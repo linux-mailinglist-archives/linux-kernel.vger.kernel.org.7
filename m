@@ -1,73 +1,79 @@
-Return-Path: <linux-kernel+bounces-621089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4243A9D3DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:08:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BACA9D3E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26611BA4A40
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDE33B5F06
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FA4223DFA;
-	Fri, 25 Apr 2025 21:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B83B2248A6;
+	Fri, 25 Apr 2025 21:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cKkVqxFL"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RZD7uDaE"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD098528E;
-	Fri, 25 Apr 2025 21:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68546217723
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745615316; cv=none; b=Oa9LoUys5/SYVTsK7d5cmPFXHAylWivwTsjldqbGdy6lt/gzARY9O1ms3BJ+8n/RvgHx54sLOlZefndAK3RzA5SihcoCGoLJQk019g6npp9Wic8Vj7xggqDhnMwXEDB2WKloqFg1uUCBcOzR8jdO1WlIsQjNp4/fMsb1oEcOlkA=
+	t=1745615381; cv=none; b=FD7MCYh/+qkO+pGfY41VnLoYO3tH6j++Oqw5GbiZvdHGGRJb9VAT/Ba1GWwrsPTDDwisah5NK1RAbU0ZOPXGubaM5OV9ePKyj2pISANoDqN0l/77pcdVE6Zxr7Y4CXopwghSfaoBSwWh+RGyKnthWyI4iR6LX3dx1Hv/GqKnnBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745615316; c=relaxed/simple;
-	bh=bgEWsXsEWp17btz+NvNq+vHT010eepOfw3CluA5PjmU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pgkXTqcY8W7eepu1pFInlfzoqvbkZXyzSlEHapj5LSv70nvz0mCDUQdJQMaNDZ6ZjcQdBf6jW3B/e07PdPu/OBVD5iSbf8ins0rLjuAy7jZeTXV7ldFljcVAWj+n74Gq5d7rQclv5HtZVhC9do1k9EGoIJGj2W08Y0F1GFX0S/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cKkVqxFL; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PL8RQJ2276113
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Apr 2025 16:08:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745615307;
-	bh=bOLo4yI6anIB9RSZml2FqX4EolYygPTDxgSa2K0zE/g=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=cKkVqxFL/z2T5f1UWy8G/FFzwwwGzvDo5RhQSX4qWi8jV5af7D5YWjCLMGYTxnkQn
-	 jmRDtDDgMgFSUkv2RK0AZHHgLo/Nru0Oi0N+nXg70M/EXlEamdzP+owbgBTH4/nTWA
-	 C4fCNmzBh+uwW0Vr6xoooVNNmrbCsqf9zL57xIuA=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PL8RqR078039
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Apr 2025 16:08:27 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
- Apr 2025 16:08:27 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 25 Apr 2025 16:08:27 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PL8R2H103328;
-	Fri, 25 Apr 2025 16:08:27 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <vigneshr@ti.com>, <u-kumar1@ti.com>, <devarsht@ti.com>,
-        <linux-kernel@vger.kernel.org>, Jayesh Choudhary <j-choudhary@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <kristo@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: dts: ti: k3-j721e-common-proc-board-infotainment: Fix nodes for dtbs warnings
-Date: Fri, 25 Apr 2025 16:08:25 -0500
-Message-ID: <174561523560.209754.14404777210651479379.b4-ty@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250424080328.57671-1-j-choudhary@ti.com>
-References: <20250424080328.57671-1-j-choudhary@ti.com>
+	s=arc-20240116; t=1745615381; c=relaxed/simple;
+	bh=o7BcIIIYtQBUHMADOGXaeTJA+HEbSY/NkKPNVQoDqrs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aPkWcGTohx284yyeais/wIEfrRANYk1GjRmIZBOCkuf8MVOhPthUbPU+SZPL86twr1w3awVxSxt9TmoQ+UPtxr8HLBxnqtM7xDy2fK1Cypy7LpD8fKZxk5JcNkO+iQxwNTTwv+0ovwghY3j3WWtBCk1uxup7D6Ja3E9QKedl5IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RZD7uDaE; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-606330df903so765085eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:09:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745615377; x=1746220177; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VpoMnDgu+7UC7RtrUCDJGErjf4myIlSL18Se8Lkjx+0=;
+        b=RZD7uDaEEDsgUPOKcaEh8DhITSnuNMG786mPtCcrg0bmzefcJYMSAm/uDxIAVonIHV
+         XpgVfGI9bIUpEVEfMsCplM1f0b5aNeybzmo+Vm1WfG0r/NpoF6VWNntdUd0KDrXmSaDj
+         hDS/t/f4kskzX026XaC9QFD5D1m7NSTE+CyzvWV/39LmlFG5n3l05ZT2cRkEkxfbhpvS
+         kf/8xVtYi1GyZGZe7QHfxGqR8gMuIf9FPPtsUR3Sh5tZldNq0tsYBhmugSwqrC6AU+rE
+         MId8nOIYLFxWCN541NdnMWRqmDmogIZClNhoiLmVoM6GSX7qBgU+gMnEu/ikowIPVJZs
+         ZDDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745615377; x=1746220177;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VpoMnDgu+7UC7RtrUCDJGErjf4myIlSL18Se8Lkjx+0=;
+        b=nwsQEBqNm/DrxVdZuFAPuKQ7yOJkpVglxfLnOSUjGRWfViTqfHAYhssy4JhJLN7DJ6
+         8B/jaDVcWSwgDJoIrSYBWNPau7LJZOZQ+XgUl4cJTscVVWszcm7tqViCT0Owsjffkh6J
+         mIeNBlRQr4i0BDSn8dCUBG6vpNNFZuZny/nlGum5nFJWmdvbNhINgs38lF0Xbc94f61a
+         ZldM5H0SOm4/Sn7U/1Ip84gSu6MS3ubwt9+Bzp6eyAHOq6Nxs/bei/Xns2RqKaAKO/Eu
+         H1JmkauN1E7xPcjhwLnDOIgWgjcGxW6aBjauREwEzFttKm/YSwQ+PUWIOYxvi4/YchMU
+         tNYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVa6qy+K4WgcVGDZ1OwudkuTpaKNBu1Zm0x2QKTsF0hCCZHujvmDV+J6Rrr/TTVOqtq4/CiiPZH8G5JauQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4ojCtNOD8sF33OV9rT0dxQBgZSTQlNHZ87uz1Soysxj9zmJnJ
+	xH/8XW5cIvQaxcOjW+E9bXHcdQKqa6pcAMY3prXid7zV3tUuNODnTAuRA/SbBt3yAmXbFtL0EmW
+	Q
+X-Gm-Gg: ASbGncvU/T4d0lgF956rLasW86TeR5NvFQ6r3cXN7QJL4ZuyhI3UveGO9bfktNrI//M
+	ZDpMrnNqotUudlSB0xhMnkMZK8dGeWNYLXYYM1MVvp5TQAvpOHZgoCkbadZflW2uAF6gNn1HjvY
+	X6RS3mWxV07d8M+p2Ti0nqQ8G8g//KVG/akSxcnRW10HS/U8rCXCXBOecw4+oD8nZ0urcorH54e
+	sfk0MjNFxmfXNjWWZ9dakLERuvlZ6OngK8vB/0e5CqUfZtVdDaa6Z+tt+IQRpIdQg/LjlemUQv5
+	Wov4LrN9dDfbL39nrgZihBa6td5LfEp6GC+UBXX8PPyR
+X-Google-Smtp-Source: AGHT+IHyxrjoVl0KXbSfTLDYg+CfefqZM8U73y5ZfAGM3b42y6FXuX1DXtEWNsTF1iIIW4wUhTqhCA==
+X-Received: by 2002:a05:6870:4595:b0:2c1:62ba:cd7c with SMTP id 586e51a60fabf-2d9be58e9a7mr562692fac.15.1745615377396;
+        Fri, 25 Apr 2025 14:09:37 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:96a3:e28:3f6:dbac])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7304f188052sm847673a34.8.2025.04.25.14.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 14:09:37 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v3 0/6] iio: introduce IIO_DECLARE_BUFFER_WITH_TS
+Date: Fri, 25 Apr 2025 16:08:42 -0500
+Message-Id: <20250425-iio-introduce-iio_declare_buffer_with_ts-v3-0-f12df1bff248@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,55 +81,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANr5C2gC/52NsQ6CMBQAf4V0tqa0QImT/2EMKe2rvASpaQtKC
+ P9uYTJuOt4NdwsJ4BECOWUL8TBhQDckEIeM6E4NN6BoEhPOeMmKvKaIjuIQvTOjho0aA7pXHpp
+ 2tBZ888TYNTFQbmsphZVGmYqk3MODxde+ulwTdxii8/N+nvLN/jGZcsooANMVV0IoZs+tmntsP
+ Ry1u5PtM/GPNuc/tHlqC2tEVchSS1Z9tdd1fQNOGb/UPwEAAA==
+X-Change-ID: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2871; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=o7BcIIIYtQBUHMADOGXaeTJA+HEbSY/NkKPNVQoDqrs=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoC/nfUdqmW0DVoD+FZo9SUw5csNWXEkaFoqBui
+ bDyBU03m8OJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaAv53wAKCRDCzCAB/wGP
+ wLHkB/4wQyGYDFJQjZBiYUgnhQdUEp7hWNlwqnEMYH7bFvPguWYt69E7pqXyv/o8AcRNpyFNwz7
+ u+Nipjjojviqe1z+4YYo2BZksKHhnD+lVzRMc3bXv6KePvl+P2mYERNI+/Tf11auIDjhSuL7rH8
+ KPBmB3NxXecOJdOBdP5QUUYXQPHCraoXxDz59qmN2nxo3WrGKrc24+lYx5Dl2AjX+2h1lS0vLOU
+ bW1wWQVh+tNBUPdS0Gw6eM8I6mvVSSIGSyJkPBJdJfx/5YXub2e9puPgxGWGWugNQjiRkDsCNQx
+ v8dZdYryvHvoLQcKJ4YsKxnSMdkJxVZpvCJGqoyCyfNk+jSC
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Jayesh Choudhary,
+Creating a buffer of the proper size and correct alignment for use with
+iio_push_to_buffers_with_ts() is commonly used and not easy to get
+right (as seen by a number of recent fixes on the mailing list).
 
-On Thu, 24 Apr 2025 13:33:28 +0530, Jayesh Choudhary wrote:
-> Fix hdmi-connector and tfp bridge node as per the bindings,
-> - remove 'digital' property which is required for DVI connector not HDMI
-> - Add 'ti,deskew' property which is a required property
-> - Fix ports property for tfp410 bridge
-> - Change node names appropriately
-> 
-> Redefine the ports for dss and for k3-j721e-common-proc-board.dts,
-> add reg property for the port (@0) to get rid of dtbs_warnings in
-> infotainment overlay when ports for dss are re-defined.
-> 
-> [...]
+In general, we prefer to use this pattern for creating such buffers:
 
-I have applied the following to branch ti-k3-dts-next on [1]. I had
-done minor fixups in the commit message and dropped the fixes tag as
-the fixups donot seem to have functional impact to require to go down
-the stable flow. Let me know if you think otherwise and we can drop
-the patch and respin the series.
+struct {
+    u16 data[2];
+    aligned_s64 timestamp;
+} buffer;
 
-Thank you!
+However, there are many cases where a driver may have a large number of
+channels that can be optionally enabled or disabled in a scan or the
+driver might support a range of chips that have different numbers of
+channels or different storage sizes for the data. In these cases, the
+timestamp may not always be at the same place relative to the data. To
+handle these, we allocate a buffer large enough for the largest possible
+case and don't care exactly where the timestamp ends up in the buffer.
 
-[1/1] arm64: dts: ti: k3-j721e-common-proc-board-infotainment: Fix nodes for dtbs warnings
-      commit: 8a0bba5b6730a1491a111bf54de5d8dcc23c8e10
+For these cases, we propose to introduce new macros to make it easier
+it easier for both the authors to get it right and for readers of the
+code to not have to do all of the math to verify that it is correct.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+I have just included a few examples of drivers that can make use of this
+new macro, but there are dozens more.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+---
+Changes in v3:
+- Fixed a few mistakes, style issues and incorporate other feedback (see
+  individual commit message changelogs for details).
+- Link to v2: https://lore.kernel.org/r/20250422-iio-introduce-iio_declare_buffer_with_ts-v2-0-3fd36475c706@baylibre.com
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Changes in v2:
+- Add 2nd macro for case where we need DMA alignment.
+- Add new patch for ad4695 to convert buffer from u8 to u16 before
+  making use of the new macro.
+- Drop the bmp280 patch since it was determined to have a better
+  alternative not using these macros.
+- Add a few more examples to show the non-DMA case, both in a struct and
+  stack allocated.
+- Link to v1: https://lore.kernel.org/r/20250418-iio-introduce-iio_declare_buffer_with_ts-v1-0-ee0c62a33a0f@baylibre.com
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+---
+David Lechner (6):
+      iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+      iio: adc: ad4695: use u16 for buffer elements
+      iio: adc: ad4695: use IIO_DECLARE_DMA_BUFFER_WITH_TS
+      iio: adc: ad7380: use IIO_DECLARE_DMA_BUFFER_WITH_TS
+      iio: accel: sca3300: use IIO_DECLARE_BUFFER_WITH_TS
+      iio: adc: at91-sama5d2: use IIO_DECLARE_BUFFER_WITH_TS
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+ drivers/iio/accel/sca3300.c        | 18 ++----------------
+ drivers/iio/adc/ad4695.c           |  8 ++------
+ drivers/iio/adc/ad7380.c           |  3 +--
+ drivers/iio/adc/at91-sama5d2_adc.c | 13 ++-----------
+ include/linux/iio/iio.h            | 38 ++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 45 insertions(+), 35 deletions(-)
+---
+base-commit: aff301f37e220970c2f301b5c65a8bfedf52058e
+change-id: 20250418-iio-introduce-iio_declare_buffer_with_ts-2f8773f7dad6
+
+Best regards,
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+David Lechner <dlechner@baylibre.com>
 
 
