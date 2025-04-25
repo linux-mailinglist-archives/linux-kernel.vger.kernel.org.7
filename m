@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-619748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB47FA9C0CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F1CA9C0D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4404F17CE68
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B0E46496C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B5623D288;
-	Fri, 25 Apr 2025 08:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i8KCNbjb"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D49236430;
+	Fri, 25 Apr 2025 08:19:26 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D7D23C390
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8C3233714;
+	Fri, 25 Apr 2025 08:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745569082; cv=none; b=LnFlpbBmefEdoPjXFlzVJcVoOuaPP7CDRQkbwNneO4i0kIc4Kxazhsipb9JBNq3dKDMOGElMxt/AFYG7heI9L5sAUVxvChb/BZGkp2s9HQ+qxm0IO2E5Fnp5Gu54YJ4tHoMBWmBlZKeRFH4w2UpzzTxwNipuARcaBP/WMc87ch0=
+	t=1745569165; cv=none; b=idplphziRTbLb80McYsxH08Ef/1EVbWOUpYodXOJterYkoi70O3WGcrBVDIXJr2Wwgx+zMnu6DGcpOtekrtzWSncXHpTY0kYaWRnzLnSpRCsLZPv18EY1TI5oqrGvnU9E7VURTv1LKYj/FfEq690Rj/FLjpqXpkVbEfGCV3a1LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745569082; c=relaxed/simple;
-	bh=ockCoErXJYNNWIE4F1OGfTdTciM14pc2rGFj8KF/fos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjaq/+ZtBPh72VsTjaLCc6U74WGWuCfIqlFzw15h1bT/I5i4Fyr1TSnSE5V2NTiRaJzmuP9mdmeRo9UleUfdGIKbGwXiu/kxVfrztQ5CY9qoK5Clj5bAqssQPUavbD1N1hiVXtvElAcmBmf9YnmGWf62Knb79ruE1LZUcDgnnrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i8KCNbjb; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso12839735e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745569077; x=1746173877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
-        b=i8KCNbjbmdKc4sIjtJQPP7WgaU8u7kgQvvJRDHolwlBVdzQNI9ZnLo81t6/elcoa2k
-         NUlaEF7k01WJT916nRHvbKnszFcNNlbw4nove37EEIIoXPLw0S1h0mJH8J4phPb1gJWx
-         Zku/gMC7L32R8ibcJfkj+eBWyLn8Pi3MnTJaD8XIOEkBoP/VKl2cA+/9OSwvILIi+mjn
-         fBW9W5Utg7nbmYjM3S2POgZQ9q3w6nsPAsh7LvqS1oNUGJe7cOTruTBSDuzPveswgDoz
-         td+zByLQKPBhOzRw1zB+EAhdDTeJJstKvhOYG8JF0hDcUkSVrjefeA5c1msW6+gwu+w0
-         hZxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745569077; x=1746173877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
-        b=s35mQ/3c4Bv9xWt+iySlc+eX/71IEhm5uSPrkqMMhE1eX7sFBr+Zou7p7Oq5/bKsGn
-         pibmYXHCuKN6eIKcvgEJQRjOt9+eAsR2rfhXhylTvwcFD36wc92G5BxDQ6OHRMN+ZbfD
-         mIJeiwNYX8+VtiS6eqYhoIgi2Lfi9sxRDf4v0Pbl4iKxCdHaRPHcRgxz1KPvBqCD5Bgi
-         pKErq+AHbdVBzczTjc3x9OYAfSZnWoxqnNYbKzhiZUYxGx9zTwElFwF0oV7J5Vh0i7is
-         VUfurPXtzibZj42YJK6/ExDZnjGWreBdgUh5zdPajvQhwNe0JKOgxMq270YQWX22SVgA
-         nJBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzi4IVrFOFYm5Z9R96kisFlXPGjNywACA3hcb7Sk3D70T6h5fddA6+W0haQsBXR7KWvJbbJCQ5iQU0KTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN+A0SF6aKg+piLWvSBRUIGjOyvWiiGaaLsZDH/QZ4ijERZ9C3
-	sTgsR3f0Qdjb4EoZPZLYlhk+O9NHGR+ZKF4Bovivhnzt4h/gs19MpWme6c5bbt/NFNX4Yx8/KpJ
-	j
-X-Gm-Gg: ASbGnct+45n3xOItRuaMiCJrnSVTTz9/u1NafDaC38Nu8EtB0sO5Jt3qVdaavVA8zEG
-	toWx5d5JbunkdDfsFYDn/yj/LHiIINHXn5neu6XGLsspLrHg8SfK5p8cC7s97V76z6HSHts0+Wl
-	d4jGRaluBv1aJCao7q6aEa5Pu6lUp95eS1I3QxdP1IBls8Df94p9mgqWJmcnXSpqWlEw52Gle2Q
-	3GM5L+6XCvpdGxSHCbmmPwLkZAwh9JV+4XhVJ6KJjE3cBI2zaiQ41oBXNjBZkpT/KGsu/4iCMZt
-	i/GhVhxLQzAJZSe1/0kijTliEb0StpvX8DS2Wum5sN6R2w==
-X-Google-Smtp-Source: AGHT+IFtIhw338SCwM97fT8DE36JSktmwAws0V+m2whiTCc2WvjhYcfxYH8N3RZVkd/V19BgPW5uag==
-X-Received: by 2002:a05:600c:3d0b:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-440a6346aabmr12093055e9.0.1745569077572;
-        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073c8d1a5sm1671072f8f.13.2025.04.25.01.17.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
-Date: Fri, 25 Apr 2025 11:17:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Marek Vasut <marex@denx.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
- __qcom_smd_send()
-Message-ID: <1cb8c180-a93e-4d5d-a17a-6452dd154801@stanley.mountain>
-References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
- <aAkhvV0nSbrsef1P@stanley.mountain>
- <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
+	s=arc-20240116; t=1745569165; c=relaxed/simple;
+	bh=x0Dg4cKMR6D3ekKFVIOe036+2dyX+Mba05yp4rdNq6c=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=bc3UEU7MEn8XPhkWCjdoTxqlLNFjtyw/AB5mfD+P0CkANQDGtXqMIO1b7Du0FkbzqPC5OZKpbqQtAZSkVER7runZVNnvcI1/zeDsDnuIwqboUTghz3GELvl7ZbT7+fhEKCXgLlvofj7YLYQDoRCVKSFlZ30raEo3hn2+AvuMnhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+EX-QQ-RecipientCnt: 6
+X-QQ-GoodBg: 2
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqQGDUD8fynKBHI8JZ5u7mlQpiu4kXxDrxM=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: 7x1qqKu5pJafhq4/ckMwMEHoaGuzSeakJOUqYa8gIII=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-2t1745569122t4bf4d3aa
+From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
+To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
+Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5aSP5Y2O?=" <xiahua@kylinos.com.cn>, "=?utf-8?B?6YKT5pe65rOi?=" <dengwangbo@kylinos.com.cn>
+Subject: Re: [PATCH] bcache: add the deferred_flush IO processing path in the writeback mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Fri, 25 Apr 2025 16:18:41 +0800
+X-Priority: 3
+Message-ID: <tencent_5EFAC84160EC2688341D1A8F@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
+	<ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+In-Reply-To: <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+X-QQ-ReplyHash: 3140873376
+X-BIZMAIL-ID: 5531191572345201483
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Fri, 25 Apr 2025 16:18:42 +0800 (CST)
+Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: OIl0qrssdEn92V9lHBMqVtpskG1A5mh41ubbIJmC2oESmhZ1ukmcyUX5
+	LvvIkL9PV6lyU2rLeVU+bkt7TVELQHhxMisOhXe3xsMamigHXBeUa1neZKdB8i1AryqV1q9
+	iwMg5om2G7/SOOXXSxOshXh3yC2nljhlwRsXpJ6sJhkOaFVpxRo9TpLmz4b0shuD1UXPZHk
+	UeWY1ApLe8aywM2W+BAtkc0YU8vqvdsyCts1chqmwF307MhhC+c99B1we6gPcQxycARTwzC
+	vNlLtniXFJyL83N5nY42DGp+couA+3IeQTTg8xzlAijZXa3cAxAnK2P5oQbrb/pUyGzlYy4
+	UWVQSDbVILvF4LoPyx61vM/oaUg47nx5+JscZC4tIXh6ovyO5RCfx/Muc/hJ0SOz8WjGYr5
+	MD9mkxttLbt7GH3GETVbxGg+niI/2MxNlquD7/heg3N3O8h4MJXXukVnVxrcqi6fSjH1hfH
+	Shy0rSeJJfE/7aAA88ko7GwXqj/FXG2jGjOUGBhZ2zJfnh6pqlmwv8zZ6yMi4wcMGdoidrw
+	SXpleH4AOU3Ufqj1dz5f9ZxepXgVgS74yH6aPYNOg3Y+9Nkk5G6KbiuRuy3bouO4QtvJZMW
+	Btas53WHp2JJWSGAzvBB0dXfnxsj3/2b19URtbGGopPFDOBcilZukpoAkuxSI3dAOP/YPGb
+	2qZunLOaBN+NiUA8O6ltlcZ3nbqE5kbjF3lgY8CHxjGemZvMswE72Mmbylo8WRIOXffKKA/
+	wR2qHHNhr5cdwvbcMpp74XAXdqDi9MEFuS1BTGLCbOJJ4bC3zgjEToAfzu/wJS17ft5C2ua
+	Gk/6Pw4WLZrE804k7pKh2TCLjrarKhohm0Z4iRb8z3ujKzrdFd4bfouQZDdlOJVpm28T4Cc
+	VRh/E+xy1oE0KgmAmb+ZHA+IXdd8KtA/k5Zy8ywEDny297VptqrXUbIG8YtCy/DRnlvF0NC
+	dW8jbU4DWMiMLSjGJdLVWX0W13ZH28NBHEfQNf0DLwySkyUu5AqagFbt6+3GcBSeJQSzNRp
+	S9zQTA8uQvFRfpduv9UP5luxJ1EP4=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Apr 25, 2025 at 11:36:24AM +0530, Naresh Kamboju wrote:
-> On Wed, 23 Apr 2025 at 22:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The "ret" variable isn't initialized if we don't enter the loop.  For
-> > example,  if "channel->state" is not SMD_CHANNEL_OPENED.
-> >
-> > Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > Naresh, could you test this patch and see if it fixes the boot
-> > problems you saw?
-> 
-> Dan, This patch fixes the reported problem.
-> 
-> Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> 
-
-Thanks Naresh,
-
-I left off your reported by tag as well.
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-regards,
-dan carpenter
+SGkgQ29seSBMaSwNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseSBhbmQgeW91ciBxdWVzdGlv
+bi4NCg0KT24gRnJpLCAyNSBBcHIgMjAyNSBhdCAxMzo0NiwgQ29seSBMaSA8Y29seWxpQGtl
+cm5lbC5vcmc+IHdyb3RlOg0KPg0KPiBIaSBKaWZlbmcsDQo+DQo+IFRoYW5rcyBmb3IgcG9z
+dGluZyB0aGUgcGF0Y2guDQo+DQo+IE9uIEZyaSwgQXByIDI1LCAyMDI1IGF0IDExOjUwOjIx
+QU0gKzA4MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IEluIHNvbWUgc2NlbmFyaW9zIHdp
+dGggaGlnaCByZXF1aXJlbWVudHMgZm9yIGJvdGggZGF0YSByZWxpYWJpbGl0eSBhbmQNCj4g
+PiB3cml0ZSBwZXJmb3JtYW5jZSwgdGhlIHZhcmlvdXMgY2FjaGUgbW9kZXMgb2YgdGhlIGN1
+cnJlbnQgYmNhY2hlIGNhbm5vdA0KPg0KPiBDb3VsZCB5b3UgcHJvdmlkZSB0aGUgZGV0YWls
+IHdvcmtsb2FkIG9yIGNpcmN1bXN0YW5jZSB3aGljaCByZXF1aXJlcyBib3RoDQo+IGRhdGEg
+cmVsaWFiaWxpdHkgYW5kIHdyaXRlIHBlcmZvcm1hbmNlIHRoYXQgY3VycmVudCBiY2FjaGUg
+Y2Fubm90IHNlcnZlPw0KDQpGb3IgZXhhbXBsZSwgaW4gc29tZSBkYXRhYmFzZSBhcHBsaWNh
+dGlvbiBzY2VuYXJpb3MsIHRoZSByZXF1aXJlbWVudHMgZm9yIGRhdGENCnNlY3VyaXR5IGFy
+ZSByZWxhdGl2ZWx5IGhpZ2guIFdoZW4gd3JpdGluZyBmcmVxdWVudGx5LCBmbHVzaCBpcyBj
+YWxsZWQgbW9yZSBvZnRlbiwNCmFuZCB0aGUgcGVyZm9ybWFuY2Ugb2Ygd3JpdGUgZHN5bmMg
+aXMgb2YgZ3JlYXQgY29uY2Vybi4gVGhlIG9wZXJhdGlvbmFsIHBlcmZvcm1hbmNlDQpvZiBz
+ZXZlcmFsIGNhY2hlIG1vZGVzIG9mIGJjYWNoZSBpbiBzdWNoIHNjZW5hcmlvcyBhdCBwcmVz
+ZW50Og0Kbm9uZTogVGhlIGNhY2hlIGRvZXMgbm90IHdvcmsgYW5kIGlzIG9mIG5vIGhlbHAg
+dG8gcGVyZm9ybWFuY2UuIFRoZSBwZXJmb3JtYW5jZSBpcw0KdGhlIHNhbWUgYXMgdGhhdCBv
+ZiB0aGUgYmFja2luZyBkZXZpY2UgYW5kIGNhbm5vdCBtZWV0IHRoZSBwZXJmb3JtYW5jZSBy
+ZXF1aXJlbWVudHMuDQp3cml0ZXJvdW5kIGFuZCB3cml0ZXRocm91Z2g6IFRoZXkgYXJlIG5v
+dCBoZWxwZnVsIGZvciB3cml0ZSBwZXJmb3JtYW5jZS4gVGhlIHdyaXRlDQpwZXJmb3JtYW5j
+ZSBpcyB0aGUgc2FtZSBhcyB0aGF0IG9mIHRoZSBiYWNraW5nIGRldmljZSBhbmQgY2Fubm90
+IG1lZXQgdGhlIHdyaXRlDQpwZXJmb3JtYW5jZSByZXF1aXJlbWVudHMuDQp3cml0ZWJhY2s6
+IFNpbmNlIHdoZW4gaXQgd3JpdGVzIGJhY2sgZGlydHkgZGF0YSwgaXQgb25seSBtYXJrcyBi
+aW8gYXMgUkVRX09QX1dSSVRFLA0KdGhlcmUgaXMgYSByaXNrIG9mIGRhdGEgbG9zcyBkdWUg
+dG8gcG93ZXIgZmFpbHVyZS4gSW4gYWRkaXRpb24sIHNpbmNlIGl0IG5lZWRzIHRvIHNlbmQg
+YQ0KZmx1c2ggcmVxdWVzdCB0byB0aGUgYmFja2luZyBkZXZpY2Ugd2hlbiBoYW5kbGluZyBy
+ZXF1ZXN0cyB3aXRoIHRoZSBmbHVzaCBtYXJrLCBpdCB3aWxsDQphZmZlY3QgdGhlIHdyaXRl
+IHBlcmZvcm1hbmNlLg0KDQo+ID4gZnVsbHkgbWF0Y2ggdGhlIHJlcXVpcmVtZW50cy4gZGVm
+ZXJyZWRfZmx1c2ggYWltcyB0byBpbmNyZWFzZSB0aGUNCj4gPiByZWxpYWJpbGl0eSBvZiB3
+cml0ZWJhY2sgd3JpdGUtYmFjay4gQW5kIHJlZHVjZSB0aGUgc2VuZGluZyBvZiBQUkVGTFVT
+SA0KPiA+IHJlcXVlc3RzIHRvIHRoZSBiYWNraW5nIGRldmljZSB0byBlbmhhbmNlIGRhdGEg
+c2VjdXJpdHkgYW5kIGRzeW5jIHdyaXRlDQo+ID4gcGVyZm9ybWFuY2UgaW4gd3JpZWJhY2sg
+bW9kZS4NCj4NCj4gSSdkIGxpa2UgdG8gc2VlIHRoZSBkZXRhaWxlZCBkZXNjcmlwdGlvbiBv
+biBob3cgZGVmZXJyZWQgZmx1c2ggaXMgZGVmaW5lZCwNCj4gYW5kIGhvdyBpdCB3b3Jrcy4g
+QW5kIHdoeSBkZWZlcnJlZCBmbHVzaCBtYXkgcHJvdmlkZSB0aGUgZGF0YSByZWxpYWJpbGl0
+eQ0KPiBhbmQgcGVyZm9ybWFuY2UgYmV0dGVyIHRoYW4gY3VycmVudCBiY2FjaGUgY29kZS4N
+Cg0KZGVmZXJyZWQgZmx1c2g6IFdoZW4gZGF0YSBpcyBwcm9jZXNzZWQgdGhyb3VnaCB0aGUg
+d3JpdGViYWNrIHBhdGgsIGl0IHdpbGwgZGV0ZXJtaW5lDQp3aGV0aGVyIGEgUFJFRkxVU0gg
+bmVlZHMgdG8gYmUgc2VudCB0byB0aGUgYmFja2luZyBkZXZpY2UuIFRoZSBqdWRnbWVudCBj
+cml0ZXJpb24NCmlzIHdoZXRoZXIgYSB3cml0ZSByZXF1ZXN0IGhhcyBiZWVuIHNlbnQgdGhy
+b3VnaCBieXBhc3Mgb3Igd3JpdGV0aHJvdWdoIGJlZm9yZS4gSWYgbm90LA0KaXQgaXMgbm90
+IG5lY2Vzc2FyeS4gUHV0IHRoZSBQUkVGTFVTSCBzZW1hbnRpY3MgaW50byB0aGUgZGlydHkg
+ZGF0YSB3cml0ZS1iYWNrIHN0YWdlDQp0byBlbnN1cmUgdGhlIHJlbGlhYmlsaXR5IG9mIHRo
+ZSBkaXJ0eSBkYXRhIHdyaXRlLWJhY2suIEhlcmUsIGJ5IHJlZHVjaW5nIHRoZSBzZW5kaW5n
+IG9mDQpQUkVMVVNIIHRvIHRoZSBiYWNraW5nIGRldmljZSwgdGhlIGRlbGF5IGZvciB0aGUg
+YmFja2luZyBkZXZpY2UgdG8gcHJvY2VzcyBQUkVMVVNIDQppcyBkZWNyZWFzZWQsIHRoZXJl
+YnkgaW1wcm92aW5nIHRoZSBwZXJmb3JtYW5jZSBvZiBkc3luYyB3cml0ZSByZXF1ZXN0cyB3
+aGVuIHRoZQ0KY2FjaGUgc3BhY2UgaXMgYWJ1bmRhbnQuIER1cmluZyB0aGUgZGlydHkgZGF0
+YSB3cml0ZS1iYWNrIHN0YWdlLCB0aGUgRlVBIG1ldGhvZCBpcw0KYWRvcHRlZCB0byBlbnN1
+cmUgdGhhdCB0aGUgZGlydHkgZGF0YSB3aWxsIG5vdCBiZSBsb3N0IGR1ZSB0byBmYWN0b3Jz
+IHN1Y2ggYXMgcG93ZXIgZmFpbHVyZS4NCg0KPiBJIGRvbid0IGxvb2sgaW50byB0aGUgcGF0
+Y2ggeWV0LCBqdXN0IHdpdGggbXkgaW50dWl0aW9uIHRoZSBvdmVyYWxsDQo+IHBlcmZvcm1h
+bmNlIHdvbid0IGJlIHF1aXRlIG9wdGltaXplZCBieSBzZXR0aW5nIEZVQSBvbiB3cml0ZWJh
+Y2sgSS9Pcy4NCg0KVXNpbmcgdGhlIEZVQSBtZXRob2QgdG8gd3JpdGUgYmFjayBkaXJ0eSBk
+YXRhIGRvZXMgaW5kZWVkIGhhdmUgYW4gaW1wYWN0IG9uIHRoZSBzcGVlZA0Kb2Ygd3JpdGlu
+ZyBiYWNrIGRpcnR5IGRhdGEuIEluIGEgdGVzdCB3aGVyZSBJL08gaXMgd3JpdHRlbiByYW5k
+b21seSBhdCA0SywgdGhlIHNwZWVkIG9mDQp3cml0aW5nIGJhY2sgZGlydHkgZGF0YSBpcyBh
+cHByb3hpbWF0ZWx5IGhhbGYgdGhhdCBvZiB0aGUgbm9uLUZVQSBtZXRob2QuIEhvd2V2ZXIs
+DQpjb25zaWRlcmluZyB0aGF0IHRoZSBkYXRhIGlzIG5vdCB3cml0dGVuIGF0IGEgaGlnaCBp
+bnRlbnNpdHkgY29udGludW91c2x5LCB0aGlzIHByb3ZpZGVzIHNvbWUNCmJ1ZmZlciB0aW1l
+IGZvciB3cml0aW5nIGJhY2sgZGlydHkgZGF0YS4gSW4gZXh0cmVtZSBjYXNlcywgd2hlbiB0
+aGUgZWZmZWN0aXZlIHNwYWNlIG9mIHRoZQ0KY2FjaGUgaXMgdGlnaHQsIGl0cyB3cml0ZSBl
+ZmZpY2llbmN5IGlzIG5vdCBsb3dlciB0aGFuIHRoZSBwZXJmb3JtYW5jZSBvZiB0aGUgYmFj
+a2luZyBkZXZpY2UuDQpUaGVyZWZvcmUsIGVuYWJsaW5nIGRlZmVycmVkX2ZsdXNoIGlzIGVm
+ZmVjdGl2ZSBpbiBsb3ctY29zdCBkZXBsb3ltZW50IHNvbHV0aW9ucyB0aGF0IHJlcXVpcmUN
+CnRoZSB1c2Ugb2YgU1NEIHRvIGFjY2VsZXJhdGUgdGhlIHBlcmZvcm1hbmNlIG9mIGRzeW5j
+Lg0KDQo+IEFuZCB0aGUgY2FjaGUgbW9kZSBjYW4gc3d0aWNoIGFyYml0YXJpbHkgaW4gcnVu
+IHRpbWUsIGlmIGNhY2hlIG1vZGUgd2FzIG5vbmUNCj4gb3Igd3JpdGV0aG91Z2gsIHRoZW4g
+c3dpdGNoIHRvIHdyaXRlYmFjaywgSSBkb24ndCBzZWUgeW91ciBwYXRjaCBoYW5kbGVzDQo+
+IHN1Y2ggc2l0dWF0aW9uLg0KDQpXaGVuIHN3aXRjaGluZyBmcm9tIG90aGVyIGNhY2hlIG1v
+ZGVzIHRvIHdyaXRlYmFjayBhbmQgc2ltdWx0YW5lb3VzbHkgZW5hYmxpbmcgDQpkZWZlcnJl
+ZF9mbHVzaCwgYSBSRVFfUFJFRkxVU0ggcmVxdWVzdCB3aWxsIGJlIHNlbnQgdG8gdGhlIGJh
+Y2tpbmcgZGV2aWNlLg0KQ29kZSBsb2NhdGlvbiBpbiB0aGUgcGF0Y2g6DQorICAgaWYgKGF0
+dHIgPT0gJnN5c2ZzX2RlZmVycmVkX2ZsdXNoKSB7DQorICAgICAgIHYgPSBfX3N5c2ZzX21h
+dGNoX3N0cmluZyhiY2hfZGVmZXJyZWRfZmx1c2gsIC0xLCBidWYpOw0KKyAgICAgICBpZiAo
+diA8IDApDQorICAgICAgICAgICByZXR1cm4gdjsNCisNCisgICAgICAgaWYgKCh1bnNpZ25l
+ZCBpbnQpIHYgIT0gQkRFVl9ERUZFUlJFRF9GTFVTSCgmZGMtPnNiKSkgew0KKyAgICAgICAg
+ICAgaWYgKHYgJiYgKEJERVZfQ0FDSEVfTU9ERSgmZGMtPnNiKSAhPSBDQUNIRV9NT0RFX1dS
+SVRFQkFDSykpIHsNCisgICAgICAgICAgICAgICBwcl9lcnIoIkl0J3Mgbm90IHRoZSB3cml0
+ZWJhY2sgbW9kZSB0aGF0IGNhbid0IGVuYWJsZSBkZWZlcnJlZF9mbHVzaC5cbiIpOw0KKyAg
+ICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KKyAgICAgICAgICAgfQ0KKw0KKyAgICAg
+ICAgICAgU0VUX0JERVZfREVGRVJSRURfRkxVU0goJmRjLT5zYiwgdik7DQorICAgICAgICAg
+ICBiY2hfd3JpdGVfYmRldl9zdXBlcihkYywgTlVMTCk7DQorICAgICAgICAgICBpZiAodikg
+ew0KKyAgICAgICAgICAgICAgIGJpb19pbml0KCZmbHVzaCwgZGMtPmJkZXYsIE5VTEwsIDAs
+IFJFUV9PUF9XUklURSB8IFJFUV9QUkVGTFVTSCk7DQorICAgICAgICAgICAgICAgLyogSS9P
+IHJlcXVlc3Qgc2VudCB0byBiYWNraW5nIGRldmljZSAqLw0KKyAgICAgICAgICAgICAgIHN1
+Ym1pdF9iaW9fd2FpdCgmZmx1c2gpOw0KKyAgICAgICAgICAgfQ0KKyAgICAgICB9DQorICAg
+fQ0KDQpUaGFua3Mu
 
 
