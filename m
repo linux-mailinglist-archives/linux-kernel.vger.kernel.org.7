@@ -1,158 +1,151 @@
-Return-Path: <linux-kernel+bounces-620582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4801A9CC74
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2B1A9CC72
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8051896F1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:09:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6608C464152
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4BD23C8B3;
-	Fri, 25 Apr 2025 15:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FA526A1A3;
+	Fri, 25 Apr 2025 15:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa4Wg8RQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="XG4y/1b8"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912E9268C66;
-	Fri, 25 Apr 2025 15:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C58258CF4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745593781; cv=none; b=r8nksgbR1GyeizG4zATNJDbHepeHHNILNIGaLYF4YVWE++oePkXQtAYBXplZLhX3yZ68LynTckHMR5pbXejGpxdAtr9UEoRcHleiearrH699MQjAKr0+hskDwGEUYs2hByloXBvaqBwsZvq8fKf+6ixqbnBx0X4AKJyK983b5dM=
+	t=1745593824; cv=none; b=K6qPns8CB9nNjRgzIzRQgQtWGmutHenBAFsrR1Gjk1/KCNfcDkdlV+4mx+Iff9wnt6ycsmn6nNE6XkgcLaHWNjqrzQI4drf+DGgykhoxTvgzmczPDugcHtnTm8eSFB8fSruD13htO/+x+H4iTwRW0jUqqmXdj6yEZlTvihJUV+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745593781; c=relaxed/simple;
-	bh=oonh1NXc7x48MBVzed3dn7v4cSOnDgtdIXNyC9GMHOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYQ23ABJGt/Pj+jQf6tbwJypmTm5+GX2GpJcuSEqzv0NwR4ArhFqu2xGY2UkOCApZPYdH9dSkeaXgZXBb532YQysBBJQg0jlEPmS+pzV8KzEpjlPTG4tBydfDtvFZ07moebH0Bt8A1BAKtvxfmsxq4xaYEXFYBUrq7XoHM3lXzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wa4Wg8RQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EC2C4CEE4;
-	Fri, 25 Apr 2025 15:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745593781;
-	bh=oonh1NXc7x48MBVzed3dn7v4cSOnDgtdIXNyC9GMHOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wa4Wg8RQpYPnV5hT2loBRJRl3BXAdLpA1RE4byQdu01Si6tt5WpI9NrF6AiXOvD88
-	 Med8EoaaZuncHUH4oJbA232D1OOq5OFnHq6KbH2QeC5bM2t+I8hn3r7VXxPWQLgLlg
-	 flhMbhwnRuIYNDEMRHvp0Rt89bcZYL1IQCvxw8x/9KsdU+PCQy0rCsNjnnTKrrt1M1
-	 sIoqmTerHBkSWAnDDJOGoYiTy1RVx3JmtRFKJQE6RYjIM2ohVjco/krIEEH5UAC1Rc
-	 3OUdqU/Y69H0XMxhvUT2ac/1pcfpiHpziej9Ayjq1cOxmvwfsOqPXeEXK/6HFO/2yD
-	 Vy7Zd7yNQJqEg==
-Date: Fri, 25 Apr 2025 12:09:38 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zixian Cai <fzczx123@gmail.com>,
-	Steve Clevenger <scclevenger@os.amperecomputing.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Martin Liska <martin.liska@hey.com>,
-	Martin =?utf-8?B?TGnFoWth?= <m.liska@foxlink.cz>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] perf build-id: Change sprintf functions to
- snprintf
-Message-ID: <aAulsrAJuia49LR0@x1>
-References: <20250424195831.1767457-1-irogers@google.com>
- <20250424195831.1767457-6-irogers@google.com>
+	s=arc-20240116; t=1745593824; c=relaxed/simple;
+	bh=vY6swcT0Alboo7MgvnMQJB9vpruBePBrokItleYPUxY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=dG6ZPjrIWkgxH7nSNI1M8LXcSCClLd4BQWGzlub0+MU7Div2pyL2jmpxmOtBwsPbAN5oZ/+R6fUCWZJY8Zgtclm8rK9ojeHCLGRVytGY8Oe2mmWrHjbYKPTHOtJyU503Oy+mSKqgOeFyMHteznfUOP7K/YelJjGX2q548Pkh3FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=XG4y/1b8; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53PF9nln2855517
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 25 Apr 2025 08:09:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53PF9nln2855517
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1745593790;
+	bh=IGecZCjl5YfBf0UiQM9IPZczEb4L7UhgqvPM+Q8gibg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=XG4y/1b8Fbb1KxTNO/IVuCGrL4x7LLZ0U5q8MVUmv43nS+I1SPHwVg4Q9AasbuukE
+	 5jyE9gWtT1H44a5JwK3iI6HbhpYbTKUfTAinczCMkcUWVFOUH0TvnYkokRnORR2Wx2
+	 fKJoaeuh5L9QJlrx6nDmh20mNcqBvyUCGMWRXEs5iuXpJq2bE5cSlR2fWRjL8K+FYI
+	 ei5Xql8gpdPQN2NCF4uMXsQx63UA6bBQc2ptjxHQIFfIjBjSVIt+USphm7oEWSk0Jo
+	 JRvd6vP5qjFfJ4tgQASETaAwNiRk/4aW5whO7JFMqwVbMzTC4zFQTM3CzVCayy+LuM
+	 j92qXhydNHh2w==
+Date: Fri, 25 Apr 2025 08:09:48 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+CC: "Ahmed S . Darwish" <darwi@linutronix.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 04/15] x86/cpu: Remove TSC-less CONFIG_M586 support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250425084216.3913608-5-mingo@kernel.org>
+References: <20250425084216.3913608-1-mingo@kernel.org> <20250425084216.3913608-5-mingo@kernel.org>
+Message-ID: <1837ABEC-86BF-44DC-B32B-6C59DF61BFE6@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424195831.1767457-6-irogers@google.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 24, 2025 at 12:58:28PM -0700, Ian Rogers wrote:
-> Pass in a size argument rather than implying all build id strings must
-> be SBUILD_ID_SIZE.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-buildid-cache.c            | 12 +++----
->  tools/perf/builtin-buildid-list.c             |  6 ++--
->  tools/perf/util/build-id.c                    | 33 ++++++++-----------
->  tools/perf/util/build-id.h                    |  6 ++--
->  tools/perf/util/disasm.c                      |  2 +-
->  tools/perf/util/dso.c                         |  4 +--
->  tools/perf/util/dsos.c                        |  2 +-
->  tools/perf/util/event.c                       |  2 +-
->  tools/perf/util/header.c                      |  2 +-
->  tools/perf/util/map.c                         |  2 +-
->  tools/perf/util/probe-file.c                  |  4 +--
->  .../scripting-engines/trace-event-python.c    |  7 ++--
->  tools/perf/util/symbol.c                      |  2 +-
->  13 files changed, 38 insertions(+), 46 deletions(-)
+On April 25, 2025 1:42:01 AM PDT, Ingo Molnar <mingo@kernel=2Eorg> wrote:
+>Remove support for TSC-less Pentium variants=2E
+>
+>All TSC-capable Pentium variants, derivatives and
+>clones should still work under the M586TSC or M586MMX
+>options=2E
+>
+>Signed-off-by: Ingo Molnar <mingo@kernel=2Eorg>
+>---
+> arch/x86/Kconfig=2Ecpu            | 10 +---------
+> arch/x86/Makefile_32=2Ecpu        |  1 -
+> arch/x86/include/asm/vermagic=2Eh |  2 --
+> 3 files changed, 1 insertion(+), 12 deletions(-)
+>
+>diff --git a/arch/x86/Kconfig=2Ecpu b/arch/x86/Kconfig=2Ecpu
+>index df586ff2178f=2E=2Ee9499e58776c 100644
+>--- a/arch/x86/Kconfig=2Ecpu
+>+++ b/arch/x86/Kconfig=2Ecpu
+>@@ -43,14 +43,6 @@ choice
+> 	  See each option's help text for additional details=2E If you don't kn=
+ow
+> 	  what to do, choose "Pentium-Pro"=2E
+>=20
+>-config M586
+>-	bool "586/K5/5x86/6x86/6x86MX"
+>-	depends on X86_32
+>-	help
+>-	  Select this for an 586 or 686 series processor such as the AMD K5,
+>-	  the Cyrix 5x86, 6x86 and 6x86MX=2E  This choice does not
+>-	  assume the RDTSC (Read Time Stamp Counter) instruction=2E
+>-
+> config M586TSC
+> 	bool "Pentium-Classic"
+> 	depends on X86_32
+>@@ -226,7 +218,7 @@ config X86_L1_CACHE_SHIFT
+> 	default "7" if MPENTIUM4
+> 	default "6" if MK7 || MPENTIUMM || MATOM || MVIAC7 || X86_GENERIC || X8=
+6_64
+> 	default "4" if MGEODEGX1
+>-	default "5" if MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII =
+|| MPENTIUMII || M686 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODE_L=
+X
+>+	default "5" if MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII =
+|| MPENTIUMII || M686 || M586MMX || M586TSC || MVIAC3_2 || MGEODE_LX
+>=20
+> config X86_F00F_BUG
+> 	def_bool y
+>diff --git a/arch/x86/Makefile_32=2Ecpu b/arch/x86/Makefile_32=2Ecpu
+>index 2dda0a19b06a=2E=2E43226c9fe795 100644
+>--- a/arch/x86/Makefile_32=2Ecpu
+>+++ b/arch/x86/Makefile_32=2Ecpu
+>@@ -10,7 +10,6 @@ else
+> align		:=3D -falign-functions=3D0 -falign-jumps=3D0 -falign-loops=3D0
+> endif
+>=20
+>-cflags-$(CONFIG_M586)		+=3D -march=3Di586
+> cflags-$(CONFIG_M586TSC)	+=3D -march=3Di586
+> cflags-$(CONFIG_M586MMX)	+=3D -march=3Dpentium-mmx
+> cflags-$(CONFIG_M686)		+=3D -march=3Di686
+>diff --git a/arch/x86/include/asm/vermagic=2Eh b/arch/x86/include/asm/ver=
+magic=2Eh
+>index b3a8beb32dfd=2E=2Ee26061df0c9b 100644
+>--- a/arch/x86/include/asm/vermagic=2Eh
+>+++ b/arch/x86/include/asm/vermagic=2Eh
+>@@ -5,8 +5,6 @@
+>=20
+> #ifdef CONFIG_X86_64
+> /* X86_64 does not define MODULE_PROC_FAMILY */
+>-#elif defined CONFIG_M586
+>-#define MODULE_PROC_FAMILY "586 "
+> #elif defined CONFIG_M586TSC
+> #define MODULE_PROC_FAMILY "586TSC "
+> #elif defined CONFIG_M586MMX
 
-You missed these, that I added, please ack.
-
-- Arnaldo
-
-diff --git a/tools/perf/tests/sdt.c b/tools/perf/tests/sdt.c
-index 9197128992510218..663c8f700069d42b 100644
---- a/tools/perf/tests/sdt.c
-+++ b/tools/perf/tests/sdt.c
-@@ -37,7 +37,7 @@ static int build_id_cache__add_file(const char *filename)
- 		return err;
- 	}
- 
--	build_id__sprintf(&bid, sbuild_id);
-+	build_id__snprintf(&bid, sbuild_id, sizeof(sbuild_id));
- 	err = build_id_cache__add_s(sbuild_id, filename, NULL, false, false);
- 	if (err < 0)
- 		pr_debug("Failed to add build id cache of %s\n", filename);
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 307ad6242a4e92f6..c10549fc451b508b 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -502,7 +502,7 @@ static struct debuginfo *open_from_debuginfod(struct dso *dso, struct nsinfo *ns
- 	if (!c)
- 		return NULL;
- 
--	build_id__sprintf(dso__bid(dso), sbuild_id);
-+	build_id__snprintf(dso__bid(dso), sbuild_id, sizeof(sbuild_id));
- 	fd = debuginfod_find_debuginfo(c, (const unsigned char *)sbuild_id,
- 					0, &path);
- 	if (fd >= 0)
-@@ -1089,7 +1089,7 @@ static int __show_line_range(struct line_range *lr, const char *module,
- 	}
- 	if (dinfo->build_id) {
- 		build_id__init(&bid, dinfo->build_id, BUILD_ID_SIZE);
--		build_id__sprintf(&bid, sbuild_id);
-+		build_id__snprintf(&bid, sbuild_id, sizeof(sbuild_id));
- 	}
- 	debuginfo__delete(dinfo);
- 	if (ret == 0 || ret == -ENOENT) {
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 3cc7c40f50978a0f..b74f6fe24bb61af8 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -859,7 +859,7 @@ static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
- 		comp_dir = cu_get_comp_dir(&pf->cu_die);
- 		if (pf->dbg->build_id) {
- 			build_id__init(&bid, pf->dbg->build_id, BUILD_ID_SIZE);
--			build_id__sprintf(&bid, sbuild_id);
-+			build_id__snprintf(&bid, sbuild_id, sizeof(sbuild_id));
- 		}
- 		ret = find_source_path(pf->fname, sbuild_id, comp_dir, &fpath);
- 		if (ret < 0) {
+For the record, all "real" Pentium chips had CX8 and TSC=2E
 
