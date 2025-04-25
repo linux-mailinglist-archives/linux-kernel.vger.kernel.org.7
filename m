@@ -1,165 +1,172 @@
-Return-Path: <linux-kernel+bounces-619687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198E5A9BFF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:43:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F709A9C00F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AF1188E5D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0913AE2FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E911122FF2D;
-	Fri, 25 Apr 2025 07:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618342309B9;
+	Fri, 25 Apr 2025 07:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="Np4Ar/u5"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmgQgdS0"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4A522F75E;
-	Fri, 25 Apr 2025 07:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745567005; cv=pass; b=msjXiQquaoNoskrBLVu6L3WrVNoLpqgt644xWZqsZWLAg23cl8x4WUqi0ohIM1NcUGCon5nuL2LzhK9OAkAp6q6P4eSbhK/oIC2U9uNeLOVaM9/GZ60sQJOLKuFrB59AEE+Ol8OnJf+WdDQ7YP89sHFV5sc7JBawaejshWTe22k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745567005; c=relaxed/simple;
-	bh=RQtI3gn+efvWLyMRJzYXV2oCjgTZh+NpE8aFcXT3ejw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQMIJK5Irqg34pORn5Z6Ye+5yOS6vt+O9Js36wh6zcKGD5HjX5y/IHmlUYSmBDR9nAPCXv5o/4zQd2pt5KcIlRxaHYivIS+UQ7c0zCD0K8aIfN9ZK1cTJ948UKOXCsglYAOVemldrURjtE6LknoOjADtrCyjPVTfPJwb6IJXZkw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=Np4Ar/u5; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745566970; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JnQDKjYH3rYWCAwKmiyLBZ2hmlwp0/jemeMxGKdoBD3v02+NNczdU/EHbnloUIZvsYGwW+d1QSDGiD9/WzZk+LG9i1aMX3WwqqpnIXLvmr3sefkhoT48Lan5gNeh/RHVfQLWhRAhKkILOGLHQ41EPAqii3Uu5f2+TpqUeaOt4X8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745566970; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=T8tWFVeEPdpMtiUtY+e6f8fdZdq5OaJQE3ekwAwYymg=; 
-	b=nngvDYq6pk51V1sVhc3mTV2rbaOhDVdkJB4gt8OfGAmDBm2TFuwzQvM4CQX1hUt2hvbjOhAZFX0miga2pu1P4Pq0+wLLy0ACClwizXLCg0OYa07+MdOA8jEmAjC/USNXK+nmEF89uEd3oZJRtIubkEWTYVT26eI9nVh5NtbvYYg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745566970;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=T8tWFVeEPdpMtiUtY+e6f8fdZdq5OaJQE3ekwAwYymg=;
-	b=Np4Ar/u5k/y7WTdImrJp1bJPZ3yjxCjUIudP8B4CtZ9Esy3hZKSvpNu5ql/TZwOJ
-	khDO3sai5xoFSmT6JH1qrVZUuEyqzLP+yJSqtnyZGSUFAwADWYS1L+VcJ9opqhTVq/d
-	uxq6Jdwp+bq5GjMllXqRx6J/q4y6iVAbIRRN8qLU=
-Received: by mx.zohomail.com with SMTPS id 1745566967087809.0756023391033;
-	Fri, 25 Apr 2025 00:42:47 -0700 (PDT)
-Message-ID: <4d87ef88-3533-4255-adc6-6c268818fe25@collabora.com>
-Date: Fri, 25 Apr 2025 12:42:38 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7E422D7A7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745567308; cv=none; b=nvCg8wrnKItRuZM49uoTgrHzeVwRynzIswNcDZXS3e8tE78tIMhIjJjinRA2zPejXoKPoOgObnKOAUa891CDT/d3Nl4YZH4A4y/TJG9PpPNFC6zhjfj4sBuhzPDX7fRObDjcFJ2WvmSHjpjH3CF2W66DlMSyiHbqsT5WdOKK+Qg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745567308; c=relaxed/simple;
+	bh=BEpBVLrKYDNW41PX/UiVhvehxlZgLkHOBEXUIvYt9NI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e5LZhBOC1xQeQI5T3yCyJKLIO9F2WciEXuVltEEwm5XAz459GlBLgyRKkghPRGn12tzBNsHmbcUqkn4gkQLKHndgdS2lqeBpFt3u+i9Ql5GwTTxGT9qya6Cf2Jw2MfU9GUnFadqAVZQt0U7Tod4aeUDkGtyHdHqW0q86ErJ5RZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmgQgdS0; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af9925bbeb7so1420780a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 00:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745567306; x=1746172106; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3iA/9JB3XSIA5/FvYUzKMHlHlp7APGzZBqZ9kU/r0z8=;
+        b=nmgQgdS00wBuOqJfHTJDh/APd+4S6UivwHvlnF1e3p4BEsia948Uz8G8RSA00zgKP0
+         mI4YqeD+YQeE6aql5VYdH8miCGEZRas6iag4u2lWGP+iBurxl9V4mNeohYBwzi2j6t0v
+         s7wl/E0nCqfjYgSVMYL9mtZjZJAr62acEebBkvgxK6RAkuYX4Bzy94Iz5Vncl1PGjDib
+         8hHh6uD0Ft5dqrV6GM85oACmmDG2OsDhBHjDihiXUqE5/eE1xvSRUAuXPkF1M7U5Ctz/
+         pGkal/ln7q3KcCLFOCcGVvf8SX2FOgC+mncI12aJUGkcwYsPP4Esa2iNWwiNm11JRgeo
+         oboA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745567306; x=1746172106;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3iA/9JB3XSIA5/FvYUzKMHlHlp7APGzZBqZ9kU/r0z8=;
+        b=RjFXbQc8JDeKg4R4j6TEpWFJSqTdGcQPqjEwjB4rzU4+uN3tkceNjuPPGLoktjEaDo
+         gzfraCfdRJppjwaPbWIoc0/EaFBH34+nifWn140AXCEJX2N+o0Vc8fO912+tzoAIes35
+         Kqtpzyli+MLX6ezICfWPduIVPkYzWQn78E4oaIrB5AAtB1tsqlBAMyTkZIs7hoDONTBy
+         J8RGbCkzyjtfJdJaQR7hUJ9kTkmZKWJSnmxtcJ8Ia/ShbvEjbStqpv4dsG9qg6zr8Ttl
+         egUXX6T1IS38AM6cZG73pqrQk5UycRK0/XVP4nW0rNFtlLCShuJMIbt9/o/eNw8KAhmd
+         CItQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU87DniOHij8jzeUnEoB7IolSYU2AVLVWcQBQYmujN+6SFxixkLr3qwMcOGzAMJ25eEtm1PmdGmtIEUpg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyITgRDeeObAWinaQI/Wv7zcNzNCZn+PkLhp/81cQkx6t9UZaXM
+	ujPEOqQu+C7fugbr49Voqv7Kz1UTe1LTxzugJUMg0sZiBW9EFgsw
+X-Gm-Gg: ASbGncuoycJAQlPGGfKyIxAZuvkzRv3FJEIHhCdb+dDXvifCsdLOq/bYud+iOzicill
+	QfTq4IAue/tDUyTJfbsweHeCELOBubiQiNAswY83Kq2u+1Ui27J1z4vHkPfkZO9K2Z//DYL4LX+
+	IEmGrEIY3ZQfaVsIvr5d9GEyX9ifJTPplddKdeB98F2w03Y6+HUDJY1JfsIQtCnsElc1iRYIxhs
+	FVrezuQWqRS8+AKMd1V8rqzHAsi9RicnjmOWTkj9wloTkQaT/eG5pn+XVwQcr5NhRCgN/fAvCtJ
+	siIKwuS0H52hFyWa5zd8y7eiyK9waa6SNcUDs7Cd7br/EqJdL4lvx6eO3VoZqvNi1FBh49J1T5j
+	ZyiExRA==
+X-Google-Smtp-Source: AGHT+IF6j/HVkBjOUOvPkA5NzTOPZcaVE5ZNvR49midYMpk8i+r5A45/NowDAV2RMCh7Dddubp9nSQ==
+X-Received: by 2002:a17:90b:4e90:b0:2f5:747:cbd with SMTP id 98e67ed59e1d1-309f7de9616mr2520520a91.18.1745567306043;
+        Fri, 25 Apr 2025 00:48:26 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f77641eesm931158a91.25.2025.04.25.00.48.23
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 25 Apr 2025 00:48:25 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH] mm/memory: fix mapcount / refcount sanity check for mTHP reuse
+Date: Fri, 25 Apr 2025 15:43:25 +0800
+Message-ID: <20250425074325.61833-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.49.0
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bus: mhi: host: don't free bhie tables during
- suspend/hibernation
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Jeff Johnson <jjohnson@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Yan Zhen <yanzhen@vivo.com>, Youssef Samir <quic_yabdulra@quicinc.com>,
- Qiang Yu <quic_qianyu@quicinc.com>, Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com, mhi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-References: <20250410145704.207969-1-usama.anjum@collabora.com>
- <h2wv7drxntokziiwbzjw5xjzbctbomp6cfcba7ppfbih6o7so7@p6dazv32xfx4>
- <1136c7cb-1c7b-410b-93d2-c74aec939196@collabora.com>
- <cfb3sntvqhupyhm2m5tevpsl77r6mzl2aqzr3wtxvr22bezmp3@qjh7ftr2kdjy>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <cfb3sntvqhupyhm2m5tevpsl77r6mzl2aqzr3wtxvr22bezmp3@qjh7ftr2kdjy>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 4/25/25 12:32 PM, Manivannan Sadhasivam wrote:
-> On Fri, Apr 25, 2025 at 12:14:39PM +0500, Muhammad Usama Anjum wrote:
->> On 4/25/25 12:04 PM, Manivannan Sadhasivam wrote:
->>> On Thu, Apr 10, 2025 at 07:56:54PM +0500, Muhammad Usama Anjum wrote:
->>>> Fix dma_direct_alloc() failure at resume time during bhie_table
->>>> allocation. There is a crash report where at resume time, the memory
->>>> from the dma doesn't get allocated and MHI fails to re-initialize.
->>>> There may be fragmentation of some kind which fails the allocation
->>>> call.
->>>>
->>>
->>> If dma_direct_alloc() fails, then it is a platform limitation/issue. We cannot
->>> workaround that in the device drivers. What is the guarantee that other drivers
->>> will also continue to work? Will you go ahead and patch all of them which
->>> release memory during suspend?
->>>
->>> Please investigate why the allocation fails. Even this is not a device issue, so
->>> we cannot add quirks :/
->> This isn't a platform specific quirk. We are only hitting it because
->> there is high memory pressure during suspend/resume. This dma allocation
->> failure can happen with memory pressure on any device.
->>
-> 
-> Yes.
-Thanks for understanding.
+From: Kairui Song <kasong@tencent.com>
 
-> 
->> The purpose of this patch is just to make driver more robust to memory
->> pressure during resume.
->>
->> I'm not sure about MHI. But other drivers already have such patches as
->> dma_direct_alloc() is susceptible to failures when memory pressure is
->> high. This patch was motivated from ath12k [1] and ath11k [2].
->>
-> 
-> Even if we patch the MHI driver, the issue is going to trip some other driver.
-> How does the DMA memory goes low during resume? So some other driver is
-> consuming more than it did during probe()?
-Think it like this. The first probe happens just after boot. Most of the
-RAM was empty. Then let's say user launches applications which not only
-consume entire RAM but also the Swap. The DMA memory area is the first
-~4GB on x86_64 (if I'm not mistaken). Now at resume time when we want to
-allocate memory from dma, it may not be available entirely or because of
-fragmentation we cannot allocate that much contiguous memory.
+The following WARNING was triggered during swap stress test with
+mTHP enabled:
 
-In our testing and real world cases, right now only wifi driver is
-misbehaving. Wifi is also very important. So we are hoping to make wifi
-driver robust.
+[ 6609.335758] ------------[ cut here ]------------
+[ 6609.337758] WARNING: CPU: 82 PID: 755116 at mm/memory.c:3794 do_wp_page+0x1084/0x10e0
+[ 6609.340922] Modules linked in: zram virtiofs
+[ 6609.342699] CPU: 82 UID: 0 PID: 755116 Comm: sh Kdump: loaded Not tainted 6.15.0-rc1+ #1429 PREEMPT(voluntary)
+[ 6609.347620] Hardware name: Red Hat KVM/RHEL-AV, BIOS 0.0.0 02/06/2015
+[ 6609.349909] RIP: 0010:do_wp_page+0x1084/0x10e0
+[ 6609.351532] Code: ff ff 48 c7 c6 80 ba 49 82 4c 89 ef e8 95 fd fe ff 0f 0b bd f5 ff ff ff e9 43 fb ff ff 41 83 a9 bc 12 00 00 01 e9 5c fb ff ff <0f> 0b e9 a6 fc ff ff 65 ff 00 f0 48 0f b
+a 6d 00 1f 0f 83 82 fc ff
+[ 6609.357959] RSP: 0000:ffffc90002273d40 EFLAGS: 00010287
+[ 6609.359915] RAX: 000000000000000f RBX: 0000000000000000 RCX: 000fffffffe00000
+[ 6609.362606] RDX: 0000000000000010 RSI: 000055a119ac1000 RDI: ffffea000ae6ec00
+[ 6609.365143] RBP: ffffea000ae6ec68 R08: 84000002b9bb1025 R09: 000055a119ab6000
+[ 6609.367569] R10: ffff8881caa2ad80 R11: 0000000000000000 R12: ffff8881caa2ad80
+[ 6609.370255] R13: ffffea000ae6ec00 R14: 000055a119ac1c9c R15: ffffc90002273dd8
+[ 6609.373007] FS:  00007f08e467f740(0000) GS:ffff88a07c214000(0000) knlGS:0000000000000000
+[ 6609.375999] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 6609.377946] CR2: 000055a119ac1c9c CR3: 00000001adfd6005 CR4: 0000000000770eb0
+[ 6609.380376] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 6609.382853] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 6609.385216] PKRU: 55555554
+[ 6609.386141] Call Trace:
+[ 6609.387017]  <TASK>
+[ 6609.387718]  ? ___pte_offset_map+0x1b/0x110
+[ 6609.389056]  __handle_mm_fault+0xa51/0xf00
+[ 6609.390363]  ? exc_page_fault+0x6a/0x140
+[ 6609.391629]  handle_mm_fault+0x13d/0x360
+[ 6609.392856]  do_user_addr_fault+0x2f2/0x7f0
+[ 6609.394160]  ? sigprocmask+0x77/0xa0
+[ 6609.395375]  exc_page_fault+0x6a/0x140
+[ 6609.396735]  asm_exc_page_fault+0x26/0x30
+[ 6609.398224] RIP: 0033:0x55a1050bc18b
+[ 6609.399567] Code: 8b 3f 4d 85 ff 74 40 41 39 5f 18 75 f2 49 8b 7f 08 44 38 27 75 e9 4c 89 c6 4c 89 45 c8 e8 bd 83 fa ff 4c 8b 45 c8 85 c0 75 d5 <41> 83 47 1c 01 48 83 c4 28 4c 89 f8 5b 4
+1 5c 41 5d 41 5e 41 5f 5d
+[ 6609.405971] RSP: 002b:00007ffcf5f37d90 EFLAGS: 00010246
+[ 6609.407737] RAX: 0000000000000000 RBX: 00000000182768fa RCX: 0000000000000000
+[ 6609.410151] RDX: 00000000000000fa RSI: 000055a105175c7b RDI: 000055a119ac1c60
+[ 6609.412606] RBP: 00007ffcf5f37de0 R08: 000055a105175c7b R09: 0000000000000000
+[ 6609.414998] R10: 000000004d2dfb5a R11: 0000000000000246 R12: 0000000000000050
+[ 6609.417193] R13: 00000000000000fa R14: 000055a119abaf60 R15: 000055a119ac1c80
+[ 6609.419268]  </TASK>
+[ 6609.419928] ---[ end trace 0000000000000000 ]---
 
-> 
->> [1]
->> https://lore.kernel.org/all/20240419034034.2842-1-quic_bqiang@quicinc.com/
->> [2]
->> https://lore.kernel.org/all/20220506141448.10340-1-quic_akolli@quicinc.com/
->>
->> What do you think can be the way forward for this patch?
->>
-> 
-> Let's try first to analyze why the memory pressure happens during suspend. As I
-> can see, even if we fix the MHI driver, you are likely to hit this issue
-> somewhere else.>
-> - Mani
-> 
->>>
-> 
-> [...]
-> 
->>> Did you intend to leak this information? If not, please remove it from
->>> stacktrace.
->> The device isn't private. Its fine.
->>
-> 
-> Okay.
-> 
-> - Mani
-> 
+The WARN_ON here is simply incorrect. The refcount here must be at least
+the mapcount, not the opposite. Each mapcount must have a corresponding
+refcount, but the refcount may increase if other components grab the
+folio, which is acceptable. Meanwhile, having a mapcount larger than
+refcount is a real problem.
 
+So fix the WARN_ON condition.
 
+Fixes: 1da190f4d0a6 ("mm: Copy-on-Write (COW) reuse support for PTE-mapped THP")
+Reported-by: Kairui Song <kasong@tencent.com>
+Closes: https://lore.kernel.org/all/CAMgjq7D+ea3eg9gRCVvRnto3Sv3_H3WVhupX4e=k8T5QAfBHbw@mail.gmail.com/
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Kairui Song <kasong@tencent.com>
+---
+ mm/memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 424420349bd3..f18266b5a0a9 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3789,7 +3789,7 @@ static bool __wp_can_reuse_large_anon_folio(struct folio *folio,
+ 
+ 	/* Stabilize the mapcount vs. refcount and recheck. */
+ 	folio_lock_large_mapcount(folio);
+-	VM_WARN_ON_ONCE(folio_large_mapcount(folio) < folio_ref_count(folio));
++	VM_WARN_ON_ONCE_FOLIO(folio_large_mapcount(folio) > folio_ref_count(folio), folio);
+ 
+ 	if (folio_test_large_maybe_mapped_shared(folio))
+ 		goto unlock;
 -- 
-Regards,
-Usama
+2.49.0
+
 
