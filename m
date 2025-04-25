@@ -1,223 +1,126 @@
-Return-Path: <linux-kernel+bounces-620756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FF8A9CF51
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8616A9CF54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A9B7B119A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:13:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 549F37B19BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57DF1E47AE;
-	Fri, 25 Apr 2025 17:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052591EFF88;
+	Fri, 25 Apr 2025 17:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GVXmDSBR"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fbIJ+x7N"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB991DEFDA;
-	Fri, 25 Apr 2025 17:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FDA1DEFDA;
+	Fri, 25 Apr 2025 17:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745601272; cv=none; b=SVHePKHYwHCXz6MxioZKL2XCADj1XWYWbrv5naaVvsQPQQqJqHdeICOgIvHkUm2YkYm+pTRTKxdHmQGMH1doWaqFEMl15bIeGjEGjDNRUQKZdx3icLCmDEmlvtv6S0L24657pFBillePlIv8Iq+s58+kQNvEyrhtJQTnrJ/5TBc=
+	t=1745601285; cv=none; b=X4LfT9Ia5bFCTRSZZVvXre+aaRRq4VMxkTTSjBp8O+d2ziz3gR/BK+s9nY22wkEGUht3hGmD9xEdFjVcOC3j1JV48q4vlwwNGfokCqPDls3gFD9MzKBt6ueg4vkVHdoC2QkyPa0irXIm7i+HaKcNJMw6luqnkaObc6FzmHFXUMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745601272; c=relaxed/simple;
-	bh=xDbZxDJFIusrxmYrFN1b3l22rU68GRLxUNx+mEoirpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RcIpBooaokqVyzlgEw1Djc+k3Oi1W+6/GShnYcum0172M7vQoNIyHnTGY8R4hXjbU0HpLd8U3LAqXxvApxr1eXxD2maCdnxVokZQ2pr0a6XVJU3lm1fsWs5s9pBW5eVnAxZXeHmvUySqn5hcnwrIiGELMZ/Rs9+Mqxk8YyeaGJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GVXmDSBR; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <30acf520-c137-4b49-8b69-08e35a7c5969@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745601266;
+	s=arc-20240116; t=1745601285; c=relaxed/simple;
+	bh=6DMIyv99NLNAyeXPbc0pWQ2kE0klBbb64BNimrX7gKw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PNZvukUutzKoZwNQwUPUCCDvxNBhZOnu3u04l/Lz9P2RYjQuY0KaJeoZ81RFyMFeAdIEIlpSIgrEW+QeCESjdu/BUbOk8joxEhNrkQHNBeoFM98OuWGbYVbLhgABmO7iL2OxxGzLdp3e4ZgzrKQ1Qb/g1O33A1N3U3zVyswmavo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fbIJ+x7N; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A5D3D439C2;
+	Fri, 25 Apr 2025 17:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745601274;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+6DLrO2Q4qtiuClsf/uksu1pDJHL8/bIE28qq6F3Ww8=;
-	b=GVXmDSBR2LHpVPi6b1jnBFxkF36uUD+nMcIboY+dU7GzwAeXHQDoCfFtrr64hfKLtb4jYy
-	Y/MVZkZGnhJuR1FsXwR/+hQ1bK1No/cJUoMn7zmXiWAFpWWTwOx8e8PcfFnmhsdnvKDiUg
-	/Ers0GDCF7imvS/NqytOaImsrtGleRw=
-Date: Fri, 25 Apr 2025 19:12:33 +0200
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sSGgYViN5hTjqbMQatIXtzugVvb8WaK6qBfz4uZBEB4=;
+	b=fbIJ+x7NwAzdGBRbPoOhn9DUZZ81nd1Z2jCIe2aAp55ZxfOtzr3KzcSbV+jivSLHF2Nx9J
+	5Fi4JFUcDO5FFdHJdeD+cMSrz+OrAu9itI22e+IYS53JAUmfMHj1dQ53Q9KGNhWtIk2aUk
+	aw+R6W1jCuPyqNoBY1RYrQQDlxOKm3dYVisJK2btd2axGBL1Jes5Goxk8bdNluC73tBLMO
+	9TMZikFXomxtmVOCjL/8TBNKEY1NynYj0FXoYQy/FsU/bANBmhJEacCygNuUDHZ/Evjm9O
+	bshtYQy2nsezexL/llbqRISfOgHanoXkH9ujfvacGwBNMBIoELOXGATSh9Icfg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next] netlink: specs: ethtool: Remove UAPI duplication of phy-upstream enum
+Date: Fri, 25 Apr 2025 19:14:18 +0200
+Message-Id: <20250425171419.947352-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] soundwire: intel_auxdevice: Fix system suspend/resume
- handling
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, linux-sound@vger.kernel.org
-References: <5891540.DvuYhMxLoT@rjwysocki.net>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <5891540.DvuYhMxLoT@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvhedvleduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgedugedvkeelhfehfeeuieeigeetgeetuedugeetuddvveffieekgfejkefgudeknecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmeefleefugemsgegieelmegtkegstgemrgejvgelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemfeelfegumegsgeeileemtgeksggtmegrjegvledphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtrddrpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrl
+ hhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 4/24/25 20:13, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> The code in intel_suspend() and intel_resume() needs to be properly
-> synchronized with runtime PM which is not the case currently, so fix
-> it.
-> 
-> First of all, prevent runtime PM from triggering after intel_suspend()
-> has started because the changes made by it to the device might be
-> undone by a runtime resume of the device.  For this purpose, add a
-> pm_runtime_disable() call to intel_suspend().
+The phy-upstream enum is already defined in the ethtool.h UAPI header
+and used by the ethtool userspace tool. However, the ethtool spec does
+not reference it, causing YNL to auto-generate a duplicate and redundant
+enum.
 
-Allow me to push back on this, because we have to be very careful with a hidden state transition that needs to happen.
+Fix this by updating the spec to reference the existing UAPI enum
+in ethtool.h.
 
-If a controller was suspended by pm_runtime, it will enter the clock stop mode.
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Not sure if it should be sent as a fix as there is no real issue here.
+---
+ Documentation/netlink/specs/ethtool.yaml       | 4 +++-
+ include/uapi/linux/ethtool_netlink_generated.h | 5 -----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-If the system needs to suspend, the controller has to be forced to exit the clock stop mode and the bus has to restart before we can suspend it, and that's why we had those pm_runtime_resume().
-
-Disabling pm_runtime when entering system suspend would be problematic for Intel hardware, it's a known can of worms.
-
-It's quite possible that some of the code in intel_suspend() is no longer required because the .prepare will resume the bus properly, but I wanted to make sure this state transition out of clock-stop is known and taken into consideration.
-
-Bard, is this a configuration you've tested?
+diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+index 655d8d10fe24..c650cd3dcb80 100644
+--- a/Documentation/netlink/specs/ethtool.yaml
++++ b/Documentation/netlink/specs/ethtool.yaml
+@@ -89,8 +89,10 @@ definitions:
+           doc: Group of short_detected states
+   -
+     name: phy-upstream-type
+-    enum-name:
++    enum-name: phy-upstream
++    header: linux/ethtool.h
+     type: enum
++    name-prefix: phy-upstream
+     entries: [ mac, phy ]
+   -
+     name: tcp-data-split
+diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
+index fe24c3459ac0..30c8dad6214e 100644
+--- a/include/uapi/linux/ethtool_netlink_generated.h
++++ b/include/uapi/linux/ethtool_netlink_generated.h
+@@ -31,11 +31,6 @@ enum ethtool_header_flags {
+ 	ETHTOOL_FLAG_STATS = 4,
+ };
  
-> Next, once runtime PM has been disabled, the runtime PM status of the
-> device cannot change, so pm_runtime_status_suspended() can be used
-> instead of pm_runtime_suspended() in intel_suspend().
-> 
-> Moreover, checking the runtime PM status of the device in intel_resume()
-> is pointless because the device is going to be resumed anyway and the
-> code running in the case when the pm_runtime_suspended() check in
-> intel_resume() returns 'true' is harmful.  Namely, calling
-> pm_runtime_resume() right after pm_runtime_set_active() has no effect
-> and calling pm_runtime_idle() on the device at that point is invalid
-> because the device is technically still suspended (it has not been
-> resumed yet).  Remove that code altogether along with the check leading
-> to it.
-> 
-> Finally, call pm_runtime_set_active() at the end intel_resume() to set
-> the runtime PM status of the device to "active" because it has just been
-> resumed and re-enable runtime PM for it after that.
-
-
-
-> Additionally, drop the setting of DPM_FLAG_SMART_SUSPEND from the
-> driver because it has never been necessary and should not have been
-> done.
-
-IIRC it was your recommendation to add this flag many moons ago... No issue to remove it, it's just not something any of the 'SoundWire' folks are knowledgeable with.
-
-> This addresses a functional regression after commit bca84a7b93fd ("PM:
-> sleep: Use DPM_FLAG_SMART_SUSPEND conditionally") that effectively
-> caused the fatal pm_runtime_suspended() check in intel_resume() to
-> trigger.
-> 
-> Fixes: bca84a7b93fd ("PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally")
-> Cc: 6.2+ <stable@vger.kernel.org> # 6.2+
-> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> Tested-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This change fixes an issue predating commit bca84a7b93fd that simply
-> uncovered the problem and it needs to be backported to 6.2 and later
-> kernels.
-> 
-> Since it fixes a recent regression in 6.15-rc, I can route it through the
-> PM tree unless that would be a major concern.
-> 
-> ---
->  drivers/soundwire/intel_auxdevice.c |   36 +++++++++++++-----------------------
->  1 file changed, 13 insertions(+), 23 deletions(-)
-> 
-> --- a/drivers/soundwire/intel_auxdevice.c
-> +++ b/drivers/soundwire/intel_auxdevice.c
-> @@ -353,9 +353,6 @@
->  	/* use generic bandwidth allocation algorithm */
->  	sdw->cdns.bus.compute_params = sdw_compute_params;
->  
-> -	/* avoid resuming from pm_runtime suspend if it's not required */
-> -	dev_pm_set_driver_flags(dev, DPM_FLAG_SMART_SUSPEND);
-> -
->  	ret = sdw_bus_master_add(bus, dev, dev->fwnode);
->  	if (ret) {
->  		dev_err(dev, "sdw_bus_master_add fail: %d\n", ret);
-> @@ -640,7 +637,10 @@
->  		return 0;
->  	}
->  
-> -	if (pm_runtime_suspended(dev)) {
-> +	/* Prevent runtime PM from racing with the code below. */
-> +	pm_runtime_disable(dev);
-> +
-> +	if (pm_runtime_status_suspended(dev)) {
->  		dev_dbg(dev, "pm_runtime status: suspended\n");
->  
->  		clock_stop_quirks = sdw->link_res->clock_stop_quirks;
-> @@ -648,7 +648,7 @@
->  		if ((clock_stop_quirks & SDW_INTEL_CLK_STOP_BUS_RESET) ||
->  		    !clock_stop_quirks) {
->  
-> -			if (pm_runtime_suspended(dev->parent)) {
-> +			if (pm_runtime_status_suspended(dev->parent)) {
->  				/*
->  				 * paranoia check: this should not happen with the .prepare
->  				 * resume to full power
-> @@ -715,7 +715,6 @@
->  	struct sdw_cdns *cdns = dev_get_drvdata(dev);
->  	struct sdw_intel *sdw = cdns_to_intel(cdns);
->  	struct sdw_bus *bus = &cdns->bus;
-> -	int link_flags;
->  	int ret;
->  
->  	if (bus->prop.hw_disabled || !sdw->startup_done) {
-> @@ -724,23 +723,6 @@
->  		return 0;
->  	}
->  
-> -	if (pm_runtime_suspended(dev)) {
-> -		dev_dbg(dev, "pm_runtime status was suspended, forcing active\n");
-> -
-> -		/* follow required sequence from runtime_pm.rst */
-> -		pm_runtime_disable(dev);
-> -		pm_runtime_set_active(dev);
-> -		pm_runtime_mark_last_busy(dev);
-> -		pm_runtime_enable(dev);
-> -
-> -		pm_runtime_resume(bus->dev);
-> -
-> -		link_flags = md_flags >> (bus->link_id * 8);
-> -
-> -		if (!(link_flags & SDW_INTEL_MASTER_DISABLE_PM_RUNTIME_IDLE))
-> -			pm_runtime_idle(dev);
-> -	}
-> -
->  	ret = sdw_intel_link_power_up(sdw);
->  	if (ret) {
->  		dev_err(dev, "%s failed: %d\n", __func__, ret);
-> @@ -761,6 +743,14 @@
->  	}
->  
->  	/*
-> +	 * Runtime PM has been disabled in intel_suspend(), so set the status
-> +	 * to active because the device has just been resumed and re-enable
-> +	 * runtime PM.
-> +	 */
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-> +
-> +	/*
->  	 * after system resume, the pm_runtime suspend() may kick in
->  	 * during the enumeration, before any children device force the
->  	 * master device to remain active.  Using pm_runtime_get()
-> 
-> 
-> 
+-enum {
+-	ETHTOOL_PHY_UPSTREAM_TYPE_MAC,
+-	ETHTOOL_PHY_UPSTREAM_TYPE_PHY,
+-};
+-
+ enum ethtool_tcp_data_split {
+ 	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN,
+ 	ETHTOOL_TCP_DATA_SPLIT_DISABLED,
+-- 
+2.34.1
 
 
