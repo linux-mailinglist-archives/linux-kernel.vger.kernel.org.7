@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-620599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F36A9CCA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:18:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF38A9CCB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45FD4E0559
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2B4167481
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3F728934B;
-	Fri, 25 Apr 2025 15:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5F02820DD;
+	Fri, 25 Apr 2025 15:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C0cJk+u6"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="PR1frhJw"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C224E27C84B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C88142AA5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745594261; cv=none; b=oI1O+Uj3JhxaRzyAIlH3+4Vyw0bFj4dML+d6cmgmp4qnnvwHLkDsykPSGM/WeSYLKUYkTNcrLtWzR6Grk6HQfiXgsUUPZh/G8LaMQA2sfLts65++uLgvrsnCYY1Q7ySwJeu+ftsoBc9WiKY8gmWmcJqUxCWr4DyqGHYtAMZ/weU=
+	t=1745594329; cv=none; b=BWBLu2mga37XuBbWIMwRVfJ3U1n6gVvlB68cWGsbgSPNT9vOGxNUS34EbFHnpFcjsb3xuT5JBy+uGrJ4GJ1gnnW0mtzA9KOXjkHGOT49wUlZhYvjTAXkm7m1rHiwgcp0Fds7xQXfaqlM71JXhWHIKLmgPCGu4wnCxyMIv/ULmnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745594261; c=relaxed/simple;
-	bh=RCuNB1mWMaNtm6vRmUVv+04+d3pPrJBXIRhX6cDQxkA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y1suCJMAeGPMpHSgBJ7u9pP/JsiKPXYI1ZKR4CqcUG3Ua4Yksi36kRSLg4ZkQeArKAY2sColr7kxLBWRa4st0Lm1M8aFu+OwOkxqFiTuEpYH4HtqIurqEZfRgZ/KVXSixfP93k8BjBE3ylHFGNyQlO1mNIs0Q80iJ8K3t/gdEl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C0cJk+u6; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39ac9aea656so2814155f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:17:39 -0700 (PDT)
+	s=arc-20240116; t=1745594329; c=relaxed/simple;
+	bh=oNHQdseGba9iDo9kIAZ1Ni9JcRGkmGb+Y7y0dTTMQw8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J6eRkRmz9ew48a7Ve8vWJhm1h4akZXF8yzrtU2UYHVQC/Muec0k+AQ5vaeBGSvcaE0maLg6roNE3OkQ13yjwwbWtc/mfVeNlD7UlJJR3Pwuzmxs/qZCES7WOrKc9JzApKIidsURtxRtKl8z586LluoJtbESGHso0yvZTIdwg5d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=PR1frhJw; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso517400166b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:18:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745594258; x=1746199058; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6kN1pqjjlFC9p10HbXmb8Vy14EP3/K2zpEgAzkFrOXk=;
-        b=C0cJk+u6wKgZlij7qW2k+jqesGAdJtTGKxvwSiqbDhvY93GL8JNmV6pdlEPX6EX6mo
-         C/bsI6+kuASnlE4yHnqmT+MhOeWRvBiuxTMY3uJydLoLYYOt1vNxd4Ehc5gYHD6dug1+
-         S6gTsb2YCPANbeNqDWPUt3dSVQqEJTMkZQ9mXU6PQXA+Xl0VYtOgyA5d6vy8B0P7YJvM
-         YMsgDomY5rDybilnF1hXi0WyQSJ48kmS2+ryMtZC7jK8FYpbdlsdJzugB7YCunZ+xwxl
-         oxcKGnWLFEWlibiTf2gWCDYIRQyzbEujglgKCCy9v0pkvsM4iMUcLy4hmnZSwp5TjIbs
-         y6CQ==
+        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1745594325; x=1746199125; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ghCaB0hzHCWB/lFbG9vF6MwKWZS9AGmGkqVTq/KrfM=;
+        b=PR1frhJw27AALlQ/efJfVbTpeGPFq1KnIDmhbIe2ehkALQq+crll5mo1a2Nhaj4KiC
+         zgimTKLMt5Hfnl0c74V//6UWlq50ElZ0WWQJeoAaqxPuJj5uKGfGxFxirh/cFFZRAMy2
+         mzMAi2iYGcA8uEdLksoaCwuqCi4Pbt7WVachXVUGWqHNeffQLHZn6QQlRdXeMSrQgiJT
+         6yJLclQTs3jHQI9yDmUFIvtEC0RvLlS1r9q/byyXDL0eH+9TiXV+2iORuv6npib25mxt
+         KZR9neugJ6qISukWkAbTHQeU19IMk+Thy2m1j2rP8W6qnf7yRw3fol9NBHRf2XXC79NH
+         4hhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745594258; x=1746199058;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6kN1pqjjlFC9p10HbXmb8Vy14EP3/K2zpEgAzkFrOXk=;
-        b=xLgpHd6BWFuP32RDs4ww2lul2930/sSZd5SLe0gT/d1CkP6act6cOx+hw2+09IRcBz
-         B5lhF07xX+vHAfFeVAeEAlTuGQp5/QO/TZQlbDqDY4ID9oLcAnYgX/Vp4XAg7VhGnlhN
-         zZzBu/bRRX5gvmmLT2U1rEV7vN0p82KhjQUex2AN1PNGUdQ47JXvsBC0RGHCh6GQA5Ei
-         g9Vp2MlxlUpQASWyyATPaACkttE92/mkrzPCes8ivolC48vcBWhG1Y45D3RDDay1UIjO
-         rvZ2Y6PQ8qiNeJceB71I9P4vz3rBP1+hHzB5OC7oq2mL4UMGEmSwJNEijJedaq7NarkR
-         BkMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaSQpdHwMgNOs4Lt0/EBZx2yFMY5KS3JzuwpekaRRDsqDZXlxk9g9v3CiWddnJsfZIL6uzdRsLQfde+ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybsPxCcLRPuLxYtoQijd1crxdtGuPrka7OODQyJ0mDLVxfS5Oh
-	38IJEtBfpm4VvlY8WmNGVCjjRO929NhvpaL4s0XIqfL0cZdF/DlJAge7MmXBlPE=
-X-Gm-Gg: ASbGncslzEdB/7QFrroIN7Fe0xRwTvO4TyXZ5F1sSPQjSveB0gNc9fMv6RqpEIv1z+7
-	DapVApWHytSdyDYJZ19E2PIFB/zNup0W0HyUhydwKH0+DDVrgsaRrZYIMBUG8vlmEnVj/qGDZAF
-	1+g9BvF/3vZ0WbAeTZHVg6T9C+ZMpvvmcEd8eQVYmUaZJMyBNge1zGRv6lKKSogC5FwKFn2ENmM
-	SByfjz/daOBa05nameR+7sa6PyVy830zedNC3fin97H8JAD3fg7NZYl4+Tg7z4yIWUrmGO+wf5B
-	3JlX25e+dkc7jes3ER8cqMQTfNSSObRDRJElltn+Dguh/WiKI+1IEGaspNWJcA/Jyea7fZNFbD1
-	Af4HHcAnuhNrMucm7
-X-Google-Smtp-Source: AGHT+IGN+RHDl7/BuFfdgLAHL0b7Am5qHQ0n0MgkovWjVE1OQ+agiU9w6gC8KIXtJWW6FmzpaJuGpA==
-X-Received: by 2002:a05:6000:2512:b0:39c:12ce:6a0 with SMTP id ffacd0b85a97d-3a074e2f343mr2335229f8f.21.1745594258028;
-        Fri, 25 Apr 2025 08:17:38 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ccf44csm2684738f8f.60.2025.04.25.08.17.37
+        d=1e100.net; s=20230601; t=1745594325; x=1746199125;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ghCaB0hzHCWB/lFbG9vF6MwKWZS9AGmGkqVTq/KrfM=;
+        b=ErvKZ4t5blbSlQXbxdqNIK/fWb4M6rHTqxr2jmvWeGtEcnhzZK+lIExdQyAsdW4NxF
+         l2mSRJbIAOzn4VGBHlOeZZLxYhhYVfqTBV4LVqCet7JJwMm4W+XDVYMw2hnIVvWdOUhB
+         Dfbz24yGjHf4rBHXNXCUpP6Cnb0LT5JYG446A4/Z+nuwWHhOQuw0F/DLGbW4dXx8QXdd
+         TvlFBRCgvCzvwxI/sZ7cpEL+eB58FWavsP3hmRbMgpk7VvUUBZu7HEk7MGgXYhoQ3zGk
+         Svjn/DGjzUl5oiPzBrT9vyMWZQOgp9/a7ZR2c1wTiB6GjWmhIqSRc14HZCbWMcff7z2H
+         3mLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2xLH4Vu+rZe4thtiunDykqb0QVKqwotVrXhtvIeZf6qeJQvc6yQe544KBQDNtOyilNMcFV1M5auJTi3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygCUczIIxdUn1bmJ0k8nJHxbdwywEeTHeXDGck8vTneiDqqMdv
+	Yi3A0EoignM9668EkxZKgFNXRhfSNgratuD+8blNLzKkNpqlRNGCXeDOzRlyHXU=
+X-Gm-Gg: ASbGncu6twhaMIojTGisqrPBz7Mdb6Zr01tXYBn7BFUJmRfpWep9TaYuT0lC0CvvFSz
+	OT6zKMdmnz9oGq1n0jPSUQQPBwDhrVOO0yBtMBICFdS/ZM8rn9RPUpwabnWyk8hVzvWq/pRXibk
+	4posii51e+gLMVFrn5tnmCRRIReTQ+hjBu/u505E2brgjfLQuJJdt3rsAKBTlBXjCLPzpVOctdQ
+	x6y0cX49ygoWDIvdTSCtiKnuPeassTYh2uFYDpR1xFxr1OSr5DfDJLWtCBRRChMaz/VoCoYDxCy
+	ZpUYS8JliQhq2QSa380m/x2jWWn1EBJ/wnm9nt6eo17ZtAw9T4CuKZVKqZ18C2X1o14L
+X-Google-Smtp-Source: AGHT+IHZJ81zFkmLlmOHjq8b1Drpt97ks2gb1lVoqv7+XTRItZNdJHhWhZeKg3aZUqr8AUurmOKZUQ==
+X-Received: by 2002:a17:907:6d27:b0:ac6:edd3:e466 with SMTP id a640c23a62f3a-ace710b0b78mr299551666b.19.1745594325144;
+        Fri, 25 Apr 2025 08:18:45 -0700 (PDT)
+Received: from [127.0.1.1] ([185.164.142.188])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e59649fsm151099766b.85.2025.04.25.08.18.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 08:17:37 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Fri, 25 Apr 2025 16:17:34 +0100
-Subject: [PATCH v2 2/2] media: qcom: camss: x1e80100: Fixup x1e csiphy
- supply names
+        Fri, 25 Apr 2025 08:18:44 -0700 (PDT)
+From: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
+Subject: [PATCH v2 0/5] Fix onboard USB hub instability on RK3399 Puma SoM
+Date: Fri, 25 Apr 2025 17:18:05 +0200
+Message-Id: <20250425-onboard_usb_dev-v2-0-4a76a474a010@thaumatec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,95 +81,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-b4-media-committers-25-04-25-camss-supplies-v2-2-8c12450b2934@linaro.org>
-References: <20250425-b4-media-committers-25-04-25-camss-supplies-v2-0-8c12450b2934@linaro.org>
-In-Reply-To: <20250425-b4-media-committers-25-04-25-camss-supplies-v2-0-8c12450b2934@linaro.org>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAK6nC2gC/3WOzW7DIBAGX8XiXCrAQLBPfY8qipYfxyvVdgLYa
+ hXl3bt2Dj31+CF2Zh6spIypsL55sJw2LLjMNNRbw8II8zVxjLSZEsqIVlm+zH6BHC9r8ZeYNg6
+ nIGwLDow0jK5uOQ34fRA/z7RHLHXJP4dgk/vr/6xNcsFBewEmSt+q8FFHWCeoKbyHZWLn50uQ0
+ 32l0vqy/IVS947W0vBYucc54nzlROdEx5A4QW5Q0X+lwqVzw4lUTnrdb2pv91COPxPWvnGtBg3
+ WdbbrRCdACxultcqLFoYBnJfGRNJR1fMXyU7UBEcBAAA=
+X-Change-ID: 20250326-onboard_usb_dev-a7c063a8a515
+To: Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Benjamin Bara <benjamin.bara@skidata.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dmitry.baryshkov@oss.qualcomm.com, loic.poulain@oss.qualcomm.com, 
- vladimir.zapolskiy@linaro.org, krzk@kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Klaus Goger <klaus.goger@theobroma-systems.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Lukasz Czechowski <lukasz.czechowski@thaumatec.com>, stable@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2290;
- i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
- bh=RCuNB1mWMaNtm6vRmUVv+04+d3pPrJBXIRhX6cDQxkA=;
- b=owEBbQKS/ZANAwAIASJxO7Ohjcg6AcsmYgBoC6eOwOXeH0lYKHhF+lTvDG4t6nhCl0QYy0oAV
- bCggMDBR7uJAjMEAAEIAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCaAunjgAKCRAicTuzoY3I
- Ou6vD/41SGFd4ePXcaWOmJgrpYHmL7CV7qsQ7IfQ+COvqTsQebM5Tm+69Ap+HXB10W9MN+yaRGm
- 1dy7DhXLNgTdtB2/+fPSBoTsAjz9wSjOrAu1DnU72xd2JguWgChlZrJ4Z16A+HEccH2u1XDCWKx
- L/E3mXiB0g/1P8QaIZhaMPDwmanNeE7QFc0BK+dLqgVrYj5HTugxVe7Un/3r4i4fsDyVrSdh2VH
- +my/nfECy2zpMu4re9/RSdm9KrShlx3qxUyywJ+vuFWkNyBuxLnqW5r3ixkA55aifYhGHwtjhs1
- xBNvLK0F0OGFoiq/XyM5bCLBR5bHY6sGmr2t500AgYTGWC33x5CiY1FALzeaf20BbKULoM0oDu7
- 6yQknBXDZmE4HrM2YYbJ+e9NMRi/Qx5TfKyxGRT23pxi7QsbFb88aXLRNnfrrCTbBrVhvwXLDRE
- /4elajNQTirYrnKzq6G1SLLRjc7zP9UF/pAuyeJoaWit/36F6Pr/oISYkaTbNFGz1V/0S0kLl2d
- 0unOPHUA/SPwjNzH38bdTuQ/vImBF61Y3t4SUUw/dAU6KGBepTXclneovlPcZ4NGpGIkApnZvRE
- dnyB6oa85SQnAqg4jO33CVk4lUc4h8WC9FVIpiIQ0/VtnhKfHsE8SGVhB2dHJVXYmiH/8sMzIVY
- /iaBLFjLPMxZ7MQ==
-X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
- fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Amend the names of the csiphy supplies to be specific to each CSIPHY thus
-allowing for the case where PHYs have individual or shared rails.
+The RK3399 Puma SoM contains the internal Cypress CYUSB3304 USB
+hub, that shows instability due to improper reset pin configuration.
+Currently reset pin is modeled as a vcc5v0_host regulator, that
+might result in too short reset pulse duration.
+Starting with the v6.6, the Onboard USB hub driver (later renamed
+to Onboard USB dev) contains support for Cypress HX3 hub family.
+It can be now used to correctly model the RK3399 Puma SoM hardware.
 
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+The first commits in this series fix the onboard USB dev driver to
+support all HX3 hub variants, including the CYUSB3304 found in
+the RK3399 Puma SoM. 
+This allows to introduce fix for internal USB hub instability on
+RK3399 Puma, by replacing the vcc5v0_host regulator with
+cy3304_reset, used inside the hub node.
+Please be aware that the patch that fixes USB hub instability in
+arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi can me merged only
+after updating the Onboard USB dev driver, otherwise the hub
+will not work. 
+
+Two last commits in the series disable unrouted USB controllers
+and PHYs on RK3399 Puma SOM and Haikou carrier board, with no
+intended functional changes.
+
+This series depends on the patch:
+Link:  https://lore.kernel.org/linux-usb/20250418-dt-binding-usb-device-compatibles-v2-1-b3029f14e800@cherry.de/
+("dt-bindings: usb: usb-device: relax compatible pattern to a contains")
+
+Signed-off-by: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
 ---
- drivers/media/platform/qcom/camss/camss.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Changes in v2:
+- Removed additional entries from onboard_dev_match table and
+  updated dt-bindings list, as suggested by Krzysztof and Conor.
+  Fallback compatible entry in SoM's dtsi file is used instead.
+- Added vdd-supply and vdd2-supply entries to onboard hub nodes
+  to satisfy bindings checks.
+- Changed the default cy3304-reset pin configuration to pcfg_output_high.
+- Added dependency to: change-id: 20250415-dt-binding-usb-device-compatibles-188f7b0a81b4
+- Link to v1: https://lore.kernel.org/r/20250326-onboard_usb_dev-v1-0-a4b0a5d1b32c@thaumatec.com
 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 06f42875702f02f9d8d83d06ddaa972eacb593f8..d63bc7dc951690132e07ee0fb8df7cef9b66927d 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -2486,8 +2486,8 @@ static const struct resources_icc icc_res_sm8550[] = {
- static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdd-csiphy-0p8-supply",
--				"vdd-csiphy-1p2-supply" },
-+		.regulators = { "vdd-csiphy0-0p8",
-+				"vdd-csiphy0-1p2" },
- 		.clock = { "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-@@ -2501,8 +2501,8 @@ static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdd-csiphy-0p8-supply",
--				"vdd-csiphy-1p2-supply" },
-+		.regulators = { "vdd-csiphy1-0p8",
-+				"vdd-csiphy1-1p2" },
- 		.clock = { "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-@@ -2516,8 +2516,8 @@ static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdd-csiphy-0p8-supply",
--				"vdd-csiphy-1p2-supply" },
-+		.regulators = { "vdd-csiphy2-0p8",
-+				"vdd-csiphy2-1p2" },
- 		.clock = { "csiphy2", "csiphy2_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-@@ -2531,8 +2531,8 @@ static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	},
- 	/* CSIPHY4 */
- 	{
--		.regulators = { "vdd-csiphy-0p8-supply",
--				"vdd-csiphy-1p2-supply" },
-+		.regulators = { "vdd-csiphy4-0p8",
-+				"vdd-csiphy4-1p2" },
- 		.clock = { "csiphy4", "csiphy4_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
+---
+Lukasz Czechowski (3):
+      usb: misc: onboard_usb_dev: fix support for Cypress HX3 hubs
+      dt-bindings: usb: cypress,hx3: Add support for all variants
+      arm64: dts: rockchip: fix internal USB hub instability on RK3399 Puma
 
+Quentin Schulz (2):
+      arm64: dts: rockchip: disable unrouted USB controllers and PHY on RK3399 Puma
+      arm64: dts: rockchip: disable unrouted USB controllers and PHY on RK3399 Puma with Haikou
+
+ .../devicetree/bindings/usb/cypress,hx3.yaml       | 19 +++++++--
+ .../arm64/boot/dts/rockchip/rk3399-puma-haikou.dts |  8 ----
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      | 48 +++++++++++-----------
+ drivers/usb/misc/onboard_usb_dev.c                 | 10 ++++-
+ 4 files changed, 48 insertions(+), 37 deletions(-)
+---
+base-commit: 834a4a689699090a406d1662b03affa8b155d025
+change-id: 20250326-onboard_usb_dev-a7c063a8a515
+prerequisite-change-id: 20250415-dt-binding-usb-device-compatibles-188f7b0a81b4:v2
+prerequisite-patch-id: f5b90f95302ac9065fbbe5244cc7845c2a772ab6
+
+Best regards,
 -- 
-2.49.0
+Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
 
 
