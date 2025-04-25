@@ -1,150 +1,199 @@
-Return-Path: <linux-kernel+bounces-620100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065D2A9C5D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:44:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C83A9C5D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19781BA222A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87EF3460099
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FCC241668;
-	Fri, 25 Apr 2025 10:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVLx6/a1"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B3D2405F5;
-	Fri, 25 Apr 2025 10:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A483B23D2A0;
+	Fri, 25 Apr 2025 10:42:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3DF248166
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745577744; cv=none; b=e/uV1mf8FJMEI6Uz8t+qwsKBEAwzg2Y5sN3MErcehaQuzs2IPc2yAjcjfXe8TAzbkB9/y2V6VLQvRLDVfEvAZ5hQGvu3zjMrrQXlE+gthtJ6MhUshNd72CHHJOFsv//gEQFqKTE5ZJgiMXfymeOmzkns9oRDzhKS+ZVolUVOUvI=
+	t=1745577754; cv=none; b=u22/aninv9vJ0v1TOST7grJZrqTbq/lL1zuuc270QJ0bljp56xxGA/WBVPRAcJQtJ82arG0ygtY7iF+vr2smkGob3+CRG8ioBymR1BV10UchkpdFxdazrop+6Ag7tLmR8J4m+xQDTSt9j9ANDojcZUPW2/vMG6VG1hlqPsjP2do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745577744; c=relaxed/simple;
-	bh=0bDDdW2Fgz+EcgDZSK00gAwh+/fzSBx05bYgQOQs8FU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MALODPR3ChEPpEusyV0811KUUsqosQhIXsNuV6Xoqewi6y7V2bnmSBZpj7exVbkC+qDUZKYGtdPB2ck22fSIn0ehH4dPdsmM+ssNPmT5iYNg1a3wCYLzihVh+MnIGkYVcrq7MMnVyOT2GTeWvLrO5kArJ74nlJ1kZchOTpZammw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVLx6/a1; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43edb40f357so14322485e9.0;
-        Fri, 25 Apr 2025 03:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745577740; x=1746182540; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NOGmH1pVAAUAxb8wMFKpWEUiZgek26ZK36mDQNMI/7Y=;
-        b=EVLx6/a1w6C7smuUIeCvKgA0Fmj9c5CjJ0kDYLYTnOeEeN1FqAp0CIxKsRBSryqBv4
-         0LouI6GoPf7z75fQLJB8z0n/+Gro6PNBxKZVh0pBlYuxIb70wn5xPVRNeptvM8p8tmZv
-         cdFLypdq+OH7uNSqww1ro+38AzskXYXJaeS0b454J7QmwJp1pknPo/KPDzhUNw56h2fF
-         ycUgi8s2SbTM4Lp8wis5XvQxIqO6DAYbH8H8beXGeiESx/KAOrYhTejLxw8lWLi7Apxx
-         jDzKyLVkGcaxf/payrK8dTEumGVMDRckU3XRpCYPSIAg3pQABqYN6P7+b3hS0jvdJiGf
-         h4QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745577740; x=1746182540;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOGmH1pVAAUAxb8wMFKpWEUiZgek26ZK36mDQNMI/7Y=;
-        b=xHCZ3HzHyBzbmyUxTrudaModQVgnnuEB90pVroqcPUBe8GSHgyhNIWgEBfvb3C57fh
-         DcS6Xp/foo+mn0PpQMG6rktfzplwR7rXPxXIvnPzNtBpqu15w9eUWX5WBFwcIfLMGyx5
-         0p5aQOXpWcD34jULjrjnh4KSfE5ECR0CB2ExbS8zPgJL/e9R8r3TUM+ZkaOjFODECELy
-         0AetlNpSMJOhGiql7OtUuioeDWs5pkCVTJf1D7nvQP+SS+g9OVoyR4zKNSvklG4KipQV
-         3jLOtjmgZkYugMHNV8aXXYC45TIuk+AAHm42zIq+G9B28pi38NeO0PeioeIQyFJ3LhJq
-         dn4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWrE/QDk8v8gPFzNpRBaGjj8QbZV1t4KGJGi7E7V8ZXsseodc8BUm20EWYPsLQnQFmaZhTq5PNQSczzRKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG117iGXzkJvBzjKBFv1BxqEfDKHyXEzSIjHIkhIPtoR0Tpfhb
-	oy70jSbAZtiEQsMhKi2LqE4+/VhDAFA6rcOXOQ4ZDJKC0T+LTuuabUqppQ==
-X-Gm-Gg: ASbGncs1RP4+wXwCFJYeaT3PDGHgJJjc8kivbWd3egEH1rt6EnBPYmAV/LJ1OUljPtF
-	EEkYYZO5/lHt7ZuDD9+NXcIz+GBe2hFopQ3C9Dp+VogaWdSDnrlX1SCh6JTr+ufd5b9FdYeRWRv
-	jdogPajHiFMjIC7dp4gzGvBWyeYPCBe/M2xxzGm5gOm6jvkO0yyC130A5xJDJc77nC/2wYhJxyY
-	ZV6HCPzUfRpPXq5A+WvBTXT/AbmzQMu+gX5wkmt1UahNruJ9MD15wtXZC01zDmL7wGJtgVGvuag
-	pLv34b5IVlIZOrHfZkNHFAs0FjU4UZ/oCW2smuWhzw==
-X-Google-Smtp-Source: AGHT+IG3Q3+8w1qsTuv8aHJ3PrGbLwd6YJC/As67Q6d59Psh8rZS3yxrTBfs7uLURaaAghrVYR+W8Q==
-X-Received: by 2002:a05:600c:1d97:b0:440:67f8:7589 with SMTP id 5b1f17b1804b1-440a66143f0mr17670635e9.16.1745577740370;
-        Fri, 25 Apr 2025 03:42:20 -0700 (PDT)
-Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-440a5394bfasm20624755e9.40.2025.04.25.03.42.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 03:42:19 -0700 (PDT)
-Date: Fri, 25 Apr 2025 12:42:17 +0200
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: arm/blake2b - Set FINAL_NONZERO
-Message-ID: <aAtnCR5jVAnjfR1i@Red>
-References: <aAop_uMhxVh2l5Fy@Red>
- <aApN64n7i15ArnX4@gondor.apana.org.au>
- <aAqhbdiLmkHV350S@Red>
- <aAsCk3jtbAE7dPpJ@gondor.apana.org.au>
+	s=arc-20240116; t=1745577754; c=relaxed/simple;
+	bh=EFJpJwh3Ql539hFsTdluqiVeUgPiTCX5hfXM5sxUzfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nk7+BDfVSloqcoRwJbFwgliAzzQnDFcLG4/P6uRXFPqqrbhywpKLyk/y2KKlO6B9XTYy9Ug/s1CJEgkRvKpSczTjZQPpaUU3+HcUb8NdgJoqyQbhcNFLrom5bBbPPjWnpFXxdBVYarmAeW1qEpWCPOcP9H7zHhOQEkOYcmkoYc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B603106F;
+	Fri, 25 Apr 2025 03:42:26 -0700 (PDT)
+Received: from [10.57.73.197] (unknown [10.57.73.197])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE90F3F66E;
+	Fri, 25 Apr 2025 03:42:29 -0700 (PDT)
+Message-ID: <0ec4d1f3-feaf-4c48-9e0d-ac3f872bcccc@arm.com>
+Date: Fri, 25 Apr 2025 11:42:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aAsCk3jtbAE7dPpJ@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] swiotlb: Make IO_TLB_SEGSIZE Configurable
+To: "Li, Hua Qian" <HuaQian.Li@siemens.com>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>
+Cc: "Kiszka, Jan" <jan.kiszka@siemens.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "Su, Bao Cheng" <baocheng.su@siemens.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <CGME20250422063734eucas1p2561ad6f847f6824c9c79a842fa458e41@eucas1p2.samsung.com>
+ <20250422063719.121636-1-huaqian.li@siemens.com>
+ <fc2e30eb-2ec7-4795-a2a4-077b7fde7fd5@samsung.com>
+ <dc6f299b18f7870c7bffecca25cee9e436a32c7b.camel@siemens.com>
+ <841c417b-c61a-4c3a-a9ed-236634d78331@arm.com>
+ <824c8fa6acda7c840f856430b5d898c7fcd4702e.camel@siemens.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <824c8fa6acda7c840f856430b5d898c7fcd4702e.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Fri, Apr 25, 2025 at 11:33:39AM +0800, Herbert Xu a écrit :
-> On Thu, Apr 24, 2025 at 10:39:09PM +0200, Corentin Labbe wrote:
-> >
-> > Thanks it fixes my crypto hw devices.
-> > So Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+On 2025-04-25 6:32 am, Li, Hua Qian wrote:
+> On Thu, 2025-04-24 at 13:58 +0100, Robin Murphy wrote:
+>> On 24/04/2025 6:12 am, Li, Hua Qian wrote:
+>>> On Tue, 2025-04-22 at 15:36 +0200, Marek Szyprowski wrote:
+>>>> On 22.04.2025 08:37, huaqian.li@siemens.com wrote:
+>>>>> From: Li Hua Qian <huaqian.li@siemens.com>
+>>>>>
+>>>>> This patchset introduces a change to make the IO_TLB_SEGSIZE
+>>>>> parameter
+>>>>> configurable via a new kernel configuration option
+>>>>> (CONFIG_SWIOTLB_SEGSIZE).
+>>>>>
+>>>>> In certain applications, the default value of IO_TLB_SEGSIZE
+>>>>> (128)
+>>>>> may
+>>>>> not be sufficient for memory allocation, leading to runtime
+>>>>> errors.
+>>>>> By
+>>>>> making this parameter configurable, users can adjust the
+>>>>> segment
+>>>>> size to
+>>>>> better suit their specific use cases, improving flexibility and
+>>>>> system
+>>>>> stability.
+>>>>
+>>>> Could You elaborate a bit more what are those certain
+>>>> applications
+>>>> that
+>>>> require increasing IO_TLB_SEGSIZE? I'm not against it, but such
+>>>> change
+>>>> should be well justified and described, while the above cover-
+>>>> letter
+>>>> doesn't provide anything more than is written in the patch
+>>>> description.
+>>> Thank you for your feedback, Marek.
+>>>
+>>> To provide more context, one specific application that requires
+>>> increasing IO_TLB_SEGSIZE is the Hailo 8 PCIe AI card. This card
+>>> uses
+>>> dma_alloc_coherent to allocate descriptor lists, as seen in the
+>>> Hailo
+>>> driver implementation here:
+>>> https://github.com/hailo-ai/hailort-drivers/blob/7161f9ee5918029bd4497f590003c2f87ec32507/linux/vdma/memory.c#L322
+>>> The maximum size (nslots) for these allocations can reach 160,
+>>> which
+>>> exceeds the current default value of IO_TLB_SEGSIZE (128).
+>>>
+>>> Since IO_TLB_SEGSIZE is defined as a constant in the kernel:
+>>>
+>>> `#define IO_TLB_SEGSIZE 128`
+>>>
+>>>
+>>> this limitation causes swiotlb_search_pool_area,
+>>> https://github.com/torvalds/linux/blame/v6.15-rc2/kernel/dma/swiotlb.c#L1085
+>>> ,
+>>> (or swiotlb_do_find_slots in older kernels) to fail when attempting
+>>> to
+>>> allocate contiguous physical memory (CMA). This results in runtime
+>>> errors and prevents the Hailo 8 card from functioning correctly in
+>>> certain configurations.
+>>
+>> Hmm, dma_alloc_coherent() should really not be trying to allocate
+>> from
+>> SWIOTLB in the first place - how is that happening?
+>>
+>> If you're using restricted DMA for a device which wants significant
+>> coherent allocations, then it wants to have it's own shared-dma-pool
+>> for
+>> those *as well* as the restricted-dma-pool for bouncing streaming
+>> DMA.
+>>
+>> Thanks,
+>> Robin.
 > 
-> What about the sha1-ce failure on arm64? Did that go away too?
-
-No they are still there:
-[    2.022921] alg: shash: sha1-ce test failed (wrong result) on test vector 0, cfg="init+update+final aligned buffer"
-[    2.022950] alg: self-tests for sha1 using sha1-ce failed (rc=-22)
-[    2.022957] ------------[ cut here ]------------
-[    2.022960] alg: self-tests for sha1 using sha1-ce failed (rc=-22)
-[    2.023009] WARNING: CPU: 3 PID: 110 at crypto/testmgr.c:5871 alg_test+0x5e8/0x60c
-[    2.023033] Modules linked in:
-[    2.023046] CPU: 3 UID: 0 PID: 110 Comm: cryptomgr_test Not tainted 6.15.0-rc1-g583d02477052 #2 PREEMPT 
-Setting prompt string to ['-+\\[ end trace \\w* \\]-+[^\\n]*\\r', '/ #', '~ #', 'sh-5.1#', 'Login timed out', 'Login incorrect']
-[    2.023057] Hardware name: Pine64 PINE H64 Model A (DT)
-[    2.023062] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    2.023071] pc : alg_test+0x5e8/0x60c
-[    2.023081] lr : alg_test+0x5e8/0x60c
-[    2.023090] sp : ffff80008180bd40
-[    2.023093] x29: ffff80008180bde0 x28: 00000000000000bc x27: 0000000000000000
-[    2.023106] x26: 00000000ffffffff x25: 00000000ffffffea x24: 0000000000000177
-[    2.023118] x23: ffff800081014208 x22: ffff00000152ae80 x21: 000000000500000e
-[    2.023130] x20: ffff00000152ae00 x19: ffff800080a26238 x18: 00000000fffffffe
-[    2.023142] x17: 2c3020726f746365 x16: 762074736574206e x15: ffff800080fdc47b
-[    2.023154] x14: 0000000000000000 x13: ffff800080fdc47f x12: 65742d666c657320
-[    2.023165] x11: 0000000000000058 x10: 0000000000000029 x9 : 0000000000000001
-[    2.023177] x8 : ffff800080ec3308 x7 : ffff80008180bae0 x6 : 000000000000000c
-[    2.023188] x5 : 0000000000000000 x4 : 00000000fffff0b5 x3 : 0000000000000000
-[    2.023199] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000099a7000
-[    2.023211] Call trace:
-[    2.023216]  alg_test+0x5e8/0x60c (P)
-[    2.023229]  cryptomgr_test+0x24/0x44
-[    2.023240]  kthread+0x12c/0x204
-[    2.023253]  ret_from_fork+0x10/0x20
-[    2.023267] ---[ end trace 0000000000000000 ]---
-
-
+> Hi Robin,
 > 
-> That didn't seem related to crypto_engine.
+> Regarding the specific Hailo Card case, the issue arises due
+> to the capabilities of certain SoCs or CPUs. For example, many
+> K3 SoCs lack an IOMMU, which is typically used to isolate the
+> system against DMA-based attacks of external PCI devices.
 > 
-> > But I still got some crash with blake2b:
-> > +[   54.348477] alg: shash: blake2b-256-neon test failed (wrong result) on test vector 1, cfg="init+update+final aligned buffer"
-> > +[   54.348525] alg: self-tests for blake2b-256 using blake2b-256-neon failed (rc=-22)
-> > +[   54.348536] ------------[ cut here ]------------
-> 
-> OK this is easy, I left out the FINAL_NONZERO bit in the arm patch:
-> 
+> Taking the TI AM65 as an example, it doesn't have an IOMMU, but
+> instead includes a Peripheral Virtualization Unit (PVU). The
+> PVU provides functionality similar to an IOMMU and is used to
+> isolate PCI devices from the Linux host, and the SWIOTLB is
+> used to manp all DMA buffers from a static memory carve-out.
 
-blake2b crash disappear, so
-Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+And as I said, if you want to support general coherent allocations then 
+you should use part of that carveout for a regular coherent DMA pool. 
+The restricted pool is only intended for streaming DMA - swiotlb_alloc() 
+is only meant as a convenience fallback for the kind of devices which 
+mostly do streaming DMA but make one or two small coherent allocations 
+from a suitable context. It does not work for *all* valid usage of 
+dma_alloc_attrs(), and if you want to do this for arbitrary PCI devices 
+then you almost certainly *do* need to be able to support drivers which 
+make allocations in atomic context.
 
-Thanks
+Thanks,
+Robin.
+
+> You can find more details and background information here:
+> https://lore.kernel.org/all/20250422061406.112539-1-huaqian.li@siemens.com/
+> 
+>>
+>>> By making IO_TLB_SEGSIZE configurable via a kernel configuration
+>>> option
+>>> (CONFIG_SWIOTLB_SEGSIZE), users can adjust the segment size to
+>>> accommodate such use cases. This change improves flexibility and
+>>> ensures that systems can be tailored to meet the requirements of
+>>> specific hardware, such as the Hailo 8 PCIe AI card, without
+>>> requiring
+>>> kernel source modifications.
+>>>
+>>> I hope this example clarifies the need for this change. Please let
+>>> me
+>>> know if further details or additional examples are required.
+>>>
+>>> Best Regards,
+>>> Li Hua Qian
+>>>>
+>>>>
+>>>>> Li Hua Qian (1):
+>>>>>      swiotlb: Make IO_TLB_SEGSIZE configurable
+>>>>>
+>>>>>     include/linux/swiotlb.h | 2 +-
+>>>>>     kernel/dma/Kconfig      | 7 +++++++
+>>>>>     2 files changed, 8 insertions(+), 1 deletion(-)
+>>>>>
+>>>> Best regards
+>>>
+> 
+> --
+> Hua Qian Li
+> Siemens AG
+> http://www.siemens.com/
+
 
