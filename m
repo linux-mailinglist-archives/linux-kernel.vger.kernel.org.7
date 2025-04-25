@@ -1,105 +1,108 @@
-Return-Path: <linux-kernel+bounces-621176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F903A9D560
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 00:19:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21F1A9D5A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 00:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7119E0F81
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:19:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC5A4C5F92
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C803A290BAE;
-	Fri, 25 Apr 2025 22:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C562957AB;
+	Fri, 25 Apr 2025 22:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQWurkxS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t+DQ0tSt"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E2528FFF9;
-	Fri, 25 Apr 2025 22:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67CC1A3145
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 22:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745619581; cv=none; b=lvv1w4BBphWJ/Db7KeANcxkBqhSXfaifsuKqRb21D+IK5WqeYLoQ4S/3btas4XeYEwizUkaE1qezUHJDUGPb4c8z4DGi+XGoXX5fwwgWXb5a2hVY/M0+RsJnKbxoLLAdc8pa06qDozzeePj0BVCV8xvieyD/N03YD/DjRUXsNF4=
+	t=1745620652; cv=none; b=atSGdfvG0nWyn9HxBghykjEy+o7i2pi/MTj9FHne4MmB/5TAsc90qcxPrAcRzdHhHP2e2kNO2ytbS/+tFs6ZirKCX/lcVzwwUISLBwOB8Q9t6qmdEO57r57sPJ+4cWNsRC56piov/ZTh0mia9YmmkZVIGww4PmDoMM9tVgCs+xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745619581; c=relaxed/simple;
-	bh=1pwExWgzQErCNQpG3IK9AR9oyY6nKXm+lJRSU+lGktw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=koapWcVnolS9oIZe3XyQoRIiFna9EIQ4Fl4gsdBYhVVZ6sbNA/F3bdYefy2iXAbgetQpsrYOL84uG+y6LAAxexh1C+UPLGSje/C3+TDws24OWDMjUnyTUhn+hEt5/T0kN51NeYCYJV3mv53OZUwcOOirfrqzsOrSeJEtanTYGP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQWurkxS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52299C4CEE4;
-	Fri, 25 Apr 2025 22:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745619580;
-	bh=1pwExWgzQErCNQpG3IK9AR9oyY6nKXm+lJRSU+lGktw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=nQWurkxS05sNgzdnf0RW8zEdnoFaCTBD985ecBJa0eiqtG5dNbVg+dzxthbK0RVet
-	 znj3yKgZzJFZDllRGUljS/xgCVF5/YhcM/xZF7TsZ+Q0ZBoyGJPV4LUl3RP6BfQ7/W
-	 K9igGWa8EyJuLIv4v8L4a5FpktEtG6fGsVjDaA/lym8ORbnYunNGPijZEbVOdhxAQW
-	 dCLMrUsv7Dix0kxsVqoeBswgwZGYCrlmuKi7ZZAxjtLuliAvD+YDZSqj8qCl+BjHpz
-	 Cd+2A9yzinIot4ReDIkWv0ALzqP18Q99q7oqfGAZvJyb4PT4uXiITlt/CbtCgQ7jtb
-	 sCHunmNDmQ/eg==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 25 Apr 2025 23:19:01 +0100
-Subject: [PATCH] kunit: configs: Enable coverage of the bitfield packing
- library
+	s=arc-20240116; t=1745620652; c=relaxed/simple;
+	bh=3KArTu/2RUkabCmBtv0e7fMu9ZeDP06C6FtALBblSxI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kUJ5qxifoTUuWqktrcUuE2ZeaatPz/ctcTlhsNgIUPIvpQz0YxDkTCAlIdPVauHcWWjSh6z8eYX2v0suCCYqizbtgnVXipb7q9WYT0RDoQAH2w1w+dfQdPfHPyIQMToBvuRxFulzv4WpcKVNYdHj0m41bQSIuKxqbcKmAow816o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t+DQ0tSt; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-308677f7d8cso2511560a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745620650; x=1746225450; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wtD+GeTJ9u0QHb0+YR6eCa58uhDG2aJS2glA/Qc9l0=;
+        b=t+DQ0tStN9s7v/HazE8xr5ZnphR2BzFtr+Dk4ApcPzKxpnLTwi94rAtfg4jkgap3oN
+         f2imSHiCqfvIf/rVX1gDlkMIs/5cFsrh7ayV7jbwXzE5yxpPyk8CxnbeNWp4g6UACvIH
+         PAnJMc5mQubHaW3MUbZu63I5RZ5VZAdmBc5rhTWXjrD1FimC4HSG5wX5dRSyT1BqYX5l
+         bakYB3oECrnb67N3+wbb2GqdahyvISq+4jCINFzPc+LVekX1XeRhvai5F63l3SW32IiG
+         mqLa5hY2h4iPb/A/ydGnBCQtCSZzmdkh/fsBNydX0RQmyFB37nJrWJo01wMQ0AS1Xxgu
+         HQLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745620650; x=1746225450;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wtD+GeTJ9u0QHb0+YR6eCa58uhDG2aJS2glA/Qc9l0=;
+        b=Dc+96AedsJ23J0qyI4sg8NhER2KO+tXk8A5jxiVmOlnrDXbmX2TPgThwgwiU2Wf94U
+         DxCXH/4rPTtGjKeEOVGIdxHEo3BHJgE4ICbc0sGSUOzGy5HvD7Gnr46EWVkBvnw8UGLw
+         N9kMyUvl1dL5mWWo21+c1ulkd0LBMBaeXxA/JVlHa+LYkswIQ+ch+enzMay2xMFiQzNN
+         s6ijGnA9MZHhZnZVBIBi/nI1ZY2Ku0YdufC6cAX2JA3POl6alUxZmjjQXeTuufX5cGbq
+         bcRg6bfCdWf16CnX3MND9oSyDYIXdGcnUA4TJkHKUukJF9Kpe9hV4XCHy2GrM7q4xjEE
+         SooQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNzublEiXWQoJQ/vgfEwjTIeBrr6RXQ9ponM2Eoa0nhk5AmBBSo/jt2dpRco4kF0IYvG3+u6Xmu5z4GL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyiwksboQ+A4B3B5xpvZvPvIeC0UWog86OQ+qtyb/qb1uENjTv
+	rMjdy1L4lS/7nCVQbBbXq3gJcLpIHd9yAKPr8uQWn9PMF4U0Ra5YR5Um5PPCpluxUHgqR3+JzHb
+	1hQ==
+X-Google-Smtp-Source: AGHT+IGgiNwVkXSP9zfX8Bwz9AFDrYnzhJff3zo34deIREPzgpgi0hqQsE0ginF6C31hQ2DJIXsWXGg0zEc=
+X-Received: from pjbkl16.prod.google.com ([2002:a17:90b:4990:b0:2fc:201d:6026])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2810:b0:2ff:502e:62d4
+ with SMTP id 98e67ed59e1d1-309f7e8ec70mr5160431a91.32.1745620649938; Fri, 25
+ Apr 2025 15:37:29 -0700 (PDT)
+Date: Fri, 25 Apr 2025 15:37:17 -0700
+In-Reply-To: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250221163352.3818347-1-yosry.ahmed@linux.dev>
+X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
+Message-ID: <174559612575.886958.13255435526046364721.b4-ty@google.com>
+Subject: Re: [PATCH 0/3] Unify IBRS virtualization
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, x86@kernel.org, Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
+	David Kaplan <David.Kaplan@amd.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-kunit-enable-missing-tests-v1-1-263391818e76@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFUKDGgC/x3MQQqDMBAF0KvIrDsQUwXjVUoXqf7qYDuWTFoE8
- e6GLt/m7WRIAqO+2inhJyarFtSXioY56gSWsZi8861rvOflq5IZGh8v8FvMRCfOsGwc6i4A4eq
- GCCrBJ+Ep2z+/3Y/jBJ98XyFsAAAA
-X-Change-ID: 20250422-kunit-enable-missing-tests-9189ee930cae
-To: Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=972; i=broonie@kernel.org;
- h=from:subject:message-id; bh=1pwExWgzQErCNQpG3IK9AR9oyY6nKXm+lJRSU+lGktw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoDAp6+lP6/ndCW8ZI2tXyIFYRXjlEQ0Zu2sJoStoo
- C2ggJbCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaAwKegAKCRAk1otyXVSH0Ij0B/
- 49P0xPGDljkPpfc1s5fxxrfeU0z8QYeyQ7oIIm6/v/z1wfYh5oKrF8lOeL3D17+XAkE6ysVpo/lCjc
- 3sk8cncoI+WjN9mIZpm5MGenYjfqD5TjBIGuuV/r6eNIkuiR6Xq95qp9VPqYMJf6gT/alvX4TQJjiJ
- IsnuB5riA0O5cqa2izqbenxxr0/nmSCbXICDKb79NX6WvFSNDQFfbe3xkSiM7VVNCnzDiOv4nvhhoU
- jKr0ksI90E1FSAA1q2/0cwFpuGNynIO1wycrV9/bhzIq+XkYxgeJmKl1pHolOX77dtUNm7BlwF40uv
- PoUCiaZiKumDOezHIWXIfxsZlMLv1B
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-There are KUnit tests for the bitfield packing library but these depend
-on CONFIG_PACKING which is not enabled by anything in either the
-existing KUnit all_tests.config or the base UML config it runs on as
-standard.  Enable that in all_tests.config to improve coverage.
+On Fri, 21 Feb 2025 16:33:49 +0000, Yosry Ahmed wrote:
+> To properly virtualize IBRS on Intel, an IBPB is executed on emulated
+> VM-exits to provide separate predictor modes for L1 and L2.
+> 
+> Similar handling is theoretically needed for AMD, unless IbrsSameMode is
+> enumerated by the CPU (which should be the case for most/all CPUs
+> anyway). For correctness and clarity, this series generalizes the
+> handling to apply for both Intel and AMD as needed.
+> 
+> [...]
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/kunit/configs/all_tests.config | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to kvm-x86 misc, thanks!
 
-diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/testing/kunit/configs/all_tests.config
-index cdd9782f9646..b0223b7aebde 100644
---- a/tools/testing/kunit/configs/all_tests.config
-+++ b/tools/testing/kunit/configs/all_tests.config
-@@ -51,3 +51,5 @@ CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TOPOLOGY_BUILD=y
-+
-+CONFIG_PACKING=y
+[1/3] x86/cpufeatures: Define X86_FEATURE_AMD_IBRS_SAME_MODE
+      commit: 9a7cb00a8ff7380a09fa75287a3f2642c472d562
+[2/3] KVM: x86: Propagate AMD's IbrsSameMode to the guest
+      commit: 65ca2872015c232d6743b497e3c08ff96596b917
+[3/3] KVM: x86: Generalize IBRS virtualization on emulated VM-exit
+      commit: 656d9624bd21d35499eaa5ee97fda6def62901c8
 
----
-base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
-change-id: 20250422-kunit-enable-missing-tests-9189ee930cae
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+--
+https://github.com/kvm-x86/linux/tree/next
 
