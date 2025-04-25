@@ -1,141 +1,158 @@
-Return-Path: <linux-kernel+bounces-619511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1460A9BD81
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6F0A9BD86
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E699213C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449D75A2557
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872411B0F11;
-	Fri, 25 Apr 2025 04:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCAA218593;
+	Fri, 25 Apr 2025 04:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d7nsCJNO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aUB3I9Fo"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B001FECA1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 04:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA79217F26
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 04:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745554839; cv=none; b=RZyBXd3PGKLLzLfacmBHV2tiU21oC7sCh5KfKM7rjfIHVLSaGjGFj9WvykoH6t3Drg32m8CQKIThqM98w65nGClqRYudDefxRqzWLD2oYoFxZo1fFgTAsirSwlM5J/XbOs9/mV2GFtCg2gwXNLu5tOV9EmUhyEWgqMAZwp1YSnk=
+	t=1745554877; cv=none; b=r7EmNOJFOnBw/SCx/51Ouo+IKq2D5tJrjJHjBt2P4DytWxhqJ0GTjyMX0G6+GmmABQx61G+cFs8/jIfLvWA4ateEF3PqhnVrAET3yhwvLKwi4uePLGh/GO5X1YKO2if3pWlkRCjsH2ClP9puxoSXaNMSmh9t+h+L3s5AvTtAyO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745554839; c=relaxed/simple;
-	bh=5Q3Mom89Oc9y3zyftp+jFydfEqxQLSJpVyDACzdoa/o=;
+	s=arc-20240116; t=1745554877; c=relaxed/simple;
+	bh=2ek74mNNFIgWcZk7Q8YaK5RG06y977D4eT9YNwdT+O0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HilZzPC/MGysUCOA/hhBUXUtBh8VTuZ2JotPDDUYA4TTPRU3svKvo9rm6BAWfx+62LXoYgL/zIVmP4Da5UrAFkRLau5M1L+WLJjn1TYbfbX1ThTZMT+D10Ldz68btStRwvRsVnNoIGtBmJfU20gOk8MUEKSErgW0xHZ8aluMf3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d7nsCJNO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745554835;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xR/fWMDLnjbCwmdvRYjaVgsHQjS4Hxv9j2CoZGyvr/0=;
-	b=d7nsCJNOltJU9v1AJNfQhq8WfcFQUpTZQWI3OiaCcyT7+JX82b5U0EWtxZxT+hl2tn0V3D
-	mfx0mUG41SK0Th3fNz/HPmx+aYPJoSeGH/bcQHLu3lQE6iyMAK8Dz6A77VUVRbcPsyEejw
-	GYO74tkpdgU3M+YYhNEXe0pUsXfBi6Y=
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
- [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-shVKGk1rO8S6RdG_umoicQ-1; Fri, 25 Apr 2025 00:20:33 -0400
-X-MC-Unique: shVKGk1rO8S6RdG_umoicQ-1
-X-Mimecast-MFC-AGG-ID: shVKGk1rO8S6RdG_umoicQ_1745554833
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-875a2033753so1883581241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 21:20:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=FCc4DeuLxUi+3xOcVm3f7P9aTsn6tCKwYxv3wo46c8wZVBjbYEv9+LTL69+SV3BXFhd+KC1ZiHaLx/3hF/RDgErgbG5thIjEr/YYP8ALIBb606iMRq7+sZI4ymByQfca2kPNIxLC3ZJRP6+HF0mMsYbaD2WWO2gHVV02iRTdfco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aUB3I9Fo; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5f6fb95f431so917021a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 21:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1745554872; x=1746159672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6NAE0ezuMYS7J5WA+bsYijLDvptHGpv+uu1oCrM7N5E=;
+        b=aUB3I9FolXVtp055ajjCkQRz5aWwZ+wCO3GJiFavr7spI6Y/DZhxm7xQeo5oajUs/f
+         SEbFwLrzs5UFaurJP5tRtjfsSR5Q+fwktglworPune4ayiAsrqTgu676dOsv9RO1er7U
+         CH6XF7lKDlDSoAbKx/wgu90q4axYFD4fnk/78=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745554833; x=1746159633;
+        d=1e100.net; s=20230601; t=1745554872; x=1746159672;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xR/fWMDLnjbCwmdvRYjaVgsHQjS4Hxv9j2CoZGyvr/0=;
-        b=Qx91UCrFPYK6w+Qi6lTBUfUywSSghyNW7c4Gxqn8vIZ+L2pA2WLy+QbTJR5QOF6mXx
-         zbI/VBDHaS7kYUD+HJiszeQSI7qJRin8GgJOLB3+CqvbDlpoxJjM6Tpc3MVXKDUTmvnR
-         80RyAcdJQV9rUY273mpI86fY/qBnayhRHg7Po3rTdfHK7r/R75rHw3uJWmrAMsjEvKqL
-         vBMLMtQqxoK7IcOvUXGqJ9UtzMn8FOWqarBDTxS9arYzf2iFMbMUAMqPom+R1i/klvq1
-         B33XceiWmwPhr5rxH9+ZpBnLww+iZqxuO9W+NVg9dBVWqOLyKApmbdWbICCSVjPrC8Im
-         MBNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTQOuYFpR2NqhENDWJYmjNPhYralRuoVo2rIStlcfQWGGZhsMKOCbQByV8uDnspO2RUjFCbxp0r+nvHjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytC5Wjwrdtiu8i6Tv3r2ZLhCQNYG3g8OondoVH+wWDA1x5OW9b
-	nh6hL7/iD+9CaAYcUr9ZPZlsJiBWXf4IdYW+VLHWLbIVatc8+1k6vL6wJ9D/3kggWLnE09J+eFM
-	q6lPUlPX37jnlYgPr6Uw04GPLiUmp3m+QAaYbICT+l7UG4PUmNXTb5ApSsPEQoxWTp5naH3Bp1m
-	hEymWjFRG+dHxgKTPMlmktiyWJeMWd260gprPZ
-X-Gm-Gg: ASbGncsorPfwELwmd24RwuGf3x6OgyOvNsLqI1lDPQkDy1bBUU8qv2yE3kfBoUCZ8Z0
-	8XlxZ1zRH0M7ZFfnmWFRQloZgcfPW0uUYhfl5eDHhkuTjyVvk16CFMgqOoQJU3qPdo5dNsw==
-X-Received: by 2002:a05:6102:941:b0:4bb:e511:15a6 with SMTP id ada2fe7eead31-4d543dc0dc9mr280600137.11.1745554833010;
-        Thu, 24 Apr 2025 21:20:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+ZaX5/u4IXJPFGkEDtJPh4I/uc6bTX0tC38RQ0tu4F39TadHB0MpGm548SRCfGfhXtl8n0CBmffMVWNLeV5U=
-X-Received: by 2002:a05:6102:941:b0:4bb:e511:15a6 with SMTP id
- ada2fe7eead31-4d543dc0dc9mr280594137.11.1745554832743; Thu, 24 Apr 2025
- 21:20:32 -0700 (PDT)
+        bh=6NAE0ezuMYS7J5WA+bsYijLDvptHGpv+uu1oCrM7N5E=;
+        b=WddzBCWtzOPTqAu1TkfbkqbiXZCiDCWiM1lRpmqatY2mrSmSK0aicPeLcJH3yOuX0h
+         tsQbJGDmgVZTdqfgRtucVO5UmoUFr8XIHIesA9zH4Jf6gyu13nV0jzUoNhWsRsKjeTv3
+         LQj53Tojk2cj3YZQ5YkWqMXHTc/5/ATEzK1bp0E1OhvM+88KLkfwWA8KDSkuN+ZwGC1W
+         Iwl5OfDXfkzD+qc65Axf8dG+ttrdCrn3ImwgDa8+IR5slkA4ho79gux3LSPFjctNWqR5
+         uVnfw0IqGPMjyKYvShRDWcx2kg/RFR8hdj2pK+kLvGtPD8gZ8VgMJ7HJaAGU92FEWQBQ
+         m4YA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcMTUV9Ai64oI/SfohNpbV+nEhJhp9Z4wSHlZkJMtWvOZ+y12nYXJTNzwHNHMHrrrfya51yzAXL/VTkPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK9QFtpuJQe1E56eZv7pLMhcfAo6f3Lozzhyxi7v+YagpFvp40
+	GwGeKv1oYoD8q/r1OTXFahcJ1Tw7Rk+ejbXm7t8p64KKAut0SW7q+VHh+olp3DXlBGiOm8cmHB8
+	VmE61Lw==
+X-Gm-Gg: ASbGnctRXP5Cu7usOtYoPtPcA2WWeEZ0GG3YH/39gEwspgj4A9ng1/aN3w1bUNyBHUC
+	8/7jS+kzt283q7b0D4j7g7tK9UYaALGEIFPH5dtScSJ03gmqtLbDuD7vojnl/VIlgGuHO4n0yMe
+	xSgCmkZTRlRu9N389NUadNNJ5YMe+6RrQPSyBY3CcJMEEtKOEf6LyylsuDPYZf4bG3AzB3Dd0Q5
+	zzu0OPaH43XXZKH6b3d/WOOIw6cjSJHuSY2Fd3OOnr/Vy3BoogeyOAZ4+maloWDeW9rmHMGb4Ck
+	dFtVjvyx5uX3U4m35GG0408fNZCW41VYSwxI/oQFSlGsmze08wdny7ZfuDB9RmIHFmGm+RP9M9b
+	/hb1Q3LpPpclqdsg=
+X-Google-Smtp-Source: AGHT+IF0R6StwMi+gqSqIZGDJoYaaEsiVSzkb5KlFhnwWsWNc31y9s9tF6ZXfa1/3zHUrGhLNZ0R1w==
+X-Received: by 2002:a17:907:94d2:b0:ac1:ecb0:ca98 with SMTP id a640c23a62f3a-ace5a48320dmr384456366b.26.1745554872417;
+        Thu, 24 Apr 2025 21:21:12 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf893fsm65919966b.96.2025.04.24.21.21.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Apr 2025 21:21:11 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-acacb8743a7so302101966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 21:21:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLIb91RORKKhlWa1J7HNBx3SWz8yn3OeAFoOfU5mCvnuOUoQ6LHZkE65TUglAZIuVjSOW6FtTE3yg0I2Q=@vger.kernel.org
+X-Received: by 2002:a17:907:94d2:b0:ac1:ecb0:ca98 with SMTP id
+ a640c23a62f3a-ace5a48320dmr384453966b.26.1745554871324; Thu, 24 Apr 2025
+ 21:21:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <680a45db.050a0220.10d98e.000a.GAE@google.com> <20250425034057.3133195-1-lizhi.xu@windriver.com>
-In-Reply-To: <20250425034057.3133195-1-lizhi.xu@windriver.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Fri, 25 Apr 2025 12:20:21 +0800
-X-Gm-Features: ATxdqUFraUfCfMCyRx3c37eHUblN-XwH6RIB8Ql5xT1vd1m9qRDtL4b-jAdR2_A
-Message-ID: <CAFj5m9LVuekp_n6pEfs17n6QB3Q0yu-qRP67NOJb9ZXRNyhP3Q@mail.gmail.com>
-Subject: Re: [PATCH] loop: Add sanity check for read/write_iter
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com, axboe@kernel.dk, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+In-Reply-To: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 24 Apr 2025 21:20:53 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+X-Gm-Features: ATxdqUGW6PrSoybEs-CBS2CL_qi9B6hsp2y203CCwxZ62Ilhm4qWIq-GEHNl9dI
+Message-ID: <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 11:41=E2=80=AFAM Lizhi Xu <lizhi.xu@windriver.com> =
-wrote:
+On Thu, 24 Apr 2025 at 19:46, Kent Overstreet <kent.overstreet@linux.dev> w=
+rote:
 >
-> Some file systems do not support read_iter or write_iter, such as selinux=
-fs
-> in this issue.
-> So before calling them, first confirm that the interface is supported and
-> then call it.
->
-> Reported-by: syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D6af973a3b8dfd2faefdc
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  drivers/block/loop.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 674527d770dc..4f968e3071ed 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -449,10 +449,15 @@ static int lo_rw_aio(struct loop_device *lo, struct=
- loop_cmd *cmd,
->         cmd->iocb.ki_flags =3D IOCB_DIRECT;
->         cmd->iocb.ki_ioprio =3D IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
->
-> -       if (rw =3D=3D ITER_SOURCE)
-> -               ret =3D file->f_op->write_iter(&cmd->iocb, &iter);
-> -       else
-> -               ret =3D file->f_op->read_iter(&cmd->iocb, &iter);
-> +       ret =3D 0;
-> +       if (rw =3D=3D ITER_SOURCE) {
-> +               if (likely(file->f_op->write_iter))
-> +                       ret =3D file->f_op->write_iter(&cmd->iocb, &iter)=
-;
-> +       }
-> +       else {
-> +               if (likely(file->f_op->read_iter))
-> +                       ret =3D file->f_op->read_iter(&cmd->iocb, &iter);
-> +       }
+> There's a story behind the case insensitive directory fixes, and lessons
+> to be learned.
 
-The check can be added in loop_configure()/loop_change_fd()
-instead of fast IO path.
+No.
 
-Thanks,
+The only lesson to be learned is that filesystem people never learn.
 
+Case-insensitive names are horribly wrong, and you shouldn't have done
+them at all. The problem wasn't the lack of testing, the problem was
+implementing it in the first place.
+
+The problem is then compounded by "trying to do it right", and in the
+process doing it horrible wrong indeed, because "right" doesn't exist,
+but trying to will make random bytes have very magical meaning.
+
+And btw, the tests are all completely broken anyway. Last I saw, they
+didn't actually test for all the really interesting cases - the ones
+that cause security issues in user land.
+
+Security issues like "user space checked that the filename didn't
+match some security-sensitive pattern". And then the shit-for-brains
+filesystem ends up matching that pattern *anyway*, because the people
+who do case insensitivity *INVARIABLY* do things like ignore
+non-printing characters, so now "case insensitive" also means
+"insensitive to other things too".
+
+For examples of this, see commits
+
+  5c26d2f1d3f5 ("unicode: Don't special case ignorable code points")
+
+and
+
+  231825b2e1ff ("Revert "unicode: Don't special case ignorable code points"=
+")
+
+and cry.
+
+Hint: =E2=9D=A4 and =E2=9D=A4=EF=B8=8F are two unicode characters that diff=
+er only in
+ignorable code points. And guess what? The cray-cray incompetent
+people who want those two to compare the same will then also have
+other random - and perhaps security-sensitive - files compare the
+same, just because they have ignorable code points in them.
+
+So now every single user mode program that checks that they don't
+touch special paths is basically open to being fooled into doing
+things they explicitly checked they shouldn't be doing. And no, that
+isn't something unusual or odd. *Lots* of programs do exactly that.
+
+Dammit. Case sensitivity is a BUG. The fact that filesystem people
+*still* think it's a feature, I cannot understand. It's like they
+revere the old FAT filesystem _so_ much that they have to recreate it
+- badly.
+
+              Linus
 
