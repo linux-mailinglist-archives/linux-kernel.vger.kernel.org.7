@@ -1,142 +1,144 @@
-Return-Path: <linux-kernel+bounces-620696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5260EA9CE44
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:36:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913D4A9CE54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E16D97B02EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0ED64C4A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B511A3145;
-	Fri, 25 Apr 2025 16:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE7D1A83F4;
+	Fri, 25 Apr 2025 16:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGLaRP/w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+nCpFkA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF42F19F462;
-	Fri, 25 Apr 2025 16:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB5912E1CD;
+	Fri, 25 Apr 2025 16:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598988; cv=none; b=adKokek/Ceiaqyg8bM86VLTHxI9TQZjH2/kfAs6FD+antKdQU/YJmL/MZDS02+is9CfQpIgNEoNRTiU3/xvFA84AMwuWTITMKJgDDzUIyNsvWmB05PCgN4Mg0I4Dbz99d5RsgCBuaWrMi71TNheSsqpTlkhrSAwm7m+2jPp9nAw=
+	t=1745599071; cv=none; b=Y/gAK2skuvZvOK70NIzzQdK2w4GgeiGFvInZDjfTM1cXIHYwdrEWxkhTmJCVG8EhkcTT4G4Gv55HVh0ahEaFNgiztxEeVa4kH/jpq/NZMkpTP1VSwfE9YbyOKSsomtSqjd2lDB1KSKgPzSHB93kKtdhxY3H86L/ongvptDDzGTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598988; c=relaxed/simple;
-	bh=qyYP/d0Q/C/Ic0eifIrMXz9F9Vl6Jkj4BL5YiQzS9uY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E1ODokoVAwZNrVIb9KwAxgOJ71YuiSZW2iImNdDMAf3SjDS3GuTHEFlFBaUHxHU8z9STAdeSdX4+6+stxURTIyp1HxHlkNiB4vIK9C4cP5czZm7jKmi6KjJoTZX1wrTzNqeKrhw6uZVm2r4tpkdX1o6vEoFZKDVaJROiZpablM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGLaRP/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14348C4CEE4;
-	Fri, 25 Apr 2025 16:36:23 +0000 (UTC)
+	s=arc-20240116; t=1745599071; c=relaxed/simple;
+	bh=JT9P8fa6GaPpdB10ha3NV7wedzAJg0y0BNu5ciaRIvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lME8Wmd2h2P361xX3BbEW6chSE4uPbtajHOqUfZ/qO9qDRSBe+XLTnp/FK47UNxXExZr/aHZJKGtjPo1yrrWs9DCPkuTjGwkVNFGzkcC+YorkfuzX7OqUKBsAn8p7LlYjGXFTFiQ5oSVvqiM6luD/yNY9xagXSpVZJQZay7lzgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+nCpFkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D656C4CEE4;
+	Fri, 25 Apr 2025 16:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745598987;
-	bh=qyYP/d0Q/C/Ic0eifIrMXz9F9Vl6Jkj4BL5YiQzS9uY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eGLaRP/w67b6h2wN8dZhO7dOlM7r9Fk99DiSfwgCAFU3mWJ3w8GA2JN6No26ObB4T
-	 U74kacS1VdPLlfj6tXp33L07rJXCBMxTy7RIGt6cTaRDjAC8kakgMeFCWDbDawAexY
-	 qvWNZtNH1OouvW97QfH6v9TLuoEaOm6Axg4nf1hEMxM6nSvWa14CkRq9BCaYBbKuyn
-	 cSNk6KwCLL5XfT7RMmgU0p7o+q5hIPzM1mEJTzEH/EGrt4dbj2jBiTjlxIhq/jnpWN
-	 bRrtBYI1dWpbYDbS1VWaOpUTA+ZzGtKsdh/9IL+iEFRmp73xm17WoZ2bZXj8N0immK
-	 6ivpz4qjHLEQQ==
-Message-ID: <16a98816-f43c-4f4d-940e-9da30cb1f73f@kernel.org>
-Date: Fri, 25 Apr 2025 18:36:22 +0200
+	s=k20201202; t=1745599070;
+	bh=JT9P8fa6GaPpdB10ha3NV7wedzAJg0y0BNu5ciaRIvE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=O+nCpFkATbcbGeFmdfOdNo4pbXvF/sY5KZ9KR00vMVrD9O71xxFpYprlLmX4IwjOu
+	 PT8Buxml0q5E+hRhkiATgWy5ej4VPTtWBZvBZZTVraBjrpYEIv6/1+5IRs5JZPf2IE
+	 vO3iTB8mZxetOwQ/zejqgoLT1r3mHZZv435ddr65ZgxGMPMT8niOe3dzgWWzzu+L1W
+	 4LptpO/qFfTlyVEHn+9onlUMKJ5dmncqMMzrTERQPnfNdruQuEj9C6eSrBEb4Ivw77
+	 NmHB+wruXS0t1OE2fgcd4ibRTFyj84jrXiJyLDEXKcJTnOWLy/vVYY2ss++Ll3PmJX
+	 hlgh/4Bio29ew==
+Date: Fri, 25 Apr 2025 11:37:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nipun Gupta <nipun.gupta@amd.com>,
+	Yury Norov <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Simon Horman <horms@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Paul Rosswurm <paulros@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH v2 1/3] PCI: Export pci_msix_prepare_desc() for dynamic
+ MSI-X alloc
+Message-ID: <20250425163748.GA546623@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: imx8qm: add ethernet aliases
-To: Francesco Dolcini <francesco@dolcini.it>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250422100239.58799-1-francesco@dolcini.it>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250422100239.58799-1-francesco@dolcini.it>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1745578437-14878-1-git-send-email-shradhagupta@linux.microsoft.com>
 
-On 22/04/2025 12:02, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On Fri, Apr 25, 2025 at 03:53:57AM -0700, Shradha Gupta wrote:
+> For supporting dynamic MSI-X vector allocation by PCI controllers, enabling
+> the flag MSI_FLAG_PCI_MSIX_ALLOC_DYN is not enough, msix_prepare_msi_desc()
+> to prepare the desc is also needed.
 > 
-> Add ethernet aliases, they are used by the firmware to set the MAC
-> address and by systemd to rename network interfaces to predictable
-> interface names, e.g. end0 and end1.
+> Export pci_msix_prepare_desc() to allow PCI controllers to support dynamic
+> MSI-X vector allocation.
 > 
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+
+Thanks for the update and for splitting this from the hv driver
+update.  Will watch for Thomas's ack here.
+
+For future postings, you might consider limiting the "To:" line to
+people you expect to actually act on the patch, and moving the rest to
+"Cc:".
+
 > ---
->  arch/arm64/boot/dts/freescale/imx8qm.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/pci/msi/irqdomain.c | 5 +++--
+>  include/linux/msi.h         | 2 ++
+>  2 files changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-> index 6fa31bc9ece8..eccd0087efa7 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-> @@ -17,6 +17,8 @@ / {
->  	#size-cells = <2>;
+> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+> index d7ba8795d60f..43129aa6d6c7 100644
+> --- a/drivers/pci/msi/irqdomain.c
+> +++ b/drivers/pci/msi/irqdomain.c
+> @@ -222,13 +222,14 @@ static void pci_irq_unmask_msix(struct irq_data *data)
+>  	pci_msix_unmask(irq_data_get_msi_desc(data));
+>  }
 >  
->  	aliases {
-> +		ethernet0 = &fec1;
-> +		ethernet1 = &fec2;
-Can't they be disabled (e.g. because MAC is external?) on actual board?
-IOW, aliases for exposed interfaces are properties of boards, not SoC.
-
-What's more, I cannot find these in this DTSI, so how can you add alias
-to non-existing node?
-
-Best regards,
-Krzysztof
+> -static void pci_msix_prepare_desc(struct irq_domain *domain, msi_alloc_info_t *arg,
+> -				  struct msi_desc *desc)
+> +void pci_msix_prepare_desc(struct irq_domain *domain, msi_alloc_info_t *arg,
+> +			   struct msi_desc *desc)
+>  {
+>  	/* Don't fiddle with preallocated MSI descriptors */
+>  	if (!desc->pci.mask_base)
+>  		msix_prepare_msi_desc(to_pci_dev(desc->dev), desc);
+>  }
+> +EXPORT_SYMBOL_GPL(pci_msix_prepare_desc);
+>  
+>  static const struct msi_domain_template pci_msix_template = {
+>  	.chip = {
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index 86e42742fd0f..d5864d5e75c2 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -691,6 +691,8 @@ struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
+>  					     struct irq_domain *parent);
+>  u32 pci_msi_domain_get_msi_rid(struct irq_domain *domain, struct pci_dev *pdev);
+>  struct irq_domain *pci_msi_get_device_domain(struct pci_dev *pdev);
+> +void pci_msix_prepare_desc(struct irq_domain *domain, msi_alloc_info_t *arg,
+> +			   struct msi_desc *desc);
+>  #else /* CONFIG_PCI_MSI */
+>  static inline struct irq_domain *pci_msi_get_device_domain(struct pci_dev *pdev)
+>  {
+> -- 
+> 2.34.1
+> 
 
