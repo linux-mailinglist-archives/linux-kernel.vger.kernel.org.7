@@ -1,210 +1,153 @@
-Return-Path: <linux-kernel+bounces-620422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B10A9CA87
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:37:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CCBA9CA74
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203533BD9EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36A31C00D19
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11CB25393B;
-	Fri, 25 Apr 2025 13:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E442381C4;
+	Fri, 25 Apr 2025 13:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I6YOJCHx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NbrJ58cQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M3uDObKF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FDD252914
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4159222A1C5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745588043; cv=none; b=FUW0LBCsG5WSRsRkeojFunTm6pGFRRXi6yAA2KjzXDGV/KxMMdAybio+6EukXEdoupm0rTMVf1tDLMX43iQGdPdIuKMeSkP2dIH2XrDAbHNj+E8FCsLEVRGTNw+xMEL1Ck67aShth+FVioLW4uzSNN50kN0gW9yiZAVihjWTSeM=
+	t=1745587896; cv=none; b=iJ0Phy31tbbWr0OY6VBgqvwnbmzP4rJpasUMk2DRzA+yvLsNmbfXFHirzynjlUihmakTiWnD3eBxWrMdwZ6rwJ0KDBCp2Is6ZYABxVklrCVw8OaKCOFfoiibsiunfmKDZJ0f3Qg7MY0lT1VPZo1e9ZaQjR+gScWiF9LzqB/OU5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745588043; c=relaxed/simple;
-	bh=TBWtWwhrMaJ9I4A/eVK+tqurIFxh6WiEiQufCnYN8l8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=UMFoa0Q9nMc4vZZ5NwnlqvBJmJ9ElNACwKHNav4rC+khZXAEn4TppXcyjAMk7oqQDpUwdQR5vVyQOfQqXdqJpCBzgC+JHKJCyMfX1xkjdG4k/rVYf26KWZeEDL+aveRLX7RULTiAxavQ1o+n9bM3SpAhNcvoFxzm9+Euzh4ylzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I6YOJCHx; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745588041; x=1777124041;
-  h=date:from:to:cc:subject:message-id;
-  bh=TBWtWwhrMaJ9I4A/eVK+tqurIFxh6WiEiQufCnYN8l8=;
-  b=I6YOJCHxW/Xkp0HRoN9WQpGo9K/Teaaq0kROKi9Pun3dFGUVLCUtoelp
-   l0ZxDrtrFaxlX7/6NSYOqBDwr33NtwdJu279J2HN14vfUeZ7saUmiu6Na
-   /8E4agmPc5dNcO0+2OGrhQ5sWZ5e8zccmrXBI4mLewu2G+19OW/F32Ypn
-   mtnmshMTTINXzQQ4Sg1sw874y/EAxmNClBkq1NUr0uQy8FlnEQbYr6R44
-   v/VUriKOsYtHgcIYN7DE2hxnODODbmPX0Yx8uZacPnez9/RWeeXmYerx5
-   ctL8GjpjpT21FnZAzp9z80lO0qxxrVc3GRDmFK+yWfwvtrYv/POwHcvoi
-   A==;
-X-CSE-ConnectionGUID: OCdl/nCITteB/6ry/GPvvA==
-X-CSE-MsgGUID: cE152qg3SmSzxlA9pgcRLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="58615132"
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="58615132"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 06:34:01 -0700
-X-CSE-ConnectionGUID: 2n1nUwY+TM2NA/Ofvp4wkA==
-X-CSE-MsgGUID: wpz7X1KiTYCB4wtmPowMOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="138069891"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 25 Apr 2025 06:32:20 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8JA9-0005En-1X;
-	Fri, 25 Apr 2025 13:32:17 +0000
-Date: Fri, 25 Apr 2025 21:31:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/core] BUILD SUCCESS
- 49916e22d9530d6cf027e635a5d824c7d698d67f
-Message-ID: <202504252121.pVehIPyV-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1745587896; c=relaxed/simple;
+	bh=0fmDWMUe5tQquTBn1XbYU0KLvWwXIUVP6pNJIR/mQSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OCx+eVokVYm9GlrbktOXZi9H8LI35+q61HHKjT76j8U0R0ZLufdpsyQ2pzjsB3s5ebQXRhTx2UqhKGU447BNklKwwc3Eu5yheSTOoMW1/c14xsVSqcPnSKN/g0C4wMq9qcY7txc4xvJVVxTcAw1FvxHMCFA+9nbY+qPnJOfcZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NbrJ58cQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M3uDObKF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 25 Apr 2025 15:31:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745587892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djfFPUnOt5o5/K/Hxm87135eBcbaPqNQQBh2lVeaSNc=;
+	b=NbrJ58cQQLxXBxZtAXQe+0leM/OhjC7mHW8Q6Fun3qTXFaeuG2CKR161yMy4wpc4h3RfQi
+	g5o/RQfSg71p32NL3qGFc+4TdwcAU21CMoOOn8FqeMIYCxl77P8qlO5aANA59mLuuEfHDB
+	eWhP0GDSwOqIF2pmoJNqvZb2bL6IoW4Y6v8o6GoXXwK7gk3v78LD9316Me35ZTcs6NGLbp
+	QLRYwuGkE4KD8JgDeLhCzMffGtDUIoyHxERltw6I7HINzowzQ3Akwus0dkD7LN8ZSV138K
+	+sZkzS25dwZaENmXKMAXGoBC80mT8UMekbc9tAsKbCQztZp9j1LmzFNct79f6Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745587892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djfFPUnOt5o5/K/Hxm87135eBcbaPqNQQBh2lVeaSNc=;
+	b=M3uDObKFOzxgMvD4Ccg/EIEXg+NEN+pYyyvPdzNbKq2UCYS8t2y5jdWSue//HRtzaIq07G
+	00U/v3RpfBKzeoBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: npiggin@gmail.com, vaibhav@linux.ibm.com, maddy@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu,
+	gautam@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] powerpc: kvm: use generic transfer to guest mode work
+Message-ID: <20250425133131.DTvWJE29@linutronix.de>
+References: <20250421102837.78515-1-sshegde@linux.ibm.com>
+ <20250421102837.78515-2-sshegde@linux.ibm.com>
+ <20250424144215._ooDjDz9@linutronix.de>
+ <365ba747-9311-45ab-b798-80ba4e578796@linux.ibm.com>
+ <20250424183811.7_MLThpt@linutronix.de>
+ <2891b989-6249-4e84-969e-f11af3f92b0b@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2891b989-6249-4e84-969e-f11af3f92b0b@linux.ibm.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-branch HEAD: 49916e22d9530d6cf027e635a5d824c7d698d67f  timers: Remove unused __round_jiffies(_up)
+On 2025-04-25 16:49:19 [+0530], Shrikanth Hegde wrote:
+> On 4/25/25 00:08, Sebastian Andrzej Siewior wrote:
+> > On 2025-04-24 21:27:59 [+0530], Shrikanth Hegde wrote:
+> > > > > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> > > > > index 19f4d298d..123539642 100644
+> > > > > --- a/arch/powerpc/kvm/book3s_hv.c
+> > > > > +++ b/arch/powerpc/kvm/book3s_hv.c
+> > > > > @@ -4901,7 +4901,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u64 time_limit,
+> > > > >    	}
+> > > > >    	if (need_resched())
+> > > > > -		cond_resched();
+> > > > > +		schedule();
+> > > > 
+> > > 
+> > > 
+> > > > This looks unrelated and odd. I don't why but this should be a
+> > > > cond_resched() so it can be optimized away on PREEMPT kernels.
+> > > 
+> > > This is needed, otherwise KVM on powerVM setup gets stuck on preempt=full/lazy.
+> > 
+> > But this makes no sense. On preempt=full the cond_resched() gets patched
+> > out while schedule() doesn't. Okay, this explains the stuck.
+> 
+> cond_resched works. What you said is right about schedule and preemption models.
+> Initially I had some other code changes and they were causing it get stuck. i retested it.
 
-elapsed time: 1461m
+so it is unrelated then ;)
 
-configs tested: 118
-configs skipped: 6
+> But looking at the semantics of usage of xfer_to_guest_mode_work
+> I think using schedule is probably right over here.
+> Correct me if i got it all wrong.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+No, if you do xfer_to_guest_mode_work() then it will invoke schedule()
+when appropriate. It just the thing in kvmhv_run_single_vcpu() looks odd
+and might have been duct tape or an accident and could probably be
+removed.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                      axs103_smp_defconfig    gcc-14.2.0
-arc                   randconfig-001-20250424    gcc-8.5.0
-arc                   randconfig-002-20250424    gcc-14.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                          gemini_defconfig    clang-20
-arm                   randconfig-001-20250424    gcc-7.5.0
-arm                   randconfig-002-20250424    gcc-7.5.0
-arm                   randconfig-003-20250424    clang-21
-arm                   randconfig-004-20250424    clang-21
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250424    clang-21
-arm64                 randconfig-002-20250424    gcc-8.5.0
-arm64                 randconfig-003-20250424    clang-21
-arm64                 randconfig-004-20250424    gcc-8.5.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250424    gcc-12.4.0
-csky                  randconfig-002-20250424    gcc-14.2.0
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250424    clang-21
-hexagon               randconfig-002-20250424    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250424    gcc-12
-i386        buildonly-randconfig-002-20250424    clang-20
-i386        buildonly-randconfig-003-20250424    clang-20
-i386        buildonly-randconfig-004-20250424    clang-20
-i386        buildonly-randconfig-005-20250424    gcc-12
-i386        buildonly-randconfig-006-20250424    clang-20
-i386                                defconfig    clang-20
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250424    gcc-14.2.0
-loongarch             randconfig-002-20250424    gcc-12.4.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                         amcore_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                           ip32_defconfig    clang-21
-mips                        maltaup_defconfig    clang-21
-mips                        vocore2_defconfig    clang-21
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250424    gcc-10.5.0
-nios2                 randconfig-002-20250424    gcc-10.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250424    gcc-9.3.0
-parisc                randconfig-002-20250424    gcc-7.5.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                       ebony_defconfig    clang-21
-powerpc                      ep88xc_defconfig    gcc-14.2.0
-powerpc                        icon_defconfig    gcc-14.2.0
-powerpc                     rainier_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250424    clang-21
-powerpc               randconfig-002-20250424    clang-17
-powerpc               randconfig-003-20250424    clang-21
-powerpc64             randconfig-001-20250424    clang-21
-powerpc64             randconfig-002-20250424    clang-21
-powerpc64             randconfig-003-20250424    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                               defconfig    clang-21
-riscv                 randconfig-001-20250424    clang-21
-riscv                 randconfig-002-20250424    clang-21
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250424    gcc-9.3.0
-s390                  randconfig-002-20250424    gcc-9.3.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-14.2.0
-sh                    randconfig-001-20250424    gcc-12.4.0
-sh                    randconfig-002-20250424    gcc-6.5.0
-sh                   rts7751r2dplus_defconfig    gcc-14.2.0
-sh                           sh2007_defconfig    gcc-14.2.0
-sh                            titan_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250424    gcc-10.3.0
-sparc                 randconfig-002-20250424    gcc-11.5.0
-sparc64               randconfig-001-20250424    gcc-9.3.0
-sparc64               randconfig-002-20250424    gcc-7.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250424    clang-21
-um                    randconfig-002-20250424    clang-21
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250424    gcc-12
-x86_64      buildonly-randconfig-002-20250424    clang-20
-x86_64      buildonly-randconfig-003-20250424    gcc-12
-x86_64      buildonly-randconfig-004-20250424    clang-20
-x86_64      buildonly-randconfig-005-20250424    clang-20
-x86_64      buildonly-randconfig-006-20250424    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                  audio_kc705_defconfig    gcc-14.2.0
-xtensa                randconfig-001-20250424    gcc-14.2.0
-xtensa                randconfig-002-20250424    gcc-14.2.0
+> on x86:
+> kvm_arch_vcpu_ioctl_run
+> 	vcpu_run
+> 		for () {
+> 			.. run guest..
+> 			xfer_to_guest_mode_handle_work
+> 				schedule
+> 		}
+> 
+> 
+> on Powerpc:  ( taking book3s_hv flavour):
+> kvm_arch_vcpu_ioctl_run
+> kvmppc_vcpu_run_hv  *1
+> 	do while() {
+> 		kvmhv_run_single_vcpu or kvmppc_run_vcpu
+> 			-- checking for need_resched and signals and bails out *2
+> 	}
+>
+> 
+> *1 - checks for need resched and signals before entering guest
+I don't see the need_resched() check here.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> *2 - checks for need resched and signals while running the guest
+> 
+> 
+> This patch is addressing only *1 but it needs to address *2 as well using generic framework.
+> I think it is doable for books3s_hv atleast. (though might need rewrite)
+> 
+> __kvmppc_vcpu_run is a block box to me yet. I think it first makes sense
+> to move it C and then try use the xfer_to_guest_mode_handle_work.
+> nick, vaibhav, any idea on __kvmppc_vcpu_run on how is it handling signal pending, and need_resched.
+> 
+> 
+> So this is going to need more work specially on *2 and doing that is also key for preempt=lazy/full to work
+> for kvm on powepc. will try to figure out.
+
+Okay.
+
+Sebastian
 
