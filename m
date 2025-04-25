@@ -1,279 +1,128 @@
-Return-Path: <linux-kernel+bounces-619768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304A0A9C0F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D57AA9C0F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE641BA6C6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE45C3BCD32
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE39236430;
-	Fri, 25 Apr 2025 08:28:10 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06D3233728;
+	Fri, 25 Apr 2025 08:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KZBKIpvw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PVOi/gi6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34420234973
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB20417A2EE
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745569689; cv=none; b=UCa7fB+YcCx6mG4jbjOyXanIHvQ1sT2FRyQh7VtuK4jLTk6/mmSRMFPnH3BVcyfnmTO4FA5BjXhmW1wBmmDN3rUt8jsVnPHiK9RILJLuchKw9YJEhTFSyBQ/XGDsSoNzUvu8O8nnoZpy/cf9gYSsDVZSEBVqhGx6X1BK1CGGXoI=
+	t=1745569652; cv=none; b=mK+Y8lxKGshh9ssAH3zCX+TMN07FV3/4qperfd6kjMQe7lO1eUGCXIac9LH6ZXQL9owyacaXQw1luv/2e0H3ZYrVKsOYXAdfBHcWB7F/6N9tAPtRWmTfL400Viai7woGEzKnVxfsY/GIQVS8W3evyEdvF7sFqph/YSMX90WhhAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745569689; c=relaxed/simple;
-	bh=yB5Qsupcz0fxdbNv9H/qgpIBrDab5OU/fAKXs0hQRfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RIu0LJJqeP/NBISHutaQ/JyDONiz9gEz0Hcfcnmi/bGe/wKv0rQgTXNOYGlhuKPK2Wk8vdhr/LmID5DHSbp/Z2OHhZPsYsmZWKbBZHuv2LhS5r86BfIK/izddE1YdPxRTAwauWlvJXi3gCQPFmxH9SDtJXOlATEYfyj7Haf/Jw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1A6CC21168;
-	Fri, 25 Apr 2025 08:27:53 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 034EC13A8B;
-	Fri, 25 Apr 2025 08:27:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SMqDAIlHC2htfwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 25 Apr 2025 08:27:53 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Fri, 25 Apr 2025 10:27:25 +0200
-Subject: [PATCH v4 5/9] tools: Add testing support for changes to rcu and
- slab for sheaves
+	s=arc-20240116; t=1745569652; c=relaxed/simple;
+	bh=dj0VyeZM4DQ+yC1nQ6mYmlEHFimAQiSWDvopuv5UeSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LvjINvwQHuIIpZCAn3p25r60ApablYUOQXTz6VJz35zSua6BdlzU0BYv8YULhfbI9OagILhczXxZIOKmIQ9L4rRXkM4HAtjnrtRuFr5mz710X/NuZt0+ViLoOjy0p9g8fPTsQiVCfu68hCbrS85/QYERBwsQN6WPhFo6Jkl0zA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KZBKIpvw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PVOi/gi6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 25 Apr 2025 10:27:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745569648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bwKc8vWDzsGShvSx8/ujEE3vSUGRy3MUCHV+p+G4yOM=;
+	b=KZBKIpvwvkXoKwK4SyKQlVDvDURRV3Awgp4XWdhfCQ/kvw4/+prjS74f+0cfZTiCNThQHP
+	SUZTrzh1MqpfaTFgfxOL/Afi+rwNmZBqAPsv2g7rI6q/eRAAMqF2FarnHsoyOcQuHdCyoh
+	JCVgXkCcXxVT8EVeE7hjmKgkDN1X2oDZheVA/sMvcomZJO05Kb3ph6BW+cf1N/4lTVqsG1
+	D0l1Pu/1LwDemaCW6wg55nnXsE+qCHjQaaWHitNqZ5dUh6k9Lx+iazIsojLEVu8xtKAUQS
+	6A4nYAkyLYUS9okHgSGVkrl/mJlkNdjsLYFG7qzUqU/95ezUtQ4pJzWp43THjA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745569648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bwKc8vWDzsGShvSx8/ujEE3vSUGRy3MUCHV+p+G4yOM=;
+	b=PVOi/gi69ZVtKyEIcPPxTfvtIYIfLesnLQgo3tRdrBwYTCpNcLJHYy2PtD0qW+oqfHAwhV
+	QaQ37ecJPxP0TNAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Junxiao Chang <junxiao.chang@intel.com>
+Cc: tomas.winkler@intel.com, Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+	Vitaly Lubart <vitaly.lubart@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	furong.zhou@intel.com
+Subject: Re: [PATCH] drm/i915/gsc: mei interrupt top half should be in irq
+ disabled context
+Message-ID: <20250425082726.Z3fE3m9I@linutronix.de>
+References: <20250424065609.624457-1-junxiao.chang@intel.com>
+ <20250425060455.641008-1-junxiao.chang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-slub-percpu-caches-v4-5-8a636982b4a4@suse.cz>
-References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
-In-Reply-To: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz, 
- "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-X-Mailer: b4 0.14.2
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 1A6CC21168
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250425060455.641008-1-junxiao.chang@intel.com>
 
-From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+On 2025-04-25 14:04:54 [+0800], Junxiao Chang wrote:
+> MEI GSC interrupt comes from i915. It has top half and bottom half.
+> Top half is called from i915 interrupt handler. It should be in
+> irq disabled context.
+> 
+> With RT kernel, by default i915 IRQ handler is in threaded IRQ. MEI GSC
+> top half might be in threaded IRQ context. generic_handle_irq_safe API
+> could be called from either IRQ or process context, it disables local
+> IRQ then calls MEI GSC interrupt top half.
+> 
+> This change fixes A380/A770 GPU boot hang issue with RT kernel.
+> 
+> Fixes: 1e3dc1d8622b ("drm/i915/gsc: add gsc as a mei auxiliary device")
+> Tested-by: Furong Zhou <furong.zhou@intel.com>
+> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+> ---
+>  drivers/gpu/drm/i915/gt/intel_gsc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gt/intel_gsc.c b/drivers/gpu/drm/i915/gt/intel_gsc.c
+> index 1e925c75fb080..a099d885508ac 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_gsc.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_gsc.c
+> @@ -284,7 +284,9 @@ static void gsc_irq_handler(struct intel_gt *gt, unsigned int intf_id)
+>  	if (gt->gsc.intf[intf_id].irq < 0)
+>  		return;
+>  
+> -	ret = generic_handle_irq(gt->gsc.intf[intf_id].irq);
+> +	/* It can be called in both irq context and in thread context */
 
-Make testing work for the slab and rcu changes that have come in with
-the sheaves work.
+I don't know why this deserves a comment. However, generic_handle_irq()
+is used from the IRQ chip, everything that signals the interrupt. This,
+if it comes from an interrupt handler itself, should use the _safe()
+variant. It used to be a issue also with threaded interrupts on !RT but
+for other reasons this is no longer the case.
 
-This only works with one kmem_cache, and only the first one used.
-Subsequent setting of kmem_cache will not update the active kmem_cache
-and will be silently dropped because there are other tests which happen
-after the kmem_cache of interest is set.
+> +	ret = generic_handle_irq_safe(gt->gsc.intf[intf_id].irq);
+> +
+>  	if (ret)
+>  		gt_err_ratelimited(gt, "error handling GSC irq: %d\n", ret);
+>  }
 
-The saved active kmem_cache is used in the rcu callback, which passes
-the object to be freed.
-
-The rcu call takes the rcu_head, which is passed in as the field in the
-struct (in this case rcu in the maple tree node), which is calculated by
-pointer math.  The offset of which is saved (in a global variable) for
-restoring the node pointer on the callback after the rcu grace period
-expires.
-
-Don't use any of this outside of testing, please.
-
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
----
- tools/include/linux/slab.h            | 41 ++++++++++++++++++++++++++++++++---
- tools/testing/shared/linux.c          | 24 ++++++++++++++++----
- tools/testing/shared/linux/rcupdate.h | 22 +++++++++++++++++++
- 3 files changed, 80 insertions(+), 7 deletions(-)
-
-diff --git a/tools/include/linux/slab.h b/tools/include/linux/slab.h
-index c87051e2b26f5a7fee0362697fae067076b8e84d..d1444e79f2685edb828adbce8b3fbb500c0f8844 100644
---- a/tools/include/linux/slab.h
-+++ b/tools/include/linux/slab.h
-@@ -23,6 +23,12 @@ enum slab_state {
- 	FULL
- };
- 
-+struct kmem_cache_args {
-+	unsigned int align;
-+	unsigned int sheaf_capacity;
-+	void (*ctor)(void *);
-+};
-+
- static inline void *kzalloc(size_t size, gfp_t gfp)
- {
- 	return kmalloc(size, gfp | __GFP_ZERO);
-@@ -37,9 +43,38 @@ static inline void *kmem_cache_alloc(struct kmem_cache *cachep, int flags)
- }
- void kmem_cache_free(struct kmem_cache *cachep, void *objp);
- 
--struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
--			unsigned int align, unsigned int flags,
--			void (*ctor)(void *));
-+
-+struct kmem_cache *
-+__kmem_cache_create_args(const char *name, unsigned int size,
-+		struct kmem_cache_args *args, unsigned int flags);
-+
-+/* If NULL is passed for @args, use this variant with default arguments. */
-+static inline struct kmem_cache *
-+__kmem_cache_default_args(const char *name, unsigned int size,
-+		struct kmem_cache_args *args, unsigned int flags)
-+{
-+	struct kmem_cache_args kmem_default_args = {};
-+
-+	return __kmem_cache_create_args(name, size, &kmem_default_args, flags);
-+}
-+
-+static inline struct kmem_cache *
-+__kmem_cache_create(const char *name, unsigned int size, unsigned int align,
-+		unsigned int flags, void (*ctor)(void *))
-+{
-+	struct kmem_cache_args kmem_args = {
-+		.align	= align,
-+		.ctor	= ctor,
-+	};
-+
-+	return __kmem_cache_create_args(name, size, &kmem_args, flags);
-+}
-+
-+#define kmem_cache_create(__name, __object_size, __args, ...)           \
-+	_Generic((__args),                                              \
-+		struct kmem_cache_args *: __kmem_cache_create_args,	\
-+		void *: __kmem_cache_default_args,			\
-+		default: __kmem_cache_create)(__name, __object_size, __args, __VA_ARGS__)
- 
- void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list);
- int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
-diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
-index 0f97fb0d19e19c327aa4843a35b45cc086f4f366..f998555a1b2af4a899a468a652b04622df459ed3 100644
---- a/tools/testing/shared/linux.c
-+++ b/tools/testing/shared/linux.c
-@@ -20,6 +20,7 @@ struct kmem_cache {
- 	pthread_mutex_t lock;
- 	unsigned int size;
- 	unsigned int align;
-+	unsigned int sheaf_capacity;
- 	int nr_objs;
- 	void *objs;
- 	void (*ctor)(void *);
-@@ -31,6 +32,8 @@ struct kmem_cache {
- 	void *private;
- };
- 
-+static struct kmem_cache *kmem_active = NULL;
-+
- void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)(void *))
- {
- 	cachep->callback = callback;
-@@ -147,6 +150,14 @@ void kmem_cache_free(struct kmem_cache *cachep, void *objp)
- 	pthread_mutex_unlock(&cachep->lock);
- }
- 
-+void kmem_cache_free_active(void *objp)
-+{
-+	if (!kmem_active)
-+		printf("WARNING: No active kmem_cache\n");
-+
-+	kmem_cache_free(kmem_active, objp);
-+}
-+
- void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list)
- {
- 	if (kmalloc_verbose)
-@@ -234,23 +245,28 @@ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
- }
- 
- struct kmem_cache *
--kmem_cache_create(const char *name, unsigned int size, unsigned int align,
--		unsigned int flags, void (*ctor)(void *))
-+__kmem_cache_create_args(const char *name, unsigned int size,
-+			  struct kmem_cache_args *args,
-+			  unsigned int flags)
- {
- 	struct kmem_cache *ret = malloc(sizeof(*ret));
- 
- 	pthread_mutex_init(&ret->lock, NULL);
- 	ret->size = size;
--	ret->align = align;
-+	ret->align = args->align;
-+	ret->sheaf_capacity = args->sheaf_capacity;
- 	ret->nr_objs = 0;
- 	ret->nr_allocated = 0;
- 	ret->nr_tallocated = 0;
- 	ret->objs = NULL;
--	ret->ctor = ctor;
-+	ret->ctor = args->ctor;
- 	ret->non_kernel = 0;
- 	ret->exec_callback = false;
- 	ret->callback = NULL;
- 	ret->private = NULL;
-+	if (!kmem_active)
-+		kmem_active = ret;
-+
- 	return ret;
- }
- 
-diff --git a/tools/testing/shared/linux/rcupdate.h b/tools/testing/shared/linux/rcupdate.h
-index fed468fb0c78db6f33fb1900c7110ab5f3c19c65..c95e2f0bbd93798e544d7d34e0823ed68414f924 100644
---- a/tools/testing/shared/linux/rcupdate.h
-+++ b/tools/testing/shared/linux/rcupdate.h
-@@ -9,4 +9,26 @@
- #define rcu_dereference_check(p, cond) rcu_dereference(p)
- #define RCU_INIT_POINTER(p, v)	do { (p) = (v); } while (0)
- 
-+void kmem_cache_free_active(void *objp);
-+static unsigned long kfree_cb_offset = 0;
-+
-+static inline void kfree_rcu_cb(struct rcu_head *head)
-+{
-+	void *objp = (void *) ((unsigned long)head - kfree_cb_offset);
-+
-+	kmem_cache_free_active(objp);
-+}
-+
-+#ifndef offsetof
-+#define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
-+#endif
-+
-+#define kfree_rcu(ptr, rhv)						\
-+do {									\
-+	if (!kfree_cb_offset)						\
-+		kfree_cb_offset = offsetof(typeof(*(ptr)), rhv);	\
-+									\
-+	call_rcu(&ptr->rhv, kfree_rcu_cb);				\
-+} while (0)
-+
- #endif
-
--- 
-2.49.0
-
+Sebastian
 
