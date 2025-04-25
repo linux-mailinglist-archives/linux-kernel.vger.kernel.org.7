@@ -1,188 +1,91 @@
-Return-Path: <linux-kernel+bounces-620084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528E9A9C5B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38535A9C66A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C944188BD5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465B83ABC09
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847F923BCF1;
-	Fri, 25 Apr 2025 10:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9548023D2A1;
+	Fri, 25 Apr 2025 10:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+rJyAKJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD8119D8A7;
-	Fri, 25 Apr 2025 10:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HNkqpsCK"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD47D1FC7E7;
+	Fri, 25 Apr 2025 10:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745577513; cv=none; b=M3KlUz1Drd31tEtr1GulRhrHE7A8zItrg17ylzoSYDouV4xcBJ0GjObWV2vmnra7zm9iWj+anrKaXpMt4CWHavcNfMSqJIc7/0uCC46CgUyh3ZvV1GSZp+fhqMZmM6gMNfEkk7AOrifMVx2yp+Lf4aa/7LvERFm9TBGr3q/7UzM=
+	t=1745578629; cv=none; b=EbVr6vIl/Rm+iJ6AP4RL75HuUsNWz9pdLnf7A3hkQoHxFwOl5w7svjmwNbpcLd1O8La9jR2LODYESHlpP5QXEDdf9rFN0intPpzaX2ktuMeNPN4B4/zU9bd9flUsq9PxiDMCRajnJAxlphzZFEEaDSgvxWl70tG3Ruy+NZiDPfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745577513; c=relaxed/simple;
-	bh=5BmKuaaK+bDkUvD9xGKp7macz+ok6g4gCHws+01z3U0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jH4vhEZgVsDDzZruTkq9pYdivtJaxFvrexIyqDXz2vXFSZgZr4BSmgNYo5ulBlERIqYvXjJLNtsB+ULACPoGi/vLWQj1kbPi3DSkosi+HJqbC2A2grux+sGJ8Erwm4iCbxS6yWZ1NryDhY2RXGV3DY3qU6T7yJGQQuOn5uMcmPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+rJyAKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D17E2C4CEE4;
-	Fri, 25 Apr 2025 10:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745577512;
-	bh=5BmKuaaK+bDkUvD9xGKp7macz+ok6g4gCHws+01z3U0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o+rJyAKJXkOpPpNhZ+W3PYmkDKmOW9bevakn75pjPnLLTV6jvq0U1j2yZJ5VZ7hb7
-	 tlZFTGNFv9q9esE7jEvWCvkxSIiRlkPM4BRdRBWxva7yjlaIFm+6CsS9n/n9kIR5ER
-	 UDHJxMsfMAErm6sGOyXf8pcBRJkscwmTXcNPKcWYOOjbnfIWQWFAvoeO+Ds1IUP5UX
-	 LVXFR2ViZxtU9wl7OMkVlA30CvYggAuL6fQAZlbnYHv8ziDrbcbv4hTfCYBHwH/FsF
-	 H/I6CFG0j4fWjY/MuUQjCVb2AvB8aoBgiw0uv36Jo2L5Cwh/alrlsZG2KYZC5f1qSX
-	 iY4OpuhTn4U/Q==
-Date: Fri, 25 Apr 2025 12:38:29 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Artur Rojek <artur@conclusive.pl>
-Cc: Johannes Berg <johannes@sipsolutions.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jakub Klama <jakub@conclusive.pl>, Wojciech Kloska <wojciech@conclusive.pl>, 
-	Ulf Axelsson <ulf.axelsson@nordicsemi.no>
-Subject: Re: [RFC PATCH v2 1/2] dt-bindings: wifi: Add support for Nordic
- nRF70
-Message-ID: <20250425-capable-tapir-of-energy-a9e03f@kuoka>
-References: <20250422175918.585022-1-artur@conclusive.pl>
- <20250422175918.585022-2-artur@conclusive.pl>
+	s=arc-20240116; t=1745578629; c=relaxed/simple;
+	bh=U1AP8Vp6gymlW5LbPui+5j590E4DK1rbwyZvEsY/+mo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MDKcwn6j0fz70antGNEFKfyrIaWTrW8SMq1XXF5sDLkAnEZwrKwIVs3nk3fJxXsZXOg66dWVP9v18ACKDBwyfdAJOX97gAJH9lrMoCEOeKm+TVW/KyGRZDNIPW4YZGWkyy7jef2sWH2j4bQcc7W64d90yiX7PCgYJ3i97H61Apw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HNkqpsCK; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=e+aUN
+	DuOX0Nk2fqzeFbWOErRpUPr6PDp+yz5IsRUTmA=; b=HNkqpsCKZUdvC4djhRc3A
+	gTpcDsVR/ZCtyrBs12xl3AKZFo5o0+OGguJRY9U+Ls1z/sQ+THcDpVq6CpLwTa79
+	8JRpGEYEnGzw9osxmrggxqLmDMQwS8LPxROxQsAoH8ASsFHhcKE8sZY5lKRyObZW
+	v0p3fScNOUvMuU1HHeCFpE=
+Received: from chi-Redmi-Book.. (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgAHVbB1agtoLX64Ag--.54305S2;
+	Fri, 25 Apr 2025 18:56:55 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: cem@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [RFC PATCH 0/2] Implement concurrent buffered write with folio lock
+Date: Fri, 25 Apr 2025 18:38:39 +0800
+Message-ID: <20250425103841.3164087-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250422175918.585022-2-artur@conclusive.pl>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgAHVbB1agtoLX64Ag--.54305S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZry7KFW7AFW7Jry3Cw1rJFb_yoWDCwcE9F
+	4vqryxJr10qF4UJaySkFn8JrZ09a1UGF18AFWktF43Wr98AFnIgw4DArySkr1qg3WUt3Z5
+	JrWkA34fCrnFkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1Gg4PUUUUU==
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBgAE6nWgLW4qwQgABsn
 
-On Tue, Apr 22, 2025 at 07:59:17PM GMT, Artur Rojek wrote:
-> Add a documentation file to describe the Device Tree bindings for the
-> Nordic Semiconductor nRF70 series wireless companion IC.
-> 
-> Signed-off-by: Artur Rojek <artur@conclusive.pl>
-> ---
-> 
-> v2: - rename the patch subject to comply with DT submission rules 
->     - fix a typo in reg property name and correct its indentation
->     - replace all gpio based properties as follows:
->       - irq-gpios with interrupts/interrupt-names
->       - bucken-gpios/iovdd-gpios with vpwr-supply/vio-supply
->     - clarify usage of said properties in their descriptions
->     - add a reference to spi-peripheral-props.yaml#
->     - specify unevaluatedProperties
->     - drop unused voltage-ranges property
->     - update bindings example accordingly w/ above changes
-> 
->  .../bindings/net/wireless/nordic,nrf70.yaml   | 71 +++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml b/Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml
-> new file mode 100644
-> index 000000000000..c9a41b61c624
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/wireless/nordic,nrf70.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nordic Semiconductor nRF70 series wireless companion IC
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-What is a wireless companion? You miss description - see example-schema.
+This is a patch attempting to implement concurrent buffered writes.
+The main idea is to use the folio lock to ensure the atomicity of the
+write when writing to a single folio, instead of using the i_rwsem.
 
-> +
-> +maintainers:
-> +  - Artur Rojek <artur@conclusive.tech>
-> +
-> +properties:
-> +  compatible:
-> +    const: nordic,nrf70
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: HOST_IRQ line, used for host processor interrupt requests.
+I tried the "folio batch" solution, which is a great idea, but during
+testing, I encountered an OOM issue because the locked folios couldn't
+be reclaimed.
 
-Drop description, obvious.
+So for now, I can only allow concurrent writes within a single block.
+The good news is that since we already support BS > PS, we can use a
+larger block size to enable higher granularity concurrency.
 
-> +
-> +  interrupt-names:
-> +    description: Name for the HOST_IRQ line. This must be set to "host-irq".
-> +    const: host-irq
+These ideas come from previous discussions:
+https://lore.kernel.org/all/953b0499-5832-49dc-8580-436cf625db8c@163.com/
 
-Drop interrupt-names, not really useful for one entry.
 
-> +
-> +  vpwr-supply:
-> +    description: BUCKEN line, used for PWR IP state control.
-> +
-> +  vio-supply:
-> +    description: IOVDD line, used for I/O pins voltage control. Optional.
+Chi Zhiling (2):
+  xfs: Add i_direct_mode to indicate the IO mode of inode
+  xfs: Enable concurrency when writing within single block
 
-Drop "Optional". Don't repeat constraints in free form text.
+ fs/xfs/xfs_file.c  | 71 ++++++++++++++++++++++++++++++++++++++++++----
+ fs/xfs/xfs_inode.h |  6 ++++
+ 2 files changed, 72 insertions(+), 5 deletions(-)
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - vpwr-supply
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-
-Missing ref to ieee802/wireless devices schema (wireless recently
-merged), assuming this is WiFi.
-
-Neither commit msg nor description explains me what this is. Both
-or at least one should.
-
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    reg_nrf70_buck: regulator-nrf70-buck {
-
-Drop this node, not relevant.
-
-> +        compatible = "regulator-fixed";
-> +        regulator-name = "nrf70_buck";
-> +        gpio = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-> +        enable-active-high;
-> +    };
-> +
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        nrf7002@0 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-WiFi is usually "wifi".
-
-Best regards,
-Krzysztof
+-- 
+2.43.0
 
 
