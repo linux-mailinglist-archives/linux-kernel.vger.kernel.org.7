@@ -1,125 +1,147 @@
-Return-Path: <linux-kernel+bounces-620952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0ECA9D1CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81588A9D161
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF5E21C01BF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE7473B374E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4416F24C080;
-	Fri, 25 Apr 2025 19:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4C821ADA6;
+	Fri, 25 Apr 2025 19:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="rh8qo9ii"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="AsIHlZ1j"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D37229B18;
-	Fri, 25 Apr 2025 19:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6831BD9D0
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745609671; cv=none; b=X/9HyApINxsRp2XYzkSMZ2dIq0k+dNmS7cTDO+yPIjgBhxXFqwwnbMD8Hf2KZLA6Uv3OVCAEWAEs4e4mPPsUzn6xP2SVIw6LetYXy82udlU15XYy56ZjWHmtjKAnbGPLwEscjvSuzf7NBdMD0fs9hihMKfJbGlD/JgyNwO9iEY4=
+	t=1745608813; cv=none; b=WeyXUbhmW70+4NQNIpuUu/tRsNMUHdQgv6tSGH5rRCrqs6ycBFMdIrtpEQvx7AizHvzjp4X2FFJVXeFTjT0Sz2DzoNB0DAKI6MyWWHCtjXEmFoYhuAcrNL+NAYDd5/8ii2dGFIJ7NqzgMHSfX+5JDDNIlrDu3JFQBjy2PS1lt8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745609671; c=relaxed/simple;
-	bh=CM+PKNzTMrafg/UMGmEjcfBGyKKh3b/TNN6P0Wd5yfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hHVIomKccKUxzw5KhBQce0Rwg/MHBdoiJ1PqovRguGWVM5onKZtoODFXst6ueHYh2qg70KyK2t4d+suoven4vosIIw0xEyVKm3v8MNjOU/DhzNiLgI5vl1gILqR8eFax/xQok6VVy0IqIxtkh4Xs8jmjMmowys2ozW1v2w/bGBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=rh8qo9ii; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [217.114.34.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AC69A664659;
-	Fri, 25 Apr 2025 21:34:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1745609668;
-	bh=CM+PKNzTMrafg/UMGmEjcfBGyKKh3b/TNN6P0Wd5yfA=;
-	h=From:Subject:Date;
-	b=rh8qo9ii/BVX8HAFIyckd58SM+AxfjSk0e7CIXHcAhvVOAqZFtRT760GF9I2TF75v
-	 /nFJV5Cy5o2i4djycniRY+STcpdG40dl8sNY1I8WEAkV+I89rn4mq8Qtje4ZHK+qad
-	 /S9czj5WO1nwOZhR7bnybvUvBmrzftNHgl9DZqKqB0pZcZ7geZddI78w63dBEEPdT4
-	 09W5xWF3HXNIipVslqckHDtLWdAl9XMcuh3SxzGUPKvwXNmudWJvJyw3UBf7y94C/a
-	 RVYKkH0unVU0JJRQJwm63fouLQ1+K/mAjLGLcv8tO7pCsnmUJZP1gODnIlFKuh0xp5
-	 TlgCFLECkTnHw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject: [PATCH v1 00/19] ACPICA: ACPICA 20250404
-Date: Fri, 25 Apr 2025 21:19:35 +0200
-Message-ID: <12671029.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1745608813; c=relaxed/simple;
+	bh=UizIfOXDw7K3bISuywDn5DUtvUYwR+8wO0LDq5X4GLo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rzWafynvHiL8YcBfjulRui74EeMbzTkDc8Hxhw+jXFa6tVHaDfcDSn/EWbL7Z902A4StFxTf+gpqOsHh4EzChWKrk6B1qQgroV2BkLYMpirenMY/OM7nYS6NR5xwnV1AYJBbuPiEkBR6tbYDqKja+U6bvqBQrLUxkl5k4TaJxzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=AsIHlZ1j; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4768f90bf36so31125151cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=libre.computer; s=google; t=1745608810; x=1746213610; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tSiF7FhF0tHfOGpGfJXsH5sp5D81/QkR5l4lerbklaI=;
+        b=AsIHlZ1jE5XQ8lJtsA313Q074M4NzIfxw6H6ZZ8/PkiY0qA1wrf4Wu63nT67La4+IS
+         DI/452ay1qr6ra4NJBMe9TwWgrQ44uvzFdH2uOBqmmXFN3xuFmX4NFXnSGCqYslfTrkq
+         M0n4v6bXEjgsqpcGn/JvAL8zSAjwxRd4t1cU0kviDwuKiQpKokpGYqLZ0QGFhR4kPPJ3
+         pZqVt3sHDgVINVQ097OrkMNuiE3M0WxtxIFKKtk0gPwKDLEV3vPT3Iqjiq38iQOr0ajX
+         paxSqEaSxPZ8iLOTA1OyJ4EJRkjLyNu8UnC/7lHctpugoHQEb5NYFT2Fw7vI4Hroh8o4
+         jJvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745608810; x=1746213610;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tSiF7FhF0tHfOGpGfJXsH5sp5D81/QkR5l4lerbklaI=;
+        b=hGzfKqXgOb8wqxJ3MYFDrgSmN0+fJ8MIjMp8BWxNxYYwcG1Iu1XMs1gSAlk+yKyUvZ
+         x+nwQPQ3rei6Xe5QicyGSDoxBA+MAi2P6sMXQ85jlsLDxmEBEFuCZVdYn/IamodR0hiv
+         UaPJg7JBu6OYweTwQvEeySIcs0gfhKlycl2jkS0yVOIxLRq/U1P30dumYdYK3YONfBuU
+         FCp1rF9fOGXWVo9511Gem4AqaaI/c3Cx22q5QAkJSjdY+gF917qw7L7jGr59SZMKFPzS
+         SXwxgX2/iUhNAMLevHNlpEtsLqpDx1/9KJ+RAGEkKjPdpyZgTuQbosnSEhFHvatBmNeB
+         CfDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHmqz8hivxmtCLe2KrqgqeZYgzzXWnqwg/5SikJHGPWLfZiG+STzcg1Fh7d9JZLW5RAsZECGDEUUGsNl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEaJIQKXEDnTZ8PwoDK6uiy4KEUqxiI8LkQWyFz0gDptloxL/r
+	MRYEURDD9tUilHM6DRzsO1mz9UnUcu83xwogk8nmZ6B2I242HU2t9FBqU8rZxA==
+X-Gm-Gg: ASbGncuC1EDgU79XZIlDE/gztUafUAgGc8gznpa49Xjxhi9RIE62WV0QJF0tpsd0kfl
+	/JQtSFHswszGDgd5xNaRzfqXJjFoWjhaRYn/iw3Rk80h2yv/26pL72Siwk0+ycYv1fR03Vp28tA
+	zZ7CnDgc9IPAlCMpudvtxSZlbUI0BmSqdRUcGxFDVor82WSyZTDOFtPXfvE5veAmES9fm/eiEVV
+	+Yvd7Ar+7ludaV1gwEQG3d/4UaDIUk2twX4SUcoTf4DasbxuddxAo+0nKa6By3q44y067twotXC
+	DKaKRB/zDIeixxo9edsz8E0mVjpMmwXg72gY
+X-Google-Smtp-Source: AGHT+IGY/FeexPuDpgYb8JxPjPFvAGcEWUmeISWIErTY/veMEqRNOKkQikr2E7yj9IXljqqh0c90qg==
+X-Received: by 2002:ac8:7d4c:0:b0:476:a895:7e87 with SMTP id d75a77b69052e-481335610c0mr7228001cf.48.1745608810494;
+        Fri, 25 Apr 2025 12:20:10 -0700 (PDT)
+Received: from localhost ([2607:fb91:bdd9:47ad:b39:2164:cbe2:1695])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9f1cc02esm29045181cf.30.2025.04.25.12.20.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 12:20:10 -0700 (PDT)
+From: Da Xue <da@libre.computer>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	stable@vger.kernel.org,
+	Da Xue <da@libre.computer>
+Subject: [PATCH v3] net: mdio: mux-meson-gxl: set reversed bit when using internal phy
+Date: Fri, 25 Apr 2025 15:20:09 -0400
+Message-Id: <20250425192009.1439508-1-da@libre.computer>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 217.114.34.19
-X-CLIENT-HOSTNAME: 217.114.34.19
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheefudelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepffffffekgfehheffleetieevfeefvefhleetjedvvdeijeejledvieehueevueffnecukfhppedvudejrdduudegrdefgedrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedruddugedrfeegrdduledphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
+Content-Transfer-Encoding: 8bit
 
-Hi All,
+This bit is necessary to receive packets from the internal PHY.
+Without this bit set, no activity occurs on the interface.
 
-This series of patches represents upstream ACPICA changes made between
-the 20241212 release and the 20250404 release that have not been included
-into the Linux source code yet.
+Normally u-boot sets this bit, but if u-boot is compiled without
+net support, the interface will be up but without any activity.
 
-It contains the following material:
+The vendor SDK sets this bit along with the PHY_ID bits.
 
-Ahmed Salem (3):
-      ACPICA: Avoid sequence overread in call to strncmp()
-      ACPICA: Apply ACPI_NONSTRING in more places
-      ACPICA: Replace strncpy() with memcpy()
+Fixes: 9a24e1ff4326 ("net: mdio: add amlogic gxl mdio mux support");
+Signed-off-by: Da Xue <da@libre.computer>
+---
+Changes since v2:
+* Rename REG2_RESERVED_28 to REG2_REVERSED
 
-Alexey Neyman (1):
-      ACPICA: Interpret SIDP structures in DMAR
+Link to v2:
+https://patchwork.kernel.org/project/linux-amlogic/patch/20250331074420.3443748-1-christianshewitt@gmail.com/
+---
+ drivers/net/mdio/mdio-mux-meson-gxl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Colin Ian King (1):
-      ACPICA: Utilities: Fix spelling mistake "Incremement" -> "Increment"
-
-Kees Cook (2):
-      ACPICA: Introduce ACPI_NONSTRING
-      ACPICA: Apply ACPI_NONSTRING
-
-Saket Dumbre (2):
-      ACPICA: Update copyright year
-      ACPICA: Logfile: Changes for version 20250404
-
-Shiju Jose (1):
-      ACPICA: actbl2.h: ACPI 6.5: RAS2: Rename structure and field names of the RAS2 table
-
-Sudeep Holla (1):
-      ACPICA: Drop stale comment about the header file content
-
-Sunil V L (1):
-      ACPICA: actbl2: Add definitions for RIMT
-
-Tamir Duberstein (1):
-      ACPICA: Apply pack(1) to union aml_resource
-
-Tony Luck (5):
-      ACPICA: infrastructure: Add new header and ACPI_DMT_BUF26 types
-      ACPICA: actbl2.h: MRRM: Add typedef and other definitions
-      ACPICA: MRRM: Some cleanups
-      ACPICA: infrastructure: Add new DMT_BUF types and shorten a long name
-      ACPICA: actbl2.h: ERDT: Add typedef and other definitions
-
-Zhe Qiao (1):
-      ACPICA: Adjust the position of code lines
-
-gldrk (1):
-      ACPICA: utilities: Fix overflow check in vsnprintf()
-
-Thanks!
-
-
+diff --git a/drivers/net/mdio/mdio-mux-meson-gxl.c b/drivers/net/mdio/mdio-mux-meson-gxl.c
+index 00c66240136b..3dd12a8c8b03 100644
+--- a/drivers/net/mdio/mdio-mux-meson-gxl.c
++++ b/drivers/net/mdio/mdio-mux-meson-gxl.c
+@@ -17,6 +17,7 @@
+ #define  REG2_LEDACT		GENMASK(23, 22)
+ #define  REG2_LEDLINK		GENMASK(25, 24)
+ #define  REG2_DIV4SEL		BIT(27)
++#define  REG2_REVERSED		BIT(28)
+ #define  REG2_ADCBYPASS		BIT(30)
+ #define  REG2_CLKINSEL		BIT(31)
+ #define ETH_REG3		0x4
+@@ -65,7 +66,7 @@ static void gxl_enable_internal_mdio(struct gxl_mdio_mux *priv)
+ 	 * The only constraint is that it must match the one in
+ 	 * drivers/net/phy/meson-gxl.c to properly match the PHY.
+ 	 */
+-	writel(FIELD_PREP(REG2_PHYID, EPHY_GXL_ID),
++	writel(REG2_REVERSED | FIELD_PREP(REG2_PHYID, EPHY_GXL_ID),
+ 	       priv->regs + ETH_REG2);
+ 
+ 	/* Enable the internal phy */
+-- 
+2.39.5
 
 
