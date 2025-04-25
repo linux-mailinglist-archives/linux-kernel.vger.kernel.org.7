@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-620340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1F4A9C936
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE41FA9C98E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BCA43B19FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:48:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2BF1629EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C562024C084;
-	Fri, 25 Apr 2025 12:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9110D253948;
+	Fri, 25 Apr 2025 12:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="AYEPtaDk"
-Received: from outbound.pv.icloud.com (p-west1-cluster2-host10-snip4-2.eps.apple.com [57.103.64.143])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="13kMQh3I"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D788C12CD8B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468D919AD48;
+	Fri, 25 Apr 2025 12:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745585310; cv=none; b=QdRUd4+F9V1ZVlhJjCcUOiezq05VTsm/uwt2t1Zn6O51suaDdKpLkWL+c1RrtVR8JFl6icze0yPsrd0WYeIu2RzMdjHB0LcKz2E800rzE+Wyhv9OWND/ZgB6rKh4LAQCnKof9Z8S06Z5eauf7fQr1NZ6rnaeSM/8SHf7kczY9PY=
+	t=1745585605; cv=none; b=pmuyMBxMsIPPGmtnmP5Suir+spMXMFrct7KRcpBO71Iz9PA15/n3I2Fqx+1p/31ouFx21LGO49VXK4/el1b0HhpFGMS5u3z/KJ3NbphKsJJ4LY/JyEMR/DzvnYpEZ6VcJov8wwTZCpp3GMX0jSA3IPlUCQlvrVvQkSBG/0DWMM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745585310; c=relaxed/simple;
-	bh=ItpS2xzAPSqiTM6g+RYEGXCpDzJkoySyO6rgMQ7nBm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TsIENo5d0aLglY40STtyChvRaxjH7koCqAcw4GDtk9Ujb69ZdT35UwZef70dQakLlDyrh9PjGWhYzCK5OfULfSqtixvTr5TXHkFNlPIkrbhP3sJu2PueKKymkg9fmQSJTMAu5U5MrT3IlZe2RmWiDacjVt7KYxaue9NNO9kE/E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=AYEPtaDk; arc=none smtp.client-ip=57.103.64.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=W+hPrG8Sv+ny5hQpRcrUhB/yLitYHoz8WmN/Jhjb124=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=AYEPtaDkVr91tES583vF/Aokv2OvPGvIngv1rMPo6KBL8QQaQ8VLaJoXGn1QjRqNO
-	 mUvGJmEgGyBTWhJJDMDPo4JiFNKEVOY6zs8AH22yvNLwYy2eu4Ry8pytpLiBfFP+tU
-	 KhAxeyWEmU//QL37S2ELlbe3lF3xMQWC3go/LwTrFAy2RjWAmCbiXWpgkjbLxpPvYX
-	 ic5yJioMPilMMKTOfJwjHWGdL8jmoJqS/Xk1Wwbx8CnmEZNaRs/UuhgAammF0rsbRu
-	 Z8a5YjdWoVk5MMzDagNB/Wd+hlGZc/xCZf6BCK3dk77fDH+BIA//zngsi95kYHjbTT
-	 pmvYg6O9dqvLw==
-Received: from outbound.pv.icloud.com (localhost [127.0.0.1])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id 0C19E1800872;
-	Fri, 25 Apr 2025 12:48:26 +0000 (UTC)
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 07AE21800869;
-	Fri, 25 Apr 2025 12:48:24 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Fri, 25 Apr 2025 20:48:10 +0800
-Subject: [PATCH v3] serdev: Refine several error or debug messages
+	s=arc-20240116; t=1745585605; c=relaxed/simple;
+	bh=zKwxpE0nQgrl5ku11YFdu+sIcrI+jdK+kOVP8m8d2hs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qkxVEQyZqNp/p+zwokkYwvmY4vDa4iIdYMQYgfp0SYJ0N7ntgvm1cRnFcwzIWQPuN/3OD9p3hHzfKxPkOcRbpxCIxnYLitn1ERcPUUubmJfoT1NKmLHriXxAwVJXb84sIcqY4emBiJiF3kXNe97grGQWp66jCVrTGITfU7hsMz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=13kMQh3I; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P7b9Ov005857;
+	Fri, 25 Apr 2025 14:53:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	yuP2hz4+AAmK0hgkk1ltz/sdzsPjbchhks48Sx2DD3M=; b=13kMQh3IKs5Bgb1s
+	JKteJKieilegE2C1DugoLk1YyWfEDKw7R1oPQ+7oMP2wHmEj6Q7Jau2a9GIkSIUe
+	+R3oO0hieOgT6eC8n63Ctx/zYYuIPA//LxRDRPZHa7O6hMcaWgES3NWy8ChhcvD4
+	/Ns/6t9thac6hfd/EYYdZacVr5grSLwT6cl46Z+Hg7iXPMalBpY/j0fd2o2VoC+N
+	osNiD60Qs5rvzSpzlpxALTZJkMxCnXNNVKj8DlwaLCSxysHDVRXDajFcye0+Eefm
+	jN0faqt2jDTLdyj5/cTywRh5b15CGARz01oYw1Agloj2Caf4L/VbkoWbwUrYjGGR
+	Wk6Z8A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jk3mkec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 14:53:01 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5872B40055;
+	Fri, 25 Apr 2025 14:51:56 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 344329F78E9;
+	Fri, 25 Apr 2025 14:50:08 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
+ 2025 14:50:07 +0200
+Received: from [10.252.15.6] (10.252.15.6) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
+ 2025 14:50:06 +0200
+Message-ID: <c78c1c19-cf11-4146-acda-fd435add6808@foss.st.com>
+Date: Fri, 25 Apr 2025 14:50:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] mfd: stm32-lptimer: add support for stm32mp25
+To: Lee Jones <lee@kernel.org>
+CC: <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jic23@kernel.org>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <robh@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
+ <20250314171451.3497789-3-fabrice.gasnier@foss.st.com>
+ <20250404144006.GB372032@google.com> <20250424130112.GD8734@google.com>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250424130112.GD8734@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-fix_serdev-v3-1-2e4ea8261640@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAImEC2gC/1WMQQ6CMBBFr0Jm7Zh2WkBdeQ9jTG2LzELQVhsN4
- e4WEhNYvv/z3gDRB/YRDsUAwSeO3HcZ1KYA25ru5pFdZiBBpdBE2PDnkh3nE+6dmaa92MkrZOE
- RfH7n2OmcueX46sN3bic5rf+MWmaSRIlUWaO0UI1T6vh8s+XObm1/hymUaCnrlUwo0Eiiyru61
- qpcy+M4/gAjSGch4wAAAA==
-X-Change-ID: 20250422-fix_serdev-9da04229081b
-To: Rob Herring <robh@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-serial@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_03,2025-04-24_02,2025-02-21_01
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 4/24/25 15:01, Lee Jones wrote:
+> On Fri, 04 Apr 2025, Lee Jones wrote:
+> 
+>> On Fri, 14 Mar 2025, Fabrice Gasnier wrote:
+>>
+>>> Add support for STM32MP25 SoC.
+>>> A new hardware configuration register (HWCFGR2) has been added, to gather
+>>> number of capture/compare channels, autonomous mode and input capture
+>>> capability. The full feature set is implemented in LPTIM1/2/3/4. LPTIM5
+>>> supports a smaller set of features. This can now be read from HWCFGR
+>>> registers.
+>>>
+>>> Add new registers to the stm32-lptimer.h: CCMR1, CCR2, HWCFGR1/2 and VERR.
+>>> Update the stm32_lptimer data struct so signal the number of
+>>> capture/compare channels to the child devices.
+>>> Also Remove some unused bit masks (CMPOK_ARROK / CMPOKCF_ARROKCF).
+>>>
+>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+>>> ---
+>>> Changes in V4:
+>>> - Add DIEROK, ARROK status flags, and their clear flags.
+>>> Changes in V2:
+>>> - rely on fallback compatible as no specific .data is associated to the
+>>>   driver. Compatibility is added by reading hardware configuration
+>>>   registers.
+>>> - read version register, to be used by clockevent child driver
+>>> - rename register/bits definitions
+>>> ---
+>>>  drivers/mfd/stm32-lptimer.c       | 33 ++++++++++++++++++++++++++-
+>>>  include/linux/mfd/stm32-lptimer.h | 37 ++++++++++++++++++++++++++++---
+>>
+>> At least the Clocksource driver depends on this.
+>>
+>> I need Acks from the other Maintainers before I can merge this.
+> 
+> Suggest you resubmit the set as a [RESEND] to re-gain traction.
+> 
 
-Refine several dev_err() and dev_dbg() messages to solve:
+Hi Lee,
 
-// hardcoded device name
-dev_dbg(dev, "...dev_name_str...")
+Thanks for suggesting.
+I recently found I needed to add a small delay in clocksource driver. So
+I just have sent a V5.
 
-// repeated device name since dev_dbg() also prints it as prefix
-dev_err(dev, "...%s...", dev_name(dev))
-
-// not concise as dev_err(dev, "...%d...", err)
-dev_err(dev, "...%pe...", ERR_PTR(err))
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-For messages printed by dev_err() and dev_dbg(), this patch series is
-to remove hardcoded or repeated device name.
----
-Changes in v3:
-- Squash both patches as Rob's comments
-- Simplify error code printing as Jiri's comments 
-- Link to v2: https://lore.kernel.org/r/20250424-fix_serdev-v2-0-a1226ed77435@quicinc.com
-
-Changes in v2:
-- Add one more patch to remove repeated device name pointed out by Greg
-- Link to v1: https://lore.kernel.org/r/20250423-fix_serdev-v1-1-26ca3403fd33@quicinc.com
----
- drivers/tty/serdev/core.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index eb2a2e58fe78fbbdb5839232936a994bda86d0b4..0213381fa35876f43f2f10f6c444160cde73a686 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -118,12 +118,11 @@ int serdev_device_add(struct serdev_device *serdev)
- 
- 	err = device_add(&serdev->dev);
- 	if (err < 0) {
--		dev_err(&serdev->dev, "Can't add %s, status %pe\n",
--			dev_name(&serdev->dev), ERR_PTR(err));
-+		dev_err(&serdev->dev, "Failed to add serdev: %d\n", err);
- 		goto err_clear_serdev;
- 	}
- 
--	dev_dbg(&serdev->dev, "device %s registered\n", dev_name(&serdev->dev));
-+	dev_dbg(&serdev->dev, "serdev registered successfully\n");
- 
- 	return 0;
- 
-@@ -783,8 +782,7 @@ int serdev_controller_add(struct serdev_controller *ctrl)
- 		goto err_rpm_disable;
- 	}
- 
--	dev_dbg(&ctrl->dev, "serdev%d registered: dev:%p\n",
--		ctrl->nr, &ctrl->dev);
-+	dev_dbg(&ctrl->dev, "serdev controller registered: dev:%p\n", &ctrl->dev);
- 	return 0;
- 
- err_rpm_disable:
-
----
-base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
-change-id: 20250422-fix_serdev-9da04229081b
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Best Regards,
+Fabrice
 
