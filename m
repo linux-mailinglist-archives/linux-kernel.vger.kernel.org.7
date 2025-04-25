@@ -1,169 +1,138 @@
-Return-Path: <linux-kernel+bounces-620653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A368AA9CDCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C72A9CDCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7571B8856F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD791B88E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131C2190497;
-	Fri, 25 Apr 2025 16:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C42418DB0E;
+	Fri, 25 Apr 2025 16:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yx33lm1a"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F5xaDdXM"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65EA1401B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF0C18CC1D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745597256; cv=none; b=aHo/OHJjcJR1C/jlGMMY+7F+Ii+HaArd2a40EJ9BIJfwUAPxcOVl2Bve/kMXtedFJcECcV5qcBx5i6XTiiTTDjpYXhXkdyzoiwfMniRuCb5r7aG9by5r85BeaBFO/Wn9IoJNku+/OcGCs4XyokqEpICO5yB2PJJBgzCo53IZSAE=
+	t=1745597290; cv=none; b=fUFj1BkGKHV1gjSFXHCgY2CfBidEb7kAJhBsTRvmO4V+eV3eL8ECmZ/4TGJ+wbG+BeCDaxVcK8g5080wdq0Z+nqVl99Ll7AFPqb4ZI10oGV1dDl5NTsN0sugOIezRAmKe++TcnYr9ktYz7uIZJI7ugwkmRiNok5L+Dhvi09LwJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745597256; c=relaxed/simple;
-	bh=WZaOdc1wZPK/4EneNSUdAaK7q9TWH49BP3VyKo6ZwAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRnCEtUsBLqIxpANQb63UD0eYskvFEtx1HRv22MJO1Jxa2jT0Y5SK39khsridwk+C1dE940c0SIwY0dR8l9SMblRinAT+5JD4du6sj8edFH77KIxw3KUkNCzI5vA29ajuvYddNWFG1vz5ahZdqcuv8c3P3idsGGSfsxfv8alvVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yx33lm1a; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2295d78b433so28634385ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:07:33 -0700 (PDT)
+	s=arc-20240116; t=1745597290; c=relaxed/simple;
+	bh=pNXJ3/U0hKm/bEbC/CqrkzhF3ks8x7lnek+wO+2a7PI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aaaCZ/pGZFpT6UV0jcYUY3q1vSeE/4wd7WF9yolh5HrK34seJvjIxSgBlDGWLZCkpp1XgDJeO8saJ7hF69f3niRARsIgNkaJMSkAWsOpGggZ0hbEWK0jDeIjuwtVDtLXiH+1uSZr9DjJqUjycO8CEjlv4f8ENheCfFEl9rqHAPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F5xaDdXM; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e6e1cd3f1c5so1970718276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745597253; x=1746202053; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ma+iGpUn/AKMVwLZapT0W95tZe34aNE+r6szCxKHl2g=;
-        b=Yx33lm1aI5IbDKpBUpJeIh+x2DnQoN7pah6x4C+Hfr/k4pS9xBgOl8MknKaVbziTVU
-         qgXKSRMUijIeiGxw53ncGtJqZgox53RYArm1SATtoygYroRhcP2ZA3AyJ9JZBL1yw9w9
-         TLIZvausDBtEDhro8l44ZXqSSH21mq0dG/0ojz/uUPpeo8q+MYCy37HPQz97afBZOvXs
-         MtqQUju7JIlctQbrOqVw9pf7RzWBjw4LSLxD2JoILT8AOFcsmSgefMq4HanQeoE47gqb
-         YRDVT7FktzR4k/ViinwQJKK4YZ+EHF/G/Hd8RKz6b3NQDLp623QFJzyRL8Tu1RDsAVu+
-         3Vjw==
+        d=google.com; s=20230601; t=1745597288; x=1746202088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uhtHm5TJ7Sf0WfPuEXwkbJxFSOzkS7Oo48FDFS+N83o=;
+        b=F5xaDdXMkIHbF+yz6NXjr7Xj0QAgV0tj1qv7JJcIjzYBEYtWIoCbBMmDMelX5Ld4ub
+         hy52cjvDgTuj97k/6B/XcDzeG6ikVnhJmL8D9iPKcXEUGehyfjbbNhv7b10smAJ65z07
+         mF/mX2EpzzVTXgwkQz7ziXm6l4qN4gqYGXux9DTNMA6L04AHE8JmNPJf5ov/p+ywNHJi
+         ZR3hCToJQ2iED3jPQFSPGTxVgexSPgiEj87ra5Lns9s6UiKBdESmvJM5LH3YWbLaj5F6
+         DrVLxesG9Op2oWtU1wy4jXG8+9J9rKQq33ZqEqoqjCbktB1hHi3LQGjoTkKgmIoaEmZW
+         Vn3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745597253; x=1746202053;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ma+iGpUn/AKMVwLZapT0W95tZe34aNE+r6szCxKHl2g=;
-        b=NFKAxyib3EBo5SsEEOutMOBP61BisR7XQdIpvoeJi96vnWR10d9hc/U2BqwfTYeizt
-         LBoOB7jO39SjrGuj0uNUDU20K+hR9IND+S9QScH55XNvLZPpX0Bj1jVST/qZ5ZHiJBX4
-         EBShjk7rDqHPF6cBsuQoBm7OJi4ijrJ4L+4a/GFiVVPxG39lgrJ4/5Av/9j7FtNpnRpC
-         jqkqNP3SJcmxEbLdHxPVQ3MxWT53vl5TZcKsqSkdVRZ1TJsMXztEhaV/0LKiqjlGbkkO
-         Y9kGH75lA1ExpLby2jBcdCbXAvK3g4omjszy9R0D9pSL0LuciK4OW/umSTGXi8Pcl6w7
-         U5Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/fEZcXjDQbMWGyC5c8Be8Hb/bGTpk/Q+P+mEdbJgjDdOXX1zKmKJF+9vAmqmwSNHqAq+rk3kQ4aNrx6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5n+IOSxpjrZ33SWralrPxqeZ0WAnac2PEOx+GCCLyYEBYxOv1
-	9oMVYZoUvUx/1mj5eI9frEO+lNEP3wJ/ucU68uhSTGSidbKYQ/DsfVmXv5RKUA==
-X-Gm-Gg: ASbGncvQG5yAoRVqDSRMEz+atLKkg6TjyAbb7b72vuJ9sHPyLIamYtlCViOW/Gmu6kx
-	Gu39jrMbPG7rGnvrPQ3zY82+Yp2vLkMom1K7lTqi58uaxSM5BU06sS9FnWK8uqXtcDvs/dWASZw
-	9+Clv8e1y+LctbdcGn7hI17TmiyGyiVEZ9EQEOPLBCtrH9VhcyASqmKoJuc81LsmQOJxfirDSgY
-	QXh9aonGcABiXJ4pHEgXtb/3JQCOXBFqAYrz12HvhpU1PCJSn+pjatyZBf2WbcMkB0GxxmP5v7x
-	oWu2rBmU3a3/1Hcl6uspVwJ/DJd7b+9eAi/sjafdNO6MWtuUoCw6
-X-Google-Smtp-Source: AGHT+IGHuaRxdPoXNwRTHc78Guuv44yqP3/H83BEy2uFRv1C3A22TKg1MCU7FGgOqFZzBgCQSRzorg==
-X-Received: by 2002:a17:902:d2ce:b0:229:1717:882a with SMTP id d9443c01a7336-22dc69efaeemr2288965ad.4.1745597253205;
-        Fri, 25 Apr 2025 09:07:33 -0700 (PDT)
-Received: from thinkpad ([120.56.201.179])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15faee2091sm3098381a12.75.2025.04.25.09.07.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 09:07:32 -0700 (PDT)
-Date: Fri, 25 Apr 2025 21:37:25 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, quic_pyarlaga@quicinc.com, quic_vbadigan@quicinc.com, 
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v2 05/10] PCI: qcom: Add support for PCIe bus bw scaling
-Message-ID: <ammo5uyd65xyr2gexp6kgkyout2hezrlqqb7l77dix52wbtehl@ezw2ntaabjug>
-References: <20250313-mhi_bw_up-v2-0-869ca32170bf@oss.qualcomm.com>
- <20250313-mhi_bw_up-v2-5-869ca32170bf@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1745597288; x=1746202088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uhtHm5TJ7Sf0WfPuEXwkbJxFSOzkS7Oo48FDFS+N83o=;
+        b=R+PZmQVGlzq99miJYcMNeleR/Dbm3/tMa03YzMY54k3dYaTW+MV+Sz18X1++Bmglv5
+         Ms/mTV2pcfKmqoWXPMihlc3507EeLdgFGDr8mDWTr1AfFHWkg1xrmV+OHMYhcs6ORYnc
+         z5oJsOQehLKiyQzYBZ7tJfRobvMFeMaPjJnc3tOuxSVlx2B9mAdqrCyJQz7SWHkMBc3m
+         Y1aHaKoS4YmDomNrJIK5lmakp7CtP0f4kqyDf0PLJ0M+11pDziuJj5QjxQNb+56VRtS9
+         i+YO5lz438WfJ1pvKMSOoWMa/T4uyZa3PCX4XvR2XWfMKY5cnWLMSO2a0b631Q+1Ezt9
+         qEng==
+X-Forwarded-Encrypted: i=1; AJvYcCUm5jrTwWXvjeyPHX5/cELn84HHRG2GTNJHsAqb/5puidOP54Gsxb73ljdmMxV5+sGfdl1FX/9R3NPDRuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPA3FclYNco8nmkW5rM4KfFHwhmcpkceLLQJxWAkUJVTurW+Wi
+	c6QT0wnA80Ew45UW5UGCLgxTFFWLjgNyuVqHSBE+sDBNfMWQOLPGN/545nVhYbgjgE+IhGnc7vY
+	LpGSESHTvpuMb9F7yJXBZWqRnVnnSEtAjirq9
+X-Gm-Gg: ASbGncsRiD2tGjvK2Qe5o6Jy/JN8wE2upIPbB1EAEnEmhcRqCHQAvoQ3bJmnpZBgmb7
+	OY0U0bKVDGbYheelfjoIuCNc9jDPnZCfvJKiaWTgyeX5Nqu48y5vrLKwp107HYJdyJwA09GqWmD
+	XTb7aSNsmoMdaEZbhMiLmkCg58N5266mtd26XBnjycHGQbnp4Rmb44zUBY
+X-Google-Smtp-Source: AGHT+IEatrbWqjCHU8cjshAn8KWTbq6dL1hiJ3EiouEz0VgKtWX+noIp6HQyBBmsFL4VoX2ccj6KPu1mnwPRs4oW83I=
+X-Received: by 2002:a05:6902:2084:b0:e6d:f1b6:f696 with SMTP id
+ 3f1490d57ef6-e73165bf781mr3624687276.11.1745597287592; Fri, 25 Apr 2025
+ 09:08:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313-mhi_bw_up-v2-5-869ca32170bf@oss.qualcomm.com>
+References: <20250424215729.194656-1-peterx@redhat.com> <CADrL8HXuZkX0CP6apHLw0A0Ax4b4a+-=XEt0dH5mAKiN7hBv3w@mail.gmail.com>
+ <dfc6db2d-0af2-44c2-8582-7e783b0292ab@redhat.com>
+In-Reply-To: <dfc6db2d-0af2-44c2-8582-7e783b0292ab@redhat.com>
+From: James Houghton <jthoughton@google.com>
+Date: Fri, 25 Apr 2025 12:07:31 -0400
+X-Gm-Features: ATxdqUHADNxLtMHz3cAEkG3rEGMR6V7j-etzi4jHK5PVzArCZtZsDkvCN62uy6E
+Message-ID: <CADrL8HW--e8GVe+6aW7ZvDEBBDHp3cBC9Tcs_6duOJ5H+ZWNpQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mm/userfaultfd: Fix uninitialized output field for
+ -EAGAIN race
+To: David Hildenbrand <david@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 13, 2025 at 05:10:12PM +0530, Krishna Chaitanya Chundru wrote:
-> QCOM PCIe controllers need to disable ASPM before initiating link
-> re-train. So as part of pre_bw_scale() disable ASPM and as part of
-> post_scale_bus_bw() enable ASPM back.
-> 
-> Update ICC & OPP votes based on the requested speed so that RPMh votes
-> get updated based on the speed.
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 49 ++++++++++++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index b66c413f1e2b..a68e62422ff7 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1328,10 +1328,59 @@ static int qcom_pcie_set_icc_opp(struct qcom_pcie *pcie, int speed, int width)
->  	return ret;
->  }
->  
-> +static int qcom_pcie_scale_bw(struct dw_pcie_rp *pp, int speed)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> +	u32 offset, status, width;
-> +
-> +	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> +	status = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
-> +
-> +	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, status);
-> +
-> +	return qcom_pcie_set_icc_opp(pcie, speed, width);
-> +}
-> +
-> +static int qcom_pcie_enable_disable_aspm(struct pci_dev *pdev, void *userdata)
+On Fri, Apr 25, 2025 at 11:58=E2=80=AFAM David Hildenbrand <david@redhat.co=
+m> wrote:
+>
+> On 25.04.25 17:45, James Houghton wrote:
+> > On Thu, Apr 24, 2025 at 5:57=E2=80=AFPM Peter Xu <peterx@redhat.com> wr=
+ote:
+> >>
+> >> When discussing some userfaultfd issues with Andrea, Andrea pointed ou=
+t an
+> >> ABI issue with userfaultfd that existed for years.  Luckily the issue
+> >> should only be a very corner case one, and the fix (even if changing t=
+he
+> >> kernel ABI) should only be in the good way, IOW there should have no r=
+isk
+> >> breaking any userapp but only fixing.
+> >
+> > FWIW, my userspace basically looks like this:
+> >
+> > struct uffdio_continue uffdio_continue;
+> > int64_t target_len =3D /* whatever */;
+> > int64_t bytes_mapped =3D 0;
+> > int ioctl_ret;
+> > do {
+> >    uffdio_continue.range =3D /* whatever */;
+> >    uffdio_continue.mapped =3D 0;
+> >    ioctl_ret =3D ioctl(uffd, UFFDIO_CONTINUE, &uffdio_continue);
+> >    if (uffdio_continue.mapped < 0) { break; }
+> >    bytes_mapped +=3D uffdio_continue.mapped;
+> > } while (bytes_mapped < target_len && errno =3D=3D EAGAIN);
+> >
+> > I think your patch would indeed break this. (Perhaps I shouldn't be
+> > reading from `mapped` without first checking that errno =3D=3D EAGAIN.)
+> >
+> > Well, that's what I would say, except in practice I never actually hit
+> > the mmap_changing case while invoking UFFDIO_CONTINUE. :)
+>
+> Hm, but what if mfill_atomic_continue() would already return -EAGAIN
+> when checking mmap_changing etc?
+>
+> Wouldn't code already run into an issue there?
 
-qcom_pcie_enable_aspm() since the opaque argument is serving as a boolean.
+Ah, thanks David. You're right, my code is already broken! :(
 
-> +{
-> +	bool *enable = userdata;
-> +
-> +	/*
-> +	 * QCOM controllers doesn't support link re-train with ASPM enabled.
-> +	 * Disable ASPM as part of pre_bus_bw() and enable them back as
-> +	 * part of post_bus_bw().
-> +	 */
-> +	if (*enable)
-> +		pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
-> +	else
-> +		pci_disable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
-> +
-> +	return 0;
-> +}
-> +
-> +static void qcom_pcie_host_post_scale_bus_bw(struct dw_pcie_rp *pp, int current_speed)
-> +{
-> +	bool enable = true;
-> +
-> +	pci_walk_bus(pp->bridge->bus, qcom_pcie_enable_disable_aspm, &enable);
-
-We do not enable ASPM on all platforms. So this is going to affect all platforms
-whose client drivers initiate link retrain.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+So given that we already have a case where -EAGAIN is put in the
+output field, I change my mind, let's keep putting -EAGAIN in the
+output field, and I'll go fix my code.
 
