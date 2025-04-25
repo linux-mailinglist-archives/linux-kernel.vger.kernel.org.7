@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-620403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCD4A9CA49
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:30:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC64A9CA60
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F8E3AED14
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53BFC4E30C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808D12586CE;
-	Fri, 25 Apr 2025 13:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5070025A2BF;
+	Fri, 25 Apr 2025 13:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ovfAxpgz"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7832561AC;
-	Fri, 25 Apr 2025 13:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Y9j75Nv5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A85253939;
+	Fri, 25 Apr 2025 13:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587725; cv=none; b=YEmAYAN5VwY7zjuoAmVaFcNcJVMMHVgkhVXmtlsQeM2MTdcV/KAxoOmKjHfhPKsyUUUE8Q3D7HiBL4wOm65o6YxxTK1qakSe5/czzQflcYgH5QGnsW33AfbrSGyxcyW0C/0oSyBzGI6fU550RF73AcLX3YjQaVLLYQJIalqXTsI=
+	t=1745587779; cv=none; b=EJW0VAWRz0KhBoIuHA83yrYsYV7LMZKu6ERE4Bk/10OzUGgK6CojyBCM5cCc7NUZBL7IsZDEuni+y8YcTby5Ck2WTeaGpjmAKySIGsc0f4weoljnW04gc85flZlFS5Xjf0lWrXAVe3sHKEt3LwIjc8LeGUjE3e0z4x8RoPNSR0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587725; c=relaxed/simple;
-	bh=t7qSU/IIIuYq1lxN3qMcq4LPGAf2mcJQYiI6P44d0FA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCCfb5fD8URfBffrzs32OhOvgYZ8r4EUypDlmXLwgqgYGNyF3R0rtLBQHXAGPdM+9lD/eVJDT3DW1SEdraJfG5ySbxjw0u7wL14leLJZn/HWawyYXXFJ7QF6a8ipD4IsithWq5WwzQXIOyIOTnzj0BEKqbrGDEC9mfzaFxIcags=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ovfAxpgz; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vlE74K0LimainSdnoFlqcyVYaVSQnmACb6u5i0CwKyc=; b=ovfAxpgz9/2ZldfFISlzn37R2N
-	N8EFk71S4CItvdyyRRcm3DUc7bnLrjz7kCxW9NJ4Wc/jKXXd6vBuAfWML+ZPsLlXQgtkxDfB9cWJK
-	ILm1XH9FdY32lrHLu5jWLz672KLYDgMmZYahFT4U+9oiHocTrGnn2SmOMkpgZpv0S7j9ajGqj1XlT
-	d80P5yDGGBqnDIpozdUD+kwzp915To2IuE9HTw0uuMc7sq7U6ZnH2MAeYfdV2OaP5ajPOQwcEyMQp
-	6W9djK5G4vVydr0L8ZDt+Qz1PGNc2wgYrkUe9LeYkhj6mVEX8gzLEdhZzSd0NPdBjSH2/H/jYXIRH
-	PvUfCDMQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u8J6h-0000000HHN9-3OF8;
-	Fri, 25 Apr 2025 13:28:43 +0000
-Date: Fri, 25 Apr 2025 06:28:43 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: ming.lei@redhat.com, axboe@kernel.dk, linux-block@vger.kernel.org,
+	s=arc-20240116; t=1745587779; c=relaxed/simple;
+	bh=2m+TXCLzGmVwV/D8lFdkppJgu5O7zNl3hHFf3Jz5L0A=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Fvu3D93sj9ZaEeOshEcOQf1v8F9vBC/SU6zkRRNeKcoKB8qjsGxbgRcemphJTsSHwf1Ns/rmYAAziSqi8bjvHheBp5uT0bq5HAYuIkibSTDDFuYMEwWi7qhbso1JjGCFnO501AlcdBByp0kTgB8k0Vggxg+IPwKRvCKAsMwbfxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Y9j75Nv5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1186)
+	id 91EA820BCAD1; Fri, 25 Apr 2025 06:29:37 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 91EA820BCAD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745587777;
+	bh=NsDvqhQJb+De3iM0WfHS/+yYk4aovZXsfudU+S60050=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Y9j75Nv5iXn2ZqeBqHM69XvpMn9Dr+efvJZi7EJZy6iZYwm6/vIJmDEBWfCz3X0Jl
+	 vRj0aXIkYsPuZglk4ibqahEZsttOeAQxkPz088aeGwGtOyULgj5hrzh9d3EZjgRyax
+	 HXZE5VUn1CX5BxtXv0dgDqfDVr5faBpIItGcg9tU=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	pabeni@redhat.com,
+	haiyangz@microsoft.com,
+	kys@microsoft.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	decui@microsoft.com,
+	wei.liu@kernel.org,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] loop: Add sanity check for read/write_iter
-Message-ID: <aAuOC8djgRrq-Gdj@infradead.org>
-References: <CAFj5m9LVuekp_n6pEfs17n6QB3Q0yu-qRP67NOJb9ZXRNyhP3Q@mail.gmail.com>
- <20250425053803.3614260-1-lizhi.xu@windriver.com>
+	netdev@vger.kernel.org
+Subject: [PATCH rdma-next v2 0/4] RDMA/mana_ib: allow separate mana_ib for each mana client
+Date: Fri, 25 Apr 2025 06:29:33 -0700
+Message-Id: <1745587777-15716-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425053803.3614260-1-lizhi.xu@windriver.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Apr 25, 2025 at 01:38:03PM +0800, Lizhi Xu wrote:
-> Some file systems do not support read_iter or write_iter, such as selinuxfs
-> in this issue.
-> So before calling them, first confirm that the interface is supported and
-> then call it.
+Microsoft mana adapter has 2 devices in the HW: mana ethernet device and RNIC device.
+Both devices can implement RDMA drivers and, so far, they have been sharing
+one ib device context. However, they are different devices with different
+capabilities in the HW and have different lifetime model.
 
-Nit: commit messages should not have lines longer than 73 characters.
+This series allows us to model the aforementioned two devices as separate ib devices.
+The mana_ib will continue supporting two devices but as individual ib devices.
+It enables the driver to dynamically destroy and create the auxiliary device over
+RNIC, when the HW reboots the RNIC module. Without this separation, the reboot
+would cause destruction of the ib device serving DPDK clients from the uninterrupted
+ethernet HW module.
 
-Please also add a:
+v2:
+- renamed aux device from mana.dpdk to mana.eth (patch 1 and 2)
+- Fixed a possible race between servicing and pci threads (patch 4)
 
-Fixes: f2fed441c69b ("loop: stop using vfs_iter__{read,write} for buffered I/O")
+Konstantin Taranov (3):
+  net: mana: Probe rdma device in mana driver
+  RDMA/mana_ib: Add support of mana_ib for RNIC and ETH nic
+  RDMA/mana_ib: unify mana_ib functions to support any gdma device
 
-and maybe add a blurb that vfs_iter_read/write had this check.
+Shiraz Saleem (1):
+  net: mana: Add support for auxiliary device servicing events
 
-Now the other interesting bit is why we did not hit this earlier with
-direct I/O?  I guess it's because we basically have no instances
-supporting direct I/O and not using the iter ops.
+ drivers/infiniband/hw/mana/cq.c                  |   4 +-
+ drivers/infiniband/hw/mana/device.c              | 174 +++++++++++------------
+ drivers/infiniband/hw/mana/main.c                |  77 +++++++---
+ drivers/infiniband/hw/mana/mana_ib.h             |   6 +
+ drivers/infiniband/hw/mana/qp.c                  |   5 +-
+ drivers/net/ethernet/microsoft/mana/gdma_main.c  |  27 +++-
+ drivers/net/ethernet/microsoft/mana/hw_channel.c |  19 +++
+ drivers/net/ethernet/microsoft/mana/mana_en.c    | 108 +++++++++++++-
+ include/net/mana/gdma.h                          |  19 +++
+ include/net/mana/hw_channel.h                    |   9 ++
+ include/net/mana/mana.h                          |   3 +
+ 11 files changed, 330 insertions(+), 121 deletions(-)
 
-> @@ -603,6 +603,12 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
->  	if (!file)
->  		return -EBADF;
->  
-> +	if (unlikely(!file->f_op->read_iter))
-> +		return -EINVAL;
-> +
-> +	if (file->f_mode & FMODE_WRITE && unlikely(!file->f_op->write_iter))
-> +		return -EINVAL;
+-- 
+1.8.3.1
 
-Can we have a common helper for change_fd and configure, please?
-
-Please also drop the unlikelys - this is not a fast path and we don't
-need to micro-optimize.
-
-A bit unrelated, but loop-configure actually checks for write_iter
-and forces read-only for that.  Do we need the same kind of check in
-change_fd?
 
