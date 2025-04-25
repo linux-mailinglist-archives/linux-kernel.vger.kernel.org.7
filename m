@@ -1,212 +1,335 @@
-Return-Path: <linux-kernel+bounces-620139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C7DA9C634
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:52:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9EBA9C61B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F15207B1FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D82B0189322D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B38425C6F7;
-	Fri, 25 Apr 2025 10:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E142472A2;
+	Fri, 25 Apr 2025 10:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="P7P1ZKaK"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DBSzamqu";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pEle41eB"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7E824BD03
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745577991; cv=none; b=AyUWtL2jJJ3RQgVeObzTAyOYTBxrU3/RDki/KaAwexJxfF595BqmJj49bx/H9/JnqrQuhr9SozwUhZK2IdmpVVQrjYXTOUsaevMWqFCQ3+tue/UrCQrKTRpx83l0GA8SlXRllmAPOwI1AwyiS8yDZv/t6s6lbkVF/2Z+FySD2j8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745577991; c=relaxed/simple;
-	bh=EWK09hWcaH146zbHZFg6DDovIAXiO8bxdJLkoqKzFV4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lzBq0fUV7ZnQSCK7Jj4Ys52qIYoHyFDdjmKblGs4t7r+JbX2Do1KYMeJ4DJYWscDVs19VrghABufqmeLTuh3omnGlhvcqAQ5bdYyTVG4CQqJlo911G51qujdUc4HR1VIqTTLDQa160un6fF3iIZp/yhI9sRdHvtu87EcZM611Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=P7P1ZKaK; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso353598166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 03:46:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364A4241CB0;
+	Fri, 25 Apr 2025 10:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745577947; cv=fail; b=Prz+SxixpZFmSZFIzlt5KNFN6u5Immz6GN9krX7xp5/gdPzna5tilyZ+lIJFf2/Fc3F3CVdI0W6IcKla/T7VcWI0yjys3ThbYE38xrGwJ0Exs4h5PukN6erhf//vBAvUitp3O5VUjc7Q7YAMOpCXRW1/lqMpPmGSUoGPpf9khgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745577947; c=relaxed/simple;
+	bh=/+Sb4pdRdrtf1BxenBkZYKwTdiGTDauxANvQ6UjK2JQ=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rYAQkewk6oXoivfcMYJ/24Lx9J6f/KODrzFR5Ew6tDNVvAwoYcgpDOys4s2SRiHsUPICtx8z9PoLZtE8NLeDK+xtdUtStYJXQRxGx4015XxXD8ooqUgVTdLlC8qMeHpNR5WUCcHwjBrRLwLmyoeEP4mYOiXOpMLgbBjvUxEVxlU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DBSzamqu; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pEle41eB; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PAHlrx018697;
+	Fri, 25 Apr 2025 10:45:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=wnDoRO9W/uJK83C17R+zmnDUwtQrg0MMefXUm/fanxs=; b=
+	DBSzamqu/N7xVld7zfZdYI94HtfA0ZoIaXF7k/x3d+Qg1bhck7xmCNV+06ZYllBI
+	EBnGJ25MYRUW3yydBlPTL1Vnb2PEaCRSLflsPOM4RXtcuCiDA2IynjyMqCDgcyqW
+	JgfVOdVhcrf14lrs5wxjL2o3xaAlxYFJr1bzVKWRlc48tm9TohXWcqCYhG8Zzr8p
+	beOfvipyllHPpzFTwlPgI9ybtM/IjdlQsUe2Icfwu9m58DNxdpja13BmWjNRu+65
+	+MtzNenNZrQIFIXdlVCEUugx+W9sApY3rx3It3hnB319uL4TAJmeKdYnX+8Ck9If
+	ec1WLPnfc4b/B1nhZBWT4Q==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46878r85vc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 10:45:29 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53PAEE8V025069;
+	Fri, 25 Apr 2025 10:45:28 GMT
+Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17013076.outbound.protection.outlook.com [40.93.6.76])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 466jbt8be7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 10:45:28 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A9tq6comQvXgHlcqnbF56t+achDVRy50NWtQoOBiLFeXbW0lqfMxOEgdLw5Hf+Y4bn6vhbEFq/X/OdW6VOoLvF6M94d2/eTwhXtZoGwFdrodn7f5dL4FOr69mtMB358WJXnez+AFAAO00xviOfMcIx4t7QW2epWOitwhFC2FVzIfwdv7Tg3LV7ImFj9P8/HbLBNgIVYCo+iiEpdKUFxRvSGLyvx9BGHH0XYmbMLXvBgkVFxzW9a4WEf+V0g0uUAnPQOF8TIYHvNny2V8MW2+Y6ovS+14fcFIf8Sj1fE6mZg0dcSGMRZKWKPctm38CiP0+zwFkPTXWi/zSjCoC0y6NA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wnDoRO9W/uJK83C17R+zmnDUwtQrg0MMefXUm/fanxs=;
+ b=FPnXoLpr78oHMfYAhAXrztppogB4L2NnpK6FjEveezgDVh1r3s4tb+N/OQarsl28k/tppumKCNcr3GBM7jX1OJcaOaFZYvsoD+U+HfI2rI96k91f95Pra4jDFciSqS2Ldj25pkkcCF71XDXSSMAJ1ItrxtFThi/zZy1jxsQHA+KUl5smfivB1U/Cu+e3QELQsH/TqWkpmbzeQj4HGYyTmMmUqqEpY1avU6SZ5lmEdpfUdZXZu4bYcEMIiBQynoXIMBJTK6bPU/oNKBbtSC9Fiv2vaT/jxGbJhAFstAz3IFrKYtylWE3zFtZwIHkmCyJDGyWsoIh+F1JKval5jvR0hg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1745577988; x=1746182788; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hK9WfekleK8BtH0UPXJ3KZe2/zWmazeTIHMX8EeozYE=;
-        b=P7P1ZKaKNWo9H4J9qGfbH77wsXRx7ZKeGD10q2K0rgOY2rclfZVuFrrT/ti5TB1Kj1
-         tcYjP7h4OPy2hmLFysrhgzVSuqbT0AvgAzLUmytnl3ZBqgfmjdxAGaaOwnL+p0XE6g/3
-         SCmAIuckDOxSvM0WKTxQ4E9a+dsoIpAsgXfZxNBMp2SkXgW9N5keF0ZQO9Z6kJ/WvMyo
-         IG6t7BdrjN00BqIFdd34Hgcxy1TGq8b/qrq4pKfwzTIwMJQ2UQnSPc3HEvj97wkPEzwI
-         deppOY0VJ+FW+5wEQU+SKUxLx9YgB+gmhYs3s+l8E2TXmrEM1BRDPxN+eLAorGovqzU5
-         +WKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745577988; x=1746182788;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hK9WfekleK8BtH0UPXJ3KZe2/zWmazeTIHMX8EeozYE=;
-        b=aIjZhvym3oJTLf5zJKpzV1WhAoYtrUcANAYJQuTQXh+T6rZwtc+hxvdwlyVidq+Ei6
-         P0fKZH/3GbsNjWnlCO9fTAs6MwL9fK3J06pA4QM0ejzZlrKbLtpHG7mKTiVKjItwta50
-         /kvH8YfPdIab8r2gypST7NQ45VzUN+VbaM8lGMqp8/cgi+lvgWMylvlFBA8LS2EfUDEw
-         TQjE3o3+jKzJxkshlazDDR7OPu8IjXQ2wgODH4nRZlc4C2WE8fMmlhBlagnYpkYfmU3e
-         2DKy7YjJZpNR80idYLxzHCMhR1k3niyR/PkKcMBdoWVhhoo50Fq7duLqriKAqoCgdDM0
-         hPrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfkfA+HX17RWJQaKYs8TlvHzH27v5MtzkQHuhjnBUX81zsGD6gEcLXpoiz5dz68aqFOSLSx1AGB5fVj58=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw77K8SRK1jwwnrBRixLCzAmGbC95ClOFiPE2L3OioMail/vtSW
-	Il4FPKcQhH4HO3ou/MyHjjCVx7yVzdfTKXwPoCv/QihKhUHwWkoONC3RBiUnc9s=
-X-Gm-Gg: ASbGncsrYVqzy+JveV9Wj/Be2J/j2fnUcmKPjji0WRO0hMkXIqPbByfgcxAY7BdZkeD
-	fGLtVte/UTK1MB/fuz36XX8FYsEc0RyBMrzMm1pWuLXcmnMbxDEgcSOGa6cKJTCBg1TyOTuG9sb
-	kI/YEZqWM52tCKWY7z+8T3yBYL47C5BrVI/mNdRf3bCvt0F3ezIESZYPjxgHz38MbunehpadQW1
-	4CPXPXF4YrVBCganUQbzG/dvoSmQLY4H3/nA3SMv2RZw3BS/prf2qv5sLOIrct4pFEbLSwIT1ZA
-	BQcx4iHXRfSHWYykKf9fMGjdNV5ke9kfwmkY4VOjqyz6u/zaDlLVLeTgyj5eSBRpfFP9fXnxWET
-	m3u6fzzIXMYiVDY4UzohPPy68MLfEKegVg2s3t0/xvBvHVLqBQV6GBwFLqd9Ik1NzvTw=
-X-Google-Smtp-Source: AGHT+IHQVDgFIH9o2gUfuqJT72GpbOPKv/PF4gbijBHoW9ExaOSzoPneDcgPWSfYtQBZXg9eDIY+8g==
-X-Received: by 2002:a17:906:7954:b0:ac7:3916:327d with SMTP id a640c23a62f3a-ace713b720bmr146876866b.60.1745577987834;
-        Fri, 25 Apr 2025 03:46:27 -0700 (PDT)
-Received: from [100.64.0.4] (2a02-8388-6584-6400-d322-7350-96d2-429d.cable.dynamic.v6.surfer.at. [2a02:8388:6584:6400:d322:7350:96d2:429d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e4e7b98sm118765066b.66.2025.04.25.03.46.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 03:46:27 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 25 Apr 2025 12:44:56 +0200
-Subject: [PATCH 6/6] arm64: dts: qcom: sm7225-fairphone-fp4: Enable USB
- audio offload support
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wnDoRO9W/uJK83C17R+zmnDUwtQrg0MMefXUm/fanxs=;
+ b=pEle41eBLi1xBfWh5omYDinsj/naii3pzBgvcVpfy9iY+KYBUU7WF3zI1SP3ETDF9AY7XUF8lEf8CcmIz5hZuWcq3b9y80OD2mrykEYOIspAuGi2iNDxMwlEbi2644ii/5y4nTBjzMJod5aoArxUMU0S1AHr9PQTi5bwjFZm3JE=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DM4PR10MB7425.namprd10.prod.outlook.com (2603:10b6:8:180::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
+ 2025 10:45:25 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
+ 10:45:25 +0000
+Date: Fri, 25 Apr 2025 11:45:23 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, Kees Cook <kees@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] mm: perform VMA allocation, freeing, duplication in
+ mm
+Message-ID: <80c17a17-e462-4e4c-8736-3d8f1eecf70f@lucifer.local>
+References: <cover.1745528282.git.lorenzo.stoakes@oracle.com>
+ <0f848d59f3eea3dd0c0cdc3920644222c40cffe6.1745528282.git.lorenzo.stoakes@oracle.com>
+ <8ff17bd8-5cdd-49cd-ba71-b60abc1c99f6@redhat.com>
+ <CAJuCfpG84+795wzWuEi6t18srt436=9ea0dGrYgg-KT8+82Sgw@mail.gmail.com>
+ <7b176eaa-3137-42b9-9764-ca4b2b5f6f6b@lucifer.local>
+ <ydldfi2bx2zyzi72bmbfu5eadt6xtbxee3fgrdwlituf66vvb4@5mc3jaqlicle>
+ <14616df5-319c-4602-b7a4-f74f988b91c0@lucifer.local>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14616df5-319c-4602-b7a4-f74f988b91c0@lucifer.local>
+X-ClientProxiedBy: LO2P265CA0123.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-fp4-usb-audio-offload-v1-6-f90f571636e4@fairphone.com>
-References: <20250425-fp4-usb-audio-offload-v1-0-f90f571636e4@fairphone.com>
-In-Reply-To: <20250425-fp4-usb-audio-offload-v1-0-f90f571636e4@fairphone.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, 
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM4PR10MB7425:EE_
+X-MS-Office365-Filtering-Correlation-Id: db6a9f1a-6321-4ab9-1511-08dd83e649a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NTgraFBDMFFZRXdMVjdGcm9ZRXdKbHh6UUpWMEwzckZhK3I4cyt6bkxLRzlu?=
+ =?utf-8?B?YVFZL1RDcVlNMGNLdVljQzJKTzFNcVpPb0ZReDVBZVhRWElmSVFPM0o5YUc1?=
+ =?utf-8?B?UEs5aVV0LzNhUUV2eml1Ulp2Tm9tSXpUa01CdnJKbU4yelJ3cnBkNzdVYTJS?=
+ =?utf-8?B?MkRRUWVpUHAwVHYvc3FnVTFKTTIvZC9KeHJualVtUTZ2b2NpZk9qODJ2TjhM?=
+ =?utf-8?B?VXBBd2pLVVZNaUVJbEFJdEg3Z24vNkY0ZFlEWm1SRFF4dThPdFY2aXo5dTFY?=
+ =?utf-8?B?RnU2QlFZWWlST0Yrb0pOMWs5dGozeTlmSmZlclNjMmE1M0JWVUh3YjZsVERq?=
+ =?utf-8?B?OUlJYjl6bVNkbWJHWGZvSDF6d3IvNmtHaXFwcWh6bzRyTC9RNmQ5YnZGanhR?=
+ =?utf-8?B?eVErUXNQOFYyZlRHcStqV21Xb1BwUW1MSEk3NTVmaFlneHdNcUxjNDRUYmo1?=
+ =?utf-8?B?UXgrNkhISmoxNDRFZnpmMWZTTmxNUXBoRm02bG9EalVpV0lPNzRlZFU4aWpB?=
+ =?utf-8?B?U2wzYVFpSng3QmpzaENxR1BPRUV0Znh2Wnp1STh1MTErOFdvUlRPcStsU3dL?=
+ =?utf-8?B?SkxLZTFWVjQ0RTZPMnNvV3JhVVRSWWppM0FSZ1FVMU12dkVpZXRwbjgrbUFS?=
+ =?utf-8?B?T1IrdUZFQ25Wem51am1nb0RyQ0lieVhWOHFiNlB6RkFwbkZ3THNlUFZScXBC?=
+ =?utf-8?B?SytFWTlmb3NPdDBxSklXa2Jja1VzdEh1V1ZIYjVUL1BEbEN6dkpJVHJJN2Fq?=
+ =?utf-8?B?RVdIYzB0SmNMaEVLYlhVdEhDcHBWUUY1L1VKUzlaRjhYUkwzU1NrcWRrRXZS?=
+ =?utf-8?B?TWdobGQzNFB0U1RwNXpTSGs3QksvRnRPaGNhK2FRczVVWjRLSkgzQmJLUko4?=
+ =?utf-8?B?L202M0dvRjF5d2FZQzFPbXJOTUZ1bUIwN28rQmk5b051S3oxR2JSd05mZHQ1?=
+ =?utf-8?B?K3dTcUhiZUVUT0NteHcyMFJtWWFHWTVZTkFxUi9aYWM3by8vY1N6bFVqclpW?=
+ =?utf-8?B?V0JKbGpOQUVXWmRRM1BEQkNCQ2p2bnZxNlZWaGRBWkFtc0R4ajJNVGt3a0pO?=
+ =?utf-8?B?bUd5SnR1V1BsUlFwdEUvcGpBcnJuT1NqSnJHamUvYUdXN0JjbEtUTnI2RnZV?=
+ =?utf-8?B?SWhYRlFoVVRBRmJRK05QK2VaTkhYak9YbnRDSWQ2aEloUlNYNVpYN2o0bmFR?=
+ =?utf-8?B?RmJzcTlrb1pxM0NFUDJ5YnNJQmIwR09vNjRYd1pTL2tFQUZhcU9LbjhiTnFI?=
+ =?utf-8?B?b21xNXFrYVlYQnRNcFR2NXBYVzUzT25QVnNsc3lua05YUnhvZGhPdzVVNk0v?=
+ =?utf-8?B?Witma2NFeW9iNHhnMnMwMWkvcFhUVFFEcWdUcWJFSUhuNElxY2Z1YUI3WFFB?=
+ =?utf-8?B?Qmx6NG1YWVR6Qml5SWdSOFdyTklOOUxKTVlmNGxEWGtRVjMrdlpBMStxVS80?=
+ =?utf-8?B?RFNYc0wxWURoZGg4dXEzWjJ6NkJrYVNUSjN2RHJSelUzekdGWEVyTFNONkxp?=
+ =?utf-8?B?a01SNFNjeU84d0phZG5yd2RCdlN5WGhiSjh3Q1hHd0cxK21qaG05Qkp2WDB1?=
+ =?utf-8?B?eWhyVTRQYVdOcVloajg4SEVxc01MTHpPWjhxd1A4YjJnU1pLL3grSTh3Z3lw?=
+ =?utf-8?B?VThkQnViUDZHd3U2UmFGQWFqaFNxa3NLMWl4SW5jOWtrSXI5TmhiUlh3czl5?=
+ =?utf-8?B?NlZKYTN5WndHcmhiWklZa0ZJQi9XKzcxbGw5UWJGMFFURy9aMzBsNTNOU0lw?=
+ =?utf-8?B?SmtzbnRvTVFNNUhkSjZTL2RWRTJ0SzJOZit0eWdaTTgvS3c0ZHNmQjdCZmRq?=
+ =?utf-8?B?eTJNSVhNUCt3THVGdXYxNk9qV3dRemVSTTZqeTQ4ZmdoZjFnRGN6a0dPYW1Y?=
+ =?utf-8?B?bGdzZmNySmQvRWJvYjlESkJCd3ErSWthamdmcGlVQXQwckduT3UycnpVR1Zl?=
+ =?utf-8?B?dVd5SFYxWUdmTWtTQnhwUW1TdFBNaEwyc3lMcCtyeW84Yjg0UUMzdnBxSFZD?=
+ =?utf-8?B?d1FjN2VPanl3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WjNJb1RIeWFFQS9wZ216SThvNk5uM2EybGZCampWUWtuamlGVnBOMk5NN0My?=
+ =?utf-8?B?RFljejltYm10akFjTXBoWGplejF0djY0ZkpyeGNEY2IycDdCS2k1azluMlFL?=
+ =?utf-8?B?TSs0Z2pQSk5EN2VtUnMvejJ2ZFNKNWN1alhxRVBsWHR4M1lERjhId0FRNEd0?=
+ =?utf-8?B?bmhaM3FFbXdURkF3MXpyTW1qYlN3TlZQRFdscjhjMEo5OGlmbm8wVVQ0QjBr?=
+ =?utf-8?B?OXI2aEpIT1pReVgwWUtsWkYrZlNCK2JqQkU2WDYwL3hYK1F4UGR2ZnhyMlk3?=
+ =?utf-8?B?RXlZcU5aazh4dkZyY1lHb2QyMTN0VWZFQzQ3TzFiYXhtbkc2cE9mL3p6bDJK?=
+ =?utf-8?B?by9zY0IrUlpkTDdvSWYrLzBkNWRabkc0Rml3dWRnWld6a3hXbThYMjNJaG1T?=
+ =?utf-8?B?U2I3TERabHdmUlAzaDRWRGtKMFJIenRpb2dqZEJDaVdzVEdWY1NoaWowb28r?=
+ =?utf-8?B?RWtVTzdwRFV5N2RoTGpURG05STdDTFZocllMaTlIaHIyaUkyQ1F6bmFGSlB3?=
+ =?utf-8?B?YmRaS1JSZUNMcTh2YXVpNDJwK3pWRnhuUkRuWmxHZjZHNk9tME9QUjRaR2Rn?=
+ =?utf-8?B?WGZ3VUUvN25sWnVTbzhjUEN3MUZuZForejZXVUtrY2x3ZWp3TG16cjhkaVNT?=
+ =?utf-8?B?WWJmUWhDRnJDMHd1UzI3bUgzN3NVckFKSitEeWY4UGVNcWJHZ1V6cmhZWi80?=
+ =?utf-8?B?ZFp3bDJzNUl0OUdLbklRR2VuQUF2dU1IN1BhQ0ljYzdxWjhDNGlWSmpPcHQx?=
+ =?utf-8?B?MFMyYXhpS0ZydTN4Z21kRkNUL2pNQ0I1Tjh4N2s1bnU2cnBmVDFESHkvL2tl?=
+ =?utf-8?B?aTlWR2tYUlMrUUg3UXlubmdnWWVaeitqN2xVVTZiaWorREN6WTkzM1FXNm1Y?=
+ =?utf-8?B?MVRpNW5HRzQ0UlVRTW0vUy9qQlBLOE1ocVlKMGJiRU4wdjJWazM5THZHdFh5?=
+ =?utf-8?B?azU4WVNPdklGY2s4eVF0YlhwR0xaeTlMUW9XVHhqeVY3WlpjbXQwUDlSZ1l4?=
+ =?utf-8?B?U2ZtVHREQmxyaUVPazBpQ2M0STZmb2tTYTk4SEFvYmxVeFIxdi9aSEd2RkpF?=
+ =?utf-8?B?Ujhwdk1FZG5vWjVzQmp5cDlYMG1FRm5HVWNMNTVLWE1oMHE2K0wwUXpmTjc3?=
+ =?utf-8?B?QXFPbEdwTDgzMDI5cXFILzN3bW1DRTNhY29TRkNpakV4SHJQdHFCWnJuNGE3?=
+ =?utf-8?B?Y1BsUWMwVGdNT0xid1pvUko2R2RYWE9PM1BHSFI1ZjlIT3V4cEdEM3B0WDFB?=
+ =?utf-8?B?UUN1OFQ1Nlk0QkhJVXRqYWQ3S2NkL0NCOXVVNUdhc05sU041SEtsZW5WS21W?=
+ =?utf-8?B?S0ZrWi9oSzVIRk9taGl2Y3FjWDJaVjVteVpTYjJoakg1aWRNcGhkdjNNZ3FC?=
+ =?utf-8?B?dEJ3b3AwR3dLQWRpVHhCMExvdXJaQWZhWS92TzV4K3Zvc3owQ3pmRWFaYnp6?=
+ =?utf-8?B?NnhIcks0Y09oRkFHdzlmZmVESTVPMFpGeEZCaHM4dU9aWmw5dEpIbVB2UHVS?=
+ =?utf-8?B?bVByTzZYUm5UTFlOcUpVWHJYZS9FR0p0SWFRL3VkMkNGNzRydzV5cUd0WXc3?=
+ =?utf-8?B?eXVvN0RodXF4UzV0M2lUbTIzK2t0UEpxR1gyREJoMzU2OFd1aTZGODdNQVJH?=
+ =?utf-8?B?TU5QMStoSXY3TGVCMHRuQVoxRXdyUkFxWFhKQ2Q5ak85N1pheUZuMnB1UnU0?=
+ =?utf-8?B?bU9xci9Qc1d3dG5ENlQ3R252TDZhNDJrN3V3dHgvRSt0R0RSc0dudGJrNWJY?=
+ =?utf-8?B?dEpsUUlqdXhrMU81NEhQd0pYdjN3aWFNM3JyS29FT0tTVjIwRkw5R1p0d2FB?=
+ =?utf-8?B?Ly9BRkpXTzJ5a1JnS1RQRWJISFJoSENvS1NCZjNaSDUvZGp2Wi9mdkZyenBi?=
+ =?utf-8?B?NWlyb1hYMjFIMFVyM25YdUJoNFpvVWpoR1UrS2t0dDMxRkN4bGZpWFZkam1h?=
+ =?utf-8?B?ZjBQdU5XN0pIdDM5NVJidGVjODlkSitnbVRjWHA1czZkZHYzWEQ0N0Q3YmtC?=
+ =?utf-8?B?SmZqOUhHc3dzUnlFSVdqS0pQekZneUNqcUlrdXZueE1LSy8wSkY1Y3g4MmxV?=
+ =?utf-8?B?Kys2ZFhkSGpNU0JNanROZjdNQjI5NHNYOFhjZzVaZG9oby9tSms5c01HYmQx?=
+ =?utf-8?B?Rkx2L0ZjVkEvQ3hEQXp0ci9lZmVnVlMvLytkWmovQTJkblJkTHlpQXQ2TXVV?=
+ =?utf-8?B?U0E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ILl8cEV8LV08TrSQNL4rE9SQRxgFOd5EUqzARosMndbVfAVMMOpVecFLgCK33rjbLZ+zFqJ4NxIYWWcbHcjdX64mbDoY4JqSabnNbN/jBmnq/t92cjatHyAZjdyjR5UIzBTvwXemdGGVjrZ3Mo0WJB7B3I+brcdBG2z/KSHWlIcy5HWVnjbgcZrPUFIMi+UitSpQkJucfBgHs37xzdjXkbIFTukd0Ko/EIMShv/oe8Lfr60rzJVXjbz7yGr65ZzxLyfqNvwi2CZtPg8i/fpBnaW6kPwquUpOEZ0hIPpyW5MRRvdjLT7SLEWgzlVoqX65bXD50mz01SR/9NHUEVEjPhYTvNAvigYH+xNkhsRNdiZn0ENywXx00hI2qSy3NPBQd8SU2y87wQy4qpXjQdl3KxquMTxT6KWIMJaqt4PnmH4pKMgzVX50z7O4yd9cNkyGNEGNaglzzc48s5tyCAmTeUAT/vNqKSl5HVoekjM7C+yIzo2Cj43bdSvUQXBBzkKXjdwJDbslF7rEz6N0RsM0T9bVuRDT/pjiN6zTBDonuYYtXeVyCpB/8ELng7LsZ6wsrkZLZWU5Ksom4bjBC2XghyYK+hfk+dRKN3CxjzSbjEs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db6a9f1a-6321-4ab9-1511-08dd83e649a2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 10:45:25.8301
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B32V1XPY+vP5EsvH7s6FqVfDK3M64QbuTgTWVf8+e9LNrWpZok40E2O/cqRwBXS01AdtVrHP6Urvhzx4qao01ATeyyc3x4nqQSduKRxIMGM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB7425
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2504250078
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA3NyBTYWx0ZWRfX0PXoFdZJ1lkD Bp2Skbe/uyQyzzLHwLrg+E7NrIVDUlTgosgkXqS2tlkXNO4bA4A8M+eVhJbIXACKYCZiGvZ2HAa uKUbBIWsk/pwJx4fED56yzf9sYxCWK605OlDEC7iWMR6dCFPWNFXHH0ha7bZojUXQ4AfUCF4kLu
+ LQxsRs5ZMoXSNNDNBfTkDstxICv1jGLhb7mMb4B+xjBzdaSVfmLguxw93Yz4+WeLWq3EF705vxc hg1zBgkoczi6jSbKkujPX6Pr6DzJkTco4DFNE5a0tYvrzoArJqUbG+arXqsLZlG6Liz38koD0/i sMqDwuuiCfC9alm+d79GyqWuaK3RyGSTrqzWLnfWqfP3GzRJwsjknzJKe8aRRmVBQugQoGUcsL1 i74acOru
+X-Proofpoint-ORIG-GUID: sKkL1tQx0wDXEm8ivCCefR9J243JSVfj
+X-Proofpoint-GUID: sKkL1tQx0wDXEm8ivCCefR9J243JSVfj
 
-Enable USB audio offloading which allows to play audio via a USB-C
-headset with lower power consumption and enabling some other features.
+On Fri, Apr 25, 2025 at 11:31:12AM +0100, Lorenzo Stoakes wrote:
+> On Fri, Apr 25, 2025 at 06:26:00AM -0400, Liam R. Howlett wrote:
+> > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250425 06:09]:
+> > > On Thu, Apr 24, 2025 at 06:22:30PM -0700, Suren Baghdasaryan wrote:
+> > > > On Thu, Apr 24, 2025 at 2:22 PM David Hildenbrand <david@redhat.com> wrote:
+> > > > >
+> > > > > On 24.04.25 23:15, Lorenzo Stoakes wrote:
+> > > > > > Right now these are performed in kernel/fork.c which is odd and a violation
+> > > > > > of separation of concerns, as well as preventing us from integrating this
+> > > > > > and related logic into userland VMA testing going forward, and perhaps more
+> > > > > > importantly - enabling us to, in a subsequent commit, make VMA
+> > > > > > allocation/freeing a purely internal mm operation.
+> > > > > >
+> > > > > > There is a fly in the ointment - nommu - mmap.c is not compiled if
+> > > > > > CONFIG_MMU is not set, and there is no sensible place to put these outside
+> > > > > > of that, so we are put in the position of having to duplication some logic
+> > > >
+> > > > s/to duplication/to duplicate
+> > >
+> > > Ack will fix!
+> > >
+> > > >
+> > > > > > here.
+> > > > > >
+> > > > > > This isn't ideal, but since nommu is a niche use-case, already duplicates a
+> > > > > > great deal of mmu logic by its nature and we can eliminate code that is not
+> > > > > > applicable to nommu, it seems a worthwhile trade-off.
+> > > > > >
+> > > > > > The intent is to move all this logic to vma.c in a subsequent commit,
+> > > > > > rendering VMA allocation, freeing and duplication mm-internal-only and
+> > > > > > userland testable.
+> > > > >
+> > > > > I'm pretty sure you tried it, but what's the big blocker to have patch
+> > > > > #3 first, so we can avoid the temporary move of the code to mmap.c ?
+> > > >
+> > > > Completely agree with David.
+> > >
+> > > Ack! Yes this was a little bit of a silly one :P
+> > >
+> > > > I peeked into 4/4 and it seems you want to keep vma.c completely
+> > > > CONFIG_MMU-centric. I know we treat NOMMU as an unwanted child but
+> > > > IMHO it would be much cleaner to move these functions into vma.c from
+> > > > the beginning and have an #ifdef CONFIG_MMU there like this:
+> > > >
+> > > > mm/vma.c
+> > >
+> > > This isn't really workable, as the _entire file_ basically contains
+> > > CONFIG_MMU-specific stuff. so it'd be one huge #ifdef CONFIG_MMU block with
+> > > one small #else block. It'd also be asking for bugs and issues in nommu.
+> > >
+> > > I think doing it this way fits the patterns we have established for
+> > > nommu/mmap separation, and I would say nommu is enough of a niche edge case
+> > > for us to really not want to have to go to great lengths to find ways of
+> > > sharing code.
+> > >
+> > > I am quite concerned about us having to consider it and deal with issues
+> > > around it so often, so want to try to avoid that as much as we can,
+> > > ideally.
+> >
+> > I think you're asking for more issues the way you have it now.  It could
+> > be a very long time until someone sees that nommu isn't working,
+> > probably an entire stable kernel cycle.  Basically the longest time it
+> > can go before being deemed unnecessary to fix.
+> >
+> > It could also be worse, it could end up like the arch code with bugs
+> > over a decade old not being noticed because it was forked off into
+> > another file.
+> >
+> > Could we create another file for the small section of common code and
+> > achieve your goals?
+>
+> That'd completely defeat the purpose of isolating core functions to vma.c.
+>
+> Again, I don't believe that bending over backwards to support this niche
+> use is appropriate.
+>
+> And if you're making a change to vm_area_alloc(), vm_area_free(),
+> vm_area_init_from(), vm_area_dup() it'd seem like an oversight not to check
+> nommu right?
+>
+> There's already a large amount of duplicated logic there specific to nommu
+> for which precisely the same could be said, including entirely parallel
+> brk(), mmap() implementations.
+>
+> So this isn't a change in how we handle nommu.
 
-This can be used like the following:
+I guess an alternative is to introduce a new vma_shared.c, vma_shared.h
+pair of files here, that we try to allow userland isolation for so vma.c
+can still use for userland testing.
 
-  $ amixer -c0 cset name='USB_RX Audio Mixer MultiMedia1' On
-  $ aplay --device=plughw:0,0 test.wav
+This then aligns with your requirement, and keeps it vma-centric like
+Suren's suggestion.
 
-Compared to regular playback to the USB sound card no interrupts should
-appear on the xhci-hcd interrupts during playback, instead the ADSP will
-be handling the playback.
+Or perhaps it could even be vma_init.c, vma_init.h? To denote that it
+references the initialisation and allocation, etc. of VMAs?
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/sm6350.dtsi              |  3 ++
- arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts | 37 +++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+Anyway we do that, we share it across all, and it solves all
+problems... gives us the isolation for userland testing and also isolation
+in mm, while also ensuring no code duplication with nommu.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index 9a1b9f02282a0cf2e39bf2ade21989dbf4362bc1..ade69296cbc99eab3ee6dc020f2064d102a3b115 100644
---- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -2956,6 +2956,9 @@ wifi: wifi@18800000 {
- 		};
- 	};
- 
-+	sound: sound {
-+	};
-+
- 	thermal-zones {
- 		aoss0-thermal {
- 			thermal-sensors = <&tsens0 0>;
-diff --git a/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts b/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts
-index 71e87ab929551b339216a5fa583833ed8661a606..0f8e0a988db0d32384f39537731c77344ec50cf2 100644
---- a/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts
-+++ b/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts
-@@ -19,6 +19,7 @@
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
- #include <dt-bindings/usb/pd.h>
- #include "sm7225.dtsi"
- #include "pm6150l.dtsi"
-@@ -955,6 +956,12 @@ channel@644 {
- 	};
- };
- 
-+&q6asmdai {
-+	dai@0 {
-+		reg = <MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+	};
-+};
-+
- &qup_uart1_cts {
- 	/*
- 	 * Configure a bias-bus-hold on CTS to lower power
-@@ -1023,6 +1030,35 @@ &sdhc_2 {
- 	status = "okay";
- };
- 
-+&sound {
-+	compatible = "fairphone,fp4-sndcard";
-+	model = "Fairphone 4";
-+
-+	mm1-dai-link {
-+		link-name = "MultiMedia1";
-+
-+		cpu {
-+			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+		};
-+	};
-+
-+	usb-dai-link {
-+		link-name = "USB Playback";
-+
-+		cpu {
-+			sound-dai = <&q6afedai USB_RX>;
-+		};
-+
-+		codec {
-+			sound-dai = <&q6usbdai USB_RX>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6routing>;
-+		};
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <13 4>, <56 2>;
- 
-@@ -1178,6 +1214,7 @@ &usb_1 {
- &usb_1_dwc3 {
- 	maximum-speed = "super-speed";
- 	dr_mode = "otg";
-+	num-hc-interrupters = /bits/ 16 <3>;
- };
- 
- &usb_1_dwc3_hs_out {
+That work?
 
--- 
-2.49.0
 
+>
+> >
+> > Thanks,
+> > Liam
+> >
+> >
 
