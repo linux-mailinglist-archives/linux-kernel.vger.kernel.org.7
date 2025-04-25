@@ -1,236 +1,107 @@
-Return-Path: <linux-kernel+bounces-619508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C6AA9BD77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:19:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA437A9BD7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3313C7A86AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FBF921123
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B4419995D;
-	Fri, 25 Apr 2025 04:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MxnPg5ko"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FD9217642;
+	Fri, 25 Apr 2025 04:19:57 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9766F21348
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 04:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5610015C158;
+	Fri, 25 Apr 2025 04:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745554753; cv=none; b=UTA+NwJ7dhPbgRs4VVV8XA4S2SRHr79n6nuuFNj8OhyHnhe6ifOIa5rEegiECXFriIfVE7pmeNNxrpj26hDo/vW6HDzwC2NPI81HhOy/fdzSN9qCMyI+XJ7qZecAiWPjm8MlCM+cyrGM48+Tnnvw4jMXoxX3YJ8YCRY9t6C8b7Q=
+	t=1745554797; cv=none; b=He9MwhTSLERb5Bx+IS+SO0l+dcsAeMLudXHwpRP58j6Lcu2MoA0OeT2P5y19GdGxppoYyWI2X3scX3f43Y//oeuoLhAr0ieKoZYnTPBwWN7ug20uj2hCPtd+wVinGie15rOA3mFLVIZx9q5YmT7xqG3TcwE7Rlw8vM20I0q6Cik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745554753; c=relaxed/simple;
-	bh=MkDiSjZZ/0iAAfFOyK6j0IGGc6Y3lJb9LactDURdW4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EgcWo4m9liHTN2yWJZYgUTbIg/6/4bjzofMjn0iZyDHvUD6ddx81mzq7zpXsCqiCYXhgoVnscgpNFbUYt2tbxx1weZy+2VBKUqwvEbX/yt6JxgAzH1EqvJaDAAVhM83YlJoGDJbQ69yFwtnVB4pQaSnW+D7MAHVXTbCl9cTc8sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MxnPg5ko; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-524125f6cadso1622648e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 21:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745554750; x=1746159550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t3kk9yJMheVJ5fcTPuvXjKALo6qxlbGvpYZFmOVqtbw=;
-        b=MxnPg5koBIT36OifPcjthU/antwTzkKa1J6Ct9xgmpuj7s/6RTxOvuynH4CkdBPBwK
-         xaXrjFbH8ubEWxgZZpuFg6GfmTRLZGuTdjoHibe28gmlDpthHiNEGHfViZzvYShCMiKK
-         nog27xnb0pZ1S//dzfxKg+cEP2wmsTsbeoEYwl4f4H507UBgg20mxp4uvZtId16kotxR
-         WtlDLJ5/jtojnM78ew/gylbklca1/engGOAefA0nfBh7jMszMorevbGwdG0s/p1GdwsJ
-         G9NYlIFfxMcWuKlx6Y5bJ8A4j/EeuumyifKlRAQuY5AJQZTsiz6Rwu0dVYJ662axFjPP
-         lgRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745554750; x=1746159550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t3kk9yJMheVJ5fcTPuvXjKALo6qxlbGvpYZFmOVqtbw=;
-        b=gp0XJSNVoXIC8CtKGuNGfJk2lttg8VlO5Vkm7PVLIDsHSRKSXoXVqLcPGXCVSR8zx9
-         +Tv5XAmaJA8VkGQKWmjH/dCKlAZPIvdhcY3Au6dVaQnPJchIgHBhI9d36XbBuxVSRSKY
-         7Ww+/u2edo6e+DDZu+hc+nEdkY4Ic7CgxhNjhqAj2+u1buoCEoGblg/08PLxVAvODLN1
-         9QEMzQoM52NcQH5dnMbN0acytOKEtPGLgF6cuMQ13tfbA8Pj2VjwxEtB6ng6Ng9h/zkF
-         P5/IiQxUgv9zKoMd22+iiBDKVLj9rKGeeKG6jjDfwfez34ptYK5OSO0gGnHv1+uHr55E
-         Cm8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUVbj8pZ56pcXBxe1mHsl19ff2rHT1NzcN26XFp3YIEdsyxkTViE001mrvdscA4nyFAzkSq0D62vqKGkYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9UScUjVTmhnclte/tFA8/WVhQnzwRUnF/ei3xOUVpvxg7F51B
-	owEa+t2irQE/evZ2Ow2QSYKExw2NtfQvxk8+5fSwpHXUynDJAhzdjooREi/mcc0xoUePCMzR3wk
-	McukFqb2MYzuHlWBCogbyMBA/XcQultj8EHu5gw==
-X-Gm-Gg: ASbGnctFu2v+09Kl1hlA9xM4rVjT7/qKUTHjo0zOLA1RGSejKLWYrf587/ix8pIpErG
-	evbqK+CxpevNxS8evxjZF/gjjbDHjb/OnMCoGyw0wgUjdqBl3KhwbI0W2rz1nMJXr1SOWXtnQvx
-	PrUkJZJDKJZdwX6drhQ8TG2Vx7ugCY8WmUilklYB2fsT1FrFwIiBkbRlkNvO1OMJhcO2I=
-X-Google-Smtp-Source: AGHT+IFIYRceIoCnN621cqMGlWwEG92deWxJ9yoaz0m5Oi2fzhMnTvsvMOdi2oQRc8SZ+44d4Y/vnujmBeCgUrJlFFo=
-X-Received: by 2002:a05:6102:3ca8:b0:4c1:71b6:6c with SMTP id
- ada2fe7eead31-4d543ac5dd6mr275821137.7.1745554750320; Thu, 24 Apr 2025
- 21:19:10 -0700 (PDT)
+	s=arc-20240116; t=1745554797; c=relaxed/simple;
+	bh=ioR4skgPOyOn8QsgJ+wTTSYELuK/OKgKf03OMzprBTU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ochDZXkoO8ukhiOM4fby87+nAf7RDD8fBPN0aBOI5EnXdhHyU07o2H2lnVj3zS8RX0A5CblRYJCpi0rDgeSLuV8T8GceFbgwmGLR1+lQUyUqScgcBeaRsDqt2ooNKtiRF0WZy5Niy5CGvsvEJqbEVTatcl4oG52tNRwtloWSK0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P4GuL0007467;
+	Thu, 24 Apr 2025 21:19:43 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 466jhd38wd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 24 Apr 2025 21:19:42 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Thu, 24 Apr 2025 21:19:42 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Thu, 24 Apr 2025 21:19:40 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <yanjun.zhu@linux.dev>
+CC: <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] loop: Add sanity check for read/write_iter
+Date: Fri, 25 Apr 2025 12:19:39 +0800
+Message-ID: <20250425041939.3388803-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <8352c76d-ad30-4c2e-91bd-9676df21b293@linux.dev>
+References: <8352c76d-ad30-4c2e-91bd-9676df21b293@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423142643.246005366@linuxfoundation.org>
-In-Reply-To: <20250423142643.246005366@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 25 Apr 2025 09:48:58 +0530
-X-Gm-Features: ATxdqUG5VErkrlfJIDEFZLkqsJY9LmUOuwtsoWkPAPv80HHqYIoYzj0mTCfuYsM
-Message-ID: <CA+G9fYtRbNtqBB5d6w=exBkWa+KgYqB0qA-2qXd_LhHsx-G_5A@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/393] 6.6.88-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=ZNDXmW7b c=1 sm=1 tr=0 ts=680b0d5f cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=x9mcN1thFNAw6uWNoUEA:9
+X-Proofpoint-ORIG-GUID: WGApeCznCFB7YWr6BMh3tTgl8PLkEL2z
+X-Proofpoint-GUID: WGApeCznCFB7YWr6BMh3tTgl8PLkEL2z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDAyOSBTYWx0ZWRfX3Vl37cFQb80B 4C4TfTV6ePTYx4d3VyKxbJN5Fyzm6U9gXYCQXFopnIGi73oJX3DQ66MHXjfcgB+BzNTS+QysHWd AqmTudfWRE9rym1/hRSfarD5ynsQhU4cyWF+nMoD4zgMXAZ/B/xtd0bKxLu/YTBILPGb6jk0/o1
+ F28WBY4r4VQ86Xw5VodEpYscvDwQn/ktwD+3bzsWGk3FLUO6hzmp+qnekI2vfuMcnmWHgyweJK7 fAwAacWsPRWr02099PyIgNMZt47vB89PSmm2XAwjQhiH5tocTu7aQVTQh6PfJ2GIrguCK52lDsv yy5bBo2av2BLAdN3KBXBRW6Lc779C8vl9D2WtZLH577M8V0gy4QYZ2XOyzo5MZhHYHBJu+ilxna
+ nT9R5tXg+5lC2ELhN4EHu7lzEMvRc0jOrBS7fX5A26bi9QugmfGq+r9nFEmzQShzkuabdiJh
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_01,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 adultscore=0 spamscore=0 bulkscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=808 mlxscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
+ definitions=main-2504250029
 
-On Wed, 23 Apr 2025 at 20:15, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.88 release.
-> There are 393 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 25 Apr 2025 14:25:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.88-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.6.88-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 2b9f423a149b8cc7f21741efb02e56cac442bb92
-* git describe: v6.6.87-394-g2b9f423a149b
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.8=
-7-394-g2b9f423a149b
-
-## Test Regressions (compared to v6.6.87-1-g268d2a7e4698)
-
-## Metric Regressions (compared to v6.6.87-1-g268d2a7e4698)
-
-## Test Fixes (compared to v6.6.87-1-g268d2a7e4698)
-
-## Metric Fixes (compared to v6.6.87-1-g268d2a7e4698)
-
-## Test result summary
-total: 123381, pass: 103202, fail: 3126, skip: 16595, xfail: 458
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 44 total, 44 passed, 0 failed
-* i386: 27 total, 23 passed, 4 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 20 total, 20 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 37 total, 36 passed, 0 failed, 1 skipped
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+On Fri, 25 Apr 2025 06:06:51 +0200, Zhu Yanjun wrote:
+> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > index 674527d770dc..4f968e3071ed 100644
+> > --- a/drivers/block/loop.c
+> > +++ b/drivers/block/loop.c
+> > @@ -449,10 +449,15 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+> >       cmd->iocb.ki_flags = IOCB_DIRECT;
+> >       cmd->iocb.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
+> >
+> > -     if (rw == ITER_SOURCE)
+> > -             ret = file->f_op->write_iter(&cmd->iocb, &iter);
+> > -     else
+> > -             ret = file->f_op->read_iter(&cmd->iocb, &iter);
+> > +     ret = 0;
+> > +     if (rw == ITER_SOURCE) {
+> > +             if (likely(file->f_op->write_iter))
+> > +                     ret = file->f_op->write_iter(&cmd->iocb, &iter);
+> > +     }
+> > +     else {
+> > +             if (likely(file->f_op->read_iter))
+> 
+> "else if" is better?
+There is nothing wrong with writing it this way logically, but it will
+destroy the clarity of the original context regarding the read/write logical
+relationship.
 
