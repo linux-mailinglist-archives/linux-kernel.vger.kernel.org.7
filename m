@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-619361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5E7A9BBCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1663EA9BBDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C745A1BA3B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87EE3A8345
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A4B161310;
-	Fri, 25 Apr 2025 00:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9246B1AE005;
+	Fri, 25 Apr 2025 00:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6WckSQT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muomQSgc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE1E17996
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624FF17BD3
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 00:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745540908; cv=none; b=CYtxQT0Jvce2J+3yMP06oXDC/dU78Bq5kAVTUyEwGqIi71ym2z9KW9dQDU0igKCoDtaygo0PctU1+SP9r7G3t8/MQNrNY4kydCfXux/CsdX5ImAV65gJkxAee0G+d7grLgihrGsHBAZvw6/0uP/7PugvEaUfO5aBISjQicj17CY=
+	t=1745540908; cv=none; b=ppqucQSZEDDUXn7Q6mf4y0k3ETkYqG0NVpiPa8bVAwYhnrql6EtBOnI03ziwH6Dn4Edod60PnFLtOppA6JfnCDHHOFvDS8+0OqYl5PeHqn+WX98Yxl19UTM/4kIhKCTgnXtRl9O7zEk4Xk9Pi+YeM++esWZZvZUT/9hjpmC5+ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745540908; c=relaxed/simple;
-	bh=8cTvVKTeuWpMcuW3WL4deHfNOV5vogrrQdWXKu7sF0Y=;
+	bh=AoiJDX1WRQ1z8ex9aR9Xj2ae6DYdYMrmnnHw0NJSU5U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XX6Axm/632UjYEU1/n+ifaId13IwxnIKvJdgbsUSQrQkKOEhFzGU8vWFn0ITvGFhIedW2qxQ5LPrO7DhiAmqu/yEvBvWw3P9xu1vwnrLe+40PDcyCUpOAxLtmbTHjydiOMf8NXa+bKK8m4ydZsUwMMneyqrkt7i3Q8RVbz14Xbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6WckSQT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB547C4CEF7;
+	 MIME-Version; b=tlxnb0MT5xlHBqxof/ewh9S1Z5DYPcytmR/ZFNgzTJpckl+GJplKX7osM8vbYaIGg+IQz+PHaFAGkmYEQZCFb1NhPXJQjuTeYww0sg7l/ufAcFAR6/n0Labq7eYVmx7TwtORjw3bJVCthARN70Hczsu+a0Yz+wbqLmqqaBqnZoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muomQSgc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B9BC4CEF8;
 	Fri, 25 Apr 2025 00:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745540907;
-	bh=8cTvVKTeuWpMcuW3WL4deHfNOV5vogrrQdWXKu7sF0Y=;
+	s=k20201202; t=1745540908;
+	bh=AoiJDX1WRQ1z8ex9aR9Xj2ae6DYdYMrmnnHw0NJSU5U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n6WckSQTxxMvMA3BQm8m37ZDY9olSKrO6uP8MMy8bVO4NlMgO9Ht6Be2LzkuEIqnN
-	 BVZ4g3lirqiSCdszPPF7+ItkYEiO18kJgrWqyzhvhI85kK0POUum53NeqYTdswU8Mb
-	 IrvnS9e7S030lk1XF7RbIkazM540FdSTH/tgutMfwj8hgNOEejEXNz4pfs6oF10bkh
-	 QDaOIN/yxF0tvmcBwrqeNHU1c/hwGhcv002Avfd8vSU+wXIeQg75l5bNTTpuZvK4Ud
-	 +SqB0QQ8/wLqCXvar1CfADvFqkPZt2xwYYnOgU3SDBg9dIbNVc0C9GjB5QnCWW7h/d
-	 PBhoVQiNRI8Qw==
+	b=muomQSgc9VyHupd95LHN2iYNEtZkUlBktLDUE3f6OMPUEq9XaVdYNl29/PEndLfmR
+	 PUr4GULMUlSAcPpyATT9C5dPYgXZl0ilIqm6Ferk4yATFJpzmBAizaQhJc2guKP0Kc
+	 RUFsBEx0Lmj6LG1xn6GawFARWI9t4vq44jd8N0NwYe7XZG/ITWnH5mbsoBGU2TjfE3
+	 q2IzxUW1fyMPd9zTpI5LgoA3sAPU8UYBBXzWFAzCZ3GQZe9/0LqwoyrP0KpFQ1UHWf
+	 PYpYdxwIHkz/bSypeWx+0WHwPR5FiRP0H9TBaEI/81QvfV6RsjVncPkdUpx+bEHgbf
+	 qgL0fASq8mv4g==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3C949CE1C3D; Thu, 24 Apr 2025 17:28:27 -0700 (PDT)
+	id 3F245CE1CFF; Thu, 24 Apr 2025 17:28:27 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -55,13 +55,10 @@ Cc: kernel-team@meta.com,
 	Jon Pan-Doh <pandoh@google.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Bert Karwatzki <spasswolf@web.de>,
-	"Aithal, Srikanth" <sraithal@amd.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v3 10/20] ratelimit: Allow zero ->burst to disable ratelimiting
-Date: Thu, 24 Apr 2025 17:28:16 -0700
-Message-Id: <20250425002826.3431914-10-paulmck@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v3 11/20] ratelimit: Force re-initialization when rate-limiting re-enabled
+Date: Thu, 24 Apr 2025 17:28:17 -0700
+Message-Id: <20250425002826.3431914-11-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
 References: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
@@ -73,30 +70,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If ->interval is zero, then rate-limiting will be disabled.
-Alternatively, if interval is greater than zero and ->burst is zero,
-then rate-limiting will be applied unconditionally.
-
-Therefore, make this classification be lockless.
-
-Note that although negative ->interval and ->burst happen to be treated
-as if they were zero, this is an accident of the current implementation.
-The semantics of negative values for these fields is subject to change
-without notice.  Especially given that Bert Karwatzki determined that
-current calls to ___ratelimit() currently never have negative values
-for these fields.
-
-This commit replaces an earlier buggy versions.
+Currently, rate limiting being disabled results in an immediate early
+return with no state changes.  This can result in false-positive drops
+when re-enabling rate limiting.  Therefore, mark the ratelimit_state
+structure "uninitialized" when rate limiting is disabled.
 
 Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
 Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
-Reported-by: Bert Karwatzki <spasswolf@web.de>
-Reported-by: "Aithal, Srikanth" <sraithal@amd.com>
-Closes: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/all/257c3b91-e30f-48be-9788-d27a4445a416@sirena.org.uk/
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Tested-by: "Aithal, Srikanth" <sraithal@amd.com>
 Cc: Petr Mladek <pmladek@suse.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
@@ -105,28 +86,39 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- lib/ratelimit.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ lib/ratelimit.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 90c9fe57eb422..7a7ba4835639f 100644
+index 7a7ba4835639f..52aab9229ca50 100644
 --- a/lib/ratelimit.c
 +++ b/lib/ratelimit.c
-@@ -35,8 +35,12 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+@@ -35,11 +35,24 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
  	unsigned long flags;
  	int ret;
  
--	if (!interval)
--		return 1;
-+	if (interval <= 0 || burst <= 0) {
-+		ret = interval == 0 || burst > 0;
-+		if (!ret)
-+			ratelimit_state_inc_miss(rs);
-+		return ret;
-+	}
++	/*
++	 * Zero interval says never limit, otherwise, non-positive burst
++	 * says always limit.
++	 */
+ 	if (interval <= 0 || burst <= 0) {
+ 		ret = interval == 0 || burst > 0;
++		if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) ||
++		    !raw_spin_trylock_irqsave(&rs->lock, flags)) {
++			if (!ret)
++				ratelimit_state_inc_miss(rs);
++			return ret;
++		}
++
++		/* Force re-initialization once re-enabled. */
++		rs->flags &= ~RATELIMIT_INITIALIZED;
+ 		if (!ret)
+ 			ratelimit_state_inc_miss(rs);
+-		return ret;
++		goto unlock_ret;
+ 	}
  
  	/*
- 	 * If we contend on this state's lock then just check if
 -- 
 2.40.1
 
