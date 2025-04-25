@@ -1,228 +1,196 @@
-Return-Path: <linux-kernel+bounces-619699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89321A9C018
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:49:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2E9A9C04C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0D33AB0A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A551189C836
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A6230D0D;
-	Fri, 25 Apr 2025 07:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A30E2309B9;
+	Fri, 25 Apr 2025 08:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="W5mzngPW"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G9Jt30zz"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9D25A79B;
-	Fri, 25 Apr 2025 07:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E6226AEC
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745567357; cv=none; b=UJdI1gicxYojLMs5gM2A+/PV7mTKSPIE+cZwDriCJPza4JOKV6sF5s+Hf/lN8TedAP9Klaz/7NJY1+4Ycre46t1ZRa3Wwiz608rzkOVNH9GCzuloIq195eV9OrOfWkGKNRoqXEJK1KJL13G1SvAsowCWBDuxrNf/m9mX6gENrGA=
+	t=1745568090; cv=none; b=VIRfRyFEentHv7oRmFCOpfKTiP+YsfD5bYan43e0wYmKlvD/g/4fDR9bhSheZ1xOTV+GZX+/J30WmvTg88wAtU7JrrvmjWQPlV/wyXBve7tZiaNk3m47WTJfGLo0ZVKXwUgRkmSGZI61tWS1efIQs2FHbI6nZPSa4BQ5xNLnMEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745567357; c=relaxed/simple;
-	bh=FZiAbyedh3Hu4XRwOaYu0OJ85o9hgbMKwtwyNH+c43U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OroELYuNJV2BVc0NP3aO1PWSEt3Dgosn5HophvPk8AHK8yjTqM9xacqwhD6kB/gMvtfRtq1Dw+rIw/oSXF81EhpdyIg1t99/yN9y0NkNw5R1wIgikSpkSV/O95Od7/0g/uyScKak5F/xxLUa71QN/AXlpndtqr7wFrktlSDnrAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=W5mzngPW; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2F99710275AFE;
-	Fri, 25 Apr 2025 09:49:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1745567352; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=/dXNASC/WIWqaw/KcaFHN25jpUIQ4813arUoFsnAA/w=;
-	b=W5mzngPWSoevp/RkCHlrm6bIeICmfBGApQFzJ0GYblGaR6HMtVLH2FxtRBPpnBDPDuTvMu
-	gGj/huEmIcEK+7lQIm6QDNgYvojSeuwBJC+IW/9AAz/26JOzVxaGchp3mN8rT0+4k+PHDg
-	JA5+9KOV1Yn5cRq20sNAN9dUYRhzx1o4oa0J7Qr4i8mKibnDACG2XvcftijG+JK6neBKuz
-	5nUduG0llbzLBYuz1oPnEez9otGn0mt2TSb1opiKqJGW/MPGR2gD+z71p0fsdAk902HIh7
-	NtbcYJyrJ8+CKVCJYWlKOEF9QrmO7GO5KDspKWxPSrnkHe1KT000/vGRU+eC/A==
-Date: Fri, 25 Apr 2025 09:49:07 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew@lunn.ch>
-Subject: Re: [net-next v7 4/7] net: mtip: The L2 switch driver for imx287
-Message-ID: <20250425094907.27740d07@wsk>
-In-Reply-To: <a5f54d46-6829-4d60-b453-9ee92e6b568c@kernel.org>
-References: <20250423072911.3513073-1-lukma@denx.de>
-	<20250423072911.3513073-5-lukma@denx.de>
-	<20250424181110.2734cd0b@kernel.org>
-	<0bf77ef6-d884-44d2-8ecc-a530fee215d1@kernel.org>
-	<20250425080556.138922a8@wsk>
-	<a5f54d46-6829-4d60-b453-9ee92e6b568c@kernel.org>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745568090; c=relaxed/simple;
+	bh=9i0pqeJF9Lv6Vi+wvxKY/gQ+rtNhrwok614Nr1Sr4JE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jm3/EnaQYyPc4OBKqLGsDvLQS4wogrm6YiFhC9DtEPIAVU5y52MVOCyBqQmyzwKz0s5pr9nHbZ+g4QA50hzta5G1O20NzHPl3KJW5zo+QFpaAsovpVmYUfHRxcwpHvnZb9iGFROWMsd2fldOR+kXZxy9TStuWqEQDKVD1Zq8TOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G9Jt30zz; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745568085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ysvHHKCoxOnwQA+EqA6Oq9PHFBYzde/132axQDe0NyE=;
+	b=G9Jt30zzgf32eLKfsf7tyBckgc77qsPK17FWt1YtgldgE1D8gcPJcopTrE3e0+7JKBvBmV
+	NYWXYeQ/GrVYTSakQcISWs5Nk+AiGIjj1eZMM0sPucMK/gpwrWinMbBtvFMdHayTnLdPxh
+	42j/xDljnjxTtpC65mu48C1tEdTngkk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Rik van Riel <riel@surriel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Max Grobecker <max@grobecker.info>,
+	Sandipan Das <sandipan.das@amd.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	"Xin Li (Intel)" <xin@zytor.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Russell Senior <russell@personaltelco.net>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Alison Schofield <alison.schofield@intel.com>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu: Replace deprecated strcpy() with strscpy()
+Date: Fri, 25 Apr 2025 09:49:11 +0200
+Message-ID: <20250425074917.1531-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aD7bD6eqbseU9NHDSHb+3ZT";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/aD7bD6eqbseU9NHDSHb+3ZT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+strcpy() is deprecated; use strscpy() instead.
 
-Hi Krzysztof, Jakub
+In cyrix.c, use 'c->x86_model_id' directly and remove the local variable
+'buf' to retain the array size of the destination buffer.
 
-> On 25/04/2025 08:05, Lukasz Majewski wrote:
-> > Hi Krzysztof, Jakub,
-> >  =20
-> >> On 25/04/2025 03:11, Jakub Kicinski wrote: =20
-> >>> On Wed, 23 Apr 2025 09:29:08 +0200 Lukasz Majewski wrote:   =20
-> >>>> This patch series provides support for More Than IP L2 switch
-> >>>> embedded in the imx287 SoC.
-> >>>>
-> >>>> This is a two port switch (placed between uDMA[01] and
-> >>>> MAC-NET[01]), which can be used for offloading the network
-> >>>> traffic.
-> >>>>
-> >>>> It can be used interchangeably with current FEC driver - to be
-> >>>> more specific: one can use either of it, depending on the
-> >>>> requirements.
-> >>>>
-> >>>> The biggest difference is the usage of DMA - when FEC is used,
-> >>>> separate DMAs are available for each ENET-MAC block.
-> >>>> However, with switch enabled - only the DMA0 is used to
-> >>>> send/receive data to/form switch (and then switch sends them to
-> >>>> respecitive ports).   =20
-> >>>
-> >>> Lots of sparse warnings and build issues here, at least on x86.
-> >>>
-> >>> Could you make sure it's clean with an allmodconfig config,=20
-> >>> something like:
-> >>>
-> >>> make C=3D1 W=3D1 drivers/net/ethernet/freescale/mtipsw/    =20
-> >>
-> >> ... and W=3D1 with clang as well.
-> >> =20
-> >=20
-> > The sparse warnings are because of struct switch_t casting and
-> > register =20
->=20
-> clang W=3D1 fails on errors, so it is not only sparse:
->=20
-> error: cast to smaller integer type 'uint' (aka 'unsigned int') from
-> 'struct cbd_t *' [-Werror,-Wpointer-to-int-cast]
->=20
-> You probably wanted there kenel_ulong_t.
+No functional changes intended.
 
-This I did not catch earlier (probably because of my testing on
-imx287). Thanks for spotting it.
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/x86/kernel/cpu/amd.c    | 3 ++-
+ arch/x86/kernel/cpu/common.c | 6 +++---
+ arch/x86/kernel/cpu/cyrix.c  | 7 +++----
+ arch/x86/kernel/cpu/intel.c  | 2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
->=20
-> > access with this paradigm (as it is done with other drivers). =20
->=20
-> I don't understand. I see code like:
->=20
-> 	struct switch_t *fecp =3D fep->hwp;
->=20
-> But this is not a cast - the same types.
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 2b36379ff675..3a6daa862536 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -8,6 +8,7 @@
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
+ #include <linux/random.h>
++#include <linux/string.h>
+ #include <linux/topology.h>
+ #include <asm/processor.h>
+ #include <asm/apic.h>
+@@ -643,7 +644,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	}
+ 
+ 	if (!c->x86_model_id[0])
+-		strcpy(c->x86_model_id, "Hammer");
++		strscpy(c->x86_model_id, "Hammer");
+ 
+ #ifdef CONFIG_SMP
+ 	/*
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 12126adbc3a9..ea43e70a9b40 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -183,9 +183,9 @@ static void default_init(struct cpuinfo_x86 *c)
+ 	if (c->cpuid_level == -1) {
+ 		/* No cpuid. It must be an ancient CPU */
+ 		if (c->x86 == 4)
+-			strcpy(c->x86_model_id, "486");
++			strscpy(c->x86_model_id, "486");
+ 		else if (c->x86 == 3)
+-			strcpy(c->x86_model_id, "386");
++			strscpy(c->x86_model_id, "386");
+ 	}
+ #endif
+ }
+@@ -1919,7 +1919,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 		const char *p;
+ 		p = table_lookup_model(c);
+ 		if (p)
+-			strcpy(c->x86_model_id, p);
++			strscpy(c->x86_model_id, p);
+ 		else
+ 			/* Last resort... */
+ 			sprintf(c->x86_model_id, "%02x/%02x",
+diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
+index dfec2c61e354..07521e3f94d8 100644
+--- a/arch/x86/kernel/cpu/cyrix.c
++++ b/arch/x86/kernel/cpu/cyrix.c
+@@ -192,7 +192,6 @@ static void early_init_cyrix(struct cpuinfo_x86 *c)
+ static void init_cyrix(struct cpuinfo_x86 *c)
+ {
+ 	unsigned char dir0, dir0_msn, dir0_lsn, dir1 = 0;
+-	char *buf = c->x86_model_id;
+ 	const char *p = NULL;
+ 
+ 	/*
+@@ -352,9 +351,9 @@ static void init_cyrix(struct cpuinfo_x86 *c)
+ 		dir0_msn = 7;
+ 		break;
+ 	}
+-	strcpy(buf, Cx86_model[dir0_msn & 7]);
++	strscpy(c->x86_model_id, Cx86_model[dir0_msn & 7]);
+ 	if (p)
+-		strcat(buf, p);
++		strcat(c->x86_model_id, p);
+ 	return;
+ }
+ 
+@@ -416,7 +415,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
+ 	if (c->x86 == 4 && test_cyrix_52div()) {
+ 		unsigned char dir0, dir1;
+ 
+-		strcpy(c->x86_vendor_id, "CyrixInstead");
++		strscpy(c->x86_vendor_id, "CyrixInstead");
+ 		c->x86_vendor = X86_VENDOR_CYRIX;
+ 
+ 		/* Actually enable cpuid on the older cyrix */
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index cdc9813871ef..5e60aaa871cb 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -605,7 +605,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		}
+ 
+ 		if (p)
+-			strcpy(c->x86_model_id, p);
++			strscpy(c->x86_model_id, p);
+ 	}
+ #endif
+ 
+-- 
+2.49.0
 
-For example:
-
-The warning:
-
-mtipl2sw.c:208:30: warning: incorrect type in argument 1 (different
-address spaces) mtipl2sw.c:208:30:    expected void const volatile
-[noderef] __iomem *addr mtipl2sw.c:208:30:    got unsigned int *
-
-corresponds to:
- info->maclo =3D readl(&fecp->ESW_LREC0);   [*]
-
-where:
-
-struct switch_t {
-        u32 ESW_REVISION;
-        u32 ESW_SCRATCH;
-	...
-        /*from 0x420-0x4FC*/
-        u32 esw_reserved9[57];
-        /*0xFC0DC500---0xFC0DC508*/
-        u32 ESW_LREC0;
-        u32 ESW_LREC1;
-        u32 ESW_LSR;
-};
-
-
-The 'u32' type seems to be valid here as this register is 32 bit wide.
-
-To fix the sparse warnings - I think that I will replace [*] with:
-
-info->maclo =3D readl((u32 __iomem *)&fecp->ESW_LREC0);
-
-as such solution is used in a wide way in the mainline kernel.
-
-Is this the acceptable solution?
-
-> >=20
-> > What is the advise here from the community?
-> >  =20
-> >> Best regards,
-> >> Krzysztof =20
-> >=20
-> >=20
-> >=20
-> >=20
-> > Best regards,
-> >=20
-> > Lukasz Majewski
-> >=20
-> > --
-> >=20
-> > DENX Software Engineering GmbH,      Managing Director: Erika Unter
-> > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell,
-> > Germany Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email:
-> > lukma@denx.de =20
->=20
->=20
-> Best regards,
-> Krzysztof
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/aD7bD6eqbseU9NHDSHb+3ZT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmgLPnMACgkQAR8vZIA0
-zr2n/Af+LVw/038n6xkuDzEVw1Ws29jNVFmBbGwSS1Om+WVKtZVnR0MEJigZTpNh
-Xw3M68InMX0jlbko1jdRMbhfzovDicEY9KYmg3pKQCZcWiFS93x+PIGFNY+ekeov
-jXyoiQY1zaC1/FT3PWtOwK6Ls+yGL83vJm9O86c2dCa6/wnARvbWULW/uQPh0AlX
-yTDzLR3RuRQqow6k+M+Rv3ruF0lx7cis6RCVOb3YkCwwBMrjUFQ/T05K5ZilZMr5
-9N257fwmaKEtAqk9Sc7fXi/kGf2IvPtobVyWOxWpyIJVeyjjp3s6G4linPN8U46P
-s2b/DM39xFJsCGTqF8rG0CJFUNM1FA==
-=Id9L
------END PGP SIGNATURE-----
-
---Sig_/aD7bD6eqbseU9NHDSHb+3ZT--
 
