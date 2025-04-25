@@ -1,196 +1,105 @@
-Return-Path: <linux-kernel+bounces-620945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC73A9D1C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:36:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F68A9D178
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D3C47B46C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0EE81C013A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F5121C166;
-	Fri, 25 Apr 2025 19:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E2821ADA6;
+	Fri, 25 Apr 2025 19:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="hX9deHI/"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nvTKPqNd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E2B221DB5;
-	Fri, 25 Apr 2025 19:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EF42D78A;
+	Fri, 25 Apr 2025 19:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745609667; cv=none; b=tGEnwDrEJ2U4vshSY5Ip33O8K2uslbuHL4rXqspA0Gv3THy8uO4PnQpu7aE9kPy/LyCbsoGi7zIKAt64NAM+n7I9ogn4h6zhqAJnmI7McEJSxn+auVM1rh/o6PX3XfCRP7xJCHXqyYTZLKecjQUhbKD2+MZr+ZpMLkkyvX0TtUU=
+	t=1745609150; cv=none; b=h7WlocSQaIWFiuRvg72tbFPqLYmapbtN5VScMHodvSdWit60KgrTVSlbEEadOHsr0lB6JtaT0bEGKopl0V4gwQWE2VoITd7JXkfiTpLUokMgZemqF6U5PiVSVrSyFSkvQEsUc6+h6pb/QYcfwBhFnwFOeo4eygL/B5b1wQFE4Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745609667; c=relaxed/simple;
-	bh=7jHb9f/VvfCt34IqH1owTNNrRCZ0eHag6Zrrj1QngmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A9g4M/NNfedJjWvjIMSdWtEth0qEwaSof72VEY6f28HId5ciR62XC51+VtXBRyrcYytEQvxTk1gkGh+q3XaZUz0yJJC+TP/woFW62RfPf9o7IyIPLYMgWClf1/HPDqMjKgWw9dVC2ziFP8O0hyxuCJpddVR88HXxn8Oxp6YVC3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=hX9deHI/; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [217.114.34.19])
+	s=arc-20240116; t=1745609150; c=relaxed/simple;
+	bh=neGbJ6Lymfsq8nEeLfmyJwBxDlpuW4G5Q1AEGS8l+uw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lqb+nnto+5zGYMdPlua623PTvM2cveStP0dlI414vPS91kN7rTpCC/qq8XN8PJBVTrhMiBrBNUZFtSom03jzDR52RdAuE5psKXJAmN8rcIJHKeVXbUYu7zwlYJkVJMRRZT8QZQ0Vm+uS3pUcgfoN1xPjkPgYfOwbJdP44DQ0bJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nvTKPqNd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745609141;
+	bh=neGbJ6Lymfsq8nEeLfmyJwBxDlpuW4G5Q1AEGS8l+uw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nvTKPqNdOBzSU+7+8MLXFwCszgzruXwUSY1c3l4gHmVVNDGWQmfvse4+ekF5hnyJe
+	 a+S1r65YH1bt6wnHHTnPcV9gqm3QJcijRuyEOFVZCgKE3STFQDxxgVioqWF36HUIyx
+	 grzXMhPOkih3z5tEvbBJkQDrm+ShsjNHYIQlELB3gNNLBGBaF0jX2G2OOlyvtoGwkg
+	 p9T/VT72boveO3A2dStmpUqPQpxvYyuzjovouDtf5EeoUtVlTWyYbbomKBjGYNF5xP
+	 ijJ03P/wQMfx0q/GnLkbLWCF4lp0P1ye+too+xfQLh1WT1SzML4lnXi148oFb48ThO
+	 TEsWLvjevCmIw==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AEBC2664A91;
-	Fri, 25 Apr 2025 21:34:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1745609662;
-	bh=7jHb9f/VvfCt34IqH1owTNNrRCZ0eHag6Zrrj1QngmY=;
-	h=From:Subject:Date;
-	b=hX9deHI/rIe3LL075In7O9eUTMcZFSfCG+gnMZi+u15cpl4j1XsEaKrYd4wuSPYkE
-	 /NeSVbAmy8AKDnMpRoNXF6yXZhB5wmlrNO792eLmJV3kSGQwe+fS1RJwoftULHsR/d
-	 ZVllhGHN5HcYJjBXIZ7mxUDEVtREIR5M2us6rJQrm5pTmElzxhKlkxZSOJi3C8xnSk
-	 Nm2y+PseCz89qYv7MWgYoXmCRsIxcog7I0yUYqs3StKyfBvvteBRmuU9PKZnA8qkGZ
-	 XoD7AURUJ8IjaDAmtnB0mrjldHwwy8MeRcBpvEKpGKLOYHmG57HUT7bGfS66dkFcGA
-	 y4W4dKDVX20wA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject: [PATCH v1 07/19] ACPICA: actbl2: Add definitions for RIMT
-Date: Fri, 25 Apr 2025 21:24:41 +0200
-Message-ID: <10665648.nUPlyArG6x@rjwysocki.net>
-In-Reply-To: <12671029.O9o76ZdvQC@rjwysocki.net>
-References: <12671029.O9o76ZdvQC@rjwysocki.net>
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DCFA417E0987;
+	Fri, 25 Apr 2025 21:25:39 +0200 (CEST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH] media: verisilicon: Free post processor buffers on error
+Date: Fri, 25 Apr 2025 15:24:47 -0400
+Message-ID: <20250425192447.227063-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 217.114.34.19
-X-CLIENT-HOSTNAME: 217.114.34.19
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheefudelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepledtieekkeekveeikeetgffgteeuteefjeevjeegudelvdduheeiuedvieehieevnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepvddujedruddugedrfeegrdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvudejrdduudegrdefgedrudelpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosggvrhhtrdhmohhorhgvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrkhgvthdrughumhgsrhgvsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
+Content-Transfer-Encoding: 8bit
 
-From: Sunil V L <sunilvl@ventanamicro.com>
+When initializing the post processor, it allocates the same number of
+buffers as the buf queue.
+As the init function is called in streamon(), if an allocation fails,
+streamon will return an error and streamoff() will not be called, keeping
+all post processor buffers allocated.
 
-ACPICA commit 73c32bc89cad64ab19c1231a202361e917e6823c
+To avoid that, all post proc buffers are freed in case of an allocation
+error.
 
-RISC-V IO Mapping Table (RIMT) is a new static table defined for RISC-V
-to communicate IOMMU information to the OS. The specification for RIMT
-is available at [1]. Add structure definitions for RIMT.
-
-[1] - https://github.com/riscv-non-isa/riscv-acpi-rimt
-
-Link: https://github.com/acpica/acpica/commit/73c32bc8
-Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 26711491a807 ("media: verisilicon: Refactor postprocessor to store more buffers")
+Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 ---
- include/acpi/actbl2.h | 83 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ drivers/media/platform/verisilicon/hantro_postproc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
-index 4fd5e8b2e199..0ae9d9915d58 100644
---- a/include/acpi/actbl2.h
-+++ b/include/acpi/actbl2.h
-@@ -51,6 +51,7 @@
- #define ACPI_SIG_RAS2           "RAS2"	/* RAS2 Feature table */
- #define ACPI_SIG_RGRT           "RGRT"	/* Regulatory Graphics Resource Table */
- #define ACPI_SIG_RHCT           "RHCT"	/* RISC-V Hart Capabilities Table */
-+#define ACPI_SIG_RIMT           "RIMT"	/* RISC-V IO Mapping Table */
- #define ACPI_SIG_SBST           "SBST"	/* Smart Battery Specification Table */
- #define ACPI_SIG_SDEI           "SDEI"	/* Software Delegated Exception Interface Table */
- #define ACPI_SIG_SDEV           "SDEV"	/* Secure Devices table */
-@@ -3042,6 +3043,88 @@ struct acpi_rhct_hart_info {
- 	u32 uid;		/* ACPI processor UID */
- };
+diff --git a/drivers/media/platform/verisilicon/hantro_postproc.c b/drivers/media/platform/verisilicon/hantro_postproc.c
+index c435a393e0cb7..9f559a13d409b 100644
+--- a/drivers/media/platform/verisilicon/hantro_postproc.c
++++ b/drivers/media/platform/verisilicon/hantro_postproc.c
+@@ -250,8 +250,10 @@ int hantro_postproc_init(struct hantro_ctx *ctx)
  
-+/*******************************************************************************
-+ *
-+ * RIMT - RISC-V IO Remapping Table
-+ *
-+ * https://github.com/riscv-non-isa/riscv-acpi-rimt
-+ *
-+ ******************************************************************************/
-+
-+struct acpi_table_rimt {
-+	struct acpi_table_header header;	/* Common ACPI table header */
-+	u32 num_nodes;		/* Number of RIMT Nodes */
-+	u32 node_offset;	/* Offset to RIMT Node Array */
-+	u32 reserved;
-+};
-+
-+struct acpi_rimt_node {
-+	u8 type;
-+	u8 revision;
-+	u16 length;
-+	u16 reserved;
-+	u16 id;
-+	char node_data[];
-+};
-+
-+enum acpi_rimt_node_type {
-+	ACPI_RIMT_NODE_TYPE_IOMMU = 0x0,
-+	ACPI_RIMT_NODE_TYPE_PCIE_ROOT_COMPLEX = 0x1,
-+	ACPI_RIMT_NODE_TYPE_PLAT_DEVICE = 0x2,
-+};
-+
-+struct acpi_rimt_iommu {
-+	u8 hardware_id[8];	/* Hardware ID */
-+	u64 base_address;	/* Base Address */
-+	u32 flags;		/* Flags */
-+	u32 proximity_domain;	/* Proximity Domain */
-+	u16 pcie_segment_number;	/* PCIe Segment number */
-+	u16 pcie_bdf;		/* PCIe B/D/F */
-+	u16 num_interrupt_wires;	/* Number of interrupt wires */
-+	u16 interrupt_wire_offset;	/* Interrupt wire array offset */
-+	u64 interrupt_wire[];	/* Interrupt wire array */
-+};
-+
-+/* IOMMU Node Flags */
-+#define ACPI_RIMT_IOMMU_FLAGS_PCIE      (1)
-+#define ACPI_RIMT_IOMMU_FLAGS_PXM_VALID (1 << 1)
-+
-+/* Interrupt Wire Structure */
-+struct acpi_rimt_iommu_wire_gsi {
-+	u32 irq_num;		/* Interrupt Number */
-+	u32 flags;		/* Flags */
-+};
-+
-+/* Interrupt Wire Flags */
-+#define ACPI_RIMT_GSI_LEVEL_TRIGGERRED  (1)
-+#define ACPI_RIMT_GSI_ACTIVE_HIGH       (1 << 1)
-+
-+struct acpi_rimt_id_mapping {
-+	u32 source_id_base;	/* Source ID Base */
-+	u32 num_ids;		/* Number of IDs */
-+	u32 dest_id_base;	/* Destination Device ID Base */
-+	u32 dest_offset;	/* Destination IOMMU Offset */
-+	u32 flags;		/* Flags */
-+};
-+
-+struct acpi_rimt_pcie_rc {
-+	u32 flags;		/* Flags */
-+	u16 reserved;		/* Reserved */
-+	u16 pcie_segment_number;	/* PCIe Segment number */
-+	u16 id_mapping_offset;	/* ID mapping array offset */
-+	u16 num_id_mappings;	/* Number of ID mappings */
-+};
-+
-+/* PCIe Root Complex Node Flags */
-+#define ACPI_RIMT_PCIE_ATS_SUPPORTED   (1)
-+#define ACPI_RIMT_PCIE_PRI_SUPPORTED   (1 << 1)
-+
-+struct acpi_rimt_platform_device {
-+	u16 id_mapping_offset;	/* ID Mapping array offset */
-+	u16 num_id_mappings;	/* Number of ID mappings */
-+	char device_name[];	/* Device Object Name */
-+};
-+
- /*******************************************************************************
-  *
-  * SBST - Smart Battery Specification Table
+ 	for (i = 0; i < num_buffers; i++) {
+ 		ret = hantro_postproc_alloc(ctx, i);
+-		if (ret)
++		if (ret) {
++			hantro_postproc_free(ctx);
+ 			return ret;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
-2.43.0
-
-
-
+2.49.0
 
 
