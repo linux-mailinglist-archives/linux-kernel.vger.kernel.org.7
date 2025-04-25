@@ -1,224 +1,389 @@
-Return-Path: <linux-kernel+bounces-619818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B0AA9C1F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:50:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB9CA9C219
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4111B1887621
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0134E1BA0FAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0C51F75A9;
-	Fri, 25 Apr 2025 08:50:09 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A32356BE;
+	Fri, 25 Apr 2025 08:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hVkobYMX"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4376E207DFF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C41121D5BD
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745571008; cv=none; b=tOiSg+uFog4CGTdE8dAMRK8Kt1DD+vADTwrT6T0jw7YDFyFRhdDT+HHisL8Z2ZkBux9hupf1dZzab59WO090X9ynNpfS/QXR8MOYwTfw/qvKEIUkV/ncYK+/CXlk8xRogHL55nQ9502ICLktZq6VUvpVOrWbu76OmjuuDyONvoA=
+	t=1745571075; cv=none; b=kuBes4jyxPgqhdCXzpLNCV8ZlproZcO4sy1F9b3yjcvjAijnjREXqb4ZrnTPHj4BOSAA8Ajh89MWtwE6v03HnQLhaHYfHS0iB6IQTwBhz0877Z73nIzyvdO12kFCSyF6DpikYfxba/2SAFZfvOtyDK8oZaX4sAQil5ehtc5V7Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745571008; c=relaxed/simple;
-	bh=JAMws/vtOTxHeLm3gccrM03foPW5z5Ne+1T0subrk1g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eLmd0GRhI1DX3wXXgCKAyJRwL3fs4RAa2JAFKGdkLJf/wbX2+xFHa6ex7qA7+pYt9c79XlDRiNOPv67jQl9qSNgmovY7G/Bm57Qq/dtDzteHdJRjmkUscDzNKA1gnxDgsc6Oazx3dw71tG5qdzmDOOuIoRkOEHSErKV62q2BlGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u8Ekm-0004ed-2U; Fri, 25 Apr 2025 10:49:48 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u8Ekh-00218p-1o;
-	Fri, 25 Apr 2025 10:49:43 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u8Ekh-00144S-1W;
-	Fri, 25 Apr 2025 10:49:43 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Simon Horman <horms@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-doc@vger.kernel.org
-Subject: [PATCH net-next v1 1/1] Documentation: networking: expand and clarify EEE_GET/EEE_SET documentation
-Date: Fri, 25 Apr 2025 10:49:41 +0200
-Message-Id: <20250425084941.253961-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1745571075; c=relaxed/simple;
+	bh=FZWopE76g0GdqxKuvbnNQTyrmos3s+r/hLBaM//0J34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lzsN8++V02xamkpVV9fqBxCsbeKuckPbEtSh02CnZzRO9iOTDVMa1iInr6GdIYvlDsaC96z34aYlEWwX/Qxvw7rgwUPF/swHIkl2SImYy12RI2pp6qiJAJ+W1Qr/JkoQvm2mc/GuG1IV48GmrlfL2iG3kj02lEHA2RnR1OeC6VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hVkobYMX; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e731a56e111so177160276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745571072; x=1746175872; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9GQfk+3zeIIKzUeHjqMJCPYPGJndG19Wjdr7pJZStAA=;
+        b=hVkobYMXDPiGMDjrjO7scyTWDArd2qmoCtMyq2jqguhhyfh+TBehTlYtGX5nBdP9gZ
+         5tvSaZ2xv/pT1UjquWN3DYTemJeA18gxIJIDe8xe7w4u5rPF8eiVpLsysBSm9mkxWozI
+         YScMuxZul5uxgnY1aCDP/W9Wb6v6tL5fGAveneUsjxQrm8V0oF/Kui6K307JIi6zIw+S
+         wfOdn5t06jqvhqasacc866HygSRwE1XtPI7UbjwYMH56riZEbsu9XKO4q3HS3R7z9eAd
+         rV4zjFNcgX4w7rlr3OHLM2l4N1pEUa1xVhAzCZTJGwf7dvnDvo7sew44GXoi50Qbo/EX
+         LSmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745571072; x=1746175872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9GQfk+3zeIIKzUeHjqMJCPYPGJndG19Wjdr7pJZStAA=;
+        b=cS7EIPZoiPDWcOXxE0Tl+6Qzh2j5sCxrt3oy2bv424EnHnrNYwhdP2t6NrgZ0JJqsf
+         +UIqmBLD6tHv8p0ZjKwUNa+vnWEuf189NGFoxKHFpJ3NyOgWW2ZSQfpzjY0Z8a3BvU33
+         yKgZAVfPyjWClbFt+y+I9BxexIxi0Axfe6TW8+XrIVhk0QnFynlZbVA44Lc51w6x4hEl
+         JRpMPzFgS19/336FJY5MoC2DWxiXZdCERQGZ9RiEbsDsBWRu6/1YbtKh2f3sE0gznbQ3
+         NvjEDhYj+Y0r433cFruTwDrCfvQ3zBu5Bg/6VWPsCY8+6VcTHuPkO6pP83u4j3O8jk8C
+         j1Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXhy0guAzFIIT1usGWEVAyR9omp2Zt0vxTqZIDn1/KFQXWeS4T5BLIeldeQ+iiwwb0a1amrIcwi9uB7Xis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMaDE7oAoqaXU1X94sdef6jWf+b8eFp9cWFHAaHOV1uAJQeTJ3
+	EszBkJQcXAQ/25exx7FSSvSo0gH9dHP2QyOg1QtMnr1SszXt0TGBsUsbAsIin6H2p5DIL7oLePr
+	bCtJ7gV2dDXYdGl2rq1g/jkzbkkQ6vQMYjfScWeaUf8tO+o9FTFI=
+X-Gm-Gg: ASbGncuz423OGKQopcv4o/M09gEaT6uazcZrpPBPpsXsrOzh5OSRSSIxGjV9EhgyhY8
+	oMRmP93XsswoqpCn2paH31nCcgoxHTeAPz3CpI3K+aaaCk5S8XmGx3bKL4gF58aZWU3JkyMQGdM
+	EDECkcbWiK87Z5O+pGbaXUYRM=
+X-Google-Smtp-Source: AGHT+IE4B65BDpklwFJDxIOPbJ0Hzq8wAs89aXC+F3ZxVBmeN5cyfnzySlvgMFu/NcYkSePA20evRaUlepPFtsP+koI=
+X-Received: by 2002:a05:6902:2807:b0:e72:8658:5839 with SMTP id
+ 3f1490d57ef6-e7316881e05mr2063821276.32.1745571072238; Fri, 25 Apr 2025
+ 01:51:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <CGME20250414185316eucas1p2c2dbd33788d9141773546f7a479ac288@eucas1p2.samsung.com>
+ <20250414-apr_14_for_sending-v2-0-70c5af2af96c@samsung.com> <20250414-apr_14_for_sending-v2-3-70c5af2af96c@samsung.com>
+In-Reply-To: <20250414-apr_14_for_sending-v2-3-70c5af2af96c@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 25 Apr 2025 10:50:35 +0200
+X-Gm-Features: ATxdqUExFbuTIHs9dJyH7CbSVLWAZOfs6hMxjA5h2peJwwEgi8V0avo5M5kQ388
+Message-ID: <CAPDyKFqX5cjQe3-MX3W9wMoQW3gzwSvb0QMf-_sTJuq_TeGsCg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] pmdomain: thead: Add GPU-specific clock and reset
+ handling for TH1520
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, 
+	Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
-Improve the documentation for ETHTOOL_MSG_EEE_GET and ETHTOOL_MSG_EEE_SET
-to provide accurate descriptions of all netlink attributes involved.
++ Bartosz
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- Documentation/networking/ethtool-netlink.rst | 103 ++++++++++++++++---
- 1 file changed, 90 insertions(+), 13 deletions(-)
+On Mon, 14 Apr 2025 at 20:53, Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> Extend the TH1520 power domain driver to manage GPU related clocks and
+> resets via generic PM domain start/stop callbacks.
+>
+> The TH1520 GPU requires a special sequence to correctly initialize:
+> - Enable the GPU clocks
+> - Deassert the GPU clkgen reset
+> - Delay for a few cycles to satisfy hardware requirements
+> - Deassert the GPU core reset
+>
+> This sequence is SoC-specific and must be abstracted away from the
+> Imagination GPU driver, which expects only a standard single reset
+> interface. Following discussions with kernel maintainers [1], this
+> logic is placed inside a PM domain, rather than polluting the clock or
+> reset frameworks, or the GPU driver itself.
 
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index b6e9af4d0f1b..dfbdd99a7228 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -1215,20 +1215,65 @@ Kernel response contents:
- 
-   =====================================  ======  ==========================
-   ``ETHTOOL_A_EEE_HEADER``               nested  request header
--  ``ETHTOOL_A_EEE_MODES_OURS``           bool    supported/advertised modes
--  ``ETHTOOL_A_EEE_MODES_PEER``           bool    peer advertised link modes
-+  ``ETHTOOL_A_EEE_MODES_OURS``           bitset  supported/advertised modes
-+  ``ETHTOOL_A_EEE_MODES_PEER``           bitset  peer advertised link modes
-   ``ETHTOOL_A_EEE_ACTIVE``               bool    EEE is actively used
-   ``ETHTOOL_A_EEE_ENABLED``              bool    EEE is enabled
-   ``ETHTOOL_A_EEE_TX_LPI_ENABLED``       bool    Tx lpi enabled
-   ``ETHTOOL_A_EEE_TX_LPI_TIMER``         u32     Tx lpi timeout (in us)
-   =====================================  ======  ==========================
- 
--In ``ETHTOOL_A_EEE_MODES_OURS``, mask consists of link modes for which EEE is
--enabled, value of link modes for which EEE is advertised. Link modes for which
--peer advertises EEE are listed in ``ETHTOOL_A_EEE_MODES_PEER`` (no mask). The
--netlink interface allows reporting EEE status for all link modes but only
--first 32 are provided by the ``ethtool_ops`` callback.
-+Detailed behavior:
- 
-+``ETHTOOL_A_EEE_MODES_OURS`` is a bitset consisting of:
-+
-+ - Value: link modes that the driver intends to advertise for EEE.
-+ - Mask: subset of link modes supported for EEE by the interface.
-+
-+The `advertised` value is stored in software and remains even if EEE is
-+disabled. It can be modified independently and is preserved across toggles of
-+EEE enable/disable. If ``ETHTOOL_A_EEE_ENABLED`` is false, PHY does not
-+advertise EEE, but the configured value is reported.
-+
-+``ETHTOOL_A_EEE_MODES_PEER`` shows the peer's EEE capabilities. It is a bitset
-+consisting of:
-+
-+ - Value: link modes that the link partner advertises for EEE.
-+ - Mask: empty
-+
-+This value is typically reported by the hardware and may represent only a
-+subset of the actual capabilities supported and advertised by the link partner.
-+The local hardware may not be able to detect or represent all EEE-capable modes
-+of the peer. As a result, the true EEE support on the peer side may exceed what
-+is reported.
-+
-+``ETHTOOL_A_EEE_ACTIVE`` indicates whether EEE is currently active on the link.
-+This is determined by the kernel as a combination of the currently active link
-+mode, locally advertised EEE modes, and peer-advertised EEE modes:
-+
-+    active = (current_link_mode & advertised & link_partner)
-+
-+In practice, the evaluation may also depend on whether the MAC supports EEE for
-+the given mode. There is mostly no hardware status bit that directly indicates
-+an active EEE state. Furthermore, even if ``ETHTOOL_A_EEE_ACTIVE`` is true,
-+other settings such as ``ETHTOOL_A_EEE_TX_LPI_ENABLED`` or an excessively high
-+``ETHTOOL_A_EEE_TX_LPI_TIMER`` may prevent the MAC from actually entering the
-+LPI state. Thus, the "active" status should be interpreted as a potential
-+capability, not as a guaranteed indication of LPI activity. The only strict
-+rule is that if ``ETHTOOL_A_EEE_ENABLED`` is false, then
-+``ETHTOOL_A_EEE_ACTIVE`` must also be false.
-+
-+``ETHTOOL_A_EEE_ENABLED`` is a software-only switch that controls if the
-+advertisement is programmed into hardware.
-+
-+``ETHTOOL_A_EEE_TX_LPI_TIMER`` defines the delay in microseconds after the last
-+transmitted frame before the MAC enters the Low Power Idle (LPI) state. This
-+value applies globally to all link modes, though in practice, optimal values
-+may differ between modes.
-+
-+The netlink interface can represent link modes up to
-+``__ETHTOOL_LINK_MODE_MASK_NBITS``, but traditional ioctls only support the
-+first 32.
- 
- EEE_SET
- =======
-@@ -1239,18 +1284,50 @@ Request contents:
- 
-   =====================================  ======  ==========================
-   ``ETHTOOL_A_EEE_HEADER``               nested  request header
--  ``ETHTOOL_A_EEE_MODES_OURS``           bool    advertised modes
-+  ``ETHTOOL_A_EEE_MODES_OURS``           bitset  advertised modes
-   ``ETHTOOL_A_EEE_ENABLED``              bool    EEE is enabled
-   ``ETHTOOL_A_EEE_TX_LPI_ENABLED``       bool    Tx lpi enabled
-   ``ETHTOOL_A_EEE_TX_LPI_TIMER``         u32     Tx lpi timeout (in us)
-   =====================================  ======  ==========================
- 
--``ETHTOOL_A_EEE_MODES_OURS`` is used to either list link modes to advertise
--EEE for (if there is no mask) or specify changes to the list (if there is
--a mask). The netlink interface allows reporting EEE status for all link modes
--but only first 32 can be set at the moment as that is what the ``ethtool_ops``
--callback supports.
-+Detailed behavior:
-+
-+``ETHTOOL_A_EEE_MODES_OURS`` can specify the list of advertised link modes.
-+
-+``ETHTOOL_A_EEE_ENABLED`` is a software flag that tells the kernel to prepare
-+EEE functionality. If autonegotiation is enabled, this means writing the EEE
-+advertisement register so that the PHY includes the EEE-capable modes in the
-+autonegotiation pages it transmits. The actual advertisement set is a subset
-+derived from PHY-supported modes, MAC capabilities, and possible blacklists.
-+This subset can be further restricted by ``ETHTOOL_A_EEE_MODES_OURS``. If
-+autonegotiation is disabled, EEE advertisement is not transmitted and EEE will
-+not be negotiated or used.
-+
-+``ETHTOOL_A_EEE_TX_LPI_ENABLED`` controls whether the system should enter the
-+Low Power Idle (LPI) state. In this state, the MAC typically notifies the PHY,
-+which then transitions the medium (e.g., twisted pair) side into LPI. The exact
-+behavior depends on the active link mode:
-+
-+ - In **100BaseT/Full**, an asymmetric LPI configuration (local off, peer on)
-+   leads to asymmetric behavior: the local TX line remains active, while the RX
-+   line may enter LPI.
-+ - In **1000BaseT/Full**, there are no separate TX/RX lines; the wire is silent
-+   only if both sides enter the LPI state.
-+
-+- ``ETHTOOL_A_EEE_TX_LPI_TIMER`` configures the delay after the last
-+  transmitted frame before the MAC enters the LPI state. This single timer
-+  value applies to all link modes, although using the same value for all modes
-+  may not be optimal in practice. A value that is too high may effectively
-+  prevent entry into the LPI state.
-+
-+.. note::
-+   For EEE advertisement to take effect, PHY autonegotiation must be enabled.
-+
-+Limitations:
- 
-+The netlink interface allows configuring all link modes up to
-+``__ETHTOOL_LINK_MODE_MASK_NBITS``, but if drivers depend on legacy
-+``ethtool_ops``, only the first 32 link modes are supported.
- 
- TSINFO_GET
- ==========
--- 
-2.39.5
+Speaking about special sequences for power-on/off devices like this
+one, that's a known common problem. We actually have a generic
+subsystem for this now, drivers/power/sequencing/*.
 
+Perhaps it's worth having a look at that, it should allow us to
+abstract things, so the GPU driver can stay more portable.
+
+Kind regards
+Uffe
+
+>
+> To support this, the TH1520 PM domain implements `attach_dev` and
+> `detach_dev` callbacks, allowing it to dynamically acquire clock and
+> reset resources from the GPU device tree node at runtime. This allows to
+> maintain the separation between generic drivers and SoC-specific
+> integration logic.
+>
+> As a result, the PM domain not only handles power sequencing but also
+> effectively acts as the SoC specific "glue driver" for the GPU device,
+> encapsulating all TH1520-specific clock and reset management.
+>
+> This approach improves maintainability and aligns with the broader
+> direction of treating PM domains as lightweight SoC-specific power
+> management drivers [2].
+>
+> [1] - https://lore.kernel.org/all/CAPDyKFqsJaTrF0tBSY-TjpqdVt5=6aPQHYfnDebtphfRZSU=-Q@mail.gmail.com/
+> [2] - https://osseu2024.sched.com/event/1ej38/the-case-for-an-soc-power-management-driver-stephen-boyd-google
+>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  drivers/pmdomain/thead/th1520-pm-domains.c | 199 +++++++++++++++++++++++++++++
+>  1 file changed, 199 insertions(+)
+>
+> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
+> index f702e20306f469aeb0ed15e54bd4f8309f28018c..75412efb195eb534c2e8ff10ced65ed4c4d2452c 100644
+> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
+> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
+> @@ -5,10 +5,13 @@
+>   * Author: Michal Wilczynski <m.wilczynski@samsung.com>
+>   */
+>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+>  #include <linux/firmware/thead/thead,th1520-aon.h>
+>  #include <linux/slab.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/reset.h>
+>
+>  #include <dt-bindings/power/thead,th1520-power.h>
+>
+> @@ -16,6 +19,15 @@ struct th1520_power_domain {
+>         struct th1520_aon_chan *aon_chan;
+>         struct generic_pm_domain genpd;
+>         u32 rsrc;
+> +
+> +       /* PM-owned reset */
+> +       struct reset_control *clkgen_reset;
+> +
+> +       /* Device-specific resources */
+> +       struct device *attached_dev;
+> +       struct clk_bulk_data *clks;
+> +       int num_clks;
+> +       struct reset_control *gpu_reset;
+>  };
+>
+>  struct th1520_power_info {
+> @@ -61,6 +73,177 @@ static int th1520_pd_power_off(struct generic_pm_domain *domain)
+>         return th1520_aon_power_update(pd->aon_chan, pd->rsrc, false);
+>  }
+>
+> +static int th1520_gpu_init_consumer_clocks(struct device *dev,
+> +                                          struct th1520_power_domain *pd)
+> +{
+> +       static const char *const clk_names[] = { "core", "sys" };
+> +       int i, ret;
+> +
+> +       pd->num_clks = ARRAY_SIZE(clk_names);
+> +       pd->clks = devm_kcalloc(dev, pd->num_clks, sizeof(*pd->clks), GFP_KERNEL);
+> +       if (!pd->clks)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < pd->num_clks; i++)
+> +               pd->clks[i].id = clk_names[i];
+> +
+> +       ret = devm_clk_bulk_get(dev, pd->num_clks, pd->clks);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "Failed to get GPU clocks\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static int th1520_gpu_init_consumer_reset(struct device *dev,
+> +                                         struct th1520_power_domain *pd)
+> +{
+> +       int ret;
+> +
+> +       pd->gpu_reset = reset_control_get_exclusive(dev, NULL);
+> +       if (IS_ERR(pd->gpu_reset)) {
+> +               ret = PTR_ERR(pd->gpu_reset);
+> +               pd->gpu_reset = NULL;
+> +               return dev_err_probe(dev, ret, "Failed to get GPU reset\n");
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int th1520_gpu_init_pm_reset(struct device *dev,
+> +                                   struct th1520_power_domain *pd)
+> +{
+> +       pd->clkgen_reset = devm_reset_control_get_exclusive(dev, "gpu-clkgen");
+> +       if (IS_ERR(pd->clkgen_reset))
+> +               return dev_err_probe(dev, PTR_ERR(pd->clkgen_reset),
+> +                                    "Failed to get GPU clkgen reset\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static int th1520_gpu_domain_attach_dev(struct generic_pm_domain *genpd,
+> +                                       struct device *dev)
+> +{
+> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
+> +       int ret;
+> +
+> +       /* Enforce 1:1 mapping - only one device can be attached. */
+> +       if (pd->attached_dev)
+> +               return -EBUSY;
+> +
+> +       /* Initialize clocks using the consumer device */
+> +       ret = th1520_gpu_init_consumer_clocks(dev, pd);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Initialize consumer reset using the consumer device */
+> +       ret = th1520_gpu_init_consumer_reset(dev, pd);
+> +       if (ret) {
+> +               if (pd->clks) {
+> +                       clk_bulk_put(pd->num_clks, pd->clks);
+> +                       kfree(pd->clks);
+> +                       pd->clks = NULL;
+> +                       pd->num_clks = 0;
+> +               }
+> +               return ret;
+> +       }
+> +
+> +       /* Mark device as platform PM driver managed */
+> +       device_platform_resources_set_pm_managed(dev, true);
+> +       pd->attached_dev = dev;
+> +
+> +       return 0;
+> +}
+> +
+> +static void th1520_gpu_domain_detach_dev(struct generic_pm_domain *genpd,
+> +                                        struct device *dev)
+> +{
+> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
+> +
+> +       /* Ensure this is the device we have attached */
+> +       if (pd->attached_dev != dev) {
+> +               dev_warn(dev,
+> +                        "tried to detach from GPU domain but not attached\n");
+> +               return;
+> +       }
+> +
+> +       /* Remove PM managed flag when detaching */
+> +       device_platform_resources_set_pm_managed(dev, false);
+> +
+> +       /* Clean up the consumer-owned resources */
+> +       if (pd->gpu_reset) {
+> +               reset_control_put(pd->gpu_reset);
+> +               pd->gpu_reset = NULL;
+> +       }
+> +
+> +       if (pd->clks) {
+> +               clk_bulk_put(pd->num_clks, pd->clks);
+> +               kfree(pd->clks);
+> +               pd->clks = NULL;
+> +               pd->num_clks = 0;
+> +       }
+> +
+> +       pd->attached_dev = NULL;
+> +}
+> +
+> +static int th1520_gpu_domain_start(struct device *dev)
+> +{
+> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
+> +       int ret;
+> +
+> +       /* Check if we have all required resources */
+> +       if (pd->attached_dev != dev || !pd->clks || !pd->gpu_reset ||
+> +           !pd->clkgen_reset)
+> +               return -ENODEV;
+> +
+> +       ret = clk_bulk_prepare_enable(pd->num_clks, pd->clks);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = reset_control_deassert(pd->clkgen_reset);
+> +       if (ret)
+> +               goto err_disable_clks;
+> +
+> +       /*
+> +        * According to the hardware manual, a delay of at least 32 clock
+> +        * cycles is required between de-asserting the clkgen reset and
+> +        * de-asserting the GPU reset. Assuming a worst-case scenario with
+> +        * a very high GPU clock frequency, a delay of 1 microsecond is
+> +        * sufficient to ensure this requirement is met across all
+> +        * feasible GPU clock speeds.
+> +        */
+> +       udelay(1);
+> +
+> +       ret = reset_control_deassert(pd->gpu_reset);
+> +       if (ret)
+> +               goto err_assert_clkgen;
+> +
+> +       return 0;
+> +
+> +err_assert_clkgen:
+> +       reset_control_assert(pd->clkgen_reset);
+> +err_disable_clks:
+> +       clk_bulk_disable_unprepare(pd->num_clks, pd->clks);
+> +       return ret;
+> +}
+> +
+> +static int th1520_gpu_domain_stop(struct device *dev)
+> +{
+> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
+> +
+> +       /* Check if we have all required resources and if this is the attached device */
+> +       if (pd->attached_dev != dev || !pd->clks || !pd->gpu_reset ||
+> +           !pd->clkgen_reset)
+> +               return -ENODEV;
+> +
+> +       reset_control_assert(pd->gpu_reset);
+> +       reset_control_assert(pd->clkgen_reset);
+> +       clk_bulk_disable_unprepare(pd->num_clks, pd->clks);
+> +
+> +       return 0;
+> +}
+> +
+>  static struct generic_pm_domain *th1520_pd_xlate(const struct of_phandle_args *spec,
+>                                                  void *data)
+>  {
+> @@ -99,6 +282,22 @@ th1520_add_pm_domain(struct device *dev, const struct th1520_power_info *pi)
+>         pd->genpd.power_off = th1520_pd_power_off;
+>         pd->genpd.name = pi->name;
+>
+> +       /* there are special callbacks for the GPU */
+> +       if (pi == &th1520_pd_ranges[TH1520_GPU_PD]) {
+> +               /* Initialize the PM-owned reset */
+> +               ret = th1520_gpu_init_pm_reset(dev, pd);
+> +               if (ret)
+> +                       return ERR_PTR(ret);
+> +
+> +               /* No device attached yet */
+> +               pd->attached_dev = NULL;
+> +
+> +               pd->genpd.dev_ops.start = th1520_gpu_domain_start;
+> +               pd->genpd.dev_ops.stop = th1520_gpu_domain_stop;
+> +               pd->genpd.attach_dev = th1520_gpu_domain_attach_dev;
+> +               pd->genpd.detach_dev = th1520_gpu_domain_detach_dev;
+> +       }
+> +
+>         ret = pm_genpd_init(&pd->genpd, NULL, true);
+>         if (ret)
+>                 return ERR_PTR(ret);
+>
+> --
+> 2.34.1
+>
 
