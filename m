@@ -1,191 +1,101 @@
-Return-Path: <linux-kernel+bounces-620649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1054A9CDBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:04:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE60A9CDB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 658CD9E385C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E089F189A678
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7801118C02E;
-	Fri, 25 Apr 2025 16:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5583D14F9EB;
+	Fri, 25 Apr 2025 16:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVIFXsjM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp/o8stG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052B522318
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F2C2701DA;
+	Fri, 25 Apr 2025 16:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745597075; cv=none; b=nbY2sp/UHi0rrrgE24XZ6+bOab6wdXaMCks6CElSFJ/D3SDKNEFdAWao9EgPpDP4iyK5Duy+BOrA4MKdDwg8+2eFfbeWlf4mtFKALOs6j2J078u+VJ7iVnH9sqEfo01r5H9CSFIcnx3g5Qa2QRdHms+4EwJQTuj964IlqpQNh/U=
+	t=1745597022; cv=none; b=fFkmPW1X8tDmHoK8JqLfx7XaTEiur8x29wBc0Uuiw/VboVYOMDA85ldDWTDcz5CVpg1+LfWFzKbejmWpmJBt4AyQpHEZMnBAB5VQdpssX/VyIm7lrUoqQyfBYsPmC2AVvUQrXKSMh8GHCY1aFgRxDUX/lQVFJp1Bb+9LxMI6gfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745597075; c=relaxed/simple;
-	bh=bc9rHthG/o0HGOF2f+lgprX8y9UVRdJbkBZnBn6xhkw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=d/Gx9gPgtMVOh1+tJAKvyUZKGgMe6uJAYQ9YcJ6k1SnEZrx2Vf2tfjtxRZOO/5TgBIZaz68mVMJFCf/i1Vw5/GVJa7443Iy7JYAcstIalne7gG2RIjSzuM804b2mtTpFR8Ts9Vifup5Mi2dHmVn3qmGZ5aUptN+BcUX4lAG+fM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVIFXsjM; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745597074; x=1777133074;
-  h=date:from:to:cc:subject:message-id;
-  bh=bc9rHthG/o0HGOF2f+lgprX8y9UVRdJbkBZnBn6xhkw=;
-  b=UVIFXsjMMzXhCAqWGak5g7/L6GdmgI9uKON0LQhigSQ0SLEVgPOYu9OG
-   jMoq9lbXiE8BIjOfy2IukadnW5W1wElQuL5EbdgE2+ExVl8ciZH7kJIQ0
-   E1dak+DJQ76qn97wTepZHqw1YAstqTHUUmMQEgXVgg+xCcbaYq6Fe/Ufx
-   ODy267mzsihxX5CDEVwMzgckCCBSCXnXI/tmu/p4CV4YLhJOvXotpI5+S
-   ZR7TzoQZzlCt65UrsdFerAJXCWG+UQzKQIqgigkuJ+61Ynq/+922kr+Zq
-   CizdhO2uH0+W9Vr2cS4XZijCtdljjhUdpgCzzzhQr4q809YaJt/gCCx42
-   g==;
-X-CSE-ConnectionGUID: uM+RHPCCRvK9Ixca8+zvAA==
-X-CSE-MsgGUID: 3feZraxJQZKo6piJDLNxTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="46975173"
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="46975173"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 09:04:33 -0700
-X-CSE-ConnectionGUID: 8+FppNpgQiOaiVHFO7E/Yg==
-X-CSE-MsgGUID: d7Zc5tO1Qw6OqR7PUESTQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="138105286"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 25 Apr 2025 09:04:32 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8LXR-0005L5-2Y;
-	Fri, 25 Apr 2025 16:04:29 +0000
-Date: Sat, 26 Apr 2025 00:03:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/boot] BUILD SUCCESS
- 18ea89eae404d119ced26d80ac3e62255ce15409
-Message-ID: <202504260023.Cz0DWUiH-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1745597022; c=relaxed/simple;
+	bh=pgHM0pQQh/AnS0sjVOOQG8XMAzr1ppzquqp9PxwxD9E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uqFuLkZ5j3YXl0YGL3agy1Bqid8JajRBjcs+2rINOq8SPhPaF0xghA5Qp3DhPaevOoZ/4weNG3bzK+1TL1Hsn+tJPQXY9LuW+txfudm1FkbMUdpn7mBx7twpPaE2GoyTG0/1BZUW0gbelpXUacbwR77mKNksQLpsWwG1vfbLKrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xp/o8stG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F27DAC4CEE8;
+	Fri, 25 Apr 2025 16:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745597020;
+	bh=pgHM0pQQh/AnS0sjVOOQG8XMAzr1ppzquqp9PxwxD9E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Xp/o8stGuvZrxmfHGzPdB4Xhb057kr4y8ixeKPp5waTpTb6DQCI794+GkW9NVUgst
+	 W/nl+r0HEWnxzfGt5zNexY7I8sEhTqXdB8qkZYz41pKchjHrWc/OnJuJSa8S7kg9Eb
+	 zoKDjAXwBdM9M22LEzttByIaREl4nRUhAOcN3HJ0EREYuJf+Q4ltJ5CDm2WnJcPmSc
+	 uPcvkmYEklwSEFuoAlsL8puQU/ZT7Zanvmm7gb96r7M8Ee1zqXkhBS5nHMUzNKGPqy
+	 dczmIj4Gmwqgi1vcrIORXa2zwErqWA4gp0PsOZo3kR6ZaOe4MTDFpuICYmkw6XzWw6
+	 llpuBSMXB9YSg==
+From: Mark Brown <broonie@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ miquel.raynal@bootlin.com, Krishnamoorthi M <krishnamoorthi.m@amd.com>, 
+ Akshata MukundShetty <akshata.mukundshetty@amd.com>
+In-Reply-To: <20250424121333.417372-1-Raju.Rangoju@amd.com>
+References: <20250424121333.417372-1-Raju.Rangoju@amd.com>
+Subject: Re: [PATCH] spi: spi-mem: Add fix to avoid divide error
+Message-Id: <174559701872.197127.17635970599658123215.b4-ty@kernel.org>
+Date: Fri, 25 Apr 2025 17:03:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/boot
-branch HEAD: 18ea89eae404d119ced26d80ac3e62255ce15409  x86/sev: Share the sev_secrets_pa value again
+On Thu, 24 Apr 2025 17:43:33 +0530, Raju Rangoju wrote:
+> For some SPI flash memory operations, dummy bytes are not mandatory. For
+> example, in Winbond SPINAND flash memory devices, the `write_cache` and
+> `update_cache` operation variants have zero dummy bytes. Calculating the
+> duration for SPI memory operations with zero dummy bytes causes
+> a divide error when `ncycles` is calculated in the
+> spi_mem_calc_op_duration().
+> 
+> [...]
 
-elapsed time: 1457m
+Applied to
 
-configs tested: 99
-configs skipped: 3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thanks!
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                   randconfig-001-20250425    gcc-14.2.0
-arc                   randconfig-002-20250425    gcc-13.3.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250425    clang-21
-arm                   randconfig-002-20250425    gcc-6.5.0
-arm                   randconfig-003-20250425    clang-21
-arm                   randconfig-004-20250425    gcc-6.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250425    clang-21
-arm64                 randconfig-002-20250425    gcc-7.5.0
-arm64                 randconfig-003-20250425    gcc-7.5.0
-arm64                 randconfig-004-20250425    gcc-9.5.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250425    gcc-13.3.0
-csky                  randconfig-002-20250425    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250425    clang-21
-hexagon               randconfig-002-20250425    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250425    gcc-12
-i386        buildonly-randconfig-002-20250425    gcc-12
-i386        buildonly-randconfig-003-20250425    clang-20
-i386        buildonly-randconfig-004-20250425    gcc-12
-i386        buildonly-randconfig-005-20250425    gcc-12
-i386        buildonly-randconfig-006-20250425    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250425    gcc-14.2.0
-loongarch             randconfig-002-20250425    gcc-13.3.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250425    gcc-5.5.0
-nios2                 randconfig-002-20250425    gcc-13.3.0
-openrisc                          allnoconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                randconfig-001-20250425    gcc-10.5.0
-parisc                randconfig-002-20250425    gcc-8.5.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc               randconfig-001-20250425    clang-21
-powerpc               randconfig-002-20250425    gcc-9.3.0
-powerpc               randconfig-003-20250425    gcc-9.3.0
-powerpc64             randconfig-001-20250425    clang-21
-powerpc64             randconfig-002-20250425    gcc-7.5.0
-powerpc64             randconfig-003-20250425    gcc-10.5.0
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250425    gcc-14.2.0
-riscv                 randconfig-002-20250425    clang-19
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250425    clang-17
-s390                  randconfig-002-20250425    gcc-7.5.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250425    gcc-7.5.0
-sh                    randconfig-002-20250425    gcc-9.3.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250425    gcc-8.5.0
-sparc                 randconfig-002-20250425    gcc-14.2.0
-sparc64               randconfig-001-20250425    gcc-10.5.0
-sparc64               randconfig-002-20250425    gcc-6.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250425    clang-21
-um                    randconfig-002-20250425    clang-21
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250425    gcc-12
-x86_64      buildonly-randconfig-002-20250425    clang-20
-x86_64      buildonly-randconfig-003-20250425    gcc-12
-x86_64      buildonly-randconfig-004-20250425    gcc-12
-x86_64      buildonly-randconfig-005-20250425    clang-20
-x86_64      buildonly-randconfig-006-20250425    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250425    gcc-6.5.0
-xtensa                randconfig-002-20250425    gcc-8.5.0
+[1/1] spi: spi-mem: Add fix to avoid divide error
+      commit: 8e4d3d8a5e51e07bd0d6cdd81b5e4af79f796927
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
