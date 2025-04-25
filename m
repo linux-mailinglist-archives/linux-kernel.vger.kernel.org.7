@@ -1,109 +1,182 @@
-Return-Path: <linux-kernel+bounces-620326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C595A9C903
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0A8A9C90C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D101BA8195
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71611BA36B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F7424BD04;
-	Fri, 25 Apr 2025 12:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E89C24C060;
+	Fri, 25 Apr 2025 12:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgMdU2He"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ags7qOgf"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895385695;
-	Fri, 25 Apr 2025 12:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0325695;
+	Fri, 25 Apr 2025 12:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745584495; cv=none; b=JoXf1O0I6EwGmue5e+9Pp4tgWj9LAQtbr0rPHtRYqidLb39tPORnRVnDtdre/1/Iu8Qkals594W//NEGMAQ8pGLk3PXau0vzrBw8fA02xUeIsVFMBGlv80x4A9HWB94uUT64cGauXcSAjA55erf9+Z1a9pUJOO3G5BKIFUtK3WE=
+	t=1745584626; cv=none; b=XCn6igoU76yDEPRmRNUPcUJPcjC21fxpzXDgxtsM+wwbqoDpTq6XJkCTrG1GhSC8gQAiZTsn56MN3sk+/qvnmtzcEYNa7dP6XekQubb4tUi3XDjyGo2PODvZhjg/zI8cFZaczY8aNtNtWy9kvgrbz6oAApBAiov7gcpUxYB9tSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745584495; c=relaxed/simple;
-	bh=0jC+f8mlnZwJBUtQlx0T8zUGzXV8KJCXfOyP3vLVigw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=juV0TerbDrKk5Udh53+Dh9UPAdMtR/nQRTRPJ0CKyTC0vJZp/KCRNeWown2Y+DWpQwwXNbv1o5DF9/F5zVmEt5k6lF10MltusMT7JqEJnf5nLxFcO0q8iAcswZgv1XwbQcgX8NbPE0SyDVwx/UvjxTSeVhNwip0sttVKZ5H3twA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgMdU2He; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21467C4CEE4;
-	Fri, 25 Apr 2025 12:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745584495;
-	bh=0jC+f8mlnZwJBUtQlx0T8zUGzXV8KJCXfOyP3vLVigw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AgMdU2HeBbp1QKCYJ6Icni1zXm+0+lmyILLqSAoeke1HIyTBc46589nPsGLSehqxP
-	 d6T5xMQyIHGttiTPk2R5S8CFQE/AcqM8AZTCdvLhb5p7enckwSarO2UpS5tw35FwkH
-	 tOysSlwX3Q0VOWetFR74l52IdzFZBgdKKLfTKKaZ9DppPv7q7xDblmajuSasaTMV6B
-	 Rrpb+iYJrtwOAkZQE4aplwJZj+1C6k8ytPF3wLioiYsd64vjfQZgMnOWbxx4PcYnXg
-	 0jJg5JVnVAexE6ydahaBcWKgTkFcxx//FAScpwOxIN8uEXCt7CvDfcutDg4D0jVKNS
-	 BAIcWyoa8jZlA==
-From: Mark Brown <broonie@kernel.org>
-To: biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
- lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-In-Reply-To: <20250410141525.4126502-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250410141525.4126502-1-claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH] ASoC: renesas: rz-ssi: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
-Message-Id: <174558449287.45647.11999550141673145450.b4-ty@kernel.org>
-Date: Fri, 25 Apr 2025 13:34:52 +0100
+	s=arc-20240116; t=1745584626; c=relaxed/simple;
+	bh=wQKMs1Q383E4DCa/GJSb7YJisKrgGs3Z3IM1JTKPSz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6j1TtAPJnhR4i3Sics4QnUOMRo4FqLZZKPh2poceGtnK/0CzGLoryoZjT3CkWMP/avcPsNSm5LevHjkSQKjxsidOIVIGVbXEu2lQPbU6hcT7lJAxgcosoO/9uAJ/vRFc0Kp2KQ8Cv5RZMgD+5XyCiqvLjPfoW2lOaM3na2KLvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ags7qOgf; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301302a328bso2957272a91.2;
+        Fri, 25 Apr 2025 05:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745584624; x=1746189424; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/57iCSzPZz9lmb8cnuwvMg4/VJ+5z5nV92ke/d2qrv4=;
+        b=ags7qOgfQCNaMIGNGylhsPhY6l4UJRq96W9S6se34Z17MFRfqzznHtSLYvjmXbSuss
+         D1VqCDEZHRQ9Cri2jRCanP4HNSVM/7AOU0ONUxmwVFD13KLqRHgpxNB4ioLbZhDub6T1
+         KzD7Fl0CfQI4B5AcZw9cm6fZRm8kk71aJ1vUmop2kUWsgL5/2iEawxenzrq77p4NF9Da
+         uvb8aDDgHsVKCFnu+aqDe+ONkxfm9EPq3WReSoIj0lYwPinJBcPKlvWBgVmpP/kEUBXr
+         PgLcr8H7mLfYcbIJe0zQDRkNFIX5eS1MjIPw8YbvOpzkeHGjkX2EGJr9e3eiiVP1y1Sq
+         I7nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745584624; x=1746189424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/57iCSzPZz9lmb8cnuwvMg4/VJ+5z5nV92ke/d2qrv4=;
+        b=AadanC5jQqpf2xu9ee/Plf1N9345uWt5+XqZ2H4wvfop3zdqRUCPivHkcjgC0/XhFs
+         E6aHxr94mCbUH+wSWUOao9e5cJgLCKLnGzu83XAu66aF/O4WhJqp/owESt2FSP+OwODk
+         qzpEih1ug03OLppfROP7EOpqZx8dm2E2RN+FNMkNI7CWLetY7cQsAQ0Rs2yKJ0Ie/CZz
+         3zQjixrJR+uyK8lfQTM3Llwmr3iJH6OINkfUYzPgGmA2iFzVONKT4En4Ai29B4G1AFBo
+         zq0TDcZf2NThgUDve3sB5DTmrzaLgiAr3GUK5RAkJvdZf5nJ3RFJ3vsdSqct0CyDxBlS
+         8W3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVotHrnz/OGcpo0mfYm8gdyLjX5h97avm04SdHqdApJQhYyQ8loxzJH+GERQDfQ/MSzMe71wnCT184LQ9k=@vger.kernel.org, AJvYcCW1Y4oI1WpO3x7wcWi46vM0UNGNtR9s9uWrMOKHQzTS+ERBA22wcz5VAKGItxN+b0xT10tE0+NYWwBLJnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAN4BUe59XCI7uqRvYfWY/LewXmXW5XvSSSTeOe2tSJLbo7vd/
+	v13Y1Z3m8d2DoWxcwkjsR2NBdslZ6y6WqiMMB1BS0N1FRzqfigXK6QlHlwMWNeefeFHyS2BKBSw
+	+tPkJJ3uNGVLJLtdQva2MFsmNkXo=
+X-Gm-Gg: ASbGncvUqoN9z/tW7S2l5UCzKeD5wTfxffVtg4Y6lxk64AIsACTU6CvUeRSwMj7Mw7i
+	xbZUTU9Q+8M1QpbrXWD+dEmI2wYjJkptdmSxnV34kY2C37A1xh39yqPlue3yh3SU00tVNf3LSEn
+	X8EJ/zCcGkfNMR3VTKjGZDJQ==
+X-Google-Smtp-Source: AGHT+IHrZKSy9HnTH+mCEVFkPApiHf33jSDgbWuJcy2WpYPblvzFC3AtdlLf658oHgbgBeN2mhj60hOxIo9mC19fh5w=
+X-Received: by 2002:a17:90a:7142:b0:2f6:be57:49d2 with SMTP id
+ 98e67ed59e1d1-309f7df3069mr3065139a91.17.1745584624192; Fri, 25 Apr 2025
+ 05:37:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+References: <CAHCN7xKy7w0Kwf8Oyjd6dFLzAhiGiqdaYOj=qfA4kSRthD5Law@mail.gmail.com>
+ <20250425121451.GP18085@pendragon.ideasonboard.com>
+In-Reply-To: <20250425121451.GP18085@pendragon.ideasonboard.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 25 Apr 2025 07:36:52 -0500
+X-Gm-Features: ATxdqUFspzEpPOPXt6QqvjLf6nDyAf7s4FR1KV8XPWjCOXF28L_HNZsVbYcD0QI
+Message-ID: <CAHCN7xL=vgZO7TW5uZr+OBPX1EKcw2zQhYwjRokTUOHpVq_Wbw@mail.gmail.com>
+Subject: Re: i.MX8M Nano ISI Channel Question
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-media <linux-media@vger.kernel.org>, imx@lists.linux.dev, 
+	arm-soc <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Frank Li <Frank.Li@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Apr 2025 17:15:25 +0300, Claudiu wrote:
-> In the latest kernel versions system crashes were noticed occasionally
-> during suspend/resume. This occurs because the RZ SSI suspend trigger
-> (called from snd_soc_suspend()) is executed after rz_ssi_pm_ops->suspend()
-> and it accesses IP registers. After the rz_ssi_pm_ops->suspend() is
-> executed the IP clocks are disabled and its reset line is asserted.
-> 
-> Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
-> snd_soc_pm_ops is associated with soc_driver (defined in
-> sound/soc/soc-core.c), and there is no parent-child relationship between
-> soc_driver and rz_ssi_driver the power management subsystem does not
-> enforce a specific suspend/resume order between the RZ SSI platform driver
-> and soc_driver.
-> 
-> [...]
+On Fri, Apr 25, 2025 at 7:14=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Adam,
+>
+> (CC'ing Frank Li)
+>
+> On Thu, Apr 24, 2025 at 08:59:18PM -0500, Adam Ford wrote:
+> > NXP-
+> >
+> > I am trying use Libcamera to capture video on an i.MX8M Nano.
+> > (Hopefully, this makes Laurent smile)
+> >
+> > I noticed that it has a maximum capture of 1080 lines when I query it
+> > with Libcamera, but the same camera on the Mini can capture at higher
+> > rates.  The multimedia overview states it can handle 1 unprocessed
+> > camera stream at 4kp30 without scaling.  The Nano's Ref manual later
+> > states that each processing channel has one line buffer, and each line
+> > buffer can store up to 2048 pixels.  It continues to describe when
+> > processing higher resolution images like 4k, the line buffer from
+> > other channels can be combined.
+> >
+> > Section 13.4.3.5 of the Nano's Ref manual (Rev 2, dated 07/2022)
+> > explicitly goes into detail on how to capture up to 4k image
+> > resolution by combining channel 'n' with channel 'n+1' which implies
+> > there are at least two channels.
+> >
+> > Section 13.4.5.1 states the registers are dedicated for each channel
+> > and spaced 64KB apart, but then the following table only shows the
+> > base address for one, and Table 2-6 shows the ISI size is 64KB.
+> >
+> > The driver is currently written to only support 1 channel.  When
+> > reading through the driver, it appears to require one IRQ per channel,
+> > so I looked through the Nano's IRQ table (7-1), and found there are
+> > three:
+> > ISI Camera Channel 0 Interrupt - 16
+> > ISI Camera Channel 1 Interrupt - 42
+> > ISI Camera Channel 2 Interrupt - 43
+> >
+> > I attempted to enable a second channel by modifying the .num_channels
+> > =3D 2 value in the driver, and I modified my device tree to assign a
+> > second IRQ (42), but when I query the pipeline with libcamera, it
+> > still doesn't show an available resolution ov 2592x1944 that is
+> > supported by the camera and work on the Mini without the ISI system.
+> >
+> > Can someone tell me how many channels are actually available, and
+> > whether or not  4Kp30 video is really available on the Nano?
+>
+> My understanding, based on the i.MX8MN reference manual, is that the ISI
+> has a single channel. The ISI features list (13.4.1.2) reports
+>
+> =E2=80=A2 Supports up to 2K resolution at 30 or 60 fps (24bpp) on each ch=
+annel.
 
-Applied to
+I saw that which is why I was really confused when they listed 4K in
+other section.
+>
+> If you look at the i.MX8MP reference manual, the same features list
+> reports
+>
+> =E2=80=A2 Supports one source of 4K resolution at 30 fps (24bpp).
+> =E2=80=A2 Supports up to 2K resolution at 30 or 60 fps (24bpp) on each ch=
+annel.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+I didn't look there, but that makes sense.
 
-Thanks!
+>
+> There's no mention of 4K in the i.MX8MN ISI features. I expect that the
+> documentation about 4K support by combining pixel buffers comes from the
+> generic ISI documentation, and is not applicable to the i.MX8MN.
 
-[1/1] ASoC: renesas: rz-ssi: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
-      commit: c1b0f5183a4488b6b7790f834ce3a786725b3583
+I suspect you're right, but the documentation is very confusing. If
+that's true, maybe Frank can get the NXP people to remove the
+references to the 4K capture from future documents.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Any idea is the CSI on Nano is really capable of 4-channel virtual
+channels as listed in section "13.5.1.2 Features" because I believe
+it's the same, or similar CSI as what is in 8M Plus and Mini, and I
+don't think those are capable of virtual channels.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+thanks,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+adam
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
