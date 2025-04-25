@@ -1,46 +1,88 @@
-Return-Path: <linux-kernel+bounces-620418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88C4A9CA73
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:33:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DFDA9CA86
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AE284E2199
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944449E5B79
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F51253958;
-	Fri, 25 Apr 2025 13:33:08 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861C4253359;
+	Fri, 25 Apr 2025 13:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Pw1N19uc"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F1824BC00;
-	Fri, 25 Apr 2025 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9413BCA6B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587988; cv=none; b=Ra597LQBOC1ycI/nOFfauO3oPMt3V0kWlQfxLZwAdxO8heSjFVjxWhp0Z9U+suJMsgCg4pqBE7tThxOiDKLqsU8z2/GfBFsSFELBIX323pmZPoRmpCXnF624aMgU7Rx2FLkuUTn9vTg5o1m+/Zs4GaWC/7nEIXmrJXRgC4YjzhE=
+	t=1745588040; cv=none; b=vB3yMEBZKKTT65odqCbQrp54shb65KOg4cCP9eSv2kuV8XmyefnidnrSfbc9vpG/U2LtZr1o3X0ZP2At72gxtowhH5H/Bi1Ok0X7s/MDlwXYG/aYVV0sR37otyJ+H2btOVrLBVwr3Ug5Qh2Z3vGzr0xx9Czl+zQwSKckcxIMZxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587988; c=relaxed/simple;
-	bh=BGZtpxWX6YZYaFUOiEUu3vqeLND56dGFiwlt2elbYFs=;
+	s=arc-20240116; t=1745588040; c=relaxed/simple;
+	bh=cduZd8Ltq5422qMan5ANCK5a+bkT5I0nJA5znBziT9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbL8hltBm/DrVK9N1Cn+zvvXdHHgMYEJrqb6xEyvtQ1Bw+QswOjDTYbnl6zzE67mVV3cijs97lYi5Z8lSg2/BLNNfVQe5tMEd5ftAaIBd7FW9YupuuqGJTwCAf4LyPtsakqIDHzniiM6Spgyd/eVaF6XmwfLH8XwoLbhbeeVbr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 567A068B05; Fri, 25 Apr 2025 15:33:00 +0200 (CEST)
-Date: Fri, 25 Apr 2025 15:32:59 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Christoph Hellwig <hch@lst.de>,
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Xiao Ni <xni@redhat.com>, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] devtmpfs: don't use vfs_getattr_nosec to query i_mode
-Message-ID: <20250425133259.GA6626@lst.de>
-References: <20250423045941.1667425-1-hch@lst.de> <20250425100304.7180Ea5-hca@linux.ibm.com> <20250425-stehlen-koexistieren-c0f650dcccec@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BaQI4MPzJBu+BZeTTVeRhqe8TELKAFjdGXg7Xnh7S5zUpA4LdVn7E7iPeiBkHfI7lZajvobc/SPpCLFdSUd4SoRdJLM89a/bjiewunJHBXJHcwxSrYsCvv4f7hRnYI83GlinMulxx9FnAbd+rmkYrA8OIeyEhxuC9hlatLFzQLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Pw1N19uc; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso1348988f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 06:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1745588036; x=1746192836; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fvxSe8a/Se9B7XO1sswsds6D5F7SBQkR6pj1GPZGuF4=;
+        b=Pw1N19ucwGhqAJdGkL62h6/+hmhQcY2/cCmKVMpDC1L7PsS56S7nIwFkEJgV8JTBXq
+         u9+hKmZBcKFnImyQviGrDxPzguGM9zumbxkjXalN9eE9PEs7dSMGDIzZ/jC1m7E0P78g
+         poEsVvzXyHHXeRGwHDBKHL+FhAjnyWK6md/7TlIh39e3QMKwGrC4W+2uTdHp5u83TKuL
+         kVuX6fnO6g1aXnKlvUqjA2nLkJPgyJkufmrZiIFoC9tzDq6g7tJEIvkWtYXt/04RIXk4
+         7BCpw24SG1pDqge6qxBpl8NaFYqOO8eW70b59oCl+CaX3oiDsFx4o+PdzY+AOBMXrr99
+         fnxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745588036; x=1746192836;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fvxSe8a/Se9B7XO1sswsds6D5F7SBQkR6pj1GPZGuF4=;
+        b=WZ5ItVspwC1I2yGDGEKT8eQne5IzBV2D2SqBsZ1KFvndAaBBq9SwJVVcWXzHzqm1DW
+         +f9T6JytFmGpAeG41LLH9AycLKFYDZeYH//WfeyctlOr9xteBvthFrct7RhQY+/UKnBT
+         /VtGGikFCcXzBSYTPmkdBO5RJtxlyOYrhJXBbDBfOSHj/up2nM+GA+onElZtMiP66Y3i
+         yNgAXbbOvnglP0KSSdTO5v0y8sekgQ+SEGKdsDZLytZADQM/lw4C2gTip+ft0FNOXa4j
+         /BuVrb3NuPhbvFS2V5uPxjFi2AWjnFXBO9iTczgxDOJIrienoN9Hbn6k3D+ZwAPCuric
+         SVYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyTwG9uArg7mt/s2RQY17uQipPo6SFzZ/a3Iy/m6dZT7wJuH9RsJHo5Bwtyk0AuzaodDAlokai2vtJ7EQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5R4PqJTI+pulb3PcA01P/AYDfSqgg2asZVDO7jyABfNZUIHmY
+	iIZVbc5xjyHjLBHQZYjuPU3EnQrFFA7Z9pQw2d8pLfsOLlTi5s3YSJZ2yL7GDJQ=
+X-Gm-Gg: ASbGncsdYYlFNLCiUaOD4smGrIUPfhr4C5ZWsdat66UaSWSquGss22KtD73QQ1qJfLQ
+	m8jVmNI60KWw1LzvAH520fPUU00l6OEE+FQrnlfE7CIb/IR6WzVguEH0vro98Fwsu3cukLh+iNe
+	nJcuFGj1qt6qo8ImLv1npXPmzuNHxPcIlKRnTJe4gSGlqOU9a1t8UXcTY0vGjE71Qyk2MLmE9N6
+	eujPkaDuE1j2xfvxE2oaVX6Dhplhn1/AWezmG+xRVmoXu9wDn1lKZRXTuB60QbSIa5HkhP9xZWF
+	iOV22lQXCxC2D579QZIfP/+4CxuS
+X-Google-Smtp-Source: AGHT+IH345KXBx7WTUF/NPXxKh0vTQxkkkmRW+ErxhOe06A807pl+3G2m+RyiKZsRHwXpurwjK/pVQ==
+X-Received: by 2002:a05:6000:1867:b0:391:3cb7:d441 with SMTP id ffacd0b85a97d-3a074e37776mr2084638f8f.25.1745588035744;
+        Fri, 25 Apr 2025 06:33:55 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::f716])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca4e50sm2467062f8f.30.2025.04.25.06.33.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 06:33:55 -0700 (PDT)
+Date: Fri, 25 Apr 2025 15:33:54 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] KVM: riscv: selftests: Decode stval to identify
+ exact exception type
+Message-ID: <20250425-f458b9801a83cc35bda55c74@orel>
+References: <20250324-kvm_selftest_improve-v1-0-583620219d4f@rivosinc.com>
+ <20250324-kvm_selftest_improve-v1-2-583620219d4f@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +91,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250425-stehlen-koexistieren-c0f650dcccec@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250324-kvm_selftest_improve-v1-2-583620219d4f@rivosinc.com>
 
-On Fri, Apr 25, 2025 at 12:12:36PM +0200, Christian Brauner wrote:
-> > That is: if dev_mynode(dev, inode) is not true some random value will be returned.
+On Mon, Mar 24, 2025 at 05:40:30PM -0700, Atish Patra wrote:
+> Currently, the sbi_pmu_test continues if the exception type is illegal
+> instruction because access to hpmcounter will generate that. However, we
+> may get illegal for other reasons as well which should result in test
+> assertion.
 > 
-> Don't bother resending, Christoph.
-> I've already fixed this with int err = 0 in the tree.
+> Use the stval to decode the exact type of instructions and which csrs are
+> being accessed if it is csr access instructions. Assert in all cases
+> except if it is a csr access instructions that access valid PMU related
+> registers.
+> 
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+>  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 32 ++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> index 03406de4989d..11bde69b5238 100644
+> --- a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> +++ b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> @@ -128,11 +128,43 @@ static void stop_counter(unsigned long counter, unsigned long stop_flags)
+>  		       "Unable to stop counter %ld error %ld\n", counter, ret.error);
+>  }
+>  
+> +#define INSN_OPCODE_MASK	0x007c
+> +#define INSN_OPCODE_SHIFT	2
+> +#define INSN_OPCODE_SYSTEM	28
+> +
+> +#define INSN_MASK_FUNCT3	0x7000
+> +#define INSN_SHIFT_FUNCT3	12
+> +
+> +#define INSN_CSR_MASK		0xfff00000
+> +#define INSN_CSR_SHIFT		20
+> +
+> +#define GET_RM(insn)            (((insn) & INSN_MASK_FUNCT3) >> INSN_SHIFT_FUNCT3)
+> +#define GET_CSR_NUM(insn)       (((insn) & INSN_CSR_MASK) >> INSN_CSR_SHIFT)
 
-Thanks!  Let me use this as a platform to rant about our option
-defaults and/or gcc error handling.  It seems like ever since we started
-zeroing on-stack variables by default gcc stopped warnings about using
-uninitialized on-stack variables, leading to tons of these case where
-we don't catch uninitialized variables.  Now in this and in many cases
-the code works fine because it assumed zero initialization, but there are
-also cases where it didn't, leading to new bugs.
+It'd be good to put these macros in include/riscv/processor.h or some new
+include/riscv/ header to be shared with other tests that may want to
+decode stval.
 
-Can we fix this somehow?
+Thanks,
+drew
+
+> +
+>  static void guest_illegal_exception_handler(struct ex_regs *regs)
+>  {
+> +	unsigned long insn;
+> +	int opcode, csr_num, funct3;
+> +
+>  	__GUEST_ASSERT(regs->cause == EXC_INST_ILLEGAL,
+>  		       "Unexpected exception handler %lx\n", regs->cause);
+>  
+> +	insn = regs->stval;
+> +	opcode = (insn & INSN_OPCODE_MASK) >> INSN_OPCODE_SHIFT;
+> +	__GUEST_ASSERT(opcode == INSN_OPCODE_SYSTEM,
+> +		       "Unexpected instruction with opcode 0x%x insn 0x%lx\n", opcode, insn);
+> +
+> +	csr_num = GET_CSR_NUM(insn);
+> +	funct3 = GET_RM(insn);
+> +	/* Validate if it is a CSR read/write operation */
+> +	__GUEST_ASSERT(funct3 <= 7 && (funct3 != 0 || funct3 != 4),
+> +		       "Unexpected system opcode with funct3 0x%x csr_num 0x%x\n",
+> +		       funct3, csr_num);
+> +
+> +	/* Validate if it is a HPMCOUNTER CSR operation */
+> +	__GUEST_ASSERT(csr_num == CSR_CYCLE || csr_num <= CSR_HPMCOUNTER31,
+> +		       "Unexpected csr_num 0x%x\n", csr_num);
+> +
+>  	illegal_handler_invoked = true;
+>  	/* skip the trapping instruction */
+>  	regs->epc += 4;
+> 
+> -- 
+> 2.43.0
+> 
+> 
+> -- 
+> kvm-riscv mailing list
+> kvm-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kvm-riscv
 
