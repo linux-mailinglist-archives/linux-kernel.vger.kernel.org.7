@@ -1,212 +1,132 @@
-Return-Path: <linux-kernel+bounces-620659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5DCA9CDDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE04DA9CDDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51789E26E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FAF11BC5D31
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5351917ED;
-	Fri, 25 Apr 2025 16:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4717E19047A;
+	Fri, 25 Apr 2025 16:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="i0DDBjj4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="puyFUw+t"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HvHr0icL"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD7218DB02;
-	Fri, 25 Apr 2025 16:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EED12C544
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745597638; cv=none; b=kHzfgKVdX6RLqcrWzvQcvoZednJPVb6+5yxftVL0+XaRGSWZAbzamcSHjeke5qlDw1Ek3Y+AzU3g5B1gApIubLm6cydUywJIr06ip7fsSot1+E451VK8pRJJYUKWl/+3vqu/QspFbacTH3wa8xFwdDycvVIN0ajfnooRbkp38qQ=
+	t=1745597686; cv=none; b=W+IdoEz7pP0o3wXP2HpJjPSzeiDRJGmhbsDCafCdOMZTdZjI6w0pSGCQaSLzVMfT8TtRXqgvhBh0mxtQBnLEDF3pci1xFFD8aa8B264ejZnqdb143+ej/DNLFRsn3t0cEqSIK5E9EluTLghjEyuzq9lmCRkLiwjv6YL1gjGcCR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745597638; c=relaxed/simple;
-	bh=AuyWfrx+dvQzrTxgKjoCW6rOdYeZI6fYUeL+Q/ZBG4k=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=HqVNseBpH1PsllOMtJ4cNj3mBZPp5s5eI56J1oV5Z26ueLyGbUSWkgM9bGTjj1oGpMjVLgdaVEscMcOJ7N9us1E9YdQj9rf3UonWwKh2nfeCJirFOQA+CAzn/U2Pe6IVlRGPo3pr1cJPlAaQU5tVWnjgK/3qAIKNGscnEAjE/qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=i0DDBjj4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=puyFUw+t; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C81B625401F0;
-	Fri, 25 Apr 2025 12:13:53 -0400 (EDT)
-Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-06.internal (MEProxy); Fri, 25 Apr 2025 12:13:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1745597633;
-	 x=1745684033; bh=gu5XKhpxKX7r1k09RdqlZZq6m7CirpXTD87nnSUIIsk=; b=
-	i0DDBjj45+tOoDXX+WAZXYetG8Ifb5PSUy1CRf3nYVPtXGURGdK9F/m8gBoUEtT1
-	V3CaedFFI9XZ4dtjP98IaPN9zVmwZ3SH7btBvIiRceT4GB+rsiEcEcqcrX3gpqRT
-	RCU8XbPKZUatotnBWmvEawlEH2rZHHRBA1Jwk0Pdj9f9Porqeiscvj/Lm2HUDNJe
-	fSTCDIDF5Zr/2cZvE7Mel4Bdu1n5RF9p862C3NT0LpkF2wJDkpgM+mXTgDvj0K8x
-	rdmgQoCDXHO1Cr/O3zQrfLAJ/7GRY4AVddVWCW98vrkTQyICAmOMQWA46qSysTmD
-	8vgZj+BbohjIImaJ7w/KdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1745597633; x=
-	1745684033; bh=gu5XKhpxKX7r1k09RdqlZZq6m7CirpXTD87nnSUIIsk=; b=p
-	uyFUw+t0LhgFBcqSVnZc83CizGVQVk1cW6A0fpmbOAmjaIykXQmVIdT9LEb2aNWr
-	kFoHmwtlbxYDeJH5APY4Q2mi16WjrPBoWn1IuGMWqYLjP5hS0Fdg6/CIjNNvVjoI
-	YZ9eS86L9Y3UMU9EydrEMRbkSCy+0EgfqQJqMHImccdGAEGKETJgFDC3nkt8LQFN
-	daoKClvwhhH05LYStricOtTX7V8n0JiVyx6/rEykj6XpUgomIIlR5WOVcPbv/ui0
-	tQSNvjL3Q1wf8SogErx25/i/+4TnrXFZkWt9tNZK+nriJMJwfcRdP4Ll6ydAJUij
-	bSYxhG8j/RomEb3vNyTfg==
-X-ME-Sender: <xms:wbQLaEKDBhlLyqNKlG1e_sCMIjaVXdulvnO0SgvVhEISTDVRwgjc5g>
-    <xme:wbQLaEJLgQYKhSJvRVDxWOGyCea2e41fOwtovKSEy47jwtTRz4bOT2vyI6F-ef3dx
-    GAZYvMr8JojizJ2-M4>
-X-ME-Received: <xmr:wbQLaEuv4oIkbXQBcmH38OU9KtFvm4WdQr2W4oJ3jX6T2i03tllIGdT_W2uJqPr4Lpa_SmwcSoafrXVHvSlnPfhPHC_mFThgROZhDv9d5qVjN3M_yA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvhedvjeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurheptgfghfggufffkfhfvegjvffosehtqhhmtdhh
-    tdejnecuhfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnih
-    gtrdhnvghtqeenucggtffrrghtthgvrhhnpeeuudejheeltdeikefgleefledtvdekgffg
-    ffffueetvdduueduledvtdekleefieenucfkphepudekjedrudehvddrudeikedrleenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohes
-    fhhluhignhhitgdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepnhhpihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthho
-    pehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhh
-    eslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhk
-    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hsvghrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:wbQLaBZxCUyiRo_NBA1XWbALgkjApUSj-bKLrk5tyhmoknKYKcDIaA>
-    <xmx:wbQLaLauKmx5cCvi_X__LyRMm4EsTHj30O6DQr96-6HKmxarSwvmWQ>
-    <xmx:wbQLaNCD0stycjs7yIlIBcJMVj8nH0NGZW0EzFcZOY8Mg0zDJ6Oo_w>
-    <xmx:wbQLaBaRbEF4cJz4je0uzpJFm_W0bhlNdETn0Ar5t1wzAsZlvIr7DQ>
-    <xmx:wbQLaBpznivKYl_RoWeTZOet3aT98pf7Mwie_GQttSkjLayRRrWXovie>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Apr 2025 12:13:53 -0400 (EDT)
-Received: from smtpclient.apple (unknown [187.152.168.9])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 380ED115C2ED;
-	Fri, 25 Apr 2025 12:13:52 -0400 (EDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Nicolas Pitre <nico@fluxnic.net>
+	s=arc-20240116; t=1745597686; c=relaxed/simple;
+	bh=pB5EQvm4M998JD5gqBKF7UyBdVALJXllJZsqqL5U7kM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JBA/QkY8ZpgahPTbrBQms4aEELo+OEGM88YfmBP/BCxTpJYM1ZiRiDWP4EPTXJVahJr0NEqHgRtfHr74LQkm3Mbr9+f78lRo4pYbjoUL/M8uYiKuhgvsWMCUGUnRIqBU8gCup6BCArDQm1pBn6bPjh0iVVE6yAcxj/2Phwp3AXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HvHr0icL; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-476a304a8edso29959141cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745597684; x=1746202484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pB5EQvm4M998JD5gqBKF7UyBdVALJXllJZsqqL5U7kM=;
+        b=HvHr0icLY1iKK01Sfw1TtMUHIFepp68JomjSluzHCAT5aXJfp6rpq7eZbQrvPr3yeB
+         HcR6suMInpzT+gnGwyq4t/tLQGHsrYhuVVnvAauH1fqrWjv3RvJ2CJN9lzlnBzEcgADm
+         Zo4pDI11q6/Xws6LdtmC+YOSdr4nI85XzkgpN+ToP0ftY4YkQHBjJgjzvhz6onak8ruL
+         /9yXsTlnK21sS/KHwZN9E3cMeMk/KdMbhfq5GLEFlhmityxvpQE/wDHnSqFlEac/ktG3
+         7fiKM0PBwd+85+Yklw0wi+JE/QmknXh1Tu2KN/EdA3Pp5ann1ivu+VPSDMF/PKRumSSd
+         F7Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745597684; x=1746202484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pB5EQvm4M998JD5gqBKF7UyBdVALJXllJZsqqL5U7kM=;
+        b=lkPtJqxDwE2FQk9VYRe+T68iqZq1vnGuAi+Z+Nq0WMxN+1yjk9pJ54cmOipD7iUMes
+         6WraLJsS96aYvobtVtpTTnog+YyhwsQLQsHkjNOqhSbt/bYIYR40ttDlORCnN+d0lk0m
+         +ZpplYijEA+deEW+xMvx3LReEiVr2v2d0h3c4FLNy0RE1EwIl5zZoWZEmz2rqaocFg7T
+         S2z653CcrGu7ervIFInWUqm25joLMAyOMO7atg2X+isiZCWFs+hyCwwR5ODOnvmWtG0G
+         mV6eZ4fzesuDJ82JuEzUWDfkex8XjES5zePnFbAU/pfYsE3ae9mKQvx1NEQjkaAlDbmH
+         6ZEQ==
+X-Gm-Message-State: AOJu0Yxd+jwS3y/h4OAGalFkL/hizhLL/5jDI6AZC8tQ6oYrbIQoLcJv
+	3bwpjtuoc3zXwjNWsnhs+2lWPV5tMq8LOHJM8t/S2uXb0V1WEgnc9uZryGM/wYFQm6PR/XHJnzJ
+	bJG5B2s4UIxB3iVlYkfwNF20CClXq5PNRD78D
+X-Gm-Gg: ASbGncuPb4YvLHIGpTXETN2fsFjQy+vriYoEmhQiDeTkmPKnaVjm3Te4R54VPsyEixB
+	TlfgcF2E2yZCUvS+GVau6U77VnAxbCGT+lDpM9IaXFyja20QxSpnbJMErQFNojNQXpw1CPJXBMQ
+	XvPmbwfZmfsnDSbjdmWMoBNhnZLBQCmRgz+RKYfbfag9eKcJSUMv5yqSQ=
+X-Google-Smtp-Source: AGHT+IGkWHXll+GKqrBvN0wE83LWOl9+WBBl0lPjNcsQhvzSc6nWeRIVsYXCHFj5Oye/ZIV+mSExs3QJhoyG96v2SFQ=
+X-Received: by 2002:a05:622a:148e:b0:477:6ef6:12f with SMTP id
+ d75a77b69052e-4801c2c1051mr41589821cf.3.1745597683786; Fri, 25 Apr 2025
+ 09:14:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v3 00/14] vt: implement proper Unicode handling
-Date: Fri, 25 Apr 2025 11:13:40 -0500
-Message-Id: <2EDC209B-7D6B-4EFB-ADD0-58D494D8AF98@fluxnic.net>
-References: <2025042517-defacing-lushly-10d5@gregkh>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Nicolas Pitre <npitre@baylibre.com>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <2025042517-defacing-lushly-10d5@gregkh>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-X-Mailer: iPhone Mail (22E252)
+MIME-Version: 1.0
+References: <20250423174634.3009657-1-edumazet@google.com> <895d688d-64aa-4321-9978-8773e726aee2@linux.ibm.com>
+In-Reply-To: <895d688d-64aa-4321-9978-8773e726aee2@linux.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 25 Apr 2025 09:14:31 -0700
+X-Gm-Features: ATxdqUE1C9ZM_UZXHwH0YNfUDKCaPD-3_ZcGihlRCOx8hZrppUWQPQTprHoRcRM
+Message-ID: <CANn89iLgMFeVz3nwpe1=tf6DbQGi+M9EaUcV=-5-iGQ6QtgxxQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: reduce false sharing on sched_balance_running
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Eric Dumazet <eric.dumazet@gmail.com>, 
+	Yafang Shao <laoar.shao@gmail.com>, Sean Christopherson <seanjc@google.com>, Josh Don <joshdon@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Apr 25, 2025 at 9:05=E2=80=AFAM Shrikanth Hegde <sshegde@linux.ibm.=
+com> wrote:
+>
+>
+>
+> On 4/23/25 23:16, Eric Dumazet wrote:
+> > rebalance_domains() can attempt to change sched_balance_running
+> > more than 350,000 times per second on our servers.
+> >
+> > If sched_clock_irqtime and sched_balance_running share the
+> > same cache line, we see a very high cost on hosts with 480 threads
+> > dealing with many interrupts.
+> >
+> > This patch only acquires sched_balance_running when sd->last_balance
+> > is old enough.
+> >
+> > It also moves sched_balance_running into a dedicated cache line on SMP.
+> >
+> > Signed-off-by: Eric Dumazet <edumazet@google.com>
+> > Cc: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Sean Christopherson <seanjc@google.com>
+> > Cc: Josh Don <joshdon@google.com>
+> > ---
+>
+> Hi Eric.
+>
+> Please check this thread which does the same thing AFAIU.
+> https://lore.kernel.org/all/20250416035823.1846307-1-tim.c.chen@linux.int=
+el.com/
 
+Ah perfect, can we get this merged ?
 
-> Le 25 avr. 2025 =C3=A0 09:29, Greg Kroah-Hartman <gregkh@linuxfoundation.o=
-rg> a =C3=A9crit :
->=20
-> =EF=BB=BFOn Thu, Apr 17, 2025 at 02:45:02PM -0400, Nicolas Pitre wrote:
->> The Linux VT console has many problems with regards to proper Unicode
->> handling:
->>=20
->> - All new double-width Unicode code points which have been introduced sin=
-ce
->>  Unicode 5.0 are not recognized as such (we're at Unicode 16.0 now).
->>=20
->> - Zero-width code points are not recognized at all. If you try to edit fi=
-les
->>  containing a lot of emojis, you will see the rendering issues. When ther=
-e
->>  are a lot of zero-width characters (like "variation selectors"), long
->>  lines get wrapped, but any Unicode-aware editor thinks that the content
->>  was rendered properly and its rendering logic starts to work in very bad=
-
->>  ways. Combine this with tmux or screen, and there is a huge mess going o=
-n
->>  in the terminal.
->>=20
->> - Also, text which uses combining diacritics has the same effect as text
->>  with zero-width characters as programs expect the characters to take few=
-er
->>  columns than what they actually do.
->>=20
->> Some may argue that the Linux VT console is unmaintained and/or not used
->> much any longer and that one should consider a user space terminal
->> alternative instead. But every such alternative that is not less maintain=
-ed
->> than the Linux VT console does require a full heavy graphical environment=
-
->> and that is the exact antithesis of what the Linux console is meant to be=
-.
->>=20
->> Furthermore, there is a significant Linux console user base represented b=
-y
->> blind users (which I'm a member of) for whom the alternatives are way mor=
-e
->> cumbersome to use reducing our productivity. So it has to stay and
->> be maintained to the best of our abilities.
->>=20
->> That being said...
->>=20
->> This patch series is about fixing all the above issues. This is accomplis=
-hed
->> with some Python scripts leveraging Python's unicodedata module to genera=
-te
->> C code with lookup tables that is suitable for the kernel. In summary:
->>=20
->> - The double-width code point table is updated to the latest Unicode vers=
-ion
->>  and the table itself is optimized to reduce its size.
->>=20
->> - A zero-width code point table is created and the console code is modifi=
-ed
->>  to properly use it.
->>=20
->> - A table with base character + combining mark pairs is created to conver=
-t
->>  them into their precomposed equivalents when they're encountered.
->>  By default the generated table contains most commonly used Latin, Greek,=
-
->>  and Cyrillic recomposition pairs only, but one can execute the provided
->>  script with the --full argument to create a table that covers all
->>  possibilities. Combining marks that are not listed in the table are simp=
-ly
->>  treated like zero-width code points and properly ignored.
->>=20
->> - All those tables plus related lookup code require about 3500 additional=
-
->>  bytes of text which is not very significant these days. Yet, one
->>  can still set CONFIG_CONSOLE_TRANSLATIONS=3Dn to configure this all out
->>  if need be.
->>=20
->> Note: The generated C code makes scripts/checkpatch.pl complain about
->>      "... exceeds 100 columns" because the inserted comments with code
->>      point names, well, make some inlines exceed 100 columns. Please make=
-
->>      an exception for those files and disregard those warnings. When
->>      checkpatch.pl is used on those files directly with -f then it doesn'=
-t
->>      complain.
->>=20
->> This series was tested on top of v6.15-rc2.
->=20
-> I've taken the first version of this, should I revert all of them and
-> then apply these, or do you want to send a diff between this and what is
-> in the tty-next tree?
-Please remove what you have and replace with this v3. Will be much cleaner t=
-his way.=20
-
-
->=20
-> thanks,
->=20
-> greg k-h
+>
+> You could also try:
+> https://lore.kernel.org/all/82baaf6c-f3d9-4c3e-be69-24389eadb18c@linux.ib=
+m.com/
+>
+> Thanks
+>
 
