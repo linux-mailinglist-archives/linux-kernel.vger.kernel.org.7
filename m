@@ -1,160 +1,105 @@
-Return-Path: <linux-kernel+bounces-621172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD2BA9D552
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 00:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F903A9D560
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 00:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BCDB1B82171
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:16:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7119E0F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5069528DF0D;
-	Fri, 25 Apr 2025 22:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C803A290BAE;
+	Fri, 25 Apr 2025 22:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b="StnhT1Dw"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQWurkxS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688A328936E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 22:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E2528FFF9;
+	Fri, 25 Apr 2025 22:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745619396; cv=none; b=blzcRV3/uyml7CZULeP82qtyk5AvGZ5XCrNzdIPCqbBuSraZqok1cWcS5Dms79KQE2gH81KAbampdR9of4p60efXdATz2LfrNu2TT6NkWll/aj2MlEzKdfQ7ruxs6YK/DUUOzx2z/gKqLTXanqSwxvsLFPnD3sdNeqM1nJ40cTg=
+	t=1745619581; cv=none; b=lvv1w4BBphWJ/Db7KeANcxkBqhSXfaifsuKqRb21D+IK5WqeYLoQ4S/3btas4XeYEwizUkaE1qezUHJDUGPb4c8z4DGi+XGoXX5fwwgWXb5a2hVY/M0+RsJnKbxoLLAdc8pa06qDozzeePj0BVCV8xvieyD/N03YD/DjRUXsNF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745619396; c=relaxed/simple;
-	bh=W30Elu0BPXUZLgDMxTxpH20ZLIU0eYAyb8+7H14ZRjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=akaUYciEYbPSV/EamuxHNf41TcuvqRiecjOg48pCw9aiBp2I02ywOdx7VUr2F+AGZbGYnwruCnW3PNxWBShleBBA6M2r993hjqijPVqC32NPKrjmHhg3DyDMxH6M5oMMqyzvuWxwjLfdCGlBh2fMwAzRTpOAkd6kfq3hiRD6/Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com; spf=none smtp.mailfrom=wkennington.com; dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b=StnhT1Dw; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=wkennington.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-736c1138ae5so2766816b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wkennington-com.20230601.gappssmtp.com; s=20230601; t=1745619394; x=1746224194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WgXD6hkPKUGRTdY1zhGVp/H0Rv3gRoc0tuevqLhxiZs=;
-        b=StnhT1DwrphxpWMTf+Y/JEzLMG3JkwBbljfQQAsYTbqZDhS1cuVzVU1fOo8EYeDSLt
-         sV7GuBSYBsbN5NnUZ+rib0r4MaNOQDErIkvHEIUvBbFWGBryhdeOLPmt+HckATBax3cs
-         n/Xy7gmfZ75jVfiSYnjfXPgo9u/3cD7J0RK60hDW33t8ScPXAcCiz9xHZ95ASnnZRED4
-         ORWuKX5gvag2Xa8mU7pxlGyAzL0HNXOlZfjPCmPrbxqWpP+21/fh27cFTPzvz3R+HSGo
-         tDfR0FD/0VNhv2zEX7vgucuXdg8d9uQSj+UTCfiOzK0HqsjUdDgelc8KEXZMuOiKUKhv
-         CeRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745619394; x=1746224194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WgXD6hkPKUGRTdY1zhGVp/H0Rv3gRoc0tuevqLhxiZs=;
-        b=McpbZWHucXzA3GQ8I4COlRhitAFfJyLhr+2pXCx+kfo3ziA1UabLcdxCVY8oglzwfu
-         FIiPYLSmmLczRs8WmN3NFh3s2vul3wAuPXtWv182Ww+eHCJOlYhxkTu0wHOnH3SHE16t
-         v09zZ0iYHHal71+pl337P3b94cGJdso91qE0rBz/QEzUKkwQe2kIAgeqJuRDd12IIPiV
-         ITH+kfW3f/eCNjT0pYvrkrwWF+ZbG4Cz0ZZyXu9rkTKa1fokbRMousq+9hL2C0fOqfWE
-         6y9cSp1qQ3az1JCfsk0KQE+/D14W2LgtBb+Nk7yOBBDGUJMv7NjDDTsFn93Xv30cWVT1
-         yCWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVunYv30XDzeXOgqasw8klOQJdvzYlqObMdKNFD6V4HupNJh7r5OHUCX7iYliF8DvxIlRYX7OIinGcaV6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBjUgD2HNo9g0bniIFHpSIVlF1xXm/zDqrJDcjvuECt3L686JW
-	CDx4SmZWLQsJXEkjnIjRitiqhL01GamnUcyLm0q+p/M4ifzCJubssappj/nd66VgFzSsS0EdEZV
-	GcouKirlvgsgWkB+1swdBy3C2aw/FxndVGfYgfw==
-X-Gm-Gg: ASbGnctHaYOCj5Rrcj+27zj0xTk1ADgLRqllpuT4ifZasXT1NBVXPioPJbdi9t+kMQg
-	oFdnNAgftDC9kcsLNS/pMlXRdscPIumVI48BOCoYi++7BkylFzwtT5pAkBZFg44+c/xAs/do3cz
-	tWbarfNuBSo+2CdcM4IhakkjadTMSddLDvVy2sgdbGVjXmQsUYgBkRVVUq
-X-Google-Smtp-Source: AGHT+IH2N4ln+J9HVbv+8+sHBp1P/isBj0gkTrIzOTOJCwbUCAtU7RG/jp9P807JAV09WP22RBF21hsTQbnlFLBbfcE=
-X-Received: by 2002:a05:6a00:218c:b0:736:5c8e:baaa with SMTP id
- d2e1a72fcca58-73ff7255d1fmr1386610b3a.2.1745619394656; Fri, 25 Apr 2025
- 15:16:34 -0700 (PDT)
+	s=arc-20240116; t=1745619581; c=relaxed/simple;
+	bh=1pwExWgzQErCNQpG3IK9AR9oyY6nKXm+lJRSU+lGktw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=koapWcVnolS9oIZe3XyQoRIiFna9EIQ4Fl4gsdBYhVVZ6sbNA/F3bdYefy2iXAbgetQpsrYOL84uG+y6LAAxexh1C+UPLGSje/C3+TDws24OWDMjUnyTUhn+hEt5/T0kN51NeYCYJV3mv53OZUwcOOirfrqzsOrSeJEtanTYGP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQWurkxS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52299C4CEE4;
+	Fri, 25 Apr 2025 22:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745619580;
+	bh=1pwExWgzQErCNQpG3IK9AR9oyY6nKXm+lJRSU+lGktw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=nQWurkxS05sNgzdnf0RW8zEdnoFaCTBD985ecBJa0eiqtG5dNbVg+dzxthbK0RVet
+	 znj3yKgZzJFZDllRGUljS/xgCVF5/YhcM/xZF7TsZ+Q0ZBoyGJPV4LUl3RP6BfQ7/W
+	 K9igGWa8EyJuLIv4v8L4a5FpktEtG6fGsVjDaA/lym8ORbnYunNGPijZEbVOdhxAQW
+	 dCLMrUsv7Dix0kxsVqoeBswgwZGYCrlmuKi7ZZAxjtLuliAvD+YDZSqj8qCl+BjHpz
+	 Cd+2A9yzinIot4ReDIkWv0ALzqP18Q99q7oqfGAZvJyb4PT4uXiITlt/CbtCgQ7jtb
+	 sCHunmNDmQ/eg==
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 25 Apr 2025 23:19:01 +0100
+Subject: [PATCH] kunit: configs: Enable coverage of the bitfield packing
+ library
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250415232521.2049906-1-william@wkennington.com> <79400920-22b4-4bce-b204-c58087495c22@kernel.org>
-In-Reply-To: <79400920-22b4-4bce-b204-c58087495c22@kernel.org>
-From: William Kennington <william@wkennington.com>
-Date: Fri, 25 Apr 2025 15:16:23 -0700
-X-Gm-Features: ATxdqUG71cOtnC9xnSIu_N-FLI_cL9Ilck2vh1utGY_dfZmPABCB1UECKPYRuu0
-Message-ID: <CAD_4BXiaqLa563LoyGsPV=C164KxREzs0H+VcXPGR9QagzKs0A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: Fix nuvoton 8xx clock properties
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, openbmc@lists.ozlabs.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250425-kunit-enable-missing-tests-v1-1-263391818e76@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFUKDGgC/x3MQQqDMBAF0KvIrDsQUwXjVUoXqf7qYDuWTFoE8
+ e6GLt/m7WRIAqO+2inhJyarFtSXioY56gSWsZi8861rvOflq5IZGh8v8FvMRCfOsGwc6i4A4eq
+ GCCrBJ+Ep2z+/3Y/jBJ98XyFsAAAA
+X-Change-ID: 20250422-kunit-enable-missing-tests-9189ee930cae
+To: Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=972; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=1pwExWgzQErCNQpG3IK9AR9oyY6nKXm+lJRSU+lGktw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoDAp6+lP6/ndCW8ZI2tXyIFYRXjlEQ0Zu2sJoStoo
+ C2ggJbCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaAwKegAKCRAk1otyXVSH0Ij0B/
+ 49P0xPGDljkPpfc1s5fxxrfeU0z8QYeyQ7oIIm6/v/z1wfYh5oKrF8lOeL3D17+XAkE6ysVpo/lCjc
+ 3sk8cncoI+WjN9mIZpm5MGenYjfqD5TjBIGuuV/r6eNIkuiR6Xq95qp9VPqYMJf6gT/alvX4TQJjiJ
+ IsnuB5riA0O5cqa2izqbenxxr0/nmSCbXICDKb79NX6WvFSNDQFfbe3xkSiM7VVNCnzDiOv4nvhhoU
+ jKr0ksI90E1FSAA1q2/0cwFpuGNynIO1wycrV9/bhzIq+XkYxgeJmKl1pHolOX77dtUNm7BlwF40uv
+ PoUCiaZiKumDOezHIWXIfxsZlMLv1B
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Apr 15, 2025 at 11:55=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 16/04/2025 01:25, William A. Kennington III wrote:
-> > The latest iteration of the clock driver got rid of the separate clock
->
-> I don't see the binding deprecated.
->
-> > compatible node, merging clock and reset devices.
-> >
-> > Signed-off-by: William A. Kennington III <william@wkennington.com>
-> > ---
-> >  .../boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi | 16 ++++++----------
-> >  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts     |  8 ++++++++
-> >  2 files changed, 14 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/=
-arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > index ecd171b2feba..4da62308b274 100644
-> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > @@ -47,17 +47,13 @@ ahb {
-> >               interrupt-parent =3D <&gic>;
-> >               ranges;
-> >
-> > -             rstc: reset-controller@f0801000 {
-> > +             clk: rstc: reset-controller@f0801000 {
-> >                       compatible =3D "nuvoton,npcm845-reset";
-> >                       reg =3D <0x0 0xf0801000 0x0 0x78>;
->
-> So now it lacks quite a bit of address space. This must be explained in
-> commit msg.
+There are KUnit tests for the bitfield packing library but these depend
+on CONFIG_PACKING which is not enabled by anything in either the
+existing KUnit all_tests.config or the base UML config it runs on as
+standard.  Enable that in all_tests.config to improve coverage.
 
-Can do that when i make the updated series. Basically the old value
-was just never consumed by an actual driver and the chip reserves that
-entire 0x1000 size address space for clock registers. However, only
-0xC4 bytes (0x78 was incorrect) of that space are used for these
-registers.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/kunit/configs/all_tests.config | 2 ++
+ 1 file changed, 2 insertions(+)
 
->
-> >                       #reset-cells =3D <2>;
-> >                       nuvoton,sysgcr =3D <&gcr>;
-> > -             };
-> > -
-> > -             clk: clock-controller@f0801000 {
-> > -                     compatible =3D "nuvoton,npcm845-clk";
-> > +                     clocks =3D <&refclk>;
-> >                       #clock-cells =3D <1>;
-> > -                     reg =3D <0x0 0xf0801000 0x0 0x1000>;
-> >               };
-> >
-> >               apb {
-> > @@ -81,7 +77,7 @@ timer0: timer@8000 {
-> >                               compatible =3D "nuvoton,npcm845-timer";
-> >                               interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL=
-_HIGH>;
-> >                               reg =3D <0x8000 0x1C>;
-> > -                             clocks =3D <&clk NPCM8XX_CLK_REFCLK>;
-> > +                             clocks =3D <&refclk>;
->
-> Not explained in commit msg.
+diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/testing/kunit/configs/all_tests.config
+index cdd9782f9646..b0223b7aebde 100644
+--- a/tools/testing/kunit/configs/all_tests.config
++++ b/tools/testing/kunit/configs/all_tests.config
+@@ -51,3 +51,5 @@ CONFIG_SOUND=y
+ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+ CONFIG_SND_SOC_TOPOLOGY_BUILD=y
++
++CONFIG_PACKING=y
 
-Yeah, I can do that WRT using an on board refclk instead of a value
-that comes from the SoC.
+---
+base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+change-id: 20250422-kunit-enable-missing-tests-9189ee930cae
 
->
->
-> Best regards,
-> Krzysztof
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
