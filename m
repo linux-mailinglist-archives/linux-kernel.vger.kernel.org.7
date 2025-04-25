@@ -1,157 +1,116 @@
-Return-Path: <linux-kernel+bounces-619684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6945A9BFEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:40:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E83A9BFEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7F33A356F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BD61B65F54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C31E22F762;
-	Fri, 25 Apr 2025 07:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639AC22FE05;
+	Fri, 25 Apr 2025 07:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGkoddQZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCZRZp+A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A2F22F3BE;
-	Fri, 25 Apr 2025 07:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03D61FDD;
+	Fri, 25 Apr 2025 07:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745566852; cv=none; b=AYfQxaLsn108icyKFDpRGyeXpRfN3EdDyaxMzTBrliEqjwrhPaVMfszErp6pPsGgnY5eSfOcCoNsf8cqxORO4xuplBFKLkK9esuBrD+PyZWy59DdlgCIJbHCFmL9n/L29DA279EdVKbdBXMSDK6q130Q/YrdFWm5TVg29+yUFyg=
+	t=1745566894; cv=none; b=kznXZXKxwI+dumyQmYoXFcZSpgQt1Uh8ZoC17AKha2dhVO9fKPCqItR4gldhg8oNyWQSZZgNzbAgSaPWUNtW0yDGT9zuxLQs7+yL0qJVWsLNBKxAWpAP0q79rKAAod91PrtFgUfKuUL+XYkerXQby2Vp+37FhOczVXo/CMxpDaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745566852; c=relaxed/simple;
-	bh=WpQFSnpwNwbZzu1PsGGV0iNBNs0zXtDESG2030ZXknQ=;
+	s=arc-20240116; t=1745566894; c=relaxed/simple;
+	bh=aHtu+q8+v/+vHM2z9zRmM6zCmE4vzWRuotmMIXEjo2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JM2H2d8qdO0VOLYF1Sryi4lC4odpE1BxJ2AhU6y86bKD9zA5qpSAjpWnmPFrOypVYOrrZKC34nyjZ54gCGMpklVYJH5IKUwM7d1zNtdfceBwQTmYKV2uJqmRS1gEKiPlUasPgBFH2f8+goNqVIq507skMTpx7lA78RRGOvq5wP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGkoddQZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16F95C4CEEA;
-	Fri, 25 Apr 2025 07:40:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iarYge0Ky8qwWCu2Clkk971vpB7DMz2a0DcwZHZziAc2dnUgQ09GdExco2lLYs/OHHLc4PWmn9Jmi6jiacQnJ6b08m6RKbhNj/U+uO4eGNLTNsg5dpUiuqZ1oaYqgwRJkRY2Cy//ObDDJc5gpl49jL8yR8HztI9ZpoDbgJz+vhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCZRZp+A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED5F1C4CEE4;
+	Fri, 25 Apr 2025 07:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745566851;
-	bh=WpQFSnpwNwbZzu1PsGGV0iNBNs0zXtDESG2030ZXknQ=;
+	s=k20201202; t=1745566894;
+	bh=aHtu+q8+v/+vHM2z9zRmM6zCmE4vzWRuotmMIXEjo2I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oGkoddQZ5ObRjUUJcPqdJRMwI3z3dPMaaU1X/QJiQ7RmWj70x9xFRAWdOMHSk5o8B
-	 WlhKmkcmuJisZlPpUQyuNjSur7xMn7tNOGfEHeMx477kg21moTiasUqLagomhrBfZm
-	 559Ubi2d/YIJfP34WUpC5oeNZijtq783bUbi5rCc0Wspw+wbILL7j52RiakFag15ta
-	 qsaqRKo7Vo5xehl/CSyyFSWt0b7R/JnV2wb+mzKHCXCXvgawjRXos87/Xwi0JFx7CP
-	 d0Dmsu7o0F+H3uqLH87Pn+TgfeaI2FtLAtF+y/2wkcdKL1bNZ6DRdvjfh0hsulg7OA
-	 X3H3tgJmcA4dw==
-Date: Fri, 25 Apr 2025 09:40:46 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
-	John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 0/15] x86: Remove support for TSC-less and CX8-less
- CPUs
-Message-ID: <aAs8fuPmXz7kK1l4@gmail.com>
-References: <202504211553.3ba9400-lkp@intel.com>
- <59198081-15e2-4b02-934f-c34dd1a0ac93@app.fastmail.com>
- <aAmeJmL0hUx2kcXC@xsang-OptiPlex-9020>
- <f1ccb8b4-bbe2-42bc-bb86-c2bf3f9c557d@app.fastmail.com>
- <CAHk-=wi6k0wk89u+8vmOhcLHPmapK13DDsL2m+xeqEwR9iTd9A@mail.gmail.com>
- <aAp6u9ylKCpvMJRF@gmail.com>
- <dd29df0c-0b4f-44e6-b71b-2a358ea76fb4@app.fastmail.com>
+	b=dCZRZp+A7DLJxpcSDgE2c5OY4mlXLvD7//yCsaBlqjAL/X2fLqpxgaUs1mFKxua2F
+	 iNHDbQ4bC+KhffqmppK+mlPCNGMCPWmIFf/q/nYc5yrMzxV31XaGoLO8lT9lYPNfUy
+	 jq2PhWtRfS8bnsEo8XVR/4u3Es1aeOSYFdBgzllWYHF8MZ1U+Uizr0DaculkXtycIk
+	 Xyj30tGA83kyWU644a9RFvWcsT5rDRlWYuqnefdycayCmv89gMjEr4D8NUWjWsdkB0
+	 PYApJhZlBQTMWJVSnNHKdx29XkTZ3F4Z3Ei2Z1NaWwqMESHc5pGaL1ehdZJBdorRkS
+	 T6SdePECjOPRA==
+Date: Fri, 25 Apr 2025 09:41:32 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v4 2/8] dt-bindings: dpll: Add support for
+ Microchip Azurite chip family
+Message-ID: <20250425-hopeful-dexterous-ibex-b9adce@kuoka>
+References: <20250424154722.534284-1-ivecera@redhat.com>
+ <20250424154722.534284-3-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dd29df0c-0b4f-44e6-b71b-2a358ea76fb4@app.fastmail.com>
+In-Reply-To: <20250424154722.534284-3-ivecera@redhat.com>
 
-
-* Arnd Bergmann <arnd@arndb.de> wrote:
-
-> >       x86/platform: Remove CONFIG_X86_RDC321X support
-> >       arch/x86, gpio: Remove GPIO_RDC321X support
-> >       arch/x86, watchdog: Remove the RDC321X_WDT watchdog driver
-> >       arch/x86, mfd: Remove MFD_RDC321X support
-> >       x86/reboot: Remove the RDC321X reboot quirk
+On Thu, Apr 24, 2025 at 05:47:16PM GMT, Ivan Vecera wrote:
+> Add DT bindings for Microchip Azurite DPLL chip family. These chips
+> provide up to 5 independent DPLL channels, 10 differential or
+> single-ended inputs and 10 differential or 20 single-ended outputs.
+> They can be connected via I2C or SPI busses.
 > 
-> I'm not sure about the RDC321X bits. Obviously the original
-> 321x/861x/vortex86sx chips are obsolete and can be removed,
-> but the product line is still actively developed by RDC and 
-> DM&P, and I suspect that some of the drivers are still used
-> on 586tsc-class (vortex86dx, vortex86mx) and 686-class
-> (vortex86dx3, vortex86ex) SoCs that do run modern kernels and
-> get updates.
+> Check:
+> $ make dt_binding_check DT_SCHEMA_FILES=/dpll/
 
-So CONFIG_X86_RDC321X actively selects M486:
+None of these commands belong to the commit msg. Look at all other
+commits: do you see it anywhere?
 
-+++ b/arch/x86/Kconfig
- 
- config X86_RDC321X
-        bool "RDC R-321x SoC"
-        depends on X86_32
-        depends on X86_EXTENDED_PLATFORM
-        select M486
-        ^^^^^^^^^^^
-        select X86_REBOOTFIXUPS
-
-But indeed the other drivers are not dependent on M486, at least 
-overtly:
-
-  arch/x86, mfd: Remove MFD_RDC321X support
-  arch/x86, watchdog: Remove the RDC321X_WDT watchdog driver
-  arch/x86, gpio: Remove GPIO_RDC321X support
-
-Although the watchdog driver has this indirect dependency:
-
-   drivers/watchdog/Kconfig:       depends on X86_RDC321X || COMPILE_TEST
-
-But the 486 kernel would work on any 586/686 upgraded boards as well.
-
-Anyway, I've dropped the mfd/watchdog/gpio removal patches, no harm in 
-keeping these drivers, and I've switched the watchdog driver over to 
-X86_32:
-
-  config RDC321X_WDT
-        tristate "RDC R-321x SoC watchdog"
-        depends on X86_32 || COMPILE_TEST
-
-There's also no harm in keeping the southbridge reboot quirk I suppose, 
-so I've dropped this as well:
-
-  x86/reboot: Remove the RDC321X reboot quirk
-
-
-> >       x86/cpu: Remove CPU_SUP_UMC_32 support
-> >       x86/cpu: Remove TSC-less CONFIG_M586 support
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+> /home/cera/devel/kernel/linux-2.6/Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: missing type definition
+>   CHKDT   ./Documentation/devicetree/bindings
+>   LINT    ./Documentation/devicetree/bindings
+>   DTC [C] Documentation/devicetree/bindings/dpll/dpll-pin.example.dtb
+>   DTEX    Documentation/devicetree/bindings/dpll/microchip,zl30731.example.dts
+>   DTC [C] Documentation/devicetree/bindings/dpll/microchip,zl30731.example.dtb
+>   DTC [C] Documentation/devicetree/bindings/dpll/dpll-device.example.dtb
 > 
-> I think Winchip6 (486-class, no tsc, no cx8) and Winchip3D
-> (486-class, with tsc but no cx8) need to go as well then.
 
-Okay, agreed, I've added this patch to the tree:
+With above fixed:
 
-  bf82539ad9f6 x86/cpu: Remove CONFIG_MWINCHIP3D/MWINCHIPC6
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-  arch/x86/Kconfig.cpu            | 28 ++++------------------------
-  arch/x86/Makefile_32.cpu        |  2 --
-  arch/x86/include/asm/vermagic.h |  4 ----
-  3 files changed, 4 insertions(+), 30 deletions(-)
+---
 
-> At this point, maybe we can consider removing CONFIG_X86_GENERIC and 
-> just always build kernels that work across a wide set of CPUs: Only 
-> CMOV and PAE still require a CPU with the hardware support, and 
-> X86_L1_CACHE_SHIFT needs to be at least 6 (64 byte) for 
-> compatibility, but everything else should just be a tuning option.
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-Agreed.
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
 
-Thanks,
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
-	Ingo
+Best regards,
+Krzysztof
+
 
