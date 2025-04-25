@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-620934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAABA9D1A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E06DA9D196
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E18C1BC1135
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9372C1BC0AC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F26F21CC49;
-	Fri, 25 Apr 2025 19:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC8E21B908;
+	Fri, 25 Apr 2025 19:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="L1c/9PE/"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dNjFCy6x"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990A3218EB4;
-	Fri, 25 Apr 2025 19:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11017C21C;
+	Fri, 25 Apr 2025 19:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745609661; cv=none; b=rwRAPWOu6kiXj/gDdY4N/H31Ve4sFG2q86Jbz3SuRNyinNCbFBGuDCa3r3v3LmoLMJiAE/dzFp79w1DQ50liaaG+MEEetwy54egpsnQUw2tWv+r+V2s9S/FIQR81TLIO3utxTo20SJFqsLVYp/Iouiv2qzoWKpSFq3qLpQU6faE=
+	t=1745609503; cv=none; b=p+OjvdRg6oyap4ygrFIU5l5cal5ZaPu+D2vH+S7cPq7jEPM7t8ZTqg59urCMU/2Zih1wPdt2sNZy9eRxifGqbN0cMXJQ2nlmZP+NiXSBtX7sibgk5A2LInsNSOvKxk3jSyDn3sjHRv8sRieY2w9v2brShifKZ9OfFnKqG/BSUhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745609661; c=relaxed/simple;
-	bh=OTVyk9B8wqVer1n6P3g47htIrI8L+Uj4KwHWWWvh/Lk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mnRiCSitUvOtuHk7zwWa8EtiEVf7GeVZr+RMT2/l0QOhd2ORVGKWJ2T/22O/CUkn45wyfKLIU3ES70uB+ohAwOJNzlLe90iL7mIiqcF80kzWm6CWLCwIjQKWNH72yBuM7gN1PlJhEqg/LEL9loZ5ufsWnzndUL2NZJwt8CUVQj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=L1c/9PE/; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [217.114.34.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 10140663C4C;
-	Fri, 25 Apr 2025 21:34:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1745609652;
-	bh=OTVyk9B8wqVer1n6P3g47htIrI8L+Uj4KwHWWWvh/Lk=;
-	h=From:Subject:Date;
-	b=L1c/9PE/Dw62yP80XL0YkwxBpmU+faFntUlc1OlnkqmqXttTs67o0owNGKgdHwguD
-	 rphrY/R8aNU51Qn5QrhkBJCx5CRlSUw7dNpLdIo1lCs6zzqfnqAO7z2yRPfDFkh9Ir
-	 l6dIrEpJZtdB5ay5jvCvDqT8JpHRWpXXhfd+aRMNLdaUlrtOObZ2um+/s7BO+WvlLF
-	 OKqWoX++dWkkNcdkwTk0VkUDtb0Btyh7ENmHSbuvVPPycnpfMTtEMyhLCnYj5/ZDcN
-	 i7TQp5JAjvKKR0FWYS7xYYtPuA5t04r2CoMkuozu/H+PcQT6mls2D2YxWgiuvWtife
-	 nY5aV2ayXH3jw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject: [PATCH v1 17/19] ACPICA: Apply ACPI_NONSTRING in more places
-Date: Fri, 25 Apr 2025 21:31:05 +0200
-Message-ID: <3833065.MHq7AAxBmi@rjwysocki.net>
-In-Reply-To: <12671029.O9o76ZdvQC@rjwysocki.net>
-References: <12671029.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1745609503; c=relaxed/simple;
+	bh=8PieXv6mj0nc1z3cu6Sb94XkBuu/I3wwKOQ/R0xhdRw=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=pxyq6BAXzE4OZRPY0Ifc/ht+SjgN3q00mVRojYKGKevOiGDfKbrXaAEn+KN/BgxGCRw01v53iEZDYCoXnweqzHUCooX7eq6X3yIPpcCeKEqdmChOS1+0+RhZr/yi3aEWP87vohziTjs1VnfXHYHnvQv14rVj/Sb26grQHrd3kC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dNjFCy6x; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 8OljuoZghQxp68Olmuvwz2; Fri, 25 Apr 2025 21:31:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1745609491;
+	bh=JIqrozcWOsOgrfWz/Flt09tv8c/B8HQaA5udh4Yf2FQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=dNjFCy6x6w6fM7gGn/+CfgPLBFdQ5mTn0ML317iEvwlLVdz5O3scxkRbtSPGIgKQZ
+	 iR+FVmsPIBcfQuhpYzeZ61RpB8iT4urP5ZEA1/Dze3sqmfuKPp49tN1mQ+emTSK9Dl
+	 KwlO5AOf9qRl7uKT9o5Wt2e8dAs1gFdOYN9qAzUWRpbfzTBIWqU/nLzxbCl8yBkfOy
+	 etD7xYvQEvbXl4S8fxTOaGfUBodgnzzJ/WfN94KcKiH3V1E56PgjYIvsWA+BTSVvw9
+	 JxFMEqhiPYNW3wd419UeCBZDHdm5qdFils2cN8aOQue/IYDJ1dRL6txzXKu45ETCkZ
+	 DRai1BYlZnx5Q==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 25 Apr 2025 21:31:31 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <3cfd718f-e96a-44d0-b42f-d759ae698810@wanadoo.fr>
+Date: Fri, 25 Apr 2025 21:31:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 217.114.34.19
-X-CLIENT-HOSTNAME: 217.114.34.19
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheefudelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepledtieekkeekveeikeetgffgteeuteefjeevjeegudelvdduheeiuedvieehieevnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepvddujedruddugedrfeegrdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvudejrdduudegrdefgedrudelpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosggvrhhtrdhmohhorhgvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrkhgvthdrughumhgsrhgvsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 2/2] wifi: Add Nordic nRF70 series Wi-Fi driver
+References: <20250422175918.585022-1-artur@conclusive.pl>
+ <20250422175918.585022-3-artur@conclusive.pl>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: artur@conclusive.pl
+Cc: broonie@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ jakub@conclusive.pl, johannes@sipsolutions.net, krzk+dt@kernel.org,
+ lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, robh@kernel.org, s.hauer@pengutronix.de,
+ ulf.axelsson@nordicsemi.no, wojciech@conclusive.pl
+In-Reply-To: <20250422175918.585022-3-artur@conclusive.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Ahmed Salem <x0rw3ll@gmail.com>
+Le 22/04/2025 à 19:59, Artur Rojek a écrit :
+> Introduce support for Nordic Semiconductor nRF70 series wireless
+> companion IC.
+> 
 
-ACPICA commit 1035a3d453f7dd49a235a59ee84ebda9d2d2f41b
+Hi,
+...
 
-Add ACPI_NONSTRING for destination char arrays without a terminating NUL
-character. This is a follow-up to commit 35ad99236f3a ("ACPICA: Apply
-ACPI_NONSTRING") where not all instances received the same treatment, in
-preparation for replacing strncpy() calls with memcpy()
+> +	/* vpwr is mandatory, but we want to catch the -ENODEV error. */
+> +	priv->vpwr = devm_regulator_get_optional(dev, "vpwr");
+> +	if (IS_ERR(priv->vpwr))
+> +		return dev_err_probe(dev, PTR_ERR(priv->vpwr),
+> +				     "Unable to find vpwr-supply property");
+> +
+> +	priv->vio = devm_regulator_get_optional(dev, "vio");
+> +	if (IS_ERR(priv->vio) && PTR_ERR(priv->vio) != -ENODEV) {
+> +		return dev_err_probe(dev, PTR_ERR(priv->vio),
+> +				     "Invalid vio-supply property");
+> +	}
 
-Link: https://github.com/acpica/acpica/commit/1035a3d4
-Signed-off-by: Ahmed Salem <x0rw3ll@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/acpica/acdebug.h                            | 2 +-
- include/acpi/actbl.h                                     | 6 +++---
- tools/power/acpi/os_specific/service_layers/oslinuxtbl.c | 2 +-
- tools/power/acpi/tools/acpidump/apfiles.c                | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+Unneeded extra { }
 
-diff --git a/drivers/acpi/acpica/acdebug.h b/drivers/acpi/acpica/acdebug.h
-index 911875c5a5f1..58842130ca47 100644
---- a/drivers/acpi/acpica/acdebug.h
-+++ b/drivers/acpi/acpica/acdebug.h
-@@ -37,7 +37,7 @@ struct acpi_db_argument_info {
- struct acpi_db_execute_walk {
- 	u32 count;
- 	u32 max_count;
--	char name_seg[ACPI_NAMESEG_SIZE + 1];
-+	char name_seg[ACPI_NAMESEG_SIZE + 1] ACPI_NONSTRING;
- };
- 
- #define PARAM_LIST(pl)                  pl
-diff --git a/include/acpi/actbl.h b/include/acpi/actbl.h
-index 2fc89704be17..74cc61e3ab09 100644
---- a/include/acpi/actbl.h
-+++ b/include/acpi/actbl.h
-@@ -66,12 +66,12 @@
-  ******************************************************************************/
- 
- struct acpi_table_header {
--	char signature[ACPI_NAMESEG_SIZE] __nonstring;	/* ASCII table signature */
-+	char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;	/* ASCII table signature */
- 	u32 length;		/* Length of table in bytes, including this header */
- 	u8 revision;		/* ACPI Specification minor version number */
- 	u8 checksum;		/* To make sum of entire table == 0 */
--	char oem_id[ACPI_OEM_ID_SIZE];	/* ASCII OEM identification */
--	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE];	/* ASCII OEM table identification */
-+	char oem_id[ACPI_OEM_ID_SIZE] ACPI_NONSTRING;	/* ASCII OEM identification */
-+	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE] ACPI_NONSTRING;	/* ASCII OEM table identification */
- 	u32 oem_revision;	/* OEM revision number */
- 	char asl_compiler_id[ACPI_NAMESEG_SIZE];	/* ASCII ASL compiler vendor ID */
- 	u32 asl_compiler_revision;	/* ASL compiler version */
-diff --git a/tools/power/acpi/os_specific/service_layers/oslinuxtbl.c b/tools/power/acpi/os_specific/service_layers/oslinuxtbl.c
-index 9d70d8c945af..987a5d32f3b6 100644
---- a/tools/power/acpi/os_specific/service_layers/oslinuxtbl.c
-+++ b/tools/power/acpi/os_specific/service_layers/oslinuxtbl.c
-@@ -19,7 +19,7 @@ ACPI_MODULE_NAME("oslinuxtbl")
- typedef struct osl_table_info {
- 	struct osl_table_info *next;
- 	u32 instance;
--	char signature[ACPI_NAMESEG_SIZE];
-+	char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;
- 
- } osl_table_info;
- 
-diff --git a/tools/power/acpi/tools/acpidump/apfiles.c b/tools/power/acpi/tools/acpidump/apfiles.c
-index 13817f9112c0..9fc927fcc22a 100644
---- a/tools/power/acpi/tools/acpidump/apfiles.c
-+++ b/tools/power/acpi/tools/acpidump/apfiles.c
-@@ -103,7 +103,7 @@ int ap_open_output_file(char *pathname)
- 
- int ap_write_to_binary_file(struct acpi_table_header *table, u32 instance)
- {
--	char filename[ACPI_NAMESEG_SIZE + 16];
-+	char filename[ACPI_NAMESEG_SIZE + 16] ACPI_NONSTRING;
- 	char instance_str[16];
- 	ACPI_FILE file;
- 	acpi_size actual;
--- 
-2.43.0
+> +
+> +	irq = of_irq_get_byname(dev->of_node, "host-irq");
+> +	if (irq <= 0)
+> +		return dev_err_probe(dev, irq, "Unable to find host-irq\n");
 
+If irq is 0, is it expected to return sucess here?
 
+> +
+> +	mutex_init(&priv->write_lock);
+> +	mutex_init(&priv->read_lock);
+...
 
-
+CJ
 
