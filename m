@@ -1,88 +1,71 @@
-Return-Path: <linux-kernel+bounces-620207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A034A9C70B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:18:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FE6A9C716
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1651BC3A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:19:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1194625EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3CF244694;
-	Fri, 25 Apr 2025 11:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A66D2459F9;
+	Fri, 25 Apr 2025 11:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mwa.re header.i=@mwa.re header.b="U0mDri4v"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="tmZsm/DW"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06015243374
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 11:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D7623C39A;
+	Fri, 25 Apr 2025 11:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745579913; cv=none; b=rHZwJxNQA5IZ78TfvNK1GD0h6Kq+PQ4q37Ot1VnvAPDqY+n7z9t1Y6nCK+KL+RU6FApA6i7Coin07gUcylgxBLNgm7EV8Ow/SxPNyp2QLaJLhogidM0k91Z79Eu03xErPoIh2X6w/6AYVYpqk1bhy/1q3R8NQNn8P5tMr/3QxB8=
+	t=1745579913; cv=none; b=W7+qedhzjfjMrTa2L16VcQB2oVXyEZs/TWHC9rD/jdEOD44hUXPWa0+CN8pg7GWhnyzeHOyuOYCvrlc0Jr1q2NYRObjy9SljbihOkl/1ZXy0PFx2kYWkIW45WYPDAf06jQFU/M4UNgsElaeF+nD2nNUOirnedCF6UMqoKcJvWmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745579913; c=relaxed/simple;
-	bh=ygMbzKzD3kI+8/mxoJF4de83lsKYgsPjh3MC5BHAUPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YfprqxjjWcB2x/uvv3a1HZqL8NXyJA2SayZGIMXJRAVcqH7ja59lnH8vPjoAjgCFx6OACCVZObUY/HfN/gerZ21EvRHlHqoiVpG37ZzvVPMJ5yVVHhF8c2kQt9qZb3ImFpuXCl1G89zHrwDa6cSgwHUKHMtlQknrrw5qub5b2zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mwa.re; spf=pass smtp.mailfrom=mwa.re; dkim=pass (2048-bit key) header.d=mwa.re header.i=@mwa.re header.b=U0mDri4v; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mwa.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mwa.re
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so11167685e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 04:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mwa.re; s=google; t=1745579908; x=1746184708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5n7vWr4dvh3itAQhDGMUdrJl92cU0T7zk39q8wkmGw=;
-        b=U0mDri4vBOumG/f1/NRl/c8ZVjSUev21oXqEeN5J6jIivim+iWArowv5XEQRf5jFZq
-         vIM7QyeAVHV5PNW0VIaKyZxWp/Oh1vGOPkvT8GDm4G1K8l1GLHAa8m3WwyPWG72Bh1tp
-         MrRypWA6pyXvheIaBU41uIYYoNnPUI0BRWXMidIZ9snI7NIyFWjqld5uJg9r1V9asuLO
-         Ua70T3x5MeTzkarT3dX4PWAIGj6gflKu3U/5+BbqCbj8AzFO+xGw/5eaYdxXdSWqKbw6
-         PwSFcJMdyXAs7H5ZmaSBCteqzofE4bifANf71JYo/fE+WRM7BvNdrdHvBSQ8v+BaX4hd
-         u9gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745579908; x=1746184708;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T5n7vWr4dvh3itAQhDGMUdrJl92cU0T7zk39q8wkmGw=;
-        b=KsUhbRR283xeaE4w+Lt2jtFhKYKWENmWSeujZxQy7mEQc5THJgspbSbelhy68M/XlF
-         2jmWEVddFXwuM/OXU0Yh0KWzXRvYPlWUx+AL5eU2d5pbsMMLlcg+cCJx/XDbir2RNI7S
-         4jeHAeQVvXo/e0El5JZR6ac3X/H1XxoPvgIywrtds2T0Y8HJCP6+rHaIVb06W+qvLlLZ
-         YIfTl9yaRoYYT4CAej2CGkzYSimGIu4303IH7EFdQX+R2m/9imQqv+Lt35AXVnX5D6w3
-         xWivnrMPpGnU27oPOT0zJnsT+Ogn9C5kj2YZrkmZrl0DgvaNSQ6lBVQ503d0VkWm4ukN
-         NVpw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8zA5GdIUJ/c3VvOW0k/hmGzCLKnclboOUrXa0NiM8Dtfzm64kVrc8auQtbOMpIrucgWRBsTQZGEExy0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP0DLcHjnFFCLCMPnBy2+QXCuqvfYpV9ZkcjZnqBXSXclJJi14
-	MxYDonD3JjVcvJcQdL6iqxhbQDNN5yQvJibzjBi2PnBh3X93VkFphCRq/RU6J0Y=
-X-Gm-Gg: ASbGncuro3sXrsz7aRAaqmqWX2lhnvCRcZ6SU+g+7IEBvs16FOgPVZYWTbDKvsnx2qg
-	hFOGZVdXRZbdh02aSfwRwrUwqRldxhdMZYHzZcaaLCGFsgA+/a65h2fewZ+h0XyefjYokR4waUO
-	S44YX1dc/lp75ccY+3Yjis0WVZhOB8wi3B/ns4A2eS432NXWsc9mFp1oeTyblNWtCPfCDaSNnMg
-	BM/SQG+8Ny5IFCsn40j8Rch5UVNyWKWN7eDC4khmfUnpYBJS6w6tUUFWkB4dYdD4YUyX0qEKzAF
-	mJwOPU5ui7rmCWGrafMdwSLryfpzCIxtYiKJLGyrNUlCGzrWK7XpAQ1ZfN90PW/ji7FFdCvtZ/B
-	E
-X-Google-Smtp-Source: AGHT+IErBreCI+aZUQSHRKHCRHBvn1tri5fl9i7MgLbnV6lm+dUMhIRmMJF/7U+2vkVn14Vo9DYcgQ==
-X-Received: by 2002:a05:600c:1988:b0:43c:fe15:41d4 with SMTP id 5b1f17b1804b1-440a661a0ebmr14851625e9.18.1745579908064;
-        Fri, 25 Apr 2025 04:18:28 -0700 (PDT)
-Received: from mw-ac-stu-3.corp.mwa.re (static-195-14-251-13.nc.de. [195.14.251.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5310a8fsm22195235e9.22.2025.04.25.04.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 04:18:27 -0700 (PDT)
-From: Antonios Salios <antonios@mwa.re>
-To: rcsekar@samsung.com
-Cc: mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	linux-can@vger.kernel.org,
+	bh=woMhmSbd2RGStLtARhpFlSXw0HogGCcgxqjp/f0CaNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mP+uNW4j3jqEb7MAZiIc/u3odBcS7TIAJMQNx/FpNy4VJwEFDxBIrgLP3AoFe3vzyWbE0ZG9wy56XN0Sbg6AN8VSM4Gi8/+isAo9uFSMD0zap3vJot3s/XWQwfJ2Yty3c2UrGsHfwicCihckb8MTrseOF5Ay+wDp4dWk26ALwsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=tmZsm/DW; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a02:2149:8a3b:5a00:3490:6581:3910:8337])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 56EAB2E028F6;
+	Fri, 25 Apr 2025 14:18:24 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1745579905;
+	bh=xkqb9DdTPLOsKuZ2Ytpn497eBzpN7zXb863QHCFPmrw=; h=From:To:Subject;
+	b=tmZsm/DWRr3VhbEE1SJlbEbDdBrZXBaiV7NoU+5g6D1rqkwPdFC6rcS0s8MV8wXob
+	 jSzP1G2QyaAjMnOupyYdu8EdDXQREJr5id4oEGpB7lcZYwEfE5YOU8/8gOrCBN9G9z
+	 L3kUJDU02k9hAqDrVfUq40KBwbrqzY0upIssrh90=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a02:2149:8a3b:5a00:3490:6581:3910:8337) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Joaquin Ignacio Aramendia <samsagax@gmail.com>,
+	Derek J Clark <derekjohn.clark@gmail.com>,
+	Kevin Greenberg <kdgreenberg234@protonmail.com>,
+	Joshua Tam <csinaction@pm.me>,
+	Parth Menon <parthasarathymenon@gmail.com>,
+	Eileen <eileen@one-netbook.com>,
 	linux-kernel@vger.kernel.org,
-	lukas@mwa.re,
-	jan@mwa.re,
-	msp@baylibre.com,
-	Antonios Salios <antonios@mwa.re>
-Subject: [PATCH v3] can: m_can: initialize spin lock on device probe
-Date: Fri, 25 Apr 2025 13:17:45 +0200
-Message-ID: <20250425111744.37604-2-antonios@mwa.re>
+	sre@kernel.org,
+	linux@weissschuh.net,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	mario.limonciello@amd.com,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v10 00/16] hwmon: (oxpsensors) Add devices, features,
+ fix ABI and move to platform/x86
+Date: Fri, 25 Apr 2025 13:18:05 +0200
+Message-ID: <20250425111821.88746-1-lkml@antheas.dev>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,68 +73,153 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <174557990523.22129.15756631395239033959@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-The spin lock tx_handling_spinlock in struct m_can_classdev is not being
-initialized. This leads the following spinlock bad magic complaint from the
-kernel, eg. when trying to send CAN frames with cansend from can-utils:
+This four part series updates the oxpsensors module to bring it in line
+with its Windows OneXPlayer counterpart. First, it adds support for all
+2024, 2025 OneXPlayer handhelds and their special variants. Then, it moves
+the module to platform/x86 to allow for including more EC features.
 
-[   10.631450] BUG: spinlock bad magic on CPU#0, cansend/95
-[   10.631462]  lock: 0xff60000002ec1010, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
-[   10.631479] CPU: 0 UID: 0 PID: 95 Comm: cansend Not tainted 6.15.0-rc3-00032-ga79be02bba5c #5 NONE
-[   10.631487] Hardware name: MachineWare SIM-V (DT)
-[   10.631490] Call Trace:
-[   10.631493] [<ffffffff800133e0>] dump_backtrace+0x1c/0x24
-[   10.631503] [<ffffffff800022f2>] show_stack+0x28/0x34
-[   10.631510] [<ffffffff8000de3e>] dump_stack_lvl+0x4a/0x68
-[   10.631518] [<ffffffff8000de70>] dump_stack+0x14/0x1c
-[   10.631526] [<ffffffff80003134>] spin_dump+0x62/0x6e
-[   10.631534] [<ffffffff800883ba>] do_raw_spin_lock+0xd0/0x142
-[   10.631542] [<ffffffff807a6fcc>] _raw_spin_lock_irqsave+0x20/0x2c
-[   10.631554] [<ffffffff80536dba>] m_can_start_xmit+0x90/0x34a
-[   10.631567] [<ffffffff806148b0>] dev_hard_start_xmit+0xa6/0xee
-[   10.631577] [<ffffffff8065b730>] sch_direct_xmit+0x114/0x292
-[   10.631586] [<ffffffff80614e2a>] __dev_queue_xmit+0x3b0/0xaa8
-[   10.631596] [<ffffffff8073b8fa>] can_send+0xc6/0x242
-[   10.631604] [<ffffffff8073d1c0>] raw_sendmsg+0x1a8/0x36c
-[   10.631612] [<ffffffff805ebf06>] sock_write_iter+0x9a/0xee
-[   10.631623] [<ffffffff801d06ea>] vfs_write+0x184/0x3a6
-[   10.631633] [<ffffffff801d0a88>] ksys_write+0xa0/0xc0
-[   10.631643] [<ffffffff801d0abc>] __riscv_sys_write+0x14/0x1c
-[   10.631654] [<ffffffff8079ebf8>] do_trap_ecall_u+0x168/0x212
-[   10.631662] [<ffffffff807a830a>] handle_exception+0x146/0x152
+Then, it adds the new charge limiting and bypass features that were first
+introduced in the X1 and retrofit to older OneXFly variants and for
+controlling the turbo led found in the X1 models. For Bypass, it adds a new
+charge_behaviour variant called inhibit-charge-s0.
 
-Initializing the spin lock in m_can_class_allocate_dev solves that
-problem.
+Finally, it performs a minor refactor by moving around switch statements
+into their own functions, in order to allow for fixing the pwm1_enable ABI
+in the final patch. Currently, pwm1_enable sets the fan to auto with the
+value 0 and allows manual control with the value 1. This patch makes it
+so 0 sets the fan to full speed, 1 sets the fan to manual control, and
+2 sets the fan to auto. This requires both setting enable and the fan
+speed when the enable sysfs is written to as 0, hence the refactor.
 
-Fixes: 1fa80e23c150 ("can: m_can: Introduce a tx_fifo_in_flight counter")
+As this is a minor ABI break and there is userspace software relying
+on this previous behavior, the last patch also changes the /name of the
+hwmon endpoint to "oxp_ec" from "oxpec" (mirroring WMI module conventions)
+such that userspace software that relied on the previous behavior can be
+retrofit to the new kernel while enabling correct functionality on old
+and new kernels. Failing that, software that is not updated will just
+stop controlling the fans, ensuring no malignant behavior.
 
-Signed-off-by: Antonios Salios <antonios@mwa.re>
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 ---
-Changes since v2:
- * Clarify bug in commit message
+V9: https://lore.kernel.org/all/20250417175310.3552671-1-lkml@antheas.dev/
+V8: https://lore.kernel.org/all/20250322103606.680401-1-lkml@antheas.dev/
+V7: https://lore.kernel.org/all/20250319181044.392235-1-lkml@antheas.dev/
+V6: NA
+V5: https://lore.kernel.org/all/20250317155349.1236188-1-lkml@antheas.dev/
+V4: https://lore.kernel.org/all/20250311165406.331046-1-lkml@antheas.dev/
+V3: https://lore.kernel.org/all/20250309112114.1177361-1-lkml@antheas.dev/
 
-Changes since v1:
- * Move spin_lock_init from device probe functions to classdev alloc function
- * Add a fixes tag
----
- drivers/net/can/m_can/m_can.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since V9:
+    - Reflow commit texts
+    - Use tabs for all defines (with extra patch)
+    - Reflow some function headers
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 884a6352c..12e313998 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -2379,6 +2379,8 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
- 	SET_NETDEV_DEV(net_dev, dev);
- 
- 	m_can_of_parse_mram(class_dev, mram_config_vals);
-+
-+	spin_lock_init(&class_dev->tx_handling_spinlock);
- out:
- 	return class_dev;
- }
+Changes since V8:
+    - Fix nits by Ilpo
+    - No functionality changes (battery check was a NOOP)
+
+Changes since V7:
+    - Add rename to ABI switch patch, for rebase friendliness (this is
+      moreso for my sanity as I will be the one rebasing)
+    - Fix 2 other nits by Thomas
+
+Changes since V6:
+    - Fix compile error due to extra const. My bad on that one, did a
+      double check on a device too.
+
+Changes since V5:
+    - Separate doc entries with Fixes as by Mario
+    - Add sysfs file name to subject as per Thomas
+    - Make tt_led and tt_turbo const as per Thomas
+    - Align a couple of structs as per Thomas
+    - Remove excess battery check as per Thomas
+    - For Thomas: devices without a BIOS update battery control is a NOOP
+      OXP is a boutique manufacturer for now, so gathering information
+      about old devices to add BIOS checks is not practical unfortunately
+
+Changes since V4:
+    - Fix nits by Hans
+    - change inhibit-charge-s0 to inhibit-charge-awake
+    - use devm_battery_hook_register and power_supply_unregister_extension
+      (based on cros driver)
+    - move charge behavior patches to the end to make the rest of the series
+      easier to merge
+    - CC platform-x86 and power maintainers
+
+Changes since V3:
+    - Fix nits by Derek
+    - Remove the hwmon documentation as it is not required for platform
+      drivers (suggested by Guenter)
+    - Add ACPI_BATTERY and HWMON depends to Kconfig
+      (reported by kernel robot)
+    - Homogenize driver into following reverse xmas convention
+
+Changes since V2:
+    - Add ack by Guenter, move platform move patch to be third (not first
+      to allow for device support backport to lts kernels)
+    - Rework patch text, especially in the refactor patches as per Derek
+    - Change bypass to use charge_behaviour instead of charge_type, as that
+      ABI supports capability detection and is more appropriate
+    - Move battery attach to probe instead of init
+    - Fix bug where reading tt_led would instead use the turbo register
+
+Changes since V1:
+    - Add X1 Pro, F1 Pro variants
+    - Fix minor typo in initial patches
+    - Convert oxp-sensors into a platform driver, as it is no longer
+      considered a hwmon driver.
+    - Add sysfs documentation and myself to the MAINTAINERS file
+    - Update documentation to state that this is the OneXPlayer/AOKZOE
+      platform driver, and that support for Ayaneo/OPI is provided until
+      they gain their own platform driver.
+
+Antheas Kapenekakis (16):
+  hwmon: (oxp-sensors) Distinguish the X1 variants
+  hwmon: (oxp-sensors) Add all OneXFly variants
+  platform/x86: oxpec: Move hwmon/oxp-sensors to platform/x86
+  ABI: testing: sysfs-class-oxp: add missing documentation
+  ABI: testing: sysfs-class-oxp: add tt_led attribute documentation
+  platform/x86: oxpec: Rename ec group to tt_toggle
+  platform/x86: oxpec: Add turbo led support to X1 devices
+  platform/x86: oxpec: Move pwm_enable read to its own function
+  platform/x86: oxpec: Move pwm value read/write to separate functions
+  platform/x86: oxpec: Move fan speed read to separate function
+  platform/x86: oxpec: Adhere to sysfs-class-hwmon and enable pwm on 2
+  platform/x86: oxpec: Follow reverse xmas convention for tt_toggle
+  power: supply: add inhibit-charge-awake to charge_behaviour
+  platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer
+  platform/x86: oxpec: Rename rval to ret in tt_toggle
+  platform/x86: oxpec: Convert defines to using tabs
+
+ Documentation/ABI/testing/sysfs-class-power  |   11 +-
+ Documentation/ABI/testing/sysfs-platform-oxp |   25 +
+ Documentation/hwmon/index.rst                |    2 +-
+ Documentation/hwmon/oxp-sensors.rst          |   89 --
+ MAINTAINERS                                  |    7 +-
+ drivers/hwmon/Kconfig                        |   11 -
+ drivers/hwmon/Makefile                       |    1 -
+ drivers/hwmon/oxp-sensors.c                  |  716 ------------
+ drivers/platform/x86/Kconfig                 |   13 +
+ drivers/platform/x86/Makefile                |    3 +
+ drivers/platform/x86/oxpec.c                 | 1055 ++++++++++++++++++
+ drivers/power/supply/power_supply_sysfs.c    |    7 +-
+ drivers/power/supply/test_power.c            |    1 +
+ include/linux/power_supply.h                 |    1 +
+ 14 files changed, 1113 insertions(+), 829 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-oxp
+ delete mode 100644 Documentation/hwmon/oxp-sensors.rst
+ delete mode 100644 drivers/hwmon/oxp-sensors.c
+ create mode 100644 drivers/platform/x86/oxpec.c
+
+
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
 -- 
 2.49.0
 
