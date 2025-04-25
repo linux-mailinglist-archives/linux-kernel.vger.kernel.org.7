@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-619948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7E1A9C3DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:39:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B685A9C3E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19DC9C26BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673B81BC090F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DC6238C1E;
-	Fri, 25 Apr 2025 09:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0FA23C8CD;
+	Fri, 25 Apr 2025 09:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ipRQI3we";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="alm4dm3r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qh8PGMFC"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FD92356B8;
-	Fri, 25 Apr 2025 09:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA3023816A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573594; cv=none; b=NArM32PV+MdmS/LkdiWQE3XhyYfX8riefiMLwys3vF66q1J2dT8Y/cKI1Ey/4d0HmZiZDkow90Cy0dtVn7iVySvK74lBqDqzqIE5pImXMe/pduHOcdJmlthd1pEx3qJDTChU1kRspqEfKBE3IQv2o85Y30W+FKwK7JWxkt25glc=
+	t=1745573639; cv=none; b=Wp2d77QFoZHWDOQO5iUvEXJ/uL2ETvhraHk1+GK8jWDCroDpXAldsR1l3Egha4YLADCRdnWjHyhcgkxp+V1s6vCByPOpiYPuan5p3bwi0BsLZpivsz7Nowx/QyoExZZ3rKeW9NDhL7Gu3AFRdZzEoBaV6Qpk6GFNj29Orfwxlxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573594; c=relaxed/simple;
-	bh=WNBCzVUdr2nMr5n1g8TkgRuxVBJ3OvFR4kRECxsx0dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7KGFIR8sWGRNRWUa3vPvvb4hZ17UsewXLW86IXo95m6tPeQ2tNl0R4S37/Drxnwreqe+ymqddy7JQXMfkTtoX5rNMTKqGyj4LVtJDodBn8Gp7FujxrP2tHPgR3AgGbPauAnNEdnU6QXb0NSFLlW9XPYR/kcwoW6G10pnwyQyuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ipRQI3we; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=alm4dm3r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Apr 2025 11:33:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745573590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttWMI3IxwHR18qgiavYlZ7Wrde1QtcOjDwO9mA75nyw=;
-	b=ipRQI3weeZvi54Pj/z6HcZh1yPAgKNFKQqK2uWbTP9LrftmBQwUREE/oSZm7ZblPbYb4Oj
-	GdXSeYy0BJWEjqn3WQ1MnPDUrrbWEoe1U5rp55kAZecRI4C/aCqPJdTgle5Ig6Xjc7ey+S
-	8I+zBS8poyVvxWB2pwsqxb8Sg+aYnHqx0uQgJXvi5533F6oANT1p/aKHVcB/Rgw2NBxbW2
-	/P2lspWZqQ49JL/uy7AWPuPnh2Uujao/IjcR7c7D+H81KgE6Y2Z0yVZj9a1vXjt+BC6v6y
-	nWRdVosrfkI0/JeljEugAyMn7b9762C/4f5LD3rgL2ssCDV1JdKY5F/s52UtQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745573590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttWMI3IxwHR18qgiavYlZ7Wrde1QtcOjDwO9mA75nyw=;
-	b=alm4dm3rSKXMYLXTb6ZshjlB0OGQ7Un5JbIALvYLgiN7mv3thBSkmwd+Oq7JF6FjGH5ML1
-	WOcvexXwgKTCfmAA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de
-Subject: Re: [PATCH v4 20/22] rv: Add rtapp_sleep monitor
-Message-ID: <20250425093309.RkeoCUBC@linutronix.de>
-References: <cover.1745390829.git.namcao@linutronix.de>
- <c23cb5ef10310f978c3f90f07c2dbb9b042e8b01.1745390829.git.namcao@linutronix.de>
- <c321c7350ec10f9f358695acd765d2dbd067eeb2.camel@redhat.com>
- <20250425063456.NBE35YHR@linutronix.de>
- <169b8478-1eff-46b1-a782-f0cb529330bb@redhat.com>
+	s=arc-20240116; t=1745573639; c=relaxed/simple;
+	bh=1Ygr1CrBfIkvZz2auxMgA8aw1aolYp7hFHfJ8IlqPEM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=k6koKp+aDRKroOOxA9INehmdqMf21fTGldW9bEb04cvAzFmqmLUkU0TB315QvxLwRnWh6Uqcuz/GJsbVDdH0+xy2dVS+JNogeG6D7Pg269Le26+KG0LuMCIrJI4rOptKCOGa7c/5MHShJVV+nk/DHylyJ8vbGybWM7e1gqaqJBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qh8PGMFC; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43947a0919aso14560125e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745573636; x=1746178436; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vtNZlxwm8AI/Tne4p8yGy9zwTk+SxzgVBhym44xlJ3c=;
+        b=Qh8PGMFCSdcHvsZxMmyBCxCddwiNrlRa2JjmF4jkvOAGedW0B+WSe4/K3+maqR2dhz
+         5puMLZlor/vO0uFwy6jB/CwvV5/XZERmrxQJpV/88rNh0VLA4IEMkq53QrFU4/wQwI/y
+         LsUkYnNjuL5fn9jLaCJj8RN8dkEMGMCi9Q1pdFsAvqRlLPIkgJq4szJUYb1JFx5yK71X
+         ooRP62bgxB9+gWOBrmenFb4FLAJOliHMSlT7wezyNm3Gm12SxiYkGVt7+5z1ftHpP/rZ
+         b493ItACT8DqF+KCajcjl0hsQdP8Fw5hoW6K/IzR2f60I4wCyPieaLSrli2Q/3o1s92o
+         DMWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745573636; x=1746178436;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vtNZlxwm8AI/Tne4p8yGy9zwTk+SxzgVBhym44xlJ3c=;
+        b=rjQPyh8+SwkazkujhY7ZEBXT+Jldwri67y6V6NbrC+CbiA1aPwK3V+nCmMtnOL/8cF
+         87hFvFWS2Ipm/B60BinkkmN9yxMngXp5W6rrhnQTXPe/lXY7vOa3vwArUDhvvNpKSB+r
+         MLb0KRd0Ol12BSRV4Yu1lq6fBp29sfuGNpRJ7jnMQ2m/IMo3WWqTxwdcOy30Gkr1LKbX
+         HPdCkvsygqz4OC0uJn87cSV9wuwTHdNa2C5zFve14UMWL5cDU2R4TPtRlzpbD8yIUm0S
+         69BOVz5WDkXGrp3KGWan0pi1j/SS4U7c73Lzb+q6+7+alpEjFkiMBWKWSUpLkEFkW2Vp
+         8aNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfqS7Nw5D8uR+a8Fa+TtpQDU6HesIIdunhaSVTRkF9Nwa3hwFk6W51wLamrWX20fXtOIKUDcKbRHdUvvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynsFwMfo2sezDfkxzB/U0Lh+0xapJb+kyClzzmUeCM8zVj9j2S
+	asHfboYjxa0mLiG1zXipNlh8BmD58XcJmoRwTlQBVbmzqgLsTy3CPaXW68RFyUu11rXY4AZomQK
+	k2Ja4XC7ZvgMyDw==
+X-Google-Smtp-Source: AGHT+IHnk5an9Qc0Hy9ZvZ4I7tAloARDp8l2BsDoikGUcRaLlxD9b6YgafS5kx4j1Q/yQ6pHobfxYAfWTVpVvY0=
+X-Received: from wmrn43.prod.google.com ([2002:a05:600c:502b:b0:440:6128:9422])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3542:b0:43c:fbe2:df3c with SMTP id 5b1f17b1804b1-440a669dbd2mr12208135e9.26.1745573636613;
+ Fri, 25 Apr 2025 02:33:56 -0700 (PDT)
+Date: Fri, 25 Apr 2025 09:33:54 +0000
+In-Reply-To: <aAqXw3t9UVU8pF8_@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <169b8478-1eff-46b1-a782-f0cb529330bb@redhat.com>
+Mime-Version: 1.0
+References: <20250423-destroy-workqueue-flush-v1-1-3d74820780a5@google.com> <aAqXw3t9UVU8pF8_@slm.duckdns.org>
+Message-ID: <aAtXApA8ggJa6sQg@google.com>
+Subject: Re: [PATCH] workqueue: flush all pending jobs in destroy_workqueue()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, Philipp Stanner <phasta@mailbox.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Apr 25, 2025 at 07:35:36AM +0000, Gabriele Monaco wrote:
-> 2025-04-25T06:35:09Z Nam Cao <namcao@linutronix.de>:
-> > On Thu, Apr 24, 2025 at 03:55:34PM +0200, Gabriele Monaco wrote:
-> >> I quickly tried the same with the other monitor comparing the number of
-> >> errors with the page_faults generated by perf, but that didn't make too
-> >> much sense. Perhaps I'm doing something wrong here though (the number
-> >> reported by perf for page faults feels a bit too high).
-> >>
-> >> perf stat -e page-faults -e rv:error_pagefault stress-ng --cyclic 1
-> >
-> > This command run a non-real-time thread to do setup, and a cyclic real-time
-> > thread. The number of pagefaults of each thread would be roughly
-> > proportional to the code size executed by each thread. As the non-real-time
-> > thread's code size is bigger, it sounds reasonable that the number of
-> > pagefaults is greater than the number of monitor's warnings.
+On Thu, Apr 24, 2025 at 09:57:55AM -1000, Tejun Heo wrote:
+> Hello, Alice.
 > 
-> Mmh I guessed something like that, although numbers were a bit out of
-> proportion (e.g. 500 page-faults and 8 errors), but again, I didn't check
-> too carefully what happens under the hood.
-
-Keep in mind that the non-real-time thread is calling into glibc. While
-the real-time thread is a small loop doing nanosleep.
-
-> > I tested the monitor on a real system. My system has some real-time audio
-> > processing processes (pipewire, firefox running youtube), yours also
-> > should.
+> On Wed, Apr 23, 2025 at 05:51:27PM +0000, Alice Ryhl wrote:
+> ...
+> > @@ -367,6 +367,8 @@ struct workqueue_struct {
+> >  	struct lockdep_map	__lockdep_map;
+> >  	struct lockdep_map	*lockdep_map;
+> >  #endif
+> > +	raw_spinlock_t		delayed_lock;	/* protects pending_list */
+> > +	struct list_head	delayed_list;	/* list of pending delayed jobs */
 > 
-> That's a good point, also I didn't mention I was running these tests in a
-> VM (virtme-ng), so the system stress is minimal and perhaps the setup
-> triggers some different oddities (filesystems are overlays and some other
-> things are set up differently from a real system).
+> I think we'll have to make this per-CPU or per-pwq. There can be a lot of
+> delayed work items being queued on, e.g., system_wq. Imagine that happening
+> on a multi-socket NUMA system. That cacheline is going to be bounced around
+> pretty hard.
 
-Oddities are good, they make some corner cases appear.
+Hmm. I think we would need to add a new field to delayed_work to keep
+track of which list it has been added to.
 
-Evidently I need to torture the monitors much more, let's see what else
-shows up..
+Another option could be to add a boolean that disables the list. After
+all, we never call destroy_workqueue() on system_wq so we don't need the
+list for that workqueue.
 
-Best regards,
-Nam
+Thoughts?
+
+Alice
 
