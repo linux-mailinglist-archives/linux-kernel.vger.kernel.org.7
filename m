@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-620816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BA2A9CFD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56242A9CFD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29E21C02C49
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEFDA01E27
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227EE215766;
-	Fri, 25 Apr 2025 17:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6C4290BAF;
+	Fri, 25 Apr 2025 17:40:48 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4EF21FF2C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED7920F097
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745602843; cv=none; b=VPjtow7VDbz1+wxHnMcOfo9nHc8qqeNhEfcl7d0XX6qhY8bf//mLm/lCwQ0huoUDH6xs6TNfpZzP3ziUv7EMRshcDizZYDpsN2Z/WU1l0AKYDcGixKW2gjhkTKVSv/RJp+sD4pdXM/JFR3MU3S9PH/WSiqnjEWkPceWpnPGHCcE=
+	t=1745602848; cv=none; b=Ky95hdnrq4NpV3yw2tDGVH0tg0xDf68zd9svR4ZTw7XoTrhQ8idrIEBsAR8tojNzP+1X/W7Ev4g7drO1aEZF3NQztJ7nYVC9VjmzDLRheZrgWa1FtxBsYvRFnlcsi+hkY9diYHDEUGgp0TO2gDqBgTD7dXwwwIt4/HiRO8ZRmDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745602843; c=relaxed/simple;
-	bh=cWfGVvH5laaqsXeTcct/Yw+jAml/lQNHzaseX++QnjU=;
+	s=arc-20240116; t=1745602848; c=relaxed/simple;
+	bh=okBl3+DhGQDapuQrdlqFf1pN/6BFvE+Q1mvKPIcsCwo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HbvUhJA2hGHRmCJ7fp3CVTHUjpI3fVWJI/GpHsigkR9su5cKG0So4V23aJNZjktcZHI1s4nDYi1OiHJQdvL7Qnn6aMCBq4I3T+cDcx2wpAiUndt6oK/a7bFtoNfibnKfvHD/bVRhGLA4e0oqL3yA66VQNvtdNnEI77IWkxvtDDY=
+	 MIME-Version; b=KUOpM2Ugk+8H91dT2nq2EivN4PDv7JKmG9UxW4UtyWRiPxROavGCEBvfit3thl/OEUvrnEqXqOwYz3MNDw8J06NTOTvsXPJj5PhGD6V5KjNdG+Xh8bz99v8nCMgSFLWYom9VuCGBGr+HApkhNEOET/im8fvFun3Uwfbepiljs4c=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 379B12308;
-	Fri, 25 Apr 2025 10:40:36 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D49AE2309;
+	Fri, 25 Apr 2025 10:40:40 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 454263F59E;
-	Fri, 25 Apr 2025 10:40:37 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2E853F59E;
+	Fri, 25 Apr 2025 10:40:41 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -62,9 +62,9 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	fenghuay@nvidia.com,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
 	Babu Moger <babu.moger@amd.com>
-Subject: [PATCH v9 25/27] fs/resctrl: Change internal.h's header guard macros
-Date: Fri, 25 Apr 2025 17:38:07 +0000
-Message-Id: <20250425173809.5529-26-james.morse@arm.com>
+Subject: [PATCH v9 26/27] x86,fs/resctrl: Move resctrl.rst to live under Documentation/filesystems
+Date: Fri, 25 Apr 2025 17:38:08 +0000
+Message-Id: <20250425173809.5529-27-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250425173809.5529-1-james.morse@arm.com>
 References: <20250425173809.5529-1-james.morse@arm.com>
@@ -76,8 +76,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The code in internal.h was moved by a script. The script didn't know to
-change the header guard macros. Do that.
+The filesystem code has moved from arch/x86 to fs. Move the documentation
+too.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Peter Newman <peternewman@google.com>
@@ -85,29 +85,84 @@ Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
 Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
 Tested-by: Babu Moger <babu.moger@amd.com>
+Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 ---
- fs/resctrl/internal.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/arch/x86/index.rst                    | 1 -
+ Documentation/filesystems/index.rst                 | 1 +
+ Documentation/{arch/x86 => filesystems}/resctrl.rst | 0
+ MAINTAINERS                                         | 2 +-
+ arch/x86/kernel/cpu/resctrl/monitor.c               | 2 +-
+ fs/resctrl/Kconfig                                  | 2 +-
+ 6 files changed, 4 insertions(+), 4 deletions(-)
+ rename Documentation/{arch/x86 => filesystems}/resctrl.rst (100%)
 
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index 06173b5f0a47..6dd2a74cf3ec 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_X86_RESCTRL_INTERNAL_H
--#define _ASM_X86_RESCTRL_INTERNAL_H
-+#ifndef _FS_RESCTRL_INTERNAL_H
-+#define _FS_RESCTRL_INTERNAL_H
+diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/index.rst
+index 8ac64d7de4dc..00f9a99689fb 100644
+--- a/Documentation/arch/x86/index.rst
++++ b/Documentation/arch/x86/index.rst
+@@ -31,7 +31,6 @@ x86-specific Documentation
+    pti
+    mds
+    microcode
+-   resctrl
+    tsx_async_abort
+    buslock
+    usb-legacy-support
+diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+index a9cf8e950b15..32618512a965 100644
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@ -113,6 +113,7 @@ Documentation for filesystem implementations.
+    qnx6
+    ramfs-rootfs-initramfs
+    relay
++   resctrl
+    romfs
+    smb/index
+    spufs/index
+diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/filesystems/resctrl.rst
+similarity index 100%
+rename from Documentation/arch/x86/resctrl.rst
+rename to Documentation/filesystems/resctrl.rst
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5709acdb7040..46f7365bb9ac 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20340,7 +20340,7 @@ M:	Tony Luck <tony.luck@intel.com>
+ M:	Reinette Chatre <reinette.chatre@intel.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+-F:	Documentation/arch/x86/resctrl*
++F:	Documentation/filesystems/resctrl.rst
+ F:	arch/x86/include/asm/resctrl.h
+ F:	arch/x86/kernel/cpu/resctrl/
+ F:	fs/resctrl/
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index 3936bab81411..3fc4d9f56f0d 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -40,7 +40,7 @@ unsigned int rdt_mon_features;
+ static int snc_nodes_per_l3_cache = 1;
  
- #include <linux/resctrl.h>
- #include <linux/kernfs.h>
-@@ -437,4 +437,4 @@ static inline int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
- static inline void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp) { }
- #endif /* CONFIG_RESCTRL_FS_PSEUDO_LOCK */
+ /*
+- * The correction factor table is documented in Documentation/arch/x86/resctrl.rst.
++ * The correction factor table is documented in Documentation/filesystems/resctrl.rst.
+  * If rmid > rmid threshold, MBM total and local values should be multiplied
+  * by the correction factor.
+  *
+diff --git a/fs/resctrl/Kconfig b/fs/resctrl/Kconfig
+index 478a8e2ad99f..21671301bd8a 100644
+--- a/fs/resctrl/Kconfig
++++ b/fs/resctrl/Kconfig
+@@ -21,7 +21,7 @@ config RESCTRL_FS
+ 	  On architectures where this can be disabled independently, it is
+ 	  safe to say N.
  
--#endif /* _ASM_X86_RESCTRL_INTERNAL_H */
-+#endif /* _FS_RESCTRL_INTERNAL_H */
+-	  See <file:Documentation/arch/x86/resctrl.rst> for more information.
++	  See <file:Documentation/filesystems/resctrl.rst> for more information.
+ 
+ config RESCTRL_FS_PSEUDO_LOCK
+ 	bool
 -- 
 2.39.5
 
