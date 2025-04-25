@@ -1,107 +1,184 @@
-Return-Path: <linux-kernel+bounces-620049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6748FA9C55B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:28:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1559A9C55C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACA516D1E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C42F3B925F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D623C8A3;
-	Fri, 25 Apr 2025 10:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF9623C8B3;
+	Fri, 25 Apr 2025 10:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="X5PsQabr"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC4718D;
-	Fri, 25 Apr 2025 10:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ertepgPj"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8AF18D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745576875; cv=none; b=UE0s/l9wK94Z7FjKY6l1gwz83jMhvA7s0Mn7Ug8NdNGbZkk1aZmqS72KuZ4CkK5yWGPdgNM8fiJbHu1c7tC30j2K/3Xm6feny+pfATtpVI82uMb7WwR5WynutW9kseKbfl799CQBrUKXqJVcu7AxQKcxrvAlycr1l+wlHguCtUc=
+	t=1745576902; cv=none; b=X5WEZ23f+78x74+yCYO+xTh2+g1v5nTz6FVZu2Qf3hOmlMaORYOSRIiZcyoEJq/ctdJKHOaj34O8gudHj30iAa0VSTVI+mwqHlgAcQ+JO8d49GIVxE2EGEY2dYRd9+AdjIXTLi9Cl16hvWlFj/spcnqh0pqkfwTS09pmRXhb6IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745576875; c=relaxed/simple;
-	bh=E0x8N3AZ4TFX3tbBzDUe98mYE9dOVHmKa0S5IerdplU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aUS3g/fq5mRwnEcdMBLkwf5Hatyox9FWBKwDKtwZud/QgC+0GVYLeRKJEO9AF0DEMDp+DsU+wlUsLMTwEM0CxEbJgdstYrpoQafd6UWrjSBcLPz6IbpL6/BKsL9NsgunDEDSUNG4c9MkYDuwuBglMpXsqxs68otw1CAbYUL2Cvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=X5PsQabr; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=zG66mfWXbPjwAhDXIOR7A3831eYYgiM5AtcB2S18NL4=;
-	b=X5PsQabrR9K6jEK20m5Eq2MEBQh2A09QM7jIB2UrPHQt0hNJboxBD2siXKisad
-	1paXffNBE7hxQ+f8HzCeu9z8lHGHyut6+CtFCe/FOO0gCvcrs27FH7TQU67pm2Mk
-	78D9AMShMMXJO++3C+VZRrCWdrbh4XpmD9TXmYvFl9DZg=
-Received: from [192.168.142.52] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgAH4ilJYwto+c_QBg--.57013S2;
-	Fri, 25 Apr 2025 18:26:18 +0800 (CST)
-Message-ID: <7c7d5e12-7378-473e-941a-33c1b03cc8c9@163.com>
-Date: Fri, 25 Apr 2025 18:26:16 +0800
+	s=arc-20240116; t=1745576902; c=relaxed/simple;
+	bh=hzyQlJAfvZlx9HV/nf8bNQRKE+HVZfxygYUIuwK1hSk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OnK0L2MzDqRgQeS0vhXuIz7vq911TWOh2fOkIhuTFwhF2nbmXK0NnqG5eJDteunM/f9N+plfY1b/Rr837t0rXWSOFeqyXyrib8BJxZ7XepWoKsHTl5kcOHWJKSq1aZKdWTQ1mV9KWDzN7AHWS5N1ww01DsfGyG4v/bFktA+WWuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ertepgPj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745576899;
+	bh=hzyQlJAfvZlx9HV/nf8bNQRKE+HVZfxygYUIuwK1hSk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ertepgPjC9jJpyLmPe8bGVxfgpaK4sXF4Q4+GdRwuwe7d1N9I5ca5vllMMJ4qJhGd
+	 SqedRSORgkNz8wVbE8VhUg7e3ZcK63yb00CxoPIUMWhbWRXp39MpbaK276jSHcvYV3
+	 MUb4uffpCRW+fXbFcG1mHnjrdQR4QntiRtHEtuXshE7/K+DHJAigYsU0vw6O7Tks8P
+	 QMAvCpp9X3ym/v1QSk/igwPNJDqzHbBZcj5oo4bgvN/EIQX7OLbipqrhZJcA8VRydt
+	 D4mown6Qb8pusxWn83NjHhtuZu3ilbChLWOblZDGCwLirhnJcAR4mo2difixVQRnTA
+	 DKlXJhfzBPaSg==
+Received: from localhost (unknown [82.76.59.226])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id D0D2217E3626;
+	Fri, 25 Apr 2025 12:28:18 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v4 00/23] drm/connector: hdmi: Allow using the YUV420
+ output format
+Date: Fri, 25 Apr 2025 13:26:51 +0300
+Message-Id: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI: Remove redundant MPS configuration
-To: Niklas Cassel <cassel@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
- heiko@sntech.de, thomas.petazzoni@bootlin.com,
- manivannan.sadhasivam@linaro.org, yue.wang@amlogic.com, pali@kernel.org,
- neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
- khilman@baylibre.com, jbrunet@baylibre.com,
- martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250425095708.32662-1-18255117159@163.com>
- <20250425095708.32662-3-18255117159@163.com> <aAthR8ZXSqfe6fzV@ryzen>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <aAthR8ZXSqfe6fzV@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PSgvCgAH4ilJYwto+c_QBg--.57013S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Xw1Dtry8AFWxKr18AFyxZrb_yoW8Jr1Upa
-	ySvrySya18tr4F9anrA3W8CryrWas7Kr90qr98Gr1xJ3Z0vF13JFya9F10q34UJryYq3W0
-	yF4Yv347C3Z0kFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UM89_UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOho6o2gLYUIC+QACsA
+X-B4-Tracking: v=1; b=H4sIAGtjC2gC/3XOSwrCMBCA4auUrI3k1bRx5T3ERZ42UBtJNFhK7
+ 25aEKTq8h9mPmYCyUZvEzhUE4g2++TDUILtKqA7OVws9KY0IIgwjCmCnbl6qMMwwPGRocVO1oI
+ b1/AWlJtbtM4/V+90Lt35dA9xXPmMl+k/KWOIIKkZaYRELW/wUYe+lypEudfhChYtk7dQI4rxV
+ iBFcMoowVzZ4OSXQD8EwrcCXX4QzFCrlGLqS5jn+QW5Wo8OMgEAAA==
+X-Change-ID: 20241130-hdmi-conn-yuv-e1fa596df768
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+Provide the basic support to enable using YUV420 as an RGB fallback when
+computing the best output format and color depth.
 
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v4:
+- Collected R-b tags from Maxime and Dmitry
+- Squashed "drm/connector: hdmi: Rename hdmi_compute_format() internal
+  helper" into "drm/connector: hdmi: Factor out bpc and format
+  computation logic" and moved the TODO hunk to next patch (Maxime)
+- Logged a debug message in "drm/connector: hdmi: Use YUV420 output
+  format as an RGB fallback" for hdmi_compute_format_bpc() (Maxime)
+- Reworded "drm/tests: hdmi: Fixup CamelCase warning" to "drm/tests:
+  hdmi: Replace '[_]MHz' with 'mhz'"
+- Reworked the patches simplifying EDID setup: ended up with just a new
+  __connector_hdmi_init() function and a single helper macro (Maxime)
+- Added new patches to handle EDEADLK:
+  * "drm/tests: helpers: Add a (re)try helper variant to enable CRTC connector"
+  * "drm/tests: hdmi: Switch to drm_kunit_helper_try_enable_crtc_connector()"
+  * "drm/tests: hdmi: Add macro to support EDEADLK handling"
+  * "drm/tests: hdmi: Restart atomic sequence on EDEADLK"
+  * "drm/tests: hdmi: Switch to drm_atomic_get_new_connector_state() where possible"
+- Updated all YUV420 test cases:
+  * Moved function renames and EDID content to dedicated patches
+  * Improved error handling
+  * Reworded a few comment blocks
+  * Hand-crafted the state and used drm_atomic_check_only() in
+    drm_test_check_driver_unsupported_fallback_yuv420()
+- Added "drm/tests: hdmi: Add test for unsupported RGB/YUV420 mode"
+- Rebased series onto drm-misc-next from 2025-04-22
+- Link to v3: https://lore.kernel.org/r/20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com
 
-On 2025/4/25 18:17, Niklas Cassel wrote:
-> On Fri, Apr 25, 2025 at 05:57:08PM +0800, Hans Zhang wrote:
->> With the PCI core now centrally configuring root port MPS to
->> hardware-supported maximums (via 128 << pcie_mpss) during host probing,
->> platform-specific MPS adjustments are redundant. This patch removes the
->> custom the configuration of the max payload logic to align with the
->> standardized initialization flow.
->>
->> By eliminating redundant code, this change prevents conflicts with global
->> PCIe hierarchy tuning policies and reduces maintenance overhead. The Meson
->> driver now fully relies on the core PCI framework for MPS configuration,
->> ensuring consistency across the PCIe topology while preserving
->> hardware-specific MRRS handling.
->>
->> Signed-off-by: Hans Zhang <18255117159@163.com>
->> ---
->>   drivers/pci/controller/dwc/pci-meson.c | 17 -----------------
->>   drivers/pci/controller/pci-aardvark.c  |  2 --
-> 
-> Since you are touching two drivers (and the changes are not exactly identical),
-> I suggest that you do one patch per driver.
+Changes in v3:
+- Collected R-b tags from Dmitry and Maxime
+- Updated debug messages in "drm/connector: hdmi: Add support for YUV420
+  format verification" to avoid referencing VIC (Maxime)
+- Reworked "drm/connector: hdmi: Use YUV420 output format as an RGB
+  fallback" and moved some parts to separate patches:
+  * drm/connector: hdmi: Add missing bpc debug info to hdmi_try_format_bpc()
+  * drm/connector: hdmi: Rename hdmi_compute_format() internal helper
+  * drm/connector: hdmi: Factor out bpc and format computation logic
+- Reworked "drm/tests: hdmi: Add macros to simplify EDID setup" by
+  renaming the new helpers and moving the conversion to separate
+  patches (Maxime):
+  * drm/tests: hdmi: Fixup CamelCase warning
+  * drm/tests: hdmi: Replace open coded EDID setup
+  * drm/tests: hdmi: Drop unused drm_kunit_helper_connector_hdmi_init_funcs()
+- Moved connector_hdmi_init_with_edid_funcs() changes from "drm/tests:
+  hdmi: Add limited range tests for YUV420 mode") to "drm/tests: hdmi:
+  Setup ycbcr_420_allowed before initializing connector"
+- Got rid of the floating-point operation in "drm/tests: hdmi: Add max
+  TMDS rate fallback tests for YUV420 mode" in order to fix the build
+  errors reported by some kernel test robots
+- Added new patch "drm/tests: hdmi: Add test for unsuccessful forced
+  fallback to YUV420"
+- Rebased series onto drm-misc-next from 2025-03-25
+- Link to v2: https://lore.kernel.org/r/20250311-hdmi-conn-yuv-v2-0-fbdb94f02562@collabora.com
 
-Dear Niklas,
+Changes in v2:
+- Provided the missing Fixes tag on first patch (Dmitry)
+- Added patch "drm/connector: hdmi: Improve debug message for supported
+  format"
+- Reworked "drm/connector: hdmi: Use YUV420 output format as an RGB
+  fallback" so that the fallback to YUV420 will be attempted only when
+  RGB cannot be supported for any of the available color depths (Maxime)
+- Added a patch to simplify EDID setup in KUnit cases
+- Added two patches extending KUnit coverage for YUV420 by providing
+  tests for limited range and max TMDS rate fallback
+- Rebased series onto drm-misc-next-2025-03-06
+- Link to v1: https://lore.kernel.org/r/20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com
 
-Thank you very much for your reply. In the next version, I will split 
-two patches.
+---
+Cristian Ciocaltea (23):
+      drm/connector: hdmi: Evaluate limited range after computing format
+      drm/connector: hdmi: Add support for YUV420 format verification
+      drm/connector: hdmi: Improve debug message for supported format
+      drm/connector: hdmi: Add missing bpc debug info to hdmi_try_format_bpc()
+      drm/connector: hdmi: Factor out bpc and format computation logic
+      drm/connector: hdmi: Use YUV420 output format as an RGB fallback
+      drm/tests: hdmi: Replace '[_]MHz' with 'mhz'
+      drm/tests: hdmi: Add macro to simplify EDID setup
+      drm/tests: hdmi: Replace open coded EDID setup
+      drm/tests: hdmi: Drop unused drm_kunit_helper_connector_hdmi_init_funcs()
+      drm/tests: hdmi: Setup ycbcr_420_allowed before initializing connector
+      drm/tests: helpers: Add a (re)try helper variant to enable CRTC connector
+      drm/tests: hdmi: Switch to drm_kunit_helper_try_enable_crtc_connector()
+      drm/tests: hdmi: Add macro to support EDEADLK handling
+      drm/tests: hdmi: Restart atomic sequence on EDEADLK
+      drm/tests: hdmi: Switch to drm_atomic_get_new_connector_state() where possible
+      drm/tests: hdmi: Provide EDID supporting 4K@30Hz with YUV420 only
+      drm/tests: hdmi: Add limited range tests for YUV420 mode
+      drm/tests: hdmi: Rename max TMDS rate fallback tests
+      drm/tests: hdmi: Provide EDID supporting 4K@30Hz with RGB/YUV
+      drm/tests: hdmi: Add max TMDS rate fallback tests for YUV420 mode
+      drm/tests: hdmi: Add test for unsuccessful fallback to YUV420
+      drm/tests: hdmi: Add test for unsupported RGB/YUV420 mode
 
-Best regards,
-Hans
-
-
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 118 ++-
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 903 +++++++++++++++------
+ drivers/gpu/drm/tests/drm_kunit_edid.h             | 232 ++++++
+ drivers/gpu/drm/tests/drm_kunit_helpers.c          |  39 +
+ include/drm/drm_kunit_helpers.h                    |   7 +
+ 5 files changed, 992 insertions(+), 307 deletions(-)
+---
+base-commit: a49ce9cc85a82d5c5d65186f5a8fda0ebfcff571
+change-id: 20241130-hdmi-conn-yuv-e1fa596df768
 
 
