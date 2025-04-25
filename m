@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-620370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1792A9C9B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F7DA9C9C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4467AAF12
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A774617C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA9325228B;
-	Fri, 25 Apr 2025 12:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C0E23D297;
+	Fri, 25 Apr 2025 13:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CU0sm/jT"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PwzqxmA4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D8C24E4A9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D392517A9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745585928; cv=none; b=rqcz/yM/Eh6L3QD2ARr3bEv4AlBEkpYEm3UrfuuVD5oqKuxqZUGK8ztF7V36xnZItfCrInHTkTh5jislSJyKEQmbCgsfibR4AjFMacoz9YVjkE85LP7aI8xjFEV0YaX80mHOElxy2L60Hpaw1OP2Rm3v0sKp8bzOU0gapXaPf1o=
+	t=1745586298; cv=none; b=V0idiKHlZPkeU2yYFTmF93k/v2SALvx/arshKQAIuRTIz27XzP4SolfBS/tgZgDpLMHt9L3ImqzYSkV4E+zozKf9jh4+ImDuBwWmdqqdaq/Q7nGuRREaETsxiPgRqLPieCkd0JKcKHrfZi/ltl6fuSiK3CyR34OS215xakWy6wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745585928; c=relaxed/simple;
-	bh=SQaMsIpmceh9GBOkpwc7cGJxTk83W4BErBldzfCX5q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RH3Wrcy9mxAtcLvNOzwr5RwyxL3CQEG1jA8F5pv7gzo2EcgvYiY2W65HuSv64MKSQKQRmpxgRqLHjHkHkN3wIh8DJ1hqowX8pSFSpS4OjMT+e3FUrrQuu8XN5IAk1rBI5a1hUhh+Rv68exxTq+iUavSJZ1FQ4Tn/4QOS1W7FadM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CU0sm/jT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso9845175e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 05:58:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745585925; x=1746190725; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h32MpWGnGgpxDT6AyOuIJQcbaczCBtPKdaZ9N2BrcSA=;
-        b=CU0sm/jTELdeVxD8TqEGVIVHXGqQWyC5E9PIOa2Q2qjXy266rYWjz1jdCSZ0O5QJ/M
-         LP3dNgzCi1NqLNjkxgguOigaEwIUaU/vmeekyUGrVTU0sjXDOcE+crVp9PYT8msnxt2W
-         ip0yvKDGdbEAqqB/PtO38ZLWV9QB86Lo+PjGEbsesjPb7QvEsvz0+kWFW+9cYh/p2q76
-         IQeXa5eym8MzIzG/O7aKjKTzB6vISDLXXBZk0LZk2PlrgWoAY1lhZKqzJ0PebK8dRnn8
-         XYeNc4tyIick3/DHxcScxvXsVTGF53Sqe33KSWQYl/rxY5xWj6qVa7xAIJTx8TJt2nbY
-         KCiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745585925; x=1746190725;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h32MpWGnGgpxDT6AyOuIJQcbaczCBtPKdaZ9N2BrcSA=;
-        b=cx8GjwO7twOkKPxygvpQhxf7NZX13iYbUvbPW5Rfk5axNpFdCScKtdhT5PuiCWAXB1
-         vr0J53t0icdJEEMOmJp2YCXlSEUr6RqYKNvCaVugLtqPaR6RXkRVsYDnoPi+g1KJWagF
-         Q++ap2A7H6Btdz9/AKt/KdeY0rrGW/GOOQrieF3iHBEnyLd/62lH7uETVFhEwutlLEj9
-         5m8E9GJF/0qOZd4P9MogQf0bKL70370IC5pD6n1s7ozZ0KTQkaUwhtUCZl8zlGesk2Cs
-         mikm1ddY85yEpWU3p5aO3DOHTuSlaJ6iHlggD1ZJUEXryo5hB+J9mfccOAJyecj4RPTw
-         E4QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFYiiDi4/ggv2g1QKMrhQfjinG/lAxye90NUcEsyDGhjOl5ZcpJnNLMHOWmoFrhWKae5co+CEm3VAXpGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBkVOFyft8LzcICx+3Ga3mRlDrBHfJX8SDsd4Jo+LX6JuJBCvq
-	eeWKR0+TmwefWJuqd0Kz27WzuUWFNZeUu0Kul42WB/84UY4899rot2aD+iZ0Ecg=
-X-Gm-Gg: ASbGncuBHRq8fanOPS8Zu6bulIL0v41jOW5O530V6XaSV4v4jhe4weQaOa5fIC1tNEp
-	M2VvVD/Lxmkxfpo2QyQ3Upltl5+DbG3HIRpdbygO1JT1SKAKrUvBDjTpODopxmN+U5Doz7+jFaE
-	9Djev6fudNMtn1Nug8a7uRGbeuOGY9uf8PNYsT7lSUHaIfFkHa4N/9QY1Od5/hMmBj0sSTJUfbu
-	Q2EPWXayS6XuwNpkQEwmypfHMdHdTYcQeHXSOtd3ygVr7Bjx2rDnR2pRkXGCexwLhIumQGwKi0q
-	kM8+ajAV07k4yujGFHjgug4auesp
-X-Google-Smtp-Source: AGHT+IH1o3+pe6w45uhSEWnsxZ3kyB6TJbP2MLFTmjrjISo8GMvqrB42OloPKpF+TK2iDyjwzSvPYQ==
-X-Received: by 2002:a05:600c:1e0b:b0:43c:f81d:34 with SMTP id 5b1f17b1804b1-440a65e2c51mr21114245e9.9.1745585924890;
-        Fri, 25 Apr 2025 05:58:44 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::f716])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5369cc1sm23902615e9.32.2025.04.25.05.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 05:58:43 -0700 (PDT)
-Date: Fri, 25 Apr 2025 14:58:42 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Mayuresh Chitale <mchitale@ventanamicro.com>
-Subject: Re: [PATCH 2/5] KVM: RISC-V: refactor sbi reset request
-Message-ID: <20250425-65f6d6913f9f621dbc8c4479@orel>
-References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com>
- <20250403112522.1566629-5-rkrcmar@ventanamicro.com>
+	s=arc-20240116; t=1745586298; c=relaxed/simple;
+	bh=rPaDqGzlo8kKc7078BfnnKIU+GVWwOACSGFFD9+ZYOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NSICYmG8x9PRu4bdKD7AsVhK7JQu3j0M29uVHOQvvNKTUw5YDn0Xhtq7X/Zh/opOEhz5ChnwrcGd+pik2BwExpiQ2HdbiY8dCh0euJrd78+o+0KGU54ZRUvp7Sa2Re03JP/kXDpmHFhJaZb6Hi6ltTJoT94BqFhGbkOVXNzl8MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PwzqxmA4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745586296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RRT3RKx4TZ+P54S/HXqOrC/ht/rfJMrgmNz4iAs0uEQ=;
+	b=PwzqxmA4cEzvFGpCD6NxwNA9Qo2KrDaphK23Hm6vuYX6i2KrU6LgFDMBbQx4fiTwGX+EgG
+	PQquMDRuq/kkSMI5fV1Sop2pP7SEfvu2ha5mTfBcYYwuE8/7XaqCY/lwFoED7kgYPwhspN
+	T1Yf6Uim5jIQZ7CbAAezAsPgsvf2XLE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-295-_3s_6pwmPWC8mVY-6ElxbQ-1; Fri,
+ 25 Apr 2025 09:04:51 -0400
+X-MC-Unique: _3s_6pwmPWC8mVY-6ElxbQ-1
+X-Mimecast-MFC-AGG-ID: _3s_6pwmPWC8mVY-6ElxbQ_1745586289
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1CFA1800264;
+	Fri, 25 Apr 2025 13:04:48 +0000 (UTC)
+Received: from [10.44.33.33] (unknown [10.44.33.33])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B090918002AD;
+	Fri, 25 Apr 2025 13:04:42 +0000 (UTC)
+Message-ID: <1ba66392-f41d-4ffa-9952-900b6856e861@redhat.com>
+Date: Fri, 25 Apr 2025 15:04:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250403112522.1566629-5-rkrcmar@ventanamicro.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 5/8] mfd: zl3073x: Add functions to work with
+ register mailboxes
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Michal Schmidt <mschmidt@redhat.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250424154722.534284-1-ivecera@redhat.com>
+ <20250424154722.534284-6-ivecera@redhat.com>
+ <5094e051-5504-48a5-b411-ed1a0d949eeb@lunn.ch>
+ <bd645425-b9cb-454d-8971-646501704697@redhat.com>
+ <8082254c-01a6-4aca-84de-76083fdcbb3b@lunn.ch>
+ <ea9cd028-3d74-4d46-b355-a74ad549269b@redhat.com>
+ <34f29b17-dc68-4005-b2da-95fde34117a0@lunn.ch>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <34f29b17-dc68-4005-b2da-95fde34117a0@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Apr 03, 2025 at 01:25:21PM +0200, Radim Krčmář wrote:
-> The same code is used twice and SBI reset sets only two variables.
+
+
+On 24. 04. 25 9:57 odp., Andrew Lunn wrote:
+> On Thu, Apr 24, 2025 at 09:53:39PM +0200, Ivan Vecera wrote:
+>>
+>>
+>> On 24. 04. 25 9:18 odp., Andrew Lunn wrote:
+>>>> During taking 613cbb91e9ce ("media: Add MIPI CCI register access helper
+>>>> functions") approach I found they are using for these functions u64
+>>>> regardless of register size... Just to accommodate the biggest
+>>>> possible value. I know about weakness of 'void *' usage but u64 is not
+>>>> also ideal as the caller is forced to pass always 8 bytes for reading
+>>>> and forced to reserve 8 bytes for each read value on stack.
+>>>
+>>> In this device, how are the u48s used? Are they actually u48s, or are
+>>> they just u8[6], for example a MAC address? The network stack has lots
+>>> of functions like:
+>>>
+>>> eth_hw_addr_set(struct net_device *dev, const u8 *addr)
+>>
+>> u48 registers always represent 48bit integer... they read from device using
+>> bulk read as big-endian 48bit int. The same is valid also for u16
+>> and u32.
 > 
-> Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/kvm_vcpu_sbi.h |  2 ++
->  arch/riscv/kvm/vcpu_sbi.c             | 12 ++++++++++++
->  arch/riscv/kvm/vcpu_sbi_hsm.c         | 13 +------------
->  arch/riscv/kvm/vcpu_sbi_system.c      | 10 +---------
->  4 files changed, 16 insertions(+), 21 deletions(-)
->
+> Then a u64 makes sense, plus on write to hardware a check the upper
+> bits are 0. These u48s are going to be stored in a u64 anyway, since C
+> does not have a u48 type.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Just note that some of 48bit registers uses signed values so the check
+should be:
+
+x is in <S48_MIN, U48_MAX>
+
+this could be done using bit operations:
+
+(!(GENMASK_ULL(63, 49) & ((u64)(x) + BIT_ULL(47))))
+
+Ivan
+
 
