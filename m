@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-619985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46426A9C467
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5742DA9C469
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55559C2074
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:53:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EE93A895B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A5B24418D;
-	Fri, 25 Apr 2025 09:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F59A246326;
+	Fri, 25 Apr 2025 09:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i/vqPwgp"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VCi70c+n"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADF024395C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808EA245032
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745574729; cv=none; b=WBe36NmGg0lT5GjgrlRCXMFvlGDZi9fCs0QrO/i3BxXc69g5bVqUrhzGZKG2jy5y5VLQW4EbS4cB12KGhKdqHVNmmRUAKo0SbhbkXk7z3QuAjCdUucio14n7rPQHLNf3GUzCHJVVcJNRJmvVVcADEy5lSOulgAspJOSu/CGOHbI=
+	t=1745574734; cv=none; b=JSHutG4EQ6FC25iAZjqxvdDIYhND54X9RUYVjFxrjk0Wc/UPrWMWdFHcYyE23pjOTHAoR5KeGtoY//HL1FnhVj7iU0yjuo3ooVe4Rsd3oHxvknZSr04CAJFQttIioEg7VOTUOlH+PyIqt+3Dher0LpKuadmuYEdaXWx1K6lVLD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745574729; c=relaxed/simple;
-	bh=VPdSvEDPiP5nJqqimsvsHJ3lJjjDFvVrzXMRBy049zU=;
+	s=arc-20240116; t=1745574734; c=relaxed/simple;
+	bh=PWEZOIO1XHYulDrCgDar8ajEFuZixmhS0FoHE4ciXMs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b5/GGqst3CbQjgW81FVKDruX7ZV0nPINj5ssVnasQt07NvuIaM8W6JBI7o7W9v7g7ZfCflNFXqHp40bvxPGoRbcEMyBTZDftDmtYOhU1KlmqekBZJCupYjuIluhfhoX+KKVW7OYIylbrpHFDnpsrmZuZFSD/gpieC5MXno11mg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i/vqPwgp; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=bGrmMLycRDdXZ4uy3dqk+kaj1EZsDDoiV8RQbRAburhj57bUci8dAsRTXwLuUFTQyHGODpxAqAa03kQUn+h7zb1BJ/V8R73xwExNqec8bkE6pABhDXVeKQkOEPy0tvnuBXNmn2qx7bc79QXhXzvZX8YtJb3eMi7q9noBRZdMebs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VCi70c+n; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8T9OZ025088
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:52:06 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8TQ2w012534
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:52:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ViRsjns1v8Jro2gFleFt5r8weaEEOv6Mpy9ydokco3c=; b=i/vqPwgpSUlhVzrp
-	bL0NIDzAcykLSIAA0KhJpA7nIZlBF1U0mj864gs+xAomimCbDsyBYG4038Vv7WfL
-	YK5sg5hW5qd2HxIluNNtHS3fAhch8SyMmssCszQNVyZY/iqP/lwEuoWwaOfXW7TG
-	8WFtVYGilE9ACORLbiQRFtsQaFCwPdecB5W/KJzquQT0BahzZeA7wFlfZusYdgac
-	LKOzxz1CcdFM+Iw8135ASNxEDD9LmHaD5HZwrYisBd8qOzf/mUq8JvtJik37+se2
-	elLs2wqVOo7Y2HgzW8nWIMHdcVWAao7YErPYBBod/6DZNzEkKTeaYYMS1dj7RH3E
-	BldwpA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh3rg2f-1
+	wO/TmcnQd+YBb2X8W0YMXAIl84/SqXkMF39BD3auU0Y=; b=VCi70c+nd9Dqa+RB
+	IUwZGnxNppTOD0MeF/eKA79FkKmn3xWhjVj6wwVm3THaoAeXMtbxkytgM7ABpssb
+	cply1gxpp71+rKviWOxgNB1PuaQ7zndxQVIvSLTm6N5QRVBEsoPLHS8eDjQc7R+D
+	RFWMI+0kB7O9q1KayA1LJ0jhLjNayef3XtdRLLK+N+5/ibny3pWGL8qrUSLCDVw2
+	MTsETADP30EuVrT61mRzqYYwyI2sDJ6xIin18LBZV5JZRixVyHRIDv4XOpQ5ipnh
+	oaMr8BZc5FxZ3oDsd8wH4b2gI5CdFf16ETqvmH4YKDZhbBUOtHvEiSUN6zngzlpc
+	7uClXg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh18exf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:52:06 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c9255d5e8cso360974685a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:52:06 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:52:11 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e91d8a7165so36102136d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:52:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745574726; x=1746179526;
+        d=1e100.net; s=20230601; t=1745574727; x=1746179527;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ViRsjns1v8Jro2gFleFt5r8weaEEOv6Mpy9ydokco3c=;
-        b=fIeriQRC5RXiIXNbFxix2VcKXaTXxlyyvCjjfDYWk+niFf/0oQFtBWsjnDBazld3m/
-         ZMCE0sVvqN0I2g2k5MUCJi7lp4Lf8anj51cvsHzFzY03ZQV/3GxJRUaj1MYDaQuF9nZN
-         Hvj/r+9hoZbN1eUlUU+JeguE+Zu1IcUTsQIk4b7pwj1MwtLOo3Yp20k8fKdsDZd1elgj
-         LjXlpWnY101PKGD6m8hauNj/PvT01RrptJbyM7qj+5oOY7YI93b8kmuV12uaBKA8U0MR
-         bvoNO6GQdpQeQoyEiO4b3iIu2ZaGc74X52eH+bfzm6A6GKRxA0VD6HxzTYsJZsUKmy8a
-         U/nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAO3sChwzztuZGtX3rjVgng95L9/ml+1Od3fey9hFgYovovCszxON6ZadW0b3pWNHixk/4/iG21zVyZ2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC/Cjp6rTI2Vc74CtYEuiHmrBE4u9928HMI9Aib6cvMqgfph5x
-	RhTwLs5YWyNoK9lmTpRiDXReAqfZSXDvW0wRpaC+h+k4MZEJTfP9821geXXvneE2OMyfnH2luUr
-	J77MD8jBk28cYrmLar0kCO60LQmk485WGVZH1EXC5GJ0jVNq1+xSUl+GjXQKPlH0=
-X-Gm-Gg: ASbGnctiWgH1s+FD33JeJvspqYo59s6HX/ThLwwnv8RyxpquWd4J60Y746Y2wB+3FRi
-	7y+KlE6ybbxJ+TzodxVC8VPlfAhGJHVt5o6U6BT5tKAz+CRT/Cwpg4EtvFCNykiCj1j3bzX6xK1
-	03hZUB0w+R7KtdS/g7d8N6hTM9g1meL5rcXV2Ctg9/x52jLHTLbR1kkQTwaQZTPYsdKBII2kiX7
-	nAH2qxcDhsJm00rHoZ3eqBhvcm0jO5H7wJfXyZ3KC2kHol6ZwujYHtwUVPcTZyDt8PcEwdx4qWI
-	jlOnvoPpra8c+9blnAiPeaRBZbdnDPBtzXWmacMw6OtD0NNlTnR9Ev64733sXZNZT5TAeEu5RaE
-	Z9b3eQHEYW+ft4UdcdcCpvNwu
-X-Received: by 2002:a05:620a:2916:b0:7c7:a629:8ae5 with SMTP id af79cd13be357-7c9607b24e8mr256006585a.56.1745574725878;
-        Fri, 25 Apr 2025 02:52:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECepdx3M8voxwdgIotc4jExjaEsT/aNU+/NJvxWGcXVKGq8zZgS2csyHQXp7J1OZcAB7cxMg==
-X-Received: by 2002:a05:620a:2916:b0:7c7:a629:8ae5 with SMTP id af79cd13be357-7c9607b24e8mr256004185a.56.1745574725551;
-        Fri, 25 Apr 2025 02:52:05 -0700 (PDT)
+        bh=wO/TmcnQd+YBb2X8W0YMXAIl84/SqXkMF39BD3auU0Y=;
+        b=xQmIDxbehSZE6pdk/ZAdzlucBgVRnP50a0awqVpIk9dAK6oaT8x4BYfCfP8oCdgawK
+         6s2jk38JqgXBKmBeW1EBDsLMpftwBf88KWs5JKpGng0lmViSAZr7xhgxphWFd8uDzVDQ
+         WqAds/WZDHRqbuxM163HMaa/8wKBLpjaSgwDczt8EnvWJABjVO+t/kwE4xwXEC7YM0s/
+         mMsbLsINK3uSkWpZOrPue3iLnFzwoNvkjRryKCKlb8pozKylR23d09UJSC6svRG1wyzZ
+         4p4tS7aXgu8nWsEIe/G4Hk19Y73URE7hQUXvBwAFwcSzryviNhA7dFTAqPFDm0r1icOZ
+         SMww==
+X-Forwarded-Encrypted: i=1; AJvYcCUK/tN/rjWMpWr3DYNI54XfmbdZlcesZFAnlYKplZKyHkq9LKrdJ6pX3MFeIn/Shn956VW+IrhLppjc/oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmb+2YP+AvSiADrVfPEf5g/npOMLe4C8BZe2wHW4copb4+TJwL
+	ZCyQQzcywDu2J4bO/eSgV2P71jUoRslKUe9FC9GMTC3BRWtmH9hCWU7LHPqmRuoY9+QnSzzxyaI
+	rzh5LejlxAFSfdDAzYgIg4wIrEzbNXuTtLy4rFfom7dnM1HrnXj8b9xgFq+pCU1o=
+X-Gm-Gg: ASbGncuWdPPRBNFdW8aIYMnNH6gtCdGknb66IT1Zslf2p3LOVRshYsQE+psujFKQI25
+	i3SaiUKT9qO0c2iwxO4TfaQbRyD7tiXd5Ep6DzaU/pCrMmhfHCWqct+Sru2+EsTZ9VjjnEW6z8+
+	KjQ/Gh/kUqUncSx9ZH3TQ1CvgWQBLIZJX6CZK6LlH2swIcf5jIGsf0UnVIA4zl6i/VsyItzRuxW
+	Ogb/HeHaptpPICxbSFycYGCPvyTCm4dgzhL48jA8UCR/Y8fVwE/G2UcMIJehVxy99rcH932mK6T
+	1IKpxGIbehFhOsPh83i4qmAzkaOp1g3imtqwJa/jFoeqqFvfXHkkWm2+JhDy+pCrvOYfscIVLQI
+	6CdeAL1o37kIsv88Oft5tqedy
+X-Received: by 2002:a05:6214:268d:b0:6ea:d629:f48b with SMTP id 6a1803df08f44-6f4cb9ed9a0mr30004746d6.19.1745574727460;
+        Fri, 25 Apr 2025 02:52:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6aGbfdyHq+EQQf+N4Ajh6G1MWGQeKTj0SfwTH/XJktJCOH77u6efYIs0QzEDB8BOkstnzYA==
+X-Received: by 2002:a05:6214:268d:b0:6ea:d629:f48b with SMTP id 6a1803df08f44-6f4cb9ed9a0mr30004396d6.19.1745574726997;
+        Fri, 25 Apr 2025 02:52:06 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7ccb7c99sm539164e87.218.2025.04.25.02.52.03
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7ccb7c99sm539164e87.218.2025.04.25.02.52.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 02:52:03 -0700 (PDT)
+        Fri, 25 Apr 2025 02:52:05 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 25 Apr 2025 12:51:55 +0300
-Subject: [PATCH v4 5/7] drm/msm/mdp4: move move_valid callback to
- lcdc_encoder
+Date: Fri, 25 Apr 2025 12:51:56 +0300
+Subject: [PATCH v4 6/7] drm/msm/mdp4: switch LVDS to use
+ drm_bridge/_connector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250425-fd-mdp4-lvds-v4-5-6b212160b44c@oss.qualcomm.com>
+Message-Id: <20250425-fd-mdp4-lvds-v4-6-6b212160b44c@oss.qualcomm.com>
 References: <20250425-fd-mdp4-lvds-v4-0-6b212160b44c@oss.qualcomm.com>
 In-Reply-To: <20250425-fd-mdp4-lvds-v4-0-6b212160b44c@oss.qualcomm.com>
 To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
@@ -110,147 +110,334 @@ To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
         Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+        linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4386;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10669;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=6zDfbr+Ff50cCHiOONUZ29i4X43jN3/ObgolYfFGR7I=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoC1s5Y0P8ukyZ1hYkilVgrYffYkcTvLpslNl2w
- sJplHwF+wWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaAtbOQAKCRCLPIo+Aiko
- 1TaXB/0VGI/G1ISEDOkZaFT9pqBVkHDfekywPNWp5O2H7Z4FvVhu+yHLnRliZHkqzPgLLvuHOnW
- 51ZW3cJpWWXK1v688XqY6G7cLyH08XzUAy/8fiEeknzCOzhyeoie+VkN2QQ72nr8vVJjUCgy2Qy
- E5HgCku6uLjfA2r7J6gc0tV5Q6PIGTIRO++sSF7yYagJtC6o/mKWAS5ajyk9MPSEQhm4GKhH89K
- R9Z253sD2HKp/IA5NZkE2gciW5iiTMnqMhB9b+nJzwJfCEvz9mh1u4z/lqsxwB89WbEKKZXI7L/
- HmrAJYr82dKvzyuSCNuqq7tl28rWs2v6wJkffxGi+CxV2Uce
+ bh=E1BBsIIQymozlYNkeECHB8spXLY+ZOYj5r2uebvZgDA=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoC1s6kX/49af49ontjbSa5smcZpA36az8IOH2h
+ fK/wi2dRU2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaAtbOgAKCRCLPIo+Aiko
+ 1SIoB/0SGBIeejLoEcS5t/PUXRa08DYlZod20hKMAL1sJUtFmFJYwMXmKW3oZnlPeSOnQFGfjvy
+ SrbQXURsKMq+OJz33Zz2+EkavazsBFaTePlO8Q9RfKcruGuoMYSTsnoAgC32gbAOvBKl2VOcLvq
+ nwZaSmaUDd8iIsjTOAkiuQ44Zm/W0MLn7mkX+aTK55TFu/wuPkE5WH77ggnG3ahDm5C9SJR03aV
+ DpVxApE3fsK/Q8YkUsa3jvsF/exBD2MMJr1/M7up2sOBVrb9l/VbsCFv7H8to8s2tKZ9f0rjSkd
+ 3YMXuCThVA0u9B1Y+Ra0jlncLwxfdLx8ojSMsm73xCAABI5x
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-ORIG-GUID: jAkUQtm0oq0s5viPu0SEh9eC1wQKCgVN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA3MSBTYWx0ZWRfX61TpvpwPgGxL JM4n1TaKSx/wKzFb2EbS+qJrwlxVM5sPZDkjcVLmt2bTDqKC7HoAA0BC3wVNpd/FLovjErU5+R5 yp0Q5I3bQ2TQxRseaDd3xJrtqR36RF5AG4gQ1Gw0QHJw3Kc3auGbDSyMW7WUmu/mUpQI6p3VOX7
- WIIMFlni54TEvqBnXiiEjpQkm1i4SBY0JUW86Ha8QuJNpKfnaxQqNHc71bPGuXXufXRqaWUXiJY bzPQx+avEkiQcbE5ieztItejdObMZGVwi+IJBZpM/ycXuUsM1lVIdWvXaTsF8VNyzgLSRXyT4UL xYhuM9rnuEhhtbxa3IP5wP/40/Zag6JKB/pWW9ur49fecZXo/7cDCuGlxwOGrM8g39kF2aKEAAg
- OUhPwhs3PBlth5t/17Rq6e+zouY9Lw/7rh6kiB520R3G/9MBypHEqNUZBC+UROkX5BOXkE42
-X-Authority-Analysis: v=2.4 cv=ELgG00ZC c=1 sm=1 tr=0 ts=680b5b46 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=e5J9yQtEsebikEsHgo4A:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: jAkUQtm0oq0s5viPu0SEh9eC1wQKCgVN
+X-Proofpoint-GUID: 9WZHQx60genl-eW4T5J7mOD3i1SceR-W
+X-Authority-Analysis: v=2.4 cv=OY6YDgTY c=1 sm=1 tr=0 ts=680b5b4b cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=7oS1v-cyAAAA:8 a=P9PoVruIDXn46qgs0YwA:9 a=QEXdDO2ut3YA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22 a=PcM2qe9_4d1tJnOwuzRa:22
+X-Proofpoint-ORIG-GUID: 9WZHQx60genl-eW4T5J7mOD3i1SceR-W
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA3MSBTYWx0ZWRfX7S/+ftiMB3Y6 Udh9dElm861KXJ4y9FI0K4zkxe4EpdshNBtn8vX5jkp8NSxOD69bQbcg0OPWqceLY1jmjX9acE9 N68akHAw5OhsJTvVyxvhcYMIgsCL8jXAhRHx6j/oTSLTeF2vzRYupx+3LrR8cQl21uKIhePVUG5
+ vLisWBNRpVZx8A0lhe2fMGzNXjpqaQjZEcpvscMAWyK/eVihOJjXQYCYx6BMDdbBHW0xb8b+XtE a8f5H17eseS/CVpaoi013k34iXAsw7niVFajR9npR3x06CARcfTWAr/xeFf/EHLebVPiM2rcU+e zbIVaFD54k5mLF8z20FZ/8KfuR/HReanALDJSKBziu+2TDm+BZL5FvPHP80dKUetVSi/2PVFdDT
+ PtmgJezeTEq0qP+a6eHyEea6QWipTKQrV9H7/xbvIvOeFyVo1Ruj+LXiM0Dd8N9daWhrCTj2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- malwarescore=0 clxscore=1015 bulkscore=0 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 phishscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
  definitions=main-2504250071
 
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-We can check the LCDC clock directly from the LCDC encoder driver, so
-remove it from the LVDS connector.
+LVDS support in MDP4 driver makes use of drm_connector directly. However
+LCDC encoder and LVDS connector are wrappers around drm_panel. Switch
+them to use drm_panel_bridge/drm_bridge_connector. This allows using
+standard interface for the drm_panel and also inserting additional
+bridges between encoder and panel.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 ---
- drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h           |  1 -
- drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  | 27 ++++++++++++++++------
- .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    | 21 -----------------
- 3 files changed, 20 insertions(+), 29 deletions(-)
+ drivers/gpu/drm/msm/Makefile                       |   1 -
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c           |  34 +++++--
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h           |   6 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  |  20 +----
+ .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    | 100 ---------------------
+ 5 files changed, 28 insertions(+), 133 deletions(-)
 
+diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+index 5df20cbeafb8bf07c825a1fd72719d5a56c38613..7a2ada6e2d74a902879e4f12a78ed475e5209ec2 100644
+--- a/drivers/gpu/drm/msm/Makefile
++++ b/drivers/gpu/drm/msm/Makefile
+@@ -48,7 +48,6 @@ msm-display-$(CONFIG_DRM_MSM_MDP4) += \
+ 	disp/mdp4/mdp4_dsi_encoder.o \
+ 	disp/mdp4/mdp4_dtv_encoder.o \
+ 	disp/mdp4/mdp4_lcdc_encoder.o \
+-	disp/mdp4/mdp4_lvds_connector.o \
+ 	disp/mdp4/mdp4_lvds_pll.o \
+ 	disp/mdp4/mdp4_irq.o \
+ 	disp/mdp4/mdp4_kms.o \
+diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
+index 689e210660a5218ed1e2d116073723215af5a187..93c9411eb422bc67b7fedb5ffce4c330310b520f 100644
+--- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
+@@ -6,6 +6,8 @@
+ 
+ #include <linux/delay.h>
+ 
++#include <drm/drm_bridge.h>
++#include <drm/drm_bridge_connector.h>
+ #include <drm/drm_vblank.h>
+ 
+ #include "msm_drv.h"
+@@ -189,7 +191,7 @@ static int mdp4_modeset_init_intf(struct mdp4_kms *mdp4_kms,
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	struct drm_encoder *encoder;
+ 	struct drm_connector *connector;
+-	struct device_node *panel_node;
++	struct drm_bridge *next_bridge;
+ 	int dsi_id;
+ 	int ret;
+ 
+@@ -199,27 +201,43 @@ static int mdp4_modeset_init_intf(struct mdp4_kms *mdp4_kms,
+ 		 * bail out early if there is no panel node (no need to
+ 		 * initialize LCDC encoder and LVDS connector)
+ 		 */
+-		panel_node = of_graph_get_remote_node(dev->dev->of_node, 0, 0);
+-		if (!panel_node)
+-			return 0;
++		next_bridge = devm_drm_of_get_bridge(dev->dev, dev->dev->of_node, 0, 0);
++		if (IS_ERR(next_bridge)) {
++			ret = PTR_ERR(next_bridge);
++			if (ret == -ENODEV)
++				return 0;
++			return ret;
++		}
+ 
+-		encoder = mdp4_lcdc_encoder_init(dev, panel_node);
++		encoder = mdp4_lcdc_encoder_init(dev);
+ 		if (IS_ERR(encoder)) {
+ 			DRM_DEV_ERROR(dev->dev, "failed to construct LCDC encoder\n");
+-			of_node_put(panel_node);
+ 			return PTR_ERR(encoder);
+ 		}
+ 
+ 		/* LCDC can be hooked to DMA_P (TODO: Add DMA_S later?) */
+ 		encoder->possible_crtcs = 1 << DMA_P;
+ 
+-		connector = mdp4_lvds_connector_init(dev, panel_node, encoder);
++		ret = drm_bridge_attach(encoder, next_bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
++		if (ret) {
++			DRM_DEV_ERROR(dev->dev, "failed to attach LVDS panel/bridge: %d\n", ret);
++
++			return ret;
++		}
++
++		connector = drm_bridge_connector_init(dev, encoder);
+ 		if (IS_ERR(connector)) {
+ 			DRM_DEV_ERROR(dev->dev, "failed to initialize LVDS connector\n");
+-			of_node_put(panel_node);
+ 			return PTR_ERR(connector);
+ 		}
+ 
++		ret = drm_connector_attach_encoder(connector, encoder);
++		if (ret) {
++			DRM_DEV_ERROR(dev->dev, "failed to attach LVDS connector: %d\n", ret);
++
++			return ret;
++		}
++
+ 		break;
+ 	case DRM_MODE_ENCODER_TMDS:
+ 		encoder = mdp4_dtv_encoder_init(dev);
 diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h
-index 3d7ffd874e0d234f450f6170e623f87572456757..66f5009fdf8aebcc543b5539d1c2d03075171001 100644
+index 66f5009fdf8aebcc543b5539d1c2d03075171001..f9d988076337cb6fb63af8e76be59b2eb34ab327 100644
 --- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h
 +++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h
-@@ -191,7 +191,6 @@ struct drm_crtc *mdp4_crtc_init(struct drm_device *dev,
+@@ -191,11 +191,7 @@ struct drm_crtc *mdp4_crtc_init(struct drm_device *dev,
  long mdp4_dtv_round_pixclk(struct drm_encoder *encoder, unsigned long rate);
  struct drm_encoder *mdp4_dtv_encoder_init(struct drm_device *dev);
  
--long mdp4_lcdc_round_pixclk(struct drm_encoder *encoder, unsigned long rate);
- struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev,
- 		struct device_node *panel_node);
+-struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev,
+-		struct device_node *panel_node);
+-
+-struct drm_connector *mdp4_lvds_connector_init(struct drm_device *dev,
+-		struct device_node *panel_node, struct drm_encoder *encoder);
++struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev);
  
+ #ifdef CONFIG_DRM_MSM_DSI
+ struct drm_encoder *mdp4_dsi_encoder_init(struct drm_device *dev);
 diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-index 8694e5d7d3f012070c72214df063a6488b2ef707..7f4e8005bc4ae0bc82ec5b87a1fea0530301b427 100644
+index 7f4e8005bc4ae0bc82ec5b87a1fea0530301b427..06a307c1272d10e678501062a63559c5672ce999 100644
 --- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
 +++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-@@ -348,19 +348,32 @@ static void mdp4_lcdc_encoder_enable(struct drm_encoder *encoder)
- 	mdp4_lcdc_encoder->enabled = true;
- }
+@@ -14,7 +14,6 @@
  
-+static enum drm_mode_status
-+mdp4_lcdc_encoder_mode_valid(struct drm_encoder *encoder,
-+		const struct drm_display_mode *mode)
-+{
-+	struct mdp4_lcdc_encoder *mdp4_lcdc_encoder =
-+			to_mdp4_lcdc_encoder(encoder);
-+	long actual, requested;
-+
-+	requested = 1000 * mode->clock;
-+	actual = clk_round_rate(mdp4_lcdc_encoder->lcdc_clk, requested);
-+
-+	DBG("requested=%ld, actual=%ld", requested, actual);
-+
-+	if (actual != requested)
-+		return MODE_CLOCK_RANGE;
-+
-+	return MODE_OK;
-+}
-+
- static const struct drm_encoder_helper_funcs mdp4_lcdc_encoder_helper_funcs = {
- 	.mode_set = mdp4_lcdc_encoder_mode_set,
- 	.disable = mdp4_lcdc_encoder_disable,
- 	.enable = mdp4_lcdc_encoder_enable,
-+	.mode_valid = mdp4_lcdc_encoder_mode_valid,
+ struct mdp4_lcdc_encoder {
+ 	struct drm_encoder base;
+-	struct device_node *panel_node;
+ 	struct drm_panel *panel;
+ 	struct clk *lcdc_clk;
+ 	unsigned long int pixclock;
+@@ -262,19 +261,12 @@ static void mdp4_lcdc_encoder_disable(struct drm_encoder *encoder)
+ 	struct mdp4_lcdc_encoder *mdp4_lcdc_encoder =
+ 			to_mdp4_lcdc_encoder(encoder);
+ 	struct mdp4_kms *mdp4_kms = get_kms(encoder);
+-	struct drm_panel *panel;
+ 
+ 	if (WARN_ON(!mdp4_lcdc_encoder->enabled))
+ 		return;
+ 
+ 	mdp4_write(mdp4_kms, REG_MDP4_LCDC_ENABLE, 0);
+ 
+-	panel = of_drm_find_panel(mdp4_lcdc_encoder->panel_node);
+-	if (!IS_ERR(panel)) {
+-		drm_panel_disable(panel);
+-		drm_panel_unprepare(panel);
+-	}
+-
+ 	/*
+ 	 * Wait for a vsync so we know the ENABLE=0 latched before
+ 	 * the (connector) source of the vsync's gets disabled,
+@@ -300,7 +292,6 @@ static void mdp4_lcdc_encoder_enable(struct drm_encoder *encoder)
+ 			to_mdp4_lcdc_encoder(encoder);
+ 	unsigned long pc = mdp4_lcdc_encoder->pixclock;
+ 	struct mdp4_kms *mdp4_kms = get_kms(encoder);
+-	struct drm_panel *panel;
+ 	uint32_t config;
+ 	int ret;
+ 
+@@ -335,12 +326,6 @@ static void mdp4_lcdc_encoder_enable(struct drm_encoder *encoder)
+ 	if (ret)
+ 		DRM_DEV_ERROR(dev->dev, "failed to enable lcdc_clk: %d\n", ret);
+ 
+-	panel = of_drm_find_panel(mdp4_lcdc_encoder->panel_node);
+-	if (!IS_ERR(panel)) {
+-		drm_panel_prepare(panel);
+-		drm_panel_enable(panel);
+-	}
+-
+ 	setup_phy(encoder);
+ 
+ 	mdp4_write(mdp4_kms, REG_MDP4_LCDC_ENABLE, 1);
+@@ -375,8 +360,7 @@ static const struct drm_encoder_helper_funcs mdp4_lcdc_encoder_helper_funcs = {
  };
  
--long mdp4_lcdc_round_pixclk(struct drm_encoder *encoder, unsigned long rate)
--{
--	struct mdp4_lcdc_encoder *mdp4_lcdc_encoder =
--			to_mdp4_lcdc_encoder(encoder);
--	return clk_round_rate(mdp4_lcdc_encoder->lcdc_clk, rate);
--}
--
  /* initialize encoder */
- struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev,
- 		struct device_node *panel_node)
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
-index 52e728181b523cc3380d7718b5956e7e2dbd4cad..4755eb13ef79f313d2be088145c8cd2e615226fe 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
-@@ -56,26 +56,6 @@ static int mdp4_lvds_connector_get_modes(struct drm_connector *connector)
- 	return ret;
- }
+-struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev,
+-		struct device_node *panel_node)
++struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev)
+ {
+ 	struct drm_encoder *encoder;
+ 	struct mdp4_lcdc_encoder *mdp4_lcdc_encoder;
+@@ -387,8 +371,6 @@ struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev,
+ 	if (IS_ERR(mdp4_lcdc_encoder))
+ 		return ERR_CAST(mdp4_lcdc_encoder);
  
--static enum drm_mode_status
--mdp4_lvds_connector_mode_valid(struct drm_connector *connector,
--			       const struct drm_display_mode *mode)
+-	mdp4_lcdc_encoder->panel_node = panel_node;
+-
+ 	encoder = &mdp4_lcdc_encoder->base;
+ 
+ 	drm_encoder_helper_add(encoder, &mdp4_lcdc_encoder_helper_funcs);
+diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
+deleted file mode 100644
+index 4755eb13ef79f313d2be088145c8cd2e615226fe..0000000000000000000000000000000000000000
+--- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
++++ /dev/null
+@@ -1,100 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Copyright (C) 2014 Red Hat
+- * Author: Rob Clark <robdclark@gmail.com>
+- * Author: Vinay Simha <vinaysimha@inforcecomputing.com>
+- */
+-
+-#include "mdp4_kms.h"
+-
+-struct mdp4_lvds_connector {
+-	struct drm_connector base;
+-	struct drm_encoder *encoder;
+-	struct device_node *panel_node;
+-	struct drm_panel *panel;
+-};
+-#define to_mdp4_lvds_connector(x) container_of(x, struct mdp4_lvds_connector, base)
+-
+-static enum drm_connector_status mdp4_lvds_connector_detect(
+-		struct drm_connector *connector, bool force)
 -{
 -	struct mdp4_lvds_connector *mdp4_lvds_connector =
 -			to_mdp4_lvds_connector(connector);
--	struct drm_encoder *encoder = mdp4_lvds_connector->encoder;
--	long actual, requested;
 -
--	requested = 1000 * mode->clock;
--	actual = mdp4_lcdc_round_pixclk(encoder, requested);
+-	if (!mdp4_lvds_connector->panel) {
+-		mdp4_lvds_connector->panel =
+-			of_drm_find_panel(mdp4_lvds_connector->panel_node);
+-		if (IS_ERR(mdp4_lvds_connector->panel))
+-			mdp4_lvds_connector->panel = NULL;
+-	}
 -
--	DBG("requested=%ld, actual=%ld", requested, actual);
--
--	if (actual != requested)
--		return MODE_CLOCK_RANGE;
--
--	return MODE_OK;
+-	return mdp4_lvds_connector->panel ?
+-			connector_status_connected :
+-			connector_status_disconnected;
 -}
 -
- static const struct drm_connector_funcs mdp4_lvds_connector_funcs = {
- 	.detect = mdp4_lvds_connector_detect,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
-@@ -87,7 +67,6 @@ static const struct drm_connector_funcs mdp4_lvds_connector_funcs = {
- 
- static const struct drm_connector_helper_funcs mdp4_lvds_connector_helper_funcs = {
- 	.get_modes = mdp4_lvds_connector_get_modes,
--	.mode_valid = mdp4_lvds_connector_mode_valid,
- };
- 
- /* initialize connector */
+-static void mdp4_lvds_connector_destroy(struct drm_connector *connector)
+-{
+-	struct mdp4_lvds_connector *mdp4_lvds_connector =
+-			to_mdp4_lvds_connector(connector);
+-
+-	drm_connector_cleanup(connector);
+-
+-	kfree(mdp4_lvds_connector);
+-}
+-
+-static int mdp4_lvds_connector_get_modes(struct drm_connector *connector)
+-{
+-	struct mdp4_lvds_connector *mdp4_lvds_connector =
+-			to_mdp4_lvds_connector(connector);
+-	struct drm_panel *panel = mdp4_lvds_connector->panel;
+-	int ret = 0;
+-
+-	if (panel)
+-		ret = drm_panel_get_modes(panel, connector);
+-
+-	return ret;
+-}
+-
+-static const struct drm_connector_funcs mdp4_lvds_connector_funcs = {
+-	.detect = mdp4_lvds_connector_detect,
+-	.fill_modes = drm_helper_probe_single_connector_modes,
+-	.destroy = mdp4_lvds_connector_destroy,
+-	.reset = drm_atomic_helper_connector_reset,
+-	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+-	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+-};
+-
+-static const struct drm_connector_helper_funcs mdp4_lvds_connector_helper_funcs = {
+-	.get_modes = mdp4_lvds_connector_get_modes,
+-};
+-
+-/* initialize connector */
+-struct drm_connector *mdp4_lvds_connector_init(struct drm_device *dev,
+-		struct device_node *panel_node, struct drm_encoder *encoder)
+-{
+-	struct drm_connector *connector = NULL;
+-	struct mdp4_lvds_connector *mdp4_lvds_connector;
+-
+-	mdp4_lvds_connector = kzalloc(sizeof(*mdp4_lvds_connector), GFP_KERNEL);
+-	if (!mdp4_lvds_connector)
+-		return ERR_PTR(-ENOMEM);
+-
+-	mdp4_lvds_connector->encoder = encoder;
+-	mdp4_lvds_connector->panel_node = panel_node;
+-
+-	connector = &mdp4_lvds_connector->base;
+-
+-	drm_connector_init(dev, connector, &mdp4_lvds_connector_funcs,
+-			DRM_MODE_CONNECTOR_LVDS);
+-	drm_connector_helper_add(connector, &mdp4_lvds_connector_helper_funcs);
+-
+-	connector->polled = 0;
+-
+-	connector->interlace_allowed = 0;
+-	connector->doublescan_allowed = 0;
+-
+-	drm_connector_attach_encoder(connector, encoder);
+-
+-	return connector;
+-}
 
 -- 
 2.39.5
