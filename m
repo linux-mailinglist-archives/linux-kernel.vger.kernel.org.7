@@ -1,77 +1,75 @@
-Return-Path: <linux-kernel+bounces-621100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317C7A9D3F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB281A9D3FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCE81883F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4689E45B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E131F224882;
-	Fri, 25 Apr 2025 21:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A810D224256;
+	Fri, 25 Apr 2025 21:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ppIXjbId"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZvDBk8FI"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A162221DAA;
-	Fri, 25 Apr 2025 21:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FED0192D6B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745615473; cv=none; b=cTsrOCLDeAkeYxTh0wmpkiTcXkJIiXn9LVMEeDIETGA0VW8rbSOmH9qwq78AfK6K84H0Kbog0ps24HeRYwNDqNUsdBeWCSovI8pl4mWT6hjkgn/k67fOUvbd3oRDJ9xFFSh5ZkiuSdOZXflQxXNjlTFhPO7isy9tuEmEY9L3ovA=
+	t=1745615550; cv=none; b=JQok1ir8GY3GgpbpMg7g4AAs1zE67fTyDx1OFkqol56BGi45N8EJG428s9pYl4jLsi0D4NVMRUAT3bP+8eqGzsG85cxzFadR4vAPFkWqFNcyfeCht+h+DDi3u2AiFY73UY9y6qF5UjbogmbQcsDwVFOLL7lDLl94QOEl05iGdds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745615473; c=relaxed/simple;
-	bh=TOc8wjLZk0dw73ZOsm1lpxPW+cD4QKAtAd+D6rjTajo=;
+	s=arc-20240116; t=1745615550; c=relaxed/simple;
+	bh=41IW46e6gDg4C4jg1vzCwRlZIgO5uBAS84n1qrKE2I8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FMKolq35saWKAiFUbsgZCVTaefVGwwHC87omG5a1BezVLayQaRrKnkl3WVHQ7ln7P9i4B9T4KplHdqhMJt2Q74ZvFEzCJT7ZENE7iy4ub6Xc5Mi5Ttf51v1koOT31uvYoOykrgeTmmsPJL7Iym0YA9ntvDKTAgSKm7z+bQ9P0sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ppIXjbId; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=P+6YiH+WbGczo3IKBr/0VhCtODUjexbcKU4GROIadTP+2OOOK8exSpZ/o8dh7YUGVoUXOnfGDYZlYBqkClXMh6XWZCjxuwdkcbesq8r782VKzh7MnPC/mrDNIkNP8JB8Wr3oYBHXrlXehm5+uYLESApjpXSbTYIgqIAUdH3LJVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZvDBk8FI; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PLB4dk2258212
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PLC68G3027242
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Apr 2025 16:11:04 -0500
+	Fri, 25 Apr 2025 16:12:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745615464;
-	bh=+wFWw+HTux9+C80z7DbPt+Y55zU1bWr9sqxdd1W7QKA=;
+	s=ti-com-17Q1; t=1745615526;
+	bh=53XdUqfFsxdrkTPF8ii63mrk/KIlvgnwsDsFFeftRxU=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ppIXjbIdExPfF0+Pq4GRofkMRiVkvlTWX5mQJ880nWYEy/AkGh5GH0WfWwrB56Qod
-	 bxDrfwhsq50MqUkiYxSN1e8gE96uEF3/U/5v6b1qmYrrq+cSpOFcjI1X+KZONS4Vht
-	 qxjgtM2lSuKL2X8TVRWPY7e5JrVOxXHr4zvH2h8s=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PLB4TE123718
+	b=ZvDBk8FINxfAVVdEMHDMIFpyEu68m8UfqsIg3+hLvhudhsuqvAQ+X6HC5ycYRa12b
+	 Hksw7Q0NfmfvAALvmLXoC3l98l5QcrxMKOcDzK1V8/61RLj9ICIGSsy/VslGXeYQhz
+	 DPvcPbOfU96V5EjGTDTCZX4ONZGGqzNPfuSMp7lU=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PLC62b017024
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Apr 2025 16:11:04 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 25 Apr 2025 16:12:06 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
- Apr 2025 16:11:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 16:12:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 25 Apr 2025 16:11:04 -0500
+ Frontend Transport; Fri, 25 Apr 2025 16:12:05 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PLB40A095369;
-	Fri, 25 Apr 2025 16:11:04 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PLC5gr096254;
+	Fri, 25 Apr 2025 16:12:05 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>, Judith Mendez <jm@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] Enable PWMs
-Date: Fri, 25 Apr 2025 16:11:02 -0500
-Message-ID: <174561544737.210439.8040371358617840114.b4-ty@ti.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jayesh Choudhary <j-choudhary@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <bjorn.andersson@oss.qualcomm.com>,
+        <krzysztof.kozlowski@linaro.org>, <geert+renesas@glider.be>,
+        <lumag@kernel.org>, <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
+        <elinor.montmasson@savoirfairelinux.com>, <ebiggers@google.com>,
+        <ross.burton@arm.com>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] arm64: defconfig: Add CDNS_DSI and CDNS_PHY config
+Date: Fri, 25 Apr 2025 16:12:02 -0500
+Message-ID: <174561548590.210587.7393005807062359269.b4-ty@ti.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250422000851.4118545-1-jm@ti.com>
-References: <20250422000851.4118545-1-jm@ti.com>
+In-Reply-To: <20250416182930.32132-1-j-choudhary@ti.com>
+References: <20250416182930.32132-1-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +80,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Judith Mendez,
+Hi Jayesh Choudhary,
 
-On Mon, 21 Apr 2025 19:08:48 -0500, Judith Mendez wrote:
-> This patch series enables PWM signal outputs on am625 SK,
-> am62 lp SK, am62a7 SK, and am62p5 SK boards.
+On Wed, 16 Apr 2025 23:59:30 +0530, Jayesh Choudhary wrote:
+> Enable configs for cdns-dsi and cdns-dphy drivers required for DSI
+> display on the following TI platforms:
+> J721E-EVM, J721E-BeagleBone-AI64, J721S2-EVM, AM68-SK, J722S-EVM,
+> BeagleY-AI, AM62P5-SK, J784S4-EVM and J742S2-EVM
 > 
-> For am625 SK and am62 lp SK, add pinmux, eCAP, and eHRPWM
-> nodes in the k3-am62x-sk-common.dtsi so as to not duplicate
-> nodes in the board files.
+> The dsi wrapper driver used by all the above mentioned platforms,
+> cdns-dsi-j721e is enabled by default if cdns-dsi config is enabled.
 > 
 > [...]
 
-I have applied the following to branch ti-k3-dts-next on [1].
+I have applied the following to branch ti-k3-config-next on [1] with minor
+commit message update (Beagle is not a TI platform :) ).
 Thank you!
 
-[1/3] arm64: dts: ti: k3-am62p5-sk: Enable PWM
-      commit: b2fd55f906ff70a39e67d5ad770774622164bef1
-[2/3] arm64: dts: ti: k3-am62a7-sk: Enable PWM
-      commit: 5aec1169b53969d07cc288814f7eebd2ef01f9a0
-[3/3] arm64: dts: ti: k3-am625-sk: Enable PWM
-      commit: d864bb528a6725e775d564fd4430762acbb9dd0d
+[1/1] arm64: defconfig: Add CDNS_DSI and CDNS_PHY config
+      commit: 882c214572e43b56f781883d4ae48689381a68f1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
