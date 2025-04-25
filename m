@@ -1,146 +1,195 @@
-Return-Path: <linux-kernel+bounces-619658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D67A9BF99
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:18:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B67A9BF87
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8711895249
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:17:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E88BE7B45C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B49230BE0;
-	Fri, 25 Apr 2025 07:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159CF22FE08;
+	Fri, 25 Apr 2025 07:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="b2lKQNy1"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="PUwuB+25"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D5222FDE8;
-	Fri, 25 Apr 2025 07:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE32522F751;
+	Fri, 25 Apr 2025 07:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745565353; cv=pass; b=tzJeGxWdAuK+3+dru3fe97YH+cP9GUbHAMbjNorBqwfq3n6pwwtTLB85+dIdyFNq+ztVBn1Vq/qtnU9fyRIBQjqMnKbQR0ky/66xShe1xSxbFfLYkT3ukhW/Kbx21UE1dvDUoSGBUL/xxpRqNxF4jC1CyAwsYuZ2+J8Yv8Wr6ug=
+	t=1745565306; cv=fail; b=AZ54AycNjO6SIg+hjjl+meoQADqtdRlUP6mkCiZLL3ilCdP3tgoue3A7gehHlhonk8R2XppnIYm2lpzYP8pKIj0EZmOgqqrXcBcFq/e63UN+yad8R6EXSXQpAtZD9JWiNeGmzqZXn63Ak/iOdj+tqnqpmS9GYvgIkzki+UxQ1zk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745565353; c=relaxed/simple;
-	bh=K2Q+c+VgO0+tqhTzzQUsPio49hiqKF4+2x4VMP4HJ4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pbanQv0qJ5SI27DeMJqIdmgXHsJWL35C2oCd0ShIcbB04zknnlurREe/0sHmRTPABDuLk5JgRFS+j5nDNRchltKvw3WL3MtnwhQE2ZJ1Gi1HUGuCQ1mIlURcMW+4bA65TxYs3h1TedENvWtfUNLEOwD7BvJVRUCTfySPfcm/d7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=b2lKQNy1; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745565290; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YyQgNK8HmwLBQP4OOWsBKMVEzu6HZKCu7JIRNVf8SGC7gPtyCeDwKNoTvn5seWl78nwevm2wWKj4L3Ebo7INFHOOj3U2Iz1Zh1ZldL2eYALoqF6W0HotVexxfPEmNl9l+G1A1GTF3p16bo7FBmil3J5WlTm7ZTUHxfWUY6XSxIE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745565290; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1A1UyE1ArDNBmuD9T7lBr0kbJd8hCw/QiuuSdI6FFkk=; 
-	b=ff5Ur5fQTTDGMgxynufXRjKyetG6JFTfAxwmh69Y1spCstClmqpTlqEwZ9udGRpqLUsbB4TbIVCYFcmlyMBfyHYCYZWvG/l5qgs5/OGjHrfGVXcgZBsb1VelN/IMgxPxgx2pOhDjctKftNqvQajyABNfCvoN7KHySdrurBO+j2I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745565290;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=1A1UyE1ArDNBmuD9T7lBr0kbJd8hCw/QiuuSdI6FFkk=;
-	b=b2lKQNy15zGClN03B/PSKhyixTKv1b7hPjazsoSqmucX4rOZ2kH87/M8/tknr1Ud
-	HaZ5xeiazUrtQ6EXSZquFQy9IMGac0g31oXuZqylSFI1WgMWNEsAqdQblZaBeNoRMh3
-	ZEj6TD5xI/6PcNtCGo15aA4YIOjtymcUnG6GqG2g=
-Received: by mx.zohomail.com with SMTPS id 1745565289014360.3511868676079;
-	Fri, 25 Apr 2025 00:14:49 -0700 (PDT)
-Message-ID: <1136c7cb-1c7b-410b-93d2-c74aec939196@collabora.com>
-Date: Fri, 25 Apr 2025 12:14:39 +0500
+	s=arc-20240116; t=1745565306; c=relaxed/simple;
+	bh=XO8n2aW2ZjomMUbojXhQFHOHg6JtajSzIJmFvSP5ijo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=C7fs8Ciys9vM6dzQJVBdV2WVxXzZPsPSN3iYkIpEd5Je2yzcFXwgFrExhkGC0KcKzx1+C3uRlsfPIvvFNITJH+Eh64tgN+e4CccXm/R5cCW6A5NTcZQPU3xZuktBZWyORae4wI2ttI6GsyFyHvaNXwJ0fzGYgXCzguwTwv7w1e8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=PUwuB+25; arc=fail smtp.client-ip=40.107.220.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wv8v5MyNuDuap30ERhwf2RoWQSY6uQAY9MG9VLVmXFDVNQfZIRnYcS9DI3TADRNTJMpzK2a11QTThsMHlCBHXytUI5BnbBdIYPJ21TLPCt0PTL0gb3H3ARPJkckNJWlhjDWaW8JvxL0d8uidR//D8Z5oBdtnjVqTjAZD6+BHguFJPv6LzzIr3QJ6HPrmPSlt24nZgMKnD0+usE7nfic3pU6ltrrIAvgn7uKPmzcIvM3pUQLgCN0/Cch+pJPwd67jeaWRY4OjYwBft3newJ5UiWeZaQ0EJO4FCAU2NHNfmWRKDRWbEasCu5Q2hkQc59hfttC7sNQze6qx1z7BIxpPWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qrfZIWqt6ftOQa6WnVOyy2UOMUwOQg3RMP2xmxd+fSc=;
+ b=lU1HISZbuftL/XjKeiZlOHqCNEh3+40zXF/H7T/Ytc+6Q8jcAkzm7qKRthYJ5ifsa2Y+hwlXw7piPHkT3mIWkvaqSEv0TjrhmL27OCdX3iNzjOfyXj3Y9oxGJDhAcyydLgL9vzm7ztJ76vjT8VLw0i+8PIIx2qJYtUg4yD4V83aOt9md/LS8dVsA/BrrxSmtzkuJXqO6IT9AwDJCjgmWWnj415DSh+a2UxTzoOv3vRwyFucCEUqlYZ+gcfRfgyWhz3eOzqyJbRLWJDgTdZpglfQkE6KPJLf2fOCny2dSG16XJoJv3MUdQEifz/o0imOflST4cewZza5Z7XBfY+1eRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qrfZIWqt6ftOQa6WnVOyy2UOMUwOQg3RMP2xmxd+fSc=;
+ b=PUwuB+25fApNjKpqUcSXysSPBtyZwxAr6hjONZTA7mASeWHknXS79SuqJVIr/wJxDOJNMYXqD/+LH8luiWftd7pLjXSRYwdEAXaPVP0oBaqjcp05gD/RrQmz+sAg0ZldHcejpBHnrPhOrzSlgh8LEGuXrlApbEznozp39c29bJYaERveumaIa8EptsZWCKBhxt6KsFX9lY6812vbxRaoT1DLVRlME1sEI+A3eCXKh8qOQrz793YDpi/fMmdIyGciyOdTVrROQfa3AUGSWuJD7T4BqNl9rqBzTlUtno/OyFRv/x9hQpHFJuR8iG25Pr8ZNSPyZLk/amm/ValktB9yNQ==
+Received: from BN8PR03MB5073.namprd03.prod.outlook.com (2603:10b6:408:dc::21)
+ by DM4PR03MB7015.namprd03.prod.outlook.com (2603:10b6:8:42::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8678.27; Fri, 25 Apr 2025 07:15:02 +0000
+Received: from BN8PR03MB5073.namprd03.prod.outlook.com
+ ([fe80::7483:7886:9e3d:f62a]) by BN8PR03MB5073.namprd03.prod.outlook.com
+ ([fe80::7483:7886:9e3d:f62a%3]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
+ 07:15:02 +0000
+From: "Ng, Boon Khai" <boon.khai.ng@altera.com>
+To: Simon Horman <horms@kernel.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com"
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Russell King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Furong Xu
+	<0x1207@gmail.com>, "Gerlach, Matthew" <matthew.gerlach@altera.com>, "Ang,
+ Tien Sung" <tien.sung.ang@altera.com>, "Tham, Mun Yew"
+	<mun.yew.tham@altera.com>, "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+Subject: RE: [PATCH net-next v4 2/2] net: stmmac: dwxgmac2: Add support for
+ HW-accelerated VLAN stripping
+Thread-Topic: [PATCH net-next v4 2/2] net: stmmac: dwxgmac2: Add support for
+ HW-accelerated VLAN stripping
+Thread-Index: AQHbstql1M+19hkYQkerBvuZ57i4x7Oyv/KAgAE9OqA=
+Date: Fri, 25 Apr 2025 07:15:02 +0000
+Message-ID:
+ <BN8PR03MB507342F36BAC5C304B0A12C9B4842@BN8PR03MB5073.namprd03.prod.outlook.com>
+References: <20250421162930.10237-1-boon.khai.ng@altera.com>
+ <20250421162930.10237-3-boon.khai.ng@altera.com>
+ <20250424121721.GF3042781@horms.kernel.org>
+In-Reply-To: <20250424121721.GF3042781@horms.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN8PR03MB5073:EE_|DM4PR03MB7015:EE_
+x-ms-office365-filtering-correlation-id: e74f4ab3-be2e-4f95-2dfc-08dd83c8e594
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ODc91Oo+1ChFfN7yQsZ3dfMZLBeQ1Fq2FK3YNhm0dlW/ZlB2zuFIQ9S+VJ0F?=
+ =?us-ascii?Q?8DUshvVjx6F1yts1FZhKgFbsuJarLjciGomV3IwmeXHMVohEa+IdVcOgx90i?=
+ =?us-ascii?Q?AKTr294U52ZDm4uiiNw11jD72mdPklNeLwT/Q9y6Z3QnYgAHOu0+2XCdM+k3?=
+ =?us-ascii?Q?/LT4gcqKdMp1Qs1YsWzewHfStfQ/kTIsP9KwmsjOLzXj5KkI+nZSlRCd4vOG?=
+ =?us-ascii?Q?sO7/s9omKCGreLjOiGBPtCI+78z1+ZKxC+THYrdLyxF2S+X2QU8NkzE1P6Fe?=
+ =?us-ascii?Q?UnlyAI8f1RA7wvcoxHxiU0sUijW9dVdQuaq3yoTx0tZIiKFuEBbVWrRPllVQ?=
+ =?us-ascii?Q?N4Q1zwNSCAF1vB4mS4VBTdKuZel9cSo6JaKpyica+MtTfembZLgaXCRAwKd+?=
+ =?us-ascii?Q?hqljQmEwOvkYsEWnQ90YrNuZQwuVXPl2Svw/oU1IQiKgbgNehnoO+pATNxWT?=
+ =?us-ascii?Q?hQvRzqdiboQN2uXlScKzak0GXqfzF/Td1N72TZ2Ql31vzXBAteGCpLhBUH5l?=
+ =?us-ascii?Q?yc32e9agHTX+3eGa35LDhCRlMIgmZ2KhQR3UxT4uRBOaOrXRoup+YHBS9HsZ?=
+ =?us-ascii?Q?6UNPFE/lpTfhWI2YC5g17bR8R3HkYRoXNrkuNTg7We9+aAFeNwcu37uogrVO?=
+ =?us-ascii?Q?WUTmlOBcvfF+ZJiXI8qfuCM/Ee+BmaBOEfYpTLc1FkJdawAzdi6K1C/MnJSM?=
+ =?us-ascii?Q?Y2WdlRy3PGym+DcZtLj+F9zNW9KIZgnwsfDV8+p6Cqww6GdpkluPP2oyFTNy?=
+ =?us-ascii?Q?Zz2wTNX43UEFni41zv2KiFfJw/ZLWRjIXG1HPTjhIsRGCB341uFgKZjdh/TQ?=
+ =?us-ascii?Q?I7o+Yj7gX8nIj1Iw7B3iMJ5r/Lmo07jHnYE8Kscsn19jyUlw1Sy66eKScvuw?=
+ =?us-ascii?Q?CuuPc180RnC5MnGtLyOPRBjA7vTyoltFNTdoUoB4iIltbxvdEqUCimwwvPnc?=
+ =?us-ascii?Q?2X6VAxNMVV7oTGZs+NylUWl5w5qFHDjhTGPVwoiDRSBm/BunWU7iX3SYlrz6?=
+ =?us-ascii?Q?vaIqwa0e8TcQBjVJIUEKEiAQLPTVXyaJJ5WBOFAE0Vn2txClclvkHnIpjzef?=
+ =?us-ascii?Q?U7bYdEBGVF06I3zSSLjreGw/wCnJT3gUutNg0VIjyanN5NlJDHiaMaeiv0WD?=
+ =?us-ascii?Q?k6ZHtYd2ICPjUnNJfPkKD0JvZz+zLdT+M7kL49+/zVabIK5w4lzvb2ZI70kX?=
+ =?us-ascii?Q?H5Qd17N2E1EOlQAk/kjVoUC75q4pD3AmJMBZSYPoaHd3EIBJhKdZEV5NZr48?=
+ =?us-ascii?Q?u7o16FBf1AigK9Rq4/bJlx67xKmoPshkh8QJ1onD1ilSXWFB9KYG+mLWiKMi?=
+ =?us-ascii?Q?skoiE/P0Oz8Gxp52ecc+EAPUJTAS6kcl+yQ3/MxbRpp87AMWOem61N2OckCN?=
+ =?us-ascii?Q?I1aRHb+wuIjw4A6RyOkuOCWVV+7U3F9LlRPQhOR44y2giJ9GtTluBAzn18Zr?=
+ =?us-ascii?Q?tLMeHUVKfah/vr8tqeaLppuSxOR6myppc5TLzSeEBsMC4pGsDMjRZg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR03MB5073.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?g8ONedgHT4Z5k8C7+1Ya7bLsPjeFF87J3vQ+WS0h8QIRE7jjtpxmnX+Eyxg7?=
+ =?us-ascii?Q?Cd1/mheNcDpXYPUMTYG6Ww0o9Nj3hjbeNr9lLOkOZ188bffs4t76Yt0BKw+W?=
+ =?us-ascii?Q?VKRxIR9L1MvBk7qVlF4PZJH8YhFSZ7W6g5AYJI8M+SYHVEKAH8BTcy4ADzqC?=
+ =?us-ascii?Q?Jk3xAsAXJy80c2kgmM73uy3YNuDJaZK/itBbpP7qpTRGtfwkBbFn4iTydltQ?=
+ =?us-ascii?Q?POvX0AvqeYtlnjJq4VyZGlEHmO2C5f3Yi4RmE4EZMIRV576uy28eEazymWPu?=
+ =?us-ascii?Q?9za92GYHJ0pJyxMDxKNsgCh3SOxKswRyc2mdJ1a1oIRafvweIN06IcD81v06?=
+ =?us-ascii?Q?ED7tB2sHsjBhOOUkCOIdD6daNOGJQKf6NyuOjzGt+wmgrMuoimGcFQRSSFJe?=
+ =?us-ascii?Q?VF+0lA7HKZinqvDtxzdgZ8kxJQMlm5f2Ku5+cfqKLW6dMf6x70FEif4Q4lVq?=
+ =?us-ascii?Q?co19iYaPR7w3NqODdevl1RgytlsMCtdS6PFvaw+dUUHI9rfH1N4A/6wbMyQl?=
+ =?us-ascii?Q?a/Gs01XnVzDh0qsKxtq3oOaJeNvIF6X91ujk9k5pXsL+EV21s8dEI2wHdcwP?=
+ =?us-ascii?Q?NF9lIpfENlsvE16Xb33Nf7Lf1tXmt4EYflhetcUU54A05ydSlkMAFeo2ZD8M?=
+ =?us-ascii?Q?HWn1GGSZmIOJmn0/VitQGcIG044hye8zFm3+I7Fvs0rHy333ZyaCwmjIijWe?=
+ =?us-ascii?Q?aKBAzug8U3hqt+hbnImRZP98Pw7LX4/q6p7Q+Q0mNwpmF+NxjyBOFh6MPa8t?=
+ =?us-ascii?Q?pzYRQPNu5WUZQUb1UcAfas+DJsDTx+/D9shjGWiHRx6z2glIsu5CbFXuk/uN?=
+ =?us-ascii?Q?u00Z7ohCyz44TnZh7yqOouRCI58IccMEzWE8ZxWhiXY1+ICAOgvVIK31gcCm?=
+ =?us-ascii?Q?Dkrxdp54oW6Cp8QezLrGuV4qt8AqusQEU/EL2R89K3r0jF5uF/dbtpOOxyeb?=
+ =?us-ascii?Q?hP2y00GpRMy4jBhSMqwg8KbJxOFXim13FGma03LzdBdXUFvs6MOgKFHhZFck?=
+ =?us-ascii?Q?h8zn1pFaarF3dAXzswW0ZHVISJ4hfwOdH9BXfbBDly9OxP3w+kuTcmz1Vi6A?=
+ =?us-ascii?Q?C5gDv+oK1tmgVieT+gV/aNm6+Q60lZ931xB898dOao2E08PoS+wmlawtPH3j?=
+ =?us-ascii?Q?w/4ya2nxgSzFMBYzr5HO2+Bbfc5jmZBSioKpPrsfdisiddAYX6c8e0NwdMQV?=
+ =?us-ascii?Q?UWhAvtdL2eB8wHz4GHaNYhx0Chv+FGj5pnf8uvZvMbH1vtZaX67KJzA7vwIa?=
+ =?us-ascii?Q?C3V4KiInCzr/dNqkoM4CmJCkD3FXOWonZ6PA09Ki3+2ay4zFyBEBA4gj+O1F?=
+ =?us-ascii?Q?g6er0tWlyIwGMEIvlF5T2AI6aovHwBj9LvK63dLr9ZfntNiyHxxelYOec2em?=
+ =?us-ascii?Q?putkH+2fs61dZzMkCXOFqCmGICrmHixtsGKQ22+APb9qBEn5HRr8Zg/dbArG?=
+ =?us-ascii?Q?NhtXOnHK/izqNzKNGo/pZc+vxrXhP6tUKmRqueRIUqGPxmtaAuj29GMMXnBI?=
+ =?us-ascii?Q?0dLxDEm+pwgJwbl/j3GwoynNwmH0cSZ+PNXMPyZAgPBHdvgAH3ZzTzINBS9+?=
+ =?us-ascii?Q?Ihejvc0rbn/+EzRNH35s5XCc8X5yxADV8PEko8WycwG2uQ37VrLh9JUkt1RH?=
+ =?us-ascii?Q?1t2LbjBItabCrtkrIsFo9MUrtyeA+Hu32a/op6VqdTA2?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bus: mhi: host: don't free bhie tables during
- suspend/hibernation
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Jeff Johnson <jjohnson@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Yan Zhen <yanzhen@vivo.com>, Youssef Samir <quic_yabdulra@quicinc.com>,
- Qiang Yu <quic_qianyu@quicinc.com>, Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com, mhi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-References: <20250410145704.207969-1-usama.anjum@collabora.com>
- <h2wv7drxntokziiwbzjw5xjzbctbomp6cfcba7ppfbih6o7so7@p6dazv32xfx4>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <h2wv7drxntokziiwbzjw5xjzbctbomp6cfcba7ppfbih6o7so7@p6dazv32xfx4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
-
-On 4/25/25 12:04 PM, Manivannan Sadhasivam wrote:
-> On Thu, Apr 10, 2025 at 07:56:54PM +0500, Muhammad Usama Anjum wrote:
->> Fix dma_direct_alloc() failure at resume time during bhie_table
->> allocation. There is a crash report where at resume time, the memory
->> from the dma doesn't get allocated and MHI fails to re-initialize.
->> There may be fragmentation of some kind which fails the allocation
->> call.
->>
-> 
-> If dma_direct_alloc() fails, then it is a platform limitation/issue. We cannot
-> workaround that in the device drivers. What is the guarantee that other drivers
-> will also continue to work? Will you go ahead and patch all of them which
-> release memory during suspend?
-> 
-> Please investigate why the allocation fails. Even this is not a device issue, so
-> we cannot add quirks :/
-This isn't a platform specific quirk. We are only hitting it because
-there is high memory pressure during suspend/resume. This dma allocation
-failure can happen with memory pressure on any device.
-
-The purpose of this patch is just to make driver more robust to memory
-pressure during resume.
-
-I'm not sure about MHI. But other drivers already have such patches as
-dma_direct_alloc() is susceptible to failures when memory pressure is
-high. This patch was motivated from ath12k [1] and ath11k [2].
-
-[1]
-https://lore.kernel.org/all/20240419034034.2842-1-quic_bqiang@quicinc.com/
-[2]
-https://lore.kernel.org/all/20220506141448.10340-1-quic_akolli@quicinc.com/
-
-What do you think can be the way forward for this patch?
-
-> 
->> To fix it, don't free the memory at power down during suspend /
->> hibernation. Instead, use the same allocated memory again after every
->> resume / hibernation. This patch has been tested with resume and
->> hibernation both.
->>
->> The rddm is of constant size for a given hardware. While the fbc_image
->> size depends on the firmware. If the firmware changes, we'll free and
->> allocate new memory for it.
->>
->> Here are the crash logs:
->>
->> [ 3029.338587] mhi mhi0: Requested to power ON
->> [ 3029.338621] mhi mhi0: Power on setup success
->> [ 3029.668654] kworker/u33:8: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
->> [ 3029.668682] CPU: 4 UID: 0 PID: 2744 Comm: kworker/u33:8 Not tainted 6.11.11-valve10-1-neptune-611-gb69e902b4338 #1ed779c892334112fb968aaa3facf9686b5ff0bd7
->> [ 3029.668690] Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
-> 
-> Did you intend to leak this information? If not, please remove it from
-> stacktrace.
-The device isn't private. Its fine.
-
-> 
-> - Mani
-> 
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR03MB5073.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e74f4ab3-be2e-4f95-2dfc-08dd83c8e594
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2025 07:15:02.4354
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fGYcFeov6NvESb58taDraX13Vm+/VPMmUK15ohGfUtFdHX5ZbfgNU8rfQfHJpb0Zo3tDX9JYvp29mOeoJlk29Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR03MB7015
 
 
--- 
+> > @@ -69,6 +70,21 @@ static int dwxgmac2_get_tx_ls(struct dma_desc *p)
+> >       return (le32_to_cpu(p->des3) & XGMAC_RDES3_LD) > 0;  }
+> >
+> > +static u16 dwxgmac2_wrback_get_rx_vlan_tci(struct dma_desc *p) {
+> > +     return (le32_to_cpu(p->des0) & XGMAC_RDES0_VLAN_TAG_MASK);
+>=20
+> nit: The outer parentheses are not needed on the line above.
+>=20
+>         return le32_to_cpu(p->des0) & XGMAC_RDES0_VLAN_TAG_MASK;
+>=20
+>=20
+
+Hi Simon, thanks for the comment, will update in v5.
+
 Regards,
-Usama
+Boon Khai
 
