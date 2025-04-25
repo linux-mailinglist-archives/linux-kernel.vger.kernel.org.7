@@ -1,120 +1,153 @@
-Return-Path: <linux-kernel+bounces-621017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6722A9D2AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:07:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808D8A9D2A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21BA3B3ECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:06:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9603F1BC80ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029DB21FF35;
-	Fri, 25 Apr 2025 20:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4B921FF2A;
+	Fri, 25 Apr 2025 20:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="bqEkieYt"
-Received: from forward201a.mail.yandex.net (forward201a.mail.yandex.net [178.154.239.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WoZQd9h2"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BD921B910;
-	Fri, 25 Apr 2025 20:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C7421930D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 20:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745611613; cv=none; b=d6pPP7XWUNAwxZ0CX71CohrtBtzySxq8xOgsHSkzWcbzPSd0d9cjtRCFXSog9mDZV3gzZTS905OING7htji1XHyO1U31KYG+C4dGd4/lhqGkPavaXEgJHc6RoP1opXKk3nw8z0/RQq96zynmCAr8cPus/3Z6EVbfQ1mKqm1TwJM=
+	t=1745611548; cv=none; b=l1AFp/CEdUTn91v5xqDadz49o4EGGTQrOcfevByGzFzlLzJF30EqHarjsF0FeoaFoqayUTJUoHffi4ZHL55eXjafZmKOQIDrmH1uiK/qE5lgGgLGWlLRXEdo+NeQQhlHS1EGooFaWBi6tsrytuNwcRfJ0E1vZGhd6M/Y+GxyC6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745611613; c=relaxed/simple;
-	bh=k/zP33OjbSmeuXYLwPcWfcL/pxTHOmfYtJxHon6HXVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eq1EBM4ZvjvyinbXjlvu738lBK02zcF0y0JzuBaQ8LIAJShboJ5rDo7pNHfHnvWHF129EAaOUTrSHDUQwsJCmVxUzax87+60dLObecAHuaGTD2yrM6BBxpnO1X+86w7jjotmcGJD7aF8YIGxSIjfWmQE/bvczsJo0ylQIyZKFW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=bqEkieYt; arc=none smtp.client-ip=178.154.239.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d100])
-	by forward201a.mail.yandex.net (Yandex) with ESMTPS id 4ADDC64420;
-	Fri, 25 Apr 2025 23:01:03 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:623d:0:640:ecee:0])
-	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 57714470D7;
-	Fri, 25 Apr 2025 23:00:55 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id s0YsVLCLh8c0-wB4UUojE;
-	Fri, 25 Apr 2025 23:00:54 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1745611254; bh=1icPC1dV+orrOweNu0r0k0DOqWLOZGhjxwAB5E3wruM=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=bqEkieYt/zZUuEb5ku/DbLQIZdrgjXxYGVOdguHUmGa51VZPw7RqbbWW7dQleg0uw
-	 0b0/KorIcjBWKQhGNR/B0x41Izqyq4cBBSeV85YZiUN7eiyBQMOpm31QtytJpKc0rX
-	 wZoCL6ExfeRK6+zO/kGCBwL/cGDvAb5H3E6KLj1E=
-Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-From: Alexei Safin <a.safin@rosa.ru>
-To: Eugene Shalygin <eugene.shalygin@gmail.com>
-Cc: Alexei Safin <a.safin@rosa.ru>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2] hwmon: (asus-ec-sensors) add WARN_ONCE() on invalid sensor index
-Date: Fri, 25 Apr 2025 23:00:51 +0300
-Message-Id: <20250425200051.2410-1-a.safin@rosa.ru>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1745611548; c=relaxed/simple;
+	bh=QbdxcNE69ZddsBu9K0zL2qGJ8S4/OJpx33fygzGV7k4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RCsasHRirviHqQlfhulRgeSoKdgVuN4ndXjBLGbRiky+BtcyKVYfY76unGES3ago6tCyH0Ne4jMOg92pzVKdjDq1IqIK/gFg5+2Ax6GF4ks74ay25DdTvqTrby4slt+HvmKCpSmnivLmonpaZLc708rlzQjHz/1HnT1SGF73vfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WoZQd9h2; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff4b130bb2so2678719a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745611546; x=1746216346; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=81aIX6D3ElOfwpCkhpTcqzf1m3Yusf5yFZf4hIvcJxE=;
+        b=WoZQd9h26EXR9ZMUM7V6L97OUiM1IXTo4egfF1MUSqjzPzw0Gf/vBU9xVredvFWYHE
+         htmrrJvB4RC4iVgWEw9cyICKGLn4YqB4ec05MK6yHzgFCfbo1SrviIQH4+ZzKFmMGsb7
+         nwYmE8qoVqJz+RHIW+2v3VL39iSM22iOxZJ5hcKeACKsKlontPJ/japva4JM3rXbPzEr
+         H86jXw9JPeoL6xKkE07RN/xo633JuBKypWq8gpf0daQdBGqnZ4Hjhs8wgsU2SMuvbZtM
+         qUzNH2/OfARbTKWDOyaEnxjwvkoyNTEnL1iFuliDQDktAOhcPwYMhFW7b2UryF2jtIkB
+         EQgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745611546; x=1746216346;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=81aIX6D3ElOfwpCkhpTcqzf1m3Yusf5yFZf4hIvcJxE=;
+        b=iK8Xd4Gk0e90RZjraFh2W1XPbD+OGnJzGvUoWhX3KEKJNWFE6KMc6n/ruKWaREINEy
+         PeZiPdd7cH7NiFbrpwBJZ8ZiswuUzcMNKQjVXtq0xz8Ehid9/Fw8z109Dx5P3G17ssb0
+         Xuphry7yDgMKCEZjpT3o7Fdt+uEc+pyJZN8RMVotDO79LCiBzvKoXfaCw9ewUfBySmaH
+         /eHfI/k0UO+GiwKnqTqZDkduQgYgRcgbe0hazJM84H59+ZHbjdMuAFBs2dC2hgFJW1Gs
+         mWF5FfnjvZeQ+mn+C3XlDCGYQFnypL0ybxvdE0QwCmnHdcKBCw5CzePNa6kB+qnmx4Sy
+         a5UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuJYLGUrJuZ4D8GrZcjnXSxqIsYfg7Y7SRvKW7BpGHc8uIYbjAUD5gGASlM8zLUP1zG9/0wo2uxdu4G24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOXQokqsSKAnvRkP0xi2A4mWdne3NvIoqvLeb/gvwDvqU4F+R3
+	2SoH9RIqyPE+EgjrkQBJxjR7Ilq0yk8PKVcJaFhcTcs5YRCVr67UQPSOXPLDYuuIVQ==
+X-Google-Smtp-Source: AGHT+IGHjrYor9DSnbkZpRLYhWCXHaBMQ7K553M2/vQUkVqXwMphsYNc+vXPfMd9SHMllf/frx6c80Q=
+X-Received: from pjbpa14.prod.google.com ([2002:a17:90b:264e:b0:2ef:95f4:4619])
+ (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d4d:b0:2ee:f076:20f1
+ with SMTP id 98e67ed59e1d1-309f7c62025mr6705269a91.0.1745611546423; Fri, 25
+ Apr 2025 13:05:46 -0700 (PDT)
+Date: Fri, 25 Apr 2025 13:05:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
+Message-ID: <20250425200541.113015-1-xur@google.com>
+Subject: [PATCH] objtool: fix up st_info in COMDAT group section
+From: xur@google.com
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Rong Xu <xur@google.com>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Prevent undefined behavior by adding WARN_ONCE() when find_ec_sensor_index()
-returns a negative value.
+From: Rong Xu <xur@google.com>
 
-Even though unsupported attributes are filtered out by asus_ec_hwmon_is_visible(),
-a programming error could still cause an invalid sensor access.
+When __elf_create_symbol creates a local symbol, it relocates the first
+global symbol upwards to make space. Subsequently, elf_update_symbol()
+is called to refresh the symbol table section. However, this isn't
+sufficient, as other sections might have the reference to the old
+symbol index, for instance, the sh_info field of an SHT_GROUP section.
 
-Instead of silently returning an error, log a warning to highlight the problem,
-and propagate the original error code.
+This patch updates the `sh_info` field when necessary. This field
+serves as the key for the COMDAT group. An incorrect key would prevent
+the linker's from deduplicating COMDAT symbols, leading to duplicate
+definitions in the final link.
 
-Update both asus_ec_hwmon_read() and asus_ec_hwmon_read_string() accordingly.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: d0ddfd241e57 ("hwmon: (asus-ec-sensors) add driver for ASUS EC")
-Signed-off-by: Alexei Safin <a.safin@rosa.ru>
+Signed-off-by: Rong Xu <xur@google.com>
 ---
-v2: Use WARN_ONCE() instead of returning -EINVAL, and update
-    both asus_ec_hwmon_read() and asus_ec_hwmon_read_string()
-    as suggested by Eugene Shalygin.
-    
- drivers/hwmon/asus-ec-sensors.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/objtool/elf.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index d893cfd1cb82..a563d7acef2e 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -820,9 +820,8 @@ static int asus_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
- 	struct ec_sensors_data *state = dev_get_drvdata(dev);
- 	int sidx = find_ec_sensor_index(state, type, channel);
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index 727a3a4fd9d77..8dffe68d705c6 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -572,6 +572,30 @@ static int read_symbols(struct elf *elf)
+ 	return -1;
+ }
  
--	if (sidx < 0) {
-+	if (WARN_ONCE(sidx < 0, "asus-ec-sensors: sensor not found\n"))
- 		return sidx;
--	}
- 
- 	ret = get_cached_value_or_update(dev, sidx, state, &value);
- 	if (!ret) {
-@@ -839,6 +838,10 @@ static int asus_ec_hwmon_read_string(struct device *dev,
- {
- 	struct ec_sensors_data *state = dev_get_drvdata(dev);
- 	int sensor_index = find_ec_sensor_index(state, type, channel);
++/*
++ * @sym's idx has changed.  Update the sh_info in group sections.
++ */
++static void elf_update_group_sh_info(struct elf *elf, Elf32_Word symtab_idx,
++				     Elf32_Word new_idx, Elf32_Word old_idx)
++{
++	struct section *sec;
 +
-+	if (WARN_ONCE(sensor_index < 0, "asus-ec-sensors: sensor not found\n"))
-+		return sensor_index;
++	list_for_each_entry(sec, &elf->sections, list) {
++		if (sec->sh.sh_type != SHT_GROUP)
++			continue;
++		if (sec->sh.sh_link == symtab_idx &&
++		    sec->sh.sh_info == old_idx) {
++			sec->sh.sh_info = new_idx;
++			mark_sec_changed(elf, sec, true);
++			/*
++			 * Each ELF group should have a unique symbol key.
++			 * Return early on match.
++			 */
++			return;
++		}
++	}
++}
 +
- 	*str = get_sensor_info(state, sensor_index)->label;
+ /*
+  * @sym's idx has changed.  Update the relocs which reference it.
+  */
+@@ -745,7 +769,7 @@ __elf_create_symbol(struct elf *elf, struct symbol *sym)
  
- 	return 0;
+ 	/*
+ 	 * Move the first global symbol, as per sh_info, into a new, higher
+-	 * symbol index. This fees up a spot for a new local symbol.
++	 * symbol index. This frees up a spot for a new local symbol.
+ 	 */
+ 	first_non_local = symtab->sh.sh_info;
+ 	old = find_symbol_by_index(elf, first_non_local);
+@@ -763,6 +787,7 @@ __elf_create_symbol(struct elf *elf, struct symbol *sym)
+ 		if (elf_update_sym_relocs(elf, old))
+ 			return NULL;
+ 
++		elf_update_group_sh_info(elf, symtab->idx, new_idx, first_non_local);
+ 		new_idx = first_non_local;
+ 	}
+ 
 -- 
-2.39.5 (Apple Git-154)
+2.49.0.850.g28803427d3-goog
 
 
