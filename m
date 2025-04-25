@@ -1,88 +1,52 @@
-Return-Path: <linux-kernel+bounces-619573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A785AA9BE59
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:05:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B768A9BF84
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD00C1892F18
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:05:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0269A4C18C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8D422B8B1;
-	Fri, 25 Apr 2025 06:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A60D22F75F;
+	Fri, 25 Apr 2025 07:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+dDc3Ts"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZxTdw2oQ"
+Received: from mail-m15589.qiye.163.com (mail-m15589.qiye.163.com [101.71.155.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D9722B581
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 06:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6987952F88
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745561096; cv=none; b=QcpeKirgDQ17eRtlh21kuNaKa1/gZohCLN5zArT2ONRtRXQ4ymlkOAdp670mFR3rmJ8MnJNnHDVsq04h9ZYzSoMne8Nq1kdQ7wNCtnbCidwYyz0RaPP9d++pXiGiN6VL/4R9irQ4e4NUKslq1jTUB3pW0Z+W2gpqBLyQWZUzfnU=
+	t=1745565211; cv=none; b=bW6Eb/U6n5xcjEJ8hI+xom/1T/W4pN9ouiRztunHyjGf3sOqTwEnRWPzox4f8qAFvppN35Ox69FwxlEgqsiVxUoJtjA2B2+stSLMdObD67zMeTbMf+wX//zSrC/nthjPC9ZmGVy+ttNks2Qgci3Z1+oKE73OmMKpS49CmGgja74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745561096; c=relaxed/simple;
-	bh=3t+D9Lfr67XaN/OQI2Y5+/XH4J/b8IDwoIxmQNpmNHk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JdWI7ZKuiCdGGuksP16BZox7KRXi/0HcajULg72/mO1IAewwxFjNKrkJS3vQYmtvtidn74aMNy2nWostTC0VzUw573Q3fc5IyYVE3TJdIGa4uZTK2ueCViKbzYbOLZiBRq1UiHsk3xWavfyxfI2mJsiK+rYfwITFoZf4Urd35zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+dDc3Ts; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745561095; x=1777097095;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3t+D9Lfr67XaN/OQI2Y5+/XH4J/b8IDwoIxmQNpmNHk=;
-  b=e+dDc3Tsr77J22NcSt69IM+nFwHyR/jjYsy7dHoooF1f0FSrhdgtb5LS
-   MTk4lG2QuEqLnmAGbYq65eDRa6oMe4uvtJ5KrK+DsythCAUTdlfPQa6mS
-   3CJ/+vTs32X0lgLPR21ynjSoOhY0eknn+a+P47Avk0eucSunwA3XkEyO3
-   ULV+xsFNMGFQiqj/RmRpExwpMXNRA8M4HrHn370UML4mqZVe+Xv3GE8Mn
-   4j4Vop2rM2j99AxRE9Nu1TSihOZH/qH6gWL9w3IkU1ZVMSJqNVbx2ft7X
-   8GULg7irBbyE5NZqzfhXxAkVesWLZVcbHe1FHAbRbtYOQpY+mVq8+t4fC
-   A==;
-X-CSE-ConnectionGUID: tEfb9nOeS5Ov1AyctZe+Dw==
-X-CSE-MsgGUID: VmW96ro5Tq+RphQ0zSMa8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="51021646"
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="51021646"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 23:04:54 -0700
-X-CSE-ConnectionGUID: kxh1GToFSUq1UwgD/emrLw==
-X-CSE-MsgGUID: bMWV5gwtTsmWaKtljNz7Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="133350476"
-Received: from junxiaochang.bj.intel.com ([10.238.157.86])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 23:04:50 -0700
-From: Junxiao Chang <junxiao.chang@intel.com>
-To: tomas.winkler@intel.com,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	Vitaly Lubart <vitaly.lubart@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1745565211; c=relaxed/simple;
+	bh=LFPokmpR/Ewf1rymDE5+F6Z0gE3r6mnvAuxxLdpVf7o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cofZbRZzQ/rg6WMTYUc0nY1VuWoWO5QuxzM0YPo7CrdQMwha4FxbAbL7V2ZPL8oLZtWwTOF2mIHVbQxomLle5CEIa0vIXY1Bcyp8hO+zi82oQJ+oUrcJjvjJ2rTdGB3PyxDyUk+52pc3nuHcB/qlcOlaFLm3r9cONWKDFyyFQ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZxTdw2oQ; arc=none smtp.client-ip=101.71.155.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from crj-HP.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 13112a5bc;
+	Fri, 25 Apr 2025 10:37:23 +0800 (GMT+08:00)
+From: Algea Cao <algea.cao@rock-chips.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	heiko@sntech.de,
+	cristian.ciocaltea@collabora.com,
+	andy.yan@rock-chips.com
+Cc: linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: junxiao.chang@intel.com,
-	furong.zhou@intel.com
-Subject: [PATCH] drm/i915/gsc: mei interrupt top half should be in irq disabled context
-Date: Fri, 25 Apr 2025 14:04:54 +0800
-Message-Id: <20250425060455.641008-1-junxiao.chang@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250424065609.624457-1-junxiao.chang@intel.com>
-References: <20250424065609.624457-1-junxiao.chang@intel.com>
+	Algea Cao <algea.cao@rock-chips.com>
+Subject: [PATCH] phy: phy-rockchip-samsung-hdptx: Fix PHY PLL output 50.25MHz error
+Date: Fri, 25 Apr 2025 10:37:20 +0800
+Message-ID: <20250425023720.3296069-1-algea.cao@rock-chips.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,42 +54,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhhCHlYaSR4ZSU9CTRkeS0JWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJMTU
+	xVSktLVUtZBg++
+X-HM-Tid: 0a966ace8e4b09dakunm13112a5bc
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pz46Ogw5GDJPNzg6DQIOIU8O
+	Hg4wCUJVSlVKTE9OTk9DTU9OS0pLVTMWGhIXVRoXHB4aVRgaFDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlLQ0w3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=ZxTdw2oQjErLaB1LCUnnvx8Jv0MePVT41slrasjLOGTRSxGTerajB/sjbSw4aSAVC7zICXzLYwfwAubMuGKcQymGqBh0XQj1hszkBbLK+snKHsV3VoDWF5eBfYK2cBHhnmgZOd748GaKMTzGMOFdi3rt1MEsbGO9/PTxl6Upt3c=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=wzcaSWol41pI08NDxtqKY2YqU38iBEqEtGi1EuR4uKI=;
+	h=date:mime-version:subject:message-id:from;
 
-MEI GSC interrupt comes from i915. It has top half and bottom half.
-Top half is called from i915 interrupt handler. It should be in
-irq disabled context.
+When using HDMI PLL frequency division coefficient at 50.25MHz
+that calculated by rk_hdptx_phy_clk_pll_calc(), it is failed to
+get PHY LANE lock. Although the calculated values are within the
+allowable range of PHY PLL configuration.
 
-With RT kernel, by default i915 IRQ handler is in threaded IRQ. MEI GSC
-top half might be in threaded IRQ context. generic_handle_irq_safe API
-could be called from either IRQ or process context, it disables local
-IRQ then calls MEI GSC interrupt top half.
+So we manually calculated PHY PLL frequency division coefficient
+at 50.25Mhz and added it to ropll_tmds_cfg. Manually calculated
+value  can make PHY LANE lock normally and output 50.25MHz normally.
 
-This change fixes A380/A770 GPU boot hang issue with RT kernel.
-
-Fixes: 1e3dc1d8622b ("drm/i915/gsc: add gsc as a mei auxiliary device")
-Tested-by: Furong Zhou <furong.zhou@intel.com>
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
 ---
- drivers/gpu/drm/i915/gt/intel_gsc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/gt/intel_gsc.c b/drivers/gpu/drm/i915/gt/intel_gsc.c
-index 1e925c75fb080..a099d885508ac 100644
---- a/drivers/gpu/drm/i915/gt/intel_gsc.c
-+++ b/drivers/gpu/drm/i915/gt/intel_gsc.c
-@@ -284,7 +284,9 @@ static void gsc_irq_handler(struct intel_gt *gt, unsigned int intf_id)
- 	if (gt->gsc.intf[intf_id].irq < 0)
- 		return;
- 
--	ret = generic_handle_irq(gt->gsc.intf[intf_id].irq);
-+	/* It can be called in both irq context and in thread context */
-+	ret = generic_handle_irq_safe(gt->gsc.intf[intf_id].irq);
-+
- 	if (ret)
- 		gt_err_ratelimited(gt, "error handling GSC irq: %d\n", ret);
- }
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index fe7c05748356..77236f012a1f 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -476,6 +476,8 @@ static const struct ropll_config ropll_tmds_cfg[] = {
+ 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
+ 	{ 650000, 162, 162, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 54, 0, 16, 4, 1,
+ 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
++	{ 502500, 84, 84, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 11, 1, 4, 5,
++	  4, 11, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
+ 	{ 337500, 0x70, 0x70, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 0x2, 0, 0x01, 5,
+ 	  1, 1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
+ 	{ 400000, 100, 100, 1, 1, 11, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
 -- 
-2.34.1
+2.43.0
 
 
