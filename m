@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-619551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1957EA9BDF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692E1A9BDF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00162176E06
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72DFE1B88212
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F42F1AB6D4;
-	Fri, 25 Apr 2025 05:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AA022A4F0;
+	Fri, 25 Apr 2025 05:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSnp/FO2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbGHV2dm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DA622A4CB;
-	Fri, 25 Apr 2025 05:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C08215F49;
+	Fri, 25 Apr 2025 05:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745559536; cv=none; b=oA/UuiC2vDBzmMYKkXXO9EqSOErD/o64Ck9BRcAW5eC9CpMPM8k975NogNMTgcp8QcTYHn31+o9CBNSFhICrn4tAZlq3RgNEyzKfhcByQzXn3uMh9JNEMmYSSN8bqXo8TuTMJs9azxUbZ4sPXc4gk2EQYo5Jju328lhzotZBQsA=
+	t=1745559833; cv=none; b=p7G6qPwyj3WV9BcCXxD1F9lbhypJZbXYRXpT5QaUVZfY4eK11s8od9O87aXO4wARxjd8O/OSteWH3kBIDjShCeNMXW0ACf/DRG5W+KmHURMLpbFaEUz+9yhVLi5NBpk4lqEpnXpJlGedbzVtYjzKhy3t840mfi82rpnm2QAQiO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745559536; c=relaxed/simple;
-	bh=T9PRj5O97dJkFelJlxsgXHiHXmLvW+PPN5zPzsjWlug=;
+	s=arc-20240116; t=1745559833; c=relaxed/simple;
+	bh=seOqirivfphfTRGlIdn4Wi3To7EpJ8SMOXWFWZdjiwI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=blPMmBoPrAo6U/+7Ry4kW9ShRAcch7MOa5fn4vZUOKhu4gR79Uwj2w82FkhKaGCXBYbO0qNOYaXhyhL0I5j/EYCN+e/Q61/a2JC85KYKj0FIXdM/b8kq/bdBboiJ2A4BSLJ6OKpTX7vJ/BN3wNcR2a7eBRJrSbVDm+c2XVNOcVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSnp/FO2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22406C4CEE4;
-	Fri, 25 Apr 2025 05:38:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ODe2PhDtI24oudGSTILAnjJteI9DNgfAL4b5mehCwd2cokW09F0VhlPPwYFYmwcndyVw2l4PZ1IbCjYIbhqZieCZsF84pjLqiQsziKLW1Z0d01qJ09OFyyC0ySY4kHo50Knr6WRVEuaI81WIObZIycC/cRzjat8HdaEpAgRodtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbGHV2dm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EC4C4CEEB;
+	Fri, 25 Apr 2025 05:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745559535;
-	bh=T9PRj5O97dJkFelJlxsgXHiHXmLvW+PPN5zPzsjWlug=;
+	s=k20201202; t=1745559833;
+	bh=seOqirivfphfTRGlIdn4Wi3To7EpJ8SMOXWFWZdjiwI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dSnp/FO2ms1RqxUlgHeKn8Y8gtNtQ4hKkIFWMrZBSP8GarrrJB3XgjbnDITBFlqyi
-	 Of317H8BMKHh1ws+0wTuYpVa1SjEK00QQEVAGYz6Hq5hruJD4m+wf6+ywbtDaZX3ud
-	 09nXCQKDh6evnYn2CWz5v7SfwqZJdBEB0IjzPNraz299ruk5iRHHQrYG/E3LZ/PgoN
-	 jmEcWX8/ZY3vY443urJg/eLqmx47Yd3uPdgQwGWk1bHmKBB8f/KcS5MtRwfm0kUISz
-	 4TYTGULUTirl7LEozoBlSZpfiNIVhf9RMI2Pm4SKWkdwh3Dxdlq8MVo9W1yzAYXLo1
-	 71MTownS9U8Eg==
-Message-ID: <f2389ea1-44f9-4d66-b8e1-d55281541aa8@kernel.org>
-Date: Fri, 25 Apr 2025 07:38:52 +0200
+	b=cbGHV2dmiVj+jMrSAR4S1lDS31mIiZo2Jy5bGBzs2OZY6oRMmvZ+e6f/QPCRNBbMz
+	 Jf0q45gFsawMjMPFxCT7ph0dFAXNOJW+hDFPwA+pFUjgVsmY4Yovmw6u64CoAXUu5a
+	 Pzqd3o40/RDxQ4zNYFra5h5li8OWMVFU/Iep7CpIYz5xxE0T5sboICGF4vRKSxvgAG
+	 K56SGr1/9+eCKItic2UWmSMf9XhegLgPMG8OLOsGMgvCL7nqMfwKgBuNEFQoTTJXxW
+	 XlA9E4XBlnjT8FZg08A7O7zjiRxph3lkyQ0jcahudHIaFGAcyk6xPWj6NQgUc6Vdze
+	 fv02R6XaKthxA==
+Message-ID: <7cf4302f-a4ba-41fb-bcef-0830013c5698@kernel.org>
+Date: Fri, 25 Apr 2025 07:43:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,116 +49,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] serdev: Remove repeated device name in
- dev_(err|dbg) messages
-To: Zijun Hu <zijun_hu@icloud.com>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20250424-fix_serdev-v2-0-a1226ed77435@quicinc.com>
- <20250424-fix_serdev-v2-2-a1226ed77435@quicinc.com>
+Subject: Re: [PATCH v3] arm64: dts: qcom: add initial support for qcom
+ sa8255p-ride
+To: Deepti Jaggi <quic_djaggi@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, quic_psodagud@quicinc.com
+Cc: quic_ptalari@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shazad Hussain <quic_shazhuss@quicinc.com>
+References: <20250422231249.871995-1-quic_djaggi@quicinc.com>
+ <f385c9eb-31ef-47c3-84a5-9f4dc86ce6f0@kernel.org>
+ <95c66338-87c0-4fce-866b-6c43c1d31cd1@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250424-fix_serdev-v2-2-a1226ed77435@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <95c66338-87c0-4fce-866b-6c43c1d31cd1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24. 04. 25, 14:23, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 25/04/2025 06:53, Deepti Jaggi wrote:
 > 
-> There are serval dev_err() and dev_dbg() usages shown below:
 > 
-> dev_dbg(dev, "...%s...", dev_name(dev))
+> On 4/23/25 23:19, Krzysztof Kozlowski wrote:
+>> On 23/04/2025 01:12, Deepti Jaggi wrote:
+>>> diff --git a/arch/arm64/boot/dts/qcom/sa8255p-ride.dts b/arch/arm64/boot/dts/qcom/sa8255p-ride.dts
+>>> new file mode 100644
+>>> index 000000000000..cb866f897d0a
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/sa8255p-ride.dts
+>>> @@ -0,0 +1,94 @@
+>>> +// SPDX-License-Identifier: BSD-3-Clause
+>>> +/*
+>>> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include <dt-bindings/gpio/gpio.h>
+>>> +
+>>> +#include "sa8255p.dtsi"
+>>> +#include "sa8255p-pmics.dtsi"
+>>> +#include "sa8255p-scmi.dtsi"
+>>> +
+>>> +/ {
+>>> +	model = "Qualcomm Technologies, Inc. SA8255P Ride";
+>>> +	compatible = "qcom,sa8255p-ride", "qcom,sa8255p";
+>>
+>> NAK
+>>
+>> Missing bindings. This is some weird process you have there. Reach to
+>> your internal guideline before you start posting. It explains this.
+>>
 > 
-> The device name is repeated since dev_dbg() also prints device
-> name as prefix.
-> 
-> Fix by optimizing the messages printed.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->   drivers/tty/serdev/core.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-> index 971651b8e18dcbb5b7983cdfa19e7d60d4cd292b..f00106de76a0f1e547310c7d21cc2fe3d5869e28 100644
-> --- a/drivers/tty/serdev/core.c
-> +++ b/drivers/tty/serdev/core.c
-> @@ -118,12 +118,12 @@ int serdev_device_add(struct serdev_device *serdev)
->   
->   	err = device_add(&serdev->dev);
->   	if (err < 0) {
-> -		dev_err(&serdev->dev, "Can't add %s, status %pe\n",
-> -			dev_name(&serdev->dev), ERR_PTR(err));
-> +		dev_err(&serdev->dev, "Can't add serdev, status %pe\n",
-> +			ERR_PTR(err));
+> I followed the approach used for other bindings [1] [2] [3], 
+> which were part of the original series and were sent as separate patches 
+> and accepted. I misjudged that the SoC binding could also be sent as a 
+> separate patch. I will combine the remaining bindings along with 
+> the device tree into a single series.
+>  
+> The UART/QUP driver changes have been posted as a separate series [4] 
+> along with the UART bindings. Please advise if the UART/QUP bindings should
+> also be included as part of next series with dt changes.
 
-You don't need to wrap now.
+I think existing docs have it well covered and explained. I advise to
+read all submitting patches documents.
 
-Could you also get rid of ERR_PTR() and print err directly using %d?
 
->   		goto err_clear_serdev;
->   	}
->   
-> -	dev_dbg(&serdev->dev, "device %s registered\n", dev_name(&serdev->dev));
-> +	dev_dbg(&serdev->dev, "serdev registered successfully\n");
->   
->   	return 0;
->   
-> @@ -783,8 +783,8 @@ int serdev_controller_add(struct serdev_controller *ctrl)
->   		goto err_rpm_disable;
->   	}
->   
-> -	dev_dbg(&ctrl->dev, "%s registered: dev:%p\n",
-> -		dev_name(&ctrl->dev), &ctrl->dev);
-> +	dev_dbg(&ctrl->dev, "serdev controller registered: dev:%p\n",
-> +		&ctrl->dev);
-
-No need to wrap.
-
--- 
-js
-suse labs
+Best regards,
+Krzysztof
 
