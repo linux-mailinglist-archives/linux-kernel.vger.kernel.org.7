@@ -1,196 +1,124 @@
-Return-Path: <linux-kernel+bounces-619712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2E9A9C04C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7B0A9C01F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A551189C836
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177081B8792F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A30E2309B9;
-	Fri, 25 Apr 2025 08:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA176231A3B;
+	Fri, 25 Apr 2025 07:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G9Jt30zz"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALvqB4Yn"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E6226AEC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD6417A314;
+	Fri, 25 Apr 2025 07:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745568090; cv=none; b=VIRfRyFEentHv7oRmFCOpfKTiP+YsfD5bYan43e0wYmKlvD/g/4fDR9bhSheZ1xOTV+GZX+/J30WmvTg88wAtU7JrrvmjWQPlV/wyXBve7tZiaNk3m47WTJfGLo0ZVKXwUgRkmSGZI61tWS1efIQs2FHbI6nZPSa4BQ5xNLnMEs=
+	t=1745567516; cv=none; b=IcGQBs/zoN8WGvT1ySCGd7asgLGDS9AQV/PUlvMObfUPRS8nhNQwpwoKadCWh483eFLooLnGxDBWlOLKGFutAGpvE7CbX1xsI+/d++q1sj/b8yGPgdxYsRvP3H01MO5MLYGdM9OI+gu/On9+zLb9DJrTrC3Byq84T2jmdiB+7YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745568090; c=relaxed/simple;
-	bh=9i0pqeJF9Lv6Vi+wvxKY/gQ+rtNhrwok614Nr1Sr4JE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jm3/EnaQYyPc4OBKqLGsDvLQS4wogrm6YiFhC9DtEPIAVU5y52MVOCyBqQmyzwKz0s5pr9nHbZ+g4QA50hzta5G1O20NzHPl3KJW5zo+QFpaAsovpVmYUfHRxcwpHvnZb9iGFROWMsd2fldOR+kXZxy9TStuWqEQDKVD1Zq8TOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G9Jt30zz; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745568085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ysvHHKCoxOnwQA+EqA6Oq9PHFBYzde/132axQDe0NyE=;
-	b=G9Jt30zzgf32eLKfsf7tyBckgc77qsPK17FWt1YtgldgE1D8gcPJcopTrE3e0+7JKBvBmV
-	NYWXYeQ/GrVYTSakQcISWs5Nk+AiGIjj1eZMM0sPucMK/gpwrWinMbBtvFMdHayTnLdPxh
-	42j/xDljnjxTtpC65mu48C1tEdTngkk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Rik van Riel <riel@surriel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Max Grobecker <max@grobecker.info>,
-	Sandipan Das <sandipan.das@amd.com>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	"Xin Li (Intel)" <xin@zytor.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Russell Senior <russell@personaltelco.net>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Alison Schofield <alison.schofield@intel.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Ingo Molnar <mingo@kernel.org>,
+	s=arc-20240116; t=1745567516; c=relaxed/simple;
+	bh=qoHFf+yoko4A/+XUPmCuZNCG1ChQkHApaZjK13JSRtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyXQQGjZUmDFEb+6w7iV4dbIKwfx8Gp0v0MWT6bz0njlM10HAe3PPfec67P8BM+37xQ4cuW2F5MCPH1BOBwrdyyPbHtuwBR1DeNMK1tzK6niAkzcF7LZy5coLKlpbIe8zPkWuXKDSkJAASLcTqkJ0JOM1cDm4IkcQ4diPILaxuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALvqB4Yn; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5ebf57360b6so283072a12.3;
+        Fri, 25 Apr 2025 00:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745567513; x=1746172313; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EtlwdttWcrSq5WLrAii4yqH6SPDuiUx6pIip08AE1cY=;
+        b=ALvqB4YnNrEASGqcj5UasutBn3oGfcqBoA1CUP+SVaqBI3tA/rL+uyyypWSIyRFPTw
+         xV+SaR9SqRGbu9b8NmRO4vvuXSbl7Zo6h9JJTCieZyo6apBnfHe5wjv0YM+h5MqnYpBz
+         sl/dVXRCbJeTiVHqudM/gil8S2mJoC22RDWzUwNuBdjHTppI57jQRXRQ6HopIlD3SrBF
+         VGTAVoh/QK2sginE3tAbHWquzhMjUxlrwttctgS1fNKTVbtYTExn3pX7K14upzHrjaDm
+         WoCiJbclQaaa951jERhScEb3w9Xbk11YLMLpMRiY+6fzpbUJms0uwqF7/HZf7YsN5Gpn
+         vQEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745567513; x=1746172313;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EtlwdttWcrSq5WLrAii4yqH6SPDuiUx6pIip08AE1cY=;
+        b=OQaH4o76hGfenKGiZqe49g9hFgzdsfulwzR34GAfeBZH1zR1UaFcEfCFYqZuvvj1aP
+         OfutvHaf9hh69KzUV3KqCfxHbp31lfPs679DqUdW7+Vn8SUnqgkSnoh9EkMgQuYjr7JW
+         u4+sNgqD4ZxZmr87rh1kDf81XFcfiLnP7MEH7QHBG/k9Qf/E5HwHYse0nx43+jvzQYjf
+         sZOEiEHUvefxC7KO48H30hs1hIaQXaWeolSZyakJ4wv9I633fbdcrhuu6I1e9+d0CF58
+         Zg+JUQCLrFhVeMilNAlPXpu9xKdSVr12D9pfAFMXWbCbH/TQIg/DbmpQ3DiXfTKvaBSg
+         14yA==
+X-Forwarded-Encrypted: i=1; AJvYcCVslP6DiqB/o1D6EmAS07CEpakLqjxO9ZKVhAlBK8/Jyl3PcxfDk+WIq7/IE+p8/61jMbr29vwB@vger.kernel.org, AJvYcCXJxPZHa4N6pFPoiMIDZNkOmxEZDxw6xyFmXt+dka2sThlpvkSMXibBJvC6w5PD3DKAVdQedVBtcu+bsrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxucfp+Kaxgaj1g320lnC8121KKSaDwGWMNx5tcl0n5NKV1wVTO
+	yNeXbuoVKLoZTDuy/M9NkOhXVNBW4Okc0PTfdz60Lozds2igm2k1
+X-Gm-Gg: ASbGncsU/+wiPgViU0hU9/NglP5EdGe92Xad/CB5jPwVTEvIQkGW2DOUKtcBtWB0rCA
+	+a5Ma8Gli9p4jBQM3T1RltmgTIi76B0HetYsblJT68GDcu+Pjz3cGZzClhHRVh6PTWEwjpKbjNt
+	YjkbvAyELIzEQHNJxRDhthm5aJoy7clURthrri+VqFxvClC98eQ1lIOErYhG+viXB9KCRcTY9u0
+	l0jFWjai93VCxm32BCIqFEZoW4YAuYgEnntWBGN9UjEjK4ibDLWh4ZtsbtK4f7zv5OeerlO5jCX
+	5R1TMbBnMkj7qgHXkbBb7U9Uklqp
+X-Google-Smtp-Source: AGHT+IGdpjO2l9Q4ZwWk0hvrRHSKx5oJXCfJGpUsINUsLgfhohWEplcz2aVOrR/qYMxGR0E4RONLHw==
+X-Received: by 2002:a17:906:4fca:b0:ac7:25c9:5142 with SMTP id a640c23a62f3a-ace7110713cmr36300866b.7.1745567512466;
+        Fri, 25 Apr 2025 00:51:52 -0700 (PDT)
+Received: from skbuf ([188.25.50.178])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41c40bsm93774566b.20.2025.04.25.00.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 00:51:51 -0700 (PDT)
+Date: Fri, 25 Apr 2025 10:51:49 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/cpu: Replace deprecated strcpy() with strscpy()
-Date: Fri, 25 Apr 2025 09:49:11 +0200
-Message-ID: <20250425074917.1531-3-thorsten.blum@linux.dev>
+Subject: Re: [PATCH net] net: dsa: fix VLAN 0 filter imbalance when toggling
+ filtering
+Message-ID: <20250425075149.esoyz3upzxlnbygw@skbuf>
+References: <20250422184913.20155-1-jonas.gorski@gmail.com>
+ <cf0d5622-9b35-4a33-8680-2501d61f3cdf@redhat.com>
+ <CAOiHx=mkuvuJOBFjmDRMAeSFByW=AZ=RTTOG6poEu53XGkWHbw@mail.gmail.com>
+ <CAOiHx=m6Dqo4r9eaSSHDy5Zo8RxBY4DpE-qNeZXTjQRDAZMmaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOiHx=m6Dqo4r9eaSSHDy5Zo8RxBY4DpE-qNeZXTjQRDAZMmaA@mail.gmail.com>
 
-strcpy() is deprecated; use strscpy() instead.
+On Fri, Apr 25, 2025 at 09:30:17AM +0200, Jonas Gorski wrote:
+> After looking into it a bit more, netdev_update_features() does not
+> relay any success or failure, so there is no way for DSA to know if it
+> succeded or not. And there are places where we temporarily want to
+> undo all configured vlans, which makes it hard to do via
+> netdev_update_features().
+> 
+> Not sure anymore if this is a good way forward, especially if it is
+> just meant to fix a corner case. @Vladimir, what do you think?
+> 
+> I'd probably rather go forward with the current fix (+ apply it as
+> well for the vlan core code), and do the conversion to
+> netdev_update_features() at later time, since I see potential for
+> unexpected breakage.
+> 
+> Best regards,
+> Jonas
 
-In cyrix.c, use 'c->x86_model_id' directly and remove the local variable
-'buf' to retain the array size of the destination buffer.
-
-No functional changes intended.
-
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/x86/kernel/cpu/amd.c    | 3 ++-
- arch/x86/kernel/cpu/common.c | 6 +++---
- arch/x86/kernel/cpu/cyrix.c  | 7 +++----
- arch/x86/kernel/cpu/intel.c  | 2 +-
- 4 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 2b36379ff675..3a6daa862536 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -8,6 +8,7 @@
- #include <linux/sched.h>
- #include <linux/sched/clock.h>
- #include <linux/random.h>
-+#include <linux/string.h>
- #include <linux/topology.h>
- #include <asm/processor.h>
- #include <asm/apic.h>
-@@ -643,7 +644,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 	}
- 
- 	if (!c->x86_model_id[0])
--		strcpy(c->x86_model_id, "Hammer");
-+		strscpy(c->x86_model_id, "Hammer");
- 
- #ifdef CONFIG_SMP
- 	/*
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 12126adbc3a9..ea43e70a9b40 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -183,9 +183,9 @@ static void default_init(struct cpuinfo_x86 *c)
- 	if (c->cpuid_level == -1) {
- 		/* No cpuid. It must be an ancient CPU */
- 		if (c->x86 == 4)
--			strcpy(c->x86_model_id, "486");
-+			strscpy(c->x86_model_id, "486");
- 		else if (c->x86 == 3)
--			strcpy(c->x86_model_id, "386");
-+			strscpy(c->x86_model_id, "386");
- 	}
- #endif
- }
-@@ -1919,7 +1919,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 		const char *p;
- 		p = table_lookup_model(c);
- 		if (p)
--			strcpy(c->x86_model_id, p);
-+			strscpy(c->x86_model_id, p);
- 		else
- 			/* Last resort... */
- 			sprintf(c->x86_model_id, "%02x/%02x",
-diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
-index dfec2c61e354..07521e3f94d8 100644
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -192,7 +192,6 @@ static void early_init_cyrix(struct cpuinfo_x86 *c)
- static void init_cyrix(struct cpuinfo_x86 *c)
- {
- 	unsigned char dir0, dir0_msn, dir0_lsn, dir1 = 0;
--	char *buf = c->x86_model_id;
- 	const char *p = NULL;
- 
- 	/*
-@@ -352,9 +351,9 @@ static void init_cyrix(struct cpuinfo_x86 *c)
- 		dir0_msn = 7;
- 		break;
- 	}
--	strcpy(buf, Cx86_model[dir0_msn & 7]);
-+	strscpy(c->x86_model_id, Cx86_model[dir0_msn & 7]);
- 	if (p)
--		strcat(buf, p);
-+		strcat(c->x86_model_id, p);
- 	return;
- }
- 
-@@ -416,7 +415,7 @@ static void cyrix_identify(struct cpuinfo_x86 *c)
- 	if (c->x86 == 4 && test_cyrix_52div()) {
- 		unsigned char dir0, dir1;
- 
--		strcpy(c->x86_vendor_id, "CyrixInstead");
-+		strscpy(c->x86_vendor_id, "CyrixInstead");
- 		c->x86_vendor = X86_VENDOR_CYRIX;
- 
- 		/* Actually enable cpuid on the older cyrix */
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index cdc9813871ef..5e60aaa871cb 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -605,7 +605,7 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		}
- 
- 		if (p)
--			strcpy(c->x86_model_id, p);
-+			strscpy(c->x86_model_id, p);
- 	}
- #endif
- 
--- 
-2.49.0
-
+I see the inconsistency you're trying to fix, but I'm still wondering
+whether it is the fix that b53 requires, given the fact that it doesn't
+seem to otherwise depend on 8021q to set up or modify VID 0. I would say
+I don't yet have a fully developed opinion and I am waiting for you to
+provide the result of the modified bridge_vlan_aware selftest,
+specifically drop_untagged().
 
