@@ -1,82 +1,152 @@
-Return-Path: <linux-kernel+bounces-621119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8E2A9D43B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A7CA9D441
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87314C1BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214D69A66B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6601F2253BB;
-	Fri, 25 Apr 2025 21:39:52 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4388A227E96;
+	Fri, 25 Apr 2025 21:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rv7JzYDM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C9020C000
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92042225779;
+	Fri, 25 Apr 2025 21:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745617192; cv=none; b=X/kq61/HmsPU5qlwwdEtT7fOe2E/rwgIC3Hqp0efC+yOgidvyM+TtuFXoQbEOoA3P7t1McDosnGCK2w5tZJ328Yl/l5UR4pQA2Tf46wVVa7FB9fdNmKacBIy75skG5xUzx2KyVPFoykAzOp1yDVfptGNSIWCGfxGu4xDG6Xf4cc=
+	t=1745617201; cv=none; b=TQhlT4KAHV3EOCP5qYP0smmVcBOaPJL52NCR+qQo0GPcD7gNUiOzsQNxp6bRx1otPgYwuzXA403CQKSVVbfRqXZUu/SmaIyuHJJ8EPcEM2woDJqVGIvDHLg/cyzG7I+Kz9ksrjKb94DXtNS/7RpAlp9SmcqvFSr+O176Mu6RMxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745617192; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dxx9eNp2h3P131cEUL2efiL/j1/Q4PPq00WBBee2IUoNqSBtB46rbAmlvJUAXBwK5sgKPxV6/YleG8LFri/2tgI/UtMpcLbpHPN1yiNWVcfoBWRscIqvHfTBMgePxunZYx3+E+/jnb+ugWlwRuwUedN0B+7PsYxaXQ1nCtKh6iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7082b3d2960so26829437b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:39:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745617189; x=1746221989;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=r3Jbu/gbswyzBSozoqk/R3ttG6uYJf6pdpxtZrsnirG3IckXE/ws2aj+0DPc3/EKEY
-         nAXaHo1g988+pIfIfbSzvDmdr9/laTvnKfSQDmTntFWM2VKHZ5oEgi67xWTMPsbhSzCv
-         ZBr7ggupsFMna2M82aRcv492YFCY8mjY8kDc3tgkiPstf5ROAg5epL+icSVL3+iQak//
-         0fgRCqeIRgwugGZzRKpNvFnJRco0zeA/y161yiDdhOW3Hmw/dPd81Enwu3JdcHJ6XC/f
-         1G7FlK4Iohk2R9SOl451DDJdsXZDqGeiURH4f4hUyYcuAn2fwRmq8YsgWrM8xbF3aQua
-         +Arg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg+cVJc9kdcsmegRLD7kI9rGVfCDH2vINQijkBREHxf+gbmy6AncS8HsvwWSmVwV3jLecNVj9j8CTb3Bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1v86NDQ4iN0Puk2pbFKYwon+MlvgaqbyN0Vrbmk/e9PVLnOz2
-	euWSqaZSglITtLwciz1dEFRUTK/IPMqqcRKgfMT+RPrmwMyJm9Kf
-X-Gm-Gg: ASbGncuUb37WIslLuH0TVD0WU6EobXoK/lRULXqjKnYzx1FIfGCrBu/rr/s5OazRkPV
-	A/ZQot+ubWHE/E5DmOXjUd/pmjKcQboulnAhYnUtzH2lDR4oaKeTsmB58BE20BBWVQaKajn0OE9
-	MrwsyI+AaYJgGk0jdGWQ61+9La6ffNWNDqltyiXAFs1AOOD+EyJ7T4vs4CVPy84HxXiB3i+E4t/
-	M7SDu2o0KmY3o5Q1vebxsakv1Ty+y7fKbkD6xJaS4Xe1c/TiXyFj1BolrWSR9osJJeeUckGi2yt
-	Q4Eb3+2KRceIF4pgmeXmgmwSIaXQKkcCxL+bhlQf
-X-Google-Smtp-Source: AGHT+IF4TrG0C0V3jSMel0JYpJKmjFKhrjvmL9BV0Vusr56pRZq+FiTE/fyScARGvN79oRmTL5lDMw==
-X-Received: by 2002:a05:690c:25c4:b0:6ef:77e3:efe6 with SMTP id 00721157ae682-708540eef1dmr56306747b3.13.1745617189476;
-        Fri, 25 Apr 2025 14:39:49 -0700 (PDT)
-Received: from [10.100.102.74] ([95.35.174.203])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7084b9cbf7bsm8429567b3.110.2025.04.25.14.39.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 14:39:48 -0700 (PDT)
-Message-ID: <bd155996-10f4-45ca-b4a0-dc54e497e3a6@grimberg.me>
-Date: Sat, 26 Apr 2025 00:39:45 +0300
+	s=arc-20240116; t=1745617201; c=relaxed/simple;
+	bh=gpEjCaRQAeZ4xN2QXu04ciaWVtO8D/BOtpyF745Ope0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GPmFsdvcrtLBJ0SAhq+9lZs4k60Uv3dlO44iVOce5JWK4XCYxbFYXro4Ikz/CxxmsUAi5OEkhE6ZL3/xBG0AjexuAUnK8C+bKKaa0ShuDHB0DZEAAWZmBXR8MjtAgR+VMWUErhUN6nbhlH6YZhcgRApbz3esfDq6qYNWs5ZW+zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rv7JzYDM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71009C4CEEE;
+	Fri, 25 Apr 2025 21:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745617201;
+	bh=gpEjCaRQAeZ4xN2QXu04ciaWVtO8D/BOtpyF745Ope0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rv7JzYDMADbddJKQpQPNdj/yCvWSTJJ4CV3A/h0Lh77pJm3MiYRY/rE53GjO5QM27
+	 hr0HHCiUDrO3NNOs0aRWuQoBnv4FYiTinIAHGJvR4CsbCmY/xlraXldx7sRtmBDSSj
+	 DCf1X5DFE4/koSPmuEnXsk9ApgHIJxHienuM7w0FJOXEg8p384hJMw7q4T4fcsEkkE
+	 73wepkAfUYVc+FNAfQ2MIZkEugoiHsc8rVYplO0xXcLBU7kVDF/sMdqtk4sMT/Y5tr
+	 i6lU8g4TAMFx/HcKt4w0H4dA+jj6iF28LgH/m9dVPEpzM/65QM3M8saKRD78XqLlC6
+	 F8HHgkQyvqbnA==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3fa6c54cc1aso2063504b6e.1;
+        Fri, 25 Apr 2025 14:40:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXA9hqGEVXjPRhx1OR9QBz2Ez0GijJ8DEHdAs5n7jk/o6hn6PifYEcy65g9VVRQbNaJ7tBTzqJKdYqIw7k=@vger.kernel.org, AJvYcCXw9o6Q1uaWR2ULKi/0jA/QwutOx/LjcU9KeJKPEKUg1GZnnb7iUbxChk4mLZhHb1Q7vcs8lceu8Eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/ACdIOzwqA5HIRRO2sZi2ZOul4smPwq4RUGev3R9rfrcQcbq1
+	6oqmUwk3DKnP/g25s4FOc1nbPy34bi2bozvMNIId4Inkf/gKgh8KXpNVmDbB5clz4p/bpKgENfA
+	ZT/8UFdCDitY4NTNW+AyiLKL+fqk=
+X-Google-Smtp-Source: AGHT+IEsffxvzq9Yr0/TB+vgHWzntwUD/rbIhUb17/qPQ3R6onl2Y6tmBGAUOYjZgUCXM6MsgXDHEc83j3KOHFY9CAk=
+X-Received: by 2002:a05:6808:2512:b0:3fa:d6d4:8160 with SMTP id
+ 5614622812f47-401f289418cmr2583961b6e.10.1745617200762; Fri, 25 Apr 2025
+ 14:40:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/nvme: Add quirks for device 126f:1001
-To: WangYuli <wangyuli@uniontech.com>, kbusch@kernel.org, axboe@kernel.dk,
- hch@lst.de
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com
-References: <5AE9DE3EEA7F8772+20250422121725.162229-1-wangyuli@uniontech.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <5AE9DE3EEA7F8772+20250422121725.162229-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <3344336.aeNJFYEL58@rjwysocki.net> <47159248.fMDQidcC6G@rjwysocki.net>
+ <1c6b70d1-279c-4d9d-ae31-2751daed04f6@arm.com>
+In-Reply-To: <1c6b70d1-279c-4d9d-ae31-2751daed04f6@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 25 Apr 2025 23:39:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iFD3FddYTiOwSJ3uAz8mduh134WE2U8spfJtBs4At6Pw@mail.gmail.com>
+X-Gm-Features: ATxdqUF9mvv7igZMHI0jECB6e_wqgQfhBYsX95BGLNNQhV1xaEQdyY_JC5sdlMI
+Message-ID: <CAJZ5v0iFD3FddYTiOwSJ3uAz8mduh134WE2U8spfJtBs4At6Pw@mail.gmail.com>
+Subject: Re: [RFT][PATCH v1 8/8] cpufreq: intel_pstate: EAS: Increase cost for
+ CPUs using L3 cache
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+On Fri, Apr 25, 2025 at 11:32=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 4/16/25 19:12, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > On some hybrid platforms some efficient CPUs (E-cores) are not connecte=
+d
+> > to the L3 cache, but there are no other differences between them and th=
+e
+> > other E-cores that use L3.  In that case, it is generally more efficien=
+t
+> > to run "light" workloads on the E-cores that do not use L3 and allow al=
+l
+> > of the cores using L3, including P-cores, to go into idle states.
+> >
+> > For this reason, slightly increase the cost for all CPUs sharing the L3
+> > cache to make EAS prefer CPUs that do not use it to the other CPUs with
+> > the same perf-to-frequency scaling factor (if any).
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpufreq/intel_pstate.c |    8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -979,6 +979,7 @@
+> >                          unsigned long *cost)
+> >  {
+> >       struct pstate_data *pstate =3D &all_cpu_data[dev->id]->pstate;
+> > +     struct cpu_cacheinfo *cacheinfo =3D get_cpu_cacheinfo(dev->id);
+> >
+> >       /*
+> >        * The smaller the perf-to-frequency scaling factor, the larger t=
+he IPC
+> > @@ -991,6 +992,13 @@
+> >        * of the same type in different "utilization bins" is different.
+> >        */
+> >       *cost =3D div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->sca=
+ling) + freq;
+> > +     /*
+> > +      * Inrease the cost slightly for CPUs able to access L3 to avoid =
+litting
+>
+> s/Inrease/Increase
+> and I guess s/litting/littering
+>
+> > +      * it up too eagerly in case some other CPUs of the same type can=
+not
+> > +      * access it.
+> > +      */
+> > +     if (cacheinfo->num_levels >=3D 3)
+
+This check actually doesn't work on Intel processors, I have a
+replacement patch for this one.
+
+> > +             (*cost)++;
+>
+> This makes cost(OPP1) of the SoC Tile e-core as expensive as cost(OPP0) o=
+f a
+> normal e-core.
+
+If "a normal Ecore" is one using L3, then yes.
+
+> Is that the intended behaviour?
+
+Yes, it is.  I wanted the Ecores on L3 to appear somewhat more
+expensive, but not too much.
+
+It looks like *cost +=3D 2 would work better, though.
 
