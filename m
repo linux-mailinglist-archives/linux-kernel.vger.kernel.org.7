@@ -1,171 +1,169 @@
-Return-Path: <linux-kernel+bounces-619909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C992A9C350
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEE0A9C357
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7321BA3933
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48181BA3CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A82235C1E;
-	Fri, 25 Apr 2025 09:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DB92367D1;
+	Fri, 25 Apr 2025 09:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fb0THmZo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GziSayXt"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F3F1AAC4
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DCF21638A;
+	Fri, 25 Apr 2025 09:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573093; cv=none; b=ccY0GvhNhwJT/BsThlkjgrTrBxQypMRNPiE7p0TH8wmZ9CA60egbv0PsFyYAE0wrevRFcwloAVIzwzCd0yb0+8hsSt12SduLwbsPUsV2wn1LlMKWnSUAnn43cSuFNZPn7XZSQquulP+XFxaMFXRg1ZTS0xlMO58j4rx36rXSPqk=
+	t=1745573119; cv=none; b=p2xyKyxeEv/XRbYHCGnjFla3byyLY8UTlcRp8OcEJHalX9u726UuErGdJBTT9OiXFACqDQewdipJUgjNjbUjka4i2kYfqznDxXLWJooRKYKJDvFvnNKyTfQBoDguMpT9ptVBQoMoggIha6e0IGOvu08R7tRmar2xo+BG5wBbkeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573093; c=relaxed/simple;
-	bh=Yc4BwXcDlBm1F9/eAPkhhmBz3Iwfa2QIOUzglIaGc98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q+vtpf4cvDlf832x4wAcT8EyPnaX0CysoSK1DcY/VaP4T+d0mwIVpmd27lm9Bc1iiWn8CdCf+LkogMruwBX/sq/2Thex2Aet/aamMni7yzWh1ZxXMDPqTUphQXHlEcJBoVztUHwzJBOmLB+1SGZ5az0rFhUX5aUDE+3MiMLIl+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fb0THmZo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8TCsM008732
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:24:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6TOVSLiHysmlmuAA0RHIHbn82IoarWugi9dE7AH6+e8=; b=fb0THmZotVS5nHV8
-	0N130J808EBa/0W5Gm8f/hAMIKSxI3bAFiZRZf1zTqz4bmTqelFz8wJU6IfKsbhY
-	o9W68ieDv/RsIWpNZ3rbMbjrPlpx87bUbKFMgicGJ4qWnO/9c0EwtyrLJZ8mM7uQ
-	7czMfxp8TYtvAS346utC/03lQkvESDO7ytrbF9Qcp5VmBAsWawLAIhb1SpQDmpDt
-	WMOae9a6xYXqjWHVMGCZsrloG5kbhOAcMfMQGzjGJaqPQ5CyqbEeih9qObRyiPYK
-	DNUfDtC2VAkSuNq/t+LCIT2moIv37QCB/2yvR7xd7JAWlDe5ytyPedxsp0a/M+Z1
-	7TfnZg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jgy8eby-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:24:49 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-47ae9ed8511so3637321cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:24:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745573088; x=1746177888;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6TOVSLiHysmlmuAA0RHIHbn82IoarWugi9dE7AH6+e8=;
-        b=BpC9vGngjgtZBHcBFAwyd2/W8JSEKZd+mjQKccp+H4t82weSIH3k+8im37rt5VgeQ0
-         Lx3ogA6RokmrB3OYRH6Jcd8JyZYtYSzcW/8o7SYxNkktq6AE/lHJW1tKC91mcMZ7GkjL
-         y3y+MI1p9lchg9+zyjOeGm3L6RdoBjMwAdkqpFLNADoRE1lyaklg3PTJ1K7jw53i1MgI
-         X3VSFAbcYaEUwoK+Xz3QxNKsFw4Pl7CeERGETzIc6/iCA9YEy7FrhSttjEoudKA4d8Zm
-         ZchETbLIKfUV7uKlliaNjB1M3cNUVifsV5syTB0XLK6U9HR5k8P/OS+xht5s8Kc/jQp8
-         FRYg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8G3105KGAKhefc74Kg6KUheRajem7VOjSCtK3Uw3I0pZXejK5L7Y0SlNdMSU2kl0EipabTAYBFArumHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywcMc6leiUu8ictfWLOh5LGQCQWKVyWKENiZRBjbg70EbVO0rn
-	6lVDZ7OqlOP6gppOp4T5XofcSddvdJNppfLr0vDbXuvZTHmR6fT9te2fk1NZMVWBkGU3nh7mY2p
-	7VHJSWJaLocwEPt0eg5J2q+0f2xHPbqts9yxLX6h9tn/iR5cDzeTUENGCSf0nQ2Q=
-X-Gm-Gg: ASbGncswmdOyKvy3uzw8J/oFSzDn7r+1BdU+RClaSqQ5EAdNnBwNKAF/aTyuOQQCRkw
-	Sr5bRuP2NXrVvEBEhE0gfuTbnsidTVF7gUuazJbyPfPX5eng0Tfu87uR1MPj4CBukkKakntFfcV
-	8L8AVYoWcWr5KC/+P0ZEbUQXi/3s61s78Jjw+SHWnKG2x4kLJSHUdei4IEJrtfuBtgjfg/srBbe
-	P0AYcGe6AwzklZoek35+mS7i5beK8FI0LWYTrGeUiJGGmNuAcH6QADUOI6QUPCqLppLxcSXVsHX
-	BpzpSvvT8U5lCfL1wIhlBMjiDXk=
-X-Received: by 2002:a05:622a:1a28:b0:472:1de1:bc59 with SMTP id d75a77b69052e-4801c796973mr7967931cf.6.1745573088536;
-        Fri, 25 Apr 2025 02:24:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECDV4NjfiCTRpDdBppQk7mkiFY9COAykAendzS1IIWlk9k/YXc3xDR978i701ANPjxYOXj4Q==
-X-Received: by 2002:a05:622a:1a28:b0:472:1de1:bc59 with SMTP id d75a77b69052e-4801c796973mr7967881cf.6.1745573088207;
-        Fri, 25 Apr 2025 02:24:48 -0700 (PDT)
-Received: from [192.168.65.5] ([78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb0becsm102529766b.167.2025.04.25.02.24.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 02:24:47 -0700 (PDT)
-Message-ID: <e83b58ea-0124-4619-82a5-35134dc0a935@oss.qualcomm.com>
-Date: Fri, 25 Apr 2025 11:24:41 +0200
+	s=arc-20240116; t=1745573119; c=relaxed/simple;
+	bh=cLDw/pFiQMKKNBt2vgKzSce0c1mxZowhfJuiq/FLoMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOOrqdjrZwI3KRTo7p1zpjuqVdxuoubpDNPqFT2iQ8cqv663QQIoc6xPHx4YHq6tvnZgoN9zCWVFK56fLnMBkcnN7QLDz0TraTzSygQTaiG6pV73BpPkux033Tu9NmBouFro7jCQrWb64VB2E4wpBR/25bDrXPjGIIo1x+EAuOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GziSayXt; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lxGr4WcpRX1IjJ/LypAJtCvOD84z/5iROdqFg9S4Asc=; b=GziSayXtt09diC+kfs0/9nXHRZ
+	ieNIDpJPy1pHf705DcK2RkuJ0u2udgnRQEIg3YWp3qcbgwPStTt2CHPpGO+qKX5xUzbBv8YCm2dLn
+	q6WR2sxlJpNUW5wCuQq54EcJMFzD7gVgaOgTkO2tjg2Oj5xYut+atmYaA94Ofd2dvaZwdAgo35q/H
+	FrTDW/t1PrxTwU41GtxLo7fTFjqF8MR6Fbmcxgj7nR0voxO/sPRtmZzhlp6E3gCP7+NkHOaUadY8l
+	okMGCMPIUg0wc3OYsUmmL3ihHfp7D4n+TyfkyWj/MuxcVFiZIj/BKFm3ziDa3W1dNodxjjLLxZCPO
+	Y9rhxgcA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52702)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u8FIn-00005f-2k;
+	Fri, 25 Apr 2025 10:24:57 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u8FIh-00021A-1a;
+	Fri, 25 Apr 2025 10:24:51 +0100
+Date: Fri, 25 Apr 2025 10:24:51 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] Documentation: networking: expand and
+ clarify EEE_GET/EEE_SET documentation
+Message-ID: <aAtU45S6HChgb0_V@shell.armlinux.org.uk>
+References: <20250425084941.253961-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sm8750: Add Soundwire nodes
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250424-sm8750-audio-part-2-v1-0-50133a0ec35f@linaro.org>
- <20250424-sm8750-audio-part-2-v1-1-50133a0ec35f@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250424-sm8750-audio-part-2-v1-1-50133a0ec35f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA2OCBTYWx0ZWRfX1q6zsbWDgOf1 qcPbnm+vHhMSTL0CJV85QC9tgJkD+ekU7neDv8U5XzgbljweN9PS1KRXm0Cb4wYWvQfMCL5QC1e IQCbsx50y/e/nQBLGRFffQ/xUW/a7mqpf8bgiijZoeDE4M8ybiRG7+e/jxKfcdKsWRj7W1Ir4HU
- FWg81ppiCXRtMBNSOarxD46iK9DiLxxhDgXVS0eBotSzfOGZSR3o2DoUMdMjS7vZIJnveiUu8LM whBnyi5W+Or1Be2AfRpcvwGJmwikAZ8HmPZvXMW9UG7S9zsd2TcydiUv/b1YVEz7xoHbg0dAhoi eMSmbtRS0TGerr6GWVnoxvoZa8ZYjJoTasbVXSli/es/sckTbnMXA4vhUj27GLtfNUiUUykFzYh
- IOTK3f+bNcI2HAtoY6YPcQ7XTBwiRHSPKGF+Mw7+ghLmSHnZfZg5zpuraHhTGl3ypu/6XOnK
-X-Proofpoint-GUID: h0mKcoHQ2hNBTSKvX3mzkcnclGJ-2I-y
-X-Proofpoint-ORIG-GUID: h0mKcoHQ2hNBTSKvX3mzkcnclGJ-2I-y
-X-Authority-Analysis: v=2.4 cv=M5VNKzws c=1 sm=1 tr=0 ts=680b54e1 cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=qkmjNN0peoRQDp3El6UA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0
- mlxlogscore=788 malwarescore=0 impostorscore=0 clxscore=1015
- suspectscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425084941.253961-1-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 4/24/25 11:40 AM, Krzysztof Kozlowski wrote:
-> Add Soundwire controllers on SM8750, fully compatible with earlier
-> SM8650 generation.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8750.dtsi | 122 +++++++++++++++++++++++++++++++++++
->  1 file changed, 122 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> index 149d2ed17641a085d510f3a8eab5a96304787f0c..1e7aa25c675e76ce6aa571e04d7117b8c2ab25f8 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> @@ -2257,6 +2257,36 @@ lpass_wsa2macro: codec@6aa0000 {
->  			#sound-dai-cells = <1>;
->  		};
->  
-> +		swr3: soundwire@6ab0000 {
-> +			compatible = "qcom,soundwire-v2.0.0";
-
-They're v2.1.0, same on 8650, there's a number of new registers
-
-[...]
-
-
-> +		swr2: soundwire@7630000 {
-> +			compatible = "qcom,soundwire-v2.0.0";
-> +			reg = <0 0x07630000 0 0x10000>;
-> +			interrupts = <GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 785 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "core", "wakeup";
-> +			clocks = <&lpass_txmacro>;
-> +			clock-names = "iface";
-> +			label = "TX";
+On Fri, Apr 25, 2025 at 10:49:41AM +0200, Oleksij Rempel wrote:
+> +``ETHTOOL_A_EEE_ACTIVE`` indicates whether EEE is currently active on the link.
+> +This is determined by the kernel as a combination of the currently active link
+> +mode, locally advertised EEE modes, and peer-advertised EEE modes:
 > +
-> +			pinctrl-0 = <&tx_swr_active>;
-> +			pinctrl-names = "default";
+> +    active = (current_link_mode & advertised & link_partner)
+
+... and EEE is enabled.
+
+EEE active is more "EEE is enabled and has been successfully negotiated
+at the current link speed", rather than "the link is in LPI state"
+which I think some people have thought it meant in the past. I'm also
+wondering whether this should also include "and autonegotiation via
+ETHTOOL_SLINKSETTINGS is enabled" as that is necessary to allow the
+PHY to exchange autoneg pages which include the EEE page.
+
+> +Detailed behavior:
 > +
-> +			qcom,din-ports = <4>;
-> +			qcom,dout-ports = <0>;
+> +``ETHTOOL_A_EEE_MODES_OURS`` can specify the list of advertised link modes.
+> +
+> +``ETHTOOL_A_EEE_ENABLED`` is a software flag that tells the kernel to prepare
+> +EEE functionality. If autonegotiation is enabled, this means writing the EEE
+> +advertisement register so that the PHY includes the EEE-capable modes in the
+> +autonegotiation pages it transmits. The actual advertisement set is a subset
+> +derived from PHY-supported modes, MAC capabilities, and possible blacklists.
+> +This subset can be further restricted by ``ETHTOOL_A_EEE_MODES_OURS``. If
+> +autonegotiation is disabled, EEE advertisement is not transmitted and EEE will
+> +not be negotiated or used.
 
-There's 1 OUT port on this instance
+Maybe similar here.
 
-otherwise (modulo the settings I don't have a reference for)
+> +
+> +``ETHTOOL_A_EEE_TX_LPI_ENABLED`` controls whether the system should enter the
+> +Low Power Idle (LPI) state. In this state, the MAC typically notifies the PHY,
+> +which then transitions the medium (e.g., twisted pair) side into LPI. The exact
+> +behavior depends on the active link mode:
+> +
+> + - In **100BaseT/Full**, an asymmetric LPI configuration (local off, peer on)
+> +   leads to asymmetric behavior: the local TX line remains active, while the RX
+> +   line may enter LPI.
+> + - In **1000BaseT/Full**, there are no separate TX/RX lines; the wire is silent
+> +   only if both sides enter the LPI state.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+I'm not sure this belongs in the API documentation, as (1) this is part
+of the hardware specification and (2) it brings up "what about faster
+link modes" which do support EEE as well.
 
-Konrad
+If they're going to be looking at whether the physical signals are
+entering low power mode, they're going to have hardware to probe the
+signals, thus they've probably got hardware experience and thus would
+surely refer to the documentation to work out what's supposed to be
+happening, and probably wouldn't look at API documentation.
+
+> +
+> +- ``ETHTOOL_A_EEE_TX_LPI_TIMER`` configures the delay after the last
+> +  transmitted frame before the MAC enters the LPI state. This single timer
+> +  value applies to all link modes, although using the same value for all modes
+> +  may not be optimal in practice. A value that is too high may effectively
+> +  prevent entry into the LPI state.
+
+As an interesting side note, stmmac defaults to one second, and it
+doesn't prevent LPI entry.
+
+Having a high value might be what an application wants - EEE introduces
+additional latency to an ethernet link, and one may wish LPI mode to be
+entered when e.g. a machine in a data centre has all users migrated off
+it, thus allowing the ethernet connection to it to fall silent.
+Otherwise one may wish the link to stay out of LPI mode, so choosing a
+high LPI timer would suit that.
+
+So, this is policy. I'm not sure statements about that should be in an
+API specification. I'm also thinking that surely one would understand
+that if one sets this to 1 second, then there needs to be no traffic
+for 1 second before the link enters LPI state.
+
+Finally, I'm wondering about the duplication of documentation between
+this document and include/uapi/linux/ethtool.h. The struct definitions
+are documented in the header file, and it seems we're describing the
+same thing in two different places which means there's a possibility
+for things to be described differently thus creating confusion. I
+think we should have only one description and reference it from
+other places.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
