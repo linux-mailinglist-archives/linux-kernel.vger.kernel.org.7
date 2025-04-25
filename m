@@ -1,177 +1,348 @@
-Return-Path: <linux-kernel+bounces-619497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F307A9BD5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB98A9BD5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B563A91D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7699F9A2301
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A5B1B2194;
-	Fri, 25 Apr 2025 03:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NmMXaRsx"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2066.outbound.protection.outlook.com [40.107.223.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C941DDA34;
+	Fri, 25 Apr 2025 03:53:14 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFCC1B0430
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 03:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745552940; cv=fail; b=iTRNP2WXQXNN2U/RqIRHMDUpSPpBknVRSVzfJ628E7YOtDjU0n5065oLOIZUCF6/QWYAqJynb1d4mMQyY+qZoNneCPHaDhq2DZugDdcFA+ElNDJf9I/P+uHLNdSkHT/NJAw0T0fMAaR9wUJPpLV/Sm7LMOvM8h4ADRuQXI5LooM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745552940; c=relaxed/simple;
-	bh=JmhF1Z4MfxhBry5tVMAPms1kspvibOtuHDPORPafbmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YO9C+7A+3waDIDcVhbolzWCy1SqmpzVMPHuOVHqxfNRvBqWTjOnSaRz+DnHt9SyYRN07GsPf/MVtG9Ntr3eHFHtC9viF7Io8uphM0qAgRQgw1ku1+0Dpq/84TTUX24/QkWpUu+TXtWUv5HDAmvTD9TmEGx9pOKPW9BoCzt51wkg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NmMXaRsx; arc=fail smtp.client-ip=40.107.223.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E0RCGgLKW2kZdMmYXzafQHE1A4wQcxInDSo7PZMJ9A3NS3BoaUgQi+SC41q8mn2OhR6SBHtJgIUwD73at+ZB3osnJOLdXCM3o0RXrx2PoYte3NwE/Apgbk3/0ovWPoiD3t69747i5i7M3kL7TBgNXsCGL52p1yHAU+xSXCwBAn3cMA2S7fZpuckfB0Quhwqw62JQTDDRbfIttkkfMFithxeWLSNqLNzna5qaHbDTHGMXOH5X4ei0vDtlWzCpAgfxpcbjYKSMosTZyMXfzCkP3BjGMK1cTIDTFFU2UYChz/hKuNyEHH5zARXAVnuZ8qLGOP3o9Ew3VzpbifGRYC+fFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=arh1hy98O7Tc3sthjRlH/8Cnh1y6FGSKLYiUyOLUJ1A=;
- b=SXiLglx/64ls4t64QiYQLCD4esDcLTMZ/o8Couua973nWoQ98HC4gPlqHe+o5ayAeMb5KAMKtv6bVHkh3w3c6jX+jpzeae54W8CNhopH+Moh/av2z8VxANRewLE0Ts3GVj94wpYsJM1IVINcRCWHLsPZWTtW5UOomJcDOCBrACGGY5f+ZUyPmZuaQd5SMa11G1ZzYv1gXow960isrJDIhM7ySW8gSfUesCaNEpJD+paPV7qL9T1R8xzgR8WvrEgVGgw7LkmCIxwmJQfR4EguzXQiNZWX4ST/2B7k4CmWavVxISJc6dH7N7SsyZvSlzCDf7LAS/hJxqFKKQlIpuj/oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=arh1hy98O7Tc3sthjRlH/8Cnh1y6FGSKLYiUyOLUJ1A=;
- b=NmMXaRsxi9LgJgSOxp9qnoBvgbec3bbnRdh2bUcR9F3gw+hYfqgnFlD9Wdn1t7nxDVRXHQMKsDyOIJhl0s9L4zkD+A9WDuP12I7QThGiE2uwCIYRFJk5X7yCi0byjfBO3MheZzl8ptIZBtLex2YPDFcqWMtCfECiRV+uQaUfKN4=
-Received: from SN7PR04CA0018.namprd04.prod.outlook.com (2603:10b6:806:f2::23)
- by DS0PR12MB7560.namprd12.prod.outlook.com (2603:10b6:8:133::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.23; Fri, 25 Apr
- 2025 03:48:55 +0000
-Received: from SA2PEPF00001506.namprd04.prod.outlook.com
- (2603:10b6:806:f2:cafe::1a) by SN7PR04CA0018.outlook.office365.com
- (2603:10b6:806:f2::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Fri,
- 25 Apr 2025 03:48:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00001506.mail.protection.outlook.com (10.167.242.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Fri, 25 Apr 2025 03:48:55 +0000
-Received: from [10.136.38.60] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Apr
- 2025 22:48:52 -0500
-Message-ID: <3fb752bb-793d-4c0b-bf7f-12d04a4e7cc0@amd.com>
-Date: Fri, 25 Apr 2025 09:18:14 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CC41B424E;
+	Fri, 25 Apr 2025 03:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745553194; cv=none; b=KWXrhxY24DiVmqbgYPrzRxt6UrtwaG2IKAHAcUdRCJywDcpPESXyGFMZ598azl8CqAsCi1pUXq8ceEy8zpw3L+arFUTz3mJnNbUAwYlyEQSIGuhqkaiTxFqUWGrrn1GSqMXA5cIKdHPf+8+/gLISM8DjhlNkHOkjV4LW3ipbLsU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745553194; c=relaxed/simple;
+	bh=mOrJbm2vgRrNlZG91GOk+o0J0tHArqPZZ6vMJ9MY40M=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=pLsa/nwwhzrYZOUDkttiA3giGI0ixwu7OPVQZ1YYEUnBcOSdqv+X2wwDFtfW5t1ctJVBEkHXoP6bPjZZv24AfkgIDzAXQ0a2sUFPqj3uWjqEKPexqC+RCkC98KsNxpCZ0BzweDgqCoBv2IGLL0AJWxIfu0PPlXIFSDUFuuiCADI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+X-QQ-mid: esmtpgz16t1745553140t3a03b901
+X-QQ-Originating-IP: dioY4icXEildtwSsco9C30TQ+RFm7FKYxM5RZp15kmE=
+Received: from localhost.localdomain ( [175.9.43.233])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 25 Apr 2025 11:50:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9689858348433697704
+EX-QQ-RecipientCnt: 7
+From: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+To: colyli@kernel.org,
+	kent.overstreet@linux.dev
+Cc: linux-bcache@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiahua@kylinos.com.cn,
+	dengwangbo@kylinos.com.cn,
+	Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Subject: [PATCH] bcache: add the deferred_flush IO processing path in the writeback mode
+Date: Fri, 25 Apr 2025 11:50:21 +0800
+Message-Id: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
+X-Mailer: git-send-email 2.18.1
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:kylinos.com.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: M75I2DDAzREF8dfP3paVPhLUffRRqGRNTxPH5MWnTIFbArRpzInfuKG8
+	RHM0SYAhfm366Y1q8CL16pVz3jCWsvg/ZYHrMXspFqGJYdQDa61jD7ztEXGSWs74SUkKZqk
+	zV4zRA5PgdS1IBSL0halv+tBY1pBekKp8l3C9GGBaT2bJgvI+f5cjZXHcx7Hc5QROugp3kD
+	3nQgnHTGs0xrMMJyXUzK6m4aqg6GQuQd1ZfpI4nJXrpBP74TArq6Ff+DNaG79AaJpHkl3gq
+	Fya/r42Pu/UHqExLaTbD3dAEA4zv6gAWh+yoIm5aTCXxe66IGUEugJEJfAuBB3RXMj7qY6v
+	krACMbRwoyHgt97UXk5vEa9uql6tXHcJmeCBlFOK0dHIUiVaGFudqCpSzp3qqFW1y3oJgx2
+	Lu1lPbonHx1nRmzXJNtYAa+2ormxfOAZZrO9FGL6b5m4cPF9/9vrINw468PLeuq3LicP1xO
+	sonrBRfCey5HSJdUlmnmhrId9zpFyCo3thTtNVW3ZD0uaGj+GWBT2vlYuENMIDz/mT4YEm3
+	qfaL18bUJbBT8TSAZcUIxokHEVUjPbUdLmi6kQ6oyteDm7fWJbV8v5vYx4dHj7VIKbQz1zI
+	SpZFTpuNmgnkqw27/2RcCmrhCMd0k7dCd7+OeotFv8hhU3j/9fbD6TJkt6pZ2mU8FZdem6s
+	wucgVtgwP302Z1DQXBYNOCfVC9j992Iq8Mf/Ui5X75c2ttbqaMf5jdobjmtR6BcDNoT/nL2
+	ZhmHv16/mDiFn7VDxCl+IY+IJgMbInts5oterQ172s011iFQSEABNrlMpCc2CDQMAO3TPfT
+	iTzXrVmOIwNQOsPYRV3qIS+hbALEg+7m9GezuiDMhXfsvNIu2aL4WwK/QJihAYvxNe/Tg/i
+	RQNS2sVtG7y6MYGuM4dY0sqdx44gsr/frqT/vNYnkbBc1imD4+kf2Ura3+QkyAfZShho7AM
+	APYdw8aBWcxkdAIAhfzyYv1WWnxBrpAtdI9wGjSQwLc/I2VJmgGXTiAaYj0AUqeqxC3gn13
+	MV2+RlhssoER1rkgDifzYrPj4iSLM=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/3] Sched: Scheduler time slice extension
-To: Prakash Sangappa <prakash.sangappa@oracle.com>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "rostedt@goodmis.org"
-	<rostedt@goodmis.org>, "mathieu.desnoyers@efficios.com"
-	<mathieu.desnoyers@efficios.com>, "tglx@linutronix.de" <tglx@linutronix.de>
-References: <20250418193410.2010058-1-prakash.sangappa@oracle.com>
- <20250418193410.2010058-2-prakash.sangappa@oracle.com>
- <20250424141345.7F42GFmZ@linutronix.de>
- <DE11FCAF-4686-44AC-82AD-F0672FE450E1@oracle.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <DE11FCAF-4686-44AC-82AD-F0672FE450E1@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001506:EE_|DS0PR12MB7560:EE_
-X-MS-Office365-Filtering-Correlation-Id: da0593e2-5dd1-47df-2834-08dd83ac1a2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WDhuL0VOalVQTDlzUm9BamxkN1lhb0NkNUU2MXN1bWhWRUlXTGYyNXBLTDQ5?=
- =?utf-8?B?ZFl4REhTVVVxRGEyZ2dPMzQyUWcyS0hzak1jdHY0djU5NG5KQmFLajBWNnU5?=
- =?utf-8?B?YWpIQWU5U2x0VnVEcDBiYWpwR09MVkNQMW9scC84blRWMjdLVDlTc284Qzh3?=
- =?utf-8?B?NDZEU255TW5RbjVENUl6dlIxUUpJVVhRQ1FEZU5oUjc0Sy9kV0N4dStEV3c2?=
- =?utf-8?B?KzhZSVo0Mm1qN3FtRzQzWFpXU2hzajNjeGhlSUllN0NrQWlkY0FvZWpuUmxB?=
- =?utf-8?B?R0pjYVM1RHhrL0lHamxwdjNTanRQSzBsb3ZCRC8wSDJKcmhMWTRVZCtMN3BW?=
- =?utf-8?B?V0h0bjIvN2hTcWxubmZZQTB3b2VjSW9JMVZ0OWc4Tm0xSnNORWFyU1JPRjJO?=
- =?utf-8?B?akVLZmZsMC92ZWhxYS8vYmJDaXd0MElHSkNQSlBFVll4a3psQXJ4Sk5yMFMz?=
- =?utf-8?B?Y2tKS2hIbnBzai93NjgxRWpYY2RldVh5YU1RY3Bkdll3SGhJM0dGMFhkYnVO?=
- =?utf-8?B?SzRObHB0S28xU0lmUEdGM3NVUmNyRUNVUVBwWGZxcDE4ZVhncVIybHNST2Np?=
- =?utf-8?B?c0tiQXRQbTVpVEFjNmRMRkd1eHVYbkdaRU1VcEV3QmlSVndyR2FXYkRoMk4z?=
- =?utf-8?B?c2Z5Y1RMVFovakRpYjBCcmkrSGVVS0hXdjBqM09kQ0ZFMVRaOWxZaWhQeXZz?=
- =?utf-8?B?UVIyVEU1YjJkaW94dUJ1Tm5lNS9ZMDlvaXBiWUV3bHBHQklaZkxhZDcxK3BY?=
- =?utf-8?B?MW1sa0J2MHluQ2ZHcUlCWXJCT0p3VFNaaHlQTVJ5TzdHZkJSZUNXT1hkUXpB?=
- =?utf-8?B?aEhvSnU2MFh3VEdKQTFqOGZWaEwweUo1eXgzOHY1WGwrdExjMk5GVEtxcGV0?=
- =?utf-8?B?dkVaQmhZZXRyVlVDZ3VVWUc1b0JiVUppQ1liSjFNZVh1cXMwOGFvb1BoQ3pZ?=
- =?utf-8?B?VWwzUTVzSFRLTjV6QWhXVldTQmpPcnlxTzdibnA5WnFRMUdvT00yZEE0TkJZ?=
- =?utf-8?B?dy9PZWd6ZVlFNFhmVnoyYzBQYzRiclBJWGFCYmtqYUNYS29TZFRUK2lEeTVy?=
- =?utf-8?B?ZEcrWXU1ZitweFJhbFVEQzZjRUgxcXhHK0pFT3ZqRGd6UWVUQldQWElpcGdS?=
- =?utf-8?B?Tm9Selppdkl4SEcxM3RIYWRFWDJSVTRpaXFFVWhhQ3YzVjJnS2E2SDJnQVV5?=
- =?utf-8?B?d3ZXM2pPZ3o2UEhsTmtXbktUS0JkRUdUWFFxb3pFSUxZRmcrQmpDVSttdWxM?=
- =?utf-8?B?amk4Mm1pRitwNDlac29UVERHZ1Znem9ySFdCOENrY0NBSnRuWmFEdW92RGYw?=
- =?utf-8?B?bTRJMFNpU1dnNzZOYnhrN1k4TkQzU1phenl1YkdLV090Q1ZXMEQ3ZVRFbTdv?=
- =?utf-8?B?VmdaamxZcnZMRi9oZVhwREorR2hybHVqSWo4VXBWRG9RdTFRaUoxWWFDdDlP?=
- =?utf-8?B?WSt6aWxtTzIraXU1T0o1UVRERDZ1VGxYMCtHd3lVaFlkeGFZNGtkZDU5dTVs?=
- =?utf-8?B?MndtMUxuQmN0dm1QTXVwQnhybTFmUWcxZTVGdEtpalUrcjVzTVczaUswWWlv?=
- =?utf-8?B?NjFCOUVFTThYZ2VoT3FsQUlodGhlQTNTNzhJRXNPS01GVEZRcTFVTktrWGpk?=
- =?utf-8?B?ejFwaHordFk2SXFROGFIalh5YXhyaTlUNWEvR005TzMxRDBpR2YwOWwrMG1T?=
- =?utf-8?B?RXZpSnovNEx6U085UFZvWWhFK0M2R3RkTy93UFF6UEw0dlZDNFZQMGh1Z3VR?=
- =?utf-8?B?cWJvc0pNNENIQlVKSE9yYVRYUDBnbkVPM21tQ21ESWFZQlB5Qy9nT2M5SEdE?=
- =?utf-8?B?WXpmWmNUOFM3QWlvN25tN2hKN2tnSXJEREJxemsyZm9hUlN6aEM5SE1TdmRO?=
- =?utf-8?B?WDdOaDVGWWdxOWFvcDJqVnBZTXAwVVZmb0JuYzg4dHNpcG1INi9XRGJPS0I5?=
- =?utf-8?B?V1A3bk5adGhOVFhGVTNrelNmdjIyeXN4RVE1TThaa09BU0I3d2JDcHNEdVFS?=
- =?utf-8?B?YlF5MWdJWXVyZWFzd2ZiRVN1aVhCM0xCaVgrL3NobXQwaUwyT3k0bSs2dXRy?=
- =?utf-8?Q?cNk4Dy?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 03:48:55.2634
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: da0593e2-5dd1-47df-2834-08dd83ac1a2d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001506.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7560
 
-Hello Prakash,
+In some scenarios with high requirements for both data reliability and
+write performance, the various cache modes of the current bcache cannot
+fully match the requirements. deferred_flush aims to increase the
+reliability of writeback write-back. And reduce the sending of PREFLUSH
+requests to the backing device to enhance data security and dsync write
+performance in wrieback mode.
 
-On 4/25/2025 6:49 AM, Prakash Sangappa wrote:
->>> static void hrtick_clear(struct rq *rq)
->>> {
->>> +	rseq_delay_resched_tick();
->> This is called from __schedule(). If you set the need-resched flag here,
->> it gets removed shortly after. Do I miss something?
-> hrtick_clear() is also called when the cpu is being removed in sched_cpu_dying().
-> We need to set resched there?
+deferred_flush supports three selectable modes:
+none: do nothing (default )
+normal: sequential I/O bypasses the cache disk
+force: sequential I/O cannot bypass the cache disk
 
-sched_cpu_dying() is called from the cpuhp thread which will go away
-once the hotplug is done and shouldn't need this. Furthermore, cpuhp
-thread will not use the "rseq_sched_delay" API so removing this should
-be fine.
+Signed-off-by: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+---
+ drivers/md/bcache/bcache.h        |  6 ++++
+ drivers/md/bcache/bcache_ondisk.h |  5 +++
+ drivers/md/bcache/request.c       | 32 ++++++++++++++++--
+ drivers/md/bcache/sysfs.c         | 54 +++++++++++++++++++++++++++++++
+ drivers/md/bcache/writeback.c     |  7 ++++
+ drivers/md/bcache/writeback.h     |  4 +++
+ 6 files changed, 106 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 785b0d9008fa..d2654c449d1c 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -405,6 +405,12 @@ struct cached_dev {
+ 	 */
+ #define BCH_WBRATE_UPDATE_MAX_SKIPS	15
+ 	unsigned int		rate_update_retry;
++
++	/*
++	 * In the deferred flush mode, 0 indicates that there is no
++	 * need to send flush to the backing device.
++	 */
++	atomic_t		need_flush;
+ };
+ 
+ enum alloc_reserve {
+diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
+index 6620a7f8fffc..822dcdc0caaf 100644
+--- a/drivers/md/bcache/bcache_ondisk.h
++++ b/drivers/md/bcache/bcache_ondisk.h
+@@ -294,6 +294,11 @@ BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
+ #define CACHE_MODE_WRITEBACK		1U
+ #define CACHE_MODE_WRITEAROUND		2U
+ #define CACHE_MODE_NONE			3U
++BITMASK(BDEV_DEFERRED_FLUSH,		struct cache_sb, flags, 4, 3);
++#define DEFERRED_FLUSH_NONE		0U
++#define DEFERRED_FLUSH_NORMAL		1U
++#define DEFERRED_FLUSH_FORCE		2U
++
+ BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
+ #define BDEV_STATE_NONE			0U
+ #define BDEV_STATE_CLEAN		1U
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index af345dc6fde1..8dc17d9c5f75 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -1026,16 +1026,28 @@ static void cached_dev_write(struct cached_dev *dc, struct search *s)
+ 		bio->bi_end_io = backing_request_endio;
+ 		closure_bio_submit(s->iop.c, bio, cl);
+ 
++		if (BDEV_DEFERRED_FLUSH(&dc->sb))
++			atomic_set(&dc->need_flush, 1);
++
+ 	} else if (s->iop.writeback) {
+ 		bch_writeback_add(dc);
+ 		s->iop.bio = bio;
+ 
+ 		if (bio->bi_opf & REQ_PREFLUSH) {
++			struct bio *flush;
++
++			/*
++			 * When DEFERRED_FLUSH is enabled, if need_flush is 0,
++			 * there is no need to send a flush to the backing device.
++			 */
++			if (BDEV_DEFERRED_FLUSH(&dc->sb) &&
++				 (!atomic_cmpxchg(&dc->need_flush, 1, 0)))
++				goto insert_data;
++
+ 			/*
+ 			 * Also need to send a flush to the backing
+ 			 * device.
+ 			 */
+-			struct bio *flush;
+ 
+ 			flush = bio_alloc_bioset(bio->bi_bdev, 0,
+ 						 REQ_OP_WRITE | REQ_PREFLUSH,
+@@ -1050,6 +1062,9 @@ static void cached_dev_write(struct cached_dev *dc, struct search *s)
+ 			closure_bio_submit(s->iop.c, flush, cl);
+ 		}
+ 	} else {
++		if (BDEV_DEFERRED_FLUSH(&dc->sb))
++			atomic_set(&dc->need_flush, 1);
++
+ 		s->iop.bio = bio_alloc_clone(bio->bi_bdev, bio, GFP_NOIO,
+ 					     &dc->disk.bio_split);
+ 		/* I/O request sent to backing device */
+@@ -1066,14 +1081,27 @@ static CLOSURE_CALLBACK(cached_dev_nodata)
+ {
+ 	closure_type(s, struct search, cl);
+ 	struct bio *bio = &s->bio.bio;
++	struct cached_dev *dc = container_of(s->d, struct cached_dev, disk);
+ 
+-	if (s->iop.flush_journal)
++	if (s->iop.flush_journal) {
+ 		bch_journal_meta(s->iop.c, cl);
+ 
++		/*
++		 * When deferred flush is enabled, it is necessary to determine
++		 * whether the flush request can be sent to the backing device.
++		 */
++		if (BDEV_DEFERRED_FLUSH(&dc->sb) &&
++				 (!atomic_cmpxchg(&dc->need_flush, 1, 0))) {
++			s->iop.status = BLK_STS_OK;
++			goto end;
++		}
++	}
++
+ 	/* If it's a flush, we send the flush to the backing device too */
+ 	bio->bi_end_io = backing_request_endio;
+ 	closure_bio_submit(s->iop.c, bio, cl);
+ 
++end:
+ 	continue_at(cl, cached_dev_bio_complete, NULL);
+ }
+ 
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index e8f696cb58c0..3f343fba2f96 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -28,6 +28,25 @@ static const char * const bch_cache_modes[] = {
+ 	NULL
+ };
+ 
++/*
++ * Deferred flush: In writeback mode, reduce unnecessary PREFLUSH
++ * passed to the backend disk to speed up the performance of dsync
++ * requests.Enhance data writeback security through FUA when dirty
++ * data is written back
++ *
++ * Default is 0 ("none")
++ * none: Do nothing
++ * normal: Sequential I/O bypasses the cache disk
++ * force: Sequential I/O cannot bypass the cache disk
++ */
++static const char * const bch_deferred_flush[] = {
++	"none",
++	"normal",
++	"force",
++	NULL
++};
++
++
+ static const char * const bch_reada_cache_policies[] = {
+ 	"all",
+ 	"meta-only",
+@@ -151,6 +170,7 @@ rw_attribute(copy_gc_enabled);
+ rw_attribute(idle_max_writeback_rate);
+ rw_attribute(gc_after_writeback);
+ rw_attribute(size);
++rw_attribute(deferred_flush);
+ 
+ static ssize_t bch_snprint_string_list(char *buf,
+ 				       size_t size,
+@@ -283,6 +303,11 @@ SHOW(__bch_cached_dev)
+ 		return strlen(buf);
+ 	}
+ 
++	if (attr == &sysfs_deferred_flush)
++		return bch_snprint_string_list(buf, PAGE_SIZE,
++					       bch_deferred_flush,
++					       BDEV_DEFERRED_FLUSH(&dc->sb));
++
+ #undef var
+ 	return 0;
+ }
+@@ -295,6 +320,7 @@ STORE(__cached_dev)
+ 	ssize_t v;
+ 	struct cache_set *c;
+ 	struct kobj_uevent_env *env;
++	struct bio flush;
+ 
+ 	/* no user space access if system is rebooting */
+ 	if (bcache_is_reboot)
+@@ -383,6 +409,12 @@ STORE(__cached_dev)
+ 			SET_BDEV_CACHE_MODE(&dc->sb, v);
+ 			bch_write_bdev_super(dc, NULL);
+ 		}
++
++		/* It's not the writeback mode that can't enable deferred_flush */
++		if (BDEV_DEFERRED_FLUSH(&dc->sb) && ((unsigned int) v != CACHE_MODE_WRITEBACK)) {
++			SET_BDEV_DEFERRED_FLUSH(&dc->sb, 0);
++			bch_write_bdev_super(dc, NULL);
++		}
+ 	}
+ 
+ 	if (attr == &sysfs_readahead_cache_policy) {
+@@ -451,6 +483,27 @@ STORE(__cached_dev)
+ 	if (attr == &sysfs_stop)
+ 		bcache_device_stop(&dc->disk);
+ 
++	if (attr == &sysfs_deferred_flush) {
++		v = __sysfs_match_string(bch_deferred_flush, -1, buf);
++		if (v < 0)
++			return v;
++
++		if ((unsigned int) v != BDEV_DEFERRED_FLUSH(&dc->sb)) {
++			if (v && (BDEV_CACHE_MODE(&dc->sb) != CACHE_MODE_WRITEBACK)) {
++				pr_err("It's not the writeback mode that can't enable deferred_flush.\n");
++				return -EINVAL;
++			}
++
++			SET_BDEV_DEFERRED_FLUSH(&dc->sb, v);
++			bch_write_bdev_super(dc, NULL);
++			if (v) {
++				bio_init(&flush, dc->bdev, NULL, 0, REQ_OP_WRITE | REQ_PREFLUSH);
++				/* I/O request sent to backing device */
++				submit_bio_wait(&flush);
++			}
++		}
++	}
++
+ 	return size;
+ }
+ 
+@@ -541,6 +594,7 @@ static struct attribute *bch_cached_dev_attrs[] = {
+ #endif
+ 	&sysfs_backing_dev_name,
+ 	&sysfs_backing_dev_uuid,
++	&sysfs_deferred_flush,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(bch_cached_dev);
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 453efbbdc8ee..68bf655f3b96 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -435,6 +435,13 @@ static CLOSURE_CALLBACK(write_dirty)
+ 	if (KEY_DIRTY(&w->key)) {
+ 		dirty_init(w);
+ 		io->bio.bi_opf = REQ_OP_WRITE;
++
++		/* When DEFERRED_FLUSH is enabled, you need to ensure that
++		 * data is flushed to disk.
++		 */
++		if (BDEV_DEFERRED_FLUSH(&dc->sb))
++			io->bio.bi_opf |= REQ_FUA | REQ_SYNC | REQ_PREFLUSH;
++
+ 		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
+ 		bio_set_dev(&io->bio, io->dc->bdev);
+ 		io->bio.bi_end_io	= dirty_endio;
+diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
+index 31df716951f6..0c92a607a875 100644
+--- a/drivers/md/bcache/writeback.h
++++ b/drivers/md/bcache/writeback.h
+@@ -117,6 +117,10 @@ static inline bool should_writeback(struct cached_dev *dc, struct bio *bio,
+ 				    bio_sectors(bio)))
+ 		return true;
+ 
++	/* Prevent IO from bypassing the cache disk */
++	if (BDEV_DEFERRED_FLUSH(&dc->sb) == DEFERRED_FLUSH_FORCE)
++		return true;
++
+ 	if (would_skip)
+ 		return false;
+ 
 -- 
-Thanks and Regards,
-Prateek
+2.18.1
 
 
