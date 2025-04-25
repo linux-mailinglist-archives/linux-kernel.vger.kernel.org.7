@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-619518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC73A9BD99
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483D9A9BDA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0279F446EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B8D9A0F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292332165E7;
-	Fri, 25 Apr 2025 04:30:26 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758C321765B;
+	Fri, 25 Apr 2025 04:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b/ba33Qk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3B13596A;
-	Fri, 25 Apr 2025 04:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650241C8621;
+	Fri, 25 Apr 2025 04:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745555425; cv=none; b=G0LwWNmqEj16+BbRMTTxz0Jpfl//L91BHsOIYhzYbiqqjX3kqd7MTUAFc59JnW55oH5+m9/sE3t+XMkONvGbGcU++kdUwCX2mp4nuMIWr+oSPOUaBR15/RNDsXIN/Jcf/W1cFiDNrbksK5S6aEVTzkx7KEVc/hK5kFZ0+UPQI2o=
+	t=1745555712; cv=none; b=TiQRRKfqfa3KJ8Axk9mbfL8867OAMIcidu4/l3H1QwdC9mg9JFrca1UvrvpGatIAjBCTfGmLF+DGqwHzJgYzZ4lfaqVkhddkJJUnnxFYgOOOocrA0xs8E/QfU47tSBguKjt2vhZU+KSZziprEzMOEQQvqNFDMxSN/Ni8r1lu4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745555425; c=relaxed/simple;
-	bh=kDx0pLQY7WRn2W3g10RIxdAuMEnnZVNPamr/Cy9aYZ4=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i36gzPrEFCxRO+zT8Rf8T1H2n45gQsQEY8h7ySVxXcAck1An/EZJSE43XD6a9W7+pExLRkUx9+ZCOE0Go0vEskekNhk6rneJZOtmdnNmJBjYPnHMG9BZ91u0ICuwtsQscU0zDDfBHtJ1nZLDVVMcmIc8ykpwr6PndOqiJEIxTig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1u8Abe-000000006IQ-1KFU;
-	Fri, 25 Apr 2025 04:30:01 +0000
-Date: Fri, 25 Apr 2025 05:29:53 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH net] net: ethernet: mtk_eth_soc: sync mtk_clks_source_name
- array
-Message-ID: <d075e706ff1cebc07f9ec666736d0b32782fd487.1745555321.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1745555712; c=relaxed/simple;
+	bh=zFyR+2o7S0aUhjQmUVl3U33tj4FHp8BKub3BSNHl6wY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+9TpLkpIBg8WURBp8+ule9AWRWuB0BOtZaq4EUby+xu/llptHLLqe92pjUKZ4ri7/2tsn2I8j++yRbJSxikaS+fWxloIIGEyhCMl49wnpftb1p9Eukaw/E8+075z7AtsiCA4bKDS27lnjGRfgYevZfAkos1b65JpalaXRpxahc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b/ba33Qk; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745555712; x=1777091712;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zFyR+2o7S0aUhjQmUVl3U33tj4FHp8BKub3BSNHl6wY=;
+  b=b/ba33QkNloD//9+XrG1Jt1cF21CUVXyhbVTvWZNHkJd8Fww+1ZXkufe
+   vZ5nb+kktbi2Y5/bzc3rqj6Pz20coPHWpd1lmLUTz/9qW+HnTvyt7zJEk
+   QQFHL0Yoak9t9NeCrD8Xfpo/nv+5mmkNrRiq22SnXMuPeFhBiaN/avxj1
+   cLfjqYc5DYU84E+OHnUG5HLYck5GteGi3uza/CzLPoXJBSGRiKcp7JJvs
+   0kn2EDdn6BMZp23w6sEnDy+fdwDnZutUfOCrx2tSveuMAzwP2KuADvOI6
+   B/Ecu+YUPUbx1cef3G1QWI84eBpeNasd+q+cXGARqYmywsgE64uCKpDSC
+   Q==;
+X-CSE-ConnectionGUID: 7zZQ7Yb8SCmZZGCX6YPRJA==
+X-CSE-MsgGUID: rs/Ib9i5RmqWjdXEpEdN2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="47226321"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="47226321"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 21:35:11 -0700
+X-CSE-ConnectionGUID: a5diDpipRK+sn2VbOI8q7A==
+X-CSE-MsgGUID: Y0y1V/sdS+yAeW6i4Gp4uQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="137644770"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa003.jf.intel.com with ESMTP; 24 Apr 2025 21:35:08 -0700
+Date: Fri, 25 Apr 2025 12:30:30 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com,
+	akpm@linux-foundation.org, marpagan@redhat.com, arnd@arndb.de,
+	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Marco Pagani <marco.pagani@linux.dev>
+Subject: Re: [PATCH v2 RESEND] fpga: fix potential null pointer deref in
+ fpga_mgr_test_img_load_sgt()
+Message-ID: <aAsP5qZ9+kGcmps0@yilunxu-OptiPlex-7050>
+References: <20250422153737.5264-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,39 +76,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250422153737.5264-1-qasdev00@gmail.com>
 
-When removing the clock bits for clocks which aren't used by the
-Ethernet driver their names should also have been removed from the
-mtk_clks_source_name array.
+On Tue, Apr 22, 2025 at 04:37:37PM +0100, Qasim Ijaz wrote:
+> fpga_mgr_test_img_load_sgt() allocates memory for sgt using
+> kunit_kzalloc() however it does not check if the allocation failed. 
+> It then passes sgt to sg_alloc_table(), which passes it to
+> __sg_alloc_table(). This function calls memset() on sgt in an attempt to
+> zero it out. If the allocation fails then sgt will be NULL and the
+> memset will trigger a NULL pointer dereference.
+> 
+> Fix this by checking the allocation with KUNIT_ASSERT_NOT_ERR_OR_NULL().
+> 
+> Reviewed-by: Marco Pagani <marco.pagani@linux.dev>
+> Fixes: ccbc1c302115 ("fpga: add an initial KUnit suite for the FPGA Manager")
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
-Remove them now as enum mtk_clks_map needs to match the
-mtk_clks_source_name array so the driver can make sure that all required
-clocks are present and correctly name missing clocks.
+Acked-by: Xu Yilun <yilun.xu@intel.com>
 
-Fixes: 887b1d1adb2e ("net: ethernet: mtk_eth_soc: drop clocks unused by Ethernet driver")
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 4 ----
- 1 file changed, 4 deletions(-)
+Applied to for-next.
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 47807b202310..83068925c589 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -269,12 +269,8 @@ static const char * const mtk_clks_source_name[] = {
- 	"ethwarp_wocpu2",
- 	"ethwarp_wocpu1",
- 	"ethwarp_wocpu0",
--	"top_usxgmii0_sel",
--	"top_usxgmii1_sel",
- 	"top_sgm0_sel",
- 	"top_sgm1_sel",
--	"top_xfi_phy0_xtal_sel",
--	"top_xfi_phy1_xtal_sel",
- 	"top_eth_gmii_sel",
- 	"top_eth_refck_50m_sel",
- 	"top_eth_sys_200m_sel",
--- 
-2.49.0
-
+> ---
+> v2:
+> - Remove stable CC tag since its just a kunit test
+> 
+>  drivers/fpga/tests/fpga-mgr-test.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
+> index 9cb37aefbac4..1902ebf5a298 100644
+> --- a/drivers/fpga/tests/fpga-mgr-test.c
+> +++ b/drivers/fpga/tests/fpga-mgr-test.c
+> @@ -263,6 +263,7 @@ static void fpga_mgr_test_img_load_sgt(struct kunit *test)
+>  	img_buf = init_test_buffer(test, IMAGE_SIZE);
+>  
+>  	sgt = kunit_kzalloc(test, sizeof(*sgt), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, sgt);
+>  	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>  	sg_init_one(sgt->sgl, img_buf, IMAGE_SIZE);
+> -- 
+> 2.39.5
+> 
+> 
 
