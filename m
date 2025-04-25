@@ -1,343 +1,130 @@
-Return-Path: <linux-kernel+bounces-619713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC21CA9C050
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:02:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5872A9C04B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11ADC189B055
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F811B88583
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C94723315E;
-	Fri, 25 Apr 2025 08:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E7230277;
+	Fri, 25 Apr 2025 08:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Tq0BWbZR"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD94D26AEC;
-	Fri, 25 Apr 2025 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YAXOvlue"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF041DDE9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745568139; cv=none; b=UHZvwDUhcjtM209bj+DW1buPge9+JBAq8GgzbDT5bZ6CH1NC2T3Zz5HB7DHSTsV0cUC/O7ZdOEj2NCAE/wCWcnww5I6KogL2MLH+SfNVBTzIqpSlIpyZTKFhlOWOwtCy6o+E5/pw+BdAT+NpUpquIC6V3LEoMd6ARXjyfgHHy2M=
+	t=1745568051; cv=none; b=ke6ALUuZgZ6h4d/3P9WxLshrG82+oZB03lrrHPBBylbLJenFZ5+HOnhE++81HRPuz6lPvbhHUY3wavvZcp3jeMg3VSvaZ2BVZIBaWbapkUsqU0A7luv2p38Mon1JbwKyGGwzlFhqN2Nre7fuVQ5SwxNKDvb9PvqHthMD2YCCpDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745568139; c=relaxed/simple;
-	bh=oCUcG3o8xYWiupP/5NaC/9IlwbrbnMsu4Ag3g9Bf/SI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Afrfs5Nk/O89G5a89U16RH40AF1pViCT2ZrwY3f7d6hJnzdHAW53z/m2kkJo08lcelzP1VTxa4wSqPRJZFd2uMqF/tuZLHKxPtXk/Qcmcc4+Lc8kKtsaQoVkDxaS0yN+I9m7oAq5wX0KE7laiHAqJmUFsiMNNFaAZwPbM82G5TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Tq0BWbZR; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=snh06
-	xH5rGaut6A5VJ9ZVezCog4RyQuNY5yFbN6JYWk=; b=Tq0BWbZRSr6W6ezmB/e4s
-	rO19nCY75j3gcbc6py1hQYCk/wc2gXQSnlWKnrUnmvCPFDmsAHZ3Vg+1igb6ucg4
-	QT/+vyv7FfYfRIxiDhx8ryNJXdGEfmEesZqmHW4qekqTg0ToaG3eP2Cm6mTkmVDG
-	1ucqVtj2nclAcOD2flLkcM=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBn8FQ8QQtopkvkCA--.25S2;
-	Fri, 25 Apr 2025 16:01:01 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	davem@davemloft.net
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH bpf-next] bpf: Allow some trace helpers for all prog types
-Date: Fri, 25 Apr 2025 16:00:32 +0800
-Message-Id: <20250425080032.327477-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1745568051; c=relaxed/simple;
+	bh=c6TIoXsjX95rpwlTor+k+SVGfkqfhOsAsRW9lkoCB+0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=vFxjdNkwsq5dwcNEhngPJoaUV7WBgRjyWzyWHLFIsb8SsHD0iyNmENUacvhQgNR9G78+x5xtj36p24KE/qOQiRehuzT49L+gMXu36SpUTnLiv+Pm1rKb03Ja2V4Tlj/x1b32L18RT6XmwLPDfnRqTmJ0VO08Lm3vhZvr57MhNZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YAXOvlue; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745568049; x=1777104049;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=c6TIoXsjX95rpwlTor+k+SVGfkqfhOsAsRW9lkoCB+0=;
+  b=YAXOvlueCNDGJ5XzvkU+RwF6scX+ij4py3YeYsv1aU09LqYh7k0wH7es
+   3Saon7weds9IlqOgFzfI6G78FBvMyvCL+ILf2u6cA8t4ZOE+FoWsZ9fMM
+   EWL/TikJa9wBS6mHtYCM/Do6AIb4Yphku6bIuTCR94mDkz0Evkk4ip9+Q
+   gxxWp//HFV7uJiqnzCYsftZ0lMSlJ2UGPJM4sYlKPj3A7sDu4a32wKx7z
+   TWtm7Xikxt9WsoEM+CE6z/4MTDG1IWSVX+NXmcFHQyvJa9f2o82ruc8Pg
+   m3lmUJIxCYKO/abcq8FMJhe2eqVLoMyYHYaLwKoPs4wnsk9q5jJlYVJos
+   g==;
+X-CSE-ConnectionGUID: K0XIvCD7Rp6qm+sw6cXI1w==
+X-CSE-MsgGUID: kz1X1yjTTJKWihjuCiuuOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="57864545"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="57864545"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 01:00:49 -0700
+X-CSE-ConnectionGUID: Puj2tsmFRT+bEnbXCo9i+Q==
+X-CSE-MsgGUID: 5mh8FrHBRICDDfsPHBC+DQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="163897606"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.83])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 01:00:43 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Junxiao Chang <junxiao.chang@intel.com>, tomas.winkler@intel.com, Joonas
+ Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams
+ <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Daniele
+ Ceraolo Spurio <daniele.ceraolospurio@intel.com>, Vitaly Lubart
+ <vitaly.lubart@intel.com>, Alexander Usyskin
+ <alexander.usyskin@intel.com>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+Cc: junxiao.chang@intel.com, furong.zhou@intel.com
+Subject: Re: [PATCH] drm/i915/gsc: mei interrupt top half should be in irq
+ disabled context
+In-Reply-To: <20250425060455.641008-1-junxiao.chang@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250424065609.624457-1-junxiao.chang@intel.com>
+ <20250425060455.641008-1-junxiao.chang@intel.com>
+Date: Fri, 25 Apr 2025 11:00:38 +0300
+Message-ID: <87v7qsy8k9.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBn8FQ8QQtopkvkCA--.25S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3trW3tr1DKFWrKr47ArykAFb_yoWkJFyxpF
-	nrAry3Ar4ktw4aqr17Jwn7ZryFk34UX3y8GaykGw1xur42qr9rtF1UKF429F1rZr9rW343
-	Z3yqvFZ0kr1xKa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jaHq7UUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiTg46eGgLQPwKkQAAsG
+Content-Type: text/plain
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On Fri, 25 Apr 2025, Junxiao Chang <junxiao.chang@intel.com> wrote:
+> MEI GSC interrupt comes from i915. It has top half and bottom half.
+> Top half is called from i915 interrupt handler. It should be in
+> irq disabled context.
+>
+> With RT kernel, by default i915 IRQ handler is in threaded IRQ. MEI GSC
+> top half might be in threaded IRQ context. generic_handle_irq_safe API
+> could be called from either IRQ or process context, it disables local
+> IRQ then calls MEI GSC interrupt top half.
+>
+> This change fixes A380/A770 GPU boot hang issue with RT kernel.
+>
+> Fixes: 1e3dc1d8622b ("drm/i915/gsc: add gsc as a mei auxiliary device")
+> Tested-by: Furong Zhou <furong.zhou@intel.com>
+> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+> ---
+>  drivers/gpu/drm/i915/gt/intel_gsc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/gt/intel_gsc.c b/drivers/gpu/drm/i915/gt/intel_gsc.c
+> index 1e925c75fb080..a099d885508ac 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_gsc.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_gsc.c
+> @@ -284,7 +284,9 @@ static void gsc_irq_handler(struct intel_gt *gt, unsigned int intf_id)
+>  	if (gt->gsc.intf[intf_id].irq < 0)
+>  		return;
+>  
+> -	ret = generic_handle_irq(gt->gsc.intf[intf_id].irq);
+> +	/* It can be called in both irq context and in thread context */
 
-if it works under NMI and doesn't use any context-dependent things,
-should be fine for any program type. The detailed discussion is in [1].
+What is "It" in this case?
 
-[1] https://lore.kernel.org/all/CAEf4Bza6gK3dsrTosk6k3oZgtHesNDSrDd8sdeQ-GiS6oJixQg@mail.gmail.com/
+> +	ret = generic_handle_irq_safe(gt->gsc.intf[intf_id].irq);
+> +
+>  	if (ret)
+>  		gt_err_ratelimited(gt, "error handling GSC irq: %d\n", ret);
+>  }
 
-Suggested-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
----
- kernel/bpf/cgroup.c      |  6 -----
- kernel/bpf/helpers.c     | 50 +++++++++++++++++++++++++++++++++++++
- kernel/trace/bpf_trace.c | 53 +++++-----------------------------------
- net/core/filter.c        |  2 --
- 4 files changed, 56 insertions(+), 55 deletions(-)
-
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 84f58f3d028a..dbdad5f42761 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -2607,16 +2607,10 @@ const struct bpf_func_proto *
- cgroup_current_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
- 	switch (func_id) {
--	case BPF_FUNC_get_current_uid_gid:
--		return &bpf_get_current_uid_gid_proto;
--	case BPF_FUNC_get_current_comm:
--		return &bpf_get_current_comm_proto;
- #ifdef CONFIG_CGROUP_NET_CLASSID
- 	case BPF_FUNC_get_cgroup_classid:
- 		return &bpf_get_cgroup_classid_curr_proto;
- #endif
--	case BPF_FUNC_current_task_under_cgroup:
--		return &bpf_current_task_under_cgroup_proto;
- 	default:
- 		return NULL;
- 	}
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index e3a2662f4e33..3b089020c18b 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -23,6 +23,7 @@
- #include <linux/btf_ids.h>
- #include <linux/bpf_mem_alloc.h>
- #include <linux/kasan.h>
-+#include <linux/bpf_verifier.h>
- 
- #include "../../lib/kstrtox.h"
- 
-@@ -1907,11 +1908,21 @@ static const struct bpf_func_proto bpf_dynptr_data_proto = {
- 
- const struct bpf_func_proto bpf_get_current_task_proto __weak;
- const struct bpf_func_proto bpf_get_current_task_btf_proto __weak;
-+#ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
-+const struct bpf_func_proto bpf_probe_read_compat_proto __weak;
-+const struct bpf_func_proto bpf_probe_read_compat_str_proto __weak;
-+#endif
- const struct bpf_func_proto bpf_probe_read_user_proto __weak;
- const struct bpf_func_proto bpf_probe_read_user_str_proto __weak;
- const struct bpf_func_proto bpf_probe_read_kernel_proto __weak;
- const struct bpf_func_proto bpf_probe_read_kernel_str_proto __weak;
- const struct bpf_func_proto bpf_task_pt_regs_proto __weak;
-+const struct bpf_func_proto bpf_perf_event_read_proto __weak;
-+const struct bpf_func_proto bpf_send_signal_proto __weak;
-+const struct bpf_func_proto bpf_send_signal_thread_proto __weak;
-+const struct bpf_func_proto bpf_get_task_stack_sleepable_proto __weak;
-+const struct bpf_func_proto bpf_get_task_stack_proto __weak;
-+const struct bpf_func_proto bpf_get_branch_snapshot_proto __weak;
- 
- const struct bpf_func_proto *
- bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-@@ -1965,6 +1976,8 @@ bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_current_pid_tgid_proto;
- 	case BPF_FUNC_get_ns_current_pid_tgid:
- 		return &bpf_get_ns_current_pid_tgid_proto;
-+	case BPF_FUNC_get_current_uid_gid:
-+		return &bpf_get_current_uid_gid_proto;
- 	default:
- 		break;
- 	}
-@@ -2022,6 +2035,8 @@ bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_current_cgroup_id_proto;
- 	case BPF_FUNC_get_current_ancestor_cgroup_id:
- 		return &bpf_get_current_ancestor_cgroup_id_proto;
-+	case BPF_FUNC_current_task_under_cgroup:
-+		return &bpf_current_task_under_cgroup_proto;
- #endif
- 	default:
- 		break;
-@@ -2037,6 +2052,16 @@ bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_current_task_proto;
- 	case BPF_FUNC_get_current_task_btf:
- 		return &bpf_get_current_task_btf_proto;
-+	case BPF_FUNC_get_current_comm:
-+		return &bpf_get_current_comm_proto;
-+#ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
-+	case BPF_FUNC_probe_read:
-+		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
-+		       NULL : &bpf_probe_read_compat_proto;
-+	case BPF_FUNC_probe_read_str:
-+		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
-+		       NULL : &bpf_probe_read_compat_str_proto;
-+#endif
- 	case BPF_FUNC_probe_read_user:
- 		return &bpf_probe_read_user_proto;
- 	case BPF_FUNC_probe_read_kernel:
-@@ -2057,6 +2082,31 @@ bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return bpf_get_trace_vprintk_proto();
- 	case BPF_FUNC_perf_event_read_value:
- 		return bpf_get_perf_event_read_value_proto();
-+	case BPF_FUNC_perf_event_read:
-+		return &bpf_perf_event_read_proto;
-+	case BPF_FUNC_send_signal:
-+		return &bpf_send_signal_proto;
-+	case BPF_FUNC_send_signal_thread:
-+		return &bpf_send_signal_thread_proto;
-+	case BPF_FUNC_get_task_stack:
-+		return prog->sleepable ? &bpf_get_task_stack_sleepable_proto
-+				       : &bpf_get_task_stack_proto;
-+	case BPF_FUNC_copy_from_user:
-+		return prog->sleepable ? &bpf_copy_from_user_proto : NULL;
-+	case BPF_FUNC_copy_from_user_task:
-+		return prog->sleepable ? &bpf_copy_from_user_task_proto : NULL;
-+	case BPF_FUNC_task_storage_get:
-+		if (bpf_prog_check_recur(prog))
-+			return &bpf_task_storage_get_recur_proto;
-+		return &bpf_task_storage_get_proto;
-+	case BPF_FUNC_task_storage_delete:
-+		if (bpf_prog_check_recur(prog))
-+			return &bpf_task_storage_delete_recur_proto;
-+		return &bpf_task_storage_delete_proto;
-+	case BPF_FUNC_get_branch_snapshot:
-+		return &bpf_get_branch_snapshot_proto;
-+	case BPF_FUNC_find_vma:
-+		return &bpf_find_vma_proto;
- 	default:
- 		return NULL;
- 	}
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 52c432a44aeb..224f02660e28 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -294,7 +294,7 @@ BPF_CALL_3(bpf_probe_read_compat, void *, dst, u32, size,
- 	return bpf_probe_read_kernel_common(dst, size, unsafe_ptr);
- }
- 
--static const struct bpf_func_proto bpf_probe_read_compat_proto = {
-+const struct bpf_func_proto bpf_probe_read_compat_proto = {
- 	.func		= bpf_probe_read_compat,
- 	.gpl_only	= true,
- 	.ret_type	= RET_INTEGER,
-@@ -313,7 +313,7 @@ BPF_CALL_3(bpf_probe_read_compat_str, void *, dst, u32, size,
- 	return bpf_probe_read_kernel_str_common(dst, size, unsafe_ptr);
- }
- 
--static const struct bpf_func_proto bpf_probe_read_compat_str_proto = {
-+const struct bpf_func_proto bpf_probe_read_compat_str_proto = {
- 	.func		= bpf_probe_read_compat_str,
- 	.gpl_only	= true,
- 	.ret_type	= RET_INTEGER,
-@@ -572,7 +572,7 @@ BPF_CALL_2(bpf_perf_event_read, struct bpf_map *, map, u64, flags)
- 	return value;
- }
- 
--static const struct bpf_func_proto bpf_perf_event_read_proto = {
-+const struct bpf_func_proto bpf_perf_event_read_proto = {
- 	.func		= bpf_perf_event_read,
- 	.gpl_only	= true,
- 	.ret_type	= RET_INTEGER,
-@@ -882,7 +882,7 @@ BPF_CALL_1(bpf_send_signal, u32, sig)
- 	return bpf_send_signal_common(sig, PIDTYPE_TGID, NULL, 0);
- }
- 
--static const struct bpf_func_proto bpf_send_signal_proto = {
-+const struct bpf_func_proto bpf_send_signal_proto = {
- 	.func		= bpf_send_signal,
- 	.gpl_only	= false,
- 	.ret_type	= RET_INTEGER,
-@@ -894,7 +894,7 @@ BPF_CALL_1(bpf_send_signal_thread, u32, sig)
- 	return bpf_send_signal_common(sig, PIDTYPE_PID, NULL, 0);
- }
- 
--static const struct bpf_func_proto bpf_send_signal_thread_proto = {
-+const struct bpf_func_proto bpf_send_signal_thread_proto = {
- 	.func		= bpf_send_signal_thread,
- 	.gpl_only	= false,
- 	.ret_type	= RET_INTEGER,
-@@ -1185,7 +1185,7 @@ BPF_CALL_3(bpf_get_branch_snapshot, void *, buf, u32, size, u64, flags)
- 	return entry_cnt * br_entry_size;
- }
- 
--static const struct bpf_func_proto bpf_get_branch_snapshot_proto = {
-+const struct bpf_func_proto bpf_get_branch_snapshot_proto = {
- 	.func		= bpf_get_branch_snapshot,
- 	.gpl_only	= true,
- 	.ret_type	= RET_INTEGER,
-@@ -1430,51 +1430,10 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	const struct bpf_func_proto *func_proto;
- 
- 	switch (func_id) {
--	case BPF_FUNC_get_current_uid_gid:
--		return &bpf_get_current_uid_gid_proto;
--	case BPF_FUNC_get_current_comm:
--		return &bpf_get_current_comm_proto;
- 	case BPF_FUNC_get_smp_processor_id:
- 		return &bpf_get_smp_processor_id_proto;
--	case BPF_FUNC_perf_event_read:
--		return &bpf_perf_event_read_proto;
--#ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
--	case BPF_FUNC_probe_read:
--		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
--		       NULL : &bpf_probe_read_compat_proto;
--	case BPF_FUNC_probe_read_str:
--		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
--		       NULL : &bpf_probe_read_compat_str_proto;
--#endif
--#ifdef CONFIG_CGROUPS
--	case BPF_FUNC_current_task_under_cgroup:
--		return &bpf_current_task_under_cgroup_proto;
--#endif
--	case BPF_FUNC_send_signal:
--		return &bpf_send_signal_proto;
--	case BPF_FUNC_send_signal_thread:
--		return &bpf_send_signal_thread_proto;
--	case BPF_FUNC_get_task_stack:
--		return prog->sleepable ? &bpf_get_task_stack_sleepable_proto
--				       : &bpf_get_task_stack_proto;
--	case BPF_FUNC_copy_from_user:
--		return &bpf_copy_from_user_proto;
--	case BPF_FUNC_copy_from_user_task:
--		return &bpf_copy_from_user_task_proto;
--	case BPF_FUNC_task_storage_get:
--		if (bpf_prog_check_recur(prog))
--			return &bpf_task_storage_get_recur_proto;
--		return &bpf_task_storage_get_proto;
--	case BPF_FUNC_task_storage_delete:
--		if (bpf_prog_check_recur(prog))
--			return &bpf_task_storage_delete_recur_proto;
--		return &bpf_task_storage_delete_proto;
- 	case BPF_FUNC_get_func_ip:
- 		return &bpf_get_func_ip_proto_tracing;
--	case BPF_FUNC_get_branch_snapshot:
--		return &bpf_get_branch_snapshot_proto;
--	case BPF_FUNC_find_vma:
--		return &bpf_find_vma_proto;
- 	default:
- 		break;
- 	}
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 79cab4d78dc3..53bf560354f7 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -8488,8 +8488,6 @@ sk_msg_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_msg_pop_data_proto;
- 	case BPF_FUNC_perf_event_output:
- 		return &bpf_event_output_data_proto;
--	case BPF_FUNC_get_current_uid_gid:
--		return &bpf_get_current_uid_gid_proto;
- 	case BPF_FUNC_sk_storage_get:
- 		return &bpf_sk_storage_get_proto;
- 	case BPF_FUNC_sk_storage_delete:
 -- 
-2.43.0
-
+Jani Nikula, Intel
 
