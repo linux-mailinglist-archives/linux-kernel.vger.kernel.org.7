@@ -1,189 +1,230 @@
-Return-Path: <linux-kernel+bounces-619908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C6DA9C348
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:23:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D14CA9C36A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887C81BA37F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D14F3AFA8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931B22356A0;
-	Fri, 25 Apr 2025 09:23:39 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF2523BCF4;
+	Fri, 25 Apr 2025 09:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6GMBVjh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DFE23536E;
-	Fri, 25 Apr 2025 09:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573019; cv=none; b=mq754SfzJWyRfp25xjnJqEmXsKvMHPZgSVxYlKSGjs/gJF3q0RlSg4JSVkzgdx07ycyyONXAym1LK4BbXiyGSBarHOwJbW2+XJCFhiayqWZnP0nrM9eTyD9vAup249WWUiFI0CyYtNDE3Q6t5lA2xvg0Y+SLpIKdUqDjaso+/0g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573019; c=relaxed/simple;
-	bh=4QFKN2RwaxOmLvvE85MgQNg6/UMRv3I7Se3dUA5myy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6hVfFyC6Er/D9cmbLw/MlYR05B8aJj/+BmSTOW6YEcYfbzVBbycRLJDR0zS00xRP9B5QnY2a6n64rHj9wPx/hep2aAnHvLtXAUrs7L81UXElHje7JDbsHSfazHW23PKA9kmgaF/2Rwct/bvkmBaJT63BXQ/5FF2PehsF5l2B1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZkS7F5sqwz4f3lWF;
-	Fri, 25 Apr 2025 17:23:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 572381A07BD;
-	Fri, 25 Apr 2025 17:23:31 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP1 (Coremail) with SMTP id cCh0CgAHanqRVAtoENpoKQ--.39960S2;
-	Fri, 25 Apr 2025 17:23:30 +0800 (CST)
-Message-ID: <2f13f928-9148-44e0-a44c-872a3779b0ef@huaweicloud.com>
-Date: Fri, 25 Apr 2025 17:23:29 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD388237170;
+	Fri, 25 Apr 2025 09:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745573211; cv=fail; b=VLUClPrxxcSXoUXQGCB8APyIi4S8Whiy1oxThnC/tfUi0uZqwLR/MmiQD5ps3gJJCKP+BGgJEubn5XG9w+VeCi8JXCDIzb2zuQlyNvgalOU1V1RK+uwY9Y++822ukZdNjPeVWtq8jznODCeA9MgQaubpSQf8D42OBtiwKapDCQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745573211; c=relaxed/simple;
+	bh=ilGSZztxLFLyO5e+EOUKjHTEBw7VdQfZsYKLpVTG2D4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Qnc+lS9Gb87o+KCp1WY+w9+gzh2SjfJ/WN4PMMiRfOkJAWvV5Bv6bct5TliD+ucpt49v19eNFrqxZO1sV0DVW/8BJ382QE6jcAJODzkQg5zBO5nII4I2IsjGMH/ZXGZE3NG/yzGkVIKQxH5/bJFk/Xi75WMakQBdGhXcloTrtdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6GMBVjh; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745573209; x=1777109209;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=ilGSZztxLFLyO5e+EOUKjHTEBw7VdQfZsYKLpVTG2D4=;
+  b=c6GMBVjhCEoc1cQInXCF6roa3n7jlBNYuVy6CfEHT06nqf5IwEiF2bxD
+   lXtd2WFnNxanruYfE7YN8Y3nUqotbSnzknu6LGQRwzOWwVLE++KnJp58B
+   IHDBmbyjfsASaPwTCpMFyN0VE8KZ4PaXjmSRETw0giR55VB0r8XcKx3nn
+   Z9lmBfDdkMtNzIRZIKC0lJrq9wts0V9ldRG52Lf3mQrOuEVlKB9vtJW/u
+   JjhsbmjGpOX2PrrphJQiYvjNxQP5sGuyg4b6Z7WWWpfaPJernyc+RkGH3
+   kO8fqaXje1P4xY84QkTAp4WBC+syl7yNLClbv1uLuEFwO7rhQ14rGEctc
+   Q==;
+X-CSE-ConnectionGUID: EhW/poA9R2+5frPxe82mtA==
+X-CSE-MsgGUID: jLQUcdjeSOGXX1E0ZjEGlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="46349992"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="46349992"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 02:26:49 -0700
+X-CSE-ConnectionGUID: Uu8hcYhyTseXjin71orVlg==
+X-CSE-MsgGUID: 2GmTU3scSfiS2LhsOqxAOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="170076065"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 02:26:49 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 25 Apr 2025 02:26:48 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 25 Apr 2025 02:26:48 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 25 Apr 2025 02:26:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PPHgUyYJuHvIKgN1WXddo+tJpiVJiQlyPAF+90u8OyLbcwGTezIV3RUJzZ2jLgsUbD/za61AKDMv3LtroEXEp3W71ShPfEZqA/dquh5tJfT5mFRM07cZAzLTTD4tpu6XAcl7XEVxG2qwzplaBgd/0J3Bo9SwcZ5Yzw5lgK8NGUd5HYEZoSUsZtaFZlR49oxroHq5bmTPpZBbkAjkDWRjDzuoChQ2x69iMUpg72uEgcPnwtx3o4qOGI6GDvmnDrB9oS13tM/ILMbG7n5W4tnRKh/gwVKNjsB4rZzdfA4jDfcmopJvVtXG5h7zAxhf6vdn16OFS7sN6G0mT/ESVT3DcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RmDt+dGzv91r+/eGNPXuixiHPGNzG11ech/iit+kE4k=;
+ b=LxliYxo8GJVS9zqfqeuDRF/qpD5NFpJyb1uOR0NhrLkONd0DU3A4hrtpr5thMVkcsVlmlNxgto0QcvbupHcbhhVjbreppVKkrVMbZCLdyfKAC7OE51mudZ88WhLZJ6+6Cq1Q2ClydDEej69o1f/BhEzJ8ntUHpvbysOJJb4vBGpTmgZOB3036PM8SI75FRkh+MjVkKcRKBV0vpZtlIaNk9Rc7KEc/eu3kVRDOqvWb+h7joz73B9KdU2k8ZD7PW/RNYbKgFoyCEei3+Eple8oBChphvvSgAMNdHwlPlD6EU3TP1ydrwAHzAsfXo3S20viiotBcsZGM3gBM2s/QAFFYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ PH8PR11MB8260.namprd11.prod.outlook.com (2603:10b6:510:1c3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
+ 2025 09:26:14 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
+ 09:26:14 +0000
+Date: Fri, 25 Apr 2025 17:24:17 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
+	<rick.p.edgecombe@intel.com>, <dave.hansen@intel.com>,
+	<kirill.shutemov@intel.com>, <tabba@google.com>, <ackerleytng@google.com>,
+	<quic_eberman@quicinc.com>, <michael.roth@amd.com>, <david@redhat.com>,
+	<vannapurve@google.com>, <vbabka@suse.cz>, <jroedel@suse.de>,
+	<thomas.lendacky@amd.com>, <pgonda@google.com>, <zhiquan1.li@intel.com>,
+	<fan.du@intel.com>, <jun.miao@intel.com>, <ira.weiny@intel.com>,
+	<isaku.yamahata@intel.com>, <xiaoyao.li@intel.com>, <chao.p.peng@intel.com>
+Subject: Re: [RFC PATCH 03/21] x86/virt/tdx: Add SEAMCALL wrapper
+ tdh_mem_page_demote()
+Message-ID: <aAtUwfH30tqx92J6@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20250424030033.32635-1-yan.y.zhao@intel.com>
+ <20250424030445.32704-1-yan.y.zhao@intel.com>
+ <8e15c41e-730f-493e-9628-99046af50c1e@linux.intel.com>
+ <aAs3I2GW8hBR0G5N@yzhao56-desk.sh.intel.com>
+ <55990bb0-9fbe-4b38-95db-bd257914b157@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <55990bb0-9fbe-4b38-95db-bd257914b157@linux.intel.com>
+X-ClientProxiedBy: KU0P306CA0067.MYSP306.PROD.OUTLOOK.COM
+ (2603:1096:d10:23::18) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC bpf-next 1/4] bpf: add struct largest member size in
- func model
-Content-Language: en-US
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Puranjay Mohan <puranjay@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Florent Revest <revest@chromium.org>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kselftest@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
- <20250411-many_args_arm64-v1-1-0a32fe72339e@bootlin.com>
- <CAEf4Bzbn6BdXTOb0dTcsQmOMZpp5=DzGS2hHHQ3+dwcja=gv+w@mail.gmail.com>
- <D98Q8BRNUVS9.11J60C67L1ALR@bootlin.com>
- <CAEf4BzZHMYyGDZ4c4eNXG7Fm=ecxCCbKhKbQTbCjvWmKtdwvBw@mail.gmail.com>
- <D9E9IQQ3QKXM.3UJ17G9CBS1FH@bootlin.com>
- <6b6472c3-0718-4e60-9972-c166d51962a3@huaweicloud.com>
- <D9EWSDXHDGFJ.FIDSHIR1OP80@bootlin.com>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <D9EWSDXHDGFJ.FIDSHIR1OP80@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAHanqRVAtoENpoKQ--.39960S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4DtFW8Gry3urWkury7trb_yoW5Ar48pF
-	WftFyktrs7GF1xZF1qqw4IvFWDtwsxKr18W3yDtr18Aws0q3saqr1jkF1Y9FWxKw1kWw47
-	XayY9ayxCFy5ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	4xRDUUUUU==
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH8PR11MB8260:EE_
+X-MS-Office365-Filtering-Correlation-Id: a63990dd-a288-45c1-f9a5-08dd83db3945
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mAIOGGnX0hxR+ySI/PAiShGeX5j8qysnYm0PRWFTl7uGNjzsAnmX3ThVVzab?=
+ =?us-ascii?Q?tDzoyg6Pa4uSYcJX05em9HYZV1VElwIKcczcwErMLI3GTaYXrzcThyitMop2?=
+ =?us-ascii?Q?G5bjpWr+BwQtYWRMjCf2uPZ0U7+pdHJI0lta4Qqfa1fm3bq6OnEtKtmq7NgD?=
+ =?us-ascii?Q?/nvnBiZnG8zNiaKGL2Ax2Krp4jhi9SVTf7DauK582T6VCMcJmuokAb91pnOC?=
+ =?us-ascii?Q?+u2emhc2pcX8cy3KYkQ9rUnwArX6FHhOPqoU1IjJITq7RjC6eb4GZffpA6RC?=
+ =?us-ascii?Q?Je056w2HCCqGfjDHAHyKBFAhKvJAzW2cbPRp2TMOMyerq+U4MCO6FG8agZGe?=
+ =?us-ascii?Q?z4utJ6LgXzPJUZdYogK9k8SXVE7EP/TEI86UpDpFUZbbkeev7gb4njCqWD5M?=
+ =?us-ascii?Q?2BdFzQVWqF4jLO0XEp86cNRC+9dXZN7iHgZ6nhIBLDKy9s4l589jAd74NK0L?=
+ =?us-ascii?Q?9mOv2A5bvenH0rPiqT2F+ri7nx4u9iW/Wm+BUzR3EqK/2OmXJs3UrOGRMj+f?=
+ =?us-ascii?Q?YlYKs0BuRUJe0aWAPWFUxR8t6W3z1UYUMD14EeJEJ6I8azj2wC7Ob+NLhizM?=
+ =?us-ascii?Q?7H0uulE6+pj/v94jH1IVJI7pGvuqdztzWcXPoVnmqtT6yK4EzSmsbZBmgj7B?=
+ =?us-ascii?Q?BcDBQGH18D4HRnxX6gi7SHB5aOGDlngjQk+G6QIwqEn+3H4HxKTV2Jct6VQV?=
+ =?us-ascii?Q?gsWdSKz4QuFuoFm4d1pQluJJO/x0Cld6Ru+vn2yAZQhIqMjvKR/IXyki5EPy?=
+ =?us-ascii?Q?HnZ0BXPnHO1DAYMvdF7nb9D2qclPINblRa3f/Z13krk78V27NsOVgvWwFx7n?=
+ =?us-ascii?Q?uv/VnQwEpL/rXUcTw8OMt5pz02biPkl01DtADfjMlxsto2grxVJwBihnkS+M?=
+ =?us-ascii?Q?L9acHO1+JOwQvNnY5KIJjJpheFgvHtfx3mIUpZDw978ZqB1j9TNkQiZXcLkJ?=
+ =?us-ascii?Q?g6s9HuldCH262CPj3sa9WSFN6AOBq079KrfuBY0XNBVyJElmKNxgExCX6Map?=
+ =?us-ascii?Q?BWVfCR+Fy2GBTNIzmY1LO99lleQMS9Ye3aYbtu2kt6kTiAg9Q4tMVvw0FlQ+?=
+ =?us-ascii?Q?5ED1qZ5pR3SqQvV4UwFMZiIhtZrRu02/jWD91gSs3wMR1gMc+wyWCYzRhtli?=
+ =?us-ascii?Q?O90DCcFmlbDojyzicU2ETc1yNoK+bEdnD6x9nDXfmPebLioJse+EvAQ5GSje?=
+ =?us-ascii?Q?8bUrVnUL4JDut1l6pO5i3b/+y4UhPF8VRHkSoHZLsAXGBAYQY9pgOIdkURsz?=
+ =?us-ascii?Q?gxndpe0O/5Pu4r0tHUeckqa4OH03saB0Qj593lZ4th1TRvXn2FZO7tHK8nG/?=
+ =?us-ascii?Q?o8Pq2OPlbjRgeEiId5YfUD3T5RWld3FqM3cranl8YCTKNRNahg6tOJM7zAKD?=
+ =?us-ascii?Q?Vy5Si6YXA5qIFsmaGEfeT94CIf6LaCOlUAkEf/gtoLkfhy3SjI3Q0rr0Sfzl?=
+ =?us-ascii?Q?XUr6tc8nVfQ=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JsqzTDjO5QT9DObjgQPaedKry5mBJQ0rA6nP5OgxWkUjFlscu61sePaR64Ii?=
+ =?us-ascii?Q?PLc3QA9tGXJM/K2cFtYRutS9VvRGLHNq56NjPqMSHMkYacmrMFkhw4O+uk0T?=
+ =?us-ascii?Q?BWxsn0oNee8ojVWrcebZIwL9o5kHDdIxmQPlEcRJDP5iY3EsFQ5fs29aGMnK?=
+ =?us-ascii?Q?DSd5l5u50c6aANkG6FxsJRdxI+jHUttf9rd63ndlMjA0l+bJHJiCA5iUIC3c?=
+ =?us-ascii?Q?GKMLi3jlDNIygngAzo7SQezPGpHYXd9XM1yGBbTuphgJj5g1xknr++BRdKRT?=
+ =?us-ascii?Q?432pxIhtf8YlOq7i0i/RrT1+GF2XLSxhoi0vFsqaCIJTCdUq3KoFEJa/LBDs?=
+ =?us-ascii?Q?J4V0PaKPtZ8TJixNXsU6ev1d3/z2l84Rky2acLwyVvvPT1dyL2gj+nfTX/3C?=
+ =?us-ascii?Q?o+yB+1ktOtWBnyXYSFcgVLXqc3WsqktYLf4cnK7ZswmdMVaDbdeRB9uLgs7R?=
+ =?us-ascii?Q?NhqQECmoeHVkbO3WARoPbMMkVe7/UOJeq46ppYB9aBlAttNc1x5oA6LyzMsU?=
+ =?us-ascii?Q?qqAZfklYKm1PoCQodgkScuR2d2jCkKjzZaWi8NbJFMNDy0yjZ84/YHThyuP7?=
+ =?us-ascii?Q?q//8m3nfAoTULkOjYNbAGiu110smhKwsNnxNxZ9w3Ws2g3e6SZSl9sqQ76fM?=
+ =?us-ascii?Q?TBFXds/XDIyLCKpaJRNL9p52a8iMWFm7YNknLQ/hri9+gU4G4ZhJ4n0Pma1b?=
+ =?us-ascii?Q?lM4FF+3yKijMYU9wuUUHa0ilFIgA40K/L6Zmoyp5gjFoENqdqvKj80VeaykE?=
+ =?us-ascii?Q?++BGen4Il7Gyx8lK2bvxKKot0TXWDcSUWqiqisSHpJURrb6wOl8NPvkXhAuo?=
+ =?us-ascii?Q?4yDulWr+8l7EUGJqUBgvcSTLik2/oyKlPN1NEyoHtdv0CeP7I3Sdhoy7RqF3?=
+ =?us-ascii?Q?cuaxxbdg0dhv9Hs81MoEWPufYthGQLRimyX/p3CxHc82WdarQaYmCkve4OYG?=
+ =?us-ascii?Q?KWstjms8fENwa/akekMSJU0rKyyxIxuUZkMK+hRq19oO4IPxNHsjqvLeRExp?=
+ =?us-ascii?Q?/QzZ+4CMNee16o/27kSleoRcQVa8m+tmhsxO8S68prTKIKTh6bvNIEotqKOb?=
+ =?us-ascii?Q?jbTdzs1APDJrF3NgOsYlIFjTXh8YDRd8bdCM2rhQJViO4gblGvVm1JiO4v75?=
+ =?us-ascii?Q?HtjBbK3XW8sYBYyRb2Id7jFHhj+1kmpTjEPGW6gTEUFnewvLy347uR4QSTXt?=
+ =?us-ascii?Q?7etwCXxwI9BZMirRj4YV2o/8QWByQWPJzYlIaYikFB9ghV9bMrzxpjMVkgPP?=
+ =?us-ascii?Q?w74yGIR6FIwIf7Vqn63a9tjaZGO89gGRSbQLx/U1dC1k3+zVB0kxqxjMdXwj?=
+ =?us-ascii?Q?pZPcmu5X0iQWtELtTHX5QVnQ5XhrqLqCje+MbUPajRR4UsaXtwA9Ja1Ju3Mc?=
+ =?us-ascii?Q?hVvQxgBaPSxJstJZ+MN38dyinMrkNWvqvelgMK6kteY38gAiDKXC9SSAgRr/?=
+ =?us-ascii?Q?vHCOCHoWVeqQBGrJImC9Zkr485REAtYC81dI0Px56gQYPO0yzPq1y9b37OMX?=
+ =?us-ascii?Q?2e00K1wIMZqHTCOpYjHue8AsBjbLQzF5tk5RduC6SXeEq2T/SF3FvJcA1vlw?=
+ =?us-ascii?Q?M8YBXhXx2I+O5Gr0nv4fki7/Rs5VKIVV7tEtBbAZ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a63990dd-a288-45c1-f9a5-08dd83db3945
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 09:26:14.0615
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 34aE0IakRKzf39cVdijtMl2CGb9+Lz8GxWDxnD2crYOCTyPPMRnnPuwl+EQoB3KlcZod4JZIWj/k+Sr1aLiuBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8260
+X-OriginatorOrg: intel.com
 
-On 4/24/2025 9:38 PM, Alexis Lothoré wrote:
-> Hi Xu,
+On Fri, Apr 25, 2025 at 03:25:12PM +0800, Binbin Wu wrote:
 > 
-> On Thu Apr 24, 2025 at 2:00 PM CEST, Xu Kuohai wrote:
->> On 4/24/2025 3:24 AM, Alexis Lothoré wrote:
->>> Hi Andrii,
->>>
->>> On Wed Apr 23, 2025 at 7:15 PM CEST, Andrii Nakryiko wrote:
->>>> On Thu, Apr 17, 2025 at 12:14 AM Alexis Lothoré
->>>> <alexis.lothore@bootlin.com> wrote:
->>>>>
->>>>> Hi Andrii,
->>>>>
->>>>> On Wed Apr 16, 2025 at 11:24 PM CEST, Andrii Nakryiko wrote:
->>>>>> On Fri, Apr 11, 2025 at 1:32 PM Alexis Lothoré (eBPF Foundation)
->>>>>> <alexis.lothore@bootlin.com> wrote:
 > 
-> [...]
+> On 4/25/2025 3:17 PM, Yan Zhao wrote:
+> > On Fri, Apr 25, 2025 at 03:12:32PM +0800, Binbin Wu wrote:
+> > > 
+> > > On 4/24/2025 11:04 AM, Yan Zhao wrote:
+> > > > From: Xiaoyao Li <xiaoyao.li@intel.com>
+> > > > 
+> > > > Add a wrapper tdh_mem_page_demote() to invoke SEAMCALL TDH_MEM_PAGE_DEMOTE
+> > > > to demote a huge leaf entry to a non-leaf entry in S-EPT. Currently, the
+> > > > TDX module only supports demotion of a 2M huge leaf entry. After a
+> > > > successful demotion, the old 2M huge leaf entry in S-EPT is replaced with a
+> > > > non-leaf entry, linking to the newly-added page table page. The newly
+> > > > linked page table page then contains 512 leaf entries, pointing to the 2M
+> > > 2M or 4K?
+> > The 512 leaf entries point to 2M guest private pages together,
+> If this, it should be 2M range, since it's not a huge page after demotion.
+> Also, the plural "pages" is confusing.
+Ah, indeed, plural "pages" is confiusing :)
+Maybe below is better:
+
+The newly linked page table now contains 512 leaf entries, each pointing to a 4K
+guest private page within the 2M range.
+
+
+> >   each pointing to
+> > 4K.
+> > 
+> > > > guest private pages.
 > 
->>> Thanks for the pointer, I'll take a look at it. The more we discuss this
->>> series, the less member size sounds relevant for what I'm trying to achieve
->>> here.
->>>
->>> Following Xu's comments, I have been thinking about how I could detect the
->>> custom alignments and packing on structures, and I was wondering if I could
->>> somehow benefit from __attribute__ encoding in BTF info ([1]). But
->>> following your hint, I also see some btf_is_struct_packed() in
->>> tools/lib/bpf/btf_dump.c that could help. I'll dig this further and see if
->>> I can manage to make something work with all of this.
->>>
->>
->> With DWARF info, we might not need to detect the structure alignment anymore,
->> since the DW_AT_location attribute tells us where the structure parameter is
->> located on the stack, and DW_AT_byte_size gives us the size of the structure.
-> 
-> I am not sure to follow you here, because DWARF info is not accessible
-> from kernel at runtime, right ? Or are you meaning that we could, at build
-> time, enrich the BTF info embedded in the kernel thanks to DWARF info ?
->
-
-Sorry for the confusion.
-
-What I meant is that there are two DWARF attributes, DW_AT_location and
-DW_AT_byte_size, which tell us the position and size of function parameters.
-
-For the example earlier:
-
-struct s2 {
-       __int128 x;
-} __attribute__((aligned(64)));
-
-int f2(__int128 a, __int128 b, __int128 c, int64_t d, __int128 e, int64_t f, struct s2 g)
-{
-     return 0;
-}
-
-On my build host, the DW_AT_location attributes for "e", "f", and "g" are:
-
-<2><ee>: Abbrev Number: 2 (DW_TAG_formal_parameter)
-     <ef>   DW_AT_name        : e
-     ...
-     <f6>   DW_AT_location    : 2 byte block: 91 0       (DW_OP_fbreg: 0)
-
-<2><f9>: Abbrev Number: 2 (DW_TAG_formal_parameter)
-     <fa>   DW_AT_name        : f
-      ...
-     <101>   DW_AT_location    : 2 byte block: 91 10     (DW_OP_fbreg: 16)
-
-<2><104>: Abbrev Number: 2 (DW_TAG_formal_parameter)
-     <105>   DW_AT_name        : g
-      ...
-     <10c>   DW_AT_location    : 2 byte block: 83 0      (DW_OP_breg19 (x19): 0)
-
-We can see "e" and "f" are at fp+0 and fp+16, but "g" is in x19+0. Disassembly shows x19
-holds a 64-byte aligned stack address.
-
-For the two questions you mentioned, I’m not sure if we can access DWARF attributes
-at runtime. As for adding parameter locations to BTF at building time, I think it
-means we would need to record CPU-related register info in BTF, which I don’t think
-is a good idea.
-
-> Thanks,
-> 
-> Alexis
-> 
-
 
