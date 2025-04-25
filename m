@@ -1,160 +1,95 @@
-Return-Path: <linux-kernel+bounces-619815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE51A9C1FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:50:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4C1A9C35C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD1C3A7F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4F3165C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66FF238C03;
-	Fri, 25 Apr 2025 08:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CBD2356DA;
+	Fri, 25 Apr 2025 09:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="MbSr3hYh"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="oWIYJ4sP"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25118238152;
-	Fri, 25 Apr 2025 08:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745570674; cv=pass; b=u8vqTLCoB7xiXkAxMua7Z/shka9tkZRmfGVtsEYaZmlVm+VlkijBCkV4uzocUa7bofR0Ttd/JEI14ZDJk8sNIFUmsM8ARsQ48TK6BaMxL6W3E92DCh3uNZP9J6poGErjHCAkNhUuKv462wmLyLMahgC2q1BK2c8dQJarlA+ZvGI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745570674; c=relaxed/simple;
-	bh=yjq2AGuA29xCOgUcG0CIGuz4LaDtS7a60cZx5XO2DGA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jxv4wddt0EOIyVDeHTA5sBcXc1nrdgCRofdyt3OBrxKDyzbphbKiXJJm6793FcPxlrdhxCwthx0GgVxowTe/V2C49Ex5JRJZzIpwxlnmzQILJGVHWRWb6TPYealNy7ZLZqdbxybLxMW4oFrzlfBGmQyQfeBKeWhCirLvtw5SV18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=MbSr3hYh; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1745570646; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iPxa1tME43btWBJM9+6+JF3341N/snsfZv7ikXOFqzt+ANi4A4Ysm8FOemEfDbUFzoeMjGLIlhMXvhq431XE1VV6YNa+7pB5M6NU7sqFUvSgmhgi2UF+CMZ3hjTIfeNhqWWMpdSilO2/ZTL8IGQzs7C3n3RKPc84NXnfsBCZNp4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745570646; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=yjq2AGuA29xCOgUcG0CIGuz4LaDtS7a60cZx5XO2DGA=; 
-	b=i2MLWQYurtV3APXeIRg1xh2Qw3urvftrm+CLRlgsB1ZqUseQD9sH5sfdPcr8+mPqYhWHjNq2IpinEvPel3RSl3sI5rt6/Nywibcnetu/saZXwsG62TBTWzkIOrksmWOyMUk1cSk71xDBYLAXccLsNWFyni33zmo3Iq+znekys6Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745570646;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=yjq2AGuA29xCOgUcG0CIGuz4LaDtS7a60cZx5XO2DGA=;
-	b=MbSr3hYhmraOXLP86p9Z8aaBI4qPNMRnIdZidUznApzOKEGDMzJjtIdnZ0yxBvc3
-	eQ844/s9iIpWOxG51BOVQHsnkKfWt6yNO6skTbO1V6EQWYPL8Umy+0EX48cFe5wrRnM
-	PLPsIZcEg7iXk5hAN0y3KJIF4LK6SMSgzKE4A1XGeCTJKqhlAsGrCqJv/CvPhz+EbCY
-	BZWanu9+eYglFfwWt1u53YhOoYPvt6Ol4M/rdHh0AZ7s9PvYeGmW7PdmZI9vQrR5NV9
-	hLcrKbqk3bwjuYWpO4TXC9j15hWYnCkSCzWc54wpAyJhi55ohZSXvbmeMNMpOXje2TZ
-	R18j/Qftog==
-Received: by mx.zohomail.com with SMTPS id 1745570643106791.8159653626777;
-	Fri, 25 Apr 2025 01:44:03 -0700 (PDT)
-Message-ID: <460048c49b82684af0759520ec8dcac057ad2857.camel@icenowy.me>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: starfive,jh7110: add
- PAD_INTERNAL_* virtual pins
-From: Icenowy Zheng <uwu@icenowy.me>
-To: E Shattow <e@freeshell.de>, Emil Renner Berthing <kernel@esmil.dk>, 
- Jianlong Huang <jianlong.huang@starfivetech.com>, Hal Feng
- <hal.feng@starfivetech.com>, Linus Walleij <linus.walleij@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Date: Fri, 25 Apr 2025 16:43:56 +0800
-In-Reply-To: <60891c52-eeca-4358-8f38-789533016495@freeshell.de>
-References: <20250424062017.652969-1-uwu@icenowy.me>
-	 <20250424062017.652969-2-uwu@icenowy.me>
-	 <60891c52-eeca-4358-8f38-789533016495@freeshell.de>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A55514830A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745573191; cv=none; b=KRxMmz9P/7IXlMjfEFtLuW5JRpicOmz0WiNt2GRYDQPqZ/g0P9V4iTFZplRee9CSVp9Tl0uAD5dowvPIbbVVuqwPkqyXTOvEdEedfQc7Woh6MZYM2xIlbPg8WpiPEXHf3mngkFeSWwmimk2Yo40OoNsT3vKrZlJR1oFrb+JA0UM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745573191; c=relaxed/simple;
+	bh=NKsOygsDFjk/xYVp4zbBgAEBu/WNssPzm1S5Aq8AM8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KD8Xudu/3vXJS1CFdAFFawsTUxgjhfC4MzWDQCxMvq6r63AUCZWNLadImWvHofX3hXiD6xpB4h9RbclSaa/oZDCqLHtQWXTMh5H+o8yZVFVG/MxUlAsi4N8ZDasXxHJLc6HVU6/0z5UXzOYwVYysilki6AUpLmHDAzBddyaKqxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=oWIYJ4sP; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1745573181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qtgU1WOXpOKgLGgZrNJLTIThCMPkblkediAeOcnKwxc=;
+	b=oWIYJ4sP2DQejiriCy+X853nBC07WvAU2/mW0mAkccyyiFTMK0Ndk3bYoDowxudxe+82kJ
+	uHu9QtMrjKt6Pg97/+BA4FIpd6XL2T2nJRr0J3jCUBuSzKUMhBj9vHKwkFoZ/ubpXSTJ9/
+	/20qn/eHopqpOOZdXID7eaWapvAEfjdX8qNu67Vh5likLF3e2ITcz/7CKqe3eKi775kIbX
+	TiNgnVHZB5fHfs4KY/VM6Juk1lF6jLIZG9anh3imLgQNbG8FIWUWXZuBizvvXDgYjiTSxB
+	UZtPPuMDNUr1TWP4SoiTtRhd+KdwiioNP62GrRkBp6b2nv6zyOCKOfFZO2EBLg==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Dragan Simic <dsimic@manjaro.org>,
+	Dang Huynh <danct12@riseup.net>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH 0/4] Add vcc-supply to SPI flash on Pine64 devices + Rock 5B
+Date: Fri, 25 Apr 2025 10:44:40 +0200
+Message-ID: <20250425092601.56549-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-=E5=9C=A8 2025-04-24=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 01:15 -0700=EF=BC=
-=8CE Shattow=E5=86=99=E9=81=93=EF=BC=9A
-> On 4/23/25 23:20, Icenowy Zheng wrote:
-> > The JH7110 SoC could support internal GPI signals to be routed to
-> > not
-> > external GPIO but internal low/high levels.
-> >=20
-> > Add two macros, PAD_INTERNAL_LOW and PAD_INTERNAL_HIGH, as two
-> > virtual
-> > "pads" to represent internal GPI sources with fixed low/high
-> > levels.
-> >=20
-> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > ---
-> > =C2=A0include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h | 4 ++++
-> > =C2=A01 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> > b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> > index 3865f01396395..3cca874b2bef7 100644
-> > --- a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> > +++ b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> > @@ -126,6 +126,10 @@
-> > =C2=A0#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0PAD_GMAC0_=
-TXEN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A018
-> > =C2=A0#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0PAD_GMAC0_=
-TXC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A019
-> > =C2=A0
-> > +/* virtual pins for forcing GPI */
-> > +#define PAD_INTERNAL_LOW=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0254
-> > +#define PAD_INTERNAL_HIGH=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0255
-> > +
-> > =C2=A0#define GPOUT_LOW=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00
-> > =C2=A0#define GPOUT_HIGH=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01
-> > =C2=A0
->=20
-> Asking about the choice of 255 and 254 values for virtual high/low
-> pins,
-> here. There's not much result when grep Linux source for 'virtual
-> pin'
-> to compare with. Are these the best values for this approach?
+The vcc-supply property was added to "jedec,spi-nor" binding in commit:
+e7f4e924f46d ("dt-bindings: mtd: jedec,spi-nor: add optional vcc-supply")
 
-These two values are picked because the following reasons:
+which resulted in the following warning:
+  spi-nor spiN.0: supply vcc not found, using dummy regulator
 
-- The pin field has 8 bits (see the comments of jh7110_pinmux_din() in
-pinctrl-starfive-jh7110.c)
-- We are already using values 0 and 1 for GPIO0/GPIO1
+Fix that by specifying the vcc-supply property.
 
-If we're designing from scratch, it's possible to have another practice
-by using 0 and 1 for internal low/high and 2 for gpio0 so on.
+Diederik de Haas (4):
+  arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3328-rock64
+  arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3399-rockpro64
+  arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3566-pinetab2
+  arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3588-rock-5b
 
->=20
-> What happens when devicetree has in it to route PAD_INTERNAL_LOW to
-> PAD_INTERNAL_HIGH and other unlikely combinations?=C2=A0 Or a devicetree
-> blob
-> with this computed value is paired to Linux kernel that does not have
-> the code to handle these virtual pins, for compatibility concern?
+ arch/arm64/boot/dts/rockchip/rk3328-rock64.dts     | 1 +
+ arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi | 1 +
+ arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi  | 1 +
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    | 1 +
+ 4 files changed, 4 insertions(+)
 
-I think it's not supported for newer DTs to be compatible with old
-kernels, but I analyzed the code, a read-out-of-bound could happen in
-jh7110_set_function() in pinctrl-starfive-jh7110-sys.c . Well this is
-unfortunate, but we can do few things to fix old kernels -- we can fix
-the problem in newer kernels.
-
-And even picking other values cannot make things better...
-
->=20
-> Do we know yet if JH8100 will share some of this design?
-
-We don't know yet whether JH8100 can exist.
-
->=20
-> -E
+-- 
+2.49.0
 
 
