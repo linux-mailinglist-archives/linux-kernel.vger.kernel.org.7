@@ -1,97 +1,69 @@
-Return-Path: <linux-kernel+bounces-619591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC679A9BEB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:33:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3900A9BEBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37A61B84EE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 197BB4A1D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B18F197A76;
-	Fri, 25 Apr 2025 06:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BF622D4D9;
+	Fri, 25 Apr 2025 06:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gI5KQpLF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="e4QzR/2y"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFD0137E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 06:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B980197A76;
+	Fri, 25 Apr 2025 06:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745562789; cv=none; b=fR8NQYsfFYqsBfkTgBNFb0y9+69MmThqbhVqRzaUPnm+igRtSgssLHIFRIK0UuD8KGiqOgrztkQYhf9e2OsMriOSN+oO2RQnHNS/Btr1tCHlF9MzTZ8XVEBoZ5xmgjw9oCew8P9Dcri3nUt91LmtQ1TDd6tBzo7zzCYhvc7Mh7I=
+	t=1745562984; cv=none; b=TSFcjQPqr352juK12SuZWnK1wlAgOii0Idu6deNXNGMhFrwmLZH2bZCu8+jDrincHgg4hOQG7T9YMdl+yq6TEAJ9g5e88CYs28hxquUWe50733b7N6tbuBJK4RfrE9nGGfjmbAtXT0zDjbyJ72hImeoUcaNjdyBD8zsg0U+5dqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745562789; c=relaxed/simple;
-	bh=56tCywcZKP0beJQf8hFoLiJGx5c54ZdK/gUAtsVWx6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ueupxL/EmsjBngOGeXHHi9+pDk+5wiohxc4avVMwgfSB63UWL0aeLuaRnVcBw81m7C4zrzbaQb8aWz741xTCQ+KvfZ4jpFn+4MWAn/bY+MVAWeXmE//ma648SwEeq974HUJjVp6fN89Ej8m0mQFXmFZNp9A6aCWaE+WRwTiZr9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gI5KQpLF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745562785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=d285x5hlvi/CsClG0dx/mghTairCHhYodtu6zCS6z7I=;
-	b=gI5KQpLF3sEj6VQF3Avblm6K6D0SRoizeuKZr+9BVkz0/H/US4gVGrk6/A88VS+phBxaaV
-	9eb7o5cD4fX5r6EDBu7yjgB7xYFdd62UD0hrVEYLKF7/5s2YGM0ul8DiaQNAxHQLj/UxTs
-	MTD4fb33FamhtW0u3tKMMAP3yql4IDE=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-219-I6qXgIZRNTelRiHR5LGnLA-1; Fri, 25 Apr 2025 02:33:04 -0400
-X-MC-Unique: I6qXgIZRNTelRiHR5LGnLA-1
-X-Mimecast-MFC-AGG-ID: I6qXgIZRNTelRiHR5LGnLA_1745562783
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7369b559169so1182546b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 23:33:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745562783; x=1746167583;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d285x5hlvi/CsClG0dx/mghTairCHhYodtu6zCS6z7I=;
-        b=XQJLtoJOimJQiBylrvD5AIH3FbpbNiZKjQ0wKW7+IQZ/mLQp5qVcR0A0M3ZHOORsJE
-         GR08ogxFjbtaiDzj50cPlDVD8wKrpDnjQeyyrAcpdXr/2nFLaM1KEEiQRZ1l5x4v6KBs
-         qoHCVXz21fgH2YDvHNN5HQRa4GKc+jdwx4cwDcK3Aoc/Cd/BuQVgpDymZICs4XaHTyiZ
-         lWJIZp4gtUMvCuFFpvZ0re5DdmjOlaLaKJWuaG93xbfZd3T12HXSCdlcJb56Wqt71eln
-         CeWhdNukgQrqD38Z1maimxT0gQK1SGnl0/8ahFV+BLbNBkxMEKs1YvN9TnXz5OSdVZcf
-         Fwpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxU9tv0PASIkfidI0xg77T1TLodORKRxXPJQY49B7eykq1vu9Al7ZuG7w0QsNf5F4nZsZ3Yz7Bi88r4mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2ObvQBQOxhqfahLCDgldF/LXiNIV2o6XZrl3zXnWm871EiDbO
-	2j5fUlyNc2yRopVjV5GmQtSZ86+uxIiotJkfCQfC82v5NOn9sMIRahMDnZNk4rxm2KVzOA+95n2
-	kCzJK4R1Bh4UIq7uL38tu+EtucuF+YaYuDQ0piXiDBs56cmLlxWh0UYSyN9M9Pw==
-X-Gm-Gg: ASbGnctDQr0/ymeivsO6lQpZ8eb+j/0cP+0FO6HJdrBnVUUnQlqH2hOofUwRnXofeq8
-	2LWhKaw+4+jtmsvFRNXOG/jWp7XMMumtHJSGjf2pX/2EJ8lsm8WdB+bShgEDXWckSQI15O07sYw
-	g++lG2fkP6PoZTFG+at5yQkMr87s0Pp8TRfTJ7J3SERYdDHtia1P9rucral1/wzAXcX+6E4PhnL
-	S2EIk0ePEs01460SpSSOQrfQsCXsf1wtYTs3PsTxuuvCzK76PFWjbgjQohj7Vvh+Dgm25xLPcSc
-	ZTlPoTI9Z0Xa
-X-Received: by 2002:a05:6a20:3d8d:b0:1f5:8de8:3b1a with SMTP id adf61e73a8af0-2045b6e73dfmr1500695637.13.1745562782839;
-        Thu, 24 Apr 2025 23:33:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHF5L5iQamY7B+V8Yg2guhT+fTSVr2uNb9/ZqVN6Z1cZ1CgRQloJBDOC8O5wm3k/XZJI+f1Gw==
-X-Received: by 2002:a05:6a20:3d8d:b0:1f5:8de8:3b1a with SMTP id adf61e73a8af0-2045b6e73dfmr1500658637.13.1745562782456;
-        Thu, 24 Apr 2025 23:33:02 -0700 (PDT)
-Received: from zeus.elecom ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f8597f5csm2211261a12.43.2025.04.24.23.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 23:33:01 -0700 (PDT)
-From: Ryosuke Yasuoka <ryasuoka@redhat.com>
-To: drawat.floss@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jfalempe@redhat.com
-Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH drm-next v2] drm/hyperv: Replace simple-KMS with regular atomic helpers
-Date: Fri, 25 Apr 2025 15:32:32 +0900
-Message-ID: <20250425063234.757344-1-ryasuoka@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745562984; c=relaxed/simple;
+	bh=KwyTNtiZvo/Ja9Uvj/tLMwjGchEpTO819iVwCPQUPzk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QT1A5dmoVDoDxmnChlheohho0NZPzjdkrZwB4nf2YT7tP4SSOdlD8K73ydbM0h3hogu+ZoMauaE34AOVL8w/7VWMw1YPJd+6xJH0H/sCmDDmVUSeb+muQlZEMJkX8B9uni3KL+jPLv679wgGbrHyow5rXZYvV/dvJmgqmf5LwiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=e4QzR/2y; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53P6YbYsA2526006, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1745562877; bh=KwyTNtiZvo/Ja9Uvj/tLMwjGchEpTO819iVwCPQUPzk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=e4QzR/2y3k1FbMi44dDAbvqc2tyAaiuAXiIb84QxIuqBKQ30PLplUEWyKrQjF9x1/
+	 6IUSMgP9YK8XL7vFQylW9KgzKzPke5cx0xnT0jO+I1wmEFmpNPdiGfA7sJ0mibYVd2
+	 fIBrGrp1dNaucTQ8Qw/pFIpx+XEjwNLR7cjgI6NLrkcWXsMikLBcI38Pns8ydUZk1N
+	 +/2Zmbb+HFf7smVCLSbPBW0VV9mrt3WOsIgpjKoTUiVcVXN6vsIGDEQ6hoILtYe+GI
+	 /qLzo2OPlIHMnopptZeP7zQKrWE71ZCIS+igzSQsSghD6a8uc1rJh+Jf9OOI/1CBL+
+	 uNJi8Vz6hmTWA==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53P6YbYsA2526006
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 14:34:37 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 25 Apr 2025 14:34:37 +0800
+Received: from RTDOMAIN (172.21.210.124) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 25 Apr
+ 2025 14:34:37 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>,
+        Joe Damato
+	<jdamato@fastly.com>
+Subject: [PATCH net-next v2] rtase: Use min() instead of min_t()
+Date: Fri, 25 Apr 2025 14:34:29 +0800
+Message-ID: <20250425063429.29742-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,293 +71,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Drop simple-KMS in favor of regular atomic helpers to make the code more
-modular. The simple-KMS helper mix up plane and CRTC state, so it is
-obsolete and should go away [1]. Since it just split the simple-pipe
-functions into per-plane and per-CRTC, no functional changes is
-expected.
+Use min() instead of min_t() to avoid the possibility of casting to the
+wrong type.
 
-[1] https://lore.kernel.org/lkml/dae5089d-e214-4518-b927-5c4149babad8@suse.de/
-
-Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-
+Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+Reviewed-by: Joe Damato <jdamato@fastly.com>
 ---
-v2:
-- Remove hyperv_crtc_helper_mode_valid
-- Remove hyperv_format_mod_supported
-- Call helper_add after {plane,crtc}_init
-- Move drm_plane_enable_fb_damage_clips to a place close to plane init
-- Move hyperv_conn_init() into hyperv_pipe_init
-- Remove hyperv_blit_to_vram_fullscreen
-- Remove format check
-- Replace hyperv_crtc_helper_atomic_check to drm_crtc_helper_atomic_check
+v1 -> v2:
+- Remove the Fixes tag.
+---
+ drivers/net/ethernet/realtek/rtase/rtase_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v1:
-https://lore.kernel.org/all/20250420121945.573915-1-ryasuoka@redhat.com/
-
- drivers/gpu/drm/hyperv/hyperv_drm.h         |   4 +-
- drivers/gpu/drm/hyperv/hyperv_drm_modeset.c | 159 +++++++++++++-------
- 2 files changed, 107 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/gpu/drm/hyperv/hyperv_drm.h b/drivers/gpu/drm/hyperv/hyperv_drm.h
-index d2d8582b36df..9e776112c03e 100644
---- a/drivers/gpu/drm/hyperv/hyperv_drm.h
-+++ b/drivers/gpu/drm/hyperv/hyperv_drm.h
-@@ -11,7 +11,9 @@
- struct hyperv_drm_device {
- 	/* drm */
- 	struct drm_device dev;
--	struct drm_simple_display_pipe pipe;
-+	struct drm_plane plane;
-+	struct drm_crtc crtc;
-+	struct drm_encoder encoder;
- 	struct drm_connector connector;
+diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+index 6251548d50ff..8c902eaeb5ec 100644
+--- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
++++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+@@ -1983,7 +1983,7 @@ static u16 rtase_calc_time_mitigation(u32 time_us)
+ 	u8 msb, time_count, time_unit;
+ 	u16 int_miti;
  
- 	/* mode */
-diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
-index 6c6b57298797..374f8464f5bc 100644
---- a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
-+++ b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
-@@ -5,6 +5,8 @@
+-	time_us = min_t(int, time_us, RTASE_MITI_MAX_TIME);
++	time_us = min(time_us, RTASE_MITI_MAX_TIME);
  
- #include <linux/hyperv.h>
+ 	msb = fls(time_us);
+ 	if (msb >= RTASE_MITI_COUNT_BIT_NUM) {
+@@ -2005,7 +2005,7 @@ static u16 rtase_calc_packet_num_mitigation(u16 pkt_num)
+ 	u8 msb, pkt_num_count, pkt_num_unit;
+ 	u16 int_miti;
  
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_crtc_helper.h>
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
-@@ -15,7 +17,7 @@
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_probe_helper.h>
--#include <drm/drm_simple_kms_helper.h>
-+#include <drm/drm_plane.h>
+-	pkt_num = min_t(int, pkt_num, RTASE_MITI_MAX_PKT_NUM);
++	pkt_num = min(pkt_num, RTASE_MITI_MAX_PKT_NUM);
  
- #include "hyperv_drm.h"
- 
-@@ -38,18 +40,6 @@ static int hyperv_blit_to_vram_rect(struct drm_framebuffer *fb,
- 	return 0;
- }
- 
--static int hyperv_blit_to_vram_fullscreen(struct drm_framebuffer *fb,
--					  const struct iosys_map *map)
--{
--	struct drm_rect fullscreen = {
--		.x1 = 0,
--		.x2 = fb->width,
--		.y1 = 0,
--		.y2 = fb->height,
--	};
--	return hyperv_blit_to_vram_rect(fb, map, &fullscreen);
--}
--
- static int hyperv_connector_get_modes(struct drm_connector *connector)
- {
- 	struct hyperv_drm_device *hv = to_hv(connector->dev);
-@@ -98,30 +88,71 @@ static int hyperv_check_size(struct hyperv_drm_device *hv, int w, int h,
- 	return 0;
- }
- 
--static void hyperv_pipe_enable(struct drm_simple_display_pipe *pipe,
--			       struct drm_crtc_state *crtc_state,
--			       struct drm_plane_state *plane_state)
-+static const uint32_t hyperv_formats[] = {
-+	DRM_FORMAT_XRGB8888,
-+};
-+
-+static const uint64_t hyperv_modifiers[] = {
-+	DRM_FORMAT_MOD_LINEAR,
-+	DRM_FORMAT_MOD_INVALID
-+};
-+
-+static void hyperv_crtc_helper_atomic_enable(struct drm_crtc *crtc,
-+					     struct drm_atomic_state *state)
- {
--	struct hyperv_drm_device *hv = to_hv(pipe->crtc.dev);
--	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
-+	struct hyperv_drm_device *hv = to_hv(crtc->dev);
-+	struct drm_plane *plane = &hv->plane;
-+	struct drm_plane_state *plane_state = plane->state;
-+	struct drm_crtc_state *crtc_state = crtc->state;
- 
- 	hyperv_hide_hw_ptr(hv->hdev);
- 	hyperv_update_situation(hv->hdev, 1,  hv->screen_depth,
- 				crtc_state->mode.hdisplay,
- 				crtc_state->mode.vdisplay,
- 				plane_state->fb->pitches[0]);
--	hyperv_blit_to_vram_fullscreen(plane_state->fb, &shadow_plane_state->data[0]);
- }
- 
--static int hyperv_pipe_check(struct drm_simple_display_pipe *pipe,
--			     struct drm_plane_state *plane_state,
--			     struct drm_crtc_state *crtc_state)
-+static void hyperv_crtc_helper_atomic_disable(struct drm_crtc *crtc,
-+					      struct drm_atomic_state *state)
-+{ }
-+
-+static const struct drm_crtc_helper_funcs hyperv_crtc_helper_funcs = {
-+	.atomic_check = drm_crtc_helper_atomic_check,
-+	.atomic_enable = hyperv_crtc_helper_atomic_enable,
-+	.atomic_disable = hyperv_crtc_helper_atomic_disable,
-+};
-+
-+static const struct drm_crtc_funcs hyperv_crtc_funcs = {
-+	.reset = drm_atomic_helper_crtc_reset,
-+	.destroy = drm_crtc_cleanup,
-+	.set_config = drm_atomic_helper_set_config,
-+	.page_flip = drm_atomic_helper_page_flip,
-+	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
-+};
-+
-+static int hyperv_plane_atomic_check(struct drm_plane *plane,
-+				     struct drm_atomic_state *state)
- {
--	struct hyperv_drm_device *hv = to_hv(pipe->crtc.dev);
-+	struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(state, plane);
-+	struct hyperv_drm_device *hv = to_hv(plane->dev);
- 	struct drm_framebuffer *fb = plane_state->fb;
-+	struct drm_crtc *crtc = plane_state->crtc;
-+	struct drm_crtc_state *crtc_state = NULL;
-+	int ret;
- 
--	if (fb->format->format != DRM_FORMAT_XRGB8888)
--		return -EINVAL;
-+	if (crtc)
-+		crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-+
-+	ret = drm_atomic_helper_check_plane_state(plane_state, crtc_state,
-+						  DRM_PLANE_NO_SCALING,
-+						  DRM_PLANE_NO_SCALING,
-+						  false, false);
-+	if (ret)
-+		return ret;
-+
-+	if (!plane_state->visible)
-+		return 0;
- 
- 	if (fb->pitches[0] * fb->height > hv->fb_size) {
- 		drm_err(&hv->dev, "fb size requested by %s for %dX%d (pitch %d) greater than %ld\n",
-@@ -132,53 +163,77 @@ static int hyperv_pipe_check(struct drm_simple_display_pipe *pipe,
- 	return 0;
- }
- 
--static void hyperv_pipe_update(struct drm_simple_display_pipe *pipe,
--			       struct drm_plane_state *old_state)
-+static void hyperv_plane_atomic_update(struct drm_plane *plane,
-+						      struct drm_atomic_state *old_state)
- {
--	struct hyperv_drm_device *hv = to_hv(pipe->crtc.dev);
--	struct drm_plane_state *state = pipe->plane.state;
-+	struct drm_plane_state *old_pstate = drm_atomic_get_old_plane_state(old_state, plane);
-+	struct hyperv_drm_device *hv = to_hv(plane->dev);
-+	struct drm_plane_state *state = plane->state;
- 	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(state);
- 	struct drm_rect rect;
- 
--	if (drm_atomic_helper_damage_merged(old_state, state, &rect)) {
-+	if (drm_atomic_helper_damage_merged(old_pstate, state, &rect)) {
- 		hyperv_blit_to_vram_rect(state->fb, &shadow_plane_state->data[0], &rect);
- 		hyperv_update_dirt(hv->hdev, &rect);
- 	}
- }
- 
--static const struct drm_simple_display_pipe_funcs hyperv_pipe_funcs = {
--	.enable	= hyperv_pipe_enable,
--	.check = hyperv_pipe_check,
--	.update	= hyperv_pipe_update,
--	DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS,
-+static const struct drm_plane_helper_funcs hyperv_plane_helper_funcs = {
-+	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-+	.atomic_check = hyperv_plane_atomic_check,
-+	.atomic_update = hyperv_plane_atomic_update,
- };
- 
--static const uint32_t hyperv_formats[] = {
--	DRM_FORMAT_XRGB8888,
-+static const struct drm_plane_funcs hyperv_plane_funcs = {
-+	.update_plane		= drm_atomic_helper_update_plane,
-+	.disable_plane		= drm_atomic_helper_disable_plane,
-+	.destroy		= drm_plane_cleanup,
-+	DRM_GEM_SHADOW_PLANE_FUNCS,
- };
- 
--static const uint64_t hyperv_modifiers[] = {
--	DRM_FORMAT_MOD_LINEAR,
--	DRM_FORMAT_MOD_INVALID
-+static const struct drm_encoder_funcs hyperv_drm_simple_encoder_funcs_cleanup = {
-+	.destroy = drm_encoder_cleanup,
- };
- 
- static inline int hyperv_pipe_init(struct hyperv_drm_device *hv)
- {
-+	struct drm_device *dev = &hv->dev;
-+	struct drm_encoder *encoder = &hv->encoder;
-+	struct drm_plane *plane = &hv->plane;
-+	struct drm_crtc *crtc = &hv->crtc;
-+	struct drm_connector *connector = &hv->connector;
- 	int ret;
- 
--	ret = drm_simple_display_pipe_init(&hv->dev,
--					   &hv->pipe,
--					   &hyperv_pipe_funcs,
--					   hyperv_formats,
--					   ARRAY_SIZE(hyperv_formats),
--					   hyperv_modifiers,
--					   &hv->connector);
-+	ret = drm_universal_plane_init(dev, plane, 0,
-+				       &hyperv_plane_funcs,
-+				       hyperv_formats, ARRAY_SIZE(hyperv_formats),
-+				       hyperv_modifiers,
-+				       DRM_PLANE_TYPE_PRIMARY, NULL);
-+	if (ret)
-+		return ret;
-+	drm_plane_helper_add(plane, &hyperv_plane_helper_funcs);
-+	drm_plane_enable_fb_damage_clips(plane);
-+
-+	ret = drm_crtc_init_with_planes(dev, crtc, plane, NULL,
-+					&hyperv_crtc_funcs, NULL);
- 	if (ret)
- 		return ret;
-+	drm_crtc_helper_add(crtc, &hyperv_crtc_helper_funcs);
- 
--	drm_plane_enable_fb_damage_clips(&hv->pipe.plane);
-+	encoder->possible_crtcs = drm_crtc_mask(crtc);
-+	ret = drm_encoder_init(dev, encoder,
-+			       &hyperv_drm_simple_encoder_funcs_cleanup,
-+			       DRM_MODE_ENCODER_NONE, NULL);
-+	if (ret)
-+		return ret;
- 
--	return 0;
-+	ret = hyperv_conn_init(hv);
-+	if (ret) {
-+		drm_err(dev, "Failed to initialized connector.\n");
-+		return ret;
-+	}
-+
-+	return drm_connector_attach_encoder(connector, encoder);
- }
- 
- static enum drm_mode_status
-@@ -221,12 +276,6 @@ int hyperv_mode_config_init(struct hyperv_drm_device *hv)
- 
- 	dev->mode_config.funcs = &hyperv_mode_config_funcs;
- 
--	ret = hyperv_conn_init(hv);
--	if (ret) {
--		drm_err(dev, "Failed to initialized connector.\n");
--		return ret;
--	}
--
- 	ret = hyperv_pipe_init(hv);
- 	if (ret) {
- 		drm_err(dev, "Failed to initialized pipe.\n");
-
-base-commit: b60301774a8fe6c30b14a95104ec099290a2e904
+ 	if (pkt_num > 60) {
+ 		pkt_num_unit = RTASE_MITI_MAX_PKT_NUM_IDX;
 -- 
-2.49.0
+2.34.1
 
 
