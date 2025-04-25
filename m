@@ -1,179 +1,162 @@
-Return-Path: <linux-kernel+bounces-619670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2405FA9BFC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525D3A9BFC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603B34662E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FD61B67F4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9957E232395;
-	Fri, 25 Apr 2025 07:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E727422F14D;
+	Fri, 25 Apr 2025 07:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdlRhfSs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkTD64xk"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA7422D780;
-	Fri, 25 Apr 2025 07:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F191DDE9;
+	Fri, 25 Apr 2025 07:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745566173; cv=none; b=RrYJxiHNptzNWSMEPsGmfoDWEQrKO/cHBL70LwTbpFks+TOkuB6ZfXrZOd1CSIU03XNJneX5rfuanv9Zx03r+MXT/42XTmDuUXCkys88+g0kBfPw3+BVqJdd0gBqtEdLqgmr5Ld3wAE/DS9sGEJhMDgKPMghQzuSLken118+hUA=
+	t=1745566231; cv=none; b=f4h2aAEVGJJjrt1oL/5exBpHOlbDy7WkP68zSBPVJpXTImTg/OSNAXxfp2QfslazIzND8AnYmmgyKlxTfW4HcpfKv1boOqzihfMI72Uw49oLVvHo/A4AIDlQoxjXBz1IByekC4pdFkaK01LQnS/bstFfCadFEYp4Crm5CFWVrmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745566173; c=relaxed/simple;
-	bh=IFsKc6AsjWYU/HKywRcQ5iDgHnBqlZkmDwblxd4kymA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HZLZzh9//cIwH/5HcRAMI+MQM17n6akcdMEWtmFiA2cjKpivd4ru3MjCA5d0OTMOr+0WuycoYk50W/wpMcnyVs6UxC5IEW80dkNWEM9phNoCZ+d2b8OJoNp2PYovSO5n/+kVwO0I9A0nNutcufjtWs9XcokzPhWKbJdpB0lxjtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdlRhfSs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD98C4CEEB;
-	Fri, 25 Apr 2025 07:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745566172;
-	bh=IFsKc6AsjWYU/HKywRcQ5iDgHnBqlZkmDwblxd4kymA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MdlRhfSs1xbQ3HA2m84OQKpiG6kmutuL+3GB7mNAopVsU8Ao2DhK1NJyXKHWltd7v
-	 RVptY2F5UoCgE1Wz6Fz0EhemaSR7zfYw/cj6sSj6+24S6K3Rip5R0tU5cCtGonwEZj
-	 mk9X7ysyJYkI+QTj6grXZtfQ5TJupx3B+TnjjEhJcy6zlxl4OWmPkDpvzbKTL0vbDy
-	 jhQTZAEa9S9XwOebUf2enAPLWeS6rn/ENaaBcc1Sv6GZzhwAfaYmwgC+92rQDgORiy
-	 j/124aVBPU0rxSL5WggblVdlNffVfl0RF1JqjD5mbghaJnZxsg3Jq9v4R1pm/CvnjI
-	 RHjneAXboS3og==
-Date: Fri, 25 Apr 2025 15:29:23 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Kees Cook
- <kees@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] docs: Sphinx: kerneldoc: only initialize kernel-doc
- classes once
-Message-ID: <20250425152923.760e22e6@sal.lan>
-In-Reply-To: <b00788f26e161512858a6e01a673c34743c954df.1745564565.git.mchehab+huawei@kernel.org>
-References: <cover.1745564565.git.mchehab+huawei@kernel.org>
-	<b00788f26e161512858a6e01a673c34743c954df.1745564565.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1745566231; c=relaxed/simple;
+	bh=OWvy44TnOoF2Xr9rCIjsqTfY38fVghdoAqz+8yWzeiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDKCxny42WlQ7dxnVveuFQKC+tDYEprcDvbiE+2+O4LVbAbXxzwMxCSl6+upXjYQ7xgW04IUiOdQnAFWnljn5GA7e6kSwZ06BwhPg0LinCoudRthAYqB0ZJq46I1JtY4l8njm93vTAum69/DQ5B/O9vE6PUuE1EtyzYn5rMMDzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkTD64xk; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e6deb3eb7dbso1614016276.0;
+        Fri, 25 Apr 2025 00:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745566228; x=1746171028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OWvy44TnOoF2Xr9rCIjsqTfY38fVghdoAqz+8yWzeiE=;
+        b=lkTD64xkfmuPvga8IW34AGtw3lZn18u5ZnI+uo6zv/I4IOGRIf93z9JapXKcIgSquz
+         NrnMZCucTowXNzOj3/DWETgXrkiOfRXuHUk7Sfb4MzSKqDmDbCZznFhWMC/41mk4PMWo
+         mfJAJuD7tJg7w9sMnC/jEaPPVYvglAa5QlQng5dFJsdpQxYTu8SySjdC8+F3CTvbK0yu
+         +QCCsRTWFuN26pRpM5kOseQKClHdfn9NgjywO7/YfVM+rwbcLD1aT/2W3cClbTD8WyMm
+         8UtDr0AnD1FEjUyk87grl/dUVkcFDcGx6t1NuVpEfAWTjKaR+TvtWM9bBtXi4xMCSKgG
+         Zt4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745566228; x=1746171028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OWvy44TnOoF2Xr9rCIjsqTfY38fVghdoAqz+8yWzeiE=;
+        b=rOzNv5ciRJ0IqzywrisJHZUnCdGUzX9vRiJbyp3xsLfbug1Vd0dZzPiYHlpLiAnhl0
+         tNYQJnpL8MQ0+k3Qyt9gDENoSie21FdUMU++qOj2fHF3nroCpsULe+wHxrhsm2BiErWT
+         4bX7KhuEDmxT4A7vsGb1YnVGjvO+UkS+Ebwh79ymvVFR2RXWlxLSk2Py4NOrAkz9q9o6
+         hdrfQxewEmMEVysu3p7Pzo1+7RRKyVJSawaSlIQCfZJfVkkYJTlDA38x3ia4FSANOOGb
+         21VboyirtZGN4GFI5ts6VbcHvtgMdiAwYDknoeHOsLdi31A2pi0we2mjHS0+MZV2KI2J
+         SOUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFe0YRWO9+bGV6E4x+bV+4W6F7FPj9qYgf2evah6pX5nQghAhU9WsWtFu//l77OwgwBfd1IwmLsatjdt4=@vger.kernel.org, AJvYcCWrveSikYhsPauxXVC5beLK1gGao7iyu3SoGmLcZSSaHEpcRpstyPAuO8nnJEJFsY2SJ2N6it7E@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYCcO63snB+BqoLQvCrHZ8y6h0k1i3raXzRKQz/yk+F6vMAkR6
+	KamAZu4CzakwpZRaCgyBZToEJjXka1AR/nnQnDp1t/BaSeBDrA2zyuuHdKKJ/1DMYlLPxU5d49s
+	X+3qCW8XnVUF1G/HRnSxyUOIfL5Q=
+X-Gm-Gg: ASbGncvPqkS5q0W+cu5FmJVen1RbaqNkOM4u5xygn7OLzZfVXaW1kzR1F7Vss0P9g8M
+	JAso8z4xa65bUAcGu6Li6V4qMs8oii0SFf1m0dH5V/5SY9+e7HNNE5LF3l55hxOPw7epTDSiUfi
+	VwnxJf6TwRpLmzP7iPQJa98/0EB8g7Lg==
+X-Google-Smtp-Source: AGHT+IEWV18KS8MumgZb8OB0QJeoK1Zd+UkrJ95ng4qoBG03B/slgD3wqgI2ekZkNmF7B69VFTKtCzF6mDRYhdO/BTo=
+X-Received: by 2002:a05:6902:2387:b0:e73:930:cc31 with SMTP id
+ 3f1490d57ef6-e73165c3e38mr1843193276.13.1745566228645; Fri, 25 Apr 2025
+ 00:30:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250422184913.20155-1-jonas.gorski@gmail.com>
+ <cf0d5622-9b35-4a33-8680-2501d61f3cdf@redhat.com> <CAOiHx=mkuvuJOBFjmDRMAeSFByW=AZ=RTTOG6poEu53XGkWHbw@mail.gmail.com>
+In-Reply-To: <CAOiHx=mkuvuJOBFjmDRMAeSFByW=AZ=RTTOG6poEu53XGkWHbw@mail.gmail.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Fri, 25 Apr 2025 09:30:17 +0200
+X-Gm-Features: ATxdqUHGRxEKMxxN2LzsQ4XQH9Vmxm-WedPheRLmBBKrtF9mIxhxgkLohyWfgjw
+Message-ID: <CAOiHx=m6Dqo4r9eaSSHDy5Zo8RxBY4DpE-qNeZXTjQRDAZMmaA@mail.gmail.com>
+Subject: Re: [PATCH net] net: dsa: fix VLAN 0 filter imbalance when toggling filtering
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jon,
+On Thu, Apr 24, 2025 at 11:50=E2=80=AFAM Jonas Gorski <jonas.gorski@gmail.c=
+om> wrote:
+>
+> Hi,
+>
+> On Thu, Apr 24, 2025 at 11:15=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> =
+wrote:
+> >
+> >
+> >
+> > On 4/22/25 8:49 PM, Jonas Gorski wrote:
+> > > When a net device has NETIF_F_HW_VLAN_CTAG_FILTER set, the 8021q code
+> > > will add VLAN 0 when enabling the device, and remove it on disabling =
+it
+> > > again.
+> > >
+> > > But since we are changing NETIF_F_HW_VLAN_CTAG_FILTER during runtime =
+in
+> > > dsa_user_manage_vlan_filtering(), user ports that are already enabled
+> > > may end up with no VLAN 0 configured, or VLAN 0 left configured.
+> >
+> > Why this is a problem specifically for dsa and not a generic one? other=
+s
+> > devices allow flipping the NETIF_F_HW_VLAN_CTAG_FILTER feature at runti=
+me.
+> >
+> > AFAICS dsa_user_manage_vlan_filtering() is currently missing a call to
+> > netdev_update_features(), why is that not sufficient nor necessary?
+>
+> Good point, I missed that (looked for something like this, but
+> obviously didn't look hard enough). But checking the flow of it in the
+> kernel ...
+>
+> netdev_update_features() for NETIF_F_HW_VLAN_CTAG_FILTER triggers a
+> NETDEV_CVLAN_FILTER_PUSH_INFO notification, which would then trigger
+> vlan_filter_push_vids(), which then calls vlan_add_rx_filter_info()
+> for all configured vlans.
+>
+> This is more or less identical to what dsa does with its
+> vlan_for_each(user, dsa_user_restore_vlan, user); call.
+>
+> And AFAICT it also has the same issue I am trying to fix here, that it
+> does not install a VLAN 0 filter for devices that are already up,
+> which it would have if the device had NETIF_F_HW_VLAN_CTAG_FILTER set
+> when was the device was enabled (and vice versa on on down/remove).
+>
+> So I guess the course of action for a V2 is fixing this in the core
+> vlan code and make vlan_filter_push_vids() / vlan_filter_drop_vids()
+> take care of the VLAN 0 filter as well, and then make dsa use
+> netdev_update_features() to simplify the code as well.
+>
+> Does that sound reasonable?
 
-Em Fri, 25 Apr 2025 15:13:38 +0800
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+After looking into it a bit more, netdev_update_features() does not
+relay any success or failure, so there is no way for DSA to know if it
+succeded or not. And there are places where we temporarily want to
+undo all configured vlans, which makes it hard to do via
+netdev_update_features().
 
-> Instead of re-creating the objects every time, initialize it
-> just once.
-> 
-> This allows caching previously parsed objects.
+Not sure anymore if this is a good way forward, especially if it is
+just meant to fix a corner case. @Vladimir, what do you think?
 
-Please notice that I opted to send you this one as you mentioned that
-performance decrease when using classes.
+I'd probably rather go forward with the current fix (+ apply it as
+well for the vlan core code), and do the conversion to
+netdev_update_features() at later time, since I see potential for
+unexpected breakage.
 
-While this patch is simple, it does improve performance and on my tests 
-it is working fine, it has a potential of causing troubles. So, maybe
-it could be wise to keep this on tests for a while - eventually 
-postponing this one to be applied after the merge window.
-
-Patches 2 and 3 on this series should be OK to be merged, as they
-are mainly cleanups.
-
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/sphinx/kerneldoc.py | 23 +++++++++++------------
->  1 file changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-> index 27baf28fb754..b713a2c4a615 100644
-> --- a/Documentation/sphinx/kerneldoc.py
-> +++ b/Documentation/sphinx/kerneldoc.py
-> @@ -48,7 +48,8 @@ from kdoc_files import KernelFiles
->  from kdoc_output import RestFormat
->  
->  __version__  = '1.0'
-> -use_kfiles = False
-> +kfiles = None
-> +logger = logging.getLogger('kerneldoc')
->  
->  def cmd_str(cmd):
->      """
-> @@ -86,7 +87,6 @@ class KernelDocDirective(Directive):
->          'functions': directives.unchanged,
->      }
->      has_content = False
-> -    logger = logging.getLogger('kerneldoc')
->      verbose = 0
->  
->      parse_args = {}
-> @@ -204,7 +204,7 @@ class KernelDocDirective(Directive):
->          node = nodes.section()
->  
->          try:
-> -            self.logger.verbose("calling kernel-doc '%s'" % (" ".join(cmd)))
-> +            logger.verbose("calling kernel-doc '%s'" % (" ".join(cmd)))
->  
->              p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
->              out, err = p.communicate()
-> @@ -214,14 +214,14 @@ class KernelDocDirective(Directive):
->              if p.returncode != 0:
->                  sys.stderr.write(err)
->  
-> -                self.logger.warning("kernel-doc '%s' failed with return code %d"
-> +                logger.warning("kernel-doc '%s' failed with return code %d"
->                                      % (" ".join(cmd), p.returncode))
->                  return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
->              elif env.config.kerneldoc_verbosity > 0:
->                  sys.stderr.write(err)
->  
->          except Exception as e:  # pylint: disable=W0703
-> -            self.logger.warning("kernel-doc '%s' processing failed with: %s" %
-> +            logger.warning("kernel-doc '%s' processing failed with: %s" %
->                                  (" ".join(cmd), str(e)))
->              return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
->  
-> @@ -261,7 +261,7 @@ class KernelDocDirective(Directive):
->              self.do_parse(result, node)
->  
->          except Exception as e:  # pylint: disable=W0703
-> -            self.logger.warning("kernel-doc '%s' processing failed with: %s" %
-> +            logger.warning("kernel-doc '%s' processing failed with: %s" %
->                                  (cmd_str(cmd), str(e)))
->              return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
->  
-> @@ -292,11 +292,9 @@ class KernelDocDirective(Directive):
->          return node.children
->  
->      def run(self):
-> -        global use_kfiles
-> +        global kfiles
->  
-> -        if use_kfiles:
-> -            out_style = RestFormat()
-> -            kfiles = KernelFiles(out_style=out_style, logger=self.logger)
-> +        if kfiles:
->              return self.run_kdoc(kfiles)
->          else:
->              return self.run_cmd()
-> @@ -306,13 +304,14 @@ class KernelDocDirective(Directive):
->              self.state.nested_parse(result, 0, node, match_titles=1)
->  
->  def setup_kfiles(app):
-> -    global use_kfiles
-> +    global kfiles
->  
->      kerneldoc_bin = app.env.config.kerneldoc_bin
->  
->      if kerneldoc_bin and kerneldoc_bin.endswith("kernel-doc.py"):
->          print("Using Python kernel-doc")
-> -        use_kfiles = True
-> +        out_style = RestFormat()
-> +        kfiles = KernelFiles(out_style=out_style, logger=logger)
->      else:
->          print(f"Using {kerneldoc_bin}")
->  
+Best regards,
+Jonas
 
