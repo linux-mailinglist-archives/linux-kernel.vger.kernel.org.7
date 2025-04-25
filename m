@@ -1,52 +1,62 @@
-Return-Path: <linux-kernel+bounces-621099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640F0A9D3F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:11:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81055A9D2D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27B81BA712F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:11:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBA6177348
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FA2225390;
-	Fri, 25 Apr 2025 21:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9E1221D80;
+	Fri, 25 Apr 2025 20:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="EIqyTlxX"
-Received: from mx06lb.world4you.com (mx06lb.world4you.com [81.19.149.116])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="exEJJvoB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28D5224AE6;
-	Fri, 25 Apr 2025 21:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38323190692;
+	Fri, 25 Apr 2025 20:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745615405; cv=none; b=BNyHMBQcN5wQWspbP05WEU371LZwzy3waP5IayAJ3iAeYpD95wlB2u3KPqzB2Ag+qST8DJxgrcR78OM3c/JhFQxCGnxziGuuDBlxpIsiAQonxZuMbmqly0+Fne9RDdXb15I4Jv3Ussti1uBah0ZLm/tpSYZmw0KA0NXrS4CR3J8=
+	t=1745612313; cv=none; b=C0/QlOh4djP7bTipiDNsjvcDErbGMCr5MJPOFWGo7b9r6jLEKTpmsj9uT2Kkiglw0QNnz1wuqHO1BDqfdofsEYmZIb+eBd0iipE4VOqKHfQp7I1PtWL+LLPROx7hi6hxpbJEfYmKEarFzxQOcbelVwi4jyrGpJgV/XWHIJS2Iw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745615405; c=relaxed/simple;
-	bh=i7IbPiakB7vpTLjK9gupk8hrsHLDntK7oG/06/Usdak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ylj2Zho7EK4CkKNzUYBoIcRKi/a/FOHSVQ6rWbdgrTF74cF0tToK1g09Iwq+/QGTsQ+rMUq8t3sm6rxUyQNjIGcsZzQ/sDvipfIEvuWZ8fevmWHMAF+sqi1nrcE1a9oFMrB6leVWSa1gcaciEAJ/vPNsSb3pavH4pODM0EHOg7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=EIqyTlxX; arc=none smtp.client-ip=81.19.149.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=U2PlbSYJoDqGmlBnxEFPhzu2SoY19RbUjb4TC95q0os=; b=EIqyTlxX3Nc8I3nDrfhAQrxBF1
-	iFoESpbBgtB7fFarOuSBVC4vSpLvEjSUfpTT0/pBGvYSUqp+t/dIOHxHjcaPOuDDLBCz/qqyAc5a7
-	/UupZVwcTgYGbu8Dd6WRyA9kXC/JAaJWqa/hh864eVu3hPa56NRo0Tq60+5umqBr2cE8=;
-Received: from [188.22.4.210] (helo=[10.0.0.160])
-	by mx06lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1u8PSV-000000006I9-2m9q;
-	Fri, 25 Apr 2025 22:15:39 +0200
-Message-ID: <31a7c481-0b0c-4a46-9eb9-983f88ca137e@engleder-embedded.com>
-Date: Fri, 25 Apr 2025 22:15:38 +0200
+	s=arc-20240116; t=1745612313; c=relaxed/simple;
+	bh=gvYAN089JCt6WwSt7YZcbJ1WRkxTh2ktUaEg1PoBk/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xc6bETlJSMtfs0vKaO9NDmFsWKSS7NMIypJ5MkXrOfSIPuZhhxCLhHC+csfDZWEGnYSkTUJh08CAM8eOOgXIu97t+OsAGtFYk2wqb0A4UFvKeLbi8v/IL5wOVecO/IVzJpm5tUwoxPVK+GdskpjcJ/UF3HjpkIiPSrTrMRzUXrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=exEJJvoB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJplt031925;
+	Fri, 25 Apr 2025 20:18:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jJYqZXzdF32jhKcPVa2dqOGh8Ls4BKAg3Edx1wDdRiE=; b=exEJJvoBx9UTm2hv
+	Nr6IUOjoRsfdIFkhPpq5kNUatEYpOq6ehwJ0YgLU9lITU8iHhNbmllmYHnz18Lpq
+	/16i2kAoDUy1aV4r5ZXlpZ1cMH6feQCAfy1TcLGGjncoMTK6auKzdBCU9SdgerdB
+	PRf85x+83y4m+iMvXYXHqLl8uk4Ab/2eK5laKGlNd5H6VvDaz0RsPoCDM3M07+T6
+	yiUkpw4w+yd2cr+ILTDglFUYEpTl0YArRBctsQdyXWtsGohF11kzr6Pbrgty/+tP
+	SSFOuTAx1PKTeCVAk/dZQokGlJUc+Bjuq8a9bNWDxrZ0PrBbCQcITiXf9QTXgn69
+	YZKHzA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jgya6ca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 20:18:23 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53PKIM7a020914
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 20:18:22 GMT
+Received: from [10.134.71.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Apr
+ 2025 13:18:22 -0700
+Message-ID: <a5975b9d-fc0e-4db6-8f61-b6ae6f3f17fe@quicinc.com>
+Date: Fri, 25 Apr 2025 13:18:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,109 +64,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC net-next 1/2] net: selftest: add net_selftest_custom()
- interface
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
- chenhao418@huawei.com, jonathan.cameron@huawei.com,
- shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, horms@kernel.org
-References: <20250421134358.1241851-1-shaojijie@huawei.com>
- <20250421134358.1241851-2-shaojijie@huawei.com>
+Subject: Re: [PATCH 1/5] drm/msm/dpu: enable SmartDMA on SM8150
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20250308-dpu-rework-vig-masks-v1-0-f1b5d101ae0b@linaro.org>
+ <20250308-dpu-rework-vig-masks-v1-1-f1b5d101ae0b@linaro.org>
+ <bf242898-bf47-4235-9086-745bd4f05acf@quicinc.com>
+ <c62wafi73jwdf7qz5a7gp3xqhqg27aifn5ollr7dmufeaeyldr@rbzbtpbfenkc>
 Content-Language: en-US
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <20250421134358.1241851-2-shaojijie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <c62wafi73jwdf7qz5a7gp3xqhqg27aifn5ollr7dmufeaeyldr@rbzbtpbfenkc>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDE0NCBTYWx0ZWRfX7XF499v8vR3I XEKEdy0bt8hD4F95LcvpzqL7ulOQjiXWc0xgIJOt8vYG0NSRpslXz37JcDmrJtXW3UNY9vQ7kVY ZuQ/K9abOX6ptoA+i1lxY33RJYqPP0P+yEIoLYOR7PcPrQHBZBkPhQlbqRUGbThYv1h7F3lr9ZU
+ enOiOZe7tcbEC50KXmnPuGFPIOuRxnYtVaBC5GpU+kNldgyuS8MmKhom62YmvdaMVPlltXDnxnv rsPx3HI/LivdcCZ9pG+N6JIM6A+OU6aDXicr7KUj1iIpS8zPKxZKxUjqgqNL0Yp77cKNLZ9PCa5 ud7Y+1DeGyxbYMZDWpQ9z+orm6HTgZVGpuVga853QMRPyO/3R76NgfpDLQq3GMLbTMLIT0RAPxz
+ VxjfNH9ptxsuWONE9QxdfiIfXt2Zkbpb32O0MIMjGg+Wco/iV/48l6oGoCetwoG+s6O9V7ZK
+X-Proofpoint-GUID: 6Cnef_pjvbNS2j5_wTmyn5xSX_7DXKXp
+X-Proofpoint-ORIG-GUID: 6Cnef_pjvbNS2j5_wTmyn5xSX_7DXKXp
+X-Authority-Analysis: v=2.4 cv=M5VNKzws c=1 sm=1 tr=0 ts=680bee0f cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=ep-ZKmNeXLTrS1u6wGwA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250144
 
-On 21.04.25 15:43, Jijie Shao wrote:
-> In net/core/selftests.c,
-> net_selftest() supports loopback tests.
-> However, the loopback content of this interface is a fixed common test
-> and cannot be expanded to add the driver's own test.
+
+
+On 4/25/2025 11:53 AM, Dmitry Baryshkov wrote:
+> On Fri, Apr 25, 2025 at 11:26:20AM -0700, Jessica Zhang wrote:
+>>
+>>
+>> On 3/7/2025 9:38 PM, Dmitry Baryshkov wrote:
+>>> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>
+>>> Reworking of the catalog dropped the SmartDMA feature bit on the SM8150
+>>> platform. Renable SmartDMA support on this SoC.
+>>>
+>>> Fixes: 460c410f02e4 ("drm/msm/dpu: duplicate sdm845 catalog entries")
+>>
+>> Hi Dmitry,
+>>
+>> The code LGTM, but was just wondering why there's a fixes tag for the first
+>> two patches but not for the other catalog changes.
+>>
+>> Is there some context I'm missing with regards to this?
 > 
-> In this patch, the net_selftest_custom() interface is added
-> to support driver customized loopback tests and
-> extra common loopback tests.
+> As I wrote in the commit message, SmartDMA for these two platforms was
+> enabled previously, but then it got disabled by the mistake in the
+> commit 460c410f02e4 ("drm/msm/dpu: duplicate sdm845 catalog entries").
+> For the rest of the platforms SmartDMA supoprt was never enabled, so
+> no need for Fixes tags.
+
+Ah, sorry I missed that sdm845_sspp has the SDMA feature flag.
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
 > 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
->   include/net/selftests.h |  61 +++++++++++++
->   net/core/selftests.c    | 188 +++++++++++++++++++++++++++++++++++++++-
->   2 files changed, 245 insertions(+), 4 deletions(-)
+>>
+>> Thanks,
+>>
+>> Jessica Zhang
+>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h | 16 ++++++++--------
+>>>    1 file changed, 8 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+>>> index 23188290001ffb45563a9953a9f710bacb4dac89..fe4de5b31644de33b77a882fa21a18f48ecd1790 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+>>> @@ -76,7 +76,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	{
+>>>    		.name = "sspp_0", .id = SSPP_VIG0,
+>>>    		.base = 0x4000, .len = 0x1f0,
+>>> -		.features = VIG_SDM845_MASK,
+>>> +		.features = VIG_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>>>    		.xin_id = 0,
+>>>    		.type = SSPP_TYPE_VIG,
+>>> @@ -84,7 +84,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_1", .id = SSPP_VIG1,
+>>>    		.base = 0x6000, .len = 0x1f0,
+>>> -		.features = VIG_SDM845_MASK,
+>>> +		.features = VIG_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>>>    		.xin_id = 4,
+>>>    		.type = SSPP_TYPE_VIG,
+>>> @@ -92,7 +92,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_2", .id = SSPP_VIG2,
+>>>    		.base = 0x8000, .len = 0x1f0,
+>>> -		.features = VIG_SDM845_MASK,
+>>> +		.features = VIG_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>>>    		.xin_id = 8,
+>>>    		.type = SSPP_TYPE_VIG,
+>>> @@ -100,7 +100,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_3", .id = SSPP_VIG3,
+>>>    		.base = 0xa000, .len = 0x1f0,
+>>> -		.features = VIG_SDM845_MASK,
+>>> +		.features = VIG_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>>>    		.xin_id = 12,
+>>>    		.type = SSPP_TYPE_VIG,
+>>> @@ -108,7 +108,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_8", .id = SSPP_DMA0,
+>>>    		.base = 0x24000, .len = 0x1f0,
+>>> -		.features = DMA_SDM845_MASK,
+>>> +		.features = DMA_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_dma_sblk,
+>>>    		.xin_id = 1,
+>>>    		.type = SSPP_TYPE_DMA,
+>>> @@ -116,7 +116,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_9", .id = SSPP_DMA1,
+>>>    		.base = 0x26000, .len = 0x1f0,
+>>> -		.features = DMA_SDM845_MASK,
+>>> +		.features = DMA_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_dma_sblk,
+>>>    		.xin_id = 5,
+>>>    		.type = SSPP_TYPE_DMA,
+>>> @@ -124,7 +124,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_10", .id = SSPP_DMA2,
+>>>    		.base = 0x28000, .len = 0x1f0,
+>>> -		.features = DMA_CURSOR_SDM845_MASK,
+>>> +		.features = DMA_CURSOR_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_dma_sblk,
+>>>    		.xin_id = 9,
+>>>    		.type = SSPP_TYPE_DMA,
+>>> @@ -132,7 +132,7 @@ static const struct dpu_sspp_cfg sm8150_sspp[] = {
+>>>    	}, {
+>>>    		.name = "sspp_11", .id = SSPP_DMA3,
+>>>    		.base = 0x2a000, .len = 0x1f0,
+>>> -		.features = DMA_CURSOR_SDM845_MASK,
+>>> +		.features = DMA_CURSOR_SDM845_MASK_SDMA,
+>>>    		.sblk = &dpu_dma_sblk,
+>>>    		.xin_id = 13,
+>>>    		.type = SSPP_TYPE_DMA,
+>>>
+>>
 > 
-> diff --git a/include/net/selftests.h b/include/net/selftests.h
-> index e65e8d230d33..a36e6ee0a41f 100644
-> --- a/include/net/selftests.h
-> +++ b/include/net/selftests.h
-> @@ -4,6 +4,48 @@
->   
->   #include <linux/ethtool.h>
->   
-> +#define NET_TEST_NETIF_CARRIER		BIT(0)
-> +#define NET_TEST_FULL_DUPLEX		BIT(1)
-> +#define NET_TEST_TCP			BIT(2)
-> +#define NET_TEST_UDP			BIT(3)
-> +#define NET_TEST_UDP_MAX_MTU		BIT(4)
-> +
-> +#define NET_EXTRA_CARRIER_TEST		BIT(0)
-> +#define NET_EXTRA_FULL_DUPLEX_TEST	BIT(1)
-> +#define NET_EXTRA_PHY_TEST		BIT(2)
 
-What is the difference between NET_TEST_NETIF_CARRIER and
-NET_EXTRA_CARRIER_TEST? Aren't these the same tests?
-
-> +struct net_test_entry {
-> +	char name[ETH_GSTRING_LEN];
-> +
-> +	/* can set to NULL */
-> +	int (*enable)(struct net_device *ndev, bool enable);
-> +
-> +	/* can set to NULL */
-> +	int (*fn)(struct net_device *ndev);
-> +
-> +	/* if flag is set, fn() will be ignored,
-> +	 * and will do test according to the flag,
-> +	 * such as NET_TEST_UDP...
-> +	 */
-> +	unsigned long flags;
-
-Looks limited, this interface does not scale as the bits in flags are
-limited.
-
-> +};
-> +
-> +#define NET_TEST_E(_name, _enable, _flags) { \
-> +	.name = _name, \
-> +	.enable = _enable, \
-> +	.fn = NULL, \
-> +	.flags = _flags }
-> +
-> +#define NET_TEST_ENTRY_MAX_COUNT	10
-
-I expect that you have to eliminate this limitation too.
-
-> +struct net_test {
-> +	/* extra tests will be added based on this flag */
-> +	unsigned long extra_flags;
-
-Why this extra_flags to trigger tests? AFAIU the same tests can be
-triggered with entries.
-
-> +
-> +	struct net_test_entry entries[NET_TEST_ENTRY_MAX_COUNT];
-> +	/* the count of entries, must <= NET_TEST_ENTRY_MAX_COUNT */
-> +	u32 count;
-> +};
-
-You try to make net selftests more usable for drivers. I also tried
-that, but Andrew Lunn argumented for controlling the selftests some
-user space interface is expected. IMO the situation has not changed.
-
-https://lore.kernel.org/netdev/20250227203138.60420-3-gerhard@engleder-embedded.com/T/#md5e4ac1ca41adbdb43755d3c189aa8b8228bf8c9
-
-Gerhard
 
