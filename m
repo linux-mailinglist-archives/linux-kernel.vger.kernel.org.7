@@ -1,112 +1,217 @@
-Return-Path: <linux-kernel+bounces-619434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF184A9BCA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:14:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F4FA9BCAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D41537B13AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B5A1BA47C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1167C156230;
-	Fri, 25 Apr 2025 02:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BBC13C3C2;
+	Fri, 25 Apr 2025 02:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="GKTHmmYg"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKrdOTeY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7821547FF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA47742AA5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745547256; cv=none; b=svm5dUJ0woFdY4/c/Wt7qoShedinVAQcjd+soL+EZvLuUBhT4rj6SKiVI+0SyuyqhcG2uVEj+uX/p1QJmCsCuUtwljKU2q8fbaiYAjOJbYLu2t5GOFjz9P4mYq5tC7ywjoD3bLZ9O81xfb18ztiVCyZbvsPJy5QtViiN2nu7/mA=
+	t=1745547336; cv=none; b=dKuOeYkf39c3dBYFma6/hfGvDeMMYxX1oDb+/WUltisXazgqRLLH1DUXREPWwj7y/PpRcbg4l2RCPMCudSooEaFAnlhzaNnxMSmZV/8jfLsCSRzKgtrmpSu+HhZGNS0Bv/HFLb3cMSqsse+OakvvuZYXMutsJoIw9xVVTgw7kqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745547256; c=relaxed/simple;
-	bh=I3A/zHwAYSwnjgk+xe7X/mxwoo6oP41oVPwo+1vnug4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpoDO5gQRK36wFdro79mUJESOvIn4RLpqy71IWOmlBkOz9F44sGFELhTYbAnQJ4RysLM+zFJCBKqTUy3UWHztTQNZ8BH6KTEhLa0WCYkme0AJ2opFKimhtiFjpUzg0Tn9W9Z4tXaaG+rEcAGCKUZdlDEw36DQNf2ktoWQU1nY60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=GKTHmmYg; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22da3b26532so16764075ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 19:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1745547254; x=1746152054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=09kVEaqIXaUD+GEpgwr5iE/SxGZwllT1KTlsw5VQ7Mo=;
-        b=GKTHmmYg2VRFiafJKBcyjLO6aIcxwnOzkMSmlxg0VqLTiGhOatT+Wf9nvSn0vY7MPp
-         hsj3zcECz7pFBP0jyd3H4vTs1jbjdGnehSPOyjgeD4TgPPiQ/LUuWNGJSBU5iQE+qnBH
-         0brq5LLbinQBOxGHhE7a0y7wZvRAXjEJYRyXg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745547254; x=1746152054;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=09kVEaqIXaUD+GEpgwr5iE/SxGZwllT1KTlsw5VQ7Mo=;
-        b=gVP0tU3gy8ZGK7CFOsvm22Y4iqH4UlMjwgbZ8dY0nGMYgWVOZsuPxIc9NjvytUCOe8
-         9Dj3xlbynVqftVYZ27mVFV5EVNd/fqt4ltLafdO44QE3qAm7qU9t06kJNMbYGHlQ868w
-         pPgXS9uv0j/uO3lJdiaL9jrIB2nfzjDOSpisD6CMIt395XHt9sJPJwfoDdw9X0tDpFbs
-         z1R2IrzFdlOs/00PaENCE4Ph2a905+cNPZAN2/uGP5ksXIUe8n/5UWI6dRDs0/+DfT/O
-         3ZukK/nLBd2dgRcbUpnv7RsE7Yt1jOi+sJyx7nHjCOUfqTWuGZHzv9HexuIP/OHH6Hz0
-         1Z8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUx5qnDbHFGj2q+D42SlKAkYnPiBqxRfEN169lpZ5X+IoSpo7XQ7nFSTOapPu1rR6aeKX/CnzbuzFuwkcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWBH9nY917051k6F1t6B2qvW4pelpNW8Tko1IRAp4++468Ym3e
-	oCmY2KrtBhN/40PtMnlQ35J6tX0ikaC+8GhTTe7QlxOd1XHqwBIwn7Z8EYk+YFA=
-X-Gm-Gg: ASbGncuvHKld0g3HT961pmC9QoRY9/k6mWSBGC7lPm2pI++F0Mk8N5o/SVPZojYDEZR
-	rg3H9mMXwk8OaAx7xUL5Le+UFcgH2cNd4ra6YHLnRHLXhdKzJOiCpPYVYHGviiNQf8yBrQHgKbJ
-	//E8W/59djEqfymEkzkeSZqGje6B7ll+0RVgBxrBvcRwXvpDVFrIBQj7fEy384sBh88c4X5qRh4
-	vH+xpBzWy3tIQOknF1GQIusLJFrDfjCETa3QhVdTWyuJG+kiusFva6W+831P9M4CPzJm+FLkXIR
-	Y+AAf5QiNXg28AJVStXEOMl5KA+UsXtY3F7gkg0G711+Inffkx8ghDdqiKn7KUkexyXMIQbCiom
-	dgEeXN3M=
-X-Google-Smtp-Source: AGHT+IH/PkabTYLPdtMjI7iYWLibevj3DXs51yGrnj7JIYtqi5YhGlW6R52IDmzjr567SoWgTnJEdA==
-X-Received: by 2002:a17:903:1b6e:b0:223:3bf6:7e6a with SMTP id d9443c01a7336-22dbf5e8fc9mr10072345ad.12.1745547254181;
-        Thu, 24 Apr 2025 19:14:14 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4dbd6f7sm20934285ad.76.2025.04.24.19.14.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 19:14:13 -0700 (PDT)
-Date: Thu, 24 Apr 2025 19:14:11 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: ip_gre: Fix spelling mistake "demultiplexor"
- -> "demultiplexer"
-Message-ID: <aArv84C4NDwv2aCa@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250423113719.173539-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1745547336; c=relaxed/simple;
+	bh=c+MeKZSECjvZGJrBH9cgxMygC8mpb5MUZDEn3oLaRk4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Rel5tcGOYoQnrIUw3715rzy5ZeEUeuHcjXAd4f0VvNavRFnvGy4IJrLJ2tpZD+KXsrG0Ydyc268VbYQWNpcSNDmhjlfjjUGMnau2K+gbnGV64n4nr6E8tp+Cq5aH9ZIGoGLfgjc94kyVauU0g8EeFmIcINglhUMgUA5yICrzeM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKrdOTeY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99738C4CEE3;
+	Fri, 25 Apr 2025 02:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745547335;
+	bh=c+MeKZSECjvZGJrBH9cgxMygC8mpb5MUZDEn3oLaRk4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=gKrdOTeYlgJ33eACTcOzqWwCkxouez8RUD+GiyAR19KtT5qkO6AVjohyLGmEZMEOG
+	 9G4kpR9O+AoQXwEBX6VzoEAzoK5cHbd7XZ72QaUhly69EKSuXMWQ1CqDD28QKgXm73
+	 51DDuE0AxT2JeF1CufJpI/wX/EyeMfH91n3ELFLCTxpjd1W1yVgXK9XIr54sfsf702
+	 IIbKkeCV4mPEdRWBbb+d5rGM2wakpllCbPXi6Hwj7GHRlP/RuqSQVOmegdp6dzr7kD
+	 TE+8Hs/Y3ZTb3Sqca4Y5Vottmy0dLrW/+EDFMQgF0Uw/XLEpBNVEixNnIMOH1MWClT
+	 sOCQ8Tj4HixgA==
+Message-ID: <894ca2d3-e680-4395-9887-2b6060fc8096@kernel.org>
+Date: Fri, 25 Apr 2025 10:15:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423113719.173539-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, hsiangkao@linux.alibaba.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] erofs: lazily initialize per-CPU workers and CPU
+ hotplug hooks
+To: Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
+ Gao Xiang <xiang@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>
+References: <20250423061023.131354-1-dhavale@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250423061023.131354-1-dhavale@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 12:37:19PM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a pr_info message. Fix it.
+On 4/23/25 14:10, Sandeep Dhavale wrote:
+> Currently, when EROFS is built with per-CPU workers, the workers are
+> started and CPU hotplug hooks are registered during module initialization.
+> This leads to unnecessary worker start/stop cycles during CPU hotplug
+> events, particularly on Android devices that frequently suspend and resume.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> This change defers the initialization of per-CPU workers and the
+> registration of CPU hotplug hooks until the first EROFS mount. This
+> ensures that these resources are only allocated and managed when EROFS is
+> actually in use.
+> 
+> The tear down of per-CPU workers and unregistration of CPU hotplug hooks
+> still occurs during z_erofs_exit_subsystem(), but only if they were
+> initialized.
+> 
+> Signed-off-by: Sandeep Dhavale <dhavale@google.com>
 > ---
->  net/ipv4/gre_demux.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v3: https://lore.kernel.org/linux-erofs/20250422234546.2932092-1-dhavale@google.com/
+> Changes since v3:
+> - fold z_erofs_init_pcpu_workers() in the caller and rename the caller
+> 
+>  fs/erofs/zdata.c | 61 +++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 45 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+> index 0671184d9cf1..647a8340c9a1 100644
+> --- a/fs/erofs/zdata.c
+> +++ b/fs/erofs/zdata.c
+> @@ -291,6 +291,9 @@ static struct workqueue_struct *z_erofs_workqueue __read_mostly;
+>  
+>  #ifdef CONFIG_EROFS_FS_PCPU_KTHREAD
+>  static struct kthread_worker __rcu **z_erofs_pcpu_workers;
+> +static atomic_t erofs_percpu_workers_initialized = ATOMIC_INIT(0);
+> +static int erofs_cpu_hotplug_init(void);
+> +static void erofs_cpu_hotplug_destroy(void);
+>  
+>  static void erofs_destroy_percpu_workers(void)
+>  {
+> @@ -336,9 +339,40 @@ static int erofs_init_percpu_workers(void)
+>  	}
+>  	return 0;
+>  }
+> +
+> +static int z_erofs_init_pcpu_workers(void)
+> +{
+> +	int err;
+> +
+> +	if (atomic_xchg(&erofs_percpu_workers_initialized, 1))
+> +		return 0;
+> +
+> +	err = erofs_init_percpu_workers();
+> +	if (err)
+> +		goto err_init_percpu_workers;
+> +
+> +	err = erofs_cpu_hotplug_init();
+> +	if (err < 0)
+> +		goto err_cpuhp_init;
+> +	return err;
+> +
+> +err_cpuhp_init:
+> +	erofs_destroy_percpu_workers();
+> +err_init_percpu_workers:
+> +	atomic_set(&erofs_percpu_workers_initialized, 0);
+> +	return err;
+> +}
 
-Reviewed-by: Joe Damato <jdamato@fastly.com>
+- mount #1				- mount #2
+ - z_erofs_init_pcpu_workers
+  - atomic_xchg(, 1)
+					 - z_erofs_init_pcpu_workers
+					  - atomic_xchg(, 1)
+					  : return 0 since atomic variable is 1
+					  it will run w/o percpu workers and hotplug
+  : update atomic variable to 1
+  - erofs_init_percpu_workers
+  : fail
+  - atomic_set(, 0)
+  : update atomic variable to 0 & fail the mount
+
+Can we add some logs to show we succeed/fail to initialize workers or
+hotplugs? As for mount #2, it expects it will run w/ them, but finally
+it may not. So we'd better have a simple way to know?
+
+Thanks,
+
+> +
+> +static void z_erofs_destroy_pcpu_workers(void)
+> +{
+> +	if (!atomic_xchg(&erofs_percpu_workers_initialized, 0))
+> +		return;
+> +	erofs_cpu_hotplug_destroy();
+> +	erofs_destroy_percpu_workers();
+> +}
+>  #else
+> -static inline void erofs_destroy_percpu_workers(void) {}
+> -static inline int erofs_init_percpu_workers(void) { return 0; }
+> +static inline int z_erofs_init_pcpu_workers(void) { return 0; }
+> +static inline void z_erofs_destroy_pcpu_workers(void) {}
+>  #endif
+>  
+>  #if defined(CONFIG_HOTPLUG_CPU) && defined(CONFIG_EROFS_FS_PCPU_KTHREAD)
+> @@ -405,8 +439,7 @@ static inline void erofs_cpu_hotplug_destroy(void) {}
+>  
+>  void z_erofs_exit_subsystem(void)
+>  {
+> -	erofs_cpu_hotplug_destroy();
+> -	erofs_destroy_percpu_workers();
+> +	z_erofs_destroy_pcpu_workers();
+>  	destroy_workqueue(z_erofs_workqueue);
+>  	z_erofs_destroy_pcluster_pool();
+>  	z_erofs_exit_decompressor();
+> @@ -430,19 +463,8 @@ int __init z_erofs_init_subsystem(void)
+>  		goto err_workqueue_init;
+>  	}
+>  
+> -	err = erofs_init_percpu_workers();
+> -	if (err)
+> -		goto err_pcpu_worker;
+> -
+> -	err = erofs_cpu_hotplug_init();
+> -	if (err < 0)
+> -		goto err_cpuhp_init;
+>  	return err;
+>  
+> -err_cpuhp_init:
+> -	erofs_destroy_percpu_workers();
+> -err_pcpu_worker:
+> -	destroy_workqueue(z_erofs_workqueue);
+>  err_workqueue_init:
+>  	z_erofs_destroy_pcluster_pool();
+>  err_pcluster_pool:
+> @@ -644,10 +666,17 @@ static const struct address_space_operations z_erofs_cache_aops = {
+>  
+>  int z_erofs_init_super(struct super_block *sb)
+>  {
+> -	struct inode *const inode = new_inode(sb);
+> +	struct inode *inode;
+> +	int err;
+>  
+> +	err = z_erofs_init_pcpu_workers();
+> +	if (err)
+> +		return err;
+> +
+> +	inode = new_inode(sb);
+>  	if (!inode)
+>  		return -ENOMEM;
+> +
+>  	set_nlink(inode, 1);
+>  	inode->i_size = OFFSET_MAX;
+>  	inode->i_mapping->a_ops = &z_erofs_cache_aops;
+
 
