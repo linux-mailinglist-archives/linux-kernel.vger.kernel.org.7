@@ -1,54 +1,60 @@
-Return-Path: <linux-kernel+bounces-619678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB84A9BFDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:36:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ABAA9BFE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E254A02DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5154A1B844A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E357322E415;
-	Fri, 25 Apr 2025 07:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B48A22F76D;
+	Fri, 25 Apr 2025 07:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="HG0avtgt"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIqPnwAB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8D122AE71
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77BAA29;
+	Fri, 25 Apr 2025 07:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745566595; cv=none; b=cZhT+JbB0cM4OPp8VM/aMrJ8i8b5jY6vVwCXAuAz9tGOgcqDVcHrbxzYsDY+mI2E+M3sBteC04C1g2Y/tVshBg3OiGGcSTxNVTjuuW3adfrzR3K5uNTfHALHOKNrz2czp2KUPEBXS3LxlvVZ07yGV3z5j11u6yT5Rg1jODP8kC8=
+	t=1745566759; cv=none; b=g2u5ibeMR/iCTeLSvtd89ds5p3/HCnyB2j9gp3DIYvPDA/fgwiWyJzLjmZHAcw9/6y9QcEsfg4PKCXyRxowNYTRmtP72UofmhkD7GOZGhRLJ/l3gP8AQaPBMuX2RdJ2lOfqXsO9f3q8oz83ihjbx78aGcNn/46XoXrXDJmfkxgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745566595; c=relaxed/simple;
-	bh=pzB+ULPjZJoXWNCIbG47lG7lxSlV7q022ronMCkd2Co=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IXa5OTeso5pBG67oBjJwqwPp3wbUK274Mo/PMtmp/4fPAlIePRI8N98zbuRSyHE3woOJO+lAhTleCCXuLSnZRbC621eLJb8S/kv9Cz4Oy3ho6wNKSl8auNZabB1vppiXbM5X76fmJDapjdWqfO6FSsfTmUp720zf6TLbJNq4h84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=HG0avtgt; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1745566590; x=1745825790;
-	bh=pzB+ULPjZJoXWNCIbG47lG7lxSlV7q022ronMCkd2Co=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=HG0avtgtjX1JJplmZ2W+xPmQcxNkKBLhOg5j0EHiybAfRtWMWBmgyWc7J+sACxz0L
-	 R9lHs89Py8lV2OveRBpvGfGmn1ttoBTbngs99N0ue/vD1CIvGJkuRZiIzoijQWelRa
-	 rDwXt1bv3YIzoUcegnBYrd/pYq9y9p2t1yyo4bGMPp1yp3QT/W4uUwdprHofNPAHpk
-	 LWRtYy2cZfFCmffg2nHgSL4+ihoF4XeEBpPij3zWLHNSlH4hw8CNjpkff1U8P8oFQG
-	 Moewtq6Rp9sB6j63t+9HQU0VZr8Q101D7BO0QEPsDJ++uSbQtdCkMhuBIzow/xHe13
-	 UBPlHVw22Vu3w==
-Date: Fri, 25 Apr 2025 07:36:23 +0000
-To: intel-xe@lists.freedesktop.org
-From: Harry Austen <hpausten@protonmail.com>
-Cc: intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, Harry Austen <hpausten@protonmail.com>, Lucas De Marchi <lucas.demarchi@intel.com>, =?utf-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Jani Nikula <jani.nikula@linux.intel.com>
-Subject: [PATCH v2] drm/xe: Allow building as kernel built-in
-Message-ID: <20250425073534.101976-1-hpausten@protonmail.com>
-Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: d1dccf1a1237e941559f5aa11cd9a2ed1b6e14c6
+	s=arc-20240116; t=1745566759; c=relaxed/simple;
+	bh=365b8kbH3MeVvxk2IpLZYYDk1QJJ8xBLvr9s5A7tcMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZaJKd2coskRkf+8cA9LTxiKQm3uaaWeRmmcKKepQiIGm15Nv5zEgoVqcpARszH0PHVUp7LuPFpt+AS4bNZgjYdpVGY0E1EvttcvCwGkWIcm4Z692QpZo95Ilpj2m8tXkVVRzFnPNq5CA47ObvdA8eqFLQZeVdfuC41Fb6w6+Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIqPnwAB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899E6C4CEE4;
+	Fri, 25 Apr 2025 07:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745566759;
+	bh=365b8kbH3MeVvxk2IpLZYYDk1QJJ8xBLvr9s5A7tcMs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aIqPnwAB27l0ZmSsBK2JErBzaZS637ACmaawT7PMVMH6S9cayH0pxZvQuScRqS5wi
+	 wfUikJCJ2UoLQsebs9nQTVZqdsiEJMsuZV5TAr+fHFL82+P9v8ac0yU9Z7+VrCQRLG
+	 DJ60WgspGx8UFZo3Usdp1sKuaycrfb+d9MX2NrpBqeAyGFdLaKLq5YdwoMFtmLyBg6
+	 scfz8g8aZAGYfrUqiIO9b7rF/wJCEUUQ8YZPTvtQPM9AfC9vhPcCOmpACCav20azes
+	 huMXUllbjkbEtEvgI++CdTidCgUCwpQjpms8OhSK3SUNBcgD0v+WnUZd2zZYlOM4ow
+	 DoAh/qyvil7Gw==
+Date: Fri, 25 Apr 2025 09:39:16 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v4 1/8] dt-bindings: dpll: Add DPLL device and
+ pin
+Message-ID: <20250425-manul-of-undeniable-refinement-dc6cdc@kuoka>
+References: <20250424154722.534284-1-ivecera@redhat.com>
+ <20250424154722.534284-2-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,50 +62,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250424154722.534284-2-ivecera@redhat.com>
 
-Fix Kconfig symbol dependency on KUNIT, which isn't actually required
-for XE to be built-in. However, if KUNIT is enabled, it must be built-in
-too.
+On Thu, Apr 24, 2025 at 05:47:15PM GMT, Ivan Vecera wrote:
+> Add a common DT schema for DPLL device and its associated pins.
+> The DPLL (device phase-locked loop) is a device used for precise clock
+> synchronization in networking and telecom hardware.
+> 
+> The device includes one or more DPLLs (channels) and one or more
+> physical input/output pins.
+> 
+> Each DPLL channel is used either to provide a pulse-per-clock signal or
+> to drive an Ethernet equipment clock.
+> 
+> The input and output pins have the following properties:
+> * label: specifies board label
+> * connection type: specifies its usage depending on wiring
+> * list of supported or allowed frequencies: depending on how the pin
+>   is connected and where)
+> * embedded sync capability: indicates whether the pin supports this
+> 
+> Check:
 
-Also, allow DRM_XE_DISPLAY to be built-in. But only as long as DRM_I915
-isn't, since that results in duplicate symbol errors.
+This does not belong to commit msg. You do not add compile commands of C
+files, do you?
 
-Fixes: 08987a8b6820 ("drm/xe: Fix build with KUNIT=3Dm")
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Signed-off-by: Harry Austen <hpausten@protonmail.com>
----
-v2: Ensure DRM_XE_DISPLAY and DRM_I915 can't both be built-in
+Whatever you want to inform and is not relevant in the Git history
+should be in changelog part.
 
- drivers/gpu/drm/xe/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-index 9bce047901b22..bc63c396d7fef 100644
---- a/drivers/gpu/drm/xe/Kconfig
-+++ b/drivers/gpu/drm/xe/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config DRM_XE
- =09tristate "Intel Xe Graphics"
--=09depends on DRM && PCI && MMU && (m || (y && KUNIT=3Dy))
-+=09depends on DRM && PCI && MMU && (m || (y && KUNIT!=3Dm))
- =09select INTERVAL_TREE
- =09# we need shmfs for the swappable backing store, and in particular
- =09# the shmem_readpage() which depends upon tmpfs
-@@ -51,7 +51,7 @@ config DRM_XE
-=20
- config DRM_XE_DISPLAY
- =09bool "Enable display support"
--=09depends on DRM_XE && DRM_XE=3Dm && HAS_IOPORT
-+=09depends on DRM_XE && (DRM_XE=3Dm || DRM_I915!=3Dy) && HAS_IOPORT
- =09select FB_IOMEM_HELPERS if DRM_FBDEV_EMULATION
- =09select I2C
- =09select I2C_ALGOBIT
---=20
-2.49.0
+> $ make dt_binding_check DT_SCHEMA_FILES=/dpll/
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+> /home/cera/devel/kernel/linux-2.6/Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: missing type definition
+>   CHKDT   ./Documentation/devicetree/bindings
+>   LINT    ./Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/dpll/dpll-pin.example.dts
+>   DTC [C] Documentation/devicetree/bindings/dpll/dpll-pin.example.dtb
+>   DTEX    Documentation/devicetree/bindings/dpll/dpll-device.example.dts
+>   DTC [C] Documentation/devicetree/bindings/dpll/dpll-device.example.dtb
+> 
+> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> ---
+> v3->v4:
+> * dropped $Ref from dpll-pin reg property
+> * added maxItems to dpll-pin reg property
+> * fixed paragraph in dpll-pin desc
 
+...
+
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^dpll(@.*)?$"
+> +
+> +  "#address-cells":
+> +    const: 0
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  dpll-types:
+> +    description: List of DPLL channel types, one per DPLL instance.
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    items:
+> +      enum: [pps, eec]
+
+Do channels have other properties as well in general?
+
+> +
+> +  input-pins:
+> +    type: object
+> +    description: DPLL input pins
+> +    unevaluatedProperties: false
+
+Best regards,
+Krzysztof
 
 
