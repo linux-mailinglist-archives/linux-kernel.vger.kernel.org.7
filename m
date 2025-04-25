@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-621148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B14A9D4BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB66A9D4BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804C09A1D04
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F491C002E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFA322A7EC;
-	Fri, 25 Apr 2025 21:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507AF22F74E;
+	Fri, 25 Apr 2025 21:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EK38/3z3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7V19e2F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161CD229B38
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A828222D78E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745618329; cv=none; b=W7iEx6X7AV98bF1Jty1duT935+xbXnujWzFvIxigugipEqS4tGsM6SX4bGm7bLIz+qlICHvE1b22ac/UY+wJwOstS0FfEPLnPBy8+408XkitH06lhpVVWAG+rZuaN4g0QFwLG9ZAId+hQAFM1ZQ6+A8ZxOepa7yosWXPBcYcXA8=
+	t=1745618330; cv=none; b=goqfb9PmFpHDGW4JnkGrqcYklLV8cvAIH54V1/yYoC2gmegV91nsbDZU54ofvw64N2dFG0GDIxye0jcINy54ybzFUBNK7rRpLR7OmQNZcQaTHM8eQ0B38k8pkSzjpfUbAhi9sflAdlvyGUQygqsDvgJ2HkZTAfWjET6J5QqB0gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745618329; c=relaxed/simple;
-	bh=JjJ7u9L4bsn3P3tXJ+xghGsmdrEbLJ8OOlksPw5V+4g=;
+	s=arc-20240116; t=1745618330; c=relaxed/simple;
+	bh=t9AdZrfcJn74TsogZtWo7+syNvH6UpmTPAk3/s1NP1Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ef3Nq37bp32Q7OKMFWa5VWj386LErEQO7KOZtPGMlyGwRQqn/y49W9RQQEAnlJ5VOjAdQz4b4umcAhoesNdYn/An1Bx11C2okf7VHQrvISmU71vh+ZSeee+l3tsjIEDPIdNrE33r9QwkGLaj3HjiGDqHR4NSmkHLzt5ANhvPdms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EK38/3z3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3862C4CEFB;
-	Fri, 25 Apr 2025 21:58:48 +0000 (UTC)
+	 MIME-Version; b=rAo72j2kRrC1kqv+2893CwTfiL2O7klchnJNUiGzB/KTvRitGor6YKRi/aFDSy1E1pmkESNwJvrHXkZG2nZ9SwnZg8tqz4i5fSkDuckE7fgTDeCnFZvGJKlLq9I/2nS6YqhKhK84wo08912paD+o62mkFO8/fI3jTlMaUPni+l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7V19e2F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3087C4CEF2;
+	Fri, 25 Apr 2025 21:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745618328;
-	bh=JjJ7u9L4bsn3P3tXJ+xghGsmdrEbLJ8OOlksPw5V+4g=;
+	s=k20201202; t=1745618330;
+	bh=t9AdZrfcJn74TsogZtWo7+syNvH6UpmTPAk3/s1NP1Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EK38/3z3ifBfMQ8YfJEKVUD+2tr7dZXQnNiLW1Mv0Q9zOjhm0idtXl9gOln0lFZrD
-	 +cLa+jHW9C0RsZzqSNF0zRCRkCIbUDevqjy+0lH7ClKEMQl3uWj9K1IOgvLtwBK30I
-	 82hnAtklE0V28U5udTJeaYCH5LJ+a/sUUFNSpw4ZfLC3m8svHsgWrdBGDdgu/Teo5m
-	 ZDAerEBzf09f7U6JU77hNTtU4v1CrBn2J+0bV45zqnwSsgkS+xYxMfC4HXn9r9TCKT
-	 PrJ58jB4AqJS9PZEdNYpQw0vUdksVJ6ssl+vEWWsSYshGTsH11Ic5DRqYz0HNrzINX
-	 yBnfCygduDoHg==
+	b=Y7V19e2FZhCgL5YVLULsRFEcvxs9MGyjJERM4YGKXOyC6cKWVUSrrraLEn4QGum0A
+	 EKLxQ3vc4wFUHwzhgd2xvzGUYKnNDUHzEi8fDRdUxMUkGr4yQZN61fobZaeK+hAcVJ
+	 7V7GVrpjnxc0E/0YKs6fvy44weV/T1mYb/AgiSzjbNWjbKEAf7iWwtYnFbZuBKvO4H
+	 sKUqj19gowFfjsJaWZmi6x0lTPLAA/z/rIrCk4mXUqX6SdBif0Z/kdqLcZ5AKomxys
+	 6xd1zbkeJ7hS02J3u390/XcTyGu5Dz0fCwQVdbrlWiGa6RbEgcrnu+EA16uIpDgN2U
+	 AhUgnxL3IJgBg==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com,
 	arighi@nvidia.com,
@@ -47,9 +47,9 @@ To: void@manifault.com,
 Cc: linux-kernel@vger.kernel.org,
 	sched-ext@meta.com,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 04/12] sched_ext: Inline create_dsq() into scx_bpf_create_dsq()
-Date: Fri, 25 Apr 2025 11:58:19 -1000
-Message-ID: <20250425215840.2334972-5-tj@kernel.org>
+Subject: [PATCH 05/12] sched_ext: Factor out scx_alloc_and_add_sched()
+Date: Fri, 25 Apr 2025 11:58:20 -1000
+Message-ID: <20250425215840.2334972-6-tj@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250425215840.2334972-1-tj@kernel.org>
 References: <20250425215840.2334972-1-tj@kernel.org>
@@ -61,79 +61,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-create_dsq() is only used by scx_bpf_create_dsq() and the separation gets in
-the way of making dsq_hash per scx_sched. Inline it into
-scx_bpf_create_dsq(). While at it, add unlikely() around
-SCX_DSQ_FLAG_BUILTIN test.
+More will be moved into scx_sched. Factor out the allocation and kobject
+addition path into scx_alloc_and_add_sched().
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- kernel/sched/ext.c | 42 ++++++++++++++++++------------------------
- 1 file changed, 18 insertions(+), 24 deletions(-)
+ kernel/sched/ext.c | 58 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 22 deletions(-)
 
 diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index fe6044f527c4..e22717c435ff 100644
+index e22717c435ff..bd2d45196bec 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -4196,29 +4196,6 @@ static void init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id)
- 	dsq->id = dsq_id;
+@@ -5236,6 +5236,39 @@ static struct kthread_worker *scx_create_rt_helper(const char *name)
+ 	return helper;
  }
  
--static struct scx_dispatch_q *create_dsq(u64 dsq_id, int node)
--{
--	struct scx_dispatch_q *dsq;
--	int ret;
--
--	if (dsq_id & SCX_DSQ_FLAG_BUILTIN)
--		return ERR_PTR(-EINVAL);
--
--	dsq = kmalloc_node(sizeof(*dsq), GFP_KERNEL, node);
--	if (!dsq)
--		return ERR_PTR(-ENOMEM);
--
--	init_dsq(dsq, dsq_id);
--
--	ret = rhashtable_lookup_insert_fast(&dsq_hash, &dsq->hash_node,
--					    dsq_hash_params);
--	if (ret) {
--		kfree(dsq);
--		return ERR_PTR(ret);
++static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
++{
++	struct scx_sched *sch;
++	int ret;
++
++	sch = kzalloc(sizeof(*sch), GFP_KERNEL);
++	if (!sch)
++		return ERR_PTR(-ENOMEM);
++
++	sch->exit_info = alloc_exit_info(ops->exit_dump_len);
++	if (!sch->exit_info) {
++		ret = -ENOMEM;
++		goto err_free_sch;
++	}
++
++	atomic_set(&sch->exit_kind, SCX_EXIT_NONE);
++	sch->ops = *ops;
++	ops->priv = sch;
++
++	sch->kobj.kset = scx_kset;
++	ret = kobject_init_and_add(&sch->kobj, &scx_ktype, NULL, "root");
++	if (ret < 0)
++		goto err_free_ei;
++
++	return sch;
++
++err_free_ei:
++	free_exit_info(sch->exit_info);
++err_free_sch:
++	kfree(sch);
++	return ERR_PTR(ret);
++}
++
+ static void check_hotplug_seq(const struct sched_ext_ops *ops)
+ {
+ 	unsigned long long global_hotplug_seq;
+@@ -5348,27 +5381,12 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 		goto err_unlock;
+ 	}
+ 
+-	sch = kzalloc(sizeof(*sch), GFP_KERNEL);
+-	if (!sch) {
+-		ret = -ENOMEM;
++	sch = scx_alloc_and_add_sched(ops);
++	if (IS_ERR(sch)) {
++		ret = PTR_ERR(sch);
+ 		goto err_unlock;
+ 	}
+ 
+-	sch->exit_info = alloc_exit_info(ops->exit_dump_len);
+-	if (!sch->exit_info) {
+-		ret = -ENOMEM;
+-		goto err_free;
 -	}
--	return dsq;
--}
 -
- static void free_dsq_irq_workfn(struct irq_work *irq_work)
- {
- 	struct llist_node *to_free = llist_del_all(&dsqs_to_free);
-@@ -6712,10 +6689,27 @@ __bpf_kfunc_start_defs();
-  */
- __bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node)
- {
-+	struct scx_dispatch_q *dsq;
-+	s32 ret;
-+
- 	if (unlikely(node >= (int)nr_node_ids ||
- 		     (node < 0 && node != NUMA_NO_NODE)))
- 		return -EINVAL;
--	return PTR_ERR_OR_ZERO(create_dsq(dsq_id, node));
-+
-+	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN))
-+		return -EINVAL;
-+
-+	dsq = kmalloc_node(sizeof(*dsq), GFP_KERNEL, node);
-+	if (!dsq)
-+		return -ENOMEM;
-+
-+	init_dsq(dsq, dsq_id);
-+
-+	ret = rhashtable_lookup_insert_fast(&dsq_hash, &dsq->hash_node,
-+					    dsq_hash_params);
-+	if (ret)
-+		kfree(dsq);
-+	return ret;
- }
+-	sch->kobj.kset = scx_kset;
+-	ret = kobject_init_and_add(&sch->kobj, &scx_ktype, NULL, "root");
+-	if (ret < 0)
+-		goto err_free;
+-
+-	atomic_set(&sch->exit_kind, SCX_EXIT_NONE);
+-	sch->ops = *ops;
+-	ops->priv = sch;
+-
+ 	/*
+ 	 * Transition to ENABLING and clear exit info to arm the disable path.
+ 	 * Failure triggers full disabling from here on.
+@@ -5566,10 +5584,6 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
  
- __bpf_kfunc_end_defs();
+ 	return 0;
+ 
+-err_free:
+-	if (sch->exit_info)
+-		free_exit_info(sch->exit_info);
+-	kfree(sch);
+ err_unlock:
+ 	mutex_unlock(&scx_enable_mutex);
+ 	return ret;
 -- 
 2.49.0
 
