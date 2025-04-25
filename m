@@ -1,221 +1,181 @@
-Return-Path: <linux-kernel+bounces-619920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A10D2A9C372
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD73A9C3A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 825C49A0509
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CDCA7B3346
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DC52367A0;
-	Fri, 25 Apr 2025 09:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D5923A9BD;
+	Fri, 25 Apr 2025 09:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mQfJItrK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ULv/3UtO"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5A71DB127
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AC522E3E3;
+	Fri, 25 Apr 2025 09:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573290; cv=none; b=A/0FMul14Xh0CJi5dByoBTPr32nmZHOfQEej4d1Lv5g7LWMcaNY7xT/L9YGoLwt47Si5yDNBJVf3c82kf5zHPHgTD/os13iKVcUE/za8RdBB67ZhKZtenaP9MIwLarP0m8mlOGuDWmieG2nhxzDcuaS3FbzOAvF437fOWceuVbM=
+	t=1745573566; cv=none; b=pmPMsw2rqgowrk++m5OsKFLaxKNtHh46F2iZGOrUssiSkK52oc6toj40TCUv3MW7a5ehdDe8fXfWNwqWqnyLXH/47v6k+yVx5ZIb2GWU2ixRBjIa9XKti5b8qs1BhVr2jvujjbW8CbB21z4kEi91cSYp5Fq1OBrfHyzO4J3SZZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573290; c=relaxed/simple;
-	bh=iQcxKLBtmBqHnu1nzKcXDSmV+Me+GwDK1oPblgbSRTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VGUUxEYUisX2p5V4NCCOuJCxfR2h5ryhHlAyu1CaoHdc5u0jcddcUxzjV0nxKe5/u4y9LOsjj2Ue9MF6LcSsRFlKDOXU5Vk8Emgv7AeqePfGo4MDhV6yCQbkLAmehI93EkA1Rz9v8tG5nLUFixrWsaT48f7rtpJJJ91TePGLxpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mQfJItrK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8T92Z023852
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:28:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xt2jjx4txmL59hNW/slqoBCJ
-	/oGYSTNA7mQ8pWiEl4c=; b=mQfJItrKW7QKh1CevTs4eVfDZpk+xBmfsJ8ePfyr
-	MgXxxMg3u2dgrr9RSzxFr9XbRswUPTH+hxBv7oQDcYv2Teli2ugzwXsX+l3hABqN
-	aoQfN66dTCS+BqsgAinm9a3y3KMtVtU5oMaFdOh2iBBJiQQmCYBnc+dMC7bVJLeo
-	I0g80pPZkllaFWAomLm5UI81/VsbNyJJvWCeALOkng4plnQj4JF6cVM17Spkd6jq
-	od8pEIWi0ifYu/hkQ90atrmCfFyZCBoNPD1dDmfjC8MBH2Z0FWYibU4UiX3JCcEO
-	DJEP1Ur5hWgMXAoy6BY0iH5ey4ypHT7Hk+VTBGaz7aFz8w==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh1rg7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:28:08 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2242ce15cc3so18790615ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:28:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745573287; x=1746178087;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xt2jjx4txmL59hNW/slqoBCJ/oGYSTNA7mQ8pWiEl4c=;
-        b=W8zalresdBnsdUNH9uuGk5u0c5z9Cl56uYFYkxfG01TfXNgoFp3/c5nT6f0ylrqeqZ
-         fOhxcCo5Xd/F4b9wVq6p1hIvZzzhX/PLtvRBeAIZ4rIV8S/MryqXJEGpiCMOStAK9gjx
-         gq9wjTWo7phhxvO/dpD6kEP6+bYwykhoJuHX2O1Lo2EcL50omT4pckqGUBqvkE13algB
-         HPnxix3l7htBQYkzhikJvDiOgrB/cY+lbIX9QKyM6QI1J4dbrS+rJUuwsp8aapP8MXp/
-         GULdf+eWYPkFPjur3lJ0Md2Nq5iyHGD58ctCWG41BVOFWLNC2iOaK73942wbfm9C02W2
-         rqIg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9B/S8INH0nE3k7iFAP2tAmJz5HeTK45p+jycT811Ud2bYn6EVZuu99ZwTnkj9YmsbAPD10tI+rRf1nLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQuODIEYMFcGLcL69Fu/+ZX7AtVh+bNVXSB2CiPepKyNJIR7tG
-	/uDb4VB9rp+eDIuzFRiO3nTCPoCId5Y0DDAiMQydewDKGzU9tPUS2ts1CBcuUMLTFkwewSdGIa4
-	QLne/vI5JNjOUIuzA9EldFdWfNCAQnsr9Vjo1VE9Qf8ETh25ASryh7pjw2UnTBkUYGoNiVkN4G7
-	3yqm7vShCrQSm7RLX1QgpR5/piFu3C0cEITTW8fg==
-X-Gm-Gg: ASbGnctRmFX+eqDcUtyz6NKDb38ufcL5RScaI1ikuyU9bicg5+pjgL5XkP/4sEM2yX7
-	79rYiVN5XIaWOFRtIQEzKxz/q6gUzrFPub2Dp/Pkspe14AuzCaznrlzZuB1ABKDxr+T4fjMoyry
-	5Z7We657g=
-X-Received: by 2002:a17:902:ecc2:b0:224:1ec0:8a16 with SMTP id d9443c01a7336-22dbf5ee6c8mr22878875ad.21.1745573286934;
-        Fri, 25 Apr 2025 02:28:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7sY9pNe21FkhpOVYLUJOVzPn9xf8OZzxysQbok+sCqT4QpEP41QTCap95a4a+qxhM7yJVJ2G9ynG4MaRKCCk=
-X-Received: by 2002:a17:902:ecc2:b0:224:1ec0:8a16 with SMTP id
- d9443c01a7336-22dbf5ee6c8mr22878495ad.21.1745573286549; Fri, 25 Apr 2025
- 02:28:06 -0700 (PDT)
+	s=arc-20240116; t=1745573566; c=relaxed/simple;
+	bh=aYQMBNplTVaHyclpbyKpZ08KlElOEJt5FXn2y9TfiXg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jjry8mJGDyMRLNsXetHv/+4iOCK4EzcZ2dD7FNNumEyUZtd0663hbQG2lU+wXs4xZt9IQt9soec3J1hw8LNllGKuJA5r9q/uILAcGNkUMeY9kItlcgeg/Ite7xSUQSzY18zbhUOj5stz77a80rqN342sBVedwCPD/KCxw4M3T0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ULv/3UtO; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 3acc597421b811f0980a8d1746092496-20250425
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=fUbJyBVUQ/Ent9qo9h24NLjKVtcs8TqR5cFHXMQPspI=;
+	b=ULv/3UtOxoa2esyo19+2Zq17hCsdtVTMR+vG0MFGYLPKZj2PuOnM6gRkyHu/3fgkZsKOuWh9tar7kZM3oBRd8Vf4h3PFiH46YKAOj7vKfbFyMyaRpAGLgKPut7oBKwvyDUjTz2o//KB5fBuPp4qewNXxkEIgZyJhKrY3fICAnNA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:77041dac-c0d3-4b96-9c7d-4f8abc1f3ec1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:5d1d9df0-ff26-40e8-a637-f0e9524b171a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 3acc597421b811f0980a8d1746092496-20250425
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1984012854; Fri, 25 Apr 2025 17:32:39 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 25 Apr 2025 17:32:37 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 25 Apr 2025 17:32:37 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Jason-JH Lin
+	<jason-jh.lin@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
+	<singo.chang@mediatek.com>, Paul-PL Chen <pual-pl.chen@mediatek.com>, Moudy
+ Ho <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
+	Xiandong Wang <xiandong.wang@mediatek.com>, Sirius Wang
+	<sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>, Chen-yu Tsai
+	<wenst@chromium.org>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
+Subject: [PATCH v5 00/19] Add GCE support for MT8196
+Date: Fri, 25 Apr 2025 17:28:32 +0800
+Message-ID: <20250425093237.1543918-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227-fd-mdp4-lvds-v3-0-c983788987ae@linaro.org>
- <20250227-fd-mdp4-lvds-v3-6-c983788987ae@linaro.org> <63e5ddf6-151a-42aa-b2cf-003d91b34a04@quicinc.com>
- <s63lvzn35d7xcvw3kkmtasyinxbqa35juyxosdscfk6vhty4pw@hu3dotyklo3r> <402bbda7-33c6-49b2-89c7-37372cc07457@quicinc.com>
-In-Reply-To: <402bbda7-33c6-49b2-89c7-37372cc07457@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 25 Apr 2025 12:27:55 +0300
-X-Gm-Features: ATxdqUHcGBSXlw8hFJp5C9Ri6LceneKkEY0gyZGnRt8lLgLrZ0UNEEiCOxxayBo
-Message-ID: <CAO9ioeXhjrOyKz3N3oU6QxW+u6WUC4R5XXqWgb=7iF7Hk0Q_nQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] drm/msm/mdp4: switch LVDS to use drm_bridge/_connector
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-GUID: aZPY4c712aDJa0TiyRFJQIWIAvgOdVY4
-X-Proofpoint-ORIG-GUID: aZPY4c712aDJa0TiyRFJQIWIAvgOdVY4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA2OCBTYWx0ZWRfX5n8ZKRvPPqxb hd2ej7H0jDE5mnIc0eFrPfx1R0UD98NFDLvOQ9pOhn6U5H1he17g2p0NGKWINPgvo7VxJueHASs zJXc48MbMQUvR4Xjj2fLeEb5H+QgpOPXrffZtfclIPk6jth1MwEha65aH+p9H1UsWDQU8pLER77
- Q4DvlD/8Sf4aHdhG8B1+3gT9MQJKBYbpG9XMl8u72SGoZAkx9bZe/FWIaMr8txMFSkwPIjj1Y9F m2/AjbATQ9ttn6dL6i5ne3vzAk209NYY/w4r15plgVoxk6QYSKWdk5czBVn+MFZzcjekE0va0XH Kr/WyIf3KJfQDp4S1wevDQIU0W5EBd+Dz/ZYtYNkGgpaozrGy//MhY4LZ109o4Okrss/dUWaPEn
- Nkj5CZyXeWF3+ZyI5JaG0J+qtq66HweRkR0CbCCIx0WgVv7kYRaiuphUNzktq6xjBV1jaciJ
-X-Authority-Analysis: v=2.4 cv=ZpjtK87G c=1 sm=1 tr=0 ts=680b55a8 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=ZLr3lU9xobrfYbAAIvMA:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
- a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- bulkscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250068
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Fri, 25 Apr 2025 at 00:00, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->
->
->
-> On 4/24/2025 3:23 AM, Dmitry Baryshkov wrote:
-> > On Wed, Apr 23, 2025 at 07:04:16PM -0700, Abhinav Kumar wrote:
-> >>
-> >>
-> >> On 2/26/2025 6:25 PM, Dmitry Baryshkov wrote:
-> >>> LVDS support in MDP4 driver makes use of drm_connector directly. However
-> >>> LCDC encoder and LVDS connector are wrappers around drm_panel. Switch
-> >>> them to use drm_panel_bridge/drm_bridge_connector. This allows using
-> >>> standard interface for the drm_panel and also inserting additional
-> >>> bridges between encoder and panel.
-> >>>
-> >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>> ---
-> >>>    drivers/gpu/drm/msm/Makefile                       |   1 -
-> >>>    drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c           |  34 +++++--
-> >>>    drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h           |   6 +-
-> >>>    drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  |  20 +----
-> >>>    .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    | 100 ---------------------
-> >>>    5 files changed, 28 insertions(+), 133 deletions(-)
-> >>>
-> >>> @@ -199,27 +201,43 @@ static int mdp4_modeset_init_intf(struct mdp4_kms *mdp4_kms,
-> >>>              * bail out early if there is no panel node (no need to
-> >>>              * initialize LCDC encoder and LVDS connector)
-> >>>              */
-> >>> -           panel_node = of_graph_get_remote_node(dev->dev->of_node, 0, 0);
-> >>> -           if (!panel_node)
-> >>> -                   return 0;
-> >>> +           next_bridge = devm_drm_of_get_bridge(dev->dev, dev->dev->of_node, 0, 0);
-> >>> +           if (IS_ERR(next_bridge)) {
-> >>> +                   ret = PTR_ERR(next_bridge);
-> >>> +                   if (ret == -ENODEV)
-> >>> +                           return 0;
-> >>> +                   return ret;
-> >>> +           }
-> >>> -           encoder = mdp4_lcdc_encoder_init(dev, panel_node);
-> >>> +           encoder = mdp4_lcdc_encoder_init(dev);
-> >>>             if (IS_ERR(encoder)) {
-> >>>                     DRM_DEV_ERROR(dev->dev, "failed to construct LCDC encoder\n");
-> >>> -                   of_node_put(panel_node);
-> >>>                     return PTR_ERR(encoder);
-> >>>             }
-> >>>             /* LCDC can be hooked to DMA_P (TODO: Add DMA_S later?) */
-> >>>             encoder->possible_crtcs = 1 << DMA_P;
-> >>> -           connector = mdp4_lvds_connector_init(dev, panel_node, encoder);
-> >>> +           ret = drm_bridge_attach(encoder, next_bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> >>> +           if (ret) {
-> >>> +                   DRM_DEV_ERROR(dev->dev, "failed to attach LVDS panel/bridge: %d\n", ret);
-> >>> +
-> >>> +                   return ret;
-> >>> +           }
-> >>
-> >> Can you pls point me to the lvds bridge used with this apq8064 board? I was
-> >> unable to find it. Just wanted to compare that against this while reviewing.
-> >
-> > It's the panel bridge, wrapping one of the LVDS panels.
-> >
->
-> Yes but what I wanted to check was which LVDS panel was being used so
-> far. Looks like for arm32 the dts is missing? As I couldnt find the lvds
-> out endpoint. So can you pls point me to the lvds panel you verified
-> this with?
+This patch series adds support for the MediaTek MT8196 SoC in the CMDQ
+driver and related subsystems. The changes include adding compatible
+names and iommus property, updating driver data to accommodate hardware
+changes, and modifying the usage of CMDQ APIs to support non-subsys ID
+hardware.
 
-I used the AUO b101xtn01 panel connected to the LVDS connector on the
-IFC6410. I'm not posting DT bits since the panel is not a part of the
-kit.
+---
+Change in v5:
+1. Rebase on tag: next-20250424 + patch [1].
+2. Split adding driver data for MT8196 patch to 3 independent patch
+   and add more detail commit message to each patch.
+3. Refine passing shift_pa as the parameter in API to storing it into
+   the cmdq_pkt.
+4. Refine DMA address potential issue in cmdq mailbox driver.
+5. Change the mminfra_offset related mbox API to passing it by cmdq_pkt.
+6. Add new cmdq_pkt_write_pa() and cmdq_pkt_write_subsys() APIs to
+   replace the cmdq_pkt_write().
 
->
->
-> >>> +
-> >>> +           connector = drm_bridge_connector_init(dev, encoder);
-> >>>             if (IS_ERR(connector)) {
-> >>>                     DRM_DEV_ERROR(dev->dev, "failed to initialize LVDS connector\n");
-> >>> -                   of_node_put(panel_node);
-> >>>                     return PTR_ERR(connector);
-> >>>             }
-> >>> +           ret = drm_connector_attach_encoder(connector, encoder);
-> >>> +           if (ret) {
-> >>> +                   DRM_DEV_ERROR(dev->dev, "failed to attach LVDS connector: %d\n", ret);
-> >>> +
-> >>> +                   return ret;
-> >>> +           }
-> >>> +
-> >>>             break;
-> >>>     case DRM_MODE_ENCODER_TMDS:
-> >>>             encoder = mdp4_dtv_encoder_init(dev);
-> >
->
+[1] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
+- https://patchwork.kernel.org/project/linux-mediatek/patch/20250421035650.441383-1-jason-jh.lin@mediatek.com/
 
+Change in v4:
+1. Remove dt-binding header and add a gce header in dts folder.
+2. Remove dot in sign-off name.
+3. Change addr type from u32 to dma_addr_t for cmdq_reg_shift_addr() and
+   cmdq_reg_revert_addr().
+
+Change in v3:
+1. Merge 2 dt-bindings pathes together and add more detail commit message.
+2. Change type u32 to phys_addr_t for pa_base of struct cmdq_client_reg.
+3. Remove cmdq_subsys_is_valid() and subsys_num in CMDQ driver.
+4. Add CMDQ_SUBSYS_INVALID to check subsys instead of using
+   cmdq_subsys_is_invalid().
+5. Make use of CMDQ_THR_SPR0 define to the parameter of CMDQ APIs.
+6. Rebase on the new MACRO in mtk-mdp3-comp.h.
+
+Change in v2:
+1. Remove the constant and fix warning in dt-bindings.
+2. Remove the pa_base parameter of CMDQ APIs and related modification.
+3. Move subsys checking to client drivers and use 2 alternative
+   CMDQ APIs to achieve the same functionality.
+
+Jason-JH Lin (19):
+  arm64: dts: mediatek: Add GCE header for MT8196
+  mailbox: mtk-cmdq: Refine DMA address handling for the command buffer
+  mailbox: mtk-cmdq: Add cmdq private data to cmdq_pkt for generating
+    instruction
+  soc: mediatek: mtk-cmdq: Add cmdq_get_mbox_priv() in cmdq_pkt_create()
+  soc: mediatek: mtk-cmdq: Add cmdq_pkt_jump_rel_temp() for removing
+    shift_pa
+  media: platform: mtk-mdp3: Change cmdq_pkt_jump_rel() to
+    cmdq_pkt_jump_rel_temp()
+  soc: mediatek: mtk-cmdq: Remove shift_pa parameter from
+    cmdq_pkt_jump()
+  media: platform: mtk-mdp3: Use cmdq_pkt_jump_rel() without shift_pa
+  soc: mediatek: mtk-cmdq: Remove cmdq_pkt_jump() and
+    cmdq_pkt_jump_rel_temp()
+  mailbox: mtk-cmdq: Add GCE hardware virtualization configuration
+  mailbox: mtk-cmdq: Add mminfra_offset configuration for DRAM
+    transaction
+  mailbox: mtk-cmdq: Add driver data to support for MT8196
+  soc: mediatek: mtk-cmdq: Add pa_base parsing for hardware without
+    subsys ID support
+  soc: mediatek: mtk-cmdq: Add new APIs to replace cmdq_pkt_write() and
+    cmdq_pkt_write_mask()
+  soc: mediatek: mtk-cmdq: Add mminfra_offset adjustment for DRAM
+    addresses
+  soc: mediatek: Add programming flow for unsupported subsys ID hardware
+  drm/mediatek: Add programming flow for unsupported subsys ID hardware
+  media: mediatek: mdp3: Add programming flow for unsupported subsys ID
+    hardware
+  soc: mediatek: mtk-cmdq: Remove cmdq_pkt_write() and
+    cmdq_pkt_write_mask()
+
+ arch/arm64/boot/dts/mediatek/mt8196-gce.h     | 612 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  24 +-
+ drivers/mailbox/mtk-cmdq-mailbox.c            | 115 +++-
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    |  16 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-comp.h    |  70 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-core.c    |   2 -
+ .../platform/mediatek/mdp3/mtk-mdp3-core.h    |   1 -
+ drivers/soc/mediatek/mtk-cmdq-helper.c        |  68 +-
+ drivers/soc/mediatek/mtk-mmsys.c              |  12 +-
+ drivers/soc/mediatek/mtk-mutex.c              |   8 +-
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |  19 +-
+ include/linux/soc/mediatek/mtk-cmdq.h         |  83 ++-
+ 12 files changed, 941 insertions(+), 89 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-gce.h
 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
