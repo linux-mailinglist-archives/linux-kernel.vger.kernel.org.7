@@ -1,39 +1,40 @@
-Return-Path: <linux-kernel+bounces-619460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BFEA9BCEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:38:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A8DA9BCED
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AAB31BA254C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3CAB7A3510
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B125817A30B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B57B156F20;
 	Fri, 25 Apr 2025 02:38:26 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4647C15B543;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AFB7483;
 	Fri, 25 Apr 2025 02:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745548706; cv=none; b=DZx0dVxhMuIIQSNVAyko4DLii0J/iqpaFvqav7liPo/C3bYjMfb5hZYZczcD9TMwVliyZZ1CHypvtAsQFAr0co51Gbm0yGDjnM5NRkwGss0EKMf4cwmUNGsZRtqFzRktqUp8oV0F1Wf+yV6uMZvOOSZNg2+BjIWzs94WEuSOoaU=
+	t=1745548705; cv=none; b=LrNE+EY8dAql1abC/E5kP8ouAGXYXZJOSmkTPxtz5h8779FPm4YOp0WIZWoqdG6P+ZA8RGf+vUW6LLOaHem2V4hpMUJtO/VGEHtfunSk23qpYC8d16uIhz2KEyr2ozzJdvkU9sKYmF7HMXwOqmKaAOlT343T18Zipg0JAMbQ/pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745548706; c=relaxed/simple;
-	bh=UschMkblraqHY5gdJ7MXLcjHLOAy+xsSTGpDeVkHSvc=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=pCtvUNQ0YabYsPEkQ4xnED4HsmH/jMfTmn2DHr7LcjRVIj4V6MUrZ+9CtvLRxCWLj9VtsboFlB4klu6p0MgLFhjDf1TY5N86YTTQtffhggfKTBGTgQtTZa6H8vEC099OtG5Qy3smGAlWk+KLcjuWRKMzmlQWdAEIpsQ2cZlZxgM=
+	s=arc-20240116; t=1745548705; c=relaxed/simple;
+	bh=QhCwiPnd0gPBrQvImDQRKzcjy0jlFgvpErnwXkD5KI4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=rP4QCDPsA+YvLbfOKwQj0Q0I95BErdt/U5beEbERGmvKiDC3tfHQfrtCcMQlJLlNYc8bYOgrPeYIKS7qB5Qx21Gutl4RDs+xR7zonlMNl/VyP+lXwfiGT85RGcmCxGcxMiEqtRna2vJb7uDL7SbDSQNKhzOAnDZJkx+vw16/0UA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80768C4CEEB;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB1BC4CEE3;
 	Fri, 25 Apr 2025 02:38:25 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1u88zG-0000000HC6R-197C;
+	id 1u88zG-0000000HC6x-1uWl;
 	Thu, 24 Apr 2025 22:40:22 -0400
-Message-ID: <20250425023750.669174660@goodmis.org>
+Message-ID: <20250425024022.303823947@goodmis.org>
 User-Agent: quilt/0.68
-Date: Thu, 24 Apr 2025 22:37:50 -0400
+Date: Thu, 24 Apr 2025 22:37:51 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -52,56 +53,58 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Borislav Petkov <bp@alien8.de>,
  Dave Hansen <dave.hansen@linux.intel.com>,
  "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 0/6] [PATCH v6 0/6] x86/vdso: VDSO updates and fixes for sframes
+Subject: [PATCH 1/6] x86/vdso: Fix DWARF generation for getrandom()
+References: <20250425023750.669174660@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 
-I'm currently working on getting sframe support from the kernel.
-In order to do that, it requires some fixes. Josh Poimboeuf did
-a lot of the hard work already, but he told me he doesn't have
-time to continue it so I'm picking it up where he left off.
+From: Josh Poimboeuf <jpoimboe@kernel.org>
 
-His last series of v4 is here:
+Add CFI annotations to the VDSO implementation of getrandom() so it will
+have valid DWARF unwinding metadata.
 
-  https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
+Fixes: 33385150ac45 ("x86: vdso: Wire up getrandom() vDSO implementation")
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ arch/x86/entry/vdso/vgetrandom-chacha.S | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-It covers a lot of topics as he found issues with other aspects of
-the kernel that needed to be fixed for sframes to work properly.
+diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
+index bcba5639b8ee..cc82da9216fb 100644
+--- a/arch/x86/entry/vdso/vgetrandom-chacha.S
++++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
+@@ -4,7 +4,7 @@
+  */
+ 
+ #include <linux/linkage.h>
+-#include <asm/frame.h>
++#include <asm/dwarf2.h>
+ 
+ .section	.rodata, "a"
+ .align 16
+@@ -22,7 +22,7 @@ CONSTANTS:	.octa 0x6b20657479622d323320646e61707865
+  *	rcx: number of 64-byte blocks to write to output
+  */
+ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+-
++	CFI_STARTPROC
+ .set	output,		%rdi
+ .set	key,		%rsi
+ .set	counter,	%rdx
+@@ -175,4 +175,5 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+ 	pxor		temp,temp
+ 
+ 	ret
++	CFI_ENDPROC
+ SYM_FUNC_END(__arch_chacha20_blocks_nostack)
+-- 
+2.47.2
 
-This series focuses only on the VDSO code. They are helpful fixes
-and updates that doesn't rely on sframes (although the last patch
-is sframe related).
 
-I based this off of the latest tip/master:
-
- commit 0c6ae66ef164c408daeab6a61aace4b86010369a
-
-Changes since v5: https://lore.kernel.org/all/20250422183439.895236512@goodmis.org/
-
-- Updated change log of patch 3 to make it more of a clean up than a fix.
-
-- Replaced $(comma} with actual comma in Makefile of the last patch.
-
-Josh Poimboeuf (6):
-      x86/vdso: Fix DWARF generation for getrandom()
-      x86/asm: Avoid emitting DWARF CFI for non-VDSO
-      x86/asm: Use CFI_* macros in SYM_FUNC_* macros so they can be added to VDSO
-      x86/vdso: Use SYM_FUNC_{START,END} in __kernel_vsyscall()
-      x86/vdso: Use CFI macros in __vdso_sgx_enter_enclave()
-      x86/vdso: Enable sframe generation in VDSO
-
-----
- arch/Kconfig                             |  3 ++
- arch/x86/entry/vdso/Makefile             | 10 ++++--
- arch/x86/entry/vdso/vdso-layout.lds.S    |  5 ++-
- arch/x86/entry/vdso/vdso32/system_call.S | 10 ++----
- arch/x86/entry/vdso/vgetrandom-chacha.S  |  3 +-
- arch/x86/entry/vdso/vsgx.S               | 19 +++++------
- arch/x86/include/asm/dwarf2.h            | 54 ++++++++++++++++++++++----------
- arch/x86/include/asm/linkage.h           | 33 +++++++++++++++----
- arch/x86/include/asm/vdso.h              |  1 -
- 9 files changed, 89 insertions(+), 49 deletions(-)
 
