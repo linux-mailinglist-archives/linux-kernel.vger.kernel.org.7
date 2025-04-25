@@ -1,148 +1,123 @@
-Return-Path: <linux-kernel+bounces-619519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1493A9BD9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEED0A9BD96
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1973D446EBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7841BA22AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFD82165E7;
-	Fri, 25 Apr 2025 04:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7025C2165E7;
+	Fri, 25 Apr 2025 04:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FO53vZrz"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZtiDDBd"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA78134CF;
-	Fri, 25 Apr 2025 04:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A44C26AC3;
+	Fri, 25 Apr 2025 04:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745555554; cv=none; b=Z1w2cr4VppNmNgRXQyBmD47V1S9rL+AWYYbA/AfeufIaXOSJFgvoPZK2HIynkwLN0IpI9fCw7VfIHee0Th009mw75bExHBRbTq12AHNhHue0W1j/9lHueCDQGRa5b1ox2h/Q50amTw92MJYfUdtEVLOfZ/XK134oXdQ3Do6ZjsY=
+	t=1745555377; cv=none; b=QYGHeToHInZYoHqfcKrQzrCeLKjdl11A0PrMikN7qvSmtpmIM8UsMOw7f6PVoob5J2BJQ7SCtQTUJP1nEvqoBP3cv5sdjlgAF0GsIQMzKR3J6D7WndIyUckl86x1RFg4KIMKns8LKWcGjTe/pcAs4tYXg0oiUNG4cbsw7HchvG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745555554; c=relaxed/simple;
-	bh=zjF9JaePE0iVCghtEj4B1rUwWxnrzjj6eVYVCPmvMNs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CM+q8YZxcqAUvGNzapLm8rrT4Yab42oYIT0QthXhJuqOSPgNyz99rZMvi34pbMAkW2L0Tp5ozwT2qQvlVYVAM2RkjRsX8anr1s08GLav4D+f8DZmkTl4oC1D73OqcskACXDjUUR8WlklOOJCixdZh3NiJOJGo2XPw4ka324WYQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FO53vZrz; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1745555553; x=1777091553;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zjF9JaePE0iVCghtEj4B1rUwWxnrzjj6eVYVCPmvMNs=;
-  b=FO53vZrz0AydtgHmCxVqKXHJLtYZTJwvCSGHXKh1iZ546qXZ0ySApM0u
-   fWbnvZLuwQlCANK5JoyvYPxl47OQlelvocWAkKnLaNdWxzlOTHTG4nvQ0
-   a+8usQUO6f/O1jTLQtDRp6rlgWHsj6rUVCmNuDkAWrcXVRZKMHuCqQ3zz
-   CUJr+0bcSrVIwVuYuCkNi+K0ejfx/S6IWllXl5UbEEGT1VwlX/SjroLRh
-   xUJU0f1pE/QQi9rv6lIl69E48xIuMNM9Q0g3xcKU6Ja+BjycOkelm9G0u
-   FPzdEJOYzjOnI2UmRu2cKXASdo2rLqncYVWaAvS8cTS3hAgjxNTt6i92B
-   w==;
-X-CSE-ConnectionGUID: Q9SVwF29Twemz3224Z21Zw==
-X-CSE-MsgGUID: Z2WZZaR1RDiB+f+XT4/lZA==
-X-IronPort-AV: E=Sophos;i="6.15,238,1739862000"; 
-   d="scan'208";a="40884322"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Apr 2025 21:32:32 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 24 Apr 2025 21:32:11 -0700
-Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 24 Apr 2025 21:32:08 -0700
-From: Thangaraj Samynathan <thangaraj.s@microchip.com>
-To: <netdev@vger.kernel.org>
-CC: <bryan.whitehead@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 net] net: lan743x: Fix memory leak when GSO enabled
-Date: Fri, 25 Apr 2025 09:58:53 +0530
-Message-ID: <20250425042853.21653-1-thangaraj.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1745555377; c=relaxed/simple;
+	bh=cg7O8yhjOZVG71mTeSzefOVsa0LfzjT7LGCUjjEisOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nr6X7lSHgnXbubquZsBQaw7LJmQKVYI+CUqtx264uaXWr+mU8tLZbsX6L6hJMVhRBnPI0M1XpzxrCLIT1aXJuX2VIFiqGp6/IWbi+2hXKxT41q9U93wn9/OhuYCqDvhOfVG0K/8N8SNQhW2e1hN773bUsRHJIL7Z+igMcwCwG2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZtiDDBd; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so264885666b.3;
+        Thu, 24 Apr 2025 21:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745555375; x=1746160175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6TQXT7I/YGU9ccLOz7Oy5JRY77KJdz9t2wirKmQESkI=;
+        b=hZtiDDBdXZ4kX2CAW2YKl4bbVjiXV6LhnDa02uirdki9WoMfjEGpnuwFIykuqDT1Vu
+         apnvwBMGNsVbCKBZ47+3E6fnmWhVY4ONn+86gcNB90Zgu0VioGTh3wNyLXlOHsWg8+x8
+         MlqwLRJdcbV5V8Apuqp/QFArU/C4MNWq/QcwOi5ss86w0ZrXrbRC8j+n0/GQbuYhgxV/
+         vs6Pp4/aPAxMQvtDrA9xEYUCGpmZxT8EmLFqYAKQNT/B45nxbZHnES8uPFLseN16Ghz+
+         kmRrzpOgAO8rELZE+kdmDzKyLTX2LAjqsGuOZb/HEWxOnQztdgvVgu12oJczJiuLLUOh
+         rz/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745555375; x=1746160175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6TQXT7I/YGU9ccLOz7Oy5JRY77KJdz9t2wirKmQESkI=;
+        b=nf3vtU9ehpEIZlj0AfmJw+mIm2uHzS2O8Mry6PUJt2A8kj0H2MWc+kwY5/Wk7PsvXh
+         D/3UFYpl6/E2rXC9qGgY0lbHNVkhkZaTWvQSSbYepllmjgBA+QBo0mrO1s+5xFIKHwK9
+         DolZIhdPctduOIyv3rcuYqbwZjyk+e0nrOXoNr1L3MvoPqpQh4aU4JampMrZdsPH8pGj
+         ADTFqdpdEReZudTC+v9NX8UqVPDZb9JUc9nUcVBhuIzDZqLZUxNR2NP3WYDWrJy2cdRQ
+         bwYG5jo5RoVufgD20Bg5M1BDidNxJg7bHEVeBe1xQylmqpniyhGQKKToaYY/pfwG0qDC
+         JApw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp1Kuyn7+9B7ZTI6SQbu75eP+NxBUzjppQk3cUZ8bT0wejgL24GnheKjjD5j3ymk8XuzxWLGOdQsmtYdxa@vger.kernel.org, AJvYcCXC18jBUTMVq5TDqWbzt4dUWW2m83aJpX7odlifCyRkU6p2gXPzUmJ8ret3wvQyqc/O5WFFhiGa36k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzF36CZvtfgxErHLymUYE7TTEctEgiOr6Qkgs/eJ4Wqc/Bwx4G
+	Q0PbnUelnvHL11p988villt44MA/TKxKU7dd9liQjcIjx+QbMveUKCHei3oPzVNpcRdBAwlfDQZ
+	J6W4WeKEUJ13+BCUlCEF1eprzuvk=
+X-Gm-Gg: ASbGncuZh28+ZQ1JtGN4H0C2YC8q3s9BHq69XvqyHPlg51n+KYLQG83HkuLkBsFvTi7
+	NPSA7i2u9oociueANLy8LoTYupqUsUsrWOj+IhZgr/XGDko/GAE4JLj6y0GPjK9a3SPSHHeJPR4
+	ZhbSYOXQCvAKBk/3w0ur/O3YI2Adm0cE0i
+X-Google-Smtp-Source: AGHT+IG0AYlOtH+5JPDtKd5wFOhw+RWLQKfnoUqpSwBB8ND0XF9crM+q/OJlTbLI/aTcHklgH2UFV9/u7EK4hxR3hs4=
+X-Received: by 2002:a17:907:6ea2:b0:ac7:f00d:52ec with SMTP id
+ a640c23a62f3a-ace713af43cmr80944666b.58.1745555374372; Thu, 24 Apr 2025
+ 21:29:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20250424-bmi270-events-v1-0-a6c722673e5f@gmail.com> <20250424-bmi270-events-v1-1-a6c722673e5f@gmail.com>
+In-Reply-To: <20250424-bmi270-events-v1-1-a6c722673e5f@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 25 Apr 2025 07:28:57 +0300
+X-Gm-Features: ATxdqUGM3HjCbKjmk98EUkLep4i7LzPMduvsKtQnoahfj8rheOtUPRhmr4gsT4U
+Message-ID: <CAHp75Vc_AnwjY6E_iE5RMOSh4eV2iWuqqAoteo9TvtgDT_CXKQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] iio: imu: bmi270: add channel for step counter
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current implementation tracks the `skb` by linking it to the
-LS descriptor when the  number of fragments is greater than zero,
-and to the EXT descriptor when the number of fragments is zero
-with GSO enabled. However, when the `skb` is mapped to the EXT
-descriptor, it is not freed resulting in a memory leak. The
-implementation has been modified to always map the `skb` to the
-last descriptor and always be properly freed.
+On Fri, Apr 25, 2025 at 3:15=E2=80=AFAM Gustavo Silva <gustavograzs@gmail.c=
+om> wrote:
+>
+> Add a channel for enabling/disabling the step counter, reading the
+> number of steps and resetting the counter.
 
-Fixes: 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
-Signed-off-by: Thangaraj Samynathan <thangaraj.s@microchip.com>
----
- drivers/net/ethernet/microchip/lan743x_main.c | 8 ++++++--
- drivers/net/ethernet/microchip/lan743x_main.h | 1 +
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Looks ideal from the style and maintaining perspective, thanks for
+making the reviewer's job easy! One small comment, but
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 8b6b9b6efe18..73dfc85fa67e 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -1815,6 +1815,7 @@ static void lan743x_tx_frame_add_lso(struct lan743x_tx *tx,
- 	if (nr_frags <= 0) {
- 		tx->frame_data0 |= TX_DESC_DATA0_LS_;
- 		tx->frame_data0 |= TX_DESC_DATA0_IOC_;
-+		tx->frame_last = tx->frame_first;
- 	}
- 	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_tail];
- 	tx_descriptor->data0 = cpu_to_le32(tx->frame_data0);
-@@ -1884,6 +1885,7 @@ static int lan743x_tx_frame_add_fragment(struct lan743x_tx *tx,
- 		tx->frame_first = 0;
- 		tx->frame_data0 = 0;
- 		tx->frame_tail = 0;
-+		tx->frame_last = 0;
- 		return -ENOMEM;
- 	}
- 
-@@ -1924,16 +1926,18 @@ static void lan743x_tx_frame_end(struct lan743x_tx *tx,
- 	    TX_DESC_DATA0_DTYPE_DATA_) {
- 		tx->frame_data0 |= TX_DESC_DATA0_LS_;
- 		tx->frame_data0 |= TX_DESC_DATA0_IOC_;
-+		tx->frame_last = tx->frame_tail;
- 	}
- 
--	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_tail];
--	buffer_info = &tx->buffer_info[tx->frame_tail];
-+	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_last];
-+	buffer_info = &tx->buffer_info[tx->frame_last];
- 	buffer_info->skb = skb;
- 	if (time_stamp)
- 		buffer_info->flags |= TX_BUFFER_INFO_FLAG_TIMESTAMP_REQUESTED;
- 	if (ignore_sync)
- 		buffer_info->flags |= TX_BUFFER_INFO_FLAG_IGNORE_SYNC;
- 
-+	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_tail];
- 	tx_descriptor->data0 = cpu_to_le32(tx->frame_data0);
- 	tx->frame_tail = lan743x_tx_next_index(tx, tx->frame_tail);
- 	tx->last_tail = tx->frame_tail;
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.h b/drivers/net/ethernet/microchip/lan743x_main.h
-index 7f73d66854be..db5fc73e41cc 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.h
-+++ b/drivers/net/ethernet/microchip/lan743x_main.h
-@@ -980,6 +980,7 @@ struct lan743x_tx {
- 	u32		frame_first;
- 	u32		frame_data0;
- 	u32		frame_tail;
-+	u32		frame_last;
- 
- 	struct lan743x_tx_buffer_info *buffer_info;
- 
--- 
-2.25.1
+...
 
+> +       case IIO_CHAN_INFO_PROCESSED: {
+> +               guard(mutex)(&data->mutex);
+
+> +               if (val || !data->steps_enabled)
+> +                       return -EINVAL;
+
+Please, move the val check outside of the lock, no need to lock for
+the local data.
+
+> +               /* Clear step counter value */
+> +               return bmi270_update_feature_reg(data, BMI270_SC_26_REG,
+> +                                                BMI270_STEP_SC26_RST_CNT=
+_MSK,
+> +                                                FIELD_PREP(BMI270_STEP_S=
+C26_RST_CNT_MSK,
+> +                                                           1));
+> +       }
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
