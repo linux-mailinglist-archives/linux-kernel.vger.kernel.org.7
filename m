@@ -1,101 +1,162 @@
-Return-Path: <linux-kernel+bounces-621025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BCEA9D2CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640F0A9D3F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0AEE7B4B20
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27B81BA712F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AA121B9D8;
-	Fri, 25 Apr 2025 20:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FA2225390;
+	Fri, 25 Apr 2025 21:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WlPgzDVg"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="EIqyTlxX"
+Received: from mx06lb.world4you.com (mx06lb.world4you.com [81.19.149.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF217A2FB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 20:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28D5224AE6;
+	Fri, 25 Apr 2025 21:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745612172; cv=none; b=rZh6/Tp3FdwXiOy2tE9IMKu2yUp4+FdO9efoN6iuQMUQvbsr6CPTJ5jpl22WGnJ0uQpc7urDfSY2Ds1FIWlI5Wlivzr3/OzFYa7MKXfPjCdnsL4+WgkGu8yQ48OO2FdURz51INLgvcR+rf93FPmG0rSHzK1KSOrE3vs+iD85kN8=
+	t=1745615405; cv=none; b=BNyHMBQcN5wQWspbP05WEU371LZwzy3waP5IayAJ3iAeYpD95wlB2u3KPqzB2Ag+qST8DJxgrcR78OM3c/JhFQxCGnxziGuuDBlxpIsiAQonxZuMbmqly0+Fne9RDdXb15I4Jv3Ussti1uBah0ZLm/tpSYZmw0KA0NXrS4CR3J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745612172; c=relaxed/simple;
-	bh=S3CUCsgERC2lKABr0RTijZNgynMNJ43s4foiri6FX1Q=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=RJLiQvwNxNQt50XzAEZh1rCFFU303TVw8SODH9E09KJZaaOlQT60C7tQay+QWNxfda3kZcCsaW3Zh9v7vzHubema7PJ5WVF1H5NZXzDP+e0REErgtkpblbNAgHJOvw+IHyBX+4AdcsYiAUMLSZzlRc/CaRpnlJWr3kNmUXhqQhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WlPgzDVg; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53PKFQDg3256787
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 25 Apr 2025 13:15:27 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53PKFQDg3256787
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745612128;
-	bh=QJR+ymoSxhx0ygaS36CxYeriy9wPOBKoGiphuOc/xYA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=WlPgzDVgOvh/0/DFcOe5XvMF8cvfSpicLG3EPZT8AMttk1GaTl6jNj6ES6WfPTR68
-	 /wWU89V8Qwj+O9E78AFFFUU6eJy1kkRMV6xfexWC7bAX3Bc0V7jqD9eNN0QRkhkkI5
-	 EziKxByPLhsc++tIDRVYnZbSrWAnma9tJh9y/9AJvo/5s1sbgoJQmb9k55q41YazSd
-	 hKfRYhop6s0UAF/DuvR4d/qrnx8GfOMSyYS2pYZjkvcz8Lok4x3GyYIB5frgJytZw+
-	 2PFF5/JtlfLV8fXzKXntPUxJIcmIaKtaARWNiHF7P3QM2WfemqbJojqVOZWOt4eQs2
-	 5y20v1j/VdOXQ==
-Date: Fri, 25 Apr 2025 13:15:24 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-CC: Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
-        Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH] [RFC] x86/cpu: rework instruction set selection
-User-Agent: K-9 Mail for Android
-In-Reply-To: <09e26f91-9a62-45c8-b94e-eddb307251f4@app.fastmail.com>
-References: <20250425141740.734030-1-arnd@kernel.org> <7CEE8E85-D7B1-4066-AD4D-747CA4340F65@zytor.com> <09e26f91-9a62-45c8-b94e-eddb307251f4@app.fastmail.com>
-Message-ID: <49675319-D30C-417C-9BE6-20D2AB8E259A@zytor.com>
+	s=arc-20240116; t=1745615405; c=relaxed/simple;
+	bh=i7IbPiakB7vpTLjK9gupk8hrsHLDntK7oG/06/Usdak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ylj2Zho7EK4CkKNzUYBoIcRKi/a/FOHSVQ6rWbdgrTF74cF0tToK1g09Iwq+/QGTsQ+rMUq8t3sm6rxUyQNjIGcsZzQ/sDvipfIEvuWZ8fevmWHMAF+sqi1nrcE1a9oFMrB6leVWSa1gcaciEAJ/vPNsSb3pavH4pODM0EHOg7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=EIqyTlxX; arc=none smtp.client-ip=81.19.149.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=U2PlbSYJoDqGmlBnxEFPhzu2SoY19RbUjb4TC95q0os=; b=EIqyTlxX3Nc8I3nDrfhAQrxBF1
+	iFoESpbBgtB7fFarOuSBVC4vSpLvEjSUfpTT0/pBGvYSUqp+t/dIOHxHjcaPOuDDLBCz/qqyAc5a7
+	/UupZVwcTgYGbu8Dd6WRyA9kXC/JAaJWqa/hh864eVu3hPa56NRo0Tq60+5umqBr2cE8=;
+Received: from [188.22.4.210] (helo=[10.0.0.160])
+	by mx06lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1u8PSV-000000006I9-2m9q;
+	Fri, 25 Apr 2025 22:15:39 +0200
+Message-ID: <31a7c481-0b0c-4a46-9eb9-983f88ca137e@engleder-embedded.com>
+Date: Fri, 25 Apr 2025 22:15:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net-next 1/2] net: selftest: add net_selftest_custom()
+ interface
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+ chenhao418@huawei.com, jonathan.cameron@huawei.com,
+ shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, horms@kernel.org
+References: <20250421134358.1241851-1-shaojijie@huawei.com>
+ <20250421134358.1241851-2-shaojijie@huawei.com>
+Content-Language: en-US
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <20250421134358.1241851-2-shaojijie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-On April 25, 2025 9:13:31 AM PDT, Arnd Bergmann <arnd@arndb=2Ede> wrote:
->On Fri, Apr 25, 2025, at 17:34, H=2E Peter Anvin wrote:
->> On April 25, 2025 7:15:15 AM PDT, Arnd Bergmann <arnd@kernel=2Eorg> wro=
-te:
->>
->> I really don't like testing an unrelated feature (CMOV for PAE);=20
->
->How about a new symbol with the opposite polarity, e=2Eg=2E CONFIG_CPU_58=
-6?
->In that case, X86_HAVE_PAE and X86_CMOV could both depend on that
->not being set=2E
->
->I only picked the X86_CMOV symbol because it already exists in =2Econfig
->files, but that is not the important bit here=2E
->
->> furthermore, at least some old hypervisors were known to have
->> broken PAE=2E
->
->I'm not following=2E What does that have to do with my patch?
->
->     Arnd
+On 21.04.25 15:43, Jijie Shao wrote:
+> In net/core/selftests.c,
+> net_selftest() supports loopback tests.
+> However, the loopback content of this interface is a fixed common test
+> and cannot be expanded to add the driver's own test.
+> 
+> In this patch, the net_selftest_custom() interface is added
+> to support driver customized loopback tests and
+> extra common loopback tests.
+> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> ---
+>   include/net/selftests.h |  61 +++++++++++++
+>   net/core/selftests.c    | 188 +++++++++++++++++++++++++++++++++++++++-
+>   2 files changed, 245 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/net/selftests.h b/include/net/selftests.h
+> index e65e8d230d33..a36e6ee0a41f 100644
+> --- a/include/net/selftests.h
+> +++ b/include/net/selftests.h
+> @@ -4,6 +4,48 @@
+>   
+>   #include <linux/ethtool.h>
+>   
+> +#define NET_TEST_NETIF_CARRIER		BIT(0)
+> +#define NET_TEST_FULL_DUPLEX		BIT(1)
+> +#define NET_TEST_TCP			BIT(2)
+> +#define NET_TEST_UDP			BIT(3)
+> +#define NET_TEST_UDP_MAX_MTU		BIT(4)
+> +
+> +#define NET_EXTRA_CARRIER_TEST		BIT(0)
+> +#define NET_EXTRA_FULL_DUPLEX_TEST	BIT(1)
+> +#define NET_EXTRA_PHY_TEST		BIT(2)
 
-This seems overly complex to me=2E
+What is the difference between NET_TEST_NETIF_CARRIER and
+NET_EXTRA_CARRIER_TEST? Aren't these the same tests?
+
+> +struct net_test_entry {
+> +	char name[ETH_GSTRING_LEN];
+> +
+> +	/* can set to NULL */
+> +	int (*enable)(struct net_device *ndev, bool enable);
+> +
+> +	/* can set to NULL */
+> +	int (*fn)(struct net_device *ndev);
+> +
+> +	/* if flag is set, fn() will be ignored,
+> +	 * and will do test according to the flag,
+> +	 * such as NET_TEST_UDP...
+> +	 */
+> +	unsigned long flags;
+
+Looks limited, this interface does not scale as the bits in flags are
+limited.
+
+> +};
+> +
+> +#define NET_TEST_E(_name, _enable, _flags) { \
+> +	.name = _name, \
+> +	.enable = _enable, \
+> +	.fn = NULL, \
+> +	.flags = _flags }
+> +
+> +#define NET_TEST_ENTRY_MAX_COUNT	10
+
+I expect that you have to eliminate this limitation too.
+
+> +struct net_test {
+> +	/* extra tests will be added based on this flag */
+> +	unsigned long extra_flags;
+
+Why this extra_flags to trigger tests? AFAIU the same tests can be
+triggered with entries.
+
+> +
+> +	struct net_test_entry entries[NET_TEST_ENTRY_MAX_COUNT];
+> +	/* the count of entries, must <= NET_TEST_ENTRY_MAX_COUNT */
+> +	u32 count;
+> +};
+
+You try to make net selftests more usable for drivers. I also tried
+that, but Andrew Lunn argumented for controlling the selftests some
+user space interface is expected. IMO the situation has not changed.
+
+https://lore.kernel.org/netdev/20250227203138.60420-3-gerhard@engleder-embedded.com/T/#md5e4ac1ca41adbdb43755d3c189aa8b8228bf8c9
+
+Gerhard
 
