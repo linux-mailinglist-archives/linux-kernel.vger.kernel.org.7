@@ -1,93 +1,123 @@
-Return-Path: <linux-kernel+bounces-619653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83268A9BF7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:15:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A54A9BF94
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F5CC7B0B85
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:14:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4581896058
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF1E230D0E;
-	Fri, 25 Apr 2025 07:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D062343C9;
+	Fri, 25 Apr 2025 07:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpWHiEUk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e7himNVO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90DC2309BD;
-	Fri, 25 Apr 2025 07:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D35233728;
+	Fri, 25 Apr 2025 07:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745565238; cv=none; b=V4+d2uQH5DzeZmte/1Jepu4s7eTSk9OaUr5RH7zNU5m86XAOBbqugaHFrzwkuGg34SNlNp9xDjulSYznxQN/blr8va3yv+gTQ+FljGdsOh7UjDEtUWIUmY46Ic2yOGguXPBvTpSLucwYlHNrW7PIl+OvJGR+BTgf7/SAyPcTUJc=
+	t=1745565243; cv=none; b=LRpRfEuRtCO2LKaWoeBXzq6oUESce+yldCI/Dze0qFK+emSBY8C27GPvh1kRnvMQ5pQHq/25uFdEZ5/dffNZmYTwW/bBUQxilrH3BUKnLak7Klea6A7slEdcaI2SEbTQf5EEAl+bEP96PJjMDmRsksLSlw+ElmysqPAAMQbBP0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745565238; c=relaxed/simple;
-	bh=e73mxh6g7pPdU5IQV9QrUPN4paBARSHM/bPj/DASL0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FmQBO58JDNx0g4nGScgbxyp5ret1PB4Ab7R2Rw2Pz7wZ7VgxlxXeRB+JXX+4aFsHcyQbsOk3nQqc5ConN5bbIA1oBmIq0q+cUI6a2yMuhOQlsKhUWJXXYBRMHb7a2TBd9iDvniY7n1FGOZeoUpOo4jHK8ilNkkK43gHnOlrr3ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpWHiEUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3B7C4CEEA;
-	Fri, 25 Apr 2025 07:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745565238;
-	bh=e73mxh6g7pPdU5IQV9QrUPN4paBARSHM/bPj/DASL0g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NpWHiEUk5utvkts/u/WFDpHgdtPTxLZb+Y85bT3vkUeOa8vYzDcxw3O4jw8TYkZcM
-	 PLtUu6WBRbhlqLfzV6vALgbVmJ+5d6WWUOW32UZzBjEFaO38wouR4h2hPk/qKXJF95
-	 EPArfiQOrsW7R3MrLZue1sFo+rNzJuhea4lcta5wwhQ6ApTHLUkHQqq4SMAk2d8fxJ
-	 E+bX6Bm03NHdMYUCg+cJZL/ZTeWBBix4l6UlqrTkcbIeu2grPw5ej3oEFJ3aGmQvfu
-	 F2Mpcc9/kn08rMhOzT+tREFBqGjoPk1b2jLYQvuOmVDqmSDOw9Ev+vBG7Vybs1L6iQ
-	 cidAzDPxIcaeA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1u8DFw-00000000TG3-05Ht;
-	Fri, 25 Apr 2025 15:13:52 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] scripts/lib/kdoc: change mode to 0644
-Date: Fri, 25 Apr 2025 15:13:39 +0800
-Message-ID: <be0b0a5bde82fa09027a5083f8202f150581eb4e.1745564565.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1745564565.git.mchehab+huawei@kernel.org>
-References: <cover.1745564565.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1745565243; c=relaxed/simple;
+	bh=+ctObHH1pb3kS3cIi40xiXuXpl2mjHb3Jdgh7xJnkbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icJciQ8wwhd66pqb2i+8r6VxViqjJkS1chBySPG/xUzpp6pEaCzDwitm5iIIeK6gOUof+E+4jplzhVfVRTTeQx6fH/j/r94f5iuvRlBAc6uBRN/BS757c6jGwA/pBQemH8JKRUcDBYtSrSbasyKXM5mu4EL3Sii/2DAg2H3agIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e7himNVO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4lmsAT3MghLxXHYhqFb6fJfOdNWGEgo/7wDZBEzOx4U=; b=e7himNVO2CGBbHxziwQwEd8jyB
+	2aeJtIakiLvV6UbndOvwrVra/cBTXt/M6YAIyhM78v7Pko/k0bLLVizrXWdZp8lyrQ1a2yAZ7Qu97
+	aUmrM8Fr+6kEEN46U+41RgKKan2diAmtDRpHTPngoaGwlBt1DnSCqKPPs7zHsi3vyi07+gX8QDyms
+	75brC7OSpI4Zr0jcQPJCiJgXGMa2IVK9RW/s9zmNsiaofuqLHqgc70+Xi9l8ZREXuMuamzKw0mdYc
+	IsjI90JiWUCKJOpqjQonXvejbG+BcH5tTnJ9qoYMPN0eGxIrFSsHfEMjnSJlIzocP39EE37NbmAPu
+	vVTx7fIw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u8DFj-0000000Dz5S-3xrJ;
+	Fri, 25 Apr 2025 07:13:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 80FA5300583; Fri, 25 Apr 2025 09:13:39 +0200 (CEST)
+Date: Fri, 25 Apr 2025 09:13:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>, Weinan Liu <wnliu@google.com>,
+	Blake Jones <blakejones@google.com>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>
+Subject: Re: [PATCH v5 11/17] perf: Simplify get_perf_callchain() user logic
+Message-ID: <20250425071339.GJ18306@noisy.programming.kicks-ass.net>
+References: <20250424162529.686762589@goodmis.org>
+ <20250424162633.048002581@goodmis.org>
+ <20250424163607.GE18306@noisy.programming.kicks-ass.net>
+ <20250424132800.49160c2e@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424132800.49160c2e@gandalf.local.home>
 
-The script library here contain just classes. Remove execution
-permission.
+On Thu, Apr 24, 2025 at 01:28:00PM -0400, Steven Rostedt wrote:
+> On Thu, 24 Apr 2025 18:36:07 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > +++ b/kernel/events/callchain.c
+> > > @@ -246,22 +246,20 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+> > >  
+> > >  	if (user) {
+> > >  		if (!user_mode(regs)) {
+> > > -			if  (current->mm)
+> > > -				regs = task_pt_regs(current);
+> > > -			else
+> > > -				regs = NULL;
+> > > +			if (!current->mm)
+> > > +				goto exit_put;
+> > > +			regs = task_pt_regs(current);  
+> > 
+> > I'm thinking this might be one of those is-kthread test written as
+> > has-mm, and they're broken.
+> > 
+> > Notably things like the io-uring kthreads do have mm.
+> 
+> Would there ever be a case where:
+> 
+> 	current->mm == NULL && !(current->flags & PF_KTHREAD)
+> 
+> ?
+> 
+> That is, do we still need to check for current->mm if it's not a kernel
+> thread, or can we assume it exists?
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/lib/kdoc/kdoc_output.py | 0
- scripts/lib/kdoc/kdoc_parser.py | 0
- scripts/lib/kdoc/kdoc_re.py     | 0
- 3 files changed, 0 insertions(+), 0 deletions(-)
- mode change 100755 => 100644 scripts/lib/kdoc/kdoc_output.py
- mode change 100755 => 100644 scripts/lib/kdoc/kdoc_parser.py
- mode change 100755 => 100644 scripts/lib/kdoc/kdoc_re.py
-
-diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-old mode 100755
-new mode 100644
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-old mode 100755
-new mode 100644
-diff --git a/scripts/lib/kdoc/kdoc_re.py b/scripts/lib/kdoc/kdoc_re.py
-old mode 100755
-new mode 100644
--- 
-2.49.0
-
+IIRC just checking PF_KTHREAD should be sufficient.
 
