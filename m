@@ -1,233 +1,520 @@
-Return-Path: <linux-kernel+bounces-621136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD49BA9D480
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E452A9D485
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 948A27B5EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3AAC175DD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A10208997;
-	Fri, 25 Apr 2025 21:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R3KCzmNr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8950A226CE6;
+	Fri, 25 Apr 2025 21:51:45 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CBE21ABA7
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191E32192F3;
+	Fri, 25 Apr 2025 21:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745617762; cv=none; b=HmrS9WIQ+qiv+VErr1U7skj6k3GeZtod+kvPGcIeiXhz/Np7LBPXs6zooNTQMkmSVLEvgqBG9kE7ucAtohB0exSK7xM5xlx5IHp8bOmfX/eXL9SXB2tfW36gNhewog9mXJkROGBuSKGXLxm2K+MNYh0MyFmGCyQyjeBv/SPK9Pc=
+	t=1745617904; cv=none; b=t4fAJT/II0ydeoxsOBuoTqQpXdtle746qfgXLPIMbmupZ0zqVr7Xp0Wup8C1NEzhkWS9o5bRM5mTTyZJMWpcp/ggHpFwYsZG67cocpOCsLrW2nj4+8dLQtEwdIoNRHq+Hwg0xN0CIp5ZJM4S6V8GQDT8LYP3OiiQfGOvzfB257k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745617762; c=relaxed/simple;
-	bh=jozrC8ALKXE/Sx+4V/NhfP3zJRrKkx5q5cBTgMlYmb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6keAAPPpkgKKC/z8JGwM3GleP+Th61Ank2xBWXMtNJ17IgxRleh/f3boLMGDmYtRbpde6irnLnpMPWi9kR/gPynzz++98UVGHbtQqGEisvpVeClBlkE5gKRA7kXE/M5NfEnL4BJPYhzFqyFz9GpJSqoCdmVLOjEWtaJsN8hpcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R3KCzmNr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJtIs007904
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:49:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pqttNioS7MEhlEyeR5tyyWNtOjjWlwl8TrfEkoHr4Ds=; b=R3KCzmNrXjv4yB1Z
-	NAY+Pru2HGVjfLGDRtTjnQZYCg+hBPXnfDnlT7JhozGnoNvo/siglLBK8wnt+aF/
-	0KmPZVYhmVga2eHmC7olyotc9QHU3t/ODGRBFguIk+fePalCNdFnuws2otaalWiX
-	qv9R3a5FFaPLGLBLXEGwLNTVjjyjPb76Dv2QhiozWND0xQz9voJaI25vLAwHPKRC
-	Huj2IKWwMl2oGjF88APbuBlHS/QJc2joLAnUDeXbPvmGWvUhtL2jA+cUJIjLFewO
-	lm2/Zt648e2HZbFbs0T6z+jEW+m70vWOt3zP2fCi07a8BTKYBQU2hsEmIlY3tw6p
-	7dPNng==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh2jeac-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:49:18 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-476a4a83106so2167061cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:49:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745617757; x=1746222557;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pqttNioS7MEhlEyeR5tyyWNtOjjWlwl8TrfEkoHr4Ds=;
-        b=gUiWUF4wzxHymBtlOm072vD902g68cYPwP+vQwze6BND21DF6W38naddfmWmuEsp3k
-         n61Y94LOZibYFAT36YOR4O15RpYTvBwvkCesDTYnfVYx22evgE6jIkwueO0d/9bsa5ac
-         FqlPViQeQHavdpPKR9yYSEWY8C5xRL7dqPlq2JblwIEXxL6kSuTlK+Mhu0xrl97zicLL
-         IiUeY+GDewNfgSR3tPS9HpvXv1ufOVBinvaL7b4F/VvN8exhVPvKznpJdrKbHun4WIpA
-         ZyT+7AMlnVBi1t4ukEQGiuAQ6tU4K9bVRaLCKObAUXR7AwE5sRXG4oErpgJIBlqroez7
-         WYZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLg3XZ+mRhKfuKheDQafgNKvww0cVe7/Ewic2XAk+ZhyAQaFtVqrJ7cK3zCWlel6fEQeu1RO9Cd6PWLwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBFzU15q/AngGSd8UEJWqKzY/4h/jX4jBhSWlsUXvH1kbEc+nE
-	1Xs9Ra3GqqoLgBctw22Loj3OMemlEUJcIKxDKgWsEX0zmhSk2wh5xfR3d/8fA9TU5IYeD3/yZmp
-	3dGM1lJd+yepKAAeMZ6s258TDsQTbsgF+k7C40xxIuayS1xdYv8l3U35Sg0x1DvM=
-X-Gm-Gg: ASbGncs5TBvkLZ7W/fBYRinPQy7+ZroZpLd869MSDLV/iuLlugjFe/8k5EmgOAqz9Z3
-	/WHx8y58iCHtkAayy/De8QW9UHDAak80CGZjH9nEe9fxMHnOdz3/E1IBTfbIqm7SpjBwha73MV9
-	Gb6zbdJNrpqnWktFtyKxe4a2DI9YTR9SVbm37syuLOCb5MhXhYuq6f4WmIf3dBqUw7driaOuVo8
-	S8/4V+KltX9N2bONL47IqoEGcUbQ7MQq8+G/TkhjKrSBzTL8Eu95bjy9ZzdKVQEzjpHYaShHGSX
-	N867o/23EgNCukecrmkB7RM2XKS2Bx1fj6kVJO4Jq78/8ueQZJWWcFX8sZUgmxVDqiY=
-X-Received: by 2002:ac8:5f8c:0:b0:474:f601:c21e with SMTP id d75a77b69052e-4801c9843damr22042681cf.5.1745617757158;
-        Fri, 25 Apr 2025 14:49:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJCIrI78Ob/2klFmqnEr49+IpnLEJ2W1gl5FH3vfPAl6chnS3piYqnr6Wnwi9TWiuuQ4mecg==
-X-Received: by 2002:ac8:5f8c:0:b0:474:f601:c21e with SMTP id d75a77b69052e-4801c9843damr22042591cf.5.1745617756834;
-        Fri, 25 Apr 2025 14:49:16 -0700 (PDT)
-Received: from [192.168.65.156] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e5963fesm194044266b.81.2025.04.25.14.49.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 14:49:16 -0700 (PDT)
-Message-ID: <3498cfda-a738-449d-9d9f-754bbc8125c2@oss.qualcomm.com>
-Date: Fri, 25 Apr 2025 23:49:14 +0200
+	s=arc-20240116; t=1745617904; c=relaxed/simple;
+	bh=UvWW5xM0ftXUKHpGxT90Ph/nnmgSYUp1c3rUqexg/eA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WS52CvaEbU1Vbj8nS0AtK0UsXe8IHGracW5xav4po8qKfnhqRRgBORSpz0GkgbFYiBhyOwYrVN7nyeXE0fIKR5FcJYA3BaqsUurTBAGv0QhlYDu+VIyEewXE+xCQi6XhIJqA1390yamOXvY7nzDnCvd8b1h89afRHzEfAwU2NI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1u8QrR-0000000062h-39Vc;
+	Fri, 25 Apr 2025 21:51:25 +0000
+Date: Fri, 25 Apr 2025 22:51:18 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
+	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+	Sky Huang <skylake.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net-next] net: ethernet: mtk_eth_soc: add support for MT7988
+ internal 2.5G PHY
+Message-ID: <ab77dc679ed7d9669e82d8efeab41df23b524b1f.1745617638.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: sm8650: add iris DT node
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250424-topic-sm8x50-upstream-iris-8650-dt-v2-1-dd9108bf587f@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250424-topic-sm8x50-upstream-iris-8650-dt-v2-1-dd9108bf587f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: fVctxWJ8QL4B_aG24tTRGkT9TAc469xF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDE1NiBTYWx0ZWRfXxBIm4HecwlA2 mzAv9SNKekaRI+LglOW4GqvLr8geQly+cOx86wzqWoKlur2YNH1B0W33hZ1xGs4xQfE4SQZAHXG +2lSkY+ok2l4aVOCX9dQrXzI/ORuDBxwVuMCNIGi2h7G8UO4ahbAYaMNpYXVSEtms3REYnEJfEH
- /IoOSOanrZvFh5ZowPv5+9p+U6i6NKsJ8A3eJOS26P+kD3WOtqJxFQN6kSwxmijfE5+UyZpwL4N si6JloI6wwl0SJnSWJxiYJt/2bllN7Ujq/zVsLuSUV5F34yY607W7Cxki7qGAwLmy4lTRGVZc0f xoV1xpJEQBM0gWia7/Blz1YudvV9kQrYO+RWkqhbPJgHOtsA4JcUYZvH5WEVRpbJh/RsXYi7KKq
- THucpfOjWLvZT6QXGVejtA/BocJDb6Hip0dXOSPtHbVHqFMHqukoEIMoiOrBXzenlWI5FOii
-X-Authority-Analysis: v=2.4 cv=Tu/mhCXh c=1 sm=1 tr=0 ts=680c035e cx=c_pps a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=MuPQQqiwDrxPnYpOdO4A:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: fVctxWJ8QL4B_aG24tTRGkT9TAc469xF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_07,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250156
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4/24/25 6:32 PM, Neil Armstrong wrote:
-> Add DT entries for the sm8650 iris decoder.
-> 
-> Since the firmware is required to be signed, only enable
-> on Qualcomm development boards where the firmware is
-> available.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
-> Changes in v2:
-> - removed useless firmware-name
-> - Link to v1: https://lore.kernel.org/r/20250418-topic-sm8x50-upstream-iris-8650-dt-v1-1-80a6ae50bf10@linaro.org
-> ---
+The MediaTek MT7988 SoC comes with an single built-in Ethernet PHY
+supporting 2500Base-T/1000Base-T/100Base-TX/10Base-T link partners in
+addition to the built-in MT7531-like 1GE switch. The built-in PHY only
+supports full duplex.
 
-[...]
+Add muxes allowing to select GMAC2->2.5G PHY path and add basic support
+for XGMAC as the built-in 2.5G PHY is internally connected via XGMII.
+The XGMAC features will also be used by 5GBase-R, 10GBase-R and USXGMII
+SerDes modes which are going to be added once support for standalone PCS
+drivers is in place.
 
-> +		iris: video-codec@aa00000 {
-> +			compatible = "qcom,sm8650-iris";
-> +			reg = <0 0x0aa00000 0 0xf0000>;
-> +
-> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH 0>;
-> +
-> +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
-> +					<&videocc VIDEO_CC_MVS0_GDSC>,
-> +					<&rpmhpd RPMHPD_MXC>,
-> +					<&rpmhpd RPMHPD_MMCX>;
-> +			power-domain-names = "venus",
-> +					     "vcodec0",
-> +					     "mxc",
-> +					     "mmcx";
-> +
-> +			operating-points-v2 = <&iris_opp_table>;
-> +
-> +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
-> +				 <&videocc VIDEO_CC_MVS0C_CLK>,
-> +				 <&videocc VIDEO_CC_MVS0_CLK>;
-> +			clock-names = "iface",
-> +				      "core",
-> +				      "vcodec0_core";
-> +
-> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +					<&mmss_noc MASTER_VIDEO QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "cpu-cfg",
-> +					     "video-mem";
-> +
-> +			/* FW load region */
+In order to make use of the built-in 2.5G PHY the appropriate PHY driver
+as well as (proprietary) PHY firmware has to be present as well.
 
-I don't think this comment brings value
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+PHY driver: https://patchwork.kernel.org/project/netdevbpf/list/?series=935473&state=*
+PHY firmware: https://gitlab.com/kernel-firmware/linux-firmware/-/commit/dcc4a0690ce0e3bcccd3625f79949e7b12c9db01
 
-> +			memory-region = <&video_mem>;
-> +
-> +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
-> +				 <&videocc VIDEO_CC_XO_CLK_ARES>,
-> +				 <&videocc VIDEO_CC_MVS0C_CLK_ARES>;
-> +			reset-names = "bus",
-> +				      "xo",
-> +				      "core";
-> +
-> +			iommus = <&apps_smmu 0x1940 0>,
-> +				 <&apps_smmu 0x1947 0>;
+ drivers/net/ethernet/mediatek/mtk_eth_path.c |  41 +++++++
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c  | 114 ++++++++++++++++---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h  |  57 +++++++++-
+ 3 files changed, 196 insertions(+), 16 deletions(-)
 
-I think you may also need 0x1942 0x0 (please also make the second value / SMR
-mask hex)> +
-> +			dma-coherent;
-> +
-> +			/*
-> +			 * IRIS firmware is signed by vendors, only
-> +			 * enable in boards where the proper signed firmware
-> +			 * is available.
-> +			 */
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_path.c b/drivers/net/ethernet/mediatek/mtk_eth_path.c
+index 6fbfb16438a5..e4636a0051e8 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_path.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_path.c
+@@ -31,6 +31,8 @@ static const char *mtk_eth_path_name(u64 path)
+ 		return "gmac2_rgmii";
+ 	case MTK_ETH_PATH_GMAC2_SGMII:
+ 		return "gmac2_sgmii";
++	case MTK_ETH_PATH_GMAC2_2P5GPHY:
++		return "gmac2_2p5gphy";
+ 	case MTK_ETH_PATH_GMAC2_GEPHY:
+ 		return "gmac2_gephy";
+ 	case MTK_ETH_PATH_GDM1_ESW:
+@@ -127,6 +129,27 @@ static int set_mux_u3_gmac2_to_qphy(struct mtk_eth *eth, u64 path)
+ 	return 0;
+ }
+ 
++static int set_mux_gmac2_to_2p5gphy(struct mtk_eth *eth, u64 path)
++{
++	int ret;
++
++	if (path == MTK_ETH_PATH_GMAC2_2P5GPHY) {
++		ret = regmap_clear_bits(eth->ethsys, ETHSYS_SYSCFG0, SYSCFG0_SGMII_GMAC2_V2);
++		if (ret)
++			return ret;
++
++		/* Setup mux to 2p5g PHY */
++		ret = regmap_clear_bits(eth->infra, TOP_MISC_NETSYS_PCS_MUX, MUX_G2_USXGMII_SEL);
++		if (ret)
++			return ret;
++
++		dev_dbg(eth->dev, "path %s in %s updated\n",
++			mtk_eth_path_name(path), __func__);
++	}
++
++	return 0;
++}
++
+ static int set_mux_gmac1_gmac2_to_sgmii_rgmii(struct mtk_eth *eth, u64 path)
+ {
+ 	unsigned int val = 0;
+@@ -209,6 +232,10 @@ static const struct mtk_eth_muxc mtk_eth_muxc[] = {
+ 		.name = "mux_u3_gmac2_to_qphy",
+ 		.cap_bit = MTK_ETH_MUX_U3_GMAC2_TO_QPHY,
+ 		.set_path = set_mux_u3_gmac2_to_qphy,
++	}, {
++		.name = "mux_gmac2_to_2p5gphy",
++		.cap_bit = MTK_ETH_MUX_GMAC2_TO_2P5GPHY,
++		.set_path = set_mux_gmac2_to_2p5gphy,
+ 	}, {
+ 		.name = "mux_gmac1_gmac2_to_sgmii_rgmii",
+ 		.cap_bit = MTK_ETH_MUX_GMAC1_GMAC2_TO_SGMII_RGMII,
+@@ -260,6 +287,20 @@ int mtk_gmac_sgmii_path_setup(struct mtk_eth *eth, int mac_id)
+ 	return mtk_eth_mux_setup(eth, path);
+ }
+ 
++int mtk_gmac_2p5gphy_path_setup(struct mtk_eth *eth, int mac_id)
++{
++	u64 path = 0;
++
++	if (mac_id == MTK_GMAC2_ID)
++		path = MTK_ETH_PATH_GMAC2_2P5GPHY;
++
++	if (!path)
++		return -EINVAL;
++
++	/* Setup proper MUXes along the path */
++	return mtk_eth_mux_setup(eth, path);
++}
++
+ int mtk_gmac_gephy_path_setup(struct mtk_eth *eth, int mac_id)
+ {
+ 	u64 path = 0;
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 83068925c589..2c47c09a4fb3 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -503,7 +503,7 @@ static void mtk_gmac0_rgmii_adjust(struct mtk_eth *eth,
+ static void mtk_setup_bridge_switch(struct mtk_eth *eth)
+ {
+ 	/* Force Port1 XGMAC Link Up */
+-	mtk_m32(eth, 0, MTK_XGMAC_FORCE_LINK(MTK_GMAC1_ID),
++	mtk_m32(eth, 0, MTK_XGMAC_FORCE_MODE(MTK_GMAC1_ID),
+ 		MTK_XGMAC_STS(MTK_GMAC1_ID));
+ 
+ 	/* Adjust GSW bridge IPG to 11 */
+@@ -532,6 +532,25 @@ static struct phylink_pcs *mtk_mac_select_pcs(struct phylink_config *config,
+ 	return NULL;
+ }
+ 
++static int mtk_mac_prepare(struct phylink_config *config, unsigned int mode,
++			   phy_interface_t iface)
++{
++	struct mtk_mac *mac = container_of(config, struct mtk_mac,
++					   phylink_config);
++	struct mtk_eth *eth = mac->hw;
++
++	if (mtk_interface_mode_is_xgmii(eth, iface) && mac->id != MTK_GMAC1_ID) {
++		mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE,
++			XMAC_MCR_TRX_DISABLE, MTK_XMAC_MCR(mac->id));
++
++		mtk_m32(mac->hw, MTK_XGMAC_FORCE_MODE(mac->id) |
++				 MTK_XGMAC_FORCE_LINK(mac->id),
++			MTK_XGMAC_FORCE_MODE(mac->id), MTK_XGMAC_STS(mac->id));
++	}
++
++	return 0;
++}
++
+ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
+ 			   const struct phylink_link_state *state)
+ {
+@@ -573,6 +592,12 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
+ 			}
+ 			break;
+ 		case PHY_INTERFACE_MODE_INTERNAL:
++			if (mac->id == MTK_GMAC2_ID &&
++			    MTK_HAS_CAPS(eth->soc->caps, MTK_2P5GPHY)) {
++				err = mtk_gmac_2p5gphy_path_setup(eth, mac->id);
++				if (err)
++					goto init_err;
++			}
+ 			break;
+ 		default:
+ 			goto err_phy;
+@@ -644,12 +669,12 @@ static void mtk_mac_config(struct phylink_config *config, unsigned int mode,
+ 	}
+ 
+ 	/* Setup gmac */
+-	if (mtk_is_netsys_v3_or_greater(eth) &&
+-	    mac->interface == PHY_INTERFACE_MODE_INTERNAL) {
++	if (mtk_interface_mode_is_xgmii(eth, state->interface)) {
+ 		mtk_w32(mac->hw, MTK_GDMA_XGDM_SEL, MTK_GDMA_EG_CTRL(mac->id));
+ 		mtk_w32(mac->hw, MAC_MCR_FORCE_LINK_DOWN, MTK_MAC_MCR(mac->id));
+ 
+-		mtk_setup_bridge_switch(eth);
++		if (mac->id == MTK_GMAC1_ID)
++			mtk_setup_bridge_switch(eth);
+ 	}
+ 
+ 	return;
+@@ -696,10 +721,19 @@ static void mtk_mac_link_down(struct phylink_config *config, unsigned int mode,
+ {
+ 	struct mtk_mac *mac = container_of(config, struct mtk_mac,
+ 					   phylink_config);
+-	u32 mcr = mtk_r32(mac->hw, MTK_MAC_MCR(mac->id));
+ 
+-	mcr &= ~(MAC_MCR_TX_EN | MAC_MCR_RX_EN | MAC_MCR_FORCE_LINK);
+-	mtk_w32(mac->hw, mcr, MTK_MAC_MCR(mac->id));
++	if (!mtk_interface_mode_is_xgmii(mac->hw, interface)) {
++		/* GMAC modes */
++		mtk_m32(mac->hw,
++			MAC_MCR_TX_EN | MAC_MCR_RX_EN | MAC_MCR_FORCE_LINK, 0,
++			MTK_MAC_MCR(mac->id));
++	} else if (mac->id != MTK_GMAC1_ID) {
++		/* XGMAC except for built-in switch */
++		mtk_m32(mac->hw, XMAC_MCR_TRX_DISABLE, XMAC_MCR_TRX_DISABLE,
++			MTK_XMAC_MCR(mac->id));
++		mtk_m32(mac->hw, MTK_XGMAC_FORCE_LINK(mac->id), 0,
++			MTK_XGMAC_STS(mac->id));
++	}
+ }
+ 
+ static void mtk_set_queue_speed(struct mtk_eth *eth, unsigned int idx,
+@@ -771,13 +805,11 @@ static void mtk_set_queue_speed(struct mtk_eth *eth, unsigned int idx,
+ 	mtk_w32(eth, val, soc->reg_map->qdma.qtx_sch + ofs);
+ }
+ 
+-static void mtk_mac_link_up(struct phylink_config *config,
+-			    struct phy_device *phy,
+-			    unsigned int mode, phy_interface_t interface,
+-			    int speed, int duplex, bool tx_pause, bool rx_pause)
++static void mtk_gdm_mac_link_up(struct mtk_mac *mac,
++				struct phy_device *phy,
++				unsigned int mode, phy_interface_t interface,
++				int speed, int duplex, bool tx_pause, bool rx_pause)
+ {
+-	struct mtk_mac *mac = container_of(config, struct mtk_mac,
+-					   phylink_config);
+ 	u32 mcr;
+ 
+ 	mcr = mtk_r32(mac->hw, MTK_MAC_MCR(mac->id));
+@@ -811,6 +843,53 @@ static void mtk_mac_link_up(struct phylink_config *config,
+ 	mtk_w32(mac->hw, mcr, MTK_MAC_MCR(mac->id));
+ }
+ 
++static void mtk_xgdm_mac_link_up(struct mtk_mac *mac,
++				 struct phy_device *phy,
++				 unsigned int mode, phy_interface_t interface,
++				 int speed, int duplex, bool tx_pause, bool rx_pause)
++{
++	u32 mcr;
++
++	if (mac->id == MTK_GMAC1_ID)
++		return;
++
++	/* Eliminate the interference(before link-up) caused by PHY noise */
++	mtk_m32(mac->hw, XMAC_LOGIC_RST, 0, MTK_XMAC_LOGIC_RST(mac->id));
++	mdelay(20);
++	mtk_m32(mac->hw, XMAC_GLB_CNTCLR, XMAC_GLB_CNTCLR, MTK_XMAC_CNT_CTRL(mac->id));
++
++	mtk_m32(mac->hw, MTK_XGMAC_FORCE_LINK(mac->id), MTK_XGMAC_FORCE_LINK(mac->id),
++		MTK_XGMAC_STS(mac->id));
++
++	mcr = mtk_r32(mac->hw, MTK_XMAC_MCR(mac->id));
++	mcr &= ~(XMAC_MCR_FORCE_TX_FC | XMAC_MCR_FORCE_RX_FC | XMAC_MCR_TRX_DISABLE);
++	/* Configure pause modes -
++	 * phylink will avoid these for half duplex
++	 */
++	if (tx_pause)
++		mcr |= XMAC_MCR_FORCE_TX_FC;
++	if (rx_pause)
++		mcr |= XMAC_MCR_FORCE_RX_FC;
++
++	mtk_w32(mac->hw, mcr, MTK_XMAC_MCR(mac->id));
++}
++
++static void mtk_mac_link_up(struct phylink_config *config,
++			    struct phy_device *phy,
++			    unsigned int mode, phy_interface_t interface,
++			    int speed, int duplex, bool tx_pause, bool rx_pause)
++{
++	struct mtk_mac *mac = container_of(config, struct mtk_mac,
++					   phylink_config);
++
++	if (mtk_interface_mode_is_xgmii(mac->hw, interface))
++		mtk_xgdm_mac_link_up(mac, phy, mode, interface, speed, duplex,
++				     tx_pause, rx_pause);
++	else
++		mtk_gdm_mac_link_up(mac, phy, mode, interface, speed, duplex,
++				    tx_pause, rx_pause);
++}
++
+ static void mtk_mac_disable_tx_lpi(struct phylink_config *config)
+ {
+ 	struct mtk_mac *mac = container_of(config, struct mtk_mac,
+@@ -828,6 +907,9 @@ static int mtk_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
+ 	struct mtk_eth *eth = mac->hw;
+ 	u32 val;
+ 
++	if (mtk_interface_mode_is_xgmii(eth, mac->interface))
++		return -EOPNOTSUPP;
++
+ 	/* Tx idle timer in ms */
+ 	timer = DIV_ROUND_UP(timer, 1000);
+ 
+@@ -858,6 +940,7 @@ static int mtk_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
+ }
+ 
+ static const struct phylink_mac_ops mtk_phylink_ops = {
++	.mac_prepare = mtk_mac_prepare,
+ 	.mac_select_pcs = mtk_mac_select_pcs,
+ 	.mac_config = mtk_mac_config,
+ 	.mac_finish = mtk_mac_finish,
+@@ -4759,6 +4842,11 @@ static int mtk_add_mac(struct mtk_eth *eth, struct device_node *np)
+ 
+ 	mac->phylink = phylink;
+ 
++	if (MTK_HAS_CAPS(mac->hw->soc->caps, MTK_2P5GPHY) &&
++	    id == MTK_GMAC2_ID)
++		__set_bit(PHY_INTERFACE_MODE_INTERNAL,
++			  mac->phylink_config.supported_interfaces);
++
+ 	SET_NETDEV_DEV(eth->netdev[id], eth->dev);
+ 	eth->netdev[id]->watchdog_timeo = 5 * HZ;
+ 	eth->netdev[id]->netdev_ops = &mtk_netdev_ops;
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+index 88ef2e9c50fc..e3a8b24dd3d3 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+@@ -431,7 +431,8 @@
+ 
+ /* XMAC status registers */
+ #define MTK_XGMAC_STS(x)	(((x) == MTK_GMAC3_ID) ? 0x1001C : 0x1000C)
+-#define MTK_XGMAC_FORCE_LINK(x)	(((x) == MTK_GMAC2_ID) ? BIT(31) : BIT(15))
++#define MTK_XGMAC_FORCE_MODE(x)	(((x) == MTK_GMAC2_ID) ? BIT(31) : BIT(15))
++#define MTK_XGMAC_FORCE_LINK(x)	(((x) == MTK_GMAC2_ID) ? BIT(27) : BIT(11))
+ #define MTK_USXGMII_PCS_LINK	BIT(8)
+ #define MTK_XGMAC_RX_FC		BIT(5)
+ #define MTK_XGMAC_TX_FC		BIT(4)
+@@ -524,6 +525,21 @@
+ #define INTF_MODE_RGMII_1000    (TRGMII_MODE | TRGMII_CENTRAL_ALIGNED)
+ #define INTF_MODE_RGMII_10_100  0
+ 
++/* XFI Mac control registers */
++#define MTK_XMAC_BASE(x)	(0x12000 + (((x) - 1) * 0x1000))
++#define MTK_XMAC_MCR(x)		(MTK_XMAC_BASE(x))
++#define XMAC_MCR_TRX_DISABLE	0xf
++#define XMAC_MCR_FORCE_TX_FC	BIT(5)
++#define XMAC_MCR_FORCE_RX_FC	BIT(4)
++
++/* XFI Mac logic reset registers */
++#define MTK_XMAC_LOGIC_RST(x)	(MTK_XMAC_BASE(x) + 0x10)
++#define XMAC_LOGIC_RST		BIT(0)
++
++/* XFI Mac count global control */
++#define MTK_XMAC_CNT_CTRL(x)	(MTK_XMAC_BASE(x) + 0x100)
++#define XMAC_GLB_CNTCLR		BIT(0)
++
+ /* GPIO port control registers for GMAC 2*/
+ #define GPIO_OD33_CTRL8		0x4c0
+ #define GPIO_BIAS_CTRL		0xed0
+@@ -587,6 +603,10 @@
+ #define GEPHY_MAC_SEL          BIT(1)
+ 
+ /* Top misc registers */
++#define TOP_MISC_NETSYS_PCS_MUX	0x84
++#define NETSYS_PCS_MUX_MASK	GENMASK(1, 0)
++#define MUX_G2_USXGMII_SEL	BIT(1)
++
+ #define USB_PHY_SWITCH_REG	0x218
+ #define QPHY_SEL_MASK		GENMASK(1, 0)
+ #define SGMII_QPHY_SEL		0x2
+@@ -951,6 +971,7 @@ enum mkt_eth_capabilities {
+ 	MTK_RGMII_BIT = 0,
+ 	MTK_TRGMII_BIT,
+ 	MTK_SGMII_BIT,
++	MTK_2P5GPHY_BIT,
+ 	MTK_ESW_BIT,
+ 	MTK_GEPHY_BIT,
+ 	MTK_MUX_BIT,
+@@ -971,8 +992,10 @@ enum mkt_eth_capabilities {
+ 	MTK_ETH_MUX_GDM1_TO_GMAC1_ESW_BIT,
+ 	MTK_ETH_MUX_GMAC2_GMAC0_TO_GEPHY_BIT,
+ 	MTK_ETH_MUX_U3_GMAC2_TO_QPHY_BIT,
++	MTK_ETH_MUX_GMAC2_TO_2P5GPHY_BIT,
+ 	MTK_ETH_MUX_GMAC1_GMAC2_TO_SGMII_RGMII_BIT,
+ 	MTK_ETH_MUX_GMAC12_TO_GEPHY_SGMII_BIT,
++	MTK_ETH_MUX_GMAC123_TO_GEPHY_SGMII_BIT,
+ 
+ 	/* PATH BITS */
+ 	MTK_ETH_PATH_GMAC1_RGMII_BIT,
+@@ -980,6 +1003,7 @@ enum mkt_eth_capabilities {
+ 	MTK_ETH_PATH_GMAC1_SGMII_BIT,
+ 	MTK_ETH_PATH_GMAC2_RGMII_BIT,
+ 	MTK_ETH_PATH_GMAC2_SGMII_BIT,
++	MTK_ETH_PATH_GMAC2_2P5GPHY_BIT,
+ 	MTK_ETH_PATH_GMAC2_GEPHY_BIT,
+ 	MTK_ETH_PATH_GDM1_ESW_BIT,
+ };
+@@ -988,6 +1012,7 @@ enum mkt_eth_capabilities {
+ #define MTK_RGMII		BIT_ULL(MTK_RGMII_BIT)
+ #define MTK_TRGMII		BIT_ULL(MTK_TRGMII_BIT)
+ #define MTK_SGMII		BIT_ULL(MTK_SGMII_BIT)
++#define MTK_2P5GPHY		BIT_ULL(MTK_2P5GPHY_BIT)
+ #define MTK_ESW			BIT_ULL(MTK_ESW_BIT)
+ #define MTK_GEPHY		BIT_ULL(MTK_GEPHY_BIT)
+ #define MTK_MUX			BIT_ULL(MTK_MUX_BIT)
+@@ -1010,6 +1035,8 @@ enum mkt_eth_capabilities {
+ 	BIT_ULL(MTK_ETH_MUX_GMAC2_GMAC0_TO_GEPHY_BIT)
+ #define MTK_ETH_MUX_U3_GMAC2_TO_QPHY		\
+ 	BIT_ULL(MTK_ETH_MUX_U3_GMAC2_TO_QPHY_BIT)
++#define MTK_ETH_MUX_GMAC2_TO_2P5GPHY		\
++	BIT_ULL(MTK_ETH_MUX_GMAC2_TO_2P5GPHY_BIT)
+ #define MTK_ETH_MUX_GMAC1_GMAC2_TO_SGMII_RGMII	\
+ 	BIT_ULL(MTK_ETH_MUX_GMAC1_GMAC2_TO_SGMII_RGMII_BIT)
+ #define MTK_ETH_MUX_GMAC12_TO_GEPHY_SGMII	\
+@@ -1021,6 +1048,7 @@ enum mkt_eth_capabilities {
+ #define MTK_ETH_PATH_GMAC1_SGMII	BIT_ULL(MTK_ETH_PATH_GMAC1_SGMII_BIT)
+ #define MTK_ETH_PATH_GMAC2_RGMII	BIT_ULL(MTK_ETH_PATH_GMAC2_RGMII_BIT)
+ #define MTK_ETH_PATH_GMAC2_SGMII	BIT_ULL(MTK_ETH_PATH_GMAC2_SGMII_BIT)
++#define MTK_ETH_PATH_GMAC2_2P5GPHY	BIT_ULL(MTK_ETH_PATH_GMAC2_2P5GPHY_BIT)
+ #define MTK_ETH_PATH_GMAC2_GEPHY	BIT_ULL(MTK_ETH_PATH_GMAC2_GEPHY_BIT)
+ #define MTK_ETH_PATH_GDM1_ESW		BIT_ULL(MTK_ETH_PATH_GDM1_ESW_BIT)
+ 
+@@ -1030,6 +1058,7 @@ enum mkt_eth_capabilities {
+ #define MTK_GMAC2_RGMII		(MTK_ETH_PATH_GMAC2_RGMII | MTK_RGMII)
+ #define MTK_GMAC2_SGMII		(MTK_ETH_PATH_GMAC2_SGMII | MTK_SGMII)
+ #define MTK_GMAC2_GEPHY		(MTK_ETH_PATH_GMAC2_GEPHY | MTK_GEPHY)
++#define MTK_GMAC2_2P5GPHY	(MTK_ETH_PATH_GMAC2_2P5GPHY | MTK_2P5GPHY)
+ #define MTK_GDM1_ESW		(MTK_ETH_PATH_GDM1_ESW | MTK_ESW)
+ 
+ /* MUXes present on SoCs */
+@@ -1049,6 +1078,10 @@ enum mkt_eth_capabilities {
+ 	(MTK_ETH_MUX_GMAC1_GMAC2_TO_SGMII_RGMII | MTK_MUX | \
+ 	MTK_SHARED_SGMII)
+ 
++/* 2: GMAC2 -> 2P5GPHY */
++#define MTK_MUX_GMAC2_TO_2P5GPHY      \
++	(MTK_ETH_MUX_GMAC2_TO_2P5GPHY | MTK_MUX | MTK_INFRA)
++
+ /* 0: GMACx -> GEPHY, 1: GMACx -> SGMII where x is 1 or 2 */
+ #define MTK_MUX_GMAC12_TO_GEPHY_SGMII   \
+ 	(MTK_ETH_MUX_GMAC12_TO_GEPHY_SGMII | MTK_MUX)
+@@ -1084,8 +1117,9 @@ enum mkt_eth_capabilities {
+ 		      MTK_MUX_GMAC12_TO_GEPHY_SGMII | MTK_QDMA | \
+ 		      MTK_RSTCTRL_PPE1 | MTK_SRAM)
+ 
+-#define MT7988_CAPS  (MTK_36BIT_DMA | MTK_GDM1_ESW | MTK_QDMA | \
+-		      MTK_RSTCTRL_PPE1 | MTK_RSTCTRL_PPE2 | MTK_SRAM)
++#define MT7988_CAPS  (MTK_36BIT_DMA | MTK_GDM1_ESW | MTK_GMAC2_2P5GPHY | \
++		      MTK_MUX_GMAC2_TO_2P5GPHY | MTK_QDMA | MTK_RSTCTRL_PPE1 | \
++		      MTK_RSTCTRL_PPE2 | MTK_SRAM)
+ 
+ struct mtk_tx_dma_desc_info {
+ 	dma_addr_t	addr;
+@@ -1437,6 +1471,22 @@ static inline u32 mtk_get_ib2_multicast_mask(struct mtk_eth *eth)
+ 	return MTK_FOE_IB2_MULTICAST;
+ }
+ 
++static inline bool mtk_interface_mode_is_xgmii(struct mtk_eth *eth, phy_interface_t interface)
++{
++	if (!mtk_is_netsys_v3_or_greater(eth))
++		return false;
++
++	switch (interface) {
++	case PHY_INTERFACE_MODE_INTERNAL:
++	case PHY_INTERFACE_MODE_USXGMII:
++	case PHY_INTERFACE_MODE_10GBASER:
++	case PHY_INTERFACE_MODE_5GBASER:
++		return true;
++	default:
++		return false;
++	}
++}
++
+ /* read the hardware status register */
+ void mtk_stats_update_mac(struct mtk_mac *mac);
+ 
+@@ -1445,6 +1495,7 @@ u32 mtk_r32(struct mtk_eth *eth, unsigned reg);
+ u32 mtk_m32(struct mtk_eth *eth, u32 mask, u32 set, unsigned int reg);
+ 
+ int mtk_gmac_sgmii_path_setup(struct mtk_eth *eth, int mac_id);
++int mtk_gmac_2p5gphy_path_setup(struct mtk_eth *eth, int mac_id);
+ int mtk_gmac_gephy_path_setup(struct mtk_eth *eth, int mac_id);
+ int mtk_gmac_rgmii_path_setup(struct mtk_eth *eth, int mac_id);
+ 
+-- 
+2.49.0
 
-Here's to another angry media article :(
-
-Please keep Iris enabled.. Vikash reassured me this is not an
-issue until the user attempts to use the decoder [1], and reading
-the code myself I come to the same conclusion (though I haven't given
-it a smoke test - please do that yourself, as you seem to have a better
-set up with these platforms).
-
-If the userland is sane, it should throw an error and defer to CPU
-decoding.
-
-This is >>unlike venus<< which if lacking firmware at probe (i.e. boot)
-would prevent .sync_state
-
-[1] https://lore.kernel.org/linux-arm-msm/98a35a51-6351-5ebb-4207-0004e89682eb@quicinc.com/
-
-[...]
-
-> +
-> +				opp-480000000 {
-> +					opp-hz = /bits/ 64 <480000000>;
-> +					required-opps = <&rpmhpd_opp_turbo>,
-> +							<&rpmhpd_opp_turbo>;
-
-nom (nom nom nom nom nom)
-
-> +				};
-> +
-> +				opp-533333334 {
-> +					opp-hz = /bits/ 64 <533333334>;
-> +					required-opps = <&rpmhpd_opp_turbo_l1>,
-> +							<&rpmhpd_opp_turbo_l1>;
-
-turbo
-
-Konrad
 
