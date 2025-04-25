@@ -1,84 +1,79 @@
-Return-Path: <linux-kernel+bounces-619947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3847A9C3DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:37:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935AAA9C37D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB961BC09F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C8F4A372E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25702517B7;
-	Fri, 25 Apr 2025 09:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3E0238C2C;
+	Fri, 25 Apr 2025 09:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ip9IG0TV"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Miy7kN9Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1E8241662;
-	Fri, 25 Apr 2025 09:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BB82367B4;
+	Fri, 25 Apr 2025 09:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573572; cv=none; b=dS/jc6LSNUExTzpTFNr2Tjq++hsj7gs+7DlPPUJCGKgb5v2Sr+JUITJQQm6RaQJrgAkY2qnTsM+cW/YZcE6Qi3Rb0I35Zja06G4EOI0c8w2EC8Maxh6gELnr2Lyre1vpJHdd4ARfK/HThsojr2T1hLyHJDRNlDsaEDTiplhmhu8=
+	t=1745573413; cv=none; b=Z1i2ruk7u5vAK7T9EGHvou30OSWFCypr/PbSP6og/LxjAvo4UgomRDD+yA/HFxR6gqTxxZ9dzAY/c7YHGGTaJDum10YwuFkNvyCbSeEq5zJxVyJJMfiqjQwwLXWJHou5Mfd/T2uhOdeR/affhR5ulmVulG46VRILSiHycLZIB38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573572; c=relaxed/simple;
-	bh=cXmqpQ2zVMpAk5TOXk5ulNe5nKFWFV8jUE90oXY/TUk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QK7C+ZY2XzjgoCVYJwuFnbBX7aNJqWBGTPZUMsdqhzZi+ZFKCi4u3gPGxqplxCKk8VAc4pLeLzodKXNr1IFZftZHixC+sZyK9T+7PmpxvP04+P/sUg6wj4uANDFqrQu5VSlXkje0l0swgoSim/RH6lxss+q/hySZ5SU3h/sDx/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ip9IG0TV; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 3c3766e621b811f09b6713c7f6bde12e-20250425
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=6VbUAEeV39eL80nnS9lHM6fAPeFr3119Wt/l0LVAUKA=;
-	b=ip9IG0TViOh0WjDhtbzkZLxk/JSINYrYhZ+t1Xt9ET1+M9TSNvxdVNxAeAyu6J4LMf1srQZzGapZhD+m7I9wDFSq9a2CKIbBTtbmpCAbbfyWKana62Vo+OB/0f/UxnvjX1Q7XHncPQWUYWe0CLm9Shw1GmkIlp1FOConQGBdoZQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:5ee56e8e-0236-450f-a189-9e952c3cb18d,IP:0,UR
-	L:0,TC:0,Content:41,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:41
-X-CID-META: VersionHash:0ef645f,CLOUDID:9b39cb76-5fec-4b3e-b8cb-933843551e81,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:4|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 3c3766e621b811f09b6713c7f6bde12e-20250425
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 737590061; Fri, 25 Apr 2025 17:32:41 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 25 Apr 2025 17:32:40 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 25 Apr 2025 17:32:40 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Jason-JH Lin
-	<jason-jh.lin@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
-	<singo.chang@mediatek.com>, Paul-PL Chen <pual-pl.chen@mediatek.com>, "Moudy
- Ho" <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>, Sirius Wang
-	<sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>, Chen-yu Tsai
-	<wenst@chromium.org>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH v5 19/19] soc: mediatek: mtk-cmdq: Remove cmdq_pkt_write() and cmdq_pkt_write_mask()
-Date: Fri, 25 Apr 2025 17:28:51 +0800
-Message-ID: <20250425093237.1543918-20-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250425093237.1543918-1-jason-jh.lin@mediatek.com>
-References: <20250425093237.1543918-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1745573413; c=relaxed/simple;
+	bh=I5+Z2XuuRDCy00p12MUdRO3AiYRjNv5qY+yQpjN4PSw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G7f2D+ws+aL0gUKpBXgx/3kIgNeIRpLPM37DdGFOC/DKqxWL9FqU7bJfX/TAJKJQd66KPGqHwaqMUiwDcNMspnmZsiTJ80P0/vKe5xy85HgzLA070CLVxk6hnUmVRRgOsGs5Fb4Z6Pas6PjHoEph9oW176Ag6VefrsCrtvhl/5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Miy7kN9Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8TBbd018977;
+	Fri, 25 Apr 2025 09:30:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=rtUOX80/ltlp7l3zShK1M6bZn4lxsi+XiIW
+	vVv0TW+c=; b=Miy7kN9QxhxDIxotLimxT1T29fh37yolFhu+Q9qRn2Ig1UyylN1
+	7sBC7HclV4yeL4B/JMtq+DKNGfuow5aTOboFBRMi4B9hE0MWMebR8gzzUWv1qYA7
+	Ge6tNp8ojcH/zylcaNb8t49oLcjPZNQ0CGusYsbznlC56Aa7QHAnOya0XaZfkZNX
+	By2TB+B0kIUzjKKM31HpDg1qbaipHHtAJ1WtbBBPlgx2wgPlXzYJkeVNMVf3r0uL
+	12Gmgozt5cLe0UfmzhGWc1CZfzt2W9GJOFxzc9z57ZX6Tgkt7bwb9GfaofT2m6cm
+	ns4VaYk3F5pwWjbbgbXkNEd19CewysEsuig==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh28hx3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 09:30:02 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 53P9Txjo022129;
+	Fri, 25 Apr 2025 09:29:59 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4644wnf72s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 09:29:59 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53P9TxMn022122;
+	Fri, 25 Apr 2025 09:29:59 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 53P9TxSq022121
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 09:29:59 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
+	id E057240D6C; Fri, 25 Apr 2025 17:29:57 +0800 (CST)
+From: Wenbin Yao <quic_wenbyao@quicinc.com>
+To: catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_mrana@quicinc.com, quic_cang@quicinc.com, quic_qianyu@quicinc.com,
+        quic_wenbyao@quicinc.com
+Subject: [PATCH v2 0/4] arm64: qcom: x1e80100-qcp: Add power supply and sideband signals for PCIe RC
+Date: Fri, 25 Apr 2025 17:29:51 +0800
+Message-Id: <20250425092955.4099677-1-quic_wenbyao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,167 +81,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EtLSrTcA c=1 sm=1 tr=0 ts=680b561a cx=c_pps a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=4-n6rLelgxkyzdg-Py0A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: r63uoIcIo8vJDo1FizADCv02yM4f4dqb
+X-Proofpoint-ORIG-GUID: r63uoIcIo8vJDo1FizADCv02yM4f4dqb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA2OCBTYWx0ZWRfX7R6Yb3LKeNoi 5sSX6JFZRKr+/obqun0INO96Qjkay+dnTqRwO0CEaw2MR1jkz/IUWD2TFCHvMb6Ub9b9hP9ML2c nC5XhbLPG/WAse+IUbA6aPsQ5KDpuTEzLSt9waTdb9cCTD27zbUGS3i+W3YDkd9yl7ElUn8nO1Q
+ 5uCITYs7nic0mwv5R8zFlgxGRSZnR7pk3puC6IWWdqT/zWTdM0uFemLnxTLXVVz7552Pk9IYgJc g2Uknix92kM4W+nU2/5pIKiIRWcK4urH+Ou2m4xW8E70zTYaxyFHehzbR/zaIBzNIuSjcuvGEFQ P9zVNZ22FTO6ywI2KfZitsN3IgDk4MY/Ea0KKQkRwhnzQ4ws71Jep1nRMNy1MNdvHfC00T1CuOj
+ AcjbSdhf27KvjfdDNghTX9t6d9074AOaAv/sw4cpxbw9eXcn0yp1QlIlZZFqd07MkRypLevG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 clxscore=1015 spamscore=0 mlxlogscore=816
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250068
 
-The original cmdq_pkt_write() and cmdq_pkt_write_mask() only supported
-generating GCE instructions with subsys ID. They have been replaced by
-cmdq_pkt_write_pa(), cmdq_pkt_write_subsys(), cmdq_pkt_write_mask_pa()
-and cmdq_pkt_write_mask_subsys().
+The first patch enables the PCI Power Control driver to control the power
+state of PCI slots. The second patch adds the bus topology of PCIe domain 3
+on x1e80100 platform. The third patch adds perst, wake and clkreq sideband
+signals, and describe the regulators powering the rails of the PCI slots in
+the devicetree for PCIe3 controller and PHY device. The fourth patch adds
+qref supply for PCIe PHYs.
 
-These 2 functions can now be removed as they are no longer in use.
+The patchset has been modified based on comments and suggestions.
 
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
----
- drivers/soc/mediatek/mtk-cmdq-helper.c | 49 ++++++++++----------------
- include/linux/soc/mediatek/mtk-cmdq.h  | 35 ------------------
- 2 files changed, 18 insertions(+), 66 deletions(-)
+Changes in v2:
+- Select PCI_PWRCTL_SLOT by ARCH_QCOM in arch/arm64/Kconfig.platforms in
+  Patch 1/4.
+- Add an empty line before pcie3port node in Patch 2/4.
+- Rename regulator-pcie_12v regulator-pcie_3v3_aux and regulator-pcie_3v3
+  in Patch 3/4.
+- Add Patch 4/4 to describe qref supply of PCIe PHYs.
+- Link to v1: https://lore.kernel.org/all/20250320055502.274849-1-quic_wenbyao@quicinc.com/
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index 0a718ffa5f3b..5822a3d13bda 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -201,18 +201,6 @@ static int cmdq_pkt_mask(struct cmdq_pkt *pkt, u32 mask)
- 	return cmdq_pkt_append_command(pkt, inst);
- }
- 
--int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
--{
--	struct cmdq_instruction inst = {
--		.op = CMDQ_CODE_WRITE,
--		.value = value,
--		.offset = offset,
--		.subsys = subsys
--	};
--	return cmdq_pkt_append_command(pkt, inst);
--}
--EXPORT_SYMBOL(cmdq_pkt_write);
--
- int cmdq_pkt_write_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/, u32 pa_base,
- 		      u16 offset, u32 value)
- {
-@@ -229,27 +217,16 @@ EXPORT_SYMBOL(cmdq_pkt_write_pa);
- int cmdq_pkt_write_subsys(struct cmdq_pkt *pkt, u8 subsys, u32 pa_base /*unused*/,
- 			  u16 offset, u32 value)
- {
--	return cmdq_pkt_write(pkt, subsys, offset, value);
-+	struct cmdq_instruction inst = {
-+		.op = CMDQ_CODE_WRITE,
-+		.value = value,
-+		.offset = offset,
-+		.subsys = subsys
-+	};
-+	return cmdq_pkt_append_command(pkt, inst);
- }
- EXPORT_SYMBOL(cmdq_pkt_write_subsys);
- 
--int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
--			u16 offset, u32 value, u32 mask)
--{
--	u16 offset_mask = offset;
--	int err;
--
--	if (mask != GENMASK(31, 0)) {
--		err = cmdq_pkt_mask(pkt, mask);
--		if (err < 0)
--			return err;
--
--		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
--	}
--	return cmdq_pkt_write(pkt, subsys, offset_mask, value);
--}
--EXPORT_SYMBOL(cmdq_pkt_write_mask);
--
- int cmdq_pkt_write_mask_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/, u32 pa_base,
- 			   u16 offset, u32 value, u32 mask)
- {
-@@ -267,7 +244,17 @@ EXPORT_SYMBOL(cmdq_pkt_write_mask_pa);
- int cmdq_pkt_write_mask_subsys(struct cmdq_pkt *pkt, u8 subsys, u32 pa_base /*unused*/,
- 			       u16 offset, u32 value, u32 mask)
- {
--	return cmdq_pkt_write_mask(pkt, subsys, offset, value, mask);
-+	u16 offset_mask = offset;
-+	int err;
-+
-+	if (mask != GENMASK(31, 0)) {
-+		err = cmdq_pkt_mask(pkt, mask);
-+		if (err < 0)
-+			return err;
-+
-+		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
-+	}
-+	return cmdq_pkt_write_subsys(pkt, subsys, pa_base, offset_mask, value);
- }
- EXPORT_SYMBOL(cmdq_pkt_write_mask_subsys);
- 
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 4a2acceb8581..f4663fbfb5a0 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -113,17 +113,6 @@ int cmdq_pkt_create(struct cmdq_client *client, struct cmdq_pkt *pkt, size_t siz
-  */
- void cmdq_pkt_destroy(struct cmdq_client *client, struct cmdq_pkt *pkt);
- 
--/**
-- * cmdq_pkt_write() - append write command to the CMDQ packet
-- * @pkt:	the CMDQ packet
-- * @subsys:	the CMDQ sub system code
-- * @offset:	register offset from CMDQ sub system
-- * @value:	the specified target register value
-- *
-- * Return: 0 for success; else the error code is returned
-- */
--int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value);
--
- /**
-  * cmdq_pkt_write_pa() - append write command to the CMDQ packet with pa_base
-  * @pkt:	the CMDQ packet
-@@ -150,19 +139,6 @@ int cmdq_pkt_write_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/,
- int cmdq_pkt_write_subsys(struct cmdq_pkt *pkt, u8 subsys,
- 			  u32 pa_base /*unused*/, u16 offset, u32 value);
- 
--/**
-- * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-- * @pkt:	the CMDQ packet
-- * @subsys:	the CMDQ sub system code
-- * @offset:	register offset from CMDQ sub system
-- * @value:	the specified target register value
-- * @mask:	the specified target register mask
-- *
-- * Return: 0 for success; else the error code is returned
-- */
--int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
--			u16 offset, u32 value, u32 mask);
--
- /**
-  * cmdq_pkt_write_mask_pa() - append write command with mask to the CMDQ packet with pa
-  * @pkt:	the CMDQ packet
-@@ -460,11 +436,6 @@ static inline int cmdq_pkt_create(struct cmdq_client *client, struct cmdq_pkt *p
- 
- static inline void cmdq_pkt_destroy(struct cmdq_client *client, struct cmdq_pkt *pkt) { }
- 
--static inline int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
--{
--	return -ENOENT;
--}
--
- static inline int cmdq_pkt_write_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/,
- 				    u32 pa_base, u16 offset, u32 value)
- {
-@@ -477,12 +448,6 @@ static inline int cmdq_pkt_write_subsys(struct cmdq_pkt *pkt, u8 subsys,
- 	return -ENOENT;
- }
- 
--static inline int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
--				      u16 offset, u32 value, u32 mask)
--{
--	return -ENOENT;
--}
--
- static inline int cmdq_pkt_write_mask_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/,
- 					 u32 pa_base, u16 offset, u32 value, u32 mask)
- {
+Qiang Yu (4):
+  arm64: Kconfig: enable PCI Power Control Slot driver for QCOM
+  arm64: dts: qcom: x1e80100: add bus topology for PCIe domain 3
+  arm64: dts: qcom: x1e80100-qcp: enable pcie3 x8 slot for X1E80100-QCP
+  arm64: dts: qcom: x1e80100-qcp: Add qref supply for PCIe PHYs
+
+ arch/arm64/Kconfig.platforms              |   1 +
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 121 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    |  11 ++
+ 3 files changed, 133 insertions(+)
+
+
+base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
+prerequisite-patch-id: 8d8c88ca71e145f5f1c5145d9ff3ebe90101aab7
 -- 
-2.43.0
+2.34.1
 
 
