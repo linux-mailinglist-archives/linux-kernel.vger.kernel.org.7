@@ -1,382 +1,133 @@
-Return-Path: <linux-kernel+bounces-619793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C07CA9C1A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD9AA9C115
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE134C319A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:40:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0869A3ACF77
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5899A2522B2;
-	Fri, 25 Apr 2025 08:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE34E235347;
+	Fri, 25 Apr 2025 08:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="f0nyTqFF"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeRCwsOf"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9596024BD04;
-	Fri, 25 Apr 2025 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6151DE2BF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745570152; cv=none; b=oFvzlDva33YeQs1ZUtDMCmCUyNyPnjQ80Ha6xPqjIM2hKs54r7gvLwY4Vt01DMzHchl4cOgL6CbqCpGY3TzyMrttzmDzKXYKj+CWS3Bl4QtlkdXUD9wSw7b3cikSBAQoYsKhNc2521jn0HfR4dS4QF6sGsP8HGoIBHebDU2ZbFE=
+	t=1745570110; cv=none; b=AZtujJKI4TnqtowanIpBI3YD+zy03LAL3MkgxxxjN+35p11dpXFT+zN77KYv12c2d2E6ATR11Iz/PbhIBdLguqLGFZk4ZwMEFumtHREh4oqSPFE0SqaRcSZfIRFGdIU0C+xJlNoEbLlvgt/G3j9qCTSmxnzZndUFpVyCUUJk5EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745570152; c=relaxed/simple;
-	bh=08js4cQ/tImzBbVAnRy9C56aMzYPY9aXKTSZAA+hU0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m53XFDggppMOVUfAIf7Auu4eoiksKorET0Ih0xl7SzfzJ3UB/9pUC5YbExMCBJcE7W1QPW3pnHj9kfGHq0Vq8/vY16FCGhcX2VmfvQxuhBFuTUOOKCZ2/TYeRV68keegMHiM02AGcoYF1GlUJfSJkc9b3BwQJWe8TnIpSNzJzb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=f0nyTqFF; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53P8Yg5c2390085
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 25 Apr 2025 01:35:16 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53P8Yg5c2390085
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1745570118;
-	bh=PGgDVUVp5WEsZGmkrE1cE9ZmxybTvIy441YCsSnZyG8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f0nyTqFFxoNNT5zdxXz0wAG2oDnQQHR2TITjrl4/WZHGQrZGNiF1OZYbax0C2iuIx
-	 CH2XXrL5uYNMptan27zhYOojgtxgK72O5RWOTmV95xgIIpIT3kSr62AOOXra9uRF6E
-	 kTbsurThw7Iy4DVFR1xhvN89VcU9gmp1/l4hhWaLt3TSW9XbKcovRa9h+mP/NfqMQv
-	 Pry2fZZ/3lQkv2R/rt1kUSU/HD8Pxr3Y+EPze/8OS2f48IUTb7v1i2RJSfxC9aW9TR
-	 2obaMyl6yz37n/hRq5aMI5eGmJZogK/gHDlJVsHJ/MBZRP2hgoN7z0zm+fw0egbklR
-	 7ZKW0NW9geX6g==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
-        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
-        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
-        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
-        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
-        haiyangz@microsoft.com, decui@microsoft.com,
-        dapeng1.mi@linux.intel.com
-Subject: [PATCH v3 14/14] x86/msr: Change the function type of native_read_msr_safe()
-Date: Fri, 25 Apr 2025 01:34:37 -0700
-Message-ID: <20250425083442.2390017-15-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425083442.2390017-1-xin@zytor.com>
-References: <20250425083442.2390017-1-xin@zytor.com>
+	s=arc-20240116; t=1745570110; c=relaxed/simple;
+	bh=kTafQVInfgZE1CFO5s37dA0o4B8Xyn3K4GQ63U9KYqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rqcEU4DRiIYzhqk1x4/MRAxLXSgib2YN+5hPR5ly1Zf9mlY3lfksqgIA4mKsdsXV/7K36/Ci1+eKhFgCeODPGILaavx4Eq1/B49MdmyVlpHRRXXMO5go7vIdxObm88DOWIV/9Ttcz8sNhEitU+dFi2GUfurgywAkYY1vqe207cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeRCwsOf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so16959125e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745570107; x=1746174907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+u8einId9BLaGDvz8um8Sc4lADMO7vEkfqq6FWkbjfA=;
+        b=OeRCwsOfDSlQTRL1GpyBFom8xW1oRHEF9dsYVOaXhCKZS6I0P+T2fhnlS0vjmhBBcl
+         /rEHOMJG1gvKFK9sP9BrVSXylOBI1HGlVDqmciGn4GCAP7BCLGV+4j//dc+djxePJc4H
+         ZB9f80C7wrb8onPlprPDZ2xZQl1e9pwmkvEJk30R0eicfCsWwIS1CpaondI5ELgY9Kln
+         GLC29osV4H66NyvXMRUD7avwXMf/bWk3dlinYwPtGBir2NK5SKPypgq03R52LigQS1N+
+         t3Ttgg1MicoODUGSaRRECt4XuMuC8eX3TXidox6aqOAiCrYf7KtDSo5AXvrtck+1g8h6
+         p1Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745570107; x=1746174907;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+u8einId9BLaGDvz8um8Sc4lADMO7vEkfqq6FWkbjfA=;
+        b=N8Tx9/rIVcRhTCBMSai+QuIeRQsn3FsYbU24MeT+YOSQp2nJyI8d96dpVSrbsxJmsS
+         AXRuBJK3U8kvCdSRqZLHxamHS8EQWVOc3IZ75Ihnkii7b1LMB4W8vojO2LiOoie53a5x
+         1MojlBmKcxpL8/Wnx35vP4h7lzvqK768VeXAqkOj+674jOxNWeORooNL/NEjsmfr+t8j
+         Xr6q/CpWlqaYf/m13LAy2594xSTufrkD92xA/f4B7mkgsWxUEhxescitKe1wZHLTLI0Z
+         NaLiKfp4XSAjaVJba09YHJsvpkjlDT+086MvxGRXLPw/nXGEMZFKJWzooGJMNDsmJKvD
+         mO6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5nrtKtY2d9WTNJHGbv2w3dcWJI7Hl5eD7LJ4lVxK2hXdrFtwSDuwjal+aYv0gxJfECi6SrqgvWY6V3Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3OqSfJVHPHgxxQu4uRSL9Mw+y4nEBQK1DlCL5v2WLTMiPOy8U
+	XK0alJ1ykwoitAMrHE9uIQQVnptLWBIEh0B6hsTcAY0ecvVbY6HDDC2fvBXp4ow=
+X-Gm-Gg: ASbGncs7cCdlpdFkiKGS3KPbnC+BdVYfr2pls5d0a0WLz/vVbvKWQpugxObB7GdzFLt
+	HYMlOgkgbHuyGxQjnFTo7HJqhreBGs7G8VRdX5yWMzKsgKydFea50++wsiouArsCRnwzDO61NJe
+	TZgGutdvacYcrodxDqasGZhew/fARHUrHYvRpteB5u7VEiwEYHf/UCJCNWsvd/ScdjCDzNM1jL2
+	dYlBoqOZwp8lm23GcdTCzQsdACktVghJIJS81TCmsc/+VPMarxlsSt0lKfk9bJLw0UOhdWWZCN/
+	GduDRzc9FiuIu2dklsiLTADMTWRnCSu+OwJeCX4RYW4MQ2v37BvIYMeulm9uzzkFjOWLRsdXwYs
+	PfZZTcA==
+X-Google-Smtp-Source: AGHT+IHbMaG/UpKmNGf2vUTKm7E0YA1Q3uH84FrSyUdv5AM2rW1f4hc1ymcUcyPYeZk5iuLyxezoog==
+X-Received: by 2002:a05:600c:510e:b0:43c:f8fc:f687 with SMTP id 5b1f17b1804b1-440a66b034amr9285185e9.27.1745570106663;
+        Fri, 25 Apr 2025 01:35:06 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2e0241sm49396355e9.37.2025.04.25.01.35.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 01:35:06 -0700 (PDT)
+Message-ID: <2dd28ebe-f69c-49c3-90c2-aedc0484a00e@linaro.org>
+Date: Fri, 25 Apr 2025 09:35:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] dt-bindings: media: Add qcom,x1e80100-camss
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
+ <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
+ <3ec3fd62-bf21-47e7-873c-ce151589d743@linaro.org>
+ <54eeb470-cd90-4bc2-b415-6dea1ce2321d@linaro.org>
+ <0ab31397-580f-4e5a-b9ad-d9bf79d29106@linaro.org>
+ <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
+ <krofzevprczeuptn6yfj4n656qsw52s52c7cgiwotidxmi2xo6@d3q5bb5zbccc>
+ <f05cba73-6d8b-4b7b-9ebe-366fcd92a079@linaro.org>
+ <lwv5pk3dtyyxgtrwxss43dyecesv7pvrzvgwacwrnztkiowfkp@jqosvhrs3jk5>
+ <42b56d7d-26cc-4c10-aca2-a0a5a16b09f6@linaro.org>
+ <3kprgpvzffupnjbh2aodsowwklliywpemzwpsftd2cng562yuw@37tpwmpemr2c>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <3kprgpvzffupnjbh2aodsowwklliywpemzwpsftd2cng562yuw@37tpwmpemr2c>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Modify the function type of native_read_msr_safe() to:
+On 25/04/2025 09:26, Dmitry Baryshkov wrote:
+> What should driver do if:
+> 
+> vdd-csiphy0-1p2-supply = <&vreg_1p2_ex0>; <- individual supply in PCB
+> vdd-csiphy1-1p2-supply = <&vreg_1p2_ex1>; <- individual supply in PCB
+> 
+> vdd-csiphy0-0p8-supply = <&vreg_0p9_ex0>; <- shared pin in the SoC
+> vdd-csiphy1-0p8-supply = <&vreg_0p9_ex1>; <- should be shared pin
+> 
+> I don't want to allow DT authors to make this kind of mistake.
 
-    int native_read_msr_safe(u32 msr, u64 *val)
+I require anybody submitting patches to show how they tested this.
 
-This change makes the function return an error code instead of the
-MSR value, aligning it with the type of native_write_msr_safe().
-Consequently, their callers can check the results in the same way.
+So you'd have to lie about testing it for a mistake like that to get 
+through.
 
-While at it, convert leftover MSR data type "unsigned int" to u32.
-
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 ---
- arch/x86/include/asm/msr.h            | 21 +++++++++++----------
- arch/x86/include/asm/paravirt.h       | 19 ++++++++-----------
- arch/x86/include/asm/paravirt_types.h |  6 +++---
- arch/x86/kvm/svm/svm.c                | 19 +++++++------------
- arch/x86/xen/enlighten_pv.c           | 13 ++++++++-----
- arch/x86/xen/pmu.c                    | 14 ++++++++------
- 6 files changed, 45 insertions(+), 47 deletions(-)
-
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 0392b9596107..e7ee51ccd82e 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -130,18 +130,22 @@ static inline u64 native_read_msr(u32 msr)
- 	return val;
- }
- 
--static inline u64 native_read_msr_safe(u32 msr, int *err)
-+static inline int native_read_msr_safe(u32 msr, u64 *p)
- {
-+	int err;
- 	DECLARE_ARGS(val, low, high);
- 
- 	asm volatile("1: rdmsr ; xor %[err],%[err]\n"
- 		     "2:\n\t"
- 		     _ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_RDMSR_SAFE, %[err])
--		     : [err] "=r" (*err), EAX_EDX_RET(val, low, high)
-+		     : [err] "=r" (err), EAX_EDX_RET(val, low, high)
- 		     : "c" (msr));
- 	if (tracepoint_enabled(read_msr))
--		do_trace_read_msr(msr, EAX_EDX_VAL(val, low, high), *err);
--	return EAX_EDX_VAL(val, low, high);
-+		do_trace_read_msr(msr, EAX_EDX_VAL(val, low, high), err);
-+
-+	*p = EAX_EDX_VAL(val, low, high);
-+
-+	return err;
- }
- 
- /* Can be uninlined because referenced by paravirt */
-@@ -221,8 +225,8 @@ static inline int wrmsrq_safe(u32 msr, u64 val)
- /* rdmsr with exception handling */
- #define rdmsr_safe(msr, low, high)				\
- ({								\
--	int __err;						\
--	u64 __val = native_read_msr_safe((msr), &__err);	\
-+	u64 __val;						\
-+	int __err = native_read_msr_safe((msr), &__val);	\
- 	(*low) = (u32)__val;					\
- 	(*high) = (u32)(__val >> 32);				\
- 	__err;							\
-@@ -230,10 +234,7 @@ static inline int wrmsrq_safe(u32 msr, u64 val)
- 
- static inline int rdmsrq_safe(u32 msr, u64 *p)
- {
--	int err;
--
--	*p = native_read_msr_safe(msr, &err);
--	return err;
-+	return native_read_msr_safe(msr, p);
- }
- 
- static __always_inline u64 rdpmc(int counter)
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index edf23bde367e..03f680d1057a 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -175,7 +175,7 @@ static inline void __write_cr4(unsigned long x)
- 	PVOP_VCALL1(cpu.write_cr4, x);
- }
- 
--static inline u64 paravirt_read_msr(unsigned msr)
-+static inline u64 paravirt_read_msr(u32 msr)
- {
- 	return PVOP_CALL1(u64, cpu.read_msr, msr);
- }
-@@ -185,9 +185,9 @@ static inline void paravirt_write_msr(u32 msr, u64 val)
- 	PVOP_VCALL2(cpu.write_msr, msr, val);
- }
- 
--static inline u64 paravirt_read_msr_safe(unsigned msr, int *err)
-+static inline int paravirt_read_msr_safe(u32 msr, u64 *val)
- {
--	return PVOP_CALL2(u64, cpu.read_msr_safe, msr, err);
-+	return PVOP_CALL2(int, cpu.read_msr_safe, msr, val);
- }
- 
- static inline int paravirt_write_msr_safe(u32 msr, u64 val)
-@@ -225,19 +225,16 @@ static inline int wrmsrq_safe(u32 msr, u64 val)
- /* rdmsr with exception handling */
- #define rdmsr_safe(msr, a, b)				\
- ({							\
--	int _err;					\
--	u64 _l = paravirt_read_msr_safe(msr, &_err);	\
-+	u64 _l;						\
-+	int _err = paravirt_read_msr_safe((msr), &_l);	\
- 	(*a) = (u32)_l;					\
--	(*b) = _l >> 32;				\
-+	(*b) = (u32)(_l >> 32);				\
- 	_err;						\
- })
- 
--static inline int rdmsrq_safe(unsigned msr, u64 *p)
-+static __always_inline int rdmsrq_safe(u32 msr, u64 *p)
- {
--	int err;
--
--	*p = paravirt_read_msr_safe(msr, &err);
--	return err;
-+	return paravirt_read_msr_safe(msr, p);
- }
- 
- static __always_inline u64 rdpmc(int counter)
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 78777b78da12..b08b9d3122d6 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -91,14 +91,14 @@ struct pv_cpu_ops {
- 		      unsigned int *ecx, unsigned int *edx);
- 
- 	/* Unsafe MSR operations.  These will warn or panic on failure. */
--	u64 (*read_msr)(unsigned int msr);
-+	u64 (*read_msr)(u32 msr);
- 	void (*write_msr)(u32 msr, u64 val);
- 
- 	/*
- 	 * Safe MSR operations.
--	 * read sets err to 0 or -EIO.  write returns 0 or -EIO.
-+	 * Returns 0 or -EIO.
- 	 */
--	u64 (*read_msr_safe)(unsigned int msr, int *err);
-+	int (*read_msr_safe)(u32 msr, u64 *val);
- 	int (*write_msr_safe)(u32 msr, u64 val);
- 
- 	u64 (*read_pmc)(int counter);
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 4ef9978dce70..838606f784c9 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -475,15 +475,13 @@ static void svm_inject_exception(struct kvm_vcpu *vcpu)
- 
- static void svm_init_erratum_383(void)
- {
--	int err;
- 	u64 val;
- 
- 	if (!static_cpu_has_bug(X86_BUG_AMD_TLB_MMATCH))
- 		return;
- 
- 	/* Use _safe variants to not break nested virtualization */
--	val = native_read_msr_safe(MSR_AMD64_DC_CFG, &err);
--	if (err)
-+	if (native_read_msr_safe(MSR_AMD64_DC_CFG, &val))
- 		return;
- 
- 	val |= (1ULL << 47);
-@@ -648,13 +646,12 @@ static int svm_enable_virtualization_cpu(void)
- 	 * erratum is present everywhere).
- 	 */
- 	if (cpu_has(&boot_cpu_data, X86_FEATURE_OSVW)) {
--		uint64_t len, status = 0;
-+		u64 len, status = 0;
- 		int err;
- 
--		len = native_read_msr_safe(MSR_AMD64_OSVW_ID_LENGTH, &err);
-+		err = native_read_msr_safe(MSR_AMD64_OSVW_ID_LENGTH, &len);
- 		if (!err)
--			status = native_read_msr_safe(MSR_AMD64_OSVW_STATUS,
--						      &err);
-+			err = native_read_msr_safe(MSR_AMD64_OSVW_STATUS, &status);
- 
- 		if (err)
- 			osvw_status = osvw_len = 0;
-@@ -2145,14 +2142,13 @@ static int ac_interception(struct kvm_vcpu *vcpu)
- 
- static bool is_erratum_383(void)
- {
--	int err, i;
-+	int i;
- 	u64 value;
- 
- 	if (!erratum_383_found)
- 		return false;
- 
--	value = native_read_msr_safe(MSR_IA32_MC0_STATUS, &err);
--	if (err)
-+	if (native_read_msr_safe(MSR_IA32_MC0_STATUS, &value))
- 		return false;
- 
- 	/* Bit 62 may or may not be set for this mce */
-@@ -2165,8 +2161,7 @@ static bool is_erratum_383(void)
- 	for (i = 0; i < 6; ++i)
- 		native_write_msr_safe(MSR_IA32_MCx_STATUS(i), 0);
- 
--	value = native_read_msr_safe(MSR_IA32_MCG_STATUS, &err);
--	if (!err) {
-+	if (!native_read_msr_safe(MSR_IA32_MCG_STATUS, &value)) {
- 		value &= ~(1ULL << 2);
- 		native_write_msr_safe(MSR_IA32_MCG_STATUS, value);
- 	}
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index c067d1e8a39c..0b2f5e679026 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1086,7 +1086,7 @@ static void xen_write_cr4(unsigned long cr4)
- 	native_write_cr4(cr4);
- }
- 
--static u64 xen_do_read_msr(unsigned int msr, int *err)
-+static u64 xen_do_read_msr(u32 msr, int *err)
- {
- 	u64 val = 0;	/* Avoid uninitialized value for safe variant. */
- 
-@@ -1094,7 +1094,7 @@ static u64 xen_do_read_msr(unsigned int msr, int *err)
- 		return val;
- 
- 	if (err)
--		val = native_read_msr_safe(msr, err);
-+		*err = native_read_msr_safe(msr, &val);
- 	else
- 		val = native_read_msr(msr);
- 
-@@ -1159,9 +1159,12 @@ static void xen_do_write_msr(u32 msr, u64 val, int *err)
- 	}
- }
- 
--static u64 xen_read_msr_safe(unsigned int msr, int *err)
-+static int xen_read_msr_safe(u32 msr, u64 *val)
- {
--	return xen_do_read_msr(msr, err);
-+	int err;
-+
-+	*val = xen_do_read_msr(msr, &err);
-+	return err;
- }
- 
- static int xen_write_msr_safe(u32 msr, u64 val)
-@@ -1173,7 +1176,7 @@ static int xen_write_msr_safe(u32 msr, u64 val)
- 	return err;
- }
- 
--static u64 xen_read_msr(unsigned int msr)
-+static u64 xen_read_msr(u32 msr)
- {
- 	int err;
- 
-diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
-index 6bee83018694..3e704094c97c 100644
---- a/arch/x86/xen/pmu.c
-+++ b/arch/x86/xen/pmu.c
-@@ -317,11 +317,12 @@ static u64 xen_amd_read_pmc(int counter)
- 	uint8_t xenpmu_flags = get_xenpmu_flags();
- 
- 	if (!xenpmu_data || !(xenpmu_flags & XENPMU_IRQ_PROCESSING)) {
--		uint32_t msr;
--		int err;
-+		u32 msr;
-+		u64 val;
- 
- 		msr = amd_counters_base + (counter * amd_msr_step);
--		return native_read_msr_safe(msr, &err);
-+		native_read_msr_safe(msr, &val);
-+		return val;
- 	}
- 
- 	ctxt = &xenpmu_data->pmu.c.amd;
-@@ -338,15 +339,16 @@ static u64 xen_intel_read_pmc(int counter)
- 	uint8_t xenpmu_flags = get_xenpmu_flags();
- 
- 	if (!xenpmu_data || !(xenpmu_flags & XENPMU_IRQ_PROCESSING)) {
--		uint32_t msr;
--		int err;
-+		u32 msr;
-+		u64 val;
- 
- 		if (counter & (1 << INTEL_PMC_TYPE_SHIFT))
- 			msr = MSR_CORE_PERF_FIXED_CTR0 + (counter & 0xffff);
- 		else
- 			msr = MSR_IA32_PERFCTR0 + counter;
- 
--		return native_read_msr_safe(msr, &err);
-+		native_read_msr_safe(msr, &val);
-+		return val;
- 	}
- 
- 	ctxt = &xenpmu_data->pmu.c.intel;
--- 
-2.49.0
-
+bod
 
