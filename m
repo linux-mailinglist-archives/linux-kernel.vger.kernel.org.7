@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-619512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A02A9BD85
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F51A9BD89
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 276EC1BA16C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B35189E56E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D61217648;
-	Fri, 25 Apr 2025 04:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D452C219E0;
+	Fri, 25 Apr 2025 04:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAENpEAm"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOb0pbdE"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DEC211C;
-	Fri, 25 Apr 2025 04:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0987211C;
+	Fri, 25 Apr 2025 04:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745554872; cv=none; b=BSdH1/SbjuNNV7wiuh2tqkqL/47G33M/QigOhPm1CTrOy2oUnZIgFcTL6g8Vo/dtBDz6ccAnOk9JZLSwCQ4yfmI6Zw9/eHLmtCRCGS5bITvX9puINjsEMEcTe5ooigYx+ft+bPZ9GYy0JaIiloLbSJ6x2P1rEWyRtUk7uum6uxA=
+	t=1745554950; cv=none; b=RYe19D5D5hLUQgXc1fjDCZ+6BGAfapK8hfSJLgJKQIb2G8o9w+ZF48U7tniovA9JAmlXVWQ7VT7n9IYxinjV0Wx5IAq63SjEX+xg/m99ua8NzkaZOiZl9OgZEhSlKR85FiOXLpNoHZy9kSaEUp+OSTF1bzdIcoRV1d/HQHKBSEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745554872; c=relaxed/simple;
-	bh=+yaWzT6r4JMRJQXV6x1vvZyp88WGrpRvUaCULB0Q3qA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QgQAo9ormXB9g0p+IFFVfebaPnsEbTLsqIEO6xsFclBo6IiDb9EJmMyP11bxorKVy1X+lMUxwzLF5hwqYkg9XXh+GscHn3VfY/BILWLMaGyQpERJJK3pRGuuYxzQB7xeFAZpn0DaCkN9Cn+HhWc0pIEEo9mCJMzLg9TXC6tyscA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAENpEAm; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1745554950; c=relaxed/simple;
+	bh=wVmtfJ0+IHdRZdURO4e3LV7ZYiRRjbMZL+41Y+TJQSk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=udFDduVDY3Jr1Czlk4DxLXKCEylYVYoCeGwNTXkL6d8wnui/nP0uCnHivfAm4RrHRkt5H5BnlZBjei3sb7nqaF9Zvrh8oPankAy5mk8fxb7YLCTbMerw/HBTq4gzSRZEGWO/WOgHbyDro3TZPLpwvV3+9f9JoCLkczxPxmTkTzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOb0pbdE; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224171d6826so28620485ad.3;
-        Thu, 24 Apr 2025 21:21:10 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aca99fc253bso271539366b.0;
+        Thu, 24 Apr 2025 21:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745554870; x=1746159670; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+yaWzT6r4JMRJQXV6x1vvZyp88WGrpRvUaCULB0Q3qA=;
-        b=XAENpEAmWDwCUxM4k73W2aHplr7CMComlmi6txpIVcRZnF1QN/NB+HvRL1n0SeP1ik
-         KnS0jcI2gtHvbuqj2/e8yG9qvcAlOe1GBkyAslMAuTeQ+l+S4aAwK0NjFCHvC3Ml2goJ
-         T+EWTgUR/GhflSdDFTLuuhfsGI+W9tlbZBzRAW/fV5qHjGg6gpJSRPo2OrER0YG9m+/t
-         QLTRwklEb33TxnBPg/SjCNcXHoAZPPG7Pd/MwEGp4x1374DDfd4Xejn8er4Cl8/0U3VZ
-         OF+R+m/TQdFMddEe/p3oxW7KkVQm4UoDvlwFvkHQFU1gDSHoLU3a1SFehecYEEampiwv
-         97uw==
+        d=gmail.com; s=20230601; t=1745554947; x=1746159747; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xkt3Fb0i8BWUPG3FcNT5RaUD+ZjJauG0htje5UaVJ0Y=;
+        b=FOb0pbdEbPIqDRZWPQvme5DubIoNY0SjbQdEdq5FpHVxyR2yLBqVouIAWVlMrOzvtD
+         Yg0txQy/ayKm1zEETKfzz0EHn72qYS/2FuosKGiWmkhAuKndZwuYy1KPCyL9H3wvE4J/
+         SJOW1NEoTE/ZaAZUUi5q332oI6VmtFmw9dzwCa4JEeeHT8ccg5L7g1+P00SPHDsMyq8E
+         arPIFozMTVEP2AP3NaYmW91GVSSK2bkM1npGid5rSR6znw26e2v5t0g/5BX8kOL9QO6h
+         mZ01D6Km7rU3QdsF4fv5aYSuzwa40lN7QNXoviWPWxYjGvKCAVgZLoq0NqffsVfPH9kz
+         MH+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745554870; x=1746159670;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yaWzT6r4JMRJQXV6x1vvZyp88WGrpRvUaCULB0Q3qA=;
-        b=pUC5r2PzU3VKIZueBnXAX5XwYhAswU8tR0kpTJxS9dl742e0FJNTXbKL2yxzSvC1yg
-         CkctpeDBQ5sNCOviVxtxLt6p0mi8BRCuSdoDtp3x/ASYJ9Ap2IfZVhfM/8Ue/rRR6g3k
-         rBUYiDO8OutJCV6R6b94sxqurNfdrXGvXlJK2EXrnNcXP/srDvaU8+6ysy3kDHHZHG8q
-         laqL3Kz8eYvYu4Vhs52u8ypgsgEc+cmqEmfDHgy7blml8H85vbqypRWVbMoRHaR4glUa
-         k/pVL6AghhbhRv2Iba2rMw+2yVlHb2bP8xRtc3707NukMB7VQj0NszjCqiTiz8Xu04jt
-         RfbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVU0k5K7WkENeZse3OBxPO4worvjktzdid45Zo5zWu/CX0fYuzpY3flczgss+A5IpV18w9p7oYlGDoBF1x+@vger.kernel.org, AJvYcCW+ttAFBrnDfIgio0FaQL63rJp33BzePS1l+mNBon4vdCxdJHqIAARRJcvwfESUjR0/Zhkdr/he@vger.kernel.org, AJvYcCXpSITeTsB3ippuRKBG/FGTP7cRt+RfFuI2tOm7IH4FcieW2sHfedt6RvBlmWIzwe9lwMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL27kZUlLf/LlWUb5Vby6uHRKHfP/pWn5/+C7qDzFVABPqVC2b
-	mtB+QqB+tfSoVrP3DxRXGTdojuFCR+xOOYA1w7l1CyhRmgpzSx+R
-X-Gm-Gg: ASbGncu69LLIOHeslXHmaaDPuNKPSLOqYq9NmlxuXNfVa9E2+f6R+aSJfRi5IfDIMkQ
-	mS9UhnguUAxqLFiOkL6Va42qdprH7gY3pCPRNVRh4jxO9xlD8JcFeUuCk/1KvvvYhC2bDlrWPue
-	AQciZw7LBrKeFFc12gfgRGoDFomgZSwa9uZwdNq5V9CbmXMxHOgnhB2+ms5NLWmlwTs7jXbJUOZ
-	HNlm2iy5rlqNluszpkeUp471w9+W9UpoIK2lak4DZe7W4ls/L5OiNYZ+rLsIbwoWGGza7Wx8+dp
-	fz6HlBFDhw6dsgt5UAmrXjbfObmCaNOuhgyr7SDyPHHXEPxE0Y3T5HBEs/LhvCsslTaqmVNkw5s
-	ai3KaAPNESxXFfa5e78A=
-X-Google-Smtp-Source: AGHT+IGWLbMKf5sYtW4rSiMV38NKZyqcmVeq1HvhSCzBrf7T/vSTtn9Z0BU/6O41NwkpiLMa+8jRAQ==
-X-Received: by 2002:a17:903:fa6:b0:22d:b305:e082 with SMTP id d9443c01a7336-22dbf640a4emr13120665ad.47.1745554869899;
-        Thu, 24 Apr 2025 21:21:09 -0700 (PDT)
-Received: from ?IPV6:2001:ee0:4f0e:fb30:ed97:ee93:42a1:7559? ([2001:ee0:4f0e:fb30:ed97:ee93:42a1:7559])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5103259sm22367705ad.185.2025.04.24.21.21.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 21:21:09 -0700 (PDT)
-Message-ID: <099f2537-e756-4608-ab28-d7702b9c1436@gmail.com>
-Date: Fri, 25 Apr 2025 11:21:01 +0700
+        d=1e100.net; s=20230601; t=1745554947; x=1746159747;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xkt3Fb0i8BWUPG3FcNT5RaUD+ZjJauG0htje5UaVJ0Y=;
+        b=ONRzqE9cuJnBgyfg/gmQZfwojDYJGL/ni8Rc3T0cVY5fGinxGg58qPNuncXjvL+cp5
+         ep24srmsU0b+NdvTlEOSyKeeJD9pRZy7mcFSyKG7CRTosttRtBOZrcIbrVaORnReiCOa
+         3MwJQ0b1XzfbIiRnHtL6ikIXWI5iJB/T3QbpWGRYad3njndQSFHNWfOg3pgvbKvVm4y8
+         AhbF+ELd7QgR220OodWYeCm7Gxl7PQP3cKCluBKA6hS2gE8t7xmcS6m7Vk+YWgMvjEwx
+         65wqoN0KuPVCT8dGRoXjFVdBW6KkIrrePDvvDHSdDkvuU0gPwNkzgPHn+NOS4wz4BMHU
+         ayDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr1d8L5ySwZr78F9S/LQDNrZ6OOQOw9Zb2jCRhbBSuGxGJUusce3eEw0NAIJjzHF8mDqxUct4wSxl/Fe0y@vger.kernel.org, AJvYcCW0OMjvS8zZA+JVI7rNn2+IPnuxeUgtCrqlQCQ/EG4hYn8QkdBwaU7pYrZO8mNC8/tQ5C68eKNZ@vger.kernel.org, AJvYcCWl/tTtX4ee560R7cP/EkpM0Kv0y1JO5rSeUPebwuQ8aCCesDQXthw5SCbh5E3TPk6o7WUH+w+3Oms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJbMQGH/+0MY0WLmmY1ShJRNLmyz4juLRNAwQLyJI40VAKoBVT
+	fq/C7WytIFBoOmj1cjx7KbFM48PmmkPWKm8LvVE4OCegetron4gmT3B3/k7F9aVYmWZ6hD6WCh5
+	pyOMMaVDRBGqA1vReNdIAX95ekEg=
+X-Gm-Gg: ASbGnctR2m5DBEs1TY7luJ1xZKRZu8Ci206694XTm4Zqf6VWbpSdUkUXMA4/RBOfOJq
+	VGNEFy/QPibcP4CGFddqwSTAbGWzf7aBiM0gCC4j1quZKWI/AftOUppNJ5GzjQmecJ2ZTm+v5Hg
+	42FqsRzT64pa/nnmY9hg8j1A==
+X-Google-Smtp-Source: AGHT+IH+BM2yM/rGFp1Z11i1ILsWonHhYb005z8Jxr+yHkNXJFdekCIfbD17qMnLRljz8On+cUmW6DtvbwQ/DNGNpng=
+X-Received: by 2002:a17:907:7d8a:b0:abf:7636:3cab with SMTP id
+ a640c23a62f3a-ace71158aa5mr70087066b.29.1745554946609; Thu, 24 Apr 2025
+ 21:22:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] virtio-net: disable delayed refill when pausing rx
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: virtualization@lists.linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20250424104716.40453-1-minhquangbui99@gmail.com>
- <20250424183450.28f5d5fb@kernel.org>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <20250424183450.28f5d5fb@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250424223210.91317-1-gshahrouzi@gmail.com> <20250424223210.91317-2-gshahrouzi@gmail.com>
+In-Reply-To: <20250424223210.91317-2-gshahrouzi@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 25 Apr 2025 07:21:50 +0300
+X-Gm-Features: ATxdqUF1UCKerji0yG_QpF0px61-9OXRWb5-42XDjrlc9ydh7FDnSk3X5-2_n5I
+Message-ID: <CAHp75VfbyGKximuP5QKuyB5UKOSPydf6Zh8+nXzk1hvZhDUbJw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] staging: iio: frequency: ad9832: Use SLEEP bit
+ instead of RESET to disable output
+To: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Cc: andy@kernel.org, dlechner@baylibre.com, gregkh@linuxfoundation.org, 
+	jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
+	Michael.Hennerich@analog.com, nuno.sa@analog.com, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/25/25 08:34, Jakub Kicinski wrote:
-> On Thu, 24 Apr 2025 17:47:13 +0700 Bui Quang Minh wrote:
->> This only includes the selftest for virtio-net deadlock bug. The fix
->> commit has been applied already.
-> This conflicts with Joe's series slightly:
-> https://lore.kernel.org/all/20250424002746.16891-1-jdamato@fastly.com/
-> Could you rebase on latest net-next and perhaps follow the comment
-> I left on v4 ?
+On Fri, Apr 25, 2025 at 1:34=E2=80=AFAM Gabriel Shahrouzi <gshahrouzi@gmail=
+.com> wrote:
+>
+> According to the AD9832 datasheet (Table 10, D12 description), setting
+> the RESET bit forces the phase accumulator to zero, which corresponds to
+> a full-scale DC output, rather than disabling the output signal.
+>
+> The correct way to disable the output and enter a low-power state is to
+> set the AD9832_SLEEP bit (Table 10, D13 description), which powers down
+> the internal DAC current sources and disables internal clocks.
 
-Sure, I'll do it. Thanks for your review :)
+...
 
-Quang Minh.
+>                 if (val)
+>                         st->ctrl_src &=3D ~(AD9832_RESET | AD9832_SLEEP |=
+ AD9832_CLR);
+>                 else
+> -                       st->ctrl_src |=3D FIELD_PREP(AD9832_RESET, 1);
+> +                       st->ctrl_src |=3D FIELD_PREP(AD9832_SLEEP, 1);
+
+From the code perspective this allows combinations of the bits to be
+set. So, what does the datasheet say about SLEEP+RESET, or RESET+CLR,
+or other combinations of these 3 bits?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
