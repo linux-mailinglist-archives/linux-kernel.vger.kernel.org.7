@@ -1,125 +1,85 @@
-Return-Path: <linux-kernel+bounces-619498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD10A9BD5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 762C1A9BD60
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02646440755
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3071441FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED351B423B;
-	Fri, 25 Apr 2025 03:53:04 +0000 (UTC)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34011FCFEC;
+	Fri, 25 Apr 2025 03:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ox4Xt8WW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4811B0430;
-	Fri, 25 Apr 2025 03:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B621C84AE;
+	Fri, 25 Apr 2025 03:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745553184; cv=none; b=YGwlv02vibTgVzZYBnlpH81SF9ywWj9Gpi4tcZ0CAKUP70Rs5YyBVPIN7kclcK2l7hy78W3mpw0i6i+YdxEblpt8wRVhP8SDw4ELL2hDAmDNvm4CI2917BsQ7dGXZo9DWo5gANyjU773zbJDHsbVGy+TxEy+ru2exrMqCLGrQtY=
+	t=1745553252; cv=none; b=N4ZwonGWG2SgxZQPMfPEqC8B1F35AgFss/SXfpi3T6sQyOqXAZNGjw5PAUC7LWfa+giVO0qKRxvDLa98lkMJAwDaWRHbhk0pvGo09sbT3cb9F+DkJqMsNxET8Mf2c9HhRRZadRtjaQ7ubD4WujDPNKn05YXWw4jLsTNdGEHQTf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745553184; c=relaxed/simple;
-	bh=tMCG7PVJZT2ImV73Bv9BnKAx04gSVppKM7hgJ6w7nuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n09+2wki/bfMNY4t48L+6qGFK/8pq7SvGq9/UqWJrnevmronMOL6cBVf+1VSZtG3dLjhyJ/eIXSYVk+Zmnr9TtufftNVJRhb5oromuagVx+VwowgNKrwHfXM2XLSRcaMmlmc1Xj8774l/EQYKMRl512c6u3S1Db5vbej8JQti5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so1642002e87.1;
-        Thu, 24 Apr 2025 20:53:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745553177; x=1746157977;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tMCG7PVJZT2ImV73Bv9BnKAx04gSVppKM7hgJ6w7nuM=;
-        b=uqa6P2kiF08OlQF1yWs9IsERerLzuC7a6Jkv3JaRtkyP0nKUGqK7SRbltpFrnjXZBh
-         tYMQSTQQX2E4tKWgwjiikElka9LE54DzpHZbKKp0S4RNUgYsMFz7THQ7Js5Pviu9+FF/
-         3IygFznYBP77r7BlFo99MC6ehQSthlRohMhs2iBchTaknF1DCZ+Wn85Fmt3wWuPIItke
-         S2O1rxqyU/1px1pzJaV8JtIcZR1jCbGJkrfL8E/QjR5755WXQy9Ot/UQ5oe6e71C+p5G
-         1c5iX1MSeNgXBEOYmEO3TRetCDI6WZZMJuXhpmqaa5TYsAyWP0k+xEB2wiWO+hYm7xd2
-         JsRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQPGQCr9tTjLWywh85vWAKtGDv/T0+iJkFwFjzOMa6FCkH2WzuZBs5m3SlZ5X4htgK+lzYy2PX+piqoS5R@vger.kernel.org, AJvYcCVb4zux6ytmnbZvdSiBPSAY8iOWI6C7MJRlC26pjyILLIaJK3kWePYdQjSsuYS47D8aBJfRpNyRWgG7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5K9zxcwo0uixhyZtAq8jF1mD7LY0Fi9M6c2XAZQ2eaGXjMiOs
-	iGdW8myMRY3b9wlTFt+xaYqJIta2f6K4qk+qogr/0mRJeWn/xOi4OhcZl5R0
-X-Gm-Gg: ASbGncvkNHbWLV9vfvslrcSac4zCe7PQWPvIFKcpyhmCu2HGtKnSTBq99lXmrlCs1jJ
-	tLsqmZeVBf+7f4HVSclsgb1EbSkSzItxpL3//6uADb/3XB1EQYEckJ4Xw3tJf6p9KkffOSC/b2d
-	/yi+6MFwg2o2vDxKOkRcizYhbGcoiEhepaQ6LdlVN/3quJiyrAFSa0ue8ynAkmGxaUh/sO+k6fu
-	+6lTYvgC1ItFPr1kBgZFDZeYP4iDUfLC7Krijeo8Ua0ICDVq6KYwdWL8Zy8vcOaMTDOfTFqzhh9
-	Jf6paPfIC2uiunilPPefxKMwfzdr8qYG7PGOynLbJZTpmnqYnVHeOM4+l0NrD91W6XT5RGBPlg=
-	=
-X-Google-Smtp-Source: AGHT+IHDU/nOpkr6bjMwVQagfnFQlq1e13eHtB1E42WFuKNyPuR+hM3ww074VQg7AKEc7hV3kuA0DA==
-X-Received: by 2002:a05:6512:3c9e:b0:549:5769:6ae3 with SMTP id 2adb3069b0e04-54e8cbcda64mr204433e87.6.1745553176615;
-        Thu, 24 Apr 2025 20:52:56 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb25931sm438896e87.27.2025.04.24.20.52.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 20:52:56 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30beedb99c9so16596961fa.3;
-        Thu, 24 Apr 2025 20:52:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGL1awKOjLlhwGeYfdis+ADzgrrokU4e7DoKEgKfBj3iNfHgJBMZBMHDNcPsxmRLDH5Tm39C9tN+JJ@vger.kernel.org, AJvYcCXwluFyTkijsnmNXagSbNneOv/xCq/K3YBitExITikeEjyvZ6tK5qCOlUlk6rZcsJ6G6SxPhjMPfexWT99a@vger.kernel.org
-X-Received: by 2002:a2e:bc90:0:b0:309:26e8:cb1a with SMTP id
- 38308e7fff4ca-319081da5e5mr1615191fa.30.1745553175817; Thu, 24 Apr 2025
- 20:52:55 -0700 (PDT)
+	s=arc-20240116; t=1745553252; c=relaxed/simple;
+	bh=hHafEMC1zjbqTr4UVvkBxEJaf9x57Yo6yCgXAZHDcq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkRPJ0Qg9SCmhxbuxR2Xd/R0f1M5TBeOa9V6sFDLKHYbYSxdu/7T1gV9uuF8wXQ29A7Jg1fyfx1/ntfsSrKdWF+kG093SBGigZivAWaAkjz8+tccIdtV8NCsc1Q/UMyXD802u8xUmFNnUF3w9hpEBQESMHjkbSJ5QHS3i463Hco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ox4Xt8WW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7shqdOiVhHCcIAIT4yzufh3XKM7CeHmj+fqBHY1a078=; b=ox4Xt8WWCDLVunCladJZnp2dyB
+	OCHJx3MavjMVWkclCPptvOeryfBsZz4DQgHRXGU4Iq26m88tvgbl0eA03YCG3SceH2J7HvQ5pdRnO
+	oo6rZyqCuo5xj/1liWKPFWWd0tXERxK4ULvxIu2aaami+jeGPPeAM4+H4ykzENbAr8uSJp2jBXi+t
+	BhD0uwmqcs/jtX0esHPRSadX1/BEhASMyqKVJNlhmyFckbwkPz7DY1fxoCBgCRrs+FpzamUYzrBJL
+	rTuLRqhtZAhtjjQ0tzL3jgZw0MXrPJs+WnRS8Cb38lg1oRWC8+1RHbWfPM55wRyNMCjhTNQ3Vtd18
+	anqXgWrQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u8A8P-0000000Dhqw-4BxZ;
+	Fri, 25 Apr 2025 03:53:54 +0000
+Date: Fri, 25 Apr 2025 04:53:53 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: nifan.cxl@gmail.com
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, akpm@linux-foundation.org,
+	david@redhat.com, fan.ni@samsung.com, yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, npache@redhat.com, mcgrof@kernel.org,
+	a.manzanares@samsung.com, dave@stgolabs.net,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v3] khugepaged: Pass folio instead of head page to trace
+ events
+Message-ID: <aAsHUZ6HTGFBRyXO@casper.infradead.org>
+References: <20250425002425.533698-1-nifan.cxl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425023527-GYA50272@gentoo> <20250425030006.45169-1-amadeus@jmu.edu.cn>
-In-Reply-To: <20250425030006.45169-1-amadeus@jmu.edu.cn>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 25 Apr 2025 11:52:42 +0800
-X-Gmail-Original-Message-ID: <CAGb2v649ntfAEUdV5S1wM8nUGhvaOP-RBw07XcxwdbafbC2PYQ@mail.gmail.com>
-X-Gm-Features: ATxdqUGezFuhR_KSYVB0KgNvKi6facsIdDbC9B14oLs_hkhyS0lMNSVl4JE789M
-Message-ID: <CAGb2v649ntfAEUdV5S1wM8nUGhvaOP-RBw07XcxwdbafbC2PYQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: dts: allwinner: correct the model name for
- Radxa Cubie A5E
-To: Chukun Pan <amadeus@jmu.edu.cn>, andre.przywara@arm.com
-Cc: dlan@gentoo.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	jernej.skrabec@gmail.com, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, robh@kernel.org, samuel@sholland.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425002425.533698-1-nifan.cxl@gmail.com>
 
-On Fri, Apr 25, 2025 at 11:00=E2=80=AFAM Chukun Pan <amadeus@jmu.edu.cn> wr=
-ote:
->
-> Hi,
->
-> > It seems I'm a little bit late for this, but while we are here,
-> > Can we also append 'cubie' to dts file name?
-> > e.g. - sun55i-a527-radxa-cubie-a5e.dts
->
-> Usually we use the device name (without the vendor name),
-> maybe sun55i-a527-cubie-a5e.dts would be better?
+On Thu, Apr 24, 2025 at 05:16:51PM -0700, nifan.cxl@gmail.com wrote:
+> From: Fan Ni <fan.ni@samsung.com>
+> 
+> The trace functions trace_mm_collapse_huge_page_isolate() and
+> trace_mm_khugepaged_scan_pmd() each have a single user, which
+> always passes in the head page of a folio.
+> Refactor both functions to take a folio directly.
+> 
+> Signed-off-by: Fan Ni <fan.ni@samsung.com>
+> Reviewed-by: Nico Pache <npache@redhat.com>
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Reviewed-by: Yang Shi <yang@os.amperecomputing.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-I agree with this one.
-
-I can probably squash in a name change (since I'll be squashing in the
-SD card slot fix anyway). Andre?
-
-
-In that case would you prefer to keep your current patch separate, or
-squashed in so that everything is clean from the first commit?
-
-It's up to you since you lose out on commit stats.
-
-
-Thanks
-ChenYu
-
-> Thanks,
-> Chukun
->
-> --
-> 2.25.1
->
->
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
