@@ -1,98 +1,118 @@
-Return-Path: <linux-kernel+bounces-619752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229A2A9C0D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:21:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3214A9C0DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F7281BA68FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243DF9A34AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3B4234989;
-	Fri, 25 Apr 2025 08:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA0917A2EE;
+	Fri, 25 Apr 2025 08:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsrU7/G1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P3KGmbEV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0XkvZIKn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFB322F16C;
-	Fri, 25 Apr 2025 08:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831B41B6D11;
+	Fri, 25 Apr 2025 08:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745569159; cv=none; b=eZFHIx9roJqLINqdZNgfmzOiCY2JOTZMLTKOTSWFh7/NCo8alatu81o8HdD7gOIkSWEOw9SwuJZHxVd1f0zC4ktzd48s+L9bsLJ1M+Xna9lVWc27id3Vhhs9kSfDolIbprtSAkhKKJFnp0uJz0zOZJYHP8tMuJYKp53SluiMrRg=
+	t=1745569348; cv=none; b=fSTmmxD1lt8LnfbyKknOkHyBjGF7OwplzFsHjc2BToPVvDRHjXE1eRD5ROcQza+DClGcPXzrEVjxka15oO9Vqp6ndhnwCb6YDt7/A/O/ERp0nMFLf29+ARmOMJswWsBMXZeMdZVhXtOnWCIR9xQai7tsMWS8jMIHWem0Q2nHmAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745569159; c=relaxed/simple;
-	bh=OrwBz+EwRHtxPq45tTkIGnSGl2Ieqh3Kx4b1WiQTSnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jxuCD6KRL5w4NYI81ply7iNUpT35+fEVlah/meQ2BKH4OdSMTy7+rGbFoXVfcStAfD6qU2nFsyBQHp2nqRBYfxrUYDfAJdrHDXg7rTUzkqrjRLDzzoyN0qE8s26wnCUr5W1qFiRxS7pHvHquGORcrapvddMAVEx0UIBiYFMuSfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsrU7/G1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922A0C4CEE4;
-	Fri, 25 Apr 2025 08:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745569158;
-	bh=OrwBz+EwRHtxPq45tTkIGnSGl2Ieqh3Kx4b1WiQTSnE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BsrU7/G1tEVDfu/Bxo/TouQqim+5s9/2Z/QB/85HcSw1rAk/+Epepgn2lRAEoyDwD
-	 dq1HRL5BGOYFyGH/26VNSMK5fpSXI6vlZ2fZgn1WChC6uFE7kWi2BLZhLBo5qb1I8X
-	 B1wbZRkIAwOef5Yhdv9AsKrbBCXrHmtJ56PwxHe6rrapD8fS5qDdBgjI+GMNPm3Xsq
-	 nGpkx/aCkJm3qcIkPI8FwimjEFIgFPXvu/npVYaUpLAjLS3Vl0VzGXrnT7IH6qxgI+
-	 NeR7uziCDCfdt1kqI0A5xL89GaEWIw8AoYhIzN68ZV+Wl+48T17u70+VMguZiW8aRq
-	 cdCo1D53uFMcA==
-Date: Fri, 25 Apr 2025 09:19:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Cc: gregkh@linuxfoundation.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
- Michael.Hennerich@analog.com, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v3 3/3] staging: iio: ad9832: Add minor improvements to
- ad9832_write_powerdown
-Message-ID: <20250425091910.545bdce7@jic23-huawei>
-In-Reply-To: <CAKUZ0zLgH9Ec5FMEjXa59-bBEVooEQUOeGuZ9OJw=A3P3OWp5A@mail.gmail.com>
-References: <20250420175419.889544-1-gshahrouzi@gmail.com>
-	<20250420175419.889544-4-gshahrouzi@gmail.com>
-	<20250421124044.400628f1@jic23-huawei>
-	<CAKUZ0zLgH9Ec5FMEjXa59-bBEVooEQUOeGuZ9OJw=A3P3OWp5A@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745569348; c=relaxed/simple;
+	bh=A4pLvUmgwj2WzHJ03YdX6y0M7SDSimc7uWYShQFhbs8=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GEIZF0yA0SbqftdW29qHeYcKVKQbRi1ADp45pIcFAvQw5Qt05tn2unasN2d9xE7PzZ0qDnGAu+7xS2fXsKY9Mk+kE0mRemA6rqY+jsJhsIu/KGwXkEQa07BCNPC0pWv3SBTz4qioPlA6AfiBh35henOfDb8u+c7ZBUgo7nrL8VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P3KGmbEV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0XkvZIKn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745569344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVLvtgy3kbHbIlgt4muvQvDSY3VtgJ61rhMKGo3z+bk=;
+	b=P3KGmbEVCsMFHByliTYfeF7pZ9UgaFbmvYf1DkdwJ/+BRX2yUgvCbJsXqJb+6UrvyVj9S0
+	xYDU+t9oxWCr7y1H1q/tvYUvFB4OB1PxqOW0hO9WeAqV2X6qm3BK9TxSB5RgCiU2solK60
+	3HL2ML5vGPDw4c8guPJ/i5lFMlErktEjPajZeHDZy2sibNhopHjXSAiUwhNSzEiVWvmIXm
+	XMLnfGHo3U3XdE0u+PkqHoZFqXFlOfUPpeCaz66DchCVfGUXncNW0g65EdVoc8zwb1L2FS
+	m6agj/766qVjF5rCJItP8uWKMzfsB04aJiB186j6Lf7CUj6IvQwt71kNJ6BmJQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745569344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVLvtgy3kbHbIlgt4muvQvDSY3VtgJ61rhMKGo3z+bk=;
+	b=0XkvZIKnykGZg/U4tmfHmIxeb1CdHUFOJHmU4ew7tb2VGVe+JLfMo4S0LU6BoPbBncuEDK
+	jBG1RCN6kisusyAA==
+To: Yunhui Cui <cuiyunhui@bytedance.com>, arnd@arndb.de,
+ andriy.shevchenko@linux.intel.com, benjamin.larsson@genexis.eu,
+ cuiyunhui@bytedance.com, gregkh@linuxfoundation.org,
+ heikki.krogerus@linux.intel.com, ilpo.jarvinen@linux.intel.com,
+ jirislaby@kernel.org, jkeeping@inmusicbrands.com,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de,
+ paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com,
+ sunilvl@ventanamicro.com, tim.kryger@linaro.org
+Subject: Re: [PATCH v4 2/4] serial: 8250: introduce serial8250_discard_data()
+In-Reply-To: <20250425062425.68761-2-cuiyunhui@bytedance.com>
+References: <20250425062425.68761-1-cuiyunhui@bytedance.com>
+ <20250425062425.68761-2-cuiyunhui@bytedance.com>
+Date: Fri, 25 Apr 2025 10:28:23 +0206
+Message-ID: <847c38irb4.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, 24 Apr 2025 18:29:57 -0400
-Gabriel Shahrouzi <gshahrouzi@gmail.com> wrote:
+On 2025-04-25, Yunhui Cui <cuiyunhui@bytedance.com> wrote:
+> To prevent triggering PSLVERR, it is necessary to check whether the
+> UART_LSR_DR bit of UART_LSR is set before reading UART_RX.
+> Ensure atomicity of UART_LSR and UART_RX, put serial8250_discard_data()
+> under port->lock.
+>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  drivers/tty/serial/8250/8250.h      | 15 +++++++++++
+>  drivers/tty/serial/8250/8250_port.c | 42 ++++++++++++++---------------
+>  2 files changed, 36 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index a913135d5217..802ac50357c0 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -2137,25 +2136,21 @@ static void wait_for_xmitr(struct uart_8250_port *up, int bits)
+>  static int serial8250_get_poll_char(struct uart_port *port)
+>  {
+>  	struct uart_8250_port *up = up_to_u8250p(port);
+> -	int status;
+> +	int status = NO_POLL_CHAR;
+>  	u16 lsr;
+>  
+>  	serial8250_rpm_get(up);
+>  
+> +	uart_port_lock_irqsave(port, &flags);
+>  	lsr = serial_port_in(port, UART_LSR);
 
-> On Mon, Apr 21, 2025 at 7:40=E2=80=AFAM Jonathan Cameron <jic23@kernel.or=
-g> wrote:
-> >
-> > On Sun, 20 Apr 2025 13:54:19 -0400
-> > Gabriel Shahrouzi <gshahrouzi@gmail.com> wrote:
-> > =20
-> > > Minimize size of type that needs to be used by replacing unsigned long
-> > > with bool. Avoid redundancy by checking if cached power state is the
-> > > same as the one requested.
-> > >
-Hi Garbiel,
+The ->poll_get_char() callback is used for kdb/kgdb.
 
-Quick process comment given you are sending quite a few emails (which is gr=
-eat!)
+Adding a spinlock here could lead to deadlock. However, I see that
+serial8250_rpm_get() is already in there, which goes down a rabbit hole
+of possible issues. So I guess we really don't care about possible
+kdb/kgdb deadlocks for now.
 
-Please don't bother replying to say you are doing something suggested.
-Focus any reply (including cropping irrelevant context) on what you want to
-discuss.  If there is nothing to discuss your reply is effectively the chan=
-ge
-log of the next version of the series.
+I can look into cleaning this up with my next 8250 nbcon console
+series. So for now, I am OK with you adding the spin_lock() in this
+callback.
 
-Even a simple email like this one takes a little time for reviewers to look
-at and they gain no extra information from doing so.
-
-Thanks,
-
-Jonathan
+John Ogness
 
