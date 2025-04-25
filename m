@@ -1,104 +1,102 @@
-Return-Path: <linux-kernel+bounces-619649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CBCA9BF8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEFCA9BF91
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A53B9A284D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1FCC3B9217
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058E42376F2;
-	Fri, 25 Apr 2025 07:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7C7230BDB;
+	Fri, 25 Apr 2025 07:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AYBWMJKo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKQZSAGb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996A322F392;
-	Fri, 25 Apr 2025 07:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B6822E415;
+	Fri, 25 Apr 2025 07:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745565163; cv=none; b=A3rm9QuRB/DtHl33P3tweL7n+H8nV08wE3MyPDUbNMcdSjyCI7B92i/AYqk5ZiOCoPTLjsb+0K/qSpzOGLSdJR4Qe6epw2TmRYvaRA95Fq97l29mshScU11Njud5SHj6WivVsDmPstpX8TIv21SBYk1E9byyCwISs0GGnJKx1YA=
+	t=1745565238; cv=none; b=WrevAv1g354EU4Rr5cOQn0xnGJ5A4CKvT5jCEuNI1mha+RKvKddB+sCVu+bpNCxOuQkFK6JIPxCZrgPfnWxK6Uw+XV+gZoCPpBHU/NbRemKYdbten716z+RKULfrpJUEqbf0rt9wzle1oky3UnwK9VEzA+M6ZJRgCDmeW/p5PKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745565163; c=relaxed/simple;
-	bh=d/b568s6HApQOCiprMr5s7J7XabhVr0AUnYNmAFHfCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n8Gu2rSIt53fFLryFzE/ZINBJyLKPA6HU7oiRHFthS3Q6wPV87recUarYAglz0zimQ+P4ZpLuEo1QSCz5B/12S1qrKUWYIxpBWa2eYo/+c87CtyzVF352KcOYvZlU6LrlH8K9mGilvWdqWWrgKeD09uirQnJo4jIOIRmVKm6FjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AYBWMJKo; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745565162; x=1777101162;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=d/b568s6HApQOCiprMr5s7J7XabhVr0AUnYNmAFHfCg=;
-  b=AYBWMJKo9hCO9FNV6T1mQtaR4sdeHIxC3U2i//HdeBb6KfxQx3MFa2bY
-   4nEqLYwyTVnoECp7w22dlr6fO+z3mMJw3wjubgHUbG/7hooS646EN1kl3
-   bRb/lJjsT9ocSTslJhSRpCU3qJcsIi6OYwhZ4u0BgpjWOHcmOR8KdngTl
-   QWTmRN9gQykflJkHAVO1pIfM4v7WTP+rfqlisMnCenkge/nQRuQlXVqzd
-   XLmROHzSPUCoFQ6nN28AjMgvTVpLf7cmgPkjNBEfNWPiCbFCYUZxTeaIY
-   8mXGGFCGGpltGSr8oG7d7gvR92MG521MJBajNS1YgNRQt9j9kluHTVeLG
-   w==;
-X-CSE-ConnectionGUID: VvuGBx6wSe+eKL55C5W6/g==
-X-CSE-MsgGUID: owHMe5ulSEOAraTan0nY6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="64636834"
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="64636834"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 00:12:41 -0700
-X-CSE-ConnectionGUID: ZOI/EPSLRKOOrlSJflAP5w==
-X-CSE-MsgGUID: 9919dTXsShehyniJZvSzHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="133343271"
-Received: from yijiemei-mobl.ccr.corp.intel.com (HELO [10.238.2.108]) ([10.238.2.108])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 00:12:35 -0700
-Message-ID: <8e15c41e-730f-493e-9628-99046af50c1e@linux.intel.com>
-Date: Fri, 25 Apr 2025 15:12:32 +0800
+	s=arc-20240116; t=1745565238; c=relaxed/simple;
+	bh=hE2LTNl6/i9rVKhkGSJYeeQV/bDrqESmfqg01MQICJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uDib4YZ5g/ozIFO2pXa+F/lLmFow6Wdo0H6OME990fVCTVDaatZbiG8x2E2DBkesboLATHLlej9+yMOFyGf7chhgJPNrtwk1JmBJiou8ocFDZxCVhJ65uqwtbF9n0i5hRv4hxpNXgD/v4svie4jHWLl02ChHHvAsVuFReZJutKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKQZSAGb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE68EC4CEE4;
+	Fri, 25 Apr 2025 07:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745565237;
+	bh=hE2LTNl6/i9rVKhkGSJYeeQV/bDrqESmfqg01MQICJ0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AKQZSAGb2uSYghmCImaLgqH/Bm9jZMGQLaKeN3aKl5319c9nVqoY/zrUldjUjnGkP
+	 GY19ptYj4D5rIOOkh5T+stoWHKgpjC9ug9urWlgZifiZGmM/rtVQVeMChtxBCn4TRp
+	 Ly1UnOBY4r/kibIy6rJk3jV9cnl1HTixoT07OSYHhvtsfEjhlXO+WOtS08R3Nidlgo
+	 yY/Elayaky2B+K5nFj0TwH/UyDfEUV0jCASpQH4WDyZ6RJeBIQDBF5k40zsX6SMUOP
+	 mPBtNGJsK6X0vo2MDYnt34aiLU4fQ8N0gEqpRsVL0pyLP4s1EwarPmesr1eVfnlD4D
+	 bLTG1TcZi35mQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab@kernel.org>)
+	id 1u8DFv-00000000TFx-3ppw;
+	Fri, 25 Apr 2025 15:13:51 +0800
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Some small improvements for kernel-doc generation
+Date: Fri, 25 Apr 2025 15:13:37 +0800
+Message-ID: <cover.1745564565.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 03/21] x86/virt/tdx: Add SEAMCALL wrapper
- tdh_mem_page_demote()
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
- dave.hansen@intel.com, kirill.shutemov@intel.com, tabba@google.com,
- ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
- david@redhat.com, vannapurve@google.com, vbabka@suse.cz, jroedel@suse.de,
- thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
- fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
- isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
-References: <20250424030033.32635-1-yan.y.zhao@intel.com>
- <20250424030445.32704-1-yan.y.zhao@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250424030445.32704-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+
+Hi Jon,
+
+This series contain 3 patches for kernel-doc:
+
+Patch 1 creates a kernel doc class at the beginning of kerneldoc Sphinx
+module and preserves it. With that, some caching is enabled;
+Patch 2 fixes some permissions;
+Patch 3 is mostly a cleanup patch to simplify a little bit the complex parser.
+
+On my tests here, it runs about 10 seconds faster on my machine
+and I didn't notice any regressions.
+
+I guess there are still space to optimize the cache, but I don't want to
+do too much optimization on a single series.
+
+Please also notice that I didn't check the amount of memory that it is
+now consumed storing the entire kernel-doc data on a dictionary.
+I assume it is not that much, as I can still compile docs on my 16GB
+laptop.
+
+Mauro Carvalho Chehab (3):
+  docs: Sphinx: kerneldoc: only initialize kernel-doc classes once
+  scripts/lib/kdoc: change mode to 0644
+  scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class
+
+ Documentation/sphinx/kerneldoc.py |  23 ++-
+ scripts/lib/kdoc/kdoc_output.py   |   0
+ scripts/lib/kdoc/kdoc_parser.py   | 277 ++++++++++++++++--------------
+ scripts/lib/kdoc/kdoc_re.py       |   0
+ 4 files changed, 162 insertions(+), 138 deletions(-)
+ mode change 100755 => 100644 scripts/lib/kdoc/kdoc_output.py
+ mode change 100755 => 100644 scripts/lib/kdoc/kdoc_parser.py
+ mode change 100755 => 100644 scripts/lib/kdoc/kdoc_re.py
+
+-- 
+2.49.0
 
 
-
-On 4/24/2025 11:04 AM, Yan Zhao wrote:
-> From: Xiaoyao Li <xiaoyao.li@intel.com>
->
-> Add a wrapper tdh_mem_page_demote() to invoke SEAMCALL TDH_MEM_PAGE_DEMOTE
-> to demote a huge leaf entry to a non-leaf entry in S-EPT. Currently, the
-> TDX module only supports demotion of a 2M huge leaf entry. After a
-> successful demotion, the old 2M huge leaf entry in S-EPT is replaced with a
-> non-leaf entry, linking to the newly-added page table page. The newly
-> linked page table page then contains 512 leaf entries, pointing to the 2M
-
-2M or 4K?
-
-> guest private pages.
-[...]
 
