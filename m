@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-619441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A597A9BCBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:19:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FD1A9BCC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07DD3B4C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61FDB9A1267
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D41E146D65;
-	Fri, 25 Apr 2025 02:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A954165F16;
+	Fri, 25 Apr 2025 02:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Id82FmGS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFuKctuT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD4F42AA5
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3FE156C69;
+	Fri, 25 Apr 2025 02:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745547564; cv=none; b=LCjfPuJofPixfehIzt+OhypfvwZNcFGr01i9mzCXE1/9b4YioYo112C7n/lskkwgkDW+eWjEFrUt0ShYQFa2Ct6cd2Pp5TFyNi5aimoLqjGFgZ36njc8Tz+g+QnUODgWpNjxaOdpES4RvSS7JJ5bPDEZwXtDbFck5ql7plXbtiQ=
+	t=1745547655; cv=none; b=gWsqi+c8o/2fFGWPgCe7F0LHu1bnl3LpjXuMcZI/kVwJuEL2cR177RTn95SkOzqphtQpdR79ZGB387cXyWp5ew7cTX5EMA/E1SQFkNU5GR524LxDvC2HFCBOHzDgUTPtS6VY9JYbpFzk1xLZoa3LmML7wwjKxfCzLyQUcP3rdi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745547564; c=relaxed/simple;
-	bh=D3m7qL1UU5oxx2HKR2qPUQh0EXxSExFwEK7uyQNho90=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QqMm94DQkfClixAHiHFum2p2GMML8ocJ0beTPT8mjaaZtRCNgpfrTbj+IqU9u2+YIUfbc8L59OVaHu6OiMFnF5tM31iwhbaRWNCoOm0SrTAyUqmxCG40BRWpvP5i6vbI8KG6kPGFKFUyjERbod/F+k0yktTN/vLfkYv+/icRXkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Id82FmGS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AD0C4CEE3;
-	Fri, 25 Apr 2025 02:19:22 +0000 (UTC)
+	s=arc-20240116; t=1745547655; c=relaxed/simple;
+	bh=vjhWnE+yweRc5pNFfcwxO1w2ynyuzXYUEPFlulFeJ2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=flkCuuYkt0+22Y3/WaujFsr2tV9cLYP8Wsgsh7Cakbtxt7GBLW4TeDiCtSWTW1PX6F+SH2LZdfkuw7GSfvfyiDmDS+d3gUtjmmlsna0ULZTNU0r5rdzKj1vO1QUQ7Hc/WtBZqkSorTO/8ECEYAjpQZKJ9aG4y7C6hvzIkB6L9jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFuKctuT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C24A5C4CEEB;
+	Fri, 25 Apr 2025 02:20:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745547564;
-	bh=D3m7qL1UU5oxx2HKR2qPUQh0EXxSExFwEK7uyQNho90=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Id82FmGSTee/K0fqbKXLy0lTRJBK78+6/TS/74IOF/FJ88foBG79MFK7M2dSH7MGW
-	 ZQ6YQRXK/9KDgmp2xo+33T8gL8YfisDLdFSFSXr+SI0Y2RcYzXc6zECGg4Ye4MRHfl
-	 ZiCHyPSqarP3TTgz+sH53Hr+vjo8zTbz+OPE6NAVRaiOIACPXg/CY0cKwdPbhloSEO
-	 +3rKdr+iU+2388BClBmv6nbjsrLY8tG9g+uJz+lPDKAGva9YD0pvePQluEI2tygsqL
-	 nlFOBhlaHRer4oQ6epw0Kca+xDE41pbmer+dSI+ZisiQLRsRuPFgnuv05DzXKzCxmv
-	 0mLNcJB+JkhLQ==
-Message-ID: <b6e395c8-207b-4b52-bd52-42e54bb9b902@kernel.org>
-Date: Fri, 25 Apr 2025 10:19:20 +0800
+	s=k20201202; t=1745547655;
+	bh=vjhWnE+yweRc5pNFfcwxO1w2ynyuzXYUEPFlulFeJ2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFuKctuTRC/wLg2WplGSQaP3gn0tPb1bIpva9sc7+v5tf5gi9XbehbR9D9Hyu+NG8
+	 3FGiJSvA7lbYEqpCNJJka2LngmB+muAaZwoCxKOmvUH1dGRd7Q0WhDAfbETuwzA91G
+	 Rb7zTo3fH+zlvnj6AjFBsZP4kvTppCOQE9jLwhmg4pPYX2BOOP7/F0vISy2SznbRGV
+	 YEBq5X/rw1b31LpFU6khV8CEnNagoBDz8apMe4zf6QI20rNXIPM9N4A7l50HlUaL/8
+	 1FZS8P9m+pSifbhUT4bt0OvBdLWjaukoFkYLXRlSl+DcXScZPDGk0mVgIgBTAlNBv9
+	 9jnG8QCTAVk2A==
+Date: Fri, 25 Apr 2025 02:20:50 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benson Leung <bleung@chromium.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, chrome-platform@lists.linux.dev,
+	linux-input@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>
+Subject: Re: (subset) [PATCH v2 0/8] arm64: mediatek: mt8186-corsola:
+ Consolidate and add new devices
+Message-ID: <aArxgrBkFvHwr_Gj@google.com>
+References: <20250421101248.426929-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, dhavale@google.com, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: erofs: add myself as reviewer
-To: Hongbo Li <lihongbo22@huawei.com>, xiang@kernel.org, huyue2@coolpad.com,
- jefflexu@linux.alibaba.com
-References: <20250424030653.3308358-1-lihongbo22@huawei.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250424030653.3308358-1-lihongbo22@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421101248.426929-1-wenst@chromium.org>
 
-On 4/24/25 11:06, Hongbo Li wrote:
-> I have a solid background in file systems and since much of my
-> recent work has focused on EROFS, I am familiar with it. Now I
-> have the time and am willing to help review EROFS patches.
+On Mon, Apr 21, 2025 at 06:12:38PM +0800, Chen-Yu Tsai wrote:
+> This is v2 of my "component probe for Corsola devices" series.
 > 
-> I hope my participation can be helpful to the EROFS patch review
-> process.
+> Changes since v1:
+> - Reworded commit message for Elan I2C-HID binding change
+> - Dropped I2C address constraint from Elan I2C-HID binding completely
+> - Dropped enum from new compatible string entry in Elan I2C-HID binding
+> - Picked up Rob's ack on two binding changes
+> - Rebased onto next-20250417, resolving conflicts with "spherion
+>   component prober" changes
+> - Link to v1:
+>   https://lore.kernel.org/all/20250312104344.3084425-1-wenst@chromium.org/
 > 
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> [...]
 
-Cool, glad to hear the good news!
+Applied to
 
-Acked-by: Chao Yu <chao@kernel.org>
+    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
 
-Thanks,
+[7/8] platform/chrome: of_hw_prober: Support trackpad probing on Corsola family
+      commit: 73d32c3e74e1bd679617b9b9c06d806dedd7c055
+[8/8] platform/chrome: of_hw_prober: Support touchscreen probing on Squirtle
+      commit: fb8bfb48a4d11efb9b3e492d7c5e9ae7478786ce
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fa1e04e87d1d..f286c96ea7db 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8719,6 +8719,7 @@ M:	Chao Yu <chao@kernel.org>
->  R:	Yue Hu <zbestahu@gmail.com>
->  R:	Jeffle Xu <jefflexu@linux.alibaba.com>
->  R:	Sandeep Dhavale <dhavale@google.com>
-> +R:	Hongbo Li <lihongbo22@huawei.com>
->  L:	linux-erofs@lists.ozlabs.org
->  S:	Maintained
->  W:	https://erofs.docs.kernel.org
-
+Thanks!
 
