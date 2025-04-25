@@ -1,87 +1,66 @@
-Return-Path: <linux-kernel+bounces-620493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A6DA9CB86
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:22:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642DFA9CB8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7722A46448F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:19:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AC418992B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4004B25E809;
-	Fri, 25 Apr 2025 14:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B54B2571D6;
+	Fri, 25 Apr 2025 14:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GP5mtgAn"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTyJrdtw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3456A25DB05;
-	Fri, 25 Apr 2025 14:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBA623C8D5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745590541; cv=none; b=sr75jlv6m85Lrz3b7qdk/W7hKUFGadnYY/bRid+hXsdf+/WEbuze/VqgpoR6vle9FCEZRbs+CQe44jbaQnxFb0DyIfrUIQSHKSVHvpK9ZOv0Qws7mi0u7UYCV7dSI4wkQe6USLEiSv+MUwFZYYgetoXlFAFSwYfALq9/1i6R2ik=
+	t=1745590882; cv=none; b=QCf9t+ZxGr7DgqNxASDw1x2lQCPVOcsDLHN6U3LX4XXqutf4mEvhbCbndnEaQaRraJX1EaKm101wJ8AJUdWR3skJRIedUamaO+auYdl1qVvE9x3lvB0EcFtPku8lM3U7Ty1eteIuyJKShNTTZ5heu7tDT97ktu01TByp4TFAWTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745590541; c=relaxed/simple;
-	bh=Db9qQGiPZ0TTN7FGospWfUBApSHcBjmwbE1tAUnYMuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NieERhHw9Cv4mdz2upExVW1dZmq8eGv3uzqI2b61bZtUusm4bz9Hnu7zhgQwuu3P/dNLjG3hZb0BjByas5FdXT/OtGnAxA0dHyMlToaHn+bDTwRy9jJKDiJdBNDuf0oYKj0fxht4lYvS8zCCGGsSVy9nVG8iwO5g1ryHptELcKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GP5mtgAn; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 763A9441FF;
-	Fri, 25 Apr 2025 14:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745590537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=puQGlCteO+0GFnat6rHWd7r7OMccCL/gwNOR4Sh2duc=;
-	b=GP5mtgAnbWm/4roNfbAJY2UUpTl3Dlcul901ASRraFr7jk8SCSuDUl9zckcroSh7EkL40m
-	gmQH7D/zR34nNfSHJ6pXFSWc20cu3YdSMPkPdNFW09i0UgVRzBbPFyZqfmUGCASREiRwQM
-	Eb476xdBNBTtRpyxCOl+WoOULMMX1RmJlbEsS9Qd8OUyjickyhxUxjvf4nng116FY49Ymv
-	6+twc4l97OmgjHtZxk521Tn+gP6umdOhOCoIOho/6MtXkd+k7jDD8E9I2VQ5gt1wBGN+SO
-	BvAPcb8972VyPj4zQcJXENUBKWtOlN9qGpxrZCCyUz9d9FkQXpp4ZocC8qDIDA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1745590882; c=relaxed/simple;
+	bh=nmDRxC+knYKh7h47UaJi1RUPn/QPP+Qvi9F5Frj7RDg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wmc3aNwCIXTQlh36xU+pLDuiPULkp4oVuPwCXrUlOEi+FF39S6Vvc2VzaplzlMB7/rEsOp7LNDivp6KXZCcn9qEli/e4iHChJ0DMrR7+Yr8tTxmfA4yWgrGCoqpCzS4YhFtFL05pTwQl5GGvMHYdSOIH+b3CR7NxY3VgeBXpjP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTyJrdtw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FA6C4CEE4;
+	Fri, 25 Apr 2025 14:21:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745590881;
+	bh=nmDRxC+knYKh7h47UaJi1RUPn/QPP+Qvi9F5Frj7RDg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hTyJrdtwYF87YDIvFLMOFAu2aLHUWkYJOG0CNgwL4gYDxHge1ooHycrGEpDnIYPcl
+	 6FnKXxnpeEuu+wghoNCmQuIVIf4HcAZoDbegk+S8xIfZyAWBYY0XqIKFMcvmXeZaII
+	 NKkLguLpJstx7yYUrDOgvcpoQO4tKyjNiitZCHTCzH1iUeOT6Q95nFAjM7T2ULK9ST
+	 k4rsebaktlzkdpQcX1ZhfgTL9L2GgzBOKPBwb+i2BhHGQ3VKU+sjtWL4LpOxSZL34E
+	 R/7vhdj8pztfVag1EXZT9VmI1AzezqZozsoB0ufdP2GiiuJRP6NhUb4WxoRyS6lgGo
+	 B8KJzIiKoazMA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: [PATCH net-next v5 14/14] Documentation: networking: Document the phy_port infrastructure
-Date: Fri, 25 Apr 2025 16:15:07 +0200
-Message-ID: <20250425141511.182537-15-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425141511.182537-1-maxime.chevallier@bootlin.com>
-References: <20250425141511.182537-1-maxime.chevallier@bootlin.com>
+	xen-devel@lists.xenproject.org
+Subject: [PATCH] [RFC] x86/cpu: rework instruction set selection
+Date: Fri, 25 Apr 2025 16:15:15 +0200
+Message-Id: <20250425141740.734030-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,165 +68,434 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvhedvheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgepuddtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrr
- dhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-This documentation aims at describing the main goal of the phy_port
-infrastructure.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+With cx8 and tsc being mandatory features, the only important
+architectural features are now cmov and pae.
+
+Change the large list of target CPUs to no longer pick the instruction set
+itself but only the mtune= optimization level and in-kernel optimizations
+that remain compatible with all cores.
+
+The CONFIG_X86_CMOV instead becomes user-selectable and is now how
+Kconfig picks between 586-class (Pentium, Pentium MMX, K6, C3, GeodeGX)
+and 686-class (everything else) targets.
+
+In order to allow running on late 32-bit cores (Athlon, Pentium-M,
+Pentium 4, ...), the X86_L1_CACHE_SHIFT can no longer be set to anything
+lower than 6 (i.e. 64 byte cache lines).
+
+The optimization options now depend on X86_CMOV and X86_PAE instead
+of the other way round, while other compile-time conditionals that
+checked for MATOM/MGEODEGX1 instead now check for CPU_SUP_* options
+that enable support for a particular CPU family.
+
+Link: https://lore.kernel.org/lkml/dd29df0c-0b4f-44e6-b71b-2a358ea76fb4@app.fastmail.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- Documentation/networking/index.rst    |   1 +
- Documentation/networking/phy-port.rst | 111 ++++++++++++++++++++++++++
- MAINTAINERS                           |   1 +
- 3 files changed, 113 insertions(+)
- create mode 100644 Documentation/networking/phy-port.rst
+This is what I had in mind as mentioned in the earlier thread on
+cx8/tsc removal. I based this on top of the Ingo's [RFC 15/15]
+patch.
+---
+ arch/x86/Kconfig                |   2 +-
+ arch/x86/Kconfig.cpu            | 100 ++++++++++++++------------------
+ arch/x86/Makefile_32.cpu        |  48 +++++++--------
+ arch/x86/include/asm/vermagic.h |  36 +-----------
+ arch/x86/kernel/tsc.c           |   2 +-
+ arch/x86/xen/Kconfig            |   1 -
+ drivers/misc/mei/Kconfig        |   2 +-
+ 7 files changed, 74 insertions(+), 117 deletions(-)
 
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index ac90b82f3ce9..f60acc06e3f7 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -96,6 +96,7 @@ Contents:
-    packet_mmap
-    phonet
-    phy-link-topology
-+   phy-port
-    pktgen
-    plip
-    ppp_generic
-diff --git a/Documentation/networking/phy-port.rst b/Documentation/networking/phy-port.rst
-new file mode 100644
-index 000000000000..6d9d46ebe438
---- /dev/null
-+++ b/Documentation/networking/phy-port.rst
-@@ -0,0 +1,111 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. _phy_port:
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index a9d717558972..1e33f88c9b97 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1438,7 +1438,7 @@ config HIGHMEM
+ 
+ config X86_PAE
+ 	bool "PAE (Physical Address Extension) Support"
+-	depends on X86_32 && X86_HAVE_PAE
++	depends on X86_32 && X86_CMOV
+ 	select PHYS_ADDR_T_64BIT
+ 	help
+ 	  PAE is required for NX support, and furthermore enables
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 6f1e8cc8fe58..0619566de93f 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -1,23 +1,32 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Put here option for CPU selection and depending optimization
+-choice
+-	prompt "x86-32 Processor family"
+-	depends on X86_32
+-	default M686
 +
-+=================
-+Ethernet ports
-+=================
++config X86_CMOV
++	bool "Require 686-class CMOV instructions" if X86_32
++	default y
+ 	help
+-	  This is the processor type of your CPU. This information is
+-	  used for optimizing purposes. In order to compile a kernel
+-	  that can run on all supported x86 CPU types (albeit not
+-	  optimally fast), you can specify "586" here.
++	  Most x86-32 processor implementations are compatible with
++	  the the CMOV instruction originally added in the Pentium Pro,
++	  and they perform much better when using it.
 +
-+This document is a basic description of the phy_port infrastructure,
-+introduced to represent physical interfaces of Ethernet devices.
++	  Disable this option to build for 586-class CPUs without this
++	  instruction. This is only required for the original Intel
++	  Pentium (P5, P54, P55), AMD K6/K6-II/K6-3D, Geode GX1 and Via
++	  CyrixIII/C3 CPUs.
+ 
+ 	  Note that the 386 and 486 is no longer supported, this includes
+ 	  AMD/Cyrix/Intel 386DX/DXL/SL/SLC/SX, Cyrix/TI 486DLC/DLC2,
+ 	  UMC 486SX-S and the NexGen Nx586, AMD ELAN and all 486 based
+ 	  CPUs.
+ 
+-	  The kernel will not necessarily run on earlier architectures than
+-	  the one you have chosen, e.g. a Pentium optimized kernel will run on
+-	  a PPro, but not necessarily on a i486.
++choice
++	prompt "x86-32 Processor optimization"
++	depends on X86_32
++	default X86_GENERIC
++	help
++	  This is the processor type of your CPU. This information is
++	  used for optimizing purposes, but does not change compatibility
++	  with other CPU types.
+ 
+ 	  Here are the settings recommended for greatest speed:
+ 	  - "586" for generic Pentium CPUs lacking the TSC
+@@ -45,14 +54,13 @@ choice
+ 
+ config M586TSC
+ 	bool "Pentium-Classic"
+-	depends on X86_32
++	depends on X86_32 && !X86_CMOV
+ 	help
+-	  Select this for a Pentium Classic processor with the RDTSC (Read
+-	  Time Stamp Counter) instruction for benchmarking.
++	  Select this for a Pentium Classic processor.
+ 
+ config M586MMX
+ 	bool "Pentium-MMX"
+-	depends on X86_32
++	depends on X86_32 && !X86_CMOV
+ 	help
+ 	  Select this for a Pentium with the MMX graphics/multimedia
+ 	  extended instructions.
+@@ -117,7 +125,7 @@ config MPENTIUM4
+ 
+ config MK6
+ 	bool "K6/K6-II/K6-III"
+-	depends on X86_32
++	depends on X86_32 && !X86_CMOV
+ 	help
+ 	  Select this for an AMD K6-family processor.  Enables use of
+ 	  some extended instructions, and passes appropriate optimization
+@@ -125,7 +133,7 @@ config MK6
+ 
+ config MK7
+ 	bool "Athlon/Duron/K7"
+-	depends on X86_32
++	depends on X86_32 && !X86_PAE
+ 	help
+ 	  Select this for an AMD Athlon K7-family processor.  Enables use of
+ 	  some extended instructions, and passes appropriate optimization
+@@ -147,42 +155,37 @@ config MEFFICEON
+ 
+ config MGEODEGX1
+ 	bool "GeodeGX1"
+-	depends on X86_32
++	depends on X86_32 && !X86_CMOV
+ 	help
+ 	  Select this for a Geode GX1 (Cyrix MediaGX) chip.
+ 
+ config MGEODE_LX
+ 	bool "Geode GX/LX"
+-	depends on X86_32
++	depends on X86_32 && !X86_PAE
+ 	help
+ 	  Select this for AMD Geode GX and LX processors.
+ 
+ config MCYRIXIII
+ 	bool "CyrixIII/VIA-C3"
+-	depends on X86_32
++	depends on X86_32 && !X86_CMOV
+ 	help
+ 	  Select this for a Cyrix III or C3 chip.  Presently Linux and GCC
+ 	  treat this chip as a generic 586. Whilst the CPU is 686 class,
+ 	  it lacks the cmov extension which gcc assumes is present when
+ 	  generating 686 code.
+-	  Note that Nehemiah (Model 9) and above will not boot with this
+-	  kernel due to them lacking the 3DNow! instructions used in earlier
+-	  incarnations of the CPU.
+ 
+ config MVIAC3_2
+ 	bool "VIA C3-2 (Nehemiah)"
+-	depends on X86_32
++	depends on X86_32 && !X86_PAE
+ 	help
+ 	  Select this for a VIA C3 "Nehemiah". Selecting this enables usage
+ 	  of SSE and tells gcc to treat the CPU as a 686.
+-	  Note, this kernel will not boot on older (pre model 9) C3s.
+ 
+ config MVIAC7
+ 	bool "VIA C7"
+-	depends on X86_32
++	depends on X86_32 && !X86_PAE
+ 	help
+-	  Select this for a VIA C7.  Selecting this uses the correct cache
+-	  shift and tells gcc to treat the CPU as a 686.
++	  Select this for a VIA C7.
+ 
+ config MATOM
+ 	bool "Intel Atom"
+@@ -192,20 +195,19 @@ config MATOM
+ 	  accordingly optimized code. Use a recent GCC with specific Atom
+ 	  support in order to fully benefit from selecting this option.
+ 
+-endchoice
+-
+ config X86_GENERIC
+-	bool "Generic x86 support"
+-	depends on X86_32
++	bool "Generic x86"
+ 	help
+-	  Instead of just including optimizations for the selected
++	  Instead of just including optimizations for a particular
+ 	  x86 variant (e.g. PII, Crusoe or Athlon), include some more
+ 	  generic optimizations as well. This will make the kernel
+-	  perform better on x86 CPUs other than that selected.
++	  perform better on a variety of CPUs.
+ 
+ 	  This is really intended for distributors who need more
+ 	  generic optimizations.
+ 
++endchoice
 +
-+Without phy_port, we already have quite a lot of information about what the
-+media-facing interface of a NIC can do and looks like, through the
-+:c:type:`struct ethtool_link_ksettings <ethtool_link_ksettings>` attributes,
-+which includes :
-+
-+ - What the NIC can do through the :c:member:`supported` field
-+ - What the Link Partner advertises through :c:member:`lp_advertising`
-+ - Which features we're advertising through :c:member:`advertising`
-+
-+We also have info about the number of lanes and the PORT type. These settings
-+are built by aggregating together information reported by various devices that
-+are sitting on the link :
-+
-+  - The NIC itself, through the :c:member:`get_link_ksettings` callback
-+  - Precise information from the MAC and PCS by using phylink in the MAC driver
-+  - Information reported by the PHY device
-+  - Information reported by an SFP module (which can itself include a PHY)
-+
-+This model however starts showing its limitations when we consider devices that
-+have more than one media interface. In such a case, only information about the
-+actively used interface is reported, and it's not possible to know what the
-+other interfaces can do. In fact, we have very few information about whether or
-+not there are any other media interfaces.
-+
-+The goal of the phy_port representation is to provide a way of representing a
-+physical interface of a NIC, regardless of what is driving the port (NIC through
-+a firmware, SFP module, Ethernet PHY).
-+
-+Multi-port interfaces examples
-+==============================
-+
-+Several cases of multi-interface NICs have been observed so far :
-+
-+Internal MII Mux::
-+
-+  +------------------+
-+  | SoC              |
-+  |          +-----+ |           +-----+
-+  | +-----+  |     |-------------| PHY |
-+  | | MAC |--| Mux | |   +-----+ +-----+
-+  | +-----+  |     |-----| SFP |
-+  |          +-----+ |   +-----+
-+  +------------------+
-+
-+Internal Mux with internal PHY::
-+
-+  +------------------------+
-+  | SoC                    |
-+  |          +-----+ +-----+
-+  | +-----+  |     |-| PHY |
-+  | | MAC |--| Mux | +-----+   +-----+
-+  | +-----+  |     |-----------| SFP |
-+  |          +-----+       |   +-----+
-+  +------------------------+
-+
-+External Mux::
-+
-+  +---------+
-+  | SoC     |  +-----+  +-----+
-+  |         |  |     |--| PHY |
-+  | +-----+ |  |     |  +-----+
-+  | | MAC |----| Mux |  +-----+
-+  | +-----+ |  |     |--| PHY |
-+  |         |  +-----+  +-----+
-+  |         |     |
-+  |    GPIO-------+
-+  +---------+
-+
-+Double-port PHY::
-+
-+  +---------+
-+  | SoC     | +-----+
-+  |         | |     |--- RJ45
-+  | +-----+ | |     |
-+  | | MAC |---| PHY |   +-----+
-+  | +-----+ | |     |---| SFP |
-+  +---------+ +-----+   +-----+
-+
-+phy_port aims at providing a path to support all the above topologies, by
-+representing the media interfaces in a way that's agnostic to what's driving
-+the interface. the struct phy_port object has its own set of callback ops, and
-+will eventually be able to report its own ksettings::
-+
-+             _____      +------+
-+            (     )-----| Port |
-+ +-----+   (       )    +------+
-+ | MAC |--(   ???   )
-+ +-----+   (       )    +------+
-+            (_____)-----| Port |
-+                        +------+
-+
-+Next steps
-+==========
-+
-+As of writing this documentation, only ports controlled by PHY devices are
-+supported. The next steps will be to add the Netlink API to expose these
-+to userspace and add support for raw ports (controlled by some firmware, and directly
-+managed by the NIC driver).
-+
-+Another parallel task is the introduction of a MII muxing framework to allow the
-+control of non-PHY driver multi-port setups.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5a6f554905eb..ed4e3726d0cf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8773,6 +8773,7 @@ F:	Documentation/devicetree/bindings/net/ethernet-connector.yaml
- F:	Documentation/devicetree/bindings/net/ethernet-phy.yaml
- F:	Documentation/devicetree/bindings/net/mdio*
- F:	Documentation/devicetree/bindings/net/qca,ar803x.yaml
-+F:	Documentation/networking/phy-port.rst
- F:	Documentation/networking/phy.rst
- F:	drivers/net/mdio/
- F:	drivers/net/mdio/acpi_mdio.c
+ #
+ # Define implied options from the CPU selection here
+ config X86_INTERNODE_CACHE_SHIFT
+@@ -216,17 +218,14 @@ config X86_INTERNODE_CACHE_SHIFT
+ config X86_L1_CACHE_SHIFT
+ 	int
+ 	default "7" if MPENTIUM4
+-	default "6" if MK7 || MPENTIUMM || MATOM || MVIAC7 || X86_GENERIC || X86_64
+-	default "4" if MGEODEGX1
+-	default "5" if MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || MVIAC3_2 || MGEODE_LX
++	default "6"
+ 
+ config X86_F00F_BUG
+-	def_bool y
+-	depends on M586MMX || M586TSC || M586
++	def_bool !X86_CMOV
+ 
+ config X86_ALIGNMENT_16
+ 	def_bool y
+-	depends on MCYRIXIII || MK6 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODEGX1
++	depends on MCYRIXIII || MK6 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODEGX1 || (!X86_CMOV && X86_GENERIC)
+ 
+ config X86_INTEL_USERCOPY
+ 	def_bool y
+@@ -234,34 +233,23 @@ config X86_INTEL_USERCOPY
+ 
+ config X86_USE_PPRO_CHECKSUM
+ 	def_bool y
+-	depends on MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MGEODE_LX || MATOM
++	depends on MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MGEODE_LX || MATOM || (X86_CMOV && X86_GENERIC)
+ 
+ config X86_TSC
+ 	def_bool y
+ 
+-config X86_HAVE_PAE
+-	def_bool y
+-	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC7 || MATOM || X86_64
+-
+ config X86_CX8
+ 	def_bool y
+ 
+-# this should be set for all -march=.. options where the compiler
+-# generates cmov.
+-config X86_CMOV
+-	def_bool y
+-	depends on (MK7 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MCRUSOE || MEFFICEON || MATOM || MGEODE_LX || X86_64)
+-
+ config X86_MINIMUM_CPU_FAMILY
+ 	int
+ 	default "64" if X86_64
+-	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
+-	default "5" if X86_32
+-	default "4"
++	default "6" if X86_32 && X86_CMOV
++	default "5"
+ 
+ config X86_DEBUGCTLMSR
+ 	def_bool y
+-	depends on !(MK6 || MCYRIXIII || M586MMX || M586TSC || M586) && !UML
++	depends on X86_CMOV && !UML
+ 
+ config IA32_FEAT_CTL
+ 	def_bool y
+@@ -297,7 +285,7 @@ config CPU_SUP_INTEL
+ config CPU_SUP_CYRIX_32
+ 	default y
+ 	bool "Support Cyrix processors" if PROCESSOR_SELECT
+-	depends on M586 || M586TSC || M586MMX || (EXPERT && !64BIT)
++	depends on !64BIT
+ 	help
+ 	  This enables detection, tunings and quirks for Cyrix processors
+ 
+diff --git a/arch/x86/Makefile_32.cpu b/arch/x86/Makefile_32.cpu
+index f5e933077bf4..ebd7ec6eaf34 100644
+--- a/arch/x86/Makefile_32.cpu
++++ b/arch/x86/Makefile_32.cpu
+@@ -10,30 +10,32 @@ else
+ align		:= -falign-functions=0 -falign-jumps=0 -falign-loops=0
+ endif
+ 
+-cflags-$(CONFIG_M586TSC)	+= -march=i586
+-cflags-$(CONFIG_M586MMX)	+= -march=pentium-mmx
+-cflags-$(CONFIG_M686)		+= -march=i686
+-cflags-$(CONFIG_MPENTIUMII)	+= -march=i686 $(call tune,pentium2)
+-cflags-$(CONFIG_MPENTIUMIII)	+= -march=i686 $(call tune,pentium3)
+-cflags-$(CONFIG_MPENTIUMM)	+= -march=i686 $(call tune,pentium3)
+-cflags-$(CONFIG_MPENTIUM4)	+= -march=i686 $(call tune,pentium4)
+-cflags-$(CONFIG_MK6)		+= -march=k6
+-# Please note, that patches that add -march=athlon-xp and friends are pointless.
+-# They make zero difference whatsosever to performance at this time.
+-cflags-$(CONFIG_MK7)		+= -march=athlon
+-cflags-$(CONFIG_MCRUSOE)	+= -march=i686 $(align)
+-cflags-$(CONFIG_MEFFICEON)	+= -march=i686 $(call tune,pentium3) $(align)
+-cflags-$(CONFIG_MCYRIXIII)	+= $(call cc-option,-march=c3,-march=i486) $(align)
+-cflags-$(CONFIG_MVIAC3_2)	+= $(call cc-option,-march=c3-2,-march=i686)
+-cflags-$(CONFIG_MVIAC7)		+= -march=i686
+-cflags-$(CONFIG_MATOM)		+= -march=atom
++ifdef CONFIG_X86_CMOV
++cflags-y			+= -march=i686
++else
++cflags-y			+= -march=i586
++endif
+ 
+-# Geode GX1 support
+-cflags-$(CONFIG_MGEODEGX1)	+= -march=pentium-mmx
+-cflags-$(CONFIG_MGEODE_LX)	+= $(call cc-option,-march=geode,-march=pentium-mmx)
+-# add at the end to overwrite eventual tuning options from earlier
+-# cpu entries
+-cflags-$(CONFIG_X86_GENERIC) 	+= $(call tune,generic,$(call tune,i686))
++cflags-$(CONFIG_M586TSC)	+= -mtune=i586
++cflags-$(CONFIG_M586MMX)	+= -mtune=pentium-mmx
++cflags-$(CONFIG_M686)		+= -mtune=i686
++cflags-$(CONFIG_MPENTIUMII)	+= -mtune=pentium2
++cflags-$(CONFIG_MPENTIUMIII)	+= -mtune=pentium3
++cflags-$(CONFIG_MPENTIUMM)	+= -mtune=pentium3
++cflags-$(CONFIG_MPENTIUM4)	+= -mtune=pentium4
++cflags-$(CONFIG_MK6)		+= -mtune=k6
++# Please note, that patches that add -mtune=athlon-xp and friends are pointless.
++# They make zero difference whatsosever to performance at this time.
++cflags-$(CONFIG_MK7)		+= -mtune=athlon
++cflags-$(CONFIG_MCRUSOE)	+= -mtune=i686 $(align)
++cflags-$(CONFIG_MEFFICEON)	+= -mtune=pentium3 $(align)
++cflags-$(CONFIG_MCYRIXIII)	+= -mtune=c3 $(align)
++cflags-$(CONFIG_MVIAC3_2)	+= -mtune=c3-2
++cflags-$(CONFIG_MVIAC7)		+= -mtune=i686
++cflags-$(CONFIG_MATOM)		+= -mtune=atom
++cflags-$(CONFIG_MGEODEGX1)	+= -mtune=pentium-mmx
++cflags-$(CONFIG_MGEODE_LX)	+= -mtune=geode
++cflags-$(CONFIG_X86_GENERIC) 	+= -mtune=generic
+ 
+ # Bug fix for binutils: this option is required in order to keep
+ # binutils from generating NOPL instructions against our will.
+diff --git a/arch/x86/include/asm/vermagic.h b/arch/x86/include/asm/vermagic.h
+index e26061df0c9b..6554dbdfd719 100644
+--- a/arch/x86/include/asm/vermagic.h
++++ b/arch/x86/include/asm/vermagic.h
+@@ -5,42 +5,10 @@
+ 
+ #ifdef CONFIG_X86_64
+ /* X86_64 does not define MODULE_PROC_FAMILY */
+-#elif defined CONFIG_M586TSC
+-#define MODULE_PROC_FAMILY "586TSC "
+-#elif defined CONFIG_M586MMX
+-#define MODULE_PROC_FAMILY "586MMX "
+-#elif defined CONFIG_MATOM
+-#define MODULE_PROC_FAMILY "ATOM "
+-#elif defined CONFIG_M686
++#elif defined CONFIG_X86_CMOV
+ #define MODULE_PROC_FAMILY "686 "
+-#elif defined CONFIG_MPENTIUMII
+-#define MODULE_PROC_FAMILY "PENTIUMII "
+-#elif defined CONFIG_MPENTIUMIII
+-#define MODULE_PROC_FAMILY "PENTIUMIII "
+-#elif defined CONFIG_MPENTIUMM
+-#define MODULE_PROC_FAMILY "PENTIUMM "
+-#elif defined CONFIG_MPENTIUM4
+-#define MODULE_PROC_FAMILY "PENTIUM4 "
+-#elif defined CONFIG_MK6
+-#define MODULE_PROC_FAMILY "K6 "
+-#elif defined CONFIG_MK7
+-#define MODULE_PROC_FAMILY "K7 "
+-#elif defined CONFIG_MCRUSOE
+-#define MODULE_PROC_FAMILY "CRUSOE "
+-#elif defined CONFIG_MEFFICEON
+-#define MODULE_PROC_FAMILY "EFFICEON "
+-#elif defined CONFIG_MCYRIXIII
+-#define MODULE_PROC_FAMILY "CYRIXIII "
+-#elif defined CONFIG_MVIAC3_2
+-#define MODULE_PROC_FAMILY "VIAC3-2 "
+-#elif defined CONFIG_MVIAC7
+-#define MODULE_PROC_FAMILY "VIAC7 "
+-#elif defined CONFIG_MGEODEGX1
+-#define MODULE_PROC_FAMILY "GEODEGX1 "
+-#elif defined CONFIG_MGEODE_LX
+-#define MODULE_PROC_FAMILY "GEODE "
+ #else
+-#error unknown processor family
++#define MODULE_PROC_FAMILY "586 "
+ #endif
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 489c779ef3ef..76b15ef8c85f 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1221,7 +1221,7 @@ bool tsc_clocksource_watchdog_disabled(void)
+ 
+ static void __init check_system_tsc_reliable(void)
+ {
+-#if defined(CONFIG_MGEODEGX1) || defined(CONFIG_MGEODE_LX) || defined(CONFIG_X86_GENERIC)
++#if defined(CONFIG_CPU_SUP_CYRIX)
+ 	if (is_geode_lx()) {
+ 		/* RTSC counts during suspend */
+ #define RTSC_SUSP 0x100
+diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+index 222b6fdad313..2648459b8e8f 100644
+--- a/arch/x86/xen/Kconfig
++++ b/arch/x86/xen/Kconfig
+@@ -9,7 +9,6 @@ config XEN
+ 	select PARAVIRT_CLOCK
+ 	select X86_HV_CALLBACK_VECTOR
+ 	depends on X86_64 || (X86_32 && X86_PAE)
+-	depends on X86_64 || (X86_GENERIC || MPENTIUM4 || MATOM)
+ 	depends on X86_LOCAL_APIC
+ 	help
+ 	  This is the Linux Xen port.  Enabling this will allow the
+diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
+index 7575fee96cc6..4deb17ed0a62 100644
+--- a/drivers/misc/mei/Kconfig
++++ b/drivers/misc/mei/Kconfig
+@@ -3,7 +3,7 @@
+ config INTEL_MEI
+ 	tristate "Intel Management Engine Interface"
+ 	depends on X86 && PCI
+-	default X86_64 || MATOM
++	default X86_64 || CPU_SUP_INTEL
+ 	help
+ 	  The Intel Management Engine (Intel ME) provides Manageability,
+ 	  Security and Media services for system containing Intel chipsets.
 -- 
-2.49.0
+2.39.5
 
 
