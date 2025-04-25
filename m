@@ -1,93 +1,179 @@
-Return-Path: <linux-kernel+bounces-619345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A31A9BBBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A8CA9BBC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847721BA2B72
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81071887EC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A71E71747;
-	Fri, 25 Apr 2025 00:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9CF29B0;
+	Fri, 25 Apr 2025 00:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDybcthE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUarwgPx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3BC23A6;
-	Fri, 25 Apr 2025 00:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B95F81E;
+	Fri, 25 Apr 2025 00:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745540399; cv=none; b=PwPfeUC8+4zy3FrrvhQRxMc+nTtOFVoeaywb4QjRbLEPZq0HuyNT/H6J8RfeJNLlSKHRil+OEJsqftlT8nwQoNHiLlZgTYx6wMIMGVbp28LGrkiVyNhAkTm8jkCsC2lu08or5gaGH7Y4AorFtoXM48eQjI2OBjsRhpz8/n2OyFM=
+	t=1745540613; cv=none; b=Cyf96yxtNAo8S5/tn1vyoZCzHDLsQfP+IlOtqg4axfBVCCGWRIR2udiYyfccHhBGXaf7mq8M6UqQw9wtPJbv8PmIxyPozm3XqdmGWCmNAGrn1kWtO2lNENPwH83BXObDktn70P2HIv3O7pYnH/17h/+9yRRlGzpuSyiu3CakF9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745540399; c=relaxed/simple;
-	bh=cldQ+FwghzdzQNqNosTRJex6UF73Wv+Mm7TPcxAbJ1U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Lt4r84i6WiwXF8khhGz2J0B++cu/RMzh817OTgPqLBTh6A0ZeO6SjoRy7RJoYIKEu8cSO6Gbduqq2WHR25bI3o3PJt4OuYWdGC7/b+vTIbsO7Eg53Mjb+CG6DUmom0W5gieT5LeJtxVG6jTncbdVCAPkyv5SKqBSJlVBG5gMKt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDybcthE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6051C4CEE8;
-	Fri, 25 Apr 2025 00:19:58 +0000 (UTC)
+	s=arc-20240116; t=1745540613; c=relaxed/simple;
+	bh=UEkSo+BagKkIVRMMe9pgkrGMxtdYLmVfK4/QgaOoRvc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ex84vSnwWi0eXVM1WNg35JPUhIuCTWuU60oK1zPvYhEu0cALN9+d3Jd5a0fEBkGD9mvJHZ5JO+4giHIuNB/X34HJ9i3A9ePn0A7KGbyj+90lIItFZ7LN7+LH08/EfFqX3DHMN48FDj4Rx2IhTX42YX+DXXWSGzDv5HQk41w8R/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUarwgPx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC6CC4CEE3;
+	Fri, 25 Apr 2025 00:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745540398;
-	bh=cldQ+FwghzdzQNqNosTRJex6UF73Wv+Mm7TPcxAbJ1U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YDybcthE6AQzsxvUp5Wf+Mi8S5XJOE9pbnPwMXULBQImhwRC/po1XDzJJHAFYtmYs
-	 jKA5R7Tm0O40vDsH76JV5Q2Cw/8pIUUu+jLY70ayCjOwC/zavRP1eSMpGEYqc2MOqg
-	 MvDBxMJ4iDCa2B53Upw6wEfka1+Y1DISUdK0z6oUiY0cZeY7D7voDY26urEXqu2YmU
-	 O5JQPAMMPqATEWBmMgvPK0F4l8hlo2hMFHURfKqP3uzDBWxdW6nz0ZfDY1bJAFsrv5
-	 NvljDmnqYHbIdVDeHj13MmsVjVnbqQk8J01Q5y3P+QAoaGNq1TCvzXYreeAeqFxDmp
-	 Jw72MrrT0ymrA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCBA380CFD9;
-	Fri, 25 Apr 2025 00:20:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1745540612;
+	bh=UEkSo+BagKkIVRMMe9pgkrGMxtdYLmVfK4/QgaOoRvc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=pUarwgPxg10MK0UdQ+n5BCmMishwDRNdqKKtmZeSwy6yosN15zyV66BLSRDZi5A3c
+	 yVKMHZZzjcPoaTAJlS3aJBbN3RbJtDAlMxvqvthKXy3RD4ayvHKrha1/fo9OcfQHxq
+	 y7p3Ui7hk/Mm4qo9Aui0h5LGGGoYcAD3AX1BjZjgVC+bWmpXfVuc+PIbBPy645vLsk
+	 +KV3W7aTXxXHLe9iZPp+6GvbYbRheGZDd2kiLKlCP9S8dqK9184eXrNyta7wElhwM4
+	 FTPshbqWhVU5pc0It3lqahAGYR/TDUNf7wxEMMQkU0TwwNjZvcrEDK4Pblvz2ty7Yo
+	 WclNOcBljsHiQ==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 24 Apr 2025 17:23:22 -0700
+Subject: [PATCH] riscv: crypto - Use SYM_FUNC_START for functions only
+ called directly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] rxrpc: Remove deadcode
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174554043732.3528880.15151083727009143758.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Apr 2025 00:20:37 +0000
-References: <20250422235147.146460-1-linux@treblig.org>
-In-Reply-To: <20250422235147.146460-1-linux@treblig.org>
-To: Dr. David Alan Gilbert <linux@treblig.org>
-Cc: horms@kernel.org, dhowells@redhat.com, marc.dionne@auristor.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- corbet@lwn.net, linux-afs@lists.infradead.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250424-riscv-crypto-fix-cfi-build-v1-1-2d7516737379@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPnVCmgC/x3M0QpAQBBA0V/RPJtai8SvyIMds0wJzSKSf7d5P
+ HW7DwRW4QBN8oDyKUHWJSJLE6CpX0ZGGaLBGluawhaoEuhE0nvbV/RyIXlBd8g8YF1WlSfnXW5
+ 6iINNOQb/vO3e9wM6U9lmbAAAAA==
+X-Change-ID: 20250424-riscv-crypto-fix-cfi-build-9577fcbfb30a
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4387; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=UEkSo+BagKkIVRMMe9pgkrGMxtdYLmVfK4/QgaOoRvc=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBlc15gdXliefvD94bbcI7N/HPy2dd+jWCa5aMaq2Ts9a
+ s1lVgb/7ChlYRDjYpAVU2Spfqx63NBwzlnGG6cmwcxhZQIZwsDFKQATsT3MyPCbPehTSr3+2ZsP
+ Dqa6ymWJap1UdSs98Nj92LItsl/2GDsy/JXjmSl+buulJcuLYzcv6JwlNPsIf8TCyuOJttM9u2w
+ 2GjECAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Hello:
+After some recent changes to the RISC-V crypto code that turned some
+indirect function calls into direct ones, builds with CONFIG_CFI_CLANG
+fail with:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+  ld.lld: error: undefined symbol: __kcfi_typeid_sm3_transform_zvksh_zvkb
+  >>> referenced by arch/riscv/crypto/sm3-riscv64-zvksh-zvkb.o:(.text+0x2) in archive vmlinux.a
 
-On Wed, 23 Apr 2025 00:51:47 +0100 you wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Remove three functions that are no longer used.
-> 
-> rxrpc_get_txbuf() last use was removed by 2020's
-> commit 5e6ef4f1017c ("rxrpc: Make the I/O thread take over the call and
-> local processor work")
-> 
-> [...]
+  ld.lld: error: undefined symbol: __kcfi_typeid_sha512_transform_zvknhb_zvkb
+  >>> referenced by arch/riscv/crypto/sha512-riscv64-zvknhb-zvkb.o:(.text+0x2) in archive vmlinux.a
 
-Here is the summary with links:
-  - [net-next,v2] rxrpc: Remove deadcode
-    https://git.kernel.org/netdev/net-next/c/39144062ea33
+  ld.lld: error: undefined symbol: __kcfi_typeid_sha256_transform_zvknha_or_zvknhb_zvkb
+  >>> referenced by arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.o:(.text+0x2) in archive vmlinux.a
 
-You are awesome, thank you!
+As these functions are no longer indirectly called (i.e., have their
+address taken), the compiler will not emit __kcfi_typeid symbols for
+them but SYM_TYPED_FUNC_START expects these to exist at link time.
+
+Switch the definitions of these functions to use SYM_FUNC_START, as they
+no longer need kCFI type information since they are only called
+directly.
+
+Fixes: 1523eaed0ac5 ("crypto: riscv/sm3 - Use API partial block handling")
+Fixes: 561aab1104d8 ("crypto: riscv/sha512 - Use API partial block handling")
+Fixes: e6c5597badf2 ("crypto: riscv/sha256 - Use API partial block handling")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S | 4 ++--
+ arch/riscv/crypto/sha512-riscv64-zvknhb-zvkb.S           | 4 ++--
+ arch/riscv/crypto/sm3-riscv64-zvksh-zvkb.S               | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S b/arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
+index 8ebcc17de4dc..f1f5779e4732 100644
+--- a/arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
++++ b/arch/riscv/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S
+@@ -43,7 +43,7 @@
+ // - RISC-V Vector SHA-2 Secure Hash extension ('Zvknha' or 'Zvknhb')
+ // - RISC-V Vector Cryptography Bit-manipulation extension ('Zvkb')
+ 
+-#include <linux/cfi_types.h>
++#include <linux/linkage.h>
+ 
+ .text
+ .option arch, +zvknha, +zvkb
+@@ -108,7 +108,7 @@
+ 
+ // void sha256_transform_zvknha_or_zvknhb_zvkb(u32 state[8], const u8 *data,
+ //					       int num_blocks);
+-SYM_TYPED_FUNC_START(sha256_transform_zvknha_or_zvknhb_zvkb)
++SYM_FUNC_START(sha256_transform_zvknha_or_zvknhb_zvkb)
+ 
+ 	// Load the round constants into K0-K15.
+ 	vsetivli	zero, 4, e32, m1, ta, ma
+diff --git a/arch/riscv/crypto/sha512-riscv64-zvknhb-zvkb.S b/arch/riscv/crypto/sha512-riscv64-zvknhb-zvkb.S
+index 3a9ae210f915..89f4a10d12dd 100644
+--- a/arch/riscv/crypto/sha512-riscv64-zvknhb-zvkb.S
++++ b/arch/riscv/crypto/sha512-riscv64-zvknhb-zvkb.S
+@@ -43,7 +43,7 @@
+ // - RISC-V Vector SHA-2 Secure Hash extension ('Zvknhb')
+ // - RISC-V Vector Cryptography Bit-manipulation extension ('Zvkb')
+ 
+-#include <linux/cfi_types.h>
++#include <linux/linkage.h>
+ 
+ .text
+ .option arch, +zvknhb, +zvkb
+@@ -95,7 +95,7 @@
+ 
+ // void sha512_transform_zvknhb_zvkb(u64 state[8], const u8 *data,
+ //				     int num_blocks);
+-SYM_TYPED_FUNC_START(sha512_transform_zvknhb_zvkb)
++SYM_FUNC_START(sha512_transform_zvknhb_zvkb)
+ 
+ 	// Setup mask for the vmerge to replace the first word (idx==0) in
+ 	// message scheduling.  There are 4 words, so an 8-bit mask suffices.
+diff --git a/arch/riscv/crypto/sm3-riscv64-zvksh-zvkb.S b/arch/riscv/crypto/sm3-riscv64-zvksh-zvkb.S
+index a2b65d961c04..4fe754846f65 100644
+--- a/arch/riscv/crypto/sm3-riscv64-zvksh-zvkb.S
++++ b/arch/riscv/crypto/sm3-riscv64-zvksh-zvkb.S
+@@ -43,7 +43,7 @@
+ // - RISC-V Vector SM3 Secure Hash extension ('Zvksh')
+ // - RISC-V Vector Cryptography Bit-manipulation extension ('Zvkb')
+ 
+-#include <linux/cfi_types.h>
++#include <linux/linkage.h>
+ 
+ .text
+ .option arch, +zvksh, +zvkb
+@@ -81,7 +81,7 @@
+ .endm
+ 
+ // void sm3_transform_zvksh_zvkb(u32 state[8], const u8 *data, int num_blocks);
+-SYM_TYPED_FUNC_START(sm3_transform_zvksh_zvkb)
++SYM_FUNC_START(sm3_transform_zvksh_zvkb)
+ 
+ 	// Load the state and endian-swap each 32-bit word.
+ 	vsetivli	zero, 8, e32, m2, ta, ma
+
+---
+base-commit: 63dc06cd12f980e304158888485a26ae2be7f371
+change-id: 20250424-riscv-crypto-fix-cfi-build-9577fcbfb30a
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Nathan Chancellor <nathan@kernel.org>
 
 
