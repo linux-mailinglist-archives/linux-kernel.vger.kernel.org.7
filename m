@@ -1,163 +1,105 @@
-Return-Path: <linux-kernel+bounces-620034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18B2A9C516
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC191A9C519
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BFFB189DFFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6043AD0A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F851238D5A;
-	Fri, 25 Apr 2025 10:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8881323A9AD;
+	Fri, 25 Apr 2025 10:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fS8OBStg"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEAmy/BS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD3220689
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF4821D3DB;
+	Fri, 25 Apr 2025 10:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745576324; cv=none; b=VC2+bVrN/BuCcbKukwmTPOgkqfPtdzhkq6IZuCv5LtDjAguUMtiYvFyEwYGW6yG+Hyzg/XJyjCOOeToahbqt98xUj3HQUtTrpFLAaKjikkx/qSEodh+pmaGIaXTDeWJc1xZvdNsmJGyIZNq6HoPmqGbRhJR3ggnUiHvgjFkavN4=
+	t=1745576357; cv=none; b=HFgGemQr387Hlszt8+q0+oqreJw7T6SOs7oYoL1ucrGY3hFP0efT1FXhx5BLn8Dt3bSLK1rWHrhp9ucuudFFiQdx0wwZBC2RCQJ2vadl4CDEAGeQQTHTb+UWb3+xyQWJDOq6Rp1fYI9vvVcc74lofHERR5Ptv9GVluyLOzm/OyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745576324; c=relaxed/simple;
-	bh=+WMDRHwIxjNdFWZib1N8x93fRIjfmI7anWK8oxtytUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sKgwk6OUbI7hg4c61yonjzK7N6EEioxrhk1orCtIHnqW0kFovkFUX1dEfpwZvRayQF3P3Lsiso+IdyTy5X6TX5eY4UfsyqeB4TJ+09dpRKaCuMz9fYPtxTHdRcUdgU2PNzb6GXphBfkXZuIRQVGOWasXwlFz/6C+C1zrBzx42k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fS8OBStg; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745576318;
-	bh=+WMDRHwIxjNdFWZib1N8x93fRIjfmI7anWK8oxtytUg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fS8OBStgXmEHPXUtgkQM6i6oldyGjHhVXAffJrz40OrrJDixFwzubm2Jjg2v2cmUv
-	 LmnmNqmFur9E5HCtxdfibtsa36Vxyr+lqMpHBeDveVhs5fy0gzCs33TzLPPMof0iw4
-	 ylrUroQH9zIEk5hXM3LaumCgjzrFtrshAOKLj5zW5YghhblY17lEoGLTUcdSfVYaV0
-	 EXmuYNQYKhv0cRLgc+ntPLmiHduEjMltKTcEDNshKbQKBpkrggTkKwLq+n9vOLU3Ky
-	 C7Ad1vqexnj6rH7xkvQOSaU0XBCmXcaei5EN+/YyIst8AG3onO9rnByzIXpJuk8wc7
-	 VmN2qkPkqiYTQ==
-Received: from eldfell (unknown [194.136.85.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pq)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4D41617E0F66;
-	Fri, 25 Apr 2025 12:18:38 +0200 (CEST)
-Date: Fri, 25 Apr 2025 13:18:17 +0300
-From: Pekka Paalanen <pekka.paalanen@collabora.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Vishal Sagar <vishal.sagar@amd.com>, Anatoliy
- Klymenko <anatoliy.klymenko@amd.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Michal Simek <michal.simek@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 03/11] drm/fourcc: Add DRM_FORMAT_Y8
-Message-ID: <20250425131817.01b7f7d9@eldfell>
-In-Reply-To: <c432aca1-cbab-476c-ba3a-e0d9cc940da7@ideasonboard.com>
-References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
-	<20250326-xilinx-formats-v4-3-322a300c6d72@ideasonboard.com>
-	<CAMuHMdXM1B1c=62EpcuUdpdpaBRZSJLXb1GBB0egzp7Fyeo5-w@mail.gmail.com>
-	<b195971c-52e6-463e-a440-83dde4346e65@ideasonboard.com>
-	<20250327112009.6b4dc430@eldfell>
-	<b5cf15a4-7c65-4718-9c39-a4c86179ba4c@ideasonboard.com>
-	<20250327175842.130c0386@eldfell>
-	<CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
-	<20250331105446.098f0fbe@eldfell>
-	<20250331082135.GB13690@pendragon.ideasonboard.com>
-	<20250331135337.61934003@eldfell>
-	<20250401162732.731ef774@eldfell>
-	<73bd6628-374d-417f-a30f-88a4b1d157bb@ideasonboard.com>
-	<20250417111315.62a749e5@eldfell>
-	<c432aca1-cbab-476c-ba3a-e0d9cc940da7@ideasonboard.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745576357; c=relaxed/simple;
+	bh=8hdBrASEox056qzws93ce/KXrePY3rfEbDz0T95lkl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHDzwWpmMbAj6rAXk6nY34dvCFruuPHZ4ttq0Q9wPsjrklT3QT5935sy2QNRizfOR60bXYDczz6eFNuFlGChaIbdAcFnYl6jCA4T5oQHpty9UDRYhpcsA2D/tKu3cm16KN7hkYs9IRuYT6XRUogRxBRV1RznXW2xjdjod006Wmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEAmy/BS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7DF9C4CEE4;
+	Fri, 25 Apr 2025 10:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745576356;
+	bh=8hdBrASEox056qzws93ce/KXrePY3rfEbDz0T95lkl4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XEAmy/BSDYyR+NH/5tniQVVLXaO44MfQIGSLZuty8bEPYJEO4+48Bpg+jqJJwPU55
+	 MjiHbscPCKiL5orQpKws711FhnyFnZt6qVPsgrxhHDeRcIR1H9WcyLwqnt5wmmwzTT
+	 U00brDEJIubTJBY5IlCWZXH4lsmm9N6ml9y/MjQBe0Jx6qNT3khEcvM3SFdJfRvvqa
+	 NwFEkkuJfav2PDXfi6eA8VN74pWmsoebsi/lkQRrAtwM0sR8qE7eLtfgrQ7iSUigWg
+	 +gUiRkFqE8kNEOpZT203FogCE1irHXylMtynHtL2D5WPnQeXcYlTwrqspQvUCM1Fsk
+	 UOG+pJ9+nOhbg==
+Date: Fri, 25 Apr 2025 12:19:13 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: arm: vt8500: Add VIA APC Rock/Paper
+ boards
+Message-ID: <20250425-polar-tamarin-of-reward-c57e01@kuoka>
+References: <20250418-apc_paper_binding-v2-1-17c9023b7c9b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+HlgRhuvMGsiYHXtWjVBSQu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250418-apc_paper_binding-v2-1-17c9023b7c9b@gmail.com>
 
---Sig_/+HlgRhuvMGsiYHXtWjVBSQu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Apr 18, 2025 at 07:24:25PM GMT, Alexey Charkov wrote:
+> APC Rock is a development board based on WonderMedia WM8950 SoC
+> released around 2013. Paper is the same as Rock but lacking a
+> VGA port and shipped with a recycled cardboard case.
+> 
+> While at that, put myself as the maintainer, given that Tony is
+> unavailable as of lately.
+> 
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+> Split the series from v1 into separate bindings patches so as not to
 
-On Fri, 25 Apr 2025 11:38:28 +0300
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+Hm? That's odd.
 
-> Hi Pekka,
->=20
-> On 17/04/2025 11:13, Pekka Paalanen wrote:
-> >> My understanding is that the Y-only pixel formats behave in a well
-> >> defined way (or, as well defined as the YUV formats), and there's
-> >> nothing more to add here. Is that right? =20
-> >=20
-> > There are two things:
-> >=20
-> > - Y8 follows COLOR_RANGE property, just like all other YUV formats.
-> > - Y8 implies that Cb and Cr are both neutral (0.0 in nominal values).
-> >=20
-> > I'd like these explicitly written down, so that they become obvious to
-> > everyone. I suspect either one might be easy to forget when writing
-> > code and taking shortcuts without thinking. =20
->=20
-> I didn't find a suitable place in the docs for this, but would this, in=20
-> the drm_fourcc.h, be enough:
->=20
-> /*
->   * Y-only (greyscale) formats
->   *
->   * The Y-only formats are handled similarly to the YCbCr formats in the=
-=20
-> display
->   * pipeline, with the Cb and Cr implicitly neutral (0.0 in nominal=20
-> values). This
->   * also means that COLOR_RANGE property applies to the Y-only formats.
->   *
->   */
->=20
-> #define DRM_FORMAT_Y8		fourcc_code('G', 'R', 'E', 'Y')  /* 8-bit Y-only */
-> #define DRM_FORMAT_Y10_P32	fourcc_code('Y', 'P', 'A', '4')  /* [31:0]=20
-> x:Y2:Y1:Y0 2:10:10:10 little endian */
->=20
+> spam all the subsystems with unrelated changes, per Rob's suggestion
+> 
+> Changes in v2:
+> - kept single-valued compatibles in a single enum (thanks Rob)
+> - dropped the empty overall description node
 
-Hi Tomi,
+...
 
-I would be very happy with that.
+> +
+> +      - description: VIA APC Rock and Paper boards
+> +        items:
+> +          - const: via,apc-rock
+
+Where is any user of this? Bindings always come with the user. Board
+compatible comes with its user - board - both to SoC subsystem (in this
+case me).
+
+See also SoC maintainer profile describing this or my guides how to
+properly target SoC subsystems:
+https://lore.kernel.org/linux-samsung-soc/CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com/T/#m2d9130a1342ab201ab49670fa6c858ee3724c83c
+
+and great example:
+https://lore.kernel.org/all/20231121-topic-sm8650-upstream-dt-v3-0-db9d0507ffd3@linaro.org/
 
 
-Thanks,
-pq
+Best regards,
+Krzysztof
 
---Sig_/+HlgRhuvMGsiYHXtWjVBSQu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAmgLYWkACgkQI1/ltBGq
-qqeHUQ/+NfUcYS7wXohrzllZkrHLk6YwDQxQOoiRG6PixGDOwza/SPNNA28d2Qqm
-CunihOWPP6oCU5c7R51Yt2fZtQZdk533eaPltmaU5YuW7g9Jk8xBvG1KFvwShJgi
-O176UFzxV1TtkCwLyx04kj5Q29rDtJRbm21T84rBiEr+r6AEe007j4JGD58D84hm
-b9vgIXy7qZ/68jXEawGdAJIianBu/SN3T95jZ1vrYJgr/RSF9cC7SVgoan5K2WoV
-3MnXgBfTVqbyKMX3zMGW1NWARglgHqC+JEnd3TORbutORjS7PgRqGF7nY+vScvxt
-9JAF3XtZ+CwA5HOXLRAdLLnCqGQEQ3OmArYyM/PRznbIiUOJGbxS0dYS4SgLkfPH
-FGJCQIOq8yY9blh9pGnV5cwZJFwsVv1/LV6akaHKR2vzPFh4ii+Edy+oFMcoywwo
-Rzoqgp/eMbEtPwL/NFCyKF4CmcBBJExuQer8z8NR/ovRXZ6KObrMi6LyPaeLcsZT
-xq4ZSX2c62B+2bnUsCJeaYcYV0WyFUdQ0KBgf24At7Y3pYE4STRF3m7bUxz0Oql2
-LpQZ7caiz6GKX89Q0aw7yLSWJSY+Euu/RldMWy5EIcXNGEhuZKq3xxVWpLVmK/gv
-hpDZrDv8d23DBk5xM7VJSvWk6M7dBqbyl60f8RlvygNpPu/9rdQ=
-=tC03
------END PGP SIGNATURE-----
-
---Sig_/+HlgRhuvMGsiYHXtWjVBSQu--
 
