@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-620681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C816AA9CE1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6AAA9CE23
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F584C5D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FB44C7ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C7F15B543;
-	Fri, 25 Apr 2025 16:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6151A0711;
+	Fri, 25 Apr 2025 16:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmAx8ep+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Crayupu+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119B5199FAB;
-	Fri, 25 Apr 2025 16:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6539619CD17
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598428; cv=none; b=fR9uwyzdP4XImOnjmFI0yvcV0fbYecbW13iPbv6AynARLfSx/p37S1dm8U67x9ExcVpsBLI8ZBgeHjGdPmV+zvm5DSn7zlXKg74lmbtynl7ABS6w+vqq3rUnyyLQhXfzrkdODO+wby7vUoPyd9qIMbRG5xTZ7tqorZeapQp4aX8=
+	t=1745598576; cv=none; b=MUMepwUw2mxd6oiRmXelBNh/TAYJE3ejDtncEbn7rVQ+YJq/IRdhL1HRONSxcx4A8ZBPissd8/STNG9l1R7sjvKE/dbvetPiHdKUWbY9eUEwxpt8OPnPfCfsCarLJUT3XaDq7NHdIowccrhDzMkCRvehbuJwSCKZ592S7awOhyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598428; c=relaxed/simple;
-	bh=cBn+oANr9dOUMRlNolRibIsRlHhJMhggDW3pxGrLgKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0CYiltLgvpiQ/IJwxwP+YlRZ+rJPRj3+GLlZYea0yB+UzDO7o7Vn5U5Y6fhtnFoxnW0YMJ2NwAzu2HcnyWmYT9tsQ5np8QL86K0bi7CPG9gmKskmu6zObfYOcIa1V7Nhb021SysFITupZkIxmAQspY0eNhhD8Yt9aIdCc1S6E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmAx8ep+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF7BC4CEE4;
-	Fri, 25 Apr 2025 16:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745598427;
-	bh=cBn+oANr9dOUMRlNolRibIsRlHhJMhggDW3pxGrLgKA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UmAx8ep+zizvn5Y301UKtoLPLk0Rrq+W7gesbRNPckYDCHO1SsPXGbnlK4/hDv71f
-	 TyowylOW8bYjPGry481TaxQSiFOhBcRTZqNb0p/xboaGLs0+Oft/yDAg2ZyPe+VJ7d
-	 ml3oVo9wKFJ5DoeyO4DYxuHskbGzJsiOHxOkK9ssct1zCDdSmLPL7rF+FCSbOYRqlV
-	 w5R3urJKmSfxT71HFFflV5ky52ig/CNv6PgqXtQXtBQW/vbLzYSeLu1BxyXwxbJ8K5
-	 8S7T67yBMtTBoNxNLAt4Qpd8E9T7UUxgVWvdk4dvNIoMftae13E4Gfm3IcNeGTeGiO
-	 CuTgz7lsgG0hg==
-Message-ID: <25f5e8e4-1b64-478f-84ab-eede2c669655@kernel.org>
-Date: Fri, 25 Apr 2025 18:27:02 +0200
+	s=arc-20240116; t=1745598576; c=relaxed/simple;
+	bh=dNOEF3deb1Hli7ypZNkU8omKQmciXb9+hWXBOwVIgw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U4kru17aCoZZBKIBDahoAwAsz91UNV5WAt+X7BqjJW4+a3BixGmdqlT8VJlSeE31g5PBEW4TRN7jN3OPbYGCMKa4iQqJtcALV4RhXXLxVOEr6B4Y3s5CeJx7FGwsBv32AKSTL5WHuqRvi3Cpq9BIovljIT2QZfzePOxKQ5CDiEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Crayupu+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745598573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hPhE2xp2EJWLrFm/riS/NVNoWM3TbNL/Rtdl7+CGpZI=;
+	b=Crayupu+SjO93zWU0WVz+85fQ4SMzyw5cy8/WQocW6nTVEEEXwMtGXP2OMre/j7a5jHDaV
+	fpTqwZg8gamYlpLi03PS3s9BWbnkkrFw35W0WNi+Y5fIdQW9jYQUjj6bpkRmGrGC95Zrb+
+	ApsqwmuJ5yEe/g2W2IjxdpM3FXCQFSc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-vkm8F_U0NriBp0kIqjty5Q-1; Fri,
+ 25 Apr 2025 12:29:30 -0400
+X-MC-Unique: vkm8F_U0NriBp0kIqjty5Q-1
+X-Mimecast-MFC-AGG-ID: vkm8F_U0NriBp0kIqjty5Q_1745598569
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBF5F1800264;
+	Fri, 25 Apr 2025 16:29:28 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3F551180045C;
+	Fri, 25 Apr 2025 16:29:28 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for Linux 6.15-rc4
+Date: Fri, 25 Apr 2025 12:29:27 -0400
+Message-ID: <20250425162927.404532-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] PCI: cadence: Add callback functions for RP and EP
- controller
-To: hans.zhang@cixtech.com, bhelgaas@google.com, lpieralisi@kernel.org,
- kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: peter.chen@cixtech.com, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Manikandan K Pillai <mpillai@cadence.com>
-References: <20250424010445.2260090-1-hans.zhang@cixtech.com>
- <20250424010445.2260090-6-hans.zhang@cixtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250424010445.2260090-6-hans.zhang@cixtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 24/04/2025 03:04, hans.zhang@cixtech.com wrote:
-> From: Manikandan K Pillai <mpillai@cadence.com>
-> 
-> Add support for the Cadence PCIe HPA controller by adding
-> the required callback functions. Update the common functions for
-> RP and EP configuration. Invoke the relevant callback functions
-> for platform probe of PCIe controller using the callback function.
-> Update the support for TI J721 boards to use the updated Cadence
-> PCIe controller code.
-> 
-> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
-> Co-developed-by: Hans Zhang <hans.zhang@cixtech.com>
-> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
-> ---
->  drivers/pci/controller/cadence/pci-j721e.c    |  12 +
->  .../pci/controller/cadence/pcie-cadence-ep.c  |  29 +-
->  .../controller/cadence/pcie-cadence-host.c    | 263 ++++++++++++++++--
->  .../controller/cadence/pcie-cadence-plat.c    |  27 +-
->  drivers/pci/controller/cadence/pcie-cadence.c | 197 ++++++++++++-
->  drivers/pci/controller/cadence/pcie-cadence.h |  11 +-
->  6 files changed, 495 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> index ef1cfdae33bb..154b36c30101 100644
-> --- a/drivers/pci/controller/cadence/pci-j721e.c
-> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> @@ -164,6 +164,14 @@ static const struct cdns_pcie_ops j721e_pcie_ops = {
->  	.start_link = j721e_pcie_start_link,
->  	.stop_link = j721e_pcie_stop_link,
->  	.link_up = j721e_pcie_link_up,
-> +	.host_init_root_port = cdns_pcie_host_init_root_port,
-> +	.host_bar_ib_config = cdns_pcie_host_bar_ib_config,
-> +	.host_init_address_translation = cdns_pcie_host_init_address_translation,
-> +	.detect_quiet_min_delay_set = cdns_pcie_detect_quiet_min_delay_set,
-> +	.set_outbound_region = cdns_pcie_set_outbound_region,
-> +	.set_outbound_region_for_normal_msg =
-> +					    cdns_pcie_set_outbound_region_for_normal_msg,
-> +	.reset_outbound_region = cdns_pcie_reset_outbound_region,
+Linus,
 
-How did you resolve Rob's comments?
+The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
 
-These were repeated I think three times finally with:
+  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
 
-"Please listen when I say we do not want the ops method used in other
-drivers. "
+are available in the Git repository at:
 
-I think you just send the same ignoring previous discussion which is the
-shortest way to get yourself NAKed.
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
+for you to fetch changes up to 2d7124941a273c7233849a7a2bbfbeb7e28f1caa:
 
-Best regards,
-Krzysztof
+  Merge tag 'kvmarm-fixes-6.15-2' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2025-04-24 13:28:53 -0400)
+
+Compared to last week's botched attempt, this includes your suggestion
+to make kvm_arch_has_irq_bypass() inline and a new ARM fix.
+
+Paolo
+
+----------------------------------------------------------------
+ARM:
+
+* Single fix for broken usage of 'multi-MIDR' infrastructure in PI
+  code, adding an open-coded erratum check for everyone's favorite pile
+  of sand: Cavium ThunderX
+
+x86:
+
+* Bugfixes from a planned posted interrupt rework
+
+* Do not use kvm_rip_read() unconditionally to cater for guests
+  with inaccessible register state.
+
+----------------------------------------------------------------
+Adrian Hunter (2):
+      KVM: x86: Do not use kvm_rip_read() unconditionally in KVM tracepoints
+      KVM: x86: Do not use kvm_rip_read() unconditionally for KVM_PROFILING
+
+Marc Zyngier (1):
+      arm64: Rework checks for broken Cavium HW in the PI code
+
+Paolo Bonzini (2):
+      KVM: arm64, x86: make kvm_arch_has_irq_bypass() inline
+      Merge tag 'kvmarm-fixes-6.15-2' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
+
+Sean Christopherson (8):
+      KVM: SVM: Don't update IRTEs if APICv/AVIC is disabled
+      KVM: SVM: Allocate IR data using atomic allocation
+      KVM: x86: Reset IRTE to host control if *new* route isn't postable
+      KVM: x86: Explicitly treat routing entry type changes as changes
+      KVM: x86: Take irqfds.lock when adding/deleting IRQ bypass producer
+      iommu/amd: Return an error if vCPU affinity is set for non-vCPU IRTE
+      iommu/amd: WARN if KVM attempts to set vCPU affinity without posted intrrupts
+      KVM: SVM: WARN if an invalid posted interrupt IRTE entry is added
+
+ arch/arm64/include/asm/kvm_host.h |  5 +++
+ arch/arm64/include/asm/mmu.h      | 11 -------
+ arch/arm64/kernel/cpu_errata.c    |  2 +-
+ arch/arm64/kernel/image-vars.h    |  4 ---
+ arch/arm64/kernel/pi/map_kernel.c | 25 +++++++++++++-
+ arch/arm64/kvm/arm.c              |  5 ---
+ arch/x86/include/asm/kvm_host.h   |  6 ++++
+ arch/x86/kvm/svm/avic.c           | 68 +++++++++++++++++++++------------------
+ arch/x86/kvm/trace.h              | 13 ++++++--
+ arch/x86/kvm/vmx/posted_intr.c    | 28 ++++++----------
+ arch/x86/kvm/x86.c                | 28 ++++++++++------
+ drivers/iommu/amd/iommu.c         | 15 +++------
+ 12 files changed, 116 insertions(+), 94 deletions(-)
+
 
