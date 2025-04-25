@@ -1,151 +1,182 @@
-Return-Path: <linux-kernel+bounces-620532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F57A9CBF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:46:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7932DA9CBFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9244A74B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C849E3ED4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B727257AED;
-	Fri, 25 Apr 2025 14:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17548258CEF;
+	Fri, 25 Apr 2025 14:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZZyu96I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z79926m5"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C0128EC;
-	Fri, 25 Apr 2025 14:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F11B24BC10
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592406; cv=none; b=JN5qGqdLHhBCHlNXkbkpLOjDLbetLGmln4VQBqRUkRLQ7fzLBr7AzUC3gZjgcqEdZG+l9L6vMPorVRCV6vsxZ1yFS2WvRWMgG53UltzSJPuAt7jG/eSau9MblfDMFAHbFE3fMwGXB6G6Kb74Jl7KUFkPrQgQUp4p6VQGW01Onws=
+	t=1745592444; cv=none; b=GmeiBzx6jwOpePnOgrhHu3L78CiLuTNOh88K3kR06/Lp7rHs25Wbe10jUcW9xb9RhYgOoLm97lJijnxeXeFYDNHpp6qIBvPtEoc11qc/NzUUWIk+3jNOU+Mnn1qKtb8lwPqtq8sZOV60HcFYPnOcpkwUlWf0l2+28AeaCx/5XdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745592406; c=relaxed/simple;
-	bh=KHMe3OlGoGnWcRJInhRahIcJzYzyZrBrXPmSKdqnqVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dUx3dp6j/hlkf8JFtk9xBcp5LGf84q3VK6I2FNAKsvf1c59bPvmugrQiN4gVg8tFqm7ZEQxPHKrUtSDKs9JrVVjK6dPrf8yHbM4ztgw4s0AYQxv3civbbpkY0Bf68dqgsfK80kyrQCeuejT0GvqdrLTyFxFFrvjqYaSpJtDkS6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZZyu96I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1492CC4CEE4;
-	Fri, 25 Apr 2025 14:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745592405;
-	bh=KHMe3OlGoGnWcRJInhRahIcJzYzyZrBrXPmSKdqnqVU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=GZZyu96IMNdT1z0KhNQMJNel37QXrrRT2E18XI6r5HmIC5hmAImGK8Pp2um1bZCdd
-	 VdffQwW8aPOA4Qc+dlGKODCGamFqfxtM+Gomc0J49kJzKFlxfOCAsT8/wp/JzazdX2
-	 rJcCug3m1JSCmRNuzOpMPFUE/6BCR39HPTzqd4FDsJ3xH3Z1KKtG97vNlYaZQ2DxTw
-	 gJedKQHg7jYdGNwtLMwAMAcb1g57S5zUBw0gpizufJdwELCa8mnaBLkIYoI4kiT2St
-	 y3I4Ad5Z6HsIFvqui9Ni9zWCrHPjBLN0Bm0TR4TDlF6T2hyzjaVzodbjYbl60b+cx3
-	 5H96lN2rKkmrA==
-Message-ID: <fa054136-961e-4a0f-a2cb-cdd393c3b022@kernel.org>
-Date: Fri, 25 Apr 2025 16:46:41 +0200
+	s=arc-20240116; t=1745592444; c=relaxed/simple;
+	bh=fPAudd0pNdvSq70SAtg2Ygg2O9zP1xgrVtnfFsN3fh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBRCZ0mvRa1k1ytjBVldijKeSczp+PZRN7Hf4sIr2FEvhjrimYaoZeDVVbg9A5Ibhh0YtXoVdl1GVjCCqRpxN0GkepggDkRWi1tUN5qTyU53Apj2KMuuY9HFcovJExgT1dV4nWVABPd+mPKOrNktrArIMbJxIQBDR6nP+vnuSjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z79926m5; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-224191d92e4so26751585ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745592442; x=1746197242; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tMds6CmcdH779xJQucw6BprWPQmeQRUV0l1L2HM0TV4=;
+        b=z79926m52YRywzSBxfcdXJ1kijC9lg3l4zWjYj9kuoguWruPIbvxz/h/oV0azWjgSt
+         prZMO2VkKjmKNWz3a8F8SegNkdWtFM6/+/zphXyds/jpIr60vasdyAP0ERwPvQv+foT9
+         Xg3gDXQpgK9W9MHw4fsYjySCMoFJD/Mhw0YYwiAC6gjyRbgErqbJ4sLW/owpNtIB0mop
+         VlKDQqUdIFtnc1JShaROE2sBJfzr1kpvB+VOuQTGvU3q/TWHOxXzUktlKuAwD/DfK7Uu
+         2hoiF405FR551wBJPZJbBLCb0YcqNcqq6DtLcUcdBXK+eq6q+4LN49S4RfOtr6tkixdY
+         hn5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745592442; x=1746197242;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tMds6CmcdH779xJQucw6BprWPQmeQRUV0l1L2HM0TV4=;
+        b=mX0KEpcKfNNnbvFCXtHrlyT+dilnWcOdKYUIE4/Obv9rM4vjOntb0tlov/pOHCWCrL
+         CejpLRoqE9gLmuzIQ9APlmttyxeNG4i18wEzzPj76Zojj0isPwEhGaLx7hbtwxUi0MNG
+         RO8pv6su0Xez0ePBjTM5Iq6W4Ha5X5EaBaAlXiGhm7PnHnTlXKjudxeJ4mzYDlfjX1y+
+         jKCO976HISabP9cG9vWV7U9bb2Th7xepTCpc94/3vYsvp83ZnJwv2METF9tip2YrAicp
+         Xhs26gK2mRBvqx0CFE4BvfR8LZ9v/rcTXdKqmOluNuT0vAjXdQ9KSkd8W1uJjFVE4Jlb
+         6F8w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1LGsTfV0kzhM89T/ie96M3YPs8iLVLOSd4JX4GIzQyK2Sfo85TYlSjROqED9TWR6p6kJT3usFJG8/U1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfnAOhjoJMZY+lB537knk7w2gVjiA0YB/b6T6BFAXTFtZ58uy8
+	gDfD93+eQ5ZX6oRksiRZE/lFlhGYcsM8Ul+DN/5k0biYJeWhS2X8Sy4IT9TZaQ==
+X-Gm-Gg: ASbGnct0wUwCkMlf/pg8TuUwcuxiS5Ay7x44SF9nWYDYCq52KZ3oZQ1qJpvTImkzCA/
+	nOpBy2h42if8TF6+bjgxGtXj1XYqXCfy12P1xvjMRfUuAP4EtwsGkDhFerngFbJ0zS2ydiUxSIm
+	OQj6Wps/lS+DnVQ3gtqjeP/G2U9nhvK6ZSEN6je7n693xTaiwhOPLklyezOeaOY0tooYq52f0XP
+	LjIP+WrghHjnviV9FRexh2TsaoMPxCdA+7EQJPQZUUDz+EKLucD8tQUlcdSMZvZANblPNoVDznI
+	IvNDMm8aOiRiO53MNniOMIq0ps1/Cy/hVE+RtfOG7GW0gs63i5ea
+X-Google-Smtp-Source: AGHT+IGlccZ19AfD3jdnufZp8LMe8Yz57J7vptNmjyBiI0lLh+m+16U65auA9epwL1IrRm+aNvHWgg==
+X-Received: by 2002:a17:902:e805:b0:223:5de7:6c81 with SMTP id d9443c01a7336-22dbf5f34f9mr38226475ad.27.1745592441695;
+        Fri, 25 Apr 2025 07:47:21 -0700 (PDT)
+Received: from thinkpad ([120.56.201.179])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db521614dsm32962505ad.215.2025.04.25.07.47.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 07:47:21 -0700 (PDT)
+Date: Fri, 25 Apr 2025 20:17:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, 
+	Jeff Johnson <jjohnson@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Yan Zhen <yanzhen@vivo.com>, Youssef Samir <quic_yabdulra@quicinc.com>, 
+	Qiang Yu <quic_qianyu@quicinc.com>, Alex Elder <elder@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com, 
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+Subject: Re: [PATCH v2] bus: mhi: host: don't free bhie tables during
+ suspend/hibernation
+Message-ID: <eypd4xigl3yydfj47usazm7ca3kplz5w7bkk7qf6piks4vtaa4@rmecjnlfix66>
+References: <20250410145704.207969-1-usama.anjum@collabora.com>
+ <h2wv7drxntokziiwbzjw5xjzbctbomp6cfcba7ppfbih6o7so7@p6dazv32xfx4>
+ <1136c7cb-1c7b-410b-93d2-c74aec939196@collabora.com>
+ <cfb3sntvqhupyhm2m5tevpsl77r6mzl2aqzr3wtxvr22bezmp3@qjh7ftr2kdjy>
+ <4d87ef88-3533-4255-adc6-6c268818fe25@collabora.com>
+ <y5odcxzms6mwpz5bdxhbjxo7p6whsdgwm772usmmzqobhf6nam@p4ul7vn7d3an>
+ <a403eb91-c90d-444c-b508-c428a8ef1447@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/10] ARM: dts: exynos: Add rtc clock definitions for
- MAX77686 PMIC for Exynos4412 Odroid
-To: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- "open list:MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BO..."
- <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-samsung-soc@vger.kernel.org>
-References: <20250425132727.5160-1-linux.amoon@gmail.com>
- <20250425132727.5160-3-linux.amoon@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250425132727.5160-3-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a403eb91-c90d-444c-b508-c428a8ef1447@collabora.com>
 
-On 25/04/2025 15:26, Anand Moon wrote:
-> The MAX77686A includes a crystal driver with an external load capacitance.
-> When enabled, the crystal driver starts in low power mode. The
-> LowJitterMode bit controls the crystal driver, allowing it to switch
-> between low power mode and low jitter mode (high power mode).
-> Setting the LowJitterMode bit to 1 activates low jitter mode on
-> three channels simultaneously. These three 32khz buffer outputs
-> (32KHAP, 32KHCP, P32KH) are independently enabled/disabled over I2C.
+On Fri, Apr 25, 2025 at 04:41:43PM +0500, Muhammad Usama Anjum wrote:
+> On 4/25/25 1:59 PM, Manivannan Sadhasivam wrote:
+> > On Fri, Apr 25, 2025 at 12:42:38PM +0500, Muhammad Usama Anjum wrote:
+> >> On 4/25/25 12:32 PM, Manivannan Sadhasivam wrote:
+> >>> On Fri, Apr 25, 2025 at 12:14:39PM +0500, Muhammad Usama Anjum wrote:
+> >>>> On 4/25/25 12:04 PM, Manivannan Sadhasivam wrote:
+> >>>>> On Thu, Apr 10, 2025 at 07:56:54PM +0500, Muhammad Usama Anjum wrote:
+> >>>>>> Fix dma_direct_alloc() failure at resume time during bhie_table
+> >>>>>> allocation. There is a crash report where at resume time, the memory
+> >>>>>> from the dma doesn't get allocated and MHI fails to re-initialize.
+> >>>>>> There may be fragmentation of some kind which fails the allocation
+> >>>>>> call.
+> >>>>>>
+> >>>>>
+> >>>>> If dma_direct_alloc() fails, then it is a platform limitation/issue. We cannot
+> >>>>> workaround that in the device drivers. What is the guarantee that other drivers
+> >>>>> will also continue to work? Will you go ahead and patch all of them which
+> >>>>> release memory during suspend?
+> >>>>>
+> >>>>> Please investigate why the allocation fails. Even this is not a device issue, so
+> >>>>> we cannot add quirks :/
+> >>>> This isn't a platform specific quirk. We are only hitting it because
+> >>>> there is high memory pressure during suspend/resume. This dma allocation
+> >>>> failure can happen with memory pressure on any device.
+> >>>>
+> >>>
+> >>> Yes.
+> >> Thanks for understanding.
+> >>
+> >>>
+> >>>> The purpose of this patch is just to make driver more robust to memory
+> >>>> pressure during resume.
+> >>>>
+> >>>> I'm not sure about MHI. But other drivers already have such patches as
+> >>>> dma_direct_alloc() is susceptible to failures when memory pressure is
+> >>>> high. This patch was motivated from ath12k [1] and ath11k [2].
+> >>>>
+> >>>
+> >>> Even if we patch the MHI driver, the issue is going to trip some other driver.
+> >>> How does the DMA memory goes low during resume? So some other driver is
+> >>> consuming more than it did during probe()?
+> >> Think it like this. The first probe happens just after boot. Most of the
+> >> RAM was empty. Then let's say user launches applications which not only
+> >> consume entire RAM but also the Swap. The DMA memory area is the first
+> >> ~4GB on x86_64 (if I'm not mistaken). Now at resume time when we want to
+> >> allocate memory from dma, it may not be available entirely or because of
+> >> fragmentation we cannot allocate that much contiguous memory.
+> >>
+> > 
+> > Looks like you have a workload that consumes the limited DMA coherent memory.
+> > Most likely the GPU applications I think.
+> > 
+> >> In our testing and real world cases, right now only wifi driver is
+> >> misbehaving. Wifi is also very important. So we are hoping to make wifi
+> >> driver robust.
+> >>
+> > 
+> > Sounds fair. If you want to move forward, please modify the exisiting
+> > mhi_power_down_keep_dev() to include this partial unprepare as well:
+> > 
+> > mhi_power_down_unprepare_keep_dev()
+> > 
+> > Since both APIs are anyway going to be used together, I don't see a need to
+> > introduce yet another API.
+> I've looked at usages of mhi_power_down_keep_dev(). Its getting used by
+> ath12k and ath11k both. We would have to look at ath12k as well before
+> we can change mhi_power_down_keep_dev(). Unfortunately, I don't have
+> device using ath12k at hand.
 > 
-> The 32khz_ap output is typically routed to the AP Processor, while the
-> 32khz_cp and 32khz_pmic outputs are intended for BT, WLAN, BB,
-> or peripheral chipsets.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> index 93ddbd4b0a18..03943c666d11 100644
-> --- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> @@ -289,6 +289,13 @@ max77686: pmic@9 {
->  		reg = <0x09>;
->  		#clock-cells = <1>;
->  
-> +		max77686_osc: clocks {
-> +			compatible = "max77686-rtc";
 
-I don't believe this works.
+ath12k conversion looks trivial. So please go ahead with this new API conversion
+for that driver as well.
 
-Best regards,
-Krzysztof
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
