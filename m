@@ -1,158 +1,258 @@
-Return-Path: <linux-kernel+bounces-620976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB4FA9D230
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22658A9D247
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1093A9DBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394161C012F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9896621FF28;
-	Fri, 25 Apr 2025 19:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABAE21E08D;
+	Fri, 25 Apr 2025 19:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usGyUZ2V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O+t1bQU4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1C321D3E2
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06473202C31
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745610523; cv=none; b=PyBvF4dyMM5ThA4W3zrcNEw4Va1euGwDpxKOokL6F+pEKD+8N9cEo/78m4nbSSY5F11el2F0Ard5Q3I3hi722a+eH86y8rmAYusrndFVcHitr8hBKTg0SD+QaHvyoF/PXEiyNDVOHhDoanEzwu3ydjvi9cBy7D7lKUhNy2PJrvw=
+	t=1745610538; cv=none; b=GmQe6bZIFwdE8rE5gL/R766SrOrOfUTbyTsd1GjTiq2PCwwv3WvXFzJazlYjS0IIDiQlxjzynog4rADeLnjLFABiOmjrr5l4hTrNdq68z/IowFbWbGuaLKxGumt7DWQl9FYzB5HUNdONtDeKlnOKq6ZIHHxejQu8W47tKO/KHAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745610523; c=relaxed/simple;
-	bh=aYZLgVf33g9YnHu5Xc58VtQRMe/tEe5fFoCFrGnuBqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ikRM6oqFzaFVesCLQ8pYeI8te2KfYS4wgqqDT6ozRHLfgE/riFQP2Gday3LlJBxM8CsDrBdoGzIaSPfLt7HhX7nv/QggF+Vek3Fe87SyD7frnOLx34pndzK2myPa/g5NmJravmgUlgEMmwn7ap8Zp/Gg8WxJUH9j08F1BZWkj78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usGyUZ2V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47656C4CEE4;
-	Fri, 25 Apr 2025 19:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745610521;
-	bh=aYZLgVf33g9YnHu5Xc58VtQRMe/tEe5fFoCFrGnuBqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=usGyUZ2VYZNrUz2/yUuIgsIkGjVlnl+RtE19TNcgISl1WhDTKjwS/vJDPic8Z9DNM
-	 PQumhvpl0QABm6c/rFLkJeAaKlyws/nmrAk6xg0DJhY9OSHOhBqeLlBVWnnVpaI/Gn
-	 mqELO99v5gHDI1lWQtF5MgIU14X3kajM7RZuZDXNvEaUJ8LqexcdNDqkcMkMB2gO3/
-	 9bfOok1FpY7qwB09FkV6PA46sWHpEIsroLSc3AVnIdK7RATcvCT37BNA7dQKPh4D9e
-	 umBMa8XTjjb3sQxMa5/Gr6JDHG05al+n7WmQUpsMg1LlHcU9YUSkNk1Bf8Ir221BGW
-	 N1y9eKbFmcPhA==
-Date: Fri, 25 Apr 2025 09:48:40 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/12] sched_ext: Use dynamic allocation for scx_sched
-Message-ID: <aAvnGKR7ThrRiRQP@slm.duckdns.org>
-References: <20250423234542.1890867-1-tj@kernel.org>
- <20250423234542.1890867-4-tj@kernel.org>
- <aAtgdcpNW6Rj4m_f@gpd3>
+	s=arc-20240116; t=1745610538; c=relaxed/simple;
+	bh=aqtGkRqBbu1U2b+axzTR7k2vGKCBOVbewJQT47q4o40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ir7I8/2Moi3vlEdgAjFA6ozYAD9CRhii19Fqxopf43lN6Nw7+e0v+29pt0AvXz6f0qiY4vFEOaqoduNvS9PRuMYou+NwWrg14oQQcBPBAJXtZfNeuvtmPga0EstBkUSGOx4Tn+/sSTcTjeS7IcIw3pGt09Tn/2Q1X+RYHyV52Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O+t1bQU4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745610535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Iyio0+rdGGHZ3rJEpArzIbX1q77xWWWNHXXnWo3MTWI=;
+	b=O+t1bQU41M+2cIK0CrRj1GH+/nN8ZWeWkjCX7E9U9RKtm9WyRVhGIz06TLtkbBiFKkMA67
+	/Bwd9mk2ovTPx16+Uj2oUU2H7rtUPNhuehfRTi+jVINHC3t1G+taZhnAjMcE2tv0LToRMs
+	OImxAX0pLQd6uEiC81mKlse7AghMK0Y=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-gT8P-k62NiK-ZaX5fI25vw-1; Fri, 25 Apr 2025 15:48:54 -0400
+X-MC-Unique: gT8P-k62NiK-ZaX5fI25vw-1
+X-Mimecast-MFC-AGG-ID: gT8P-k62NiK-ZaX5fI25vw_1745610533
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d3b211d0eso16356855e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:48:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745610533; x=1746215333;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Iyio0+rdGGHZ3rJEpArzIbX1q77xWWWNHXXnWo3MTWI=;
+        b=llNLFvixpRMidUzY6YHYNSLa3spZaFxT4gbmUsu7dAUus/kIWVA6JNO2xwM65Q9f/j
+         cC7fAGZbGivD30OG2Y6XH5g2IiN+u1Mkcq3MeLvx3/sS+fXmo0eKr0LafeMpx5gLAhyV
+         wvTywc/9sikOXtUl65oMOceEjFZl6vriWWqFq3BUOfYSIzvt3YTLdcIzf9uqMuS8Q6VR
+         RByhguQa1mirK/QhGg/7lbAaHXAU+nUsTz9U7wYGAKOQXc2PVeCM6MXmDZ72VPKa41B1
+         rwTKVk4VsjX+g3/BjVkgq8h/TyrVVJCK6dHFVkObnVSdSNTbMN26AZapTGv1/76yUDPb
+         3yYQ==
+X-Gm-Message-State: AOJu0YyUDOUSrhdk4MHXazPeIaOJYXLVqBMZQZDrD0BxV/rPI60Ee9EU
+	NR22SKE3c66yaBu4IVTEyXCONZgmPqSoYOpiNy8ySxphCej+a/fuHS7+lCJAGPaZYZusgyJrc+p
+	vQX83zUyLgnrWd6xm3AWC8UhThm1sCbEnh5gzfuWEnKaYz5aORQRe43BzYC7poQ==
+X-Gm-Gg: ASbGncs2KgsSkOuilFh3gJCjxJaArG0nIfLuSWI9Ir8Q42IEEkzuvMz3Ksk1tOnHwx3
+	LUqFOkd5Lf+I2ZVm487TxAsD0aQX9mRo0jm675oSUjPgpPatj+X/t4xkS7kD/jVcHDz6MsHq4Vq
+	Sh+cC+ySLOh9vm46oTSyl92uJcReWRsyUlz5jXzEcWiCFIshvZq0EGy+mvX//eixahIUwNAZmoo
+	B95CC4wkwoSVex5lgBR/UVFirzt0rH70nsOOYIqK28xsgQ5KfmA0ZTTA2PrgndNsA+fgXVigoQj
+	Ngljn64BrSDzGcSKO8za6HhoQzIv1Zk1qWjIYOC7Fw==
+X-Received: by 2002:a05:600c:45d0:b0:43d:5264:3cf0 with SMTP id 5b1f17b1804b1-4409c4de02dmr67828725e9.11.1745610533009;
+        Fri, 25 Apr 2025 12:48:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCFfrtzSc+UtPRGo0BIvDxCf3n2hnwRdIbAoPATpGWLsnc5w/p+CDOEbj1RMEvVgHKgNRMBw==
+X-Received: by 2002:a05:600c:45d0:b0:43d:5264:3cf0 with SMTP id 5b1f17b1804b1-4409c4de02dmr67828555e9.11.1745610532645;
+        Fri, 25 Apr 2025 12:48:52 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff23df8.dip0.t-ipconnect.de. [79.242.61.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5310ad2sm34335985e9.21.2025.04.25.12.48.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 12:48:52 -0700 (PDT)
+Message-ID: <78f88303-6b00-42cf-8977-bf7541fa45a9@redhat.com>
+Date: Fri, 25 Apr 2025 21:48:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAtgdcpNW6Rj4m_f@gpd3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 02/11] mm: convert track_pfn_insert() to
+ pfnmap_sanitize_pgprot()
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-trace-kernel@vger.kernel.org, Dave Hansen
+ <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ "H. Peter Anvin" <hpa@zytor.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250425081715.1341199-1-david@redhat.com>
+ <20250425081715.1341199-3-david@redhat.com> <aAvjJOmvm5GsZ-JN@x1.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aAvjJOmvm5GsZ-JN@x1.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 25, 2025 at 12:14:13PM +0200, Andrea Righi wrote:
-...
-> >  static void bpf_scx_unreg(void *kdata, struct bpf_link *link)
-> >  {
-> > +	struct scx_sched *sch = scx_root;
-> > +
-> >  	scx_disable(SCX_EXIT_UNREG);
-> >  	kthread_flush_work(&scx_disable_work);
-> > +	kobject_put(&sch->kobj);
-> >  }
+On 25.04.25 21:31, Peter Xu wrote:
+> On Fri, Apr 25, 2025 at 10:17:06AM +0200, David Hildenbrand wrote:
+>> ... by factoring it out from track_pfn_remap().
+>>
+>> For PMDs/PUDs, actually check the full range, and trigger a fallback
+>> if we run into this "different memory types / cachemodes" scenario.
 > 
-> We probably need to check sch != NULL here, I was able to trigger this bug
-> (using a buggy rustland):
-> 
-> [    5.048913] sched_ext: rustland: invalid CPU -16 from ops.select_cpu()
-> [    5.048984]    ops_cpu_valid+0x4a/0x60
-> [    5.049039]    select_task_rq_scx+0x10f/0x200
-> [    5.049100]    try_to_wake_up+0x17a/0x890
-> [    5.049149]    ep_autoremove_wake_function+0x12/0x40
-> [    5.049211]    __wake_up_common+0x7f/0xc0
-> [    5.049259]    __wake_up+0x36/0x60
-> [    5.049306]    ep_poll_callback+0x265/0x320
-> [    5.049354]    __wake_up_common+0x7f/0xc0
-> [    5.049401]    __wake_up+0x36/0x60
-> [    5.049448]    __send_signal_locked+0x71e/0x740
-> [    5.049508]    group_send_sig_info+0xf3/0x1b0
-> [    5.049567]    kill_pid_info_type+0x79/0x1a0
-> [    5.049627]    kill_proc_info+0x5d/0x110
-> [    5.049674]    __x64_sys_kill+0x91/0xc0
-> [    5.049789]    do_syscall_64+0xbb/0x1d0
-> [    5.049855]    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> [    5.050315] BUG: kernel NULL pointer dereference, address: 00000000000003b0
-> [    5.050386] #PF: supervisor read access in kernel mode
-> [    5.050439] #PF: error_code(0x0000) - not-present page
-> [    5.050488] PGD 0 P4D 0
-> [    5.050523] Oops: Oops: 0000 [#1] SMP NOPTI
-> [    5.050571] CPU: 5 UID: 0 PID: 284 Comm: scx_rustland Not tainted 6.14.0-virtme #27 PREEMPT(full)
-> [    5.050670] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-> [    5.050782] RIP: 0010:kthread_flush_work+0x60/0x140
-> [    5.050847] Code: 80 00 00 00 31 c0 48 8d 7c 24 18 48 89 24 24 48 89 64 24 08 48 c7 44 24 10 30 e6 58 b0 f3 48 ab 48 8d 7c 24 30 e8 40 6c 05 00 <48> 8b 6b 18 48 85 ed 74 69 4c 8d 65 08 4c 89 e7 e8 0b 0c d3 00 48
-> [    5.051021] RSP: 0018:ffffad01816f7e08 EFLAGS: 00010246
-> [    5.051066] RAX: 0000000000000000 RBX: 0000000000000398 RCX: 0000000000000000
-> [    5.051131] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffffb2f34d80
-> [    5.051196] RBP: ffff9b140268e800 R08: 0000000000000002 R09: 0000000000000000
-> [    5.051260] R10: 0000000000000001 R11: 0000000000000000 R12: ffff9b14804c1ea0
-> [    5.051325] R13: ffff9b1401b6cc20 R14: ffff9b1403965728 R15: 0000000000000000
-> [    5.051393] FS:  00007f1ff0550800(0000) GS:ffff9b14cbdb3000(0000) knlGS:0000000000000000
-> [    5.051463] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    5.051516] CR2: 00000000000003b0 CR3: 000000000553e002 CR4: 0000000000772ef0
-> [    5.051582] PKRU: 55555554
-> [    5.051606] Call Trace:
-> [    5.051634]  <TASK>
-> [    5.051665]  ? __pfx_kthread_flush_work_fn+0x10/0x10
-> [    5.051726]  bpf_scx_unreg+0x27/0x40
-> [    5.051773]  bpf_struct_ops_map_link_dealloc+0x36/0x50
-> [    5.051824]  bpf_link_release+0x18/0x20
-> [    5.051863]  __fput+0xf8/0x2c0
-> [    5.051905]  __x64_sys_close+0x3d/0x80
-> [    5.051943]  do_syscall_64+0xbb/0x1d0
-> [    5.051983]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Changing bpf_scx_unreg() as following fixed the bug for me:
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index d963aa5c99e1a..0e52a8dbd593e 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -5752,11 +5752,17 @@ static int bpf_scx_reg(void *kdata, struct bpf_link *link)
->  
->  static void bpf_scx_unreg(void *kdata, struct bpf_link *link)
->  {
-> -	struct scx_sched *sch = scx_root;
-> +	struct scx_sched *sch;
->  
->  	scx_disable(SCX_EXIT_UNREG);
-> -	kthread_flush_work(&sch->disable_work);
-> -	kobject_put(&sch->kobj);
-> +
-> +	rcu_read_lock();
-> +	sch = rcu_dereference(scx_root);
-> +	if (sch) {
-> +		kthread_flush_work(&sch->disable_work);
-> +		kobject_put(&sch->kobj);
-> +	}
-> +	rcu_read_unlock();
->  }
+> The current patch looks like to still pass PAGE_SIZE into the new helper at
+> all track_pfn_insert() call sites, so it seems this comment does not 100%
+> match with the code?  Or I may have misread somewhere.
 
-Oh I didn't expect that. As scx_root can only be written by the preceding
-bpf_scx_reg(), I don't think we need rcu_read_lock() here as subtle as that
-may be. I'll update the code.
+No, you're right, while reshuffling the patches I forgot to add the 
+actual PMD/PUD size.
 
-Thanks.
+> 
+> Maybe it's still easier to keep the single-pfn lookup to never fail..  more
+> below.
+> 
 
+[...]
+
+>>   /*
+>> @@ -1556,8 +1553,23 @@ static inline void untrack_pfn_clear(struct vm_area_struct *vma)
+>>   extern int track_pfn_remap(struct vm_area_struct *vma, pgprot_t *prot,
+>>   			   unsigned long pfn, unsigned long addr,
+>>   			   unsigned long size);
+>> -extern void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+>> -			     pfn_t pfn);
+>> +
+>> +/**
+>> + * pfnmap_sanitize_pgprot - sanitize the pgprot for a pfn range
+> 
+> Nit: s/sanitize/update|setup|.../?
+> 
+> But maybe you have good reason to use sanitize.  No strong opinions.
+
+What it does on PAT (only implementation so far ...) is looking up the 
+memory type to select the caching mode that can be use.
+
+"sanitize" was IMHO a good fit, because we must make sure that we don't 
+use the wrong caching mode.
+
+update/setup/... don't make that quite clear. Any other suggestions?
+
+> 
+>> + * @pfn: the start of the pfn range
+>> + * @size: the size of the pfn range
+>> + * @prot: the pgprot to sanitize
+>> + *
+>> + * Sanitize the given pgprot for a pfn range, for example, adjusting the
+>> + * cachemode.
+>> + *
+>> + * This function cannot fail for a single page, but can fail for multiple
+>> + * pages.
+>> + *
+>> + * Returns 0 on success and -EINVAL on error.
+>> + */
+>> +int pfnmap_sanitize_pgprot(unsigned long pfn, unsigned long size,
+>> +		pgprot_t *prot);
+>>   extern int track_pfn_copy(struct vm_area_struct *dst_vma,
+>>   		struct vm_area_struct *src_vma, unsigned long *pfn);
+>>   extern void untrack_pfn_copy(struct vm_area_struct *dst_vma,
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index fdcf0a6049b9f..b8ae5e1493315 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -1455,7 +1455,9 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+>>   			return VM_FAULT_OOM;
+>>   	}
+>>   
+>> -	track_pfn_insert(vma, &pgprot, pfn);
+>> +	if (pfnmap_sanitize_pgprot(pfn_t_to_pfn(pfn), PAGE_SIZE, &pgprot))
+>> +		return VM_FAULT_FALLBACK;
+> 
+> Would "pgtable" leak if it fails?  If it's PAGE_SIZE, IIUC it won't ever
+> trigger, though.
+> 
+> Maybe we could have a "void pfnmap_sanitize_pgprot_pfn(&pgprot, pfn)" to
+> replace track_pfn_insert() and never fail?  Dropping vma ref is definitely
+> a win already in all cases.
+
+It could be a simple wrapper around pfnmap_sanitize_pgprot(), yes. 
+That's certainly helpful for the single-page case.
+
+Regarding never failing here: we should check the whole range. We have 
+to make sure that none of the pages has a memory type / caching mode 
+that is incompatible with what we setup.
+
+
+Thanks a bunch for the review!
 -- 
-tejun
+Cheers,
+
+David / dhildenb
+
 
