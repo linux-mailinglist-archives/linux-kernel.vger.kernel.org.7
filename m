@@ -1,351 +1,306 @@
-Return-Path: <linux-kernel+bounces-620315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FBEA9C8C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:16:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FFEA9C8CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4983BA18E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:16:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5E867B3D41
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3032475F2;
-	Fri, 25 Apr 2025 12:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AB124BBFF;
+	Fri, 25 Apr 2025 12:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="vzVhMsX8"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sRFvOrVP"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B07218EBA
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA6242914
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745583383; cv=none; b=TYWwihsTpyZBpOQ02r+WWfMf/73VAUgWwVFRgxOFKzGEjkaihYVBvjF2fGX8t/1hACMobp58LYfaUXxFs9QkPJz4ONe35PZS3NcxaISf5jcfGveKu16fn1bXlG/Kxj8dduMXFoG5Oh10TWClxowDDj2YcZWtVqp7+pdyjQ9i7NA=
+	t=1745583460; cv=none; b=lISJFrYI1rL69JPMA6d9MQ4jX1caAmkIaq+o4we5vYT+GGuePUEFUjEst1qWaiT7ZP96ytHFlmSjeFL+qMOeMf5NWWzLvxhQhkug09Ehdwz+CF4HSKJN19svOK5YN+rJSxbeSubajL0Bi/B2x8hpMv2kl+YAuMTmI/AqIQZzfOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745583383; c=relaxed/simple;
-	bh=AGdsNfPOT4ZJ36IEZCGFqThGojslbdmK8SRR0ccO4M4=;
+	s=arc-20240116; t=1745583460; c=relaxed/simple;
+	bh=PrhApg1ld6f3w5PMm+xwxo8UUKj9Su2NGanHz9pKXwU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iCDBrRFOs0jKryAv3Ey5qhi8nKcUQZcO3z85udo/8gt8BhErG2Tur5x5070/KmWGQcxVB76hKmX4bRJMlk6mBb5Su+1qEtShm1EtarTkg3yNbEPDBsa966mVFKoVEhFkz6/9E7bg1ilT+P8+b4bFtC7jx5ogQGFWueYgolEGUiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=vzVhMsX8; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3cfce97a3d9so9763145ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 05:16:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=O+IiwH4qpHsD65FtEIoDGStH9/w8O8X49FfBEhQ3y7CDt0fNUur5l9deAofaORg0kB3rz+lGnsgmSX1cuWoofEoe6Iemn5G8o7ug4rSTIHEB5Fr1msoImbJNzuk5pe1klfA4yGxrDJk9E+NBltoFtUVCTYahJtvP0q8/Z4eTDIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sRFvOrVP; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7082b3d2960so20712857b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 05:17:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1745583381; x=1746188181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sR1QWT7RZw6vjjuErAm9wdIpbaItJ2RsLcPIqcHp4h8=;
-        b=vzVhMsX8KKzNKROZCMAfudC9Ppa+2Ko9j1Qa7cq6qSqDOmYYL+YpMfDZZfPzuUtqAs
-         7IkJdGQBp8IeloQ1HC85d/BE+2cZI97IMCOvcjQgwM6LOgmTgx3C62YI2pqIhyGvkR62
-         cq1CQVCC20BzVdKXdsQ1cdrJwxtjHFtL0OpDXGwrphelFkhsvcbLOFHe8aYUytEnPMaf
-         cS+9xFZ/qc+eYwUleGXMbtGotoFWOAXfxv82QonQAYGZkxWOovinPu/FqgQTPc70Zjw/
-         B1ztEBs5GHpGs9TinciF4IyIcUXSnin6+umylixul00Bt+Epx7ZNcHzOrjdG1ZAFse5h
-         +WbA==
+        d=linaro.org; s=google; t=1745583457; x=1746188257; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MzOovnCFz7a1pN3eCV+0adUMbLsCWU/yLERT/IqWY78=;
+        b=sRFvOrVPGGE3lTUyZhKmlhAzbFIcU/4hMe3cPghPWRenzNwR7ID90ly8oEQba5bIfi
+         KjZvWWmx8qmhrlrXrQqaqDS4CIxBKLxdtEEUotRZ9fPy8bNm6rupE+NjDdZQD6IsL0Yp
+         ifgHamDAAsYBWI+PN7VpWU3igiVFLiuBGcMdK5IX/duS4Vk8JC0/rhUTn0qRqmo0DIz5
+         IbFAhLfJ2cK7Ho0xvvWd5SzJA8snyObDg/kiQnRvB1YJfQEreHjzDij4KC/bT1UpyUiC
+         XaKRN8S/RCK0e7JkjVmiiR1vdJbtRHcU/IjqOQPfeIvkl6piJfyGz1C2+kCPLl6JMM9o
+         Hn9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745583381; x=1746188181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sR1QWT7RZw6vjjuErAm9wdIpbaItJ2RsLcPIqcHp4h8=;
-        b=eHRzO8SzlyWmaQmxEBq4PaNLjZEZ72hgNQTGAzDIpvUa/rdliQgoHt1MZ2Edu3KW5e
-         7GM1+cMSdGzPJcZVAwWX5wdoVFQJa7z1vkcij9uDDXL4KU+d2ukPQ+8Xqq5nmPdNckW2
-         45usaewAcnaQJzzf4b899+9dM7QMf+MrO3dq5AcvqVPziu/I2dGP4+jIjawPat70BdpT
-         IK2C1hhw95FkWEALR9fLPxg8gGbjEnbwioKo+yeRQVnrJ7DD9CVEF9h+5Ykr9U47mNSt
-         4TjlOqnMCli/3oBttFhFjJRmAwzCFjlwVNfuTd25qZqReDB6wjmjPL2j0PBfE5OJChkO
-         LpUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+uwsPpKlEh3CeSwzInr0sR32hjuLCf2OLA3fWNUbPQNnrqcj6YO1o6AG4xIIsFRxg/UljV6LZMoR4FFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS2SMHq3U159yk0a71GS+PIM/60In0X0Km4FcBLBANf500ymy1
-	ZsGu4s704gwmB3H+lpbnMqPr/hK6cPTJl8SGOpAq8n58/iNFJQ9MC/z7j6XV8uYuiuuLIccSSWo
-	FFbg6pKTTrv5X1w+o8BHln3++SXGTQG/qhTnIKtFq3RHFs//6d5Y85Q==
-X-Gm-Gg: ASbGncu9g51gBxVL2TTAWH8W1X+QqgRW8OZXZkr4xZGajfuMlN+ZUYcn2QdGQcZsI0k
-	Kqh6F5VVMHOSrKPKkGtC/zyOXDNfcxI9siTkk6d5TYIghP6ZQ/pBXQSTOksztmaGF3yI+RXLAGK
-	GnBVBYtzLgfdunnEYaGLufUc4=
-X-Google-Smtp-Source: AGHT+IHUI0f5u3ysZDKjk7ru2v+4bEO8MrX1EvOnO6NfeJTcIQj/ItlgMUItxvWEQmMSKvrKfKiMcTX9TqwiJ6k+zKk=
-X-Received: by 2002:a05:6e02:154b:b0:3cf:bac5:d90c with SMTP id
- e9e14a558f8ab-3d93b5713bamr16983295ab.18.1745583380884; Fri, 25 Apr 2025
- 05:16:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745583457; x=1746188257;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MzOovnCFz7a1pN3eCV+0adUMbLsCWU/yLERT/IqWY78=;
+        b=tk1vR7jHCmAbIqJVZyg0Q7jAEmAq23UgOXg86i+qKVmkWe4b/sBvKImqsCizPlQH1V
+         DAXl2GfgdpDo3Ab4me2GitEDFa221TNLMgqUxT+JBuepz+bHdgRwQ0yT1lmqreJJw1Me
+         7/Kxiz63acq6M9bMt2ET64iyehL1AXAC9/PHJuPuUeZQpxkEJ37aTg+Tojb6/A4iK+QS
+         5WWwcao6W1/YjWPpbk3df+nBuPzkaSyEC7J4J+IxSAOU3MEdO7zRyODGg9DbyyXEV8qa
+         l/FrrTp00u49a5ao+aKit9osq09qqJyXW0StY09RkZvBu2p4QpgTwPRZMfr1e3K7r4NP
+         uZBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6wVuIVuJB6r8x2MBeLuQRzzQrJHd7ayOxw1VNcPjmTJK06BedUzP5ywqOv1M6pedF+06l1UFmvmwz/CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3vTqEnPhM6dO+Bv63g7cCkSTUbM5wnPmI3NrTGws/BO93Mp/q
+	lXv4zOyjmyzNL8kpcvc1EyUmIvLdQGbSuimWZRjisjEfpH75ltySM5S+/oNOnjVG8QehNLXQH/S
+	22NP0mA8HCr7Zkba6ch1u2aTnnUVBprpvLn5UDg==
+X-Gm-Gg: ASbGncvLFlHAYrg0v9FdgIBh7+c02aKGqP5ss2tqqjCEt8Cv1Usao/xmrNrQzJfvDXq
+	ou+lpT9hXEM/v2L5LTMRm6gnhVbD4MN9OWYohC4tUWiLzQEafqPqj57s9bm2E4lUPmzKEIFJH3k
+	Us8KUuc9ioI9HC5a8Mof3cNOQ=
+X-Google-Smtp-Source: AGHT+IGhJmRc9wirk6fDwzA3gjt9BfQcDnkXr8+Xu6rh22RdL/tZq9C8iOaUX31C0gPRlQRgIZCpM52uZZvwSlBctd0=
+X-Received: by 2002:a05:690c:60c8:b0:6fb:5498:70fa with SMTP id
+ 00721157ae682-7085412a5c0mr29991187b3.18.1745583457456; Fri, 25 Apr 2025
+ 05:17:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-kvm_selftest_improve-v1-0-583620219d4f@rivosinc.com> <20250324-kvm_selftest_improve-v1-3-583620219d4f@rivosinc.com>
-In-Reply-To: <20250324-kvm_selftest_improve-v1-3-583620219d4f@rivosinc.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 25 Apr 2025 17:46:09 +0530
-X-Gm-Features: ATxdqUHOv11PvgP9nPj69AiTxCtGGOn3N9GW7InbiMASP_G6lX5jdncyYKfQBj0
-Message-ID: <CAAhSdy2YocSNuOVbfoh6juDrw48YhsugGoRS8yXHOREZY91BOQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] KVM: riscv: selftests: Add vector extension tests
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Atish Patra <atishp@atishpatra.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250417142513.312939-1-ulf.hansson@linaro.org> <8e748129-3348-4bf1-9fc8-fadc569fa48e@ideasonboard.com>
+In-Reply-To: <8e748129-3348-4bf1-9fc8-fadc569fa48e@ideasonboard.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 25 Apr 2025 14:17:01 +0200
+X-Gm-Features: ATxdqUHCfnRVoNINH1KaYmw86rw8GwFvpw8gSk9J6VyXy12y2iJ3WN0VKIVIR6M
+Message-ID: <CAPDyKFqEgJPn-e-FooG_3h=Eqfw511c9_b+ywPcrfao8_p=u+Q@mail.gmail.com>
+Subject: Re: [PATCH 00/11] pmdomain: Add generic ->sync_state() support to genpd
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>, 
+	Peng Fan <peng.fan@oss.nxp.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, 
+	Devarsh Thakkar <devarsht@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 6:10=E2=80=AFAM Atish Patra <atishp@rivosinc.com> w=
-rote:
+On Thu, 24 Apr 2025 at 12:59, Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
 >
-> Add vector related tests with the ISA extension standard template.
-> However, the vector registers are bit tricky as the register length is
-> variable based on vlenb value of the system. That's why the macros are
-> defined with a default and overidden with actual value at runtime.
+> Hi,
 >
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> On 17/04/2025 17:24, Ulf Hansson wrote:
+> > If a PM domain (genpd) is powered-on during boot, there is probably a good
+> > reason for it. Therefore it's known to be a bad idea to allow such genpd to be
+> > powered-off before all of its consumer devices have been probed. This series
+> > intends to fix this problem.
+> >
+> > We have been discussing these issues at LKML and at various Linux-conferences
+> > in the past. I have therefore tried to include the people I can recall being
+> > involved, but I may have forgotten some (my apologies), feel free to loop them
+> > in.
+> >
+> > A few notes:
+> > *)
+> > Even if this looks good, the last patch can't go in without some additional
+> > changes to a couple of existing genpd provider drivers. Typically genpd provider
+> > drivers that implements ->sync_state() need to call of_genpd_sync_state(), but I
+> > will fix this asap, if we think the series makes sense.
+> >
+> > *)
+> > Patch 1 -> 3 are just preparatory cleanups.
+> >
+> > *)
+> > I have tested this with QEMU with a bunch of local test-drivers and DT nodes.
+> > Let me know if you want me to share this code too.
+> >
+> >
+> > Please help review and test!
+> > Finally, a big thanks to Saravana for all the support!
+>
+> I had a quick test with this on TI's AM62 board. A few observations.
+>
+> With this series, all the individual PDs seem to get a state_synced file:
+>
+> ...
+> /sys/devices/genpd_provider/pd:143/state_synced
+> /sys/devices/genpd_provider/pd:54/state_synced
+> /sys/devices/genpd_provider/pd:105/state_synced
+> /sys/devices/genpd_provider/pd:62/state_synced
+> /sys/devices/genpd_provider/pd:141/state_synced
+> ...
+>
+> Is that on purpose? What do these files represent? They all seem to be "1".
 
-LGTM.
+It's on purpose, but in this case there are no fw_devlink tracking
+them, but instead that's done via..
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+/sys/devices/platform/bus@f0000/44043000.system-controller/44043000.system-controller:power-controller/state_synced
 
-Regards,
-Anup
+..as you point out below.
 
-> ---
->  tools/testing/selftests/kvm/riscv/get-reg-list.c | 111 +++++++++++++++++=
-+++++-
->  1 file changed, 110 insertions(+), 1 deletion(-)
+Depending on the DT layout these nodes may be useful, but not in the
+TI PM domain case.
+
 >
-> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/tes=
-ting/selftests/kvm/riscv/get-reg-list.c
-> index 8515921dfdbf..576ab8eb7368 100644
-> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> @@ -145,7 +145,9 @@ void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcpu=
-_reg_list *c)
->  {
->         unsigned long isa_ext_state[KVM_RISCV_ISA_EXT_MAX] =3D { 0 };
->         struct vcpu_reg_sublist *s;
-> -       uint64_t feature;
-> +       uint64_t feature =3D 0;
-> +       u64 reg, size;
-> +       unsigned long vlenb_reg;
->         int rc;
+> When I boot up, I see the sync_state pending:
 >
->         for (int i =3D 0; i < KVM_RISCV_ISA_EXT_MAX; i++)
-> @@ -173,6 +175,23 @@ void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcp=
-u_reg_list *c)
->                 switch (s->feature_type) {
->                 case VCPU_FEATURE_ISA_EXT:
->                         feature =3D RISCV_ISA_EXT_REG(s->feature);
-> +                       if (s->feature =3D=3D KVM_RISCV_ISA_EXT_V) {
-> +                               /* Enable V extension so that we can get =
-the vlenb register */
-> +                               __vcpu_set_reg(vcpu, feature, 1);
-> +                               /* Compute the correct vector register si=
-ze */
-> +                               rc =3D __vcpu_get_reg(vcpu, s->regs[4], &=
-vlenb_reg);
-> +                               if (rc < 0)
-> +                               /* The vector test may fail if the defaul=
-t reg size doesn't match */
-> +                                       break;
-> +                               size =3D __builtin_ctzl(vlenb_reg);
-> +                               size <<=3D KVM_REG_SIZE_SHIFT;
-> +                               for (int i =3D 0; i < 32; i++) {
-> +                                       reg =3D KVM_REG_RISCV | KVM_REG_R=
-ISCV_VECTOR | size |
-> +                                             KVM_REG_RISCV_VECTOR_REG(i)=
-;
-> +                                       s->regs[5 + i] =3D reg;
-> +                               }
-> +                               __vcpu_set_reg(vcpu, feature, 0);
-> +                       }
->                         break;
->                 case VCPU_FEATURE_SBI_EXT:
->                         feature =3D RISCV_SBI_EXT_REG(s->feature);
-> @@ -408,6 +427,35 @@ static const char *fp_d_id_to_str(const char *prefix=
-, __u64 id)
->         return strdup_printf("%lld /* UNKNOWN */", reg_off);
->  }
+> [   22.541292] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> 2b10000.audio-contro
+> ller
+> [   22.554839] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> e0f0000.watchdog
+> [   22.566550] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> e030000.watchdog
+> [   22.577854] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> e020000.watchdog
+> [   22.589239] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> e010000.watchdog
+> [   22.600674] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> e000000.watchdog
+> [   22.611875] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> 30200000.dss
+> [   22.622813] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> fd00000.gpu
+> [   22.633565] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> b00000.temperature-s
+> ensor
+> [   22.645540] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> 2b300050.target-modu
+> le
+> [   22.657067] ti_sci_pm_domains
+> 44043000.system-controller:power-controller: sync_state() pending due to
+> chosen:framebuffer@0
 >
-> +static const char *vector_id_to_str(const char *prefix, __u64 id)
-> +{
-> +       /* reg_off is the offset into struct __riscv_v_ext_state */
-> +       __u64 reg_off =3D id & ~(REG_MASK | KVM_REG_RISCV_VECTOR);
-> +       int reg_index =3D 0;
-> +
-> +       assert((id & KVM_REG_RISCV_TYPE_MASK) =3D=3D KVM_REG_RISCV_VECTOR=
-);
-> +
-> +       if (reg_off >=3D KVM_REG_RISCV_VECTOR_REG(0))
-> +               reg_index =3D reg_off -  KVM_REG_RISCV_VECTOR_REG(0);
-> +       switch (reg_off) {
-> +       case KVM_REG_RISCV_VECTOR_REG(0) ...
-> +            KVM_REG_RISCV_VECTOR_REG(31):
-> +               return strdup_printf("KVM_REG_RISCV_VECTOR_REG(%d)", reg_=
-index);
-> +       case KVM_REG_RISCV_VECTOR_CSR_REG(vstart):
-> +               return "KVM_REG_RISCV_VECTOR_CSR_REG(vstart)";
-> +       case KVM_REG_RISCV_VECTOR_CSR_REG(vl):
-> +               return "KVM_REG_RISCV_VECTOR_CSR_REG(vl)";
-> +       case KVM_REG_RISCV_VECTOR_CSR_REG(vtype):
-> +               return "KVM_REG_RISCV_VECTOR_CSR_REG(vtype)";
-> +       case KVM_REG_RISCV_VECTOR_CSR_REG(vcsr):
-> +               return "KVM_RISCV_VCPU_VECTOR_CSR_REG(vcsr)";
-> +       case KVM_REG_RISCV_VECTOR_CSR_REG(vlenb):
-> +               return "KVM_REG_RISCV_VECTOR_CSR_REG(vlenb)";
-> +       }
-> +
-> +       return strdup_printf("%lld /* UNKNOWN */", reg_off);
-> +}
-> +
->  #define KVM_ISA_EXT_ARR(ext)           \
->  [KVM_RISCV_ISA_EXT_##ext] =3D "KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_=
-EXT_" #ext
+> The "real" state_synced file on this platform is:
 >
-> @@ -635,6 +683,9 @@ void print_reg(const char *prefix, __u64 id)
->         case KVM_REG_SIZE_U128:
->                 reg_size =3D "KVM_REG_SIZE_U128";
->                 break;
-> +       case KVM_REG_SIZE_U256:
-> +               reg_size =3D "KVM_REG_SIZE_U256";
-> +               break;
->         default:
->                 printf("\tKVM_REG_RISCV | (%lld << KVM_REG_SIZE_SHIFT) | =
-0x%llx /* UNKNOWN */,\n",
->                        (id & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT, id=
- & ~REG_MASK);
-> @@ -666,6 +717,10 @@ void print_reg(const char *prefix, __u64 id)
->                 printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_FP_D | %s,\n=
-",
->                                 reg_size, fp_d_id_to_str(prefix, id));
->                 break;
-> +       case KVM_REG_RISCV_VECTOR:
-> +               printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_VECTOR | %s,=
-\n",
-> +                      reg_size, vector_id_to_str(prefix, id));
-> +               break;
->         case KVM_REG_RISCV_ISA_EXT:
->                 printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_ISA_EXT | %s=
-,\n",
->                                 reg_size, isa_ext_id_to_str(prefix, id));
-> @@ -870,6 +925,54 @@ static __u64 fp_d_regs[] =3D {
->         KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_=
-REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_D,
->  };
+> /sys/devices/platform/bus@f0000/44043000.system-controller/44043000.system-controller:power-controller/state_synced
 >
-> +/* Define a default vector registers with length. This will be overwritt=
-en at runtime */
-> +static __u64 vector_regs[] =3D {
-> +       KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
-> +       KVM_REG_RISCV_VECTOR_CSR_REG(vstart),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
-> +       KVM_REG_RISCV_VECTOR_CSR_REG(vl),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
-> +       KVM_REG_RISCV_VECTOR_CSR_REG(vtype),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
-> +       KVM_REG_RISCV_VECTOR_CSR_REG(vcsr),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
-> +       KVM_REG_RISCV_VECTOR_CSR_REG(vlenb),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(0),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(1),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(2),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(3),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(4),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(5),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(6),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(7),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(8),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(9),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(10),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(11),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(12),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(13),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(14),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(15),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(16),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(17),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(18),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(19),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(20),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(21),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(22),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(23),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(24),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(25),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(26),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(27),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(28),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(29),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(30),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_RE=
-G_RISCV_VECTOR_REG(31),
-> +       KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_=
-REG_RISCV_ISA_SINGLE |
-> +       KVM_RISCV_ISA_EXT_V,
-> +};
-> +
->  #define SUBLIST_BASE \
->         {"base", .regs =3D base_regs, .regs_n =3D ARRAY_SIZE(base_regs), =
-\
->          .skips_set =3D base_skips_set, .skips_set_n =3D ARRAY_SIZE(base_=
-skips_set),}
-> @@ -894,6 +997,10 @@ static __u64 fp_d_regs[] =3D {
->         {"fp_d", .feature =3D KVM_RISCV_ISA_EXT_D, .regs =3D fp_d_regs, \
->                 .regs_n =3D ARRAY_SIZE(fp_d_regs),}
+> In strict mode, this shows 0, and if I echo 1 (interestingly "echo 1 >
+> /sys/..." doesn't work, I need "echo -n 1 > /sys/...), I see PDs getting
+> powered off (added a debug print there):
 >
-> +#define SUBLIST_V \
-> +       {"v", .feature =3D KVM_RISCV_ISA_EXT_V, .regs =3D vector_regs, \
-> +               .regs_n =3D ARRAY_SIZE(vector_regs),}
-> +
->  #define KVM_ISA_EXT_SIMPLE_CONFIG(ext, extu)                   \
->  static __u64 regs_##ext[] =3D {                                  \
->         KVM_REG_RISCV | KVM_REG_SIZE_ULONG |                    \
-> @@ -962,6 +1069,7 @@ KVM_SBI_EXT_SIMPLE_CONFIG(susp, SUSP);
->  KVM_ISA_EXT_SUBLIST_CONFIG(aia, AIA);
->  KVM_ISA_EXT_SUBLIST_CONFIG(fp_f, FP_F);
->  KVM_ISA_EXT_SUBLIST_CONFIG(fp_d, FP_D);
-> +KVM_ISA_EXT_SUBLIST_CONFIG(v, V);
->  KVM_ISA_EXT_SIMPLE_CONFIG(h, H);
->  KVM_ISA_EXT_SIMPLE_CONFIG(smnpm, SMNPM);
->  KVM_ISA_EXT_SUBLIST_CONFIG(smstateen, SMSTATEEN);
-> @@ -1034,6 +1142,7 @@ struct vcpu_reg_list *vcpu_configs[] =3D {
->         &config_fp_f,
->         &config_fp_d,
->         &config_h,
-> +       &config_v,
->         &config_smnpm,
->         &config_smstateen,
->         &config_sscofpmf,
+> [   87.335487] ti_sci_pd_power_off 88
+> [   87.342896] ti_sci_pd_power_off 87
+> [   87.347404] ti_sci_pd_power_off 86
+> [   87.356464] ti_sci_pd_power_off 128
+> [   87.361296] ti_sci_pd_power_off 127
+> [   87.368714] ti_sci_pd_power_off 126
+> [   87.373349] ti_sci_pd_power_off 125
+> [   87.378077] ti_sci_pd_power_off 62
+> [   87.382587] ti_sci_pd_power_off 60
+> [   87.387194] ti_sci_pd_power_off 59
+> [   87.391759] ti_sci_pd_power_off 53
+> [   87.396648] ti_sci_pd_power_off 52
+> [   87.400801] ti_sci_pd_power_off 51
+> [   87.405131] ti_sci_pd_power_off 75
+> [   87.409238] ti_sci_pd_power_off 143
+> [   87.413328] ti_sci_pd_power_off 142
+> [   87.417403] ti_sci_pd_power_off 141
+> [   87.421494] ti_sci_pd_power_off 105
+> [   87.425632] ti_sci_pd_power_off 104
+> [   87.429815] ti_sci_pd_power_off 103
+> [   87.433941] ti_sci_pd_power_off 102
+> [   87.438054] ti_sci_pd_power_off 158
+> [   87.442151] ti_sci_pd_power_off 156
+> [   87.446324] ti_sci_pd_power_off 155
+> [   87.450463] ti_sci_pd_power_off 154
+> [   87.454549] ti_sci_pd_power_off 153
+> [   87.458671] ti_sci_pd_power_off 152
+> [   87.462571] ti_sci_pd_power_off 43
+> [   87.466425] ti_sci_pd_power_off 42
+> [   87.470254] ti_sci_pd_power_off 41
+> [   87.474032] ti_sci_pd_power_off 40
+> [   87.477825] ti_sci_pd_power_off 39
+> [   87.481609] ti_sci_pd_power_off 38
+> [   87.485432] ti_sci_pd_power_off 37
+> [   87.489256] ti_sci_pd_power_off 36
+> [   87.493077] ti_sci_pd_power_off 95
+> [   87.496845] ti_sci_pd_power_off 132
+> [   87.500780] ti_sci_pd_power_off 107
+> [   87.504583] ti_sci_pd_power_off 114
+> [   87.508429] ti_sci_pd_power_off 79
+> [   87.512050] ti_sci_pd_power_off 148
+> [   87.515859] ti_sci_pd_power_off 147
+> [   87.519644] ti_sci_pd_power_off 106
+> [   87.523414] ti_sci_pd_power_off 149
+> [   87.527203] ti_sci_pd_power_off 50
+> [   87.530971] ti_sci_pd_power_off 49
+> [   87.534708] ti_sci_pd_power_off 48
+> [   87.538401] ti_sci_pd_power_off 35
+> [   87.542040] ti_sci_pd_power_off 186
 >
-> --
-> 2.43.0
+> We do have a lot of "extra" PDs enabled by the bootloader...
 >
+> With the timeout mode, I see the sync_state() getting called some
+> seconds after the boot has finished.
+>
+> So... I think it all works as expected. You can take this as some kind
+> of Tested-by, but it'd be good if someone from TI who knows more about
+> PDs would test this too =).
+
+Thanks a lot for testing and sharing your information!
+
+>
+> Interestingly, I see a difference in behavior to the old patches from
+> Abel: with the old patches, if I boot up with the DSS (display
+> subsystem) enabled by the bootloader, it looks the same as with these
+> patches. However, with the old patches, when I load the DSS driver, and
+> it probes successfully, the DSS PD will get managed correctly, i.e. if I
+> blank the screen, the DSS PD will go to off, even if the sync_state has
+> not been called.
+>
+> With these patches the DSS PD will stay on, no matter if I load the DSS
+> driver or not, and will only go off after sync_state has been called.
+>
+> I'm not quite sure here, but I think the behavior with the old patches
+> makes sense: when the driver for a particular PD loads, the PD no longer
+> needs to be kept on. Or... Is this about the case where a PD has
+> multiple consumers? The PD provider cannot know how many consumers there
+> are for a single PD, so it must keep all boot-time-enabled PDs on until
+> sync_state() (i.e. all the consumer drivers have probed)?
+
+You are correct!
+
+ti_sci_pm_domains are modelled in DT by using:
+#power-domain-cells = <1>;
+or
+#power-domain-cells = <2>;
+
+fw_devlink doesn't look at those additional specifiers in DT. For
+example, if a consumer has "power-domains = <&k2g_pds 5>;" the '5'
+will not be considered as a separate domain, but instead all consumers
+of &k2g_pds needs to be probed, before the ->sync_state() gets called.
+
+Theoretically, if we could treat the specifier ('5' in this case) as
+being a separate domain, that should would for most cases. The
+question is, how difficult it would be to extend fw_devlink to support
+this, so that when all consumers that has  "power-domains = <&k2g_pds
+5>" has probed, the ->sync_state() get's invoked for the corresponding
+genpd->dev.
+
+If Saravanna want to comment on this, that would be nice, otherwise I
+will chat with him offlist about this.
+
+That said, it seems like this is working fine for the TI platforms,
+which is great!
+
+Kind regards
+Uffe
 
