@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-619991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1442DA9C47F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB8FA9C476
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB0A1BA72D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E759A6420
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63482239585;
-	Fri, 25 Apr 2025 09:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A97238C10;
+	Fri, 25 Apr 2025 09:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BQHi4oT8"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022CB2367A7;
-	Fri, 25 Apr 2025 09:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="lc6wir0s"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE70F233707
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745575098; cv=none; b=XP72e/H7INma8P6YR+KVwbV+lhr6HkHvh1HMCFpDRMkU3Ejr1tT+C/LO8dtiDMI7I+V6K3iH5/rAxck2NYeu34E4/Elz3jAGHAevbl81PO8b3S/KSvW79c9uU71Q8zPMOWX4TBZSAcAy4P7NIZh4LUphd+es5qkGCw8k1Uw02BY=
+	t=1745575052; cv=none; b=nvDe4HzVxRoWCtuOHF+9MCxB0YUSXuwohOdy+wqUHJ1iTpwVJByg1VZzR8inUEX7nYNdTfG+N6NW0WW329k4XZ28i5o6euScXV+v0gRkpsDH/Xn41kSedTFIwD+zksz/40+0u89Ce1wc98cTllWPh3vnbcNnX5ReK1TN71ITSiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745575098; c=relaxed/simple;
-	bh=OhLGSBuQVLXaIk4wy2LU6O6nHuMtPkRCcZXq8EDJPHc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tOvho+z4/p4DZbnDXUCbVy8YCJZhoqtmyJCSdLnOmqFDMErGXWrpkFKGPziDcGIexEkF6RHbkG+4+lqSv8qeKOZAShphW9vkmNa5Rr2U2lAKrRBY3R1x407QQYxn/ilJ+0P5Vrhomw58iXnKAgGmiBKxf0AjDhK0hPZRhZGXYBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BQHi4oT8; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=9P6dx
-	24LcPTLqnmztGQ81vANm+nUct9U80WqazHI54k=; b=BQHi4oT8vGRbvvroE56N0
-	AyIgktZ1DIttAFQxJtXGIVB8Trkxgsa6kh6Wa8DIwPPKu0xxZt1HE5lCJrL0hYMv
-	IngkQlKeaVuS67pE9u3zJJKIKQCD48Ne1OIhtZfTkTBscBgKlUcvVy8ejuSQ0U0f
-	VZI0sp+ruS5VmlAlC+r/rw=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgAnfJt2XAtowU4iAw--.17018S4;
-	Fri, 25 Apr 2025 17:57:16 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	heiko@sntech.de,
-	thomas.petazzoni@bootlin.com,
-	manivannan.sadhasivam@linaro.org,
-	yue.wang@Amlogic.com
-Cc: pali@kernel.org,
-	neil.armstrong@linaro.org,
-	robh@kernel.org,
-	jingoohan1@gmail.com,
-	khilman@baylibre.com,
-	jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2 2/2] PCI: Remove redundant MPS configuration
-Date: Fri, 25 Apr 2025 17:57:08 +0800
-Message-Id: <20250425095708.32662-3-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250425095708.32662-1-18255117159@163.com>
-References: <20250425095708.32662-1-18255117159@163.com>
+	s=arc-20240116; t=1745575052; c=relaxed/simple;
+	bh=koJmUEiWE6fqAjEJwa/k5DcYQrznO4aQL9O+hYBe8+M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=e0vpwf/KcSxul8ShehHecxfi5JknnD+vFJbsZBYIgPiyvnDebt4J57ymZWs5a/7AjVgMsRR1VJEzR6cgoX/Z2ot1pkijOMZRDhz7QhNuXhy0o4Lrbl4LbFUJvnaSSRqhL5xio2ZhqTs51Qxd+sAly7wriuD5YKr9PRS3yZ/uMBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=lc6wir0s; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZkStn0sppz9sNv;
+	Fri, 25 Apr 2025 11:57:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1745575041; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cXIEFtQ52fKXo6R0hZKFeHaB5fiZSBox6IEBfViD5is=;
+	b=lc6wir0sb5hpNXp4VGvYZg1ioXx0/3S8A5QRHV/6Wm+cGiUFdixrDrQ7AAcrN4XqxzWR7y
+	fHlqPnQx5Tgp6kCKANiSgDxVp3/9OgeCp9Lv1fvnDKSNcW2J5tWqOzIowHDBXIhSwZ8gz7
+	X2zG+ht+WCyNOjkZYAzoRWdZRn6/mY4AF/te9AbE2If+n9CvlWlXKd9JGZ8HGT48CzqT6I
+	mpL6ik+RoSImuj+JOW8vJxpuN3AFIaJA2UPB0bfoUYA9m4TiEq/LBtLe9G//bw1JPN3k8y
+	bjGorQ3ilTkQyUzlN0W9MlJ9MDmT6oowso5lWPjUtPZrbUxIHv/Nhlx4Fru7CQ==
+Message-ID: <6b6267872fcc5e75883144f241c79c93c03fcead.camel@mailbox.org>
+Subject: Re: [PATCH] workqueue: flush all pending jobs in destroy_workqueue()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Alice Ryhl <aliceryhl@google.com>, Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, Danilo Krummrich
+ <dakr@kernel.org>,  linux-kernel@vger.kernel.org
+Date: Fri, 25 Apr 2025 11:57:18 +0200
+In-Reply-To: <aAtXApA8ggJa6sQg@google.com>
+References: <20250423-destroy-workqueue-flush-v1-1-3d74820780a5@google.com>
+	 <aAqXw3t9UVU8pF8_@slm.duckdns.org> <aAtXApA8ggJa6sQg@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgAnfJt2XAtowU4iAw--.17018S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFWUWr43Zry8Gr13Kr1DGFg_yoW5Ww17pF
-	W3XrsayF4rtr45ua1DAa1rCFW3JasIkry7J39xW34fZF9IyFW7JFyayFWSka4fJr40gF10
-	yF15t3y8A3W5trUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_EfYiUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDw06o2gLWGyMnQAAsd
+X-MBO-RS-META: kw16xfbxxwo5s5ptz8o9npmyb9wumhs1
+X-MBO-RS-ID: 6236fa34f97b4b98029
 
-With the PCI core now centrally configuring root port MPS to
-hardware-supported maximums (via 128 << pcie_mpss) during host probing,
-platform-specific MPS adjustments are redundant. This patch removes the
-custom the configuration of the max payload logic to align with the
-standardized initialization flow.
+On Fri, 2025-04-25 at 09:33 +0000, Alice Ryhl wrote:
+> On Thu, Apr 24, 2025 at 09:57:55AM -1000, Tejun Heo wrote:
+> > Hello, Alice.
+> >=20
+> > On Wed, Apr 23, 2025 at 05:51:27PM +0000, Alice Ryhl wrote:
+> > ...
+> > > @@ -367,6 +367,8 @@ struct workqueue_struct {
+> > > =C2=A0	struct lockdep_map	__lockdep_map;
+> > > =C2=A0	struct lockdep_map	*lockdep_map;
+> > > =C2=A0#endif
+> > > +	raw_spinlock_t		delayed_lock;	/* protects
+> > > pending_list */
+> > > +	struct list_head	delayed_list;	/* list of
+> > > pending delayed jobs */
+> >=20
+> > I think we'll have to make this per-CPU or per-pwq. There can be a
+> > lot of
+> > delayed work items being queued on, e.g., system_wq. Imagine that
+> > happening
+> > on a multi-socket NUMA system. That cacheline is going to be
+> > bounced around
+> > pretty hard.
+>=20
+> Hmm. I think we would need to add a new field to delayed_work to keep
+> track of which list it has been added to.
+>=20
+> Another option could be to add a boolean that disables the list.
+> After
+> all, we never call destroy_workqueue() on system_wq so we don't need
+> the
+> list for that workqueue.
+>=20
+> Thoughts?
 
-By eliminating redundant code, this change prevents conflicts with global
-PCIe hierarchy tuning policies and reduces maintenance overhead. The Meson
-driver now fully relies on the core PCI framework for MPS configuration,
-ensuring consistency across the PCIe topology while preserving
-hardware-specific MRRS handling.
+I for my part was astonished that I actually found this half-bug in the
+WQ implementation, because WQs are a) very important and b) very
+intensively used, so I had expected that the bug *must* be on my side.
+The fact that it wasn't is a hint for me that there are not that many
+parties in the kernel that tear down with non-canceled DW.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/dwc/pci-meson.c | 17 -----------------
- drivers/pci/controller/pci-aardvark.c  |  2 --
- 2 files changed, 19 deletions(-)
+You also have to race a bit to run into the problem.
 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index db9482a113e9..126f38ed453d 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -261,22 +261,6 @@ static int meson_size_to_payload(struct meson_pcie *mp, int size)
- 	return fls(size) - 8;
- }
- 
--static void meson_set_max_payload(struct meson_pcie *mp, int size)
--{
--	struct dw_pcie *pci = &mp->pci;
--	u32 val;
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
--	int max_payload_size = meson_size_to_payload(mp, size);
--
--	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
--	val &= ~PCI_EXP_DEVCTL_PAYLOAD;
--	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
--
--	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
--	val |= PCIE_CAP_MAX_PAYLOAD_SIZE(max_payload_size);
--	dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
--}
--
- static void meson_set_max_rd_req_size(struct meson_pcie *mp, int size)
- {
- 	struct dw_pcie *pci = &mp->pci;
-@@ -381,7 +365,6 @@ static int meson_pcie_host_init(struct dw_pcie_rp *pp)
- 
- 	pp->bridge->ops = &meson_pci_ops;
- 
--	meson_set_max_payload(mp, MAX_PAYLOAD_SIZE);
- 	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
- 
- 	return 0;
-diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-index a29796cce420..d8852892994a 100644
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
- 	reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
- 	reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
- 	reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
--	reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
- 	reg &= ~PCI_EXP_DEVCTL_READRQ;
--	reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
- 	reg |= PCI_EXP_DEVCTL_READRQ_512B;
- 	advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
- 
--- 
-2.25.1
+I'm not sure how relevant that is for the synchronization overhead
+Tejun describes; but take it for what it's worth.
+
+
+P.
+
+>=20
+> Alice
 
 
