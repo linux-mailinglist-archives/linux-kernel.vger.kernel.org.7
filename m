@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-619474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0ADA9BD18
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:00:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2282A9BD1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607A79281B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B231B88738
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1269B176AA1;
-	Fri, 25 Apr 2025 03:00:24 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86AB1714B2;
+	Fri, 25 Apr 2025 03:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="VvxJ+dhM"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A411C28E;
-	Fri, 25 Apr 2025 03:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA331C28E;
+	Fri, 25 Apr 2025 03:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745550023; cv=none; b=pxq/zIBIm5KNlB+4ZMueRFDRZrnnyLj/AV896LfZDOHDIlHN/8nzFXce5mvXLLJYpofahUgRNPurY9RpxJaq3o7v3Ctmx0CVB6cFX7rn6neNDmPhp4K4A5118I55dtqyLOSuN+nqhRZ2Cpl6eEJfpK1WWHYyZ6aEQjp1WC9onWI=
+	t=1745550256; cv=none; b=hee7Q2j2hGH+LveFgk1D+n7umlF4535aNtu86uz4jsMHZS+u/ABTnKUrEFPNW1OEOnleXUUyx1ZuBStbB10q/kAOwlwZQRLm/RNcpQdLWCbTH1N+2BHxxc2FKzc3Tvr3WRgmPKI3ni3Fwrr9rR2+pqburoEjRyWS9i8EzdIRoUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745550023; c=relaxed/simple;
-	bh=LVmXxPc0GsxJCoufkyTtR1wIh6N17gyPoDGVcYXM0fk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tg9yWv3KgFeD6X4JlcqUTFnyPxKAaTmhZ9IMRwPi4a39uXDGzx+Ie9wIqdrwDregxV0Ag7n5iqKUFhrfUUIR2HGU5AtPC3dVryzCEBikSFq5qWrijktOvsO0+3+XqeIZ94jnukbIfnBfiVmqxDNl4zqGmxv+vSm8m12V56HjRIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.214.249])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 131194130;
-	Fri, 25 Apr 2025 11:00:10 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: dlan@gentoo.org
-Cc: amadeus@jmu.edu.cn,
-	andre.przywara@arm.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	jernej.skrabec@gmail.com,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	robh@kernel.org,
-	samuel@sholland.org,
-	wens@csie.org
-Subject: Re: [PATCH 1/1] arm64: dts: allwinner: correct the model name for Radxa Cubie A5E
-Date: Fri, 25 Apr 2025 11:00:06 +0800
-Message-Id: <20250425030006.45169-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250425023527-GYA50272@gentoo>
-References: <20250425023527-GYA50272@gentoo>
+	s=arc-20240116; t=1745550256; c=relaxed/simple;
+	bh=YUh/cuAE81XqoCZ65QZiyr1IrGQd8iZowQB2p0pWx2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7eR3r6zDZnY8rWryu40YsZCwytKWIcmSuN67iPdtkGW06t6Yrpm6a5iKmZ2qJbw1683TEX6PP4XcMLMWhk5dAjpWI3/V34Uy9tzkqaiGxRvCrUBkmK4vodjrvMRo7wGHC3XvDJUrBFHSHLjQRG3svBfUAWgu1Fixj4VORfthOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=VvxJ+dhM; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=qxiKMycuA/S/b4aduDKHTJVt95lznX3mP7Vus3psjjw=;
+	b=VvxJ+dhMu6cRjtBkTzfZ+9gf0j6+3tBsuLq/z85fsYxjPQtBrikxTqdRjlaAri
+	E27qhrS9dWDA2Fy36ElNxP+fB3I/aLI0C96hOTSwR29LWDMxkd8j0lnDjyTR51fd
+	GylpjBrEnGjkmhVbR8POr+R5wE1dY0PYyP2FRHHqW3UrI=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAna+J2+wpoIiTtAw--.35636S3;
+	Fri, 25 Apr 2025 11:03:19 +0800 (CST)
+Date: Fri, 25 Apr 2025 11:03:17 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: max.oss.09@gmail.com
+Cc: max.krummenacher@toradex.com, Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64: dts: imx8-apalis: Add PCIe and SATA support
+Message-ID: <aAr7dQH5O3VY7+N3@dragon>
+References: <20250416151353.1692373-1-max.oss.09@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkNJVk1OSEpPHktPTB5IGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VJT0JZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVU
-	pCS0tZBg++
-X-HM-Tid: 0a966ae36a7503a2kunm131194130
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PRw6FAw*GTIBSj83AzhNIlEK
-	FBIaCypVSlVKTE9OTk5LS0pJSklPVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpPVUlPQllXWQgBWUFKS0NLNwY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416151353.1692373-1-max.oss.09@gmail.com>
+X-CM-TRANSID:Ms8vCgAna+J2+wpoIiTtAw--.35636S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUx7PEUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBQ6ZWgK1S+unQAAsk
 
-Hi,
+On Wed, Apr 16, 2025 at 05:13:41PM +0200, max.oss.09@gmail.com wrote:
+> From: Max Krummenacher <max.krummenacher@toradex.com>
+> 
+> The needed drivers to support PCIe and SATA for i.MX 8QM have been
+> added.
+> Configure them for the Apalis iMX8 SoM.
+> 
+> The pciea and pcieb blocks each get a single PCIe lane, pciea is
+> available on the carrier boards while pcieb is connected to the
+> on module Wi-Fi/BT module.
+> The SATA lane is available on the carrier boards.
+> 
+> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
 
-> It seems I'm a little bit late for this, but while we are here,
-> Can we also append 'cubie' to dts file name?
-> e.g. - sun55i-a527-radxa-cubie-a5e.dts
-
-Usually we use the device name (without the vendor name),
-maybe sun55i-a527-cubie-a5e.dts would be better?
-
-Thanks,
-Chukun
-
---
-2.25.1
+Applied, thanks!
 
 
