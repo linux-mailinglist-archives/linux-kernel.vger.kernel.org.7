@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-621139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF269A9D495
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:54:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243F2A9D499
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67CF97AC47A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B699C18E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF952253F9;
-	Fri, 25 Apr 2025 21:53:37 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DA6225775;
+	Fri, 25 Apr 2025 21:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fu+J0XSq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F67208997
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244D12192F3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745618016; cv=none; b=HW7OXVNOPDJJSqgVlOJPIJ1j1XS5jDhFAFWwzFAZpkQ+nGY2keXl3j5lvZbT2lH31jVx2cfjC30c++7HPY9kOK/bx+GI9S6SzcSyYYxx1Vie79QgTm2g+W+JNSnjwLFSikEJOeL/Zu98elyr88ic9KWZGCt6gepS8d4/LN7G7CE=
+	t=1745618088; cv=none; b=Sp8JJ5gaDqYKn+Nl9qw6kcuG74ZmOSkjV3pTGQZLWzJnQN/PCNL6j27yqChy91C25yT376WjJ11REC1XCEaHwZrV/K4Juuv2bDTOSjGAYlzEK71n86yoWXiTCmsFFSTAmabr/USyw1O7ZK2S6DhcRZJG98MlYYDeQr4zv/RJIK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745618016; c=relaxed/simple;
-	bh=C6aXmLydQyAM+rD4/MTvQ7pXQmlAMgEPsvg7ad7XjpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gn06DBh6sz8e1BGO0Nh5shq48orZzQtaz0H57zKL66xbWyVzEl8hxcIcu8OtFTlTe4Rvw6d169SfcSTPzvGmd037BUVEfUEjPTAPrtbRJfJjGGqVCZs4EyO1xtRA3EaZh6lX/MlTnnr7Tm+MPjXq9GvGW/SCK9acceT7c4iLo3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso31374765e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:53:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745618012; x=1746222812;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVVbo4ROS446ViNmU/AD2hQGyqQ0dbBdWmkbwu91I+0=;
-        b=rvicNE2KXXPkOHWtZQrUzHTGrn8MTpmBY6bxLJ/sbJ5gKKKG0smCJ3iUaL8B61EdPc
-         srlol2bMymE80gVnxpD4Jr/bGLWPrs+7CuWxn06ltdCF1XgO0wDyT+DkumPFCt9JBvmv
-         h8U0lXZvfl1anEMP4nnEcShU/k+8IfYb2bEZEAXOCgObFkiLZodQ7gA0hWXdQAw4mU9L
-         AlO64RAMqw9AiT+dgDqmooyd/9Od/wkZBtAQQwhIkZOSIqauOErMqdN98yFUNGvAv5uE
-         ehH6G5Gx+Ej/nQGJwPZIkaQP6dqTbzwDW2uCs0yYQHK0MmqmDZiMt/AtIpHFu2nHEum6
-         PCBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXphMPd6L9WD75nxm9SS45UulYDxRPfPgpPee6W/5cnAu0CEeTBsXICzWq1y5PBLh1EU9m3/77Z7e44SKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxnhSVAK+IQ9+c5IkZyN53qAourEs5TEG4Z4JijPLR8H/9MQsC
-	R9evTIrNJpeCWhbDt63jOdHh5ZL28tHlmQI9Ecx2stVKRjeydjdd
-X-Gm-Gg: ASbGncuPKXqO+DhCFHyHaFeb2WXrf1+J/rTCJQkBFG+B395mfLksd8HmJ22wXxh82BX
-	efOIMdgQHUrzhDwFSDWsgtJn7WjGLtwXen5UnGTbag+rTrbhYjbO5V2iTQM2wus0myOquBEK9Ix
-	43qkuE27enXbBvNIOcgNc2v/Qn+BjSqHT4aiEYiECkkmKT8VCPJ3IQ9CvFEfEhdVk4WvzX7ekro
-	tjdjuxvEhZjYNI08rtkxcXf/Fh6ZkVQYdIYbCbKIxGG/xYS1jAkScKasUlBFUR7TLAJxQsHP9cm
-	PStzwogsmQIGawCFztIrcxCzIq9rr/B5hwjGYfwU
-X-Google-Smtp-Source: AGHT+IGSD+ivcGxPzjE4UnDxqHkDSfK+l5KI6zUPiQ4sOkdq5u51vTEljeieRQYpKNmD6n+VeRTiMQ==
-X-Received: by 2002:a05:600c:1e1c:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-440a64c14bdmr35479365e9.4.1745618012216;
-        Fri, 25 Apr 2025 14:53:32 -0700 (PDT)
-Received: from [10.100.102.74] ([95.35.174.203])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2ad112sm69015145e9.24.2025.04.25.14.53.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 14:53:31 -0700 (PDT)
-Message-ID: <a306a2b0-bd7c-4376-8c26-738b5c7c9807@grimberg.me>
-Date: Sat, 26 Apr 2025 00:53:30 +0300
+	s=arc-20240116; t=1745618088; c=relaxed/simple;
+	bh=Mc9klkHjsEtUdhzu7kWt63vU8h5AjTn8SprVVJFiBOc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=kjOHEQwMzqG1z/D8bJo8k269H2YU0wN5Y4r+IsONRA0o5hZXCVrPJhSatMFs12DDBpRuetsNAWBYaCdAqLXx4Dn8e2yJDZNZTC0rjUPA2PzWW0kvX5MDnRMTDFWAACYdyEHN7UvqmT2AZKtIvRxL7iXO9122n6U67ZKOfiTyrxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fu+J0XSq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2B6C4CEE4;
+	Fri, 25 Apr 2025 21:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745618087;
+	bh=Mc9klkHjsEtUdhzu7kWt63vU8h5AjTn8SprVVJFiBOc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=Fu+J0XSqt1iBO2Ad6I/EoIr58mfhd6uN9LKiekUC0IBF90uEftYZ58iGp3nXIsohr
+	 atuB09rvZp5p3QqmV7+CzHBdZeL5gHII6DUffkviHMDEmEjkvNDCB6OGR2ar8RWL5R
+	 vlYgOF0zlOABni1HA5wdJWp2b5A2YpmvXhdT4/GaAYx9HDlsJdYyLb2FwIrEAbrrcU
+	 7K4V6gCi2r/nKe3y0SxH9aD3xGxZXGzH5xbyKiUw0QPHfBpkYiCdDb+ex0xg6TdZ+J
+	 UW50Kgw+cTirKIkmGrmYH4dm6+YlnNO4ga/3hztj2gPu9/opZDyhRpKIqYvMbEBKTE
+	 9NpZmdACIw5Ow==
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 03D221200068;
+	Fri, 25 Apr 2025 17:54:45 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Fri, 25 Apr 2025 17:54:46 -0400
+X-ME-Sender: <xms:pQQMaLcCtE2TgaFoItHnqeXO8xjTyc9iEtzbcX8C9wkYJ-UsGyDreg>
+    <xme:pQQMaBOuv0qtIy98O7TkysWaIMQbtozpGqws-3EvlPm5hz1l41NvwLkQF9r7kY3d5
+    tFxP7_9Mn6FU-WE_gU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheefgeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
+    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepudffteefvdeljeehgfffgfejheeigfej
+    ieevieffteejffefiedtueelgeeigfdunecuffhomhgrihhnpehgnhhurdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedtvdegqddvkeejtd
+    dtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghr
+    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlih
+    gvnhekrdguvgdprhgtphhtthhopegrnhgurhgvfidrtghoohhpvghrfeestghithhrihig
+    rdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtg
+    hpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnghhosehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopegurghrfihisehlihhnuhhtrhhonhhigidrug
+    gvpdhrtghpthhtohepjhhohhhnrdhoghhnvghssheslhhinhhuthhrohhnihigrdguvgdp
+    rhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehtoh
+    hrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:pQQMaEiI5vTsz4uLfN69IMwDsbmqtYYJiTBhNjrRrJhj2CBrsbdmIw>
+    <xmx:pQQMaM8i3Ls1_0Y2Vtus8MoxZBeel7tYGGV_831P9rG1OIIknHA_TA>
+    <xmx:pQQMaHuQGJmNHsz86kSzCdQJ4xqs9-jFBamm1DMy74H0ec3bTgQ6pA>
+    <xmx:pQQMaLGijp3aSjK1dI8R2vg1ovTdMpWGUNTiCrZc4J6ElRaUfp-4qQ>
+    <xmx:pQQMaOPcrye1XaqS2hJwJi8W__DWRRnkv5eTXx5qWba_M4iijOoOVqgK>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C6F522220073; Fri, 25 Apr 2025 17:54:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] nvme-tcp: wait socket wmem to drain in queue stop
-To: Michael Liang <mliang@purestorage.com>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
-Cc: Mohamed Khalfella <mkhalfella@purestorage.com>,
- Randy Jennings <randyj@purestorage.com>, linux-nvme@lists.infradead.org,
+X-ThreadId: Td35c5eaba32a0728
+Date: Fri, 25 Apr 2025 23:54:15 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>, "Ingo Molnar" <mingo@kernel.org>,
  linux-kernel@vger.kernel.org
-References: <20250424161750.jwbdohybrqftuioe@purestorage.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20250424161750.jwbdohybrqftuioe@purestorage.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Cc: "Ahmed S . Darwish" <darwi@linutronix.de>,
+ "Andrew Cooper" <andrew.cooper3@citrix.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "John Ogness" <john.ogness@linutronix.de>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Message-Id: <1d4ddcab-cf46-4d7e-9e33-de12b6bd350c@app.fastmail.com>
+In-Reply-To: <8D770F85-5417-4A9E-80DE-1B6A890DECEF@zytor.com>
+References: <20250425084216.3913608-1-mingo@kernel.org>
+ <20250425084216.3913608-14-mingo@kernel.org>
+ <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
+ <8D770F85-5417-4A9E-80DE-1B6A890DECEF@zytor.com>
+Subject: Re: [PATCH 13/15] x86/cpu: Make CONFIG_X86_CX8 unconditional
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Given that this is a fix - lets rename the patch title to say that.
+On Fri, Apr 25, 2025, at 17:15, H. Peter Anvin wrote:
+> On April 25, 2025 5:10:27 AM PDT, Arnd Bergmann <arnd@kernel.org> wrote:
+>>
+>>I just noticed this one: the final 'default "4"' is no longer possible
+>>here and can be removed. All the remaining CPUs report family "5" or
+>>higher.
+>>
+>>There is an old issue for some rare CPUs (Geode LX and Crusoe) that
+>>support CMOV but report family=6. These to boot a kernel with X86_MINIMUM_CPU_FAMILY=6 because it triggers the boot time check.
+>>
+>
+> They report family=5 because family=6 implies fcomi and nopl support 
+> (in the case of Crusoe, they have fcomi but didn't support movl.)
 
-nvme-tcp: fix possible data corruption caused by premature queue removal 
-and I/O failover
+Ah right, I see now. I had only checked that the kernel itself
+no longer uses nopl after your ba0593bf553c ("x86: completely
+disable NOPL on 32 bits"), and I had seen that Debian intentionally
+builds 32-bit i686 kernels with CONFIG_MGEODEGX1.
 
+I now found that both Debian 12 and gcc 11 changed their definition
+if 686 to actually require nopl for Indirect branch tracking 
+(-fcf-protection) in user space, as discussed in
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104713
 
-On 24/04/2025 19:17, Michael Liang wrote:
-> This patch addresses a data corruption issue observed in nvme-tcp during
-> testing.
->
-> Issue description:
-> In an NVMe native multipath setup, when an I/O timeout occurs, all inflight
-> I/Os are canceled almost immediately after the kernel socket is shut down.
-> These canceled I/Os are reported as host path errors, triggering a failover
-> that succeeds on a different path.
->
-> However, at this point, the original I/O may still be outstanding in the
-> host's network transmission path (e.g., the NIC’s TX queue). From the
-> user-space app's perspective, the buffer associated with the I/O is considered
-> completed since they're acked on the different path and may be reused for new
-> I/O requests.
->
-> Because nvme-tcp enables zero-copy by default in the transmission path,
-> this can lead to corrupted data being sent to the original target, ultimately
-> causing data corruption.
->
-> We can reproduce this data corruption by injecting delay on one path and
-> triggering i/o timeout.
->
-> To prevent this issue, this change ensures that all inflight transmissions are
-> fully completed from host's perspective before returning from queue
-> stop. To handle concurrent I/O timeout from multiple namespaces under
-> the same controller, always wait in queue stop regardless of queue's state.
->
-> This aligns with the behavior of queue stopping in other NVMe fabric transports.
+So even if it makes sense for GeodeLX specific kernel to use CMOV,
+any general-purpose i686 distro would still want to enable IBT
+in userspace to gain IBT on Tiger Lake and newer 64-bit CPUs.
 
-We need a "Fixes: " tag, even if it goes all the way to day-0...
-
->
-> Reviewed-by: Mohamed Khalfella <mkhalfella@purestorage.com>
-> Reviewed-by: Randy Jennings <randyj@purestorage.com>
-> Signed-off-by: Michael Liang <mliang@purestorage.com>
-
-Please resend, but you can add to your v4
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+     Arnd
 
