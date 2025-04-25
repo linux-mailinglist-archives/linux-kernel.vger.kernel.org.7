@@ -1,169 +1,125 @@
-Return-Path: <linux-kernel+bounces-619668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CE4A9BFB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EF9A9BFC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD6B4672CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A62B7B66A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC4B22F147;
-	Fri, 25 Apr 2025 07:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="SevJ/7Vu"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B40622F15E;
+	Fri, 25 Apr 2025 07:32:30 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E79D10FD;
-	Fri, 25 Apr 2025 07:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B3C10FD
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745566137; cv=none; b=OwnJi1haBNPB+KuQmdlGPux96dppWk4PQQAAgr1atdNfoYrPQbCi1LjSDvWFhqdjne8kBrO7RPe98t18RmBdImQthByJdT0DZo1oqrWWjy4thADSyUq8VYNWjtViyaYJCyVnecfzH1KYJJ1jKmR0etV0KGGRn7e0QYW1UGI/oDE=
+	t=1745566349; cv=none; b=UE83H3ue3CpS3jfPuX2A/hpbVsIt3z36DkXn0smo+SMAbSAF5AkJ+iTScCGaF/odizu6eekbFtxhK3pmX63/JBCnzhCNBsJkSlpqqjT71bO4rCpW0NAbFhekjYSPs0pJzkh65Jd8LEVV9YweZiY9Dn6+WeEMM3hzFUPRXHBmLzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745566137; c=relaxed/simple;
-	bh=OffDbqTBVes6nVtKvc2+GvuunHqk86fjhIel2nXw05w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HNFGB/KAMedPuDGI5wjHrRHAmlWOPvGsnDRn6KA/eUQMfkteoNRKaGytmGgkYNgRSphw/0X4TySWsSP2Kb3MUTFpEE5dKgQxlR7vgx3gYyTLKL7zG0l1C05pACmImNb6ov6lSm44j3GZ7MY4Y3Zpxe/qn9Zli9OeGc/43GWgp0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=SevJ/7Vu; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: e8cba82021a611f09b6713c7f6bde12e-20250425
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=JYqespCzipBArbkbxwYqmmhBdhSBu5Sof0tluCzWjzo=;
-	b=SevJ/7VuOaCdLQhWKJDTlAsQ25Lq34Kp9PokzmhNpcW7MFfLs96ybN+UhzvvZLWCXcShBNh6gXu0wIn+EH/Do9/f250FIdRkJGuQ7XTURxFIzxfdDxndy/MtdXy01W7od7p7d4sFFtuFRijypwYln9g9lRX4LIZJjjkfqHYH7Tg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:bd336e9d-80d5-4a59-a328-206cda895afe,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:0ef645f,CLOUDID:502c0907-829c-41bc-b3dd-83387f72f90e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: e8cba82021a611f09b6713c7f6bde12e-20250425
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <shiming.cheng@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1674504371; Fri, 25 Apr 2025 15:28:40 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 25 Apr 2025 15:28:39 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 25 Apr 2025 15:28:38 +0800
-From: Shiming Cheng <shiming.cheng@mediatek.com>
-To: <edumazet@google.com>, <davem@davemloft.net>, <dsahern@kernel.org>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-CC: Jibin Zhang <jibin.zhang@mediatek.com>
-Subject: [PATCH] net: call inet_twsk_put() on TIMEWAIT sockets It is possible for a pointer of type struct inet_timewait_sock to be returned from the functions __inet_lookup_established() and __inet6_lookup_established(). This can cause a crash when the returned pointer is of type struct inet_timewait_sock and sock_put() is called on it. The following is a crash call stack that shows sk->sk_wmem_alloc being accessed in sk_free() during the call to sock_put() on a struct inet_timewait_sock pointer. To avoid this issue, use inet_twsk_put() instead of sock_put() when sk->sk_state is TCP_TIME_WAIT.
-Date: Fri, 25 Apr 2025 15:31:13 +0800
-Message-ID: <20250425073120.28195-1-shiming.cheng@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1745566349; c=relaxed/simple;
+	bh=qh3+deB5RfXkp3djJ1R95fy9ZiJQodi7eJFwTJQylFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SUovvACHUpponIGR3W1CTY18axLo8Tw/Xfpb1rryww85ndLmv0pQM4IdYihwY2pqGwDW1gTmTaTx4Cxs0W/9DDLfWj4WOODwS6nW72eysx0P2bR0E4wAyl0uwBxFUuY9+XGIMadcjR6Hq3zJHNvnn8jlXdB8cBrjk9k0XkE+9H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CC7D8210F9;
+	Fri, 25 Apr 2025 07:32:25 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A597113A79;
+	Fri, 25 Apr 2025 07:32:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id i4FpKIk6C2iYbwAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Fri, 25 Apr 2025 07:32:25 +0000
+Date: Fri, 25 Apr 2025 09:32:16 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin <costa.shul@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
+	storagedev@microchip.com, virtualization@lists.linux.dev, 
+	GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v6 6/9] isolation: introduce io_queue isolcpus type
+Message-ID: <dd4719dc-5ac4-44d9-bccb-e867d322864e@flourine.local>
+References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
+ <20250424-isolcpus-io-queues-v6-6-9a53a870ca1f@kernel.org>
+ <2db989db-4849-46a9-9bad-0b67d85d1650@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2db989db-4849-46a9-9bad-0b67d85d1650@suse.de>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: CC7D8210F9
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-From: Jibin Zhang <jibin.zhang@mediatek.com>
+On Fri, Apr 25, 2025 at 08:26:22AM +0200, Hannes Reinecke wrote:
+> On 4/24/25 20:19, Daniel Wagner wrote:
+> > Multiqueue drivers spreading IO queues on all CPUs for optimal
+> > performance. The drivers are not aware of the CPU isolated requirement
+> > and will spread all queues ignoring the isolcpus configuration.
+> > 
+> > Introduce a new isolcpus mask which allows the user to define on which
+> > CPUs IO queues should be placed. This is similar to the managed_irq but
+> > for drivers which do not use the managed IRQ infrastructure.
+> > 
+> > Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> > ---
+> >   include/linux/sched/isolation.h | 1 +
+> >   kernel/sched/isolation.c        | 7 +++++++
+> >   2 files changed, 8 insertions(+)
+> > 
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-mrdump.ko        ipanic() + 120
-vmlinux          notifier_call_chain(nr_to_call=-1, nr_calls=0) + 132
-vmlinux          atomic_notifier_call_chain(val=0) + 56
-vmlinux          panic() + 344
-vmlinux          add_taint() + 164
-vmlinux          end_report() + 136
-vmlinux          kasan_report(size=0) + 236
-vmlinux          report_tag_fault() + 16
-vmlinux          do_tag_recovery() + 16
-vmlinux          __do_kernel_fault() + 88
-vmlinux          do_bad_area() + 28
-vmlinux          do_tag_check_fault() + 60
-vmlinux          do_mem_abort() + 80
-vmlinux          el1_abort() + 56
-vmlinux          el1h_64_sync_handler() + 124
-vmlinux        > 0xFFFFFFC080011294()
-vmlinux          __lse_atomic_fetch_add_release(v=0xF2FFFF82A896087C)
-vmlinux          __lse_atomic_fetch_sub_release(v=0xF2FFFF82A896087C)
-vmlinux          arch_atomic_fetch_sub_release(i=1, v=0xF2FFFF82A896087C)
-+ 8
-vmlinux          raw_atomic_fetch_sub_release(i=1, v=0xF2FFFF82A896087C)
-+ 8
-vmlinux          atomic_fetch_sub_release(i=1, v=0xF2FFFF82A896087C) + 8
-vmlinux          __refcount_sub_and_test(i=1, r=0xF2FFFF82A896087C,
-oldp=0) + 8
-vmlinux          __refcount_dec_and_test(r=0xF2FFFF82A896087C, oldp=0) + 8
-vmlinux          refcount_dec_and_test(r=0xF2FFFF82A896087C) + 8
-vmlinux          sk_free(sk=0xF2FFFF82A8960700) + 28
-vmlinux          sock_put() + 48
-vmlinux          tcp6_check_fraglist_gro() + 236
-vmlinux          tcp6_gro_receive() + 624
-vmlinux          ipv6_gro_receive() + 912
-vmlinux          dev_gro_receive() + 1116
-vmlinux          napi_gro_receive() + 196
-ccmni.ko         ccmni_rx_callback() + 208
-ccmni.ko         ccmni_queue_recv_skb() + 388
-ccci_dpmaif.ko   dpmaif_rxq_push_thread() + 1088
-vmlinux          kthread() + 268
-vmlinux          0xFFFFFFC08001F30C()
+Just realized I forgot to also add some document on this new argument:
 
-Signed-off-by: Jibin Zhang <jibin.zhang@mediatek.com>
----
- net/ipv4/tcp_offload.c   | 8 ++++++--
- net/ipv6/tcpv6_offload.c | 8 ++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+			io_queue
+			  Isolate from IO queue work caused by multiqueue
+			  device drivers. Restrict the placement of
+			  queues to housekeeping CPUs only, ensuring that
+			  all IO work is processed by a housekeeping CPU.
 
-diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
-index 2308665b51c5..95d7cbf6a2b5 100644
---- a/net/ipv4/tcp_offload.c
-+++ b/net/ipv4/tcp_offload.c
-@@ -431,8 +431,12 @@ static void tcp4_check_fraglist_gro(struct list_head *head, struct sk_buff *skb,
- 				       iph->daddr, ntohs(th->dest),
- 				       iif, sdif);
- 	NAPI_GRO_CB(skb)->is_flist = !sk;
--	if (sk)
--		sock_put(sk);
-+	if (sk) {
-+		if (sk->sk_state == TCP_TIME_WAIT)
-+			inet_twsk_put(inet_twsk(sk));
-+		else
-+			sock_put(sk);
-+	}
- }
- 
- INDIRECT_CALLABLE_SCOPE
-diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
-index a45bf17cb2a1..5fcfa45b6f46 100644
---- a/net/ipv6/tcpv6_offload.c
-+++ b/net/ipv6/tcpv6_offload.c
-@@ -41,8 +41,12 @@ static void tcp6_check_fraglist_gro(struct list_head *head, struct sk_buff *skb,
- 					&hdr->daddr, ntohs(th->dest),
- 					iif, sdif);
- 	NAPI_GRO_CB(skb)->is_flist = !sk;
--	if (sk)
--		sock_put(sk);
-+	if (sk) {
-+		if (sk->sk_state == TCP_TIME_WAIT)
-+			inet_twsk_put(inet_twsk(sk));
-+		else
-+			sock_put(sk);
-+	}
- #endif /* IS_ENABLED(CONFIG_IPV6) */
- }
- 
--- 
-2.46.0
+			  Note: When an isolated CPU issues an IO, it is
+			  forwarded to a housekeeping CPU. This will
+			  trigger a software interrupt on the completion
+			  path.
 
+			  Note: It is not possible to offline housekeeping
+			  CPUs that serve isolated CPUs.
 
