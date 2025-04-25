@@ -1,221 +1,200 @@
-Return-Path: <linux-kernel+bounces-621031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99535A9D2E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B194FA9D2F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC05117C53F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A53A9C23DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8329C221D9F;
-	Fri, 25 Apr 2025 20:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E30221DB5;
+	Fri, 25 Apr 2025 20:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EZBoPtEt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e+CyW1H4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F2C22068B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 20:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FFB22068B;
+	Fri, 25 Apr 2025 20:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745612621; cv=none; b=fSUIoUm8lz2BnStUBJGTHR2lsRs2Ddv/P/Syp6wQ0jHlTN9FGFSO/pUik3QGhfAugtTAy9oS/dJPJUfE+U5ACmYziE5COyk2Q2UckUGguebuSR34flUlYnm8kC19VBScvfvXolAHVy7Y6cYMqejokCEWPRkPW4+ks27Z/x6iQv8=
+	t=1745612688; cv=none; b=JWtdGj6gi4oyQALtU1TIVOS5IRPbWJJwMHgmXklTYnvCeu7xqaBSj3B6KjlJbr56iIUMnlgHbHvPYf3IjGgQM15dDPBqUnr8YhmmNfy5qdkIqpAHyKlfk/XBBYgzq8JqaKj+avhkqPqsU04CrUhIFdUtHkV4T0UEsnIl0LvLn88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745612621; c=relaxed/simple;
-	bh=TzBSGSj6jGOetYQyWr//XfuEnO/nibgpaRK8a5Y7DVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NAHHsXiRXM1lYUhb+R2keqAgYUCtfR6EAY6vdDchgj9YwbU02xnNiWpYCSb8UeA83d1eQa7VRS54R6f1WmKpPakqNWkICSrJ0anGgoqiARq4Cc+RTK7iF9uptUxurtc9c1PEHn8rGXCQ5AC77EqA3Ewpqh4go/gmqHlVqkNT5KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EZBoPtEt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745612619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lnuw5o7CPzgYgSg30nFZeV0xqdVhh4HEfg3UbcumuG4=;
-	b=EZBoPtEti1vBtNOoxnf+TEehupvW9gttCYiaxUF/fLs85NiN/XHa2SIlCHrljk+1CzM/60
-	zEJfUDZttLXxAjxu49hg8sJvG4wwMga04wVOoQeJZ1KRb+O2Xj1LWi95B6GaXQ5yJvdKay
-	u+q5qe5EyWtMujIw2M1amN3Al6XBtzw=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-iT8UHxadOWuZrr_ARfC_9w-1; Fri, 25 Apr 2025 16:23:37 -0400
-X-MC-Unique: iT8UHxadOWuZrr_ARfC_9w-1
-X-Mimecast-MFC-AGG-ID: iT8UHxadOWuZrr_ARfC_9w_1745612617
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8f6443ed5so65861956d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:23:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745612617; x=1746217417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lnuw5o7CPzgYgSg30nFZeV0xqdVhh4HEfg3UbcumuG4=;
-        b=k2e0Tt4L0faRzSp9CJ8dYejsAOqphJRJ9WC9/Wxq2zroMcydmcIaslNgrrr0+z42uC
-         OOqGJOyyW1GKCM4BYm6deRUYK69Z6nFS8wGtO+u6aIkcsL4nWOLiArphydvcgrsWIv3h
-         WHRgl8FDIlTSHr9y1cTgdlpkcxhb/VgXBlRxfI5mfh9jMmBKOari8onzvRLJ0piR1RoC
-         D7sm0nEZUPA23A9SyLdJhC5/bQG/OuDc4fECfPW/RxsnSWkyM/dCFaw9+4M7QMC1/wJf
-         4Jd8OvY1FDeKvh72+xC/2zf65ydSltg7SmMhBbCYmnqpoihkVuw+tFYwOS9wNgB5Q/Yd
-         5UAA==
-X-Gm-Message-State: AOJu0Yy8RrK1Lz0pKpduKtl2YXUurZqE+lVo0Lr7dAYhZPh3GBBA38wF
-	/nB/u3QINjhtEu+uGFZX7qlv9gesyfAJRrVR/iY+vhJALkkOSF9ze36BE9k0QqXo3GRTS93tIBf
-	7SG90DnZZiFxktm9K0zdcsZs7/RyFZ/QlLnRGtHOXf+hU2pnVWw1L7vd6iUSj94RsxRmvqA==
-X-Gm-Gg: ASbGncsL/0w0vIXGws1AVlOjhScQVliJIWZipG1s/9z08Jev31SMq9bekmRSbz+Xd2f
-	+FUysqHNw+cuO3v8m+qBhrqab7RLIN3K4+2LPilU0ZQv7KF2bPAsHu5W4yVznmPrRWLSnq6O8xm
-	EhaJ51c377eXZAldrX7LTJZr950Sc+G5z5TdcLgpsbfrTDF08Pfh1aF7BDXkvrZs5grJCX57YC+
-	puN+OUodiqk8iM8uhM2dkCh0IQ1Ti4/shiJCM3JWjus5A1QgClcwBgd2GO8JlF+ItZk00ScVteN
-	aUk=
-X-Received: by 2002:a05:6214:ca2:b0:6f4:c939:a3f5 with SMTP id 6a1803df08f44-6f4cc38cae8mr50223896d6.17.1745612616900;
-        Fri, 25 Apr 2025 13:23:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHAbB9VBhNfVFkn16GQ1jhi8yEPGvnD0kLIi/1k7vzQQf+ePUU4ZzjJOht8FgMwVJBxtCN+iQ==
-X-Received: by 2002:a05:6214:ca2:b0:6f4:c939:a3f5 with SMTP id 6a1803df08f44-6f4cc38cae8mr50223586d6.17.1745612616494;
-        Fri, 25 Apr 2025 13:23:36 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c0aaf9a3sm25917506d6.98.2025.04.25.13.23.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 13:23:35 -0700 (PDT)
-Date: Fri, 25 Apr 2025 16:23:31 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-trace-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH v1 05/11] mm: convert VM_PFNMAP tracking to
- pfnmap_track() + pfnmap_untrack()
-Message-ID: <aAvvQ1h9bg11hiqI@x1.local>
-References: <20250425081715.1341199-1-david@redhat.com>
- <20250425081715.1341199-6-david@redhat.com>
+	s=arc-20240116; t=1745612688; c=relaxed/simple;
+	bh=1XWxFj5nRr1x9vrMuHYbrtHZT6ZgbVTFoRVbQLvDzl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LADE6C+mLKOzGml7d6c3nHnKcGSRZqAWFa2Eukw04rz61z6m4gnmITWt3/6aZAg8heLh9S7fZkxwHZH4acHwKBAvB/tco7/i10r7X5xWEz18Sp2vwtVdgKJ7L6iQMP1o48GUHfnUpImtAPXfGxGtQZ+AiLo29ywPeVvCpjG+0Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e+CyW1H4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJuB1024750;
+	Fri, 25 Apr 2025 20:24:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kcun9w3A1j/G1OzzsPcb3/mY7bDiEDLBGze6UIAGCZ0=; b=e+CyW1H4wfeZhM3O
+	N8ApVdvBP3jZC1FkvkUcBDaA2OMYxyf7GF0Az2iSWlJvtXLMEPH5HpqD6xEAvfUv
+	g1HnTJZaGLu6IpIHi31FXQJ6ap0s7xL/J3EPeMT43BKAmxbznUeGLUex5GCcgSNs
+	taI6v1/BnpKq9SR2UZ5AjbMKOnMIzoZIuFLQ4SWy6K0fWp14ssmIhOArMmyYRbZ4
+	A90fLkBpBbCUOBS05C70/meBy/OZfWdBLaa1X80IEkdLrl1v6Wcie1tmWssivRDY
+	2Q9K4Eh94p/6UXh7/uAcx+BFcn6BXRjr5Eirqya1zMofTa1dirOmgNKPwYQSH9iD
+	+PjKXg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0t389-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 20:24:37 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53PKOaJp003713
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 20:24:36 GMT
+Received: from [10.134.71.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Apr
+ 2025 13:24:35 -0700
+Message-ID: <f1afcf58-2937-4ad4-b5ad-8935c3367190@quicinc.com>
+Date: Fri, 25 Apr 2025 13:24:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250425081715.1341199-6-david@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] drm/msm/dpu: enable SmartDMA on SC8180X
+To: Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20250308-dpu-rework-vig-masks-v1-0-f1b5d101ae0b@linaro.org>
+ <20250308-dpu-rework-vig-masks-v1-2-f1b5d101ae0b@linaro.org>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20250308-dpu-rework-vig-masks-v1-2-f1b5d101ae0b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: M5REsFV_lE3FfKzfgb6csjkq94wXydRw
+X-Authority-Analysis: v=2.4 cv=ftfcZE4f c=1 sm=1 tr=0 ts=680bef85 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=SJCa53jPp-AOw9btYvwA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: M5REsFV_lE3FfKzfgb6csjkq94wXydRw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDE0NiBTYWx0ZWRfXxnXh3lYrrYuT SygwMhm5STjoyF5Sqb1zsYaFn8WnUmq6xaolKsgbc4ry5pR7Ccfn0wG1vrXMfuXdHADxvcV7yt/ YxNxxIcNiSSjSmzYj1Yz4jBpVOboyp04TXp9WljVKelPYTrE8m9yIeaxTEZLcWJYPjkhfj/0My9
+ zZN1PQgOEPxk+oCIaJyQozW0KBlEAkdlr1PVgcDhiz5Gbjbg/9YiX0w5kai+oYVnAXdsn36ZS5z eIjdg7qWhM6itC28yHwJVzN19rINH0BRcpJjw9Qrhet08acDdfCr3uYg5nOIzUPKDGsiiMfdEb8 0CGFHuyO1BJ2xShPtCkJkHPU/xLi6NJXcfzb/Y9WI1J7qda6pWKPK5SBGSgDZSFmXa0GCgnQGkz
+ C7/LBM2E//Irj+8Ow18Evk20RizOUAvtKY8IIZefeXV+IOd8sVn79N8aiC4LUl4RhezsbWz4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250146
 
-On Fri, Apr 25, 2025 at 10:17:09AM +0200, David Hildenbrand wrote:
-> Let's use our new interface. In remap_pfn_range(), we'll now decide
-> whether we have to track (full VMA covered) or only sanitize the pgprot
-> (partial VMA covered).
+
+
+On 3/7/2025 9:38 PM, Dmitry Baryshkov wrote:
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
-> Remember what we have to untrack by linking it from the VMA. When
-> duplicating VMAs (e.g., splitting, mremap, fork), we'll handle it similar
-> to anon VMA names, and use a kref to share the tracking.
+> Reworking of the catalog dropped the SmartDMA feature bit on the SC8180X
+> platform. Renable SmartDMA support on this SoC.
 > 
-> Once the last VMA un-refs our tracking data, we'll do the untracking,
-> which simplifies things a lot and should sort our various issues we saw
-> recently, for example, when partially unmapping/zapping a tracked VMA.
-> 
-> This change implies that we'll keep tracking the original PFN range even
-> after splitting + partially unmapping it: not too bad, because it was
-> not working reliably before. The only thing that kind-of worked before
-> was shrinking such a mapping using mremap(): we managed to adjust the
-> reservation in a hacky way, now we won't adjust the reservation but
-> leave it around until all involved VMAs are gone.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Fixes: 460c410f02e4 ("drm/msm/dpu: duplicate sdm845 catalog entries")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
 > ---
->  include/linux/mm_inline.h |  2 +
->  include/linux/mm_types.h  | 11 ++++++
->  kernel/fork.c             | 54 ++++++++++++++++++++++++--
->  mm/memory.c               | 81 +++++++++++++++++++++++++++++++--------
->  mm/mremap.c               |  4 --
->  5 files changed, 128 insertions(+), 24 deletions(-)
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-> index f9157a0c42a5c..89b518ff097e6 100644
-> --- a/include/linux/mm_inline.h
-> +++ b/include/linux/mm_inline.h
-> @@ -447,6 +447,8 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
->  
->  #endif  /* CONFIG_ANON_VMA_NAME */
->  
-> +void pfnmap_track_ctx_release(struct kref *ref);
-> +
->  static inline void init_tlb_flush_pending(struct mm_struct *mm)
->  {
->  	atomic_set(&mm->tlb_flush_pending, 0);
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 56d07edd01f91..91124761cfda8 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -764,6 +764,14 @@ struct vma_numab_state {
->  	int prev_scan_seq;
->  };
->  
-> +#ifdef __HAVE_PFNMAP_TRACKING
-> +struct pfnmap_track_ctx {
-> +	struct kref kref;
-> +	unsigned long pfn;
-> +	unsigned long size;
-> +};
-> +#endif
-> +
->  /*
->   * This struct describes a virtual memory area. There is one of these
->   * per VM-area/task. A VM area is any part of the process virtual memory
-> @@ -877,6 +885,9 @@ struct vm_area_struct {
->  	struct anon_vma_name *anon_name;
->  #endif
->  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> +#ifdef __HAVE_PFNMAP_TRACKING
-> +	struct pfnmap_track_ctx *pfnmap_track_ctx;
-> +#endif
-
-So this was originally the small concern (or is it small?) that this will
-grow every vma on x86, am I right?
-
-After all pfnmap vmas are the minority, I was thinking whether we could
-work it out without extending vma struct.
-
-I had a quick thought quite a while ago, but never tried out (it was almost
-off-track since vfio switched away from remap_pfn_range..), which is to
-have x86 maintain its own mapping of vma <-> pfn tracking using a global
-stucture.  After all, the memtype code did it already with the
-memtype_rbroot, so I was thinking if vma info can be memorized as well, so
-as to get rid of get_pat_info() too.
-
-Maybe it also needs the 2nd layer like what you did with the track ctx, but
-the tree maintains the mapping instead of adding the ctx pointer into vma.
-
-Maybe it could work with squashing the two layers (or say, extending
-memtype rbtree), but maybe not..
-
-It could make it slightly slower than vma->pfnmap_track_ctx ref when
-looking up pfn when holding a vma ref, but I assume it's ok considering
-that track/untrack should be slow path for pfnmaps, and pfnmaps shouldn't
-be a huge lot.
-
-I didn't think further, but if that'll work it'll definitely avoids the
-additional fields on x86 vmas.  I'm curious whether you explored that
-direction, or maybe it's a known decision that the 8 bytes isn't a concern.
-
-Thanks,
-
--- 
-Peter Xu
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> index de8ccf589f1fe026ca0697d48f9533befda4659d..330490d10247e6347df71927ce601da1468f466e 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> @@ -75,7 +75,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	{
+>   		.name = "sspp_0", .id = SSPP_VIG0,
+>   		.base = 0x4000, .len = 0x1f0,
+> -		.features = VIG_SDM845_MASK,
+> +		.features = VIG_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>   		.xin_id = 0,
+>   		.type = SSPP_TYPE_VIG,
+> @@ -83,7 +83,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_1", .id = SSPP_VIG1,
+>   		.base = 0x6000, .len = 0x1f0,
+> -		.features = VIG_SDM845_MASK,
+> +		.features = VIG_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>   		.xin_id = 4,
+>   		.type = SSPP_TYPE_VIG,
+> @@ -91,7 +91,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_2", .id = SSPP_VIG2,
+>   		.base = 0x8000, .len = 0x1f0,
+> -		.features = VIG_SDM845_MASK,
+> +		.features = VIG_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>   		.xin_id = 8,
+>   		.type = SSPP_TYPE_VIG,
+> @@ -99,7 +99,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_3", .id = SSPP_VIG3,
+>   		.base = 0xa000, .len = 0x1f0,
+> -		.features = VIG_SDM845_MASK,
+> +		.features = VIG_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_vig_sblk_qseed3_1_4,
+>   		.xin_id = 12,
+>   		.type = SSPP_TYPE_VIG,
+> @@ -107,7 +107,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_8", .id = SSPP_DMA0,
+>   		.base = 0x24000, .len = 0x1f0,
+> -		.features = DMA_SDM845_MASK,
+> +		.features = DMA_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_dma_sblk,
+>   		.xin_id = 1,
+>   		.type = SSPP_TYPE_DMA,
+> @@ -115,7 +115,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_9", .id = SSPP_DMA1,
+>   		.base = 0x26000, .len = 0x1f0,
+> -		.features = DMA_SDM845_MASK,
+> +		.features = DMA_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_dma_sblk,
+>   		.xin_id = 5,
+>   		.type = SSPP_TYPE_DMA,
+> @@ -123,7 +123,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_10", .id = SSPP_DMA2,
+>   		.base = 0x28000, .len = 0x1f0,
+> -		.features = DMA_CURSOR_SDM845_MASK,
+> +		.features = DMA_CURSOR_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_dma_sblk,
+>   		.xin_id = 9,
+>   		.type = SSPP_TYPE_DMA,
+> @@ -131,7 +131,7 @@ static const struct dpu_sspp_cfg sc8180x_sspp[] = {
+>   	}, {
+>   		.name = "sspp_11", .id = SSPP_DMA3,
+>   		.base = 0x2a000, .len = 0x1f0,
+> -		.features = DMA_CURSOR_SDM845_MASK,
+> +		.features = DMA_CURSOR_SDM845_MASK_SDMA,
+>   		.sblk = &dpu_dma_sblk,
+>   		.xin_id = 13,
+>   		.type = SSPP_TYPE_DMA,
+> 
 
 
