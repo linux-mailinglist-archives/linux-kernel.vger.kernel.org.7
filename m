@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-619455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F4FA9BCE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:35:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BFEA9BCEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF38C927032
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AAB31BA254C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C84155A59;
-	Fri, 25 Apr 2025 02:35:34 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B125817A30B;
+	Fri, 25 Apr 2025 02:38:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38BC17C98;
-	Fri, 25 Apr 2025 02:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4647C15B543;
+	Fri, 25 Apr 2025 02:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745548533; cv=none; b=eb3lrT2fDT2DM0QZPWkSSKa+GfHw5Bbs3x02oC+SQtbdgTt8VcvACHsAN8hlqh18MpxNaoQ8aKqfPZQcQ+Wx/ps95uInoxCj8+NYsJEN5YXsJLNWi/JI46QwZ/p7PM7r6kBUD3e+9snbQpdOefuFvBe+DLsRZGpqbcqZhZ8RZ8c=
+	t=1745548706; cv=none; b=DZx0dVxhMuIIQSNVAyko4DLii0J/iqpaFvqav7liPo/C3bYjMfb5hZYZczcD9TMwVliyZZ1CHypvtAsQFAr0co51Gbm0yGDjnM5NRkwGss0EKMf4cwmUNGsZRtqFzRktqUp8oV0F1Wf+yV6uMZvOOSZNg2+BjIWzs94WEuSOoaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745548533; c=relaxed/simple;
-	bh=RIs/31Rjyt7B68AoWeqJz+goZQ/NLZV4bEu2N//Tka0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmNiLdB/YHBLQez5eKkiM9tTmQJQNe7kSgjDXhv7TmXrh/jA9bpqMzMvfVoT6UP3651k0TfGdRReEcz1D0RoCIuZpdmi7XqFtKdLpXfKonHNLYm/z9cCQOccFfEZtuloBglxFcXa8agL3X4P4HsU1k6x7fqNxNICg7IR4yH8rKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 8484234133B;
-	Fri, 25 Apr 2025 02:35:31 +0000 (UTC)
-Date: Fri, 25 Apr 2025 02:35:27 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: dts: allwinner: correct the model name for
- Radxa Cubie A5E
-Message-ID: <20250425023527-GYA50272@gentoo>
-References: <20250416100006.82920-1-amadeus@jmu.edu.cn>
- <174551712323.4050580.15085872783453662439.b4-ty@csie.org>
+	s=arc-20240116; t=1745548706; c=relaxed/simple;
+	bh=UschMkblraqHY5gdJ7MXLcjHLOAy+xsSTGpDeVkHSvc=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=pCtvUNQ0YabYsPEkQ4xnED4HsmH/jMfTmn2DHr7LcjRVIj4V6MUrZ+9CtvLRxCWLj9VtsboFlB4klu6p0MgLFhjDf1TY5N86YTTQtffhggfKTBGTgQtTZa6H8vEC099OtG5Qy3smGAlWk+KLcjuWRKMzmlQWdAEIpsQ2cZlZxgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80768C4CEEB;
+	Fri, 25 Apr 2025 02:38:25 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1u88zG-0000000HC6R-197C;
+	Thu, 24 Apr 2025 22:40:22 -0400
+Message-ID: <20250425023750.669174660@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 24 Apr 2025 22:37:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jens Remus <jremus@linux.ibm.com>,
+ x86@kernel.org,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 0/6] [PATCH v6 0/6] x86/vdso: VDSO updates and fixes for sframes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174551712323.4050580.15085872783453662439.b4-ty@csie.org>
 
-Hi Chukun, Chen-Yu,
+I'm currently working on getting sframe support from the kernel.
+In order to do that, it requires some fixes. Josh Poimboeuf did
+a lot of the hard work already, but he told me he doesn't have
+time to continue it so I'm picking it up where he left off.
 
-On 01:52 Fri 25 Apr     , Chen-Yu Tsai wrote:
-> On Wed, 16 Apr 2025 18:00:06 +0800, Chukun Pan wrote:
-> > According to https://radxa.com/products/cubie/a5e,
-> > the name of this board should be "Radxa Cubie A5E".
-> > This is also consistent with the dt-bindings.
-> > 
-> > 
-> 
-> Applied to dt-for-6.16 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
-> 
-> [1/1] arm64: dts: allwinner: correct the model name for Radxa Cubie A5E
->       commit: 1e5a69d67d1b3c55c9b0cd3933af1436b5d52aa1
-> 
-It seems I'm a little bit late for this, but while we are here,
-Can we also append 'cubie' to dts file name? e.g. - sun55i-a527-radxa-cubie-a5e.dts
+His last series of v4 is here:
 
-for the reasons:
-1) there are already too many product lines from Radxa - Rock, Orion, Zero..
-some dts file in rockchip already adopt this name scheme:
-  arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3e.dts
-2) there might be more products in the future for the cubie series..
+  https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
 
-Chukun, if people agree on this, could you send a follow-up patch
-to address this?
+It covers a lot of topics as he found issues with other aspects of
+the kernel that needed to be fixed for sframes to work properly.
 
--- 
-Yixun Lan (dlan)
+This series focuses only on the VDSO code. They are helpful fixes
+and updates that doesn't rely on sframes (although the last patch
+is sframe related).
+
+I based this off of the latest tip/master:
+
+ commit 0c6ae66ef164c408daeab6a61aace4b86010369a
+
+Changes since v5: https://lore.kernel.org/all/20250422183439.895236512@goodmis.org/
+
+- Updated change log of patch 3 to make it more of a clean up than a fix.
+
+- Replaced $(comma} with actual comma in Makefile of the last patch.
+
+Josh Poimboeuf (6):
+      x86/vdso: Fix DWARF generation for getrandom()
+      x86/asm: Avoid emitting DWARF CFI for non-VDSO
+      x86/asm: Use CFI_* macros in SYM_FUNC_* macros so they can be added to VDSO
+      x86/vdso: Use SYM_FUNC_{START,END} in __kernel_vsyscall()
+      x86/vdso: Use CFI macros in __vdso_sgx_enter_enclave()
+      x86/vdso: Enable sframe generation in VDSO
+
+----
+ arch/Kconfig                             |  3 ++
+ arch/x86/entry/vdso/Makefile             | 10 ++++--
+ arch/x86/entry/vdso/vdso-layout.lds.S    |  5 ++-
+ arch/x86/entry/vdso/vdso32/system_call.S | 10 ++----
+ arch/x86/entry/vdso/vgetrandom-chacha.S  |  3 +-
+ arch/x86/entry/vdso/vsgx.S               | 19 +++++------
+ arch/x86/include/asm/dwarf2.h            | 54 ++++++++++++++++++++++----------
+ arch/x86/include/asm/linkage.h           | 33 +++++++++++++++----
+ arch/x86/include/asm/vdso.h              |  1 -
+ 9 files changed, 89 insertions(+), 49 deletions(-)
 
