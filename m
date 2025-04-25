@@ -1,79 +1,86 @@
-Return-Path: <linux-kernel+bounces-621134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482F3A9D465
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:44:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD49BA9D480
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160953BC9A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 948A27B5EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817F5225414;
-	Fri, 25 Apr 2025 21:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A10208997;
+	Fri, 25 Apr 2025 21:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ecdIgtzW"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R3KCzmNr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF9A2253B7
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CBE21ABA7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745617466; cv=none; b=MtDWhFExZ9S9lE6MKD7mHfzgswRhD0wqfgwYP2TCmhIm5SIMY8TvFESQusaC7URFK32qPpa24sh60ojP21YW54DwCIbGOjAAHnBYjhvKEs13J70R6pebMX9w4FtNBab4+26K2DthOSFguRDZz2FJ3jvoP0HIxUZmGeLbsyZYUX0=
+	t=1745617762; cv=none; b=HmrS9WIQ+qiv+VErr1U7skj6k3GeZtod+kvPGcIeiXhz/Np7LBPXs6zooNTQMkmSVLEvgqBG9kE7ucAtohB0exSK7xM5xlx5IHp8bOmfX/eXL9SXB2tfW36gNhewog9mXJkROGBuSKGXLxm2K+MNYh0MyFmGCyQyjeBv/SPK9Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745617466; c=relaxed/simple;
-	bh=0PGOU404WR3ZZT5UO5ZutPGEui+7NlIYTJrsKba4mAI=;
+	s=arc-20240116; t=1745617762; c=relaxed/simple;
+	bh=jozrC8ALKXE/Sx+4V/NhfP3zJRrKkx5q5cBTgMlYmb4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kTVB574/J4irsTBLGrFER12N1fK9ZhH0DDYNGcciPAxvvHr/3B830QdX3L6yw9dChNCfD3etcdU8JBRnEXU39AzcsM4iO5N0RlfJDNPUSmwRsUHtQd1cU6ntSUSng+WafgGgeDMswM3kf7OJIsS+lT+TS2D7c+M8Gl490h6yj5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ecdIgtzW; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-401c43671ecso1494375b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745617463; x=1746222263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vetl9XpldH8JvL8GlwOYXmdLs3vxDNII55h0sSj3lYc=;
-        b=ecdIgtzWNSzsQn2U0k23mm0eBPvHL1C1TcUx5drufKdFJWPjIQ7GsvtCZNtt5PLkrQ
-         WnTYAnIngoJxMKPjvGQiafQHc11uLmi+6WacfOsAoF51wtpj5OD1KLHbuqOxW9MJ+gqu
-         5dnK7M15p2Ba7STyIzHw8yQ2C07rw8o15cRsmQMj8XCNaYuV4Xz4PUCW26zxhpCC1VG5
-         46kunNXqj5N6793pab6hLib2fv9d4od8dWNR/iV2yFkzw4n8YTPKs+UFmFcwE9gaYloe
-         CVGYnFNqsC2iAGruFEhIv3ZuPkZEJxVIArXn+geM9L4Mb+yzI1VWxaB1nUXsqcfJTKI3
-         kjVA==
+	 In-Reply-To:Content-Type; b=r6keAAPPpkgKKC/z8JGwM3GleP+Th61Ank2xBWXMtNJ17IgxRleh/f3boLMGDmYtRbpde6irnLnpMPWi9kR/gPynzz++98UVGHbtQqGEisvpVeClBlkE5gKRA7kXE/M5NfEnL4BJPYhzFqyFz9GpJSqoCdmVLOjEWtaJsN8hpcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R3KCzmNr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJtIs007904
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:49:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pqttNioS7MEhlEyeR5tyyWNtOjjWlwl8TrfEkoHr4Ds=; b=R3KCzmNrXjv4yB1Z
+	NAY+Pru2HGVjfLGDRtTjnQZYCg+hBPXnfDnlT7JhozGnoNvo/siglLBK8wnt+aF/
+	0KmPZVYhmVga2eHmC7olyotc9QHU3t/ODGRBFguIk+fePalCNdFnuws2otaalWiX
+	qv9R3a5FFaPLGLBLXEGwLNTVjjyjPb76Dv2QhiozWND0xQz9voJaI25vLAwHPKRC
+	Huj2IKWwMl2oGjF88APbuBlHS/QJc2joLAnUDeXbPvmGWvUhtL2jA+cUJIjLFewO
+	lm2/Zt648e2HZbFbs0T6z+jEW+m70vWOt3zP2fCi07a8BTKYBQU2hsEmIlY3tw6p
+	7dPNng==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh2jeac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 21:49:18 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-476a4a83106so2167061cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:49:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745617463; x=1746222263;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1745617757; x=1746222557;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vetl9XpldH8JvL8GlwOYXmdLs3vxDNII55h0sSj3lYc=;
-        b=T8U6NNIQ5eWTGoZ9Jp4IQvRxMHDY+7bXYAsNa8+cBbClELawxUydXIS1rsd3KpLBk4
-         VOtWB05e/0iunkm+hHzVY4OtlZ4cM9+6UbtcizVXxJCwpTryHpSEeKPhFU7c3FR3oNZK
-         tzRZ8WwPaqRhdV4mFkJqkOsFF7MUc7gZbBV9Bcy7wbgI8mPS9SMq7mm81USbm8UtF8iE
-         U83k/yyipYU4hohzFE5ax+8+s8ndUWNGUuxPrnkxAQjTBjjYBbkWvrsQutzzS6+3f0To
-         SSN1nxj2gY56Ejd9YD11BCc1yktHyaKdKSaPJ0Q0uN9OOzbGoJao2mEevtvdCY2xDJVH
-         kHwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9yUutDy5ctKAo8NtaGdE0bgFGrZSp559jaoCCa6sTaMrZQCSbnLewHfO/RPz1FGYbqstbEx4CMeVho9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybnbMBV1asjLmgNhZeoHFaUt4DG8VU5zuCZVpgjRK36yoDZiLG
-	C+s0AsW4mrOVTxXSe+Pf+eYyQh/jwRvT2zjVEeQNbE+NC/2q/7adHn29YBX6Uyk=
-X-Gm-Gg: ASbGncsdEy4akJXX/tJTXvZ3MjLbsc0EkH4iofCJvbcjYXB2HLmjzgpokgxsYuedMvp
-	RMawqANF5cLRY2HYPo3yR9XafNWUBznw867QaQbfytFDhlq8SlwTR7mmM6j9KZr+f8Nvhg4kNZP
-	+K+BI6h8nh5X7SIc40onAmaZKgHWCAlgnYoy71Srg0HBG02+2PXAW/gVgvNR9fXlsMDsgMZLnfx
-	5/l3AjlSU2YSFUxRbU6YMPTSe/OCdzOPG6Ck7RDWviBpReuuMViEIrNE4rSGrS9+ttD3AOhmOL7
-	J1eSazmlehKnyE/+nOdz25YoYiRtq5rl17MJIdFG2zzgfeJtRPF3QqeL/qy1OK6KsBm8eWosxpk
-	wBfFwF9Z39HQx
-X-Google-Smtp-Source: AGHT+IGYSYK/NgbfRtntiLX0fyD882sY0Y9kI7JKZ0e9QJqEQnnrOLa7rFd/SxmE01a29TeJbZfoUg==
-X-Received: by 2002:a05:6808:178e:b0:400:fa6b:94bf with SMTP id 5614622812f47-401ec44c715mr4767354b6e.4.1745617462686;
-        Fri, 25 Apr 2025 14:44:22 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:96a3:e28:3f6:dbac? ([2600:8803:e7e4:1d00:96a3:e28:3f6:dbac])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-401ec8afb1esm939069b6e.10.2025.04.25.14.44.20
+        bh=pqttNioS7MEhlEyeR5tyyWNtOjjWlwl8TrfEkoHr4Ds=;
+        b=gUiWUF4wzxHymBtlOm072vD902g68cYPwP+vQwze6BND21DF6W38naddfmWmuEsp3k
+         n61Y94LOZibYFAT36YOR4O15RpYTvBwvkCesDTYnfVYx22evgE6jIkwueO0d/9bsa5ac
+         FqlPViQeQHavdpPKR9yYSEWY8C5xRL7dqPlq2JblwIEXxL6kSuTlK+Mhu0xrl97zicLL
+         IiUeY+GDewNfgSR3tPS9HpvXv1ufOVBinvaL7b4F/VvN8exhVPvKznpJdrKbHun4WIpA
+         ZyT+7AMlnVBi1t4ukEQGiuAQ6tU4K9bVRaLCKObAUXR7AwE5sRXG4oErpgJIBlqroez7
+         WYZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLg3XZ+mRhKfuKheDQafgNKvww0cVe7/Ewic2XAk+ZhyAQaFtVqrJ7cK3zCWlel6fEQeu1RO9Cd6PWLwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFzU15q/AngGSd8UEJWqKzY/4h/jX4jBhSWlsUXvH1kbEc+nE
+	1Xs9Ra3GqqoLgBctw22Loj3OMemlEUJcIKxDKgWsEX0zmhSk2wh5xfR3d/8fA9TU5IYeD3/yZmp
+	3dGM1lJd+yepKAAeMZ6s258TDsQTbsgF+k7C40xxIuayS1xdYv8l3U35Sg0x1DvM=
+X-Gm-Gg: ASbGncs5TBvkLZ7W/fBYRinPQy7+ZroZpLd869MSDLV/iuLlugjFe/8k5EmgOAqz9Z3
+	/WHx8y58iCHtkAayy/De8QW9UHDAak80CGZjH9nEe9fxMHnOdz3/E1IBTfbIqm7SpjBwha73MV9
+	Gb6zbdJNrpqnWktFtyKxe4a2DI9YTR9SVbm37syuLOCb5MhXhYuq6f4WmIf3dBqUw7driaOuVo8
+	S8/4V+KltX9N2bONL47IqoEGcUbQ7MQq8+G/TkhjKrSBzTL8Eu95bjy9ZzdKVQEzjpHYaShHGSX
+	N867o/23EgNCukecrmkB7RM2XKS2Bx1fj6kVJO4Jq78/8ueQZJWWcFX8sZUgmxVDqiY=
+X-Received: by 2002:ac8:5f8c:0:b0:474:f601:c21e with SMTP id d75a77b69052e-4801c9843damr22042681cf.5.1745617757158;
+        Fri, 25 Apr 2025 14:49:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJCIrI78Ob/2klFmqnEr49+IpnLEJ2W1gl5FH3vfPAl6chnS3piYqnr6Wnwi9TWiuuQ4mecg==
+X-Received: by 2002:ac8:5f8c:0:b0:474:f601:c21e with SMTP id d75a77b69052e-4801c9843damr22042591cf.5.1745617756834;
+        Fri, 25 Apr 2025 14:49:16 -0700 (PDT)
+Received: from [192.168.65.156] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e5963fesm194044266b.81.2025.04.25.14.49.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 14:44:21 -0700 (PDT)
-Message-ID: <9f5b0709-f795-44c5-aa64-aaed81a459bf@baylibre.com>
-Date: Fri, 25 Apr 2025 16:44:20 -0500
+        Fri, 25 Apr 2025 14:49:16 -0700 (PDT)
+Message-ID: <3498cfda-a738-449d-9d9f-754bbc8125c2@oss.qualcomm.com>
+Date: Fri, 25 Apr 2025 23:49:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,182 +88,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] docs: iio: new docs for ad4052 driver
-To: Jorge Marques <jorge.marques@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-pwm@vger.kernel.org
-References: <20250422-iio-driver-ad4052-v2-0-638af47e9eb3@analog.com>
- <20250422-iio-driver-ad4052-v2-4-638af47e9eb3@analog.com>
-From: David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sm8650: add iris DT node
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250424-topic-sm8x50-upstream-iris-8650-dt-v2-1-dd9108bf587f@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20250422-iio-driver-ad4052-v2-4-638af47e9eb3@analog.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250424-topic-sm8x50-upstream-iris-8650-dt-v2-1-dd9108bf587f@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: fVctxWJ8QL4B_aG24tTRGkT9TAc469xF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDE1NiBTYWx0ZWRfXxBIm4HecwlA2 mzAv9SNKekaRI+LglOW4GqvLr8geQly+cOx86wzqWoKlur2YNH1B0W33hZ1xGs4xQfE4SQZAHXG +2lSkY+ok2l4aVOCX9dQrXzI/ORuDBxwVuMCNIGi2h7G8UO4ahbAYaMNpYXVSEtms3REYnEJfEH
+ /IoOSOanrZvFh5ZowPv5+9p+U6i6NKsJ8A3eJOS26P+kD3WOtqJxFQN6kSwxmijfE5+UyZpwL4N si6JloI6wwl0SJnSWJxiYJt/2bllN7Ujq/zVsLuSUV5F34yY607W7Cxki7qGAwLmy4lTRGVZc0f xoV1xpJEQBM0gWia7/Blz1YudvV9kQrYO+RWkqhbPJgHOtsA4JcUYZvH5WEVRpbJh/RsXYi7KKq
+ THucpfOjWLvZT6QXGVejtA/BocJDb6Hip0dXOSPtHbVHqFMHqukoEIMoiOrBXzenlWI5FOii
+X-Authority-Analysis: v=2.4 cv=Tu/mhCXh c=1 sm=1 tr=0 ts=680c035e cx=c_pps a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=MuPQQqiwDrxPnYpOdO4A:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: fVctxWJ8QL4B_aG24tTRGkT9TAc469xF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_07,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250156
 
-On 4/22/25 6:34 AM, Jorge Marques wrote:
-> This adds a new page to document how to use the ad4052 ADC driver.
+On 4/24/25 6:32 PM, Neil Armstrong wrote:
+> Add DT entries for the sm8650 iris decoder.
 > 
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+> Since the firmware is required to be signed, only enable
+> on Qualcomm development boards where the firmware is
+> available.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  Documentation/iio/ad4052.rst | 95 ++++++++++++++++++++++++++++++++++++++++++++
+> Changes in v2:
+> - removed useless firmware-name
+> - Link to v1: https://lore.kernel.org/r/20250418-topic-sm8x50-upstream-iris-8650-dt-v1-1-80a6ae50bf10@linaro.org
+> ---
 
-Also need to update the table of contents in Documentation/iio/index.rst,
-otherwise this page won't be build (and will cause a build error).
+[...]
 
-You can run `make htmldocs SPHINXDIRS=iio` to speed things up and only build
-the iio directory to make sure you have it right.
+> +		iris: video-codec@aa00000 {
+> +			compatible = "qcom,sm8650-iris";
+> +			reg = <0 0x0aa00000 0 0xf0000>;
+> +
+> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH 0>;
+> +
+> +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
+> +					<&videocc VIDEO_CC_MVS0_GDSC>,
+> +					<&rpmhpd RPMHPD_MXC>,
+> +					<&rpmhpd RPMHPD_MMCX>;
+> +			power-domain-names = "venus",
+> +					     "vcodec0",
+> +					     "mxc",
+> +					     "mmcx";
+> +
+> +			operating-points-v2 = <&iris_opp_table>;
+> +
+> +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
+> +				 <&videocc VIDEO_CC_MVS0C_CLK>,
+> +				 <&videocc VIDEO_CC_MVS0_CLK>;
+> +			clock-names = "iface",
+> +				      "core",
+> +				      "vcodec0_core";
+> +
+> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+> +					 &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
+> +					<&mmss_noc MASTER_VIDEO QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "cpu-cfg",
+> +					     "video-mem";
+> +
+> +			/* FW load region */
 
-More info: https://www.kernel.org/doc/html/latest/doc-guide/sphinx.html
+I don't think this comment brings value
 
->  MAINTAINERS                  |  1 +
->  2 files changed, 96 insertions(+)
-> 
-> diff --git a/Documentation/iio/ad4052.rst b/Documentation/iio/ad4052.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..410aaa437ed5fea6a2924d374fa5f816f5754e22
-> --- /dev/null
-> +++ b/Documentation/iio/ad4052.rst
-> @@ -0,0 +1,95 @@
-> +.. SPDX-License-Identifier: GPL-2.0-only
+> +			memory-region = <&video_mem>;
 > +
-> +=============
-> +AD4052 driver
-> +=============
+> +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
+> +				 <&videocc VIDEO_CC_XO_CLK_ARES>,
+> +				 <&videocc VIDEO_CC_MVS0C_CLK_ARES>;
+> +			reset-names = "bus",
+> +				      "xo",
+> +				      "core";
 > +
-> +ADC driver for Analog Devices Inc. AD4052 and similar devices.
+> +			iommus = <&apps_smmu 0x1940 0>,
+> +				 <&apps_smmu 0x1947 0>;
 
-Please don't put newline after every period. Here and throughout the document.
-It makes it harder to read.
+I think you may also need 0x1942 0x0 (please also make the second value / SMR
+mask hex)> +
+> +			dma-coherent;
+> +
+> +			/*
+> +			 * IRIS firmware is signed by vendors, only
+> +			 * enable in boards where the proper signed firmware
+> +			 * is available.
+> +			 */
 
-> +The module name is ``ad4052``.
-> +
-> +Supported devices
-> +=================
-> +
-> +The following chips are supported by this driver:
-> +
-> +* `AD4050 <https://www.analog.com/AD4050>`_
-> +* `AD4052 <https://www.analog.com/AD4052>`_
-> +* `AD4056 <https://www.analog.com/AD4056>`_
-> +* `AD4058 <https://www.analog.com/AD4058>`_
-> +
-> +Wiring modes
-> +============
-> +
-> +The ADC uses SPI 4-wire mode, and contain two programmable GPIOs and
-> +a CNV pin.
-> +
-> +The CNV pin is exposed as the ``cnv-gpios`` and triggers a ADC conversion.
-> +GP1 is ADC conversion ready signal and GP0 Threshold event interrupt, both
-> +exposed as interrupts.
-> +
-> +Omit ``cnv-gpios`` and tie CNV and CS together to use the rising edge
-> +of the CS as the CNV signal.
-> +
-> +Device attributes
-> +=================
-> +
-> +The ADC contain only one channels, and the following attributes:
-> +
-> +.. list-table:: Driver attributes
-> +   :header-rows: 1
-> +
-> +   * - Attribute
-> +     - Description
-> +   * - ``in_voltage0_raw``
-> +     - Raw ADC voltage value
+Here's to another angry media article :(
 
-No scale attribute? How do we convert raw to millivolts?
+Please keep Iris enabled.. Vikash reassured me this is not an
+issue until the user attempts to use the decoder [1], and reading
+the code myself I come to the same conclusion (though I haven't given
+it a smoke test - please do that yourself, as you seem to have a better
+set up with these platforms).
 
-> +   * - ``in_voltage0_oversampling_ratio``
-> +     - Enable the device's burst averaging mode to over sample using
-> +       the internal sample rate.
-> +   * - ``in_voltage0_oversampling_ratio_available``
-> +     - List of available oversampling values. Value 0 disable the burst
-> +       averaging mode.
+If the userland is sane, it should throw an error and defer to CPU
+decoding.
 
-Typically 1 means no oversampling, not zero. (It is a ratio, divide by 1 is the
-same as doing nothing, but divide by 0 is undefined.)
+This is >>unlike venus<< which if lacking firmware at probe (i.e. boot)
+would prevent .sync_state
 
-> +   * - ``conversion_frequency``
+[1] https://lore.kernel.org/linux-arm-msm/98a35a51-6351-5ebb-4207-0004e89682eb@quicinc.com/
 
-Needs to be updated to ``oversampling_frequency``.
-
-> +     - Device internal sample rate used in the burst averaging mode.
-> +   * - ``conversion_frequency_available``
-> +     - List of available sample rates.
-> +
-> +Threshold events
-> +================
-> +
-> +The ADC supports a monitoring mode to raise threshold events.
-> +The driver supports a single interrupt for both rising and falling
-> +readings.
-> +
-> +The feature is enabled/disabled by setting ``thresh_either_en``.
-> +During monitor mode, the device continuously operates in autonomous mode until
-> +put back in configuration mode, due to this, the device returns busy until the
-> +feature is disabled.
-
-Probably worth mentioning the ``events/sampling_frequency`` and
-``sampling_frequency_available`` attributes since we've mentioned all of the
-other attributes.
+[...]
 
 > +
-> +Low-power mode
-> +==============
-> +
-> +The device enters low-power mode on idle to save power.
-> +Enabling an event puts the device out of the low-power since the ADC
-> +autonomously samples to assert the event condition.
-> +
-> +SPI offload support
-> +===================
-> +
-> +To be able to achieve the maximum sample rate, the driver can be used with the
-> +`AXI SPI Engine`_ to provide SPI offload support.
-> +
-> +.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/ad4052_ardz/index.html
-> +
-> +When SPI offload is being used, additional attributes are present:
-> +
-> +.. list-table:: Additional attributes
-> +   :header-rows: 1
-> +
-> +   * - Attribute
-> +     - Description
-> +   * - ``in_voltage0_sampling_frequency``
-> +     - Set the sampling frequency.
-> +   * - ``in_voltage0_sampling_frequency_available``
-> +     - Get the sampling frequency range.
+> +				opp-480000000 {
+> +					opp-hz = /bits/ 64 <480000000>;
+> +					required-opps = <&rpmhpd_opp_turbo>,
+> +							<&rpmhpd_opp_turbo>;
 
-In the driver, this is currently info_mask_shared_by_type, so would be
-``in_voltage_sampling_frequency``. And there currently isn't 
-``in_voltage_sampling_frequency_available`` in the driver, so it needs to be
-added in the driver (or removed here).
+nom (nom nom nom nom nom)
 
+> +				};
 > +
-> +The scan type is different when the buffer with offload support is enabled.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 81fbe7176475c48eae03ab04115d4ef5b6299fac..04aa8db44bee418382a2e74cb6b1d03a810bd781 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1334,6 +1334,7 @@ M:	Jorge Marques <jorge.marques@analog.com>
->  S:	Supported
->  W:	https://ez.analog.com/linux-software-drivers
->  F:	Documentation/devicetree/bindings/iio/adc/adi,ad4052.yaml
-> +F:	Documentation/iio/ad4052.rst
->  
->  ANALOG DEVICES INC AD4130 DRIVER
->  M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
-> 
+> +				opp-533333334 {
+> +					opp-hz = /bits/ 64 <533333334>;
+> +					required-opps = <&rpmhpd_opp_turbo_l1>,
+> +							<&rpmhpd_opp_turbo_l1>;
 
+turbo
+
+Konrad
 
