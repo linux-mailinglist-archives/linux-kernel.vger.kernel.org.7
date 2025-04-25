@@ -1,38 +1,39 @@
-Return-Path: <linux-kernel+bounces-620567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793C8A9CC42
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AB7A9CC49
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3D237B852E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:01:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 792547BB063
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAC5262FD7;
-	Fri, 25 Apr 2025 15:02:02 +0000 (UTC)
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91732268C7F;
+	Fri, 25 Apr 2025 15:02:11 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7CC25E44D;
-	Fri, 25 Apr 2025 15:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5A6267F75;
+	Fri, 25 Apr 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745593322; cv=none; b=po5v0AMSWgZwNmam/szuH0dHRJK4pGL/ZcrETRu3bE268vSWmZf/d0UXXI5aAw2usZg63JnEs8qdXoU0Dkz3ugc4PMPwvu2Qf6YE1O/vNveQDEJ/BiRP7E8YEDvXd/B2SrYrmBwpW8MwsC6eXNltsOB+8qHDSroe7nqgoYaoqj0=
+	t=1745593331; cv=none; b=Ma6VdbpN1HJUcTY2EMOGmNvRJhnBbO6Ow4NjIVrHT3y8wF39ObADE/5jqfSBaBzO2Og3w0OHz4w+JS6ksZlZm6hlhGOwtZcff798CyKRGjEuLqAFaKR4Oy7gtP8s22FlhD4QuVnGKBBMayvYIfcSVf1BcNuv68OgojIMbUHxLOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745593322; c=relaxed/simple;
-	bh=TATDdWHubxkqnktZL0woFYkT0+jsr8JhaVnmyrpNueQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gaAFOqT/THsowV8LiIxMuqAZkrEiK8bPIuBE1BZkZ8nuqBKXPJUPZeTBFD+rEF56Yq7uOMa2Kxuc4dQP9YFYIGWP3w8N58sCJaXD3tRNEDSVV26l/azVAxU1EI8fF+8O4h2cjSZ4omFhFbf5REAE+8QEIWoUIruPSi1VWQJpmuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.171
+	s=arc-20240116; t=1745593331; c=relaxed/simple;
+	bh=iTu3xyMaen6N4lYL60lO/zs4WK1E+diSLwDbJZm8Ee8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oa4blcwvTO6pbHnZot0RYbkzR+pkhY7TZIEAxbVMWmH6LviALerEHMbpZrHtXcYksTvvjDagl0B3u5iupSjTBlzFIPh/U7/hC5XyuX0LOfccSm+GNcTJyCXxztw0uEVt3/lpDUbhLiVLyuo7YC9fxABvpXA1Z+ZjaIgiUJzr3dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZkbfB0qCVz9svM;
-	Fri, 25 Apr 2025 17:01:54 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZkbfF4thPz9srM;
+	Fri, 25 Apr 2025 17:01:57 +0200 (CEST)
 From: Remo Senekowitsch <remo@buenzli.dev>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -53,9 +54,11 @@ To: Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v3 0/7] More Rust bindings for device property reads
-Date: Fri, 25 Apr 2025 17:01:23 +0200
-Message-ID: <20250425150130.13917-1-remo@buenzli.dev>
+Subject: [PATCH v3 1/7] rust: property: Move property_present to separate file
+Date: Fri, 25 Apr 2025 17:01:24 +0200
+Message-ID: <20250425150130.13917-2-remo@buenzli.dev>
+In-Reply-To: <20250425150130.13917-1-remo@buenzli.dev>
+References: <20250425150130.13917-1-remo@buenzli.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,67 +66,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4ZkbfB0qCVz9svM
+X-Rspamd-Queue-Id: 4ZkbfF4thPz9srM
 
-This adds more Rust bindings for reading device properties, based on
-Rob Herring's work. I'm working on a driver[1] that uses these, but the
-driver has more dependencies than this.
+Not all property-related APIs can be exposed directly on a device.
+For example, iterating over child nodes of a device will yield
+fwnode_handle. Thus, in order to access properties on these child nodes,
+the property access methods must be implemented on the abstraction over
+fwnode_handle.
 
-Best regards,
-Remo
+While it's possible to expose similar methods on `Device` directly for
+convenience, those methods would have to get the `FwNode` first, which
+is a fallible operation, making the API inconsistent. For this reason,
+such duplicated methods are omitted. Users who need to read properties
+of a device will have to explictily get the `FwNode` first (handle the
+`None` case) and then read properties on that.
 
-changes in v3:
-* (started testing myself with Rust 1.78 and doctests enabled)
-* Fix doctest and platform driver sample.
-* Move property.rs to device/property.rs (a submodule of device).
-* Make `Device::fwnode` fallible, avoiding a panic.
-* Remove the duplicated property reading methods on Device. Now that
-  `Device::fwnode` is fallible, these methods would have confusingly
-  different signatures than the ones on `FwNode`. It will be clearer for
-  users to explicitly convert from `&Device` to `&FwNode` first,
-  handling that error case separately, and then reading properties on
-  `FwNode`.
-* Split off separate commits for:
-  - printing fwnode name and path
-  - adding PropertyGuard
-* Do not access `fwnode_handle.dev` in PropertyGuard for
-  device-associated logging, fwnode_handle doesn't own a reference to
-  the device.
-* Rename some extension trait methods to be more descriptive:
-  - Property::read => read_from_fwnode_property
-  - PropertyInt::read_array => read_array_from_fwnode_property
-  These methods are not meant to be used directly and won't be
-  accessible unless their traits are in scope. (And there is no reason
-  for API users to pull them into scope.) Nevertheless, this reduces the
-  risk of confusion caused by non-descriptive methods like "read" being
-  attached to primitive types.
-* Implement fwnode printing logic in Rust directly instead of calling
-  scnprintf.
-* Improve some safety comments.
-
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/DS90UB954.20driver.20done.2C.20ready.20to.20upstream.3F/with/507874342 [1]
-
-Remo Senekowitsch (7):
-  rust: property: Move property_present to separate file
-  rust: property: Enable printing fwnode name and path
-  rust: property: Introduce PropertyGuard
-  rust: property: Add bindings for reading device properties
-  rust: property: Add child accessor and iterator
-  rust: property: Add property_get_reference_args
-  samples: rust: platform: Add property read examples
-
- MAINTAINERS                                  |   3 +-
- drivers/of/unittest-data/tests-platform.dtsi |   3 +
- rust/helpers/helpers.c                       |   1 +
- rust/helpers/property.c                      |   8 +
- rust/kernel/{device.rs => device/mod.rs}     |   9 +-
- rust/kernel/device/property.rs               | 578 +++++++++++++++++++
- samples/rust/rust_driver_platform.rs         |  72 ++-
- 7 files changed, 663 insertions(+), 11 deletions(-)
+Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
+---
+ MAINTAINERS                              |  3 +-
+ rust/helpers/helpers.c                   |  1 +
+ rust/helpers/property.c                  |  8 +++
+ rust/kernel/{device.rs => device/mod.rs} |  9 +--
+ rust/kernel/device/property.rs           | 70 ++++++++++++++++++++++++
+ 5 files changed, 83 insertions(+), 8 deletions(-)
  create mode 100644 rust/helpers/property.c
  rename rust/kernel/{device.rs => device/mod.rs} (97%)
  create mode 100644 rust/kernel/device/property.rs
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c8d9e8187..4585f9e7f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7112,7 +7112,8 @@ F:	include/linux/kobj*
+ F:	include/linux/property.h
+ F:	include/linux/sysfs.h
+ F:	lib/kobj*
+-F:	rust/kernel/device.rs
++F:	rust/kernel/device/mod.rs
++F:	rust/kernel/device/property.rs
+ F:	rust/kernel/device_id.rs
+ F:	rust/kernel/devres.rs
+ F:	rust/kernel/driver.rs
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 0640b7e11..b4eec5bf2 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -23,6 +23,7 @@
+ #include "platform.c"
+ #include "pci.c"
+ #include "pid_namespace.c"
++#include "property.c"
+ #include "rbtree.c"
+ #include "rcu.c"
+ #include "refcount.c"
+diff --git a/rust/helpers/property.c b/rust/helpers/property.c
+new file mode 100644
+index 000000000..08f68e2da
+--- /dev/null
++++ b/rust/helpers/property.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/property.h>
++
++void rust_helper_fwnode_handle_put(struct fwnode_handle *fwnode)
++{
++	fwnode_handle_put(fwnode);
++}
+diff --git a/rust/kernel/device.rs b/rust/kernel/device/mod.rs
+similarity index 97%
+rename from rust/kernel/device.rs
+rename to rust/kernel/device/mod.rs
+index db2d9658b..e49107452 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device/mod.rs
+@@ -6,7 +6,6 @@
+ 
+ use crate::{
+     bindings,
+-    str::CStr,
+     types::{ARef, Opaque},
+ };
+ use core::{fmt, ptr};
+@@ -14,6 +13,8 @@
+ #[cfg(CONFIG_PRINTK)]
+ use crate::c_str;
+ 
++pub mod property;
++
+ /// A reference-counted device.
+ ///
+ /// This structure represents the Rust abstraction for a C `struct device`. This implementation
+@@ -181,12 +182,6 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::Arguments<'_>) {
+             )
+         };
+     }
+-
+-    /// Checks if property is present or not.
+-    pub fn property_present(&self, name: &CStr) -> bool {
+-        // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
+-        unsafe { bindings::device_property_present(self.as_raw().cast_const(), name.as_char_ptr()) }
+-    }
+ }
+ 
+ // SAFETY: Instances of `Device` are always reference-counted.
+diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+new file mode 100644
+index 000000000..d89715f7d
+--- /dev/null
++++ b/rust/kernel/device/property.rs
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Unified device property interface.
++//!
++//! C header: [`include/linux/property.h`](srctree/include/linux/property.h)
++
++use core::ptr;
++
++use crate::{bindings, device::Device, str::CStr, types::Opaque};
++
++impl Device {
++    /// Obtain the fwnode corresponding to the device.
++    pub fn fwnode(&self) -> Option<&FwNode> {
++        // SAFETY: `self` is valid.
++        let fwnode_handle = unsafe { bindings::__dev_fwnode(self.as_raw()) };
++        if fwnode_handle.is_null() {
++            return None;
++        }
++        // SAFETY: `fwnode_handle` is valid. Its lifetime is tied to `&self`. We
++        // return a reference instead of an `ARef<FwNode>` because `dev_fwnode()`
++        // doesn't increment the refcount. It is safe to cast from a
++        // `struct fwnode_handle*` to a `*const FwNode` because `FwNode` is
++        // defined as a `#[repr(transparent)]` wrapper around `fwnode_handle`.
++        Some(unsafe { &*fwnode_handle.cast() })
++    }
++}
++
++/// A reference-counted fwnode_handle.
++///
++/// This structure represents the Rust abstraction for a
++/// C `struct fwnode_handle`. This implementation abstracts the usage of an
++/// already existing C `struct fwnode_handle` within Rust code that we get
++/// passed from the C side.
++///
++/// # Invariants
++///
++/// A `FwNode` instance represents a valid `struct fwnode_handle` created by the
++/// C portion of the kernel.
++///
++/// Instances of this type are always reference-counted, that is, a call to
++/// `fwnode_handle_get` ensures that the allocation remains valid at least until
++/// the matching call to `fwnode_handle_put`.
++#[repr(transparent)]
++pub struct FwNode(Opaque<bindings::fwnode_handle>);
++
++impl FwNode {
++    /// Obtain the raw `struct fwnode_handle *`.
++    pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
++        self.0.get()
++    }
++
++    /// Checks if property is present or not.
++    pub fn property_present(&self, name: &CStr) -> bool {
++        // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
++        unsafe { bindings::fwnode_property_present(self.as_raw().cast_const(), name.as_char_ptr()) }
++    }
++}
++
++// SAFETY: Instances of `FwNode` are always reference-counted.
++unsafe impl crate::types::AlwaysRefCounted for FwNode {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
++        unsafe { bindings::fwnode_handle_get(self.as_raw()) };
++    }
++
++    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
++        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
++        unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
++    }
++}
 -- 
 2.49.0
 
