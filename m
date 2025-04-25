@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-619407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2388FA9BC62
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:35:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93A6A9BC66
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7321BA12FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A63B4CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B5A13C3C2;
-	Fri, 25 Apr 2025 01:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB88612CD96;
+	Fri, 25 Apr 2025 01:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzZWW9FK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QVkPdYIf"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD3219FC;
-	Fri, 25 Apr 2025 01:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A89E8528E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745544892; cv=none; b=aQNKiwQ9g+yd/OeCM3dMOoocArR2KHAQAFLPf0YwDO5Mg397JVzdufU/0qPv8wwQfqLADWpUFymXknXB7qc2lL+dNoOQJJiA2EdjIvwEj2X2zPuOIpRIauCtPpjOJ4kkE+0NNXuAkR1yJFnjYhnUllPQSRFbUtLfGyEGJwSG/k8=
+	t=1745545015; cv=none; b=pygb3jzbVAVm+KRY/m5yE5FC/qDQe9ZuxmmZptO6hNqCdSV0XrHCTXr+dMG4I+Hj+7b7t5IsVZK908waW1BUBTrYR6qEhfzp5Za7hPg5U5cIdeuE07Ugxe711qYQdgqlmv/ot09Gtqg/6m7pmJDWq8etFLPwlMuRgvj8ZV+qgHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745544892; c=relaxed/simple;
-	bh=oOaYkaS/qZ/j69534YB4WXg9JzG1tuS4cM2YUrZRMcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gsw5MonGdLZtQkTcaqULYczauGi+BscO+aTfNlaMve//+rxCXI67799WOEGkHm7Dl9qe5xrfNQgCENxqgm+0RBUmoIogE0aV/l3C7wj8uHXXiozPbB6wt+1moAPMV/nbEqUJEcViUpyIY2/PmK0BF9LK5NS7zHXyFaDcTCAwVHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzZWW9FK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016D5C4CEE3;
-	Fri, 25 Apr 2025 01:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745544891;
-	bh=oOaYkaS/qZ/j69534YB4WXg9JzG1tuS4cM2YUrZRMcY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rzZWW9FK50e+W99VufmV7I98NPvW/oafB2wEa01eq+9zbPbrqr9x69iW0lLSg8VPM
-	 jBiV8e3KSZaPIQY/ZR1LhwuQp0f+GzoKX7XGtxbYslOvAKs53iF2MG3O5EMgnlqB4J
-	 l/WxzqHzBt0/KAaSu2mqKB7G4c90VVOhVQQnsmGqHeq6RIWDiHUpoB/iUSpwbSlPsw
-	 ISrQJJryQo/LOZt5iN0lazaXA1I5+WVIjqCJr8y0kNATq6MwSvnGDUeiiJMVVTeugM
-	 7sdgH2GgUwQ7bsCoRpDtdnEj9MB8gYZIcXIke1J9TvB0/KufQDujgvE0gyI7uSNou+
-	 WYVEXrs7Tda4Q==
-Date: Thu, 24 Apr 2025 18:34:50 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: virtualization@lists.linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer
- <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Eugenio
- =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v5 0/3] virtio-net: disable delayed refill when pausing
- rx
-Message-ID: <20250424183450.28f5d5fb@kernel.org>
-In-Reply-To: <20250424104716.40453-1-minhquangbui99@gmail.com>
-References: <20250424104716.40453-1-minhquangbui99@gmail.com>
+	s=arc-20240116; t=1745545015; c=relaxed/simple;
+	bh=p5aAM8nvuq5KR9Vajvi+nQEW2Rln1Bwv8GwF4gnQeO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PAAM03o9i2WfJ1oxluI6pAARx8UL/r/M8d2uv8UpOhIjrzd5VTbQQkyhRoH949kF4ikCmjoZU0IJywctxq1XVXjiqprtBJRBDto40ErwzfoKQnupFoMq5Qk/t5NGVDED/h8gWza7gnJMIrQJtBro5qLBFA91JDpIEJGeiO2P+nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QVkPdYIf; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acacb8743a7so286502666b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1745545010; x=1746149810; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7Zbmc9PFyMIhUbm13T2e4rkkq7qjR76gjJbFxlv9Tw=;
+        b=QVkPdYIfSkCmSkKgIhQo2BYTr+zHC+pgsmsJIvmfSy5iqhTRk1qblc4lPYoyCj/UZK
+         rgMMUXd0sgTDVbSD7PpZcSkhDKuGVWl8lH2md1cE60/7iRn+LE3o569aA5ygAjE26OYA
+         m6uKiFJJdejofsDcqIUMTXKBOBD5ozHxEz4KM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745545010; x=1746149810;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b7Zbmc9PFyMIhUbm13T2e4rkkq7qjR76gjJbFxlv9Tw=;
+        b=D8O4p1+t3XkJiikro0Y3vWUAoI7TNF6x7fq05JciEE+Q1OnbKPU3YzvNmEKvaNl6WT
+         5Hy/6KIKOBxCZAyg/rNLockRrKeQZ2f29HXdXS6e1Zrwz39we2RbJSuteoqxxaRcfw+H
+         OA6lTDNacWx2E5Uj4D/hQxwaGWkcD/yF5kTTzVnFGVN1GhksndlKDIMrKfXZ2t3r1kmv
+         ZHNxz0bX29WsDxyHgsvNVTEn6BRMWnbtuNmbOc/HWHM+kK6yUqErvTOqiXuz3ZeDZG1A
+         Xuou6PubHqdowWovhvesA5kj+bt2/6+rykElv4rRGFDIvAd162FBmPFjkpUS2ptG7WR6
+         o6pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUCGi+ZdVlryxbSN2csHVqNZT6Fj2ZVQIaFKni6hkTOpQjd3lsM5xFQsuHhOMDIA9gcSNvpphuBR/Mm6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNn+UVSb3T5pzuPHseEC6xd4ek8uTo4Arkr3WD4SMdnKnYMJju
+	axkr4RSsYVYpv7p0Jx9Ijuf0J+ZoEUz19Tw3DFJ5u0N3rGVD89/XRYBjCwfba9fpHSsKTRi4GCC
+	28KbV5g==
+X-Gm-Gg: ASbGncthYkO8ZZP8WKA3AZiiYf3/VxdIBN3j5FqgtQCDqpIQKp6BIjcgY5FM7jgpGYZ
+	7KP4soL8d5lLENuLZQbVZknMjEAS+zzZ6wiYQteHxSocKeRGWGm74ZYprVdOLcWn17fXw/7kK25
+	9ThcwivH/gNMb7rYSzhBcvkvJK2MQ1RQFZ5kaRPCoFSd4+4QnOVZPB1ZCaePqTMzLsz4reR9reL
+	p6KCd7HV5KmySeGD4uy6wnvsKo9I/xTwDgkQDUQb2ge10AVWUIrlrcTxFy0etrsE27KD502Djnx
+	Sz9tSVEw2YrYls8YXZQgS+xtfhQEfVP1n1UY0muc30dXiW36gvfCUrPwlPs/6QRYvHBGbNZYsMq
+	S6jWS+KbgYfRh22o=
+X-Google-Smtp-Source: AGHT+IEFxilkq1QymT8bTPcvVyOn/kVUINmXrpDrtN6a4h38fFqXkhb/NDdMhEriTiCGA6FS8Lp+BA==
+X-Received: by 2002:a17:907:3ea8:b0:acb:b9ab:6d75 with SMTP id a640c23a62f3a-ace73540b78mr22703166b.23.1745545010391;
+        Thu, 24 Apr 2025 18:36:50 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41b2fcsm50243066b.26.2025.04.24.18.36.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Apr 2025 18:36:49 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acacb8743a7so286500266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:36:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXjDJE5cHWIPwaaVq6Ikk0sOQ9O0dX8LzRrtMLjK19Duqs/zL2FiKykaV8gqrKhaU+F5fvcPgQ1VMBY6gg=@vger.kernel.org
+X-Received: by 2002:a17:907:97c4:b0:ace:4870:507c with SMTP id
+ a640c23a62f3a-ace5a44a4bdmr367221766b.23.1745545009283; Thu, 24 Apr 2025
+ 18:36:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250425003342.GA795313@ax162>
+In-Reply-To: <20250425003342.GA795313@ax162>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 24 Apr 2025 18:36:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whfT3A8K2Z+WbieGG5Hhc9QAT5s3qsbB19O0Roj2G5tfA@mail.gmail.com>
+X-Gm-Features: ATxdqUH_oZs_YreS6F_9--y11jLu023Kq43k2pNb3lC2tv-avxOMETPk50B1xGw
+Message-ID: <CAHk-=whfT3A8K2Z+WbieGG5Hhc9QAT5s3qsbB19O0Roj2G5tfA@mail.gmail.com>
+Subject: Re: Adding __popcountsi2 and __popcountdi2
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 24 Apr 2025 17:47:13 +0700 Bui Quang Minh wrote:
-> This only includes the selftest for virtio-net deadlock bug. The fix
-> commit has been applied already.
+On Thu, 24 Apr 2025 at 17:33, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> I figured added
+> these may not be as bad as the wcslen() case because most architectures
+> generally have an optimized popcount implementation and I am not sure
+> compiler builtins are banned entirely from the kernel but I can
+> understand if it is still contentious.
 
-This conflicts with Joe's series slightly: 
-https://lore.kernel.org/all/20250424002746.16891-1-jdamato@fastly.com/
-Could you rebase on latest net-next and perhaps follow the comment 
-I left on v4 ? 
--- 
-pw-bot: cr
+Why does the compiler even bother to do this if the architecture
+doesn't have the popcount instruction? The function call is quite
+possibly more expensive than just doing it the stupid way.
+
+But if you want to do this, put the damn thing as an alias on the code
+that actually *does* the SW fallback in lib/hweight.c.
+
+Because the way your patch does it now, it takes "I'm doing stupid
+things" to the next level by turning that function call into *two*
+function calls - first calling __popcountsi2, which then calls
+__sw_hweight32.
+
+Let's not do stupid things, ok?
+
+              Linus
 
