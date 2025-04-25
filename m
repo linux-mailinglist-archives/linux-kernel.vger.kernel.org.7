@@ -1,184 +1,173 @@
-Return-Path: <linux-kernel+bounces-620742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A60AA9CF22
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:08:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89896A9CF29
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4DB1BA6923
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F3EE173C7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2B71DE4C3;
-	Fri, 25 Apr 2025 17:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D17B1DF99C;
+	Fri, 25 Apr 2025 17:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SmpoDMRN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GXSdxail"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524D81DE3C1;
-	Fri, 25 Apr 2025 17:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E551DE4F3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745600922; cv=none; b=titfBjr5G+Zr+yL8qxRP8eKORtBCdFytNy7gfkqs/1r13dcpLHN3WEKMsCO9VGKWJNP3gtmIZFfxWAWWVxZkDY2DD5tkGscqpC/03huKogwrpqj5mYVOOfsSBttd12c3QtWnPMxlX2LuQlLELEdMemcamc+4DGzWTCw6QMDZWPM=
+	t=1745600994; cv=none; b=lfPS1gHHwF/qWwKaxo0IIyesgKZtzAynZ9on2kcvhaWVbI+5X8fgd3Esr2Pp08ctiFIV5QmeT5N8Lgxec2AUSmPoCY45Yrx3x4KTrVhAYyZvht1K2Ebt5RH1lUBLl74TfXkedKj1Y5ZairADBI2a+4cgChbaVl5b+t5bP2dGFkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745600922; c=relaxed/simple;
-	bh=3e9BUcOp9lJZgyjIMsLsCjD8rTiGOJhcb5CW+ZazBKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQKLlvduiLQII6Dy10N23/oxWEn7RI9DE+yp6UAnPCpibNFHfrdfZxksxJDZcYNU3aQM684N6rNRpFQGulGO5AIfomhQuW09K1lYewPU+XsXU99r5faHjA/cR2xuIU51eE6sBzwdBec6JUXnF2Wi/t3UoFAi+9LECgUbf1RKVoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SmpoDMRN; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745600920; x=1777136920;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3e9BUcOp9lJZgyjIMsLsCjD8rTiGOJhcb5CW+ZazBKI=;
-  b=SmpoDMRNTAZ0smB0wve/bMA+J32vWXi2VU3iPTGCA1CA8cfZeqCpkRuj
-   Z0I5YpYPLf1DspStxS1QGinar0QIUISk49u9gtKph6eu8qkO7xn7pKfUk
-   5lW2JZ+9dXtI44gvdnfWiQ4Y7FpQApwA5a09hZmKi+6iB/wgjhwEjCtjj
-   ANQLCQvxLegt5+HKQsK68jDavKYXM4Enzh6lhVd2romuAL57lfBlXfp5i
-   Xdu6VdF2kx0/URNWlrLwhWJmAkqhdWRsNKv+DcCWYc+GAdDIqjIghdELS
-   4dRFh4sxRpQBGjmtlcP7/oh9HrGNoAA7y2BxVPgi9WA5U6jjytKXO93Q1
-   w==;
-X-CSE-ConnectionGUID: zO9Q3MJJTVy38XOzXDi3ZA==
-X-CSE-MsgGUID: 920aLyJMSEOg5rRQl0M/9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="34885685"
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="34885685"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 10:08:40 -0700
-X-CSE-ConnectionGUID: LM4NqfKZTCSgdYhaGUkRAQ==
-X-CSE-MsgGUID: Vh0Xj+TdQeq6Sn+JCr3WQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="133481210"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 25 Apr 2025 10:08:38 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8MXS-0005NZ-27;
-	Fri, 25 Apr 2025 17:08:34 +0000
-Date: Sat, 26 Apr 2025 01:07:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chiang Brian <chiang.brian@inventec.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Chiang Brian <chiang.brian@inventec.com>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] hwmon: (pmbus/tps53679) Add support for TPS53685
-Message-ID: <202504260045.9nia3Zzl-lkp@intel.com>
-References: <20250424132538.2004510-2-chiang.brian@inventec.corp-partner.google.com>
+	s=arc-20240116; t=1745600994; c=relaxed/simple;
+	bh=dYqLI7u6j7zrd5PXopfq6mUq2GOVheKBP/CHkLosnvQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hm0/HUMIMmh6U38AhL536h4MV/CpMSRB66W0c7A5ntzDndn2swtHb2kUvC7cwVNy1ldM0en/oKuVuocL1AzK3RW8OzGH8L8mN2EJXJFPkK5TVZn8jD7tZCe4Mh4MrqMT1xlqgMrzPeWvsoKRk1B2KY2q+UWnTLZaiBK/2QGyNEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GXSdxail; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745600990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GqqQjjEwcJFLkEviIiNfaNPHHWIhRoIIV2Bq/TIESdo=;
+	b=GXSdxail2lOHpKcSHUspcRF/bihxGTKrBw9+DO3q3FoYthPob4NZ/j/YDMELoM2chutsUO
+	1V4zU9WgPckxxjUyxl20ZwOPN1KNK7sHI+9RgsfqweSMj0gXCnbO5o1wB6TByLyC4nfm78
+	1DpWGJ8Icx0Nu6AnFs7bwoE9CbUoZe4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-Ux3H4YJhPQW0vudd90qvtw-1; Fri,
+ 25 Apr 2025 13:09:44 -0400
+X-MC-Unique: Ux3H4YJhPQW0vudd90qvtw-1
+X-Mimecast-MFC-AGG-ID: Ux3H4YJhPQW0vudd90qvtw_1745600982
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 265E71956077;
+	Fri, 25 Apr 2025 17:09:42 +0000 (UTC)
+Received: from p16v.redhat.com (unknown [10.44.33.33])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B81031800D9F;
+	Fri, 25 Apr 2025 17:09:36 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Lee Jones <lee@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Schmidt <mschmidt@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH net-next v5 0/8] Add Microchip ZL3073x support (part 1)
+Date: Fri, 25 Apr 2025 19:09:27 +0200
+Message-ID: <20250425170935.740102-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424132538.2004510-2-chiang.brian@inventec.corp-partner.google.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Chiang,
+Add support for Microchip Azurite DPLL/PTP/SyncE chip family that
+provides DPLL and PTP functionality. This series bring first part
+that adds the common MFD driver that provides an access to the bus
+that can be either I2C or SPI.
 
-kernel test robot noticed the following build errors:
+The next part of the series is bringing the DPLL driver that will
+covers DPLL functionality. Another series will bring PTP driver and
+flashing capability via devlink in the MFD driver will follow soon.
 
-[auto build test ERROR on groeck-staging/hwmon-next]
-[also build test ERROR on robh/for-next linus/master v6.15-rc3 next-20250424]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Testing was done by myself and by Prathosh Satish on Microchip EDS2
+development board with ZL30732 DPLL chip connected over I2C bus.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chiang-Brian/dt-bindings-trivial-Add-tps53685-support/20250424-222559
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20250424132538.2004510-2-chiang.brian%40inventec.corp-partner.google.com
-patch subject: [PATCH v6 1/2] hwmon: (pmbus/tps53679) Add support for TPS53685
-config: powerpc64-randconfig-001-20250425 (https://download.01.org/0day-ci/archive/20250426/202504260045.9nia3Zzl-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250426/202504260045.9nia3Zzl-lkp@intel.com/reproduce)
+Patch breakdown
+===============
+Patch 1 - Common DT schema for DPLL device and pin
+Patch 2 - DT bindings for microchip,zl3073* devices
+Patch 3 - Basic support for I2C, SPI and regmap configuration
+Patch 4 - Devlink device registration and info
+Patch 5 - Helpers for reading and writing register mailboxes
+Patch 6 - Fetch invariant register values used by DPLL/PTP sub-drivers
+Patch 7 - Clock ID generation for DPLL driver
+Patch 8 - Register/create DPLL device cells
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504260045.9nia3Zzl-lkp@intel.com/
+---
+v4->v5:
+* fixed DT patches description
+* dropped mailbox API
+* added type-safe register access functions
+* added an ability to protect multi-op accesses
+v3->v4:
+* fixed shortcomings in DT patches
+* completely reworked register access
+* removed a need to manage locking during mailbox accesses by callers
+* regcache switched to maple
+* dev_err_probe() in probe path
+* static mfd cells during sub-devices registration
 
-All errors (new ones prefixed by >>):
+v1->v3:
+* dropped macros for generating register access functions
+* register access functions are provided in <linux/mfd/zl3073x_regs.h>
+* fixed DT descriptions and compatible wildcard usage
+* reworked regmap locking
+  - regmap uses implicit locking
+  - mailbox registers are additionally protected by extra mutex
+* fixed regmap virtual address range
+* added regmap rbtree cache (only for page selector now)
+* dropped patches for exporting strnchrnul and for supporting mfg file
+  this will be maybe added later
 
->> drivers/hwmon/pmbus/tps53679.c:133:50: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
-     133 |         ret = tps53679_identify_chip(client, pmbus_rev, device_id);
-         |                                                         ^~~~~~~~~
-   drivers/hwmon/pmbus/tps53679.c:90:26: note: passing argument to parameter 'id' here
-      90 |                                   u8 revision, char *id)
-         |                                                      ^
->> drivers/hwmon/pmbus/tps53679.c:165:10: error: incompatible pointer to integer conversion passing 'char[2]' to parameter of type 'int' [-Wint-conversion]
-     165 |                                             TPS53681_DEVICE_ID);
-         |                                             ^~~~~~~~~~~~~~~~~~
-   drivers/hwmon/pmbus/tps53679.c:34:32: note: expanded from macro 'TPS53681_DEVICE_ID'
-      34 | #define TPS53681_DEVICE_ID     "\x81"
-         |                                ^~~~~~
-   drivers/hwmon/pmbus/tps53679.c:129:25: note: passing argument to parameter 'device_id' here
-     129 |                                         int pmbus_rev, int device_id)
-         |                                                            ^
-   2 errors generated.
+Ivan Vecera (8):
+  dt-bindings: dpll: Add DPLL device and pin
+  dt-bindings: dpll: Add support for Microchip Azurite chip family
+  mfd: Add Microchip ZL3073x support
+  mfd: zl3073x: Add support for devlink device info
+  mfd: zl3073x: Protect operations requiring multiple register accesses
+  mfd: zl3073x: Fetch invariants during probe
+  mfd: zl3073x: Add clock_id field
+  mfd: zl3073x: Register DPLL sub-device during init
 
-
-vim +133 drivers/hwmon/pmbus/tps53679.c
-
-53030bcc87e4a4 Guenter Roeck 2020-01-20  120  
-53030bcc87e4a4 Guenter Roeck 2020-01-20  121  /*
-53030bcc87e4a4 Guenter Roeck 2020-01-20  122   * Common identification function for chips with multi-phase support.
-53030bcc87e4a4 Guenter Roeck 2020-01-20  123   * Since those chips have special configuration registers, we want to have
-53030bcc87e4a4 Guenter Roeck 2020-01-20  124   * some level of reassurance that we are really talking with the chip
-53030bcc87e4a4 Guenter Roeck 2020-01-20  125   * being probed. Check PMBus revision and chip ID.
-53030bcc87e4a4 Guenter Roeck 2020-01-20  126   */
-53030bcc87e4a4 Guenter Roeck 2020-01-20  127  static int tps53679_identify_multiphase(struct i2c_client *client,
-53030bcc87e4a4 Guenter Roeck 2020-01-20  128  					struct pmbus_driver_info *info,
-53030bcc87e4a4 Guenter Roeck 2020-01-20  129  					int pmbus_rev, int device_id)
-53030bcc87e4a4 Guenter Roeck 2020-01-20  130  {
-53030bcc87e4a4 Guenter Roeck 2020-01-20  131  	int ret;
-53030bcc87e4a4 Guenter Roeck 2020-01-20  132  
-53030bcc87e4a4 Guenter Roeck 2020-01-20 @133  	ret = tps53679_identify_chip(client, pmbus_rev, device_id);
-53030bcc87e4a4 Guenter Roeck 2020-01-20  134  	if (ret < 0)
-53030bcc87e4a4 Guenter Roeck 2020-01-20  135  		return ret;
-53030bcc87e4a4 Guenter Roeck 2020-01-20  136  
-53030bcc87e4a4 Guenter Roeck 2020-01-20  137  	ret = tps53679_identify_mode(client, info);
-53030bcc87e4a4 Guenter Roeck 2020-01-20  138  	if (ret < 0)
-53030bcc87e4a4 Guenter Roeck 2020-01-20  139  		return ret;
-53030bcc87e4a4 Guenter Roeck 2020-01-20  140  
-53030bcc87e4a4 Guenter Roeck 2020-01-20  141  	return tps53679_identify_phases(client, info);
-53030bcc87e4a4 Guenter Roeck 2020-01-20  142  }
-53030bcc87e4a4 Guenter Roeck 2020-01-20  143  
-53030bcc87e4a4 Guenter Roeck 2020-01-20  144  static int tps53679_identify(struct i2c_client *client,
-53030bcc87e4a4 Guenter Roeck 2020-01-20  145  			     struct pmbus_driver_info *info)
-53030bcc87e4a4 Guenter Roeck 2020-01-20  146  {
-53030bcc87e4a4 Guenter Roeck 2020-01-20  147  	return tps53679_identify_mode(client, info);
-53030bcc87e4a4 Guenter Roeck 2020-01-20  148  }
-53030bcc87e4a4 Guenter Roeck 2020-01-20  149  
-a49c0dafb304b8 Chiang Brian  2025-04-24  150  static int tps53685_identify(struct i2c_client *client,
-a49c0dafb304b8 Chiang Brian  2025-04-24  151  				 struct pmbus_driver_info *info)
-a49c0dafb304b8 Chiang Brian  2025-04-24  152  {
-a49c0dafb304b8 Chiang Brian  2025-04-24  153  	info->func[1] |= PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
-a49c0dafb304b8 Chiang Brian  2025-04-24  154  			 PMBUS_HAVE_STATUS_INPUT;
-a49c0dafb304b8 Chiang Brian  2025-04-24  155  	info->format[PSC_VOLTAGE_OUT] = linear;
-a49c0dafb304b8 Chiang Brian  2025-04-24  156  	return tps53679_identify_chip(client, TPS53681_PMBUS_REVISION,
-a49c0dafb304b8 Chiang Brian  2025-04-24  157  					   TPS53685_DEVICE_ID);
-a49c0dafb304b8 Chiang Brian  2025-04-24  158  }
-a49c0dafb304b8 Chiang Brian  2025-04-24  159  
-53030bcc87e4a4 Guenter Roeck 2020-01-20  160  static int tps53681_identify(struct i2c_client *client,
-53030bcc87e4a4 Guenter Roeck 2020-01-20  161  			     struct pmbus_driver_info *info)
-53030bcc87e4a4 Guenter Roeck 2020-01-20  162  {
-53030bcc87e4a4 Guenter Roeck 2020-01-20  163  	return tps53679_identify_multiphase(client, info,
-53030bcc87e4a4 Guenter Roeck 2020-01-20  164  					    TPS53681_PMBUS_REVISION,
-53030bcc87e4a4 Guenter Roeck 2020-01-20 @165  					    TPS53681_DEVICE_ID);
-53030bcc87e4a4 Guenter Roeck 2020-01-20  166  }
-53030bcc87e4a4 Guenter Roeck 2020-01-20  167  
+ .../devicetree/bindings/dpll/dpll-device.yaml |  76 ++
+ .../devicetree/bindings/dpll/dpll-pin.yaml    |  45 +
+ .../bindings/dpll/microchip,zl30731.yaml      | 115 +++
+ MAINTAINERS                                   |  11 +
+ drivers/mfd/Kconfig                           |  32 +
+ drivers/mfd/Makefile                          |   5 +
+ drivers/mfd/zl3073x-core.c                    | 855 ++++++++++++++++++
+ drivers/mfd/zl3073x-i2c.c                     |  68 ++
+ drivers/mfd/zl3073x-regs.h                    |  54 ++
+ drivers/mfd/zl3073x-spi.c                     |  68 ++
+ drivers/mfd/zl3073x.h                         |  31 +
+ include/linux/mfd/zl3073x-regs.h              |  88 ++
+ include/linux/mfd/zl3073x.h                   | 188 ++++
+ 13 files changed, 1636 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dpll/dpll-device.yaml
+ create mode 100644 Documentation/devicetree/bindings/dpll/dpll-pin.yaml
+ create mode 100644 Documentation/devicetree/bindings/dpll/microchip,zl30731.yaml
+ create mode 100644 drivers/mfd/zl3073x-core.c
+ create mode 100644 drivers/mfd/zl3073x-i2c.c
+ create mode 100644 drivers/mfd/zl3073x-regs.h
+ create mode 100644 drivers/mfd/zl3073x-spi.c
+ create mode 100644 drivers/mfd/zl3073x.h
+ create mode 100644 include/linux/mfd/zl3073x-regs.h
+ create mode 100644 include/linux/mfd/zl3073x.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
