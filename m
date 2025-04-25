@@ -1,142 +1,136 @@
-Return-Path: <linux-kernel+bounces-619887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD9EA9C307
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4E3A9C2F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E1D77A6807
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318ED4C42D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B041EB182;
-	Fri, 25 Apr 2025 09:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R37HHpOU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE56235C1E;
+	Fri, 25 Apr 2025 09:08:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA240236435
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C49A2356BC;
+	Fri, 25 Apr 2025 09:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745572082; cv=none; b=GcudtRkXrycs94jg1u3LFnwqvwBY/ck+QPyDvkmDdgL9wn5Ri4F5l8P53/WEUb8Xo4o9wYzliqjU6bHRc8k5xbwOvt+75JCvpouoTvYkFM6BJXFqw2WsnIXOEAVNMeUxyMdssALDAhwTK0UR2IBZCB1WujDkPSGg18lGGT5Kzxs=
+	t=1745572080; cv=none; b=QrGwn9yGAygVv9fFoYEE4KUNLJCQDUY0NQXDwbyoFmVKgLRXftXBjiFf/SqYBWHiKUP6LMzo+nsrIPm25MHWbCkY0ueXNTXYPfz5sz7swRbxrD9zLqo8Svb0b1hQYnpz25Vc5/JsEGlegDUhKrL66hksiQgohy0ogY+HXAzuUIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745572082; c=relaxed/simple;
-	bh=DsjDnHtiCgBweWj2Z9rRF9NFYYy/5gSoExnp430J+Js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zxv6PLZJTDa7ApSfkTzaCWs2Sqi7IGJ3aMgl7zW9HLGbAX8wNDm2D3fdXaT9tMZXqjcCy1yjXXEd1P4WNh0OgPzpyB80W5xiiM7mRzolVwjCjtI2VTtcVQktjlohElmoaU1CXcCJZeSCDBYIVfYvJ+GtiBOm6enmIRa0TWrkOX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R37HHpOU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8T6Tm019782
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:08:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=E7YGT9JoWm91VFNYG/u4ZzAL
-	7c7lgU5OKZbu1IKjJ28=; b=R37HHpOUIk4ozHJYiR/Vf6YEkpL6IJnwmqdF+5D/
-	Efzded7xua0q/u+CyTp9Zv6jKWBABfo7lgKiFApdm9UcbKC4jIf1amT0KxH3bbLZ
-	FLWfEcCHT3wCUpHOqxSJ7752t7yf0yAv6XvetfRfvEKikA3uUX1Yx5HM8+azt9hW
-	YQv78cpdaniUK/Bln8YCUxYmNVgQ0UJOsyyrXtNUb3FO/+vSAjCe90T2z5pPzFea
-	mU1OG55KJ7uNj0zotoSiZhxPf0x/2Mj4APd9uY+bzL8UGZlotVbymTdvZ8o4b9Db
-	zxKz2YpdNGirhCI/apCdUe3tRMWdP2hG2BDSbijWsWmAPg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh2geem-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:07:59 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c95556f824so216831885a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 02:07:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745572078; x=1746176878;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7YGT9JoWm91VFNYG/u4ZzAL7c7lgU5OKZbu1IKjJ28=;
-        b=Vs+xARXpsVJTjCb4/Gs3X/n3I/UGf89FCv0b01fE440TwFZ3qv/rnsgLbPCXzwxAss
-         HWz+JWIsUgQrahaUCiyLtHVw1tltBnICrY8poj4c/LBIfmEWotZOG/c2TUiC6IUTFH7M
-         9DdxlgvTAdXLAfgK9jBo/d1gFGngqQX9YUO4EY86uv6y8V6UlsjCuoU+ZqXOeZPJ2Bd3
-         GVpmA9y6BgQNHI1yGl2ZYVWGCP9EetfsNAPW5JL+l/F3xs8K2slOHLZzyXlKLdc/NCXk
-         yzs5zOooSTvDONR/1NyAgqUdo1qacZ/w7YMlPT27+WzyeoN/eWIMqhwvNEEgNCfwajqS
-         yBZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoRIWhk5oTbZaYRcxD+Vsn2u/Yh71PxIkKmiw2OPnG8DI17VGkum/aTgbcqVwT7qxx40fYYngxVhKfj5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHbH9PEqklbFCnbrxpooOtta+G++GvXC7DWD35eKkHGwOk5Gsg
-	59PgXHpeO1drv+7+MhO6NJSZUcn6NdbaTJUFNCiCT782BrTv89XE6NCCldEi9bssYh9PC9jNrba
-	lUidspmFHSMv899ISwbGYNzt8ZJ30fx+KA1OpdfQ7zrYT88P843mWgTbvt5XikyM=
-X-Gm-Gg: ASbGnctubSfuotW8Qiwe7mbVtBlIK6M4pYt+IRjBkyhSqfyvvJUyc0AtJzeOEfsKwz7
-	se2JagUYyjegL+QNIZE/4ZC83XqFG/CYuSsotrRyQJlFdtiyiHhmruG+yRDHHnU96wAs3BvPFZx
-	+zITnAgFF36UG2ppoBIwl9LSc6FAJbilDqR1f3MgTILOFSz3ZljXSomeUICUlpuewgVHlMly32o
-	seHGFeMDUAby5DDiurwF8CcWHfjMeF83IqgSanhu/lo1erU/O4PG7z5k3b4Ip+FdBUvigBgy6TZ
-	h5bYo//NkT/eQel4vLxzXV2YPe+Bpjn22fAUqH0thCGEdA3z80fH8NqWxXLZhCV0L5XwBRlu2oo
-	=
-X-Received: by 2002:a05:620a:1b99:b0:7c5:a463:397b with SMTP id af79cd13be357-7c9606e0b7dmr246311585a.20.1745572078684;
-        Fri, 25 Apr 2025 02:07:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHpqKgmY/joCABcKakjj51b/bf9LSO5bp8KVEFf7NSYBd5yr5G0Dj8JO9ClMIekjeU5G8jvg==
-X-Received: by 2002:a05:620a:1b99:b0:7c5:a463:397b with SMTP id af79cd13be357-7c9606e0b7dmr246308285a.20.1745572078331;
-        Fri, 25 Apr 2025 02:07:58 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7ccb83dasm520591e87.249.2025.04.25.02.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 02:07:57 -0700 (PDT)
-Date: Fri, 25 Apr 2025 12:07:55 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
-        linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] ASoC: qcom: sm8250: add DisplayPort Jack support
-Message-ID: <cgog34zs3e43n23mkt35swvu2ibuoaav4ccrhjoizg6b4kgc63@36blexv25aud>
-References: <20250425-fp5-dp-sound-v3-0-7cb45180091b@fairphone.com>
- <20250425-fp5-dp-sound-v3-3-7cb45180091b@fairphone.com>
+	s=arc-20240116; t=1745572080; c=relaxed/simple;
+	bh=WDD2ChdL2+c7+M9ePXnsLS5FbYREB9Wg/cPjhxBFzXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fZcCMQngDzVgMj+XrQZL/WcFdvCN69mGed8OEpExQHBhxTHARqEO4zzeQ+9fQXlx6qIcXhTCvjT15wF+dWd1BgihV9+MCKi6Q/dW//3vf50lSSjgZ66YklPaJ1csso/IRQ1Gk+IRoRXDMGRsfLjL581BuINUmWB6FMlgXqvfigI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D773C4CEE4;
+	Fri, 25 Apr 2025 09:07:58 +0000 (UTC)
+Message-ID: <99e4aff6-9ad2-4cea-9e78-a238eb349709@xs4all.nl>
+Date: Fri, 25 Apr 2025 11:07:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425-fp5-dp-sound-v3-3-7cb45180091b@fairphone.com>
-X-Proofpoint-GUID: eilFcjn5PBUQuxi4LsxO2jkKR12XBgi_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA2NiBTYWx0ZWRfXxAda/n/egTvU R434xDxnIpaIRyKmiko9OTKq/xO6hax9gjPuOWWYWyK26Vr2Zg6vn2dVCGNesoVjdnQvMDB2Qpk IO0yPQwu6sljKlgwVxC8ZpHHJpQIJulIBNI7osZl3/7yWv94ondjptEf23pB9OPC1/d05el8Fct
- EsBpt+AsgT+2xvYgu+kmALQlbLpQ+FAnqZjPipgpnj9QwPpMdt6k2Toh00Xmxt8zPuBizlrS6df 7YYtX7bhjEFx9LroQ+0h4L+gW/iidHxYIhjzwNCDeWUWKFmhuctaY0Mdy7Qq+hzxZGFUFGLsRT5 TYbwuNEz+zD8qa7HY+5f6XjgO31mHuI5jDsLbTf6c23l6W5a41ZtxBIL9aIukdXJBcrTFCbX3SJ
- wQioC7u+SvNp7M9TbCPNFJ8uPoB/AzM5B9yySeiZ2JFeJ83I2LmPam7mFYm01REm9rYzDX6m
-X-Authority-Analysis: v=2.4 cv=Tu/mhCXh c=1 sm=1 tr=0 ts=680b50f0 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=EBsx7UlYEkoSbB8InyQA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: eilFcjn5PBUQuxi4LsxO2jkKR12XBgi_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=893 bulkscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250066
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND] media: nuvoton: npcm-video: Prevent returning
+ unsupported resolutions
+To: Michael Chang <zhang971090220@gmail.com>, kwliu@nuvoton.com,
+ kflin@nuvoton.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250408055454.3421083-1-zhang971090220@gmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250408055454.3421083-1-zhang971090220@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 25, 2025 at 10:07:27AM +0200, Luca Weiss wrote:
-> Add support for DisplayPort Jack events, so that user space can
-> configure the audio routing correctly.
+On 08/04/2025 07:54, Michael Chang wrote:
+> To restrict the returned resolution due to Nuvoton SoC hardware
+> limitations.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Michael Chang <zhang971090220@gmail.com>
+
+Just for future reference: please don't resend. If it is in
+https://patchwork.linuxtv.org/ then it will be picked up eventually.
+
+Regards,
+
+	Hans
+
 > ---
->  sound/soc/qcom/sm8250.c | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+>  drivers/media/platform/nuvoton/npcm-video.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/media/platform/nuvoton/npcm-video.c b/drivers/media/platform/nuvoton/npcm-video.c
+> index 234fdec04f74..8d6d51a674a3 100644
+> --- a/drivers/media/platform/nuvoton/npcm-video.c
+> +++ b/drivers/media/platform/nuvoton/npcm-video.c
+> @@ -578,7 +578,7 @@ static unsigned int npcm_video_hres(struct npcm_video *video)
+>  	regmap_read(gfxi, HVCNTL, &hvcntl);
+>  	apb_hor_res = (((hvcnth & HVCNTH_MASK) << 8) + (hvcntl & HVCNTL_MASK) + 1);
+>  
+> -	return apb_hor_res;
+> +	return (apb_hor_res > MAX_WIDTH) ? MAX_WIDTH : apb_hor_res;
+>  }
+>  
+>  static unsigned int npcm_video_vres(struct npcm_video *video)
+> @@ -591,7 +591,7 @@ static unsigned int npcm_video_vres(struct npcm_video *video)
+>  
+>  	apb_ver_res = (((vvcnth & VVCNTH_MASK) << 8) + (vvcntl & VVCNTL_MASK));
+>  
+> -	return apb_ver_res;
+> +	return (apb_ver_res > MAX_HEIGHT) ? MAX_HEIGHT : apb_ver_res;
+>  }
+>  
+>  static int npcm_video_capres(struct npcm_video *video, unsigned int hor_res,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
--- 
-With best wishes
-Dmitry
 
