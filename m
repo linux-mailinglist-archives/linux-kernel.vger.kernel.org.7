@@ -1,129 +1,213 @@
-Return-Path: <linux-kernel+bounces-621056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92342A9D344
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:48:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5215A9D380
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61B379E047C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EF518985D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 20:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8338E223DF1;
-	Fri, 25 Apr 2025 20:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A01E2820D8;
+	Fri, 25 Apr 2025 20:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="iobspATP"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gck3Ox8N"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17581AC458
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 20:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B82571DF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 20:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745614068; cv=none; b=jm1waszpHCJ1zPb4l/0y+glb/OaeKqSDTWatIXO6zHPTvjcdhYWZu/brhd32UD7yCUEvqoiMeU4zBGaaCIZXuqwRYmmqaDek8Q7DzNYfqIqPPOBl10Q0Z1fj91w9BjHWtrkHCmWMnHYYKJZw8+3qyyWdIwIF7ahYSLXtea64Omo=
+	t=1745614082; cv=none; b=a5gb6f5uBhr/29+5jseGlSKryXcY32SMgNuayf15LTjawogRN5DqkbxiRrsY8r2WfCS95UUPyXtz42qLS8D22yQX4cNYpcav05rA67vXYYnInNj4fALfx4x6kUhtOjfpBs28q8dpMifM1PgfsAhDCJ7sit+kJsBfukPrIfWKjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745614068; c=relaxed/simple;
-	bh=Ons6fbZ/ZBBSkZ0lCnRlE60mRw4vXN50ao9l15AnCic=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=FjjdihN1i60XU18E9V/+HHqAsvDp2dA57Tt7ZVEfSW2EGk7mC/sX0//GP1UwF5G6S0v0eve3DjVGO6QTyAwrj4kUHC9ESShAevigvsqo5sCbBd8bmpH6SSiTWAQR7Xd9/so+F76YQ1Hup04BRhFCmbTe4zOZ1Py6XD6ArT3dBlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=iobspATP; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso3020709f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:47:45 -0700 (PDT)
+	s=arc-20240116; t=1745614082; c=relaxed/simple;
+	bh=IqsfQhrBtY/uIgA0HP7SJ1VUXOKuOAdjCdaXsDurLeM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=I4CS1k8+vUukjBHY2lJTCDgoVKolcwqk7gVeC9MqwUh3oLl1R7Fo9+hJ2QDJVrI7NWwBcG4SuZrrMTRc5ycViR1yRLMVt4lUc98miELm64Rbcz8vh0npS+cEcXkm5pbaQ++0LaF9pdufzQllxGbu0NJWtEQ4O7zpV9PMKP/ge1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gck3Ox8N; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af8f28f85a7so1628989a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:48:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1745614064; x=1746218864; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ons6fbZ/ZBBSkZ0lCnRlE60mRw4vXN50ao9l15AnCic=;
-        b=iobspATPfwGqIsLM0hRdkX27+Vqee4L0hK2wogylTQQQC9L+KpXhkA5f+ufUH071k7
-         qgJ+/c36AdNxZ+cdMkrDE9ooQA33mTTGNqt5WcH+Wc0yI1bLLLdPvR+8RR6eE1ja1h5I
-         W+H7D/iIG+hff2pOE3PUh+2sGH4wo8EgNreZyL7jTb0xgL8hP3WvmQtCOV+5Cr7fqU3u
-         //Ki43jNqsfiXc/67oMwWU2xrQT6OPXwdPjTt8pMf80P5yrLIVscYTBJuGsgYEuvpEai
-         JKUXTf30k4vhbfxVbdV4in6mRewfa6G5fUDWy6ptcbwej9NsfGrL2C6+unNLWv4pTE9M
-         HrPA==
+        d=google.com; s=20230601; t=1745614080; x=1746218880; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=enOs7QykkTtNaI2qaSAZnEBkFkPUOBhTrAhJqBADVAA=;
+        b=gck3Ox8N3l+5EPI1lefL58pZPp3aVM2kEUCChhxJctaALiZplvPpUN2DreShB+Q6dW
+         9FfWc12VSqnMYjpA61NzwLOlQyvG3asjflTygx/WK8Wfkx1UJ6LGklxod8DLg8cP30mP
+         p0t0x/dK1WTvTpmI6gwoduF6NoOUwVs+kuLl2U38ll+Hp5lgb8DWQoSEIKYfNtzbCLAT
+         Gh8kJ9K3/J2nNXCqgYGuDmVOdSGEIziQZ0a134hddJfxCG3I5glbI8n8Ent4+VynmQwv
+         XiugGMg4rITDQDE6Ra0iwo8sUV3EycElshgZBaWy1mxh0nQOGwhP5yId8wfYjwKpuw/7
+         LWaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745614064; x=1746218864;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ons6fbZ/ZBBSkZ0lCnRlE60mRw4vXN50ao9l15AnCic=;
-        b=qTCYRE9n8CF2zK7zIrMC0dk3cR7cMBRy0hQlc676ijIYmfbRF5e97du4zlJLL5gM6Q
-         Njvh4F7FDUBbMSp623EGY/R3BDgtOZqcDPK05sSKgk2W7Cg0RmW/4OV064jRrnojWmDx
-         0WsU02L/r9ZuYL/FUXfCDBsOKuJfkIYBvM0E0SjxySCAoSp59UaIdUY/oLvBn6/bHzhM
-         Odsl9kXaE13i5MwN1StWBzquTYuYBkQC8T05iDbaO/f1KErqVtv9YhyHR1eo1AKMf9s6
-         DlUzCzXsErpN8HkwU/iDLkcs9NzACYtf61Ch1lXcAvrbmzW5rUp1JlY4DZLYnOuRMUsa
-         T/Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXC1fPfT8+F22s+zlh0HUrbt7KuT9ZsZmjoxX1TzK+Pkni8Ix6E45L9qWE9f4jMdRUUn717WaP2zRb11c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztaDRcwXt1VpVqCnn7nZe79cUe6oXH3aWPlGV1306U6sfg9Ail
-	XirLccye7nxR+xI73dQyCEOwT/xriOYMjrMkC5X0xAGP+enfBL1998waQwtXChc=
-X-Gm-Gg: ASbGncs7fIJDOqwk+RQHHag7GvPdA3RY5De0g1N1m+CrzAGyhM6NBj3gCUewFy4KvdQ
-	gShq7J47XhYidYtE6tuDKTBYMchyC3qnR3xEmIvQvn+vuXU48YIBtrewonflKzetDDI7JTCLMbV
-	Sg/qisAdtNt26BUSuW1rJKgguwkEE4zP9jRjcoHFMPYp9og0oalAuNnD4mjxz80YzTlE85aRgTs
-	GF8WN31JoOoWxApyCvdKzabTucry6qSpOVKquy6g7BrYyE4+GGaAsG/EugPO4pDhxohN9y2DH2N
-	ej0yD8U7tHqhNPMGgS5fHU8qB6fxaMOzSzBXdJcmCEik07XXoCJjsJqqwfxIu8+Tq9s89TB/o3b
-	6EKbkznyrQKwlYO5Y0AjWjLrQgeaI2Q2xcY4wy1K5jpKZkQNxgwH7
-X-Google-Smtp-Source: AGHT+IHc2IGV1cabuJnO+f6tRyRq8tFSNKSMn/0EAuS9gCgWsxP2W699M+Xi8my9zfWANmox2FyRWg==
-X-Received: by 2002:a05:6000:18a8:b0:39f:a553:3d98 with SMTP id ffacd0b85a97d-3a074f89292mr3119425f8f.56.1745614064100;
-        Fri, 25 Apr 2025 13:47:44 -0700 (PDT)
-Received: from localhost (2a02-8388-6584-6400-d322-7350-96d2-429d.cable.dynamic.v6.surfer.at. [2a02:8388:6584:6400:d322:7350:96d2:429d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5da0dsm3245891f8f.88.2025.04.25.13.47.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 13:47:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745614080; x=1746218880;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=enOs7QykkTtNaI2qaSAZnEBkFkPUOBhTrAhJqBADVAA=;
+        b=quc0PRGstcYZjM7V0GunA2Sy9UHBx0+prEDDhVJYIk/29HO8zkmyBMNPyq5AUmL49l
+         uUoZV5Ndn1lhjiQdIl8wIuai0xdopDK2KANShV5v9z4VpFgd5T9iP2beLptaEmHAYeeY
+         nln1ZxFSqBvSo6dex9P1tPLOQkERyn2/kl3fYfAzZZWDP5LUVQZXrNT0ojVWLzsIFi8R
+         iDuXmuiPVO8vTpV/4gD2PUIcH6yI60eB19E9DU498MPMFZBO4k4O2JNYaQ6VAe00usl6
+         SJ6rlgejYCjBhwmJtP+MEWDo1feQm3OKrLQIa5+FD+FR0q1T1/oH4+mvREpgk1vLqPCw
+         NbzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Cici1eMPgBQCvA2d4czhT5x9BBX+onZqpSerhvqjhgeUHEHXerM+GViflN1ZtIPx/NiSTRsy+V877E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuEN0lpz1HNavAVH39dc5yvijXflBwIQUI3A0kaJmL3SepZzti
+	IdEUdJVhnpaBCiERIEQVRE76yToIx4oPern3IR41XNJs1j7qrMCaONFrh26coJOdXGpQ1C3d97M
+	DHnNgV8nzFtez8kWntoDByA==
+X-Google-Smtp-Source: AGHT+IHcjFhgbZOspdHgxUsPOfyrBROyrCg8nBVVwhtEsRnrdryXYVVZvBNaSdH0Tt8bNLe6UvZbFPOh7gN4ZRQYNw==
+X-Received: from pfbld18.prod.google.com ([2002:a05:6a00:4f92:b0:73c:257c:fd5f])
+ (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:9016:b0:1f5:8de8:3b1a with SMTP id adf61e73a8af0-2046a430706mr855699637.13.1745614079664;
+ Fri, 25 Apr 2025 13:47:59 -0700 (PDT)
+Date: Fri, 25 Apr 2025 20:47:42 +0000
+In-Reply-To: <20250425204743.617260-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Apr 2025 22:47:42 +0200
-Message-Id: <D9G0JHKZ0RXB.3LI5UGS7QTVQN@fairphone.com>
-Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Banajit Goswami"
- <bgoswami@quicinc.com>, "Liam Girdwood" <lgirdwood@gmail.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
- "Takashi Iwai" <tiwai@suse.com>, "Bjorn Andersson" <andersson@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>,
- <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3 2/5] ASoC: qcom: sm8250: set card driver name from
- match data
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Mark Brown" <broonie@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250425-fp5-dp-sound-v3-0-7cb45180091b@fairphone.com>
- <20250425-fp5-dp-sound-v3-2-7cb45180091b@fairphone.com>
- <36904d64-68e1-43b2-baed-50b5fddc2bcb@sirena.org.uk>
- <D9FXE4TJ23QB.1CS3D6PU2FGMR@fairphone.com>
- <ccca5e19-5a4e-423b-923e-ea0de6682752@sirena.org.uk>
-In-Reply-To: <ccca5e19-5a4e-423b-923e-ea0de6682752@sirena.org.uk>
+References: <20250425204743.617260-1-almasrymina@google.com>
+X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
+Message-ID: <20250425204743.617260-9-almasrymina@google.com>
+Subject: [PATCH net-next v12 8/9] net: check for driver support in netmem TX
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, io-uring@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	"=?UTF-8?q?Eugenio=20P=C3=A9rez?=" <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri Apr 25, 2025 at 9:03 PM CEST, Mark Brown wrote:
-> On Fri, Apr 25, 2025 at 08:19:39PM +0200, Luca Weiss wrote:
->
->> I've based this series on next-20250417 tag, so this is probably due to
->> the changes from the USB sound offloading series that Greg has picked
->> up.
->
->> So either Greg also picks up these changes when they're ready, or we
->> wait until 6.17?
->
-> Or base it on my tree and let things get sorted in the merge, I don't
-> know what the conflicts might be?
+We should not enable netmem TX for drivers that don't declare support.
 
-For this patch here it might be okay but patch 3/5 from this series very
-much depends on the patch in Greg's tree, given it refactors/expands on
-the USB_RX if there. Resolving this through merge wouldn't be very
-pretty.
+Check for driver netmem TX support during devmem TX binding and fail if
+the driver does not have the functionality.
 
-Regards
-Luca
+Check for driver support in validate_xmit_skb as well.
+
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+
+---
+
+v8:
+- Rebase on latest net-next and resolve conflict.
+- Remove likely (Paolo)
+
+v5: https://lore.kernel.org/netdev/20250227041209.2031104-8-almasrymina@google.com/
+- Check that the dmabuf mappings belongs to the specific device the TX
+  is being sent from (Jakub)
+
+v4:
+- New patch
+
+---
+ net/core/dev.c         | 34 ++++++++++++++++++++++++++++++++--
+ net/core/devmem.h      |  6 ++++++
+ net/core/netdev-genl.c |  7 +++++++
+ 3 files changed, 45 insertions(+), 2 deletions(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index d1a8cad0c99c4..66f0c122de80e 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3896,12 +3896,42 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
+ }
+ EXPORT_SYMBOL(skb_csum_hwoffload_help);
+ 
++static struct sk_buff *validate_xmit_unreadable_skb(struct sk_buff *skb,
++						    struct net_device *dev)
++{
++	struct skb_shared_info *shinfo;
++	struct net_iov *niov;
++
++	if (likely(skb_frags_readable(skb)))
++		goto out;
++
++	if (!dev->netmem_tx)
++		goto out_free;
++
++	shinfo = skb_shinfo(skb);
++
++	if (shinfo->nr_frags > 0) {
++		niov = netmem_to_net_iov(skb_frag_netmem(&shinfo->frags[0]));
++		if (net_is_devmem_iov(niov) &&
++		    net_devmem_iov_binding(niov)->dev != dev)
++			goto out_free;
++	}
++
++out:
++	return skb;
++
++out_free:
++	kfree_skb(skb);
++	return NULL;
++}
++
+ static struct sk_buff *validate_xmit_skb(struct sk_buff *skb, struct net_device *dev, bool *again)
+ {
+ 	netdev_features_t features;
+ 
+-	if (!skb_frags_readable(skb))
+-		goto out_kfree_skb;
++	skb = validate_xmit_unreadable_skb(skb, dev);
++	if (unlikely(!skb))
++		goto out_null;
+ 
+ 	features = netif_skb_features(skb);
+ 	skb = validate_xmit_vlan(skb, features);
+diff --git a/net/core/devmem.h b/net/core/devmem.h
+index 67168aae5e5b3..919e6ed28fdcd 100644
+--- a/net/core/devmem.h
++++ b/net/core/devmem.h
+@@ -229,6 +229,12 @@ net_devmem_get_niov_at(struct net_devmem_dmabuf_binding *binding, size_t addr,
+ {
+ 	return NULL;
+ }
++
++static inline struct net_devmem_dmabuf_binding *
++net_devmem_iov_binding(const struct net_iov *niov)
++{
++	return NULL;
++}
+ #endif
+ 
+ #endif /* _NET_DEVMEM_H */
+diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+index db0e9a6a4badc..119f4fbc0c944 100644
+--- a/net/core/netdev-genl.c
++++ b/net/core/netdev-genl.c
+@@ -982,6 +982,13 @@ int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info)
+ 		goto err_unlock_netdev;
+ 	}
+ 
++	if (!netdev->netmem_tx) {
++		err = -EOPNOTSUPP;
++		NL_SET_ERR_MSG(info->extack,
++			       "Driver does not support netmem TX");
++		goto err_unlock_netdev;
++	}
++
+ 	binding = net_devmem_bind_dmabuf(netdev, DMA_TO_DEVICE, dmabuf_fd,
+ 					 info->extack);
+ 	if (IS_ERR(binding)) {
+-- 
+2.49.0.850.g28803427d3-goog
+
 
