@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-620355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE41FA9C98E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:54:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB09A9C969
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2BF1629EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:53:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEDEF7B6DB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9110D253948;
-	Fri, 25 Apr 2025 12:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A755F252909;
+	Fri, 25 Apr 2025 12:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="13kMQh3I"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHnr7k5B"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468D919AD48;
-	Fri, 25 Apr 2025 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665FA24EAAA;
+	Fri, 25 Apr 2025 12:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745585605; cv=none; b=pmuyMBxMsIPPGmtnmP5Suir+spMXMFrct7KRcpBO71Iz9PA15/n3I2Fqx+1p/31ouFx21LGO49VXK4/el1b0HhpFGMS5u3z/KJ3NbphKsJJ4LY/JyEMR/DzvnYpEZ6VcJov8wwTZCpp3GMX0jSA3IPlUCQlvrVvQkSBG/0DWMM8=
+	t=1745585475; cv=none; b=s8nNiVtLjn1Ki76NJsqr5xbCoVoI6nMhY7cCG4g2ya/ncqGtuwLkwGa+DUPIvwfcSo1+JrDV0idtu0iVUTEplMR9qDw6+SGrAnpNCCwMk3JCpNWBCdPLmgtFjpmiuEWySvepXHbAmhb1cxUWfh2fkj6DkVj7Or1Ae1KeOJVwFNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745585605; c=relaxed/simple;
-	bh=zKwxpE0nQgrl5ku11YFdu+sIcrI+jdK+kOVP8m8d2hs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qkxVEQyZqNp/p+zwokkYwvmY4vDa4iIdYMQYgfp0SYJ0N7ntgvm1cRnFcwzIWQPuN/3OD9p3hHzfKxPkOcRbpxCIxnYLitn1ERcPUUubmJfoT1NKmLHriXxAwVJXb84sIcqY4emBiJiF3kXNe97grGQWp66jCVrTGITfU7hsMz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=13kMQh3I; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P7b9Ov005857;
-	Fri, 25 Apr 2025 14:53:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	yuP2hz4+AAmK0hgkk1ltz/sdzsPjbchhks48Sx2DD3M=; b=13kMQh3IKs5Bgb1s
-	JKteJKieilegE2C1DugoLk1YyWfEDKw7R1oPQ+7oMP2wHmEj6Q7Jau2a9GIkSIUe
-	+R3oO0hieOgT6eC8n63Ctx/zYYuIPA//LxRDRPZHa7O6hMcaWgES3NWy8ChhcvD4
-	/Ns/6t9thac6hfd/EYYdZacVr5grSLwT6cl46Z+Hg7iXPMalBpY/j0fd2o2VoC+N
-	osNiD60Qs5rvzSpzlpxALTZJkMxCnXNNVKj8DlwaLCSxysHDVRXDajFcye0+Eefm
-	jN0faqt2jDTLdyj5/cTywRh5b15CGARz01oYw1Agloj2Caf4L/VbkoWbwUrYjGGR
-	Wk6Z8A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 466jk3mkec-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Apr 2025 14:53:01 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5872B40055;
-	Fri, 25 Apr 2025 14:51:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 344329F78E9;
-	Fri, 25 Apr 2025 14:50:08 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
- 2025 14:50:07 +0200
-Received: from [10.252.15.6] (10.252.15.6) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
- 2025 14:50:06 +0200
-Message-ID: <c78c1c19-cf11-4146-acda-fd435add6808@foss.st.com>
-Date: Fri, 25 Apr 2025 14:50:06 +0200
+	s=arc-20240116; t=1745585475; c=relaxed/simple;
+	bh=wmiEsRCKskC/Mif+OPtRe3wDfkOxVjGaJYhZdFWjEdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PvcKH6EZzpbvtOgSoUHXnPPJ6b93XLakuwl1fWEAkPndDjsrVfJtlH9iSW36VQ0jjBqF5Y7AKifQrOCZn3bFdMuhSqjdIrdapvnRJBLNZpEgF9WgHTE4HoGR2lUxbCWvP6+q+W0GAX9A/OcQHM5nOqlZb3EA/TE4wszv8tGlEWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHnr7k5B; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f4d28d9fd8so2765814a12.3;
+        Fri, 25 Apr 2025 05:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745585472; x=1746190272; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=19SQnt4bgMlzflhUBdgnvIZw2qMd2olVK4+5/MXutG8=;
+        b=VHnr7k5BnjdU/8hqL2VyUYxtYS4pakdJDZQxePAJ6T+FgBeaNWKzOQhhYiOy6yFMIv
+         4Ut5nuMNScrfCyt5PCGMMrGnKC1RGEaLwomCKOpTSJ4JTZ53xkmjca00ROAIVCLRbeMd
+         7EHI+WN0ly8MttPD+N6JgbsRbLnxDbPHicoftkxqEhh/Q1HRYuPi1ExpQeXRGjXZ3SnX
+         2geATosNBrDVnsyAhbmCr1WBOI5k2/pCyeJeSPbvrEYiPqCQSeuy2Oc8wrtgfhMw77wr
+         lWdLa0XC7yEJAXZ6JDXIbhwOJO7fbv5Y08OS9HxfPxvHEcSksAToZDRW0fMBW2DHMe0+
+         TvhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745585472; x=1746190272;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=19SQnt4bgMlzflhUBdgnvIZw2qMd2olVK4+5/MXutG8=;
+        b=CnAZisuoM7vSS+S1v60zoxHaWOvNW2QoS47qR0DsE6xqyVItbEnpMZP7YmgoSiKB/G
+         HIDWFKZVSC3WZVMu8QCt4ALonEhb7Nw5yfBJ0T3dJ+V1h9bMotVJAeDn1y1ih6nfS6Cq
+         JTdWeAtDCUPBaE/BE0BpUkUk/wzNAjpGBSbqqITFnj/WkAwbmZ3AZLyly2JKCChCTgc7
+         lN42XWZPvaEnhXCugyPI8L4uVhfvqbgXTt8tqKaSGoZZxLpsqHxQSgJx1DnvPSiSG1+3
+         deqkpuEksk+fqmg1pYaIDUn8TbF2m8ukijPrOtj8ZFy0KpMO4+aiFS28ZCXYo/eqDWBz
+         9Osw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8v/GOu91+xA2badAw60wKuyBXmodoadSIPhmKZ9Hr2+TpZcPkKALw+eHIhDLJbZSwaIIWd/AVZAmhEg8SSKw=@vger.kernel.org, AJvYcCXELcwLJ+SPrto15x8pwhCEKgAjyQ6iwlZKadxIzb6dl1Eb/qUg0xBMu/NouZMqFSi0oFU/JdJj5hp/9yqU@vger.kernel.org, AJvYcCXR/Sm4w1VBejSc++qJ3Vy+EFQIRhFbANEfx2Tgmo5BBLOLHlT/veeNf0Q3sYwWt6yOaDxlD1ZnK2A8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9b6K0fWPbZPJ1ZrzsDdUn8Pv19dXpkkZS5zg5shUb9IYxQHma
+	W0+ABjv036hH1ik9oMutJffs7Jdc2oIpaNab9Lic7b+3mk9jXlG5j/WKw8pQ
+X-Gm-Gg: ASbGncs64vW4bv2+MXtdiI/k6no+8FywHX+pqPX9Db3LJQ+J/nGCHkYNOoIZOu1n1a7
+	3T9IupF9aS4hoXXEG0IcSkIbWLf85Q5maEGDW5AfqlDultkhdbEqzCqO2fQ7mbtahhbn5V6xxtr
+	X28vQW9qodteXpB6HbUJqYADZgPzwO4HqvNjzqpp8XXJZIOUp0k+h8GhSWOWijQVXDh9IcvPjq2
+	OvclNIYt/F1bLW2ZgM3ojr6OScJONfkdRWhpDSdhvZOd0yJFJGmJd1R69Qc2EycoUEyDFqU6G5Z
+	s4fbYcKW7WALCCMlpTYAkU0eQPnvrBwibYzF3qdY+BvgGEDnA4rcH56MDaNTtxwM/w==
+X-Google-Smtp-Source: AGHT+IH/NrWffoy/u2nsOLxymoZYRZ+CZhi9kKY0D1DpYpA2UcXxmclpaKgPo2+5Qdo1fcEv82aORg==
+X-Received: by 2002:a17:907:781:b0:aca:cad6:458e with SMTP id a640c23a62f3a-ace713c2584mr182471466b.43.1745585471276;
+        Fri, 25 Apr 2025 05:51:11 -0700 (PDT)
+Received: from localhost ([217.151.144.138])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ace6e4f8835sm136631966b.67.2025.04.25.05.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 05:51:10 -0700 (PDT)
+Date: Fri, 25 Apr 2025 14:50:10 +0200
+From: Oliver Graute <oliver.graute@gmail.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: fsl,scu-wdt: Document imx8qm
+Message-ID: <aAuFApCnKVqKA1Zu@graute-macos>
+References: <20250407-imx8qm-watchdog-v1-0-20c219b15fd2@bootlin.com>
+ <20250407-imx8qm-watchdog-v1-1-20c219b15fd2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/8] mfd: stm32-lptimer: add support for stm32mp25
-To: Lee Jones <lee@kernel.org>
-CC: <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jic23@kernel.org>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <robh@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>
-References: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
- <20250314171451.3497789-3-fabrice.gasnier@foss.st.com>
- <20250404144006.GB372032@google.com> <20250424130112.GD8734@google.com>
-Content-Language: en-US
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250424130112.GD8734@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_03,2025-04-24_02,2025-02-21_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407-imx8qm-watchdog-v1-1-20c219b15fd2@bootlin.com>
 
-On 4/24/25 15:01, Lee Jones wrote:
-> On Fri, 04 Apr 2025, Lee Jones wrote:
+On 07/04/25, Thomas Richard wrote:
+> Add an entry for 'fsl,imx8qm-sc-wdt' as imx8qm also contains the SCU
+> watchdog block.
 > 
->> On Fri, 14 Mar 2025, Fabrice Gasnier wrote:
->>
->>> Add support for STM32MP25 SoC.
->>> A new hardware configuration register (HWCFGR2) has been added, to gather
->>> number of capture/compare channels, autonomous mode and input capture
->>> capability. The full feature set is implemented in LPTIM1/2/3/4. LPTIM5
->>> supports a smaller set of features. This can now be read from HWCFGR
->>> registers.
->>>
->>> Add new registers to the stm32-lptimer.h: CCMR1, CCR2, HWCFGR1/2 and VERR.
->>> Update the stm32_lptimer data struct so signal the number of
->>> capture/compare channels to the child devices.
->>> Also Remove some unused bit masks (CMPOK_ARROK / CMPOKCF_ARROKCF).
->>>
->>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
->>> ---
->>> Changes in V4:
->>> - Add DIEROK, ARROK status flags, and their clear flags.
->>> Changes in V2:
->>> - rely on fallback compatible as no specific .data is associated to the
->>>   driver. Compatibility is added by reading hardware configuration
->>>   registers.
->>> - read version register, to be used by clockevent child driver
->>> - rename register/bits definitions
->>> ---
->>>  drivers/mfd/stm32-lptimer.c       | 33 ++++++++++++++++++++++++++-
->>>  include/linux/mfd/stm32-lptimer.h | 37 ++++++++++++++++++++++++++++---
->>
->> At least the Clocksource driver depends on this.
->>
->> I need Acks from the other Maintainers before I can merge this.
-> 
-> Suggest you resubmit the set as a [RESEND] to re-gain traction.
-> 
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 
-Hi Lee,
-
-Thanks for suggesting.
-I recently found I needed to add a small delay in clocksource driver. So
-I just have sent a V5.
-
-Best Regards,
-Fabrice
+Acked-by: Oliver Graute <oliver.graute@kococonnector.com>
 
