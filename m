@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-619435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2FFA9BCA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:14:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3162EA9BCA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7719A28C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:14:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A971BA453D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBB415278E;
-	Fri, 25 Apr 2025 02:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69E214B945;
+	Fri, 25 Apr 2025 02:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="QeppXBwc"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8xHJ3QH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF8014831F;
-	Fri, 25 Apr 2025 02:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF51AAC4;
+	Fri, 25 Apr 2025 02:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745547273; cv=none; b=glKrTY1+4NmFZyGEiNkcsiMEs6xGhQbVBnVLL621UB+lbRArs9J9x+GCOL1WtlV9d8wamOsDlHOhAv21APfUadTmL4C+0u1tByIPOItL2f9RbKj2eAuHD0YtqHQ6DTyEGCU7pHlgs+tLCtmxJ3lcT5z0nf42KtzGJTw5XepS7A0=
+	t=1745547235; cv=none; b=oZ92Ae/VcLIMaP9KW+R+VvdXV8rwpz3OttF8zVuCgm40tJ5MMD9M/t65rOvHs3EniASQ6X9cKgEp2UAIbtBtiDR8p0ZXi/LdJjNtJrHSJe9ytpmgRsLt5VSrVar0dvnIRa49c408+VRi4IqiyORc1G18RwhN82/UZaKThOiehqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745547273; c=relaxed/simple;
-	bh=22mLpVSZ+7h35wRUeBnuNiexnafvBA8zB/TsZyPssX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsKJDwXA+IsduuVY0zEKboBVdzFjzd21VQMmOmLNI63Ymjz4T0tt4INJ0RZkhEpvqUasAb3no4WFE8BgS45B58IcNSQo2bsMfLKtuntKDRl0BpmZ2ot078iEDxVNvRNj+sWu7lutjXt+nN8hlEIfuFLIV+9pK4ZfJkEFACvD768=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=QeppXBwc; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=sB2QjJ66j3kraGlrqjw6SCUngpcSvfBQPp40F1HnYIo=;
-	b=QeppXBwcJBb4ePAeuS1oYCzcV9k1vTQQ7gJQWzlgx855MAHLtommaeAZ8Sx/1g
-	aB6pz4zjvbPG5fQUw1qqRCdhpiT/tc5oB84mxjPOrsD6HMIIFpn+XOcsfi3UcfPe
-	M2yCOCQJGQIfxJbWxMudbLd5LogR6YFrRxVy1IoI+VjaI=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCnXrzc7wpoPm_aAw--.52709S3;
-	Fri, 25 Apr 2025 10:13:49 +0800 (CST)
-Date: Fri, 25 Apr 2025 10:13:47 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Revert "arm64: dts: imx93-tqma9352-mba93xxca: enable
- Open Drain for MDIO"
-Message-ID: <aArv2yur3ox+RCDT@dragon>
-References: <20250417081522.1145586-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1745547235; c=relaxed/simple;
+	bh=zhKRqLVd26FfGbO14mufcGFlylQAXcG1racRs/okgag=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fo9ojmJLNaRaTvObYttOa3wU6NbQbCMMulPVRyO3lXq/1bmqQxsm58JWBoiZkfwhG5LYCBeg/TOlOEahwjBWk2fo0EPkIy3RipoXAJNFe98TH03H5co+MpksRrgy+OF0zaddwnhScx2K6WtCRWW8rCLm4tjOvpWHsVhorf3bICI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8xHJ3QH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDCE4C4CEE3;
+	Fri, 25 Apr 2025 02:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745547233;
+	bh=zhKRqLVd26FfGbO14mufcGFlylQAXcG1racRs/okgag=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H8xHJ3QHyW32cpizyk44/SZZ7fLssnULuTJhyh73dm6ah7nOv+8lQkBFycU3KCBQb
+	 gjtKPXLpOLt2qIOu5gy+XDnYUYQpXo3IPhkXuCPr5JhYb2E/zRHT5iPtEiCrTbA8vk
+	 0AtJeKfurLux9WVFiolGd6zSbmHF8wlHaDhwftUxAHifydoa4sIC1MSNia9uuKtfNs
+	 x0zkRhpUpZDzLXR0ubHxp+qINQrvRLFOKckCEjDzbJVQ1guaZSlY9kZFDQdW3DAvCX
+	 /DYOYrQans7jn++GyA6TCj3zsMcytNJQCpANb+tW9D/Q1gAObp27PuYKF1u3xeM+VM
+	 R9ahJvStFzGDA==
+Date: Thu, 24 Apr 2025 19:13:50 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: danishanwar@ti.com, rogerq@kernel.org, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com,
+ ssantosh@kernel.org, tony@atomide.com, richardcochran@gmail.com,
+ glaroque@baylibre.com, schnelle@linux.ibm.com, m-karicheri2@ti.com,
+ s.hauer@pengutronix.de, rdunlap@infradead.org, diogo.ivo@siemens.com,
+ basharath@couthit.com, horms@kernel.org, jacob.e.keller@intel.com,
+ m-malladi@ti.com, javier.carrasco.cruz@gmail.com, afd@ti.com,
+ s-anna@ti.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pratheesh@ti.com, prajith@ti.com,
+ vigneshr@ti.com, praneeth@ti.com, srk@ti.com, rogerq@ti.com,
+ krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
+Subject: Re: [PATCH net-next v6 04/11] net: ti: prueth: Adds link detection,
+ RX and TX support.
+Message-ID: <20250424191350.7bf69fdb@kernel.org>
+In-Reply-To: <20250423072356.146726-5-parvathi@couthit.com>
+References: <20250423060707.145166-1-parvathi@couthit.com>
+	<20250423072356.146726-5-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417081522.1145586-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Mc8vCgCnXrzc7wpoPm_aAw--.52709S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsmFCUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiARY6ZWgK0Y2F8AAAsD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 17, 2025 at 10:15:19AM +0200, Alexander Stein wrote:
-> From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> 
-> Using the MDIO pins with Open Drain causes spec violations of the
-> signals. Revert the changes.
-> 
-> This reverts commit 9015397c2f2d9d327c0cf88d74e39c4858cb4912.
-> 
-> Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+On Wed, 23 Apr 2025 12:53:49 +0530 Parvathi Pudi wrote:
+> +static inline void icssm_prueth_write_reg(struct prueth *prueth,
+> +					  enum prueth_mem region,
+> +					  unsigned int reg, u32 val)
+> +{
+> +	writel_relaxed(val, prueth->mem[region].va + reg);
+> +}
 
-Applied both, thanks!
-
+Please don't use "inline" unnecessarily.
+The compiler will inline a single-line static function.
 
