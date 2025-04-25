@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-621200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C6AA9D618
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 01:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F59A9D617
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 01:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E8D49C5C90
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B244A5A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 23:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202052973DE;
-	Fri, 25 Apr 2025 23:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9770A2973A9;
+	Fri, 25 Apr 2025 23:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yym5k9DV"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwDLP1LP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE0621ABD6;
-	Fri, 25 Apr 2025 23:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD921296D37;
+	Fri, 25 Apr 2025 23:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745622927; cv=none; b=aL24s0fGhAzJqSjtaVgEunFheLqmHWvqaiETzDEV35iQRZgH35ljZLYJpwzltS3WLKn0w00lC6eEBzALR0vInAItVkTZr8yOt6GtN4MpcQyZLcjRSmGwyt//vVbCNahsllO8nsZB/ZyGitLhAHuni6mLodUvBJaAl7bJa+S4mO8=
+	t=1745622861; cv=none; b=rvT24ea6qkG247+loGtX5ceYKh7t+YFcRyOlwA0XjCZ087P5bBIx0xABoJQ5KIH3zCEjtl8/RUrCObPim1TsNpjGFrsFi92dzdloaAyW5XoQIdpBxI+szTWOhOA1V8vOODFcihF8lqIPYDlr4VMEk7Hnm50ZyHLt/ZaP6jZwVHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745622927; c=relaxed/simple;
-	bh=vsFKpSpZnGhZifAM23UK3UzlMYS9tXWLxNc3v4lm3Ro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pR1OHXbVJMkIfuGmc8AsdoWOm/tVPwRlxzfNyzTjkkdtoEawbpLydaYzMZJH34kiUK2rcf3CD0YAfUOxkWoPXbP5fNcRotYEHglT3wSd9Ar5rYjmrUMbsHn83y+h+Ojl4V6QUdnznbpe8GsJNi1JzGgsFYRU9GfIHX2P0s5K0j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yym5k9DV; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-224019ad9edso41653735ad.1;
-        Fri, 25 Apr 2025 16:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745622925; x=1746227725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ad7ab9Hi/U7rnoziyztPIwqTOAC6c1GvW0nqsLo6SJI=;
-        b=Yym5k9DVAqR2pbIuMA7lkg6vuVnUmOAyJ/cxpwIvaW/s8J3tOWYkw/s0c9QWyfsq+y
-         5zYXdN8HaKue3lYNlwNOPORohE7gkfIGQVFCxlqmHLVQmfaDwVFHDlJo6obCBP1EuraV
-         sWFC7Ung7QajJFFXyJczCicCUBGLYUdGwolc+ihW7Na/H3rGtlkMYoxX9GWq7+YcA63K
-         VRVoBeJN+3uO4Wyjk+W/ubE4wvW3Uc5633Md7i8rJWxbmapjnCZTUeyVJevXC2jeo7xW
-         yGoIvea5xoOhEXsouuFjs+pKcPOX3xel8/jZ4HhjAQQx2G92WZF/8N2YZdzeA5lc1gkM
-         jv5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745622925; x=1746227725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ad7ab9Hi/U7rnoziyztPIwqTOAC6c1GvW0nqsLo6SJI=;
-        b=aSzc/fYhuc0Wtr5VD6MVv13zhdnGXAitc5HEqROMMnueKd/juCqlZ36cynUIAzkjU2
-         92j0bJPKwizXJpzJYlwBDal/w4CPZF6ETdtUmNqrk73V+Cn4uqOncZHV1welEKvNSgqv
-         QSez4AxiepW6Q/uOAfCvDk2rXMCTmQJnENfpmCsAs+oLzIkeAOu+UtOornlEAWt3YrZE
-         glHweVUlSWnJmM5owwASeeWbgcljTsuNLJBBf/JOeLbKQvJm827IqPTmJZMkl0rdbFjk
-         nlHEHKaGOW7alP8R6DDyRDjW+EPWUnJsEiUjF6FUZIFsBMNtwxRGJmr3lnPHaK62OPoS
-         ISEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU82bBUNs9DbUTme6TH9Fa5YzAaLLvodPKITn/RBN6gB2PzEIR7CXEUzeEiDaUWsudKEBG3Av4x@vger.kernel.org, AJvYcCU9oQXyyoq41YT410RRA7W5dnTnzg40CfuxlOB4pfFgAFv6U6KQSyFV/X0kRJ9f7zel+ZlaUQTSo9R4Lds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEZ9YvM+uiauLSwNnFoPIyXEawTA7q/AG4BmQeOG25uIO2bow5
-	dhgt+grQrft+XWleg/4lUN5iGcb1C+V0BE/nEcxOWgleWSm+S1l1
-X-Gm-Gg: ASbGncuD5GNgAy+feQPzH/6JqKfy2bt0Wt//Cr1H9/Ey9pC8in1u14nhTjJeQhlkxYY
-	fe1gvMp4fspn/xNGbtbRuIo7gv1ifY/n8gQV6BsMFRwptsq6dQNsyN94INGGmdjw1dJnKi9hvX6
-	6DAaMPuuBF88xrrFjmCrAjb7Z98OotsQJXcQ02VXCiZujFaCDJGlWQVO51Cm1V1oZ7b2YFSm3Yc
-	NCp0+YmENGmzA4zoT6Sa7r/39Ao4eCBKwy7/EmDhlBYwHf+RQVWfPHjKIwj3iBxk3vBLkURiUb0
-	RZHeJjdaaaEe0jTnyGuEcOARzcqPjqboduP1j29HOQ==
-X-Google-Smtp-Source: AGHT+IFrQfGBydx8cnsUqT3XFwz17wFaHW9pKFR5UQ9X+kB2b1/bZey7ss18z7TOgQ7RHqhwP6HkvQ==
-X-Received: by 2002:a17:902:d2c8:b0:224:10a2:cad5 with SMTP id d9443c01a7336-22dbf4c8508mr64194745ad.10.1745622925235;
-        Fri, 25 Apr 2025 16:15:25 -0700 (PDT)
-Received: from mythos-cloud.. ([125.138.201.7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15fa906da6sm3462952a12.62.2025.04.25.16.15.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 16:15:24 -0700 (PDT)
-From: Moon Yeounsu <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Moon Yeounsu <yyyynoom@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] net: dlink: add synchronization for stats update
-Date: Sat, 26 Apr 2025 08:13:52 +0900
-Message-ID: <20250425231352.102535-2-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745622861; c=relaxed/simple;
+	bh=/3+EpY5kAKYfUTr3MB2kwKL0Bo2vCJ3MPx+r89JsXWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovsOKBIVR05URk5FYN8pzbyYwDTa85ZNcQ6cXRKxZqZx6mBlDjtx6PghfaLIKiAnah2+GmJWUXrviVadhQKEXptwxTQ6y7wVT6GS7XMf219kE1Tsr7ZW5Jw4LDFIK/FH4dff/p0AdjlsmNWNvVmrg517OYNiyZmse3xj/jxdhf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwDLP1LP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75084C4CEE4;
+	Fri, 25 Apr 2025 23:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745622861;
+	bh=/3+EpY5kAKYfUTr3MB2kwKL0Bo2vCJ3MPx+r89JsXWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dwDLP1LPFqDQzFvH2p/24nfWsndGZDv1qaWEVnvV8Cts7dVW9nxlho0UGTdVkGCM3
+	 xR6JvcrGLS6jrrMR1Xt0YutHI2zoASO0hjiXmXtptzftbHw+EkjHy5zqDhMjJqBrua
+	 DG0CZKaIk2kt/sRrSynLLzI/oVDkQKLxgxOd3LfZcUaG7PNqbN2cu7wt64w4dUJ24o
+	 Y0yCrDuX2OCl2GnwM+89vKY1X5C/fYP/GLlaDwx/zKflH7Xo5Fd4SpL9/d9nYSPkBK
+	 jBszw1+fbSz7tCbwazfyR7xBTiyvJpptopTvQvgS463Dz/yfaRm4wCbtPPrEtvD4X3
+	 YtKYgm6BVSmGg==
+Date: Fri, 25 Apr 2025 19:14:15 -0400
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Avraham Stern <avraham.stern@intel.com>,
+	Daniel Gabay <daniel.gabay@intel.com>,
+	linux-wireless@vger.kernel.org,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] wifi: iwlwifi: mld: Work around Clang loop unrolling bug
+Message-ID: <20250425231415.GA3584546@ax162>
+References: <20250421204153.work.935-kees@kernel.org>
+ <20250422195903.GA3475704@ax162>
+ <202504251032.51B2CB6233@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202504251032.51B2CB6233@keescook>
 
-There are two paths that call `get_stats()`:
-    1. From user space via the `ip` command
-    2. From interrupt context via `rio_interrupt()`
+On Fri, Apr 25, 2025 at 11:18:33AM -0700, Kees Cook wrote:
+> On Tue, Apr 22, 2025 at 12:59:03PM -0700, Nathan Chancellor wrote:
+> >   $ git cite
+> >   a33b5a08cbbd ("Merge tag 'sched_ext-for-6.15-rc3-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext")
+> 
+> Make me look. :) "cite" is a local alias, yes? Looks like my own alias
+> for "short", but basically "short HEAD". From my ~/.gitconfig:
+> 
+> [alias]
+>         short = "!f() { for i in \"$@\"; do git log -1 --pretty='%h (\"%s\")' \"$i\"; done; }; f"
 
-Case 1 is synchronized by `rtnl_lock()`, so it is safe.
-However, the two cases above are not synchronized with each other.
-Therefore, `spin_lock` is needed to protect `get_stats()` as it can be
-preempted by an interrupt. In this context, `spin_lock_irq()` is required
-(using `spin_lock_bh()` may result in a deadlock).
+Heh, yes, that was me being lazy :) 'cite' ultimately expands to
 
-`dev->stats.tx_errors` and `dev->stats.collisions` may be
-concurrently modified by the interrupt handler and user space, so
-they are also protected by `spin_lock`.
+  show --format='%h ("%s")' --no-patch
 
-Tested-on: D-Link DGE-550T Rev-A3
-Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
----
-Changelog:
-v1: https://lore.kernel.org/netdev/20250421191645.43526-2-yyyynoom@gmail.com/
-v2:
-- fix incorrect method of updating `dev->stats.tx_errors` and
-  `dev->stats.collisions`
----
- drivers/net/ethernet/dlink/dl2k.c | 11 ++++++++++-
- drivers/net/ethernet/dlink/dl2k.h |  2 ++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+to basically do what yours does.
 
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index d88fbecdab4b..0a3ac9ba3729 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -865,7 +865,6 @@ tx_error (struct net_device *dev, int tx_status)
- 	frame_id = (tx_status & 0xffff0000);
- 	printk (KERN_ERR "%s: Transmit error, TxStatus %4.4x, FrameId %d.\n",
- 		dev->name, tx_status, frame_id);
--	dev->stats.tx_errors++;
- 	/* Ttransmit Underrun */
- 	if (tx_status & 0x10) {
- 		dev->stats.tx_fifo_errors++;
-@@ -902,9 +901,15 @@ tx_error (struct net_device *dev, int tx_status)
- 		rio_set_led_mode(dev);
- 		/* Let TxStartThresh stay default value */
- 	}
-+
-+	spin_lock_irq(&np->stats_lock);
- 	/* Maximum Collisions */
- 	if (tx_status & 0x08)
- 		dev->stats.collisions++;
-+
-+	dev->stats.tx_errors++;
-+	spin_unlock_irq(&np->stats_lock);
-+
- 	/* Restart the Tx */
- 	dw32(MACCtrl, dr16(MACCtrl) | TxEnable);
- }
-@@ -1074,6 +1079,7 @@ get_stats (struct net_device *dev)
- #endif
- 	unsigned int stat_reg;
- 
-+	spin_lock_irq(&np->stats_lock);
- 	/* All statistics registers need to be acknowledged,
- 	   else statistic overflow could cause problems */
- 
-@@ -1123,6 +1129,9 @@ get_stats (struct net_device *dev)
- 	dr16(TCPCheckSumErrors);
- 	dr16(UDPCheckSumErrors);
- 	dr16(IPCheckSumErrors);
-+
-+	spin_unlock_irq(&np->stats_lock);
-+
- 	return &dev->stats;
- }
- 
-diff --git a/drivers/net/ethernet/dlink/dl2k.h b/drivers/net/ethernet/dlink/dl2k.h
-index 195dc6cfd895..c24823e909ef 100644
---- a/drivers/net/ethernet/dlink/dl2k.h
-+++ b/drivers/net/ethernet/dlink/dl2k.h
-@@ -372,6 +372,8 @@ struct netdev_private {
- 	struct pci_dev *pdev;
- 	void __iomem *ioaddr;
- 	void __iomem *eeprom_addr;
-+	// To ensure synchronization when stats are updated.
-+	spinlock_t stats_lock;
- 	spinlock_t tx_lock;
- 	spinlock_t rx_lock;
- 	unsigned int rx_buf_sz;		/* Based on MTU+slack. */
--- 
-2.49.0
+  $ git cite HEAD~2 HEAD^ HEAD
+  e72e9e693307 ("Merge tag 'net-6.15-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
+  30e268185e59 ("Merge tag 'landlock-6.15-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux")
+  02ddfb981de8 ("Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi")
 
+> > diff --git a/drivers/net/wireless/intel/iwlwifi/mld/d3.c b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+> > index fba6a7b1bb5c..7ce01ad3608e 100644
+> > --- a/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+> > +++ b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
+> > @@ -1757,7 +1757,7 @@ iwl_mld_send_proto_offload(struct iwl_mld *mld,
+> >  
+> >  		addrconf_addr_solict_mult(&wowlan_data->target_ipv6_addrs[i],
+> >  					  &solicited_addr);
+> > -		for (j = 0; j < c && j < n_nsc; j++)
+> > +		for (j = 0; j < n_nsc && j < c; j++)
+> >  			if (ipv6_addr_cmp(&nsc[j].dest_ipv6_addr,
+> >  					  &solicited_addr) == 0)
+> >  				break;
+> 
+> Oof, an unstable solution. Well, I guess we work with what we've got.
+> Your change also solves it for me, so I'll send a v2 with it that way.
+
+Indeed... I will review v2 shortly but another option would be stick a
+
+  #include <linux/unroll.h>
+
+  #ifdef CONFIG_CC_IS_CLANG
+  unrolled_none
+  #endif
+
+above the loop to just avoid tripping the optimizer up altogether but I
+understand that is just as unstable as this one (even if it is one of
+the few ways that the compiler gives us to turn off optimizations).
+
+Cheers,
+Nathan
 
