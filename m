@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-619747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5025DA9C0CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:20:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29419A9C0D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D898173ADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:20:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B3746195C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDE423BD1F;
-	Fri, 25 Apr 2025 08:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59EC23D290;
+	Fri, 25 Apr 2025 08:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlQcK00e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmlmR3RU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63592235354;
-	Fri, 25 Apr 2025 08:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6372356A4;
+	Fri, 25 Apr 2025 08:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745569078; cv=none; b=i8zk6eyISQbA1DwR+Gsy46OhQw8ZvWET2mphv1WYGWxViflGPcU90riJqP4k2LWAbxS0WGu2zhfWASonWQD2XpW7z3hQf7+X7WPRAeMeYLmoxGgI3LxAm/wrO2nN7cOhAW4/+jxj++ayd9qvZra4oMjeWoqR7A8ndgJ0VVmacbY=
+	t=1745569083; cv=none; b=oTzeddf2c00g4ns0eaXlBR7LZtGt8ESgfGMAlReKPCPNWffD3fUKRxsAFqATqz1S8CTO71J34XjFHDXNPkubrYQZAQXgshF9GWAjdDh65LDWlryzsF2T2PcNTfAxc5ij74hL88lLvrorpRI2uzuDuWGWYZSVlYYTFDvaqFTKPb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745569078; c=relaxed/simple;
-	bh=dIsIfNWPh4pCz7BGWzAp5hEA101BvYn+yM42BX3fm/A=;
+	s=arc-20240116; t=1745569083; c=relaxed/simple;
+	bh=Q7F5o8AVhR4zCIu34F9b0xfiGNI6jZVtQ88rTFRCmfQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ILXJDX+hFE9lQ6qbHJzVu6XcJt3qeUHGYCwR742DCW6XX1AUxpNIpRhdFxu1NTtgylvDc/MzagCAAShhLQ53k+H7zg8e9r871idRu8Hq/vJpwjsrH/j8PSZGie66XsmipheosZgpKVALs0MvY8NqAZ9jO9B/HQTUhIM9c8pFnIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlQcK00e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D6FAC4CEE4;
-	Fri, 25 Apr 2025 08:17:53 +0000 (UTC)
+	 MIME-Version; b=IN4z5ZU8SEhGdY9GW6zeJsht+NlEjhEcMk0HCiTo0FHpfF3mEmRhOHq6IP+4/CzlntVHFg9yNXCxxxhPvBEb+6C2dvJie1mbQyE4k3LyGNFyJugUUqMqtp3ngUvdB5EB2nmohVDb9yMKAoZOoni3ZwBYHAB7SRtYgIaJJbiIV1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmlmR3RU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B722C4CEEA;
+	Fri, 25 Apr 2025 08:17:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745569077;
-	bh=dIsIfNWPh4pCz7BGWzAp5hEA101BvYn+yM42BX3fm/A=;
+	s=k20201202; t=1745569082;
+	bh=Q7F5o8AVhR4zCIu34F9b0xfiGNI6jZVtQ88rTFRCmfQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GlQcK00ex9c+3BjQc/0nVKEIU3/rknFLInQP4eRYbNtNy9VM1EHV/ISH6rtmKBmsG
-	 xalKn78G8U1pdamgvJi+ombtaJUZtZfUNtRo21GsDAJCrOgB07nwBR1+EcGR/B2xGw
-	 8eVwUIf6HGxsYgVEUR4B3zSeVZjDKQSeJESpk3cJ3TQGDGLuyhWBJAbZZU1xB9SvX0
-	 /PcesbOMue+77zyHg29xEjI2oNV2+Ida8udoPQYEvd89SLDYsZTI3QphgimOl3Zo5N
-	 wabpOUsseaL8hii5RCKhREAL5nKCElDb9W+xn2uj3342UzdtcAfyIIPysS9ejPby/7
-	 h/QCXuKaSl11g==
+	b=JmlmR3RUGsRb4c65c4O7IpQUXHZGK0oFAsFll/hEN2w7a+SHx3M2F64yLy5Ik2wOw
+	 xF+43QeV7spXkQkJZj9mq6CztDaa4oBclbHpSoBvEWH2jZ9f2XEDKUhrXYivmhxEEH
+	 ISGi1TkhXAIQ4CihiH5VMHgy2wgWBSKfS7yX3ZMBaviXgXy4jQcE+loTFWSizp7KFq
+	 reQvtVwgumwEmgdVNOttUCS5UmpNdw10EwsdMmUmg7R5BjYKLWKDqhiRVt/tMJ/O+n
+	 xs0UxSPfSaD7pKnFswy4kqBbucE1zm2tPWY/vAY+TgLIj4kowaYVMflK9fQnSBMR74
+	 rHCjbZKZ/0fvQ==
 From: Philipp Stanner <phasta@kernel.org>
 To: Cezary Rojewski <cezary.rojewski@intel.com>,
 	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
@@ -59,9 +59,9 @@ To: Cezary Rojewski <cezary.rojewski@intel.com>,
 Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	sound-open-firmware@alsa-project.org
-Subject: [PATCH v3 1/4] ASoC: sof: Use pure devres PCI
-Date: Fri, 25 Apr 2025 10:17:40 +0200
-Message-ID: <20250425081742.61623-3-phasta@kernel.org>
+Subject: [PATCH v3 2/4] ASoC: intel: avs: Use pure devres PCI
+Date: Fri, 25 Apr 2025 10:17:41 +0200
+Message-ID: <20250425081742.61623-4-phasta@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250425081742.61623-2-phasta@kernel.org>
 References: <20250425081742.61623-2-phasta@kernel.org>
@@ -80,62 +80,54 @@ and should not be used anymore.
 Replace pci_request_regions() with the always-managed function
 pcim_request_all_regions().
 
-Remove surplus calls to PCI release functions, since pcim_ functions do
-cleanup automatically.
+Remove the goto jump to pci_release_regions(), since pcim_ functions
+clean up automatically.
 
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- sound/soc/sof/sof-pci-dev.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ sound/soc/intel/avs/core.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/sof/sof-pci-dev.c b/sound/soc/sof/sof-pci-dev.c
-index 2fc14b9a33d4..c50249aadea9 100644
---- a/sound/soc/sof/sof-pci-dev.c
-+++ b/sound/soc/sof/sof-pci-dev.c
-@@ -216,7 +216,7 @@ int sof_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
- 	if (ret < 0)
+diff --git a/sound/soc/intel/avs/core.c b/sound/soc/intel/avs/core.c
+index 8fbf33e30dfc..8f15a65406cd 100644
+--- a/sound/soc/intel/avs/core.c
++++ b/sound/soc/intel/avs/core.c
+@@ -445,7 +445,7 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
  		return ret;
- 
--	ret = pci_request_regions(pci, "Audio DSP");
-+	ret = pcim_request_all_regions(pci, "Audio DSP");
- 	if (ret < 0)
- 		return ret;
- 
-@@ -240,8 +240,7 @@ int sof_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
- 		path_override->ipc_type = sof_pci_ipc_type;
- 	} else {
- 		dev_err(dev, "Invalid IPC type requested: %d\n", sof_pci_ipc_type);
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
  	}
  
- 	path_override->fw_path = fw_path;
-@@ -271,13 +270,7 @@ int sof_pci_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
- 	sof_pdata->sof_probe_complete = sof_pci_probe_complete;
+-	ret = pci_request_regions(pci, "AVS HDAudio");
++	ret = pcim_request_all_regions(pci, "AVS HDAudio");
+ 	if (ret < 0)
+ 		return ret;
  
- 	/* call sof helper for DSP hardware probe */
--	ret = snd_sof_device_probe(dev, sof_pdata);
--
--out:
--	if (ret)
--		pci_release_regions(pci);
--
--	return ret;
-+	return snd_sof_device_probe(dev, sof_pdata);
- }
- EXPORT_SYMBOL_NS(sof_pci_probe, "SND_SOC_SOF_PCI_DEV");
+@@ -454,8 +454,7 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ 	bus->remap_addr = pci_ioremap_bar(pci, 0);
+ 	if (!bus->remap_addr) {
+ 		dev_err(bus->dev, "ioremap error\n");
+-		ret = -ENXIO;
+-		goto err_remap_bar0;
++		return -ENXIO;
+ 	}
  
-@@ -290,9 +283,6 @@ void sof_pci_remove(struct pci_dev *pci)
- 	if (snd_sof_device_probe_completed(&pci->dev) &&
- 	    !(sof_pci_debug & SOF_PCI_DISABLE_PM_RUNTIME))
- 		pm_runtime_get_noresume(&pci->dev);
--
--	/* release pci regions and disable device */
+ 	adev->dsp_ba = pci_ioremap_bar(pci, 4);
+@@ -512,8 +511,6 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ 	iounmap(adev->dsp_ba);
+ err_remap_bar4:
+ 	iounmap(bus->remap_addr);
+-err_remap_bar0:
 -	pci_release_regions(pci);
+ 	return ret;
  }
- EXPORT_SYMBOL_NS(sof_pci_remove, "SND_SOC_SOF_PCI_DEV");
  
+@@ -584,7 +581,6 @@ static void avs_pci_remove(struct pci_dev *pci)
+ 	pci_free_irq_vectors(pci);
+ 	iounmap(bus->remap_addr);
+ 	iounmap(adev->dsp_ba);
+-	pci_release_regions(pci);
+ 
+ 	/* Firmware is not needed anymore */
+ 	avs_release_firmwares(adev);
 -- 
 2.48.1
 
