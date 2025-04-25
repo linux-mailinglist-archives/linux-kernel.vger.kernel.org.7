@@ -1,163 +1,162 @@
-Return-Path: <linux-kernel+bounces-619794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A808DA9C1AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:42:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 232E6A9C1D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56CAE4C2DF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04F15A622C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1664D25395F;
-	Fri, 25 Apr 2025 08:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4526423370F;
+	Fri, 25 Apr 2025 08:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="islUnSNc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dlFvvZ0R"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB8C235C1E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C92356B8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745570158; cv=none; b=uPNuekOnoVzQ8bOjWW3z6HTaNWmZJI5URU8+j+rEuAspJiaqY9JEk5LesdhxKOEAWLxHA4FkGImU/BU5SIMnjPxOVWlPG8o7BAelJAByeRQn8X2MNQhn0eg+bT391+QOOz/82TlWb8DxqYmp8Xhhiu9BMLLp4PG6BREdcy+oB4I=
+	t=1745570315; cv=none; b=d3IZu7gdG0eKaK8tK5NixvXDJJ6AFCzTS4tVxK5diHpDkOlqL31A6a0qFwXHo+g0df32nP1yRhYSG/yEuqCfuCNJFYuS35JoO5ohT29qrQud8nYIX8Tao+Nma7Gi785VYN1+/fSPbLA2CZKiRx+4T3w9GNpp8VXI1n9EcbiNpsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745570158; c=relaxed/simple;
-	bh=W0OGvNpepYMtQUI2P000WddWaGAaKqDLXnohX671FZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSP1ApYQcEtHDVzBTz6RyAmAa0sQAf7vjwNQsCkJSXRoaNcWveltV0hSkdJUojgN/EvdSPIylaeykZnQM5SaXGuZ1cJsiDrVb+tQ+kPZMFeK5nWvYvG/0M4W2X2GqTXSHfDJtqw+xYRT5OPgsB4KdcDqrYGMBLFFnKTXIWzyfjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=islUnSNc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745570155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VIpzb0kJnabV+/Rbk1AeDaWRoPqgDoiA6nLSqcAP3Qs=;
-	b=islUnSNcmoHVw1oYCIr7DD1r5DIOY0N12VIVvTP6wxn0Umm+snMczVx2tSZytw3G8VrLle
-	aj1hplCxbH8ma5y+pvLvB+iiS2FFc5xBBDUX5+HfaYPD0AoKhqYp7G3RSmkt2YPgk324KL
-	5C15Z7D8U1r7O7wH2j+jsuwnZQgneBs=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-FQqyT1l2OyuCqHkMG8o0DQ-1; Fri, 25 Apr 2025 04:35:53 -0400
-X-MC-Unique: FQqyT1l2OyuCqHkMG8o0DQ-1
-X-Mimecast-MFC-AGG-ID: FQqyT1l2OyuCqHkMG8o0DQ_1745570152
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cec217977so10051845e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:35:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745570152; x=1746174952;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VIpzb0kJnabV+/Rbk1AeDaWRoPqgDoiA6nLSqcAP3Qs=;
-        b=c80t8Js2jBeTA8+rc76/tJjei6fhw01tYjMHh0jkWMniB5kRDJHZ8VFq/Hr1SmvKbp
-         aig+Huq0XaszX9IE7VhpsIPRCSL+Rmy+KeD9MDE7i/6/sA78NIdqZLpFEafPXrqzThjX
-         KAc6osp4mdkDi6KkveyUwRiysZiqFcgBxcimMBSiQjXlqSdEXzjgySkVZxzxUfNxP4Fg
-         oQru2xPP7k1Iu1Xg32WnLXeMglOBqdkhtFCHjJwjDVBDZdpMFUTKJHe+oMwQviRys52s
-         obY7T1r8Vfro2DDYI6GXaENumd/zVfJs0R/ZNR5zGdqGO/2GXPpG3niB4Pjl1N+BOiHo
-         A1TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+NVaiZQlG3NpAM3RIzqT54ENKbUrBsNvncq6xvM6kOVzQlbWSdJWjXiFZJdTQpX/oCn+zuj+ShLJM0Ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl+TNVEfZVVQaA1cZ8jRFEdXh79sFEKnlvbNuNEPNc3oVdgWXD
-	Df+czHGzOC/9kAjH4DxEqG3zTa6XIf9wqVRRTHU/ziIx6FJMvx/Hjsa8VICz6P05KxVlhNTF7GU
-	aJ/58txEAg+r7FaHU99lIprJ8MrDbcAY4MkrHhc0OeWRKCEq4JddjhRgPGktTRg==
-X-Gm-Gg: ASbGncuE+xsoVLKh/D6zNTl0WBKFpeX69kdIpdKXjH66zjDK1DtHx/XhunCHrvg8E9K
-	4uvyf0Vb7/GR2EgkzlQqQGMX2SNBybe2JtiwNKDkKbQkJp/CxBuI1nVQnaFIpIdM33IJ5hSdUki
-	UAyX/hoSVJJWUmcLGQDrUTXecmtV7MSVXtELusGTiwCSCwHe/Lb0TnFCTiZ7d+OTnpJ67p2zllc
-	ieDlBtIa9gppiQ5qraaCyy+T7cdG75X1gCpt7e9pzvuKXffnzNZUJOidFBchZqCTxJZ06120bWZ
-	CvSRzg==
-X-Received: by 2002:a05:600d:19:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-440a66d9ba5mr12028215e9.17.1745570152501;
-        Fri, 25 Apr 2025 01:35:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVwMxFD5f3mySi27LmA61xgw9SkI2YEf5bOWu+NSzAJvOJz2O8GeJpN1BaqSOng5t4z7wJTg==
-X-Received: by 2002:a05:600d:19:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-440a66d9ba5mr12027935e9.17.1745570152192;
-        Fri, 25 Apr 2025 01:35:52 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5310a8fsm17114375e9.22.2025.04.25.01.35.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 01:35:51 -0700 (PDT)
-Date: Fri, 25 Apr 2025 04:35:47 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: virtualization@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] virtio-net: disable delayed refill when pausing rx
-Message-ID: <20250425043542-mutt-send-email-mst@kernel.org>
-References: <20250425071018.36078-1-minhquangbui99@gmail.com>
+	s=arc-20240116; t=1745570315; c=relaxed/simple;
+	bh=1mMtj98z3YShJdLxUAd5dw43PD6KBTkoMvJI6Gyi9wM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g4cjxPg8byTrCF2+3KZ0bm3VeKGNQ3JBlE38duxaMKGFZqC4oQ8UkxDohVJWEFki9CswohERXSyLaM/XmASCkc+cT/SVSSccZP0bOtCwylcKsqpfT5P98FzzI8Qjf8Zj+dFbdg5Wrh9Y0nYzyzKWU91/WSYrtwNichRPjAqv9Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dlFvvZ0R; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4E1D6982;
+	Fri, 25 Apr 2025 10:38:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745570309;
+	bh=1mMtj98z3YShJdLxUAd5dw43PD6KBTkoMvJI6Gyi9wM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dlFvvZ0RsAmZZnruhIOvgP/1hcZ71oMlzTUhKVDxi2Dmb81X8/EphUiA0KWueYZHI
+	 hQ3waux+4qNoKag7YlgA6h3TEHo/99FqJWnNHkilLNejAeWTei7tRRFjCW5XJDZaaz
+	 fn6nh6CRi/MyNdvQPfCaBoC6I4RQjwR6YcC0WRE4=
+Message-ID: <c432aca1-cbab-476c-ba3a-e0d9cc940da7@ideasonboard.com>
+Date: Fri, 25 Apr 2025 11:38:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425071018.36078-1-minhquangbui99@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/11] drm/fourcc: Add DRM_FORMAT_Y8
+To: Pekka Paalanen <pekka.paalanen@haloniitty.fi>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Vishal Sagar <vishal.sagar@amd.com>,
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
+ <20250326-xilinx-formats-v4-3-322a300c6d72@ideasonboard.com>
+ <CAMuHMdXM1B1c=62EpcuUdpdpaBRZSJLXb1GBB0egzp7Fyeo5-w@mail.gmail.com>
+ <b195971c-52e6-463e-a440-83dde4346e65@ideasonboard.com>
+ <20250327112009.6b4dc430@eldfell>
+ <b5cf15a4-7c65-4718-9c39-a4c86179ba4c@ideasonboard.com>
+ <20250327175842.130c0386@eldfell>
+ <CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
+ <20250331105446.098f0fbe@eldfell>
+ <20250331082135.GB13690@pendragon.ideasonboard.com>
+ <20250331135337.61934003@eldfell> <20250401162732.731ef774@eldfell>
+ <73bd6628-374d-417f-a30f-88a4b1d157bb@ideasonboard.com>
+ <20250417111315.62a749e5@eldfell>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
+ wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
+ Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
+ eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
+ LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
+ G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
+ DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
+ 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
+ rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
+ Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
+ aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
+ ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
+ PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
+ VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
+ 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
+ uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
+ R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
+ sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
+ Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
+ PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
+ dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
+ qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
+ hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
+ DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
+ KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
+ 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
+ xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
+ UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
+ /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
+ 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
+ 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
+ mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
+ 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
+ suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
+ xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
+ m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
+ CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
+ CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
+ 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
+ ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
+ yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
+ 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
+In-Reply-To: <20250417111315.62a749e5@eldfell>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 25, 2025 at 02:10:14PM +0700, Bui Quang Minh wrote:
-> Hi everyone,
-> 
-> This only includes the selftest for virtio-net deadlock bug. The fix
-> commit has been applied already.
-> 
-> Link: https://lore.kernel.org/virtualization/174537302875.2111809.8543884098526067319.git-patchwork-notify@kernel.org/T/
+Hi Pekka,
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+On 17/04/2025 11:13, Pekka Paalanen wrote:
+>> My understanding is that the Y-only pixel formats behave in a well
+>> defined way (or, as well defined as the YUV formats), and there's
+>> nothing more to add here. Is that right?
+> 
+> There are two things:
+> 
+> - Y8 follows COLOR_RANGE property, just like all other YUV formats.
+> - Y8 implies that Cb and Cr are both neutral (0.0 in nominal values).
+> 
+> I'd like these explicitly written down, so that they become obvious to
+> everyone. I suspect either one might be easy to forget when writing
+> code and taking shortcuts without thinking.
 
-> Version 6 changes:
-> - Rebase on net-next and resolve conflicts
-> - Move the retry logic to xdp_helper
-> 
-> Version 5 changes:
-> - Refactor the selftest
-> 
-> Version 4 changes:
-> - Add force zerocopy mode to xdp_helper
-> - Make virtio_net selftest use force zerocopy mode
-> - Move virtio_net selftest to drivers/net/hw
-> 
-> Version 3 changes:
-> - Patch 1: refactor to avoid code duplication
-> 
-> Version 2 changes:
-> - Add selftest for deadlock scenario
-> 
-> Thanks,
-> Quang Minh.
-> 
-> Bui Quang Minh (4):
->   selftests: net: move xdp_helper to net/lib
->   selftests: net: add flag to force zerocopy mode in xdp_helper
->   selftests: net: retry when bind returns EBUSY in xdp_helper
->   selftests: net: add a virtio_net deadlock selftest
-> 
->  .../testing/selftests/drivers/net/.gitignore  |  1 -
->  tools/testing/selftests/drivers/net/Makefile  |  1 -
->  .../testing/selftests/drivers/net/hw/Makefile |  1 +
->  .../selftests/drivers/net/hw/xsk_reconfig.py  | 60 +++++++++++++++++++
->  .../selftests/drivers/net/napi_id_helper.c    |  2 +-
->  tools/testing/selftests/drivers/net/queues.py |  4 +-
->  tools/testing/selftests/net/lib/.gitignore    |  1 +
->  tools/testing/selftests/net/lib/Makefile      |  1 +
->  .../selftests/{drivers/net => net/lib}/ksft.h |  0
->  .../{drivers/net => net/lib}/xdp_helper.c     | 39 +++++++++---
->  10 files changed, 98 insertions(+), 12 deletions(-)
->  create mode 100755 tools/testing/selftests/drivers/net/hw/xsk_reconfig.py
->  rename tools/testing/selftests/{drivers/net => net/lib}/ksft.h (100%)
->  rename tools/testing/selftests/{drivers/net => net/lib}/xdp_helper.c (78%)
-> 
-> -- 
-> 2.43.0
+I didn't find a suitable place in the docs for this, but would this, in 
+the drm_fourcc.h, be enough:
+
+/*
+  * Y-only (greyscale) formats
+  *
+  * The Y-only formats are handled similarly to the YCbCr formats in the 
+display
+  * pipeline, with the Cb and Cr implicitly neutral (0.0 in nominal 
+values). This
+  * also means that COLOR_RANGE property applies to the Y-only formats.
+  *
+  */
+
+#define DRM_FORMAT_Y8		fourcc_code('G', 'R', 'E', 'Y')  /* 8-bit Y-only */
+#define DRM_FORMAT_Y10_P32	fourcc_code('Y', 'P', 'A', '4')  /* [31:0] 
+x:Y2:Y1:Y0 2:10:10:10 little endian */
+
+  Tomi
 
 
