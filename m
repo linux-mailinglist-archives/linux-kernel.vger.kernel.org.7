@@ -1,167 +1,118 @@
-Return-Path: <linux-kernel+bounces-620382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4F7A9CA0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:20:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5287DA9CA13
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EA947B0590
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8C71BC5C66
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFB11E871;
-	Fri, 25 Apr 2025 13:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC8124C097;
+	Fri, 25 Apr 2025 13:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvs1NKtz"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Itww2kKd"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5153E2557A;
-	Fri, 25 Apr 2025 13:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4C42557A;
+	Fri, 25 Apr 2025 13:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587220; cv=none; b=KeOsMG1oLC8Ov/oRilh1/Clg4/FDEwQWq5YQ7fLbbOpk4H70DhjlPDPclU9aNrtR8iB1jrJs3Otoixc3pjmJ3pLUsTWKYY23P73wN0lUSsHDbceNKpp8HqMzdxL3CanRfC3MlehucJzVyMG97YnLO+OzynIrbjxs5icPC8qpSg4=
+	t=1745587273; cv=none; b=E4KHQcXmLHfc89dWoB4p4xhqDgB+/dUcNYn7HhDpeuV19lHZB3zKJ+lU+cfiKEisiF34x3SahVcv02KBm4iM6mRteoyJOP3xBYOY8TqP6ac4V8w3YakW5T7h1mKvkVuAgtNLVY7fZO63U68laS+mTpKulZCnG6veA/PzPh/SC3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587220; c=relaxed/simple;
-	bh=SPyeJFPnbHfdtjXp/gNM2HM2zqqL14sTVD1IE9G44cw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcQHXXnDbZ/bO3lwYlGVU6JQiJQHHlgrhBvZWUR73GzFS25JZeTveRDSO0Yumby/EL0EfYG1/qU4ZCQysqpeZviazFRSl970SxcpUBWjVppE5C7ftlgMA8jNFjWO9/+I0QxgF72Xy0kLHDGLePdZVW4ieIg2UeLH1cJaGz8kV44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvs1NKtz; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1745587273; c=relaxed/simple;
+	bh=nnN/zvDCW4aQbCYXelWwSibBHI4kTIF3Tsz0c8cnjC0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ec6hExDmGg446cywe9vq9BP1b30d2bJTLqy1RYQxYJ4vIqgN+hYc8If9YzYDXupzgrCVQ++oWrw6MVcM6+jg/drUxAqv0BA7qRz1GjMUOGvDzqHD9mpNWV2pGigTrGa7ARvcXLwFnhrS+LyS1RRyf7Zs3QWYMPxiMWq7m1ftg30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Itww2kKd; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so341838666b.0;
-        Fri, 25 Apr 2025 06:20:16 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso4291485a12.3;
+        Fri, 25 Apr 2025 06:21:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745587214; x=1746192014; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tiDbQOOhMKzPk9TaDla//wQdnnmLWU+xDiPyN3yrQNE=;
-        b=lvs1NKtzqcqElldMA168UMLN8kjU4zRZrC036CXzbMKYlkopxS7UNLfW70mnZ4IkRo
-         8BPpyUxgBQqdeSpJ0ajO+gvCmG/amKl+AS6uGWTLTqMgRLyrVV2Xuf9jS9ok8bvTS3Sw
-         mFkev6qJkAbl1wToVDeM1GnkbBsR20hxeYgukyVZNxBkdx6kLrhHzbO33muTrc7FymPK
-         neVrn1jFwacoDSALxK9E+944qpZImUyk2c3Yqe0IA4dfxu6mmbuvBUQC35eubU/JSkbc
-         DLMQK0rDZtNXk3IyULk/wpeo6xkyL3KQmGDHGHhjSF1dpP+UsI8qiXEmns8YtuoTv8Wu
-         Ijzw==
+        d=gmail.com; s=20230601; t=1745587269; x=1746192069; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nnN/zvDCW4aQbCYXelWwSibBHI4kTIF3Tsz0c8cnjC0=;
+        b=Itww2kKd12WUOl/G8nWIElxXMUnYVZTEZUjIHkY8fO1iB3vVcjVihsGstcNE2J+IYB
+         x9SR0Vl0NeM2f6QR/hrf8jeh3uj9AsF6adp9iEVD0itGGC9nHx6qUbEuWt0p8LLaL5nX
+         38dKtM3hSl59VkObz8uZOLh3nUAOPV/7ewFf4OV0RqB/YZYiDp27R+BmVC6EXvLO39sj
+         AvHzav1FhEKdIeLkzMWFOffUWStSk56D2LOFUX6Rnoek937haqc8PZZJnMa7MMqBSiXM
+         x8S3HghF+sisWNAaglpXFiLNNHMwSpWegl7v46LuFmHeZhcpCe+QQ3tB1+xvxTPY4PIH
+         Mnmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745587214; x=1746192014;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tiDbQOOhMKzPk9TaDla//wQdnnmLWU+xDiPyN3yrQNE=;
-        b=Qcjh0JCIKwgqTQ1oMgFtLWCUZmrrXTuosUywKvCECVpT8nmWSSj953MgWuvp7efAnN
-         n2DzGRg7cmyupcMo0LmSISccQSN/Nm252Kg0zDDsHqnSzx2Q5Ev2X0G8FPSKYqauA9o/
-         YaIlk4eYF+YoRMN4uk8Q4l/LJhz/uJpgL9uGetc/AUweZHlp3Mh+jluNAQibh/udQ/M4
-         wUxYhlgei542mNvrXipYg+VfeIvwLzdRZMsON9H4Ri5qpmRGSnysRbvqwm4jQxTmUbJv
-         78c8oL0Om99WDfv8iZ56z7cdv381DY1cYuQYVEeCtv2I9S4q1IPvmZ+PGa92T4Ld3X3W
-         yTww==
-X-Forwarded-Encrypted: i=1; AJvYcCXWpsRKaBlD/bABvgJh5LDgKAMpStIlGcr9tdNUgXXdm0yaTcNVmtpsRIwcimophB9tYwY=@vger.kernel.org, AJvYcCXcxQA33VPcA74itxDkSD4sGNlwHE8pZsn9UkZDj0aaMzlZjoZYjWGExWDadp9MLhMFMRwlMf/sY2UtgWpy@vger.kernel.org, AJvYcCXyghieXVwQFo0l0X3BlhatgboyrQlfJW9df30rf7csgZQRlS1qy4xt4l48hG2swyfrLVR7xzuxmpmlRDa2ATJAQZ20@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKMgvtzgRsjNvodjCTVUF2Wk6p6CqGRBA3wJjK/UfDsrxDl2Qe
-	EvooMrRL/Lt08C6k4ZECSoGNcpPMq6kl3dJmYHgsBCxGA//JcmR2
-X-Gm-Gg: ASbGncvKKEI9jxrU3BUTN3IXQ7CIKdjskv5ppIAOcg3bxPHYA8Ti0ZNtMAR5JNZu15r
-	tn1RlTHCki/jiLIk+H+zOnfzHkbPeWLqClql2oOfeCQvpiXNUMlKUKaXc4X5jwLtACz+M0EXqXq
-	/h79dRk/0q4gjpYLQ0dg6jC1D28NqlZyewBTqdNsQecVxKO7J5Mh6Etm1PXS74l19d6n8Lwab/5
-	ZGfXhcPIM52PNVyIEsDmiSnfAzf0VLKeGMkReYIquPvUX60WTDtlP5QDEkL5p+qUSGuiDrB25Gp
-	rG1FNzVVBi19v7fVrUtXhVE6vus=
-X-Google-Smtp-Source: AGHT+IEGzf+3TOrg5dTtOxaINCOqHwTMbgLBeYUbqcdGafNXT/aTs0JPn43Dy04GGn7+CgBVyLmJhg==
-X-Received: by 2002:a17:907:3f0b:b0:ac3:3e40:e182 with SMTP id a640c23a62f3a-ace7109ff27mr224360066b.19.1745587214242;
-        Fri, 25 Apr 2025 06:20:14 -0700 (PDT)
-Received: from krava ([173.38.220.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf9a17sm135823266b.99.2025.04.25.06.20.13
+        d=1e100.net; s=20230601; t=1745587269; x=1746192069;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nnN/zvDCW4aQbCYXelWwSibBHI4kTIF3Tsz0c8cnjC0=;
+        b=Bc+PXax70dxQ1SfA1m+hsAEi+AcsYfC62Up7gje7SgLbn1JKFUO44rsD51AAef2vUb
+         OAQwZusAEZUKmuL8gfjKEeK2d2SBEJCWWH1bIHQQ52ssqYvnMgzFFbsMAxWWU4UZb77P
+         ENIYOc53ErUVBp9U3Dyxjcs/fTqMhvAa+J/5k1qeL7PjhMfCrCDM4Gqfo2q/yvaVksB7
+         ebk2ij4KWDwB4ZMap/mm62Poz5vq6Z/itZMWlQIa0yUcXFyFOjmmMMLmR6Iq3h4LkZwP
+         SRe67oD7WVUaULfGDaYeLWAciIvd6aMZPrgkzQI7qBM7NqWIDWtmONv8FY5XZSz4UHD8
+         6sTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4iNXO0+O9HNoG38Sf48hIFMKrLkmtdhQ9JFr5lsnNK9blrp8Ju7z2TDOZlbEVqeHoI9CUU5wTKLn6bZNx@vger.kernel.org, AJvYcCWOn9SvInhhZpR1qTKGVpMGB8GXf51R/K5UwWsbGogls+bTg5TbrVt/1jsAtQV2ij2lr4t4ekzSJ0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg2HP3z+Bn7YvC0nU0ydLDKUhBVpMojiCpn4w8lSds2+VAlNZt
+	eT0ZOYEQb3Dy9VAmCq5nk4RmJUL0eSD0fXOKxivNtVlQEFR6ouwo
+X-Gm-Gg: ASbGncv97aB5GFghpHBHi/NJZ9n4+6qh0tqhwJABUBfs8nBFRgjIy4BbO8uiDZvi8tO
+	1SUHpGaxfade9ls2RfKj5QfHWXNLezkLpQNdmsw/Fgc9+kSWRfA13WJRmXKMshapdORQcm5erG9
+	T78uXILNlPXY0018D1ipAORzh+363Zae2vMahaffzHrKH/5FGFM/nTO8p2EaIvxBmGrIBmotRs1
+	Y+EvtYbKSIRIhJpv5a98kbbOQ4rBWzc4MHjnNm1avExZIYEDkkcjYYwf9o4vvr6jM7zxDgaeSW8
+	Zx8upRz69ioqw5Tg1eF4YB27lDVC+gbZxOg=
+X-Google-Smtp-Source: AGHT+IH2r2WYk5dSL0KFXawvkk35Ed/5kzDoW5At9jJbtgFTDM+r3IBBvnpB36nXmjR3LgJM/1EPRw==
+X-Received: by 2002:a17:906:c110:b0:aca:a688:fb13 with SMTP id a640c23a62f3a-ace71178f01mr226892966b.36.1745587268547;
+        Fri, 25 Apr 2025 06:21:08 -0700 (PDT)
+Received: from spiri.. ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed65410sm133823466b.126.2025.04.25.06.21.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 06:20:13 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 25 Apr 2025 15:20:12 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 11/22] selftests/bpf: Use 5-byte nop for x86
- usdt probes
-Message-ID: <aAuMDEyiahZi6zIa@krava>
-References: <20250421214423.393661-1-jolsa@kernel.org>
- <20250421214423.393661-12-jolsa@kernel.org>
- <CAEf4BzbxCqgPErQVBV7Ojz23ZEqYKvxi0Y4j8hq6FgXVvdQo9A@mail.gmail.com>
- <aAozU3alQYU0vNkw@krava>
- <CAEf4BzagXsyr-iKB=ZpRZ3kS2FE69jpbWa8EVyFJknUOCGtEEQ@mail.gmail.com>
- <CAEf4BzZvwH2GR6cr8EN8Up02tHBkGij_1v6UNPcKaVFATmKvUQ@mail.gmail.com>
+        Fri, 25 Apr 2025 06:21:08 -0700 (PDT)
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alisa-Dariana Roman <alisa.roman@analog.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: [PATCH v1 0/1] iio: adc: ad7192: Refactor filter config
+Date: Fri, 25 Apr 2025 16:20:19 +0300
+Message-ID: <20250425132051.6154-1-alisa.roman@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZvwH2GR6cr8EN8Up02tHBkGij_1v6UNPcKaVFATmKvUQ@mail.gmail.com>
 
-On Thu, Apr 24, 2025 at 11:20:11AM -0700, Andrii Nakryiko wrote:
-> On Thu, Apr 24, 2025 at 9:29 AM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Thu, Apr 24, 2025 at 5:49 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > >
-> > > On Wed, Apr 23, 2025 at 10:33:18AM -0700, Andrii Nakryiko wrote:
-> > > > On Mon, Apr 21, 2025 at 2:46 PM Jiri Olsa <jolsa@kernel.org> wrote:
-> > > > >
-> > > > > Using 5-byte nop for x86 usdt probes so we can switch
-> > > > > to optimized uprobe them.
-> > > > >
-> > > > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > > > ---
-> > > > >  tools/testing/selftests/bpf/sdt.h | 9 ++++++++-
-> > > > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > > >
-> > > >
-> > > > So sdt.h is an exact copy/paste from systemtap-sdt sources. I'd prefer
-> > > > to not modify it unnecessarily.
-> > > >
-> > > > How about we copy/paste usdt.h ([0]) and use *that* for your
-> > > > benchmarks? I've already anticipated the need to change nop
-> > > > instruction, so you won't even need to modify the usdt.h file itself,
-> > > > just
-> > > >
-> > > > #define USDT_NOP .byte 0x0f, 0x1f, 0x44, 0x00, 0x00
-> > > >
-> > > > before #include "usdt.h"
-> > >
-> > >
-> > > sounds good, but it seems we need bit more changes for that,
-> > > so far I ended up with:
-> > >
-> > > -       __usdt_asm1(990:        USDT_NOP)                                                       \
-> > > +       __usdt_asm5(990:        USDT_NOP)                                                       \
-> > >
-> > > but it still won't compile, will need to spend more time on that,
-> > > unless you have better solution
-> > >
-> >
-> > Use
-> >
-> > #define USDT_NOP .ascii "\x0F\x1F\x44\x00\x00"
-> >
-> > for now, I'll need to improve macro magic to handle instructions with
-> > commas in them...
-> 
-> Ok, fixed in [0]. If you get the latest version, the .byte approach
-> will work (I have tests in CI now to validate this).
-> 
->   [0] https://github.com/libbpf/usdt/pull/12
+Dear maintainers,
 
-yep, works nicely, thanks
+Here is a pretty voluminous patch improving the filter setup for AD7192
+and similar chips.
 
-jirka
+I removed the write options for two attributes and I know that is
+questionable. I am sending this version just in case it is still viable
+since I think the driver is a lot cleaner like this.
+
+I also modified the size of the 3db filter low pass available attribute
+since AD7193/AD7194 have 16 filter modes, unlike the other chips that
+have 4.
+
+Note that I moved a few of the functions around to be able to use them
+where needed.
+
+Have a great weekend!
+
+Kind regards,
+Alisa-Dariana Roman.
+
 
