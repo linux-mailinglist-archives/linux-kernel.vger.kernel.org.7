@@ -1,157 +1,146 @@
-Return-Path: <linux-kernel+bounces-620455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A322A9CAD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406B9A9CADD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4FF717432A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272889A2D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0F523371B;
-	Fri, 25 Apr 2025 13:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D6D24BBFF;
+	Fri, 25 Apr 2025 13:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="UFof23l2"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAVPoJQL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84556F30C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B4471747;
+	Fri, 25 Apr 2025 13:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745589032; cv=none; b=hdM6xY/MmvN/zgkmOS8puskI85oZh0R+0UdGpqW0/5vG3l4tizrunlWRfDVpmUxsL5gumBKYhlXu93N5/mesXOA/730DXGKAOX338Lm66RjKzg5Nw/NwwCeOdN09dZwHJZVEYU7helcQny4JtnKevXFO12q0z+YShNGxmUc46ZM=
+	t=1745589072; cv=none; b=QZf7ZHWSrjWcNcYSevLMWVqYrUR5VrhKvh6K4uHnNbJsWhTF9iFZjQTvcuWVyf1btXGwMH5Anc2HoovfTIrr9iD9gLcfT/33NCTItSEKdY8vWc4NA0vfjpyB5fT+00GYRraifdc0+aYPWttIR3i7Iz16Gg4ZrMZHPRBiGoLMZLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745589032; c=relaxed/simple;
-	bh=D+DjpJkVY50DCH/EIM2jyo+5APpyBQvmmE9jeNvI0IY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ci0PwQwrIMBbnw3gW9SLD91RzNxzjsQP6Hx1rX/lBVH0mj2DEgzDIhJJYES2c7zMllENJGA09r3O048LDi9hZuOE55ZJ9FhrWy+F99r5q8owzdmDrqBr2iZaDj/9j1/hA+3q5Y4JEvA1YQ4PGlUsBI8eq0fmf2HypfQuaWO7Kok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=UFof23l2; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso16087225e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 06:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745589029; x=1746193829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZUA/m6gOa249NNOmchovOHq5LELqOzlt/ubdwJUo+cU=;
-        b=UFof23l2l5NNuW4SRlxc5RyBLx3foa/OACM0JNkbNkWglyp3NrALdiOP13LBxFEOCY
-         DPBjBTbQVDK9MRRXCDl+/ikzUejmImiGShFwlLTR9KjMeGVGjUDgPmrGVxx36kAHJI+q
-         roV1RMdHSja37GodK2QFW8/zVz/p/La0UoeVyKWJk4OxA2Cl/5MBhwH7lJBd4QDOC+sd
-         uxiw5iZiJYfD8+ki7R2gZg5oBsyrV8iYm+H/7Ef+3PGWoyzH4H95+ELGn7+KzQgVvXqc
-         lOT0lAYw1Zi17Z8e+bqQHCGjHOZgIrPgH9NfITuXRe1qHX7xWZe3AcvXHP9I2MH/+kAF
-         wKfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745589029; x=1746193829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZUA/m6gOa249NNOmchovOHq5LELqOzlt/ubdwJUo+cU=;
-        b=RvDT6vP5TKsTCOG9pcQWz26w7vLOB05K874DU0BYDUpuJvGXLpSMQ17Omter5h2wvy
-         BmHSCoTE7X07YZtmW/dtG6crMw2fHPNg7kFOcHqWkKITih4Dmd7/QIPn0dB5e8v3df6W
-         d19dEMUGaLoCgm0dC/RG2CQViWLMiE+Npr6tOqFUEJ4ifJSIejF03TVtVHisbQ2P5wt6
-         hOVfl00s+fCACB1Vo3qXWLywbvkRrqbS+41pdLW3WbU5vZ+DSz0ilztq1FtbORgFPXpa
-         5RpORYZ5Of9sM0gtYtycRga1q+wcGzmy9jct/ClwzKxDmTz5SBEOc98OF5v2+lSXwMxe
-         F51A==
-X-Forwarded-Encrypted: i=1; AJvYcCXI7xxPe3gPhM+4Ie/M4Ht85rWVxisav8envIvuUyStdProdWukBygw/T0H+MTHq5y5scRUh9G5NqJ4els=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxoXxjiChKgRniVqR84ny7uqRGNRSwkrIbrEGbH2jLZAd2kvbl
-	jd64/Lo670/pNx+Q2jvXYCi58C/cHD8tZpyDFmvl8CEgeCWKA11FZHBH6AQTVRk=
-X-Gm-Gg: ASbGncsbxskPsgkPzqAmxqLs/qOrbJC38gDWQ7EQLwRvr68tD7EH5Vm1Q53ULEWwJ1i
-	ffU9LzBnXzwOtwdRMk3jVag5AFHTaaCaBsmwldJ5eW/LzBjrRr92FTRccdAOW0iGVbSPaLsKFkH
-	D0sOkf/sBZRso3FhwCwNJNFTu5rbfR/olUNvA5veCTbLf097s/7sPNxlPtNsruXccVLKWUu+kIk
-	0WNrX+WUW4Gn8ENu4y48RcOir9MpMvqKpqwF1AQ344JPBs+aqaA/Co3dsOMB7J2szAHV5JGE1j6
-	xhxDhw7KvX73PIATCvOnYC/Nz6MG
-X-Google-Smtp-Source: AGHT+IF/LMdkzYLBWPyT5ztxJyzb+GPhFh3GxsY5b8ixWQQMljvmNbliBGV7ZjWkl9GsiErnAoI9/g==
-X-Received: by 2002:a05:600c:1f82:b0:43d:934:ea97 with SMTP id 5b1f17b1804b1-440a66ab23bmr18288315e9.27.1745589028834;
-        Fri, 25 Apr 2025 06:50:28 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::f716])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073c8cab5sm2480265f8f.10.2025.04.25.06.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 06:50:28 -0700 (PDT)
-Date: Fri, 25 Apr 2025 15:50:27 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] KVM: riscv: selftests: Add stval to exception
- handling
-Message-ID: <20250425-dc44cb547ab5e2f994c94e80@orel>
-References: <20250324-kvm_selftest_improve-v1-0-583620219d4f@rivosinc.com>
- <20250324-kvm_selftest_improve-v1-1-583620219d4f@rivosinc.com>
+	s=arc-20240116; t=1745589072; c=relaxed/simple;
+	bh=OhZMVslTMFHk1PYXUziNNqXZhgpB08GxxfE5qfU9SMk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Y3uBEwUTz1y/AdR/MWlV+Z2dbkK/10ijvrcSykTek4CawjFz1m1L2ctc99MM2TdlIuQrtTYKJcz96JOf3/Az5Gx1iJHdSI8BB+6GdhcD0BvOo/TpVuKSB9dLWh/nOfFKYYkhAfocgk/esZxa+bBmEa2dHLCt6D2/yDXPthqCsm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAVPoJQL; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745589071; x=1777125071;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=OhZMVslTMFHk1PYXUziNNqXZhgpB08GxxfE5qfU9SMk=;
+  b=ZAVPoJQLRHhmJ2advrNRsFva3K7C9aGDvJBcxDwNlg+1oy7u8BxdV3iV
+   ybh5VxV0CLWl9/xtMTZtIqzd0ZSiFwtWOoVgDCyq5xceJaIg3YBY5gGBR
+   lQMvOWAL7iBjXty/8NYXaERN4JP/YuHePGMj9TNoV2U0KKJDa2saMP6FW
+   do4WbVV1WKdF3okTErJndahHzNSeUV0Zrze7hH/huN2MUsYLm+BxzDqyJ
+   xAXsFjMcsWfqW7Fg3MqjoD01ehx+7Y+W3czuE8Pivq2J0dcaygtF+LB5t
+   OnCBELDIre0ITrFmVAK197LB1DJudSVWlmiUKi+pPJOlU17YdL0kcs1Xc
+   w==;
+X-CSE-ConnectionGUID: 77xyvPGySFi2WBKZPmBQ9w==
+X-CSE-MsgGUID: aj6lyNgmT9ubvaAOL7uahA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="50917497"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="50917497"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 06:51:10 -0700
+X-CSE-ConnectionGUID: bD/JDR3LQ9yWdeM3F6uVBA==
+X-CSE-MsgGUID: VK6mzkL+SLKFFR+xFJka7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="137722441"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.154])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 06:51:04 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: platform-driver-x86@vger.kernel.org, 
+ Antheas Kapenekakis <lkml@antheas.dev>
+Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+ Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Joaquin Ignacio Aramendia <samsagax@gmail.com>, 
+ Derek J Clark <derekjohn.clark@gmail.com>, 
+ Kevin Greenberg <kdgreenberg234@protonmail.com>, 
+ Joshua Tam <csinaction@pm.me>, Parth Menon <parthasarathymenon@gmail.com>, 
+ Eileen <eileen@one-netbook.com>, linux-kernel@vger.kernel.org, 
+ sre@kernel.org, linux@weissschuh.net, hdegoede@redhat.com, 
+ mario.limonciello@amd.com
+In-Reply-To: <20250425111821.88746-1-lkml@antheas.dev>
+References: <20250425111821.88746-1-lkml@antheas.dev>
+Subject: Re: [PATCH v10 00/16] hwmon: (oxpsensors) Add devices, features,
+ fix ABI and move to platform/x86
+Message-Id: <174558905993.2965.3080490340204327476.b4-ty@linux.intel.com>
+Date: Fri, 25 Apr 2025 16:50:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324-kvm_selftest_improve-v1-1-583620219d4f@rivosinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, Mar 24, 2025 at 05:40:29PM -0700, Atish Patra wrote:
-> Save stval during exception handling so that it can be decoded to
-> figure out the details of exception type.
+On Fri, 25 Apr 2025 13:18:05 +0200, Antheas Kapenekakis wrote:
+
+> This four part series updates the oxpsensors module to bring it in line
+> with its Windows OneXPlayer counterpart. First, it adds support for all
+> 2024, 2025 OneXPlayer handhelds and their special variants. Then, it moves
+> the module to platform/x86 to allow for including more EC features.
 > 
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  tools/testing/selftests/kvm/include/riscv/processor.h | 1 +
->  tools/testing/selftests/kvm/lib/riscv/handlers.S      | 2 ++
->  2 files changed, 3 insertions(+)
+> Then, it adds the new charge limiting and bypass features that were first
+> introduced in the X1 and retrofit to older OneXFly variants and for
+> controlling the turbo led found in the X1 models. For Bypass, it adds a new
+> charge_behaviour variant called inhibit-charge-s0.
 > 
-> diff --git a/tools/testing/selftests/kvm/include/riscv/processor.h b/tools/testing/selftests/kvm/include/riscv/processor.h
-> index 5f389166338c..f4a7d64fbe9a 100644
-> --- a/tools/testing/selftests/kvm/include/riscv/processor.h
-> +++ b/tools/testing/selftests/kvm/include/riscv/processor.h
-> @@ -95,6 +95,7 @@ struct ex_regs {
->  	unsigned long epc;
->  	unsigned long status;
->  	unsigned long cause;
-> +	unsigned long stval;
->  };
->  
->  #define NR_VECTORS  2
-> diff --git a/tools/testing/selftests/kvm/lib/riscv/handlers.S b/tools/testing/selftests/kvm/lib/riscv/handlers.S
-> index aa0abd3f35bb..2884c1e8939b 100644
-> --- a/tools/testing/selftests/kvm/lib/riscv/handlers.S
-> +++ b/tools/testing/selftests/kvm/lib/riscv/handlers.S
-> @@ -45,9 +45,11 @@
->  	csrr  s0, CSR_SEPC
->  	csrr  s1, CSR_SSTATUS
->  	csrr  s2, CSR_SCAUSE
-> +	csrr  s3, CSR_STVAL
->  	sd    s0, 248(sp)
->  	sd    s1, 256(sp)
->  	sd    s2, 264(sp)
-> +	sd    s3, 272(sp)
+> [...]
 
-We can't add stval without also changing how much stack we allocate at the
-top of this macro, but since we need to keep sp 16-byte aligned in order
-to call C code (route_exception()) we'll need to decrement -8*36, not
--8*35. Or, we could just switch struct ex_regs to be the kernel's struct
-pt_regs which has 36 unsigned longs. The 'badaddr' member is for stval and
-the additional long is orig_a0.
 
->  .endm
->  
->  .macro restore_context
+Thank you for your contribution, it has been applied to my local
+review-ilpo-next branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+local branch there, which might take a while.
 
-I guess we should restore stval too.
+The list of commits applied:
+[01/16] hwmon: (oxp-sensors) Distinguish the X1 variants
+        commit: 217d55ca13d22ba6af7e96ac2d28c2ef6927fc54
+[02/16] hwmon: (oxp-sensors) Add all OneXFly variants
+        commit: 9f4c9ec158fa8fa4afcdbcbff9c9a9a900dc9c2f
+[03/16] platform/x86: oxpec: Move hwmon/oxp-sensors to platform/x86
+        commit: fe812896e55d0d8e2a45bcf994cadc80fe912fb5
+[04/16] ABI: testing: sysfs-class-oxp: add missing documentation
+        commit: 05f8e5928bfd37416380e8e0994c5f4fd1b615c8
+[05/16] ABI: testing: sysfs-class-oxp: add tt_led attribute documentation
+        commit: 7ba14e4eec62985ae2021ef7e06d537b8e4c8712
+[06/16] platform/x86: oxpec: Rename ec group to tt_toggle
+        commit: 8e1963b9d84a3db10cdd2a807dc3fe401837d228
+[07/16] platform/x86: oxpec: Add turbo led support to X1 devices
+        commit: 5485a80150ff03b6784bfbb194858244ae5f991d
+[08/16] platform/x86: oxpec: Move pwm_enable read to its own function
+        commit: aa682cff3097dfa2370298ecebd33ff1fb64bab8
+[09/16] platform/x86: oxpec: Move pwm value read/write to separate functions
+        commit: 0ba0d67b0608c15b407491712af1c2a3d5140492
+[10/16] platform/x86: oxpec: Move fan speed read to separate function
+        commit: 653feeccdd2eb1dfe44923f4c0bbf50a948c7a07
+[11/16] platform/x86: oxpec: Adhere to sysfs-class-hwmon and enable pwm on 2
+        commit: 7dea472a8b2814013213f4fed290f5f86c6cc7cb
+[12/16] platform/x86: oxpec: Follow reverse xmas convention for tt_toggle
+        commit: bb9854e9819ae5c29602d4985313cde2d07f6847
+[13/16] power: supply: add inhibit-charge-awake to charge_behaviour
+        commit: 468182a839f88fecab915792cbb98ad7328be266
+[14/16] platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer
+        commit: 202593d1e86bf3ccb1c1091713760b6f44641718
+[15/16] platform/x86: oxpec: Rename rval to ret in tt_toggle
+        commit: 57c775a990a742f7cc2650a5cbfc103d6b4a015d
+[16/16] platform/x86: oxpec: Convert defines to using tabs
+        commit: f5612600314bcce86934318601501e2d8301176d
 
-Thanks,
-drew
+--
+ i.
 
-> 
-> -- 
-> 2.43.0
-> 
-> 
-> -- 
-> kvm-riscv mailing list
-> kvm-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kvm-riscv
 
