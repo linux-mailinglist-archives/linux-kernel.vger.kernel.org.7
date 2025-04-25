@@ -1,106 +1,156 @@
-Return-Path: <linux-kernel+bounces-619917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00710A9C367
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2432AA9C214
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618481BA6B5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6FE3B8780
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02F72367D6;
-	Fri, 25 Apr 2025 09:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BB0208997;
+	Fri, 25 Apr 2025 08:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="lTZkGhlO"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XfnHkCqt"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D86238C3D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A441B6D11;
+	Fri, 25 Apr 2025 08:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573208; cv=none; b=tqkfC6F6W8zSEcS2imAbiDNnPM1Zu4Lu7gqLYDhdRuxTSilBN8ikn/YHezCNFIrQw2ATSsdFpeLKpEtQOF/FZGBpk3y0sWQF/DwFjV+eL+TT92g6Xy3SguSIDADQsFqbbSXoHE4QAjLdPhrSdgFFaA+IgXRDzJrqh8ow9Vb5W6w=
+	t=1745570848; cv=none; b=EGn9mf2wx/LxNPUnFgvirQG8oACvfOfsetUPhfn2yAo++0lMRH8BDoI2sq/eyee+5e+Stli+LpxOAl3hQerZDFCB6sHe7t417EsnhlwVCrGILIRpPqfoE+oOsV6vw1PzOxbGeXRwqakfBeZflqDIoOP6E7vAnyNETzXKgnA2czg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573208; c=relaxed/simple;
-	bh=vJN/7KIG+1nOIFCnwVIBp3bhkdUCJlec+LujjNCchJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PHpGdTlskDfZHofyuuCdEJ7yMsNc139jXHDUIYYcPYMn0LSeU6ehqTZlVHgWt9UnxFWRHrRHBbdlJzBQo+o0bf2h+LvrnEL8jD6Vm6SADFZYtFR6R5jOneLz7eFE/RgjezBLN7Cow9wnpnSvHbyt7agN5s3vVsb90Dp2/U9v/WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=lTZkGhlO; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1745573204;
+	s=arc-20240116; t=1745570848; c=relaxed/simple;
+	bh=h26gMhMCs1xS5/I+YRXsVSuot5NCWQyBZrETzDmORVs=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:Mime-Version:
+	 References:In-Reply-To; b=LQgRO6pkB7I8rgDnblEdADqdlUXhAwsapOgTV6UbYpaIuiBfnsYJATrr/ICAIo9neyAukzkSCn/fmlmBSfxPx0Jgzw3mWWyyxsLGDX0ak0otcqWXmNAnhj4+AO8XL7mpiANBWtKBflchmCS73Q0OVktkwPzGAq476oSQzkNXJKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XfnHkCqt; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5EBCD432E9;
+	Fri, 25 Apr 2025 08:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745570837;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gH5Q/9/Gya6g7S3LOJ0iW2pbkqKWlFOIE72t/4lmn3Y=;
-	b=lTZkGhlOubLAFQnv5HDHfiOwIA2OpqXLEg6CO4Vya9kGFeFRlwExSb2RWSwYm5Eg8XhwMl
-	40ebWHvf0C5xx1UO+mf9m3Rz2ts1yZ7xrtn7QJRxWPW/QA0QFQzbkEVctK+/hqI3NJL0Xb
-	vfNJMdAbIhcLxg3hfoGB0NV4eQ8VC32TmsNs6lCXpqk+2LpSkraU+0HxeK3+0zJ35u7ZmS
-	I9ImvqE94u8EmgSe35zoemOT7i5A4qztXMimy74DrlUCnyXfsnwGcFbHniIeIFLSMtvJqx
-	SdboLYb34L/MNtJdNWHS8V3A81f31kgsjxhoUfkqLDRXPK5RIkYliB+kNtZNDA==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Dragan Simic <dsimic@manjaro.org>,
-	Dang Huynh <danct12@riseup.net>,
-	Johan Jonker <jbx6244@gmail.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH 4/4] arm64: dts: rockchip: Add vcc-supply to SPI flash on rk3588-rock-5b
-Date: Fri, 25 Apr 2025 10:44:44 +0200
-Message-ID: <20250425092601.56549-5-didi.debian@cknow.org>
-In-Reply-To: <20250425092601.56549-1-didi.debian@cknow.org>
-References: <20250425092601.56549-1-didi.debian@cknow.org>
+	bh=F20bZhqAcFtAHBc8oMhq0YvImZee5ACc/cX8f7eyPuQ=;
+	b=XfnHkCqteD1vpSoUt3ytJgWvsKgXhBYCY/VDhoaYvcppi7dX9o7N3sJa/QEBclq2bvIvS2
+	8oGE2voC8liDallF7KWtiuCZpafMIKHtPveqUr200YcwxdIxaKUnyBy08CUCDvmQumUHcc
+	CbJWVkyDn16/vVWwVae39myfJRsgODUT7oziDllNHVJoAv2lqaCmj+GkRmNHrINV4OXf8Z
+	vwa9a87Oq0n5Vo79Wk4l45c7L20tIGyTYunrSm9vcX+JBDZe0j1ryGLZ2U4qloUAH6uo6l
+	4ZI8oRkKI94MsvFag4FC6XVg/yArVD+aQQcwN0mhCAm1X0/MZAmVhSjN++Bcww==
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Apr 2025 10:47:15 +0200
+Message-Id: <D9FL7V8UX9GP.25220KL6CKOY7@bootlin.com>
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+Cc: "Xu Kuohai" <xukuohai@huaweicloud.com>, "Andrii Nakryiko"
+ <andrii.nakryiko@gmail.com>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "John Fastabend"
+ <john.fastabend@gmail.com>, "Andrii Nakryiko" <andrii@kernel.org>, "Martin
+ KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>,
+ "Song Liu" <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>,
+ "KP Singh" <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>,
+ "Hao Luo" <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Puranjay
+ Mohan" <puranjay@kernel.org>, "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>, "Mykola Lysenko" <mykolal@fb.com>, "Shuah
+ Khan" <shuah@kernel.org>, "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>, "Florent Revest"
+ <revest@chromium.org>, "Bastien Curutchet" <bastien.curutchet@bootlin.com>,
+ <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "bpf" <bpf@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "linux-arm-kernel"
+ <linux-arm-kernel@lists.infradead.org>, "open list:KERNEL SELFTEST
+ FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH RFC bpf-next 1/4] bpf: add struct largest member size in
+ func model
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
+ <20250411-many_args_arm64-v1-1-0a32fe72339e@bootlin.com>
+ <CAEf4Bzbn6BdXTOb0dTcsQmOMZpp5=DzGS2hHHQ3+dwcja=gv+w@mail.gmail.com>
+ <D98Q8BRNUVS9.11J60C67L1ALR@bootlin.com>
+ <CAEf4BzZHMYyGDZ4c4eNXG7Fm=ecxCCbKhKbQTbCjvWmKtdwvBw@mail.gmail.com>
+ <D9E9IQQ3QKXM.3UJ17G9CBS1FH@bootlin.com>
+ <6b6472c3-0718-4e60-9972-c166d51962a3@huaweicloud.com>
+ <D9EWSDXHDGFJ.FIDSHIR1OP80@bootlin.com>
+ <CAADnVQJjQLdc_Chvz9v2-huCb9rmi048heK-eEX30AtW10H+-Q@mail.gmail.com>
+In-Reply-To: <CAADnVQJjQLdc_Chvz9v2-huCb9rmi048heK-eEX30AtW10H+-Q@mail.gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheduledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegtfffkhffvvefuggfgofhfjgesthhqredtredtjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhoruceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeigefgieffvddvvdduuefhvdeivdejtddvfedthefhgefggedtledtueehuddtieenucffohhmrghinheplhhinhhugigsrghsvgdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedupdhrtghpthhtoheprghlvgigvghirdhsthgrrhhovhhoihhtohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepgihukhhuohhhrghisehhuhgrfigvihgtlhhouhgurdgtohhmpdhrtghpthhtoheprghnughrihhirdhnrghkrhihihhkohesghhmrghilhdrtghomhdprhgtphhtthhopegrshhts
+ ehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-The Radxa Rock 5B component placement document identifies the SPI Nor
-Flash chip as 'U4300' which is described on page 25 of the Schematic
-v1.45. There we can see that the VCC connector is connected to the
-VCC_3V3_S3 power source.
+Hello Alexei,
 
-This fixes the following warning:
+On Fri Apr 25, 2025 at 1:14 AM CEST, Alexei Starovoitov wrote:
+> On Thu, Apr 24, 2025 at 6:38=E2=80=AFAM Alexis Lothor=C3=A9
+> <alexis.lothore@bootlin.com> wrote:
 
-  spi-nor spi5.0: supply vcc not found, using dummy regulator
+[...]
 
-Fixes: e7f4e924f46d ("dt-bindings: mtd: jedec,spi-nor: add optional vcc-supply")
-Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 1 +
- 1 file changed, 1 insertion(+)
+>> > With DWARF info, we might not need to detect the structure alignment a=
+nymore,
+>> > since the DW_AT_location attribute tells us where the structure parame=
+ter is
+>> > located on the stack, and DW_AT_byte_size gives us the size of the str=
+ucture.
+>>
+>> I am not sure to follow you here, because DWARF info is not accessible
+>> from kernel at runtime, right ? Or are you meaning that we could, at bui=
+ld
+>> time, enrich the BTF info embedded in the kernel thanks to DWARF info ?
+>
+> Sounds like arm64 has complicated rules for stack alignment and
+> stack offset computation for passing 9th+ argument.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index d22068475c5d..17f4fd054cd3 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -562,6 +562,7 @@ flash@0 {
- 		spi-max-frequency = <104000000>;
- 		spi-rx-bus-width = <4>;
- 		spi-tx-bus-width = <1>;
-+		vcc-supply = <&vcc_3v3_s3>;
- 	};
- };
- 
--- 
-2.49.0
+AFAICT, arm64 has some specificities for large types, but not that much
+compared to x86 for example. If I take a look at System V ABI ([1]), I see
+pretty much the same constraints:
+- p.18: "Arguments of type __int128 offer the same operations as INTEGERs,
+  [...] with the exception that arguments of type __int128 that are stored
+  in memory must be aligned on a 16-byte boundary"
+- p.13: "Structures and unions assume the alignment of their most strictly
+  aligned component"
+- the custom packing and alignments attributes will end up having the same
+  consequence on both architectures
+
+As I mentioned in my cover letter, the new tests covering those same
+alignment constraints for ARM64 break on x86, which makes me think other
+archs are also silently ignoring those cases.
+
+> Since your analysis shows:
+> "there are about 200 functions accept 9 to 12 arguments, so adding suppor=
+t
+> for up to 12 function arguments."
+> I say, let's keep the existing limitation:
+>         if (nregs > 8)
+>                 return -ENOTSUPP;
+>
+> If there is a simple and dumb way to detect that arg9+ are scalars
+> with simple stack passing rules, then, sure, let's support those too,
+> but fancy packed/align(x)/etc let's ignore.
+
+
+[1] https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf
+
+
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
