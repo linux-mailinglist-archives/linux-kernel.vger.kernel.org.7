@@ -1,188 +1,146 @@
-Return-Path: <linux-kernel+bounces-620680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A2FA9CE18
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 147FAA9CE20
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4924E4C759D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE939E6CD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6431A3145;
-	Fri, 25 Apr 2025 16:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614681A3142;
+	Fri, 25 Apr 2025 16:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KUb16g1s"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2087.outbound.protection.outlook.com [40.107.223.87])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RHBtXhP8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20238192D9D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598356; cv=fail; b=Lm30rddcU/U0BeuZeac/z9vF6K/1IHlHwFsyOX6x3oojlw+dML6XxmskIdqzjQ5ina6S9BFGn7hWONRQso/EssRjpOdqcoY/T+Ijjiclh8sowDpWVa/nRTz5oEgCWwTLToCY5AHETMZD5RrTlOHCfA458fqAQg+qwarudR/Iw9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598356; c=relaxed/simple;
-	bh=hoocMjWLm7pP9G907m8zxRXsmWMLT3tG22itoUpvM14=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SyDNEMPsMo420Zl837X7hs459uMyjJRKqppCuan6+lVvDy9AwQXQMpj/7HAScx1wX+m92RlyUZjaG1/2tMf4XsgcjhaGrsZwKrbycH7rZaVfBJJAu5+a/tq5/+EHEAN+Cou+ezWUrISvHnm0PvKCEmk2GUukj8Mmf9prBP5iNeI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KUb16g1s; arc=fail smtp.client-ip=40.107.223.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UsKE/cFtbdg2ypK2tHT+eqFiVN6Nq7aJ63z0RLgs2I+szdtV8L6P82070GufhvP/MKfmsuMup08vwEnybk1QS/pNA4wyk+SsDvVzNVpaYlyI/BxKLWjLfJ3BQLkx+uXQfEpBdO4+CwfTSqc4OBIMaATpSeJw5V+udggMHUF7Y+k4LNzS9Btgs5IqxIDf/x+D0rvdV97tstT6D8EnJdjYdLvoi58RinYqVa6rEbPj1hxHEm8xZv6hamxLHOhyg+KE0zQeHG9X1RgZrw2GYG/FuGbZcHAHaG/YkyeAASWBPTIJSbjOwUZS8wnLppxaoGKqzRlWKT3ODt3IsFyj7NgvUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K58g+GAiJARfzwSaSn1uWoZ4fiksKow5ElFdtsluvFI=;
- b=vAi0AqHloQ09zXPkkJ9EakGOja8AgOOW4Cg7xHY4PWpSCnZpO/yDS+QwVv/YzRPOe4LIIb5ySs21HZxEFFCQYowhaQC34bynpiKF04gz4P4sI+sJV0zsZmJBynMcTnhoXa3a1tMfQ0lJa+fKEa6ATJzibE0OTkd59d1NINF9wHWHQJ1oPW2vnKkccX1Y4sh+g2J1arf7pJ3QutUT6eC0kUTVfGECjvVljP59K4qbg/iM1M5fqUvBQqG7WiNMK09EQyKLyKuV1b5MndpkNx+DOt9wCw5WrjGnq9pYLfqO5N5RVAR7eq9u/aItnGE/yNyr7yLdRvIGZ9239sCfet+lpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K58g+GAiJARfzwSaSn1uWoZ4fiksKow5ElFdtsluvFI=;
- b=KUb16g1sMghYLTJmolPJceEk8Hqzfh/AorOnpoTeyf2p9ji3lIMZrzAqGz+f0TAhSWI9tqrJS6u5FPfv55nJHUIaNu//RsV601ZvnSrUgys2IK3FTZuwikZtE3tB1X9PcLPTtFR1VRAxL1ZnwrT3r+jmIumvI24f4IRwAcGzVMs=
-Received: from SN6PR01CA0035.prod.exchangelabs.com (2603:10b6:805:b6::48) by
- CY8PR12MB7659.namprd12.prod.outlook.com (2603:10b6:930:9f::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.26; Fri, 25 Apr 2025 16:25:51 +0000
-Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
- (2603:10b6:805:b6:cafe::4) by SN6PR01CA0035.outlook.office365.com
- (2603:10b6:805:b6::48) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.32 via Frontend Transport; Fri,
- 25 Apr 2025 16:25:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Fri, 25 Apr 2025 16:25:51 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
- 2025 11:25:50 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Apr
- 2025 11:25:50 -0500
-Received: from amd.com (10.180.168.240) by SATLEXMB03.amd.com (10.181.40.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
- Transport; Fri, 25 Apr 2025 11:25:46 -0500
-Date: Fri, 25 Apr 2025 16:25:40 +0000
-From: Ankit Soni <Ankit.Soni@amd.com>
-To: Joao Martins <joao.m.martins@oracle.com>
-CC: <iommu@lists.linux.dev>, <suravee.suthikulpanit@amd.com>,
-	<joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<linux-kernel@vger.kernel.org>, Alejandro Jimenez
-	<alejandro.j.jimenez@oracle.com>, David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/2] iommu/amd: Add HATDis feature support
-Message-ID: <g3xrnjfs6zekogfohud2s7kdvphx43e6mdh3vfpllynrwokxwf@vvetz2j2nrai>
-References: <cover.1745389415.git.Ankit.Soni@amd.com>
- <6282a5c349812a311a67a8522dc5e4aabfe3ec3a.1745389415.git.Ankit.Soni@amd.com>
- <596ed125-c995-4e2b-824c-b7929c852754@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F38119F43A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745598430; cv=none; b=S9pAYWS0+bY5Yy5hdrTMvWrzfIjWeUS1f7vSCYZ2yKY6WFWSIF9tJIrx76nyNtny/z/qUfq8GtX12PLJaGeT0LoJ14USp2taWos0zlwvFbn6QH9o8K2tiX+aez2uPHwZL8lH9RkOmDC6teur4ITOvfV9VIoYlVBqtsSC00lbi68=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745598430; c=relaxed/simple;
+	bh=gfj6qfAB2+A2B2FUesZrGJqPp4VulFSQvkvzvy8kgwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nmybpX5Xtg7Q2Jry9TE8kGMkfHc7xf/n9JzVlQBkivDjehbfHMOIxA9SIVUBGPJcvSuBQ3s7DFRJ5puuBjwldsC9LmKb2BJov6Lluwd/dLuVI4qySvJA+PDEt0eD9brTP/+zZeO9nmT8PamR7YX8ToEJ/4Xiktwrvj10NUZwo+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RHBtXhP8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745598428;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/MhH+JzUZ4LUQs+r61lBHwV7dFz4bYUCQFljM9RbcvE=;
+	b=RHBtXhP8da7XjrpJifMEMvv8WBYSqUbkxy6QHOGE7laRgDmWcre/qob9HHDoBjPQva6gxQ
+	FQvffRNy8SlBxBZCDG9D443OS23CjdvsU6VDaZNhOzEzM+4/9BvFjmNJXp/2U5JuYVrpb+
+	EkjTULrIyaWCjfwJYVtpzwFKYFyVkZ4=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-644-BNeni7X6MJ6jXL6zdSpOVQ-1; Fri, 25 Apr 2025 12:27:04 -0400
+X-MC-Unique: BNeni7X6MJ6jXL6zdSpOVQ-1
+X-Mimecast-MFC-AGG-ID: BNeni7X6MJ6jXL6zdSpOVQ_1745598424
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f2c9e1f207so40474766d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:27:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745598424; x=1746203224;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/MhH+JzUZ4LUQs+r61lBHwV7dFz4bYUCQFljM9RbcvE=;
+        b=NmLIJayM9EAsPUuVUKGXNTKp86h33GtzXOHmXKAU6JneDCmazKRl6KG+nnBGyU5Q2F
+         Yp1x2Y27eIoR4pHXWqEQ0cXKVh2rhLaAMyzK5a2uG+iuIvTO8T5w16ATi4tK3cw8mbEg
+         shYmUjoLe0fDz8tJpBiz/w5RcD9D224jrpGC6jNS7D0bEVRrgN0LiEeCBOFsI0/6ZpSK
+         SL9xsjgG4ivOVxGfGRHFm6guxNCM6DeOBUsMy+6kr22M+dAZ4O1QCfzrjYC7M+R3so8l
+         PLZUfBkH02f2n0kzdSWZfFwH8oTPYNBA3ZaRz1QzaoV2OhEmKYSRSCcHZCiYCmkB6CgQ
+         Zv/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX7y06uohW5XTp3LFlNqG5pDtJk86yBdab+/2A1ugkJZwJ5gB0OYMOd77voYRYzc9HbOMjD20djZgIg4aY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjBSaAXH+tmpVu1DksQ99u4yYY9T/pIF2P6djVX71XvFMcehaD
+	DBHC+uOb54Kdv91zfuyx68YXQ5KoLCsdO1zYr/kJhGJoR/efIKkC5NL2EptqBgfNBKwWv/IsWbn
+	k290/SApBb90I7KWT6dyiEtMycgycQj43ehaRMF4RqYO1hU9XwatTIYKS9/YyUw==
+X-Gm-Gg: ASbGncvizw+zIrXo1voCyO9SBfOax4ZNpZheB+09tfW9SYTp/3PChbC0QGiXliNrd/7
+	uNn2Uc2vNyCf4mlS5mCNyedhuhQZYG8iTjp+qG0nA8fhnJfXPm39K3uoLlJb/kkJeLne7h7wAdf
+	6Mghz1/C4UuYhWkbLeaA0ydhipKWA8d1KlJx8oz8aI8hVpMk/+4uZICkDITLgsiLRyWKHgVXsE1
+	8Wj0PkxZMa/UHi3PNEELdH3h3/sdZcHtcAdUgFDQR4GtXwvrNYrLFXhLfhRmYUTBDoHXJmdeWqJ
+	b+A=
+X-Received: by 2002:a05:6214:c2a:b0:6e6:65a6:79a4 with SMTP id 6a1803df08f44-6f4d1f9e216mr223246d6.44.1745598424262;
+        Fri, 25 Apr 2025 09:27:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrsTAOZevjGCechpgS5uQE6KpTPiMl2lEp9QFsRSucLuWkkusPkRPE26kdYaQ3TBFsbWONiw==
+X-Received: by 2002:a05:6214:c2a:b0:6e6:65a6:79a4 with SMTP id 6a1803df08f44-6f4d1f9e216mr222976d6.44.1745598423934;
+        Fri, 25 Apr 2025 09:27:03 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c08ef0cdsm23874656d6.18.2025.04.25.09.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 09:27:03 -0700 (PDT)
+Date: Fri, 25 Apr 2025 12:27:00 -0400
+From: Peter Xu <peterx@redhat.com>
+To: James Houghton <jthoughton@google.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-stable <stable@vger.kernel.org>,
+	Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH 1/2] mm/userfaultfd: Fix uninitialized output field for
+ -EAGAIN race
+Message-ID: <aAu31E7CSbhw6Yh9@x1.local>
+References: <20250424215729.194656-1-peterx@redhat.com>
+ <20250424215729.194656-2-peterx@redhat.com>
+ <23e2d207-58ac-49d3-b93e-4105a0624f9d@redhat.com>
+ <CADrL8HVhMhG6_nSwLfVr4g8XpjA9xh+maLPrC1=jv+L6LNxxkA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <596ed125-c995-4e2b-824c-b7929c852754@oracle.com>
-Received-SPF: None (SATLEXMB05.amd.com: Ankit.Soni@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|CY8PR12MB7659:EE_
-X-MS-Office365-Filtering-Correlation-Id: 309b193f-794e-4768-bbc0-08dd8415d82b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mejqhlQgFhLA+YhGFj+C+IH5jZsVmgLL9VAQ4sGai1JTJAerTW/X3q9pF2Y4?=
- =?us-ascii?Q?KNm3rQV9Q2lRPp8mY7sO7RrKN08EyT+6C1/2DlPaVklKx2VCD3HMMiTy6yPz?=
- =?us-ascii?Q?sAVoTQjlKyleXcDjn5ff4cQ+HVJkg1n+v+DOhRtDR0vhxj/P6znvQl5M+azs?=
- =?us-ascii?Q?Uy2uVw8D9cV4HZ9Xr3dMgMqs6nSYOvT1HNq9qaNhyobG9qoyuYF2s1FBKqWM?=
- =?us-ascii?Q?/2nAJFiykmS762FTvIjSjl5Td3rJNKDPZcboktzzw/7QvaBpShaBjX1cDYOI?=
- =?us-ascii?Q?AkMsioAPefKPeWVV4UqPOLPVzlHYUtL8ZzJU2DfJh8tpnC7gBoEy7b4RPqe7?=
- =?us-ascii?Q?FHQlb7NratvAp+J/v1qT1BKSZCxxNm+iZindmOFkuUeOMSedNQWoHcQF6EzJ?=
- =?us-ascii?Q?5IzhCUC3rn2/6y7Mfm7gVKmIvMFOHqBCVUJZha82pBDaMGkw52lcD4Rz8vad?=
- =?us-ascii?Q?gvvHF2tW2K6BDT1AAIEO8IA3cdfujYV13ZfF5KQDDkGuEAtEJ6KPMH+gaAGV?=
- =?us-ascii?Q?f3D+ZOLPdawE99w6MdfgbZBRfAgNkn4MdRWAFFYUgECASZRMS1dNDpclU8EZ?=
- =?us-ascii?Q?K/A0v3IS8ptAe21H23tNmv9NuXfeGCPcMZ/e2dCRpSJnFKU9U3xw2K11FDmn?=
- =?us-ascii?Q?X5R4mbbur9tjNZAw4cdpMFQoyHSiFUZKKwvFIgiJ8oAASg3KYxchhrJIMRDH?=
- =?us-ascii?Q?h1HVPQ78SpHerusQlJYQ5+Y6+/4CSgioJgjlMVBYvFSlDBsjzHkJOyEw2Yqd?=
- =?us-ascii?Q?As4eM6PRv//07MDb7RJP7lgTr33T3oY6BS/mKGRnhCzOWj71UobIBfXMHdD5?=
- =?us-ascii?Q?Oo//mafRiSgHH+Ulv6r1Scc9gOsE2kKSAqt6/M8PO21WqoLU5ekHCRWsgLKs?=
- =?us-ascii?Q?J2xZuWRbYCsiTs0Vwd/rA8snOaBYoPYLd1DCQe+tjtVrTfIO8TpmpC3KODS6?=
- =?us-ascii?Q?aAa23P9iNLuV6pcAKIunH9qeq4a+O9GFyrcULU0ANbeepDD1NH+6hZYE3my0?=
- =?us-ascii?Q?PYJX58jCydItpK88GDzTTQeMAlGTVf8DLhcrGgJBybwqn4XdTeHkOZKqhrOS?=
- =?us-ascii?Q?VAnB2xp6iBTBjUBpvQw091pUyvCLowytwASZC/Zj/RtUyJJGn4j1AHyMVrgG?=
- =?us-ascii?Q?5SJYsWq2CqoRzklR69cbSiQ+IpwoeVvYLbQyFNqErZzz+0HxX89CKBbFoFy/?=
- =?us-ascii?Q?bY5JkRSSbOdlEhN9PEFmbpNJ1NW2m98l6Uh7AgGn1OyxygGThH/ZXL+Mvoj9?=
- =?us-ascii?Q?t9XnltCUeZz5joIjGThDwLTESMHpl7pCfQO3/LHesQCOhqQDIfX4UHFtqsrM?=
- =?us-ascii?Q?AkJhbcH2tB9Dhx4obDWlk6MxTZjamKOY3lSC3YSnoBAplJU4huqu4wyu971o?=
- =?us-ascii?Q?/9mrS0KG6JKQj2AGVDySKA3HTVRq7NXd0srm+0FUivtvwrkFDpKL0SLbLLpd?=
- =?us-ascii?Q?ii603KlhzoBAMLnKfq0HYJJyDIBbfWqIwNFRstZBtJVV5n4jjbTMtW3gtuDN?=
- =?us-ascii?Q?Mq2vhm6dMfck/xeuOdOAP4YP+oZhvuGEBbIC?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 16:25:51.1621
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 309b193f-794e-4768-bbc0-08dd8415d82b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529E.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7659
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADrL8HVhMhG6_nSwLfVr4g8XpjA9xh+maLPrC1=jv+L6LNxxkA@mail.gmail.com>
 
-Hi Joao,
-Thank you for review this patch.
-
-On Thu, Apr 24, 2025 at 01:19:43PM +0100, Joao Martins wrote:
-> >  {
-> > +	if (amd_iommu_hatdis)
-> > +		return false;
-> > +
-> >  	return iommu && (iommu->features & FEATURE_HDSUP);
-> >  }
-> >  
+On Fri, Apr 25, 2025 at 11:54:47AM -0400, James Houghton wrote:
+> On Fri, Apr 25, 2025 at 11:12 AM David Hildenbrand <david@redhat.com> wrote:
+> >
+> > On 24.04.25 23:57, Peter Xu wrote:
+> > > While discussing some userfaultfd relevant issues recently, Andrea noticed
+> > > a potential ABI breakage with -EAGAIN on almost all userfaultfd ioctl()s.
+> >
+> > I guess we talk about e.g., "man UFFDIO_COPY" documentation:
+> >
+> > "The copy field is used by the kernel to return the number of bytes that
+> > was actually copied,  or an  error  (a  negated errno-style value).  The
+> > copy field is output-only; it is not read by the UFFDIO_COPY operation."
+> >
+> > I assume -EINVAL/-ESRCH/-EFAULT are excluded from that rule, because
+> > there is no sense in user-space trying again on these errors either way.
+> > Well, there are cases where we would store -EFAULT, when we receive it
+> > from mfill_atomic_copy().
+> >
+> > So if we store -EAGAIN to copy.copy it says "we didn't copy anything".
+> > (probably just storing 0 would have been better, but I am sure there was
+> > a reason to indicate negative errors in addition to returning an error)
 > 
-> It's strange we seem to somehow have host translation disabled, while it
-> advertises other translation-related features like the normal case.
-
-If HATDis bit is enabled driver will ignore host(v1) page table related field,
-this includes nested page table.
-
+> IMHO, it makes more sense to store 0 than -EAGAIN (at least it will
+> mean that my userspace[1] won't break).
 > 
-> In any case we should probably follow Intel's example (which does similar thing
-> to HATSDis) where we only call invoke IOMMU groups
-> iommu_device_register()/iommu_device_sysfs_add() with DMA translation enabled?
-> That should simplify most of the patch as those codepaths are not reachable via
-> kernel/userspace? Unless I am missing something ofc
-> 
-> See also commit c40aaaac10 ("iommu/vt-d: Gracefully handle DMAR units with no
-> supported address widths"). I am not sure what else is the closest example here
-> besides intel-iommu equivalent.
+> Userspace will need to know from where to restart the ioctl, and if we
+> put -EAGAIN in `mapped`/`copy`/etc., userspace will need to know that
+> -EAGAIN actually means 0 anyway.
 
-With intel patch you mentioned above, it seems that it is mostly handling 
-"second stage translation support" disable, which will eventually disable dma 
-translation. And in AMD case, HATDis bit indicates host(v1) translation is not
-available, then attempt to use guest(v2) translation, and if both page
-table modes are not available then disable dma tranlation.
+Yes agreed, the API might be easier to follow if the kernel will only
+update >=0 values to copy.copy and only if -EAGAIN is returned, so that
+errno will be the only source of truth on the type of error that userapp
+must check first. For now, we may need to stick with the current API.
 
-Thanks,
--Ankit
+-- 
+Peter Xu
+
 
