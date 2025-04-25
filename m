@@ -1,342 +1,196 @@
-Return-Path: <linux-kernel+bounces-620410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81BBA9CA67
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:33:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C9CA9CA69
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6783AB478
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFCB24E3CEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE25E25A328;
-	Fri, 25 Apr 2025 13:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23AD2500DF;
+	Fri, 25 Apr 2025 13:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CLNYtVQW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB8625524D;
-	Fri, 25 Apr 2025 13:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wi5K0Yu6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1892701D7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 13:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587779; cv=none; b=JpzsrSxViAgl1JAf7E4hmUCycrgdIFfCEfOF8zq1uj2wAbEIEYe6T8IVDMUUWBH8xW4xnLmx4MVHyF8YS+GUJgzPNznVhrcsnqz41khsMng/gdQr2j2XHMVyh36lIK/P99TE7xASOZbYjCwhLR2g34If3jtb9b9OnjGtL8hs8VU=
+	t=1745587823; cv=none; b=FpAk7ZSdQDbog2z0b6vA3Q6nhQobkX9t8oyA3e5ZVL4+o+/Gz4nvdZ9MhwVGIvk0j4mPrH8JbqijY0Pp6maOht3QRDwO04CRFjnHG4MigwF9+7mN4CyFS1724cntp0ULUouwVTBVP/Zwr9gEu2f9K8bTQP/DNQfxVIKl+Um1tCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587779; c=relaxed/simple;
-	bh=X9s38AFitvss5w9rj6xKtTNuhrCtPgInhOR92ySVVYI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Q35koe6gVAmigavTZBq06ySpjtQs6IgoMGt0po+4B1JaOM5MTdkYbQMIh48b/H4xx/DPs0FC5Qz1W8JzlFXnmWrjHyoWnWzgYy/6fhX0x0mr75H5128t874CmLd56PQQmoS34FS1A2ocfrb8IJ72X17UhHCJMsHnKu5TUlENiFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CLNYtVQW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1186)
-	id C7641202095C; Fri, 25 Apr 2025 06:29:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C7641202095C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745587777;
-	bh=RiOFjcGtYKwB80UEqpnpaVJHrzdwUYUItgslE4NxIVw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CLNYtVQWP+nifHlUMhfCzBoPyJ4+59cSs3u0Hc0EwFJqokrC51R6At86z4ABgwdmK
-	 XU/t+zcHCePLyGEeWbTg6IWT75lxKTWrwpwRmPhg8trVeUjPCla3KEJ08TwKcIVbcR
-	 m5zSfOCgxuj7CnI59OJPu9OUayw+ZVp6HMoZ/z0I=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	pabeni@redhat.com,
-	haiyangz@microsoft.com,
-	kys@microsoft.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	decui@microsoft.com,
-	wei.liu@kernel.org,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH rdma-next v2 4/4] net: mana: Add support for auxiliary device servicing events
-Date: Fri, 25 Apr 2025 06:29:37 -0700
-Message-Id: <1745587777-15716-5-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1745587777-15716-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1745587777-15716-1-git-send-email-kotaranov@linux.microsoft.com>
+	s=arc-20240116; t=1745587823; c=relaxed/simple;
+	bh=TQo7Wq8Qoea/Bz42bCfah384lMzjlnECEGvaipuWrYA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=NT+yyu1xPieI03BXGBxw3gnU8xhfakG9eOUf2IjxeOZyjSMEDXJUU8R+JxuRcVAOhqphRvywrCbKsraoNCNiuzeJdRTOCHtTNI4mNgKF2QL3H+IKyg4+goocLjcEvmmBFuXsWr2C7Lh8toZFL+7PPFnWKeOCH2wI20Clb+YEuMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wi5K0Yu6; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745587822; x=1777123822;
+  h=date:from:to:cc:subject:message-id;
+  bh=TQo7Wq8Qoea/Bz42bCfah384lMzjlnECEGvaipuWrYA=;
+  b=Wi5K0Yu6Q9bUyZbHJrHJpga4LYZk7YB72XaBZFnRI9xBjY4apMkX2PyD
+   QpXJmkg3y4JqMTfRaWKbWnpukNLuPqcQlDOVy0MgsE0dzmixbomfHJWtN
+   L3mjCuX6wzenKX9HeafqR22Sv8Hx4QLkqlASO9W/ozjup6wEQtPs57gks
+   +TdL0yd4Plxs0M/0z/adC/Wa3VIyVTAyxFg6/Ytn4BnYCBnBRGBT8n4Ry
+   MZ52A85QPhvEIKyxXdAr0beXcOK5V8CKMykses6mHymDyKjj9Ya6v6ruT
+   d6JQ4I3VQkrrro7aEjo27+gP+a77UYW/SCsB+vVT8tmJDYhMhSCaiLRJI
+   w==;
+X-CSE-ConnectionGUID: osFrGxhPRBWwksWnpMimJw==
+X-CSE-MsgGUID: P50Hr6cJQ6yRjaVhJ8o8sg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="57448087"
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="57448087"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 06:30:21 -0700
+X-CSE-ConnectionGUID: O9RSCtpDRbOoP09IzS3eEw==
+X-CSE-MsgGUID: ZqZDV83HTJOEEfSTbzJEtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
+   d="scan'208";a="170123894"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 25 Apr 2025 06:30:20 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u8J8D-0005Ee-0y;
+	Fri, 25 Apr 2025 13:30:17 +0000
+Date: Fri, 25 Apr 2025 21:29:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/core] BUILD SUCCESS
+ 0128816c42b52c6ee339718621aeda85855cd3be
+Message-ID: <202504252137.0jJ86Rdq-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-From: Shiraz Saleem <shirazsaleem@microsoft.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+branch HEAD: 0128816c42b52c6ee339718621aeda85855cd3be  genirq: Fix typo in IRQ_NOTCONNECTED comment
 
-Handle soc servcing events which require the rdma auxiliary device resources to
-be cleaned up during a suspend, and re-initialized during a resume.
+elapsed time: 1461m
 
-Signed-off-by: Shiraz Saleem <shirazsaleem@microsoft.com>
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
----
- drivers/net/ethernet/microsoft/mana/gdma_main.c  | 11 +++-
- drivers/net/ethernet/microsoft/mana/hw_channel.c | 19 +++++++
- drivers/net/ethernet/microsoft/mana/mana_en.c    | 69 ++++++++++++++++++++++++
- include/net/mana/gdma.h                          | 19 +++++++
- include/net/mana/hw_channel.h                    |  9 ++++
- 5 files changed, 126 insertions(+), 1 deletion(-)
+configs tested: 104
+configs skipped: 3
 
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 1caf73c..1d98dd6 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -385,6 +385,7 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
- 	case GDMA_EQE_HWC_INIT_EQ_ID_DB:
- 	case GDMA_EQE_HWC_INIT_DATA:
- 	case GDMA_EQE_HWC_INIT_DONE:
-+	case GDMA_EQE_HWC_SOC_SERVICE:
- 	case GDMA_EQE_RNIC_QP_FATAL:
- 		if (!eq->eq.callback)
- 			break;
-@@ -1438,9 +1439,13 @@ static int mana_gd_setup(struct pci_dev *pdev)
- 	mana_gd_init_registers(pdev);
- 	mana_smc_init(&gc->shm_channel, gc->dev, gc->shm_base);
- 
-+	gc->service_wq = alloc_ordered_workqueue("gdma_service_wq", 0);
-+	if (!gc->service_wq)
-+		return -ENOMEM;
-+
- 	err = mana_gd_setup_irqs(pdev);
- 	if (err)
--		return err;
-+		goto free_workqueue;
- 
- 	err = mana_hwc_create_channel(gc);
- 	if (err)
-@@ -1464,6 +1469,8 @@ destroy_hwc:
- 	mana_hwc_destroy_channel(gc);
- remove_irq:
- 	mana_gd_remove_irqs(pdev);
-+free_workqueue:
-+	destroy_workqueue(gc->service_wq);
- 	return err;
- }
- 
-@@ -1474,6 +1481,8 @@ static void mana_gd_cleanup(struct pci_dev *pdev)
- 	mana_hwc_destroy_channel(gc);
- 
- 	mana_gd_remove_irqs(pdev);
-+
-+	destroy_workqueue(gc->service_wq);
- }
- 
- static bool mana_is_pf(unsigned short dev_id)
-diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-index a00f915..407b46e 100644
---- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
-+++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-@@ -112,11 +112,13 @@ out:
- static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
- 					struct gdma_event *event)
- {
-+	union hwc_init_soc_service_type service_data;
- 	struct hw_channel_context *hwc = ctx;
- 	struct gdma_dev *gd = hwc->gdma_dev;
- 	union hwc_init_type_data type_data;
- 	union hwc_init_eq_id_db eq_db;
- 	u32 type, val;
-+	int ret;
- 
- 	switch (event->type) {
- 	case GDMA_EQE_HWC_INIT_EQ_ID_DB:
-@@ -199,7 +201,24 @@ static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
- 		}
- 
- 		break;
-+	case GDMA_EQE_HWC_SOC_SERVICE:
-+		service_data.as_uint32 = event->details[0];
-+		type = service_data.type;
-+		val = service_data.value;
- 
-+		switch (type) {
-+		case GDMA_SERVICE_TYPE_RDMA_SUSPEND:
-+		case GDMA_SERVICE_TYPE_RDMA_RESUME:
-+			ret = mana_rdma_service_event(gd->gdma_context, type);
-+			if (ret)
-+				dev_err(hwc->dev, "Failed to schedule adev service event: %d\n", ret);
-+			break;
-+		default:
-+			dev_warn(hwc->dev, "Received unknown SOC service type %u\n", type);
-+			break;
-+		}
-+
-+		break;
- 	default:
- 		dev_warn(hwc->dev, "Received unknown gdma event %u\n", event->type);
- 		/* Ignore unknown events, which should never happen. */
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index e08b43f..d35b7fd 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -2982,6 +2982,70 @@ idx_fail:
- 	return ret;
- }
- 
-+static void mana_handle_rdma_servicing(struct work_struct *work)
-+{
-+	struct mana_service_work *serv_work =
-+		container_of(work, struct mana_service_work, work);
-+	struct gdma_dev *gd = serv_work->gdma_dev;
-+	struct device *dev = gd->gdma_context->dev;
-+	int ret;
-+
-+	if (READ_ONCE(gd->rdma_teardown))
-+		goto out;
-+
-+	switch (serv_work->event) {
-+	case GDMA_SERVICE_TYPE_RDMA_SUSPEND:
-+		if (!gd->adev || gd->is_suspended)
-+			break;
-+
-+		remove_adev(gd);
-+		gd->is_suspended = true;
-+		break;
-+
-+	case GDMA_SERVICE_TYPE_RDMA_RESUME:
-+		if (!gd->is_suspended)
-+			break;
-+
-+		ret = add_adev(gd, "rdma");
-+		if (ret)
-+			dev_err(dev, "Failed to add adev on resume: %d\n", ret);
-+		else
-+			gd->is_suspended = false;
-+		break;
-+
-+	default:
-+		dev_warn(dev, "unknown adev service event %u\n",
-+			 serv_work->event);
-+		break;
-+	}
-+
-+out:
-+	kfree(serv_work);
-+}
-+
-+int mana_rdma_service_event(struct gdma_context *gc, enum gdma_service_type event)
-+{
-+	struct gdma_dev *gd = &gc->mana_ib;
-+	struct mana_service_work *serv_work;
-+
-+	if (gd->dev_id.type != GDMA_DEVICE_MANA_IB) {
-+		/* RDMA device is not detected on pci */
-+		return 0;
-+	}
-+
-+	serv_work = kzalloc(sizeof(*serv_work), GFP_ATOMIC);
-+	if (!serv_work)
-+		return -ENOMEM;
-+
-+	serv_work->event = event;
-+	serv_work->gdma_dev = gd;
-+
-+	INIT_WORK(&serv_work->work, mana_handle_rdma_servicing);
-+	queue_work(gc->service_wq, &serv_work->work);
-+
-+	return 0;
-+}
-+
- int mana_probe(struct gdma_dev *gd, bool resuming)
- {
- 	struct gdma_context *gc = gd->gdma_context;
-@@ -3153,11 +3217,16 @@ int mana_rdma_probe(struct gdma_dev *gd)
- 
- void mana_rdma_remove(struct gdma_dev *gd)
- {
-+	struct gdma_context *gc = gd->gdma_context;
-+
- 	if (gd->dev_id.type != GDMA_DEVICE_MANA_IB) {
- 		/* RDMA device is not detected on pci */
- 		return;
- 	}
- 
-+	WRITE_ONCE(gd->rdma_teardown, true);
-+	flush_workqueue(gc->service_wq);
-+
- 	if (gd->adev)
- 		remove_adev(gd);
- 
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 89abf98..6b79788 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -60,6 +60,7 @@ enum gdma_eqe_type {
- 	GDMA_EQE_HWC_INIT_DONE		= 131,
- 	GDMA_EQE_HWC_SOC_RECONFIG	= 132,
- 	GDMA_EQE_HWC_SOC_RECONFIG_DATA	= 133,
-+	GDMA_EQE_HWC_SOC_SERVICE	= 134,
- 	GDMA_EQE_RNIC_QP_FATAL		= 176,
- };
- 
-@@ -70,6 +71,18 @@ enum {
- 	GDMA_DEVICE_MANA_IB	= 3,
- };
- 
-+enum gdma_service_type {
-+	GDMA_SERVICE_TYPE_NONE		= 0,
-+	GDMA_SERVICE_TYPE_RDMA_SUSPEND	= 1,
-+	GDMA_SERVICE_TYPE_RDMA_RESUME	= 2,
-+};
-+
-+struct mana_service_work {
-+	struct work_struct work;
-+	struct gdma_dev *gdma_dev;
-+	enum gdma_service_type event;
-+};
-+
- struct gdma_resource {
- 	/* Protect the bitmap */
- 	spinlock_t lock;
-@@ -224,6 +237,8 @@ struct gdma_dev {
- 	void *driver_data;
- 
- 	struct auxiliary_device *adev;
-+	bool is_suspended;
-+	bool rdma_teardown;
- };
- 
- /* MANA_PAGE_SIZE is the DMA unit */
-@@ -409,6 +424,8 @@ struct gdma_context {
- 	struct gdma_dev		mana_ib;
- 
- 	u64 pf_cap_flags1;
-+
-+	struct workqueue_struct *service_wq;
- };
- 
- #define MAX_NUM_GDMA_DEVICES	4
-@@ -888,4 +905,6 @@ int mana_gd_destroy_dma_region(struct gdma_context *gc, u64 dma_region_handle);
- void mana_register_debugfs(void);
- void mana_unregister_debugfs(void);
- 
-+int mana_rdma_service_event(struct gdma_context *gc, enum gdma_service_type event);
-+
- #endif /* _GDMA_H */
-diff --git a/include/net/mana/hw_channel.h b/include/net/mana/hw_channel.h
-index 158b125..83cf933 100644
---- a/include/net/mana/hw_channel.h
-+++ b/include/net/mana/hw_channel.h
-@@ -49,6 +49,15 @@ union hwc_init_type_data {
- 	};
- }; /* HW DATA */
- 
-+union hwc_init_soc_service_type {
-+	u32 as_uint32;
-+
-+	struct {
-+		u32 value	: 28;
-+		u32 type	:  4;
-+	};
-+}; /* HW DATA */
-+
- struct hwc_rx_oob {
- 	u32 type	: 6;
- 	u32 eom		: 1;
--- 
-1.8.3.1
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250424    gcc-8.5.0
+arc                   randconfig-002-20250424    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-14.2.0
+arm                          gemini_defconfig    clang-20
+arm                   randconfig-001-20250424    gcc-7.5.0
+arm                   randconfig-002-20250424    gcc-7.5.0
+arm                   randconfig-003-20250424    clang-21
+arm                   randconfig-004-20250424    clang-21
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250424    clang-21
+arm64                 randconfig-002-20250424    gcc-8.5.0
+arm64                 randconfig-003-20250424    clang-21
+arm64                 randconfig-004-20250424    gcc-8.5.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250424    gcc-12.4.0
+csky                  randconfig-002-20250424    gcc-14.2.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250424    clang-21
+hexagon               randconfig-002-20250424    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250424    gcc-12
+i386        buildonly-randconfig-002-20250424    clang-20
+i386        buildonly-randconfig-003-20250424    clang-20
+i386        buildonly-randconfig-004-20250424    clang-20
+i386        buildonly-randconfig-005-20250424    gcc-12
+i386        buildonly-randconfig-006-20250424    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250424    gcc-14.2.0
+loongarch             randconfig-002-20250424    gcc-12.4.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                        bcm63xx_defconfig    clang-21
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250424    gcc-10.5.0
+nios2                 randconfig-002-20250424    gcc-10.5.0
+openrisc                          allnoconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250424    gcc-9.3.0
+parisc                randconfig-002-20250424    gcc-7.5.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                 mpc8315_rdb_defconfig    clang-21
+powerpc                  mpc866_ads_defconfig    clang-21
+powerpc               randconfig-001-20250424    clang-21
+powerpc               randconfig-002-20250424    clang-17
+powerpc               randconfig-003-20250424    clang-21
+powerpc64             randconfig-001-20250424    clang-21
+powerpc64             randconfig-002-20250424    clang-21
+powerpc64             randconfig-003-20250424    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250424    clang-21
+riscv                 randconfig-002-20250424    clang-21
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250424    gcc-9.3.0
+s390                  randconfig-002-20250424    gcc-9.3.0
+sh                               alldefconfig    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250424    gcc-12.4.0
+sh                    randconfig-002-20250424    gcc-6.5.0
+sh                           se7206_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250424    gcc-10.3.0
+sparc                 randconfig-002-20250424    gcc-11.5.0
+sparc64               randconfig-001-20250424    gcc-9.3.0
+sparc64               randconfig-002-20250424    gcc-7.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250424    clang-21
+um                    randconfig-002-20250424    clang-21
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250424    gcc-12
+x86_64      buildonly-randconfig-002-20250424    clang-20
+x86_64      buildonly-randconfig-003-20250424    gcc-12
+x86_64      buildonly-randconfig-004-20250424    clang-20
+x86_64      buildonly-randconfig-005-20250424    clang-20
+x86_64      buildonly-randconfig-006-20250424    gcc-12
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250424    gcc-14.2.0
+xtensa                randconfig-002-20250424    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
