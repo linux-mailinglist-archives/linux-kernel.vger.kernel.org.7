@@ -1,203 +1,538 @@
-Return-Path: <linux-kernel+bounces-620622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8E0A9CD3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:35:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D86A9CD3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB7B87B47A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CDE1BC5C00
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7F528CF65;
-	Fri, 25 Apr 2025 15:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED54C289343;
+	Fri, 25 Apr 2025 15:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EsapinBE"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="BX3HMffL"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04F5289368
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D748A26B941
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745595270; cv=none; b=Rqz0ZMeBC83qQE7tfUV90UJsg+dGatDaB0VqyjnqfF9BkNyMkrgT4RTWvgf16Sj9ZL08V+Ks9nIw2kiCsIySbQcCjLV2YQzt1HRjx5hsowLnQlVb1LAyMRoATfKnIVJIIBA7dvMgZ9sQkj66gKNXxuxJZh18HlS82gpxiwpt27M=
+	t=1745595304; cv=none; b=JkSmFvHx4zVl6nibof0uuAFc6wtx0Xdn+vG+rLez62QcwsRmpz+NDnQ3RVnSbfz28tGOrEQq5zhYcdr44ACrE1vev0e6X6ffMQcFBeBvno/9ouFb69tNhTys4CDX5Xi08Ng/9vwCxxZ+Gtn9MxlBtWvyZJNYNbNsHItg1PEAuxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745595270; c=relaxed/simple;
-	bh=0jK06R2qLurz+wi/sMT+CchnLf1TN2lsnDN5h1VaYpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=uAyS1yfPcR7Eyf4TeJdms0nq+1nS3QxsFVxvO1/qfRQbPm4sNcjwpReqWcuzSABtHeVhIOWJTXAML0eVJqwUcTSixoEBAV2xyXlYs+jHkXhLVZYh1j31rsq5BOz84ixc3O9LuN6mgnHZdF0GikpGqfeevwZGVZiArpzMC3KFn50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EsapinBE; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-47666573242so432341cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745595268; x=1746200068; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g5/jbEJKCj61SS9UYhrPT3xCuMZt1d5yjdn5+6M7u7I=;
-        b=EsapinBE1E1Fxy3neslFSWWmJFW3wDWCjQbzVl1YnFr5W/SG0xw6UPSueWlmBAXuDG
-         tr5WLPwkO0O9rZsd0ZpSMA97L061ansk2Tcrgtah1fmlMFbqPoijMEpG8lmpFm+3XLhn
-         qx/7hWx9aC5bNydgEnsloJRo5jmO+m+gMnbB+c2fbK7Z2CiBNyDrP0/fqPRs3e/J/wdd
-         5AtP6W6COcPmh38HWoEm38ClBe23eJWNnbV62dIffizJcF98Cl8ErmkjNC79i5z4zQe6
-         FwFNs/cm4KW5cU509jN/F9DMKDnhuLj+SG9TXv7hZELLWQAlu5+0y2p0suWxqmDVDfZy
-         RCaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745595268; x=1746200068;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g5/jbEJKCj61SS9UYhrPT3xCuMZt1d5yjdn5+6M7u7I=;
-        b=QHsRXtZ3hr5gTv+hRJCr6SNAbI3wSwNHpcxiz99MsoRoPQ/U0LLykUzYl8xm7KHlPm
-         0wtQ8EKqoKtKzA6GxAIL4nASn5zrNa38CyUiIShl5J+koITCPvhTy7LOrxPLjMJij2uL
-         2ORkfEMxvzmliHTexZWi5srbMKhaZeHv7gqpyunIHSYDS/z4uL+e1GEO8vrIVznx9SLY
-         pe/B4oR8demQXrbVCp1KtuZ5zqboWOJTrgUXLx3FnLBAWi9UlJ8Up5uAE5FhfwQE4BnD
-         EVLn5y6+ewOKsRxvjxok/ISS/4euQReXhW1hw0wZxWo7zANSXRdrNCMQWU4VEhkOj1ov
-         jj5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/5Z6Ch5MTMz8uiEiiOwtMKF7bkHf6a2yXdmaZnl2avEuTBdTsvLex43a9VRUDR6VR0ylhhWrU6azDIPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzORqP0QEdKxKDtpBXBPuqc+ZBq+tthCJrnNL9RdH9DbD+72NhL
-	tt3cGx53/Jv6aO3PrNOkfxbctjGfHYz20PUj6h/HjTmL8FSvr8N8IYL2ZZJCmPZPx6OOuI+X3jI
-	W7OOSy948e7w/TxX7AzmYXQjaFecQa7bFaEgr
-X-Gm-Gg: ASbGnctBl6g6sHyQBgtrSTUojUiM3a5Ki2RRJqO9vZ3/4OED23Sj65qxVGnAT+U8rj/
-	8GOJlhkVoRGwL5jvTV8qGy4iF5ewKkEEw+xJeYPbrxaT2kzdX3s/g3n5xP6FSm0xzj02vThP4Vm
-	Qac6GLLTjb1nXgw8RiOzXa
-X-Google-Smtp-Source: AGHT+IFaLY3s0izE7nmgvYKPlu8fJRpk84aR32fIsczDTeevwRZvaPztL4MnBjYx9gEAYjD/NulcuZ/Xj53z+YfAbTw=
-X-Received: by 2002:a05:622a:230d:b0:475:1410:2ca3 with SMTP id
- d75a77b69052e-4800d34c448mr3287071cf.15.1745595267360; Fri, 25 Apr 2025
- 08:34:27 -0700 (PDT)
+	s=arc-20240116; t=1745595304; c=relaxed/simple;
+	bh=a8uqZdeONBvGi7TrZw0SJD7BYPwQwhPT2U9jso4Lgxc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=N3wb04HKo1L3UIHUXhK4d+vIX/M2O5WJpRBQS/O9yphODHFoFqcqznGR3JGRq3TJahQnWcGbDpIhUfu8d8XOITLFgkhiq/yBFzZ61X6Qc5rlfeICYBOj/TFi/7ag3ZW16vrKLDyDF7MMfKXcEIi2moNaVtS+HT0MrvxfXLhpJW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=BX3HMffL; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53PFYLdk2886041
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 25 Apr 2025 08:34:21 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53PFYLdk2886041
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1745595262;
+	bh=xquCoLx0EClrpIqU/qUlrzBrIsfVOPaUZzqU87EdpwY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=BX3HMffLlNpx/LYQ7xFc9hoV2yFjQgyVgU4Noc2vtwkFaWwsn7fUYGugqvcZ9bHzx
+	 6JrqG0yqkpPa2/nGO/p0gzmTYp2DMvqlF2+DN2KPi78Ob4Ge2jny19g3XBqcDBg8x+
+	 JRAEK79RjjO1vhN8MmSKecEqNmCBjQuB/eP+qj+kB8GrQf3ktqiTMdv2luGopNW8Fn
+	 G8zUGVJLHPtXDB01+RsfR3V+FPUNQxN9O4XfIMMGQnS0GZGYqjvNI1y7bJ413qPeUU
+	 D37G3DK9ILdKnTWBaO5Ns84SGR2e0lJFa8r5sSdRagIq8K2K54l21slo9cOnz6AaKt
+	 FB4e7KOILHaKw==
+Date: Fri, 25 Apr 2025 08:34:19 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+CC: Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+        "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] [RFC] x86/cpu: rework instruction set selection
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250425141740.734030-1-arnd@kernel.org>
+References: <20250425141740.734030-1-arnd@kernel.org>
+Message-ID: <7CEE8E85-D7B1-4066-AD4D-747CA4340F65@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1745528282.git.lorenzo.stoakes@oracle.com>
- <0f848d59f3eea3dd0c0cdc3920644222c40cffe6.1745528282.git.lorenzo.stoakes@oracle.com>
- <51903B43-2BFC-4BA6-9D74-63F79CF890B7@kernel.org> <7212f5f4-f12b-4b94-834f-b392601360a3@lucifer.local>
- <n6lrbjs4o6luzl3fydpo4frj35q6kvoz74mhlyae5gp7t5loyy@ubmfmzwfhnwq> <CAJuCfpErtLvktCsbFSGmrT_zir9z0g+uuVvhr=QEitA7ARkdkw@mail.gmail.com>
-In-Reply-To: <CAJuCfpErtLvktCsbFSGmrT_zir9z0g+uuVvhr=QEitA7ARkdkw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 25 Apr 2025 08:34:16 -0700
-X-Gm-Features: ATxdqUFzDiR6aSNEgXYvKyPF3vMF5nNp5WgPe7-q3Zd9yW0scIDZAX7G0iFsnAY
-Message-ID: <CAJuCfpGtz-gXur2mNaa8NW-V=dk5oKfgYXAXzNMuv-Aq7Qg-bA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm: perform VMA allocation, freeing, duplication in mm
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	David Hildenbrand <david@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 8:32=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
+On April 25, 2025 7:15:15 AM PDT, Arnd Bergmann <arnd@kernel=2Eorg> wrote:
+>From: Arnd Bergmann <arnd@arndb=2Ede>
 >
-> On Fri, Apr 25, 2025 at 6:55=E2=80=AFAM Liam R. Howlett <Liam.Howlett@ora=
-cle.com> wrote:
-> >
-> > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250425 06:40]:
-> > > On Thu, Apr 24, 2025 at 08:15:26PM -0700, Kees Cook wrote:
-> > > >
-> > > >
-> > > > On April 24, 2025 2:15:27 PM PDT, Lorenzo Stoakes <lorenzo.stoakes@=
-oracle.com> wrote:
-> > > > >+static void vm_area_init_from(const struct vm_area_struct *src,
-> > > > >+                        struct vm_area_struct *dest)
-> > > > >+{
-> > > > >+  dest->vm_mm =3D src->vm_mm;
-> > > > >+  dest->vm_ops =3D src->vm_ops;
-> > > > >+  dest->vm_start =3D src->vm_start;
-> > > > >+  dest->vm_end =3D src->vm_end;
-> > > > >+  dest->anon_vma =3D src->anon_vma;
-> > > > >+  dest->vm_pgoff =3D src->vm_pgoff;
-> > > > >+  dest->vm_file =3D src->vm_file;
-> > > > >+  dest->vm_private_data =3D src->vm_private_data;
-> > > > >+  vm_flags_init(dest, src->vm_flags);
-> > > > >+  memcpy(&dest->vm_page_prot, &src->vm_page_prot,
-> > > > >+         sizeof(dest->vm_page_prot));
-> > > > >+  /*
-> > > > >+   * src->shared.rb may be modified concurrently when called from
-> > > > >+   * dup_mmap(), but the clone will reinitialize it.
-> > > > >+   */
-> > > > >+  data_race(memcpy(&dest->shared, &src->shared, sizeof(dest->shar=
-ed)));
-> > > > >+  memcpy(&dest->vm_userfaultfd_ctx, &src->vm_userfaultfd_ctx,
-> > > > >+         sizeof(dest->vm_userfaultfd_ctx));
-> > > > >+#ifdef CONFIG_ANON_VMA_NAME
-> > > > >+  dest->anon_name =3D src->anon_name;
-> > > > >+#endif
-> > > > >+#ifdef CONFIG_SWAP
-> > > > >+  memcpy(&dest->swap_readahead_info, &src->swap_readahead_info,
-> > > > >+         sizeof(dest->swap_readahead_info));
-> > > > >+#endif
-> > > > >+#ifdef CONFIG_NUMA
-> > > > >+  dest->vm_policy =3D src->vm_policy;
-> > > > >+#endif
-> > > > >+}
-> > > >
-> > > > I know you're doing a big cut/paste here, but why in the world is t=
-his function written this way? Why not just:
-> > > >
-> > > > *dest =3D *src;
-> > > >
-> > > > And then do any one-off cleanups?
-> > >
-> > > Yup I find it odd, and error prone to be honest. We'll end up with un=
-initialised
-> > > state for some fields if we miss them here, seems unwise...
-> > >
-> > > Presumably for performance?
-> > >
-> > > This is, as you say, me simply propagating what exists, but I do wond=
-er.
-> >
-> > Two things come to mind:
-> >
-> > 1. How ctors are done.  (v3 of Suren's RCU safe patch series, willy mad=
-e
-> > a comment.. I think)
-> >
-> > 2. Some race that Vlastimil came up with the copy and the RCU safeness.
-> > IIRC it had to do with the ordering of the setting of things?
-> >
-> > Also, looking at it again...
-> >
-> > How is it safe to do dest->anon_name =3D src->anon_name?  Isn't that re=
-f
-> > counted?
+>With cx8 and tsc being mandatory features, the only important
+>architectural features are now cmov and pae=2E
 >
-> dest->anon_name =3D src->anon_name is fine here because right after
-> vm_area_init_from() we call dup_anon_vma_name() which will bump up the
-> refcount. I don't recall why this is done this way but now looking at
-> it I wonder if I could call dup_anon_vma_name() directly instead of
-> this assignment. Might be just an overlooked legacy from the time we
-> memcpy'd the entire structure. I'll need to double-check.
+>Change the large list of target CPUs to no longer pick the instruction se=
+t
+>itself but only the mtune=3D optimization level and in-kernel optimizatio=
+ns
+>that remain compatible with all cores=2E
 >
-> >
-> > Pretty sure it's okay, but Suren would know for sure on all of this.
-> >
-> > Suren, maybe you could send a patch with comments on this stuff?
+>The CONFIG_X86_CMOV instead becomes user-selectable and is now how
+>Kconfig picks between 586-class (Pentium, Pentium MMX, K6, C3, GeodeGX)
+>and 686-class (everything else) targets=2E
 >
-> Yeah, I think I need to add some comments in this code for
-> clarification. We do not copy the entire vm_area_struct because we
-> have to preserve vma->vm_refcnt field of the dest vma. Since these
-> structures are allocated from a cache with SLAB_TYPESAFE_BY_RCU,
-> another thread might be concurrently checking the state of the dest
-> object by reading dest->vm_refcnt. Therefore it's important here not
-> to override the vm_refcnt. Changelog in
-> https://lore.kernel.org/all/20250213224655.1680278-18-surenb@google.com/
-> touches on it but a comment in the code would be indeed helpful. Will
-> add it but will wait for Lorenzo's refactoring to land into linux-mm
+>In order to allow running on late 32-bit cores (Athlon, Pentium-M,
+>Pentium 4, =2E=2E=2E), the X86_L1_CACHE_SHIFT can no longer be set to any=
+thing
+>lower than 6 (i=2Ee=2E 64 byte cache lines)=2E
+>
+>The optimization options now depend on X86_CMOV and X86_PAE instead
+>of the other way round, while other compile-time conditionals that
+>checked for MATOM/MGEODEGX1 instead now check for CPU_SUP_* options
+>that enable support for a particular CPU family=2E
+>
+>Link: https://lore=2Ekernel=2Eorg/lkml/dd29df0c-0b4f-44e6-b71b-2a358ea76f=
+b4@app=2Efastmail=2Ecom/
+>Signed-off-by: Arnd Bergmann <arnd@arndb=2Ede>
+>---
+>This is what I had in mind as mentioned in the earlier thread on
+>cx8/tsc removal=2E I based this on top of the Ingo's [RFC 15/15]
+>patch=2E
+>---
+> arch/x86/Kconfig                |   2 +-
+> arch/x86/Kconfig=2Ecpu            | 100 ++++++++++++++------------------
+> arch/x86/Makefile_32=2Ecpu        |  48 +++++++--------
+> arch/x86/include/asm/vermagic=2Eh |  36 +-----------
+> arch/x86/kernel/tsc=2Ec           |   2 +-
+> arch/x86/xen/Kconfig            |   1 -
+> drivers/misc/mei/Kconfig        |   2 +-
+> 7 files changed, 74 insertions(+), 117 deletions(-)
+>
+>diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>index a9d717558972=2E=2E1e33f88c9b97 100644
+>--- a/arch/x86/Kconfig
+>+++ b/arch/x86/Kconfig
+>@@ -1438,7 +1438,7 @@ config HIGHMEM
+>=20
+> config X86_PAE
+> 	bool "PAE (Physical Address Extension) Support"
+>-	depends on X86_32 && X86_HAVE_PAE
+>+	depends on X86_32 && X86_CMOV
+> 	select PHYS_ADDR_T_64BIT
+> 	help
+> 	  PAE is required for NX support, and furthermore enables
+>diff --git a/arch/x86/Kconfig=2Ecpu b/arch/x86/Kconfig=2Ecpu
+>index 6f1e8cc8fe58=2E=2E0619566de93f 100644
+>--- a/arch/x86/Kconfig=2Ecpu
+>+++ b/arch/x86/Kconfig=2Ecpu
+>@@ -1,23 +1,32 @@
+> # SPDX-License-Identifier: GPL-2=2E0
+> # Put here option for CPU selection and depending optimization
+>-choice
+>-	prompt "x86-32 Processor family"
+>-	depends on X86_32
+>-	default M686
+>+
+>+config X86_CMOV
+>+	bool "Require 686-class CMOV instructions" if X86_32
+>+	default y
+> 	help
+>-	  This is the processor type of your CPU=2E This information is
+>-	  used for optimizing purposes=2E In order to compile a kernel
+>-	  that can run on all supported x86 CPU types (albeit not
+>-	  optimally fast), you can specify "586" here=2E
+>+	  Most x86-32 processor implementations are compatible with
+>+	  the the CMOV instruction originally added in the Pentium Pro,
+>+	  and they perform much better when using it=2E
+>+
+>+	  Disable this option to build for 586-class CPUs without this
+>+	  instruction=2E This is only required for the original Intel
+>+	  Pentium (P5, P54, P55), AMD K6/K6-II/K6-3D, Geode GX1 and Via
+>+	  CyrixIII/C3 CPUs=2E
+>=20
+> 	  Note that the 386 and 486 is no longer supported, this includes
+> 	  AMD/Cyrix/Intel 386DX/DXL/SL/SLC/SX, Cyrix/TI 486DLC/DLC2,
+> 	  UMC 486SX-S and the NexGen Nx586, AMD ELAN and all 486 based
+> 	  CPUs=2E
+>=20
+>-	  The kernel will not necessarily run on earlier architectures than
+>-	  the one you have chosen, e=2Eg=2E a Pentium optimized kernel will run=
+ on
+>-	  a PPro, but not necessarily on a i486=2E
+>+choice
+>+	prompt "x86-32 Processor optimization"
+>+	depends on X86_32
+>+	default X86_GENERIC
+>+	help
+>+	  This is the processor type of your CPU=2E This information is
+>+	  used for optimizing purposes, but does not change compatibility
+>+	  with other CPU types=2E
+>=20
+> 	  Here are the settings recommended for greatest speed:
+> 	  - "586" for generic Pentium CPUs lacking the TSC
+>@@ -45,14 +54,13 @@ choice
+>=20
+> config M586TSC
+> 	bool "Pentium-Classic"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_CMOV
+> 	help
+>-	  Select this for a Pentium Classic processor with the RDTSC (Read
+>-	  Time Stamp Counter) instruction for benchmarking=2E
+>+	  Select this for a Pentium Classic processor=2E
+>=20
+> config M586MMX
+> 	bool "Pentium-MMX"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_CMOV
+> 	help
+> 	  Select this for a Pentium with the MMX graphics/multimedia
+> 	  extended instructions=2E
+>@@ -117,7 +125,7 @@ config MPENTIUM4
+>=20
+> config MK6
+> 	bool "K6/K6-II/K6-III"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_CMOV
+> 	help
+> 	  Select this for an AMD K6-family processor=2E  Enables use of
+> 	  some extended instructions, and passes appropriate optimization
+>@@ -125,7 +133,7 @@ config MK6
+>=20
+> config MK7
+> 	bool "Athlon/Duron/K7"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_PAE
+> 	help
+> 	  Select this for an AMD Athlon K7-family processor=2E  Enables use of
+> 	  some extended instructions, and passes appropriate optimization
+>@@ -147,42 +155,37 @@ config MEFFICEON
+>=20
+> config MGEODEGX1
+> 	bool "GeodeGX1"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_CMOV
+> 	help
+> 	  Select this for a Geode GX1 (Cyrix MediaGX) chip=2E
+>=20
+> config MGEODE_LX
+> 	bool "Geode GX/LX"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_PAE
+> 	help
+> 	  Select this for AMD Geode GX and LX processors=2E
+>=20
+> config MCYRIXIII
+> 	bool "CyrixIII/VIA-C3"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_CMOV
+> 	help
+> 	  Select this for a Cyrix III or C3 chip=2E  Presently Linux and GCC
+> 	  treat this chip as a generic 586=2E Whilst the CPU is 686 class,
+> 	  it lacks the cmov extension which gcc assumes is present when
+> 	  generating 686 code=2E
+>-	  Note that Nehemiah (Model 9) and above will not boot with this
+>-	  kernel due to them lacking the 3DNow! instructions used in earlier
+>-	  incarnations of the CPU=2E
+>=20
+> config MVIAC3_2
+> 	bool "VIA C3-2 (Nehemiah)"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_PAE
+> 	help
+> 	  Select this for a VIA C3 "Nehemiah"=2E Selecting this enables usage
+> 	  of SSE and tells gcc to treat the CPU as a 686=2E
+>-	  Note, this kernel will not boot on older (pre model 9) C3s=2E
+>=20
+> config MVIAC7
+> 	bool "VIA C7"
+>-	depends on X86_32
+>+	depends on X86_32 && !X86_PAE
+> 	help
+>-	  Select this for a VIA C7=2E  Selecting this uses the correct cache
+>-	  shift and tells gcc to treat the CPU as a 686=2E
+>+	  Select this for a VIA C7=2E
+>=20
+> config MATOM
+> 	bool "Intel Atom"
+>@@ -192,20 +195,19 @@ config MATOM
+> 	  accordingly optimized code=2E Use a recent GCC with specific Atom
+> 	  support in order to fully benefit from selecting this option=2E
+>=20
+>-endchoice
+>-
+> config X86_GENERIC
+>-	bool "Generic x86 support"
+>-	depends on X86_32
+>+	bool "Generic x86"
+> 	help
+>-	  Instead of just including optimizations for the selected
+>+	  Instead of just including optimizations for a particular
+> 	  x86 variant (e=2Eg=2E PII, Crusoe or Athlon), include some more
+> 	  generic optimizations as well=2E This will make the kernel
+>-	  perform better on x86 CPUs other than that selected=2E
+>+	  perform better on a variety of CPUs=2E
+>=20
+> 	  This is really intended for distributors who need more
+> 	  generic optimizations=2E
+>=20
+>+endchoice
+>+
+> #
+> # Define implied options from the CPU selection here
+> config X86_INTERNODE_CACHE_SHIFT
+>@@ -216,17 +218,14 @@ config X86_INTERNODE_CACHE_SHIFT
+> config X86_L1_CACHE_SHIFT
+> 	int
+> 	default "7" if MPENTIUM4
+>-	default "6" if MK7 || MPENTIUMM || MATOM || MVIAC7 || X86_GENERIC || X8=
+6_64
+>-	default "4" if MGEODEGX1
+>-	default "5" if MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII =
+|| MPENTIUMII || M686 || M586MMX || M586TSC || MVIAC3_2 || MGEODE_LX
+>+	default "6"
+>=20
+> config X86_F00F_BUG
+>-	def_bool y
+>-	depends on M586MMX || M586TSC || M586
+>+	def_bool !X86_CMOV
+>=20
+> config X86_ALIGNMENT_16
+> 	def_bool y
+>-	depends on MCYRIXIII || MK6 || M586MMX || M586TSC || M586 || MVIAC3_2 |=
+| MGEODEGX1
+>+	depends on MCYRIXIII || MK6 || M586MMX || M586TSC || M586 || MVIAC3_2 |=
+| MGEODEGX1 || (!X86_CMOV && X86_GENERIC)
+>=20
+> config X86_INTEL_USERCOPY
+> 	def_bool y
+>@@ -234,34 +233,23 @@ config X86_INTEL_USERCOPY
+>=20
+> config X86_USE_PPRO_CHECKSUM
+> 	def_bool y
+>-	depends on MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIU=
+MIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MGEODE_LX =
+|| MATOM
+>+	depends on MCYRIXIII || MK7 || MK6 || MPENTIUM4 || MPENTIUMM || MPENTIU=
+MIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MGEODE_LX =
+|| MATOM || (X86_CMOV && X86_GENERIC)
+>=20
+> config X86_TSC
+> 	def_bool y
+>=20
+>-config X86_HAVE_PAE
+>-	def_bool y
+>-	depends on MCRUSOE || MEFFICEON || MCYRIXIII || MPENTIUM4 || MPENTIUMM =
+|| MPENTIUMIII || MPENTIUMII || M686 || MVIAC7 || MATOM || X86_64
+>-
+> config X86_CX8
+> 	def_bool y
+>=20
+>-# this should be set for all -march=3D=2E=2E options where the compiler
+>-# generates cmov=2E
+>-config X86_CMOV
+>-	def_bool y
+>-	depends on (MK7 || MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII =
+|| M686 || MVIAC3_2 || MVIAC7 || MCRUSOE || MEFFICEON || MATOM || MGEODE_LX=
+ || X86_64)
+>-
+> config X86_MINIMUM_CPU_FAMILY
+> 	int
+> 	default "64" if X86_64
+>-	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPEN=
+TIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
+>-	default "5" if X86_32
+>-	default "4"
+>+	default "6" if X86_32 && X86_CMOV
+>+	default "5"
+>=20
+> config X86_DEBUGCTLMSR
+> 	def_bool y
+>-	depends on !(MK6 || MCYRIXIII || M586MMX || M586TSC || M586) && !UML
+>+	depends on X86_CMOV && !UML
+>=20
+> config IA32_FEAT_CTL
+> 	def_bool y
+>@@ -297,7 +285,7 @@ config CPU_SUP_INTEL
+> config CPU_SUP_CYRIX_32
+> 	default y
+> 	bool "Support Cyrix processors" if PROCESSOR_SELECT
+>-	depends on M586 || M586TSC || M586MMX || (EXPERT && !64BIT)
+>+	depends on !64BIT
+> 	help
+> 	  This enables detection, tunings and quirks for Cyrix processors
+>=20
+>diff --git a/arch/x86/Makefile_32=2Ecpu b/arch/x86/Makefile_32=2Ecpu
+>index f5e933077bf4=2E=2Eebd7ec6eaf34 100644
+>--- a/arch/x86/Makefile_32=2Ecpu
+>+++ b/arch/x86/Makefile_32=2Ecpu
+>@@ -10,30 +10,32 @@ else
+> align		:=3D -falign-functions=3D0 -falign-jumps=3D0 -falign-loops=3D0
+> endif
+>=20
+>-cflags-$(CONFIG_M586TSC)	+=3D -march=3Di586
+>-cflags-$(CONFIG_M586MMX)	+=3D -march=3Dpentium-mmx
+>-cflags-$(CONFIG_M686)		+=3D -march=3Di686
+>-cflags-$(CONFIG_MPENTIUMII)	+=3D -march=3Di686 $(call tune,pentium2)
+>-cflags-$(CONFIG_MPENTIUMIII)	+=3D -march=3Di686 $(call tune,pentium3)
+>-cflags-$(CONFIG_MPENTIUMM)	+=3D -march=3Di686 $(call tune,pentium3)
+>-cflags-$(CONFIG_MPENTIUM4)	+=3D -march=3Di686 $(call tune,pentium4)
+>-cflags-$(CONFIG_MK6)		+=3D -march=3Dk6
+>-# Please note, that patches that add -march=3Dathlon-xp and friends are =
+pointless=2E
+>-# They make zero difference whatsosever to performance at this time=2E
+>-cflags-$(CONFIG_MK7)		+=3D -march=3Dathlon
+>-cflags-$(CONFIG_MCRUSOE)	+=3D -march=3Di686 $(align)
+>-cflags-$(CONFIG_MEFFICEON)	+=3D -march=3Di686 $(call tune,pentium3) $(al=
+ign)
+>-cflags-$(CONFIG_MCYRIXIII)	+=3D $(call cc-option,-march=3Dc3,-march=3Di4=
+86) $(align)
+>-cflags-$(CONFIG_MVIAC3_2)	+=3D $(call cc-option,-march=3Dc3-2,-march=3Di=
+686)
+>-cflags-$(CONFIG_MVIAC7)		+=3D -march=3Di686
+>-cflags-$(CONFIG_MATOM)		+=3D -march=3Datom
+>+ifdef CONFIG_X86_CMOV
+>+cflags-y			+=3D -march=3Di686
+>+else
+>+cflags-y			+=3D -march=3Di586
+>+endif
+>=20
+>-# Geode GX1 support
+>-cflags-$(CONFIG_MGEODEGX1)	+=3D -march=3Dpentium-mmx
+>-cflags-$(CONFIG_MGEODE_LX)	+=3D $(call cc-option,-march=3Dgeode,-march=
+=3Dpentium-mmx)
+>-# add at the end to overwrite eventual tuning options from earlier
+>-# cpu entries
+>-cflags-$(CONFIG_X86_GENERIC) 	+=3D $(call tune,generic,$(call tune,i686)=
+)
+>+cflags-$(CONFIG_M586TSC)	+=3D -mtune=3Di586
+>+cflags-$(CONFIG_M586MMX)	+=3D -mtune=3Dpentium-mmx
+>+cflags-$(CONFIG_M686)		+=3D -mtune=3Di686
+>+cflags-$(CONFIG_MPENTIUMII)	+=3D -mtune=3Dpentium2
+>+cflags-$(CONFIG_MPENTIUMIII)	+=3D -mtune=3Dpentium3
+>+cflags-$(CONFIG_MPENTIUMM)	+=3D -mtune=3Dpentium3
+>+cflags-$(CONFIG_MPENTIUM4)	+=3D -mtune=3Dpentium4
+>+cflags-$(CONFIG_MK6)		+=3D -mtune=3Dk6
+>+# Please note, that patches that add -mtune=3Dathlon-xp and friends are =
+pointless=2E
+>+# They make zero difference whatsosever to performance at this time=2E
+>+cflags-$(CONFIG_MK7)		+=3D -mtune=3Dathlon
+>+cflags-$(CONFIG_MCRUSOE)	+=3D -mtune=3Di686 $(align)
+>+cflags-$(CONFIG_MEFFICEON)	+=3D -mtune=3Dpentium3 $(align)
+>+cflags-$(CONFIG_MCYRIXIII)	+=3D -mtune=3Dc3 $(align)
+>+cflags-$(CONFIG_MVIAC3_2)	+=3D -mtune=3Dc3-2
+>+cflags-$(CONFIG_MVIAC7)		+=3D -mtune=3Di686
+>+cflags-$(CONFIG_MATOM)		+=3D -mtune=3Datom
+>+cflags-$(CONFIG_MGEODEGX1)	+=3D -mtune=3Dpentium-mmx
+>+cflags-$(CONFIG_MGEODE_LX)	+=3D -mtune=3Dgeode
+>+cflags-$(CONFIG_X86_GENERIC) 	+=3D -mtune=3Dgeneric
+>=20
+> # Bug fix for binutils: this option is required in order to keep
+> # binutils from generating NOPL instructions against our will=2E
+>diff --git a/arch/x86/include/asm/vermagic=2Eh b/arch/x86/include/asm/ver=
+magic=2Eh
+>index e26061df0c9b=2E=2E6554dbdfd719 100644
+>--- a/arch/x86/include/asm/vermagic=2Eh
+>+++ b/arch/x86/include/asm/vermagic=2Eh
+>@@ -5,42 +5,10 @@
+>=20
+> #ifdef CONFIG_X86_64
+> /* X86_64 does not define MODULE_PROC_FAMILY */
+>-#elif defined CONFIG_M586TSC
+>-#define MODULE_PROC_FAMILY "586TSC "
+>-#elif defined CONFIG_M586MMX
+>-#define MODULE_PROC_FAMILY "586MMX "
+>-#elif defined CONFIG_MATOM
+>-#define MODULE_PROC_FAMILY "ATOM "
+>-#elif defined CONFIG_M686
+>+#elif defined CONFIG_X86_CMOV
+> #define MODULE_PROC_FAMILY "686 "
+>-#elif defined CONFIG_MPENTIUMII
+>-#define MODULE_PROC_FAMILY "PENTIUMII "
+>-#elif defined CONFIG_MPENTIUMIII
+>-#define MODULE_PROC_FAMILY "PENTIUMIII "
+>-#elif defined CONFIG_MPENTIUMM
+>-#define MODULE_PROC_FAMILY "PENTIUMM "
+>-#elif defined CONFIG_MPENTIUM4
+>-#define MODULE_PROC_FAMILY "PENTIUM4 "
+>-#elif defined CONFIG_MK6
+>-#define MODULE_PROC_FAMILY "K6 "
+>-#elif defined CONFIG_MK7
+>-#define MODULE_PROC_FAMILY "K7 "
+>-#elif defined CONFIG_MCRUSOE
+>-#define MODULE_PROC_FAMILY "CRUSOE "
+>-#elif defined CONFIG_MEFFICEON
+>-#define MODULE_PROC_FAMILY "EFFICEON "
+>-#elif defined CONFIG_MCYRIXIII
+>-#define MODULE_PROC_FAMILY "CYRIXIII "
+>-#elif defined CONFIG_MVIAC3_2
+>-#define MODULE_PROC_FAMILY "VIAC3-2 "
+>-#elif defined CONFIG_MVIAC7
+>-#define MODULE_PROC_FAMILY "VIAC7 "
+>-#elif defined CONFIG_MGEODEGX1
+>-#define MODULE_PROC_FAMILY "GEODEGX1 "
+>-#elif defined CONFIG_MGEODE_LX
+>-#define MODULE_PROC_FAMILY "GEODE "
+> #else
+>-#error unknown processor family
+>+#define MODULE_PROC_FAMILY "586 "
+> #endif
+>=20
+> #ifdef CONFIG_X86_32
+>diff --git a/arch/x86/kernel/tsc=2Ec b/arch/x86/kernel/tsc=2Ec
+>index 489c779ef3ef=2E=2E76b15ef8c85f 100644
+>--- a/arch/x86/kernel/tsc=2Ec
+>+++ b/arch/x86/kernel/tsc=2Ec
+>@@ -1221,7 +1221,7 @@ bool tsc_clocksource_watchdog_disabled(void)
+>=20
+> static void __init check_system_tsc_reliable(void)
+> {
+>-#if defined(CONFIG_MGEODEGX1) || defined(CONFIG_MGEODE_LX) || defined(CO=
+NFIG_X86_GENERIC)
+>+#if defined(CONFIG_CPU_SUP_CYRIX)
+> 	if (is_geode_lx()) {
+> 		/* RTSC counts during suspend */
+> #define RTSC_SUSP 0x100
+>diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+>index 222b6fdad313=2E=2E2648459b8e8f 100644
+>--- a/arch/x86/xen/Kconfig
+>+++ b/arch/x86/xen/Kconfig
+>@@ -9,7 +9,6 @@ config XEN
+> 	select PARAVIRT_CLOCK
+> 	select X86_HV_CALLBACK_VECTOR
+> 	depends on X86_64 || (X86_32 && X86_PAE)
+>-	depends on X86_64 || (X86_GENERIC || MPENTIUM4 || MATOM)
+> 	depends on X86_LOCAL_APIC
+> 	help
+> 	  This is the Linux Xen port=2E  Enabling this will allow the
+>diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
+>index 7575fee96cc6=2E=2E4deb17ed0a62 100644
+>--- a/drivers/misc/mei/Kconfig
+>+++ b/drivers/misc/mei/Kconfig
+>@@ -3,7 +3,7 @@
+> config INTEL_MEI
+> 	tristate "Intel Management Engine Interface"
+> 	depends on X86 && PCI
+>-	default X86_64 || MATOM
+>+	default X86_64 || CPU_SUP_INTEL
+> 	help
+> 	  The Intel Management Engine (Intel ME) provides Manageability,
+> 	  Security and Media services for system containing Intel chipsets=2E
 
-s/linux-mm/mm-unstable. I need my morning coffee.
+I really don't like testing an unrelated feature (CMOV for PAE); furthermo=
+re, at least some old hypervisors were known to have broken PAE=2E
 
-> first to avoid adding merge conflicts.
->
-> >
-> > Thanks,
-> > Liam
+At the very least it needs to be abstracted for clarity reasons=2E=20
+
+Nacked-by: H=2E Peter Anvin <hpa@zytor=2Ecom>
 
