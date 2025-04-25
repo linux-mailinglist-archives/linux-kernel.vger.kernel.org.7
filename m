@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-619326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10213A9BB89
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 922D3A9BB8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87961BA68A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:00:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDFE41B681A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B24928F52A;
-	Thu, 24 Apr 2025 23:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFgGRM6Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78689139E;
+	Fri, 25 Apr 2025 00:04:21 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6E820CCDF;
-	Thu, 24 Apr 2025 23:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6C12F4A;
+	Fri, 25 Apr 2025 00:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745539190; cv=none; b=AlOlaIOcocTFyL19EinGXa4iYkjMdhM67aEl5O3y6R3qcTIHDhVQh9KKidfbG8CDzppOgRX3mPWlemqGwGWNjZYM1yUKch1DVaiso8RBDkAGd9CeiSIc1QNFppJn9PYe5MiigoWdi5AnHhj079fWOAiR6zfK1oxSMLeQYsTI8kE=
+	t=1745539461; cv=none; b=dLgfqxswFoEsvYWiZ1fpBc3jIHq/9C8OMapr3CkMsmXyR0/sv2LfuToJm4PxS6UhTjLzhwtJANu28G1o+vbtwWcQuWOHgT7QC6zXVP7sPt0TDBVq3sjAMGFA6PRygECwAutIgn97gF5DnKiCLPQqlcpE5le5jTnSPNpHAABxJyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745539190; c=relaxed/simple;
-	bh=uxkWEhvEgjBl6+I8KJLSIovkjWIVOEjUEOCh39u1z3k=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dZUhmHyV4dPuYRmtJpus3tx4uwM6YlbloaC3FGo+qKdHkLEPVfgfFHkRDkQAKnCtlOzZZcUXacV+n3m3/Zzrim+mBxfKO/vq4x1rFL4lTN2u4+A/q5tECrH/dtdlaJbUPKcoFwmtQfUWloGnldcTKgBSl50eaJehWLxkrQClLfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFgGRM6Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7ACC4CEE3;
-	Thu, 24 Apr 2025 23:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745539190;
-	bh=uxkWEhvEgjBl6+I8KJLSIovkjWIVOEjUEOCh39u1z3k=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZFgGRM6QbzeSdwwFR+7RNV+Y5bfTFD+NctRfb4wervVFG/LXp8wnWv0t2CbeIdi3h
-	 XXGcUnqRYTZmyapJdM1Yul4l/5retcr/1KvcAq8Hs7t0EGt+BJ02tdPxFBkl94PDv9
-	 qNN8LYMErTMlIB63G9PJSc7EOs/wEO7lqcPh10cnUHTzmSNfuet5ZmTIokfjXBxS9n
-	 4T4uynO1EH43sUwGhNOp8bVHeeA5lba4JnaUTypTEAnFAsID9XdpEAC6/Ad70UEU0e
-	 GcDlDsQTB3XiSzsHTfQeIMOpuqmPoZ7mPGXQ8AtM72Rs7o/wzsolEyGbFdPE7zQ6Vl
-	 U/X+KCtLmdv3Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADCF380CFD9;
-	Fri, 25 Apr 2025 00:00:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745539461; c=relaxed/simple;
+	bh=yL08VFLSYPbcVaWmbvsr8GwxFwVmu3ru/80RoCesrt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biDje0P5GjTuB38Ar0TtI8OSdMpaBTBYUVzIcfTe/XQYAJhEG5lHBdxIzyIS7MCM4D329CFB+1cBZ0Ci8UXn0KZOepd0T5bfZNf3wnvE61vsHsKkAM0FnDjQ1nHzZO2LEsYqV4Xajc2da6AXW3DUwUpJqvP+tNxq6uTcZCn2KTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.95])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 6E804340C43;
+	Fri, 25 Apr 2025 00:04:17 +0000 (UTC)
+Date: Fri, 25 Apr 2025 00:04:06 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alex Elder <elder@riscstar.com>,
+	Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 1/3] riscv: defconfig: spacemit: enable gpio support
+ for K1 SoC
+Message-ID: <20250425000406-GYA49092@gentoo>
+References: <20250424-03-k1-gpio-v9-0-eaece8cc5a86@gentoo.org>
+ <20250424-03-k1-gpio-v9-1-eaece8cc5a86@gentoo.org>
+ <20250424-untried-refueling-50c5902d63c9@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1] selftests: iou-zcrx: Get the page size at runtime
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174553922875.3525507.18267700755622543899.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Apr 2025 00:00:28 +0000
-References: <20250419141044.10304-1-haiyuewa@163.com>
-In-Reply-To: <20250419141044.10304-1-haiyuewa@163.com>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: io-uring@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
- dw@davidwei.uk, axboe@kernel.dk, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424-untried-refueling-50c5902d63c9@spud>
 
-Hello:
+Hi Conor,
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 19 Apr 2025 22:10:15 +0800 you wrote:
-> Use the API `sysconf()` to query page size at runtime, instead of using
-> hard code number 4096.
+On 16:22 Thu 24 Apr     , Conor Dooley wrote:
+> On Thu, Apr 24, 2025 at 05:40:49PM +0800, Yixun Lan wrote:
+> > Enable GPIO support, in order to activate follow-up GPIO LED,
+> > and ethernet reset pin.
+> > 
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > 
-> And use `posix_memalign` to allocate the page size aligned momory.
+> Do you want me to grab this patch, or do you have a defconfig branch to
+> put it on?
 > 
-> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
-> 
-> [...]
+Yes, I'd appreciate if you willing to pick it, to avoid potential conflicts?
+(I currently do not maintain defconfig branch)
 
-Here is the summary with links:
-  - [v1] selftests: iou-zcrx: Get the page size at runtime
-    https://git.kernel.org/netdev/net-next/c/df8cf32413fa
+BTW, we might have few more in this cycle, e.g. - clock, reset
 
-You are awesome, thank you!
+Thanks
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Yixun Lan (dlan)
 
