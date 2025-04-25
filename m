@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-619651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEFCA9BF91
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:17:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DE6A9BF8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1FCC3B9217
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE8B4C1A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7C7230BDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B84230D14;
 	Fri, 25 Apr 2025 07:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKQZSAGb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4xqKXxg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B6822E415;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D905B22F169;
 	Fri, 25 Apr 2025 07:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745565238; cv=none; b=WrevAv1g354EU4Rr5cOQn0xnGJ5A4CKvT5jCEuNI1mha+RKvKddB+sCVu+bpNCxOuQkFK6JIPxCZrgPfnWxK6Uw+XV+gZoCPpBHU/NbRemKYdbten716z+RKULfrpJUEqbf0rt9wzle1oky3UnwK9VEzA+M6ZJRgCDmeW/p5PKM=
+	t=1745565238; cv=none; b=jH7X5i0Hm8NnCNdxgo4LbygwfUPbtBaBG7u483jqsZU0i19XGClm0JLMsnsfU5yClXumdHllpaXYzmBUzzg+hqXjwhBnQ+wUnEm30LOfChhpVf4rFQ6pgNkzcsVWS/cIBgsQhpTBABbf2A1JrkEUcMMr8LGatkxH5fAgtQvQGwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745565238; c=relaxed/simple;
-	bh=hE2LTNl6/i9rVKhkGSJYeeQV/bDrqESmfqg01MQICJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uDib4YZ5g/ozIFO2pXa+F/lLmFow6Wdo0H6OME990fVCTVDaatZbiG8x2E2DBkesboLATHLlej9+yMOFyGf7chhgJPNrtwk1JmBJiou8ocFDZxCVhJ65uqwtbF9n0i5hRv4hxpNXgD/v4svie4jHWLl02ChHHvAsVuFReZJutKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKQZSAGb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE68EC4CEE4;
-	Fri, 25 Apr 2025 07:13:57 +0000 (UTC)
+	bh=8ht6CFnJ+xOrz1MUeE1fJUbi02R0O8GllLmGzGZXdI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V4vAylJ3J123jErK9qj4h/rRX+1/J4rh/fLsEkKVrPXEZC1eGjkVed/t5XVbIYURpiR9ezRuaUvhU8Dfb+/ntDoFuVokaD+TQyhtDaS7W1kfmpdVX976fHTmCtPw+MGsCVDENRQ8DscLVx+19mhS4ZLITrssbq5WaKtjMtDdIrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4xqKXxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F75DC4CEEB;
+	Fri, 25 Apr 2025 07:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745565237;
-	bh=hE2LTNl6/i9rVKhkGSJYeeQV/bDrqESmfqg01MQICJ0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AKQZSAGb2uSYghmCImaLgqH/Bm9jZMGQLaKeN3aKl5319c9nVqoY/zrUldjUjnGkP
-	 GY19ptYj4D5rIOOkh5T+stoWHKgpjC9ug9urWlgZifiZGmM/rtVQVeMChtxBCn4TRp
-	 Ly1UnOBY4r/kibIy6rJk3jV9cnl1HTixoT07OSYHhvtsfEjhlXO+WOtS08R3Nidlgo
-	 yY/Elayaky2B+K5nFj0TwH/UyDfEUV0jCASpQH4WDyZ6RJeBIQDBF5k40zsX6SMUOP
-	 mPBtNGJsK6X0vo2MDYnt34aiLU4fQ8N0gEqpRsVL0pyLP4s1EwarPmesr1eVfnlD4D
-	 bLTG1TcZi35mQ==
+	s=k20201202; t=1745565238;
+	bh=8ht6CFnJ+xOrz1MUeE1fJUbi02R0O8GllLmGzGZXdI8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=W4xqKXxgE2kAuh2nQCFC89WDz7OrprgGEjOwuKb1cmBpBV+Jh1XurURM1yEcN4Gst
+	 kzrwSA+3t2gB7xZ0RmRP9542aEHFy0nBX+th+LOjKjCEYUtaC5WK4YL2ZXi2ywetRv
+	 Dvx5UBm3B4XnYPvokDKqyQVXW1ZQdBvLV+P7yGsum8HsbYrjYBwl0DvhUnMAuZnmm/
+	 weIUUioXUeCnQnB+SpkLZYk+Koku4ONi99guaA84qPU76IZwZGRIZe41QT84Xk5xoI
+	 xiUQTsVXZ47DK7nOt7ONpTzErVLoqhKJ0ujUmF3XbkcUQ4Af+RwP7ZZ5E0U4vnENoG
+	 QqC4qHdf1O54Q==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1u8DFv-00000000TFx-3ppw;
+	id 1u8DFv-00000000TG0-43yQ;
 	Fri, 25 Apr 2025 15:13:51 +0800
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] Some small improvements for kernel-doc generation
-Date: Fri, 25 Apr 2025 15:13:37 +0800
-Message-ID: <cover.1745564565.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 1/3] docs: Sphinx: kerneldoc: only initialize kernel-doc classes once
+Date: Fri, 25 Apr 2025 15:13:38 +0800
+Message-ID: <b00788f26e161512858a6e01a673c34743c954df.1745564565.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1745564565.git.mchehab+huawei@kernel.org>
+References: <cover.1745564565.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,42 +65,105 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Hi Jon,
+Instead of re-creating the objects every time, initialize it
+just once.
 
-This series contain 3 patches for kernel-doc:
+This allows caching previously parsed objects.
 
-Patch 1 creates a kernel doc class at the beginning of kerneldoc Sphinx
-module and preserves it. With that, some caching is enabled;
-Patch 2 fixes some permissions;
-Patch 3 is mostly a cleanup patch to simplify a little bit the complex parser.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/sphinx/kerneldoc.py | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-On my tests here, it runs about 10 seconds faster on my machine
-and I didn't notice any regressions.
-
-I guess there are still space to optimize the cache, but I don't want to
-do too much optimization on a single series.
-
-Please also notice that I didn't check the amount of memory that it is
-now consumed storing the entire kernel-doc data on a dictionary.
-I assume it is not that much, as I can still compile docs on my 16GB
-laptop.
-
-Mauro Carvalho Chehab (3):
-  docs: Sphinx: kerneldoc: only initialize kernel-doc classes once
-  scripts/lib/kdoc: change mode to 0644
-  scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class
-
- Documentation/sphinx/kerneldoc.py |  23 ++-
- scripts/lib/kdoc/kdoc_output.py   |   0
- scripts/lib/kdoc/kdoc_parser.py   | 277 ++++++++++++++++--------------
- scripts/lib/kdoc/kdoc_re.py       |   0
- 4 files changed, 162 insertions(+), 138 deletions(-)
- mode change 100755 => 100644 scripts/lib/kdoc/kdoc_output.py
- mode change 100755 => 100644 scripts/lib/kdoc/kdoc_parser.py
- mode change 100755 => 100644 scripts/lib/kdoc/kdoc_re.py
-
+diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+index 27baf28fb754..b713a2c4a615 100644
+--- a/Documentation/sphinx/kerneldoc.py
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -48,7 +48,8 @@ from kdoc_files import KernelFiles
+ from kdoc_output import RestFormat
+ 
+ __version__  = '1.0'
+-use_kfiles = False
++kfiles = None
++logger = logging.getLogger('kerneldoc')
+ 
+ def cmd_str(cmd):
+     """
+@@ -86,7 +87,6 @@ class KernelDocDirective(Directive):
+         'functions': directives.unchanged,
+     }
+     has_content = False
+-    logger = logging.getLogger('kerneldoc')
+     verbose = 0
+ 
+     parse_args = {}
+@@ -204,7 +204,7 @@ class KernelDocDirective(Directive):
+         node = nodes.section()
+ 
+         try:
+-            self.logger.verbose("calling kernel-doc '%s'" % (" ".join(cmd)))
++            logger.verbose("calling kernel-doc '%s'" % (" ".join(cmd)))
+ 
+             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+             out, err = p.communicate()
+@@ -214,14 +214,14 @@ class KernelDocDirective(Directive):
+             if p.returncode != 0:
+                 sys.stderr.write(err)
+ 
+-                self.logger.warning("kernel-doc '%s' failed with return code %d"
++                logger.warning("kernel-doc '%s' failed with return code %d"
+                                     % (" ".join(cmd), p.returncode))
+                 return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
+             elif env.config.kerneldoc_verbosity > 0:
+                 sys.stderr.write(err)
+ 
+         except Exception as e:  # pylint: disable=W0703
+-            self.logger.warning("kernel-doc '%s' processing failed with: %s" %
++            logger.warning("kernel-doc '%s' processing failed with: %s" %
+                                 (" ".join(cmd), str(e)))
+             return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
+ 
+@@ -261,7 +261,7 @@ class KernelDocDirective(Directive):
+             self.do_parse(result, node)
+ 
+         except Exception as e:  # pylint: disable=W0703
+-            self.logger.warning("kernel-doc '%s' processing failed with: %s" %
++            logger.warning("kernel-doc '%s' processing failed with: %s" %
+                                 (cmd_str(cmd), str(e)))
+             return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
+ 
+@@ -292,11 +292,9 @@ class KernelDocDirective(Directive):
+         return node.children
+ 
+     def run(self):
+-        global use_kfiles
++        global kfiles
+ 
+-        if use_kfiles:
+-            out_style = RestFormat()
+-            kfiles = KernelFiles(out_style=out_style, logger=self.logger)
++        if kfiles:
+             return self.run_kdoc(kfiles)
+         else:
+             return self.run_cmd()
+@@ -306,13 +304,14 @@ class KernelDocDirective(Directive):
+             self.state.nested_parse(result, 0, node, match_titles=1)
+ 
+ def setup_kfiles(app):
+-    global use_kfiles
++    global kfiles
+ 
+     kerneldoc_bin = app.env.config.kerneldoc_bin
+ 
+     if kerneldoc_bin and kerneldoc_bin.endswith("kernel-doc.py"):
+         print("Using Python kernel-doc")
+-        use_kfiles = True
++        out_style = RestFormat()
++        kfiles = KernelFiles(out_style=out_style, logger=logger)
+     else:
+         print(f"Using {kerneldoc_bin}")
+ 
 -- 
 2.49.0
-
 
 
