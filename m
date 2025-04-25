@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-619780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD9AA9C115
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:35:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A808DA9C1AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0869A3ACF77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56CAE4C2DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE34E235347;
-	Fri, 25 Apr 2025 08:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1664D25395F;
+	Fri, 25 Apr 2025 08:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeRCwsOf"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="islUnSNc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6151DE2BF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB8C235C1E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745570110; cv=none; b=AZtujJKI4TnqtowanIpBI3YD+zy03LAL3MkgxxxjN+35p11dpXFT+zN77KYv12c2d2E6ATR11Iz/PbhIBdLguqLGFZk4ZwMEFumtHREh4oqSPFE0SqaRcSZfIRFGdIU0C+xJlNoEbLlvgt/G3j9qCTSmxnzZndUFpVyCUUJk5EA=
+	t=1745570158; cv=none; b=uPNuekOnoVzQ8bOjWW3z6HTaNWmZJI5URU8+j+rEuAspJiaqY9JEk5LesdhxKOEAWLxHA4FkGImU/BU5SIMnjPxOVWlPG8o7BAelJAByeRQn8X2MNQhn0eg+bT391+QOOz/82TlWb8DxqYmp8Xhhiu9BMLLp4PG6BREdcy+oB4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745570110; c=relaxed/simple;
-	bh=kTafQVInfgZE1CFO5s37dA0o4B8Xyn3K4GQ63U9KYqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rqcEU4DRiIYzhqk1x4/MRAxLXSgib2YN+5hPR5ly1Zf9mlY3lfksqgIA4mKsdsXV/7K36/Ci1+eKhFgCeODPGILaavx4Eq1/B49MdmyVlpHRRXXMO5go7vIdxObm88DOWIV/9Ttcz8sNhEitU+dFi2GUfurgywAkYY1vqe207cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeRCwsOf; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so16959125e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745570107; x=1746174907; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+u8einId9BLaGDvz8um8Sc4lADMO7vEkfqq6FWkbjfA=;
-        b=OeRCwsOfDSlQTRL1GpyBFom8xW1oRHEF9dsYVOaXhCKZS6I0P+T2fhnlS0vjmhBBcl
-         /rEHOMJG1gvKFK9sP9BrVSXylOBI1HGlVDqmciGn4GCAP7BCLGV+4j//dc+djxePJc4H
-         ZB9f80C7wrb8onPlprPDZ2xZQl1e9pwmkvEJk30R0eicfCsWwIS1CpaondI5ELgY9Kln
-         GLC29osV4H66NyvXMRUD7avwXMf/bWk3dlinYwPtGBir2NK5SKPypgq03R52LigQS1N+
-         t3Ttgg1MicoODUGSaRRECt4XuMuC8eX3TXidox6aqOAiCrYf7KtDSo5AXvrtck+1g8h6
-         p1Uw==
+	s=arc-20240116; t=1745570158; c=relaxed/simple;
+	bh=W0OGvNpepYMtQUI2P000WddWaGAaKqDLXnohX671FZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSP1ApYQcEtHDVzBTz6RyAmAa0sQAf7vjwNQsCkJSXRoaNcWveltV0hSkdJUojgN/EvdSPIylaeykZnQM5SaXGuZ1cJsiDrVb+tQ+kPZMFeK5nWvYvG/0M4W2X2GqTXSHfDJtqw+xYRT5OPgsB4KdcDqrYGMBLFFnKTXIWzyfjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=islUnSNc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745570155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VIpzb0kJnabV+/Rbk1AeDaWRoPqgDoiA6nLSqcAP3Qs=;
+	b=islUnSNcmoHVw1oYCIr7DD1r5DIOY0N12VIVvTP6wxn0Umm+snMczVx2tSZytw3G8VrLle
+	aj1hplCxbH8ma5y+pvLvB+iiS2FFc5xBBDUX5+HfaYPD0AoKhqYp7G3RSmkt2YPgk324KL
+	5C15Z7D8U1r7O7wH2j+jsuwnZQgneBs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-253-FQqyT1l2OyuCqHkMG8o0DQ-1; Fri, 25 Apr 2025 04:35:53 -0400
+X-MC-Unique: FQqyT1l2OyuCqHkMG8o0DQ-1
+X-Mimecast-MFC-AGG-ID: FQqyT1l2OyuCqHkMG8o0DQ_1745570152
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cec217977so10051845e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:35:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745570107; x=1746174907;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+u8einId9BLaGDvz8um8Sc4lADMO7vEkfqq6FWkbjfA=;
-        b=N8Tx9/rIVcRhTCBMSai+QuIeRQsn3FsYbU24MeT+YOSQp2nJyI8d96dpVSrbsxJmsS
-         AXRuBJK3U8kvCdSRqZLHxamHS8EQWVOc3IZ75Ihnkii7b1LMB4W8vojO2LiOoie53a5x
-         1MojlBmKcxpL8/Wnx35vP4h7lzvqK768VeXAqkOj+674jOxNWeORooNL/NEjsmfr+t8j
-         Xr6q/CpWlqaYf/m13LAy2594xSTufrkD92xA/f4B7mkgsWxUEhxescitKe1wZHLTLI0Z
-         NaLiKfp4XSAjaVJba09YHJsvpkjlDT+086MvxGRXLPw/nXGEMZFKJWzooGJMNDsmJKvD
-         mO6w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5nrtKtY2d9WTNJHGbv2w3dcWJI7Hl5eD7LJ4lVxK2hXdrFtwSDuwjal+aYv0gxJfECi6SrqgvWY6V3Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3OqSfJVHPHgxxQu4uRSL9Mw+y4nEBQK1DlCL5v2WLTMiPOy8U
-	XK0alJ1ykwoitAMrHE9uIQQVnptLWBIEh0B6hsTcAY0ecvVbY6HDDC2fvBXp4ow=
-X-Gm-Gg: ASbGncs7cCdlpdFkiKGS3KPbnC+BdVYfr2pls5d0a0WLz/vVbvKWQpugxObB7GdzFLt
-	HYMlOgkgbHuyGxQjnFTo7HJqhreBGs7G8VRdX5yWMzKsgKydFea50++wsiouArsCRnwzDO61NJe
-	TZgGutdvacYcrodxDqasGZhew/fARHUrHYvRpteB5u7VEiwEYHf/UCJCNWsvd/ScdjCDzNM1jL2
-	dYlBoqOZwp8lm23GcdTCzQsdACktVghJIJS81TCmsc/+VPMarxlsSt0lKfk9bJLw0UOhdWWZCN/
-	GduDRzc9FiuIu2dklsiLTADMTWRnCSu+OwJeCX4RYW4MQ2v37BvIYMeulm9uzzkFjOWLRsdXwYs
-	PfZZTcA==
-X-Google-Smtp-Source: AGHT+IHbMaG/UpKmNGf2vUTKm7E0YA1Q3uH84FrSyUdv5AM2rW1f4hc1ymcUcyPYeZk5iuLyxezoog==
-X-Received: by 2002:a05:600c:510e:b0:43c:f8fc:f687 with SMTP id 5b1f17b1804b1-440a66b034amr9285185e9.27.1745570106663;
-        Fri, 25 Apr 2025 01:35:06 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2e0241sm49396355e9.37.2025.04.25.01.35.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 01:35:06 -0700 (PDT)
-Message-ID: <2dd28ebe-f69c-49c3-90c2-aedc0484a00e@linaro.org>
-Date: Fri, 25 Apr 2025 09:35:05 +0100
+        d=1e100.net; s=20230601; t=1745570152; x=1746174952;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VIpzb0kJnabV+/Rbk1AeDaWRoPqgDoiA6nLSqcAP3Qs=;
+        b=c80t8Js2jBeTA8+rc76/tJjei6fhw01tYjMHh0jkWMniB5kRDJHZ8VFq/Hr1SmvKbp
+         aig+Huq0XaszX9IE7VhpsIPRCSL+Rmy+KeD9MDE7i/6/sA78NIdqZLpFEafPXrqzThjX
+         KAc6osp4mdkDi6KkveyUwRiysZiqFcgBxcimMBSiQjXlqSdEXzjgySkVZxzxUfNxP4Fg
+         oQru2xPP7k1Iu1Xg32WnLXeMglOBqdkhtFCHjJwjDVBDZdpMFUTKJHe+oMwQviRys52s
+         obY7T1r8Vfro2DDYI6GXaENumd/zVfJs0R/ZNR5zGdqGO/2GXPpG3niB4Pjl1N+BOiHo
+         A1TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+NVaiZQlG3NpAM3RIzqT54ENKbUrBsNvncq6xvM6kOVzQlbWSdJWjXiFZJdTQpX/oCn+zuj+ShLJM0Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl+TNVEfZVVQaA1cZ8jRFEdXh79sFEKnlvbNuNEPNc3oVdgWXD
+	Df+czHGzOC/9kAjH4DxEqG3zTa6XIf9wqVRRTHU/ziIx6FJMvx/Hjsa8VICz6P05KxVlhNTF7GU
+	aJ/58txEAg+r7FaHU99lIprJ8MrDbcAY4MkrHhc0OeWRKCEq4JddjhRgPGktTRg==
+X-Gm-Gg: ASbGncuE+xsoVLKh/D6zNTl0WBKFpeX69kdIpdKXjH66zjDK1DtHx/XhunCHrvg8E9K
+	4uvyf0Vb7/GR2EgkzlQqQGMX2SNBybe2JtiwNKDkKbQkJp/CxBuI1nVQnaFIpIdM33IJ5hSdUki
+	UAyX/hoSVJJWUmcLGQDrUTXecmtV7MSVXtELusGTiwCSCwHe/Lb0TnFCTiZ7d+OTnpJ67p2zllc
+	ieDlBtIa9gppiQ5qraaCyy+T7cdG75X1gCpt7e9pzvuKXffnzNZUJOidFBchZqCTxJZ06120bWZ
+	CvSRzg==
+X-Received: by 2002:a05:600d:19:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-440a66d9ba5mr12028215e9.17.1745570152501;
+        Fri, 25 Apr 2025 01:35:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEVwMxFD5f3mySi27LmA61xgw9SkI2YEf5bOWu+NSzAJvOJz2O8GeJpN1BaqSOng5t4z7wJTg==
+X-Received: by 2002:a05:600d:19:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-440a66d9ba5mr12027935e9.17.1745570152192;
+        Fri, 25 Apr 2025 01:35:52 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5310a8fsm17114375e9.22.2025.04.25.01.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 01:35:51 -0700 (PDT)
+Date: Fri, 25 Apr 2025 04:35:47 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: virtualization@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] virtio-net: disable delayed refill when pausing rx
+Message-ID: <20250425043542-mutt-send-email-mst@kernel.org>
+References: <20250425071018.36078-1-minhquangbui99@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: Add qcom,x1e80100-camss
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
- <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
- <3ec3fd62-bf21-47e7-873c-ce151589d743@linaro.org>
- <54eeb470-cd90-4bc2-b415-6dea1ce2321d@linaro.org>
- <0ab31397-580f-4e5a-b9ad-d9bf79d29106@linaro.org>
- <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
- <krofzevprczeuptn6yfj4n656qsw52s52c7cgiwotidxmi2xo6@d3q5bb5zbccc>
- <f05cba73-6d8b-4b7b-9ebe-366fcd92a079@linaro.org>
- <lwv5pk3dtyyxgtrwxss43dyecesv7pvrzvgwacwrnztkiowfkp@jqosvhrs3jk5>
- <42b56d7d-26cc-4c10-aca2-a0a5a16b09f6@linaro.org>
- <3kprgpvzffupnjbh2aodsowwklliywpemzwpsftd2cng562yuw@37tpwmpemr2c>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <3kprgpvzffupnjbh2aodsowwklliywpemzwpsftd2cng562yuw@37tpwmpemr2c>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425071018.36078-1-minhquangbui99@gmail.com>
 
-On 25/04/2025 09:26, Dmitry Baryshkov wrote:
-> What should driver do if:
+On Fri, Apr 25, 2025 at 02:10:14PM +0700, Bui Quang Minh wrote:
+> Hi everyone,
 > 
-> vdd-csiphy0-1p2-supply = <&vreg_1p2_ex0>; <- individual supply in PCB
-> vdd-csiphy1-1p2-supply = <&vreg_1p2_ex1>; <- individual supply in PCB
+> This only includes the selftest for virtio-net deadlock bug. The fix
+> commit has been applied already.
 > 
-> vdd-csiphy0-0p8-supply = <&vreg_0p9_ex0>; <- shared pin in the SoC
-> vdd-csiphy1-0p8-supply = <&vreg_0p9_ex1>; <- should be shared pin
+> Link: https://lore.kernel.org/virtualization/174537302875.2111809.8543884098526067319.git-patchwork-notify@kernel.org/T/
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+> Version 6 changes:
+> - Rebase on net-next and resolve conflicts
+> - Move the retry logic to xdp_helper
 > 
-> I don't want to allow DT authors to make this kind of mistake.
+> Version 5 changes:
+> - Refactor the selftest
+> 
+> Version 4 changes:
+> - Add force zerocopy mode to xdp_helper
+> - Make virtio_net selftest use force zerocopy mode
+> - Move virtio_net selftest to drivers/net/hw
+> 
+> Version 3 changes:
+> - Patch 1: refactor to avoid code duplication
+> 
+> Version 2 changes:
+> - Add selftest for deadlock scenario
+> 
+> Thanks,
+> Quang Minh.
+> 
+> Bui Quang Minh (4):
+>   selftests: net: move xdp_helper to net/lib
+>   selftests: net: add flag to force zerocopy mode in xdp_helper
+>   selftests: net: retry when bind returns EBUSY in xdp_helper
+>   selftests: net: add a virtio_net deadlock selftest
+> 
+>  .../testing/selftests/drivers/net/.gitignore  |  1 -
+>  tools/testing/selftests/drivers/net/Makefile  |  1 -
+>  .../testing/selftests/drivers/net/hw/Makefile |  1 +
+>  .../selftests/drivers/net/hw/xsk_reconfig.py  | 60 +++++++++++++++++++
+>  .../selftests/drivers/net/napi_id_helper.c    |  2 +-
+>  tools/testing/selftests/drivers/net/queues.py |  4 +-
+>  tools/testing/selftests/net/lib/.gitignore    |  1 +
+>  tools/testing/selftests/net/lib/Makefile      |  1 +
+>  .../selftests/{drivers/net => net/lib}/ksft.h |  0
+>  .../{drivers/net => net/lib}/xdp_helper.c     | 39 +++++++++---
+>  10 files changed, 98 insertions(+), 12 deletions(-)
+>  create mode 100755 tools/testing/selftests/drivers/net/hw/xsk_reconfig.py
+>  rename tools/testing/selftests/{drivers/net => net/lib}/ksft.h (100%)
+>  rename tools/testing/selftests/{drivers/net => net/lib}/xdp_helper.c (78%)
+> 
+> -- 
+> 2.43.0
 
-I require anybody submitting patches to show how they tested this.
-
-So you'd have to lie about testing it for a mistake like that to get 
-through.
-
----
-bod
 
