@@ -1,147 +1,142 @@
-Return-Path: <linux-kernel+bounces-619475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972BEA9BD1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:03:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A11A9BD15
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 04:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D7616B75D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:03:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68411927612
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541A91714B2;
-	Fri, 25 Apr 2025 03:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NY3Q2Aod"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166D42701AE;
-	Fri, 25 Apr 2025 03:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6026D16D9C2;
+	Fri, 25 Apr 2025 02:59:49 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id B1A9017736;
+	Fri, 25 Apr 2025 02:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745550228; cv=none; b=oLUd/VLRCycxozkZAbSyi7ZMTTgERKzuhxOS+mY24uGvCat0nQ/rL3uLO6lNfQoNSPmXoeM4F7fChBdO6KjASiKH43aRsRkQ8KbKkT+Zh3URMalDrw00LlU5OhcXSl+Jm/VcEJRbErkfwVgePFY3NY6apN2+zdq54EmxNltXBPs=
+	t=1745549989; cv=none; b=LyPmNso9BP9oXgdKFpGqQrbbBvS7zJvqZe5oLJI5MzkT9rqqM2zx430TsH6MMMuo1Q9i0Hfi6pGnnymI/Inp/DGEr1bZCiixqPgCwISn7xb4mWcWkDfArIPoywsKkl/qSF7XmUCJaLefdVGLcadi5k652Ddq0XFhw0ZjcFHz3Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745550228; c=relaxed/simple;
-	bh=PbrTW9Nb3NrHcVwh2uM1HWLU9tSO0MnJRZBwUbnBVL0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cAZDsZ5FSwfNaClyUBC6IHl8f65aB5QzlmRIyXZ90OXCufdKZPF8AKbrcbaGlrNg2Uf6gzg6Pt5MGw8i/8dShyLpL0SVS7sBeekP1t0QXeWgMotZAQ7cq1Hp/r4h1/LhCnP2bolIe8VJV+qeuDJ6TPslc8Lb3vziiSEk9ZBHdoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NY3Q2Aod; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745550227; x=1777086227;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=PbrTW9Nb3NrHcVwh2uM1HWLU9tSO0MnJRZBwUbnBVL0=;
-  b=NY3Q2Aodw/+ExeUtZhELwWKZmiXIMAuZ2+xlMa3sdpfzw0VDL0OYxX6g
-   ciY0SlETOdAY4x/9jizOtS+XdTR58zU5Jgcw//HFUNmPCozApZqHiXKek
-   4HH2gGBaevOki7Pd7PT6UYHbJ4TQBg1p+rDfYZsc0uC3QExJhqfZJvWbG
-   tEEmGB23rj6CxZsMb8h4A2W0kCKDYA1wxlaspwFTVHIsGMlPtiS+rCX0E
-   MTiHOWIWG8IZSLVA4bUYpuz3Cj34WXwTRLjB9jgUaIYIzLyB3E16770vS
-   hcZnT25Zn7x13CA6tEyXFi8UVFKCWc1UTSlvNzu8bTA7sY+iqcmpaanYu
-   g==;
-X-CSE-ConnectionGUID: ChGvJbipRnOoLizS4jH7pQ==
-X-CSE-MsgGUID: fRRXzPL+TNa4qLaFoyNWbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="57404506"
-X-IronPort-AV: E=Sophos;i="6.15,237,1739865600"; 
-   d="scan'208";a="57404506"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 20:03:46 -0700
-X-CSE-ConnectionGUID: AdA3GsKPSe+gUpEo+rXnjA==
-X-CSE-MsgGUID: 2wUPDRRrROKdrn9fLmgO4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,237,1739865600"; 
-   d="scan'208";a="136858169"
-Received: from ipu5-build.bj.intel.com (HELO [10.238.232.136]) ([10.238.232.136])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 20:03:43 -0700
-Subject: Re: [PATCH 2/2] udmabuf: fix vmap missed offset page
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>, Huan Yang
- <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, Dave Airlie <airlied@redhat.com>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20250415031548.2007942-1-link@vivo.com>
- <20250415031548.2007942-3-link@vivo.com>
- <IA0PR11MB7185796FAA2A065CBE4EAB37F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: Bingbu Cao <bingbu.cao@linux.intel.com>
-Message-ID: <70a4ae40-dbfe-a8ff-c4d7-a11c35490b3a@linux.intel.com>
-Date: Fri, 25 Apr 2025 10:59:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1745549989; c=relaxed/simple;
+	bh=1noSq6+jV4vpoXsxBAPhm5+YkmZNnuvS+RNNNsXt2fY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=Q/EtM9EhGIgz6QG0IhQisDFoKHMgKdBXoYzwEJ2GwElypQB23M/AOk5ZtWANBv7o/HjDIhnm0ldJJRNri5mpGKBQW23L6kIHpbYbw1NCKstGX7hT82tKj8Z/fnWlmNV7KPibIm+MPFKhg5E/XbKZwJRSyLWhSo/fon25zZiN1Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id D9FA4601717E1;
+	Fri, 25 Apr 2025 10:59:35 +0800 (CST)
+Message-ID: <8f562746-15f3-4cb5-8f18-e916e8ae4718@nfschina.com>
+Date: Fri, 25 Apr 2025 10:59:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <IA0PR11MB7185796FAA2A065CBE4EAB37F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] alarmtimer: switch spin_{lock,unlock}_irqsave() to
+ guard()
+To: John Stultz <jstultz@google.com>
+Cc: tglx@linutronix.de, sboyd@kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <CANDhNCq0yOXRF+6_JaMYo98o5uKP_af+UXJcJmzuFvX63RdTaA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2025/4/25 07:59, John Stultz wrote:
+> On Thu, Apr 24, 2025 at 7:48 AM Su Hui <suhui@nfschina.com> wrote:
+>> There are two code styles for the lock in alarmtimer, guard() and
+>> spin_{lock,unlock}_irqsave(). Switch all these to guard() to make code
+>> neater.
+>>
+> Thanks for sending this out! A few comments below.
+>
+>> diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+>> index e5450a77ada9..920a3544d0cd 100644
+>> --- a/kernel/time/alarmtimer.c
+>> +++ b/kernel/time/alarmtimer.c
+>> @@ -70,12 +70,10 @@ static DEFINE_SPINLOCK(rtcdev_lock);
+>>    */
+>>   struct rtc_device *alarmtimer_get_rtcdev(void)
+>>   {
+>> -       unsigned long flags;
+>>          struct rtc_device *ret;
+>>
+>> -       spin_lock_irqsave(&rtcdev_lock, flags);
+>> -       ret = rtcdev;
+>> -       spin_unlock_irqrestore(&rtcdev_lock, flags);
+>> +       scoped_guard(spinlock_irqsave, &rtcdev_lock)
+>> +               ret = rtcdev;
+>>
+>>          return ret;
+> This seems like it could be simplified further to just:
+> {
+>      guard(spinlock_irqsave, &rtcdev_lock);
+>      return rtcdev;
+> }
+>
+> No?
+Yes, it's better. I can update this in v2.
+>> -       spin_lock_irqsave(&freezer_delta_lock, flags);
+>> -       min = freezer_delta;
+>> -       expires = freezer_expires;
+>> -       type = freezer_alarmtype;
+>> -       freezer_delta = 0;
+>> -       spin_unlock_irqrestore(&freezer_delta_lock, flags);
+>> +       scoped_guard(spinlock_irqsave, &freezer_delta_lock) {
+>> +               min = freezer_delta;
+>> +               expires = freezer_expires;
+>> +               type = freezer_alarmtype;
+>> +               freezer_delta = 0;
+>> +       }
+> I'm not necessarily opposed, but I'm not sure we're gaining much here.
+I can remove this in v2.
+>
+>> @@ -352,13 +347,13 @@ EXPORT_SYMBOL_GPL(alarm_init);
+>>   void alarm_start(struct alarm *alarm, ktime_t start)
+>>   {
+>>          struct alarm_base *base = &alarm_bases[alarm->type];
+>> -       unsigned long flags;
+>>
+>> -       spin_lock_irqsave(&base->lock, flags);
+>> -       alarm->node.expires = start;
+>> -       alarmtimer_enqueue(base, alarm);
+>> -       hrtimer_start(&alarm->timer, alarm->node.expires, HRTIMER_MODE_ABS);
+>> -       spin_unlock_irqrestore(&base->lock, flags);
+>> +       scoped_guard(spinlock_irqsave, &base->lock) {
+>> +               alarm->node.expires = start;
+>> +               alarmtimer_enqueue(base, alarm);
+>> +               hrtimer_start(&alarm->timer, alarm->node.expires,
+>> +                             HRTIMER_MODE_ABS);
+>> +       }
+> Similarly, this just seems more like churn, than making the code
+> particularly more clear.
+I can remove this in v2 too.
+> Overall, there's a few nice cleanups in this one, but there's also
+> some that I'd probably leave be. I personally don't see
+> straightforward explicit lock/unlocks as an anti-patern, but the guard
+> logic definitely helps cleanup some of the uglier goto unlock
+> patterns, which is a nice benefit.  One argument I can see for pushing
+> to switch even the simple lock/unlock usage, is that having both
+> models used makes the code less consistent, and adds mental load to
+> the reader, but there's a lot of complex locking that can't be done
+> easily with guard() so I don't know if we will ever be able to excise
+> all the explicit lock/unlock calls, and the extra indentation for
+> those scoped_guard sections can cause readability problems on its own
+> as well.
+Understand, thanks for your suggestions!
+I will send a v2 patch to update these points later if there is no more 
+other
+suggestion.
 
-On 4/22/25 1:22 PM, Kasireddy, Vivek wrote:
-> Hi Huan,
-> 
->> Subject: [PATCH 2/2] udmabuf: fix vmap missed offset page
->>
->> Before invoke vmap, we need offer a pages pointer array which each page
->> need to map in vmalloc area.
->>
->> But currently vmap_udmabuf only set each folio's head page into pages,
->> missed each offset pages when iter.
->>
->> This patch set the correctly offset page in each folio into array.
->>
->> Signed-off-by: Huan Yang <link@vivo.com>
->> Fixes: 5e72b2b41a21 ("udmabuf: convert udmabuf driver to use folios")
->> ---
->>  drivers/dma-buf/udmabuf.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
->> index 79845565089d..af5200e360a6 100644
->> --- a/drivers/dma-buf/udmabuf.c
->> +++ b/drivers/dma-buf/udmabuf.c
->> @@ -120,7 +120,8 @@ static int vmap_udmabuf(struct dma_buf *buf, struct
->> iosys_map *map)
->>  		return -ENOMEM;
->>
->>  	for (pg = 0; pg < ubuf->pagecount; pg++)
->> -		pages[pg] = &ubuf->folios[pg]->page;
->> +		pages[pg] = folio_page(ubuf->folios[pg],
->> +				       ubuf->offsets[pg] >> PAGE_SHIFT);
-> IIUC, it does not look like vm_map_ram() or the other functions it calls would
-> write to these tail page pointers (struct page*), which should be safe even
-> when HVO is enabled (based on your conversations with Muchun). However,
-> I am wondering whether Bingbu can test this out with HVO enabled?
+Su Hui
 
-Sorry, I cannot test HVO enabled case. I was running my case with local
-revert patch. :)
-
-> 
-> Regardless,
-> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
-> 
-> Thanks,
-> Vivek
-> 
->>
->>  	vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
->>  	kvfree(pages);
->> --
->> 2.48.1
-> 
-
--- 
-Best regards,
-Bingbu Cao
 
