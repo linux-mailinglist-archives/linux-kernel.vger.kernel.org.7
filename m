@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-621168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F3CA9D530
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 00:10:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B670A9D529
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 00:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD237177BE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0C31898502
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 22:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FD2235347;
-	Fri, 25 Apr 2025 22:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5930B233735;
+	Fri, 25 Apr 2025 22:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="daJe1wps"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="R2A0oH31"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DE0233702
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 22:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1202218592;
+	Fri, 25 Apr 2025 22:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745619035; cv=none; b=nWEUJXn9zfkZuIb068o2fpi4c3qzVCQUzFMm++vQ7gN2QOSNt421IVOe2YWgycg2CCSp60vtHpArjj0uF8piEz5wZy77fDmX8k//RMRhVQ89bMCT+RfpApeOjxfehL/vnYZ8A8LIYser75yZHrfzonnvWmcpljJakOuFgREIwrA=
+	t=1745618973; cv=none; b=ai2s4t4xn6GMrggoVzI3uU4en3Krlwf7caLMefbVhEXN9q+5xX2LiuXzuHIVeQb1x4IqjhhIvyB8PHuzeX7IQHK0IYXz1txRiforSd9n+6tsjHnMFtCi5FapU51fCnQMap+s5bje18HVodLOasot8atPi7zX8iKB4CyipMFQhF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745619035; c=relaxed/simple;
-	bh=aimnY6tUnV94o9RMhPjhm6dvNWiap2zaXUs78GC9ue4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UKqSVes76Qd3weFJAyfIkOt6//SAgMJ+bRFgoNpa+D00etY7Po9MlrgF8pwezrZ6dIGec6qhT4TekkqsBmJZPd+I4YpCVEAwnbY6x3mHH7wiWJ2xZK2mpmuNGFPNipkBCZSyjTBuYIra6vaPqDE9q9yZzNtWwR7QHjWvQL89br8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=daJe1wps; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b0e5f28841dso1604552a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 15:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745619033; x=1746223833; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4LgaQ1GuAUWP/kw7PddvzqxjqGh3o+JtvV4OkUBUe8=;
-        b=daJe1wps1Ozklx5W+J2iyk0OddGhNcj5xcZ9HN4J1U6ZY62U0Vi1+hofDXtPL9OciX
-         4rflYit7WXV8QWNj5dghU40uqd0bvGgtx96H1+BwzV7wUSTmHYJMQ697eqJhl2cSqbMW
-         R835WVWUb9PgxKes0TlVtwiBhKk9OOyR9UPKsAl/AX95chJme0LJdC2tkz+BYxvSve4D
-         leY0nnuSK2+uWKh+T4vzTsn/hDYx6spTeEvY9QMnGbMWc+D7qYvAzHwG5cNxtRPWX1o+
-         lNAChxPAuz7BDWOjsLC83BkLNc6S1tn7cVTCzc5bzmd7WCKT6oi3MbuvYYpqU0AectHF
-         kt4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745619033; x=1746223833;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4LgaQ1GuAUWP/kw7PddvzqxjqGh3o+JtvV4OkUBUe8=;
-        b=NuhgUsBc/8bzGPWuwbIVdtNvK0yOw5Qmn5cHiblDG11peQbI25x7QMTObk+Pj30bMD
-         N5+qubhkncpFAQijVUpQDCFWhJLucJnNePZ625qU6p2bKKQTR6o2cGOUnMyXzeUqS/xL
-         +UEqab4z3AwNb+q6nrw819DK+5GAgChSXteTfuEfPwohpBePu+2gZO2RawGb8IRdYuAZ
-         S4C6g1Mcea/MAEvSKJ23k1fa/vEvgtNnO75ExJ4L/B9vueNAEpDT2HDBQji0ghsfA/TZ
-         qrcCp3eDHRcaXRn8KZWjvPGUhN3IcjO/be7j1t/8gr7MMDYBd7Du5PSxSIkaiPaR4QBK
-         Q5FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNvIR7mrvHKkkf1TKRe1XIluKLh76q+plLMZCVRgyGbvRGEe5IfSYF/HSJYzQlHHBIbI4hL+Imknd8fH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0FRFSPtsLVMUyH6DRRPb7Bx8mhk0RuEbVEPGLyrUfS8CuyvQH
-	c6aRn83sTD7dciI9eb+JfWxb+LTZ/BfYwUjBRMvYizfyGSgD0oafHaRDnmHV58QsbP169MQgTyE
-	gWA==
-X-Google-Smtp-Source: AGHT+IHcSOCDilduu6zKy2qslrDSQQbZGnCFwZnVCF+4bEL6G4X94qzFQSwcH21tq4LeS9ZdDdCRP63DyQE=
-X-Received: from pjbrr7.prod.google.com ([2002:a17:90b:2b47:b0:2fa:2891:e310])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4cc2:b0:2ee:44ec:e524
- with SMTP id 98e67ed59e1d1-309f7e8f6dbmr5194411a91.35.1745619033277; Fri, 25
- Apr 2025 15:10:33 -0700 (PDT)
-Date: Fri, 25 Apr 2025 15:09:00 -0700
-In-Reply-To: <20250324160617.15379-1-bp@kernel.org>
+	s=arc-20240116; t=1745618973; c=relaxed/simple;
+	bh=xlnD3QHWa+7MUgoy3f5aIfPeC6qtSBgmxlA3LctdjjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ec+6kD/2o6ZgGO+Wua9PsWeTFNqfui/KkZkdbaPZNeknpEbRoOYzRTcVeGt/e74VAWafDd0MWLUMEHP8LXTHrINeYHgSE25ogsiJ4X2vWiczryzwXN7Sfq0mzd3dEycTwzTgaBAiZwM/EdPAM+SmZS2X24OOcyGdxpwX8UesQeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=R2A0oH31; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=U33urWJ0nbHUSj4/Ei55DnraHJ93Xd3t00xN2jKFwUw=; b=R2A0oH31L8HOyJJ3pZ3Q+UUzRc
+	o8mEE4btAzk82MmSOlVcj24R+jgnLh+OsOAczxgLLgS7G3hElozLwNVypRWDYOepIbpoVJYYpl+LF
+	afGJodDUn06LsKLeAysAE0DoQVb269hnPe18BDB6CbXe1pT0+m5eOJ81KEBdzwIb6gFoOffAhiPeu
+	KUnwTRFJuKDYHk42LkkmxZsEWzULaSispPBUoLgj9Szq1ggFQvwQamvith2pRqh8E0cfSxpxyfVmu
+	evz/qWNUPvxPBnP/IKu7+r7HYvCLQ7LVaFIi7Nz0dAkZj5B97TD25ozt98qv8jDXvXg0BjQ/+Pu2p
+	xi4wANtQ==;
+Received: from i53875aba.versanet.de ([83.135.90.186] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1u8REO-0008Uk-72; Sat, 26 Apr 2025 00:09:12 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: srinivas.kandagatla@linaro.org,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	detlev.casanova@collabora.com,
+	sebastian.reichel@collabora.com
+Subject: Re: (subset) [PATCH RESEND v2 0/6] RK3576 OTP support
+Date: Sat, 26 Apr 2025 00:09:02 +0200
+Message-ID: <174561877790.431677.17884049982561107688.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250210224510.1194963-1-heiko@sntech.de>
+References: <20250210224510.1194963-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324160617.15379-1-bp@kernel.org>
-X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
-Message-ID: <174559664970.890368.7017242957436567888.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: x86: Sort CPUID_8000_0021_EAX leaf bits properly
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Borislav Petkov <bp@kernel.org>
-Cc: X86 ML <x86@kernel.org>, KVM <kvm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Mar 2025 17:06:17 +0100, Borislav Petkov wrote:
-> WRMSR_XX_BASE_NS is bit 1 so put it there, add some new bits as
-> comments only.
 
-Applied to kvm-x86 misc, thanks!
+On Mon, 10 Feb 2025 23:45:04 +0100, Heiko Stuebner wrote:
+> This enables OTP support in the nvmem driver for rk3576.
+> 
+> I expect to pick the clock patch (patch1) and the arm64-dts patch (patch6)
+> myself, after the nvmem-driver and -binding patches have been applied
+> (patches 2-5).
+> 
+> But kept them together for people wanting to try this series.
+> 
+> [...]
 
-[1/1] KVM: x86: Sort CPUID_8000_0021_EAX leaf bits properly
-      commit: 49c140d5af127ef4faf19f06a89a0714edf0316f
+Applied, thanks!
 
---
-https://github.com/kvm-x86/linux/tree/next
+[1/6] clk: rockchip: rk3576: define clk_otp_phy_g
+      commit: d934a93bbcccd551c142206b8129903d18126261
+
+While the original nvmem applied message [0] listed the clock patch,
+it was in fact not applied there - probable for being a clock patch.
+
+So I've done that now, hopefully as fix for 6.15 to make the
+nvmem work in this timeframe.
+
+
+[0] https://lore.kernel.org/linux-arm-kernel/173978599692.25901.15315285566342669137.b4-ty@linaro.org/
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
