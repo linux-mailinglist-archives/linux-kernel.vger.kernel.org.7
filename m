@@ -1,365 +1,154 @@
-Return-Path: <linux-kernel+bounces-620543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA73A9CC28
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:57:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E998A9CC3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64C037B8490
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:55:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC414E1178
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440AF259C8D;
-	Fri, 25 Apr 2025 14:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA56258CE4;
+	Fri, 25 Apr 2025 14:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aNivC7Ty"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIefl8f2"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B39E259483
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF53D28EC
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592962; cv=none; b=n3quiMOZ8Y7iVZMTwSqzy9Eks00a9kfWfZbYppdsS7MY4k3EXQeYoECIiHxzu3VbYpFGGIs4Nqgbc6DPRQNch8mQDW623Ig3NymVg6vzmP9roOlBgYVcqXYQRjcIjumm80XsDa65aMV1f+cpMUkRNNvydX9zQJsAfulK7mz7C2I=
+	t=1745593088; cv=none; b=YM1z8r/FqM7Suh2oNCZF/w8OhvUn1slR+Wf841BD+kM5z2rKJU3yqdLVq4l8isBlxV73hD5+stqxL3yhwBKfWM8hdNbYZ58ppbpkmQxDfXCH7bGVdU7GxHXHdsAQik4hoA0rUDbSj6ktLZ4NM2/YvrJmeaD38uvFxtT8vMGP3zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745592962; c=relaxed/simple;
-	bh=Skqcgh8PtxclxdmdbrawzglN71VPDDZQI2CXZmEw3bA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0sdukIWaKDGWJUB7mxAlmzvYSF7Cl6DcdYbDjl3/zUplTzcq03WtEzuKM03i+Djaz+GKrsrkOCMK4KL1IKVaX0vC/QNoRRZH0IOHMIeX3ldtPruAZvCkG2v4OANy9JNe/YDr12B0kuJl9RsoMBcEq5pbkihu9ShGGRfaPg/Pq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aNivC7Ty; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso22651325e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:55:59 -0700 (PDT)
+	s=arc-20240116; t=1745593088; c=relaxed/simple;
+	bh=/OKM3YtB1u7t4llITDX/LmLKKxVYmX8r8f4jO8mJyfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OeazQThV1ZT1ATq9M+juxKDz5cycG0aAWjgJfXIDRQB4DpLvZs+HS8qLbdvWAjW65YwR1k1uPdyK+ywC1BG2GP4VJ3td2EOEeUHNCZmupoGR6nTYdZNVB8ICREUmrUGVkTVh0o8c8NO2RLfUIXpzwqt1j4cnbLCgvmw5PHkXkq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LIefl8f2; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e7299e3ab5cso1869049276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:58:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1745592958; x=1746197758; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9wi3Z4F/ZXo2lSh1mTkLkRMTQraUNG6drOWw2/TXm2o=;
-        b=aNivC7TyEMTsgX9viYEa3LvvCEauImDcbbPE4p8RgphRsqmk2egtni5ZcFWWuFKAVf
-         Pv6hLdMs+fDsn9YnsoVl13cnTDdsfqDyv3uGptKX3wFaX8cCR3Dk4bGnjgYrertYyHgz
-         P53Th0IcqFMK6IJXi4WSopWGB241waMDm1V3qhLUEiYEJHBRS9o2ryPX4+eGRRWTlZpu
-         hsO5f067wBRg/qTIj+VaXmxwNzk2ioFywUvx19xhKT64OrvUOECo9F0tVdRK5/Fu31ii
-         asOhKyK5JcLFeJ+oZGn0jamEfYdmRtZhgX5NItxuLKcPOu6au+WwyeLncu+Y1bPs79m3
-         bgtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745592958; x=1746197758;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1745593085; x=1746197885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9wi3Z4F/ZXo2lSh1mTkLkRMTQraUNG6drOWw2/TXm2o=;
-        b=BBTO7sWD4JvlfPhPFLifMEJ/gr7kjhU1qlYkgyvJpr0A09Q0EFq80YDtYs9+TTUXHO
-         O/T4L9GoJtUnQ87AYRzejh2FpA4tTBb+YY6yiVUNFv10PUecP2yVl934Xj0wAreltABs
-         YL3Z6W7A3bO3ymmZ9QjyE97MXuimXknnO5lzYnFPns0YCRU4+Y+17bViywj06xxQbMOQ
-         oJ89bBrx1hP7uBTSuq9GVHiIRvmadJBOvF10SApjYPd6hvKXuTfY40PPqYzCi67WdU9I
-         tMZtORf3Gxd7eDH35gCRRPReS/YlgjO4tvw+WcUUsA5TORA7CmAQFH7cpKzoCYsnZrjK
-         w0wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWsh3YapJWaBuMGqCDuX+r7uRwJpD9p5CtbeeqbiRMnx77FNU1tCpcKEllzokAbYs7ZyKH9Hj9unRqA7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKDbVZcn6p3+1IOz9ewdy5oMPY/bTjEC/G7EKMu8atj1xNaUDM
-	cAYm7CFZn26ZjTX0H+hN6+YWeYToJ8zYDYh6gLY97ceuOFgzpBhkGhNWYlhs1nU=
-X-Gm-Gg: ASbGncsQnVFDAzFNZpgPLKgiip50jbsqMFYNUBsw7eOe8UGDHqfwV/mUyFu/igSBD59
-	zl2CCJrRE9XeYgHOEHuJoDxp/KjgpVpEqXxIUI2SNRzxZDdoHLnzQFDzwoJsH/NdRTdJ3tOjO/q
-	ZBJsMkThKdq7xUIM4w3XCzv1TFgJQ7CvhVaHwDaElcU3LoxWCeWgLQvuB8ox+fIBZeSgE6EWOM7
-	ZX+W6wFFWTL9SGKkLNgwN9Dpoei/v9YY5K09nV0GgoXzmVxzOtPmcRAeAfPlprC2QKesPMwyVeS
-	7Le8E+3GGy62Tcz48rNUB19paPB2t+V903S9ChLd11s=
-X-Google-Smtp-Source: AGHT+IFgIRokUZYTYI70Z7OlSIFK/SGUSJHZsWnIET747+TcTmVoXGAOSPAik/ehs/Dbq7WC4ivhng==
-X-Received: by 2002:a05:600c:510e:b0:43c:f3e4:d6f7 with SMTP id 5b1f17b1804b1-440a66b02d8mr25061715e9.31.1745592957584;
-        Fri, 25 Apr 2025 07:55:57 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4408d8d191bsm85485845e9.1.2025.04.25.07.55.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 07:55:57 -0700 (PDT)
-Date: Fri, 25 Apr 2025 16:55:55 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Tomasz Figa <tfiga@chromium.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hung_task: configurable hung-task stacktrace loglevel
-Message-ID: <aAuie7Pgm3_9MsXK@pathway.suse.cz>
-References: <20250424070436.2380215-1-senozhatsky@chromium.org>
- <aAoZbwEtkQ3gVl5d@pathway.suse.cz>
- <xhkbymqobtva6j7xmwzvh5g2tvuixvu2hwfdozed6hijrt3vkl@rywdhz43e52y>
+        bh=n+JfgXLgZyCYxu7B7mUIKQ4/DMO5+uHVG4Enqm6k6wU=;
+        b=LIefl8f2OCZ4ODUHVf3NgBiso0nHhT8MOUdOKHio2Mgg6qEAy56mohySXsz31K0NZl
+         9PNkbR59mvdSWTrGJZRmeaoN+l/XBDAtTZKzTEdK5hUggbteh4PIJc3Hfm2OEPPUFGRR
+         JqHAGkRQ7v0z/IoGG9ZxhGjaf1KlTeFWKZWb+Hb+YRyaaGzk0MbDljYBlL6zbJdyI7+N
+         QKkvvzmOpWhjSYJdcfzRmr8bwHQtvz57jrlrJ/NRvlOBDHFfdio6GThvOCoGEZWn3jKt
+         UqAzNR11g465TzUJxvzgbC4srHOAN6ekjxPaBdZt8sgL3WbyFdiWjpAnDuSjVtA3R5zm
+         djNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745593085; x=1746197885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n+JfgXLgZyCYxu7B7mUIKQ4/DMO5+uHVG4Enqm6k6wU=;
+        b=tkNIaEkMV4d4fhzljlJgS7vxTS+l3flv5nyP9XgOvyuNBCv2x0pekKP3oWQbjFh7xE
+         LGbBAxFpO2r1AqWu3VSuEBoaBUB8tjFzPHqN6vnmQlkws7E7ePxQLLDjM/9xDlas43cP
+         YF06j+hR6/JBctPh2GiVBxlga8h9D/JJ6a/XMUXI+bZgMsm7rrT8uTund21cy9722i8V
+         eye/ALV3UEZ5ZSdL8o0hQqtzzs4XXxfjF9p0xJTaMXvfqM3M8gTfQqweO+embEevYPb9
+         nvKwdEcNeMhwF1G050OFd6WVktgoOvPDaJ8l/gVWARE6WADiIoIAxEdusS759nyqn5J2
+         LOug==
+X-Forwarded-Encrypted: i=1; AJvYcCWQuxEB2ZzR0r9QWOV4re0hiNNbUJkb5bfkR7WA5gd0opEdm+vfxp7Mc7pLKgG1813tY30Tv4WChh71EPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvbk3bIngJH0hI9ZOwLd0QIp+mMcSYuZ0ICHqrn5la0g9ta6cl
+	/rqo03BoJcL+TQiPLSyobfIQs3egWrtiPxBeUOjEpy7jGXQPDQgEpZJgkOTVSf1uWpMCWprN9vU
+	T4P+emANY3tgXpFhFzzdSEDU7K6E=
+X-Gm-Gg: ASbGncubD1goodFWW9rZEmx42tIJ29laXc3NDu4cUdlwrDn74xX9cIEL1dVAoClHTew
+	e6G6M8N0D9TiWbegFvBzpdD2MXN5yNWw3BE5A9RHGXX8/dL5ZtdrcAD2fg0Anzh2gMCg8tN71II
+	ed4/sABzAM313/z+K+kzJIFlhQgaGZ3JWSig==
+X-Google-Smtp-Source: AGHT+IEo7ARr7g02UpjCXpp5GUfKWlGgEmFddHaeQwxNo6PWnqJ2zIiDARe5QyTYEKSdmvHqXaz07LR62euwob5p1Zg=
+X-Received: by 2002:a05:6902:140b:b0:e6b:80e3:2d00 with SMTP id
+ 3f1490d57ef6-e73167d2953mr3499792276.17.1745593085330; Fri, 25 Apr 2025
+ 07:58:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhkbymqobtva6j7xmwzvh5g2tvuixvu2hwfdozed6hijrt3vkl@rywdhz43e52y>
+References: <20250424153815.4003-1-haowenchao22@gmail.com> <8905cbf7-7507-44de-8721-b3e75e80732b@linux.alibaba.com>
+In-Reply-To: <8905cbf7-7507-44de-8721-b3e75e80732b@linux.alibaba.com>
+From: Wenchao Hao <haowenchao22@gmail.com>
+Date: Fri, 25 Apr 2025 22:57:54 +0800
+X-Gm-Features: ATxdqUEg70XJjGEjqzqthCjr_rv-cR_B85mtW4y2_0_YdVO9cQCkVBrryBfOaCY
+Message-ID: <CAOptpSMZtw8xEHqgu-ufdQouiAHpitkQtBdFXmEbRGQ+FSAWYA@mail.gmail.com>
+Subject: Re: [PATCH] mm/compaction: do not break pages whose order is larger
+ than target order
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 2025-04-25 13:49:13, Sergey Senozhatsky wrote:
-> Hi Petr,
-> 
-> On (25/04/24 12:58), Petr Mladek wrote:
-> > On Thu 2025-04-24 16:02:43, Sergey Senozhatsky wrote:
-> > > Currently, hung-task watchdog uses two different loglevels
-> > > to report hung-tasks: a) KERN_INFO for all the important task
-> > > information (e.g. sched_show_task()) and b)  KERN_ERR for the
-> > > rest.
-> > 
-> > IMHO, the two different loglevels make sense. The KERN_ERR
-> > message seems to inform about that a task gets blocked for too long.
-> > And KERN_INFO is used for an extra debug information.
-> > 
-> > > This makes it a little inconvenient, especially for
-> > > automated kernel logs parsing.
-> > 
-> > Anyway, what is the exact problem, please?
-> > Are the KERN_INFO messages filtered because of console_loglevel?
-> > Or is it a problem to match all the related lines?
-> 
-> The latter one.  A made up example, just to demonstrate what we are
-> getting now:
-> 
+On Fri, Apr 25, 2025 at 2:53=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2025/4/24 23:38, Wenchao Hao wrote:
+> > When scanning free pages for memory compaction, if the compaction targe=
+t
+> > order is explicitly specified, do not split pages in buddy whose order
+> > are larger than compaction target order.
+>
+> We've already checked this in suitable_migration_target(), so how did
+> you observe that there are still attempts to isolate such non-suitable
+> free large folios? Please explain your usecase in detail.
+>
 
-Note: I do not have strong opinion. I am rather thinking loudly.
+I found such non-suitable during testing proactive compaction on
+android device (6.6 kernel), and I want to use proactive compaction
+to produce order4 pages for mthp.
 
-When I look at it. A prefix line:
+The test device did not include your patch "mm: compaction: limit the suita=
+ble
+target page order to be less than cc->order".
 
-<6>[  125.297687][  T140] ------------[ cut here ]------------
+However, from the analysis of the code flow, even if it is included,
+similar non-suitable free large folios may still appear.
 
-> <3>[  125.297687][  T140] INFO: task zsh:470 blocked for more than 61 seconds.
-> <3>[  125.302321][  T140]       Not tainted 6.15.0-rc3-next-20250424-00001-g258d8df78c77-dirty #154
-> <3>[  125.309333][  T140] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> <6>[  125.315040][  T140] task:zsh             state:D stack:0     pid:470   tgid:470   ppid:430    task_flags:0x400100 flags:0x00004002
-> <6>[  125.320594][  T140] Call Trace:
-> <6>[  125.322327][  T140]  <TASK>
-> <6>[  125.323852][  T140]  __schedule+0x13b4/0x2120
-> <6>[  125.325459][  T140]  ? schedule+0xdc/0x280
-> <6>[  125.327100][  T140]  schedule+0xdc/0x280
-> <6>[  125.328590][  T140]  schedule_preempt_disabled+0x10/0x20
-> <6>[  125.330589][  T140]  __mutex_lock+0x698/0x1200
-> <6>[  125.332291][  T140]  ? __mutex_lock+0x485/0x1200
-> <6>[  125.334074][  T140]  mutex_lock+0x81/0x90
-> <6>[  125.335113][  T140]  drop_caches_sysctl_handler+0x3e/0x140
-> <6>[  125.336665][  T140]  proc_sys_call_handler+0x327/0x4f0
-> <6>[  125.338069][  T140]  vfs_write+0x794/0xb60
-> <6>[  125.339216][  T140]  ? proc_sys_read+0x10/0x10
-> <6>[  125.340568][  T140]  ksys_write+0xb8/0x170
-> <6>[  125.341701][  T140]  do_syscall_64+0xd0/0x1a0
-> <6>[  125.343009][  T140]  ? arch_exit_to_user_mode_prepare+0x11/0x60
-> <6>[  125.344612][  T140]  ? irqentry_exit_to_user_mode+0x7e/0xa0
-> <6>[  125.346260][  T140]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> <6>[  125.347772][  T140] RIP: 0033:0x7fa4bd8be687
-> <6>[  125.348958][  T140] RSP: 002b:00007ffecf417820 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-> <6>[  125.351161][  T140] RAX: ffffffffffffffda RBX: 00007fa4bd82e300 RCX: 00007fa4bd8be687
-> <6>[  125.353221][  T140] RDX: 0000000000000002 RSI: 00005621f5c65860 RDI: 0000000000000001
-> <6>[  125.355338][  T140] RBP: 00005621f5c65860 R08: 0000000000000000 R09: 0000000000000000
-> <6>[  125.357424][  T140] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
-> <6>[  125.359677][  T140] R13: 00007fa4bda175c0 R14: 00007fa4bda14e80 R15: 00007fa4bdb59f70
-> <6>[  125.361551][  T140]  </TASK>
-> <3>[  125.362363][  T140] INFO: task zsh:470 is blocked on a mutex likely owned by task zsh:470.
-> <6>[  125.364467][  T140] task:zsh             state:D stack:0     pid:470   tgid:470   ppid:430    task_flags:0x400100 flags:0x00004002
-> <6>[  125.367493][  T140] Call Trace:
-> <6>[  125.368359][  T140]  <TASK>
-> <6>[  125.369180][  T140]  __schedule+0x13b4/0x2120
-> <6>[  125.370364][  T140]  ? schedule+0xdc/0x280
-> <6>[  125.371486][  T140]  schedule+0xdc/0x280
-> <6>[  125.372518][  T140]  schedule_preempt_disabled+0x10/0x20
-> <6>[  125.374049][  T140]  __mutex_lock+0x698/0x1200
-> <6>[  125.375326][  T140]  ? __mutex_lock+0x485/0x1200
-> <6>[  125.376572][  T140]  mutex_lock+0x81/0x90
-> <6>[  125.377773][  T140]  drop_caches_sysctl_handler+0x3e/0x140
-> <6>[  125.379391][  T140]  proc_sys_call_handler+0x327/0x4f0
-> <6>[  125.380715][  T140]  vfs_write+0x794/0xb60
-> <6>[  125.381951][  T140]  ? proc_sys_read+0x10/0x10
-> <6>[  125.383083][  T140]  ksys_write+0xb8/0x170
-> <6>[  125.384329][  T140]  do_syscall_64+0xd0/0x1a0
-> <6>[  125.385461][  T140]  ? arch_exit_to_user_mode_prepare+0x11/0x60
-> <6>[  125.387110][  T140]  ? irqentry_exit_to_user_mode+0x7e/0xa0
-> <6>[  125.388566][  T140]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> <6>[  125.390194][  T140] RIP: 0033:0x7fa4bd8be687
-> <6>[  125.391268][  T140] RSP: 002b:00007ffecf417820 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-> <6>[  125.393367][  T140] RAX: ffffffffffffffda RBX: 00007fa4bd82e300 RCX: 00007fa4bd8be687
-> <6>[  125.395506][  T140] RDX: 0000000000000002 RSI: 00005621f5c65860 RDI: 0000000000000001
-> <6>[  125.397494][  T140] RBP: 00005621f5c65860 R08: 0000000000000000 R09: 0000000000000000
-> <6>[  125.399701][  T140] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
-> <6>[  125.401663][  T140] R13: 00007fa4bda175c0 R14: 00007fa4bda14e80 R15: 00007fa4bdb59f70
-> <6>[  125.403579][  T140]  </TASK>
+suitable_migration_target() only check before isolate_freepages_block(), an=
+d
+check is based on the starting page of pageblock.
 
-and a suffix line
+If the target order is relatively small(order4 for example), just one check=
+ in
+suitable_migration_target() is not enough, because there may be other free
+folios which are larger than order4 in this pageblock.
 
-<6>[  125.403579][  T140] ------------[ cut here ]------------
-
-might be helpful for both automated monitors and humans => win win solution.
-
-> So there are <3> and then <6> lines and we can't easily tell when to
-> stop parsing and what to consider part of the automated error report
-> and what not to, there also can be some other <6> lines in between.
-
-All the related information should be printed from the same context.
-It is "[  T140]" in this case. The only exception would be backtraces
-from other CPUs.
-
-> > > Introduce CONFIG_HUNG_TASK_STACKTRACE_LOGLEVEL so that (a)
-> > > becomes configurable.
-> > 
-> > I am not sure if adding hung-task-specific config option is
-> > the right solution. I guess that other watchdogs or other
-> > similar reports have the same problem.
+> > Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+> > ---
+> >   mm/compaction.c | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
 > >
-> > It seems that several other reports, for example,
-> > watchdog_hardlockup_check(), or __die(), are using KERN_DEFAULT
-> > which is configurable via CONFIG_MESSAGE_LOGLEVEL_DEFAULT.
-> > 
-> > A solution might be using KERN_DEFAULT for sched_show_task()
-> > in hung_tasks detector as well.
-> 
-> So my worry with CONFIG_MESSAGE_LOGLEVEL_DEFAULT was that, if we
-> set it, say, to 3 (KERN_ERR), then how many "false positives" we
-> will get?  There are many printk("") calls in the kernel that
-> default to MESSAGE_LOGLEVEL_DEFAULT, as far as I understand it:
-> 	git grep "printk(\"" | grep -v TP_printk | wc -l
-> 	9001
-
-Just for record, this still counts also many other printk() wrappers,
-e.g. bpf_printk(), srm_printk(), dprintk().
-
-It should be more precise with -w option:
-
-	$> git grep -w "printk(\"" | wc -l
-	2830
-
-That said, I agree that it might still mean a lot of false
-positives.
-
-> But maybe that is the solution.  Do you want to switch sched_show_task()
-> to KERN_DEFAULT for all or would it be better to still introduce
-> sched_show_task_log_lvl() can call it with KERN_DEFAULT only from
-> kernel/hung_task.c?
-
-If you want to go this way then I would introduce sched_show_task_log_lvl().
-It would allow to fix the various reports incrementally.
-
-For example, I see sched_show_task() used in show_cpu_pool_hog() in
-kernel/workqueue.c and some other messages are KERN_INFO. So, using
-another log level in sched_show_task() would cause mess here.
-
-That said, you probably want to fix workqueue stall report
-as well. I believe that you have the workqueue watchdog enabled
-and it has the same problem as the hung_task detector.
-
-
-My opinion:
-
-I think that using the prefix/postfix "cut here" line is a win-win
-solution. And I would personally go this way.
-
-But I understand this might have other problems, like the need
-of the full log (the other reply from Thomasz Figa). You really
-might want to use the same loglevel for the entire report.
-
-If you want the same loglevel then I really suggest to introduce
-a generic CONFIG option, e.g. CONFIG_CONSISTENT_REPORT_LOGLEVEL
-and use is everywhere to force the consistent loglevel,
-for example, hung taskdetector, workqueue watchdog, soft lockup
-detector, Oops, ...
-
-
-Idea:
-
-Some people complained about a non-consistent loglevel when pr_cont()
-lines were not connected because another context (CPU, task,
-interrupt) added a message in between.
-
-I had an idea to store the last used loglevel in struct task_struct.
-But it did not look worth it just for continues lines.
-
-This might be another use-case. So we could add something like:
-
-struct printk_context {
-	u8	deferred;	/* printk_safe/deferred nesting	counter. */
-	u8      emergency;	/* nbcon_emergency nesting counter */
-	u8	level:3;	/* last used or forced log level */
-	u8	flags:5;
-}
-
-and one of the flags might be
-
-enum printk_context_flag {
-	pr_ctxt_force_level = 0x0,	/* Force the same loglevel for	all messages */
-};
-
-and then we could create an API:
-
-void printk_force_loglevel_enter(const char *lvl)
-{
-	struct printk_context *pr_ctxt;
-
-	pr_ctxt = printk_get_context();
-	/* FIXME: make sure the it returns a valid level 0..7 */
-	pr_ctxt.level = printk_get_level(lvl);
-	pt_ctxt.flags |= pr_ctct_force_level;
-}
-
-void printk_force_loglevel_exit(void)
-{
-	struct printk_context *pr_ctxt;
-
-	pr_ctxt = printk_get_context();
-	pt_ctxt.flags &= ~pr_ctct_force_level;
-}
-
-, where printk_get_context() would return the right struct
-printk_context either from struct task_struct for task context or
-a static per-CPU variable for IRQ or NMI context.
-
-FIXME: We should integrate the above with the existing:
-
-	  + printk_context used by printk_safe_enter()/exit()
-	  + nbcon_pcpu_emergency_nesting
-	  + ??? (Did I miss any other printk context counter/flag?)
-
-
-Also we could even create an API for consistent reports:
-
-static atomic_t printk_report_count = ATOMIC_INIT(0);
-static bool printk_force_report_loglevel = IS_ENABLED(CONFIG_PRINTK_FORCE_REPORT_LOGLEVEL);
-
-int printk_report_start(const char *lvl)
-{
-	int report_id = atomic_inc_return(&printk_report_count);
-
-	if (printk_force_report_loglevel)
-		printk_force_loglevel_enter(lvl);
-
-	printk("%s---------- Report No. %d start --------\n", lvl, report_id);
-
-	return report_id;
-}
-
-void printk_report_end(const char *lvl, int report_id)
-{
-	printk("%s---------- Report No. %d end --------\n", lvl, report_id);
-
-	if (printk_force_report_loglevel)
-		printk_force_loglevel_exit();
-}
-
-This API would help to standardize the reports from various watchdogs:
-
-  + The "start/end" lines would help both humans and bots.
-
-  + The optional loglevel forcing would help to filter the messages depending
-    on whether people want to see all details using the same loglevel
-    or not.
-
-
-My problem with the log level manipulation is that I do not know what
-loglevel right. The loglevel might be important with slow consoles which
-need not be suitable for all the details.
-
-Best Regards,
-Petr
+> > diff --git a/mm/compaction.c b/mm/compaction.c
+> > index 3925cb61dbb8..b0ed0831c400 100644
+> > --- a/mm/compaction.c
+> > +++ b/mm/compaction.c
+> > @@ -656,6 +656,17 @@ static unsigned long isolate_freepages_block(struc=
+t compact_control *cc,
+> >
+> >               /* Found a free page, will break it into order-0 pages */
+> >               order =3D buddy_order(page);
+> > +
+> > +             /*
+> > +              * Do not break free pages whose order is larger than
+> > +              * compact's desired order
+> > +              */
+> > +             if (cc->order !=3D -1 && order >=3D cc->order) {
+> > +                     blockpfn +=3D (1 << order) - 1;
+> > +                     page +=3D (1 << order) - 1;
+> > +                     goto isolate_fail;
+> > +             }
+> > +
+> >               isolated =3D __isolate_free_page(page, order);
+> >               if (!isolated)
+> >                       break;
 
