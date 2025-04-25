@@ -1,110 +1,160 @@
-Return-Path: <linux-kernel+bounces-619995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68520A9C492
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:02:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C9FA9C496
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25383BB4BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72704C3F6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983922222C5;
-	Fri, 25 Apr 2025 10:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F92523370C;
+	Fri, 25 Apr 2025 10:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Nlu1XCxf"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HADueul/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAD913DDAA
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4611EA7CA;
+	Fri, 25 Apr 2025 10:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745575338; cv=none; b=d7zGY2yAfrgnTDO0w1Rc44kWI6K9l+6j0XChT4mWWWlNGugx/7+gYdTJhnQICnD47qK5W/nhiG8TQpEz1f6EkwpIwfi8NJESB0CELiQFby2X1SoPUWsSEWLOQ6bfi9V8ACGbhmip2gLhukaG9vjtUl+lC2gkZBARdmNpKZ1GVUI=
+	t=1745575404; cv=none; b=X3sPW0itr2hjnA/VZ4rxVe8W09CEyZuT7gG7GEZX9QEwTB8ovOWoTFketXxobtNqzHqcKAsYR/kp8Ohr+incngKltMsHRIJX2eeEF1o6qmAdq2sU0BxhPaeQbEHRofzVEFhhp4gg3MAZClSvsb7fyNNuNiiytoq5wgPwVgFCJCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745575338; c=relaxed/simple;
-	bh=yal9lwCqGuNOtoRBSPCamKbzMaGWto6/yb4OR4lzTE0=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=d31FkNgEPoGeeGj0Aai6W2wDy9C3p6mFfciqrJ8v7hF6N1If58LPRiZpHnNkfl/gyzO6dZ2iFe17VXWuhmPdGBdgsGTgUXKUC2wbl010LcJFFIzg1Uhk+NfDS+dDxSDEbDNUndjwa0C2uJEZiuzxiJFn6YG2bZmlR4eegYl0x8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=Nlu1XCxf; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1745575337; x=1777111337;
-  h=from:to:cc:subject:date:message-id:reply-to:mime-version:
-   content-transfer-encoding;
-  bh=cF5QB9sYw+Xl3Kp3sr18k8pRzKSX5fAtpwidswIedXk=;
-  b=Nlu1XCxfG5NiJjZeKt5DOp7yuYu+IOg1wl4CM9p7UXuOBd+Rr/MEffps
-   eNU6iuAqWwL4ed5ZRQsz0wnh+pDzdqbbhqfBZ/gQtT+U+xaXs8jKjWZZ7
-   TLX4+NuVeE0AWcvQf+4dwmdc5JfAZiyZLcKVMIy5fpyRz0oFER/WAH3To
-   c=;
-X-IronPort-AV: E=Sophos;i="6.15,238,1739836800"; 
-   d="scan'208";a="194314763"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 10:02:14 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:55341]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.185:2525] with esmtp (Farcaster)
- id 91e8e608-dc2e-48df-adbc-7a134a9c9407; Fri, 25 Apr 2025 10:02:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 91e8e608-dc2e-48df-adbc-7a134a9c9407
-Received: from EX19D014EUC002.ant.amazon.com (10.252.51.161) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 25 Apr 2025 10:02:13 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D014EUC002.ant.amazon.com (10.252.51.161) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 25 Apr 2025 10:02:13 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1544.014; Fri, 25 Apr 2025 10:02:13 +0000
-From: "Gutierrez Cantu, Bernardo" <bercantu@amazon.de>
-To: "yajun.deng@linux.dev" <yajun.deng@linux.dev>
-CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "lkp@intel.com" <lkp@intel.com>,
-	"rppt@kernel.org" <rppt@kernel.org>, "dwmw2@infradead.org"
-	<dwmw2@infradead.org>
-Subject: Re: [PATCH v4] mm: pass nid to reserve_bootmem_region()
-Thread-Topic: Re: [PATCH v4] mm: pass nid to reserve_bootmem_region()
-Thread-Index: Adu1xWGtRnOVME03T+mfcIE2Ywerww==
-Date: Fri, 25 Apr 2025 10:02:12 +0000
-Message-ID: <bd5842a92bd340799a74063f8da83d96@amazon.de>
-Reply-To: "Gutierrez Cantu, Bernardo" <bercantu@amazon.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
+	s=arc-20240116; t=1745575404; c=relaxed/simple;
+	bh=4kFE348Wzuz0aONETluNIRmXtHsilTTLgNF8cOgIVxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHNesZocvSijnaYf2aDaiaHVG0v1EpYARRnEXrS2KUNqv/kyS+C2PxGq+yc8YwnxYQJL8Bku8d2vJgyI3h9V/n1PLFAquH/l0v9pLLuauSzYsUHgP72aaDGZIyR4mHAupO/CEFZyZupy3RBvdoUxfkFabH+ohr9TgOuEjTSp244=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HADueul/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53P9imrs004048;
+	Fri, 25 Apr 2025 10:03:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=GwmIhPe1gG9Lbospo0jC1b8F8kiRME
+	sFrN5jK5e0vWA=; b=HADueul/TKOMnCpOV7h8aKR5hFvBqfWl26qT+vZ0u5GVdZ
+	pi0KrAxFLA4qshx6vKacTQXfwmfhSlTSHgu3Ox2MHdwA/fwl8pjZWckP+fH4GQ8a
+	znhjBHorZHOHGXkry6LAwQSAyWA+3zWt+tx7481P6lYdf86wtsyeqNSGdkIUo8Ha
+	Ue6nMnO4qv6AeRSsGyZjZbjcB+s+zX9ra202kYOBE/JzFh5FA+OqPY+CY8tKu7jL
+	+036bCmYynAxZI2ypxAeV9A8WQY5/p3sgSF+zla2WN2lweMk8m9VJnXJ7hty/Cz7
+	5A9NboBlcZ5RI2zCsH7qYa1CDXY/JetBncBjs0BA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 467wew2j4m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 10:03:08 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8MiFl005893;
+	Fri, 25 Apr 2025 10:03:08 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 466jfxmp6w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 10:03:08 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53PA36jj26870264
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 10:03:06 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2A3A020067;
+	Fri, 25 Apr 2025 10:03:06 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AAE4C20063;
+	Fri, 25 Apr 2025 10:03:05 +0000 (GMT)
+Received: from osiris (unknown [9.111.13.86])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 25 Apr 2025 10:03:05 +0000 (GMT)
+Date: Fri, 25 Apr 2025 12:03:04 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+        brauner@kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Shin'ichiro Kawasaki" <shinichiro.kawasaki@wdc.com>,
+        Xiao Ni <xni@redhat.com>
+Subject: Re: [PATCH] devtmpfs: don't use vfs_getattr_nosec to query i_mode
+Message-ID: <20250425100304.7180Ea5-hca@linux.ibm.com>
+References: <20250423045941.1667425-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423045941.1667425-1-hch@lst.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA2OSBTYWx0ZWRfXznCDRKWD1ksR FQ2FfJk2erLg/tEJIcbu9Jae/aLRETx9uLaQpd68C8SlAsJ9rN1a/E/lmzejOZXfLlwnm+cvXrU 4BLmvCZW6JplVWc8bwtyOpS6nE9Xl2d8GKUNm3Kdlz/bI7SnwCdBS1dNRCvf6A1OKhBL6whZT86
+ QBdr9whZEFv7h4n/l3/dGtEdiLQ25Hxulqgo9UZOy+4ezgXDEIRGqZLmeaWcUQseczxXU4fWSsm hnwNoROCTl3KeJM2uEF+o9zs/Ioia/1pRrXJL/btq4giU7loKdBRq7as9Z3T9DOmFiOlQhe4IIO MCDWkjvBRscutyJZ1BW7M/BcJABQ/Ikxrhhgt/oSjPyot/z+gE9UTXsfbOiKxeFQQxo4ykkJyb2
+ u6H317eGQJrvhS0pLNWqigJjpz12ex/go78I/zppdI2jfYvtT9bevrdUV8P+tUQ786Fhv8i2
+X-Proofpoint-ORIG-GUID: K0p3muNkcqYvb7N11TP3OgVo7-4vBF9m
+X-Authority-Analysis: v=2.4 cv=JLU7s9Kb c=1 sm=1 tr=0 ts=680b5ddc cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=JF9118EUAAAA:8 a=20KFwNOVAAAA:8 a=UC29wqCd6ki5ZiVo4UAA:9 a=CjuIK1q_8ugA:10
+ a=xVlTc564ipvMDusKsbsT:22
+X-Proofpoint-GUID: K0p3muNkcqYvb7N11TP3OgVo7-4vBF9m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=283 suspectscore=0
+ clxscore=1015 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250069
 
-> +		if (memblock_is_nomap(region))
-> +			reserve_bootmem_region(start, end, nid);
-> +
-> +		memblock_set_node(start, end, &memblock.reserved, nid);
+On Wed, Apr 23, 2025 at 06:59:41AM +0200, Christoph Hellwig wrote:
+> The recent move of the bdev_statx call to the low-level vfs_getattr_nosec
+> helper caused it being used by devtmpfs, which leads to deadlocks in
+> md teardown due to the block device lookup and put interfering with the
+> unusual lifetime rules in md.
+> 
+> But as handle_remove only works on inodes created and owned by devtmpfs
+> itself there is no need to use vfs_getattr_nosec vs simply reading the
+> mode from the inode directly.  Switch to that to avoid the bdev lookup
+> or any other unintentional side effect.
+> 
+> Reported-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+> Reported-by: Xiao Ni <xni@redhat.com>
+> Fixes: 777d0961ff95 ("fs: move the bdex_statx call to vfs_getattr_nosec")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+> Tested-by: Xiao Ni <xni@redhat.com>
+> ---
+>  drivers/base/devtmpfs.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
 
-memblock_set_node() receives a `base` and a `size` argument. Passing `end` =
-would
-cause us to set the node id on an incorrect range. Will send a fixup patch
-shortly...
+...
 
-Best regards
-Bernardo
+> @@ -330,11 +329,8 @@ static int handle_remove(const char *nodename, struct device *dev)
+>  	if (IS_ERR(dentry))
+>  		return PTR_ERR(dentry);
+>  
+> -	p.mnt = parent.mnt;
+> -	p.dentry = dentry;
+> -	err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
+> -			  AT_STATX_SYNC_AS_STAT);
+> -	if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
+> +	inode = d_inode(dentry);
+> +	if (dev_mynode(dev, inode)) {
 
+clang rightfully complains:
 
+    CC      drivers/base/devtmpfs.o
+      drivers/base/devtmpfs.c:333:6: warning: variable 'err' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        333 |         if (dev_mynode(dev, inode)) {
+            |             ^~~~~~~~~~~~~~~~~~~~~~
+      drivers/base/devtmpfs.c:358:9: note: uninitialized use occurs here
+        358 |         return err;
+            |                ^~~
+      drivers/base/devtmpfs.c:333:2: note: remove the 'if' if its condition is always true
+        333 |         if (dev_mynode(dev, inode)) {
+            |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+      drivers/base/devtmpfs.c:326:9: note: initialize the variable 'err' to silence this warning
+        326 |         int err;
+            |                ^
+            |                 = 0
 
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+That is: if dev_mynode(dev, inode) is not true some random value will be returned.
 
