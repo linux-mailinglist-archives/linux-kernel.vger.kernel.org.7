@@ -1,147 +1,197 @@
-Return-Path: <linux-kernel+bounces-620261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDAFA9C7DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:41:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4672EA9C7EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB161BC4F04
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8600016D5C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F312451F0;
-	Fri, 25 Apr 2025 11:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39588247285;
+	Fri, 25 Apr 2025 11:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiHVua4C"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="KjRgrNMd"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A16245014;
-	Fri, 25 Apr 2025 11:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745581280; cv=none; b=twr/QHgL07cvvdkaUMjNliwM2Qp40etCUPB1S/nAV4zAg5oCFrovvVz++o0hfVtQUiUILitGkVlONPz14PuowhlmTz4ufpOxyMprMxWEIAE9NU0ekoSgi9rpb5d/b2zDOu2RcoMUDqW1gqzVsP74F6CruMjijbQ9O8T8fV8m9qc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745581280; c=relaxed/simple;
-	bh=hPfGrECKFcWEMNQnIM2AZVH2K6h+gcz0LypC0f8QB8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=StdOpbm1B+AhDJAL1OGto63w+m7TQvN2NqjtuwAHjQZ/rD6ljgqp6tv0M74Ngm2mkmDt01t/DwyZIPpjiySfAtwb95n/p3XgKUzgQ0VG4dSEPukdxkQWSrGC6KV6z4gHhjhSOZyQP22N0jL1HZw2vJJ/r8Wdiz7lo1LnLVA0uxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiHVua4C; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47691d82bfbso46640931cf.0;
-        Fri, 25 Apr 2025 04:41:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745581277; x=1746186077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2zHcCfM1HSsSCDVCLPk6d+vTWAqwAKyrWGRSQ0Rhx+U=;
-        b=jiHVua4C2ShZVzHLsxVDx7A3wYamzrgB41OCCCR/MWKVWd4l0SEoDxzP7ErDya7ocs
-         UB61F2o+XoyL1c+PLdyXeY2jNHC2rCro8dlk/PsUv6uhhVG/6Bf7kospS0zw/4sg0lmD
-         /Qu7MuQrkKTRRUkS2AbP0lEQKmYPAN19uLv7SJP8yCaBLRDmtfA7rVrB1125/t26jhX8
-         YPkYOSuIfbbdTncej7XNNH2SOJNMA+4tE2P54Bb8yMG/e5AEb+wyG3BDoopK3oyRjBFR
-         JuGsMtfHV3+ORxImNwZ1CJpjDUGfiMLZRBHF/Doy5h32+uijkE8v7Mz3WmCauLrS8pGG
-         atkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745581277; x=1746186077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2zHcCfM1HSsSCDVCLPk6d+vTWAqwAKyrWGRSQ0Rhx+U=;
-        b=UjEzKDhrl6+xI/GI22OM6QXxpgksJqmI5aor0amaEGe5Np3YRhn5NzizMsdB9pJvgP
-         dbf1DJvis8JpjgtNN8dh+WP7Fm9X8vK/8ELa4mo0+2n6hHFGSAagkFx5/yI72g2uIoDy
-         vCSw6onWXO3YMknTUusM9cAMmeuSeEJ8yG7QWjYqD5JDd2ay0k3F9IQUtqBpwZeeKNZP
-         YI3N13sJOnXeLVuBu9nrNP8mPsMg7omKsTffL8Uz3T4vTOVZxwMfOmxMsniaIkHd7eIP
-         dDrqhey9Apgmj899/5K+8l25wivhi5HkdpHckjp2VEX6sCDzdkKEDVcX5XpKKjxASFjb
-         IGuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhZWRdhMsrmf6ViaByQsL1h+T737zXdm0SvChMxmL/sHhm081dPEA96Q5KUWBXQjU2aAowfjV/SfUQ58sk@vger.kernel.org, AJvYcCUpJf8IQ0cu6QPZzHiwxUDSjk0yCS/J8h+T/uTxUkmD14L4vZ5Rz89HgLmhUl+DJf3VZTXaUgcNXErn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZGA9DuBmaNM/EliFtNzg9sthtZCsSz+aJY3cV7rBCCnyXL95M
-	nbsbgEYAFZfava9L+YaNkt3pznLzgbDQO/z5Qum60J24nLulMijRYjl7rRIf6TSTeMgMhu6J5Xz
-	BgAiPNwdoyrZGXvYmtg6LXhrddEvBxbWrqFs=
-X-Gm-Gg: ASbGncuUafn+12ehJECWk0BDE+4xDFx3+GypjVafswcz+9ThDIhcgQAEL7CwedmymNA
-	r7DPSM0uq3t9o2pBF32BPJozeho2djewVIh5Bxmnwm2JIw2kuTD15q3IXUzFqpWZKYMuhND6cO8
-	8FOInjuBIDLaaSnutncLS5NnBKo7BcYwBb+PhitSNAvdTjeQ08anGUVQ==
-X-Google-Smtp-Source: AGHT+IFkNfMrEkt2OLQpD1shT90xHG1USl6LfDxZ2FGfY367Tscfx0A4o/7r3mMaoZQdqcAjqfmpcFi/fYlqoZbRX+g=
-X-Received: by 2002:a05:622a:1991:b0:476:8f90:b5b5 with SMTP id
- d75a77b69052e-4801d13fcdcmr35202461cf.27.1745581277388; Fri, 25 Apr 2025
- 04:41:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79F32459D7;
+	Fri, 25 Apr 2025 11:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745581351; cv=pass; b=HpjT9BaXRSjXSORFtWsk2eIaJ3rH5e+MZwWm1B9MKDU2gBpnhwZTGLivXe0j9ojxdoancXWC2JwnPPVMZdzA/qYsudvJuUVSpBrDr0FbcNuq0sQmGLzT1fRIQPfwtdn9OKin5mSjfvP1/TEWf08lzWw88Uid5IVHKpj763exa9o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745581351; c=relaxed/simple;
+	bh=1G6AweYjxm0kJiNi3tcdfVXSJehj5SwP9EIh79+Tjd0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tg5jpU52xhm0D21P03BUqC3lQaHWmVYcHpwf9ZJF5o4vISzs+9PnbqeKjS/aOmMqbmO8eWnTeA9xiMxQ8VGFZbCvOI3P6zwZs4t0gkev1xg4ZTK2K256un8iXVLdQPROnpHAr4WW0kvSJz5Xbu9tiVzDneruFgYcqDISOEhMup0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=KjRgrNMd; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1745581316; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ATO62M49i6OKXGbXEsqzcVCpnUqkaDPw41NH+jE9uXMYRr4A4p2GnT2e0ExLoNzJYGZ6GttFkpGgICVCqQngHe8+x4QlmH61vOP07dPzlGvfOOsVfd4vVgth8vpIrq2T4mVivjRtmjIBRsjcOEFelzTs66eAlHm37O6yz5T376Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745581316; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=l4DUDdg/nGvqN1UdcxVddkB5BkoJ1f3+rZUXbIsl6cU=; 
+	b=Wl8eOBZW8/wRHV/gJMpTqYzRfliBCChHOlLNx29kS1HVg2S5FQGYP+5/Ca7vK9csP/rUT4XZjctRmffH3h9BJpETshlcRklQKmL1kCbsgjs5JiEXyNkz2fIqzdgp9m5jfYUVt/3it37EOCG/8eD2oafhiLBQ+gfqBw8CX0Dlwm4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745581316;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=l4DUDdg/nGvqN1UdcxVddkB5BkoJ1f3+rZUXbIsl6cU=;
+	b=KjRgrNMd+H1um2Hg8ung+jJ23G975Y9PLhHqT5paYiZ0mF18EGWqr9wlZRxNU1P8
+	YjGYi2bAbmEGxGhCj6Lo/aQSfqsRexvLRKagUlK+LBmKKEi2ZWwmai+dA4QflPJA1b2
+	rlHBTSYt1sYqeLLFRGJRxGE7hjRatpYkBqjjdGdg=
+Received: by mx.zohomail.com with SMTPS id 1745581313535618.4441025554677;
+	Fri, 25 Apr 2025 04:41:53 -0700 (PDT)
+Message-ID: <a403eb91-c90d-444c-b508-c428a8ef1447@collabora.com>
+Date: Fri, 25 Apr 2025 16:41:43 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418-apc_paper_binding-v2-1-17c9023b7c9b@gmail.com> <20250425-polar-tamarin-of-reward-c57e01@kuoka>
-In-Reply-To: <20250425-polar-tamarin-of-reward-c57e01@kuoka>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Fri, 25 Apr 2025 15:41:28 +0400
-X-Gm-Features: ATxdqUEpNuktPOA4KReBJ0ipSgTM3Bzqbz64PRQCms9H1j8nBpSuJhCOtEASRAc
-Message-ID: <CABjd4YynxcBT+q69GuXwM447uXmGbkZ4JxFF=c0M9+R25dnvtQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: arm: vt8500: Add VIA APC Rock/Paper boards
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com, Johannes Berg <johannes@sipsolutions.net>,
+ Jeff Johnson <jjohnson@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Yan Zhen <yanzhen@vivo.com>, Youssef Samir <quic_yabdulra@quicinc.com>,
+ Qiang Yu <quic_qianyu@quicinc.com>, Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com, mhi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+Subject: Re: [PATCH v2] bus: mhi: host: don't free bhie tables during
+ suspend/hibernation
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20250410145704.207969-1-usama.anjum@collabora.com>
+ <h2wv7drxntokziiwbzjw5xjzbctbomp6cfcba7ppfbih6o7so7@p6dazv32xfx4>
+ <1136c7cb-1c7b-410b-93d2-c74aec939196@collabora.com>
+ <cfb3sntvqhupyhm2m5tevpsl77r6mzl2aqzr3wtxvr22bezmp3@qjh7ftr2kdjy>
+ <4d87ef88-3533-4255-adc6-6c268818fe25@collabora.com>
+ <y5odcxzms6mwpz5bdxhbjxo7p6whsdgwm772usmmzqobhf6nam@p4ul7vn7d3an>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <y5odcxzms6mwpz5bdxhbjxo7p6whsdgwm772usmmzqobhf6nam@p4ul7vn7d3an>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, Apr 25, 2025 at 2:19=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Fri, Apr 18, 2025 at 07:24:25PM GMT, Alexey Charkov wrote:
-> > APC Rock is a development board based on WonderMedia WM8950 SoC
-> > released around 2013. Paper is the same as Rock but lacking a
-> > VGA port and shipped with a recycled cardboard case.
-> >
-> > While at that, put myself as the maintainer, given that Tony is
-> > unavailable as of lately.
-> >
-> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > ---
-> > Split the series from v1 into separate bindings patches so as not to
->
-> Hm? That's odd.
+On 4/25/25 1:59 PM, Manivannan Sadhasivam wrote:
+> On Fri, Apr 25, 2025 at 12:42:38PM +0500, Muhammad Usama Anjum wrote:
+>> On 4/25/25 12:32 PM, Manivannan Sadhasivam wrote:
+>>> On Fri, Apr 25, 2025 at 12:14:39PM +0500, Muhammad Usama Anjum wrote:
+>>>> On 4/25/25 12:04 PM, Manivannan Sadhasivam wrote:
+>>>>> On Thu, Apr 10, 2025 at 07:56:54PM +0500, Muhammad Usama Anjum wrote:
+>>>>>> Fix dma_direct_alloc() failure at resume time during bhie_table
+>>>>>> allocation. There is a crash report where at resume time, the memory
+>>>>>> from the dma doesn't get allocated and MHI fails to re-initialize.
+>>>>>> There may be fragmentation of some kind which fails the allocation
+>>>>>> call.
+>>>>>>
+>>>>>
+>>>>> If dma_direct_alloc() fails, then it is a platform limitation/issue. We cannot
+>>>>> workaround that in the device drivers. What is the guarantee that other drivers
+>>>>> will also continue to work? Will you go ahead and patch all of them which
+>>>>> release memory during suspend?
+>>>>>
+>>>>> Please investigate why the allocation fails. Even this is not a device issue, so
+>>>>> we cannot add quirks :/
+>>>> This isn't a platform specific quirk. We are only hitting it because
+>>>> there is high memory pressure during suspend/resume. This dma allocation
+>>>> failure can happen with memory pressure on any device.
+>>>>
+>>>
+>>> Yes.
+>> Thanks for understanding.
+>>
+>>>
+>>>> The purpose of this patch is just to make driver more robust to memory
+>>>> pressure during resume.
+>>>>
+>>>> I'm not sure about MHI. But other drivers already have such patches as
+>>>> dma_direct_alloc() is susceptible to failures when memory pressure is
+>>>> high. This patch was motivated from ath12k [1] and ath11k [2].
+>>>>
+>>>
+>>> Even if we patch the MHI driver, the issue is going to trip some other driver.
+>>> How does the DMA memory goes low during resume? So some other driver is
+>>> consuming more than it did during probe()?
+>> Think it like this. The first probe happens just after boot. Most of the
+>> RAM was empty. Then let's say user launches applications which not only
+>> consume entire RAM but also the Swap. The DMA memory area is the first
+>> ~4GB on x86_64 (if I'm not mistaken). Now at resume time when we want to
+>> allocate memory from dma, it may not be available entirely or because of
+>> fragmentation we cannot allocate that much contiguous memory.
+>>
+> 
+> Looks like you have a workload that consumes the limited DMA coherent memory.
+> Most likely the GPU applications I think.
+> 
+>> In our testing and real world cases, right now only wifi driver is
+>> misbehaving. Wifi is also very important. So we are hoping to make wifi
+>> driver robust.
+>>
+> 
+> Sounds fair. If you want to move forward, please modify the exisiting
+> mhi_power_down_keep_dev() to include this partial unprepare as well:
+> 
+> mhi_power_down_unprepare_keep_dev()
+> 
+> Since both APIs are anyway going to be used together, I don't see a need to
+> introduce yet another API.
+I've looked at usages of mhi_power_down_keep_dev(). Its getting used by
+ath12k and ath11k both. We would have to look at ath12k as well before
+we can change mhi_power_down_keep_dev(). Unfortunately, I don't have
+device using ath12k at hand.
 
-Now that you've asked it (and in light of your comment below) I
-realize that Rob referred to rewrites of old textual bindings into
-YAML schemas, and probably not this patch in particular.
+Should we keep this new API or what should we do?
 
-> > spam all the subsystems with unrelated changes, per Rob's suggestion
-> >
-> > Changes in v2:
-> > - kept single-valued compatibles in a single enum (thanks Rob)
-> > - dropped the empty overall description node
->
-> ...
->
-> > +
-> > +      - description: VIA APC Rock and Paper boards
-> > +        items:
-> > +          - const: via,apc-rock
->
-> Where is any user of this? Bindings always come with the user. Board
-> compatible comes with its user - board - both to SoC subsystem (in this
-> case me).
+> 
+> - Mani
+> 
+>>>
+>>>> [1]
+>>>> https://lore.kernel.org/all/20240419034034.2842-1-quic_bqiang@quicinc.com/
+>>>> [2]
+>>>> https://lore.kernel.org/all/20220506141448.10340-1-quic_akolli@quicinc.com/
+>>>>
+>>>> What do you think can be the way forward for this patch?
+>>>>
+>>>
+>>> Let's try first to analyze why the memory pressure happens during suspend. As I
+>>> can see, even if we fix the MHI driver, you are likely to hit this issue
+>>> somewhere else.>
+>>> - Mani
+>>>
+>>>>>
+>>>
+>>> [...]
+>>>
+>>>>> Did you intend to leak this information? If not, please remove it from
+>>>>> stacktrace.
+>>>> The device isn't private. Its fine.
+>>>>
+>>>
+>>> Okay.
+>>>
+>>> - Mani
+>>>
+>>
+>>
+>> -- 
+>> Regards,
+>> Usama
+> 
 
-The DTS addition was in the original "merged" series [1]. I will
-resubmit it along with this binding change: it has no external
-dependencies so should not create any hassle (i.e. it can be merged in
-any order vs. other VT8500 DTS additions and cleanups that I'm doing).
 
-> See also SoC maintainer profile describing this or my guides how to
-> properly target SoC subsystems:
-> https://lore.kernel.org/linux-samsung-soc/CADrjBPq_0nUYRABKpskRF_dhHu+4K=
-=3DduPVZX=3D=3D0pr+cjSL_caQ@mail.gmail.com/T/#m2d9130a1342ab201ab49670fa6c8=
-58ee3724c83c
->
-> and great example:
-> https://lore.kernel.org/all/20231121-topic-sm8650-upstream-dt-v3-0-db9d05=
-07ffd3@linaro.org/
-
-These are great explainers, thanks a lot for pointing them out!
-
-Best regards,
-Alexey
+-- 
+Regards,
+Usama
 
