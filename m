@@ -1,137 +1,328 @@
-Return-Path: <linux-kernel+bounces-619620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99FE5A9BF08
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EF2A9BF0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D777A1BA3118
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F260E1BA36FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 06:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7892D22D79F;
-	Fri, 25 Apr 2025 06:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1387F22D7A0;
+	Fri, 25 Apr 2025 06:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQ0zXSRz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="m8q9qI7R"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479B22CBC9;
-	Fri, 25 Apr 2025 06:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA404414;
+	Fri, 25 Apr 2025 06:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745564318; cv=none; b=oqCkO9/WqK5EFs4qju77WsnGHWySi3kf/CmiixWL8pHGtqaWdac4NQyahe7RlGl1564+8TVpkBVlKnewOatwgUZitQcmUdUBfUQBMqm7TuILaBxdIbtguytfl0LfRAr/XWMy/MbjYGS+J0fONjeAKxE7yBLN2XF2s78HRDfSXsE=
+	t=1745564365; cv=none; b=EllsvdodCTEBOSn84EGqMpwtdEjFIST6B5qRzsbGeoHVs3uNj1XVlIdxZuUb6dz2pN1MI/s+37pFz5QRzpOnbJr/lys/30xwFtBLpaadBRp3+t48Z8B9BHZoUYkNLLCJ+X+KRNxf5RNc0q5WoV6XbL8Wo4gy+gQWYldGlIcMaNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745564318; c=relaxed/simple;
-	bh=ZOCpgYtOjGRmmw6XMk4R1FQCrrG9Hy9EDJQTQ/uzv1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rvj2UV67TQzunU0qY4dJj50FyJ1mw7MGoVOIlVKVJmqwTfBdS9l+sbkMwwel1u7SyYmTpE+QqmZ/meZbnxXvHtNbU9FsMNcZAIf1T/kPhRGZSRECbHXt0RoBwawbfRECbbhLQBte4SfLHKIg/nJWhYEoTLtbG2zPvki2o6BX2NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQ0zXSRz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01378C4CEE4;
-	Fri, 25 Apr 2025 06:58:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745564318;
-	bh=ZOCpgYtOjGRmmw6XMk4R1FQCrrG9Hy9EDJQTQ/uzv1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BQ0zXSRzKxud5QbdoyrqDtmmA+RNeeCnTbdhp3plOJH1bqYru6wepkYH7g3u4FrBu
-	 QWbjNm2+GGGCVnFapW4QqXrvd8Z0JPPGrBpdFVzgiP8B9YWP3VDsShnLifupD/MwCq
-	 SU4fTv6M3dYOm5Xpm9GY5dqWTfxuYSmqCxuMxjSstmRW/c+bxBUh31ukcfHQo6pjN4
-	 ilbmH9kgnsEnaD8HHw3lt03NWi5bFo8stud8771nTlNsgos6gDZWkwDobO1U7PSwZ8
-	 YW1Ofia52UoRfh03McK2MyGe+xUcu63z4h4QxRYEUmcZAhZJG5GgJ6Tb194ytEZChi
-	 zL9+0cSFPG7PA==
-Date: Fri, 25 Apr 2025 08:58:35 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: John Stultz <jstultz@google.com>
-Cc: Jared Kangas <jkangas@redhat.com>, sumit.semwal@linaro.org, 
-	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com, tjmercier@google.com, 
-	christian.koenig@amd.com, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dma-buf: heaps: Give default CMA heap a fixed name
-Message-ID: <20250425-savvy-chubby-alpaca-0196e3@houat>
-References: <20250422191939.555963-1-jkangas@redhat.com>
- <20250422191939.555963-3-jkangas@redhat.com>
- <20250424-sassy-cunning-pillbug-ffde51@houat>
- <CANDhNCqfsUbN3aavAH5hi4wdcKuUkjLX4jqhKzy-q+jCEqpoow@mail.gmail.com>
+	s=arc-20240116; t=1745564365; c=relaxed/simple;
+	bh=A7zkNKvQB6u5H1frJaZ3QunxIoyKnq8PvZ/di23pP8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qc1xcZFxLlYnPhHDenUbgZBgE4KQRNYdti5igd6NTORqR+I2JmT5OaLdMgPx3ZeTev0i4mjT62zRFZ4XWztCQpRK1/zofrtGlC2DVSxDmBsKZs4vTH0LmzTp0XlCjt9iQ6lpoy9A4PA0wn1WxHjm0uIKV2XmLjaHoJdgpuzolm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=m8q9qI7R; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53OL4NtM002532;
+	Fri, 25 Apr 2025 06:58:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=TRhqbD
+	67z9XvmRFQN2yKg1Ib2zMzYiTPqDsaG9k6XLg=; b=m8q9qI7RmWtdn6jhYibpFj
+	rUqVlJ0akLjbuVqVQQCFJaSCBYWgei6uEWPm8AN9tCpiaW+swqD0Ef3HEHFsJd62
+	76rNHc4QQF2oQeUNPA2JWeRRNB3Mhrc39YeqDxa3zO967gD3kSQLlh8V07Qku7i7
+	l2zD+W/AhZe0xjeFogaIlpfdO83MD8/pzFcKSD0HGJbg5U66xDnIcKNKGix1cce3
+	kwRRrmMytYLnCeByaP3W7MGf4WTKFmWn/vFBupV5prXop6YK+B9BPMYvfSJKTV57
+	J1SiOyNlRhvN6eGSB7+ghfIwAj+7mD7bxW8Q+Q1g4PQylxCRirilfJyvMJaBN87Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 467vvkswkg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 06:58:56 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53P6wtse022579;
+	Fri, 25 Apr 2025 06:58:55 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 467vvkswka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 06:58:55 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53P3xI5a028447;
+	Fri, 25 Apr 2025 06:58:54 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 466jfvv01d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 06:58:54 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53P6wpje30868164
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 06:58:52 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D9C7758055;
+	Fri, 25 Apr 2025 06:58:51 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6696F5804B;
+	Fri, 25 Apr 2025 06:58:45 +0000 (GMT)
+Received: from [9.61.252.26] (unknown [9.61.252.26])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Apr 2025 06:58:45 +0000 (GMT)
+Message-ID: <d11b2740-d484-4fcf-8296-80e93ef534f2@linux.ibm.com>
+Date: Fri, 25 Apr 2025 12:28:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="kzhh3umpacms7elx"
-Content-Disposition: inline
-In-Reply-To: <CANDhNCqfsUbN3aavAH5hi4wdcKuUkjLX4jqhKzy-q+jCEqpoow@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf build: Add tools/arch/x86/include/asm/amd/ibs.h to
+ sync the headers
+Content-Language: en-GB
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Athira Rajeev <atrajeev@linux.ibm.com>, jolsa@kernel.org,
+        adrian.hunter@intel.com, irogers@google.com, namhyung@kernel.org,
+        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.ibm.com, disgoel@linux.vnet.ibm.com,
+        hbathini@linux.vnet.ibm.com, Aditya.Bodkhe1@ibm.com,
+        jiang.peng9@zte.com.cn, Tejas.Manhas1@ibm.com, sshegde@linux.ibm.com,
+        sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        ravi.bangoria@amd.com, bp@alien8.de
+References: <20250424163033.6601-1-atrajeev@linux.ibm.com>
+ <16bee348-2b41-4337-85c8-8a6d2719e99b@linux.ibm.com> <aAqB6kI5mDp4bxY9@x1>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <aAqB6kI5mDp4bxY9@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA0NyBTYWx0ZWRfXxKioVV0C0UhC TAqyHKuAWOuw71w+ovLckblGdA69anb68RWrig9PQWCdkma9B/+As6dR82LavF3T8lphzn8+LR8 7CHb+6syPkyaix10Ka/CsErmPd8h6JaIOAND9kO0WNch9/fplReqeKd39t8w3ZCwsC8P0FhmV0v
+ btu8qjiFTMzDkMAJrnJ90LqhuVzra/XeX2Lf2MsD2RBrK78Rj4tzSbOtak55iUWcgyxUkuarEzl OENk5jkjffZi44kjSejFE1EgUA8fsYZSKtDXlVwj9DSEJvl/l/bHF9CTOh6sBMbmHDRYA0TmO0+ /ruVaNxaSLJL2+ggFWVrW/lz5VWPsYMnsNdOFXRFxZ4NZl3IdE+3M/RpOer4JE5in6RncVY8hZ2
+ vVzYw/HJkOAK9pmBaDrTqRv+IiYCK3ErhEjSbHrYdRNE7uxMsQ1ivhUDJAlziwFhc8NbQ7f4
+X-Proofpoint-ORIG-GUID: bA5O8ybd1YYa84ySleW6v5WOi1z1V4vV
+X-Proofpoint-GUID: pmgqd089mNEFfh4hnCCxUkWvw90Bwq1-
+X-Authority-Analysis: v=2.4 cv=HoF2G1TS c=1 sm=1 tr=0 ts=680b32b0 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=Oh2cFVv5AAAA:8 a=VnNF1IyMAAAA:8 a=LpQ4EuG3LMeFR_QAhVYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=7KeoIwV6GZqOttXkcoxL:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_01,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 clxscore=1015 impostorscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250047
 
 
---kzhh3umpacms7elx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] dma-buf: heaps: Give default CMA heap a fixed name
-MIME-Version: 1.0
+On 24/04/25 11:54 pm, Arnaldo Carvalho de Melo wrote:
+> On Thu, Apr 24, 2025 at 10:39:56PM +0530, Venkat Rao Bagalkote wrote:
+>> On 24/04/25 10:00 pm, Athira Rajeev wrote:
+>> Tested this patch by applying on tip HEAD:
+>> 7ab869c799fc0fb22f9b4c2f36aaa603d9c7cc9d and it fixes the reported issue.
+> This is just a long list of characters, can you please next time provide
+> something like, humm, tip/head, not really:
+>
+> ⬢ [acme@toolbx perf-tools-next]$ git remote -v | grep tip
+> tip	https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git (fetch)
+> tip	https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git (push)
+> ⬢ [acme@toolbx perf-tools-next]$ git remote update tip
+> Fetching tip
+> ⬢ [acme@toolbx perf-tools-next]$ git show 7ab869c799fc0fb22f9b4c2f36aaa603d9c7cc9d
+> fatal: bad object 7ab869c799fc0fb22f9b4c2f36aaa603d9c7cc9d
+> ⬢ [acme@toolbx perf-tools-next]$
+>
+> So please add the summary, that way we can try to figure out if this is
+> a rebase and they look for the description instead of this sha1 that I'm
+> not finding even after doing a 'git remore update tip'.
 
-On Thu, Apr 24, 2025 at 05:13:47PM -0700, John Stultz wrote:
-> On Thu, Apr 24, 2025 at 1:34=E2=80=AFAM Maxime Ripard <mripard@kernel.org=
-> wrote:
-> > On Tue, Apr 22, 2025 at 12:19:39PM -0700, Jared Kangas wrote:
-> > > @@ -22,6 +22,7 @@
-> > >  #include <linux/slab.h>
-> > >  #include <linux/vmalloc.h>
-> > >
-> > > +#define DEFAULT_CMA_NAME "default_cma"
-> >
-> > I appreciate this is kind of bikeshed-color territory, but I think "cma"
-> > would be a better option here. There's nothing "default" about it.
->=20
-> I disagree.  It very much is "default" as it's returning the
-> dma_contiguous_default_area.
+Apolozies for the confusion.
 
-My main concern here is that it's "default" as opposed to what, exactly?
-We have a single CMA allocator. We could have multiple buffer
-attributes, but then "cached_cma" would make more sense to me if we
-expect to have uncached CMA allocations at some point.
+The commit ID I shared was from the repo: 
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/tip/tip.
 
-> There can be multiple CMA areas, and out of tree, vendors do reserve
-> separate areas for specific purposes, exposing multiple CMA dmabuf
-> heaps.
+# git log
+commit 7ab869c799fc0fb22f9b4c2f36aaa603d9c7cc9d (HEAD -> master)
+Merge: 1e4babe52c11 e396dd85172c
+Author: Ingo Molnar <mingo@kernel.org>
+Date:   Tue Apr 22 14:42:13 2025 +0200
 
-By "CMA areas", I guess you mean carved-out memory regions? If so, how
-is it relevant to userspace if we use CMA or any other implementation to
-expose a carved-out region, and thus that we carry that implemenattion
-detail in the name?
+     Merge branch into tip/master: 'x86/sev'
 
-> There have been patches to expose multiple CMA heaps, but with no
-> upstream drivers using those purpose specific regions, we haven't
-> taken them yet.
-> I do hope as the drivers that utilize these purpose focused heaps go
-> upstream, we can add that logic, so I think being specific that this
-> is default CMA is a good idea.
+      # New commits in x86/sev:
+         e396dd85172c ("x86/sev: Register tpm-svsm platform device")
+         93b7c6b3ce91 ("tpm: Add SNP SVSM vTPM driver")
+         b2849b072366 ("svsm: Add header with SVSM_VTPM_CMD helpers")
+         770de678bc28 ("x86/sev: Add SVSM vTPM probe/send_command 
+functions")
 
-If heaps names are supposed to carry the region it exposes, then it
-should be default_cma_region/area. If heap names are supposed to expose
-the allocator (but I don't think it's a good idea), it should be cma. If
-they are meant to carry all that plus some policy,
-cached_default_cma_region should be used.
+     Signed-off-by: Ingo Molnar <mingo@kernel.org>
 
-Either way, default_cma seems to me either too specific or not specific
-enough. And we should really document what the policy for those heaps
-are supposed to be.
 
-Maxime
+I have freshly cloned the repo from 
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/ and issue 
+is seen here also. I have applied the patch on top of this, and issue is 
+resolved.
 
---kzhh3umpacms7elx
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Additional info regarding the environment:
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaAsylwAKCRAnX84Zoj2+
-dgz1AYDE1OlrQrJ1tqUlxdkEo+pMUFfnZtUXx7wFnBgkSsShPzQ9Spy4piXMG+a0
-iIcqHaUBf26WQQpK5w5lp83mz5dNKQ/Xis/4/MLYZk3MUlxMaD37yGN5yf/Nu9aZ
-Y9wYQW2MAg==
-=vwbA
------END PGP SIGNATURE-----
 
---kzhh3umpacms7elx--
+git log
+
+commit 0c6ae66ef164c408daeab6a61aace4b86010369a (HEAD -> master, 
+origin/master, origin/HEAD)
+Merge: b6e62c063f84 e396dd85172c
+Author: Ingo Molnar <mingo@kernel.org>
+Date:   Thu Apr 24 20:20:18 2025 +0200
+
+     Merge branch into tip/master: 'x86/sev'
+
+      # New commits in x86/sev:
+         e396dd85172c ("x86/sev: Register tpm-svsm platform device")
+         93b7c6b3ce91 ("tpm: Add SNP SVSM vTPM driver")
+         b2849b072366 ("svsm: Add header with SVSM_VTPM_CMD helpers")
+         770de678bc28 ("x86/sev: Add SVSM vTPM probe/send_command 
+functions")
+
+     Signed-off-by: Ingo Molnar <mingo@kernel.org>
+
+
+git branch
+* master
+
+
+git remote show origin
+* remote origin
+   Fetch URL: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/
+   Push  URL: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/
+   HEAD branch: master
+   Remote branches:
+     auto-latest           tracked
+     core/build            tracked
+     core/core             tracked
+     core/debugobjects     tracked
+     core/documentation    tracked
+     core/entry            tracked
+     core/headers          tracked
+     core/kprobes          tracked
+     core/merge            tracked
+     core/mm               tracked
+     core/rcu              tracked
+     core/static_call      tracked
+     core/urgent           tracked
+     efi/core              tracked
+     efi/urgent            tracked
+     irq/core              tracked
+     irq/drivers           tracked
+     irq/msi               tracked
+     irq/urgent            tracked
+     locking/core          tracked
+     locking/debug         tracked
+     locking/futex         tracked
+     locking/header        tracked
+     locking/kcsan         tracked
+     locking/nmi           tracked
+     locking/rcuref        tracked
+     locking/rwsem         tracked
+     locking/urgent        tracked
+     locking/wwmutex       tracked
+     master                tracked
+     objtool/core          tracked
+     objtool/urgent        tracked
+     perf/core             tracked
+     perf/kprobes          tracked
+     perf/merge            tracked
+     perf/urgent           tracked
+     perf/vlbr             tracked
+     ras/core              tracked
+     ras/merge             tracked
+     ras/urgent            tracked
+     rcu/urgent            tracked
+     sched/arm64           tracked
+     sched/core            tracked
+     sched/eevdf           tracked
+     sched/fifo            tracked
+     sched/migrate-disable tracked
+     sched/psi             tracked
+     sched/rt              tracked
+     sched/smp             tracked
+     sched/urgent          tracked
+     smp/core              tracked
+     smp/urgent            tracked
+     timers/cleanups       tracked
+     timers/clocksource    tracked
+     timers/core           tracked
+     timers/merge          tracked
+     timers/nohz           tracked
+     timers/ptp            tracked
+     timers/urgent         tracked
+     timers/vdso           tracked
+     tip/tip               tracked
+     tip/urgent            tracked
+     x86/acpi              tracked
+     x86/alternatives      tracked
+     x86/apic              tracked
+     x86/asm               tracked
+     x86/boot              tracked
+     x86/bugs              tracked
+     x86/build             tracked
+     x86/cache             tracked
+     x86/cc                tracked
+     x86/cleanups          tracked
+     x86/core              tracked
+     x86/cpu               tracked
+     x86/entry             tracked
+     x86/fpu               tracked
+     x86/fred              tracked
+     x86/fsgsbase          tracked
+     x86/headers           tracked
+     x86/hyperv            tracked
+     x86/irq               tracked
+     x86/kaslr             tracked
+     x86/kconfig           tracked
+     x86/kdump             tracked
+     x86/merge             tracked
+     x86/microcode         tracked
+     x86/misc              tracked
+     x86/mm                tracked
+     x86/msr               tracked
+     x86/mtrr              tracked
+     x86/nmi               tracked
+     x86/paravirt          tracked
+     x86/pasid             tracked
+     x86/percpu            tracked
+     x86/platform          tracked
+     x86/sev               tracked
+     x86/seves             tracked
+     x86/sgx               tracked
+     x86/shstk             tracked
+     x86/splitlock         tracked
+     x86/tdx               tracked
+     x86/timers            tracked
+     x86/urgent            tracked
+     x86/vdso              tracked
+     x86/vmware            tracked
+   Local branch configured for 'git pull':
+     master merges with remote master
+   Local ref configured for 'git push':
+
+     master pushes to master (fast-forwardable)
+
+
+Regards,
+
+Venkat.
+
+>   
+>> Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>
+> Thanks,
+>
+> - Arnaldo
 
