@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-619409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93A6A9BC66
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB7FA9BC6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A63B4CEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD4E468297
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB88612CD96;
-	Fri, 25 Apr 2025 01:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C381537A7;
+	Fri, 25 Apr 2025 01:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QVkPdYIf"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="SPLlJN4K"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A89E8528E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8512EBE7;
+	Fri, 25 Apr 2025 01:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745545015; cv=none; b=pygb3jzbVAVm+KRY/m5yE5FC/qDQe9ZuxmmZptO6hNqCdSV0XrHCTXr+dMG4I+Hj+7b7t5IsVZK908waW1BUBTrYR6qEhfzp5Za7hPg5U5cIdeuE07Ugxe711qYQdgqlmv/ot09Gtqg/6m7pmJDWq8etFLPwlMuRgvj8ZV+qgHg=
+	t=1745545084; cv=none; b=Q/y+aWm7hQwtXx1et1lCzWqEPXS01B5u3AuPvsfcZKNcjg9B2g9xtDlhBZ9xOl3kvbVDMxa3A4NohqkZ66KyZS3Gk6wjOEU+qJxQrcyFvWgYhMad6M1ACcQl+0BxIrlot09a1PycaPH08QxzlGAH2MQOnk09i5C8DXAub4kkvYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745545015; c=relaxed/simple;
-	bh=p5aAM8nvuq5KR9Vajvi+nQEW2Rln1Bwv8GwF4gnQeO4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAAM03o9i2WfJ1oxluI6pAARx8UL/r/M8d2uv8UpOhIjrzd5VTbQQkyhRoH949kF4ikCmjoZU0IJywctxq1XVXjiqprtBJRBDto40ErwzfoKQnupFoMq5Qk/t5NGVDED/h8gWza7gnJMIrQJtBro5qLBFA91JDpIEJGeiO2P+nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QVkPdYIf; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acacb8743a7so286502666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745545010; x=1746149810; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=b7Zbmc9PFyMIhUbm13T2e4rkkq7qjR76gjJbFxlv9Tw=;
-        b=QVkPdYIfSkCmSkKgIhQo2BYTr+zHC+pgsmsJIvmfSy5iqhTRk1qblc4lPYoyCj/UZK
-         rgMMUXd0sgTDVbSD7PpZcSkhDKuGVWl8lH2md1cE60/7iRn+LE3o569aA5ygAjE26OYA
-         m6uKiFJJdejofsDcqIUMTXKBOBD5ozHxEz4KM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745545010; x=1746149810;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b7Zbmc9PFyMIhUbm13T2e4rkkq7qjR76gjJbFxlv9Tw=;
-        b=D8O4p1+t3XkJiikro0Y3vWUAoI7TNF6x7fq05JciEE+Q1OnbKPU3YzvNmEKvaNl6WT
-         5Hy/6KIKOBxCZAyg/rNLockRrKeQZ2f29HXdXS6e1Zrwz39we2RbJSuteoqxxaRcfw+H
-         OA6lTDNacWx2E5Uj4D/hQxwaGWkcD/yF5kTTzVnFGVN1GhksndlKDIMrKfXZ2t3r1kmv
-         ZHNxz0bX29WsDxyHgsvNVTEn6BRMWnbtuNmbOc/HWHM+kK6yUqErvTOqiXuz3ZeDZG1A
-         Xuou6PubHqdowWovhvesA5kj+bt2/6+rykElv4rRGFDIvAd162FBmPFjkpUS2ptG7WR6
-         o6pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUCGi+ZdVlryxbSN2csHVqNZT6Fj2ZVQIaFKni6hkTOpQjd3lsM5xFQsuHhOMDIA9gcSNvpphuBR/Mm6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNn+UVSb3T5pzuPHseEC6xd4ek8uTo4Arkr3WD4SMdnKnYMJju
-	axkr4RSsYVYpv7p0Jx9Ijuf0J+ZoEUz19Tw3DFJ5u0N3rGVD89/XRYBjCwfba9fpHSsKTRi4GCC
-	28KbV5g==
-X-Gm-Gg: ASbGncthYkO8ZZP8WKA3AZiiYf3/VxdIBN3j5FqgtQCDqpIQKp6BIjcgY5FM7jgpGYZ
-	7KP4soL8d5lLENuLZQbVZknMjEAS+zzZ6wiYQteHxSocKeRGWGm74ZYprVdOLcWn17fXw/7kK25
-	9ThcwivH/gNMb7rYSzhBcvkvJK2MQ1RQFZ5kaRPCoFSd4+4QnOVZPB1ZCaePqTMzLsz4reR9reL
-	p6KCd7HV5KmySeGD4uy6wnvsKo9I/xTwDgkQDUQb2ge10AVWUIrlrcTxFy0etrsE27KD502Djnx
-	Sz9tSVEw2YrYls8YXZQgS+xtfhQEfVP1n1UY0muc30dXiW36gvfCUrPwlPs/6QRYvHBGbNZYsMq
-	S6jWS+KbgYfRh22o=
-X-Google-Smtp-Source: AGHT+IEFxilkq1QymT8bTPcvVyOn/kVUINmXrpDrtN6a4h38fFqXkhb/NDdMhEriTiCGA6FS8Lp+BA==
-X-Received: by 2002:a17:907:3ea8:b0:acb:b9ab:6d75 with SMTP id a640c23a62f3a-ace73540b78mr22703166b.23.1745545010391;
-        Thu, 24 Apr 2025 18:36:50 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41b2fcsm50243066b.26.2025.04.24.18.36.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 18:36:49 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acacb8743a7so286500266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Apr 2025 18:36:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXjDJE5cHWIPwaaVq6Ikk0sOQ9O0dX8LzRrtMLjK19Duqs/zL2FiKykaV8gqrKhaU+F5fvcPgQ1VMBY6gg=@vger.kernel.org
-X-Received: by 2002:a17:907:97c4:b0:ace:4870:507c with SMTP id
- a640c23a62f3a-ace5a44a4bdmr367221766b.23.1745545009283; Thu, 24 Apr 2025
- 18:36:49 -0700 (PDT)
+	s=arc-20240116; t=1745545084; c=relaxed/simple;
+	bh=lj4/F/U3f7X3aAx/fAzeWcWcAOrau3CQvSstWIVxob0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tBjjLC1r35prl+tpdBxrb7V3YL0Q4W+d5qvp1iGw8o3q9gNs2Sf0DSsNly5XYZbY98XmnUjRzNNmNjZ7hv+uCYY2acMH8gpay98npnKWGiWODx5QcNIvlJHI9J9pI9p6toO9wZHvHXOPS/Oc32ONVUTaYzJkpNmzlJOxaX3tb6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=SPLlJN4K; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=wxtRcz/33uGdmZmU3FiyNrSabB4K+ePSyN7XL7Ah7Jw=;
+	b=SPLlJN4KzWXlr871NdLyCV3uvHLRYDTx4+fL0KG+OoMyB92edVzMl0kLZVdjzR
+	Bak/po+uO0ofuuAt6oXw/WfNk6XKFe8x1KqYFNb5XJ+DMRmK63sug5YeUHGy9sC3
+	eZjDtuemsYmry0SYD8IrxC9/G9dFdP70BDOGtWgMT+9e8=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgCHNko55wpokC_SAw--.37001S3;
+	Fri, 25 Apr 2025 09:36:59 +0800 (CST)
+Date: Fri, 25 Apr 2025 09:36:57 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: michael.riesch@collabora.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH 1/3] MAINTAINERS: add exclude for dt-bindings to imx entry
+Message-ID: <aArnOZapBlDgJ6sY@dragon>
+References: <20250410-maintainer-mriesch-v1-0-cdc5c6c68238@collabora.com>
+ <20250410-maintainer-mriesch-v1-1-cdc5c6c68238@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425003342.GA795313@ax162>
-In-Reply-To: <20250425003342.GA795313@ax162>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 24 Apr 2025 18:36:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whfT3A8K2Z+WbieGG5Hhc9QAT5s3qsbB19O0Roj2G5tfA@mail.gmail.com>
-X-Gm-Features: ATxdqUH_oZs_YreS6F_9--y11jLu023Kq43k2pNb3lC2tv-avxOMETPk50B1xGw
-Message-ID: <CAHk-=whfT3A8K2Z+WbieGG5Hhc9QAT5s3qsbB19O0Roj2G5tfA@mail.gmail.com>
-Subject: Re: Adding __popcountsi2 and __popcountdi2
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410-maintainer-mriesch-v1-1-cdc5c6c68238@collabora.com>
+X-CM-TRANSID:M88vCgCHNko55wpokC_SAw--.37001S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JF4rJF1xXF1fXrW7urWkXrb_yoWxCrb_ur
+	W8t34kuw47G3ZFkasruFn8Gayfuw18Wr15A3s8trZIqayavFWDGr1DtrnIqr1DtwsxJasF
+	kFZ3XF9Yk3y7WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0eyIUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAQw6ZWgK0Y1WOAABsD
 
-On Thu, 24 Apr 2025 at 17:33, Nathan Chancellor <nathan@kernel.org> wrote:
->
-> I figured added
-> these may not be as bad as the wcslen() case because most architectures
-> generally have an optimized popcount implementation and I am not sure
-> compiler builtins are banned entirely from the kernel but I can
-> understand if it is still contentious.
+On Thu, Apr 10, 2025 at 09:41:30PM +0200, Michael Riesch via B4 Relay wrote:
+> From: Michael Riesch <michael.riesch@collabora.com>
+> 
+> Since the IMX (as in i.MX, the NXP SoCs) MAINTAINERS entry claims
+> everything that contains the name "imx", hanges to device tree
+> bindings for any Sony IMX image sensor are likely to be sent to the
+> maintainers listed therein. Add the missing exclude to fix that.
+> 
+> Fixes: da8b7f0fb02b ("MAINTAINERS: add all files matching "imx" and "mxs" to the IMX entry")
+> Suggested-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 
-Why does the compiler even bother to do this if the architecture
-doesn't have the popcount instruction? The function call is quite
-possibly more expensive than just doing it the stupid way.
+Applied, thanks!
 
-But if you want to do this, put the damn thing as an alias on the code
-that actually *does* the SW fallback in lib/hweight.c.
-
-Because the way your patch does it now, it takes "I'm doing stupid
-things" to the next level by turning that function call into *two*
-function calls - first calling __popcountsi2, which then calls
-__sw_hweight32.
-
-Let's not do stupid things, ok?
-
-              Linus
 
