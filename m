@@ -1,135 +1,201 @@
-Return-Path: <linux-kernel+bounces-620495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA686A9CB87
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:23:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3A1A9CB0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1754E4E3A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED97C1B69180
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7365258CE9;
-	Fri, 25 Apr 2025 14:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784C24DFF4;
+	Fri, 25 Apr 2025 14:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="TvW9Zx7Z"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eADtGQQC"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABD123C8D5
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE44537F8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 14:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745590668; cv=none; b=l12PTApq2lsgqVojj/iMMJsn4ButR/ZjEnTOVwzD2pt+Qugzsod5bA4ClWCpWO2mM4/s9mKpglx3icr5oAlcu0nqtTyJiOoEnyyCSNpTCNjSCEMJ3BnS5jBjSEDJ6vnUqPCNRX5uT8S2WkJK8sKPQjWPNXWU2xrT+2DvDi7Ef/4=
+	t=1745589924; cv=none; b=P7XWIcns5JAWn6uk2FEjAUdnKGPILnKFXWu9p0fwwBXkM5MtSUZMyl1Ti5bZzcCW2SFOMxcMEnitbA1VxPCkGVLwXTC7bNUmfyb14gaGccxB+symLY6PkVnLwpGgGKIILnWrYjSasdFHgSe1YMPyTRe8cd3Tjz156kPAxQl8IJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745590668; c=relaxed/simple;
-	bh=BZhn1BsYPMezYI/+h5i91Uy7LJ1qBouu5TAx2ZQwFRw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nmax9vYNWI1zau4K/KSRSaDKsv2HvQyASUiBQ92dRKK48/3fMAsNdlZvlw4WaMPDhiDfm4ffxU0lD5AM43XFqAJ81xFVOIEKN77BWJIjBtpoZkr4hXS/ZfW3wLiPgk1gCUW5MtPqVXw9ULMI2am3n0qlwsSWX5OtnYl8nksDBnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=TvW9Zx7Z; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=sM7oqKLyYP571Y9Dfl29bOvk2BWbvZHGztoSxElnFJQ=; b=TvW9Zx7ZQg3NSpnY/MFOrJMCU8
-	KlDFzbxBFtgU0An/p+X8kBhYYkz5g5Wxx8eD6j9L7SrPNZ62dSFaO4V4kI8tZGbpoMST/e8x27vHA
-	Rs2oIAdW392VAf+fzlt6tsF3lMV22ToUN2pYMeGbIN/92i4omavO4GNyJVSwQXm8Pxd7Fc53DDnms
-	d2MVU/7M9uBqda7fLTNy1BFZ3srz3WBb3qwHTdj7Al6KelGTg2mc6IE1kYRDAhsdqs+YqOIHW5okf
-	KFi1zAQxTtCd+YvwtCgMJ5j9tLQwOaZ1uqkKIt1+SNEQuKkG5nV2FasH8DFC0Z319PZPORHIwU9W6
-	tbbGju0A==;
-Received: from [77.26.4.178] (helo=edoras.jupiter)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1u8Js0-008MK6-Iq; Fri, 25 Apr 2025 16:17:36 +0200
-From: Jose Maria Casanova Crespo <jmcasanova@igalia.com>
-To: Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Iago Toral Quiroga <itoral@igalia.com>
-Cc: Jose Maria Casanova Crespo <jmcasanova@igalia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: [PATCH v2 2/2] drm/v3d: client ranges from axi_ids are different with V3D 7.1
-Date: Fri, 25 Apr 2025 14:25:08 +0200
-Message-ID: <20250425122522.18425-2-jmcasanova@igalia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425122522.18425-1-jmcasanova@igalia.com>
-References: <20250425122522.18425-1-jmcasanova@igalia.com>
+	s=arc-20240116; t=1745589924; c=relaxed/simple;
+	bh=HjSsdxdE9NyGgJS9GCqGafk2gzAj2H4hnr8cVPyhdtE=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=RvSTAOizbetPL/X2SSG9ABQeHyuYoDZrMaScL2NMRRfNVQLUj3V3KV5WjBFKsdOfZyBBIV3uqTZnpntmmtiLz3PeZCMBDVHQEuqUZxejg/Ac+5j/oubQRTH4U02Nc+m+X10ih0fFAM7oSvbic+WHo/H7HN6j3buKZQGA8xBxtuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eADtGQQC; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaecf50578eso352474266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 07:05:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745589917; x=1746194717; darn=vger.kernel.org;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3LCw/MgP3XEKxNv5aRVxq1OQohgxDYMo6gz2G3JzZjs=;
+        b=eADtGQQCaVulIBAwIaVsPDjXru1fwWgtPYYxNYy6k4amclgV19b6iWv8gHdpah5vqJ
+         q2bBYtwQ9P1ZZpQVYSxId1RLgXN3Th04favpdlhLw5d+qkAF+ZkHERSO4rqOp8bIJn1q
+         0r+n2vv6BUgB6xGhv3H5KXAlbM7JsVfopBiWShpOQANMGPXneoM0nDDLyFQXlqJU4UfP
+         pZRlvJrVq7B98de6YY5MZXW5eBH8lFdLGbAsNJIg6ZPHCtZhzJsUKVLG6q+neYWWz8/B
+         fGTJtrt09aQkP1e7J1iB/HXgETSdx9VQBE8tQks++BlAbbyxdI9IO07YXpzZPs2Vwpeg
+         JmgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745589917; x=1746194717;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3LCw/MgP3XEKxNv5aRVxq1OQohgxDYMo6gz2G3JzZjs=;
+        b=qUyMsUkCDYonn9RDJSiAGDjAVcxvcQp5LbcruVYR8+nK0ENmtZzYrOCr29UtuJyy0y
+         w25EWwx39r2rD53r5yebHQAzTrUWLXCI2MYgmBv86HpbFf/zAjx9zYzqDNXaidH9Ah26
+         rw0U4rqV25yQvkqiH9ky1nUP51kWEWx8sYL2+JC2Xx3Fqu/+vhBxMRHFds1/z7pNqOfk
+         nbhFl6BPwxHDHZC5NEMK4sQlENg0nigDQdXEjyS/+83hKtksrZmVrh5wd9LsN1R2S4h5
+         wvfaP+xN62aKFxwGaGGp62dJZvQMCH8gVPBT1tc2QBBRil1q+aYIbIPg789g6RUgHPT0
+         rWsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKJ57oAimISuH+l/73W28IHxkwBY5rE+vgoumZ6wHIGbU9aWyPkZJxWq6ZVdjEEjHsmN0RyxlO9oDNwac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOe12ZXAmLDnm0DOagg5c9MOzuQ9oQLHTh4lWqsgi5HCeY8t09
+	nxnYYVsT6J9Vl8ZUB+svWcJudjSmfMqSelmvU/V5wDUywywEs6u+LTu2Kr/5
+X-Gm-Gg: ASbGncug+OojSdKMATTPmUJjMTN/f7usYZD3boBmIYWsQ7vs1lOJCoC5xzEDJ+xIT1C
+	c4rYIurecqVTbGFa/34LhzeisBhiyCWh5oMAUip0FuNjtvb98roU0/xy+km3nWmdket9LNWlh2A
+	fMGpAWGIiFN3qK5zkzsTOEGhq744/QVdyiHD1Cq0tXDHeSqxCqEqGPDm04QxCzZNmhA7BrMEXwq
+	UMggIdrfPjaeqr3ZmnebtRrnsb9Zt6KFvA78ud39DN+bcfhj+wQVJPphiHh32n5x3MzInzwwO07
+	5KlSiYrdoZ4JAI5XdR4DBYGJNo19uV8swk7Z/qsaQQ==
+X-Google-Smtp-Source: AGHT+IGO6f7Pi4UOW3QsPuiNoBivx1U0eHxe4dctUaLMeU47U+Zqdei8tzT8IVRPQYOqLMuz6fImGA==
+X-Received: by 2002:a17:906:c153:b0:ac3:8988:deda with SMTP id a640c23a62f3a-ace7136cb5cmr190335466b.40.1745589917041;
+        Fri, 25 Apr 2025 07:05:17 -0700 (PDT)
+Received: from [192.168.1.100] ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf8ca6sm139246066b.118.2025.04.25.07.05.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 07:05:16 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------7fYHuXv1MXr1zGZT1rHlAPO4"
+Message-ID: <15696bb3-126b-ef71-f838-80e1e1c1b0aa@gmail.com>
+Date: Fri, 25 Apr 2025 16:05:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 14/15] x86/percpu: Remove !CONFIG_X86_CX8 methods
+To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: "Ahmed S . Darwish" <darwi@linutronix.de>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, John Ogness <john.ogness@linutronix.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+References: <20250425084216.3913608-1-mingo@kernel.org>
+ <20250425084216.3913608-15-mingo@kernel.org>
+Content-Language: en-US
+From: Uros Bizjak <ubizjak@gmail.com>
+In-Reply-To: <20250425084216.3913608-15-mingo@kernel.org>
 
-The client mask has been reduced from 8 bits on V3D 4.1 to 7 bits
-on V3D 7.1, so the ranges for each client are not compatible.
+This is a multi-part message in MIME format.
+--------------7fYHuXv1MXr1zGZT1rHlAPO4
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On V3D 7.1, the CSD client can also report MMU errors.
-Therefore, add its AXI ID to the IDs list.
 
-Fixes: 0ad5bc1ce463 ("drm/v3d: fix up register addresses for V3D 7.x")
-Signed-off-by: Jose Maria Casanova Crespo <jmcasanova@igalia.com>
----
- drivers/gpu/drm/v3d/v3d_irq.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
 
-Changes in v2:
-- Use imperative in commit log. (Maíra Canal)
-- Fixed Typos in commit log.
+On 25. 04. 25 10:42, Ingo Molnar wrote:
+> TODO: review the constraints.
+> 
+> NOT-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>   arch/x86/include/asm/percpu.h | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+> index 5fe314a2e73e..275c76a031ee 100644
+> --- a/arch/x86/include/asm/percpu.h
+> +++ b/arch/x86/include/asm/percpu.h
+> @@ -334,8 +334,7 @@ do {									\
+>   	new__.var = _nval;						\
+>   									\
+>   	asm_inline qual (						\
+> -		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+> -			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+> +		"cmpxchg8b " __percpu_arg([var])			\
+>   		: ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
+>   				"+a" (old__.low), "+d" (old__.high))	\
+>   		: "b" (new__.low), "c" (new__.high),			\
 
-diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
-index d6ce1324905d..2cca5d3a26a2 100644
---- a/drivers/gpu/drm/v3d/v3d_irq.c
-+++ b/drivers/gpu/drm/v3d/v3d_irq.c
-@@ -199,12 +199,33 @@ v3d_hub_irq(int irq, void *arg)
- 			{0xA0, 0xA1, "TFU"},
- 			{0xC0, 0xE0, "MMU"},
- 			{0xE0, 0xE1, "GMP"},
-+		}, v3d71_axi_ids[] = {
-+			{0x00, 0x30, "L2T"},
-+			{0x30, 0x38, "CLE"},
-+			{0x38, 0x39, "PTB"},
-+			{0x39, 0x3A, "PSE"},
-+			{0x3A, 0x3B, "CSD"},
-+			{0x40, 0x60, "TLB"},
-+			{0x60, 0x70, "MMU"},
-+			{0x7C, 0x7E, "TFU"},
-+			{0x7F, 0x80, "GMP"},
- 		};
- 		const char *client = "?";
- 
- 		V3D_WRITE(V3D_MMU_CTL, V3D_READ(V3D_MMU_CTL));
- 
--		if (v3d->ver >= V3D_GEN_41) {
-+		if (v3d->ver >= V3D_GEN_71) {
-+			size_t i;
-+
-+			axi_id = axi_id & 0x7F;
-+			for (i = 0; i < ARRAY_SIZE(v3d71_axi_ids); i++) {
-+				if (axi_id >= v3d71_axi_ids[i].begin &&
-+				    axi_id < v3d71_axi_ids[i].end) {
-+					client = v3d71_axi_ids[i].client;
-+					break;
-+				}
-+			}
-+		} else if (v3d->ver >= V3D_GEN_41) {
- 			size_t i;
- 
- 			axi_id = axi_id & 0xFF;
--- 
-2.49.0
+There is no need for asm_inline, ALT_OUTPUT_SP() macro and "S" input 
+(that was used to force the compiler to put the memory argument into 
+%esi register):
 
+	asm qual ("cmpxchg8b " __percpu_arg([var])		\
+		: "+m" (__my_cpu_var(_var)),			\
+		  "+a" (old__.low), "+d" (old__.high)		\
+		: "b" (new__.low), "c" (new__.high)		\
+		: "memory");					\
+
+> @@ -363,8 +362,7 @@ do {									\
+>   	new__.var = _nval;						\
+>   									\
+>   	asm_inline qual (						\
+> -		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+> -			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+> +		"cmpxchg8b " __percpu_arg([var])			\
+>   		CC_SET(z)						\
+>   		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
+>   				[var] "+m" (__my_cpu_var(_var)),	\
+
+Same here:
+
+	asm qual ("cmpxchg8b " __percpu_arg([var])		\
+		CC_SET(z)					\
+		: CC_OUT(z) (success),				\
+		  [var] "+m" (__my_cpu_var(_var)),		\
+		  "+a" (old__.low), "+d" (old__.high)		\
+		: "b" (new__.low), "c" (new__.high)		\
+		: "memory");					\
+
+Please see the attached patch that implements the change.
+
+Uros.
+--------------7fYHuXv1MXr1zGZT1rHlAPO4
+Content-Type: text/plain; charset=UTF-8; name="percpu_cmpxchg.diff.txt"
+Content-Disposition: attachment; filename="percpu_cmpxchg.diff.txt"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3BlcmNwdS5oIGIvYXJjaC94ODYv
+aW5jbHVkZS9hc20vcGVyY3B1LmgKaW5kZXggYjBkMDNiNmMyNzliLi42NGMyZTcxNWFmNjMg
+MTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3BlcmNwdS5oCisrKyBiL2FyY2gv
+eDg2L2luY2x1ZGUvYXNtL3BlcmNwdS5oCkBAIC0zMzUsMTMgKzMzNSwxMCBAQCBkbyB7CQkJ
+CQkJCQkJXAogCW9sZF9fLnZhciA9IF9vdmFsOwkJCQkJCVwKIAluZXdfXy52YXIgPSBfbnZh
+bDsJCQkJCQlcCiAJCQkJCQkJCQlcCi0JYXNtX2lubGluZSBxdWFsICgJCQkJCQlcCi0JCUFM
+VEVSTkFUSVZFKCJjYWxsIHRoaXNfY3B1X2NtcHhjaGc4Yl9lbXUiLAkJXAotCQkJICAgICJj
+bXB4Y2hnOGIgIiBfX3BlcmNwdV9hcmcoW3Zhcl0pLCBYODZfRkVBVFVSRV9DWDgpIFwKLQkJ
+OiBBTFRfT1VUUFVUX1NQKFt2YXJdICIrbSIgKF9fbXlfY3B1X3ZhcihfdmFyKSksCVwKLQkJ
+CQkiK2EiIChvbGRfXy5sb3cpLCAiK2QiIChvbGRfXy5oaWdoKSkJXAotCQk6ICJiIiAobmV3
+X18ubG93KSwgImMiIChuZXdfXy5oaWdoKSwJCQlcCi0JCSAgIlMiICgmKF92YXIpKQkJCQkJ
+CVwKKwlhc20gcXVhbCAoImNtcHhjaGc4YiAiIF9fcGVyY3B1X2FyZyhbdmFyXSkJCQlcCisJ
+CTogIittIiAoX19teV9jcHVfdmFyKF92YXIpKSwJCQkJXAorCQkgICIrYSIgKG9sZF9fLmxv
+dyksICIrZCIgKG9sZF9fLmhpZ2gpCQkJXAorCQk6ICJiIiAobmV3X18ubG93KSwgImMiIChu
+ZXdfXy5oaWdoKQkJCVwKIAkJOiAibWVtb3J5Iik7CQkJCQkJXAogCQkJCQkJCQkJXAogCW9s
+ZF9fLnZhcjsJCQkJCQkJXApAQCAtMzY0LDE1ICszNjEsMTIgQEAgZG8gewkJCQkJCQkJCVwK
+IAlvbGRfXy52YXIgPSAqX292YWw7CQkJCQkJXAogCW5ld19fLnZhciA9IF9udmFsOwkJCQkJ
+CVwKIAkJCQkJCQkJCVwKLQlhc21faW5saW5lIHF1YWwgKAkJCQkJCVwKLQkJQUxURVJOQVRJ
+VkUoImNhbGwgdGhpc19jcHVfY21weGNoZzhiX2VtdSIsCQlcCi0JCQkgICAgImNtcHhjaGc4
+YiAiIF9fcGVyY3B1X2FyZyhbdmFyXSksIFg4Nl9GRUFUVVJFX0NYOCkgXAorCWFzbSBxdWFs
+ICgiY21weGNoZzhiICIgX19wZXJjcHVfYXJnKFt2YXJdKQkJCVwKIAkJQ0NfU0VUKHopCQkJ
+CQkJXAotCQk6IEFMVF9PVVRQVVRfU1AoQ0NfT1VUKHopIChzdWNjZXNzKSwJCQlcCi0JCQkJ
+W3Zhcl0gIittIiAoX19teV9jcHVfdmFyKF92YXIpKSwJXAotCQkJCSIrYSIgKG9sZF9fLmxv
+dyksICIrZCIgKG9sZF9fLmhpZ2gpKQlcCi0JCTogImIiIChuZXdfXy5sb3cpLCAiYyIgKG5l
+d19fLmhpZ2gpLAkJCVwKLQkJICAiUyIgKCYoX3ZhcikpCQkJCQkJXAorCQk6IENDX09VVCh6
+KSAoc3VjY2VzcyksCQkJCQlcCisJCSAgW3Zhcl0gIittIiAoX19teV9jcHVfdmFyKF92YXIp
+KSwJCQlcCisJCSAgIithIiAob2xkX18ubG93KSwgIitkIiAob2xkX18uaGlnaCkJCQlcCisJ
+CTogImIiIChuZXdfXy5sb3cpLCAiYyIgKG5ld19fLmhpZ2gpCQkJXAogCQk6ICJtZW1vcnki
+KTsJCQkJCQlcCiAJaWYgKHVubGlrZWx5KCFzdWNjZXNzKSkJCQkJCQlcCiAJCSpfb3ZhbCA9
+IG9sZF9fLnZhcjsJCQkJCVwK
+
+--------------7fYHuXv1MXr1zGZT1rHlAPO4--
 
