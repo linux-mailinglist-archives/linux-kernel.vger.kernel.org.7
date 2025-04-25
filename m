@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-620400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8730CA9CA3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:29:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCD4A9CA49
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BDB1B64B5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F8E3AED14
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FC0257421;
-	Fri, 25 Apr 2025 13:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808D12586CE;
+	Fri, 25 Apr 2025 13:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ac1FfL4g"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ovfAxpgz"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4EC256C6F;
-	Fri, 25 Apr 2025 13:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7832561AC;
+	Fri, 25 Apr 2025 13:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587704; cv=none; b=vAEbUx+vMEfQrJUB2eQrGmn82/HmoEODl/SsfxAsvV82nzAuh2ohZOLuwyGnb8b5vivq5DX0A+uewnKiM12Ce0ybxY4ct6Wq/Rxe55bmnEs6Wf0GUEaMa+yu/F9bPjXfujXejILTNvhYYYbKN7eigkkW89lCZxWvPeq3xoF5EGs=
+	t=1745587725; cv=none; b=YEmAYAN5VwY7zjuoAmVaFcNcJVMMHVgkhVXmtlsQeM2MTdcV/KAxoOmKjHfhPKsyUUUE8Q3D7HiBL4wOm65o6YxxTK1qakSe5/czzQflcYgH5QGnsW33AfbrSGyxcyW0C/0oSyBzGI6fU550RF73AcLX3YjQaVLLYQJIalqXTsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587704; c=relaxed/simple;
-	bh=mDs1kublQxCA1O7cB2fREvwvXpYdNZzxnOO/aSHfTbM=;
+	s=arc-20240116; t=1745587725; c=relaxed/simple;
+	bh=t7qSU/IIIuYq1lxN3qMcq4LPGAf2mcJQYiI6P44d0FA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VyNDpb6fM25rm2D9p81mtZt15iXqW5yqhYwfYIMZmIv7mR0sxn/HaVF6jyHOlljF3zono8I3s34aqyVGX+1H6UIGmhm1r53yZ030pMbkNLoDKqxtq9+rtHRrChrAdA+2lZNgItWQmkFhMWxZCu3kWPJY1WGqCAUF8rGYRx/MapA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ac1FfL4g; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso15849965e9.3;
-        Fri, 25 Apr 2025 06:28:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745587700; x=1746192500; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aug+uhhO10dT8SA1KkPf7sPRP/dd7tZddbirMjYFdb0=;
-        b=Ac1FfL4gR4m5aSPPSl7gVv+CijBQ+YaPVdP7SpT5swarWLB/rMp670dbqwE8gvYOuh
-         c5w+ssWnCJ9Zy9qYQjg8xU2vChunkFIsahJMjQV+gpXEanVEspjNQQvj0yR1Y8/3sopT
-         tJn3izENXHxxb4AOROlB2Je9wwheJVxaegV/FA0RgZxe0PJFOl97AsmyqF4x0unryHpV
-         HuaEdwnA1ZmvBs8bsnO4+3bjcp/Q6C2HvULjFiPfC5qT2Esh8CtONMZJhMrspHvOCw1Y
-         jA2zSllQCBmJUfQx6poRjshFjyL7Dvm0OZT0ClN8igEe4WIXhKv8DGU/XlucNI6vwl+c
-         tbow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745587700; x=1746192500;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aug+uhhO10dT8SA1KkPf7sPRP/dd7tZddbirMjYFdb0=;
-        b=lzwFaxgES0RwZZ0d71r4KnMVDjd1Z4S9C5+PiDzQKC3X8U77sRiuZ8BMP2TQOYEYu2
-         AvE+ooPCVS5fXtHevVa794nqZtPdRWqYF252+MKXW0V1OzJmasm1FKTlWbtkW9A14UXd
-         cyr9ppEkH/hNiinBV/8XOrqtjH7OWJ5RJsP7MeLupzOVz6U+t4tqqsnHpjX4ibfBA2sz
-         tyTbAsOtimoEMlUNPnCVwjNmWGC4Tzr4kam+u/G0kJMR03dtdLoGvAxxd+Ng9x6/2mf9
-         s61BewF4PqS0odOay1Sq4UbKWkaIezmB3KVyMutoMng79ofAq2rBg3Wcg5miXv89Mnna
-         YxBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8J4fB8LFzCuB+/XeP3OStsbheY89LObHSJs7/bllfb6yMnuQS8wMgJNmRLOygNa3k8eZKXLzcvsV8Z5E=@vger.kernel.org, AJvYcCXIFYqIA4auXhLPvTXBys2EcAzTKAPRPmVSDo3SZCoIiDiBClKP7AqBBrJb6zWPENSTeceW3IJ3/jfERes0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7zXicioPOwABb45xMgl6YGOB/OeRwd4KkFShAFAGJpJOUI5/G
-	j4ZHOvrZ9B5GbziawdQP7rG9zwQhdcVSlbmxpZ8tJxDCTIjDMySQ
-X-Gm-Gg: ASbGncsMIpJhPj142d8i54xr2yVod7q7D/JccNA8yXoZHP6VrtOiCbi0oWvMO3/YPK3
-	KzcufNybRiefes8F05LDnnqYDR7fJmGQJ+gqg4yH/fFdZkiMOt9+JDNwzfLCbiqoOchXpb+sKmS
-	p+csuJp8Y+jsUsRiazFVAEM/4S3Xz8oWFc/8prBMVilr3ZCtPKJLyKb2oMf+Ero9xzFt46mF/gW
-	pDOqzmOWIT/ndm6D6BZutYgKwQsXnOlv5M3s3DWTEKEp5n+OWM3cbmmevvI4Hbr4frgMsEgZXu4
-	ZMF9qE7zKtlFnRh0WDyM/1tDVTfocJMfUQiDwq6hVZSp0Ucqlgfi
-X-Google-Smtp-Source: AGHT+IFSGC6ia6yK5H9T8nOwC67dP5jiFTss/M9i30fMyhHSIu9i6Cr1xRw6VNVbGW1I/F1aUlxm1w==
-X-Received: by 2002:a05:6000:144b:b0:39c:2678:302b with SMTP id ffacd0b85a97d-3a074f14a59mr1999330f8f.45.1745587700424;
-        Fri, 25 Apr 2025 06:28:20 -0700 (PDT)
-Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a073c8c7fesm2394207f8f.6.2025.04.25.06.28.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 06:28:19 -0700 (PDT)
-Date: Fri, 25 Apr 2025 15:28:18 +0200
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
-	linux-crypto@vger.kernel.org, wens@csie.org,
-	jernej.skrabec@gmail.com, samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] crypto: sun8i-ce-cipher - use
- pm_runtime_resume_and_get()
-Message-ID: <aAuN8i5p1HlEkFn6@Red>
-References: <20250425124517.2225963-1-ovidiu.panait.oss@gmail.com>
- <20250425124517.2225963-4-ovidiu.panait.oss@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCCfb5fD8URfBffrzs32OhOvgYZ8r4EUypDlmXLwgqgYGNyF3R0rtLBQHXAGPdM+9lD/eVJDT3DW1SEdraJfG5ySbxjw0u7wL14leLJZn/HWawyYXXFJ7QF6a8ipD4IsithWq5WwzQXIOyIOTnzj0BEKqbrGDEC9mfzaFxIcags=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ovfAxpgz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vlE74K0LimainSdnoFlqcyVYaVSQnmACb6u5i0CwKyc=; b=ovfAxpgz9/2ZldfFISlzn37R2N
+	N8EFk71S4CItvdyyRRcm3DUc7bnLrjz7kCxW9NJ4Wc/jKXXd6vBuAfWML+ZPsLlXQgtkxDfB9cWJK
+	ILm1XH9FdY32lrHLu5jWLz672KLYDgMmZYahFT4U+9oiHocTrGnn2SmOMkpgZpv0S7j9ajGqj1XlT
+	d80P5yDGGBqnDIpozdUD+kwzp915To2IuE9HTw0uuMc7sq7U6ZnH2MAeYfdV2OaP5ajPOQwcEyMQp
+	6W9djK5G4vVydr0L8ZDt+Qz1PGNc2wgYrkUe9LeYkhj6mVEX8gzLEdhZzSd0NPdBjSH2/H/jYXIRH
+	PvUfCDMQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u8J6h-0000000HHN9-3OF8;
+	Fri, 25 Apr 2025 13:28:43 +0000
+Date: Fri, 25 Apr 2025 06:28:43 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: ming.lei@redhat.com, axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] loop: Add sanity check for read/write_iter
+Message-ID: <aAuOC8djgRrq-Gdj@infradead.org>
+References: <CAFj5m9LVuekp_n6pEfs17n6QB3Q0yu-qRP67NOJb9ZXRNyhP3Q@mail.gmail.com>
+ <20250425053803.3614260-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250425124517.2225963-4-ovidiu.panait.oss@gmail.com>
+In-Reply-To: <20250425053803.3614260-1-lizhi.xu@windriver.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Le Fri, Apr 25, 2025 at 03:45:17PM +0300, Ovidiu Panait a écrit :
-> Replace pm_runtime_get_sync() usage with pm_runtime_resume_and_get() to
-> simplify error handling.
-> 
-> This is recommended in the documentation of pm_runtime_get_sync():
-> /**
->  * pm_runtime_get_sync - Bump up usage counter of a device and resume it.
-> ...
->  * Consider using pm_runtime_resume_and_get() instead of it, especially
->  * if its return value is checked by the caller, as this is likely to result
->  * in cleaner code.
-> ...
->  */
-> 
+On Fri, Apr 25, 2025 at 01:38:03PM +0800, Lizhi Xu wrote:
+> Some file systems do not support read_iter or write_iter, such as selinuxfs
+> in this issue.
+> So before calling them, first confirm that the interface is supported and
+> then call it.
 
-Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
-Acked-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+Nit: commit messages should not have lines longer than 73 characters.
 
-Thanks
-Regards
+Please also add a:
+
+Fixes: f2fed441c69b ("loop: stop using vfs_iter__{read,write} for buffered I/O")
+
+and maybe add a blurb that vfs_iter_read/write had this check.
+
+Now the other interesting bit is why we did not hit this earlier with
+direct I/O?  I guess it's because we basically have no instances
+supporting direct I/O and not using the iter ops.
+
+> @@ -603,6 +603,12 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+>  	if (!file)
+>  		return -EBADF;
+>  
+> +	if (unlikely(!file->f_op->read_iter))
+> +		return -EINVAL;
+> +
+> +	if (file->f_mode & FMODE_WRITE && unlikely(!file->f_op->write_iter))
+> +		return -EINVAL;
+
+Can we have a common helper for change_fd and configure, please?
+
+Please also drop the unlikelys - this is not a fast path and we don't
+need to micro-optimize.
+
+A bit unrelated, but loop-configure actually checks for write_iter
+and forces read-only for that.  Do we need the same kind of check in
+change_fd?
 
