@@ -1,139 +1,135 @@
-Return-Path: <linux-kernel+bounces-619751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE553A9C0D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:20:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB47FA9C0CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757631BA4788
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4404F17CE68
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFCF23E347;
-	Fri, 25 Apr 2025 08:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B5623D288;
+	Fri, 25 Apr 2025 08:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2dqp/1Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i8KCNbjb"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B252356A6;
-	Fri, 25 Apr 2025 08:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D7D23C390
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745569092; cv=none; b=mSlfMQWe60+ZeaWF0mTXiCxwTB/F8JKoFfb6F6u3V8GJDU5+Rv/m1m+zf/09M3udsh17XIfpVKl1nQ5z8IV4GLWx+GPaHsfhca23Cup3qLIoircdCeZa+hLw/HBBE4NAa0v41nRH05srVe3qWeJTl5LDYeF2dGERLz2ewOBrtio=
+	t=1745569082; cv=none; b=LnFlpbBmefEdoPjXFlzVJcVoOuaPP7CDRQkbwNneO4i0kIc4Kxazhsipb9JBNq3dKDMOGElMxt/AFYG7heI9L5sAUVxvChb/BZGkp2s9HQ+qxm0IO2E5Fnp5Gu54YJ4tHoMBWmBlZKeRFH4w2UpzzTxwNipuARcaBP/WMc87ch0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745569092; c=relaxed/simple;
-	bh=vBvwTngtF1y3gEmzsBG3Ole+k2+llV0wO5j1OWtz3cU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Av4jdjC03x1ReIOKARbBt3loTBM4SiFEZi3gKu4Hw145bLGA1z+M0hQ12Y1ETP6Ezjlv7M9YOo1wPJo6riz0fL6FVUSW4P1G9Rmbv8ZkuO29WBTy+9aJvv4EW+paynFfMQ925BcMPXQHRMTPF15UB8KQbQcYsqoUat3esojJ+eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2dqp/1Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB43CC4CEE4;
-	Fri, 25 Apr 2025 08:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745569092;
-	bh=vBvwTngtF1y3gEmzsBG3Ole+k2+llV0wO5j1OWtz3cU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s2dqp/1ZtDMF0/3m2Sgj/JqnJpL1j3Fa5gTBKgtpqy4pAYukdZiVnJcPm95z067J/
-	 gVTGpWxG6Om5uwtxnptI1fV5MXhajBk3q1WvLCU6oZXyLidfIp9BDLKhn3St0IuxVM
-	 gNvRHn3xhRsNLqx/M6/WxEhN1IWtXWjldZq8fqf9y/NVL7XFcISVYh0ceu0rGLxcIs
-	 RoVsiYBS1bGEP3VdHJ9Rg5h4b+qw4VvVkzVZ4arssf7HxFflWioLqg+mipGTW35drH
-	 ZIu7ntFfgIDynQHBgsD6dsDKj76aLkrCa1kiRpVvXXznTtQjpvHGr9SBZ5WnqksS49
-	 v7cF3FaDRbbXg==
-From: Philipp Stanner <phasta@kernel.org>
-To: Cezary Rojewski <cezary.rojewski@intel.com>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sound-open-firmware@alsa-project.org
-Subject: [PATCH v3 4/4] AsoC: intel: atom: Return -ENOMEM if pcim_iomap() fails
-Date: Fri, 25 Apr 2025 10:17:43 +0200
-Message-ID: <20250425081742.61623-6-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250425081742.61623-2-phasta@kernel.org>
-References: <20250425081742.61623-2-phasta@kernel.org>
+	s=arc-20240116; t=1745569082; c=relaxed/simple;
+	bh=ockCoErXJYNNWIE4F1OGfTdTciM14pc2rGFj8KF/fos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjaq/+ZtBPh72VsTjaLCc6U74WGWuCfIqlFzw15h1bT/I5i4Fyr1TSnSE5V2NTiRaJzmuP9mdmeRo9UleUfdGIKbGwXiu/kxVfrztQ5CY9qoK5Clj5bAqssQPUavbD1N1hiVXtvElAcmBmf9YnmGWf62Knb79ruE1LZUcDgnnrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i8KCNbjb; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso12839735e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745569077; x=1746173877; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
+        b=i8KCNbjbmdKc4sIjtJQPP7WgaU8u7kgQvvJRDHolwlBVdzQNI9ZnLo81t6/elcoa2k
+         NUlaEF7k01WJT916nRHvbKnszFcNNlbw4nove37EEIIoXPLw0S1h0mJH8J4phPb1gJWx
+         Zku/gMC7L32R8ibcJfkj+eBWyLn8Pi3MnTJaD8XIOEkBoP/VKl2cA+/9OSwvILIi+mjn
+         fBW9W5Utg7nbmYjM3S2POgZQ9q3w6nsPAsh7LvqS1oNUGJe7cOTruTBSDuzPveswgDoz
+         td+zByLQKPBhOzRw1zB+EAhdDTeJJstKvhOYG8JF0hDcUkSVrjefeA5c1msW6+gwu+w0
+         hZxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745569077; x=1746173877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
+        b=s35mQ/3c4Bv9xWt+iySlc+eX/71IEhm5uSPrkqMMhE1eX7sFBr+Zou7p7Oq5/bKsGn
+         pibmYXHCuKN6eIKcvgEJQRjOt9+eAsR2rfhXhylTvwcFD36wc92G5BxDQ6OHRMN+ZbfD
+         mIJeiwNYX8+VtiS6eqYhoIgi2Lfi9sxRDf4v0Pbl4iKxCdHaRPHcRgxz1KPvBqCD5Bgi
+         pKErq+AHbdVBzczTjc3x9OYAfSZnWoxqnNYbKzhiZUYxGx9zTwElFwF0oV7J5Vh0i7is
+         VUfurPXtzibZj42YJK6/ExDZnjGWreBdgUh5zdPajvQhwNe0JKOgxMq270YQWX22SVgA
+         nJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzi4IVrFOFYm5Z9R96kisFlXPGjNywACA3hcb7Sk3D70T6h5fddA6+W0haQsBXR7KWvJbbJCQ5iQU0KTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN+A0SF6aKg+piLWvSBRUIGjOyvWiiGaaLsZDH/QZ4ijERZ9C3
+	sTgsR3f0Qdjb4EoZPZLYlhk+O9NHGR+ZKF4Bovivhnzt4h/gs19MpWme6c5bbt/NFNX4Yx8/KpJ
+	j
+X-Gm-Gg: ASbGnct+45n3xOItRuaMiCJrnSVTTz9/u1NafDaC38Nu8EtB0sO5Jt3qVdaavVA8zEG
+	toWx5d5JbunkdDfsFYDn/yj/LHiIINHXn5neu6XGLsspLrHg8SfK5p8cC7s97V76z6HSHts0+Wl
+	d4jGRaluBv1aJCao7q6aEa5Pu6lUp95eS1I3QxdP1IBls8Df94p9mgqWJmcnXSpqWlEw52Gle2Q
+	3GM5L+6XCvpdGxSHCbmmPwLkZAwh9JV+4XhVJ6KJjE3cBI2zaiQ41oBXNjBZkpT/KGsu/4iCMZt
+	i/GhVhxLQzAJZSe1/0kijTliEb0StpvX8DS2Wum5sN6R2w==
+X-Google-Smtp-Source: AGHT+IFtIhw338SCwM97fT8DE36JSktmwAws0V+m2whiTCc2WvjhYcfxYH8N3RZVkd/V19BgPW5uag==
+X-Received: by 2002:a05:600c:3d0b:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-440a6346aabmr12093055e9.0.1745569077572;
+        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073c8d1a5sm1671072f8f.13.2025.04.25.01.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
+Date: Fri, 25 Apr 2025 11:17:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Marek Vasut <marex@denx.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
+ __qcom_smd_send()
+Message-ID: <1cb8c180-a93e-4d5d-a17a-6452dd154801@stanley.mountain>
+References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
+ <aAkhvV0nSbrsef1P@stanley.mountain>
+ <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
 
-The error checks for pcim_iomap() have the function return -EINVAL.
--ENOMEM is a more appropriate error code.
+On Fri, Apr 25, 2025 at 11:36:24AM +0530, Naresh Kamboju wrote:
+> On Wed, 23 Apr 2025 at 22:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The "ret" variable isn't initialized if we don't enter the loop.  For
+> > example,  if "channel->state" is not SMD_CHANNEL_OPENED.
+> >
+> > Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > Naresh, could you test this patch and see if it fixes the boot
+> > problems you saw?
+> 
+> Dan, This patch fixes the reported problem.
+> 
+> Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> 
 
-Replace -EINVAL with -ENOMEM.
+Thanks Naresh,
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
-Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
----
- sound/soc/intel/atom/sst/sst_pci.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I left off your reported by tag as well.
 
-diff --git a/sound/soc/intel/atom/sst/sst_pci.c b/sound/soc/intel/atom/sst/sst_pci.c
-index bf2330e6f5a4..22ae2d22f121 100644
---- a/sound/soc/intel/atom/sst/sst_pci.c
-+++ b/sound/soc/intel/atom/sst/sst_pci.c
-@@ -49,7 +49,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
- 
- 		ctx->ddr = pcim_iomap(pci, 0, 0);
- 		if (!ctx->ddr)
--			return -EINVAL;
-+			return -ENOMEM;
- 
- 		dev_dbg(ctx->dev, "sst: DDR Ptr %p\n", ctx->ddr);
- 	} else {
-@@ -59,7 +59,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
- 	ctx->shim_phy_add = pci_resource_start(pci, 1);
- 	ctx->shim = pcim_iomap(pci, 1, 0);
- 	if (!ctx->shim)
--		return -EINVAL;
-+		return -ENOMEM;
- 
- 	dev_dbg(ctx->dev, "SST Shim Ptr %p\n", ctx->shim);
- 
-@@ -67,7 +67,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
- 	ctx->mailbox_add = pci_resource_start(pci, 2);
- 	ctx->mailbox = pcim_iomap(pci, 2, 0);
- 	if (!ctx->mailbox)
--		return -EINVAL;
-+		return -ENOMEM;
- 
- 	dev_dbg(ctx->dev, "SRAM Ptr %p\n", ctx->mailbox);
- 
-@@ -76,7 +76,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
- 	ctx->iram_base = pci_resource_start(pci, 3);
- 	ctx->iram = pcim_iomap(pci, 3, 0);
- 	if (!ctx->iram)
--		return -EINVAL;
-+		return -ENOMEM;
- 
- 	dev_dbg(ctx->dev, "IRAM Ptr %p\n", ctx->iram);
- 
-@@ -85,7 +85,7 @@ static int sst_platform_get_resources(struct intel_sst_drv *ctx)
- 	ctx->dram_base = pci_resource_start(pci, 4);
- 	ctx->dram = pcim_iomap(pci, 4, 0);
- 	if (!ctx->dram)
--		return -EINVAL;
-+		return -ENOMEM;
- 
- 	dev_dbg(ctx->dev, "DRAM Ptr %p\n", ctx->dram);
- 	return 0;
--- 
-2.48.1
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+regards,
+dan carpenter
 
 
