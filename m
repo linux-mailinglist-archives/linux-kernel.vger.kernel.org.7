@@ -1,141 +1,144 @@
-Return-Path: <linux-kernel+bounces-620533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E203DA9CBF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:47:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290E8A9CC03
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078421BA83EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:47:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18C6C7B61C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 14:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B882580D1;
-	Fri, 25 Apr 2025 14:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952D12580F8;
+	Fri, 25 Apr 2025 14:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSIB+P22"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTdFEbSt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5B81607AC;
-	Fri, 25 Apr 2025 14:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE616DEB1;
+	Fri, 25 Apr 2025 14:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745592433; cv=none; b=HpCfKkdEBltF8SyTNrKr8dCZ5uEFWToQQyrhKwTx1io1+EcU6A3CPET6lf5YRQOoGu1IfRALrHeSXgRx2Su5D5I0Clv8lCuR4SeSRoree37l0cikgvKcQm+efuFeHNOUHESpVCB9ru9C7QgYlxfELbIZcN1U6KIJ/Cm7qS/0TTw=
+	t=1745592489; cv=none; b=KY+kDWUsZtj0c0unEJEskcf+wiaPzih95HW+t1ThCLPUwG8b4c1mazNK97iK8K2hMA5dNt/KnBzAWD3kscbeUBTIzydAyRV/m5tkslWAscC76M8WrlKgJrWzmRg2Y0lNfW5Qmt7mBsDDAwe39E78bCp7QkXQ9evkQV9NhsVLhrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745592433; c=relaxed/simple;
-	bh=LER9aU+L0aeoLrB3bj1csguH/ZwflKpZIZu3s7LPh+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r4bFff7mTTOfxFgFpBf57q1i8fofOD5cZbgRG/cE08jKCBuHrafbpth6Qkc12rusQCvUB8EkQNpyZv+7jqv/7DuvMhXGyerrMKA2KWW/gyuZHEXwex+rngKnZKMAimikxtHoYKy0L/R8B9xZoCAjXJm5zpi+VVavu200XWbevVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSIB+P22; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4769b16d4fbso15330721cf.2;
-        Fri, 25 Apr 2025 07:47:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745592429; x=1746197229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5vQ3ECSy7kq++7n9LdZsctmJdxrSk1yP0N+IbR2cYEw=;
-        b=XSIB+P2272sx59mwGrBV4q8mItNAUWHOyDqez9YDzyyfsGb2DOUzBkWvnlZMi5rOUh
-         ZcG1mRv6DkJvdp2oZWxldbiY4T1ktmu9BW2l7f9QL+5fJcfx5qDZgTHcaMmx4z93PuWU
-         iZNe27njzlUuosbMshEApJpYVPtx78tyO5bFgG4C5ZWFLZqpIsLZ5OZ5TCMj7JhC7vh5
-         DaA1Rxar8BRH7mWWfifJJ12g0mMnlsHCFcYVlyLp1Km9efazdrTctQxFPBJTh9SWbRqa
-         R+H43h5Bn20nOtsaGjQe/W6pE8e/T+OSzlKeCIkkS27N1+I1W6W7zE5n+Ct7GP3F9p8V
-         BE7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745592429; x=1746197229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5vQ3ECSy7kq++7n9LdZsctmJdxrSk1yP0N+IbR2cYEw=;
-        b=lxPZPEbEydvcvV5z1q7S3iCJ21KNEBUAtedZee1fJHldA/jjBueJdnkk5AGp/4drUo
-         eNA8AoIyk3tv2GQNWLG3Aq9x4P9K0NQ9WNKLDvuzvIN6AEuyHYhhwhC1wmtkRiN5DV4+
-         fvjPxHI7YNRxa0czUL/XDLi3MvaLJJaYmQvZkI7bQGWPRI/uamGVYCduvgAVIV8S0yNX
-         +CbX0j8btnvMkERVNjHPkfUCvfX14uS6d52LvWFSnJrAM5071U1FT//yqdutU/FqBDAC
-         v+5wuLkrMYQ2AR4ieVqvTF4Ga8F2khw/MRDEPOgJL93hfUWy8LCCC/8uV1n09QBmY5vG
-         jdWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8qY2AQ9yQY36jb9tT5LYIhOi2NiRO2/wdBiOu/vrdN/nVQWjCgdFeh3ol877UM02PIht15DK4h+NjKso=@vger.kernel.org, AJvYcCV9ellItojGU85HMgTRSoroP/UkywMLQIVxQFLpP38M6EwLnpNgh8T3UnOVv388JeDmOhSahRUS@vger.kernel.org, AJvYcCXmhigCO7MiOsUCi6bA89fpJ90JTyy6EdW/l9j1QF8TuTSdNM3omGcUOQDAi90EBoKBOoiwZbiBmAhP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIJkWKpbOsxwsmDKjsJX/2cTcNIMfMioa1HCfbYu6x6+Fx9OCd
-	Ff66V9d+W89xYcpPCexYFtZY4g/cV3W1M8jVNDXuEU5zA4rv9RIaIPfKchEq5osMJn0yb2ZK6r7
-	j8LIbYp4xMwSyZ2hdEs1TXDgdANw=
-X-Gm-Gg: ASbGncsQ9bhXapXWoGz04u+9pFUpPkJzzCucvTzvbj7r+VAFGi+7c4EtSc2X98oqT2t
-	Uy3iZVv6oDy0oDa9KLdmNHlKGK07dYDBjmArAvC2W/9yGBxUHG3d5dGQ7XPcJ2BFqmUdgXNUaDq
-	Cv5QyDJHcOfqYIb3IS8fH+rsoarpYfdC8xELi85EElj2SKYxngbE86Q5R6GgITgCSz
-X-Google-Smtp-Source: AGHT+IHdyaZUkjx2wLyQvz4EyKo0TT9LnRXvma57qycBPjr9Qe5W18EFaKNddII2vuw42lPtPbimo+O1vIN0gI8NBpY=
-X-Received: by 2002:a05:622a:30c:b0:476:90ea:8ee4 with SMTP id
- d75a77b69052e-4801e3f7027mr45924211cf.32.1745592428986; Fri, 25 Apr 2025
- 07:47:08 -0700 (PDT)
+	s=arc-20240116; t=1745592489; c=relaxed/simple;
+	bh=cTn3gTkFSXujq0nxsFZya3joPkMK0fBUAanT6MYYcY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pw4kQzdMgeYlnbduBKl+vzdLO2lW8vEiNTXkh1l3Y2qnyRIncyXFxXODQx4OYci6zVtxYIJAvAnVfd+Ej/Ne3dYaa20zkaYDcOQCtKts4tEVMG7FW1gIuUuv7NcilWlJ+iIBA1f0PO58XoPQQFwLiyENqy4EktRFUcDxAVXpG6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTdFEbSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7840EC4CEE4;
+	Fri, 25 Apr 2025 14:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745592488;
+	bh=cTn3gTkFSXujq0nxsFZya3joPkMK0fBUAanT6MYYcY8=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=bTdFEbStM/ldlHxkNKYpIVly2hILH0HPSpiqal1l5+PcGenMgOjwU/TjQ7K/Jgq0R
+	 xWVpXA1NbP2+8/VBDrDfFjgcQaDPB7XLUhT63wlXAwF3ez+rPjjAe4wXd/QjNmvheh
+	 ek1+vmW0mQLD3UsyhMhUWxJ0guiAPyGWySgo7vfKWXZ5gEtLRHT7/4DfG7Wjb8EuDz
+	 JVL7yBEiqlXODCV2l2WewaTqInxAdOlcP0Mfg+3lEbknws45wvPr5hy7pZxQ/UWSGK
+	 OIlKDbwsTfNih+nwXSA6YLaF358sP8UTpGihtxrEGWn3ouqxF7JSK7xuwNjOYEp9yv
+	 itinzPCUe6muQ==
+Message-ID: <7a1e2432-46e2-40f6-84af-bff45ab79899@kernel.org>
+Date: Fri, 25 Apr 2025 16:48:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250425-uhci-clock-optional-v1-1-a1d462592f29@gmail.com> <2025042549-comma-whoever-ffe7@gregkh>
-In-Reply-To: <2025042549-comma-whoever-ffe7@gregkh>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Fri, 25 Apr 2025 18:47:20 +0400
-X-Gm-Features: ATxdqUGwH3DNr9STx1xUjKlf5u6ZwPeMTDrUv9cMSBaOb0zfPHoNmV5rMIxw104
-Message-ID: <CABjd4Yxmk9qLekptHjN3pO7rn8kJ=rtNRBSMJCCU8rafROsq6g@mail.gmail.com>
-Subject: Re: [PATCH] usb: uhci-platform: Make the clock really optional
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, 
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 08/10] ARM: dts: exynos: Add proper regulator states
+ for suspend-to-mem for Exyno5250 smdk5250
+To: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ "open list:MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BO..."
+ <linux-kernel@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-samsung-soc@vger.kernel.org>
+References: <20250425132727.5160-1-linux.amoon@gmail.com>
+ <20250425132727.5160-9-linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250425132727.5160-9-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 25, 2025 at 6:20=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Apr 25, 2025 at 06:11:11PM +0400, Alexey Charkov wrote:
-> > Device tree bindings state that the clock is optional for UHCI platform
-> > controllers, and some existing device trees don't provide those - such
-> > as those for VIA/WonderMedia devices.
-> >
-> > The driver however fails to probe now if no clock is provided, because
-> > devm_clk_get returns an error pointer in such case.
-> >
-> > Switch to devm_clk_get_optional instead, so that it could probe again
-> > on those platforms where no clocks are given.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 26c502701c52 ("usb: uhci: Add clk support to uhci-platform")
-> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > ---
-> >  drivers/usb/host/uhci-platform.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-p=
-latform.c
-> > index a7c934404ebc7ed74f64265fafa7830809979ba5..62318291f5664c9ec94f245=
-35c71d962e28354f3 100644
-> > --- a/drivers/usb/host/uhci-platform.c
-> > +++ b/drivers/usb/host/uhci-platform.c
-> > @@ -121,7 +121,7 @@ static int uhci_hcd_platform_probe(struct platform_=
-device *pdev)
-> >       }
-> >
-> >       /* Get and enable clock if any specified */
-> > -     uhci->clk =3D devm_clk_get(&pdev->dev, NULL);
-> > +     uhci->clk =3D devm_clk_get_optional(&pdev->dev, NULL);
->
-> Why does this need to go to all stable trees all of a sudden?  This has
-> been "broken" for years, what changed recently to cause this to show up?
+On 25/04/2025 15:26, Anand Moon wrote:
+> The MAX77686 PMCI is able to power down and up key core supplies and other
+> voltage rails via PWRREQ signal to enter / exit (deep) sleep mode.
+> PWRREQ status is ignored during initial power up and down processes.
+> All programming must be done before the AP enterns the sleep mode by
+> pulling PWRREQ low since the AP does not have programming capability
+> in (deep) sleep mode.
+> 
+> Add suspend-to-mem node to regulator core to be enabled or disabled
+> during system suspend and also support changing the regulator operating
+> mode during runtime and when the system enter sleep mode (stand by mode).
+> 
+> Regulators which can be turned off during system suspend:
+> 	-LDOn   :       2, 6-8, 10-12, 14-16,
+>         -BUCKn  :       1-4.
+> Use standard regulator bindings for it ('regulator-off-in-suspend').
 
-Users who suffer from nonfunctional built-in keyboards on WM8650 and
-WM8850 based laptops complain. It used to work on even older kernels,
-but not on current ones. What changed is that I found the time to
-investigate :)
+I do not believe you tested this but instead send whatever you found
+somewhere without actually understanding the code. In the past you were
+sending such patches - without knowing what they do and without actually
+testing.
 
-The way 26c502701c52 ("usb: uhci: Add clk support to uhci-platform")
-described the change implies that "optional" was the intended behavior
-from the outset, so I believe it deserves a backport. Don't know if
-the age of a regression prevents it from being considered a regression
-or not.
+NAK
 
 Best regards,
-Alexey
+Krzysztof
 
