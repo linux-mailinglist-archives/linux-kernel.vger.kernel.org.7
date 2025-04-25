@@ -1,186 +1,203 @@
-Return-Path: <linux-kernel+bounces-620743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B54A9CF26
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5DDA9CF47
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B96507AE1E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B1A9E2560
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FB91DED77;
-	Fri, 25 Apr 2025 17:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9889520A5DA;
+	Fri, 25 Apr 2025 17:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FK3ro41n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XwVYHcBU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12571A23A0;
-	Fri, 25 Apr 2025 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182E6208962
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745600978; cv=none; b=I+LMBzJdUFhdydyB0ekBF3H9HuA43IlH/h5+m1GIZP7GY6yV5pRFGbGV8hCZoqWOrzBhZc/pRmqyYPqUf8tvhw8d0z9U0GZLvWSEGE2Lx+raBmsKyzo1VN6YqOPTUSGjrp2demqQ11XbdJgNVRtQ/s+pMei7gFYzBJywRRJTiXU=
+	t=1745601025; cv=none; b=J0AfzSP+AbBObMYzRK+K74tyF9Kyb24cm2uYW8YNii8glIm0eSrvTvJPSuBfwjsbxpqSKpPantoez7nNHj26BscjRY3eXFoxL8x9JMEoYY/7og5MENj+sPr0iyqhhAzjsDkVYx4EIiWUfrwQ+XgJN/qSdHHPZn2mpLp5Tf+RzQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745600978; c=relaxed/simple;
-	bh=yPI9RwIxxq/NTAS39rdib9EWfVe1cDzmMU4iH7dYSU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kUYjiF+asWJZHXXJhPs/XGLgygE59kMLphzia8iPzx2gmq1BAglGx0om89Is+dXZVfWfQrhxqM7YqqjDxayZNytkMChXgPDln6TRPudV1vYBvCtQp6EgyQUoTuHZXnJBPWZts2ZtV3FDguBvbe9jOL47k3Ya7EnTobCxf2bnyrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FK3ro41n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D55EC4CEE4;
-	Fri, 25 Apr 2025 17:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745600978;
-	bh=yPI9RwIxxq/NTAS39rdib9EWfVe1cDzmMU4iH7dYSU8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FK3ro41n0ITFuq+eCIkqVW6QZi1IqOB1y/tU2dwHj0f540wc3jIS2AFnScaQZbgBM
-	 71hgD/kIhac5YlE60SKsS3Xqve1l9t/O5fz/efn5atxJM0q4VeV7gAJhFxnCNpqlEA
-	 QN0Xlt2RqK+f2cvZnuep8h+ShKk+oopJiPmHr8jbyKQwJwil/XNt7vX0GXlmFEgsRi
-	 nZRd20ZWOmwKQXqO72pu2tUO9nKx4JlFmpvDpdAzXIQvW6wO0n0SYaQ0uv+hUsleka
-	 0RvHE0LDWMw/s79wtBqBGoeQbcz0hikY462IlUVC5ptHljF/VPY7Zi1ESGcoKOkhwQ
-	 5BN7+edDki9Vg==
-Date: Fri, 25 Apr 2025 10:09:34 -0700
-From: Kees Cook <kees@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] mm: abstract initial stack setup to mm subsystem
-Message-ID: <202504250925.58434D763@keescook>
-References: <cover.1745592303.git.lorenzo.stoakes@oracle.com>
- <92a8e5ef7d5ce31a3b3cf631cb65c6311374c866.1745592303.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1745601025; c=relaxed/simple;
+	bh=ADqWSGg2aTWeCDUn4Vgojx6+CHI3WxiSbz6mOXwGsDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Dt/xSXXwMos0QANSb0+na/TjQ7jFszxaJKHMJhCtH5kvkx4iqAdKMBoF0D6mcpuGHpVRP8fI6DK7nHoZsYcsMy17nISZDrW/N4XgVPhK8ww5TjJxMiq95f1peIpVLPk+YglJMafas5omkslvNIUvb+dTqaH0c0J1r52sphkGJHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XwVYHcBU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745601022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppuw9LFQhB9cUUbxNwgmGqatm4p1g4Atwmdt+aA+dFs=;
+	b=XwVYHcBU76dToakG8SNsM1yEHmTlQoW0yvVrv2SOweBVldvgBG9yWqERnVFWBnC7AeOVUq
+	KTFpsdqzoDTP3/7pmPbYCUhMo5RSpjPmo2GWtgL/JAUqbY/gIjZTDcynyT5ENcdRX0bLRf
+	3gKAI/CAYPBmy5YWBy1rXp9yDcHdPjo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-XXbpFdjxOXiTGLW2adcQbQ-1; Fri,
+ 25 Apr 2025 13:10:21 -0400
+X-MC-Unique: XXbpFdjxOXiTGLW2adcQbQ-1
+X-Mimecast-MFC-AGG-ID: XXbpFdjxOXiTGLW2adcQbQ_1745601019
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 12A9D1956086;
+	Fri, 25 Apr 2025 17:10:19 +0000 (UTC)
+Received: from p16v.redhat.com (unknown [10.44.33.33])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7378F1800D97;
+	Fri, 25 Apr 2025 17:10:14 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Lee Jones <lee@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Schmidt <mschmidt@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH net-next v5 7/8] mfd: zl3073x: Add clock_id field
+Date: Fri, 25 Apr 2025 19:09:34 +0200
+Message-ID: <20250425170935.740102-8-ivecera@redhat.com>
+In-Reply-To: <20250425170935.740102-1-ivecera@redhat.com>
+References: <20250425170935.740102-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92a8e5ef7d5ce31a3b3cf631cb65c6311374c866.1745592303.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, Apr 25, 2025 at 03:54:34PM +0100, Lorenzo Stoakes wrote:
-> There are peculiarities within the kernel where what is very clearly mm
-> code is performed elsewhere arbitrarily.
-> 
-> This violates separation of concerns and makes it harder to refactor code
-> to make changes to how fundamental initialisation and operation of mm logic
-> is performed.
-> 
-> One such case is the creation of the VMA containing the initial stack upon
-> execve()'ing a new process. This is currently performed in __bprm_mm_init()
-> in fs/exec.c.
-> 
-> Abstract this operation to create_init_stack_vma(). This allows us to limit
-> use of vma allocation and free code to fork and mm only.
-> 
-> We previously did the same for the step at which we relocate the initial
-> stack VMA downwards via relocate_vma_down(), now we move the initial VMA
-> establishment too.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  fs/exec.c          | 51 +---------------------------------
+Add .clock_id to zl3073x_dev structure that will be used by later
+commits introducing DPLL driver. The clock ID is required for DPLL
+device registration.
+To generate this ID, use chip ID read during device initialization.
+In case where multiple zl3073x based chips are present, the chip ID
+is shifted and lower bits are filled by an unique value - using
+the I2C device address for I2C connections and the chip-select value
+for SPI connections.
 
-I'm kind of on the fence about this. On the one hand, yes, it's all vma
-goo, and should live with the rest of vma code, as you suggest. On the
-other had, exec is the only consumer of this behavior, and moving it
-out of fs/exec.c means that changes to the code that specifically only
-impacts exec are now in a separate file, and will no longer get exec
-maintainer/reviewer CCs (based on MAINTAINERS file matching). Exec is
-notoriously fragile, so I'm kind of generally paranoid about changes to
-its behaviors going unnoticed.
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+---
+ drivers/mfd/zl3073x-core.c  | 6 +++++-
+ drivers/mfd/zl3073x-i2c.c   | 4 +++-
+ drivers/mfd/zl3073x-spi.c   | 4 +++-
+ drivers/mfd/zl3073x.h       | 2 +-
+ include/linux/mfd/zl3073x.h | 2 ++
+ 5 files changed, 14 insertions(+), 4 deletions(-)
 
-In defense of moving it, yes, this routine has gotten updates over the
-many years, but it's relatively stable. But at least one thing has gone in
-without exec maintainer review recently (I would have Acked it, but the
-point is review): 9e567ca45f ("mm/ksm: fix ksm exec support for prctl")
-Everything else was before I took on the role officially (Nov 2022).
-
-So I guess I'm asking, how do we make sure stuff pulled out of exec
-still gets exec maintainer review?
-
-> [...]
->  static int __bprm_mm_init(struct linux_binprm *bprm)
->  {
-> -	int err;
-> [...]
-> -	return err;
-> +	return create_init_stack_vma(bprm->mm, &bprm->vma, &bprm->p);
->  }
-
-I'd prefer __bprm_mm_init() go away if it's just a 1:1 wrapper now.
-However, it doesn't really look like it makes too much sense for the NOMMU
-logic get moved as well, since it explicitly depends on exec-specific
-values (MAX_ARG_PAGES), so perhaps something like this:
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 8e4ea5f1e64c..313dc70e0012 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -382,9 +382,13 @@ static int bprm_mm_init(struct linux_binprm *bprm)
- 	bprm->rlim_stack = current->signal->rlim[RLIMIT_STACK];
- 	task_unlock(current->group_leader);
+diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+index 513ba2d0463a7..41a874480758a 100644
+--- a/drivers/mfd/zl3073x-core.c
++++ b/drivers/mfd/zl3073x-core.c
+@@ -756,13 +756,14 @@ static void zl3073x_devlink_unregister(void *ptr)
+  * zl3073x_dev_probe - initialize zl3073x device
+  * @zldev: pointer to zl3073x device
+  * @chip_info: chip info based on compatible
++ * @dev_id: device ID to be used as part of clock ID
+  *
+  * Common initialization of zl3073x device structure.
+  *
+  * Returns: 0 on success, <0 on error
+  */
+ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+-		      const struct zl3073x_chip_info *chip_info)
++		      const struct zl3073x_chip_info *chip_info, u8 dev_id)
+ {
+ 	u16 id, revision, fw_ver;
+ 	struct devlink *devlink;
+@@ -806,6 +807,9 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+ 		FIELD_GET(GENMASK(15, 8), cfg_ver),
+ 		FIELD_GET(GENMASK(7, 0), cfg_ver));
  
--	err = __bprm_mm_init(bprm);
-+#ifndef CONFIG_MMU
-+	bprm->p = PAGE_SIZE * MAX_ARG_PAGES - sizeof(void *);
-+#else
-+	err = create_init_stack_vma(bprm->mm, &bprm->vma, &bprm->p);
- 	if (err)
- 		goto err;
-+#endif
++	/* Use chip ID and given dev ID as clock ID */
++	zldev->clock_id = ((u64)id << 8) | dev_id;
++
+ 	/* Initialize mutex for operations where multiple reads, writes
+ 	 * and/or polls are required to be done atomically.
+ 	 */
+diff --git a/drivers/mfd/zl3073x-i2c.c b/drivers/mfd/zl3073x-i2c.c
+index da8bbd702d76c..e00277f87de92 100644
+--- a/drivers/mfd/zl3073x-i2c.c
++++ b/drivers/mfd/zl3073x-i2c.c
+@@ -27,7 +27,9 @@ static int zl3073x_i2c_probe(struct i2c_client *client)
+ 		return PTR_ERR(zldev->regmap);
+ 	}
  
- 	return 0;
+-	return zl3073x_dev_probe(zldev, i2c_get_match_data(client));
++	/* Initialize device and use I2C address as dev ID */
++	return zl3073x_dev_probe(zldev, i2c_get_match_data(client),
++				 client->addr);
+ }
  
-
-
-On a related note, I'd like to point out that my claim that exec is
-the only consumer here, is slightly a lie. Technically this is correct,
-but only because this is specifically setting up the _stack_.
-
-The rest of the VMA setup actually surrounds this code (another
-reason I remain unhappy about moving it). Specifically the mm_alloc()
-before __bprm_mm_init (which is reached through alloc_brpm()). And
-then, following alloc_bprm() in do_execveat_common(), is the call to
-setup_new_exec(), which does the rest of the VMA setup, specifically
-arch_pick_mmap_layout() and related fiddling.
-
-The "create userspace VMA" logic, mostly through mm_alloc(), is
-used in a few places (e.g. text poking), but the "bring up a _usable_
-userspace VMA" logic (i.e. one also with functional mmap) is repeated in
-lib/kunit/alloc_user.c for allowing testing of code that touches userspace
-(see kunit_attach_mm() and the kunit_vm_mmap() users). (But these tests
-don't actually run userspace code, so no stack is set up.)
-
-I guess what I'm trying to say is that I think we need a more clearly
-defined "create usable userspace VMA" API, as we've got at least 3
-scattered approaches right now: exec ("everything"), non-mmap-non-stack
-users (text poking, et al), and mmap-but-not-stack users (kunit tests).
-
-And the One True User of a full userspace VMA, exec, has the full setup
-scattered into several phases, mostly due to needing to separate those
-phases because it needs to progressively gather the information needed
-to correctly configure each piece:
-- set up userspace VMA at all (mm_alloc)
-- set up a stack because exec args need to go somewhere (__bprm_mm_init)
-- move stack to the right place (depends on executable binary and task bits)
-- set up mmap (arch_pick_mmap_layout) to actually load executable binary
-  (depends on arch, binary, and task bits)
-
-Hopefully this all explains why I'm uncomfortable to see __bprm_mm_init
-get relocated. It'll _probably_ be fine, but I get antsy about changes
-to code that only exec uses...
-
+ static const struct i2c_device_id zl3073x_i2c_id[] = {
+diff --git a/drivers/mfd/zl3073x-spi.c b/drivers/mfd/zl3073x-spi.c
+index 962b6845c0325..368001ae19db9 100644
+--- a/drivers/mfd/zl3073x-spi.c
++++ b/drivers/mfd/zl3073x-spi.c
+@@ -27,7 +27,9 @@ static int zl3073x_spi_probe(struct spi_device *spi)
+ 		return PTR_ERR(zldev->regmap);
+ 	}
+ 
+-	return zl3073x_dev_probe(zldev, spi_get_device_match_data(spi));
++	/* Initialize device and use SPI chip select value as dev ID */
++	return zl3073x_dev_probe(zldev, spi_get_device_match_data(spi),
++				 spi_get_chipselect(spi, 0));
+ }
+ 
+ static const struct spi_device_id zl3073x_spi_id[] = {
+diff --git a/drivers/mfd/zl3073x.h b/drivers/mfd/zl3073x.h
+index 3a2fea61cf579..abd1ab9a56ded 100644
+--- a/drivers/mfd/zl3073x.h
++++ b/drivers/mfd/zl3073x.h
+@@ -26,6 +26,6 @@ extern const struct zl3073x_chip_info zl3073x_chip_info[];
+ struct zl3073x_dev *zl3073x_devm_alloc(struct device *dev);
+ void zl3073x_dev_init_regmap_config(struct regmap_config *regmap_cfg);
+ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+-		      const struct zl3073x_chip_info *chip_info);
++		      const struct zl3073x_chip_info *chip_info, u8 dev_id);
+ 
+ #endif /* __ZL3073X_CORE_H */
+diff --git a/include/linux/mfd/zl3073x.h b/include/linux/mfd/zl3073x.h
+index da4b7ae6a89ec..1512e8c7cc7bb 100644
+--- a/include/linux/mfd/zl3073x.h
++++ b/include/linux/mfd/zl3073x.h
+@@ -53,6 +53,7 @@ struct zl3073x_synth {
+  * @dev: pointer to device
+  * @regmap: regmap to access device registers
+  * @multiop_lock: to serialize multiple register operations
++ * @clock_id: clock id of the device
+  * @input: array of inputs' invariants
+  * @output: array of outputs' invariants
+  * @synth: array of synthesizers' invariants
+@@ -61,6 +62,7 @@ struct zl3073x_dev {
+ 	struct device		*dev;
+ 	struct regmap		*regmap;
+ 	struct mutex		multiop_lock;
++	u64			clock_id;
+ 
+ 	/* Invariants */
+ 	struct zl3073x_input	input[ZL3073X_NUM_INPUTS];
 -- 
-Kees Cook
+2.49.0
+
 
