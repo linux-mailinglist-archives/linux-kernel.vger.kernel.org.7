@@ -1,122 +1,142 @@
-Return-Path: <linux-kernel+bounces-620006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99674A9C4B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:08:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E316A9C4A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 12:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738E09216EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AF7F1BA5694
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C0923BCFF;
-	Fri, 25 Apr 2025 10:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79392238D56;
+	Fri, 25 Apr 2025 10:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KYcECwT9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRz8R4fN"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2821D23BCE3
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5A726AC3;
+	Fri, 25 Apr 2025 10:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745575685; cv=none; b=ed6tx99iF9nzP38jCfXOGgLAM7ut6J2Schcbv+pf0A0/AXp+JgGKhliI69GaKjLCIG3ycxKZQcWwKF42Pvn0YhQhq8kfTUtgZfXjzyHMQPOR0WbiPQTfKU4JOxgL9b+U6nYQseqNVyYKL8MfuLYqiufLLpRYNy6d+VY2f9/0TP0=
+	t=1745575652; cv=none; b=TYAqzqbwC2ZjkTn7pxZhOdJvWM9eG/Qz+lo4190dIBFqxsh8maMaYpEUUtz/+zP6p/3S5eyE1/y4wh+k0HmURcOgMhue8gJzPlX0LPBghLZ76imw4YFq7NUpods03O7a7OwC4qZzEu0V6DJRHnUbu48cg37kvDXMPWMhUlCQQRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745575685; c=relaxed/simple;
-	bh=RbOCfUpnNaUeMgS18nPHmR6Rsmt7FCEuf9nQm74xq3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gegpp7ydvwQSYQeqzgvAoFvCBSpF3gagY7mk4aYu5AzXLLS1+w2/s3i7eL5HRRZTRJNL0/VNwjA1r+CZJXHSgLnPL7duiy8VhLvCF2/1ZKrtvrsXq5D/8sHaz8cX+pYEC7PF88sWO7slFba132HNyEpCNLPp0t/h95gyeqrISwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KYcECwT9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745575683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wCWDXuJuaWOovXQdKzwU0ohDqLv9bgc+JZP0GesYdB4=;
-	b=KYcECwT9WGPudHzFwXegrZ7uCBn7wLm1LQ+EX5y3B+SsoKVLm7i6cYu0qIESL86iDDB/6g
-	asCeVru+q4p6FJo6Wfou4Dvz7ejWPyQAZf+NxHLOFG/3i3Bm/enxLfS2Ep0weLa/SdtN++
-	7DHbz6g5TSl71RRB2uDFZmgvI3jFG4M=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-YPOQJynNO4CzyAgpMYVfxw-1; Fri,
- 25 Apr 2025 06:07:57 -0400
-X-MC-Unique: YPOQJynNO4CzyAgpMYVfxw-1
-X-Mimecast-MFC-AGG-ID: YPOQJynNO4CzyAgpMYVfxw_1745575675
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9CE8C180087A;
-	Fri, 25 Apr 2025 10:07:54 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.93])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 79E5B1800352;
-	Fri, 25 Apr 2025 10:07:47 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 25 Apr 2025 12:07:16 +0200 (CEST)
-Date: Fri, 25 Apr 2025 12:07:07 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: linux-kernel@vger.kernel.org, mrpre@163.com, mkoutny@suse.com,
-	syzbot+adcaa842b762a1762e7d@syzkaller.appspotmail.com,
-	syzbot+fab52e3459fa2f95df57@syzkaller.appspotmail.com,
-	syzbot+0718f65353d72efaac1e@syzkaller.appspotmail.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Bill O'Donnell <bodonnel@redhat.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH v2] pid: annotate data-races around pid_ns->pid_allocated
-Message-ID: <20250425100707.GA8093@redhat.com>
-References: <20250425055824.6930-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1745575652; c=relaxed/simple;
+	bh=AEtQ4zVhOD5ipP+9Ofvo+I3POCv/ZAPLObFlY45PRVo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JCgcgJBpIujqISwLSYoJosHYFuYz+Nockv1x2wuRwefeE54gyuGnbXZ5Dh9r5QDvVAQZ79w3CYFkGvw+Rx1Tu3miJAYXIYGPEKbAdeMnOJvC4EeeCrZ4u6X8rOJjgZkVx7EkEZk2Bg8SYIqgW1k3tlQsGZ0QTMlSV+Yy5Hynhpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRz8R4fN; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af590aea813so3107274a12.0;
+        Fri, 25 Apr 2025 03:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745575651; x=1746180451; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9uPmzHYOFCtYn1VfRn4G0KZ5XWfuvrYmTvkQ5ZTDH8s=;
+        b=cRz8R4fN7dSlBirVjdrfUm2phowCC1GZ3ausi9WoEgYxHNEXp2Ic4Smf96vxI3VCYT
+         H3eKRCVFV63aSPLaV3GoaGzKeJyX2u2M1vdaL7Co8RC8L5nEZ4wOfhW+csCN7phi5gLa
+         OZzCA31spbSVoVfy158Ur+KDF5qJ3chdBYzn6pI2Fx1cfPXnndcryGD/KvMEDt7aviYZ
+         GKjGma1GaEsUrH9Xy1TChtFF6priEBScxyUvYzmcl44g9qTeITyHMLKUovVeN5/VjYe0
+         TQaTQ38rsBrtGZ1LMj4RUf+pSpwwl9Us25EUfrgAiMA12ecIKXVr6QT3lxK0tM556HhG
+         lILw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745575651; x=1746180451;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9uPmzHYOFCtYn1VfRn4G0KZ5XWfuvrYmTvkQ5ZTDH8s=;
+        b=IG2Se8ErSr7t8OCm9p1G7+80TP0wFK83OZMTUNEQHObo6yjj0xaxsPrz2o8GOjss8o
+         b95vG3/r7vfIRrpRbOXtfN3Tq8x3NJeHGoyJXsGsGMQEJCKM42TXrrhegjCxFiXeuW8f
+         2wxkkb+YVws7vMtTa1Wax0xBrUa7E+0zApUkzIXioPzFg/y47dZSpPjf6Ds0+zYL/Prt
+         3cSZTY7e5hUIVItY25O0ed9PfvTylN19UpQVrvITl5iMftoELSBN9TtfwBlSiMKIecO2
+         u9n/67/zwWv6V86H3DFunhccMzKvn50GXQ8BuJREfAmYNRGKlGcTiE7cVPW0ht8I3iEG
+         UQaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTQU4BPE592S/gZcJM3VprEATX1SCEGcPh19z2rEUtkmvHc8zqSTj0BnC4U9G0mpz/cR2bF+MvjrWo@vger.kernel.org, AJvYcCUkorRfhYE6+K+hNBsYCMOk+5r2/u1Inn9plQSYHj+4hTfGZnS4Y/wOSoVSWuKpjf/7tChf123o9ieWH17Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBT8aZQdZJCf3oyr+Up4TmT51sePJfABNhW6Wr4eJ0ECGWnLXF
+	fBg86UaanxwjiWeHOQj46JiB9WF+RViQTkEW+krE6C699ZAPjEEs
+X-Gm-Gg: ASbGncuFuVXSPzu5Lr+HnPpxJ7/k0v9kcQ8JbJUTd1MEAZOZb7SqzhJrS4NsQWkKjl8
+	zxEK6+asAArOIRi+LhEpAgNjVj7doouRxPnjXEQXwVtlhT++r0ypKPCwNKwzxo1pShkfXAtJ4vM
+	rmYE4t/Pja6o0whVTpAteE9BobVlloKToqCkVCXgaGiWyeycl6ZghL5WSYdfMqzChESODinbLC0
+	xQ8lF6ZTrKwl90HsIOKcYi1bS3q3qXKqoqeNm3Y4iRxnvNcBaFx44nQgstHAy2kHPasGdNXVBtw
+	pt54030gYqbpYyejuA2PJfZZRPn8YTMEUfowEvRCrvATuzMTXSsB
+X-Google-Smtp-Source: AGHT+IEOXFkBumaprnMtZPAH/o9LFhkdeVpSsvxZfbKPhXNApsgEGu3ARHcUpcaYofflyKnemwQfCg==
+X-Received: by 2002:a17:90b:2741:b0:2fe:93be:7c9d with SMTP id 98e67ed59e1d1-309f8992d63mr2194207a91.7.1745575650719;
+        Fri, 25 Apr 2025 03:07:30 -0700 (PDT)
+Received: from NB-GIGA003.letovo.school ([5.194.95.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef03bb26sm3337254a91.6.2025.04.25.03.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 03:07:30 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+Date: Fri, 25 Apr 2025 14:07:31 +0400
+Subject: [PATCH v2] dt-bindings: usb: generic-ehci: Add VIA/WonderMedia
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425055824.6930-1-jiayuan.chen@linux.dev>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250425-vt8500-ehci-binding-v2-1-b4a350335add@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAOJeC2gC/32NQQrCMBBFr1Jm7cg0sSquvId00SSTdsCmkpSgl
+ Nzd2APIX70P//0NEkfhBLdmg8hZkiyhgjo0YKchjIziKoMi1dFJaczrtSNCnqygkeAkjMhnuhg
+ /eGeNh7p8Rfby3q2PvvIkaV3iZz/J7a/978st1nDVkdOarLqP8yDPo11m6EspX5r7yUO2AAAA
+X-Change-ID: 20250423-vt8500-ehci-binding-e607bfafdcbf
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Alexey Charkov <alchark@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745575666; l=1405;
+ i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
+ bh=AEtQ4zVhOD5ipP+9Ofvo+I3POCv/ZAPLObFlY45PRVo=;
+ b=vyHQLxiH6LvzFbCTrK/BQsAfEZwEPwwAEu0+Z2j4SM0N2lJrJeHP4v8CfMaEVeJROC0PduAWH
+ nrT6KR+ej9LA4O4dHv1G5+WDymiZLntez9+TgpduHl/hqlgx3DnQBZT
+X-Developer-Key: i=alchark@gmail.com; a=ed25519;
+ pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
 
-On 04/25, Jiayuan Chen wrote:
->
-> @@ -2584,7 +2584,7 @@ __latent_entropy struct task_struct *copy_process(
->  	rseq_fork(p, clone_flags);
->
->  	/* Don't start children in a dying pid namespace */
-> -	if (unlikely(!(ns_of_pid(pid)->pid_allocated & PIDNS_ADDING))) {
-> +	if (unlikely(!(data_race(ns_of_pid(pid)->pid_allocated & PIDNS_ADDING)))) {
+VIA/WonderMedia SoCs use a plain vanilla EHCI controller with a
+compatible string "via,vt8500-ehci". This compatible is already
+used by the mainline Linux driver and relevant in-tree DTS files,
+so add it to the binding.
 
-Well. data_race() just hides the potential problem. READ_ONCE() makes more
-sense imo, even if I think there are no real problems with the current code.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Alexey Charkov <alchark@gmail.com>
+---
+Changes in v2:
+- Amend the commit message to state that the compatible string in
+  question is already used by the driver and DTS (thanks Conor)
+- Add Conor's Ack
+- Link to v1: https://lore.kernel.org/r/20250423-vt8500-ehci-binding-v1-1-1edcb0d330c2@gmail.com
+---
+ Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Either way,
+diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+index 223f2abd5e592ff8cc3ad97f9a325356ea57044a..508d958e698c2e8dad748a6fcdef65d6e883b97d 100644
+--- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
++++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+@@ -86,6 +86,7 @@ properties:
+           - nuvoton,npcm845-ehci
+           - ti,ehci-omap
+           - usb-ehci
++          - via,vt8500-ehci
+ 
+   reg:
+     minItems: 1
 
-> @@ -271,13 +271,13 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  	upid = pid->numbers + ns->level;
->  	idr_preload(GFP_KERNEL);
->  	spin_lock(&pidmap_lock);
-> -	if (!(ns->pid_allocated & PIDNS_ADDING))
-> +	if (!(data_race(ns->pid_allocated & PIDNS_ADDING)))
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250423-vt8500-ehci-binding-e607bfafdcbf
 
-again, you do not need data_race() or READ_ONCE() if you read the
-data protected by pidmap_lock. But you still need WRITE_ONCE() when
-->pid_allocated is modified.
-
-Oleg.
+Best regards,
+-- 
+Alexey Charkov <alchark@gmail.com>
 
 
