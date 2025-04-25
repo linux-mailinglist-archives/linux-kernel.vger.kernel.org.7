@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel+bounces-620757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A91A9CF52
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:14:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E363FA9CE3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D30D1B84117
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FAB4C53D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02191E1308;
-	Fri, 25 Apr 2025 17:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F189A1A315C;
+	Fri, 25 Apr 2025 16:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xmmbQezi"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AUT8y7Q2"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C86C1DEFDA
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE28C1A2393
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745601278; cv=none; b=gSTFo33gSpMLWNJ3RWNhD/eGGycg2rtncsMj1o0aw+amNErUaPVWv4t2RffLZ+GNrm2oV/nOF/E1ZWQ+L/J8IKReQCCL+uZ+HXjx5Uex8aBDcba8NHD/D1nSef0XAl93n6wEmOtm/j1nRDPIDoqQZ9JCYEztnaM+W0DpGLe1kFA=
+	t=1745598949; cv=none; b=pFI12G0fJt5bJ55H9OkCFBIaxvslZTBeXWA6IwIh00NZVbtntHQCaucCg41J8NCuMk3Rcc0jvxe6B8bEh1TQpXUFKoewibh5nuTPqDgFfPBAUm6jA9oa/RVsA5vbIF1X1Sv0X+rVCwyf/r1MR6uni0SHbdIsnoRsPwctR+mVv+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745601278; c=relaxed/simple;
-	bh=Lm2N0n4u1FlM9Vtf3w6Fx40mc0HytZ/KQT9CUeJY2p0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BDWaCSz71qy7q0maHGh8n3vHGh9rRupVzNZc0GTsAazCVqTjxtwvI0+4qxbvOcaXCZZt1qTD0AvRHJWHPPULTkaoO8hk3HtgdlQ3FuVhVSkUcKmlutnOPcAMLbbhzaxqQyFBZe35R5GdS0g5d65+OFrq9PMEKKVkiJj3p86dUwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xmmbQezi; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <dc069aec-8f34-4745-804b-936e0466559c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745601263;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R5HHbZEVfAo5xHjVAfeinei8cc6O8D95xrShblmNxCw=;
-	b=xmmbQeziKHWdI391OleiVoTdZ0Ul+dSemlipkTYjGz6VcQh4o4OAvsCsiJ5Oau5gRqJCd+
-	XV8ASeYUA2sBQ0rXIL3o+BK8h5efUDaE+TVs5vxNJ3kAkyf8lQ+gQxKADk7L9OQD6bm7QU
-	hCFCHNLQMcDNNOSj5DNth/RVDa25peQ=
-Date: Fri, 25 Apr 2025 18:35:27 +0200
+	s=arc-20240116; t=1745598949; c=relaxed/simple;
+	bh=mdIQCxdUYhtXLzXUmLDFNwoEcEWuoi78Lo+56Eh8rac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N69VOQueA/Gy4pRZZqf2YMdiMqHGwCEn3MRQGWE+5xDwDf+s6/kzRYa+WedS9ejkJ1oOCbk6H4yE83ri+3rVqCOy8OpAksPSBYQRaRDYIzp3RX8+WYstAKjdzlViThGOf6iEOIXPhytSIXKQfsjMgyBBZ9dU1u/lXuAKjLmMjuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AUT8y7Q2; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso430174666b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1745598945; x=1746203745; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EIUARXjixZE2LMjIM7t5GFiqmmk274q2ndIpCfZ4HnU=;
+        b=AUT8y7Q2pVqVvCMV42YSG5GNC1Xxj7a/ixWBwJTDz61OsXbgaV8BFJf8L2b+lPrUcv
+         UiLtSm6Kd9x5Zo3voC7BNfPH6Ip5suH7AyhY/qWGkntDaUB7G8eSd65OzvDNqf+YRF7r
+         17919hC3EDALbyKgFmv6kZjcwkhFgIXT0TzmE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745598945; x=1746203745;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EIUARXjixZE2LMjIM7t5GFiqmmk274q2ndIpCfZ4HnU=;
+        b=glQWAUzJgAFT9qSAGBRdcqrrLhzkBVtse4sk4WDhHErMsvk8PLhT45rMf30Ap0FGn3
+         VhjaZAQscfPa33+03eke0Rhd75wTHp3dWcmpfMa8cRryKATubkdST93dszLZqv7lDb9a
+         gc/4ZI6XrbF+RX8N6a1ckvYm1Q1lpraKcm2N21ufT6AH1I8d5nIj+f8CumtppmJd5Zyi
+         qHbyNcSvt2z6U3FLq1zo383xPAFI/Ku0z7MgK0ZEvsyQl3PRk6JTZUVYb1Oq0hGok5Vm
+         f0T2hIL50Ycvohk7+7Zj+6bz9FF16I4c7raU8DjMcKwfDIQBwK9qgC5oyifoRVxT235y
+         Yyhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBPYF+1xQ8yMj186vQaVQTGvc8qNwOcA6uAFTyr1H4F/xVAAaSW8ERxXzvRFeEElLwAg/m0oUtzJAI1sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdrUl+Lm1w2FkAJJtkoNo28hG+gROo2Ulz53I+f2lfbTLRE/Zb
+	fzw3qgeiAQGla9tn9LcgLqV8JdUg7umkfcpY1EWcf4EcMnhp0ZaETsEkCVbOpe4buELT4P/ddlR
+	4Mh0=
+X-Gm-Gg: ASbGnct3kalNPrE9R8iPuZL7xvEcLy9TgfOPQW++ssHfYH4MmUu3cBez86/vKiG3v5X
+	GE4CkCk3kdy6wwbvVxOgSGLsjSvJ22hkc8iNt4zEBSRYYjz86FHK5KW77QooMAL6jfgQLrYl2hn
+	LmCw12OAiP1UTHBUdQfjbhAqJvpHx6z5W8ikv2/Rp8+CxFSaNAVey3mM+Aj7nqXDBf67c3NL2rE
+	yvNag7Wh3mav2N81HBzHWZLyfrxY7Qu0XOY7Q3z1rpMuUSeRlYpuKrKMvkV3Ejb+g9Glf5LW98/
+	e++BN68FeRxp8jn9aq2rpAruwB6KS757AePsLhrCVFUGHtHrFjpyZH6zXlkH0thViib8PkEesUn
+	SThheQeHBv+viGIA=
+X-Google-Smtp-Source: AGHT+IEka1D6FEhBpC8L791UwfgmQyq8I+vV96voBhupIM1wn6N0OB/rzF9unMlOXsA2j2qPgBsa0g==
+X-Received: by 2002:a17:907:720d:b0:ac6:e33e:9ef8 with SMTP id a640c23a62f3a-ace739dcdb1mr309645766b.2.1745598944885;
+        Fri, 25 Apr 2025 09:35:44 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41bc36sm160618966b.33.2025.04.25.09.35.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 09:35:44 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso430170466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:35:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPZskGMKX+7AZQVYvOJLRARKFkNbTwE7pRrK1OwUIE9KXtJnQIqKv4XA2VPx4HJ4yL2hkgTNJoXwCG5w0=@vger.kernel.org
+X-Received: by 2002:a17:907:26ce:b0:aca:c38d:fef0 with SMTP id
+ a640c23a62f3a-ace736f5aa5mr267986666b.0.1745598943873; Fri, 25 Apr 2025
+ 09:35:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] soundwire: bus: Add internal slave ID and use for
- IRQs
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: vkoul@kernel.org, yung-chuan.liao@linux.intel.com,
- sanyog.r.kale@intel.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-References: <20250422104245.958678-1-ckeepax@opensource.cirrus.com>
- <20250422104245.958678-3-ckeepax@opensource.cirrus.com>
- <b286bbf3-0da9-4e84-8d21-7720970833c3@linux.dev>
- <aAeHgqcQCtuFKW/A@opensource.cirrus.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <aAeHgqcQCtuFKW/A@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+ <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com> <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+In-Reply-To: <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 25 Apr 2025 09:35:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
+X-Gm-Features: ATxdqUHMp1icRsSCmBF8bQUPP7IOF6HLUDbKcNsbk2Yj391oWT65wJGBfC1ihnQ
+Message-ID: <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/22/25 14:11, Charles Keepax wrote:
-> On Tue, Apr 22, 2025 at 01:50:13PM +0200, Pierre-Louis Bossart wrote:
->> On 4/22/25 12:42, Charles Keepax wrote:
->> I see the patch add a limit during probe, so now that
->> means the number of ACPI devices MUST be lower than 11. That
->> doesn't sound right to me and could cause some configurations
->> to fail. It's perfectly ok to have ghost devices and no limits
->> on how many our BIOS colleagues decide to list.
-> 
-> Yeah it will limit the ACPI to 11 devices. I can't say I am a
-> huge fan of the "ghost" devices, like its ACPI it is for
-> describing the hardware, so it should describe the hardware.
-> 
-> That said my thinking on this was I have not seen a system with
-> more than 4 real devices on a single bus, and not more than a
-> couple ghosts in the ACPI. So this didn't look like a big issue.
-> 
->> Using a dedicated IDA for IRQ mapping looks like a good
->> idea to me, but I don't think you can really use the same IDA
->> for dev_num
-> 
-> If you are really concerned about the ghost devices I could back
-> out the part that reuses the ID for the dev_num. However I do
-> need to know the maximum number of devices when the IRQ domain is
-> allocated. So I can't really see a way to avoid picking a maximum
-> number of devices for the bus. What number of real + ghosts would
-> you be comfortable with? Although I guess if not using it for the
-> dev_num it is then fairly easy to expand if needed so perhaps I
-> just back out the dev_num bit, but stick with 11 for now and we
-> can expand if necessary?
+On Thu, 24 Apr 2025 at 21:52, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> And the attitude of "I hate this, so I'm going to partition this off as
+> much as I can and spend as little time as I can on this" has all made
+> this even worse - the dcache stuff is all half baked.
 
-A maximum of 16 devices total is probably ok. That's 10 more than the worst-case configuration we've seen so far, and I can't think of a case where more than 10 ghost devices would be listed.
+No. The dcache side is *correct*.
 
+The thing is, you absolutely cannot make the case-insensitive lookup
+be the fast case.
+
+So it's partitioned off not because people don't want to deal with it
+(which also admittedly _is_ true), but because partitioning off is a
+firewall against the code generation garbage case that simply *cannot*
+be done well and allows the proper cases to be properly optimized.
+
+Now, if filesystem people were to see the light, and have a proper and
+well-designed case insensitivity, that might change. But I've never
+seen even a *whiff* of that. I have only seen bad code that
+understands neither how UTF-8 works, nor how unicode works (or rather:
+how unicode does *not* work - code that uses the unicode comparison
+functions without a deeper understanding of what the implications
+are).
+
+Your comments blaming unicode is only another sign of that.
+
+Because no, the problem with bad case folding isn't in unicode.
+
+It's in filesystem people who didn't understand - and still don't,
+after decades - that you MUST NOT just blindly follow some external
+case folding table that you don't understand and that can change over
+time.
+
+The "change overr time" part is particularly vexing to me, because it
+breaks one of the fundamental rules that unicode was *supposed* to
+fix: no locale garbage.
+
+And the moment you think you need "unicode versioning", you have
+basically now created a locale with a different name, and you MISSED
+THE WHOLE %^$*ING POINT OF IT ALL.
+
+And yes, *those* problems come from people thinking it's "somebody
+else's problem that they solved for me" without actually understanding
+that no, that wasn't the case at all. Many of the unicode rules were
+about *glyphs*, and simply cannot be used for filesystems or equality
+comparisons.
+
+Which isn't to say that Unicode doesn't have problems, but the real
+problem is then using it without understanding the problems.
+
+So the real issue with unicode is that it's very complicated, and it
+tried to solve many different problems, and that then resulted in
+people not understanding that not all of it was appropriate for
+*their* use.
+
+Part of it is the "CS disease": thinking that a generic solution is
+always "better". Not so. Being overrly generic is often much much
+worse than having a targeted solution to a intentionally limited
+problem.
+
+   "Everything Should Be Made as Simple as Possible, But Not Simpler".
+
+and involving unicode in case folding is antithetical to that
+fundamental concept.
+
+What I personally strongly feel should have been done is to just limit
+case folding knowingly to a very strict subset, and people should have
+said "we're being backwards compatible with FAT" or something like
+that. Instead of extending the problem space to the point where it
+becomes a huge problem, re-introduces "locales" in a different guise,
+and creates security issues because people don't understand just *how*
+big they made the problem space.
+
+Oh well. Rant over.
+
+                Linus
 
