@@ -1,172 +1,87 @@
-Return-Path: <linux-kernel+bounces-620221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547A1A9C758
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:22:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F08A9C702
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480B73BB305
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:21:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44937A20E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2381258CD3;
-	Fri, 25 Apr 2025 11:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC34242D64;
+	Fri, 25 Apr 2025 11:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="2TKnnLZA"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rh1xpy8p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2DF2571BC;
-	Fri, 25 Apr 2025 11:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3500523644D;
+	Fri, 25 Apr 2025 11:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745579929; cv=none; b=MPL+p9ePv+1OURP7w/IMx50lRg0JxsQzy+HJTgdu7JgcxyjXV6MmSlw6Gfvk3sEwYd9s/kMWegwADLXNUOvKdGdpT99OwgBgZRmXTSbKvba+4wPrQzbQq/31dyteydO2IaCwwYUJDJJmbylopJ/hZEzgUKJGyW5sCXvSxxawPNc=
+	t=1745579905; cv=none; b=R71J4M3K+p/XpPvdMsJVzZbe7ad5kqToNbFQpPWwaUtgwWinCuwJ6flpDVj91lC/B5vMhXWiBm5qmOS1JeItT6ea1tcKrQg+x/LcoSuVVIxxUJ8G8wJaEb6p2Se8YNEcyzYVEuNcnp79D58lqcKYxCuZfHSB1U5n2+RtBRpn4DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745579929; c=relaxed/simple;
-	bh=HWrtJGu36+Tjmp+jQPTHcW486BAmz4c8wtSG0n4UjfM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WzZ6U9XrnUwpaiVgzKCi8A2+bX8K5u5ZBvORFj0hJomzkXzyybF56J9Sx1S3FloYrlD4zqKQdNzSHFLv9R+aGWJz7HFDzzZgwrY4u0bFrjMo4T2Bupxo5OS5mEjAtuMGlqjM6fDsHqNcbW+78p/1/KFOmX/D3QwHGpF9keblSJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=2TKnnLZA; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from localhost.localdomain (unknown [IPv6:2a02:2149:8a3b:5a00:3490:6581:3910:8337])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 2416A2E08DB1;
-	Fri, 25 Apr 2025 14:18:44 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1745579925;
-	bh=LZE5oE2VvX68JSaIpTMQBjpgC+iEII7D1XoT+KTQkGQ=; h=From:To:Subject;
-	b=2TKnnLZABt24V+l9cdt3rvgkFnezCfT2J5TrEtYntKxB1roZbKdurnBb5VQWq6viB
-	 xqkVhE/xyT5Ji/8D7Auw8hLNLci6ZGsFs7mwLMuNGN3HVThHFxjPWKZhF3Fkc938Dn
-	 O4kqrPYDnnpbfC2UdbW+0jLCpUMo5Fq/jOe9R7fg=
-Authentication-Results: linux1587.grserver.gr;
-	spf=pass (sender IP is 2a02:2149:8a3b:5a00:3490:6581:3910:8337) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Joaquin Ignacio Aramendia <samsagax@gmail.com>,
-	Derek J Clark <derekjohn.clark@gmail.com>,
-	Kevin Greenberg <kdgreenberg234@protonmail.com>,
-	Joshua Tam <csinaction@pm.me>,
-	Parth Menon <parthasarathymenon@gmail.com>,
-	Eileen <eileen@one-netbook.com>,
-	linux-kernel@vger.kernel.org,
-	sre@kernel.org,
-	linux@weissschuh.net,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	mario.limonciello@amd.com,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v10 13/16] power: supply: add inhibit-charge-awake to
- charge_behaviour
-Date: Fri, 25 Apr 2025 13:18:18 +0200
-Message-ID: <20250425111821.88746-14-lkml@antheas.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425111821.88746-1-lkml@antheas.dev>
-References: <20250425111821.88746-1-lkml@antheas.dev>
+	s=arc-20240116; t=1745579905; c=relaxed/simple;
+	bh=Skktz0pyFpb+cPGjSKmPDKvIXMPRNAL8a111YD665lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M24SNQk+rssXVg/jrwUX/bTOGziiK6ws8OTrqkQbthZrHTFOcTn3dEcN2ns+tQscY9EmHn1HtN28zITfybFEsI5WUTjqYekbE07EoibQUq02KV8/ZUmzanDlS8NlR7VXinru7JljSHprJ31K7dAFzznBcRpqR94Fy8oDIVHjSao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rh1xpy8p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1DAFC4CEE4;
+	Fri, 25 Apr 2025 11:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745579904;
+	bh=Skktz0pyFpb+cPGjSKmPDKvIXMPRNAL8a111YD665lo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rh1xpy8pu8DOTA8VkiHV5d0k05cWh7NwBgA5Fvkf6Scg6pEhy7boAMZwTjPioFXm2
+	 W+CLAPli9G9KK4XOV6MlQlqFk0YW9+FR/8p6QQG6S1vXSiF4kcpW3XtcdkczD1+Xbn
+	 mvz8w45CYX8hudbcwA+f+TSTgsGw5Ia09299ZfA2uIJBBHL2pl3M10ngd72azwepkt
+	 C4CVpuMCawnpMF7ooUC8Gg7EVqOpPkc4EWnquGRCEhw1tkKLMbRk/TCB5/DaAbG8NB
+	 gmywWi1IOylKin3S6MveDLGIbnITHDa7MVAX3cL3MMVdrCA3L99GzQ2OFoZqFxmnDJ
+	 OS1gI3GFVqmQQ==
+Date: Fri, 25 Apr 2025 13:18:19 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>, "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>, 
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v5 2/5] i2c: piix4: Depends on X86
+Message-ID: <qqrff4zx6eyoyppx3bmsujl4vzhmlwi2dldhoxxikkspmlbiiz@sabqjmjekv7w>
+References: <20250422234830.2840784-1-superm1@kernel.org>
+ <20250422234830.2840784-3-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <174557992504.23105.7297001227554873076@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422234830.2840784-3-superm1@kernel.org>
 
-OneXPlayer devices have a charge inhibit feature that allows the user
-to select between it being active always or only when the device is on.
+Hi,
 
-Therefore, add attribute inhibit-charge-awake to charge_behaviour to
-allow the user to select that charge should be paused only when the
-device is awake.
+On Tue, Apr 22, 2025 at 06:48:27PM -0500, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> PIIX4 and compatible controllers are only for X86. As some headers are
+> being moved into x86 specific headers PIIX4 won't compile on non-x86.
+> 
+> Suggested-by: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
-Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- Documentation/ABI/testing/sysfs-class-power | 11 ++++++-----
- drivers/power/supply/power_supply_sysfs.c   |  7 ++++---
- drivers/power/supply/test_power.c           |  1 +
- include/linux/power_supply.h                |  1 +
- 4 files changed, 12 insertions(+), 8 deletions(-)
+OK, so these are going through x86, at the end.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
-index 2a5c1a09a28f9..78afb2422fc5a 100644
---- a/Documentation/ABI/testing/sysfs-class-power
-+++ b/Documentation/ABI/testing/sysfs-class-power
-@@ -508,11 +508,12 @@ Description:
- 		Access: Read, Write
- 
- 		Valid values:
--			================ ====================================
--			auto:            Charge normally, respect thresholds
--			inhibit-charge:  Do not charge while AC is attached
--			force-discharge: Force discharge while AC is attached
--			================ ====================================
-+			===================== ========================================
-+			auto:                 Charge normally, respect thresholds
-+			inhibit-charge:       Do not charge while AC is attached
-+			inhibit-charge-awake: inhibit-charge only when device is awake
-+			force-discharge:      Force discharge while AC is attached
-+			===================== ========================================
- 
- What:		/sys/class/power_supply/<supply_name>/technology
- Date:		May 2007
-diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
-index 439dd0bf8644e..ad4f8b944d204 100644
---- a/drivers/power/supply/power_supply_sysfs.c
-+++ b/drivers/power/supply/power_supply_sysfs.c
-@@ -138,9 +138,10 @@ static const char * const POWER_SUPPLY_SCOPE_TEXT[] = {
- };
- 
- static const char * const POWER_SUPPLY_CHARGE_BEHAVIOUR_TEXT[] = {
--	[POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO]		= "auto",
--	[POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE]	= "inhibit-charge",
--	[POWER_SUPPLY_CHARGE_BEHAVIOUR_FORCE_DISCHARGE]	= "force-discharge",
-+	[POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO]			= "auto",
-+	[POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE]		= "inhibit-charge",
-+	[POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE_AWAKE]	= "inhibit-charge-awake",
-+	[POWER_SUPPLY_CHARGE_BEHAVIOUR_FORCE_DISCHARGE]		= "force-discharge",
- };
- 
- static struct power_supply_attr power_supply_attrs[] __ro_after_init = {
-diff --git a/drivers/power/supply/test_power.c b/drivers/power/supply/test_power.c
-index 2a975a110f485..958e0c0cf2876 100644
---- a/drivers/power/supply/test_power.c
-+++ b/drivers/power/supply/test_power.c
-@@ -214,6 +214,7 @@ static const struct power_supply_desc test_power_desc[] = {
- 		.property_is_writeable = test_power_battery_property_is_writeable,
- 		.charge_behaviours = BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO)
- 				   | BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE)
-+				   | BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE_AWAKE)
- 				   | BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_FORCE_DISCHARGE),
- 	},
- 	[TEST_USB] = {
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index 888824592953d..cbec930430a79 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -212,6 +212,7 @@ enum power_supply_usb_type {
- enum power_supply_charge_behaviour {
- 	POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO = 0,
- 	POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE,
-+	POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE_AWAKE,
- 	POWER_SUPPLY_CHARGE_BEHAVIOUR_FORCE_DISCHARGE,
- };
- 
--- 
-2.49.0
+Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
+Thanks,
+Andi
 
