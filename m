@@ -1,154 +1,149 @@
-Return-Path: <linux-kernel+bounces-620904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEC5A9D121
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:07:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3BDA9D12B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 21:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9387B9A2E2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:07:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF7D7A06E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E02219A81;
-	Fri, 25 Apr 2025 19:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ECD219A63;
+	Fri, 25 Apr 2025 19:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S6TV0Lox"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IdUl5Bn/"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5211E5B7B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24EB215F72
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745608040; cv=none; b=bWTin82UUxv30CLMQbV2t4M5ziAUYKp3MbUL5cJMcDRZtYXAObOGhj50tiwlex7q29RKi6ofEio/C1FgDNi6wlCWNuItYYUxtMou74Pa8JfoEozRRsXbbIG/gUud/U9Ve/7/yBgLwVV9wFTODDdIq7RgygnqzFZer82SmNr2yZM=
+	t=1745608097; cv=none; b=NHadT7caAWciayd9p3L8iHh7Qqbs7aCWJU35HfAIBJNd3WhamvAm93Sei0439PooPVg5dFOpCEcit1++lLYZ4P0Wc5pUeLqGdaqjKfMjOaE84yZmk89AJjmkvq9shL0wooa3QQiXNZ/f7yCvBJ3jMfQwG5rwlNf+Gblui2jR2k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745608040; c=relaxed/simple;
-	bh=PptaosrMKIkszF9oY5swFi4VZ1gvZMuR9i7Ep8CGyvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJh1iSRzEhTlCQG+QXp0RDBReODRzSz/ZlkV81n04Xl+4N5UPoo8PC25psgDoS/+I+WbxLWf6uEBGYuLn5SVvtWDExWMexviZtInzMA+QUOuI4K7NbCcVH6AMAI0qdjvZZ/t36DXIHSf/Cobj+UWqfmZuJ3+nzpNZfZ/mN/QNik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S6TV0Lox; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJuFM001357
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:07:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YJbYuN2gJ/vLBVO+7ggEakIk
-	yWo8fYN/fU1HKulgY6I=; b=S6TV0LoxN9Hg9UrUvaO+4Ci803NRAtkxU5Vfo6rY
-	80rUfOdGhN1a9MfOxX87Am9700jbKmaBiTQTkA1uXadpqDCPb5QEgrdrERyRE9NB
-	SMy3ULr6tezjisWlIiL+16hKKbxqPD2abNFbLi2n0s0qarzJsOVtpMgVB+TsjBmP
-	4Lqc0a3p1Dv3ErRpy7pLTi/qBB/3XEOo8nL08zhNKHi1+sYkCMvjvrsQrmCbjH+5
-	Uv5t3NKkQuino53SK5SE95mkEhprXs2L6YY+bsOxQu4TmkFNHeXYezhbVFYIfcxe
-	lW7ZjJZR1vPgn0+QNr1XW8EFcyOOOYZiLYqXy3nUMGBABw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh3j36t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:07:18 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c7c30d8986so724845385a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 12:07:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745608037; x=1746212837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YJbYuN2gJ/vLBVO+7ggEakIkyWo8fYN/fU1HKulgY6I=;
-        b=PgOtw1JIZt4j1vSTX9ZXMcYFSCNKblo+jJMULvYNYbaDNzfKEOUhrAuy0G994jNXwN
-         25St6X+eazKVmXEcqtonhx/VIPo/rremWDl2kZxkNPidwGCJpBWxgeAr54vmdDkb/hQF
-         dKTcNuogC2wICCQOwL+1K6KOAZ+QZd8y4ROMusGs83ut/pddaj9jpT2OhDQsh/pDzqKM
-         Ys8vDe+4w0eaDeRVoIx/ow0WX56zYeacREuND2AnanvvGEQDNKQLV2F0EyrjYIxdyP08
-         kv/Dr2+/ryMMd8pImFmMeWOM4GR3pLurvCXG/0mScD3ctcnsVZOXspo47pOnm8u3z8aO
-         jjeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXj1gMLvhhddcCbPlKaVHIpga7j1EfwDivPnLMB+xxPe8EISFIQausao20FFg8GyHgXEf7M34cXKv9HkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpIJaDkCBbSaTIc3gvCqVNUOg5DooSPou6IXethq/2QOJncg/3
-	8Srp5MWyENkJXyNo7zs9QdIXIDXHaiFOz4sUezkvi3RRX8MDAYiU5S3/EUp83FKRv+zdrA8h6KU
-	5GpCGLeruS9wNcWcvwHtMal8zRksDPWx5Y/WGoLIJth7TY6b4AhVVPO+QujR9Mx8=
-X-Gm-Gg: ASbGncsB/TBx1W9mXZ72ve0BXBfgHO2UdkCdAludXPwFc8+hh2+Xu4l5Okc3F76NWqo
-	bWT1RS/J4sJHEQNfEk0yPrV78VmcYrS+2I5rkTl8+N+OEsH9VDx+i+Qkx9EDiPXB4BGG78uL35w
-	Xi7PuuX5xTHXkJM+LLu5VD+LKFmuR32Cv8jGOeJ07uAwPPbHY76y7zlEBSXFdfxQAkwIvB7qfEg
-	65eM/lGYtPlzTrNC6HbqpK4lZq+q5T5i1WUIIV3XP1JgkiqK3+b7i68sZiCFpFpTb6vUDSuNj3P
-	ervb34PDowKEC9dQwuDJsmOEyennOw/jNyvyJgfm/o0kE4ElHygx4UCyr0UeohtDtkuFlTAdnZA
-	=
-X-Received: by 2002:a05:620a:4609:b0:7c5:6a66:5c1e with SMTP id af79cd13be357-7c9668cdc37mr115702285a.58.1745608036741;
-        Fri, 25 Apr 2025 12:07:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfsamSTL36MZXKs1A+xdmyxqbS+5Cgy4qJPLYj7dmxRhp/lz8rumoOXUYE90g5yOpO1ztFkQ==
-X-Received: by 2002:a05:620a:4609:b0:7c5:6a66:5c1e with SMTP id af79cd13be357-7c9668cdc37mr115698685a.58.1745608036439;
-        Fri, 25 Apr 2025 12:07:16 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7ccb83b5sm712379e87.245.2025.04.25.12.07.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 12:07:15 -0700 (PDT)
-Date: Fri, 25 Apr 2025 22:07:12 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        laurentiu.tudor1@dell.com, abel.vesa@linaro.org, johan@kernel.org,
-        Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: Re: [PATCH v3 4/4] drm/msm/dp: Introduce link training per-segment
- for LTTPRs
-Message-ID: <zb5fqcnersry6blohozlzc3f2it2q6ypi4xei3z2fvzp5ogszj@mj23wsa64nqi>
-References: <20250417021349.148911-1-alex.vinarskis@gmail.com>
- <20250417021349.148911-5-alex.vinarskis@gmail.com>
+	s=arc-20240116; t=1745608097; c=relaxed/simple;
+	bh=L1uhPKJqM4uJoNb/FduIwtRIQp44jmuA62BWQ2acaOo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RT315Utg1flkoI7AjiGsdAQYqlZFa6gKfCxW0BeWHsd0ov/qE5/VHsdItITXL0LyAaGvdrBvhMGs6uCTR679ON5puSF4LrrGuvi959tAfcu/ngalr9XwVWD7wCP6h4gZzu1SQVpRkgZJg5kPy4nd5tbvN/nPMXMD8h5W6mVU8KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IdUl5Bn/; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53PJ831l2862529
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 14:08:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745608083;
+	bh=v/ZY+DevxDSqruvVl+CgKBTK5F/u+6alzZsc87GdoMM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=IdUl5Bn/1LxfG2ntRSMkFtRblGw973o2F5myBC04i6/IIRdf0TfwI64JZfJrBMAeN
+	 SbCTTtkevggALf+BSF29lAoEqm2a6pDKm/qsgipZv7bHCTj8KRfbRdnbVIvR0EWQh0
+	 NqA/GHPB+6XnaYwXUA1ysfjJjWd+wvYxvmA1o6eQ=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53PJ838E001635
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 25 Apr 2025 14:08:03 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
+ Apr 2025 14:08:03 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 25 Apr 2025 14:08:03 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53PJ83Cu089924;
+	Fri, 25 Apr 2025 14:08:03 -0500
+Date: Fri, 25 Apr 2025 14:08:03 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Kendall Willis <k-willis@ti.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <d-gole@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] firmware: ti_sci: Convert CPU latency constraint from us
+ to ms
+Message-ID: <20250425190803.s7bag5fop7hsxcxe@sliced>
+References: <20250425153754.2141984-1-k-willis@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250417021349.148911-5-alex.vinarskis@gmail.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDEzNSBTYWx0ZWRfX1Y8mU7WRmiz3 HCsrvzAP5HvlWt99rO9FeDfIjloqxp7hnkaRRZNsAkU/Zf7LXFtAJEccPzJi54SVjFJxruAgTtw HST7FPXqKyc+IvtPcHwxojLgqfOLnygRZ5n6yyhA0BcxNcpBZDex4XnX5vrUQbbapRwgfGGQL19
- oKSRT8rgBYa1Ib7Kp7VPfwI+hOC9SjsdrugtHvVu/Tc+xDW2LZwuHc7dPEPIpUwCv7TfO/csRD4 AwCm1f03hMyfSshOY63lg+uSeYnvegYZNSy0F4FTMtGpNbBxC6ldZ2t7NdG0RMKeSSy3Ji2cxlR jpr+UckoIHf9qZyTAlxgORNQUevTm1r1Vsd7vfFlgHccVI921GUfXJEA7EE3FlFMnLd7P84JJSY
- xEjowMTbHKIVPOYFJz9Y7284afjT8RnLB3Skx06v5Tsi+gqcBcGVSsrZRMtV08LSi3xUS/Qs
-X-Authority-Analysis: v=2.4 cv=bs1MBFai c=1 sm=1 tr=0 ts=680bdd66 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=GOLd5LZXdg2kOnOye_0A:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: gjNpQrwbqYTuug6R_AgrOmyLZw-lXjDs
-X-Proofpoint-GUID: gjNpQrwbqYTuug6R_AgrOmyLZw-lXjDs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0 malwarescore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250135
+In-Reply-To: <20250425153754.2141984-1-k-willis@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Apr 17, 2025 at 04:10:35AM +0200, Aleksandrs Vinarskis wrote:
-> DisplayPort requires per-segment link training when LTTPR are switched
-> to non-transparent mode, starting with LTTPR closest to the source.
-> Only when each segment is trained individually, source can link train
-> to sink.
+On 10:37-20250425, Kendall Willis wrote:
+> Fix CPU resume latency constraint units sent to TI SCI firmware.
+> CPU latency constraints are set using the PM QoS framework. The PM QoS
+> framework uses usecs as the units for latency whereas the device manager
+> uses msecs, so a conversion is needed before passing to device manager.
 > 
-> Implement per-segment link traning when LTTPR(s) are detected, to
-> support external docking stations. On higher level, changes are:
-> 
-> * Pass phy being trained down to all required helpers
-> * Run CR, EQ link training per phy
-> * Set voltage swing, pre-emphasis levels per phy
-> 
-> This ensures successful link training both when connected directly to
-> the monitor (single LTTPR onboard most X1E laptops) and via the docking
-> station (at least two LTTPRs).
-> 
-> Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org>
-> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
+If this is a bug fix (sounds like it), follow the stable kernel rules.
+
+Also please do not expect reviewers in the community know what this
+means, I think you intent to point folks to the url
+https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html#tisci-msg-lpm-set-latency-constraint
+
+If so, add the reference to your commit message.
+
+
+> Signed-off-by: Kendall Willis <k-willis@ti.com>
+> Reviewed-by: Dhruva Gole <d-gole@ti.com>
 > ---
->  drivers/gpu/drm/msm/dp/dp_ctrl.c | 126 ++++++++++++++++++++++---------
->  1 file changed, 89 insertions(+), 37 deletions(-)
+> Test log [1] shows entry to MCU Only low power mode by sending a CPU
+> resume latency constraint of 100000 us using PM QoS. MCU Only is shown
+> to be entered by 0x1 as the printed mode.
 > 
+> [1] https://gist.github.com/kwillis01/059a2ca38232387b414bc6f4b87c7475
+> ---
+>  drivers/firmware/ti_sci.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> index 806a975fff22..bc138a837430 100644
+> --- a/drivers/firmware/ti_sci.c
+> +++ b/drivers/firmware/ti_sci.c
+> @@ -3670,6 +3670,7 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
+>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>  	struct device *cpu_dev, *cpu_dev_max = NULL;
+>  	s32 val, cpu_lat = 0;
+> +	u16 cpu_lat_ms;
+>  	int i, ret;
+>  
+>  	if (info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
+> @@ -3682,9 +3683,13 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
+>  			}
+>  		}
+>  		if (cpu_dev_max) {
+> -			dev_dbg(cpu_dev_max, "%s: sending max CPU latency=%u\n", __func__, cpu_lat);
+> +			/* PM QoS latency unit is usecs, TI SCI uses msecs */
+> +			cpu_lat_ms = cpu_lat / USEC_PER_MSEC;
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+round_down or a round_up? I assume you intent round_down, please
+document that in the comments.
+
+> +			dev_dbg(cpu_dev_max, "%s: sending max CPU latency=%u ms\n", __func__,
+> +				cpu_lat_ms);
+>  			ret = ti_sci_cmd_set_latency_constraint(&info->handle,
+> -								cpu_lat, TISCI_MSG_CONSTRAINT_SET);
+> +								cpu_lat_ms,
+> +								TISCI_MSG_CONSTRAINT_SET);
+>  			if (ret)
+>  				return ret;
+>  		}
+> 
+> base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+> -- 
+> 2.34.1
+> 
 
 -- 
-With best wishes
-Dmitry
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
