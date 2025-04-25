@@ -1,88 +1,53 @@
-Return-Path: <linux-kernel+bounces-619977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83B2A9C454
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:53:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E4DA9C437
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53EEE3A429C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101571884052
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EFA23F439;
-	Fri, 25 Apr 2025 09:51:18 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD2023BF80;
+	Fri, 25 Apr 2025 09:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAy93lce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7529B238C04;
-	Fri, 25 Apr 2025 09:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A09223BD04
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745574677; cv=none; b=SYOkff3DP8ZEpGh8QiMGnpXPq6RAJv9PhGb+Xo7GTebZNM7kgvyC5BWCI+BrOMUjvVKdJfyYfEGYuBQiWKMp5cGpUJcVgOnnwTpUlfvi5BRmHNxt5uHLZP5yytAPFgz3KCllygDysU43Q3ny0KMSLFTFAgFy3/Cp7tNzKZPnxjo=
+	t=1745574662; cv=none; b=YRA3qmxTLAlhfY8fMvudcWIepAzEPD2wbneq6WKjjWeh1ULNCfsK/Gr3TJhJdnV641yCcBptAi/DRjqk2MP67G7CHMRjM9QsPSk9Wdg3z/lhtSq6M6EDyH8TzjFLAxGodHyqs8fdTlbRpqDWrJTJoogMDP7b2r5qH3gHb97o0VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745574677; c=relaxed/simple;
-	bh=aCnbddNjcpDZwKRa9tup09qc7MePN4i0Whw6J3J7Wjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=avkrTVk0KVmG5DMI51Ed0bH/WfT1/OaBmkBNSUpRpqluppncwxGKu+F02bRiAM36vvQBZ606+uUoMu4euPZVVx84MRyCW+dxPMsjjLpAxgHVLK8mp8Cj+oEzLQiNcWc8Y3cqsYAygJ5B4ce/R8e/mm5mwxvs7dxJ+DPlVYMfRtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ceea4baa21ba11f0a216b1d71e6e1362-20250425
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
-	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	UD_TRUSTED, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
-	GTI_C_CI, GTI_FG_IT, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0ddfab29-0e91-4b04-bf02-984af4606283,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:5
-X-CID-INFO: VERSION:1.1.45,REQID:0ddfab29-0e91-4b04-bf02-984af4606283,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:5
-X-CID-META: VersionHash:6493067,CLOUDID:7782e4460cd16490f63496accad47f71,BulkI
-	D:250425175109UY6YW1YJ,BulkQuantity:0,Recheck:0,SF:19|24|44|66|72|78|102,T
-	C:nil,Content:0|50,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
-X-UUID: ceea4baa21ba11f0a216b1d71e6e1362-20250425
-X-User: jianghaoran@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <jianghaoran@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1796518417; Fri, 25 Apr 2025 17:51:06 +0800
-From: Haoran Jiang <jianghaoran@kylinos.cn>
-To: linux-kernel@vger.kernel.org
-Cc: daniel@iogearbox.net,
-	ast@kernel.org,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@google.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	trix@redhat.com,
-	bpf@vger.kernel.org,
-	llvm@lists.linux.dev,
-	chenhuacai@kernel.org,
-	yangtiezhu@loongson.cn,
-	zhangxi <zhangxi@kylinos.cn>
-Subject: [PATCH] samples/bpf: Fix compilation failure for samples/bpf on LoongArch Fedora
-Date: Fri, 25 Apr 2025 17:50:42 +0800
-Message-Id: <20250425095042.838824-1-jianghaoran@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1745574662; c=relaxed/simple;
+	bh=goSww0P5SFEYhcqCWdBoe88SPIL4JuxXLc5uGO6rmaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tTbyb+CmZ1/FCzXeVo0pGSWhZDSuQJ6p8NpIF8I58JioL92gNYjSqul56S8edkQOAzvWcimKQq0a4GYxAsscblGw1Fwvk+Uodj5F+9E+CdR68EZPWWwczGaO4HSfScb4T6HRliyq1V3Qnl6bWCk/um5vQNXvYIlXTuf+a1DdDvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAy93lce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D3BC4CEED;
+	Fri, 25 Apr 2025 09:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745574661;
+	bh=goSww0P5SFEYhcqCWdBoe88SPIL4JuxXLc5uGO6rmaw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KAy93lcei+DzfvhvdLUJJhaZdqf7ej28LnCI1gBYT4eX/K69uKyfDaNQ80PQyaTBN
+	 XufgvYNTk3Dkg3PQFdlA+5G7aQc66o9lkhO4lkcdRPXygzxrdURe5Ov+XrpQ99ErM9
+	 7rNuL7wf8rEXfTbG9Aje/BEz00OVflJIYZaRnMFHIYa9hv0cKOyZwuwREI517EKj7/
+	 yimkEutthYVEDBDeuS0ZwjyeWrXUz/3xCWCA2xyzHomI8LH27zZTMvquJ7OJn5fVLj
+	 U9NQo6SYXCWJvWphmSEmo/3r36K+2w86B6UOYkYOa7oRYfoWq6BU9iShkaWi2ElwFx
+	 ewRlGQKRxnlbg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: support FAULT_TIMEOUT
+Date: Fri, 25 Apr 2025 17:50:55 +0800
+Message-ID: <20250425095055.1129285-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,51 +56,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When building the latest samples/bpf on LoongArch Fedora
+Support to inject a timeout fault into function, currently it only
+support to inject timeout to commit_atomic_write flow to reproduce
+inconsistent bug, like the bug fixed by commit f098aeba04c9 ("f2fs:
+fix to avoid atomicity corruption of atomic file").
 
-     make M=samples/bpf
+By default, the new type fault will inject 1000ms timeout, and the
+timeout process can be interrupted by SIGKILL.
 
-There are compilation errors as follows:
-
-In file included from ./linux/samples/bpf/sockex2_kern.c:2:
-In file included from ./include/uapi/linux/in.h:25:
-In file included from ./include/linux/socket.h:8:
-In file included from ./include/linux/uio.h:9:
-In file included from ./include/linux/thread_info.h:60:
-In file included from ./arch/loongarch/include/asm/thread_info.h:15:
-In file included from ./arch/loongarch/include/asm/processor.h:13:
-In file included from ./arch/loongarch/include/asm/cpu-info.h:11:
-./arch/loongarch/include/asm/loongarch.h:13:10: fatal error: 'larchintrin.h' file not found
-         ^~~~~~~~~~~~~~~
-1 error generated.
-
-larchintrin.h is included in /usr/lib64/clang/14.0.6/include,
-and the header file location is specified at compile time.
-
-Test on LoongArch Fedora:
-https://github.com/fedora-remix-loongarch/releases-info
-
-Signed-off-by: Haoran Jiang <jianghaoran@kylinos.cn>
-Signed-off-by: zhangxi <zhangxi@kylinos.cn>
-Change-Id: I5fca6f0cee21e429982c5a3865efc5afeb3fa757
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- samples/bpf/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs |  1 +
+ Documentation/filesystems/f2fs.rst      |  1 +
+ fs/f2fs/f2fs.h                          | 17 +++++++++++++++++
+ fs/f2fs/segment.c                       |  3 +++
+ fs/f2fs/super.c                         |  1 +
+ 5 files changed, 23 insertions(+)
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 3fa16412db15..927d72659173 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -392,7 +392,7 @@ $(obj)/%.o: $(src)/%.c
- 	@echo "  CLANG-bpf " $@
- 	$(Q)$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(BPF_EXTRA_CFLAGS) \
- 		-I$(obj) -I$(srctree)/tools/testing/selftests/bpf/ \
--		-I$(LIBBPF_INCLUDE) \
-+		-I$(LIBBPF_INCLUDE) $(CLANG_SYS_INCLUDES) \
- 		-D__KERNEL__ -D__BPF_TRACING__ -Wno-unused-value -Wno-pointer-sign \
- 		-D__TARGET_ARCH_$(SRCARCH) -Wno-compare-distinct-pointer-types \
- 		-Wno-gnu-variable-sized-type-not-at-end \
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index c805a48dd3dc..0dd0936e31b0 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -735,6 +735,7 @@ Description:	Support configuring fault injection type, should be
+ 		FAULT_BLKADDR_CONSISTENCE        0x000080000
+ 		FAULT_NO_SEGMENT                 0x000100000
+ 		FAULT_INCONSISTENT_FOOTER        0x000200000
++		FAULT_TIMEOUT                    0x000400000 (1000ms)
+ 		===========================      ===========
+ 
+ What:		/sys/fs/f2fs/<disk>/discard_io_aware_gran
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 95c64b5b5638..6dcafcf3bf54 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -207,6 +207,7 @@ fault_type=%d		 Support configuring fault injection type, should be
+ 			 FAULT_BLKADDR_CONSISTENCE        0x000080000
+ 			 FAULT_NO_SEGMENT                 0x000100000
+ 			 FAULT_INCONSISTENT_FOOTER        0x000200000
++			 FAULT_TIMEOUT                    0x000400000 (1000ms)
+ 			 ===========================      ===========
+ mode=%s			 Control block allocation mode which supports "adaptive"
+ 			 and "lfs". In "lfs" mode, there should be no random
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index be752d833a06..3e0d1f9b62ba 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -63,6 +63,7 @@ enum {
+ 	FAULT_BLKADDR_CONSISTENCE,
+ 	FAULT_NO_SEGMENT,
+ 	FAULT_INCONSISTENT_FOOTER,
++	FAULT_TIMEOUT,
+ 	FAULT_MAX,
+ };
+ 
+@@ -613,6 +614,9 @@ enum {
+ /* congestion wait timeout value, default: 20ms */
+ #define	DEFAULT_IO_TIMEOUT	(msecs_to_jiffies(20))
+ 
++/* timeout value injected, default: 1000ms */
++#define DEFAULT_FAULT_TIMEOUT	(msecs_to_jiffies(1000))
++
+ /* maximum retry quota flush count */
+ #define DEFAULT_RETRY_QUOTA_FLUSH_COUNT		8
+ 
+@@ -4830,6 +4834,19 @@ static inline void f2fs_io_schedule_timeout(long timeout)
+ 	io_schedule_timeout(timeout);
+ }
+ 
++static inline void f2fs_io_schedule_timeout_killable(long timeout)
++{
++	while (timeout) {
++		if (fatal_signal_pending(current))
++			return;
++		set_current_state(TASK_UNINTERRUPTIBLE);
++		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++		if (timeout <= DEFAULT_IO_TIMEOUT)
++			return;
++		timeout -= DEFAULT_IO_TIMEOUT;
++	}
++}
++
+ static inline void f2fs_handle_page_eio(struct f2fs_sb_info *sbi,
+ 				struct folio *folio, enum page_type type)
+ {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 037d06d58fda..b1ce8a41becd 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -371,6 +371,9 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+ 	}
+ 
+ out:
++	if (time_to_inject(sbi, FAULT_TIMEOUT))
++		f2fs_io_schedule_timeout_killable(DEFAULT_FAULT_TIMEOUT);
++
+ 	if (ret) {
+ 		sbi->revoked_atomic_block += fi->atomic_write_cnt;
+ 	} else {
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index de88084f9861..1c33d90c4c92 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -65,6 +65,7 @@ const char *f2fs_fault_name[FAULT_MAX] = {
+ 	[FAULT_BLKADDR_CONSISTENCE]	= "inconsistent blkaddr",
+ 	[FAULT_NO_SEGMENT]		= "no free segment",
+ 	[FAULT_INCONSISTENT_FOOTER]	= "inconsistent footer",
++	[FAULT_TIMEOUT]			= "timeout",
+ };
+ 
+ int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
 -- 
-2.25.1
+2.49.0
 
 
