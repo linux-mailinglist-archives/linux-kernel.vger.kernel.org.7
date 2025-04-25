@@ -1,234 +1,402 @@
-Return-Path: <linux-kernel+bounces-619550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56C4A9BDEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF9BA9BDF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 07:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999A617F355
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437DA172A1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 05:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6030822A4E3;
-	Fri, 25 Apr 2025 05:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E9922A1C0;
+	Fri, 25 Apr 2025 05:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b="XkwRx1zl"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aRU2FiQd"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C023022A1F1;
-	Fri, 25 Apr 2025 05:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.153.144
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745559528; cv=fail; b=EkY6oAEnHgoHsuXKFwQv2M80WMGCRmePR765FI7gAi9/WAeRCL5sRRtEBRubbWycIrBs4jXCADGLZqQlB3N+PGCUAOTW40nX9xsxoO6zesD20dHQIKuLFVBKHkfTQekekq3hvB9GgsyS7kHS/QL0uhu80iqsc2oDNwuF/oqffCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745559528; c=relaxed/simple;
-	bh=VXTe/uCqvEWwaGUZrbs6qkQKWIdO3VtkT6QnM394ZAE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KMowXf0vuBIaddCaBtdRhDj89Ec7v9Zpf781ZrkFkhJisrhBKnKJJ53/o4z6zJpE3zYfIwCOGbk+Co70VC7iQWyStfIq9AtOkWd/Sz7UXLxLJWREPaR1LLo8zyIALiNRKaviA7Pc+CNn9iPf1JdXXkAVQ76jXd3HD7bL7SDHWpo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com; spf=pass smtp.mailfrom=sandisk.com; dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b=XkwRx1zl; arc=fail smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandisk.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=sandisk.com; i=@sandisk.com; q=dns/txt;
-  s=dkim.sandisk.com; t=1745559526; x=1777095526;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=VXTe/uCqvEWwaGUZrbs6qkQKWIdO3VtkT6QnM394ZAE=;
-  b=XkwRx1zl6wNqo0xJdm6y40YUHsC4VUksqAH80XI9EurCUpgrLo/aRi2y
-   uYE+Oyi9/PDnQScFo5oBrbwZxEWscu7g0W2UQFmpguJcSMFc3+60kcz2w
-   vVAWt3T2DkS0hQh80b5j5UlQ6vjMfXBf09P3GG/dNKzMsGydJC/gMHG1k
-   i+vwm/HJ3RCR9DEzemzVmUZpSvkKDVUfxz+KF1EiKRE5LJ4/ZZX4HUkTM
-   CPwagcEB8UdP/VnaMhT4zz7kkQDduX1VWm09UzVVhKwMxvE2/xuA09tnC
-   Mmj7rxbvW723fH6VY6E4Q6yJPS4Jv7DkTx4WDK0CVOa/UzzArr68qmde9
-   g==;
-X-CSE-ConnectionGUID: 8SHSw+MrSHqBtvHbHXs55Q==
-X-CSE-MsgGUID: U15msuW7Sqe0uqgcVkGrGw==
-X-IronPort-AV: E=Sophos;i="6.15,238,1739808000"; 
-   d="scan'208";a="77118189"
-Received: from mail-bn8nam12lp2176.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.176])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Apr 2025 13:38:44 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JwUhpjYZndj8elqDh5VrJ0rYVa4+1RKPigM6sqq53Jec4EOhCCxhcI4Qdcr+FXzXp8abVK8rzQdPKXXzCp4Tg1tgOQZPgkuCWGYHY/giw+vlJhHywlwP2yFN4gFZlCt95Fwv3i7qpOLH2+hQ2FstXonF/nu8/l7CiJMgaqs1IAtfxFYPlhyCuGMaKmg5kGscnx73GooTqzT48OC8ILPADq7EGf/N8vlPI3JdX+77b6+T1+LhtAOYcGx/PULsnQSR+AkmwRLLwA7h0Qwz+hC9ey06rwPPE4EXZLzu/xgBBY1PvXeeR/Z12OZslasx70uLvaLLA6AgFFhLlNDi2AJzxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VXTe/uCqvEWwaGUZrbs6qkQKWIdO3VtkT6QnM394ZAE=;
- b=uB7qZ+ppjURuibpwONXZREpQZwCgug7nK8D/H4asCD3rIuD42TovJ7DS5Z5gSJTtY9UqoztQpaTbshCYkVJGGkUudAfTyIs9msqLswjOq/7QTPPKNHxdbfFqm8gY2KzX7xHWQv0ibjKy0+9tA7/Ozy8tpdFSA5ZFE04WASG+FIl21yPiNqvV8DkNVkivLiYX2ekzW67QMJNPyX3u/PMBxQqsGZmjicsAEBE3BuE44DQvvbbLpvXcyJNLNQpE9oQqpvtBiy+pPsKdpHeH74SuTlcoK7JvAzyCx5Hf54bRMdaLatGUYoX5vUDxp7OGP5sKRFgrmNeotfHlmOHwpkPm1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sandisk.com; dmarc=pass action=none header.from=sandisk.com;
- dkim=pass header.d=sandisk.com; arc=none
-Received: from PH7PR16MB6196.namprd16.prod.outlook.com (2603:10b6:510:312::5)
- by BN7PPF52F30F1FE.namprd16.prod.outlook.com (2603:10b6:40f:fc02::70e) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
- 2025 05:38:43 +0000
-Received: from PH7PR16MB6196.namprd16.prod.outlook.com
- ([fe80::fff9:726d:943f:6852]) by PH7PR16MB6196.namprd16.prod.outlook.com
- ([fe80::fff9:726d:943f:6852%7]) with mapi id 15.20.8678.023; Fri, 25 Apr 2025
- 05:38:43 +0000
-From: Avri Altman <Avri.Altman@sandisk.com>
-To: "keosung.park@samsung.com" <keosung.park@samsung.com>, ALIM AKHTAR
-	<alim.akhtar@samsung.com>, "avri.altman@wdc.com" <avri.altman@wdc.com>,
-	"bvanassche@acm.org" <bvanassche@acm.org>,
-	"James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "peter.wang@mediatek.com"
-	<peter.wang@mediatek.com>, "manivannan.sadhasivam@linaro.org"
-	<manivannan.sadhasivam@linaro.org>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ufs: core: Remove redundant query_complete trace
-Thread-Topic: [PATCH] ufs: core: Remove redundant query_complete trace
-Thread-Index: AQHbtX5Ip6OdafELmU2a+8Sv02/mybOz3SBA
-Date: Fri, 25 Apr 2025 05:38:43 +0000
-Message-ID:
- <PH7PR16MB61962DED035E3F1F5F03B142E5842@PH7PR16MB6196.namprd16.prod.outlook.com>
-References:
- <CGME20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
- <20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
-In-Reply-To: <20250425010605epcms2p67e89b351398832fe0fd547404d3afc65@epcms2p6>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=sandisk.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR16MB6196:EE_|BN7PPF52F30F1FE:EE_
-x-ms-office365-filtering-correlation-id: 28a13e98-c519-4f35-c931-08dd83bb70e4
-x-ms-exchange-atpmessageproperties: SA
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?THhTcm5DREZhTGQ2WWlvTnNZZXRaQ0xncE1TZGxVcS9MVGtzcXdNTTRJT3o1?=
- =?utf-8?B?VDVpbjlHWnJlOFAyemgza2NVc0p3ODlpOXQ3bTdCR3IvaDdGRDAxNUg1SS85?=
- =?utf-8?B?Vmx5eWF5NWQ1dFpETUVPN0U5NDBPREZiN1llTG9VT1VsVTI4UkRucHh4VXI3?=
- =?utf-8?B?a0pwOHZCYmFXMUwvOGxaZkZYRDVVYXREazFHMUIvL050TTFqYTFicXEwR1ZP?=
- =?utf-8?B?OWZvbGkwK1VSTUMya25NTVA3WjlKNFNEb0JEVmhUTUhrZEo5N1RERlFldFFP?=
- =?utf-8?B?dGpjYWJ1Tlk1YUQwc0orQzNmOTJMUnRyYWNITDNPdjNmOVM2ZmRYZks5bzU5?=
- =?utf-8?B?dmt6ZVdiYzlJQ045SVQ2eU9DVXBZc2FtUDZLN2QwUkJpZ1F5cWR2QnB0TlR0?=
- =?utf-8?B?UEoyVVd1YlZJWVcwV0lFSFdndlR3UWZzTnFHMmtMZnJIRUlyUGRadzRaeWFR?=
- =?utf-8?B?RkQwUHVHeEFOeS9HMnM3cXR3MlYyczUyNzJrL0FvcW5rNWJ5RW8yQlozQTR3?=
- =?utf-8?B?RjNRalBpOERFM3BIOVNoY1Fzc0RmQUR3VWpRYjIvK3FQQTF0L1pFUXlObC8w?=
- =?utf-8?B?SnU3UDZnTFV2c2NkMFlPdzU2b1VqQS9NQkwxdFNhLzhWYzlkQ3Q2MzMwclRY?=
- =?utf-8?B?RmdIN1FybkFxcmMrd2R5OTkxTE1JYUhTOTRVR0xRbmtMdDJ2NzVkeVNFRVN4?=
- =?utf-8?B?bjRHTTZ2akoxNk5KWGtMNnJqRENOYUt5ak1uWDJvekZKR1VQQm91T2hPTFBD?=
- =?utf-8?B?K3UxV3NuYUF4anhtU0pUODZLdS92WkhpQ2pJbXRlZjRmaFZUOWJnTjNvbDRU?=
- =?utf-8?B?OGdEemovc0pNRTdvRjhNYVVud3VQWG83SWNDd0JTbUxDcXZlM092OGNJQ2pU?=
- =?utf-8?B?OEtEbUd5RThNUWlZTDdKTUFhS0dla1BRbDg3RDlSNzJqWXg1ay96V0lUczFi?=
- =?utf-8?B?dnJ4eVhFVTJmL040VjBDc1hRSjM5OXFmcUtSQUE4Rkt6U0M5QmNDblhPZCsz?=
- =?utf-8?B?ZUJ1Q1Z0QlFoNDlORHg5V2traXZhZ2lDajhNKzM1WVZFT3lWNUdSbTR0WFBU?=
- =?utf-8?B?ZGsyYTY4cVdYcFVTaWtXZWphNDhLbXBGaUtFZXl6RW4wbjMzbVAwcHZnSnNx?=
- =?utf-8?B?b0FoclM0WEhIeWIwOFA5cjlia1NZTlFRRXVCM2YyOUFtV2VabnNUc0ZRaTBR?=
- =?utf-8?B?YldwS3AyRHJWeHZyVyttSC9YNWl4NTV2dGVCWHQzVVpsY3dzVzY2M0tDcS8v?=
- =?utf-8?B?UHBoa3ZhOXV5aUpiWjVsYVo5bWNjWlJuVkFsdk1XcFArTUhiK2NSa1o1eUpJ?=
- =?utf-8?B?Y2t1Q1NxUkZrR2IweTdPTC9RZU5xdGxvZ2h3eFpWM2tVMTF6VnZGNEUxSnJ1?=
- =?utf-8?B?Ujc2VVA5WTRlTjZCVGwzYlAwckNucjl4aTFNQTRheWVmRmZ6ZkVmMU0zQ2lt?=
- =?utf-8?B?bnNKdTRNN2c3SzYrZ0JRb0pmeHpPWmtDZ1BnbGdMeTg5R0FSamg3Z3l3Zm93?=
- =?utf-8?B?WFB3ZVlnSXQrQ1YxS1ZlRjNoRFpYVnJsVFJKaU9JWU5HN2xSMUFzNm4rRmNK?=
- =?utf-8?B?d3lFV0RoNWZkRGdidEYveGNwVTdDNUcxVk9nYUoydzZHSFFMZ2V1YkRJb3pV?=
- =?utf-8?B?Y3VFN0tNQ05LWXdXQ1Bjc1NWb2VmTHZSaWpYUUdFb1JrNXVjdDVJTlYvc0NZ?=
- =?utf-8?B?cUduRkwvTjdwTUNDSmp4YlJ1MzN3OTFBa2srRnBIcWVwTVFubzZ3MTBxNDhj?=
- =?utf-8?B?WXBOcWFXdllFckxoMWxLYVQ5OFFJQS9ybGViSXpCeVlXOUxaYXpQVSs0UjQ3?=
- =?utf-8?B?Wk9RUFhkRmcxNE1sUThBMmVkckdlS25OWHpJZzE5VVlTZXIydm1pTXJoZ2Rz?=
- =?utf-8?B?OW9QNTA3dEJRK1NPVEhRWXo1dkM4TmoyTENYR05IYTVCZGd6T2x2b0hzeHpQ?=
- =?utf-8?B?Q2p2L3pmd0FhNUJ4RVBUZmY2UzBlWnBIK01waUN2MGp6V3ZWT2dyWWFyMWZQ?=
- =?utf-8?Q?O21jH32DSv1V7NlA1g9MuJHGj8zy+M=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR16MB6196.namprd16.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YVhXTkNDdCtIK2M5L2NuUFE5cGFDVStVcjZkRk5sREFKSFJ1UDduS2hWMTQv?=
- =?utf-8?B?MC9CNFhFbk42UlVhTm1VbHZYcjlIdE0rZGVLenQvVnR2cW5wb3NVT1doVnZh?=
- =?utf-8?B?dERRYWJ0ZW1vSUhXV0dwSzhMY2Y5dEtTT2RqN2xiNjh3U0pKcS9HaE1vcUp2?=
- =?utf-8?B?UGkrcSs2S2lSRHh2UkF1SkFCaVRQR254TGZnMnlHaWVudGd4c20raFlVU2RQ?=
- =?utf-8?B?dGhMcklXRUFvNzhkY2ZSdURJcEppQ0VDV0p5NmtQZWtZUDNITlo0RVI1NXdR?=
- =?utf-8?B?WDRYQVBUa3JTNUw0L1NXZ01PWnFjUExPYTFmNmVyTUU1VHQ1eFNnNU5KMEI5?=
- =?utf-8?B?bHZOTFhVYjJsZmoyWkovcUdKdGhBZmdvRTNUUDFBYWdmZmFLL1gvT1MxUXQ4?=
- =?utf-8?B?R3BOTTN1S0xYdUVuWjFYTE5tNUNhY21zK2JRVnIrd2JncmU0VjlTWXNGRndm?=
- =?utf-8?B?RlRYWmFJdFZGNEdpNWtKQWhTVzdwRkN4QlJxSGZEMG91NzB1V3JUOVhQcVhP?=
- =?utf-8?B?UUo2cmlvTXVpK2pxSFU0a0IrM2xXQXNsUHRhWURSSTdtb2wzUUU0eU5qU1hn?=
- =?utf-8?B?TWFOVDU2WG9IY1lSempUc3dGMHA3UXJoM1pzcHFSYytPc2tNbzNkWVIxWWIv?=
- =?utf-8?B?cTdZZFJPcW1qMEJMMCtvbzgwUlJ0UVZIQmFsdGpPOFJyK0FjTTZsREZwakxz?=
- =?utf-8?B?R3BabEVOT0U1VUZsZGJNL1hESysyRy9QK09mTSs3aEFHQjRKcUNxN3FFOTF3?=
- =?utf-8?B?Yjd5OG9FZWwvelNQZDFWUkh6eWwrcjhqR3B3UDBvUU40TXlIZlpBbzNWa0xm?=
- =?utf-8?B?c1NlZlJOUG1kWXhmUjJhNHNsaFBvZjhIR29MbDZPS0lYWnRwcm5VUElRalBT?=
- =?utf-8?B?VWtzeGVtcGdRU3N3bWRUK0lnT1NPQzVodS9meVhDZkNYbzJwUFc4UERCZFBG?=
- =?utf-8?B?YjN1R0xYblY2N3d1Tkx6OHFqZXErVUg5eS92QktHUStVN0ZYenRJcHprc1lz?=
- =?utf-8?B?MnZmUURBcDF3dEQ0K2tzOTk1N0FCMGcyTElVcXRtZDNkSk9VV2xuNk00cEVV?=
- =?utf-8?B?R2d6b1VNTHY4WmRHak1Camg5ajQ4clRBQUczWmZYV0FqUzZkdzg2U0RSVEla?=
- =?utf-8?B?K1lDMEJhTXBxd2s5a1l3L3lRc0lwdXdLZzU1ZHZpZ1VxenZWU1pNK1dTUlls?=
- =?utf-8?B?SWt2SGJKSXBGMnhzSjNiZ1NkcUNaZ2thZUZzd3JoTHBCOC8xdzcvcVE4TEJE?=
- =?utf-8?B?a0JoVnZhUzA3UzFsQlNPWFFBeENpeW5QT3RKdlRxMWtLSS9JZ1FQMEo4Yitt?=
- =?utf-8?B?RWNGOXhSM1RheUZEWE40UldWeEllS3AzWnpzeFN1dzNZWC9NbFMvWHppaU1R?=
- =?utf-8?B?RFBDa2pIMXlmTmpnLzNVSGcrMmV2Yk5tZVVnNmJpV003dFI3dlNMZ09KdWQ2?=
- =?utf-8?B?Zmk5NDZ5NXIvWlZSdk1icjRoNE9vQkUzcExrNWJxOEpnNWpta2pWNzk1U08x?=
- =?utf-8?B?dGhvb29sSEhHL2dBdzIzUGxadFptWTlTWGp0LzExcmRFMlVsaEQxWTdkYnB3?=
- =?utf-8?B?Z1h3d3FJWFA1U3RTQW1sSmNzc2VNa2N5WVA5QVVYczQ2QXZsQXB5TjBYMUlB?=
- =?utf-8?B?WERtMFZyalMxWUMyZ21HcHVpQW5OaVI4R1NTS3NrbGUxZ2thYlpXVzlvaUt2?=
- =?utf-8?B?YVVJYkluT1BEWjlCUjBiWHFzd0VRVXBSY2NrR0NSV3g2bVNxVFB1b09iOFNp?=
- =?utf-8?B?TWpGVVlBUUpBazREb1VRbEEyaHdDTTZFOThiL1VWcDROZE1MUGwvbjhYMjQr?=
- =?utf-8?B?aGsrZ01ZcHNrZFFiQUVRbGVZSUpNeVlra2NoMkY2eXBNc3BjMDNxTVk0ZFB6?=
- =?utf-8?B?RXlMNVhIbVBqZGd2SFlqZW9NNTc5dyt5MGZNSWdPcU1OZ3FRTzViNVFhUGJ5?=
- =?utf-8?B?VmgvaTRaL2l2SlFpSEdEODEwWUJIZE1NN3VPNXV5Zytaa0s3QTY4TnhUaCsv?=
- =?utf-8?B?blltQ1hvV0tFdVBYZHlpbUYzTFNDamZJNWJJU2N6SkNPeG9BKzFzbG5LTDlO?=
- =?utf-8?B?anY3a2hvOUdWMjZ0eDBxRkFIaDk5VXhzSWVJNlM2Nkh4cWJqaDR5Und5R0Ex?=
- =?utf-8?Q?eK6m1tkqDLYFReBVLVHNJoteD?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896CD22A4E1
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 05:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745559553; cv=none; b=WNCQn0gG7q7hr5GIRWI/M+WEVVtKcUw9pMaaaqfo8hbx1/4S+vRzfQAlRlo3waEUSXa1/WFm4zDzWgqpwTqOMqHdopWHcT6bpf3OyvE2AxRccffA5rzKp+d5C1hXWdtNds/RW4EPuY2vF8/AU39eDz5Ar9Asp2t898wZEfvFALA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745559553; c=relaxed/simple;
+	bh=b9UUp56fhlHYYYqBq7pOiquc0aK8VSlUBOO1CQ3XJwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=D66kWwOu+cQUooDVIgZsdPke/2SDbtyyD1E3CWwhrF3K2o7vOooLvoP8svfLzci5izAALJ0lfHRN3yDt7Mi5QvpIpSKEKG8FAQxwhO2nGOlKHxuahLdq43PCe2ik2qFUsDzw87mxlFOrGw7q6QrPSn19M1hPKtO5jCYGg/dm3ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aRU2FiQd; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kQn3j8oy3qQQmYRxZVRSssTGsG+xx6gciB4/Lw9xIb4=; b=aRU2FiQdm7p0kU18GfiiHDUZI+
+	bhxxB5U6Y5Oni3Sb58QWI6TsWtzzwsLnJv+wJ8T/8ThI/uEwhmBTe+DFJCs8lLMbaINcJ4vlgUE6M
+	MdhET5I3UeipXsZ+j9DsCF1FKXO6hfYIDWsl07Q/dA528pkWLVhW4HS0RZjY0/jauDt0WOJuueYV1
+	zjHJOA4fajUTZ833hFG9m/A3Lb5FrhRPUxC92GMDcj+D7zhdMdg/bViQyrn3uiTPNClGX8NHeKEjm
+	PZNhtCd42vfgT/1QYt0/QiILbyIr99QElEBdeCFNkyyfM+GlOMsQD9YN/+VQsAfjthM3jaofo1FNA
+	+sl6TDfA==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u8Bm6-008AX9-C6; Fri, 25 Apr 2025 07:38:59 +0200
+Message-ID: <44776ca8-f059-4655-ace4-c98330dc6074@igalia.com>
+Date: Fri, 25 Apr 2025 14:38:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	9FzkxiH1fmLxn0/0Rx3aBsL/4Zsz2lqmd0yJWHEWQojjnFaNsppblP0fLa1/c9bXmTMWyV/ACXTy1mA3fXrXtzZN5GhfXkS11CqSLja69wzopJBBpzyVbhjgchLABU5Ne1xJrmhqEmyIMv0WY6NJqqopxyJB0LYvMBz2W6JvCeIMkB9MNbJ2V2bPtnOpPmC9Inh17dFbmPP54+t5tEI5MqJAaxKuoSVSaK/fhZXGka07+zzzxirtab2phUGS20l/gZpUpuLJE5C/7xAocWhaRKcHQFF32EmAvlUc9vDzsGCtCeUX2bEvlK+FIBJ1WBNB4c4YAJW1/mcr4ln0WGXY9TTl/Bo8CVkaKRKombCvMn1DkOdWxyuxmj1HgMmZe/U2dVUbhsadaXFrPE8juRobJG1b4igL8Vn0umUH+PFwenXKWMXld+TFh9TRBQwRcbW8Duxd/r55XhzaC2+yhSCFWSaZ+v339Pg9XaRY5fv+8yDlhpBC4BfC+ko/jtgokUXIxP+PZNUMkcMI8tTI+jbQ7BQq0eulsDe/TXZKuCHXCHlLwJJ22EoW3Lj6gMGaTmIaMaImYep+zMn76LhNpE5WcxBVgB2pw75wvh8cbF7eUyba3RLxk50B2to+3CSSlrEYuD1nbcLuhK9E07p5Ol3/iQ==
-X-OriginatorOrg: sandisk.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR16MB6196.namprd16.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28a13e98-c519-4f35-c931-08dd83bb70e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2025 05:38:43.2541
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ffe0ff2-35d0-407e-a107-79fc32e84ec4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ux6O4PAfAgK13CM/v1mg9uk5ZLVqkxL5RnA9CX03NAbrRimwVeyrVHmnypWrV5PwKws/UVP8RlmvutkHJapGrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF52F30F1FE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/12] sched_ext: Move event_stats_cpu into scx_sched
+To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Andrea Righi <arighi@nvidia.com>, linux-kernel@vger.kernel.org
+References: <20250423234542.1890867-1-tj@kernel.org>
+ <20250423234542.1890867-11-tj@kernel.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <20250423234542.1890867-11-tj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-PiBUaGUgcXVlcnlfY29tcGxldGUgdHJhY2Ugd2FzIG5vdCByZW1vdmVkIGFmdGVyIHVmc2hjZF9p
-c3N1ZV9kZXZfY21kKCkNCj4gd2FzIGNhbGxlZCBmcm9tIHRoZSBic2cgcGF0aCwgcmVzdWx0aW5n
-IGluIGR1cGxpY2F0ZSBvdXRwdXQuDQo+IA0KPiBCZWxvdyBpcyBhbiBleGFtcGxlIG9mIHRoZSB0
-cmFjZToNCj4gDQo+ICB1ZnMtdXRpbHMtNzczICAgICBbMDAwXSAuLi4uLiAgIDIxOC4xNzY5MzM6
-IHVmc2hjZF91cGl1OiBxdWVyeV9zZW5kOg0KPiAwMDAwOjAwOjA0LjA6IEhEUjoxNiAwMCAwMCAx
-ZiAwMCAwMSAwMCAwMCAwMCAwMCAwMCAwMCwgT1NGOjAzIDA3IDAwIDAwIDAwDQo+IDAwIDAwIDAw
-IDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwDQo+ICB1ZnMtdXRpbHMtNzczICAgICBbMDAwXSAuLi4u
-LiAgIDIxOC4xNzcxNDU6IHVmc2hjZF91cGl1OiBxdWVyeV9jb21wbGV0ZToNCj4gMDAwMDowMDow
-NC4wOiBIRFI6MzYgMDAgMDAgMWYgMDAgMDEgMDAgMDAgMDAgMDAgMDAgMDAsIE9TRjowMyAwNyAw
-MCAwMCAwMA0KPiAwMCAwMCAwMCAwMCAwMCAwMCAwOCAwMCAwMCAwMCAwMA0KPiAgdWZzLXV0aWxz
-LTc3MyAgICAgWzAwMF0gLi4uLi4gICAyMTguMTc3MTQ2OiB1ZnNoY2RfdXBpdTogcXVlcnlfY29t
-cGxldGU6DQo+IDAwMDA6MDA6MDQuMDogSERSOjM2IDAwIDAwIDFmIDAwIDAxIDAwIDAwIDAwIDAw
-IDAwIDAwLCBPU0Y6MDMgMDcgMDAgMDAgMDANCj4gMDAgMDAgMDAgMDAgMDAgMDAgMDggMDAgMDAg
-MDAgMDANCj4gDQo+IFRoaXMgY29tbWl0IHJlbW92ZXMgdGhlIHJlZHVuZGFudCB0cmFjZSBjYWxs
-IGluIHRoZSBic2cgcGF0aCwgcHJldmVudGluZw0KPiBkdXBsaWNhdGlvbi4NCj4gDQoNCkZpeGVz
-OiA3MWFhYmI3NDdkNWYgKCJzY3NpOiB1ZnM6IGNvcmU6IFJldXNlIGV4ZWNfZGV2X2NtZCIpDQo+
-IFNpZ25lZC1vZmYtYnk6IEtlb3Nlb25nIFBhcmsgPGtlb3N1bmcucGFya0BzYW1zdW5nLmNvbT4N
-ClJldmlld2VkLWJ5OiBBdnJpIEFsdG1hbiA8YXZyaS5hbHRtYW5Ac2FuZGlzay5jb20+DQoNCj4g
-LS0tDQo+ICBkcml2ZXJzL3Vmcy9jb3JlL3Vmc2hjZC5jIHwgMiAtLQ0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91ZnMvY29yZS91
-ZnNoY2QuYyBiL2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMNCj4gaW5kZXggYmU2NWZjNGI1Y2Nk
-Li5jNzhjN2FkNGUzOTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMN
-Cj4gKysrIGIvZHJpdmVycy91ZnMvY29yZS91ZnNoY2QuYw0KPiBAQCAtNzI3MSw4ICs3MjcxLDYg
-QEAgc3RhdGljIGludCB1ZnNoY2RfaXNzdWVfZGV2bWFuX3VwaXVfY21kKHN0cnVjdA0KPiB1ZnNf
-aGJhICpoYmEsDQo+ICAJCQllcnIgPSAtRUlOVkFMOw0KPiAgCQl9DQo+ICAJfQ0KPiAtCXVmc2hj
-ZF9hZGRfcXVlcnlfdXBpdV90cmFjZShoYmEsIGVyciA/IFVGU19RVUVSWV9FUlIgOg0KPiBVRlNf
-UVVFUllfQ09NUCwNCj4gLQkJCQkgICAgKHN0cnVjdCB1dHBfdXBpdV9yZXEgKilscmJwLT51Y2Rf
-cnNwX3B0cik7DQo+IA0KPiAgCXJldHVybiBlcnI7DQo+ICB9DQo+IC0tDQo+IDIuMjUuMQ0KPiAN
-Cg0K
+Hi Tejun,
+
+On 4/24/25 08:44, Tejun Heo wrote:
+> The event counters are going to become per scheduler instance. Move
+> event_stats_cpu into scx_sched.
+> 
+> - [__]scx_add_event() are updated to take @sch. While at it, add missing
+>    parentheses around @cnt expansions.
+> 
+> - scx_read_events() is updated to take @sch.
+> 
+> - scx_bpf_events() accesses scx_root under RCU read lock.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>   kernel/sched/ext.c | 100 ++++++++++++++++++++++++++-------------------
+>   1 file changed, 58 insertions(+), 42 deletions(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 4d2866db8cbe..75c91b58430c 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -835,6 +835,13 @@ struct scx_sched {
+>   	struct rhashtable	dsq_hash;
+>   	struct scx_dispatch_q	**global_dsqs;
+>   
+> +	/*
+> +	 * The event counters are in a per-CPU variable to minimize the
+> +	 * accounting overhead. A system-wide view on the event counter is
+> +	 * constructed when requested by scx_bpf_get_event_stat().
+
+scx_bpf_get_event_stat() should be replaced to scx_bpf_events(). I
+think, in the original code, the old function name,
+scx_bpf_get_event_stat(), was creeped in by mistake.
+
+Other than that, the other changes look straightforward and good to me.
+
+Acked-by: Changwoo Min <changwoo@igalia.com>
+
+Regards,
+Changwoo Min
+
+
+> +	 */
+> +	struct scx_event_stats __percpu *event_stats_cpu;
+> +
+>   	bool			warned_zero_slice;
+>   
+>   	atomic_t		exit_kind;
+> @@ -1596,34 +1603,29 @@ static struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
+>   	return p;
+>   }
+>   
+> -/*
+> - * The event counter is organized by a per-CPU variable to minimize the
+> - * accounting overhead without synchronization. A system-wide view on the
+> - * event counter is constructed when requested by scx_bpf_get_event_stat().
+> - */
+> -static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
+> -
+>   /**
+>    * scx_add_event - Increase an event counter for 'name' by 'cnt'
+> + * @sch: scx_sched to account events for
+>    * @name: an event name defined in struct scx_event_stats
+>    * @cnt: the number of the event occured
+>    *
+>    * This can be used when preemption is not disabled.
+>    */
+> -#define scx_add_event(name, cnt) do {						\
+> -	this_cpu_add(event_stats_cpu.name, cnt);				\
+> -	trace_sched_ext_event(#name, cnt);					\
+> +#define scx_add_event(sch, name, cnt) do {					\
+> +	this_cpu_add((sch)->event_stats_cpu->name, (cnt));			\
+> +	trace_sched_ext_event(#name, (cnt));					\
+>   } while(0)
+>   
+>   /**
+>    * __scx_add_event - Increase an event counter for 'name' by 'cnt'
+> + * @sch: scx_sched to account events for
+>    * @name: an event name defined in struct scx_event_stats
+>    * @cnt: the number of the event occured
+>    *
+>    * This should be used only when preemption is disabled.
+>    */
+> -#define __scx_add_event(name, cnt) do {						\
+> -	__this_cpu_add(event_stats_cpu.name, cnt);				\
+> +#define __scx_add_event(sch, name, cnt) do {					\
+> +	__this_cpu_add((sch)->event_stats_cpu->name, (cnt));			\
+>   	trace_sched_ext_event(#name, cnt);					\
+>   } while(0)
+>   
+> @@ -1648,7 +1650,8 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
+>   } while (0)
+>   
+>   
+> -static void scx_read_events(struct scx_event_stats *events);
+> +static void scx_read_events(struct scx_sched *sch,
+> +			    struct scx_event_stats *events);
+>   
+>   static enum scx_enable_state scx_enable_state(void)
+>   {
+> @@ -1874,7 +1877,7 @@ static void dsq_mod_nr(struct scx_dispatch_q *dsq, s32 delta)
+>   static void refill_task_slice_dfl(struct task_struct *p)
+>   {
+>   	p->scx.slice = SCX_SLICE_DFL;
+> -	__scx_add_event(SCX_EV_REFILL_SLICE_DFL, 1);
+> +	__scx_add_event(scx_root, SCX_EV_REFILL_SLICE_DFL, 1);
+>   }
+>   
+>   static void dispatch_enqueue(struct scx_dispatch_q *dsq, struct task_struct *p,
+> @@ -2203,7 +2206,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+>   		goto local;
+>   
+>   	if (scx_rq_bypassing(rq)) {
+> -		__scx_add_event(SCX_EV_BYPASS_DISPATCH, 1);
+> +		__scx_add_event(sch, SCX_EV_BYPASS_DISPATCH, 1);
+>   		goto global;
+>   	}
+>   
+> @@ -2213,14 +2216,14 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
+>   	/* see %SCX_OPS_ENQ_EXITING */
+>   	if (!(scx_root->ops.flags & SCX_OPS_ENQ_EXITING) &&
+>   	    unlikely(p->flags & PF_EXITING)) {
+> -		__scx_add_event(SCX_EV_ENQ_SKIP_EXITING, 1);
+> +		__scx_add_event(sch, SCX_EV_ENQ_SKIP_EXITING, 1);
+>   		goto local;
+>   	}
+>   
+>   	/* see %SCX_OPS_ENQ_MIGRATION_DISABLED */
+>   	if (!(scx_root->ops.flags & SCX_OPS_ENQ_MIGRATION_DISABLED) &&
+>   	    is_migration_disabled(p)) {
+> -		__scx_add_event(SCX_EV_ENQ_SKIP_MIGRATION_DISABLED, 1);
+> +		__scx_add_event(sch, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED, 1);
+>   		goto local;
+>   	}
+>   
+> @@ -2343,7 +2346,7 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int enq_flags
+>   
+>   	if ((enq_flags & SCX_ENQ_CPU_SELECTED) &&
+>   	    unlikely(cpu_of(rq) != p->scx.selected_cpu))
+> -		__scx_add_event(SCX_EV_SELECT_CPU_FALLBACK, 1);
+> +		__scx_add_event(scx_root, SCX_EV_SELECT_CPU_FALLBACK, 1);
+>   }
+>   
+>   static void ops_dequeue(struct rq *rq, struct task_struct *p, u64 deq_flags)
+> @@ -2571,7 +2574,8 @@ static bool task_can_run_on_remote_rq(struct task_struct *p, struct rq *rq,
+>   
+>   	if (!scx_rq_online(rq)) {
+>   		if (enforce)
+> -			__scx_add_event(SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE, 1);
+> +			__scx_add_event(scx_root,
+> +					SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE, 1);
+>   		return false;
+>   	}
+>   
+> @@ -3093,7 +3097,7 @@ static int balance_one(struct rq *rq, struct task_struct *prev)
+>   	if (prev_on_rq &&
+>   	    (!(scx_root->ops.flags & SCX_OPS_ENQ_LAST) || scx_rq_bypassing(rq))) {
+>   		rq->scx.flags |= SCX_RQ_BAL_KEEP;
+> -		__scx_add_event(SCX_EV_DISPATCH_KEEP_LAST, 1);
+> +		__scx_add_event(sch, SCX_EV_DISPATCH_KEEP_LAST, 1);
+>   		goto has_tasks;
+>   	}
+>   	rq->scx.flags &= ~SCX_RQ_IN_BALANCE;
+> @@ -3424,6 +3428,7 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
+>   
+>   static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flags)
+>   {
+> +	struct scx_sched *sch = scx_root;
+>   	bool rq_bypass;
+>   
+>   	/*
+> @@ -3440,7 +3445,7 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
+>   		return prev_cpu;
+>   
+>   	rq_bypass = scx_rq_bypassing(task_rq(p));
+> -	if (likely(SCX_HAS_OP(scx_root, select_cpu)) && !rq_bypass) {
+> +	if (likely(SCX_HAS_OP(sch, select_cpu)) && !rq_bypass) {
+>   		s32 cpu;
+>   		struct task_struct **ddsp_taskp;
+>   
+> @@ -3469,7 +3474,7 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
+>   		p->scx.selected_cpu = cpu;
+>   
+>   		if (rq_bypass)
+> -			__scx_add_event(SCX_EV_BYPASS_DISPATCH, 1);
+> +			__scx_add_event(sch, SCX_EV_BYPASS_DISPATCH, 1);
+>   		return cpu;
+>   	}
+>   }
+> @@ -4410,6 +4415,8 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
+>   	struct scx_dispatch_q *dsq;
+>   	int node;
+>   
+> +	free_percpu(sch->event_stats_cpu);
+> +
+>   	for_each_node_state(node, N_POSSIBLE)
+>   		kfree(sch->global_dsqs[node]);
+>   	kfree(sch->global_dsqs);
+> @@ -4452,10 +4459,11 @@ SCX_ATTR(ops);
+>   static ssize_t scx_attr_events_show(struct kobject *kobj,
+>   				    struct kobj_attribute *ka, char *buf)
+>   {
+> +	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
+>   	struct scx_event_stats events;
+>   	int at = 0;
+>   
+> -	scx_read_events(&events);
+> +	scx_read_events(sch, &events);
+>   	at += scx_attr_event_show(buf, at, &events, SCX_EV_SELECT_CPU_FALLBACK);
+>   	at += scx_attr_event_show(buf, at, &events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE);
+>   	at += scx_attr_event_show(buf, at, &events, SCX_EV_DISPATCH_KEEP_LAST);
+> @@ -4588,25 +4596,29 @@ static void scx_bypass(bool bypass)
+>   {
+>   	static DEFINE_RAW_SPINLOCK(bypass_lock);
+>   	static unsigned long bypass_timestamp;
+> -
+> -	int cpu;
+> +	struct scx_sched *sch;
+>   	unsigned long flags;
+> +	int cpu;
+>   
+>   	raw_spin_lock_irqsave(&bypass_lock, flags);
+> +	sch = rcu_dereference_bh(scx_root);
+> +
+>   	if (bypass) {
+>   		scx_bypass_depth++;
+>   		WARN_ON_ONCE(scx_bypass_depth <= 0);
+>   		if (scx_bypass_depth != 1)
+>   			goto unlock;
+>   		bypass_timestamp = ktime_get_ns();
+> -		scx_add_event(SCX_EV_BYPASS_ACTIVATE, 1);
+> +		if (sch)
+> +			scx_add_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
+>   	} else {
+>   		scx_bypass_depth--;
+>   		WARN_ON_ONCE(scx_bypass_depth < 0);
+>   		if (scx_bypass_depth != 0)
+>   			goto unlock;
+> -		scx_add_event(SCX_EV_BYPASS_DURATION,
+> -			      ktime_get_ns() - bypass_timestamp);
+> +		if (sch)
+> +			scx_add_event(sch, SCX_EV_BYPASS_DURATION,
+> +				      ktime_get_ns() - bypass_timestamp);
+>   	}
+>   
+>   	atomic_inc(&scx_breather_depth);
+> @@ -5179,7 +5191,7 @@ static void scx_dump_state(struct scx_exit_info *ei, size_t dump_len)
+>   	dump_line(&s, "Event counters");
+>   	dump_line(&s, "--------------");
+>   
+> -	scx_read_events(&events);
+> +	scx_read_events(scx_root, &events);
+>   	scx_dump_event(s, &events, SCX_EV_SELECT_CPU_FALLBACK);
+>   	scx_dump_event(s, &events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE);
+>   	scx_dump_event(s, &events, SCX_EV_DISPATCH_KEEP_LAST);
+> @@ -5287,16 +5299,22 @@ static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
+>   		sch->global_dsqs[node] = dsq;
+>   	}
+>   
+> +	sch->event_stats_cpu = alloc_percpu(struct scx_event_stats);
+> +	if (!sch->event_stats_cpu)
+> +		goto err_free_gdsqs;
+> +
+>   	atomic_set(&sch->exit_kind, SCX_EXIT_NONE);
+>   	sch->ops = *ops;
+>   
+>   	sch->kobj.kset = scx_kset;
+>   	ret = kobject_init_and_add(&sch->kobj, &scx_ktype, NULL, "root");
+>   	if (ret < 0)
+> -		goto err_free_gdsqs;
+> +		goto err_event_stats;
+>   
+>   	return sch;
+>   
+> +err_event_stats:
+> +	free_percpu(sch->event_stats_cpu);
+>   err_free_gdsqs:
+>   	for_each_node_state(node, N_POSSIBLE)
+>   		kfree(sch->global_dsqs[node]);
+> @@ -5372,15 +5390,6 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+>   
+>   	mutex_lock(&scx_enable_mutex);
+>   
+> -	/*
+> -	 * Clear event counters so a new scx scheduler gets
+> -	 * fresh event counter values.
+> -	 */
+> -	for_each_possible_cpu(cpu) {
+> -		struct scx_event_stats *e = per_cpu_ptr(&event_stats_cpu, cpu);
+> -		memset(e, 0, sizeof(*e));
+> -	}
+> -
+>   	if (!scx_helper) {
+>   		WRITE_ONCE(scx_helper, scx_create_rt_helper("sched_ext_helper"));
+>   		if (!scx_helper) {
+> @@ -7401,7 +7410,7 @@ __bpf_kfunc u64 scx_bpf_now(void)
+>   	return clock;
+>   }
+>   
+> -static void scx_read_events(struct scx_event_stats *events)
+> +static void scx_read_events(struct scx_sched *sch, struct scx_event_stats *events)
+>   {
+>   	struct scx_event_stats *e_cpu;
+>   	int cpu;
+> @@ -7409,7 +7418,7 @@ static void scx_read_events(struct scx_event_stats *events)
+>   	/* Aggregate per-CPU event counters into @events. */
+>   	memset(events, 0, sizeof(*events));
+>   	for_each_possible_cpu(cpu) {
+> -		e_cpu = per_cpu_ptr(&event_stats_cpu, cpu);
+> +		e_cpu = per_cpu_ptr(sch->event_stats_cpu, cpu);
+>   		scx_agg_event(events, e_cpu, SCX_EV_SELECT_CPU_FALLBACK);
+>   		scx_agg_event(events, e_cpu, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE);
+>   		scx_agg_event(events, e_cpu, SCX_EV_DISPATCH_KEEP_LAST);
+> @@ -7430,9 +7439,16 @@ static void scx_read_events(struct scx_event_stats *events)
+>   __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events,
+>   				size_t events__sz)
+>   {
+> +	struct scx_sched *sch;
+>   	struct scx_event_stats e_sys;
+>   
+> -	scx_read_events(&e_sys);
+> +	rcu_read_lock();
+> +	sch = rcu_dereference(scx_root);
+> +	if (sch)
+> +		scx_read_events(sch, &e_sys);
+> +	else
+> +		memset(&e_sys, 0, sizeof(e_sys));
+> +	rcu_read_unlock();
+>   
+>   	/*
+>   	 * We cannot entirely trust a BPF-provided size since a BPF program
+
 
