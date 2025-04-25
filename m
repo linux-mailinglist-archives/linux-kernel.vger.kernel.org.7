@@ -1,39 +1,81 @@
-Return-Path: <linux-kernel+bounces-619892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC61A9C2FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4697FA9C30C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04FDD1BC009E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5463C1BA12BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 09:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9767523315A;
-	Fri, 25 Apr 2025 09:10:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4921DB127
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F16B2153C7;
+	Fri, 25 Apr 2025 09:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XMDUGTsI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5B242A96
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745572221; cv=none; b=ZGAioeS6ReUZi1OevaFIyylD/7FlulXgEBNpHlTH0XVo4o+ieRL+OQr5Chkq1czVRdhjhG9HSVR8AIsqygxlHHWf86uuHtKIWV8h4rVLthhLmp2JB6VQa2dNyFJzuib4ak6g9RwvtZie1aa679/KWhigirkIsuR9dUPlEhNfp2s=
+	t=1745572441; cv=none; b=fNrPkGY4NNIwdp0H+eX3g4dAKbPhZW8XXwJt9m5cZtSQAnSpCRfeDDU/qAe5A/F/LoxYlg8MuYJfjTmOUdrveLTw070UUuOlfAvdf0EuOrq8yMk66L1VHUUmcERFmT0u04RHWbjMBWu2is2Gzg1D6esmTWs+I2mBp2zG9nUxzGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745572221; c=relaxed/simple;
-	bh=8fvNheKM6TTp3DO5eFthsaM5qX5QplPTs2GrnLjXlUc=;
+	s=arc-20240116; t=1745572441; c=relaxed/simple;
+	bh=+d5xi9g6vW5km+N3rMkR1JMirfPLvZmpAundHvmz3iI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHNoMokkn9oQG3qYGmDUATcGmWrNfjB4KGzz49iKAHxD92BJ8a8Gm5jtWfP0BAZ4wBpgHmnfszxKS4+eCKBu/oTfo0bmsKFMdi3uAbPqWaw7g81uLZwhhxq+/44LYMGEsvz10tlMUC8qrT4+Kn2UeoDAjW7H48LR7EQFeuMhAU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B96D106F;
-	Fri, 25 Apr 2025 02:10:07 -0700 (PDT)
-Received: from [10.163.51.18] (unknown [10.163.51.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF7573F59E;
-	Fri, 25 Apr 2025 02:10:09 -0700 (PDT)
-Message-ID: <fc8c2bc3-210a-4cf0-a61a-ce919239b0a1@arm.com>
-Date: Fri, 25 Apr 2025 14:40:06 +0530
+	 In-Reply-To:Content-Type; b=ISPBYPjbmqbiEPFlYvbDVfhzaY03rtjJuphBl3EzqOfOAA0wlAjVvHoSHFhzhObBS2hcjdqYxJyxQA5q/JlyRbmriVm6EzHLPSS4qlHzbrMXb43o+2BqLnsOlnLHj4ZMKYG7vg+E3s0fJ0GYfEsX/fF9V64FxJl0GIonhPo1gG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XMDUGTsI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ONkUMG025716;
+	Fri, 25 Apr 2025 09:13:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=40PrTU9Pl6DG0oznrHmQPME36hN6eFppb2K1WSBFMa4=; b=XMDUGTsIZsDt
+	Jrw2G/gPBxCn/xFqdTccdL6wuhiAow13C8DKXrUjNKRDyZNaac+xdwkL6HhYi2zS
+	wppz6SnkSOltCRkNAvgQa8HDdOPV668fOfFHBHE9rUpPIlibLIe02m5jds5St15r
+	gEk7Kug5LoT/dh0RgPRWPffL38JnKjDna3SxkRBCtrnLi0WvIlNHOYRPJ1hw3Bet
+	/Cs306aBuA2zATYxIrRXuA4vSNVF+DEnrRL236ZjvaOM2CIsfnLlKDUvYidNmR2p
+	qF3/bdzoVXf1KYxZlJxfI11xRuUfErE4ZBgYlNssnlW85BkZ+Q03YM4L4tUk3cDP
+	4eazdM/p2A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 467y90sxkj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 09:13:29 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53P9CKph014843;
+	Fri, 25 Apr 2025 09:13:29 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 467y90sxkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 09:13:29 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53P8WDxv008557;
+	Fri, 25 Apr 2025 09:13:28 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 466jfxvh2s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Apr 2025 09:13:28 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53P9DR5r18744056
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 09:13:27 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2286D58060;
+	Fri, 25 Apr 2025 09:13:27 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A654F5803F;
+	Fri, 25 Apr 2025 09:13:19 +0000 (GMT)
+Received: from [9.43.9.122] (unknown [9.43.9.122])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Apr 2025 09:13:19 +0000 (GMT)
+Message-ID: <f02e2c1a-e65f-4078-a138-ccf734f84643@linux.ibm.com>
+Date: Fri, 25 Apr 2025 14:43:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,174 +83,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] arm64/mm: Re-organise setting up FEAT_S1PIE registers
- PIRE0_EL1 and PIR_EL1
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250416035604.2717188-1-anshuman.khandual@arm.com>
- <fbba5d43-d740-401a-b5c5-9dfc222db5c4@arm.com>
- <c0c95b67-2dec-43f1-8f3a-0e1e624292bf@arm.com>
- <7996ef9d-4872-44de-893e-ffe4bec07d5e@arm.com>
+Subject: Re: [RFC PATCH 4/5] sched: Inhibit cache aware scheduling if the
+ preferred LLC is over aggregated
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        K Prateek Nayak <kprateek.nayak@amd.com>,
+        "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Tim Chen <tim.c.chen@intel.com>,
+        Vincent Guittot
+ <vincent.guittot@linaro.org>,
+        Libo Chen <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>,
+        Hillf Danton <hdanton@sina.com>, linux-kernel@vger.kernel.org,
+        Len Brown <len.brown@intel.com>, Chen Yu <yu.chen.surf@foxmail.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <cover.1745199017.git.yu.c.chen@intel.com>
+ <2c45f6db1efef84c6c1ed514a8d24a9bc4a2ca4b.1745199017.git.yu.c.chen@intel.com>
+ <cd6065dc-837f-474a-a4f5-0faa607da73a@linux.ibm.com>
+ <d221a260-51d5-4dec-8c08-37d27dd80145@intel.com>
+ <e45141a1a64d7dcfca2683f56735ba4da60ba19e.camel@linux.intel.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <7996ef9d-4872-44de-893e-ffe4bec07d5e@arm.com>
+Reply-To: e45141a1a64d7dcfca2683f56735ba4da60ba19e.camel@linux.intel.com
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <e45141a1a64d7dcfca2683f56735ba4da60ba19e.camel@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=aZRhnQot c=1 sm=1 tr=0 ts=680b5239 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=pcUInrTLMDQ4R4IrCpkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: fRezSggGYyjgGpAv2xEIpbOWQ21f76lZ
+X-Proofpoint-ORIG-GUID: Hs114uIbUKacBXLLh0pIE6463OJHjqcn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDA2NiBTYWx0ZWRfX/eriBh2zjgyJ Mmxeg7WW1AuBqqhzq2AOiEVyI9OgBN/0k5iAIQURHXLfM73nkjPAl/VTfCaNJCXvz7ymfl7lLgw VC3jefc406Xz4E9ySV1o0NobMkGhs2f2rXMZpDo2bdJv1K8MlapvECGsEUy6+Tl7diWquP1IN82
+ I4LhKsYCKA4MJgJdwtZqBivDTbff7tv+02WDZ3WgQZBztzvstTf83vKJouPiMZAqkPJIer0obsD o66IKwyVpXZuEUsMrTILpJpLEuQ5cttBMd667eynYxFL2hz4SZOSw7EtjCss0cgBXHC+DHx8VQK zwjGLNPj/g2W96zLFBM5vo6H7yTL57IVB0YgR8U+dXlxa6v1OVkjco738fGAfXMXewtPuRo40Vd
+ Qz0AP6IWK0+8QIiFyw7fxO34fl7WkwP7m/u9BP50w4tGo18LfBs4x0ItCcs4N5KwZzXGB1Lv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 mlxlogscore=673 impostorscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250066
 
+Hi Tim,
 
-
-On 4/24/25 17:35, Ryan Roberts wrote:
-> On 24/04/2025 12:00, Anshuman Khandual wrote:
+On 24/04/25 21:21, Tim Chen wrote:
+> On Thu, 2025-04-24 at 22:11 +0800, Chen, Yu C wrote:
 >>
->>
->> On 4/24/25 15:37, Ryan Roberts wrote:
->>> On 16/04/2025 04:56, Anshuman Khandual wrote:
->>>> mov_q cannot really move PIE_E[0|1] macros into a general purpose register
->>>> as expected if those macro constants contain some 128 bit layout elements,
->>>> that are required for D128 page tables. The primary issue is that for D128,
->>>> PIE_E[0|1] are defined in terms of 128-bit types with shifting and masking,
->>>> which the assembler can't accommodate.
->>>>
->>>> Instead pre-calculate these PIRE0_EL1/PIR_EL1 constants into asm-offsets.h
->>>> based PIE_E0_ASM/PIE_E1_ASM which can then be used in arch/arm64/mm/proc.S.
->>>>
->>>> While here also move PTE_MAYBE_NG/PTE_MAYBE_SHARED assembly overrides into
->>>> arch/arm64/kernel/asm-offsets.c to ensure PIRE0_EL1/PIR_EL1 are calculated
->>>> in assembly without arm64_use_ng_mappings and lpa2_is_enabled() symbols
->>>> being accessible. Also move the corresponding comment as well.
->>>>
->>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>>> Cc: Will Deacon <will@kernel.org>
->>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>> Cc: linux-arm-kernel@lists.infradead.org
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>> ---
->>>> This patch applies on v6.15-rc2
->>>>
->>>> Changes in V2:
->>>>
->>>> - Added asm-offsets.c based PIE_E0_ASM and PIE_E1_ASM symbols as per Ard
->>>> - Moved PTE_MAYBE_NG and PTE_MAYBE_SHARED overrides inside asm-offsets.c
->>>>   along with the corresponding comment as per Ard
->>>>
->>>> Changes in V1:
->>>>
->>>> https://lore.kernel.org/linux-arm-kernel/20250410074024.1545768-1-anshuman.khandual@arm.com/
->>>>
->>>>  arch/arm64/kernel/asm-offsets.c | 16 ++++++++++++++++
->>>>  arch/arm64/mm/proc.S            | 19 ++-----------------
->>>>  2 files changed, 18 insertions(+), 17 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
->>>> index eb1a840e4110..5b99a78f6882 100644
->>>> --- a/arch/arm64/kernel/asm-offsets.c
->>>> +++ b/arch/arm64/kernel/asm-offsets.c
->>>> @@ -182,5 +182,21 @@ int main(void)
->>>>  #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
->>>>    DEFINE(FTRACE_OPS_DIRECT_CALL,	offsetof(struct ftrace_ops, direct_call));
->>>>  #endif
->>>> +	/*
->>>> +	 * The PROT_* macros describing the various memory types may resolve to
->>>> +	 * C expressions if they include the PTE_MAYBE_* macros, and so they
->>>> +	 * can only be used from C code. The PIE_E* constants below are also
->>>> +	 * defined in terms of those macros, but will mask out those
->>>> +	 * PTE_MAYBE_* constants, whether they are set or not. So #define them
->>>> +	 * as 0x0 here so we can evaluate the PIE_E* constants in asm context.
->>>> +	 */
->>>> +#undef PTE_MAYBE_NG
->>>> +#define PTE_MAYBE_NG		0
->>>> +
->>>> +#undef PTE_MAYBE_SHARED
->>>> +#define PTE_MAYBE_SHARED	0
+>>> It spawns lot of threads and is CPU intensive. So, I think it's not impacted
+>>> due to the below conditions.
 >>>
->>> My toolchain at least is smart enough to figure out that the bits of interest in
->>> PIE_E1 are all contstant so it works without this hack.
->>>
->>> I'd prefer to drop this hack on that basis. Or if there are issues with other
->>> toolchains that mean we need to keep it, I think the wording of the comment
+>>> Also, in schbench numbers provided by you, there is a degradation in saturated
+>>> case. Is it due to the overhead in computing the preferred llc which is not
+>>> being used due to below conditions?
 >>
->> So could we keep these for some more time and later drop them off just to be
->> on the safer side ?
+>> Yes, the overhead of preferred LLC calculation could be one part, and we 
+>> also suspect that the degradation might be tied to the task migrations. 
+>> We still observed more task migrations than the baseline, even when the 
+>> system was saturated (in theory, after 25% is exceeded, we should 
+>> fallback to the generic task wakeup path). We haven't dug into that yet, 
+>> and we can conduct an investigation in the following days.
 > 
-> What exactly is your concern? That some toolchains might not be so smart? But
-> that same risk exists when we eventually drop the hack, so why not just do it now?
-> 
-> TBH, I imagine that it's spec'ed to work like this by the C standard, in which
-> case you would definitely be safe.
-> 
-> I checked with and without the hack and it gives the same answer both times:
-> 
-> 	#define PIE_E0_ASM 5769270003974144000 /* PIE_E0 */
-> 	#define PIE_E1_ASM -3708698853797527552 /* PIE_E1 */
+> In the saturation case it is mostly the tail latency that has regression.
+> The preferred LLC has a tendency to have higher load than the
+> other LLCs. Load balancer will try to move tasks out and wake balance will
+> try to move it back to the preferred LLC. This increases the task migrations
+> and affect tail latency.
 
-Alright, will drop these PTE_MAYBE_* defines.
+Why would the task be moved back to the preferred LLC in wakeup path for the
+saturated case? The checks shouldn't allow it right?
+
+Thanks,
+Madadi Vineeth Reddy
 
 > 
->>
->>> should be changed since we are now in C code so the "can only be used from C
->>> code" bit doesn't really make sense.
->>
->> Dropped that. Does this look better ?
->>
->> 	/*
->> 	 * The PROT_* macros describing the various memory types may resolve
->> 	 * to C expressions if they include the PTE_MAYBE_* macros. The PIE_E*
->> 	 * constants below are also defined in terms of those macros, but will
->> 	 * mask out those PTE_MAYBE_* constants, whether they are set or not.
->> 	 * So #define them as 0x0 here so we can evaluate the PIE_E* constants
->> 	 * in asm context.
->>  	 */
-> 
-> Yeah that works if leaving it in.
-> 
->>
->>>
->>> Thanks,
->>> Ryan
->>>
->>>> +
->>>> +  DEFINE(PIE_E0_ASM, PIE_E0);
->>>> +  DEFINE(PIE_E1_ASM, PIE_E1);
->>>>    return 0;
->>>>  }
->>>> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
->>>> index fb30c8804f87..80d470aa469d 100644
->>>> --- a/arch/arm64/mm/proc.S
->>>> +++ b/arch/arm64/mm/proc.S
->>>> @@ -512,26 +512,11 @@ alternative_else_nop_endif
->>>>  	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1PIE_SHIFT, #4
->>>>  	cbz	x1, .Lskip_indirection
->>>>  
->>>> -	/*
->>>> -	 * The PROT_* macros describing the various memory types may resolve to
->>>> -	 * C expressions if they include the PTE_MAYBE_* macros, and so they
->>>> -	 * can only be used from C code. The PIE_E* constants below are also
->>>> -	 * defined in terms of those macros, but will mask out those
->>>> -	 * PTE_MAYBE_* constants, whether they are set or not. So #define them
->>>> -	 * as 0x0 here so we can evaluate the PIE_E* constants in asm context.
->>>> -	 */
->>>> -
->>>> -#define PTE_MAYBE_NG		0
->>>> -#define PTE_MAYBE_SHARED	0
->>>> -
->>>> -	mov_q	x0, PIE_E0
->>>> +	mov_q	x0, PIE_E0_ASM
->>>>  	msr	REG_PIRE0_EL1, x0
->>>> -	mov_q	x0, PIE_E1
->>>> +	mov_q	x0, PIE_E1_ASM
->>>>  	msr	REG_PIR_EL1, x0
->>>>  
->>>> -#undef PTE_MAYBE_NG
->>>> -#undef PTE_MAYBE_SHARED
->>>> -
->>>>  	orr	tcr2, tcr2, TCR2_EL1_PIE
->>>>  	msr	REG_TCR2_EL1, x0
->>>>  
->>>
-> 
+> Tim
+
 
