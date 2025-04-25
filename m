@@ -1,116 +1,84 @@
-Return-Path: <linux-kernel+bounces-619368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B1CA9BBD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCDA9BBDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 02:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29594C2139
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:31:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7324F4C282A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 00:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B4C1B3725;
-	Fri, 25 Apr 2025 00:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6E9C2EF;
+	Fri, 25 Apr 2025 00:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKRbhdhP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvNLdt9F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763B21BC2A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 00:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43C31D555;
+	Fri, 25 Apr 2025 00:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745540908; cv=none; b=dMk7UbwQbHekqKk1YEGo3eFVu4iJTEfCgFD0z3GhNfv3z64Q6SA4rJvxim4J2e/Evs2jjrlMJGFdTCLcjsegvvx7Q0otP7YiCDkcucdvFivOYaDuHl3Jui4ts2VTtI4gN5klYsAb8vBpSFw7yYUP2jNX8SbFaI+3fTyeZgIPGzI=
+	t=1745540948; cv=none; b=tlXc3yj0Y4lu9uxr4YzFgAGgJvLpfYI15klDWfkYZJvQ59dCWVHscc8A/5gY5GqM1Zq75N9AjEf+OHpZt0lLfx6C/ty+yC63Imjg0eNANxtwY08ebCnk9MQiJmO/BlCrgiB3NwU2zQ/sw7uyySnmsvz1P8G5lZ8miltz6eJ0m+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745540908; c=relaxed/simple;
-	bh=SIvxBFCy/LA8Y/l0yUDYKluYB2RGP/ro5bfWDL0VDk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cv4fzsz6CNvYxVI7dE3DszAQuikP4X2oP3IPx2GBmBYBX+JTp194y3y3pXJPrBTeh2Aaa5/GNVH+a27dH7rll1Yd8kfz08MvjLVc00P8rZhY4/VpszeYcxzESuaVUr7dhr5uXfh1nnDvexC1L1NuEe+jVYUjAlFnZUs4nsaKzfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKRbhdhP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CEDC4CEED;
-	Fri, 25 Apr 2025 00:28:28 +0000 (UTC)
+	s=arc-20240116; t=1745540948; c=relaxed/simple;
+	bh=ugYHviq2GMOQ1AcvdkeyhC+Q2tttWJ+KSq0ZZKyk5hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N9cksErsYXxIIAbKEh0SrGFNT32lvExi7LjA51TbZNS2TzQ5qPGKe8Rr0uv//AuZbWtQq2gzcDkXy03E6wqh6j12gfIQJ/h3oL9i/7G57syOI8HOyzlRC6+PnNRJBSHv6/Ch3RV3qlN4YJ2agnuitVTsV09f48wf5dbelxhhV2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvNLdt9F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA6FC4CEE3;
+	Fri, 25 Apr 2025 00:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745540908;
-	bh=SIvxBFCy/LA8Y/l0yUDYKluYB2RGP/ro5bfWDL0VDk0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SKRbhdhPjMOtC96ULiPNTkdJuMeScESKDqxTTu6sMGSCwQPrtcG70cBKJrVZaY7S9
-	 0LkXRrblWVjVf9mN/267xWRX9azCWh+4ml8UuRA8SikW/ptuuDO0AC5tC9d26HO5a6
-	 QWbo4YelrfYQfbWlAtd2nZYHI+Fb3ixsBLH/noJTbrkKgiH12jUAehpcR3HYatPuCy
-	 uedXaeSJAlAMoBqCXr58L+nMQ/iqrIVOtmEVT1US1MUSs1oUEAXMy3vOzcauiY9Eh4
-	 5+r8LfG72ALEh6kYQ5vYkreCRuazK5M9dZcA6pU2vjc+kRz7zEIgFvvGLi0+A/Q7x/
-	 VL55LxAxlC5Qw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 58870CE1DE2; Thu, 24 Apr 2025 17:28:27 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v3 20/20] ratelimit: Drop redundant accesses to burst
-Date: Thu, 24 Apr 2025 17:28:26 -0700
-Message-Id: <20250425002826.3431914-20-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
-References: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
+	s=k20201202; t=1745540947;
+	bh=ugYHviq2GMOQ1AcvdkeyhC+Q2tttWJ+KSq0ZZKyk5hs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EvNLdt9FcbkwjBGBrOGYEbC/UDjCPMFoc6dEsDriUFcZy1TIcyRIO8mj4G513z5DU
+	 JVgztTDJtRJAC7PQ5Tu2mtz0cGeWFzLnoJ9/rHjT0NzpdTUdmEDvL/YJpYXPkQ0RGL
+	 5lt9js14mDKCN+7q26in1fMXVUwUf59dgFyjZuwfelKMXfMokKfW1jqaU+liL5M7Lv
+	 4h6t0A6LLNi0yTHgQRNhH+wor7VkkN5e65zA5rc/Gs/qxily3xvOXKVZLWB+ThHyEe
+	 rxfK27D/N5LWub0fZFAkmphfamx5PTnGnQQv5efXi6YlFemKDPGWEfSi0cY/EUYA75
+	 xYUiD1oWTeqzA==
+Date: Thu, 24 Apr 2025 17:29:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] xsk: respect the offsets when copying frags
+Message-ID: <20250424172905.181af8be@kernel.org>
+In-Reply-To: <20250423101047.31402-1-minhquangbui99@gmail.com>
+References: <20250423101047.31402-1-minhquangbui99@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Now that there is the "burst <= 0" fastpath, for all later code, burst
-must be strictly greater than zero.  Therefore, drop the redundant checks
-of this local variable.
+On Wed, 23 Apr 2025 17:10:47 +0700 Bui Quang Minh wrote:
+> Add the missing offsets when copying frags in xdp_copy_frags_from_zc().
+> 
+> Fixes: 560d958c6c68 ("xsk: add generic XSk &xdp_buff -> skb conversion")
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
 
-Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
-Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- lib/ratelimit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I think the fix is right but I dislike the use of netmem here :(
+Could we switch back to page_pool_dev_alloc() ?
+Allocating a netmem to immediately call __netmem_address() is strange.
+At least to me. Because netmem is supposed to be potentially unreadable.
+And using normal page allocation will avoid the confusion and bug we're
+dealing with now.
 
-diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 768f26790ea9a..626f04cabb727 100644
---- a/lib/ratelimit.c
-+++ b/lib/ratelimit.c
-@@ -58,7 +58,7 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	 * the current lock owner is just about to reset it.
- 	 */
- 	if (!raw_spin_trylock_irqsave(&rs->lock, flags)) {
--		if (READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED && burst &&
-+		if (READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED &&
- 		    atomic_read(&rs->rs_n_left) > 0 && atomic_dec_return(&rs->rs_n_left) >= 0)
- 			ret = 1;
- 		goto nolock_ret;
-@@ -90,7 +90,7 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	}
- 
- 	/* Note that the burst might be taken by a parallel call. */
--	if (burst && atomic_read(&rs->rs_n_left) > 0 && atomic_dec_return(&rs->rs_n_left) >= 0)
-+	if (atomic_read(&rs->rs_n_left) > 0 && atomic_dec_return(&rs->rs_n_left) >= 0)
- 		ret = 1;
- 
- unlock_ret:
--- 
-2.40.1
-
+As Stanislav pointed out this function is not used anywhere today,
+so let's target the rewrite to net-next and explain in the commit 
+message where the bug comes from and why it doesn't need to be
+backported (and drop the Fixes tag)?
 
