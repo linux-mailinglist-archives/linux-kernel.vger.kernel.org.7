@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-620691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34255A9CE38
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A91A9CF52
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8081898B45
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D30D1B84117
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6D81A2393;
-	Fri, 25 Apr 2025 16:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02191E1308;
+	Fri, 25 Apr 2025 17:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGvF959s"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xmmbQezi"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C5B12E1CD
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C86C1DEFDA
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598938; cv=none; b=oagJ5sH5coYlDCXyZojI5mPYjQ875VVmDD49ljatn42j3bXGMCSKxqsx4n/f8W1SiIKgm2x4rQhHsG9IKmSw2Iv/WaiofVcbdphIfDjZui6V9ZoO/S36hzdD8ndKfi06+meHHWDuTeFVKW272hCKZgmSjkgVdRUu/8PNLwpRlog=
+	t=1745601278; cv=none; b=gSTFo33gSpMLWNJ3RWNhD/eGGycg2rtncsMj1o0aw+amNErUaPVWv4t2RffLZ+GNrm2oV/nOF/E1ZWQ+L/J8IKReQCCL+uZ+HXjx5Uex8aBDcba8NHD/D1nSef0XAl93n6wEmOtm/j1nRDPIDoqQZ9JCYEztnaM+W0DpGLe1kFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598938; c=relaxed/simple;
-	bh=w5pWDkPMz8eM76xaPiviMfJHqkPul3Uqq0dCsFQh6dQ=;
+	s=arc-20240116; t=1745601278; c=relaxed/simple;
+	bh=Lm2N0n4u1FlM9Vtf3w6Fx40mc0HytZ/KQT9CUeJY2p0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LqbJnTWO6+GXYA2SwF1Fv9Dv1xeuyMPfG6YJE0akVcaeG9Bw+ZYXCpOXEJm4B9gtSSsjvKn9kSWWhjj6b/uFYYsVkDf2AOJKw8FuDWOHoSl4Wpzwc/Hq2vFLjCdJ0m2fjwciPIRkAan8giVfNVOhUOlLBh3HxdmMnGAPpt9FtyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hGvF959s; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso3103607a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745598936; x=1746203736; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eRXHF94Gxw2igepYLnZobF7wF3QfLUtoMAIPFNB3Zms=;
-        b=hGvF959ssW8ODGDaE5NEpYMKJUZJHJAyLV8VSfrX3B6rGpiGUYtk92TqaTMpQ3Zmdt
-         cTKVR0+BuuZxWtIrE/nqxhxma9XVOL5D5H/lurE7uah6HN1o6eZM0GSRW1E456buPJ5L
-         XAlMeWvbGan9Bi/bF/hPCM6dajCczBjMZs0I7X2dRAL0Waf0znxoTfQ82qI6btG9N+Eb
-         XGx2VVq0mo4hyo0d4hjca97Tal12zgmtMZMyfz9nalx+tTGjqqdpuvtlEDrAswurDbsQ
-         2PPdscCiYGpK3JG8p6M3qS+epCXF4fuXMOeJqnqkWYczKGy7MPX778qP6g+ggILQ1BDU
-         7w5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745598936; x=1746203736;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eRXHF94Gxw2igepYLnZobF7wF3QfLUtoMAIPFNB3Zms=;
-        b=ee0ibIo5ieEoDdL4Ap7Ii0Th2ZeLegQ1Sm+VNBaMcIbKf2npGxIkT9m5R30hR27fTf
-         /iimWUsx7EJQIfwN8+zrEdUQDoSaZ75Zncx7im6+WeoBU7xUrmfZua1/OqEuy18MkzgN
-         5KVOM1XbvxruoST8KodZ0fa/HvpH1RhUh+i4KeGj8lxjUN3uV1l6tsusD7P+4Nym2Wyk
-         gV30RhRcBKq+Yg5hbWLMCAHnSuyXabw99ab7W841btpEp2n7FHHRcjqkhXHM4pDQrByO
-         Ck7gE6e/+amZqT1KFdCVc/1FM1zPI/GZAEoGKZwlZS27yCmVWqUUysTd2kWy3u0BStig
-         Xemw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeWkgsWQNo353XvhYxup1IzgjcsvNIXVXg0DuPcTbG5ITk1XHUXisqbC+iK0MvXH9jAjED5r4qXcgD5zI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvI9Z01Ws0p9PAODq2CZMYdYgVyMSjZscOE1iZ8Rsujx+4M35c
-	e/A6qRLmQnVKLX3gbrTiBHiMvhG/MOo+obo/PwBOCBHVNkbkl7C/
-X-Gm-Gg: ASbGncu4hAtZZX0Ske6uRCVjNNFDt+qLJxRW0zPVH6tyNtZ2loXs6nP2Z9gNuf21flh
-	fEkiZWhgF7prXco8U50ezZ8zDHprk76lw4qoXruooiguFqohdqj0UfnS+eQ3/x7ZlPre10436bb
-	iudRi/39+SJ/RCpKjOVcwL46FJpCNWsqG63iFHKJDwLwuBSNBcmUvJo9f1IC5tq26z2rzzLG8Uz
-	78D2WnvjQrksugTs01tjCn1+pPe1IFLDx7XT1YSRXMDfhP/HPZKlDqsx3AVIIKaSsTomFt3VmMd
-	NOJfJTQ8B57I+1Ya4bgZQgpaMGv9z500B7Y+GB/AgjvlxFZQsX2l9YwU9TKKgOhCHCk0ZPFq
-X-Google-Smtp-Source: AGHT+IFPl7CUIexk7v4e/+SGM7Q6vaidXSFlz/auCXkWC48GIPzQYxqRbnCZ1b4ACCXot4UQtyF18w==
-X-Received: by 2002:a17:90b:4e87:b0:2ee:9b2c:3253 with SMTP id 98e67ed59e1d1-30a013d9433mr273927a91.30.1745598935713;
-        Fri, 25 Apr 2025 09:35:35 -0700 (PDT)
-Received: from [192.168.8.155] ([103.127.219.137])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef124cffsm4043795a91.32.2025.04.25.09.35.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 09:35:35 -0700 (PDT)
-Message-ID: <b6880ffc-4ce5-49cd-b08d-de2c82b21f4f@gmail.com>
-Date: Sat, 26 Apr 2025 00:35:24 +0800
+	 In-Reply-To:Content-Type; b=BDWaCSz71qy7q0maHGh8n3vHGh9rRupVzNZc0GTsAazCVqTjxtwvI0+4qxbvOcaXCZZt1qTD0AvRHJWHPPULTkaoO8hk3HtgdlQ3FuVhVSkUcKmlutnOPcAMLbbhzaxqQyFBZe35R5GdS0g5d65+OFrq9PMEKKVkiJj3p86dUwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xmmbQezi; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dc069aec-8f34-4745-804b-936e0466559c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745601263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R5HHbZEVfAo5xHjVAfeinei8cc6O8D95xrShblmNxCw=;
+	b=xmmbQeziKHWdI391OleiVoTdZ0Ul+dSemlipkTYjGz6VcQh4o4OAvsCsiJ5Oau5gRqJCd+
+	XV8ASeYUA2sBQ0rXIL3o+BK8h5efUDaE+TVs5vxNJ3kAkyf8lQ+gQxKADk7L9OQD6bm7QU
+	hCFCHNLQMcDNNOSj5DNth/RVDa25peQ=
+Date: Fri, 25 Apr 2025 18:35:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: avoid missing db ring during reset
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <fa04f3d5-56ff-62bb-0afd-ad94e961ddee@gmail.com>
- <aAuu1RvgwyfXI3AL@kbusch-mbp.dhcp.thefacebook.com>
-From: Linjun Bao <meljbao@gmail.com>
-In-Reply-To: <aAuu1RvgwyfXI3AL@kbusch-mbp.dhcp.thefacebook.com>
+Subject: Re: [PATCH 2/2] soundwire: bus: Add internal slave ID and use for
+ IRQs
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: vkoul@kernel.org, yung-chuan.liao@linux.intel.com,
+ sanyog.r.kale@intel.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+References: <20250422104245.958678-1-ckeepax@opensource.cirrus.com>
+ <20250422104245.958678-3-ckeepax@opensource.cirrus.com>
+ <b286bbf3-0da9-4e84-8d21-7720970833c3@linux.dev>
+ <aAeHgqcQCtuFKW/A@opensource.cirrus.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <aAeHgqcQCtuFKW/A@opensource.cirrus.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 4/25/2025 11:48 PM, Keith Busch wrote:
-> On Fri, Apr 25, 2025 at 08:01:45PM +0800, Linjun Bao wrote:
->> During nvme reset, there is a rare case, when user admin cmd such
->> as smart-log and nvme_admin_create_sq from nvme_setup_io_queues
->> happen to in the same blk_mq dispatch list, and the user cmd is
->> the last one. nvme_admin_create_sq is dispatched first in
->> nvme_queue_rq(), nvme_write_sq_db() is called but immediately
->> returns without writing the doorbell because it's not masked
->> "last". The subsequent smart-log ioctl fails fast hitting
->> nvme_fail_nonready_cmd(), skipping both nvme_sq_copy_cmd() and
->> nvme_write_sq_db(), so no doorbell write ever occurs. The
->> nvme_admin_create_sq fails timeout finally.
+On 4/22/25 14:11, Charles Keepax wrote:
+> On Tue, Apr 22, 2025 at 01:50:13PM +0200, Pierre-Louis Bossart wrote:
+>> On 4/22/25 12:42, Charles Keepax wrote:
+>> I see the patch add a limit during probe, so now that
+>> means the number of ACPI devices MUST be lower than 11. That
+>> doesn't sound right to me and could cause some configurations
+>> to fail. It's perfectly ok to have ghost devices and no limits
+>> on how many our BIOS colleagues decide to list.
 > 
-> The block layer is supposed to call the driver's commit_rqs() function
-> if anything in the dispatch list wasn't successful, which should notify
-> the controller of any pending SQEs. Is that not happening here?
+> Yeah it will limit the ACPI to 11 devices. I can't say I am a
+> huge fan of the "ghost" devices, like its ACPI it is for
+> describing the hardware, so it should describe the hardware.
+> 
+> That said my thinking on this was I have not seen a system with
+> more than 4 real devices on a single bus, and not more than a
+> couple ghosts in the ACPI. So this didn't look like a big issue.
+> 
+>> Using a dedicated IDA for IRQ mapping looks like a good
+>> idea to me, but I don't think you can really use the same IDA
+>> for dev_num
+> 
+> If you are really concerned about the ghost devices I could back
+> out the part that reuses the ID for the dev_num. However I do
+> need to know the maximum number of devices when the IRQ domain is
+> allocated. So I can't really see a way to avoid picking a maximum
+> number of devices for the bus. What number of real + ghosts would
+> you be comfortable with? Although I guess if not using it for the
+> dev_num it is then fairly easy to expand if needed so perhaps I
+> just back out the dev_num bit, but stick with 11 for now and we
+> can expand if necessary?
 
-Yes, in this case, the last user admin cmd will fail nvme_host_path_errror
-finally, but ret BLK_STS_OK, which will let blk_mq_dispatch_rq_list skips 
-the commit_rqs, thus missing updating the SQ doorbell.
+A maximum of 16 devices total is probably ok. That's 10 more than the worst-case configuration we've seen so far, and I can't think of a case where more than 10 ghost devices would be listed.
+
 
