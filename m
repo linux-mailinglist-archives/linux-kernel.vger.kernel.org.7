@@ -1,196 +1,206 @@
-Return-Path: <linux-kernel+bounces-620766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB5FA9CF7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:26:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D41A9CF80
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF7D3B57B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98CBE7B9DE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B65D1FAC23;
-	Fri, 25 Apr 2025 17:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB0A1F8AC5;
+	Fri, 25 Apr 2025 17:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dxYRUDos"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k9Y8r4Co"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFE51922D3
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FA11F6694
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745601986; cv=none; b=bUZXFGW0+tH80DBccdx4qBj4ZssyXnCdeCmWKvjCCtGiD2XqwJXafF3yAZDSnIa4drsx8uc6P6DTmq5sGIiD3FLPO106e/t9ZcEi9LW8i0dY5oiztzxShk7hLgacWlsY5sBCL5gEVmhuVzVIC+DVrhBggv/MM2IJfdScUrVtt7A=
+	t=1745602021; cv=none; b=LwDjMVIypRtMKtvKAAZ5KjVNGdkeR1y80tOrj7oKMKg0YiCWk+rSniedc+ZJSQVrEfSd4pSeAe27bGJPe5T/CQRs4G4aUwOeMjzTl7u9poSwqTRmd5N5KOvrL1URYNoMv6ejd8LPCef2tfTgjEym4L8WeQI7oKmAuNuMls/LrYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745601986; c=relaxed/simple;
-	bh=8hg558yANT2sc+YTep6wfK5k68FYbDUsk2+ub2VNI3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kk8QN5YfUdISNG74XgXOTH5voUgYXDxwYvNLdmdXGYWeJMM3ZTu8mDDrNGRUiupaK1IwnYWDl0ZHTNg2+B4KDxpIjHz2/xNNkr9VAf8BvBcIyv0ck8w8UNTZPUo9lMkIQ9UUuzB0JcUiMIwuMZKUoEBW07vYoWnoQOcHH/vws3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dxYRUDos; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJucQ000413
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:26:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=5epQh/flHpVh8dT3+VnITaav
-	y9i6eZEZFyRfGUTfpqs=; b=dxYRUDosRFUFA9B/unpg6slaZNQC2s7SJf4A9a7t
-	0X6SVESP3MXxLG55zeRX7HuZtNfyE6muo1M5O5hxEiz6SYNLxJ5I15o7OwvqYaqI
-	M9bUejR6aFqqWgC9Qq8mv1KVkF2YBl1EepZ4XdcJCnygAwwBMCEB+MI0/3QlFQkb
-	udyo6jW1qc6SVjnQzWx65XerwZP9WcTXn/CkRVpxk64JzGz1PhDdFTRBiwaMr+kI
-	++0rcGBPym1XxBVIojKC4BJvCWfJ3gDdPDvNsDiRiAzFATOcTiwXjFkfRSMw/5Yk
-	Gv3wEw3aBdxTRmPlDdQjqoAe1tM+HEUpjLKUI7UGUnYwfQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh3hsdq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:26:23 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54e9f6e00so574105185a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:26:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745601982; x=1746206782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1745602021; c=relaxed/simple;
+	bh=RUX2gI2q/VVGvwoTtRvFHA0juUd3HegmJSo0vMg0yFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m4bVMNsRgw2hgvzvAMBnjiePaONEkJ7KCQ4G1+fzgvM1nXQ7bYmVAu/xbNj/JqoPpBOz69jBdtsTuwAMmhHwQuFcyR4qOrgMbJmvgpCSGO6SvSwFp+q/XkugzQfflek1YVq+5DE6BGgWKnp8nvNWIHVaqcLX7rXBLh1+nCae+rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k9Y8r4Co; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47e9fea29easo9561cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 10:26:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745602019; x=1746206819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5epQh/flHpVh8dT3+VnITaavy9i6eZEZFyRfGUTfpqs=;
-        b=WQYIFrP0wdEnfIdzpnovVyFwydeFd+8YCfhMh1UnklyTqelHS7wzRHmtFdnshj7LHg
-         2qV8MVhMi9Fdv+a04uQUcQW+SSTQKHtT45RruF4DToRBKifgER3+torGk2g1iIyJtRLt
-         k2BtVC8ZOa1shDeZjGVkYLGvJ+KcN9bCeaxXByqwm1F7N5lS+11+2iC8CVzvs0vxI7NO
-         epvZ7U5kqkDvCS+lwYQ9/45QaWzb7v16o5IEdbxAkCDrth+hV3QiwN8fvqkv+lhM3iCp
-         Kr61tRxFgQpxNn2eDuyC1uhWgtmOD/pIViqb7ndk6ds/a8/wkjK9qQ74kU8o8IBlvpb9
-         0kHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgPwolI0aKeihbykRAxeOX3eTcOMyOq9ZsbB72VCgCliOWnZ6+VEUQhvmcjIr172Jo1aDUiJ0Xu0xXzDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJLhAEwySE4+iQRRN+ICkpY+TBG05CzJ1s4ZdHtr+M7No3cQbD
-	lPURSsYFVQZpRwjOxxa+/GyVHrmFjpx+43kn6IdOz013ezQT8YljxNr+NfJ/ZrQDEakOIf89ctj
-	P3cvXrHXVuS+WYtQNfQ9zg63MVB5cCW1OwaFHaI55FSnv5A6zIjwa+izC2iMr37Y=
-X-Gm-Gg: ASbGncsMtoSHf3fyzYGLaJj8ACBBHrdcR8bCU1HTllmQ0aet4JykONv3rraUwFy6MHY
-	MNB9zRVoCbFfCe/3jcwATcxDiN/75+rWsMuiudRgFdTATgfyIRXEvZA64saG1aX/PEzBU5cZMAd
-	CkeOGKkhBZ3IpX2PMkGmbyKsgx70mwTqKSPwhLfcmLt86rqWm4EacZwjl1qLHqculmD7SfpUdZV
-	C3ZJ/icdGb0dx0DVB2vZkYFMt7fjTpg2cg9C53aROg1wzf3T9qMIWiBMKbu8dHmB9EBc+I/OFeZ
-	dewr8FC+rFkGJ9AS9XfmOrErSz28AWrOe5LU2s7lATdEIg2n5QpLInfKj8+1GmIiv4XNnpYWzWQ
-	=
-X-Received: by 2002:a05:620a:294d:b0:7b6:d7be:2e4 with SMTP id af79cd13be357-7c958659f26mr1134335985a.26.1745601982649;
-        Fri, 25 Apr 2025 10:26:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpT2LmKJlaY/z7qsyXSWdk47538nPobMnHSAFaz8q08N8ny0p0lgp7K4A5R/f9gHoDn7zjyQ==
-X-Received: by 2002:a05:620a:294d:b0:7b6:d7be:2e4 with SMTP id af79cd13be357-7c958659f26mr1134332885a.26.1745601982311;
-        Fri, 25 Apr 2025 10:26:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317cfb481ecsm8114181fa.31.2025.04.25.10.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 10:26:21 -0700 (PDT)
-Date: Fri, 25 Apr 2025 20:26:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, loic.poulain@oss.qualcomm.com,
-        vladimir.zapolskiy@linaro.org, krzk@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: media: qcom,x1e80100-camss: Fixup
- csiphy supply names
-Message-ID: <z7rklnxuuqnimmc64vcc2b77n6ohdqznek2yxxlmfljvnkqk4c@4dfzdeb2x2ha>
-References: <20250425-b4-media-committers-25-04-25-camss-supplies-v2-0-8c12450b2934@linaro.org>
- <20250425-b4-media-committers-25-04-25-camss-supplies-v2-1-8c12450b2934@linaro.org>
+        bh=WVMnvFn9n+P1CKhwUPkCgqII5/m+lypiQFfGIbxcLVc=;
+        b=k9Y8r4CoiQfcH6npxvwR1VkRf+zF49Gv0CsZHecEFgvwrHSwjL/+tzT33GswZo6KJO
+         LJ11En4c/82csNgW9BhtQBagW9jFol5x5cbmW4YYqxc0lvpX/g0kdQ8aFadTSwPJIDvX
+         9fJXCTUPXzDCOf5u11XDZ2Coz25/bm1NgtPZxzgju9nSaBQ0BTc/ba7Ter25JkVKQ5qm
+         HdsMexoExCDH2WVZdaZtTqeIu7VVs4GCRlBrx4BmDhGuHd7iRo8dCzdWArUFMy+MPsya
+         3P5aRnj3GBhOeLLTPX9IopXcZ8xi8wlGHrNzcEdVPvtbrtB8bGqQIwSIlmUPq7Kj2SjF
+         ZgZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745602019; x=1746206819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WVMnvFn9n+P1CKhwUPkCgqII5/m+lypiQFfGIbxcLVc=;
+        b=DW6CUCcqorqcF6VwACY82RsA1zdoBIG39zPtqcQAobDJbZGOtFfhlOMK33UcVOvQRv
+         xnqvrF+g2NtihC7We6hz+z5OKs5zH/V50hxc8tM4o9Pd18ei0HSSAxbR0Y9C5VMQZEC/
+         CCS0vDiYH4KCxz803bJuuleZECm+37fvmXrfSvz5C25TqDa+59QNvVEknm1W0LIMVdEi
+         z3/KrXx1sdpaze6d4pP+JU5VoNWXyK7UN3xgsVaz0kovnv+JSRYAScId1TOXSj62vU57
+         yEGlCC3ab9qD8ppuAW24uzh54JmzZ9RfgfBAmkDmKQjqHhjzh0sXXeFAQNHYoNISdeBW
+         +7Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVciuXuLfGsn4owkK8Z9rt+Z0JpQxFLW7nIT0Tteh/xvWDfPeEgYGIqKI+qk835XGsnXVzLD/9hoDuWnXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0lG0+/EScFDxb5ud1GSF87i5apJF7YuGhw03KQd3t9bE/UMY7
+	k9Fdmkl1n3oeE1LBWMpr+AJuXGxfpcAo+VMYcxFZ1Nt82aY1SYCeIDTRmAC6tO8o/68Ane80aD6
+	t+Le6zMavF1im6SnEVU+7BiLytzBnedV/6yc/
+X-Gm-Gg: ASbGncsB5dGC7asR/ExWErqsgpw3D59O4f45iPdAeArP9u5l2fLndsik76G2wbNia+E
+	l4BzHyZ4TzPe/92fnbDIHmMRmM5yiPvfVKyu1KNEITTXlHgt9y9se4QDwk6vpALTy802ylUCi00
+	ocLxOteKRTbCSFnXMknC95
+X-Google-Smtp-Source: AGHT+IG2cM1yVyej3lzRTanwt7H6lzpj/LO2wjSzm/XIby/6ONbcRTy0GQn4YFZVRCdWJ666A7314P2+DMcWcIOFy4s=
+X-Received: by 2002:a05:622a:5a0e:b0:476:d668:fd1c with SMTP id
+ d75a77b69052e-48140acfd95mr30411cf.2.1745602018724; Fri, 25 Apr 2025 10:26:58
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425-b4-media-committers-25-04-25-camss-supplies-v2-1-8c12450b2934@linaro.org>
-X-Proofpoint-ORIG-GUID: Op1ArKSCzXy8sW8UiOtXDyZo_H8L-q5I
-X-Proofpoint-GUID: Op1ArKSCzXy8sW8UiOtXDyZo_H8L-q5I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDEyMyBTYWx0ZWRfXygD4FAdkChpA CKmSvnPZ4kgqIQ9BS10nKQLTFiVqcovLRAyK5zGlWajX+u4GkWSi4gy6EeRewhVxTvarr0zwApv ECzj0RUn6C+YN92Nxn9vXTC3WsXxna/qUbqFGQKyajrHix2AtUCWa2AFs+HcNvcLlhxI0A7qq5x
- 48xyjobCrJqQUOdJTaY8McSwVtdha+JTd0rbJA0LuHr8MUq2KVXNVM6xzO0H5FTwdxLjCMgMLEF lPb/9cs0PeGROSrw5cdiQbKVdKXJVUUJaRat7ZcTRXGtvVC5a424PMBol2ELGPwzNPaShr2quFF ae256IU6cDdHa1GJZcqpFgyg/bTI+pTWK5SJAa/6wNFx3MPZv6hikdsUaMhh2RwSTriK7qpLLH3
- ks98kteTRllOr8DLfI3XVTIXlhL96qki7tS5Vgdt5s7DI8lqwBO/fiWKw56F2FZ7Jpue8QQJ
-X-Authority-Analysis: v=2.4 cv=Mepsu4/f c=1 sm=1 tr=0 ts=680bc5bf cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=VqMsr5fPH0kPJOHiwU8A:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 impostorscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504250123
+References: <cover.1745528282.git.lorenzo.stoakes@oracle.com>
+ <0f848d59f3eea3dd0c0cdc3920644222c40cffe6.1745528282.git.lorenzo.stoakes@oracle.com>
+ <51903B43-2BFC-4BA6-9D74-63F79CF890B7@kernel.org> <7212f5f4-f12b-4b94-834f-b392601360a3@lucifer.local>
+ <n6lrbjs4o6luzl3fydpo4frj35q6kvoz74mhlyae5gp7t5loyy@ubmfmzwfhnwq>
+ <CAJuCfpErtLvktCsbFSGmrT_zir9z0g+uuVvhr=QEitA7ARkdkw@mail.gmail.com> <202504251010.C5CCE66@keescook>
+In-Reply-To: <202504251010.C5CCE66@keescook>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 25 Apr 2025 10:26:47 -0700
+X-Gm-Features: ATxdqUFI25tBLuuz7impmOSN8LJFpyEkWMIodbUWLISW0FgBbB8BqB9ZvMK9h3U
+Message-ID: <CAJuCfpG+0zV3P-P+yr_bnGKJVkNHVznfcVmfcsWbUcW4Bw4LzQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm: perform VMA allocation, freeing, duplication in mm
+To: Kees Cook <kees@kernel.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 04:17:33PM +0100, Bryan O'Donoghue wrote:
-> Declare a CSIPHY regulator pair 0p8 and 1p2 for each CSIPHY.
-> 
-> Name the inputs based on the voltage so as to have a consistent naming of
-> these rails across SoCs and PCBs.
-> 
-> There are no upstream users of this yaml definition yet so this change is
-> safe to make.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  .../bindings/media/qcom,x1e80100-camss.yaml        | 52 +++++++++++++++++-----
->  1 file changed, 40 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-> index 113565cf2a991a8dcbc20889090e177e8bcadaac..dc7c1a9394c3b547f5e0885bf501ed42dfbeba88 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-> @@ -118,14 +118,6 @@ properties:
->        - const: ife1
->        - const: top
->  
-> -  vdd-csiphy-0p8-supply:
-> -    description:
-> -      Phandle to a 0.8V regulator supply to a PHY.
-> -
-> -  vdd-csiphy-1p2-supply:
-> -    description:
-> -      Phandle to 1.8V regulator supply to a PHY.
-> -
->    ports:
->      $ref: /schemas/graph.yaml#/properties/ports
->  
-> @@ -157,6 +149,30 @@ properties:
->                - clock-lanes
->                - data-lanes
->  
-> +  vdd-csiphy0-0p8-supply:
-> +    description: Phandle to a 0.8V regulator supply to csiphy0.
-> +
-> +  vdd-csiphy0-1p2-supply:
-> +    description: Phandle to a 1.2V regulator supply to csiphy0.
-> +
-> +  vdd-csiphy1-0p8-supply:
-> +    description: Phandle to a 0.8V regulator supply to csiphy1.
-> +
-> +  vdd-csiphy1-1p2-supply:
-> +    description: Phandle to a 1.2V regulator supply to csiphy1.
-> +
-> +  vdd-csiphy2-0p8-supply:
-> +    description: Phandle to a 0.8V regulator supply to csiphy2.
-> +
-> +  vdd-csiphy2-1p2-supply:
-> +    description: Phandle to a 1.2V regulator supply to csiphy2.
-> +
-> +  vdd-csiphy4-0p8-supply:
-> +    description: Phandle to a 0.8V regulator supply to csiphy4.
-> +
-> +  vdd-csiphy4-1p2-supply:
-> +    description: Phandle to a 1.2V regulator supply to csiphy4.
+On Fri, Apr 25, 2025 at 10:12=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Fri, Apr 25, 2025 at 08:32:48AM -0700, Suren Baghdasaryan wrote:
+> > On Fri, Apr 25, 2025 at 6:55=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
+racle.com> wrote:
+> > >
+> > > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250425 06:40]:
+> > > > On Thu, Apr 24, 2025 at 08:15:26PM -0700, Kees Cook wrote:
+> > > > >
+> > > > >
+> > > > > On April 24, 2025 2:15:27 PM PDT, Lorenzo Stoakes <lorenzo.stoake=
+s@oracle.com> wrote:
+> > > > > >+static void vm_area_init_from(const struct vm_area_struct *src,
+> > > > > >+                        struct vm_area_struct *dest)
+> > > > > >+{
+> > > > > >+  dest->vm_mm =3D src->vm_mm;
+> > > > > >+  dest->vm_ops =3D src->vm_ops;
+> > > > > >+  dest->vm_start =3D src->vm_start;
+> > > > > >+  dest->vm_end =3D src->vm_end;
+> > > > > >+  dest->anon_vma =3D src->anon_vma;
+> > > > > >+  dest->vm_pgoff =3D src->vm_pgoff;
+> > > > > >+  dest->vm_file =3D src->vm_file;
+> > > > > >+  dest->vm_private_data =3D src->vm_private_data;
+> > > > > >+  vm_flags_init(dest, src->vm_flags);
+> > > > > >+  memcpy(&dest->vm_page_prot, &src->vm_page_prot,
+> > > > > >+         sizeof(dest->vm_page_prot));
+> > > > > >+  /*
+> > > > > >+   * src->shared.rb may be modified concurrently when called fr=
+om
+> > > > > >+   * dup_mmap(), but the clone will reinitialize it.
+> > > > > >+   */
+> > > > > >+  data_race(memcpy(&dest->shared, &src->shared, sizeof(dest->sh=
+ared)));
+> > > > > >+  memcpy(&dest->vm_userfaultfd_ctx, &src->vm_userfaultfd_ctx,
+> > > > > >+         sizeof(dest->vm_userfaultfd_ctx));
+> > > > > >+#ifdef CONFIG_ANON_VMA_NAME
+> > > > > >+  dest->anon_name =3D src->anon_name;
+> > > > > >+#endif
+> > > > > >+#ifdef CONFIG_SWAP
+> > > > > >+  memcpy(&dest->swap_readahead_info, &src->swap_readahead_info,
+> > > > > >+         sizeof(dest->swap_readahead_info));
+> > > > > >+#endif
+> > > > > >+#ifdef CONFIG_NUMA
+> > > > > >+  dest->vm_policy =3D src->vm_policy;
+> > > > > >+#endif
+> > > > > >+}
+> > > > >
+> > > > > I know you're doing a big cut/paste here, but why in the world is=
+ this function written this way? Why not just:
+> > > > >
+> > > > > *dest =3D *src;
+> > > > >
+> > > > > And then do any one-off cleanups?
+> > > >
+> > > > Yup I find it odd, and error prone to be honest. We'll end up with =
+uninitialised
+> > > > state for some fields if we miss them here, seems unwise...
+> > > >
+> > > > Presumably for performance?
+> > > >
+> > > > This is, as you say, me simply propagating what exists, but I do wo=
+nder.
+> > >
+> > > Two things come to mind:
+> > >
+> > > 1. How ctors are done.  (v3 of Suren's RCU safe patch series, willy m=
+ade
+> > > a comment.. I think)
+> > >
+> > > 2. Some race that Vlastimil came up with the copy and the RCU safenes=
+s.
+> > > IIRC it had to do with the ordering of the setting of things?
+> > >
+> > > Also, looking at it again...
+> > >
+> > > How is it safe to do dest->anon_name =3D src->anon_name?  Isn't that =
+ref
+> > > counted?
+> >
+> > dest->anon_name =3D src->anon_name is fine here because right after
+> > vm_area_init_from() we call dup_anon_vma_name() which will bump up the
+> > refcount. I don't recall why this is done this way but now looking at
+> > it I wonder if I could call dup_anon_vma_name() directly instead of
+> > this assignment. Might be just an overlooked legacy from the time we
+> > memcpy'd the entire structure. I'll need to double-check.
+>
+> Oh, is "dest" accessible to other CPU threads? I hadn't looked and was
+> assuming this was like process creation where everything gets built in
+> isolation and then attached to the main process tree. I was thinking
+> this was similar.
 
-My preference is still for the platform-specific supply names which can
-be correlated to the actual SoC pins.
+Yeah, it's process creation time but this structure is created from a
+SLAB_TYPESAFE_BY_RCU cache which adds complexity. A newly allocated
+object from this cache might be still accessible from another thread
+holding a reference to its earlier incarnation. We need an indication
+for that other thread to say "this object has been released, so the
+reference you are holding is pointing to a freed or reallocated/wrong
+object". vm_refcnt in this case is this indication and we are careful
+not to override it even temporarily during object initialization.
+Well, in truth we override it later with 0 but for the other thread
+that will still mean this object is not what it wants.
 
-> +
->  required:
->    - compatible
->    - reg
+I suspect you know this already but just in case
+https://elixir.bootlin.com/linux/v6.14.3/source/include/linux/slab.h#L101
+has more detailed explanation of SLAB_TYPESAFE_BY_RCU.
 
--- 
-With best wishes
-Dmitry
+>
+> --
+> Kees Cook
 
