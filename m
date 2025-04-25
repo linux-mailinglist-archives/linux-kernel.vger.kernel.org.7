@@ -1,130 +1,69 @@
-Return-Path: <linux-kernel+bounces-619711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5872A9C04B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:00:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833EAA9C053
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F811B88583
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91851899A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E7230277;
-	Fri, 25 Apr 2025 08:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2590C233D8E;
+	Fri, 25 Apr 2025 08:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YAXOvlue"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqiguB/X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF041DDE9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782CF26AEC;
+	Fri, 25 Apr 2025 08:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745568051; cv=none; b=ke6ALUuZgZ6h4d/3P9WxLshrG82+oZB03lrrHPBBylbLJenFZ5+HOnhE++81HRPuz6lPvbhHUY3wavvZcp3jeMg3VSvaZ2BVZIBaWbapkUsqU0A7luv2p38Mon1JbwKyGGwzlFhqN2Nre7fuVQ5SwxNKDvb9PvqHthMD2YCCpDE=
+	t=1745568147; cv=none; b=uJz0H2n0G3vu7o6QKR+JvOprDDFdJN3Rl6ncdxttBdHmcOjCGaxGBup/S2oXMvm/mEmNjtwcBUPw21mzyCtovFt6gD5pkB3W2cm3fwiLcwHKJZlp8mlwJQwB+L9gf/UmJcInrzAokiQ1NIJoUvIlQP1sOulDq0OCogBA8Lj3diE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745568051; c=relaxed/simple;
-	bh=c6TIoXsjX95rpwlTor+k+SVGfkqfhOsAsRW9lkoCB+0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=vFxjdNkwsq5dwcNEhngPJoaUV7WBgRjyWzyWHLFIsb8SsHD0iyNmENUacvhQgNR9G78+x5xtj36p24KE/qOQiRehuzT49L+gMXu36SpUTnLiv+Pm1rKb03Ja2V4Tlj/x1b32L18RT6XmwLPDfnRqTmJ0VO08Lm3vhZvr57MhNZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YAXOvlue; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745568049; x=1777104049;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=c6TIoXsjX95rpwlTor+k+SVGfkqfhOsAsRW9lkoCB+0=;
-  b=YAXOvlueCNDGJ5XzvkU+RwF6scX+ij4py3YeYsv1aU09LqYh7k0wH7es
-   3Saon7weds9IlqOgFzfI6G78FBvMyvCL+ILf2u6cA8t4ZOE+FoWsZ9fMM
-   EWL/TikJa9wBS6mHtYCM/Do6AIb4Yphku6bIuTCR94mDkz0Evkk4ip9+Q
-   gxxWp//HFV7uJiqnzCYsftZ0lMSlJ2UGPJM4sYlKPj3A7sDu4a32wKx7z
-   TWtm7Xikxt9WsoEM+CE6z/4MTDG1IWSVX+NXmcFHQyvJa9f2o82ruc8Pg
-   m3lmUJIxCYKO/abcq8FMJhe2eqVLoMyYHYaLwKoPs4wnsk9q5jJlYVJos
-   g==;
-X-CSE-ConnectionGUID: K0XIvCD7Rp6qm+sw6cXI1w==
-X-CSE-MsgGUID: kz1X1yjTTJKWihjuCiuuOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11413"; a="57864545"
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="57864545"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 01:00:49 -0700
-X-CSE-ConnectionGUID: Puj2tsmFRT+bEnbXCo9i+Q==
-X-CSE-MsgGUID: 5mh8FrHBRICDDfsPHBC+DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,238,1739865600"; 
-   d="scan'208";a="163897606"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.83])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 01:00:43 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Junxiao Chang <junxiao.chang@intel.com>, tomas.winkler@intel.com, Joonas
- Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams
- <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Daniele
- Ceraolo Spurio <daniele.ceraolospurio@intel.com>, Vitaly Lubart
- <vitaly.lubart@intel.com>, Alexander Usyskin
- <alexander.usyskin@intel.com>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-Cc: junxiao.chang@intel.com, furong.zhou@intel.com
-Subject: Re: [PATCH] drm/i915/gsc: mei interrupt top half should be in irq
- disabled context
-In-Reply-To: <20250425060455.641008-1-junxiao.chang@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250424065609.624457-1-junxiao.chang@intel.com>
- <20250425060455.641008-1-junxiao.chang@intel.com>
-Date: Fri, 25 Apr 2025 11:00:38 +0300
-Message-ID: <87v7qsy8k9.fsf@intel.com>
+	s=arc-20240116; t=1745568147; c=relaxed/simple;
+	bh=ZzZjk3TjuB5fjuT9Nol3bp4rK92tHdKiUKt3jAgH5SM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tc014s2zn2kgo7TqPyj2ZfV4aCXJgLqkhVnuPDK9vyoEeDzeCNOsI4Go4wPvancoL/Lrod8dLHM96vn6p8fDpQ/w5V0i8yzQUs/t75dy7OGhwUOJ9EGjkd3L5VBwupjIjG5tbLsBtaRHLQ2smRwea2xeK9J24bnQ7FbVQW+hOT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqiguB/X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430DCC4CEE4;
+	Fri, 25 Apr 2025 08:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745568147;
+	bh=ZzZjk3TjuB5fjuT9Nol3bp4rK92tHdKiUKt3jAgH5SM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oqiguB/XOmcobZQ6DwFVt3el425tJHvMGeEjW7EoxMhwMX99Esi8Bs4MiLfDbH1ee
+	 mnelrUXFdpEUvjXI8i1NfphmSFgqffJ3CRLCzBzmT0Pil4MsVtfRjt8kH3q4izCMOw
+	 xDm84uYLAjQIF/qAqCQbMdk0sJEizII5nfALI+uoA2otCBkDZEtNfajRHbR5L1S6Uw
+	 djSkk2gh9OCezgZ/Dn55FQx1cF+2FGxXgUMxBe1rpLQKmXYLunxcqmnGibyaTED/C3
+	 aSCyqm+P4uMRSGXbzXGvlliFAfBGja2oHT85/Kn1oeNMyjIpsxJb95SKqAJB/bFJtV
+	 XH/1SMdYq4xYw==
+Date: Fri, 25 Apr 2025 10:02:20 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com
+Subject: Re: [PATCH RFC 2/4] net, pidfs: prepare for handing out pidfds for
+ reaped sk->sk_peer_pid
+Message-ID: <20250425-richten-hubschrauber-02bba42aa559@brauner>
+References: <20250424-chipsatz-verpennen-afa9e213e332@brauner>
+ <20250425011448.86924-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250425011448.86924-1-kuniyu@amazon.com>
 
-On Fri, 25 Apr 2025, Junxiao Chang <junxiao.chang@intel.com> wrote:
-> MEI GSC interrupt comes from i915. It has top half and bottom half.
-> Top half is called from i915 interrupt handler. It should be in
-> irq disabled context.
->
-> With RT kernel, by default i915 IRQ handler is in threaded IRQ. MEI GSC
-> top half might be in threaded IRQ context. generic_handle_irq_safe API
-> could be called from either IRQ or process context, it disables local
-> IRQ then calls MEI GSC interrupt top half.
->
-> This change fixes A380/A770 GPU boot hang issue with RT kernel.
->
-> Fixes: 1e3dc1d8622b ("drm/i915/gsc: add gsc as a mei auxiliary device")
-> Tested-by: Furong Zhou <furong.zhou@intel.com>
-> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
-> ---
->  drivers/gpu/drm/i915/gt/intel_gsc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/gt/intel_gsc.c b/drivers/gpu/drm/i915/gt/intel_gsc.c
-> index 1e925c75fb080..a099d885508ac 100644
-> --- a/drivers/gpu/drm/i915/gt/intel_gsc.c
-> +++ b/drivers/gpu/drm/i915/gt/intel_gsc.c
-> @@ -284,7 +284,9 @@ static void gsc_irq_handler(struct intel_gt *gt, unsigned int intf_id)
->  	if (gt->gsc.intf[intf_id].irq < 0)
->  		return;
->  
-> -	ret = generic_handle_irq(gt->gsc.intf[intf_id].irq);
-> +	/* It can be called in both irq context and in thread context */
+> I prefer DEBUG_NET_WARN_ON_ONCE() or removing it as rcu_sleep_check()
 
-What is "It" in this case?
-
-> +	ret = generic_handle_irq_safe(gt->gsc.intf[intf_id].irq);
-> +
->  	if (ret)
->  		gt_err_ratelimited(gt, "error handling GSC irq: %d\n", ret);
->  }
-
--- 
-Jani Nikula, Intel
+I've removed it.
 
