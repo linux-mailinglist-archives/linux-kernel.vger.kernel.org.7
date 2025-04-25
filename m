@@ -1,154 +1,85 @@
-Return-Path: <linux-kernel+bounces-620225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13D4A9C75A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B358A9C742
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBA41BC60B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1321BC1027
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 11:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FFA25A2CB;
-	Fri, 25 Apr 2025 11:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6132257AF4;
+	Fri, 25 Apr 2025 11:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="gN9XDfXO"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U70uki6V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC3A2594B4;
-	Fri, 25 Apr 2025 11:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC372571B0;
+	Fri, 25 Apr 2025 11:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745579933; cv=none; b=iNHzg7KV9aIaKVD9ozzzkpw4EtXMDinaWgXJ1WgS4z/JQAzIEpe38De24XIninf2MXxjZif8jYpu4Tx1kfF/Q8GxjHtAKuLUhnZORDh+6OgJYVEwtYmXZd/CSNGaQXkv020wNAt4rE6t7ZaRZqGJrzrNKY9tnzbjqXA3GPpYmNs=
+	t=1745579927; cv=none; b=HwX9dCZzDveItjd9xtxuoKHNhA2DTKGpCVNxtRzaNYNzQSuMcmhBLGYDmDOvJV+uJBb/l8NDzBbpmJvTWcv3HE2HBXqxrXwMrettf0r8RyQ55NlfkJVOmggo3QKzQ4/zRlBL/QjN9MMgm8zgbqwI2Ra+DEnwpIZvI6A3wr3jI+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745579933; c=relaxed/simple;
-	bh=T7PKyVUt3crhS062wcPX6RuQLioSxyB4opN5XxKCgAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wx50jAkU5BEXkFCTBFqVUxM5LO0TqagfUgt/0XLmtW7xhEIn7Z9H84gIyy5BgFuh/n8t1AKqNtUKNyuG6S12r+IJAH+LRIBjNZXAAPkpegxqifMYYVD1TcUTg4msVhtavdAJ0r9XypIzwT8PxBUKTKT6akI5kp8xirgoT55q6/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=gN9XDfXO; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from localhost.localdomain (unknown [IPv6:2a02:2149:8a3b:5a00:3490:6581:3910:8337])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 4DF772E028F6;
-	Fri, 25 Apr 2025 14:18:48 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1745579929;
-	bh=EOM7xb1wc43oU0lf5rEDD2j76CA4sncrvzR8q1EepOk=; h=From:To:Subject;
-	b=gN9XDfXO9bZuksSsw7C9sWYvNPOBsB77UZG1AoldwsHpf3RsJacLdDwCOxqYqiS+o
-	 C9HcCfuMGURG2GWy8WDQEWwLryfHeISXzXqmvquLiiHfOiyENWtNc99prITGsoQsQe
-	 Tvrg4ba7t6hVZrdU9D/N6b0yKzDVYr4tj4KkLo+o=
-Authentication-Results: linux1587.grserver.gr;
-	spf=pass (sender IP is 2a02:2149:8a3b:5a00:3490:6581:3910:8337) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Joaquin Ignacio Aramendia <samsagax@gmail.com>,
-	Derek J Clark <derekjohn.clark@gmail.com>,
-	Kevin Greenberg <kdgreenberg234@protonmail.com>,
-	Joshua Tam <csinaction@pm.me>,
-	Parth Menon <parthasarathymenon@gmail.com>,
-	Eileen <eileen@one-netbook.com>,
-	linux-kernel@vger.kernel.org,
-	sre@kernel.org,
-	linux@weissschuh.net,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	mario.limonciello@amd.com,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v10 16/16] platform/x86: oxpec: Convert defines to using tabs
-Date: Fri, 25 Apr 2025 13:18:21 +0200
-Message-ID: <20250425111821.88746-17-lkml@antheas.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250425111821.88746-1-lkml@antheas.dev>
-References: <20250425111821.88746-1-lkml@antheas.dev>
+	s=arc-20240116; t=1745579927; c=relaxed/simple;
+	bh=NqgGdkd8g5cQ3OKGc4RKIxtEOuoRmO3gUTre8U3aPfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGeC12N3u972t7Q9qvmL5QVuVIVqyNWox1cWLZ0ACUqwqCGv5lDw72dGjzC9wZ6BMJSBL9mduPYkR/YRcmAsFDTuM32O7DOn59AJhdMEMXuoI/J39Bvky4oW/VEPo4PB5+Uq4y5V9wO2gll5Jfcnl4ND+GHUXNyc4Wr5ZWOTq4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U70uki6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04964C4CEE9;
+	Fri, 25 Apr 2025 11:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745579925;
+	bh=NqgGdkd8g5cQ3OKGc4RKIxtEOuoRmO3gUTre8U3aPfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U70uki6V7H3WduGjz/GRRmi5rOak9aAX2Q6yKONn7YHn3T1PVH3Gitavn4j97BhEg
+	 sRAcrTy3Zot/eYQao2xeNQVA8zvzWzP6tjAxlbZaSPz8G7vfSFIwzCBBJI206avGgT
+	 U5v1qHodWaPdRiLfndj0KJYmmVF/GXuOk/0XhKLQbnQYuA1LzUeKynbUbqXW7t4pnk
+	 HdECg/sk8b0FMS1ecwnh3s6pVaEHor9ewIu8gxStZ/sBsyaFiPeqwBpXjeGRNCOwD7
+	 Zh9uL2CVzBUG+A4o4xEkVnF1cZqZhu2W4xh2BRzDN+na1zqpAT69q/3FRD/DjP40ps
+	 eqGV8N/FOVTmg==
+Date: Fri, 25 Apr 2025 13:18:40 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Yazen Ghannam <yazen.ghannam@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>, "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v5 3/5] i2c: piix4: Move SB800_PIIX4_FCH_PM_ADDR
+ definition to amd/fch.h
+Message-ID: <iuq72okvc4nhy2ddgkkyb43mhm55ujxru3duqi3whnmgt4zrp3@i5nxnsl2nyc5>
+References: <20250422234830.2840784-1-superm1@kernel.org>
+ <20250422234830.2840784-4-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <174557992913.23354.14997138938371653254@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422234830.2840784-4-superm1@kernel.org>
 
-The defines used spaces previously. Convert all of them to use tabs.
+Hi,
 
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/platform/x86/oxpec.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+On Tue, Apr 22, 2025 at 06:48:28PM -0500, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> SB800_PIIX4_FCH_PM_ADDR is used to indicate the base address for the
+> FCH PM registers.  Multiple drivers may need this base address, so
+> move it to a common header location and rename accordingly.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
-index 692a6d6d08316..a07ba9c2fe4f5 100644
---- a/drivers/platform/x86/oxpec.c
-+++ b/drivers/platform/x86/oxpec.c
-@@ -64,36 +64,36 @@ static enum oxp_board board;
- static struct device *oxp_dev;
- 
- /* Fan reading and PWM */
--#define OXP_SENSOR_FAN_REG             0x76 /* Fan reading is 2 registers long */
--#define OXP_2_SENSOR_FAN_REG           0x58 /* Fan reading is 2 registers long */
--#define OXP_SENSOR_PWM_ENABLE_REG      0x4A /* PWM enable is 1 register long */
--#define OXP_SENSOR_PWM_REG             0x4B /* PWM reading is 1 register long */
--#define PWM_MODE_AUTO                  0x00
--#define PWM_MODE_MANUAL                0x01
-+#define OXP_SENSOR_FAN_REG		0x76 /* Fan reading is 2 registers long */
-+#define OXP_2_SENSOR_FAN_REG		0x58 /* Fan reading is 2 registers long */
-+#define OXP_SENSOR_PWM_ENABLE_REG	0x4A /* PWM enable is 1 register long */
-+#define OXP_SENSOR_PWM_REG		0x4B /* PWM reading is 1 register long */
-+#define PWM_MODE_AUTO			0x00
-+#define PWM_MODE_MANUAL			0x01
- 
- /* OrangePi fan reading and PWM */
--#define ORANGEPI_SENSOR_FAN_REG        0x78 /* Fan reading is 2 registers long */
--#define ORANGEPI_SENSOR_PWM_ENABLE_REG 0x40 /* PWM enable is 1 register long */
--#define ORANGEPI_SENSOR_PWM_REG        0x38 /* PWM reading is 1 register long */
-+#define ORANGEPI_SENSOR_FAN_REG		0x78 /* Fan reading is 2 registers long */
-+#define ORANGEPI_SENSOR_PWM_ENABLE_REG	0x40 /* PWM enable is 1 register long */
-+#define ORANGEPI_SENSOR_PWM_REG		0x38 /* PWM reading is 1 register long */
- 
- /* Turbo button takeover function
-  * Different boards have different values and EC registers
-  * for the same function
-  */
--#define OXP_TURBO_SWITCH_REG           0xF1 /* Mini Pro, OneXFly, AOKZOE */
--#define OXP_2_TURBO_SWITCH_REG         0xEB /* OXP2 and X1 */
--#define OXP_MINI_TURBO_SWITCH_REG      0x1E /* Mini AO7 */
-+#define OXP_TURBO_SWITCH_REG		0xF1 /* Mini Pro, OneXFly, AOKZOE */
-+#define OXP_2_TURBO_SWITCH_REG		0xEB /* OXP2 and X1 */
-+#define OXP_MINI_TURBO_SWITCH_REG	0x1E /* Mini AO7 */
- 
--#define OXP_MINI_TURBO_TAKE_VAL        0x01 /* Mini AO7 */
--#define OXP_TURBO_TAKE_VAL             0x40 /* All other models */
-+#define OXP_MINI_TURBO_TAKE_VAL		0x01 /* Mini AO7 */
-+#define OXP_TURBO_TAKE_VAL		0x40 /* All other models */
- 
--#define OXP_TURBO_RETURN_VAL           0x00 /* Common return val */
-+#define OXP_TURBO_RETURN_VAL		0x00 /* Common return val */
- 
- /* X1 Turbo LED */
--#define OXP_X1_TURBO_LED_REG           0x57
-+#define OXP_X1_TURBO_LED_REG		0x57
- 
--#define OXP_X1_TURBO_LED_OFF           0x01
--#define OXP_X1_TURBO_LED_ON            0x02
-+#define OXP_X1_TURBO_LED_OFF		0x01
-+#define OXP_X1_TURBO_LED_ON		0x02
- 
- /* Battery extension settings */
- #define EC_CHARGE_CONTROL_BEHAVIOURS	(BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO)             | \
--- 
-2.49.0
+Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
+Thanks,
+Andi
 
