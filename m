@@ -1,104 +1,97 @@
-Return-Path: <linux-kernel+bounces-620819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11919A9CFD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB850A9CFCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 19:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0298169C83
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1746B4E52EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 17:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C21B291152;
-	Fri, 25 Apr 2025 17:40:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EB7212D7C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 17:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4276281501;
+	Fri, 25 Apr 2025 17:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3MlYAir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B07211A3D;
+	Fri, 25 Apr 2025 17:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745602852; cv=none; b=VletIyHlPYZbF4MbZNjGgWhJ1f7E357snd+QQugn9Sy7OCFBS5I0/9m+ULFbwZFaQoN0EKJgBBQBvGJM9z4rcD0vNcjnmVNqWqtoPBEQ7I1jVJKXdLNT7X0NnmfGbgKFNz+IbjE/j+lO/pXpKaVOo2HSvwxwdZpPkwRLV4/Tdjc=
+	t=1745602824; cv=none; b=HBiRt810InRTVrTYKK7Z+zrSFf5cHyaZe/CbP69zYB89E1T7TshuXO2mgjNoYTluQCy6SM8rebEaVI46J9bUBLCEVR5cGdgrBTTefvKjbSXFxOQpE8G0Ig0k/TBSL+klaft6QWDRHXAcLl1S7K7bv2EVpjcKnt5iIByH4ZJ+R0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745602852; c=relaxed/simple;
-	bh=zERpLnmULJ2ru4e8rKC7XhdZRh6jPAlLF079EvoWPrQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N4yQMT4ch/bxFdk65zn7LbQ4jwQ0eKmZvU1suJ4efUGy0JhubXg2iHtGPyk4OeP3lPF/dt+Q9RHG6UGPK23mh0fgGAEgCHYmLHKar44GmE+p47CzHd1rtAsvLFh93aSCJgOdOOaQUHUnCFrI9SEYxui/xPUF19MDVvAYDw83tR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 501192328;
-	Fri, 25 Apr 2025 10:40:45 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E1E23F59E;
-	Fri, 25 Apr 2025 10:40:46 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com
-Subject: [PATCH v9 27/27] MAINTAINERS: Add reviewers for fs/resctrl
-Date: Fri, 25 Apr 2025 17:38:09 +0000
-Message-Id: <20250425173809.5529-28-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250425173809.5529-1-james.morse@arm.com>
-References: <20250425173809.5529-1-james.morse@arm.com>
+	s=arc-20240116; t=1745602824; c=relaxed/simple;
+	bh=dD07SS44wuizxAu68++AhwtRyN/8n2xaSdbZAAQzMHs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MI6cgCw/tDjukPkYTi9FLDPNUjhXYolIq0Fd75aynSGtKT5wDvn6tGSDPZevRE8KiJW3RGj3omEoFd+5xdov/GKloNjYqdzbIhThRtIkyFDJxxDuIuUR6ot4kWtFxwn6ZQG8aOV3fzf3cPcUiE5eb9quStriZ138W1yJpf6tSrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3MlYAir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45786C4CEE4;
+	Fri, 25 Apr 2025 17:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745602823;
+	bh=dD07SS44wuizxAu68++AhwtRyN/8n2xaSdbZAAQzMHs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=S3MlYAirmw8B+RJKBrrLSjIeAhYy/ps8kGvVKpn8bXTO8Q5OlURjy+96mQeDzbwN7
+	 xUlb7BLn++DemBOnwTN2cRgYOb5+m3OW2wbXcWKkAEz7Z2+2wNZ8n7k9XlenWXH5xR
+	 zbzDOwfDgy6JQxuEn1ChHufj+WN4Tk657pSRj5vO9fcjL4KXl0/gyGk/hLHB77S8Gk
+	 eYanJYswu3RlMXPN7KW2P/zUDkbelMbZx7cy3GfuszFL44O8hXXU8ojlW7TpOAtEdi
+	 F1kYGAvJuJSoPR1dxJQZpYd6fldSqjYmP2vEkNSdv6JgI5vyBfv8+SoJ6Ut4aD5xhw
+	 VoDHHQww4svig==
+From: Mark Brown <broonie@kernel.org>
+To: Walker Chen <walker.chen@starfivetech.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250424133648.86459-2-thorsten.blum@linux.dev>
+References: <20250424133648.86459-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] ASoC: starfive: Use max() to simplify code in
+ jh7110_tdm_syncdiv()
+Message-Id: <174560282200.225473.340728717437668088.b4-ty@kernel.org>
+Date: Fri, 25 Apr 2025 18:40:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-resctrl has existed for quite a while as a filesystem interface private to
-arch/x86. To allow other architectures to support the same user interface
-for similar hardware features, it has been moved to /fs/.
+On Thu, 24 Apr 2025 15:36:49 +0200, Thorsten Blum wrote:
+> Use max() to simplify jh7110_tdm_syncdiv() and improve its readability.
+> 
+> 
 
-Add those with a vested interest in the common code as reviewers.
+Applied to
 
-Signed-off-by: James Morse <james.morse@arm.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46f7365bb9ac..3a878ca99a78 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20338,6 +20338,8 @@ F:	tools/testing/selftests/net/rds/
- RDT - RESOURCE ALLOCATION
- M:	Tony Luck <tony.luck@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
-+R:	Dave Martin <Dave.Martin@arm.com>
-+R:	James Morse <james.morse@arm.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	Documentation/filesystems/resctrl.rst
--- 
-2.39.5
+Thanks!
+
+[1/1] ASoC: starfive: Use max() to simplify code in jh7110_tdm_syncdiv()
+      commit: 0787a08ae785366b9473905fc8bf23f165a08b8d
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
