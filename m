@@ -1,124 +1,208 @@
-Return-Path: <linux-kernel+bounces-619393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602C0A9BC2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:15:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A86A9BC20
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 03:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D8D189ECA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D6A4C0DE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 01:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3FD39FCE;
-	Fri, 25 Apr 2025 01:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D8522301;
+	Fri, 25 Apr 2025 01:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ksdYkpDW"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hT0Io7Uc"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B09D24B34;
-	Fri, 25 Apr 2025 01:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CD4DF59;
+	Fri, 25 Apr 2025 01:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745543708; cv=none; b=gstklvA0VQuKdEP67lVan1eRyqYpTJcns/1ke6UeuQGEeu0xhekq7TyktfctEPyHRvw519GyH+c2N/ZsrqG+OUVa8RbHsErg/UhzMJVWvJ/h/n/g8Qp+33iwctJPmhGFLHUMbkwAmUeXAq/pI0T7RQOyTCOBHwil232b2YSi3AQ=
+	t=1745543427; cv=none; b=Zl38OZSVoYTBWew6xt70TkrTRNwMj+lpzbfNdd5KTQaYRnjITLPMeRXW9JfKMUCR8IhSSjC59uiS/aHytxmuM5xVXOAlSyeudUEcARw0eb1pKz/gGu8Zey7ynEU1W9ppONLTfozh+Redu43i676oUlwSds6BirWqpy03BPjHWCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745543708; c=relaxed/simple;
-	bh=dibXvsCIlw/r5xer4uGGb3IzXFKI1fgh2NkaWgp2q4Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VrzUei7nqQv4lGYGkAfEmMNDOM8n0jB7AHtxBgIrsRe9YEmxK+UnzmfrtdPuFdonf+5T6MUINec+aFyy4OlBcV3dehlBHPBgPnNVBVC7pw7qIxAoMrIAURmYvbTFek4+M/igycx9+Qi7tX6Z/cmED5p8p0trFdtdGXX7v2CLn3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ksdYkpDW; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1745543706; x=1777079706;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6plyhxgT9bnqn3jAySOCqKgFkQSEJPbSjpMDXSsRL/0=;
-  b=ksdYkpDWMpk7qsgJNOYwz3vaeE9lEiTLe0xpuKdv00SZigGRBwSYbYra
-   QZ56k+0mzXU/jwHZF1NmP4+MWPDYfZK+dv538s8Gnkw1tEFulMsAVnraq
-   1gacueHD2A3DXeoopMS/WAs5E1gJtiJx1psF9hkesBWaM8FoNTGvH3t4Y
-   o=;
-X-IronPort-AV: E=Sophos;i="6.15,237,1739836800"; 
-   d="scan'208";a="738575957"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 01:15:01 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:42637]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.42.20:2525] with esmtp (Farcaster)
- id b487d46e-dabb-473b-a507-671f53cb5076; Fri, 25 Apr 2025 01:15:01 +0000 (UTC)
-X-Farcaster-Flow-ID: b487d46e-dabb-473b-a507-671f53cb5076
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 25 Apr 2025 01:15:00 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.101.8) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 25 Apr 2025 01:14:56 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <brauner@kernel.org>
-CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <daan.j.demeyer@gmail.com>,
-	<davem@davemloft.net>, <david@readahead.eu>, <edumazet@google.com>,
-	<horms@kernel.org>, <jack@suse.cz>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <me@yhndnzj.com>, <netdev@vger.kernel.org>,
-	<oleg@redhat.com>, <pabeni@redhat.com>
-Subject: Re: [PATCH RFC 2/4] net, pidfs: prepare for handing out pidfds for reaped sk->sk_peer_pid
-Date: Thu, 24 Apr 2025 18:08:46 -0700
-Message-ID: <20250425011448.86924-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250424-chipsatz-verpennen-afa9e213e332@brauner>
-References: <20250424-chipsatz-verpennen-afa9e213e332@brauner>
+	s=arc-20240116; t=1745543427; c=relaxed/simple;
+	bh=JERu1AJOctJ3AM1Bf9zYfBuZWhE1MR7/mcuQEMvFd7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LqvojS4MbQPzk71B4sdCgtM0YWHo8BBkS91cbmgpZL0KaXfDVq+D4nldGmZWjrx547/kkqHKSkioEmmN/WEVOcRRINXKVKWW2EgVs7mVOk2jFXEhbjqRp5UZFZUipuGFhmiVBTsNkr4zJ5/7ZUek55hDyAVNOWOFdlWeERLoxTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hT0Io7Uc; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1745543414; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=xuK53ZT3pmW8ZkR+lYJ8YR2B580d+pyqYdFFgzrMsMs=;
+	b=hT0Io7Uc2ax5SuqguakSavw8PXgMx+DSliZcYfRH1Ciuea4Ds5clpjs+OeANO8m/zQh+pmaKPs3P4raHzdPixNq9Mz6A+n1+gSwguTqluA4WcfAu3WwD+BVERzXzkAvHtA0PnaZ3wsGKnptDJCMDdPtEajt+aInkQhmQwfKQiqc=
+Received: from 30.246.162.65(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WY.2xUu_1745543410 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 25 Apr 2025 09:10:12 +0800
+Message-ID: <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com>
+Date: Fri, 25 Apr 2025 09:10:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Hanjun Guo <guohanjun@huawei.com>, "Luck, Tony" <tony.luck@intel.com>,
+ rafael@kernel.org, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, linux-edac@vger.kernel.org, x86@kernel.org,
+ justin.he@arm.com, ardb@kernel.org, ying.huang@linux.alibaba.com,
+ ashish.kalra@amd.com, baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com, sudeep.holla@arm.com, lpieralisi@kernel.org,
+ linux-acpi@vger.kernel.org, yazen.ghannam@amd.com, mark.rutland@arm.com,
+ mingo@redhat.com, robin.murphy@arm.com, Jonathan.Cameron@Huawei.com,
+ bp@alien8.de, linux-arm-kernel@lists.infradead.org,
+ wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
+ linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
+ tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
+ jarkko@kernel.org
+References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
+ <20250404112050.42040-2-xueshuai@linux.alibaba.com>
+ <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
+ <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
+ <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
+ <653abdd4-46d2-4956-b49c-8f9c309af34d@linux.alibaba.com>
+ <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D033UWC001.ant.amazon.com (10.13.139.218) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
-
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 24 Apr 2025 17:19:28 +0200
-> > > @@ -643,6 +644,14 @@ static void unix_sock_destructor(struct sock *sk)
-> > >  		return;
-> > >  	}
-> > > 
-> > > +	if (sock_flag(sk, SOCK_RCU_FREE)) {
-> > > +		pr_info("Attempting to release RCU protected socket with sleeping 
-> > > locks: %p\n", sk);
-> > > +		return;
-> > > +	}
-> > 
-> > unix-sockets do not use `SOCK_RCU_FREE`,
-
-Right, and I think we won't flag SOCK_RCU_FREE in the future.
 
 
-> but even if they did, doesn't
-> > this flag imply that the destructor is delayed via `call_rcu`, and
-> > thus *IS* allowed to sleep? And then, sleeping in the destructor is
-> > always safe, isn't it? `SOCK_RCU_FREE` just guarantees that it is
-> > delayed for at least an RCU grace period, right? Not sure, what you
-> > are getting at here, but I might be missing something obvious as well.
+
+在 2025/4/25 09:00, Hanjun Guo 写道:
+> On 2025/4/18 20:35, Shuai Xue wrote:
+>>
+>>
+>> 在 2025/4/18 15:48, Hanjun Guo 写道:
+>>> On 2025/4/14 23:02, Shuai Xue wrote:
+>>>>
+>>>>
+>>>> 在 2025/4/14 22:37, Hanjun Guo 写道:
+>>>>> On 2025/4/4 19:20, Shuai Xue wrote:
+>>>>>> Synchronous error was detected as a result of user-space process accessing
+>>>>>> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+>>>>>> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+>>>>>> memory_failure() work which poisons the related page, unmaps the page, and
+>>>>>> then sends a SIGBUS to the process, so that a system wide panic can be
+>>>>>> avoided.
+>>>>>>
+>>>>>> However, no memory_failure() work will be queued when abnormal synchronous
+>>>>>> errors occur. These errors can include situations such as invalid PA,
+>>>>>> unexpected severity, no memory failure config support, invalid GUID
+>>>>>> section, etc. In such case, the user-space process will trigger SEA again.
+>>>>>> This loop can potentially exceed the platform firmware threshold or even
+>>>>>> trigger a kernel hard lockup, leading to a system reboot.
+>>>>>>
+>>>>>> Fix it by performing a force kill if no memory_failure() work is queued
+>>>>>> for synchronous errors.
+>>>>>>
+>>>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>>>>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>>>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>>>>> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+>>>>>> Reviewed-by: Jane Chu <jane.chu@oracle.com>
+>>>>>> ---
+>>>>>>   drivers/acpi/apei/ghes.c | 11 +++++++++++
+>>>>>>   1 file changed, 11 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>>>>>> index b72772494655..50e4d924aa8b 100644
+>>>>>> --- a/drivers/acpi/apei/ghes.c
+>>>>>> +++ b/drivers/acpi/apei/ghes.c
+>>>>>> @@ -799,6 +799,17 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>>>>>           }
+>>>>>>       }
+>>>>>> +    /*
+>>>>>> +     * If no memory failure work is queued for abnormal synchronous
+>>>>>> +     * errors, do a force kill.
+>>>>>> +     */
+>>>>>> +    if (sync && !queued) {
+>>>>>> +        dev_err(ghes->dev,
+>>>>>> +            HW_ERR GHES_PFX "%s:%d: synchronous unrecoverable error (SIGBUS)\n",
+>>>>>> +            current->comm, task_pid_nr(current));
+>>>>>> +        force_sig(SIGBUS);
+>>>>>> +    }
+>>>>>
+>>>>> I think it's reasonable to send a force kill to the task when the
+>>>>> synchronous memory error is not recovered.
+>>>>>
+>>>>> But I hope this code will not trigger some legacy firmware issues,
+>>>>> let's be careful for this, so can we just introduce arch specific
+>>>>> callbacks for this?
+>>>>
+>>>> Sorry, can you give more details? I am not sure I got your point.
+>>>>
+>>>> For x86, Tony confirmed that ghes will not dispatch x86 synchronous errors
+>>>> (a.k.a machine check exception), in previous vesion.
+>>>> Sync is only used in arm64 platform, see is_hest_sync_notify().
+>>>
+>>> Sorry for the late reply, from the code I can see that x86 will reuse
+>>> ghes_do_proc(), if Tony confirmed that x86 is OK, it's OK to me as well.
+>>
+>> Hi, Hanjun,
+>>
+>> Glad to hear that.
+>>
+>> I copy and paste in the original disscusion with @Tony from mailist.[1]
+>>
+>>> On x86 the "action required" cases are signaled by a synchronous machine check
+>>> that is delivered before the instruction that is attempting to consume the uncorrected
+>>> data retires. I.e., it is guaranteed that the uncorrected error has not been propagated
+>>> because it is not visible in any architectural state.
+>>
+>>> APEI signaled errors don't fall into that category on x86 ... the uncorrected data
+>>> could have been consumed and propagated long before the signaling used for
+>>> APEI can alert the OS.
+>>
+>> I also add comments in the code.
+>>
+>> /*
+>>   * A platform may describe one error source for the handling of synchronous
+>>   * errors (e.g. MCE or SEA), or for handling asynchronous errors (e.g. SCI
+>>   * or External Interrupt). On x86, the HEST notifications are always
+>>   * asynchronous, so only SEA on ARM is delivered as a synchronous
+>>   * notification.
+>>   */
+>> static inline bool is_hest_sync_notify(struct ghes *ghes)
+>> {
+>>      u8 notify_type = ghes->generic->notify.type;
+>>
+>>      return notify_type == ACPI_HEST_NOTIFY_SEA;
+>> }
+>>
+>>
+>> If you are happy with code, please explictly give me your reviewed-by tags :)
 > 
-> Callbacks run from call_rcu() can be called from softirq context and in
-> general are not allowed to block. That's what queue_rcu_work() is for
-> which uses system_unbound_wq.
+> Call force_sig(SIGBUS) directly in ghes_do_proc() is not my favourite,
+> but I can bear that, please add
 > 
-> > 
-> > Regardless, wouldn't you want WARN_ON_ONCE() rather than pr_info?
+> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 > 
-> Sure.
+> Thanks
+> Hanjun
 
-I prefer DEBUG_NET_WARN_ON_ONCE() or removing it as rcu_sleep_check()
-in __might_sleep() has better checks.
+Thanks. Hanjun.
 
-The netdev CI enables debug.config, which has CONFIG_DEBUG_ATOMIC_SLEEP
-and enables the checks, so adding a test case in
-tools/testing/selftests/net/af_unix/scm_pidfd.c will catch the future
-regression.
+@Rafael, @Catalin,
+
+Both patch 1 and 2 have reviewed-by tag from the arm64 ACPI maintainers, Hanjun,
+now. Are you happpy to pick and queue this patch set to acpi tree or arm tree?
+
+If you need me to send a new version to collect the reviewed-by tag, please
+let me know.
+
+Thanks.
+
+Best Regards,
+Shuai
 
