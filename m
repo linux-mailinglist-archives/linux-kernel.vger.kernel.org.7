@@ -1,177 +1,185 @@
-Return-Path: <linux-kernel+bounces-619825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-619829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B902BA9C253
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:55:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8960AA9C26B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 10:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44B43AF3BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20E49A5BF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 08:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47783215F48;
-	Fri, 25 Apr 2025 08:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD14238152;
+	Fri, 25 Apr 2025 08:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="wrSpVzne"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JNKduLSl"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AE215199A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 08:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279AD215F48;
+	Fri, 25 Apr 2025 08:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745571204; cv=none; b=EpRCFId86cREnuW+WYRsRwvaBYxz3jBFJCydVf2azELeXNp3gWxEG7QKXZFoVY+yhptCE3c82/l4Y3BOPU4ELvtzSEeQakydYAXrUzyQsR1vO6cdExbZdYBIo1wHqxy5xCQ51JDtwrK+IhpslzS5g/YbVGJspHvErd4LzNkVDHY=
+	t=1745571225; cv=none; b=F7Z0lKQj3mdacitdqjpneHMMoj9EM3F5FBcduaKXZmQolSmgdN4KUXLNf7t3r5ReobRDZGdzyYbIYek6HJIQqpRZ3v3SundT+qTsQyX49kd7Hu0doIWxU9H+pdUqyFuAUqcmgFrBCetS/wDwZWMGGKXE2I45k+mRijKYz3H+Teo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745571204; c=relaxed/simple;
-	bh=qgDwMiYZ03jZ3VtL+iQWdqO0dM+ODU13Aog/AyevosA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCZI5+adoPiFhoKv1bW9YrgLaK8XRLbuvL6439zCzTqifnZHbUlaIasOpWr1UEyPVomEPXA1KU0GhpfgBM5gBI3333p4roJ8dd0xI68InnaJy/P9uNwd8jEJVwCF9n94nQ7RSdK/xzqD94THdq+AmX5CgkEWbxnzAHUnmbH1VT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=wrSpVzne; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22792ef6215so4111745ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 01:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1745571202; x=1746176002; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eHzaBwzTKLMB8wXpN6R71/QTn3oT0lrrtPmHK341lbw=;
-        b=wrSpVzneBuDhyi3onzognhVpFe388QkFDoOdELiBjrvlhhv/o6dV61po2pVvK+YLG7
-         n8lGhiPGs+ZAjIWNARjNU64JGtgpRkbQnmImOEwwjZkIDxaKhTOUBxooZM5epVeqpEAz
-         UAPi6QEKxuHaXl5aMVT0iurd6W0mPuobqQmneDy5y2L23NgZUQGi4e5FpZ4s5wjRCAsF
-         yzNiotl5/K6+neDIw0tlgm8cJUsXU7ys1Cd31yu7zBucX/aA2zfr7Nk9m180uQZ9A+CF
-         mSAbHX+1327aB3TqbZ9KMdSJPLvQDEMT8sBXJNm3EFYZyLfht7MPemviwFwTYqAfId0t
-         me0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745571202; x=1746176002;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eHzaBwzTKLMB8wXpN6R71/QTn3oT0lrrtPmHK341lbw=;
-        b=wJ2Mtp01FCdR5VDcD2ZMs316Yp2/y7CNsvEOJBIQuv+0852STX6coWxdVk/AQwxNlv
-         LdgT7/PU/KVgqdpSURI0QMVhT1bdyKdUYKN8B7GxdScsFnrrU8PsTtk8pod1UI6oiyjC
-         mDoF2M4aI+bwqUBhiXZdI2VGH1pJ1SkEIH6+SdCCEL6CSzDYqbpwit3IpUqcOAzhpR2w
-         K3moKPrADONZ1a3uanTfFRrDqDn7DDvIltCFBlYq9iUUEu7H2szGeYzFlfsqTJnQipEz
-         WN09G8vXyl4K6Mc4Tb4A4pAabJe+ba8hM5MWXXcUORwmmrhcB4q2GwBDtk6knkeQg0Qt
-         99+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUw6rhHcOQf9EPeMxLdZB2ilXCF3Utq/NG3zfJXQiluSm1GDFnSO19XqFWjE82hBiTf1b1qhd3NZw22IEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT/hbeSn6nFQgHCa6Vfhw0nXOqJikiUAIpYPL52R+oZUvVhOQS
-	c+THsgQY9X+PeznFO9LWf/AH9aQwVVzG8XlI7TW6T4m8xBYYDVS/Nhp3fWd/euo=
-X-Gm-Gg: ASbGnctXLXyDsnW/AXOYNSZc5emGK7S9fESKHfW1l+Jxhc9Z52ZDab9iAvpUFXcdKSm
-	pWWYRCRxGmNM6fE9hn/39+Fg3kGiOWC97SGYoIyGv2mn8gAo2F4/O0z1is7NAN4bw5OMUpQRQSC
-	7UmFOBu/hsF9swp+OSLrEuHRivQJ39pfZH9GzsMELKwXvajZiyWdtOHWi/Kar+BYAg6Pw/i/XYo
-	Fy7E23yYnAg5arSe3T1M1e7kUaNhiDsTs+QckIstV+Avh1qK3/IPxTeX4LD0XfYP3rK1HIZGZHc
-	NyqE6r7gI/Hqy8zf9TLBeJs=
-X-Google-Smtp-Source: AGHT+IHy79p8wpw9a/bGmuVyH6iKCQpoDtLC7+Y2eHtrwToW7GhqV++yQOsVgd9uP6UhFx1jyjEVpQ==
-X-Received: by 2002:a17:903:1b07:b0:216:3dd1:5460 with SMTP id d9443c01a7336-22dbf4d04c1mr8243245ad.2.1745571202300;
-        Fri, 25 Apr 2025 01:53:22 -0700 (PDT)
-Received: from telecaster ([2620:10d:c090:400::5:daee])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db51025fasm27066575ad.189.2025.04.25.01.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 01:53:21 -0700 (PDT)
-Date: Fri, 25 Apr 2025 01:53:19 -0700
-From: Omar Sandoval <osandov@osandov.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>, Chris Mason <clm@meta.com>,
-	Pat Cody <pat@patcody.io>, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org, patcody@meta.com,
-	kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-Subject: Re: [PATCH] sched/fair: Add null pointer check to pick_next_entity()
-Message-ID: <aAtNf6QMG7Dj6snR@telecaster>
-References: <20250402082221.GT5880@noisy.programming.kicks-ass.net>
- <b378f48593ca7449257a1bb55e78b186d88cd9f1.camel@surriel.com>
- <20250415080235.GK5600@noisy.programming.kicks-ass.net>
- <20250416124442.GC6580@noisy.programming.kicks-ass.net>
- <abffc286b637060f631925f9b373fad114d667d6.camel@surriel.com>
- <20250418154438.GH17910@noisy.programming.kicks-ass.net>
- <aALk9DVfjTTHGdvA@telecaster>
- <aAbdlTISuaJnc5AG@telecaster>
- <20250422141351.GG14170@noisy.programming.kicks-ass.net>
- <20250422151421.GB33555@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1745571225; c=relaxed/simple;
+	bh=0ic9nSHJIEU67IPNZMKfWmVwcxHXiqKoAMZ7l2TeF3M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r+A+zCAGBekWb5QHSAoDaEMJO1quYUalbd7QZo72ilnjmwjs0LmTcGW2jHDnoEwleiKZTL1CoayDPDk78EjJIJpcA4QZgEZ6KbBX0He8+ZnYDJd6/wVYAsLcsyqpYw04Dt38TgLE3cRjJWjyfuUka6NdhA+tp+mQFbmsdo4csoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JNKduLSl; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: c63d555e21b211f0980a8d1746092496-20250425
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=u6xY90hU6nu3Tth8oHF+kYJGFxaM/O8gw2OGN1LI5xc=;
+	b=JNKduLSldJ4SB/HrTfGWcJxy2hcu9ssza1r18RPFihO1Wcko5kvZhBBH+fHIHZOlsf5RriKiJZoXpRXOO0rtwY1xhkR8cpj7Fld6Wp1ythc4bsWYpSA1s8U/XPBU5WEvmk1HalHHGmzb9avEpLWpoNjo8pNaqUh0t7Pc4CCtHD8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:2a5b7d61-6d8c-4bab-a0f2-10203e219112,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:7ac8ca76-5fec-4b3e-b8cb-933843551e81,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
+	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
+	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 5,DFT|NGT
+X-CID-BAS: 5,DFT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: c63d555e21b211f0980a8d1746092496-20250425
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <kyrie.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 612131882; Fri, 25 Apr 2025 16:53:36 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 25 Apr 2025 16:53:35 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 25 Apr 2025 16:53:34 +0800
+From: Kyrie Wu <kyrie.wu@mediatek.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, kyrie wu
+	<kyrie.wu@mediatek.corp-partner.google.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Kyrie Wu <kyrie.wu@mediatek.com>
+Subject: [PATCH v3 03/12] media: mediatek: jpeg: add jpeg compatible
+Date: Fri, 25 Apr 2025 16:53:19 +0800
+Message-ID: <20250425085328.16929-4-kyrie.wu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20250425085328.16929-1-kyrie.wu@mediatek.com>
+References: <20250425085328.16929-1-kyrie.wu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422151421.GB33555@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Tue, Apr 22, 2025 at 05:14:21PM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 22, 2025 at 04:13:52PM +0200, Peter Zijlstra wrote:
-> > On Mon, Apr 21, 2025 at 05:06:45PM -0700, Omar Sandoval wrote:
-> > 
-> > > Hey, Peter,
-> > > 
-> > > We haven't been able to test your latest patch, but I dug through some
-> > > core dumps from crashes with your initial zero_vruntime patch. It looks
-> > > like on just about all of them, the entity vruntimes are way too spread
-> > > out, so we would get overflows regardless of what we picked as
-> > > zero_vruntime.
-> > > 
-> > > As a representative example, we have a cfs_rq with 3 entities with the
-> > > follow vruntimes and (scaled down) weights:
-> > > 
-> > > vruntime           weight
-> > > 39052385155836636  2      (curr)
-> > > 43658311782076206  2
-> > > 42824722322062111  4886
-> > > 
-> > > The difference between the minimum and maximum is 4605926626239570,
-> > 
-> > Right, that is quite beyond usable. The key question at this point
-> > is how did we get here...
-> > 
-> > > which is 53 bits. The total load is 4890. Even if you picked
-> > > zero_vruntime to be equidistant from the minimum and maximum, the
-> > > (vruntime - zero_vruntime) * load calculation in entity_eligible() is
-> > > doomed to overflow.
-> > > 
-> > > That range in vruntime seems too absurd to be due to only to running too
-> > > long without preemption. We're only seeing these crashes on internal
-> > > node cgroups (i.e., cgroups whose children are cgroups, not tasks). This
-> > > all leads me to suspect reweight_entity().
-> > > 
-> > > Specifically, this line in reweight_entity():
-> > > 
-> > > 	se->vlag = div_s64(se->vlag * se->load.weight, weight);
-> > > 
-> > > seems like it could create a very large vlag, which could cause
-> > > place_entity() to adjust vruntime by a large value.
-> > 
-> > Right, I fixed that not too long ago. At the time I convinced myself
-> > clipping there wasn't needed (in fact, it would lead to some other
-> > artifacts iirc). Let me go review that decision :-)
-> 
-> In particular, the two most recent commits in this area are:
-> 
->   https://lore.kernel.org/r/20250109105959.GA2981@noisy.programming.kicks-ass.net
->   https://lkml.kernel.org/r/20250110115720.GA17405@noisy.programming.kicks-ass.net
-> 
-> (from the same thread).
-> 
-> Note that it does call update_entity_lag() which does clip. So after
-> that it's just scaling for the new weight.
-> 
-> Notably, virtual time = time / weight, and the clip limit is adjusted
-> for weight.
-> 
-> So if it is inside limits pre-scaling, it should still be in limits
-> after scaling.
-> 
-> l = max / w;
-> 
-> w->w' --> l' = l*w/w' = (max / w) * (w/w') = max / w'
-> 
-> I've stuck some trace_printk()s on again, and the numbers I get here
-> seem sane.
+Add jpeg dec and enc compatible for mt8196
 
-For anyone following along, I found the source of the bad vruntimes and
-sent a patch:
+Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
+---
+ .../platform/mediatek/jpeg/mtk_jpeg_core.c    | 34 +++++++++++++++++++
+ .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.c  |  3 ++
+ .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.c  |  3 ++
+ 3 files changed, 40 insertions(+)
 
-https://lore.kernel.org/all/f0c2d1072be229e1bdddc73c0703919a8b00c652.1745570998.git.osandov@fb.com/
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
+index 7eb12449b63a..e89ccb8c904c 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
+@@ -1918,6 +1918,19 @@ static struct mtk_jpeg_variant mtk8195_jpegenc_drvdata = {
+ 	.jpeg_worker = mtk_jpegenc_worker,
+ };
+ 
++static struct mtk_jpeg_variant mtk8196_jpegenc_drvdata = {
++	.formats = mtk_jpeg_enc_formats,
++	.num_formats = MTK_JPEG_ENC_NUM_FORMATS,
++	.qops = &mtk_jpeg_enc_qops,
++	.m2m_ops = &mtk_jpeg_multicore_enc_m2m_ops,
++	.dev_name = "mtk-jpeg-enc",
++	.ioctl_ops = &mtk_jpeg_enc_ioctl_ops,
++	.out_q_default_fourcc = V4L2_PIX_FMT_YUYV,
++	.cap_q_default_fourcc = V4L2_PIX_FMT_JPEG,
++	.multi_core = true,
++	.jpeg_worker = mtk_jpegenc_worker,
++};
++
+ static const struct mtk_jpeg_variant mtk8195_jpegdec_drvdata = {
+ 	.formats = mtk_jpeg_dec_formats,
+ 	.num_formats = MTK_JPEG_DEC_NUM_FORMATS,
+@@ -1931,6 +1944,19 @@ static const struct mtk_jpeg_variant mtk8195_jpegdec_drvdata = {
+ 	.jpeg_worker = mtk_jpegdec_worker,
+ };
+ 
++static const struct mtk_jpeg_variant mtk8196_jpegdec_drvdata = {
++	.formats = mtk_jpeg_dec_formats,
++	.num_formats = MTK_JPEG_DEC_NUM_FORMATS,
++	.qops = &mtk_jpeg_dec_qops,
++	.m2m_ops = &mtk_jpeg_multicore_dec_m2m_ops,
++	.dev_name = "mtk-jpeg-dec",
++	.ioctl_ops = &mtk_jpeg_dec_ioctl_ops,
++	.out_q_default_fourcc = V4L2_PIX_FMT_JPEG,
++	.cap_q_default_fourcc = V4L2_PIX_FMT_YUV420M,
++	.multi_core = true,
++	.jpeg_worker = mtk_jpegdec_worker,
++};
++
+ static const struct of_device_id mtk_jpeg_match[] = {
+ 	{
+ 		.compatible = "mediatek,mt8173-jpgdec",
+@@ -1952,6 +1978,14 @@ static const struct of_device_id mtk_jpeg_match[] = {
+ 		.compatible = "mediatek,mt8195-jpgdec",
+ 		.data = &mtk8195_jpegdec_drvdata,
+ 	},
++	{
++		.compatible = "mediatek,mt8196-jpgenc",
++		.data = &mtk8196_jpegenc_drvdata,
++	},
++	{
++		.compatible = "mediatek,mt8196-jpgdec",
++		.data = &mtk8196_jpegdec_drvdata,
++	},
+ 	{},
+ };
+ 
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
+index e78e1d11093c..20553bf541df 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
+@@ -45,6 +45,9 @@ static const struct of_device_id mtk_jpegdec_hw_ids[] = {
+ 	{
+ 		.compatible = "mediatek,mt8195-jpgdec-hw",
+ 	},
++	{
++		.compatible = "mediatek,mt8196-jpgdec-hw",
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, mtk_jpegdec_hw_ids);
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
+index 9ab27aee302a..69c95113f205 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
+@@ -52,6 +52,9 @@ static const struct of_device_id mtk_jpegenc_drv_ids[] = {
+ 	{
+ 		.compatible = "mediatek,mt8195-jpgenc-hw",
+ 	},
++	{
++		.compatible = "mediatek,mt8196-jpgenc-hw",
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, mtk_jpegenc_drv_ids);
+-- 
+2.46.0
+
 
