@@ -1,139 +1,195 @@
-Return-Path: <linux-kernel+bounces-620648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D52A9CDB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D6CA9CDBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 18:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451A64A179F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAD11B80595
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 16:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7A218C322;
-	Fri, 25 Apr 2025 16:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2C18C933;
+	Fri, 25 Apr 2025 16:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BaeccDHv"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="JdVNc3E1"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E17F189F20
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0B518C02E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 16:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745597053; cv=none; b=qQ/Dm6IauOEhduHf5ifv/gdwPmU1yHqANclFCKj3y5T12fqTx0Mf8iEYuYTLyDRAshrK4Pj24J4Od619FzD8VQ1+dCHk7X2NceDmAwpyz8ZL/r/gVPGG4TlVx8yY4J7do9VC0c71oDG2A6tqOR8SgGlV9S54tpcPvlw4L9dNKp4=
+	t=1745597097; cv=none; b=SxYX3M74PgLvF5nS5+jP4rwpIqPOoV76ZGfU09YeP3gkUj1bFPYiUkPhcCxY802IvbwlQV7bPDhuVZPOqf06tKag7owryo/zSP3Mr0w68p4ASyY7LRTdqpn3N2nK+fZ3nTfdmLUVoRkNQhXa5bciY8DjXw++TPlHhXsJnEMEVaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745597053; c=relaxed/simple;
-	bh=hIMMmVhGXg5SLkbfuKp5Gsu/Gb5HryaY2msIq+5wmtQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nsIw1iwGmfe5E//vjeueHwOrUIjEd+4IKQEayvoz+DCGPHUnvUx7a1Us6pETTy85tKbugfIK7mD4j/SIVbydimErEn3YFdOpKsy0uKRRvziXU+ObatfF32MzLXsOIUV79woh7Zk6HdjFkThvxt/iBXVQXM/RMYJoFIDDE55WuYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BaeccDHv; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d5bc35ed3aso221325ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:04:11 -0700 (PDT)
+	s=arc-20240116; t=1745597097; c=relaxed/simple;
+	bh=23QgPi6XF0jIetS0s+QPwlevn+YBcwsl063Mh1cXQaU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=LZhjVq2rBeEkSmKUjNvSa6/K/o0jWzm72M2QMUfwPsx59gJmRScEfc6JCU+ygWqLbsBMjqyjzLLdG7tfCCatL7/Bvk/Y6pkQSdcbbKOsgasneaV9289bkMlF6toheIPo3hyOQP0jRckH0tkiKnFvsEVMnWsctj4QnhdbJd5yPyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=JdVNc3E1; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3912ebb8e88so158789f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 09:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745597050; x=1746201850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ventanamicro.com; s=google; t=1745597093; x=1746201893; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IJis+idf2PJBqpKbbBrBtHLOAbkaCHGsxT69CiZn9Is=;
-        b=BaeccDHvFZ8Fe4mXabfopRLVxKQ9Bgk2ieRcoSxypHk+BElWiltpbIkxOqBViopXcB
-         M3El2+5l9KENDd9iUMWAOycwXLpYU5moILe/DaMe0tq7OrgU2pNq9gZxKw5JbqymF6sp
-         XdEmHQI+CIz8QQnHKLkrXWrgJtsS+MZ8OmFViYpKE+FP5yTo21WzJ2VKKPDQzW+grxWM
-         l7Rj/6d+rEBXel6XAmPjCrE1k5P+dk2kMAa1omkyZ6o66mE6xIWXRi0aiKWnhGTNueu8
-         y8rJ/orTHCMZ39D7gDY7XElenBJbdFFrv5aeRugQhcMCY04WzxNV6vaj+92Y93wXib3j
-         S+6w==
+        bh=vVmQISaVL5Cg2XsgzQXK0sbbtQNmhL4LdWnCYGEZ450=;
+        b=JdVNc3E1vu+5NCR6xLM5WpSyAA6nYltdhfBvxzkGHaU4GOFNIt/DvRYUsJkogEwf/p
+         kZMo10t6xroBvou/QD+GvXOHg6BzwLzi+jO3aqzNjfkAHXqkoMbows2AkCr3hZ016fo5
+         giUQnhM1Pi07aqIm1tv1shGr1DjcBIYz3BYLTvoeMwQQ2bZfI3DnFs0SuHG4KXuSbKpZ
+         FC+iyb8/kahe4wfzYrXzqSBmhCGhS6NeEw2LKgFZx0h+RbjcEw29qqRDTYgL1Eh6FUAg
+         vBpw+u0YNuDELKUZlmeDL4t42OeDYhjTG8ISAWz2YjPqA7zqBKqI3dUEHWwBvwoGL2Kk
+         27yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745597050; x=1746201850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IJis+idf2PJBqpKbbBrBtHLOAbkaCHGsxT69CiZn9Is=;
-        b=iwP27LeeDq3XvqPkvHr59R+yd+xG9qX8/g3u0PEKMyl35hqXqbN9jdpRI4NVBaid99
-         KD5krUAit2QjZVcaODbkBjiWdJ5ZBzzB0TfkrLp0+t+HhH+HDyfJrAO4b+Vd0ctTdx6o
-         mRAvWBS+KHeoS/pvHUKR6510c3kPU0dSSLmH+rojpOpYUiFD3k2/XvJ215kpjP/qG0Lu
-         gXi385tC205+RlfUcKGX4wDejW8cienLwgBVdRVZXOBsuFNvV3NCXLzXWNw1ennr0Ue8
-         9avhtldvRxyL1mCJ1a0iOhGHQ0tLMk7WLcOCBBMPk4uiUJ3lTWZn8F2s4Hb7J5cvhVse
-         8J9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUE+2+jiuUZCvWkllFDFCzs9B7exUPzbR2kfgBTYI6B/X/aAUf4j+aa0cay9Qi2RV/UkH+LuBX78rqQm94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcuiEDSFpQyYrcUxuKP7veHgVREzHyG7nsZtGhlIP+q/7auIky
-	ybeSEi7gwtu1mLio0qfIf760vC1mm6LBNNXoeYrIzCZam8LPBG3xE3EFdjZssGk/5d99XhZowjf
-	Y0sk97vdyIR5XnrRsaM2WY6KUStH6BBIngLQD
-X-Gm-Gg: ASbGnctJeNLqDdEwO5nU9/Ml3NhxcdEWoJPlKTg6Ewbmq+eS1dQgRlWQQ/DZGf8Jhkp
-	Pa5U1O62X35Y57hsaLiTdUH3Vk0SoObhd91NA43t9ReDGGjA6FeECIDrAKvKY61O0vGfvFK4S2v
-	/cbJFHanVDrTaEI1SzhqVQhnQjk0xBnaK2bQ==
-X-Google-Smtp-Source: AGHT+IGpCL7uANXf1i5RK8BHDw8uOpYkVRUVZ6VE9xD2BW+PwsdhIiH3mHt7HLpAYGr0fJzJ2676rhN1n1V9oJnNFU4=
-X-Received: by 2002:a05:6e02:1a45:b0:3d9:25aa:a140 with SMTP id
- e9e14a558f8ab-3d93a7c6a49mr3192085ab.15.1745597050438; Fri, 25 Apr 2025
- 09:04:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745597093; x=1746201893;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vVmQISaVL5Cg2XsgzQXK0sbbtQNmhL4LdWnCYGEZ450=;
+        b=dkq8caNlblrIp4kh/0YVoiL9vIMy8V9wKakvb3YYEuSoDOLuqqBd1roZzb/au2a2df
+         t6JRMW/n65xaqpVuvs95BcymCy8TEExw2uMuv2uCZCx9ihJEIBVPM6xJ/k2AzB+uj37T
+         8djOaIj+LRsTfkUG1XUal9AGXbSjDtUKCkp4XDvKyDJE4P5i6244S5BwBrHssx70MOjr
+         L03Ep3eUkAXoQ/CN2XgYg47dfOnLuwc9Tkrt2bHSmWtfioVVOE9bLByDIwEN79p1Bk8X
+         e65boAMuZT68CDKPc/L4isJwda6YqyW3e7RF0ZNRN1BFeqGBbY+43BuK1MzHLrLZHYhI
+         BusA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcvPZY8QsvwkNdjQhi0iw+bOCsQzasFS0S0q+D/OB3VcW6YuWOkMXdvZIjR43/fGQA9YjP+6RBXAVrsSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvnqSkJwdKt+N0uqFwxgeQR9dXnU5WV0GodafDHTYUdiO74ygQ
+	YwknK3eO1TAXwu73GUWMjWVZ+RkND2dU3aQjv6Oz3fT9m4PIoBuy7WrUWU0CSb0=
+X-Gm-Gg: ASbGncutiEQ9zcN00YRloWu/DU6yRp8txLIREfCPlCCJEPmStwpdzMGXClhe6TDFxVr
+	ne0DZdug9CJzS/7K/Vs1bI69FdxpmS9HUoM+ZDGPi9s2BRsq4Jvxk4tqqW1Emnvo1sQAICCQSS9
+	BfvrTC8tQjJ/LWyGJxndpnxmLSv8dEEBqcyuijnKxZo1UT5gZr30FxmZy+aBpBn+JsYt2s6kttc
+	ccIs6a4Rp73uv6zimUeFNVV+PAit4RONnxWtOwD9jQ9Qi9Wlprj/zUZ+oa2YDltQoJqXqcfnxwk
+	wN6i0Je2tbAhCpjSkkBq3fvqo+xWyGyVI1LtOQXtafexGMd+
+X-Google-Smtp-Source: AGHT+IFygwyNuR6Mluia/w4Oq01jCNKf5/yVIETD2X/Y28L1PTlwfkhtOAURq+PQcMZWcGjTeDYsfw==
+X-Received: by 2002:a05:6000:2211:b0:3a0:1d90:f7c1 with SMTP id ffacd0b85a97d-3a074d90429mr834424f8f.0.1745597093416;
+        Fri, 25 Apr 2025 09:04:53 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:84a3:2b0a:bdb8:ce08])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46981sm2731522f8f.66.2025.04.25.09.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 09:04:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250424061943.1321025-1-irogers@google.com> <20250424061943.1321025-6-irogers@google.com>
- <CAP-5=fXHay1Qn7c3JUe4nH-cTw8zPhPv6-XWMZdPKpwwT=9n2w@mail.gmail.com> <aAugBbpOHQyu7YK2@x1>
-In-Reply-To: <aAugBbpOHQyu7YK2@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 25 Apr 2025 09:03:59 -0700
-X-Gm-Features: ATxdqUHJClydx5PmGHm-hPQCiW_3yHysNRLOzFT7WStr0Wj1CfLke6VtmJmxtzk
-Message-ID: <CAP-5=fWwW9G7EpR6Bn02dm9PVsqvzyDBcAzzVF1Sc2djAcqaYw@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] perf record: Make --buildid-mmap the default
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Athira Rajeev <atrajeev@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
-	Li Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, James Clark <james.clark@linaro.org>, 
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Michael Petlan <mpetlan@redhat.com>, 
-	=?UTF-8?Q?Krzysztof_=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Leo Yan <leo.yan@arm.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, Zixian Cai <fzczx123@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Martin Liska <martin.liska@hey.com>, 
-	=?UTF-8?Q?Martin_Li=C5=A1ka?= <m.liska@foxlink.cz>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Apr 2025 18:04:52 +0200
+Message-Id: <D9FUIXQ1FIHS.2BLRCEWLXZL45@ventanamicro.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH 4/5] KVM: RISC-V: reset VCPU state when becoming
+ runnable
+Cc: <kvm-riscv@lists.infradead.org>, <kvm@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Anup
+ Patel" <anup@brainfault.org>, "Atish Patra" <atishp@atishpatra.org>, "Paul
+ Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Mayuresh Chitale" <mchitale@ventanamicro.com>
+To: "Andrew Jones" <ajones@ventanamicro.com>
+References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com>
+ <20250403112522.1566629-7-rkrcmar@ventanamicro.com>
+ <20250425-2bc11e21ecef7269702c424e@orel>
+In-Reply-To: <20250425-2bc11e21ecef7269702c424e@orel>
 
-On Fri, Apr 25, 2025 at 7:45=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+2025-04-25T15:26:08+02:00, Andrew Jones <ajones@ventanamicro.com>:
+> On Thu, Apr 03, 2025 at 01:25:23PM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 wro=
+te:
+>> Beware, this patch is "breaking" the userspace interface, because it
+>> fixes a KVM/QEMU bug where the boot VCPU is not being reset by KVM.
+>>=20
+>> The VCPU reset paths are inconsistent right now.  KVM resets VCPUs that
+>> are brought up by KVM-accelerated SBI calls, but does nothing for VCPUs
+>> brought up through ioctls.
 >
-> On Thu, Apr 24, 2025 at 12:20:44AM -0700, Ian Rogers wrote:
-> > On Wed, Apr 23, 2025 at 11:19=E2=80=AFPM Ian Rogers <irogers@google.com=
-> wrote:
-> > > @@ -1795,7 +1796,8 @@ record__finish_output(struct record *rec)
-> > >                         data->dir.files[i].size =3D lseek(data->dir.f=
-iles[i].fd, 0, SEEK_CUR);
-> > >         }
-> > >
-> > > -       if (!rec->no_buildid) {
-> > > +       /* Buildid scanning disabled or build ID in kernel and synthe=
-sized map events. */
-> > > +       if (!rec->no_buildid && !rec->buildid_mmap) {
->
-> > So I think this is wrong. It matches current behaviors, but it is
-> > wrong. If we don't process the kernel's mmap events the DSOs won't be
-> > loaded and the build ID cache won't contain the DSOs. There is also
-> > the bug that the sample processing to find maps to find DSOs, doesn't
-> > handle call chains. Given the broken nature of the build ID cache I'm
-> > not sure it makes any sense for perf record to be by default
-> > populating it. I think it probably makes sense to consider the default
-> > population a legacy feature and make -N the default along with
-> > --buildid-mmap.
->
-> The first four patches are good fixes/cleanups, so I'm picking them, ok?
+> I guess we currently expect userspace to make a series of set-one-reg
+> ioctls in order to prepare ("reset") newly created vcpus,
 
-Thanks, happy for the clean ups to land. I'm keen to push the needle
-on making build IDs the norm in the codebase so if we don't take the
-switching on build ID mmap by default change, let me know what I can
-do to make it so it can land.
+Userspace should currently get-one-reg a freshly reset VCPU to know what
+KVM SBI decides is the correct reset.  Userspace shouldn't set-one-reg
+anything other than what KVM decides, hence we can currently just let
+KVM do it.
 
-Thanks,
-Ian
+>                                                           and I guess
+> the problem is that KVM isn't capturing the resulting configuration
+> in order to replay it when SBI HSM reset is invoked by the guest.
+
+That can also be a solution, but it's not possible to capture the
+desired reset state with current IOCTLs, because the first run of a VCPU
+can just as well be a resume from a mid-execution.
+
+>                                                                   But,
+> instead of capture-replay we could just exit to userspace on an SBI
+> HSM reset call and let userspace repeat what it did at vcpu-create
+> time.
+
+Right, I like the idea.  (It doesn't fix current userspaces, though.)
+
+>> We need to perform a KVM reset even when the VCPU is started through an
+>> ioctl.  This patch is one of the ways we can achieve it.
+>>=20
+>> Assume that userspace has no business setting the post-reset state.
+>> KVM is de-facto the SBI implementation, as the SBI HSM acceleration
+>> cannot be disabled and userspace cannot control the reset state, so KVM
+>> should be in full control of the post-reset state.
+>>=20
+>> Do not reset the pc and a1 registers, because SBI reset is expected to
+>> provide them and KVM has no idea what these registers should be -- only
+>> the userspace knows where it put the data.
+>
+> s/userspace/guest/
+
+Both are correct...  I should have made the context clearer here.
+I meant the initial hart boot, where userspace loads code/dt and sets
+pc/a1 to them.
+
+>> An important consideration is resume.  Userspace might want to start
+>> with non-reset state.  Check ran_atleast_once to allow this, because
+>> KVM-SBI HSM creates some VCPUs as STOPPED.
+>>=20
+>> The drawback is that userspace can still start the boot VCPU with an
+>> incorrect reset state, because there is no way to distinguish a freshly
+>> reset new VCPU on the KVM side (userspace might set some values by
+>> mistake) from a restored VCPU (userspace must set all values).
+>
+> If there's a correct vs. incorrect reset state that KVM needs to enforce,
+> then we'll need a different API than just a bunch of set-one-reg calls,
+> or set/get-one-reg should be WARL for userpace.
+
+Incorrect might have been too strong word... while the SBI reset state
+is technically UNSPECIFIED, I think it's just asking for bugs if the
+harts have different initial states based on their reset method.
+
+>    set/get-one-reg should be WARL for userpace.
+
+WAAAA! :)
+
+>> The advantage of this solution is that it fixes current QEMU and makes
+>> some sense with the assumption that KVM implements SBI HSM.
+>> I do not like it too much, so I'd be in favor of a different solution if
+>> we can still afford to drop support for current userspaces.
+>>=20
+>> For a cleaner solution, we should add interfaces to perform the KVM-SBI
+>> reset request on userspace demand.
+>
+> That's what the change to kvm_arch_vcpu_ioctl_set_mpstate() in this
+> patch is providing, right?
+
+It does.  With conditions to be as compatible as possible.
+
+>> I think it would also be much better
+>> if userspace was in control of the post-reset state.
+>
+> Agreed. Can we just exit to userspace on SBI HSM reset?
+
+Yes.  (It needs an userspace toggle if we care about
+backward-compatiblity, though.)
+
+How much do we want to fix/break current userspaces?
+
+Thanks.
 
