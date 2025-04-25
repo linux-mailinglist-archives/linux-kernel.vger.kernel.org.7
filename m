@@ -1,109 +1,149 @@
-Return-Path: <linux-kernel+bounces-620426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-620378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CF9A9CA9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CF9A9C9DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 15:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697093B7032
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:38:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F44F7A56E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Apr 2025 13:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0BE253338;
-	Fri, 25 Apr 2025 13:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOU+Khpl"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C2024EABD;
+	Fri, 25 Apr 2025 13:14:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D981C101DE;
-	Fri, 25 Apr 2025 13:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837D524E00D;
+	Fri, 25 Apr 2025 13:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745588305; cv=none; b=der57KdF5UYwcwclauPOull0e1lbgOM5ts2FTv2kVwirwDPStK0dAH0SHu5kEwBVRkZaw/m/DFIIGgudadqdtfvO0qh34z8ENsX3j0SZXJxx4ck3sf3S6XnyckBks+eiZXI97n4PlrgKSeKrf/m30l6VQVHUxG7uaD9zmwRwu4s=
+	t=1745586851; cv=none; b=rKEY0utMGXcqJMLnV7HFLzLvzaR3wmW0uZu65+mbVdsJHVCbJJzIbIZ05Syp0T+96lGy/+yASEJ4wjUX5EcmhnjeOEa+c1kLgGGH9NSVlUZFxMtL53SY6zSdMdKgT307pUedg3tBh8LToFFqyqO8UvyXTW/79DrSGSUFXEUFMAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745588305; c=relaxed/simple;
-	bh=eql/A+0VoqpLXSVZu0IePHu6j73BQUU/xmbRTnd/rgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBBIsW5EfoGBsMOyuyWRHLrWYUZBfv/+ZEY3PcDFc4UTZz9kqznpafpRFPq8ZMNDqBZqvWEjtVK1yoR27v3gXZrmY7c+gsSaNTfR6LmZ4UEYQraHQPc82rv7CS5sxJvQg6HFQB9qgbMpYORGmBm75DU3Vcl6K/3kuntfNMuPbao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOU+Khpl; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so281166766b.1;
-        Fri, 25 Apr 2025 06:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745588302; x=1746193102; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6IMOiea3GhWLNir4wotniHxT7Pbt88zv8Te73Hc/hlo=;
-        b=DOU+KhplU67M4ZzYCO1kER1D3hGAZiSZ4t7//PMl/OpmyounmJ6BiSnspEJrbaj9Th
-         6X0RnB18OM9yH8uCPGyjR7rCkivL3JsFvTfGgflP0+nMVMHmLdnJjEU+bBkz5VdEun6o
-         EJthSWvFU+HVqjQ25alXkt1iDIxG+VtwpoKG7uQJD+ud1E4LNKLYkkdyEVRSvLXdecxl
-         KBcWGHi7sEHx5yWdDXObwzUTBbQM+/0EteDQ7LVARSLXli81JzxuTIUGw9w4TlZjelvL
-         nZdkRPsCKQ8q4VbbvuTPIs+czc5kyJ2tkzroelLUtvzbNd31MzxWj+JKeaQP75FbI7Bz
-         lLMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745588302; x=1746193102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6IMOiea3GhWLNir4wotniHxT7Pbt88zv8Te73Hc/hlo=;
-        b=Aw7XbRfKUhoBpY3d7qcMfH5CCxkwqdqmyhDHCT7Y1S51aaNO4nW2uPzsI2dnxjYPM1
-         xTZvqtPIkj0kdM1A9Bdc9Z7pDnMAA4I+pv8YJXPiCavkcfXS/a0NpUH6tJ9cCelTEZH0
-         C9f8fteYBogqAvjP8iCBwTpFFY/e5e+X6+ClveuO0fNAYwWFcMT/So1pLubrqVndOU8C
-         pS8MPWXmKRXHMSbCUar2j/DDZ5XTtN/QvL+Z7juXDX53Apt+FNWP3RlTk7JEKG+dyPil
-         MpIc3CWn9xM6tj808zqMFMtArpBuSRBCwX6VzdwMXPMJA4uV+FQ5nLFosxprGBr/8DnW
-         m3fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbC8uufFucUyq9YlC3Y6jDgte3p09bAEUo8Ico4sz4ZblatopcMAMhQo5S4Ya9FGKLzUlO0Ywu0znxDyXFL8E=@vger.kernel.org, AJvYcCWULbDlijwbofB4bU2W1f1esWwT6RLp5W1jnRDup0EOE5H/tFlgaLJe/QDdP94+EVPsQBBRqNEnz1kD2mTa@vger.kernel.org, AJvYcCX1TbrACREO/GJhHO3o7TdMFYHQcsObV9a4paP9VJWDts3WZPlC1HhJazG/5quNLWtDHTCRORGIRw1m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9s2AStzfl+O4zIctcTAmxsJzITnCgamWYKVWU14N2MzHoXeQS
-	SWqB9rDrKvGHVQpch+6pscb5aqfu9eZeD3kdt8X7iyKOSZ9n4y+t
-X-Gm-Gg: ASbGncttWQpL43rwDNpkZI/vxUNFAWasSGxW99KvrLQI//X0bYZwUHSJHTNlLg+L2K2
-	WkkoDNUkK9uLT1NNbvP4VfmmYP5vvS/ePv9EGU760P6ZFrOPz+oQluc0yNdSvMg2QjTrEkaNYKh
-	GKhNCDU5/R/y3PktJBNljhwIsV0PaYp4SOv3HyqmfdVEP5zzBAJftnihRSKjDnH7CoIMl6v1swC
-	+fKXghuN4+dEsJcrY+lmKUbfJLarAxob702h+t3URNX52mbRdkJOmaxSHW2Rus3dcEQvoOLbOtV
-	xW+vBS8uSAJYDRaXjcbAjG/+TwG+Lt8BwLbo8ONqy4nlu4BVlAdITzw=
-X-Google-Smtp-Source: AGHT+IG1oJi+fCaW3nLcNOn339NORpBu1OpVP+r3+z/N3hqTIFh+IGeR/Kz+ryWWUdgqSktDSZIf3w==
-X-Received: by 2002:a17:906:730f:b0:acb:88ac:e30f with SMTP id a640c23a62f3a-ace710c6585mr259076066b.20.1745588301955;
-        Fri, 25 Apr 2025 06:38:21 -0700 (PDT)
-Received: from localhost ([217.151.144.138])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ace6e4e7a4fsm142045666b.61.2025.04.25.06.38.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 06:38:21 -0700 (PDT)
-Date: Fri, 25 Apr 2025 15:11:55 +0200
-From: Oliver Graute <oliver.graute@gmail.com>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: imx8qm: add system controller
- watchdog support
-Message-ID: <aAuKG-_vk36dK0is@graute-macos>
-References: <20250414-imx8qm-watchdog-v2-0-449265a9da4e@bootlin.com>
- <20250414-imx8qm-watchdog-v2-2-449265a9da4e@bootlin.com>
+	s=arc-20240116; t=1745586851; c=relaxed/simple;
+	bh=p9uvMC7OUclf4qAiBvQ87dCW505h28sVCCqJAIvv5/8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cpaesw+/QuljJMTZAlqABUzHQ4Tpl1uGwcOO6f5pC2U63JZnu6E9lHm91LZld3P7kpbfaz/boLiI6obpHPKKwinHkKg7WgkqTwazuhVyyhK83rUeeVaHq9tmyQuFfExgcJN2Syj3fxvmGmhqrw8Nyb2GPXgO5hIOBqOEIdhe5Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZkY8v1fQYz6M4vJ;
+	Fri, 25 Apr 2025 21:09:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5BB91404F5;
+	Fri, 25 Apr 2025 21:14:03 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Apr
+ 2025 15:14:02 +0200
+Date: Fri, 25 Apr 2025 14:14:01 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Karolina Stolarek <karolina.stolarek@oracle.com>
+CC: Bjorn Helgaas <helgaas@kernel.org>, "Shen, Yijun" <Yijun.Shen@dell.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, Jon Pan-Doh
+	<pandoh@google.com>, Terry Bowman <terry.bowman@amd.com>, Len Brown
+	<lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck
+	<tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Ben Cheatham
+	<Benjamin.Cheatham@amd.com>, Ira Weiny <ira.weiny@intel.com>, Shuai Xue
+	<xueshuai@linux.alibaba.com>, Liu Xinpeng <liuxp11@chinatelecom.cn>, "Darren
+ Hart" <darren@os.amperecomputing.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] PCI/AER: Consolidate CXL, ACPI GHES and native AER
+ reporting paths
+Message-ID: <20250425141401.0000067b@huawei.com>
+In-Reply-To: <61d3f860-9411-4c86-b9c4-a4524ec8ea6d@oracle.com>
+References: <20250424172809.GA492728@bhelgaas>
+	<61d3f860-9411-4c86-b9c4-a4524ec8ea6d@oracle.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414-imx8qm-watchdog-v2-2-449265a9da4e@bootlin.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 14/04/25, Thomas Richard wrote:
-> Add system controller watchdog support for i.MX8QM.
+On Fri, 25 Apr 2025 12:32:10 +0200
+Karolina Stolarek <karolina.stolarek@oracle.com> wrote:
+
+> On 24/04/2025 19:28, Bjorn Helgaas wrote:
+> > [+to Yijun @Dell in case there's some testing opportunity, thread at
+> > https://lore.kernel.org/r/81c040d54209627de2d8b150822636b415834c7f.1742900213.git.karolina.stolarek@oracle.com]
+> > 
+> > On Thu, Apr 24, 2025 at 11:01:11AM +0200, Karolina Stolarek wrote:  
+>  >>
+> >> The only way to inject GHES errors I'm aware of is Mauro's patch for
+> >> qemu[1], so I went down the virtualization path. As for working with the
+> >> actual hardware, I'd need to ask around and learn more about the platform.  
+> > 
+> > I'd be surprised if the qemu firmware supports firmware-first
+> > handling, so I wouldn't expect to be able to exercise this path that
+> > way.  I think there are some bits in HEST and similar tables that tell
+> > us about this, e.g., ACPI r6.5, sec 18.3.2.4.  
 > 
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-Acked-by: Oliver Graute <oliver.graute@kococonnector.com>
+> It's possible that some of the nuances of this escaped me. I decided to 
+> pick up the series, as I saw "PCI Express bus error injection via GHES" 
+> script and thought it might be useful.
+
+With Mauro's series you can inject (on ARM64 virt) any CPER record you
+like.  That doesn't synchronize the wider state of the system though
+so may not exercise everything (PCI registers etc not updated as it
+is only injecting the record).  Mostly it just works, as remarkably 
+few error handlers actually take the state of the components on which
+the error is reported into account.
+
+The aim is specifically to allow exercising FW first error handling
+paths because it's a pain to get real systems that have firmware to inject
+the full range of what the kernel etc need to handle.
+
+x86 support for emulated injection is a work in progress (more of a mess wrt
+to the different ways the event signaling is handled than it is on arm64).
+
+I did have an earlier version of that work wired up to the same
+hooks as the native CXL error injection but I dropped it from my QEMU
+CXL staging tree for now as it was a pain to rebase whilst Mauro was rapidly
+revising the infrastructure.  I'll bring it back when I get time.
+
+Jonathan
+
+> 
+> > Unfortunately there are some typos in the spec (FIRMWARE_FIRST,
+> > FIRMWAREFIRST in 18.4), so it's a little hard to find all the
+> > references.  
+> 
+> Thanks for the pointers, I'll take a look.
+> 
+> > It's a long shot, but I added Yijun as a Dell contact that who might
+> > have a pointer to someone who could possibly test GHES logging on a
+> > Dell box with and without your patch so we could have a concrete
+> > comparison of the dmesg log differences.  
+> 
+> Thank you very much. Let's see, maybe we'll get lucky :)
+> 
+> All the best,
+> Karolina
+> 
+> >   
+> >>> If you can't produce actual logs for comparison, I think we can take
+> >>> info from a sample log somebody has posted and synthesize what the
+> >>> changes would be after this patch.  
+> >>
+> >> I also found some logs at some point, mostly from 2021 and 2023, but I felt
+> >> bad about mocking up the messages and tried to produce actual logs. If I
+> >> can't find a way to get this working in two weeks, I'll revisit this idea.
+> >>
+> >> All the best,
+> >> Karolina
+> >>
+> >> -------------------------------------------------------------
+> >> [1] - https://lore.kernel.org/lkml/76824dfc6bb5dd23a9f04607a907ac4ccf7cb147.1740653898.git.mchehab+huawei@kernel.org/  
+> 
+> 
+
 
