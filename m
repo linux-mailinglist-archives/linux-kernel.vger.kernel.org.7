@@ -1,121 +1,83 @@
-Return-Path: <linux-kernel+bounces-621458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4BBA9D9FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FA3A9DA13
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7A84A7F92
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5792E4C0140
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5055F225A23;
-	Sat, 26 Apr 2025 10:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10710224257;
+	Sat, 26 Apr 2025 10:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nN+8CViK"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="1pEJTd38"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74F01EE021
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB63A251780;
+	Sat, 26 Apr 2025 10:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745661926; cv=none; b=AuqIojZCncu66fLwqiWuBMzwx+/U+L1xN5bW0GbavDl/bVFn/0U8SGerQus6iXgbaQHJJgkG3RfFosMbhZxbESA5fcXDX4Wn505liXWVpKG6SfV6ibrKahUBeobdVkj2u2FFT9vESud+mUVKm0g5lk0Wt60K3EYM/Na4hkBSOfM=
+	t=1745662795; cv=none; b=tTtwmK9t8vOk88TPNm6zyYwAc/l821eoZE4YM24PD1WWz4MBvOmvWc5bjpkD8IH2UCNYFpZrB9kTjv2SG8/n9asB1sMHOmBrSboXHMcH4TeKNRMijJ0nNgnOFcV04xuyhAD3A3c4igVf7KgGFoSIrwca6bBopSaFvxJrSEmv+5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745661926; c=relaxed/simple;
-	bh=h5nDQI4JyGOjMxhPbRkAI1pqnBTIqjl9/FBQRi4VPGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7wzi0zg9tSKNgb1lRbMEBv7Z9pqoqocpzKiMyHzyXIPuU/HeTmcXufav5dhPl5xTb5f1ilmEyGYkd0OKSKgmJEeVVs/t8kj/umjHyOcvfE/bQj1T84AfHhMkabkiOKKCKf357Q2e/3iJeVBe+GbvSmWk4OjHyoIH9Nn6iOj2iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nN+8CViK; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745661920;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tsXNwk53+3Gu5tZw/HRtX0kZWtSs7hie+/fyzm0FRPE=;
-	b=nN+8CViKIByaAP4gQ2WEeblprOTXu2XVUZJvsbe6TGuHyxYG9Jc1+A65ihYAS5af8hGlAE
-	wQE3TzwNcD9XP6lcmeuoSFLw6UhY+w4BTVfL93SXIypxW0dY3nxjWQVUGmrXzTBsC8lcgh
-	5AZ5dlRnpPG3T0hM438QHHSpSeB9d08=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jon Maloy <jmaloy@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	netdev@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] tipc: Replace msecs_to_jiffies() with secs_to_jiffies()
-Date: Sat, 26 Apr 2025 12:04:44 +0200
-Message-ID: <20250426100445.57221-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1745662795; c=relaxed/simple;
+	bh=Gi4j3/CStBhVaColCj9R9LbTwPaj/OLr7aMH5pr1hDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iOpOR/LneKLJuERs9I39YjpMgCFdQFmO2kWuIkXdq1EmzlikxjPusIUbJemVhPWH9lO/Clak+ThUTYxvD2FbGDrPi20LaQy812tExgIFe3nR3FZ0WHDzQ8TDSkNWgu2ZJT/PTfOTclfMMQBSYXKv95OEE+XpNUj7Wjq2WuH41ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=1pEJTd38; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=vUfBLhny/0NLdb0Q3q96q+rAFFUP94yvmCb4kfOb41o=; b=1pEJTd38fUuMwt9fBRDqdD6DAB
+	vMcI6iM52egg2hGUOUJfAoTdol0Bjyf8adf1LnKmx0159/xAy1HGTCFJ9yjRW99rWfdJM3crXL3hK
+	DoxjvUN/3HEJusEs4UcPkKgIzKV6Mi9zKx3lZiTZxQXB8dOVGB62wVgo7ETAz7y2S6CFRBQxtPzEX
+	H86ggO93qASnN7/iyW0Xw8uABpr4TS4Eh14syuPS5987La2V2/qYqAdWMvvJK5SiGv8RK0/PvXI/b
+	V/fVSm5yjqgUvAbbdzd2K3aRE183gorJ+VpKW5R2GtHJZnHYpZz6hBUe2TxgIFWqIppuuFhqKRE3x
+	2YzdlIZA==;
+Date: Sat, 26 Apr 2025 11:54:24 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
+ tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nm@ti.com, pratheesh@ti.com, prajith@ti.com, vigneshr@ti.com,
+ danishanwar@ti.com, praneeth@ti.com, srk@ti.com, rogerq@ti.com, afd@ti.com,
+ krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com,
+ basharath@couthit.com
+Subject: Re: [PATCH v1 1/1] bus: ti-sysc: PRUSS OCP configuration
+Message-ID: <20250426115424.518cfe88@akair>
+In-Reply-To: <20250407072134.1044797-2-parvathi@couthit.com>
+References: <20250407072134.1044797-1-parvathi@couthit.com>
+	<20250407072134.1044797-2-parvathi@couthit.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Use secs_to_jiffies() instead of msecs_to_jiffies() and avoid scaling
-'delay' to milliseconds in tipc_crypto_rekeying_sched(). Compared to
-msecs_to_jiffies(), secs_to_jiffies() expands to simpler code and
-reduces the size of 'tipc.ko'.
+Am Mon,  7 Apr 2025 12:51:34 +0530
+schrieb Parvathi Pudi <parvathi@couthit.com>:
 
-Remove unnecessary parentheses around the local variable 'now'.
+> Updates OCP master port configuration to enable memory access outside
+> of the PRU-ICSS subsystem.
+> 
+> This set of changes configures PRUSS_SYSCFG.STANDBY_INIT bit to enable
+> the OCP master ports during resume sequence and disables the OCP master
+> ports during suspend sequence (applicable only on SoCs using OCP
+> interconnect like the OMAP family).
+> 
+> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
 
-No functional changes intended.
+mirrors what is done on module disable, so it looks sane.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- net/tipc/crypto.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
-index c524421ec652..45edb29b6bd7 100644
---- a/net/tipc/crypto.c
-+++ b/net/tipc/crypto.c
-@@ -41,10 +41,10 @@
- #include "msg.h"
- #include "bcast.h"
- 
--#define TIPC_TX_GRACE_PERIOD	msecs_to_jiffies(5000) /* 5s */
--#define TIPC_TX_LASTING_TIME	msecs_to_jiffies(10000) /* 10s */
--#define TIPC_RX_ACTIVE_LIM	msecs_to_jiffies(3000) /* 3s */
--#define TIPC_RX_PASSIVE_LIM	msecs_to_jiffies(15000) /* 15s */
-+#define TIPC_TX_GRACE_PERIOD	secs_to_jiffies(5)
-+#define TIPC_TX_LASTING_TIME	secs_to_jiffies(10)
-+#define TIPC_RX_ACTIVE_LIM	secs_to_jiffies(3)
-+#define TIPC_RX_PASSIVE_LIM	secs_to_jiffies(15)
- 
- #define TIPC_MAX_TFMS_DEF	10
- #define TIPC_MAX_TFMS_LIM	1000
-@@ -2348,7 +2348,7 @@ static void tipc_crypto_work_rx(struct work_struct *work)
- 	struct delayed_work *dwork = to_delayed_work(work);
- 	struct tipc_crypto *rx = container_of(dwork, struct tipc_crypto, work);
- 	struct tipc_crypto *tx = tipc_net(rx->net)->crypto_tx;
--	unsigned long delay = msecs_to_jiffies(5000);
-+	unsigned long delay = secs_to_jiffies(5);
- 	bool resched = false;
- 	u8 key;
- 	int rc;
-@@ -2418,8 +2418,8 @@ void tipc_crypto_rekeying_sched(struct tipc_crypto *tx, bool changed,
- 	}
- 
- 	if (tx->rekeying_intv || now) {
--		delay = (now) ? 0 : tx->rekeying_intv * 60 * 1000;
--		queue_delayed_work(tx->wq, &tx->work, msecs_to_jiffies(delay));
-+		delay = now ? 0 : tx->rekeying_intv * 60;
-+		queue_delayed_work(tx->wq, &tx->work, secs_to_jiffies(delay));
- 	}
- }
- 
--- 
-2.49.0
-
+Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
 
