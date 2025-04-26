@@ -1,231 +1,109 @@
-Return-Path: <linux-kernel+bounces-621553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F88A9DB38
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:40:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF1EA9DB4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D1371BC3F0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF2B1B676C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2241DE2B5;
-	Sat, 26 Apr 2025 13:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C3A253923;
+	Sat, 26 Apr 2025 13:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcQjy28L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="K+bpHxuT"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBF91DDA36;
-	Sat, 26 Apr 2025 13:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC04828373;
+	Sat, 26 Apr 2025 13:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745674825; cv=none; b=i7960ljtu+0na8Lz2L1TKrgV0P3x17U44RNpQRR55/wHp3iSn6UaL0M5qmxHXoF4lxh/bjUNC4831aMAQpAPJi/7TRtzrqZzd+yFSfLqCxr6M3x3KhxA2FzLfYOvzmb+yaOpnEejcADpEbyb7ny7ezMq8dr/D/gdR4BHpGIZtWk=
+	t=1745675307; cv=none; b=E4S/VTizPzpTQCyk/HyR7IlQs2WoXCG4l9NPdnEBPjelqncTE443xb2fn9N+nA6tcU1cY718zMbtXiZYos1u4P0GsOfpV/O38joOzymIco5bYk22t89/a/waO7PfuCyAJFSVgJwobaCh+xiZr2lwxGe+JL8TXYF+bGeiVNaz6AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745674825; c=relaxed/simple;
-	bh=a9YheHxg1bV1k91w8fVr/bZrKoFwcOIpG9RZjVvkrz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EY3dKXbPsOehQQupswXK0DoxqDrMphjthIfRjaR/2LoNQta5yLJusICTLkvv7yK6tFfp6pw/aPbHsT88/a5q/fIqe2AtmdRqMwbeMgzyzdzI1v/H3n4iYqk97VRYd6BVzDWMAV8rBGjjjTbYs/ZkfuuT94VQ3b1rI+0rR/+aSJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcQjy28L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C27C4CEE2;
-	Sat, 26 Apr 2025 13:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745674825;
-	bh=a9YheHxg1bV1k91w8fVr/bZrKoFwcOIpG9RZjVvkrz0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BcQjy28LSXcL4Q7Bmqje5GO1AGtsKqSv2gl4lumrPJNhK6Mv6Z9Wj8Eo6/KHjjLfr
-	 ky7vQJmVAdT3yC0RBIm7fL1+MM6GmTVzpn9imZtGMn3YZE6UNMpQbJ3RDxCqeTdlhG
-	 kSpyf317MAUowNgjb4/xX4y9mGUD+pb2RROh01/QgkgAeGFivUB0dDeaDS2SaJgCLN
-	 WfWPTshnGHUxHvHgGLb1zeJZ6FLVl3ReuFSlhl4866CNEFqhuphfe/Pas2rBMzSiYw
-	 feaYelGO4AgVrCw4tI8YZTL51UZc5aeJAfvqevlB33JCp8yq5JlWR3MiwG6ia3Vdak
-	 Gq7o5DnsSb7VQ==
-Date: Sat, 26 Apr 2025 14:40:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: imu: bmi270: add channel for step counter
-Message-ID: <20250426144020.2633f9cb@jic23-huawei>
-In-Reply-To: <20250424-bmi270-events-v1-1-a6c722673e5f@gmail.com>
-References: <20250424-bmi270-events-v1-0-a6c722673e5f@gmail.com>
-	<20250424-bmi270-events-v1-1-a6c722673e5f@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745675307; c=relaxed/simple;
+	bh=nrZSCfPbnk5nx5eNvJ+bauiybIFi8fpp8A71FO4JFzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SsA6Eb9DJvoR6p6yZsXVFxlt///Q4ESQT4mUdgrUzzEWizJTirWSgGCKgF+giUVHXgtJbVz0gcuguLvuONc35IZ03bukRA6kOXcvOAnYpexoDE13mSX/Mg8AOWre/yZzHy4wQUHlVBrJSMrxatUZa272kjG0Mzm7DmZb0yAXYW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=K+bpHxuT; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.5])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 63D7B40737DD;
+	Sat, 26 Apr 2025 13:48:22 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 63D7B40737DD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1745675302;
+	bh=IUpEVYdhOlEyZsxKVHyuvQMfByNjhpVm12RTwE2N+Zk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K+bpHxuTfxmPSkqnNRFn+jcirmWbEDHJg5vwzMyvfIdHQWtVLXTMenJSmmA3y9DrG
+	 LOohz1Lqz3JwwFHYFw8/UTZL4vMau8JdpJQRYieLrhsNCL5kRq7RNj7VqiZaVb1rv3
+	 cvP5q3XxNrDPBS8uWkbJGgvRkBdVAjcQsYRs2cHA=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Carlos Maiolino <cem@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Chandan Babu R <chandanbabu@kernel.org>,
+	Brian Foster <bfoster@redhat.com>,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Alexey Nepomnyashih <sdl@nppct.ru>,
+	stable@vger.kernel.org
+Subject: [PATCH] xfs: fix diff_two_keys calculation for cnt btree
+Date: Sat, 26 Apr 2025 16:42:31 +0300
+Message-ID: <20250426134232.128864-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Apr 2025 21:14:50 -0300
-Gustavo Silva <gustavograzs@gmail.com> wrote:
+Currently the difference is computed on 32-bit unsigned values although
+eventually it is stored in a variable of int64_t type. This gives awkward
+results, e.g. when the diff _should_ be negative, it is represented as
+some large positive int64_t value.
 
-> Add a channel for enabling/disabling the step counter, reading the
-> number of steps and resetting the counter.
-> 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-Hi Gustavo,
+Perform the calculations directly in int64_t as all other diff_two_keys
+routines actually do.
 
-This is tripping over the somewhat theoretical requirement for
-regmap to be provided with DMA safe buffers for bulk accesses.
+Found by Linux Verification Center (linuxtesting.org) with Svace static
+analysis tool.
 
-Jonathan
+Fixes: 08438b1e386b ("xfs: plumb in needed functions for range querying of the freespace btrees")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+ fs/xfs/libxfs/xfs_alloc_btree.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/iio/imu/bmi270/bmi270_core.c | 127 +++++++++++++++++++++++++++++++++++
->  1 file changed, 127 insertions(+)
-> 
-> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> index a86be5af5ccb1f010f2282ee31c47f284c1bcc86..f09d8dead9df63df5ae8550cf473b5573374955b 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_core.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-> @@ -31,6 +31,8 @@
-
->  /* See datasheet section 4.6.14, Temperature Sensor */
->  #define BMI270_TEMP_OFFSET				11776
->  #define BMI270_TEMP_SCALE				1953125
-> @@ -111,6 +118,7 @@ struct bmi270_data {
->  	struct iio_trigger *trig;
->  	 /* Protect device's private data from concurrent access */
->  	struct mutex mutex;
-> +	int steps_enabled;
-
-Seems a little odd to have a thing called _enabled as an integer.
-Probably better as a bool even though that will require slightly more
-code to handle read / write.
-
-
->  
->  	/*
->  	 * Where IIO_DMA_MINALIGN may be larger than 8 bytes, align to
-> @@ -282,6 +290,99 @@ static const struct  bmi270_odr_item bmi270_odr_table[] = {
->  	},
->  };
->  
-> +enum bmi270_feature_reg_id {
-> +	BMI270_SC_26_REG,
-> +};
-> +
-> +struct bmi270_feature_reg {
-> +	u8 page;
-> +	u8 addr;
-> +};
-> +
-> +static const struct bmi270_feature_reg bmi270_feature_regs[] = {
-> +	[BMI270_SC_26_REG] = {
-> +		.page = 6,
-> +		.addr = 0x32,
-> +	},
-> +};
-> +
-> +static int bmi270_write_feature_reg(struct bmi270_data *data,
-> +				    enum bmi270_feature_reg_id id,
-> +				    u16 val)
-> +{
-> +	const struct bmi270_feature_reg *reg = &bmi270_feature_regs[id];
-> +	int ret;
-> +
-> +	ret = regmap_write(data->regmap, BMI270_FEAT_PAGE_REG, reg->page);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_bulk_write(data->regmap, reg->addr, &val, sizeof(val));
-
-For a regmap on top of an SPI bus. I think we are still requiring DMA safe
-buffers until we can get confirmation that the API guarantees that isn't
-needed.  (there is another thread going on where we are trying to get that
-confirmation).
-
-That is a pain here because this can run concurrently with buffered
-capture and as such I think we can't just put a additional element after
-data->data but instead need to mark that new element __aligned(IIO_DMA_MINALIGN)
-as well (and add a comment that it can be used concurrently with data->data).
-
-This hole thing is a mess because in reality I think the regmap core is always
-bouncing data today. In theory it could sometimes be avoiding copies
-and the underlying regmap_spi does require DMA safe buffers. This all relies
-on an old discussion where Mark Brown said that we should not assume any
-different requirements from the the underlying bus.
-
-> +}
-> +
-> +static int bmi270_read_feature_reg(struct bmi270_data *data,
-> +				   enum bmi270_feature_reg_id id,
-> +				   u16 *val)
-> +{
-> +	const struct bmi270_feature_reg *reg = &bmi270_feature_regs[id];
-> +	int ret;
-> +
-> +	ret = regmap_write(data->regmap, BMI270_FEAT_PAGE_REG, reg->page);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_bulk_read(data->regmap, reg->addr, val, sizeof(*val));
-> +}
-> +
-> +static int bmi270_update_feature_reg(struct bmi270_data *data,
-> +				     enum bmi270_feature_reg_id id,
-> +				     u16 mask, u16 val)
-> +{
-> +	u16 reg_val;
-> +	int ret;
-> +
-> +	ret = bmi270_read_feature_reg(data, id, &reg_val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	set_mask_bits(&reg_val, mask, val);
-> +
-> +	return bmi270_write_feature_reg(data, id, reg_val);
-> +}
-
-> +
-> +static int bmi270_read_steps(struct bmi270_data *data, int *val)
-> +{
-> +	__le16 steps_count;
-> +	int ret;
-> +
-> +	ret = regmap_bulk_read(data->regmap, BMI270_SC_OUT_0_REG, &steps_count,
-> +			       sizeof(steps_count));
-> +	if (ret)
-> +		return ret;
-> +
-> +	*val = sign_extend32(le16_to_cpu(steps_count), 15);
-> +	return IIO_VAL_INT;
-> +}
-> +
->  static int bmi270_set_scale(struct bmi270_data *data, int chan_type, int uscale)
->  {
->  	int i;
-> @@ -551,6 +652,8 @@ static int bmi270_read_raw(struct iio_dev *indio_dev,
->  	struct bmi270_data *data = iio_priv(indio_dev);
->  
->  	switch (mask) {
-> +	case IIO_CHAN_INFO_PROCESSED:
-> +		return bmi270_read_steps(data, val);
->  	case IIO_CHAN_INFO_RAW:
->  		if (!iio_device_claim_direct(indio_dev))
->  			return -EBUSY;
-> @@ -571,6 +674,10 @@ static int bmi270_read_raw(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_SAMP_FREQ:
->  		ret = bmi270_get_odr(data, chan->type, val, val2);
->  		return ret ? ret : IIO_VAL_INT_PLUS_MICRO;
-> +	case IIO_CHAN_INFO_ENABLE:
-> +		scoped_guard(mutex, &data->mutex)
-> +			*val = data->steps_enabled;
-
-What race is this protecting against?  Protecting the write is fine because it
-is about ensuring we don't race an enable against a clear of the counter.
-A race here would I think just give the same as either the race to take the lock
-being won by this or not (so not a race as such, just ordering of calls)
-So I don't think you need the lock here.
-
-> +		return IIO_VAL_INT;
-
+diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+index a4ac37ba5d51..b3c54ae90e25 100644
+--- a/fs/xfs/libxfs/xfs_alloc_btree.c
++++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+@@ -238,13 +238,13 @@ xfs_cntbt_diff_two_keys(
+ 	ASSERT(!mask || (mask->alloc.ar_blockcount &&
+ 			 mask->alloc.ar_startblock));
+ 
+-	diff =  be32_to_cpu(k1->alloc.ar_blockcount) -
+-		be32_to_cpu(k2->alloc.ar_blockcount);
++	diff = (int64_t)be32_to_cpu(k1->alloc.ar_blockcount) -
++			be32_to_cpu(k2->alloc.ar_blockcount);
+ 	if (diff)
+ 		return diff;
+ 
+-	return  be32_to_cpu(k1->alloc.ar_startblock) -
+-		be32_to_cpu(k2->alloc.ar_startblock);
++	return (int64_t)be32_to_cpu(k1->alloc.ar_startblock) -
++			be32_to_cpu(k2->alloc.ar_startblock);
+ }
+ 
+ static xfs_failaddr_t
+-- 
+2.49.0
 
 
