@@ -1,95 +1,161 @@
-Return-Path: <linux-kernel+bounces-621602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C315A9DBD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3021A9DBFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED94924551
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1655A4B08
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4362225D1EF;
-	Sat, 26 Apr 2025 15:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157225D20A;
+	Sat, 26 Apr 2025 15:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yi6Et77C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="muZMyENy"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854A3A31;
-	Sat, 26 Apr 2025 15:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAC919CC0A;
+	Sat, 26 Apr 2025 15:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745681227; cv=none; b=h6RSHVSReBEa9M7HyIoaaeVu9OZCuzW7xfgNV2Tc4nvtqV3R8iSjZAPbEHB+z/qJbKdWv8ab7viG5Il0dNXjm5Q3CtkekZUYURXtchcN8mUJVgCxCoSWDS7x17V1aiSAJR1rH+Jtf9z2N/UeL/1DpvIumelc4lZoxMWxJgCoNrA=
+	t=1745682776; cv=none; b=DIpVi9y4BF4+VzIJO4SSDabNJlSM1TfxOeI6i4Q1GpPi5Ml+Kayx+J2V0nWOdXj/gxdYbV40pnb4aOX2s8erGpCwNEkomox2hHogR8wOKgMCKMO9o4opeL5o4sfNhRWpuSqu5BS/uyI8Pw68hKnsCQJqlrU32KNtUDQyxMev5B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745681227; c=relaxed/simple;
-	bh=xg7cH77o+Zu4oFh7/hJOJwiI2nIPiwrKXvo9u09DWLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ho5miU3hY9RIUfhqa/KIW4Prds4rAnIhwi+dZS6lFmsLAQfLQVFP5Fw0YY9D8zg5O6bApoGfVkIJB8SK6SHY33ueHrZVZm2ErTFZdUmaw3QT+JmMjLf/oBGIW7JC3H1uW7S91yZS6+kqJGeDmVodmndMpgBN6zP+vs8xgsDSvsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yi6Et77C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FABAC4CEE2;
-	Sat, 26 Apr 2025 15:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745681227;
-	bh=xg7cH77o+Zu4oFh7/hJOJwiI2nIPiwrKXvo9u09DWLo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yi6Et77CVwcasf/aB0jE2MdoiXZILQq5kipc+QWh/oLt9kU7jNqqRdcxOg1wZo6p6
-	 LaohpWIezPBHi/L9xkDU22ZJ+jOZZNoCf4y/jQIq+Mdj94jdYFcj8fL6LojP+3Z65o
-	 K1VJzCikdIe9AjWkdIGv8qMfNGwME43W2jLvd6JJRWq1Sl3kQwiRYJRMFU4yfrokQ1
-	 Xe2TVm0YSEhn+xcHLeGsYi+T+UXleC63C/YXw/bUPU5M2nyRwl8/w+0S3dM8/qIKUw
-	 XHgtJaNdiv9CHBIvWlkrwtdyksrVOcsy3yIbivwpsrwHEbnst37xtvDHMHwlNspVr5
-	 74t+Ro72y7gPg==
-Date: Sat, 26 Apr 2025 16:27:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: pressure: bmp280: drop sensor_data array
-Message-ID: <20250426162701.4dd1f282@jic23-huawei>
-In-Reply-To: <CAHp75VdAw8T_3t8=2JLO07zddjy1_eYX0bSoG9R=7TFPY9pWbA@mail.gmail.com>
-References: <20250422-iio-pressure-bmp280-rework-push-to-buffers-v1-1-ee722f29aeca@baylibre.com>
-	<CAHp75Ve_C6BXo75xy4+xZ5b1O9-TT5TGGQDgTR_F1s3TFK3p6Q@mail.gmail.com>
-	<12dac98d-3e6b-4c2b-8ac0-d526bdb5efd4@baylibre.com>
-	<CAHp75VcHMTSGRrodixsLDS-xCi8KQJ0MtMSMi7tfATUgd3E5uA@mail.gmail.com>
-	<22e934cd-117f-40fb-a788-edcfc0f8b0ba@baylibre.com>
-	<CAHp75VdAw8T_3t8=2JLO07zddjy1_eYX0bSoG9R=7TFPY9pWbA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745682776; c=relaxed/simple;
+	bh=uINH35vO359kuO4RKCBqhNMqf7rry0dhDnoFY7BQ++0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t63su/rO6MRrs2jFsWNzGn7rBtSkNzXMcOuE/FvDYCF1ytNwOgIDlTPzlukQs3QCj/arUehaRyKCoqTokUiG/h2rqlR7CmUw6viG3gFDuDy3DSRBJoiddMdTxDhhvEPYVQa7WpDCtewFZJQS0bGd6yFca1zmE+2vVywOuH5LG3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=muZMyENy; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=luF1/ZSWAFeNSfH7gBHAFSQcCO8MBfOBlBzZ4kCjuvc=; b=muZMyENyxj8U9rbvrUED25L643
+	YAQNXfz/9PjxlkZ7cjSY0OeE/QvsO+Zg9uzXG6YxNVapqruZjujWkta1Jt/nq/yXX9IFUpoHrAgk+
+	CNeE49k+Xt6Ly923c/AdZcFoqceafh+37/HscczGatb/4648EUFUHnG7nyOQugaszFfk=;
+Received: from p5b206c93.dip0.t-ipconnect.de ([91.32.108.147] helo=Maecks.lan)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1u8hVn-00FfwR-0F;
+	Sat, 26 Apr 2025 17:32:15 +0200
+From: Felix Fietkau <nbd@nbd.name>
+To: netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Willem de Bruijn <willemb@google.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: ipv6: fix UDPv6 GSO segmentation with NAT
+Date: Sat, 26 Apr 2025 17:32:09 +0200
+Message-ID: <20250426153210.14044-1-nbd@nbd.name>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 23 Apr 2025 01:38:13 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+If any address or port is changed, update it in all packets and recalculate
+checksum.
 
-> On Wed, Apr 23, 2025 at 1:32=E2=80=AFAM David Lechner <dlechner@baylibre.=
-com> wrote:
-> > On 4/22/25 5:19 PM, Andy Shevchenko wrote: =20
-> > > On Wed, Apr 23, 2025 at 12:22=E2=80=AFAM David Lechner <dlechner@bayl=
-ibre.com> wrote: =20
->=20
-> ...
->=20
-> > > Ah, I meant the plural: of the supported sensors. Otherwise are you
-> > > talking only about one sensor?
-> > > =20
-> > "each type of the sensors" doesn't sound right to me either.
-> >
-> > I am talking about more than one type, not more than one sensor. Sensor=
- just
-> > describes what types I am talking about.
-> >
-> > So perhaps we could just avoid it with "each different sensor type". =20
->=20
-> Okay, it might be my misunderstanding... Use the original one if you
-> think it's better.
->=20
+Fixes: 9fd1ff5d2ac7 ("udp: Support UDP fraglist GRO/GSO.")
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ net/ipv4/udp_offload.c | 61 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 60 insertions(+), 1 deletion(-)
 
-I stuck to original text.  Applied.
+diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
+index 2c0725583be3..9a8142ccbabe 100644
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -247,6 +247,62 @@ static struct sk_buff *__udpv4_gso_segment_list_csum(struct sk_buff *segs)
+ 	return segs;
+ }
+ 
++static void __udpv6_gso_segment_csum(struct sk_buff *seg,
++				     struct in6_addr *oldip,
++				     const struct in6_addr *newip,
++				     __be16 *oldport, __be16 newport)
++{
++	struct udphdr *uh = udp_hdr(seg);
++
++	if (ipv6_addr_equal(oldip, newip) && *oldport == newport)
++		return;
++
++	if (uh->check) {
++		inet_proto_csum_replace16(&uh->check, seg, oldip->s6_addr32,
++					  newip->s6_addr32, true);
++
++		inet_proto_csum_replace2(&uh->check, seg, *oldport, newport,
++					 false);
++		if (!uh->check)
++			uh->check = CSUM_MANGLED_0;
++	}
++
++	*oldip = *newip;
++	*oldport = newport;
++}
++
++static struct sk_buff *__udpv6_gso_segment_list_csum(struct sk_buff *segs)
++{
++	const struct ipv6hdr *iph;
++	const struct udphdr *uh;
++	struct ipv6hdr *iph2;
++	struct sk_buff *seg;
++	struct udphdr *uh2;
++
++	seg = segs;
++	uh = udp_hdr(seg);
++	iph = ipv6_hdr(seg);
++	uh2 = udp_hdr(seg->next);
++	iph2 = ipv6_hdr(seg->next);
++
++	if (!(*(const u32 *)&uh->source ^ *(const u32 *)&uh2->source) &&
++	    ipv6_addr_equal(&iph->saddr, &iph2->saddr) &&
++	    ipv6_addr_equal(&iph->daddr, &iph2->daddr))
++		return segs;
++
++	while ((seg = seg->next)) {
++		uh2 = udp_hdr(seg);
++		iph2 = ipv6_hdr(seg);
++
++		__udpv6_gso_segment_csum(seg, &iph2->saddr, &iph->saddr,
++					 &uh2->source, uh->source);
++		__udpv6_gso_segment_csum(seg, &iph2->daddr, &iph->daddr,
++					 &uh2->dest, uh->dest);
++	}
++
++	return segs;
++}
++
+ static struct sk_buff *__udp_gso_segment_list(struct sk_buff *skb,
+ 					      netdev_features_t features,
+ 					      bool is_ipv6)
+@@ -259,7 +315,10 @@ static struct sk_buff *__udp_gso_segment_list(struct sk_buff *skb,
+ 
+ 	udp_hdr(skb)->len = htons(sizeof(struct udphdr) + mss);
+ 
+-	return is_ipv6 ? skb : __udpv4_gso_segment_list_csum(skb);
++	if (is_ipv6)
++		return __udpv6_gso_segment_list_csum(skb);
++	else
++		return __udpv4_gso_segment_list_csum(skb);
+ }
+ 
+ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
+-- 
+2.49.0
+
 
