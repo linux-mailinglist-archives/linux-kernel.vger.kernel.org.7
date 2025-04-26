@@ -1,150 +1,140 @@
-Return-Path: <linux-kernel+bounces-621416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9D5A9D943
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20EDA9D949
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99F5464EBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083FC3BA33A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BF62517A4;
-	Sat, 26 Apr 2025 08:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCB824E01D;
+	Sat, 26 Apr 2025 08:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFkvH3nT"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKxNffB2"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E1F1922D4;
-	Sat, 26 Apr 2025 08:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288847A13A;
+	Sat, 26 Apr 2025 08:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745655236; cv=none; b=XGWCUX465E7fGSVltXW805hANNX8CjTcudilr0e2In8BxF2/zcaKHY0RRJ54EeTdpKO6FECpGhzR8ENmfnBWRJaNB1yQY/Fo09xeXbxebR2r/znsbwDxi0mqWT7zhH3HINf0CGhSLkCNI2Yzjbp8oTxLXJIUC0Th1KQTqhf+On4=
+	t=1745655396; cv=none; b=ZGJhjQqYqn0ciLgsEFSamDXDeVSHTy47rMXtp/Y1Wtx9sXh8HdE258T0deQxUk7BhmsjZ91cDn4gk99RvYWb91uO+65vnqQGVSusCdAL7rwatk0B3OfH3Zln5wwmgNzaDot2aGfbRgQOJlb2FHhH7SNjm/L1UqrRbwin3bNEE40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745655236; c=relaxed/simple;
-	bh=RRgJ0M8WImGsVCT3LiCickwe65JTKgCkTOOLN+aRAdM=;
+	s=arc-20240116; t=1745655396; c=relaxed/simple;
+	bh=f5nFF9hrf8k+mrJsshn3YqKT1TsxR5hPPisEV2OefvY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RP39WHzvZAugiPM5AMebHo6BhNdhxI12ubExwhobCxqxI28ZBhLLEBG4bDpBJoBbhgVFkj6rXZN+DOHT9XgFJMoFZgfABzMyRGWq4IqzSt4F3nW8gYRd+RLfzu2YRDpKOy6tO4QfUxGYXZpyr3keMXRCkucGDm39sSFMj5Bh6Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFkvH3nT; arc=none smtp.client-ip=209.85.210.178
+	 MIME-Version:Content-Type; b=jAfvkzidhxLYmWcp7dbkaEFHceFUSnEpcgP6aUZi1NMS8rpKDNUbOBaJGco7Jxry1S6o/wWZLOc2DFZ5xyvDfqnuNvXXrUY+v+40iujB8yMFjqgleZgtnWAcouZZksZEqe2wVnETsV1hHMIGuMP64vZCrc4UN6UHFnQUNRIs3VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKxNffB2; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7376dd56f60so2346798b3a.3;
-        Sat, 26 Apr 2025 01:13:54 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22d95f0dda4so48227015ad.2;
+        Sat, 26 Apr 2025 01:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745655233; x=1746260033; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745655394; x=1746260194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eH8QzBJQF0/lOlRD7wA47uCgpgIE30Df48r/OH+A7Vc=;
-        b=HFkvH3nTaViOSV4SzoDwY0I5nliY4pbVAJxTcRCsE/1maYMjr1xnf3dwIgob+c/8bn
-         /7JyXFwusU/XvoeHpMOPQICDcbvQ/b4mgMN6PGOZVuJET8MexfP5SE+gV7MwQDQZ01MR
-         QwNb/e38ECyPXhTy03db6N3/gNC0n5K+Y8DFl+gGEflwOM+zRUs4RGaScoXieU0wH1ZM
-         B62v8BqZ6EtCMW+BegHTuBqOHG3djQouZqcO9wVNi4VHqgciJPKfLrlZ0QEL01AVnMlH
-         /QCRI6IyUWnsoFv5/aIOLcX8RAXieG4HuTFVZGVntPxDMDPgZdcdgGmie9uVFFOocSPB
-         10BQ==
+        bh=f5nFF9hrf8k+mrJsshn3YqKT1TsxR5hPPisEV2OefvY=;
+        b=EKxNffB2kmw7X3O4tbt/WQxN0/bBYWR+9ySAASb03QPl/KWbvIwt+9YrH9Tlzqn5JP
+         ikR4r5KB6liNRX/H/5oqc0raK6GZjNKrSTW6+6ZtvbW/aozg6SpF6dz//LxWEEhjM7lb
+         sb38ikCCr4RYmaK6PVRtvKaq1GnsT4ty/ig32oHw4xv02nYJ7u3aznibMVpShOyxAaqi
+         v4w4DSwHqsiXGkbOKCqqRzv6TvxAMD/UhUd94iETFl7Xabit0PbSOyrAm3nPgj6EbYcA
+         oAaAyd/30Gz5m6BOY2/AaFFrlUTxLgy+FHwQD3oQHH3Ad93C2NwbZLGQm0uwd3jDrUEF
+         K8kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745655233; x=1746260033;
+        d=1e100.net; s=20230601; t=1745655394; x=1746260194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eH8QzBJQF0/lOlRD7wA47uCgpgIE30Df48r/OH+A7Vc=;
-        b=acy/GEg2YoVOmHsUJw6T5fICGGa7/8hPFdlX+OID+wW21001yy+MbszL3j6BCM+hq+
-         OLz+3W3CyoOxwRoAg0xi4yiM3b9aAFekueSNUqOfRSt96HW5wYd5pJQYLg/QYxV6MbV6
-         ixt11XhgLW2ufiiMzunU1kXVwxSitR0esmskNwtpwPYXM47JujkeJomPBva9EISB7EGW
-         1jCDCWxpy2zg8+eIoT9dvXwr8AdHK09WRWO7H2OrS5cxP/NGkEu4jrCvsgLbbBagl0Hc
-         ULSUa/ldfUyf0fq4jnwKSRmy63dTN4XMaXnUjhjV+AIWVxBb+OO6y9J7UA/EHmM86/ul
-         x3/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWt74UqfQh0YxTRSS8xYNtvoflxNq014seD5vLI+aQHKLhJ24mWhYhNa40Q+OpOQSuC1jXn7TO1voNtbic6@vger.kernel.org, AJvYcCXkDOGt+Xf2kk09G6JOvx/Qn3HbhEKdj6N98bBgRETRydYDrfOkFpKUOQDa5D30OsuuSGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxplYP8rwLtq3NmgcJIefjoJkkKEwNKTmho4oU6W0e0xVsp0MA4
-	7aGwvi6j6+6St3qniMyQndDN+RBtoQTpYMYH0G5QD3MuoSfUj5G44wGqZHvI
-X-Gm-Gg: ASbGnctt247ORRuQW/hzXKXGBN38zvp1ii5O4xyr0QvOFCIn9E5S9Qf3imcdCMpKhEW
-	3DsObQUO75MgDLrV2pUdcis7Zj7XgKS8xH/I7w+C4qwNJO/fkILZqUdrZOpD8PSQDszmKwGKPOj
-	eoCvK/18qEUnwkQTVSfN2Ic9zB0CS4w0c2A8y7AK3maRbi1SBwrccmOxwD5wo4RJT3BrcsOG9qJ
-	7bbdbhrL7oczDfDV2gavRtzoPkUzLbnPF9FgC7zyk+sOF1jcdKJvS/OERocntSYHZHW80L5DNk5
-	oZQzfjPk0gy2MWiLy9/ylVWsgAuCknRVt8kvCUfwN/86MkSKwKI+E3g+
-X-Google-Smtp-Source: AGHT+IEnU9oZyJ5GoaLkPDm5yq3VJd2HPNs7PPm0BnwPXq1TSM0GRuSCzfX7Q++U5KRAZsW8ctxlbw==
-X-Received: by 2002:a05:6a00:228e:b0:736:4d44:8b77 with SMTP id d2e1a72fcca58-73fd6de9577mr7983197b3a.8.1745655233008;
-        Sat, 26 Apr 2025 01:13:53 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:52b1:1f45:145e:af27])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73e25941bf7sm4503700b3a.68.2025.04.26.01.13.47
+        bh=f5nFF9hrf8k+mrJsshn3YqKT1TsxR5hPPisEV2OefvY=;
+        b=WL0mAk5XZCD7Ni6GQOywFhjL0g/zYqnlPCOiMAVCgdtE4OJC2X1VBwy5Un4z+5eijf
+         EWOrxjLdbBN999Svq1+5v/UdPY7ylNmAOYBV+jfI7oxHEiJrGMNTli+g9e2mp3ysQMt0
+         xbqj+XUJia4LccuTilyiV40KltRjm6x4AR89KFGC+bDqPV6qgs2W34tCnL33s4BliCSr
+         sqz5P5pc3NXtQGr1q6oMfrPNnDs3YtIK/TvmQX3aGRt7crlqOnakZTNL+hGjsfaK5AA+
+         eKNrsLSkJRqg309xYfgLwl6eKsFFCfReCfY9lZdVcJyDIdH3f2Mi109CtoDd1N3BgCHh
+         Ye5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVKH6jmlq89Uh2+HPEPN2w9BPw46zW1/cEHjM+O1ms2eluxpAQjIl7IIjOSDwJzVQ7ESCtH1BVIER/CmfZF@vger.kernel.org, AJvYcCW9BHL+8f1ew7FIdJaNrU0DoK0QKN27Q8EicOeJj3i5EHJLXSPDqms/p3M8qrjAQ5nC/D6OlGi8ZomgtQByTg==@vger.kernel.org, AJvYcCXf96T4KjIiA0q1I5AkE49OiW3/Ig1fy6suhlf82VJJ1Xb3IMrF0bo68rjTYHSla4Ut95aMls0XThO7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX/oAfTVPg/gUqt08Uj/pZluL4/YNVjeQZutvSkWV7qnE4/+hb
+	PS+KgyrEdhtuPvKgvTY0UckTCcVcCzOLvsm6QMf8RAvLEKVyJRczUUhBDw==
+X-Gm-Gg: ASbGncvBTPUV47500yPXMTIeMkYXESYAMQ7kKGoQmPTgrbOirGYYU1Mgr9xFmCzL9MM
+	+9SI/oUzYvs17nvWcmBqsN/kPd9n4dCt/qNSPECVyrXVVFRUfaA8cAx/qTMKau29UTl7+jdQojl
+	vO8muObwDSFAHEvxgYNtgUTqVH8JY/mG68l3Aij1hO3wS714rzBO9ANflCb+44dAV00wxjypzJl
+	lkKJlwwD4xzq+PXO1tjMhqh4ODKpacLyMkHGEQEpUfpzqSlA0Y/lQ8VsfSrkU+XcHdsraiKMmm5
+	HkuYpTasmXzc07NU/LRdlR9VYWaDI4iYZx39nTM=
+X-Google-Smtp-Source: AGHT+IH2uRpVPaRuKcj/Dnooeg5tCZHg5INKprYzVhvYC8u33M/5h6/1Yrvk8VqXDWgVX0OSW7Ou1w==
+X-Received: by 2002:a17:903:41c8:b0:224:76f:9e44 with SMTP id d9443c01a7336-22dbf4c84e4mr63259185ad.8.1745655394358;
+        Sat, 26 Apr 2025 01:16:34 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5219c47sm44906405ad.240.2025.04.26.01.16.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Apr 2025 01:13:52 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	bpf@vger.kernel.org,
+        Sat, 26 Apr 2025 01:16:33 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: abel.vesa@linaro.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	kishon@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>
-Subject: [PATCH net-next v2 2/2] xsk: convert xdp_copy_frags_from_zc() to use page_pool_dev_alloc()
-Date: Sat, 26 Apr 2025 15:12:20 +0700
-Message-ID: <20250426081220.40689-3-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250426081220.40689-1-minhquangbui99@gmail.com>
-References: <20250426081220.40689-1-minhquangbui99@gmail.com>
+	linux-phy@lists.infradead.org,
+	mitltlatltl@gmail.com,
+	robh@kernel.org,
+	sfr@canb.auug.org.au,
+	vkoul@kernel.org
+Subject: Re: [PATCH v2 2/2] phy: qualcomm: phy-qcom-eusb2-repeater: rework reg override handler
+Date: Sat, 26 Apr 2025 16:14:23 +0800
+Message-ID: <20250426081424.422590-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <q6zqfk3l2khp3tkodxd4pzhufiesyjcypl66zoqzslolwoveyo@ltrw2iulrkqs>
+References: <q6zqfk3l2khp3tkodxd4pzhufiesyjcypl66zoqzslolwoveyo@ltrw2iulrkqs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This commit makes xdp_copy_frags_from_zc() use page allocation API
-page_pool_dev_alloc() instead of page_pool_dev_alloc_netmem() to avoid
-possible confusion of the returned value.
+On Sat, Apr 26, 2025 at 3:41 AM Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> On Wed, Apr 16, 2025 at 08:02:01PM +0800, Pengyu Luo wrote:
+> > In downstream tree, many registers need to be overridden, it varies
+> > from devices and platforms, with these registers getting more, adding
+> > a handler for this is helpful.
+>
+> It should be noted that previously all values were applied during _init
+> phase, before checking the status etc. Now the overrides are programmed
+> from the set_mode. Should you still program sane defaults at the init
+> stage too?
+>
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
- net/core/xdp.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+I think programming in set_mode is ok. When we init(dwc3_core_init), we
+set_mode(dwc3_core_init_mode) later, please check
+https://elixir.bootlin.com/linux/v6.14.3/source/drivers/usb/dwc3/core.c#L2287
 
-diff --git a/net/core/xdp.c b/net/core/xdp.c
-index 89111c68e545..4e91c7790671 100644
---- a/net/core/xdp.c
-+++ b/net/core/xdp.c
-@@ -701,21 +701,21 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
- 		const skb_frag_t *frag = &xinfo->frags[i];
- 		u32 len = skb_frag_size(frag);
- 		u32 offset, truesize = len;
--		netmem_ref netmem;
-+		struct page *page;
- 
--		netmem = page_pool_dev_alloc_netmem(pp, &offset, &truesize);
--		if (unlikely(!netmem)) {
-+		page = page_pool_dev_alloc(pp, &offset, &truesize);
-+		if (unlikely(!page)) {
- 			sinfo->nr_frags = i;
- 			return false;
- 		}
- 
--		memcpy(__netmem_address(netmem) + offset,
--		       __netmem_address(frag->netmem) + skb_frag_off(frag),
-+		memcpy(page_address(page) + offset,
-+		       skb_frag_page(frag) + skb_frag_off(frag),
- 		       LARGEST_ALIGN(len));
--		__skb_fill_netmem_desc_noacc(sinfo, i, netmem, offset, len);
-+		__skb_fill_page_desc_noacc(sinfo, i, page, offset, len);
- 
- 		tsize += truesize;
--		pfmemalloc |= netmem_is_pfmemalloc(netmem);
-+		pfmemalloc |= page_is_pfmemalloc(page);
- 	}
- 
- 	xdp_update_skb_shared_info(skb, nr_frags, xinfo->xdp_frags_size,
--- 
-2.43.0
+Actually, in the downstream, all the things are done in init, it
+overrides first, then masked write the deaults, finally it set_mode,
+you can check here
+https://github.com/OnePlusOSS/android_kernel_oneplus_sm8650/blob/oneplus/sm8650_v_15.0.0_pad_pro/drivers/usb/repeater/repeater-qti-pmic-eusb2.c#L356
 
+> BTW, is there a real need to override those for the platform you are
+> working on? Could you please provide some details, maybe in the cover
+> letter.
+
+I am not quite sure, recently, I expirenced mode switching failure,
+when I `echo device > /sys/kernel/debug/usb/a600000.usb/mode`, Ethernet
+Gadget wouldn't work again, my desktop can't connect to it.
+
+BTW, as you can see in line 356, it is most likely that overrides
+related to charging feature. I have not ported charging yet, but adding
+more overrides seems harmless, and if overriding, distinguishing which
+mode seems necessary, even if some devices use the same sequence. So I
+sent the patch.
+
+Best wishes,
+Pengyu
 
