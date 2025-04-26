@@ -1,258 +1,148 @@
-Return-Path: <linux-kernel+bounces-621725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62957A9DD42
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 23:28:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9A3A9DD34
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 23:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F63175D64
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 21:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE82173E1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 21:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516011FAC42;
-	Sat, 26 Apr 2025 21:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080B71F91C7;
+	Sat, 26 Apr 2025 21:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1KLpmg9"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHDW/jas"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051D21F5619;
-	Sat, 26 Apr 2025 21:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8BF1D5CDD;
+	Sat, 26 Apr 2025 21:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745702924; cv=none; b=ZxsMThBlx+NzUk6ApfenVs2TRgMZM9W4Wov0cpYAIhDFqBpeuLoo8VPkWBTFnJ0dGwyeV6CGwMqBBKbt4Z/R6ZtijoTnLFQ1mT2hw+7/FpbqY8P5xv+EUaYtHMs0DJ3bSP+/H+W6oRyo5s5xvRhC9i3S1l39pAOq4hbuz4sbus0=
+	t=1745702649; cv=none; b=NyK/c4duVpb4g/FbK1FSNkQ6qYKOGz4W0qIF2rXnr8oPMt5DHhSCVn3TwDEPVgnGH9tRO4+yJf9YBZz1yLYo+G4IjEF9TAg1V2vo2HLcE9EyYRs/so8RK1jWY656TD254g0EoNv+OGqJVNaz3xrphLIMZUVJMa+8K2Utixwm220=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745702924; c=relaxed/simple;
-	bh=4qDv12GpymzV9cqm+5wc+FH3p/oXtI26viWEferrXSk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aY5DEDVadHqnRcNedPTS8sj7sG/FAjc4uTq9JQiJgOG77TAgx7VAtGrP25QcJpntJLEf1/hRIQ8cVA0204JMirntkwwH3YOZimngivo+bW4PeBRO4s7XKp1kBq54WfhkW7QYK/KuQ1KceTcz/jhzuHVhnxxjTiKMguXFDRSWibc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1KLpmg9; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d813c1c39eso32089405ab.0;
-        Sat, 26 Apr 2025 14:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745702922; x=1746307722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=in3Jc9pC1jNw19VgvSAZdkrPc3LvG10mRUdoc1WL8qI=;
-        b=C1KLpmg9kXxweCLjSFkM0u7RuqaZ+IO+NSl/DmdWrNlYXU53kp6lxlmhP2CJSQHbi2
-         FpbTnBTpHC1k5xUxJkvoC7h1R0akrkLTkFgVNnFs2HgL0sFQNNayxXbJx7schJAHCarE
-         XtmJmPaWsheEKXasasMog4AXWPljE8ypTIQNcU7qAUZbde1a43PVJ3TUPFIpHhAWqwRb
-         9QMF5c3r3Q3XCc4YvUoqCZFoDSzpf83iNlQyxuYcOZ3VRf0OraEgVx8RX5wwHjXhvNVg
-         0wDHCGHuZXwh3HHKt9tqsuBfq4ji7pnSef5jzfZXI+3YXHNqBj3qIDcZCHH21jzz8BAc
-         5MOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745702922; x=1746307722;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=in3Jc9pC1jNw19VgvSAZdkrPc3LvG10mRUdoc1WL8qI=;
-        b=QyYX8rGCJTRz/LZZVzzZlCWgZhGHntJbR4Pn+HL1kWbJ1smlRJBDTNOotzRm5tOliO
-         DiyTF+7MMYw0ZkV1VTOsiI3H6YVcyRu90taEXKBZRcRE8CpY6Yz29jI4r/R4eivDo36b
-         WxVizVv+1aMPDwj+/irtX8h8NxIp5NwAaxwDlwwFi0yETb3yEgPPlwrnHRpH2ajwenqq
-         0RvIBgmsfVhbtpuNLQYNf7v6aq3aoFhi5F5FEKffn4u1kNSuBl0cjSu6LXjdkXlEjfan
-         bbYRUIfZAMlWp+T3VfILfaEAzgQBpXz+DQfD8oSsMat5sKMDTa1zQjf90ovmP0wuGmw1
-         Ss4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXdNnn+sN2+kk26T/z/AJKVr1yxfbywRkh04F1igA24rjSMPCXqpmN/gdYGxfeOb+aW8EGrMg==@vger.kernel.org, AJvYcCXwPbZQ3/DhClp5N+BZoYlK58Wek1ZOyVMHLzZHgJMVqaVRjxC/S8n8XwDBHkAdLB7qiTbfUcK5SdSe5bLG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPqgZ7rwxrzUuV27P6Eg0LdBBTHI9hA0+yjsEsDHdscZYU4EsM
-	I5kxOIKypHRzBWiWs8TnjqBh49cguNyHC/OFQQ4Cwqk3AkmaRUq7po7ocC/s
-X-Gm-Gg: ASbGncuMwB6o4NwQVW3hLQMFstLDaVSY1OKtKnjwrDxbCNWyzil8Q9CwqiravURdKMQ
-	BjoPQ0uZSj/JqXnu7oDhRJFH5ZDOfP3rpCyJaRTczjCInUeK4d/4xx7bIyNdvaNlJl5Vexaz/7L
-	E6oa258U6bTMIGEh7csFBPFs4dJh7V9c6IhTx8QRijuK8dvyE0C3+8jtm5byNk+C7pkM29IEaTk
-	u3Ub3w5PfFBlXqwzrr0q3YSXSpV6lw57lB39evMT3bE/ous/AhVpNUJ+TRzKNCG2fIngHyX18zu
-	jjnt6Eq6X112BMRma/w1bu+F7eCquiCockcemnMpRJkrhoPKCZoq8yrV2MFmOymQrbLYsDTEnao
-	/tlR0OJLabV2Gks8pz9yvEpwVhFkVNn9NP5Gqjta9ywGHlTPB
-X-Google-Smtp-Source: AGHT+IEBsK1Ip7zewga42fow2XKfAMr6aAeFPtYTe8aj7FYt3FMb9QHjB7XcLkdoWDnjTaV1NaN4+g==
-X-Received: by 2002:a05:6e02:12e8:b0:3d0:1fc4:edf0 with SMTP id e9e14a558f8ab-3d942e12849mr42783385ab.15.1745702921897;
-        Sat, 26 Apr 2025 14:28:41 -0700 (PDT)
-Received: from master.chath-253561.iommu-security-pg0.wisc.cloudlab.us (sm220u-10s10539.wisc.cloudlab.us. [128.105.146.46])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f824ba34c1sm1454482173.126.2025.04.26.14.28.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Apr 2025 14:28:41 -0700 (PDT)
-From: Chathura Rajapaksha <chathura.abeyrathne.lk@gmail.com>
-X-Google-Original-From: Chathura Rajapaksha <chath@bu.edu>
-To: kvm@vger.kernel.org
-Cc: Chathura Rajapaksha <chath@bu.edu>,
-	William Wang <xwill@bu.edu>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@redhat.com>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Xin Zeng <xin.zeng@intel.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Yahui Cao <yahui.cao@intel.com>,
-	Yunxiang Li <Yunxiang.Li@amd.com>,
-	Dongdong Zhang <zhangdongdong@eswincomputing.com>,
-	Avihai Horon <avihaih@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	audit@vger.kernel.org
-Subject: [RFC PATCH 2/2] audit accesses to unassigned PCI config regions
-Date: Sat, 26 Apr 2025 21:22:49 +0000
-Message-Id: <20250426212253.40473-3-chath@bu.edu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250426212253.40473-1-chath@bu.edu>
-References: <20250426212253.40473-1-chath@bu.edu>
+	s=arc-20240116; t=1745702649; c=relaxed/simple;
+	bh=KLJnmowEU+MNFxEcyRwWXecaoBq3TaKxQVFB2EjCS64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6O0CXcFwBntrdengXTBLeMziAPKTL+ZnI677cOLfpwp44VSk4ojmKDxdvHYqA7T8BYbrUtmmgHm0B7G0v87pecueXvX7j/w6vuhOY9MLD9M6eTiammU/djJAwMlEv+MtBUsLb4rLudtaSih1io1WHtNE/1D3naSL2B3yFasLI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHDW/jas; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD93C4CEE2;
+	Sat, 26 Apr 2025 21:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745702648;
+	bh=KLJnmowEU+MNFxEcyRwWXecaoBq3TaKxQVFB2EjCS64=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HHDW/jas22rogQcHXyRbn73zocRA7tKgEeZL6XGO+/fEnn7FZfvQGswBIy7LfayiG
+	 eSSfQG+R/XmYm6JOo2OexX5rPOaHH2mQpQhVWEqBjCylWCZTSpRB2SxBJ2/uxz+Ocp
+	 Q23DBCsCZeUsjY00sjtGZLTsKDtXUT28KyhacRXxCsuC8lWhufoUPQXwIL8+ECFYnf
+	 hRfFSRDr3qqSoOXnNZ+ZksZurGwSWvvvTFuvp7eUtqoc3Kqz7IJtDkErYYcALcpXgB
+	 y1w6BnvvNk00dEj4MwhTyNG9PQm2tt8VTpK8Sd6cmBgb5SisnsiTeCtW4Zqclkdwp+
+	 nzyj5TkjhH/KA==
+Date: Sat, 26 Apr 2025 23:24:01 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	kwilczynski@kernel.org, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	joelagnelf@nvidia.com, ttabi@nvidia.com, acourbot@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] rust: devres: implement Devres::access_with()
+Message-ID: <aA1O8Wem1FhyybF5@pollux>
+References: <D9GUR8Y08PQ6.2ULV6V4UJAGQB@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D9GUR8Y08PQ6.2ULV6V4UJAGQB@proton.me>
 
-Some PCIe devices trigger PCI bus errors when accesses are made to
-unassigned regions within their PCI configuration space. On certain
-platforms, this can lead to host system hangs or reboots.
+On Sat, Apr 26, 2025 at 08:28:30PM +0000, Benno Lossin wrote:
+> On Sat Apr 26, 2025 at 3:30 PM CEST, Danilo Krummrich wrote:
+> > Implement a direct accessor for the data stored within the Devres for
+> > cases where we can proof that we own a reference to a Device<Bound>
+> > (i.e. a bound device) of the same device that was used to create the
+> > corresponding Devres container.
+> >
+> > Usually, when accessing the data stored within a Devres container, it is
+> > not clear whether the data has been revoked already due to the device
+> > being unbound and, hence, we have to try whether the access is possible
+> > and subsequently keep holding the RCU read lock for the duration of the
+> > access.
+> >
+> > However, when we can proof that we hold a reference to Device<Bound>
+> > matching the device the Devres container has been created with, we can
+> > guarantee that the device is not unbound for the duration of the
+> > lifetime of the Device<Bound> reference and, hence, it is not possible
+> > for the data within the Devres container to be revoked.
+> >
+> > Therefore, in this case, we can bypass the atomic check and the RCU read
+> > lock, which is a great optimization and simplification for drivers.
+> >
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/devres.rs | 35 +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 35 insertions(+)
+> >
+> > diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> > index 1e58f5d22044..ec2cd9cdda8b 100644
+> > --- a/rust/kernel/devres.rs
+> > +++ b/rust/kernel/devres.rs
+> > @@ -181,6 +181,41 @@ pub fn new_foreign_owned(dev: &Device<Bound>, data: T, flags: Flags) -> Result {
+> >  
+> >          Ok(())
+> >      }
+> > +
+> > +    /// Obtain `&'a T`, bypassing the [`Revocable`].
+> > +    ///
+> > +    /// This method allows to directly obtain a `&'a T`, bypassing the [`Revocable`], by presenting
+> > +    /// a `&'a Device<Bound>` of the same [`Device`] this [`Devres`] instance has been created with.
+> > +    ///
+> > +    /// An error is returned if `dev` does not match the same [`Device`] this [`Devres`] instance
+> > +    /// has been created with.
+> > +    ///
+> > +    /// # Example
+> > +    ///
+> > +    /// ```no_run
+> 
+> The `no_run` is not necessary, as you don't run any code, you only
+> define a function.
 
-The current vfio-pci driver allows guests to access unassigned regions
-in the PCI configuration space. Therefore, when such a device is passed
-through to a guest, the guest can induce a host system hang or reboot
-through crafted configuration space accesses, posing a threat to
-system availability.
+Yet, I'd like to keep it to make it obvious that this test isn't supposed to
+run.
 
-This patch introduces auditing support for config space accesses to
-unassigned regions. When enabled, this logs such accesses for all
-passthrough devices. 
-This feature is controlled via a new Kconfig option:
+> > +    /// # use kernel::{device::Core, devres::Devres, pci};
+> > +    ///
+> > +    /// fn from_core(dev: &pci::Device<Core>, devres: Devres<pci::Bar<0x4>>) -> Result<()> {
+> > +    ///     let bar = devres.access_with(dev.as_ref())?;
+> > +    ///
+> > +    ///     let _ = bar.read32(0x0);
+> > +    ///
+> > +    ///     // might_sleep()
+> > +    ///
+> > +    ///     bar.write32(0x42, 0x0);
+> > +    ///
+> > +    ///     Ok(())
+> > +    /// }
+> 
+> Missing '```'?
 
-  CONFIG_VFIO_PCI_UNASSIGNED_ACCESS_AUDIT
+Good catch -- interestingly the doctest did compile anyways.
 
-A new audit event type, AUDIT_VFIO, has been introduced to support
-this, allowing administrators to monitor and investigate suspicious
-behavior by guests.
+> 
+> > +    pub fn access_with<'s, 'd: 's>(&'s self, dev: &'d Device<Bound>) -> Result<&'s T> {
+> 
+> I don't think that we need the `'d` lifetime here (if not, we should
+> remove it).
 
-Co-developed by: William Wang <xwill@bu.edu>
-Signed-off-by: William Wang <xwill@bu.edu>
-Signed-off-by: Chathura Rajapaksha <chath@bu.edu>
----
- drivers/vfio/pci/Kconfig           | 12 ++++++++
- drivers/vfio/pci/vfio_pci_config.c | 46 ++++++++++++++++++++++++++++--
- include/uapi/linux/audit.h         |  1 +
- 3 files changed, 57 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-index c3bcb6911c53..7f9f16262b90 100644
---- a/drivers/vfio/pci/Kconfig
-+++ b/drivers/vfio/pci/Kconfig
-@@ -42,6 +42,18 @@ config VFIO_PCI_IGD
- 	  and LPC bridge config space.
- 
- 	  To enable Intel IGD assignment through vfio-pci, say Y.
-+
-+config VFIO_PCI_UNASSIGNED_ACCESS_AUDIT
-+	bool "Audit accesses to unassigned PCI configuration regions"
-+	depends on AUDIT && VFIO_PCI_CORE
-+	help
-+	  Some PCIe devices are known to cause bus errors when accessing
-+	  unassigned PCI configuration space, potentially leading to host
-+	  system hangs on certain platforms. When enabled, this option
-+	  audits accesses to unassigned PCI configuration regions.
-+
-+	  If you don't know what to do here, say N.
-+
- endif
- 
- config VFIO_PCI_ZDEV_KVM
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index cb4d11aa5598..ddd10904d60f 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -25,6 +25,7 @@
- #include <linux/uaccess.h>
- #include <linux/vfio.h>
- #include <linux/slab.h>
-+#include <linux/audit.h>
- 
- #include "vfio_pci_priv.h"
- 
-@@ -1980,6 +1981,37 @@ static size_t vfio_pci_cap_remaining_dword(struct vfio_pci_core_device *vdev,
- 	return i;
- }
- 
-+enum vfio_audit {
-+	VFIO_AUDIT_READ,
-+	VFIO_AUDIT_WRITE,
-+	VFIO_AUDIT_MAX,
-+};
-+
-+static const char * const vfio_audit_str[VFIO_AUDIT_MAX] = {
-+	[VFIO_AUDIT_READ]  = "READ",
-+	[VFIO_AUDIT_WRITE] = "WRITE",
-+};
-+
-+static void vfio_audit_access(const struct pci_dev *pdev,
-+			      size_t count, loff_t *ppos, bool blocked, unsigned int op)
-+{
-+	struct audit_buffer *ab;
-+
-+	if (WARN_ON_ONCE(op >= VFIO_AUDIT_MAX))
-+		return;
-+	if (audit_enabled == AUDIT_OFF)
-+		return;
-+	ab = audit_log_start(audit_context(), GFP_ATOMIC, AUDIT_VFIO);
-+	if (unlikely(!ab))
-+		return;
-+	audit_log_format(ab,
-+			 "device=%04x:%02x:%02x.%d access=%s offset=0x%llx size=%ld blocked=%u\n",
-+			 pci_domain_nr(pdev->bus), pdev->bus->number,
-+			 PCI_SLOT(pdev->devfn), PCI_FUNC(pdev->devfn),
-+			 vfio_audit_str[op], *ppos, count, blocked);
-+	audit_log_end(ab);
-+}
-+
- static ssize_t vfio_config_do_rw(struct vfio_pci_core_device *vdev, char __user *buf,
- 				 size_t count, loff_t *ppos, bool iswrite)
- {
-@@ -1989,6 +2021,7 @@ static ssize_t vfio_config_do_rw(struct vfio_pci_core_device *vdev, char __user
- 	int cap_start = 0, offset;
- 	u8 cap_id;
- 	ssize_t ret;
-+	bool blocked;
- 
- 	if (*ppos < 0 || *ppos >= pdev->cfg_size ||
- 	    *ppos + count > pdev->cfg_size)
-@@ -2011,13 +2044,22 @@ static ssize_t vfio_config_do_rw(struct vfio_pci_core_device *vdev, char __user
- 	cap_id = vdev->pci_config_map[*ppos];
- 
- 	if (cap_id == PCI_CAP_ID_INVALID) {
--		if (((iswrite && block_pci_unassigned_write) ||
-+		blocked = (((iswrite && block_pci_unassigned_write) ||
- 		     (!iswrite && block_pci_unassigned_read)) &&
--		    !pci_uaccess_lookup(pdev))
-+		    !pci_uaccess_lookup(pdev));
-+		if (blocked)
- 			perm = &block_unassigned_perms;
- 		else
- 			perm = &unassigned_perms;
- 		cap_start = *ppos;
-+		if (IS_ENABLED(CONFIG_VFIO_PCI_UNASSIGNED_ACCESS_AUDIT)) {
-+			if (iswrite)
-+				vfio_audit_access(pdev, count, ppos, blocked,
-+						  VFIO_AUDIT_WRITE);
-+			else
-+				vfio_audit_access(pdev, count, ppos, blocked,
-+						  VFIO_AUDIT_READ);
-+		}
- 	} else if (cap_id == PCI_CAP_ID_INVALID_VIRT) {
- 		perm = &virt_perms;
- 		cap_start = *ppos;
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 9a4ecc9f6dc5..c0aace7384f3 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -122,6 +122,7 @@
- #define AUDIT_OPENAT2		1337	/* Record showing openat2 how args */
- #define AUDIT_DM_CTRL		1338	/* Device Mapper target control */
- #define AUDIT_DM_EVENT		1339	/* Device Mapper events */
-+#define AUDIT_VFIO		1340	/* VFIO events */
- 
- #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
- #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
--- 
-2.34.1
-
+If the returned reference out-lives dev it can become invalid, since it means
+that the device could subsequently be unbound. Hence, I think we indeed need to
+require that the returned reference cannot out-live dev.
 
