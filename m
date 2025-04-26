@@ -1,133 +1,185 @@
-Return-Path: <linux-kernel+bounces-621524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3E8A9DAD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D980DA9DADF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB3627B557C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 234809235CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D422B35973;
-	Sat, 26 Apr 2025 12:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D3413777E;
+	Sat, 26 Apr 2025 13:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMuCLQgI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NM6BgfME"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3493F2F24;
-	Sat, 26 Apr 2025 12:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF82A55;
+	Sat, 26 Apr 2025 13:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745672243; cv=none; b=u6KaEFM7g80GUFmv9h3wupu0b9Y3LJgCyAfiWh4v99qJ4ClnFSpRhIawUg4oXWLSM4TOPzlw3fISqys7CcpT9jwgl1dV9fXKklyB/z/1DZO84UdhBYI1F5OlVVkkOvines/nXp30K+y+xWHbrHNvXqnz1Znqlqf8b2N7fv8YhrE=
+	t=1745672531; cv=none; b=gjnF8r/aEN0mZn9+n/55E5sFlDNfPGigceloYpqpGA+DGlrl9O6BZaZYmust1Ha8aa0MEfzdcD+V5mQgrOy++Jg9HleJg7UObGAZIjFW6HdcifyrxCZgqaqcR11Nrta7XUvgYz2JlrxA1yJqwBq00tajuurI/3KlUXXP6IhBozM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745672243; c=relaxed/simple;
-	bh=7vnqcVl5ngC2WnVfizhAsL0Eks4mJZUDw7HzflzBWOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UP+XWldd5mYrw1m5vbjXpsjSJs8rFJ4DI9kz6QqFDdKXjr9Topep/49RpwMJk5PXL2zrJqXBR7CgH/jNP+ql77/P5hFfnaoYsIRUtM/ClvRAzpiXmCkfBagu1KAy6M6KxtDOAVQDRfpwEb5dx6OGzXLMVvH0aZRydiXVJfyA7tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMuCLQgI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C96C4CEE2;
-	Sat, 26 Apr 2025 12:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745672242;
-	bh=7vnqcVl5ngC2WnVfizhAsL0Eks4mJZUDw7HzflzBWOI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oMuCLQgIKpLjI+JSbeLr/pxzfWwb4AEqiajhWDjJ/K96eva/VELbmm37Yk2ZYZe7f
-	 Vg8A7Dl7Zjgf0mc7kjwMiQsm6b4ZS8madUWixIRihiSiQHWNz1WFL2AzHeqi4DiCsk
-	 PHZYuNER9j2uOXc3BwGq5lOe1SI2GXaW3+4KCI30zojnYZbA22oh7wHXDMX8OaTsGI
-	 Z+SlxlyLJgNW2M9Mthj/eOHUwv3c1hbqEBkLT1AJ3PhOOygFj23ihq/kTCdsWN/fTV
-	 ZRjA2efx9Xlpg9m3Yefh/iwXUkWMxLAiPY1+IB629NYJbT/wo3xJK0guh7q46WQ23R
-	 NFvCyAbiZe0pQ==
-Date: Sat, 26 Apr 2025 20:57:08 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, airlied@gmail.com,
- corbet@lwn.net, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, jani.nikula@linux.intel.com,
- joonas.lahtinen@linux.intel.com, linux-doc@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- maarten.lankhorst@linux.intel.com, masahiroy@kernel.org,
- mripard@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
- rodrigo.vivi@intel.com, simona@ffwll.ch, tursulin@ursulin.net,
- tzimmermann@suse.de
-Subject: Re: [PATCH v4 0/4] Don't create Python bytecode when building the
- kernel
-Message-ID: <20250426205708.4f90a83d@sal.lan>
-In-Reply-To: <22d7bca2-cdfb-4e06-acb2-41363ba13333@gmail.com>
-References: <cover.1745453655.git.mchehab+huawei@kernel.org>
-	<22d7bca2-cdfb-4e06-acb2-41363ba13333@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1745672531; c=relaxed/simple;
+	bh=OKE665Bl2Yy8MukRJPxgjLpludfwT5ohBBeio0C4TTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hd4sTuaHB5T7VkScECLMBuOwe4lWOhYFN7eEbPgBXPG6BUX/SxvI9mWKJKVuKSlh3rNAEvqsAt5t/E2YLjaPdjrIOsxXknmEiMUcfnzyY0734s6PgTYSkRuDBSShQf2yjqzbCqBrUKrEl4TkK8cNwy/5gq3/QXrkV7AbJr0nGoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NM6BgfME; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f4ca707e31so5135435a12.2;
+        Sat, 26 Apr 2025 06:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745672527; x=1746277327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+DYeZqYBcR9JQccEFP/h/dHS2RjGn5FPfmXbvBGKsU=;
+        b=NM6BgfME7hhDSve+4s3U8FfjjelTzHcOmkHZWPfXFhFMKBfNv0xRwSMrLCYbkKmL6H
+         sYBfVoTsbiEzZQ+6dDCXuFqjfjOOGB0A6gRhc/lXXAm+y9KXN9WVmy4stG13tfO6fV9Y
+         1Wh2DA+gkqjM8xAreZfGwGpTQhFDYEolLt0q0HnE+0klyaw9412l9Ur6Yf5fLVrolLww
+         Lbi8Iy8XWDlt73uJbhsWV6//LYXDPTX/4v8ZlhL9yq3s2xnmc9W+I5NVMZU1Olo+VDiB
+         Ft59HFRuvak3bqEwamR/DH8/FYLcqPaFUgm3TvWp56dbxbd94arwBgZxhcxCdR+9H3gu
+         mB3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745672527; x=1746277327;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9+DYeZqYBcR9JQccEFP/h/dHS2RjGn5FPfmXbvBGKsU=;
+        b=oQe5OlMTeiTXbM67+zE+iiHd5OOjDLZGrLJ9DfBp/NSjfWI8Ma3o1lwh5XiCVvwHz6
+         eDMRa1Nal8lXleehwUywXc0G3O1ApyKDFRKPZYs/1v8KLeStfMP97QakxsMLg9A6Tg3O
+         8KFh+okjm5phXp5hTY5e4DGc7/tr07bagnhc+wVL8XP+vq6QyngwvhY8YCn/FJ6nvF7R
+         phlpMVU7cwYnqMb1ObbjZLXqaqL66FchZXGCbWjVFFjAFZeNnsgH7sot27FD2P2dvAIG
+         4VUY/XbqfS+0NwLCAiXqv57aqKZ5mH8BzbGQgsL+t3RfM5a84ABGFZiCmU9L63Cwvbcb
+         iitw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaXRD+ZxlCLAcoZxmW8dYMadjNfouq/PnupTVd9ru6+GzYzmBbNxX97KEr0yNWDqk/Mp7CW3bGP+TwCyDJ@vger.kernel.org, AJvYcCVp+IKCsZGlclw1K7BEGGJVFpJANyM+O8jKYwsF5WMbHouO8mcx3CJmCXfwusxX1jbxpd1P0R1FoTSezJH+aA==@vger.kernel.org, AJvYcCWlbrkO5eoEcm7A2oBAy3MCB34CFaVg1fTvhwTpQcpt2gt6+qrNjzkHxZR0OyRsOi6+cza/viJHASk4@vger.kernel.org, AJvYcCXBEfC6/s05/9uMMHVW7lOYIYFTxkBS15AGTtvBzvVI2TUCsgj2x/1rv8GBT/CyPECwLki+UDyHFcOc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3wVq9Ei5gqqm6O2NSNk0ZL9Vctay+um64N9TCatKWxfmR0ctw
+	BlXeZuHtAM1AkGAK4SQKCmqF622JPt182O00wgx6MTtPSyzoUvU=
+X-Gm-Gg: ASbGncvPMZXN530AkRol1587JAHJO0yvc2bBxO+r/GbkLVrYZ3NJj3HV1SkeDxzN6lo
+	L7qbbZYQQG6YhrUhRA9e+ncSN495FnND4FAtLSajRlFzf0i6VXdkjFKppL9foxlGM+z8A6uk0xT
+	yiz+YFuWfkgNS9PboeTupBA+hVdMwXTmoFVU0LuVktCIeeAobIGolt4zp28V7ajxozdcNOJBK7C
+	4KSTtq8JEmCtbY05BMndtzrIBd1fQ7bzzyj0nx32NL2g8IJAXrBJjKpETAMWLfjq0UBkl6nR9Zb
+	a2AQD75TgooPVob2Z62BFfZnEB25IvreQixLJFcmzAGtQQ==
+X-Google-Smtp-Source: AGHT+IGqr0lvrcpl6TuiVabgrcL04bTpP2on4P6isYpjsk7p+9fVD7HOSA4ODagyOwexvut7iubt0A==
+X-Received: by 2002:a17:907:6ea0:b0:ac1:791c:1532 with SMTP id a640c23a62f3a-ace84af5697mr227475866b.51.1745672526836;
+        Sat, 26 Apr 2025 06:02:06 -0700 (PDT)
+Received: from alex-x1.lan ([84.226.118.249])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6eda7affsm286452566b.170.2025.04.26.06.02.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Apr 2025 06:02:06 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	maud_spierings@hotmail.com,
+	dmitry.baryshkov@oss.qualcomm.com
+Subject: [PATCH v4 0/4] X1E Asus Zenbook A14 support
+Date: Sat, 26 Apr 2025 14:57:56 +0200
+Message-ID: <20250426130203.37659-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Akira,
+Introduce support for the mentioned laptop.
 
-Em Sat, 26 Apr 2025 11:39:05 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
+Particular device exists in two model numbers:
+* UX3407QA: X1P-42-100 or X1-26-100 (as tested)
+* UX3407RA: X1E-78-100
 
-> Bothering with might-become-incompatilbe-in-the-future python environment
-> variables in kernel Makefiles looks over-engineering to me.
-> Also, as Mauro says in 3/4, it is incomplete in that it does not cover
-> the cases where those scripts are invoked outside of kernel build.
-> And it will interfere with existing developers who want the benefit of
-> bytecode caching.
-> 
-> I'm not precluding the possibility of incoherent bytecode cache; for example
-> by using a shared kernel source tree among several developers, and only
-> one of them (owner) has a write permission of it.  In that case, said
-> owner might update the tree without running relevant python scripts.
-> 
-> I don't know if python can notice outdated cache and disregard it.
-> 
-> In such a situation, setting PYTHONPYCACHEPREFIX as an environment
-> variable should help, for sure, but only in such special cases.
-> 
-> Andy, what do you say if I ask reverts of 1/4, 2/4/, and 3/4?
+Mostly similar to other X1-based laptops. Notable differences are:
+* Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
+  and Qualcomm FastConnect 7800 on UX3407RA
+* USB Type-C retimers are Parade PS8833, appear to behave identical
+  to Parade PS8830
+* gpio90 is TZ protected
 
-Patches 1 and 2 are, IMO, needed anyway, as they fix a problem:
-KERNELDOC environment is not used consistently.
+When comparing device firmware between UX3407QA, UX3407RA, it seems
+that only ADSP firmware is different, CDSP and GPU firmware appears to
+be the same. (At least assuming the GPU firmware name in both cases is
+`qcdxkmsuc8380.mbn`). Since at least some blobs are different betweeen
+X1E and X1/X1P, define new firmware directory for `qcom/x1p42100`. This
+also makes it easier for distros to automatically extract firmware from
+Windows and place all blobs for the model under the same path. If/When
+firmware blobs make it to linux-firmware, same blobs can be easily
+symlinked between `qcom/x1e80100` and `qcom/x1p42100`.
 
-Now, patch 3 is the one that may require more thinking.
+NVMe SSD depends on [1]. USB Type-A over USB MP controller  depends on
+[2], or equivalent proposed solution.
 
-I agree with Andy that, when O=<dir> is used, nothing shall be
-written to source dir.
+Qualcomm FastConnect 6900 on UX3407QA did not work out of the box, and
+additionally required both newer firmware and patches to `board-2.bin`.
+I added a short how-to [3], as it is not exactly trivial.
 
-There are a couple of reasons for that:
+ACPI dumps can be found on aarch64-laptops' github [4]. HWids on
+dtbloader's github [5].
 
-1. source dir may be read only;
-2. one may want to do cross compilation and use multiple output
-   directories, one for each version;
-3. the source dir could be mapped via NFS to multiple machines
-   with different architectures.
+[1] https://lore.kernel.org/linux-arm-msm/20250319094544.3980357-1-quic_wenbyao@quicinc.com/
+[2] https://lore.kernel.org/all/20250318-xps13-fingerprint-v1-1-fbb02d5a34a7@oss.qualcomm.com/
+[3] https://github.com/alexVinarskis/linux-x1e80100-zenbook-a14?tab=readme-ov-file#wcn688x-wifi
+[4] https://github.com/aarch64-laptops/build/pull/134/files
+[5] https://github.com/TravMurav/dtbloader/pull/4/files
 
-For (3), it could mean that multiple machines may have different
-Python versions, so, sharing the Python bytecode from source dir doesn't
-sound a good idea. Also, I'm not sure if the pyc from different archs
-would be identical.
+Changes to v3:
+* Drop redundant comments
+* Drop incomplete wcn7850 as it is causing dt errors
+* Picked a-by
+Link to v3: https://lore.kernel.org/all/20250416232345.5240-1-alex.vinarskis@gmail.com/
 
-With that, there are two options:
+Changes to v2:
+* Fix/re-add PS8833 as fallback
+* Add EC's i2c address
+* Add pwrseq for wcn6855, placeholder for wcn7850 until its tested
+* Rename x1-zenbook.dtsi to x1-asus-zenbook.dtsi
+Link to v2: https://lore.kernel.org/all/20250402084646.10098-1-alex.vinarskis@gmail.com/
 
-a. disable cache;
-b. set PYTHONCACHEPREFIX.
+Changes to v1:
+* Drop PS8833 variant, fallback to PS8830 as they behave the same
+* Drop wrong pcie6a_phy compatible revert
+* Drop redundant comments, fix order of properties in the device-tree
+* Fix device name bindings, express in model names instead of the soc
+* Fix GPU firmware name for UX3407QA
+* Fix model string, enclose variant in parenthesis
+* Added missing new lines before 'status = "okay";'
+* Updated cover letter to reflect some of the above changes
+* Left SPI10 disabled as it is unknown how/what for to use it as of now
+Link to v1: https://lore.kernel.org/all/20250331215720.19692-1-alex.vinarskis@gmail.com/
 
-We're currently doing (a). I guess everybody agrees that this is
-is not ideal.
+Aleksandrs Vinarskis (4):
+  dt-bindings: usb: Add Parade PS8833 Type-C retimer variant
+  dt-bindings: arm: qcom: Add Asus Zenbook A14
+  firmware: qcom: scm: Allow QSEECOM on Asus Zenbook A14
+  arm64: dts: qcom: Add support for X1-based Asus Zenbook A14
 
-So, ideally, we should move to (b). For Spinx, the easiest solution
-is just to place it under Documentation/output, but this is not
-generic enough: ideally, we should revert patch 3 and set
-PYTHONCACHEPREFIX when O is used. Eventually, we can apply my
-patch for Documentation/output, while we craft such logic.
+ .../devicetree/bindings/arm/qcom.yaml         |    2 +
+ .../bindings/usb/parade,ps8830.yaml           |    7 +-
+ arch/arm64/boot/dts/qcom/Makefile             |    2 +
+ .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    | 1307 +++++++++++++++++
+ .../dts/qcom/x1e80100-asus-zenbook-a14.dts    |   33 +
+ .../dts/qcom/x1p42100-asus-zenbook-a14.dts    |  137 ++
+ drivers/firmware/qcom/qcom_scm.c              |    2 +
+ 7 files changed, 1488 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dts
 
-Regards,
-Mauro
+-- 
+2.45.2
 
 
