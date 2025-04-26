@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-621722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32A9A9DD3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 23:26:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20562A9DD48
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 23:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA4E7B188C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 21:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7E146451D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 21:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0A71F9F47;
-	Sat, 26 Apr 2025 21:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0364C1FE455;
+	Sat, 26 Apr 2025 21:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktzsYGbE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Buawh5+b"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616301DDA31;
-	Sat, 26 Apr 2025 21:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E21C3BE2;
+	Sat, 26 Apr 2025 21:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745702804; cv=none; b=ajGJjRzlrEcggRefl1UVwfar+szk7MJEieOIie0xCSWaV4ZHcew0zViKJqiXTdYU2sksCz90ubkF8m9SLGOg9Zvm6KM7Z2Y+vYKtQMYGbPfnBLTJXj8QRISXc/a5f4pn7g5mfH4YgYrdMi1QErrm7HXIajpcKPXbiuS7efswvEA=
+	t=1745703988; cv=none; b=Aq6mSrsvjXcdGZKI32+S3UfjMp3rkLzCyWH020aUEj1FMPlGQuyzimDQmXjP+70GAQJu96cJ5JQbbwS2MQO6GGQol1aqfda3DCpzHJcrXHNiqy6FrJb5p2zs5Pwsj5WBjgYw8Uumrfa2vtMoMaw1PSyzmZDJD4/eL/ZzawDWBXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745702804; c=relaxed/simple;
-	bh=Yby1Mo/3EYqLTXwzUGNMJNPfcTdhTI0E8a0Pj9oSi4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYuRUJl9OA/zRQQcvkYrxMJd35IIunfS1I0yw1sYvbGI1A1IiXUtK68U49YI3imdeoUn+NKPZT59Jz+4h/MFVAgHBRT2b6aXh36M9WFSRgeMgWpxZrf0JCLYN6PEq+o4cilTnfBvNpdwg9cGtegWOm4ZlQap7Gc2MgDm1rOm+BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktzsYGbE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D87C4CEE2;
-	Sat, 26 Apr 2025 21:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745702803;
-	bh=Yby1Mo/3EYqLTXwzUGNMJNPfcTdhTI0E8a0Pj9oSi4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ktzsYGbEAaYSwQxvzpKSNvrbGqkD1wBrvJTKckiliahIu1+eeIIeTYHJuj+kGjuyC
-	 EInspB4YzfLkFUTOwuRNw36KFBRblG7xPX5RDIjtzcUPQBmlfMIW5jMNteNXJmG/mP
-	 Lc3jP28V32NvMHZr7cY4t9qoBUNlQe4uXA6gJAHD7AtM37+LDRpPpYJAW1DVeWzzZ+
-	 rc0tdlhrN7egZPfGDqFOtOCoeFgCbp49vIO3oV/ycXy8VM1lWzegAlD6OW8Ds/+24Q
-	 Hn4YfqfUGuYzQuDDgk1sNfTLrJLyFpyWzE/w5pMGe/mAZ+es2sf6c6vrvAz8n8gahb
-	 Csh7yU1IcQEUQ==
-Date: Sat, 26 Apr 2025 23:26:36 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	kwilczynski@kernel.org, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
-	joelagnelf@nvidia.com, ttabi@nvidia.com, acourbot@nvidia.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] samples: rust: pci: take advantage of
- Devres::access_with()
-Message-ID: <aA1PjHrG4yT7XpCI@pollux>
-References: <20250426133254.61383-1-dakr@kernel.org>
- <20250426133254.61383-4-dakr@kernel.org>
- <D9GUSVZY3ZT7.O3RTG4N0ZIK0@proton.me>
+	s=arc-20240116; t=1745703988; c=relaxed/simple;
+	bh=J8h86/12IPiidVEXvsbB+qEPf5663lCxTnKk8rXApOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fWnh9OjwNCOIuy9qU3aHNCkt+UFYSt2uyjv5KJxUrj+XTEBYN4Yqx2+ZiedDYOzd7NNQlPJyqauyap+Qi2p4k4IkrAlEevnFXAN7lCTeIbj8Kfgk8H+FrdsZ/xPE/wLefNUQmM9EDBWk4enXYThnmvbLvCwAncWhe55H++WFoaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Buawh5+b; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=JE2UPcOj432rz3CwaH1lESlLqaPq8YS2nPPAFqBdtDc=; b=Buawh5+bOuQGVZTBEWc5m0nIzj
+	3y+TjDkxOU1dKe2cJlqNg7LgJZ7qz7Y12dLQruqMKvigAALjI5eFwcGwLUoyppncpd7CZaxJdAsqf
+	3A2oRWpDhWjVerWODWu/OSogyg69L3aFUH4qkoHzLzDpORbBWx4h/ChDThm1JaSlAGzq+OT3wFOUp
+	8yOLlW/Xt45pAd1gXF+OrGzyZyqA2cFreAtZWG0jPv6oQ3ittZ2pFGVrhWN7ZfKl6dzU24kSPVMyJ
+	VFW2r28PQ0T3Atl/rVIWfIzb7681twsHwYrhSlJvLsoaaboi6S+HjZrRvUj3hszyiZRqbOBxMPtXX
+	LVevX+nw==;
+Received: from i53875aba.versanet.de ([83.135.90.186] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1u8nLp-0001OR-5u; Sat, 26 Apr 2025 23:46:21 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH] clk: rockchip: rk3568: Add PLL rate for 33.3MHz
+Date: Sat, 26 Apr 2025 23:46:05 +0200
+Message-ID: <174570370121.31943.11182147025111665944.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250318181930.1178256-1-anarsoul@gmail.com>
+References: <20250318181930.1178256-1-anarsoul@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D9GUSVZY3ZT7.O3RTG4N0ZIK0@proton.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 26, 2025 at 08:30:39PM +0000, Benno Lossin wrote:
-> On Sat Apr 26, 2025 at 3:30 PM CEST, Danilo Krummrich wrote:
-> > For the I/O operations executed from the probe() method, take advantage
-> > of Devres::access_with(), avoiding the atomic check and RCU read lock
-> > required otherwise entirely.
-> >
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  samples/rust/rust_driver_pci.rs | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-> > index 9ce3a7323a16..3e1569e5096e 100644
-> > --- a/samples/rust/rust_driver_pci.rs
-> > +++ b/samples/rust/rust_driver_pci.rs
-> > @@ -83,12 +83,12 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> Result<Pin<KBox<Self>
-> >              GFP_KERNEL,
-> >          )?;
-> >  
-> > -        let res = drvdata
-> > -            .bar
-> > -            .try_access_with(|b| Self::testdev(info, b))
-> > -            .ok_or(ENXIO)??;
-> > -
-> > -        dev_info!(pdev.as_ref(), "pci-testdev data-match count: {}\n", res);
-> > +        let bar = drvdata.bar.access_with(pdev.as_ref())?;
+
+On Tue, 18 Mar 2025 11:18:51 -0700, Vasily Khoruzhick wrote:
+> Add PLL rate for 33.3 MHz to allow BTT HDMI5 screen to run at its native
+> mode of 800x480
 > 
-> Since this code might inspire other code, I don't think that we should
-> return `EINVAL` here (bubbled up from `access_with`). Not sure what the
-> correct thing here would be though...
+> 
 
-I can't think of any other error code that would match better, EINVAL seems to
-be the correct thing. Maybe one could argue for ENODEV, but I still think EINVAL
-fits better.
+Applied, thanks!
+
+[1/1] clk: rockchip: rk3568: Add PLL rate for 33.3MHz
+      commit: 3cb09de48f652abd662b436b23f914d3eb66f1fd
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
