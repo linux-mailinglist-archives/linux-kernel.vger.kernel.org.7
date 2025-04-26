@@ -1,160 +1,215 @@
-Return-Path: <linux-kernel+bounces-621576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FDEA9DB88
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07A3A9DB7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DBE77A9D9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D6B4A35FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C211010785;
-	Sat, 26 Apr 2025 14:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A17A25CC46;
+	Sat, 26 Apr 2025 14:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIkd5rnR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPaAUPAd"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CABA25D212;
-	Sat, 26 Apr 2025 14:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970351DE894;
+	Sat, 26 Apr 2025 14:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745678965; cv=none; b=GPLK75zNH63nPrDg8V/YCxtDQvGueXQatxTZblGczuAPoWlyHV/qgD7ISjP84UFQugU/NF3d/+U+qkhflNhCFy+3NP3C28tkS0il3Kn6VO0sxgKPucPTGC257OXNH4ulWtynxZpt6FbRVvYbtF0CLrB4fPK9ADg4l0WojOww8qo=
+	t=1745678112; cv=none; b=qZIsR2IUGW4Rq+nRKAxpf4RgF3v171EBaXA4ljD+s2RTdt0qKxxnmFqY0OUUPj/sJX/kpKRaXGDB6DNXPYGCIWRdkIAd05leiObAsEtji7RpVcpAWQBvW9ro1NNZ1IeP/dYlvBkvow3RvxY1S8kuR5chQsH18MjW/auRNc5D7n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745678965; c=relaxed/simple;
-	bh=TCjIUMQhUHnSLDDQBZcImrdXzq+N5thjBf/twGBfmig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bGkDjUrB6x/nlv0VI2EtY/znBpjxV7tzMzV+gU153f8olnts6/Yww8EaKUKuLVz3FBt636fldKmAWcAx7AWU3zfVrUKWFVGijMB//TjpRve/LBtNpI+Ng42haSHianyXm5AiF5Q+dK0rW5GFhnoTaP5JVKmnVcMgG2zxRqaHyL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIkd5rnR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489C6C4CEE2;
-	Sat, 26 Apr 2025 14:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745678964;
-	bh=TCjIUMQhUHnSLDDQBZcImrdXzq+N5thjBf/twGBfmig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LIkd5rnR5sgsAT9xGm2RZ29iCkLdlLhhuRACunIz02F+phiTirenEhGm3Yqn6/rdD
-	 GEgEkPwpj94RxXahsaU15YY4ycebNo0dojDZ8YujYFz8Or51Oxjli/y679Sm9Ou9WW
-	 MA2b7djDd4fnQHlVgp8QT1ZwoOMPDE4FuUKc9O98QDTlFGArLdWgXOYTSo7DUazvTC
-	 yj+RnGbpuAUStGUikBd2MdfNz4rM/y6cDwm9YJYYwA0iXRNJpF29/c2sS4LznXFgYY
-	 1I0xFVsyA1tI57F0/k2Fy/SwsJ/XSVHGa2WVkWz8DdDcx3Iz/pxxZvxsH6cvxhpc2U
-	 Nx3lWkUSO1X1w==
-Date: Sat, 26 Apr 2025 22:32:34 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Min Lin <linmin@eswincomputing.com>,
-	Pritesh Patel <pritesh.patel@einfochips.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Yu Chien Peter Lin <peterlin@andestech.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Darshan Prajapati <darshan.prajapati@einfochips.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
-	rafal@milecki.pl, Anup Patel <anup@brainfault.org>,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/10] Basic device tree support for ESWIN EIC7700
- RISC-V SoC
-Message-ID: <aAzugucziBi4Nr-y@xhacker>
-References: <20250410152519.1358964-1-pinkesh.vaghela@einfochips.com>
+	s=arc-20240116; t=1745678112; c=relaxed/simple;
+	bh=oCb2dSqs+9IKSBblP7u70zkOwRDAybvfrg1eFn/yOJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LH2YbZbwwS+Bt+hJsKnfy6u2VU8DFSEWlWKl3Yb+YFzF0CjBj6UdnUWnhO2r7XbrgDD8QS2EIY4WMua/dGrGT76OkJ3Z+V6X9EOX/OG8HcXRGQ7/59U9BExTxpIaA/rE+I8G9VbYn4Enb8Br8ML0Za5dwuee5UcDnsZDWKEoPs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPaAUPAd; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-acacb8743a7so536202166b.1;
+        Sat, 26 Apr 2025 07:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745678109; x=1746282909; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gPlX2N5OdUdzHj/MqtkszNOL68KaUYEyIKkA0vaRGkU=;
+        b=EPaAUPAd4DGoZ2TtwkSIcBdYeONUi/5h40nshPh49a2inmSDpXqcGYsMvTuM6nuC3r
+         ReMNFALv1NhG7cgKSDpvGFMeI5/f9mOHbUPnPtU7I50JaRdUi6cOtfCDxdzmQXGC94yb
+         XDx9p2Ad3jAAVUPlE+7ills6q7kOnZnhBOYEGz65ymJVtWYSpY1kvCSzb1VhsDzREP5g
+         5Ea+UR1JSXZ3I2kgKdgvy3ejCJ48NltRo7ch79hyahaasp8fyA1wKmH3UXzMwWj5oaS/
+         UI3F5IFPfvVWqM6Gc7Nsr9D7hM2y+OQr9NDTlaxehQXuMxylvOaQe0m9jFP7Q0UVHi4u
+         XdOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745678109; x=1746282909;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gPlX2N5OdUdzHj/MqtkszNOL68KaUYEyIKkA0vaRGkU=;
+        b=McJ77zcqN+/dHKDiVudP1equa/KnRGZe/YvnRwDAHRfkEgG18LlogJAvbKEeR5V8ba
+         PjmT20RxDNqFnC8Bk3RVmrE21RDPMNiGPXWDGHI5JwgP8oaSha0URoCzbuzvkW2dqEfm
+         itznWIPGJSiimzTVdxTydnkPhlGbIb6f8IsSe23Jc9nY6JyrW/kFwwBSnMIm6+ReFimP
+         gz95CAIvuNCbB4aXR9xwgOG5l6OchFNuF6wNyE2r6h1FtjOQ8/P7Vyu9YP3NYbs2ZTzM
+         PGf311cPE/BaMcuAskWsth6mUb8WjqT6CgZS1sODY/LV0zsQzD+e/VA14OOb7HSzRag8
+         1RgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSkjLmkIwVYy34YplSS8WXYo7fLtR/Wk6YvODJW09OelpgTFk1WP4Jv72GlVMq2X4R/T6LgDxH0fGWCGK7@vger.kernel.org, AJvYcCVWrc+bm3/LV1EsSsWssfwB58pCqbzF9/hjiZyHNJjt/wrTEWUeQu6+8FbKYROkApLKaAo0J1spmlUTd9YVrNU=@vger.kernel.org, AJvYcCX4ERALHYvd+zKQzYBAt5+iiJuKUF2kym34LifHXAPsTdkbg1btPjSbJru37eodCsFQl32Q3TbuMnOF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7Ke9q552gE3MdJ2S1l0zrjqxis1MITj1k7bw9miXGwv9GlIxd
+	QfssRHkH9f8EY5EE6M198WHJ/M22GRouRmvK/BT7ANlmZO39lxG3
+X-Gm-Gg: ASbGncu44K6qS+aGOku/ZXOpi4UjHFVaGsklu8ynCQtROlW4S/Nc9hj3j/jEFroXrk6
+	Hg9BOJ2jMevE+TWedwvV0dt16PxScD3Cs+ERXE+SwvXUfcJlG8xQoff7sgfQL0db0ajwv5ZXGGX
+	qpkEVUc+1pnBMdg+BhopN7DHpjUP5JrLTVkO0O8zZROT4YzziG23dL9M+IFM2rfx/t6UV+oJwzb
+	j5Zw1B0/6YI4UeJWFFjR7fq91gnyaPpp+aTt6LffXKtYdsa9sK1nvkRVDWJrSsbX85qq+1mIMYM
+	DZpx1b/95GY8/jD+srD8Y1ZMbY/TxoF+JUi9qBp83ktu6/oARkbukQ9sEYcPUYeqVtvr4oMIBpd
+	TSmOIv6ZaHzeBlD1c7ayrADf/1VG2ljFJAR/mT6HbVwL2Ya5SVwIa9Mep5tiamgyJ+UmCGtep
+X-Google-Smtp-Source: AGHT+IGE898MsOaWL/eqzSD2zo266ibsfP2maLjuP99Ooh1OsltZUj+SZHEbS9S6ASJdgQBt2nmxzw==
+X-Received: by 2002:a17:907:1ca0:b0:acb:aa0e:514c with SMTP id a640c23a62f3a-ace7339d4b8mr570570966b.2.1745678108526;
+        Sat, 26 Apr 2025 07:35:08 -0700 (PDT)
+Received: from ?IPV6:2003:df:bf1b:2a00:97c2:84bd:aab8:d0be? (p200300dfbf1b2a0097c284bdaab8d0be.dip0.t-ipconnect.de. [2003:df:bf1b:2a00:97c2:84bd:aab8:d0be])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e587f1csm298578166b.79.2025.04.26.07.35.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Apr 2025 07:35:08 -0700 (PDT)
+Message-ID: <39798ebd-35a8-4a67-9df4-f12a6f20ef11@gmail.com>
+Date: Sat, 26 Apr 2025 16:35:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250410152519.1358964-1-pinkesh.vaghela@einfochips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] rust: property: Introduce PropertyGuard
+To: Danilo Krummrich <dakr@kernel.org>, Remo Senekowitsch <remo@buenzli.dev>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Dirk Behme
+ <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20250425150130.13917-1-remo@buenzli.dev>
+ <20250425150130.13917-4-remo@buenzli.dev> <aAuryiI0lY4qYyIt@pollux>
+ <81a65d89-b3e1-4a52-b385-6c8544c76dd2@gmail.com> <aAyyR5LyhmGVNQpm@pollux>
+ <D9GIUOH0CKE4.3R01AYKCCG54O@buenzli.dev> <aAzrg31NB2g0X4qL@cassiopeiae>
+Content-Language: de-AT-frami
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <aAzrg31NB2g0X4qL@cassiopeiae>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 10, 2025 at 08:55:09PM +0530, Pinkesh Vaghela wrote:
-> Add support for ESWIN EIC7700 SoC consisting of SiFive Quad-Core
-> P550 CPU cluster and the first development board that uses it, the
-> SiFive HiFive Premier P550.
+On 26.04.25 16:19, Danilo Krummrich wrote:
+> On Sat, Apr 26, 2025 at 01:08:39PM +0200, Remo Senekowitsch wrote:
+>> On Sat Apr 26, 2025 at 12:15 PM CEST, Danilo Krummrich wrote:
+>>> On Sat, Apr 26, 2025 at 08:19:09AM +0200, Dirk Behme wrote:
+>>>> On 25.04.25 17:35, Danilo Krummrich wrote:
+>>>>> On Fri, Apr 25, 2025 at 05:01:26PM +0200, Remo Senekowitsch wrote:
+>>>>>> This abstraction is a way to force users to specify whether a property
+>>>>>> is supposed to be required or not. This allows us to move error
+>>>>>> logging of missing required properties into core, preventing a lot of
+>>>>>> boilerplate in drivers.
+>>>>>>
+>>>>>> It will be used by upcoming methods for reading device properties.
+>>>>>>
+>>>>>> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
+>>>>>> ---
+>>>>>>  rust/kernel/device/property.rs | 57 ++++++++++++++++++++++++++++++++++
+>>>>>>  1 file changed, 57 insertions(+)
+>>>>>>
+>>>>>> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+>>>>>> index 28850aa3b..de31a1f56 100644
+>>>>>> --- a/rust/kernel/device/property.rs
+>>>>>> +++ b/rust/kernel/device/property.rs
+>>>>>> @@ -146,3 +146,60 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>>>>>>          unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
+>>>>>>      }
+>>>>>>  }
+>>>>>> +
+>>>>>> +/// A helper for reading device properties.
+>>>>>> +///
+>>>>>> +/// Use [`Self::required`] if a missing property is considered a bug and
+>>>>>> +/// [`Self::optional`] otherwise.
+>>>>>> +///
+>>>>>> +/// For convenience, [`Self::or`] and [`Self::or_default`] are provided.
+>>>>>> +pub struct PropertyGuard<'fwnode, 'name, T> {
+>>>>>> +    /// The result of reading the property.
+>>>>>> +    inner: Result<T>,
+>>>>>> +    /// The fwnode of the property, used for logging in the "required" case.
+>>>>>> +    fwnode: &'fwnode FwNode,
+>>>>>> +    /// The name of the property, used for logging in the "required" case.
+>>>>>> +    name: &'name CStr,
+>>>>>> +}
+>>>>>> +
+>>>>>> +impl<T> PropertyGuard<'_, '_, T> {
+>>>>>> +    /// Access the property, indicating it is required.
+>>>>>> +    ///
+>>>>>> +    /// If the property is not present, the error is automatically logged. If a
+>>>>>> +    /// missing property is not an error, use [`Self::optional`] instead.
+>>>>>> +    pub fn required(self) -> Result<T> {
+>>>>>> +        if self.inner.is_err() {
+>>>>>> +            pr_err!(
+>>>>>> +                "{}: property '{}' is missing\n",
+>>>>>> +                self.fwnode.display_path(),
+>>>>>> +                self.name
+>>>>>> +            );
+>>>>>
+>>>>> Hm, we can't use the device pointer of the fwnode_handle, since it is not
+>>>>> guaranteed to be valid, hence the pr_*() print...
+>>>>>
+>>>>> Anyways, I'm not sure we need to print here at all. If a driver wants to print
+>>>>> that it is unhappy about a missing required property it can do so by itself, I
+>>>>> think.
+>>>>
+>>>> Hmm, the driver said by using 'required' that it *is* required. So a
+>>>> missing property is definitely an error here. Else it would have used
+>>>> 'optional'. Which doesn't print in case the property is missing.
+>>>>
+>>>> If I remember correctly having 'required' and 'optional' is the result
+>>>> of some discussion on Zulip. And one conclusion of that discussion was
+>>>> to move checking & printing the error out of the individual drivers
+>>>> into a central place to avoid this error checking & printing in each
+>>>> and every driver. I think the idea is that the drivers just have to do
+>>>> ...required()?; and that's it, then.
+>>>
+>>> Yes, I get the idea.
+>>>
+>>> If it'd be possible to use dev_err!() instead I wouldn't object in this specific
+>>> case. But this code is used by drivers from probe(), hence printing the error
+>>> without saying for which device it did occur is a bit pointless.
+>>>
+>>> Drivers can still decide to properly print the error if the returned Result
+>>> indicates one.
+>>
+>> One alternative would be to store a reference count to the device in
+>> `FwNode`. At that point we'd be guaranteed to have a valid reference
+>> whenever we want to log something.
 > 
-> This patch series adds initial device tree and also adds ESWIN
-> architecture support.
+> Yes, that would work. However, I'm not convinced that it's worth to store an
+> ARef<Device> (i.e. take a device reference) in each FwNode structure *only* to
+> be able to force an error print if a required device property isn't available.
+> 
+> Why do you think it is important to force this error print by having it in
+> PropertyGuard::required() and even take an additional device reference for this
+> purpose, rather than leaving it to the driver when to print a message for an
+> error condition that makes it fail to probe()?
 
-Per past experience, new SoC needs at least pinctrl and clk tree ready.
-> 
-> Boot-tested using intiramfs with Linux 6.15.0-rc1 on HiFive Premier
-> P550 board using U-Boot 2024.01 and OpenSBI 1.4.
-> 
-> Changes in v3:
-> - Rebased the patches to kernel 6.15.0-rc1
-> - Added "Reviewed-by" tag of "Rob Herring" for Patch 4
-> - Updated MAINTAINERS file
->   - Add GIT tree URL
-> - Updated DTSI file
->   - Added "dma-noncoherent" property to soc node
->   - Updated GPIO node labels in DTSI file
-> - Link to v2: https://lore.kernel.org/lkml/20250320105449.2094192-1-pinkesh.vaghela@einfochips.com/
-> 
-> Changes in v2:
-> - Added "Acked-by" tag of "Conor Dooley" for Patches 1, 2, 3, 7 and 8
-> - Added "Reviewed-by" tag of "Matthias Brugger" for Patch 4
-> - Updated MAINTAINERS file
->   - Add the path for the eswin binding file
-> - Updated sifive,ccache0.yaml
->   - Add restrictions for "cache-size" property based on the
->     compatible string
-> - Link to v1: https://lore.kernel.org/lkml/20250311073432.4068512-1-pinkesh.vaghela@einfochips.com/
-> 
-> Darshan Prajapati (3):
->   dt-bindings: riscv: Add SiFive P550 CPU compatible
->   dt-bindings: interrupt-controller: Add ESWIN EIC7700 PLIC
->   dt-bindings: timer: Add ESWIN EIC7700 CLINT
-> 
-> Min Lin (2):
->   riscv: dts: add initial support for EIC7700 SoC
->   riscv: dts: eswin: add HiFive Premier P550 board device tree
-> 
-> Pinkesh Vaghela (2):
->   riscv: Add Kconfig option for ESWIN platforms
->   cache: sifive_ccache: Add ESWIN EIC7700 support
-> 
-> Pritesh Patel (3):
->   dt-bindings: vendor-prefixes: add eswin
->   dt-bindings: riscv: Add SiFive HiFive Premier P550 board
->   dt-bindings: cache: sifive,ccache0: Add ESWIN EIC7700 SoC
->     compatibility
-> 
->  .../bindings/cache/sifive,ccache0.yaml        |  44 ++-
->  .../sifive,plic-1.0.0.yaml                    |   1 +
->  .../devicetree/bindings/riscv/cpus.yaml       |   1 +
->  .../devicetree/bindings/riscv/eswin.yaml      |  29 ++
->  .../bindings/timer/sifive,clint.yaml          |   1 +
->  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
->  MAINTAINERS                                   |   9 +
->  arch/riscv/Kconfig.socs                       |   6 +
->  arch/riscv/boot/dts/Makefile                  |   1 +
->  arch/riscv/boot/dts/eswin/Makefile            |   2 +
->  .../dts/eswin/eic7700-hifive-premier-p550.dts |  29 ++
->  arch/riscv/boot/dts/eswin/eic7700.dtsi        | 345 ++++++++++++++++++
->  drivers/cache/sifive_ccache.c                 |   2 +
->  13 files changed, 469 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/riscv/eswin.yaml
->  create mode 100644 arch/riscv/boot/dts/eswin/Makefile
->  create mode 100644 arch/riscv/boot/dts/eswin/eic7700-hifive-premier-p550.dts
->  create mode 100644 arch/riscv/boot/dts/eswin/eic7700.dtsi
-> 
-> -- 
-> 2.25.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+To my understanding doing the error print in "core" was proposed by
+Rob [1]:
+
+"If the property is missing and required, then we may want to print an
+error msg (in the core, not every caller)"
+
+Dirk
+
+[1]
+https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/DS90UB954.20driver.20done.2C.20ready.20to.20upstream.3F/near/496884813
+
+
 
