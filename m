@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-621274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F627A9D726
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 04:07:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8777A9D73C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 04:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3A11BA185B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 02:07:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 473664A1636
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 02:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841FE1F12F2;
-	Sat, 26 Apr 2025 02:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3B51F875C;
+	Sat, 26 Apr 2025 02:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SVP6Bnra"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ponkila.com header.i=@ponkila.com header.b="HfMNfN2x"
+Received: from www572.your-server.de (www572.your-server.de [188.40.218.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B583C0C
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 02:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2644A02;
+	Sat, 26 Apr 2025 02:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.218.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745633217; cv=none; b=NDDzJ9eAcCEF6tYFirYx4eZOIsb8rzGzr8Dt11j/xLP8DE6gwTCQZ7G74IVYyoACXixj+NIgSSsVJ1eMqt0LEVQ3ZdxjoDNm0pp0jriMAcZ03ReCd6zjOF6aVc3jIrezLtdp4EZXMoFaFI5aazNzPlubJK92a8T6Cicei/Uj28c=
+	t=1745634049; cv=none; b=gV2M+cWlEIFR/f8GFTExdV99vmv8ING2XlvO5QRRtKmuOEiN6kZhXkLBbuLyJqPCRfLkfzU1CU/CponBSRuSJ2Qm7LOorBpv5/y8A1gZQd9OsSO5EClQqJZMKPg/boyrNkG3ZTedCESI6XIDSPyKNUg4Gdavq38q+1valqw0nh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745633217; c=relaxed/simple;
-	bh=vKddt/shVIWbSOkTrcpAoYFqlwmCIAab9WEJ+OCpY4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FktFXPaYi9WY4NG9HClbvy8cgguv3wTGo2HeO1yPqIm0xowq66sMkQc9Fq8yx3r4U+kfPxlCXgX790plUiKPg9C0TCEhdi+G3kyDBGNW8/0DoobmYTmU21Fs/svOXaNinVmggYDSRiLzRQ5lHzrhb0Bs8n3vKDr/kdC1sEEqOAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SVP6Bnra; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJt8I007897
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 02:06:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=hVfsLsmSAu4FPUjKiv9wh0y2
-	VuLXMaFjQQMfN0b6AAQ=; b=SVP6BnraL/aN7XzJbJwh/h1hbwgfAQOU5e1BKV8u
-	MzrLGiNl4rVNgwWz5osi21AB4fVMxDtxzEAZ5hCvNepmiAv4XKbycK2OPvOPDSrX
-	lvIfFHt4cQ0aMyVl5G3cpAvAwwYtGoHWhYX7F47kvvvt2s6yk11MkFgzRmU8rPRW
-	7M0E0mmnmZCOclUZgxXxfBlde5yNA5oCZYhRUransiflieLwMSFDJBJMSjbfn4hK
-	yLjBpfQZ5cufjfgFEQcijXaqHzBF2bxZs9vSWlhcx0oPZeOCHwn2Tv2ibXzWMJph
-	hGoEx74f966Om4lvBicTHtpDHRDXIz+6Jbg63FBnebzqKQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh2jsu1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 02:06:54 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5e2a31f75so892013985a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 19:06:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745633213; x=1746238013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hVfsLsmSAu4FPUjKiv9wh0y2VuLXMaFjQQMfN0b6AAQ=;
-        b=g1WgAkspDpkEOUnT0cDw1aFR0nOYioi54sF/ARII4Ib2mS3U90a22rTgjfKIjS8DHr
-         5VhDHe/qhTuu99r3buQi+ydbC1xauE7uhrE63VAqu0CCcAgadt5n8JXJx448152p9BgG
-         cShUFevNfl9+eS/myEo8TvH+vYMmXW57CqreyumnZJ6nopZLfUlp08AmGKKupQJaGqlv
-         6sCCbI3DbGUJN6dkL07eLS43s2cmqsTtTzdVQ3HBvYKyW/38pczLfL00bhKKTI/re0b7
-         z0xttHCMWZv6qEW6Nk5uAsZaKqkEAEIm4cICgaOxh32ZHVZzxrS3sIpAJi/s7U1DIFYx
-         C7zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvB8Dts1nDpgKDm77CIObjKWgLsiNqJW7gWmJnFkAhFsj+8w4ljbgbdvtEll8SMaVdUsRgr6agFsbxx40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw97mt6PxFkJXKqZLR8+q7CJ9OVa7GjPWPFC8UengG794SiRYi3
-	Ya1JlJW8D1Y6d4zd/bQtgW6yJ3uo03Nosf/gF3sl5sINwLp1J7PY6jFHZl7cIZZj4WljQQpmqGy
-	fxqOapjgwLaQAmPwL+yaoVOc+6m1jIWIoHIFBByktE/u4qycwHjR4sVzshFHq7OTCCVIW6/M=
-X-Gm-Gg: ASbGnctqABLc5ZEh6/wXvKcJ9vdjbFocEwHMS2fC7cip4tN45OIGE68ZBjm2J0TX9Ar
-	mJN2XEyEK4QZXp4XEe/p8NokQ0viFK04REu7tyTPRJODb3HVEMrNZdZFtfPEFP5cL662m3YPcy1
-	MnhaOCjbYqSETwI1iDoxExYdsF3OrPuWcNXcDzbiglQl2kHUJ29djF/4uhr/9CBh3C0CNjCtZFy
-	fSsxwRJORea2GTfnoXHmdnAHeiyi4EEjY9PT9tg12OdqBKce4p9uz1nAurT2Mu/LrMzp/6fvo9a
-	ju3Mxdyymm58O4gqtQLOYWU6jNZnq1NDekHXj/Go4jLtkqde1DLqEBGrwpH/U+9E4J4CiVZnoXg
-	=
-X-Received: by 2002:a05:620a:1905:b0:7c3:d5a4:3df3 with SMTP id af79cd13be357-7c96687d640mr321885185a.34.1745633213169;
-        Fri, 25 Apr 2025 19:06:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4SMUT4h6GsDQGdEqaKfY00ULbElXli4PoIut0Y6O7SlBmj8y5hZZQ1GnqVySpZeyf1n/gHA==
-X-Received: by 2002:a05:620a:1905:b0:7c3:d5a4:3df3 with SMTP id af79cd13be357-7c96687d640mr321883285a.34.1745633212842;
-        Fri, 25 Apr 2025 19:06:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317d1b96e80sm9809931fa.103.2025.04.25.19.06.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 19:06:51 -0700 (PDT)
-Date: Sat, 26 Apr 2025 05:06:50 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/23] drm/tests: hdmi: Replace '[_]MHz' with 'mhz'
-Message-ID: <t76t7yilgl4bwzwgtnjwl6f2zjpgftbk6g5gdqu5yzqq7xa4jk@cyan56ziptk5>
-References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
- <20250425-hdmi-conn-yuv-v4-7-5e55e2aaa3fa@collabora.com>
+	s=arc-20240116; t=1745634049; c=relaxed/simple;
+	bh=abpqB7r7yhSJl9fJC74FAcYqtD9rIO9MlBWGIhv9euM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jqAhob3AS8e1IM5bv4iNjl5DMueOUaAaz1z0n2FE/lX99ieTh7fTXQfUJ9KRB9knIqeyDmO7qZ98lMdCcJ26ZbwljlwZzSKwBVIM1YdQLC/VgaDmcKOlNVwuGn3ks1SAyyZJkvF34jVLz0psNUhMQ5jjp8h4OZs58KBn4otGTNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ponkila.com; spf=pass smtp.mailfrom=ponkila.com; dkim=pass (2048-bit key) header.d=ponkila.com header.i=@ponkila.com header.b=HfMNfN2x; arc=none smtp.client-ip=188.40.218.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ponkila.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ponkila.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ponkila.com
+	; s=default2410; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=tz9cMsRoYeMhEHGF4I0Gy1Va1L8t4+FiGi1VZlVHcl0=; b=HfMNfN2xhuruSkGspT+3OMODbL
+	7TtPuVvrPBq7qOr+W7d2mBtDOK7nR+6IFMFMyS5/o/wNU12risL7vZ1f638aLxPPu12GrIbTjV0zk
+	jvtBKEbkSyJq0HNA7ZKyAJ4qyK7a6U5FucAjl1JhpqPag+C0Z9gvyrtxuXXXM4lZxrJhnTlzFcQAN
+	0Emh0q2coGju0VBVY0zo2FaYgTO4QH6BE+L1IiRV+G+OfzNYb4V0G2W435KSqyWiZ0GRDk4YU32Fx
+	Jz506kxcGVVXB9IUgHDc0QOcIQpvU+b8kt1CrztNpbRzRYNyQyTr9tUT+zI4A5W/CobDjeB8ieajD
+	9H0DU1Pw==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www572.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <jesse@ponkila.com>)
+	id 1u8Uuw-000OFY-2X;
+	Sat, 26 Apr 2025 04:05:21 +0200
+Received: from [2001:14ba:a86b:a900::1373] (helo=localhost)
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <jesse@ponkila.com>)
+	id 1u8Uuv-000OeU-1f;
+	Sat, 26 Apr 2025 04:05:21 +0200
+From: Jesse Karjalainen <jesse@ponkila.com>
+To: linux-leds@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Jesse Karjalainen <jesse@ponkila.com>
+Subject: [PATCH] leds: pca995x: fix typo
+Date: Sat, 26 Apr 2025 05:04:54 +0300
+Message-ID: <20250426020454.47059-1-jesse@ponkila.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425-hdmi-conn-yuv-v4-7-5e55e2aaa3fa@collabora.com>
-X-Proofpoint-GUID: l3wdzTwFzfFDSzMrv6lCwxZnX9VBvqKe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI2MDAxNCBTYWx0ZWRfX1wC0f7DGe6dQ f0z6/iIcVFpueywZPMoAob/C+V2zIA7LTjG5d4ls3c6/QTp3sHrMyzPdUaLlaIwXwiPQAQbEX24 C1svlEXv1UfcT4e0Qlr6NZs7pWeYy9Fb27GTx0zMmb1/gx3Tbs0eaDHSPGIL7il4kjCEc5/q+0H
- 5F1I3RNUCraGkgkNYq5Q2P+6RnHmxjGlXvsbAHszQ5X1itqFpJ9hkezpPW8YEPZlT3cekIp95fm /bD64IeI1XELZFrfOwhMD4L2IvuyeaUfenkl7rJDHdopsY5rBn77FcOQ7w/l8yE3+yZrpUS7MtF bgkPUhu+ORogyBCJmNjAhA6bprwdWouyPKtLjRlu/Pm/dtjYxr4jxqKexb1Ks8u1Pwck5JDjuoP
- hEHHgnlyVFHnhBLyzdcnQk0Xk+BFYPP6c7sCXOKoeinhvgKHXg89T8UCHHZ92nBFodlXIPd2
-X-Authority-Analysis: v=2.4 cv=Tu/mhCXh c=1 sm=1 tr=0 ts=680c3fbe cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8 a=UTU-KeHaearOzU57cusA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-ORIG-GUID: l3wdzTwFzfFDSzMrv6lCwxZnX9VBvqKe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-25_07,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 adultscore=0 phishscore=0 mlxlogscore=827 bulkscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504260014
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: jesse@ponkila.com
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27619/Fri Apr 25 10:35:46 2025)
 
-On Fri, Apr 25, 2025 at 01:26:58PM +0300, Cristian Ciocaltea wrote:
-> Improve consistency throughout drm_hdmi_state_helper_test.c by replacing
-> the two occurrences of '[_]MHz' substring with 'mhz'.
-> 
-> As a bonus, this also helps getting rid of checkpatch.pl complaint:
-> 
->   CHECK: Avoid CamelCase: <reject_100_MHz_connector_hdmi_funcs>
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
+Remove the stray space between the '.' and the 'data' field name in
+the PCA995x device-tree match table.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Jesse Karjalainen <jesse@ponkila.com>
+---
+ drivers/leds/leds-pca995x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
+index 11c7bb69573e..6ad06ce2bf64 100644
+--- a/drivers/leds/leds-pca995x.c
++++ b/drivers/leds/leds-pca995x.c
+@@ -197,7 +197,7 @@ MODULE_DEVICE_TABLE(i2c, pca995x_id);
+ 
+ static const struct of_device_id pca995x_of_match[] = {
+ 	{ .compatible = "nxp,pca9952", .data = &pca9952_chipdef },
+-	{ .compatible = "nxp,pca9955b", . data = &pca9955b_chipdef },
++	{ .compatible = "nxp,pca9955b", .data = &pca9955b_chipdef },
+ 	{ .compatible = "nxp,pca9956b", .data = &pca9956b_chipdef },
+ 	{},
+ };
+
+base-commit: 02ddfb981de88a2c15621115dd7be2431252c568
 -- 
-With best wishes
-Dmitry
+2.48.1
+
 
