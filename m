@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-621667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B5FA9DCA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:52:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A25A9DCAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D351A465ED8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:52:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 441337B4ED3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0869C25DCF8;
-	Sat, 26 Apr 2025 17:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E9825E800;
+	Sat, 26 Apr 2025 17:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="XOTd83cc"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="IC3EpR6c"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1571DE883;
-	Sat, 26 Apr 2025 17:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E942C25E44B;
+	Sat, 26 Apr 2025 17:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745689947; cv=none; b=siVvjcKjKSfhG7LkmsaUK2tNgkePXUL1u8Us5tVjQa4e4TNHuRs2rke4wV+L1oBAf1ZrER8xuA2hq54XfL7XV8zteIQ3KCdc1O+q996ZCIEMjXAdzck20HKvRHKVyzgzweudouDSRqf1GF6dnDP0/IFmlrHBFeD7wfTbiI9cAYo=
+	t=1745689951; cv=none; b=mF//9XnuUUuTTh+X1MvctBP4Vdj3xpkCYjgNQL8z0tPfnhk0TbfxSUgcJZ9qBcxV+KtoHao4ZtbZ+qjPLFcwOeV1mr6VRvaJuAMhaOwvoJpW8Ols7gCYLe4JEqmWiuTy86H7tIaIV2DWbbTdkxBZh9Po7epeYaZ27LT6nEm5DYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745689947; c=relaxed/simple;
-	bh=/uh2f4BTN14XsIz3+Nr7E4au5x2/32t2+an01LvJun4=;
+	s=arc-20240116; t=1745689951; c=relaxed/simple;
+	bh=NAt10LZBeqEWHfZdM5eVz5PYKVVcgF6L19KxgNYKQ5U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RUbZ2BPzusribIpWy8aanHnHB/tBOxcL9v2Fsnjc9tfxBEYS5oYElxv+dXIzFrDp3rcBZyJOJ5lR5uIolusIo+WxiM/LmU5NAAM1YyJTSUeQEDVRFJXltambgYshFHdzblL1BvD2AX8u/2/aEZ/bzIxkKSo2QVyQZLyFFXX5UF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=XOTd83cc; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=cFA0J8UvewSynWnPviyTaC4r25tSEpSSST2o7DN5MyyVmXJ8fsTYAJGWiUXmAEKRqg9uFZ/HktA0s2Nqst50YjpQggVl1CrkdbegMwztmJOmEBCd/732aea+XZ5D8KbSS/jxbyWqwl1wRUrwukPvuFj9kdpzcxWyppwlO265jHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=IC3EpR6c; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=/o189ne/jQPGYgD8OUPO8z1q2TFdEwQ0I6J22Cp9OBY=; b=XOTd83ccw1btb6QK
-	Bq4TZoXSQGpP+XSRzoAlI6OQwXA4lA8ZtRQvbFcfmVUGWNzLKSa+/Qsj/AMIbG0un5UtxvpWGBV90
-	dIorF6SR17LBjCZXQXFAHXb4xRk9zHfB1ySJ4eZlPB4iHjucWTDOAFtwRfC9jYX6QvcyI/cjI57Pp
-	9XGevhqBJhRTIixikvdkv8L1OE+NWs1boIalWKvAmroK1bomG5iLqhVKHpBh2YajN0OmRyRkOSp0X
-	EcjNLY0tdLppRJdSPcyvjf5xjFbxjxlDM9jFTanqKaVpKenLHVpTATRs6ooAUzNsr9pe+T86ArBMl
-	UVyXMlVoQcafSxYwJA==;
+	:Subject; bh=hoQcdVh4NTeufFeA4Okoft80aRjA9PYTz59tnqkdNKk=; b=IC3EpR6co+J+FAVF
+	DD4X8ia3/bZQ0wFu0pPJX1EDme9q7MaVdVBsq+VdfgNVzSPmUE1d+dNTQF2qTuxEW1jlDqErhFzdx
+	gCJcGF1B6vUvNQQEmR/GfjRPhBObHUGd8Kth3L4SN2zLrtLxFhtLqSxcHq0I7CuaGEebQbBDeOz7S
+	hxsLZPN32KC/GbGDAUv++DjiekESrqs5gIVJqVKVPNV5eMOhFHblS/ZUspef6mh0lL/IAFhWz/RyD
+	8Y9BOiqxr8iWapD+XLuRtkDNhRnk99A82Mu84Ao+bRIS4Uvz3sunO4gtMUAePkk89GfeY8lgloHsX
+	FQaI6bCL5jrG9l/mGg==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1u8jhN-00E44n-06;
-	Sat, 26 Apr 2025 17:52:21 +0000
+	id 1u8jhS-00E44n-0L;
+	Sat, 26 Apr 2025 17:52:26 +0000
 From: linux@treblig.org
 To: lgirdwood@gmail.com,
 	broonie@kernel.org
@@ -50,9 +50,9 @@ Cc: linux-doc@vger.kernel.org,
 	corbet@lwn.net,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/5] regulator: core: Remove unused regulator_bulk_force_disable
-Date: Sat, 26 Apr 2025 18:51:40 +0100
-Message-ID: <20250426175143.128086-3-linux@treblig.org>
+Subject: [PATCH 3/5] regulator: core: Remove unused regulator_*drvdata functions
+Date: Sat, 26 Apr 2025 18:51:41 +0100
+Message-ID: <20250426175143.128086-4-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250426175143.128086-1-linux@treblig.org>
 References: <20250426175143.128086-1-linux@treblig.org>
@@ -66,91 +66,94 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-regulator_bulk_force_disable() was explicitly added in 2012 by
-commit e1de2f423462 ("regulator: add regulator_bulk_force_disable
-function")
+regulator_get_init_drvdata() was added in 2008 by the
+commit a5766f11cfd3 ("regulator: core - Rework machine API to remove string
+based functions.")
+regulator_set_drvdata() was also added in 2008 by the
+commit 414c70cb91c4 ("regulator: regulator framework core")
 
-but hasn't been used.
+neither have been used since,
 
-Remove it.
+Remove them.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/regulator/core.c           | 34 ------------------------------
- include/linux/regulator/consumer.h |  8 -------
- 2 files changed, 42 deletions(-)
+ drivers/regulator/core.c           | 17 -----------------
+ include/linux/regulator/consumer.h |  6 ------
+ include/linux/regulator/driver.h   |  1 -
+ 3 files changed, 24 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 90629a756693..32e3919e37d2 100644
+index 32e3919e37d2..60c72d77f77a 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -5196,40 +5196,6 @@ int regulator_bulk_disable(int num_consumers,
+@@ -6096,17 +6096,6 @@ void *regulator_get_drvdata(struct regulator *regulator)
  }
- EXPORT_SYMBOL_GPL(regulator_bulk_disable);
+ EXPORT_SYMBOL_GPL(regulator_get_drvdata);
  
 -/**
-- * regulator_bulk_force_disable - force disable multiple regulator consumers
-- *
-- * @num_consumers: Number of consumers
-- * @consumers:     Consumer data; clients are stored here.
-- *
-- * This convenience API allows consumers to forcibly disable multiple regulator
-- * clients in a single API call.
-- * NOTE: This should be used for situations when device damage will
-- * likely occur if the regulators are not disabled (e.g. over temp).
-- * Although regulator_force_disable function call for some consumers can
-- * return error numbers, the function is called for all consumers.
-- *
-- * Return: 0 on success or a negative error number on failure.
+- * regulator_set_drvdata - set regulator driver data
+- * @regulator: regulator
+- * @data: data
 - */
--int regulator_bulk_force_disable(int num_consumers,
--			   struct regulator_bulk_data *consumers)
+-void regulator_set_drvdata(struct regulator *regulator, void *data)
 -{
--	int i;
--	int ret = 0;
--
--	for (i = 0; i < num_consumers; i++) {
--		consumers[i].ret =
--			    regulator_force_disable(consumers[i].consumer);
--
--		/* Store first error for reporting */
--		if (consumers[i].ret && !ret)
--			ret = consumers[i].ret;
--	}
--
--	return ret;
+-	regulator->rdev->reg_data = data;
 -}
--EXPORT_SYMBOL_GPL(regulator_bulk_force_disable);
+-EXPORT_SYMBOL_GPL(regulator_set_drvdata);
 -
  /**
-  * regulator_bulk_free - free multiple regulator consumers
-  *
+  * rdev_get_id - get regulator ID
+  * @rdev: regulator
+@@ -6131,12 +6120,6 @@ struct regmap *rdev_get_regmap(struct regulator_dev *rdev)
+ }
+ EXPORT_SYMBOL_GPL(rdev_get_regmap);
+ 
+-void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data)
+-{
+-	return reg_init_data->driver_data;
+-}
+-EXPORT_SYMBOL_GPL(regulator_get_init_drvdata);
+-
+ #ifdef CONFIG_DEBUG_FS
+ static int supply_map_show(struct seq_file *sf, void *data)
+ {
 diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 1e20c7330cd4..999eba865c20 100644
+index 999eba865c20..0e9275079e17 100644
 --- a/include/linux/regulator/consumer.h
 +++ b/include/linux/regulator/consumer.h
-@@ -209,8 +209,6 @@ int devm_regulator_bulk_get_enable(struct device *dev, int num_consumers,
- 				   const char * const *id);
- int regulator_bulk_disable(int num_consumers,
- 			   struct regulator_bulk_data *consumers);
--int regulator_bulk_force_disable(int num_consumers,
--			   struct regulator_bulk_data *consumers);
- void regulator_bulk_free(int num_consumers,
- 			 struct regulator_bulk_data *consumers);
+@@ -267,7 +267,6 @@ int regulator_set_suspend_voltage(struct regulator *regulator, int min_uV,
  
-@@ -470,12 +468,6 @@ static inline int regulator_bulk_disable(int num_consumers,
- 	return 0;
+ /* driver data - core doesn't touch */
+ void *regulator_get_drvdata(struct regulator *regulator);
+-void regulator_set_drvdata(struct regulator *regulator, void *data);
+ 
+ /* misc helpers */
+ 
+@@ -633,11 +632,6 @@ static inline void *regulator_get_drvdata(struct regulator *regulator)
+ 	return NULL;
  }
  
--static inline int regulator_bulk_force_disable(int num_consumers,
--					struct regulator_bulk_data *consumers)
+-static inline void regulator_set_drvdata(struct regulator *regulator,
+-	void *data)
 -{
--	return 0;
 -}
 -
- static inline void regulator_bulk_free(int num_consumers,
- 				       struct regulator_bulk_data *consumers)
+ static inline int regulator_count_voltages(struct regulator *regulator)
  {
+ 	return 0;
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 4a216fdba354..e849bab379f2 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -765,7 +765,6 @@ int regulator_set_active_discharge_regmap(struct regulator_dev *rdev,
+ int regulator_set_current_limit_regmap(struct regulator_dev *rdev,
+ 				       int min_uA, int max_uA);
+ int regulator_get_current_limit_regmap(struct regulator_dev *rdev);
+-void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
+ int regulator_find_closest_bigger(unsigned int target, const unsigned int *table,
+ 				  unsigned int num_sel, unsigned int *sel);
+ int regulator_set_ramp_delay_regmap(struct regulator_dev *rdev, int ramp_delay);
 -- 
 2.49.0
 
