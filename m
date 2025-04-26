@@ -1,161 +1,108 @@
-Return-Path: <linux-kernel+bounces-621614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3021A9DBFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:53:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14C9A9DBDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1655A4B08
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:52:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4856D7A6843
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157225D20A;
-	Sat, 26 Apr 2025 15:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0580200BB8;
+	Sat, 26 Apr 2025 15:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="muZMyENy"
-Received: from nbd.name (nbd.name [46.4.11.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LAHj99m8"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAC919CC0A;
-	Sat, 26 Apr 2025 15:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445C2440C
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 15:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745682776; cv=none; b=DIpVi9y4BF4+VzIJO4SSDabNJlSM1TfxOeI6i4Q1GpPi5Ml+Kayx+J2V0nWOdXj/gxdYbV40pnb4aOX2s8erGpCwNEkomox2hHogR8wOKgMCKMO9o4opeL5o4sfNhRWpuSqu5BS/uyI8Pw68hKnsCQJqlrU32KNtUDQyxMev5B8=
+	t=1745681645; cv=none; b=GtUHhtTyNeONOTfTbM2C/aPI+PBf4r1m4zZXq/rmXot5BUZIcLJtUn6M6iP3joe+swvZOr/qUx0QNkxFvhx/6EeFP/nA/CjbnHOP8it+yjqqlD1G7BllW1v69RqpGwg8ZUl1nzmZ0KbhrcIL4Tecqkn7IqWglEu9SZhy4pRzMSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745682776; c=relaxed/simple;
-	bh=uINH35vO359kuO4RKCBqhNMqf7rry0dhDnoFY7BQ++0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t63su/rO6MRrs2jFsWNzGn7rBtSkNzXMcOuE/FvDYCF1ytNwOgIDlTPzlukQs3QCj/arUehaRyKCoqTokUiG/h2rqlR7CmUw6viG3gFDuDy3DSRBJoiddMdTxDhhvEPYVQa7WpDCtewFZJQS0bGd6yFca1zmE+2vVywOuH5LG3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=muZMyENy; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=luF1/ZSWAFeNSfH7gBHAFSQcCO8MBfOBlBzZ4kCjuvc=; b=muZMyENyxj8U9rbvrUED25L643
-	YAQNXfz/9PjxlkZ7cjSY0OeE/QvsO+Zg9uzXG6YxNVapqruZjujWkta1Jt/nq/yXX9IFUpoHrAgk+
-	CNeE49k+Xt6Ly923c/AdZcFoqceafh+37/HscczGatb/4648EUFUHnG7nyOQugaszFfk=;
-Received: from p5b206c93.dip0.t-ipconnect.de ([91.32.108.147] helo=Maecks.lan)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1u8hVn-00FfwR-0F;
-	Sat, 26 Apr 2025 17:32:15 +0200
-From: Felix Fietkau <nbd@nbd.name>
-To: netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Willem de Bruijn <willemb@google.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: ipv6: fix UDPv6 GSO segmentation with NAT
-Date: Sat, 26 Apr 2025 17:32:09 +0200
-Message-ID: <20250426153210.14044-1-nbd@nbd.name>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745681645; c=relaxed/simple;
+	bh=efeGQbHLDerPawNiWy0UWzTlDAZvY+aauNBsOnalqVg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jABe1ZeFFTIcmXxTEtJb5FMIBUlIw1cJYc+ov5xlM1fqv85TjmR8p3MIvKuI9VewCnsCQRZSKMOD7sOfpQtHU/IYEXF7w1sJDT5PxZFKvfEw0jj4SyNKjLuSlCcNK9kRtcQmLW4nY3oWTdlHvx2q918/z0tZuxyZ5G6zDRfMB48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LAHj99m8; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb1eso1914748a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 08:34:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1745681640; x=1746286440; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbfGRFY1ORn8OxsWarlewNbSwUtGm4LLMqrZX4kLbSs=;
+        b=LAHj99m8X31Dh0viYrL2kWIqSJpSIklZcc3thedKUdXX4go5NySxB7peLtQ8gmvFVj
+         pmOx8YXma98FHQfH6D1WPAwhf/TmJPApGF7Zc4Sz87dH9y0AYpd4SGfTYmgRuYXcY7C5
+         lNyOJcYuYJenWO01UXbKhKVDo+jdJRWtGZHDM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745681640; x=1746286440;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HbfGRFY1ORn8OxsWarlewNbSwUtGm4LLMqrZX4kLbSs=;
+        b=QEEFLhp8EoVnhil2BRvAg+hiUIkYbKtQfLA8/52fLi6lIycudCReFAw+ZR1g0Pygef
+         R0vchrpDpADz6X0HM2owD0SXuPLN0832L3PCPLINuSyXdsDd859s7U6YHHNyNsI5cM7R
+         REeloanDxuYnR5mw85V9Pd2AUYwsuph8sq5oo/tQzb5IM7w03tAFFqy6XMHXrXWVF4fh
+         UCWXL94MV3FeQKPI6ORx27tuneSE4haSbmn01gFTaepHgMzNqmVTWxg625U34g+spA34
+         FiXNzcUUNuOguTl2BFQaDNoiZr8WEXf3cfkIC1Ofk2BJ2Ff97hyxKpC/ThD8/2fia8I/
+         7pQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeT9eU46/nkCUlc1e6MhQopqgKdgoYO3KWN1myiMZzctYvv+L2lLC0oh+jsLJ5JkKZmUaobCkHxfxC59g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU2CaRFb8+Hgqo5+MPoZPGZjh/+rpPHOOe+hkuPN2/kZIhZmfv
+	c4kwYqnbDXp16FFhLr6oxsd3Jp8JRdOtJHtrPaSZaF9fZbJXh6KD2W+4Am1wGMZdhAE2BehTl2b
+	DV9s=
+X-Gm-Gg: ASbGnctFKL6l2IU5fkY1Kp/VK1T44W10b17nQ8g90PVEf01FzlUbnfC81DIh3l3Sdbn
+	zcWVTPt678g/9z0ahXQnyNXbYX6FvA9Ayzfn99jMRMwvq9Lyozwpo5n1ZQ9rWIxx2APdIJulsWE
+	Z0SK0JB/NCnwcymhJoxuC7vq0bTczDy+BllMo/Nz4NRRaVSbWpJGVLEFhYqESZefswvHI6UHFQu
+	Lwp/B0nDhEAEgSoezTb0LyGx67rCC33mP4my3Hzxk1ZLfq66jREOIYV8DyqfwIEepIAvSLEzFOq
+	7qJqBo9hrWRkmItLXcqsOmrC3kuBJsaFk4gyz2xjXymNWjafu2QQkR6aPvAvaQpWm7ND94oRk/V
+	KBuWYTJYsacauJPE=
+X-Google-Smtp-Source: AGHT+IFVTP5W6Tj8gFDPbZkqK1UKSj1VuL33x11GdakaE8TsOCdG0C+EOS+iYwSITVi7/DaSHUy60w==
+X-Received: by 2002:a05:6402:3490:b0:5e5:854d:4d17 with SMTP id 4fb4d7f45d1cf-5f6ef1f7f96mr9010209a12.11.1745681640283;
+        Sat, 26 Apr 2025 08:34:00 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7035464f1sm2782653a12.62.2025.04.26.08.33.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Apr 2025 08:33:59 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac7bd86f637so840569366b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 08:33:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVsFUpYGJvndt12ITM7RO3CSz7WwTfIaZLfrzmlx0FAMFeOYTM2aNRJDHpfgTd8c2y8izIZXXWSwk8JFY=@vger.kernel.org
+X-Received: by 2002:a17:906:ef09:b0:aca:c67d:eac0 with SMTP id
+ a640c23a62f3a-ace59dfdf18mr954992566b.0.1745681639385; Sat, 26 Apr 2025
+ 08:33:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAPM=9twNOWYCQ6vXZqUAu8G=oxGrKUvcTYz-SL6Jc=4+8ivVew@mail.gmail.com>
+ <CAHk-=wj+h6i94DyxGQ2Ez6tvp2sBs70EfY7Lp0N1umpwHL_VrQ@mail.gmail.com>
+ <CAPM=9tx2XsDNFDWkxndpFPNihgf18CK7Ps85vE4ZRvuLBG35UA@mail.gmail.com> <CAPM=9tzh5sdpfDXQgLymXKn2_qf7ccN4EsAEaYTNEY=hWNbGNw@mail.gmail.com>
+In-Reply-To: <CAPM=9tzh5sdpfDXQgLymXKn2_qf7ccN4EsAEaYTNEY=hWNbGNw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 26 Apr 2025 08:33:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whMccpCwD2q2EADXwOUSzHspuAn-hkvNYKAQLnAcZmeoQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFbBNCkGjEM_ki0jdb3CgQwcJU2i7U6M0VeEhqz-zXX5qfY8nimjN_etBA
+Message-ID: <CAHk-=whMccpCwD2q2EADXwOUSzHspuAn-hkvNYKAQLnAcZmeoQ@mail.gmail.com>
+Subject: Re: [git pull] drm fixes for 6.15-rc4
+To: Dave Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>, bentiss@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If any address or port is changed, update it in all packets and recalculate
-checksum.
+On Fri, 25 Apr 2025 at 23:54, Dave Airlie <airlied@gmail.com> wrote:
+>
+> It seems to have recovered now, but not sure how stable is it, please
+> repull the original PR when you get a chance.
 
-Fixes: 9fd1ff5d2ac7 ("udp: Support UDP fraglist GRO/GSO.")
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
- net/ipv4/udp_offload.c | 61 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 60 insertions(+), 1 deletion(-)
+Yup, all good now. Thanks,
 
-diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-index 2c0725583be3..9a8142ccbabe 100644
---- a/net/ipv4/udp_offload.c
-+++ b/net/ipv4/udp_offload.c
-@@ -247,6 +247,62 @@ static struct sk_buff *__udpv4_gso_segment_list_csum(struct sk_buff *segs)
- 	return segs;
- }
- 
-+static void __udpv6_gso_segment_csum(struct sk_buff *seg,
-+				     struct in6_addr *oldip,
-+				     const struct in6_addr *newip,
-+				     __be16 *oldport, __be16 newport)
-+{
-+	struct udphdr *uh = udp_hdr(seg);
-+
-+	if (ipv6_addr_equal(oldip, newip) && *oldport == newport)
-+		return;
-+
-+	if (uh->check) {
-+		inet_proto_csum_replace16(&uh->check, seg, oldip->s6_addr32,
-+					  newip->s6_addr32, true);
-+
-+		inet_proto_csum_replace2(&uh->check, seg, *oldport, newport,
-+					 false);
-+		if (!uh->check)
-+			uh->check = CSUM_MANGLED_0;
-+	}
-+
-+	*oldip = *newip;
-+	*oldport = newport;
-+}
-+
-+static struct sk_buff *__udpv6_gso_segment_list_csum(struct sk_buff *segs)
-+{
-+	const struct ipv6hdr *iph;
-+	const struct udphdr *uh;
-+	struct ipv6hdr *iph2;
-+	struct sk_buff *seg;
-+	struct udphdr *uh2;
-+
-+	seg = segs;
-+	uh = udp_hdr(seg);
-+	iph = ipv6_hdr(seg);
-+	uh2 = udp_hdr(seg->next);
-+	iph2 = ipv6_hdr(seg->next);
-+
-+	if (!(*(const u32 *)&uh->source ^ *(const u32 *)&uh2->source) &&
-+	    ipv6_addr_equal(&iph->saddr, &iph2->saddr) &&
-+	    ipv6_addr_equal(&iph->daddr, &iph2->daddr))
-+		return segs;
-+
-+	while ((seg = seg->next)) {
-+		uh2 = udp_hdr(seg);
-+		iph2 = ipv6_hdr(seg);
-+
-+		__udpv6_gso_segment_csum(seg, &iph2->saddr, &iph->saddr,
-+					 &uh2->source, uh->source);
-+		__udpv6_gso_segment_csum(seg, &iph2->daddr, &iph->daddr,
-+					 &uh2->dest, uh->dest);
-+	}
-+
-+	return segs;
-+}
-+
- static struct sk_buff *__udp_gso_segment_list(struct sk_buff *skb,
- 					      netdev_features_t features,
- 					      bool is_ipv6)
-@@ -259,7 +315,10 @@ static struct sk_buff *__udp_gso_segment_list(struct sk_buff *skb,
- 
- 	udp_hdr(skb)->len = htons(sizeof(struct udphdr) + mss);
- 
--	return is_ipv6 ? skb : __udpv4_gso_segment_list_csum(skb);
-+	if (is_ipv6)
-+		return __udpv6_gso_segment_list_csum(skb);
-+	else
-+		return __udpv4_gso_segment_list_csum(skb);
- }
- 
- struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
--- 
-2.49.0
-
+               Linus
 
