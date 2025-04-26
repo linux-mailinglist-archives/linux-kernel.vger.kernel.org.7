@@ -1,83 +1,111 @@
-Return-Path: <linux-kernel+bounces-621470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FA3A9DA13
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55381A9D9FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5792E4C0140
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D749A626A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10710224257;
-	Sat, 26 Apr 2025 10:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037CF225A23;
+	Sat, 26 Apr 2025 10:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="1pEJTd38"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiCwMDig"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB63A251780;
-	Sat, 26 Apr 2025 10:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF6B1C36
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745662795; cv=none; b=tTtwmK9t8vOk88TPNm6zyYwAc/l821eoZE4YM24PD1WWz4MBvOmvWc5bjpkD8IH2UCNYFpZrB9kTjv2SG8/n9asB1sMHOmBrSboXHMcH4TeKNRMijJ0nNgnOFcV04xuyhAD3A3c4igVf7KgGFoSIrwca6bBopSaFvxJrSEmv+5U=
+	t=1745662186; cv=none; b=BpMt6iDIGOs+Vcu8ux0AjLK5gsSuK9JJ+9xYVsfKuA3qQRRW86hQZdho83W/EA7uJW9OPaawOOT4/oVMUIv+8UhxkKCouVRlCunaPPFOg/vpSZrULANg4EnK/It5bSCFpI19Vm/6f3Jf9nZzu64gOEjHhoH4MwX7s+H/5Ycfgds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745662795; c=relaxed/simple;
-	bh=Gi4j3/CStBhVaColCj9R9LbTwPaj/OLr7aMH5pr1hDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iOpOR/LneKLJuERs9I39YjpMgCFdQFmO2kWuIkXdq1EmzlikxjPusIUbJemVhPWH9lO/Clak+ThUTYxvD2FbGDrPi20LaQy812tExgIFe3nR3FZ0WHDzQ8TDSkNWgu2ZJT/PTfOTclfMMQBSYXKv95OEE+XpNUj7Wjq2WuH41ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=1pEJTd38; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=vUfBLhny/0NLdb0Q3q96q+rAFFUP94yvmCb4kfOb41o=; b=1pEJTd38fUuMwt9fBRDqdD6DAB
-	vMcI6iM52egg2hGUOUJfAoTdol0Bjyf8adf1LnKmx0159/xAy1HGTCFJ9yjRW99rWfdJM3crXL3hK
-	DoxjvUN/3HEJusEs4UcPkKgIzKV6Mi9zKx3lZiTZxQXB8dOVGB62wVgo7ETAz7y2S6CFRBQxtPzEX
-	H86ggO93qASnN7/iyW0Xw8uABpr4TS4Eh14syuPS5987La2V2/qYqAdWMvvJK5SiGv8RK0/PvXI/b
-	V/fVSm5yjqgUvAbbdzd2K3aRE183gorJ+VpKW5R2GtHJZnHYpZz6hBUe2TxgIFWqIppuuFhqKRE3x
-	2YzdlIZA==;
-Date: Sat, 26 Apr 2025 11:54:24 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Parvathi Pudi <parvathi@couthit.com>
-Cc: aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
- tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
- nm@ti.com, pratheesh@ti.com, prajith@ti.com, vigneshr@ti.com,
- danishanwar@ti.com, praneeth@ti.com, srk@ti.com, rogerq@ti.com, afd@ti.com,
- krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com,
- basharath@couthit.com
-Subject: Re: [PATCH v1 1/1] bus: ti-sysc: PRUSS OCP configuration
-Message-ID: <20250426115424.518cfe88@akair>
-In-Reply-To: <20250407072134.1044797-2-parvathi@couthit.com>
-References: <20250407072134.1044797-1-parvathi@couthit.com>
-	<20250407072134.1044797-2-parvathi@couthit.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745662186; c=relaxed/simple;
+	bh=+dSeHCDPkLi4s13f7givFRWz0QNyRYjrVGiCHP5glzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=feDYTD/J0vNm6lGWohmNf+a/fAUYzpG1EKZZK9JDlVjMSeuXmqH5taQwxFMefWdNtXaRbOMyibM1tCWMyPlm9jotCO8Ptr+nbmQpRatR+o1tKsw9PG0MNHxucK6PC1tlgNCfwtQ3AC7xxhxoGDqhKmrGGAoInoNaisG/M9CFc6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiCwMDig; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E123EC4CEEB
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745662185;
+	bh=+dSeHCDPkLi4s13f7givFRWz0QNyRYjrVGiCHP5glzc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XiCwMDigvoBeSkH+tG4v4+R7hq4qu7y63WHd4Cqg4TUWCk51IMYegmabySKN1UDAt
+	 hh/+gp09FgMLHVIOkZR3i6w15HvMyTeJxNIjsKpLDiczL+1FFNeYjLXjr18WuZc10U
+	 EAj4bAHFLsiaK1Nsfl1mHnE7gt7MtR2p49xtkpbo+tzZYNTvBiQdt4umpNBlj7FmXb
+	 1PiwU+1Ivcldt494BCGsdfk3IsEStJQNpQAUJryw02CoMCncGwHLEUt01UCL99Ry5j
+	 A1dzcFz2TUYZIQwV/IERO3+SoExXTKxdUIttv8Os4lE0O3I7hu3nDS+fXVSG9+KVP+
+	 3SIKjQ89nKoyA==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac3b12e8518so540452266b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 03:09:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpC1n+NlWcv5xoKSJZaWJ/paTBw11kkbBGJiabEjb4RxSry4nheLHrfDE47GLAgueRaCZjmZbcpQJe2zE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzArp2JGjuElFxYbqsMxYb5NyFJVkYMZjf4pBouuF8cQv2g5Mtk
+	4u9F1qnUWXJUTBugy7ejWme4eGKqXyFCedBm0z+If5HmDUkGdbf8M6AMMUfFS2okiV4HCi34hdK
+	Qn5iDFlWeiX4LPB0Wt0jF1XJS09k=
+X-Google-Smtp-Source: AGHT+IGiCA2J42eJM1hxcTb7t1MjZL2vpEWpK37pKd4NlNOTF8InkxUxvzV7PS9ia/U3F9kdJIwWYyVKrTqiptmT2lI=
+X-Received: by 2002:a17:907:2dab:b0:ace:4fde:c28f with SMTP id
+ a640c23a62f3a-ace84ad7a54mr196891266b.41.1745662184520; Sat, 26 Apr 2025
+ 03:09:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CC80F694AAFA2099+20250417080746.352276-1-wangyuli@uniontech.com>
+In-Reply-To: <CC80F694AAFA2099+20250417080746.352276-1-wangyuli@uniontech.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 26 Apr 2025 18:09:34 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7d5CQW2nPeUQNG4Y3RJRAF-AePWKLyOrEAa105muUOAw@mail.gmail.com>
+X-Gm-Features: ATxdqUEsWNQ2lM6EcfQj5ldyBfzquoyTXLjtve2BiEeTdjeGznJHVA_uO5kjWzo
+Message-ID: <CAAhV-H7d5CQW2nPeUQNG4Y3RJRAF-AePWKLyOrEAa105muUOAw@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Select ARCH_USE_MEMTEST
+To: WangYuli <wangyuli@uniontech.com>
+Cc: kernel@xen0n.name, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	jiaxun.yang@flygoat.com, liuyun@loongson.cn, chenhuacai@loongson.cn, 
+	zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com, 
+	Erpeng Xu <xuerpeng@uniontech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Mon,  7 Apr 2025 12:51:34 +0530
-schrieb Parvathi Pudi <parvathi@couthit.com>:
+Applied, thanks.
 
-> Updates OCP master port configuration to enable memory access outside
-> of the PRU-ICSS subsystem.
-> 
-> This set of changes configures PRUSS_SYSCFG.STANDBY_INIT bit to enable
-> the OCP master ports during resume sequence and disables the OCP master
-> ports during suspend sequence (applicable only on SoCs using OCP
-> interconnect like the OMAP family).
-> 
-> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+Huacai
 
-mirrors what is done on module disable, so it looks sane.
-
-Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
+On Thu, Apr 17, 2025 at 4:08=E2=80=AFPM WangYuli <wangyuli@uniontech.com> w=
+rote:
+>
+> As of commit dce44566192e ("mm/memtest: add ARCH_USE_MEMTEST"),
+> architectures must select ARCH_USE_MEMTESET to enable CONFIG_MEMTEST.
+>
+> Commit 628c3bb40e9a ("LoongArch: Add boot and setup routines") added
+> support for early_memtest but did not select ARCH_USE_MEMTESET.
+>
+> Fixes: 628c3bb40e9a ("LoongArch: Add boot and setup routines")
+> Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+> Tested-by: Yuli Wang <wangyuli@uniontech.com>
+> Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+> ---
+>  arch/loongarch/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 54ed5b59a690..1ce9b8f5fd03 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -74,6 +74,7 @@ config LOONGARCH
+>         select ARCH_SUPPORTS_RT
+>         select ARCH_USE_BUILTIN_BSWAP
+>         select ARCH_USE_CMPXCHG_LOCKREF
+> +       select ARCH_USE_MEMTEST
+>         select ARCH_USE_QUEUED_RWLOCKS
+>         select ARCH_USE_QUEUED_SPINLOCKS
+>         select ARCH_WANT_DEFAULT_BPF_JIT
+> --
+> 2.49.0
+>
 
