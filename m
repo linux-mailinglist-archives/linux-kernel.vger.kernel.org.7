@@ -1,137 +1,198 @@
-Return-Path: <linux-kernel+bounces-621606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4463BA9DBE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E124A9DBD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9877A1725DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AABAA1BA69CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C6F25CC74;
-	Sat, 26 Apr 2025 15:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C075825D1E7;
+	Sat, 26 Apr 2025 15:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XykLgF22"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDBA3208;
-	Sat, 26 Apr 2025 15:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPOeXVjE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF64825CC52
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 15:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745681838; cv=none; b=S00NdU3a7R06Nzh53FQXAEEHbhcIuKZQgexQ8fevnKmEoEHZPhwuI3nIZwyPlAYYgUXQ71TyBb5PyNN/ywED7H1y0PuEGKMC7uB1e2oo4Yj77lWQeUGzFcIV3vG5XZRwKnSdNj1gK3pudUnmt4iUzc7CbuXVRfl9rh1tieLBUsM=
+	t=1745681239; cv=none; b=sE3tcUiYjoekWmTEGZsnihEAqVYLz7yBrdNxD0Vuo3nqYUo0iT2s/9zALPZ+S35bcUv7ncBL8NJlXLeZHxK7Kg+kmpYVh+/u4hVxM8DmQUFLDGfDB6dnEhJC+xUpDCqw3NDEWYH9RA3f+WUhanC/UpL1Qgfm6vHyht03hqxUoPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745681838; c=relaxed/simple;
-	bh=UNmEORGIRTFZO2nDjWGv+So8tDdlKJ5Bjz2t6uxaODY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8LqahjHTd4VoS6UojgB9eENphBOPN0LU6+vVl+QZ7W82RyJJ3qA1qFRUEyJ6KdP2HPIA3BLq4H/ItUqzgEUxGyfMqlemzwv3nnUDmy8M8EzsN9/pS8QGxC0p3/ZmIFiRnI/0QtefiOfKbOFfyFaGwh+DfU2HPos2vuWwkVoS94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XykLgF22; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=vUM7vf0vXe7N2oH0oe3DEg8G2pM3KxBEYmjLGlpyeQI=;
-	b=XykLgF22/iL6/iZpwTQ6uMB0pT5VlkDM8hPhc+/Hec6fOqHV/1C9/xveBE9CIU
-	S7ZITsIp5u5cX2ute/9ADqyEhp6H5yR2epcbwdWq8/06amgxvZY5fK1fOj0+Abkv
-	eE611yM3hVj/g2JXM2zmId9J3jmagbkF+/sGJF9BoIR/g=
-Received: from [192.168.71.89] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCX+C2_+Qxo0RWfCg--.59461S2;
-	Sat, 26 Apr 2025 23:20:33 +0800 (CST)
-Message-ID: <4e5a60dc-fb0b-413e-9ed9-82f926abd023@163.com>
-Date: Sat, 26 Apr 2025 23:20:32 +0800
+	s=arc-20240116; t=1745681239; c=relaxed/simple;
+	bh=Qtd0dyIZfJKj7+m+rfi4DTy1I/LCHUZ/AplD+F81XpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfM44oRiDWEwhqRPtjDntaQLr9cLqRQQdeoAvRQgBTcMEyp93rnQp32qgqgwG9crilZH4YKZKG3dCjcFrNVbDot5xLFpxUfHhe9Cgef47VBPk78ANS4lkZ4ws0SlRTytcCWgseMhoQat7rkzX3bzlof54oFcfWStk8gpMmJ9Ars=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CPOeXVjE; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745681237; x=1777217237;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qtd0dyIZfJKj7+m+rfi4DTy1I/LCHUZ/AplD+F81XpA=;
+  b=CPOeXVjEsWwnpJKp4bmyAWwk2a0131tyKdfCoE9v9Uyt14821gpCZ/vu
+   7ZgaUkynTiLkDOD8DWD01eM1ltNdRjXIaih3pfwX6tWrx6NBiJkFGwTEO
+   b9rEldouE9pTFd+JT3YCNobxQrxgjx+txlBpCB5jqbweeTlogbePXbIs3
+   yDXXshESN3FwkBJsueH/DC+ssqskLBc1IWcYaUexhb83KFjrdNNT05hoK
+   W+q3nJDLfwiK3POUMiEoMhm9gCPGQuMWBLlVowXJgu2FtomPRUbres/5W
+   3EQGaZ+ojtzalEqf6o379/wyqtdQXbMH2lxhEEuD32PlgQj9dmfh5aEbh
+   w==;
+X-CSE-ConnectionGUID: 8RJTKPquRYuoLXXEyrf7Jw==
+X-CSE-MsgGUID: Rjk5946/R/24ZYQeDWxNEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="51140956"
+X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
+   d="scan'208";a="51140956"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 08:27:15 -0700
+X-CSE-ConnectionGUID: vIOf90g1TqmfwU94/Brdog==
+X-CSE-MsgGUID: yT0Jv8AjQ/asx7LR1shiGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
+   d="scan'208";a="133449003"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 26 Apr 2025 08:27:14 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u8hQt-0005sb-1z;
+	Sat, 26 Apr 2025 15:27:11 +0000
+Date: Sat, 26 Apr 2025 23:26:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Darshan Rathod <darshanrathod475@gmail.com>, abbotti@mev.co.uk0
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	hsweeten@visionengravers.com, linux-kernel@vger.kernel.org,
+	Darshan Rathod <darshanrathod475@gmail.com>
+Subject: Re: [PATCH] Staging: comedi: das16: Fixed a stucture warning in code
+Message-ID: <202504262332.cRQb8NpG-lkp@intel.com>
+References: <20250426113627.36525-1-darshanrathod475@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI: Remove redundant MPS configuration
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
- heiko@sntech.de, thomas.petazzoni@bootlin.com,
- manivannan.sadhasivam@linaro.org, yue.wang@Amlogic.com,
- neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
- khilman@baylibre.com, jbrunet@baylibre.com,
- martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250425095708.32662-1-18255117159@163.com>
- <20250425095708.32662-3-18255117159@163.com>
- <20250425181345.bybgcht5tweyg43k@pali>
- <5e2844cc-8359-4b87-a8ce-eb5ebb85f8ff@163.com>
- <20250426150650.c63x62ugtnwx5nzy@pali>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250426150650.c63x62ugtnwx5nzy@pali>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCX+C2_+Qxo0RWfCg--.59461S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ary3JFW8ZF1kKr1xXw4UXFb_yoW8Kr1Upw
-	45JFs3JF4qqF15uF1Iqa1vgr1ftasIyr15Wws8GrW7AasIq3srtFy2yr45CasrXwn7CF12
-	va42qFWSyFsxtaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UPR6cUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwo7o2gM8qeGtQABsK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250426113627.36525-1-darshanrathod475@gmail.com>
+
+Hi Darshan,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on staging/staging-testing]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Darshan-Rathod/Staging-comedi-das16-Fixed-a-stucture-warning-in-code/20250426-193741
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20250426113627.36525-1-darshanrathod475%40gmail.com
+patch subject: [PATCH] Staging: comedi: das16: Fixed a stucture warning in code
+config: arm64-randconfig-003-20250426 (https://download.01.org/0day-ci/archive/20250426/202504262332.cRQb8NpG-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250426/202504262332.cRQb8NpG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504262332.cRQb8NpG-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/comedi/drivers/das16.c:969:18: error: cannot assign to variable 'lrange' with const-qualified type 'const struct comedi_lrange *'
+     969 |                 lrange->length = 1;
+         |                 ~~~~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:959:31: note: variable 'lrange' declared const here
+     959 |                 const struct comedi_lrange *lrange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+>> drivers/comedi/drivers/das16.c:971:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
+     971 |                 krange->min = min;
+         |                 ~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:960:31: note: variable 'krange' declared const here
+     960 |                 const struct comedi_krange *krange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/comedi/drivers/das16.c:972:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
+     972 |                 krange->max = max;
+         |                 ~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:960:31: note: variable 'krange' declared const here
+     960 |                 const struct comedi_krange *krange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/comedi/drivers/das16.c:973:17: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
+     973 |                 krange->flags = UNIT_volt;
+         |                 ~~~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:960:31: note: variable 'krange' declared const here
+     960 |                 const struct comedi_krange *krange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/comedi/drivers/das16.c:1003:18: error: cannot assign to variable 'lrange' with const-qualified type 'const struct comedi_lrange *'
+    1003 |                 lrange->length = 1;
+         |                 ~~~~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:993:31: note: variable 'lrange' declared const here
+     993 |                 const struct comedi_lrange *lrange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/comedi/drivers/das16.c:1005:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
+    1005 |                 krange->min = min;
+         |                 ~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:994:31: note: variable 'krange' declared const here
+     994 |                 const struct comedi_krange *krange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/comedi/drivers/das16.c:1006:15: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
+    1006 |                 krange->max = max;
+         |                 ~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:994:31: note: variable 'krange' declared const here
+     994 |                 const struct comedi_krange *krange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/comedi/drivers/das16.c:1007:17: error: cannot assign to variable 'krange' with const-qualified type 'const struct comedi_krange *'
+    1007 |                 krange->flags = UNIT_volt;
+         |                 ~~~~~~~~~~~~~ ^
+   drivers/comedi/drivers/das16.c:994:31: note: variable 'krange' declared const here
+     994 |                 const struct comedi_krange *krange;
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   8 errors generated.
 
 
+vim +969 drivers/comedi/drivers/das16.c
 
-On 2025/4/26 23:06, Pali Rohár wrote:
-> On Saturday 26 April 2025 23:02:08 Hans Zhang wrote:
->> On 2025/4/26 02:13, Pali Rohár wrote:
->>> On Friday 25 April 2025 17:57:08 Hans Zhang wrote:
->>>> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
->>>> index a29796cce420..d8852892994a 100644
->>>> --- a/drivers/pci/controller/pci-aardvark.c
->>>> +++ b/drivers/pci/controller/pci-aardvark.c
->>>> @@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
->>>>    	reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
->>>>    	reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
->>>>    	reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
->>>> -	reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
->>>>    	reg &= ~PCI_EXP_DEVCTL_READRQ;
->>>> -	reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
->>>>    	reg |= PCI_EXP_DEVCTL_READRQ_512B;
->>>>    	advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
->>>> -- 
->>>> 2.25.1
->>>>
->>>
->>> Please do not remove this code. It is required part of the
->>> initialization of the aardvark PCI controller at the specific phase,
->>> as defined in the Armada 3700 Functional Specification.
->>
->> Hi Pali,
->>
->> This series of patches is discussing the initialization of DevCtl.MPS by the
->> Root Port. Please look at the first patch I submitted. If there is a
->> reasonable method in the end, DevCtl.MPS will also be configured
->> successfully.
-> 
-> This does not matter what would be configured in DevCtl.MPS at the end.
-> 
->> The PCIe maintainer will give the review opinions. Please rest
->> assured that it will not affect the functions of the aardvark PCI
->> controller.
-> 
-> This patch is modifying initialization of the aardvark PCIe controller
-> and is removing the mandatory step of the controller configuration as
-> required and defined in the Armada 3700 Functional Specification.
-> It says exactly in which order and which values to which registers has
-> to be written.
+742c4a095973f69 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-12  947  
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  948  static const struct comedi_lrange *das16_ai_range(struct comedi_device *dev,
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  949  						  struct comedi_subdevice *s,
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  950  						  struct comedi_devconfig *it,
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  951  						  unsigned int pg_type,
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  952  						  unsigned int status)
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  953  {
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  954  	unsigned int min = it->options[4];
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  955  	unsigned int max = it->options[5];
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  956  
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  957  	/* get any user-defined input range */
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  958  	if (pg_type == das16_pg_none && (min || max)) {
+5c47473ec0f437f drivers/comedi/drivers/das16.c         Darshan Rathod      2025-04-26  959  		const struct comedi_lrange *lrange;
+5c47473ec0f437f drivers/comedi/drivers/das16.c         Darshan Rathod      2025-04-26  960  		const struct comedi_krange *krange;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  961  
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  962  		/* allocate single-range range table */
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  963  		lrange = comedi_alloc_spriv(s,
+ee8ed0141d532d6 drivers/comedi/drivers/das16.c         Gustavo A. R. Silva 2022-01-25  964  					    struct_size(lrange, range, 1));
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  965  		if (!lrange)
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  966  			return &range_unknown;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  967  
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  968  		/* initialize ai range */
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26 @969  		lrange->length = 1;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  970  		krange = lrange->range;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26 @971  		krange->min = min;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  972  		krange->max = max;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  973  		krange->flags = UNIT_volt;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  974  
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  975  		return lrange;
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  976  	}
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  977  
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  978  	/* use software programmable range */
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  979  	if (status & DAS16_STATUS_UNIPOLAR)
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  980  		return das16_ai_uni_lranges[pg_type];
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  981  	return das16_ai_bip_lranges[pg_type];
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  982  }
+0ce8280e2876091 drivers/staging/comedi/drivers/das16.c H Hartley Sweeten   2015-01-26  983  
 
-Hi Pali,
-
-Is the maximum MPS supported by Armada 3700 512 bytes? What are the 
-default values of DevCap.MPS and DevCtl.MPS?
-
-Because the default value of DevCtl.MPS is not 512 bytes, it needs to be 
-configured here, right?
-
-If it's my guess, RK3588 also has the same requirements as you, just 
-like the first patch I submitted.
-
-Best regards,
-Hans
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
