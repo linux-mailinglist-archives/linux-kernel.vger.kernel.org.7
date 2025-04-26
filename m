@@ -1,99 +1,124 @@
-Return-Path: <linux-kernel+bounces-621588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ACA4A9DBA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3A3A9DBAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6416C1BA66A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4336C169935
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3728A25CC7C;
-	Sat, 26 Apr 2025 15:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485B625CC52;
+	Sat, 26 Apr 2025 15:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bgBoFfuu"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KkIR2qZu"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF79722FE08
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 15:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE4425C6F3
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 15:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745679798; cv=none; b=t8qsgicvsbXBoNLbvH7W/dy9ihY4+uiQXk6tRclKYSA8A+essrraKGmgveg8Subq+5tF3zxymTY4Hv6figlr+RUWoAY6p0j4vBiL8rxMfkcjfG4Zq9U6QgoNUAtZRQGD+TASXoJttZeXYLj16lrvsK8gqQVc6ozZVysgGp9EjmM=
+	t=1745679830; cv=none; b=QdNHQuQYvGyogALZbsf+AKZmUGKdB/+LZd7TzZuP5shu+cmfYJno2H0Ug7QmjSk4fyPQPzV0o9J54QNlFPtqXQVYtns/nggBW5tOp05ikr0iIOr6K44XzwvntExohvW60/MpzLgTcuEp6+4zAdzQRSZsGdch4E0GF2B19PO/LwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745679798; c=relaxed/simple;
-	bh=Vm8is0fZMA8KIAs1cGn6dnzN77suefz/64PXNNt+6pE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omRSDlQ1OErMSn/W/mWC9oneZYYB6KQGm+tzHiAGjDyIZDkUuUDuD5YljVa6hZB6GXy/1rvjsQlMTc7FfGUg8HYnmBsATLykOvUanHkoLWjskChzBKXWWBKZU9wbT4yfabOu7rpdjuib4M+59BB54YdoizE8BO+9DpHVtcvtc70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bgBoFfuu; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 26 Apr 2025 11:03:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745679792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nfBFNtrkXGpwEI1f8qxFcLLJ+djj3QoJA6M531zvfsg=;
-	b=bgBoFfuucV1MYv23Sx+JWqkW37ke3hwsYGwVnAywb7CCGdvWPBhkaOVe6kU9Ji/OrgPuZc
-	uGvUevBF2m4UPwGcFH4UmpGEcBGhSzOevfJ8QF+0V3v4p1nWfsLhK3c3f92fA3PXHCWFkM
-	HbfMBFjpPoVmBYELvhEhkq2coWXPCgY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com, 
-	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	davem@davemloft.net, herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] bcachefs: Fix unit-value within btree_bounce_alloc()
-Message-ID: <c32cu4mrdeln3kovzgehwjccfx2qpfh7evsgiug6ckshfux76q@ms6mab54ivy5>
-References: <000000000000736bd406151001d7@google.com>
- <20250423163718.194316-1-richard120310@gmail.com>
- <ur4a24w2wb3euh3ej7ybeqnvmqyhzmqp2wwsjtilh6mfetv45l@qlxs3vggfq5h>
- <aAu-Heqb3malYkjI@vaxr-BM6660-BM6360>
+	s=arc-20240116; t=1745679830; c=relaxed/simple;
+	bh=ys6A4cDEFP1W1sJupQLltwEWdunfdSd5hz+OjsL7hK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o7oUsjHFO0JEWOAuTlFfOSabA8aZ2CPBUSZRcrZIhR1NM6Q/6809PM8EkpNEI4ExCy1UgdnqRfhOHFkXqFKBuHty/NUGrBXnigVrS+jMOuGDmCF+dRiVCE3SdJcAItuuToJGVChzKgXF8gozekwdBqDl5FxhZCp4ei8mVd5nYG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KkIR2qZu; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c266c1389so2234250f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 08:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745679827; x=1746284627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R12xvSBWaLq2rJ6VQZ7Dr5nb/4gTUkpwvOZxkJT4gsc=;
+        b=KkIR2qZuRh49N8iQomazthfDgAhcckSuFeYay3LtsZJxmfi9srV4DxbzoEPM5dFV7T
+         v9rBAl2i5qtljjtqsn9KpNOMb0iQzeG1BwOesNhrrqZPUuwMiY9cYa2sGlWaSv/RQzeM
+         jNsoRhIjJwK/RoMlxf61CFvafZVkWCYl7fCV/2OrYkjZtc2m2AZkr9diWEDFvPxCv7Gl
+         ND7q4maOoXqe/W1Rh7Ld/SIJdDRfkj9+wcOgzSET5qQ6xJDiA1nnsJo0F2hUS0yHi/+d
+         k3SgeA5SEpbQumA7PbnHZbPcxteNny0lkUKXOfBaNHt9XyCyE/rEZTm22eT4oJisqS7v
+         iTLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745679827; x=1746284627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R12xvSBWaLq2rJ6VQZ7Dr5nb/4gTUkpwvOZxkJT4gsc=;
+        b=r0OAn7IEs7QJ3Gv1Rlz8y5dUnBfYSGdI27XKM65ISetaLARxfpBAaNHl85mAdoVoHe
+         LEVhfnY/dbOKEztSwmBQmmFLFGetMT5vAgatLj7Ww2jCK+I0bCKXysujvDGdH814jM6X
+         iLggM8zVvKqv4yeBsyOMbtbUugkhJBDAZu2OidNbKR8gXOgCFaXI6xUEZrSCugcmbyis
+         wAkkeuIQ/RM9Hhb8hBa+GAqL3B+YXMPNsCO/Cdzo4mo9jtM0V+hU3uq6GY+nV8QAr5yw
+         qN0Kv9G7P0XW9oYOerxSSb0G+2fFfYGgr0WUu2GeNjOBl5Sht2ejYeW5vbCVjuwI8MuV
+         d6lw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+vkX2dQEDYyvdFsDu7ltMZnt33yms4d4hdPBpXrprULx4Gk9ocCwwSL87OhLvKGbfucAJLPMBV+LrVyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycj+8Rd6gTEOy5CrdRYyntxqq5cM0CIw8cY9ZvXT8PzHAACE6V
+	su8Z8uwTdRLvBZONHb1lSXSnDVP+aSUeQQyjJH1JZ77TZQu0wt0H
+X-Gm-Gg: ASbGncu5/zT+On/T86qh5GiJNTPs9LWkZQr6MtfHXRnbcd1DZPYsFSltmUsAHakFmdu
+	SuAPnhCongC3GZ6WFWGJetyb++EmIeER440QjDN79olBUBWjbPIjijzD+8lLC1V+ju5KV47yjoi
+	IkIVf1OjHFCFqW1Uclr7Q4FiQCjs1u9FePG8FNd/eA2dfKXuKbor4/ZHPy4w4BT0jhbKS75cAFs
+	1GYsYIY0jlIr3+oUF4no5jhZFeDMwxTnOzAoXrj/tC4iZ/Po6ZjZfJ06Qzh0pFDuwgYZ9Qc0vXG
+	vUGkDjdENfdx/Z/oTVDNL1iv0mmMapjzDgIp9mrSe/d5cI4CxDV1Tut1AGI+qA+dV/4f4U7fXaH
+	5
+X-Google-Smtp-Source: AGHT+IEjx09wY5wUftFqqXjkXTMQp6yzODOhA+KvWTfu3F37Mh9vH6f9hED17Nc5kra/W1ybxH13cg==
+X-Received: by 2002:a05:6000:40c8:b0:39e:dbb0:310f with SMTP id ffacd0b85a97d-3a074f1488emr4646345f8f.39.1745679827039;
+        Sat, 26 Apr 2025 08:03:47 -0700 (PDT)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5e1c6sm5931813f8f.98.2025.04.26.08.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Apr 2025 08:03:46 -0700 (PDT)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: marcello.carla@gmx.com,
+	dan.carpenter@linaro.org,
+	Dave Penkler <dpenkler@gmail.com>
+Subject: [PATCH V2] staging: gpib: Fix lpvo request_system_control
+Date: Sat, 26 Apr 2025 17:03:19 +0200
+Message-ID: <20250426150319.5580-1-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAu-Heqb3malYkjI@vaxr-BM6660-BM6360>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 26, 2025 at 12:53:49AM +0800, I Hsin Cheng wrote:
-> On Wed, Apr 23, 2025 at 12:45:20PM -0400, Kent Overstreet wrote:
-> > On Thu, Apr 24, 2025 at 12:37:18AM +0800, I Hsin Cheng wrote:
-> > > Use "kvzalloc()" instead of "kvmalloc()" in btree_bounce_alloc() to
-> > > prevent uninit-value issue.
-> > > 
-> > > Reported-by: syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=549710bad9c798e25b15
-> > > Fixes: cb6fc943b650 ("bcachefs: kill kvpmalloc()")
-> > > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> > > ---
-> > > syzbot reported an uninit-value issue. [1]
-> > > 
-> > > Though the uninit value was detected in the context of crc32_body(), the
-> > > memory was actually allocated in "btree_bounce_alloc()". Use
-> > > "kvzalloc()" to allocate the memory can solve the issue, and I've tested
-> > > against syzbot. [2]
-> > > 
-> > > If there're any further tests needed to be performed, please let me
-> > > know. I'll be more than happy to assist you with that, thanks !
-> > 
-> > See Documentation/filesystems/bcachefs/SubmittingPatches.
-> >
-> 
-> Sure ! Thanks for the info.
-> 
-> > And this isn't the correct fix - the correct fix is already in Linus's
-> > tree.
-> 
-> Ahh ok, may I ask for the commit hash or title so I can learn from it ?
+The IEEE-488 GPIB standard was designed to ensure that there is only ever
+one controller-in-charge on the bus at any one time. If a board becomes
+controller-in-charge on request_system_control there is no way to ensure
+that there is not another board also acting as controller-in-charge.
+This can lead to bus conflicts and hangs.
 
-9c3a2c9b471a bcachefs: Disable asm memcpys when kmsan enabled
+Remove the setting of controller-in-charge from request_system_control.
+
+Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
+Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+---
+
+Changes V1->V2: Expand commit message to include user impact of bug
+
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index 2e315c7756c4..3cf5037c0cd2 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -916,7 +916,6 @@ static int usb_gpib_request_system_control(struct gpib_board *board, int request
+ 	if (!request_control)
+ 		return -EINVAL;
+ 
+-	set_bit(CIC_NUM, &board->status);
+ 	DIA_LOG(1, "done with %d -> %lx\n", request_control, board->status);
+ 	return 0;
+ }
+-- 
+2.49.0
+
 
