@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-621669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522CEA9DCA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:52:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B5FA9DCA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F34924E07
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:52:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D351A465ED8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C372A25DD13;
-	Sat, 26 Apr 2025 17:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0869C25DCF8;
+	Sat, 26 Apr 2025 17:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="K5QGhbeI"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="XOTd83cc"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6991A08DB;
-	Sat, 26 Apr 2025 17:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1571DE883;
+	Sat, 26 Apr 2025 17:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745689950; cv=none; b=EtGQ8Ogk/1uU9XYnCCKBeNK//ajuR8WVaaq2Xv8vhcVeFdwkEWVMBz9pURip+PE2Jz2Gl8O0xDhDUBhH2szl06S/Kslh17KVFO0KThqf/mhZKO7pvSNubcJYndr0WPvz7KmiXravWnBhlDnYRknuAcVRHARXqa/Lia1iBf4qugA=
+	t=1745689947; cv=none; b=siVvjcKjKSfhG7LkmsaUK2tNgkePXUL1u8Us5tVjQa4e4TNHuRs2rke4wV+L1oBAf1ZrER8xuA2hq54XfL7XV8zteIQ3KCdc1O+q996ZCIEMjXAdzck20HKvRHKVyzgzweudouDSRqf1GF6dnDP0/IFmlrHBFeD7wfTbiI9cAYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745689950; c=relaxed/simple;
-	bh=vJgy8tQMrt+aoG2ttElS3cDlnT/MD3d+wjc/TizjeCo=;
+	s=arc-20240116; t=1745689947; c=relaxed/simple;
+	bh=/uh2f4BTN14XsIz3+Nr7E4au5x2/32t2+an01LvJun4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sBCQDPBNQXtXFhycQwEBV2RMXibPLPUiqP3LnMQgMLKij95bPr3ecthguCISdZETKIkHa4+LvA0nTWi0p8qXj4nqBANoo1hSlWUXEJorDfqFaCPggqEiQho3XlLIFERToBLC7dUZY0Fx+HNJBxwdFL47YH+/F/S/+we9YeWNhSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=K5QGhbeI; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=RUbZ2BPzusribIpWy8aanHnHB/tBOxcL9v2Fsnjc9tfxBEYS5oYElxv+dXIzFrDp3rcBZyJOJ5lR5uIolusIo+WxiM/LmU5NAAM1YyJTSUeQEDVRFJXltambgYshFHdzblL1BvD2AX8u/2/aEZ/bzIxkKSo2QVyQZLyFFXX5UF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=XOTd83cc; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=nODb2/Dg6J9XfTDKpylGMZozA/0cRZe7/w52L6ftxRw=; b=K5QGhbeIogdaidpq
-	aGoVoSKkoHsY1l/0ieb852CntaIRHSasdmM20mNfyyaG1hVgV0G89bXid7xyrDj0twwAaDxWXdaub
-	qfFE+LtoLYeivj2Loj3qbGLCDxT9oa0+zc6Lekg1xRnp4sgc3S1utFjEbmz7UtYE9Pul6pBuRDs/B
-	kLrsj0DEibPa9pMAIQNHarfhQbeVkwexNP2JBII5K3LmO8GOe3FyWDK/9A4HqNuHCCYSaFDd5EYHt
-	vtLZxpr3slwZlW3g+8HQN2NZDL5uqRclVDdhqSAtGgtHJeZ7virYtuzWtiEHLQ9u4oX/aMhPlnFob
-	nLIrK/ry8CqVnNbubA==;
+	:Subject; bh=/o189ne/jQPGYgD8OUPO8z1q2TFdEwQ0I6J22Cp9OBY=; b=XOTd83ccw1btb6QK
+	Bq4TZoXSQGpP+XSRzoAlI6OQwXA4lA8ZtRQvbFcfmVUGWNzLKSa+/Qsj/AMIbG0un5UtxvpWGBV90
+	dIorF6SR17LBjCZXQXFAHXb4xRk9zHfB1ySJ4eZlPB4iHjucWTDOAFtwRfC9jYX6QvcyI/cjI57Pp
+	9XGevhqBJhRTIixikvdkv8L1OE+NWs1boIalWKvAmroK1bomG5iLqhVKHpBh2YajN0OmRyRkOSp0X
+	EcjNLY0tdLppRJdSPcyvjf5xjFbxjxlDM9jFTanqKaVpKenLHVpTATRs6ooAUzNsr9pe+T86ArBMl
+	UVyXMlVoQcafSxYwJA==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1u8jhG-00E44n-1d;
-	Sat, 26 Apr 2025 17:52:14 +0000
+	id 1u8jhN-00E44n-06;
+	Sat, 26 Apr 2025 17:52:21 +0000
 From: linux@treblig.org
 To: lgirdwood@gmail.com,
 	broonie@kernel.org
@@ -50,9 +50,9 @@ Cc: linux-doc@vger.kernel.org,
 	corbet@lwn.net,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 1/5] regulator: devres: Remove unused devm_regulator_bulk_register_supply_alias
-Date: Sat, 26 Apr 2025 18:51:39 +0100
-Message-ID: <20250426175143.128086-2-linux@treblig.org>
+Subject: [PATCH 2/5] regulator: core: Remove unused regulator_bulk_force_disable
+Date: Sat, 26 Apr 2025 18:51:40 +0100
+Message-ID: <20250426175143.128086-3-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250426175143.128086-1-linux@treblig.org>
 References: <20250426175143.128086-1-linux@treblig.org>
@@ -66,140 +66,91 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-devm_regulator_bulk_register_supply_alias() has been unused since 2014's
-commit d137be00ee01 ("mfd: core: Don't use devres functions before device
-is added")
+regulator_bulk_force_disable() was explicitly added in 2012 by
+commit e1de2f423462 ("regulator: add regulator_bulk_force_disable
+function")
 
-Remove it, and the static helpers only it used.
+but hasn't been used.
+
+Remove it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/regulator/devres.c                    | 74 -------------------
- include/linux/regulator/consumer.h            |  6 --
- 3 files changed, 81 deletions(-)
+ drivers/regulator/core.c           | 34 ------------------------------
+ include/linux/regulator/consumer.h |  8 -------
+ 2 files changed, 42 deletions(-)
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index d75728eb05f8..9a0122fceabd 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -424,7 +424,6 @@ PWM
-   devm_fwnode_pwm_get()
- 
- REGULATOR
--  devm_regulator_bulk_register_supply_alias()
-   devm_regulator_bulk_get()
-   devm_regulator_bulk_get_const()
-   devm_regulator_bulk_get_enable()
-diff --git a/drivers/regulator/devres.c b/drivers/regulator/devres.c
-index 2cf03042fddf..3fb01417fa5a 100644
---- a/drivers/regulator/devres.c
-+++ b/drivers/regulator/devres.c
-@@ -490,15 +490,6 @@ struct regulator_supply_alias_match {
- 	const char *id;
- };
- 
--static int devm_regulator_match_supply_alias(struct device *dev, void *res,
--					     void *data)
--{
--	struct regulator_supply_alias_match *match = res;
--	struct regulator_supply_alias_match *target = data;
--
--	return match->dev == target->dev && strcmp(match->id, target->id) == 0;
--}
--
- static void devm_regulator_destroy_supply_alias(struct device *dev, void *res)
- {
- 	struct regulator_supply_alias_match *match = res;
-@@ -547,71 +538,6 @@ int devm_regulator_register_supply_alias(struct device *dev, const char *id,
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 90629a756693..32e3919e37d2 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5196,40 +5196,6 @@ int regulator_bulk_disable(int num_consumers,
  }
- EXPORT_SYMBOL_GPL(devm_regulator_register_supply_alias);
+ EXPORT_SYMBOL_GPL(regulator_bulk_disable);
  
--static void devm_regulator_unregister_supply_alias(struct device *dev,
--						   const char *id)
--{
--	struct regulator_supply_alias_match match;
--	int rc;
--
--	match.dev = dev;
--	match.id = id;
--
--	rc = devres_release(dev, devm_regulator_destroy_supply_alias,
--			    devm_regulator_match_supply_alias, &match);
--	if (rc != 0)
--		WARN_ON(rc);
--}
--
 -/**
-- * devm_regulator_bulk_register_supply_alias - Managed register
-- * multiple aliases
+- * regulator_bulk_force_disable - force disable multiple regulator consumers
 - *
-- * @dev:       device to supply
-- * @id:        list of supply names or regulator IDs
-- * @alias_dev: device that should be used to lookup the supply
-- * @alias_id:  list of supply names or regulator IDs that should be used to
-- *             lookup the supply
-- * @num_id:    number of aliases to register
+- * @num_consumers: Number of consumers
+- * @consumers:     Consumer data; clients are stored here.
 - *
-- * @return 0 on success, a negative error number on failure.
+- * This convenience API allows consumers to forcibly disable multiple regulator
+- * clients in a single API call.
+- * NOTE: This should be used for situations when device damage will
+- * likely occur if the regulators are not disabled (e.g. over temp).
+- * Although regulator_force_disable function call for some consumers can
+- * return error numbers, the function is called for all consumers.
 - *
-- * This helper function allows drivers to register several supply
-- * aliases in one operation, the aliases will be automatically
-- * unregisters when the source device is unbound.  If any of the
-- * aliases cannot be registered any aliases that were registered
-- * will be removed before returning to the caller.
+- * Return: 0 on success or a negative error number on failure.
 - */
--int devm_regulator_bulk_register_supply_alias(struct device *dev,
--					      const char *const *id,
--					      struct device *alias_dev,
--					      const char *const *alias_id,
--					      int num_id)
+-int regulator_bulk_force_disable(int num_consumers,
+-			   struct regulator_bulk_data *consumers)
 -{
 -	int i;
--	int ret;
+-	int ret = 0;
 -
--	for (i = 0; i < num_id; ++i) {
--		ret = devm_regulator_register_supply_alias(dev, id[i],
--							   alias_dev,
--							   alias_id[i]);
--		if (ret < 0)
--			goto err;
+-	for (i = 0; i < num_consumers; i++) {
+-		consumers[i].ret =
+-			    regulator_force_disable(consumers[i].consumer);
+-
+-		/* Store first error for reporting */
+-		if (consumers[i].ret && !ret)
+-			ret = consumers[i].ret;
 -	}
--
--	return 0;
--
--err:
--	dev_err(dev,
--		"Failed to create supply alias %s,%s -> %s,%s\n",
--		id[i], dev_name(dev), alias_id[i], dev_name(alias_dev));
--
--	while (--i >= 0)
--		devm_regulator_unregister_supply_alias(dev, id[i]);
 -
 -	return ret;
 -}
--EXPORT_SYMBOL_GPL(devm_regulator_bulk_register_supply_alias);
+-EXPORT_SYMBOL_GPL(regulator_bulk_force_disable);
 -
- struct regulator_notifier_match {
- 	struct regulator *regulator;
- 	struct notifier_block *nb;
+ /**
+  * regulator_bulk_free - free multiple regulator consumers
+  *
 diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 56fe2693d9b2..1e20c7330cd4 100644
+index 1e20c7330cd4..999eba865c20 100644
 --- a/include/linux/regulator/consumer.h
 +++ b/include/linux/regulator/consumer.h
-@@ -185,12 +185,6 @@ int devm_regulator_register_supply_alias(struct device *dev, const char *id,
- 					 struct device *alias_dev,
- 					 const char *alias_id);
+@@ -209,8 +209,6 @@ int devm_regulator_bulk_get_enable(struct device *dev, int num_consumers,
+ 				   const char * const *id);
+ int regulator_bulk_disable(int num_consumers,
+ 			   struct regulator_bulk_data *consumers);
+-int regulator_bulk_force_disable(int num_consumers,
+-			   struct regulator_bulk_data *consumers);
+ void regulator_bulk_free(int num_consumers,
+ 			 struct regulator_bulk_data *consumers);
  
--int devm_regulator_bulk_register_supply_alias(struct device *dev,
--					      const char *const *id,
--					      struct device *alias_dev,
--					      const char *const *alias_id,
--					      int num_id);
+@@ -470,12 +468,6 @@ static inline int regulator_bulk_disable(int num_consumers,
+ 	return 0;
+ }
+ 
+-static inline int regulator_bulk_force_disable(int num_consumers,
+-					struct regulator_bulk_data *consumers)
+-{
+-	return 0;
+-}
 -
- /* regulator output control and status */
- int __must_check regulator_enable(struct regulator *regulator);
- int regulator_disable(struct regulator *regulator);
+ static inline void regulator_bulk_free(int num_consumers,
+ 				       struct regulator_bulk_data *consumers)
+ {
 -- 
 2.49.0
 
