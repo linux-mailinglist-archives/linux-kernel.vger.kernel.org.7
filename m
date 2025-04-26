@@ -1,185 +1,190 @@
-Return-Path: <linux-kernel+bounces-621638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24628A9DC4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 18:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463D3A9DC52
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 18:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72B07A8142
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:48:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CF57176041
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFBB25D54B;
-	Sat, 26 Apr 2025 16:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A0425D55F;
+	Sat, 26 Apr 2025 16:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuorZh3o"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2DbS05K"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175F2229B38;
-	Sat, 26 Apr 2025 16:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEBBA94A;
+	Sat, 26 Apr 2025 16:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745686163; cv=none; b=au4RdSLukwOYN1qawkZwtp1f58H+ZhEnG0XgAHLMKYK5ilAz6iJBUuYO09begXNTCX/jOspy9BentzPcHFeBKsSP3dJuhTGxF/j3EG74c5KdW1Z+ax4hxOXsTa/5ym7ll3Ca+9gOZQVGbdAmv4tMrU6U0MGGqeCWR9Ht7knApOY=
+	t=1745686395; cv=none; b=DBouns0RqMFAArURUlaPthZFrp/j7SsBvJIOyiaZIGmV1AGx+G4vNLpcA2QEgLlf7pX85CZ9emGubSZDmseY7MC/Elg0IWm/LcPPlFxRj7WKasDDyyyBeKMMZ+mH9xRnUnm749LlZHn4TlOLXyO8eN7CmbAPHe+hMjTq3kOwrUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745686163; c=relaxed/simple;
-	bh=V4+TZl8fcr9Q0wXgQgzoLtvYSlv5lmsMYdpJdBEhc/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I1nRynisEfHg6Gm705ZyFml1GrU6SpEETXBYu0kUb6pQGLddWHwqjgjR0/pRkuFRnblLJkQG1q9qkjsp10Bprsy+rg9xFKGVk5WunX97vfS/JqBTKfiPCrglv6pqqrqeJN/9IMd1OX8/c9Jfbv0Q9wfCOuHxBXtWml0XHcEL8qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuorZh3o; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745686162; x=1777222162;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=V4+TZl8fcr9Q0wXgQgzoLtvYSlv5lmsMYdpJdBEhc/M=;
-  b=RuorZh3o4TfG/BvoBnj8WtSR1WmfPrRHVyei58S3MDxpbwria70bEVvy
-   7wH5Ig2u59ET2rujYJjI8bHFLpa55iW1h59jgjwZPpsgkaD9X731/lSXI
-   JC4ijHpiLoRZHyZgW0tYvMYg6NE3gKOoZGRjG70M2sQxcIX3CwH87+y+P
-   vaBtzD4Hh4wBrgaDIAnb1wlbSaC1MTiXxjAjh9W09zWCAU0MI1JigE4J/
-   sIE6X7SLokhUdKPkCMCjYn1g2MVtPH7YOZA/TGgxZouLUsp7cTDYW2DwE
-   BigO05Dk+xS+dJX6U1Dok1vGrT/pUjvdOisVNrZ3jsWc2DKGn6LoEF9Ue
-   w==;
-X-CSE-ConnectionGUID: uazPRBJcS0uz9amC6v/THQ==
-X-CSE-MsgGUID: usijDLeyRsKyOvr66pOcmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="64854290"
-X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
-   d="scan'208";a="64854290"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 09:49:21 -0700
-X-CSE-ConnectionGUID: bYDClL1sR8SOZNQYjUs6zg==
-X-CSE-MsgGUID: YgHuZT8sQRCcqJfiOMRTTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
-   d="scan'208";a="164212010"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Apr 2025 09:49:20 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8iiL-0005vP-38;
-	Sat, 26 Apr 2025 16:49:17 +0000
-Date: Sun, 27 Apr 2025 00:48:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	linux-doc@vger.kernel.org
-Subject: drivers/net/ethernet/ti/cpsw_ale.c:1360: warning: This comment
- starts with '/**', but isn't a kernel-doc comment. Refer
- Documentation/doc-guide/kernel-doc.rst
-Message-ID: <202504270023.hRD576RW-lkp@intel.com>
+	s=arc-20240116; t=1745686395; c=relaxed/simple;
+	bh=X7xnq85wY/gWSKsD9DoU5wnwThXnb5KlA/HmxiKJRH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EHgAgrjGLhVc3g7rjVVo+GhGCWxZ6wrVS/DTEuREgnrA0IZq2iKdOW0Jaq8tLH1KOSk5tr5wA/44iPBcVRlyDTb6heDJx+gVkYIb+bjLpCe0NlpDU+KsawowQbIuxGEpKq2j210OrH2Ntvnmx8UgbBGdvUfrkecLY2X7O3WzNy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2DbS05K; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf680d351so25693855e9.0;
+        Sat, 26 Apr 2025 09:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745686392; x=1746291192; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xUZaXRHqtJVgnkyUE9q17Wetw9kYAHMgInznaRd/Y54=;
+        b=e2DbS05Kg3CnwCQ03DImysy8AhG3Ow5+9rr59hIbV7IRiLlMBjYZTG4eA2Zz79ejwC
+         H5RmklsaEjtovOby2AcA7ULIMXFLdcZR5N0cZEr83+yrmREtpnWcRRzWL7LC/Aa18kPS
+         UuD2jRbVY8wDgAioOuYaUL4SDDm8n2QsxAzzs58pFZ7grvm9HIQpnA2Wcr80Ykn/wo5L
+         bN3Y7KAUCkWX0VjewFbM4qR1Jw2A7eWvRdfJ86cT5BWrncJL7zTsjStiGS9xPZvm5FiE
+         WjIuPZducGlOyVpmEx8CLmJiw7QMdgv+EnGFgDiN5MlCOzE2UXrrgf5DNZuW7ldyhHBK
+         3quw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745686392; x=1746291192;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUZaXRHqtJVgnkyUE9q17Wetw9kYAHMgInznaRd/Y54=;
+        b=xEPMGOjQfUkWvsAqJIgjVCghkWckl+W0H2A1ZXGN28n5dqQY/b5fCbamEWmKiWUSyt
+         p7loXNiPRotIADZ8AkwJKObtd16MrbhG51//CTYYHWajc3d+ZWqYqkk3nULHcMPKT09p
+         y8D/UyL4ECJsvl5wE734+3nEpP4qsN+kFwX95Bs8JhTRp6PqWj6QzjGoHYTbafSkuam9
+         tiza4C9bvggQMOG7TV5aX6LN/tyrywjrPNWy9h/lkCEYsD4WlIJVH4109rdXeLHpwoy0
+         1SqcZZTQmtYNdo+eoF7M+F4lMKuuRbhufAemlqrRwspAVQZlcTx4UqoaucY/du8OE8Ie
+         3Oug==
+X-Forwarded-Encrypted: i=1; AJvYcCVTy3jTTxLZZfXw5oVFv8j1hGUuclm++Aea1Y6ox/3ZqPDRZY3/rD+n/OBdNAGXLB2wrCf5nsxYDMZf2UFsruo=@vger.kernel.org, AJvYcCVuLGt5Nxg9/mdDy1LEMVAzXu87/A2Szjg3pR3156q/rrb/McNqThiHyMVCdusV03ove49YepW2+59qmts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYDF+teNfJehG/8RPSXIbNoh72X0JLgCPF8ezExqhftnkzUm37
+	lNZjVT3PwdC//BQRX8ITFtCGDHvBT6YrazXHiqBYf+n7UxHp7NU7
+X-Gm-Gg: ASbGncvxjZ2BTE0TScbDjklOAfqEgaJx69vGp3Mjj5XnpKn6x8ybVcJO6XzdwL0Xwyx
+	fQjrTebfh7KfYMzz+tT3bcl9J/ftyjO76lGb8Y1/LAB6kPXTrbhTNy9/j6P/+G86Ch3WeSyoy+h
+	6RBKOJCSupKm8oUo5MzufuOlrZsCrB/rbrTH32L5CpecsEpOCpFEgDUf1izyXbpQWwWpR+Zkt3h
+	opzpUiLtY3GWXsN6+3rIlGuDiUWET6aCR5FHAY0/y8v31HNAMmPTmEQPtJlCgmPMka8Hk2x2I6A
+	5dmbyJec984/wshrbHwJT+G9uR2X4aACVyOZ6xhCKhuE5C7EPfKktg==
+X-Google-Smtp-Source: AGHT+IFKmZ7mhB8aR8Dx52u/NjMaXf8xS2ko9r/BSAYOwgrhNBxKW8vD1hGM9SPWLpQyrQwyvCYBIw==
+X-Received: by 2002:a05:600c:3b21:b0:43b:c592:7e16 with SMTP id 5b1f17b1804b1-4409c454190mr108298515e9.3.1745686391644;
+        Sat, 26 Apr 2025 09:53:11 -0700 (PDT)
+Received: from ?IPV6:2001:871:22a:99c5::1ad1? ([2001:871:22a:99c5::1ad1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2e00e3sm101061305e9.34.2025.04.26.09.53.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Apr 2025 09:53:11 -0700 (PDT)
+Message-ID: <ce224b78-5c26-46d9-9b69-6bceb1bda62d@gmail.com>
+Date: Sat, 26 Apr 2025 18:53:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] rust: devres: implement Devres::access_with()
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org,
+ zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, bskeggs@nvidia.com,
+ acurrid@nvidia.com, joelagnelf@nvidia.com, ttabi@nvidia.com,
+ acourbot@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu
+Cc: linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250426133254.61383-1-dakr@kernel.org>
+ <20250426133254.61383-3-dakr@kernel.org>
+Content-Language: en-US, de-DE
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <20250426133254.61383-3-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   02ddfb981de88a2c15621115dd7be2431252c568
-commit: eb41dd76abce6a13bd7ad9c779dd560136caf60a net: ethernet: ti: cpsw_ale: add Policer and Thread control register fields
-date:   8 months ago
-config: arm64-randconfig-001-20250426 (https://download.01.org/0day-ci/archive/20250427/202504270023.hRD576RW-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250427/202504270023.hRD576RW-lkp@intel.com/reproduce)
+On 26.04.25 3:30 PM, Danilo Krummrich wrote:
+> Implement a direct accessor for the data stored within the Devres for
+> cases where we can proof that we own a reference to a Device<Bound>
+> (i.e. a bound device) of the same device that was used to create the
+> corresponding Devres container.
+> 
+> Usually, when accessing the data stored within a Devres container, it is
+> not clear whether the data has been revoked already due to the device
+> being unbound and, hence, we have to try whether the access is possible
+> and subsequently keep holding the RCU read lock for the duration of the
+> access.
+> 
+> However, when we can proof that we hold a reference to Device<Bound>
+> matching the device the Devres container has been created with, we can
+> guarantee that the device is not unbound for the duration of the
+> lifetime of the Device<Bound> reference and, hence, it is not possible
+> for the data within the Devres container to be revoked.
+> 
+> Therefore, in this case, we can bypass the atomic check and the RCU read
+> lock, which is a great optimization and simplification for drivers.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/devres.rs | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> index 1e58f5d22044..ec2cd9cdda8b 100644
+> --- a/rust/kernel/devres.rs
+> +++ b/rust/kernel/devres.rs
+> @@ -181,6 +181,41 @@ pub fn new_foreign_owned(dev: &Device<Bound>, data: T, flags: Flags) -> Result {
+>  
+>          Ok(())
+>      }
+> +
+> +    /// Obtain `&'a T`, bypassing the [`Revocable`].
+> +    ///
+> +    /// This method allows to directly obtain a `&'a T`, bypassing the [`Revocable`], by presenting
+> +    /// a `&'a Device<Bound>` of the same [`Device`] this [`Devres`] instance has been created with.
+> +    ///
+> +    /// An error is returned if `dev` does not match the same [`Device`] this [`Devres`] instance
+> +    /// has been created with.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504270023.hRD576RW-lkp@intel.com/
+I would prefer this as a `# Errors` section.
 
-All warnings (new ones prefixed by >>):
+Also are there any cases where this is actually wanted as an error?
+I'm not very familiar with the `Revocable` infrastructure,
+but I would assume a mismatch here to be a bug in almost every case,
+so a panic here might be reasonable.
+(I would be fine with a reason for using an error here in the 
+commit message or documentation/comments)
 
->> drivers/net/ethernet/ti/cpsw_ale.c:1360: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-            * REG_FIELDS not defined for this as fields cannot be correctly
+With that:
+
+Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+
+> +    ///
+> +    /// # Example
+> +    ///
+> +    /// ```no_run
+> +    /// # use kernel::{device::Core, devres::Devres, pci};
+> +    ///
+> +    /// fn from_core(dev: &pci::Device<Core>, devres: Devres<pci::Bar<0x4>>) -> Result<()> {
+> +    ///     let bar = devres.access_with(dev.as_ref())?;
+> +    ///
+> +    ///     let _ = bar.read32(0x0);
+> +    ///
+> +    ///     // might_sleep()
+> +    ///
+> +    ///     bar.write32(0x42, 0x0);
+> +    ///
+> +    ///     Ok(())
+> +    /// }
+> +    pub fn access_with<'s, 'd: 's>(&'s self, dev: &'d Device<Bound>) -> Result<&'s T> {
+> +        if self.0.dev.as_raw() != dev.as_raw() {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        // SAFETY: `dev` being the same device as the device this `Devres` has been created for
+> +        // proofes that `self.0.data` hasn't been revoked and is guaranteed to not be revoked as
+> +        // long as `dev` lives; `dev` lives at least as long as `self`.
+> +        Ok(unsafe { self.deref().access() })
+> +    }
+>  }
+>  
+>  impl<T> Deref for Devres<T> {
 
 
-vim +1360 drivers/net/ethernet/ti/cpsw_ale.c
-
-  1319	
-  1320	static const struct reg_field ale_fields_cpsw_nu[] = {
-  1321		/* CPSW_ALE_IDVER_REG */
-  1322		[MINOR_VER]	= REG_FIELD(ALE_IDVER, 0, 7),
-  1323		[MAJOR_VER]	= REG_FIELD(ALE_IDVER, 8, 10),
-  1324		/* CPSW_ALE_STATUS_REG */
-  1325		[ALE_ENTRIES]	= REG_FIELD(ALE_STATUS, 0, 7),
-  1326		[ALE_POLICERS]	= REG_FIELD(ALE_STATUS, 8, 15),
-  1327		/* CPSW_ALE_POLICER_PORT_OUI_REG */
-  1328		[POL_PORT_MEN]	= REG_FIELD(ALE_POLICER_PORT_OUI, 31, 31),
-  1329		[POL_TRUNK_ID]	= REG_FIELD(ALE_POLICER_PORT_OUI, 30, 30),
-  1330		[POL_PORT_NUM]	= REG_FIELD(ALE_POLICER_PORT_OUI, 25, 25),
-  1331		[POL_PRI_MEN]	= REG_FIELD(ALE_POLICER_PORT_OUI, 19, 19),
-  1332		[POL_PRI_VAL]	= REG_FIELD(ALE_POLICER_PORT_OUI, 16, 18),
-  1333		[POL_OUI_MEN]	= REG_FIELD(ALE_POLICER_PORT_OUI, 15, 15),
-  1334		[POL_OUI_INDEX]	= REG_FIELD(ALE_POLICER_PORT_OUI, 0, 5),
-  1335	
-  1336		/* CPSW_ALE_POLICER_DA_SA_REG */
-  1337		[POL_DST_MEN]	= REG_FIELD(ALE_POLICER_DA_SA, 31, 31),
-  1338		[POL_DST_INDEX]	= REG_FIELD(ALE_POLICER_DA_SA, 16, 21),
-  1339		[POL_SRC_MEN]	= REG_FIELD(ALE_POLICER_DA_SA, 15, 15),
-  1340		[POL_SRC_INDEX]	= REG_FIELD(ALE_POLICER_DA_SA, 0, 5),
-  1341	
-  1342		/* CPSW_ALE_POLICER_VLAN_REG */
-  1343		[POL_OVLAN_MEN]		= REG_FIELD(ALE_POLICER_VLAN, 31, 31),
-  1344		[POL_OVLAN_INDEX]	= REG_FIELD(ALE_POLICER_VLAN, 16, 21),
-  1345		[POL_IVLAN_MEN]		= REG_FIELD(ALE_POLICER_VLAN, 15, 15),
-  1346		[POL_IVLAN_INDEX]	= REG_FIELD(ALE_POLICER_VLAN, 0, 5),
-  1347	
-  1348		/* CPSW_ALE_POLICER_ETHERTYPE_IPSA_REG */
-  1349		[POL_ETHERTYPE_MEN]	= REG_FIELD(ALE_POLICER_ETHERTYPE_IPSA, 31, 31),
-  1350		[POL_ETHERTYPE_INDEX]	= REG_FIELD(ALE_POLICER_ETHERTYPE_IPSA, 16, 21),
-  1351		[POL_IPSRC_MEN]		= REG_FIELD(ALE_POLICER_ETHERTYPE_IPSA, 15, 15),
-  1352		[POL_IPSRC_INDEX]	= REG_FIELD(ALE_POLICER_ETHERTYPE_IPSA, 0, 5),
-  1353	
-  1354		/* CPSW_ALE_POLICER_IPDA_REG */
-  1355		[POL_IPDST_MEN]		= REG_FIELD(ALE_POLICER_IPDA, 31, 31),
-  1356		[POL_IPDST_INDEX]	= REG_FIELD(ALE_POLICER_IPDA, 16, 21),
-  1357	
-  1358		/* CPSW_ALE_POLICER_TBL_CTL_REG */
-  1359		/**
-> 1360		 * REG_FIELDS not defined for this as fields cannot be correctly
-  1361		 * used independently
-  1362		 */
-  1363	
-  1364		/* CPSW_ALE_POLICER_CTL_REG */
-  1365		[POL_EN]		= REG_FIELD(ALE_POLICER_CTL, 31, 31),
-  1366		[POL_RED_DROP_EN]	= REG_FIELD(ALE_POLICER_CTL, 29, 29),
-  1367		[POL_YELLOW_DROP_EN]	= REG_FIELD(ALE_POLICER_CTL, 28, 28),
-  1368		[POL_YELLOW_THRESH]	= REG_FIELD(ALE_POLICER_CTL, 24, 26),
-  1369		[POL_POL_MATCH_MODE]	= REG_FIELD(ALE_POLICER_CTL, 22, 23),
-  1370		[POL_PRIORITY_THREAD_EN] = REG_FIELD(ALE_POLICER_CTL, 21, 21),
-  1371		[POL_MAC_ONLY_DEF_DIS]	= REG_FIELD(ALE_POLICER_CTL, 20, 20),
-  1372	
-  1373		/* CPSW_ALE_POLICER_TEST_CTL_REG */
-  1374		[POL_TEST_CLR]		= REG_FIELD(ALE_POLICER_TEST_CTL, 31, 31),
-  1375		[POL_TEST_CLR_RED]	= REG_FIELD(ALE_POLICER_TEST_CTL, 30, 30),
-  1376		[POL_TEST_CLR_YELLOW]	= REG_FIELD(ALE_POLICER_TEST_CTL, 29, 29),
-  1377		[POL_TEST_CLR_SELECTED]	= REG_FIELD(ALE_POLICER_TEST_CTL, 28, 28),
-  1378		[POL_TEST_ENTRY]	= REG_FIELD(ALE_POLICER_TEST_CTL, 0, 4),
-  1379	
-  1380		/* CPSW_ALE_POLICER_HIT_STATUS_REG */
-  1381		[POL_STATUS_HIT]	= REG_FIELD(ALE_POLICER_HIT_STATUS, 31, 31),
-  1382		[POL_STATUS_HIT_RED]	= REG_FIELD(ALE_POLICER_HIT_STATUS, 30, 30),
-  1383		[POL_STATUS_HIT_YELLOW]	= REG_FIELD(ALE_POLICER_HIT_STATUS, 29, 29),
-  1384	
-  1385		/* CPSW_ALE_THREAD_DEF_REG */
-  1386		[ALE_DEFAULT_THREAD_EN]		= REG_FIELD(ALE_THREAD_DEF, 15, 15),
-  1387		[ALE_DEFAULT_THREAD_VAL]	= REG_FIELD(ALE_THREAD_DEF, 0, 5),
-  1388	
-  1389		/* CPSW_ALE_THREAD_CTL_REG */
-  1390		[ALE_THREAD_CLASS_INDEX] = REG_FIELD(ALE_THREAD_CTL, 0, 4),
-  1391	
-  1392		/* CPSW_ALE_THREAD_VAL_REG */
-  1393		[ALE_THREAD_ENABLE]	= REG_FIELD(ALE_THREAD_VAL, 15, 15),
-  1394		[ALE_THREAD_VALUE]	= REG_FIELD(ALE_THREAD_VAL, 0, 5),
-  1395	};
-  1396	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
