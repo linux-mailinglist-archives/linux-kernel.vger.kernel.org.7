@@ -1,86 +1,52 @@
-Return-Path: <linux-kernel+bounces-621341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF50A9D811
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8090A9D814
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6C816A29D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 06:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E603C4C3B14
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 06:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5A1ACEC8;
-	Sat, 26 Apr 2025 06:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2AF17A2F0;
+	Sat, 26 Apr 2025 06:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Euyr66pp"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQSQDSPq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030B38634E;
-	Sat, 26 Apr 2025 06:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A7186334
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 06:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745647229; cv=none; b=hk07crfVVmQgeo/xHHjrM6HYK5zPmXVO0hjcNc0WPcThelTSyFWAo6Okfb9LWpkb+ZEjzVdwhKSOnShtG6WanN0VgZ04d7sLHxX+HdsYedSYiWwOvKS7hJ2XURRM8Hg5GhmGc8+kg37asnEDZIYf0ULEQMA76MRatj62ZJqGy6o=
+	t=1745647438; cv=none; b=rqlazf4vHkUP62zHbLIRsFHUuXfS83zp8XGp+M1QwfgubaeMWORieLtVnbYVBxDcANVdXX/uc/g1jBLYeOJY/p5d88jb9RJYuvMm63BunR91HkdQ1kQ0QQl7KpYoxKPRXuaSQMaBZNl87UbrAZvNB9DOKZ/gPMCehGSx/QmzQF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745647229; c=relaxed/simple;
-	bh=Z/+2vB1WW7lMcA4V70Fgu5ztt4rDzP7C0iUZ5Iv8O+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7jEj58+z4N8HfwslfsRiIYDYkzRNsVniCVREad21wxZxCZB9sBqjqcZFjO1ZVJLq9FejuPeeGiRSL6GfopHwxt0on59xY+7rXI9s4ZMU1LirAtRTqQzN8vgDz3CNoFgGGsqEgqmcThFcQXSk8/yt0/cr44JqEiBH0ITu8Cg0pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Euyr66pp; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39ee651e419so1661859f8f.3;
-        Fri, 25 Apr 2025 23:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745647226; x=1746252026; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wR+dRgzhuKqqYs5EvURqtTJ4vi/drJO0Egc4UPl7VlU=;
-        b=Euyr66ppyiobhJR0en5/H8EF53QLU00ZT8eWC6g6tR7m9CHgfGRA+zZQ4n48tZvSfm
-         R/p/O+wTqnM1hQC2+J6WWdp5EbZl3hHr2M4hobTYsHHG3BrwOg/IQSC6NqKGh0Jip7gu
-         cftRDOaB5irGRglD2tMry1kNYmyeTwx5jeUfeXmY6MnzSZyRZN6QDVwSAIdfhECCsskD
-         Fl78kibXUV9uil9jQwoi6DtvPe1jkPfI4kIB9bNfCKy6gZFZO5RVY6kpuzxVGND2p2t0
-         zl+s+yqxJCxVLcu/xU0yCVSb/tRh/CPSn2zXepALGYjv1aHV5fLQN/UZ5ZDoijV0DbT8
-         4Hqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745647226; x=1746252026;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wR+dRgzhuKqqYs5EvURqtTJ4vi/drJO0Egc4UPl7VlU=;
-        b=aZmfIK4fTeboCSKSlxB/GFherE/2HyX9KrVMrz2zlI6RV5aIA2XHJtL40Krkkykqtd
-         uQJeC8AnAoyUt5tkHDGj7RWI5a483qdDwqV4drmUM3JnMdEnqFdt/MfTUrJ//AyNKI0x
-         he6AoMSbkWhuBZ9ZPTUh5EJ2UCgr3TLAU2SoGS71lWQ8yfWGo1+OdRWwUEArnOEncLKf
-         Yqd5WYDrMtqPoaXUWTRwihQSHCF4TeqAhiGDRClhMzFrXD08317VTrkW1c0rE6PkF/xm
-         y7wfcTRZxwwYr1BjacrHahvCsy/1/QaQTmRmysMBgrUe1Kvuf5WM7vezeeZ9Iq5s7RNh
-         Rnrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHfnPuHrROUMKI7rsEy32n+GGMh976Pjmzv0Ht9LRGaxygQaMa3CGhiLnX7/k0F1P5f4J5ZRsV3L+twnBrj6U=@vger.kernel.org, AJvYcCWMaLdoIKi2XBYp+s2e71L2pnC8OHTntZprSnGhYH6he4LUdaZx03rI2vf2Kr4NSuFpjsiGNxk1JpkxaTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL6U1uLbZyWR47dzv5U0t66GzLjvyvZ1y7LvURVMPEZOO1mdD4
-	jUDeBiIcqBrOu5FUmsYyb9DusyfgYTvx7UQRYlNuGsyrM1ZZIFZl
-X-Gm-Gg: ASbGncsU2rlMsX8D805AjIFSVr1aURN3fsyDYbvJ28ABWm6y8vhhSjBwGXTuDVODoZ3
-	ErbzMBCAX510Vbca5z7nyh08NB+pfFljaEh1w/nStaAlUSUxPFBl/F5/imCN6Sz7uk4WaYCMtkj
-	lp3tkJLg7qEkW0XolvEoKy0yiG3WFDqqZzeCHj0NkEdY5ajlzeeG6q/5VAw/khrS17z8fhbobA4
-	dfphsCFOddPuKtHLGjd/N41q52+K8RNRZKQ2dniBD5snqscICXkPn4ZpYDpk+yREgoIeU/eCF10
-	xAuhP1CaicNdLDJqoxXWnnCSsqQVxfbL+cMOurI1+ncJcxMfkVtSy4tlpvvkC92vsmaPFa0dpxg
-	4rpCu
-X-Google-Smtp-Source: AGHT+IFRvPCxnGOT/k515W2EtRstexsEZG5a16LVfMOI+x3Q5eU4BJjaj9cX1CCmZkTIsPkyZ7PFBA==
-X-Received: by 2002:a5d:64a6:0:b0:38d:cf33:31d6 with SMTP id ffacd0b85a97d-3a074e10426mr3467980f8f.3.1745647225935;
-        Fri, 25 Apr 2025 23:00:25 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073cbf030sm4358676f8f.46.2025.04.25.23.00.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 23:00:25 -0700 (PDT)
-Date: Sat, 26 Apr 2025 07:00:24 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	linux-openrisc@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] usr/include: openrisc: don't HDRTEST bpf_perf_event.h
-Message-ID: <aAx2eAa2yyjabL2L@antec>
-References: <20250426030815.1310875-1-rdunlap@infradead.org>
+	s=arc-20240116; t=1745647438; c=relaxed/simple;
+	bh=0XokfoSh8++cl3/KKEd8xD10OAMywI6GvWNX7omzZHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mk8cGgF3WxlbbchB3+o+VbvlonjkOyClvxDqHvw99l4tamgwsClIZQvVKdfEBRW/Idq0vVn4GCW66S+R9WbFg2q/wHiDXxc726yumsYpQ+ajBybZEZhCywieoVWQHKlox9Fauxfu7ogMzwsFcg060c5b0wdifYKon16SRQ8C0BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQSQDSPq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 500BFC4CEE2;
+	Sat, 26 Apr 2025 06:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745647437;
+	bh=0XokfoSh8++cl3/KKEd8xD10OAMywI6GvWNX7omzZHM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HQSQDSPq0QX9v8P9A0t14Uyhckho356ZjRBtjOadxduEn6RH4tEhvn7whOpG+ENpD
+	 S7loToyDnQbbQv7fIjbcDb5rhfq0+k52w7QFiiR2cfoYKInL523uUXksM++yHdAFlf
+	 RRHBhdczW0bzxSZ0jTKi6NzwbtSphhcXWuFEHqO+4JgPagOuAExwKoUkZxcfp2OfVb
+	 k1bpY+6YSd1anyvAq/5lBR67yPtJ902hIyUru3jyI1lsoKLdhSvtb3wAse8d/7VYtm
+	 6n6yy2V8vEALKrpO4LnJ7iHo24+bmHMn9MJZksvGwKObKvjN3kPKqe1nn+kfnw9awX
+	 0kr/xMM6dWM9g==
+Date: Fri, 25 Apr 2025 23:03:54 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] move-lib-kunit fix for v6.15-rc4
+Message-ID: <202504252302.665FB14F3@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,43 +55,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250426030815.1310875-1-rdunlap@infradead.org>
 
-Hi Randy,
+Hi Linus,
 
-On Fri, Apr 25, 2025 at 08:08:15PM -0700, Randy Dunlap wrote:
-> Since openrisc does not support PERF_EVENTS, omit the HDRTEST of
-> bpf_perf_event.h for arch/openrisc/.
->
-> Fixes a build error:
-> usr/include/linux/bpf_perf_event.h:14:28: error: field 'regs' has incomplete type
+Please pull this single fix for the kunit lib/tests/ relocation for
+v6.15-rc4.
 
-This looks ok to me, but do you have any pointer of how to reproduce this?
+Thanks!
 
--Stafford
+-Kees
 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Jonas Bonn <jonas@southpole.se>
-> Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-> Cc: Stafford Horne <shorne@gmail.com>
-> Cc: linux-openrisc@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
-> ---
->  usr/include/Makefile |    4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> --- linux-next-20250424.orig/usr/include/Makefile
-> +++ linux-next-20250424/usr/include/Makefile
-> @@ -59,6 +59,10 @@ ifeq ($(SRCARCH),arc)
->  no-header-test += linux/bpf_perf_event.h
->  endif
->  
-> +ifeq ($(SRCARCH),openrisc)
-> +no-header-test += linux/bpf_perf_event.h
-> +endif
-> +
->  ifeq ($(SRCARCH),powerpc)
->  no-header-test += linux/bpf_perf_event.h
->  endif
+The following changes since commit 3f2925174f8bd811f9399cb4049f6b75fd2fba91:
+
+  lib/prime_numbers: KUnit test should not select PRIME_NUMBERS (2025-04-15 13:50:43 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/move-lib-kunit-v6.15-rc4
+
+for you to fetch changes up to 4ea404fdbc39971814cd3eb36b43c11fb6f32e17:
+
+  lib: Ensure prime numbers tests are included in KUnit test runs (2025-04-22 08:48:10 -0700)
+
+----------------------------------------------------------------
+move-lib-kunit fix for v6.15-rc4
+
+- Ensure prime numbers tests are included in KUnit test runs (Mark Brown)
+
+----------------------------------------------------------------
+Mark Brown (1):
+      lib: Ensure prime numbers tests are included in KUnit test runs
+
+ tools/testing/kunit/configs/all_tests.config | 2 ++
+ 1 file changed, 2 insertions(+)
+
+-- 
+Kees Cook
 
