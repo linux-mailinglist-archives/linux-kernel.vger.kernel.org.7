@@ -1,204 +1,276 @@
-Return-Path: <linux-kernel+bounces-621665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22D9A9DCA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:43:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B4AA9DCA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF3792250B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:42:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B368D466237
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A64825DB07;
-	Sat, 26 Apr 2025 17:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8454025E441;
+	Sat, 26 Apr 2025 17:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LNevhdV1"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gtQ6xT/v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2F92628D
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 17:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A322025D20F
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745689384; cv=none; b=WhTNQFjvXExgA3Lboo9L2CmwxG0aoC2CYN9nLo69hM8goJWc+B6VNmNsjEoNPf5vPScL81HUYfAO1BpDs7nkRSZVUpG1sAjYktUw4QNPaYQDxb7NgbjumUb1OzhxiFN8VunzbEgy7YwH5m6ULsHYxJzH0ZRqZRqOVY6hSGzXnJw=
+	t=1745689948; cv=none; b=oY6qaBYWipvk2drCkDxX20O7cgSSfU4NlCsyrSLzp6RFXhOSSC1dgLhpgX4fc3DPXIKHgJSTIBAmSFgdkry2eSHLl/e7oXcj/+ot8M5ZffccQhcTnwewFnX8ElQGSW6LxXsIUJeNlKviMbfNDM9oLDL7g2xUkuqbZd6f7g9ILLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745689384; c=relaxed/simple;
-	bh=fW+pvd0Ylzz49EXNC4nHMsZvzlR1ClyAzRR7WMnje6c=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sh4zeHph9qPUTrsadd2eVt2/87c8CFM+/UWWguui1RVE1iB1AruNVPmpkX5wzAlM9PpPmXrOUaW/lbP2j9VFW4Klg873c8OQnGkKpIarHY9D629v8D/MK0/fjwMi6YHy5q41kV3ecGaHl4niFjPUtDiCxH+zQaJLHS8fMPOMwdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LNevhdV1; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f4b7211badso5572082a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:43:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745689379; x=1746294179; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p5ZuHweNuEVBE3Fej2LIynmyJBbRTA/TM1UDo0+mKg0=;
-        b=LNevhdV1Qhut5j2TTiqxt2tjzGEwBbSlxADu8HdN6jl2Kl065WjQCUGZK7QxwaxnzI
-         JqFpuSrjZUIpoR3+fPypMwGxLIJUEGxk6868OsCF1WQqjgemv420qzaGK0KNiZMO8WB5
-         XbewvqDfPHh8/suE/TAwIkI6LKcABHD62uGvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745689379; x=1746294179;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p5ZuHweNuEVBE3Fej2LIynmyJBbRTA/TM1UDo0+mKg0=;
-        b=hj2ovjcpnJSLX5gWQLkuxnkTJM/0HuxG47+4g/hgql4PVnU5498nlQ5vr1L6pg/RJQ
-         EhVV33FRsFjLLBHkVTQ8a/DazFSguGmdm+rUehkAfRIyS+SfWMAYmqok+tc3NcVqlO05
-         /YWIMKIu5ZpWgpHe09T91RAHbjrbhS0gVf9xImsVcOH5UIGZD4NioVNqh54G1CLCq48k
-         TzxyMrtzkWxH1YT+NsW1Hr/S+ZfIc9KpLsECb7qjxGHhZhzzPQ8XTDk5vkKKbouQSMDB
-         baT3EgQYFwB8uerAL7nsCNlFIB1SCh9rkbDQTIwIKm8Z5wp3bIWAGIy0P0QV5gGA5Wl4
-         yT2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUY/JGI1mExQfcpiQNsnhiiRCJsAAv49++z2P06WaUE2Ugww7MPxRJrPmzr5af1TC3yR7ljN88iEkYXajU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYMJDtnFjJWR5valOHUs6i5rTqK6oiuqc3tXVtX/fu2IqqGh1J
-	9oqlGKXy2cGVYMF7n2jWbnfFGoZ567dR5Q1EfBXDQds7tykvvVPkwHcCmrneBQnwxG9p/8Iq2NX
-	S5vY=
-X-Gm-Gg: ASbGncuNWeVYnX/Q2Z1NHQvtXp600lGSZDlKaHkf9nWXZZLe9U94cKytT4sEaY2BdhX
-	s/1STg+7MijHU/anqES3FDjcTV4DqvFSIuYtuRmJlAvUvmpSenBFXmkuPe7YekJA0Bbhyrz/m7t
-	xiPb377ZNNzVqxl1aLcy22VzAYgc2cUcsejurWxuI8m+H0W1gNX/4v+lmxNnlch2mTFZvfZcnkA
-	a0sHxZUQ95KZYGWLz5MqsqjH5gNf2jnJJmLixCf4a5H4AclJq1tJENpkDKEHjnY4kvsq9MYQTbp
-	vNOHSoNArSIQPsGMywnZEJR748XY2fG1/lnw9VXg0q6KZxqEFg4iArKNA0LtGSgNzDDv8K+Cspy
-	NU99te2mJYC9lU8Q=
-X-Google-Smtp-Source: AGHT+IHunIBSf7+jX3mLsOfwspyngpFwYCylSAHQILTFPiopUjgoSNhYin+BoXYjK06ozjblm14/gg==
-X-Received: by 2002:a17:907:6ea2:b0:ac3:eb24:ab26 with SMTP id a640c23a62f3a-ace713fb7dcmr635227966b.51.1745689378339;
-        Sat, 26 Apr 2025 10:42:58 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecfa375sm316687366b.121.2025.04.26.10.42.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Apr 2025 10:42:57 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso5396546a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:42:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDokFMT588fjrZ6K/ez55B8A/uqmZIom5q3sffW1+VZfdfuFi0qBezAfbj0e8Va5sYCfVf7qUiV370FOo=@vger.kernel.org
-X-Received: by 2002:a17:906:9fc7:b0:aca:cde4:fac1 with SMTP id
- a640c23a62f3a-ace71131c2dmr658231266b.31.1745689377007; Sat, 26 Apr 2025
- 10:42:57 -0700 (PDT)
+	s=arc-20240116; t=1745689948; c=relaxed/simple;
+	bh=DuWkln8Z15mNTBXs5f3ihM5iRSFco8ncZC9SdiejQRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SFAXIBK+jb4Y6TeeZ2EYryyGeF+MGdV1EemXM1kckPwS/z8Mi6WFXpMHoi2BJ9mMEv0boWMiATOInr6RijHSSyufHjb75eWT3njCQXp/khpglmYUc5o64Ug35eaK/PKqyVhQlgLYFgweu3jR+E6rD70f8v2A0DVK0Qk5w1yWAts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gtQ6xT/v; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745689947; x=1777225947;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DuWkln8Z15mNTBXs5f3ihM5iRSFco8ncZC9SdiejQRo=;
+  b=gtQ6xT/vH/Or8PeZmiGrJJJ8eUPXoXeh3Nl/sPOnNVpw1cyqdnotE9So
+   QLDJyM8fq2x64GXZztEaYiLM2cnWkB0fRhw2VWiS9b9J6D8FmGeiD++cN
+   raXEKlt4HNNt0tI3bCL3dw3JTLBCErx34peRqaO+G1Jte2LZBx3nYUk35
+   Km0xUd/9wTkLo0sjXjuYPOga6kdarT07n4YxRaei61K08Bxr6aiyT5DEi
+   f/p9DNUKlW0Lawe/dPwhraB1pSVyRl5Hrj78LuAY1eKqxRN9HOtoYKeDG
+   Gavq8fyqEM4r0v7w7URQ+WUvADzEL19lszFHdbCGs7yLmTPilaemdumwp
+   Q==;
+X-CSE-ConnectionGUID: ktbTrlElQuC+RD+iRWuxMQ==
+X-CSE-MsgGUID: +38hcebVT82pLsBm18HGFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="58688258"
+X-IronPort-AV: E=Sophos;i="6.15,242,1739865600"; 
+   d="scan'208";a="58688258"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 10:52:27 -0700
+X-CSE-ConnectionGUID: hRpJ6hhbRwKtXtJzKhRYyQ==
+X-CSE-MsgGUID: H+CgsN/2QlOgMGG6CzTRig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,242,1739865600"; 
+   d="scan'208";a="138310006"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 26 Apr 2025 10:52:25 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u8jhO-0005wH-0c;
+	Sat, 26 Apr 2025 17:52:22 +0000
+Date: Sun, 27 Apr 2025 01:51:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	John Harrison <John.C.Harrison@intel.com>
+Subject: drivers/gpu/drm/xe/xe_vm.c:1409: warning: Function parameter or
+ struct member 'XE_VM_FLAG_GSC' not described in 'if'
+Message-ID: <202504270116.2ROXcxtz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 26 Apr 2025 10:42:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiq=E0fwJLFpCc3wPY_9BPZF3dbdqGgVoOmK9Ykj5JEeg@mail.gmail.com>
-X-Gm-Features: ATxdqUF66SgVPO-TQX09fkvhV4kdjdHCzpMk_g01lv5yN5C2c15Un2Rowbof3YY
-Message-ID: <CAHk-=wiq=E0fwJLFpCc3wPY_9BPZF3dbdqGgVoOmK9Ykj5JEeg@mail.gmail.com>
-Subject: clang and drm issue: objtool warnings from clang build
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Harry Wentland <harry.wentland@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: "the arch/x86 maintainers" <x86@kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So with clang, I get these drm build warnings
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   02ddfb981de88a2c15621115dd7be2431252c568
+commit: dcdd6b84d9acaa0794c29de7024cfdb20cfd7b92 drm/xe/pxp: Allocate PXP execution resources
+date:   3 months ago
+config: riscv-randconfig-002-20250426 (https://download.01.org/0day-ci/archive/20250427/202504270116.2ROXcxtz-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250427/202504270116.2ROXcxtz-lkp@intel.com/reproduce)
 
-  drivers/gpu/drm/amd/amdgpu/../display/dc/basics/fixpt31_32.o:
-     warning: objtool: dc_fixpt_recip() falls through to next function
-dc_fixpt_sinc()
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504270116.2ROXcxtz-lkp@intel.com/
 
-  drivers/gpu/drm/amd/amdgpu/../display/dc/sspl/spl_fixpt31_32.o:
-     warning: objtool: spl_fixpt_recip() falls through to next
-function spl_fixpt_sinc()
+All warnings (new ones prefixed by >>):
 
-and the warnings seem real. I ignored them because it wasn't entirely
-obvious what was going on and I was looking at other things, but today
-I looked at why these happen.
+>> drivers/gpu/drm/xe/xe_vm.c:1409: warning: Function parameter or struct member 'XE_VM_FLAG_GSC' not described in 'if'
+>> drivers/gpu/drm/xe/xe_vm.c:1409: warning: expecting prototype for GSC VMs are kernel(). Prototype was for if() instead
 
-What is going on is that the *_fixpt_recip() function has a
 
-        SPL_ASSERT(arg.value);
+vim +1409 drivers/gpu/drm/xe/xe_vm.c
 
-which results in basically a test for 'arg.value' being zero and a WARN_ON()
+  1376	
+  1377	struct xe_vm *xe_vm_create(struct xe_device *xe, u32 flags)
+  1378	{
+  1379		struct drm_gem_object *vm_resv_obj;
+  1380		struct xe_vm *vm;
+  1381		int err, number_tiles = 0;
+  1382		struct xe_tile *tile;
+  1383		u8 id;
+  1384	
+  1385		/*
+  1386		 * Since the GSCCS is not user-accessible, we don't expect a GSC VM to
+  1387		 * ever be in faulting mode.
+  1388		 */
+  1389		xe_assert(xe, !((flags & XE_VM_FLAG_GSC) && (flags & XE_VM_FLAG_FAULT_MODE)));
+  1390	
+  1391		vm = kzalloc(sizeof(*vm), GFP_KERNEL);
+  1392		if (!vm)
+  1393			return ERR_PTR(-ENOMEM);
+  1394	
+  1395		vm->xe = xe;
+  1396	
+  1397		vm->size = 1ull << xe->info.va_bits;
+  1398	
+  1399		vm->flags = flags;
+  1400	
+  1401		/**
+  1402		 * GSC VMs are kernel-owned, only used for PXP ops and can sometimes be
+  1403		 * manipulated under the PXP mutex. However, the PXP mutex can be taken
+  1404		 * under a user-VM lock when the PXP session is started at exec_queue
+  1405		 * creation time. Those are different VMs and therefore there is no risk
+  1406		 * of deadlock, but we need to tell lockdep that this is the case or it
+  1407		 * will print a warning.
+  1408		 */
+> 1409		if (flags & XE_VM_FLAG_GSC) {
+  1410			static struct lock_class_key gsc_vm_key;
+  1411	
+  1412			__init_rwsem(&vm->lock, "gsc_vm", &gsc_vm_key);
+  1413		} else {
+  1414			init_rwsem(&vm->lock);
+  1415		}
+  1416		mutex_init(&vm->snap_mutex);
+  1417	
+  1418		INIT_LIST_HEAD(&vm->rebind_list);
+  1419	
+  1420		INIT_LIST_HEAD(&vm->userptr.repin_list);
+  1421		INIT_LIST_HEAD(&vm->userptr.invalidated);
+  1422		init_rwsem(&vm->userptr.notifier_lock);
+  1423		spin_lock_init(&vm->userptr.invalidated_lock);
+  1424	
+  1425		ttm_lru_bulk_move_init(&vm->lru_bulk_move);
+  1426	
+  1427		INIT_WORK(&vm->destroy_work, vm_destroy_work_func);
+  1428	
+  1429		INIT_LIST_HEAD(&vm->preempt.exec_queues);
+  1430		vm->preempt.min_run_period_ms = 10;	/* FIXME: Wire up to uAPI */
+  1431	
+  1432		for_each_tile(tile, xe, id)
+  1433			xe_range_fence_tree_init(&vm->rftree[id]);
+  1434	
+  1435		vm->pt_ops = &xelp_pt_ops;
+  1436	
+  1437		/*
+  1438		 * Long-running workloads are not protected by the scheduler references.
+  1439		 * By design, run_job for long-running workloads returns NULL and the
+  1440		 * scheduler drops all the references of it, hence protecting the VM
+  1441		 * for this case is necessary.
+  1442		 */
+  1443		if (flags & XE_VM_FLAG_LR_MODE)
+  1444			xe_pm_runtime_get_noresume(xe);
+  1445	
+  1446		vm_resv_obj = drm_gpuvm_resv_object_alloc(&xe->drm);
+  1447		if (!vm_resv_obj) {
+  1448			err = -ENOMEM;
+  1449			goto err_no_resv;
+  1450		}
+  1451	
+  1452		drm_gpuvm_init(&vm->gpuvm, "Xe VM", DRM_GPUVM_RESV_PROTECTED, &xe->drm,
+  1453			       vm_resv_obj, 0, vm->size, 0, 0, &gpuvm_ops);
+  1454	
+  1455		drm_gem_object_put(vm_resv_obj);
+  1456	
+  1457		err = xe_vm_lock(vm, true);
+  1458		if (err)
+  1459			goto err_close;
+  1460	
+  1461		if (IS_DGFX(xe) && xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K)
+  1462			vm->flags |= XE_VM_FLAG_64K;
+  1463	
+  1464		for_each_tile(tile, xe, id) {
+  1465			if (flags & XE_VM_FLAG_MIGRATION &&
+  1466			    tile->id != XE_VM_FLAG_TILE_ID(flags))
+  1467				continue;
+  1468	
+  1469			vm->pt_root[id] = xe_pt_create(vm, tile, xe->info.vm_max_level);
+  1470			if (IS_ERR(vm->pt_root[id])) {
+  1471				err = PTR_ERR(vm->pt_root[id]);
+  1472				vm->pt_root[id] = NULL;
+  1473				goto err_unlock_close;
+  1474			}
+  1475		}
+  1476	
+  1477		if (xe_vm_has_scratch(vm)) {
+  1478			for_each_tile(tile, xe, id) {
+  1479				if (!vm->pt_root[id])
+  1480					continue;
+  1481	
+  1482				err = xe_vm_create_scratch(xe, tile, vm);
+  1483				if (err)
+  1484					goto err_unlock_close;
+  1485			}
+  1486			vm->batch_invalidate_tlb = true;
+  1487		}
+  1488	
+  1489		if (vm->flags & XE_VM_FLAG_LR_MODE) {
+  1490			INIT_WORK(&vm->preempt.rebind_work, preempt_rebind_work_func);
+  1491			vm->batch_invalidate_tlb = false;
+  1492		}
+  1493	
+  1494		/* Fill pt_root after allocating scratch tables */
+  1495		for_each_tile(tile, xe, id) {
+  1496			if (!vm->pt_root[id])
+  1497				continue;
+  1498	
+  1499			xe_pt_populate_empty(tile, vm, vm->pt_root[id]);
+  1500		}
+  1501		xe_vm_unlock(vm);
+  1502	
+  1503		/* Kernel migration VM shouldn't have a circular loop.. */
+  1504		if (!(flags & XE_VM_FLAG_MIGRATION)) {
+  1505			for_each_tile(tile, xe, id) {
+  1506				struct xe_exec_queue *q;
+  1507				u32 create_flags = EXEC_QUEUE_FLAG_VM;
+  1508	
+  1509				if (!vm->pt_root[id])
+  1510					continue;
+  1511	
+  1512				q = xe_exec_queue_create_bind(xe, tile, create_flags, 0);
+  1513				if (IS_ERR(q)) {
+  1514					err = PTR_ERR(q);
+  1515					goto err_close;
+  1516				}
+  1517				vm->q[id] = q;
+  1518				number_tiles++;
+  1519			}
+  1520		}
+  1521	
+  1522		if (number_tiles > 1)
+  1523			vm->composite_fence_ctx = dma_fence_context_alloc(1);
+  1524	
+  1525		trace_xe_vm_create(vm);
+  1526	
+  1527		return vm;
+  1528	
+  1529	err_unlock_close:
+  1530		xe_vm_unlock(vm);
+  1531	err_close:
+  1532		xe_vm_close_and_put(vm);
+  1533		return ERR_PTR(err);
+  1534	
+  1535	err_no_resv:
+  1536		mutex_destroy(&vm->snap_mutex);
+  1537		for_each_tile(tile, xe, id)
+  1538			xe_range_fence_tree_fini(&vm->rftree[id]);
+  1539		ttm_lru_bulk_move_fini(&xe->ttm, &vm->lru_bulk_move);
+  1540		kfree(vm);
+  1541		if (flags & XE_VM_FLAG_LR_MODE)
+  1542			xe_pm_runtime_put(xe);
+  1543		return ERR_PTR(err);
+  1544	}
+  1545	
 
-Then - through inlining - we get from *_fixpt_recip() to
-
-  spl_fixpt_from_fraction ->
-    spl_complete_integer_division_u64()
-
-here we have *another* check for the divisor not being zero:
-
-        SPL_ASSERT(divisor);
-
-and then it goes on to inline the code:
-
-      spl_div64_u64_rem() ->
-        div64_u64_rem()
-
-which does
-
-        *remainder = dividend % divisor;
-        return dividend / divisor;
-
-so now what has happened is that clang sees that when it inlines those
-things, it basically has a path with two warnings, following a divide
-by a value known to be the constant zero.
-
-And that makes clang just stop generating any code at all, and the asm
-looks like this:
-
-spl_fixpt_recip:                        # @spl_fixpt_recip
-# %bb.0:
-        callq   __fentry__
-        testq   %rdi, %rdi
-        je      .LBB3_10
-  ...
-.LBB3_10:
-        #APP
-     .. disgusting unreadable for WARN_ON() on line 199 ..
-        #NO_APP
-        #APP
-     .. disgusting unreadable for WARN_ON() on line 32 ..
-        #NO_APP
-.Lfunc_end3:
-
-because clang has decided - correctly - that this path now divides by
-zero. Notice how it just falls off at .Lfunc_end3 with no actual
-divide, and no other sign of "you have failed at life".
-
-However, this is actually problematic for the kernel: yes, the warning
-hopefully helps show what is wrong, but because clang has now
-generated code that basically jumps to random code, you get random
-security issues if the warnign ever triggers (and there are
-configurations where the warning is just disabled).
-
-So there are two problems here:
-
- - the drm code should not "assert" crap. Do proper error handling, or
-don't. But don't have a random "this is a known bad value" and then
-fall back to using that value anyway.
-
-We had something similar some time ago, where there was a drm
-assertion without error handling, which caused the compiler to see
-that there was a static path where the invalid value was used, and
-then caused other problems. I forget the details, and gmail search
-isn't helping me
-
-But I *really* think that clang silently just generating known bad
-code for invalida operations like this is very very dangerous, and is
-a bug in clang.
-
-So I'm cc'ing drm and clang people (and x86 people) in the hope that
-we can fix both of these things.
-
-Can we *please* get a flag for clang that it doesn't just stop
-generating code because it has decided some path is unreachable or
-undefined? Add a TRAP instruction, for Chrissake! PLEASE!
-
- Maybe such a flag already exists, and the kernel just doesn't know
-about it. This whole "do random things for undefined behavior" is a
-bug, dammit.
-
-And yes, the drm code shouldn't be doing this. Adding warnings for
-things that will oops is actually counter-productive. It generates
-extra code, but this is an example of it actually causing *more*
-problems. We'd have been better off with a nice clean divide-by-zero
-oops than with a warning followed by random behavior.
-
-               Linus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
