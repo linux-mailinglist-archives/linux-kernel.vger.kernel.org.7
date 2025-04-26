@@ -1,152 +1,117 @@
-Return-Path: <linux-kernel+bounces-621585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52743A9DB9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF00A9DBA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC433B779B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE2D5A586A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4D325D1F9;
-	Sat, 26 Apr 2025 14:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826FF25D1EE;
+	Sat, 26 Apr 2025 15:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="Cynu4gWm"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962CA25CC57
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 14:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MTNfI1bj"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3604979CF;
+	Sat, 26 Apr 2025 15:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745679403; cv=none; b=r7UDHL9aQ/4GFjkjbKsq4+FYsU5PYI2fHKfbqLYrIIayUC0r5L3rBfUmeBjs/Y3sQJmYVv8nNtqJQ7YHpaWjbGDZtqZQEWz6neghTGB3QeQGYH2r19tKOfekGacu48M/PcQFnlEi3oefTc7Ci4HqHBPSgQnILBrc7Ff/+q8u8W8=
+	t=1745679798; cv=none; b=DRCvYkXPN142RhSPgSKBInWb3RzTO0Tv6iysPEExC8L8hiLV/c1UuYoiuVdkeFPR+PqtHeTyzQ8vRWrIEow5RyjpAdv4i06a2ZQHty6rOunFK17hWKDlD43NGz9qAc95laxnbHdljbclDFXNZgMqk3xaj4yweEkw78MFlUqjQK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745679403; c=relaxed/simple;
-	bh=khH4WkE0mEFj9busZOZ8flLqC6GG3A9JhSqOV9SegDs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hDXkuzUZs+DFpv0JL/7/H/9w4eqWwt8rHam8hPGnjMflFriihcea0KF9p+bm4/HJ+JAsOBqJNd6223E86OyHBIWdU8bkcO0xbV/lOx3uJCFg7nbwVhCgYz0FF4iSFStjrORcF8jU4zP14tjfnoITY7FlMeOBtn35K17HBRNeM+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=Cynu4gWm; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1745679399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2kGESmUc5K4aE63sF+pKXsYXoXR44233ot7fuIdc7eY=;
-	b=Cynu4gWmcHLMMh351vsuhpvZBlrDwJN2/KOCWh5A3hAyULSfEYOXSXewFSphEDseSyuP9v
-	dV5Ez5gCNMYOGlS9N7LgVeLYvDcFg6l2yidT5oVjD1MP3cAjs6lIaoQFy255/djZqLMx37
-	G83QxgEd0YA1aGKOmeVxETiwZUeGNIwZsUTBcEmLzwJtaBzNYnFm+w0Z1Po1YDt/HTDHjd
-	XxaVGqV5dHAc3WFg/6Via63St3EqkjbAL7xjS6/HpMVwuQ+HztkXazkwfzMulJrFU0d7oE
-	hHMdeeMGEGIrtqbVJoZlO0baceoMVP8T9ygPzWF0yGpS5s4bHSx38JYsZ1rH/w==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Sat, 26 Apr 2025 16:56:19 +0200
-Subject: [PATCH v4 2/2] riscv: introduce asm/swab.h
+	s=arc-20240116; t=1745679798; c=relaxed/simple;
+	bh=qcwLaEogrcneoQ3HfNmnr34uKQuRptXO8bBDkZuKctk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UD3choS3F83zBRxGTC3EuLv8KbKd+CH1PvMW/QXO3pqqPnstoFAEyNhMakxwcrQN/M4kVUTVTh0fpmirEvDmcdeBksWXn9LilPw5QFxM/i7UhrGI4WvSafhGcXiTRIyY+iO06dY45I73CmI97TigGlzCUmzh3PQh54J4h8iXWKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MTNfI1bj; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=2NTP26rZSO4aLxowU1tMWp58BMiXt/URHc+KIhHuxrE=;
+	b=MTNfI1bjj/6sOwjhpxl6bkmPC/+LTUKOPSiUAIeVV8nKWRz27uFqb1sJ+lDGtQ
+	63MoHFbayfTFrFSrFK+NANLTRI56wf+0T1ppXgIdKpVkRgIFTswtZJ8DfmcNUM85
+	eMNUYZOx0YDL/JumkNNFBNzS8YHXDrsFhuJdclLcPClrM=
+Received: from [192.168.71.89] (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBXbM5v9QxolMNQCw--.59638S2;
+	Sat, 26 Apr 2025 23:02:08 +0800 (CST)
+Message-ID: <5e2844cc-8359-4b87-a8ce-eb5ebb85f8ff@163.com>
+Date: Sat, 26 Apr 2025 23:02:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250426-riscv-swab-v4-2-64201404a68c@iencinas.com>
-References: <20250426-riscv-swab-v4-0-64201404a68c@iencinas.com>
-In-Reply-To: <20250426-riscv-swab-v4-0-64201404a68c@iencinas.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
- skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- linux-arch@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] PCI: Remove redundant MPS configuration
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ heiko@sntech.de, thomas.petazzoni@bootlin.com,
+ manivannan.sadhasivam@linaro.org, yue.wang@Amlogic.com,
+ neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+ khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20250425095708.32662-1-18255117159@163.com>
+ <20250425095708.32662-3-18255117159@163.com>
+ <20250425181345.bybgcht5tweyg43k@pali>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250425181345.bybgcht5tweyg43k@pali>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBXbM5v9QxolMNQCw--.59638S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryUGr4UtrWfAw1rGF18Grg_yoW8Wr4xpa
+	13XFs3JF4Fqr15uF17Ja10gr1fXasIkFy5Xws8GFW3Za4aqw1UGFy2krs0kasrXr4v9F17
+	Za42v3ySyanxtaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UmYL9UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxM6o2gLzK+LogABst
 
-Implement endianness swap macros for RISC-V.
 
-Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-default mask-and-shift implementation.
 
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
----
- arch/riscv/include/asm/swab.h | 62 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+On 2025/4/26 02:13, Pali Rohár wrote:
+> On Friday 25 April 2025 17:57:08 Hans Zhang wrote:
+>> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+>> index a29796cce420..d8852892994a 100644
+>> --- a/drivers/pci/controller/pci-aardvark.c
+>> +++ b/drivers/pci/controller/pci-aardvark.c
+>> @@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
+>>   	reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
+>>   	reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
+>>   	reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
+>> -	reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
+>>   	reg &= ~PCI_EXP_DEVCTL_READRQ;
+>> -	reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
+>>   	reg |= PCI_EXP_DEVCTL_READRQ_512B;
+>>   	advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
+>>   
+>> -- 
+>> 2.25.1
+>>
+> 
+> Please do not remove this code. It is required part of the
+> initialization of the aardvark PCI controller at the specific phase,
+> as defined in the Armada 3700 Functional Specification.
 
-diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-new file mode 100644
-index 000000000000..629f6164c1f3
---- /dev/null
-+++ b/arch/riscv/include/asm/swab.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ASM_RISCV_SWAB_H
-+#define _ASM_RISCV_SWAB_H
-+
-+#include <linux/types.h>
-+#include <linux/compiler.h>
-+#include <asm/cpufeature-macros.h>
-+#include <asm/hwcap.h>
-+#include <asm-generic/swab.h>
-+
-+#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-+
-+#define ARCH_SWAB(size, value)						\
-+({									\
-+	unsigned long x = value;					\
-+									\
-+	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
-+		asm volatile (".option push\n"				\
-+			      ".option arch,+zbb\n"			\
-+			      "rev8 %0, %1\n"				\
-+			      ".option pop\n"				\
-+			      : "=r" (x) : "r" (x));			\
-+		x = x >> (BITS_PER_LONG - size);			\
-+	} else {                                                        \
-+		x = ___constant_swab##size(value);                      \
-+	}								\
-+	x;								\
-+})
-+
-+static __always_inline __u16 __arch_swab16(__u16 value)
-+{
-+	return ARCH_SWAB(16, value);
-+}
-+
-+static __always_inline __u32 __arch_swab32(__u32 value)
-+{
-+	return ARCH_SWAB(32, value);
-+}
-+
-+#ifdef CONFIG_64BIT
-+static __always_inline __u64 __arch_swab64(__u64 value)
-+{
-+	return ARCH_SWAB(64, value);
-+}
-+#else
-+static __always_inline __u64 __arch_swab64(__u64 value)
-+{
-+	__u32 h = value >> 32;
-+	__u32 l = value & ((1ULL << 32) - 1);
-+
-+	return ((__u64)(__arch_swab32(l)) << 32) | ((__u64)(__arch_swab32(h)));
-+}
-+#endif
-+
-+#define __arch_swab64 __arch_swab64
-+#define __arch_swab32 __arch_swab32
-+#define __arch_swab16 __arch_swab16
-+
-+#undef ARCH_SWAB
-+
-+#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-+#endif /* _ASM_RISCV_SWAB_H */
+Hi Pali,
 
--- 
-2.49.0
+This series of patches is discussing the initialization of DevCtl.MPS by 
+the Root Port. Please look at the first patch I submitted. If there is a 
+reasonable method in the end, DevCtl.MPS will also be configured 
+successfully. The PCIe maintainer will give the review opinions. Please 
+rest assured that it will not affect the functions of the aardvark PCI 
+controller.
+
+Rockchip's RK3588 also has the same problem.
+
+
+https://patchwork.kernel.org/project/linux-pci/patch/20250416151926.140202-1-18255117159@163.com/
+
+Best regards,
+Hans
 
 
