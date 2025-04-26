@@ -1,159 +1,146 @@
-Return-Path: <linux-kernel+bounces-621537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3260A9DAFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59301A9DB04
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2177467C16
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0882C189484A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D98514F11E;
-	Sat, 26 Apr 2025 13:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99AF2AE8E;
+	Sat, 26 Apr 2025 13:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1FRYKoK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="j7abyu2H"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8EF13777E;
-	Sat, 26 Apr 2025 13:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78D35962
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 13:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745673302; cv=none; b=qF7Hwg/uh1SMfJiX/uth3GJuzsjcDeqP8MtQ109SAv8YD3kLr7W8Iis1J+iM0ijd4ti/S/UecXyE9N2HSZ9ToAvdKZsAXmKRqehT+i1qveOJUbsMpwXs1zMxHbggvrPeeyKzj9zJtu4pPHjIIGeFYYlEvvFzag1uSTxXJNcCd9g=
+	t=1745673409; cv=none; b=itJzbzsCDw5PBEQjMseKdQ68utRKxFIHP1j5uV+J1UsoU5/97mFyfaOczq48dQXo1uHNF5LQaBA320l6mnGgd9Ep0nF7G1yAt2iKbVlRiOYbLn+aVD2dnnaa8Y2NALYFQW5+w8dhNE65YeYlkWij0tWJZn1lS7vOslLrKnNIvBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745673302; c=relaxed/simple;
-	bh=AFi3KdsvjqYyfX8dyI4Wdz5V6ie382V5cdvIOs3lmFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QsDCeU2jtZ5LtITqPSvQ8/DSFlUM3smGbflEGCbB5M285UJWWxTtVyB8q/6l/waQxVmTTRHAzvDgIj04j3SWZaYRkqRZzSrcZp5r7ZDDPuj+p+g+sekSu8g4peEQdP1NnyxyRzdYbla6bE8NfbGMjW2Sm3bwbt5sPAQlp2TlS+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1FRYKoK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7C9C4CEE2;
-	Sat, 26 Apr 2025 13:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745673302;
-	bh=AFi3KdsvjqYyfX8dyI4Wdz5V6ie382V5cdvIOs3lmFg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k1FRYKoK0R6a8PVWK5/nJj6fiIoiBoqU71CbVYibHEoVPGXUHk5PE/65cWjYPs7+N
-	 KlksrkNIm/mm+hvV3Ygp+UsI4rwk2EAA32rV1dE3mDPybIIUxvBb+GD3/oVwLgj47m
-	 Gqgfd2V/jA2QWkv4ydPUsFqMjGsbQukVryak1qLtMYEnbPhENw+/WRqikuPBVOaY/Y
-	 tMAv8LeRDF4Pqda0LiFFkneo6omJxNs1Y2/JOyj5FSdligksQaGCZtwWxIF798kRQ8
-	 XIkMQu+kvS+zq16mNZl3v9GtUfSMkwOl4puPZeULSSAVV7qBiKHkuKAQwNCivHqG39
-	 hiSz/SRLFFfag==
-Date: Sat, 26 Apr 2025 14:14:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Nuno Sa 
- <nuno.sa@analog.com>
-Subject: Re: [PATCH v3 01/11] iio: backend: add support for filter config
-Message-ID: <20250426141455.05487816@jic23-huawei>
-In-Reply-To: <20250425112538.59792-2-antoniu.miclaus@analog.com>
-References: <20250425112538.59792-1-antoniu.miclaus@analog.com>
-	<20250425112538.59792-2-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745673409; c=relaxed/simple;
+	bh=A2QesqpKFd5HugAJmo85A8ZYC0ForBZg6/ap+WMdLRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IGtRnv02Sf3KspkS3fL6PhPrlRTXKSqa3G+ozSUjiPK35hHhgOUaQlDEHIRwn4cZ9Uh2w5gtlVeBr8J/9dtZikY3UJ7pRCwhBwdIN3YXZM0ABP28NufJGGVm0tYSFIc/bks46IS2zkr3/kpL8zgeMw431DgX8AZxlQeIxPwsMKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=j7abyu2H; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso37201725e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 06:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1745673404; x=1746278204; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J407mJFXHjtMTMAmHlJN1cKIkBEdqNJvnzIbzWuD3a0=;
+        b=j7abyu2HrxbXpboRgy0NBBnlSfFX84wfbkU0qgv/XAs4UxiZ2YdxYex6i2VgG9vN3C
+         bAJc5fbkiaRNzDtThI7WVtEUbCYkcpklADzwsmu2bJUzpdy5c10EnnXlRq5+UnS44yuO
+         LTYQRTmsmEQcfl1mZIzXCcPAjXBw5hvKh+0DD6Bl5i53VWCawmFCOHzwy3oVHC9G16+m
+         Hw6p9XNbQFvUcWVA4ZBjb8cR8pfpE/Lkxfki0AhGNe5dyk29JsVR2abs8KZmSkmaKdD0
+         t5m/C2STAWpJVJM+eFISjOkq2GcYcaVQB+xwKMI4lFfm6UNYc3VCD1Baa6iL99Mx8/np
+         9w5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745673404; x=1746278204;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J407mJFXHjtMTMAmHlJN1cKIkBEdqNJvnzIbzWuD3a0=;
+        b=Zt41wjKp2vtrEtD0JVTGatMh5R7EvIroDsP7hmTCgnLDW7NwVfeXsHSi+Y+1j5uy+8
+         jlFTXUtiX8WaYpnv+Syp/jZDYigGvIDMWzMUpMMMbGnpsCUEbqWxdcUeevivvfjH3D4m
+         18qZy0sKnuXAH08hZIcg8W+TQVVR+0qZXDIOvdncr6C5oB5eM1XYl8BGv2r0tOLfu8T6
+         sO4k4pJbb/KsExuoy4ExX9MskBhdG7qFwzBAfAjNVKcurELEiDohFELGGZSZRgDOrL0k
+         Y5UnjQ9xYHcQCcEtc4NHANXA15CAyBBeZjzpzfC9JSU72FDK40LPbLigKfTkWylHua6D
+         p8aw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8ni6a6vyRqLhsAQN9/aRVbKx2yAwc6jwidBeIbBEVu8iMeokub0HBnHKLHp2shj+I/aL2W/QuxvCIlE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/4yRJ7AJkXAINCqaiP+7tmiKCJv53APJ3whYseaP3pJ70SAuw
+	AjidMmZ7/zeh+UR0RamL+JIBfmdHYh4EzWsCrmI75vfevX4WzxRHbXYQ9bEg098=
+X-Gm-Gg: ASbGnctRHTPsN15qa6uDnIiV4G4FWJMIYHMjTEmHXKybvPsbDm5nzOjl4Fanbtt2DhC
+	Sj45Eg3zKun5EQzEBUCjJ4U/hNeMsPtII4jXUz1xVe5m7JOKYIJnIyqDeUgsajLlyqZqeRK6Sjz
+	/PZNcex4Ht6Dj9BUzjVbO72QkXApZHn4I51KdjXkDcphDBIVW8m0adOpZcATayVrYel5I3cYkUB
+	XrPxKWWb3GopKDs6krUmLZCRbp5rrD7nT/iWKK1Qd6+CosMti5G2mpxQNcMtVY2nepg1wz6jvwx
+	vgbtlsYdhMLL+cBX5MnjNP77DYlwb77VbGgmy32/pDqVTLvFXw==
+X-Google-Smtp-Source: AGHT+IFEdPhvnEPF2IPYYIjIlVAxjiyxZPBsePtMycDc8OXoHjZ80eyhmbO/+g2anWdvGqYyjM32vw==
+X-Received: by 2002:a05:600c:3548:b0:43c:e8a5:87a with SMTP id 5b1f17b1804b1-440a65fe6ebmr57418595e9.16.1745673404131;
+        Sat, 26 Apr 2025 06:16:44 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.145])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5e1c6sm5649133f8f.98.2025.04.26.06.16.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Apr 2025 06:16:43 -0700 (PDT)
+Message-ID: <79d1211f-6d4b-4f1f-8d94-3bb717025f05@tuxon.dev>
+Date: Sat, 26 Apr 2025 16:16:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/11] ARM: dts: microchip: sama7d65: Add RTT and GPBR
+ Support for sama7d65 SoC
+To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, lee@kernel.org, sre@kernel.org,
+ p.zabel@pengutronix.de
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <cover.1744666011.git.Ryan.Wanner@microchip.com>
+ <e8868ef06102241b47883ba10edaed751831be6d.1744666011.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <e8868ef06102241b47883ba10edaed751831be6d.1744666011.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 25 Apr 2025 14:25:28 +0300
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+Hi, Ryan,
 
-> Add backend support for digital filter type selection.
+On 15.04.2025 00:41, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> This setting can be adjusted within the IP cores interfacing devices.
+> Add RTT support for SAMA7D65 SoC. The GPBR is added so the SoC is able
+> to store the RTT time data.
 > 
-> The IP core can be configured based on the state of the actual
-> digital filter configuration of the part.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-All these backend things look fine to me. However, as for all backend
-stuff I'm not the expert so will be looking for other reviews on these.
-
-+CC Nuno
-
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
-> changes in v3:
->  - update function to set the actual filter type instead of just enable/disable.
->  drivers/iio/industrialio-backend.c | 15 +++++++++++++++
->  include/linux/iio/backend.h        | 13 +++++++++++++
->  2 files changed, 28 insertions(+)
+>  arch/arm/boot/dts/microchip/sama7d65.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-> index d4ad36f54090..2d28eabb1607 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -778,6 +778,21 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
->  	return 0;
->  }
+> diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> index 8439c6a9e9f2..bec70164a75c 100644
+> --- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> @@ -132,6 +132,13 @@ shdwc: poweroff@e001d200 {
+>  			status = "disabled";
+>  		};
 >  
-> +/**
-> + * iio_backend_filter_type_set - Set filter type
-> + * @back: Backend device
-> + * @type: Filter type.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_filter_type_set(struct iio_backend *back,
-> +				enum iio_backend_filter_type type)
-> +{
-> +	return iio_backend_op_call(back, filter_type_set, type);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_filter_type_set, "IIO_BACKEND");
+> +		rtt: rtc@e001d300 {
+> +			compatible = "microchip,sama7d65-rtt", "atmel,at91sam9260-rtt";
+> +			reg = <0xe001d300 0x30>;
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clk32k 0>;
+> +		};
 > +
->  /**
->   * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
->   * @back: Backend device
-> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-> index e45b7dfbec35..5526800f5d4a 100644
-> --- a/include/linux/iio/backend.h
-> +++ b/include/linux/iio/backend.h
-> @@ -76,6 +76,14 @@ enum iio_backend_interface_type {
->  	IIO_BACKEND_INTERFACE_MAX
->  };
+>  		clk32k: clock-controller@e001d500 {
+>  			compatible = "microchip,sama7d65-sckc", "microchip,sam9x60-sckc";
+>  			reg = <0xe001d500 0x4>;
+> @@ -146,6 +153,11 @@ rtc: rtc@e001d800 {
+>  			clocks = <&clk32k 1>;
+>  		};
 >  
-> +enum iio_backend_filter_type {
-> +	IIO_BACKEND_FILTER_TYPE_DISABLED,
-> +	IIO_BACKEND_FILTER_TYPE_SINC1,
-> +	IIO_BACKEND_FILTER_TYPE_SINC5,
-> +	IIO_BACKEND_FILTER_TYPE_SINC5_PLUS_COMP,
-> +	IIO_BACKEND_FILTER_TYPE_MAX
-> +};
+> +		gpbr: syscon@e001d700 {
+> +			compatible = "microchip,sama7d65-gpbr", "syscon";
+> +			reg = <0xe001d700 0x48>;
+> +		};
 > +
->  /**
->   * struct iio_backend_ops - operations structure for an iio_backend
->   * @enable: Enable backend.
-> @@ -100,6 +108,7 @@ enum iio_backend_interface_type {
->   * @read_raw: Read a channel attribute from a backend device
->   * @debugfs_print_chan_status: Print channel status into a buffer.
->   * @debugfs_reg_access: Read or write register value of backend.
-> + * @filter_type_set: Set filter type.
->   * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
->   * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
->   * @data_stream_enable: Enable data stream.
-> @@ -150,6 +159,8 @@ struct iio_backend_ops {
->  					 size_t len);
->  	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int reg,
->  				  unsigned int writeval, unsigned int *readval);
-> +	int (*filter_type_set)(struct iio_backend *back,
-> +			       enum iio_backend_filter_type type);
->  	int (*ddr_enable)(struct iio_backend *back);
->  	int (*ddr_disable)(struct iio_backend *back);
->  	int (*data_stream_enable)(struct iio_backend *back);
-> @@ -190,6 +201,8 @@ int iio_backend_data_sample_trigger(struct iio_backend *back,
->  int devm_iio_backend_request_buffer(struct device *dev,
->  				    struct iio_backend *back,
->  				    struct iio_dev *indio_dev);
-> +int iio_backend_filter_type_set(struct iio_backend *back,
-> +				enum iio_backend_filter_type type);
->  int iio_backend_ddr_enable(struct iio_backend *back);
->  int iio_backend_ddr_disable(struct iio_backend *back);
->  int iio_backend_data_stream_enable(struct iio_backend *back);
 
+This should go before rtc node to keep the nodes sorted by their address.
+I'll adjust while applying.
+
+Thank you,
+Claudiu
 
