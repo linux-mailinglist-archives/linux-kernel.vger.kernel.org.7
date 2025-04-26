@@ -1,112 +1,98 @@
-Return-Path: <linux-kernel+bounces-621284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B591A9D73A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 04:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F86A9D746
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 04:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5814A4E1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 02:20:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8071BC4FCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 02:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AB6200138;
-	Sat, 26 Apr 2025 02:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D251FF601;
+	Sat, 26 Apr 2025 02:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEdvUXPd"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NV3HH5cT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D345E1FF60A;
-	Sat, 26 Apr 2025 02:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1D31E834D;
+	Sat, 26 Apr 2025 02:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745633995; cv=none; b=etsgmPvnrnYBf/ehCR0m0jnznxaCDKTacucw7b23L3dV8yiT2Bxvy7LDy7H+/AbRwhDrJWjNQJnZe8tXsgDR38qTXGwzZ5wVTR5ntozkJh3K1EJ0W1WnykaUrUVWgh39R0jAm7MvsWjgL1wdyIQ7uNOJ7GeEJ4hZ6BvR0fkpNiA=
+	t=1745634771; cv=none; b=fs4VH7kMmRna2oWrUGntihuvxHH0D8Yjb6zviOFuxRpCrqyhixi0qSwIbZVUHWFycbQT1iNTtSqpENnvxOOo2uBo7MbZVqGPmA8tjDOV6FOpYI7uhX9eqg97w9JQyIe/yOPtFTY9Htw3vkq9jrxuZcUDVeXtyUqmqG2hdqwMgUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745633995; c=relaxed/simple;
-	bh=Iss9/F8ysh7Nj74llcoIoLu0cjF85nogcjM3ps/8aOo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LNnvKnjMdDqI8U7IsoyZBbEk587tvEftdyGQTxfd5Q4Ek6C3R87unZesfUZ3+R9LtloFx80KyI82N9pgyleH90tQ7icxRzvbZrOqxM2Pttmq0+ttoKcbUFWS/mKcCw9AM2AyTVNG96UbIB4WuS0RRINqQ/ek8H72yLKHT7U/AEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEdvUXPd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D4EFC4CEEA;
-	Sat, 26 Apr 2025 02:19:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745633995;
-	bh=Iss9/F8ysh7Nj74llcoIoLu0cjF85nogcjM3ps/8aOo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=tEdvUXPd4orT7qKMAcKERL2CpaBFmue7/2U7W2emfKePsiltdSGMGJ2zcfpIN6rdT
-	 s5Zpa+zpVipKr3yhwYyQLZpLaMGQdmz8A5UJT1qGNLfPK+IFLewsLpKGsazvlDhp5q
-	 97kBhQazYZgdtWYaUFGDtgEUQxMARPIE+cxW2+9F3AMeIUzBJpxQ/sdBcgmpY0A3rA
-	 tRIHINc5+rZErhxvuXoySiFC1QeYhh7zUVIpfM1GDd+54N3ebugzEd1MRCvHkDIBI2
-	 1ryKAT3Bfwb40g1cj757aJ0nTA+PjlWnjho0KHJXPSjlUQ/zkecbnQymIZe+k8SFct
-	 8IHUbDWucWMYQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DAE380CFDC;
-	Sat, 26 Apr 2025 02:20:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745634771; c=relaxed/simple;
+	bh=+RUTWIt3VFeUueyp+/LHBU7OQa1nslQTo03DjgGapQA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KZvxPmMh8fPvildNUB50dIGBJOh8LKZJLnVSTVKpTdJ4cOpiDP+pD103TAmRuZBcFzw4AwWYju6Crsa6XeJC5itsK89tIFjfPRodca2poR43PFjNS65orNctStefg8eziXAakNIwZIX5yO3R5uabW7cEg7AvuLah223sBHxSBsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NV3HH5cT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B430EC4CEE4;
+	Sat, 26 Apr 2025 02:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1745634770;
+	bh=+RUTWIt3VFeUueyp+/LHBU7OQa1nslQTo03DjgGapQA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NV3HH5cTytNLqUSnhZu/e/1hOQv76j3RXu91ccBhnAZKPShm2ywlHlwxEmP2NFyJ8
+	 9mJGv0SrHBCtXVkieOdFVL+aj36B86SkAmVo+3g7zY7zwp1CWMsmr/ZbWtOT8bEZyr
+	 8NA5f5WhQqLgsoDwMQL/xkJ+DI4oOl2RlkHukU3w=
+Date: Fri, 25 Apr 2025 19:32:49 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alessandro Carminati <acarmina@redhat.com>
+Cc: linux-kselftest@vger.kernel.org, David Airlie <airlied@gmail.com>, Arnd
+ Bergmann <arnd@arndb.de>, =?ISO-8859-1?Q?Ma=EDra?= Canal
+ <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>, Kees Cook
+ <keescook@chromium.org>, Daniel Diaz <daniel.diaz@linaro.org>, David Gow
+ <davidgow@google.com>, Arthur Grillo <arthurgrillo@riseup.net>, Brendan
+ Higgins <brendan.higgins@linux.dev>, Naresh Kamboju
+ <naresh.kamboju@linaro.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Daniel
+ Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, Guenter
+ Roeck <linux@roeck-us.net>, Alessandro Carminati
+ <alessandro.carminati@gmail.com>, Jani Nikula <jani.nikula@intel.com>,
+ dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, loongarch@lists.linux.dev, x86@kernel.org
+Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
+Message-Id: <20250425193249.78b45d2589575c15f483c3d8@linux-foundation.org>
+In-Reply-To: <20250313114329.284104-1-acarmina@redhat.com>
+References: <20250313114329.284104-1-acarmina@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] rtase: Modify the condition used to detect overflow in
- rtase_calc_time_mitigation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174563403387.3902866.14183742832431815593.git-patchwork-notify@kernel.org>
-Date: Sat, 26 Apr 2025 02:20:33 +0000
-References: <20250424040444.5530-1-justinlai0215@realtek.com>
-In-Reply-To: <20250424040444.5530-1-justinlai0215@realtek.com>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, horms@kernel.org, pkshih@realtek.com,
- larry.chiu@realtek.com, lkp@intel.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Thu, 13 Mar 2025 11:43:15 +0000 Alessandro Carminati <acarmina@redhat.com> wrote:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> Some unit tests intentionally trigger warning backtraces by passing bad
+> parameters to kernel API functions. Such unit tests typically check the
+> return value from such calls, not the existence of the warning backtrace.
 
-On Thu, 24 Apr 2025 12:04:44 +0800 you wrote:
-> Fix the following compile error reported by the kernel test
-> robot by modifying the condition used to detect overflow in
-> rtase_calc_time_mitigation.
-> 
-> In file included from include/linux/mdio.h:10:0,
->                   from drivers/net/ethernet/realtek/rtase/rtase_main.c:58:
->  In function 'u16_encode_bits',
->      inlined from 'rtase_calc_time_mitigation.constprop' at drivers/net/
->      ethernet/realtek/rtase/rtase_main.c:1915:13,
->      inlined from 'rtase_init_software_variable.isra.41' at drivers/net/
->      ethernet/realtek/rtase/rtase_main.c:1961:13,
->      inlined from 'rtase_init_one' at drivers/net/ethernet/realtek/
->      rtase/rtase_main.c:2111:2:
-> >> include/linux/bitfield.h:178:3: error: call to '__field_overflow'
->       declared with attribute error: value doesn't fit into mask
->     __field_overflow();     \
->     ^~~~~~~~~~~~~~~~~~
->  include/linux/bitfield.h:198:2: note: in expansion of macro
->  '____MAKE_OP'
->    ____MAKE_OP(u##size,u##size,,)
->    ^~~~~~~~~~~
->  include/linux/bitfield.h:200:1: note: in expansion of macro
->  '__MAKE_OP'
->   __MAKE_OP(16)
->   ^~~~~~~~~
-> 
-> [...]
+I've had this series in mm.git's mm-new branch for a while.  I didn't
+send it up for 6.15-rc1 due to what I believe to be unresolved review
+issues.
 
-Here is the summary with links:
-  - [net] rtase: Modify the condition used to detect overflow in rtase_calc_time_mitigation
-    https://git.kernel.org/netdev/net/c/68f9d8974b54
+I'll drop this v4 series.  Please resend if/when suitable.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Some notes I have taken are:
 
+https://lkml.kernel.org/r/202504190918.JLNuRGVb-lkp@intel.com
+https://lkml.kernel.org/r/20250402074550.GQ5880@noisy.programming.kicks-ass.net
+#arm64-add-support-for-suppressing-warning-backtraces.patch: check review
 
+Some fixes I had merged which presumably should be carried forward are
+https://lore.kernel.org/all/20250330212934.3F898C4CEDD@smtp.kernel.org/T/
+https://lkml.kernel.org/r/20250330212739.85827C4CEDD@smtp.kernel.org
+
+Thanks.
 
