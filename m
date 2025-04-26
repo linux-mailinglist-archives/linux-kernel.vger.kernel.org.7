@@ -1,152 +1,251 @@
-Return-Path: <linux-kernel+bounces-621504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4450CA9DA76
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79301A9DA7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC68C46125B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 11:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B92B7171C0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB597228C9C;
-	Sat, 26 Apr 2025 11:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DF922F765;
+	Sat, 26 Apr 2025 12:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KU2t9Kw+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZIhYvVC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499D122615
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 11:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7796522F751
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 12:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745668143; cv=none; b=SZkgNLYekMHcjEf8JcJC+nIzsiSxv8tyI0V+XkSi+5Hu4MaWr360j19UH5oASKm2LDvukKdqt86RmYctqE4rb2HmByqGGEmmNLhlDvSS+6y7oSJDtH1h+CVz4cuahnC/3yiA27tl2S37vTCkSSq4yJk4rXdHfL4L03dxsNHE0S0=
+	t=1745669598; cv=none; b=odLlfo6XYXO2rBV5k4j7kvjWos1ZtGF3roFnEtP0eWwPWsH8ElhsgYJ4Gm96m07u4KBFP4QMcJPU8ZxMwkWfLk3rLoBRIP9OlKUyPE5PIgaKDSaGinhTcv0h/NaGuMQvVmiygJDtM880wXWt9lqB6MuPT25WPwdc7j9cHnZsFsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745668143; c=relaxed/simple;
-	bh=9qY009RV75gqbE+jedcoHrBfx5CXmKwBngAS1X7fotI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dAEMrufnvHRGTvReU69yi8YC72lWw5VAE4mOU2Y+IVWdkr1jEkT6KWNriAKjKe41zfrXBSK6DyL8ZXFdQR8ZLmkd2R9h+TkAVrZvwPxuMMBPFgBDN8iYNciVkIwIUMGDHiG+UAWqLQqLIQH0PW+q+ke1OQ4r1PuotWdt0CaDT/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KU2t9Kw+; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745668140; x=1777204140;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=9qY009RV75gqbE+jedcoHrBfx5CXmKwBngAS1X7fotI=;
-  b=KU2t9Kw+fvDazhZysctW2ZsqWDY0/nfIotXk+7skZ1YoJo58+fNjgexW
-   l7Qb9rKaXGDsHoXixM3rxDa/l1eiFLANFwGTyqO/62T/QHa/T+pl9UNVe
-   +7gJ+UpUfUIEHSttr/ZXcYyDLRJ6ZNlBfFDzqvN/nMNdQR73Jkx5KxOJ1
-   Zh3dmEdcY88Etfki/7I7onQh11G8iLAzoNFPfH7MYOIXHq7PTacXjPwDu
-   ZGbLE+FeZZbP1eTG8wS1QwcPUBoiJH85ryWXzLs5wOAQvjYaJHYkzF9BP
-   cZdet55EVpYqnFyDr+wESa03WmRuhdFEZrR2Y8bdHijcfiS+3AebXCR4h
-   A==;
-X-CSE-ConnectionGUID: xZMMO3glQRKuH8VpGuLQpg==
-X-CSE-MsgGUID: pUtUowX3Q4+9bd8e/BKVGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="64845772"
-X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
-   d="scan'208";a="64845772"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 04:48:59 -0700
-X-CSE-ConnectionGUID: d1B1/+U/R7+zf63cNUhacg==
-X-CSE-MsgGUID: SzZrDdoRRPODvMWF8ShVlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
-   d="scan'208";a="134049929"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 26 Apr 2025 04:48:58 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8e1g-0005oT-0J;
-	Sat, 26 Apr 2025 11:48:56 +0000
-Date: Sat, 26 Apr 2025 19:48:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maarten Lankhorst <dev@lankhorst.se>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Maxime Ripard <mripard@kernel.org>,
-	Friedrich Vock <friedrich.vock@gmx.de>
-Subject: kernel/cgroup/dmem.c:21: warning: Cannot understand          * @ref:
- References keeping the region alive.
-Message-ID: <202504261939.1yj5iNwS-lkp@intel.com>
+	s=arc-20240116; t=1745669598; c=relaxed/simple;
+	bh=53WPXHcZDRdCxH3dOJiupnW+3yRJeUva+6PJxzQa+fY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YZCsqAhXhELRHo/EHhUWDmTPybRZ+grOtXjGr/Oydwds/j/Qu38mDzZ3BWqqA2CXutVMyTmLxjFEh67uvDZ7mIWs6gRUNmj4ue3OUGeLK/My7O4j7yo2KidP4RO4AoxYey5/VCJ7+8jgl7BeOHOjo3WDOHeJeiKNAu2q4kRK+sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZIhYvVC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745669595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8xTcAXMj4tAsirXSeiAXOoY8tnLHpYX9Lnnx10mXT5k=;
+	b=GZIhYvVCpsEGoCki7U26BLQDzWYfUltlCl8HpNnv1ClqjQ8ZraSDcQDaDJi86qbGrwXbTl
+	6WFP/A+RS2vuzOfe3uoqg6XOJa7N3v7v49qEho4W/PISaVzlFPFro/CWD9jXuLlryTPYum
+	b62ScYlKifPGa1LwnHFFiczQyK8CGH4=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-578-ToAnP57pPoKhmusTVgxstw-1; Sat, 26 Apr 2025 08:13:13 -0400
+X-MC-Unique: ToAnP57pPoKhmusTVgxstw-1
+X-Mimecast-MFC-AGG-ID: ToAnP57pPoKhmusTVgxstw_1745669592
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3087a703066so3088663a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 05:13:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745669592; x=1746274392;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8xTcAXMj4tAsirXSeiAXOoY8tnLHpYX9Lnnx10mXT5k=;
+        b=UdwPm/AWrQw9omFoLEBp007bq3Q6VvdZCnrfJ5nvnn+TBFWWPFtTUrMN+bKRPwMFkl
+         26AaCOrrEFNgpQILGbrwcOgaF3PI0Eq88/xyYK2vIBnKWlWqqArOmHT9aRtfoBTa8lxq
+         f8V9HVP5UrUWGSmWpSrizLDfpr6x14hE4M1XjXNHTGoAnzUQCAlMJ1HkZloCxvlWkfPV
+         To1Wvcja9gblWDasC8GEsRoTloPdag/0dVEfLAwpf+v9YbjrpP9sb1W7dCQvR/WtwQA6
+         7smS8OPr0EAaYi9hLlIZAN48u0ogiMSEGB12Xv7ryzP/SSRUFyXYqoU58vWLfLSNGQXr
+         Yagw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6I1arm+k5fqV9AOVBfqpWA2r/EIP1XcCrbNskrTLYfXlpBfiNVNG4prJGPLqb3s8ELaXbRNOmX3HoPoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCqoUaLTBwpQk9rmb8x4mxYIo9VnSZeqnsUZv+tgrYpS2p5xk/
+	TBy7faKlYsoTnGzfIzA9jRBVSOedSYzy9QEdVlqgjYlOv1NFGprXxj0PerF7l1sNNWv7HA0sDci
+	0s/6Rr1wfo5X4reLq3XdUeWG7nVKdOKCgbbKZhXIMTqyzUQzBMFAJ2V8Z8mQTHz+/NNbPMUN6Vv
+	GPNkqkaQmtpd0LQXBaNjGgmoH/6ZFi1wRV0Sdq
+X-Gm-Gg: ASbGncvHwyhTpr+rV9HgGiQO5kyFSzpXHnbuavDs6ywu40GbdYzmc80aJfSITm8iMJn
+	FBjwKJI1Du4y0Xeb3LrlZKTcSAA5v1iOTKCST3erLyuD1P+bdrvFpGuupGbuLfqP479ERYsUOCf
+	f7l6qGqlkQ+woNWeXcSzh7cqxw
+X-Received: by 2002:a17:90a:e70b:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-30a01398557mr4355672a91.28.1745669592381;
+        Sat, 26 Apr 2025 05:13:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFbEOQ7OJ1l+r0ODl6FuQUy8VHIQMHy0KMCDKAuggeFJa2xVPLoqb7dQAjINDCv4vafGglRIW52yLgCmTZ3urA=
+X-Received: by 2002:a17:90a:e70b:b0:301:1d9f:4ba2 with SMTP id
+ 98e67ed59e1d1-30a01398557mr4355644a91.28.1745669592087; Sat, 26 Apr 2025
+ 05:13:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250425063234.757344-1-ryasuoka@redhat.com> <87wmb8yani.fsf@minerva.mail-host-address-is-not-set>
+In-Reply-To: <87wmb8yani.fsf@minerva.mail-host-address-is-not-set>
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Date: Sat, 26 Apr 2025 21:13:00 +0900
+X-Gm-Features: ATxdqUEw5zYtq3FD3jK20hIdBkgB26BvzEwuuPr00vWIGWH2Uh-jkXnoDtXz9Kg
+Message-ID: <CAHpthZqJPKtXUjFiVRLP+LEmTKFowUKVHGDe9=NS4aGx7WWcMA@mail.gmail.com>
+Subject: Re: [PATCH drm-next v2] drm/hyperv: Replace simple-KMS with regular
+ atomic helpers
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: drawat.floss@gmail.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	jfalempe@redhat.com, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   02ddfb981de88a2c15621115dd7be2431252c568
-commit: b168ed458ddecc176f3b9a1f4bcd83d7a4541c14 kernel/cgroup: Add "dmem" memory accounting cgroup
-date:   4 months ago
-config: riscv-randconfig-001-20250426 (https://download.01.org/0day-ci/archive/20250426/202504261939.1yj5iNwS-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250426/202504261939.1yj5iNwS-lkp@intel.com/reproduce)
+Hi Javier,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504261939.1yj5iNwS-lkp@intel.com/
+On Fri, Apr 25, 2025 at 4:15=E2=80=AFPM Javier Martinez Canillas
+<javierm@redhat.com> wrote:
+>
+> Ryosuke Yasuoka <ryasuoka@redhat.com> writes:
+>
+> Hello Ryosuke,
+>
+> > Drop simple-KMS in favor of regular atomic helpers to make the code mor=
+e
+> > modular. The simple-KMS helper mix up plane and CRTC state, so it is
+> > obsolete and should go away [1]. Since it just split the simple-pipe
+> > functions into per-plane and per-CRTC, no functional changes is
+> > expected.
+> >
+> > [1] https://lore.kernel.org/lkml/dae5089d-e214-4518-b927-5c4149babad8@s=
+use.de/
+> >
+> > Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> >
+>
+>
+>
+> > -static void hyperv_pipe_enable(struct drm_simple_display_pipe *pipe,
+> > -                            struct drm_crtc_state *crtc_state,
+> > -                            struct drm_plane_state *plane_state)
+> > +static const uint32_t hyperv_formats[] =3D {
+> > +     DRM_FORMAT_XRGB8888,
+> > +};
+> > +
+> > +static const uint64_t hyperv_modifiers[] =3D {
+> > +     DRM_FORMAT_MOD_LINEAR,
+> > +     DRM_FORMAT_MOD_INVALID
+> > +};
+> > +
+>
+> I think the kernel u32 and u64 types are preferred ?
 
-All warnings (new ones prefixed by >>):
+I'm not sure if I should fix this in this patch because I did not add these
+variables. IMO, we need to split the commit if we fix them.
 
->> kernel/cgroup/dmem.c:21: warning: Cannot understand          * @ref: References keeping the region alive.
-    on line 21 - I thought it was a doc line
->> kernel/cgroup/dmem.c:30: warning: Cannot understand          * @region_node: Linked into &dmem_cgroup_regions list.
-    on line 30 - I thought it was a doc line
->> kernel/cgroup/dmem.c:36: warning: Cannot understand          * @pools: List of pools linked to this region.
-    on line 36 - I thought it was a doc line
->> kernel/cgroup/dmem.c:48: warning: Cannot understand          * @unregistered: Whether the region is unregistered by its caller.
-    on line 48 - I thought it was a doc line
-   kernel/cgroup/dmem.c:300: warning: Excess function parameter 'dev' description in 'dmem_cgroup_state_evict_valuable'
-   kernel/cgroup/dmem.c:300: warning: Excess function parameter 'index' description in 'dmem_cgroup_state_evict_valuable'
-   kernel/cgroup/dmem.c:635: warning: Function parameter or struct member 'region' not described in 'dmem_cgroup_try_charge'
-   kernel/cgroup/dmem.c:635: warning: Excess function parameter 'dev' description in 'dmem_cgroup_try_charge'
+> > +static void hyperv_crtc_helper_atomic_enable(struct drm_crtc *crtc,
+> > +                                          struct drm_atomic_state *sta=
+te)
+> >  {
+> > -     struct hyperv_drm_device *hv =3D to_hv(pipe->crtc.dev);
+> > -     struct drm_shadow_plane_state *shadow_plane_state =3D to_drm_shad=
+ow_plane_state(plane_state);
+> > +     struct hyperv_drm_device *hv =3D to_hv(crtc->dev);
+> > +     struct drm_plane *plane =3D &hv->plane;
+> > +     struct drm_plane_state *plane_state =3D plane->state;
+> > +     struct drm_crtc_state *crtc_state =3D crtc->state;
+> >
+> >       hyperv_hide_hw_ptr(hv->hdev);
+> >       hyperv_update_situation(hv->hdev, 1,  hv->screen_depth,
+> >                               crtc_state->mode.hdisplay,
+> >                               crtc_state->mode.vdisplay,
+> >                               plane_state->fb->pitches[0]);
+> > -     hyperv_blit_to_vram_fullscreen(plane_state->fb, &shadow_plane_sta=
+te->data[0]);
+> >  }
+> >
+> > -static int hyperv_pipe_check(struct drm_simple_display_pipe *pipe,
+> > -                          struct drm_plane_state *plane_state,
+> > -                          struct drm_crtc_state *crtc_state)
+> > +static void hyperv_crtc_helper_atomic_disable(struct drm_crtc *crtc,
+> > +                                           struct drm_atomic_state *st=
+ate)
+> > +{ }
+> > +
+>
+> Why do you need an empty CRTC atomic disable callback? Can you just not
+> set it instead?
 
+OK. I'll fix it in my next patch.
 
-vim +21 kernel/cgroup/dmem.c
+> >
+> > -static void hyperv_pipe_update(struct drm_simple_display_pipe *pipe,
+> > -                            struct drm_plane_state *old_state)
+> > +static void hyperv_plane_atomic_update(struct drm_plane *plane,
+> > +                                                   struct drm_atomic_s=
+tate *old_state)
+> >  {
+> > -     struct hyperv_drm_device *hv =3D to_hv(pipe->crtc.dev);
+> > -     struct drm_plane_state *state =3D pipe->plane.state;
+> > +     struct drm_plane_state *old_pstate =3D drm_atomic_get_old_plane_s=
+tate(old_state, plane);
+> > +     struct hyperv_drm_device *hv =3D to_hv(plane->dev);
+> > +     struct drm_plane_state *state =3D plane->state;
+>
+> You should never access the plane->state directly, instead the helper
+> drm_atomic_get_new_plane_state() should be used. You can also rename
+> the old_state paramete to just state, since it will be used to lookup
+> both the old and new atomic states.
+>
+> More info is in the following email from Ville:
+>
+> https://lore.kernel.org/dri-devel/Yx9pij4LmFHrq81V@intel.com/
 
-    18	
-    19	struct dmem_cgroup_region {
-    20		/**
-  > 21		 * @ref: References keeping the region alive.
-    22		 * Keeps the region reference alive after a succesful RCU lookup.
-    23		 */
-    24		struct kref ref;
-    25	
-    26		/** @rcu: RCU head for freeing */
-    27		struct rcu_head rcu;
-    28	
-    29		/**
-  > 30		 * @region_node: Linked into &dmem_cgroup_regions list.
-    31		 * Protected by RCU and global spinlock.
-    32		 */
-    33		struct list_head region_node;
-    34	
-    35		/**
-  > 36		 * @pools: List of pools linked to this region.
-    37		 * Protected by global spinlock only
-    38		 */
-    39		struct list_head pools;
-    40	
-    41		/** @size: Size of region, in bytes */
-    42		u64 size;
-    43	
-    44		/** @name: Name describing the node, set by dmem_cgroup_register_region */
-    45		char *name;
-    46	
-    47		/**
-  > 48		 * @unregistered: Whether the region is unregistered by its caller.
-    49		 * No new pools should be added to the region afterwards.
-    50		 */
-    51		bool unregistered;
-    52	};
-    53	
+OK. I'll fix it in my next patch. Thank you for sharing the url.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> >       struct drm_shadow_plane_state *shadow_plane_state =3D to_drm_shad=
+ow_plane_state(state);
+> >       struct drm_rect rect;
+> >
+> > -     if (drm_atomic_helper_damage_merged(old_state, state, &rect)) {
+> > +     if (drm_atomic_helper_damage_merged(old_pstate, state, &rect)) {
+>
+> I know that most of the simple-KMS drivers do this but since this driver
+> enables FB damage clips support, it is better to iterate over the damage
+> areas. For example:
+>
+>         struct drm_atomic_helper_damage_iter iter;
+>         struct drm_rect dst_clip;
+>         struct drm_rect damage;
+>
+>         drm_atomic_helper_damage_iter_init(&iter, old_pstate, state);
+>         drm_atomic_for_each_plane_damage(&iter, &damage) {
+>                 dst_clip =3D state->dst;
+>
+>                 if (!drm_rect_intersect(&dst_clip, &damage))
+>                         continue;
+>
+>                 hyperv_blit_to_vram_rect(state->fb, &shadow_plane_state->=
+data[0], &damage);
+>                 hyperv_update_dirt(hv->hdev, &damage);
+>         }
+>
+
+OK. As you said, other drivers like mgag200 implement like this. I'll
+fix them in my next patch.
+
+> Other than these small comments, the patch looks good to me. So if you ta=
+ke
+> into account my suggestions, feel free to add:
+>
+> Acked-by: Javier Martinez Canillas <javierm@redhat.com>
+
+Thank you for your review and comment. I'll fix them and add your ack.
+
+Best regards,
+Ryosuke
+
+> --
+> Best regards,
+>
+> Javier Martinez Canillas
+> Core Platforms
+> Red Hat
+>
+
 
