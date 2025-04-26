@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-621464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C8AA9DA07
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:13:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F53A9DA0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B3F3A907A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31379172254
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD73924EABD;
-	Sat, 26 Apr 2025 10:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CDE224257;
+	Sat, 26 Apr 2025 10:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNQ9VUyf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iAWTdLnF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3EE224888
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085701B4F0F
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745662431; cv=none; b=eAqhEVbGPoekuh/L7Q8Cy73CmoziLpyseEYiSAJfFNXsvPOOajm5WSRWVLbuvSLMgOEd30fJZKjJ1Zs8D86ymHek5tKiMFC51OzE4Du3c3Ki7n/SK9W0PJKq/0qFZJvbLkQUgydAguDF7e4Y6/Qs3bfyJ+7h7aNmRdtYF5NWkZQ=
+	t=1745662557; cv=none; b=q0EVpz4wlX06uY+cYwkM9ZT7ErnC5knrWuN8ZT40uERJHMHuAyVnU80zrh3JWOwQE9BSiuOY1LT79tKcKaBruGW/dlk7k4YdpNukv3hWl6pIN5A/RA7AUfho0rc6lwWVe2oQuHYRM6aHMtXH4aLFsl6JmJ0iP3kXII//gwWdfts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745662431; c=relaxed/simple;
-	bh=EQiqrKqTukWbVBL5IGd2hbGdeBS1OCfXZkEgYDGooII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X+Bt0/MhB7+OjuiNBncjhM8QJIazDxWuMRe9xNjlvKUCh0wiOc2CMQzLTeVtpC6UB82+1Q4zhZLHj5VFZ+Fz8PA5s3k67KArh57RQJzN3H0rX38z+yHLrJalC1wi2A4KprTQ/3sUNjEVHHPotreGhPXCDEodGHi7VatqjRmfLfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNQ9VUyf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF018C4CEE8
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 10:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745662430;
-	bh=EQiqrKqTukWbVBL5IGd2hbGdeBS1OCfXZkEgYDGooII=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BNQ9VUyfS5WR1b7FJVwWXUXcEDM4rrJs6y2qRQhNsnXyjop7hn02vYciIuwI1yRDv
-	 Fc+dCAEoHBo1j0z8CjJS4s+//R+na9qdZPEWD1OeDtJQTloaBMcXcdbXRPBVG8zxd3
-	 n3xheH9U8a50OFztZTeSv0ss4k4qtqE6fHMin1nOlTWXQmL4p3z/7Zu4WOpiTOFX3Y
-	 NsSfiDbqS2hS1UnAbqZu5HEicVXrxQHN9w8dOEAFYldPjvzYGr2BFP0i5//1zRcGWM
-	 D2DnF/FUXED191BTZ0JkYAJUWvxm24HzOFwSN48T5jjOIMKJCH/qFppdKWPImRlbRq
-	 PZBubzKMiCdHQ==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac6ed4ab410so494643466b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 03:13:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWl9Uo8Ech3lmTh3yHjXnLVoSWPzUYqyqUmdnUntp7te0qROdlwSINdkssEJYhG9rvCRxPaGSVH5yZ0fak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq3egPSwJe7QLH93BKms9GLW7/IBiTptj+NlLZzPDo+aCYSyn+
-	RvKhWnT7+5gxKExYRDla+NNUFU1Z8RkiXzI/5TtQvVRn4VksRX1h4WU7pWUwZKKiuRyrkLYOrIo
-	VnoOzOrUfEq7i/xRDjv+51cTG5nY=
-X-Google-Smtp-Source: AGHT+IEZjc2EQqDCixMAOSJTMEsc3fcgtaBnZPEL4M3yGy4i7IUGdVWlnt55DQeCJrxyp75W4qKPWFCvnRYdM3ug334=
-X-Received: by 2002:a17:907:86ac:b0:aca:c7c6:b218 with SMTP id
- a640c23a62f3a-ace848c28femr196158566b.1.1745662429435; Sat, 26 Apr 2025
- 03:13:49 -0700 (PDT)
+	s=arc-20240116; t=1745662557; c=relaxed/simple;
+	bh=Bgg33G1mN4LgBsqM1Yzp9RAosd2oACBOwE1ILaEVsgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UI2zSrN/RHTTN+QtUnj+igukxbcSCAUxMOSpoJvkafKd03flKuu2VKWytmiEHTsht53O36gzq231fuuVgmoPbgCk2obHlb+I/n9/pKy61soxuatAIToh1rFW9rTdWUJoQs4LKRb0IA5pH4UdHEesm9NECtSDsJmLR/xMRBv9rbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iAWTdLnF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745662555; x=1777198555;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Bgg33G1mN4LgBsqM1Yzp9RAosd2oACBOwE1ILaEVsgo=;
+  b=iAWTdLnFG3MhYUMr/HM85FmpfDTS1+Ais7TfNuyiJoeAU1cER/NRgn6T
+   aAc8T+leuzy0DfWu2GvFQ85tpzBykH5291orWqGlgKKFE/Pkx1Klt9MTy
+   a35fVLT22UBhvhV8Nt+OuKFUW9ae9oLa6E9tCdmoQ8jOEG3UPixulPbRE
+   UtCOX1lHRTvqS/sNMHgWGUD60JNlK26+74voi3LT77qMTxbnN+C2y4kb0
+   vTBtYtXobqs6A4+RWr4us/XtxpDW9cnwku8wslMVZ0m4PU7Us0ZPRxTl6
+   YJJrD93C/7yoRmudeyqObM9jKDpKHPS8lcAwvJQJHNLue9EtiBVb90+n/
+   w==;
+X-CSE-ConnectionGUID: a1LsRRnfRzK/oDkj4QW3Qw==
+X-CSE-MsgGUID: oot/4q1ARNGnrWWcaRRy4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="47440632"
+X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
+   d="scan'208";a="47440632"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 03:15:54 -0700
+X-CSE-ConnectionGUID: iGNUiYHKTDarzNwTKIgAdw==
+X-CSE-MsgGUID: heu8r2mfQLC2d9QR24KzzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
+   d="scan'208";a="132988490"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 26 Apr 2025 03:15:53 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u8cZa-0005np-1S;
+	Sat, 26 Apr 2025 10:15:50 +0000
+Date: Sat, 26 Apr 2025 18:15:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shengyang Chen <shengyang.chen@starfivetech.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Subject: drivers/phy/starfive/phy-jh7110-dphy-tx.c:178: warning: Cannot
+ understand          * @maps:
+Message-ID: <202504261831.YcGFqEO5-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424083037.2226732-1-wangming01@loongson.cn>
-In-Reply-To: <20250424083037.2226732-1-wangming01@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 26 Apr 2025 18:13:38 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4uiJC0dz+MDUvXEQa0wx78L9U=-XVXZ-xC5AhV_J+gaQ@mail.gmail.com>
-X-Gm-Features: ATxdqUFMJA4o5CR-fsncn0k0L2x8oe7F61DzM3fg9Z4yooOUjlJawEIGteazZqA
-Message-ID: <CAAhV-H4uiJC0dz+MDUvXEQa0wx78L9U=-XVXZ-xC5AhV_J+gaQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/hugetlb: LoongArch: Return NULL from huge_pte_offset()
- for none PMD
-To: Ming Wang <wangming01@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>, Peter Xu <peterx@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Hongchen Zhang <zhanghongchen@loongson.cn>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	lixuefeng@loongson.cn, gaojuxin@loongson.cn, chenhuacai@loongson.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied, thanks.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   02ddfb981de88a2c15621115dd7be2431252c568
+commit: d3ab7955330843699cdcc413edd7993923e6c016 phy: starfive: Add mipi dphy tx support
+date:   11 months ago
+config: riscv-randconfig-001-20250426 (https://download.01.org/0day-ci/archive/20250426/202504261831.YcGFqEO5-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250426/202504261831.YcGFqEO5-lkp@intel.com/reproduce)
 
-Huacai
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504261831.YcGFqEO5-lkp@intel.com/
 
-On Thu, Apr 24, 2025 at 4:30=E2=80=AFPM Ming Wang <wangming01@loongson.cn> =
-wrote:
->
-> LoongArch's huge_pte_offset() currently returns a pointer to a PMD slot
-> even if the underlying entry points to invalid_pte_table (indicating no
-> mapping). Callers like smaps_hugetlb_range() fetch this invalid entry
-> value (the address of invalid_pte_table) via this pointer.
->
-> The generic is_swap_pte() check then incorrectly identifies this address
-> as a swap entry on LoongArch, because it satisfies the !pte_present()
-> && !pte_none() conditions. This misinterpretation, combined with a
-> coincidental match by is_migration_entry() on the address bits, leads
-> to kernel crashes in pfn_swap_entry_to_page().
->
-> Fix this at the architecture level by modifying huge_pte_offset() to
-> check the PMD entry's content using pmd_none() before returning. If the
-> entry is none (i.e., it points to invalid_pte_table), return NULL
-> instead of the pointer to the slot.
->
-> Co-developed-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> Signed-off-by: Ming Wang <wangming01@loongson.cn>
-> ---
->  arch/loongarch/mm/hugetlbpage.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/mm/hugetlbpage.c b/arch/loongarch/mm/hugetlbp=
-age.c
-> index e4068906143b..cea84d7f2b91 100644
-> --- a/arch/loongarch/mm/hugetlbpage.c
-> +++ b/arch/loongarch/mm/hugetlbpage.c
-> @@ -47,7 +47,7 @@ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned l=
-ong addr,
->                                 pmd =3D pmd_offset(pud, addr);
->                 }
->         }
-> -       return (pte_t *) pmd;
-> +       return pmd_none(pmdp_get(pmd)) ? NULL : (pte_t *) pmd;
->  }
->
->  uint64_t pmd_to_entrylo(unsigned long pmd_val)
-> --
-> 2.43.0
->
+All warnings (new ones prefixed by >>):
+
+>> drivers/phy/starfive/phy-jh7110-dphy-tx.c:178: warning: Cannot understand          * @maps:
+    on line 178 - I thought it was a doc line
+
+
+vim +178 drivers/phy/starfive/phy-jh7110-dphy-tx.c
+
+   175	
+   176	struct stf_dphy_info {
+   177		/**
+ > 178		 * @maps:
+   179		 *
+   180		 * Physical lanes and logic lanes mapping table.
+   181		 *
+   182		 * The default order is:
+   183		 * [data lane 0, data lane 1, data lane 2, date lane 3, clk lane]
+   184		 */
+   185		u8 maps[STF_MAP_LANES_NUM];
+   186	};
+   187	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
