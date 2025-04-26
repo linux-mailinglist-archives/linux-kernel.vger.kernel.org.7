@@ -1,162 +1,131 @@
-Return-Path: <linux-kernel+bounces-621581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED670A9DB93
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:54:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1697CA9DB9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 16:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466A73B0B94
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:54:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A73A27A94DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287BB25CC60;
-	Sat, 26 Apr 2025 14:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3420D25CC62;
+	Sat, 26 Apr 2025 14:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ocKA6jnW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="V97VpETT"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3739CA31;
-	Sat, 26 Apr 2025 14:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E08256D
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 14:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745679256; cv=none; b=jq9OMBv8xrk6ajPRzeri8BoXwf5aEaproOCeXeQblMKWuenPYQrico0zSbh/jedKadLf4u0sFULr9MT4Kh9XJxL7G/q0UXDsgqLrU6QMpXMv9YOJL2naQSYYE+niLXA1iS9Y27CY5a6wzR9pzsXqjoah+S8mzsxfRMDiRCjJgwU=
+	t=1745679411; cv=none; b=e09gQkIAsZ8P9tb2B7qiDVvW20ULYN9W/9wJotATfB3P7Nn0XZH2hHQU1RdfIVK/BEJaoDj/7t5q2D3lNW/dWF7/QXGVbIW0k1xrTpt8Ook3gqOcf/B9iXCt8Sob5cZWKtS2YUIkzlw8oH6Ax/cg0ABUd5izbt7ILvwArwi0TnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745679256; c=relaxed/simple;
-	bh=hfJSUaOue8jaJ1lUo2evihusiUNyV0JQ02DewVaWNeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rs2l6LV6Ch+AYF3Uwgui+TfK6U1+mt5AvgCyIlo97Mn/lTMO8mLJq0/T0ZsEfhbbMUhKF0+ksJ/Re273zDrV795g/CNBScC9ItirqX0rYVHDEeFNi0n58roYhvMaA/N+1PbBqXgI2EOVlf97iVHcDi27ylEcjtbqag64r0odpYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ocKA6jnW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53Q1XJRX004556;
-	Sat, 26 Apr 2025 14:53:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=gZqL6S
-	CFtZEsJqWtffztgLGfLxz9kqQadUrIxWSZSCo=; b=ocKA6jnWfPENKOUSHz6OFA
-	oP6tIya0Sn8mrw3rjq4iA8667bxZTsdhNkBl4SFNZ2+dWBu+4q9NJx0wYgxzS07v
-	Bs1lgWWF/h4KWrIbm4slUxuAdXTQSSNDKTwRohEluWgIfeO7Rt7HUh9UqAgEOUED
-	oGqfyHV5e/r1N0A5923uJ69b7PRenI1XJBhDWUeDiIHZ9v1FfghMlNQyD+Wi9KUP
-	qh6z37xGGCpQkR4Ef6WzrKgVJZmDnr2D6IvkI4eJ+dEksZhz1YLfaYJd9tbhAGnD
-	o7EwrQCx96C5c/u+34tcgnpgQqta2kl9oRAXqNQbxRFy8HnnzCEQQgs0sAE0rFGw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 468nwmhtxx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Apr 2025 14:53:53 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53QB2cut008601;
-	Sat, 26 Apr 2025 14:53:53 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 466jfy29mj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Apr 2025 14:53:53 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53QErq3g31916612
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 26 Apr 2025 14:53:52 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE8F25805D;
-	Sat, 26 Apr 2025 14:53:52 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8071458065;
-	Sat, 26 Apr 2025 14:53:50 +0000 (GMT)
-Received: from [9.61.248.121] (unknown [9.61.248.121])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 26 Apr 2025 14:53:50 +0000 (GMT)
-Message-ID: <e8bf676e-7bf0-4896-b104-ac75e1b22d2e@linux.ibm.com>
-Date: Sat, 26 Apr 2025 20:23:49 +0530
+	s=arc-20240116; t=1745679411; c=relaxed/simple;
+	bh=bHBQBm0qlrFLSPTQ5kZMOgmZuQIX6guRz1psjWrgWzQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cnu/c/6bUjfe2oBVHG58S8wOBRgQcybgloXXztCcYsNWGHPZzHhly5y9PtmwDCCX8WMzLbKCsaEtoLlfG+01ktl2gae8yxEpCqofLUX0+jrpEKqPUX+8S2D8LJsdLf+bOTQSlKLzG1bfe6+TStctzHNQm9eH2lV32ZryXelcmr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=V97VpETT; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1745679397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GICB4BFYHCXkZcWANyav9UTGwPzsmDF0x+dfscxZ+3E=;
+	b=V97VpETThcQMI2V6pF8NhEa6hJbzknZuXEklIlmiA3b0ryvgW4Ki8dI3NbrTDsRvdx+oJH
+	SCOxyM6iqtdWcFQQ+wUd9mHMuIhgZxbJaBUsH9kieekgvikhAWiJGEKFXi9UD4d8pRduE4
+	ZXq983R6AJ+HS2XHOUoPOF8jIkkcZKnnjfh8HmydHdhLeQoHra/VtZqX6NiPrlbcb08RC+
+	8taQ3XUXyhgwNVsbmd3GiaHCdteW8BXeIB7pbU6rY9I1KQAEgBUZp5jXnrBD7AZOYQqFkQ
+	N37TMYVibwe0Q/scWSR/urLfgOuB/Kdq0EORg9SPenxHXvjFtKdZjpJGbZYabA==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Subject: [PATCH v4 0/2] Implement endianess swap macros for RISC-V
+Date: Sat, 26 Apr 2025 16:56:17 +0200
+Message-Id: <20250426-riscv-swab-v4-0-64201404a68c@iencinas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next-20250422] Build failure: Wvla-larger-than=0 is
- meaningless
-Content-Language: en-GB
-To: Kees Cook <kees@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, nathan@kernel.org, hch@lst.de,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <7780883c-0ac8-4aaa-b850-469e33b50672@linux.ibm.com>
- <202504252249.6F09D31FD1@keescook>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <202504252249.6F09D31FD1@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI2MDEwMiBTYWx0ZWRfXwQG/5hwB3MDq NUgHomRmpv5agiuIGuByTyFSFy/61ent4aMr0AuOqw/J90PER8+GR7DyhmACtxZwHCzIh4+NZG/ qlc/8T9E/lb3lnUIDje+qc1GUMb+XmkNw2AYIJSZUNE2ewxOXwChmNtsumqwXy5L7d7OPQ06+R5
- wXTe3pqofNfso0kUKbn9E/cMZcls2tcu8wmexjb8yumIlukL5SawrjmxMg/fA/tLrryYiqiTEw+ eE37AMDo+CUTdW+wg+mEVgK0IzusWRaPdMuLA0rfgqflrm8ytSHiOUrocJgEcgqm+hbdXtaZSkH hz4YaN0N9gZDp9/TMf1VSQx3QWfgUyUDgZi+PXdZ5T5DnArlypX4RJXe1llOoFYhNAZRIHnfczn
- bp+9H5DIxo/tC6UMkmmZ5+aQ72ZEFEIoPnQde9lpSetw3SNwCtvcd/Ex3qNHobRgnxQTk9OP
-X-Authority-Analysis: v=2.4 cv=Yfq95xRf c=1 sm=1 tr=0 ts=680cf381 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=mDV3o1hIAAAA:8 a=VnNF1IyMAAAA:8
- a=wbOSOQyIEbtBsbREJHsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: g28sRGoavhM-5JAT-vqtPds04jO0le0U
-X-Proofpoint-GUID: g28sRGoavhM-5JAT-vqtPds04jO0le0U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-26_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504260102
+X-B4-Tracking: v=1; b=H4sIABH0DGgC/23MQQ7CIBCF4as0rMUAU2px5T2MC6BTnYWtAYOap
+ neXNia2xuV7yfcPLGIgjGxfDCxgokh9l0e5KZi/2O6MnJq8mRJKCxA7Hij6xOPDOu5q6UxpjfX
+ SsQxuAVt6zrHjKe8LxXsfXnM7yen9ZKRYZpLkkkNZaYWtRDTVgbDz1Nm49f2VTaWkltqstOKCN
+ xpc1VTWGan/aPjqUsBKQ9bg2p3QTS0Q4EeP4/gG6i983iMBAAA=
+X-Change-ID: 20250307-riscv-swab-b81b94a9ac1b
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
+ skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ linux-arch@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
+Motivated by [1]. A couple of things to note:
 
-On 26/04/25 11:20 am, Kees Cook wrote:
-> On Wed, Apr 23, 2025 at 07:11:43PM +0530, Venkat Rao Bagalkote wrote:
->> I am observing linux-next build failure on IBM Power8 server.
->>
->>
->> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->>
->> Branch: master
->>
->> GCC: 8.5.0 20210514
->>
->> ldd (GNU libc) 2.28
->>
->> Attached is the .config file.
->>
->>
->> Build errors:
->>
->>
->> [[01m^[[Kcc1:^[[m^[[K ^[[01;36m^[[Knote: ^[[m^[[K-Wvla-larger-than=0 is
->> meaningless
-> Weird that it doesn't get dropped by "cc-option". I reproduced the
-> issue, and this patch seems to fix it:
->
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index 70ff932fd5ec..59d3d196fe4f 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -51,7 +51,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, dangling-pointer)
->   # types, so depend on GCC for now to keep stack VLAs out of the tree.
->   # https://github.com/llvm/llvm-project/issues/57098
->   # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98217
-> -KBUILD_CFLAGS += $(call cc-option,-Wvla-larger-than=0)
-> +KBUILD_CFLAGS += $(call cc-option,-Wvla-larger-than=1)
->   
->   # disable pointer signed / unsigned warnings in gcc 4.0
->   KBUILD_CFLAGS += -Wno-pointer-sign
->
+RISC-V needs a default implementation to fall back on. There is one
+available in include/uapi/linux/swab.h but that header can't be included
+from arch/riscv/include/asm/swab.h. Therefore, the first patch in this
+series moves the default implementation into asm-generic.
 
-Thanks for the fix. Applied the above patch on top of next-20250424 and 
-it fixes the reported issue. Hence,
+Tested with crc_kunit as pointed out here [2]. I can't provide
+performance numbers as I don't have RISC-V hardware yet.
 
+[1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
+[2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
 
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+---
+Changes in v4:
 
+- Add missing include in the 1st patch, reported by 
+  https://lore.kernel.org/all/202504042300.it9RcOSt-lkp@intel.com/
+- Rewrite the ARCH_SWAB macro as suggested by Arnd
+- Define __arch_swab64 for CONFIG_32BIT (Ben)
+- Link to v3: https://lore.kernel.org/r/20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com
 
-Regards,
+Arnd, I know you don't like Patch 1 but I tried your suggestions and
+couldn't make them work. Please let me know if I missed anything [3] [4]
 
-Venkat.
+[3] https://lore.kernel.org/linux-riscv/f5464e26-faa0-48f1-8585-9ce52c8c9f5f@iencinas.com/
+[4] https://lore.kernel.org/linux-riscv/b3b59747-0484-4042-bdc4-c067688e3bfe@iencinas.com/
+
+Changes in v3:
+
+PATCH 2:
+  Use if(riscv_has_extension_likely) instead of asm goto (Eric). It 
+  looks like both versions generate the same assembly. Perhaps we should 
+  do the same change in other places such as arch/riscv/include/asm/bitops.h
+- Link to v2: https://lore.kernel.org/r/20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com
+
+Changes in v2:
+- Introduce first patch factoring out the default implementation into
+  asm-generic
+- Remove blank line to make checkpatch happy
+- Link to v1: https://lore.kernel.org/r/20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com
+
+---
+Ignacio Encinas (2):
+      include/uapi/linux/swab.h: move default implementation for swab macros into asm-generic
+      riscv: introduce asm/swab.h
+
+ arch/riscv/include/asm/swab.h   | 62 +++++++++++++++++++++++++++++++++++++++++
+ include/uapi/asm-generic/swab.h | 33 ++++++++++++++++++++++
+ include/uapi/linux/swab.h       | 33 +---------------------
+ 3 files changed, 96 insertions(+), 32 deletions(-)
+---
+base-commit: a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
+change-id: 20250307-riscv-swab-b81b94a9ac1b
+
+Best regards,
+-- 
+Ignacio Encinas <ignacio@iencinas.com>
 
 
