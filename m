@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-621729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D840A9DD4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 23:47:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA3BA9DD55
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 23:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBCD4464917
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 21:47:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0A497B3082
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 21:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE4B2010F6;
-	Sat, 26 Apr 2025 21:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C986A206F18;
+	Sat, 26 Apr 2025 21:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ROfm/sQD"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JQtUD51f"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC3B139E;
-	Sat, 26 Apr 2025 21:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF83F2066F5;
+	Sat, 26 Apr 2025 21:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745703989; cv=none; b=FzoQgcHJyAO/Kf5A5inOcM5ZM1lO1xzJgUhc4/BBV4uMlSop1CZCj3dUJHLVxutQC6cOJnnZ+uZp1DQ2B6zmXZVPpXSuhRbd5k9uMfIQYwvBc3lAsHwMl7cDAgsQ4jq3hV6v5TXUOtJsGYtrzsx6AaNGVd0SZQVJQ1wSHP/p3FE=
+	t=1745704010; cv=none; b=qQ+Ng6WgiZgITko42V/Oi+vmidYSpN/Ks9VQA6QntJnkUH0CrfIwEYGthfY0AstzVl3eObS6/cnCXC1clJmj5pD954NWFYmoa/BtPWKQsqf+of+NBah9v3Dpr198OYU/o+G5TP8Du05M7sZYeOa1FEYSMfa9ObMXLoNkkeZTwo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745703989; c=relaxed/simple;
-	bh=damSU/DMJDYd4rrKRAWQuW1uPwaU5hiKUotDw3rURC4=;
+	s=arc-20240116; t=1745704010; c=relaxed/simple;
+	bh=ynv/wfwjZEk4oIq6re7xnM18SfXROFg18WZyQV945Os=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X7iiEAZcJROybYGzkPBsV9vXGX58nrtUluW39N4bN8OJMkIAbHHPV9O8VyCcQyQrARL06FwK7k4Z8GAhTQ4pKzmC6eOCK3ERUzGZWxLuKWdYtIF9UvlytGeGr7quwA5avwh0zDwmceGFHqfDRZimGV+DDuiuGwoEFbYNbLDp24M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ROfm/sQD; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=NvNbblBTF0fJ9mlTJliWUQep4p83hzTH56VbHvKQ2YnGiG9ng1CNdbfk6GpOy1XgeC2yKSL9K9tGHiaSvIxcSAQhob+ssJbcnqTOby68bLXFgv2xxJfdVHBrP2B1RVRQXWzrZg8vQr5Q8zoQTr+qZVFx2L3IQ6Qm3hh+irWGUeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JQtUD51f; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,35 +35,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=FyVq9gE+8a0STJLL9I8+U45gbX2e/0ltR2qoqQaj8Ak=; b=ROfm/sQD00zi9MxnailTqqRhTM
-	QJHzYwMO09uaRoOoAnqWsZlO4FCZCES3PGcRK3BTYgTJhtDK3JrN86sXmgkbEr/virYfaQK8kyXbh
-	gnWvTqCZOZcgWYeqj+QP7sUT7jTGjFYk44cN8XYaLhodwwXqp2bFifSXTEi21ezb3qJvJNQR+fGlE
-	rvDI+Hr1UGWC6PIF1thAPdgD5wG3AibqpFsSNNOOJ2N6tLvKNIrAv8fKA+LvNFIqW0SY7ZQ42IlOq
-	oAGcShv/hqpV2IeU5FGjF6OI5l7Qv1iQ6cE5e9hC1JR9iO1pLFvUAXHWJfKAh6a5MQQm2NPThXeT/
-	EOAkWhlg==;
+	bh=nzrNCfIbltJDUh80KeXlbQkeQ/0zkPnKqxcq0vFHnCk=; b=JQtUD51fZGQQxc8ThllDYRda/J
+	UsYh90YKpgmHy6rd9JUOG9a7+SmcJR5UnWZ51MWF2l8hTlfGtV6phO5NyLN/qVSKNi4HU4BrRdbAA
+	3dnXjheeTjG30PyUATW7xQXKD4PQZ18OvqlXdKb7BvV7B6/e9lFI7q3DehiofZL5tm72sBfbMYfl6
+	/fDi/XafR845N/ZOXejcqVDt6npFcjfBk3vOm+6N9ti6CAkYvmdsbQjFG/EGnAmkRyLuRFoaqvvSs
+	Ntp886f6adFTCfffJ+UaOSsyZ9H7o24mifmqjNIVSDHRqemOnHT8WyFmJHIk8H7j5drkcraRTqOZp
+	Rua6IaAw==;
 Received: from i53875aba.versanet.de ([83.135.90.186] helo=phil..)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1u8nLr-0001OR-7D; Sat, 26 Apr 2025 23:46:23 +0200
+	id 1u8nLr-0001OR-W1; Sat, 26 Apr 2025 23:46:24 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jacobe Zang <jacobe.zang@wesion.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jimmy Hon <honyuenkwun@gmail.com>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	nick@khadas.com,
-	Muhammed Efe Cetin <efectn@protonmail.com>
-Subject: Re: [PATCH 0/3] arm64: dts: Add board support for Khadas Edge2
-Date: Sat, 26 Apr 2025 23:46:10 +0200
-Message-ID: <174570370110.31943.7845871822930134911.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Add support for RK3588 EVB2 board
+Date: Sat, 26 Apr 2025 23:46:11 +0200
+Message-ID: <174570370119.31943.10378973370072965130.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250424-edge-v1-0-314aad01d9ab@wesion.com>
-References: <20250424-edge-v1-0-314aad01d9ab@wesion.com>
+In-Reply-To: <20250418014757.336-1-kernel@airkyi.com>
+References: <20250418014757.336-1-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,22 +84,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 24 Apr 2025 18:14:39 +0800, Jacobe Zang wrote:
-> These patches add board support as following:
+On Fri, 18 Apr 2025 09:47:55 +0800, Chaoyi Chen wrote:
+> General features for rk3588 evb2 board:
+> - Rockchip RK3588
+> - LPDDR4/4X
+> - eMMC5.1
+> - RK806-2x2pcs + DiscretePower
+> - 1x HDMI2.1 TX / HDMI2.0 RX
+> - 1x full size DisplayPort
+> - 3x USB3.0 Host
+> - 1x USB2.0 Host
+> - WIFI/BT
 > 
-> - HDMI audio and display out
-> - BCM43438 bluetooth
-> 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/3] arm64: dts: rockchip: Add bluetooth support to Khadas Edge2
-      commit: fef7d8834c5646f029f95ff0f3c3e11d449465b6
-[2/3] arm64: dts: rockchip: Add HDMI & VOP2 to Khadas Edge2
-      commit: 1307bb6e1a4c0b1144a77f77aff728219cf10bb5
-[3/3] arm64: dts: rockchip: enable HDMI out audio on Khadas Edge2
-      commit: 6bf923a7d0138e8e7d8165f6642c8121fb115571
+[1/2] dt-bindings: arm: rockchip: Add rk3588 evb2 board
+      commit: ebabb3cdb89eee8853157a6daeed9d3f5a46dce4
+[2/2] arm64: dts: rockchip: Add rk3588 evb2 board
+      commit: 013dd238a822c940e056504fe644bd0a38c5d806
 
 Best regards,
 -- 
