@@ -1,178 +1,115 @@
-Return-Path: <linux-kernel+bounces-621436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE24A9D97C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F37A9D97F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 10:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF0B57A7F61
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5388792179D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2A925179C;
-	Sat, 26 Apr 2025 08:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B99250BF9;
+	Sat, 26 Apr 2025 08:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTABcfo6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrlNMfwu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80251D8DE4;
-	Sat, 26 Apr 2025 08:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB101ABEA5
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 08:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745657271; cv=none; b=FX81+WmumiKz7UKHqk+ntX9N+rwr5uQ2694NSZX9vv8Pkj3EDleC5yKQUBowlDRAzSlSqZ5K3Td6Le06LRL2/a8fLngk7sxn/56/32vuzL8GLk97gEPvFkaB+HTln3tCX1FO0xK77oLi4GDaD+Nbo19HZP02QXF05pCJM9bg+34=
+	t=1745657427; cv=none; b=nkujr13SyHIjJQ8K3SdfAOITkkt4MKSrT+YaEfyK9GR72i/WScYtEc3xJDOdK5TAmnZSgd0jzdRngWZZkROE1KFZjLE1/D8/gsWdWBKSMMn/tB77tuil6+39MuXHTANBHJC5DUxW+/iBcHU+XLsP/aUwnB422KmCGvC+n46nusk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745657271; c=relaxed/simple;
-	bh=EePur+oXQTN/Q0Mfo8DIsWZ0cPCciOMp+Cc7Bx6MPW8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cU0FTtx12aQX7TldzqajyRKwDd3wPXvvcYd3QP0lY7VIBtAyPFKf+LUrTHXnjM7ZIft6mF33PVvIjsOXyNJjCo73lRN38yY2UZvLeCd9nw/q42vCoZUjDNZmSCm42bq1B1tQ/E2WBAD0FzSrC/oKKJjLrTgJwBwm6f/KFI4eh1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTABcfo6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0654BC4CEE8;
-	Sat, 26 Apr 2025 08:47:51 +0000 (UTC)
+	s=arc-20240116; t=1745657427; c=relaxed/simple;
+	bh=XcUeaAZt8IbD2wHYlVKSdeWnQ/W6qrJDTR3sqZuLT2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VxovNKzQidoBsMairj0GEeOe21NlNNEn2Lx7Smd31r+s/lONQzDSsRLSFJ1mb9Edov/ArDKnZT7yjV+6aoDx0QUE9YqQke741AnfEgE8JEfXLRJaPUYTrv2ir1GwRWPLiUcwOht9KxoJTv6Eu7Ty5lXYNes+WaKd9TY2phfRfX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrlNMfwu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404C5C4CEE2;
+	Sat, 26 Apr 2025 08:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745657271;
-	bh=EePur+oXQTN/Q0Mfo8DIsWZ0cPCciOMp+Cc7Bx6MPW8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UTABcfo6244t1yLjNqtebadpBMWpLStD0HXuIpSgcszl9lrLf0yf71UgCkR3EoHP+
-	 vbnui9fBd76v723pI0iRja0z4mSXYJSvkFyP4/tISLzEFiFKa7m2JSQhtH243g6f80
-	 cz5sykVT/PZrr6eEcRGJGnkVWU1QOlUTgy3wLRzsvrFQOvU4JHxfmtZWHKvjRrfRUS
-	 fsUvar5fBwlOsayFk4DkaXGWu4iQ7mbGEaK1pdP513sXnAJ6sFphzVto6SwS4JLlyG
-	 fgPjLCyv5at66q35UapwuYSsnDg7xwZ30yGlZcPH6WFpSauffZp78IS2aeKKyc+XDo
-	 Nr122Qbw+3dAw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96F4C369D9;
-	Sat, 26 Apr 2025 08:47:50 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Sat, 26 Apr 2025 12:47:21 +0400
-Subject: [PATCH v9 2/2] arm64: dts: qcom: ipq5018: Enable PCIe
+	s=k20201202; t=1745657426;
+	bh=XcUeaAZt8IbD2wHYlVKSdeWnQ/W6qrJDTR3sqZuLT2Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NrlNMfwuUxDajFRcbHoVyXuFFKN2wZkdMalwQpeUv5kuWY3j/ythNAbCzoGu1xqu/
+	 s6LEMINTh+WPBaW4h3yRxLSgAGUIwP1W3YJ88aNS/3lDzgLDbRspXULykoa1nxHNG3
+	 H3RlE+bcW/rO55xEfAlvCXKultchCvTvhkj93Gbo1gp1BXrFXxilg9AzHJG5uaTmVf
+	 HTxkT6rzn7x+mI3heZhXpunybcFBDi+2OZY+v2ovGQfuoooPxlYNe0obHcCpq9q2V0
+	 AwG5v5JqRiBcj6DPm4fRg0DmuJJNa6Yw5otsc8GMp/r1dnd4zO+EleBUb4aoaGp7d9
+	 7fSx04raVZuHg==
+Date: Sat, 26 Apr 2025 10:50:21 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [GIT PULL] scheduler fix
+Message-ID: <aAyeTUAkDVb9usoI@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250426-ipq5018-pcie-v9-2-1f0dca6c205b@outlook.com>
-References: <20250426-ipq5018-pcie-v9-0-1f0dca6c205b@outlook.com>
-In-Reply-To: <20250426-ipq5018-pcie-v9-0-1f0dca6c205b@outlook.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nitheesh Sekar <quic_nsekar@quicinc.com>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Praveenkumar I <quic_ipkumar@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
- 20250317100029.881286-1-quic_varada@quicinc.com, 
- 20250317100029.881286-2-quic_varada@quicinc.com, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745657268; l=2062;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=OKmTrcmt0ksiQwz9dz8aVIs/K+GfvvlMVFo78Mfk/ZA=;
- b=rV0etEqqpSlZRcytneg10NcKG8RAOvyDsfbwXwAY97bz9Nj6HGPetzIPY8+RBPQsDtlKI8Q/t
- cKs3ntwbB2ADl5MmOQ2qSpeide1bVr2mNbwcpwcCVt5+flGX6QTrxrx
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+Linus,
 
-Enable the PCIe controller and PHY nodes for RDP 432-c2.
+Please pull the latest sched/urgent Git tree from:
 
-Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 40 ++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2025-04-26
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-index 8460b538eb6a3e2d6b971bd9637309809e0c0f0c..43def95e9275258041e7522ba4098a3767be3df1 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-@@ -9,6 +9,8 @@
+   # HEAD: bbce3de72be56e4b5f68924b7da9630cc89aa1a8 sched/eevdf: Fix se->slice being set to U64_MAX and resulting crash
+
+Fix sporadic crashes in dequeue_entities() due to ... bad math.
+
+[ Arguably if pick_eevdf()/pick_next_entity() was less trusting
+  of complex math being correct it could have de-escalated a
+  crash into a warning, but that's for a different patch. ]
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Omar Sandoval (1):
+      sched/eevdf: Fix se->slice being set to U64_MAX and resulting crash
+
+
+ kernel/sched/fair.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e43993a4e580..0fb9bf995a47 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7081,9 +7081,6 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 		h_nr_idle = task_has_idle_policy(p);
+ 		if (task_sleep || task_delayed || !se->sched_delayed)
+ 			h_nr_runnable = 1;
+-	} else {
+-		cfs_rq = group_cfs_rq(se);
+-		slice = cfs_rq_min_slice(cfs_rq);
+ 	}
  
- #include "ipq5018.dtsi"
+ 	for_each_sched_entity(se) {
+@@ -7093,6 +7090,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 			if (p && &p->se == se)
+ 				return -1;
  
-+#include <dt-bindings/gpio/gpio.h>
-+
- / {
- 	model = "Qualcomm Technologies, Inc. IPQ5018/AP-RDP432.1-C2";
- 	compatible = "qcom,ipq5018-rdp432-c2", "qcom,ipq5018";
-@@ -28,6 +30,20 @@ &blsp1_uart1 {
- 	status = "okay";
- };
++			slice = cfs_rq_min_slice(cfs_rq);
+ 			break;
+ 		}
  
-+&pcie0 {
-+	pinctrl-0 = <&pcie0_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 16 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc_default_state>;
- 	pinctrl-names = "default";
-@@ -43,6 +59,30 @@ &sleep_clk {
- };
- 
- &tlmm {
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio14";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio15";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio16";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
- 			pins = "gpio9";
-
--- 
-2.49.0
-
-
 
