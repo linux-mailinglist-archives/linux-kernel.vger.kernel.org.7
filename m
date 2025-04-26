@@ -1,131 +1,142 @@
-Return-Path: <linux-kernel+bounces-621396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DEFA9D8E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:55:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0335A9D8E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209DA16D4B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 06:55:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131041C017DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 06:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E181DB127;
-	Sat, 26 Apr 2025 06:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110B21E521D;
+	Sat, 26 Apr 2025 06:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQJPsOol"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="j3Y50Rlo"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EC21B4140
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 06:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F601D63CD
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 06:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745650466; cv=none; b=VwfDqQEVVmlGaISalDembhRkVsCtIm0qpLGCnHTGIAM4nO/l0FsiUBBsTCASWrQ7rCSl/kKHORynWg0uW+mpfoyHp1JNa1Lu/Y8iC96/IoTBAd93Fgjent4FNpNOGBqDz04+OIVUEUmlSFoR5jtwjyGyTkgeoWy/cc58EmCrbKw=
+	t=1745650547; cv=none; b=B1ZMcc+mFih3sI2CGe0pW7JbV0kFiVIr8Ho16Ny3M0sXkJEo/L0DjsoPk1THwZf4DpxtggwhbhV3ZciEWIGXoD86OQl77TvzqSXOYWbsoeuNj652CsATFY/i/lCgNugQRG859XGREIlECDUY3uoYSL+IOJkBrN3MDzC84+xGzOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745650466; c=relaxed/simple;
-	bh=m0GzTi67G/BBlHNZ1XWaTzJYi8lLqT/n/ATxOLVWBK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=THppvGQg/6m1ntWpwoHnPkPz5pLXlGKasQNDdM6W3P4YyyuLUOfYX5F8HO2TyhHmyJEwTMVbXfFbqWV/oIcs4wOdYsNsWe2o0wMed9YnUPqyFtJuKLsXf1RAqSL5SWP6aMBL9HzwrIo+Ykk/KGFG6w4E+3q2RpTLw2j7kQehVSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQJPsOol; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so566863066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Apr 2025 23:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745650463; x=1746255263; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8WoCmUis8Ol6Z+c7rTs6b7qBE/ahNLhfc6fAQ3sAHhQ=;
-        b=VQJPsOolp/Cg23FENMiqoWTtffRcsUT+EZDhd7KAzcdj+dpSF1lVkvw3ykbsvIhOMl
-         x1Nmj2ARevIWLwoXOfb1t3KDL+abvslEC8Lr6CAwq7VrKYG+t/x2jv0EaKGq+bdY9a6O
-         gbOkE8vBVpGSn2CY+f5BUmLmLbObANsQSYHks4X0fyiknnuT2gl+Gp/r2bNRKWRseqdm
-         PDbBwTR+D+1yjapyOgJn7Q7sT/ZDwqDfY/gjdp6W7CFHw7wctjX4emIpDgjL9PeWd14P
-         qokbt7DzIm9kScFxiWRj/PDFas1zw5wASJKaMmWtpsDLAEqTbSa2mjLBA8FJBWkV3Vuo
-         P6kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745650463; x=1746255263;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8WoCmUis8Ol6Z+c7rTs6b7qBE/ahNLhfc6fAQ3sAHhQ=;
-        b=r2SeXuUlI0mVoK5xP+uuYQ39maTsIqV97REdvzrPkEZrGqNbaEobT60aguKCwXgH6r
-         6GGCXqUxUUBBo1oWkqKNnsNuKvk0iQaA2Af8JZV4sPR3NWUSQtpbXQTahpRG0xTa4D2D
-         XRCVLeV1UfFBbwir+DLRyTTP9cSsQKQkTkp3ye/8Dpvd/PfdVAn0VOiZy46uUSSbnHrQ
-         LfN5qIoye2HNxL50H8ymtWiuRbDFmitXZjy50u3wNJ7WJFwe03Y0bYnmAUbEExQh+oJW
-         jmYc4N3OEPoyeTlHDcSY92HBkmYjZZmPBEbJvqf9sguJhhkQEGkz8YdUQTgByhDf/B9e
-         Wy3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVeqVXEg3heT7YWspKHDOp79fQnw0WM6vjm9gImFuEbl/Md/f9Ufw1fnJi//byXjp1QzaEHHMvehMkPvF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpyRlAMe/q40CZV0/YlZh1iH1cl6hHmBktYPppWSx+PeEfqJfm
-	IyW8ocwOfGRNMkFonLQbDH6Gb9QqNlgqXcOOfz4JjYt2pgC9BfSRO+nCOIs+ERbiRnrW3bJANgr
-	ud2eJPmow4olUXnB+3G+DEDoN2Uk=
-X-Gm-Gg: ASbGnctYn0urFR+lgiefjkP+R9VGeaBJfJ5I8hcK+nCvLymsTjVDr/rHfRzmgB1+zGm
-	LRncw+lfGfboD97r04KCjn+0k2tsewoBlc3Ixu/Q2eRYFKu/db28LiHq25wcKoojEQfCHdUKnJo
-	X7bIP4U9QvlOxH4qUoXVgi
-X-Google-Smtp-Source: AGHT+IGC0uvpV3EDS4q705RyZRePh5QkNiJf6PrdO99FXottogwNk+Gb4LWLNJ1XHzSx+9giL/LPUBOCImqGbG+Ekd4=
-X-Received: by 2002:a17:906:db04:b0:ace:6a10:aba2 with SMTP id
- a640c23a62f3a-ace73b46db5mr372271066b.57.1745650462894; Fri, 25 Apr 2025
- 23:54:22 -0700 (PDT)
+	s=arc-20240116; t=1745650547; c=relaxed/simple;
+	bh=YtEkNTHUG+n5iHo3EXZNJ4qo4UYkQllu7HZAWLn/jqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mDTFC8wwXYd/SzmIbDvtJqS0zI5FM+y9NrOi7u3qM4J/0ZzCXkWbJ1zP+ByP1RLciJSjDgC+yxUW3x0isxRpTs36L4lvmoAM3d8kQcGsWDtkeHv9RnjmGCd+oeFKbEr4niUD5lKQmv6KsScKkQ/MAPpBer7ZoLZVoceLVzlk5Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=j3Y50Rlo; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
+	by cmsmtp with ESMTPS
+	id 8VlruxuYwMETl8ZRquq4e2; Sat, 26 Apr 2025 06:55:38 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 8ZRouxOtS79Ii8ZRpu3BXV; Sat, 26 Apr 2025 06:55:37 +0000
+X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=680c8369
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=efVMuJ2jJG67FGuSm7J3ww==:17
+ a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=FOH2dFAWAAAA:8 a=maIFttP_AAAA:8 a=iox4zFpeAAAA:8 a=MCMyBeqthVF3y6c2b0kA:9
+ a=QEXdDO2ut3YA:10 a=qR24C9TJY6iBuJVj_x8Y:22 a=WzC6qhA0u3u7Ye7llzcV:22
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kBkRlnDp5Hdmm2yE73zuDnhdBvqAkeMGF98g6gosTXE=; b=j3Y50Rlou93+yINb2qrM0pNoFE
+	SWsdOKVHichB/jZPJ3XljpzTaseSD+mWbf7y2BRVv5WlhXOIfBUij8SFDuviGBheErbtcnDW0W8uV
+	zd+vcRtEdrs6w5NEnAdecsR0ydByiaCXCYd6dwIHnP/Kxy48FgZbYEz4/ioPfbY1Vzw622YNXwOrj
+	TEaMlA0ewMXlr6MeUmPXW//lqYu671uX7Ren3XtaC/cGu8jnVa6REO8nEKl4sOxExT7LtJ1jyDfje
+	1/LQUoISw7Y5FVqb0DvC9/eJUKsSn2uum6oDDJ6DnnVt22H6syAqHMLaa/ZG2v5zSWHWG5g1ZcUrX
+	RHwK7Y+g==;
+Received: from [177.238.17.151] (port=30278 helo=[192.168.0.103])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1u8ZRn-000000000fQ-3dXR;
+	Sat, 26 Apr 2025 01:55:36 -0500
+Message-ID: <4dd1e595-21c2-4a6c-a7b9-e7c945d3a7a2@embeddedor.com>
+Date: Sat, 26 Apr 2025 00:55:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9twNOWYCQ6vXZqUAu8G=oxGrKUvcTYz-SL6Jc=4+8ivVew@mail.gmail.com>
- <CAHk-=wj+h6i94DyxGQ2Ez6tvp2sBs70EfY7Lp0N1umpwHL_VrQ@mail.gmail.com> <CAPM=9tx2XsDNFDWkxndpFPNihgf18CK7Ps85vE4ZRvuLBG35UA@mail.gmail.com>
-In-Reply-To: <CAPM=9tx2XsDNFDWkxndpFPNihgf18CK7Ps85vE4ZRvuLBG35UA@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Sat, 26 Apr 2025 16:54:11 +1000
-X-Gm-Features: ATxdqUE73n1-4m37EOUkbbFZ1-rjlaR3nnvcNv5GqEIbodg1glh8xu1Pail9vBI
-Message-ID: <CAPM=9tzh5sdpfDXQgLymXKn2_qf7ccN4EsAEaYTNEY=hWNbGNw@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 6.15-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>, bentiss@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: compression: Adjust cb->compressed_folios
+ allocation type
+To: Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250426062328.work.065-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250426062328.work.065-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.17.151
+X-Source-L: No
+X-Exim-ID: 1u8ZRn-000000000fQ-3dXR
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.103]) [177.238.17.151]:30278
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLtrUyZwsqxOVXzAlJ1DEEGrSYUvvgewFOnErwRjLem9Ug7kOjtlG0bvNtDdPcJSlCzQGscKl2ZYruE4zRrbg4xXBD+G0pkYUjmbFkZQPvozN+Yk65EC
+ fKf/n2finTPHoq6NVLkIAv1u9xURxuowhk2g/O+wQ1517WtO8wzIMRdv+7CfOz9MVGcqZDkSpdhEXveEi4ivQqCurWuJbJOM+Sh4EW56DvaQzpFDSnsPWLcb
 
-On Sat, 26 Apr 2025 at 16:44, Dave Airlie <airlied@gmail.com> wrote:
->
-> On Sat, 26 Apr 2025 at 10:56, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Fri, 25 Apr 2025 at 16:12, Dave Airlie <airlied@gmail.com> wrote:
-> > >
-> > > Weekly drm fixes, mostly amdgpu, with some exynos cleanups and a
-> > > couple of minor fixes, seems a bit quiet, but probably some lag from
-> > > Easter holidays.
-> >
-> > Hmm. Is freedesktop.org feeling a bit under the weather?
-> >
-> > I'm getting
-> >
-> >   remote: GitLab is not responding
-> >   fatal: unable to access
-> > 'https://gitlab.freedesktop.org/drm/kernel.git/': The requested URL
-> > returned error: 502
-> >
-> > and when I look at it with a web browser, I get
-> >
-> >     HTTP 502: Waiting for GitLab to boot
-> >
-> > and it talks about it taking a few minutes, but it's been going on for
-> > longer than "a few minutes" by now..
->
-> Indeed between me pushing this branch and you trying to pull it, it
-> does seem to have died, I've pinged the appropriate authorities.
->
-> I've pushed the same branch to
->
-> https://github.com/airlied/linux.git drm-fixes
->
-> I can try to create a pull request from that if gitlab isn't back tomorrow.
 
-It seems to have recovered now, but not sure how stable is it, please
-repull the original PR when you get a chance.
 
-Thanks,
-Dave.
->
-> Dave.
+On 26/04/25 00:23, Kees Cook wrote:
+> In preparation for making the kmalloc family of allocators type aware,
+> we need to make sure that the returned type from the allocation matches
+> the type of the variable being assigned. (Before, the allocator would
+> always return "void *", which can be implicitly cast to any pointer type.)
+> 
+> The assigned type is "struct folio **" but the returned type will be
+> "struct page **". These are the same allocation size (pointer size), but
+> the types don't match. Adjust the allocation type to match the assignment.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Chris Mason <clm@fb.com>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: <linux-btrfs@vger.kernel.org>
+> ---
+>   fs/btrfs/compression.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> index e7f8ee5d48a4..7f11ef559be6 100644
+> --- a/fs/btrfs/compression.c
+> +++ b/fs/btrfs/compression.c
+> @@ -606,7 +606,7 @@ void btrfs_submit_compressed_read(struct btrfs_bio *bbio)
+>   	free_extent_map(em);
+>   
+>   	cb->nr_folios = DIV_ROUND_UP(compressed_len, PAGE_SIZE);
+> -	cb->compressed_folios = kcalloc(cb->nr_folios, sizeof(struct page *), GFP_NOFS);
+> +	cb->compressed_folios = kcalloc(cb->nr_folios, sizeof(struct folio *), GFP_NOFS);
+
+Why not `sizeof(*cb->compressed_folios)` as in other patches? :)
+
+-Gustavo
+
 
