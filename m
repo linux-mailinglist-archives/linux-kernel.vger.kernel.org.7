@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-621670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A25A9DCAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D744A9DCAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 19:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 441337B4ED3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2234846636A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E9825E800;
-	Sat, 26 Apr 2025 17:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3B625EF85;
+	Sat, 26 Apr 2025 17:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="IC3EpR6c"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Xnb2z96M"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E942C25E44B;
-	Sat, 26 Apr 2025 17:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102FC25EF82;
+	Sat, 26 Apr 2025 17:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745689951; cv=none; b=mF//9XnuUUuTTh+X1MvctBP4Vdj3xpkCYjgNQL8z0tPfnhk0TbfxSUgcJZ9qBcxV+KtoHao4ZtbZ+qjPLFcwOeV1mr6VRvaJuAMhaOwvoJpW8Ols7gCYLe4JEqmWiuTy86H7tIaIV2DWbbTdkxBZh9Po7epeYaZ27LT6nEm5DYQ=
+	t=1745689957; cv=none; b=XpTZRW/6s/Fbi2WxKOtZCp4t5fup1G6nigCjZ//p4n9zkUJzTkaYdvEgnpfRHf1zBA463oq4kBIWtCiQROYYVfhgxqzHPIKK2MV1RPIf3A0P/IYiQlNn0t4jq7GxHF+0xrt6EaK+XHebjhlv5gm1KNcLiVD+X4B+uAyQiBDUg7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745689951; c=relaxed/simple;
-	bh=NAt10LZBeqEWHfZdM5eVz5PYKVVcgF6L19KxgNYKQ5U=;
+	s=arc-20240116; t=1745689957; c=relaxed/simple;
+	bh=xbtbngHvOCi4Ro+jEiyoc4Stf5WoaqvLmDrAcxQpY3s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cFA0J8UvewSynWnPviyTaC4r25tSEpSSST2o7DN5MyyVmXJ8fsTYAJGWiUXmAEKRqg9uFZ/HktA0s2Nqst50YjpQggVl1CrkdbegMwztmJOmEBCd/732aea+XZ5D8KbSS/jxbyWqwl1wRUrwukPvuFj9kdpzcxWyppwlO265jHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=IC3EpR6c; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=b9LadtPq10a1laJyLF56khJAAUAwE5izfhXFMviz6d/07ADYNUQp96NNsj97FvRnvmyzbvVef5k1e/T3By/v0VLRNtGt3QiY1zGqWUwAuK9gNKoc3gPYiN++4MIiGXZ9N5IoPI1e5SQMaXTuKX0hMxdV51tbBmSeQqkw4Mx2BC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Xnb2z96M; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=hoQcdVh4NTeufFeA4Okoft80aRjA9PYTz59tnqkdNKk=; b=IC3EpR6co+J+FAVF
-	DD4X8ia3/bZQ0wFu0pPJX1EDme9q7MaVdVBsq+VdfgNVzSPmUE1d+dNTQF2qTuxEW1jlDqErhFzdx
-	gCJcGF1B6vUvNQQEmR/GfjRPhBObHUGd8Kth3L4SN2zLrtLxFhtLqSxcHq0I7CuaGEebQbBDeOz7S
-	hxsLZPN32KC/GbGDAUv++DjiekESrqs5gIVJqVKVPNV5eMOhFHblS/ZUspef6mh0lL/IAFhWz/RyD
-	8Y9BOiqxr8iWapD+XLuRtkDNhRnk99A82Mu84Ao+bRIS4Uvz3sunO4gtMUAePkk89GfeY8lgloHsX
-	FQaI6bCL5jrG9l/mGg==;
+	:Subject; bh=hLe/NEDwH1YdpkKS3VuvEd3SqsKOowWSgbtWazS7OU4=; b=Xnb2z96MHV7lH/So
+	dVTIPj0V1S0meyZVi1uO1YzWKSLy5mrELOU0JEpuwX9wE5zXo7MWGT9NWvnvJCZSNR8clbdxRcvST
+	WR/IsLjS6G72w5nGI+joSIpnX15YiDm87OPeu5/9MlBV8B4wg/rIfVNuhQSonUR2t4z06Jp5eyZCU
+	Srzjq2ZPn7tPex4yoGaB/5GQDDFEp4h5PhEdjCVih4p/lMrfxN0xwzcZ/Idpy0bT08soxdLlW6eaR
+	eNRTOUnka1/BpnqLHa+BvfeEyRW12ddAWgyPBd8Uyi/zrePI8QmNhiI6j7hslVOqya7dbA5dFsmZD
+	qp3zezJ/rOgge4wlzA==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1u8jhS-00E44n-0L;
-	Sat, 26 Apr 2025 17:52:26 +0000
+	id 1u8jhY-00E44n-0p;
+	Sat, 26 Apr 2025 17:52:32 +0000
 From: linux@treblig.org
 To: lgirdwood@gmail.com,
 	broonie@kernel.org
@@ -50,9 +50,9 @@ Cc: linux-doc@vger.kernel.org,
 	corbet@lwn.net,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 3/5] regulator: core: Remove unused regulator_*drvdata functions
-Date: Sat, 26 Apr 2025 18:51:41 +0100
-Message-ID: <20250426175143.128086-4-linux@treblig.org>
+Subject: [PATCH 4/5] regulator: core: Remove unused regulator_suspend_(disable|enable)
+Date: Sat, 26 Apr 2025 18:51:42 +0100
+Message-ID: <20250426175143.128086-5-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250426175143.128086-1-linux@treblig.org>
 References: <20250426175143.128086-1-linux@treblig.org>
@@ -66,94 +66,109 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-regulator_get_init_drvdata() was added in 2008 by the
-commit a5766f11cfd3 ("regulator: core - Rework machine API to remove string
-based functions.")
-regulator_set_drvdata() was also added in 2008 by the
-commit 414c70cb91c4 ("regulator: regulator framework core")
+regulator_suspend_disable() and regulator_suspend_enable() were added
+by 2018's
+commit f7efad10b5c4 ("regulator: add PM suspend and resume hooks")
 
-neither have been used since,
+but have remained unused.
 
-Remove them.
+Remove them and their helper function regulator_suspend_toggle().
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/regulator/core.c           | 17 -----------------
- include/linux/regulator/consumer.h |  6 ------
- include/linux/regulator/driver.h   |  1 -
- 3 files changed, 24 deletions(-)
+ drivers/regulator/core.c           | 44 ------------------------------
+ include/linux/regulator/consumer.h | 16 -----------
+ 2 files changed, 60 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 32e3919e37d2..60c72d77f77a 100644
+index 60c72d77f77a..90449f387b98 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -6096,17 +6096,6 @@ void *regulator_get_drvdata(struct regulator *regulator)
+@@ -4244,50 +4244,6 @@ int regulator_set_voltage(struct regulator *regulator, int min_uV, int max_uV)
  }
- EXPORT_SYMBOL_GPL(regulator_get_drvdata);
+ EXPORT_SYMBOL_GPL(regulator_set_voltage);
  
--/**
-- * regulator_set_drvdata - set regulator driver data
-- * @regulator: regulator
-- * @data: data
-- */
--void regulator_set_drvdata(struct regulator *regulator, void *data)
+-static inline int regulator_suspend_toggle(struct regulator_dev *rdev,
+-					   suspend_state_t state, bool en)
 -{
--	regulator->rdev->reg_data = data;
--}
--EXPORT_SYMBOL_GPL(regulator_set_drvdata);
+-	struct regulator_state *rstate;
 -
- /**
-  * rdev_get_id - get regulator ID
-  * @rdev: regulator
-@@ -6131,12 +6120,6 @@ struct regmap *rdev_get_regmap(struct regulator_dev *rdev)
- }
- EXPORT_SYMBOL_GPL(rdev_get_regmap);
- 
--void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data)
+-	rstate = regulator_get_suspend_state(rdev, state);
+-	if (rstate == NULL)
+-		return -EINVAL;
+-
+-	if (!rstate->changeable)
+-		return -EPERM;
+-
+-	rstate->enabled = (en) ? ENABLE_IN_SUSPEND : DISABLE_IN_SUSPEND;
+-
+-	return 0;
+-}
+-
+-int regulator_suspend_enable(struct regulator_dev *rdev,
+-				    suspend_state_t state)
 -{
--	return reg_init_data->driver_data;
+-	return regulator_suspend_toggle(rdev, state, true);
 -}
--EXPORT_SYMBOL_GPL(regulator_get_init_drvdata);
+-EXPORT_SYMBOL_GPL(regulator_suspend_enable);
 -
- #ifdef CONFIG_DEBUG_FS
- static int supply_map_show(struct seq_file *sf, void *data)
- {
+-int regulator_suspend_disable(struct regulator_dev *rdev,
+-				     suspend_state_t state)
+-{
+-	struct regulator *regulator;
+-	struct regulator_voltage *voltage;
+-
+-	/*
+-	 * if any consumer wants this regulator device keeping on in
+-	 * suspend states, don't set it as disabled.
+-	 */
+-	list_for_each_entry(regulator, &rdev->consumer_list, list) {
+-		voltage = &regulator->voltage[state];
+-		if (voltage->min_uV || voltage->max_uV)
+-			return 0;
+-	}
+-
+-	return regulator_suspend_toggle(rdev, state, false);
+-}
+-EXPORT_SYMBOL_GPL(regulator_suspend_disable);
+-
+ static int _regulator_set_suspend_voltage(struct regulator *regulator,
+ 					  int min_uV, int max_uV,
+ 					  suspend_state_t state)
 diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 999eba865c20..0e9275079e17 100644
+index 0e9275079e17..a5479de53906 100644
 --- a/include/linux/regulator/consumer.h
 +++ b/include/linux/regulator/consumer.h
-@@ -267,7 +267,6 @@ int regulator_set_suspend_voltage(struct regulator *regulator, int min_uV,
+@@ -258,10 +258,6 @@ void devm_regulator_unregister_notifier(struct regulator *regulator,
+ 					struct notifier_block *nb);
  
- /* driver data - core doesn't touch */
- void *regulator_get_drvdata(struct regulator *regulator);
--void regulator_set_drvdata(struct regulator *regulator, void *data);
+ /* regulator suspend */
+-int regulator_suspend_enable(struct regulator_dev *rdev,
+-			     suspend_state_t state);
+-int regulator_suspend_disable(struct regulator_dev *rdev,
+-			      suspend_state_t state);
+ int regulator_set_suspend_voltage(struct regulator *regulator, int min_uV,
+ 				  int max_uV, suspend_state_t state);
  
- /* misc helpers */
- 
-@@ -633,11 +632,6 @@ static inline void *regulator_get_drvdata(struct regulator *regulator)
- 	return NULL;
+@@ -608,18 +604,6 @@ static inline int devm_regulator_unregister_notifier(struct regulator *regulator
+ 	return 0;
  }
  
--static inline void regulator_set_drvdata(struct regulator *regulator,
--	void *data)
+-static inline int regulator_suspend_enable(struct regulator_dev *rdev,
+-					   suspend_state_t state)
 -{
+-	return -EINVAL;
 -}
 -
- static inline int regulator_count_voltages(struct regulator *regulator)
- {
- 	return 0;
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4a216fdba354..e849bab379f2 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -765,7 +765,6 @@ int regulator_set_active_discharge_regmap(struct regulator_dev *rdev,
- int regulator_set_current_limit_regmap(struct regulator_dev *rdev,
- 				       int min_uA, int max_uA);
- int regulator_get_current_limit_regmap(struct regulator_dev *rdev);
--void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
- int regulator_find_closest_bigger(unsigned int target, const unsigned int *table,
- 				  unsigned int num_sel, unsigned int *sel);
- int regulator_set_ramp_delay_regmap(struct regulator_dev *rdev, int ramp_delay);
+-static inline int regulator_suspend_disable(struct regulator_dev *rdev,
+-					    suspend_state_t state)
+-{
+-	return -EINVAL;
+-}
+-
+ static inline int regulator_set_suspend_voltage(struct regulator *regulator,
+ 						int min_uV, int max_uV,
+ 						suspend_state_t state)
 -- 
 2.49.0
 
