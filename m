@@ -1,155 +1,105 @@
-Return-Path: <linux-kernel+bounces-621342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27FBA9D818
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:05:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF1CA9D81A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 08:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD589C7EF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 06:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347293B19F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 06:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21EC1EFF88;
-	Sat, 26 Apr 2025 06:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7B0192580;
+	Sat, 26 Apr 2025 06:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VWKotXnk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ovp8hzZy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F851A5BA3;
-	Sat, 26 Apr 2025 06:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75492F56;
+	Sat, 26 Apr 2025 06:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745647244; cv=none; b=WqlTLsJxKypTPbtI5e4QmlYwWjtkYMTxzoLBtFjaYuBYJ/R9/4C8ryYLgmCiakaS5BBZVe6i9KXezK0UPg3A7mEkwQI4phWzw8Z+r1zIYQjMYL98E8KQRK8zDoKwagTp1pONL30s80TLUqErytrj5Gk7sTZoNcAfq/UCC4OsogM=
+	t=1745647535; cv=none; b=HQ69I4uVGLLxRMnyeO/dMVVlEj+507vyIMC1hXJWdQj2aCBXqMdJXH488zEB8b4wfhofv98YRdmt4HngAnxW9EjNbvL4b/lADYQF87v7bBo2JooFBiHLAfVu8ah5op19QLaOCA8eV7NVrhjoZYAIJvXX/7zKjl8uwcu0/pcduIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745647244; c=relaxed/simple;
-	bh=DHN+2XwaGWSWPVgZUpkQ5NWYnVCsHjEBcx8IoO728h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyUPkC9FgBBXTSKohoMrRnrTkRzdm0IG3XrFcQe5DAX+42U3yJqWKpzbb6Tdm2q+HbntoyfQaO0oRcRy0cgf4UBNTo8SjIAVWKmpauxsivZv3Ul/BTFMf6lfuHkVWw7wwIm9s2P5oY6rgWHHH6vfZIIpc/QOVBDgX0P4Ykt+vrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VWKotXnk; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745647242; x=1777183242;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DHN+2XwaGWSWPVgZUpkQ5NWYnVCsHjEBcx8IoO728h0=;
-  b=VWKotXnkCmPbL7t8bSLFLpjAKyRKWmweuVZJ/yn+E6Pf7tiu3xgQVx5e
-   7He+YqtrBaOy56lSE84+65riWkRc8hwqsddgfH4wpLByi5AZF68Y8s9Ru
-   qyJI7Xossz3+BM/rgy/R7dGmoCtezLwAwDKRR03w6jmIADGcV/LSVD4cG
-   X7i/D6dKKpvWoVM5jDqZdxn4G+z1/WETA7KqVDRS9t6jp0TWD5rAJLUIY
-   RBJNKSNFrI6/tixUJw2wklHCVwq2KsZ+LJ+s0KhAnYDl13BA34LXOhoFN
-   WwngoXGg5LzZ2rk6iUXaSRs5v4vEQucX+0+Ezfb3fXLBn/C6hR/WUzWtw
-   g==;
-X-CSE-ConnectionGUID: HJjMGsXYTkuHqTAsWRnvag==
-X-CSE-MsgGUID: tObNXKajTUeVpydfi7I6Mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11414"; a="57951641"
-X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
-   d="scan'208";a="57951641"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 23:00:41 -0700
-X-CSE-ConnectionGUID: fGVsoJFCSU20yY+XSe/Qyg==
-X-CSE-MsgGUID: ckQjLZxXSfiXaCohK5TDOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,241,1739865600"; 
-   d="scan'208";a="170290518"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 25 Apr 2025 23:00:37 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8YaX-0005iR-2e;
-	Sat, 26 Apr 2025 06:00:33 +0000
-Date: Sat, 26 Apr 2025 13:59:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yunhui Cui <cuiyunhui@bytedance.com>, arnd@arndb.de,
-	andriy.shevchenko@linux.intel.com, benjamin.larsson@genexis.eu,
-	gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org,
-	jkeeping@inmusicbrands.com, john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	markus.mayer@linaro.org, matt.porter@linaro.org,
-	namcao@linutronix.de, paulmck@kernel.org, pmladek@suse.com,
-	schnelle@linux.ibm.com, sunilvl@ventanamicro.com,
-	tim.kryger@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v4 2/4] serial: 8250: introduce serial8250_discard_data()
-Message-ID: <202504261327.CEtXsr6g-lkp@intel.com>
-References: <20250425062425.68761-2-cuiyunhui@bytedance.com>
+	s=arc-20240116; t=1745647535; c=relaxed/simple;
+	bh=+Iu3Pv9dfXKldLQnwTqAn464zwK92Et5ST3hgC+8/aI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GgHsFwaLC4siHzdA8a4Y5QUxOrjYHPK8Om31eE0yIpDbeZmOwoJHoGEw+3O8HcaZDxOPQ542Qzdt4xwyYvKWyTomownPTfivx55OKU4SqEaHYqh92wHDPlVjHdcM3P/Dpn2d5KP8YQ6k8EyL1lK6pvQm/V3xZBTgNBK3EynTvQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ovp8hzZy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3921CC4CEE2;
+	Sat, 26 Apr 2025 06:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745647534;
+	bh=+Iu3Pv9dfXKldLQnwTqAn464zwK92Et5ST3hgC+8/aI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ovp8hzZyT0IWrYBQSuqEzkwusfYkNr7+O2/LIMfwGrPXOmrirL/uFONeZtS+f0Ouz
+	 fEs/0NZ+EIqow81vwE/oQ/YQuisohuLNMPEjzzw4TOu1R5f3VX4tArD8g4JtUc+7qI
+	 SkSxsweRLfwlSTTdwBM4DT/kIdMIAFl7GBaz5yye4PhhK0ORYwfAOLiSU/ApuYoBup
+	 k5WI1GuYC1YNPyMISbSbVjnAnKdOb/vdEbTpZ4BUa0KBVqWKr738pPygZgarr8Yh29
+	 eIUFRhqeBvovxW2e3fjZXhIKBdIc1/Zf6sCrwZdjr9et3KFBEkFHJtCIpdnyqUJSZ5
+	 J7cq+ea+BXJUQ==
+From: Kees Cook <kees@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Kees Cook <kees@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] ipv4: fib: Fix fib_info_hash_alloc() allocation type
+Date: Fri, 25 Apr 2025 23:05:30 -0700
+Message-Id: <20250426060529.work.873-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425062425.68761-2-cuiyunhui@bytedance.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1455; i=kees@kernel.org; h=from:subject:message-id; bh=+Iu3Pv9dfXKldLQnwTqAn464zwK92Et5ST3hgC+8/aI=; b=owGbwMvMwCVmps19z/KJym7G02pJDBk85SvduN3Nez22VejfM2NMP/pkS1jPo3fnHi7pSNjxl 49PO+h7RykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwEROCzP893m94sdtU87ZIYfN BT1fHpi2RobF77nyZ640bvZFzFP7fRj+Clx9+sn01m6bKV7XVLpXnJzK439dvltxciDPKtW3640 uMwAA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hi Yunhui,
+In preparation for making the kmalloc family of allocators type aware,
+we need to make sure that the returned type from the allocation matches
+the type of the variable being assigned. (Before, the allocator would
+always return "void *", which can be implicitly cast to any pointer type.)
 
-kernel test robot noticed the following build errors:
+This was allocating many sizeof(struct hlist_head *) when it actually
+wanted sizeof(struct hlist_head). Luckily these are the same size.
+Adjust the allocation type to match the assignment.
 
-[auto build test ERROR on soc/for-next]
-[cannot apply to tty/tty-testing tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.15-rc3 next-20250424]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: David Ahern <dsahern@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>
+Cc: <netdev@vger.kernel.org>
+---
+ net/ipv4/fib_semantics.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yunhui-Cui/serial-8250-introduce-serial8250_discard_data/20250425-142655
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20250425062425.68761-2-cuiyunhui%40bytedance.com
-patch subject: [PATCH v4 2/4] serial: 8250: introduce serial8250_discard_data()
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250426/202504261327.CEtXsr6g-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250426/202504261327.CEtXsr6g-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504261327.CEtXsr6g-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/tty/serial/8250/8250_port.c:2146:32: error: use of undeclared identifier 'flags'
-    2146 |         uart_port_lock_irqsave(port, &flags);
-         |                                       ^
-   drivers/tty/serial/8250/8250_port.c:2150:36: error: use of undeclared identifier 'flags'
-    2150 |         uart_port_unlock_irqrestore(port, flags);
-         |                                           ^
-   2 errors generated.
-
-
-vim +/flags +2146 drivers/tty/serial/8250/8250_port.c
-
-  2131	
-  2132	#ifdef CONFIG_CONSOLE_POLL
-  2133	/*
-  2134	 * Console polling routines for writing and reading from the uart while
-  2135	 * in an interrupt or debug context.
-  2136	 */
-  2137	
-  2138	static int serial8250_get_poll_char(struct uart_port *port)
-  2139	{
-  2140		struct uart_8250_port *up = up_to_u8250p(port);
-  2141		int status = NO_POLL_CHAR;
-  2142		u16 lsr;
-  2143	
-  2144		serial8250_rpm_get(up);
-  2145	
-> 2146		uart_port_lock_irqsave(port, &flags);
-  2147		lsr = serial_port_in(port, UART_LSR);
-  2148		if ((lsr & UART_LSR_DR))
-  2149			status = serial_port_in(port, UART_RX);
-  2150		uart_port_unlock_irqrestore(port, flags);
-  2151	out:
-  2152		serial8250_rpm_put(up);
-  2153		return status;
-  2154	}
-  2155	
-
+diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
+index f68bb9e34c34..37d12b0bc6be 100644
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -365,7 +365,7 @@ static struct hlist_head *fib_info_laddrhash_bucket(const struct net *net,
+ static struct hlist_head *fib_info_hash_alloc(unsigned int hash_bits)
+ {
+ 	/* The second half is used for prefsrc */
+-	return kvcalloc((1 << hash_bits) * 2, sizeof(struct hlist_head *),
++	return kvcalloc((1 << hash_bits) * 2, sizeof(struct hlist_head),
+ 			GFP_KERNEL);
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
