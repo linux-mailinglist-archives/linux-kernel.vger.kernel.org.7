@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-621516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFAE4A9DAC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:38:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C70AEA9DACE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 14:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD094A5920
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:38:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0BC95A7869
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 12:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0864A1D;
-	Sat, 26 Apr 2025 12:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0DD18B0F;
+	Sat, 26 Apr 2025 12:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCg5U5Kh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=brownhat.org header.i=@brownhat.org header.b="ifFJmfEc"
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C0823BE;
-	Sat, 26 Apr 2025 12:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEE75661
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Apr 2025 12:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745671081; cv=none; b=hGuGRb7LViBBJQLge2zcfgb+8hUeCsZLo6c0SyudyV1jOdjj8N2XDrs+YQ+6Q6XntdYdyCmIwNE7PFxVXv2a5DNMUzfzPnGVVxz7HlIxGoqRxqPuXYGRTZhNghGInqupr6ErP9yCcPcWmKJp4D2gKDN1xNthA4gBcT5E7+HbIPE=
+	t=1745671822; cv=none; b=nSZKqZLhqeFNJQbXKuAa2MPRYB8qpASnoxFJYtt+2yT3MdVijZ+H4QpYwk6B9wCa5qef7IRzKLSnyXmbpQafzc/R1m1j2Om+SOKQlY7Zc/JyMiDcSmoSLc8VxqgtCCC19b5TEd+zY3AkCEmveFTyKAsJ3TTsvWOB/Bx6r8SYAiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745671081; c=relaxed/simple;
-	bh=iVm0TgSUq1X8824i7H5Q1jPfT2hTMoopWW3MVt+gxGY=;
+	s=arc-20240116; t=1745671822; c=relaxed/simple;
+	bh=pPjkIvAb973JIjC0KrnU484B3+Q0+y9rM7H88YyWnGo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Puv8IfC/Bh5HXuBBwqiFokeqrTOeaiiM5NfE77m6ZvjPqfol40pD+RRlPUZKSWUgsMNaXnG956h5p6TeXMrsIL65qCkUwU5Ap8ufakvNR0jeS8hMFsf3Gd06Op4OQPlV/fJGBSz8IQJG1quR/SsMpzf/Dk/8krjn7uCV4f7TZ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCg5U5Kh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74FC4C4CEE2;
-	Sat, 26 Apr 2025 12:37:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745671080;
-	bh=iVm0TgSUq1X8824i7H5Q1jPfT2hTMoopWW3MVt+gxGY=;
+	 In-Reply-To:Content-Type; b=P0jyZ5327qSs/vKkvSFILVIg9EYQs6qmaFPk4XWt4+lymeeoA/GRh4ZFNop9vNnT2QstHYCOubJvI47GaE7WT/er9IfjJ/fc7Mdrl7HwMC8PISC/BjwZTXsOXwlW6kX3sKIGiR3allgN3kwLD0aj0Us4Pjs2Ct282xWsR4jAL68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brownhat.org; spf=pass smtp.mailfrom=brownhat.org; dkim=pass (1024-bit key) header.d=brownhat.org header.i=@brownhat.org header.b=ifFJmfEc; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brownhat.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brownhat.org
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zl8Rg0h1yzYwb;
+	Sat, 26 Apr 2025 14:39:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=brownhat.org;
+	s=20191113; t=1745671182;
+	bh=Olfu3brFWDS51/0/ryjEK1Ts5wIML5vHhBtSBjeGn1M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KCg5U5Kh6ytIvx9abvrcD2HVSNWglQs1xGcBJjPHx0QiYqzuk0R4yiDRPmKgaUkFV
-	 /iB85Th2hjKMYUpkii6KI6RkRzju0yMnzAqpv/deXHfvoJPh+J+tybP3tgWM7Wqszt
-	 Ce2BkM2R7oiPTvF/Uw/Kqg89+HXpC4KroTQjjSYNo8vs0yxWYa4wmpuVAoDJa+CJCK
-	 FsU3EaKme/AVePY7c32+FUgK3/7WR7VF1REmllzqekAJzjQUdAGn7Q4QgSBsq9FhZG
-	 l6s15Mbmw4R46HRUOUxm93dYSeSMwvOuDSXtdZfnvLcLbfS/rA1S4gNg/YrgdLDFaV
-	 UNg4Lq0sV8A1Q==
-Message-ID: <7bc208b3-5d28-4f25-8a59-c17f3ffa1907@kernel.org>
-Date: Sat, 26 Apr 2025 22:37:56 +1000
+	b=ifFJmfEc1FOCIgKpJS3CmV/oFxLwNtEOuu3N1PglAJNIrXe4ppOjcGxlb++vl9DyK
+	 JbAw7/MiqXxys6UudQhbbmx9ZSnasJ8LrtZ+CBS0ghmiydCm9NiL/Ec2r0vl+5PFha
+	 SDEvQRap2v9uEdv6aOxSN5DtOwovM7031rbBrtN8=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zl8Rc499kzDBB;
+	Sat, 26 Apr 2025 14:39:40 +0200 (CEST)
+Message-ID: <559370be-a366-4754-8baf-3a4b332be025@brownhat.org>
+Date: Sat, 26 Apr 2025 14:39:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,47 +51,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/nolibc: Add m68k support
-To: Daniel Palmer <daniel@0x0f.com>, Willy Tarreau <w@1wt.eu>
-Cc: linux@weissschuh.net, linux-m68k@vger.kernel.org, geert@linux-m68k.org,
- linux-kernel@vger.kernel.org
-References: <20250426041212.4141152-1-daniel@0x0f.com>
- <20250426051423.GA8239@1wt.eu>
- <CAFr9PXkU3W6DdYKhHz13K7bk9bnik67R85wqYUwHeROKEx59zA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] net: ethernet: sis900: Use pure PCI devres API
+To: Philipp Stanner <phasta@kernel.org>, Sunil Goutham
+ <sgoutham@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
+ <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>,
+ Taras Chornyi <taras.chornyi@plvision.eu>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Helge Deller <deller@gmx.de>,
+ Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Al Viro <viro@zeniv.linux.org.uk>, Shannon Nelson <shannon.nelson@amd.com>,
+ Sabrina Dubroca <sd@queasysnail.net>
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
+References: <20250425085740.65304-2-phasta@kernel.org>
+ <20250425085740.65304-7-phasta@kernel.org>
 Content-Language: en-US
-From: Greg Ungerer <gerg@kernel.org>
-In-Reply-To: <CAFr9PXkU3W6DdYKhHz13K7bk9bnik67R85wqYUwHeROKEx59zA@mail.gmail.com>
+From: Daniele Venzano <venza@brownhat.org>
+In-Reply-To: <20250425085740.65304-7-phasta@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Infomaniak-Routing: alpha
 
-Hi Daniel,
-
-On 26/4/25 16:16, Daniel Palmer wrote:
-> Hi Willy,
-> 
-> On Sat, 26 Apr 2025 at 14:14, Willy Tarreau <w@1wt.eu> wrote:
->> Nice, thank you! Could you please also add support for it to
->> tools/testing/selftests/nolibc/ and verify that it works ?
-> 
-> Sure, doing that now. For now it'll be using the mmu enabled m68k virt
-> machine that QEMU supports out of the box.
-> 
->> changes. You may possible have to add a few ifndef, as I don't
->> think we've ever had a nommu platform yet. If you face too many
->> failures or just difficulties, please let us know so that we can
->> figure together a suitable solution.
-> 
-> I need to test actually building and running something for nommu but I
-> will do that later today.
-> Making nommu test automatically might be a bit difficult though as I
-> think it only really works with some changes I have to linux and QEMU.
-
-It works out-of-the-box for m68k qemu and a mainline kernel configured
-for m5208evb_defconfig - when using the qemu "mcf5208evb" machine.
-That is a nommu m68k/coldfire variant.
-
-Regards
-Greg
-
-
+On 25/04/2025 10:57, Philipp Stanner wrote:
+> The currently used function pci_request_regions() is one of the
+> problematic "hybrid devres" PCI functions, which are sometimes managed
+> through devres, and sometimes not (depending on whether
+> pci_enable_device() or pcim_enable_device() has been called before).
+>
+> The PCI subsystem wants to remove this behavior and, therefore, needs to
+> port all users to functions that don't have this problem.
+>
+> Replace pci_request_regions() with pcim_request_all_regions().
+>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Acked-by: Daniele Venzano <venza@brownhat.org>
+> ---
+>   drivers/net/ethernet/sis/sis900.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/sis/sis900.c b/drivers/net/ethernet/sis/sis900.c
+> index 332cbd725900..df869f82cae8 100644
+> --- a/drivers/net/ethernet/sis/sis900.c
+> +++ b/drivers/net/ethernet/sis/sis900.c
+> @@ -468,7 +468,7 @@ static int sis900_probe(struct pci_dev *pci_dev,
+>   	SET_NETDEV_DEV(net_dev, &pci_dev->dev);
+>   
+>   	/* We do a request_region() to register /proc/ioports info. */
+> -	ret = pci_request_regions(pci_dev, "sis900");
+> +	ret = pcim_request_all_regions(pci_dev, "sis900");
+>   	if (ret)
+>   		goto err_out;
+>   
 
