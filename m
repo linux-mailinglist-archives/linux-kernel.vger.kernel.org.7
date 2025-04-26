@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-621589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF00A9DBA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:03:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71E4A9DBA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 17:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE2D5A586A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:03:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 142EC4639C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826FF25D1EE;
-	Sat, 26 Apr 2025 15:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84625CC5F;
+	Sat, 26 Apr 2025 15:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MTNfI1bj"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3604979CF;
-	Sat, 26 Apr 2025 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lm1vUHVN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4AD79CF;
+	Sat, 26 Apr 2025 15:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745679798; cv=none; b=DRCvYkXPN142RhSPgSKBInWb3RzTO0Tv6iysPEExC8L8hiLV/c1UuYoiuVdkeFPR+PqtHeTyzQ8vRWrIEow5RyjpAdv4i06a2ZQHty6rOunFK17hWKDlD43NGz9qAc95laxnbHdljbclDFXNZgMqk3xaj4yweEkw78MFlUqjQK8=
+	t=1745679750; cv=none; b=eXj4bxXmRvThCHRIZRR7cWVeMyOVAtwhrb2Nd/CMOdm56nRa/NuRSQ9Z5GP0WcvaXxd2ibCzQnQQYtGP5Mb66FBJ8glE/VJieo+Z+jpe+vjHO4L+ZHirL0wrBVUzo9vOG4erro0Ytbk38M4K4gBMK8rvrdgEDr/8Jh6VrpiBxJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745679798; c=relaxed/simple;
-	bh=qcwLaEogrcneoQ3HfNmnr34uKQuRptXO8bBDkZuKctk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UD3choS3F83zBRxGTC3EuLv8KbKd+CH1PvMW/QXO3pqqPnstoFAEyNhMakxwcrQN/M4kVUTVTh0fpmirEvDmcdeBksWXn9LilPw5QFxM/i7UhrGI4WvSafhGcXiTRIyY+iO06dY45I73CmI97TigGlzCUmzh3PQh54J4h8iXWKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MTNfI1bj; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=2NTP26rZSO4aLxowU1tMWp58BMiXt/URHc+KIhHuxrE=;
-	b=MTNfI1bjj/6sOwjhpxl6bkmPC/+LTUKOPSiUAIeVV8nKWRz27uFqb1sJ+lDGtQ
-	63MoHFbayfTFrFSrFK+NANLTRI56wf+0T1ppXgIdKpVkRgIFTswtZJ8DfmcNUM85
-	eMNUYZOx0YDL/JumkNNFBNzS8YHXDrsFhuJdclLcPClrM=
-Received: from [192.168.71.89] (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBXbM5v9QxolMNQCw--.59638S2;
-	Sat, 26 Apr 2025 23:02:08 +0800 (CST)
-Message-ID: <5e2844cc-8359-4b87-a8ce-eb5ebb85f8ff@163.com>
-Date: Sat, 26 Apr 2025 23:02:08 +0800
+	s=arc-20240116; t=1745679750; c=relaxed/simple;
+	bh=vm+BLppbw1VD4WX0DPD3q9NuAeJlDbqTxlZ+9ctOkKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBlkcNTTfo3MjD06PJsHTMmGLj6Dxn67R+4rRwZWGsrUgTUTOGA00PclghfF9+mvpum52a8dY2lR5F7ukquV5KJWDHjyKn1MsLOMU+/3jtNhS6PtLQG7UVLJDZo8lEw84bnjLbDprJksB6m4kk+Q4tBr0tkn+vhAU8Qf/DzmG20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lm1vUHVN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8004C4CEE2;
+	Sat, 26 Apr 2025 15:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745679749;
+	bh=vm+BLppbw1VD4WX0DPD3q9NuAeJlDbqTxlZ+9ctOkKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lm1vUHVNH2GMp5VCJ0wSxwGSSZVshXdpyLM4IgVENZOIZlt9lq5blXFiHzPcbiZ3C
+	 usqHNaw5fgQWTfsn1RUhWSyZYQgRFBA6AMVPRxiimQp5gTLuT4pZNnIcXjEdeqmkW1
+	 D6wo5vVAM5w0MRF6FLyONqs353v026DoR/dQJZlT+wT2NhPn91nOtB/96ZErif5VQj
+	 2O/qZZjknr3KI5eV+psonhcexQkqmigTUH7raw/jLIkAT3EH/HGGaLMKK/bEe2Ze0t
+	 AfUOAMA/mftmbxwH3mokmwsYT42BdgskYAD3PgXn11aqwtmCLEUPfPDYFhkvTq+CFy
+	 HRAA3ZclTTUDg==
+Date: Sat, 26 Apr 2025 17:02:23 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Remo Senekowitsch <remo@buenzli.dev>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] rust: property: Introduce PropertyGuard
+Message-ID: <aAz1f2jhdwjXmHex@cassiopeiae>
+References: <20250425150130.13917-1-remo@buenzli.dev>
+ <20250425150130.13917-4-remo@buenzli.dev>
+ <aAuryiI0lY4qYyIt@pollux>
+ <81a65d89-b3e1-4a52-b385-6c8544c76dd2@gmail.com>
+ <aAyyR5LyhmGVNQpm@pollux>
+ <D9GIUOH0CKE4.3R01AYKCCG54O@buenzli.dev>
+ <aAzrg31NB2g0X4qL@cassiopeiae>
+ <39798ebd-35a8-4a67-9df4-f12a6f20ef11@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI: Remove redundant MPS configuration
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
- heiko@sntech.de, thomas.petazzoni@bootlin.com,
- manivannan.sadhasivam@linaro.org, yue.wang@Amlogic.com,
- neil.armstrong@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
- khilman@baylibre.com, jbrunet@baylibre.com,
- martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250425095708.32662-1-18255117159@163.com>
- <20250425095708.32662-3-18255117159@163.com>
- <20250425181345.bybgcht5tweyg43k@pali>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250425181345.bybgcht5tweyg43k@pali>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXbM5v9QxolMNQCw--.59638S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryUGr4UtrWfAw1rGF18Grg_yoW8Wr4xpa
-	13XFs3JF4Fqr15uF17Ja10gr1fXasIkFy5Xws8GFW3Za4aqw1UGFy2krs0kasrXr4v9F17
-	Za42v3ySyanxtaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UmYL9UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxM6o2gLzK+LogABst
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39798ebd-35a8-4a67-9df4-f12a6f20ef11@gmail.com>
 
-
-
-On 2025/4/26 02:13, Pali Rohár wrote:
-> On Friday 25 April 2025 17:57:08 Hans Zhang wrote:
->> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
->> index a29796cce420..d8852892994a 100644
->> --- a/drivers/pci/controller/pci-aardvark.c
->> +++ b/drivers/pci/controller/pci-aardvark.c
->> @@ -549,9 +549,7 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
->>   	reg = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
->>   	reg &= ~PCI_EXP_DEVCTL_RELAX_EN;
->>   	reg &= ~PCI_EXP_DEVCTL_NOSNOOP_EN;
->> -	reg &= ~PCI_EXP_DEVCTL_PAYLOAD;
->>   	reg &= ~PCI_EXP_DEVCTL_READRQ;
->> -	reg |= PCI_EXP_DEVCTL_PAYLOAD_512B;
->>   	reg |= PCI_EXP_DEVCTL_READRQ_512B;
->>   	advk_writel(pcie, reg, PCIE_CORE_PCIEXP_CAP + PCI_EXP_DEVCTL);
->>   
->> -- 
->> 2.25.1
->>
+On Sat, Apr 26, 2025 at 04:35:07PM +0200, Dirk Behme wrote:
+> On 26.04.25 16:19, Danilo Krummrich wrote:
+> > On Sat, Apr 26, 2025 at 01:08:39PM +0200, Remo Senekowitsch wrote:
+> >> On Sat Apr 26, 2025 at 12:15 PM CEST, Danilo Krummrich wrote:
+> >>> If it'd be possible to use dev_err!() instead I wouldn't object in this specific
+> >>> case. But this code is used by drivers from probe(), hence printing the error
+> >>> without saying for which device it did occur is a bit pointless.
+> >>>
+> >>> Drivers can still decide to properly print the error if the returned Result
+> >>> indicates one.
+> >>
+> >> One alternative would be to store a reference count to the device in
+> >> `FwNode`. At that point we'd be guaranteed to have a valid reference
+> >> whenever we want to log something.
+> > 
+> > Yes, that would work. However, I'm not convinced that it's worth to store an
+> > ARef<Device> (i.e. take a device reference) in each FwNode structure *only* to
+> > be able to force an error print if a required device property isn't available.
+> > 
+> > Why do you think it is important to force this error print by having it in
+> > PropertyGuard::required() and even take an additional device reference for this
+> > purpose, rather than leaving it to the driver when to print a message for an
+> > error condition that makes it fail to probe()?
 > 
-> Please do not remove this code. It is required part of the
-> initialization of the aardvark PCI controller at the specific phase,
-> as defined in the Armada 3700 Functional Specification.
+> To my understanding doing the error print in "core" was proposed by
+> Rob [1]:
 
-Hi Pali,
-
-This series of patches is discussing the initialization of DevCtl.MPS by 
-the Root Port. Please look at the first patch I submitted. If there is a 
-reasonable method in the end, DevCtl.MPS will also be configured 
-successfully. The PCIe maintainer will give the review opinions. Please 
-rest assured that it will not affect the functions of the aardvark PCI 
-controller.
-
-Rockchip's RK3588 also has the same problem.
-
-
-https://patchwork.kernel.org/project/linux-pci/patch/20250416151926.140202-1-18255117159@163.com/
-
-Best regards,
-Hans
-
+That is fine, though it doesn't answer my question above. :)
 
