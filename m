@@ -1,157 +1,166 @@
-Return-Path: <linux-kernel+bounces-621525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CA0A9DADB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34F7A9DAF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 15:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26CF46558B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC491BC0EBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Apr 2025 13:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD30884A35;
-	Sat, 26 Apr 2025 13:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048608635F;
+	Sat, 26 Apr 2025 13:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSiYylpS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aqa9aMWo"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF4F12B73;
-	Sat, 26 Apr 2025 13:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580D17E4;
+	Sat, 26 Apr 2025 13:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745672416; cv=none; b=At8aoJt8vhSaMMlKEkaLT79RtCSjB0Tcwrs/N1sSWnJ+JcziABCsi7aDtDvZPuz+KTJb+dmOqjnzOHDzj6wImy6Nr/CYGAAPXvR/6hV/L0AYuussT6TtMxSHu6gRd/Ytig7hvwRBgYMWti/9ltQsA/PKbPcpozRRuRmDOy9y2yg=
+	t=1745672631; cv=none; b=DuKMFQg7XS1FJz4lZp9eVwY59GHiLiVVw9ohq+K9hC5GniWL2YzvRliFDOUD5UVCcEywNPrFxmOVS8iPJNmJUzr6VwZjT9fplvOwZja9wuqYR7XQ7Wz4r1ZxPEM7x7xiK6EAw1Uwm0r9TUwP6PecWnkyZcbb+HVRZfTYJEeg1Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745672416; c=relaxed/simple;
-	bh=8lzPKSvLL4xki+UzGTVEQf754K7mp3zBbel/pXCugbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ctwCC81eSunxlG3w+20csBbAi/yWm7cfObXsjeIcHbO8rku7eCu2/6bGCTeffnh+i48KsJTLlEOXEq8NCDgPpAL6yKWSveDyyaSjbQ58Iom2OrR+L0dolaLOtSQPW6PXceX29f7VDhfJfumXZMg4YVWjYOAAPFSLRX9cX6SqNsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSiYylpS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9175FC4CEE2;
-	Sat, 26 Apr 2025 13:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745672414;
-	bh=8lzPKSvLL4xki+UzGTVEQf754K7mp3zBbel/pXCugbc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SSiYylpSkUnY4vU6FWLD53bdXMb8K4/xbF7keJtMniGrZGt2QiNuvhYRbGDO/HQUN
-	 vlYEBODjW3cBYi96AG3GAj90UeBQ1b7HILIdpyE3fL44wJ/DfVgelqT7PbruguU+J9
-	 qZ2U865ygnV6yy/ww/ig75AMri4siLaNKsthxbx/+Rl5n1LHdB+CDWY+JUrGd6hNCv
-	 K5AGmSzjgDuRNqQjaf2x6Pm1zhIPciPP4aMUdhTJO1ekR8r+ZYxEVMFMS6pZIrBvRM
-	 zFvnbjkA+zbB9MLt+ygHX2RpPDJXrHyd/SdOzCg6rcPd4QB6W/RNHhgArjHZuxXLo8
-	 ub2zW177r8Nxw==
-Message-ID: <b4bc07aa-e4b5-4a2a-a4ad-91c1e5071f00@kernel.org>
-Date: Sat, 26 Apr 2025 08:00:09 -0500
+	s=arc-20240116; t=1745672631; c=relaxed/simple;
+	bh=LOv10ixA99uJUgAd+49HOus8BD8w55+P8EgHAuvPFAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaAr9A2O8Pax+ErUdCGmRAkII2tnxbuRYtfNRd5KzW8cn1AMARyn3Kf8Vvb6geVY/EpOKTTzH5R+w5cWvsY/wkh966nJmbx/SoOFtiAHH6YzyC4666DWumhl09o6YlBU/aF9VBdil5sZqruBov2YhIWM7LldLn0R/XBuSoD01fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aqa9aMWo; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-700b17551cdso26960287b3.0;
+        Sat, 26 Apr 2025 06:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745672628; x=1746277428; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pArXvD4SC+oounH0K1I0/IWv+qZfNWdtoZjyo3eQnoc=;
+        b=aqa9aMWoizK/nOE3HgtBtnSaXwaGdrmWsC/QR6BVyI82PKLoLAtHfpLFbv2TF+/e1f
+         C3DSzRHRs8HnYA6NUW3ASeIg27OtRAjf77xzHN52OB2kdcxt/sYJHLlnrGA+TpXaieTg
+         ENx1+xPujji8nR+40Lm5AEZvHPwwyRsK+++1PxhOkTXgU6LcAZrNEEQ0zYLdsBOvIUE0
+         6AWvwEmQzyQC/2BsFk8FNS1q0ppdNP8Fql6k7A7t+cbpF2SzWy8/E0UZqb8QJQt9TaAB
+         HFvLquQBN+PUdpZX1cZOAGb41GRBRXlmYGZUvnXFt1rGMwb5FHFBgxiu8f0xKkfbvRrP
+         OH4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745672628; x=1746277428;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pArXvD4SC+oounH0K1I0/IWv+qZfNWdtoZjyo3eQnoc=;
+        b=VOMUaFMGgu9QX/XBUaVUDScRra67vq101bfQpvk+Y06ouzadmJfUdTSO5M/wTVvvPM
+         Iv20H1x6bKFLYKr249nlinrnkgCL8kCPKzlKWRB0rK5MYZNlLg7eSyo5Wsbe5gn9zfqC
+         pAxugaIVv1ZzY3g9t6AfkkWqqN4CeNG/Ori1H1GursorsSbxcSE3eDrgpimC7e23LGr1
+         SrycNn0dN4eJ60myGnpqUD/orph+pSb+v2dsUO7wWwswIE2+lOz7y3s9lOiVFEt7oUqq
+         FMRtydV/oZTwwvcjCiadrKTjE/+o6Ohwftl5T/2TKaV/Ent3opyjvyQDVTTYYtOH+CiA
+         D9kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWzW/GEmB3D8rs8d0QBSPRPZDWEs2p7pcyTbtvmqFKAr6cZ300bdwomMmxTI0hRKdVgiIXFTkCxsOCmORtiRg=@vger.kernel.org, AJvYcCV24Zo6MN6MQErMgkdSwZlOkl4bmWZ9zAKCdU/8gVTW2si9bqpCHl/YnP2xkj0r5I9jQV/3lxO2D17xDVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEL26s2hx+vSz+PlbYavW3YJTzbEsAUmG8pM18MRgsIsgQpJPf
+	AH84HhbywxCcByj+Pr/tS1x8Ya45iv8FbnPyAYW7mt4dFDF5mqh7
+X-Gm-Gg: ASbGncvV8jqbYpVEI8qlGiGxg2fo0dRPKqh5iJ5v9w/BitSbj+k5+X4JM+kjF9I3fsX
+	Zge7b/QsgtlnBP/bb3mL/5UR+9VdupQQVvgmKH7JDuCdrUDjYNytq0L/YH8NKvKTUx0roqCS0en
+	g8mxvMjHIbCgTdH1euboOTPhvm6n8ALGdFN/jLT3xV85kdoGfH44dLtiWRfwvP6Li8HwNvNsceY
+	68HARnXcHifMqFm8UvbDbDGFPVIAjWRnUs6WyM2gPS3xkUThGW4GAkskT5SO65gd/QVXI+l/VQM
+	kNO4aCVzDRGKkpEESDHh86fjgNbiLilnDzaCP5aBrCpoZ7N1/X6OoSv4KRm+2w/QXxqWj/mQPkf
+	o
+X-Google-Smtp-Source: AGHT+IEia9pgplrxoTS6AfxtvFCZPRIts8sdokrNoTW8XGGUsk4kNPdD0R7oJlEuwx5KccwJaBDVGA==
+X-Received: by 2002:a05:690c:9a0c:b0:6fe:b701:6403 with SMTP id 00721157ae682-7085f178207mr49240757b3.11.1745672628523;
+        Sat, 26 Apr 2025 06:03:48 -0700 (PDT)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70841933581sm14197057b3.8.2025.04.26.06.03.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Apr 2025 06:03:47 -0700 (PDT)
+Date: Sat, 26 Apr 2025 09:03:46 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Burak Emir <bqe@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rong Xu <xur@google.com>
+Subject: Re: [PATCH v7 4/5] rust: add find_bit_benchmark_rust module.
+Message-ID: <aAzZsqK5Gm7aooys@yury>
+References: <20250423134344.3888205-2-bqe@google.com>
+ <20250423134344.3888205-6-bqe@google.com>
+ <aAkbw0jEp_IGzvgB@yury>
+ <CACQBu=XaOohewMnLj9PvgR5rYBxzYSXf2OAjCzUY=GFTJ9L=+Q@mail.gmail.com>
+ <680a6b54.d40a0220.27afd9.5e84@mx.google.com>
+ <680abbce.050a0220.144721.78ac@mx.google.com>
+ <CACQBu=VEATxHmFvt0TKbb+Hx5jeEGO8SL733=0m8LNnX6S+ZKw@mail.gmail.com>
+ <aAuR_0om4FI5Pb_F@Mac.home>
+ <CACQBu=VkFT5yDuDz098L+S+tGvtGHMvm4FaZ6p3sr9VCp88jww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] Input: Add a Kconfig to emulate KEY_SCREENLOCK
- with META + L
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>,
- "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
- <linux-input@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <W_Armin@gmx.de>
-References: <20250425162949.2021325-1-superm1@kernel.org>
- <aAyWFI+o/kU9hDVs@duo.ucw.cz>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <aAyWFI+o/kU9hDVs@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACQBu=VkFT5yDuDz098L+S+tGvtGHMvm4FaZ6p3sr9VCp88jww@mail.gmail.com>
 
-
-
-On 4/26/25 03:15, Pavel Machek wrote:
-> On Fri 2025-04-25 11:29:48, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> In the PC industry KEY_SCREENLOCK isn't used as frequently as it used
->> to be. Modern versions of Windows [1], GNOME and KDE support "META" + "L"
->> to lock the screen. Modern hardware [2] also sends this sequence of
->> events for keys with a silkscreen for screen lock.
->>
->> Introduced a new Kconfig option that will change KEY_SCREENLOCK when
->> emitted by driver to META + L.
+On Fri, Apr 25, 2025 at 06:17:59PM +0200, Burak Emir wrote:
+> On Fri, Apr 25, 2025 at 3:45 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > On Fri, Apr 25, 2025 at 02:20:13PM +0200, Burak Emir wrote:
+> > > On Fri, Apr 25, 2025 at 12:31 AM Boqun Feng <boqun.feng@gmail.com> wrote:
+> > > >
+> > > > On Thu, Apr 24, 2025 at 09:48:17AM -0700, Boqun Feng wrote:
+> > > > > On Thu, Apr 24, 2025 at 06:45:33PM +0200, Burak Emir wrote:
+> > > > > > On Wed, Apr 23, 2025 at 6:56 PM Yury Norov <yury.norov@gmail.com> wrote:
+> > > > > > > So? Can you show your numbers?
+> > > > > >
+> > > > > > For now, I only have numbers that may not be very interesting:
+> > > > > >
+> > > > > > - for find_next_bit,  find_next_zero_bit and find_next_zero_bit (sparse):
+> > > > > >   22 ns/iteration in C, 32 ns/iteration in Rust.
+> > > > > >
+> > > > > > - for sparse find_next_bit (sparse):
+> > > > > >   60 ns/iteration in C, 70 ns/iteration in Rust.
+> > > > > >
+> > > > > > This is a VM running nested in a VM. More importantly: the C helper
+> > > > > > method is not inlined.
+> > > > > > So we are likely measuring the overhead (plus the extra bounds checking).
 > 
-> Fix gnome and kde, do not break kernel...
-
-I'm sorry; fix them to do what exactly?  Switch to KEY_SCREENLOCK?
-
-That's going to break modern hardware lockscreen keys.  They've all 
-obviously moved to META+L because that's what hardware today uses.
-
-That's also what earlier versions of my series tried to change just 
-amd-pmf over to use, but Armin Wolf said this should be done in the 
-input subsystem for all drivers instead.
-
-> 									Pavel
+> Alice and I discussed that it may be better to do away with the extra
+> bounds check.
+> Micro benchmark, for the upcoming v8 that has the bounds check removed
+> (and the test changed to >=, as requested):
 > 
->>   
->> +config INPUT_SCREENLOCK_EMULATION
->> +	bool "Pass KEY_SCREENLOCK as META + L"
->> +	help
->> +	  Say Y here if you want KEY_SCREENLOCK to be passed to userspace as
->> +	  META + L.
->> +
->> +	  If unsure, say Y.
->> +
->>   comment "Input Device Drivers"
->>   
->>   source "drivers/input/keyboard/Kconfig"
->> diff --git a/drivers/input/input.c b/drivers/input/input.c
->> index dfeace85c4710..983e3c0f88e5f 100644
->> --- a/drivers/input/input.c
->> +++ b/drivers/input/input.c
->> @@ -370,6 +370,13 @@ void input_handle_event(struct input_dev *dev,
->>   	}
->>   }
->>   
->> +static void handle_screenlock_as_meta_l(struct input_dev *dev, unsigned int type,
->> +					int value)
->> +{
->> +	input_handle_event(dev, type, KEY_LEFTMETA, value);
->> +	input_handle_event(dev, type, KEY_L, value);
->> +}
->> +
->>   /**
->>    * input_event() - report new input event
->>    * @dev: device that generated the event
->> @@ -392,6 +399,12 @@ void input_event(struct input_dev *dev,
->>   {
->>   	if (is_event_supported(type, dev->evbit, EV_MAX)) {
->>   		guard(spinlock_irqsave)(&dev->event_lock);
->> +#ifdef CONFIG_INPUT_SCREENLOCK_EMULATION
->> +		if (code == KEY_SCREENLOCK) {
->> +			handle_screenlock_as_meta_l(dev, type, value);
->> +			return;
->> +		}
->> +#endif
->>   		input_handle_event(dev, type, code, value);
->>   	}
->>   }
->> @@ -2134,6 +2147,13 @@ void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int
->>   
->>   	switch (type) {
->>   	case EV_KEY:
->> +#ifdef CONFIG_INPUT_SCREENLOCK_EMULATION
->> +		if (code == KEY_SCREENLOCK) {
->> +			__set_bit(KEY_L, dev->keybit);
->> +			__set_bit(KEY_LEFTMETA, dev->keybit);
->> +			break;
->> +		}
->> +#endif
->>   		__set_bit(code, dev->keybit);
->>   		break;
->>   
-> 
+> [] Start testing find_bit() with random-filled bitmap
+> [] find_next_bit:                 3598165 ns, 164282 iterations
+> [] find_next_zero_bit:            3626186 ns, 163399 iterations
+> [] Start testing find_bit() with sparse bitmap
+> [] find_next_bit:                   40865 ns,    656 iterations
+> [] find_next_zero_bit:            7100039 ns, 327025 iterations
+> [] find_bit_benchmark_rust_module: Start testing find_bit() Rust with
+> random-filled bitmap
+> [] find_bit_benchmark_rust_module: next_bit:
+> 4572086 ns, 164112 iterations
+> [] find_bit_benchmark_rust_module: next_zero_bit:
+> 4582930 ns, 163569 iterations
+> [] find_bit_benchmark_rust_module: Start testing find_bit() Rust with
+> sparse bitmap
+> [] find_bit_benchmark_rust_module: next_bit:
+> 42622 ns,    655 iterations
+> [] find_bit_benchmark_rust_module: next_zero_bit:
+> 8835122 ns, 327026 iterations
 
+So I'm lost. You're going to keep those hardenings, but show the
+numbers without hardening on VM. Is that right?
+
+Can you please show the numbers on bare-metal with the final
+configuration?
+
+Thanks,
+Yury
 
