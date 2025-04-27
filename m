@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-621917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F75A9E04B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229EAA9E001
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2906176BE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C8F1A82FE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F6D245006;
-	Sun, 27 Apr 2025 07:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3EA241664;
+	Sun, 27 Apr 2025 06:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="ie5YftHH"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MtNBnlro"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7471E98EF
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 07:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598731A8F89;
+	Sun, 27 Apr 2025 06:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745737546; cv=none; b=l6N8syJvxiuBAYgnoig8nYhFR4Zt8lO4/aqtwCEY8vB9px/hls//ONLR4XLqZv0D7cIrB6NruErEAwcGbKEOlCyQRa9LSiasPwMWOH/udJgIPkVD0V6eczq0rNYw3aiJ9z68qp5Z4MeoL+LrVHrze2W+NuWeBjLhKUzs7UHyfT4=
+	t=1745736223; cv=none; b=VQJ4kPJw4rBN37KdzQRfNN8B6sV1U5spnQOzDS22fglAlcJoMGypz+yNgJKqgRP6kniswXUfVJHKM3Tk52FYY53ly9AVbbfX2DCRNWLuyDtwEFDyyEWT1EGZz+/HDKuI5vHf3JFTIdfGWG6qq+GjiJEwEDtrcblotpsEoSvb8uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745737546; c=relaxed/simple;
-	bh=cP6/XJCXVqldEshjXYoc8yE5Oq3R5dY8qFB9/WC3g1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifVasdEPVAp0tLekGue6xDlHRg/HvS0Nc6myj41gVznR/brSFwpY4NvJOxNzqp28W/sAbI7pUSJ3D5ZhI0KpVBwab9Ag5sSl8V3me04muGS181Zmc0YSwdmYdCMMvVNJUE6eu/GdkmznkF7/RrJEIS3car7RTpBdBf4clUW/R7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=ie5YftHH; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 17292 invoked from network); 27 Apr 2025 08:39:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1745735941; bh=o3uXY+03fHMqEVm7xfc1m3HwM3CT7TcojXJU2tbxrfA=;
-          h=From:To:Cc:Subject;
-          b=ie5YftHHgYaGWXxljKQT+IURdnwlKkaXBpvqN124lcpaqyFuTYF3rQUBUZJPdS/Ip
-           LT9lXqsla0AerdAd6slIu4XlXtkjJl1TYiloi99J77+2syjmq42Fe0vp+BzgVlkZhN
-           inNgKhQmag6+Jx75X0Rqn5VxQ6sArK8ZzsivRzHTLRktD97WGW2Kz9m1AvuIp5C6JB
-           er77cb2I8R5vjeXyRljAfqYV4WYnYgvkwhlWC4r4AIgFziyo6I7JqkqruMryXkLW4I
-           wQ65e0K0CgkzOXYvugtgrdXlTZSiJPX636d3LBopgqC8s0GKBiNruJ+0Q0Dv8jZRpS
-           04RjbOA5UK7XA==
-Received: from 89-64-9-175.dynamic.chello.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.175])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <a.safin@rosa.ru>; 27 Apr 2025 08:39:01 +0200
-Date: Sun, 27 Apr 2025 08:39:00 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Alexei Safin <a.safin@rosa.ru>
-Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] iwlegacy: 4965: fix possible out-of-bounds access in
- il4965_tx_cmd_build_rate()
-Message-ID: <20250427063900.GA48509@wp.pl>
-References: <20250424185244.3562-1-a.safin@rosa.ru>
+	s=arc-20240116; t=1745736223; c=relaxed/simple;
+	bh=Avkh+IHRFhmXquqMCTj0xnURVEaMs2AVp7RorDHEx4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XOwfJd6ZSHkWbln7Bb+m+vX1NrRfGyeLHDPreBmm3NhB5gAgeYmBbB8w8XeXVeTsPUmJ7imDqBsBn9oalj9tWI9dmFMmL7TXRz9sfN6MFgba0ZvolqjgpeG9ggVhOwAWCOIyjW/0X9gafO+4d0o1zEI4AYzqdNnELSMGKlkJ2bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MtNBnlro; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745736222; x=1777272222;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Avkh+IHRFhmXquqMCTj0xnURVEaMs2AVp7RorDHEx4U=;
+  b=MtNBnlrod1lCOiqBmmR4435x00jIG7QQVsbroKMOsieuErTCLfdFDC+7
+   h4XFAsUyzDiVzs24sK62lizR8Z4oVvXWwdjRFAxHgD2g89UzaaQSlC/1+
+   LiiW9cNphl/CSoWD0r7QYQq2oeQH470ONbE3DfOOj/ggHnU5MSecJPVpD
+   +5iGtexoCiuGObh0K2o5479Y/Wnp9c477IwbhgY7iFU3t+mUO001L9c//
+   GP2lAc+3r7L5IFwF4Yir6oOSJZw3n4poxsLtV+H7PNXupH3nBtkk7Alk7
+   twFqcXtXzQxTjpm1N6TVyQOR3EjCxs7s938Fqfx6is9RQEvtYlPJhWiPi
+   Q==;
+X-CSE-ConnectionGUID: keQoUg4vRzCN2IF4nBqGrg==
+X-CSE-MsgGUID: 09+AMdaWSfKouwlyBh1UxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="47430898"
+X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
+   d="scan'208";a="47430898"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 23:43:41 -0700
+X-CSE-ConnectionGUID: nlUKeu2LRMaehOEljfFcBQ==
+X-CSE-MsgGUID: RSaSroJwTzy9u9o2IB/EVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
+   d="scan'208";a="133732043"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 23:43:35 -0700
+Message-ID: <6dc981fd-f093-48fc-a162-4e4e989c22f2@linux.intel.com>
+Date: Sun, 27 Apr 2025 14:39:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424185244.3562-1-a.safin@rosa.ru>
-X-WP-MailID: 3dfcb9b3360eb4c1b73ce68492ffa8f3
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000001 [gSIx]                               
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/22] iommu: Add iommu_copy_struct_to_user helper
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ corbet@lwn.net, will@kernel.org
+Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+ peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+ praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
+ alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <ca032e90c0241fe0653023fcb655185dba763f5f.1745646960.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ca032e90c0241fe0653023fcb655185dba763f5f.1745646960.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi
-
-On Thu, Apr 24, 2025 at 09:52:44PM +0300, Alexei Safin wrote:
-> Prevent out-of-bounds access in il4965_tx_cmd_build_rate() by rejecting
-> rate_idx values greater than or equal to RATE_COUNT_LEGACY.
+On 4/26/25 13:57, Nicolin Chen wrote:
+> Similar to the iommu_copy_struct_from_user helper receiving data from the
+> user space, add an iommu_copy_struct_to_user helper to report output data
+> back to the user space data pointer.
 > 
-> Use a correct bounds check to avoid accessing il_rates[] with
-> an invalid index. The previous comparison allowed rate_idx to become
-> equal to RATE_COUNT_LEGACY, which exceeds the array limit.
+> Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
 
-Thanks for the patch, however I think it's not correct.
-
-The definitions are:
-
-enum {
-        RATE_1M_IDX = 0,
-	...
-	RATE_54M_INDEX,
-	RATE_60M_INDEX,
-	RATE_COUNT
-        RATE_COUNT_LEGACY = RATE_COUNT - 1,     /* Excluding 60M */
-}
-
-extern const struct il_rate_info il_rates[RATE_COUNT];
-
-> Replace the check 'rate_idx > RATE_COUNT_LEGACY' with
-> 'rate_idx >= RATE_COUNT_LEGACY' to ensure memory safety.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-> Fixes: 7ac9a364c172 ("iwlegacy: move under intel directory")
-> Signed-off-by: Alexei Safin <a.safin@rosa.ru>
-> ---
-> v2: change reciepent
->  drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-> index 78dee8ccfebf..f60d9b9798c1 100644
-> --- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-> +++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-> @@ -1572,7 +1572,7 @@ il4965_tx_cmd_build_rate(struct il_priv *il,
->  	 */
->  	rate_idx = info->control.rates[0].idx;
->  	if ((info->control.rates[0].flags & IEEE80211_TX_RC_MCS) || rate_idx < 0
-> -	    || rate_idx > RATE_COUNT_LEGACY)
-> +	    || rate_idx >= RATE_COUNT_LEGACY)
->  		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
-
-.. so looks the check is fine already and changing it will induce a bug
-for RATE_54M_INDEX.
-
-Regards
-Stanislaw
-
->  	/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
->  	if (info->band == NL80211_BAND_5GHZ)
-> -- 
-> 2.39.5 (Apple Git-154)
-> 
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
