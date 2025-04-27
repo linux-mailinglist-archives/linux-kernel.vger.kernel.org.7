@@ -1,48 +1,62 @@
-Return-Path: <linux-kernel+bounces-621946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19A8A9E0BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:19:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2705DA9E0B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317871898970
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:19:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D793178FA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96324A055;
-	Sun, 27 Apr 2025 08:19:06 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E583F1DE4DC;
-	Sun, 27 Apr 2025 08:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2DA23F405;
+	Sun, 27 Apr 2025 08:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHgeWA7G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C9B1ABEC5
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 08:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745741945; cv=none; b=ucLiwQ4u5c/WF9XhY+epb3X6NbO/qsroULZHjVTn/M6NKRgZzBMQ9QdUqCL+MhwFzbchvIbVctCAZ0CxxFohSR5fUZ/PAy12wogdL3jtBX/nyNbYfrCJcJQnTHYWb6ELWp+imN2PiuSSVlgM+dc+BM4MWc7n1rtSsiezUL0G7Jw=
+	t=1745741790; cv=none; b=HMKJn3sxYaxYvvtfkMMM2hRd7yDmVAqLN/rDfgc4qD1F48wy38XO113hI1uRcYzrIMHBWgpGcdLjDHYgSIgQjgBgNrhBfV0txD4+JpbbUAfpkiehTgRn3MccObeV7UYHlaWYqkZVDlp/X3MuRZtdBjwK7mWp6XxE3pCTLkYTZAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745741945; c=relaxed/simple;
-	bh=3Sb1vLQTf/OWbWkKPCVxaLe+sn9DqAhiXbRhoC7vsD8=;
+	s=arc-20240116; t=1745741790; c=relaxed/simple;
+	bh=jJcSQ2vAr8YR0cCbb8BI6h+fgvUJ8h87tk10K3e7KoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkFi3xskdU/P0ASy37oBJTLTtxawp7cozYhdONEhfpLQpcQPtpkGwyDjNI/dv3O6JT6dkXK+/KuOx4eie63Yb6p8kO1xbqhZSd09/KpHtn55ggMmFy+d2vx/jdZfk7uxCHEVOev5XsCAyhPiEHS8ruS56/qP/xOC/Kt5/ydJgVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1u8xE4-0007QR-00; Sun, 27 Apr 2025 10:19:00 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 869BEC01A2; Sun, 27 Apr 2025 10:15:50 +0200 (CEST)
-Date: Sun, 27 Apr 2025 10:15:50 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	Paul Burton <paulburton@kernel.org>,
-	Chao-ying Fu <cfu@wavecomp.com>, stable@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: CPS: Fix potential NULL pointer dereferences in
- cps_prepare_cpus()
-Message-ID: <aA3ntsiN6tNHFKD1@alpha.franken.de>
-References: <20250407163224.794608-1-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDWqYq1hvb54icHmDThY5a/N1Mn92TaL+4EYWsNE1RgCRkeWSAWX6Vnk9hGVYlnGvr6Si+jBi62c9yzVPP+nsRlmT5c+Kdt+ggeTOwmOdVzQvtwjVByAy+est8N0/k3x1r9bPeYhsUWEojd3KAsVFdGbWia4WVru4fhWrcHZKak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHgeWA7G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28093C4CEE3;
+	Sun, 27 Apr 2025 08:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745741789;
+	bh=jJcSQ2vAr8YR0cCbb8BI6h+fgvUJ8h87tk10K3e7KoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MHgeWA7GUFmS4sv/HjHwgIo1o+G7en+rMigASUUzPzPQPoWKm2MR2wwvecNevQGYk
+	 l7LrrYAS5BJ6SQRhGBQzFAKURqAGH/BB2GubHZbRdjt5ITcBJ1kByfiJf1CoWFEV73
+	 PSmcJ2hZj8b3RIOHL/bWTszv5ffvb+0OLDED/g38ESRa2Ta9hZQODNZExk8onancGO
+	 bee26LKx6fbTbVMyReVBY2ibf7M6X+stbkHdjgOoWqbXyzuY5UBSrAwmuhVzcFKINJ
+	 zu51vi8q8bYtUsf0EXV77DZkPOAYDnHpDZI/WQklQW4a0D10e5/Ru1HfCLBD6hscsH
+	 xgLK01qba/Tsg==
+Date: Sun, 27 Apr 2025 10:15:54 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, "Ahmed S . Darwish" <darwi@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 13/15] x86/cpu: Make CONFIG_X86_CX8 unconditional
+Message-ID: <aA3numuKnE6lCLyn@gmail.com>
+References: <20250425084216.3913608-1-mingo@kernel.org>
+ <20250425084216.3913608-14-mingo@kernel.org>
+ <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,52 +65,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407163224.794608-1-thorsten.blum@linux.dev>
+In-Reply-To: <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
 
-On Mon, Apr 07, 2025 at 06:32:21PM +0200, Thorsten Blum wrote:
-> Check the return values of kcalloc() and exit early to avoid potential
-> NULL pointer dereferences.
+
+* Arnd Bergmann <arnd@kernel.org> wrote:
+
+> On Fri, Apr 25, 2025, at 10:42, Ingo Molnar wrote:
+> > @@ -257,7 +256,7 @@ config X86_MINIMUM_CPU_FAMILY
+> >  	int
+> >  	default "64" if X86_64
+> >  	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || 
+> > MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
+> > -	default "5" if X86_32 && X86_CX8
+> > +	default "5" if X86_32
+> >  	default "4"
+> > 
 > 
-> Compile-tested only.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 75fa6a583882e ("MIPS: CPS: Introduce struct cluster_boot_config")
-> Fixes: 0856c143e1cd3 ("MIPS: CPS: Boot CPUs in secondary clusters")
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/mips/kernel/smp-cps.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-> index e85bd087467e..cc26d56f3ab6 100644
-> --- a/arch/mips/kernel/smp-cps.c
-> +++ b/arch/mips/kernel/smp-cps.c
-> @@ -332,6 +332,8 @@ static void __init cps_prepare_cpus(unsigned int max_cpus)
->  	mips_cps_cluster_bootcfg = kcalloc(nclusters,
->  					   sizeof(*mips_cps_cluster_bootcfg),
->  					   GFP_KERNEL);
-> +	if (!mips_cps_cluster_bootcfg)
-> +		goto err_out;
->  
->  	if (nclusters > 1)
->  		mips_cm_update_property();
-> @@ -348,6 +350,8 @@ static void __init cps_prepare_cpus(unsigned int max_cpus)
->  		mips_cps_cluster_bootcfg[cl].core_power =
->  			kcalloc(BITS_TO_LONGS(ncores), sizeof(unsigned long),
->  				GFP_KERNEL);
-> +		if (!mips_cps_cluster_bootcfg[cl].core_power)
-> +			goto err_out;
->  
->  		/* Allocate VPE boot configuration structs */
->  		for (c = 0; c < ncores; c++) {
-> -- 
-> 2.49.0
+> I just noticed this one: the final 'default "4"' is no longer 
+> possible here and can be removed. All the remaining CPUs report 
+> family "5" or higher.
 
-applied to mips-fixes.
+Right, I've applied the fix below and backmerged it into the series.
 
-Thomas.
+Thanks,
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+	Ingo
+
+==========================>
+ arch/x86/Kconfig.cpu | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 6f1e8cc8fe58..b3772d384fa0 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -257,7 +257,6 @@ config X86_MINIMUM_CPU_FAMILY
+ 	default "64" if X86_64
+ 	default "6" if X86_32 && (MPENTIUM4 || MPENTIUMM || MPENTIUMIII || MPENTIUMII || M686 || MVIAC3_2 || MVIAC7 || MEFFICEON || MATOM || MK7)
+ 	default "5" if X86_32
+-	default "4"
+ 
+ config X86_DEBUGCTLMSR
+ 	def_bool y
 
