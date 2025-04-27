@@ -1,143 +1,135 @@
-Return-Path: <linux-kernel+bounces-621854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5886A9DF48
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:15:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AF5A9DF4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 767C37B16E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:14:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3193B43DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEF1237194;
-	Sun, 27 Apr 2025 06:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2362376F4;
+	Sun, 27 Apr 2025 06:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ACX3Y4pg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfKLc7ae"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7800F43ABC;
-	Sun, 27 Apr 2025 06:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C2C2376E6;
+	Sun, 27 Apr 2025 06:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745734522; cv=none; b=RWX0269BrsCsdK18gKL5iKJBLHrDTomyuOE0HV6Z6Ou+saclmkTd6Fmm+X1EYWeoaREOerHIaq5VgrPYr6oAEuletEjwzWeRJ19Qv+lDZUZb4r3eE1bLz8GTzk1L1ys7icOQQyyPCfiAoPd25GS0HOs7ye7/YfmkIiwOwZnm3HY=
+	t=1745734583; cv=none; b=WtsIdtAagAPPiGnlw2wqo9hAcOw66YiUIA+qzsyQdckOG9K2SJ9H728VDGGbYK1jRmRhGbD6elAMPo3+5eYry7PAl92R81jzO8mE/AFlZ87coKKT4tKuFopqq+xlghNyF/6awFZC7fQxJxkX7MjhFSC7Qky3PxEFl0ES9P7W9UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745734522; c=relaxed/simple;
-	bh=Spv2kcfLKKvB3c9NmgCG1sn10fxF0SOsf1c+Sb8hYjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gHhT5KZg0jHDFrz2yzC0x0AZuk0nEXfXZBjXPwpKli4yvzC+GiCBdIsGIwHplMcXHUdXG/H9Y4lm8FUNaWiJaTzXsFDBo4O4TfVl/QeoAvDr7gNL4jqgEJ339dKGr+IEY7xWYeP4tDIypDMUWVmgBoDJu9eBdhX1ATNbi8Zdi3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ACX3Y4pg; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745734520; x=1777270520;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Spv2kcfLKKvB3c9NmgCG1sn10fxF0SOsf1c+Sb8hYjM=;
-  b=ACX3Y4pgjVqq7uwoILfUjuRA7VVTp3MrszY2CRTv0z1HESkingu8YP7n
-   bNvaXRZetYqJMGCgS96J7kJG+Cb2wmUzeEyTTSGmuPF2taIFMqZAgTIbP
-   BtCy/eTDtvHBhSD00TkGpiIMTYzBnxOrQsnVWRO7rhI4vosBp8oOp1X/L
-   a3LUIuKMjapFVeijOz0llpTJ+CFEys8CRiFotXPaEyS8M9Vj4LRBmpntB
-   txpvgZ2M5I3t2J+r6+Cw3eiunJ+DHqcRDX1W1Iy1mIDZnA0ZOSIins2lR
-   7G2yhrDJIZ8R8QXiJ8+Po/IUJhgdgIHyHHVA333giHQ4ZSCaIo9TKFIcD
-   Q==;
-X-CSE-ConnectionGUID: Fxnpy3fbSYaL+v6zeWa6pg==
-X-CSE-MsgGUID: br/lO/bPQDKAXM7KCC/RCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="46578507"
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="46578507"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 23:15:18 -0700
-X-CSE-ConnectionGUID: mRi7tWCUQTGA35hwXdMYIw==
-X-CSE-MsgGUID: ZGNuoRJGTOGcBShz+Ebfmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="138331905"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 26 Apr 2025 23:15:16 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8vII-000691-1n;
-	Sun, 27 Apr 2025 06:15:14 +0000
-Date: Sun, 27 Apr 2025 14:15:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lijo Lazar <lijo.lazar@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Kenneth Feng <kenneth.feng@amd.com>, linux-doc@vger.kernel.org
-Subject: drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu11/arcturus_ppt.c:1348:
- warning: This comment starts with '/**', but isn't a kernel-doc comment.
- Refer Documentation/doc-guide/kernel-doc.rst
-Message-ID: <202504271422.D6cqMlZ0-lkp@intel.com>
+	s=arc-20240116; t=1745734583; c=relaxed/simple;
+	bh=DtaW7OP2HYTPn66Jo2Rzozz1dqRdlYrtqq0+MD41MKA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aAZAqvU4hljU+vbNEQ0myx8qdQuEVZ8Nu2WoSsAPFzE+kGx3pY47WRI8wSMBJTHEo5NNn6hDL8OIwzCcgvkT2WcoAnI2Wao9gsv4k/dUgJLnQp0UZXFWTTkWyjbLsSLUi8BRpnucaBOkb02uRNgl0uY2azkjrk/fLe3K8UYiSjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfKLc7ae; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-af9a6b3da82so2373949a12.0;
+        Sat, 26 Apr 2025 23:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745734579; x=1746339379; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sVkOXl+FItqnBG4PWwNvXOPdmDOL8HuWkGunCwBr2+Y=;
+        b=RfKLc7aeBoqMFB20O9dG2TGIxdUPTBQKy5wvpZCsTaJRSHy4Jokg+xLR7wmfSbUcmS
+         Q8d7ClF5L+DRlrsyVAMmtAZlW+jgIQ5/JqCdH/0Uvfk2hU5h32OMZT/9He7/yldXzSgX
+         tyacy2ao6Zf8cmausLSDM2qEUPCP/2V9fVLySCfiPRL4i1ovwYbL9O+2VInTJ4erw+ZS
+         UuGyYGBWyY4vN6xMZs9kPH5SU0EfhYXn2wg/MtQ9KiNrcg4Xpoan6f0TmCK7tQ87lsEM
+         1FLuPOQ3q5C7n6FPKXxa6KWXHPVAPK+21Z/7yJU3PWZLLk3t1IOda9XYHrnqTlXVoxGo
+         ezog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745734579; x=1746339379;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sVkOXl+FItqnBG4PWwNvXOPdmDOL8HuWkGunCwBr2+Y=;
+        b=hgLGbYn+d2DL01YCsEpofNvQV7ROV4XhpASwj3zaKzVxbLPTJKGDENNdiXq2w/uowd
+         1wWLkwy2K6mSQNpTKcXUzpamRnbkHJBPkGO9SPZMTWeurmkhLNjLTpWyDEjp0BZCi029
+         H5NveiB8oMwknOK/n3VFSj3mSUcrMDBEwYa3nYuDDWtgfOIe2xash/2TDJrDB2WnwU6G
+         dOni9VZalYx0R1grjJ25KmsbwxJoUxyuFO+FNgIG3k1DpB4IZUFPibdcFUP7xbGlnT01
+         1EoEivaHreHtT54FqX2MD6lQzq72mETUbveUMv8fiFbNG3tTB0Tj3sgIkuTp65yb/3mJ
+         9LqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoHo9Ph6/JEK+/tMMkHqDgmNRmk20TGB5d6osjVRStiYvy5iaTloYBKTV7sEbGl9xXsH323e+FmyYo7E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyaT215majCRgluZHle83XRLhaY/O0NjRUtgzAb2Pmw069wbXs
+	NVojYTPuojjHiOl/O33cqVYECGCUNFE1ooKasdYPh3eM3+PvTKJhEPY6dNMGkKVVfaZM
+X-Gm-Gg: ASbGnctwWiYqSTELgBGMAxq089q7LhNkyVT5ObaUkrMV6hZ6OSs0xb/4iclcDQO4d4R
+	o8DXn4Hx4MhUXvx8DtuDgCFEPfF5vJqbaDNhggUQAToi8Zce8Ezti43CUGn4fo557FV0SZ6LxaZ
+	yYaHb0OMZgzYiGGFOfRNT2xL5Wh2pjwYqvyRIP8b8fVT1mz7NJ4iJ5DkR3u63wEWXJJ1kyKhqqd
+	qP+ceNik+Qh4VdbjRY7dqvf9+MM5UM5EpkmI++G58Bj8b5ZfJLANjfFirreWkzWz+F4rKNt8on4
+	YXfRQrJrJ0zUfdbBmfaoDwWDsPt8Y8JQVLA=
+X-Google-Smtp-Source: AGHT+IGBhNvZrPFXBrP6EMdlDeC9iJtG6LNBbpfeI0Y349BALjf9LLYTf9Dnt8oACeh5pZIUz91ILQ==
+X-Received: by 2002:a17:90b:3a0e:b0:305:2d68:8d39 with SMTP id 98e67ed59e1d1-309f7ddd52dmr14596177a91.12.1745734578705;
+        Sat, 26 Apr 2025 23:16:18 -0700 (PDT)
+Received: from [127.0.1.1] ([2a0d:2683:c100::bf])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f782d461sm5080287a91.39.2025.04.26.23.16.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Apr 2025 23:16:18 -0700 (PDT)
+From: Troy Mitchell <troymitchell988@gmail.com>
+Subject: [PATCH v2 0/2] i2c: imx: adapting the mainline
+Date: Sun, 27 Apr 2025 14:16:08 +0800
+Message-Id: <20250427-i2c-imx-update-v2-0-d312e394b573@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKjLDWgC/3XMywqDMBCF4VeRWXeKkzQqXfU9igvJjDpQLyRWL
+ OK7N3Xf5X/gfDtECSoR7tkOQVaNOo0pzCUD3zdjJ6icGkxuXH4zhGo86rDhe+ZmEWQiLgrmqpQ
+ K0mkO0up2gs86da9xmcLn9Ff6rX+plTBHIlu21Fpn2T26odHX1U8D1MdxfAGDSpRyrAAAAA==
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Cc: linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Troy Mitchell <troymitchell988@gmail.com>, Yongchao Jia <jyc0019@gmail.com>, 
+ Frank Li <Frank.Li@nxp.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745734572; l=1057;
+ i=troymitchell988@gmail.com; h=from:subject:message-id;
+ bh=DtaW7OP2HYTPn66Jo2Rzozz1dqRdlYrtqq0+MD41MKA=;
+ b=UQtKorS1lD5nKkZmkn2u6pSa0dlWJkQzqKzsVPpcbHAb8Slpn66/D3G0oDkLFVwsW3schQyFm
+ P7g6OrbvRz9CPWLOHqVmAs8/0owueY6zScF+rcKWD8vSwBXI/eVJbrO
+X-Developer-Key: i=troymitchell988@gmail.com; a=ed25519;
+ pk=2spEMGBd/Wkpd36N1aD9KFWOk0aHrhVxZQt+jxLXVC0=
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   02ddfb981de88a2c15621115dd7be2431252c568
-commit: da868898cf4c5ddbd1f7406e356edce5d7211eb5 drm/amd/pm: Remove arcturus min power limit
-date:   5 months ago
-config: sparc-randconfig-001-20250426 (https://download.01.org/0day-ci/archive/20250427/202504271422.D6cqMlZ0-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 10.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250427/202504271422.D6cqMlZ0-lkp@intel.com/reproduce)
+Since this patch[1], we have new callback function names.
+Since this patch[2], we can use `guard` to call `spin_lock_irqsave`
+and release this lock when it goes out of scope.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504271422.D6cqMlZ0-lkp@intel.com/
+Link:
+https://lore.kernel.org/all/20240706112116.24543-2-wsa+renesas@sang-engineering.com/ [1]
+https://lore.kernel.org/all/20250227221924.265259-10-lyude@redhat.com/ [2]
 
-All warnings (new ones prefixed by >>):
+Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
+---
+Changes in v2:
+- Add more details in the commit message
+- Drop a useless variable
+- Refactor the logic of i2c_imx_isr function
+- Link to v1: https://lore.kernel.org/r/20250421-i2c-imx-update-v1-0-1137f1f353d5@gmail.com
 
->> drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu11/arcturus_ppt.c:1348: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-            * No lower bound is imposed on the limit. Any unreasonable limit set
+---
+Troy Mitchell (2):
+      i2c: imx: use guard to take spinlock
+      i2c: imx: drop master prefix
 
+ drivers/i2c/busses/i2c-imx.c | 43 ++++++++++++++++++++-----------------------
+ 1 file changed, 20 insertions(+), 23 deletions(-)
+---
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+change-id: 20250421-i2c-imx-update-d11d66dd87e8
 
-vim +1348 drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu11/arcturus_ppt.c
-
-  1321	
-  1322	static int arcturus_get_power_limit(struct smu_context *smu,
-  1323						uint32_t *current_power_limit,
-  1324						uint32_t *default_power_limit,
-  1325						uint32_t *max_power_limit,
-  1326						uint32_t *min_power_limit)
-  1327	{
-  1328		PPTable_t *pptable = smu->smu_table.driver_pptable;
-  1329		uint32_t power_limit;
-  1330	
-  1331		if (smu_v11_0_get_current_power_limit(smu, &power_limit)) {
-  1332			/* the last hope to figure out the ppt limit */
-  1333			if (!pptable) {
-  1334				dev_err(smu->adev->dev, "Cannot get PPT limit due to pptable missing!");
-  1335				return -EINVAL;
-  1336			}
-  1337			power_limit =
-  1338				pptable->SocketPowerLimitAc[PPT_THROTTLER_PPT0];
-  1339		}
-  1340	
-  1341		if (current_power_limit)
-  1342			*current_power_limit = power_limit;
-  1343		if (default_power_limit)
-  1344			*default_power_limit = power_limit;
-  1345		if (max_power_limit)
-  1346			*max_power_limit = power_limit;
-  1347		/**
-> 1348		 * No lower bound is imposed on the limit. Any unreasonable limit set
-  1349		 * will result in frequent throttling.
-  1350		 */
-  1351		if (min_power_limit)
-  1352			*min_power_limit = 0;
-  1353	
-  1354		return 0;
-  1355	}
-  1356	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Troy Mitchell <troymitchell988@gmail.com>
+
 
