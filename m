@@ -1,95 +1,149 @@
-Return-Path: <linux-kernel+bounces-622132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82359A9E365
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 15:53:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2514FA9E371
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB851189F61F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 13:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8034C3BDD43
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F70190462;
-	Sun, 27 Apr 2025 13:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="gFF+/ZQY"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6DC14D428;
-	Sun, 27 Apr 2025 13:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AD3770E2;
+	Sun, 27 Apr 2025 14:07:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3551AC88A;
+	Sun, 27 Apr 2025 14:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745761990; cv=none; b=rM/nuy0E0wAHljanmbTJSfcuwgzrHymb4xV0clhPIqDtYJCSb5Tcoq1qOGzYr7F0l22fL6xNEMRZj+uPLFZJTKY/pZDNIiqtUjDir4rRnvrMYqCilFS2YQqcRvhINv70XLcHq29rt/oLUqJMXZMxPp5wiqDar1tL/l+tZYe7zSI=
+	t=1745762844; cv=none; b=XNJ0lWkOaj6x/Xgj5lJ7d8FQiM/Im1W2EmzzMYuk4/7+oZxHfpouo4a3+dTdHZWkw91EgKpb1ZgRCiTVUvudohdsLxQk4sP0J3vM4D+pjmIGi5G1B54JM+G2hKq5yeZ/Gim7yE7UIuPw4/SsBmqYXVghh6pob9wmI7Gd0UjhApM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745761990; c=relaxed/simple;
-	bh=UoIHPJ4depb+g8pAi0LtyZ8iSz2y4kJvvn2d28X511c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqRxJeTTHpIHr4KFOHEpwF8ByBhxaMaVcVh04NDaw7kc0BifD/5nDlZPP+1KJOJVJngEdiSE/lWYkaGitLFphDKGU6Y0lOS8NT5fa45aZnHAzQIkkj7/XRmAWj28TnY/KQYbbD4uZr2yGZ9QesDeQ9SIN7PpAG3xC9lQ8+0Bugs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=gFF+/ZQY; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=i4Fnrl096oXKF65tzuRQZ6eRc4onRrFK13fpUbFl9Pk=;
-	b=gFF+/ZQYa5fCAE5KYgEvYnr15hbTuWaIQYDpVPvL4hRk4V75FQLpe+wAQEgPJs
-	YjpTRhGSpOLJ5Z9JvtLRSAEEfwa46u3/q+ui6qPzsEK6LgcWMoyhNHYpdNQrLA9x
-	HYLSj8IGOSJx6x5e/WjQ3RhzPf6vGoqR5qlspjLDq2Ly8=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3p0tlNg5o4Vb3Aw--.41011S3;
-	Sun, 27 Apr 2025 21:51:35 +0800 (CST)
-Date: Sun, 27 Apr 2025 21:51:33 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Philippe Schenker <philippe.schenker@impulsing.ch>,
-	Manuel Traut <manuel.traut@mt.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4] arm64: dts: imx8mm-verdin: Link reg_usdhc2_vqmmc to
- usdhc2
-Message-ID: <aA42ZS8xeyDi9xNO@dragon>
-References: <20250424095916.1389731-1-Wojciech.Dubowik@mt.com>
+	s=arc-20240116; t=1745762844; c=relaxed/simple;
+	bh=/NuX/kzXUHNm5l65ud/S9tlUN73pCHMwQuH34Z/ek18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=szowrwvzDZvyTfBZB9dE5jwdEigVMEu5kDuD5hEfSiFenyocesVIZ9HoBK+asJPoRGozTZstijv2r+hv6m+fkt24FgbzMufRN4sXqDxDXT+IoEnrqP1hMMzTsbAhhLtWPMEEDsM6jCNwccwgVJWOI+W7lPh5Y0wlCuqGEz4zexU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DF12106F;
+	Sun, 27 Apr 2025 07:01:40 -0700 (PDT)
+Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A5F03F66E;
+	Sun, 27 Apr 2025 07:01:44 -0700 (PDT)
+Message-ID: <61cd69f5-6790-4480-8fe7-77ef763ed82b@arm.com>
+Date: Sun, 27 Apr 2025 16:01:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424095916.1389731-1-Wojciech.Dubowik@mt.com>
-X-CM-TRANSID:M88vCgD3p0tlNg5o4Vb3Aw--.41011S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JF4UXFy3Jr47JF4xWr1Dtrb_yoW3uwcE9r
-	1Fkws5Xr45Wr45Cw45tFnxZF48G3W5Kry3try29rZ5Ar95AayDJFn8KrZ5Zr43WanIvF9x
-	Z3429rs5trW7WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8GXdUUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwA8ZWgODbOJNwAAs0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT][PATCH v1 5/8] PM: EM: Introduce em_adjust_cpu_capacity()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+References: <3344336.aeNJFYEL58@rjwysocki.net>
+ <2649447.Lt9SDvczpP@rjwysocki.net>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <2649447.Lt9SDvczpP@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 24, 2025 at 11:59:14AM +0200, Wojciech Dubowik wrote:
-> Define vqmmc regulator-gpio for usdhc2 with vin-supply
-> coming from LDO5.
+On 16/04/2025 20:06, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Without this definition LDO5 will be powered down, disabling
-> SD card after bootup. This has been introduced in commit
-> f5aab0438ef1 ("regulator: pca9450: Fix enable register for LDO5").
+> Add a function for updating the Energy Model for a CPU after its
+> capacity has changed, which subsequently will be used by the
+> intel_pstate driver.
 > 
-> Fixes: 6a57f224f734 ("arm64: dts: freescale: add initial support for verdin imx8m mini")
-> Tested-by: Manuel Traut <manuel.traut@mt.com>
-> Reviewed-by: Philippe Schenker <philippe.schenker@impulsing.ch>
-> Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
+> An EM_PERF_DOMAIN_ARTIFICIAL check is added to em_adjust_new_capacity()
+> to prevent it from calling em_compute_costs() for an "artificial" perf
+> domain with a NULL cb parameter which would cause it to crash.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+> ---
+> 
+> v0.3 -> v1:
+>      * Added R-by from Lukasz.
+> 
+> ---
+>  include/linux/energy_model.h |    2 ++
+>  kernel/power/energy_model.c  |   28 ++++++++++++++++++++++++----
+>  2 files changed, 26 insertions(+), 4 deletions(-)
+> 
+> --- a/include/linux/energy_model.h
+> +++ b/include/linux/energy_model.h
+> @@ -179,6 +179,7 @@
+>  int em_dev_update_chip_binning(struct device *dev);
+>  int em_update_performance_limits(struct em_perf_domain *pd,
+>  		unsigned long freq_min_khz, unsigned long freq_max_khz);
+> +void em_adjust_cpu_capacity(unsigned int cpu);
+>  void em_rebuild_sched_domains(void);
+>  
+>  /**
+> @@ -405,6 +406,7 @@
+>  {
+>  	return -EINVAL;
+>  }
+> +static inline void em_adjust_cpu_capacity(unsigned int cpu) {}
+>  static inline void em_rebuild_sched_domains(void) {}
+>  #endif
+>  
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -698,10 +698,12 @@
+>  {
+>  	int ret;
+>  
+> -	ret = em_compute_costs(dev, em_table->state, NULL, pd->nr_perf_states,
+> -			       pd->flags);
+> -	if (ret)
+> -		goto free_em_table;
+> +	if (!(pd->flags & EM_PERF_DOMAIN_ARTIFICIAL)) {
 
-Applied, thanks!
+This looks weird to me. How can an artificial EM ever have a non-ZERO
+em_data_callback here?
 
+There is already EM_PERF_DOMAIN_ARTIFICIAL specific handling in
+em_compute_costs(). Which probably works well for the
+em_create_perf_table() call-site.
+
+Will there be cases for Hybrid CPU EM's in which 'em_max_perf !=
+cpu_capacity':
+
+em_adjust_new_capacity()
+
+  if (em_max_perf == cpu_capacity)
+    return
+
+  em_recalc_and_update()
+    em_compute_costs()
+
+so that em_compute_costs() might be called?
+
+Maybe:
+
+@@ -233,11 +237,17 @@ static int em_compute_costs(struct device *dev,
+struct em_perf_state *table,
+        unsigned long prev_cost = ULONG_MAX;
+        int i, ret;
+
++       if (!cb && (flags & EM_PERF_DOMAIN_ARTIFICIAL))
++               return 0;
+
+is somehow clearer in this case?
+
+[...]
 
