@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-621849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F28AA9DF3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:05:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A648A9DF3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7FB5A4584
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:05:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C60C7B075E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9302343CF;
-	Sun, 27 Apr 2025 06:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E52343CF;
+	Sun, 27 Apr 2025 06:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="losPkBoZ"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nKdWAIIS"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B644B2343AF
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 06:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E06610D
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 06:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745733950; cv=none; b=rGt59tAhROfOm/bkb3tj7SCtt0mB3rXIq2VQOXWMJUuMbO8/7V4gLnMXbyexCNwX/ambCQCIiH2EMoF7VBN4GROYcacoECKHZQbKlurWaGREZqvt61hG+z0GFSLkd5ltUPS1En3kuA3uavmRb25gRFb/R3qL9U9ePSTk9bKtLu4=
+	t=1745734028; cv=none; b=PPwwEPjOXzr87laCMqsVzP3xUgBP6CEkx9icHThE7w9/RhWxpPQylu8jIKo1UFqXd7cfPqk7N6Ckmx5Al612+QhucTX00D4Ape852dE6Sr0e2aNP15TUhmBRbp3j/P9Q2zaBpjJf/h93RaV8PMT7XSZViOZCNU9lHeRVYGB5SUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745733950; c=relaxed/simple;
-	bh=WCRgJwGFiscDS9s+la7Bw3jtrCTld3qoxSSBwkR+DoA=;
+	s=arc-20240116; t=1745734028; c=relaxed/simple;
+	bh=nWonDwXa6lTHreu5HkvLHRjxafxaPKpG2JJX7sYMwOg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WqT6sfTcp+HwGoIQPjQAGs9M3vxdMI+r47Dlk/zNLPGCFWSpCOUve0suPk6s/0Ov9JurYJgIUdgogiaerj7NVxHRtoehvJhTghzNp2z5LYiHOx74gKARmz8eg4ZMzs1WHS2N8gyMrMobOBPLyloKpbXM7lGmu5St+GFa+9SG2oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=losPkBoZ; arc=none smtp.client-ip=115.124.30.110
+	 In-Reply-To:Content-Type; b=mxUKLdhmBVQX5UjmBdTYpgwsJ5m2zi3Tl93ookb4Bb9iVv0C1OmNT/2Znx3s/stwHysVWiAQ2t9y2j4BLi6d62onsYPdVbGpHG3p28E++ZjAP5Y2bsLND0/inHrPSbXQT+h/087fGPuHGb6S4Oh2d2fqdBCG0ONy6YeKg8t/lgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nKdWAIIS; arc=none smtp.client-ip=115.124.30.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1745733936; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=OAjq9LNbHWJusiKPmnwrKHajD1aAkosJ1OT3e2o8rvg=;
-	b=losPkBoZKdfGVWfw0enqBiuMt/eizSwRP3idJHyuF0UkC7bkYiHcN9It6zDU5fSAZntNTnlPjJXYynz7zxQIVqX2+7mLFGASCV4dEOy9HJGkgyOf3wzQmzToEY5Sm0d0cUB+PYvajU0uQ74+o5sJ0KgT/q2zHHeAzQIJ0SwPx4s=
-Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WY7rxZ4_1745733935 cluster:ay36)
+	t=1745734017; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hC0xG7CwTbEtPZFEoTnnKtGHvz9QFvegQL55crSubn4=;
+	b=nKdWAIISdbjy9dNGUMExXyl7h2Z+FuT/KqykpnU3/ncK1EwhSrTTMi6Fvju3tBXaeG5JqX5n/6W4hErJu/osv1DWQ65BlXiu1X87Q5gMfCDs1v1KzCxhnbtgi0gEqC1eNL23gpUFeQawn/xiL5xJEwAYeBfpHgGVc6BywzjzTMg=
+Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WY7uW41_1745734016 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Sun, 27 Apr 2025 14:05:35 +0800
-Message-ID: <ec1eca29-4ac7-4b5c-a962-b81ee4b77d75@linux.alibaba.com>
-Date: Sun, 27 Apr 2025 14:05:35 +0800
+          Sun, 27 Apr 2025 14:06:56 +0800
+Message-ID: <5945408b-e4f0-429f-ad25-a67cd2014737@linux.alibaba.com>
+Date: Sun, 27 Apr 2025 14:06:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,35 +47,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm/huge_memory: Adjust try_to_migrate_one() and
- split_huge_pmd_locked()
+Subject: Re: [PATCH v2 2/2] mm/huge_memory: Remove useless folio pointers
+ passing
 To: Gavin Guo <gavinguo@igalia.com>, linux-mm@kvack.org,
  akpm@linux-foundation.org
 Cc: gshan@redhat.com, david@redhat.com, willy@infradead.org, ziy@nvidia.com,
  linmiaohe@huawei.com, hughd@google.com, revest@google.com,
  kernel-dev@igalia.com, linux-kernel@vger.kernel.org
 References: <20250425103859.825879-1-gavinguo@igalia.com>
- <20250425103859.825879-2-gavinguo@igalia.com>
+ <20250425103859.825879-3-gavinguo@igalia.com>
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250425103859.825879-2-gavinguo@igalia.com>
+In-Reply-To: <20250425103859.825879-3-gavinguo@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 2025/4/25 18:38, Gavin Guo wrote:
-> The split_huge_pmd_locked function currently performs redundant checks
-> for migration entries and folio validation that are already handled by
-> the page_vma_mapped_walk mechanism in try_to_migrate_one.
-> 
-> Specifically, page_vma_mapped_walk already ensures that:
-> - The folio is properly mapped in the given VMA area
-> - pmd_trans_huge, pmd_devmap, and migration entry validation are
-> performed
-> 
-> To leverage page_vma_mapped_walk's work, moving TTU_SPLIT_HUGE_PMD
-> handling to the while loop checking and removing these duplicate checks
-> from split_huge_pmd_locked.
+> Since the previous commit "mm/huge_memory: Adjust try_to_migrate_one() and
+> split_huge_pmd_locked()" has simplified the logic by leveraging the
+> folio verification in page_vma_mapped_walk(), this patch removes the
+> unnecessary folio pointers passing.
 > 
 > Suggested-by: David Hildenbrand <david@redhat.com>
 > Link: https://lore.kernel.org/all/98d1d195-7821-4627-b518-83103ade56c0@redhat.com/
