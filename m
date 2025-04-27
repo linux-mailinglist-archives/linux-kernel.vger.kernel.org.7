@@ -1,70 +1,82 @@
-Return-Path: <linux-kernel+bounces-622133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329C1A9E36F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B420A9E375
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15DE05A0624
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81633178E94
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344A519D898;
-	Sun, 27 Apr 2025 14:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E0B1A0730;
+	Sun, 27 Apr 2025 14:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Y5RhSc5/"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XWWvnbXW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EC233EA;
-	Sun, 27 Apr 2025 14:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5A96F2F2
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 14:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745762839; cv=none; b=u40P6P84ALqjktV02W0Aw7SADOebeuzPqskWpYVKqS/kUi+XNu15Rx5x3XO0/exyyAugz/winv5D4W2cJV42xIHtpd5ozHdYl3OHz78+/nu6fqXDOMnCil9kmwGJ4aqS0N0GeflzkJNL9XYAEvpgHkZcENiPN+abCwWsJIAgc7Q=
+	t=1745763274; cv=none; b=rvxijNoclUJLCvF2lfQ2OTLKSBt4Lk4Q3tiM4/oip3VfhVHkm6qrlr0iD/zzeJPHU0r0P1jLXjxz8dy5kfHWkIEFGpA6fcTZIEreYbIi0GZudze3quPwel4x8BkNlDDCNBm+aclK22t+CFSNwR3v7L2pggpkmjlEnZ6Q4EnXlY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745762839; c=relaxed/simple;
-	bh=1Xn31aUEL7UCLpME3athNyqhY+EDxL95zDk5CYxrO6w=;
+	s=arc-20240116; t=1745763274; c=relaxed/simple;
+	bh=49DuRZhOVTYQFxHgGdK6okYEXh4PRTvvhmby35xZFuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k36byUii5Murl5VFV6JVp+70j9WEZR3PvPHr/mno4Qh4ZyhpOHwlc30LG+Cd89gHZC8BD2nP5en+lsd/jwEs4WuIYWZjeH3U8TORrjDhgoO8sPTS9fN/HT8Yp4f+mp5rhpQAphbmLaBnADP/Ell+LMxS1YiheS9mm18UpRY/PFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Y5RhSc5/; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=bjaQCYAZZv7TZCyYcpymHM3x4tGRpcCplG+gYWSYS9Y=; b=Y5RhSc5/FybI7zmz9SHjUsOJyt
-	6y13MP9+31En+C9RdXh+jvvPfmcEs8+ugf/lrbM+EuMyfHqK2AbcS8TSq6nIW/o0J5hLQbnKW2dwO
-	5PDPeGJ0dMiB+I1jO7FLhSzAAUHoGPP0xtZH8fUgS54mB21PslHj4y/wIynDPQmglvHJFPSzYGQUS
-	e6SLa2lor/mFtkN8PODNuoz4j9cgiiqr6ML354CiGk2KNJSUINJ8HzdvV/YfmSH+b2/2lTMTZ+f9n
-	8+V6BnpZAT4ZOKXfyim5oaRqg6ehnl6jo5JsXrJNniEO3jfXP0RfbAfbnaxToW16RVxQ/wE8t43b+
-	zz+/7N0Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1u92ev-001PEG-1R;
-	Sun, 27 Apr 2025 22:07:06 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 27 Apr 2025 22:07:05 +0800
-Date: Sun, 27 Apr 2025 22:07:05 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	sparclinux@vger.kernel.org, linux-s390@vger.kernel.org,
-	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld " <Jason@zx2c4.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [v2 PATCH 00/13] Architecture-optimized SHA-256 library API
-Message-ID: <aA46Cfr7p6dMXwvU@gondor.apana.org.au>
-References: <cover.1745734678.git.herbert@gondor.apana.org.au>
- <20250427123514.GA1161@quark>
- <aA4mAlozk3RvxvTe@gondor.apana.org.au>
- <20250427125641.GB1161@quark>
- <20250427131138.GC1161@quark>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DTHRrAdojY4EIArWcEcVUz/T3MFBFevhiM85uX5kc8TwgkNpz8agfv3Sx0lUqaXU58SRozsFgJA10gpXtWUsrj4nBgjakiyC+VRFl4C6hS8EUIB3wZxRlhrXHBc8dUJgGZJurRamzh9CcAC3H9BKUjgFr2atoi/Lzy7YwcHjAJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XWWvnbXW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745763272;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BNjVVte3p3EsUaESR/jga3ypvTF1DEPySfxUJUdW+ts=;
+	b=XWWvnbXWj9BI2uKCEO2x49y60LAeP9gXVCCkT/dg+k1UddwZ82npKAv8VicG6ws8AwRyvR
+	76NK+PHW0D4noazJWv4YqQUT9jSiieQcTfjUhJtRp+kXs38yR3VsQ+Q71h3swj178OhTTW
+	DLK5TF3PFxQ52GOHj7yvlcoaYg0vB3c=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-NkxcXgFHPNizLPHKlO-eyQ-1; Sun,
+ 27 Apr 2025 10:14:25 -0400
+X-MC-Unique: NkxcXgFHPNizLPHKlO-eyQ-1
+X-Mimecast-MFC-AGG-ID: NkxcXgFHPNizLPHKlO-eyQ_1745763263
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A589C19560AA;
+	Sun, 27 Apr 2025 14:14:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 645D1180045C;
+	Sun, 27 Apr 2025 14:14:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 27 Apr 2025 16:13:43 +0200 (CEST)
+Date: Sun, 27 Apr 2025 16:13:35 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 03/22] uprobes: Move ref_ctr_offset update out
+ of uprobe_write_opcode
+Message-ID: <20250427141335.GA9350@redhat.com>
+References: <20250421214423.393661-1-jolsa@kernel.org>
+ <20250421214423.393661-4-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,30 +85,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250427131138.GC1161@quark>
+In-Reply-To: <20250421214423.393661-4-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sun, Apr 27, 2025 at 06:11:38AM -0700, Eric Biggers wrote:
+On 04/21, Jiri Olsa wrote:
 >
-> By the way, as I mentioned in my cover letter:
-> 
->     For now the SHA-256 library is well-covered by the crypto_shash
->     self-tests, but I plan to add a test for the library directly later.
-> 
-> But due to your gratuitous changes where crypto_shash is no longer built on top
-> of the normal SHA-256 library API, that's no longer the case.
-> 
-> So while I do still plan to add a SHA-256 library test anyway, I don't see the
-> reason for not also making crypto_shash just do the right thing.
+> +static int set_swbp_refctr(struct uprobe *uprobe, struct vm_area_struct *vma, unsigned long vaddr)
+> +{
+> +	struct mm_struct *mm = vma->vm_mm;
+> +	int err;
+> +
+> +	/* We are going to replace instruction, update ref_ctr. */
+> +	if (uprobe->ref_ctr_offset) {
+> +		err = update_ref_ctr(uprobe, mm, 1);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	err = set_swbp(&uprobe->arch, vma, vaddr);
+> +
+> +	/* Revert back reference counter if instruction update failed. */
+> +	if (err && uprobe->ref_ctr_offset)
+> +		update_ref_ctr(uprobe, mm, -1);
+> +	return err;
+>  }
+...
+> +static int set_orig_refctr(struct uprobe *uprobe, struct vm_area_struct *vma, unsigned long vaddr)
+> +{
+> +	int err = set_orig_insn(&uprobe->arch, vma, vaddr);
+> +
+> +	/* Revert back reference counter even if instruction update failed. */
+> +	if (uprobe->ref_ctr_offset)
+> +		update_ref_ctr(uprobe, vma->vm_mm, -1);
+> +	return err;
+>  }
 
-OK at least this objection makes sense.
+This doesn't look right even in the simplest case...
 
-I'll add an additional sha256 shash implementation that wraps
-around the lib/sha256 interface so we don't lose that testing
-coverage.
+To simplify, suppose that uprobe_register() needs to change a single mm/vma
+and set_swbp() fails. In this case uprobe_register() calls uprobe_unregister()
+which will find the same vma and call set_orig_refctr(). set_orig_insn() will
+do nothing. But update_ref_ctr(uprobe, vma->vm_mm, -1) is wrong/unbalanced.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+The current code updates ref_ctr after the verify_opcode() check, so it doesn't
+have this problem.
+
+-------------------------------------------------------------------------------
+OTOH, I think that the current logic is not really correct too,
+
+	/* Revert back reference counter if instruction update failed. */
+	if (ret < 0 && is_register && ref_ctr_updated)
+		update_ref_ctr(uprobe, mm, -1);
+
+I think that "Revert back reference counter" logic should not depend on
+is_register. Otherwise we can have the unbalanced update_ref_ctr(-1) if
+uprobe_unregister() fails, then another uprobe_register() comes at the
+same address, and after that uprobe_unregister() succeeds.
+
+Oleg.
+
 
