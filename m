@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-621959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EA7A9E0D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:26:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE3CA9E0FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB04189BE7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:26:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7C3460174
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414C42472BD;
-	Sun, 27 Apr 2025 08:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUagof68"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B882512C5;
+	Sun, 27 Apr 2025 08:37:15 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCB024633C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 08:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B127228CA9;
+	Sun, 27 Apr 2025 08:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745742367; cv=none; b=fZDR8YmUkh6ne85pNVfpjmT/ek8Hm4TGm7CseVaLZEFrHJP60KXmm0OB5G9Y1TvQ9knZ59vcQwksBTZTTe9n6rd2s4JhmuSJT45O2nQE5NmtZGQFiS6Oss5Se0C1yfZsVcPUxO+s0Nj6YQBnjLw0PJNrnJKUSkF59MOHb926G2A=
+	t=1745743035; cv=none; b=FkPj10FI1HJl1j66oabb0Knh8irNyB5So3TMQ9MSrgiHptYfMaeDa9Gr1Qqwkm+/5ELs/8ZzUOgdHzrbHNmMc/SIXzRXaNdnoMTuwJkMyUauegko2Q9DV1Q9dI3NSkF49fiia7MmuFzpvNbuVm77eqYk9p4n67I3vl1Q+EUA4AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745742367; c=relaxed/simple;
-	bh=2lTkGpjuVaiHemAJyC6zG/W9tYCkJYk/HO4SNHQcq1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtIcLkAdcc6xgejP0HbZzMdQLNA+7yh7pQodUh/6nXiEQbVBD1YNFNLHkr+Lj0DNwOKI8vo8SqZAZbMt89j9yVUxrapYYGfNCAy2hzp2A8vCRStm3vN12FiqeeCtIp/t7AkJKYpFGQWvSJE4kcmlpVDchE/N2mt5hYj7J6mQCBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUagof68; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3501BC4CEE3;
-	Sun, 27 Apr 2025 08:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745742366;
-	bh=2lTkGpjuVaiHemAJyC6zG/W9tYCkJYk/HO4SNHQcq1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bUagof68sE48Oo8Jj/G8kBhjSoai2URy/CLveb7hIU4rcYtgHLKkL7kOjdZ/wam9S
-	 2lqsH7ZxAD2McNWSpkzruxkciXl+0gFs40rMtKqCATXgqnVTcdTKT2H67ZshecU8RJ
-	 LOy89X6GMKl4o1KtZ0Szo7YW7drTOsvjBnHzoyXy50qIj+ZRkOCfcGQjmaZCIovtO4
-	 To9Woiy8FWICKdML6+UkrZHhweECx07r+baR3YPvMH8JMHBNyN+mIqjsgXlg0YTWuc
-	 zbyrT/xTNVQrfVS/RjBdSIaKf9zod+u4Ym7HNxMUX0NTOSmy3XxlHjNu+DrVNrIMNT
-	 ecXw4YxGW/HTQ==
-Date: Sun, 27 Apr 2025 10:26:00 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org, "Ahmed S . Darwish" <darwi@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 15/15] x86/atomics: Remove !CONFIG_X86_CX8 methods
-Message-ID: <aA3qGMf759kePUFI@gmail.com>
-References: <20250425084216.3913608-1-mingo@kernel.org>
- <20250425084216.3913608-16-mingo@kernel.org>
- <5c175b6a-e9c8-2546-a4fe-98572c3f4935@gmail.com>
+	s=arc-20240116; t=1745743035; c=relaxed/simple;
+	bh=OUHwNKnG3YpW8fdJ7O7QdjsVE5cAIInl4Sq4+BBFX0w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A/FVVJhhwl5oDkJpwlWn/8xcQJjfcE7NXSaNotm5zL8sJ1I5LEcEz7g+PfRq+P1LUvFlqm2njGF/o1anYcOFVFIg1qIltMHa3cAl7zpx64JuqmuMcUJRiy7oH9mPrbPemPhxxo2QrIB8HU85q6/syTO9cIt2kLZwI2036LK/TUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zlg0w67vkz4f3jt7;
+	Sun, 27 Apr 2025 16:36:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id A67691A09E6;
+	Sun, 27 Apr 2025 16:37:07 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgDHGsWx7A1oOv4xKg--.7274S4;
+	Sun, 27 Apr 2025 16:37:07 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@infradead.org,
+	axboe@kernel.dk,
+	xni@redhat.com,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	cl@linux.com,
+	nadav.amit@gmail.com,
+	ubizjak@gmail.com,
+	akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v2 0/9] md: fix is_mddev_idle()
+Date: Sun, 27 Apr 2025 16:29:19 +0800
+Message-Id: <20250427082928.131295-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c175b6a-e9c8-2546-a4fe-98572c3f4935@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDHGsWx7A1oOv4xKg--.7274S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrurWUJw17Jr1xury5Ww1xKrg_yoWDWwbE9F
+	WDZFyaqF4xXF13AFyqkF13ZrWjkrW8X3s8XFy2qrW5Zr93Xr1UKws0kw4Yq398WFW7u3ZY
+	yr18ur18Ar48XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+From: Yu Kuai <yukuai3@huawei.com>
 
-* Uros Bizjak <ubizjak@gmail.com> wrote:
+Changes in v2:
+ - add patch 1-5
+ - add reviewed-by in patch 6,7,9
+ - rename mddev->last_events to mddev->normal_IO_events in patch 8
 
-> 
-> 
-> On 25. 04. 25 10:42, Ingo Molnar wrote:
-> 
-> > -#endif
-> > +#define arch_cmpxchg64			__cmpxchg64
-> > +#define arch_cmpxchg64_local		__cmpxchg64_local
-> > +#define arch_try_cmpxchg64		__try_cmpxchg64
-> > +#define arch_try_cmpxchg64_local	__try_cmpxchg64_local
-> >   #define system_has_cmpxchg64()		boot_cpu_has(X86_FEATURE_CX8)
-> 
-> #define system_has_cmpxchg64()		1
+Yu Kuai (9):
+  blk-mq: remove blk_mq_in_flight()
+  block: reuse part_in_flight_rw for part_in_flight
+  block: WARN if bdev inflight counter is negative
+  block: cleanup blk_mq_in_flight_rw()
+  block: export API to get the number of bdev inflight IO
+  md: record dm-raid gendisk in mddev
+  md: add a new api sync_io_depth
+  md: fix is_mddev_idle()
+  md: cleanup accounting for issued sync IO
 
-Thanks, I've updated the patch with the change below.
+ block/blk-core.c          |   2 +-
+ block/blk-mq.c            |  22 ++---
+ block/blk-mq.h            |   5 +-
+ block/blk.h               |   1 -
+ block/genhd.c             |  69 ++++++++------
+ drivers/md/dm-raid.c      |   3 +
+ drivers/md/md.c           | 193 +++++++++++++++++++++++++++-----------
+ drivers/md/md.h           |  18 +---
+ drivers/md/raid1.c        |   3 -
+ drivers/md/raid10.c       |   9 --
+ drivers/md/raid5.c        |   8 --
+ include/linux/blkdev.h    |   1 -
+ include/linux/part_stat.h |   2 +
+ 13 files changed, 194 insertions(+), 142 deletions(-)
 
-	Ingo
+-- 
+2.39.2
 
-===========>
- arch/x86/include/asm/cmpxchg_32.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index 5902fa5af93b..6c7b37bc65c1 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -74,6 +74,6 @@ static __always_inline bool __try_cmpxchg64_local(volatile u64 *ptr, u64 *oldp,
- #define arch_try_cmpxchg64		__try_cmpxchg64
- #define arch_try_cmpxchg64_local	__try_cmpxchg64_local
- 
--#define system_has_cmpxchg64()		boot_cpu_has(X86_FEATURE_CX8)
-+#define system_has_cmpxchg64()		1
- 
- #endif /* _ASM_X86_CMPXCHG_32_H */
 
