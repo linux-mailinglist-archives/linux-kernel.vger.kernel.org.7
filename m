@@ -1,90 +1,99 @@
-Return-Path: <linux-kernel+bounces-622138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C86A9E37B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33F9A9E381
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3223C7AB16C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA5E317A560
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B203C1A0730;
-	Sun, 27 Apr 2025 14:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60231ACEC8;
+	Sun, 27 Apr 2025 14:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUz0RzZK"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1erEWoz"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EC779C4;
-	Sun, 27 Apr 2025 14:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C827199385;
+	Sun, 27 Apr 2025 14:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745763867; cv=none; b=PnKtDE0BhGgc5tCXPOMbI5MMviOPBYEjlRhCqvkgNN1hin00GJfQQKVLsLgy4rKfnXAtOtO+Uqpoux/8fBv/U/xhxiVPJYRoyUnhimVSrUA6dS9dkYC6b2YlFqNrrPcIoIx/6R3Ftk64irEAIZxRYvDYVTIvCUx/bdC5CN2Yn8A=
+	t=1745763916; cv=none; b=BOL582egVV0xOnFuha1mBW0ZEzNuwaPu9n9r+Xm7mAi/XjToShxSQ1FlPx3QzPPoykBX4ZtVm+NzRBfcT3XmDKx6ILPrpbDy32rpQLagICxafdr6vsG34qGw/tWlZk6650LHIa/eqaLoxJ/e96yMY38/jcZXIpdeRekWGZbj6xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745763867; c=relaxed/simple;
-	bh=CYELTFpR5RO+UOyF9XdelPjNz+Bh+smiwCLw6IrLdZ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BfydODlMa+fxj7gR9FXW2CyQJphJdPUlVmzEdlXFyYKYGXTU85rbJDO2BmOMRIcKWHpK/TbMws6n+pF/qYC5ZC9repbfgEV/wjazLCCFvMm4McdjJJMcclcu2ZtEiTz8mChkmITjv7cidEJ2gm5EK/MsBzeU1h3KuFb8Wkc8zi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUz0RzZK; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1745763916; c=relaxed/simple;
+	bh=4RuQwRBAdLPTYq/a4FeieIjOWizMZ9M2PNfdmCov5UQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k8Uibvv5zA9yoFr81/X2kjb7uj2g1uwAtVdKOrpuH3MZgzvv9DNs7Hu3n+F6Ls5RiY7Z9He3Omk6Hlj1lUo7wm0bSa/06ZGe5/GYwDKP8MRlYUHMI/fjkbwrulnDkS0lRaI64wiLQdXQA2/3t1Fen5yXBQ7onTnBR25sfEhY0RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1erEWoz; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso7385117a12.3;
-        Sun, 27 Apr 2025 07:24:25 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3105ef2a071so38683191fa.1;
+        Sun, 27 Apr 2025 07:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745763864; x=1746368664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bTdCSXyXKLGjb4xxRuXuC2QAcp6Bhl4G5LPZiZnxAkg=;
-        b=CUz0RzZKR05KT7vLGB8Rn5afblt+COzKsUCyeZ8JqLq2msC9J+R6ej5B2cNnKYXpqZ
-         BEqMOLs4MlqUStdcW6t5YA8rhr2cep/5X/zx43YnzmQdmcZPmZf3Kcqog271b+cWqGa6
-         VJFm1O6xO+SA3NszDUSM40+PuFuZSrbQBtN0s6+qs54HLZ5u+67pPgu2hfIlgAlvLLuF
-         AwWuh4kAx8lm5OYFP+WJ2Mskdl7Ojl7AM0DtBzaJiCO28OTfkGM830l5Wy6hT04KT9lo
-         tpW48Zkw+9jirf2A1qBvs8PXGuOy0wf5tNoyJ4inDptr0zTuxyEDIqwiBxC4YRffbq0Z
-         mexQ==
+        d=gmail.com; s=20230601; t=1745763912; x=1746368712; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l+/h+HUw5Fa9i+auYLXdmFTVTqLMJ8IF6VQixN6G/8c=;
+        b=R1erEWozsynBtkY7tq/1Aeruwl9LB18PPTgZs/rSW4RzH56ck/NMaQ+GQQNtF5sKkV
+         udHAzE3Hs3JVx2M3BtkcBPAwCS4pYyPudodsUWQQVeDSxf27aP1bxazq73kCt5+EOZ4b
+         EzhMQl53HOaOR16KIS+SJhKHc8ar2Di6n/8iM6uT+jGT0igRsVptxttEpXu722lujPZW
+         jOD8HDFjF2MD/HUv9tQnF/5Rrw37iyBZjP8j2mE7uu6KMn1T2p61pZluNCxNRXkGrJ8N
+         PA1B+z9JOTK85Ue89iU9MNhRNCFqAxW621d87dhwhMIFWRaDBgC5yLTaHHHl211XbIqn
+         M3lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745763864; x=1746368664;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bTdCSXyXKLGjb4xxRuXuC2QAcp6Bhl4G5LPZiZnxAkg=;
-        b=GOrhTMJiuoo0xAoHPiQDUa/iyugy3wuz0CkX0hDXNIUTd3+V5rK2IbfJYVT8SXh4SB
-         sOKG2HQz6M4nBrVcFZs9BD0R/UalY9Fok3QXPjo729X9hBdFOP0ZzYVONLShdygz+fqt
-         sJXFKWe5cINXvqVqiEuUwpw6MBT44U6/fHA4TBg5JtMGfAn3gtHs8uWLWSsxoqxBIfXF
-         NuKaoXval8kmzcI5D3VJmQCF/oNK49mQqo6Z7xg5O6gX6skUPmKsBIMNiVtxkU9Oxmg4
-         ZmW+o5tG6QNntROR0UDYWz38JCH44sp6RfyPtH1avI6klqrqJF9r1a2qhuGX5xoJtOKv
-         2SxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPt0x6lHUEvrvZhRP3u5znZeERZn1KzlsAR0deTBVWZPMwhAmS0LapezBpfnGAFh5SLG5KC9Rl899KFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZriykhYm0X0FNM4WX1p8XUG3bAURiX8CaH5PUA/NpKBEN8ZFk
-	t5kk0URWnv2d19/A8XVmCJgvDTz+kx7/XQFTR+mHY5hjo2j6bsqf
-X-Gm-Gg: ASbGncvMM/X9vfP+PTe5NnEMLOXnYaCqPINMSviwp9iZf1WuSdUZzfLcQg2z5PngkLV
-	fp7em6SLTupiCRlUulqiUTLb0WtDKenqhH7befM+y5aZYAVAR2gIlQiTEwlnrSr6CbMhX3aCnfE
-	0rYn8ZfJH79P6M5zMoa2Jxo6Yozlcm9SRTrhKEZcXGJ9+oLGa7AtDqnGRczW3HPfPPAEZE4U5eC
-	dRej1E7Z6WHbZTtgeU1Kr3BWB1MJKaEGYjFQOHl2cX8GsJWgeHFoLbqtr9xLDm0i76D+3v7HU+l
-	WZiAO87BVkgwMnzSh6xMtKzjrcA5R8OT1K0HCBKAfzgMj5qzSnoY7B8LgK4hvxZ2pWeOZL8dGlC
-	FvkQdcQ6eiJ0rCX9Bw1vIZbTXWFvb7OQb7n0LPgVVB2jbiXnAKCV8Gl5aQ4s7VCRbP98Vu80tl9
-	0hBG8n5+2pGZjb
-X-Google-Smtp-Source: AGHT+IEGGx+E6y0ja04a6qnyw/DrZz43zsPPJqJEON+oYaLNJPZ/6oFZnmp5gDVsYnh60N40JF2ChQ==
-X-Received: by 2002:a17:907:97c9:b0:aca:d54d:a1f8 with SMTP id a640c23a62f3a-ace711175a7mr969009066b.31.1745763863610;
-        Sun, 27 Apr 2025 07:24:23 -0700 (PDT)
-Received: from chimera.arnhem.chello.nl (2001-1c08-0706-8b00-1150-51db-ebed-e084.cable.dynamic.v6.ziggo.nl. [2001:1c08:706:8b00:1150:51db:ebed:e084])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed6fea9sm447956566b.127.2025.04.27.07.24.23
+        d=1e100.net; s=20230601; t=1745763912; x=1746368712;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l+/h+HUw5Fa9i+auYLXdmFTVTqLMJ8IF6VQixN6G/8c=;
+        b=OseQftm9+hyneiUMkf5f9V0HqYwFwlYGNm9PQgl/hrop+v3+LxYbDDKe9Gh+hgOsPB
+         RKGU3ad1CUEZ5F0KXM9yD2dP9mjXjZexo/+G4o29/Qan2qPz6bBNS0ZPHfPnIa/wksOI
+         NHJy0tbazx/zX/TWXDMTRZfzhnXws1MAY6fwqJDvz/Sg5AJ+Hwh9miwocZodlEiN4HZF
+         UOOjIl41YIluPumGHeNEG83nvXt1TIOE5uHzU5c/d0uMPrB7ipgvtt1uzCHmhqVMt/i/
+         H1eai9cPpa1E9gbYZA6D9vdUaLUuvKY+DsKm1xI4s44AOZlf3zpGKojXmkxRlaQN5134
+         ti5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU29g8sj2ci/Ce0CGvlkaedNrkOVhdUuChDSnYK/5Nb3qnMTku+1rKL5eVVRJWh+o4i8IyWBo3caVOH@vger.kernel.org, AJvYcCWyXc3oe3VC80lpvLtpTJo8gN0NslybCWo9P83BJQoyoKGceaZgKh407GnrX1VybXRxz0UE2LueK3cZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw24Cm6DPdtKGak7+0sVgPoVbJXafFAJoJOiTNnA6JDkoxxWudp
+	dU6XiSLnvb0A0cgE1RMEtWFfYWiaIxHdW7uZ3ThOc2Ys4gmrGisyLTaARmhc1UVu
+X-Gm-Gg: ASbGncuRhV+7b+ZSAIo2C9DfNHQKSp44BkSor+OqbZ9oy4ZvaIZGLEOZFbO9Hch6FmJ
+	HtHWkEfYD8ndsghe6mw3S3JaRaetzjMyfP3t3lL9W7LOoOPvtTKGFBt+N0N9ww/9PuhSJ6/XH+5
+	427pVzRrEM35RmKDRb+2rZf4RinhFt551Q+pM+X6QtjMPqqr7vkdpg/+7upUcKdRGrhmC265W92
+	eX3L6m09IFibn4H8cSUELOe33fhbusIzq3bSs6WsdosgYrHtZ3HPH7UKgXzYMKGG/xykjwDnbDy
+	9fSVOWvB224Ycvynphla8Bs6iRulv2mk6zBztm59R3y+Zl3jJjZj4wEI
+X-Google-Smtp-Source: AGHT+IEZEKc9Vnf/efSmBJgLhw4tTfU2F09GmxdHClCejQ/XhLFf9brnK906waqbWQ74zPb6LP0ysg==
+X-Received: by 2002:a05:651c:158c:b0:30b:cd68:b68d with SMTP id 38308e7fff4ca-319dc02035cmr14537211fa.10.1745763911951;
+        Sun, 27 Apr 2025 07:25:11 -0700 (PDT)
+Received: from localhost.localdomain ([178.176.177.108])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317cfb482b1sm17659191fa.29.2025.04.27.07.25.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Apr 2025 07:24:23 -0700 (PDT)
-From: Thomas Andreatta <thomasandreatta2000@gmail.com>
-X-Google-Original-From: Thomas Andreatta <thomas.andreatta2000@gmail.com>
-To: andy@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	thomas.andreatta2000@gmail.com
-Subject: Re: [PATCH 2/2] Staging: media: atomisp: style corrections
-Date: Sun, 27 Apr 2025 16:24:22 +0200
-Message-Id: <20250427142422.88271-1-thomas.andreatta2000@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHp75Vef0DuupHr9CAaU9qnDEw6O6KRPaO51uzrKXPwvfAiiJA@mail.gmail.com>
-References: <CAHp75Vef0DuupHr9CAaU9qnDEw6O6KRPaO51uzrKXPwvfAiiJA@mail.gmail.com>
+        Sun, 27 Apr 2025 07:25:11 -0700 (PDT)
+From: Aleksandr Shubin <privatesub2@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Aleksandr Shubin <privatesub2@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Cheo Fusi <fusibrandon13@gmail.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v12 0/3] Add support for Allwinner PWM on D1/T113s/R329 SoCs
+Date: Sun, 27 Apr 2025 17:24:52 +0300
+Message-Id: <20250427142500.151925-1-privatesub2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,39 +102,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 27, 2025 at 12:41:34PM +0300, Andy Shevchenko wrote:
-> On Sat, Apr 26, 2025 at 11:15 PM Thomas Andreatta
-> <thomasandreatta2000@gmail.com> wrote:
-> >
-> > Corrected consistent spacing around '*' and braces positions
-> 
-> Missed period.
-> And what is the correct spacing and why?
+v2:
+ - fix dt-bindings
+ - fix a remark in the driver
 
-I agree that the spacing looks weird and I questioned it too, but the script
-checkpatch.pl highlights as error:
-`sh_css.c:336: ERROR: need consistent spacing around '*' (ctx:WxV)`
-`sh_css.c:338: ERROR: need consistent spacing around '*' (ctx:WxV)`
+v3:
+ - fix dt-bindings
+ - fix sunxi-d1s-t113.dtsi
 
-Should this be ignored because the script tries its best and it becomes common
-sense that the suggested spacing is "wrong"?
+v4:
+ - fix a remark in the driver
 
-> 
-> ...
-> 
-> >  static unsigned int get_crop_lines_for_bayer_order(const struct
-> > -       ia_css_stream_config *config);
-> > +       ia_css_stream_config * config);
-> >  static unsigned int get_crop_columns_for_bayer_order(const struct
-> > -       ia_css_stream_config *config);
-> > +       ia_css_stream_config * config);
-> 
-> No, this makes it the opposite. Please, read Coding Style if it sheds
-> a light on this. In any case the kernel style is to avoid spacing
-> between asterisk and name.
+v5:
+ - dropped unused varibale in the driver
+ - fix dt-bindings
 
-Understood. I'll resubmit with the correct spacing.
+v6:
+ - add apb0 clock
 
-Thanks,
-Thomas
+v7:
+ - fix a remark in the driver
+ - add maintainer
+
+v8:
+ - fix compile driver for 6.8-rc
+
+v9:
+ - fix a remark in the driver
+ - fix dt-bindings
+ - rename apb0 -> apb
+
+v10:
+ - fix a remark in the driver
+ - fix compile driver for 6.12-rc2
+
+v11:
+ - fix a remark in the driver
+ - fix compile driver for 6.14.0-rc2
+
+v12:
+ - fix a remark in the driver
+ - fix a remark in the dt-bindings
+ - check driver build on 6.15.0-rc3
+
+Aleksandr Shubin (3):
+  dt-bindings: pwm: Add binding for Allwinner D1/T113-S3/R329 PWM
+    controller
+  pwm: Add Allwinner's D1/T113-S3/R329 SoCs PWM support
+  riscv: dts: allwinner: d1: Add pwm node
+
+ .../bindings/pwm/allwinner,sun20i-pwm.yaml    |  84 ++++
+ .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    |  12 +
+ drivers/pwm/Kconfig                           |  10 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-sun20i.c                      | 379 ++++++++++++++++++
+ 5 files changed, 486 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+ create mode 100644 drivers/pwm/pwm-sun20i.c
+
+-- 
+2.25.1
+
 
