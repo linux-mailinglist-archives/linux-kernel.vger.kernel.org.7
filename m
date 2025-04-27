@@ -1,52 +1,64 @@
-Return-Path: <linux-kernel+bounces-622043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7392A9E25B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 12:06:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B00A9E258
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 12:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66871897DF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E941A189F269
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6F124A067;
-	Sun, 27 Apr 2025 10:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4D12512E2;
+	Sun, 27 Apr 2025 10:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KrV+/+4C"
-Received: from mail-m93197.xmail.ntesmail.com (mail-m93197.xmail.ntesmail.com [103.126.93.197])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PEg/uTS2"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899CD1A3145
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.126.93.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CF024889B
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 10:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745748409; cv=none; b=fsfoPEY8zxKIZBn/6ICEmr5FrhRUHNKoCKYOUQeTw6OnuWAeXNogXlnkM4Ml1JiTbh0uJ38rG9VwII4TmwbwrYCr3fhgq0TJJ5ewCtjoH9nYPoI09DKMkwZAxAxwxsRkBBWawtyyRuDmrnu05cFUBN/6wVtOxCbqTJBQ7Hky+MI=
+	t=1745748298; cv=none; b=QJ+nuS86piHphYaJVe+l8idd70cD6gCV6L7YruDwbmK+LuxamfGbbxy7l2UPyG/LHlhq8cvUEq52wZiugaufEYfSCh/mjHyv3zgjmBiT3pT1QtoEMm6S33v1duNLQnMqtGADVgfUgZS/BV1HrEh3XIFtD18JISae6qBzJjxiTYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745748409; c=relaxed/simple;
-	bh=asQztV10Eu4C1KXhcgwNRdm6QTg2lik5SZm7MbwcNuI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hSrBpdCzW50SMja4iEgMDCANLsAADUeAj1Fs1n3cj9NgmTXDIP9IIhYCjVZkzdzu8Tr0SncH40k3exTWf1/BIVkg1PkoXiDYf9LQpMeuB5Kc2WiTKvO1SaY7MK9d7dqMMI83bGLJk2phjCFvYRkYPpbGF8QASRkPwP6npl65d0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KrV+/+4C; arc=none smtp.client-ip=103.126.93.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from crj-HP.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 13467afd3;
-	Sun, 27 Apr 2025 17:51:26 +0800 (GMT+08:00)
-From: Algea Cao <algea.cao@rock-chips.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	heiko@sntech.de,
-	cristian.ciocaltea@collabora.com,
-	andy.yan@rock-chips.com
-Cc: linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Algea Cao <algea.cao@rock-chips.com>
-Subject: [PATCH v2] phy: phy-rockchip-samsung-hdptx: Fix PHY PLL output 50.25MHz error
-Date: Sun, 27 Apr 2025 17:51:24 +0800
-Message-ID: <20250427095124.3354439-1-algea.cao@rock-chips.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745748298; c=relaxed/simple;
+	bh=mydvLjJBnHeE5NSycpyqpNudDH9TuVuCg/ncb1LLdyA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PbeE7faJYyB2gbEP7RtfzFzd/pN8T5ERO2f3bk0XlWbhfCQctSHeggHCD/NGJx9DglSsMtSoJycTWED5oHY/wYqqb5BZ5YSb0kn27u82EpXgxgilPCq7al9UA4vMfdoFuEJ0zZWPwZYGpd9I72iJaCjZjZNUftXgIq+Sg22N+3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PEg/uTS2; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745748293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kbBrGSlttyJqDmbUGbneT8Q4Vin8RnOijYhB+MLIS+I=;
+	b=PEg/uTS2wvCSic3eeEgSsJTlL+SDg6uQF696X8jumoihxpQWBpM98gDOn5yDJrEoTxQeL7
+	AOyVjzXTVEkHr7ZXb6b8LvxWORoczRPrjgNV6MsQZix9A+bMWZAJSe5RieUox9DWjCrgGm
+	jDK9g1j+nFbGlsFqNylJyku53PjXSQo=
+From: Ye Liu <ye.liu@linux.dev>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	rppt@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	david@redhat.com,
+	harry.yoo@oracle.com,
+	riel@surriel.com,
+	vbabka@suse.cz,
+	liuye@kylinos.cn,
+	ye.liu@linux.dev
+Subject: [PATCH 1/3] mm/io-mapping: precompute remap protection flags for clarity
+Date: Sun, 27 Apr 2025 18:04:40 +0800
+Message-Id: <20250427100442.958352-2-ye.liu@linux.dev>
+In-Reply-To: <20250427100442.958352-1-ye.liu@linux.dev>
+References: <20250427100442.958352-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,55 +66,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhoeHlZCQkoeQh1OGExOHRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9676a8a62a09dakunm13467afd3
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ohw6TAw5EDJKNzAjIiEXAg88
-	IR4wFE5VSlVKTE9OTE9MT0NMSUNMVTMWGhIXVRoXHB4aVRgaFDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlJSEg3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=KrV+/+4CPUARt4u7JXOYH09ZtCg74JjPajJcsbOdnLlHIU6yfpJARmdeDu3KozYLYmuQKiI1t1YmH9sjIf+oQ9Ahi9Jkw9SngZpIOvbLyE4kPq3/jojUMZA82LpTUlQ854nhYhE73BThCJqbG1Am1I2zSLCezAdhfbqs5dkvyq0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=SoYz/XFXV7qWYJpDDDScC20wyuaAqrciDeZizEc1w4E=;
-	h=date:mime-version:subject:message-id:from;
+X-Migadu-Flow: FLOW_OUT
 
-When using HDMI PLL frequency division coefficient at 50.25MHz
-that is calculated by rk_hdptx_phy_clk_pll_calc(), it fails to
-get PHY LANE lock. Although the calculated values are within the
-allowable range of PHY PLL configuration.
+From: Ye Liu <liuye@kylinos.cn>
 
-In order to fix the PHY LANE lock error and provide the expected
-50.25MHz output, manually compute the required PHY PLL frequency
-division coefficient and add it to ropll_tmds_cfg configuration
-table.
+In io_mapping_map_user(), precompute the page protection flags in a local
+variable before calling remap_pfn_range_notrack().
 
-Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+No functional change.
 
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
 ---
+ mm/io-mapping.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Changes in v2:
-- Modify some descriptions in commit message.
----
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index fe7c05748356..77236f012a1f 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -476,6 +476,8 @@ static const struct ropll_config ropll_tmds_cfg[] = {
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
- 	{ 650000, 162, 162, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 54, 0, 16, 4, 1,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
-+	{ 502500, 84, 84, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 11, 1, 4, 5,
-+	  4, 11, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
- 	{ 337500, 0x70, 0x70, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 0x2, 0, 0x01, 5,
- 	  1, 1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
- 	{ 400000, 100, 100, 1, 1, 11, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
+diff --git a/mm/io-mapping.c b/mm/io-mapping.c
+index 01b362799930..f44a6a134712 100644
+--- a/mm/io-mapping.c
++++ b/mm/io-mapping.c
+@@ -21,9 +21,10 @@ int io_mapping_map_user(struct io_mapping *iomap, struct vm_area_struct *vma,
+ 	if (WARN_ON_ONCE((vma->vm_flags & expected_flags) != expected_flags))
+ 		return -EINVAL;
+ 
++	pgprot_t remap_prot = __pgprot((pgprot_val(iomap->prot) & _PAGE_CACHE_MASK) |
++				       (pgprot_val(vma->vm_page_prot) & ~_PAGE_CACHE_MASK));
++
+ 	/* We rely on prevalidation of the io-mapping to skip track_pfn(). */
+-	return remap_pfn_range_notrack(vma, addr, pfn, size,
+-		__pgprot((pgprot_val(iomap->prot) & _PAGE_CACHE_MASK) |
+-			 (pgprot_val(vma->vm_page_prot) & ~_PAGE_CACHE_MASK)));
++	return remap_pfn_range_notrack(vma, addr, pfn, size, remap_prot);
+ }
+ EXPORT_SYMBOL_GPL(io_mapping_map_user);
 -- 
-2.43.0
+2.25.1
 
 
