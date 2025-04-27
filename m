@@ -1,92 +1,50 @@
-Return-Path: <linux-kernel+bounces-621848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37CEA9DF3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:05:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21854A9DF3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2592217D5E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:05:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CBB57B035F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4AB2367A4;
-	Sun, 27 Apr 2025 06:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D6E229B2C;
+	Sun, 27 Apr 2025 06:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nHd7jJ3x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ngHWs4m7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD34279F2;
-	Sun, 27 Apr 2025 06:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD82610D;
+	Sun, 27 Apr 2025 06:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745733924; cv=none; b=ob0+vUdMO17UAigq/rB/P/3zoza5lTNrQFnqp3xxBqn7eUckkhAr7ctgoy3igk/Bs9u2tjUkE1x2ATr5CgRsEWGkZIP/v3KYSZv5dNYFoJ4N5bteDnA70itGsNDt7151TnLedGW9VcYTS52uHpAmZEF48PCN7PMNt6zOJKglLc4=
+	t=1745734017; cv=none; b=JAQ3twaaO/NFOmJc6sep5tVDZHdWnJgoVO/WsMtWEjnd9qZeLAWJbyvoHg6dlmMRxIWQMM/Dmfog4p3GSUVP8XE4JO8UILT0/ixmNLlQg2TEJXCXqjneGb99X0d5Gp5PcdUDyO4JgbDzwBfsd+uKWeCzj0+INTpHYN4UkZljUm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745733924; c=relaxed/simple;
-	bh=ZldK3+fSlzSjRsOdQzFFyxV4omaUhKTuFH+wBprq+/w=;
+	s=arc-20240116; t=1745734017; c=relaxed/simple;
+	bh=/BefJrHXQrl1hSUikz9IN8Tj0wJJFiqZM1aPZqAb06w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p/PEc0ihH+gh+JAZMce0H8qeDnxY8Fid4hDkn5T/cNqJcef9lFnfhH+oNw0ypz1Wh+zriBfl8wx8LEO/2nxHXgbxBt/AKPQVAb9wYTI9kQafpoJLH9WkcwecCHTFmXwNaEGrBiitXpGYHEVrVEqWgJMF5jBFAESX5xk7MH1Ys2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nHd7jJ3x; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745733922; x=1777269922;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZldK3+fSlzSjRsOdQzFFyxV4omaUhKTuFH+wBprq+/w=;
-  b=nHd7jJ3xh+vh/iD5R5F5hNAsH5WQshmbLagXe1YxsIvP+t6SZnwEKR6G
-   8Fos7BLjm912xG+wf97xi/AhIb2AMZ6rYvh44tlPiuk4Wd2YKrfXDaFBo
-   rhLsSZNbt5oHwuMqCTVHZUqBMUyOp84URwdWVwT9I5JWBeZtHRbWgw7PB
-   DP4BLguoT7qGJKCHlqVpUL36VzR40JcZ/KuxkZTs37452L1zAXU3fm7g2
-   h5dy1DvZcyZntr+OKz40sUPxn9jp1Naqx6cPM/yoKA8DGmxKahdtRqfR2
-   iJMOKxbQbazuWV3ZEpJMXbmMudOAZejotyHnQj2Na5S87mcBRaEV6F/Y0
-   A==;
-X-CSE-ConnectionGUID: uCMwUXDuRZqwCXIccuukyA==
-X-CSE-MsgGUID: Gx/hY6jCTdWH9YMEQrx6rw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="58706655"
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="58706655"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 23:05:22 -0700
-X-CSE-ConnectionGUID: QYM4ZrilT4G7I63yKlDDFQ==
-X-CSE-MsgGUID: KSzi8iNSQUqg49j/SDdZVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="164295196"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Apr 2025 23:05:16 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u8v8b-00068j-2a;
-	Sun, 27 Apr 2025 06:05:13 +0000
-Date: Sun, 27 Apr 2025 14:04:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Kees Cook <kees@kernel.org>, Bill Wendling <morbo@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Petr Mladek <pmladek@suse.com>, David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>, Tamir Duberstein <tamird@gmail.com>,
-	Diego Vieira <diego.daniel.professional@gmail.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Mark Brown <broonie@kernel.org>, WangYuli <wangyuli@uniontech.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 2/3] lib/tests: Add randstruct KUnit test
-Message-ID: <202504271552.T3fbs0XC-lkp@intel.com>
-References: <20250427013836.877214-2-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HM6VZdYAtspu6mhuQUryMMm084nJ24utjSEVyRpyJoElweHQHnyUTRbE559kxSwcc25dfrnTGYG3wZXJvk/KDuSBNBsL5+oe0caWEGr12NR/NecRWQWGf9QuFlg3GNlkANatHJGRqTvIcKzM1zT3N3Uj/rx+HwbjJRqIQWuVbZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ngHWs4m7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD166C4CEEC;
+	Sun, 27 Apr 2025 06:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745734014;
+	bh=/BefJrHXQrl1hSUikz9IN8Tj0wJJFiqZM1aPZqAb06w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ngHWs4m75yPFowM6bPYL9XnX4rKAxw50jh9LKN10DEpOcJpw8KDzhDB4ozleJgweo
+	 vu4xywU5o2DFafJ7b5cWXQmn3vNXlParkZ4ItpAOok6DMmSLmnyKXQHCVWPWdAi8xw
+	 hk9JRmc3zX1WEQ6zlwi2FAgy+4mZx0UY0YxQEg0g=
+Date: Sun, 27 Apr 2025 08:05:14 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ariel Simulevski <ariel@simulevski.at>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Fix CamelCase and coding style
+ issues across driver
+Message-ID: <2025042759-smudgy-acetone-4994@gregkh>
+References: <20250426232032.193306-1-ariel@simulevski.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,64 +53,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250427013836.877214-2-kees@kernel.org>
+In-Reply-To: <20250426232032.193306-1-ariel@simulevski.at>
 
-Hi Kees,
+On Sun, Apr 27, 2025 at 01:20:01AM +0200, Ariel Simulevski wrote:
+> This is a resend of the patch with the correct CC to linux-staging@lists.linux.dev.
+> No changes to the patch itself.
+> 
+> This patch renames several functions and variables from CamelCase
+> to snake_case across the rtl8723bs driver, in accordance with the
+> Linux kernel coding style guidelines.
+> 
+> It also addresses various minor coding style warnings reported
+> by checkpatch.pl, including line length violations, missing spaces,
+> and other formatting cleanups.
+> 
+> No functional changes were made.
+> 
+> Signed-off-by: Ariel Simulevski <ariel@simulevski.at>
 
-kernel test robot noticed the following build warnings:
+Hi,
 
-[auto build test WARNING on kees/for-next/hardening]
-[also build test WARNING on linus/master v6.15-rc3 next-20250424]
-[cannot apply to akpm-mm/mm-nonmm-unstable soc/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kees-Cook/randstruct-gcc-plugin-Remove-bogus-void-member/20250427-093946
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-patch link:    https://lore.kernel.org/r/20250427013836.877214-2-kees%40kernel.org
-patch subject: [PATCH 2/3] lib/tests: Add randstruct KUnit test
-config: powerpc64-randconfig-002-20250427 (https://download.01.org/0day-ci/archive/20250427/202504271552.T3fbs0XC-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250427/202504271552.T3fbs0XC-lkp@intel.com/reproduce)
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504271552.T3fbs0XC-lkp@intel.com/
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-All warnings (new ones prefixed by >>):
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
->> lib/tests/randstruct_kunit.c:36:36: warning: '_Static_assert' with no message is a C2x extension [-Wc2x-extensions]
-      36 | _Static_assert(MEMBER_NAME_MAX == 8);
-         |                                    ^
-         |                                    , ""
-   1 warning generated.
+thanks,
 
-
-vim +/_Static_assert +36 lib/tests/randstruct_kunit.c
-
-    19	
-    20	#define DO_MANY_MEMBERS(macro, args...)	\
-    21		macro(a, args)			\
-    22		macro(b, args)			\
-    23		macro(c, args)			\
-    24		macro(d, args)			\
-    25		macro(e, args)			\
-    26		macro(f, args)			\
-    27		macro(g, args)			\
-    28		macro(h, args)
-    29	
-    30	#define do_enum(x, ignored)	MEMBER_NAME_ ## x,
-    31	enum randstruct_member_names {
-    32		DO_MANY_MEMBERS(do_enum)
-    33		MEMBER_NAME_MAX,
-    34	};
-    35	/* Make sure the macros are working: want 8 test members. */
-  > 36	_Static_assert(MEMBER_NAME_MAX == 8);
-    37	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+greg k-h's patch email bot
 
