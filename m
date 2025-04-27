@@ -1,43 +1,47 @@
-Return-Path: <linux-kernel+bounces-622267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543DFA9E512
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 00:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E93DA9E50F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 00:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE083B9333
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 22:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E491897C48
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 22:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CEE2063FC;
-	Sun, 27 Apr 2025 22:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE3C204C32;
+	Sun, 27 Apr 2025 22:50:19 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73771205E10;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA2FCA5A;
 	Sun, 27 Apr 2025 22:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745794220; cv=none; b=p86L7ggbAUHv+WXvQ5xBl7NaYgXhO8O166GGWFTKyX8XMFMLkQ2UxAIXPOMdxVvIIISST1GgCtweDmLfFCWn/5e3Yw8bIMZgiWQC+FoizHQ2uypsmdkqDyWU+utjZzJhsP1I5wOqoBJu9KTMhfW74Dg9Oh7JsImdm3GWpmY67HM=
+	t=1745794219; cv=none; b=Cu+z5AeMPsOPMd1l5T3S34gLE+FEVxIErlA/AFs8i5Ss53XSwdkiorD2NUWDiorJ85/+BfeiU8owLXb3sXPni/OK539zg2xBZxrLOyhMV8IvphBwY3wBo3aomgbvaILSgQIV9/8CA9LOq3b0sOsid0pKqykWAme29VZwR3HM47k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745794220; c=relaxed/simple;
-	bh=bIefR7abHqZ0OLFrE8m28DahUtmVjQc6Jqf2rjP4FkQ=;
+	s=arc-20240116; t=1745794219; c=relaxed/simple;
+	bh=5aEq1QPIGztKU2UH0UG2ljvohKb3aCC/THa7DUSt13w=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ewNKCi9xJM22U5gEX8/1QorH34wvImqQACK77Qxp5OgUxLnCk+hZ5MpQVqXUpIim/vtZ4TmeNoxr5UuJhe4tdAQlg4NhU3f49LdH1Hi1Vdx8RJ44rYO93xUpTv/kR1vNCH5GICMX2ytIInk8QfVAr4pWR7WOZzkVjMFTjDJ0BHE=
+	 MIME-Version:Content-Type; b=pXisqQihreVXC5KxH20EF7a/bOGV4UXxQ3BJ1sV24L7NTps3ubbKaQxkCZ8UqNmS5FJUNadQwd9jakRjCc3muFOJoukjlBnnfxOxstyXpId2A6OSHCdnJZNW2V2pz6txrPKu+VnQZbkrPV24t2y73zLpdAvth7YDWUmzl8q+y/g=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2002C4AF0B;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51DEC4AF0C;
 	Sun, 27 Apr 2025 22:50:18 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id C7643180F9E; Mon, 28 Apr 2025 00:50:16 +0200 (CEST)
+	id BC6C4180F9A; Mon, 28 Apr 2025 00:50:16 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, Jerry Lv <Jerry.Lv@axis.com>
-Cc: kernel@axis.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250415-foo-fix-v2-1-5b45a395e4cc@axis.com>
-References: <20250415-foo-fix-v2-1-5b45a395e4cc@axis.com>
-Subject: Re: [PATCH v4] power: supply: bq27xxx: Retrieve again when busy
-Message-Id: <174579421680.295785.5362050281749814568.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250307-reboot-mode-chars-v1-1-d83ff95da524@linaro.org>
+References: <20250307-reboot-mode-chars-v1-1-d83ff95da524@linaro.org>
+Subject: Re: [PATCH] power: reset: reboot-mode: better compatibility with
+ DT (replace ' ,/')
+Message-Id: <174579421676.295785.14214055614630227030.b4-ty@collabora.com>
 Date: Mon, 28 Apr 2025 00:50:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -46,26 +50,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 15 Apr 2025 11:40:47 +0800, Jerry Lv wrote:
-> Multiple applications may access the battery gauge at the same time, so
-> the gauge may be busy and EBUSY will be returned. The driver will set a
-> flag to record the EBUSY state, and this flag will be kept until the next
-> periodic update. When this flag is set, bq27xxx_battery_get_property()
-> will just return ENODEV until the flag is updated.
+On Fri, 07 Mar 2025 07:50:18 +0000, André Draszik wrote:
+> This driver's purpose is to parse boot modes described in DT, via key
+> (node name) / value pairs, and to match them to a reboot mode requested
+> by the kernel. Unfortunately, DT node names can not contain certain
+> characters, like space ' ' or comma ',' or slash '/', while the
+> requested reboot mode may.
 > 
-> Even if the gauge was busy during the last accessing attempt, returning
-> ENODEV is not ideal, and can cause confusion in the applications layer.
+> This is a problem because it makes it impossible to match reboot modes
+> containing any of those characters.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] power: supply: bq27xxx: Retrieve again when busy
-      commit: f16d9fb6cf03fdbdefa41a8b32ba1e57afb7ae3d
+[1/1] power: reset: reboot-mode: better compatibility with DT (replace ' ,/')
+      commit: ca3d2ea52314286dda597f03b07ed759c5798fba
 
 Best regards,
 -- 
