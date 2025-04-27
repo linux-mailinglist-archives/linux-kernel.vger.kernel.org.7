@@ -1,110 +1,192 @@
-Return-Path: <linux-kernel+bounces-621904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCEFA9E01C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:00:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637A4A9E025
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20534189931F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F8E5A12FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E038F245027;
-	Sun, 27 Apr 2025 06:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB2C247291;
+	Sun, 27 Apr 2025 07:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IiuJCj6s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="it74CA05"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8DD1CAA4;
-	Sun, 27 Apr 2025 06:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213342459C7;
+	Sun, 27 Apr 2025 07:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745737199; cv=none; b=HQgNFqFVWobKKU1BYhjjEWkFIQC/6/z1RCIiPjLlnwx5jS5pHBWoEind7YNpPrybH14Z4JZYyhchTlRRdJSurnOw9nfVzvY34rMxhoo3WW+uyebVFlOcAHa+PL3sv5c0exl4VP2SKjECUunFm3foiIaPHJydHSJt+fL/F9p1rzQ=
+	t=1745737362; cv=none; b=OLBIfxddtAVD5TX3Zr8rRl6CqvKNpyF2Ko03eYDbE5jRv2CF5n6tRMyD9qebkejbfiYymR4kHIzqs6WohICebCpyN4WkhJJy1pQuAnlOlwUQYQdwtqBPFnewwvv3EA4O9E2OamiROziQNNVHm2iJJ77kgkyAGyYJzGO3+NhZkEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745737199; c=relaxed/simple;
-	bh=WPVNiPXysA+ZKbcBuVxOUqy7B0r28vdmFSIesJvE8b0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLbKQrx67SoIDSBdOVlcGo0luYt3ruX+cC+y4eJtRKB02/hIJAtfTOAroC8mAT4SjI8XxLK6J5mkU4Bfb4Wd9idDhxkoCvvqMrJx4qE5SWryoAGH2GaO/zUYP+ZJHeLDHmUb0foZw4/gX/99k3ntSmKgfJA4w+uNKKGuV9GtObU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IiuJCj6s; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745737197; x=1777273197;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WPVNiPXysA+ZKbcBuVxOUqy7B0r28vdmFSIesJvE8b0=;
-  b=IiuJCj6sUEdUdqrXmghiZw5SNqOZF8xqpg5/DwJ89XH4mR42KWCOGlws
-   R9Z+4yF4mFTBsHvzQXDRtcxFXwNJ4lor9cSrswJyh6/np+zSLsao0wZNE
-   MgvvlAX8X4mKkLVafjFI5GGrQHLdydUF7mxGeR0pAomd/WlP7kSplt6j5
-   JPS8HoLT49IGjEVD9sO57qrQOWy4OSAL/TCASwtFYotlZkKUnvXcnpRrM
-   XhbJepYa26l7bW4X8sZqGklMqXuvv76U5oj9eefo5c4Gu3oCxPMZh8ot8
-   FH9gtV0+097gpSs7ayfjSeMVBsf/UJv7SoEFtFxKXE7m1QcC/lVPRbb4s
-   w==;
-X-CSE-ConnectionGUID: HkDl3RIyTlmjIwFnB7sf+g==
-X-CSE-MsgGUID: BFEFsiaZRwOxoqNxwc1Tjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="47230524"
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="47230524"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 23:59:56 -0700
-X-CSE-ConnectionGUID: d1ZTnjH0RQyh27Uc3LKjrw==
-X-CSE-MsgGUID: v/r5yexURzibspAZ8Nkryw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
-   d="scan'208";a="138394240"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2025 23:59:49 -0700
-Message-ID: <9737606f-d3af-4c20-b1ce-7c705a7c8590@linux.intel.com>
-Date: Sun, 27 Apr 2025 14:55:40 +0800
+	s=arc-20240116; t=1745737362; c=relaxed/simple;
+	bh=47kLZPUut9WWbTSbHi4nhZs1+KsdMSLZkdH9lfl+YFg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PhVgYxiQzD3N0n/fEWIpJ6csXkJRHZDkTAZBwUQqEVP57TaTtAz83ew/h1Y/CU4VMNquiNzCxyRpJmfwD4gyUmeTgnpLwmHl6ZJJli3+/od6ghwwbnWNo2Qe/rGtpxbQxYtpCEtti2sSV/dvJ0bDHI3CYH6neKf4RBBpVv/bh/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=it74CA05; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53QGM3pA012252;
+	Sun, 27 Apr 2025 07:02:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+MAEcSEhI4YhkGLSQlz6Ty
+	WqjuuATG51QHsdhzGFtUk=; b=it74CA05hGNLRsSfc259A/n1+G9swQxYOq/WwY
+	zYx7iZOZulQ0iCYlKKOChZRoN/2VKcNXUwg3iZtGPVMsYPmqUyIrQkmyp0840Gsx
+	leTzyDmqqx+PQyru8w0rio8AaxC4fiwB06Z6yMo0IFbAMDL+oPLOKOAjRIe7GJQB
+	5/YQ6pZDsoS25PgvkFiAwIDy9UVKzaNAq+j5/s6YO0DdvQ6irvEsm3N4SSEptcBp
+	PvS3bnaKRbPo+ItuuolWDR9TGGlY2aXsUwSr/USPfM+TRLEqWOdVVJzfR04JTgDk
+	ELwwr0UeR5vYluMd5fR3a1uSu4y8lo2Se4Gh10ZiyGSU02KQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468r8hk3x9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Apr 2025 07:02:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53R728xO008163
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Apr 2025 07:02:08 GMT
+Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 27 Apr 2025 00:02:02 -0700
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <quic_vikramsa@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 RFC/WIP 0/9] Add sa8775p camss support
+Date: Sun, 27 Apr 2025 12:31:26 +0530
+Message-ID: <20250427070135.884623-1-quic_vikramsa@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/22] iommufd: Add iommufd_struct_destroy to revert
- iommufd_viommu_alloc
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <3d8c60fe9f1cdaecd59ce3e395eb6ca029ca8ded.1745646960.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <3d8c60fe9f1cdaecd59ce3e395eb6ca029ca8ded.1745646960.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nyMFdmJsIaxmS-DB1eDskt_ZBIEyb0RN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI3MDA1NSBTYWx0ZWRfX01OGbWF16R5m UJMsHHgf2bMrhq/BXNBjK/v/1ZNWpOkuwl22+JfJlovu/wSutKMz2RfuAP1qfhARzHQUYnuCi/m df3aO0Oj3TGPwTepOO4TrtEABWIImf8QhmXCsxC+3Pmr5GyOZN+Qp+iUS6f5fCrWdvmingJllRh
+ oy4j67+nMHKy8TnjCqZUy6FbEtoRLYcLCCvrnnVeygM4SUhVSJcGDcYkI7HY8+cKrXLGyFnhLll lstbkoWqye0n1OQosb0B0l0PcR1RSXYAdaS0/fbFib5MKAwB9IOP7LK449dOnUInPFWiBMim6uU FjbjddBUYzNA+M5hhFqIMcNnqlz64fgio1IXXfjvnZK24uZdpXyUBJnhKuV/KkYwTWD9auPydMG
+ JNMWqFHCT0Tpmk18t2dKymZEQ/TbgEkqwOPTuz2Qnv2rR6o8ZXFs/aZ9/or2rFmib57ZhEgw
+X-Authority-Analysis: v=2.4 cv=cfzSrmDM c=1 sm=1 tr=0 ts=680dd671 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=4pAsuTqdjomlMBfRpP0A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: nyMFdmJsIaxmS-DB1eDskt_ZBIEyb0RN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-27_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504270055
 
-On 4/26/25 13:58, Nicolin Chen wrote:
-> An IOMMU driver that allocated a vIOMMU may want to revert the allocation,
-> if it encounters an internal error after the allocation. So, there needs a
-> destroy helper for drivers to use.
+From: Vikram Sharma <vikramsa@qti.qualcomm.com>
 
-A brief explanation or a small code snippet illustrating a typical
-allocation and potential abort scenario would be helpful.
+Posting these changes as RFC/WIP because there is some renaming done for
+existing files so that same files can be used for multiple vfe/csid
+version.
+ 
+SA8775P is a Qualcomm SoC. This series adds bindings and devicetree to bring
+up CSIPHY, TPG, CSID, VFE/RDI interfaces in SA8775P.
 
-> Move iommufd_object_abort() to the driver.c file and the public header, to
-> introduce common iommufd_struct_destroy() helper that will abort all kinds
-> of driver structures, not confined to iommufd_viommu but also the new ones
-> being added in the future.
-> 
-> Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+SA8775P provides
+- 2 x VFE, 3 RDI per VFE
+- 5 x VFE Lite, 6 RDI per VFE
+- 2 x CSID
+- 5 x CSID Lite
+- 3 x TPG
+- 4 x CSIPHY
+   
+Changes compared to v1:
+- Renaming camss-vfe-780.c to camss-vfe-gen2.c and camss-csid-780 to
+  camss-csid-gen3 to avoid code duplication for SA8775P.SA877P have csid
+  690 and vfe 690 which is almost same as csid/vfe 780 with very minor
+  change in register bitfield.
+- Restructure vfe and csid addition to reuse existing files.
+- Updated cisd-lite and vfe-lite interuppt names.
+- add enumeration changes as seprate patch. 
+- Update required fileds in bindings.
+- Link to v1:
+  DT: https://lore.kernel.org/linux-arm-msm/20250210155605.575367-1-quic_vikramsa@quicinc.com/
+  Driver: https://lore.kernel.org/linux-media/20250210162843.609337-1-quic_vikramsa@quicinc.com/
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Sanity check for these patches:
+- make CHECK_DTBS=y W=1 DT_SCHEMA_FILES=media/qcom,sa8775p-camss.yaml
+- make DT_CHECKER_FLAGS=-m W=1
+  DT_SCHEMA_FILES=media/qcom,sa8775p-camss.yaml dt_binding_check
+- checkpatch.pl
+- Smatch: make CHECK="smatch --full-path" M=drivers/media/platform/qcom/camss/
+- Sparse: make C=2 M=drivers/media/platform/qcom/camss/
+- make -j32 W=1
 
-Thanks,
-baolu
+We have tested this on qcs9100-ride board with 'Test Pattern Generator'
+TPG driver support will be posted in a follow up series.
+
+Tested with following commands:
+- media-ctl -d /dev/media0 --reset
+- yavta --no-query -w '0x009f0903 0' /dev/v4l-subdev0
+- media-ctl -d /dev/media0 -V '"msm_tpg0":0[fmt:SRGGB10/1920x1080
+  field:none]'
+- media-ctl -d /dev/media0 -V '"msm_csid0":0[fmt:SRGGB10/1920x1080
+  field:none]'
+- media-ctl -d /dev/media0 -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/1920x1080
+  field:none]'
+- media-ctl -d /dev/media0 -l '"msm_tpg0":1->"msm_csid0":0[1]'
+- media-ctl -d /dev/media0 -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+- yavta --no-query -w '0x009f0903 9' /dev/v4l-subdev0
+- yavta -B capture-mplane -n 5 -f SRGGB10P -s 1920x1080 /dev/video0
+  --capture=7
+
+Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+
+Vikram Sharma (9):
+  media: qcom: camss: add generic csid handling in csid gen3
+  media: qcom: camss: add generic vfe handling in vfe gen3
+  media: dt-bindings: Add qcom,sa8775p-camss
+  arm64: dts: qcom: sa8775p: Add support for camss
+  media: qcom: camss: Add sa8775p compatible
+  media: qcom: camss: Add support for CSIPHY 690
+  media: qcom: camss: Add support for CSID for sa8775p
+  media: qcom: camss: Add support for VFE 690
+  media: qcom: camss: Enumerate resources for SA8775P
+
+ .../bindings/media/qcom,sa8775p-camss.yaml    | 352 +++++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 187 +++++++
+ drivers/media/platform/qcom/camss/Makefile    |   4 +-
+ .../{camss-csid-780.c => camss-csid-gen3.c}   |  42 +-
+ .../{camss-csid-780.h => camss-csid-gen3.h}   |   9 +-
+ .../media/platform/qcom/camss/camss-csid.h    |   2 +-
+ .../qcom/camss/camss-csiphy-3ph-1-0.c         |  84 ++++
+ .../media/platform/qcom/camss/camss-csiphy.c  |   5 +
+ .../media/platform/qcom/camss/camss-csiphy.h  |   1 +
+ .../{camss-vfe-780.c => camss-vfe-gen3.c}     |   9 +-
+ drivers/media/platform/qcom/camss/camss-vfe.c |   5 +-
+ drivers/media/platform/qcom/camss/camss-vfe.h |   2 +-
+ drivers/media/platform/qcom/camss/camss.c     | 461 +++++++++++++++++-
+ drivers/media/platform/qcom/camss/camss.h     |   1 +
+ 14 files changed, 1130 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sa8775p-camss.yaml
+ rename drivers/media/platform/qcom/camss/{camss-csid-780.c => camss-csid-gen3.c} (87%)
+ rename drivers/media/platform/qcom/camss/{camss-csid-780.h => camss-csid-gen3.h} (84%)
+ rename drivers/media/platform/qcom/camss/{camss-vfe-780.c => camss-vfe-gen3.c} (95%)
+
+-- 
+2.25.1
+
 
