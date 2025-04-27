@@ -1,197 +1,108 @@
-Return-Path: <linux-kernel+bounces-621853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD197A9DF45
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC823A9DF49
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07DF617E48A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B251A802A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DD5236A73;
-	Sun, 27 Apr 2025 06:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F49A1F4701;
+	Sun, 27 Apr 2025 06:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXcMuJKp"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OLU5VAEw"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E732701C4;
-	Sun, 27 Apr 2025 06:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8810E5
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 06:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745734324; cv=none; b=F+FfAVPolBeG6BakC3sr23gsux12xOIW4HpBRKl9/6WkQVQ+yyR/jPENmie3vOY36bTXJ3IuuInh+cizOaWbg6dGYXPI/evYucXpHvq04b74YF1bAJZRlJrT9IEqwmTlR4XU3xWTWYESS7DW0SMUo0/NPd9CA0b3o7/QgQf+e1c=
+	t=1745734577; cv=none; b=K9sUDq/NuoknnKFjEmz4vmgLmd0b1hI6aB3LoGg/uI/LN6WOUbLldPYbZeK6LCnJ9pfTElIzAhY+1O9qzVKkrNUKgOTsYTqe/laBKoG9PT6/9mpyLtPrFk2TYVsRlTECKUeR4hTCHlKn8wFb8ZLenD3wk7SjgqMyL96QlThFWC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745734324; c=relaxed/simple;
-	bh=VJ4RUcTICTDuJcHkp0gBNaKOqNGjOfhieOfq27t17C8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y57SUaO/2T2k02bD9PYI/tINeXx1Bcg29bP5Bgubf7NLJ6JBFiuUBO8K4gCEWodo/27zNck3uFgqtTbuv3TgDH4GyzG+KhJNi0V4LxNIvXIMf9vocORgt3QmtPXqYNNw/mIH6ikJmdIcuHn3X6z2A4Z/+7rLWX7KAjeTVXZbaOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXcMuJKp; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac25d2b2354so530741466b.1;
-        Sat, 26 Apr 2025 23:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745734321; x=1746339121; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LO4JXf5cTqs00UnHvgohh5WutNknkaGRKbNuNR6fpi8=;
-        b=iXcMuJKpYBJ06P/QYht7unLWqNX9UjflDbMboMACuPgWu4xn9cwMYqFli3KMHaahjd
-         pJs8U807aO81fJFCez5NsP9qcw4F+e8JB6owkJbCHUEPpc/bioYJ9Lbaygh9PgPVjxeF
-         w0LVy9ARIEosP+0Cc8j2XnL93O5ZwSgCbuWMASN0IET7DfnvnCm0NoT2Xrw2zZFbcPq+
-         UqZeNUMq0cVGE2eLVd9S3uIJLO/QW0kM7XQmgxLau+BOjKHcHZrgDagbMGMIhs4iPSyc
-         71bM7XRjstQYgkVMGmXQA/QBxfJg0yxPWqdBW3mrnOlHgVsZB/drUBs/JkNppQinxHse
-         Lzpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745734321; x=1746339121;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LO4JXf5cTqs00UnHvgohh5WutNknkaGRKbNuNR6fpi8=;
-        b=reD3YjIWaFXngCk21zgSlcrKfNW5rUjuL6ThfIB4RzPhGDoz1/gd8FRQEo1FxakAcY
-         RNYknSN9VaEI0hHC3A60HxWThBNbFPGB8cBQYsHrJaXU75UvpHtf6nIJ0/8Uvo3Tq8IF
-         eMDXkUjl3WDemhQo2QmxxWV5Z+K8XpQtY0H95QWFsMqlbkbA6N8qjdXSkrrXzmUvZwO3
-         aWb5+7QectkcAys2elVQ7PX5W4Uon2MLe2QJxyw5Cpd05P2+SbucOJzE3liFSD6CaFez
-         oGlA8cdb6VAcizTzqFBcvXaMXY7A+E3g+qWZ+oUuLhCFBTiNTaM5VxjKSd3O1lX05V1y
-         NVFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBi4mYcHeurG3ky0IoXsg6lGOAt09/eVYTVsG21wSQbE1filnxUuRENciPUV0sW6y06ikDhhMa4AY4@vger.kernel.org, AJvYcCVo0qRTKaNP2AI0r5CL7WP0NtKKsQzF+zUjMvyEta0oSbHKjZsbJlWab0BS7Q7w2xncwoTL3j/ZRGg80LuQ@vger.kernel.org, AJvYcCXbehyquC6ne9eKplezVkf671zaPUnpARikFl7rv+rv0MgKieKpBTIr1nRh+5kxC27VwrM37h9kh2iASdivGuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy2wCDDVQ5sPdu8NQ68dcJlA/bvBfj/fCGxItxRYQ2oIpWM9Da
-	10x/C2HRwMBQsTjkPJ65jCg4pSj1gmPguRVCK8AsrJYMoZqV7ADH
-X-Gm-Gg: ASbGncvwfKdyJfgxub2DLlSv+ZsSh+lI74Si8mxEm8i0jNDstJakbN1oR4fy+CDDFfq
-	QYofbM72ysE9YIPqFOWxDHKTcW83WYBTEzLpy+yOdw/bPqvUDENCSMNnzXEIeO0Nnh1Y6DZAOQ+
-	PFVPjQrsxe2z1n6mQ2GqMy/mfxohqCzp7PUipE9KNY9Gpvhz1090Utyc4jNnHugLn4gpX8E8SN7
-	t1xIIkejCXXfPCXbqcp1KzwV1U9hE3FPM8C3fcSJ2rEqeXLVpHYOa9v7oigxPPiAGNn8QGet8Yf
-	sdOCLjwlz8qV7R+Xo9Cb3Xv67krydxTgLZ8o2hydRCJw8Led5enMN6Zlxw0nLuFKyQAMJ+qaDPe
-	C8+kotlNgZHlNXdmZ+9gyIS8PkpwXm5H693Dc0e1Lpr8wDTcKUQbdPtMgBfviVu0LCqAIew==
-X-Google-Smtp-Source: AGHT+IEfzv9CpQxDVb63vmsJ/XP4VJEPtd3lrJMA6/PsG+Frtp5xYHxxKh7hfaMm8xOM14z5aqiI0g==
-X-Received: by 2002:a17:907:6ea2:b0:acb:ba0f:4b12 with SMTP id a640c23a62f3a-ace7119b1bbmr755049566b.36.1745734320530;
-        Sat, 26 Apr 2025 23:12:00 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf1b:2a00:551b:171a:3f0:64b3? (p200300dfbf1b2a00551b171a03f064b3.dip0.t-ipconnect.de. [2003:df:bf1b:2a00:551b:171a:3f0:64b3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed65410sm389896466b.126.2025.04.26.23.11.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Apr 2025 23:12:00 -0700 (PDT)
-Message-ID: <0756503c-02e7-477a-9e89-e7d4881c8ce6@gmail.com>
-Date: Sun, 27 Apr 2025 08:11:58 +0200
+	s=arc-20240116; t=1745734577; c=relaxed/simple;
+	bh=uxnruMTEieBwjTHSvBt1nHOSf/Ie3aH8icaXsc0a7YU=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=ViJQviBD5JG9EDRW7Lj8dis8YTEkRFkfRPr/90ezh6hsHe0060cTobyvtPc+gGGOrqgkzs4DI68drG5Tadu79KcEv2sCHtcoQZvSHYnbwKoyEJ8BydJxf6CnU7k2JVqb3AvCHsaUQ+W7xRLmpQ0RKmegBuXHiZAzQfry1s46jeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OLU5VAEw; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1745734561; bh=JADm9sLhPOlgyvPadH5StISQzwN1fU2VLalMOuW/29E=;
+	h=From:To:Cc:Subject:Date;
+	b=OLU5VAEw6jKv8U49sYZS+RPazVMVmd+yfkrvp8zY6WN+8lVpXN+w7zxfZkKRKjuve
+	 c1UlNPA4mfYEP3cfUUqZknkvf1NQDR8zr4Wxk2IGqEE2S/DLIDIBG/jTuNHOnFQ9JW
+	 RQlAzVYm8q9DUV2M+YyPfy27r8s0sc9zADsYJhQU=
+Received: from localhost.localdomain ([36.111.64.85])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 3ABB3611; Sun, 27 Apr 2025 14:14:43 +0800
+X-QQ-mid: xmsmtpt1745734483tbxwd139x
+Message-ID: <tencent_C263C0783702591C464F887E3D3C496E6B08@qq.com>
+X-QQ-XMAILINFO: MC6m07AaSFhrE4NspI8KCHLkkt63Z7TSdkfNo7n1S6m43AQC6WRMV6VcttPzXd
+	 o9praB98wph5PNaXpQQj6gZpJutBLSEFOjaFna83oe3gHEOnWV0ZR+dbkh6N7noWWH1cGEFxvJ7t
+	 YVNxU0ccGIkaj3jXSj5GK9eRrufpzPBfa8lPxIcFSqV5//wIMPHRYUiRdpds5gkaiIqpFayJ3S7S
+	 A1nUtdUkzQj2ebMJURt5Vc54mJBUdYMb+seAqSmZelmcj6gyZ78iSN3ilbOonrAP0tCMdwh5bgXK
+	 P3BxxcCI6XgUEejPeh/1BBFQgiWUv4JdSPqGlJFYgQesmh6hOIbjr3nno/72sjMW/SWXacDxZCu0
+	 erOnTu8m4L8d/Z5ZJ4VppOC3+K0sT5aI8KPhiQozaccMYu8mSC73l6pTs8q8/KkqhjyItTGM8EJ0
+	 l9k4HSdfSMxtxIApDQZV0xd0YfNOQFHdm4I1DYxkvYHe84tq9JJLqZUZHRsk2kI/ZeYwHDEmaSy7
+	 OX2tFuAV5kpJOQ/tX0fp8V3WvFXDUcpFK9BFvQ3HrvDrSFSDc3vlvhu8T4P8VxlzD5OeH+Hp9Q1T
+	 OkzHrNLTJNqczMYnFacnQkhCg4n3ylInbQUBH8hOyC/qYKsnysFPBo59U2wcIccLKjV/Jbz0ZwHi
+	 mvZpMJ772Gz9QpHf+w8BcAF1sMfpDfwUfpam3Fb3esS64os5LYM+nFB2cqscRZfLmKLVK3Jig9Zi
+	 NkdjhEbao85LL9l1DB/iv770+Geb7OhUo/JRLfLypznhtx1qUSJwniGNqshfAfJhqVAAU+LsHhcL
+	 mXZbt1P5ajiqmp2/AzoWCh9HkBH2WTejsDxuB1du/PNOA8M+av+opbbWQevc7hBmyomcYTwGtuPl
+	 ppB0Pyms5s4ns5jlM6ZIDfGDAtRtj2FTnkTBRklX80TCPAGI4YZHxUjoNRmIazHWt4HSYBOB9l10
+	 RGwsW2DyjcvFtOw4u93kKZ1J/d8VsFeDGvTp3PJaARw+JPGPBHbwirNMnXuVMuBdgjbctfEBBI3x
+	 1GEGEQ11S7vgQYKcNmZrrFUJFUMEU82xDGV2hRN+DP4KkMiimc
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Feng Lee <379943137@qq.com>
+To: akpm@linux-foundation.org
+Cc: david@redhat.com,
+	ryan.roberts@arm.com,
+	libang.li@antgroup.com,
+	peterx@redhat.com,
+	maobibo@loongson.cn,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	anshuman.khandual@arm.com,
+	trivial@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Feng Lee <379943137@qq.com>
+Subject: [PATCH] mm: remove useless code
+Date: Sun, 27 Apr 2025 14:13:59 +0800
+X-OQ-MSGID: <20250427061359.2647-1-379943137@qq.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] rust: property: Introduce PropertyGuard
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Remo Senekowitsch <remo@buenzli.dev>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Dirk Behme
- <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20250425150130.13917-1-remo@buenzli.dev>
- <20250425150130.13917-4-remo@buenzli.dev> <aAuryiI0lY4qYyIt@pollux>
- <81a65d89-b3e1-4a52-b385-6c8544c76dd2@gmail.com> <aAyyR5LyhmGVNQpm@pollux>
-Content-Language: de-AT-frami, en-US
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <aAyyR5LyhmGVNQpm@pollux>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26.04.25 12:15, Danilo Krummrich wrote:
-> On Sat, Apr 26, 2025 at 08:19:09AM +0200, Dirk Behme wrote:
->> On 25.04.25 17:35, Danilo Krummrich wrote:
->>> On Fri, Apr 25, 2025 at 05:01:26PM +0200, Remo Senekowitsch wrote:
->>>> This abstraction is a way to force users to specify whether a property
->>>> is supposed to be required or not. This allows us to move error
->>>> logging of missing required properties into core, preventing a lot of
->>>> boilerplate in drivers.
->>>>
->>>> It will be used by upcoming methods for reading device properties.
->>>>
->>>> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
->>>> ---
->>>>  rust/kernel/device/property.rs | 57 ++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 57 insertions(+)
->>>>
->>>> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
->>>> index 28850aa3b..de31a1f56 100644
->>>> --- a/rust/kernel/device/property.rs
->>>> +++ b/rust/kernel/device/property.rs
->>>> @@ -146,3 +146,60 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->>>>          unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
->>>>      }
->>>>  }
->>>> +
->>>> +/// A helper for reading device properties.
->>>> +///
->>>> +/// Use [`Self::required`] if a missing property is considered a bug and
->>>> +/// [`Self::optional`] otherwise.
->>>> +///
->>>> +/// For convenience, [`Self::or`] and [`Self::or_default`] are provided.
->>>> +pub struct PropertyGuard<'fwnode, 'name, T> {
->>>> +    /// The result of reading the property.
->>>> +    inner: Result<T>,
->>>> +    /// The fwnode of the property, used for logging in the "required" case.
->>>> +    fwnode: &'fwnode FwNode,
->>>> +    /// The name of the property, used for logging in the "required" case.
->>>> +    name: &'name CStr,
->>>> +}
->>>> +
->>>> +impl<T> PropertyGuard<'_, '_, T> {
->>>> +    /// Access the property, indicating it is required.
->>>> +    ///
->>>> +    /// If the property is not present, the error is automatically logged. If a
->>>> +    /// missing property is not an error, use [`Self::optional`] instead.
->>>> +    pub fn required(self) -> Result<T> {
->>>> +        if self.inner.is_err() {
->>>> +            pr_err!(
->>>> +                "{}: property '{}' is missing\n",
->>>> +                self.fwnode.display_path(),
->>>> +                self.name
->>>> +            );
->>>
->>> Hm, we can't use the device pointer of the fwnode_handle, since it is not
->>> guaranteed to be valid, hence the pr_*() print...
->>>
->>> Anyways, I'm not sure we need to print here at all. If a driver wants to print
->>> that it is unhappy about a missing required property it can do so by itself, I
->>> think.
->>
->> Hmm, the driver said by using 'required' that it *is* required. So a
->> missing property is definitely an error here. Else it would have used
->> 'optional'. Which doesn't print in case the property is missing.
->>
->> If I remember correctly having 'required' and 'optional' is the result
->> of some discussion on Zulip. And one conclusion of that discussion was
->> to move checking & printing the error out of the individual drivers
->> into a central place to avoid this error checking & printing in each
->> and every driver. I think the idea is that the drivers just have to do
->> ...required()?; and that's it, then.
-> 
-> Yes, I get the idea.
-> 
-> If it'd be possible to use dev_err!() instead I wouldn't object in this specific
-> case. But this code is used by drivers from probe(), hence printing the error
-> without saying for which device it did occur is a bit pointless.
+Remove unused conditional macros.
 
-Thinking a little about this, yes, we don't know the device here. But:
-Does the device matter here? There is nothing wrong with the (unknown)
-device, no? What is wrong here is the firmware (node). It misses
-something. And this is exactly what the message tells: "There is an
-error due to the missing node 'name' in 'path', please fix it". That
-should be sufficient to identify the firmware/device tree description
-and fix it.
+Signed-off-by: Feng Lee <379943137@qq.com>
+---
+ include/linux/pgtable.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-I can still follow Rob's proposal on doing the printing in 'core' :)
-
-Thanks,
-
-Dirk
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index b50447ef1c92..47c5a54b7551 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1164,9 +1164,7 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
+ }
+ #endif
+ 
+-#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+ #define pgd_offset_gate(mm, addr)	pgd_offset(mm, addr)
+-#endif
+ 
+ #ifndef __HAVE_ARCH_MOVE_PTE
+ #define move_pte(pte, old_addr, new_addr)	(pte)
+-- 
+2.49.0
 
 
