@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-621977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168A7A9E117
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:41:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E936A9E138
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16E54633B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD2C5A74C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D7F24C067;
-	Sun, 27 Apr 2025 08:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5745B248865;
+	Sun, 27 Apr 2025 08:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AaxiIQj+"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IeWoDXkx"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA6C19048A;
-	Sun, 27 Apr 2025 08:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D6246326;
+	Sun, 27 Apr 2025 08:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745743281; cv=none; b=oZ/gkcG3my55bGe7NPoZ773Q2IPTc8ORnMMygMAhI4bOnckOLA7vm7gVtQ5miT5RMD61+IICR8fPpWZTQHmxatMI3fESQpCjWhY4ztRZYmiipEqnjNfGtZR7jaGxsGwzvVAO5ymKkW85CwrXbpV6kK4dQl7eiPDmmQh8PBZwV5A=
+	t=1745744119; cv=none; b=oqUjkKDMJL+aebN8bHNzAITBj7fLxb2+Vqlh1ynq/KcF+G5C8HNum5WkGvRwHgJpq57ui7QkKYIkG+8Jz/Sg8rcC7cyWNOv8/jOb7EPZWl8SC2RRnsHbPhV5npcyvAsqkaHMfPwPAD8xZRSfYzDPh1iYi3PvwX7FB+YU3GF1p1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745743281; c=relaxed/simple;
-	bh=6ttQTFlnLRk5umQOwmKH2yxEnh/cM8lnhIS1sNIMgwE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JnIwWUtcRDHqGztUa8VpQXHSYNMN8XvKgedWOoTa1JrjDy3d8aUQuEz0iTyhPYNG714m3/tn54rKoben02yfmy7a1HswAbuddXu8PefYJJWxJTNuRemVopTM+/KOf8A1bztpTc6ygUu+WqiyU9qjMw5oHY6bReN1DiO+Ua9ldh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=AaxiIQj+; arc=none smtp.client-ip=109.224.244.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1745743266; x=1746002466;
-	bh=EuMz3kZQGQn4bADul2EcojS+v3oCdcGvpvDdhtvlJVw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=AaxiIQj+sRwbNym/0B8oK8rQIsYn42qeTwKNTcAUbPIf8PbRUajZThVJPQzzV71xi
-	 zDFvOarPSExw3Elq+3Q5o9e8uRVxMCsIZ89UHEmTXLYvwP+Nlx0X8j+GfNmAWk9Zp+
-	 YsTqUGaWYqocGnjGjycMmMqHxX4T2QnKmo1CWs0v7HwAPlkbmWXRCLZhI7myhttxeG
-	 Tr3ZoBp/4YQ0nUfMf9gYZ31zxf2KyynwGevbhHzab1tUGc3RVdd3pdEwsJgZjVZdJU
-	 2D0wJtl2AAnwwjlfl3zVXP4Olxg81MYTGDsK//vYcB4stO9qBXPWXJ4Z59x9QZfXCf
-	 yClrqHjrGKtyA==
-Date: Sun, 27 Apr 2025 08:41:02 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com, joelagnelf@nvidia.com, ttabi@nvidia.com, acourbot@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rust: devres: implement Devres::access_with()
-Message-ID: <D9HAC6KW2GTG.ICOFCQX4A2U3@proton.me>
-In-Reply-To: <aA1O8Wem1FhyybF5@pollux>
-References: <D9GUR8Y08PQ6.2ULV6V4UJAGQB@proton.me> <aA1O8Wem1FhyybF5@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: bb8e0fa1479c64fc29feef18bdaa8bd6644ac35b
+	s=arc-20240116; t=1745744119; c=relaxed/simple;
+	bh=xoJ/+Kxws9hcyMvKoFMln5L5fp0JObvMuvDv3kAi3Ek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z32g/11iBW7YMo+XVO0q01ZM6B4byS5GvFgiCsCC+a/pN+GRnKsELzuP49Oz6GbLB5kfu35S8/8CaLn/Tnnu7yy91zIZ+ZzG4cTtFdnE6iUp/C+AyeWmCkY4AMW2/YU1mHnY5e92SbMrLOF/lT47hYrZ0E2xzsKVa6Mt4XvSOJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IeWoDXkx; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso619454666b.1;
+        Sun, 27 Apr 2025 01:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745744114; x=1746348914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xoJ/+Kxws9hcyMvKoFMln5L5fp0JObvMuvDv3kAi3Ek=;
+        b=IeWoDXkxbU9Gw1rmwdVgSyxIjUgzxokUKLbDAe+3cOHhuzX0nIGH2a+Z4M9BRwyW5G
+         nXWxzq//sJkIYUbHPDjpEEyFXiXM0TmJ6qyfppODkTWOxkp4VBLsvKZtlcGGbkPEpCsx
+         86sayopqnCzpayAr8J89GIem8bAIYQvKmfEaojBlq4AEvwGt+RY5GV76b6YLfANxF9Ef
+         iyXpxBpFg6/qu+9USOZcINJaJdoplxNvGBCc69ezaBku7T4v19Tt51Gcaz2XhICNUfBk
+         LeDvLqiZflxH0z8ts7TVF1H3CMpynLGOf/emE/mTiaLXrEXBg9peNa/CleBB3dir/uEM
+         2bqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745744114; x=1746348914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xoJ/+Kxws9hcyMvKoFMln5L5fp0JObvMuvDv3kAi3Ek=;
+        b=LAD2Uz+cnXsKuftT8aMB+wmDkjNaRPZPgjVCoL2AZ+8NhtVtK/NpK4Qao0ygIBmH3g
+         WIXThcAUcWfMaQ0+PjVARzxtlYF32UhbZqCXfN17aWmLdMW/gGIK5XDj7XQliuBNXi7w
+         NgDXYtcCHZjj7Vd+mshjBgqys9yTUwk5KuLyzxnXolFNbWfusUyYaazWopXk27DuI7sq
+         ZNNWG5R0XEOuy/1LXMzXa2n3ZnzjGzUIoB8HsCMN9LhL9fbb0gMbVCuHpYybOkO4evgd
+         5roKXILqQtlg07L1eosCNffXvuk6PXl5UXiCZs68MgbqAprIDwihD3KN7oj2ccLlIiWK
+         TjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU79OpvURDqawaRvAeLeT5/Mccw6wNan5Pw7R7qhF8UbC3UltyMgNPqVc7hZmEMcsSsJARX6+aiDfyg@vger.kernel.org, AJvYcCWQgDh5bgmNoTNsMVgu5gaujMK5q0s0lz0OYmm9TOJJhTQS2v1Peq0g48N1hyhQTemhdUVqUqf/km+Gsti6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQGmKTNKFaTq1RSOai+qt/lPoR/bcuDk5MbHtcz2sy0bIbxkgi
+	+ehqqmWDTdRaWA8tKB3WCDoGeVMJiXddEsi7fH9pBpWimo4qYy4dkb0/XbPyU94+gtsE6gPi2Fb
+	B/j4guzKtHJHwJJJl4OBIFZPcAGo=
+X-Gm-Gg: ASbGncuBl3cBQS6privUvzNX0PZqSrzWjWOFZylcNTne3Me5jqRsD2JIeSNBei3V0uU
+	GhyqjwdqPOrYtIjS21WJdeg0iBXNM5SbY7CsP5h1wrju6pbhYCQOsllZ7yPQJt8xZW3lwnYKSy1
+	PL1231b4qrCvz9NRPWleSbzdjM+SGBar7g
+X-Google-Smtp-Source: AGHT+IFWiy9LJ5L5w5vCuPgZqC4QHw+FesRweBH/UokuUi4+dKeIyxrTwPSebkoZVCO8QO4FAgsPsXoV5xqijAh9mxg=
+X-Received: by 2002:a17:907:3f0b:b0:ac6:f5aa:87f5 with SMTP id
+ a640c23a62f3a-ace710a20b7mr623326566b.14.1745744114072; Sun, 27 Apr 2025
+ 01:55:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250426231127.190090-1-ariel@simulevski.at>
+In-Reply-To: <20250426231127.190090-1-ariel@simulevski.at>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 27 Apr 2025 11:54:37 +0300
+X-Gm-Features: ATxdqUGWzCZoGHYF9n1Zc1OjBcvlWH4y0FKIuKAiyIfaBdwAYt6KFZzU8gWm-6Q
+Message-ID: <CAHp75VcAM0ca6E-wC7m-mkJ-LONweYesWdP7s4=kMCwYQPO4Lw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: alderlake: Add missing I2C2/I2C3/I2C4 pin definitions
+To: Ariel Simulevski <ariel@simulevski.at>
+Cc: mika.westerberg@linux.intel.com, andy@kernel.org, linus.walleij@linaro.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guido Trentalancia <guido2022@trentalancia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat Apr 26, 2025 at 11:24 PM CEST, Danilo Krummrich wrote:
-> On Sat, Apr 26, 2025 at 08:28:30PM +0000, Benno Lossin wrote:
->> On Sat Apr 26, 2025 at 3:30 PM CEST, Danilo Krummrich wrote:
->> > +    pub fn access_with<'s, 'd: 's>(&'s self, dev: &'d Device<Bound>) =
--> Result<&'s T> {
->>=20
->> I don't think that we need the `'d` lifetime here (if not, we should
->> remove it).
+On Sun, Apr 27, 2025 at 2:11=E2=80=AFAM Ariel Simulevski <ariel@simulevski.=
+at> wrote:
 >
-> If the returned reference out-lives dev it can become invalid, since it m=
-eans
-> that the device could subsequently be unbound. Hence, I think we indeed n=
-eed to
-> require that the returned reference cannot out-live dev.
+> The PixArt I2C touchpad (PIXA3848) found on several Alder Lake
+> laptops is not detected unless the Tiger Lake pinctrl driver is used.
+>
+> This patch adds missing I2C2, I2C3, and I2C4 pin definitions
+> to the Alder Lake pinctrl driver, based on Tiger Lake mappings,
+> with corrected pin numbering and proper community assignment.
 
-I meant the following signature:
+Thanks for the patch and report. Why can't the Tigerlake driver be used?
 
-    pub fn access_with<'a>(&'a self, dev: &'a Device<Bound>) -> Result<&'a =
-T>
-
-You don't need to specify the additional `'d` one, since lifetimes allow
-subtyping [1]. So if I have a `&'s self` and a `&'d Device<Bound>` and
-`'d: 's`, then I can supply those arguments to my suggested function and
-the compiler will shorten `'d` to be `'s` or whatever is correct in the
-context.
-
-[1]: https://doc.rust-lang.org/nomicon/subtyping.html#subtyping
-
----
-Cheers,
-Benno
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
