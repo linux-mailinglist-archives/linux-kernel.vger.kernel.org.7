@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-622077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1CF7A9E2C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 13:35:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3796FA9E2CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 13:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20FCB188A60B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:35:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9173B7A9ED0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C70241661;
-	Sun, 27 Apr 2025 11:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CVi/hRLo"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE0117A2F0
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 11:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632E62528E5;
+	Sun, 27 Apr 2025 11:35:45 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 46D9B250C14;
+	Sun, 27 Apr 2025 11:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745753738; cv=none; b=G9Bco7AZlhmrghFB8b0zcL/ZT+tmRjhZOKriwdzwcAZBHWqMdLb5dgKdC4EAd4S98Xdl6VfoNKdKW/qdI6+p3DXlv0ED1A9tNT6pu9i5vaVFeFe1b8X5MySl9+Pc+5h7GLtou4IpR5ib+DKcdqKsFfRxZAYV1igIP6MT4mVFNJ0=
+	t=1745753745; cv=none; b=B17vyKzwfZEcrWA4LymNtW8HjA33uF12TU5PyeNBVE2tln7DZR8fz6XXgMhivolVyx0ylsBK+pHNjeeIHoqweypBDEC5gntLZMtFIhMdyEznrG3aAED1MOQ4YqJJxAOTLoxccY9s5n2Syfkc2uh+z3BOLa3mWtbB4xpx9FTFkdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745753738; c=relaxed/simple;
-	bh=jmvndnXismTNZl16DZ1DIdluALOH15b+ESCZyIyPXO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDs/suWeJT8CHl4c8VoEwqOQfSmxnN7pODmTAHLNNkmgXOmLAF9FG0/aK5H3kFty3NyG2mTE7QX4ECr710hJPq8v3whucC7RtDFmKZh0vseTcwzT9kBsMP8BKvrvRwg4HYmK76drVlg9h8O9hGMEb+oBrZcQVW4squG76PIMZ/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CVi/hRLo; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745753722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hW4519CYvEA+gdkgAaMdE31EOuLdWmzDYGdg411anRE=;
-	b=CVi/hRLo9aiX4RAl4jdxPta5M5UJDDubLc3IsviJ3VPH2NBGChnmoyzijVL+ngINTZkWUN
-	1ddqYuTWLakyvmS5OIjp5CMID6b74yXmzEuns5csfTUg0zrXW//rckxpTN2pliTL4iFxuz
-	AeoTbyP6m0MCEETg3POpVxXZm076Jsg=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] MIPS: Fix MAX_REG_OFFSET
-Date: Sun, 27 Apr 2025 13:34:24 +0200
-Message-ID: <20250427113423.67040-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1745753745; c=relaxed/simple;
+	bh=4iic99CSTrCgezl0wafUvtYGM6RZbIUL1twLDdeoMSc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rOKNQVcjIXfY5M+ejkJ9QGXN3jSin42N31bpFWtcM0t1/8MsHVn1l+7wlfqgQhRON9vmfFtaETLB9Et1/C/FqXU0vMmLX1uvJ42rMWoBw2kSitgM772hdx4NgeM3I+/UmvdpYJ+5jaGspQFMLYFQP+m9TIePPguDcXCniJBPres=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 9115F6019643E;
+	Sun, 27 Apr 2025 19:35:37 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: jstultz@google.com,
+	tglx@linutronix.de,
+	sboyd@kernel.org
+Cc: Su Hui <suhui@nfschina.com>,
+	eahariha@linux.microsoft.com,
+	luiz.von.dentz@intel.com,
+	geert@linux-m68k.org,
+	anna-maria@linutronix.de,
+	ojeda@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 0/3] time: some cleanup for jiffies and alarmtimer
+Date: Sun, 27 Apr 2025 19:35:27 +0800
+Message-Id: <20250427113529.1473800-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +53,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Fix MAX_REG_OFFSET to point to the last register in 'pt_regs' and not to
-the marker itself, which could allow regs_get_register() to return an
-invalid offset.
+There are some small cleanup for jiffies.c and alarmtimer.c.
+Compile test only.
 
-Fixes: 40e084a506eb ("MIPS: Add uprobes support.")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Compile-tested only.
+v2:
+ - remove some guard() useages in patch 3.
 
-Changes in v2:
-- Fix MAX_REG_OFFSET as suggested by Maciej (thanks!)
-- Link to v1: https://lore.kernel.org/lkml/20250411090032.7844-1-thorsten.blum@linux.dev/
+v1:
+ - https://lore.kernel.org/all/20250424144819.24884-1-suhui@nfschina.com/
 
-Changes in v3:
-- Keep the marker and avoid using #ifdef by adjusting MAX_REG_OFFSET as
-  suggested by Thomas and Maciej
-- Link to v2: https://lore.kernel.org/lkml/20250417174712.69292-2-thorsten.blum@linux.dev/
----
- arch/mips/include/asm/ptrace.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Su Hui (3):
+  time/jiffies: change register_refined_jiffies() to void __init
+  alarmtimer: remove dead return value in clock2alarm()
+  alarmtimer: switch some spin_{lock,unlock}_irqsave() to guard()
 
-diff --git a/arch/mips/include/asm/ptrace.h b/arch/mips/include/asm/ptrace.h
-index 85fa9962266a..ef72c46b5568 100644
---- a/arch/mips/include/asm/ptrace.h
-+++ b/arch/mips/include/asm/ptrace.h
-@@ -65,7 +65,8 @@ static inline void instruction_pointer_set(struct pt_regs *regs,
- 
- /* Query offset/name of register from its name/offset */
- extern int regs_query_register_offset(const char *name);
--#define MAX_REG_OFFSET (offsetof(struct pt_regs, __last))
-+#define MAX_REG_OFFSET \
-+	(offsetof(struct pt_regs, __last) - sizeof(unsigned long))
- 
- /**
-  * regs_get_register() - get register value from its offset
+ include/linux/jiffies.h  |  2 +-
+ kernel/time/alarmtimer.c | 62 +++++++++++++++++-----------------------
+ kernel/time/jiffies.c    |  5 +---
+ 3 files changed, 28 insertions(+), 41 deletions(-)
+
 -- 
-2.49.0
+2.30.2
 
 
