@@ -1,357 +1,174 @@
-Return-Path: <linux-kernel+bounces-622122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DFAA9E343
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 15:16:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7ABA9E347
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 15:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE707189ADCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 13:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79883BAAEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 13:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857142C187;
-	Sun, 27 Apr 2025 13:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C91014EC5B;
+	Sun, 27 Apr 2025 13:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZWcwfo1C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ji8UYBzO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pMNJ8qqe"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C0B4431
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 13:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3035D4A35
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745759810; cv=none; b=uNLB84LWmqqc7inkmWnA+Unui44O4TmqYS0sUiQFh4IKd3zjGf1Qk6v+6nZtMicKhGogcq+DQOWmo+IUqtP42/K4zrZnWTvKEeH+DzXMO8NsqtQaP/OkPpwYL/rJ77Gd9HMzZiUxV35DVh59IaKOzZ49t82FWCbjo/F5Z1Wktq8=
+	t=1745760326; cv=none; b=BRTs88DiU2FYCaLdlH4kygBEDWwmN0600vnGeOgDUAm0OXLTRbRxjuSYzNRfM149vPDn4qrBg4BqKtqaWs5v7MkBfF5haMUmZlXwfz922M6rYjQtA+1Wrv+wbq96vRJehMJecgo6CshzR/ZkAyQuJf7bdBRyuFKLnWvCyCmYkHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745759810; c=relaxed/simple;
-	bh=zpbX1uMtfOi2J4AdPhR43Ca4FXYXOfxg45fsj7Hd8x4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9LssfyWh3B7HlRsL1pbsGtoTAERQCuxQbkk/PdGuYu1Krw8CKUao924QjOzmXcgVeXiAQVwFrPmRQZugpcQdWqLwFP1HEAoyWE8nuInVh9lSgl05xP0YaAr4o+B8eTYNlbXPLG4yvnIggTZFeM3ftCM1tnpf5H1j8NITdaXpr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZWcwfo1C; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745759807; x=1777295807;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zpbX1uMtfOi2J4AdPhR43Ca4FXYXOfxg45fsj7Hd8x4=;
-  b=ZWcwfo1CWvL+lrP85uyIPjv0VYNHwD3/6BopJw8v+meVvRuhKO4KHQb4
-   ZJoQF+DIJ2zYUGI3luR5MAwLJBMyZhRe9E6OB9n1LkJ99+V8nmze1PZns
-   JPH2SWWpgUa3tVr92dpJv52lHtTXeIobTrsvSK2R6ry+yApcqLNM0oSBT
-   nE9xmxp0N0wyLyr36YgrKAUt4Q+a8uD0anUfXHBjihsQifCl5wQM3owwO
-   KFveH6bKeOs4QVBpdwbD2a62yRWPHa/0S5p+8askUZ85cOkuQLhFUtdZw
-   U5Ri4qSd2Y+K0/9HGib4snlH730tQXZ86692m6Cs1TIGBlobbGD4rLZZa
-   g==;
-X-CSE-ConnectionGUID: yVcLY1AmQxmAul+SkyMNSQ==
-X-CSE-MsgGUID: ucwOGaCeSsqp4rYk5FWP+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="47245313"
-X-IronPort-AV: E=Sophos;i="6.15,244,1739865600"; 
-   d="scan'208";a="47245313"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 06:16:47 -0700
-X-CSE-ConnectionGUID: CKY2I5vPR/K8PTltUK0qNg==
-X-CSE-MsgGUID: 0MQVi9mpRPuTO1Koa414DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,244,1739865600"; 
-   d="scan'208";a="138457997"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 27 Apr 2025 06:16:44 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u91sA-0006Ir-0M;
-	Sun, 27 Apr 2025 13:16:42 +0000
-Date: Sun, 27 Apr 2025 21:16:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ariel Simulevski <ariel@simulevski.at>, gregkh@linuxfoundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Ariel Simulevski <ariel@simulevski.at>
-Subject: Re: [PATCH] staging: rtl8723bs: Fix CamelCase and coding style
- issues across driver
-Message-ID: <202504272023.zLKcAokT-lkp@intel.com>
-References: <20250426232032.193306-1-ariel@simulevski.at>
+	s=arc-20240116; t=1745760326; c=relaxed/simple;
+	bh=CgeL1cCRE9Ta8FXAWBI037iet+oYIAygSo5U4n9JJJQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=LzO1fiKu1eb5L6ZBhT4UYQiHgmJZ/1gIAcQPmlk78hzuwYzEZm3G8Nt0LXBUWwfUT2LQ2SuYTy8n1iAhUI66E2Yu0HvBoAZNj+fNuR/MwlB4Py3RbhwZ4iaGfm24XvS0AohG9BoX2FHK6xpU6tpbH5Wi6Z+xpLud5B+4hYV96TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ji8UYBzO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pMNJ8qqe; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 345AE1380159;
+	Sun, 27 Apr 2025 09:25:22 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Sun, 27 Apr 2025 09:25:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1745760322;
+	 x=1745846722; bh=rcRIwwGikN6rDFL8XQvl8eUL9IKcyXAXoLoaTF31pRE=; b=
+	ji8UYBzOvICDLf9fpCKIsb9LzcCvjC1nYyB77xrxzQWv5eP+e2Wra8/TrMsOsOQv
+	2HrbgZ86o0QF18nSXhGDAEPoVSsLMhs58A40fBb+VS51Y+rwZFEDlGbsnvAg13Fv
+	Qmb+3ZRbNZWfswT50q/3A5g0ojmPZx3P8vL0AGVQmLVoPyyCq3L4Al/pqQXC+Yo+
+	oLwIl+38FwHe22s64LwVrehIOQ3EYPf8neA0LBOB70U7ZAIg0xJmnxEy5KoxBjPF
+	nxi+0k3UDHUSDX1tsLV3dV2D6Rt02FLAAqQ0ByZCuUNs+XonBdfgJKPFas7g9d8B
+	dSLpRL4HpHk0et1YEqdp1Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1745760322; x=
+	1745846722; bh=rcRIwwGikN6rDFL8XQvl8eUL9IKcyXAXoLoaTF31pRE=; b=p
+	MNJ8qqe/h6wW7u+WICSImTekmwwgxS/BucapRnnhPUofEj6IWDjBGVQV3Mcw3UOc
+	AwaaQeAXiJ5jlPX+qT5GwJFAantkZL7+LpipA7PC2Wx6Aom1dOCdyO8RQV0oz5w5
+	V5KGV4Kz8DUhhEeGF+UHhAN6gxRfc17tVrE2AmkJU3mlqB28wZ5FIzp4WjXsGIlH
+	8uc/XmLIBwMHwkVBL6zrVDroBy56pxpEbhkOhQOzrSdT2/hdMYyw8twKbGN7el1D
+	pTRWlpBH47Cb3gQxc+D8NwTyka64EWMvivzC3ljrEXMggR81oMW99PNlppinpZJ0
+	eSbGbRYhBEo0f35BoSUPA==
+X-ME-Sender: <xms:QDAOaBfjyDbrjOq4KTgaAqG76tfcTDTOnfyQXgrGjCAU9ToSLQ3jCg>
+    <xme:QDAOaPN2uWKOyqxn3SmGnBQ7wVIpuxqr1K9NdFi1_YCCqWVTnrd_8s8LTZc-yih_E
+    bXjbJOfSCHVgwn11Hk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvheekudekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    udelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+    dprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
+    pegrlhgvgigrnhguvghrrdhushihshhkihhnsehinhhtvghlrdgtohhmpdhrtghpthhtoh
+    eprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepmhhinhhgoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
+X-ME-Proxy: <xmx:QDAOaKhPOgPU1cF7kXRj0K6BAV-NjYqPt2QC12cEFNKNXIZe45CaGg>
+    <xmx:QDAOaK9GKCccyIXPuB1h8Kf6b9dVf7RBSBdYEuul3tGFRfjrCQlnJA>
+    <xmx:QDAOaNsWPwNpJaqiq9ePfoQ5KndvyQyRCrxF3OLtM6a0kbHMnOLZfQ>
+    <xmx:QDAOaJEZMI136cXoIF5aYkZ7hn8NjHqwJWDMBmNR788DGx1BNTk9sg>
+    <xmx:QjAOaJ6NussH3fWrDag9b8dt8QSa-PFtZFBcVuJ8G-i4rKHsw1OehSpN>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 809422220073; Sun, 27 Apr 2025 09:25:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250426232032.193306-1-ariel@simulevski.at>
+X-ThreadId: T6ef4c78fde3bfaf8
+Date: Sun, 27 Apr 2025 15:24:59 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ingo Molnar" <mingo@kernel.org>
+Cc: "Arnd Bergmann" <arnd@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "Juergen Gross" <jgross@suse.com>,
+ "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+ "Alexander Usyskin" <alexander.usyskin@intel.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+ "Mike Rapoport" <rppt@kernel.org>, "Ard Biesheuvel" <ardb@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Message-Id: <0fc64201-03cc-4c3e-af86-7ef11c3505a0@app.fastmail.com>
+In-Reply-To: <aA0vft1cPuvzdZvJ@gmail.com>
+References: <20250425141740.734030-1-arnd@kernel.org>
+ <aAyiganPp_UsNlnZ@gmail.com>
+ <d2b0e71c-e79b-40d6-8693-3202cd894d66@app.fastmail.com>
+ <aA0vft1cPuvzdZvJ@gmail.com>
+Subject: Re: [PATCH] [RFC] x86/cpu: rework instruction set selection
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Ariel,
+On Sat, Apr 26, 2025, at 21:09, Ingo Molnar wrote:
+> * Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> CMOV is missing not just on old Socket 5/7 CPUs (Pentium MMX, AMD K6, 
+>> Cyrix MII) but also newer embedded Via C3, Geode GX and 
+>> Vortex86DX/MX/EX/DX2. The replacement Nehemiah (2003), GeodeLX (2005) 
+>> and Vortex86DX3/EX2 (2015!) have CMOV, but the old ones were sold 
+>> alongside them for years, and some of the 586-class Vortex86 products 
+>> are still commercially available.
+>
+> Very few (if any) of the commercially available products will run 
+> modern 6.16+ kernels, right?
 
-kernel test robot noticed the following build errors:
+No, at least not in absolute numbers. As far as I can tell, the RDC
+SoC family is the only one that is still around, after Quark, Geode
+and Eden were all discontinued around 2019.
 
-[auto build test ERROR on staging/staging-linus]
-[also build test ERROR on linus/master v6.15-rc3]
-[cannot apply to staging/staging-testing staging/staging-next next-20250424]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+There are multiple known RDC licensees (DM&P/Vortex86, xlichip) and
+probably a few more with custom chips. They lag behind Intel and AMD
+by about one patent expiration time, and maybe a decade behind Arm
+SoCs, so they only just arrived at quad-core SMP, LPDDR4, and SSSE3
+instructions and have announced upcoming 64-bit chips.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ariel-Simulevski/staging-rtl8723bs-Fix-CamelCase-and-coding-style-issues-across-driver/20250427-072220
-base:   staging/staging-linus
-patch link:    https://lore.kernel.org/r/20250426232032.193306-1-ariel%40simulevski.at
-patch subject: [PATCH] staging: rtl8723bs: Fix CamelCase and coding style issues across driver
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250427/202504272023.zLKcAokT-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250427/202504272023.zLKcAokT-lkp@intel.com/reproduce)
+They do have super-long support cycles, and there are a few markets
+that absolutely require kernel updates for many years, so I would
+still consider the 586-class embedded chips more relevant for future
+kernels than 30 year old PCs, and the 686-class embedded chips
+more relevant than 20 year old laptops.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504272023.zLKcAokT-lkp@intel.com/
+> Note that the real danger the 32-bit x86 kernel is going to be facing 
+> in 2-5 years is total removal due to lack of development interest, but 
+> I think we can support 686+ reasonably far into the future, and can 
+> keep it tested reasonably - while covering like 99%+ of the currently 
+> available 32-bit-only x86 products on the market. The fewer variants, 
+> the better.
 
-All error/warnings (new ones prefixed by >>):
+I agree that this is the endgame for x86-32 and that eventually
+the while thing will be remove, and every simplification helps, but
+I still don't think that removing 586 earlier helps enough to
+outweigh the cost here.
 
->> drivers/staging/rtl8723bs/core/rtw_ap.c:322:6: warning: no previous prototype for function 'add_ratid' [-Wmissing-prototypes]
-     322 | void add_ratid(struct adapter *padapter, struct sta_info *psta, u8 rssi_level)
-         |      ^
-   drivers/staging/rtl8723bs/core/rtw_ap.c:322:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     322 | void add_ratid(struct adapter *padapter, struct sta_info *psta, u8 rssi_level)
-         | ^
-         | static 
->> drivers/staging/rtl8723bs/core/rtw_ap.c:399:3: warning: '/*' within block comment [-Wcomment]
-     399 |                 /* prepare for add_ratid */
-         |                 ^
->> drivers/staging/rtl8723bs/core/rtw_ap.c:1219:52: error: use of undeclared identifier 'set_sta_key_cmd'; did you mean 'set_stakey_hdl'?
-    1219 |         init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, set_sta_key_cmd);
-         |                                                           ^~~~~~~~~~~~~~~
-         |                                                           set_stakey_hdl
-   drivers/staging/rtl8723bs/include/rtw_cmd.h:76:18: note: expanded from macro 'init_h2fwcmd_w_parm_no_rsp'
-      76 |         pcmd->cmdcode = code;\
-         |                         ^
-   drivers/staging/rtl8723bs/include/rtw_mlme_ext.h:646:4: note: 'set_stakey_hdl' declared here
-     646 | u8 set_stakey_hdl(struct adapter *padapter, u8 *pbuf);
-         |    ^
->> drivers/staging/rtl8723bs/core/rtw_ap.c:1278:18: error: use of undeclared identifier 'set_key_cmd'; did you mean 'setkey_hdl'?
-    1278 |         pcmd->cmdcode = set_key_cmd;
-         |                         ^~~~~~~~~~~
-         |                         setkey_hdl
-   drivers/staging/rtl8723bs/include/rtw_mlme_ext.h:645:4: note: 'setkey_hdl' declared here
-     645 | u8 setkey_hdl(struct adapter *padapter, u8 *pbuf);
-         |    ^
-   2 warnings and 2 errors generated.
---
->> drivers/staging/rtl8723bs/core/rtw_cmd.c:910:53: error: use of undeclared identifier 'set_sta_key_cmd'; did you mean 'set_stakey_hdl'?
-     910 |                 init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, set_sta_key_cmd);
-         |                                                                   ^~~~~~~~~~~~~~~
-         |                                                                   set_stakey_hdl
-   drivers/staging/rtl8723bs/include/rtw_cmd.h:76:18: note: expanded from macro 'init_h2fwcmd_w_parm_no_rsp'
-      76 |         pcmd->cmdcode = code;\
-         |                         ^
-   drivers/staging/rtl8723bs/include/rtw_mlme_ext.h:646:4: note: 'set_stakey_hdl' declared here
-     646 | u8 set_stakey_hdl(struct adapter *padapter, u8 *pbuf);
-         |    ^
-   drivers/staging/rtl8723bs/core/rtw_cmd.c:961:53: error: use of undeclared identifier 'set_sta_key_cmd'; did you mean 'set_stakey_hdl'?
-     961 |                 init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, set_sta_key_cmd);
-         |                                                                   ^~~~~~~~~~~~~~~
-         |                                                                   set_stakey_hdl
-   drivers/staging/rtl8723bs/include/rtw_cmd.h:76:18: note: expanded from macro 'init_h2fwcmd_w_parm_no_rsp'
-      76 |         pcmd->cmdcode = code;\
-         |                         ^
-   drivers/staging/rtl8723bs/include/rtw_mlme_ext.h:646:4: note: 'set_stakey_hdl' declared here
-     646 | u8 set_stakey_hdl(struct adapter *padapter, u8 *pbuf);
-         |    ^
-   2 errors generated.
---
->> drivers/staging/rtl8723bs/core/rtw_mlme.c:975:51: error: expected expression
-     975 |                 if (padapter->securitypriv.dot11_auth_algrthm ==.dot11_auth_algrthm_8021X) {
-         |                                                                 ^
-   drivers/staging/rtl8723bs/core/rtw_mlme.c:1299:49: error: expected expression
-    1299 |         if (adapter->securitypriv.dot11_auth_algrthm ==.dot11_auth_algrthm_8021X)
-         |                                                        ^
-   drivers/staging/rtl8723bs/core/rtw_mlme.c:1857:42: error: expected expression
-    1857 |         if (psecuritypriv->dot11_auth_algrthm ==.dot11_auth_algrthm_8021X)
-         |                                                 ^
->> drivers/staging/rtl8723bs/core/rtw_mlme.c:1901:19: error: use of undeclared identifier 'set_key_cmd'; did you mean 'setkey_hdl'?
-    1901 |                 pcmd->cmdcode = set_key_cmd;
-         |                                 ^~~~~~~~~~~
-         |                                 setkey_hdl
-   drivers/staging/rtl8723bs/include/rtw_mlme_ext.h:645:4: note: 'setkey_hdl' declared here
-     645 | u8 setkey_hdl(struct adapter *padapter, u8 *pbuf);
-         |    ^
-   4 errors generated.
---
->> drivers/staging/rtl8723bs/core/rtw_pwrctrl.c:330:50: error: expected expression
-     330 |         if (padapter->securitypriv.dot11_auth_algrthm ==.dot11_auth_algrthm_8021X &&
-         |                                                         ^
-   1 error generated.
---
->> drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:21:2: error: use of undeclared identifier 'WLAN_CIPHER_SUITE__WEP40_'; did you mean 'WPA_CIPHER_SUITE__WEP40_'?
-      21 |         WLAN_CIPHER_SUITE__WEP40_,
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |         WPA_CIPHER_SUITE__WEP40_
-   drivers/staging/rtl8723bs/include/ieee80211.h:106:11: note: 'WPA_CIPHER_SUITE__WEP40_' declared here
-     106 | extern u8 WPA_CIPHER_SUITE__WEP40_[];
-         |           ^
->> drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:21:2: error: incompatible pointer to integer conversion initializing 'const u32' (aka 'const unsigned int') with an expression of type 'u8[]' (aka 'unsigned char[]') [-Wint-conversion]
-      21 |         WLAN_CIPHER_SUITE__WEP40_,
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:546:39: error: expected expression
-     546 |                         psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Auto;
-         |                                                            ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:616:42: error: expected expression
-     616 |         if (psecuritypriv->dot11_auth_algrthm ==.dot11_auth_algrthm_8021X && psta) { /*  psk/802_1x */
-         |                                                 ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:764:50: error: expected expression
-     764 |         if (padapter->securitypriv.dot11_auth_algrthm ==.dot11_auth_algrthm_8021X) { /*  802_1x */
-         |                                                         ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:858:7: error: use of undeclared identifier 'WLAN_CIPHER_SUITE__WEP40_'
-     858 |         case WLAN_CIPHER_SUITE__WEP40_:
-         |              ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1325:38: error: expected expression
-    1325 |                 psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Auto;
-         |                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1330:38: error: expected expression
-    1330 |                 psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Open;
-         |                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1333:39: error: expected expression
-    1333 |                         psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_8021X;
-         |                                                            ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1338:38: error: expected expression
-    1338 |                 psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Shared;
-         |                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1344:38: error: expected expression
-    1344 |                 psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Open;
-         |                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1369:7: error: use of undeclared identifier 'WLAN_CIPHER_SUITE__WEP40_'
-    1369 |         case WLAN_CIPHER_SUITE__WEP40_:
-         |              ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1403:38: error: expected expression
-    1403 |                 psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_8021X;
-         |                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1405:38: error: expected expression
-    1405 |                 psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_8021X;
-         |                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1448:47: error: expected expression
-    1448 |                         padapter->securitypriv.dot11_auth_algrthm =.dot11_auth_algrthm_8021X;
-         |                                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1457:47: error: expected expression
-    1457 |                         padapter->securitypriv.dot11_auth_algrthm =.dot11_auth_algrthm_8021X;
-         |                                                                    ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1580:37: error: expected expression
-    1580 |         psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Open; /* open system */
-         |                                            ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1676:37: error: expected expression
-    1676 |         psecuritypriv->dot11_auth_algrthm =.dot11_auth_algrthm_Open; /* open system */
-         |                                            ^
-   drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:1699:43: error: expected expression
-    1699 |         if ((psecuritypriv->dot11_auth_algrthm ==.dot11_auth_algrthm_Shared ||
-         |                                                  ^
-   19 errors generated.
---
->> drivers/staging/rtl8723bs/os_dep/mlme_linux.c:72:49: error: expected expression
-      72 |         if (adapter->securitypriv.dot11_auth_algrthm ==.dot11_auth_algrthm_8021X) {
-         |                                                        ^
-   drivers/staging/rtl8723bs/os_dep/mlme_linux.c:106:34: error: expected expression
-     106 |                 psec_priv->dot11_auth_algrthm =.dot11_auth_algrthm_Open;  /* open system */
-         |                                                ^
-   2 errors generated.
+The situation is similar on 32-bit Arm, where we currently support
+armv4, armv4t, armv5, armv6, armv6k, armv7, armv7ve and armv8-aarch32.
+Removing armv3 a few years ago helped a lot, removing the extremely
+rare armv6 will help as well, but there is little value in dropping
+CPU support for v4 and v4t as long as v5 is there, or v6k and v7
+as long as we have v7ve and v8-aarch32. My guess would be that we
+can remove armv4/v4t/v5 at the same time as i586/i686 and
+some other 32-bit targets, followed by armv7/v7ve/v8-aarch32
+much later.
 
-
-vim +1219 drivers/staging/rtl8723bs/core/rtw_ap.c
-
-  1198	
-  1199	u8 rtw_ap_set_pairwise_key(struct adapter *padapter, struct sta_info *psta)
-  1200	{
-  1201		struct cmd_obj *ph2c;
-  1202		struct set_stakey_parm	*psetstakey_para;
-  1203		struct cmd_priv *pcmdpriv = &padapter->cmdpriv;
-  1204		u8 res = _SUCCESS;
-  1205	
-  1206		ph2c = rtw_zmalloc(sizeof(struct cmd_obj));
-  1207		if (!ph2c) {
-  1208			res = _FAIL;
-  1209			goto exit;
-  1210		}
-  1211	
-  1212		psetstakey_para = rtw_zmalloc(sizeof(struct set_stakey_parm));
-  1213		if (!psetstakey_para) {
-  1214			kfree(ph2c);
-  1215			res = _FAIL;
-  1216			goto exit;
-  1217		}
-  1218	
-> 1219		init_h2fwcmd_w_parm_no_rsp(ph2c, psetstakey_para, set_sta_key_cmd);
-  1220	
-  1221		psetstakey_para->algorithm = (u8)psta->dot11_802_1x_privacy;
-  1222	
-  1223		memcpy(psetstakey_para->addr, psta->hwaddr, ETH_ALEN);
-  1224	
-  1225		memcpy(psetstakey_para->key, &psta->dot11_802_1x_uncst_key, 16);
-  1226	
-  1227		res = rtw_enqueue_cmd(pcmdpriv, ph2c);
-  1228	
-  1229	exit:
-  1230	
-  1231		return res;
-  1232	}
-  1233	
-  1234	static int rtw_ap_set_key(struct adapter *padapter, u8 *key, u8 alg, int keyid, u8 set_tx)
-  1235	{
-  1236		u8 keylen;
-  1237		struct cmd_obj *pcmd;
-  1238		struct setkey_parm *psetkeyparm;
-  1239		struct cmd_priv *pcmdpriv = &padapter->cmdpriv;
-  1240		int res = _SUCCESS;
-  1241	
-  1242		pcmd = rtw_zmalloc(sizeof(struct cmd_obj));
-  1243		if (!pcmd) {
-  1244			res = _FAIL;
-  1245			goto exit;
-  1246		}
-  1247		psetkeyparm = rtw_zmalloc(sizeof(struct setkey_parm));
-  1248		if (!psetkeyparm) {
-  1249			kfree(pcmd);
-  1250			res = _FAIL;
-  1251			goto exit;
-  1252		}
-  1253	
-  1254		psetkeyparm->keyid = (u8)keyid;
-  1255		if (is_wep_enc(alg))
-  1256			padapter->securitypriv.key_mask |= BIT(psetkeyparm->keyid);
-  1257	
-  1258		psetkeyparm->algorithm = alg;
-  1259	
-  1260		psetkeyparm->set_tx = set_tx;
-  1261	
-  1262		switch (alg) {
-  1263		case WEP_40:
-  1264			keylen = 5;
-  1265			break;
-  1266		case _WEP104_:
-  1267			keylen = 13;
-  1268			break;
-  1269		case _TKIP_:
-  1270		case _TKIP_WTMIC_:
-  1271		case _AES_:
-  1272		default:
-  1273			keylen = 16;
-  1274		}
-  1275	
-  1276		memcpy(&psetkeyparm->key[0], key, keylen);
-  1277	
-> 1278		pcmd->cmdcode = set_key_cmd;
-  1279		pcmd->parmbuf = (u8 *)psetkeyparm;
-  1280		pcmd->cmdsz =  (sizeof(struct setkey_parm));
-  1281		pcmd->rsp = NULL;
-  1282		pcmd->rspsz = 0;
-  1283	
-  1284		INIT_LIST_HEAD(&pcmd->list);
-  1285	
-  1286		res = rtw_enqueue_cmd(pcmdpriv, pcmd);
-  1287	
-  1288	exit:
-  1289	
-  1290		return res;
-  1291	}
-  1292	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+       Arnd
 
