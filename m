@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-621921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2547A9E062
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:25:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D95FA9E06B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07F63B46D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:25:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83CD97A9047
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C258246348;
-	Sun, 27 Apr 2025 07:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043222451C3;
+	Sun, 27 Apr 2025 07:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1xqE+mq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Is+oWpTV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823868BE7;
-	Sun, 27 Apr 2025 07:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B8D1DE3AC
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 07:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745738712; cv=none; b=m8A1ONpjtDWfN/06FtimLX3dQUc+seGSV4cjYLxQVMBr3T10zSz6OFjQoOxNo/vvC/XrBxC/VSFYdJYooEj1qdTGZdCYZN3CrKSgR54MQePw8lkspeS2n/Jnn/ZuLwa0lyrVnwE8mdxNfpDTLCqEjBGEkNq8nzuP/d7gQXe6Yaw=
+	t=1745738970; cv=none; b=Pum33gyZtYI7W9bVPm6s9HKLV1qdCdFuZ9PRPyR48M4vn3OvRa2e5acQThjwqnvWK5OIGuUwzuymlNbYbb0teYqutwhqg8UDlDlplviEjrIXgegQN4p6SBZDbUljd0fwjvhuJruuZ1+QiDYpp1mD/+rctY67UXflTsJ/BvLmBzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745738712; c=relaxed/simple;
-	bh=bERqNoVKbx4P/SwDDUOXyFXrxjwzNnYFUoDcCNKCVfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cje/cKoF1gV8pQ6CBVfcjehbzOMIoEQZAq5pRKC5DnsU0sjL+HkCw1AJ2j5bQTYwXwMbRQx64JkMHr+CcWJL8pOCh/7WtryWX/aZesAYAJdMRHKZ/YjOtGyq3Fj1m5c3cLNk95Cwpq1xI76PEdDKquujyhEuzRooHD6IzJX/PFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1xqE+mq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40495C4CEE3;
-	Sun, 27 Apr 2025 07:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745738712;
-	bh=bERqNoVKbx4P/SwDDUOXyFXrxjwzNnYFUoDcCNKCVfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O1xqE+mqwh8U+55fROspjUrKNzRVSIzJfDGM+Ls83njMJYStvF3kCZtrxDGnS8SVT
-	 FH2Y3/4QmPSaIrhVwSXIBJfNKQb2jOqg/0R9XOlNO+8e0XTTOVDsgTNzItS/cuPjFL
-	 PJCX+bYuGxOwMqFXAxDt9oJubodYIurQ+knbiSyXMkoJmOUGIl6AyOiN49LQkcuXwW
-	 lX4Zt8yUC+E7ZRN3ptmo7qa1Dn9p3RQqNw+5yoy5YM9m0zO7K7IBGHJkXHsUDSieM4
-	 qCQegX3jtiPkdIH87I9vQ2L9GafYOjlgT1bfZh8UZrFfu8pXhN2WP2XoeZGCszveQ5
-	 tJLYM5tBLk6AQ==
-Date: Sun, 27 Apr 2025 10:25:07 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v9 01/24] PCI/P2PDMA: Refactor the p2pdma mapping helpers
-Message-ID: <20250427072507.GB5848@unreal>
-References: <cover.1745394536.git.leon@kernel.org>
- <3a962f9039f0265de939f4c81924ee8208fc93a6.1745394536.git.leon@kernel.org>
- <aAwnJwLeOs7rfkHL@bombadil.infradead.org>
+	s=arc-20240116; t=1745738970; c=relaxed/simple;
+	bh=YmIdSq43KeqVX2RY3EWr0cE19/g+nxXYj6wkj+8bK7M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UB+gdYaGGBm9ujTKY/p63SmklOeTH877nsFubp2y8YgJ1ZlFsnCLXFFwt3vhMQlTzNnt589gQXSa/cqtMX/gqdJDbW6ITvWT8/pdJDL6F2AteF0KaFExHFiRDUBRpzYRYzLuFgYHMa26DhdfDvKtFaCsX7Yzw84y1p0d4+d1/BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Is+oWpTV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745738967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcGQpFTguItVa6CDu+q0byxuNxLDL/Np928mwDKp2zQ=;
+	b=Is+oWpTV6S7/aK/v/Ng3NVe5/7DfH8YuLnihzo7J5jXqu4OB6r8Z5/yAQ88foLmlx6iVeW
+	jJL2GN05tCzxgI0SVK0g/WFmiCUy1X09+ZeOoqUcBDh5JQLB+bTtaYi5NS36tSlziIYd4j
+	uMB1DSsn5unJ7x37W63KhwRcsxrChVo=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-TT62dsfcNpirg4YClsN7jw-1; Sun, 27 Apr 2025 03:29:25 -0400
+X-MC-Unique: TT62dsfcNpirg4YClsN7jw-1
+X-Mimecast-MFC-AGG-ID: TT62dsfcNpirg4YClsN7jw_1745738964
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so18142635e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 00:29:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745738964; x=1746343764;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wcGQpFTguItVa6CDu+q0byxuNxLDL/Np928mwDKp2zQ=;
+        b=mMy7chRj0B4HP6SLb3EU5TF1N9d50sjx1Zbiav2TgvX0wDYftkp61qOvb9l/EspPXp
+         P2ydbwH1deyJhLHODAfdhuFhad7qDK1cpOuJnLLlkBfs13AHBp9KpY1D51gfT01iFw0A
+         aJvxh8iCwUlGZruoLEU1NIu8SBpsw7FRL18lQzi84jVJurKFtVruz5y3YnyZKc5d4Uds
+         BOVm/FYMGfzfEQn7/WNUDOXsIGAUFXFKQnvyayT9UezAST7mLlGJY7gBUsWrx0eI+mzt
+         fQjOUHA/77XUqSRQ0+yOL5RkP1exqj5ngCy4Ebo4UbbA7zJuYVQwPrgwGwoN1e57I8Kx
+         dBJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSVRN4TUd6klSakIBxZknl7P4+0PsQFvg6eHLJB5wMBtPXGjwsm4umX+LvEALFPmQTIyctkgah/FGT0L4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx571ffbqCxZsNK+YxVhmqqAv4aPeX8ry+YnVo3s2xuFQMHsgXN
+	OAztuv+pjPiithYtNIKjkArt+UGzqBTZPxNJcGI82+T4BUlfGGRkMdRhdSxgBM7g939zLLRa4xD
+	WhCUFowU7KfTjpDkjABc6yGfYZ8Dr/Fjx/Vk8H0QHxN+SXqaO6YqqGMGD90iqEA==
+X-Gm-Gg: ASbGncuhLbdWqmWpufQgHwssFwT4PM475XCXG3Y5Al2CYb+hGCdF5W7R8IGfCxD/sZC
+	n61Go8DgCRjUhhudsvrt4i/XL8YWBOb0NtqufGYIeR+kjLmJxhSFWdRQX5ErPc0QTuj93rEgSiu
+	cgKO92pir2tR2RjPK+T2wKJUdKiyQwlQqa0EB9bFIREA81UHi0NaHJZkw0JJiSxi+twTTS3zn25
+	jg6MbYd3zbPzdeJtAgU46RiV0II+e5KrwpgcRC+Bj8rrL+IFv2K+mMlV6BchmJYodFQo4qS7KqP
+	9przDwcIvU0sRgXYZ34dxxAYpNQMnbvN6uIDb9zYjCr52MVob0YmRkL78tTylAVvt53AOQ==
+X-Received: by 2002:a05:600c:1e84:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-440a66b7b68mr66727295e9.29.1745738963930;
+        Sun, 27 Apr 2025 00:29:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHimZlDfyKX+dV1RunsI8DPPpzKCieKScXo5Xcy7H8gXFHsd947YK1+IzF4ivCFxFOjPMb/Zw==
+X-Received: by 2002:a05:600c:1e84:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-440a66b7b68mr66727125e9.29.1745738963562;
+        Sun, 27 Apr 2025 00:29:23 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4408d0a7802sm102831515e9.1.2025.04.27.00.29.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Apr 2025 00:29:22 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: drawat.floss@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, jfalempe@redhat.com, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH drm-next v2] drm/hyperv: Replace simple-KMS with regular
+ atomic helpers
+In-Reply-To: <CAHpthZqJPKtXUjFiVRLP+LEmTKFowUKVHGDe9=NS4aGx7WWcMA@mail.gmail.com>
+References: <20250425063234.757344-1-ryasuoka@redhat.com>
+ <87wmb8yani.fsf@minerva.mail-host-address-is-not-set>
+ <CAHpthZqJPKtXUjFiVRLP+LEmTKFowUKVHGDe9=NS4aGx7WWcMA@mail.gmail.com>
+Date: Sun, 27 Apr 2025 09:29:20 +0200
+Message-ID: <87selugizz.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAwnJwLeOs7rfkHL@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 05:21:59PM -0700, Luis Chamberlain wrote:
-> On Wed, Apr 23, 2025 at 11:12:52AM +0300, Leon Romanovsky wrote:
-> > From: Christoph Hellwig <hch@lst.de>
-> > 
-> > The current scheme with a single helper to determine the P2P status
-> > and map a scatterlist segment force users to always use the map_sg
-> > helper to DMA map, which we're trying to get away from because they
-> > are very cache inefficient.
-> > 
-> > Refactor the code so that there is a single helper that checks the P2P
-> > state for a page, including the result that it is not a P2P page to
-> > simplify the callers, and a second one to perform the address translation
-> > for a bus mapped P2P transfer that does not depend on the scatterlist
-> > structure.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Tested-by: Jens Axboe <axboe@kernel.dk>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Might make it easier for patch review to split off adding
-> __pci_p2pdma_update_state() in a seprate patch first.
+Ryosuke Yasuoka <ryasuoka@redhat.com> writes:
 
-Original code __pci_p2pdma_update_state() had this code and was
-dependent on SG, which we are removing in this patch.
+Hello Ryosuke,
 
-       if (state->map == PCI_P2PDMA_MAP_BUS_ADDR) {
-               sg->dma_address = sg_phys(sg) + state->bus_off;
-               sg_dma_len(sg) = sg->length;
-               sg_dma_mark_bus_address(sg);
-       }
+> Hi Javier,
+>
+> On Fri, Apr 25, 2025 at 4:15=E2=80=AFPM Javier Martinez Canillas
+> <javierm@redhat.com> wrote:
+>>
+>> Ryosuke Yasuoka <ryasuoka@redhat.com> writes:
+>>
+>> Hello Ryosuke,
+>>
+>> > Drop simple-KMS in favor of regular atomic helpers to make the code mo=
+re
+>> > modular. The simple-KMS helper mix up plane and CRTC state, so it is
+>> > obsolete and should go away [1]. Since it just split the simple-pipe
+>> > functions into per-plane and per-CRTC, no functional changes is
+>> > expected.
+>> >
+>> > [1] https://lore.kernel.org/lkml/dae5089d-e214-4518-b927-5c4149babad8@=
+suse.de/
+>> >
+>> > Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+>> >
+>>
+>>
+>>
+>> > -static void hyperv_pipe_enable(struct drm_simple_display_pipe *pipe,
+>> > -                            struct drm_crtc_state *crtc_state,
+>> > -                            struct drm_plane_state *plane_state)
+>> > +static const uint32_t hyperv_formats[] =3D {
+>> > +     DRM_FORMAT_XRGB8888,
+>> > +};
+>> > +
+>> > +static const uint64_t hyperv_modifiers[] =3D {
+>> > +     DRM_FORMAT_MOD_LINEAR,
+>> > +     DRM_FORMAT_MOD_INVALID
+>> > +};
+>> > +
+>>
+>> I think the kernel u32 and u64 types are preferred ?
+>
+> I'm not sure if I should fix this in this patch because I did not add the=
+se
+> variables. IMO, we need to split the commit if we fix them.
+>
 
-So to split, we would need to introduce new version of __pci_p2pdma_update_state(),
-rename existing one to something like __pci_p2pdma_update_state2() and
-remove it in next patch. Such pattern of adding and immediately deleting
-code is not welcomed.
+Right, I got confused for how the diff showed the changes. But I agree with
+you that should be a separate patch since the variables already exist.
 
-> Other than that, looks good.
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kenrel.org>
+[...]
 
-Thanks
+>>
+>> Acked-by: Javier Martinez Canillas <javierm@redhat.com>
+>
+> Thank you for your review and comment. I'll fix them and add your ack.
+>
 
-> 
->   Luis
+Thanks!
+
+> Best regards,
+> Ryosuke
+>
+
+--=20
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
