@@ -1,243 +1,95 @@
-Return-Path: <linux-kernel+bounces-621941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266DBA9E0AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:13:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74608A9E0B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CD11896A1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07512179CE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5DF248893;
-	Sun, 27 Apr 2025 08:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DED824BBE1;
+	Sun, 27 Apr 2025 08:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/Og4bFj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE5F8BE7;
-	Sun, 27 Apr 2025 08:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hWN+lRm/"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B74524A067;
+	Sun, 27 Apr 2025 08:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745741599; cv=none; b=AXt6OT6qujARVFBUhoLNMN/dYFlxEZzzwttgZhxSBucwfNf277IKW6h6yCOzuvTmIsOguwIIzc5KFjzDA+7c7NQFZyDno2r/Vw1wLepN8jPSsO0R9UQ93bJIhisBz5qeuKwcIoId4XtwsVyFuCcacODRZD1Bvqxz/lhLNTPx2bA=
+	t=1745741725; cv=none; b=IXG4Bhdw7VaOLYrY46OSfR7kmfxhVsDGfKSoVFqHKMZv3wGnozT5tYa9naYAfYok7cB1aOfnJlbmElmNZtjY2h0kGN7qtYMykNG3pQTK3kRQgov3T676jF8NVi/zEaOR2dUH7LOzQoFt5MRdoHmRtFcHOfowAiQ2g89/BWMv2JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745741599; c=relaxed/simple;
-	bh=n1LP0hWDAYYPPGoxCmhHUpx37KloYPiSW/LsrkJ+pog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ck3+Dr72d+ZWiBqQdru1YnbO9WYjNmjpoNDItlRUyQt7WjfQx9qakiZbJ3ORxYR2HaJZkkOAe8pTEHIxN2uIe6JGkDVtjh0w8w1tmxWOicCZLvs0Q88J24gMZSz2o3TxdTDGVQ42a7f4RVaAdMDkilu7jP5Gx8haG+QMu1fCn6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/Og4bFj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103DBC4CEE3;
-	Sun, 27 Apr 2025 08:13:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745741598;
-	bh=n1LP0hWDAYYPPGoxCmhHUpx37KloYPiSW/LsrkJ+pog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l/Og4bFjNyyLOyqiobd0OX+NlvlhiWMjlqCuR7bjQ3koqjqNsiHAbxhyy+n6EFWpx
-	 F0s02toBkpYSqLGr5zllGOwnm/YR+cBtijfhM7TVWEWRlqZZD7tdVQ2f1cr6H3j+vY
-	 /V4qD4omORMMjdDmZK0stm+5Mw4PJdjUhKlKsl6UBn8mYclrE4YOqm0/14yFLod31h
-	 ZCy3hMjY93C/oDHv0y2/amWuCxtPm2rAUMkBEU2/j5WJZJ36ZRGs00HmVVhJdNAAU3
-	 OAmjF5VOgM3oeArUzKcU+xI7P+9v0yugvVf2x9c6hhu7fKaqUTKAgYRmAQgjnW9EMm
-	 4KL9ASZVaAifQ==
-Date: Sun, 27 Apr 2025 11:13:12 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v9 07/24] dma-mapping: Implement link/unlink ranges API
-Message-ID: <20250427081312.GE5848@unreal>
-References: <cover.1745394536.git.leon@kernel.org>
- <2d6ca43ef8d26177d7674b9e3bdf0fe62b55a7ed.1745394536.git.leon@kernel.org>
- <aA1iRtCsPkuprI-X@bombadil.infradead.org>
+	s=arc-20240116; t=1745741725; c=relaxed/simple;
+	bh=Mn80SW3Km6lATD9DaG7Li6MT8pGTVqd9Ppo3rt/T/J8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nPQcAMB1GY7fwsdTDORXpzGYxH9KGcR028aLNsl9P6twQ+Rqt1RLXN1t+0tRb5MW1WIPp5DgT6v9EzeWN+3FmF48jPjV93cKUzuUxrVpLIVsfeUuYzOhadUqajwJk0UJ31cSHI5ry6gqE6ZFst+49x3eF2KZyc9DYhcttkhQ5/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hWN+lRm/; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Mn80S
+	W3Km6lATD9DaG7Li6MT8pGTVqd9Ppo3rt/T/J8=; b=hWN+lRm/M1Yd7f0H7CtQe
+	jz7I97H5IfTJ3Jt98EUx/PY+2YI5D+Edq8MEVls8BWGpYJgBVdpJtdGVS7t/Ac8q
+	gbxihVwQAyjqqdIdkrafvWnJWMHMxPMydLlhDbWNVeVBnNq1xr1VQ054DJCu2+i1
+	4wBiSR/HtX4uu7wPs5BOCg=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCXGBpd5w1ok9FMCw--.42436S4;
+	Sun, 27 Apr 2025 16:14:22 +0800 (CST)
+From: lvxiafei <xiafei_xupt@163.com>
+To: fw@strlen.de,
+	xiafei_xupt@163.com
+Cc: coreteam@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kadlec@netfilter.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com,
+	netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org
+Subject: Re: [PATCH V6] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
+Date: Sun, 27 Apr 2025 16:14:20 +0800
+Message-Id: <20250427081420.34163-1-xiafei_xupt@163.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250415090834.24882-1-xiafei_xupt@163.com>
+References: <20250415090834.24882-1-xiafei_xupt@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aA1iRtCsPkuprI-X@bombadil.infradead.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCXGBpd5w1ok9FMCw--.42436S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Wr4rCF1fXryUJry7Cr47CFg_yoW3KrXE9F
+	n2kas3t3W5Xay0gr47tr1fZw40q3y7Za48ArWFqrW7J34Svrn5XFs2kanIva1Sqay8GF4D
+	tF1DGrW2vw45ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7VUjtrc7UUUUU==
+X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/xtbBMRo8U2gN4WSBvQABsZ
 
-On Sat, Apr 26, 2025 at 03:46:30PM -0700, Luis Chamberlain wrote:
-> On Wed, Apr 23, 2025 at 11:12:58AM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Introduce new DMA APIs to perform DMA linkage of buffers
-> > in layers higher than DMA.
-> > 
-> > In proposed API, the callers will perform the following steps.
-> > In map path:
-> > 	if (dma_can_use_iova(...))
-> > 	    dma_iova_alloc()
-> > 	    for (page in range)
-> > 	       dma_iova_link_next(...)
-> > 	    dma_iova_sync(...)
-> > 	else
-> > 	     /* Fallback to legacy map pages */
-> >              for (all pages)
-> > 	       dma_map_page(...)
-> > 
-> > In unmap path:
-> > 	if (dma_can_use_iova(...))
-> > 	     dma_iova_destroy()
-> > 	else
-> > 	     for (all pages)
-> > 		dma_unmap_page(...)
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Tested-by: Jens Axboe <axboe@kernel.dk>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  drivers/iommu/dma-iommu.c   | 261 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/dma-mapping.h |  32 +++++
-> >  2 files changed, 293 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index d2c298083e0a..2e014db5a244 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -1818,6 +1818,267 @@ void dma_iova_free(struct device *dev, struct dma_iova_state *state)
-> >  }
-> >  EXPORT_SYMBOL_GPL(dma_iova_free);
-> >  
-> > +static int __dma_iova_link(struct device *dev, dma_addr_t addr,
-> > +		phys_addr_t phys, size_t size, enum dma_data_direction dir,
-> > +		unsigned long attrs)
-> > +{
-> > +	bool coherent = dev_is_dma_coherent(dev);
-> > +
-> > +	if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-> > +		arch_sync_dma_for_device(phys, size, dir);
-> 
-> So arch_sync_dma_for_device() is a no-op on some architectures, notably x86.
-> So since you're doing this work and given the above pattern is common on
-> the non iova case, we could save ourselves 2 branches checks on x86 on
-> __dma_iova_link() and also generalize savings for the non-iova case as
-> well. For the non-iova case we have two use cases, one with the attrs on
-> initial mapping, and one without on subsequent sync ops. For the iova
-> case the attr is always consistently used.
+Hello!
 
-I want to believe that compiler will discards these "if (!coherent &&
-!(attrs & DMA_ATTR_SKIP_CPU_SYNC)))" branch if case is empty.
+My name is Xiafei Lv, and I sent patch v6 on April 15, 2025. As of today, it
+has been nearly two weeks, and I have not received any feedback. However, the
+patch has been tested successfully, and you can view the details at this link:
+https://patchwork.kernel.org/project/netdevbpf/patch/20250415090834.24882-1-xiafei_xupt@163.com/
 
-> 
-> So we could just have something like this:
-> 
-> #ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> static inline void arch_sync_dma_device(struct device *dev,
->                                         phys_addr_t paddr, size_t size,
->                                         enum dma_data_direction dir)
-> {
->     if (!dev_is_dma_coherent(dev))
->         arch_sync_dma_for_device(paddr, size, dir);
-> }
-> 
-> static inline void arch_sync_dma_device_attrs(struct device *dev,
->                                               phys_addr_t paddr, size_t size,
->                                               enum dma_data_direction dir,
->                                               unsigned long attrs)
-> {
->     if (!dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
->         arch_sync_dma_for_device(paddr, size, dir);
-> }
-> #else
-> static inline void arch_sync_dma_device(struct device *dev,
->                                         phys_addr_t paddr, size_t size,
->                                         enum dma_data_direction dir)
-> {
-> }
-> 
-> static inline void arch_sync_dma_device_attrs(struct device *dev,
->                                               phys_addr_t paddr, size_t size,
->                                               enum dma_data_direction dir,
->                                               unsigned long attrs)
-> {
-> }
-> #endif
+I understand that kernel development is busy, and maintainers may have many
+things to deal with and may not have time to review my patch. With this in mind,
+I would like to politely ask what steps I should take next? If you have any
+questions about my patch or need additional information from me, please feel
+free to let me know and I will cooperate as soon as possible.
 
-The problem is that dev_is_dma_coherent() and DMA_ATTR_SKIP_CPU_SYNC
-checks are scattered over all dma-iommu.c file with different
-combinations. While we can do new static functions for small number of
-use cases, it will be half-solution.
+Thank you very much for taking the time to deal with my request, and I look
+forward to your response.
 
-> 
-> > +/**
-> > + * dma_iova_link - Link a range of IOVA space
-> > + * @dev: DMA device
-> > + * @state: IOVA state
-> > + * @phys: physical address to link
-> > + * @offset: offset into the IOVA state to map into
-> > + * @size: size of the buffer
-> > + * @dir: DMA direction
-> > + * @attrs: attributes of mapping properties
-> > + *
-> > + * Link a range of IOVA space for the given IOVA state without IOTLB sync.
-> > + * This function is used to link multiple physical addresses in contiguous
-> > + * IOVA space without performing costly IOTLB sync.
-> > + *
-> > + * The caller is responsible to call to dma_iova_sync() to sync IOTLB at
-> > + * the end of linkage.
-> > + */
-> > +int dma_iova_link(struct device *dev, struct dma_iova_state *state,
-> > +		phys_addr_t phys, size_t offset, size_t size,
-> > +		enum dma_data_direction dir, unsigned long attrs)
-> > +{
-> > +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> > +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> > +	struct iova_domain *iovad = &cookie->iovad;
-> > +	size_t iova_start_pad = iova_offset(iovad, phys);
-> > +
-> > +	if (WARN_ON_ONCE(iova_start_pad && offset > 0))
-> > +		return -EIO;
-> > +
-> > +	if (dev_use_swiotlb(dev, size, dir) && iova_offset(iovad, phys | size))
-> 
-> There is already a similar check for the non-iova case for this on
-> iommu_dma_map_page() and a nice comment about what why this checked,
-> this seems to be just screaming for a helper:
-> 
-> /*                                                                       
->  * Checks if a physical buffer has unaligned boundaries with respect to
->  * the IOMMU granule. Returns non-zero if either the start or end
->  * address is not aligned to the granule boundary.
-> */
-> static inline size_t iova_unaligned(struct iova_domain *iovad,
->                                     phys_addr_t phys,
-> 				    size_t size)
-> {                                                                                
-> 	return iova_offset(iovad, phys | size);
-> }  
+Best wishes!
 
-I added this function, thanks.
- 
-> Other than that, looks good.
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> 
->   Luis
+Xiafei Lv
+
 
