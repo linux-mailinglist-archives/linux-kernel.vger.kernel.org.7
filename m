@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-621918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755C6A9E050
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDC8A9E068
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2405A17AC95
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A72D17DAB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E752459FB;
-	Sun, 27 Apr 2025 07:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07332459F0;
+	Sun, 27 Apr 2025 07:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M96skoYC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ow5hOO3d"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F43B173;
-	Sun, 27 Apr 2025 07:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B635B10E0;
+	Sun, 27 Apr 2025 07:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745737833; cv=none; b=C6j1/ZlAv9na6uhfYAI06H53qIjhyqzh/v0lg4INQRC043yroqIDqHEa6+RRgXGDZ9b6BYY41gwH0MkxzLo8iSuOmtc/CTK7mtiUbQ193yMsFFqpr9kJBqRDQzJMPDBgzyvqvMCz/pgOEDxLOg7zjt2DJgLaPl/hnOZUwWn4nnI=
+	t=1745738790; cv=none; b=JuknIHekORO42Qr5LTrrYTWUueHVuVH2y5lpZk7aYZrhbrYkZ5/LZIw4FDLSzw4KFf9K4CfXzdliV1/N2kwTlAk7vNan8fVHye46HSZ+sBlrmsmka41Mx4QmxUG4HwcE36vEk9gLi8ajG727Y+ufhEpKKdDYXY+1+jFj3D8csxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745737833; c=relaxed/simple;
-	bh=CGnsiRcgcTLWNshlRKt3+TY3846/zeQqAZXDX5kQlSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqkWi8+P2ZDAkrg1g3/cQELePi0zNRNAsMgpWyC/+fYJMcSxojzW6zQQueR8s8sTOupZz7FFn3t7G/VbGTFyv0Os2qAP/5aWFDlG0+aA6seBOPhMDYiimwozYy/gYyc8NOn/ACxl7+7NitRrn1i0mRhviqnx5kiQ5mG8+kWPiO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M96skoYC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7284DC4CEE3;
-	Sun, 27 Apr 2025 07:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745737832;
-	bh=CGnsiRcgcTLWNshlRKt3+TY3846/zeQqAZXDX5kQlSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M96skoYCIAliV9mE/cHFjQyXeYgIKCso7ocEVoV4QwsavwZFE3rfEM0dziGcjOR6b
-	 7kjkhtEE/0EQdgXtARUS6cI7T75h7ppRVSbbVbM6R6qxPwg9Sg1vSFr6VbnyOZQ57g
-	 o/iTgqG/YLNmmypwMR2+p+Nr3hxoD01W7r5hdZeZwzGeiH97kZ/4Ut5fcVkg1wzjts
-	 hXvK19kK7wEZSW5jdM0EDEgy9k/RevkU6uLUiXDosGVulyNXnwwR8BBoNXzP3d0oXt
-	 HjLpbmZL7Uu8naYplITM7UrID84hix6jY7jTs9NC+PEEEgVOxLpTdYZy8aECiq9kdG
-	 KVcDCKntZyoxA==
-Date: Sun, 27 Apr 2025 10:10:26 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>, Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [PATCH v9 23/24] nvme-pci: convert to blk_rq_dma_map
-Message-ID: <20250427071026.GA5848@unreal>
-References: <cover.1745394536.git.leon@kernel.org>
- <7c5c5267cba2c03f6650444d4879ba0d13004584.1745394536.git.leon@kernel.org>
- <20250423092437.GA1895@lst.de>
+	s=arc-20240116; t=1745738790; c=relaxed/simple;
+	bh=Jmn+u6fFBrsun9XakIeVgT39XGKP2ToxwISS/MEt76w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fZ16HpEF3FsPMKyaTKZuGPS1TWlTSW6/kH+eDlYpYi6lpcQ+eqI1IBL6+Yx+99KlaeMRZNGqHLdFGK/KSnnZ3DtPoYEzFkcThEnEbAlfse8NQqSl4uK9SuHBUCXI6M0rL0nXuBAzdhn2fd3ZxVt4rYB97QEJuUk1Oe9F6WNhNHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ow5hOO3d; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745738789; x=1777274789;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Jmn+u6fFBrsun9XakIeVgT39XGKP2ToxwISS/MEt76w=;
+  b=Ow5hOO3dYdPH0bm9AffH6yeAFD7CCB0RIYwBaD2sFblt8KuyX2XRiK8t
+   M63DFWJ2N1cU7Gi4dOBQyCdq+sBMmrrDtO6U24dE5FVSUY2C43vHTadZq
+   swYAasRJ6lecXN4KTQ+DdBmATuzBRoaLMirCjJK25DE1vU6ABw2IzHGht
+   3DQBnyc04vtGl3oD+Zr9Qgj+EwQPb3HTAx16dowlH3JbZIbAQwiQkV0hx
+   XWWpelvGb+iUpfckbXNdNS3AUV+SnnY3dh6QSCTodkglgTCvaeGIGFtF6
+   MOBrgenJz10QDSIo59+a4G7CiMqKNEVGy9rxtG/jIv4/a3mfkJP9B86S3
+   Q==;
+X-CSE-ConnectionGUID: SkYzLka3Rden+VeSTREfmQ==
+X-CSE-MsgGUID: EVpScRpuSgyfLGkk0neDug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="58710628"
+X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
+   d="scan'208";a="58710628"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 00:26:28 -0700
+X-CSE-ConnectionGUID: tjr0bvpUSgWfm/XawVYnrA==
+X-CSE-MsgGUID: OXjYL/GnT9ykpQQNpcmQ5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
+   d="scan'208";a="164217471"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 00:26:22 -0700
+Message-ID: <376566b4-6c13-45ad-b1e5-8cfe2de437bc@linux.intel.com>
+Date: Sun, 27 Apr 2025 15:22:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423092437.GA1895@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
+ iopt_unpin_pages helpers
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ corbet@lwn.net, will@kernel.org
+Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+ peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+ praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
+ alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 11:24:37AM +0200, Christoph Hellwig wrote:
-> I don't think the meta SGL handling is quite right yet, and the
-> single segment data handling also regressed.  
+On 4/26/25 13:58, Nicolin Chen wrote:
+> The new vCMDQ object will be added for HW to access the guest memory for a
+> HW-accelerated virtualization feature. It needs to ensure the guest memory
+> pages are pinned when HW accesses them and they are contiguous in physical
+> address space.
+> 
+> This is very like the existing iommufd_access_pin_pages() that outputs the
+> pinned page list for the caller to test its contiguity.
+> 
+> Move those code from iommufd_access_pin/unpin_pages() and related function
+> for a pair of iopt helpers that can be shared with the vCMDQ allocator. As
+> the vCMDQ allocator will be a user-space triggered ioctl function, WARN_ON
+> would not be a good fit in the new iopt_unpin_pages(), thus change them to
+> use WARN_ON_ONCE instead.
 
-If my testing is correct, my dma-split-wip branch passes all tests,
-including single segment.
+I'm uncertain, but perhaps pr_warn_ratelimited() would be a better
+alternative to WARN_ON() here? WARN_ON_ONCE() generates warning messages
+with kernel call traces in the kernel messages, which might lead users
+to believe that something serious has happened in the kernel.
 
-Thanks
+> 
+> Rename check_area_prot() to align with the existing iopt_area helpers, and
+> inline it to the header since iommufd_access_rw() still uses it.
+> 
+> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+> ---
+>   drivers/iommu/iommufd/io_pagetable.h    |   8 ++
+>   drivers/iommu/iommufd/iommufd_private.h |   6 ++
+>   drivers/iommu/iommufd/device.c          | 117 ++----------------------
+>   drivers/iommu/iommufd/io_pagetable.c    |  95 +++++++++++++++++++
+>   4 files changed, 117 insertions(+), 109 deletions(-)
+
+Thanks,
+baolu
 
