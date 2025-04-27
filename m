@@ -1,45 +1,43 @@
-Return-Path: <linux-kernel+bounces-622271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8B7A9E524
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76632A9E523
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099231892071
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 23:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744A418920D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 23:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8038C20E6E4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF9C20E332;
 	Sun, 27 Apr 2025 23:27:28 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147001E9B06;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1464CB663;
 	Sun, 27 Apr 2025 23:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745796448; cv=none; b=t/Jx1TyyJ2jqWVZSAZhLiMzjswVFa2doNIaX0w5w037sCrAda4AxYNv22O9Nv71SmlrwPUGQHFhOuCnR+gPomJ1fgkvsOkH68xjJ4ieWw7HurRzL7GWu3Aj8WGXnWmD4IAaXa/SrMTXUudPyCGHgtMlg4uhVC6iFOzbkL3wETdA=
+	t=1745796448; cv=none; b=ocT2wLFKDlmR/Bgn9q1NKGAMft9J2dSsol5HaLZgE7VRGEQBzlox7I3wysiIue0kZPEauDYBo0T+QxE47/mxYhPHmbIgs3dfrW9YGWkYJUX8zGqWSpPmBa8X84AtOkFqdN51cz7rF4THFVWxEaDorRlRGJ9toIy/UABLY6mGpFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745796448; c=relaxed/simple;
-	bh=D/dJ6yPFDK5tY8JrHM5ZOkMgJyHCRtnyS201gkIeU1E=;
+	bh=9SKc+mYiQDS0sF/SZPXMjoefdv+Wv38cj1C/b7g9aFE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nTEzBTmfJG7nOSGZGzCaik3IKsxaPn++PhqSSdC4D4ZHAUn8nimZwqzeiHuOztVshaZveTc7PdZQPg2rwjerUbmUl0QjNlHRqTWs+t2oZ7rUx2Qsf3i9y5StKaXWv/UGEa/eCzrXDZqwaj6Fb2MRLv81yGROLieUysoL5kRD9RI=
+	 MIME-Version:Content-Type; b=pMmeVdJf3N+sJYT0J+fuzXs32W6avEoj21vUBNCbAXhCysbQ/6hWWFqo+FOABhuH6xXVmkCKmcYd1dOgWTkvzoqgAu0Iu+VVX7hiaZKSEg5HXWkis8Y21KTTIyVgyusQkUMUvldAaWhz6WE255QTZRP57FqFw1QkscT20gpDAJg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DEDDC4CEEC;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F06C4CEEE;
 	Sun, 27 Apr 2025 23:27:27 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 87C7F180F9C; Mon, 28 Apr 2025 01:27:25 +0200 (CEST)
+	id 85286180F9A; Mon, 28 Apr 2025 01:27:25 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250421-bq24193-v1-0-f125ef396d24@gmail.com>
-References: <20250421-bq24193-v1-0-f125ef396d24@gmail.com>
-Subject: Re: [PATCH 0/2] power: bq24190: Add BQ24193 support
-Message-Id: <174579644555.306236.15284743421675195488.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, Kees Cook <kees@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org
+In-Reply-To: <20250416222740.work.569-kees@kernel.org>
+References: <20250416222740.work.569-kees@kernel.org>
+Subject: Re: [PATCH] power: supply: sysfs: Remove duplicate NUL termination
+Message-Id: <174579644553.306236.1161318959919770313.b4-ty@collabora.com>
 Date: Mon, 28 Apr 2025 01:27:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,16 +50,27 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 21 Apr 2025 23:27:32 -0500, Aaron Kling wrote:
+On Wed, 16 Apr 2025 15:27:41 -0700, Kees Cook wrote:
+> GCC 15's new -Wunterminated-string-initialization notices that one of
+> the sysfs attr strings would lack the implicit trailing NUL byte during
+> initialization:
 > 
-
+> drivers/power/supply/power_supply_sysfs.c:183:57: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (32 chars into 31 available) [-Wunterminated-string-initialization]
+>   183 |         POWER_SUPPLY_ATTR(CHARGE_CONTROL_START_THRESHOLD),
+>       |                                                         ^
+> drivers/power/supply/power_supply_sysfs.c:36:23: note: in definition of macro '_POWER_SUPPLY_ATTR'
+>    36 |         .attr_name = #_name "\0",               \
+>       |                       ^~~~~
+> drivers/power/supply/power_supply_sysfs.c:183:9: note: in expansion of macro 'POWER_SUPPLY_ATTR'
+>   183 |         POWER_SUPPLY_ATTR(CHARGE_CONTROL_START_THRESHOLD),
+>       |         ^~~~~~~~~~~~~~~~~
+> 
+> [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: power: supply: bq24190: Add BQ24193 compatible
-      commit: 6133b98d39e8bdb7c4d9211e9f00e9580a7d2d11
-[2/2] power: bq24190: Add BQ24193 support
-      commit: afe5301bfbaa0692811da3ba5f8769f599f7ff3f
+[1/1] power: supply: sysfs: Remove duplicate NUL termination
+      commit: 77f5bb150132bbbcd6bc37ffdc80c9e140e373a4
 
 Best regards,
 -- 
