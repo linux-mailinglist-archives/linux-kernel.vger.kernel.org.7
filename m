@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-622105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FE3A9E315
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF9FA9E31B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E507A647F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 12:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F9D1897F97
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 12:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53637D07D;
-	Sun, 27 Apr 2025 12:52:09 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9A7610C;
-	Sun, 27 Apr 2025 12:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAA315A858;
+	Sun, 27 Apr 2025 12:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FP3RFEvR"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3972AEE1;
+	Sun, 27 Apr 2025 12:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745758329; cv=none; b=Lot/MKUrM1vWjFA+xQ0VAHDJliA6UV4wRj2MSB7T9L2o+ANA3bP3lmvtmz845NGAUeqSgckEmMSpQKTilEFu0esjf7PPo9ql1j+3bfFobR7Z5QfKQ8g/zFuoiFjgDpF0mAddISAfWh48Iarfc9FUoaAbyrUqs0OsHpsz8C869yM=
+	t=1745758447; cv=none; b=XoAmLsVbBo2Rn3Qa5eRjXD0xpUX5npyPgtE5W2Pr7trZhZeh06DNzPh4kZQL71QbcYQKZZg3CTO+D25ADSDbQp1+68YxXoOlGYf576wdjVG3nqNjgyv6lJjX/bNf8DC7F9sbfLLQwwR5Y3XqMfn+aXILqCYASXTHSvG8dqbEwZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745758329; c=relaxed/simple;
-	bh=6cEZKR3sZKuXHUIDeK4kcLFUsoi8b21G0ldm2TLtdWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BQN9PJvFSD134XlHfkvpq11vzdGAgtgYfjPuB1SKLY/Jo2QNphG5EEB91HXWwBMxlpIREhmC0mNftKV5uZk3EvNAFJhJFWmfm/ZDAB5ILMWE544N/+ZSKi3/TeHN+dh/JTDb/FCxd+ph/HfIeo7hTExsL0sXa7j1nb+XqVKkAg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1u91UK-0000ST-00; Sun, 27 Apr 2025 14:52:04 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 7CAA9C01A2; Sun, 27 Apr 2025 14:51:54 +0200 (CEST)
-Date: Sun, 27 Apr 2025 14:51:54 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Oleg Nesterov <oleg@redhat.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] MIPS: Fix MAX_REG_OFFSET
-Message-ID: <aA4oag9MAXT3y0t8@alpha.franken.de>
-References: <20250427113423.67040-2-thorsten.blum@linux.dev>
- <CAAhV-H6kxy9NaWXqq1QLfobVvVz9-VMybHC6M+0V-sE3MY9SRA@mail.gmail.com>
+	s=arc-20240116; t=1745758447; c=relaxed/simple;
+	bh=GSlbB56K0ESuzYRh6DM1zXQRUOraBVh6Wp+RgeVaZ9o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=soE9DzIwHzBhga27f6wvht/zEXRNKljELw3yrzKEJAgOPkQ75+U/NqYq9PgUdfLUNFX6EYBdQcKPxEru7lP3YPtYDt6n8qDU2MkrgPoaphxl6RtaFcGu9DEL1j1jzT222wgdowtL53e1UwV9Sl+UfCahf03fCzGRjMULlPKIbWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FP3RFEvR; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=a4qEw
+	fske43/vfxYVnMiAvY6fWKRLGjrP0gzaLq1nD4=; b=FP3RFEvRSxhbARzBfEvlf
+	VV5ox97bb+Qk1pM4K86E10rDHHvT21qSGKzb/UvzCR2tF4kd+X31noRgJhvZw35y
+	D33ppMi9AGHENYdvMTqodWe/+TIUVwkNFPeYBofk4vFuGmi18xAGdkNNiKyAE/UB
+	To7h/tNcLjJ4drwTbth8BQ=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3LwC9KA5oNqx8Cw--.63816S2;
+	Sun, 27 Apr 2025 20:53:19 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	heiko@sntech.de
+Cc: manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	shawn.lin@rock-chips.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v4 0/3] PCI: dw-rockchip: Reorganize register and bitfield definitions
+Date: Sun, 27 Apr 2025 20:53:13 +0800
+Message-Id: <20250427125316.99627-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H6kxy9NaWXqq1QLfobVvVz9-VMybHC6M+0V-sE3MY9SRA@mail.gmail.com>
+X-CM-TRANSID:_____wD3LwC9KA5oNqx8Cw--.63816S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJFyfXw4kGrWkWw1DCF47XFb_yoW5Gw1fpF
+	s8WFZ3Wr47Jw4Fvan7Kw17ZFy8K3ZxCFZ8Zw4DKw1xJ34Yg3W8WFyfKF1F9ry7JrWIgF1I
+	vw47X3409FyYya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEwIDUUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDx88o2gOJqQ3gAAAsc
 
-On Sun, Apr 27, 2025 at 08:32:05PM +0800, Huacai Chen wrote:
-> Hi, Thorsten,
-> 
-> On Sun, Apr 27, 2025 at 7:35 PM Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> >
-> > Fix MAX_REG_OFFSET to point to the last register in 'pt_regs' and not to
-> > the marker itself, which could allow regs_get_register() to return an
-> > invalid offset.
-> >
-> > Fixes: 40e084a506eb ("MIPS: Add uprobes support.")
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> > ---
-> > Compile-tested only.
-> >
-> > Changes in v2:
-> > - Fix MAX_REG_OFFSET as suggested by Maciej (thanks!)
-> > - Link to v1: https://lore.kernel.org/lkml/20250411090032.7844-1-thorsten.blum@linux.dev/
-> >
-> > Changes in v3:
-> > - Keep the marker and avoid using #ifdef by adjusting MAX_REG_OFFSET as
-> >   suggested by Thomas and Maciej
-> > - Link to v2: https://lore.kernel.org/lkml/20250417174712.69292-2-thorsten.blum@linux.dev/
-> > ---
-> >  arch/mips/include/asm/ptrace.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/mips/include/asm/ptrace.h b/arch/mips/include/asm/ptrace.h
-> > index 85fa9962266a..ef72c46b5568 100644
-> > --- a/arch/mips/include/asm/ptrace.h
-> > +++ b/arch/mips/include/asm/ptrace.h
-> > @@ -65,7 +65,8 @@ static inline void instruction_pointer_set(struct pt_regs *regs,
-> >
-> >  /* Query offset/name of register from its name/offset */
-> >  extern int regs_query_register_offset(const char *name);
-> > -#define MAX_REG_OFFSET (offsetof(struct pt_regs, __last))
-> > +#define MAX_REG_OFFSET \
-> > +       (offsetof(struct pt_regs, __last) - sizeof(unsigned long))
-> There is no 80 columns limit now, so no new line needed here.
+1. PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+2. PCI: dw-rockchip: Reorganize register and bitfield definitions
+3. PCI: dw-rockchip: Unify link status checks with FIELD_GET
 
-but not forbidden to care about it. I still prefer this limit.
+---
+Changes for v4:
+- According to Mani's suggestion, submit based on the following branches
+  and do not rely on others' patches.
 
-Thomas.
+  Because of *this* dependency, I couldn't apply this series. I'd suggest
+  to respin this series avoiding the above mentioned patch and just rebase
+  on top of controller/dw-rockchip branch:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dw-rockchip
+
+Changes for v3:
+- Delete the redundant Spaces in the comments of patch 2/3.
+
+Changes for v2:
+- Add register annotations to enhance readability.
+- Use macro definitions instead of magic numbers.
+
+https://patchwork.kernel.org/project/linux-pci/patch/20250416151926.140202-1-18255117159@163.com/
+
+Bjorn Helgaas:
+These would be material for a separate patch:
+
+- The #defines for register offsets and bits are kind of a mess,
+  e.g., PCIE_SMLH_LINKUP, PCIE_RDLH_LINKUP, PCIE_LINKUP,
+  PCIE_L0S_ENTRY, and PCIE_LTSSM_STATUS_MASK are in
+  PCIE_CLIENT_LTSSM_STATUS, but you couldn't tell that from the
+  names, and they're not even defined together.
+
+- Same for PCIE_RDLH_LINK_UP_CHGED, PCIE_LINK_REQ_RST_NOT_INT,
+  PCIE_RDLH_LINK_UP_CHGED, which are in PCIE_CLIENT_INTR_STATUS_MISC.
+
+- PCIE_LTSSM_ENABLE_ENHANCE is apparently in PCIE_CLIENT_HOT_RESET_CTRL?
+  Sure wouldn't guess that from the names or the order of #defines.
+
+- PCIE_CLIENT_GENERAL_DEBUG isn't used at all.
+
+- Submissions based on the following patches:
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-1-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-2-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744850111-236269-3-git-send-email-shawn.lin@rock-chips.com/
+https://patchwork.kernel.org/project/linux-pci/patch/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
+---
+
+Hans Zhang (3):
+  PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG
+  PCI: dw-rockchip: Reorganize register and bitfield definitions
+  PCI: dw-rockchip: Unify link status checks with FIELD_GET
+
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 65 ++++++++++---------
+ 1 file changed, 36 insertions(+), 29 deletions(-)
+
+
+base-commit: d4a5d7e6d91f6e53c8bf6ec72b7ee6c51f781695
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.25.1
+
 
