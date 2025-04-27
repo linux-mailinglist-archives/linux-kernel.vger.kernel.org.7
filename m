@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-622042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DD4A9E25A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 12:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC92DA9E25D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 12:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8999317EA9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49CC17EC01
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C02250BFE;
-	Sun, 27 Apr 2025 10:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D078E24EF79;
+	Sun, 27 Apr 2025 10:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZmqKWeE8"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPmh0aTR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37BB2517B8
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 10:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBEF1AA1E0;
+	Sun, 27 Apr 2025 10:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745748307; cv=none; b=uyLLgnc3NLKYZVbscKBL/2DRywC3QSo5aSHcEkdrWbfJsBbf6aw66O4iDWgO4p+g2mSQnN2pou5cpNkzAjReiGo4Zh468RfngiQ/+UPJ9wOafuo2Fbw3G9WZ9CQnPqbryUTjuTCxAJIMXazVpdgAt1X5GmlLN8Tua7tkAjA9pVg=
+	t=1745748621; cv=none; b=OXvdqoZxhPHcyNZ7JS1UZelzqDWC6js+wPozmzkJlNllbDAjlCLT1sB6X1pjmVBhqTcg0vVnV/+VUbboYbGKJmnj9kAN343nB96wFJNSD4+IKFiKSAGZ/s5gxByp/ab6gLKr3QW2Zrutaofmjrthx+ecEk8K++3QWxo7LpqjS/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745748307; c=relaxed/simple;
-	bh=ljEY+bxunLMA8SJBNpd9fExsjEpK7FDnRqpECM4hgXI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bp0P9Xi2Za8R4nWDfjQ2+Jf0wOGLL/sXOqg4XomG8MoYOx5oBexi6OsRVVlRuEZv01LglV8YB7bCP8RzIENQN2+Hrdp0IZsTNJFndQzqLqd4j+9yJdEaiuRt5Zq0lxOIBt/9rwznMKvu/tXa7pL0Z0Ikk+ewZscRI86VBtz7mnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZmqKWeE8; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745748300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HsxLrijwsdqk8P5G6bYDVUq36qmeIQy/hfJ4ADbTjxc=;
-	b=ZmqKWeE8OudYZ5p9qrIgipYIvk7iwNTk/A/H7mQF4eVBqxTzSr2F4vhBj4LN4UjHMNAXG5
-	lCoVsUJRHtsl5k2rNujBS52tYzykC0xmzwB8QFgdaOfOFIy5OJ+t53xzd4EPTqQKbHHZ1K
-	CvH37RClbzMLNHxilh3iS08TUhuRIpk=
-From: Ye Liu <ye.liu@linux.dev>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	rppt@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	david@redhat.com,
-	harry.yoo@oracle.com,
-	riel@surriel.com,
-	vbabka@suse.cz,
-	liuye@kylinos.cn,
-	ye.liu@linux.dev
-Subject: [PATCH 3/3] mm/numa: remove unnecessary local variable in alloc_node_data()
-Date: Sun, 27 Apr 2025 18:04:42 +0800
-Message-Id: <20250427100442.958352-4-ye.liu@linux.dev>
-In-Reply-To: <20250427100442.958352-1-ye.liu@linux.dev>
-References: <20250427100442.958352-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1745748621; c=relaxed/simple;
+	bh=LmDoB/y/g1bdzjAapvVCYn6JmM5/tIwS924XhVIG9LQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRT5jgzK0E75OwxZ1M/+Nqw8XlWdVEW5Iyl+k2QBiEUwnFWDot9b4vvq6Eska79jL9g10IGAS69yhl4ty0mI6T+LMkSjSMu4l/7F7qDQp/QLd1RUeH0BhQji3Kgsfc+C+hvjok+k5v2R2u+g+iZ3Ajj1TyeXbULKiYg7J9Ykk7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPmh0aTR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E756EC4CEE3;
+	Sun, 27 Apr 2025 10:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745748619;
+	bh=LmDoB/y/g1bdzjAapvVCYn6JmM5/tIwS924XhVIG9LQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DPmh0aTRh7wrs7iTIVCj28MZ/dSZhj96rprOfXQkBASNBIMmoXp1zUqcK5xO9p93v
+	 9NKBXJ+eqCKBvtPR7BGmwV14Wp/he2/i1QkF/iGqq5k98xB6Zrolzw2QPhNZhLChFH
+	 m7lCy27/qWLe1ZfKw8wszZNUgrwbWHK1JlOaBXXKbsjtkKfsgPlv/GhisRN0ITVqR5
+	 SCInFD3mkOKmEuwqf9vuoF6+x+jjz4ZaJsk3gN9lcTdkKboJh9f+ViJ1zBuniSHlIt
+	 4KZuVCcV0sSbe96t1okyz/Ac5w1mEqnUfurO447BqFXoxEuXCiXtc17ZgyWgnTFMJh
+	 9/gOflF8ltPFQ==
+Date: Sun, 27 Apr 2025 12:10:12 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	kwilczynski@kernel.org, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	joelagnelf@nvidia.com, ttabi@nvidia.com, acourbot@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] rust: devres: implement Devres::access_with()
+Message-ID: <aA4ChLR5xf0I7YJY@pollux>
+References: <D9GUR8Y08PQ6.2ULV6V4UJAGQB@proton.me>
+ <aA1O8Wem1FhyybF5@pollux>
+ <D9HAC6KW2GTG.ICOFCQX4A2U3@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D9HAC6KW2GTG.ICOFCQX4A2U3@proton.me>
 
-From: Ye Liu <liuye@kylinos.cn>
+On Sun, Apr 27, 2025 at 08:41:02AM +0000, Benno Lossin wrote:
+> On Sat Apr 26, 2025 at 11:24 PM CEST, Danilo Krummrich wrote:
+> > On Sat, Apr 26, 2025 at 08:28:30PM +0000, Benno Lossin wrote:
+> >> On Sat Apr 26, 2025 at 3:30 PM CEST, Danilo Krummrich wrote:
+> >> > +    pub fn access_with<'s, 'd: 's>(&'s self, dev: &'d Device<Bound>) -> Result<&'s T> {
+> >> 
+> >> I don't think that we need the `'d` lifetime here (if not, we should
+> >> remove it).
+> >
+> > If the returned reference out-lives dev it can become invalid, since it means
+> > that the device could subsequently be unbound. Hence, I think we indeed need to
+> > require that the returned reference cannot out-live dev.
+> 
+> I meant the following signature:
+> 
+>     pub fn access_with<'a>(&'a self, dev: &'a Device<Bound>) -> Result<&'a T>
+> 
+> You don't need to specify the additional `'d` one, since lifetimes allow
+> subtyping [1]. So if I have a `&'s self` and a `&'d Device<Bound>` and
+> `'d: 's`, then I can supply those arguments to my suggested function and
+> the compiler will shorten `'d` to be `'s` or whatever is correct in the
+> context.
+> 
+> [1]: https://doc.rust-lang.org/nomicon/subtyping.html#subtyping
 
-The temporary local variable 'nd' is redundant. Directly assign the
-virtual address to node_data[nid] to simplify the code.
-
-No functional change.
-
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
----
- mm/numa.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/mm/numa.c b/mm/numa.c
-index f1787d7713a6..7d5e06fe5bd4 100644
---- a/mm/numa.c
-+++ b/mm/numa.c
-@@ -13,7 +13,6 @@ void __init alloc_node_data(int nid)
- {
- 	const size_t nd_size = roundup(sizeof(pg_data_t), SMP_CACHE_BYTES);
- 	u64 nd_pa;
--	void *nd;
- 	int tnid;
- 
- 	/* Allocate node data.  Try node-local memory and then any node. */
-@@ -21,7 +20,6 @@ void __init alloc_node_data(int nid)
- 	if (!nd_pa)
- 		panic("Cannot allocate %zu bytes for node %d data\n",
- 		      nd_size, nid);
--	nd = __va(nd_pa);
- 
- 	/* report and initialize */
- 	pr_info("NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
-@@ -30,7 +28,7 @@ void __init alloc_node_data(int nid)
- 	if (tnid != nid)
- 		pr_info("    NODE_DATA(%d) on node %d\n", nid, tnid);
- 
--	node_data[nid] = nd;
-+	node_data[nid] = __va(nd_pa);
- 	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
- }
- 
--- 
-2.25.1
-
+Makes sense, and I don't mind changing it, but I still think the orignal version
+makes the actual requirement more obvious to the reader, i.e. dev must live *at
+least* as long as self, but not dev must live *exactly* as long as self.
 
