@@ -1,79 +1,95 @@
-Return-Path: <linux-kernel+bounces-622272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76632A9E523
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:27:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FECA9E525
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744A418920D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 23:27:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7481177D51
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 23:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF9C20E332;
-	Sun, 27 Apr 2025 23:27:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCA71FE455;
+	Sun, 27 Apr 2025 23:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PNZHyo5/"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1464CB663;
-	Sun, 27 Apr 2025 23:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A2563A9
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 23:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745796448; cv=none; b=ocT2wLFKDlmR/Bgn9q1NKGAMft9J2dSsol5HaLZgE7VRGEQBzlox7I3wysiIue0kZPEauDYBo0T+QxE47/mxYhPHmbIgs3dfrW9YGWkYJUX8zGqWSpPmBa8X84AtOkFqdN51cz7rF4THFVWxEaDorRlRGJ9toIy/UABLY6mGpFY=
+	t=1745796623; cv=none; b=QKWDxtj/qlSbnGWXlGoa+3fPU92CsNmNGG+0MMnxyQ6eChfyvD2Js1sBMY0Br8lp2X3VYBmWqo/xBlTrx/ieuI+MoK3Cbs4Hc+LCElpocfTj65YpjKR7d+12qEvx8lHbhY29+uAeFMirg2SLnXP6fG+him/DOVxjfQNuXASKATk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745796448; c=relaxed/simple;
-	bh=9SKc+mYiQDS0sF/SZPXMjoefdv+Wv38cj1C/b7g9aFE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pMmeVdJf3N+sJYT0J+fuzXs32W6avEoj21vUBNCbAXhCysbQ/6hWWFqo+FOABhuH6xXVmkCKmcYd1dOgWTkvzoqgAu0Iu+VVX7hiaZKSEg5HXWkis8Y21KTTIyVgyusQkUMUvldAaWhz6WE255QTZRP57FqFw1QkscT20gpDAJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F06C4CEEE;
-	Sun, 27 Apr 2025 23:27:27 +0000 (UTC)
-Received: by venus (Postfix, from userid 1000)
-	id 85286180F9A; Mon, 28 Apr 2025 01:27:25 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Kees Cook <kees@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org
-In-Reply-To: <20250416222740.work.569-kees@kernel.org>
-References: <20250416222740.work.569-kees@kernel.org>
-Subject: Re: [PATCH] power: supply: sysfs: Remove duplicate NUL termination
-Message-Id: <174579644553.306236.1161318959919770313.b4-ty@collabora.com>
-Date: Mon, 28 Apr 2025 01:27:25 +0200
+	s=arc-20240116; t=1745796623; c=relaxed/simple;
+	bh=qC0cof0TG29XLBAu2iLtkaKEqep3HGv/4gBofq79CHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mzLKRwDP/135NR4CnRggeJX6X96wlKRPQwyz+3rWdVjlSVOksQ5/mQ8gWs34PW79qKDhIzK945EMKC3U5Ja3Ya/n8sHME0w6SnhBGjKAnipOmq5JcEklqBZU5z/FIfLxxIz4KN0Z2GTbxQrjIpbBzBOw8iYB0kGLAb8BPxZ1ht4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PNZHyo5/; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=THsb5OlOsoQipkgpscGZtTDIF02P0Acq+zPTefXP8+c=; b=PNZHyo5/t0Wrku0w
+	q3vksLShQjGNMEW7T06XOkWBF7dRNvdD/D1e/ze4OZqpuAyxZgcnft2rSswaJbmKaiWoeSKx2olHC
+	mSmhLjC2msdmnLqBetDz15BKZmfj0NwzLFVpFsT/L/F3uf1pDoqODWdxrS/hjflWMlK7ybOBBIvWg
+	o56sejfkAk3yS4bmfZ6LW1cgsC/JW6a9O7y9XsWpcuJySxlKl9WRR4LpBOGQzlU9m+kbU1c5loPj4
+	OkmmBgQseiEOcUtFYcrUG2qQlzpYG8HlP5qRAPuCTLoVC6AWMOIxiHUe0/U1HoZqpMD6yCbjo3Kyj
+	TSMBNv1IB/0mRiuJ/w==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1u9BRx-0001ZL-2d;
+	Sun, 27 Apr 2025 23:30:17 +0000
+From: linux@treblig.org
+To: gregkh@linuxfoundation.org,
+	dragan.cvetic@xilinx.com,
+	derek.kiernan@xilinx.com
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] MAINTAINERS: Fix XILINX SD-FEC entry
+Date: Mon, 28 Apr 2025 00:30:16 +0100
+Message-ID: <20250427233016.124044-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On Wed, 16 Apr 2025 15:27:41 -0700, Kees Cook wrote:
-> GCC 15's new -Wunterminated-string-initialization notices that one of
-> the sysfs attr strings would lack the implicit trailing NUL byte during
-> initialization:
-> 
-> drivers/power/supply/power_supply_sysfs.c:183:57: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (32 chars into 31 available) [-Wunterminated-string-initialization]
->   183 |         POWER_SUPPLY_ATTR(CHARGE_CONTROL_START_THRESHOLD),
->       |                                                         ^
-> drivers/power/supply/power_supply_sysfs.c:36:23: note: in definition of macro '_POWER_SUPPLY_ATTR'
->    36 |         .attr_name = #_name "\0",               \
->       |                       ^~~~~
-> drivers/power/supply/power_supply_sysfs.c:183:9: note: in expansion of macro 'POWER_SUPPLY_ATTR'
->   183 |         POWER_SUPPLY_ATTR(CHARGE_CONTROL_START_THRESHOLD),
->       |         ^~~~~~~~~~~~~~~~~
-> 
-> [...]
+The SD-FEC entry claims ownership of the generic
+   drivers/misc/Kconfig   and
+   drivers/misc/Makefile
 
-Applied, thanks!
+in reality that driver is just one of many using those files.
 
-[1/1] power: supply: sysfs: Remove duplicate NUL termination
-      commit: 77f5bb150132bbbcd6bc37ffdc80c9e140e373a4
+Remove those file entries.
 
-Best regards,
+Fixes: e00feed03f8d ("MAINTAINERS: add maintainer for SD-FEC")
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8c7d796131a8..246bc1af2be3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26491,8 +26491,6 @@ M:	Dragan Cvetic <dragan.cvetic@amd.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/misc/xlnx,sd-fec.yaml
+ F:	Documentation/misc-devices/xilinx_sdfec.rst
+-F:	drivers/misc/Kconfig
+-F:	drivers/misc/Makefile
+ F:	drivers/misc/xilinx_sdfec.c
+ F:	include/uapi/misc/xilinx_sdfec.h
+ 
 -- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+2.49.0
 
 
