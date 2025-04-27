@@ -1,121 +1,193 @@
-Return-Path: <linux-kernel+bounces-621996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB54A9E141
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:11:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346C9A9E142
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A241A80037
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:11:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F6207AAA80
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C283250BF2;
-	Sun, 27 Apr 2025 09:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A691FF603;
+	Sun, 27 Apr 2025 09:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNAhfZm6"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wmw2akk6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB16124C083
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 09:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8DA24E4A9;
+	Sun, 27 Apr 2025 09:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745745037; cv=none; b=n/xlZc7Vw9ZMJltp306U0Ti7PisfVoti3aRDos1xIULjEjC89Z7MkprXICHjIkHqqKsY0hIqzi7fndlk/NYGi9H+B+QI+SZWvbGzKTK8vBzgAsxgXmaR5mMaoSpVK771AwI4JgCRuB1/xMzt9AMPdPCNVTFDnj1xHhJDTSrHKzw=
+	t=1745745053; cv=none; b=cG5d8C8fzuV/aNIa9EeyNk9y5mAVBsTuBblIFgN6GKPSZB26uDYT0pDSHVifHM+NaoZZZkxn4h3qtPgziZSieH7MvNAiV8FpOzsJ7B2VRR9W2gjMSJFrAcAi4jMSj/U89NAlYBBbeWuBHr4jyybEI4QTNCDWS5Py+WTZhdnSLVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745745037; c=relaxed/simple;
-	bh=UA+cvZElZlyjZuyFX2EFMnvtlOX6L661FSlIyfzkuwc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g6ER4VFFddDAwWGJQZdYIRlFmnylGpBCxDRx14JIRPAszskvP+yTnAMJKDWlIxGfqBbTUVlsUh4ksNFs4xSuUSxLXhZNllPI3O5dzHdTO8SAkgb4TMtU8JgBIoco6A2gnmFG5UX/bGtqcxNfD7f33Oeju0EJazFaAFDP2slvfyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNAhfZm6; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3995ff6b066so1864632f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 02:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745745033; x=1746349833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V99EMTWWXaGhjrbD4OzKCKARxP+WZmBldZfdsQ6WV0I=;
-        b=LNAhfZm6iiA6hacEnD/s5vsnw04gH4BMbBq8w4hza4bVajLKJCv3FNAu45XE9C/egL
-         6nCFfEkT+QmgHw2WMu2LO/l2RBGtgIvqwTw5nNyLkDfxzP4FBj9sQGuaxnXhVxLZx2pH
-         LzhLTkpkF6udsUyVAi48vEEqhQQepznP33IWtNM1ilVfsoMPP6lpBjTSI6vlABdIMkfT
-         Rp34CfNJBihoFzA+02ciSSFP9lxMzfxJZu04gZ43SiKCNbS+kZNrRn6N1sPQ9EsTPzFB
-         qoE+1CMtHdUKranGp6648Rd8xok4KpToQv5Onu6IZUtFlTQtGfzO69lAdqI65DLB2aip
-         s3+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745745033; x=1746349833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V99EMTWWXaGhjrbD4OzKCKARxP+WZmBldZfdsQ6WV0I=;
-        b=e8GzXIk1rxxPg6mMRxcE5Sg/Ii7y/sJ5Qegb9zDx8FTKDI7kgGdK/yTawy4xCZM8rU
-         jPAezi861WTW87cttyVCCcXP9hyz3oI8sem8jrtxMgmjNHCuMRq1tcAPrpP5W6QimOsH
-         EGxDQ16HISaMR6yTwwpCtB85tTKqraqfsdlYV0Zkg0jIbIpsLN+Q3MH5wiNoKQovcVLs
-         GILowq0OxX8XD1izs9LHYIhzByiwh/iOcv4rr6W5VIxebE0eWToVt/jHc1T/maJTEvi8
-         aPPseONX3EuUW5x3BI73ebp1k6S5bPihqtw+jApJDPfXzlxaRrxVS0l8Tz9/voLs0ASn
-         Tp3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMfg8e6m2kb7yEGFUetMoCeNOcjAqDBRpqoCSpHJNkhh9vAoV0aw4Typf4ms5Ra/8vLzST7u5s+XAoHCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmtHI7lw9PpMBvtsftbejAnRC23cXQDeN9U5ZI+tIuXdAHcjnL
-	K7TVmW0KAAuP4pQNfB5E5zoUOCjYRoISRSeSJSDA4NanOm9nqxcT
-X-Gm-Gg: ASbGncupQlC4FKOGM9pwBl1oObk6wq6XU7RKNtI6gpBX5fGBJQ7s54Y6vXJjzQGFsCo
-	f75fR7yCTYOs4qipSf20qj7KJJcIvKuW86/xPvs7PR/ePVw+ttLvd1vCMAxKteCMfZXX7utpkNm
-	EUCWvPl53Xbdz3INEQyBGAFaL8PZvziaMqEFV5M0dGri22ZYeFQyc+7CZdzhGpXOl2q9ofQW22m
-	YSHeNqwkWI9XS7jYF82V/SeH3UOxhwoA18OzqHoT6gB3zYrqECXcuXbFh+8LymYHfvc+6ArxE2N
-	TnGes/14YbfPn9ZmiKDniKYHUb6iIl3asIpSoR4Wew9e+gx4mT0VivymkspoaB8C3kEddJeTCDC
-	c1K0hKBWotNI=
-X-Google-Smtp-Source: AGHT+IGnbRIp4zIDH5q0X081pg4Kq7T7MoVVMLlgJURBzSJHHwVVHobY7sMzHUn9prbYxlGdYJHoWg==
-X-Received: by 2002:a05:6000:4202:b0:3a0:833b:a1e2 with SMTP id ffacd0b85a97d-3a0833ba364mr570019f8f.46.1745745032832;
-        Sun, 27 Apr 2025 02:10:32 -0700 (PDT)
-Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca557bsm7925805f8f.35.2025.04.27.02.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Apr 2025 02:10:32 -0700 (PDT)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH 3/3] staging: gpib: Avoid unused variable warning
-Date: Sun, 27 Apr 2025 11:10:18 +0200
-Message-ID: <20250427091018.13705-4-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250427091018.13705-1-dpenkler@gmail.com>
-References: <20250427091018.13705-1-dpenkler@gmail.com>
+	s=arc-20240116; t=1745745053; c=relaxed/simple;
+	bh=l27j9bbFzg5WdPYW60QEheUSRLlp0arn/ghs/Nzwozo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iEZPkaHJd9a0A6RIK/K3CGycPiyDHwaS9iwdTcXXmfOU4N/Y4pwnzfig6mR3aL7tfBzzJnMtziNWbHuDgHq3HtMm6Y2X2xDZCZSRvwKQIS0XKA7Fpkot6qIbf7ddvdxWfEwtj87Sp2Ogo0Uyr4Yc4h+IKwia0Nv777NGjAV34L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wmw2akk6; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745745051; x=1777281051;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=l27j9bbFzg5WdPYW60QEheUSRLlp0arn/ghs/Nzwozo=;
+  b=Wmw2akk65oG1R4ymJEGFNtunTiXzQVaUlUK0EQf8iW7cMHanuM1S+5P7
+   JmmfkLypMevtVswcgjIG6D3//q4LHg0+G2VfOURKczBVXVAL6FdtuXDY6
+   +4VJFAn6z9QTdQiqgO1KfoHe6OffvsyxbNbxJQXMwiR53ee1yXnvGZ8Rd
+   QJS1JCV6JOiSsljYbssf2QOAWBspaTNkhSXqiwzC1V1K+sl0xNQT/y+X+
+   QcqFt2shl15xyPcAzK7CaQVkH3DR8+sxrhGkoxDu6mCuTx7Tsc344MkoA
+   KtmuhjT3xVAwWeAM76LR5yLttqfJuOx3cF6BA5QE68nMfOWxcXiZ5FPvD
+   w==;
+X-CSE-ConnectionGUID: uYDaokDHQ3KBt1oePv+0JQ==
+X-CSE-MsgGUID: N7VQM6NORoSXWl6jxFRWDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11415"; a="57994264"
+X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
+   d="scan'208";a="57994264"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 02:10:50 -0700
+X-CSE-ConnectionGUID: vpIpS3DeTp2CXfSkUqwIig==
+X-CSE-MsgGUID: 3vCkie5AToGeIrdu6tlCCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,243,1739865600"; 
+   d="scan'208";a="134202862"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 02:10:47 -0700
+Message-ID: <701a94eb-feac-4578-850c-5b1f015877af@linux.intel.com>
+Date: Sun, 27 Apr 2025 17:10:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/intel: KVM: Mask PEBS_ENABLE loaded for guest
+ with vCPU's value.
+To: Sean Christopherson <seanjc@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Seth Forshee <sforshee@kernel.org>
+References: <20250426001355.1026530-1-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250426001355.1026530-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This addresses a warning produced by make W=1 with the configuration
-parameter CONFIG_GPIB_PCMCIA=y
 
-ines/ines_gpib.c:1115:28: warning: variable 'dev' set but not used [-Wunused-but-set-variable]
+On 4/26/2025 8:13 AM, Sean Christopherson wrote:
+> When generating the MSR_IA32_PEBS_ENABLE value that will be loaded on
+> VM-Entry to a KVM guest, mask the value with the vCPU's desired PEBS_ENABLE
+> value.  Consulting only the host kernel's host vs. guest masks results in
+> running the guest with PEBS enabled even when the guest doesn't want to use
+> PEBS.  Because KVM uses perf events to proxy the guest virtual PMU, simply
+> looking at exclude_host can't differentiate between events created by host
+> userspace, and events created by KVM on behalf of the guest.
+>
+> Running the guest with PEBS unexpectedly enabled typically manifests as
+> crashes due to a near-infinite stream of #PFs.  E.g. if the guest hasn't
+> written MSR_IA32_DS_AREA, the CPU will hit page faults on address '0' when
+> trying to record PEBS events.
+>
+> The issue is most easily reproduced by running `perf kvm top` from before
+> commit 7b100989b4f6 ("perf evlist: Remove __evlist__add_default") (after
+> which, `perf kvm top` effectively stopped using PEBS).	The userspace side
+> of perf creates a guest-only PEBS event, which intel_guest_get_msrs()
+> misconstrues a guest-*owned* PEBS event.
+>
+> Arguably, this is a userspace bug, as enabling PEBS on guest-only events
+> simply cannot work, and userspace can kill VMs in many other ways (there
+> is no danger to the host).  However, even if this is considered to be bad
+> userspace behavior, there's zero downside to perf/KVM restricting PEBS to
+> guest-owned events.
+>
+> Note, commit 854250329c02 ("KVM: x86/pmu: Disable guest PEBS temporarily
+> in two rare situations") fixed the case where host userspace is profiling
+> KVM *and* userspace, but missed the case where userspace is profiling only
+> KVM.
+>
+> Fixes: c59a1f106f5c ("KVM: x86/pmu: Add IA32_PEBS_ENABLE MSR emulation for extended PEBS")
+> Reported-by: Seth Forshee <sforshee@kernel.org>
+> Closes: https://lore.kernel.org/all/Z_VUswFkWiTYI0eD@do-x1carbon
+> Cc: stable@vger.kernel.org
+> Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/events/intel/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index cd6329207311..75a376478b21 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -4625,7 +4625,7 @@ static struct perf_guest_switch_msr *intel_guest_get_msrs(int *nr, void *data)
+>  	arr[pebs_enable] = (struct perf_guest_switch_msr){
+>  		.msr = MSR_IA32_PEBS_ENABLE,
+>  		.host = cpuc->pebs_enabled & ~cpuc->intel_ctrl_guest_mask,
+> -		.guest = pebs_mask & ~cpuc->intel_ctrl_host_mask,
+> +		.guest = pebs_mask & ~cpuc->intel_ctrl_host_mask & kvm_pmu->pebs_enable,
 
-Remove the declaration of the unused variable.
+Although I can't reproduce the guest crash issue on local SPR server, the
+logic is correct.
 
-Signed-off-by: Dave Penkler <dpenkler@gmail.com>
----
- drivers/staging/gpib/ines/ines_gpib.c | 1 -
- 1 file changed, 1 deletion(-)
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
-index a16219c0f7c8..3f79d3c850d5 100644
---- a/drivers/staging/gpib/ines/ines_gpib.c
-+++ b/drivers/staging/gpib/ines/ines_gpib.c
-@@ -1112,7 +1112,6 @@ static int ines_gpib_config_iteration(struct pcmcia_device *link, void *priv_dat
-  */
- static int ines_gpib_config(struct pcmcia_device *link)
- {
--	struct local_info *dev;
- 	int retval;
- 	void __iomem *virt;
- 
--- 
-2.49.0
+Furthermore,  the below global_ctrl guest value calculation  seems
+incorrect as well.
 
+    u64 pebs_mask = cpuc->pebs_enabled & x86_pmu.pebs_capable;
+
+    arr[global_ctrl] = (struct perf_guest_switch_msr){
+        .msr = MSR_CORE_PERF_GLOBAL_CTRL,
+        .host = intel_ctrl & ~cpuc->intel_ctrl_guest_mask,
+        .guest = intel_ctrl & ~cpuc->intel_ctrl_host_mask & ~pebs_mask,
+    };
+
+For guest PEBS events, its HW counter idx would be set into
+cpuc->pebs_enabled as well, so the calculated guest value would clear the
+corresponding bit of the guest PEBS events. Thus the guest PEBS events
+should not be enabled in non-root mode, but coincidentally since the
+calculated host and guest value of global_ctrl MSR is same,
+atomic_switch_perf_msrs() doesn't really write the guest value into
+GLOBAL_CTRL MSR before vm-entry and GLOBAL_CTRL MSR still keeps the default
+value (all HW counters are enabled). That's why we see guest PEBS still works.
+
+for (i = 0; i < nr_msrs; i++)
+        if (msrs[i].host == msrs[i].guest)
+            clear_atomic_switch_msr(vmx, msrs[i].msr);
+        else
+            add_atomic_switch_msr(vmx, msrs[i].msr, msrs[i].guest,
+                    msrs[i].host, false);
+
+Currently we have this Sean's fix, only the guest PEBS event bits of
+IA32_PEBS_ENABLE MSR are enabled in non-root mode, suppose we can simply
+change global_ctrl guest value calculation to this.
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 09d2d66c9f21..5bc56bb616ec 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4342,9 +4342,12 @@ static struct perf_guest_switch_msr
+*intel_guest_get_msrs(int *nr, void *data)
+        arr[global_ctrl] = (struct perf_guest_switch_msr){
+                .msr = MSR_CORE_PERF_GLOBAL_CTRL,
+                .host = intel_ctrl & ~cpuc->intel_ctrl_guest_mask,
+-               .guest = intel_ctrl & ~cpuc->intel_ctrl_host_mask & ~pebs_mask,
++               .guest = intel_ctrl & ~cpuc->intel_ctrl_host_mask,
+        };
+
+>  	};
+>  
+>  	if (arr[pebs_enable].host) {
+>
+> base-commit: 2492e5aba2be064d0604ae23ae0770ecc0168192
 
