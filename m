@@ -1,366 +1,212 @@
-Return-Path: <linux-kernel+bounces-622028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EEEA9E237
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:44:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D60A9E23C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 753F77A5611
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD6B16CFA2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AB024EAAB;
-	Sun, 27 Apr 2025 09:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8893D24E4AD;
+	Sun, 27 Apr 2025 09:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="kqs/rmpI"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b="ulaOntCI"
+Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266E87081F;
-	Sun, 27 Apr 2025 09:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C562E1DED57;
+	Sun, 27 Apr 2025 09:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745747026; cv=none; b=mopmWB3iUAmI6nq5QPsbvrsZbiaz/Lkf3hVVjuOrEI4Adx1WjUrGr+OWZBOa37elrDnhPkdwqoRDwtL6nBjlHptAcKsDY1sqaNN1AIu2AK3mNYh003+uUtrsiT3qL14L/z3Vfk5Se/uQpGITgYFkYQpExmaDDmDb/Rg7bPvf05o=
+	t=1745747141; cv=none; b=qk3b/0oI2+ODL/zcvfC+WiUN4D4S6cFk/0gZKARokNRK1dooE9eOPUM+tsMR30XvzQKHrn0cZSot1xbNLJAqJZs1oWiFk80hHPdaQ7P7DfshzeDzpuNCHS5/yiSY5dHDkIvvniCldqJUohE+xMHq3Rc7Rp0qv9JD97gAI891mJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745747026; c=relaxed/simple;
-	bh=zZzy9nO3I8ovKYQrg77YqGeqwsYUZdlhxgMwGWiqRSI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=FXU0OZsUgefe7xUm+2UjWJNyy8CV1bxgp/lxRVz2rWLez1O6da23Sjn2XdmajrJ6/Utwo4wR5Hqmq5fkyJ8urtsAHGofPZgB/UqlJoaGOFHTH6tqUimgoQaIxqlslehTWTj4KtahK00FIyVqyHAjb72bB2EeyP/dkrnKC1SDQdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=kqs/rmpI; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1745746959;
-	bh=3dBcTOwhLLAnlZ3/5xvuemZ5v+zbRuhaM6dLdrtDIek=;
-	h=From:To:Subject:Date:Message-Id;
-	b=kqs/rmpIxQfkymK10KdXVWwt6Furve0cGOMtkeXGukNm84ItUbX4Sa26I9BLi3nFS
-	 wMOQCncUD1Sjx9Bddohi5cGdG8Pp3ahCu0pYFGsHZ9KMqqUVD+JkBxwoG7BFD0/gcP
-	 NqqQK3pva3wp+4JXZnwsobtXd3o3/vBIibzrLVks=
-X-QQ-mid: esmtpgz13t1745746953tea6e95f9
-X-QQ-Originating-IP: 0CyvTdPCnkit835WDRKZUzn1no0tgQjOj1qT+l5BIpo=
-Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 27 Apr 2025 17:42:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12905984598938793410
-EX-QQ-RecipientCnt: 20
-From: Chaoyi Chen <kernel@airkyi.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jimmy Hon <honyuenkwun@gmail.com>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: rockchip: Add rk3399-evb-ind board
-Date: Sun, 27 Apr 2025 17:42:11 +0800
-Message-Id: <20250427094211.246-3-kernel@airkyi.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250427094211.246-1-kernel@airkyi.com>
-References: <20250427094211.246-1-kernel@airkyi.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: NV9lVvsB36OpbcFDcLZiJ/gJssUNoSAUtHkkMuI+IDj4b6CShKWaKlxh
-	phTa2NXkDT7JZe1YaMB+gYsSRI1moel0Gh3GLaf4+mJh/Uy0Rv4DayCCuXTi3sg49wQ3GUE
-	kG15uUGcQdKygevg4tPKp7HQisfSF3mO+JKrrW8EZIEtCSrD/KaJX6DE0p7Uw/0mQl94+wH
-	AiWU6zUU2E8MGpqh3utV7I8Tzxx4j6peoXL+aZls7fx4scub7xq4zAFKKXRHZLBCZGcWUpo
-	KP/h+RbGMLFLNtZdZ8zQcgKXltHKJdU4d2YXFioE7aY5DxArEwzAERZmp+uJthKu1UOAzc1
-	e2k2t7wxYs7SnGORvBkIMr3ncBPRkBfo7G6UfjpMIcUbfcaNA9OUh8ootlD6gQpQ0f9jkbF
-	r7tEYRgBIHDmNEapDcUE2nojwBPXed3b48muAlOoT2JDABpyO4b+ZCna6gc4BychTorh4RZ
-	eOiXqByIWZZl+AifO2Susv8uO1cemftT0ewLqyVH6XySilgxQ6rdKO32oSUVr2PcIpCdQ1R
-	Usw+UeZb2nYNtnYRTgu9T0WugaS8J4kZmr1tHLW9B5kNoW4PjdkuTPATefVALuWAJ990tjT
-	Gi5tHblCOQbLOOCJSvNzZcfyzv2updWsT2saPAjtD8nOhrzwecYnC787rAjLDYZ1lJBPHx1
-	q6wRi/sItYS4SI7/1C5AdcQ6mWwgR4czIPcrY/u3ZLM8MYQ2M0wzuLDXUtk6lYYcDMiL+Jk
-	dKIn5QjLUXZnnbyNF5tl4DuMnPj8KHNKSfBRA4MUeoaNzD5WE/B1wV87XiM9Qtdpjm/PcAS
-	WGCpDoC6dSx4Ujo5DbHubFjV39SnNWKhmZs1GczrjTdib24CEBtJm3P2FrT1sfKhWP3zZbr
-	OcvCYfhNI14lN5yRnqPK2peoMO3LL42d4izNsB6lZqTdU4uepocRniDB38vli99IppzftZZ
-	DEAyw3wKj1PGUPumautnwSwSoo8tLZSsF02gmK68xVhGttRqcE7oUYd2UP17D4nOBWYA=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+	s=arc-20240116; t=1745747141; c=relaxed/simple;
+	bh=wtXNaCiZwHuFeeesE9U1dOeQMH3rki85RDwtlsNWFFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LlEhS80I9xERSxmYVhfCOto11aq6vY60uZzMdLprsplKfe4faqoGpxIQFoKmXmzD2K7N5rcf6MZExnEkSOWlE5NGYtx84o9HcepWuIdURGn8/DJ/dG6Anu4bYA7XIlC97+VFc1lIoYSuyR+RoZ//sUcaU/Bz83iAN1v+asc0NxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl; spf=pass smtp.mailfrom=jjverkuil.nl; dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b=ulaOntCI; arc=none smtp.client-ip=185.233.34.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jjverkuil.nl
+Received: from smtp.freedom.nl (unknown [10.10.4.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by dane.soverin.net (Postfix) with ESMTPS id 4ZlhX52CFlz18nP;
+	Sun, 27 Apr 2025 09:45:25 +0000 (UTC)
+Received: from smtp.freedom.nl (smtp.freedom.nl [10.10.4.108]) by freedom.nl (Postfix) with ESMTPSA id 4ZlhX44ByKz2xMF;
+	Sun, 27 Apr 2025 09:45:24 +0000 (UTC)
+Authentication-Results: smtp.freedom.nl;
+	dkim=pass (2048-bit key; unprotected) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.a=rsa-sha256 header.s=soverin1 header.b=ulaOntCI;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jjverkuil.nl;
+	s=soverin1; t=1745747125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rswjIovrocctqrjdm39BXUqHn6IGAn3W8NnLInumgwU=;
+	b=ulaOntCIhUSrAW6OW8ty5K0Gl38Tb7ZOTVJPYvcRrsyXtR9ndGq4cnhc1/EToahAZ+oHMc
+	jQsILqVxNnNzfoW3LgDxaCLvHg/aZhjoZHnlG3VtnHeo1WXU/LoFalamJ74yzAGrQEHzBZ
+	17akmoxzFo+i3DS1VaPz8kOqfuV0P6FKkMWlEAs+dxk1KEGEGqvRUe+63q6KsFxiZMBX5U
+	R1WyTP/cZ7FbVHglj/3QpXsdA7hZR1STIFyjt7VFosEWgi9r8+sd1FI7ptMF/9OCKvit6x
+	s1wONsTha4JVLNV8AZNDf0TbzXy8WXTnb6lnkt7rgm2GR1xsPWc6MeDAxZDbvg==
+X-CM-Analysis: v=2.4 cv=d/oPyQjE c=1 sm=1 tr=0 ts=680dfcb5 a=smkfPCmiGCBx+NgG8pXs4w==:117 a=smkfPCmiGCBx+NgG8pXs4w==:17 a=IkcTkHD0fZMA:10 a=-CwenhCMtp_CBWieSUQA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4xfIujUoz9Hu2jSc4hDAl8kRs58D4H4AGQC6ckbOLP5kili1KLi8EAUVGhYD2j+TvDs6HUK7LL6p0ByrOfCL4B5azj83rbaMphPvOy/lEyFrA/qwKzdMRn HgPnthsGS5jqpkZSPP0fUs3tlV/s6vI9mWw1onZPqC5ydW8yBteLanFcNUqQIlgEtNssBjMiV3sdRlOxatRUJfpWKln7ZG3o/2frVUqL46IJ90LfME8+/4rq IY9J0rtgS/2JmdFLgscAFK+EHU/4H7dddOwAfBSgMdMgdSFaHwttb9lwMqzJsld8ZfZjuUUvIsAjd3djTO28ii6N1GTINgQk2gjWfc0TnGZKGu/0p4EcTsmX QJDBbDX2sMxBKS/uVUujKAlu46/xklI2P+b8otacy1QIhO1UsnRFnvXxEFj+dEu9cAW1M5Q+WM8Ub0JzA4vH5rGN6dHboGbTdAAIUeTzwZTLFBmpvns2UFm/ 8CXdplipv8Ub2rUWwUgTT+PaCeVxxN4QWUfgoGRa8BtYL0D17HNJg/v4H7qCLoX9tVF0XF0n2xeh7rCZYB4XaOUAfhgopMtMPuFT6V5cN9Ea1J7Bu7NEX7ie J5Y=
+Message-ID: <09726b7e-4ac4-4ebe-b1eb-4d142c2ee0fb@jjverkuil.nl>
+Date: Sun, 27 Apr 2025 11:45:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH 0/3] media: vim2m: add multiplanar API support
+To: Matthew Majewski <mattwmajewski@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Naushir Patuck <naush@raspberrypi.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250304191701.2957096-1-mattwmajewski@gmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hans@jjverkuil.nl>
+Autocrypt: addr=hans@jjverkuil.nl; keydata=
+ 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
+In-Reply-To: <20250304191701.2957096-1-mattwmajewski@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spampanel-Class: ham
 
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Hi Matthew,
 
-General feature for rk3399 industry evaluation board:
-- Rockchip RK3399
-- 4GB LPDDR4
-- emmc5.1
-- SDIO3.0 compatible TF card
-- 1x HDMI2.0a TX
-- 1x HDMI1.4b RX with TC358749XBG HDMI to MIPI CSI2 bridge chip
-- 1x type-c DisplayPort
-- 3x USB3.0 Host
-- 1x USB2.0 Host
-- 1x Ethernet / USB3.0 to Ethernet
+On 04/03/2025 20:16, Matthew Majewski wrote:
+> Hi everyone,
+> 
+> This patch series adds multiplane API support for the virtual M2M
+> driver, along with some minor driver refactoring/improvements.
+> 
+> I followed the lead of the vivid driver and made multiplanar support
+> selectable with a module parameter, and the default is to use the
+> single planar api.
+> 
+> Although there are not yet any pixelformats in the driver that make
+> use of multiple memory planes, adding support for these should be
+> easier now with the API level changes taken care of.
 
-Tested with HDMI/GPU/USB2.0/USB3.0/Ethernet/TF card/emmc.
+Are you planning follow-up patches adding support for at least one
+multiplanar format? That would be really nice.
 
-Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
----
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3399-evb-ind.dts      | 222 ++++++++++++++++++
- 2 files changed, 223 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
+Regards,
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 3e8771ef69ba..8a3adb7482ca 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -40,6 +40,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-px5-evb.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-r88.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-eaidk-610.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-evb.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-evb-ind.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-ficus.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts b/arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
-new file mode 100644
-index 000000000000..a995d4ff202d
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
-+ */
-+
-+/dts-v1/;
-+#include "rk3399-base.dtsi"
-+
-+/ {
-+	model = "Rockchip RK3399 EVB IND LPDDR4 Board";
-+	compatible = "rockchip,rk3399-evb-ind", "rockchip,rk3399";
-+
-+	aliases {
-+		ethernet0 = &gmac;
-+		mmc0 = &sdhci;
-+		mmc1 = &sdmmc;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:1500000n8";
-+	};
-+
-+	clkin_gmac: external-gmac-clock {
-+		compatible = "fixed-clock";
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clkin_gmac";
-+		#clock-cells = <0>;
-+	};
-+
-+	vcc5v0_sys: regulator-vcc5v0-sys {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
-+		regulator-name = "vcc5v0_sys";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-min-microvolt = <5000000>;
-+	};
-+
-+	vcc_phy: regulator-vcc-phy {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-name = "vcc_phy";
-+	};
-+};
-+
-+&emmc_phy {
-+	status = "okay";
-+};
-+
-+&gmac {
-+	assigned-clocks = <&cru SCLK_RMII_SRC>;
-+	assigned-clock-parents = <&clkin_gmac>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>;
-+	clock_in_out = "input";
-+	phy-supply = <&vcc_phy>;
-+	phy-mode = "rgmii";
-+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 10000 150000>;
-+	tx_delay = <0x22>;
-+	rx_delay = <0x23>;
-+	status = "okay";
-+};
-+
-+&gpu {
-+	mali-supply = <&vdd_gpu>;
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_i2c_xfer>, <&hdmi_cec>;
-+	status = "okay";
-+};
-+
-+&hdmi_in_vopl {
-+	status = "disabled";
-+};
-+
-+&hdmi_sound {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	clock-frequency = <400000>;
-+	i2c-scl-falling-time-ns = <4>;
-+	i2c-scl-rising-time-ns = <168>;
-+	status = "okay";
-+
-+	vdd_gpu: tcs4526@10 {
-+		compatible = "tcs,tcs4525";
-+		reg = <0x10>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vsel2_gpio>;
-+		fcs,suspend-voltage-selector = <1>;
-+		vin-supply = <&vcc5v0_sys>;
-+		vsel-gpios = <&gpio1 RK_PB6 GPIO_ACTIVE_HIGH>;
-+		regulator-compatible = "fan53555-reg";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-initial-state = <3>;
-+		regulator-max-microvolt = <1500000>;
-+		regulator-min-microvolt = <712500>;
-+		regulator-name = "vdd_gpu";
-+		regulator-ramp-delay = <1000>;
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+};
-+
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
-+	disable-wp;
-+	max-frequency = <150000000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
-+	status = "okay";
-+};
-+
-+&sdhci {
-+	bus-width = <8>;
-+	keep-power-in-suspend;
-+	mmc-hs400-1_8v;
-+	mmc-hs400-enhanced-strobe;
-+	no-sdio;
-+	no-sd;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&tcphy0 {
-+	status = "okay";
-+};
-+
-+&tcphy1 {
-+	status = "okay";
-+};
-+
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_host {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_host {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_0 {
-+	status = "okay";
-+};
-+
-+&usbdrd3_0 {
-+	status = "okay";
-+};
-+
-+&usbdrd3_1 {
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-+
-+&usb_host1_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host1_ohci {
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	pmic {
-+		vsel2_gpio: vsel2-gpio {
-+			rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+	};
-+};
-+
-+&vopb {
-+	status = "okay";
-+};
-+
-+&vopb_mmu {
-+	status = "okay";
-+};
--- 
-2.49.0
+	Hans
+
+> 
+> v4l2-compliance reports the following with multiplane support disabled:
+> 
+>   Total for vim2m device /dev/video0: 48, Succeeded: 48, Failed: 0, Warnings: 0
+> 
+> and the same with multiplane support enabled:
+> 
+>   Total for vim2m device /dev/video0: 48, Succeeded: 48, Failed: 0, Warnings: 0
+> 
+> Patches need to be applied in increasing numerical order (Patch [3/3]
+> depends on [1/3] and [2/3]).
+> 
+> Since the multi-plane changes had to touch a lot of the driver, I did
+> a basic regression test with the following script which generates a
+> test input image with vivid and an output image from vim2m for each
+> supported format. I confirmed all outputs visually and verified they
+> were identical to the outputs before the change. Testing was done on
+> an x86_64 qemu image.
+> 
+> #!/bin/sh
+> 
+> # tested with HDMI vivid emulation
+> # modprobe vivid num_inputs=1 input_types=3
+> 
+> vim2m=/dev/video0
+> vivid=/dev/video1
+> 
+> width=640
+> height=480
+> out_width=320
+> out_height=240
+> 
+> capture_formats=$(v4l2-ctl -d $vim2m --list-formats | awk '/\]:/ {print $2}' | sed "s/'//g")
+> output_formats=$(v4l2-ctl -d $vim2m --list-formats-out | awk '/\]:/ {print $2}' | sed "s/'//g")
+> 
+> # Turn off text mode so that images will be identical
+> v4l2-ctl -d $vivid -c osd_text_mode=2
+> 
+> for ofmt in ${output_formats}; do
+>     # generate input image
+>     inname="${width}x${height}.${ofmt}"
+>     v4l2-ctl -d $vivid -v pixelformat=$ofmt,width=$width,height=$height,field=none \
+>              --stream-mmap --stream-count=1 --stream-to=$inname
+>     for cfmt in ${capture_formats}; do
+>         outname="${out_width}x${out_height}-out.${cfmt}"
+>         v4l2-ctl -d $vim2m -x pixelformat=$ofmt,width=$width,height=$height \
+>                  -v pixelformat=$cfmt,width=$out_width,height=$out_height \
+>                  --stream-from=$inname --stream-to=$outname --stream-mmap --stream-out-mmap \
+>                  --stream-count=1
+>     done
+> done
+> 
+> Matthew Majewski (3):
+>   media: v4l2-common: Add RGBR format info
+>   media: vim2m: Simplify try_fmt
+>   media: vim2m: Add parametized support for multiplanar API
+> 
+>  drivers/media/test-drivers/vim2m.c    | 327 +++++++++++++++++++++-----
+>  drivers/media/v4l2-core/v4l2-common.c |   1 +
+>  2 files changed, 274 insertions(+), 54 deletions(-)
+> 
 
 
