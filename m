@@ -1,96 +1,200 @@
-Return-Path: <linux-kernel+bounces-621945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C45A9E0BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4173A9E0C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB99C1781CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2877B17A321
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B18247280;
-	Sun, 27 Apr 2025 08:19:05 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B341CAA85;
-	Sun, 27 Apr 2025 08:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80B51DE2D8;
+	Sun, 27 Apr 2025 08:21:25 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E8124503E
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 08:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745741945; cv=none; b=q3onrhgK9Ii89v+t0MCPzBC8fx1j/2PUqlsaNXssY2Gjm9xizKPlv4zIL62XGYqnebWivYvOSN2cKPlPhfCiVXX2sjG7bnqc42VhiUpLqYHqEzaZMYB6KvoIEtUWrPYkwfce755/3yra6p+nLOjkWSdXjB+uKWmBEfXMz3lUZu0=
+	t=1745742085; cv=none; b=NF7MuNwtVz1vhSDeQuYkWwXpTlO7v6XzHk9bhxQRbKvlbL6jxuvRqwV8Y9tAbbTWLV2Y015NhXkHZP/1PpbWLVBUFDQx8wfz+DU6p8G32ZcemB++6BlRs7PeXwNCHcpQc79tbM6D2i/ZqUHvSChJ7SKo51cv7tDYoU9b5aSRJlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745741945; c=relaxed/simple;
-	bh=K/LAiiDDRBvOuo+r4km25h7Zoc4FKiIKhE0c8fH1Vco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTHIIw9C5aNLUfjobriCSUWiRUzVobCQU3Hjjrdy6XJGZqwaKzn8jkY2UnVE0QiFrGGG7u64FJCGfyNNNUK5dHRNG3MXs4S51ZjJrZy/hKFHA6/J6In9tbAEBAGMMcymlcCgbGCEHdIIcU3iEUBGxGVXpP/xEu6nhshAKtrdq8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1u8xE5-0007QX-00; Sun, 27 Apr 2025 10:19:01 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 17DA1C0A20; Sun, 27 Apr 2025 10:18:35 +0200 (CEST)
-Date: Sun, 27 Apr 2025 10:18:35 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: John Crispin <john@phrozen.org>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: ralink: Avoid x/x division in rt_timer_config()
-Message-ID: <aA3oWzkUP3CYbShi@alpha.franken.de>
-References: <20250408082804.796515-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1745742085; c=relaxed/simple;
+	bh=buMXtnro85aLbJ8vzlE+WVBcMzVVJdOoueenXL85wUI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OLEIEj/VMAGFQR/lo73nDJKa7qPW27JmaoTFyi4Q5H0S9dN5z/TpFjaPB3H5+8BFv9t84IVsyXdWM0Naqc8yYZ8GvPBT4Let4Tv4stVCUmv9PyL6HeBsmbsSnLPGWMQmUmjQe2gb885IwUJ1vBARplgoCEeLF0LutZFS3iUl38k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85ed07f832dso354916639f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 01:21:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745742082; x=1746346882;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vAf/JFA/8xW4355KhkGlJwhLhf96j10N4gFAjUa7/E=;
+        b=rRCpCwTA+RWlGXcWtE/SToeoKoiibfCFbZpgEp9dWiY0yOxaNedwC+scHpyojZMfaE
+         VHP6khBs1tKrimd773jEer30ow1RkhaCEUeiMv9MY4K40PwrM7NXa2k7PLgLz5XsMBAJ
+         2y878HBNlDTjoq13lrP0PI9rklFlzyU5+3ewbwEFlk/QrqEsybe+GoAnjsSsk0PoelTb
+         a4hOC0I0Nvljm9kIKX7K4KECM60IB5cWddKlamrw5ajdyamhI+2erJUcNuQTsvmuwT9Z
+         GRYKhTzmXq43B1AMDh+9SJtNPSI0g3jGN5UANxouVBAufQdIu+f5Rput6ytHOl6KWuIH
+         rRug==
+X-Forwarded-Encrypted: i=1; AJvYcCU3rWsQTPl5npaxIM7IqybQFIY4sR04ymIH9dkGMtCSyOLVEA04wzh5+1GLc+q1fGfbn40DVEVFchfUCds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjtRhRO8AF1+QUrFoWS1K8lR06BmdFUUiK9L2xY/+S0SF5G7qI
+	DvPdWRtVzCkyGBRj64tv/C9TnGPEgWicJ+Ek4MRaDWpkANMObr/czhED5zmJasY6LIW/UINzZxu
+	/58OF03+PrJEQ630GhPoarwJiWcQIM4EgrLjUCw/VyYnvt4+Ob6NdOJg=
+X-Google-Smtp-Source: AGHT+IGE7hEw88NJG3K6Qu+an7B7jyY6Me8dPkz4tLYNe3C6IrTsSxcikrvR7eDOrshYhqZ7dVNPNAvG4BlInsb2fOMtRDDeBa2k
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408082804.796515-2-thorsten.blum@linux.dev>
+X-Received: by 2002:a05:6602:6c0b:b0:864:48eb:30fd with SMTP id
+ ca18e2360f4ac-8645cd45231mr786974639f.11.1745742082674; Sun, 27 Apr 2025
+ 01:21:22 -0700 (PDT)
+Date: Sun, 27 Apr 2025 01:21:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <680de902.050a0220.3b8549.0081.GAE@google.com>
+Subject: [syzbot] [ext4?] general protection fault in jbd2_journal_dirty_metadata
+From: syzbot <syzbot+de24c3fe3c4091051710@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 08, 2025 at 10:28:05AM +0200, Thorsten Blum wrote:
-> Avoid the 'rt->timer_freq / rt->timer_freq' division when the divisor is
-> larger than the timer frequency and use '1' directly.
-> 
-> No functional changes intended.
-> 
-> Suggested-by: David Laight <david.laight.linux@gmail.com>
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/mips/ralink/timer.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/mips/ralink/timer.c b/arch/mips/ralink/timer.c
-> index 54094f6e033e..5d8286603584 100644
-> --- a/arch/mips/ralink/timer.c
-> +++ b/arch/mips/ralink/timer.c
-> @@ -75,12 +75,16 @@ static int rt_timer_request(struct rt_timer *rt)
->  
->  static int rt_timer_config(struct rt_timer *rt, unsigned long divisor)
->  {
-> -	if (rt->timer_freq < divisor)
-> +	u32 t;
-> +
-> +	if (rt->timer_freq < divisor) {
->  		rt->timer_div = rt->timer_freq;
-> -	else
-> +		t = 1;
-> +	} else {
->  		rt->timer_div = divisor;
-> -
-> -	rt_timer_w32(rt, TIMER_REG_TMR0LOAD, rt->timer_freq / rt->timer_div);
-> +		t = rt->timer_freq / rt->timer_div;
-> +	}
-> +	rt_timer_w32(rt, TIMER_REG_TMR0LOAD, t);
+Hello,
 
-I really don't see the point for this change. IMHO, this isn't really 
-runtime critical and I prefer the code like it is at the moment.
+syzbot found the following issue on:
 
-Thomas.
+HEAD commit:    5bc1018675ec Merge tag 'pci-v6.15-fixes-3' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12730374580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=90837c100b88a636
+dashboard link: https://syzkaller.appspot.com/bug?extid=de24c3fe3c4091051710
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149e6270580000
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-5bc10186.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3a2f39285e07/vmlinux-5bc10186.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2a37a55f34fb/bzImage-5bc10186.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/852ff332bbf1/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=14730374580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/e42a022d555a/mount_9.gz
+mounted in repro #3: https://storage.googleapis.com/syzbot-assets/7cbdc25f298f/mount_13.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=109e6270580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+de24c3fe3c4091051710@syzkaller.appspotmail.com
+
+(syz.0.497,7529,0):ocfs2_xa_prepare_entry:2151 ERROR: status = -30
+(syz.0.497,7529,0):ocfs2_xa_set:2254 ERROR: status = -30
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 7529 Comm: syz.0.497 Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:jbd2_journal_dirty_metadata+0x234/0xcd0 fs/jbd2/transaction.c:1531
+Code: 74 08 4c 89 ff e8 ec a5 9c ff 4d 39 37 0f 84 49 01 00 00 e8 de b0 3a ff 31 c0 e9 5e 05 00 00 4c 8b 34 24 4c 89 f0 48 c1 e8 03 <80> 3c 18 00 74 08 4c 89 f7 e8 be a5 9c ff 49 8b 06 48 89 44 24 38
+RSP: 0018:ffffc9000d47ec18 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: ffff88801f980000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: ffff888043abc420 R08: ffff888043aacd9f R09: 1ffff110087559b3
+R10: dffffc0000000000 R11: ffffed10087559b4 R12: 1ffff1100382e0df
+R13: 1ffff11008757884 R14: 0000000000000000 R15: 1ffff1100382e0dc
+FS:  00007f9939c2b6c0(0000) GS:ffff88808d6cc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5fec172720 CR3: 000000004e785000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_journal_dirty+0x149/0x740 fs/ocfs2/journal.c:812
+ ocfs2_xa_journal_dirty fs/ocfs2/xattr.c:1453 [inline]
+ ocfs2_xa_set+0x2516/0x3050 fs/ocfs2/xattr.c:2263
+ ocfs2_xattr_block_set+0x3c4/0x2bc0 fs/ocfs2/xattr.c:2985
+ __ocfs2_xattr_set_handle+0x661/0xf20 fs/ocfs2/xattr.c:3387
+ ocfs2_xattr_set+0xde8/0x11f0 fs/ocfs2/xattr.c:3650
+ __vfs_setxattr+0x439/0x480 fs/xattr.c:200
+ __vfs_setxattr_noperm+0x12d/0x660 fs/xattr.c:234
+ vfs_setxattr+0x16b/0x2f0 fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ filename_setxattr+0x274/0x600 fs/xattr.c:665
+ path_setxattrat+0x364/0x3a0 fs/xattr.c:713
+ __do_sys_setxattr fs/xattr.c:747 [inline]
+ __se_sys_setxattr fs/xattr.c:743 [inline]
+ __x64_sys_setxattr+0xbc/0xe0 fs/xattr.c:743
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9938d8e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9939c2b038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 00007f9938fb6160 RCX: 00007f9938d8e969
+RDX: 0000200000000240 RSI: 0000200000000140 RDI: 0000200000000080
+RBP: 00007f9938e10ab1 R08: 0000000000000002 R09: 0000000000000000
+R10: 000000000000001e R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f9938fb6160 R15: 00007fff798d5618
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:jbd2_journal_dirty_metadata+0x234/0xcd0 fs/jbd2/transaction.c:1531
+Code: 74 08 4c 89 ff e8 ec a5 9c ff 4d 39 37 0f 84 49 01 00 00 e8 de b0 3a ff 31 c0 e9 5e 05 00 00 4c 8b 34 24 4c 89 f0 48 c1 e8 03 <80> 3c 18 00 74 08 4c 89 f7 e8 be a5 9c ff 49 8b 06 48 89 44 24 38
+RSP: 0018:ffffc9000d47ec18 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: ffff88801f980000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: ffff888043abc420 R08: ffff888043aacd9f R09: 1ffff110087559b3
+R10: dffffc0000000000 R11: ffffed10087559b4 R12: 1ffff1100382e0df
+R13: 1ffff11008757884 R14: 0000000000000000 R15: 1ffff1100382e0dc
+FS:  00007f9939c2b6c0(0000) GS:ffff88808d6cc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c000940c71 CR3: 000000004e785000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	74 08                	je     0xa
+   2:	4c 89 ff             	mov    %r15,%rdi
+   5:	e8 ec a5 9c ff       	call   0xff9ca5f6
+   a:	4d 39 37             	cmp    %r14,(%r15)
+   d:	0f 84 49 01 00 00    	je     0x15c
+  13:	e8 de b0 3a ff       	call   0xff3ab0f6
+  18:	31 c0                	xor    %eax,%eax
+  1a:	e9 5e 05 00 00       	jmp    0x57d
+  1f:	4c 8b 34 24          	mov    (%rsp),%r14
+  23:	4c 89 f0             	mov    %r14,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 f7             	mov    %r14,%rdi
+  33:	e8 be a5 9c ff       	call   0xff9ca5f6
+  38:	49 8b 06             	mov    (%r14),%rax
+  3b:	48 89 44 24 38       	mov    %rax,0x38(%rsp)
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
