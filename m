@@ -1,188 +1,150 @@
-Return-Path: <linux-kernel+bounces-621838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4181A9DF29
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:28:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96C9A9DF2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 07:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617F91A82D2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 05:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 426911717B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 05:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12602227EBB;
-	Sun, 27 Apr 2025 05:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="qwR6rJAo"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E901821D3ED;
+	Sun, 27 Apr 2025 05:29:17 +0000 (UTC)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F457E9;
-	Sun, 27 Apr 2025 05:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7938C747F;
+	Sun, 27 Apr 2025 05:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745731667; cv=none; b=Qp1LtAzQ/PteSe2gnuWGe2/z819sDuMID2Jcu565SpR8vz0Gi/ZJznOsmKJxsOm8JHtORgg3DtsjPOnAonXBjRf5rIzDF6hiQ5lKrly1ghlYL4szix4UvlEN9MYcF44+YD995cGDqlILU+o49xrlVqyW+mkmXOC26VocgO3EP/0=
+	t=1745731757; cv=none; b=O1MbmMaUKxgswcszMVUCKuNKo4/r9lT39XHfFIH51FqwrPnh7VXx7xNhucbq2tuXlw1IWLaM5ImTimwjKbqByTCWeBoCp87WcaO9raF7/S7RWZzHHjgnFGPw3hh8N5J1dhUlySHdM8o4DaQ5c8az7/1S0iqn955gGj2pLoXYnTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745731667; c=relaxed/simple;
-	bh=WEEMvuLtd7p4Qgk0tAoa2kXnjk6i2SW6sYj7Ivqq/+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j6qySmYuO/DbtpmfuI89xs4JO5YeUQgNTn4cs/aiBFIuKQg9mULzPifeMeIvlyGPrM1dnh65XBUcwBHxsK09YSoeIC3zjfNAq2muKd2FQMrs6zMEgVW91ugo5X+2Ijp53vKn8Y/VKMP2Cw8K4BnhiUemREHYHjEX8dCbw01yTXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=qwR6rJAo; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=9frzizwkt26vlquYFfrv5FcyPYNaWUMutJpHPozBbhQ=; b=qwR6rJAokchwAAsw8fJ4WtZxj6
-	PYWWozpbZJwpmrxRNfN2+nQ6Gz+mmPfJVUBREZ/TxB8A0pmjk+CJUHYsmqEYsXrorLevkXuB7vC3r
-	affRQpHq/CytoZ38KSGex7QBZ3VrcRTDXqb59as3L1BlPGxcxrLV/Ke1YVy7bdti7lbeUO0mIU0LM
-	6R5/YUXW89Iwaf8mdzqRGQXVSa69gekSDdzENXd7KDagpjKDgV0vnMZ2HMlpaxOSR40JWpnu7JVHM
-	YffJC7wafilU5dH5DeSX3uCg2ATLP603LaXaTfMknrbn/hhG2px4iu6ZdOMJtx2DK7YDVWyqYm8Xg
-	iRFavy4A==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 2/2] ARM: dts: omap4: panda: cleanup bluetooth
-Date: Sun, 27 Apr 2025 07:27:35 +0200
-Message-Id: <20250427052735.88133-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250427052735.88133-1-andreas@kemnade.info>
-References: <20250427052735.88133-1-andreas@kemnade.info>
+	s=arc-20240116; t=1745731757; c=relaxed/simple;
+	bh=1FUe7aXRzxsu+EjRvAhzLXksbJrtabn2nY+5vLDSRVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PvcREE4PnWKlO+fL1GKw11v4hXPrlMIV8xe+B/eHQWG7T9FS9h1lZAzTCbXBuyhoC/eFF8Adfm9stzk9iwCv7IO4SBo9zYVQQ4Pa8I+oPbpSSUatUOmER8iz8/LsieQs+SFR5iPhSCUnciv81AcDDCxBs1+zKFEfbE7j2KCN9kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549963b5551so3616562e87.2;
+        Sat, 26 Apr 2025 22:29:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745731750; x=1746336550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fDi3xnZL6fsQsXT2rLh2TNElIcjVvgvD9LuKBrnF8Ww=;
+        b=W1JUASVF1Cs+wuqtP4fIL+uYnJ1rjfFqG7zA8ORGchCvd0jLJFcw6ihksgU5WyAbjg
+         ZZ+5DOpqFwYzkSV85qoRORT4l+JtKH9JO8Mvia2cr+bG35b2Dj8pYhrlLXzuiLro31GF
+         Vg/YbLMX9rM/B2JDHJtQxt0FGri36dRngjfOvmr5KqINBADNEqMN/zJL6lmraLJKau3Q
+         rJmUXoJRGhWWuWq3GNY1uEfUjLTkEb4fzUMRJ8+Sg6RN/EaW+EJVodC1POlZhPWdCyew
+         42DPxEQ3/LFWDODITtqn4AY8BYxPrQ8L+xD1C41BS/73sp+nvcr3TYcyUcXDGkGL3Xne
+         7UAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIRQ2NdqCnRvqwJ1s1/G2sc45WTFLZWT7eiU2UI7COEkOJxCSCV1KrmbpPgBIdjPMSY9RtX5hxRkjlw5+G@vger.kernel.org, AJvYcCW3kgZXuxtbGcj0DC6IcZA19soca9Xdv4TbzQdTv8qwmKw+Fq4P/Zdleg6+iWixMOtleGnhjM/lz8dd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGhWncp8DAqI1J+rCe9/9tRNm9JV2/psn/vZZnoWCKSKFsKUmx
+	iY4s8k99Dqr30XIun8ky/0xbRbFQCGKjNfjWL3ouTXl/pb5gcesHa5PXeiE551s=
+X-Gm-Gg: ASbGncs/8FwcGEEUlN8rdqpRaH1RPCH1RgyoKqvuZ4lXk+mbbyVaUzGwMjGv47rH2Tw
+	XcuOj335eJ+sQzsCffrJqnv8VkwwhG0pz8VRYERFvXqxiTozggqPBsbLmItVBequTF7s3UW/ll3
+	pl9gpKa6EhRmLMepMWudBlpqQkLljd8ohTEsaTTtXGVyg4FuUy1r2VifLJuruLOgLoxnePVss7Y
+	avqhRuv4LAUNoWotVJQWyQqlSAqbDMcWgDXeVvHvOeTIwIh/7aRTrlNGcXbsCJD/IyOXRB61UJs
+	W0ihVfQSW+xwLKHrmpAzZB0hp3VFW1/tapBGvsMqEeDcscdEFqLIv6lYFeCPsdPA+8YTQM5Sm0M
+	nGXVfhxtH
+X-Google-Smtp-Source: AGHT+IEWPDJC3w7cRgMg/ifjyR+rVIpAuSYNEu3glQcvSCJ+kAdzp8jRsmnUhmx8TuQSC69Ve68sqA==
+X-Received: by 2002:a05:6512:33d6:b0:549:91bc:67a9 with SMTP id 2adb3069b0e04-54e8cbcddafmr1799242e87.9.1745731750257;
+        Sat, 26 Apr 2025 22:29:10 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cc9f719sm1238209e87.124.2025.04.26.22.29.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Apr 2025 22:29:10 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30db1bc464dso37994391fa.0;
+        Sat, 26 Apr 2025 22:29:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpVt9Gg7R+TJw0dmOPcAwdrJ8WIM4xD0BV79oMM/OCZa0m0A//Ml92LV0x9xchFlmhbpeyZszrIB3z@vger.kernel.org, AJvYcCX8aBVlXelicc+3NaEPTvDkG6QCHTeJPs2nmyz85inVX0sfyGljFPWrGMjz/asu2IExIJKquG4r98h9kD3o@vger.kernel.org
+X-Received: by 2002:a2e:ad90:0:b0:30d:e104:b796 with SMTP id
+ 38308e7fff4ca-319087b0605mr23238281fa.40.1745731749733; Sat, 26 Apr 2025
+ 22:29:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250418-opz-audio-v1-1-4e86bb5bc734@posteo.net>
+In-Reply-To: <20250418-opz-audio-v1-1-4e86bb5bc734@posteo.net>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 27 Apr 2025 13:28:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67-1tk0uAmYL-y6479itUxBJua76qhjn+0tTsN+Ni_a1w@mail.gmail.com>
+X-Gm-Features: ATxdqUEYYTKOqIRqwitrJwW2PxZXei0_VhgNMizMN4MUT9WfXUWnAmdzTIPf0Jo
+Message-ID: <CAGb2v67-1tk0uAmYL-y6479itUxBJua76qhjn+0tTsN+Ni_a1w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: allwinner: orangepi-zero: Enable audio codec
+To: j.ne@posteo.net
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Bluetooth is available on the other Panda board versions, too, so move
-stuff to common and specify the needed clock properly.
+On Fri, Apr 18, 2025 at 7:32=E2=80=AFAM J. Neusch=C3=A4fer via B4 Relay
+<devnull+j.ne.posteo.net@kernel.org> wrote:
+>
+> From: "J. Neusch=C3=A4fer" <j.ne@posteo.net>
+>
+> Line out playback and microphone capture work, after enabling the
+> corresponding ALSA controls. Tested with the Orange Pi Zero interface
+> board, which is a (mostly) passive adapter from the 13-pin header to
+> standard connectors (2x USB A, 1x Audio/Video output, 1x built-in
+> microphone).
+>
+>   https://orangepi.com/index.php?route=3Dproduct/product&product_id=3D871
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
----
- .../boot/dts/ti/omap/omap4-panda-common.dtsi  | 31 ++++++++++++++++--
- arch/arm/boot/dts/ti/omap/omap4-panda-es.dts  | 32 -------------------
- 2 files changed, 28 insertions(+), 35 deletions(-)
+What about the USB ports?
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-index c860b590142a..05c871d31d7b 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-@@ -367,10 +367,8 @@ OMAP4_IOPAD(0x130, PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c4_sda */
- 	 */
- 	wl12xx_gpio: wl12xx-gpio-pins {
- 		pinctrl-single,pins = <
--			OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 */
--			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a22.gpio_46 */
-+			OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 - WLAN_EN */
- 			OMAP4_IOPAD(0x070, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a24.gpio_48 */
--			OMAP4_IOPAD(0x072, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a25.gpio_49 */
- 		>;
- 	};
- 
-@@ -393,6 +391,22 @@ button_pins: button-pins {
- 			OMAP4_IOPAD(0x114, PIN_INPUT_PULLUP | MUX_MODE3)	/* gpio_121 */
- 		>;
- 	};
-+
-+	bt_pins: bt-pins {
-+		pinctrl-single,pins = <
-+			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)	  /* gpmc_a22.gpio_46 - BTEN */
-+			OMAP4_IOPAD(0x072, PIN_OUTPUT_PULLUP | MUX_MODE3) /* gpmc_a25.gpio_49 - BTWAKEUP */
-+		>;
-+	};
-+
-+	uart2_pins: uart2-pins {
-+		pinctrl-single,pins = <
-+			OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)  /* uart2_cts.uart2_cts - HCI */
-+			OMAP4_IOPAD(0x11a, PIN_OUTPUT | MUX_MODE0)	  /* uart2_rts.uart2_rts */
-+			OMAP4_IOPAD(0x11c, PIN_INPUT_PULLUP | MUX_MODE0)  /* uart2_rx.uart2_rx */
-+			OMAP4_IOPAD(0x11e, PIN_OUTPUT | MUX_MODE0)	  /* uart2_tx.uart2_tx */
-+		>;
-+	};
- };
- 
- &omap4_pmx_wkup {
-@@ -531,8 +545,19 @@ &twl_usb_comparator {
- };
- 
- &uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_pins>;
- 	interrupts-extended = <&wakeupgen GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH
- 			       &omap4_pmx_core OMAP4_UART2_RX>;
-+
-+	bluetooth {
-+		compatible = "ti,wl1271-st";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_pins>;
-+		enable-gpios = <&gpio2 14 GPIO_ACTIVE_HIGH>;	/* GPIO_46 */
-+		clocks = <&twl 0>;
-+		clock-names = "ext_clock";
-+	};
- };
- 
- &uart3 {
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts b/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts
-index fe7b156d10ed..a933fe560834 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts
-@@ -49,22 +49,6 @@ button_pins: button-pins {
- 			OMAP4_IOPAD(0x0fc, PIN_INPUT_PULLUP | MUX_MODE3) /* gpio_113 */
- 		>;
- 	};
--
--	bt_pins: bt-pins {
--		pinctrl-single,pins = <
--			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a22.gpio_46 - BTEN */
--			OMAP4_IOPAD(0x072, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a25.gpio_49 - BTWAKEUP */
--		>;
--	};
--
--	uart2_pins: uart2-pins {
--		pinctrl-single,pins = <
--			OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart2_cts.uart2_cts - HCI */
--			OMAP4_IOPAD(0x11a, PIN_OUTPUT | MUX_MODE0)		/* uart2_rts.uart2_rts */
--			OMAP4_IOPAD(0x11c, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart2_rx.uart2_rx */
--			OMAP4_IOPAD(0x11e, PIN_OUTPUT | MUX_MODE0)		/* uart2_tx.uart2_tx */
--		>;
--	};
- };
- 
- &led_wkgpio_pins {
-@@ -96,19 +80,3 @@ buttonS2 {
- &gpio1_target {
- 	 ti,no-reset-on-init;
- };
--
--&wl12xx_gpio {
--	pinctrl-single,pins = <
--		OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 */
--		OMAP4_IOPAD(0x070, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a24.gpio_48 */
--	>;
--};
--
--&uart2 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&uart2_pins &bt_pins>;
--	bluetooth: tiwi {
--		compatible = "ti,wl1271-st";
--		enable-gpios = <&gpio2 14 GPIO_ACTIVE_HIGH>;	/* GPIO_46 */
--	};
--};
--- 
-2.39.5
+In any case, we don't enable peripherals on "headers" by default. That's
+up to the end user. The description for the whole adapter board could be
+an overlay that users can then apply directly.
 
+
+ChenYu
+
+> Signed-off-by: J. Neusch=C3=A4fer <j.ne@posteo.net>
+> ---
+>  arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts =
+b/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
+> index 1b001f2ad0efd2e77218742efe6d8edfdd18a816..d65ede3dd6ed1206248a39c91=
+e46065684e7ba29 100644
+> --- a/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
+> +++ b/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
+> @@ -112,6 +112,14 @@ wifi_pwrseq: pwrseq {
+>         };
+>  };
+>
+> +&codec {
+> +       allwinner,audio-routing =3D
+> +               "Line Out", "LINEOUT",
+> +               "MIC1", "Mic",
+> +               "Mic",  "MBIAS";
+> +       status =3D "okay";
+> +};
+> +
+>  &cpu0 {
+>         cpu-supply =3D <&reg_vdd_cpux>;
+>  };
+>
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250417-opz-audio-890849c8bb2e
+>
+> Best regards,
+> --
+> J. Neusch=C3=A4fer <j.ne@posteo.net>
+>
+>
+>
 
