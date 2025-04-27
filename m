@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-622173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330B6A9E3CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 17:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA09CA9E3D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 17:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADA7189A98B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 15:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3143B9120
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 15:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3555E1D5CC6;
-	Sun, 27 Apr 2025 15:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D53C1DE8A0;
+	Sun, 27 Apr 2025 15:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEMqwpM7"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CW8AziDb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D0E148832;
-	Sun, 27 Apr 2025 15:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D737A1DE3CE
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 15:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745768917; cv=none; b=YjIOFNNW2jrn+ojN6SHGu41LgT1QWhGkdW1dBmWX03OFum2nNjep2/0KMlKd0a2B1O88+8iq+y81TpFgLDj9Q0kZ/QF0qNWEAJZHcIT0Uy2uz41xr1D6Umksme28JAMxbnTfR2L2qTIe7jqQR4MndtezHQfGTawmlLLxL1wNvdw=
+	t=1745769119; cv=none; b=d5FcqZGx9OmdnKkFBjAzhWqz6vZHpSG9cij1IidtawTCxB4i3m+yyTqbFmuv6QsTtAhhlQ/Rp06bZGa0qb90HU9zoBLpocMO369EA31vDloFLm66bNGLaN1yow8Glxk+eRrri0ZW5rli1v2uG6soTZKPmIrMB5qQnkEm1jwN/Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745768917; c=relaxed/simple;
-	bh=UFzSyisM3IZr5hdd997M0KmDiSaAUnMiOjf0cFk0zTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=auYgTUqwk7Zbm1G+PRYMLquY/3uqGrAPY4ugjssdCh/y/XcDC1yq54x/Q6zgW8v3Uz11xE4geMjXrBU8XC86vg4czw0kLgfFK4fICT42tRI8k1ocyYcTaXkzRv3YyJEDyuG5s2QzzFz02tifi6HManZFH6OFG3IVgykY+aabkds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEMqwpM7; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so478789866b.1;
-        Sun, 27 Apr 2025 08:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745768914; x=1746373714; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8QP2qKXlylQ5fUgl8dt0xcd9xHalJz4VX3PTuL+s83g=;
-        b=IEMqwpM7uCgAhDoL7fcbEKimxmyEw9YIvrMnCBdGQtr+7ICC2GvgjOxB8ndzfPGQIi
-         9Y7uZ0KP8/wPxCKFsGyCQTmgfVS31zBM2DS6GLRcTeEFuKzvZhCs2GvXk6G4li46XGa3
-         BBQZi32d78mRyol7iaVy6+BJRNqD+fWKvUYPA8JWTswJKu8XwMQ39j6P73kwGqD7/O4M
-         w1xYuHoN0OzFJyvEy+4PdRhEx2LU0VuPxlyOKHofy4faq4dcVevkOLFXeH5TeomM3g41
-         MnEASxhMvkxqukMgXYE06VVUcPUk4kXAw+hvyMqHIGQ8O8VNhflYX8opgzGvMBrsiQ67
-         GqrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745768914; x=1746373714;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8QP2qKXlylQ5fUgl8dt0xcd9xHalJz4VX3PTuL+s83g=;
-        b=uZkhyI1dno8Ts0q3mrOB9ZMpIpQ6Kam07ONWJFUlbp8eyaexM/+53lXwl9xsz/6G6L
-         37ovOo2nii1U5gjfBEFEk2Qzy7ZatArci0FYId5ROtKco+c5mYE7xW9Tjo49SJ8X7hWj
-         /R1M7LIt6MWOivMp/zz6K6BnpYUfPFpGwIvx4Rf97DrM41mO4wWlS6m4Ogj+x2hQmKFN
-         loR+EgXXP9cdJt8/XJ4Q6pCsoMmlJ8jK/FaPFP20s/82RhSs776Qi0ewixuJTlKvl0WD
-         +2QQ1UQxUmbp2AkwNWV61bFePpJ0VQ5Q2q5rKdABTh3eDdadaSPZ5CwnuNR5uSZBLU47
-         o3Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qsgLuhjR6XOqGx5gjXNgEUzwsVecYGZPEa7rGE199XvcSIZuWfdQDJOEg/xAux6s+gEd+FWvc+U5yGpt@vger.kernel.org, AJvYcCXHai3+XH4xFWGEZyH8Xso8qHH/WIU1E5LA04fmut8idUT7mAH79OyAzDtqL4rF1iFKGoQewbyBr2k6Qg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRLlnWA5IZbryKq+bBCiV52fk8xrscKRMUq77PpPKGeekzCpGi
-	cJ/MNs2h7PyDErNXKTvRrtubmkyXCi+cvm+pc2fxCMD0yJSPboGc
-X-Gm-Gg: ASbGncsX4ts1/OYiYLEvdih2kkSyPv2ZKnaEnkniwhSLRJsFI986G4waPyA+yj/U3bd
-	7zzwmXdbG2p7+ymDQgyI34cx8hgSh+FD/rhlR+z/DiUG4nVXO56ZSg0UNbWeC+r35MROSrzJvjH
-	cX07ibopF0qMgBV5fHaZTL5UdEzyWSzUk3D7u+ECgAEtufXnOYr7BhL/8fOHzl3pQMAzD8i7MBt
-	oWGZGpYygNcbA7wKC07MZ9ALbJGJSwGZf7jtA5k+mdQhJMCTdiTadb4nWykZsfwBDvxD4viIfYO
-	up32i/urjC+Q7/jFi9DTCoTq4n/ifIwGtWWB9Tin
-X-Google-Smtp-Source: AGHT+IHcmgxRrBs0qKvkEibbI/1p/gWCaTVx6a/jlKX5SCzjltVcUrawA0H5BtGngKUx98T+x/djlg==
-X-Received: by 2002:a17:907:c10:b0:ace:4197:9ad0 with SMTP id a640c23a62f3a-ace7111d8c0mr798356466b.25.1745768914063;
-        Sun, 27 Apr 2025 08:48:34 -0700 (PDT)
-Received: from pc ([165.51.118.63])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6eda7d9asm457235866b.166.2025.04.27.08.48.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Apr 2025 08:48:33 -0700 (PDT)
-Date: Sun, 27 Apr 2025 16:48:30 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-	Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH] block: rnbd: add .release to rnbd_dev_ktype
-Message-ID: <aA5Rzse_xM5JWjgg@pc>
+	s=arc-20240116; t=1745769119; c=relaxed/simple;
+	bh=fB1w5EdlophF9FygpQ1v2gxIq4Vfe+fEHjSkE38dAW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8EibkJuQI78j4I5EKOoXYnMoit0dv4SjC5vfcMCKTD9ACRJ4qoTf6HVTBBxj5qCEz6AvCiGV/x9jbI8MCv++dd4/bWqFjU8c1NkUhr0s5EMcBlI7h1F50kpiBIvUwDrAJXy9azfyntNofqyHTvshDLkOq8inI/elKj01pJ0IgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CW8AziDb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745769116;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZEsO7LxrjwCVQiphxbxj8Q1M9BC5vnt9cQxUJ75ymR0=;
+	b=CW8AziDbeyfLDs6qRpKHLpcEbNLInUvpzdHlWBwng1xnWGuXzcCLz5Ts+jUm4AsdRCMQ3+
+	RvnsXFyjU+P4BxwEdDWQIQQAWu5oLyqbpI7D9YemWoweQozVsRNyfYWXBzjMrvfEFil9XT
+	Fw6KV5p2ooTexnScc928NSoJrEmf2fI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-178-JrxdJ07tOBin5wljtoGs2Q-1; Sun,
+ 27 Apr 2025 11:51:50 -0400
+X-MC-Unique: JrxdJ07tOBin5wljtoGs2Q-1
+X-Mimecast-MFC-AGG-ID: JrxdJ07tOBin5wljtoGs2Q_1745769108
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 625D21956088;
+	Sun, 27 Apr 2025 15:51:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DA0BC19560A3;
+	Sun, 27 Apr 2025 15:51:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 27 Apr 2025 17:51:09 +0200 (CEST)
+Date: Sun, 27 Apr 2025 17:51:00 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 09/22] uprobes/x86: Add uprobe syscall to speed
+ up uprobe
+Message-ID: <20250427155059.GD9350@redhat.com>
+References: <20250421214423.393661-1-jolsa@kernel.org>
+ <20250421214423.393661-10-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,38 +85,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250421214423.393661-10-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Every ktype must provides a .release function that will be called after
-the last kobject_put.
+On 04/21, Jiri Olsa wrote:
+>
+> We do not allow to execute uprobe syscall if the caller is not
+> from uprobe trampoline mapping.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/block/rnbd/rnbd-clt-sysfs.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+...
 
-diff --git a/drivers/block/rnbd/rnbd-clt-sysfs.c b/drivers/block/rnbd/rnbd-clt-sysfs.c
-index 6ea7c12e3a87..144aea1466a4 100644
---- a/drivers/block/rnbd/rnbd-clt-sysfs.c
-+++ b/drivers/block/rnbd/rnbd-clt-sysfs.c
-@@ -475,9 +475,17 @@ void rnbd_clt_remove_dev_symlink(struct rnbd_clt_dev *dev)
- 	}
- }
- 
-+static void rnbd_dev_release(struct kobject *kobj)
-+{
-+	struct rnbd_clt_dev *dev = container_of(kobj, struct rnbd_clt_dev, kobj);
-+
-+	kfree(dev);
-+}
-+
- static const struct kobj_type rnbd_dev_ktype = {
- 	.sysfs_ops      = &kobj_sysfs_ops,
- 	.default_groups = rnbd_dev_groups,
-+	.release	= rnbd_dev_release,
- };
- 
- static int rnbd_clt_add_dev_kobj(struct rnbd_clt_dev *dev)
--- 
-2.43.0
+> +SYSCALL_DEFINE0(uprobe)
+> +{
+> +	struct pt_regs *regs = task_pt_regs(current);
+> +	unsigned long ip, sp, ax_r11_cx_ip[4];
+> +	int err;
+> +
+> +	/* Allow execution only from uprobe trampolines. */
+> +	if (!in_uprobe_trampoline(regs->ip))
+> +		goto sigill;
+
+I honestly don't understand why do we need this check. Same for the similar
+trampoline_check_ip() check in sys_uretprobe(). Nevermind, I won't argue.
+
+Oleg.
 
 
