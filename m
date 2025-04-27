@@ -1,262 +1,254 @@
-Return-Path: <linux-kernel+bounces-621876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-621878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CBDA9DF89
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:30:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1947A9DF9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DC13BF801
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:29:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B2E17D61D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 06:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B07B24A072;
-	Sun, 27 Apr 2025 06:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586892405FD;
+	Sun, 27 Apr 2025 06:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDpTPxgy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fKrAb1QY"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CAC24167E;
-	Sun, 27 Apr 2025 06:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BF323F405;
+	Sun, 27 Apr 2025 06:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745735245; cv=none; b=KVTkgmMUjNtgHRJ78vEbUoroBMats7pP8YRCNoTvTzwpX8mGcOjS0KkBvZA7bC3qxyETXW9I4gl6hWB1LG0t601577zufdsEOI/Cxdikb6DQtzFiAJmlEOIN/ODq1rBGR9a94SVmkqAe1FSSdTgehdefk9H+t0mIZGMC5nqPmVM=
+	t=1745735460; cv=none; b=E5OY0Tb+7/mGEOArKlnaWYy4af5sdr6mTgdjToFUOF9aRSW49uGgnIbgcAFN26tAKzW9Oa3a4fCS7AsD8gunMYV1Tt1gMNerthDg+Zo6PtxNfnbe5x4FEilt8TkHrytiTACc6vFSksYRbFjlGri9EvisoFd0gxMf/hjNva8wnoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745735245; c=relaxed/simple;
-	bh=rV7ELWY4jzPxSIePzvayWLNlw8ecdtIvAPaE7yFk0vU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sLYJbht+vs5pQlFcvKimTUXCFVhqZmxEXWZmN4eLiLou+dZwLvVbt928bcv/EpBpQMzIzSxTk5XZEpZeCLm/VLh0s5mIGyW+ijfmDUpmHFrJK1T+0hK6o6ct3XAJTiAlAYsJMRhOOYA/QQvZXFNo6o/kqu41E+YSj71BFvopNdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDpTPxgy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C4AC6C4CEFA;
-	Sun, 27 Apr 2025 06:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745735244;
-	bh=rV7ELWY4jzPxSIePzvayWLNlw8ecdtIvAPaE7yFk0vU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TDpTPxgySUdwev2esioHyY2Sq5XePX//9shTWNWy+J8+vzprBzR/NqfZGuvkn87MU
-	 ShFv1AQSE8jEoSoU39+zBgUiRxQfKsXf1UuNwyrjhUnCCo6BwR5tqjgQigvwQsbk06
-	 634XDL1mL+F+p9HiLX93uWXBmQ8JobJ2/FYFrv3BMHULt1LSv5B8t7tfmrbdUpCCer
-	 rf+XyZyjso3KrB5mpbAeNMaZFuMlMzwVLwBhxNJCfhDhg4ryh3pcYQTjTa+wwfsooj
-	 ipeMqWJoiR8iF5+uZIXG4XxWQVXIx2SU9y4KuFaNMEiWaE7w7yi8inrsllnVVq1vOy
-	 WvLNTows4RUBg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B958DC369D8;
-	Sun, 27 Apr 2025 06:27:24 +0000 (UTC)
-From: Keke Li via B4 Relay <devnull+keke.li.amlogic.com@kernel.org>
-Date: Sun, 27 Apr 2025 14:27:18 +0800
-Subject: [PATCH v9 10/10] Documentation: media: add documentation file
- c3-isp.rst
+	s=arc-20240116; t=1745735460; c=relaxed/simple;
+	bh=VJ7L7BYADzYNs+d8QhATh6t1ze4VTHt6LLIj98q3GcQ=;
+	h=Date:Message-Id:From:Subject:To:Cc; b=h7gehhLbfv2zTi/pEr82Ti3zPaXQXSrqssbmGQk1pVzqz5xpWFoC+6ZdsaI6bnbZmH/4/NzaAJ15/0f0A4Gk+Je3cdjxaG24NQzIOfgzxwP7GokE9K+S0/XQKVkxhIOrMABkRL00xjnx0HI0jCXUfRRJI7ob4SJj10DtVYA/ilw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fKrAb1QY; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Cc:To:Subject:From:Message-Id:Date:Sender:Reply-To:MIME-Version
+	:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oAXjI0apa7kqIIJEbs93dN3t43HIG2L7yLBf0wEIXg0=; b=fKrAb1QY6AYmSKC1+SbgwPZUB9
+	ND6uPjsk0kfdAruuwq3/wh1Rjs0ArDAhMxkfFj/YS8iPHgbV+WU3ZNU1TpzS2lZudY3arRUqlFEci
+	cTBYneIKtmDaXSHmf8SiUzDUr38H2kHgyB2twrVfSJjI8j7gHHEYPnP/kMnSC6DKRbJVivK8p4Gwg
+	DAHYRw4IH9o8iSK6l01mCSmN78jjq3othguu9t5gazmg9DloT8PSYrcPiVJlXhbtVri8zLPFnarWN
+	JC4zlJACV8FcZUWdwmtuPZnzOx5cHSZRXG9rOAnHMjIgXrXs+LP4m3XOp4BH0STFTfzldvCnTle1H
+	XRSE9/Lw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u8vXF-001LUW-2x;
+	Sun, 27 Apr 2025 14:30:42 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 27 Apr 2025 14:30:41 +0800
+Date: Sun, 27 Apr 2025 14:30:41 +0800
+Message-Id: <cover.1745734678.git.herbert@gondor.apana.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [v2 PATCH 00/13] Architecture-optimized SHA-256 library API
+To: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld " <Jason@zx2c4.com>, Linus Torvalds <torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250427-c3isp-v9-10-e0fe09433d94@amlogic.com>
-References: <20250427-c3isp-v9-0-e0fe09433d94@amlogic.com>
-In-Reply-To: <20250427-c3isp-v9-0-e0fe09433d94@amlogic.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
- laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com, 
- jacopo.mondi@ideasonboard.com, Keke Li <keke.li@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745735242; l=8064;
- i=keke.li@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=+qgXJevpfResF3gzd9+bsMteto6Ioe7ohnvu5EA8FeY=;
- b=L1GiFGfOGSh4t7UdgMWHpdfzM+uNicpwZ8QmOE/dHDUDIafTSMkgEmY3QU2N/BBqnnqZRt9Mu
- VDFquY6pVm6DhmByZIF1Zfe1wujepuQUeYtc4Y93GXHQ8QMY4kuXBPC
-X-Developer-Key: i=keke.li@amlogic.com; a=ed25519;
- pk=XxNPTsQ0YqMJLLekV456eoKV5gbSlxnViB1k1DhfRmU=
-X-Endpoint-Received: by B4 Relay for keke.li@amlogic.com/20240902 with
- auth_id=204
-X-Original-From: Keke Li <keke.li@amlogic.com>
-Reply-To: keke.li@amlogic.com
 
-From: Keke Li <keke.li@amlogic.com>
+Changes in v2:
+- Rebase on top of lib partial block helper series.
+- Restore the block-only shash implementation of sha256.
+- Move the SIMD hardirq test out of the block functions so that
+  it is only done for the lib/crypto interface.
+- Split the lib/crypto sha256 module to break cycle in allmod build.
 
-Add the file 'c3-isp.rst' that documents the c3-isp driver.
+This is based on
 
-Signed-off-by: Keke Li <keke.li@amlogic.com>
----
- Documentation/admin-guide/media/c3-isp.dot      |  26 ++++++
- Documentation/admin-guide/media/c3-isp.rst      | 101 ++++++++++++++++++++++++
- Documentation/admin-guide/media/v4l-drivers.rst |   1 +
- MAINTAINERS                                     |   2 +
- 4 files changed, 130 insertions(+)
+	https://patchwork.kernel.org/project/linux-crypto/list/?series=957415
 
-diff --git a/Documentation/admin-guide/media/c3-isp.dot b/Documentation/admin-guide/media/c3-isp.dot
-new file mode 100644
-index 000000000000..42dc931ee84a
---- /dev/null
-+++ b/Documentation/admin-guide/media/c3-isp.dot
-@@ -0,0 +1,26 @@
-+digraph board {
-+	rankdir=TB
-+	n00000001 [label="{{<port0> 0 | <port1> 1} | c3-isp-core\n/dev/v4l-subdev0 | {<port2> 2 | <port3> 3 | <port4> 4 | <port5> 5}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000001:port3 -> n00000008:port0
-+	n00000001:port4 -> n0000000b:port0
-+	n00000001:port5 -> n0000000e:port0
-+	n00000001:port2 -> n00000027
-+	n00000008 [label="{{<port0> 0} | c3-isp-resizer0\n/dev/v4l-subdev1 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000008:port1 -> n00000016 [style=bold]
-+	n0000000b [label="{{<port0> 0} | c3-isp-resizer1\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000b:port1 -> n0000001a [style=bold]
-+	n0000000e [label="{{<port0> 0} | c3-isp-resizer2\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000e:port1 -> n00000023 [style=bold]
-+	n00000011 [label="{{<port0> 0} | c3-mipi-adapter\n/dev/v4l-subdev4 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000011:port1 -> n00000001:port0 [style=bold]
-+	n00000016 [label="c3-isp-cap0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-+	n0000001a [label="c3-isp-cap1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-+	n0000001e [label="{{<port0> 0} | c3-mipi-csi2\n/dev/v4l-subdev5 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000001e:port1 -> n00000011:port0 [style=bold]
-+	n00000023 [label="c3-isp-cap2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
-+	n00000027 [label="c3-isp-stats\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
-+	n0000002b [label="c3-isp-params\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
-+	n0000002b -> n00000001:port1
-+	n0000003f [label="{{} | imx290 2-001a\n/dev/v4l-subdev6 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000003f:port0 -> n0000001e:port0 [style=bold]
-+}
-diff --git a/Documentation/admin-guide/media/c3-isp.rst b/Documentation/admin-guide/media/c3-isp.rst
-new file mode 100644
-index 000000000000..ac508b8c6831
---- /dev/null
-+++ b/Documentation/admin-guide/media/c3-isp.rst
-@@ -0,0 +1,101 @@
-+.. SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+
-+.. include:: <isonum.txt>
-+
-+=================================================
-+Amlogic C3 Image Signal Processing (C3ISP) driver
-+=================================================
-+
-+Introduction
-+============
-+
-+This file documents the Amlogic C3ISP driver located under
-+drivers/media/platform/amlogic/c3/isp.
-+
-+The current version of the driver supports the C3ISP found on
-+Amlogic C308L processor.
-+
-+The driver implements V4L2, Media controller and V4L2 subdev interfaces.
-+Camera sensor using V4L2 subdev interface in the kernel is supported.
-+
-+The driver has been tested on AW419-C308L-Socket platform.
-+
-+Amlogic C3 ISP
-+==============
-+
-+The Camera hardware found on C308L processors and supported by
-+the driver consists of:
-+
-+- 1 MIPI-CSI-2 module: handles the physical layer of the MIPI CSI-2 receiver and
-+  receives data from the connected camera sensor.
-+- 1 MIPI-ADAPTER module: organizes MIPI data to meet ISP input requirements and
-+  send MIPI data to ISP.
-+- 1 ISP (Image Signal Processing) module: contains a pipeline of image processing
-+  hardware blocks. The ISP pipeline contains three resizers at the end each of
-+  them connected to a DMA interface which writes the output data to memory.
-+
-+A high-level functional view of the C3 ISP is presented below.::
-+
-+                                                                   +----------+    +-------+
-+                                                                   | Resizer  |--->| WRMIF |
-+  +---------+    +------------+    +--------------+    +-------+   |----------+    +-------+
-+  | Sensor  |--->| MIPI CSI-2 |--->| MIPI ADAPTER |--->|  ISP  |---|----------+    +-------+
-+  +---------+    +------------+    +--------------+    +-------+   | Resizer  |--->| WRMIF |
-+                                                                   +----------+    +-------+
-+                                                                   |----------+    +-------+
-+                                                                   | Resizer  |--->| WRMIF |
-+                                                                   +----------+    +-------+
-+
-+Driver architecture and design
-+==============================
-+
-+With the goal to model the hardware links between the modules and to expose a
-+clean, logical and usable interface, the driver registers the following V4L2
-+sub-devices:
-+
-+- 1 `c3-mipi-csi2` sub-device - the MIPI CSI-2 receiver
-+- 1 `c3-mipi-adapter` sub-device - the MIPI adapter
-+- 1 `c3-isp-core` sub-device - the ISP core
-+- 3 `c3-isp-resizer` sub-devices - the ISP resizers
-+
-+The `c3-isp-core` sub-device is linked to 2 video device nodes for statistics
-+capture and parameters programming:
-+
-+- the `c3-isp-stats` capture video device node for statistics capture
-+- the `c3-isp-params` output video device for parameters programming
-+
-+Each `c3-isp-resizer` sub-device is linked to a capture video device node where
-+frames are captured from:
-+
-+- `c3-isp-resizer0` is linked to the `c3-isp-cap0` capture video device
-+- `c3-isp-resizer1` is linked to the `c3-isp-cap1` capture video device
-+- `c3-isp-resizer2` is linked to the `c3-isp-cap2` capture video device
-+
-+The media controller pipeline graph is as follows (with connected a
-+IMX290 camera sensor):
-+
-+.. _isp_topology_graph:
-+
-+.. kernel-figure:: c3-isp.dot
-+    :alt:   c3-isp.dot
-+    :align: center
-+
-+    Media pipeline topology
-+
-+Implementation
-+==============
-+
-+Runtime configuration of the ISP hardware is performed on the `c3-isp-params`
-+video device node using the :ref:`V4L2_META_FMT_C3ISP_PARAMS
-+<v4l2-meta-fmt-c3isp-params>` as data format. The buffer structure is defined by
-+:c:type:`c3_isp_params_cfg`.
-+
-+Statistics are captured from the `c3-isp-stats` video device node using the
-+:ref:`V4L2_META_FMT_C3ISP_STATS <v4l2-meta-fmt-c3isp-stats>` data format.
-+
-+The final picture size and format is configured using the V4L2 video
-+capture interface on the `c3-isp-cap[0, 2]` video device nodes.
-+
-+The Amlogic C3 ISP is supported by `libcamera <https://libcamera.org>`_ with a
-+dedicated pipeline handler and algorithms that perform run-time image correction
-+and enhancement.
-diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
-index e8761561b2fe..3bac5165b134 100644
---- a/Documentation/admin-guide/media/v4l-drivers.rst
-+++ b/Documentation/admin-guide/media/v4l-drivers.rst
-@@ -10,6 +10,7 @@ Video4Linux (V4L) driver-specific documentation
- 	:maxdepth: 2
- 
- 	bttv
-+	c3-isp
- 	cafe_ccic
- 	cx88
- 	fimc
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5bbfda5662b3..e6f66a240917 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1262,6 +1262,8 @@ AMLOGIC ISP DRIVER
- M:	Keke Li <keke.li@amlogic.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/admin-guide/media/c3-isp.dot
-+F:	Documentation/admin-guide/media/c3-isp.rst
- F:	Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
- F:	Documentation/userspace-api/media/v4l/metafmt-c3-isp.rst
- F:	drivers/media/platform/amlogic/c3/isp/
+Original description:
+
+Following the example of several other algorithms (e.g. CRC32, ChaCha,
+Poly1305, BLAKE2s), this series refactors the kernel's existing
+architecture-optimized SHA-256 code to be available via the library API,
+instead of just via the crypto_shash API as it was before.  It also
+reimplements the SHA-256 crypto_shash API on top of the library API.
+
+This makes it possible to use the SHA-256 library in
+performance-critical cases.  The new design is also much simpler, with a
+negative diffstat of over 1200 lines.  Finally, this also fixes the
+longstanding issue where the arch-optimized SHA-256 was disabled by
+default, so people often forgot to enable it.
+
+For now the SHA-256 library is well-covered by the crypto_shash
+self-tests, but I plan to add a test for the library directly later.
+I've fully tested this series on arm, arm64, riscv, and x86.  On mips,
+powerpc, s390, and sparc I've only been able to partially test it, since
+QEMU does not support the SHA-256 instructions on those platforms.  If
+anyone with access to a mips, powerpc, s390, or sparc system that has
+SHA-256 instructions can verify that the crypto self-tests still pass,
+that would be appreciated.  But I don't expect any issues, especially
+since the new code is more straightforward than the old code.
+
+Eric Biggers (13):
+  crypto: sha256 - support arch-optimized lib and expose through shash
+  crypto: arm/sha256 - implement library instead of shash
+  crypto: arm64/sha256 - remove obsolete chunking logic
+  crypto: arm64/sha256 - implement library instead of shash
+  crypto: mips/sha256 - implement library instead of shash
+  crypto: powerpc/sha256 - implement library instead of shash
+  crypto: riscv/sha256 - implement library instead of shash
+  crypto: s390/sha256 - implement library instead of shash
+  crypto: sparc - move opcodes.h into asm directory
+  crypto: sparc/sha256 - implement library instead of shash
+  crypto: x86/sha256 - implement library instead of shash
+  crypto: sha256 - remove sha256_base.h
+  crypto: lib/sha256 - improve function prototypes
+
+ arch/arm/configs/exynos_defconfig             |   1 -
+ arch/arm/configs/milbeaut_m10v_defconfig      |   1 -
+ arch/arm/configs/multi_v7_defconfig           |   1 -
+ arch/arm/configs/omap2plus_defconfig          |   1 -
+ arch/arm/configs/pxa_defconfig                |   1 -
+ arch/arm/crypto/Kconfig                       |  21 -
+ arch/arm/crypto/Makefile                      |   8 +-
+ arch/arm/crypto/sha2-ce-glue.c                |  87 ----
+ arch/arm/crypto/sha256_glue.c                 | 107 -----
+ arch/arm/crypto/sha256_glue.h                 |   9 -
+ arch/arm/crypto/sha256_neon_glue.c            |  75 ---
+ arch/arm/lib/crypto/.gitignore                |   1 +
+ arch/arm/lib/crypto/Kconfig                   |   7 +
+ arch/arm/lib/crypto/Makefile                  |   8 +-
+ arch/arm/{ => lib}/crypto/sha256-armv4.pl     |  20 +-
+ .../sha2-ce-core.S => lib/crypto/sha256-ce.S} |  10 +-
+ arch/arm/lib/crypto/sha256.c                  |  64 +++
+ arch/arm64/configs/defconfig                  |   1 -
+ arch/arm64/crypto/Kconfig                     |  19 -
+ arch/arm64/crypto/Makefile                    |  13 +-
+ arch/arm64/crypto/sha2-ce-glue.c              | 138 ------
+ arch/arm64/crypto/sha256-glue.c               | 171 -------
+ arch/arm64/crypto/sha512-glue.c               |   6 +-
+ arch/arm64/lib/crypto/.gitignore              |   1 +
+ arch/arm64/lib/crypto/Kconfig                 |   6 +
+ arch/arm64/lib/crypto/Makefile                |   9 +-
+ .../crypto/sha2-armv8.pl}                     |   2 +-
+ .../sha2-ce-core.S => lib/crypto/sha256-ce.S} |  36 +-
+ arch/arm64/lib/crypto/sha256.c                |  75 +++
+ arch/mips/cavium-octeon/Kconfig               |   6 +
+ .../mips/cavium-octeon/crypto/octeon-sha256.c | 139 ++----
+ arch/mips/configs/cavium_octeon_defconfig     |   1 -
+ arch/mips/crypto/Kconfig                      |  10 -
+ arch/powerpc/crypto/Kconfig                   |  11 -
+ arch/powerpc/crypto/Makefile                  |   2 -
+ arch/powerpc/crypto/sha256-spe-glue.c         | 128 ------
+ arch/powerpc/lib/crypto/Kconfig               |   6 +
+ arch/powerpc/lib/crypto/Makefile              |   3 +
+ .../powerpc/{ => lib}/crypto/sha256-spe-asm.S |   0
+ arch/powerpc/lib/crypto/sha256.c              |  70 +++
+ arch/riscv/crypto/Kconfig                     |  11 -
+ arch/riscv/crypto/Makefile                    |   3 -
+ arch/riscv/crypto/sha256-riscv64-glue.c       | 125 -----
+ arch/riscv/lib/crypto/Kconfig                 |   8 +
+ arch/riscv/lib/crypto/Makefile                |   3 +
+ .../sha256-riscv64-zvknha_or_zvknhb-zvkb.S    |   4 +-
+ arch/riscv/lib/crypto/sha256.c                |  67 +++
+ arch/s390/configs/debug_defconfig             |   1 -
+ arch/s390/configs/defconfig                   |   1 -
+ arch/s390/crypto/Kconfig                      |  10 -
+ arch/s390/crypto/Makefile                     |   1 -
+ arch/s390/crypto/sha256_s390.c                | 144 ------
+ arch/s390/lib/crypto/Kconfig                  |   6 +
+ arch/s390/lib/crypto/Makefile                 |   2 +
+ arch/s390/lib/crypto/sha256.c                 |  47 ++
+ arch/sparc/crypto/Kconfig                     |  10 -
+ arch/sparc/crypto/Makefile                    |   2 -
+ arch/sparc/crypto/aes_asm.S                   |   3 +-
+ arch/sparc/crypto/aes_glue.c                  |   3 +-
+ arch/sparc/crypto/camellia_asm.S              |   3 +-
+ arch/sparc/crypto/camellia_glue.c             |   3 +-
+ arch/sparc/crypto/des_asm.S                   |   3 +-
+ arch/sparc/crypto/des_glue.c                  |   3 +-
+ arch/sparc/crypto/md5_asm.S                   |   3 +-
+ arch/sparc/crypto/md5_glue.c                  |   3 +-
+ arch/sparc/crypto/sha1_asm.S                  |   3 +-
+ arch/sparc/crypto/sha1_glue.c                 |   3 +-
+ arch/sparc/crypto/sha256_glue.c               | 129 ------
+ arch/sparc/crypto/sha512_asm.S                |   3 +-
+ arch/sparc/crypto/sha512_glue.c               |   3 +-
+ arch/sparc/{crypto => include/asm}/opcodes.h  |   6 +-
+ arch/sparc/lib/Makefile                       |   1 +
+ arch/sparc/lib/crc32c_asm.S                   |   3 +-
+ arch/sparc/lib/crypto/Kconfig                 |   8 +
+ arch/sparc/lib/crypto/Makefile                |   4 +
+ arch/sparc/lib/crypto/sha256.c                |  64 +++
+ arch/sparc/{ => lib}/crypto/sha256_asm.S      |   5 +-
+ arch/x86/crypto/Kconfig                       |  14 -
+ arch/x86/crypto/Makefile                      |   3 -
+ arch/x86/crypto/sha256_ssse3_glue.c           | 432 ------------------
+ arch/x86/lib/crypto/Kconfig                   |   8 +
+ arch/x86/lib/crypto/Makefile                  |   3 +
+ arch/x86/{ => lib}/crypto/sha256-avx-asm.S    |  12 +-
+ arch/x86/{ => lib}/crypto/sha256-avx2-asm.S   |  12 +-
+ .../crypto/sha256-ni-asm.S}                   |  36 +-
+ arch/x86/{ => lib}/crypto/sha256-ssse3-asm.S  |  14 +-
+ arch/x86/lib/crypto/sha256.c                  |  80 ++++
+ arch/x86/purgatory/Makefile                   |   3 -
+ arch/x86/purgatory/sha256.c                   |  15 +
+ crypto/Kconfig                                |   1 +
+ crypto/Makefile                               |   3 +-
+ crypto/sha256.c                               | 198 ++++++++
+ crypto/sha256_generic.c                       | 102 -----
+ include/crypto/internal/sha2.h                |  75 +++
+ include/crypto/sha2.h                         |  23 +-
+ include/crypto/sha256_base.h                  | 148 ------
+ lib/crypto/Kconfig                            |  30 ++
+ lib/crypto/Makefile                           |   1 +
+ lib/crypto/sha256-generic.c                   | 139 ++++++
+ lib/crypto/sha256.c                           | 150 ++----
+ 100 files changed, 1165 insertions(+), 2313 deletions(-)
+ delete mode 100644 arch/arm/crypto/sha2-ce-glue.c
+ delete mode 100644 arch/arm/crypto/sha256_glue.c
+ delete mode 100644 arch/arm/crypto/sha256_glue.h
+ delete mode 100644 arch/arm/crypto/sha256_neon_glue.c
+ rename arch/arm/{ => lib}/crypto/sha256-armv4.pl (97%)
+ rename arch/arm/{crypto/sha2-ce-core.S => lib/crypto/sha256-ce.S} (91%)
+ create mode 100644 arch/arm/lib/crypto/sha256.c
+ delete mode 100644 arch/arm64/crypto/sha2-ce-glue.c
+ delete mode 100644 arch/arm64/crypto/sha256-glue.c
+ rename arch/arm64/{crypto/sha512-armv8.pl => lib/crypto/sha2-armv8.pl} (99%)
+ rename arch/arm64/{crypto/sha2-ce-core.S => lib/crypto/sha256-ce.S} (80%)
+ create mode 100644 arch/arm64/lib/crypto/sha256.c
+ delete mode 100644 arch/powerpc/crypto/sha256-spe-glue.c
+ rename arch/powerpc/{ => lib}/crypto/sha256-spe-asm.S (100%)
+ create mode 100644 arch/powerpc/lib/crypto/sha256.c
+ delete mode 100644 arch/riscv/crypto/sha256-riscv64-glue.c
+ rename arch/riscv/{ => lib}/crypto/sha256-riscv64-zvknha_or_zvknhb-zvkb.S (98%)
+ create mode 100644 arch/riscv/lib/crypto/sha256.c
+ delete mode 100644 arch/s390/crypto/sha256_s390.c
+ create mode 100644 arch/s390/lib/crypto/sha256.c
+ delete mode 100644 arch/sparc/crypto/sha256_glue.c
+ rename arch/sparc/{crypto => include/asm}/opcodes.h (96%)
+ create mode 100644 arch/sparc/lib/crypto/Kconfig
+ create mode 100644 arch/sparc/lib/crypto/Makefile
+ create mode 100644 arch/sparc/lib/crypto/sha256.c
+ rename arch/sparc/{ => lib}/crypto/sha256_asm.S (95%)
+ delete mode 100644 arch/x86/crypto/sha256_ssse3_glue.c
+ rename arch/x86/{ => lib}/crypto/sha256-avx-asm.S (98%)
+ rename arch/x86/{ => lib}/crypto/sha256-avx2-asm.S (98%)
+ rename arch/x86/{crypto/sha256_ni_asm.S => lib/crypto/sha256-ni-asm.S} (85%)
+ rename arch/x86/{ => lib}/crypto/sha256-ssse3-asm.S (98%)
+ create mode 100644 arch/x86/lib/crypto/sha256.c
+ create mode 100644 arch/x86/purgatory/sha256.c
+ create mode 100644 crypto/sha256.c
+ delete mode 100644 crypto/sha256_generic.c
+ create mode 100644 include/crypto/internal/sha2.h
+ delete mode 100644 include/crypto/sha256_base.h
+ create mode 100644 lib/crypto/sha256-generic.c
 
 -- 
-2.49.0
-
+2.39.5
 
 
