@@ -1,87 +1,161 @@
-Return-Path: <linux-kernel+bounces-622155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA14A9E3A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:51:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD94DA9E3AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 16:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9304816D232
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4199A17196E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 14:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34BE1898FB;
-	Sun, 27 Apr 2025 14:51:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F7E1B423B;
+	Sun, 27 Apr 2025 14:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9uu1pMH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FF642056
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 14:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E6A18871F
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 14:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745765464; cv=none; b=hd8xD4Bh17TRP7OA6Ct/aketMYqUcDxH6bQoD7cQyw8fddiY1COMuLMcNoHkVvdfQrU0Pcdf53eXdXMgLZpzROmGjmZe1gfpjHRDaHrFbQS2djhYzoYzUg+4ZXzHU98q0A7feNfraT3KOpX1bctAs+eAkChzNDew6lGSRzaaO0E=
+	t=1745765824; cv=none; b=J/VI3uJXD8it6YYTuvmKUjujUxzRipM8QKAnoOmuvgO+rRL6AJ7c4InICFplxjqNuUrvQRFjrpPClFHXJwXfryzUnKTtAmtpEKcKgaLDWjgFcMyTDUgIm6Rk1i4sW4Waq0dT93yS1ZpWeWO4NMlbZA3E4zUgesLpOL6wfG/xaeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745765464; c=relaxed/simple;
-	bh=JTC1ZTM27YJPJjsW5CY8+JXzB37BPZjRX/s4HydbeF8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gvcWqXpejggU2q9hMSNEYVhQOdOBCqq6S7eRV+LQ5np6KfbeAVVgZYYr8vrvntI/BBe6XINK7xrgp3T4VddqbqfQDu7dDfuo3+pxyVA8cjHS8RsttxM6m1dti9qn039lpp//LQ92JkS7f39h70ay5ugNAkuN+l+3f9nveezs6BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85be9e7bf32so727299239f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 07:51:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745765462; x=1746370262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bl2iY4rRdldgveGAajnRt4QLAQDUhtfabCPqKYtzafY=;
-        b=DQAtbrTe5NKrrkRPAJkpTHXK/thY5v7i8w4U4NZtaDsLye0pBXD5G8qhSUB/6eLVT5
-         vtIHgv6+vnY9Y849rkQ/5WoP9LoYlOd8H3mJhERoUWAfIUC50f8Xz5v0kOeDfktoCfr8
-         IQmHUhQamRCcgQVtWmpL+6fUNa0QQIQ82aZYtGTpXNLupnkMmHhqQDD5C8wIxESuwsIt
-         5t6DuuadGdMIfy63HNyGz5kZh+FNfU3l8fH4mdywsUEGPZfm8W69UU0jT9z5LhEaOcjn
-         Mhlu0Ks8hM/qZ9TT9dCsUXE64PuoXmYV81C2+uFqXHXlMK4nwDv2xVjkf+PLB9f4L0OV
-         m+FA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9wBDoHgPPiq/PGc8ReJQPiX3MK71JLqaYmdIKW9pQXcLquvf5EJMGII9pAJUNPt1r3J2Wz5j7fsMujdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyx+zbtDMd9vthOCwGhgNDziVm1IV4ioRd6A71lQB3Ig3nc2tu
-	kyYUkPBV+rXAvUd1L6/KZvnwpw6b8gAxsV94D3Dn3Fl7gXybbzjRCgF0260ePRjeivRaXEGcAz2
-	m6dMl3pSwv2SATb9/ZLHpt4BYcWIU7HPiBcahuBbNgmt87XPLtlwjrw4=
-X-Google-Smtp-Source: AGHT+IHnWulWDcmRIhqOSpX52aohj5vWsDsaiaZdO3a/aKT88I3SzVYQYaGzJil1Ssz2j1slMiriQQkAdxK2SAJXliXfm5VinJF/
+	s=arc-20240116; t=1745765824; c=relaxed/simple;
+	bh=d2uDCVX6vy5fgINTJAoPSXWz99AZILOOAgGVtDIVWIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0svrwJFyol4jRpyi9c/SM7l4dUnZNSyGUKy4Xd5XpzFcJY2bq7JtSjYT/xo+oZJGYQ8HbA6WGILrSP42ab2gCt7/ZucvwMe67ZA3deTL887hUjNq93wopt+KSZN6cEIT4/YZWnWSfhTVqQdhr6i0ZoCNo8PFex+MaajfzR+y70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9uu1pMH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745765821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=icw4AxzsZTsOJJ+P8ibwCbXmBIE2aO1l9yKvVx2uDRo=;
+	b=f9uu1pMHwQa6QpE23oSsuFLJkeyPUrm4DLP2vGM6b+Ko7hmKzvoT36vLsDM+J3X6gkgjUA
+	QVzwiFeSkglz3pC+bwAdMHZnQ3qPxipGTFMdD8zi5zxEmjzpZBJVhRyMPFiPXzXFKAaN1/
+	GDSC69SAxcun/Sswjba9hnGndzHCrRQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-270-O4ZXsu8TO7GR1XelWUl6qg-1; Sun,
+ 27 Apr 2025 10:56:55 -0400
+X-MC-Unique: O4ZXsu8TO7GR1XelWUl6qg-1
+X-Mimecast-MFC-AGG-ID: O4ZXsu8TO7GR1XelWUl6qg_1745765813
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B5311955DDE;
+	Sun, 27 Apr 2025 14:56:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D563E1800368;
+	Sun, 27 Apr 2025 14:56:45 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 27 Apr 2025 16:56:14 +0200 (CEST)
+Date: Sun, 27 Apr 2025 16:56:06 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 08/22] uprobes/x86: Add mapping for optimized
+ uprobe trampolines
+Message-ID: <20250427145606.GC9350@redhat.com>
+References: <20250421214423.393661-1-jolsa@kernel.org>
+ <20250421214423.393661-9-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15cf:b0:864:5a0c:84db with SMTP id
- ca18e2360f4ac-8645d24b339mr986715239f.13.1745765461861; Sun, 27 Apr 2025
- 07:51:01 -0700 (PDT)
-Date: Sun, 27 Apr 2025 07:51:01 -0700
-In-Reply-To: <20250427142723.72473-1-duttaditya18@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <680e4455.050a0220.3b8549.0082.GAE@google.com>
-Subject: Re: [v6.1] UBSAN: array-index-out-of-bounds in xtSearch (2)
-From: syzbot <syzbot+7cb897779f3c479d0615@syzkaller.appspotmail.com>
-To: duttaditya18@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-lts-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421214423.393661-9-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+On 04/21, Jiri Olsa wrote:
+>
+> +static unsigned long find_nearest_page(unsigned long vaddr)
+> +{
+> +	struct vm_area_struct *vma, *prev = NULL;
+> +	unsigned long prev_vm_end = PAGE_SIZE;
+> +	VMA_ITERATOR(vmi, current->mm, 0);
+> +
+> +	vma = vma_next(&vmi);
+> +	while (vma) {
+> +		if (prev)
+> +			prev_vm_end = prev->vm_end;
+> +		if (vma->vm_start - prev_vm_end  >= PAGE_SIZE) {
+> +			if (is_reachable_by_call(prev_vm_end, vaddr))
+> +				return prev_vm_end;
+> +			if (is_reachable_by_call(vma->vm_start - PAGE_SIZE, vaddr))
+> +				return vma->vm_start - PAGE_SIZE;
+> +		}
+> +		prev = vma;
+> +		vma = vma_next(&vmi);
+> +	}
+> +
+> +	return 0;
+> +}
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This can be simplified afaics... We don't really need prev, and we can
+use for_each_vma(),
 
-Reported-by: syzbot+7cb897779f3c479d0615@syzkaller.appspotmail.com
-Tested-by: syzbot+7cb897779f3c479d0615@syzkaller.appspotmail.com
+	static unsigned long find_nearest_page(unsigned long vaddr)
+	{
+		struct vm_area_struct *vma;
+		unsigned long prev_vm_end = PAGE_SIZE;
+		VMA_ITERATOR(vmi, current->mm, 0);
 
-Tested on:
+		for_each_vma(vmi, vma) {
+			if (vma->vm_start - prev_vm_end  >= PAGE_SIZE) {
+				if (is_reachable_by_call(prev_vm_end, vaddr))
+					return prev_vm_end;
+				if (is_reachable_by_call(vma->vm_start - PAGE_SIZE, vaddr))
+					return vma->vm_start - PAGE_SIZE;
+			}
+			prev_vm_end = vma->vm_end;
+		}
 
-commit:         535ec20c Linux 6.1.135
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=157c30d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=74f095942d812894
-dashboard link: https://syzkaller.appspot.com/bug?extid=7cb897779f3c479d0615
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14ac30d4580000
+		return 0;
+	}
 
-Note: testing is done by a robot and is best-effort only.
+> +static struct uprobe_trampoline *create_uprobe_trampoline(unsigned long vaddr)
+> +{
+> +	struct pt_regs *regs = task_pt_regs(current);
+> +	struct mm_struct *mm = current->mm;
+> +	struct uprobe_trampoline *tramp;
+> +	struct vm_area_struct *vma;
+> +
+> +	if (!user_64bit_mode(regs))
+> +		return NULL;
+
+Cosmetic, but I think it would be better to move this check into the
+caller, uprobe_trampoline_get().
+
+> +	vma = _install_special_mapping(mm, tramp->vaddr, PAGE_SIZE,
+> +				VM_READ|VM_EXEC|VM_MAYEXEC|VM_MAYREAD|VM_DONTCOPY|VM_IO,
+> +				&tramp_mapping);
+
+Note that xol_add_vma() -> _install_special_mapping() uses VM_SEALED_SYSMAP.
+Perhaps create_uprobe_trampoline() should use this flag too for consistency?
+
+Oleg.
+
 
