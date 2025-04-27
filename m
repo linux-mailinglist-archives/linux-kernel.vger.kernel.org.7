@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-622029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2673AA9E238
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:44:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E88EA9E23A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8CEA7A8969
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC31178FCC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0724EAB2;
-	Sun, 27 Apr 2025 09:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F66A24E00D;
+	Sun, 27 Apr 2025 09:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="b88ElFoZ"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="fo0JMPAv"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7528624167D;
-	Sun, 27 Apr 2025 09:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C294D7081F;
+	Sun, 27 Apr 2025 09:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745747026; cv=none; b=kioyQOAkqess04LGjKTFGFXRKNA8zPnchrQZGMTdm24smKhC2jEMFxUfMWDfbI+n0ZOzx0ft26glVOMqAt/dDodPcxEl1u9OLf+LgX/HLz5hVCTz/pd/a/40UMdwjZ+apvkUNSI36KLwpaPmHAtO6THE7dkLu404TpRr8Fykljc=
+	t=1745747034; cv=none; b=FptFQMEmUxu5jAEk414rl/j+qCv79Yls0yslcIY3avdwUMjrxkx2X8FrQxPrEA6V98MB/Ag6UEmN6Ah1XoMy2SASyzH4/qdd8TguGq/qrLTcs/8c0Z2GvB+4kjHzqP4d6AKWN1I/EmnfHfquevJC/7B9jwsZ+U932mfPdXbPNHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745747026; c=relaxed/simple;
-	bh=DbMD6eplEEJV51whg5oFNXFVeTOfDligYqxPbznRFx8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Ghh5slfuoAv00hPZDno24ReTPEsoDxul7wd1xLh8UCXPLKfoB2aoZjx0gtCK7ukMHEkkJN20giNfUHPjrB5QU+VvP1EcW/ti1boQpcMX+g9dbM74K7EyL1VRKryHh+43m3TOheKCMc8xmozvSF2KwTCN4FOFQLZes4IdHrEZAfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=b88ElFoZ; arc=none smtp.client-ip=54.206.34.216
+	s=arc-20240116; t=1745747034; c=relaxed/simple;
+	bh=+NkiG3jX3SEIpGCj43Ct8brYjSD4g7Ru1t1WzHIo0UU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=rmGr4Df6yPbQ1uUyv7m1PCSGpXEcAHRYchvTfApnRW79jmrffqWtOrT6iDLB6VnWgoIgFfNNLJ2PJBg7oGBJjH/+j7J461+vCq7xdXtxvOBgFt1zL33QrNXzjhPC1UBxene5mGMjRcBKGYayKkIvOoc8qrqdQxAnOlIqrOsQp7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=fo0JMPAv; arc=none smtp.client-ip=54.207.19.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1745746952;
-	bh=4+SDHkGQub2M803DuAn/oXEZ4KRv6c1CjhqwzQNrquo=;
+	s=altu2504; t=1745746956;
+	bh=kPSSrSb3jP6BCqf5pwKmn+N4eRAqsp/w9IrrNpu2wWQ=;
 	h=From:To:Subject:Date:Message-Id;
-	b=b88ElFoZiRbVWjWFbhMGfqILv7kpqO7hA4MdTDLovooj5jrwWidKLYU+Zh2MB8vBh
-	 5nsUso1gBTMzY5/fHVkVM0clNoX58/YuKypvZHm+cU4gIEKY8blNQsnMFt8z3oUbzh
-	 CWx9lwCZcYeBBSsKhQIQROeJ/xvTUI2Mhvfnx3Qk=
-X-QQ-mid: esmtpgz13t1745746944t8989c152
-X-QQ-Originating-IP: y6iJRkIkSVZWqfIl5qBr3OIRxyRvJ6n5dpIC3CBmOXE=
+	b=fo0JMPAv3B5Tbg1cDp42RKbPvmkAVbw2ryrf+xBoeOfM7RiT8ES85czoaLa/a/1om
+	 ktKLzUcyBPqudHfqR0HJ6EAnwavQHu9uYPl4hiQWxwphaj3cM40W7ZTYgCIjqe5GMK
+	 8EXdoFfB/pSm5F0snMChdotT8CfpC7ZCKLiEKIhA=
+X-QQ-mid: esmtpgz13t1745746949tec797486
+X-QQ-Originating-IP: /T03SnbxL73Bju9CPvvuA08Yp8+fugFNhO3ZT4bd8gM=
 Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 27 Apr 2025 17:42:21 +0800 (CST)
+	id ; Sun, 27 Apr 2025 17:42:26 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12595977349983944088
+X-BIZMAIL-ID: 7345639608399007083
 EX-QQ-RecipientCnt: 20
 From: Chaoyi Chen <kernel@airkyi.com>
 To: Heiko Stuebner <heiko@sntech.de>
@@ -66,29 +66,30 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Add support for rk3399 industry evaluation board
-Date: Sun, 27 Apr 2025 17:42:09 +0800
-Message-Id: <20250427094211.246-1-kernel@airkyi.com>
+Subject: [PATCH 1/2] dt-bindings: arm: rockchip: Add rk3399 industry evaluation board
+Date: Sun, 27 Apr 2025 17:42:10 +0800
+Message-Id: <20250427094211.246-2-kernel@airkyi.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250427094211.246-1-kernel@airkyi.com>
+References: <20250427094211.246-1-kernel@airkyi.com>
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: N5QhsOwzP0INIoqwFLSoVCKGR9LUgb7tLt/sIpJEhY7xmx1T5J9akfn0
-	BoNPeZH4/hJE5f6x0AjWXNq+ZoiPVm8fA3ERVgtsO+hcOHHx91MrAe598d4sQJgB8q487f6
-	fXPm2vRGCvpJPd+oSuUojQv3//2jvAocRQ9JIT23aRTJqII0H4o9YbomCnoSNlrzlPDaJl1
-	R4fw1pZzQ/G2j01G5mqyfPG6IwyOl6nn3+/zzSL29GQgR5IwpagrKs36FO/Jq4opdqF27eK
-	MPUEKg73fca0ZDUj2oPIn+iCpv8PdRZaBxG03yQVjVOeNZyG0XYLcw64G2dnnHFDCpATNpu
-	X/k0olJy5sIvTeHkUfhne3INgUoLg+5XFKBdvNX+6RXYZgFtVwNwvg8VklTryrwU+kw2ITs
-	QXyYQOup7dxq/zQSOPhQB+sV8/nbrsIBfBrS7cia+a8gWN+C41agxcwSHF/llgFlAfo70HK
-	JSBtg0RKizpaZSJ4Wn6wDilsCn29cEW4b4schzBmor/9H6ROcI2x8rvnql4i/JsanuN331H
-	cqjPBYTk+ezEPtgLj3x7qw79ASW98QqP+JjIpfZC7c1WTXieBBreg1DBu9xxkpjEALox5GG
-	tcoFWh2uJYScu7QW6UzDxhjqIviu9catWcgV3FqzGV1ixhoXK9wcrgSDoCYj0jhJ8LzVyPU
-	aK5gblnfWJQ1zukfxO+j/QdLjPBhWDhOD2WxyTucLxwDXctFH1CNwyOlv1v98fmw5vg7VMw
-	xsCdK/1QCsiEdjG3BX8x6iKItQc6KuqACBNsmQ0NSFISbTsmCAn2KJ3wjCaa0w5oH3m6KEK
-	ubO5qJuQjEsXbqGchSdPwHOgCLQKtj8IJ6kJ1zMau3CBAYfAe319Ff/gX6B5CKUFvVa2hz+
-	QPBaT/y/tY+QI8ZvgkUEZ0Tyjpb8S7J1hy1teoikyAA3ItiJOidozCcSa+9T7Rd+CFCgLzN
-	o381d5A6VmGXz+GEdu3C4WyjbPJpvHMtjz8YfWiSpcGg5a0DhY3VHUu9ys8JEoSDv7P2WlP
-	lCrx4mAe8kR0mrf5k6mrkGV3QbCjY1uuHZnEQo2w==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: MgQY1K25Ph0m69AjCHDG8dL3hBqrmdXSfid7xJf5VUMV91uYYBeZ1EI9
+	UrqM9K0jxpexEz1Zc1hEobiDcaY4SPOQlv8uVcowEWgacqMU1+4ZmYRIlkDK6TnA7xc/RAc
+	IJQanCak27/v/1UGeju/EFCc9IfUZ1g1rUUo/7HSPu+qgntwZIz3Rm7CyvE291HFkdt7XQs
+	q1reLfQ8kWxKUTd3eG51jypywBf3FN97vwp6+nq0og1fQ8VgVgGk7Q7PpiJBZxmxeuuuHtx
+	vc4oMQ0PDX0FTsSr2J3XoPm75HGHMCLynDT3BXJ/t4AHY27wpkOxqxxurG9U1yoz2sZzVk2
+	5tR2Q7qffWU4z+7IlgjG0yd1Gr3u1rJG40AsAsHYFWUWkph7OS2WJH6zqmiAbuyVOaFGrg9
+	IOu+rIF8vHxo4fM1vZ2K6c0ItcWBGo71K3A00Uo0Je6FyayFMjMz/lTB7aBC7CxG12oS9Rj
+	sKbKO2FoRmBPrVo7+Yb3Pr4kMcr5hnIwa6k0iFA1llQupBmcs2igTn6qitvKniRO/HAsoK3
+	Z0PRz1vrniZy11AOFwjLwvlIK7PVXAOj3q3q0DgEgZ4BfUvK3yi2Met5+Aec/4Nv4ligp7o
+	f9tdy0+HWDU9yZr2dc7n2mft2o0mlTcdRUKTdaNZr5dVR9zPGrt8JqTioNwemZSlYH3OsRe
+	PsJ3PklKE+WuJvDevnrmuGwQlIZjM2QHP+RJOCS0NlqCvSAG4oeHEhB7KF2801biY/dDGKk
+	7D/N3Z4owRrPieTBdX9+DFOj2zyW/iix9NKdATTuuVr91jew56hIHSMSJanz5Y5IC5sn5/a
+	ksKOVige01jJGcfIWGqch8gvqSMyo3Obo0HrXviM7frKCpezlNoTnp+k8EW/fkiib2rmZAh
+	/yLIi/whi4D6u0N3mqP5jd2y5v8X59THrinRnb1XkzrUrvjUcoVzEYipL0781jgG9kfXIr0
+	ufvaUYK4qz7ymITFC7iNBSLQsYEHvcWI/dFoXSmGdR1e678v765nbMdHcnDuJYv3TQUc=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -98,31 +99,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-General feature for rk3399 industry evaluation board:
-- Rockchip RK3399
-- 4GB LPDDR4
-- emmc5.1
-- SDIO3.0 compatible TF card
-- 1x HDMI2.0a TX
-- 1x HDMI1.4b RX with TC358749XBG HDMI to MIPI CSI2 bridge chip
-- 1x type-c DisplayPort
-- 3x USB3.0 Host
-- 1x USB2.0 Host
-- 1x Ethernet / USB3.0 to Ethernet
+Add devicetree binding for the rk3399 industry evaluation board.
 
-Tested with HDMI/GPU/USB2.0/USB3.0/Ethernet/TF card/emmc.
+Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Chaoyi Chen (2):
-  dt-bindings: arm: rockchip: Add rk3399 industry evaluation board
-  arm64: dts: rockchip: Add rk3399-evb-ind board
-
- .../devicetree/bindings/arm/rockchip.yaml     |   5 +
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3399-evb-ind.dts      | 222 ++++++++++++++++++
- 3 files changed, 228 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
-
---
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 650fb833d96e..684d48ba20fc 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -1047,6 +1047,11 @@ properties:
+           - const: rockchip,rk3399-evb
+           - const: rockchip,rk3399
+ 
++      - description: Rockchip RK3399 Industry Evaluation board
++        items:
++          - const: rockchip,rk3399-evb-ind
++          - const: rockchip,rk3399
++
+       - description: Rockchip RK3399 Sapphire standalone
+         items:
+           - const: rockchip,rk3399-sapphire
+-- 
 2.49.0
 
 
