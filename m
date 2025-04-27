@@ -1,146 +1,236 @@
-Return-Path: <linux-kernel+bounces-621940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9845AA9E0A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 10:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7454FA9E156
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 11:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0E57189D759
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 08:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A894D1750BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Apr 2025 09:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16DB24728A;
-	Sun, 27 Apr 2025 08:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E9C2405E5;
+	Sun, 27 Apr 2025 09:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RrB+nrqz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ov+8iBvC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RrB+nrqz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ov+8iBvC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="PgqdcOqV"
+Received: from mail66.out.titan.email (mail66.out.titan.email [3.216.99.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805598BE7
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 08:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F08B2C9A
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 09:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745741073; cv=none; b=juJTqkrcOHngsILrnrVXtMJUZHaW8FpV0TwYuaL80Q9BxgQ0Mn1Q81i2IP/Xfx5nYwQ/LVQeIt5McIutsO6mlRgRNgqrJREKaekZZDDjRAd+M+zQeLg9QeF5RQkJvsI/zIw4Ki3XzJRU+HpU1SftwI0wV5YhkJXfD1D4SnSkKgs=
+	t=1745745377; cv=none; b=LuIRK1vREsoGCl/SutFD2TZzFuHRS1Ge5jRCERXbb9DrQ8cZYSW10kSeOODNSuCyYZLnfit1XPO0anpGvufv4GAvaUBOSIZpyak/42MIQTMM0DaAq4DBTEbyhJGBpEoVtV7eq7bK6S5Znci4e+BwZQBOAXpq4jA8gF6TO+NRD/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745741073; c=relaxed/simple;
-	bh=WBSJc7oB+yR13DAvdQSBqLkKRXyHSO2MBCampK9h5KQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V1xMwD4ssyAo8epLXs0H7rv+0XELjYnl8oUsb/1gm8yVM6n6sB3MoGaeC73Af6Dj09+T7j5S/D4j53Ek+asUfEFO8cIuJw5RJb8vFn73y3jlxj+u0d/3+mUEDTIm2quCZzwFkRi80oXNl0/fvGj6LaJs9Bd9/Ay+vpWBRbBj3QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RrB+nrqz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ov+8iBvC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RrB+nrqz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ov+8iBvC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 940FA1F749;
-	Sun, 27 Apr 2025 08:04:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745741069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/xgdygPLSQTBfZrtxZDlXzTaXvQR6hthcsY3VTYUN84=;
-	b=RrB+nrqzgmS0WyplsrVf/KU8Jyo9r2OgHJwcIOnP5lyiC+DX3bdYKgTosKCS8d9khd4vR4
-	awPOz5lKzeb9lmOFpmgziYaB2Yd5ZJk3TEAdQ2foxDr2pIQkpfYacRtS5KfwM0C+MzDKGm
-	4kYvG5/pmL1DAi0QzvWxfazRG9k8cFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745741069;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/xgdygPLSQTBfZrtxZDlXzTaXvQR6hthcsY3VTYUN84=;
-	b=ov+8iBvCaxb8eZENdujWj/Nc8I3Rlazz6GkrOrwJlENK5yugEhcA/iOrL3Iow7sT59K5dm
-	HOUQVfDAeVOvEdAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745741069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/xgdygPLSQTBfZrtxZDlXzTaXvQR6hthcsY3VTYUN84=;
-	b=RrB+nrqzgmS0WyplsrVf/KU8Jyo9r2OgHJwcIOnP5lyiC+DX3bdYKgTosKCS8d9khd4vR4
-	awPOz5lKzeb9lmOFpmgziYaB2Yd5ZJk3TEAdQ2foxDr2pIQkpfYacRtS5KfwM0C+MzDKGm
-	4kYvG5/pmL1DAi0QzvWxfazRG9k8cFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745741069;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/xgdygPLSQTBfZrtxZDlXzTaXvQR6hthcsY3VTYUN84=;
-	b=ov+8iBvCaxb8eZENdujWj/Nc8I3Rlazz6GkrOrwJlENK5yugEhcA/iOrL3Iow7sT59K5dm
-	HOUQVfDAeVOvEdAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62E4A13927;
-	Sun, 27 Apr 2025 08:04:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0eLNFg3lDWhXKgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 27 Apr 2025 08:04:29 +0000
-Date: Sun, 27 Apr 2025 10:04:29 +0200
-Message-ID: <87r01exc6q.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chris Chiu <chris.chiu@canonical.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	kailang@realtek.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: Apply volume control on speaker+lineout for HP EliteStudio AIO
-In-Reply-To: <20250425103618.534951-1-chris.chiu@canonical.com>
-References: <20250425103618.534951-1-chris.chiu@canonical.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1745745377; c=relaxed/simple;
+	bh=SnKDtn9vNNEvBK7+Ork9k+3FMuZ/BPGhOp5jL12zxrg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ta1u8v6uu+Cgw2l54rg2wA3JanaalaFWefW+khxh5OR97lZTnGr0V/2l0ClaR1bu0VcXTjXpEHgg24dpNShMyEk0xKRkYmNOO+zAZJx8cbR5C2LoF/gYwa1E7gOnVdfDIa9VNkUkGW5FuwS6k/yKJtusy20XwGYuoz979MbvahA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=PgqdcOqV; arc=none smtp.client-ip=3.216.99.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id CCDA060044;
+	Sun, 27 Apr 2025 06:48:15 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=bQYeXUX70C/rw//HG2eTPdfBxl6JMtsEVq9jZKgzyKc=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=from:to:subject:cc:references:mime-version:in-reply-to:date:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1745736495; v=1;
+	b=PgqdcOqVqt+jjQSSE7o6p7HfsCdoMUDlzBggVwEqnpHlCqGJmf5HxriVcC1vdVauXKCp1JfL
+	euNNMmfRDdxuilG2f82OsJ0ZbWcF/NJso/ZEpDlvMkAyHhOf0BV9DB6KJXXigw3+TOHbTj7WWlH
+	iEvIlCgfDt0N6TRMAdtLeFWs=
+Received: from smtpclient.apple (v133-18-227-172.vir.kagoya.net [133.18.227.172])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id ED03360110;
+	Sun, 27 Apr 2025 06:48:12 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[canonical.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-
-On Fri, 25 Apr 2025 12:36:18 +0200,
-Chris Chiu wrote:
-> 
-> This hardware has ALC274 codec with speaker NID 0x17 and line out
-> NID 0x16 for audio output. The line out is routed correctly but
-> the speaker is not. Thus the volume can't be controlled.
-> 
-> This patch removes DAC NID 0x06 (without volume control) from the
-> connection list for speaker NID 0x17. Routing both speaker and line
-> out pins to DAC NID 0x02 which controls the output volume.
-> 
-> Signed-off-by: Chris Chiu <chris.chiu@canonical.com>
-
-Applied to for-linus branch now.  Thanks.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH] bcache: add the deferred_flush IO processing path in the
+ writeback mode
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+X-Priority: 3
+In-Reply-To: <tencent_5EFAC84160EC2688341D1A8F@qq.com>
+Date: Sun, 27 Apr 2025 14:47:59 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ "kent.overstreet" <kent.overstreet@linux.dev>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ =?utf-8?B?5aSP5Y2O?= <xiahua@kylinos.com.cn>,
+ =?utf-8?B?6YKT5pe65rOi?= <dengwangbo@kylinos.com.cn>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DEAB3741-AF2F-4CD3-B715-EBC3AB9B394E@coly.li>
+References: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
+ <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+ <tencent_5EFAC84160EC2688341D1A8F@qq.com>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1745736495701004276.5242.6327280174020665267@prod-use1-smtp-out1001.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=O7TDvA9W c=1 sm=1 tr=0 ts=680dd32f
+	a=mj4eMbsE5mSnrU54dbyulA==:117 a=mj4eMbsE5mSnrU54dbyulA==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=2g-bObx1AAAA:8 a=VwQbUJbxAAAA:8
+	a=fA3rBA8wnNJP-tMNtCUA:9 a=QEXdDO2ut3YA:10 a=2vxvtA42U9rPmyYw9DsL:22
 
 
-Takashi
+
+> 2025=E5=B9=B44=E6=9C=8825=E6=97=A5 16:18=EF=BC=8CZhou Jifeng =
+<zhoujifeng@kylinos.com.cn> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi Coly Li,
+> Thank you for your reply and your question.
+>=20
+> On Fri, 25 Apr 2025 at 13:46, Coly Li <colyli@kernel.org> wrote:
+>>=20
+>> Hi Jifeng,
+>>=20
+>> Thanks for posting the patch.
+>>=20
+>> On Fri, Apr 25, 2025 at 11:50:21AM +0800, Zhou Jifeng wrote:
+>>> In some scenarios with high requirements for both data reliability =
+and
+>>> write performance, the various cache modes of the current bcache =
+cannot
+>>=20
+>> Could you provide the detail workload or circumstance which requires =
+both
+>> data reliability and write performance that current bcache cannot =
+serve?
+>=20
+> For example, in some database application scenarios, the requirements =
+for data
+> security are relatively high. When writing frequently, flush is called =
+more often,
+> and the performance of write dsync is of great concern. The =
+operational performance
+> of several cache modes of bcache in such scenarios at present:
+> none: The cache does not work and is of no help to performance. The =
+performance is
+> the same as that of the backing device and cannot meet the performance =
+requirements.
+> writeround and writethrough: They are not helpful for write =
+performance. The write
+> performance is the same as that of the backing device and cannot meet =
+the write
+> performance requirements.
+> writeback: Since when it writes back dirty data, it only marks bio as =
+REQ_OP_WRITE,
+> there is a risk of data loss due to power failure. In addition, since =
+it needs to send a
+> flush request to the backing device when handling requests with the =
+flush mark, it will
+> affect the write performance.
+>=20
+>>> fully match the requirements. deferred_flush aims to increase the
+>>> reliability of writeback write-back. And reduce the sending of =
+PREFLUSH
+>>> requests to the backing device to enhance data security and dsync =
+write
+>>> performance in wrieback mode.
+>>=20
+>> I'd like to see the detailed description on how deferred flush is =
+defined,
+>> and how it works. And why deferred flush may provide the data =
+reliability
+>> and performance better than current bcache code.
+>=20
+> deferred flush: When data is processed through the writeback path, it =
+will determine
+> whether a PREFLUSH needs to be sent to the backing device. The =
+judgment criterion
+> is whether a write request has been sent through bypass or =
+writethrough before. If not,
+> it is not necessary. Put the PREFLUSH semantics into the dirty data =
+write-back stage
+> to ensure the reliability of the dirty data write-back. Here, by =
+reducing the sending of
+> PRELUSH to the backing device, the delay for the backing device to =
+process PRELUSH
+> is decreased, thereby improving the performance of dsync write =
+requests when the
+> cache space is abundant. During the dirty data write-back stage, the =
+FUA method is
+> adopted to ensure that the dirty data will not be lost due to factors =
+such as power failure.
+>=20
+>> I don't look into the patch yet, just with my intuition the overall
+>> performance won't be quite optimized by setting FUA on writeback =
+I/Os.
+>=20
+> Using the FUA method to write back dirty data does indeed have an =
+impact on the speed
+> of writing back dirty data. In a test where I/O is written randomly at =
+4K, the speed of
+> writing back dirty data is approximately half that of the non-FUA =
+method. However,
+> considering that the data is not written at a high intensity =
+continuously, this provides some
+> buffer time for writing back dirty data. In extreme cases, when the =
+effective space of the
+> cache is tight, its write efficiency is not lower than the performance =
+of the backing device.
+> Therefore, enabling deferred_flush is effective in low-cost deployment =
+solutions that require
+> the use of SSD to accelerate the performance of dsync.
+
+I am not sure whether the situation you stated is acceptable or not for =
+most of users.
+
+I hope to see more testing data.
+
+>=20
+>> And the cache mode can swtich arbitarily in run time, if cache mode =
+was none
+>> or writethough, then switch to writeback, I don't see your patch =
+handles
+>> such situation.
+>=20
+> When switching from other cache modes to writeback and simultaneously =
+enabling=20
+> deferred_flush, a REQ_PREFLUSH request will be sent to the backing =
+device.
+> Code location in the patch:
+> +   if (attr =3D=3D &sysfs_deferred_flush) {
+> +       v =3D __sysfs_match_string(bch_deferred_flush, -1, buf);
+> +       if (v < 0)
+> +           return v;
+> +
+> +       if ((unsigned int) v !=3D BDEV_DEFERRED_FLUSH(&dc->sb)) {
+> +           if (v && (BDEV_CACHE_MODE(&dc->sb) !=3D =
+CACHE_MODE_WRITEBACK)) {
+> +               pr_err("It's not the writeback mode that can't enable =
+deferred_flush.\n");
+> +               return -EINVAL;
+> +           }
+> +
+> +           SET_BDEV_DEFERRED_FLUSH(&dc->sb, v);
+> +           bch_write_bdev_super(dc, NULL);
+> +           if (v) {
+> +               bio_init(&flush, dc->bdev, NULL, 0, REQ_OP_WRITE | =
+REQ_PREFLUSH);
+> +               /* I/O request sent to backing device */
+> +               submit_bio_wait(&flush);
+> +           }
+> +       }
+> +   }
+
+And when read/write congestion happen, part of read/write requests will =
+directly from/to hard drive and bypass cache device.
+
+Anyway, long time high load testing result is necessary. I assume this =
+patch will decrease general write back throughput and result higher =
+pressure for cache device garbage collection load triggered by =
+allocator.
+Maybe I am wrong, I=E2=80=99d like to learn from your benchmark results.
+
+Thanks.
+
+Coly Li=
 
