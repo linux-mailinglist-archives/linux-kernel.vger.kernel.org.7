@@ -1,220 +1,118 @@
-Return-Path: <linux-kernel+bounces-622939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C71A9EEAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D79A9EED8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 011287AD664
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C9F5A1138
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F98263F2B;
-	Mon, 28 Apr 2025 11:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04847267B92;
+	Mon, 28 Apr 2025 11:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2ptE2LU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9ojCpq2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD2A265604;
-	Mon, 28 Apr 2025 11:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592F6267B67;
+	Mon, 28 Apr 2025 11:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745838711; cv=none; b=MrhtzfjLqaD3V/6cLOH5UHZ2hC78x17tHKYL2mJfAhPLxNNg5yDcEdlryUmQNK/eOTc314QzdrOig9pXeFDme872rPb49Xsx2kfzZ1G3Bfks9kXyFmx7ASWqIFKZZVbHbm71FpG4DW6JySl+4IE/rUT8w1WAyu3kkcMInnLjd0Q=
+	t=1745838993; cv=none; b=GuntIc3x2bHRHg3rLXLDcRLaWs5ytTRX8HcBmE7S58F+RZ6iC2xIbOyNP/I9KKXvIMVr1S8WRds+mDPCLmFbblX96n7OFQmzcz9GoePLGJwlBzDTfWPOIJEt8Gx3n7Q4qS82igQIcivrsM9IXFragc13Lkhdv/DPfy6GmJSXKhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745838711; c=relaxed/simple;
-	bh=M8bfo9nwHR9FBIyNBaiiApaWzDjww92GWLsgn0B2p44=;
+	s=arc-20240116; t=1745838993; c=relaxed/simple;
+	bh=ZHlHP1G+yKLerL6A3JQMfI+d7AtCg+sYXv3msXk4+Uw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usgVtM/PApy7OEKtb3N5AOthCa9kz9z4ydcSO1GBIX0C2FAa9JMDaM61pQEBJQetEyWpZf6jREGx1U8eh/WqS4iibCe6T/lLLZmm1jMfTp/+KkPzt5jhgtvPbe4IJSHi7U024S9t1OCRmw6ShJ0luarQKgdWSYui0sLXDoOhX1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2ptE2LU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ABFC4CEF2;
-	Mon, 28 Apr 2025 11:11:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKt7W7LttTcPEWIYqvI6S5RGeVeuDC6x8gQv9eh6n9Zxkzp0cOwnq5IyRL0RcyUA6JdaSp2KQNQRRZxc4nBZ/8+aqbc1xXwBSYsw7wEBo/+g0zBwTlAu7PLeS31c7usWj+B1nQHLb0olgcq8MY4JEEBr00ezWfJe1cfVYSEFMWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9ojCpq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE14C4CEE4;
+	Mon, 28 Apr 2025 11:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745838710;
-	bh=M8bfo9nwHR9FBIyNBaiiApaWzDjww92GWLsgn0B2p44=;
+	s=k20201202; t=1745838990;
+	bh=ZHlHP1G+yKLerL6A3JQMfI+d7AtCg+sYXv3msXk4+Uw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g2ptE2LULN/9xqE5iRO+qlMYyfOkLCI0Oje/CzfSo5mOpJ7WWJ00odf1s5RIAqRPi
-	 rAztIyzza5w0MlJlYEyd++Ak/qx+z0WOzhY494W2IvPSToFuaPQQd9pHb4TTLJGlH7
-	 Ewes1QIp9/wp9CdO1VukijKAv23gloO08Vcf+UzTaOKXBMlqO0b5M19+T8mMq9mR5j
-	 B8WBca0kBiJtch3jIoN+pEA41bUej1KNbTWp05acw+HwMwUl5yXF3VEyjjQzuPBUdk
-	 /06B4ZXKqx4V9UvRVsjrdBMrpjYtwxKp7IOat6DSx35BXIzj/i26pqV1Ip5nzygZLo
-	 5aNNwNdYfp3bQ==
-Date: Mon, 28 Apr 2025 13:11:47 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/4] perf: Fix irq work dereferencing garbage
-Message-ID: <aA9ic6m6WAcmVBAw@pavilion.home>
-References: <20250424161128.29176-1-frederic@kernel.org>
- <20250424161128.29176-3-frederic@kernel.org>
- <20250424163024.GC18306@noisy.programming.kicks-ass.net>
+	b=r9ojCpq2Ycbah3dnNCGr/ENC8EAMQvNr7f1MbLb/7XVh4MvrZcaUCJGriFFkbOzRY
+	 yhxKDx7v5wQNhYiSaWRfpy4FHJJsyjodIC44J/+jfe5cTcPi+pMqZXQPrJgl/SR+UX
+	 H/i3ynfhzP4JOxDVvE1xG3/3Lmq6fUrXNtIkeHNOb1Sw3q5KTNZv6IvmnYI0bGQ/SP
+	 q2rmj19Q6+hnAlPGLmoEaaEX7X8Wgk4SUMqbJl6ToJr59gWHgGj3rwRhS4Ij3yqIJE
+	 eJ/g3z7ceN8yajGbUc9DhjJMwkOKyvezN8t5fjLMWj8dz6RdZAdxZ84mx3tywbYKzH
+	 eHAqjBpWVa9hw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u9MTP-000000002X9-11Rt;
+	Mon, 28 Apr 2025 13:16:31 +0200
+Date: Mon, 28 Apr 2025 13:16:31 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Wenbin Yao <quic_wenbyao@quicinc.com>, catalin.marinas@arm.com,
+	will@kernel.org, linux-arm-kernel@lists.infradead.org,
+	andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com,
+	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
+	quic_cang@quicinc.com, quic_qianyu@quicinc.com
+Subject: Re: [PATCH v2 2/4] arm64: dts: qcom: x1e80100: add bus topology for
+ PCIe domain 3
+Message-ID: <aA9jjyBR5DZcSbyQ@hovoldconsulting.com>
+References: <20250425092955.4099677-1-quic_wenbyao@quicinc.com>
+ <20250425092955.4099677-3-quic_wenbyao@quicinc.com>
+ <4bb58766-a080-4351-87f5-79a98219171c@oss.qualcomm.com>
+ <aAt4TBrekUqyTjfi@hovoldconsulting.com>
+ <306ce1fa-be83-4f13-bedd-97a20448d162@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250424163024.GC18306@noisy.programming.kicks-ass.net>
+In-Reply-To: <306ce1fa-be83-4f13-bedd-97a20448d162@oss.qualcomm.com>
 
-Le Thu, Apr 24, 2025 at 06:30:24PM +0200, Peter Zijlstra a écrit :
-> On Thu, Apr 24, 2025 at 06:11:26PM +0200, Frederic Weisbecker wrote:
-> > @@ -13940,29 +13941,36 @@ perf_event_exit_event(struct perf_event *event,
-> >  		 * Do destroy all inherited groups, we don't care about those
-> >  		 * and being thorough is better.
-> >  		 */
-> > -		detach_flags |= DETACH_GROUP | DETACH_CHILD;
-> > +		prd.detach_flags |= DETACH_GROUP | DETACH_CHILD;
-> >  		mutex_lock(&parent_event->child_mutex);
-> >  	}
-> >  
-> >  	if (revoke)
-> > -		detach_flags |= DETACH_GROUP | DETACH_REVOKE;
-> > +		prd.detach_flags |= DETACH_GROUP | DETACH_REVOKE;
-> >  
-> > -	perf_remove_from_context(event, detach_flags);
-> > +	perf_remove_from_context(event, &prd);
+On Sat, Apr 26, 2025 at 12:44:57PM +0200, Konrad Dybcio wrote:
+> On 4/25/25 1:55 PM, Johan Hovold wrote:
+> > On Fri, Apr 25, 2025 at 12:22:56PM +0200, Konrad Dybcio wrote:
+> >> On 4/25/25 11:29 AM, Wenbin Yao wrote:
+> >>> From: Qiang Yu <quic_qianyu@quicinc.com>
+> >>>
+> >>> Add pcie3port node to represent the PCIe bridge of PCIe3 so that PCI slot
+> >>> voltage rails can be described under this node in the board's dts.
+> >>>
+> >>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> >>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> >>> ---
+> >>>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 11 +++++++++++
+> >>>  1 file changed, 11 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> >>> index 46b79fce9..430f9d567 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> >>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> >>> @@ -3287,6 +3287,17 @@ opp-128000000 {
+> >>>  					opp-peak-kBps = <15753000 1>;
+> >>>  				};
+> >>>  			};
+> >>> +
+> >>> +			pcie3port: pcie@0 {
+> >>
+> >> @0,0 for PCIe adressing (bus,device)
+> > 
+> > No, the bus number is not included in the unit address, so just the
+> > device number (0) is correct here (when the function is 0) IIUC.
 > 
-> Isn't all this waay to complicated?
-> 
-> That is, to modify state we need both ctx->mutex and ctx->lock, and this
-> is what __perf_remove_from_context() has, but because of this, holding
-> either one of those locks is sufficient to read the state -- it cannot
-> change.
-> 
-> And here we already hold ctx->mutex.
-> 
-> So can't we simply do:
-> 
-> 	old_state = event->attach_state;
-> 	perf_remove_from_context(event, detach_flags);
-> 
-> 	// do whatever with old_state
+> Some DTs definitely have that, but I couldn't find any documentation to
+> back the syntax up or explain it properly
 
-Right, the locking scenario is just a bit more complicated.
-Most flags are set on init or with both ctx mutex and lock.
-But:
+It's part of the spec:
 
-_ PERF_ATTACH_CHILD is set instead with parent child_mutex and ctx lock.
-_ PERF_ATTACH_ITRACE is set from pmu::start(). Thus from the event context
-  with just interrupt disabled. It's probably enough to synchronize against
-  initialization and remove_from_context IPIs but perf_event_exit_event() needs
-  some care.
+	http://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
 
-So we must hold both ctx mutex and child_mutex (although the pmus_srcu thing
-should make that PERF_ATTACH_CHILD thing visible but let's keep things obvious).
-And also have WRITE_ONCE() / READ_ONCE() to take care about PERF_ATTACH_ITRACE,
-which we don't care about anyway.
+The first number is the device number and the second is the function
+which can be left out if zero.
 
-Now this looks like this:
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7bcb02ffb93a..7278ca731a55 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -208,7 +208,6 @@ static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
- }
- 
- #define TASK_TOMBSTONE ((void *)-1L)
--#define EVENT_TOMBSTONE ((void *)-1L)
- 
- static bool is_kernel_event(struct perf_event *event)
- {
-@@ -2338,12 +2337,6 @@ static void perf_child_detach(struct perf_event *event)
- 
- 	sync_child_event(event);
- 	list_del_init(&event->child_list);
--	/*
--	 * Cannot set to NULL, as that would confuse the situation vs
--	 * not being a child event. See for example unaccount_event().
--	 */
--	event->parent = EVENT_TOMBSTONE;
--	put_event(parent_event);
- }
- 
- static bool is_orphaned_event(struct perf_event *event)
-@@ -5705,7 +5698,7 @@ static void put_event(struct perf_event *event)
- 	_free_event(event);
- 
- 	/* Matches the refcount bump in inherit_event() */
--	if (parent && parent != EVENT_TOMBSTONE)
-+	if (parent)
- 		put_event(parent);
- }
- 
-@@ -9998,7 +9991,7 @@ void perf_event_text_poke(const void *addr, const void *old_bytes,
- 
- void perf_event_itrace_started(struct perf_event *event)
- {
--	event->attach_state |= PERF_ATTACH_ITRACE;
-+	WRITE_ONCE(event->attach_state, event->attach_state | PERF_ATTACH_ITRACE);
- }
- 
- static void perf_log_itrace_start(struct perf_event *event)
-@@ -13922,10 +13915,7 @@ perf_event_exit_event(struct perf_event *event,
- {
- 	struct perf_event *parent_event = event->parent;
- 	unsigned long detach_flags = DETACH_EXIT;
--	bool is_child = !!parent_event;
--
--	if (parent_event == EVENT_TOMBSTONE)
--		parent_event = NULL;
-+	unsigned int attach_state;
- 
- 	if (parent_event) {
- 		/*
-@@ -13942,6 +13932,8 @@ perf_event_exit_event(struct perf_event *event,
- 		 */
- 		detach_flags |= DETACH_GROUP | DETACH_CHILD;
- 		mutex_lock(&parent_event->child_mutex);
-+		/* PERF_ATTACH_ITRACE might be set concurrently */
-+		attach_state = READ_ONCE(event->attach_state);
- 	}
- 
- 	if (revoke)
-@@ -13951,18 +13943,25 @@ perf_event_exit_event(struct perf_event *event,
- 	/*
- 	 * Child events can be freed.
- 	 */
--	if (is_child) {
--		if (parent_event) {
--			mutex_unlock(&parent_event->child_mutex);
--			/*
--			 * Kick perf_poll() for is_event_hup();
--			 */
--			perf_event_wakeup(parent_event);
-+	if (parent_event) {
-+		mutex_unlock(&parent_event->child_mutex);
-+		/*
-+		 * Kick perf_poll() for is_event_hup();
-+		 */
-+		perf_event_wakeup(parent_event);
-+
-+		/*
-+		 * Match the refcount initialization. Make sure it doesn't happen
-+		 * twice if pmu_detach_event() calls it on an already exited task.
-+		 */
-+		if (attach_state & PERF_ATTACH_CHILD) {
- 			/*
- 			 * pmu_detach_event() will have an extra refcount.
-+			 * perf_pending_task() might have one too.
- 			 */
- 			put_event(event);
- 		}
-+
- 		return;
- 	}
- 
+Johan
 
