@@ -1,102 +1,101 @@
-Return-Path: <linux-kernel+bounces-622650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FDCA9EA49
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259A9A9EAE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D2D188E601
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E111796B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9971E253F02;
-	Mon, 28 Apr 2025 08:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526BF25D1F0;
+	Mon, 28 Apr 2025 08:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D5+M0xwz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6H6zXolH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TN2Wu5aC"
+Received: from mail-m49210.qiye.163.com (mail-m49210.qiye.163.com [45.254.49.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D51FECB4
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80D81B423C;
+	Mon, 28 Apr 2025 08:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745827550; cv=none; b=ETPKEpibC2/yyTEarm6rzDb35NwjSV+rI/PTy1u9DFbxhOklflDuVZqq5lYZ9bCn10bM/o5AwhX7fWguXOQWNfjsKyTiH2/1uXPhKmsSfyx9gcDNRy+usFTAWfBIaBsfg+2Od2xnLhn+Fq781fLxznpYjL4zR/w18G8o/pSA+Dk=
+	t=1745829448; cv=none; b=fSeuDWgsBpSLcV+oOAkbXma8IgI9tguj5W89QYxLZAURY2oIx87mHs9e7TbBYTrMM2D/p6fjXdqDfo+a8CoCExVHs9oJtDWBLhDK8zzOdY0d+zpABPqVKVgVGs7UN0NdCAoM4KYILe1SBWo/5oYunBI+IwXZqAEorZYB/YCoG5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745827550; c=relaxed/simple;
-	bh=O7+wBp3jrxFqs0rsHHQxwu6iKcNOltLmKuL98WKINYs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZJSOpf5v7Uj2zI7lGeNVCliqaXWAP8WAlcxbSZWhImiApbhTKFQhSGaMlFi81tSJguRV62ztHdQGwDNfmmszQfrsfI7Uq4YWujUJZvbDQmo4QM2LAQtuFjrzVqO76eSX7mEwpwcZA5W3sv8Tsv/MJi91bB16K0jXKfHhrPd4GLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D5+M0xwz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6H6zXolH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745827547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O7+wBp3jrxFqs0rsHHQxwu6iKcNOltLmKuL98WKINYs=;
-	b=D5+M0xwzsQBCKtJetI9jZNWCZVECj9GmZvmqLDL5cxEcjozOSXuQppMT7dw36nBmLYFf+S
-	c73vhY/yAevcoQp9xF0JwA52eBSTNl3dfrCDM2KeqHCfsD2jHrmAyljRkeNonW5ekv/gNP
-	9vN8525cHwfqcm/n5Zuo7hwY1KkYMSQinZQaygSSHmn4KSsSGw23LP5sniPRGyU3br4b8x
-	pekm/C7i/kWG94atRikIaCYRC75XZTXNbQo6Iv0hfytAgqd28T6j1jH4Ew159VitgIKGlB
-	Rn6IDysM5zdERFMyJyaOlJAKa357jnzpfBFWraq9TGD9HcUNQsEWqSQKr6FxlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745827547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O7+wBp3jrxFqs0rsHHQxwu6iKcNOltLmKuL98WKINYs=;
-	b=6H6zXolH+MrLWuO0OsmpDiyO8AAZkH/ZgC3gD/QHYbsPuVD+jSZv4mmLjDXN8vpND4uyrF
-	jtRnVDu+NyxYTEAA==
-To: Petr Mladek <pmladek@suse.com>, Tomasz Figa <tfiga@chromium.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Steven Rostedt
- <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hung_task: configurable hung-task stacktrace loglevel
-In-Reply-To: <aAuq-3yjYM97rvj1@pathway.suse.cz>
-References: <20250424070436.2380215-1-senozhatsky@chromium.org>
- <aAoZbwEtkQ3gVl5d@pathway.suse.cz>
- <CAAFQd5A6J-UCy46bp1MYP0imJf3oUL29mxFVLZZZ4JmP2YTvhQ@mail.gmail.com>
- <aAuq-3yjYM97rvj1@pathway.suse.cz>
-Date: Mon, 28 Apr 2025 10:11:46 +0206
-Message-ID: <84selszp5x.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1745829448; c=relaxed/simple;
+	bh=xmPngeECVmhAvM70jzaBoWCmDC5rNEugWKIjrTeVgck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HRQLM9wRY6BvCmhvaySIvqz8K3swpgPPmQTsWpSb2mxzGxxSLAQoHrqasiIL3vnI4Sela8P7gxE3W8d/S1kgfsbG0V+vkJcgNbyhqmXr36kviP9sL6jdYtIDxS3UJWUTPpnnFXe/w75Be2TbENuYp151CgzcL/8UCZtyJoFHOIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TN2Wu5aC; arc=none smtp.client-ip=45.254.49.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-1-entmail-virt204.gy.ntes [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1352e9cb0;
+	Mon, 28 Apr 2025 09:47:35 +0800 (GMT+08:00)
+Message-ID: <c583c59a-d5b7-4e20-9a1f-96f51bd7b4f3@rock-chips.com>
+Date: Mon, 28 Apr 2025 09:47:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add rk3399-evb-ind board
+To: Andrew Lunn <andrew@lunn.ch>, Chaoyi Chen <kernel@airkyi.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Jianfeng Liu <liujianfeng1994@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
+ Jimmy Hon <honyuenkwun@gmail.com>, Quentin Schulz
+ <quentin.schulz@cherry.de>, FUKAUMI Naoki <naoki@radxa.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Alexey Charkov <alchark@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250427094211.246-1-kernel@airkyi.com>
+ <20250427094211.246-3-kernel@airkyi.com>
+ <6291f6b8-75d3-4243-9935-9b64450e2b7f@lunn.ch>
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <6291f6b8-75d3-4243-9935-9b64450e2b7f@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0NJQ1YdS0NCTxlJTkkeGE1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a967a14094f03abkunm1352e9cb0
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxA6Fyo4NTIBGTc5DjA0KClK
+	MTAaCjZVSlVKTE9OQ0tPQ01JTEJLVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
+	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBSkJCSzcG
+DKIM-Signature:a=rsa-sha256;
+	b=TN2Wu5aCbMNJ07Ic14b2WT/foLdkBTLvzfTZS6mnlGHNbaoXw/LbMDiGGutDzATnQT/dSjxXcZL/GxDTvu6c2BQ2VhDApBpJDim/4HnmuOFLLdkEb0DUFAOl3OQbL6HIrs5EUN35YkTzKuawI3xzhlTBTK7Gn2rQeLcUXEhkoOk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=A+SoCMYT/rgL+jihOoJQvLhqmps7MULckBt2jEZFGUc=;
+	h=date:mime-version:subject:message-id:from;
 
-On 2025-04-25, Petr Mladek <pmladek@suse.com> wrote:
-> I am afraid that manipulating log levels is a lost fight because
-> different people might have different opinion about how various
-> messages are important.
+Hi Andrew,
 
-Wasn't that the whole point of Sergey's patch? To make it configurable?
+On 2025/4/28 4:42, Andrew Lunn wrote:
+>> +&gmac {
+>> +	assigned-clocks = <&cru SCLK_RMII_SRC>;
+>> +	assigned-clock-parents = <&clkin_gmac>;
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&rgmii_pins>;
+>> +	clock_in_out = "input";
+>> +	phy-supply = <&vcc_phy>;
+>> +	phy-mode = "rgmii";
+> Does the PCB have extra long clock lines to implement the RGMII 2ns
+> delay?
+The 2ns delay of RGMII is implemented inside the RK3399 chip instead of 
+PCB lines, and there are also additional delayline configurations.
 
-I must admit that I am not happy with the patch. Mostly because it is
-too specific. And I am not sure if we really want to try to make it all
-dynamic with a report API either. At least we need to think about it
-more carefully.
-
-One thing that crossed my mind was that we have enter/exit markers for
-emergency mode, which should be used whenever something "bad" happens. I
-am wondering if a fixed loglevel could be configured for all messages
-stored by a CPU in emergency mode. This might also encourage developers
-to track down and mark more emergency sections. For the nbcon series, I
-really only picked a few obvious ones, but I am sure there are more.
-
-In other words, I would prefer to recycle the emergenceny enter/exit
-markers rather than introduce new ones. (Unless we are also talking
-about reports that are totally normal and acceptable during runtime.)
-
-John
+>
+> 	Andrew
+>
+>
 
