@@ -1,206 +1,106 @@
-Return-Path: <linux-kernel+bounces-623098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46DFA9F0E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46D8A9F0E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9A416BDDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:37:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 536C87AD08B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC2626A0A6;
-	Mon, 28 Apr 2025 12:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8B2269CEC;
+	Mon, 28 Apr 2025 12:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pc0Ugzqp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aZCuGCW5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d0FVi0lS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EEE1DE2D8;
-	Mon, 28 Apr 2025 12:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F26268FFF;
+	Mon, 28 Apr 2025 12:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745843844; cv=none; b=bwP6V7WrNbHhfOekPINW6eJKwIfTy3dv+lTnE3vTmtjqiWB5H+Ja3P7dec0oq5SD2UsUAAPydNi/Iz3aWqvS37+HAjIULWJGrzijWlpAPT6PVgM8FVSP82jVNbeA42t2uyQd2WvmTi4hkf2UpogGmVgmoBLUoIsjuAQ1Eg5hDLE=
+	t=1745843886; cv=none; b=CR0HyqdM/rIOOSG7CSTY66UjntRlPkNl23kz610tmAVBuOEcFtr0KXFx47xeuTu31lWdiGstkrvNZmZridI/CosaJVsh9AIDBiY/WJ8YXBDgGtPL3M903G8I8exdm+9cD8RKKp+tM1Ig4yIOmYySuWVtpv6C40Nkxi5z1kyt9WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745843844; c=relaxed/simple;
-	bh=mT/RIYXk40ttqYQuB40/818XHsQdzjGQkXqnLnfSqQU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cJ2Pc/E+zylLPyTOUwA3yHY2+IVX+8MNqnqri03HH7B2kbbmzfkszsS6/NZVtsdsRf20ecH4u6eUwAgANOQ/wWQCSsfokN8sKdzNkLswK5WabHI27HhVQTs067nJmwwtvn3aGb+1lT+T5s9ylAuk/NMNKboBHQak/jitd53UEn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pc0Ugzqp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aZCuGCW5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745843839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a/l2o6PbIvhGTxkfi6z3TuPhlSt81OUbkxBgnnsi/0U=;
-	b=pc0UgzqpiLeAwBOUf1EJA8/rnl6Ee7rR73sZp9CIU4LXS0xPWGeCeNAFS7PRI7DiiAw7vF
-	wswDPHH2rRmdFjJdwWV+ZXaja72eKXMY9kZd8d7p3qh/cMwwsv8/NjtMcGj59xn+9HjxHV
-	872egQZIYk5ea0etvvKZn4G9666sI23+Xts3+lqV8VqQOXDyM+3ruRNd6cFeST+rrsK1e/
-	f2u2nyVSyrm5krrf2eiwmy8J4cetjFmFQj5M8wUMZiUax+mimWSfEOsYV/EtSy0AYZpwk5
-	yyUl41OjCOc9Mk+MEDtZPM0Y+kZl7ecKdpClcF3eFKnnb4smrOZIw3HPpdBgtA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745843839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a/l2o6PbIvhGTxkfi6z3TuPhlSt81OUbkxBgnnsi/0U=;
-	b=aZCuGCW55jbdINBj1Vh3BbucF7jCF4dyzI4t3VbS9xKnEXP3D87a5rE41TKPSqrP+IUt6M
-	GlGSH2+4YXHzhsBQ==
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, Keith
- Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
- <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Costa Shulyupin
- <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Valentin
- Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei
- <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, Mel
- Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- storagedev@microchip.com, virtualization@lists.linux.dev,
- GR-QLogic-Storage-Upstream@marvell.com, Daniel Wagner <wagi@kernel.org>
-Subject: Re: [PATCH v6 1/9] lib/group_cpus: let group_cpu_evenly return
- number initialized masks
-In-Reply-To: <20250424-isolcpus-io-queues-v6-1-9a53a870ca1f@kernel.org>
-References: <20250424-isolcpus-io-queues-v6-0-9a53a870ca1f@kernel.org>
- <20250424-isolcpus-io-queues-v6-1-9a53a870ca1f@kernel.org>
-Date: Mon, 28 Apr 2025 14:37:19 +0200
-Message-ID: <87ikmoqx6o.ffs@tglx>
+	s=arc-20240116; t=1745843886; c=relaxed/simple;
+	bh=meHWLVZ0S5MilVqdf5x6PAb4kftFLYvDmsZ1UCGAZoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9uDrYLJHkbxD0skslweNt4s4PDe2a44/LGk54/KfYtkN1zSzeBDVS2EzMquw0KVPELk3KSEA3BzUzFfHOlVVuSAEOwogQT3zBzMyHVe2gjM8o1r24lsWOBcCPph8Z6//7dUvLrsEtVw6A1cMFwKnaNrxUwUWIcl50skWR6X0kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=d0FVi0lS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=dH/FvjHE8lshhA2GzAYCh4KC+tngQVadf9pdXMFOnjI=; b=d0
+	FVi0lSLJts6XaHlfuaVTqfbQlGFln20eaztuujqTEbBR2i8yn4Zf7TAF06sWq8vpWuEQb0cWOxG+g
+	e5pbH2bSpZAXbo7Waa46KZIhptnYsMfl6hxPJ9ILCMu5iR7AiZ6FXWvIItQ4gllGkewnTfHNY/cHB
+	dLMHkIPA6XTVe8Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u9Nk4-00Apse-Im; Mon, 28 Apr 2025 14:37:48 +0200
+Date: Mon, 28 Apr 2025 14:37:48 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, wens@csie.org,
+	samuel@sholland.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: allwinner: h6: Add OrangePi 3 LTS DTS
+Message-ID: <34e30bf2-6f80-4c43-9e52-c1ebe0521c43@lunn.ch>
+References: <20250413134318.66681-1-jernej.skrabec@gmail.com>
+ <20250425135429.174a1871@donnerap.manchester.arm.com>
+ <cd7fd026-2f82-43d1-abdb-482bfe600bb5@lunn.ch>
+ <2219754.irdbgypaU6@jernej-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2219754.irdbgypaU6@jernej-laptop>
 
-On Thu, Apr 24 2025 at 20:19, Daniel Wagner wrote:
+On Sat, Apr 26, 2025 at 08:00:49PM +0200, Jernej Škrabec wrote:
+> Dne petek, 25. april 2025 ob 17:34:14 Srednjeevropski poletni čas je Andrew Lunn napisal(a):
+> > > > +&emac {
+> > > > +	pinctrl-names = "default";
+> > > > +	pinctrl-0 = <&ext_rgmii_pins>;
+> > > > +	phy-mode = "rgmii-rxid";
+> > > 
+> > > So relating to what Andrew said earlier today, should this read rgmii-id
+> > > instead? Since the strap resistors just set some boot-up value, but we
+> > > want the PHY driver to enable both RX and TX delay programmatically?
+> > 
+> > Yes.
+> > 
+> > There is a checkpatch.pl patch working its way through the system
+> > which will add warning about any rgmii value other than rgmii-id. Such
+> > values need a comment that the PCB has extra long clock
+> > lines. Hopefully that will make people actually stop and think about
+> > this, rather than just copy broken vendor code.
+> 
+> I spent quite some time working on ethernet support for this board. Once
+> I've found PHY datasheet, I confirmed that there is added delay. So this
+> particular board needs "rgmii-rxid" mode.
 
-"let group_cpu_evenly return number initialized masks' is not a
-sentence.
+There have been numerous discussions about what these rgmii modes
+mean, because DT developers frequently get them wrong.
 
-  Let group_cpu_evenly() return the number of initialized masks
+Does the PCB have an extra long clock line in the TX direction? That
+is what rgmii-rxid means, the PCB is providing the TX delay, the
+MAC/PHY pair needs to add the RX delay.
 
-is actually parseable.
+Ignore strapping. That is just a power on default which gets over
+ridden once the PHY driver is running.
 
-> group_cpu_evenly might allocated less groups then the requested:
+What PHY is this?
 
-group_cpu_evenly() might have .... then requested.
-
-> group_cpu_evenly
->   __group_cpus_evenly
->     alloc_nodes_groups
->       # allocated total groups may be less than numgrps when
->       # active total CPU number is less then numgrps
->
-> In this case, the caller will do an out of bound access because the
-> caller assumes the masks returned has numgrps.
->
-> Return the number of groups created so the caller can limit the access
-> range accordingly.
->
-> --- a/include/linux/group_cpus.h
-> +++ b/include/linux/group_cpus.h
-> @@ -9,6 +9,7 @@
->  #include <linux/kernel.h>
->  #include <linux/cpu.h>
->  
-> -struct cpumask *group_cpus_evenly(unsigned int numgrps);
-> +struct cpumask *group_cpus_evenly(unsigned int numgrps,
-> +				  unsigned int *nummasks);
-
-One line
-
->  #endif
-> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> index 44a4eba80315cc098ecfa366ca1d88483641b12a..d2aefab5eb2b929877ced43f48b6268098484bd7 100644
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -70,20 +70,21 @@ irq_create_affinity_masks(unsigned int nvecs, struct irq_affinity *affd)
->  	 */
->  	for (i = 0, usedvecs = 0; i < affd->nr_sets; i++) {
->  		unsigned int this_vecs = affd->set_size[i];
-> +		unsigned int nr_masks;
-
-  unsigned int nr_masks, this_vect = ....
-
->  		int j;
-
-As yoou touch the loop anyway, move this into the for ()
-
-> -		struct cpumask *result = group_cpus_evenly(this_vecs);
-> +		struct cpumask *result = group_cpus_evenly(this_vecs, &nr_masks);
->  
->  		if (!result) {
->  			kfree(masks);
->  			return NULL;
->  		}
->  
-> -		for (j = 0; j < this_vecs; j++)
-
-                for (int j = 0; ....)
-
-> +		for (j = 0; j < nr_masks; j++)
->  			cpumask_copy(&masks[curvec + j].mask, &result[j]);
->  		kfree(result);
->  
-> -		curvec += this_vecs;
-> -		usedvecs += this_vecs;
-> +		curvec += nr_masks;
-> +		usedvecs += nr_masks;
->  	}
->  
->  	/* Fill out vectors at the end that don't need affinity */
-> diff --git a/lib/group_cpus.c b/lib/group_cpus.c
-> index ee272c4cefcc13907ce9f211f479615d2e3c9154..016c6578a07616959470b47121459a16a1bc99e5 100644
-> --- a/lib/group_cpus.c
-> +++ b/lib/group_cpus.c
-> @@ -332,9 +332,11 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
->  /**
->   * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
->   * @numgrps: number of groups
-> + * @nummasks: number of initialized cpumasks
->   *
->   * Return: cpumask array if successful, NULL otherwise. And each element
-> - * includes CPUs assigned to this group
-> + * includes CPUs assigned to this group. nummasks contains the number
-> + * of initialized masks which can be less than numgrps.
->   *
->   * Try to put close CPUs from viewpoint of CPU and NUMA locality into
->   * same group, and run two-stage grouping:
-> @@ -344,7 +346,8 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
->   * We guarantee in the resulted grouping that all CPUs are covered, and
->   * no same CPU is assigned to multiple groups
->   */
-> -struct cpumask *group_cpus_evenly(unsigned int numgrps)
-> +struct cpumask *group_cpus_evenly(unsigned int numgrps,
-> +				  unsigned int *nummasks)
-
-No line break required.
-
->  {
->  	unsigned int curgrp = 0, nr_present = 0, nr_others = 0;
->  	cpumask_var_t *node_to_cpumask;
-> @@ -421,10 +424,12 @@ struct cpumask *group_cpus_evenly(unsigned int numgrps)
->  		kfree(masks);
->  		return NULL;
->  	}
-> +	*nummasks = nr_present + nr_others;
->  	return masks;
->  }
->  #else /* CONFIG_SMP */
-> -struct cpumask *group_cpus_evenly(unsigned int numgrps)
-> +struct cpumask *group_cpus_evenly(unsigned int numgrps,
-> +				  unsigned int *nummasks)
-
-Ditto.
-
-Other than that:
-
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+	Andrew
 
