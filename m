@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-623142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBA4A9F17A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:54:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EC7A9F188
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E277177BBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FE93B40EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A6A2690D0;
-	Mon, 28 Apr 2025 12:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4145D477;
+	Mon, 28 Apr 2025 12:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TyTI+CiJ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSjrJ1yY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED71F8AC5;
-	Mon, 28 Apr 2025 12:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC91266B67;
+	Mon, 28 Apr 2025 12:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745844849; cv=none; b=VJb7E+beKp4IAgJcOWf+S2QSV+FomVRg+vkle1MQvgazILqc3O51uJRuAUN3WitpAYvqFWznMSfQPUnXFx50atA/1o1uekhrsYEbCqZSwg62VqfTFz8DdzP4AO0KZ8P2tD5TbOInKjK+lgZ4KpzgcKd9zDwx3ojEE2BVCJXFkCI=
+	t=1745844937; cv=none; b=KqclnG4NKNZEFjXbF52VVi1UGNdNsGjU8E8bHBM18VGQTcR3rB0xXEA6r8rE56RALsQwS67ojICoGt5JZM72oeu+HCiqeMSdmbxUkQVHaY14FqY02sAMaB9Ht1Ia8Zj/7P4LTgVEgrlC9Y9c8AXesPSWyiK5iK4YVBjl9OfOfQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745844849; c=relaxed/simple;
-	bh=ljVmkwfyBpxbZuNNqkJ6Uc4gcwYncJlBYXT65/Ip3V8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UqWrlXbhRhK7Br5VXgRJ2YuAbhQla2mLa0g4RyBOdYUyGTtt2uPRH1vfFoliE2S2J1mVzWzyxNl+7p29OsbrMeqZVRFXFeAUtVS3XqhfadHNgfJW74lhD20NR4gJ72Bt1UpNbN2qGozUNHCTrwOR6NAZuHyZIpeehUWWZk6gVDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TyTI+CiJ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=KuthMj4SVMiZzJYTH3vd30SFc9+oF/zdEInnc/IAW3I=; b=TyTI+CiJ2BuRPrHGUpV3WnqfK5
-	pQHGHEiVzGirZafi2MBTbScvTMlVUkWI4B1Uq1BlJQGwXJUP0ZBrOMQ08AFtFSVdok8NwhLo7IrD9
-	srcEU0Yf9668WCud4JinfuHuAEnFCMxouxXhdBk96mxRhIORVK61LG5lhfsDg+kwHsjA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u9Nzf-00Apzo-1Z; Mon, 28 Apr 2025 14:53:55 +0200
-Date: Mon, 28 Apr 2025 14:53:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: daniel.braunwarth@kuka.com
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
+	s=arc-20240116; t=1745844937; c=relaxed/simple;
+	bh=X+xLCbiG+4JgTGFLVyMpzBshiy8LrzoV71eX7VicFbo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dkBReUx8CcjItGJnidXEpfdYpp/5VuON46TccF+o1C6V+c8Rg7A/2iSDzF16SLnN1RKzifV/CIeBALmDnaCFLnpmtQpM7QJw1jGLe87JzppB7CUDb7sdJL0dGeapPpAA1LuQU5jBR678Hr3uf4ujAVGr1svxvHeqtoL+JeQ/kZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSjrJ1yY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3962C4CEE4;
+	Mon, 28 Apr 2025 12:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745844937;
+	bh=X+xLCbiG+4JgTGFLVyMpzBshiy8LrzoV71eX7VicFbo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iSjrJ1yYBFS88e5l8XTZ0bYtP1CsipMiSfkHgL1ojBEgMgvmjgwK98hGFzikcYuQ0
+	 fbL6cwlDVD7ZdLEttMYaF4a9quHe5Qy9azNzpRBhUcZPj5Z/83vtM7vQ5le5BFihSl
+	 HhyRvI+Wfjrb81SG7XDm+E32gDlkcJA+8WZ7i5lU2hdA9ZIYbVRDCW7hmG687guIwX
+	 RQFIJhyRPPPLVuN5f08+1Xw3hWKZQ3h/T1yDmaMt9mHuBkvQLEwl4cskPx+Mkq0sbd
+	 UikqaBcYSbi3346DkprINITV/oHO9oKumJeO1YInc1q/w7lsnkw21ZOwg4MWwHbvuW
+	 srXcsf47tCOfw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: realtek: Add support for WOL magic
- packet on RTL8211F
-Message-ID: <39f9fa02-7fa9-4246-aaa5-2f14d6319f90@lunn.ch>
-References: <20250428-realtek_wol-v1-1-15de3139d488@kuka.com>
+	Eric Biggers <ebiggers@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "crypto: crc32 - remove "_generic" from filenames"
+Date: Mon, 28 Apr 2025 14:54:02 +0200
+Message-Id: <20250428125530.2018272-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428-realtek_wol-v1-1-15de3139d488@kuka.com>
+Content-Transfer-Encoding: 8bit
 
-> +static void rtl8211f_get_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
-> +{
-> +	struct rtl821x_priv *priv = dev->priv;
-> +
-> +	wol->supported = WAKE_MAGIC;
-> +	wol->wolopts = priv->saved_wolopts;
+From: Arnd Bergmann <arnd@arndb.de>
 
-Can the current configuration be read from the hardware, rather than
-using a cached value. The BIOS could for example enable magic packet,
-and Linux inherits it.
+Each loadable module in the kernel must have a unique name, so renaming
+the crc32 crypto module made it conflict with the crc32 library, as
+shown by the build failure:
 
-> +static int rtl8211f_set_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
-> +{
-> +	struct rtl821x_priv *priv = dev->priv;
-> +	const u8 *mac_addr = dev->attached_dev->dev_addr;
-> +	int oldpage;
-> +
-> +	oldpage = phy_save_page(dev);
-> +	if (oldpage < 0)
-> +		goto err;
-> +
-> +	if (wol->wolopts & WAKE_MAGIC) {
-> +		/* Store the device address for the magic packet */
-> +		rtl821x_write_page(dev, 0xd8c);
+ error: the following would cause module name conflict:
+   crypto/crc32.ko
+   lib/crc32.ko
 
-Does the datasheet have names for these magic values? Please add
-#defines.
+This could be solved by renaming one of the two conflicting modules
+to something else again. As I can't think of a better name, just
+revert back to the previous state as the easiest fix.
 
-	Andrew
+Fixes: ce653e0a7e0a ("crypto: crc32 - remove "_generic" from filenames")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ crypto/Makefile                       | 8 ++++----
+ crypto/{crc32.c => crc32_generic.c}   | 0
+ crypto/{crc32c.c => crc32c_generic.c} | 0
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+ rename crypto/{crc32.c => crc32_generic.c} (100%)
+ rename crypto/{crc32c.c => crc32c_generic.c} (100%)
+
+diff --git a/crypto/Makefile b/crypto/Makefile
+index f238281b16c0..5d2f2a28d8a0 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -153,10 +153,10 @@ obj-$(CONFIG_CRYPTO_POLY1305) += poly1305.o
+ CFLAGS_poly1305.o += -DARCH=$(ARCH)
+ obj-$(CONFIG_CRYPTO_DEFLATE) += deflate.o
+ obj-$(CONFIG_CRYPTO_MICHAEL_MIC) += michael_mic.o
+-obj-$(CONFIG_CRYPTO_CRC32C) += crc32c.o
+-obj-$(CONFIG_CRYPTO_CRC32) += crc32.o
+-CFLAGS_crc32c.o += -DARCH=$(ARCH)
+-CFLAGS_crc32.o += -DARCH=$(ARCH)
++obj-$(CONFIG_CRYPTO_CRC32C) += crc32c_generic.o
++obj-$(CONFIG_CRYPTO_CRC32) += crc32_generic.o
++CFLAGS_crc32c_generic.o += -DARCH=$(ARCH)
++CFLAGS_crc32_generic.o += -DARCH=$(ARCH)
+ obj-$(CONFIG_CRYPTO_AUTHENC) += authenc.o authencesn.o
+ obj-$(CONFIG_CRYPTO_KRB5ENC) += krb5enc.o
+ obj-$(CONFIG_CRYPTO_LZO) += lzo.o lzo-rle.o
+diff --git a/crypto/crc32.c b/crypto/crc32_generic.c
+similarity index 100%
+rename from crypto/crc32.c
+rename to crypto/crc32_generic.c
+diff --git a/crypto/crc32c.c b/crypto/crc32c_generic.c
+similarity index 100%
+rename from crypto/crc32c.c
+rename to crypto/crc32c_generic.c
+-- 
+2.39.5
+
 
