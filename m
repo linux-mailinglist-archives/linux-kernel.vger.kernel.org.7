@@ -1,193 +1,275 @@
-Return-Path: <linux-kernel+bounces-622824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47909A9ED17
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:48:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2FAA9ED4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771E77ABCB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:46:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5933A5A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9A3266F17;
-	Mon, 28 Apr 2025 09:41:54 +0000 (UTC)
-Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazon11022076.outbound.protection.outlook.com [52.101.96.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0880725E825;
+	Mon, 28 Apr 2025 09:50:07 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B18266B40;
-	Mon, 28 Apr 2025 09:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.96.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745833314; cv=fail; b=V6jK+Y4wwji2DcQx03m4S9RIziAw/T+x4snw90NBzcnRTe+y0s3maPM3vR6t8UFUY13hrHW0Bn/kQ94vhMRZigeWD/+0LMZaQvw4bzMXDeUWhDnsJeJC1R+5ka86t6N6L2s47um8xdpRHGECXpohiJBZ+yFclOb4XfVXWmfZVDU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745833314; c=relaxed/simple;
-	bh=fkBC6NEZ1wrpgHsWQrVDPtwSkT+V7N0YCK54+Vdlfnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eXRLQ04yX2YGgLKj/NbotS1psJnt2arrkJX1uK2uiAUH0OVMN1gjP4T0xj5M92QrNgeL7dJLksiqf69H7iKq0LYLmpwQqgisuUpVf2QBFmDuvnJ24tlTrdZNoHArrYtK3f8l+UI6R9y5GYDi4Ft0HNMDDIlre5GXqQftwGkywtA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.96.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kQeQ2EwD5PZqZy9R1QOMPMLBFU1BdO3c4b9rH2Ix356zxrhiAWXwvluy6NcbqIDK+WI2TIfXuKwrskU2+Fd2a5vTI5dkFBEVtGZQYR4f1WjjJAQDws3v6zlLGBz3CXUrgXBtOWDYlhp3h7ndwnAUNmdE6TBmgHuaJ7HLqXwn29d/jvVY3lq+JEtzvXmyJ97kjPC2eMN+hgLJ/Lh/a9QGJKvZ7nFyGx91XyO6zp2stPGxolldT2qIVRl4wajz7lmtQ0ClHuIn1YoUE8qaXwHY6aZhhjJvq7Jvq4O/3LPHw3GN6CwwGqPZ6abR5eY5+7qcTfF9zgxcmOEVebnsVuxH5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JKbp8UjxIdBaF6w3swB9ILb/ng664UfSlDx7Eh8GzdI=;
- b=eyHNuFklNHNyDXfvbwrqeRCOi++Zn9KyMMZNyy63FMLOgoEXOowLTkXAC+qgyXBT8pPQtXfNyXslM7nYhblrWyMxyouKZtBIOZnDfPVIYQMnonWeHuD4dfw0SLjzwTNhMp239yor2/C+RLceIfvJDw5sevzootPjT+x4TsYgrb94TChHpYzEhbR/dCtMaahRyGCSCryinvdywSe7UJhoWojUEAFV2TJznMhlvKC2I6TekvpNhR+wP9kyNE4u9l81C4whsX1riePcXDfDfAZkkh/wQYUCIQ7QFFML6ZVH+CfWUmFJXqAlus+GiN1AhyrDMcTRYrPyq/CTY25naiYDww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LO4P123MB6498.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:27c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.18; Mon, 28 Apr
- 2025 09:41:46 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::5352:7866:8b0f:21f6]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::5352:7866:8b0f:21f6%6]) with mapi id 15.20.8699.012; Mon, 28 Apr 2025
- 09:41:46 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: mpi3mr-linuxdrv.pdl@broadcom.com
-Cc: kashyap.desai@broadcom.com,
-	sumit.saxena@broadcom.com,
-	sreekanth.reddy@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/1] scsi: mpi3mr: Introduce smp_affinity_enable module parameter
-Date: Mon, 28 Apr 2025 10:41:41 +0100
-Message-ID: <20250428094141.1385188-2-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250428094141.1385188-1-atomlin@atomlin.com>
-References: <20250428094141.1385188-1-atomlin@atomlin.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0605.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:314::7) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507A519048A;
+	Mon, 28 Apr 2025 09:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745833806; cv=none; b=dx2Z2Fb1Vqe8uVyObolSYUg/Kb2kiYlWTnDyihBp63/Eoxj5bxa99stmMOkDajYVTOn8U3tC5AXdNSMWAiMYHvOdaO1vM5xCXpCTgAcTZ5cp5vJFX9z6jKFoG+6iEyzRHvoO/JbEqoZ+1BR+Rh7s7ap7RrGbmKkS35dctMAf7Fc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745833806; c=relaxed/simple;
+	bh=ARn8mONPmTlVesWVEfl9zh27G6Ld5tHGETk93xsn4Ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o/d9rMXzHosI3WRYwTaA5pxVZ9KLSOPw5DNz4pgRUvDz+RaliI3IF3Lpu/LCjFJ4uf0M1e7bhvA2xEBqBtMIh70FT2wZpYYmh9z1qQOrljiCAUwfud9qd3G9o850ZaWR8VKSjUIrDeqBJCD87yCIZZxbFBXnalvKLEJ9nVekuIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [198.18.0.1] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [27.18.99.221])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1364b8143;
+	Mon, 28 Apr 2025 17:44:46 +0800 (GMT+08:00)
+Message-ID: <c94409d9-3bd1-42c3-b5f6-785e994baa77@whut.edu.cn>
+Date: Mon, 28 Apr 2025 17:44:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LO4P123MB6498:EE_
-X-MS-Office365-Filtering-Correlation-Id: 183e5894-2f34-4fe6-7f72-08dd8638e33e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HQ+Gz92GASiVKdpanpN1dx7T7GF0MndEN8SEAqTr2d1448oX7Us3ZDwSSvBY?=
- =?us-ascii?Q?9ma0GVkasRIqSNpDXwKp5johgVMtElrP8AfUMbH9WEFODl44Pu0rpM6/ouNw?=
- =?us-ascii?Q?k3t2Syhb/XD6jIyl4W9Nq+Ta3S8hlhh7y8gMDJlM6Y2sGWwyKUJbnk0giB44?=
- =?us-ascii?Q?zBgqtEfJJzFyS42Azc353tGTExtWZ/tJPamldABhlOTGw6hb6GRW051n31so?=
- =?us-ascii?Q?kCCT6OmTryXoytgNhPb7XlTv3gn2DMsoE96Pce5MuRE7IScJ3OBC7QI0Wxe/?=
- =?us-ascii?Q?jXOIAVppJCDU7zpmhuM90nY6wln/LlR41FrXCU3YmMmjIo9Gy4OE+65I+DH6?=
- =?us-ascii?Q?UrqV17PuW3Zz2yl2ECJWCJka06wO1e5Xi3lHkoRnNtDRIT0j6t3lmNmZFivT?=
- =?us-ascii?Q?yBV022+h7rxXYpN8NEBFeNOayjZ+k+uNEpcZuBHfB08tQ1Xr6GcNV1L5Oz25?=
- =?us-ascii?Q?CELG/Va0nbxhnzaNJUZH6uDtfFYdqny0KuMDmYWgZtClpD9cUsbNNFi63W2u?=
- =?us-ascii?Q?7HcFcXHQPa5v+LCGnNKUsgjTsRmxUsAXqh8Yo4TBVq8tYbMDfd2w2yHH+/AM?=
- =?us-ascii?Q?EGfQTLgpWshj6vjo4LaYb5qONVoMKQ5yOQUh8rf1dNrJLn/aQvnGijtjf1kQ?=
- =?us-ascii?Q?8rgqCzypWSbi7aof+/WBJJnoUVkAdSRVvE6B9A8oQnJtekUSbsD1X3j6hgIU?=
- =?us-ascii?Q?v+zOd+VIh0grLvrhSCe6HnSKueY3lFmXL8k2zUtAP/uHBkBxK5iXKoDRxr8t?=
- =?us-ascii?Q?CL4Wc3g35KkoU01e7CZrtJxQ0kRyqvF/MQgTzFGuAxSb1omcrJWjh4HKMiLM?=
- =?us-ascii?Q?jKEKgj2pR7n8yPEesAdV+KkklvZmpYKPEwZTjlWlTkqYBo4fvw9LMRNjO1ww?=
- =?us-ascii?Q?L8cshXI4m/z0WFcsV8pr5RpqLeWyDeKWtMK7sakWq4z/8pSFk35iimrNt3zw?=
- =?us-ascii?Q?0jqmj5+42x6E41SdT257TQgAbpFrRtegBZdwSKeZOsOiTmaLw9PCYdYG27HE?=
- =?us-ascii?Q?wh9z1vNT6qHvyWVJkX6yzq8JDfo1D+lyrU9Un1xC48QO2qb3lsPPdTCRN+5T?=
- =?us-ascii?Q?yxPY54kiUeULPEbAXibKss5FnVF8BIUQpZ30d6Bb4ZQda+xSmnksOzmC7fcM?=
- =?us-ascii?Q?Kum0GElE5XiQb+EClzDQvAvNmDzTwFKW8lA9BNDfZ9cY5nxT2EY6MM8rb21r?=
- =?us-ascii?Q?Wd/NhFYAyAUuUL3c8eKsXvOjbcso7GolKuMeS06uj3N7TYdGIeIgDf46kyv/?=
- =?us-ascii?Q?gRgwxzUYb6tNjL+8onijMTnixWLvPlSiS2DOqRRG1zw4dXVbtVgOJ4Va16Rd?=
- =?us-ascii?Q?qU5KXaFInLFBJBeczsTWG9QTDDnA3O26LzEeULZWyVQDkvDoWvmYm09iyr9Z?=
- =?us-ascii?Q?DBtTmXv9FPiSGer8Fr63JFf7fgc86zUmVA4fyIS1HZiJCMJTca/CxP2gLRVx?=
- =?us-ascii?Q?LBBtcxZBOxI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?diQd7PEZBMUqkg4jlVL8HzyFNqJAA2WqHv+K0k+iBaqQQco52berLjPYvbmh?=
- =?us-ascii?Q?QQp+S/i1YImkdM8jF5zWURfsa3FkFIqMz0Psh1Qjc1Jh0kBaBHjS7hwA1tXC?=
- =?us-ascii?Q?zxX5hkokOPKZ+GIhru94PZwdJK85WTdwjm9O8xrbNLQPnYO1gxMaEf2DXL9b?=
- =?us-ascii?Q?B4zkkL68OPqy2uYbWycWy4uI1QR4+RjDTcj8MtJKO1regJpJ1Ksl7Rt5LF8N?=
- =?us-ascii?Q?3K4tPHdDi4CqrgCA45yqJxmz1pTGRDIRYanIpn+A5kPhnYSnvvx1azApDhNr?=
- =?us-ascii?Q?HMMaAjGPytbHhgLYYskCpIur8TVNDSrMP+t3PT8LIEGV1VernyN7DIRKdWH0?=
- =?us-ascii?Q?0X8Yw/1bOCX1mXCsZKMHcMGi5M7Me6ckbuGvPNcLswnXYQwuDKfIhLLnLuqH?=
- =?us-ascii?Q?H/Vb8CYUQK86/kl629gf9MvFhdoPmco5kBeZxgC1U8iXlUL08anG8xluXl9Q?=
- =?us-ascii?Q?qrR3mzrzCLYVxE6Xjf4727n/ooBGy262aE/5rY0PFc+/MF46Q1+v7LlPeJW1?=
- =?us-ascii?Q?S88iv7vmIJhaI+kwrG9kzh+sNT2WORyfs/0Eb6RXppVk/ENW1/n5qx1BGSMa?=
- =?us-ascii?Q?IHuwgCc0bRz8oPqJBsYXTgAlb2vwjakZjpeK1TAB73fWNh9kY1vyiZsL9NcS?=
- =?us-ascii?Q?1EUp7DpG6LxuiWZ2+CxNxw54lUWvx2R+WETqrdJXzFaNvkTrYtmVevbewsM8?=
- =?us-ascii?Q?RfBk7vMKV3LbHdoivC08hvYBfSeonqD1mwC3woNn6qov/KQCwDei4JBS+v20?=
- =?us-ascii?Q?WAwV0oKuixljCy1qdvWw2AxsYqCpxxihaIZ37pngbM0FsFHKs7kEs9x3wFo6?=
- =?us-ascii?Q?f3JWbQ/Bl4q4HnM0hVertjR0j3Jf9C5+zFKuETQQJmtPRKpGWONQuZTPlFbv?=
- =?us-ascii?Q?+94shdvmoaQ7zHkGbfcRBXJKUSig3bxhu5yv6mHL1ysM/lTrriXtp5I889WG?=
- =?us-ascii?Q?5ehEcX223km/8faamLKYHpN07YvubKYq3lpO2h/hBzRllheuO+8acJZE7TLg?=
- =?us-ascii?Q?0p6WStS9Yy/tDZS4oISamcjCeXvWSA4PTxqMUu4Lp1F7y6yWXr0U2nnJm5Ae?=
- =?us-ascii?Q?CUrHfyI/L7knycyScqGNAf12ola3N8bieiHeOSs2+4WZXb6+bEoZUJOx5aP6?=
- =?us-ascii?Q?XSUdOuTNuA6MgxYv4T3kRXQCkswEBr50P9L+EMwm0HoOzAifc7Iawgbfvkpf?=
- =?us-ascii?Q?5DEcGTLNC+LaInpoAV7BRLcGKh+FL6oVjqGMp48BVSIGkaO0VuhhFMVizr8U?=
- =?us-ascii?Q?biVnztHV6Veb6W7/k5Wz4O1/jfxiIZAAZX98DzORhiogulDnovr0yTg+k2No?=
- =?us-ascii?Q?+631lrO4Wn1DWoefIK/VehEgVrqp0EUc9PF0sD/jFWTece+9LRA+2LTdBKt5?=
- =?us-ascii?Q?FdZiUDzhntYK0jE4pF6dfvyfcIwWMloYjUyNbkwdWEPXczWLZeBX0khuIZC7?=
- =?us-ascii?Q?pBk73aZSr76w3PPNICV8WLct5EvljTstDJf+MuVQcHYInIejMOOe34Mh3xtY?=
- =?us-ascii?Q?koyPMpZiSO+3pLGuPX3vJ+/uh9SdZjkiOwQ1s0qEuumzJc34PUZpHnI8jQU7?=
- =?us-ascii?Q?2oOHckydrDjyhQvSJSIrPV/aXC9MGmpF4xNbQSeq?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 183e5894-2f34-4fe6-7f72-08dd8638e33e
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 09:41:44.7281
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RREL/5G4bEX+wwkW9pPOk0RQupMY+eN3LiBfdMbN4JSWxVkW4FgfsfCo7/VFjPfEVn1gF7XxjqfTWbrZpdJJ0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P123MB6498
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] riscv: dts: spacemit: add usb3.0 support for K1
+To: Yao Zi <ziyao@disroot.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250428-b4-k1-dwc3-v2-v1-0-7cb061abd619@whut.edu.cn>
+ <20250428-b4-k1-dwc3-v2-v1-2-7cb061abd619@whut.edu.cn>
+ <aA87PjTsbHxxFOdl@pie.lan>
+Content-Language: en-US
+From: Ze Huang <huangze@whut.edu.cn>
+In-Reply-To: <aA87PjTsbHxxFOdl@pie.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGBhLVkxLQ0oYSEMYTU1DQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VCQlVJSUpZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVUpCS0
+	tZBg++
+X-HM-Tid: 0a967bc8e9ca03a1kunm1364b8143
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6K1E6OQw5ITIBCTQWIQI9Ng41
+	EEwwChxVSlVKTE9OQ0hIT0JJT0hNVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VCQlVJSUpZV1kIAVlBTE5NSTcG
 
-This patch introduces a new module parameter namely
-"smp_affinity_enable", to govern the application of system-wide IRQ
-affinity (with kernel boot-time parameter "irqaffinity") for MSI-X
-interrupts. By default, the default IRQ affinity mask will not be
-respected. Set smp_affinity_enable to 0 disables this behaviour.
-Consequently, preventing the auto-assignment of MSI-X IRQs.
+On 4/28/25 4:24 PM, Yao Zi wrote:
+> On Mon, Apr 28, 2025 at 03:38:12PM +0800, Ze Huang wrote:
+>> Add USB 3.0 support for the SpacemiT K1 SoC, including the
+>> following components:
+>>
+>> - USB 2.0 PHY nodes
+>> - USB 3.0 combo PHY node
+>> - USB 3.0 host controller
+>> - USB 3.0 hub and vbus regulator (usb3_vhub, usb3_vbus)
+>> - DRAM interconnect node for USB DMA ("dma-mem")
+>>
+>> The `usb3_vbus` and `usb3_vhub` regulator node provides a fixed 5V
+>> supply to power the onboard USB 3.0 hub and usb vbus.
+>>
+>> On K1, some DMA transfers from devices to memory use separate buses with
+>> different DMA address translation rules from the parent node. We express
+>> this relationship through the interconnects node("dma-mem").
+>>
+>> Signed-off-by: Ze Huang <huangze@whut.edu.cn>
+>> ---
+>>   arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 52 +++++++++++++++++++++++
+>>   arch/riscv/boot/dts/spacemit/k1.dtsi            | 56 +++++++++++++++++++++++++
+>>   2 files changed, 108 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+>> index 816ef1bc358ec490aff184d5915d680dbd9f00cb..0c0bf572d31e056955eb2ff377c3262271dcc156 100644
+>> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+>> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+>> @@ -28,6 +28,25 @@ led1 {
+>>   			default-state = "on";
+>>   		};
+>>   	};
+>> +
+>> +	usb3_vhub: regulator-vhub-5v {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "USB30_VHUB";
+>> +		regulator-min-microvolt = <5000000>;
+>> +		regulator-max-microvolt = <5000000>;
+>> +		gpio = <&gpio K1_GPIO(123) GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +	};
+>> +
+>> +	usb3_vbus: regulator-vbus-5v {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "USB30_VBUS";
+>> +		regulator-min-microvolt = <5000000>;
+>> +		regulator-max-microvolt = <5000000>;
+>> +		regulator-always-on;
+>> +		gpio = <&gpio K1_GPIO(97) GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +	};
+>>   };
+>>   
+>>   &uart0 {
+>> @@ -35,3 +54,36 @@ &uart0 {
+>>   	pinctrl-0 = <&uart0_2_cfg>;
+>>   	status = "okay";
+>>   };
+>> +
+>> +&usbphy2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&combphy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_dwc3 {
+>> +	dr_mode = "host";
+>> +	phy_type = "utmi";
+>> +	snps,hsphy_interface = "utmi";
+>> +	snps,dis_enblslpm_quirk;
+>> +	snps,dis-u1u2-quirk;
+>> +	snps,dis-u2-freeclk-exists-quirk;
+>> +	snps,dis-del-phy-power-chg-quirk;
+>> +	snps,dis_u2_susphy_quirk;
+>> +	snps,dis_u3_susphy_quirk;
+>> +	snps,dis_rxdet_inp3_quirk;
+>> +	snps,xhci-trb-ent-quirk;
+> I suspect whether it's the correct place to put these quirks: they look
+> like IP quirks which are present in every K1 SoC regardless of the
+> board model, if my understanding is correct they should go into SoC
+> devicetree.
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
----
- drivers/scsi/mpi3mr/mpi3mr_fw.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I checked these quirks in differenct board dts in vendor repo, they are 
+actually the same.
+Will follow.
 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-index 5ed31fe57474..c1d76431230a 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-@@ -22,6 +22,10 @@ static int poll_queues;
- module_param(poll_queues, int, 0444);
- MODULE_PARM_DESC(poll_queues, "Number of queues for io_uring poll mode. (Range 1 - 126)");
- 
-+static int smp_affinity_enable = 1;
-+module_param(smp_affinity_enable, int, 0444);
-+MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disable Default: enable(1)");
-+
- #if defined(writeq) && defined(CONFIG_64BIT)
- static inline void mpi3mr_writeq(__u64 b, volatile void __iomem *addr)
- {
-@@ -846,7 +850,8 @@ static int mpi3mr_setup_isr(struct mpi3mr_ioc *mrioc, u8 setup_one)
- 
- 		desc.post_vectors = mrioc->requested_poll_qcount;
- 		min_vec = desc.pre_vectors + desc.post_vectors;
--		irq_flags |= PCI_IRQ_AFFINITY | PCI_IRQ_ALL_TYPES;
-+		if (smp_affinity_enable)
-+			irq_flags |= PCI_IRQ_AFFINITY | PCI_IRQ_ALL_TYPES;
- 
- 		retval = pci_alloc_irq_vectors_affinity(mrioc->pdev,
- 			min_vec, max_vectors, irq_flags, &desc);
--- 
-2.47.1
+>
+>> +	vbus-supply = <&usb3_vbus>;
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	status = "okay";
+>> +
+>> +	hub@1 {
+>> +		compatible = "usb2109,817";
+>> +		reg = <0x1>;
+>> +		vdd-supply = <&usb3_vhub>;
+>> +		reset-gpios = <&gpio K1_GPIO(124) GPIO_ACTIVE_LOW>;
+>> +	};
+>> +};
+>> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+>> index c0cc4b99c9356d550a470291dba9f2625b10f8df..c7b86c850da969e5412ad42c63995cd20b4d0484 100644
+>> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
+>> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+>> @@ -4,6 +4,8 @@
+>>    */
+>>   
+>>   #include <dt-bindings/clock/spacemit,k1-syscon.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/phy/phy.h>
+>>   
+>>   /dts-v1/;
+>>   / {
+>> @@ -346,6 +348,13 @@ soc {
+>>   		dma-noncoherent;
+>>   		ranges;
+>>   
+>> +		dram_range0: dram-range@0 {
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
+>> +			#interconnect-cells = <0>;
+>> +		};
+>> +
+>>   		syscon_rcpu: system-controller@c0880000 {
+>>   			compatible = "spacemit,k1-syscon-rcpu";
+>>   			reg = <0x0 0xc0880000 0x0 0x2048>;
+>> @@ -358,6 +367,53 @@ syscon_rcpu2: system-controller@c0888000 {
+>>   			#reset-cells = <1>;
+>>   		};
+>>   
+>> +		usb_dwc3: usb@c0a00000 {
+>> +			compatible = "spacemit,k1-dwc3", "snps,dwc3";
+>> +			reg = <0x0 0xc0a00000 0x0 0x10000>;
+>> +			clocks = <&syscon_apmu CLK_USB30>;
+>> +			clock-names = "bus_early";
+>> +			resets = <&syscon_apmu RESET_USB3_0>;
+>> +			interrupt-parent = <&plic>;
+>> +			interrupts = <125>;
+>> +			interconnects = <&dram_range0>;
+>> +			interconnect-names = "dma-mem";
+>> +			phys = <&usbphy2>, <&combphy PHY_TYPE_USB3>;
+>> +			phy-names = "usb2-phy", "usb3-phy";
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		usbphy0: phy@c0940000 {
+>> +			compatible = "spacemit,usb2-phy";
+>> +			reg = <0x0 0xc0940000 0x0 0x200>;
+>> +			clocks = <&syscon_apmu CLK_USB_AXI>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		usbphy1: phy@c09c0000 {
+>> +			compatible = "spacemit,usb2-phy";
+>> +			reg = <0x0 0xc09c0000 0x0 0x200>;
+>> +			clocks = <&syscon_apmu CLK_USB_P1>;
+>> +			status = "disabled";
+>> +		};
+> Why don't add #phy-cells properties to usbphy{0,1} just like usbphy2?
+> You've claimed #phy-cells as an essential property of
+> spacemit,k1-usb2-phy nodes in the PHY series and I suspect whether this
+> passes dtbs_check.
+
+The DT bindings for the USB PHY were submitted in an earlier patchset,
+some dts checks about PHY were missed.
+
+I will add #phy-cells in next version. thanks!
+
+>
+>> +		usbphy2: phy@0xc0a30000 {
+>> +			compatible = "spacemit,k1-usb2-phy";
+>> +			reg = <0x0 0xc0a30000 0x0 0x200>;
+>> +			clocks = <&syscon_apmu CLK_USB30>;
+>> +			#phy-cells = <0>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		combphy: phy@c0b10000 {
+>> +			compatible = "spacemit,k1-combphy";
+>> +			reg = <0x0 0xc0b10000 0x0 0x800>,
+>> +			      <0x0 0xd4282910 0x0 0x400>;
+>> +			reg-names = "ctrl", "sel";
+>> +			resets = <&syscon_apmu RESET_PCIE0>;
+>> +			#phy-cells = <1>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>>   		syscon_apbc: system-control@d4015000 {
+>>   			compatible = "spacemit,k1-syscon-apbc";
+>>   			reg = <0x0 0xd4015000 0x0 0x1000>;
+>>
+>> -- 
+>> 2.49.0
+>>
+>>
+> Best regards,
+> Yao Zi
+>
+>
+>
 
 
