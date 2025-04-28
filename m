@@ -1,169 +1,230 @@
-Return-Path: <linux-kernel+bounces-623674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98560A9F924
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:03:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E32A9F92B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2420465613
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:03:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD05C7A7912
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F75C296D3A;
-	Mon, 28 Apr 2025 19:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D5E296D34;
+	Mon, 28 Apr 2025 19:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cfk5D5RY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALJYc9PR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB0E296159;
-	Mon, 28 Apr 2025 19:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4504319ABC6;
+	Mon, 28 Apr 2025 19:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745866984; cv=none; b=galeXtGOTOFuFUnJtg7iVLFLxtWwCJxO4GlNnbdOs6uSYRrbS+8mVFpXxqoIZtvhNHEqCJJj5ra203ZZuzy51bhDR7JLIiBR2RTAxoMeOkpH1knYPgRfe0J2swhHhicyh4awmmnkTxw+lT2Nhojlcou48t1PytaShAixGbYeUQg=
+	t=1745867098; cv=none; b=Rf3hQAQYnj19cJP2CSP07flIh93UVBBNSqou9G0qNgOcpXbBmkLum8vlH48ldpw6jGHsKDGZ7UY+bGRGermmoMVKKli3KcN6TGGF1LIRJO6Tp6k78dYpzyirxSU/TOxJo1VEmTFccK1LoNRDSdF5Ff1yn0525E2zKuUztb8ntXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745866984; c=relaxed/simple;
-	bh=MitUwhZAq+uXKif4IPGFASbUhjHmzKU2gV025oXp/Vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NMghHMDMjnBNcfl+14tlTb3d1PCdEuUnJeNiwA4ijVUDDiwRsQsoNt/b7X5dHtHjU7mr5zxDdAzdhJykOkRJbSTMltcOHbcTiCbiOyhDTOqmUdenEklP6l2ayMuyo5RqJ8zMYGHl99H5PTIcSNktFvBoGnZFcDWf7tWI95BXXiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cfk5D5RY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SADFOi002817;
-	Mon, 28 Apr 2025 19:02:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aauU0FGniSWBHKvffweWH7HLyt3q/OcuurZpMxy2CLk=; b=Cfk5D5RYRxtBiwt0
-	mc/Zxe03Xw0UeJz7Ho34x3NWMbODzAd5ohR6DzNE1//Vc66uqFK1vv0mGDoKiQSJ
-	/WUEub4rlnydUIPDdbTo11s7iFv7YG78eOQqM68NhJhEzmj31251+oDgNbmaSSBy
-	yHPp03t/03VKqirJcLC1mQm5JMFXTpR2VUoSG2aqcYnqu3tFRJRgPzk+k3MxzrKj
-	pi6fVE0bwO6S3Sk6pJv7QghZpfscb9BfDy852mWg5LGnPhxVGYldWP0bdaMt4Tdl
-	TPdaz/F7ktggEfGURagHqplxpSDJSsBQmEEBBC7VHKL8ecWabQtH2/kYQKQd5qix
-	qWIIew==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468qv9j3q3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 19:02:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53SJ2mG1006066
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 19:02:49 GMT
-Received: from [10.134.71.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Apr
- 2025 12:02:48 -0700
-Message-ID: <7cd99242-e670-420d-bced-b8a979e3fd2f@quicinc.com>
-Date: Mon, 28 Apr 2025 12:02:47 -0700
+	s=arc-20240116; t=1745867098; c=relaxed/simple;
+	bh=yd3XTTVHcnpHFArsoHLF/KSZ5TfDWwJCeAmdln9qQkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M/G6bCopdcDgKTUKTeHIGVK88zvB5+4LPpcIqS3mLYn7BBYwOw7npvAo1HDRruMgMlhnsaVCktgFz5OQJZuhkI2amz9He7dDgHueFeL5iyJe1ObpoG4Fr3w6u2T5i7Xun393w8ReMsDwUWmiOMznBnUgdwifDNBKMOPMfUAQvig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALJYc9PR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E886C4CEE4;
+	Mon, 28 Apr 2025 19:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745867097;
+	bh=yd3XTTVHcnpHFArsoHLF/KSZ5TfDWwJCeAmdln9qQkU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ALJYc9PR+AUq1lxvddH9AbDiAfljYdiuvDEbETp9zB1F3uSSjOOkV+wbgNTg4eYfu
+	 XZRQBn9i9BZ/+YyRZapwV5j6BhmvkzO83Kcq7epw/hPqbeL2zsGaOYdT/KdDmwDvIs
+	 nhqApA8jty67E5MhvES4Ktr9Ih1v7zWMTK3Uj5mjrAK8uYOu+5/dR32eZERKpSs+v9
+	 43GlLTj6W3H2HBBUSpcTLpoNDVL5edUePZkedWJA+fgB7NF6JTqkyydNCReleYV/sE
+	 kpzr0GzI3opXLnT0ZE8fShBuBQG0YQXzesLUXufuRdpbnwYcAOiXbmS6e9mfnjBhHb
+	 E1FJS7is8lGuw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: John Johansen <john.johansen@canonical.com>,
+	apparmor@lists.ubuntu.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH] apparmor: use SHA-256 library API instead of crypto_shash API
+Date: Mon, 28 Apr 2025 12:04:30 -0700
+Message-ID: <20250428190430.850240-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE
- register
-To: Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Neil
- Armstrong" <neil.armstrong@linaro.org>
-References: <20250307-dpu-active-ctl-v3-0-5d20655f10ca@linaro.org>
- <20250307-dpu-active-ctl-v3-1-5d20655f10ca@linaro.org>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250307-dpu-active-ctl-v3-1-5d20655f10ca@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=AO34vM+d c=1 sm=1 tr=0 ts=680fd0da cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=tVI0ZWmoAAAA:8 a=COk6AnOGAAAA:8
- a=w8TCXdzS96gXyQ4iQjUA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=-BPWgnxRz2uhmvdm1NTO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: n0vkWxy-KaGU8_FxfUBEL44yYIAItQxf
-X-Proofpoint-ORIG-GUID: n0vkWxy-KaGU8_FxfUBEL44yYIAItQxf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDE1MyBTYWx0ZWRfXzOnUrbR4z09D g/ZVbSc/k6A70cMiAGbjoXhoU7GA+iJ9zRN7NEFTGblbvEAv3EQb97xx7L4pKgoBNtQjBcPb16G lvMAJvG3m5eLaIDnnNou9jjQvcmd67VbTQOTF/ZbbrTlyzjmOAamonEi7LkRIPlPWJO00Nh+9af
- pQrzjUPNOsPipWEd8u1RVfB1NSL9j5AcLA27jKl7gR0p4No62u4H2yZfzf7VZel0ySb70P7Znzo P1ZfteYstGHwhYihXW3JIa6PUN5jR2Rh5ZiulVOFmjsd/YFMRPfts5rjz74q6lHWQ2hGDHGmIo+ 1m1krhh3hBGlxyITBasH7MpfSXJinxiVStWnBo+96dO7qTqCP4M66zHh+tbozZPYRT42Xsz5JvV
- NAZUNhDYwK5VPnGAT05crKKelazphxl2HU9b3qbxlWP+5tkEQJ8pFhNd8HZr62Xx0cJPX/Nk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_07,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504280153
+Content-Transfer-Encoding: 8bit
 
+From: Eric Biggers <ebiggers@google.com>
 
+This user of SHA-256 does not support any other algorithm, so the
+crypto_shash abstraction provides no value.  Just use the SHA-256
+library API instead, which is much simpler and easier to use.
 
-On 3/6/2025 10:24 PM, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> In case of complex pipelines (e.g. the forthcoming quad-pipe) the DPU
-> might use more that one MERGE_3D block for a single output.  Follow the
-> pattern and extend the CTL_MERGE_3D_ACTIVE active register instead of
-> simply writing new value there. Currently at most one MERGE_3D block is
-> being used, so this has no impact on existing targets.
-> 
-> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+This patch is targeting the apparmor tree for 6.16.
 
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> index 411a7cf088eb72f856940c09b0af9e108ccade4b..cef3bfaa4af82ebc55fb8cf76adef3075c7d73e3 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-> @@ -563,6 +563,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->   	u32 wb_active = 0;
->   	u32 cwb_active = 0;
->   	u32 mode_sel = 0;
-> +	u32 merge_3d_active = 0;
->   
->   	/* CTL_TOP[31:28] carries group_id to collate CTL paths
->   	 * per VM. Explicitly disable it until VM support is
-> @@ -578,6 +579,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->   	wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
->   	cwb_active = DPU_REG_READ(c, CTL_CWB_ACTIVE);
->   	dsc_active = DPU_REG_READ(c, CTL_DSC_ACTIVE);
-> +	merge_3d_active = DPU_REG_READ(c, CTL_MERGE_3D_ACTIVE);
->   
->   	if (cfg->intf)
->   		intf_active |= BIT(cfg->intf - INTF_0);
-> @@ -591,15 +593,15 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
->   	if (cfg->dsc)
->   		dsc_active |= cfg->dsc;
->   
-> +	if (cfg->merge_3d)
-> +		merge_3d_active |= BIT(cfg->merge_3d - MERGE_3D_0);
-> +
->   	DPU_REG_WRITE(c, CTL_TOP, mode_sel);
->   	DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
->   	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
->   	DPU_REG_WRITE(c, CTL_CWB_ACTIVE, cwb_active);
->   	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
-> -
-> -	if (cfg->merge_3d)
-> -		DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE,
-> -			      BIT(cfg->merge_3d - MERGE_3D_0));
-> +	DPU_REG_WRITE(c, CTL_MERGE_3D_ACTIVE, merge_3d_active);
->   
->   	if (cfg->cdm)
->   		DPU_REG_WRITE(c, CTL_CDM_ACTIVE, cfg->cdm);
-> 
+ security/apparmor/Kconfig  |  3 +-
+ security/apparmor/crypto.c | 85 ++++++--------------------------------
+ 2 files changed, 13 insertions(+), 75 deletions(-)
+
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 64cc3044a42ce..1e3bd44643dac 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -57,12 +57,11 @@ config SECURITY_APPARMOR_INTROSPECT_POLICY
+ 	  cpu is paramount.
+ 
+ config SECURITY_APPARMOR_HASH
+ 	bool "Enable introspection of sha256 hashes for loaded profiles"
+ 	depends on SECURITY_APPARMOR_INTROSPECT_POLICY
+-	select CRYPTO
+-	select CRYPTO_SHA256
++	select CRYPTO_LIB_SHA256
+ 	default y
+ 	help
+ 	  This option selects whether introspection of loaded policy
+ 	  hashes is available to userspace via the apparmor
+ 	  filesystem. This option provides a light weight means of
+diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
+index aad486b2fca65..40e17e153f1e5 100644
+--- a/security/apparmor/crypto.c
++++ b/security/apparmor/crypto.c
+@@ -9,115 +9,54 @@
+  * Fns to provide a checksum of policy that has been loaded this can be
+  * compared to userspace policy compiles to check loaded policy is what
+  * it should be.
+  */
+ 
+-#include <crypto/hash.h>
++#include <crypto/sha2.h>
+ 
+ #include "include/apparmor.h"
+ #include "include/crypto.h"
+ 
+-static unsigned int apparmor_hash_size;
+-
+-static struct crypto_shash *apparmor_tfm;
+-
+ unsigned int aa_hash_size(void)
+ {
+-	return apparmor_hash_size;
++	return SHA256_DIGEST_SIZE;
+ }
+ 
+ char *aa_calc_hash(void *data, size_t len)
+ {
+-	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+ 	char *hash;
+-	int error;
+-
+-	if (!apparmor_tfm)
+-		return NULL;
+ 
+-	hash = kzalloc(apparmor_hash_size, GFP_KERNEL);
++	hash = kzalloc(SHA256_DIGEST_SIZE, GFP_KERNEL);
+ 	if (!hash)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	desc->tfm = apparmor_tfm;
+-
+-	error = crypto_shash_init(desc);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_update(desc, (u8 *) data, len);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_final(desc, hash);
+-	if (error)
+-		goto fail;
+-
++	sha256(data, len, hash);
+ 	return hash;
+-
+-fail:
+-	kfree(hash);
+-
+-	return ERR_PTR(error);
+ }
+ 
+ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+ 			 size_t len)
+ {
+-	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+-	int error;
++	struct sha256_state state;
+ 	__le32 le32_version = cpu_to_le32(version);
+ 
+ 	if (!aa_g_hash_policy)
+ 		return 0;
+ 
+-	if (!apparmor_tfm)
+-		return 0;
+-
+-	profile->hash = kzalloc(apparmor_hash_size, GFP_KERNEL);
++	profile->hash = kzalloc(SHA256_DIGEST_SIZE, GFP_KERNEL);
+ 	if (!profile->hash)
+ 		return -ENOMEM;
+ 
+-	desc->tfm = apparmor_tfm;
+-
+-	error = crypto_shash_init(desc);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_update(desc, (u8 *) &le32_version, 4);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_update(desc, (u8 *) start, len);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_final(desc, profile->hash);
+-	if (error)
+-		goto fail;
+-
++	sha256_init(&state);
++	sha256_update(&state, (u8 *)&le32_version, 4);
++	sha256_update(&state, (u8 *)start, len);
++	sha256_final(&state, profile->hash);
+ 	return 0;
+-
+-fail:
+-	kfree(profile->hash);
+-	profile->hash = NULL;
+-
+-	return error;
+ }
+ 
+ static int __init init_profile_hash(void)
+ {
+-	struct crypto_shash *tfm;
+-
+-	if (!apparmor_initialized)
+-		return 0;
+-
+-	tfm = crypto_alloc_shash("sha256", 0, 0);
+-	if (IS_ERR(tfm)) {
+-		int error = PTR_ERR(tfm);
+-		AA_ERROR("failed to setup profile sha256 hashing: %d\n", error);
+-		return error;
+-	}
+-	apparmor_tfm = tfm;
+-	apparmor_hash_size = crypto_shash_digestsize(apparmor_tfm);
+-
+-	aa_info_message("AppArmor sha256 policy hashing enabled");
+-
++	if (apparmor_initialized)
++		aa_info_message("AppArmor sha256 policy hashing enabled");
+ 	return 0;
+ }
+-
+ late_initcall(init_profile_hash);
+
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+-- 
+2.49.0
 
 
