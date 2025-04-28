@@ -1,108 +1,201 @@
-Return-Path: <linux-kernel+bounces-623338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04841A9F452
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:24:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5112A9F464
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB98189FF2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449261A8321D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAEC279907;
-	Mon, 28 Apr 2025 15:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855414A62B;
+	Mon, 28 Apr 2025 15:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hq3lpwr6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LV0tZSB6"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42902797A1;
-	Mon, 28 Apr 2025 15:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31FE1EA65;
+	Mon, 28 Apr 2025 15:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745853841; cv=none; b=Cg7DbaaSxIAEnMQlSPTQCFkLFMsG69RkiL6V1d28AUGQn2URYvNi2jJshI/iEO/QID1IXsA21g99Mm1s0orOopwhoKzJYCMl3HHvfQlBgr7R1U5xc0ogTJ0hZIWqUZTFqbC4vx4lRSuK3RPz7etbBlJ2C/+CC/JODulenp2ZfOI=
+	t=1745853923; cv=none; b=lqdbgU/eguWiz3Ge/YbAxTyRetme1HPJKJLFRlEXVcjyKQ18oxjvjq4zs34o8ljdkKGrGq4GJod0yaFSjiyDlRmd+Vyp7XrOx40uYVlC/JxY1NAYPaNyMuYTklN16w+wc8xhzf5V2a1v5Gqi5IWU3IXJmmgUjpYiGRuXvsjQ1fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745853841; c=relaxed/simple;
-	bh=HzKzkrxa9A4F/zt2zYIknGsXS+zLy1fxDykz1llhI68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JaSti2ch/fpuGC1DwtG+vBHgLqN4kwkNtn8+IHxPK2qvJQmOjk6HazAGNnc0J3FXHi0zawcE+LwTgQ8M623Dy5oK6Dytg6mhTpkZjJPwrMH9b5XIYkTGTFwYGKkoCjcIddkVqQLApKyXeZQ9WpVP+kp/pVIBDGlVa5lUFK6Axzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hq3lpwr6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BEA0C4CEE4;
-	Mon, 28 Apr 2025 15:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745853841;
-	bh=HzKzkrxa9A4F/zt2zYIknGsXS+zLy1fxDykz1llhI68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hq3lpwr6J3FigWsiuBd93GDgW7+LocZzZO4qV35W2Z3DVqLenlDHfJukspyiadhYm
-	 uj9RRJp8DCUnPxagJAp2mDC8QgicsTp+AU7gFHo4L0fhRtj2t2btuUDnKTkafimpAO
-	 jp2SjwZ909NDiImGdOHfc37lXm1c72newPMRUzXAqODW7nr23tQoKIcZfBnDd0X0hE
-	 bPcKrnpek9brq0HwhW2DTumJdIZIyDI06TjdFtEHzvLmNIGwpaH6ifPFrj9WWn9zvi
-	 isa7xYK/bOoG9YGq2Wh9Nc6ndsl8Wqs2XQI1xbhw0UbodP2JI5kY/PtRFa4d8SbpMo
-	 LO4MFVuKpFbrg==
-Date: Mon, 28 Apr 2025 16:23:51 +0100
-From: Will Deacon <will@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>, "Luck, Tony" <tony.luck@intel.com>,
-	rafael@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, linux-edac@vger.kernel.org,
-	x86@kernel.org, justin.he@arm.com, ardb@kernel.org,
-	ying.huang@linux.alibaba.com, ashish.kalra@amd.com,
-	baolin.wang@linux.alibaba.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
-	robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
-	zhuo.song@linux.alibaba.com, sudeep.holla@arm.com,
-	lpieralisi@kernel.org, linux-acpi@vger.kernel.org,
-	yazen.ghannam@amd.com, mark.rutland@arm.com, mingo@redhat.com,
-	robin.murphy@arm.com, Jonathan.Cameron@Huawei.com, bp@alien8.de,
-	linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
-	tanxiaofei@huawei.com, mawupeng1@huawei.com, linmiaohe@huawei.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com,
-	tongtiangen@huawei.com, gregkh@linuxfoundation.org,
-	jarkko@kernel.org
-Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task
- if synchronous memory error not recovered
-Message-ID: <20250428152350.GA23615@willie-the-truck>
-References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
- <20250404112050.42040-2-xueshuai@linux.alibaba.com>
- <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
- <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com>
- <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
- <653abdd4-46d2-4956-b49c-8f9c309af34d@linux.alibaba.com>
- <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
- <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com>
+	s=arc-20240116; t=1745853923; c=relaxed/simple;
+	bh=q8BzutDi9sIZXY6YDi5vn2fxR4E0c469D8I7ZAqRQiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F8S7ArlAyaQL32kXQzTwPEtLvixt4RqYHX7MzLEW+QWLihwTxOQ8aad2Lf7o7pCLLpPmeEUPijwcJ1Gn34gANAttIEeReeluSh0cjDG945WVxuy465yu5agiYBC+S3IR4lG9u2O0PI9n+fpNLrLZmub7xWFq2pHNl0H1YwDMiSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LV0tZSB6; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BC76741E0D;
+	Mon, 28 Apr 2025 15:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745853912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hN9Ynenyf1lRwHEK1Ce+hj/6WjWz5+RthwslvM5GjFo=;
+	b=LV0tZSB62q9TVFOERPpjO3INFWfz2QMz0oWE+LlhDcLv9EgOWZ7NQ5eLzpn3F8Mzrgl1e3
+	nNK9OtTJ1ht4xvXuIW7jZkttywFk7xJK1wXH6DeT9gKSLK2Iyur1Jw275KFjuE/jAOm7BB
+	cCMTHsvVHX4v2dGFMoRyVfT4/iThms1irlOHZt3KTM9ytNFzFkn6gljWTBL7iqNte8EpZ4
+	SfF39hJSM8ArCDoKhd8wPfZUWZ2CTfqqjd0JKkWt49+2kE4Y9h8iMDRWSwQDWeEgqA0jhC
+	H8khpWMEI7piNFV0f0373e9AG1/Pz9kSsOS/Q/sXMeefskBk4KQMnNoOb4YfMQ==
+Date: Mon, 28 Apr 2025 17:24:57 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Douglas Anderson
+ <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski
+ <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
+ Adam Ford <aford173@gmail.com>, Adrien Grassein
+ <adrien.grassein@gmail.com>, Aleksandr Mishin <amishin@t-argos.ru>, Andy
+ Yan <andy.yan@rock-chips.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Benson Leung
+ <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, Christoph
+ Fritz <chf.fritz@googlemail.com>, Cristian Ciocaltea
+ <cristian.ciocaltea@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, Dharma Balasubiramani
+ <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, Heiko
+ Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne
+ Grunau <j@jannau.net>, Jerome Brunet <jbrunet@baylibre.com>, Jesse Van
+ Gavere <jesseevg@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>, Liu Ying
+ <victor.liu@nxp.com>, Manikandan Muralidharan <manikandan.m@microchip.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Phong LE
+ <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Sugar Zhang
+ <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, Tomi
+ Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan
+ <mordan@ispras.ru>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
+ <ilpo.jarvinen@linux.intel.com>, Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Dmitry
+ Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>, Pin-yen Lin
+ <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, Aradhya Bhatia
+ <a-bhatia1@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Ian
+ Ray <ian.ray@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, Peter
+ Senna Tschudin <peter.senna@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Herve Codina <herve.codina@bootlin.com>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Helge Deller
+ <deller@gmx.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre
+ <yannick.fertre@foss.st.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Michal Simek <michal.simek@amd.com>
+Subject: Re: [PATCH v2 00/34] drm: convert all bridges to
+ devm_drm_bridge_alloc()
+Message-ID: <20250428172457.23e23df5@booty>
+In-Reply-To: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedufedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvddtuedtfefgueehiefhjeeiffekudfhgfdtledvffekhfegteduieejveevteehnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtkedprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgp
+ dhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Fri, Apr 25, 2025 at 09:10:09AM +0800, Shuai Xue wrote:
-> 在 2025/4/25 09:00, Hanjun Guo 写道:
-> > Call force_sig(SIGBUS) directly in ghes_do_proc() is not my favourite,
-> > but I can bear that, please add
-> > 
-> > Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
-> > 
-> > Thanks
-> > Hanjun
-> 
-> Thanks. Hanjun.
-> 
-> @Rafael, @Catalin,
-> 
-> Both patch 1 and 2 have reviewed-by tag from the arm64 ACPI maintainers, Hanjun,
-> now. Are you happpy to pick and queue this patch set to acpi tree or arm tree?
+Hi Maxime, other DRM maintainers,
 
-Since this primarily touches drivers/acpi/apei/ghes.c, I think it should
-go via the ACPI tree and not the arm64 one.
+On Thu, 24 Apr 2025 20:59:07 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-Will
+> devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a D=
+RM
+> bridge, and the only one supported from now on. It is also necessary for
+> implementing reference counting and thus needed to support removal of
+> bridges from a still existing DRM pipeline without use-after-free.
+>=20
+> This series converts all DRM bridges to the new API.
+>=20
+> Patch 1 uses a coccinelle semantic patch to mass-convert some of those
+> drivers -- thanks Maxime for having suggested the patch that served as a
+> starting point for me. I was unable to come up with a better patch
+> converting more drivers though, so I converted all others manually. Most =
+of
+> them were trivial. I left the non-trivial ones at the end of the series to
+> help reviewers know where to look at more carefully.
+>=20
+> Due to the large number of touched files, the list of recipients generated
+> by get_maintainers (b4 actually) was huge, 60~70 people (not counting
+> mailing lists), so I took the liberty of trimming the list as reasonably =
+as
+> I could to DRM maintainers and frequent contributors, and added all other
+> recipients individually per-patch. I hope this is fine. Don't hesitate to
+> suggest more people which should be Cc-ed in a future series, or a better
+> Cc policy.
+>=20
+> Current plan and status of the DRM bridge refcounting work:
+>=20
+>  A. =E2=9C=94 add new alloc API and refcounting -> (now in drm-misc-next)
+>  B. =E2=9E=9C convert all bridge drivers to new API (this series)
+>  C. =E2=80=A6 documentation, kunit tests, debugfs improvements (v1 under =
+discussion)
+>  D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+>  E. after (B), convert accessors; this is a large work and can be done
+>     in chunks
+>=20
+> Luca
+>=20
+> [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e=
+629b715ea3d1ba537ef2da95eec
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+Maintaining this long series is quite painful. Do you think at least
+patches with a R-by or T-by tag could be merged before I send v3, so we
+can relieve the maintenance effort, mail servers, and everybody's
+inboxes?
+
+Otherwise I could split this series in parts somewhat arbitrarily, but
+that is an additional work on its own and is not a perfect solution as
+it would not provide the big picture.
+
+Best regards,
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
