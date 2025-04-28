@@ -1,155 +1,97 @@
-Return-Path: <linux-kernel+bounces-623190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AACA9F20E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699A1A9F207
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9144B1891CA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A020016DFF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908E026A1A3;
-	Mon, 28 Apr 2025 13:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OPPXYSvF"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1F626B2D6;
+	Mon, 28 Apr 2025 13:20:14 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682F0268698;
-	Mon, 28 Apr 2025 13:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188BD25E81D;
+	Mon, 28 Apr 2025 13:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745846453; cv=none; b=MS6pGPnJT24u814vThGyg2FUUV3TEjave8HHENExcfdH+v7ZkVx1/gSb0n8IWgoM/UGl2l+F4ghLfrFISbH+HaqXH8vrK2x8g5aGNnm7J7H37rHS8FQIz+gof6hTgo20KKpYQX1SnQ3V2m2LAcUYs4T0Bge4drTtlcOfCNHN9s8=
+	t=1745846414; cv=none; b=oyqlom4hQl/yLClTpLhF/tZzXv1UoybezamheQOFwlCXUpeZ7ROBzZFQ+ry+i2tIq1V35HsVYQglk8EygestM6qFlq+RS2/LHjSicipPI/sGonUGmQJs8kjn0SbFhIDFml97C3u/Jm9T2nyK2YaVjwBdWY0NPHHZ/RBig5b7D8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745846453; c=relaxed/simple;
-	bh=a1t7bCBBT1JqFXgoLpLPIzAFz5gO1F7ujmkJJ0Hkl5U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rc5TCcZaZXG5ZjMV+PfmLQ0f7pSirtkagWgjS18hKm4ARfMUvIG2jQRTpdfJ3G6/xYTOXId61VAYZkPwTxHWBy/sPuRPaM8RTHQxI/3ibL44fyMSAT78fkky+RKYlXnuaqJxQ00360OTVVaoDQXA/SGadtI6Ck49ZTsnIFzwqr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OPPXYSvF; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SAefKA022824;
-	Mon, 28 Apr 2025 13:20:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=seDaDRAvts/ybRbfT
-	6WMEYoOYh8mM6UN+9cj9JMviUI=; b=OPPXYSvFureZeDPfUYkpg2ZphpQJWYHIg
-	muUzzRUn+IS8ohSg0tgQKFf/GzwD3mld4INOqAdkmZ+CHj/uKCMLzYBCSl+qfElW
-	kuYmE57CemecZRTlBOtdDIB+2K6P1gs8Aci4ly2mJKObteksZYKITT1ySdbnxfhj
-	Lz47MnWfyhFcbVX6hM8qgz+hZBMai7j1CeD61AagMaFFEMxBUeplTPRo0nuamwei
-	OAA9Plo+hTMzfQTCWKI8E4a2gCZ4IvDaFAl60SFTxlxcxAvyLpzcUp1/8t5KBC6E
-	3XAVggsVW5aKSH+g7H9dEcSu5HMQz31p4gxY9f2gRWd/4FFYe9sBQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46a84s0qgr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 13:20:24 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53SBZD1F001799;
-	Mon, 28 Apr 2025 13:20:23 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469bamegag-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 13:20:23 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53SDKJQY50397596
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Apr 2025 13:20:19 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C0E8620040;
-	Mon, 28 Apr 2025 13:20:19 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D6F7D20043;
-	Mon, 28 Apr 2025 13:20:15 +0000 (GMT)
-Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.ibm.com (unknown [9.124.219.50])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Apr 2025 13:20:15 +0000 (GMT)
-From: "Nysal Jan K.A." <nysal@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org, "Nysal Jan K.A." <nysal@linux.ibm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests/mm: Fix a build failure on powerpc
-Date: Mon, 28 Apr 2025 18:49:35 +0530
-Message-ID: <20250428131937.641989-2-nysal@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250428131937.641989-1-nysal@linux.ibm.com>
-References: <20250428131937.641989-1-nysal@linux.ibm.com>
+	s=arc-20240116; t=1745846414; c=relaxed/simple;
+	bh=j5yKBIk0ChsBmEbxwXBtdSmj61Lr30e37k9LA8CJ3MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVZgzqss5BFSrOXfupaVOBZEjUu7cNZt4UQf62uYCh3GS394BoMID9F4dPDIvYX8n8ZcF/FOnQ2B+Ou9PYAL01ZgI+b1u6PUPY0t6Jwhr233aP940SUdsC1vti47sNkKv2nf4cjJXA+mAoDPCwK/voLANh8MN+bCs3iak35vfGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3A2B668C4E; Mon, 28 Apr 2025 15:20:06 +0200 (CEST)
+Date: Mon, 28 Apr 2025 15:20:06 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
+	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Zhu Yanjun <zyjzyj2000@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Subject: Re: [PATCH v9 07/24] dma-mapping: Implement link/unlink ranges API
+Message-ID: <20250428132006.GA30966@lst.de>
+References: <cover.1745394536.git.leon@kernel.org> <2d6ca43ef8d26177d7674b9e3bdf0fe62b55a7ed.1745394536.git.leon@kernel.org> <aA1iRtCsPkuprI-X@bombadil.infradead.org> <20250427081312.GE5848@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Mchsu4/f c=1 sm=1 tr=0 ts=680f8098 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=eIFaomMv7K_DaQaFpIwA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDEwOCBTYWx0ZWRfX9cHEmT6RPkmt ULlIMp7J8N67EZZRn6YjvouXN1NecTs93kQx0CYtEpWO1ithBn6qlGoscJj85CSPjnpdjMdQFsX kso9E+w0Jv9BT+HjfjPDd6krV119bAWk8HMwcQQSYORuStzlXdepzd5v69qUr/hthr/9ivRWVit
- 4auy2DRbPhfP+876HGUlZxPBWayrwOvwo9bsah3IuW70JON/vy2woJTMEZTqIdUpzBT4O8Px/Z+ frq7QhdXfYGrYBS/KFRK2vJicHGuvgDjPQ/1z65CNanQ47NviMvQqGJvxyGQV7fw1zXXyHb8jU8 C0lImHInMPqt+P6kk1XHqsBoFOEsqq5FqmgrLlvJKb/oSI2f8ZZUMehCNjNwQqp+oaM767xIGF6
- WzLjuoQr4oGmlJQNCpRW0uRGGy5qpEPLbR3pyiJGUvdL/wmn4IhoQjvCChgP/tFXe3BHGorE
-X-Proofpoint-ORIG-GUID: NWPF_M0em3vCenetzMbNZhpYx1xdGHLc
-X-Proofpoint-GUID: NWPF_M0em3vCenetzMbNZhpYx1xdGHLc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=853 impostorscore=0 bulkscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504280108
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250427081312.GE5848@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The compiler is unaware of the size of code generated by the ".rept"
-assembler directive. This results in the compiler emitting branch
-instructions where the offset to branch to exceeds the maximum allowed
-value, resulting in build failures like the following:
+On Sun, Apr 27, 2025 at 11:13:12AM +0300, Leon Romanovsky wrote:
+> > So arch_sync_dma_for_device() is a no-op on some architectures, notably x86.
+> > So since you're doing this work and given the above pattern is common on
+> > the non iova case, we could save ourselves 2 branches checks on x86 on
+> > __dma_iova_link() and also generalize savings for the non-iova case as
+> > well. For the non-iova case we have two use cases, one with the attrs on
+> > initial mapping, and one without on subsequent sync ops. For the iova
+> > case the attr is always consistently used.
+> 
+> I want to believe that compiler will discards these "if (!coherent &&
+> !(attrs & DMA_ATTR_SKIP_CPU_SYNC)))" branch if case is empty.
 
-  CC       protection_keys
-  /tmp/ccypKWAE.s: Assembler messages:
-  /tmp/ccypKWAE.s:2073: Error: operand out of range (0x0000000000020158
-  is not between 0xffffffffffff8000 and 0x0000000000007ffc)
-  /tmp/ccypKWAE.s:2509: Error: operand out of range (0x0000000000020130
-  is not between 0xffffffffffff8000 and 0x0000000000007ffc)
+Yes, it is the poster child for dead code elimination using the
+IS_ENABLED() helper.
 
-Fix the issue by manually adding nop instructions using the preprocessor.
+> checks are scattered over all dma-iommu.c file with different
+> combinations. While we can do new static functions for small number of
+> use cases, it will be half-solution.
 
-Fixes: 46036188ea1f5 ("selftests/mm: build with -O2")
-Reported-by: Madhavan Srinivasan <maddy@linux.ibm.com>
-Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
----
- tools/testing/selftests/mm/pkey-powerpc.h | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/mm/pkey-powerpc.h b/tools/testing/selftests/mm/pkey-powerpc.h
-index d8ec906b8120..17bf2d1b0192 100644
---- a/tools/testing/selftests/mm/pkey-powerpc.h
-+++ b/tools/testing/selftests/mm/pkey-powerpc.h
-@@ -104,8 +104,18 @@ static inline void expect_fault_on_read_execonly_key(void *p1, int pkey)
- 	return;
- }
- 
-+#define REPEAT_8(s) s s s s s s s s
-+#define REPEAT_64(s) REPEAT_8(s) REPEAT_8(s) REPEAT_8(s) REPEAT_8(s) \
-+		     REPEAT_8(s) REPEAT_8(s) REPEAT_8(s) REPEAT_8(s)
-+#define REPEAT_512(s) REPEAT_64(s) REPEAT_64(s) REPEAT_64(s) REPEAT_64(s) \
-+		      REPEAT_64(s) REPEAT_64(s) REPEAT_64(s) REPEAT_64(s)
-+#define REPEAT_4096(s) REPEAT_512(s) REPEAT_512(s) REPEAT_512(s) REPEAT_512(s) \
-+		       REPEAT_512(s) REPEAT_512(s) REPEAT_512(s) REPEAT_512(s)
-+#define REPEAT_16384(s) REPEAT_4096(s) REPEAT_4096(s) \
-+			REPEAT_4096(s) REPEAT_4096(s)
-+
- /* 4-byte instructions * 16384 = 64K page */
--#define __page_o_noops() asm(".rept 16384 ; nop; .endr")
-+#define __page_o_noops() asm(REPEAT_16384("nop\n"))
- 
- static inline void *malloc_pkey_with_mprotect_subpage(long size, int prot, u16 pkey)
- {
--- 
-2.47.0
+Don't bother.
 
 
