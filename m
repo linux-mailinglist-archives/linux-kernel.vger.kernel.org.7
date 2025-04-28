@@ -1,256 +1,189 @@
-Return-Path: <linux-kernel+bounces-623476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CC9A9F641
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:52:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1CDA9F645
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4081A189E75F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E511A847A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE41280A4F;
-	Mon, 28 Apr 2025 16:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F18E289352;
+	Mon, 28 Apr 2025 16:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASREfJFa"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jngz/xE3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1768C440C;
-	Mon, 28 Apr 2025 16:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D2A2820CE;
+	Mon, 28 Apr 2025 16:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745859161; cv=none; b=aJZGp58z/6ReKVMJmTzIQkAZG6Q3Ximh1dS368RTRKOsGDyzB5GqeHM/zscI+YagCgqBzhQGlLBUDsXkjJENDEYr48jIXqM98gLzWdk/9dYP9+9PVvrFC6BKYr34PBVeL2VnKq9KNDxZrDS7sLQkBmMD9t9P5fnkvJnAjbtqEpI=
+	t=1745859178; cv=none; b=SuPbuMxVAOCQQHUObi3opcqvsmcMpWfHMruyWUeqr5ZLhOHd4/tBG8ojqJdHQZHcubsJiBWeR1J34CuO/ZJ25k8l2lNw+f2gUSS7lr93Q/oz4lDvQnpL6Bg1tbKcbYcOhtHapA9bi8VRUfSbrOAF7gykzsx1gUlase7JHpkEQ70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745859161; c=relaxed/simple;
-	bh=VUF/o4RE1v1hk1nOAcb1fGdra/R4W25gdM3uBlpyVcs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Xyoznu4tnYGvOKRhHwjgT8VY0v7P2IuOnNU9XaVNft9tHLG/DFv4kv21XTxWIOH36r7QpLhRdxBXMEZklRqhldJbpAJv68x2O3sAnXy9z4Ve+L6e08uxYINbP09s4CUluJgvhGxAA6mKPio3HpX8tPlNNezgSQWnG7/pUg802w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ASREfJFa; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223fb0f619dso57045055ad.1;
-        Mon, 28 Apr 2025 09:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745859159; x=1746463959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IjvZYK2d2GAr0o6m4ARn5rvHXuqogyOYirhk7zcNjLo=;
-        b=ASREfJFaiE1Lce4P0fvnoDuCXJBQ3RX0CnAMthRqg6T/5wqC9SS+MTWK0xTpuLx0Gu
-         yMDHQqUzIlKybqYmvVFUOHTD/iR0BG25oUpASZtA+EziAzEOnpPK4ow8iDdlU/NhkDYg
-         JBl6rjJsdx9x9fhDby5/6xQ1cMNYzqDmJdq1h5UxlyldPFXQu3gD1HpnpJDJy9Y4IAOZ
-         aT18eSIMATCLcUL57n+YQNkWOBeEOyAhJyo1Md0V+ubvWIW9RQmnT9t1n3K1Bh533ZDy
-         O239MykPXvceLsnijGxiJ8OVz9rBGMjUdiF+K9hSZrrl1pVPjtwJnj70UzbZciOzX6qc
-         4fKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745859159; x=1746463959;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IjvZYK2d2GAr0o6m4ARn5rvHXuqogyOYirhk7zcNjLo=;
-        b=v3xA67P1TVsYlrZ4AxxWDltL0nlyBGzjg2d/M17jI+tcB3rCq+i0hdfQBakaxPmzuD
-         nLBAN1pwXYz2GArCkK5SNBun5FjmaHu9Ts02qq8hmkND8N7/22Txq4pDCRScMCE829K2
-         JepsIeT5WOCBu5OIn0vHEsgM3UzC1VVbAjtQ01/iJcniwxgx9nQwd+W9noJuCMvOPmpz
-         p8zvRwP9CHYj08ZA1wTz8SsenP8o6YxQAOaeoclk8DH/7qA3cMgAZRXPdYFJGKaMqQxk
-         jrV5odb+0yfFtqR27HTZf6bimq147VSkh/ZWBvAo5KFm0CzFQfutuGtMeADRMohHwSWg
-         MUjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTZLSQD6tg10hn5WvKcvLEpx9q+VxUH/DguJbkoA+1Rb3Axr57jxnhCnBzjZH237UKdG8=@vger.kernel.org, AJvYcCVrEXIg/sAreH4bqyTLdTxUTReufzr09HGJE9XVQ2ukvJaaGsFG4Qic0xCZhOsbVw/PnwCEIGb9izxRsaah@vger.kernel.org, AJvYcCWxqbrCqcjY6hqUeISiGPfWwaDFLOrPhw7yzugxyduU7ppqc8jUUOXHXVrb48W0gb7OUH7bgO0gIvhQzAWjyWR3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx50f4uebkm3bscCqQeOUWAu7tWS9vM55tz6L9eYxlvRPfAusHj
-	c48+tdK1ffuub3qxT3lfnF4gcqmueUU7uP+qYjh/XiS8BOI44MjB
-X-Gm-Gg: ASbGnctwfVEl2yo1wspYw567ArKYOMFFd1pa4S8i6zbNoUHuEj+dvampA3yINK8FXsX
-	OYzILm71ZMBuH4UDFx8v/9ewSJs6VdX0PLpEgUggLKFQIh13YEOxr6ZW54YkW0TqAGdQ6hzBAaB
-	2GPm/WdGbcJeM/sXsD47F9LgQ6kfVTZaHikiUzRP0tecLa2QGEHm0s//yE2AidOsdYY1h+FRJIB
-	/1xMXhm/hkLwKwkGR1fXcgKjXS1Dncb8fdJti6cOq5ryqRG6iS6Xm9J05Hvw39x1WSfR4NzxO5R
-	rfkpIXAkIA2xTFBoKpt+UkQatLGQtb8hkSdvATEJRl+TrUXIbw==
-X-Google-Smtp-Source: AGHT+IGBCRKNAZsf7FtVymPsCdsoGJ/DJafrNa9HOoRlQsbwOsn8q7cEi76BNaSHeHA2zQC4abBnMA==
-X-Received: by 2002:a17:903:40cb:b0:224:1935:fb91 with SMTP id d9443c01a7336-22dbf5fd432mr161245665ad.27.1745859159109;
-        Mon, 28 Apr 2025 09:52:39 -0700 (PDT)
-Received: from ezingerman-mba ([2620:10d:c090:500::6:6628])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22dd86032dcsm25258755ad.181.2025.04.28.09.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 09:52:38 -0700 (PDT)
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: "Alexei Starovoitov" <ast@kernel.org>,  "Daniel Borkmann"
- <daniel@iogearbox.net>,  "John Fastabend" <john.fastabend@gmail.com>,
-  "Andrii Nakryiko" <andrii@kernel.org>,  "Martin KaFai Lau"
- <martin.lau@linux.dev>,  "Song Liu" <song@kernel.org>,  "Yonghong Song"
- <yonghong.song@linux.dev>,  "KP Singh" <kpsingh@kernel.org>,  "Stanislav
- Fomichev" <sdf@fomichev.me>,  "Hao Luo" <haoluo@google.com>,  "Jiri Olsa"
- <jolsa@kernel.org>,  "Puranjay Mohan" <puranjay@kernel.org>,  "Xu Kuohai"
- <xukuohai@huaweicloud.com>,  "Catalin Marinas" <catalin.marinas@arm.com>,
-  "Will Deacon" <will@kernel.org>,  "Mykola Lysenko" <mykolal@fb.com>,
-  "Shuah Khan" <shuah@kernel.org>,  "Maxime Coquelin"
- <mcoquelin.stm32@gmail.com>,  "Alexandre Torgue"
- <alexandre.torgue@foss.st.com>,  "Florent Revest" <revest@chromium.org>,
-  "Bastien Curutchet" <bastien.curutchet@bootlin.com>,
-  <ebpf@linuxfoundation.org>,  "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>,  <bpf@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,
-  <linux-kselftest@vger.kernel.org>,
-  <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [PATCH RFC bpf-next 3/4] bpf/selftests: add tests to validate
- proper arguments alignment on ARM64
-In-Reply-To: <D9I6TQN2I6B1.QC4FFHEWAURZ@bootlin.com> ("Alexis =?utf-8?Q?Lo?=
- =?utf-8?Q?thor=C3=A9=22's?=
-	message of "Mon, 28 Apr 2025 12:08:32 +0200")
-References: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
-	<20250411-many_args_arm64-v1-3-0a32fe72339e@bootlin.com>
-	<3a16fae0346d4f733fb1a67ae6420d8bf935dbd8.camel@gmail.com>
-	<D9I6TQN2I6B1.QC4FFHEWAURZ@bootlin.com>
-Date: Mon, 28 Apr 2025 09:52:35 -0700
-Message-ID: <m21ptcmdnw.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1745859178; c=relaxed/simple;
+	bh=pI6hRChqlANd3TecWcb41Oh8OAvvjaVSWeKsY3yEuzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xoql57HwaddbIowSVfspn2aMDj0on07gKKOwUIIvz8AuIlq3kR/h3cSM6nHoPxwrPkEO/byZzHZhOqL/HCSqgv58jjkGdQQklQGuzgMQ70BxmgCa2fhQbXZs+EPBHCgmWZA8+h64Crxt4yg5SbN62oBPUxDZZnhJiAl4GRdbiA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jngz/xE3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10D93C4CEEC;
+	Mon, 28 Apr 2025 16:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745859178;
+	bh=pI6hRChqlANd3TecWcb41Oh8OAvvjaVSWeKsY3yEuzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jngz/xE3VRgYdOP5FFPjdrAXuTFs/nLzMIEAHSlf322k0q7gncsf/GGojuYzDsp5S
+	 BNJDlrsOhHxhjProwexPa5h0Pt+usdtysKtHnR8UPoSQWEkIyQAAHIXG0F/26NVrz1
+	 J0fC6ZZGSLMFYY5hdBiLr8FkGQGr22UeZWnUcU1vk0Uykg7edAzLCZGaYicG0+j3v/
+	 z9HO3ILHQsCYwEQ4afHLJZJMSGU/ZBX0J7PGlBScxow/RpaVxaKL067VApRfw6WsAV
+	 s3T0Cja8HL88ix+611GRh3TcSwFngRWelycA2BEURj4xdgMZnDsfaOD/AahJJqR/FP
+	 ZzSSOG6bchqBQ==
+Date: Mon, 28 Apr 2025 17:52:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Yuntao Dai <d1581209858@live.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: mailbox: add Sophgo CV18XX series SoC
+Message-ID: <20250428-glade-unripe-4cdb4913ede4@spud>
+References: <20250428-cv18xx-mbox-v3-0-ed18dfd836d1@pigmoral.tech>
+ <20250428-cv18xx-mbox-v3-1-ed18dfd836d1@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="808Y5OGEYRt8756B"
+Content-Disposition: inline
+In-Reply-To: <20250428-cv18xx-mbox-v3-1-ed18dfd836d1@pigmoral.tech>
+
+
+--808Y5OGEYRt8756B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com> writes:
+On Mon, Apr 28, 2025 at 08:39:44PM +0800, Junhui Liu wrote:
+> From: Yuntao Dai <d1581209858@live.com>
+>=20
+> Introduce the mailbox module for CV18XX series SoC, which is responsible
+> for interchanging messages between asymmetric processors.
+>=20
+> Signed-off-by: Yuntao Dai <d1581209858@live.com>
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> ---
+>  .../bindings/mailbox/sophgo,cv1800b-mailbox.yaml   | 57 ++++++++++++++++=
+++++++
+>  1 file changed, 57 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mai=
+lbox.yaml b/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbo=
+x.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..5815dc02189c973d681f5b4ff=
+22a9fb7536802b9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/sophgo,cv1800b-mailbox.ya=
+ml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/sophgo,cv1800b-mailbox.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sophgo CV1800/SG2000 mailbox controller
+> +
+> +maintainers:
+> +  - Yuntao Dai <d1581209858@live.com>
+> +  - Junhui Liu <junhui.liu@pigmoral.tech>
+> +
+> +description: |
+> +  Mailboxes integrated in Sophgo CV1800/SG2000 SoCs have 8 channels, each
+> +  shipping an 8-byte FIFO. Any processor can write to an arbitrary chann=
+el
+> +  and raise interrupts to receivers. Sending messages to itself is also
+> +  supported.
 
-[...]
+> +  Sophgo CV1800/SG2000 SoCs include the following processors, numbered a=
+s:
+> +  <0> Cortex-A53 (Only available on CV181X/SG200X)
+> +  <1> C906B
+> +  <2> C906L
+> +  <3> 8051
 
->> The function listened to is defined as accepting 'struct bpf_testmod_str=
-uct_arg_7',
->> at the same time this function uses 'struct bpf_testmod_struct_arg_5'.
->
-> That's not an accidental mistake, those are in fact the same definition.
-> bpf_testmod_struct_arg_7 is the kernel side definition in bpf_testmod.c:
->
-> struct bpf_testmod_struct_arg_7 {
-> 	__int128 a;
-> };
->
-> and struct bpf_testmode_struct_arg_5 is the one defined in the bpf test
-> program:
->
-> struct bpf_testmod_struct_arg_5 {
-> 	__int128 a;
-> };
+I think this section should be moved to the mbox-cells property, since it
+is describing how to use the mboxes property.
 
-Apologies, but I'm still confused:
-- I apply this series on top of:
-  224ee86639f5 ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bp=
-f after rc4")
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,cv1800b-mailbox
 
-- line 12 of tracing_struct_many_args.c has the following definition:
+Remind me, why only a cv1800b compatible when you also mention sg2000?
+Rebranding of the same SoC, or something like that?
 
-  struct bpf_testmod_struct_arg_5 {
-         char a;
-         short b;
-         int c;
-         long d;
-  };
+Cheers,
+Conor.
 
-- line 135 of the same file has the following definition:
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#mbox-cells":
+> +    const: 2
+> +    description:
+> +      The first cell indicates the channel index (0-7), the second cell
+> +      indicates the target processor ID (0-3) to which messages are sent.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - "#mbox-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    mailbox@1900000 {
+> +        compatible =3D "sophgo,cv1800b-mailbox";
+> +        reg =3D <0x01900000 0x1000>;
+> +        interrupts =3D <101 IRQ_TYPE_LEVEL_HIGH>;
+> +        #mbox-cells =3D <2>;
+> +    };
+>=20
+> --=20
+> 2.49.0
+>=20
 
-   SEC("fentry/bpf_testmod_test_struct_arg_11")
-   int BPF_PROG2(test_struct_many_args_9, struct bpf_testmod_struct_arg_5, =
-a,
-                 struct bpf_testmod_struct_arg_5, b,
-                 struct bpf_testmod_struct_arg_5, c,
-                 struct bpf_testmod_struct_arg_5, d, int, e,
-                 struct bpf_testmod_struct_arg_5, f)
+--808Y5OGEYRt8756B
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- line 70 of tools/testing/selftests/bpf/test_kmods/bpf_testmod.c:
+-----BEGIN PGP SIGNATURE-----
 
-   struct bpf_testmod_struct_arg_7 {
-         __int128 a;
-   };
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaA+yZAAKCRB4tDGHoIJi
+0t1lAP9V2g2LIIJRAKEvyHiOiSZqBssxSKYR38pDHKDgwVNB8QD/WW5d+UskSt4X
+aQBF7jtO3m4hOntZ5PTi7OrEe6twXwc=
+=XbeY
+-----END PGP SIGNATURE-----
 
-- line 152 of the same file:
-
-  noinline int bpf_testmod_test_struct_arg_11(struct bpf_testmod_struct_arg=
-_7 a,
-                                              struct bpf_testmod_struct_arg=
-_7 b,
-                                              struct bpf_testmod_struct_arg=
-_7 c,
-                                              struct bpf_testmod_struct_arg=
-_7 d,
-                                              short e,
-                                              struct bpf_testmod_struct_arg=
-_7 f)
-
-Do I use a wrong base to apply the series?
-
-[...]
-
->> Nevertheless, the assertion persists even with correct types.
->
-> So I digged a bit further to better share my observations here. This is t=
-he
-> function stack when entering the trampoline after having triggered the
-> target function execution:
->
-> (gdb) x/64b $rbp+0x18
-> 0xffffc9000015fd60:     41      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd68:     0       0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd70:     42      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd78:     35      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd80:     43      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd88:     0       0       0       0       0       0       0=
-       0
->
-> We see the arguments that did not fit in registers, so d, e and f.
->
-> This is the ebpf context generated by the trampoline for the fentry
-> program, from the content of the stack above + the registers:
->
-> (gdb) x/128b $rbp-60
-> 0xffffc9000015fce8:     38      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fcf0:     0       0       0       0       0       0       0=
-       0
-> 0xffffc9000015fcf8:     39      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd00:     0       0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd08:     40      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd10:     0       0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd18:     41      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd20:     0       0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd28:     42      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd30:     35      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd38:     43      0       0       0       0       0       0=
-       0
-> 0xffffc9000015fd40:     37      0       0       0       0       0       0=
-       0
->
-> So IIUC, this is wrong because the "e" variable in the bpf program being
-> an int (and about to receive value 42), it occupies only 1 "tracing conte=
-xt
-> 8-byte slot", so the value 43 (representing the content for variable f),
-> should be right after it, at 0xffffc9000015fd30. What we have instead is a
-> hole, very likely because we copied silently the alignment from the
-> original function call (and I guess this 35 value is a remnant from the
-> previous test, which uses values from 27 to 37)
-
-Interesting, thank you for the print outs.
-
-> Regardless of this issue, based on discussion from last week, I think I'll
-> go for the implementation suggested by Alexei: handling the nominal cases,
-> and detecting and blocking the non trivial cases (eg: structs passed on
-> stack). It sounds reasonable as there seems to be no exisiting kernel
-> function currently able to trigger those very specific cases, so it could
-> be added later if this changes.
-
-Yes, this makes sense.
+--808Y5OGEYRt8756B--
 
