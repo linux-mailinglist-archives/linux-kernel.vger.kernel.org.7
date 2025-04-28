@@ -1,189 +1,156 @@
-Return-Path: <linux-kernel+bounces-623322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71F2A9F40F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:05:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E416AA9F401
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD441A839E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EA21889E4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F4427A12E;
-	Mon, 28 Apr 2025 15:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1BF279796;
+	Mon, 28 Apr 2025 15:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gXh7tx0K"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IRs2gL/l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vXpVP0uT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IRs2gL/l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vXpVP0uT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DD127A113;
-	Mon, 28 Apr 2025 15:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745852622; cv=fail; b=Rm48kGrtxWlsDddN6BK7+p8p6m1Oy1uaHK5l3uIMePtn7fDp/1jgBx7k4GXKxCfUEXQT2q+BVbZgSV86Aq0YD5KeApsgJP520TjK6k4epEeA+2HIZNBkgjRDwLe/3RfuBsKfPP1C9mMATRhflw64ioO+DQGmr8Id2j+ZoFWdn8g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745852622; c=relaxed/simple;
-	bh=sFTIvvD7hPaiQOzNXnvIltvyXFOXqYuYmYuUTZsDXnY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DksKCCbm11cfPE4cyoix+DFlKDWh5L2aB0ADPi+Xbs6CdvZ+wyQSKmP8PZ6cFRf8138x5+rNzUD7LwQA27SLdjDu7K/sXluFYyi916k246oYaVArhPqIuIZZzy4XZ1j0pkTzwplYEt6kIvWme/azmiiJpE7Q3Jc6d9wnwbHpuy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gXh7tx0K; arc=fail smtp.client-ip=40.107.223.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gOGe2nkNUTsQr/nzmaBbUUSuMuRnW6Ai18M0SgEPfdiNTuVFSibk7XNf7SI12brwuLgTTWRv5HMCY42fBzTlLpei5mBxwIUQNVGIoZ3pDI4LWvkGMRvNI5M4+wBpNhaytqN1LhB1Kln2PPk7lxVdFMwt/jvdLm7gyfeI0cnF8DhPJZM3QSL6P/AX4a27SMiYtb3/e0DB2B/4WizP+ihz8DpnFoyoZ6gEyeWaZ3yv8Kh7v2jm1zJOvjVhrpy0/Ql4tp73YIOLl0GjF54xycyZa10mjrQXjo5q1VeDADCdlzW1ABnRNBxPTFi7NERavOIL6y1srpBco8dMqVDNPGI5YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U+ueYxcZmVBqlw0maIp0d6uESCx80aT3eg59/aDI9Jk=;
- b=uRtUEvzbZiyqpRpxXv+Ep8RZ/LX73EorN9Mxc5ZuuIByfzO4G/0kq7LfbXfS0/6ZrBYS7tyYDtcQaWjT7oQZvjEvfHuPfBHatkq2Fz8HLJ0EfuhtuRCFS49JvHTUIU5rSqSkFdqOL1N9BOxwAu6HwhQcuo/cfVdCIJBTQ8BnFzqIDTVFLP0DO4gwZq+NPLCKhh5y4ydOCi2yV5KNVZFBgjyyQ4KWHpEogl/w8wzeIHAS73wjWAa1AudUSrHKdNas4sB3cDXBROtJK+ZfFygGuXepW8mTbJahRTWZls4HLvplRqfl4lkkGU3s9CqBtnTHzZiTk2Ke/Yl4sWAFvRXWhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+ueYxcZmVBqlw0maIp0d6uESCx80aT3eg59/aDI9Jk=;
- b=gXh7tx0KdFm2AjPy3z++mMSPAf4wttIfc1AM06BHC8ql+jGO9yZUhnkJA50VqSDKEwxY28RlAMFS/xRJdrO0SKcONe6EcaYB4EKxxJcXj0zvYraL1n8fkECtUGuw4rLolCZRKsEKorX+yGWVhd29k4er5UzdY0er9EcNdQ6TeHw=
-Received: from SA0PR11CA0210.namprd11.prod.outlook.com (2603:10b6:806:1bc::35)
- by SA5PPFF3CB57EDE.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8eb) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Mon, 28 Apr
- 2025 15:03:38 +0000
-Received: from SN1PEPF0002636E.namprd02.prod.outlook.com
- (2603:10b6:806:1bc:cafe::6a) by SA0PR11CA0210.outlook.office365.com
- (2603:10b6:806:1bc::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.36 via Frontend Transport; Mon,
- 28 Apr 2025 15:03:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002636E.mail.protection.outlook.com (10.167.241.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 15:03:38 +0000
-Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:03:34 -0500
-From: Raju Rangoju <Raju.Rangoju@amd.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<Shyam-sundar.S-k@amd.com>, Raju Rangoju <Raju.Rangoju@amd.com>
-Subject: [PATCH net-next v2 5/5] amd-xgbe: add support for new pci device id 0x1641
-Date: Mon, 28 Apr 2025 20:32:35 +0530
-Message-ID: <20250428150235.2938110-6-Raju.Rangoju@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250428150235.2938110-1-Raju.Rangoju@amd.com>
-References: <20250428150235.2938110-1-Raju.Rangoju@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007A31D514E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 15:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745852570; cv=none; b=ISh4ZH5t8EGCKO13CWpGOYilPibO8kRmkj5bwVio9Kh2lBYO/ToTLAknMKMdAbkqMUAALAxKUxZvE5SZBgglZ4Ngd8XAP0cgolYEU4ipOyayhn21JhSOD8fZu2uw0aE5RRalahy2HQHMZ+n2Z7SxXRu3q3F0In1ofkbF8hgNuAQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745852570; c=relaxed/simple;
+	bh=K0i6N6XU/eo+JUwWVPtNBjxcS3VAlT6S7AcsTS0MjJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRVdPK1q6C27FaKO9slYEgfDQwqnp8LiPnlrgPLA6Y4q+8Zg1cyzD4zYcLrxpZToyCPVVJA6U9i5ywAG2Eth1BEwDPqwZvuVgTmMZqCguYZTrXUhO6qJMURDo+3cefM0wYZtTURxr08d9nm1lXLUa/Ktlf1kCPU6ppd3hpTH8K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IRs2gL/l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vXpVP0uT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IRs2gL/l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vXpVP0uT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 36B5321202;
+	Mon, 28 Apr 2025 15:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745852567;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DlCcLKUjlD1OxNHq0D8n3cf+N2ql/QeYWJgB4UAAMsQ=;
+	b=IRs2gL/lp/hOjHgeg7Dv3IJQI702xSVxGuwV26VjHeZRBDs65X1BvxZ2Rs2cuxfWrVfWpI
+	FGNwIemtVkMDHyYcyQos++rRJ4A5WXT1LfKgGw7SNXRWjmsWDkTPwazii2FL9NGDR7Szqm
+	uzFEGWPcUtHKuODZGH+BhvceDrRhccQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745852567;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DlCcLKUjlD1OxNHq0D8n3cf+N2ql/QeYWJgB4UAAMsQ=;
+	b=vXpVP0uTDoQSKKrFFMJtCdl8rF2//Meb8elg2OP3Go3ZhnwRlMu4bfKB7tvmPy49Kf/Kto
+	fKA8UAKSw+7yerDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="IRs2gL/l";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vXpVP0uT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745852567;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DlCcLKUjlD1OxNHq0D8n3cf+N2ql/QeYWJgB4UAAMsQ=;
+	b=IRs2gL/lp/hOjHgeg7Dv3IJQI702xSVxGuwV26VjHeZRBDs65X1BvxZ2Rs2cuxfWrVfWpI
+	FGNwIemtVkMDHyYcyQos++rRJ4A5WXT1LfKgGw7SNXRWjmsWDkTPwazii2FL9NGDR7Szqm
+	uzFEGWPcUtHKuODZGH+BhvceDrRhccQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745852567;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DlCcLKUjlD1OxNHq0D8n3cf+N2ql/QeYWJgB4UAAMsQ=;
+	b=vXpVP0uTDoQSKKrFFMJtCdl8rF2//Meb8elg2OP3Go3ZhnwRlMu4bfKB7tvmPy49Kf/Kto
+	fKA8UAKSw+7yerDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0938F13A25;
+	Mon, 28 Apr 2025 15:02:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5lAIApeYD2gEAgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 28 Apr 2025 15:02:47 +0000
+Date: Mon, 28 Apr 2025 17:02:41 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Kees Cook <kees@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] btrfs: compression: Adjust cb->compressed_folios
+ allocation type
+Message-ID: <20250428150241.GC7139@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250426062328.work.065-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636E:EE_|SA5PPFF3CB57EDE:EE_
-X-MS-Office365-Filtering-Correlation-Id: a2f81dc8-ecf5-43fa-2838-08dd8665db18
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?W/VJhdrPavMtGvBUbnK+WDqUUy57iyjl1F+rUTD7ke1Z33wXjvejSzP8Pn5c?=
- =?us-ascii?Q?neAfAy+l2S8PhPri50cJA6+TKFKUTarmUsdzgQ7MVpd+G1dKKN/KGGVRRLGA?=
- =?us-ascii?Q?o6b7L6caxXXJoZ9Hpd4WrudYTAhLfqLj2E31JHxZOWiaw/K/x+XU8oVgv8Ce?=
- =?us-ascii?Q?NrZWpkSPs5krWxHvqMz/GvELzXEcqIhCFi7Ymz5vIInDFiIKlYcysRDbisaK?=
- =?us-ascii?Q?M8FoKmSQqD/tVeZX9zKaj7oVB77sEetJZH5GSPl3VA7I1RfM19T755Yk5Sc/?=
- =?us-ascii?Q?aqt4FJT5ltaQG1XfglomBSg4oYzl1S92GpPlwp7em3Pb6vJshZq0eblrf+UE?=
- =?us-ascii?Q?i/SXgK9d8RXRQY3/OTtYNTWgFDATBHUzQjjxTWpvJQx6t66W7cK3NEWlZwat?=
- =?us-ascii?Q?9W9zRbs+dBXThvYQHj/LMVoU8vUTD1L4SHBW17DP0tv+7IxyS9GRZWZAIObB?=
- =?us-ascii?Q?Y0b3zQgHh7/dBT6lFXUjiH56Gv361fGONdmDM3yoXHibQsQLuZQxuDVBNyC+?=
- =?us-ascii?Q?HjNab3p8jqjbF/XG/V8vujmJSqA3ml/yt3rDlkAEU4qhJEIDZqLxN5TS2aIu?=
- =?us-ascii?Q?/kOeptqxki5xdyCDZTLG4Sb9qPwG2F0zBr72Oetp/xxdLbUar1kt74Hhb4fh?=
- =?us-ascii?Q?sWpAeXYNnyZKksgMeATqPrwcE9SKKOL++jGA95kmHF6fpIpTmbbJRq1taxKV?=
- =?us-ascii?Q?JvG2g80WxsVmLtrhTCIqC8qjcGnfu/fN6eUWOMvOmMSO0/cPo8ydkJGcgbj9?=
- =?us-ascii?Q?8tV5dI2vKYhMRob4EnauUzj3GZL5p0BjRZePMjgWuJqocyzX3FnmRr730q73?=
- =?us-ascii?Q?dQzYb8B5o5e9CDQAzF8uvbtlpsj4HqKtn44l0m2Y5KfaTvOFx7hg01rsHPRp?=
- =?us-ascii?Q?49k0Dj1tYjOaY/fpN2CJKAjubqE8w15p5eNE6rzb+Zz8KYi9JWQTLx8oRJbk?=
- =?us-ascii?Q?A1x9nCgLlkkQeOaJY5oHB3lsj7n5WT26VP29QS6Vq6Rpo5WYEFK0QxnUzoVW?=
- =?us-ascii?Q?eUgG+83hxylovcynfoX8EYZBEEOi03MZdELkzij5Mx1ksoKwuyPBanQy1TSZ?=
- =?us-ascii?Q?b1tuu6IXv8DYC7mWm8nCT5iX/tuSkXOL6iP3LpOwoyA/dKsI39fxmnyyL18g?=
- =?us-ascii?Q?9Q9zzrLU++UKVvWa7CnHlDahXCKCOk8SqzYx9+rvYYqKMWoKiIRbBXGHNaZJ?=
- =?us-ascii?Q?iB+7to5HEh43FME+iUjL2jpoDbyUtZWgRKgI+fx/6NB79s527lArxeQnU+s1?=
- =?us-ascii?Q?E8vLCG9rOIq7b2mbi4y7xfA1ckCXHb02szQe4xRWy3tbFEbRPuWl8SSQ1DbG?=
- =?us-ascii?Q?OFivneBJUXNkgzsZY6mj5jAilqvoDY908v86vWN+kMyCsTb1tSLbrXzKDxGn?=
- =?us-ascii?Q?g0ysdJX1u44F/fp9qr2dYU+ttjeowgarJOtuUIQaEPxsOTsgh8wGsj8mxHq2?=
- =?us-ascii?Q?JDkjz+7E4P/KZuHzNL0Kjmc7jxi+si3d/la+spA2f5JH2mjKM2+uWXk3iL+x?=
- =?us-ascii?Q?dUqMKBk73iFHhNIot/j2BWTz15ssb/9EeR9b?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 15:03:38.1547
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2f81dc8-ecf5-43fa-2838-08dd8665db18
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFF3CB57EDE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250426062328.work.065-kees@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 36B5321202
+X-Spam-Score: -4.21
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add support for new pci device id 0x1641 to register
-Crater device with PCIe.
+On Fri, Apr 25, 2025 at 11:23:29PM -0700, Kees Cook wrote:
+> In preparation for making the kmalloc family of allocators type aware,
+> we need to make sure that the returned type from the allocation matches
+> the type of the variable being assigned. (Before, the allocator would
+> always return "void *", which can be implicitly cast to any pointer type.)
+> 
+> The assigned type is "struct folio **" but the returned type will be
+> "struct page **". These are the same allocation size (pointer size), but
+> the types don't match. Adjust the allocation type to match the assignment.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Signed-off-by: Raju Rangoju <Raju.Rangoju@amd.com>
----
- drivers/net/ethernet/amd/xgbe/xgbe-pci.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-pci.c b/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-index 718534d30651..097ec5e4f261 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-@@ -391,6 +391,22 @@ static int __maybe_unused xgbe_pci_resume(struct device *dev)
- 	return ret;
- }
- 
-+static struct xgbe_version_data xgbe_v3 = {
-+	.init_function_ptrs_phy_impl	= xgbe_init_function_ptrs_phy_v2,
-+	.xpcs_access			= XGBE_XPCS_ACCESS_V3,
-+	.mmc_64bit			= 1,
-+	.tx_max_fifo_size		= 65536,
-+	.rx_max_fifo_size		= 65536,
-+	.tx_tstamp_workaround		= 1,
-+	.ecc_support			= 1,
-+	.i2c_support			= 1,
-+	.irq_reissue_support		= 1,
-+	.tx_desc_prefetch		= 5,
-+	.rx_desc_prefetch		= 5,
-+	.an_cdr_workaround		= 0,
-+	.enable_rrc			= 0,
-+};
-+
- static struct xgbe_version_data xgbe_v2a = {
- 	.init_function_ptrs_phy_impl	= xgbe_init_function_ptrs_phy_v2,
- 	.xpcs_access			= XGBE_XPCS_ACCESS_V2,
-@@ -428,6 +444,8 @@ static const struct pci_device_id xgbe_pci_table[] = {
- 	  .driver_data = (kernel_ulong_t)&xgbe_v2a },
- 	{ PCI_VDEVICE(AMD, 0x1459),
- 	  .driver_data = (kernel_ulong_t)&xgbe_v2b },
-+	{ PCI_VDEVICE(AMD, 0x1641),
-+	  .driver_data = (kernel_ulong_t)&xgbe_v3 },
- 	/* Last entry must be zero */
- 	{ 0, }
- };
--- 
-2.34.1
-
+Added to for-next, thanks.
 
