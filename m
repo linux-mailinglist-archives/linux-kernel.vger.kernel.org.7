@@ -1,455 +1,184 @@
-Return-Path: <linux-kernel+bounces-622661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A10A9EA74
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6918EA9EAA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F2C7A3AB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B48B3BA09B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D66525E465;
-	Mon, 28 Apr 2025 08:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BF225EFBB;
+	Mon, 28 Apr 2025 08:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWdLVnC4"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hdMwjSOR"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B781F22FE0F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8207725E818;
+	Mon, 28 Apr 2025 08:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745828104; cv=none; b=HmviYPB+6Ipk/VjQkpzMGsJ+R9t/b50sNRalpChtYcTgO3/CZhcMuZZDNA+CkdyReimpvFcGGnzl0J10ovBPCwSCNtDdgBjEvv+bOHNSnGvmj9ehfG6oLLK9QP6kKpPEHDhbpx2sWO7s397idpE+depMjqwwFdeCsDFqVFMqNKc=
+	t=1745828388; cv=none; b=gd2ozXF0WfUkYuTnf3EWw+aqdYJVlRmL8am3hZolYQwoCNSuDH/xjR2SXlN1PL0t4rQHLvhq4UzBiQPcwYuyAFj7l08r67tYGvQvFivMHZ5T6uTSbLdpZQSlwrKW7uiJs0IdN0RkoQbuuD7RG0Wl2mmfIsa4dX3lPZzfsez13Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745828104; c=relaxed/simple;
-	bh=smaZaaYoXzeniFwBXuqTrpZ3qBD+3RZvqsIZoPcBYnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sz9snkxewCART1WXhh86bU5DjhKrRj48wmWucxF1s0I1PQbz2M15xjnzhD6Wyby1o77PlcFB//R1xqRAqpmyMMIJyt1X2wWr9a4r1c7fGjeNpGEv+N+RRtK15xi0xAYTJuLA3DXhj9fXUozemrrL1l+2t8hPs9xbQeP6LiPVpQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mWdLVnC4; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2c76a1b574cso1122894fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 01:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745828101; x=1746432901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CjLKLWPVIix6Lq3CRuHZgmalj80BDZ10wGlvfmzu2jw=;
-        b=mWdLVnC4WqsrYWdgWZrmaZ4wvVTatWAYap5JTfjYcKv3CTzmOaXXcqbflnltrnZviB
-         e5q63O/BXVPaTxfJxVYP4JbLnq7noTOB6UUm11jQA+3oBT9Wmp2mwHLkmIw3PrczjpPq
-         xzynZASE90PFw6Br9wdE0gx5AwxX8cubnkjC8CnV5jD5eMuiy0L4hBJJM5mwhRf7DsHJ
-         p7TrLZQHL3HxNg1rhEPGUuHKuXeQnkUWje4VI8SP2x60ssvmuaDuQY4e/NuTmsvbSL8K
-         kIQdzICMt6T7uYIaX7Nl88MYhKCJeMhh+iG04iS/+svPhR1C0SNn8KkHyzi+UgmhE2Iv
-         iMEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745828101; x=1746432901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CjLKLWPVIix6Lq3CRuHZgmalj80BDZ10wGlvfmzu2jw=;
-        b=okn+ucUP3fDOSQJc9mN4oG/+WDKPhS1qvo73PXFZDCy8ELUkkAG3oCNxF3wZzQmSmA
-         P1kSe1pvjYk38WxvLSw9cx/j8I22EIjtdLAb3Zfj5l32EUjsZ47phNSdz9xemyLxXShZ
-         M1H4e+qo97wqYjVa0wO8RkHHYHymtByoGkbbVadtWvZg25q3MkdB+u5PEjeAHGGcrnOk
-         V9iVcGrQwIfrvFID5uPzREUKdi1d7m168r1ybi7kMfu+VlJbXSDKgZHUUd5HRoaTxAUy
-         XLMzaATNIAWPlvZU+F/FgubfmL3fCzEUOG7pPhRcikkzLrdC04sIFOSoC7TgKvic/wEs
-         kKhw==
-X-Gm-Message-State: AOJu0YzqS4Y6Ohd1o04T8Y70eyIMnW7BX2U9sM3tk50eeUZzI2zdDh5z
-	I5LuKaKMgN8HJHo4dqUECwpsIK4OAN1i0EMiiE/w9SLOE1vG8mbOnO66X0kXRHodpcAAzOv7kcX
-	SVKFpbASCcA/jmjTvRl402ZBAZ5SSDrihaBhR/A==
-X-Gm-Gg: ASbGnctXhWbFn2BydtInkP+O56YxJSy2dmhpWoYWlTTpFTbQgjk7cSzzfRODH+lw3bR
-	tqDdwFfGJdDyBcok0nHmiBrwI4ikGaMpgCzmDY5Q3acadUYDMouDiwT4mBwutfBPJiFA1eYBEXZ
-	dB8IZo3TRX3ood92oMHCLHPYM=
-X-Google-Smtp-Source: AGHT+IEWtlpQOJjftCm+n3ouabVHz54n2qgyLCvi3RwihIEpBbgC5PkDIay7d9OERLr+OtQPUr9HF2lFg7zlk9MOBYo=
-X-Received: by 2002:a05:6870:890a:b0:29e:6547:bffa with SMTP id
- 586e51a60fabf-2d9be5c5aa0mr4238130fac.21.1745828100541; Mon, 28 Apr 2025
- 01:15:00 -0700 (PDT)
+	s=arc-20240116; t=1745828388; c=relaxed/simple;
+	bh=VK0BrH3ZZDN9Jgn9dD1/pWlMvI7r00jAXZwatq9vcEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JXhkGvI6IwU/ZqUPszi8tAUAiZ0DX8ff/mjfKAYvIJhZVuJxyEx6Ke8UkVXifhoXsenSgqsNRFjwQc1/JWRNdrCkMlSZQJT0oQFtgHQxZFQ1djtTA6+nnw0s9DZpSnz45tdXpb61WhQt9TfEqe0gOh1iG+SxNkh0iO4r8F5Fqag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hdMwjSOR; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S10w7P021339;
+	Mon, 28 Apr 2025 10:19:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	yr7t1olrwsxTtck0/lM3DwdKRKb3Z1gEKVydU7fX9vg=; b=hdMwjSORmCF7wlLm
+	irCx7AnOE8qIJNbjPKSlLflA4pJaS5QX9+kDvKlOKc0Bryt1Z6wnrJJqERnf9NKD
+	c/3SU4ACwMwXZCt1byR8rs0K0MBb6CyEdDssM991Jrcw+OBgUW99LeD0Kml0SgsG
+	MqPhHzQYIEDEYR29tSwc4qAPBZQeG3+IFqbFliIB4E2AfL8rabyB5VxYeySrfx2M
+	6YEP1gmhXIxuN6EedCVN/QmI7Sg+leAeo3WruQudKtDMscZ/wXtdN4TMj0KCzzrt
+	cpWe80Mr2F2LtoOr0yOos5ZaBOWhByW6LWlANsoXQ0AwdHY6scYRQbTpxJMf5l+n
+	MGHDTg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 468mm9drpq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 10:19:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2352040048;
+	Mon, 28 Apr 2025 10:17:43 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 81ED0A2D14A;
+	Mon, 28 Apr 2025 10:16:05 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
+ 2025 10:16:05 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
+ 2025 10:16:04 +0200
+Message-ID: <698066cd-6fee-4fd8-9caf-0f5fbd19fda6@foss.st.com>
+Date: Mon, 28 Apr 2025 10:16:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404143215.2281034-1-jens.wiklander@linaro.org>
- <20250404143215.2281034-5-jens.wiklander@linaro.org> <CAK8z29XHZXo5e1u8q_0D=iWxr3V2m7PateRGgqVGFe-WDeFKGg@mail.gmail.com>
-In-Reply-To: <CAK8z29XHZXo5e1u8q_0D=iWxr3V2m7PateRGgqVGFe-WDeFKGg@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 28 Apr 2025 10:14:48 +0200
-X-Gm-Features: ATxdqUH0di-vJZcwSmU7RTw4PhvgopuZ5ILZgAWtuzUvUa846pxVI0QQshePM40
-Message-ID: <CAHUa44GFFUAPRSDUzp-LJ8DZgsbAzNs3ZueA3wkePP4zqG9Z3A@mail.gmail.com>
-Subject: Re: [PATCH v7 04/11] optee: sync secure world ABI headers
-To: Rouven Czerwinski <rouven.czerwinski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Garg <sumit.garg@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Saravana Kannan
+	<saravanak@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai
+	<wens@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Daniel Baluta
+	<daniel.baluta@nxp.com>
+References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
 
-Hi Rouven,
 
-On Fri, Apr 25, 2025 at 3:36=E2=80=AFPM Rouven Czerwinski
-<rouven.czerwinski@linaro.org> wrote:
->
-> Hi,
->
-> On Fri, 4 Apr 2025 at 16:31, Jens Wiklander <jens.wiklander@linaro.org> w=
-rote:
-> >
-> > Update the header files describing the secure world ABI, both with and
-> > without FF-A. The ABI is extended to deal with protected memory, but as
-> > usual backward compatible.
-> >
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > ---
-> >  drivers/tee/optee/optee_ffa.h | 27 +++++++++---
-> >  drivers/tee/optee/optee_msg.h | 83 ++++++++++++++++++++++++++++++-----
-> >  drivers/tee/optee/optee_smc.h | 71 +++++++++++++++++++++++++++++-
-> >  3 files changed, 163 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/drivers/tee/optee/optee_ffa.h b/drivers/tee/optee/optee_ff=
-a.h
-> > index 257735ae5b56..cc257e7956a3 100644
-> > --- a/drivers/tee/optee/optee_ffa.h
-> > +++ b/drivers/tee/optee/optee_ffa.h
-> > @@ -81,7 +81,7 @@
-> >   *                   as the second MSG arg struct for
-> >   *                   OPTEE_FFA_YIELDING_CALL_WITH_ARG.
-> >   *        Bit[31:8]: Reserved (MBZ)
-> > - * w5:   Bitfield of secure world capabilities OPTEE_FFA_SEC_CAP_* bel=
-ow,
-> > + * w5:   Bitfield of OP-TEE capabilities OPTEE_FFA_SEC_CAP_*
-> >   * w6:   The maximum secure world notification number
-> >   * w7:   Not used (MBZ)
-> >   */
-> > @@ -94,6 +94,8 @@
-> >  #define OPTEE_FFA_SEC_CAP_ASYNC_NOTIF  BIT(1)
-> >  /* OP-TEE supports probing for RPMB device if needed */
-> >  #define OPTEE_FFA_SEC_CAP_RPMB_PROBE   BIT(2)
-> > +/* OP-TEE supports Protected Memory for secure data path */
-> > +#define OPTEE_FFA_SEC_CAP_PROTMEM      BIT(3)
-> >
-> >  #define OPTEE_FFA_EXCHANGE_CAPABILITIES OPTEE_FFA_BLOCKING_CALL(2)
-> >
-> > @@ -108,7 +110,7 @@
-> >   *
-> >   * Return register usage:
-> >   * w3:    Error code, 0 on success
-> > - * w4-w7: Note used (MBZ)
-> > + * w4-w7: Not used (MBZ)
-> >   */
-> >  #define OPTEE_FFA_UNREGISTER_SHM       OPTEE_FFA_BLOCKING_CALL(3)
-> >
-> > @@ -119,16 +121,31 @@
-> >   * Call register usage:
-> >   * w3:    Service ID, OPTEE_FFA_ENABLE_ASYNC_NOTIF
-> >   * w4:   Notification value to request bottom half processing, should =
-be
-> > - *       less than OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE.
-> > + *       less than OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE
-> >   * w5-w7: Not used (MBZ)
-> >   *
-> >   * Return register usage:
-> >   * w3:    Error code, 0 on success
-> > - * w4-w7: Note used (MBZ)
-> > + * w4-w7: Not used (MBZ)
-> >   */
-> >  #define OPTEE_FFA_ENABLE_ASYNC_NOTIF   OPTEE_FFA_BLOCKING_CALL(5)
-> >
-> > -#define OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE 64
-> > +#define OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE        64
-> > +
-> > +/*
-> > + * Release Protected memory
-> > + *
-> > + * Call register usage:
-> > + * w3:    Service ID, OPTEE_FFA_RECLAIM_PROTMEM
-> > + * w4:    Shared memory handle, lower bits
-> > + * w5:    Shared memory handle, higher bits
-> > + * w6-w7: Not used (MBZ)
-> > + *
-> > + * Return register usage:
-> > + * w3:    Error code, 0 on success
-> > + * w4-w7: Note used (MBZ)
-> > + */
-> > +#define OPTEE_FFA_RELEASE_PROTMEM      OPTEE_FFA_BLOCKING_CALL(8)
-> >
-> >  /*
-> >   * Call with struct optee_msg_arg as argument in the supplied shared m=
-emory
-> > diff --git a/drivers/tee/optee/optee_msg.h b/drivers/tee/optee/optee_ms=
-g.h
-> > index e8840a82b983..22d71d6f110d 100644
-> > --- a/drivers/tee/optee/optee_msg.h
-> > +++ b/drivers/tee/optee/optee_msg.h
-> > @@ -133,13 +133,13 @@ struct optee_msg_param_rmem {
-> >  };
-> >
-> >  /**
-> > - * struct optee_msg_param_fmem - ffa memory reference parameter
-> > + * struct optee_msg_param_fmem - FF-A memory reference parameter
-> >   * @offs_lower:           Lower bits of offset into shared memory refe=
-rence
-> >   * @offs_upper:           Upper bits of offset into shared memory refe=
-rence
-> >   * @internal_offs: Internal offset into the first page of shared memor=
-y
-> >   *                reference
-> >   * @size:         Size of the buffer
-> > - * @global_id:    Global identifier of Shared memory
-> > + * @global_id:    Global identifier of the shared memory
-> >   */
-> >  struct optee_msg_param_fmem {
-> >         u32 offs_low;
-> > @@ -165,7 +165,7 @@ struct optee_msg_param_value {
-> >   * @attr:      attributes
-> >   * @tmem:      parameter by temporary memory reference
-> >   * @rmem:      parameter by registered memory reference
-> > - * @fmem:      parameter by ffa registered memory reference
-> > + * @fmem:      parameter by FF-A registered memory reference
-> >   * @value:     parameter by opaque value
-> >   * @octets:    parameter by octet string
-> >   *
-> > @@ -296,6 +296,18 @@ struct optee_msg_arg {
-> >   */
-> >  #define OPTEE_MSG_FUNCID_GET_OS_REVISION       0x0001
-> >
-> > +/*
-> > + * Values used in OPTEE_MSG_CMD_LEND_PROTMEM below
-> > + * OPTEE_MSG_PROTMEM_RESERVED          Reserved
-> > + * OPTEE_MSG_PROTMEM_SECURE_VIDEO_PLAY Secure Video Playback
-> > + * OPTEE_MSG_PROTMEM_TRUSTED_UI                Trused UI
-> > + * OPTEE_MSG_PROTMEM_SECURE_VIDEO_RECORD       Secure Video Recording
-> > + */
-> > +#define OPTEE_MSG_PROTMEM_RESERVED             0
-> > +#define OPTEE_MSG_PROTMEM_SECURE_VIDEO_PLAY    1
-> > +#define OPTEE_MSG_PROTMEM_TRUSTED_UI           2
-> > +#define OPTEE_MSG_PROTMEM_SECURE_VIDEO_RECORD  3
-> > +
-> >  /*
-> >   * Do a secure call with struct optee_msg_arg as argument
-> >   * The OPTEE_MSG_CMD_* below defines what goes in struct optee_msg_arg=
-::cmd
-> > @@ -337,15 +349,62 @@ struct optee_msg_arg {
-> >   * OPTEE_MSG_CMD_STOP_ASYNC_NOTIF informs secure world that from now i=
-s
-> >   * normal world unable to process asynchronous notifications. Typicall=
-y
-> >   * used when the driver is shut down.
-> > + *
-> > + * OPTEE_MSG_CMD_LEND_PROTMEM lends protected memory. The passed norma=
-l
-> > + * physical memory is protected from normal world access. The memory
-> > + * should be unmapped prior to this call since it becomes inaccessible
-> > + * during the request.
-> > + * Parameters are passed as:
-> > + * [in] param[0].attr                  OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
-> > + * [in] param[0].u.value.a             OPTEE_MSG_PROTMEM_* defined abo=
-ve
-> > + * [in] param[1].attr                  OPTEE_MSG_ATTR_TYPE_TMEM_INPUT
-> > + * [in] param[1].u.tmem.buf_ptr                physical address
-> > + * [in] param[1].u.tmem.size           size
-> > + * [in] param[1].u.tmem.shm_ref                holds protected memory =
-reference
-> > + *
-> > + * OPTEE_MSG_CMD_RECLAIM_PROTMEM reclaims a previously lent protected
-> > + * memory reference. The physical memory is accessible by the normal w=
-orld
-> > + * after this function has return and can be mapped again. The informa=
-tion
-> > + * is passed as:
-> > + * [in] param[0].attr                  OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
-> > + * [in] param[0].u.value.a             holds protected memory cookie
-> > + *
-> > + * OPTEE_MSG_CMD_GET_PROTMEM_CONFIG get configuration for a specific
-> > + * protected memory use case. Parameters are passed as:
-> > + * [in] param[0].attr                  OPTEE_MSG_ATTR_TYPE_VALUE_INOUT
-> > + * [in] param[0].value.a               OPTEE_MSG_PROTMEM_*
-> > + * [in] param[1].attr                  OPTEE_MSG_ATTR_TYPE_{R,F}MEM_OU=
-TPUT
-> > + * [in] param[1].u.{r,f}mem            Buffer or NULL
-> > + * [in] param[1].u.{r,f}mem.size       Provided size of buffer or 0 fo=
-r query
-> > + * output for the protected use case:
-> > + * [out] param[0].value.a              Minimal size of protected memor=
-y
-> > + * [out] param[0].value.b              Required alignment of size and =
-start of
-> > + *                                     protected memory
-> > + * [out] param[1].{r,f}mem.size                Size of output data
-> > + * [out] param[1].{r,f}mem             If non-NULL, contains an array =
-of
-> > + *                                     uint16_t holding endpoints that
-> > + *                                     must be included when lending
-> > + *                                     memory for this use case
-> > + *
-> > + * OPTEE_MSG_CMD_ASSIGN_PROTMEM assigns use-case to protected memory
-> > + * previously lent using the FFA_LEND framework ABI. Parameters are pa=
-ssed
-> > + * as:
-> > + * [in] param[0].attr                  OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
-> > + * [in] param[0].u.value.a             holds protected memory cookie
-> > + * [in] param[0].u.value.b             OPTEE_MSG_PROTMEM_* defined abo=
-ve
-> >   */
-> > -#define OPTEE_MSG_CMD_OPEN_SESSION     0
-> > -#define OPTEE_MSG_CMD_INVOKE_COMMAND   1
-> > -#define OPTEE_MSG_CMD_CLOSE_SESSION    2
-> > -#define OPTEE_MSG_CMD_CANCEL           3
-> > -#define OPTEE_MSG_CMD_REGISTER_SHM     4
-> > -#define OPTEE_MSG_CMD_UNREGISTER_SHM   5
-> > -#define OPTEE_MSG_CMD_DO_BOTTOM_HALF   6
-> > -#define OPTEE_MSG_CMD_STOP_ASYNC_NOTIF 7
-> > -#define OPTEE_MSG_FUNCID_CALL_WITH_ARG 0x0004
-> > +#define OPTEE_MSG_CMD_OPEN_SESSION             0
-> > +#define OPTEE_MSG_CMD_INVOKE_COMMAND           1
-> > +#define OPTEE_MSG_CMD_CLOSE_SESSION            2
-> > +#define OPTEE_MSG_CMD_CANCEL                   3
-> > +#define OPTEE_MSG_CMD_REGISTER_SHM             4
-> > +#define OPTEE_MSG_CMD_UNREGISTER_SHM           5
-> > +#define OPTEE_MSG_CMD_DO_BOTTOM_HALF           6
-> > +#define OPTEE_MSG_CMD_STOP_ASYNC_NOTIF         7
-> > +#define OPTEE_MSG_CMD_LEND_PROTMEM             8
-> > +#define OPTEE_MSG_CMD_RECLAIM_PROTMEM          9
-> > +#define OPTEE_MSG_CMD_GET_PROTMEM_CONFIG       10
-> > +#define OPTEE_MSG_CMD_ASSIGN_PROTMEM           11
-> > +#define OPTEE_MSG_FUNCID_CALL_WITH_ARG         0x0004
-> >
-> >  #endif /* _OPTEE_MSG_H */
-> > diff --git a/drivers/tee/optee/optee_smc.h b/drivers/tee/optee/optee_sm=
-c.h
-> > index 879426300821..b17e81f464a3 100644
-> > --- a/drivers/tee/optee/optee_smc.h
-> > +++ b/drivers/tee/optee/optee_smc.h
-> > @@ -264,7 +264,6 @@ struct optee_smc_get_shm_config_result {
-> >  #define OPTEE_SMC_SEC_CAP_HAVE_RESERVED_SHM    BIT(0)
-> >  /* Secure world can communicate via previously unregistered shared mem=
-ory */
-> >  #define OPTEE_SMC_SEC_CAP_UNREGISTERED_SHM     BIT(1)
-> > -
-> >  /*
-> >   * Secure world supports commands "register/unregister shared memory",
-> >   * secure world accepts command buffers located in any parts of non-se=
-cure RAM
-> > @@ -280,6 +279,10 @@ struct optee_smc_get_shm_config_result {
-> >  #define OPTEE_SMC_SEC_CAP_RPC_ARG              BIT(6)
-> >  /* Secure world supports probing for RPMB device if needed */
-> >  #define OPTEE_SMC_SEC_CAP_RPMB_PROBE           BIT(7)
-> > +/* Secure world supports protected memory */
-> > +#define OPTEE_SMC_SEC_CAP_PROTMEM              BIT(8)
-> > +/* Secure world supports dynamic protected memory */
-> > +#define OPTEE_SMC_SEC_CAP_DYNAMIC_PROTMEM      BIT(9)
-> >
-> >  #define OPTEE_SMC_FUNCID_EXCHANGE_CAPABILITIES 9
-> >  #define OPTEE_SMC_EXCHANGE_CAPABILITIES \
-> > @@ -451,6 +454,72 @@ struct optee_smc_disable_shm_cache_result {
-> >
-> >  /* See OPTEE_SMC_CALL_WITH_REGD_ARG above */
-> >  #define OPTEE_SMC_FUNCID_CALL_WITH_REGD_ARG    19
-> > +/*
-> > + * Get protected memory config
-> > + *
-> > + * Returns the protected memory config.
-> > + *
-> > + * Call register usage:
-> > + * a0   SMC Function ID, OPTEE_SMC_GET_PROTMEM_CONFIG
-> > + * a2-6        Not used, must be zero
-> > + * a7  Hypervisor Client ID register
-> > + *
-> > + * Have config return register usage:
-> > + * a0  OPTEE_SMC_RETURN_OK
-> > + * a1  Physical address of start of protected memory
-> > + * a2  Size of protected memory
-> > + * a3  Not used
-> > + * a4-7        Preserved
-> > + *
-> > + * Not available register usage:
-> > + * a0  OPTEE_SMC_RETURN_ENOTAVAIL
-> > + * a1-3 Not used
-> > + * a4-7        Preserved
-> > + */
-> > +#define OPTEE_SMC_FUNCID_GET_PROTMEM_CONFIG            20
-> > +#define OPTEE_SMC_GET_PROTMEM_CONFIG \
-> > +       OPTEE_SMC_FAST_CALL_VAL(OPTEE_SMC_FUNCID_GET_PROTMEM_CONFIG)
-> > +
-> > +struct optee_smc_get_protmem_config_result {
-> > +       unsigned long status;
-> > +       unsigned long start;
-> > +       unsigned long size;
-> > +       unsigned long flags;
->
-> The ABI comment does not document a flags return argument, either
-> this can be removed or the ABI comment needs to be fixed.
 
-Sure, I'll remove the field.
+On 4/23/25 21:42, Rob Herring (Arm) wrote:
+> While there's a common function to parse "memory-region" properties for
+> DMA pool regions, there's not anything for driver private regions. As a
+> result, drivers have resorted to parsing "memory-region" properties
+> themselves repeating the same pattern over and over. To fix this, this
+> series adds 2 functions to handle those cases:
+> of_reserved_mem_region_to_resource() and of_reserved_mem_region_count().
+> 
+> I've converted the whole tree, but just including remoteproc here as
+> it has the most cases. I intend to apply the first 3 patches for 6.16
+> so the driver conversions can be applied for 6.17.
+> 
+> A git tree with all the drivers converted is here[1].
+> 
+> v2:
+> - Fix of_dma_set_restricted_buffer() to maintain behavior on warning msg
+> - Export devm_ioremap_resource_wc()
+> - Rework handling of resource name to drop unit-address from name as it 
+>   was before.
+> - Link to v1: 
+>   https://lore.kernel.org/all/20250317232426.952188-1-robh@kernel.org
+> 
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/memory-region
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Rob Herring (Arm) (4):
+>       of: reserved_mem: Add functions to parse "memory-region"
+>       of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
+>       devres: Export devm_ioremap_resource_wc()
+>       remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+> 
+>  drivers/of/device.c                       | 31 +++++-------
+>  drivers/of/of_reserved_mem.c              | 80 +++++++++++++++++++++++++++++++
+>  drivers/remoteproc/imx_dsp_rproc.c        | 45 +++++++----------
+>  drivers/remoteproc/imx_rproc.c            | 68 +++++++++++---------------
+>  drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++------
+>  drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++++---------------
+>  drivers/remoteproc/qcom_q6v5_pas.c        | 69 ++++++++++----------------
+>  drivers/remoteproc/qcom_q6v5_wcss.c       | 25 ++++------
+>  drivers/remoteproc/qcom_wcnss.c           | 23 ++++-----
+>  drivers/remoteproc/rcar_rproc.c           | 36 ++++++--------
+>  drivers/remoteproc/st_remoteproc.c        | 41 ++++++++--------
+>  drivers/remoteproc/stm32_rproc.c          | 44 ++++++++---------
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++------
+>  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++------
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++------
+>  drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++++------------
+>  include/linux/of_reserved_mem.h           | 26 ++++++++++
+>  lib/devres.c                              |  1 +
+>  18 files changed, 339 insertions(+), 369 deletions(-)
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250423-dt-memory-region-v2-a2b15caacc63
+> 
 
-> Same for
-> > +};
-> > +
-> > +/*
-> > + * Get dynamic protected memory config
-> > + *
-> > + * Returns the dynamic protected memory config.
-> > + *
-> > + * Call register usage:
-> > + * a0  SMC Function ID, OPTEE_SMC_GET_DYN_SHM_CONFIG
->
-> should be OPTEE_SMC_GET_DYN_PROTMEM_CONFIG
+Testing of the series on the STM32MP15 platform has passed.
 
-Thanks, I'll update.
+just one minor comment in patch 1/4.
 
->
-> > + * a2-6        Not used, must be zero
-> > + * a7  Hypervisor Client ID register
-> > + *
-> > + * Have config return register usage:
-> > + * a0  OPTEE_SMC_RETURN_OK
-> > + * a1  Minamal size of protected memory
->
-> Nit: Typo, should be "Minimal"
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 
-Yes, I'll update.
+Thanks,
+Arnaud
 
-Cheers,
-Jens
 
->
-> > + * a2  Required alignment of size and start of registered protected me=
-mory
-> > + * a3  Not used
-> > + * a4-7        Preserved
-> > + *
-> > + * Not available register usage:
-> > + * a0  OPTEE_SMC_RETURN_ENOTAVAIL
-> > + * a1-3 Not used
-> > + * a4-7        Preserved
-> > + */
-> > +
-> > +#define OPTEE_SMC_FUNCID_GET_DYN_PROTMEM_CONFIG        21
-> > +#define OPTEE_SMC_GET_DYN_PROTMEM_CONFIG \
-> > +       OPTEE_SMC_FAST_CALL_VAL(OPTEE_SMC_FUNCID_GET_DYN_PROTMEM_CONFIG=
-)
-> > +
-> > +struct optee_smc_get_dyn_protmem_config_result {
-> > +       unsigned long status;
-> > +       unsigned long size;
-> > +       unsigned long align;
-> > +       unsigned long flags;
-> > +};
-> >
-> >  /*
-> >   * Resume from RPC (for example after processing a foreign interrupt)
-> > --
-> > 2.43.0
->
-> - Rouven
+
+
+> Best regards,
 
