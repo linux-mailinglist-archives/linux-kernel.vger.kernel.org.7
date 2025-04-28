@@ -1,429 +1,227 @@
-Return-Path: <linux-kernel+bounces-623502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94760A9F6B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D50A9F666
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BB9460A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:03:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A5E17F43C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16912949F4;
-	Mon, 28 Apr 2025 17:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C06828B51E;
+	Mon, 28 Apr 2025 17:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WA7uLejx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="XeSJpptC"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB74291177;
-	Mon, 28 Apr 2025 17:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1799427A90B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 17:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745859724; cv=none; b=AcMgnxdH7jndIfcuPGUqYA0z5exili1lZYQo2abImDozKTFTYG77GzUf6k7/f00ODk10FsooPqzBq0EXPSyCawqFEaANddG8TxS1wlAyld0i5Cj2I/EA6ohno3Xkcc0RN8VrK/NAFPlKs/t8zP3EN4i+656Sz/5H5gGl6utxciE=
+	t=1745859645; cv=none; b=qf0IjOOx86ZMOE4D5ksbKCeq3vvhDNsqArHKqFCH8wo7lcdowhf1OS4FBwmozSF3fWfAveM8x79/cITfBPS17RO1aZe2q6poi467vWUfBMm805zeTir3wy21zCYbvy+HwCfK79Hxbt4OWv/ffWkMVFE73khK4JSuXsrflT17i28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745859724; c=relaxed/simple;
-	bh=frmoNMX9rkL1gGxdvxYvF+q9FW0efq8uiNqM3qhMIXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=izDfqKRqTr157rN72pg+PQExQ+/6xOrSCOf69bHFmNDL5A5G6Gicg0jjFRXJsIvfutZ8ZEUv+twRGjerN68qA8d+oE7yE2a0kQqgV5K00uokIYJ4P/6khYS1taL4j+kISY6xa+xDv9zNmpIt/fZAf4Y9XYTWmOpknJtNwXdKXpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WA7uLejx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD436C4CEF5;
-	Mon, 28 Apr 2025 17:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745859724;
-	bh=frmoNMX9rkL1gGxdvxYvF+q9FW0efq8uiNqM3qhMIXk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WA7uLejx4xoqBJQ7fXdy8TqDNqpFQvuvIr91wiuNMVCIiR8NBhJxFspDoP2RfMZgi
-	 gGFNP8fJpiBJf4pI+5cHnwuP4PliLxQLaWuXKruvM3SqF1hmhCv0ORLwttKDrfsqaJ
-	 wdy47IC9S2g5A8vSN7TyLkQFJKh5IGztlcWpNXDx3eLLnI97LZbXedjwQNv94lGHBT
-	 P0PuLXEQJmzreIdUivGN5u6Ym+fTyeNCogFKhTw2HIsXyJdx+oK0K05zG7fofkFCtq
-	 SyDv2Xr9hBYiLeWYGHOJj2T0Ts5MO1hbnGzjDJl+gjGtlobXQgWuWkmIzsmkztZjmf
-	 66PLi9pBmqbKA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	sparclinux@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v4 09/13] crypto: sparc - move opcodes.h into asm directory
-Date: Mon, 28 Apr 2025 10:00:34 -0700
-Message-ID: <20250428170040.423825-10-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250428170040.423825-1-ebiggers@kernel.org>
-References: <20250428170040.423825-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1745859645; c=relaxed/simple;
+	bh=eFfuesw+QGXoKHVGiq+bk6Aq8mK7RpBspj51PR1Ik88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GV+SxMqz/M0X5WSne38237Q5qUhhrw2eGoATMk++ATbGqetoXJtx5N0zWSW4wN/xepyMKyH2kgVV5lQJTQOkU55rMuHChYtsyzqdWvLiefUo+HDQswtAsK+Dz1lBNOsUu0V+gFiJqLDXioKchTWfTC2ECTm8a4odiE3SNLiZ5dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=XeSJpptC; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Mon, 28 Apr 2025 13:00:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1745859640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sg8XZ9CR9qDeTIx+rDJpUhFGbbTBIqmoWO1me0C2EqA=;
+	b=XeSJpptCZOnw5pTqme5mUnDdWRKVctf29A4FYstbOqnwQb/DPLicYPTZh6e8kWhp9dv3LV
+	ma47SY4duzEpvJWlBFdznEqif9Vl9P2ZUX04kivJhyd9WvaFJL7jIcPr/9dUaNZc3ObzsW
+	qwir6XwNwskDGdQ/8be5tZIup1zELlwvLIIxbTY1Zk2KxHpube6N1RztL6lGwdYsxcjjue
+	bFu54pJEow5hveQW5vwnNOnUrO4KX2Pr9qSJtxzfVpN96bhY9dJoFWSJGKutzvhIq6A8b1
+	36lOqO8zdlTBL0VwxWiIE2N4dDyk02fUxPDQOOtgm5r3mfIzRWAu0Xqiw9Uhzw==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>, airlied@redhat.com,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>, apw@canonical.com,
+	joe@perches.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	Kees Cook <kees@kernel.org>, tamird@gmail.com,
+	Aditya Garg <gargaditya08@live.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	Hector Martin <marcan@marcan.st>,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] vsprintf: Use %p4chR instead of %p4cn for reading data
+ in reversed host ordering
+Message-ID: <aA-0MuLxVTueDAhm@blossom>
+References: <20250428123132.578771-1-pmladek@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250428123132.578771-1-pmladek@suse.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: Eric Biggers <ebiggers@google.com>
+Acked-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
-Since arch/sparc/crypto/opcodes.h is now needed outside the
-arch/sparc/crypto/ directory, move it into arch/sparc/include/asm/ so
-that it can be included as <asm/opcodes.h>.
+Since the other patches went thru drm-misc-next, I guess this should
+too?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- arch/sparc/crypto/aes_asm.S                  | 3 +--
- arch/sparc/crypto/aes_glue.c                 | 3 +--
- arch/sparc/crypto/camellia_asm.S             | 3 +--
- arch/sparc/crypto/camellia_glue.c            | 3 +--
- arch/sparc/crypto/des_asm.S                  | 3 +--
- arch/sparc/crypto/des_glue.c                 | 3 +--
- arch/sparc/crypto/md5_asm.S                  | 3 +--
- arch/sparc/crypto/md5_glue.c                 | 3 +--
- arch/sparc/crypto/sha1_asm.S                 | 3 +--
- arch/sparc/crypto/sha1_glue.c                | 3 +--
- arch/sparc/crypto/sha256_asm.S               | 3 +--
- arch/sparc/crypto/sha256_glue.c              | 3 +--
- arch/sparc/crypto/sha512_asm.S               | 3 +--
- arch/sparc/crypto/sha512_glue.c              | 3 +--
- arch/sparc/{crypto => include/asm}/opcodes.h | 6 +++---
- arch/sparc/lib/crc32c_asm.S                  | 3 +--
- 16 files changed, 18 insertions(+), 33 deletions(-)
- rename arch/sparc/{crypto => include/asm}/opcodes.h (96%)
 
-diff --git a/arch/sparc/crypto/aes_asm.S b/arch/sparc/crypto/aes_asm.S
-index 155cefb98520e..f291174a72a1d 100644
---- a/arch/sparc/crypto/aes_asm.S
-+++ b/arch/sparc/crypto/aes_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- #define ENCRYPT_TWO_ROUNDS(KEY_BASE, I0, I1, T0, T1) \
- 	AES_EROUND01(KEY_BASE +  0, I0, I1, T0) \
- 	AES_EROUND23(KEY_BASE +  2, I0, I1, T1) \
- 	AES_EROUND01(KEY_BASE +  4, T0, T1, I0) \
- 	AES_EROUND23(KEY_BASE +  6, T0, T1, I1)
-diff --git a/arch/sparc/crypto/aes_glue.c b/arch/sparc/crypto/aes_glue.c
-index 6831508303562..359f22643b051 100644
---- a/arch/sparc/crypto/aes_glue.c
-+++ b/arch/sparc/crypto/aes_glue.c
-@@ -25,15 +25,14 @@
- #include <crypto/algapi.h>
- #include <crypto/aes.h>
- #include <crypto/internal/skcipher.h>
- 
- #include <asm/fpumacro.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <asm/elf.h>
- 
--#include "opcodes.h"
--
- struct aes_ops {
- 	void (*encrypt)(const u64 *key, const u32 *input, u32 *output);
- 	void (*decrypt)(const u64 *key, const u32 *input, u32 *output);
- 	void (*load_encrypt_keys)(const u64 *key);
- 	void (*load_decrypt_keys)(const u64 *key);
-diff --git a/arch/sparc/crypto/camellia_asm.S b/arch/sparc/crypto/camellia_asm.S
-index dcdc9193fcd72..8471b346ef548 100644
---- a/arch/sparc/crypto/camellia_asm.S
-+++ b/arch/sparc/crypto/camellia_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- #define CAMELLIA_6ROUNDS(KEY_BASE, I0, I1) \
- 	CAMELLIA_F(KEY_BASE +  0, I1, I0, I1) \
- 	CAMELLIA_F(KEY_BASE +  2, I0, I1, I0) \
- 	CAMELLIA_F(KEY_BASE +  4, I1, I0, I1) \
- 	CAMELLIA_F(KEY_BASE +  6, I0, I1, I0) \
-diff --git a/arch/sparc/crypto/camellia_glue.c b/arch/sparc/crypto/camellia_glue.c
-index aaa9714378e66..e7a1e1c42b996 100644
---- a/arch/sparc/crypto/camellia_glue.c
-+++ b/arch/sparc/crypto/camellia_glue.c
-@@ -13,15 +13,14 @@
- #include <linux/types.h>
- #include <crypto/algapi.h>
- #include <crypto/internal/skcipher.h>
- 
- #include <asm/fpumacro.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <asm/elf.h>
- 
--#include "opcodes.h"
--
- #define CAMELLIA_MIN_KEY_SIZE        16
- #define CAMELLIA_MAX_KEY_SIZE        32
- #define CAMELLIA_BLOCK_SIZE          16
- #define CAMELLIA_TABLE_BYTE_LEN     272
- 
-diff --git a/arch/sparc/crypto/des_asm.S b/arch/sparc/crypto/des_asm.S
-index 7157468a679df..d534446cbef9a 100644
---- a/arch/sparc/crypto/des_asm.S
-+++ b/arch/sparc/crypto/des_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- 	.align	32
- ENTRY(des_sparc64_key_expand)
- 	/* %o0=input_key, %o1=output_key */
- 	VISEntryHalf
- 	ld	[%o0 + 0x00], %f0
-diff --git a/arch/sparc/crypto/des_glue.c b/arch/sparc/crypto/des_glue.c
-index a499102bf7065..e50ec4cd57cde 100644
---- a/arch/sparc/crypto/des_glue.c
-+++ b/arch/sparc/crypto/des_glue.c
-@@ -14,15 +14,14 @@
- #include <crypto/algapi.h>
- #include <crypto/internal/des.h>
- #include <crypto/internal/skcipher.h>
- 
- #include <asm/fpumacro.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <asm/elf.h>
- 
--#include "opcodes.h"
--
- struct des_sparc64_ctx {
- 	u64 encrypt_expkey[DES_EXPKEY_WORDS / 2];
- 	u64 decrypt_expkey[DES_EXPKEY_WORDS / 2];
- };
- 
-diff --git a/arch/sparc/crypto/md5_asm.S b/arch/sparc/crypto/md5_asm.S
-index 7a6637455f37a..60b544e4d205b 100644
---- a/arch/sparc/crypto/md5_asm.S
-+++ b/arch/sparc/crypto/md5_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- ENTRY(md5_sparc64_transform)
- 	/* %o0 = digest, %o1 = data, %o2 = rounds */
- 	VISEntryHalf
- 	ld	[%o0 + 0x00], %f0
- 	ld	[%o0 + 0x04], %f1
-diff --git a/arch/sparc/crypto/md5_glue.c b/arch/sparc/crypto/md5_glue.c
-index 5b018c6a376c4..b3615f0cdf626 100644
---- a/arch/sparc/crypto/md5_glue.c
-+++ b/arch/sparc/crypto/md5_glue.c
-@@ -13,21 +13,20 @@
-  */
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <asm/elf.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <crypto/internal/hash.h>
- #include <crypto/md5.h>
- #include <linux/errno.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/unaligned.h>
- 
--#include "opcodes.h"
--
- struct sparc_md5_state {
- 	__le32 hash[MD5_HASH_WORDS];
- 	u64 byte_count;
- };
- 
-diff --git a/arch/sparc/crypto/sha1_asm.S b/arch/sparc/crypto/sha1_asm.S
-index 7d8bf354f0e79..00b46bac1b08f 100644
---- a/arch/sparc/crypto/sha1_asm.S
-+++ b/arch/sparc/crypto/sha1_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- ENTRY(sha1_sparc64_transform)
- 	/* %o0 = digest, %o1 = data, %o2 = rounds */
- 	VISEntryHalf
- 	ld	[%o0 + 0x00], %f0
- 	ld	[%o0 + 0x04], %f1
-diff --git a/arch/sparc/crypto/sha1_glue.c b/arch/sparc/crypto/sha1_glue.c
-index ec5a06948e0d4..ef19d5023b1bc 100644
---- a/arch/sparc/crypto/sha1_glue.c
-+++ b/arch/sparc/crypto/sha1_glue.c
-@@ -10,19 +10,18 @@
-  */
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <asm/elf.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <crypto/internal/hash.h>
- #include <crypto/sha1.h>
- #include <crypto/sha1_base.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
--#include "opcodes.h"
--
- asmlinkage void sha1_sparc64_transform(struct sha1_state *digest,
- 				       const u8 *data, int rounds);
- 
- static int sha1_sparc64_update(struct shash_desc *desc, const u8 *data,
- 			       unsigned int len)
-diff --git a/arch/sparc/crypto/sha256_asm.S b/arch/sparc/crypto/sha256_asm.S
-index 0b39ec7d7ca29..8ce88611e98ad 100644
---- a/arch/sparc/crypto/sha256_asm.S
-+++ b/arch/sparc/crypto/sha256_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- ENTRY(sha256_sparc64_transform)
- 	/* %o0 = digest, %o1 = data, %o2 = rounds */
- 	VISEntryHalf
- 	ld	[%o0 + 0x00], %f0
- 	ld	[%o0 + 0x04], %f1
-diff --git a/arch/sparc/crypto/sha256_glue.c b/arch/sparc/crypto/sha256_glue.c
-index ddb250242faf4..25008603a9868 100644
---- a/arch/sparc/crypto/sha256_glue.c
-+++ b/arch/sparc/crypto/sha256_glue.c
-@@ -10,19 +10,18 @@
-  */
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <asm/elf.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <crypto/internal/hash.h>
- #include <crypto/sha2.h>
- #include <crypto/sha256_base.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
--#include "opcodes.h"
--
- asmlinkage void sha256_sparc64_transform(u32 *digest, const char *data,
- 					 unsigned int rounds);
- 
- static void sha256_block(struct crypto_sha256_state *sctx, const u8 *src,
- 			 int blocks)
-diff --git a/arch/sparc/crypto/sha512_asm.S b/arch/sparc/crypto/sha512_asm.S
-index b2f6e67288023..9932b4fe1b599 100644
---- a/arch/sparc/crypto/sha512_asm.S
-+++ b/arch/sparc/crypto/sha512_asm.S
-@@ -1,11 +1,10 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- 
--#include "opcodes.h"
--
- ENTRY(sha512_sparc64_transform)
- 	/* %o0 = digest, %o1 = data, %o2 = rounds */
- 	VISEntry
- 	ldd	[%o0 + 0x00], %f0
- 	ldd	[%o0 + 0x08], %f2
-diff --git a/arch/sparc/crypto/sha512_glue.c b/arch/sparc/crypto/sha512_glue.c
-index 1d0e1f98ca461..47b9277b6877a 100644
---- a/arch/sparc/crypto/sha512_glue.c
-+++ b/arch/sparc/crypto/sha512_glue.c
-@@ -9,19 +9,18 @@
-  */
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <asm/elf.h>
-+#include <asm/opcodes.h>
- #include <asm/pstate.h>
- #include <crypto/internal/hash.h>
- #include <crypto/sha2.h>
- #include <crypto/sha512_base.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
--#include "opcodes.h"
--
- asmlinkage void sha512_sparc64_transform(u64 *digest, const char *data,
- 					 unsigned int rounds);
- 
- static void sha512_block(struct sha512_state *sctx, const u8 *src, int blocks)
- {
-diff --git a/arch/sparc/crypto/opcodes.h b/arch/sparc/include/asm/opcodes.h
-similarity index 96%
-rename from arch/sparc/crypto/opcodes.h
-rename to arch/sparc/include/asm/opcodes.h
-index 417b6a10a337a..ebfda6eb49b26 100644
---- a/arch/sparc/crypto/opcodes.h
-+++ b/arch/sparc/include/asm/opcodes.h
-@@ -1,8 +1,8 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _OPCODES_H
--#define _OPCODES_H
-+#ifndef _SPARC_ASM_OPCODES_H
-+#define _SPARC_ASM_OPCODES_H
- 
- #define SPARC_CR_OPCODE_PRIORITY	300
- 
- #define F3F(x,y,z)	(((x)<<30)|((y)<<19)|((z)<<5))
- 
-@@ -95,6 +95,6 @@
- #define MOVXTOD_G3_F60		\
- 	.word	0xbbb02303;
- #define MOVXTOD_G7_F62		\
- 	.word	0xbfb02307;
- 
--#endif /* _OPCODES_H */
-+#endif /* _SPARC_ASM_OPCODES_H */
-diff --git a/arch/sparc/lib/crc32c_asm.S b/arch/sparc/lib/crc32c_asm.S
-index ee454fa6aed68..4db873850f44c 100644
---- a/arch/sparc/lib/crc32c_asm.S
-+++ b/arch/sparc/lib/crc32c_asm.S
-@@ -1,12 +1,11 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <asm/opcodes.h>
- #include <asm/visasm.h>
- #include <asm/asi.h>
- 
--#include "../crypto/opcodes.h"
--
- ENTRY(crc32c_sparc64)
- 	/* %o0=crc32p, %o1=data_ptr, %o2=len */
- 	VISEntryHalf
- 	lda	[%o0] ASI_PL, %f1
- 1:	ldd	[%o1], %f2
--- 
-2.49.0
-
+Le Mon , Apr 28, 2025 at 02:31:32PM +0200, Petr Mladek a écrit :
+> The generic FourCC format always prints the data using the big endian
+> order. It is generic because it allows to read the data using a custom
+> ordering.
+> 
+> The current code uses "n" for reading data in the reverse host ordering.
+> It makes the 4 variants [hnbl] consistent with the generic printing
+> of IPv4 addresses.
+> 
+> Unfortunately, it creates confusion on big endian systems. For example,
+> it shows the data &(u32)0x67503030 as
+> 
+> 	%p4cn	00Pg (0x30305067)
+> 
+> But people expect that the ordering stays the same. The network ordering
+> is a big-endian ordering.
+> 
+> The problem is that the semantic is not the same. The modifiers affect
+> the output ordering of IPv4 addresses while they affect the reading order
+> in case of FourCC code.
+> 
+> Avoid the confusion by replacing the "n" modifier with "hR", aka
+> reverse host ordering. It is inspired by the existing %p[mM]R printf
+> format.
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/r/CAMuHMdV9tX=TG7E_CrSF=2PY206tXf+_yYRuacG48EWEtJLo-Q@mail.gmail.com
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+> Hi,
+> 
+> I am sending this as a proper patch. It would be nice to queue it
+> together with the other patches adding the generic printf modifiers.
+> 
+> Best Regards,
+> Petr
+> ---
+> Documentation/core-api/printk-formats.rst | 10 +++++-----
+>  lib/tests/printf_kunit.c                  |  4 ++--
+>  lib/vsprintf.c                            | 11 ++++++++---
+>  3 files changed, 15 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> index 125fd0397510..f531873bb3c9 100644
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -652,7 +652,7 @@ Generic FourCC code
+>  -------------------
+>  
+>  ::
+> -	%p4c[hnlb]	gP00 (0x67503030)
+> +	%p4c[h[R]lb]	gP00 (0x67503030)
+>  
+>  Print a generic FourCC code, as both ASCII characters and its numerical
+>  value as hexadecimal.
+> @@ -660,23 +660,23 @@ value as hexadecimal.
+>  The generic FourCC code is always printed in the big-endian format,
+>  the most significant byte first. This is the opposite of V4L/DRM FourCCs.
+>  
+> -The additional ``h``, ``n``, ``l``, and ``b`` specifiers define what
+> +The additional ``h``, ``hR``, ``l``, and ``b`` specifiers define what
+>  endianness is used to load the stored bytes. The data might be interpreted
+> -using the host byte order, network byte order, little-endian, or big-endian.
+> +using the host, reversed host byte order, little-endian, or big-endian.
+>  
+>  Passed by reference.
+>  
+>  Examples for a little-endian machine, given &(u32)0x67503030::
+>  
+>  	%p4ch	gP00 (0x67503030)
+> -	%p4cn	00Pg (0x30305067)
+> +	%p4chR	00Pg (0x30305067)
+>  	%p4cl	gP00 (0x67503030)
+>  	%p4cb	00Pg (0x30305067)
+>  
+>  Examples for a big-endian machine, given &(u32)0x67503030::
+>  
+>  	%p4ch	gP00 (0x67503030)
+> -	%p4cn	00Pg (0x30305067)
+> +	%p4chR	00Pg (0x30305067)
+>  	%p4cl	00Pg (0x30305067)
+>  	%p4cb	gP00 (0x67503030)
+>  
+> diff --git a/lib/tests/printf_kunit.c b/lib/tests/printf_kunit.c
+> index b1fa0dcea52f..bc54cca2d7a6 100644
+> --- a/lib/tests/printf_kunit.c
+> +++ b/lib/tests/printf_kunit.c
+> @@ -726,7 +726,7 @@ static void fourcc_pointer(struct kunit *kunittest)
+>  	static const struct fourcc_struct try_ch[] = {
+>  		{ 0x41424344, "ABCD (0x41424344)", },
+>  	};
+> -	static const struct fourcc_struct try_cn[] = {
+> +	static const struct fourcc_struct try_chR[] = {
+>  		{ 0x41424344, "DCBA (0x44434241)", },
+>  	};
+>  	static const struct fourcc_struct try_cl[] = {
+> @@ -738,7 +738,7 @@ static void fourcc_pointer(struct kunit *kunittest)
+>  
+>  	fourcc_pointer_test(kunittest, try_cc, ARRAY_SIZE(try_cc), "%p4cc");
+>  	fourcc_pointer_test(kunittest, try_ch, ARRAY_SIZE(try_ch), "%p4ch");
+> -	fourcc_pointer_test(kunittest, try_cn, ARRAY_SIZE(try_cn), "%p4cn");
+> +	fourcc_pointer_test(kunittest, try_chR, ARRAY_SIZE(try_chR), "%p4chR");
+>  	fourcc_pointer_test(kunittest, try_cl, ARRAY_SIZE(try_cl), "%p4cl");
+>  	fourcc_pointer_test(kunittest, try_cb, ARRAY_SIZE(try_cb), "%p4cb");
+>  }
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 2c5de4216415..34587b2dbdb1 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1804,9 +1804,8 @@ char *fourcc_string(char *buf, char *end, const u32 *fourcc,
+>  	orig = get_unaligned(fourcc);
+>  	switch (fmt[2]) {
+>  	case 'h':
+> -		break;
+> -	case 'n':
+> -		orig = swab32(orig);
+> +		if (fmt[3] == 'R')
+> +			orig = swab32(orig);
+>  		break;
+>  	case 'l':
+>  		orig = (__force u32)cpu_to_le32(orig);
+> @@ -2396,6 +2395,12 @@ early_param("no_hash_pointers", no_hash_pointers_enable);
+>   *       read the documentation (path below) first.
+>   * - 'NF' For a netdev_features_t
+>   * - '4cc' V4L2 or DRM FourCC code, with endianness and raw numerical value.
+> + * - '4c[h[R]lb]' For generic FourCC code with raw numerical value. Both are
+> + *	 displayed in the big-endian format. This is the opposite of V4L2 or
+> + *	 DRM FourCCs.
+> + *	 The additional specifiers define what endianness is used to load
+> + *	 the stored bytes. The data might be interpreted using the host,
+> + *	 reversed host byte order, little-endian, or big-endian.
+>   * - 'h[CDN]' For a variable-length buffer, it prints it as a hex string with
+>   *            a certain separator (' ' by default):
+>   *              C colon
+> -- 
+> 2.49.0
+> 
 
