@@ -1,205 +1,217 @@
-Return-Path: <linux-kernel+bounces-623537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBA2A9F725
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:19:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57569A9F6F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A4F16925E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5892A189D9F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5686C28E600;
-	Mon, 28 Apr 2025 17:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B77328DEE1;
+	Mon, 28 Apr 2025 17:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwhWrqUs"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AgKVSsdl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12192290082
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 17:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278B928D82A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 17:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745860709; cv=none; b=fvin3QTH6q+yy73Autig8QMf00cL9ft+NOJF+Yg1bM8UuzWe9kt6avI7MkjZL0r5Jljmo86n8iYVGGyD83clAdT+nZ6PxaAGMxLVm4H4c7x3WbqMSkZXngIsLU1GkxTWg0PWI1iLB5Qb3GE07M9ugJRcVIKP19tGdG4vVmEjiiw=
+	t=1745860339; cv=none; b=blJHMuc04OqP2dBoMWMVZP6V4wOmUwYi7zf/WJTDKpIUnXQ92WlFpQ+qng5h7lnwTq62jncgysi0gKVyBPplH6+KEy/ZaMSUV2TeYF+h7/EAtSHlvnbRzF00iUzKXMSMJz38IdrvG0FkdkLE2ZYQWmYyUyM9TOqZsDXbq00/B10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745860709; c=relaxed/simple;
-	bh=H3q5H6suiWXiuvs2KAMcY/pa2l8BVXHAsZ1qIm7fH5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cOx423I1J0s49Ur2SE6J2UOqbVR920QDyAeeSphCJzeK/Xg45oMoIfMURVk4GeednkGNS9l4Zt3DeAHw0Lo1C6QMTytKBEmhThKTKV08HgcgsJ/957Mu1J9QZbGFt4X6dyH9CiQL3Um7q1RfRKXP7Kf4paeO5FGE2lQZbJjf0nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwhWrqUs; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8f8657f29so50530156d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:18:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745860707; x=1746465507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kjtKTj8iYaV5Lk4x0tdvWcE0jO5ltQORsyv2ZseCCwg=;
-        b=dwhWrqUsUhsPU3o6a0dtVAFlaAfNqLZirfe4NS9t7+je2ScHIYTQtHFRr98AFes8H3
-         cjQI/NjS4sG8f7i6zc8GCwvwZCevxBiLDjZjE4hzekpWzomZEaNW91RISSTf5RT8/t1C
-         qtiBZBNFdl6vggK7650Yq0DzHfdM+pNP7kB3cAIgReyukDXqBZDYpa1Dxu7C4ZMYSkUM
-         283YwNLIMH9AcdsI2TJndver/0WB+gX7/XPLXixSXNFYCR94HP+Kt6mbTl4MWgyglktB
-         mcGv9aRU4yZJeJA0HVqk8v4bnSBof7FuQDkolnDFS1ZLbT88eMYpcfjk75cMdebcieLl
-         ICdQ==
+	s=arc-20240116; t=1745860339; c=relaxed/simple;
+	bh=jULmZlWn/2/Vo/wWa1N1sU9KO7XMrfNbc0iy0j8QOUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M0UrNcRLGHGac92/NcB1vRZaN9hP91dckk1q5oaJvWeS04QyQnixjUSAV9ZRpV+T9/u9NXTQte9gemHuBTcQt34fD2ykyLo2e1WwxHTuqWivL69+0M6FH3Rn4L7wcFNF9JEEmmY4lGe10zRRC3sRfjYkC66JYw8//9spuGgIkN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AgKVSsdl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745860336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YlBurcqbe64ISpcElqVnUgzueWYOv8LWsAS36SHmzGE=;
+	b=AgKVSsdlXwp0uaNd0vgFjTUoDSAYAG7ta7rtRhLUURb07p5NXR0AGb3tMrVIYHrS0slmwm
+	H5gbOCQqUf1CFih+HCR3QWejzM4rZEbUBcbLvjkCVfL6a7P9m62ie1lVs8bj5e8Cqh6Hch
+	vazkP/zJEZTHwqnArTRguT29f4yA/nk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-01CX6NJ6Pb-zs2aR2-pH5A-1; Mon, 28 Apr 2025 13:12:14 -0400
+X-MC-Unique: 01CX6NJ6Pb-zs2aR2-pH5A-1
+X-Mimecast-MFC-AGG-ID: 01CX6NJ6Pb-zs2aR2-pH5A_1745860333
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d5ca7c86aso29543005e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:12:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745860707; x=1746465507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kjtKTj8iYaV5Lk4x0tdvWcE0jO5ltQORsyv2ZseCCwg=;
-        b=KT3qYxPfv4FoyJyIuhGM4C8RIFpL4yedEn3mbrSYG3L5kG3cTwjL6p4DhCkllX4RFf
-         osxnZfHsXPBqAuaaHOqlx9Qppon2qRUlIXKiwik4EZuBNHR3K3M3SPbG0YW8CArub12B
-         7Z5cCq4l0v8da0x25+9fXxZRclJFkAyfCJu/r4vBk+eG1uciB7g9L+jv0NDRLURwGs29
-         PB5TdmGNGHvlJ5+34j2OL+MwR/CQrZNWT2ocRZsHt8xkyuOD2V9LuBWZsMA6+Bt0WeoF
-         ei+HBk+84l6vjGPDwVJbwVk8PlLKRCKXfNH+7eKuqqom4AGoJsZCZ4It7RNV+YELdW7c
-         O6dA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDfwmbXKdA8YB77DJMEW50uaIZ0u9QIR4Woz5CsbrLJs2c66x1TNKLHqy7UmLGqVPZri+zkYaFLJ/D250=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiX/fjE3I9boeNCfX00qArByztGoUfTZpei2ciEkec6sluFFWc
-	CtpjgyEItB5QqjZZ4oU4s8GA6d+V7jLR5Zu6V5OspbSJZTCyTNIi
-X-Gm-Gg: ASbGnctPkMD98malef8h5Yx1GvvLzGS1JGtrP+QJAdp6cA6CF3wfY5GIGF0dhMxnnOJ
-	3hafXch8DKits0Xvy7CzagJzzPYPKyfELL6PE+AzO6qHbV6SgXqTGU5OTpxDLxTGu6K+PY7fjJc
-	2EKPvcfeTgABvrT9dVhNkXgjuwyvvIdpXmIRV+tqo3Quh35ckxKsFYwiV4jMGWhXfCFNgNwdRvc
-	WCYlgHwY2kAqALmBmJd5iZ8tYGbHPD0sK0NLqqAMLY9crfiREfKMv/8SVjFtFt8neCCbSGeDdTa
-	WTiNX7ldQCw+ulnrFAwotK8DkOH6cCzLeHvyFVD2OzMgJpknl/4QnEG9S4G/+EoIa1X/
-X-Google-Smtp-Source: AGHT+IEA7TYfHtaKvQ9mdaP5c5C6mbPEctCz601dDDlmmSTyKrk7y2ueKhroNRxv24n5SyIkTp4r/g==
-X-Received: by 2002:a05:6214:768:b0:6ea:d393:962f with SMTP id 6a1803df08f44-6f4d1efe83cmr186471176d6.16.1745860707052;
-        Mon, 28 Apr 2025 10:18:27 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fb90:8ee2:8c9a:73d0:fe8a:86bb:e664])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c08ef3e7sm63443436d6.6.2025.04.28.10.18.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 10:18:26 -0700 (PDT)
-From: nifan.cxl@gmail.com
-To: muchun.song@linux.dev,
-	willy@infradead.org
-Cc: mcgrof@kernel.org,
-	a.manzanares@samsung.com,
-	dave@stgolabs.net,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Fan Ni <fan.ni@samsung.com>
-Subject: [PATCH v3 4/4] mm/hugetlb: Convert use of struct page to folio in __unmap_hugepage_range()
-Date: Mon, 28 Apr 2025 10:11:47 -0700
-Message-ID: <20250428171608.21111-7-nifan.cxl@gmail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250428171608.21111-3-nifan.cxl@gmail.com>
-References: <20250428171608.21111-3-nifan.cxl@gmail.com>
+        d=1e100.net; s=20230601; t=1745860333; x=1746465133;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YlBurcqbe64ISpcElqVnUgzueWYOv8LWsAS36SHmzGE=;
+        b=kObkACiDbquLLecDc0xKUkBUsdeQRLUlviKWIRvApJAewGE9gkZIOYbOcJEvW/iKaC
+         86NNN7vzWbcpbGWcw9A/rOhElMfYH9nN7+CkMJn2+aSFfn2fhOx9oqr/FpdaT0jW/U+Z
+         jjFHme6FF/cEQ1YcIZ0SDjN7nzvmHDO6lqdhRyhS64vWd6/2EfE2uzxC1FUWVEbZ2ufK
+         JEccq5qf0zMnUlp0t6QWmP6WSimu+PndjFSG6x+hNzQ90P0lgMv+DIECH0Jl9cyRJrxp
+         gdMyIZaVIhGM53zQTUwPG4OBk8e21iPht9d+JtgvMMpjtW5DgAB2yKomP+tZU5q57XaR
+         /DDQ==
+X-Gm-Message-State: AOJu0YwrjyTpuwXpS+Pl8b9guPsRqPGsZ0KcchJ12Kl5lrbQA7YynCzp
+	MutelrC/KNLzEmycVmXWFNPjHBOCfqmlWiw9V5Tu3ApOX5ixypxnWJOP+GU7Mk2cCAq/90HKHSM
+	ESigkCbrUH8Qqe0ZnbdovYe2/SxpQOwu3+63nNkMXZwGn0TdDdZR7nIiiz2HKDA==
+X-Gm-Gg: ASbGncvoPC5nD+wRui2H/1AG3SYkkzzzMfi5qIVthxxDbQtw0H1pqClDS66ZwotHQBf
+	16BwcBb6tloeqDzkXeL5NjJ7APRRkm9XbCWzYi3JsBsufa7oKRbEXXEgoV2g8gbzR363sp9hLSw
+	Gs4XlJ6a43XSsMjJoOnyA3vp0LYrSfb5fxJOv368rPuWY8SmruCfn+qvKw109+nQEMJ3l+23Uoq
+	88YU/3PKU7iq/cg4g34z7kzQCjAaIvxdTFkKx6Otu04o5QjQtR6XzqcO3bP836s/+FYZTTGzXZq
+	ONzm76+F0kDoTFvfwUAygXCcjJBOXfrkYuKuroKyYVDb3LTH9aQRld5kQRqRHsGXUIP9/BvhhTe
+	9R539OKfxZ0cIyuSQboEbLDuoO3WV+9hdiTF/lA==
+X-Received: by 2002:a05:600c:4e4b:b0:43b:b756:f0a9 with SMTP id 5b1f17b1804b1-441ac8eb213mr763645e9.11.1745860333369;
+        Mon, 28 Apr 2025 10:12:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGI3eEGBKgI0g/a7m3l8hddD1u69DnS0ugwSS0KDQtTLhljvtnZJ97Ojpq6J+GchDMn+0V3FA==
+X-Received: by 2002:a05:600c:4e4b:b0:43b:b756:f0a9 with SMTP id 5b1f17b1804b1-441ac8eb213mr763265e9.11.1745860332996;
+        Mon, 28 Apr 2025 10:12:12 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f32:c200:9add:4a7a:46aa:f740? (p200300d82f32c2009add4a7a46aaf740.dip0.t-ipconnect.de. [2003:d8:2f32:c200:9add:4a7a:46aa:f740])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4408d0a7802sm127236275e9.1.2025.04.28.10.12.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Apr 2025 10:12:12 -0700 (PDT)
+Message-ID: <fc8117d9-57f8-4c28-9c46-328e4a3c4613@redhat.com>
+Date: Mon, 28 Apr 2025 19:12:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 03/11] x86/mm/pat: introduce pfnmap_track() and
+ pfnmap_untrack()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-trace-kernel@vger.kernel.org, Dave Hansen
+ <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ "H. Peter Anvin" <hpa@zytor.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Peter Xu <peterx@redhat.com>
+References: <20250425081715.1341199-1-david@redhat.com>
+ <20250425081715.1341199-4-david@redhat.com>
+ <554a6063-268c-49a7-883b-c39cf541c146@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <554a6063-268c-49a7-883b-c39cf541c146@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Fan Ni <fan.ni@samsung.com>
 
-In __unmap_hugepage_range(), the "page" pointer always points to the
-first page of a huge page, which guarantees there is a folio associating
-with it.  Convert the "page" pointer to use folio.
+>>
+>> +int pfnmap_track(unsigned long pfn, unsigned long size, pgprot_t *prot)
+>> +{
+>> +	const resource_size_t paddr = (resource_size_t)pfn << PAGE_SHIFT;
+>> +
+>> +	return reserve_pfn_range(paddr, size, prot, 0);
+> 
+> Nitty, but a pattern established by Liam which we've followed consistently
+> in VMA code is to prefix parameters that might be less than obvious,
+> especially boolean parameters, with a comment naming the parameter, e.g.:
+ > > 	return reserve_pfn_range(paddr, size, prot, /*strict_prot=*/0);
 
-Signed-off-by: Fan Ni <fan.ni@samsung.com>
----
- mm/hugetlb.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+Not sure I like that. But as this parameter goes away patch #8, I'll 
+leave it as is in this patch and not start a bigger discussion on better 
+alternatives (don't use these stupid boolean variables ...) ;)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6696206d556e..293c2afa724b 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5815,12 +5815,12 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	pte_t *ptep;
- 	pte_t pte;
- 	spinlock_t *ptl;
--	struct page *page;
- 	struct hstate *h = hstate_vma(vma);
- 	unsigned long sz = huge_page_size(h);
- 	bool adjust_reservation = false;
- 	unsigned long last_addr_mask;
- 	bool force_flush = false;
-+	const bool folio_provided = !!folio;
- 
- 	WARN_ON(!is_vm_hugetlb_page(vma));
- 	BUG_ON(start & ~huge_page_mask(h));
-@@ -5879,14 +5879,13 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			continue;
- 		}
- 
--		page = pte_page(pte);
- 		/*
- 		 * If a reference page is supplied, it is because a specific
- 		 * page is being unmapped, not a range. Ensure the page we
- 		 * are about to unmap is the actual page of interest.
- 		 */
--		if (folio) {
--			if (page_folio(page) != folio) {
-+		if (folio_provided) {
-+			if (folio != page_folio(pte_page(pte))) {
- 				spin_unlock(ptl);
- 				continue;
- 			}
-@@ -5896,12 +5895,14 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			 * looking like data was lost
- 			 */
- 			set_vma_resv_flags(vma, HPAGE_RESV_UNMAPPED);
-+		} else {
-+			folio = page_folio(pte_page(pte));
- 		}
- 
- 		pte = huge_ptep_get_and_clear(mm, address, ptep, sz);
- 		tlb_remove_huge_tlb_entry(h, tlb, ptep, address);
- 		if (huge_pte_dirty(pte))
--			set_page_dirty(page);
-+			folio_mark_dirty(folio);
- 		/* Leave a uffd-wp pte marker if needed */
- 		if (huge_pte_uffd_wp(pte) &&
- 		    !(zap_flags & ZAP_FLAG_DROP_MARKER))
-@@ -5909,7 +5910,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 					make_pte_marker(PTE_MARKER_UFFD_WP),
- 					sz);
- 		hugetlb_count_sub(pages_per_huge_page(h), mm);
--		hugetlb_remove_rmap(page_folio(page));
-+		hugetlb_remove_rmap(folio);
- 
- 		/*
- 		 * Restore the reservation for anonymous page, otherwise the
-@@ -5918,8 +5919,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 * reservation bit.
- 		 */
- 		if (!h->surplus_huge_pages && __vma_private_lock(vma) &&
--		    folio_test_anon(page_folio(page))) {
--			folio_set_hugetlb_restore_reserve(page_folio(page));
-+		    folio_test_anon(folio)) {
-+			folio_set_hugetlb_restore_reserve(folio);
- 			/* Reservation to be adjusted after the spin lock */
- 			adjust_reservation = true;
- 		}
-@@ -5943,16 +5944,17 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 				 * count will not be incremented by free_huge_folio.
- 				 * Act as if we consumed the reservation.
- 				 */
--				folio_clear_hugetlb_restore_reserve(page_folio(page));
-+				folio_clear_hugetlb_restore_reserve(folio);
- 			else if (rc)
- 				vma_add_reservation(h, vma, address);
- 		}
- 
--		tlb_remove_page_size(tlb, page, huge_page_size(h));
-+		tlb_remove_page_size(tlb, folio_page(folio, 0),
-+				     folio_size(folio));
- 		/*
- 		 * Bail out after unmapping reference page if supplied
- 		 */
--		if (folio)
-+		if (folio_provided)
- 			break;
- 	}
- 	tlb_end_vma(tlb, vma);
+[...]
+
+>> +
+>> +/**
+>> + * pfnmap_track - track a pfn range
+> 
+> To risk sounding annoyingly pedantic and giving the kind of review that is
+> annoying, this really needs to be expanded, I think perhaps this
+> description is stating the obvious :)
+> 
+> To me the confusing thing is that the 'generic' sounding pfnmap_track() is
+> actually PAT-specific, so surely the description should give a brief
+> overview of PAT here, saying it's applicable on x86-64 etc. etc.
+> 
+> I'm not sure there's much use in keeping this generic when it clearly is
+> not at this point?
+
+Sorry, is your suggestion to document more PAT stuff or what exactly?
+
+As you know, I'm a busy man ... so instructions/suggestions please :)
+
+> 
+>> + * @pfn: the start of the pfn range
+>> + * @size: the size of the pfn range
+> 
+> In what units? Given it's a pfn range it's a bit ambiguous as to whether it
+> should be expressed in pages/bytes.
+
+Agreed. It's bytes. (not my favorite here, but good enough)
+
+
 -- 
-2.47.2
+Cheers,
+
+David / dhildenb
 
 
