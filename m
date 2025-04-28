@@ -1,147 +1,149 @@
-Return-Path: <linux-kernel+bounces-622517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52F6A9E88C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:51:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072ABA9E894
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 251877A4404
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:50:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD483AC7FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711CD1D5142;
-	Mon, 28 Apr 2025 06:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CAF1D5176;
+	Mon, 28 Apr 2025 06:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="1K6otC4L"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpFdPQgS"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA01D1CAA7B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 06:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16CA610C;
+	Mon, 28 Apr 2025 06:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745823078; cv=none; b=JxRkb9yMEczXAIeGcqOyWMjztcJ+DNDds7eWssefa76Fco8u8O6ixo0RHMONafXmTA25LFllUsGnEMpkY5GWZiasVfm7QaUotTiLYSpBgydw+oiI1zZTI0nye0uLL51l/exSWg7VPedSVe4ydePyx3QV6y9EdezAmJlHYdfiQew=
+	t=1745823280; cv=none; b=nViga8FTCpeN7bW8lvaKvbWSgqkIkcKyQmcwRGs4eqRzVrl4KmFGPFuCQi86QrJX+NkslSEaOdVquylgHAuyiR+7tbuEuBrcKByAkBdwDSl8mEmTz6t3nrKwm9Af0AOsbnsk3EGG8bWv3Rt2gEmUnNuZ5XyPaMtbokDfmu/akBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745823078; c=relaxed/simple;
-	bh=yPwiv3LIPXq7QwC+Z6qeGGumORWMUcAQ8Rt34+S+TqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eyUhaQJgiRnr1dgShBrPxYOAgqGjqeGsji7tDUX0nLVJGwelcEdD+vvDTt48ptNlmmiXTJsT39hdDIQB3CKdTrcu+22cug4yTQXQc0LfmZQU/3gGeySX8T6Sfpyn0d1XzAR5OE8enZAp9yWsJK84lhCZf+zcxB2PIdn6olTiE1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=1K6otC4L; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso947826266b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 23:51:15 -0700 (PDT)
+	s=arc-20240116; t=1745823280; c=relaxed/simple;
+	bh=48cNU57hP+b9UkBTib/Cvujad4ba1JubYtk40ZfdEz4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P7dAOxGqbPLymP5Pps9M5WlcZvyFURlJuyXtS7FDIUWIvu3yGiwhDnMmNm/anrQkSwe1bDE9XHuR4l6zx+w9sO3EE+n+ijOSAtfxRworv0ALxtiKWX6xkIvPUr/lTFz3YfG9ee5JvBg11ey8sdf1IPQwYPIcIVTLVFDL8Py/mcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpFdPQgS; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54addb5a139so4779800e87.0;
+        Sun, 27 Apr 2025 23:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1745823074; x=1746427874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=olp7njR9Ybm79qV02JWYfEZZNtFSE8MfHDfoR2yiSUc=;
-        b=1K6otC4LVS8Mr2e6mKhawp9VCVtNjoaiXCOU8gPOnpx/XLl/euBLq5mV+dzC8MRa9u
-         xyD/rBCRFZ2eOrfwngfGPbTYBhMA7O4xaJ8h9GQKDMiLIN6zKbjHtVBA72pG8tc4wNy8
-         r93ENVJB9hSzfvDyd+6Ogdx+48I7BRzwGceuOtj4aGnt5SI1tBwletGkBUsg1AcM1mx+
-         yau5zc/m4KGbPKUZdH50LBq7TvHx+k1jM8yNY28SWcZHZx0KZOWzjthAEhJ0xGhKYU7K
-         lWqSlyZDLLff1ywCcDvWOXXJ/EOPC/Gzo2G7WILW5jiyPDSDcQZerUA97EgJHHUllxdt
-         tFtA==
+        d=gmail.com; s=20230601; t=1745823277; x=1746428077; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zSekJLgCgUpPHCoaul8BTpjij5Bz3zhv9bJ5xoXvV60=;
+        b=JpFdPQgSKsNmcrytl1gyrhVY2cPKvfpAxfmdxmdIj1lndD0WghUOuxqJElf+LVSBw9
+         /uskrUgnL7ctcUwKbzexZSO0NNsBf94E5OMWI9hocMJBa5w539ifnehBYDtpbRy9kM2i
+         On+lvqLap7oQ7QyU2jaAv1N2LFbQBu7HlHDwKMj5kv/aqgIse+hp0UN6Nu7s3FVZqIVr
+         LKux2swJ+fV7qLeEbXRmMf+K0cfWZUxB6BL9Yg+DuwxWZDU3/p+sFpCtNaS+366y13Ay
+         suVkB74MwAMNCbqsZXK8Lei/NqnDB0HEiN3CTr3ZlZ2vrlMwZrQQmkUwr+7O1JOHrDmV
+         CqQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745823074; x=1746427874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=olp7njR9Ybm79qV02JWYfEZZNtFSE8MfHDfoR2yiSUc=;
-        b=rs3RfY+ApTeEbfqXSTArpuYvVSO4Bb22YP8ueZkoiylmkKBiaA3pUND8g0KBcCV7mF
-         aUWktW7Vvef9PNbSbfEtaZBF8446ysdyipVEnb6Tq0ob+vwgS4XKBZ85bPZg49pRa//4
-         7xCcSkwby0wGQ9ORg5a+y7ip+395OXGD34Kay+7XMpXDXo6J38q/zGAzDyYDEI2fbMcq
-         KTG3khUNl+NeYd1IYQwj7uMQd17BIIJLTPs3cf0rcqG6Zpsgksx2TliXbzK1ZGpY6cNO
-         TITMJlG2ntIKm/NzV09zA2iW3eM5rv1MEUVfpSZnzAlxuZrCFpnos+OaMb4nJ17Pb/98
-         R0PA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMwv4KMiaO2F40mYEpnAWBiwqw6raFL8SKV93JEXtKV/+pCcG/ysVWkGxOuc0KAeAijwuWtHiQhLqyVEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypS+Uhqm6ixUZSc4lXol63LSRWLl1yM+xav4XEOiBCQMbq7VmD
-	/fYQomzwhxH3VEqSKsrxFQ1aaU4FilSi4Wo5+GAuOLqsqDLAH2XIbqpSnEv9TYbvO/p5otFKqlS
-	4psdDsOnAHMSyQnEBHh4QtydrXCXI09WozwuGIw==
-X-Gm-Gg: ASbGnctspINbJGqhK3VimMynE9KBMh/htSiZEB+wEPpbL/dzeH7+fvBhdTMe8GJDt3d
-	pCReCAr9dvzHIjPwFMjrdsTw4w16c8a9Zl83QeH4uFkcIDYsYlKVcNCfx7LJbZ1U2fgZDlNPG9L
-	zSlWfcXkKFoYSLzv3wdG3W6yQ=
-X-Google-Smtp-Source: AGHT+IEtEaxs9n/fqGJEuZ8Xotr69RVdjbKFMaVctCQmuSvnkMpXaGIdiMr0ZU582rbQFSZfQks/8XyJ+CzfPm0I+P0=
-X-Received: by 2002:a17:907:1b0b:b0:ac7:4d45:f13e with SMTP id
- a640c23a62f3a-ace710a0eacmr947603266b.13.1745823074048; Sun, 27 Apr 2025
- 23:51:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745823277; x=1746428077;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zSekJLgCgUpPHCoaul8BTpjij5Bz3zhv9bJ5xoXvV60=;
+        b=i1sQVPZ9SlHbUIyaXTB4t+/veC0VdrlHN9Q4Ll8wqkxzJ/o/tEWjQ0pH+vNDN9lJzu
+         4gbFTvQAAGmjLbhEM1rM3/gpusQB1jMy6CTKLJtBIJx2vfS2WZrsFFce+DdF0gEdY41K
+         Vr0ynmANgF1xk601v7QfUafzNVMdf4utUU1eTz1fa7Tz6caKhyn2OxzZbEPWxwXf7qPE
+         nMrubD4g+JpOqvmZR2L153+GimYy8Jz66zEvT2vZR4BiWM9/f9QGa5E/fOLr1vXsMo8k
+         3sO72gTeNN5ovV0wlAFNzeZbJC4LxcwO3eJus+QpjZQ+zgt/NO/kFfhk6seXIUBqaN5y
+         A8qA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+3Q/B4dvorQXrRpHh7C4lo5xXdDMqsrlP6gQ9whJTymZ9XpdGRxDqxDg/Jm+vLZRDIxup3I0Dnaxt@vger.kernel.org, AJvYcCU1oxFwGepUnjPCoeCpVJKlFS5nHoRui5a9FvAP39ZLPeTQibK4xtaO7falTFjDg6ykaJnu3y4sQoe5@vger.kernel.org, AJvYcCUG+WjwHbqqLWvuLXpbBCL6utKHsU8/kMs9jTnA8sFE7mSfUR3uPFyoI0Gmm4bZO8yGYQXqlCX5YvQhrnJv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMJwei8dNqTeOj/JOfG1cSweTMUZ1t94NUv0Aw0ItVm1VrsVhm
+	u1e9syko7u6pQ5WkLZM8FLUqYxY73VAxSipqUpJHp0P4G7aU5zFj
+X-Gm-Gg: ASbGnctzu+LjskK8H39LEg3qF8va/WCEXc5GIx6C2kli1XuJB4D76TvJRL1PdmCL5jL
+	ihtsUQ5ZQ2ddwh7kIO0MQOEQavWte7MF6L4C4awKzJOU8G2DIvXYGIsfhaHqKGJewl6+UjkXbri
+	ze02mPk7F7HA6VRbTkqnohUkDdJ8je4YRGh4vznPxo911ip8oDuRni6z0J9J5hUI2qiXEi/1tbH
+	ZqNLaDbBZgADlsW05NrmxxhkvNR/DW86KRATOezAa/1F+Nz/8dNMuAW58dikQI1MvYNG1yvgqxh
+	0DuzGL5tBkv/2E3NWN/rsW5LnpHHkIGBT+e1BM6JwBqUxdDoMEDY0OC3kmhKoULU3y1qVMpGPjs
+	GLDym8JrP
+X-Google-Smtp-Source: AGHT+IEc7trnuoOf+WcMfa6zN9tP2pMADhRPX/raBXFSY9J8IDEUOb3IODRKljuVqg38ONQCP/AaQw==
+X-Received: by 2002:a05:651c:3127:b0:30b:a187:7a77 with SMTP id 38308e7fff4ca-319db959b6amr21917121fa.4.1745823276705;
+        Sun, 27 Apr 2025 23:54:36 -0700 (PDT)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317cf659c4fsm20017871fa.21.2025.04.27.23.54.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Apr 2025 23:54:36 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v2 0/3] MCP3911 fixes
+Date: Mon, 28 Apr 2025 08:54:10 +0200
+Message-Id: <20250428-mcp3911-fixes-v2-0-406e39330c3d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250420070251.378950-1-guodong@riscstar.com> <20250420070251.378950-3-guodong@riscstar.com>
- <mzfiyc2me2smqrrmiymzkzxvsyjmst6ggy7scq4wxz2yfj2ef5@np3h3k467mbl>
-In-Reply-To: <mzfiyc2me2smqrrmiymzkzxvsyjmst6ggy7scq4wxz2yfj2ef5@np3h3k467mbl>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Mon, 28 Apr 2025 14:50:52 +0800
-X-Gm-Features: ATxdqUER8JSTuuOTantCFeixTZRLC93zvf7G5uIviwPU2QmuQNBr7asOpX-Fl3I
-Message-ID: <CAH1PCMZ4hqYo9SLCnzHYp_EiQKs5nhgW3XpxwqLEk4eX8=vWPw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] pwm: pxa: add optional reset control
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, dlan@gentoo.org, p.zabel@pengutronix.de, drew@pdp7.com, 
-	inochiama@gmail.com, geert+renesas@glider.be, heylenay@4d2.org, 
-	tglx@linutronix.de, hal.feng@starfivetech.com, unicorn_wang@outlook.com, 
-	duje.mihanovic@skole.hr, elder@riscstar.com, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABImD2gC/3WMyw6CMBBFf4XM2po+BV35H4YFbQeYRChpTaMh/
+ Xcre5fn3pyzQ8JImODW7BAxU6KwVpCnBtw8rBMy8pVBcmm4lootblNXIdhIb0wMR2Wl0Ma0rYf
+ qbBGPoyqPvvJM6RXi58hn8Vv/lbJgnBnrub106HQn7tMy0PPswgJ9KeULdaJFUKoAAAA=
+X-Change-ID: 20250423-mcp3911-fixes-ef3b2145577d
+To: Kent Gustavsson <kent@minoris.se>, Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kent Gustavsson <nedo80@gmail.com>, devicetree@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ Lukas Rauber <lukas.rauber@janitza.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1177;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=48cNU57hP+b9UkBTib/Cvujad4ba1JubYtk40ZfdEz4=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBoDyYXzDADfwYyTazTzjCGvtghTHyJe6Vm4hiTm
+ rMrhuRbgbWJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaA8mFwAKCRCIgE5vWV1S
+ Msj8D/9JplE+wRUeMCYYV5AqNwZ3WjJF+ZiJg2MUzg4q1EeHvFD0C379j73sX6v3TRJyNiitlmN
+ zq0oFffuoAxuh9oOiVvobJwpH+WdySWfV18XyJIBIghJCjq0zyFUDAu4bWr/lUxbSnay5R97LVQ
+ O6Ym9Q0ACnxDa+o/IxdT9EhCwOWfQCa12nWEaTixZJAW3p+0ckFh9EpqMlVq++Mva8oYvs4cWzq
+ mEhT12llGGVQJebOYHdGEwTlJ89lBLkYBEP1MOrU7w3AeMHscwyU7YR4yuLhwQDjudFSjfcavRd
+ vhXxwXpNcTDpsS8sSQB12Jn+j471DGIUcSggW0von7uUquizi68kSjq7hconDeOOn4j/xl0FDfK
+ cHtYpy7z3vG5hSg7r3PvrK3wpNnpMxQCNSEF1aq9hzI0A1mKPNMgXHMvVU/0UK/pO5FtmXYqCfc
+ 8ga9OBDe1k4lCrBn0wMNPwlhYAYVSsl21uX77TJbFeUCnPZ3LsDjFezQUZgSzustiLshjqq/kXW
+ KxnbQ3rxZ3X7Njub3yvotrvAnwfNY9B6TflnjWSQX5INEiw0C+a1Uh27nmimfOxXWO4+Eo/6X9+
+ XDpXTA6KlA0ODypfFlSHjKapgn+th9MEcW4huQ4arVZReaHuldYytW8c9khhVmdwXKXwo9fXo5J
+ 9izchAbBIy+7tDg==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-On Thu, Apr 24, 2025 at 3:30=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
-nel.org> wrote:
->
-> Hello,
->
-> On Sun, Apr 20, 2025 at 03:02:47PM +0800, Guodong Xu wrote:
-> > @@ -49,10 +50,10 @@ MODULE_DEVICE_TABLE(platform, pwm_id_table);
-> >  #define PWMDCR_FD    (1 << 10)
-> >
-> >  struct pxa_pwm_chip {
-> > -     struct device   *dev;
-> > -
-> > -     struct clk      *clk;
-> > -     void __iomem    *mmio_base;
-> > +     struct device           *dev;
-> > +     struct clk              *clk;
-> > +     void __iomem            *mmio_base;
-> > +     struct reset_control    *reset;
->
-> Changes like these are the reason I prefer to not align the member
-> names. Luckily reset is a write only variable and you can just drop this
-> hunk if you use a local variable for it in pwm_probe() below.
->
+This series contain two fixes for the MCP3911 driver:
+- Add support for reset signal
+- Fix wrong mapping for the coversion result registers
 
-Thanks Uwe for the suggestion, I agree.
-I will update it in v3 by dropping this hunk and using a local variable for
-reset in pwm_probe() as you recommended.
+The register map for the conversion result registers of the MCP3911
+differs from the other variants so make sure we read from the right
+register by introducing device-dependent .read_raw() callbacks.
 
-BR,
-Guodong
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Changes in v2:
+- Fix review comments from Andy Shevchenko (Thanks Andy!)
+- Link to v1: https://lore.kernel.org/r/20250423-mcp3911-fixes-v1-0-5bd0b68ec481@gmail.com
 
-> >  };
-> >
-> >  static inline struct pxa_pwm_chip *to_pxa_pwm_chip(struct pwm_chip *ch=
-ip)
-> > @@ -179,6 +180,11 @@ static int pwm_probe(struct platform_device *pdev)
-> >       if (IS_ERR(pc->clk))
-> >               return PTR_ERR(pc->clk);
-> >
-> > +     pc->reset =3D devm_reset_control_get_optional_exclusive_deasserte=
-d(
-> > +                     &pdev->dev, NULL);
-> > +     if (IS_ERR(pc->reset))
-> > +             return PTR_ERR(pc->reset);
-> > +
-> >       chip->ops =3D &pxa_pwm_ops;
-> >
-> >       if (IS_ENABLED(CONFIG_OF))
->
-> Best regards
-> Uwe
+---
+Marcus Folkesson (3):
+      iio: adc: mcp3911: fix device dependent mappings for conversion result registers
+      dt-bindings: iio: adc: mcp3911: add reset-gpios
+      iio: adc: mcp3911: add reset management
+
+ .../bindings/iio/adc/microchip,mcp3911.yaml        |  5 ++
+ drivers/iio/adc/mcp3911.c                          | 58 ++++++++++++++++++++--
+ 2 files changed, 58 insertions(+), 5 deletions(-)
+---
+base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
+change-id: 20250423-mcp3911-fixes-ef3b2145577d
+
+Best regards,
+-- 
+Marcus Folkesson <marcus.folkesson@gmail.com>
+
 
