@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-622630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68E3A9E9F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1598A9E9F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69EE116794B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8464E189190F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E664C1DEFD2;
-	Mon, 28 Apr 2025 07:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC54C216E26;
+	Mon, 28 Apr 2025 07:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EPktEH1D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IjNveLpm"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D100B23C9;
-	Mon, 28 Apr 2025 07:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7038021516D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826467; cv=none; b=o/h7NxLsXUjdhlvkrHUOniQqsBpY+sctjeUfMGDrA1Kyr5gz5dbfaOaC8cLcVHpCgXI3pQyqOEmh26EWb6LomgMnePbF3rmLbGjiN4QnkjlM+Y7mU8mUxFmRsCV8y/53yEeQg89oRIG/uX2qDbZS9rPuA3o3hMarxXqYdhtEo14=
+	t=1745826534; cv=none; b=IMpkTJ6dle/tZ8JadrraWQ1mc49ggTRtqaOLfTmwjY6KAl4lp2rC4nOXE99TDzc30Pf8EhUqPG9skPmnTuVlQi4T1vHwM8u9YhASdzryjYm2+9Cvj2I7n8uaFvg8d+DO85KjRjnxYiIiJjIJjf0hllrbhHs62ji5Ae4RgcphTe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826467; c=relaxed/simple;
-	bh=V9VO8d7GqRn1Ql1CwDZyQu1tYggE7XNW+vS8mR6BDDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXTa+8bB12MI8+NgaTDfjPSUgdT/VzeAYaGGNqonvBFwZKyvSKxepsrv8SFfEsMjEj0uUm00Ip5asr/e3+Cz9iJTr2+S1epZRWSYQC2gtf09YKbUbzBXSlkivvhLK158H9bJhIO62ESABj23b6GmGGdOdUPVVjVDEH1EkVXLBGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EPktEH1D; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745826466; x=1777362466;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V9VO8d7GqRn1Ql1CwDZyQu1tYggE7XNW+vS8mR6BDDc=;
-  b=EPktEH1D6VAx/+uXcUPUusV7Z7SVdMVa4NxcfMzyMS+iBlPoaKyLPVc0
-   86wXNmRjnb1zJbW40SmorTP4woAeuADB2fMfNyQhsWe6HSG8VA0a3HrJo
-   ugJdLNFG8lMpA322UT/THA4qnlyxePsw3PlqPhoTKM0Yl9TdrHnEVnByM
-   s4ZtyVQ+dpCifUggT3u0VtXsCBt9EB9aUkoQro3o8NXllkhvoSzZ9SBCh
-   tP5NxxrP7mPm+UoZRolvcbaorcEv/YsB20ykAcBNpUG9MDGV95POSlVtN
-   wbobr6t9a/W11mRH4xWaXqnrA0/V54VjGJo/2l3IFDaFCTf4qxQorraX+
-   A==;
-X-CSE-ConnectionGUID: 6g0JmwdYQyavyS68Zdm4RQ==
-X-CSE-MsgGUID: pml7PYGeTVq66dwedX6L8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="50060258"
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="50060258"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 00:47:45 -0700
-X-CSE-ConnectionGUID: sbVqtqoyQiO34GlzQs/iVw==
-X-CSE-MsgGUID: hw9NucE/RAmkdkz81dmYqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="137494097"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 00:47:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u9JDH-000000011Mm-3j3O;
-	Mon, 28 Apr 2025 10:47:39 +0300
-Date: Mon, 28 Apr 2025 10:47:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Raag Jadav <raag.jadav@intel.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: (subset) [PATCH v2 0/3] gpiolib: finish conversion to
- devm_*_action*() APIs
-Message-ID: <aA8ym3GYoAK4lI2y@smile.fi.intel.com>
-References: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com>
- <174582608319.15717.12211907178640999391.b4-ty@linaro.org>
+	s=arc-20240116; t=1745826534; c=relaxed/simple;
+	bh=0aPbq7QjWZD6WH/+NpInspV5AqubEwAIG6v/0OXrdB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nv8LVf5k9gGHhMxhQgl5bBlWPYBihI171wWQeEsxzoBeoXMsuJvwYec/ss2Q6aRZyWqYs7ML50vzqz760mqhPSGcURf1DwpIyvP/DmSbVxVPCzcpFHRyF/pAl2mJ2WmvMcaZSk8AQmxZreVhBqlT0Rk8C3aoGXkSelVV9S0JnVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IjNveLpm; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-549967c72bcso5020614e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 00:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745826529; x=1746431329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1PCCupPubZed2dSKQMnkWeJ2fjhjsL4Shb7ISSeWciY=;
+        b=IjNveLpm13oF5r2UvpgJceynHNCNU8TNihB6eRTsivQQ+/KLBnRoWi9JF/FnpH/Meq
+         juVVH0q72HorDvRjQD4atseEsQZYH7Gq1DDsw5VFfWLI/fo6CWmibascIH1Q/7gGO1QL
+         AbwVDvoi2M7TDjILYMk+c9s3qI9BrXvmUmQ/Xpx/BE7ATdIle6asMFx7Kr/L5NP75+4a
+         +kGWRhtau2Js6PM5jZtR7s0w5x78HD8U5BjiZHFCJbL8JLUmP78DMKV22g1xUqjDRNxz
+         hopxodbjKUQ3E82qD5pGWEOIIFZuKpDsyGx7ncF3eb9DmjV+3fPIUEhQWFOKkaQcxGVE
+         t3eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745826529; x=1746431329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1PCCupPubZed2dSKQMnkWeJ2fjhjsL4Shb7ISSeWciY=;
+        b=aIgINxu65MpS99dT1Gq4Yr4CzHpF4q/Ks51JgbkwrdLHIOtIQaohzZiJOvbn2dWTA8
+         5/MlgifWlRwnxygQfEDILZBSAaSEJkCkRoihaqGgAWmc5YeKi5WgxBxf2JBNO5yew1+7
+         D/+jBKz/5f8fFvymNCmoixOzuNerr+bRKPeqwK37m1O915QZMnm4ptiFW7Y9TryT0wIC
+         51XWP3btqYFgBB/SI5/s1LcjlBJlUr8vJe4mc2inQblcjlDyexcnx6sqA/yE3U8fO/RE
+         cU1+vBAnCq8qoIU8KpF3hS/o3vm2nGdSk3xSqKDZErF9vqGcJ2WjOoJXDpF7YBB+qkMg
+         N/qA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0eT+a/IASd3HUQe6FAfTAqzqb06tve6yJx/0ucQhFQFb8CENWYp4DGbInNuFsxIzSIgElofT3upK58DI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbInnncm3SLckIUkTUKR/AfRsTAdCLJehstbklpA9EDNMiW5Qe
+	TmP+4syRFyewFe7qH5jmZarKLNVC9wiRlNlhd9kaVxgI3vdIArXoSrM2LhUz8bmT40hmNLy1K7r
+	66wzmuu6UazGPisSLPkqAS+XQVwr2Wex6K+ODOA==
+X-Gm-Gg: ASbGncsdOCErNXuRZ5vaRVYd627qpMZID89qzJ0rK4Z6+12BupiCuaVVwbFKhL/AZbO
+	hk43NkceQlOoIz9IQK4R8SVW3f+g91k48Xctfwf+lyw/na8su6IhXy3ra7REaLrbHPBor63daeO
+	y2OdO+Fbv7uRVnNuVFSsZF2NBiBgalEceFKTLxKNEBft4P++Ajg8uGJcx5m1YlImPM
+X-Google-Smtp-Source: AGHT+IF0HgPn8OeKW5WS+KDxofSmzOi/8NCd/YBlI5lK1Rs8gPsRVwuBuxWF7hz9jPutkk72Ap10CvMM1TUnDBKdFrA=
+X-Received: by 2002:a05:6512:3f1f:b0:54e:8183:eaa3 with SMTP id
+ 2adb3069b0e04-54e8cc134b1mr3025602e87.57.1745826529270; Mon, 28 Apr 2025
+ 00:48:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174582608319.15717.12211907178640999391.b4-ty@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com>
+ <174582608319.15717.12211907178640999391.b4-ty@linaro.org> <aA8ym3GYoAK4lI2y@smile.fi.intel.com>
+In-Reply-To: <aA8ym3GYoAK4lI2y@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 28 Apr 2025 09:48:37 +0200
+X-Gm-Features: ATxdqUFRtjOrKeJMUsvJ7WCe4eV9I3R70d8kFAEM_J2BwLrUZ6JPObHuV-g07WA
+Message-ID: <CAMRc=MdeVrgzVKSjbNzBz+Kf2SqqFY7KO=yprU7GF0Nbbcq4ow@mail.gmail.com>
+Subject: Re: (subset) [PATCH v2 0/3] gpiolib: finish conversion to
+ devm_*_action*() APIs
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zijun Hu <quic_zijuhu@quicinc.com>, 
+	Raag Jadav <raag.jadav@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 09:41:52AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> On Thu, 20 Feb 2025 18:20:25 +0200, Andy Shevchenko wrote:
-> > GPIOLIB has some open coded stuff that can be folded to the devm_*_action*()
-> > calls. This mini-series is for that. The necessary prerequisites are here
-> > as well, namely:
-> > 1) moving the respective APIs to the devres.h;
-> > 2) adding a simple helper that GPIOLIB will rely on;
-> > 3) finishing the GPIOLIB conversion to the device managed action APIs.
+On Mon, Apr 28, 2025 at 9:47=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Apr 28, 2025 at 09:41:52AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > On Thu, 20 Feb 2025 18:20:25 +0200, Andy Shevchenko wrote:
+> > > GPIOLIB has some open coded stuff that can be folded to the devm_*_ac=
+tion*()
+> > > calls. This mini-series is for that. The necessary prerequisites are =
+here
+> > > as well, namely:
+> > > 1) moving the respective APIs to the devres.h;
+> > > 2) adding a simple helper that GPIOLIB will rely on;
+> > > 3) finishing the GPIOLIB conversion to the device managed action APIs=
+.
+>
+> [...]
+>
+> > Applied, thanks!
+>
+> Thanks!
+>
+> > [3/3] gpiolib: devres: Finish the conversion to use devm_add_action()
+> >       https://git.kernel.org/brgl/linux/c/d1d52c6622a61a0ae8dd2bd2097b2=
+5c0f553d2f3
+>
+> Only one? What about the first two?
 
-[...]
+b4 borked with the patches applied to gpio/for-next through an
+immutable tag but all is there, please check the tree.
 
-> Applied, thanks!
-
-Thanks!
-
-> [3/3] gpiolib: devres: Finish the conversion to use devm_add_action()
->       https://git.kernel.org/brgl/linux/c/d1d52c6622a61a0ae8dd2bd2097b25c0f553d2f3
-
-Only one? What about the first two?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart
 
