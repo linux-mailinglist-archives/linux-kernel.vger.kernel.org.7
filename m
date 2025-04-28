@@ -1,282 +1,189 @@
-Return-Path: <linux-kernel+bounces-622832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D10CA9ED51
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00353A9ED4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A75133A868B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E772168095
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD00725F978;
-	Mon, 28 Apr 2025 09:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B2825EFB6;
+	Mon, 28 Apr 2025 09:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IIkj46+K"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gEuGzhmw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3B325F7A9;
-	Mon, 28 Apr 2025 09:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8881B4236
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745833941; cv=none; b=T3honlgvZWI7rfh7BUtTArzddZjwN2QGMcsIv7/nAqzZ/8jY+Rq9KeCfUkZtfjIhgD6IRm42LuRQp9GNpqKhJf96JTpZJEqHD6MKjxVXmiHIdBE3Tb6f07bu1b2GA5sSmEzGyQ8wnxTVAgCIYDHxBtOZUiD7Qn/CPZ6PnyRrRb8=
+	t=1745833978; cv=none; b=vAh4mSVt1IIE+A4ao7PV3SqyuOWp9MbXKA6v77mFWclSe1JxLiqwyZHWRe8+NTijD0uuARj4I1FRFb97+BV/Zl4Mw1Fs9qU+7jXew+ZSfDbTM2l4EksDTWLc/vGO81XX95pXLK3ZbSzN+SySpcSAzUiQe0q9JwKPpw1zix5qT34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745833941; c=relaxed/simple;
-	bh=dWpRQX+CGHl+qDOq8dzcQkHH9x2Cri+xTU+SEnQBc8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsaHTYooReM6bY1oG92bFGyBHaldDR3xCk2ZF53Swl8jfsXGfBv8gaH/rOPIWPFqkX2vM9B9maU8B3hoxZymimMyUyRSI+SwTu4HORCXvOtoncNEaXVOs1PU3n67BN4Gvr4CWEFZZ9opheZMAoecn5bSMLTnu7RnCfCcruBwoS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IIkj46+K; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C734489A;
-	Mon, 28 Apr 2025 11:52:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1745833930;
-	bh=dWpRQX+CGHl+qDOq8dzcQkHH9x2Cri+xTU+SEnQBc8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IIkj46+KmFFSzp9NZncTswS+3fy+umEfUdCLs8tj4tuCeqQFbT6SSr8PlUtpmAxWK
-	 BH3eQKDZ5HUOiWi3u6aU+gRcN3mzH6u6pBk+4coU/VI/YslPk3yKVCBZLhP5SmRBU1
-	 74fwAlDNqUS5l1I8QRGVe9OPe9jvao2/QpiKg+V8=
-Date: Mon, 28 Apr 2025 12:52:08 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Michael Riesch <michael.riesch@collabora.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 03/11] media: dt-bindings: media: add bindings for
- rockchip rk3568 vicap
-Message-ID: <20250428095208.GD3371@pendragon.ideasonboard.com>
-References: <20250306-v6-8-topic-rk3568-vicap-v5-0-f02152534f3c@wolfvision.net>
- <20250306-v6-8-topic-rk3568-vicap-v5-3-f02152534f3c@wolfvision.net>
- <20250307-pink-dalmatian-of-kindness-f87ad2@krzk-bin>
- <Z8rBGHK9Tjx7D1D2@kekkonen.localdomain>
- <4a1e5834-df52-43d2-ab19-e3117840a001@collabora.com>
- <20250428092232.GC3371@pendragon.ideasonboard.com>
- <1b3245c1-2a4b-4854-ac2f-e89a52a454ec@collabora.com>
+	s=arc-20240116; t=1745833978; c=relaxed/simple;
+	bh=Qra0jDZ082u3o61wFUg8DO/d33Nm/eecQ74+ZCXcKP0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tdwyuyMN8Jap6XndLL1ft19Gbe0ShYsJlxvXOJqAsbtJUflK/Rb3zMn1BrkFLbHIlzuHMM+rGBr07uRpJTSRvt1BJZ/qmeC+z2FLTVhHS1gbt0Wf5bk8rO42gHcTujNVRUtr9ymumb4JWdCRggucM428MgbQpd1YyTsmvcsDgDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gEuGzhmw; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745833976; x=1777369976;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Qra0jDZ082u3o61wFUg8DO/d33Nm/eecQ74+ZCXcKP0=;
+  b=gEuGzhmw5GK3b8gzOTpXQYQJW/5uz2F21F6/RqZNQiG0BnU067u1O4Nz
+   cnjjnMBd8EDzTHg4ub+FP3kXvTP91tjRNNc45M9IbKbx9FkiPOZ6OYLa7
+   RMQoKR08aFMj534hNimfeskZv9xYw4jX8YCEXD2Ty8rvh6EIPBkUSogqY
+   suS8usLaPZ3leHIo5TKWrVoxo7orCMcXEhf+ZXusSYwUx2q1Hm9k8Pcs8
+   62qpdcW4ij5oLMH3LBfP1mblrySQ0i153qRpkYjA2Ef8ShBRyLADsgym+
+   TC/TG1vUaWQFT0/6mVr8SmDZHAPAd0q7Pd4txZVFWABhTvJW3MyhkYtlD
+   w==;
+X-CSE-ConnectionGUID: KLOPHo22TjuotmgLYqnhnw==
+X-CSE-MsgGUID: 4S3eICFnQ3+TmnjbsmwukQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="35029878"
+X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
+   d="scan'208";a="35029878"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 02:52:55 -0700
+X-CSE-ConnectionGUID: AlJxoydRT3yVcmDz1WNpAQ==
+X-CSE-MsgGUID: xdpgg3BkR0qF/8jnBps79w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
+   d="scan'208";a="164439560"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.174])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 02:52:51 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 08/23] drm/tests: hdmi: Add macro to simplify EDID setup
+In-Reply-To: <20250425-hdmi-conn-yuv-v4-8-5e55e2aaa3fa@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
+ <20250425-hdmi-conn-yuv-v4-8-5e55e2aaa3fa@collabora.com>
+Date: Mon, 28 Apr 2025 12:52:47 +0300
+Message-ID: <87cycwy5n4.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1b3245c1-2a4b-4854-ac2f-e89a52a454ec@collabora.com>
+Content-Type: text/plain
 
-On Mon, Apr 28, 2025 at 11:48:57AM +0200, Michael Riesch wrote:
-> On 4/28/25 11:22, Laurent Pinchart wrote:
-> > On Mon, Apr 28, 2025 at 10:11:51AM +0200, Michael Riesch wrote:
-> >> Hi Krzysztof, Sakari,
-> >>
-> >> Thanks for your feedback! Also, sorry for the delayed response, but as
-> >> the e-mail address indicates, there has been a job change in between
-> >> that kept me busy :-)
-> >>
-> >> On 3/7/25 10:49, Sakari Ailus wrote:
-> >>> Hi Krzysztof, Michael,
-> >>>
-> >>> On Fri, Mar 07, 2025 at 08:51:54AM +0100, Krzysztof Kozlowski wrote:
-> >>>> On Thu, Mar 06, 2025 at 05:56:04PM +0100, Michael Riesch wrote:
-> >>>>> Add documentation for the Rockchip RK3568 Video Capture (VICAP) unit.
-> >>>>>
-> >>>>> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-> >>>>
-> >>>> subject: only one media prefix, the first
-> >>>>
-> >>>> A nit, subject: drop second/last, redundant "bindings". The
-> >>>> "dt-bindings" prefix is already stating that these are bindings.
-> >>>> See also:
-> >>>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> >>
-> >> Ack. Plain "media: dt-bindings: add rockchip rk3568 vicap" it is, then.
-> >>
-> >>>>
-> >>>>> ---
-> >>>>>  .../bindings/media/rockchip,rk3568-vicap.yaml      | 169 +++++++++++++++++++++
-> >>>>>  MAINTAINERS                                        |   1 +
-> >>>>>  2 files changed, 170 insertions(+)
-> >>>>>
-> >>>>
-> >>>> ...
-> >>>>
-> >>>>> +  clocks:
-> >>>>> +    items:
-> >>>>> +      - description: ACLK
-> >>>>> +      - description: HCLK
-> >>>>> +      - description: DCLK
-> >>>>> +      - description: ICLK
-> >>>>> +
-> >>>>> +  clock-names:
-> >>>>> +    items:
-> >>>>> +      - const: aclk
-> >>>>> +      - const: hclk
-> >>>>> +      - const: dclk
-> >>>>> +      - const: iclk
-> >>>>> +
-> >>>>> +  rockchip,cif-clk-delaynum:
-> >>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >>>>> +    minimum: 0
-> >>>>> +    maximum: 127
-> >>>>> +    description:
-> >>>>> +      Delay the DVP path clock input to align the sampling phase, only valid
-> >>>>> +      in dual edge sampling mode. Delay is zero by default and can be adjusted
-> >>>>> +      optionally.
-> >>>>
-> >>>> default: 0
-> >>
-> >> Ack.
-> >>
-> >>>
-> >>> And this is technically specific to the DVP port (0). Should (or could?) it
-> >>> be located there?
-> >>
-> >> "Should"? Yes, makes sense to me.
-> >> "Could"? I guess, as we are referencing port-base here it should be
-> >> feasible. Not an expert opinion, mind you.
-> >>
-> >>>
-> >>>>
-> >>>>> +
-> >>>>> +  iommus:
-> >>>>> +    maxItems: 1
-> >>>>> +
-> >>>>> +  resets:
-> >>>>> +    items:
-> >>>>> +      - description: ARST
-> >>>>> +      - description: HRST
-> >>>>> +      - description: DRST
-> >>>>> +      - description: PRST
-> >>>>> +      - description: IRST
-> >>>>> +
-> >>>>> +  reset-names:
-> >>>>> +    items:
-> >>>>> +      - const: arst
-> >>>>> +      - const: hrst
-> >>>>> +      - const: drst
-> >>>>> +      - const: prst
-> >>>>> +      - const: irst
-> >>>>> +
-> >>>>> +  rockchip,grf:
-> >>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
-> >>>>> +    description: Phandle to general register file used for video input block control.
-> >>>>> +
-> >>>>> +  power-domains:
-> >>>>> +    maxItems: 1
-> >>>>> +
-> >>>>> +  ports:
-> >>>>> +    $ref: /schemas/graph.yaml#/properties/ports
-> >>>>> +
-> >>>>> +    properties:
-> >>>>> +      port@0:
-> >>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> >>>>> +        unevaluatedProperties: false
-> >>>>> +        description: The digital video port (DVP, a parallel video interface).
-> >>>>> +
-> >>>>> +        properties:
-> >>>>> +          endpoint:
-> >>>>> +            $ref: video-interfaces.yaml#
-> >>>>> +            unevaluatedProperties: false
-> >>>>> +
-> >>>>> +            properties:
-> >>>>> +              bus-type:
-> >>>>> +                enum: [5, 6]
-> >>>>> +
-> >>>>> +            required:
-> >>>>> +              - bus-type
-> >>>>> +
-> >>>>> +      port@1:
-> >>>>> +        $ref: /schemas/graph.yaml#/properties/port
-> >>>>> +        description: Internal port connected to a MIPI CSI-2 host.
-> >>>>> +
-> >>>>> +        properties:
-> >>>>> +          endpoint:
-> >>>>> +            $ref: video-interfaces.yaml#
-> >>>>> +            unevaluatedProperties: false
-> >>>>
-> >>>> Hm, does it actually work? graph/port does not allow any other
-> >>>> properties. You should use graph/port-base and probably still narrow
-> >>>> lanes for both of port@0 and port@1.
-> >>>
-> >>> I'd list the relevant properties for both DVP and CSI-2, either as
-> >>> mandatory or with defaults (could be reasonable for DVP signal polarities
-> >>> but not e.g. on number of CSI-2 lanes).
-> >>
-> >> Not sure whether we are on the same page here. As pointed out in the
-> >> last round of feedback
-> >> (https://lore.kernel.org/all/0b19c544-f773-435e-9829-aaaa1c6daf7a@wolfvision.net/),
-> >> port@1 is not MIPI CSI, but some internal interface.
-> >>
-> >> I tried to clarify this by changing the description of this port to
-> >> "Internal port connected to a MIPI CSI-2 host." The host (see
-> >> rockchip,rk3568-mipi-csi.yaml) has a port that is actually MIPI CSI and
-> >> one port that is the other end of port@1 here.
-> > 
-> > I'd write "Port connected to the MIPI CSI-2 receiver output". We use
-> > "receiver" instead of "host".
-> 
-> Ack. I'll adjust the "host" -> "receiver" wording change in all the
-> other places as well.
+On Fri, 25 Apr 2025, Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+> Factor out the HDMI connector initialization from
+> drm_kunit_helper_connector_hdmi_init_funcs() into a common
+> __connector_hdmi_init() function, while extending its functionality to
+> allow setting custom (i.e. non-default) EDID data.
+>
+> Introduce a macro as a wrapper over the new helper to allow dropping the
+> open coded EDID setup from all test cases.
+>
+> The actual conversion will be handled separately; for now just apply it
+> to drm_kunit_helper_connector_hdmi_init() helper.
+>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 46 +++++++++++++---------
+>  1 file changed, 28 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> index c8dc6fa0f925e35e9903a18bac7f78f9d8165960..36734639d19a3f279abc4631eb19d5c2b20ca315 100644
+> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> @@ -140,10 +140,11 @@ static const struct drm_connector_funcs dummy_connector_funcs = {
+>  
+>  static
+>  struct drm_atomic_helper_connector_hdmi_priv *
+> -drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
+> -					   unsigned int formats,
+> -					   unsigned int max_bpc,
+> -					   const struct drm_connector_hdmi_funcs *hdmi_funcs)
+> +__connector_hdmi_init(struct kunit *test,
+> +		      unsigned int formats,
+> +		      unsigned int max_bpc,
+> +		      const struct drm_connector_hdmi_funcs *hdmi_funcs,
+> +		      const char *edid_data, size_t edid_len)
 
-You can keep "host" when you quote documentation if it uses that
-vocabulary, but for generic usage, "receiver" is better.
+char* is weird for EDID data, but it's a pre-existing thing, and
+actually making it unsigned char or u8 isn't much better.
 
-> >> As to port@1 here, I am not aware of any properties that can be set. Not
-> >> even very peculiar ones similar to rockchip,cif-clk-delaynum. Should I
-> >> have overlooked something, I think we can relax the constraints, but we
-> >> should start strict, right?
-> >>
-> >>>>> +
-> >>>>> +required:
-> >>>>> +  - compatible
-> >>>>> +  - reg
-> >>>>> +  - interrupts
-> >>>>> +  - clocks
-> >>>>> +  - ports
-> >>>>> +
-> >>>>> +additionalProperties: false
-> >>>>> +
-> >>>>> +examples:
-> >>>>> +  - |
-> >>>>> +    #include <dt-bindings/clock/rk3568-cru.h>
-> >>>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >>>>> +    #include <dt-bindings/interrupt-controller/irq.h>
-> >>>>> +    #include <dt-bindings/power/rk3568-power.h>
-> >>>>> +    #include <dt-bindings/media/video-interfaces.h>
-> >>>>> +
-> >>>>> +    parent {
-> >>>>
-> >>>> soc {
-> >>
-> >> Ack.
-> >>
-> >>>>> +        #address-cells = <2>;
-> >>>>> +        #size-cells = <2>;
+A follow-up could switch edid_data to just const void *, and ditto for
+set_connector_edid() and current_edid member in struct
+drm_atomic_helper_connector_hdmi_priv.
+
+BR,
+Jani.
+
+>  {
+>  	struct drm_atomic_helper_connector_hdmi_priv *priv;
+>  	struct drm_connector *conn;
+> @@ -197,29 +198,38 @@ drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
+>  
+>  	drm_mode_config_reset(drm);
+>  
+> +	if (edid_data && edid_len) {
+> +		ret = set_connector_edid(test, &priv->connector, edid_data, edid_len);
+> +		KUNIT_ASSERT_GT(test, ret, 0);
+> +	}
+> +
+>  	return priv;
+>  }
+>  
+> +static
+> +struct drm_atomic_helper_connector_hdmi_priv *
+> +drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
+> +					   unsigned int formats,
+> +					   unsigned int max_bpc,
+> +					   const struct drm_connector_hdmi_funcs *hdmi_funcs)
+> +{
+> +	return __connector_hdmi_init(test, formats, max_bpc, hdmi_funcs, NULL, 0);
+> +}
+> +
+> +#define drm_kunit_helper_connector_hdmi_init_with_edid_funcs(test, formats, max_bpc, funcs, edid) \
+> +	__connector_hdmi_init(test, formats, max_bpc, funcs, edid, ARRAY_SIZE(edid))
+> +
+>  static
+>  struct drm_atomic_helper_connector_hdmi_priv *
+>  drm_kunit_helper_connector_hdmi_init(struct kunit *test,
+>  				     unsigned int formats,
+>  				     unsigned int max_bpc)
+>  {
+> -	struct drm_atomic_helper_connector_hdmi_priv *priv;
+> -	int ret;
+> -
+> -	priv = drm_kunit_helper_connector_hdmi_init_funcs(test,
+> -							  formats, max_bpc,
+> -							  &dummy_connector_hdmi_funcs);
+> -	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
+> -
+> -	ret = set_connector_edid(test, &priv->connector,
+> -				 test_edid_hdmi_1080p_rgb_max_200mhz,
+> -				 ARRAY_SIZE(test_edid_hdmi_1080p_rgb_max_200mhz));
+> -	KUNIT_ASSERT_GT(test, ret, 0);
+> -
+> -	return priv;
+> +	return drm_kunit_helper_connector_hdmi_init_with_edid_funcs(test,
+> +				formats,
+> +				max_bpc,
+> +				&dummy_connector_hdmi_funcs,
+> +				test_edid_hdmi_1080p_rgb_max_200mhz);
+>  }
+>  
+>  /*
 
 -- 
-Regards,
-
-Laurent Pinchart
+Jani Nikula, Intel
 
