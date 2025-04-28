@@ -1,193 +1,136 @@
-Return-Path: <linux-kernel+bounces-623848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB968A9FB7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 978D7A9FB81
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3A01A87366
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17D31A8739D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D00F20A5F5;
-	Mon, 28 Apr 2025 20:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C4220FA86;
+	Mon, 28 Apr 2025 20:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x+hzPssk"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Doiy4D3q"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD2D204583
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 20:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEC220969A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 20:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745873931; cv=none; b=EaoYZMkNf7v+Z3qnQcGrmcQc1+GHVdBMkgkhNU3Do2RDuNoK8mE+JgMbHsG/GOi2aNMQuW79qKeQwF+GQ8geGN1kSWMhFWc9md5PQXsj2G6dXGivt3UNDdRiF1PvlzT6RMZR80OcYuL2DP2VVzSpu6NUGOYYKBzW+vJE35OoMKY=
+	t=1745873986; cv=none; b=MfPxEFHAfRZaqVG/8WZQ71AYOBjOjGgc7S4g+/SNFLuxl82Fh3lo5AYIBnHy6W/1dlFq0xoJeKiJz+wqZf2gxp6zTafk7iSuAsiYrglQ4PuU1/wOdCGblXdM/dGsgTBtoUBQzZvQ1wddYEYKAzeDf1EHlmjaSrv9jLUT4R/m3Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745873931; c=relaxed/simple;
-	bh=4iyX54oCBGEccZV7NFgaUB4UpcQsiWByq2oxmUaqGlw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=soG4KZo1bYfSR7qpaKwlxhPOuyCxCz0gIo6HnZEzsgtxJakMXBCRxsVopA2SK9lT6G0TaLw4XJANfeUrHkup+KPuEwII/XeC25vftPKvPTIhKK85NPIDnZM/74XJbZjztJpRdUVnEPrkuyUQkBQhAdvzqIJoL18GXS/+Bbv3Z2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x+hzPssk; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac25d2b2354so782987866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:58:49 -0700 (PDT)
+	s=arc-20240116; t=1745873986; c=relaxed/simple;
+	bh=QvUul7P7AsGMFv4R3G/+ROuDAPMlgtEDwetlk7UIGB0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ohp+VQpy2XcMEcwvnYenOJ7c5jWOxdR3RZ+p/BHjBuPBX1wvWuHkkxqGUrLhputzkKWMq6jDVKVqbBiGxdawjVWqdYETxpzI0wL4CQs/6IbwKBwxuqOeIjIj8rT6JP/zPk78naNpNtuhCjb16olX8uObFeRE6EitEnkPnMjko14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Doiy4D3q; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72b7a53ceb6so3437356a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745873928; x=1746478728; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cXxnMI8M/GtLF+9NF954ti8G8yA0onSPXV9Pub/d3Ic=;
-        b=x+hzPssk6E5TBhCGflnXFqUj4cF5oNUlhSYcFHf+sTR/lVGLgHa7u0r0WcH2/bqPuR
-         22gp0cf1/lbngdsKRfIpAzR3vmgVUMAKimaGucZ2CImOVo541aHPkByIWAL878tdpmKn
-         AlskYVy2KqyRl/vLVbRVde+t8+nJgvrut/sN/uV2u1ytrLSrx3uK+edlA2XIpC/wzPb4
-         Dqw7aMUKQ7bJPk3XKSL/IeMB4Mw+XY51au0aRwy0NRe9AOk2zx6YLayyIKmfXdWsBTFk
-         hB8Xm7e9QKwftq0sTG2hRqkMuEHRzUMiEfjsT7+KjNHpayuMace8N+vb7L9QCVJ5QkZE
-         adcQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745873982; x=1746478782; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y2EIqTs1TgX6bm49NLj9s9Ql9X7BAhggXRPkJc6829s=;
+        b=Doiy4D3q6on6By+MY3bOL09b5mlTh1E4wRn3DWh8Q1gv4PUpuThtmYh+H9uVbBGXgH
+         HOs8aKjA1ILNQ+5wwr+we2LKEmhHMR5gRcHa/+yfai4HW/Hsq4VdjrOO5qtwwu/uOsOC
+         m7fnQREJBEh/AKM0uFQOpBHcN+EK5JaRXSZbZvrQhFCK+sr3nHcrhQE1Q5/ac7v1A5hA
+         KVzngIGrCyPHloiNCVBqpmVsTtBcImyMs/7YGpjvW2jzIRMkLeOiJd6FqcFJK9VrHR0j
+         /VEjLaLhrgRrt2+5KbG9InnFw6yiMIuoP8iulR8DiHWeab2ysnHBj5dP6iuLyTi14+Yj
+         UiYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745873928; x=1746478728;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cXxnMI8M/GtLF+9NF954ti8G8yA0onSPXV9Pub/d3Ic=;
-        b=ghGHe+uLAPLCTKOA6M5+eFq54dbZL9B2xKvOyndqhnFE8wOV1GLwYdzhrUEybdz399
-         MkTvqpjkUc6iVQHeqHxTMIWu4u309c3HBryX7MG0ZNnVwki8EVTPtSBOjqvpyiok7yaa
-         dbdKjSEREPhl/znHliB6M5NE3ORFyRpAaoQapqcE7B9I09dIRSc279fUHHMXRQ48RQI7
-         rMBq0uMQnfkXsDpCrYlVaZ73GvPDyNeTdRS1dkwjY5tWI29jne1b5V9o/i9YReGncqSj
-         EvfZLdblepU/c7X7zFDIL//FncXoSM0JbOSBcoYCgnDTp4HLOwQsCrUySSerf/LoxrY9
-         r/RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnjkP8sQbvLzWoUTFJp7806des/BUQxFtxqzSqtTkIMdER5m7lqvuibYx3DaJDuoHW/+TQ00S8XiYDE4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm07TUTejgnjs55LrBEzF2Cuw4QG5tc4RevsVivJ0htDGaLczK
-	YdQibNMEjeECoDXcWCXm3+7F0PyXl7fKcu7sZuQnySOzqZG2KxkOpJND+DvgjoN2oZ8a4uR2LQR
-	4SGTR+q5iebC09oQXRHezRlP0EuArX1VAm1g=
-X-Gm-Gg: ASbGncu2loIFA/emHqchOxe0zEzBCXbtGezU5H+bn+Zj6QnJwkV5L1nhLzy9aFplTR8
-	G8GKJaqONwRB708cy39l9RmWuCHP7fweLHfYIf/wwg1gblv+uYXaYiUdv1L5SlGYLNWgud6mA93
-	KoDZ3dO+Gcl9ys9Fd/TNk=
-X-Google-Smtp-Source: AGHT+IGOyelpELUrcOaJAvR9wIXmVNLb4kVyS6Bj3YvQoR4friAxcC5mv6fARKTEWbb74RFaxnK/H/YGZe2ubcspY0I=
-X-Received: by 2002:a17:907:2da3:b0:ace:3643:1959 with SMTP id
- a640c23a62f3a-acec4b404d3mr117462266b.7.1745873927652; Mon, 28 Apr 2025
- 13:58:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745873982; x=1746478782;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y2EIqTs1TgX6bm49NLj9s9Ql9X7BAhggXRPkJc6829s=;
+        b=KlTPxLYvYcm5cQFpnwcwpmdA1z+vi1lNbV2MfRYxgnrU5+tPA52oUiawPH18TrCR86
+         6FDhYvl+1EE8VumLLyy0NlZL+iVyH/bFud1dbi17Jtdp9ySRNQPrGinqJuARxYK7TdtV
+         /JltDfIJyYtukIM7ay7JgOeEL1CvLptR3+d+NoKYn/X8tcSwpCZJNDZmHkr1Al3rXgXz
+         9dDBk2K6QLPePGlphx12bz5ARdId03RN+py98V856C4hK+MLo9JhncRusEP/t4IXE2Ha
+         rhReK/uaJHbuYvCWWPzKSFoWl0Vjza87RnY1wBGhhKnDvmcRLyjX8mmoHi0xprlkY1+S
+         uWAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPbnU25GO7GxiubY9i5DwdkmDdPpYFfjnR96ZnZE8rgUiHsqiGoSl/4iUOMhh728czoFbr+xh5Z21jyCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4wPvWWIkDzvzAz2uhfEhdGU4V4W+hRfYTietgIrjpxqqIS5cY
+	blH7Cn/4ZwYZWsMfhkpeR0QHOa+LtaEc4BZvQSE8Syed9DfC7udND3vLF6kKIr8=
+X-Gm-Gg: ASbGncuHql5cKTrTNuweErJ6Ml/qPmMSKd0i1EqMy6rQq49F5LO3KX1HM2ymrGDok4p
+	ljlfr+qmwWwkkYCbmCtzTNaC2jAgSKJXyenKkEtnAmt7XL8JxkZa1gVOdVx4RrS5buBPjX29Jcg
+	3fHlhyB5ICReqSQZSNgA+8cAq4vXeCAA246rVUWTf8OtxG9hZPlaxn7utJhLmAJ2FXIGg/62C9z
+	KzmPrJGT2jDPlMvTTNdIHTNAUEkDCJMLwo9NUFULrS7FAcgZvuPkxxarDx/OWyhWiRTS1/EEneH
+	3FMNO5/55HhFg2093PpEOwU4i/n8ubHhechKEU1dYu+NwFA=
+X-Google-Smtp-Source: AGHT+IHzkS6dTmYI2nXJFRjdvYktsXRp0acyZXyKq5290XGI313oJ5apKfMQaKbv9asJ/o2fv3/mzg==
+X-Received: by 2002:a05:6830:6888:b0:72b:974f:de49 with SMTP id 46e09a7af769-730898ef2dbmr386791a34.7.1745873982408;
+        Mon, 28 Apr 2025 13:59:42 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:cff6:9ed0:6e45:1ff9])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7304f056ed8sm1907614a34.0.2025.04.28.13.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 13:59:41 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/4] spi: axi-spi-engine: offload instruction optimization
+Date: Mon, 28 Apr 2025 15:58:55 -0500
+Message-Id: <20250428-adi-main-v1-0-4b8a1b88a212@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wiq=E0fwJLFpCc3wPY_9BPZF3dbdqGgVoOmK9Ykj5JEeg@mail.gmail.com>
- <CAHk-=wip2-yTrWpAkrUQ0iejEo2PjReddu4xntwBvdnSvWDbzg@mail.gmail.com>
- <20250426200513.GA427956@ax162> <CAHk-=wgPCbZv0JgqoNWMOO+p=N772YW16xYk_pmb1GU7aeuPFA@mail.gmail.com>
- <20250426232344.GA1395819@ax162> <CAHk-=wha-AgeeqATWRrKuopM4fKhhF_tZE_raQM77qO7Zd3fOQ@mail.gmail.com>
- <CAGG=3QUk8-Ak7YKnRziO4=0z=1C_7+4jF+6ZeDQ9yF+kuTOHOQ@mail.gmail.com> <CAHk-=wgrT9++rFTnM1vh3bwx2Pcc18anDGQCwEL+0d2nDm3p+A@mail.gmail.com>
-In-Reply-To: <CAHk-=wgrT9++rFTnM1vh3bwx2Pcc18anDGQCwEL+0d2nDm3p+A@mail.gmail.com>
-From: Bill Wendling <morbo@google.com>
-Date: Mon, 28 Apr 2025 13:58:30 -0700
-X-Gm-Features: ATxdqUF4QkWNeHvPaIyn2o9vl9GR7lp0ClD6ieeSP_GVkSD20WfrHb3VJY9h8jg
-Message-ID: <CAGG=3QVJWRNUEAm=bbszJGvAwT-1Fka4hd-0R6Uszyx8WZ3zQQ@mail.gmail.com>
-Subject: Re: clang and drm issue: objtool warnings from clang build
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Justin Stitt <justinstitt@google.com>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA/sD2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY2ND3cSUTN3cxMw8XRMzCzPjxOS0ZFMTAyWg8oKi1LTMCrBR0bG1tQC
+ 9orVsWgAAAA==
+X-Change-ID: 20250331-adi-main-46863acfc540
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1361; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=QvUul7P7AsGMFv4R3G/+ROuDAPMlgtEDwetlk7UIGB0=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoD+wYlIGLHSGHsasichpx7lAD1+EteZmTn+Bwi
+ JfGOdspmNmJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaA/sGAAKCRDCzCAB/wGP
+ wOroB/4j4xjnCOzRdziE0l83g7H8bQ3H/T3MB66sbUo/gUuWXjqcGWAchp215k5G8Dn3ugt2Xbk
+ ElDtuHGiYuC5o5T8mEdcrTVZ9VTj79hYDgPzy/NPBiiJPjHxGaC0OhhS7F9AeszxpZu/zsCA256
+ x+Q5iw9eKjL9GFJjqovqMKoMBDhivEJ6/U22HJQlpoagHTZm0cLoWlEbWDmFgy5rwfhVwsiTPwI
+ U6rLa+vAWetGKYoNwjkAZjzrsBoVni+9Aqod9RnSmX6ww5s9Ki/0HlxuZE9rZ2V+t37aCAUfcK4
+ oXqKuo0JkPTsyaQdsdpJmdS//X9FWNByT53EOyK9Gom/y/1v
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Mon, Apr 28, 2025 at 12:34=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, 28 Apr 2025 at 11:08, Bill Wendling <morbo@google.com> wrote:
-> >
-> > This situation is one of the
-> > easier ones: "do something other than fall into the next function";
->
-> Note that the "fall into the next function" is just something that
-> objtool notices. It *could* be "fall into the next basic block of the
-> same function, and objtool wouldn't warn, because objtool generally
-> wouldn't notice (there could be other things that make objtool notice,
-> of course - things like stack updates being out of whack or similar).
->
-> But I really wish that clang would look at a "don't depend on UD as a
-> code generation model AT ALL" as a flag.
->
-> The whole "this is undefined, so I'll generate something different"
-> model is just wrong.
->
-> That said, there are certainly graduations of wrong:
->
-> > but there are far more involved examples, of course. And even in this
-> > case, the compiler needs to know if a "trap" is okay, or would
-> > returning with garbage in %rax be okay.
->
-> Honestly, the least wrong thing is to just NOT HAVE THE CHECK FOR ZERO AT=
- ALL.
->
-> IOW, just generate the divide instruction.
->
-> I can almost guarantee that that will actually then generate the best
-> code too, because you'll probably just end up sharing the divide
-> instruction will all the *normal* cases.
->
-I get what you're saying, I really do. I'm actually in the "playing
-Wack-A-Mole(tm) is far better than generating code that accidentally
-launches the nukes" crowd. The fact that the compiler silently
-generates something wrong is horrifying to me. The compiler has a ton
-of options to allow for "bad" math, but they're mostly (all?) for
-floating point operations. It has some for integers, like the -fwrapv
-you mentioned.
+In order to achieve a 4 MSPS rate on a 16-bit ADC with a 80 MHz SCLK
+using the SPI offload feature of the AXI SPI Engine, we need to shave
+off some time that is spent executing unnecessary instructions. There
+are a few one-time setup instructions that can be moved so that they
+execute only once when the SPI offload trigger is enabled rather than
+repeating each time the offload is triggered. Additionally, a recent
+change to the IP block allows dropping the SYNC instruction completely.
+With these changes, we are left with only the 3 instructions that are
+needed to to assert CS, transfer the data, and deassert CS. This makes
+3 + 16 * 12.5 ns = 237.5 ns < 250 ns which is comfortably within the
+available time period.
 
-> So the best model is to literally remove that pointless and stupid "is
-> this a divide by zero" code. It's pointless and stupid because it
-> literally just makes for more work both for the compiler AND it
-> generates worse code.
->
-> Why do extra work to generate worse code?
->
-> Btu if some religious nutcase decides that "I will not generate divide
-> instructions if I know the divisor is zero" is a hill they will die
-> on, generating a "trap" instruction is certainly not inexcusable.
->
-I'll see what I can do with this. I might be able to sneak a patch in
-past the religious nutcases. The fact that we have the two flags
-Nathan and I mentioned could indicate that someone will be amenable to
-the patch.
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+David Lechner (4):
+      spi: axi-spi-engine: wait for completion in setup
+      spi: axi-spi-engine: don't repeat mode config for offload
+      spi: axi-spi-engine: optimize bits_per_word for offload
+      spi: axi-spi-engine: omit SYNC from offload instructions
 
--bw
+ drivers/spi/spi-axi-spi-engine.c | 91 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 85 insertions(+), 6 deletions(-)
+---
+base-commit: aba9c2fee9598d797034ffd289b0da770d9119e8
+change-id: 20250331-adi-main-46863acfc540
 
-> Generating a random value for %eax is WRONG. Now, that said, it's
-> clearly less wrong than falling through to some unrelated code
-> entirely, so it would be an improvement on the *current* situation,
-> but that's like saying that getting shot in the foot is an improvement
-> on getting shot in the head: true, but if the alternative is not
-> getting shot at all, why is that "less bad" alternative even on the
-> table?
->
-> The "just execute random code" is clearly so bad that it *should* be
-> off the table in the first place, and I don't understand why it is
-> what clang does now. It's just crazy.
->
-> And yes, this really is a very potential and real security issue. In
-> the kernel I don't think we have this ever happening, partly because a
-> lot of configurations use gcc which afaik doesn't have this particular
-> horrendous model of UD.
->
-> But this isn't just a kernel issue, it's a "anybody using clang to
-> build any program that might have security issues would be *insane* to
-> think this is a good model for dealing with UD". We do more checking
-> than most on the code generation, so we actually had tools that
-> noticed this odd code generaton. I can guarantee you that 99% of all
-> projects out there would never have even noticed.
->
-> And who knows what cases we *don't* find.
->
-> And obviously hopefully UD doesn't actually happen. But that's like
-> saying "hopefully we have no bugs". It's not reality.
->
-> Using UD to change code generation really is a truly horrendously bad
-> idea in the first place, but doing it in anything where security might
-> matter takes "bad idea" to "just don't do this".
->
->                  Linus
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
