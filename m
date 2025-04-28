@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-623408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C00A9F54D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62874A9F548
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA2516CB31
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44033BE256
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB9527A934;
-	Mon, 28 Apr 2025 16:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBADD27BF79;
+	Mon, 28 Apr 2025 16:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3MPVIkG"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uaIJgJt+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE6B27A90A;
-	Mon, 28 Apr 2025 16:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE627B4F9;
+	Mon, 28 Apr 2025 16:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745856770; cv=none; b=YQnbi6XMLVqdQFDRRPvZNfAqLUdVAs5ozkd4jqEhNePkb6MigGPtvly9y9J+ktlLCxQelrFR/BPIgQVfRvnuukluZBHPFrjY8b8Q1ySWEAYpg2gtd+f3lGTS6ka5SxUb4TKAoJjr5SQvRtJh+BqzYTDNstskASZVj1EraHSiyYY=
+	t=1745856761; cv=none; b=SS+Nk5dMAY7CtdZIRoa/uo4U3rj1oCCpR/ifPBfFNdev9CGFNVk+mZ8Gg7JISSqi3al/YF5wqCjDrw8PRn0EApiQ/nHciFRIu3svKO3rtNu77yIot8lKnkz8bn1Erq6xn4unNCUnjihToOWnUcpLLiTGAJ+qGI2URu4X+47kTIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745856770; c=relaxed/simple;
-	bh=ByRxh52fka9P9JRSeYUSXOGXCFjMN0BA0b7fy8L5J5c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZenEJ+y+dvtYov4+ZDMIKH785WS1pmnXOrgnegTuVVy6Foh6v3wKGPec+rEgA6dbjGBKpHealmcOzuXumXZSdXmIQKO6ERHqQPK59KwuejHdb1+ao1a1/S8mbI03OKC6hKmm5Wh7tmoIH9LEfeJwrdiEP+qhmSKHMr2tf1aZVmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3MPVIkG; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so7869263a12.1;
-        Mon, 28 Apr 2025 09:12:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745856766; x=1746461566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJ6LdQEoc6+Eq/+8hw96j8E1cLvu8eynjDejEQpx0P8=;
-        b=c3MPVIkGrhShKrFRR3d3nAn96ezG0/TESRSGPQtlpJ/KmTqTea8tG7WLcObrxBm7PG
-         cyRafX+ItIDjSRrLWDatzqFWVIRCzHBRAGPAwkXFHHwVYxDjEz+jzo8JZ49twTfkB3ws
-         mZq6TRAeIZ01uQnOhwfgCa+34QXRL+1BaVPwJXWQtJf81Fc+w4uTTEegwK/Z9xBQgN6+
-         TVpWQ0rkQLsPHdP6gsfVu5hOPooJKB8PhaoUC7s9GC6h/YlXCb1n9m5ojUFRyCgF4JPv
-         bv/xfOD2+sj4IMHf9xsYaTMhljqHQtDyD6aCmaoEK3WXYo6Ya2srPpbsY4FKXHDv1Yqu
-         ixlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745856766; x=1746461566;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tJ6LdQEoc6+Eq/+8hw96j8E1cLvu8eynjDejEQpx0P8=;
-        b=RXQbeP7+9iUZRMwzaQEndk9aTWMlbW6cvUagFdudyerrDHxgnDCjRBAVkpJ0XAnM75
-         q/+7RT19dgiMA0hl1QkWz+KL90OUFPavNQb1HOLG73g6YVK987RTFHvOWS3MRXhQrx3S
-         gJPByF4yqkNTJodRkORi+ImWYdPl3bJ6YWlsbq/eIsiD8tGf4XYcpnU+5EpTbwhettuD
-         wWL9v8fU+gqvFCExK/SVkZVNCfQY3QyxfBFBRvUgOLs1Y6037HwDKapUD39cH0ag7xe6
-         mDKIJyU3rOo2U87wRhMzd8UAfGhm8MmQZgEVc24/p7qR7GExv75T8S5jCOUG0bBKAWVL
-         /TuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoZ+P/hCgCRnkj5raiO58IFM6cEiX7mTlPd6uhoC9FE0hIqbqBOcd+eM6DoUP40IWUGBGX9noDSBwy4Tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDDMVg22NjpxJykdCuZlZxDyvukRh/Myl2N8NCK1PyzZ1VkEWs
-	shUevpnXPrImhFaDKoGm7+7PU/mIY2gud/suesR2fXNs0iQMhkhn
-X-Gm-Gg: ASbGnctinHU/qR9k964E2WEAcwDjxDfAF9B9R2BYWSlhCj5udzDqp46agMZSA7ghJ0Y
-	d9UVP/ZdDDIddAKdpLDFLKeoZdyxEBQINOz1v8J/forsrR0Ouawx2BoBudgTCUGuX9sgVZtGBw3
-	FIJRnKKdMhOeUQort3rS3YgS7E7cmYXq5DTCIMLa9eW4fryPqsD6l+sq10ioGuhhGHFobOKqqyd
-	Ef+D2oSVPvq0OntA8/yAF0MP91lU/kfkXu2c0SyW8dKeD6mZO5jBTNJf4EAA7Q9t9H3tWrXDbQ7
-	A7hZGAumX9DFdc0SBLovEMgluU8XSX9TGjynQFXG/R7sutq+D4513uVtUNdFGJSmRUDYn2D+6+a
-	EBMLPBBdu+1qIlA==
-X-Google-Smtp-Source: AGHT+IGlL+aSuwZFAf7ef5SH8B09/XSBqPd7PuCHqe4A2eNjIlK/w5Rq0KLs+zc2T078YQ1ntWDF0A==
-X-Received: by 2002:a17:907:7daa:b0:acb:5f9a:7303 with SMTP id a640c23a62f3a-ace8493c1e3mr829040766b.35.1745856766249;
-        Mon, 28 Apr 2025 09:12:46 -0700 (PDT)
-Received: from playground.localdomain ([82.79.237.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41bc36sm640429266b.33.2025.04.28.09.12.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 09:12:45 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mark Brown <broonie@kernel.org>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: SOF: topology: check if machine is NULL during tplg load
-Date: Mon, 28 Apr 2025 12:12:36 -0400
-Message-Id: <20250428161236.126200-1-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745856761; c=relaxed/simple;
+	bh=Ucpgunkpy6U/IjEb5XHK0SIzreigneomegn1oB6Tnow=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=XSulZiC3Nxr6uLZL+nGToTDTsN5EdRnfdk6VOaVFwWEEw2KlXX3TtXSv9TSxTqIFnKOxfGrkZp8hRha4mch9A9nRtclT49uD3ANpig1J819Obudc4vQskaZDpIXpSoSdIWU3IvXMvQ3TdQRTUjJ0C26QStM4vCQXWaTIp5YCpGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uaIJgJt+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC3EC4CEED;
+	Mon, 28 Apr 2025 16:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745856760;
+	bh=Ucpgunkpy6U/IjEb5XHK0SIzreigneomegn1oB6Tnow=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=uaIJgJt+DJaMG67WjKi3sdigCzl/72lz3imb2odO9xWNkJzqi4qzGKb+O/bB4Qa6f
+	 PU2S2K7obAU4IxU8ve2cW5qfyAn0drFc+2pQXdak6nzpN+jm5IlHzN5N3ggyHKOjIF
+	 GdKPcU3AI6AMXnLHwvEkbijjecDmcaVICihnkVMXPdmV68TBA5XiYZkLX9DizAX4Tb
+	 fS80ZZbUBkyAJmw07JN5rtrMxrF9kaifLyw57CqrC4zLRHFsck6VB7u2MXwWVn2gTD
+	 1sb1wA5XutyZDS7KIyUVH9k4NwnvD0mwr98QzHA6zTvfJnC0kiDxV6C+kGTURWjQ0n
+	 /WhagvG3Zg2SQ==
+Date: Mon, 28 Apr 2025 11:12:38 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-hardening@vger.kernel.org, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-gpio@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>, 
+ Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Lee Jones <lee@kernel.org>
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+In-Reply-To: <20250428-max77759-mfd-v7-1-edfe40c16fe8@linaro.org>
+References: <20250428-max77759-mfd-v7-0-edfe40c16fe8@linaro.org>
+ <20250428-max77759-mfd-v7-1-edfe40c16fe8@linaro.org>
+Message-Id: <174585675718.1413056.7895723185749789189.robh@kernel.org>
+Subject: Re: [PATCH v7 1/6] dt-bindings: gpio: add max77759 binding
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Check if "sof_pdata->machine" is NULL before calling the machine-specific
-"get_function_tplg_files()". Otherwise, for OF-based machines (which set
-the "of_machine" instead of the "machine" field), the operation will
-result in a NULL pointer dereference fault.
+On Mon, 28 Apr 2025 12:36:04 +0100, André Draszik wrote:
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
+> 
+> This describes its GPIO module.
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+> v2:
+> * drop 'interrupts' property and sort properties alphabetically
+> ---
+>  .../bindings/gpio/maxim,max77759-gpio.yaml         | 44 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  6 +++
+>  2 files changed, 50 insertions(+)
+> 
 
-Fixes: 6d5997c412cc ("ASoC: SOF: topology: load multiple topologies")
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- sound/soc/sof/topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index e19ba94f2c80..5d3ee3a86392 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -2481,7 +2481,7 @@ int snd_sof_load_topology(struct snd_soc_component *scomp, const char *file)
- 	if (!tplg_files)
- 		return -ENOMEM;
- 
--	if (sof_pdata->machine->get_function_tplg_files) {
-+	if (sof_pdata->machine && sof_pdata->machine->get_function_tplg_files) {
- 		tplg_cnt = sof_pdata->machine->get_function_tplg_files(scomp->card,
- 								       sof_pdata->machine,
- 								       tplg_filename_prefix,
--- 
-2.34.1
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml: Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250428-max77759-mfd-v7-1-edfe40c16fe8@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
