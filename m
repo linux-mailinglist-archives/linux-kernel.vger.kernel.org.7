@@ -1,221 +1,114 @@
-Return-Path: <linux-kernel+bounces-623604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976D2A9F82E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B93A9F81D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68265A2F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:14:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 194D67A4779
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BC32973D9;
-	Mon, 28 Apr 2025 18:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LBmJheu/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A252951C9;
+	Mon, 28 Apr 2025 18:12:16 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7842973C7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E73A4AEE2;
+	Mon, 28 Apr 2025 18:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864010; cv=none; b=cMHBkzdqT3p/TZIV1CExjpj5XHvUmO1R/A2xc4E8LwW+t2jKzm6qPAayNHaV+La3yVEsG1PAOiJtUUyXFluLIR4OqLB/PY5wNBkZ4AsJKUVfuK+aHNwvrbDhEFA9CmUXgPgRymFITvPv0I1ZaF+kqOoHxRo3guNsI1t1XNE+tIU=
+	t=1745863935; cv=none; b=VS/9AQVLGmCdzgLLy4HbD3T7HHSeuUHdYD2mdqw+THBj2KWp1f/YayYhEPn2F1foiq/xIb78mr+3r/5E9+7a/utd8ZiLQoxRjyWYmk9W0pITvNGzfnv0kEV133twmuQWyJKqVny3Xx0+LuFXtksSZDdISGTNMl4BsNndymcNFlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864010; c=relaxed/simple;
-	bh=izoFedzkTaJOHbhKVxh1hVWz6CnEStoxb12rm/MlOVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i2zaXE8hWtEOdpcgmnQFIz4PGFeT7M6ktvFam7ebCo8iSZiyxPWf/JnyeFNLH2J+6fpmzf1Xmc6xyv+uZ08HtH9otbIUUCyuYqgnPwP3G7lBpuVmSoaMwRCtttpRtyEGxwsU5gJVEYXsJXB2zpfZyxrSphHZXJhZapTMWwcGxgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LBmJheu/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745864007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aTX6P2IggYqzg7C0+KpKEa9+57Ib0vSV4YGBosZ11Fk=;
-	b=LBmJheu/qTspjhO/8XGDje/u8oplNaIsf1OtQ6iQUWDs5LUBmDxTevvCgOKbtGYqGy9o3p
-	mee/1z35py+rtgGJkj9CH93zRC/xmMdGLKRoVg+F/JQvGxaK8bDhidumYJVUN1bjef0QUu
-	9R9sHqabyv5xlDBCzNnTvEzHQ6CEca0=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-ve0q8oP_OZCoLPOyLOidkQ-1; Mon,
- 28 Apr 2025 14:13:24 -0400
-X-MC-Unique: ve0q8oP_OZCoLPOyLOidkQ-1
-X-Mimecast-MFC-AGG-ID: ve0q8oP_OZCoLPOyLOidkQ_1745864000
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E778180010A;
-	Mon, 28 Apr 2025 18:13:19 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.65.12])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 07152180045B;
-	Mon, 28 Apr 2025 18:13:11 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	corbet@lwn.net,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	david@redhat.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	ryan.roberts@arm.com,
-	willy@infradead.org,
-	peterx@redhat.com,
-	ziy@nvidia.com,
-	wangkefeng.wang@huawei.com,
-	usamaarif642@gmail.com,
-	sunnanyong@huawei.com,
-	vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com,
-	yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com,
-	aarcange@redhat.com,
-	raquini@redhat.com,
-	dev.jain@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	tiwai@suse.de,
-	will@kernel.org,
-	dave.hansen@linux.intel.com,
-	jack@suse.cz,
-	cl@gentwo.org,
-	jglisse@google.com,
-	surenb@google.com,
-	zokeefe@google.com,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rdunlap@infradead.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com
-Subject: [PATCH v5 04/12] khugepaged: generalize alloc_charge_folio()
-Date: Mon, 28 Apr 2025 12:12:10 -0600
-Message-ID: <20250428181218.85925-5-npache@redhat.com>
-In-Reply-To: <20250428181218.85925-1-npache@redhat.com>
-References: <20250428181218.85925-1-npache@redhat.com>
+	s=arc-20240116; t=1745863935; c=relaxed/simple;
+	bh=baR8yuZ+DKQ7vAMklIhbgweOPRiTcktqr21Q2I4keIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S396FAXMgPZCaOtQ5OE/Vx5xe3oylLcvz48l49dE/kJfHYoFNU0jm3+ffGVMlJYF1eym7pQSNc27Mt2JRuLnbBBruDHylw0EO/GhhLm0yOl2lPrreOqVZg3zPO0Z1u0DImnQ8zylKuDvVKVk5m9KaUsjGLD0abqI17ly8DTFgAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D130C4CEE4;
+	Mon, 28 Apr 2025 18:12:12 +0000 (UTC)
+Date: Mon, 28 Apr 2025 14:12:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, x86@kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers
+ <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
+ James <sam@gentoo.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jens
+ Remus <jremus@linux.ibm.com>, Florian Weimer <fweimer@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Weinan Liu <wnliu@google.com>, Blake Jones
+ <blakejones@google.com>, Beau Belgrave <beaub@linux.microsoft.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Alexander Aring <aahringo@redhat.com>
+Subject: Re: [PATCH v5 3/9] unwind deferred: Use bitmask to determine which
+ callbacks to call
+Message-ID: <20250428141210.6ef945c6@gandalf.local.home>
+In-Reply-To: <ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com>
+References: <20250424192456.851953422@goodmis.org>
+	<20250424192612.844558089@goodmis.org>
+	<02339b93-de9a-49e4-8dbb-137d02fc6ea8@efficios.com>
+	<20250428125600.1f50f476@gandalf.local.home>
+	<ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Dev Jain <dev.jain@arm.com>
+On Mon, 28 Apr 2025 14:00:07 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Pass order to alloc_charge_folio() and update mTHP statistics.
+> >>
+> >> It is enough to guard with RCU ? See syscall_regfunc() from
+> >> tracepoint.c where we do:
+> >>
+> >>                   read_lock(&tasklist_lock);
+> >>                   for_each_process_thread(p, t) {
+> >>                           set_task_syscall_work(t, SYSCALL_TRACEPOINT);
+> >>                   }
+> >>                   read_unlock(&tasklist_lock);
+> >>
+> >> To prevent concurrent fork from adding threads while we
+> >> iterate, thus opening the possibility of missing a clear
+> >> due to a concurrent fork + set bit.  
+> > 
+> > A set_bit only would happen if the callback was live and accepting new
+> > callback requests. It's a bug for a tracer to call unwind_deferred_cancel()
+> > and then call unwind_deferred_request() (which would set the bit). We could
+> > possibly set the tracer's unwind descriptor id to -1, and do an
+> > WARN_ON_ONCE() in unwind_deferred_request() if the tracer's id is negative.
+> > 
+> > The loop is called under the callback_mutex, where no new tracer could
+> > register and be assigned that bit.  
+> 
+> Ah, that's the piece I missed. The callback_mutex prevents reallocation
+> of the ID by unwind_deferred_init while iterating on the tasks.
+> 
+> One more comment: if we change the linked list for an array (or make the 
+> linked list an RCU list), can we remove the callback_mutex from
+> unwind_deferred_task_work by turning it into an RCU read-side ?
+> 
+> Then we just need to wait for a grace period before returning from
+> unwind_deferred_cancel, which then allows the caller to reclaim "work".
+> 
+> Taking the callback_mutex in unwind_deferred_task_work will end up being
+> the single thing that does a lot of cache line bouncing across CPUs when
+> hit heavily by tracers.
 
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Co-developed-by: Nico Pache <npache@redhat.com>
-Signed-off-by: Nico Pache <npache@redhat.com>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- include/linux/huge_mm.h |  2 ++
- mm/huge_memory.c        |  4 ++++
- mm/khugepaged.c         | 17 +++++++++++------
- 3 files changed, 17 insertions(+), 6 deletions(-)
+I'm not against this, but again, that's an optimization. I want to keep the
+initial code simple. And then add the more complex optimizations when this
+is stable.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2f190c90192d..0bb65bd4e6dd 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -123,6 +123,8 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_ALLOC,
- 	MTHP_STAT_ANON_FAULT_FALLBACK,
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-+	MTHP_STAT_COLLAPSE_ALLOC,
-+	MTHP_STAT_COLLAPSE_ALLOC_FAILED,
- 	MTHP_STAT_ZSWPOUT,
- 	MTHP_STAT_SWPIN,
- 	MTHP_STAT_SWPIN_FALLBACK,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2780a12b25f0..670b8b7a6738 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -615,6 +615,8 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
- DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(collapse_alloc, MTHP_STAT_COLLAPSE_ALLOC);
-+DEFINE_MTHP_STAT_ATTR(collapse_alloc_failed, MTHP_STAT_COLLAPSE_ALLOC_FAILED);
- DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
- DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
-@@ -680,6 +682,8 @@ static struct attribute *any_stats_attrs[] = {
- #endif
- 	&split_attr.attr,
- 	&split_failed_attr.attr,
-+	&collapse_alloc_attr.attr,
-+	&collapse_alloc_failed_attr.attr,
- 	NULL,
- };
- 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index ddb805356e05..16b5b3761f95 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1074,21 +1074,26 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
- }
- 
- static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
--			      struct collapse_control *cc)
-+			      struct collapse_control *cc, u8 order)
- {
- 	gfp_t gfp = (cc->is_khugepaged ? alloc_hugepage_khugepaged_gfpmask() :
- 		     GFP_TRANSHUGE);
- 	int node = khugepaged_find_target_node(cc);
- 	struct folio *folio;
- 
--	folio = __folio_alloc(gfp, HPAGE_PMD_ORDER, node, &cc->alloc_nmask);
-+	folio = __folio_alloc(gfp, order, node, &cc->alloc_nmask);
- 	if (!folio) {
- 		*foliop = NULL;
--		count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
-+		if (order == HPAGE_PMD_ORDER)
-+			count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
-+		count_mthp_stat(order, MTHP_STAT_COLLAPSE_ALLOC_FAILED);
- 		return SCAN_ALLOC_HUGE_PAGE_FAIL;
- 	}
- 
--	count_vm_event(THP_COLLAPSE_ALLOC);
-+	if (order == HPAGE_PMD_ORDER)
-+		count_vm_event(THP_COLLAPSE_ALLOC);
-+	count_mthp_stat(order, MTHP_STAT_COLLAPSE_ALLOC);
-+
- 	if (unlikely(mem_cgroup_charge(folio, mm, gfp))) {
- 		folio_put(folio);
- 		*foliop = NULL;
-@@ -1125,7 +1130,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
- 	 */
- 	mmap_read_unlock(mm);
- 
--	result = alloc_charge_folio(&folio, mm, cc);
-+	result = alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
- 	if (result != SCAN_SUCCEED)
- 		goto out_nolock;
- 
-@@ -1849,7 +1854,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
- 	VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
- 	VM_BUG_ON(start & (HPAGE_PMD_NR - 1));
- 
--	result = alloc_charge_folio(&new_folio, mm, cc);
-+	result = alloc_charge_folio(&new_folio, mm, cc, HPAGE_PMD_ORDER);
- 	if (result != SCAN_SUCCEED)
- 		goto out;
- 
--- 
-2.48.1
-
+-- Steve
 
