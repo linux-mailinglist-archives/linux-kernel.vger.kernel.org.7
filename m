@@ -1,138 +1,72 @@
-Return-Path: <linux-kernel+bounces-623606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B63EA9F832
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:15:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C59A9F83F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1865A3108
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5705A1A847F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16F2297A66;
-	Mon, 28 Apr 2025 18:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACD429A3CB;
+	Mon, 28 Apr 2025 18:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Hgrm6XxF"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjxgaQo4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFE1297A70;
-	Mon, 28 Apr 2025 18:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05672296145;
+	Mon, 28 Apr 2025 18:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864020; cv=none; b=iG4QVMQEvnzmsBpUOqK64XIFjgUhXXNTnlPC9IWF6tcUCL+f31bEVv7yKIWi9AonrwDyZ+qUbGvtVFj6/a7ZwVK48t5DAdJ/KyOXKuZ8YZLA39qSepPUI5MnN0gpje9jscaNB/pNvIcFLgb3yXSBJL7H/uac6i8Q2G4D4Ep4lZA=
+	t=1745864063; cv=none; b=Z0XbrqNvHNF8gWqXmtRViW4Ib+aDJa/gI5go2rA22hTnU90Q94t99P7G60elscg0qCfdatB1E0dF4WKn8g9DrRdWcmUiwj5gKEFXazNvYtGUGaz/jgXC6zzo3aBcM3Qzm6+px5fmbt3uK6YhnRhysMo88QQUe9bNVWjtmk5bUPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864020; c=relaxed/simple;
-	bh=IJjkyUZox2URzUQtE7jRJKXjME8ZBdk02rDxxxDsOg8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=QYcmov8XjikD6qijhVcfCw6oObd9xXgghe5mVgH9wBFHdBauHjWQMcjTNGeLnKP7Wv06GxqXPPe4168bqz154wswd6KvayxgpHe96dafe0gfGFXCON3zW2EFmlYlIcZDXoEaeBEB2awtpEwmsGRZt4YKUFSRAtTWO2YSICQe3SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Hgrm6XxF; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (web.docker-mailserver_default [172.18.0.2])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 4D466BBAD2;
-	Mon, 28 Apr 2025 18:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1745864010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XzisxXOIvIt99ecAlPMk+mfkIlF+kp2Ehh9SvEPsx/4=;
-	b=Hgrm6XxFsLPmkiFUr/E6kZw7iJUUJq7ANQdlFZTDIPiaz1CLld4JQmCo70YsggLEkEFup3
-	xzRsbSYVQEBKS6+qUVBrys+IlXb+/I6qy7u0Io7nHRIzzx5n09xF3uL8U7LM+4ib28zfSh
-	CaQm7z1QLUQ6th4mgcllmfjvEnNo298ORww9v92JjDtEPIYe+WmMFNw7OVOOZcCjwcsSB/
-	3RVWj/xTscwTOOlEXiuSiWxdASHOFOai8B1J/sqdtNyvNgTLexK5EV99xbe4uRLfYoUbI9
-	1OW/AJWswZXisUqfY0QZ5pj421KZpnaIxMKs4UTp0ArIDxcnmtyjhLSf0gA3wA==
+	s=arc-20240116; t=1745864063; c=relaxed/simple;
+	bh=V/IQhGS2b9nx5FaAzRZuKyVKEnejhV3AORkajdzukH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r+ov3yYhmWZjFOr0rI/fneBJxA7xX1tjAH7EqD2h7xFAoMywa7EVPbUas9rZKVc0iie2dYLiJ6ycUs9lDZpQ3AjIWnkAGyTKCGbTyoWfJpUk/+fdXjmMDuQkKawpsCnu7kj5zbI4HMEZMd/knbeOz7JkCeHr+tkscM0hT00HupU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjxgaQo4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B873C4CEEF;
+	Mon, 28 Apr 2025 18:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745864062;
+	bh=V/IQhGS2b9nx5FaAzRZuKyVKEnejhV3AORkajdzukH0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sjxgaQo4/sNAE+F9HaExsPqtrgVET36rFOg+oh+O/bbe/Z+dOHr2A1Oz/joAg9PlM
+	 NPrPsbh8/q63xx8R4IfNvsw5ht7SGE/CBSgwO0CdR7tQnCHOV+TkBR96meHJoeggt6
+	 pnilYg+Ox0FgfpcBsTuRSD+O4wJRMR/uFVKImKZ6+llFFKQ14aRxZagTiYngmP7Dvw
+	 hyjy7eP6+ozY9YcFkEDiewZs1ifCk/kGv03lrfMd+1OEs84Xoxgj7W1SOlFZsEZsKy
+	 QHdALbRz1ZmwuiltYZwNTleVu80No6wZnF241xNws3wU0Y215xmfZgTz122aSk1Ktg
+	 pMs5gUjfapWeQ==
+Date: Mon, 28 Apr 2025 11:14:21 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v2 0/4] net: selftest: improve test string
+ formatting and checksum handling
+Message-ID: <20250428111421.399dc60d@kernel.org>
+In-Reply-To: <aA80qh01gosQvPEh@pengutronix.de>
+References: <20250422123902.2019685-1-o.rempel@pengutronix.de>
+	<20250423184400.31425ecd@kernel.org>
+	<aA80qh01gosQvPEh@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 28 Apr 2025 20:13:30 +0200
-From: barnabas.czeman@mainlining.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang
- <quic_jesszhan@quicinc.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: panel: Add BOE TD4320
-In-Reply-To: <20250428-versed-boar-of-charisma-961cbf@kuoka>
-References: <20250427-lavender-panel-v1-0-b2611674166c@mainlining.org>
- <20250427-lavender-panel-v1-1-b2611674166c@mainlining.org>
- <20250428-versed-boar-of-charisma-961cbf@kuoka>
-Message-ID: <d838dc2006c52bf6099767a2805ad826@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2025-04-28 11:22, Krzysztof Kozlowski wrote:
-> On Sun, Apr 27, 2025 at 11:11:11AM GMT, Barnabás Czémán wrote:
->> Document BOE TD4320 6.3" 2340x1080 panel
->> found in Xiaomi Redmi Note 7 smartphone.
->> 
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> ---
->>  .../bindings/display/panel/boe,td4320.yaml         | 55 
->> ++++++++++++++++++++++
->>  1 file changed, 55 insertions(+)
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml 
->> b/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml
->> new file mode 100644
->> index 
->> 0000000000000000000000000000000000000000..65da1c392cafbb7cd3ce32e347fba1b9244c1ad8
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/panel/boe,td4320.yaml
->> @@ -0,0 +1,55 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/panel/boe,td4320.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: BOE TD4320 MIPI-DSI panels
->> +
->> +maintainers:
->> +  - Barnabas Czeman <barnabas.czeman@mainlining.org>
->> +
->> +description:
->> +  BOE TD4320 6.3" 1080x2340 panel found in Xiaomi Redmi Note 7 
->> smartphone.
->> +
->> +allOf:
->> +  - $ref: panel-common.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: boe,td4320
->> +
->> +  reg:
->> +    maxItems: 1
+On Mon, 28 Apr 2025 09:56:26 +0200 Oleksij Rempel wrote:
+> > Doesn't apply, presumably because of the fix that's sitting in net?  
 > 
-> No supplies?
-> 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reset-gpios
-> 
-> No supplies? This looks really incomplete.
-It works without supplies because BL is enabling them and there is no 
-qpnp-lcdb driver yet.
-I do not see worth to add them at them moment but I can if you want.
-> 
-> 
-> Best regards,
-> Krzysztof
+> Needed patch is already in net-next. Should i resend this patches?
+
+Yes, you need to repost.
 
