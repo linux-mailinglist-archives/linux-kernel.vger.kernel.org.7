@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-622613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E600A9E9C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:44:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D9DA9E9E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2A73A47B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:44:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43CCB7AEA4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604911DE887;
-	Mon, 28 Apr 2025 07:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EED1E3787;
+	Mon, 28 Apr 2025 07:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1rnsjNW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hddJxAKF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B970B1C5D4E;
-	Mon, 28 Apr 2025 07:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B961DE8BE;
+	Mon, 28 Apr 2025 07:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826279; cv=none; b=mxUODicblaMdc9h2NhF6LpenD4JHg53y453oVDk0HWk9pFBKqmqmun88J/BKQ1WRwwSGtRzcu5EcoYqqfyjfV9OEcvmHTcwVoVUudAUrJ3TsAkdrQMLfYwwrolhvyDuF8piHzSVLLRm9yikbtbnNNGL8lfhxodTOSVYtXIBg5wk=
+	t=1745826324; cv=none; b=tR5n2ZFmwG3s6WbINeSYAASh/55xoZb54tKIvGWbYJ6RCKUv3gsPN1y/oyrRkLjWEiT2xTOkZJNGx5zy59lqefFO55ZhIxzRtTq7+Vc6bhyQeSyKjVu8LhD0Dn1AkPdkFAxlNKXjLCa87QwRPC8RTvemdz9g9RtX6QxPESn6CUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826279; c=relaxed/simple;
-	bh=iaOEkR7J0upw1H1sW/Gba6M32XBT6NbbB44yO9AFP40=;
+	s=arc-20240116; t=1745826324; c=relaxed/simple;
+	bh=t0Da91DWrbzujPj1g6eKoWgpJ0WoF4h007/WWJU4frk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u26ZWPvbBS+v3SGIxhOsoNKqPASzOrU4HbhKUrrtFXEN0l7joscDhe96Zo84/QoRmzTJHpr/jzvDXPzOJKCOdji8He8Ad6o9fbDWPPRm60HQAUZ3jBsdcvwWg7YsNHixK+j+lG26QOQHV2sNQIFIUDIR5XyT59Nsb56uoIchc5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1rnsjNW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CB8C4CEEC;
-	Mon, 28 Apr 2025 07:44:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5YNIforn1TsV1mg0Q0azQfa0Z8oYyVSwyjHEFMy3RjYQJi8YECmZHSpJ1R0i1Isqou7+uHSI14rqjH48LfFQgxDfIjEnmF+uksQTqXHCYOMZvk9BxcXXOhO1C+8EvayMEBXpC7J71DL9TMQz+yB8paPQ2ra875U9pnlswLiOqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hddJxAKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B8FC4CEE4;
+	Mon, 28 Apr 2025 07:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745826279;
-	bh=iaOEkR7J0upw1H1sW/Gba6M32XBT6NbbB44yO9AFP40=;
+	s=k20201202; t=1745826323;
+	bh=t0Da91DWrbzujPj1g6eKoWgpJ0WoF4h007/WWJU4frk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G1rnsjNWP3ey3w5VHNKSOLAdfXR7x2aGaGIszhDbLvZAVcGD0HalBsWhLNF1Cj27Z
-	 au8hCz3MgBvvjqH9zQGHtdC4UPfAbxBLmUc8Y9xzNFLVDEzBXld+IKwhZtpeN8YNxU
-	 Y0feWYZaw/LFvdmswcY8jwEgrV7pNbS7tqsQaeSwDBoBMTFy1srphuMDtILZQ5KDzT
-	 y7jkBIQb4a0+zrS5P9c7l/RsoTWrqtXnXUBmhnDkKtLsAa+F68lnD9BBznN1SDljBU
-	 qtNTZNj6c1PtTV1gFRovCsP95APNsj6VxXb2zWL7tKIVuFt0TviMnYEHZjbYpOJjoz
-	 N/EYLtUJ4nMUw==
-Date: Mon, 28 Apr 2025 09:44:35 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Mikko Juhani Korhonen <mjkorhon@gmail.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ata: libata: disable LPM for WDC WD20EFAX-68FB5N0
- hard drives
-Message-ID: <aA8x47kjcGAsFrTZ@ryzen>
-References: <CAAZ0mTfSFZoL_CS9s1L0JhfaoyMGJ6Up5Z9_YvU-pX05MOZ99w@mail.gmail.com>
+	b=hddJxAKFJISn2zWBvXWpe1bcwMG1Bww03EhSUYat2xtGuVjmbgrwIntzPhyCCrgiS
+	 cYmxEfK2NNIHTvDlr2qg1U1Jk2rWeSJXf70ViBJ88dsFGuSFapG8lwRwuX7HXVTr89
+	 7TXSJB5eyt3X7uOQpQkJzmjY7/JtFQBgkvWc9kmPZEGxhkGEWvu3vG67vRokCrQkaC
+	 b5wDioRo90sKLnMQVxcRwqSbEvTniIb6etAYizIV6WPW5W/Oo03Fr7bOJM4xECu6vW
+	 es9P4uj9BUYolIcqqxSnPLFkWMR5hynxvveh71EjF2NDMcld/6VQc4UQ47ZuHF4Mrf
+	 G+KKVTDXJRZQQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u9JB6-000000004zK-0H1W;
+	Mon, 28 Apr 2025 09:45:24 +0200
+Date: Mon, 28 Apr 2025 09:45:24 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	laurentiu.tudor1@dell.com, abel.vesa@linaro.org
+Subject: Re: drm/msm/dp: Introduce link training per-segment for LTTPRs
+Message-ID: <aA8yFI2Bvm-lFJTl@hovoldconsulting.com>
+References: <20250417021349.148911-1-alex.vinarskis@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,47 +67,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAZ0mTfSFZoL_CS9s1L0JhfaoyMGJ6Up5Z9_YvU-pX05MOZ99w@mail.gmail.com>
+In-Reply-To: <20250417021349.148911-1-alex.vinarskis@gmail.com>
 
-On Fri, Apr 25, 2025 at 10:33:17PM +0300, Mikko Juhani Korhonen wrote:
-> Make WDC WD20EFAX-68FB5N0 hard drives work again after regression in
-> 6.9.0 when LPM was enabled, so disable it for this model.
-> 
-> Signed-off-by: Mikko Korhonen <mjkorhon@gmail.com>
-> ---
-> drivers/ata/libata-core.c | 5 +++++
-> 1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> index 773799cfd443..5c2f26945d61 100644
-> --- a/drivers/ata/libata-core.c
-> +++ b/drivers/ata/libata-core.c
-> @@ -4239,6 +4239,11 @@ static const struct ata_dev_quirks_entry
-> __ata_dev_quirks[] = {
->        { "WDC WD3000JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
->        { "WDC WD3200JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
-> 
-> +       /*
-> +        * This specific WD SATA-3 model has problems with LPM.
-> +        */
-> +       { "WDC WD20EFAX-68FB5N0",       NULL,   ATA_QUIRK_NOLPM },
-> +
->        /*
->         * This sata dom device goes on a walkabout when the ATA_LOG_DIRECTORY
->         * log page is accessed. Ensure we never ask for this log page with
-> 
-> base-commit: 14a3cc755825ef7b34c986aa2786ea815023e9c5
-> --
-> 2.47.2
+On Thu, Apr 17, 2025 at 04:10:31AM +0200, Aleksandrs Vinarskis wrote:
+> Recently added Initial LTTPR support in msm/dp has configured LTTPR(s)
+> to non-transparent mode to enable video output on X1E-based devices
+> that come with LTTPR on the motherboards. However, video would not work
+> if additional LTTPR(s) are present between sink and source, which is
+> the case for USB Type-C docks (eg. Dell WD19TB/WD22TB4), and at least
+> some universal Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
 
-When submitting a v4,
-please add:
+Does this mean that the incomplete LTTPR support in 6.15-rc1 broke
+adapters or docks with retimers in transparent mode?
 
-Fixes: 7627a0edef54 ("ata: ahci: Drop low power policy board type")
+You describe at least one of this patches as a fix but I'm not seeing
+any Fixes tags or indication that these need to go into 6.15-rc to fix
+a regression.
 
-So that Sasha's scripts will see it and backport it to stable kernels.
+> Changes in v3:
+> - Split 1st patch into 3
+> - Simplified handling of max_lttpr_lanes/max_lttpr_rate
+> - Moved lttpr_common_caps to msm_dp_link (not msm_dp_panel, as LTTPRs
+>   are link related, not panel related)
+> - Picked Stefan's T-b tag (last patch only, as 1st one is getting split)
+> - Droped Abel's R-b tags from 1st patch that got split due to high diff
+> - Fixed alignment issues, initialization of variables, debug prints
+> - Moved lttpr_count to avoid ugly pointer
+> - Link to v2: https://lore.kernel.org/all/20250311234109.136510-1-alex.vinarskis@gmail.com/
 
+I tested v2 due to the dependencies in msm-next and DP altmode still
+works on my X13s and T14s (while not using any docks):
 
-Kind regards,
-Niklas
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+> Aleksandrs Vinarskis (4):
+>   drm/msm/dp: Fix support of LTTPR initialization
+>   drm/msm/dp: Account for LTTPRs capabilities
+>   drm/msm/dp: Prepare for link training per-segment for LTTPRs
+>   drm/msm/dp: Introduce link training per-segment for LTTPRs
+
+Johan
 
