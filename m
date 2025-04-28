@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-623400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15FAA9F531
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:09:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9203DA9F533
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D593B0CA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5FD3BBDDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F61927A130;
-	Mon, 28 Apr 2025 16:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0E027A135;
+	Mon, 28 Apr 2025 16:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="prEXNT1y"
-Received: from sonic311-21.consmr.mail.sg3.yahoo.com (sonic311-21.consmr.mail.sg3.yahoo.com [106.10.244.38])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n5jIOwE0"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A727A12B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B52270ED9
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745856535; cv=none; b=KBCtCKM2mMXN2Ka7M5CbN+0b67BQdB9g5OndecobAvpt9lteYjWMO7JQZSIHHeRrXzybFD6GL+uiNLAl7LJ0gzHC1vJgy+wX09pe1xvDTHtxUleYmP8NxEKgGYRssQPZCJWmEPwB1uAEXaFfOmu8wZnn9pP5fnOi3tWhBrLCBMg=
+	t=1745856560; cv=none; b=o5rSNtXqcdXXUfi9wljtkb+aSkRlTc5xSpImSIgEXlR2V6atPp7/QzQ5xUMG/DRL8nMvKcT/awD6/rHpB5QIc+RTLaAyc8utfhG3RYXTDmhrsEk60mlP1corIkMxC87qlWSDw+o5cOmn4ioaKpfiXSRfx6CjP7b/Ms0s49A60no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745856535; c=relaxed/simple;
-	bh=B6uyN/GXc2eQI6i3BD6f5Z2pfT4bTJrXRzoEund/6uE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iLu2HzwfmPD7dQkoRErEUdcDxdNqR40R10TZkmn0MnP2VyWVjV0LNTh4s0hjp4LjW3VsAG/FQjh5BwqsjEyQ7uycBgGZfiFJZDsyEWe3mEbEZ9Dbh9K8LqnZXfobW7qufHZv5kq2YMNZR2MlSCciqBDIHC8HEF4BveteAJnvOcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=prEXNT1y; arc=none smtp.client-ip=106.10.244.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745856531; bh=VLcOt41PrL1t3Y+w2c4iRwS3H4eA69ks/2yDegArszY=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=prEXNT1ykNXrHzuQVGkcjaGsQv1+qTEphx53/ibjQ9XmlCE9ijblq1jXnhyPCeBjplKjN+utjyDL4+b5FEwawDoWzSoFVpj372zyIceAgFS/nTDdCFzRE/3tmPUCpwUMFCE5MG/KkW4eGhAYCbVS78DLrS46YMlquPW8wvYbTLrFdGmh7TAL/netxQ2XrdmMrWpG1hKh9pUWumPxjGajDxddOLUj1bhLeaeJbKRpClyQjAfSrSF48jeyErcTp3T5JpHlEJSx64/5cybZyJ4p7CY2GZEzomtR7Yxw3L8+RCRL7Vb1Ns2mBw8GLmls+QR6QAM01ufxUxHoSycSmbZraw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745856531; bh=JSASTLT6G2Ln4xa2I4GI30CjpTfFSqfT0SjATlRRvWO=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=csimAA/uZRUFzltMmiHWVjZOYieVEqEpSLZkpX2VIBNYp/HY6KGuVLOt01+hQoGJyL11Gn9M8K7UnLOXaGL2J8LmdDFYHlBEeI3frLILf3pk976gdSF7sCdqMadfsoK18PcvqrtcYpmrFJLIwyX0hT6lRDnjbf6BSv+zlbAsosBU0NmBP+NcK5yBx2c9+IwP6j0LLeMf+lOjlHLG44K/pP2XqpOjYFcw3uXHKNXe1i1DhGtA8bPUw4FPBCbiiFGKKdeh9wI4BWHw2RlI7A3mSiKe8hukDK0IHr0/FJoo4wMLJbDKaWCEwSaEascUr0w02sHA4aWzkfjAy3ugHz68nQ==
-X-YMail-OSG: rPr3dOgVM1lzZp_coWwp3tcrJGdx4SUaaB618vcSGgFN6tg_Vv4bf1_uXEkVSXQ
- DNX2TUzHUIYlVYOa.m9YqDCHVPh6P81c.uIdtoPl2sVt_1FYQSVk2EaVoxC.wlzOlgF_3Y8qRb.R
- dnZuPAZJjWeofE0orP3RFV_vfydYhb3q8PbOJx5lMsInOWjnmlx1kT8oe3I9pUPnVOJo7e0BfTfS
- 7SPzfL9flurJ1Jg4EY4I9GZ0.FrIXgezSIxWpmb_PWbXxNhh9yGGfyRMaU8rdRGlrkJJ1RYYUL3Y
- dQMU2WQdxdr.y9Z_0NG.yUrcithXFzfawoYFm_lE9RDqJrhjOjQEKVDqcirrnTss_9W5UZy0c19u
- 7C_hl5zz6UwsRehIKMxxmzbtgMxkHlFN86yB21QjMl9PG4qdA5325tVO.glOISYuPgDl4e.s87tl
- 2R_HDiLycF2PaiOFzswbY88q2iHgSkQTJGqbqEK_Ivk_owUxgrK.cdd3MMS6d62nHRwVBi8PCS73
- xlha0LipEOcnHRNf7uOrVKluWKfT3PmfWRc1FmVXVof8BMH4M_G8HeU3t4Nq1SkyfVq8KDE85n2a
- KHi_PyHIOB_Xw.f739CFj5r65M1WvZc98qjGL985FnqkRvC71gx0y1cuo2_0UwBihxPRSgS1HuaA
- yQqLlKowQ_8Sxwb5qiiXOoSVQ6jP41FScTW9IQ5Dn_A05mPCyyTILHRc9wx57priVPRT5xmeVEL5
- lyVoSBULG9bwfLi91.UlTUoZ9YeZXO8t5C9uxR1XMT0KMifnVLO9LrU6wpGycvJGcTs1a1TGywug
- u.zUKN3gsZ2SAZc4gdWfhEojLC_7avlVMYuwXefkG1PBlUqZTxnFk6IgDr1_Au90Z9YobFS43CXI
- m7peKM8BhIAkXCoMHHk_F2aJVbVFrpv4wo8BGdraCCuiQPL1dbruSIN01Cg7EmqVy43glFPd0z0S
- NKEOsAfwAWm0m4OUmdjVFnJI.CsyEdSyTMEarsKcysDdr1rqyxnn7K2gl3R4SGU3MDr6hpBTnAXq
- ZbjFzr1izBJyHZUaj3fEokeepSLDan_IBfJQP1lG7ZKXapzNRQkt2ULync5pO_HP5E6nTPXwiLkL
- efCVzBYDKT7krl7yo4JJoS858eMPFZnOBlHc7oHMnLUIvKB9vKSUaE2z3IlNI06lOj50wXBtuEJH
- KIYZRfVybzqfc1VS3f7AmEX0G.lY_Y7D4nYCCnvamdcasikrAiguE0M6HJldysFokmcBGLaHKm.w
- sc52SwA8nt_aTqy2sJo1jHwoVQHzHayCgX2.glB2elT31xvrrm4p3FBHNBsHeSPt5IYzJw6_cOr1
- k7GzaWhpebE2h9sxrdrYvOIPCcnIG1ZnCoD0n0eGBgS5LiV2eoLXvmAukXVi3n0dHhX4CW6yxjaL
- ivdnJReJwdnu4Dx88GUtwKeyoIxWbHlnGmo0DAedsDmPEvs2Cf1XIy4YPPHJ_KSHnKPmMi7ZB1rb
- fWMQ79Pxl2mF65lc7ay5rlf5zD1QAqj2Pq3DttEqk.m_xm15BxqI5fTUeFkKkKn0cKiYX4newHHD
- L1_C_wikGt3kXoKfFQVJUv_7CWGWrCl4XFJSpZ9Ghcv37IXwNGrc25nOO94bVY1no.LWFzzDNGPG
- TvKWbQESFBZpEMpZJWL9O3IXPQISvWYU3rYGPvVUTqkq1e7T55JRvowwx4m0SflELJXQcARUhyua
- IWSmSToGEb2qREoWWlDoTDD5MyaJTC5om4U7sLBhUUn_PwIwPHEy.60RUzpyPOsuTMezUeAN4aBp
- xewXZpMKwRL2h1tWF8Ki3gQ_MfUZ2jdCDCWGIxh4mVfxw6jVIyy0AmFD00zotPGjnxIiRermV4pH
- WMRy3VmqA2oMmXOz9TsBQN4KxjeYh_qMKpQIsxIph7sTNPKxuKzAFTj2gAQcFJFfCicO1LwALa2p
- YSg.J0YtJxjhyfS1W64gBTIGUjQ1j4j73w4tlWs7gePIIcyaKbgR1umvVPv4gcMyTubl5Sn6B5rL
- Dl2g8oHzTFdYQM2hSBfNN_LyFcevxekl8iCzscbp9E.MkZ51v9L6yOK6yzuJTN3Ggre7tNRHTYsO
- bLcZjRYlTWdcZueK3GF2FAuS2F3UFsuRY89iwk8YRPcJ8I4DxEvkzo3ZpAteE11u.csO.2x4HEUO
- PeAD_5sll6hDUpv3yHh8G8zUknqgGWmGnjc.0Dp1yxQl686MCB7TAdM0iiO.xT05qdKVV34fL2pD
- jhr1fEFdD43YtWF5vs37nbUOP2fWdomD4XMVWqXA3YafAhXIfDFyxTueHXrg-
-X-Sonic-MF: <sridhar.arra@yahoo.com>
-X-Sonic-ID: 3e50eaa4-aed4-4bc8-8fee-61ed46524e8f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.sg3.yahoo.com with HTTP; Mon, 28 Apr 2025 16:08:51 +0000
-Received: by hermes--production-sg3-cdfd77c9c-5kclf (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 69441e8edc2b0b466e94cefa32871180;
-          Mon, 28 Apr 2025 16:08:47 +0000 (UTC)
-From: Sridhar Arra <sridhar.arra@yahoo.com>
-To: vireshk@kernel.org
-Cc: johan@kernel.org,
-	elder@kernel.org,
-	gregkh@linuxfoundation.org,
-	greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Sridhar Arra <sridhar.arra@yahoo.com>
-Subject: [PATCH v2 2/2] [PATCH V2 2/2] staging: greybus: fix indentation in fw_mgmt_ioctl()
-Date: Mon, 28 Apr 2025 21:38:37 +0530
-Message-ID: <20250428160837.664000-2-sridhar.arra@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250428160837.664000-1-sridhar.arra@yahoo.com>
-References: <20250428160837.664000-1-sridhar.arra@yahoo.com>
+	s=arc-20240116; t=1745856560; c=relaxed/simple;
+	bh=FxpVlTj9Og0fal9AGjqztLBuWeXzj8BFTeMP3+xLTPc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X1lI/dVJio5C3QJlmYE/PLa/Kcr/rBNHOgHSTiEhPw0Ojc05Rba4OEONzqPTE+wZ+ohhAwGB7plhtp5CKd7FuP9vzHwV8x7hoxHhZyJLonifljRgOto4JfKL1FGwxIbkTGMF9ALba95Y2QZzJ8gqbkgxZqzaR7kPL5xtLaQVbbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n5jIOwE0; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ff1e375a47so51790607b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745856557; x=1746461357; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yqcC00DctTwElBMGXfCuGugRSRS3FAHgs7qozz2W9RE=;
+        b=n5jIOwE0DWmAW06B+ZC2nZwA7AzTiognNPjeOs8wRH78SiwEUr3jwXA7+0orCXuzdV
+         vvXizioTevDKVxckEmQ7/bJecDI7fCiPCKCaC+xb0pFrs3jrK+tzKRf/vHGduCD8cZPi
+         WtEUyh5Cw1f+BH/l5tn7V/NGS2frrT8LV6QWewyVJV8LeIp4GRdkCzj8/b8AkA5UEJNK
+         OS4tJQY5Xnm1Tb/Lp9+esDM2X6vpCU4HG0MqbulPmhOcwajTDYJm8N3pJI2PvDlQaG0Q
+         E69LKrSokfiMVco8xmvLMZ1hyxqnX35eVyfqfiOGFhzVHlG8YRgRpZb4Tnzlp5xXf9jt
+         5SDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745856557; x=1746461357;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yqcC00DctTwElBMGXfCuGugRSRS3FAHgs7qozz2W9RE=;
+        b=Xs9fdY3CoZxiG3wWvzWVbqtZVVkYxGTv/Ik1orf5clI2aXfyBE6FG4DfXYY8SZkWv4
+         +DmuQO0ObqrA0a5l1gcxavmJWQifIBlKMxQgB/7rABtpaPtL+YvH12ENIcWi1Nq1xWTQ
+         TAqZTe/8hzjrPu+G/tef6XCeMj7e3OOEy5+A7LrkceEhHX5WRViYBlka+lLYF7Ox8AyP
+         AeLojn5ZBJlPPHIaluxsM1bwRE04GCkjik2kbwX4cuOlzLpLajx63JgRVc7qSvgG1zEo
+         e6owlRTdQ2fiHymSvQvEe5/Kd99NlvjAksX78IHjnGuC0ZjP/wrs5NWysFuhlj6ijqOt
+         9YEA==
+X-Gm-Message-State: AOJu0Yx74H4kKlgw35PZobdfQeHn4FxuyjfYx+P5KiF/EOiB4XF3cvdc
+	9JbfhM9D8IBBWme3+faRGh2UrWsgkjqOIk7We7W7FvAR/rWyp4/bBPs84viZmGG7w4a6vqKQ95J
+	LQwi7KsIgawMQYuU0cznqQZG8LT51f65QPBnPMA==
+X-Gm-Gg: ASbGncvUvmLhHVfjVcyaXmGqhbm+gK/fCevV+jnuEnxoGXXZBrQLMTtIWTv2AJuDR6p
+	DrUJsJx+9HwIH7e8xpRO4U2nJ/BkxbXVoO0HWG2kZRvQO1wyPeQU7PeATFfQxmeNYe4piwwxLRP
+	aqOmLlXWYchHOI65WKmNTK3Ys=
+X-Google-Smtp-Source: AGHT+IFEFlpBt75E9EmIVPvfAWV/hGclcHZhuGr+yR9C3ot2RgIFPMVPhVt5NG3pmNSvDkBdKNsEDpJt2mO9I3DlqTs=
+X-Received: by 2002:a05:690c:b9b:b0:6f2:9704:405c with SMTP id
+ 00721157ae682-7085f183418mr133016977b3.15.1745856557599; Mon, 28 Apr 2025
+ 09:09:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250421031536.1173373-1-ricky_wu@realtek.com>
+In-Reply-To: <20250421031536.1173373-1-ricky_wu@realtek.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 28 Apr 2025 18:08:41 +0200
+X-Gm-Features: ATxdqUHSoZXSXQAQyumHjEg_3CVlyJjSwwyw2GG_4aqVXDoXNhtZeDVWMOl3qBE
+Message-ID: <CAPDyKFqNWirdJMA_7kpWjUcNYh4q9RLOLW+eY1hPztw4roEsMw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: rtsx: usb add 100ms delay before power on
+To: Ricky Wu <ricky_wu@realtek.com>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Corrects indentation to comply with checkpatch guidelines.
+On Mon, 21 Apr 2025 at 05:15, Ricky Wu <ricky_wu@realtek.com> wrote:
+>
+> this delay make sure the last time power off did the discharge clean.
+> During the card recognition process, card power will be toggled in 1ms=EF=
+=BC=8C
+> and 1ms is not enough to discharge cleanly
+>
+> Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
+> ---
+>  drivers/mmc/host/rtsx_usb_sdmmc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_us=
+b_sdmmc.c
+> index 1edfe2acf809..e5820b2bb380 100644
+> --- a/drivers/mmc/host/rtsx_usb_sdmmc.c
+> +++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> @@ -952,6 +952,8 @@ static int sd_power_on(struct rtsx_usb_sdmmc *host)
+>         struct rtsx_ucr *ucr =3D host->ucr;
+>         int err;
+>
+> +       msleep(100);
+> +
 
-Signed-off-by: Sridhar Arra <sridhar.arra@yahoo.com>
----
- drivers/staging/greybus/fw-management.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Wouldn't it be better to do this at power-off instead then? Otherwise
+you may end up adding 100ms at card-initialization even if the card
+has been off for a long time?
 
-diff --git a/drivers/staging/greybus/fw-management.c b/drivers/staging/greybus/fw-management.c
-index 56725b711a17..413a4d4f4e40 100644
---- a/drivers/staging/greybus/fw-management.c
-+++ b/drivers/staging/greybus/fw-management.c
-@@ -461,7 +461,8 @@ static int fw_mgmt_ioctl(struct fw_mgmt *fw_mgmt, unsigned int cmd,
- 			return -EFAULT;
- 
- 		ret = fw_mgmt_load_and_validate_operation(fw_mgmt,
--				intf_load.load_method, intf_load.firmware_tag);
-+							  intf_load.load_method,
-+							  intf_load.firmware_tag);
- 		if (ret)
- 			return ret;
- 
--- 
-2.43.0
+Or maybe this is because we are worried about bootloaders turning on
+the card and leaving it in that state when the kernel boots?
 
+>         dev_dbg(sdmmc_dev(host), "%s\n", __func__);
+>         rtsx_usb_init_cmd(ucr);
+>         rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_SELECT, 0x07, SD_MOD_SE=
+L);
+> --
+> 2.25.1
+>
+
+Kind regards
+Uffe
 
