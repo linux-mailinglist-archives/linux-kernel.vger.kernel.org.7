@@ -1,151 +1,174 @@
-Return-Path: <linux-kernel+bounces-622692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24681A9EAE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9FBA9EAE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90AED1888EF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78FA188FC4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA04525DCED;
-	Mon, 28 Apr 2025 08:36:59 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6511BD01D;
+	Mon, 28 Apr 2025 08:37:51 +0000 (UTC)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C91A1B423C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEE425D1F0;
+	Mon, 28 Apr 2025 08:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745829419; cv=none; b=JK+8a9NnI09sjUsFdjvI/wjgjXz13523lGnL58dzUwS6GVLjtL6bHk35gp1masadEyaSMagahW3QGSX88nmSokFxSFQXPG/bVdIfwN250iawSMeZ9dE0wu+5DFuxS/7mkL8H2sRPEjGHqULm2/QVwgoeifvyhHaLwEDcuUPHvko=
+	t=1745829470; cv=none; b=diRwSCgFlQLsYdz9SCu6dDCbt5deg8XyBfaw7cZCXv9Y93n+ydTYvB4C7y+blJPhO9wD8+gS+7Idoob7yoCbyme7arnYCDNLMlsY0K0Hse+0R9lIOtezxpgUYH+aSn7oWWumvulLW/4fKZoKFJB2mVmuNOMdnOMI7K4PLzKIM/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745829419; c=relaxed/simple;
-	bh=up4xmKeUHk6N6IzCRI9ReUFoCyUNJnulwdwYT17K3Ik=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hFbRyklChmks1hM8MPVirwVtH6yLPxwQ8Gw0fXNqTdxKpwHItXGL8AIulGy3AqYgelGKjGplYtmU+4hJ1Mbbdd3KReEe19JVjFJby3JyZ1zLlgMoEyARbmxWgPX8wrJD7dzBi4FgDEIEpd8O5He7V+vchfLQMISwzOUo39yZIsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 53S8aWbM052103;
-	Mon, 28 Apr 2025 16:36:32 +0800 (+08)
-	(envelope-from baisheng.gao@unisoc.com)
-Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4ZmGwF2kPfz2MDkkp;
-	Mon, 28 Apr 2025 16:34:53 +0800 (CST)
-Received: from BJ15137PCW.spreadtrum.com (10.0.73.32) by
- shmbx06.spreadtrum.com (10.0.1.11) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Mon, 28 Apr 2025 16:36:30 +0800
-From: Baisheng Gao <baisheng.gao@unisoc.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim
-	<namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <cixi.geng@linux.dev>, <hao_hao.wang@unisoc.com>,
-        <zhaoyang.huang@unisoc.com>
-Subject: [PATCH V2] perf/core: Fix a defect in perf_output_sample
-Date: Mon, 28 Apr 2025 16:36:29 +0800
-Message-ID: <20250428083629.88-1-baisheng.gao@unisoc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745829470; c=relaxed/simple;
+	bh=0kLJgngd8OBHnB9bkAEEFHOf3k87BlAdTqH93ssIaow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HoZlCU12FrueBofT3kc/iosYcwiTaYYhoJCGqSzTLIYdFY6OYngxLiSAAPw1ZbjJxFF6NxzSjkk+akR1djbZCgZIZ0wYpxuQyW0+9eqHN9oFSnHd4Ro/iH7R210DdiGifrWV39Ur743oE4Ry6V1R2yK/zaQ3P9XXGBOuLurHTkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so5277756e87.2;
+        Mon, 28 Apr 2025 01:37:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745829465; x=1746434265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ztfMn1VNdd3sBgxsbvmNyvjhCCtBTgEPkzz2bCSzMw=;
+        b=xDUl4g5KsAGno7/Xi9PVpXFWAhx4/jzUEY2qqFMp5EKZoXXlJnoFNZ5LuOhZMV2TUf
+         myxbaGVsbf8ZU9soKFcrWcehhRiRVyfMfKSQ8/WdWuymXR1qU5UBkgLXXyiRs2HXvQ6X
+         N854ByyyBQrYVkb/pl+GQ/2zkxetJoPmfPvoEp8lEBYQGqggg5jp25fvugDOt6LMLiYO
+         iIqhEm/uv7aWLi7d9+BLLDIKbE/1rw52PJbqn5fSR986XxJmdrqrFlTL/F8/i//OwcUA
+         EPhAb0VmlXwab4ChLtkwN9l/Rx7oOpUbSe0mlUnmHxjhGhc/NvhKczhubPJDW3r2GuBh
+         ZMAg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ZO1jo0GzCD5EwCYcgxVv1kjHeqnFt6d9xU5xhVUIJhyNaDEZWUsR5C/UbAqv5+oCXYFv25H9nS8i@vger.kernel.org, AJvYcCW1y+C1+stw8qyVkW5pgmFe6lySNRYRCRQP7y3l+uiNXGYKjtCPNhk64K12XS1izeMZXWO5ceeIdAdCePSg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfe/09NukeWj0M6H56q0F5oMaVrL2AsXL7EBaiDrl9jCIlTYtG
+	lDXmQxCPJJlZkKoh2lgipp3IiEZZMMidhqxX9fccbB2mbURwKWuQaZUw/R0W
+X-Gm-Gg: ASbGncvIvbaQDvpYT4IYMf7kcdw9sveI0mxhqRywycygRlr3MpDY4TwLHAshTmNeWWH
+	wWtP/P3p+RoMNiq962Joc7bT7dxxSU1N+MP0R8a+i733K6jJT9vqAhTf+FhGxOpC/JjoTN0MB0O
+	R7knCllKA6Sl21naIIsmaPJEieGHQ/ieAcA4MMlF6elZqyXWIfUsa9GZlc651XF+REAe0lDEgU/
+	t4pVLfrsDuvUr/oI9brs/EAAJyDlhmJRPGRuGVWfYgyxE9Dch3Guys9dSXkFmTbJNiXekfZ4fZS
+	Wa++E4B+zpovI4LMh7+s+t4/yFwpd+IZJYit8lXCYfubW808or4+/oFsQyfN+x+MmWbagIxBTw=
+	=
+X-Google-Smtp-Source: AGHT+IFGk1CDfCRj/uFHPQZuVvqOBdytVA3yZg418ITL4VBPm6XEGCmdolILhkHHD+VF36LH+OaYZQ==
+X-Received: by 2002:ac2:4e11:0:b0:54a:cc04:ea24 with SMTP id 2adb3069b0e04-54e8cc0e6afmr3350571e87.46.1745829464962;
+        Mon, 28 Apr 2025 01:37:44 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7ccb83b5sm1622229e87.245.2025.04.28.01.37.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Apr 2025 01:37:44 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-31062172698so47265371fa.0;
+        Mon, 28 Apr 2025 01:37:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUy5nbDl0EYM6/al4YUlNn2igIY0t2w78YfbyoaCBGwZJI+imo9bPIHq5VeT7yV6lD43ud1DUrLNQS5dMcw@vger.kernel.org, AJvYcCX2juqirtQvXgOmN6+aC4u3GLIJRbU21sinjUkRZKmDsz+LVEllKqR7RZ4swvqIFxlLh/joF2kPOQdl@vger.kernel.org
+X-Received: by 2002:a2e:bc22:0:b0:30b:9813:b002 with SMTP id
+ 38308e7fff4ca-31907611d07mr36339461fa.30.1745829463977; Mon, 28 Apr 2025
+ 01:37:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- shmbx06.spreadtrum.com (10.0.1.11)
-X-MAIL:SHSQR01.spreadtrum.com 53S8aWbM052103
+References: <20250418-opz-audio-v1-1-4e86bb5bc734@posteo.net>
+ <CAGb2v67-1tk0uAmYL-y6479itUxBJua76qhjn+0tTsN+Ni_a1w@mail.gmail.com> <aA8tsao6hhW50k4e@probook>
+In-Reply-To: <aA8tsao6hhW50k4e@probook>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 28 Apr 2025 16:37:31 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67Trz_Dtp5_ME3MnfwBjtp=DwPN4aJ1vrtizgiUn08_3w@mail.gmail.com>
+X-Gm-Features: ATxdqUGWc3W8r_9HVJ8EOFRWh1ggm3Yd1EhRVjGqxp6FjjlbklMvKQE6GcEe8I0
+Message-ID: <CAGb2v67Trz_Dtp5_ME3MnfwBjtp=DwPN4aJ1vrtizgiUn08_3w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: allwinner: orangepi-zero: Enable audio codec
+To: =?UTF-8?B?Si4gTmV1c2Now6RmZXI=?= <j.ne@posteo.net>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The defect exits in an exiting process which is interrupted by the
-perf sample routine. The routine will collect the user stack if
-being specified, whereas the user memory space possibly has been
-unavailable, so a panic will happen.
+On Mon, Apr 28, 2025 at 3:26=E2=80=AFPM J. Neusch=C3=A4fer <j.ne@posteo.net=
+> wrote:
+>
+> On Sun, Apr 27, 2025 at 01:28:58PM +0800, Chen-Yu Tsai wrote:
+> > On Fri, Apr 18, 2025 at 7:32=E2=80=AFAM J. Neusch=C3=A4fer via B4 Relay
+> > <devnull+j.ne.posteo.net@kernel.org> wrote:
+> > >
+> > > From: "J. Neusch=C3=A4fer" <j.ne@posteo.net>
+> > >
+> > > Line out playback and microphone capture work, after enabling the
+> > > corresponding ALSA controls. Tested with the Orange Pi Zero interface
+> > > board, which is a (mostly) passive adapter from the 13-pin header to
+> > > standard connectors (2x USB A, 1x Audio/Video output, 1x built-in
+> > > microphone).
+> > >
+> > >   https://orangepi.com/index.php?route=3Dproduct/product&product_id=
+=3D871
+> >
+> > What about the USB ports?
+>
+> Good point, I could test these. I have not mentioned them because they
+> are not related to audio.
+>
+> > In any case, we don't enable peripherals on "headers" by default. That'=
+s
+> > up to the end user. The description for the whole adapter board could b=
+e
+> > an overlay that users can then apply directly.
+>
+> For features such as pinmuxed UARTs (already present and disabled in the
+> dts), I fully agree, because they could as well be used as GPIO, and
+> that's for the user to decide.
+>
+> For the audio pins, there's nothing else one can do with them, as far as
+> I understand it. It is possible to use at the least the Line Out pins
+> with very minimal setup, e.g. just connecting the pins to headphones or
+> something else.
 
-In order to fix the issue, forbidding to copy the user stack of an
-exiting process.
+Sure, but you are also adding the routing information, which could be
+different if someone designs a different adapter board. One could
+include GPIOs and I2C from the 26-pin header, and make a headset
+adapter (mic on the TRRS instead of tv-out) with a headphone amp
+and headset detection IC.
 
-Stack dump:
- Internal error: synchronous external abort: ffffffff96000010 [#1]
-  PREEMPT SMP
- CPU: 3 PID: 2651 Comm: binder:2649_1 Tainted: G        W  OE
-  5.15.149-android13-8-00008-gbe074b05e5af-ab12096863 #1
- Hardware name: Spreadtrum UMS9230 1H10 SoC (DT)
- pstate: 204000c5 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : __arch_copy_from_user+0x180/0x218
- lr : arch_perf_out_copy_user+0xb0/0x17c
- sp : ffffffc00801baf0
- x29: ffffffc00801baf0 x28: ffffffc00801bbf8 x27: ffffffc00801bbe8
- x26: 0000000000000000 x25: 0000000000001000 x24: 000000000000feb8
- x23: 00000000000005f0 x22: ffffff80613c8000 x21: ffffff8143102a10
- x20: 0000007c239643c0 x19: 00000000000005f0 x18: ffffffc00801d058
- x17: ffffffc16e677000 x16: ffffffc008018000 x15: 0000007c239643c0
- x14: 0000000000000002 x13: 0000000000000003 x12: ffffffc008000000
- x11: ffffff8000090000 x10: ffffffc008090000 x9 : 0000007fffffffff
- x8 : 0000007c239643c0 x7 : 000000000000feb8 x6 : ffffff8143102a10
- x5 : ffffff8143103000 x4 : 0000000000000000 x3 : ffffff8093cad140
- x2 : 0000000000000570 x1 : 0000007c239643c0 x0 : ffffff8143102a10
- Call trace:
-  __arch_copy_from_user+0x180/0x218
-  perf_output_sample+0x14e4/0x1904
-  perf_event_output_forward+0x90/0x130
-  __perf_event_overflow+0xc8/0x17c
-  perf_swevent_hrtimer+0x124/0x290
-  __run_hrtimer+0x134/0x4a0
-  hrtimer_interrupt+0x2e4/0x560
-  arch_timer_handler_phys+0x5c/0xa0
-  handle_percpu_devid_irq+0xc0/0x374
-  handle_domain_irq+0xd8/0x160
-  gic_handle_irq.34215+0x58/0x26c
-  call_on_irq_stack+0x3c/0x70
-  do_interrupt_handler+0x44/0xa0
-  el1_interrupt+0x34/0x64
-  el1h_64_irq_handler+0x1c/0x2c
-  el1h_64_irq+0x7c/0x80
-  release_pages+0xac/0x9b4
-  tlb_finish_mmu+0xb0/0x238
-  exit_mmap+0x1b8/0x538
-  __mmput+0x40/0x274
-  mmput+0x40/0x134
-  exit_mm+0x3bc/0x72c
-  do_exit+0x294/0x1160
-  do_group_exit+0xc8/0x174
-  get_signal+0x830/0x95c
-  do_signal+0x9c/0x2a8
-  do_notify_resume+0x98/0x1ac
-  el0_svc+0x5c/0x84
-  el0t_64_sync_handler+0x88/0xec
-  el0t_64_sync+0x1b8/0x1bc
+It's easily overridable, and I suppose providing the basic use-case
+that one can directly use via the pins does have value. Instead of
+doing a lot of editing, the user can just toggle the status via
+the bootloader.
 
-Signed-off-by: Baisheng Gao <baisheng.gao@unisoc.com>
----
- kernel/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> I'll clarify the following points in a comment in the next version:
+>
+>  - The audio signals are exposed on the 1x13 header described in
+>    https://linux-sunxi.org/Xunlong_Orange_Pi_Zero
+>
+>  - The pins can't be used for anything else according to section
+>    3.1. Pin Characteristics of the Allwinner H3 Datasheet.
+>
+> Although I would prefer to enable the audio pins by default (because
+> they are present on the Orange Pi Zero board), I would also be ok with
+> adding them as status =3D "disabled", as is the case with uart1 and uart2=
+.
+> Please let me know your opinion.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e93c19565914..9c9b571b812d 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7867,7 +7867,8 @@ void perf_output_sample(struct perf_output_handle *handle,
- 		}
- 	}
- 
--	if (sample_type & PERF_SAMPLE_STACK_USER) {
-+	if (sample_type & PERF_SAMPLE_STACK_USER &&
-+			!(current->flags & PF_EXITING)) {
- 		perf_output_sample_ustack(handle,
- 					  data->stack_user_size,
- 					  data->regs_user.regs);
--- 
-2.34.1
+I think it's better to have them disabled by default. We don't want to
+confuse users that don't have the adapter board, who might end up looking
+at their audio mixer and wondering where the line out is.
 
+If they have the adapter, or they are explicitly using wires to hook up
+things, then they can toggle the status. If they have something else,
+then they load whatever overlay that matches their hardware.
+
+
+Thanks
+ChenYu
+
+> I will test the USB ports and write a devicetree overlay at
+> arch/arm/boot/dts/allwinner/orangepi-zero-interface-board.dtso
+>
+>
+> Best regards,
+> J. Neusch=C3=A4fer
+>
 
