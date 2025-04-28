@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-623239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810EFA9F2EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:57:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DD6A9F302
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FA2461CA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A3B17AEDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953A526A1A3;
-	Mon, 28 Apr 2025 13:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8000C26C3AB;
+	Mon, 28 Apr 2025 13:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjeRAvqr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="hAWdxv54";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="UJbPZw/E"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4117B262FCA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF3F26C3A7;
+	Mon, 28 Apr 2025 13:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745848621; cv=none; b=PdenafBCf+3ZFlFZuQiqR87lgV5tTw7FXO9NQx1B8wbfUWJAjJrexi+QB6G8/aB6I2mA8xSM3QL6fY7fAhzBhmNHtAw72xbFHdAR59BnolfJVLIvMc0zFSCT8ECCejxX8+w1upO8tfpYUsvSDn50sXcI9WtTc14mm3LNvMdtU+g=
+	t=1745848769; cv=none; b=NenJ0ykOD8deUUaf+G8iOMNiPlrbRU9HyOsD0QKi8nnVfakePNL2sfiEvNL/N8Icclt/6vMoep3SH8kJq9v2ZHFTzojVg6Rfit6VHCqKF1Je127ESskX6ByWcxv8UI6L4l8FgWyzUAzVvQx5p1YtSC8TKv/oukHAP/CMjZSgNrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745848621; c=relaxed/simple;
-	bh=70lfu/B2ib3SJpO5ooGMaAt1QBpRSWIEV/Np9sKATMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzQslkKRodH+He4nt9ig1xF0aTJ5s/JCBvNtHPVSrf5jmqvBt0PERBtffe18334HXM/0L320wLjyUjSGSBpoi+G7MBzGv6jeVaYeNVU3p2R85WEBn35nvLZE0ConCAdD+GLyVku8Me4NZl4PzEIN/guWAXmKEHFXyA9jDLUyvyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjeRAvqr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745848619;
+	s=arc-20240116; t=1745848769; c=relaxed/simple;
+	bh=Bj+QlsNEcLPsV28ssPYh/TsN21FF8vVG981eLOGY/Q8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BLVeVONRmT2ovoLkcJQvlW9wVpyCnUafEMdww5VH6Mx/2eevGO6ENFITJAKit6mXSl2OqP4/9APeD3GyirHZaNfBdPOgMwI3UcpBey0eGpy4jUwEjBFzJvNgKynR+MeOQ41HOx/RYvbckXYPDmj8M+k5EiTJPiacTK+7EsR9Igs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=hAWdxv54; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=UJbPZw/E reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1745848766; x=1777384766;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WKpFz0sFR5mCvXUjLxoDEJGO4+bSqpZN4lZyQeOmWkQ=;
+  b=hAWdxv54aF/AyNfu/5thP/kioGmIFK2YVnQzXq9JwpdCqGSriS02dKJ7
+   aJ8k3zWrWbVmfhYH5TpD5Ut+w2KzMKtw3rgocCvFR/MptyaiMlBGRZvlL
+   ZzpfX6YOjEKzmw7UTif9VncyPkMWUbCP/jI896Q4CXLNI7T0W+2kKQdcw
+   dGvMTjpxRCAXod6vlEd5P4DnSiiBJSOTcCvimLZOt0UCNnLmN+GL+MdOZ
+   X/f5xg09AQeawPiY3ZEs6zE6jkNn91/gEj/dMzQgxl18rbvXCVUWM5vhW
+   njulTqBPail+oPbk/vqQYKHMnMH3gKiRsSewFi6h9RiJA72YJ3Ob5h5Vn
+   A==;
+X-CSE-ConnectionGUID: 9CeSALBcSamhBdAtN/0Uaw==
+X-CSE-MsgGUID: 1lcsG385T/uI+2rHjKtZmg==
+X-IronPort-AV: E=Sophos;i="6.15,246,1739833200"; 
+   d="scan'208";a="43759129"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Apr 2025 15:59:23 +0200
+X-CheckPoint: {680F89BA-26-2417938-F0170C2B}
+X-MAIL-CPID: ED23F6D0B04F11E4999A0A2C1B96DE42_2
+X-Control-Analysis: str=0001.0A006396.680F89B9.007A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A5A111615E0;
+	Mon, 28 Apr 2025 15:59:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1745848758;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UHyYAaJAMEZKibWtlyqh2W6HZtpo9zi498VVY4y0rAg=;
-	b=SjeRAvqroFS6XltalVLoQhkO0cXVeoI1CmmDqrL4SeNSITFcowaHG8L2CtedWD58dj0Pc6
-	yfoJG3CoYzOai1eBv4oTr2gq7EWSKVeBitCljVIROSdZQnfOAvuen7EBN4iCXWJPgnkbgy
-	k/wWbZ6bga3BnaXuA3sI01a7WFLFlUE=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-354-igm4VrrxOuy36hbbI65Yiw-1; Mon, 28 Apr 2025 09:56:57 -0400
-X-MC-Unique: igm4VrrxOuy36hbbI65Yiw-1
-X-Mimecast-MFC-AGG-ID: igm4VrrxOuy36hbbI65Yiw_1745848617
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c54e9f6e00so937115885a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 06:56:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745848617; x=1746453417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UHyYAaJAMEZKibWtlyqh2W6HZtpo9zi498VVY4y0rAg=;
-        b=EtGjMlurvhauHLQiaKjLjKCAchuetMYlFL7bQQA5J3y47idioTa5JsoXZ2K9+Ws9d2
-         1E7w2ghKMjy7TcBXJXO2XLowC/8ZzlCpkfKVMaLAFhFmDRY047jgw2lzY1gZxVOH1bRL
-         vra9/9UGib6ZWT/8Xf8afsssxGtzAwAB1BXUCMg7g4yIGXS6q+ukrC3dZL3zs88bdWdf
-         rvAVPTuCCycjeYtj9xh4+3PMVPdJIgPuo0N0OLj6CkHfjpIQPg5UdO+sSce73Kkk06Rk
-         ZNbM0IAenqffY5dg9lnWQmz6tOr6eoquW/vgP5CrKJ9CD4OpJe/eqkoYP9ZkxIFjD0yw
-         j3oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrtRwC0EcRcXDkvlquAXnUWn0wwb8FNPGtB23mUAEBruKFlbtvmavXMvOFZs6VPyV6yrhInz7/uaTUUfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznE7TuItCe5DNQodu9uZLTxIiiOSTOxg3u9DLLuMs0CqAjuRyR
-	dl2TyGPEA53o4lQb6J7jxuXN2+p3vTKBa/LOwiDewJiVRhDGNlo8VrCr3IM4NcABm5urpb9xxLG
-	B/yKsjj0OZXIJgYbNfvSbOV9wuSNeFHX3AvIR0+XEihgiteXEdcLHEzXDWxulUQ==
-X-Gm-Gg: ASbGncsx/auctMnddgapwZ1Sgl5fcL48lr/HEbK4uu/gwcpK/NKzn6t4vFVK7PKehmQ
-	D1R9ipL16+4i1I9H27dhf5BZHpWdy6iq8mxmfTpfgHkdR6GHe+bnrYtZVU5NJyNl7PGD/wxByuL
-	W4IwyL+20pG0xigqCbe1nwy6uzVvsRjxcCgqHvbahw/IZShdAnVnQ3po0TVcZvoPIjoOmkzEFu1
-	mdhE2snoT/rgimKOfzNuhK9zD+jq9klYjhr95RfYn2+dQyeYxS216t2MOW8cngziI6h2w27L3mJ
-	e16+yfGn5bBeqpxZ
-X-Received: by 2002:a05:620a:2887:b0:7c0:a1c8:1db3 with SMTP id af79cd13be357-7c9585c5877mr2487230185a.11.1745848616976;
-        Mon, 28 Apr 2025 06:56:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFF77QtEVSxz59mKWcWmWXJCMGCmi0uBQwkt5f3Bu+dckdVzt5kbvV5X2qwCObb0VZdyOuwAw==
-X-Received: by 2002:a05:620a:2887:b0:7c0:a1c8:1db3 with SMTP id af79cd13be357-7c9585c5877mr2487224585a.11.1745848616412;
-        Mon, 28 Apr 2025 06:56:56 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.205.27])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958cbd048sm623795385a.43.2025.04.28.06.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 06:56:55 -0700 (PDT)
-Date: Mon, 28 Apr 2025 15:56:38 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Luigi Leonardi <leonardi@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/3] vsock: Linger on unsent data
-Message-ID: <wff4t4owsukm2jynm2dhju4rrtegyjjlrhu7o5xppsxfqrcus4@wmsvcwkdtdat>
-References: <20250421-vsock-linger-v2-0-fe9febd64668@rbox.co>
- <20250421-vsock-linger-v2-1-fe9febd64668@rbox.co>
- <km2nad6hkdi3ngtho2xexyhhosh4aq37scir2hgxkcfiwes2wd@5dyliiq7cpuh>
- <k47d2h7dwn26eti2p6nv2fupuybabvbexwinvxv7jnfbn6o3ep@cqtbaqlqyfrq>
- <ee09df9b-9804-49de-b43b-99ccd4cbe742@rbox.co>
- <wnonuiluxgy6ixoioi57lwlixfgcu27kcewv4ajb3k3hihi773@nv3om2t3tsgo>
- <5a4f8925-0e4d-4e4c-9230-6c69af179d3e@rbox.co>
- <CAGxU2F6YSwrpV4wXH=mWSgK698sjxfQ=zzXS8tVmo3D84-bBqw@mail.gmail.com>
- <81940d67-1a9b-42e1-8594-33af86397df6@rbox.co>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WKpFz0sFR5mCvXUjLxoDEJGO4+bSqpZN4lZyQeOmWkQ=;
+	b=UJbPZw/EeB14ZfS1ldzTzTFLeJF7p0m/+I5DS+PogBIKzwX9ySrbfmPO+qon4qkcnVWAGX
+	d5zGmfOae2tq9xt2KCQmHm5I9Qoxb7zIKkTe/ezD7vjz9V6Gjk+Qi3VDffo8eQuV3KLGHC
+	bhw3Evp1LuwWkZKuEFRU/rHOubaZ8mOx3C/cYljCbrtURicoUXkYt/xc6oU0TtU+9kdaqm
+	R/m2Glz1ARWF80VyorozyfBCTwm+o3cDpB4vq9priXL0Uhxl5eoZApV7oKH2+sCwOKJoJ0
+	mhTQfy7fcBiEFha0afAjdTkBZZ7Si9Nrj9oB0hIS/eNHJKi6NIxF8vEjnf5Tdg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] dt: bindings: arm: add bindings for TQMa95xxSA
+Date: Mon, 28 Apr 2025 15:59:08 +0200
+Message-ID: <20250428135915.520432-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <81940d67-1a9b-42e1-8594-33af86397df6@rbox.co>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Apr 24, 2025 at 01:24:59PM +0200, Michal Luczaj wrote:
->On 4/24/25 10:36, Stefano Garzarella wrote:
->> On Thu, 24 Apr 2025 at 09:53, Michal Luczaj <mhal@rbox.co> wrote:
->>> On 4/24/25 09:28, Stefano Garzarella wrote:
+TQMa95xxSA is a SOM using NXP i.MX95 CPU. MB-SMARC-2 is a carrier
+reference design.
 
-[...]
+[1] https://www.tq-group.com/en/products/tq-embedded/arm-architecture/tqma95xxsa/
 
->>> You're right, it was me who was confused. VMCI and Hyper-V have their own
->>> vsock_transport::release callbacks that do not call
->>> virtio_transport_wait_close().
->>>
->>> So VMCI and Hyper-V never lingered anyway?
->>
->> I think so.
->>
->> Indeed I was happy with v1, since I think this should be supported by
->> the vsock core and should not depend on the transport.
->> But we can do also later.
->
->OK, for now let me fix this nonsense in comment and commit message.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* None
 
-Thanks!
+ Documentation/devicetree/bindings/arm/fsl.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
->
->But I'll wait for your opinion on [1] (drop, squash, change order of
->patches?) before posting v3.
-
-I'm fine with a second patch to fix the indentation and the order looks 
-fine.
-
-BTW I'm thinking if it makes sense to go back on moving the lingering in 
-the core. I mean, if `unsent_bytes` is implemented, support linger, if 
-not, don't support it, like now.
-
-That said, this should be implemented in another patch (or eventually 
-another series if you prefer), so my idea is the following split:
-- use unsent_bytes() just in virtio
-- move linger support in af_vsock.c (depending on transports 
-   implementing unsent_bytes())
-- implement unsent_bytes() in other transports (in the future)
-
-WDYT?
-
-Thanks,
-Stefano
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 447054b52ea39..a6cf65e10d43f 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1419,6 +1419,16 @@ properties:
+           - const: kontron,imx93-osm-s    # Kontron OSM-S i.MX93 SoM
+           - const: fsl,imx93
+ 
++      - description:
++          TQMa95xxSA is a series of SOM featuring NXP i.MX95 SoC variants.
++          It has the SMARC form factor and is designed to be placed on
++          different carrier boards. MB-SMARC-2 is a carrier reference design.
++        items:
++          - enum:
++              - tq,imx95-tqma9596sa-mb-smarc-2 # TQ-Systems GmbH i.MX95 TQMa95xxSA SOM on MB-SMARC-2
++          - const: tq,imx95-tqma9596sa         # TQ-Systems GmbH i.MX95 TQMa95xxSA SOM
++          - const: fsl,imx95
++
+       - description:
+           Freescale Vybrid Platform Device Tree Bindings
+ 
+-- 
+2.43.0
 
 
