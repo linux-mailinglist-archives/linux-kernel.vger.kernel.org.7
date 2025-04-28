@@ -1,54 +1,81 @@
-Return-Path: <linux-kernel+bounces-622726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40EAA9EB5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAA9A9EB63
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222DB3AA780
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C393A6D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB325F796;
-	Mon, 28 Apr 2025 09:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1645E25F96D;
+	Mon, 28 Apr 2025 09:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GB1kbE3K"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nJvkzJn5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C8D1C5D7D;
-	Mon, 28 Apr 2025 09:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E6025F794;
+	Mon, 28 Apr 2025 09:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745830877; cv=none; b=T9hY7D1Vd1eirf8+eEBwOnf7FkKMcmpWCUvf45yRtu9+47eYB6o+LcCgqbKFZGdFmMa6hcqJVM4w04FZD5rqQF6JzeuD82wtd+u7+zPa2vavuYnq3d3PwBadWs6dLfUQTAkajNdiOS6N0nIXDs+n+SnL3+SLwL01AxAGX7gMdws=
+	t=1745830973; cv=none; b=RVBKbe9j9TkDiVV9YfLCp+EWCRgxWIwG48gmh/6K+3SdU5DtAvvllxBzefraCHl9sKdoct/E7ZQ/qNQWXBIHdrmCHoRXMLUfSGCavEEGVjJcDYiidpJQ/q6YWCTh/LOOXX//ffOzdwDpbu9YsjxBtjkqSZbP+pNHXE7crCZrWWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745830877; c=relaxed/simple;
-	bh=2FiqQ0lqpxnXDiKt3Y64cAG6xao81V1A55zkKBRZ6KQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=m1QbYecml2Sw9QBdMC0Yoh6LokLQZYLbY8P07LfbZ1H1WMSw/knqfWjx5t0ZUuFjggc0GX31WwKYJB2WO5qAmZgQvuqMOI/mbxENgvEI3uw2tzM4WirXhte/kOm0UeChoe5tPWesvzWcHfhej2FGRovBQCMoTZvDOlhd9NgyfNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GB1kbE3K; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1745830854; x=1746435654; i=markus.elfring@web.de;
-	bh=N5TM2MWXPktxJ6+QkYB1LobVq7/QhRKnPDbuFXe/aXQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GB1kbE3KxnsU0klSc+Nt+fqK1SB5braPL0jhiB3ANSBq7yP2nx8hbE3+5zyp09Z2
-	 pLP8QwqjpeoTJJdaPSBIMtbTojtT6pI2nyCldMwL6LDODNSj8J63EVA8JR2wctOwn
-	 egccmm6R6KTJPnqgbT7HSD9cKxJ00FFmdON1In7ZVHJ+QU39YAqSY9wBmNyokq+23
-	 tX4VDyaklPO+6j8tz82sil4cMr6+1cI18taevp04WK9IZz+ZnwiT7nxuloetCETc5
-	 AoAsX3cM22OJi9SF3nGmMuabl9mNKzaE0t3MkdsdFR/bO136YjqfMgMiErWZGHtno
-	 jXK/aa8u2rVsDSBLFg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.68]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MV2Ka-1uY2ka1WGE-00Yv4e; Mon, 28
- Apr 2025 11:00:54 +0200
-Message-ID: <edab112f-9449-4862-8f8a-0beae136e0c6@web.de>
-Date: Mon, 28 Apr 2025 11:00:46 +0200
+	s=arc-20240116; t=1745830973; c=relaxed/simple;
+	bh=jk2xPovHc5F6l7T8mmd6XwqbNZPK/rB+qGPsEbuP4iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bn6YaAexS+A98BRtgXPj/WIo9b0492LYK0N+LScVmuNGHcgmuG4RGcgllmh/AOedQA3JMgDHwAGkvkGRnj9QYHq3wrNqbKOC+/ZkBSCBrNYe89KJYGtwiGXqs57s87fcywMH7X8iBeRHBtqtltohsNxvYBux8YLx0nCSc7DCezQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nJvkzJn5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53RMu5b7023190;
+	Mon, 28 Apr 2025 09:01:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2FVh8p
+	KWRuaqN3fBqmPyc2Nc7uaC9djDNtBndOlCsIg=; b=nJvkzJn5ZARn6vwwP5m5q9
+	FubFQ3/ZU8MiFGZEQu4r5jjAl72RcEC1YVz94xHhI4tOBI1wsbJI92w+nbJkXnbO
+	X7/WCbfWcJMjp0roQuJktbH1BGYGllW1b17i0BKvi26TdEdUPPR7W4E+JFrOXux8
+	LCced+QhTs6XUn3Ah8RaXUL2W1ZImLE1H/Zho9rwNcvE1YJaIol9Nb/dA0kr5t0X
+	rGUZ4fvwRScozf5kLGL9q5/6tx2n+9n5DoEOfrcmkQUN2OIZlYbMDfFCoZuuyRRH
+	gLYxdS+zrBvlkFmXkVjK9lB2uYdpsc/un7VJshESFQusfi/rH/jN48nne5l/gAGQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 469v5kj87x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 09:01:13 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53S8nZ83032396;
+	Mon, 28 Apr 2025 09:01:12 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 469v5kj87t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 09:01:12 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53S8k1ob008518;
+	Mon, 28 Apr 2025 09:01:11 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 469ch2wawx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 09:01:11 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53S919Un46924108
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 09:01:09 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7720720148;
+	Mon, 28 Apr 2025 09:01:09 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 41CFC2013C;
+	Mon, 28 Apr 2025 09:01:01 +0000 (GMT)
+Received: from [9.111.133.157] (unknown [9.111.133.157])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 28 Apr 2025 09:01:01 +0000 (GMT)
+Message-ID: <5aaab4c0-accd-4b37-8093-d2664483f985@linux.ibm.com>
+Date: Mon, 28 Apr 2025 11:00:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,84 +83,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Thorsten Blum <thorsten.blum@linux.dev>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250428061318.88859-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] regcache: Use sort()'s default swap() implementation
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250428061318.88859-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jYu1RbvTuavSHVuDYYd1PGKmz1Cij6OikwHrZn+YTrZY7+roVcx
- iANh31gwRuBqBzDlRnANjub2DiVnTYEt/t5URbS8bX7yJIWiR09TwnEIU73S1E6X4+g1FIz
- mk+uMJRgRyKtEl9CFw6A+iUmL1kn9hRYto6jDnrIyt2ASITP7jIErIjTI5kFYas6nYNzPJt
- lb3tKYx/xnquBgYfJClBw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EbpGoGf2SVg=;Y678rU9vnGiiKBZGUWMtY/nypG9
- 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
+Subject: Re: [PATCH v5 06/12] unwind_user/sframe: Add prctl() interface for
+ registering .sframe sections
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+        Sam James <sam@gentoo.org>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Weinan Liu <wnliu@google.com>, Blake Jones <blakejones@google.com>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        "Jose E. Marchesi"
+ <jemarch@gnu.org>,
+        Alexander Aring <aahringo@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>
+References: <20250424201511.921245242@goodmis.org>
+ <20250424201824.466438405@goodmis.org>
+From: Jens Remus <jremus@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250424201824.466438405@goodmis.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: kJDEausPcbwEQ5UVXsuWsVgepzjfRBDY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDA3MCBTYWx0ZWRfX6HmmDtG6yVbm 5sAPffm3RWr8Ok53wbtDbbgnczO/VpoLTLYRq4daoO8iqz/d3q2DPi3eHMj+BCGax2bpXNgEyjo S+ziWTBLpq701Gr0BXej3kcZnj6JkbIlZ1zJKerDSrG1qOFM4yWTyA3T6noFe07bMAFQAucieMF
+ J+81Y6T4ufIayQh429v2nGqLIpEhaUq7C5dPJOVApl7GtBsxy65cuOFyL6B+P0h69e17SqktpJS bSI2/2vC+Fcsaeu6s74MZW57hjf0LDsoSzRBpLkdfdfS8HyQceKTjjsaeJ0vOnUQAXGiMAKuBbd ky8JV+T9iJwIj/q3G6HQDttlCp/2o2noxQ1cNR+lgoaBYi/47uSshxlV6yNHnkHia+Z3HP8OCOL
+ dSgXhCRcqnT2uyia/ZX8kCw8lRkB7CSVrBdRd7ZW0HKdTBVkD0NBNTRcTNcxeHCywuQni/VG
+X-Proofpoint-GUID: 3C0i5nYl02Er9XYf-2XXf9tbdHY-GiOS
+X-Authority-Analysis: v=2.4 cv=DvxW+H/+ c=1 sm=1 tr=0 ts=680f43d9 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=0MvmVg10__VCTnNSAJcA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 clxscore=1011
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504280070
 
-=E2=80=A6
-> +++ b/drivers/base/regmap/regcache.c
-=E2=80=A6
->  void regcache_sort_defaults(struct reg_default *defaults, unsigned int =
-ndefaults)
->  {
->  	sort(defaults, ndefaults, sizeof(*defaults),
-> -	     regcache_defaults_cmp, regcache_defaults_swap);
-> +	     regcache_defaults_cmp, NULL);
->  }
-=E2=80=A6
+On 24.04.2025 22:15, Steven Rostedt wrote:
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> 
+> The kernel doesn't have direct visibility to the ELF contents of shared
+> libraries.  Add some prctl() interfaces which allow glibc to tell the
+> kernel where to find .sframe sections.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Would the following source code formatting become applicable?
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
 
-+	sort(defaults, ndefaults, sizeof(*defaults), regcache_defaults_cmp, NULL=
-);
+> +#define PR_ADD_SFRAME			78
+> +#define PR_REMOVE_SFRAME		79
 
+Note that those values have been bumped since Josh's v4.  Therefore
+Josh's related Glibc patch needs to be updated and Glibc needs to be
+rebuild as well.  Otherwise the Kernel won't be able to find any
+.sframe sections for DSOs.
 
 Regards,
-Markus
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
+
 
