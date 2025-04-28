@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-622562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1B2A9E90A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AC2A9E93E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460BA18972AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88203189CB52
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E1E1DE4C9;
-	Mon, 28 Apr 2025 07:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C021D63EF;
+	Mon, 28 Apr 2025 07:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PF0WiXgd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="i3mVEHrA"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0824BE67;
-	Mon, 28 Apr 2025 07:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA431D514E;
+	Mon, 28 Apr 2025 07:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745824771; cv=none; b=Qcru2GqNW1fS91Q6IWwc2rjPf6jHXmQHbEcYsnvSwzAj9jGUezb7dqEOlbw8d3hBh3TpT/yafuZQTaemIDra90PGnDcRzrWoiF8WEB0+Is6QXd8L2mXwxt8VK3j+0Q3JrSqlsL/w3CJRq1LdITmz89A2lfVBvaxEZAZ3z1UZ520=
+	t=1745825117; cv=none; b=UntrRbAvbeMHmtsLB5STptfk/xGuaLQT8WhfyAUGyaDt/A6I3SfT+jIUXAYzMLYklxnH3xuZxwqItYu26NLxUE6t1QqLX6eZ2hPruulUfoeeO4y2LuKlaYJDUfBKk02FJZxMq4EMfctKkSiwl6JKh1yg8DQ0jvwX36vh3iBYasY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745824771; c=relaxed/simple;
-	bh=SK4ddA8HzYC+KUfP2k0/WCmcI111NkEGUqOsBHoq1Bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cQilZcCiuyaZH02c9imMF29cLsdXho/eFfx5+3ZGXkQ369CrBE8CNXQkp2ww4qKAFx9edkf9yPYnQvDgtSNvTV/DiaUGI7SRX04/wuKwD2MbEgoAV/2+KBB3gEB/T6y/edQBbwu51cDUOLDN4yct+FI6AudnYeS8bxrGq2pIXKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PF0WiXgd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1745824764;
-	bh=p5S7r+9+LrTkJDSOqXTMk9hxb/ouo5NJ7kDZBb+ZTeY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PF0WiXgdfX9wZkNfUwDzNXtb0R4B0QqwqGxor9KYF6QR87o2XdiDft+bW571PaZof
-	 8ok3jwqukcmSVAaBIgIQz8tQ4QlG2B/vrmA7OfmCKOlM7hklEQI2bn+WtjxtlVy9Ya
-	 +AfcggWWBqVcvXyowQxR9UIhG9ZJQKMrifXxh+y4f54NPhddXVKCCRxeg7M34Q10XU
-	 o3ufXmQR8yMoesGUftV4CDD9GbAxdqrjpI6r9sNTS131HQowvUc1oHA5pvkPL0jHS6
-	 54xG8Riu13GG11Vq2+pLa7hZAVTl4rISEvLS5dvDTScQImV0ao2UYcyenIHyxfvKEJ
-	 +skbepmE+aPjw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZmFF7648tz4wcy;
-	Mon, 28 Apr 2025 17:19:23 +1000 (AEST)
-Date: Mon, 28 Apr 2025 17:18:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>
-Cc: Athira Rajeev <atrajeev@linux.ibm.com>, Shrikanth Hegde
- <sshegde@linux.ibm.com>, Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20250428171852.36d8533a@canb.auug.org.au>
-In-Reply-To: <F5AD4FED-338E-4DC6-97BF-396F7EB73CA1@linux.ibm.com>
-References: <20250415133518.2c8d4325@canb.auug.org.au>
-	<20250417134959.37204d48@canb.auug.org.au>
-	<20250422163502.02ceeb0d@canb.auug.org.au>
-	<bb1f2928-617f-4943-bdd0-dfa74904ffb3@linux.ibm.com>
-	<D66D1529-714C-4700-BD74-AC6AFA7C97A8@linux.ibm.com>
-	<F5AD4FED-338E-4DC6-97BF-396F7EB73CA1@linux.ibm.com>
+	s=arc-20240116; t=1745825117; c=relaxed/simple;
+	bh=1XfRHpMN7FdDWOn92sRc2bykGert03rj8/SmnH9bqWo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DUezx4+xbDVoDd+ZEaQD1E7JpiOGRcRPPhIyAzxdpsMIXo8zmO7RtR58l0DHHvjDhJR8JEAmzYZ3TR0HXxkQu8vxROFUJcWs8h7NJNISeJF8bcTIRCL9jRxUiTkCcBgHCNFzj+geaeDgEfRmjZ3/d6SdGpr49oej+G1qoMgeLK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=i3mVEHrA; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53S7Ki9O3334061
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 02:20:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745824844;
+	bh=j3ziubjMM4iDinkRWPpqOq279fOOole6d1gFV+rphZk=;
+	h=From:To:Subject:Date;
+	b=i3mVEHrAl64u6xIjvnBtDnJ+JjrjhuXGnPUCo7pVPv03G9yjJTIsQW2bfWUFEFOTz
+	 7MRUPA1U7mjppe5IllSWrJB0FIJeBtcNpWaSlxbB9VDw9T5rgF9wc7glZ+ZceRYloH
+	 SP9oRM3LS9hybOrIxaGB6bxawHDfy9GumJv+Re2g=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53S7KiCC003072
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Apr 2025 02:20:44 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
+ Apr 2025 02:20:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 28 Apr 2025 02:20:44 -0500
+Received: from uda0498651.dhcp.ti.com (uda0498651.dhcp.ti.com [172.24.227.7])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53S7KdMZ068873;
+	Mon, 28 Apr 2025 02:20:40 -0500
+From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nm@ti.com>,
+        <ssantosh@kernel.org>, <s-adivi@ti.com>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
+        <vigneshr@ti.com>, <u-kumar1@ti.com>, <a-chavda@ti.com>
+Subject: [PATCH 0/8] dmaengine: ti: Add support for BCDMA v2 and PKTDMA v2
+Date: Mon, 28 Apr 2025 12:50:24 +0530
+Message-ID: <20250428072032.946008-1-s-adivi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SEQCxJKfbwLlfkhccXJJfVY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
---Sig_/SEQCxJKfbwLlfkhccXJJfVY
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+This series adds support for the BCDMA_V2 and PKTDMA_V2 which is
+introduced in AM62L.
 
-Hi all,
+The key differences between the existing DMA and DMA V2 are:
+- Absence of TISCI: Instead of configuring via TISCI calls, direct
+  register writes are required.
+- Autopair: There is no longer a need for PSIL pair and instead AUTOPAIR
+  bit needs to set in the RT_CTL register.
+- Static channel mapping: Each channel is mapped to a single peripheral.
+- Direct IRQs: There is no INT-A and interrupt lines from DMA are
+  directly connected to GIC.
+- Remote side configuration handled by DMA. So no need to write to PEER
+  registers to START / STOP / PAUSE / TEARDOWN.
 
-On Thu, 24 Apr 2025 22:03:05 +0530 Athira Rajeev <atrajeev@linux.ibm.com> w=
-rote:
->
-> > On 24 Apr 2025, at 8:07=E2=80=AFPM, Athira Rajeev <atrajeev@linux.ibm.c=
-om> wrote:
-> >  =20
-> >> On 22 Apr 2025, at 3:26=E2=80=AFPM, Shrikanth Hegde <sshegde@linux.ibm=
-.com> wrote:
-> >>=20
-> >> On 4/22/25 12:05, Stephen Rothwell wrote: =20
-> >>  =20
-> >>> On Thu, 17 Apr 2025 13:49:59 +1000 Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote: =20
-> >>>>=20
-> >>>> On Tue, 15 Apr 2025 13:35:18 +1000 Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote: =20
-> >>>>>=20
-> >>>>> After merging the tip tree, today's linux-next build (native perf)
-> >>>>> failed like this:
-> >>>>>=20
-> >>>>> diff: tools/arch/x86/include/asm/amd/ibs.h: No such file or directo=
-ry
-> >>>>> In file included from util/amd-sample-raw.c:12:
-> >>>>> tools/include/../../arch/x86/include/asm/amd/ibs.h:10:10: fatal err=
-or: asm/msr-index.h: No such file or directory
-> >>>>>   10 | #include <asm/msr-index.h>
-> >>>>>      |          ^~~~~~~~~~~~~~~~~
-> >>>>> compilation terminated.
-> >>>>>=20
-> >>>>> Maybe caused by commit
-> >>>>>=20
-> >>>>>  3846389c03a8 ("x86/platform/amd: Move the <asm/amd-ibs.h> header t=
-o <asm/amd/ibs.h>")
-> >>>>> or associated commits?
->
-> Posted the fix in mailing here: https://lore.kernel.org/linux-perf-users/=
-20250424163033.6601-1-atrajeev@linux.ibm.com/T/#u
-> Please share feedback if it fixes the compilation issue.
+Sai Sree Kartheek Adivi (8):
+  dt-bindings: dma: ti: Add document for K3 BCDMA V2
+  dt-bindings: dma: ti: Add document for K3 PKTDMA V2
+  drivers: dma: ti: Refactor TI K3 UDMA driver
+  dmaengine: ti: k3-psil-am62l: Add AM62Lx PSIL and PDMA data
+  drivers: soc: ti: k3-ringacc: handle absence of tisci
+  dmaengine: ti: New driver for K3 BCDMA_V2
+  dmaengine: ti: k3-udma-v2: Add support for PKTDMA V2
+  dmaengine: ti: k3-udma-v2: Update glue layer to support PKTDMA V2
 
-OK, so to progress things ...
+ .../bindings/dma/ti/k3-bcdma-v2.yaml          |   97 +
+ .../bindings/dma/ti/k3-pktdma-v2.yaml         |   73 +
+ drivers/dma/ti/Kconfig                        |   14 +-
+ drivers/dma/ti/Makefile                       |    4 +-
+ drivers/dma/ti/k3-psil-am62l.c                |  132 +
+ drivers/dma/ti/k3-psil-priv.h                 |    1 +
+ drivers/dma/ti/k3-psil.c                      |    1 +
+ drivers/dma/ti/k3-udma-common.c               | 2974 +++++++++++++
+ drivers/dma/ti/k3-udma-glue.c                 |   91 +-
+ drivers/dma/ti/k3-udma-private.c              |   48 +-
+ drivers/dma/ti/k3-udma-v2.c                   | 1513 +++++++
+ drivers/dma/ti/k3-udma.c                      | 3751 ++---------------
+ drivers/dma/ti/k3-udma.h                      |  571 ++-
+ drivers/soc/ti/k3-ringacc.c                   |  162 +-
+ include/linux/soc/ti/k3-ringacc.h             |    7 +
+ 15 files changed, 5873 insertions(+), 3566 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/ti/k3-bcdma-v2.yaml
+ create mode 100644 Documentation/devicetree/bindings/dma/ti/k3-pktdma-v2.yaml
+ create mode 100644 drivers/dma/ti/k3-psil-am62l.c
+ create mode 100644 drivers/dma/ti/k3-udma-common.c
+ create mode 100644 drivers/dma/ti/k3-udma-v2.c
 
-Just reverting the changes to tools/perf in commit
+-- 
+2.34.1
 
-  3846389c03a8 ("x86/platform/amd: Move the <asm/amd-ibs.h> header to <asm/=
-amd/ibs.h>")
-
-Allows perf to build again on ppc64el (and gets rid of the warning), so
-is that a reasonable thing to do - and leave the tools perf update to
-the perf guys?
-
-If so, can that partial revert be added to the tip tree, please?
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SEQCxJKfbwLlfkhccXJJfVY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgPK9wACgkQAVBC80lX
-0GyBGgf8CvhUQl3Kd6I66RwI6x0BE4JTj41gBzuuE2A6hPKHypSEBIutoPTgruxK
-mp/TTcZHd027eDMCnyhsooovrwOZkhWNQ6zfZ4jHH9ZfpiryMXhwlsFzi3wvxQJa
-W3CQbLyPMnUGCGXdStheqoLWriK/RjzkiZurPBrg+5BapTAC5c4hHZ/EXbNKtG5C
-TMKRZOGyxzeg3J9HWXsLcPEMIANMmQp1TI7lC9c5svEvBYOOZQsSLJh16WXW9sbv
-gXv+YaLhsVflcdFkhxKeJhIjCXcITfNWLSozgqWCaJlEvTKRuOsuB9zxBtdxZymR
-OzQ08Vdvoam2ugQg4+6oWAtwCuXw5w==
-=4/IE
------END PGP SIGNATURE-----
-
---Sig_/SEQCxJKfbwLlfkhccXJJfVY--
 
