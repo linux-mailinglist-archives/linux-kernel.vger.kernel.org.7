@@ -1,162 +1,231 @@
-Return-Path: <linux-kernel+bounces-623068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0310AA9F077
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A30A9F06F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479693B52B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9AE3B0E5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98083263F49;
-	Mon, 28 Apr 2025 12:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D01269823;
+	Mon, 28 Apr 2025 12:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TPV3s7xa"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bxAQkRVr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="twh4wyhw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bxAQkRVr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="twh4wyhw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448994C91
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 12:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0544268FF0
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 12:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745842595; cv=none; b=gz5dKtGVsMOC2ysRTosV+6evnZhmD3z6G7AzdQ4sBw69wx0WkDUAIZdInE17k3iD+TYyaR1fwSvOjBKHZ/xqIELVj6+ke+xj6e6Bhs/l7V2eZGSg+uNSSbgsKzdBXY5EljJyn4rqEkTsHnaotMdlWdvCqLVI6gA3VhWBJxnmA5I=
+	t=1745842493; cv=none; b=Usie19O7V9Lyrep8zAiff5JWe5vuj/Awyy9ipmd48naqWgHOCeMuVF6qRJfuMHIjnjddEyASMV6+NU58yBhRuOm+sDerdwApIWJO1caXP+WeO4QwVKaDaQ+H7f8edKKNVXV8exln/ckPMPwFy/2SS/M2Qp9LWK01D2M/dxKGS/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745842595; c=relaxed/simple;
-	bh=bGsqofgo4NXqI1aUsv0UVKWbN/KgMV1cM5RdDhcr3AQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Y+oYTd1yVP4Jo1cpAeTm2hxH5q424TUgK0gHLV5BNlV8aYnB5CjEriNJ1LndHn0/5GbNcuNvUL3ho7frXH+e2zfO/xXLOCb4kucyjzFW4caLtqGNJ0G8acU+0Ui4L6/REhudIVLn5akttm4cNgBAzCk49io32CnuHcKOH8kvaPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TPV3s7xa; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250428121630epoutp03e315d8f07fbd3fa8dff0899da0266745~6epX7pB7X1309313093epoutp03G
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 12:16:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250428121630epoutp03e315d8f07fbd3fa8dff0899da0266745~6epX7pB7X1309313093epoutp03G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745842590;
-	bh=njfnSw/OzgCfnpUUUvsiz+VFYsSHIIORU2SrxBPlyTA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TPV3s7xavoD9UPUQ1keNySicbdEoAp2LeONRS079wIl/cO4qfDHg2UVXgUHTfngsd
-	 yHaCcxGiY4N5/hprTUUgkVvgJkkbRNwHdpLdmIY207oR+i72Kbc58fi9V00lJe2NZi
-	 o2B5+dvQk29OZP2+5rmetTPatbStMBG93HnuFv64=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250428121629epcas5p48af00b74bbf51523585f76a118699f36~6epXNzWit0170601706epcas5p4e;
-	Mon, 28 Apr 2025 12:16:29 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZmMqv5754z2SSKX; Mon, 28 Apr
-	2025 12:16:27 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250428121432epcas5p1d7f070391d0d206909dd8dc82f919396~6enqzJ6yl2814528145epcas5p1C;
-	Mon, 28 Apr 2025 12:14:32 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250428121432epsmtrp2f26bd06225bf3ea60b2b7fecc29e173b~6enqwrRbW0223602236epsmtrp25;
-	Mon, 28 Apr 2025 12:14:32 +0000 (GMT)
-X-AuditID: b6c32a2a-d57fe70000002265-22-680f7128c330
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	98.A4.08805.8217F086; Mon, 28 Apr 2025 21:14:32 +0900 (KST)
-Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250428121431epsmtip1f4d6f781b572e671553bd1e14f1f086d~6enpVszo91538615386epsmtip1a;
-	Mon, 28 Apr 2025 12:14:31 +0000 (GMT)
-From: "Faraz Ata" <faraz.ata@samsung.com>
-To: "'Greg KH'" <gregkh@linuxfoundation.org>
-Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<jirislaby@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <dev.tailor@samsung.com>,
-	<rosa.pila@samsung.com>
-In-Reply-To: <2025042508-statute-pleading-df6f@gregkh>
-Subject: RE: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
-Date: Mon, 28 Apr 2025 17:44:21 +0530
-Message-ID: <0ce801dbb837$19706530$4c512f90$@samsung.com>
+	s=arc-20240116; t=1745842493; c=relaxed/simple;
+	bh=aMHNCdM1B1YlVmqJsC2X9YtwGoK0CghHtIKw9Du8ts8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjZSf/48cAtgXpajo1faLOm862soErO+wS/Xoayxh2tDjexqx0m54wpv/MaMGNRG21sV6bfFLGtzyda8oFeS/opkRjLUYQDM/YCuY/AsQRO1ltjsJkRxKxo1dnn9rHi4MUyreTxbW4srGhtvQuYQryF0Cod4WdPubg8QIPOS3xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bxAQkRVr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=twh4wyhw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bxAQkRVr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=twh4wyhw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A6B7621202;
+	Mon, 28 Apr 2025 12:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745842489; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y+mMo7uk5RmaOGiC0vVI1M/VdXJrx2bD5Y8WN/ZyEgE=;
+	b=bxAQkRVrEjcDA3Bc0g09UJpaspspCSwvxc5dVOHXSHPd/0von1KPy7XBOR3levpJB4e+jB
+	ya11PrwjzkiI0p69ccjIMXZphqhy7D6B1fjeylseDI2bpjV1/0JO/RDC+srMQaOXgxlgwb
+	WOPyX+83TfCfC6ETD4EEWXL9FaviWEc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745842489;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y+mMo7uk5RmaOGiC0vVI1M/VdXJrx2bD5Y8WN/ZyEgE=;
+	b=twh4wyhwkdZUAE/vGn23FosDZylyMRjmCF0BvcbWmwLnC+zsoKiejnpt1p85QlonWcUrqD
+	6HNgGWeh6XgqYoBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745842489; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y+mMo7uk5RmaOGiC0vVI1M/VdXJrx2bD5Y8WN/ZyEgE=;
+	b=bxAQkRVrEjcDA3Bc0g09UJpaspspCSwvxc5dVOHXSHPd/0von1KPy7XBOR3levpJB4e+jB
+	ya11PrwjzkiI0p69ccjIMXZphqhy7D6B1fjeylseDI2bpjV1/0JO/RDC+srMQaOXgxlgwb
+	WOPyX+83TfCfC6ETD4EEWXL9FaviWEc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745842489;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y+mMo7uk5RmaOGiC0vVI1M/VdXJrx2bD5Y8WN/ZyEgE=;
+	b=twh4wyhwkdZUAE/vGn23FosDZylyMRjmCF0BvcbWmwLnC+zsoKiejnpt1p85QlonWcUrqD
+	6HNgGWeh6XgqYoBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 957621336F;
+	Mon, 28 Apr 2025 12:14:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jf9/JDlxD2iqSwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 28 Apr 2025 12:14:49 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4011AA0AD5; Mon, 28 Apr 2025 14:14:45 +0200 (CEST)
+Date: Mon, 28 Apr 2025 14:14:45 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Joe Damato <jdamato@fastly.com>, linux-fsdevel@vger.kernel.org, 
+	jack@suse.cz, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Sridhar Samudrala <sridhar.samudrala@intel.com>, Alexander Duyck <alexander.h.duyck@intel.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in
+ the future
+Message-ID: <ernjemvwu6ro2ca3xlra5t752opxif6pkxpjuegt24komexsr6@47sjqcygzako>
+References: <20250416185826.26375-1-jdamato@fastly.com>
+ <20250426-haben-redeverbot-0b58878ac722@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQNDUeEKzZOD+6UL/EvMWKPcOF/PnAGTFIryAfZj8UECGlBVKgGCAc+IsLCZPcA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJTlejkD/DYM9LY4sH87axWdzbsYzd
-	onnxejaLd3NlLM6f38BusenxNVaLy7vmsFnMOL+PyeLM4l52iy8/HzA7cHlsWtXJ5rF/7hp2
-	j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjfLoEr4/Gs58wFL7gr5s1cz9TAuIKzi5GTQ0LA
-	RGL3x2dMILaQwG5GifVXrSHikhKHn95lhbCFJVb+e87excgFVPOcUaKreSJYgk1AU+LO56dg
-	zSICOhIdZ06wgBQxC2xgkliy9g8jRMcMJokPh48yg1RxCphJfJu9B6iDg0NYwF1ixe4IkDCL
-	gKrE25aHLCA2r4ClxIuDv9kgbEGJkzOfsICUMwvoSbRtZAQJMwvIS2x/O4cZ4jgFiZ9Pl7GC
-	lIgI+EnceZQHUSIu8fLoEfYJjMKzkAyahTBoFpJBs5B0LGBkWcUomVpQnJueW2xYYJSXWq5X
-	nJhbXJqXrpecn7uJERxjWlo7GPes+qB3iJGJg/EQowQHs5IIb5UBf4YQb0piZVVqUX58UWlO
-	avEhRmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFINTPPWNW3dHhOyv1P5pmhqv0aCdPOD
-	EIu9or26n+dfPRq07esmDut1tyzmrPo06cKSVpsPNWdyO7a9PP/li1zetO16z03zJbRkll/3
-	lt/w7OSMz+v3/l3y6qRj6Ik7LneLJ4qZGDaEvkjr9Q/uy3P5pnO2zZ295OK8hLYvK3nfvuxd
-	82VPqSSzhXhQ6/I9XyPNAj/p/dml3DI/q2uVS++cFFvz8vtKK2ZvMPja2bqcT/7zXNOPGu7B
-	Z+fP+2d7RuPYmaTjAe4Vik9zY4pdpnC7Nizjd+n9YX1AcXMqb+qxRi79c+mr58kavqyZZ6p+
-	6Of15qSCi3X5wUm7NPf90ZE57Hwu3CN/qdSMC3qeITvnTVFiKc5INNRiLipOBACclZXeIAMA
-	AA==
-X-CMS-MailID: 20250428121432epcas5p1d7f070391d0d206909dd8dc82f919396
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250417042427epcas5p2df3d35803adcb24da7d83e5df586380d
-References: <CGME20250417042427epcas5p2df3d35803adcb24da7d83e5df586380d@epcas5p2.samsung.com>
-	<20250417043427.1205626-1-faraz.ata@samsung.com>
-	<d350841c-3560-4511-a866-9490737e48f7@kernel.org>
-	<06cb01dbaf5a$1ea1a8b0$5be4fa10$@samsung.com>
-	<2025042508-statute-pleading-df6f@gregkh>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250426-haben-redeverbot-0b58878ac722@brauner>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-HI Greg
+On Sat 26-04-25 14:29:15, Christian Brauner wrote:
+> On Wed, Apr 16, 2025 at 06:58:25PM +0000, Joe Damato wrote:
+> > Avoid an edge case where epoll_wait arms a timer and calls schedule()
+> > even if the timer will expire immediately.
+> > 
+> > For example: if the user has specified an epoll busy poll usecs which is
+> > equal or larger than the epoll_wait/epoll_pwait2 timeout, it is
+> > unnecessary to call schedule_hrtimeout_range; the busy poll usecs have
+> > consumed the entire timeout duration so it is unnecessary to induce
+> > scheduling latency by calling schedule() (via schedule_hrtimeout_range).
+> > 
+> > This can be measured using a simple bpftrace script:
+> > 
+> > tracepoint:sched:sched_switch
+> > / args->prev_pid == $1 /
+> > {
+> >   print(kstack());
+> >   print(ustack());
+> > }
+> > 
+> > Before this patch is applied:
+> > 
+> >   Testing an epoll_wait app with busy poll usecs set to 1000, and
+> >   epoll_wait timeout set to 1ms using the script above shows:
+> > 
+> >      __traceiter_sched_switch+69
+> >      __schedule+1495
+> >      schedule+32
+> >      schedule_hrtimeout_range+159
+> >      do_epoll_wait+1424
+> >      __x64_sys_epoll_wait+97
+> >      do_syscall_64+95
+> >      entry_SYSCALL_64_after_hwframe+118
+> > 
+> >      epoll_wait+82
+> > 
+> >   Which is unexpected; the busy poll usecs should have consumed the
+> >   entire timeout and there should be no reason to arm a timer.
+> > 
+> > After this patch is applied: the same test scenario does not generate a
+> > call to schedule() in the above edge case. If the busy poll usecs are
+> > reduced (for example usecs: 100, epoll_wait timeout 1ms) the timer is
+> > armed as expected.
+> > 
+> > Fixes: bf3b9f6372c4 ("epoll: Add busy poll support to epoll with socket fds.")
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  v2: 
+> >    - No longer an RFC and rebased on vfs/vfs.fixes
+> >    - Added Jan's Reviewed-by
+> >    - Added Fixes tag
+> >    - No functional changes from the RFC
+> > 
+> >  rfcv1: https://lore.kernel.org/linux-fsdevel/20250415184346.39229-1-jdamato@fastly.com/
+> > 
+> >  fs/eventpoll.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index 100376863a44..4bc264b854c4 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -1996,6 +1996,14 @@ static int ep_try_send_events(struct eventpoll *ep,
+> >  	return res;
+> >  }
+> >  
+> > +static int ep_schedule_timeout(ktime_t *to)
+> > +{
+> > +	if (to)
+> > +		return ktime_after(*to, ktime_get());
+> > +	else
+> > +		return 1;
+> > +}
+> > +
+> >  /**
+> >   * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
+> >   *           event buffer.
+> > @@ -2103,7 +2111,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+> >  
+> >  		write_unlock_irq(&ep->lock);
+> >  
+> > -		if (!eavail)
+> > +		if (!eavail && ep_schedule_timeout(to))
+> >  			timed_out = !schedule_hrtimeout_range(to, slack,
+> >  							      HRTIMER_MODE_ABS);
+> 
+> Isn't this buggy? If @to is non-NULL and ep_schedule_timeout() returns
+> false you want to set timed_out to 1 to break the wait. Otherwise you
+> hang, no?
 
-> Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
-> 
-> On Thu, Apr 17, 2025 at 11:02:24AM +0530, Faraz Ata wrote:
-> > Hello Krzysztof
-> >
-> > > -----Original Message-----
-> > > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Sent: Thursday, April 17, 2025 10:50 AM
-> > > To: Faraz Ata <faraz.ata@samsung.com>; alim.akhtar@samsung.com;
-> > > gregkh@linuxfoundation.org; jirislaby@kernel.org
-> > > Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> > > soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > > serial@vger.kernel.org; dev.tailor@samsung.com;
-> > > rosa.pila@samsung.com
-> > > Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart
-> > > ports
-> > >
-> > > On 17/04/2025 06:34, Faraz Ata wrote:
-> > > > ExynosAutov920 SoC supports 18 UART ports, update the value of
-> > > UART_NR
-> > > > to accommodate the same.
-> > > >
-> > > > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
-> > > > ---
-> > > > Changes in v3:
-> > > > - Fixed review comments from Krzysztof
-> > >
-> > > Which ones? What changed?
-> > >
-> > While sending v2  change log was missed unintentionally.
-> > Added missed change log in v3.
-> 
-> Can you add this properly and send a v4?
-> 
-This was a clarification given to Krzysztof.
-The complete change-log was missed in v2, This was pointed out by Krzysztof.
-Added those missed changes in v3.
-Do you want me to add this clarification as well and send v4 ?
+Yep, looks like that. Good spotting!
 
-> thanks,
-> 
-> greg k-h
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
