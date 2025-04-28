@@ -1,131 +1,165 @@
-Return-Path: <linux-kernel+bounces-622960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A457A9EEEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:21:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C6CA9EEF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B808D160570
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8443A9252
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9478D266EE2;
-	Mon, 28 Apr 2025 11:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C08262FFA;
+	Mon, 28 Apr 2025 11:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LI0ek4yE"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsxEHsX5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8651FFC45;
-	Mon, 28 Apr 2025 11:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E5C1367
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 11:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745839237; cv=none; b=iT0RCjmIoA+k68qX0jmEAVrtCwmanOnNE2fQIdiQVr3e+PHp8qeruO+Lmh+WcOQKH64JPY4Juu15Wq8YqiWcXCxMBJ+Oj1hBz+YD3SIsMErXZ8u3lBYkelKjVRBCQgYpc+x9c6SPJnIwe31kZ99Clni648gkGxWP+0d0ala+rrw=
+	t=1745839318; cv=none; b=h2fq9j8ng8549T4KrQQ9pvV/CzXv+GElM1G9VtA6xJw9lD5tA1V/XT4ALasOJMZAXVl1/xdzBVwcZRSV1Ms7q3Qq4wCdmaaidWxpduny8oUW28ADdXyXG74mCPJSteTTOGj75+5hof0/vODKuGwu5KppKDlVBxuUE0pQSdVBl78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745839237; c=relaxed/simple;
-	bh=1MAE2vSA2ExeGztIwI2W5Euf1qO2TGGX1pDG/xYRq5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Opps29npTV0idvh5eZtFgJaK2y/DK0BZKX9IwknQj0tjAKg19goK/QndCZAVuS3NvoJKYz5kYn7D8MrlH2LKAPfnr5zMlgtBNNzDNO2VPdyTRn1SiWIt06BI9YfXRPNh0wPYVuUSShIS5Fmc7yFpplWn0FJtIZJhK2L5giWXTSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LI0ek4yE; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22c336fcdaaso53406475ad.3;
-        Mon, 28 Apr 2025 04:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745839235; x=1746444035; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zeoiKe2W1Yc48k3zPSEuqht0Q72/jv/tcMqw/BIER4c=;
-        b=LI0ek4yEsEuvqsi9LPXeMurrr9T28GPxNd51CuJd1XtPqle3ODF1LWFlQHt5qxGEr6
-         12XMoTVYYJX4kxQAhWiCCZesNKS3tAtKW2lpybCgh57jXvAkTDtC/LGPD3A7wZ8qZztE
-         bH8lbzitHwOEUf5G1Arg5o+7IM7cZLh/3qaLet9nUQqJqLaCWlTbENL17VH/f5YJKw14
-         CQD0nmjX1/hNES1g1lWdkbcQtspOChZt28hdc1ZUgHeIg7MwvZrLg8hLbBBVn6Rm0Zex
-         +NaM3OxhLHEfEyZYsnDXKQtCD430vxcGdX9xniKJFBYe29meK9mCRaU4RpV6RTtmgP0p
-         d9zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745839235; x=1746444035;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zeoiKe2W1Yc48k3zPSEuqht0Q72/jv/tcMqw/BIER4c=;
-        b=e9eaiugJQ7NSzGbL7yVNRONQWHgYDzRQv3Bj89Ld/HrdW8X2DMTQ6D7UIe1cs0Kjdg
-         KxI2q6iNKGFErJFcj773j7D6FHhAQdbxNMXIrJ6QRqs20vKZyvkp2IKR4ZbOSmHOLda3
-         fmfdWF0uJVkL9lOHNv94ookeH0lZxivBnktDvwGBHRsnZ7PgazhrD4auHus6+35zT/Qb
-         gohgM2rdARuHX4TpqBb85xaBxoYioVWC5atCCznk9iCuFz8hmVvRZ0j0h8y2Xh8icmw+
-         c+rb6yqwa+d/bd++pS78YmcWuZUnicyCIgqe71jXP/qwknZWXLs2O/UAgkRG7qPCrHSG
-         Q+9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAu2M1/KQxRK3zv8rI7qaHz07aNLwJwi7zdGdyjkB4bSLfQYim6b0y1CpuEAM7Jerc/J5yAvY9KYmZ3R83@vger.kernel.org, AJvYcCWnfggQ/ftEFgHsmLr7/GJkJTv3ry08E8u3N7NcaXgInX8X0Xti0ysJgCrlLFnjq1hthL9znodYtj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX8zdGOG+w2ND++qOrAOzwuJxmJJ8OPhU1YcErY99+DqprFSJA
-	YGivWAKAihMBJAzmV3RM/qG93Ztp2vhLhmxR999mP6VbuYzhSu6u
-X-Gm-Gg: ASbGncu843+6qcbtyOJSfMzzks+uUGfOamaAib8KZCP3p8gUtXo3rpJpHagbqbXKecL
-	349N0t857VINBE5jqqiWAnRKog1ZGnlPDv6ezlY0O+t9xu4SnwZKeVfmWtu/mHu0nNTLQf8AHoy
-	DxK4nowqLktWYOj/2/rIobf8uy6VXLOtYQhcujpJ48a+0BobuwF2yN8gR4ZnwxM1K6ko4pDuImM
-	ByG9dpsuecVAOVdvV8UxejO8rmatZmyFdxOmQwEYfi5N5RCQ4YXYwmtDzAvoEsB1iv+3FtRiq30
-	+MRVDMWfTrjRp9GRH1BChqRcbCvu2VW9F+JMbGIv
-X-Google-Smtp-Source: AGHT+IFGo7DVUABwaW2xSoYjag2d0XbhQQHIzS6EBrTnK+orzIMck6P4yW4cL4RcL+wb9o2csFNgUg==
-X-Received: by 2002:a17:90b:2f4c:b0:2ee:dd9b:e402 with SMTP id 98e67ed59e1d1-309f7da68f2mr22025870a91.12.1745839234596;
-        Mon, 28 Apr 2025 04:20:34 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50ea440sm80008005ad.123.2025.04.28.04.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 04:20:33 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id F23A941CA464; Mon, 28 Apr 2025 18:20:30 +0700 (WIB)
-Date: Mon, 28 Apr 2025 18:20:30 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: rsworktech@outlook.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] docs: tproxy: fix code block style
-Message-ID: <aA9kfiqQpbONuv6W@archie.me>
-References: <20250427-tproxy-docs-fix-v1-1-988e94844ccb@outlook.com>
+	s=arc-20240116; t=1745839318; c=relaxed/simple;
+	bh=bTeGTMOF8DYOE8sSNsyIBusGRI519Pame5N8Rpm2j1o=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=RvxjEut2CA4FqM4Zj5YabxBFi215qhqemjzHPlyHcMo6z1WtnNow+qHUvSPrpkVMiM34ZHqOtbcrlBmtrd/t2bDdRp4VhzRSR8kgrYolENSOU2/DJuZaOrnZ0kBIOb05iLFuBclZgnxLeRZ0+J9eEwXp8alGAsHwqJKg9IH1oWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsxEHsX5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B80C4CEE9;
+	Mon, 28 Apr 2025 11:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745839317;
+	bh=bTeGTMOF8DYOE8sSNsyIBusGRI519Pame5N8Rpm2j1o=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=HsxEHsX5qa8GjJpuWU7enHyBbRY86Dx7h8ZWu87a+kF6ROYwE3O6wpZ9xyXNYklP9
+	 VLs5pKHpp+Qe8wpNSCjSBkpAvHRB7yfpyaZ//gnayKvCm6RQioNgl/Unaos246TAEr
+	 xmuqPdtiI6dc/RSNSIcxiJyzHAdflBWUJWQ8WkfeWxYDUvLhXM2XqKBEn89jPyePUh
+	 39b4K9to+UL/fo+rO6zTObvKtbOfwWFyYKpBywI9KsME0o5L6QA79clD+CTyJWcATt
+	 5P1+lxoqT3FNUQupcUwETsNSeNn2x6/m8/9Cl+qjrEjCXnyql/pGdwpyMVyl6P/8RY
+	 DAZ7LiI8RSJrg==
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6B400120007B;
+	Mon, 28 Apr 2025 07:21:56 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Mon, 28 Apr 2025 07:21:56 -0400
+X-ME-Sender: <xms:1GQPaHGFbTXqLgRY4x7WAqLSg3VSy219YaVSqRN1UTqTqR1s1v032Q>
+    <xme:1GQPaEVzp2-KoAzEFKLz1u10LXPga9DzAd_6UXdogyq4XSQqEWRpq1AKDMnsGXzfm
+    wRyEX7_m_B3NOP7lmE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedtkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
+    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfef
+    feeitdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvg
+    hlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegrnh
+    gurhgvfidrtghoohhpvghrfeestghithhrihigrdgtohhmpdhrtghpthhtohepphgvthgv
+    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegurghrfihisehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepjhhohhhnrdhogh
+    hnvghssheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehtghhlgieslhhinhhu
+    thhrohhnihigrdguvgdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouh
+    hnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:1GQPaJJq2AyxzBZzbnAMd2_h2xoE4XytKnJIoQAsBkgq8htGD9XgEQ>
+    <xmx:1GQPaFH4XweXi-nfdUAiB5CafwiHXrHMESJ177CaagaR5InB7EGiww>
+    <xmx:1GQPaNVE5cFHILUY-cIcOTPCoe4uQNAqPVESOls1zVnz1de7qBKMpA>
+    <xmx:1GQPaANJuDU99feE8ExJZh4f5gW1dI0owmjbVJrxt0E1ZzUxZumTBA>
+    <xmx:1GQPaM1ZccwVKXaqIbjlFyRZXJ4HXI9Ln759Rd3tG1OSk3NkNQFMa6No>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 46B762220074; Mon, 28 Apr 2025 07:21:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zdG46O1MrI4y82Oq"
-Content-Disposition: inline
-In-Reply-To: <20250427-tproxy-docs-fix-v1-1-988e94844ccb@outlook.com>
+X-ThreadId: Td35c5eaba32a0728
+Date: Mon, 28 Apr 2025 13:21:11 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Ingo Molnar" <mingo@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ "Ahmed S . Darwish" <darwi@linutronix.de>,
+ "Andrew Cooper" <andrew.cooper3@citrix.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "John Ogness" <john.ogness@linutronix.de>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Message-Id: <6c363c6f-7152-4d09-96db-861eda759a35@app.fastmail.com>
+In-Reply-To: <aA9HaA2u-tdVA2ET@gmail.com>
+References: <20250425084216.3913608-1-mingo@kernel.org>
+ <20250425084216.3913608-14-mingo@kernel.org>
+ <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
+ <8D770F85-5417-4A9E-80DE-1B6A890DECEF@zytor.com>
+ <1d4ddcab-cf46-4d7e-9e33-de12b6bd350c@app.fastmail.com>
+ <aA34I9rY1-1QQo0R@gmail.com>
+ <b97650f6-b541-4496-b84d-862fc7fd711b@app.fastmail.com>
+ <aA9HaA2u-tdVA2ET@gmail.com>
+Subject: Re: [PATCH 13/15] x86/cpu: Make CONFIG_X86_CX8 unconditional
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Mon, Apr 28, 2025, at 11:16, Ingo Molnar wrote:
+> * Arnd Bergmann <arnd@kernel.org> wrote:
+>> 
+>> b) always build with -march=i586 and leave only the -mtune
+>>    flags; see if anyone cares enough to even benchmark
+>>    and pick one of the other options if they can show
+>>    a meaningful regression over -march=i686 -mtune=
+>
+> That's actually a good idea IMO. I looked at the code generation with 
+> current compilers and it turns out that M686 is *substantially* worse 
+> in code generation than M586, as apparently the extra CMOV instructions 
+> bloat up the generated code:
+>
+>       text	   data	    bss	    dec	    hex	filename
+>   15427023	7601010	1744896	24772929	17a0141	vmlinux.M586
+>   16578295	7598826	1744896	25922017	18b89e1	vmlinux.M686
+>
+>  - +7.5% increase in text size (5.6% according to bloatometer),
+>  - +2% increase in instruction count,
+>  - while number of branches increases by +1.3%.
+>
+> But it's not about CMOV: I checked about a dozen functions that end up 
+> using CMOV, and the 'conditional' part of CMOV does seem to reduce 
+> branches for those functions by a minor degree and ends up reducing 
+> their size as well. So CMOV helps, a bit.
+>
+> The substantial code bloat comes from some other aspect of GCC's 
+> march=i686 flag ... I bet it's primarily inlining: there's a 0.7% 
+> reduction in number of calls done.
 
---zdG46O1MrI4y82Oq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I had tried the same thing already, but saw a different result,
+For me, the i686 output is 0.2% smaller than the i586 one (both
+-mtune=generic), using gcc-14.2. or just 0.1% with clang-21,
+which is roughly what I expected:
 
-On Sun, Apr 27, 2025 at 10:36:59PM +0800, Levi Zim via B4 Relay wrote:
->  Or the following rule to nft:
-> =20
-> -# nft add rule filter divert tcp dport 80 tproxy to :50080 meta mark set=
- 1 accept
-> +    # nft add rule filter divert tcp dport 80 tproxy to :50080 meta mark=
- set 1 accept
+   text	   data	    bss	    dec	    hex	filename
+7454055	4158218	1695744	13308017	 cb1071	build/tmp/vmlinux-i586
+7433427	4154146	1695744	13283317	 caaff5	build/tmp/vmlinux-i686
+7318514	4052573	1687552	13058639	 c7424f	build/tmp/vmlinux-i586-clang
+7309938	4052573	1687552	13050063	 c720cf	build/tmp/vmlinux-i686-clang
 
-Use double-colon syntax instead to wrap the rule above in literal code block
-like in other rules.
+I do see a larger difference compared to other -mtune= options, here is
+the same config with "clang-21 -march=i586 -mtune=i686" instead of
+"-march=i586 -mtune=generic":
 
-Thanks.
+7254510	4056669	1687552	12998731	 c6584b	build/tmp/vmlinux
 
---=20
-An old man doll... just what I always wanted! - Clara
+There is a good chance that the -mtune= optimizations totally
+dwarf cmov not just in code size difference but also actual
+performance, the bit I'm unsure about is whether we still need
+to worry about any core where this is not the case (I'm guessing
+not but have no way to prove that).
 
---zdG46O1MrI4y82Oq
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaA9kdQAKCRD2uYlJVVFO
-oy7iAQD/6Huyhp7ZIhbYOVeO5jcZVhkqnIyi9AuJZwfdpLSMsgEApUqTiO64fBoN
-nwgDjHv7yQAAyInl9yKYLEB5nxdR0ww=
-=ax8J
------END PGP SIGNATURE-----
-
---zdG46O1MrI4y82Oq--
+      Arnd
 
