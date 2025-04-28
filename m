@@ -1,275 +1,243 @@
-Return-Path: <linux-kernel+bounces-623903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586E7A9FC48
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:36:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26610A9FC4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 859FB7ADC58
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 305D81893BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF20214A80;
-	Mon, 28 Apr 2025 21:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23294210F59;
+	Mon, 28 Apr 2025 21:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ph7B7qQj"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wylie.me.uk header.i=@wylie.me.uk header.b="iBx5lyIc"
+Received: from wylie.me.uk (wylie.me.uk [82.68.155.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3BE214A68
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 21:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4220B7FD;
+	Mon, 28 Apr 2025 21:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.68.155.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745876071; cv=none; b=tf2ge6otfurnmzYJo5Y2VphCgV7ZmyTw0po/lcx1A/0VlLHUgnF6JpteKMEp+rMC7GQ0joWZaxzzb+2KI0NOCgnl4TxGmHrI5oHxK3EiLtCQFoRuZpBEXjUIGYj4arEPhyxqJDSNvzX8RJpTaOo92R/bVQxFCn4KHOzUZr/X9PU=
+	t=1745876101; cv=none; b=M2hxj2Qb7948wIQNKjLjL9Xikupd7H/7cODubV/N6OFFs+wQCzRBiJ2fG9wIzDQYDkYmgbgITOaLykNnIaKnqcARKpG5yw2TeOMCy4Bn86ol42/zMm2wB7YpCqrE9DryalmEE0IykgoZoHywfQTTXatGGZrZZTIUIDxB5RBxlXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745876071; c=relaxed/simple;
-	bh=PScFL3QKHD83Kd+8sQnLhjHRKeKqkKT+m+cpgcoH03w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=Nl0piOSLlEIjbu2emhgFFdlkMVVUL8J4YZCXz5ajgl/6LdhP+NNNdZrlcwtXFku/YtfUaG3iefjO5gtZXf0i5Ijkl/xA2fTI0gxvNa7M3pz04Tgx8cpy8E3XhoIaqubOzAyrg4DYVlXZZ8Az3CFc7z7xlSSFNjLvdmvFE1QAfU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ph7B7qQj; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-736c1ea954fso2692796b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745876069; x=1746480869; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HSs+BEdvbnIfY2dq99UXmMP4Buukql0Gb5bTAHvwkAg=;
-        b=ph7B7qQjAbfUgFsmG3luIKpNwWX2iH18m3Ed060jtsRX79wbQP2yqEG8aYXm5gqZxv
-         aiFRInz3GNHnPleU1IQfkpAjGZsnvsrOXMBzxf7xt3PofEHJFU4hiWr7Jfa3kL5ptRHv
-         NwdEjJxiRhgMvyM3swknIffDPcVZTiJF2N6aTqu9WimVepqW9F3xIT9ELF4HB7sEE677
-         1UebDnwlUfdBj2X1V39FpIf/57KBf8k3KLD0LawTHcVnME1YA7xpQlB2+5Cq1a5B5VPC
-         73GpDNe/Yrad7+2BNqqP2+5Aag3lR/MNFTIRk3pIEiH3Gts4fPg5ML/GR6BjEoMV5IHY
-         qmlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745876069; x=1746480869;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSs+BEdvbnIfY2dq99UXmMP4Buukql0Gb5bTAHvwkAg=;
-        b=bWa/0aeqxsz4xEW3TOi29dN8hYTlNOsA8wwuI6gGBGVIa0f9DpUdRLL6KiwKbF+1IA
-         E9rHLZ8kYavj5u6azOr/+CGGxbi9Wgw7oqz8aDinqUIU6zulBdumgxNjE8nhyr7OB/lY
-         OTpGVQNXYU4XoEnYIB6/+x9OzQxpkALoFRNULkKA95h//lVp67xwur3TfHUhggUOxXVz
-         73YarvXnVefbGM1SZAxbzgtBcknuU69Ty0bUizlNlJy4yYM+6WGTKRwNJCJwBmNozIbU
-         xNw1mb9ONuitpKRV9rVukFiwwKUtUcA8/Lg7Ce5nNUkTKvATfpbHAjklgg/zwnWXiGgq
-         ysLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9SLZthPQZtmWUFpv6LjJVZjcpgofH3m5zI/HfzSgZ0PeMvV8SK4DRV/FGbfgCwVdVppf7Xa18s7KR39s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc3/GVSMPgl48z8Mb2nL8xyai46Bl4JPcIdooM1sAPth6TFjKl
-	gp/vMeuh2veLY7Om+lMgkC8IuVHILFP8nald5Bn5Ri04InA5bY+6xKAFzabjCfx7BC/gvW+TPeM
-	IipFWNA==
-X-Google-Smtp-Source: AGHT+IFcsBuxLiRKFxo6cxliw7p+n3n5l2JnUxq7Z0GFhsWt1MiIhCDgVcaUM/hovjHWg7X6AItekzXO1Bba
-X-Received: from pfoc2.prod.google.com ([2002:aa7:8802:0:b0:73c:26bd:133c])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:9282:b0:736:5753:12f7
- with SMTP id d2e1a72fcca58-74028f9382amr954698b3a.3.1745876069395; Mon, 28
- Apr 2025 14:34:29 -0700 (PDT)
-Date: Mon, 28 Apr 2025 14:34:08 -0700
-In-Reply-To: <20250428213409.1417584-1-irogers@google.com>
+	s=arc-20240116; t=1745876101; c=relaxed/simple;
+	bh=vnWp8P/f82zW/1bRdFMUriUFJlEc3dQM6Nbaofozku4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rnc6pyRuRP9U+52FRKSaeZaorDWPROB5oGXCQeN1U9C62vezi00KghV0DTa5yWWegUnHIbfd5WFDP4xUqduOh/yEMQH9b12VMYx1qK4ltl7dOrrCvrv0D/5WhzPGbc+/aWMf9y9OjiNILRE1wqxdT9pHzmMJm6H/6A4mWk7FskI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wylie.me.uk; spf=pass smtp.mailfrom=wylie.me.uk; dkim=pass (2048-bit key) header.d=wylie.me.uk header.i=@wylie.me.uk header.b=iBx5lyIc; arc=none smtp.client-ip=82.68.155.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wylie.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wylie.me.uk
+Received: from frodo.int.wylie.me.uk (frodo.int.wylie.me.uk [192.168.21.2])
+	by wylie.me.uk (Postfix) with ESMTP id 6963212085B;
+	Mon, 28 Apr 2025 22:34:37 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=wylie.me.uk;
+	s=mydkim006; t=1745876077;
+	bh=vnWp8P/f82zW/1bRdFMUriUFJlEc3dQM6Nbaofozku4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=iBx5lyIcqldvfXJaDXiTx+hvApXWmAYoweADubDhW6wYf9f/8syoyYBMdrqj/14P2
+	 BWZlcUR9FSeQjiZWxvgj6RcePHMcEcTRvo+HUE6HzfUmaCO5Q35SXyQvuX/DcZfztg
+	 KnCei2lK4zXGIpptU0C1OYkZuFRq90p5L+uUoGx5IDZ6c4/+537p9/UPpmJdqDiZUi
+	 V0wWjhmxhl888BJxeFUPBHKnOGEWRaZul3jFuE7XLDG8sAWGTVKoeFZ4e4PWU8ynNj
+	 +i84o351vnt2qyC5JwiXCj8no6q2yGYv5+6TTySXMwHttjn+80Hn96VNzud9ksGhQ0
+	 tWZPEv/1I+Y7A==
+Date: Mon, 28 Apr 2025 22:34:36 +0100
+From: "Alan J. Wylie" <alan@wylie.me.uk>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Holger =?UTF-8?B?SG9mZnN0w6R0dGU=?= <holger@applied-asynchrony.com>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, regressions@lists.linux.dev, Jiri
+ Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Octavian Purdila <tavip@google.com>, Toke
+ =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>,
+ stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [REGRESSION] 6.14.3 panic - kernel NULL pointer dereference in
+ htb_dequeue
+Message-ID: <20250428223436.48529979@frodo.int.wylie.me.uk>
+In-Reply-To: <aA/s3GBuDc5t1nY5@pop-os.localdomain>
+References: <4e2a6522-d455-f0ce-c77d-b430c3047d7c@applied-asynchrony.com>
+	<aAf/K7F9TmCJIT+N@pop-os.localdomain>
+	<20250422214716.5e181523@frodo.int.wylie.me.uk>
+	<aAgO59L0ccXl6kUs@pop-os.localdomain>
+	<20250423105131.7ab46a47@frodo.int.wylie.me.uk>
+	<aAlAakEUu4XSEdXF@pop-os.localdomain>
+	<20250424135331.02511131@frodo.int.wylie.me.uk>
+	<aA6BcLENWhE4pQCa@pop-os.localdomain>
+	<20250427204254.6ae5cd4a@frodo.int.wylie.me.uk>
+	<20250427213548.73efc7b9@frodo.int.wylie.me.uk>
+	<aA/s3GBuDc5t1nY5@pop-os.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+X-Clacks-Overhead: GNU Terry Pratchett
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250428213409.1417584-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
-Message-ID: <20250428213409.1417584-10-irogers@google.com>
-Subject: [PATCH v3 9/9] perf record: Make --buildid-mmap the default
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, James Clark <james.clark@linaro.org>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, 
-	"=?UTF-8?q?Krzysztof=20=C5=81opatowski?=" <krzysztof.m.lopatowski@gmail.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Zixian Cai <fzczx123@gmail.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Martin Liska <martin.liska@hey.com>, 
-	"=?UTF-8?q?Martin=20Li=C5=A1ka?=" <m.liska@foxlink.cz>, Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Support for build IDs in mmap2 perf events has been present since
-Linux v5.12:
-https://lore.kernel.org/lkml/20210219194619.1780437-1-acme@kernel.org/
-Build ID mmap events don't avoid the need to inject build IDs for DSO
-touched by samples as the build ID cache is populated by perf
-record. They can avoid some cases of symbol mis-resolution caused by
-the file system changing from when a sample occurred and when the DSO
-is sought. To disable build ID scanning
+On Mon, 28 Apr 2025 14:02:20 -0700
+Cong Wang <xiyou.wangcong@gmail.com> wrote:
 
-Unlike the --buildid-mmap option, this doesn't disable the build ID
-cache but it does disable the processing of samples looking for DSOs
-to inject build IDs for. To disable the build ID cache the -B
-(--no-buildid) option should be used.
+> I doubt it is related to iptables. I will try some TCP traffic on my
+> side later, but I suspect this is related to the type of packets.
+> 
+> Meanwhile, since I still can't reproduce it here, do you mind applying
+> both of my patches on top of -net and test again?
+> 
+> For your convenience, below is the combined patch of the previous two
+> patches, which can be applied on -net.
+> 
+> Thanks!
+> 
+> ----->
+> 
+> diff --git a/net/sched/sch_htb.c b/net/sched/sch_htb.c
+> index 4b9a639b642e..9d88fff120bc 100644
+> --- a/net/sched/sch_htb.c
+> +++ b/net/sched/sch_htb.c
+> @@ -348,7 +348,8 @@ static void htb_add_to_wait_tree(struct htb_sched *q,
+>   */
+>  static inline void htb_next_rb_node(struct rb_node **n)
+>  {
+> -	*n = rb_next(*n);
+> +	if (*n)
+> +		*n = rb_next(*n);
+>  }
+>  
+>  /**
+> @@ -1487,7 +1488,8 @@ static void htb_qlen_notify(struct Qdisc *sch, unsigned long arg)
+>  
+>  	if (!cl->prio_activity)
+>  		return;
+> -	htb_deactivate(qdisc_priv(sch), cl);
+> +	if (!cl->leaf.q->q.qlen)
+> +		htb_deactivate(qdisc_priv(sch), cl);
+>  }
+>  
+>  static inline int htb_parent_last_child(struct htb_class *cl)
 
-Making this option the default was raised on the list in:
-https://lore.kernel.org/linux-perf-users/CAP-5=fXP7jN_QrGUcd55_QH5J-Y-FCaJ6=NaHVtyx0oyNh8_-Q@mail.gmail.com/
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-record.c        | 33 +++++++++++++++++++-----------
- tools/perf/util/symbol_conf.h      |  2 +-
- tools/perf/util/synthetic-events.c | 16 +++++++--------
- 3 files changed, 30 insertions(+), 21 deletions(-)
+With those patches applied, I've run 5 or 6 SpeedTests, no panics.
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index ba20bf7c011d..7b64013ba8c0 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -169,6 +169,7 @@ struct record {
- 	bool			no_buildid_cache_set;
- 	bool			buildid_all;
- 	bool			buildid_mmap;
-+	bool			buildid_mmap_set;
- 	bool			timestamp_filename;
- 	bool			timestamp_boundary;
- 	bool			off_cpu;
-@@ -1795,6 +1796,7 @@ record__finish_output(struct record *rec)
- 			data->dir.files[i].size = lseek(data->dir.files[i].fd, 0, SEEK_CUR);
- 	}
- 
-+	/* Buildid scanning disabled or build ID in kernel and synthesized map events. */
- 	if (!rec->no_buildid) {
- 		process_buildids(rec);
- 
-@@ -2966,6 +2968,8 @@ static int perf_record_config(const char *var, const char *value, void *cb)
- 			rec->no_buildid = true;
- 		else if (!strcmp(value, "mmap"))
- 			rec->buildid_mmap = true;
-+		else if (!strcmp(value, "no-mmap"))
-+			rec->buildid_mmap = false;
- 		else
- 			return -1;
- 		return 0;
-@@ -3349,6 +3353,7 @@ static struct record record = {
- 		.ctl_fd_ack          = -1,
- 		.synth               = PERF_SYNTH_ALL,
- 	},
-+	.buildid_mmap = true,
- };
- 
- const char record_callchain_help[] = CALLCHAIN_RECORD_HELP
-@@ -3514,8 +3519,8 @@ static struct option __record_options[] = {
- 		   "file", "vmlinux pathname"),
- 	OPT_BOOLEAN(0, "buildid-all", &record.buildid_all,
- 		    "Record build-id of all DSOs regardless of hits"),
--	OPT_BOOLEAN(0, "buildid-mmap", &record.buildid_mmap,
--		    "Record build-id in map events"),
-+	OPT_BOOLEAN_SET(0, "buildid-mmap", &record.buildid_mmap, &record.buildid_mmap_set,
-+			"Legacy record build-id in map events option which is now the default. Behaves indentically to --no-buildid. Disable with --no-buildid-mmap"),
- 	OPT_BOOLEAN(0, "timestamp-filename", &record.timestamp_filename,
- 		    "append timestamp to output filename"),
- 	OPT_BOOLEAN(0, "timestamp-boundary", &record.timestamp_boundary,
-@@ -4042,19 +4047,23 @@ int cmd_record(int argc, const char **argv)
- 		record.opts.record_switch_events = true;
- 	}
- 
-+	if (!rec->buildid_mmap) {
-+		pr_debug("Disabling build id in synthesized mmap2 events.\n");
-+		symbol_conf.no_buildid_mmap2 = true;
-+	} else if (rec->buildid_mmap_set) {
-+		/*
-+		 * Explicitly passing --buildid-mmap disables buildid processing
-+		 * and cache generation.
-+		 */
-+		rec->no_buildid = true;
-+	}
-+	if (rec->buildid_mmap && !perf_can_record_build_id()) {
-+		pr_warning("Missing support for build id in kernel mmap events. Disable this warning with --no-buildid-mmap\n");
-+		rec->buildid_mmap = false;
-+	}
- 	if (rec->buildid_mmap) {
--		if (!perf_can_record_build_id()) {
--			pr_err("Failed: no support to record build id in mmap events, update your kernel.\n");
--			err = -EINVAL;
--			goto out_opts;
--		}
--		pr_debug("Enabling build id in mmap2 events.\n");
--		/* Enable mmap build id synthesizing. */
--		symbol_conf.buildid_mmap2 = true;
- 		/* Enable perf_event_attr::build_id bit. */
- 		rec->opts.build_id = true;
--		/* Disable build id cache. */
--		rec->no_buildid = true;
- 	}
- 
- 	if (rec->opts.record_cgroup && !perf_can_record_cgroup()) {
-diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-index cd9aa82c7d5a..7a80d2c14d9b 100644
---- a/tools/perf/util/symbol_conf.h
-+++ b/tools/perf/util/symbol_conf.h
-@@ -43,7 +43,7 @@ struct symbol_conf {
- 			report_individual_block,
- 			inline_name,
- 			disable_add2line_warn,
--			buildid_mmap2,
-+			no_buildid_mmap2,
- 			guest_code,
- 			lazy_load_kernel_maps,
- 			keep_exited_threads,
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index 69b98023ce74..638d7dd7fa4b 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -532,7 +532,7 @@ int perf_event__synthesize_mmap_events(const struct perf_tool *tool,
- 		event->mmap2.pid = tgid;
- 		event->mmap2.tid = pid;
- 
--		if (symbol_conf.buildid_mmap2)
-+		if (!symbol_conf.no_buildid_mmap2)
- 			perf_record_mmap2__read_build_id(&event->mmap2, machine, false);
- 
- 		if (perf_tool__process_synth_event(tool, event, machine, process) != 0) {
-@@ -690,7 +690,7 @@ static int perf_event__synthesize_modules_maps_cb(struct map *map, void *data)
- 		return 0;
- 
- 	dso = map__dso(map);
--	if (symbol_conf.buildid_mmap2) {
-+	if (!symbol_conf.no_buildid_mmap2) {
- 		size = PERF_ALIGN(dso__long_name_len(dso) + 1, sizeof(u64));
- 		event->mmap2.header.type = PERF_RECORD_MMAP2;
- 		event->mmap2.header.size = (sizeof(event->mmap2) -
-@@ -734,9 +734,9 @@ int perf_event__synthesize_modules(const struct perf_tool *tool, perf_event__han
- 		.process = process,
- 		.machine = machine,
- 	};
--	size_t size = symbol_conf.buildid_mmap2
--		? sizeof(args.event->mmap2)
--		: sizeof(args.event->mmap);
-+	size_t size = symbol_conf.no_buildid_mmap2
-+		? sizeof(args.event->mmap)
-+		: sizeof(args.event->mmap2);
- 
- 	args.event = zalloc(size + machine->id_hdr_size);
- 	if (args.event == NULL) {
-@@ -1124,8 +1124,8 @@ static int __perf_event__synthesize_kernel_mmap(const struct perf_tool *tool,
- 						struct machine *machine)
- {
- 	union perf_event *event;
--	size_t size = symbol_conf.buildid_mmap2 ?
--			sizeof(event->mmap2) : sizeof(event->mmap);
-+	size_t size = symbol_conf.no_buildid_mmap2 ?
-+			sizeof(event->mmap) : sizeof(event->mmap2);
- 	struct map *map = machine__kernel_map(machine);
- 	struct kmap *kmap;
- 	int err;
-@@ -1159,7 +1159,7 @@ static int __perf_event__synthesize_kernel_mmap(const struct perf_tool *tool,
- 		event->header.misc = PERF_RECORD_MISC_GUEST_KERNEL;
- 	}
- 
--	if (symbol_conf.buildid_mmap2) {
-+	if (!symbol_conf.no_buildid_mmap2) {
- 		size = snprintf(event->mmap2.filename, sizeof(event->mmap2.filename),
- 				"%s%s", machine->mmap_name, kmap->ref_reloc_sym->name) + 1;
- 		size = PERF_ALIGN(size, sizeof(u64));
+There's several WARNINGS in the log, though, about one per run.
+
+I'm away from the keyboard tomorrow morning.
+
+Hoping this has helped
+Alan
+
+$ ./scripts/decode_stacktrace.sh < bar vmlinux
+Apr 28 22:22:20 bilbo kernel: ------------[ cut here ]------------
+Apr 28 22:22:20 bilbo kernel: WARNING: CPU: 1 PID: 0 at htb_deactivate (net/sched/sch_htb.c:613 (discriminator 1)) sch_htb 
+Apr 28 22:22:20 bilbo kernel: Modules linked in: sch_htb cls_u32 sch_ingress sch_cake ifb act_mirred xt_hl xt_nat ts_bm xt_string xt_TARPIT(O) xt_CT xt_tcpudp xt_helper nf_nat_ftp nf_conntrack_f>
+Apr 28 22:22:20 bilbo kernel:  fb_io_fops snd_pcm cfbcopyarea crypto_simd i2c_algo_bit cdc_acm cryptd snd_timer fb at24 e1000 snd k10temp regmap_i2c font acpi_cpufreq soundcore fam15h_power liba>
+Apr 28 22:22:20 bilbo kernel: CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G           O        6.15.0-rc3-00109-gf73f05c6f711-dirty #2 PREEMPT(lazy)
+Apr 28 22:22:20 bilbo kernel: Tainted: [O]=OOT_MODULE
+Apr 28 22:22:20 bilbo kernel: Hardware name: Gigabyte Technology Co., Ltd. To be filled by O.E.M./970A-DS3P, BIOS FD 02/26/2016
+Apr 28 22:22:20 bilbo kernel: RIP: 0010:htb_deactivate (net/sched/sch_htb.c:613 (discriminator 1)) sch_htb 
+Apr 28 22:22:20 bilbo kernel: Code: d4 45 21 a4 87 08 01 00 00 48 83 c4 18 5b 5d 41 5c 41 5d 41 5e 41 5f e9 81 8c ae e0 90 53 83 be a8 01 00 00 00 48 89 f3 75 02 <0f> 0b 48 89 de e8 29 fe ff ff >
+All code
+========
+   0:	d4                   	(bad)
+   1:	45 21 a4 87 08 01 00 	and    %r12d,0x108(%r15,%rax,4)
+   8:	00 
+   9:	48 83 c4 18          	add    $0x18,%rsp
+   d:	5b                   	pop    %rbx
+   e:	5d                   	pop    %rbp
+   f:	41 5c                	pop    %r12
+  11:	41 5d                	pop    %r13
+  13:	41 5e                	pop    %r14
+  15:	41 5f                	pop    %r15
+  17:	e9 81 8c ae e0       	jmp    0xffffffffe0ae8c9d
+  1c:	90                   	nop
+  1d:	53                   	push   %rbx
+  1e:	83 be a8 01 00 00 00 	cmpl   $0x0,0x1a8(%rsi)
+  25:	48 89 f3             	mov    %rsi,%rbx
+  28:	75 02                	jne    0x2c
+  2a:*	0f 0b                	ud2		<-- trapping instruction
+  2c:	48 89 de             	mov    %rbx,%rsi
+  2f:	e8 29 fe ff ff       	call   0xfffffffffffffe5d
+	...
+
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2
+   2:	48 89 de             	mov    %rbx,%rsi
+   5:	e8 29 fe ff ff       	call   0xfffffffffffffe33
+	...
+Apr 28 22:22:20 bilbo kernel: RSP: 0018:ffffc900000f4e50 EFLAGS: 00010246
+Apr 28 22:22:20 bilbo kernel: RAX: ffff888148f88000 RBX: ffff888148f89000 RCX: ffff888148f891c8
+Apr 28 22:22:20 bilbo kernel: RDX: ffff888148f89000 RSI: ffff888148f89000 RDI: ffff88811ce07180
+Apr 28 22:22:20 bilbo kernel: RBP: 0000000000000000 R08: ffff88811ce072b0 R09: 000000000d22f2d3
+Apr 28 22:22:20 bilbo kernel: R10: 0000000000001dad R11: ffffc900000f4ff8 R12: 0000000000000000
+Apr 28 22:22:20 bilbo kernel: R13: ffff888148f89000 R14: 00000034c76615a5 R15: 0000000000000000
+Apr 28 22:22:20 bilbo kernel: FS:  0000000000000000(0000) GS:ffff8884ac7df000(0000) knlGS:0000000000000000
+Apr 28 22:22:20 bilbo kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Apr 28 22:22:20 bilbo kernel: CR2: 00007fb66c09f000 CR3: 0000000138968000 CR4: 00000000000406f0
+Apr 28 22:22:20 bilbo kernel: Call Trace:
+Apr 28 22:22:20 bilbo kernel:  <IRQ>
+Apr 28 22:22:20 bilbo kernel: htb_dequeue (./include/net/sch_generic.h:821 (discriminator 1) net/sched/sch_htb.c:702 (discriminator 1) net/sched/sch_htb.c:933 (discriminator 1) net/sched/sch_htb.c:983 (discriminator 1)) sch_htb 
+Apr 28 22:22:20 bilbo kernel: __qdisc_run (net/sched/sch_generic.c:293 net/sched/sch_generic.c:398 net/sched/sch_generic.c:416) 
+Apr 28 22:22:20 bilbo kernel: ? timerqueue_del (lib/timerqueue.c:58) 
+Apr 28 22:22:20 bilbo kernel: qdisc_run (./include/net/pkt_sched.h:128 ./include/net/pkt_sched.h:124) 
+Apr 28 22:22:20 bilbo kernel: net_tx_action (net/core/dev.c:5535) 
+Apr 28 22:22:20 bilbo kernel: handle_softirqs (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/jump_label.h:262 ./include/trace/events/irq.h:142 kernel/softirq.c:580) 
+Apr 28 22:22:20 bilbo kernel: __irq_exit_rcu (kernel/softirq.c:453 kernel/softirq.c:680) 
+Apr 28 22:22:20 bilbo kernel: sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1049 (discriminator 35) arch/x86/kernel/apic/apic.c:1049 (discriminator 35)) 
+Apr 28 22:22:20 bilbo kernel:  </IRQ>
+Apr 28 22:22:20 bilbo kernel:  <TASK>
+Apr 28 22:22:20 bilbo kernel: asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:574) 
+Apr 28 22:22:20 bilbo kernel: RIP: 0010:cpuidle_enter_state (drivers/cpuidle/cpuidle.c:292) 
+Apr 28 22:22:20 bilbo kernel: Code: 08 58 6e 00 85 c0 7e 0b 8b 73 04 83 cf ff e8 b1 fd e4 ff 31 ff e8 9a 1a 97 ff 45 84 ff 74 07 31 ff e8 7e 3f 9c ff fb 45 85 ed <0f> 88 cc 00 00 00 49 63 c5 48 >
+All code
+========
+   0:	08 58 6e             	or     %bl,0x6e(%rax)
+   3:	00 85 c0 7e 0b 8b    	add    %al,-0x74f48140(%rbp)
+   9:	73 04                	jae    0xf
+   b:	83 cf ff             	or     $0xffffffff,%edi
+   e:	e8 b1 fd e4 ff       	call   0xffffffffffe4fdc4
+  13:	31 ff                	xor    %edi,%edi
+  15:	e8 9a 1a 97 ff       	call   0xffffffffff971ab4
+  1a:	45 84 ff             	test   %r15b,%r15b
+  1d:	74 07                	je     0x26
+  1f:	31 ff                	xor    %edi,%edi
+  21:	e8 7e 3f 9c ff       	call   0xffffffffff9c3fa4
+  26:	fb                   	sti
+  27:	45 85 ed             	test   %r13d,%r13d
+  2a:*	0f 88 cc 00 00 00    	js     0xfc		<-- trapping instruction
+  30:	49 63 c5             	movslq %r13d,%rax
+  33:	48                   	rex.W
+	...
+
+Code starting with the faulting instruction
+===========================================
+   0:	0f 88 cc 00 00 00    	js     0xd2
+   6:	49 63 c5             	movslq %r13d,%rax
+   9:	48                   	rex.W
+	...
+Apr 28 22:22:20 bilbo kernel: RSP: 0018:ffffc900000afe98 EFLAGS: 00000202
+Apr 28 22:22:20 bilbo kernel: RAX: ffff8884ac7df000 RBX: ffff888101f0c000 RCX: 0000000000000000
+Apr 28 22:22:20 bilbo kernel: RDX: 000000348d3ee395 RSI: fffffff068159bd4 RDI: 0000000000000000
+Apr 28 22:22:20 bilbo kernel: RBP: 0000000000000002 R08: 0000000000000002 R09: 0000000000000013
+Apr 28 22:22:20 bilbo kernel: R10: 0000000000000006 R11: 0000000000000671 R12: ffffffff81f9b660
+Apr 28 22:22:20 bilbo kernel: R13: 0000000000000002 R14: 000000348d3ee395 R15: 0000000000000000
+Apr 28 22:22:20 bilbo kernel: ? cpuidle_enter_state (drivers/cpuidle/cpuidle.c:286) 
+Apr 28 22:22:20 bilbo kernel: cpuidle_enter (drivers/cpuidle/cpuidle.c:391 (discriminator 2)) 
+Apr 28 22:22:20 bilbo kernel: do_idle (kernel/sched/idle.c:234 kernel/sched/idle.c:325) 
+Apr 28 22:22:20 bilbo kernel: cpu_startup_entry (kernel/sched/idle.c:422) 
+Apr 28 22:22:20 bilbo kernel: start_secondary (arch/x86/kernel/smpboot.c:315) 
+Apr 28 22:22:20 bilbo kernel: common_startup_64 (arch/x86/kernel/head_64.S:419) 
+Apr 28 22:22:20 bilbo kernel:  </TASK>
+Apr 28 22:22:20 bilbo kernel: ---[ end trace 0000000000000000 ]---
+
+
+
 -- 
-2.49.0.901.g37484f566f-goog
+Alan J. Wylie     https://www.wylie.me.uk/     mailto:<alan@wylie.me.uk>
 
+Dance like no-one's watching. / Encrypt like everyone is.
+Security is inversely proportional to convenience
 
