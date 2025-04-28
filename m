@@ -1,288 +1,187 @@
-Return-Path: <linux-kernel+bounces-622902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB47A9EE3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:44:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135BFA9EE41
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D3C9189E528
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4134C3BA624
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB8B262FFD;
-	Mon, 28 Apr 2025 10:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3EC25EF9F;
+	Mon, 28 Apr 2025 10:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sE8+cc9B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bNS/ZROp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532B425F969;
-	Mon, 28 Apr 2025 10:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D22D26280C;
+	Mon, 28 Apr 2025 10:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745837071; cv=none; b=UN4WEqoees170qNla+yVJAsf4iPARh7paWjyB21XyZykw5nPBncTqBpcaTDZEDX15ZZBqQxpscZYo/QZFQt9tnKaccDZhgYYKSkOXmw4QCtU6/8TROZCKKA6KQZuy0z4qGjjzEG2did9oeazLkMzcRPucsUE+xfjhICCIQmMe8k=
+	t=1745837108; cv=none; b=DGKWHAsjHIY8JuraE++3054i4tPF3nWT53HP1NKyXvOrmmz0KgoT5oZIZoyyEhLGoPf95s6qexB3y/azERtLfBZpwb5rhCvkGFXMYr6iGcdR8LqFnY4ykFhyUE1K6KjPjgIUq/GMsbNLKG4dqk7sEGeoVtQPCCi/N4mmZyAQUkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745837071; c=relaxed/simple;
-	bh=bABu/VDEElSSmPA6cekdNFlpkqmVhNewXrFKDvSrJ70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vi0VX+M7pCLnOZR+/KfMBk+D5FSyo/8KjAO70IWkEQD+DDXbv7d6vFimBDkU7Yw+pLg1oKmn6FahoqwNuhTILW6hSfujlelTomGmCmfMrfY7mrFfNh9ils1Coq2blxRehn9aAzQ2hbPLk7VwMZLBQdkeZkxPgtAMPpZqstHm0uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sE8+cc9B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0E980C4CEF3;
-	Mon, 28 Apr 2025 10:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745837071;
-	bh=bABu/VDEElSSmPA6cekdNFlpkqmVhNewXrFKDvSrJ70=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=sE8+cc9BZwAi5Zzk8ui1e54lPZKk2HBRKq2Cq11+GGeKiP9SgR6udO/meV5W2aiq/
-	 vW8Z9Ji5yy4qVty5/GlSHPHZvHCCaQd5veDGjWPeSgYBe03oRMM12axybhd+Q0IWIP
-	 rrWVp85/0o7HdVnQmF0yt+qHCreJHY1iQti9QudCwMSWPQbt57tjBN/ve1fhKgQ5wP
-	 fG6OJhgfFBZdgQ1Kz+pHh9Fs81Go2aU9wpdgrTk3o2nJOd2H0+kDk/zHUN2miosT8w
-	 LcZ2sbs+HpXtQxfagG2kztjwDmizichm0FeTHF4yXSY7uBEGDD6n3yXXnzNNlLD/ZK
-	 nyFu4conRGS0A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05159C369DC;
-	Mon, 28 Apr 2025 10:44:31 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Mon, 28 Apr 2025 12:44:31 +0200
-Subject: [PATCH v2 4/4] ARM: dts: amlogic: meson8-fernsehfee3: Describe
- regulators
+	s=arc-20240116; t=1745837108; c=relaxed/simple;
+	bh=BS9C6qoxcbZ0618oLeOGhF4ysXJUAV+mphi3z3/zUbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=puaoVXYSNdFljGBo53Scp92cvz3I362cvVSMdAtZwPOcsN8cblfj6W3E5eQSuZrAob2QiJe829Elh7JDSQh9MWB98Un5z1i2ZLzpYeNTxI4RsH0mMYeqbvuCKYJwxmdRn4rFULtdmA2BxPjT/T3ax/TCDa6Tuny3xZc/rTHN2vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bNS/ZROp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SACRke025798;
+	Mon, 28 Apr 2025 10:44:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rilsCXWAK9vi7OM2nXU4iJx4djTQbOQyhyG3UdhMzd0=; b=bNS/ZROpElA+PTY1
+	rKr0lddW+wXsA6IPw96KCvTH5aTNzlAU0WwJzigIHF+0yFcHjKwjbUqY+GOq2yr3
+	vRhhna2U7lrWk+LceacvD5mX4EFFMpUNLWc+h1RURdfNCOEd358LrN+F5QjBdL47
+	7Mhw5gWlXQMCEPj6wlYBRhBux9NnGtW6+0WUSKZ1U+Pg8NFGJsKJQxSuHhuCYcBJ
+	/VtAT1t9gklUonJ37t7u8GTxPiF3MKE2QLc2MIzpFakNgzaaq9sp/IS+KeolTvZK
+	Z/Ii0cIN9RpgRIv4dB/wqCN/U+28UwXQeF1/ZP7pBOFdUm1F5+0q210tZUM4KpTD
+	yKstKg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468q320ufm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 10:44:46 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53SAijlp014497
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 10:44:45 GMT
+Received: from [10.216.32.231] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Apr
+ 2025 03:44:37 -0700
+Message-ID: <aa8ebd50-683b-4043-9494-5675a2d9a01e@quicinc.com>
+Date: Mon, 28 Apr 2025 16:14:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250428-fernsehfee-v2-4-293b98a43a91@posteo.net>
-References: <20250428-fernsehfee-v2-0-293b98a43a91@posteo.net>
-In-Reply-To: <20250428-fernsehfee-v2-0-293b98a43a91@posteo.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745837069; l=6255;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=AKgCpfdZWCv+zwZ8v1j45DO/pgrxh4IwJ6agZCbSHzg=;
- b=H2zfdKROsGKE+lXPLgpMspCqA17o4V39l5+mZZxisa5jdqEqBITV+eE5Zkft+itNVp4tlp2tm
- HoKZZBJ5DdgDJKT6qoUQu3NSrTkamu5YM59m3WjtJQB1iXlizXKMvQW
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] arm64: dts: qcom: qcs8300: Add gpu and gmu nodes
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Jie Zhang <quic_jiezh@quicinc.com>
+References: <20250228-a623-gpu-support-v2-0-aea654ecc1d3@quicinc.com>
+ <20250228-a623-gpu-support-v2-5-aea654ecc1d3@quicinc.com>
+ <e22daaae-57fc-4523-b594-87d202d255f3@oss.qualcomm.com>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <e22daaae-57fc-4523-b594-87d202d255f3@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=M7xNKzws c=1 sm=1 tr=0 ts=680f5c1e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=ICJeL3kfza5QV274o94A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: WRz8n5WYy_YEjm6Lor_fkkGCisA8WlSe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDA4OCBTYWx0ZWRfXzX04qvK3h2ns XrxsGaiaLUPn2KaF2xIhrqLJu3sOK9Ccv6aP8RzulL9JY5Indny16q34xu2pQzCB98eZBW9E2Kv JiAuBiyekyi0LK6YztG3Vxr7cMsyDKuS2uEEkzZBXrbQekTBdTteKMAkvEBaYO79HE0LzMP9pH8
+ LOGFo0LlUOJ8S1/UnG3iIyWg6kohGLjE8h/w7AAXdJv2fEwSwcVMxRNgpQwi1PCZxvL05JxWjBn l4k6HPOmgcUAaMQkRL2Os6CwEKG4EUq1gXbg9QcAf4pz6cstDfI+r5gQNy8vQjQRcxKowsbgnp3 beRADFu304b4ff+6CuK9PfhUHyZ1oSxHvtGXS2WqMMKTcRdzsqOWQdf8aKtjD+dfa70gBuJe9Up
+ nIdX/XKbg8Ooq2fOcb1eD+ub81CHWNjyaGweZ1VpEjVQ+3ZJcsQMK8zQD+xHLLHs3oonNtUj
+X-Proofpoint-ORIG-GUID: WRz8n5WYy_YEjm6Lor_fkkGCisA8WlSe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 clxscore=1015 mlxlogscore=701 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504280088
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On 4/14/2025 4:31 PM, Konrad Dybcio wrote:
+> On 2/27/25 9:07 PM, Akhil P Oommen wrote:
+>> From: Jie Zhang <quic_jiezh@quicinc.com>
+>>
+>> Add gpu and gmu nodes for qcs8300 chipset.
+>>
+>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+> 
+> [...]
+> 
+>> +		gmu: gmu@3d6a000 {
+>> +			compatible = "qcom,adreno-gmu-623.0", "qcom,adreno-gmu";
+>> +			reg = <0x0 0x03d6a000 0x0 0x34000>,
+> 
+> size = 0x26000 so that it doesn't leak into GPU_CC
 
-The fernsehfee3 board uses a Ricoh RN5T618 PMIC to generate various
-voltages. Board schematics are not available, but the regulator voltages
-found in /sys/kernel/debug/regulator/regulator_summary match those in
-meson8m2-mxiii-plus.dts:
+We dump GPUCC regs into snapshot!
 
- DCDC1               0    0      0 unknown  1100mV     0mA     0mV     0mV
- DCDC2               0    0      0 unknown  1150mV     0mA     0mV     0mV
- DCDC3               0    0      0 unknown  1500mV     0mA     0mV     0mV
- LDO1                0    0      0 unknown  2900mV     0mA     0mV     0mV
- LDO2                0    0      0 unknown  1800mV     0mA     0mV     0mV
- LDO3                0    0      0 unknown  1800mV     0mA     0mV     0mV
- LDO4                0    0      0 unknown  2850mV     0mA     0mV     0mV
- LDO5                0    0      0 unknown  1800mV     0mA     0mV     0mV
- LDORTC1             0    0      0 unknown  2700mV     0mA     0mV     0mV
- LDORTC2             0    0      0 unknown   900mV     0mA     0mV     0mV
+> 
+>> +			      <0x0 0x03de0000 0x0 0x10000>,
+>> +			      <0x0 0x0b290000 0x0 0x10000>;
+>> +			reg-names = "gmu", "rscc", "gmu_pdc";
+>> +			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "hfi", "gmu";
+>> +			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
+>> +				 <&gpucc GPU_CC_CXO_CLK>,
+>> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
+>> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+>> +				 <&gpucc GPU_CC_AHB_CLK>,
+>> +				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
+>> +				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
+> 
+> This should only be bound to the SMMU
 
-This patch takes the following approach:
+Not sure how this sneaked in. Will remove this.
 
- - Copy RN5T618 regulator nodes from meson8m2-mxiii-plus.dts
- - Remove some of the regulator names, which do not seem to apply
- - Verify regulator supply relations by starting without any relations
-   (and without regulator-always-on) and seeing what breaks when the
-   kernel turns off "unused" regulators.
+> 
+>> +			clock-names = "gmu",
+>> +				      "cxo",
+>> +				      "axi",
+>> +				      "memnoc",
+>> +				      "ahb",
+>> +				      "hub",
+>> +				      "smmu_vote";
+>> +			power-domains = <&gpucc GPU_CC_CX_GDSC>,
+>> +					<&gpucc GPU_CC_GX_GDSC>;
+>> +			power-domain-names = "cx",
+>> +					     "gx";
+>> +			iommus = <&adreno_smmu 5 0xc00>;
+>> +			operating-points-v2 = <&gmu_opp_table>;
+>> +
+>> +			gmu_opp_table: opp-table {
+>> +				compatible = "operating-points-v2";
+>> +
+>> +				opp-200000000 {
+>> +					opp-hz = /bits/ 64 <200000000>;
+> 
+> It looks like this clock only has a 500 Mhz rate 
 
-This results in the following observations:
+Ack.
 
- - When LDO1 is turned off, the board resets
- - When DCDC1, DCDC2, DCDC3, LDO2, or LDO5 are turned off, the board (as
-   observed through the serial port) stops running, so these must stay on
-   at all times.
- - LDO4 (VCC2V8) appears to be unused on this board.
- - LDO3 (VCC1V8_USB) must stay on in order for USB to work, both the
-   external USB ports and the internal USB wifi module.
-
-The cpu-supply and mali-supply relations are also copied from
-meson8m2-mxiii-plus.dts
-
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
-
-Checklist used during the development of this patch (when a given
-regulator is not forced to stay on, which features work/fail?):
-
- regulator | boot | run  | USB  | WLAN | eMMC | SD   | Eth
- ----------|------|------|------|------|------|------|------
-  baseline | ok   | ok   | ok   | ok   | ok   | ok   | ok
-  empty¹   | ok   | ok   | ok   | ok   | ok   | init²| ok
-  DCDC1    | ok   | STOP |      |      |      |      |
-  DCDC2    | ok   | STOP |      |      |      |      |
-  DCDC3    | ok   | STOP |      |      |      |      |
-  LDO1     | ok   | RESET| FAIL | FAIL | ok   | init | ok
-  LDO2     | ok   | STOP | ok   | ok   | ok   | ok   |
-  LDO3     | ok   | ok   | FAIL | FAIL | ok   | ok   | ok
-  LDO4     | ok   | ok   | ok   | ok   | ok   | ok   | ok
-  LDO5     | ok   | STOP |      |      |      |      |
-  LDORTC1  |      |      |      |      |      |      |
-  LDORTC2  |      |      |      |      |      |      |
-
-¹: empty list of regulators
-²: fails to initialize when plugged in at boot, only inits on hotplug
-
-
-V2:
-- new patch
----
- arch/arm/boot/dts/amlogic/meson8-fernsehfee3.dts | 91 ++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
-
-diff --git a/arch/arm/boot/dts/amlogic/meson8-fernsehfee3.dts b/arch/arm/boot/dts/amlogic/meson8-fernsehfee3.dts
-index 3f9e2e5d8d5bd7ca7eb31e9b6cc7a591666c89ea..4e52447d51bd2d1d04e4ce21ddf598bc80a4c5f4 100644
---- a/arch/arm/boot/dts/amlogic/meson8-fernsehfee3.dts
-+++ b/arch/arm/boot/dts/amlogic/meson8-fernsehfee3.dts
-@@ -85,6 +85,10 @@ wifi_3v3: regulator-wifi {
- 	};
- };
- 
-+&cpu0 {
-+	cpu-supply = <&vcck>;
-+};
-+
- &ethmac {
- 	status = "okay";
- 	pinctrl-0 = <&eth_pins>;
-@@ -117,6 +121,87 @@ pmic@32 {
- 		compatible = "ricoh,rn5t618";
- 		reg = <0x32>;
- 		system-power-controller;
-+
-+		regulators {
-+			vcck: DCDC1 {
-+				regulator-name = "VCCK";
-+				regulator-min-microvolt = <825000>;
-+				regulator-max-microvolt = <1150000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vddee: DCDC2 {
-+				/* the output is also used as VDDAO */
-+				regulator-name = "VDD_EE";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1150000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			DCDC3 {
-+				regulator-name = "VDD_DDR";
-+				regulator-min-microvolt = <1500000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			LDO1 {
-+				regulator-name = "VDDIO_AO28";
-+				regulator-min-microvolt = <2900000>;
-+				regulator-max-microvolt = <2900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			LDO2 {
-+				regulator-name = "VDDIO_AO18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vcc1v8_usb: LDO3 {
-+				regulator-name = "VCC1V8_USB";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+			};
-+
-+			LDO4 {
-+				/* This one appears to be unused */
-+				regulator-name = "VCC2V8";
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <2850000>;
-+			};
-+
-+			LDO5 {
-+				regulator-name = "AVDD1V8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			LDORTC1 {
-+				regulator-name = "VDD_LDO";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <2700000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			LDORTC2 {
-+				regulator-name = "RTC_0V9";
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <900000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
- 	};
- 
- 	eeprom@50 {
-@@ -137,6 +222,10 @@ &i2c_B {
- 	/* TODO: SiI9293 HDMI receiver @ 0x39 */
- };
- 
-+&mali {
-+	mali-supply = <&vddee>;
-+};
-+
- &sdhc {
- 	status = "okay";
- 	pinctrl-0 = <&sdxc_c_pins>;
-@@ -188,6 +277,7 @@ &usb0 {
- 
- &usb0_phy {
- 	status = "okay";
-+	phy-supply = <&vcc1v8_usb>;
- };
- 
- &usb1 {
-@@ -206,6 +296,7 @@ wifi: wifi@1 {
- 
- &usb1_phy {
- 	status = "okay";
-+	phy-supply = <&vcc1v8_usb>;
- };
- 
- &ir_receiver {
-
--- 
-2.48.0.rc1.219.gb6b6757d772
-
+-Akhil.
+> 
+> Konrad
 
 
