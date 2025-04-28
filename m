@@ -1,213 +1,147 @@
-Return-Path: <linux-kernel+bounces-622860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF8DA9ED9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEF8A9EE68
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11F71892DA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:08:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0560B189F645
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911E3261399;
-	Mon, 28 Apr 2025 10:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE6F262FC7;
+	Mon, 28 Apr 2025 10:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M7nrpeQe"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UIfkN/8d"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E92B261398;
-	Mon, 28 Apr 2025 10:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B31AC44D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745834855; cv=none; b=o1/dyIRrr5WlbukyRV2ASIXuyQiCmWQxzFPu7lB59RVJNrZJLtlgCkr1RJr17XlWn19QTaKt/0LH0x9l3/MkNJkAJnAKJb3waqYbKyYCqfLqFn5nGIPdbaUdcCyfurLEAsMc/byGCzSLq8yJseqoezbDWUpAzMLjBpvKxkX1DIg=
+	t=1745837591; cv=none; b=IxE028rzD2QCd4MIUZit1BFQXWIlctpR+om2PZJy7SpZWfkxBiVJkCxqTbY/VaWhOjjLw5c3aLk+qYiRP8mFOMLeqmzw/m0F7+L/mNuiujvzZhVepziWtWyTCSOAz7vy0ba63Es5YwIRs9aKyHzlCLEZPGeqBVhdqmb47DHhvaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745834855; c=relaxed/simple;
-	bh=jXwUVvExxc5z7Z8jSiT7683GcJvsn0SjsTrr/ZaHQ7c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GLXnwSgCyuF/75M8rxOOlBWvyyzzDxXXG+mr1Whjg3eB8VR5qZHU5n0JbNcsCj0ClqCRIS46WIae69HkSKHZLLv6JcatlXe4qJe1sGbirdeNeiXcsGLssOtK2cPYNkfepMpkE+TBakBqkzkD/2e8xlPSQCYe9TqH6CeUWoTRd2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M7nrpeQe; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S8fBf7010204;
-	Mon, 28 Apr 2025 10:07:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=eWaIen6eo2SXPif9Yt6V2b
-	lg9we19vELALYOzhSIwtc=; b=M7nrpeQeE08a79PiuiT/onuZBlKondtEc4KlAX
-	y2XiCzDCeYv3VtRL+e6xNaRWjsAcI69yogdvdVJ0CpBGJfZ8hbBBQcXU0ciLrltW
-	mU18z/0hRRQh3q7u5pn8zNrkv3ufYPQiQdd6A37BKc1W7ccascZ13kiTqAFLSaT6
-	lXQZVK22qhR5wVWrTKPfgRZrKMJ+P++4/Zux26LOhoa/aRAjOiJH3LOvV0ChE0uU
-	meZFgXnQpfewT7fByQq8wiL9KXOXCFqSmkvKW/WlwKm5yAzWUXqPm3HzOt3R49F+
-	j75blA1+uIEVLhr7AMc6zLH2siVQIY0He0fUi8ZwxeQdKEDA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468pevfu88-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 10:07:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53SA755w003634
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 10:07:05 GMT
-Received: from hyiwei-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 28 Apr 2025 03:06:59 -0700
-From: Huang Yiwei <quic_hyiwei@quicinc.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-        <tony.luck@intel.com>, <bp@alien8.de>
-CC: Huang Yiwei <quic_hyiwei@quicinc.com>, <xueshuai@linux.alibaba.com>,
-        <quic_aiquny@quicinc.com>, <quic_satyap@quicinc.com>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@quicinc.com>,
-        <kernel@oss.qualcomm.com>
-Subject: [PATCH] firmware: SDEI: Allow sdei initialization without ACPI_APEI_GHES
-Date: Mon, 28 Apr 2025 17:56:23 +0800
-Message-ID: <20250428095623.3220369-1-quic_hyiwei@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1745837591; c=relaxed/simple;
+	bh=LVQ136RWyYRc2fD+t9t3p/5kJXBOfZ/prV2pR22/y8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=K5QEe5dXI+R5x/E0MQG2nICZyu0EFETRCGL6Yjm83UFN2P/tKAMX+ovL5HktsvUmREa2GG16dOIgwd2C2x7NenhUBzwiBYYz3oJCTzvjWhxenK3A0mP3tgppjzkd438BTvFapK4f9SjOf1EsQsRG6DEdghBiUljGwTi4O5l9MXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UIfkN/8d; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250428105307epoutp02f8eea1988d88875268741ac778578373~6dgkm6qZU2676426764epoutp02D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:53:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250428105307epoutp02f8eea1988d88875268741ac778578373~6dgkm6qZU2676426764epoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745837587;
+	bh=ZpOykj4NyH8OeDmsrqGV4eLwknuE5Llb0rONDyJLoLM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=UIfkN/8dbmzA7aDQcVeanqNL6SDCSC8EpNW+N+dQuyzNDzCGv2RCnmvP+OuUhwc8J
+	 bKdb5RWEKGJl3raj2/tJDUW8d/JYGW+hEDHesJVYCwm8XDqN+DGY78ROocoRIfAUD6
+	 KRjGJAJta39e+WRlODxnnss6GI3QmyoH/A9k+u+w=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250428105306epcas5p10398f853ddd88927a174a6dba33abfe8~6dgkLeGqC3228032280epcas5p1O;
+	Mon, 28 Apr 2025 10:53:06 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZmKzj2Jhdz3hhTC; Mon, 28 Apr
+	2025 10:53:05 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14~6c425zY3r1485614856epcas5p3z;
+	Mon, 28 Apr 2025 10:07:38 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250428100738epsmtrp23a2e80870d794866303e307fb14311ae~6c425FNh62525625256epsmtrp29;
+	Mon, 28 Apr 2025 10:07:38 +0000 (GMT)
+X-AuditID: b6c32a2a-d63ff70000002265-7f-680f53698ae6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	14.FA.08805.9635F086; Mon, 28 Apr 2025 19:07:37 +0900 (KST)
+Received: from green245.sa.corp.samsungelectronics.net (unknown
+	[107.99.41.245]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250428100736epsmtip11694115ac09e75b0c4231033e257f9a3~6c41j-q6U0417804178epsmtip1A;
+	Mon, 28 Apr 2025 10:07:36 +0000 (GMT)
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Christian Brauner
+	<brauner@kernel.org>, Keith Busch <kbusch@kernel.org>
+Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, Nitesh Shetty
+	<nj.shetty@samsung.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] iov_iter: Use iov_offset for length calculation in
+ iov_iter_aligned_bvec
+Date: Mon, 28 Apr 2025 15:28:48 +0530
+Message-Id: <20250428095849.11709-1-nj.shetty@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsWy7bCSnG5WMH+Gwc0kiznr17BZrL7bz2bx
+	+vAnRoubB3YyWUw6dI3R4vKuOWwWO540Mlps+z2f2eL83+OsDpweO2fdZfe4fLbUY9OqTjaP
+	EzN+s3j0bVnF6PF5k5zHpidvmQLYo7hsUlJzMstSi/TtErgypq76ylrwl6vi90vJBsY/HF2M
+	nBwSAiYSs97tY+pi5OIQEtjNKPH85nY2iISkxLK/R5ghbGGJlf+es0MUNTNJLG2fAuRwcLAJ
+	aEuc/s8BEhcROMYo8XPJZkaQBmaBGoktfW3sILawQIzEvok7wIayCKhKtG44CTaUV8BK4s2b
+	DnaIBfISqzccYJ7AyLOAkWEVo2RqQXFuem6xYYFRXmq5XnFibnFpXrpecn7uJkZwoGlp7WDc
+	s+qD3iFGJg7GQ4wSHMxKIrxVBvwZQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJ
+	zU5NLUgtgskycXBKNTDV3D6cNzVrjpZy+OKTx8Ij/5+WifXoM83d8f79kb7uJW/5qtWjmarZ
+	Kr6vvMZ1Watn+b9ktwPpESXvM7a03TKa86T9lv6Lj9I3ORovNdfecC73vps3pbJtb+KsrVum
+	evZ95dl0a/7F+vQbs6vKfyz+avHDc35V+0yT1xK3hT+m7srT0Nqn1a8jVfe5sSt++++IO1zb
+	l15VsRecpPhrXkTtpj2zl5WkKvd4/U0o6XSaLdH38Pe9gxfZL6bbi2zOyxHJDHmV8KKCYUv/
+	hbsbf4f2xcUEla6Rn7Zt5cnNn2b55LVodUhLlu0yLNgQLSy/nuuIPlf86eQGG9fABwVJ2VM7
+	HTVT1xpy50W9XLZMbbYSS3FGoqEWc1FxIgDsv7BFowIAAA==
+X-CMS-MailID: 20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14
+References: <CGME20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: J4vdveoOh9iAt7PvfjFwRV7BSYaA87bJ
-X-Authority-Analysis: v=2.4 cv=aeBhnQot c=1 sm=1 tr=0 ts=680f534a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=SRrdq9N9AAAA:8 a=COk6AnOGAAAA:8
- a=ODOW-txAOSA8bPpV2xoA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: J4vdveoOh9iAt7PvfjFwRV7BSYaA87bJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDA4MyBTYWx0ZWRfX1WcCnLhv2G4G qk+Is7tNLX0h15/gqmvE97xI7941ISJfzPn9Y0giX7IRIHDRlhz8M2f2A7myxmdd0ZnEUYpjEEn iDcOMigECOaf2pKNQsWPgM75w5bgACdFm0Gny75mpgvvmcZft2lVas5HOnmfkpbbytDObirsLeE
- iZ55j8U3aMpRIUjcKM8DbBr8WOoVH8D3hz+GieLZErHRfztbRhRo7sciCX46KHtPOhJgzeFkkaP 0K8D1YFWv03WUP7A/yH2HTDvLBjeBH3X5OOxgxCzRhGsWT6C2/RuG8pjSmKdDj2aIqxiUjv2qST WdAXeX/HIFchjGd3xuCJsb6FdcaKzpkZ/y8Q2TZIpLIZXpNifstrivr3NZiO8VSdYwJ+leC0/+f
- 5xfjQUNaKB3QS0KtYR03DiqK6BR/9QiTh+/mrPjdOhInnI/00NpAk+byp4LqjKhPijoLA3s9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
- impostorscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 spamscore=0
- mlxlogscore=537 phishscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504280083
 
-SDEI usually initialize with the ACPI table, but on platforms where
-ACPI is not used, the SDEI feature can still be used to handle
-specific firmware calls or other customized purposes. Therefore, it
-is not necessary for ARM_SDE_INTERFACE to depend on ACPI_APEI_GHES.
+If iov_offset is non-zero, then we need to consider iov_offset in length
+calculation, otherwise we might pass smaller IOs such as 512 bytes, in
+below scenario[1].
+This issue is reproducible using lib-uring test/fixed-seg.c application
+with fixed buffer on a 512 LBA formatted device.
 
-In commit dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES
-in acpi_init()"), to make APEI ready earlier, sdei_init was moved
-into acpi_ghes_init instead of being a standalone initcall, adding
-ACPI_APEI_GHES dependency to ARM_SDE_INTERFACE. This restricts the
-flexibility and usability of SDEI.
+[1]
+At present we pass the alignment check,
+for 512 LBA formatted devices, len_mask = 511
+when IO is smaller, i->count = 512
+has an offset, i->io_offset = 3584
+with bvec values, bvec->bv_offset = 256, bvec->bv_len = 3840.
+In short, the first 256 bytes are in the current page,
+next 256 bytes are in the another page.
+Ideally we expect to fail the IO.
 
-This patch corrects the dependency in Kconfig and allows the
-initialization of SDEI without ACPI_APEI_GHES enabled.
-
-Fixes: dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES in apci_init()")
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>
-Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
+Fixes: 2263639f96f2 ("iov_iter: streamline iovec/bvec alignment iteration")
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
+Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
 ---
-Link: https://lore.kernel.org/all/20230906130900.12218-1-schspa@gmail.com/
+ lib/iov_iter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Current patch has been verified in the following scenarios:
-  - ACPI_APEI_GHES enabled and ARM_SDE_INTERFACE enabled
-  - ACPI_APEI_GHES disabled and ARM_SDE_INTERFACE enabled
-  - ACPI_APEI_GHES disabled and ARM_SDE_INTERFACE disabled
-  - SDEI works well with DT node and compatiable firmware when
-    ACPI_APEI_GHES disabled
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index bc9391e55d57..9ce83ab71bac 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -820,7 +820,7 @@ static bool iov_iter_aligned_bvec(const struct iov_iter *i, unsigned addr_mask,
+ 	size_t size = i->count;
+ 
+ 	do {
+-		size_t len = bvec->bv_len;
++		size_t len = bvec->bv_len - skip;
+ 
+ 		if (len > size)
+ 			len = size;
 
-The scenario where CONFIG_ACPI enabled but not used has not been
-considered in this patch due to the absence of such platform.
-
- drivers/acpi/apei/Kconfig   | 1 +
- drivers/firmware/Kconfig    | 1 -
- drivers/firmware/arm_sdei.c | 9 +++++++--
- include/linux/arm_sdei.h    | 4 ++--
- 4 files changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
-index 3cfe7e7475f2..070c07d68dfb 100644
---- a/drivers/acpi/apei/Kconfig
-+++ b/drivers/acpi/apei/Kconfig
-@@ -23,6 +23,7 @@ config ACPI_APEI_GHES
- 	select ACPI_HED
- 	select IRQ_WORK
- 	select GENERIC_ALLOCATOR
-+	select ARM_SDE_INTERFACE if ARM64
- 	help
- 	  Generic Hardware Error Source provides a way to report
- 	  platform hardware errors (such as that from chipset). It
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index aadc395ee168..7df19d82aa68 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -31,7 +31,6 @@ config ARM_SCPI_PROTOCOL
- config ARM_SDE_INTERFACE
- 	bool "ARM Software Delegated Exception Interface (SDEI)"
- 	depends on ARM64
--	depends on ACPI_APEI_GHES
- 	help
- 	  The Software Delegated Exception Interface (SDEI) is an ARM
- 	  standard for registering callbacks from the platform firmware
-diff --git a/drivers/firmware/arm_sdei.c b/drivers/firmware/arm_sdei.c
-index 3e8051fe8296..ddb10389b340 100644
---- a/drivers/firmware/arm_sdei.c
-+++ b/drivers/firmware/arm_sdei.c
-@@ -1062,14 +1062,14 @@ static bool __init sdei_present_acpi(void)
- 	return true;
- }
- 
--void __init sdei_init(void)
-+int __init sdei_init(void)
- {
- 	struct platform_device *pdev;
- 	int ret;
- 
- 	ret = platform_driver_register(&sdei_driver);
- 	if (ret || !sdei_present_acpi())
--		return;
-+		return ret;
- 
- 	pdev = platform_device_register_simple(sdei_driver.driver.name,
- 					       0, NULL, 0);
-@@ -1079,7 +1079,12 @@ void __init sdei_init(void)
- 		pr_info("Failed to register ACPI:SDEI platform device %d\n",
- 			ret);
- 	}
-+
-+	return ret;
- }
-+#ifndef CONFIG_ACPI_APEI_GHES
-+subsys_initcall_sync(sdei_init);
-+#endif
- 
- int sdei_event_handler(struct pt_regs *regs,
- 		       struct sdei_registered_event *arg)
-diff --git a/include/linux/arm_sdei.h b/include/linux/arm_sdei.h
-index 255701e1251b..1a54f0eebb0d 100644
---- a/include/linux/arm_sdei.h
-+++ b/include/linux/arm_sdei.h
-@@ -46,12 +46,12 @@ int sdei_unregister_ghes(struct ghes *ghes);
- /* For use by arch code when CPU hotplug notifiers are not appropriate. */
- int sdei_mask_local_cpu(void);
- int sdei_unmask_local_cpu(void);
--void __init sdei_init(void);
-+int __init sdei_init(void);
- void sdei_handler_abort(void);
- #else
- static inline int sdei_mask_local_cpu(void) { return 0; }
- static inline int sdei_unmask_local_cpu(void) { return 0; }
--static inline void sdei_init(void) { }
-+static inline int sdei_init(void) { return 0; }
- static inline void sdei_handler_abort(void) { }
- #endif /* CONFIG_ARM_SDE_INTERFACE */
- 
+base-commit: 02ddfb981de88a2c15621115dd7be2431252c568
 -- 
-2.25.1
+2.43.0
 
 
