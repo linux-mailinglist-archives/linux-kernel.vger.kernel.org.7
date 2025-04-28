@@ -1,169 +1,179 @@
-Return-Path: <linux-kernel+bounces-622733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A02A9EB78
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C373BA9EB7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B003AFF49
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EE63AFEBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAFF25EFBF;
-	Mon, 28 Apr 2025 09:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA20925EFB8;
+	Mon, 28 Apr 2025 09:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIkVtC1P"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OtuJiFnU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7C724EAAB;
-	Mon, 28 Apr 2025 09:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695AB19C54B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745831214; cv=none; b=hqq4HYHEMbLJqtkKdVonzimGlePQhERkWH17aZ5R2IgXcNyrTSoHZ3wXS43y8dH5GJxoxzzLb3TPnha9qJLnOLvWxTU2Qc1/e47WLpkoOD1UHpChwtCfDhgRVErXROaVzuufvNngF2PlDohzp7dMOJbDpSHH40iPxupI1/dJA74=
+	t=1745831260; cv=none; b=sXibjRY48skgnYQzAmoig012rNv4hzAMp73VSkWJjB+DBrDjgiOBhG5gCqb0v8oMSq7AmwHx3Ax+XEk/x9jsU19xOynAK5tOEcxH0qjtkMCjGWFbXkBViwi8JVMCSQDpC3Yh/+r0akNUl/pfMdqMYpmt1A9iyz0yo8iSQ/Y++dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745831214; c=relaxed/simple;
-	bh=ppIWNtOg1LXw8uMI8CjjeWX0CnxWw5y9RE1aVI9yQIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q7djKVZvkXx1bhrAHHk+TFOQMyXxz+7dDnf5hVa4aNFwwLBHcUtAHZ20sPtfcedCdgOWth/ltLkLQ3y0z+4qmZFdQ1UT/sZv4tkylb7DXGfYEFLsyTnL2YJXQJx7exDFwXZtd9MXiYOe4B/lRlxfPEqktGP8x0OsgVVIySMZzQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIkVtC1P; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c1efc4577so2569085f8f.0;
-        Mon, 28 Apr 2025 02:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745831211; x=1746436011; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vrP2CkY7EdRWUrqip7eV8X83IUPU9ETL4wnHODJxb2w=;
-        b=UIkVtC1Pt8H3/wUmvKVMK7uwkLwostuqdm50upH+jCCdJ2MapUoh/Ip6as9raylKgg
-         EP+H25YK8plD42LrVl4bC98glYmpQqBlrryseYym06oFbGKhmLOukV1id6cMYNMBN088
-         of0cyI+3MNGyDwn2NgLYNru5folRGnyVO0hhY4CCWdcqmbGCWO7pHeJlO1Jm+Pu/mO2+
-         anCUSb0BVWGZbs7plvqTG/NKBqywdrIrhjB+H2a+TcuckXqe9W2ydi7mlVnSVgwda+y4
-         vrzZBcQ3/Xr7iunjzx5bfBPcBY2fMn234eMFvRzU2/tNMBcIzpxI+IcuXM8cmQ9bs2Nc
-         h0GQ==
+	s=arc-20240116; t=1745831260; c=relaxed/simple;
+	bh=UybRkzn8WVqdE1THG5SNswNLOWS8DckJhCs42e2ygxw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Mv4u//Rj3j+kJfGjcRjpCgaFBNyw9YZw+ufWV9To7dSvurZrL16c7zGUqbfP/hb8RkvOzHH973rfcxu30dyzkm0gpZEIxzRIPGkj+ZytYeJKfNRQz1RfJKWCvo/XbGHTJGoYmk9WvzVSKLtingzpfyKjrLiZbMhLrUDoHfQ7SAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OtuJiFnU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745831257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=U83a+nTlEFAKC2Rdyrq3VHyIzU428c5fHiV27cVYo1k=;
+	b=OtuJiFnURzqC6qvya7jIZw2FU1FBsC9i8mhVMToUA8rU1SqhYaqLrXB3rs2+NmN5Q6y2zw
+	D1SjHPTgUe0pFOAXxGrfFY9yUaCJyM8ohVs5SL+rZ/FvBOcZh3Igh30to04cWyfpDSWxxB
+	/Wuf6b3WVEefjpvfZDcErV2oeVu2wrE=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-cSVR0qFzN0iYK4lki_pmoA-1; Mon, 28 Apr 2025 05:07:35 -0400
+X-MC-Unique: cSVR0qFzN0iYK4lki_pmoA-1
+X-Mimecast-MFC-AGG-ID: cSVR0qFzN0iYK4lki_pmoA_1745831254
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-acbbb0009aeso321533066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 02:07:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745831211; x=1746436011;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vrP2CkY7EdRWUrqip7eV8X83IUPU9ETL4wnHODJxb2w=;
-        b=LzF8D5o5iuFc6+yjMLr5sDZZCDQjW5pctI0Im27bVt33eI9FaH9pnR6ix8oiO1KCCx
-         YhGuJsdSGSpoJPWU7iB2knt+Gvo5PvP2dfc4cixGZ7SjbUJd3HqOcCqwvu7ba8Os50Pe
-         JOnbtom0uzEBKDDZKL1BoeCl0luKbxDbwbAKW4qjcAV+iYFYvoR6FryW7/rozPU7Xi2h
-         v24OMrl3BtnuQs6mcu4fqdEnDC3g896LV3kNtNbdYZ86xePshlGnZej2edWaNRkenRpz
-         07lAg9Zaj/L8y1Lkv6g5XomHUnYavQ3Q0jtGtIQ2Dtsok/GaJHrFhk3hRPnDjRRcg7Ed
-         jwXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWi2SgUcvnKUxEcRMaZG3LvofHxXxN9OdA2Wfsgo+Ik65oYvOveHeGRhdj08EM7fDidGNV5zuLdaWA9uGM@vger.kernel.org, AJvYcCXfjp9lYgS++TUM4Cwym2/7lvlOxinCUaiiLtkmaUifnlFnb6MKuYMT7QunDoJ9fNgx86se0E0/GhQFODBT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj07EohaWSKwo97HCzVMNJIg+GG4ar/uoySf+x+kN6EknOyJ9l
-	HWlQtt80/0Ne9iij92h1izCoPflyUfCK0FSgoCNnr80m5sZwhutUExVGttDjT+wYeVsMP+Je+tu
-	0tZVGqFpFBt7qPtDJ4TKXPeDeCQ==
-X-Gm-Gg: ASbGncvAuN5K0bYEA6goKLoiBpXpZqmDwyG1hfN1igKVJn93UjUxPBOiGTn79/TRZHC
-	x2qZ20b+RNPVrONxkCrii5Rvbsh5cZ0vsPbqeVVVApbHOGwE7ObsLSVk98WT6n0jnlUajNpQ5pL
-	zQtPR3OTDLGZKnVX0cFFDZeg==
-X-Google-Smtp-Source: AGHT+IHd5cOvjdSZ4jvtyMnwviGdePLYjYKhf+NbtpduvF+uiSPCjh2ycn+8lgcJGcQkuWFGpwfb0lxDvsulR2tTh74=
-X-Received: by 2002:a05:6000:22c2:b0:399:71d4:a9 with SMTP id
- ffacd0b85a97d-3a074f7f22amr8908857f8f.52.1745831210949; Mon, 28 Apr 2025
- 02:06:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745831254; x=1746436054;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U83a+nTlEFAKC2Rdyrq3VHyIzU428c5fHiV27cVYo1k=;
+        b=vyuAVFZixj0YRSN412Gy/aErBmPQCVyVef33WgivcGjgZmhfLGvvMEiZ4zS/7Hvqh9
+         HJRAhbifG2/ODmPNbkY0yd97E+2dxqL4aVk/ZobygGDwZ5pM69KWDYnNiSExDAy68B92
+         iHu0eDWJpEveiQbhQ34O9AqqfNU0rneQzrD23r7AZVcTCn57Ue82vwq2qJfw6SgXYa6C
+         1sSRl/JI0YcsBNKn6kdu8FRLHCiGUsoXf7Q10crgad44iBP7vgJ7j8qkrnGYGiBk2ZmH
+         tLawW5hyQ8KN5q4Y0ODXflW9+cA4hhoGVoCbyWLD39GzgjfaGtxKWl/vSPB8Zv4jxzNf
+         95HA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwIuNlxh0CxP5OT4fJ/2plTOaNqTAdYj00IPrYSyBOXSNpkl8qbH6a8YzRTnM6+1C3VeDnLePVBzb9XiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfYXWn7Xax79+G808tEkpOP4DN6548aePDY/fNBIY9cwa19Eyj
+	itKrDfjPBdOgQ1TmAgkXPT0o0jsg7F+vu72un0HuiKVKVQVKsgVzLM+glkk8kODtSQTz26XsiHO
+	bhrkg82DyDH36rW1quEXM6E+Oxww5ySTJ5tdkhji4Gj41Y9e2YGpFu4HxEGMJxx2zhreCNVE83Z
+	5laSPXzfS4UoYDjJ6Z5sgHPG/0bb6fxWTCa8o/1aox/xXA7eo=
+X-Gm-Gg: ASbGnctsuKhXLY3HzD2cTfHqhTqQaCauF2aEXNAR8o+aLMSijrVmYu45puiwLm83XG9
+	i0VJb7z5LI3LhoFXFp4c9g0OHbq2OMneMWidNKpQo+YeFzpKFYRb5EvLTlIvHCc4dIOUQQA4cU5
+	hsYuOy1hWcVs3DmfrdeSTuOp0=
+X-Received: by 2002:a17:907:1b22:b0:aca:a687:a409 with SMTP id a640c23a62f3a-ace71098d4bmr1075264166b.17.1745831253636;
+        Mon, 28 Apr 2025 02:07:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgYwmPlIC7YgpE+PSFxKMe//ba9PVWCueXky1f4Hyp24q1RjJNcmUjYtJUZ28R0eTkQQ9mALmDyYJsqSo+HHM=
+X-Received: by 2002:a17:907:1b22:b0:aca:a687:a409 with SMTP id
+ a640c23a62f3a-ace71098d4bmr1075261666b.17.1745831253261; Mon, 28 Apr 2025
+ 02:07:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250417021349.148911-1-alex.vinarskis@gmail.com> <aA8yFI2Bvm-lFJTl@hovoldconsulting.com>
-In-Reply-To: <aA8yFI2Bvm-lFJTl@hovoldconsulting.com>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Mon, 28 Apr 2025 11:06:39 +0200
-X-Gm-Features: ATxdqUE21e2Yp75-k_wyhiJlMRQ-z3ZtLT7itOJ8xGoFly7x2Ai_IKkUtx-RkD4
-Message-ID: <CAMcHhXpmii=Rc9YVeKXaB17mYv0piSFs02K=0r8kWe5tQGk7eA@mail.gmail.com>
-Subject: Re: drm/msm/dp: Introduce link training per-segment for LTTPRs
-To: Johan Hovold <johan@kernel.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, laurentiu.tudor1@dell.com, 
-	abel.vesa@linaro.org
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Mon, 28 Apr 2025 11:07:21 +0200
+X-Gm-Features: ATxdqUGbtYEpyFOd5glkWz-aR-UH1QxYr3tYPCWdrrc_cIW_rAu4Jj2afo2Hfp8
+Message-ID: <CAP4=nvTab7BnT4uu0iCuFJpZ-_MdY-MYU+Q25QnpygEZKmsQ8A@mail.gmail.com>
+Subject: [BUG] perf segfaults when combining --overwrite and intel_pt event
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Wander Costa <wcosta@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 28 Apr 2025 at 09:45, Johan Hovold <johan@kernel.org> wrote:
->
-> On Thu, Apr 17, 2025 at 04:10:31AM +0200, Aleksandrs Vinarskis wrote:
-> > Recently added Initial LTTPR support in msm/dp has configured LTTPR(s)
-> > to non-transparent mode to enable video output on X1E-based devices
-> > that come with LTTPR on the motherboards. However, video would not work
-> > if additional LTTPR(s) are present between sink and source, which is
-> > the case for USB Type-C docks (eg. Dell WD19TB/WD22TB4), and at least
-> > some universal Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
->
-> Does this mean that the incomplete LTTPR support in 6.15-rc1 broke
-> adapters or docks with retimers in transparent mode?
+Dear maintainers,
 
-I am actually not 100% sure.
-- If without LTTPR initialization, they default to transparent mode,
-then yes, incomplete LTTPR support sets them to non-transparent
-without per-segment training and breaks docks with retimers, while it
-would've worked if LTTPR(s) would've been left in default transparent
-mode. Note that in this case, X1E devices with ps883x are somehow an
-exception, because without LTTPR initialization at all the training
-always fails.
-- If LTTPR has to be initialized either way, and explicitly set to
-transparent mode if we do not want non-transparent, then no,
-incomplete LTTPR support in 6.15-rcX did not explicitly break docks
-with retimers, as those never worked in the first place. As per my
-understanding, this is the case, unless something (firmware?) has
-already placed LTTPR to transparent mode before the driver takes over
-- then 1st case would be applicable.
+I would like to report a bug in perf I ran into when trying to combine
+--overwrite and intel_pt on latest perf from 6.15-rc4:
 
-Docks with retimers do not work in 6.15-rcX, but I am unable to verify
-if it did work before, as I do not have a Qualcomm based device
-without LTTPR on the baseboard.
+$ perf --version
+perf version 6.15.rc4.gb4432656b36e
+$ perf record --overwrite -a -e intel_pt/cyc,noretcomp/k
+perf: Segmentation fault
+Obtained 16 stack frames.
+perf() [0x59aab7]
+perf() [0x59ab97]
+perf() [0x41a9db]
+/lib64/libc.so.6(+0x1a050) [0x7f7fc2e27050]
+perf() [0x61bb16]
+perf() [0x55fee9]
+perf() [0x54a790]
+perf() [0x469c92]
+perf() [0x46a09f]
+perf() [0x46a317]
+perf() [0x54ac83]
+perf() [0x41c61c]
+perf() [0x41c92c]
+perf() [0x41cc65]
+perf() [0x41ff41]
+perf() [0x424015]
+Segmentation fault (core dumped)
 
-> You describe at least one of this patches as a fix but I'm not seeing
-> any Fixes tags or indication that these need to go into 6.15-rc to fix
-> a regression.
+GDB gives the following backtrace:
 
-You are right, I will add Fixes tag to the 1st patch to make it clear:
-Fixes 72d0af4accd (drm/msm/dp: Add support for LTTPR handling)
+(gdb) bt
+#0  0x000000000061bb16 in auxtrace_mmap__mmap (mm=0x7c9fa0,
+mp=0x7fffffff9008, userpg=0x7ffff7cff000, fd=7) at util/auxtrace.c:136
+#1  0x000000000055fee9 in mmap__mmap (map=0x7c9f40, mp=0x7fffffff8ff0,
+fd=7, cpu=...) at util/mmap.c:312
+#2  0x000000000054a790 in perf_evlist__mmap_cb_mmap (_map=0x7c9f40,
+_mp=0x7fffffff8ff0, output=7, cpu=...) at util/evlist.c:825
+#3  0x0000000000469c92 in mmap_per_evsel (evlist=0x78f190,
+ops=0x7fffffff8fd0, idx=0, mp=0x7fffffff8ff0, cpu_idx=0, thread=0,
+   _output=0x7fffffff8f10, _output_overwrite=0x7fffffff8f14,
+nr_mmaps=0x7fffffff8f0c) at evlist.c:527
+#4  0x000000000046a09f in mmap_per_cpu (evlist=0x78f190,
+ops=0x7fffffff8fd0, mp=0x7fffffff8ff0) at evlist.c:620
+#5  0x000000000046a317 in perf_evlist__mmap_ops (evlist=0x78f190,
+ops=0x7fffffff8fd0, mp=0x7fffffff8ff0) at evlist.c:679
+#6  0x000000000054ac83 in evlist__mmap_ex (evlist=0x78f190,
+pages=4294967295, auxtrace_pages=1024, auxtrace_overwrite=false,
+   nr_cblocks=0, affinity=0, flush=1, comp_level=0) at util/evlist.c:977
+#7  0x000000000041c61c in record__mmap_evlist (rec=0x764de0 <record>,
+evlist=0x78f190) at builtin-record.c:1310
+#8  0x000000000041c92c in record__mmap (rec=0x764de0 <record>) at
+builtin-record.c:1359
+#9  0x000000000041cc65 in record__open (rec=0x764de0 <record>) at
+builtin-record.c:1413
+#10 0x000000000041ff41 in __cmd_record (rec=0x764de0 <record>, argc=0,
+argv=0x7fffffffe0f0) at builtin-record.c:2492
+#11 0x0000000000424015 in cmd_record (argc=0, argv=0x7fffffffe0f0) at
+builtin-record.c:4285
+#12 0x0000000000461133 in run_builtin (p=0x769260 <commands+288>,
+argc=5, argv=0x7fffffffe0f0) at perf.c:351
+#13 0x00000000004613a2 in handle_internal_command (argc=5,
+argv=0x7fffffffe0f0) at perf.c:404
+#14 0x00000000004614f1 in run_argv (argcp=0x7fffffffdedc,
+argv=0x7fffffffded0) at perf.c:448
+#15 0x00000000004617d7 in main (argc=5, argv=0x7fffffffe0f0) at perf.c:556
 
-Or should I mark the entire series with Fixes, so that the docking
-stations with retimers can be fixed in 6.15 already? Landing only the
-1st patch will fix inconsistency with DP spec, but will not fix
-docking stations with retimers. I guess this comes down to whether
-existing LTTPR (but not multiple LTTPRs) support is considered a bug
-(and patches 2,3,4 are a fix) or lack of functionality (and patches
-2,3,4 are a new feature).
+Further investigation shows the range associated with userpg, to which
+the statement at util/auxtrace.c:136 attempts to write to, is mapped
+read-only:
 
->
-> > Changes in v3:
-> > - Split 1st patch into 3
-> > - Simplified handling of max_lttpr_lanes/max_lttpr_rate
-> > - Moved lttpr_common_caps to msm_dp_link (not msm_dp_panel, as LTTPRs
-> >   are link related, not panel related)
-> > - Picked Stefan's T-b tag (last patch only, as 1st one is getting split)
-> > - Droped Abel's R-b tags from 1st patch that got split due to high diff
-> > - Fixed alignment issues, initialization of variables, debug prints
-> > - Moved lttpr_count to avoid ugly pointer
-> > - Link to v2: https://lore.kernel.org/all/20250311234109.136510-1-alex.vinarskis@gmail.com/
->
-> I tested v2 due to the dependencies in msm-next and DP altmode still
-> works on my X13s and T14s (while not using any docks):
->
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+(gdb) info proc mappings
+...
+0x00007ffff7cff000 0x00007ffff7d80000 0x81000            0x0
+     r--s  anon_inode:[perf_event]
+...
 
-Thanks,
+Compare to a run without --overwrite, where the memory is writable and
+everything is good:
 
-Alex
+(gdb) info proc mappings
+...
+0x00007ffff7cff000 0x00007ffff7d80000 0x81000            0x0
+     rw-s  anon_inode:[perf_event]
+...
 
->
-> > Aleksandrs Vinarskis (4):
-> >   drm/msm/dp: Fix support of LTTPR initialization
-> >   drm/msm/dp: Account for LTTPRs capabilities
-> >   drm/msm/dp: Prepare for link training per-segment for LTTPRs
-> >   drm/msm/dp: Introduce link training per-segment for LTTPRs
->
-> Johan
+Let me know if you need any more information.
+
+Tomas
+
 
