@@ -1,172 +1,260 @@
-Return-Path: <linux-kernel+bounces-622430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C739A9E709
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:29:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC89A9E712
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F613B638B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 04:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2272E3B8A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 04:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA29F1925AF;
-	Mon, 28 Apr 2025 04:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FunUyaLx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6A715E5D4;
+	Mon, 28 Apr 2025 04:32:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABC22F44
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 04:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA67757F3;
+	Mon, 28 Apr 2025 04:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745814536; cv=none; b=XKzPYlJJ/xwZJsNkLoLE9NN0ijFp/DggOOamrLCzjhgK9zXljOvx4/TRSAX1eZuLb9QCsQ5zOKwMkIwogN2roX2HkkjD7IrzB9TyRVo7PMHuCMDdPF4JgDuTCqIG3sl9dXbjjYRVtxSP6OdGMAxToFUIZ7PE7RBmei4C9UYzjMc=
+	t=1745814734; cv=none; b=oeeT/1cepcq03/BPKrE9rpYGoKv0C0MkbXpOEduL4q5gdNg0o95ej3XjdVrgn3gvSBqZ+W+CAIcl70uO9p1s9GLDMnzaui12ZaROXCNmrU1x4o+51RhX9bQxaT8dMAbmGTyATQC4AAmqq632Osrx8DRwVf2wm+AED86CT55ONDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745814536; c=relaxed/simple;
-	bh=d1lImxcL5KXXt5ekjHY3CgyCvgBRY/NhyBhBex+CUxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TmjJpvxZpQIs4pCOb/6p0qdfzEdkAgDwWb3n94cXs7Na56OqsAcjFq6TOMC9IYss/51V6DJYNx316Lvzp86DQT8KQCwSoojGwd70HLHQR0xwmREtKK1aLqOOW1EWajPIJls24Z3C6n2Giyg36n5MPKoXhXE4vVD5j1DXFpjCw1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FunUyaLx; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745814534; x=1777350534;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=d1lImxcL5KXXt5ekjHY3CgyCvgBRY/NhyBhBex+CUxo=;
-  b=FunUyaLxSo7hp/bZi4S+FdaYSbCKSX5u833d9pnKyqSegMxcBxFrlERZ
-   jm8O5jnaca+xKXkDG0L1kISFHBeTfGbskp1Z6cRn2Jy9ubpGvOS2ViUeI
-   kXbcC3K7m86O0xBYBQrLhGUlsGLzy7jJfDKqSptNIq9kjrCoSMUf75f9+
-   sHMqJMDfNFuO4cZtsB2YlhfZF2V2jUvssh2dDsQ787h2PaABcsWCvZsz2
-   HP25ZOIPQYjSyeWoBuJJOk+JSoN3+e3KvXUxoqHcIWvMcHs1uOpCqVlUj
-   O31Nl+hPb35EDEEvxY6PSTERO8zoWRR3CdGuox9OfXqodO2SqNpNHdp3D
-   A==;
-X-CSE-ConnectionGUID: 7dMV5zQ8QOqhXLgDA0iLng==
-X-CSE-MsgGUID: xRtwtIMkR4aOW1wA/sGSdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="58034495"
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="58034495"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 21:28:53 -0700
-X-CSE-ConnectionGUID: IF32Jd26QMinyimSE+FmbA==
-X-CSE-MsgGUID: 51ynQFvFTCCb2YY9zK27RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="133140879"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 27 Apr 2025 21:28:51 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u9G6q-0006bt-1J;
-	Mon, 28 Apr 2025 04:28:48 +0000
-Date: Mon, 28 Apr 2025 12:28:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Wei Liu <wei.liu@kernel.org>,
-	Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
-	Jinank Jain <jinankjain@microsoft.com>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	Muminul Islam <muislam@microsoft.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Roman Kisel <romank@linux.microsoft.com>
-Subject: drivers/hv/mshv_root_main.c:1341:25: sparse: sparse: incorrect type
- in argument 1 (different address spaces)
-Message-ID: <202504281257.v5WVmO03-lkp@intel.com>
+	s=arc-20240116; t=1745814734; c=relaxed/simple;
+	bh=M9Mtf264J+Mb3cNVqR5CP6GjGyjzcGOdvAIaG/ht+Os=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KG0ecmYxN/NGKv0nftvTzLF4OI+Ax2Abf6CPZcTzogH78HzrN/d8bZy9XyGnFhxl22eJ/4Vd2A+OX/Myd/UHapp0G8F8z/yVHDUFsjoXDNDHRiluSXPb3PdmFVHAMGgAyxpv6UF0GM1VHsbWbrOajsMadinYjqq4EaVY1fm66zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4Zm9X81FTszYQv5S;
+	Mon, 28 Apr 2025 12:32:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9EB9F1A0904;
+	Mon, 28 Apr 2025 12:32:07 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgD3W2DFBA9o93coKw--.41236S3;
+	Mon, 28 Apr 2025 12:32:07 +0800 (CST)
+Message-ID: <7b0319ac-cad4-4285-800c-b1e18ee4d92b@huaweicloud.com>
+Date: Mon, 28 Apr 2025 12:32:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH blktests 2/3] dm/003: add unmap write zeroes tests
+To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ hch <hch@lst.de>, "tytso@mit.edu" <tytso@mit.edu>,
+ "djwong@kernel.org" <djwong@kernel.org>,
+ "john.g.garry@oracle.com" <john.g.garry@oracle.com>,
+ "bmarzins@redhat.com" <bmarzins@redhat.com>,
+ "chaitanyak@nvidia.com" <chaitanyak@nvidia.com>,
+ "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+ "yukuai3@huawei.com" <yukuai3@huawei.com>,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>
+References: <20250318072835.3508696-1-yi.zhang@huaweicloud.com>
+ <20250318072835.3508696-3-yi.zhang@huaweicloud.com>
+ <t4vmmsupkbffrp3p33okbdjtf6il2ahp5omp2s5fvuxkngipeo@4thxzp4zlcse>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <t4vmmsupkbffrp3p33okbdjtf6il2ahp5omp2s5fvuxkngipeo@4thxzp4zlcse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgD3W2DFBA9o93coKw--.41236S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr13XFyxAF1fXF1rAw4kCrg_yoWrZF18pF
+	W5CF90yrZrKF17tw13ZF13Xr15Aws5Aw47Jw47J34jy398ZrySgFyxKF1UCa4xXrZ3ua10
+	yay2qa4rCr1UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   02ddfb981de88a2c15621115dd7be2431252c568
-commit: 621191d709b14882270dfd8ea5d7d6cdfebe2c35 Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs
-date:   5 weeks ago
-config: arm64-randconfig-r111-20250428 (https://download.01.org/0day-ci/archive/20250428/202504281257.v5WVmO03-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce: (https://download.01.org/0day-ci/archive/20250428/202504281257.v5WVmO03-lkp@intel.com/reproduce)
+On 2025/4/3 15:43, Shinichiro Kawasaki wrote:
+> On Mar 18, 2025 / 15:28, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Test block device unmap write zeroes sysfs interface with device-mapper
+>> stacked devices. The /sys/block/<disk>/queue/write_zeroes_unmap
+>> interface should return 1 if the underlying devices support the unmap
+>> write zeroes command, and it should return 0 otherwise.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  common/rc        | 16 ++++++++++++++
+>>  tests/dm/003     | 57 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>  tests/dm/003.out |  2 ++
+>>  3 files changed, 75 insertions(+)
+>>  create mode 100755 tests/dm/003
+>>  create mode 100644 tests/dm/003.out
+>>
+>> diff --git a/common/rc b/common/rc
+>> index bc6c2e4..60c21f2 100644
+>> --- a/common/rc
+>> +++ b/common/rc
+>> @@ -615,3 +615,19 @@ _io_uring_restore()
+>>  		echo "$IO_URING_DISABLED" > /proc/sys/kernel/io_uring_disabled
+>>  	fi
+>>  }
+>> +
+>> +# get real device path name by following link
+>> +_real_dev()
+>> +{
+>> +	local dev=$1
+>> +	if [ -b "$dev" ] && [ -L "$dev" ]; then
+>> +		dev=`readlink -f "$dev"`
+>> +	fi
+>> +	echo $dev
+>> +}
+> 
+> This helper function looks useful, and it looks reasonable to add it.
+> 
+>> +
+>> +# basename of a device
+>> +_short_dev()
+>> +{
+>> +	echo `basename $(_real_dev $1)`
+>> +}
+> 
+> But I'm not sure about this one. The name "_short_dev" is not super
+> clear for me.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504281257.v5WVmO03-lkp@intel.com/
+I copied these two helpers form the xfstests. :)
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/hv/mshv_root_main.c:1341:25: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const [noderef] __user *addr @@     got void const * @@
-   drivers/hv/mshv_root_main.c:1341:25: sparse:     expected void const [noderef] __user *addr
-   drivers/hv/mshv_root_main.c:1341:25: sparse:     got void const *
-   drivers/hv/mshv_root_main.c:2192:23: sparse: sparse: symbol 'mshv_reboot_nb' was not declared. Should it be static?
+>> diff --git a/tests/dm/003 b/tests/dm/003
+>> new file mode 100755
+>> index 0000000..1013eb5
+>> --- /dev/null
+>> +++ b/tests/dm/003
+>> @@ -0,0 +1,57 @@
+>> +#!/bin/bash
+>> +# SPDX-License-Identifier: GPL-3.0+
+>> +# Copyright (C) 2025 Huawei.
+>> +#
+>> +# Test block device unmap write zeroes sysfs interface with device-mapper
+>> +# stacked devices.
+>> +
+>> +. tests/dm/rc
+>> +. common/scsi_debug
+>> +
+>> +DESCRIPTION="test unmap write zeroes sysfs interface with dm devices"
+>> +QUICK=1
+>> +
+>> +requires() {
+>> +	_have_scsi_debug
+>> +}
+>> +
+>> +device_requries() {
+>> +	_require_test_dev_sysfs queue/write_zeroes_unmap
+>> +}
+> 
+> Same comment as the 1st patch: device_requries() does not work here.
+> 
+>> +
+>> +setup_test_device() {
+>> +	if ! _configure_scsi_debug "$@"; then
+>> +		return 1
+>> +	fi
+> 
+> In same manner as the 1st patch, I suggest to check /queue/write_zeroes_unmap
+> here.
+> 
+> 	if [[ ! -f /sys/block/${SCSI_DEBUG_DEVICES[0]}/queue/write_zeroes_unmap ]]; then
+> 		_exit_scsi_debug
+> 		SKIP_REASONS+=("kernel does not support unmap write zeroes sysfs interface")
+> 		return 1
+> 	fi
+> 
+> The caller will need to check setup_test_device() return value.
 
-vim +1341 drivers/hv/mshv_root_main.c
+Sure.
 
-  1317	
-  1318	/*
-  1319	 * This maps two things: guest RAM and for pci passthru mmio space.
-  1320	 *
-  1321	 * mmio:
-  1322	 *  - vfio overloads vm_pgoff to store the mmio start pfn/spa.
-  1323	 *  - Two things need to happen for mapping mmio range:
-  1324	 *	1. mapped in the uaddr so VMM can access it.
-  1325	 *	2. mapped in the hwpt (gfn <-> mmio phys addr) so guest can access it.
-  1326	 *
-  1327	 *   This function takes care of the second. The first one is managed by vfio,
-  1328	 *   and hence is taken care of via vfio_pci_mmap_fault().
-  1329	 */
-  1330	static long
-  1331	mshv_map_user_memory(struct mshv_partition *partition,
-  1332			     struct mshv_user_mem_region mem)
-  1333	{
-  1334		struct mshv_mem_region *region;
-  1335		struct vm_area_struct *vma;
-  1336		bool is_mmio;
-  1337		ulong mmio_pfn;
-  1338		long ret;
-  1339	
-  1340		if (mem.flags & BIT(MSHV_SET_MEM_BIT_UNMAP) ||
-> 1341		    !access_ok((const void *)mem.userspace_addr, mem.size))
-  1342			return -EINVAL;
-  1343	
-  1344		mmap_read_lock(current->mm);
-  1345		vma = vma_lookup(current->mm, mem.userspace_addr);
-  1346		is_mmio = vma ? !!(vma->vm_flags & (VM_IO | VM_PFNMAP)) : 0;
-  1347		mmio_pfn = is_mmio ? vma->vm_pgoff : 0;
-  1348		mmap_read_unlock(current->mm);
-  1349	
-  1350		if (!vma)
-  1351			return -EINVAL;
-  1352	
-  1353		ret = mshv_partition_create_region(partition, &mem, &region,
-  1354						   is_mmio);
-  1355		if (ret)
-  1356			return ret;
-  1357	
-  1358		if (is_mmio)
-  1359			ret = hv_call_map_mmio_pages(partition->pt_id, mem.guest_pfn,
-  1360						     mmio_pfn, HVPFN_DOWN(mem.size));
-  1361		else
-  1362			ret = mshv_partition_mem_region_map(region);
-  1363	
-  1364		if (ret)
-  1365			goto errout;
-  1366	
-  1367		/* Install the new region */
-  1368		hlist_add_head(&region->hnode, &partition->pt_mem_regions);
-  1369	
-  1370		return 0;
-  1371	
-  1372	errout:
-  1373		vfree(region);
-  1374		return ret;
-  1375	}
-  1376	
+> 
+>> +
+>> +	local dev="/dev/${SCSI_DEBUG_DEVICES[0]}"
+>> +	local blk_sz="$(blockdev --getsz "$dev")"
+>> +	dmsetup create test --table "0 $blk_sz linear $dev 0"
+> 
+> I suggest to call _real_dev() here, and echo back the device name.
+> 
+> 	dpath=$(_real_dev /dev/mapper/test)
+> 	echo ${dpath##*/}
+> 
+> The bash parameter expansion ${xxx##*/} works in same manner as the basename
+> command. The caller can receive the device name in a local variable. This will
+> avoid a bit of code duplication, and allow to avoid _short_dev().
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'm afraid this approach will not work since we may set the
+SKIP_REASONS parameter. We cannot pass the device name in this
+manner as it will overlook the SKIP_REASONS setting when the caller
+invokes $(setup_test_device xxx), this function runs in a subshell.
+
+If you don't like _short_dev(), I think we can pass dname through a
+global variable, something like below:
+
+setup_test_device() {
+	...
+	dpath=$(_real_dev /dev/mapper/test)
+	dname=${dpath##*/}
+}
+
+if ! setup_test_device lbprz=0; then
+	return 1
+fi
+umap="$(< "/sys/block/${dname}/queue/write_zeroes_unmap")"
+
+What do you think?
+
+Thanks,
+Yi.
+
+>> +}
+>> +
+>> +cleanup_test_device() {
+>> +	dmsetup remove test
+>> +	_exit_scsi_debug
+>> +}
+>> +
+>> +test() {
+>> +	echo "Running ${TEST_NAME}"
+>> +
+>> +	# disable WRITE SAME with unmap
+>> +	setup_test_device lbprz=0
+>> +	umap="$(cat "/sys/block/$(_short_dev /dev/mapper/test)/queue/write_zeroes_unmap")"
+> 
+> I suggest to modify the two lines above as follows, to match with the other
+> suggested changes:
+> 
+> 	local dname umap
+> 	if ! dname=$(setup_test_device lbprz=0); then
+> 		return 1
+> 	fi
+> 	umap="$(< "/sys/block/${dname}/queue/write_zeroes_unmap")"
+> 
+> (Please note that the suggested changes are untested)
+
 
