@@ -1,154 +1,272 @@
-Return-Path: <linux-kernel+bounces-622781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A91FA9EC91
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678CDA9EBB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBDEE3BBD1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C5B17B14F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130B427B4E3;
-	Mon, 28 Apr 2025 09:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E756225F78E;
+	Mon, 28 Apr 2025 09:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyqXQ6VB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KuZykKAp"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E460263F5B;
-	Mon, 28 Apr 2025 09:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAFB1FECB4;
+	Mon, 28 Apr 2025 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745832261; cv=none; b=SbuMfK4cuBLLMFvJXVUEdxf/SS3ZR3KTIVaKlyIiWwSkxavAomECMr0nhKQZN1LrymyX1wsfhjq4OFyj3Z/dV4l5VvQH7OrxH/uAogznHZdI2kv3KTLPZEj1PWgmNdbm+6CoKYDPwWkJSytj1yFrHsuYjG/L7LGIB7IAW3nRb7E=
+	t=1745832163; cv=none; b=fYd6dwA6D9RpNsJCUOnfs4BbrptbxDxv61LBW7jQAQbXrFq7wiStSom9xtal1AmdVl+YogQ8h+IiBljg/CovvdEmM1wlKDBeC/1kW5WwzYobKhH2wDSgtgnQECCj0jB6vSsorEg+nN5F7Mt3Uqq1G/SFnsWL6DGyyAk/TqSjX+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745832261; c=relaxed/simple;
-	bh=JltzEs94lpehyHx6nl6wHRaPQKIRgU/HyWicrIFjUro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i8mbF1sFmXl/wShn023sj+q8DSPUPUqTZFh2MVY76MzhYChzQFbhXXuHHbW9mOI4krua6MxY2p5sHGOxjRm+c1RIloccEAHExXMxgEz/i9D3zJVuBq0bgRkzXoECHhj99A5NrFlH1nWiRtX5OJjhmh6gwdls6GqekVyivY6I2KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyqXQ6VB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C09AC4CEE4;
-	Mon, 28 Apr 2025 09:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745832260;
-	bh=JltzEs94lpehyHx6nl6wHRaPQKIRgU/HyWicrIFjUro=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DyqXQ6VBPGUV60WqF+uTbZzXAsUAIJ9C1BCb2KV9m8F42ozYCzXInlnKQFxIS2b36
-	 s+SctZer4F7Q5NkzQQld7WJZo9qsmkj9svarVHnHcf2ojzaBTAeBo4/HXSAAYmAED9
-	 0xAI51RXFcaNAViqGFTvgw71I5NRyjdQoBDcESxnGQBEZOfbe7wMnLan2Z1+J+qRj+
-	 8OEN5Dl/+rgO5hpebjkaj1SMCY1/3eRJ/TzmFUnFCx9NWXXoE71dQT6bHrYlzaqCDj
-	 cQfDk5LtjtwfeRrBMl5iLWmlcl+SqiMKCEXYnYeUEY8YsO01MnQzVcNjFdveNAbkls
-	 vBmDT0QLSZCQA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Jake Edge <jake@lwn.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-mm@kvack.org,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [PATCH v10 24/24] nvme-pci: store aborted state in flags variable
-Date: Mon, 28 Apr 2025 12:22:30 +0300
-Message-ID: <ef01afea04a2aca3217ce1b52ec99bcd80e99f00.1745831017.git.leon@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1745831017.git.leon@kernel.org>
-References: <cover.1745831017.git.leon@kernel.org>
+	s=arc-20240116; t=1745832163; c=relaxed/simple;
+	bh=NY/33MR9wfSNfzTcGXyyEDpLjwV3dc9w3keIJgd0PrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZ5r2sGDpQrzWWmCQYPrTz6xRluN+t9Ro3PMHlcu31HqQkOMPsZ8tAuGLNGjiE7NFOWuaGFj8UHY1GcloI1aRlnduPNtuNFD4M+zUCymKoj4IRBUy9ehb++jfdAb0714sU3wpxiznFhOVYjbgk0FQAnQ1RDW+2vnOjO+PmZfS1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KuZykKAp; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 22ADC475;
+	Mon, 28 Apr 2025 11:22:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745832153;
+	bh=NY/33MR9wfSNfzTcGXyyEDpLjwV3dc9w3keIJgd0PrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KuZykKApfPKPCcLx822+/Vfr0vTuqQO0py4EQJ3h3F6veI9WAG61Z5QHrIYYDZHXn
+	 MPCOIyQ7524Hsv8DRnD2dWjg8+Hp42PmxKWQ7cT0E2fqGOPJXfCp5YHUy2huerdEZX
+	 6xt048WplYGxYMMcLth80hfar/aSE88EG6NjSdL4=
+Date: Mon, 28 Apr 2025 12:22:32 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 03/11] media: dt-bindings: media: add bindings for
+ rockchip rk3568 vicap
+Message-ID: <20250428092232.GC3371@pendragon.ideasonboard.com>
+References: <20250306-v6-8-topic-rk3568-vicap-v5-0-f02152534f3c@wolfvision.net>
+ <20250306-v6-8-topic-rk3568-vicap-v5-3-f02152534f3c@wolfvision.net>
+ <20250307-pink-dalmatian-of-kindness-f87ad2@krzk-bin>
+ <Z8rBGHK9Tjx7D1D2@kekkonen.localdomain>
+ <4a1e5834-df52-43d2-ab19-e3117840a001@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4a1e5834-df52-43d2-ab19-e3117840a001@collabora.com>
 
-From: Leon Romanovsky <leonro@nvidia.com>
+On Mon, Apr 28, 2025 at 10:11:51AM +0200, Michael Riesch wrote:
+> Hi Krzysztof, Sakari,
+> 
+> Thanks for your feedback! Also, sorry for the delayed response, but as
+> the e-mail address indicates, there has been a job change in between
+> that kept me busy :-)
+> 
+> On 3/7/25 10:49, Sakari Ailus wrote:
+> > Hi Krzysztof, Michael,
+> > 
+> > On Fri, Mar 07, 2025 at 08:51:54AM +0100, Krzysztof Kozlowski wrote:
+> >> On Thu, Mar 06, 2025 at 05:56:04PM +0100, Michael Riesch wrote:
+> >>> Add documentation for the Rockchip RK3568 Video Capture (VICAP) unit.
+> >>>
+> >>> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+> >>
+> >> subject: only one media prefix, the first
+> >>
+> >> A nit, subject: drop second/last, redundant "bindings". The
+> >> "dt-bindings" prefix is already stating that these are bindings.
+> >> See also:
+> >> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> 
+> Ack. Plain "media: dt-bindings: add rockchip rk3568 vicap" it is, then.
+> 
+> >>
+> >>> ---
+> >>>  .../bindings/media/rockchip,rk3568-vicap.yaml      | 169 +++++++++++++++++++++
+> >>>  MAINTAINERS                                        |   1 +
+> >>>  2 files changed, 170 insertions(+)
+> >>>
+> >>
+> >> ...
+> >>
+> >>> +  clocks:
+> >>> +    items:
+> >>> +      - description: ACLK
+> >>> +      - description: HCLK
+> >>> +      - description: DCLK
+> >>> +      - description: ICLK
+> >>> +
+> >>> +  clock-names:
+> >>> +    items:
+> >>> +      - const: aclk
+> >>> +      - const: hclk
+> >>> +      - const: dclk
+> >>> +      - const: iclk
+> >>> +
+> >>> +  rockchip,cif-clk-delaynum:
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    minimum: 0
+> >>> +    maximum: 127
+> >>> +    description:
+> >>> +      Delay the DVP path clock input to align the sampling phase, only valid
+> >>> +      in dual edge sampling mode. Delay is zero by default and can be adjusted
+> >>> +      optionally.
+> >>
+> >> default: 0
+> 
+> Ack.
+> 
+> > 
+> > And this is technically specific to the DVP port (0). Should (or could?) it
+> > be located there?
+> 
+> "Should"? Yes, makes sense to me.
+> "Could"? I guess, as we are referencing port-base here it should be
+> feasible. Not an expert opinion, mind you.
+> 
+> > 
+> >>
+> >>> +
+> >>> +  iommus:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  resets:
+> >>> +    items:
+> >>> +      - description: ARST
+> >>> +      - description: HRST
+> >>> +      - description: DRST
+> >>> +      - description: PRST
+> >>> +      - description: IRST
+> >>> +
+> >>> +  reset-names:
+> >>> +    items:
+> >>> +      - const: arst
+> >>> +      - const: hrst
+> >>> +      - const: drst
+> >>> +      - const: prst
+> >>> +      - const: irst
+> >>> +
+> >>> +  rockchip,grf:
+> >>> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >>> +    description: Phandle to general register file used for video input block control.
+> >>> +
+> >>> +  power-domains:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  ports:
+> >>> +    $ref: /schemas/graph.yaml#/properties/ports
+> >>> +
+> >>> +    properties:
+> >>> +      port@0:
+> >>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> >>> +        unevaluatedProperties: false
+> >>> +        description: The digital video port (DVP, a parallel video interface).
+> >>> +
+> >>> +        properties:
+> >>> +          endpoint:
+> >>> +            $ref: video-interfaces.yaml#
+> >>> +            unevaluatedProperties: false
+> >>> +
+> >>> +            properties:
+> >>> +              bus-type:
+> >>> +                enum: [5, 6]
+> >>> +
+> >>> +            required:
+> >>> +              - bus-type
+> >>> +
+> >>> +      port@1:
+> >>> +        $ref: /schemas/graph.yaml#/properties/port
+> >>> +        description: Internal port connected to a MIPI CSI-2 host.
+> >>> +
+> >>> +        properties:
+> >>> +          endpoint:
+> >>> +            $ref: video-interfaces.yaml#
+> >>> +            unevaluatedProperties: false
+> >>
+> >> Hm, does it actually work? graph/port does not allow any other
+> >> properties. You should use graph/port-base and probably still narrow
+> >> lanes for both of port@0 and port@1.
+> > 
+> > I'd list the relevant properties for both DVP and CSI-2, either as
+> > mandatory or with defaults (could be reasonable for DVP signal polarities
+> > but not e.g. on number of CSI-2 lanes).
+> 
+> Not sure whether we are on the same page here. As pointed out in the
+> last round of feedback
+> (https://lore.kernel.org/all/0b19c544-f773-435e-9829-aaaa1c6daf7a@wolfvision.net/),
+> port@1 is not MIPI CSI, but some internal interface.
+> 
+> I tried to clarify this by changing the description of this port to
+> "Internal port connected to a MIPI CSI-2 host." The host (see
+> rockchip,rk3568-mipi-csi.yaml) has a port that is actually MIPI CSI and
+> one port that is the other end of port@1 here.
 
-Instead of keeping dedicated "bool aborted" variable, let's reuse
-newly introduced flags variable and save space.
+I'd write "Port connected to the MIPI CSI-2 receiver output". We use
+"receiver" instead of "host".
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- drivers/nvme/host/pci.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> As to port@1 here, I am not aware of any properties that can be set. Not
+> even very peculiar ones similar to rockchip,cif-clk-delaynum. Should I
+> have overlooked something, I think we can relax the constraints, but we
+> should start strict, right?
+> 
+> >>> +
+> >>> +required:
+> >>> +  - compatible
+> >>> +  - reg
+> >>> +  - interrupts
+> >>> +  - clocks
+> >>> +  - ports
+> >>> +
+> >>> +additionalProperties: false
+> >>> +
+> >>> +examples:
+> >>> +  - |
+> >>> +    #include <dt-bindings/clock/rk3568-cru.h>
+> >>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >>> +    #include <dt-bindings/interrupt-controller/irq.h>
+> >>> +    #include <dt-bindings/power/rk3568-power.h>
+> >>> +    #include <dt-bindings/media/video-interfaces.h>
+> >>> +
+> >>> +    parent {
+> >>
+> >> soc {
+> 
+> Ack.
+> 
+> >>> +        #address-cells = <2>;
+> >>> +        #size-cells = <2>;
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index eb835425b496..9f3e2d8cbd04 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -219,6 +219,7 @@ struct nvme_queue {
- enum {
- 	IOD_LARGE_DESCRIPTORS = 1 << 0, /* uses the full page sized descriptor pool */
- 	IOD_SINGLE_SEGMENT = 1 << 1, /* single segment dma mapping */
-+	IOD_ABORTED = 1 << 2, /* abort timed out commands */
- };
- 
- /*
-@@ -227,7 +228,6 @@ enum {
- struct nvme_iod {
- 	struct nvme_request req;
- 	struct nvme_command cmd;
--	bool aborted;
- 	u8 nr_descriptors;	/* # of PRP/SGL descriptors */
- 	u8 flags;
- 	unsigned int total_len; /* length of the entire transfer */
-@@ -1027,7 +1027,6 @@ static blk_status_t nvme_prep_rq(struct nvme_dev *dev, struct request *req)
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
- 	blk_status_t ret;
- 
--	iod->aborted = false;
- 	iod->nr_descriptors = 0;
- 	iod->flags = 0;
- 	iod->total_len = 0;
-@@ -1576,7 +1575,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req)
- 	 * returned to the driver, or if this is the admin queue.
- 	 */
- 	opcode = nvme_req(req)->cmd->common.opcode;
--	if (!nvmeq->qid || iod->aborted) {
-+	if (!nvmeq->qid || (iod->flags & IOD_ABORTED)) {
- 		dev_warn(dev->ctrl.device,
- 			 "I/O tag %d (%04x) opcode %#x (%s) QID %d timeout, reset controller\n",
- 			 req->tag, nvme_cid(req), opcode,
-@@ -1589,7 +1588,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req)
- 		atomic_inc(&dev->ctrl.abort_limit);
- 		return BLK_EH_RESET_TIMER;
- 	}
--	iod->aborted = true;
-+	iod->flags |= IOD_ABORTED;
- 
- 	cmd.abort.opcode = nvme_admin_abort_cmd;
- 	cmd.abort.cid = nvme_cid(req);
 -- 
-2.49.0
+Regards,
 
+Laurent Pinchart
 
