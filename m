@@ -1,306 +1,191 @@
-Return-Path: <linux-kernel+bounces-623308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D1CA9F3DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AC4A9F3EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E763B323E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:53:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214743BD303
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF8126FDB9;
-	Mon, 28 Apr 2025 14:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472B427935C;
+	Mon, 28 Apr 2025 14:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ELyt86T9"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HtHhelRj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADDA25228B;
-	Mon, 28 Apr 2025 14:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745852027; cv=fail; b=aufs2CEvLOWhjEw4BOuV3Ia7fQdUDIFfbnySCBZoRwXUhWxm45Pb/vcfrVDfCwWPxX5iEGTelQdCk9G2JhC5DPawrykthjN5zPN1PSBTMdOBt9AFXoi2wuzg6bGbEtf/YKHt3fBVaZ7WPgM9hErxwYeK8IzIAm4XhsNqZUqlVX4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745852027; c=relaxed/simple;
-	bh=K3GJ7RHRcgQcHUv3rmPhfaDGGshWUK4DD9cL5DH3+uE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UqY665nX1qcaCNX5wjJSYuvCG+kvJomrWvbaM3ydEOP/1Hjg3RwAaUxOJ0NMcHT4bxMJhL/ZsxyqqBNtFKe5p2zbVeuFxNCG7ukorudwo1XdwH6k2tM0qwF15S1Pe9iZsL8UvSWoHLc1Q8UYhMxrdxAjcn5wxr/vB/q9GZLxcZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ELyt86T9; arc=fail smtp.client-ip=40.107.237.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xWpt7rgPb38fS+0lJiYALRqmbfip+cYB2VG4/mdIavKjD8ynM1ADpGQi8528GwVNOrNHcJ5j40P6Ohr/klTyzvXpZYCwPYRhoxfYaoGI9ODUQ9cELt4kqaMN1r231pANvPAH5Hz7B7VszSuSUcKgGj5xHqZnW2wY4nWajrIZqqVrix7EmYpb7ZBANTcMGPSB8LoPeZBkEqX9f2O7oycP/z0aNLKFW0baOX+6+HQ5sUdxIS3ZOxuEDQhHFSlnrS85qEimRiMMvRwSbXy/yTlzPVKhEsGYFy0Nfbp8xYXc42d1l4315rTDzI1WwsCqUku73Z3234BmgeAFfOZ1qCSwgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xUiyxrKkvQ7Gg8yEyny3ulrqFmzUfmcrgu4qvqeNdnw=;
- b=fyOMuvfqz9hV07lv7FCnMmAbtOAQ57KG9p4vLGTLfYlOknIX2gNca7FWgK6jylSnkSb3Vty7GOLKM9bSsYeQN0QgQziiTnwOd5XcqA81BTG51IV+a2x18OKohvQNjqZjFobKhErwxh9qVv6aNa9bKajZjvIb/f/N9CXJZsScAmxJJcY5SSbs/NokCssH30fjG0aTs2NYkDwU9NYa1S+U39sFRVZN92v4HKDdvAEaxp2eGSjpJ3FRashdpOUedgrhh7p43EGN6jjGKl/RfoJacHTpBw2EdnH9K6oSg87kkg+o1GcmDtNEf5Za0VKrVYUDRYhxMsDymXVF+zWtYc9X7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xUiyxrKkvQ7Gg8yEyny3ulrqFmzUfmcrgu4qvqeNdnw=;
- b=ELyt86T9eBfbHb2M6cAsyyfTKpY+FlHg6qJ72UU+lHxj76YbaTAhcrp3v6QVc4MrRgGdR4aQvb0Cm1lWOmnIuJ8+YZIcrFcwfBj93e06BBwC7lyNHHZPN8KoPQ2DHANVCdq/mu7YV/Ty9uLPwbiOTxeJ0Df7BOCFkhyBM74u2+U=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS4PR12MB9708.namprd12.prod.outlook.com (2603:10b6:8:278::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Mon, 28 Apr
- 2025 14:53:41 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
- 14:53:41 +0000
-Message-ID: <9d7392ed-20fd-4237-89bf-483f9930e09e@amd.com>
-Date: Mon, 28 Apr 2025 16:53:32 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/amdgpu: check a user-provided number of BOs in
- list
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: "Deucher, Alexander" <Alexander.Deucher@amd.com>,
- Denis Arefev <arefev@swemel.ru>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
- Chunming Zhou <david1.zhou@amd.com>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20250418083129.9739-1-arefev@swemel.ru>
- <PH7PR12MB56852EECD78C11BD15157AF383BB2@PH7PR12MB5685.namprd12.prod.outlook.com>
- <CADnq5_NLEUZget2naQm9bYH1EsrvbhJCGd7yPN+=9Z_kKmUOCw@mail.gmail.com>
- <BL1PR12MB5144467CB7C017E030A4C3E3F7BB2@BL1PR12MB5144.namprd12.prod.outlook.com>
- <9e4700f6-df58-4685-b4fe-6b53fc1c5222@amd.com>
- <CADnq5_O-tqQ4y7sNx0nMD_0aTFO0H7_vVg=umaPXUbBLFmwnJg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <CADnq5_O-tqQ4y7sNx0nMD_0aTFO0H7_vVg=umaPXUbBLFmwnJg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0053.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:93::6) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7F27934D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745852234; cv=none; b=srs3RrIWQnnqJ+5dk8wkSpZqxa6GKdPWGT2SlyDEc3vHhlGSMuinfeh12FwjPOsFVBDne2JQHxwEYokyt9o664/0fX2CKYx3HMTm8+K+QDNikFqxA9PtNl6peAR9vre/1cD6UXxoSAGAEZNf6BS1m0bGHGI746IqtljpnhRQPx8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745852234; c=relaxed/simple;
+	bh=tQKS6ESMU4XqVh1loYK5WinArQ9UR2bn/2B7Gb7Oafo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mjoOFu/aglP1JQSVv6zW/3wDAxfmybOZtop4C5W6nrcUwLHEPqmfif34+uD1IFG9OEJrm0ajLRlXzQSdIdtn18L0ultcriyLHHA9cpiXghVvMoiwxZQxfhI/F7PWqRHiNKHVFAhoD4Q6qNMIbcaHCWOJL8k0kzogJK9yMtHgx9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HtHhelRj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745852231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y35svQEUNVinLjrbig+h/RI+A+7BGDLM2oykyzI/Jak=;
+	b=HtHhelRj7gSgc/EShf5Jp8kUnl/OW5PeEIfvjWEI0olxfKMFcDwI/jckBWqSJPmrhbMI1C
+	z8yuCky6Xofzha5UMZIVsvfNaXUvNt889/BICWAjcctINx0wZIU6AtfwpI9wvKE68jXjNU
+	3Y5lLTUj/GSmNMAz+E8U3lTzd3upYCA=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-490-7ZqEuQwkPceAFYML0JSk6g-1; Mon, 28 Apr 2025 10:55:16 -0400
+X-MC-Unique: 7ZqEuQwkPceAFYML0JSk6g-1
+X-Mimecast-MFC-AGG-ID: 7ZqEuQwkPceAFYML0JSk6g_1745852115
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-7040773fd79so64733197b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:55:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745852115; x=1746456915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y35svQEUNVinLjrbig+h/RI+A+7BGDLM2oykyzI/Jak=;
+        b=xIdoMQMioeoI65w8aUCSs0YVr/Wf+0oFOwh52YZTWmiHCeNvmz5bVi6I8UVfSLAxum
+         AHTgnmD1zWoz/cJlUOHmiPhyXxKKJOYrqRqQ7VAH5UBnnlet20taXmIogu/5A0c7cTkx
+         fpVuteDG+DcSeOT3O6samX5UfSBZB0VBgP6DBgNxnZQRBvqIM1B5zmhniIJROSJNqZ4k
+         lIQpqIBE+J50NBxYV2caA+tJZTrtmWNETer92Gv8SUL6oAIp70UVTJt0fqGDLb44Lj82
+         q+TV5rj1qgFRJUURy5LUcnG2x0fIBRNrehWZ1ovjfTbJHXUWKc7d08MKsQ1RQb8waaw7
+         pv4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWvI44tztwUiORiDqxJ7Bhs4cLo59RCqKIt80f9p9po8VYr6RiYo4poyy38QRJ4OHkOvNCT/Rw9xSuPYqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaTSkfuF2VxxiweQwSYhdNlslA05P0RFQQWM6yGx55apgGDapU
+	/B73vreiw5nVjmhQtkDqkVYRQMfhqLqut06WCaLDXuoIICV1TJlF5hAZvN+8n0U3Cgfz9fb5hsS
+	wEiCE+pTy4ad1YF2J8g5Vew81ftyeKxaou1P28koyWLUwmwwzd4wBm975SNZI4AUEe/klKl+xu0
+	TfBgdfTMGg6mEEfCMPRKJyLNldREMr6P0EhToWV9sHObldgj0=
+X-Gm-Gg: ASbGncsmZ2cN1QB7vnixps0Lw42utlf+TJLAjOiuKyM4sSnniilaRs+dxv3SbCVFusN
+	AgFu7tVi6bs03a3aaWWt79wlQ72jrYjGf+fTqvhifgfUfXiDIYffXUcLzpQL6Fg8TxUFSYSdCQn
+	hVTYnn3+E=
+X-Received: by 2002:a05:690c:39b:b0:708:1d15:e013 with SMTP id 00721157ae682-7089963f2cemr326127b3.7.1745852115080;
+        Mon, 28 Apr 2025 07:55:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmPzgoIcf2zjGWAfQJdt3FvqX6eeOCmgl+PxaPPQiwuCUtJ53kFcyZuTL8sqPiYecQmPEK1B0eYwqIXjEZnPg=
+X-Received: by 2002:a05:690c:39b:b0:708:1d15:e013 with SMTP id
+ 00721157ae682-7089963f2cemr325477b3.7.1745852114651; Mon, 28 Apr 2025
+ 07:55:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS4PR12MB9708:EE_
-X-MS-Office365-Filtering-Correlation-Id: 123c718f-b3cc-4347-15a9-08dd8664773c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bXQ3RnRyUmw1SXNERklwUVNJOG5Qb0pwQWs2eXRRSHdid1FEL2pSNUV1NFl4?=
- =?utf-8?B?K3hjeXIrR2hNd2d6RDNRMWx1c0QrS2Q4VXVQU0F4MjhXNWhxZmZIazNSNVFm?=
- =?utf-8?B?R3FJS0dRaG02RVlyMVByNU1QMGVJL0ErNFlralRIZ2lMWkJUOEEyaGhYa1lO?=
- =?utf-8?B?bExNajlTTEt6clZRUkh3SllEN3ltc1VIYVphYVhPbFBiNFMyd2NndEdVYy9G?=
- =?utf-8?B?Qy96dFJZVzZHSFZtSXVxRitDMFVpaXFkT1p6V1FQUFJWNWd6bCt4Y3FEc2N5?=
- =?utf-8?B?Wm9JN2FjdnZJdjhPTzF2WFp0SnNlanFYTjZyOWV1b242aG9KQnVzWThRTHc2?=
- =?utf-8?B?RGsxRU9zYWc0ZzBQSmxUdEd5eExyQW5vb3FaNlNBSUc4ZXk1MVJmM3lYZWow?=
- =?utf-8?B?NUZkaXpDQUJxYjdNenBJeGQ0U3hVZnBGR1BadmsyM2ZkVjN0M2IvdTJkWkhn?=
- =?utf-8?B?aFJZd2h3TUlObFUrcDh3ZGlLSlByVHVGVGl0RHE2ME1QNzdFTWFzbUc3elNw?=
- =?utf-8?B?ZGVkUGtrRElvazdTeGpDNEFtQStwTFpQSjE2NVdFUk1nbVJsVGZvYTRnOWls?=
- =?utf-8?B?cWVzbDNsQU5CQUZSSEg3Vm9QcW55ajB4T1l2UnNyNTZFUnRGN2E0cjVVaER5?=
- =?utf-8?B?anpkeXNMTDltNm41eUREVUFaNDZubjhGcjdObkQ5UzFMaHRkRVJ2RkpHYUZp?=
- =?utf-8?B?RzF6NWJLZklqMUV1V3Q4NDVPSHNqbHNtQ2NNSXFDbnA3aDVaeVl0TUI2OXFT?=
- =?utf-8?B?N1UvVU12TkhhNHNKU2JaSGhraHNzcEdEK1ZHbGVVQW10L3ZSSjhNSE9IVHAv?=
- =?utf-8?B?ODlwQTcrR1QvLy9OQ1RYNW9oQWJKNWEwcTliOE9sWFI2aHl5ZC95ckhVUVlG?=
- =?utf-8?B?c1NGVXUyT2NOeFdZRHhvWUZYVTY2K0tTZ3RrNmJDcHlpYnRkMGNQd00wUFVU?=
- =?utf-8?B?VUdMRzM0OFBmbi9xUjE5OEpaTzNxNEE1WnRuQzl4aUFJS24xK21ZRVdCUUJi?=
- =?utf-8?B?NWJoWGRXL0xoZ0Q5dEZ3OUNmNm1YVWxPL3pPcFNVbitIR2k0bkVBWDgrUlR4?=
- =?utf-8?B?OTY4d0lqZEZyWGtiUGhlZEk0SDI2TFJRRXUvZUF1SGJ1TEdpSkpldWxuSTlJ?=
- =?utf-8?B?VzZkMmxPRkM5QXJMNFc2bnpzSWlNTVVUVk5EclFBV21MdW5lU2trZXJaSGhs?=
- =?utf-8?B?V094amJaTDhCbTVZT2dPSWs3ZVdqQnprTE1FcGpQVjFOY0h3RUN4K1RZV25G?=
- =?utf-8?B?NFlIcUd1a3hWWWRrK3R3NzVZKzgwbFZqMXJpbCtWb2FzY2NQYVhPVDlOSThp?=
- =?utf-8?B?VlcwV2V5NUJMbmIxMlpQTjNKTXhXaTM4Z2hsQmZ2NGJuNEhkZGR6MmtBR1V3?=
- =?utf-8?B?ajNCZ1pncllQbXpTWjhjY1hmVlR1WjQ0RHZPY1NMQVkxUTFqbzFrVUdEN3VN?=
- =?utf-8?B?d0VUWG5GdXA1ei90ODFyZmRJNU1BNHNKQ0VTVU9VcnBxT043bytzdWw3Wjgz?=
- =?utf-8?B?WGhNcHVZREZ6WHFEZGJzM3ZDYmlNVGpxVTJYaEE5UHRvZGVVWVFXekNVRncx?=
- =?utf-8?B?a0VqUldjTmU2aXlWU0QzcFNORjNaaGFSbkJCakQxR29YTkg0WWJCOXh2dFl1?=
- =?utf-8?B?OURna2p0b1FnWkpKTjZPV1h4Ti9ZUTVqeGdWWitjRGdVUFpkeWZKc2VremRx?=
- =?utf-8?B?UlJxYnBlTVNVTEZFd3ZTRHFCRUxZb0pKU0s5aWJhVDdtNmdBOUxidWJTVWFB?=
- =?utf-8?B?TUhyUlUwQjVWYTVaaGZlN0lFa1cvR0xtZVlXWlRzQVZHbHlEak1PNVpzUHNC?=
- =?utf-8?B?KzFRNlM1NGZabzhoZVV4Nkk5TUJkSzN2SWtITWFyazdILzN1b2pYRXp2YTFI?=
- =?utf-8?B?R1EwQzBGb1YzMzNud255QllQNnVYQkdVQ2FJUG02THpUYWlpVXlvL0wrc2Vt?=
- =?utf-8?Q?Ka/FBxjxHk4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eEVWeURJeXhldnN1UkRGZjRaaTVaemg3NkpyeTNtT0MrOW0vWnlqMkk3dUho?=
- =?utf-8?B?S2Z6Ym02eGUrVVJUUEpMK0MzZWt3MVJTcFhCZklkVmZxWWVpSE5uZ2pWcFlK?=
- =?utf-8?B?SlVqSFR0eHdvRHJhTnViRFVHK0tMM0laZmcrbVhZL2xUU1IrQTZ0UFkzZ21X?=
- =?utf-8?B?bWFORFlNS20yY2kzbWdqTVZMS3FaQ3hDa0dtK3JrM1FGTE95T0E5cjFsV3hu?=
- =?utf-8?B?SGhzYmtWVFppcDdCem9KSW9xQU9sQ1FJL0RqNTV6cWtkNjhUajJTQmRhOEdD?=
- =?utf-8?B?Qk1CU0hMUlhqdzlhT0FZM1lTMldPMk5BZW5hY0kxUFVuUkQxRGphWVpsUFRo?=
- =?utf-8?B?UExNUVM1SFZRcXlYejhrcEVqQ0pJVnE4U2lpRlBIMmhMSFNrVHYwa1lWaXpr?=
- =?utf-8?B?RUVnaWVEcHNFSjIrUk0xWVNXdkVqTUZseXE4cUNvRWI3enNGTWlYZnhFbldo?=
- =?utf-8?B?Wm5xWXlxYU1PYStIRmZZNG9haTR5bU02SDZMaDcvNjhlcmE0dFh5NUNjeXFh?=
- =?utf-8?B?UTFBRWdyTUxjWmRPaFhOWm00Z1ZVcXB2NnVBWi9zbFdST2h6YVVZeDB5dEJQ?=
- =?utf-8?B?Q1NuRjVOMTNHZWd6SFRhT085K2t3Zmd6blE2VmNPWCtpcXM1QXQyNmlyOWRH?=
- =?utf-8?B?TmF5MkVJZWsrYXB1bjAydjVlRnZURTBsckhiNjFDYng1WjNsRVlNejdqc0hQ?=
- =?utf-8?B?VVJXL0U0MlNQYXEweCtMMlExc1hUU09jMDlWUGg1bjRlLy93TEhMcko1SDNQ?=
- =?utf-8?B?cmg2S1RNdml0S2JkdENyNzR2MWhxNUQvWVVBbnBIeEd5QSt1OFF6S0F1VUly?=
- =?utf-8?B?dytJTHBxNVVCMEp5M0liQjJycTZEVGxSN2E1UURaNXdYVndkd1JYdmpPa2pP?=
- =?utf-8?B?Z3ZBN1hocUJBY2QzeFZtK0JQd214RjZhT0NzaW53ajBRRXlyRVNRYk9WTnJn?=
- =?utf-8?B?eUhCenNiRERMcGlQSXZ4OUovb2QrUG9mMEppUngwY3MzV3hnTXVPR1hMNlZZ?=
- =?utf-8?B?YXk3amFGSUlWYkFTS1NGYlVLcDNNb3YwS0xFUVJKT3JqN3NGcjNXdjZDMlFV?=
- =?utf-8?B?d0NkeUZRdUl1ckpKbCtDSGRkdlhGZ3lQZUxzOXpNZ29JZmNYbDE4QXhhVkIr?=
- =?utf-8?B?TTZuMFRDQ3BjZGZDenVNWFp0dW4vVE9XOVBwNU13aER6eUpWczNlSTlNc1Jv?=
- =?utf-8?B?bitab0RKSUo2MFhLT09iU3pqbEEyeTFUWlErczIydzZTMFpNUS81eklwRk5W?=
- =?utf-8?B?d24rejFGdTdZS25xdUhid3d2K3BGUzFuWnlWODlqOElMeDQ5Um4yUHBkN1or?=
- =?utf-8?B?WHlYZ2YrcWVmWXdiU2NHcnQ0YjFtaTJTRWJYZ2h3VXcybG04VFF4UDZsdEJ4?=
- =?utf-8?B?VCtSYUFydUdlT0R1c3Vzd0FQUFNlbXhrSkNMQ2daM3hCckFYbmhPMlRENm1w?=
- =?utf-8?B?VytLc1JIYmVBdWJyVVlselVSenJZeXNTZlpyeEdidWpxd2dETkdtRk1XQkF1?=
- =?utf-8?B?blBmSi94TUQweTdhWVBRTkpmbWZ2cnVuZ0NWQkZIWEt1YnVhV3FzVWYwOXFR?=
- =?utf-8?B?VFdTNTZBVGtzVnpPSUNCcEtIMUZvNnV3WDRaZGFiOHgrWlZTbnlJdkozRS9u?=
- =?utf-8?B?L0RwVjNKMG4zQllxZUlidnlzam9VK09obTBqb0l2SDI5Q08yc3VaMEhiSmZJ?=
- =?utf-8?B?TFZRNlpIV0wvdTZJb0xKMld4aElvd0xWelRaM2tWNWVrZzhDbENnVk5vcWxI?=
- =?utf-8?B?MEYvTUt3UjFnTGRVcXAvSmRMVWhuTkZCRHhWMG5jRGRSblRGTzVGTVdvcEEz?=
- =?utf-8?B?VlRCVkcrUDJKUE9FRUM1amZ6OWNQandzemNncmkzbDZzN0NvUVlqTFNua2Zz?=
- =?utf-8?B?VjdJY3ZyaTI1TzVhb0xGMFMwUHV4d20wL28ydmViZlNKbkJXdzg0TldlQ1Js?=
- =?utf-8?B?UjhZL0xibFJMUEg4RC85QzZFYnVTTWkxeG56QXllYkU1cWF6STZBNGpVam9E?=
- =?utf-8?B?UGRha3JkOVNVd1lCTm9pMldwVnRPd1FPTWhCdllmWmhualB3a00wbWdUdXlx?=
- =?utf-8?B?SVAxY21pWkQxQUJlL2Zsenl2REJkNVdQbE80c0dGQ0xyZ21qU3dLN2wwSG9P?=
- =?utf-8?Q?EKRAT5xGN3wUDI3C8V8Ochr4+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 123c718f-b3cc-4347-15a9-08dd8664773c
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 14:53:41.4926
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rNDw6DSa2bxi+SRCdmQmigDvt9c+uABk6NpoybhgX/lRgnV2eg6VGJtHE9+/cx3o
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9708
+References: <20250417000238.74567-1-npache@redhat.com> <20250417000238.74567-13-npache@redhat.com>
+ <b22e222f-1d6a-4685-871c-1aaee319b744@gmail.com>
+In-Reply-To: <b22e222f-1d6a-4685-871c-1aaee319b744@gmail.com>
+From: Nico Pache <npache@redhat.com>
+Date: Mon, 28 Apr 2025 08:54:47 -0600
+X-Gm-Features: ATxdqUEM4Y4YSJdY2ZlnauGjTRYOP-E22W7On3YrDJ0KhY5tdri4FdTql7M6Xhs
+Message-ID: <CAA1CXcBQ6G70Pg93XphsXAwwHtJPbFuJb=OmfwK2s3q3aevGuA@mail.gmail.com>
+Subject: Re: [PATCH v4 12/12] Documentation: mm: update the admin guide for
+ mTHP collapse
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com, 
+	baohua@kernel.org, baolin.wang@linux.alibaba.com, ryan.roberts@arm.com, 
+	willy@infradead.org, peterx@redhat.com, ziy@nvidia.com, 
+	wangkefeng.wang@huawei.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
+	tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, 
+	cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com, 
+	hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com, 
+	rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/24/25 15:40, Alex Deucher wrote:
-> On Wed, Apr 23, 2025 at 10:29 AM Christian König
-> <christian.koenig@amd.com> wrote:
->>
->> On 4/22/25 18:26, Deucher, Alexander wrote:
->>> [Public]
->>>
->>>> -----Original Message-----
->>>> From: Alex Deucher <alexdeucher@gmail.com>
->>>> Sent: Tuesday, April 22, 2025 9:46 AM
->>>> To: Koenig, Christian <Christian.Koenig@amd.com>
->>>> Cc: Denis Arefev <arefev@swemel.ru>; Deucher, Alexander
->>>> <Alexander.Deucher@amd.com>; David Airlie <airlied@gmail.com>; Simona Vetter
->>>> <simona@ffwll.ch>; Andrey Grodzovsky <andrey.grodzovsky@amd.com>;
->>>> Chunming Zhou <david1.zhou@amd.com>; amd-gfx@lists.freedesktop.org; dri-
->>>> devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; lvc-
->>>> project@linuxtesting.org; stable@vger.kernel.org
->>>> Subject: Re: [PATCH v2] drm/amdgpu: check a user-provided number of BOs in list
->>>>
->>>> Applied.  Thanks!
->>>
->>> This change beaks the following IGT tests:
->>>
->>> igt@amdgpu/amd_vcn@vcn-decoder-create-decode-destroy@vcn-decoder-create
->>> igt@amdgpu/amd_vcn@vcn-decoder-create-decode-destroy@vcn-decoder-decode
->>> igt@amdgpu/amd_vcn@vcn-decoder-create-decode-destroy@vcn-decoder-destroy
->>> igt@amdgpu/amd_jpeg_dec@amdgpu_cs_jpeg_decode
->>> igt@amdgpu/amd_cs_nop@cs-nops-with-nop-compute0@cs-nop-with-nop-compute0
->>> igt@amdgpu/amd_cs_nop@cs-nops-with-sync-compute0@cs-nop-with-sync-compute0
->>> igt@amdgpu/amd_cs_nop@cs-nops-with-fork-compute0@cs-nop-with-fork-compute0
->>> igt@amdgpu/amd_cs_nop@cs-nops-with-sync-fork-compute0@cs-nop-with-sync-fork-compute0
->>> igt@amdgpu/amd_basic@userptr-with-ip-dma@userptr
->>> igt@amdgpu/amd_basic@cs-compute-with-ip-compute@cs-compute
->>> igt@amdgpu/amd_basic@cs-sdma-with-ip-dma@cs-sdma
->>> igt@amdgpu/amd_basic@eviction-test-with-ip-dma@eviction_test
->>> igt@amdgpu/amd_cp_dma_misc@gtt_to_vram-amdgpu_hw_ip_compute0
->>> igt@amdgpu/amd_cp_dma_misc@vram_to_gtt-amdgpu_hw_ip_compute0
->>> igt@amdgpu/amd_cp_dma_misc@vram_to_vram-amdgpu_hw_ip_compute0
->>
->>
->> Could it be that we used BO list with zero entries for those?
-> 
-> Yes.  Dropping the 0 check fixed them.  E.g.,
-> 
-> +       if (in->bo_number > USHRT_MAX)
-> +               return -EINVAL;
+On Thu, Apr 24, 2025 at 9:04=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 17/04/2025 01:02, Nico Pache wrote:
+> > Now that we can collapse to mTHPs lets update the admin guide to
+> > reflect these changes and provide proper guidence on how to utilize it.
+> >
+> > Signed-off-by: Nico Pache <npache@redhat.com>
+> > ---
+> >  Documentation/admin-guide/mm/transhuge.rst | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
+/admin-guide/mm/transhuge.rst
+> > index dff8d5985f0f..06814e05e1d5 100644
+> > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > @@ -63,7 +63,7 @@ often.
+> >  THP can be enabled system wide or restricted to certain tasks or even
+> >  memory ranges inside task's address space. Unless THP is completely
+> >  disabled, there is ``khugepaged`` daemon that scans memory and
+> > -collapses sequences of basic pages into PMD-sized huge pages.
+> > +collapses sequences of basic pages into huge pages.
+> >
+> >  The THP behaviour is controlled via :ref:`sysfs <thp_sysfs>`
+> >  interface and using madvise(2) and prctl(2) system calls.
+> > @@ -144,6 +144,14 @@ hugepage sizes have enabled=3D"never". If enabling=
+ multiple hugepage
+> >  sizes, the kernel will select the most appropriate enabled size for a
+> >  given allocation.
+> >
+> > +khugepaged uses max_ptes_none scaled to the order of the enabled mTHP =
+size to
+> > +determine collapses. When using mTHPs it's recommended to set max_ptes=
+_none
+> > +low-- ideally less than HPAGE_PMD_NR / 2 (255 on 4k page size). This w=
+ill
+> > +prevent undesired "creep" behavior that leads to continuously collapsi=
+ng to a
+> > +larger mTHP size. max_ptes_shared and max_ptes_swap have no effect whe=
+n
+> > +collapsing to a mTHP, and mTHP collapse will fail on shared or swapped=
+ out
+> > +pages.
+> > +
+>
+> Hi Nico,
+>
+> Could you add a bit more explanation of the creep behaviour here in docum=
+entation.
+> I remember you explained in one of the earlier versions that if more than=
+ half of the
+> collapsed mTHP is zero-filled, it for some reason becomes eligible for co=
+llapsing to
+> larger order, but if less than half is zero-filled its not eligible? I ca=
+nt exactly
+> remember what the reason was :) Would be good to have it documented more =
+if possible.
+Hi Usama,
 
+You can think of the creep as a byproduct of introducing N new
+non-zero pages to a N sized mTHP, essentially doubling the size. On a
+second pass of this mTHP the same condition would be eligible, leading
+to constant promotion to the next size. If we allow khugepaged to
+double the size of mTHP, by introducing non-zero pages, it will keep
+doubling.
 
-Feel free to keep my rb on that version as well.
+I'll see how I can incorporate this description into the admin guide.
 
-Christian.
-
-> 
-> Alex
-> 
->>
->> Christian.
->>
->>>
->>> Alex
->>>
->>>>
->>>> On Tue, Apr 22, 2025 at 5:13 AM Koenig, Christian <Christian.Koenig@amd.com>
->>>> wrote:
->>>>>
->>>>> [AMD Official Use Only - AMD Internal Distribution Only]
->>>>>
->>>>> Reviewed-by: Christian König <christian.koenig@amd.com>
->>>>>
->>>>> ________________________________________
->>>>> Von: Denis Arefev <arefev@swemel.ru>
->>>>> Gesendet: Freitag, 18. April 2025 10:31
->>>>> An: Deucher, Alexander
->>>>> Cc: Koenig, Christian; David Airlie; Simona Vetter; Andrey Grodzovsky;
->>>>> Chunming Zhou; amd-gfx@lists.freedesktop.org;
->>>>> dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org;
->>>>> lvc-project@linuxtesting.org; stable@vger.kernel.org
->>>>> Betreff: [PATCH v2] drm/amdgpu: check a user-provided number of BOs in
->>>>> list
->>>>>
->>>>> The user can set any value to the variable ‘bo_number’, via the ioctl
->>>>> command DRM_IOCTL_AMDGPU_BO_LIST. This will affect the arithmetic
->>>>> expression ‘in->bo_number * in->bo_info_size’, which is prone to
->>>>> overflow. Add a valid value check.
->>>>>
->>>>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>>>>
->>>>> Fixes: 964d0fbf6301 ("drm/amdgpu: Allow to create BO lists in CS ioctl
->>>>> v3")
->>>>> Cc: stable@vger.kernel.org
->>>>> Signed-off-by: Denis Arefev <arefev@swemel.ru>
->>>>> ---
->>>>> V1 -> V2:
->>>>> Set a reasonable limit 'USHRT_MAX' for 'bo_number' it as Christian
->>>>> König <christian.koenig@amd.com> suggested
->>>>>
->>>>>  drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 3 +++
->>>>>  1 file changed, 3 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
->>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
->>>>> index 702f6610d024..85f7ee1e085d 100644
->>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
->>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
->>>>> @@ -189,6 +189,9 @@ int amdgpu_bo_create_list_entry_array(struct
->>>> drm_amdgpu_bo_list_in *in,
->>>>>         struct drm_amdgpu_bo_list_entry *info;
->>>>>         int r;
->>>>>
->>>>> +       if (!in->bo_number || in->bo_number > USHRT_MAX)
->>>>> +               return -EINVAL;
->>>>> +
->>>>>         info = kvmalloc_array(in->bo_number, info_size, GFP_KERNEL);
->>>>>         if (!info)
->>>>>                 return -ENOMEM;
->>>>> --
->>>>> 2.43.0
->>>>>
->>
+-- Nico
+>
+> Thanks
+>
+> >  It's also possible to limit defrag efforts in the VM to generate
+> >  anonymous hugepages in case they're not immediately free to madvise
+> >  regions or to never try to defrag memory and simply fallback to regula=
+r
+>
 
 
