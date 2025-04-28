@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-623908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494B4A9FC63
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30453A9FC6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8203A88BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:42:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8F5A1695B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D7E78F29;
-	Mon, 28 Apr 2025 21:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F0120FAB6;
+	Mon, 28 Apr 2025 21:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TKKccxUd"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2089.outbound.protection.outlook.com [40.107.243.89])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yAoA0YCH"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2CFA94A;
-	Mon, 28 Apr 2025 21:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FF820E6EC;
+	Mon, 28 Apr 2025 21:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745876533; cv=fail; b=EfQ2s/CKuiHSmwq0k7KmK7ob9y2P7SI28bz2kuXxfBaJU7CrZq9W5sDWjbYciMkle9J30lfamxtoZCTcCy+GU/rwRBv/gb8l+wlBxIk2vE4xq7WqFkmUrjcMLI3bhrCycmdAus06oRIkqqcKXkhqy5ynLVT3zOPtIaoM17t93ek=
+	t=1745876620; cv=fail; b=RMnkEpEufnRRRymG08kh2vMO3hrg//h6DDOkYYv7/BpW2SgWQjpcXL8SbcIrxLFrEkayWT2dnhvSbnv2PQvARxX5kcGzea0n02u7Ppf32FJzvtNtLBFHgjhspH4u43/pXy+PqHtlGY9K30xON6SEVTBzoaRbxRX5RPRYDI4kqAI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745876533; c=relaxed/simple;
-	bh=NBlmFerCCl2hF4YON7Xn0RLQw7+PAYMA6OLsjbUcQMQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dXTKOR+im+EDHCINicq2XQQ2YN6Q91GKaKUsuFb9sUFBccTS8GZITmq+pHUST/+fUIL27cGU5Lcj78sVOXg4r1qbr14mP+4KKvV/11PYswyHWl73mov9/bnV7MrAGwXLZ/AebHr7FRxF57RqCq1Z2bZL672CJcY+GqX86qSLhnc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TKKccxUd; arc=fail smtp.client-ip=40.107.243.89
+	s=arc-20240116; t=1745876620; c=relaxed/simple;
+	bh=K1h/aiUp5QCpDW4B9cE03j0gcBejGJ4Go0yIK0XPmwQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tg8G9IhBdJhWZdi9EH8llhNPKv7AZNNEeGsdlfSLKm+ilFtXOXL8UDUtdoak9b110sBJ7UnhEgssDFy8T9KHvSTx2qrSHXaxy4mDDkMtezfMIPe5SIvzjkRvmS5OM3E7MZF93UdkOpx+TxGOtSgxZiyo17ZI7uAvJjQZUjVo8xI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yAoA0YCH; arc=fail smtp.client-ip=40.107.94.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uF6fVgcd+AcxQvmgXnY9XrCT1Gfm3ae3ex55mPMS34UIx7uU6kVs/ffSSMmWxJH0YxCTYEmHXxrx+zejvLsha/Dp4zg7lSgzav0nNjy3RX/IFyeWqchMq3JGm1QMiT8PpWx/rPNyCOu+JYrAxZsHptNfdT0LQBRf42d/g3E6LkbY1gBFSmBO9tbEQtWBldcfvW2VJ19JYKyPB3A53qZBvUWyXlYXblSH8/T79L5BrLdywAwy/FrBCrkYEYgJC6ajEP8Ni5Cxfi4etJcLyfuxLAhefjxsmQWjUmBQuOiq098hwPYvCV80Bfl/95rTmpT4m3mo/U1dTOhZy/w1qoz4Pw==
+ b=Dn4RPPJseVaKE12xNZklt0OoBhAJ0Xo3PGukuPLMKgyHrLMNJ2826p85Yo/Xus/S40p1v70BYMVU3jEAPpLFaLtaLuU7Op8nZ1EVwpAECu4W8BNVOM0TXT+wA3ziWGlaJfb5qv9OCoGvnwVqozIvrgR2rpW64FKwUptJWa61LmoxpIhvpUPilLPOFzlWVdVHipaMSm9CW+2Q/navX4jF2VBWL9xKO/7/Yxy/jNxIjgAefjbFxGNnmh6ZGjG3f5kbjiqy+5u1gKBf4g0z8KkQwBc4E5b/14SclrerqyeEeFl2A38lx+/jqJ0yoNXkr8yPCIjsvwPnUWwMQdRkLIyepA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WGaDKsU76PUZQdKN9pEr4car2ehPDnzIQ5pZ5crExJk=;
- b=xJA5g5GD/pfKPgATRCadwMkCoP4BHasgfy/LhFFQJqf6a0l/9eJ0KiVOZVX0QGd29UtNYzR/6aKYRbWjogIFpOJI3ZhbWbA+P1u6tnlO7BFd1qD89dLuFUEzamYYpIzrvlIOH60jEZBEk7Aebs1Q8JEinGzSlJS5v9iCeZWIpNAz4TI2HfRGqrlv9f4PBkOk+zZ983ZoVIxHSKtSk7ogCdDAms9zlC+ig4Zg1gBXOyty/ZBs+2D3M16U04YSxfYGGXoqv8FZX5TZztCi2JgyVGr5LJA56DBR/ge92XmWXS7+NPJWXTo/0O5SueivbQ1WkhJe4DPzZWGz57bwKXBHJA==
+ bh=+G27S6yfvXh9WgHOl6w3hWKgq/T/GpFJmmYKx5L5yGU=;
+ b=BAahBp+zC9icvlqf9yzdXn2jsQAZJiFq81MOLA5yyCBu390ClZ3xG9mR7hzxkt6ADvp3Vv8o+VAVIhzzivI7Cdf1avPFT399Wo6J9WlcH1NB44M8XcbU74ULlQ1usfLRr5ec+IxdVq5pVln/AlaNYOyZdrS/3DS0xtAgBEWr/Mvj83/xIQSRZRXRRv2JsggmXG/fDqcil1iT5LcuG1TJQk+Jma6gkaA6igm22Ew/wfwfru4x6CNMFT8a4v6nsP7Xc418TRciJnurcH2MnsNXakeflezqAJ7WPvtl9+mdTLNosKEpmd+XRtSN1t/j4VOTv4j5Kzeo19rZnrdbmKQ33g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WGaDKsU76PUZQdKN9pEr4car2ehPDnzIQ5pZ5crExJk=;
- b=TKKccxUdWEpWAkHXX7mQdFqg5ghMk1expmKWJ4nzEgRo7rv4E8Id8xeKX9JrdngMInHSQChzZLYW7eHtD9thOBFTvQHnuEjPAbt2yLJ2cuv8b9gcXyprNnoG1l+d7e+WuJWZUC7lSZGBciwC1IXbeSInzybdVK39xlVDVNSzqyA=
-Received: from BN9PR03CA0895.namprd03.prod.outlook.com (2603:10b6:408:13c::30)
- by PH8PR12MB6844.namprd12.prod.outlook.com (2603:10b6:510:1cb::17) with
+ bh=+G27S6yfvXh9WgHOl6w3hWKgq/T/GpFJmmYKx5L5yGU=;
+ b=yAoA0YCH+kseDW+lqU/i4KgPSVfOkkzf+Q5xBr11EE/vJHE4BQOgkfs8pH5HKclockdJ+fTDAsoNfnseZoBuGUXRPq4yfR1mITF9h3aKQguLsc0WpLWoL8D5fwg8n7dIY6nGRYFF3sYjJEpOtR1F7wLmHq5jgNeZLfV1nO7qnBg=
+Received: from BY3PR10CA0027.namprd10.prod.outlook.com (2603:10b6:a03:255::32)
+ by DM4PR12MB6375.namprd12.prod.outlook.com (2603:10b6:8:a2::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 28 Apr
- 2025 21:42:06 +0000
-Received: from BN3PEPF0000B36D.namprd21.prod.outlook.com
- (2603:10b6:408:13c:cafe::3d) by BN9PR03CA0895.outlook.office365.com
- (2603:10b6:408:13c::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Mon,
- 28 Apr 2025 21:42:05 +0000
+ 2025 21:43:36 +0000
+Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
+ (2603:10b6:a03:255:cafe::1f) by BY3PR10CA0027.outlook.office365.com
+ (2603:10b6:a03:255::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.40 via Frontend Transport; Mon,
+ 28 Apr 2025 21:43:35 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -61,25 +61,26 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B36D.mail.protection.outlook.com (10.167.243.164) with Microsoft
+ MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8722.2 via Frontend Transport; Mon, 28 Apr 2025 21:42:05 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 21:43:35 +0000
+Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 16:42:04 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <bp@alien8.de>, <thomas.lendacky@amd.com>, <hpa@zytor.com>
-CC: <kees@kernel.org>, <michael.roth@amd.com>, <nikunj@amd.com>,
-	<seanjc@google.com>, <ardb@kernel.org>, <gustavoars@kernel.org>,
-	<sgarzare@redhat.com>, <stable@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<kexec@lists.infradead.org>, <linux-coco@lists.linux.dev>
-Subject: [PATCH v3] x86/sev: Do not touch VMSA pages during kdump of SNP guest memory
-Date: Mon, 28 Apr 2025 21:41:51 +0000
-Message-ID: <20250428214151.155464-1-Ashish.Kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
+ 2025 16:43:30 -0500
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Robert Richter <rrichter@amd.com>
+Subject: [PATCH v5 00/14] cxl: Address translation support, part 1: Cleanups and refactoring
+Date: Mon, 28 Apr 2025 23:43:03 +0200
+Message-ID: <20250428214318.1682212-1-rrichter@amd.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,370 +93,150 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36D:EE_|PH8PR12MB6844:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ac92e29-721b-4a4c-7fdc-08dd869d8512
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|DM4PR12MB6375:EE_
+X-MS-Office365-Filtering-Correlation-Id: b265da50-982b-4e93-3f7b-08dd869dbab7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|7416014|82310400026;
+	BCL:0;ARA:13230040|7416014|82310400026|36860700013|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zKza91aqYfloM5yY6pPuevkCd2MD/nwAovfeQ7gbuOll0mqTdSb2YFRS8ugL?=
- =?us-ascii?Q?GrzYVkux4eaJQRqHhPT0BoNEgLINZMXYvnmjtsR3M+Cu9s7gwSkyheI+yFU5?=
- =?us-ascii?Q?vcUIfIabBddD1ebx+58oSuLqe4PTOa355ktckBD89UxkadWutSjnvMTS6O7R?=
- =?us-ascii?Q?wZkiMQquzC/8wnSFtXnHzc3C2P160QZOELASVZG8VM8HLKXXzCizT00SjD+q?=
- =?us-ascii?Q?X8yL5frMVFWNnQlix7GPOb7z/8Tq5VUJmPoJFtoyy5gvm6JqA8oqknesKxw7?=
- =?us-ascii?Q?GA2c51d/Ps+m/hV7YuEUUZ3FAFdGHx92QhngGM1B/2pe0fQ533zRnc638FFn?=
- =?us-ascii?Q?VxC+v+hA+KmF6k9+oyYR+OlDlZ90ENWQ2JpDuSyI5k5z2Ofm1sD20lA/5kfW?=
- =?us-ascii?Q?yY40JiQjZHyJVdaTp3RecLhsQI1+5CN2qYLsOQYQvzGHNkKHqdVIZo4AtStA?=
- =?us-ascii?Q?bJ21kn1IGFGw0GYKdY3cNV8PZAOIcac94+ABJ7ktO589/ARcJZYkH/PFQk4w?=
- =?us-ascii?Q?5vByGRp4TNbVLlpeBAfZ915pQsC9QNykg2Ytemu9cVisfWtjJUGHCJVZaycw?=
- =?us-ascii?Q?rRtA+v6hzs3r+vVJzW1OMLayMoN/E+fYMtS7WI29jMt48MkEsrAf6yUVAsAp?=
- =?us-ascii?Q?9F/jCug2KG8Dk1qa7lOnyVicpIO0X588HHSHizxiB89zJMK8Q9njxDk1Ae4v?=
- =?us-ascii?Q?EG88hhScItOcyE+Yt9Dysf6AEpAEmE1LJn0Nw6OTs12cuvbeOK8wTR+ERIcn?=
- =?us-ascii?Q?UUsauZJRau1GrLlXVnZetLPnzrQT6sgfRAuDh1EHRDUl2Wq15x5puvsjgDX7?=
- =?us-ascii?Q?uWJ56k6C2oKj1j3zhzb0QASyDhkp6eQTgVmtjMNzwjAm+NEzXhpWL0czyQcP?=
- =?us-ascii?Q?k3dh4AfShWgRnnyRJGr9HMf1+FU3zAsi/d//Mu/XvkUhsMGEHMahfmehePOR?=
- =?us-ascii?Q?q2HqHV3Y1aP7/WVyL+Gfl74gwT+ZhueOMtlMrUZaiZU+25IpkPrD5qOdnP6V?=
- =?us-ascii?Q?xLQj0OBSO3PfJI3Fw++vlbv9iAFecD+JzJBnxWdyjt13F5Ejj4Ouu76woU/n?=
- =?us-ascii?Q?75t0I/iLfWOd2dzfEe1AKVjzrtBuUbMXVKNtK5wB76UEpWF8qUqvHz8Yph+c?=
- =?us-ascii?Q?/wyycufkpiTX76+8u8Li1IGoz76Z41eJGGOtnNlaVUU+EJfuI79rPEtCTsI+?=
- =?us-ascii?Q?ollAcg/vxWvhzleqzsEwcOlbzfWzO5jpmlYn6Ir5NEfrWsVZMuRZVSa88NN2?=
- =?us-ascii?Q?exfpunRDCq8CvXos59YBG0my3bLEG9rDE2lVf1TocP6QJb9lTTJFfgN5JAsh?=
- =?us-ascii?Q?RQzych55cGtzXOVP1Ap+ugBuTWc03TrfeFBCANXDmSRESe0b22DRrsu94zr0?=
- =?us-ascii?Q?a5jPbe11RGApnWb5gjZ0QwaH9O1iqh67biyZvNkwU8hSxGLEv5Qu/9cFz2EU?=
- =?us-ascii?Q?1sDcrw7NLH3NrGgCFDv82miSCMNPiAZTaH9741ZhH9EWmZ3vnbepI5pHghxU?=
- =?us-ascii?Q?QrmFuHNIXet9XC4=3D?=
+	=?us-ascii?Q?BzBpTThgJt/boN37zjzkvnTjiHumwn74OWaHsrcVbAOPGD2xu5OVhHUFZagt?=
+ =?us-ascii?Q?vmeDX052ZZYlaVbQ88rlShudTn3qBsO8iuNDsghuP/yIXq6bgDEVXs2/4J9w?=
+ =?us-ascii?Q?WvcBPpfjcWTPo6jS+GtslsNvifrLBo2V1b7T082OJi5KuLW5elS+lwMG6k6o?=
+ =?us-ascii?Q?lthrRf5BhNOnKLgOztpD7R5e4WFDtHUpOib2InYwCmekQrFLYEOCgL3ml/FH?=
+ =?us-ascii?Q?tzTfwn+O+B5D9nLWDaXH2JP3Ufg4PAwLqyAsGyxW1XGBCuj+p8/vkabR5Ghs?=
+ =?us-ascii?Q?2U1XOtlJFqazXgxyDCCySJHN5ZijlIJmYo5ETdIv0UR8MwbpeJ55uM6nXWPZ?=
+ =?us-ascii?Q?IQrtR9k3p2PH6Hx/tm8vsVEpzhtHeFuIYZHDkVBVlk43J9NlI1U2IgjQnNzK?=
+ =?us-ascii?Q?NF+IJhUwBCZpKfgEKGJdP16idHRNhbsFwoMcUjptFHh+CD2RIwjFJJ4v016V?=
+ =?us-ascii?Q?G59A1V1tFrIsN7QMmuqMfrlr/IL8qbyd3k9Iag5Y7x1vi1OZsVR6xbOHOFrn?=
+ =?us-ascii?Q?JVWHMU2KbH5A1/18EpyVM8n83ze7vA4L1AvzUq4YXf6FAEStNHBBZBTnVaG3?=
+ =?us-ascii?Q?v1x0rxfPJ6VEN7mZX/HoEp0FFPZL9/bScxrpy1Im2lgHFDsDldmsPMFJEQbt?=
+ =?us-ascii?Q?D57pxT/oiZuVTgB/ce2gvtpjGuhVZkUTt2j8ZjTEo5CH6nkgI6XZYP5CfI6L?=
+ =?us-ascii?Q?udhmgd4XkQ5lRtFzA0D7FWRBdK9k7bhzohhULGc0l4MiUFcSsQXT5Cd/Ons9?=
+ =?us-ascii?Q?VLFD3cwiiEJQPZKXw+e4fNYvV+/a6XIuRSQN9BAZulceVUNl0sNhAZinnl2h?=
+ =?us-ascii?Q?N1R+4riMaTWqhlwZhaPNxL4eb6Gm4vxDJu4RsJNRP5GFt2HLd37bNE3xOPas?=
+ =?us-ascii?Q?DQvtHaFV3bNx2ketCf0/ruowLhFGUvdxxdhHeIt+EKh4uUIeCSbWgoPnB7H8?=
+ =?us-ascii?Q?6x02shj5xdYQZ1KzEtTCG8gWT8+80rMIaBkjJhjr7WgDBHdfGlR3PvbuhiPx?=
+ =?us-ascii?Q?jY2hu+iCsscxxY2fw7WENpIsNkxSSncqdrqz6ncwGPEwRvbPC1HjHKA2Y0+C?=
+ =?us-ascii?Q?aObMm2I2sfvqgZ+RW6wxX1+VvqRDXXMkOTvaSuvkx26JTpKTwQ3HBhqBV65U?=
+ =?us-ascii?Q?tVnDzlmhmqZFbzwuXnOJLYfmcVEiKliFn/S2LzN/AdywsP1gje7mvBZ1fBoU?=
+ =?us-ascii?Q?HF+Cw9o7Xpdjd1rk5zPA4DAZw9z1NGt2czV5iBjl9Q8OTdmNfjLawZP0qUXP?=
+ =?us-ascii?Q?FVxHgFFeU2LOgPhLPeMwppeoh4nLMrhYHxtFx3z6o9BCFnn3GINwhuKglzFt?=
+ =?us-ascii?Q?AqsVI/S7Ks+zCdQhv8zyOj4lC7oDaYQY/OLFK8pnCjJJYm9OnOeAjl4+jJ6R?=
+ =?us-ascii?Q?4vQwNTS0anJgjCZwvZWe2EbVC5OIZxvNBf34CXZ3i07YD2cWM475A4j/oSAi?=
+ =?us-ascii?Q?aUDxKYmOqsNnqQO8vdRXKlb4NlUyK2L8OBdQ78y7rG1J8gbQ1c8rXgiDF4ry?=
+ =?us-ascii?Q?RmhHKTvrdsOluPHXWD4KAnRAJQ4TGdvvQgbj?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(7416014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 21:42:05.6625
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 21:43:35.5474
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ac92e29-721b-4a4c-7fdc-08dd869d8512
+X-MS-Exchange-CrossTenant-Network-Message-Id: b265da50-982b-4e93-3f7b-08dd869dbab7
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36D.namprd21.prod.outlook.com
+	MWH0EPF000989E5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6844
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6375
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+This series is the first part of adding support for CXL address
+translation. It contains cleanup and code refactoring in preparation
+of the actual implementation that will be sent in part 2. Cleanup and
+code refactoring have been split in a separate series to reduce the
+number of patches of the series. Even without address translation on
+top this rework improves esp. the region code, cleans it up,
+simplifies it and adds debugging messages to better analyze region
+creation failures:
 
-When kdump is running makedumpfile to generate vmcore and dumping SNP
-guest memory it touches the VMSA page of the vCPU executing kdump which
-then results in unrecoverable #NPF/RMP faults as the VMSA page is
-marked busy/in-use when the vCPU is running and subsequently causes
-guest softlockup/hang.
+Content of patches:
 
-Additionally other APs may be halted in guest mode and their VMSA pages
-are marked busy and touching these VMSA pages during guest memory dump
-will also cause #NPF.
+ * Patches 1: Remove else after return.
 
-Issue AP_DESTROY GHCB calls on other APs to ensure they are kicked out
-of guest mode and then clear the VMSA bit on their VMSA pages.
+ * Patches 2-3: Cleanups and comments around cxl_hdm_decode_init().
 
-If the vCPU running kdump is an AP, mark it's VMSA page as offline to
-ensure that makedumpfile excludes that page while dumping guest memory.
+ * Patches 4-6: Adding and modifying helper functions.
 
-Cc: stable@vger.kernel.org
-Fixes: 3074152e56c9 ("x86/sev: Convert shared memory back to private on kexec")
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
----
- arch/x86/coco/sev/core.c | 241 +++++++++++++++++++++++++--------------
- 1 file changed, 155 insertions(+), 86 deletions(-)
+ * Patches 7-11: Refactoring of endpoint decoder setup and cxl_find*()
+   including cleanup helpers.
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index dcfaa698d6cf..f4eb5b645239 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -877,6 +877,99 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end)
- 	set_pages_state(vaddr, npages, SNP_PAGE_STATE_PRIVATE);
- }
- 
-+static int vmgexit_ap_control(u64 event, struct sev_es_save_area *vmsa, u32 apic_id)
-+{
-+	struct ghcb_state state;
-+	unsigned long flags;
-+	struct ghcb *ghcb;
-+	int ret = 0;
-+
-+	local_irq_save(flags);
-+
-+	ghcb = __sev_get_ghcb(&state);
-+
-+	vc_ghcb_invalidate(ghcb);
-+	if (event == SVM_VMGEXIT_AP_CREATE)
-+		ghcb_set_rax(ghcb, vmsa->sev_features);
-+	ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_AP_CREATION);
-+	ghcb_set_sw_exit_info_1(ghcb,
-+				((u64)apic_id << 32)	|
-+				((u64)snp_vmpl << 16)	|
-+				event);
-+	ghcb_set_sw_exit_info_2(ghcb, __pa(vmsa));
-+
-+	sev_es_wr_ghcb_msr(__pa(ghcb));
-+	VMGEXIT();
-+
-+	if (!ghcb_sw_exit_info_1_is_valid(ghcb) ||
-+	    lower_32_bits(ghcb->save.sw_exit_info_1)) {
-+		pr_err("SNP AP %s error\n", (event == SVM_VMGEXIT_AP_CREATE ? "CREATE" : "DESTROY"));
-+		ret = -EINVAL;
-+	}
-+
-+	__sev_put_ghcb(&state);
-+
-+	local_irq_restore(flags);
-+
-+	return ret;
-+}
-+
-+static int snp_set_vmsa(void *va, void *caa, int apic_id, bool make_vmsa)
-+{
-+	int ret;
-+
-+	if (snp_vmpl) {
-+		struct svsm_call call = {};
-+		unsigned long flags;
-+
-+		local_irq_save(flags);
-+
-+		call.caa = this_cpu_read(svsm_caa);
-+		call.rcx = __pa(va);
-+
-+		if (make_vmsa) {
-+			/* Protocol 0, Call ID 2 */
-+			call.rax = SVSM_CORE_CALL(SVSM_CORE_CREATE_VCPU);
-+			call.rdx = __pa(caa);
-+			call.r8  = apic_id;
-+		} else {
-+			/* Protocol 0, Call ID 3 */
-+			call.rax = SVSM_CORE_CALL(SVSM_CORE_DELETE_VCPU);
-+		}
-+
-+		ret = svsm_perform_call_protocol(&call);
-+
-+		local_irq_restore(flags);
-+	} else {
-+		/*
-+		 * If the kernel runs at VMPL0, it can change the VMSA
-+		 * bit for a page using the RMPADJUST instruction.
-+		 * However, for the instruction to succeed it must
-+		 * target the permissions of a lesser privileged (higher
-+		 * numbered) VMPL level, so use VMPL1.
-+		 */
-+		u64 attrs = 1;
-+
-+		if (make_vmsa)
-+			attrs |= RMPADJUST_VMSA_PAGE_BIT;
-+
-+		ret = rmpadjust((unsigned long)va, RMP_PG_SIZE_4K, attrs);
-+	}
-+
-+	return ret;
-+}
-+
-+static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa, int apic_id)
-+{
-+	int err;
-+
-+	err = snp_set_vmsa(vmsa, NULL, apic_id, false);
-+	if (err)
-+		pr_err("clear VMSA page failed (%u), leaking page\n", err);
-+	else
-+		free_page((unsigned long)vmsa);
-+}
-+
- static void set_pte_enc(pte_t *kpte, int level, void *va)
- {
- 	struct pte_enc_desc d = {
-@@ -973,6 +1066,65 @@ void snp_kexec_begin(void)
- 		pr_warn("Failed to stop shared<->private conversions\n");
- }
- 
-+/*
-+ * Shutdown all APs except the one handling kexec/kdump and clearing
-+ * the VMSA tag on AP's VMSA pages as they are not being used as
-+ * VMSA page anymore.
-+ */
-+static void shutdown_all_aps(void)
-+{
-+	struct sev_es_save_area *vmsa;
-+	int apic_id, this_cpu, cpu;
-+
-+	this_cpu = get_cpu();
-+
-+	/*
-+	 * APs are already in HLT loop when enc_kexec_finish() callback
-+	 * is invoked.
-+	 */
-+	for_each_present_cpu(cpu) {
-+		vmsa = per_cpu(sev_vmsa, cpu);
-+
-+		/*
-+		 * BSP does not have guest allocated VMSA and there is no need
-+		 * to clear the VMSA tag for this page.
-+		 */
-+		if (!vmsa)
-+			continue;
-+
-+		/*
-+		 * Cannot clear the VMSA tag for the currently running vCPU.
-+		 */
-+		if (this_cpu == cpu) {
-+			unsigned long pa;
-+			struct page *p;
-+
-+			pa = __pa(vmsa);
-+			/*
-+			 * Mark the VMSA page of the running vCPU as offline
-+			 * so that is excluded and not touched by makedumpfile
-+			 * while generating vmcore during kdump.
-+			 */
-+			p = pfn_to_online_page(pa >> PAGE_SHIFT);
-+			if (p)
-+				__SetPageOffline(p);
-+			continue;
-+		}
-+
-+		apic_id = cpuid_to_apicid[cpu];
-+
-+		/*
-+		 * Issue AP destroy to ensure AP gets kicked out of guest mode
-+		 * to allow using RMPADJUST to remove the VMSA tag on it's
-+		 * VMSA page.
-+		 */
-+		vmgexit_ap_control(SVM_VMGEXIT_AP_DESTROY, vmsa, apic_id);
-+		snp_cleanup_vmsa(vmsa, apic_id);
-+	}
-+
-+	put_cpu();
-+}
-+
- void snp_kexec_finish(void)
- {
- 	struct sev_es_runtime_data *data;
-@@ -987,6 +1139,8 @@ void snp_kexec_finish(void)
- 	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
- 		return;
- 
-+	shutdown_all_aps();
-+
- 	unshare_all_memory();
- 
- 	/*
-@@ -1008,51 +1162,6 @@ void snp_kexec_finish(void)
- 	}
- }
- 
--static int snp_set_vmsa(void *va, void *caa, int apic_id, bool make_vmsa)
--{
--	int ret;
--
--	if (snp_vmpl) {
--		struct svsm_call call = {};
--		unsigned long flags;
--
--		local_irq_save(flags);
--
--		call.caa = this_cpu_read(svsm_caa);
--		call.rcx = __pa(va);
--
--		if (make_vmsa) {
--			/* Protocol 0, Call ID 2 */
--			call.rax = SVSM_CORE_CALL(SVSM_CORE_CREATE_VCPU);
--			call.rdx = __pa(caa);
--			call.r8  = apic_id;
--		} else {
--			/* Protocol 0, Call ID 3 */
--			call.rax = SVSM_CORE_CALL(SVSM_CORE_DELETE_VCPU);
--		}
--
--		ret = svsm_perform_call_protocol(&call);
--
--		local_irq_restore(flags);
--	} else {
--		/*
--		 * If the kernel runs at VMPL0, it can change the VMSA
--		 * bit for a page using the RMPADJUST instruction.
--		 * However, for the instruction to succeed it must
--		 * target the permissions of a lesser privileged (higher
--		 * numbered) VMPL level, so use VMPL1.
--		 */
--		u64 attrs = 1;
--
--		if (make_vmsa)
--			attrs |= RMPADJUST_VMSA_PAGE_BIT;
--
--		ret = rmpadjust((unsigned long)va, RMP_PG_SIZE_4K, attrs);
--	}
--
--	return ret;
--}
--
- #define __ATTR_BASE		(SVM_SELECTOR_P_MASK | SVM_SELECTOR_S_MASK)
- #define INIT_CS_ATTRIBS		(__ATTR_BASE | SVM_SELECTOR_READ_MASK | SVM_SELECTOR_CODE_MASK)
- #define INIT_DS_ATTRIBS		(__ATTR_BASE | SVM_SELECTOR_WRITE_MASK)
-@@ -1084,24 +1193,10 @@ static void *snp_alloc_vmsa_page(int cpu)
- 	return page_address(p + 1);
- }
- 
--static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa, int apic_id)
--{
--	int err;
--
--	err = snp_set_vmsa(vmsa, NULL, apic_id, false);
--	if (err)
--		pr_err("clear VMSA page failed (%u), leaking page\n", err);
--	else
--		free_page((unsigned long)vmsa);
--}
--
- static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip)
- {
- 	struct sev_es_save_area *cur_vmsa, *vmsa;
--	struct ghcb_state state;
- 	struct svsm_ca *caa;
--	unsigned long flags;
--	struct ghcb *ghcb;
- 	u8 sipi_vector;
- 	int cpu, ret;
- 	u64 cr4;
-@@ -1215,33 +1310,7 @@ static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip)
- 	}
- 
- 	/* Issue VMGEXIT AP Creation NAE event */
--	local_irq_save(flags);
--
--	ghcb = __sev_get_ghcb(&state);
--
--	vc_ghcb_invalidate(ghcb);
--	ghcb_set_rax(ghcb, vmsa->sev_features);
--	ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_AP_CREATION);
--	ghcb_set_sw_exit_info_1(ghcb,
--				((u64)apic_id << 32)	|
--				((u64)snp_vmpl << 16)	|
--				SVM_VMGEXIT_AP_CREATE);
--	ghcb_set_sw_exit_info_2(ghcb, __pa(vmsa));
--
--	sev_es_wr_ghcb_msr(__pa(ghcb));
--	VMGEXIT();
--
--	if (!ghcb_sw_exit_info_1_is_valid(ghcb) ||
--	    lower_32_bits(ghcb->save.sw_exit_info_1)) {
--		pr_err("SNP AP Creation error\n");
--		ret = -EINVAL;
--	}
--
--	__sev_put_ghcb(&state);
--
--	local_irq_restore(flags);
--
--	/* Perform cleanup if there was an error */
-+	ret = vmgexit_ap_control(SVM_VMGEXIT_AP_CREATE, vmsa, apic_id);
- 	if (ret) {
- 		snp_cleanup_vmsa(vmsa, apic_id);
- 		vmsa = NULL;
+ * Patches 12-14: Adding and modifying debug messages.
+
+v5:
+ * added tags to SOB chain,
+ * made comment a oneliner in cxl_hdm_decode_init() (Jonathan),
+ * updated patch description introducing parent_port_of() (Fabio),
+ * removed EXPORT_SYMBOL_NS_GPL() of function parent_port_of() (Dan),
+ * renamed functions to cxl_port_pick_region_decoder() and
+   cxl_rr_assign_decoder(), updated descriptions (Dan),
+ * added patch to replace put_cxl_root() by a cleanup helper,
+ * using __free() for reference counting of cxl_find_*() functions,
+   added cleanup helpers (Dan),
+ * dropped patch adding CFMWS memory log messages (Dan),
+
+v4:
+ * rebased onto cxl/next, commit 0a14566be090 ("cxl/Documentation:
+   Remove 'mixed' from sysfs mode doc"),
+ * added tags to SOB chain,
+ * reworked comments in cxl_hdm_decode_init() (dropped moving comment
+   and updated patch that modifies comments) (Jonathan),
+ * reworded patch description that removes duplicate call of
+   cxl_find_decoder_early() (Jonathan),
+ * moved some patches out of this rework and cleanup series (Dave,
+   Jonathan),
+
+v3:
+ * added tags to SOB chain,
+ * fixed NULL pointer dereference in cxl_find_root_decoder() (Alison),
+ * updated subject line of patches that add kernel messages and
+   included example log messages (Alison),
+
+v2:
+ * rebased onto cxl/next,
+ * added tags to SOB chain,
+ * move patches with cleanups and refactoring into this separate
+   series (Dave),
+ * added patch "cxl/acpi: Unify CFMWS memory log messages with SRAT
+   messages" to improve CFMWS log messages,
+ * renamed endpoint decoder functions to cxl_endpoint_decoder_*() (Li),
+ * reworded patch description that moves find_cxl_root() and reworks
+   cxl_find_root_decoder() (Terry),
+ * small changes to cxl_find_root_decoder()/
+   cxl_endpoint_decoder_initialize() (Jonanthan),
+ * updated comment in cxl_port_find_switch_decoder() (Ben),
+ * cxl_endpoint_decoder_initialize(): Simplify variable declaration
+   (Jonathan, Ben),
+ * cxl_find_decoder_early(): Added comment on function usage (Gregory),
+ * reordered patches and reworded some of the subject for a better
+   structure.
+
+Robert Richter (14):
+  cxl: Remove else after return
+  cxl/pci: Moving code in cxl_hdm_decode_init()
+  cxl/pci: Add comments to cxl_hdm_decode_init()
+  cxl: Introduce parent_port_of() helper
+  cxl/region: Rename function to cxl_port_pick_region_decoder()
+  cxl/region: Avoid duplicate call of cxl_port_pick_region_decoder()
+  cxl/region: Move find_cxl_root() to cxl_add_to_region()
+  cxl/port: Replace put_cxl_root() by a cleanup helper
+  cxl/region: Factor out code to find the root decoder
+  cxl/region: Factor out code to find a root decoder's region
+  cxl/region: Add function to find a port's switch decoder by range
+  cxl/region: Add a dev_warn() on registration failure
+  cxl/region: Add a dev_err() on missing target list entries
+  cxl: Add a dev_dbg() when a decoder was added to a port
+
+ drivers/cxl/acpi.c        |  10 ++-
+ drivers/cxl/core/cdat.c   |   2 +-
+ drivers/cxl/core/hdm.c    |   3 +-
+ drivers/cxl/core/pci.c    |  48 +++++++----
+ drivers/cxl/core/port.c   |  23 ++---
+ drivers/cxl/core/region.c | 172 ++++++++++++++++++++++++--------------
+ drivers/cxl/cxl.h         |  13 +--
+ drivers/cxl/port.c        |  15 +---
+ 8 files changed, 170 insertions(+), 116 deletions(-)
+
 -- 
-2.34.1
+2.39.5
 
 
