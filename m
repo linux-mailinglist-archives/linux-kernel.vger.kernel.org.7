@@ -1,273 +1,138 @@
-Return-Path: <linux-kernel+bounces-623447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A3F4A9F5DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:32:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB92A9F643
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B5E17C0AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85484189E527
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA0C27A10D;
-	Mon, 28 Apr 2025 16:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3A927FD63;
+	Mon, 28 Apr 2025 16:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hITa48Ks"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TmShkLv5"
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77E91EA65
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ABA21CC64
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745857920; cv=none; b=SkdUDGoHfUf9kpKE0+e/M798esmw50KsWR5aUfM6zcUzZa/7GIDKZiXe5bDsDM01+0AA7ocWyJJaf+bX4Wsx3hnbLbJN195Ol+EpGwRykTLfUoHxcTRL5JU254B+G35zh8aq1JFnp2GrW/43uAndJevVcsncQWmofcjyrb8PgtM=
+	t=1745859172; cv=none; b=LfQ6DBomueEWZtakr3jDBFFzcMwsuFN0NbJ84Oh+Gjtmx2ERpFKYbtu9cIZYBS5dlqj5/aR0yG6yTcThvbfwcY6R4wQ4hu+oOT/T/DQNHR9zDVZ7x0xHWLM3Q88r6ZSnZ3IJh+GKvTXAmc7fyaBdKFzTQdoQjc/0nGpDgxKaEK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745857920; c=relaxed/simple;
-	bh=2flk/hePgzpEnCa5tkTmVPtt3EsWIE0IUFHUsusXdX4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iH1R8VoKlUvHaSwYMw2CRCB3RVku/+NSwpt2quhk0e6/9tqT7GJD6cQYQnthj0v3NaV/MxT2QI/yFmeiVWXuK3ClZG951iGCouoAcTBNNXX/LXfLREaMAecx7rskP2iL9hXm3WqiJre8kuy0vA+bAPtnBS43otwksWm7L+CMxRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hITa48Ks; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745857918; x=1777393918;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2flk/hePgzpEnCa5tkTmVPtt3EsWIE0IUFHUsusXdX4=;
-  b=hITa48KsmkzgkpOcovSAoq4eF/U3COxGaDCjPgfCxPp52N3+SX8u+aPD
-   P36HvTzrkyP4RMRWC8FSoF5A8K+aNOcdq6NAYwNdAShN5oDnhkFH2C7GZ
-   tsViJfTYS7WGarEysFhASmZnpzIgNdTLSDwqGwlLeZbv064a/nZe46XGY
-   pDmSbj9UHlhyS6VsBDV6/lVB4A7mvE1oEvFcYLwo5MfSVnEAN39j8a+Yt
-   DR9FNNdWhdoTZg0wSm9QhR89eS11sdBbJwy7sxAmMhMOyH4rMUnj74JiB
-   gjffK6eolGkKSR8gkFdtOq8U/DSxKTkRvEK+pXXu/JrQ/4sY/9szWXacX
-   g==;
-X-CSE-ConnectionGUID: 8fAY3bD0QAKC+RDyFtQOiA==
-X-CSE-MsgGUID: f19kwnz9QpmCb2jxfeRXZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="64990938"
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="64990938"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 09:31:57 -0700
-X-CSE-ConnectionGUID: ZjDgHR9hQyqRRRf05YluIg==
-X-CSE-MsgGUID: xtdCujlnSJiUCj8kRmLw2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="133460477"
-Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.174])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 09:31:54 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Anusha Srivatsa <asrivats@redhat.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, Anusha Srivatsa
- <asrivats@redhat.com>
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-In-Reply-To: <20250331-b4-panel-refcounting-v4-2-dad50c60c6c9@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com>
- <20250331-b4-panel-refcounting-v4-2-dad50c60c6c9@redhat.com>
-Date: Mon, 28 Apr 2025 19:31:50 +0300
-Message-ID: <87y0vkw8ll.fsf@intel.com>
+	s=arc-20240116; t=1745859172; c=relaxed/simple;
+	bh=6xY2nc0RaB26C8Wx9+EpDD+pS50ZQFFzgqmN0vDJVM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZY2K6qgg7gC+VEK/YO1NMH+un3kt/RKCoh4PX47WtVb+Fby0OvegHbYUEmYl/oYYJGfOKBinZwqFzdmRqhxNBk9b3Bh8QtUzchQj97njtzmhe21DxV0LO4hTrHk1f4QlpkpTduJC01k6xR3WP7XZ27NMDDRdpomOwN/xBCkpkDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=TmShkLv5; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745859164; bh=sqVT6q/gS2IO11mPSx1zGKMYT49soEThtm+blh315uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=TmShkLv5LTcjqhtI1S3E3yTKqUlFEaq6/9edfX4pUbh5DQYJIMFgMv/rdLoDv/ZrSd9SBRx3IWFDa3Fp30+k24uzLUqqZxUOriyrA/fm6A9i6KveGjRl3pf0lDv7vW9GsIOpcvuFCDZJk/o7EGyR1+KJnxJVykYZyjmBSRXL0mbJVauuoC3Ma5Th3qsjw7eeVn3TxpvbsKgXpN+4PndNu8CatyyD8gGlMxNkGfku6xOt/OVJF82rWFt42naM8+hrycFNslm6pnoKTyN+6qg5xq7kjQIY6tcXq9gak99IFS+FhFlNUY5nosl4awH7/TFsm25LuYfevukmI+yAU2Z7ZQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745859164; bh=1ocgATpWUMwDoqL1q7zfHtIKlCWRZ8QGGEvu4gHsels=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=CfaVzAbwXQaWtjfP7NSeZUnNEArlCi9pQcFy7WS7n0tRLu5NnwjgbJh00KrgNN0RRDnhTI0ZKfPMabVrmmt9yLqMshGnJPHSkUh4AcHF8yz43SwKgTmwjMzVEoJeaFqsrgnBzBUhDBA8pt5L1vCAvOQlTwQap8j8utAmMBXTbnhqkigN2RdqHBpeQr6jUinyLGnCcoXnjJ2NlEU9ppF5bsoKpklFLJLAlOA+rzgcq0J/Xuzy4QOVjNw4Jd803gLYGnLCsUdEJo1cxMBx2Lg2kHDQzYoLkck11WqvTdafY+HvHsSjpOuYtzMioRoiW27gEdP2kUCAkEOlec618qg/FA==
+X-YMail-OSG: UYxsJJYVM1nve9Q1xFVLkeERBzVnVqyeHNPd50KUB7jgbH3qnYdOeQSyfMHuvbW
+ qdxenoAyQY4kfeXtpWqZncnvV4pEA65QrNlhYkSBm5eHxEzqJaN_MrUWFi4HLAdU3NTv9ONO8gLT
+ cLAu_MOBPS_LgVGCglF1z0Y3_8ytqhiuFo_TP8MCy0UFNM6a1IbxYWDG86Cox61EjEcmypBIvpe1
+ uWuUd4TD4tK.3ul8yWMxqrd25_WVjmqzIPeI2kQxA80v8bDSvAvS9fRfgBQie1dFmB7b.lMgWFOP
+ ZilW7mYqGAUAEd5sIHhRbM5sX06GQSi1mpsVcYkc8PJknupzijLUWFVZter12xVOFjb0BA55oSAH
+ 77H4.ISHRjuvqylanW3b5ADWiS95coLks.f8xOjtuxNenvVMAg8nqxpdtyEdsA_UdRr4ecIQECqE
+ bmgJN.bhYwx3oMX6z3Jz1bkOJklFDEYmnAKw3D3str.Nht9hC_xVNgrbLJZ9.rNr.mOFSxqa6jfR
+ NzTWQm.Ytw63L55tA06hyzHHdrjVR2OXcgnBOkat708FMl_IPur7I3GO7c4xZx1cLwYxLsVyQlM2
+ vLwoPcqv2JNGJlx.k_S6poZ78DMhnZPo1Fi5UANnyldKm0qx2nvSkgFeSxH_dSA2oUxF38Jv05Ex
+ uPnh4LNRt2ILoAAhOXhYaQBMOFAHUmDPQjBMyjx8eZA84SDu2cVeBZrZdVN01GhuztLQNAVp294G
+ ULILjvCOs.54DRfxU1wtH17Sk79MRyUWr7F2m1MfzeT0xDCQ2oSEuRMV9JWeS7rkBFeYtUEFcUW.
+ Ps03SFKOZwHHSe7i1CUN1AQL79JqCpL2D2vGFmZElBKd654KIWGglrDvQzz9go6t_dnC_0XNuFFz
+ Wqfs7cwGDr1KAQbGHT1tMMN62xIPoyd_lYLpXpPLS6T.i1PVqtCeHq0agMU62JEcFBVVHeNq0Q5y
+ mMIR8R_58uuJGV80TTO8N1InesdhPtkZG17KfzZZvINBYepDdFtaqqkiiBMdwmDvIJnUKUTq8RqS
+ x80QqukyMnMk8ThsUJYJh7MuGF59h2T8N7GxnM7K9zgIZvCApcvG2ecW.Hagm535fBKgeZ0GuN6T
+ wiN7fj8CSnxIEf_0tjTs2hd_CtNjs8SOo.FceppCmCHalLAesziEagVow2DCsId4mAsLZ71.1NYv
+ UM92W_x6lVQ2vZW8fpmNtXDjV6DeZgshzQGWrjWc5lF9TmZ55DoTsPTGyMcqDW8Mhi8Y4z9i5EMw
+ CWoPC1chtCz9ZdvpDp4qoHVc_j3gH9PNFj8xOBHxZOnW6EAV76Srgpn_yfaAL6R1qRitIkQ3zVba
+ se2GMNKCv42Z4LlEa6TVZnzW7d.s1xmc4I5nEbAM6as4EXDBMCURXjgZkS8G2BpYfHRXrvrLN9An
+ Plqi._0rEVZ2rLX5T9oTpcEATS9cFX7LHkTPtZQDEEDSiq5419tp0MLu0nUE0Mzc_BaWFqe7j6MV
+ lJUinby15mI.gtJVB88ANtxOgY0xa4bjspGMx0ECpJNHzOzwvRhcjz6fru4tXGfll_EI0ippPIKM
+ W8anfa3hFd3u5KeQF0v38m8BShW4c229uA06WOCdxy16JBMDZNRX6wC8iiwbUX6O8zmrAjhjzGCq
+ 8DBAN9gSguBrMmyQfB9o1y_vYNPbiRJhNk5BckAjmHuytY.ZPhAU6RKnJsxHUkntiUL3Yj_vuUv0
+ ZApsmGak9pq3qlG5QUcnQvs6v0DMvfgq50PynoFhABZkdJVH0q9P8DdveQcOMI7OKHSgrLik59kD
+ zaAPDwdXDMgvaHXZGiHD_O7bBbCYplhKf2VkM9JNis2_GH.mGmPc0wDqk2xNoJsy_iRm4YJQmnZ1
+ Jw2c_L2ut7ybkHC9Psxxp_7UnGIAXvGz0NIIJuf8qh4T._FjQXNr69vuYWFV7T76pOB8boFnM5ja
+ l7YhKZuFRVmZ5L9nsUvkc.gHXv1JPVQofrP2YOb4NQ0c2zJhGP9RqrTDcMjCUxhYdYydxislMlC9
+ 5h9hTDI2E0ppdVWQHyCCtUufdASICa2N11Z._oEMpPJA4daZpCA_mE.C2jtNPkKssc5BJ9BN9lrt
+ nLrLJj3TroWEET.3j7WUAXcboQKa9astOlpVySbvvahbPdIInXS0_eNLewaYQdPs9jgfKzFjlmfK
+ T1srwHLociI00t176XO8hSn3oi0EoSBcwNnUUgDQU6Y_pXmS753OvERIzjlzBKsc_l58.0hGdfjW
+ a2f_2_EOabiLHJtwbquFCYOboie.Js47cjFkCbFEceb5TxLWGaqgqoGFms5rdJF23KIRecTSMtda
+ VUg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: dc9f098f-28ea-41ed-87ec-fab9cfeed3e1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Mon, 28 Apr 2025 16:52:44 +0000
+Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0d3d3196c6fbd5ff60aed6348ba5f11a;
+          Mon, 28 Apr 2025 16:32:29 +0000 (UTC)
+Message-ID: <f24142d4-e0eb-4d35-b230-80dff1e58331@schaufler-ca.com>
+Date: Mon, 28 Apr 2025 09:32:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ netdev@vger.kernel.org, selinux@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250428155535.6577-2-stephen.smalley.work@gmail.com>
+ <988adabb-4236-4401-9db1-130687b0d84f@schaufler-ca.com>
+ <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Mon, 31 Mar 2025, Anusha Srivatsa <asrivats@redhat.com> wrote:
-> Allocate panel via reference counting. Add _get() and _put() helper
-> functions to ensure panel allocations are refcounted. Avoid use after
-> free by ensuring panel pointer is valid and can be usable till the last
-> reference is put.
->
-> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
->
-> ---
-> v4: Add refcounting documentation in this patch (Maxime)
->
-> v3: Add include in this patch (Luca)
->
-> v2: Export drm_panel_put/get() (Maxime)
-> - Change commit log with better workding (Luca, Maxime)
-> - Change drm_panel_put() to return void (Luca)
-> - Code Cleanups - add return in documentation, replace bridge to
-> panel (Luca)
-> ---
->  drivers/gpu/drm/drm_panel.c | 64 ++++++++++++++++++++++++++++++++++++++++++++-
->  include/drm/drm_panel.h     | 19 ++++++++++++++
->  2 files changed, 82 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index bdeab5710ee324dc1742fbc77582250960556308..7b17531d85a4dc3031709919564d2e4d8332f748 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -355,24 +355,86 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
->  }
->  EXPORT_SYMBOL(of_drm_find_panel);
->  
-> +static void __drm_panel_free(struct kref *kref)
-> +{
-> +	struct drm_panel *panel = container_of(kref, struct drm_panel, refcount);
-> +
-> +	kfree(panel->container);
-> +}
-> +
-> +/**
-> + * drm_panel_get - Acquire a panel reference
-> + * @panel: DRM panel
-> + *
-> + * This function increments the panel's refcount.
-> + * Returns:
-> + * Pointer to @panel
-> + */
-> +struct drm_panel *drm_panel_get(struct drm_panel *panel)
-> +{
-> +	if (!panel)
-> +		return panel;
-> +
-> +	kref_get(&panel->refcount);
-> +
-> +	return panel;
-> +}
-> +EXPORT_SYMBOL(drm_panel_get);
-> +
-> +/**
-> + * drm_panel_put - Release a panel reference
-> + * @panel: DRM panel
-> + *
-> + * This function decrements the panel's reference count and frees the
-> + * object if the reference count drops to zero.
-> + */
-> +void drm_panel_put(struct drm_panel *panel)
-> +{
-> +	if (panel)
-> +		kref_put(&panel->refcount, __drm_panel_free);
-> +}
-> +EXPORT_SYMBOL(drm_panel_put);
-> +
-> +/**
-> + * drm_panel_put_void - wrapper to drm_panel_put() taking a void pointer
-> + *
-> + * @data: pointer to @struct drm_panel, cast to a void pointer
-> + *
-> + * Wrapper of drm_panel_put() to be used when a function taking a void
-> + * pointer is needed, for example as a devm action.
-> + */
-> +static void drm_panel_put_void(void *data)
-> +{
-> +	struct drm_panel *panel = (struct drm_panel *)data;
-> +
-> +	drm_panel_put(panel);
-> +}
-> +
->  void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t offset,
->  			     const struct drm_panel_funcs *funcs,
->  			     int connector_type)
->  {
->  	void *container;
->  	struct drm_panel *panel;
-> +	int err;
->  
->  	if (!funcs) {
->  		dev_warn(dev, "Missing funcs pointer\n");
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	container = devm_kzalloc(dev, size, GFP_KERNEL);
-> +	container = kzalloc(size, GFP_KERNEL);
->  	if (!container)
->  		return ERR_PTR(-ENOMEM);
->  
->  	panel = container + offset;
-> +	panel->container = container;
->  	panel->funcs = funcs;
-> +	kref_init(&panel->refcount);
+On 4/28/2025 9:23 AM, Stephen Smalley wrote:
+> On Mon, Apr 28, 2025 at 12:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 4/28/2025 8:55 AM, Stephen Smalley wrote:
+>>> Update the security_inode_listsecurity() interface to allow
+>>> use of the xattr_list_one() helper and update the hook
+>>> implementations.
+>>>
+>>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
+>>>
+>>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>>> ---
+>>> This patch is relative to the one linked above, which in theory is on
+>>> vfs.fixes but doesn't appear to have been pushed when I looked.
+>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>>> index bf3bbac4e02a..3c3919dcdebc 100644
+>>> --- a/include/linux/lsm_hook_defs.h
+>>> +++ b/include/linux/lsm_hook_defs.h
+>>> @@ -174,8 +174,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
+>>>        struct inode *inode, const char *name, void **buffer, bool alloc)
+>>>  LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
+>>>        const char *name, const void *value, size_t size, int flags)
+>>> -LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
+>>> -      size_t buffer_size)
+>>> +LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
+>>> +      ssize_t *remaining_size)
+>> How about "rem", "rsize" or some other name instead of the overly long
+>> "remaining_size_"?
+> I don't especially care either way but was just being consistent with
+> the xattr_list_one() code.
 
-Hi Anusha, this should be done in drm_panel_init() instead.
+Sigh. Then I'd leave it as is.
 
-There are many users of drm_panel that don't use devm_drm_panel_alloc()
-but allocate separately, and call drm_panel_init() only. They'll all
-have refcount set to 0 instead of 1 like kref_init() does.
-
-This means all subsequent get/put pairs on such panels will lead to
-__drm_panel_free() being called! But through a lucky coincidence, that
-will be a nop because panel->container is also not initialized...
-
-I'm sorry to say, the drm refcounting interface is quite broken for such
-use cases.
-
-
-BR,
-Jani.
-
-
-> +
-> +	err = devm_add_action_or_reset(dev, drm_panel_put_void, panel);
-> +	if (err)
-> +		return ERR_PTR(err);
->  
->  	drm_panel_init(panel, dev, funcs, connector_type);
->  
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index 415e85e8b76a15679f59c944ea152367dc3e0488..31d84f901c514c93ab6cbc09f445853ef897bc95 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -28,6 +28,7 @@
->  #include <linux/errno.h>
->  #include <linux/list.h>
->  #include <linux/mutex.h>
-> +#include <linux/kref.h>
->  
->  struct backlight_device;
->  struct dentry;
-> @@ -266,6 +267,17 @@ struct drm_panel {
->  	 * If true then the panel has been enabled.
->  	 */
->  	bool enabled;
-> +
-> +	/**
-> +	 * @container: Pointer to the private driver struct embedding this
-> +	 * @struct drm_panel.
-> +	 */
-> +	void *container;
-> +
-> +	/**
-> +	 * @refcount: reference count of users referencing this panel.
-> +	 */
-> +	struct kref refcount;
->  };
->  
->  void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t offset,
-> @@ -282,6 +294,10 @@ void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t offset,
->   * @connector_type: the connector type (DRM_MODE_CONNECTOR_*) corresponding to
->   * the panel interface
->   *
-> + * The reference count of the returned panel is initialized to 1. This
-> + * reference will be automatically dropped via devm (by calling
-> + * drm_panel_put()) when @dev is removed.
-> + *
->   * Returns:
->   * Pointer to container structure embedding the panel, ERR_PTR on failure.
->   */
-> @@ -294,6 +310,9 @@ void drm_panel_init(struct drm_panel *panel, struct device *dev,
->  		    const struct drm_panel_funcs *funcs,
->  		    int connector_type);
->  
-> +struct drm_panel *drm_panel_get(struct drm_panel *panel);
-> +void drm_panel_put(struct drm_panel *panel);
-> +
->  void drm_panel_add(struct drm_panel *panel);
->  void drm_panel_remove(struct drm_panel *panel);
-
--- 
-Jani Nikula, Intel
 
