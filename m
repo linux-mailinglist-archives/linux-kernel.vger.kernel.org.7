@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-623602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE23A9F82C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:14:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976D2A9F82E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B0C5A2BD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68265A2F2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B6A296D31;
-	Mon, 28 Apr 2025 18:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BC32973D9;
+	Mon, 28 Apr 2025 18:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XXtmLw9Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LBmJheu/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B564A2957A8
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7842973C7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864003; cv=none; b=b3L6dDRd/NKR03M5tEaVZSw7/Wm9LnMZ/ngTr3zoqWUxOhFwrJgfrZbvSKRoepYnTZPMZuCX7FM6BAd+wwWwUhgAGApoHOWELxe1GYc5zL0Fg91UCuAz/rPvyPog05IacLhwrNpHgbQAExiBoWG5e/GYsmDZNTs4lJmSvFNLZzA=
+	t=1745864010; cv=none; b=cMHBkzdqT3p/TZIV1CExjpj5XHvUmO1R/A2xc4E8LwW+t2jKzm6qPAayNHaV+La3yVEsG1PAOiJtUUyXFluLIR4OqLB/PY5wNBkZ4AsJKUVfuK+aHNwvrbDhEFA9CmUXgPgRymFITvPv0I1ZaF+kqOoHxRo3guNsI1t1XNE+tIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864003; c=relaxed/simple;
-	bh=5z+IYGVEcdYg78Uowl2EpuhK5eJp37p2sUw0GqC0quo=;
+	s=arc-20240116; t=1745864010; c=relaxed/simple;
+	bh=izoFedzkTaJOHbhKVxh1hVWz6CnEStoxb12rm/MlOVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aM+SC9ZrGK49Nw2fe9Hq5yfAcmyKrGqYd2G2FBMea/S/uLm1lKM2Q6xS+tB/8EtWh+yMRx8w+p4CQSnKhkrQ4KF3J59ckAjHP3YbKEdMBDNP5u5ZIC45BdNB+luVQXxqxcbpk+xa7H0QeZiq7ZvaIvCqHHJMvI3Jlanfq5ygMVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XXtmLw9Z; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=i2zaXE8hWtEOdpcgmnQFIz4PGFeT7M6ktvFam7ebCo8iSZiyxPWf/JnyeFNLH2J+6fpmzf1Xmc6xyv+uZ08HtH9otbIUUCyuYqgnPwP3G7lBpuVmSoaMwRCtttpRtyEGxwsU5gJVEYXsJXB2zpfZyxrSphHZXJhZapTMWwcGxgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LBmJheu/; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745864000;
+	s=mimecast20190719; t=1745864007;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ePmLXrUr/o3h7jPNSUCdUrcTkYoB25I2nXP+9bwQ7to=;
-	b=XXtmLw9Z8lV2yXEr6ZO15Wh6FVxrCJqL0gG5l7lathjobQin3SQWOZ6FYyPYxzwridWE8x
-	zDrUYCwEAT1CeX5Tba15kWIUrHxJF4EjwQugimMaIdBVORyKi0xw7ZadcYtLiBwXKgy2hL
-	CHmxEE7XzEDkmdVjsZDBG8pTuaDFc6M=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=aTX6P2IggYqzg7C0+KpKEa9+57Ib0vSV4YGBosZ11Fk=;
+	b=LBmJheu/qTspjhO/8XGDje/u8oplNaIsf1OtQ6iQUWDs5LUBmDxTevvCgOKbtGYqGy9o3p
+	mee/1z35py+rtgGJkj9CH93zRC/xmMdGLKRoVg+F/JQvGxaK8bDhidumYJVUN1bjef0QUu
+	9R9sHqabyv5xlDBCzNnTvEzHQ6CEca0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-86-4VUygtS7OQeFszrIXDtQew-1; Mon,
- 28 Apr 2025 14:13:18 -0400
-X-MC-Unique: 4VUygtS7OQeFszrIXDtQew-1
-X-Mimecast-MFC-AGG-ID: 4VUygtS7OQeFszrIXDtQew_1745863992
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-ve0q8oP_OZCoLPOyLOidkQ-1; Mon,
+ 28 Apr 2025 14:13:24 -0400
+X-MC-Unique: ve0q8oP_OZCoLPOyLOidkQ-1
+X-Mimecast-MFC-AGG-ID: ve0q8oP_OZCoLPOyLOidkQ_1745864000
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B71081956089;
-	Mon, 28 Apr 2025 18:13:11 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E778180010A;
+	Mon, 28 Apr 2025 18:13:19 +0000 (UTC)
 Received: from h1.redhat.com (unknown [10.22.65.12])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA927180094B;
-	Mon, 28 Apr 2025 18:13:03 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 07152180045B;
+	Mon, 28 Apr 2025 18:13:11 +0000 (UTC)
 From: Nico Pache <npache@redhat.com>
 To: linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
@@ -99,9 +99,9 @@ Cc: akpm@linux-foundation.org,
 	rdunlap@infradead.org,
 	lorenzo.stoakes@oracle.com,
 	Liam.Howlett@oracle.com
-Subject: [PATCH v5 03/12] khugepaged: generalize hugepage_vma_revalidate for mTHP support
-Date: Mon, 28 Apr 2025 12:12:09 -0600
-Message-ID: <20250428181218.85925-4-npache@redhat.com>
+Subject: [PATCH v5 04/12] khugepaged: generalize alloc_charge_folio()
+Date: Mon, 28 Apr 2025 12:12:10 -0600
+Message-ID: <20250428181218.85925-5-npache@redhat.com>
 In-Reply-To: <20250428181218.85925-1-npache@redhat.com>
 References: <20250428181218.85925-1-npache@redhat.com>
 Precedence: bulk
@@ -113,71 +113,108 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-For khugepaged to support different mTHP orders, we must generalize this
-function for arbitrary orders.
+From: Dev Jain <dev.jain@arm.com>
 
-No functional change in this patch.
+Pass order to alloc_charge_folio() and update mTHP statistics.
 
 Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Co-developed-by: Dev Jain <dev.jain@arm.com>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
+Co-developed-by: Nico Pache <npache@redhat.com>
 Signed-off-by: Nico Pache <npache@redhat.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
- mm/khugepaged.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/huge_mm.h |  2 ++
+ mm/huge_memory.c        |  4 ++++
+ mm/khugepaged.c         | 17 +++++++++++------
+ 3 files changed, 17 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 2f190c90192d..0bb65bd4e6dd 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -123,6 +123,8 @@ enum mthp_stat_item {
+ 	MTHP_STAT_ANON_FAULT_ALLOC,
+ 	MTHP_STAT_ANON_FAULT_FALLBACK,
+ 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
++	MTHP_STAT_COLLAPSE_ALLOC,
++	MTHP_STAT_COLLAPSE_ALLOC_FAILED,
+ 	MTHP_STAT_ZSWPOUT,
+ 	MTHP_STAT_SWPIN,
+ 	MTHP_STAT_SWPIN_FALLBACK,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2780a12b25f0..670b8b7a6738 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -615,6 +615,8 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
+ DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
++DEFINE_MTHP_STAT_ATTR(collapse_alloc, MTHP_STAT_COLLAPSE_ALLOC);
++DEFINE_MTHP_STAT_ATTR(collapse_alloc_failed, MTHP_STAT_COLLAPSE_ALLOC_FAILED);
+ DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+ DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+ DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
+@@ -680,6 +682,8 @@ static struct attribute *any_stats_attrs[] = {
+ #endif
+ 	&split_attr.attr,
+ 	&split_failed_attr.attr,
++	&collapse_alloc_attr.attr,
++	&collapse_alloc_failed_attr.attr,
+ 	NULL,
+ };
+ 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 3690a6ec5883..ddb805356e05 100644
+index ddb805356e05..16b5b3761f95 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -920,7 +920,7 @@ static int khugepaged_find_target_node(struct collapse_control *cc)
- static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
- 				   bool expect_anon,
- 				   struct vm_area_struct **vmap,
--				   struct collapse_control *cc)
-+				   struct collapse_control *cc, int order)
+@@ -1074,21 +1074,26 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
+ }
+ 
+ static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
+-			      struct collapse_control *cc)
++			      struct collapse_control *cc, u8 order)
  {
- 	struct vm_area_struct *vma;
- 	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
-@@ -932,9 +932,9 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
- 	if (!vma)
- 		return SCAN_VMA_NULL;
+ 	gfp_t gfp = (cc->is_khugepaged ? alloc_hugepage_khugepaged_gfpmask() :
+ 		     GFP_TRANSHUGE);
+ 	int node = khugepaged_find_target_node(cc);
+ 	struct folio *folio;
  
--	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
-+	if (!thp_vma_suitable_order(vma, address, order))
- 		return SCAN_ADDRESS_RANGE;
--	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER))
-+	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, order))
- 		return SCAN_VMA_CHECK;
- 	/*
- 	 * Anon VMA expected, the address may be unmapped then
-@@ -1130,7 +1130,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
- 		goto out_nolock;
+-	folio = __folio_alloc(gfp, HPAGE_PMD_ORDER, node, &cc->alloc_nmask);
++	folio = __folio_alloc(gfp, order, node, &cc->alloc_nmask);
+ 	if (!folio) {
+ 		*foliop = NULL;
+-		count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
++		if (order == HPAGE_PMD_ORDER)
++			count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
++		count_mthp_stat(order, MTHP_STAT_COLLAPSE_ALLOC_FAILED);
+ 		return SCAN_ALLOC_HUGE_PAGE_FAIL;
+ 	}
  
- 	mmap_read_lock(mm);
--	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
-+	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, HPAGE_PMD_ORDER);
- 	if (result != SCAN_SUCCEED) {
- 		mmap_read_unlock(mm);
- 		goto out_nolock;
-@@ -1164,7 +1164,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
- 	 * mmap_lock.
+-	count_vm_event(THP_COLLAPSE_ALLOC);
++	if (order == HPAGE_PMD_ORDER)
++		count_vm_event(THP_COLLAPSE_ALLOC);
++	count_mthp_stat(order, MTHP_STAT_COLLAPSE_ALLOC);
++
+ 	if (unlikely(mem_cgroup_charge(folio, mm, gfp))) {
+ 		folio_put(folio);
+ 		*foliop = NULL;
+@@ -1125,7 +1130,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
  	 */
- 	mmap_write_lock(mm);
--	result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
-+	result = hugepage_vma_revalidate(mm, address, true, &vma, cc, HPAGE_PMD_ORDER);
+ 	mmap_read_unlock(mm);
+ 
+-	result = alloc_charge_folio(&folio, mm, cc);
++	result = alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
  	if (result != SCAN_SUCCEED)
- 		goto out_up_write;
- 	/* check if the pmd is still valid */
-@@ -2792,7 +2792,7 @@ int madvise_collapse(struct vm_area_struct *vma, struct vm_area_struct **prev,
- 			mmap_read_lock(mm);
- 			mmap_locked = true;
- 			result = hugepage_vma_revalidate(mm, addr, false, &vma,
--							 cc);
-+							 cc, HPAGE_PMD_ORDER);
- 			if (result  != SCAN_SUCCEED) {
- 				last_fail = result;
- 				goto out_nolock;
+ 		goto out_nolock;
+ 
+@@ -1849,7 +1854,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
+ 	VM_BUG_ON(start & (HPAGE_PMD_NR - 1));
+ 
+-	result = alloc_charge_folio(&new_folio, mm, cc);
++	result = alloc_charge_folio(&new_folio, mm, cc, HPAGE_PMD_ORDER);
+ 	if (result != SCAN_SUCCEED)
+ 		goto out;
+ 
 -- 
 2.48.1
 
