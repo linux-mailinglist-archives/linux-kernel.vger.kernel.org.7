@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-622526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEF3A9E8AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:58:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A7BA9E8A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE283B9FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:58:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07DDF3B959C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650E91D54E9;
-	Mon, 28 Apr 2025 06:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA601D54D1;
+	Mon, 28 Apr 2025 06:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b="tJ+uUBjI"
-Received: from server4.hayhost.am (server4.hayhost.am [2.56.206.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BTMUUgkd"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42121D88A4
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 06:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=2.56.206.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02321D5143
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 06:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745823493; cv=none; b=Ut/HytRFP6ibgeivsD/LlJicU8Or/yYWAIM/UBhE09h9fAcBU9JwNILh8M4JoN/NFiXxRCzg+k4xWrhtUa5FJXL41v3RDx9YrtBi2FQt4B7ovhp4+80EtaKtUWKr1u2271zzR5/8Hwjva9JKssCCgz4C5J1ozVWkjW5N6ni31MY=
+	t=1745823460; cv=none; b=fv0/D2Xdg2sYLCC3cFr11PtcJorHAewSsRMTorxc0W4YZhudHyAdjnTQOwyNOfNkFLKCFHWygYoDJ8HPH8S1KxiJtNO8UsliIf8G7+ceW9Lg4LqzDtA/+URv/uA7xWnaYS0WuqWelvfS7aMXxGlRpMggKZqJwJxy8T29WgR9pzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745823493; c=relaxed/simple;
-	bh=QesdOeuFd/3U5ADek4FnursgFsJEeQKVIGbHn5fY02w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NW1o1gjR5O4ODpQD3PHnk+OhjS/Lk7bHm4f8m+UqxuGjgfJzVAo51BGXbPCnfpD7/SuhGRN/stwjnnHtggaAMSZT/VJcn5nU60RpwGW3WKlDWEBPrsdnfXzFtHqCx43izelxQCZtRvOGa+txcWRcrfoemLRnIXgbIedKeI5+Kfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am; spf=pass smtp.mailfrom=beldev.am; dkim=pass (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b=tJ+uUBjI; arc=none smtp.client-ip=2.56.206.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beldev.am
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beldev.am;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=PgSNGRhDDLimUACzMmlpyYb3XHHooMd5BY0OOU8/LWc=; b=tJ+uUBjIOr4Oo3rLKAqL6nVZrp
-	mWmW7T6aRG7X5BUaNvlEpPK3jbgSlgp38C2lNW19AZCt+ngqS2Y4I1+jS//WbyrHDZYwx66R94iuy
-	Gk3+k2j+0vQ5wkBllKM4pNGHIPE+yEan5cx23DKWYdladr4VPkYJwsRz9DjSCzNWe/HIJmOK1n6DT
-	veyA2Ymq7xogkugdmrS3dFLYUn9scoFluif5+a+kjVytzimMaDdfZlOjn8mDGwBiU0/YEpZIfe5eJ
-	ewpIfgjveqpLta8rvk4yuVm5D++ah1Hy+znIh6qFOX0u7XY/TAMLxeMfoHJKVrp6RmZVbVpHMrXUw
-	bRXseRVg==;
-Received: from host-90-233-217-8.mobileonline.telia.com ([90.233.217.8]:64580 helo=localhost.localdomain)
-	by server4.hayhost.am with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <igor.b@beldev.am>)
-	id 1u9IRh-00000000A3R-1Px4;
-	Mon, 28 Apr 2025 10:58:29 +0400
-From: Igor Belousov <igor.b@beldev.am>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	minchan@kernel.org,
-	nphamcs@gmail.com,
-	senozhatsky@chromium.org,
-	shakeel.butt@linux.dev,
-	yosry.ahmed@linux.dev,
-	Igor Belousov <igor.b@beldev.am>
-Subject: [PATCH mm-new] mm/zblock: avoid failing the build
-Date: Mon, 28 Apr 2025 08:57:27 +0200
-Message-ID: <20250428065727.57990-1-igor.b@beldev.am>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745823460; c=relaxed/simple;
+	bh=d4XFv9AM2KzoklohKn4qQQWEUfY2HK2Ojc07GQWCCU0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GbgolUx1LJ180vqyxFd/rwlHSrb7FnEcZBq7U1GGgH3X7Zni/XKc6k4WWU6bzcYipEwmw0rqmK9NSEEtMIapMc3lkanqhIvcr4GzDc0xvkERFvMYSQrYCGB4slJKiyxoszaEHR8vS2p2WUcrz4nuEN7q3Fc5VVvPF5wj9hlfWGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BTMUUgkd; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f801baf960so16325a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 23:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745823456; x=1746428256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5+ortHNrfOvVi3JtuuibxSl/bmwTJ5xWjzQLpGiIwY0=;
+        b=BTMUUgkd+v8IIPzvt+5P5kyH2sC5Igo2jIQ64GKuejDk7mQjFMKzsZbGHUlTLLTMNn
+         rqtb4zkYLhASdIiNvINmjR4kRCAmrSSTM19m39Zjkx2BkU2zIWYO3Ji5fsGm6ujWOfjZ
+         5+JpEIMpF780H0bapcyC5NJlnM0t5h6jm4iAhYH2RCmFz1kADG4r24Ig2GObHkmPdWAr
+         pB7VoPdfwXZBDNm3gOTmS+q+Ik/7FmpIehiOXiHOL1SzanL5NkwXNX3y8ceolyHSbHQw
+         vtFjGkdgIpSVytA7f9O2F9yB0OkKDSGTV6NtBTm+jUSanjSfbHfzbH48frpyn83wCFgb
+         QiVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745823456; x=1746428256;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5+ortHNrfOvVi3JtuuibxSl/bmwTJ5xWjzQLpGiIwY0=;
+        b=mECo0gshRDBLoQcVAju77NYNXj4VpYhcc+cu0KvKVqN07VUrWN1TfXECvGmSjHPZ8A
+         PGWxA/CpJEn/96KsmgPuS9jDD+l2Zk+M1iVmHWP/PaRx7Kf9AwTV+Fcvn9hxLgyzV2Ax
+         Qtqa4ZcYhZOgq7tof7Mf/aoMJPQ6tEKN9EVuagdexcHeYJ9/nB7AVpIMu4fQag0nX+6S
+         PlO0dK9pLU356gBzxn7KHYePjB3gJfO8/ntCiygRQjVgW7vOe4EqOGhzJnRVo6xLHnii
+         lI6xkKOOX9Xsag91PcWzWoXMkeeeui3DRSDCBT2W6rBRi5m7klv0F2+XoHiRjLxHnTP4
+         kM8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUf65EhQGz7M6DX0mLoplhZo3PbJaPWV/rs1NyawJjqLVEm7ffccW5uFWuxKEwaF0oslkUA85pOPYVxiBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEXP+NjNTOtWYLpPmdiXeQE1rw8G7InN0CH0DLgxWp/TDoOO80
+	dPe2FjyjyW6LZ68qPbyiDSxDuq5pcwai8mDGshCI/6AkLB50QYMLZKxEIK3py0izPNw7N8Bx46Y
+	O
+X-Gm-Gg: ASbGncu6gfwWze7G6afAcGFWeRjLkkUtqhZO3Z3BrYkvMNIdJZ4hg6JXQLErvsVm3+2
+	Z1JWDOmZnTm5bZVg5I8C4g9NiCl1fu52CPvU98lBNkoxikLQzcfCt4Dh4TfN81pq46ef9rTBrak
+	PfX7xmBuwnUhWSbsA7cyZM2LLD5DzfxSGUb44iNAwXWwa2iMHSGi8gJ1GluuBIIL/rYsJyH+pP3
+	kHQx4xv40NGBwwf4isucFqPEqyQofA3Dvrjw4Vio3yTLXDO+cq1olDoDWxNJMnm5BrEv4pB1Nmb
+	Wtv6w58HP9MW/elyu0stDnuLDEG/n2SI5WgrIHtUUy9PJXwF+eZ6Y9l9row=
+X-Google-Smtp-Source: AGHT+IGPXwdKcilrH0EaY87ltjYS5IfxJmMxGOJymVoJWkuZjfIeQ+m0X5W+e8qJFuxvTNyVzNvW2g==
+X-Received: by 2002:a17:907:2d94:b0:ac7:2aa0:309b with SMTP id a640c23a62f3a-ace7102a77emr346405166b.1.1745823456326;
+        Sun, 27 Apr 2025 23:57:36 -0700 (PDT)
+Received: from [192.168.1.28] ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41b2fcsm569109166b.26.2025.04.27.23.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Apr 2025 23:57:35 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alexey Charkov <alchark@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20250425-apc_paper_binding-v5-0-3aef49e97332@gmail.com>
+References: <20250425-apc_paper_binding-v5-0-3aef49e97332@gmail.com>
+Subject: Re: [PATCH v5 0/2] ARM: vt8500: Add VIA APC Rock/Paper board
+Message-Id: <174582345507.19754.6996971204397782519.b4-ty@linaro.org>
+Date: Mon, 28 Apr 2025 08:57:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server4.hayhost.am
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - beldev.am
-X-Get-Message-Sender-Via: server4.hayhost.am: authenticated_id: igor.b@beldev.am
-X-Authenticated-Sender: server4.hayhost.am: igor.b@beldev.am
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Don't break the build for a PAGE_SIZE that is not fully supported,
-just print out a warning in that case.
 
-Signed-off-by: Igor Belousov <igor.b@beldev.am>
----
- mm/zblock.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Fri, 25 Apr 2025 19:02:21 +0400, Alexey Charkov wrote:
+> Add binding and DTS for the WM8950 based VIA APC Rock board. Paper
+> is the same board for all intents and purposes, so reflect it only
+> in the binding description.
+> 
+> Split the series from v1 into several chunks by topic so as not to
+> spam all the subsystems with unrelated changes, per Rob's suggestion
+> 
+> [...]
 
-diff --git a/mm/zblock.h b/mm/zblock.h
-index fd72961c077a..8610196b651e 100644
---- a/mm/zblock.h
-+++ b/mm/zblock.h
-@@ -21,7 +21,8 @@
- /* max 256 slots per block, max table size 64 */
- #define SLOT_BITS 8
- #else
--#error Unsupported PAGE_SIZE
-+#warn This PAGE_SIZE is not quite supported yet
-+#define SLOT_BITS 8
- #endif
- 
- #define MAX_SLOTS (1 << SLOT_BITS)
-@@ -101,7 +102,7 @@ static const struct block_desc block_desc[] = {
- 	{ SLOT_SIZE(10, 3), 10, 3 },
- 	{ SLOT_SIZE(9, 3), 9, 3 },
- 	{ SLOT_SIZE(4, 2), 4, 2 },
--#elif PAGE_SIZE == 0x4000
-+#else
- 	{ SLOT_SIZE(255, 0), 255, 0 },
- 	{ SLOT_SIZE(185, 0), 185, 0 },
- 	{ SLOT_SIZE(145, 0), 145, 0 },
+Applied, thanks!
+
+[1/2] dt-bindings: arm: vt8500: Add VIA APC Rock/Paper boards
+      https://git.kernel.org/krzk/linux-dt/c/5ff150fc3755516937e7b1747722687ad4f75eae
+[2/2] ARM: dts: vt8500: Add VIA APC Rock/Paper board
+      https://git.kernel.org/krzk/linux-dt/c/927e1b7ac361fa1a76fb29caa21853c9d8ba315a
+
+Best regards,
 -- 
-2.49.0
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
