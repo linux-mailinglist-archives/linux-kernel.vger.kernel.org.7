@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-622833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BF7A9ED4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:53:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EFDA9ED45
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877BC1886C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637A21886B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A4225F7A9;
-	Mon, 28 Apr 2025 09:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A61D25EFB8;
+	Mon, 28 Apr 2025 09:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="O4/B1puB"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388D825F994;
-	Mon, 28 Apr 2025 09:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pt/9xNwK"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B123211;
+	Mon, 28 Apr 2025 09:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745833946; cv=none; b=FS1CeRUV2gWgxZ3ImOW3gkMIuvu7r72FS6x2wNqoxmoTaWbBVGbX8zKRsvcfLFvmgO0E416DBriPU6zdBo4t7aob4T7GF+96l1FapRKHH20gwgbKZhnHEPEJhr8IdI3dh0XpDPMpLJh93Bsjtq0PfjO+hT+YCOBEe+Wz89OGvhw=
+	t=1745833937; cv=none; b=D9KKQSIRiqXNdhUxlllSEq9lDd0uc9HuVLG+Tm9KmhSN8HsitsvSwkBfJY6Fd8t5zrAMCIRJy53pjF6B34A+6XH8KYbGLfQGFBIfUeRgQdnBdc/4XZNa7J279/APZGiBKdwZaMDwshbvll3TkEaxYAwK7XC11hAungjl4bu9dYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745833946; c=relaxed/simple;
-	bh=1x8sp4jumFzb6yWzuwhlCiCa+03Bi2NQt2ISCvoMH0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sxYDN34ex5IsPK8qenFv5T0ohLXZ0AZ7tdAu7BzoGpCiK5O4LYAKsRZ/adauRrHKtlDarrtpYy5bFl1kJhL0EDJARDNpJDVRKSwA4mudECtVYq/Unqel1fS8ZGY4jQKAnxu5043zQpmSv0gwbl7EV+UYWYFjwLmJJy3Auv+yktc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=O4/B1puB; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=fZ1KTKeeZQIrOF8B6kO1Vb75Qk2vIgjMHppVXpEZZMA=;
-	b=O4/B1puB6Tj52ocS1Uq3UMlVUbuBwXkUxkoottG2J6ecxU0/WK6vxZEjLjiomI
-	zsQ+b9TnRjLhmoGLcxCDn+Jf5n5RJfLOQkWPSV5IJjTEnpWK2V6tWsjMR4QELaOV
-	HKqKlM8zmSC4ZMbCbJyIT1MZm37D7Iimc3zDeGmi67r6g=
-Received: from [10.42.12.155] (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBXNGeMTw9oeVYADQ--.39766S2;
-	Mon, 28 Apr 2025 17:51:10 +0800 (CST)
-Message-ID: <575ce02c-9128-4098-a852-d9e14f14010e@163.com>
-Date: Mon, 28 Apr 2025 17:51:08 +0800
+	s=arc-20240116; t=1745833937; c=relaxed/simple;
+	bh=vPO7FCqTPBnOCQ2w7fDeoAW8wssO18SdE/68cKcOv7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T0SlRKCzRXRzujtLb7JaSPUGm1ANMr8kzxIyPcxhn3AvObJCuZ9g+ubMp3kweTQzJuHr2KzSCyZfPHHUfd6xK8rM+2orTZNwufSuICAIqn7XsiPC5BZOURGW9iwTVAltEay2FQOSYiKoIuCLKByV0V1XOQtzdtbkO8NaHbhPN/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pt/9xNwK; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso53244185e9.3;
+        Mon, 28 Apr 2025 02:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745833934; x=1746438734; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3iYa4MxU6eARu1/VvWGOAcWwlx81rdNPO/NjIIvnc1I=;
+        b=Pt/9xNwKun4Ezj6eyF05cve9XHEfzKo0HKKYD9YeCuRoHt/NdQVx9jmGnND6LPyS2O
+         UD6BsfIjbPkAPIWH+3VXZ5HK+h5RXW8OIAiNqqHLtkc/It/sDZ5ud6DdAis3qYcAjoWM
+         iEE6A/rfVMw5GEsMwDTNbOuAsE7ZT267R10F/07AFlSnbBJS5jGxH/zOQoNZslCebtfh
+         48S5EzWbmp0Wp6NFsHsyrPCYfc1A1SN/MwFovmro5fu+udOwDdcHOFzGyyXe+4xnD3mF
+         L93G48+H2CFvnibKdELLQclpQVHlUqxfIfiwzjhGLDPL3Sw9YCHrInJlNFtR9oadkmhr
+         PiNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745833934; x=1746438734;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3iYa4MxU6eARu1/VvWGOAcWwlx81rdNPO/NjIIvnc1I=;
+        b=S040mko3icILkUiJReVTiSq63AFRRbQHKx+12Fh4wEjqK6gb1RZ+tSyyo2tbImscGL
+         xnOZlHyn5rqGcNyABSnRs28uTfcgarjYqzy8tzHjehxJhpX7LXgtrrVOb1wTzx5TrvT3
+         3n9OpqHhBpdZGqbfcnsxxW7cl/LTM5nKzgYv3axrNS/Z/uqDCTLMPvr2KleZbfYyPRIe
+         GZyjAU8PO6iXQauCGwki/HUxlTMloWcxqT26vnUrsH8vuXnbTUKMPsiXwfXXZNBro+zw
+         ZXJTT04lLPhoTwTVDOs7HI38b1C2XhLx+W17LWV2YA8eqNX0ohiRGrJ8whHaR6NBwq7x
+         hZmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUakVlEBTYemxfDDw9AGjw7XsTF0K+249TNmtUUcSrqmUxXEtlWP6IFayOznFjaQ9ud4rnFHl+pHHCcM68fvcduUZ8=@vger.kernel.org, AJvYcCWMhNV9UdOj+9SjZ3r4wQPRlEZOHghhRM8BaJtdvSRDrlZSDuzKjJrjaBXJ3WS4CXlnjfUMAJn7Jv3UuY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfkNGqdtBnq8Clj1CrunazKRHBkBzcr7mcRIfk+BYjqXVgbJ+I
+	d5vSiTVBb28cPyMUgsnmD3grGTYamWCBw5BCiRdxYi9Ka0NPpdA9
+X-Gm-Gg: ASbGnctAnrGsKL6CK/4ZlWk5NeWdWHKu4AlzOk+dJAhWMW/5pxZFnEnL3YG6aL/yMtQ
+	LvEXgJBbQaxI1MsmLaGXDv/fqJc/PRtYCFzQZr9qg6n/pm5aXfwXRdF4RJ6UlyQFD6dY73xafic
+	2HHTXC75b4neQzh5dC3GmGhufahY5/PLtGHYnEoRTCUlISHdhfdDEy0AzWSMO3ZGOgzaThpqAQa
+	twilZ9DdlRcREgP1dcWqEzNmShm1kky5VX+InUtiWLfiezywxAsa34jk2WMyDDOIE9PhI4KUqSj
+	nGJ6MilaRuWZwNgRuhvm1o1cERdcqx/PmKLt/W7kBgZAcQhM0JZaTvn+lSgpwD8BSa2BMLfWTQ=
+	=
+X-Google-Smtp-Source: AGHT+IHQIE3IbLN9grTmPPTyYeJCMY0+kRbu20H7dv/9Ml0ERyaY34QGpx1q/Q8dd+TjlLPZxxuzgA==
+X-Received: by 2002:a05:600c:1911:b0:43d:83a:417d with SMTP id 5b1f17b1804b1-440a65dbddcmr91918865e9.12.1745833933918;
+        Mon, 28 Apr 2025 02:52:13 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:593b:8313:b361:2f0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca497esm10551270f8f.24.2025.04.28.02.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 02:52:13 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] media: renesas: rzg2l-cru: Simplify FIFO empty check
+Date: Mon, 28 Apr 2025 10:52:08 +0100
+Message-ID: <20250428095208.99062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usbip: set the dma mask to 64bit default for vhci-driver
-To: Greg KH <gregkh@linuxfoundation.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>, i@zenithal.me,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, shuah@kernel.org,
- valentina.manea.m@gmail.com, Zongmin Zhou <zhouzongmin@kylinos.cn>
-References: <3e1f8fab-0155-4ff9-800d-5fa9df88c48c@linuxfoundation.org>
- <20250422063409.607859-1-min_halo@163.com> <aAdEM0crDfSP9JYf@infradead.org>
- <4c6660a6-29ce-4b97-b092-8fc15585e52a@163.com>
- <2025042512-corsage-handpick-bf2a@gregkh>
-Content-Language: en-US
-From: Zongmin Zhou <min_halo@163.com>
-In-Reply-To: <2025042512-corsage-handpick-bf2a@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXNGeMTw9oeVYADQ--.39766S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFy5try3tFWUKw17XF4rAFb_yoW8WF13pF
-	Z3uaySyrs8KF1Iqws5uw15Za4IyrsIvF9Ygr1DXr1UC3y5uFnFkFWIgr45uasrJr93C3Wr
-	ArZ7Was0yFWq9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UeKZAUUUUU=
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbiUA49q2gPTZI1sAAAs1
 
-Dear Greg and Shuah,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I found out that the vhci-hcd driver added this virtual device
-as a platform device from the very beginning since 2014.
-I'm just getting in touch with this module and
-don't have a deep understanding of it，shuah should be clearer.
+Simplify the `rzg2l_fifo_empty()` helper by removing the redundant
+comparison in the return path. Now the function explicitly returns `true`
+if the FIFO write and read pointers match, and `false` otherwise, improving
+readability without changing behavior.
 
-I don't know if using the faux bus to replace the platform bus can solve 
-the problem
-that the error limitation on max_hw_sectors for usbip device since 
-commit d74ffae8b8dd applied.
-But this change will request user to update kernel version to support 
-faux bus.
-This will also be an expensive change to fix the problem?
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aAtQThCibZCROETx@stanley.mountain/
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have been discussing with shuah for a long time.
-Is there any simpler way to fix this problem?
-
-On 2025/4/25 16:28, Greg KH wrote:
-> On Fri, Apr 25, 2025 at 04:08:47PM +0800, Zongmin Zhou wrote:
->> Dear Greg and Christoph:
->>
->> This patch is the simple solution for the issue described in below link:
->> https://lore.kernel.org/all/20250219092555.112631-1-min_halo@163.com/
->>
->> This issue has been discussed at length with Shuah.
->>
->> As Christoph said,vhci-hcd is a virtual hci,
->> but it serves as a bridge to connect virtual USB devices to the real USB
->> controller.
->> Since the commit d74ffae8b8dd is applied on kernel v5.3,
->> the virtual USB devices's max_sectors size is limited since v5.3.
->>
->> Just because on vhci-hcd, the dma mask setting follows the platform device
->> default setting(32-bit).
-> Wait, why is vhci-hcd a platform device at all?  It shouldn't be doing
-> that, try removing that to start with, which will remove that "default"
-> setting.  I recommend using the faux bus as a potential replacement.
->
-> thanks,
->
-> greg k-h
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+index 067c6af14e95..97faefcd6019 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+@@ -348,7 +348,7 @@ bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru)
+ 	if (amnfifopntr_w == amnfifopntr_r_y)
+ 		return true;
+ 
+-	return amnfifopntr_w == amnfifopntr_r_y;
++	return false;
+ }
+ 
+ void rzg2l_cru_stop_image_processing(struct rzg2l_cru_dev *cru)
+-- 
+2.49.0
 
 
