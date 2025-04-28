@@ -1,212 +1,289 @@
-Return-Path: <linux-kernel+bounces-622533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDD8A9E8C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A761A9E8C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BFD188F5A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 963A41721BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1AE1D5CFB;
-	Mon, 28 Apr 2025 07:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CD51D61B7;
+	Mon, 28 Apr 2025 07:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmC+QhMV"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="H4K8ojtI"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012004.outbound.protection.outlook.com [52.101.126.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE1B3C3C;
-	Mon, 28 Apr 2025 07:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745823758; cv=none; b=V6mA0XdIFQDVM5xinN+25QaxF3AKKF4TD7oEGEICUBTvZUjOKA0mGaCIvxZIxl03KZg4IzVPdI2pRrkjL/tolLeO4JihAMWn3WWsLT0IzpXS71+umrRIPKLEE3Gl7e/DBFWRR2Tf5tk13QVJUeS5uLMFz/md21p2i8IcolO/wjI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745823758; c=relaxed/simple;
-	bh=5F7JfgtkKFnOClnGWwKldccpucpiSv2bOpWoSonwojM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mXepzJOnRoaUlY5aJRwo0Amj8rEXmEmQEv6Rt0EIu1eozJ8q5j5dYUQaroXAT2AqSc5emkzgeQhvvM/gAVlVA6cV+GvbQ6PLfixM2mIE0Sr5UAuNgTsiXx67TeeUd9jWWc4fGP6UAigZq0L/FPLy5lrBq9dLm/MDHVMhSRap7Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmC+QhMV; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54addb5a139so4787474e87.0;
-        Mon, 28 Apr 2025 00:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745823755; x=1746428555; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mKZTAR18iQQ5PiSvQfyPIEtFL+CoyxFraPYXeb+BF+A=;
-        b=nmC+QhMVoSyuMnvt0jfRLTMosm6SKYLUAM2vXAGzVgKh7+AKSEtP21SMtb4zkQ0nYw
-         TTPh9uez9+U5GcT2He5tB71DLRSnik/ZGn5q4IH3gGciD8x8spGe4b25IDaD81QAAU4e
-         RaVIlbSMWUpJl1H5CyrMd44geidzDthvuWZONTgfgazOClFkc04gLEIy40xvryeMwEYl
-         z0yLSgk1bKKSR5zqafhdvk5KG6liY9ix2aQBw3Y6mAUSkDJguQFSeo4rJbtTGKIB/f8/
-         tvlZrEF9IBkHiEYVOTpL5o88EQbo2Nljm7eeC3Q3VYtbKPko83ToBZxfpjVj6Qd3TKi6
-         //7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745823755; x=1746428555;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mKZTAR18iQQ5PiSvQfyPIEtFL+CoyxFraPYXeb+BF+A=;
-        b=YAbtRO2jjJ818RZi8Bb++17qzSWtK5LyvHV2DbQ6QYg/UYUfuyUFIufAYjm85ALjKe
-         CdcGyK0zvpS1J9NAokOEQaiSPBfkpHd4jbjKHE8AE+lompmHkEYpMtVddkhehVg+uMhT
-         N9NHFcwMcj9yx7XvNK//TvyjfekXjKKXo72zfBFr/6HKsRCKFq3V361ZGlM1XMnQwyyR
-         ArdncdXxhtVQfVHmUYle8wyzawpmIIrrWHanD5QZKFAKMH05V8BMDE0OJajVqqV6e1y8
-         ukj2Y/lxmf6DPhzX6iH97e6522Kdm/ZyuRVQtGjEkVzdHyV/Qz3xpGHshZ3qul0NjySN
-         shcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8+vuWxz/ItsfcrUprATSm8ExVnaA0eIEHBIdE0IxOGwqibryOGcRUgBFjqUlx49/MIsGsJlski3w9C8Sa@vger.kernel.org, AJvYcCV1cOOFZJGkcCA0x51tjk3cZgbMAJJzs4/FGv5ObK6qtlTDodpJECOwXMLy5pJfqMepVzWpZJ/8FXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1xQ7FMoKeTM8HkQhNB+PGdLy/42Q90rjH1iXg4E2rrzn9bu5e
-	FrRI13Iq76ME2+wnF9Bhs8zO8JadssiKymr7n/llDpbGVmYG4ab4
-X-Gm-Gg: ASbGncs3Nedg51pKd+Ygk7+2DUYtFPNzMf7F82g+Z0oEkF1ohfa9eeePvfXv1dbGMSZ
-	RF9FH9jfAxCrTxQ2pBf/ZIjW67eEs3mLfgNrrDBZ6i+MYa15Thw55C8oye+2UGiA5y6HITLfOyq
-	SL/h1bQNj0aMUQE8SMKC8pPzRI3BsZ5HF6HBlEZ9UEGj+E20oXfGRy38Xmp2gHeAfM9kGALj7Ml
-	d3+9M5nFJqB/DTYDVnqIr9KLnXNGEKDF+6k2mA0X7o6MnjrFYbetG4dasVu55nw+o3RpGtqd7IV
-	b6ciKe5xo53/fbu2EgY8f/E8fDtfLQTahF1NeHosmPsaGwbus0I0JsCjGQ==
-X-Google-Smtp-Source: AGHT+IE1wjupvO5Q83YwJEzkje9DsDOyRwb3d3UPovutABH1nRWY7Hx1Ef8G/Sa0AxSVKdRD1nAxVA==
-X-Received: by 2002:a05:6512:1090:b0:54d:68bd:2847 with SMTP id 2adb3069b0e04-54e90015593mr1878763e87.52.1745823754566;
-        Mon, 28 Apr 2025 00:02:34 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb3bdbcsm1555619e87.96.2025.04.28.00.02.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 00:02:33 -0700 (PDT)
-Date: Mon, 28 Apr 2025 10:02:17 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: ti-adc128s052: Drop variable vref
-Message-ID: <59106e24332743a7f9eb0b13ad6a2f5595ab485a.1745823530.git.mazziesaccount@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1683C3C;
+	Mon, 28 Apr 2025 07:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745823871; cv=fail; b=LNGF54Q6xN3fE0P3cczquc474wjew4Iu/SfZqjEPvPQT8L1UMkMfz5aoLBWVzZ6LA6V4CIosQeg3XzELntAbxBuGc2SnVax/AWcySY9DXCZuoDMxdz6svNcyvcB7IUXaeMRkuxXrfMWTdLAtFLWwsh8Nx0XbHyC0g9Bfl7SV9oQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745823871; c=relaxed/simple;
+	bh=Cbbikdph9gVW9EbWvWUkvnrtH4QVP0gmTP9R3tfLkhQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dFqAcvwOgbDP10o+v6xXDnX/TLLQlBKmJq/toJ2nVjJy7pQ/AHL6690APko+MVfkxQJdoJqorjlocHYV5PH7iG2s4exr0RuYfK0fceAzWevd+si4jmSHTzE4CnCjgFHc6TGGkVltySodbPi1ylARGD6JmydM5esgROJTHGeQVJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=H4K8ojtI; arc=fail smtp.client-ip=52.101.126.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QmaNThclFJXfPIg+TN7J65fY2qcqEtPSGgG6w3phxToe0Uum4KcUSuiHP74t0gL1CeQSTo0/S1jLvDnY45W9EORSNvSGscR1kjQgQddP7LNkL8WfEc7f0JHThZAJMhMKuWXhm0M9QdnEIpfMP+mZXdfXe6x1WGB7ELQk4seNMsScX/tvDMayNfYB6DB6w6a6lXIt8Vrl7VZun0z+Z4j4mhoQbt+u2wLVY58lDsMN3vzpznE4TWdePDQnVuXBs4pyZnmMYiCtRCl3gWUwxnV3ARkEKRDmxr8yOOYefjZdH+Ut5tXX+y7X6Vsl1NqVm5Sk9QiGzqsq/6uOnQaCVphkEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3saixAML2VUGusm9AYcp6Yvl405I9RHeRBGZnM96/dU=;
+ b=G4WMGZmj2wUlA0JurIwx5cMPjPqFfNYv7wanNzY0mqEzOaAi8CgCb6TQT6Vbs0+hNUH9aXOo50JAjCjoCYQDvXQRpqG+FVBhvhOFFvDmsS3yVb6uuCt/AaMZ+90oK7lhzJwazijUS5j6kzRh1QfqY48kln0QakfEUpDORnr9gKO0a++ZRT+kIIe8e7FCFJhw6xwB3jU+pgoIPNTLnVeONhOSt7eDMSTm2GvEOhFDRDTYxIjrjacxQiopotIifhYSPgv2obNnk23kwP8qPV3kB8fpaPNaOexhQ0fF9rIEGTdN/jKWAtfHGUJ7Yl0vwvXZl3jfIxLWN8ch08fEs48/eA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3saixAML2VUGusm9AYcp6Yvl405I9RHeRBGZnM96/dU=;
+ b=H4K8ojtIt4TZLSzIqUkXZ0c6U2YlPav4r6cLPaKf8ABpIe12u8LovagXAzkfaTFepFgLSbrwKliPQfMMTANrYJYFnWB+bpnjWmnjxYzYVBoi6RTzQ9CHH8Z8j9a/JXUUyiZ4KSlVYKaKggRED6/g1zAcb9tjENLDkSXdcpchxubOoPrXDJ+Nqw2IqcTgp1P6mTizcEs6NzLlRckf2MVK8lIhaFk+YLjqHcYYGqvBPNBiP4MRVWfler0JbqkkrrgjKlhWS/08Zyms0j1UEk+8Xf2daRVkXRwr9moc5NRrq+AF27RzojZIodny0iXnpLEVVhQjxKSnsvwyYOjGnsMWjw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by JH0PR06MB6979.apcprd06.prod.outlook.com (2603:1096:990:71::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Mon, 28 Apr
+ 2025 07:04:22 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%7]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
+ 07:04:21 +0000
+Message-ID: <b077248e-8af5-46be-89a5-100da3ca35ba@vivo.com>
+Date: Mon, 28 Apr 2025 15:03:01 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Revert "udmabuf: fix vmap_udmabuf error page set"
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Dave Airlie <airlied@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>,
+ Bingbu Cao <bingbu.cao@linux.intel.com>
+References: <20250415031548.2007942-1-link@vivo.com>
+ <20250415031548.2007942-2-link@vivo.com>
+ <IA0PR11MB71852A481E8A99C9380C7317F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+ <63297d3f-5e37-411e-8150-108a03a01a89@vivo.com>
+ <c752a31d-e7c5-49bf-8722-8eeaf582a4d1@vivo.com>
+ <IA0PR11MB7185FC46BE53F16BA6A9C7C9F8812@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB7185FC46BE53F16BA6A9C7C9F8812@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYBP286CA0042.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:10a::30) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d3Pp7L838hXuKerh"
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|JH0PR06MB6979:EE_
+X-MS-Office365-Filtering-Correlation-Id: 332e716d-6918-41e1-200c-08dd8622e691
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bVI1WnJIaXdpYndvdURlaGJpVE9kb0F3MlBISzdTOGk1UkMvTUJZMHNReWVO?=
+ =?utf-8?B?QmUwRGEzUEVHdjJQNCtCZkF5NHd4UlorTnFHQUpNSXdWcmF2T0tKWWxyaW1Q?=
+ =?utf-8?B?WFdSZ1NXdG4vYlhNYWdOR3h1SzVNdjZOS2dXVHVPRFcvVkk0OUpVTENEaWZI?=
+ =?utf-8?B?dGtiU2NHMFpPb0s2M0s0cGcvWkVVWWFOamVCTldvMW5KNGtOQ3UrYmR1NVFV?=
+ =?utf-8?B?YnpxaUJFblhuRWJPV2hQenZjandKUE4vWU1pTm9jUE92YlQ2Z3ZjQTBwdFVV?=
+ =?utf-8?B?bk9QK0hoRkxjWkkzZTVuWVE3TDcxWGozRUZ3aUZ3UDVyNVZITEpEZ3NiWnFN?=
+ =?utf-8?B?V3J3dy8zSHN4SFFMQVlnWFFKSXBUUjd2VWE1ZmY3alJGRis0eW93Z2YxcnpN?=
+ =?utf-8?B?cFM2d213ZVNwcEJQaU1Ka05jdkVDYVZtcE91VytjbXhrVVBmQnJRNmw2VDVp?=
+ =?utf-8?B?cGRmVHBQZ3pSOUJYUGMxWHl4N1o3aVdoc0MyQkExRWJQaldBRkhMQUdYQzY4?=
+ =?utf-8?B?OGdnK1JNREdTbnpkNVFqdTNJMDVkMUZLQlJUay9HcnhwcldiYm9IeGxSYTZG?=
+ =?utf-8?B?Y0hCOFo2T3F0cW9menRSdDRWRndxZ3N3eFJLU2J1enIzU3FkRVA1aHJMNXhk?=
+ =?utf-8?B?ZlNHemV5WTQrTnhTWElmM0hpbGNrZko1VWc3Y20wZ2YyZHVYY25ySWdaSUtR?=
+ =?utf-8?B?U2wwd00vbGpmYU9kRXVZbU4valY2Z0cydWUrWEZ3T1I0ZmpIeUd4YmtmUy9Z?=
+ =?utf-8?B?dms2WTBlRXRZT3JHOEErcHlPMS9XWVFwanIya2U1YVdHVmFDSzVMYVVoSmxB?=
+ =?utf-8?B?UjVYVytRcEUwSWorM3lZaS96aEczLzkzWjlYa3pJekdkNTlWOENwYmpUVzcr?=
+ =?utf-8?B?b0ZwemNXa1lnc1hLb1h3K3JSNmc0Qmt3TklnYnU4VzdWZVMrUFFWdGxjZ2Rp?=
+ =?utf-8?B?WkZCM0RDUlFib2VLRWFpQWE0ajBnNFdaRUpOZmlSbm9vY0ZYdEx2RkRMSTF2?=
+ =?utf-8?B?WUc3dnhUME9TU09nWnFSbUJuQUVvck9PR29nSGVBL2lzQU5kRnZZL0lWV2h0?=
+ =?utf-8?B?WWNrRWxjKzVMejQvSGNiOTJCSXM4eC8xYVUrYzR3UElsYlRLLzBKWGtXTXBh?=
+ =?utf-8?B?WVdjVE1QUnU2elVXYVo2VWpLSHhKMXpOM3Q0SmNBSjVBNzdvbEVTV2RIemcr?=
+ =?utf-8?B?dzNoQjU0NG1ZdFFEK2paR1BnMmtKWkp4YVdyZ1dkTjVGK243TThsV1pxVVYv?=
+ =?utf-8?B?akV2Zkc0YXJtbGg3RjNrL3hYZVBla251UmRFL0VWVDFKRzZaUkE1UFYzdysr?=
+ =?utf-8?B?by9aRFYybGVYU0tORmpMUmVUYXNSZmRLL2E4MGwyd2psS1ZHR0libTRZUk5Q?=
+ =?utf-8?B?bTh1QXB0aU5Uby9sdzhPNW5yOWJsbUpJT0l5cE1QUFU5bytRTTVZTVpSanE5?=
+ =?utf-8?B?WE1xYU96a29ETk9LK2IrUE9vbWJaTmIzN3dvblZZenJCOUYxMHJUNVBLTG12?=
+ =?utf-8?B?RXU2cy8wQm9DVWFEb0kzMzIwOUkvcG9BekJQaXc4aDhGMWd6SWVZRG4rZXlv?=
+ =?utf-8?B?YXAxSS81dGVFYjVrcjVLbXNtYTlPTkowK1dnZ2w4RDFBRHVWNlJhQTVlQVNj?=
+ =?utf-8?B?NDRpV0RxMEFVTFQ3dEI3V0FRRDBCbm1UYmMzbDlnYlVDQ0sxS3FqOFpodGZ1?=
+ =?utf-8?B?bkcwSEhQbE8wbzVqcnRoOWdYQTdvajFXbWw2KzNEV3k2dVJObjA1cExUdUsy?=
+ =?utf-8?B?RkIwcUYrVnJGS0MwajU4d2I3WmVIK1NPVGcvR01YUThtSjJqaFRkZ1Btc2xh?=
+ =?utf-8?B?OEhUVzNtTjFqNVkxSzNsMmJlYlZVY1RTZ1J3QUdzOUxVeDFVaTBoSkVhK1dl?=
+ =?utf-8?B?a1c4MTFkRXJWYXNrelNtWVRiNUVCRjhMSHVOTVZPQUQ0Y0R6R1ZlU2xMNEJO?=
+ =?utf-8?Q?ysRXd1aRQvQ6raFMjO0gLibUE1+GX47b?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S2Z3VU9FRGE1TDliS1RlUXZESVFlNEt2dk1YUjRndnZpcEpTL29TWDN4SkxU?=
+ =?utf-8?B?bUFxMnY4a2JnTDNiMWNTYktPQmN3ZlZvQzBDVklsYUhPS0Nqa1Y2MGpRUS9P?=
+ =?utf-8?B?d1VLSzRxSFExQ1poQWJMaVNUbmp2QVM1eGNwTmNFdFpvVFdZck1CN09iN1lG?=
+ =?utf-8?B?U05FYjJtM1JqakxUUXZlK0VNQnFGMEk1dXlSVzVCTWpPRm9iaDVQQTIxWjRy?=
+ =?utf-8?B?ZTFuMWZ4TUg3cnUzSkZRbkpIbjJaQVdKT0MrYTZ5Y3NuWGo0YXM2b3pkWVYw?=
+ =?utf-8?B?T2JMY1pBUnZuQ20xN280b1E2SEd2TkhObVZDbzdKK0M4RUlsb1dXM3I0cjFS?=
+ =?utf-8?B?WENCOTUzak4vaUJLczFtekdITmp5N2N4UnZrOVpjZGtURGwrbjhCNHMzM2lM?=
+ =?utf-8?B?WE16cm90N1kxOXAzMlljSmR2QXRCQndDNFlyMFRMT1FVYmFGZTBGL0hjUC93?=
+ =?utf-8?B?Wi9GYnVObUk4bnhIUk9Rb0dvOUpMbVU1TGk2U091VkdHKy9RcGV2N0t1Ni9Z?=
+ =?utf-8?B?MEFiMTFmUnV3Um91VVBFdG5JbFErTEdiWXZ5bEdneVFnVlRvY2Q3enM2U2xL?=
+ =?utf-8?B?SjRPcXgxckZ6Qjg3NWRYeVRla0tvL3NuRDhaeVlRYzFxRm9uU1M5NDhYRGZJ?=
+ =?utf-8?B?R2x0eE5mYnRpSHlFYlZBWmc0SHVtZy9aSW9pTmVZZ3ZhSU5odVU1TWxrNW5v?=
+ =?utf-8?B?R1B3UkEvWU9JbXVpWVZhWXUwRFVFNDhsUHVoWWNJcUZjdEVMSVdKQ1c0QUVS?=
+ =?utf-8?B?WDhUZlpibE9GWWJkSFFmcXdmditFSGd2NWE5cGNBUmFYbm1QOC9mcjdKdERD?=
+ =?utf-8?B?eDVJR2R1L1VUWWlxS1J5MmxUM0FJRWE0di8ycGkvcStZUThKdkFPVHVrOStI?=
+ =?utf-8?B?M0p2WVRJbWZSNzJsSExTSHh0WTFFVC9wM0hjVkhGci9oYUVDT2tlblJqdDVQ?=
+ =?utf-8?B?N0sxWGhMM0Z0bFFsUVoxTUhNTWdmV1l5cFV1YjNyUlh4NUtObzdKSUZYQTd2?=
+ =?utf-8?B?dlNydkRzaytteitFYzhocGk0TTVyVnJqajVWTHo5dEpiQVhNTWR0YkFjeWc5?=
+ =?utf-8?B?UnFRM1QrU0g3ZnpnOUhMUHpQYkljUThxU0dwLzBuY1ZYelJOWnJzNzUzTFQr?=
+ =?utf-8?B?TDdWY1Fra1ZZOURWb24zOGtaTVFoUW5XOENjQmtIYzlha0Y4NVBzcWVpUDB2?=
+ =?utf-8?B?VlMwUTVlb01YN2U0UWNLVG80alhyOUpaWHE5K2tFMGFFT0JUbEsvVjFqbVRL?=
+ =?utf-8?B?dmR2MjdoY0VsM1RheGxUSUZLKzJzZTRQb3YyOSt4YUFyRm44T0xXNXJaSXkw?=
+ =?utf-8?B?eDFVcUpJYTBhSmIyMGIzSjA2WksrVWs4R2xjd0d0ckcrcHZZVmZIY0h3Wm5l?=
+ =?utf-8?B?WDdjVmV3MFNWS3dReTNuNUFVYXN1WGZPUTBabGhaUmNZczBBWkJOOGNscFp0?=
+ =?utf-8?B?TVI2bGJFQXlSUDNHaldTbFJJcGpWTVI5M1NpZUU3cExlWU5Vd0pCUStjL3o0?=
+ =?utf-8?B?OC9ZS3hhcUFkSTBFYzlkdXhQREkySGV0V0xBMkp1ZjhTUll1OElKcU91VEoz?=
+ =?utf-8?B?WU9rcFN4ZVRsazd0Y3hnaDhLZGlCb3FITTZVQ1dCNlVVVjJSb05SUS80dDRF?=
+ =?utf-8?B?QS9RRWp3MExCYW84T2UzK2VFSmlqSE94UHRKT2ZpaVRkN2NVREZqRGF3Sm5t?=
+ =?utf-8?B?clZQV0xlYThxN05BY2RXcld6eUwvbUNIM056aDA4b3FHYXdQODI3VUVGOWdD?=
+ =?utf-8?B?Z2JCeDgrYVlDUWRaZDdUY2svTnFFQW4vWHlNdmhFMjYxNWE4UmtDU1B6dXdO?=
+ =?utf-8?B?K29zMGNIWkRoNDZRMDB6ZUZRQWQwVG5jZ01LMEJzdHVjbC8yTU1zRWN5Z3J6?=
+ =?utf-8?B?aU9aa3l5Z3NuczBscmFuTGhUY3Q0Qzh4c3M2K1VDWnNldTl3YlB0SGlkNGUz?=
+ =?utf-8?B?bW56ZHZJSXZnSHlFYzVpT1MrZkpLNlp2ZlNoa2hnNWozWVAyUEN2dzJEQ25C?=
+ =?utf-8?B?WlFUdzd5ZXlBTTh0Um9HSWZnc1dLVUZiSit6TUJ1eFRMalRsZllHd0kwbS9L?=
+ =?utf-8?B?Rk5PTWhZTDF5cmo1WFMvMWIrM0xrMzczUWpFamd1OFdOdFlPNHJRTXJ1cHVv?=
+ =?utf-8?Q?0/lVlty6sJn8swBOoTMsdBw2w?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 332e716d-6918-41e1-200c-08dd8622e691
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 07:04:21.3638
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PoO/CtrIOFZMC15nseFlwhpGAIR3YwhtB73Wik/SDQcq6aTdA5WtmCO4jVN4OYw2RUeN2hrDF3VVkW6VVaFL0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6979
 
 
---d3Pp7L838hXuKerh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+在 2025/4/28 12:16, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: Re: [PATCH 1/2] Revert "udmabuf: fix vmap_udmabuf error page set"
+>>
+>>   From 38aa11d92f209e7529736f3e11e08dfc804bdfae Mon Sep 17 00:00:00
+>> 2001
+>> From: Huan Yang <link@vivo.com>
+>> Date: Tue, 15 Apr 2025 10:04:18 +0800
+>> Subject: [PATCH 1/2] Revert "udmabuf: fix vmap_udmabuf error page set"
+>>
+>> This reverts commit 18d7de823b7150344d242c3677e65d68c5271b04.
+>>
+>> This given a misuse of vmap_pfn, vmap_pfn give a !pfn_valid check
+>> to avoid user miss use it. This API design to only for none-page struct
+>> based user invoke, i.e. PCIe BARs and other. So any page based will
+>> inject by !pfn_valid check.
+>>
+>> udmabuf used shmem or hugetlb as folio src, hence, page/folio based,
+>> can't use it.
+> Please consider having a commit message like below and resend both patches:
+> "We cannot use vmap_pfn() in vmap_udmabuf() as it would fail the pfn_valid()
+> check in vmap_pfn_apply(). This is because vmap_pfn() is intended to be
+> used for mapping non-struct-page memory such as PCIe BARs. Since, udmabuf
+> mostly works with pages/folios backed by shmem/hugetlbfs/THP, vmap_pfn()
+> is not the right tool or API to invoke for implementing vmap."
 
-According to Jonathan, variable reference voltages are very rare. It is
-unlikely it is needed, and supporting it makes the code a bit more
-complex.
+Thanks, that's clearer, I'll update in v2 version. :)
 
-Simplify the driver and drop the variable vref support.
+Huan
 
-Suggested-by: Jonathan Cameron <jic23@kernel.org>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
----
-Revision history:
-RFCv3 to this patch:
- - Split out of the series (as other patches were applied)
- - Print an error if Vref can't be read
- - RFCv3: https://lore.kernel.org/all/db5cb2e1543e03d5a9953faa3934d66f4621c=
-d12.1744022065.git.mazziesaccount@gmail.com/
----
- drivers/iio/adc/ti-adc128s052.c | 31 +++++++++----------------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s05=
-2.c
-index d4721ad90f2c..383098206246 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -29,13 +29,12 @@ struct adc128_configuration {
- struct adc128 {
- 	struct spi_device *spi;
-=20
--	struct regulator *reg;
- 	/*
- 	 * Serialize the SPI 'write-channel + read data' accesses and protect
- 	 * the shared buffer.
- 	 */
- 	struct mutex lock;
--
-+	int vref_mv;
- 	union {
- 		__be16 buffer16;
- 		u8 buffer[2];
-@@ -81,11 +80,7 @@ static int adc128_read_raw(struct iio_dev *indio_dev,
-=20
- 	case IIO_CHAN_INFO_SCALE:
-=20
--		ret =3D regulator_get_voltage(adc->reg);
--		if (ret < 0)
--			return ret;
--
--		*val =3D ret / 1000;
-+		*val =3D adc->vref_mv;
- 		*val2 =3D 12;
- 		return IIO_VAL_FRACTIONAL_LOG2;
-=20
-@@ -155,11 +150,6 @@ static const struct iio_info adc128_info =3D {
- 	.read_raw =3D adc128_read_raw,
- };
-=20
--static void adc128_disable_regulator(void *reg)
--{
--	regulator_disable(reg);
--}
--
- static int adc128_probe(struct spi_device *spi)
- {
- 	const struct adc128_configuration *config;
-@@ -183,17 +173,14 @@ static int adc128_probe(struct spi_device *spi)
- 	indio_dev->channels =3D config->channels;
- 	indio_dev->num_channels =3D config->num_channels;
-=20
--	adc->reg =3D devm_regulator_get(&spi->dev, config->refname);
--	if (IS_ERR(adc->reg))
--		return PTR_ERR(adc->reg);
--
--	ret =3D regulator_enable(adc->reg);
-+	ret =3D devm_regulator_get_enable_read_voltage(&spi->dev,
-+							   config->refname);
- 	if (ret < 0)
--		return ret;
--	ret =3D devm_add_action_or_reset(&spi->dev, adc128_disable_regulator,
--				       adc->reg);
--	if (ret)
--		return ret;
-+		return dev_err_probe(&spi->dev, ret,
-+				     "failed to read '%s' voltage",
-+				     config->refname);
-+
-+	adc->vref_mv =3D ret / 1000;
-=20
- 	if (config->num_other_regulators) {
- 		ret =3D devm_regulator_bulk_get_enable(&spi->dev,
-
-base-commit: 350224bdb9725aab5b90d72fc3db7618ebd232ae
---=20
-2.49.0
-
-
---d3Pp7L838hXuKerh
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmgPJ/UACgkQeFA3/03a
-ocVkWQf+LtXxOmsp24IhxXidyxq2xGdPFzLuvNvH0W01JNYW9sBm1pccqeYK31hs
-ALvBFBLBcLVutFJPMq6e7tYzhgokwL/ITqLtYGE8pxa5Xic7X2xbyEZZIgY6mqv+
-BFUpIikAmGFMEFkJSjivkIprVI4OEWXgh2iaK7J894fqdxlTXBtUpO+GcYy1hZu5
-/AujvyyeG0sBghD86CuyaG0jMy031BLc94vtwtSU7TPVLrzPRxLBHY4eEc74eVtL
-P5+DOCrzovo+pyUcyFcaWOeMawrqRkxi/XUWFHL0fJEYvfoPdgOEmnCTxwe7XDaq
-ii0eJEWw+Bqh26kixKZWuQ0e2o4h8A==
-=VBG+
------END PGP SIGNATURE-----
-
---d3Pp7L838hXuKerh--
+>
+> Thanks,
+> Vivek
+>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> Reported-by: Bingbu Cao <bingbu.cao@linux.intel.com>
+>> Closes: https://lore.kernel.org/dri-devel/eb7e0137-3508-4287-98c4-
+>> 816c5fd98e10@vivo.com/T/#mbda4f64a3532b32e061f4e8763bc8e307bea3ca
+>> 8
+>> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> ---
+>>    drivers/dma-buf/Kconfig   |  1 -
+>>    drivers/dma-buf/udmabuf.c | 22 +++++++---------------
+>>    2 files changed, 7 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+>> index fee04fdb0822..b46eb8a552d7 100644
+>> --- a/drivers/dma-buf/Kconfig
+>> +++ b/drivers/dma-buf/Kconfig
+>> @@ -36,7 +36,6 @@ config UDMABUF
+>>        depends on DMA_SHARED_BUFFER
+>>        depends on MEMFD_CREATE || COMPILE_TEST
+>>        depends on MMU
+>> -    select VMAP_PFN
+>>        help
+>>          A driver to let userspace turn memfd regions into dma-bufs.
+>>          Qemu can use this to create host dmabufs for guest framebuffers.
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index 7eee3eb47a8e..79845565089d 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -109,29 +109,21 @@ static int mmap_udmabuf(struct dma_buf *buf,
+>> struct vm_area_struct *vma)
+>>    static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
+>>    {
+>>        struct udmabuf *ubuf = buf->priv;
+>> -    unsigned long *pfns;
+>> +    struct page **pages;
+>>        void *vaddr;
+>>        pgoff_t pg;
+>>
+>>        dma_resv_assert_held(buf->resv);
+>>
+>> -    /**
+>> -     * HVO may free tail pages, so just use pfn to map each folio
+>> -     * into vmalloc area.
+>> -     */
+>> -    pfns = kvmalloc_array(ubuf->pagecount, sizeof(*pfns), GFP_KERNEL);
+>> -    if (!pfns)
+>> +    pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages), GFP_KERNEL);
+>> +    if (!pages)
+>>            return -ENOMEM;
+>>
+>> -    for (pg = 0; pg < ubuf->pagecount; pg++) {
+>> -        unsigned long pfn = folio_pfn(ubuf->folios[pg]);
+>> -
+>> -        pfn += ubuf->offsets[pg] >> PAGE_SHIFT;
+>> -        pfns[pg] = pfn;
+>> -    }
+>> +    for (pg = 0; pg < ubuf->pagecount; pg++)
+>> +        pages[pg] = &ubuf->folios[pg]->page;
+>>
+>> -    vaddr = vmap_pfn(pfns, ubuf->pagecount, PAGE_KERNEL);
+>> -    kvfree(pfns);
+>> +    vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
+>> +    kvfree(pages);
+>>        if (!vaddr)
+>>            return -EINVAL;
+>>
+>> --
+>> 2.48.1
+>>
 
