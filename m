@@ -1,343 +1,246 @@
-Return-Path: <linux-kernel+bounces-622859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFF9A9ED99
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:08:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974F4A9ED9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC8B1892F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A093BD8A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAC3265CAD;
-	Mon, 28 Apr 2025 10:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0BA25F996;
+	Mon, 28 Apr 2025 10:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YqD4ZQQn"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013069.outbound.protection.outlook.com [40.107.162.69])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n0pN73mO"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E18B264629;
-	Mon, 28 Apr 2025 10:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745834839; cv=fail; b=Iw2x/YIFXfnDMYdiWyzJmgGsJpkTSYjZ+tJ7+F0iM3eaFIJj4AhTAHbwW6Hm4bQiWZWuzoc50VqKsqoVVsoRpNxmNt8bcGL76V3lxrTRkKe58afnid8y/rpN9yft711h5qAM4yo6gKBKexEPoq8ODnpWp0qReuw1F4AcqCF/itQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745834839; c=relaxed/simple;
-	bh=2/l5GtjZGLBBEZpH/Kn6J6YvSDdH64hZArKpTESh4is=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VMNwWap6NIkgmtKpiAZe+FTUmHmklODyQOMO7j/ke0Fn2hrNFcnsq2U2RbxWle8d66S7ZGY9u/jiO5RSmVhmr7ASmgvPLGuR+UvBjaiedfkPAO65pUML+6qYVYCzG9tmAv/IkEfg1c5SxO2HnIep+CnLAhvMSps1j8xikg32/Kk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YqD4ZQQn; arc=fail smtp.client-ip=40.107.162.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rsDEoZt6o+ZlP8d0G6feVPwFMB4djqFU0OZdmPAV5R7JFyeRDXPuRG5cKPJFY9n7G4iF/Hl6arDvq95ZW738Sjumz1TJgxNmmL5g3kPRwpL2z4yoYUAtXMUCpgZRjN1TWLGWvnPqq8loYQa1KLYqy/+z4e5EI8TaiM03rd11tKooOhfzVEZ+XmWJWxLJZm/982C+yISyLIX5N6hHQK8zDpQYPvg4P1ff1YPOfJ/fSqWvNBs2xSrYsuPcnHIDA8/1cAKZpH+dBe0PmiMBr7lmXB3EczB/cx1p4L4zHnY/sZTCkuUWtA5m24w48hQHJQlBWBi/sr+gCeQwRbaWPaEW9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+JQnTMcNxw2iwVIbBoU1FYd18XVg+pJHlN3rCHEMTJM=;
- b=uoT2E/I9eqMPTSTVYcRNlGPBQ4UNynAjsYux4yIOFLOc6d3ndLkSSMr1r6lh/i6K6iIacdMZ72Xm4WvNkHTqVGkgx5Z02D8qXcuUiNn7pwiEln6uvOX9uxAqisk5h/WQjBJj3SskbYvmLho8mvtt1z1oZNZBRQ+j4+2fB8mCQAQ2Hr533T4LDcZsXODFgrrjDT5xR2ifwvwl9lGJjigTcQUgJLDq0/GL/m7PSQMqGuf/KOOTwgG4VxNOf4aVEhbC9ywVB0LeozKXnCvL5iMDD49SIFCsVyJNDI5NQzLNt/pJHrHb/JO7EddHX4RHHwxwPYRZh0yRQ8MgZzYDifupXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+JQnTMcNxw2iwVIbBoU1FYd18XVg+pJHlN3rCHEMTJM=;
- b=YqD4ZQQnJbrDiJRLOZY9zx6fDNrGt2mJjmV9I7SzvTzZTXJRnhm/NnB94RDrN/pJcDtAI4VF65MCjKYlVLDWjXuP6iGzmePaIhNPOzzOmRe/y4kGAv/2nGgFp21MWz4U86nSKgh5rI7GJDq/yZrslt9ksIJlcAOkXBUNy5h8PCOQob8LNEMcAcZZ3YVEt7rP1bPnuiVq9SExaPV4TPETkmGhkhwl3Uo/V6DrONS20yu115KiEpsr7fZQ+Yh2bCJ9fh4FGq8OdZjC8OqRrZVJAmGZHesfZiMVUatbdYDdBXAacMV7qHGxBgQH318PJDQj9nJA+OTGivypZ4gZ12vnkg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AM9PR04MB8081.eurprd04.prod.outlook.com (2603:10a6:20b:3e2::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 28 Apr
- 2025 10:07:14 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%4]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
- 10:07:14 +0000
-Date: Mon, 28 Apr 2025 13:07:11 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: Nikolay Aleksandrov <razor@blackwall.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net 2/2] net: dsa: propagate brentry flag changes
-Message-ID: <20250428100711.cushq4ok3s2n5fxm@skbuf>
-References: <20250412122428.108029-3-jonas.gorski@gmail.com>
- <20250414124930.j435ccohw3lna4ig@skbuf>
- <20250414125248.55kdsbjfllz4jjed@skbuf>
- <CAOiHx==VEbdn3ULHXf5FEBaNAxzyoHTqJEMYYtcQzjkj__RoLg@mail.gmail.com>
- <20250414150743.zku6yhs7x3sthn55@skbuf>
- <CAOiHx==Wk8b43x8HLX4i-o696LioqeHoTpM+kzwn+NBE7dV8wg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOiHx==Wk8b43x8HLX4i-o696LioqeHoTpM+kzwn+NBE7dV8wg@mail.gmail.com>
-X-ClientProxiedBy: VI1PR07CA0292.eurprd07.prod.outlook.com
- (2603:10a6:800:130::20) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9D91F8676;
+	Mon, 28 Apr 2025 10:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745834921; cv=none; b=eXOe09/YZwxaMT7jqNoqA2a8HuJNNXWj412KeAFchTJiuIeViPUEo7Fko+KwWoENMha5EXS7nUsx5k4YQnewXNcB7cVpU1akowdf2/G/OeehmtJkuIyRl2n/g394b9iX/TUvNDi8DhZ0qs/2r7NBWsJw8BVttn2inmTP+/MxNvk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745834921; c=relaxed/simple;
+	bh=lr6pQ3NIoD+lRzXdXbL+Byvxr/QgEuEyFJ7ZHAW6OTs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=jms9nBwEZzPieZAPkh3n64RSgnr7wChsfNDNKrecn09TWpw+dxTYxyid5jHfGNGUszXp6WOtRM+u9YlHJUhY8xkxrIGcsZNTAiGbzSiPJibiCjZgT9rIKihloNPvXaOsM+5lfXOTuu66alj3FijMv5h0Pke6rkLVvVomnwuNGWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n0pN73mO; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0378941E0D;
+	Mon, 28 Apr 2025 10:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745834916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyLLSu+6S+6dxer7LO6vuNlydixelSCtlsd/r01CLYw=;
+	b=n0pN73mOyqcHetOyty577p3pErAzkt7nOjTmTs7YgE7Q0kFnEUjpP51kQxEZbEasxxXrt7
+	JLvkjuOt0AXoXFzIgQigzMagk7hFGPyQUdle3Zb9jKfyz12z4ip3NeyasSIldXmsRciGHI
+	DAPPFmRMZw65TNO0ONyFX1B9VOWdBPbWVfFQRxq7GDgZTyiOu6KiIQmtgUPrBgjq25ltX4
+	fXs7Qr6/wadKGI1e/wzLtxDQu6R/a1PPKI1hnCq8qK3a+JQ9bdUmnQfv6UUGKYpoRgrzG2
+	3kbgk9SijtBUMuGij0XV/jKboUCdiajElMI6QPih9raiz1GLhgDuUXF1++0s5Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM9PR04MB8081:EE_
-X-MS-Office365-Filtering-Correlation-Id: a02308ed-1f62-43ab-b087-08dd863c72fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NDRHVEpkUjR2NmVySlNLUGF6Tzl6dWl3Yk1PZnhJSkFzNk5mNkVyNFA4OXZB?=
- =?utf-8?B?WHhZQnNvT2wxS2paZ0dnUTlUMER1aktuSTFRdmwxc25YbElqQjN2SkE5Ky9a?=
- =?utf-8?B?OEF1dzNyMktMcWNGSG1hRXB0WmxqK0RUTVYyQ3NhbjdGeW5sT1RQWGR4MHo1?=
- =?utf-8?B?N3k4QktvcnY5emc4cDljcFpxQ1kwcU9vaWhWck9VZWkzQys5TkowNEU5Z2NI?=
- =?utf-8?B?UEpVMldJV1RXNy9Qbi9HT1pYcEpzTURTVDNBRnFRRkJROEUzSEd2UU5naHlz?=
- =?utf-8?B?QUJDcEpUb0EwNWxuN0swRTRBYmdEczhDaWpXRyt1OUFseUJMUFRxTG5yMmZo?=
- =?utf-8?B?ZTluTUd1U1FhVHBZTnpLQzNSWEMyS2s1UG9ydGlGeFQ4Y0xCKzVZUkJMVnQ0?=
- =?utf-8?B?bVd6c0RGQ2tmbEYyTmwzY0o0RGVBYVVRdHN0NHc4SWdnRmtjR0xVNjJhYitS?=
- =?utf-8?B?TTNRVHB5b1JGdGlqa2dSTU44alllS3NEQzh0MXhiZnh2SkN2QS9sc1FNVjRG?=
- =?utf-8?B?N1JDb1FYTDBGY3dhZEpCUE5vRXNuUlF0RGV3Z3pZei9xTTBqWDg5OFk1UGVU?=
- =?utf-8?B?NkI4Q2FFdG8zeXV2SU5OZVRzeU8wb3JXWmF1UnljUzJIVGRGcWtPd1orKzNX?=
- =?utf-8?B?RWFsVFlob2d4OXJDc2lYNzhrbjFwM0duV1hVTnBvL1diWHY4ckhwSTVLMHk0?=
- =?utf-8?B?VmVrR3Fyci9kUDIxYmdwd0NmdDY1QW5LRDFyWGE5QTNmZ1RNYnFNY3J1QWNz?=
- =?utf-8?B?Rk1pSDkvUDlRY2RBdHYxYmtsSTlQUThvUE5kV0JZWlhhYzU0VmRKb00xRmM1?=
- =?utf-8?B?d0pqUEhRTmlrVVdsUnppaVVZYW1ENWEwVytiOExycHJ4VUw5QXlyZGVzZjNx?=
- =?utf-8?B?cU9zbjRYaTJRMG9aVFZhZFB5RGVoeGNCWG53VTVJbkJrUCtIR3ZjdU5xWlhu?=
- =?utf-8?B?QVNmbGQ4V0RnNVB6OEk5N3ByYXFodHFNZzMwMWNYTFJmQXNyY2psNUVSYlU3?=
- =?utf-8?B?L3BhRnQ3SUFLVkxIZ1cxRklEREZEOGp5TVpubEFJWmNMUnpacFpMYUtsWTNM?=
- =?utf-8?B?OUpuMzlXeENSYjUrSWdxUmZOQmdqaUZwNjgvN2VVSUN6WFpKZWZNMU1UeDgz?=
- =?utf-8?B?WisvZWtmN1kxM1VKNkVZRklGaTMwMU15bWxXQjhJQmdhUy9XY0Ivb2UwbGdO?=
- =?utf-8?B?WFhxakRxNWg3VkFKcW1VbS9XTytXWFBBYTdpaDhsNlV6eTY0UHM1Kzk2K29C?=
- =?utf-8?B?WWFaL0dwZkdFd3d4OWx4RkVvS2RubmVYZUVJNHVMby9oRlN2c0RTZmhRb1ZT?=
- =?utf-8?B?YWFrVHdPSkthaDNhOHREbEtraGtVWDRSeUx2YzAyUWk2Y1VLUzhjd0gzRHhO?=
- =?utf-8?B?NUI4dDNiS0M2Y2o2Z29GTFRBRTRockV0VnIrdzcwYUNrakh3Ulk3SjExS0J1?=
- =?utf-8?B?OWVCME83MyszWE5nb1RWNm44YjlsRXB3TGtoSHY0RU9ydWJQVUNCNWEyTjdG?=
- =?utf-8?B?TUN6U1lMbnAyNjlaZzMxQlRYVWg1QzFEQm8xdGdmL1puMFRsQ1FORU5nNXdV?=
- =?utf-8?B?Rzk1eUx3RTlsT2Qzdkk1TDdrUGcxQkZaVUtUQkpQdXlZYnRyQnEzNVYvVGkz?=
- =?utf-8?B?cFI2RFIvOU9sRmV5aTdnWmZ6QjhrSEZKVCtnQTJsZmFCdVVWTkxhQlJFdW9W?=
- =?utf-8?B?Z2dtT3daNFd1Y0I1RGdTd0trN2wwMXVYZHBDc0JaSHYrR1g2K2dsY3RUTFVI?=
- =?utf-8?B?dWdlemVOb1NzUWN5eGFGUFhsSzJpZ0FsUTlzcXJXVHcxN21XVm5rSkJ0U0x2?=
- =?utf-8?B?U2ZOSjg3TEN2OGZxemptaE5lTDhoaEtKMHFxVEtsM2RaWDA4cWVSYVg5alVs?=
- =?utf-8?B?VlpEYjVUSGorZFA0dUhFcWNqaVkyOWtHRkQ4V2hYNGg3RXR0dUpjckZTRXBM?=
- =?utf-8?Q?5fo+FX2IfOs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?elhLMUlHRXYvWEdWVWVvam53bUlOUUlhRkxrT01ESU9uZ01pelRWZ1R0Z2xh?=
- =?utf-8?B?WHphRzV5VUprWWtiZGlMU1hDQzI5K3hwUDZ6OXgvUmU4MXMreFYxSTVYNFpz?=
- =?utf-8?B?WkVjeHdoWTdMUXpwbTdJdHY1dU0rTGRTeU8vSGVsb2xVUXhNSFc3MVNNM1lp?=
- =?utf-8?B?SGJKZEpYbzBOYk5mejB0N253Q0J0STFpTlBSSDd6SnUyeXZPYTFaY3VObk9N?=
- =?utf-8?B?UG5CQ3B2aTlrTjVxcHpRazdJczZKUDlacUhJd2dGZU5sak54NHpHM3VOR1pv?=
- =?utf-8?B?L1Mwb0QzN2g1dUdFaUhVYi9kdUM3SUJyRVRRVGRhVHZsZVI4ZFNrM3ZEdTgz?=
- =?utf-8?B?eCtNeGhieExDR0I4a0V1UisvZkM4eE9RN0duSnpVVmtsQXIzMkpJSzduYUty?=
- =?utf-8?B?Y2txMFpMdVlPUElqUi9WRkNkVmg2UUpHc3cvano1Rm8za3k4UDN3TU5BQjVq?=
- =?utf-8?B?R21sVlpzSTd2WEtncU1RWlFxcHducHFWazRHcmpENVZlRWY3Q09ZZ0hmdTVq?=
- =?utf-8?B?dHdqRER5RG5LY1dsV1YzZmFDVG9xbUY3ZzlLS1VCY1lLRjNLY0tvbzNlLzMx?=
- =?utf-8?B?Y0VCa1BuNWpuamVMR1JVNjJtalY2RDg2Rk5JUXJIS2lIWTBrVWpINXhPRHhF?=
- =?utf-8?B?a1VuNXE5Zy9MS0Y2YVJqM3Rmd1ZJUlc2Y2JmTzVMNzBhRmU5dnY1c3U4UTda?=
- =?utf-8?B?RFBCMFF1ZnB5VGlmVk1Va09hNlhDT2RoWFgwVVlSa0N6WFpBQW1wQWpXVEtR?=
- =?utf-8?B?N005ZnNjakNuT3Y4amVxdTVZMmlPZVoxR1Ayek9lQ1daeVdWaGhnOFJXSTNV?=
- =?utf-8?B?V2cwZHMyTDJRbktHbzRrOXVvMWs5R0hKTGtVS09rQzhiSC9heEl6QXErZVNh?=
- =?utf-8?B?L0pOT1hpbWhvaFZXWGlhZFc2Q3YyN2VWaWNjYURDUmY3NHhJK1d3NHZEVmVH?=
- =?utf-8?B?RkhrZVhKNDZJZE9RMFBmTkpVdnFHRGhzMTUxWGRSbm5ES1BZZVd5WlJxTm04?=
- =?utf-8?B?MVo0QmU0MDFxS2VnblNLbml2aHYvcHNUU2ppODlZTFJGZ3pyU1hoK3BGbXpO?=
- =?utf-8?B?SnVQSC9rVHdJbjdBTmNWdG1McTBWeW9tbDJWOUJiRjVIelFmdi8vL1h5eWJq?=
- =?utf-8?B?bVI2YkZmMFFwbDYvcURwNGlJRTZnVDZFQU94dm82ZnI4MXNEOFZJbS9qRFFh?=
- =?utf-8?B?dHphWmtXYkFrVUJnZEhNTVFmQmc4Unkvc21na0F3dWpWaDU2d2JSZFo3djl2?=
- =?utf-8?B?eE5ETUdnc2YzdnRWM2xESzVTMWY0RnJ4NkRGVkdNOVVtZVM0OVRsTWliMERH?=
- =?utf-8?B?OFZlTW5qSFc0cHBlVVZTQk9KbnVaSTNpSWdZRlp3b2d0VFkrMjF4cURnN0lW?=
- =?utf-8?B?M1F4Kzh6OGU1eFhFdmlnbnNzUzdtamVLeFY2cmxLZEFhQnZvOGVVOWNQbGl6?=
- =?utf-8?B?aS9HSzFBKzJMdHc3aVZ1MExUSDZrbVNtbUR2OGg2dXdiYVEyWkdMYUgwUUly?=
- =?utf-8?B?ZVdqbU9NVjcyQThkYzhNMkJ1YVZlV2ttdHM2K1Zmdy9Wbkx3cUFkTFpaQ0F1?=
- =?utf-8?B?M2h2R0YyVXBsVVFFM2NwT0c5ZTR5UWJQcmZJYVY5NzNiWFZqQTZ6cDJWRHdl?=
- =?utf-8?B?VEdJYmhwN0JGZEFPZzFWV3Qzd3UwbmZ2U1hSalA5bEU4T0Ruc2ROUzFrcDRL?=
- =?utf-8?B?eTVleXZ5ekxvS0Q1ZUF1ZzZ6RVJYRFpVSFZ2L05oaU1ONk5PRWJha3Y5RU9i?=
- =?utf-8?B?NEIxTVFKLzZWamUvSXlxTHJLSW5iSmNkQnBjVmFTVEp3VldSM1ZEbzY1ajFN?=
- =?utf-8?B?RW1xREQzSVRqKzZiQ1Z1UG9tcXM4NTBGYmFKekg3S3J3bDBGVGprRmNuVDNG?=
- =?utf-8?B?dmdpR3owVitOOWhhQTFpc2JEdEJyQmdvNWFyUDRKdFcrbWpFTXE5WGd6YTJR?=
- =?utf-8?B?eWxuaEsycEl4YWh0QmpFcFNHMEliT1dvWm5LTnVMOTAwZit1bzFiaWdDYk9J?=
- =?utf-8?B?bW01OFJvWW1meW5nZ2dJTEtEZ3VzaFc3SWZwbFFudnVPbmR6NmVyazh0TU0x?=
- =?utf-8?B?TlBhRm5CZXVXRkFMNDROTWtvamJkelEyM0dwUjVISG4vQjNtMXJKekN2ODBr?=
- =?utf-8?B?MlV2SitRa2JKSG1GZVpwa29FWTlGK3hQVlljYWFQbGoxVkgwVkRRa0xzZ3B5?=
- =?utf-8?B?bEE9PQ==?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a02308ed-1f62-43ab-b087-08dd863c72fb
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 10:07:14.3555
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M2p+xcH2B7bTczhURtqSVWzJYyGAG8kKKwOAL3+JchPpIyyF0Pu7foXMpJfsEDPEMiRL/4V8PNDhi9fXcFCQnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8081
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Apr 2025 12:08:32 +0200
+Message-Id: <D9I6TQN2I6B1.QC4FFHEWAURZ@bootlin.com>
+Cc: "Bastien Curutchet" <bastien.curutchet@bootlin.com>,
+ <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <bpf@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kselftest@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH RFC bpf-next 3/4] bpf/selftests: add tests to validate
+ proper arguments alignment on ARM64
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Eduard Zingerman" <eddyz87@gmail.com>, "Alexei Starovoitov"
+ <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>, "John
+ Fastabend" <john.fastabend@gmail.com>, "Andrii Nakryiko"
+ <andrii@kernel.org>, "Martin KaFai Lau" <martin.lau@linux.dev>, "Song Liu"
+ <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>, "KP Singh"
+ <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo"
+ <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Puranjay Mohan"
+ <puranjay@kernel.org>, "Xu Kuohai" <xukuohai@huaweicloud.com>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Mykola Lysenko" <mykolal@fb.com>, "Shuah Khan" <shuah@kernel.org>, "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
+ <alexandre.torgue@foss.st.com>, "Florent Revest" <revest@chromium.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
+ <20250411-many_args_arm64-v1-3-0a32fe72339e@bootlin.com>
+ <3a16fae0346d4f733fb1a67ae6420d8bf935dbd8.camel@gmail.com>
+In-Reply-To: <3a16fae0346d4f733fb1a67ae6420d8bf935dbd8.camel@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedtieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefuhffvofhfjgesthhqredtredtjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhoruceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelkeehiefhfeehvefhtdegueelkeehffffffeuvdekkeekuddvueeguefgieeukeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdelpdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnv
+ ghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeihohhnghhhohhnghdrshhonhhgsehlihhnuhigrdguvghv
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Sat, Apr 19, 2025 at 12:52:09PM +0200, Jonas Gorski wrote:
-> On Mon, Apr 14, 2025 at 5:07â€¯PM Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
-> > You'd have to ask yourself how do you even expect DSA to react and sort
-> > this out, between the bridge direction wanting the VLAN untagged and the
-> > 8021q direction wanting it tagged.
-> 
-> Unless the switch chip supports passing frames as is to the cpu port
-> (and only there), the only winning move is likely to keep the cpu port
-> tagged in all cases, and untag in software as needed. I guess this is
-> what untag_vlan_aware_bridge_pvid is for.
-> 
-> As a side note, b53 datasheets state that all vlans are always tagged
-> on egress and ignore the untag map for the management port, but that
-> is clearly not the case for most devices lol.
+Hello Eduard,
 
-So it's in fact not a problem, am I reading this right?
+On Mon Apr 28, 2025 at 9:01 AM CEST, Eduard Zingerman wrote:
+> On Fri, 2025-04-11 at 22:32 +0200, Alexis Lothor=C3=A9 (eBPF Foundation) =
+wrote:
+>> When dealing with large types (>8 bytes), ARM64 trampolines need to take
+>> extra care about the arguments alignment to respect the calling
+>> convention set by AAPCS64.
+>>=20
+>> Add two tests ensuring that the BPF trampoline arranges arguments with
+>> the relevant layout. The two new tests involve almost the same
+>> arguments, except that the second one requires a more specific alignment
+>> to be set by the trampoline when preparing arguments before calling the
+>> the target function.
+>>=20
+>> Signed-off-by: Alexis Lothor=C3=A9 (eBPF Foundation) <alexis.lothore@boo=
+tlin.com>
+>> ---
+>
+> [...]
+>
+>> +SEC("fentry/bpf_testmod_test_struct_arg_11")
+>> +int BPF_PROG2(test_struct_many_args_9, struct bpf_testmod_struct_arg_5,=
+ a,
+>> +	      struct bpf_testmod_struct_arg_5, b,
+>> +	      struct bpf_testmod_struct_arg_5, c,
+>> +	      struct bpf_testmod_struct_arg_5, d, int, e,
+>> +	      struct bpf_testmod_struct_arg_5, f)
+>
+> Hello Alexis,
+>
+> I'm trying to double check the error you've seen for x86.
 
-> I am still a bit confused by untag_bridge_pvid, or more specifically
-> dsa_software_untag_vlan_unaware_bridge(). I would have expected a non
-> vlan_filtering bridge to ignore any vlan configuration, including
-> PVID. Or rather the PVID is implicit by a port being bridged with vlan
-> uppers of a certain vid (e.g. port1.10 + port2 => port2 has PVID 10),
-> but not explicitly via the bridge vlan configuration.
+Thanks for taking a look at this.
 
-I think dsa_software_untag_vlan_unaware_bridge() exists in this form
-only as a result of the misunderstanding that the bridge PVID must not
-be committed to hardware in vlan_filtering=0 mode. Otherwise, it is a
-coincidence that the bridge PVID == the VID added by hardware to packets
-in VLAN-unaware bridging mode.
+> I see that tracing_struct/struct_many_args fails with assertion:
+> "test_struct_many_args:FAIL:t11:f unexpected t11:f: actual 35 !=3D expect=
+ed 43".
+> Could you please help me understand this test?
 
-See the reference to ds->ops->get_private_vid() if you need to pop a
-driver-specific VID from packets received from VLAN-unaware bridge ports,
-VID which is not necessarily equal to the bridge PVID.
+Sure. When we attach fentry/fexit programs to a kernel function,  a small
+trampoline is generated to handle the attached programs execution. This
+trampoline has to:
+1. properly read and aggregate the functions arguments into a bpf tracing
+context. Those arguments comes from registers, and possibly from the stack
+if not all function arguments fit in registers
+2. if the trampoline is in charge of calling the target function (that's
+the case for example when we have both a fentry and a fexit programs
+attached), it must prepare the arguments for the target function, by
+filling again the registers, and possibly pushing the additional arguments
+on the stack at the relevant offset.
 
-> > > I guess the proper fix for b53 is probably to always have a vlan tag
-> > > on the cpu port (except for the special vlan 0 for untagged traffic on
-> > > ports with no PVID), and enable untag_vlan_aware_bridge_pvid.
-> >
-> > What's the story with the ports with no PVID, and VID 0?
-> > In Documentation/networking/switchdev.rst, it is said that VLAN
-> > filtering bridge ports should drop untagged and VID 0 tagged RX packets
-> > when there is no pvid.
-> 
-> Hm, that's not what the code does:
-> 
-> With a vlan_filtering bridge VID 0 always gets added to bridge ports
-> if they get set up:
-> 
-> The order is:
-> 
-> 1. filtering is enabled on the port => NETIF_F_HW_VLAN_CTAG_FILTER is set
-> 2. on if up, vlan_device_event() sees that NETIF_F_HW_VLAN_CTAG_FILTER
-> is enabled and calls vlan_vid_add(dev, .., 0)
-> 3. switchdev/dsa passes this on to the dsa driver via port_vlan_add()
-> 4. all bridge ports being up are now members of vlan 0/have vlan 0 enabled.
-> 
-> Not sure if this is intended/expected behavior, but this enables
-> untagged rx at least with b53. And since b53 can't restrict forwarding
-> on a per-vlan base, likely enables forwarding between all bridge ports
-> for untagged traffic (until a PVID vlan is configured on the bridge,
-> then the untagged traffic is moved to a different port). This part is
-> likely not intended.
-> 
-> My first guess was that this is intentional to allow STP & co to work
-> regardless if there is a PVID/egress untagged VLAN configured. Though
-> this will likely also require preventing of forwarding unless this is
-> a configured bridge vlan. Currently trying to read 802.1Q-2022 to see
-> if I find anything clearly stating how this should (not) work ... .
+This test is about validating the first point: ensuring that the trampoline
+has correctly read the initial arguments from the target function and
+forwarded them to the fentry program. So the actual test triggers the
+targeted function, it triggers the attached fentry program which record the
+values passed by the trampoline in t11_a, t11_b, etc, and then the
+test checks back that those "spied" values are the one that it has actually
+passed when executing the target function.
 
-Not replying to this, as this discussion continued in the other thread.
+> The function listened to is defined as accepting 'struct bpf_testmod_stru=
+ct_arg_7',
+> at the same time this function uses 'struct bpf_testmod_struct_arg_5'.
 
-> > > Makes the think the cpu port always tagged should be the default
-> > > behavior. It's easy to strip a vlan tag that shouldn't be there, but
-> > > hard to add one that's missing, especially since in contrast to PVID
-> > > you can have more than one vlan as egress untagged.
-> >
-> > I agree and I would like to see b53 converge towards that. But changing
-> > the default by unsetting this flag in DSA could be a breaking change, we
-> > should be careful, and definitely only consider that for net-next.
-> >
-> > b53 already sets a form (the deprecated form) of ds->untag_bridge_pvid,
-> > someone with hardware should compare its behavior to the issues
-> > documented in dsa_software_untag_vlan_unaware_bridge(), and, if
-> > necessary, transition it to ds->untag_vlan_aware_bridge_pvid or perhaps
-> > something else.
-> 
-> This is for the case when you have a b53 switch behind a b53 switch, e.g.
-> 
-> sw0.port1..4 user ports
-> sw0.cpu -> sw1.port1
-> sw1.port2..4 user ports
-> sw1.cpu -> eth0
-> 
-> and you have user ports on both switches. Due to the way the broadcom
-> tag works, if sw0 would be brcm tagged, then sw1 wouldn't see the vlan
-> tag anymore on rx (since there will now be the brcm tag), and all
-> traffic would go to the pvid of sw1.port1, thus any forwarding between
-> ports of sw0 and sw1 would have to be done in software.
+That's not an accidental mistake, those are in fact the same definition.
+bpf_testmod_struct_arg_7 is the kernel side definition in bpf_testmod.c:
 
-Can sw0 be brcm-tagged in another way that allows sw1 to see VLAN tags?
-Like with brcm-legacy perhaps?
+struct bpf_testmod_struct_arg_7 {
+	__int128 a;
+};
 
-> In this case, sw0 needs to have its traffic always tagged. Also sw1
-> needs to keep all vlans on port1 egress tagged, not sure if we
-> actually take care of that ... (maybe the dsa code does that for us,
-> didn't check).
+and struct bpf_testmode_struct_arg_5 is the one defined in the bpf test
+program:
 
-No, this would be driver-level configuration. DSA doesn't alter the
-egress-tagged flag of bridge VLANs.
+struct bpf_testmod_struct_arg_5 {
+	__int128 a;
+};
 
-> Although forwarding works between user ports of sw0 and sw1, from the
-> linux perspective we would never receive any traffic from sw0's ports,
-> since we only have sw1's tag, and that one will say sw1.port1.
-> 
-> So while you may be able to configure vlans and forwarding, probably
-> everything else won't work as expected. Like when you want to send out
-> a packet on a certain port.
-> 
-> Though I assume this isn't a special issue for b53, and rather a
-> common issue of chained switch chips, and b53 just acknowledges it /
-> tries to work around it. I know that marvell (E)DSA can handle this,
-> but I wouldn't be surprised if many others can't.
+I agree while being correct, this is confusing :/ I have kind of blindly
+applied the logic I have observed in here for declaring test structs, and
+so declared it twice (in kernel part and in bpf part), just incrementing
+the index of the last defined structure. But I guess it could benefit from
+some index syncing, or better, some refactoring to properly share those
+declarations. I'll think about it for a new rev.
 
-For the record, we have a non-proprietary DSA tagging infrastructure
-(tag_8021q.c) which supports cross-chip bridging, used for 3 drivers
-already. I know Florian has looked at it in the past, but due to various
-reasons couldn't immediately find a way to make use of it for b53.
-It could be interesting though.
+> Nevertheless, the assertion persists even with correct types.
 
-> Looking at devices in OpenWrt that are affected by this, these device
-> have exactly one user port on sw1, and that one is mostly used as a
-> wan port, so as a stand-alone port, not a bridge port. One could argue
-> here that proper functioning of the "outer" switch's ports is more
-> important than being able to forward frames in hardware to the wan
-> port.
-> 
-> Unfortunately I do not have a device at hand, might need to figure out
-> if I can get my hands on one ... .
+So I digged a bit further to better share my observations here. This is the
+function stack when entering the trampoline after having triggered the
+target function execution:
 
-Generally, switches which support a cascading topology have the necessary
-prerequisites taken care of at the tagging protocol level. Two switches
-from the same vendor which are connected together are more likely to
-form a single switch tree, and the switch ID from the packet indicates
-which device from the tree does the packet belong to. There's a single
-DSA tag in this situation.
+(gdb) x/64b $rbp+0x18
+0xffffc9000015fd60:     41      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd68:     0       0       0       0       0       0       0  =
+     0
+0xffffc9000015fd70:     42      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd78:     35      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd80:     43      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd88:     0       0       0       0       0       0       0  =
+     0
 
-On the other hand you have tag stacking, where a DSA user port is the
-conduit of a downstream DSA switch. There are 2 single-switch trees in
-that case. That also tends to work, usually, though you wouldn't expect
-hardware-accelerated forwarding between the top and bottom switch
-(software needs to perform tag adaptation for the general case).
-There are recorded cases of tagging protocols "ocelot" and "ocelot-8021q"
-working just fine as DSA conduits for "sja1105".
+We see the arguments that did not fit in registers, so d, e and f.
 
-For the stacked b53 case, it looks like due to hardware limitations, the
-tag stacking solution was partially adopted, but with b53 specificities.
-You have hardware-accelerated cross-chip bridging (which you wouldn't
-normally expect) and one of the switches has tagging protocol "none"
-(which again you wouldn't expect). See if maybe a single tree with a
-custom "brcm-8021q" tagging protocol is something feasible.
+This is the ebpf context generated by the trampoline for the fentry
+program, from the content of the stack above + the registers:
+
+(gdb) x/128b $rbp-60
+0xffffc9000015fce8:     38      0       0       0       0       0       0  =
+     0
+0xffffc9000015fcf0:     0       0       0       0       0       0       0  =
+     0
+0xffffc9000015fcf8:     39      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd00:     0       0       0       0       0       0       0  =
+     0
+0xffffc9000015fd08:     40      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd10:     0       0       0       0       0       0       0  =
+     0
+0xffffc9000015fd18:     41      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd20:     0       0       0       0       0       0       0  =
+     0
+0xffffc9000015fd28:     42      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd30:     35      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd38:     43      0       0       0       0       0       0  =
+     0
+0xffffc9000015fd40:     37      0       0       0       0       0       0  =
+     0
+
+So IIUC, this is wrong because the "e" variable in the bpf program being
+an int (and about to receive value 42), it occupies only 1 "tracing context
+8-byte slot", so the value 43 (representing the content for variable f),
+should be right after it, at 0xffffc9000015fd30. What we have instead is a
+hole, very likely because we copied silently the alignment from the
+original function call (and I guess this 35 value is a remnant from the
+previous test, which uses values from 27 to 37)
+
+Regardless of this issue, based on discussion from last week, I think I'll
+go for the implementation suggested by Alexei: handling the nominal cases,
+and detecting and blocking the non trivial cases (eg: structs passed on
+stack). It sounds reasonable as there seems to be no exisiting kernel
+function currently able to trigger those very specific cases, so it could
+be added later if this changes.
+
+Alexis
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
