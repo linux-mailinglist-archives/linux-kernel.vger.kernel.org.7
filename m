@@ -1,270 +1,112 @@
-Return-Path: <linux-kernel+bounces-623362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F283FA9F4A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:38:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FF0A9F492
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E011188F3AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1152168193
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACF725D54B;
-	Mon, 28 Apr 2025 15:37:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421EF1E008B;
-	Mon, 28 Apr 2025 15:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092E625C716;
+	Mon, 28 Apr 2025 15:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vp+36QXB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3852356A7;
+	Mon, 28 Apr 2025 15:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745854620; cv=none; b=G44oK7YAcQg1JfV2tTDGPrS9ETmdZgUxmFYOv84MFJlcYKYNZdQk1/QPDGMbagqof9AkRCNLXvBMY8dEqNtXq50TviVx7qJuTZcvn3B58OzIu7lmmXL7HNqPq93OOF6H/DxXHDEBH5tEdnEPEYe2iJf0x98IDMjGmKRJsrBxEgE=
+	t=1745854544; cv=none; b=POe9MbKOy6YAXI0yzPtXaP5/+oTV+eWw1dkNSpS4g19RyeIqSkHLEjedHiZJaGyx27jnsZyuIRXZVigH+JP4vfQtIDEDK/oDTn2+1UJGOl9PdEmwGAdWKj76fzPVM8v1Kweh2UL0X2oC+LdyG2Va5yDHY6P14LjCpsGtuHqgSWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745854620; c=relaxed/simple;
-	bh=X4YAC7UgnFX/IJfpLFastAckdvY3Zbt3gQxxkAai4SM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LNlBcRaDdyihV2z3wdE1n24EfhcoHMULLHy63zk5CDA+wMRERBfvrBKEdXUY29xq5xZSWs4YkwUdfi2JAJt/kcR7ROjE5/iP1bWqqUOR3VX9JPLGLTOhNbxgDjVeapMn4VxwjnB/8IU75/QRHpcHjIX9vA5lCG3niMXm7E2l5ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A99E15A1;
-	Mon, 28 Apr 2025 08:36:51 -0700 (PDT)
-Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3315B3F673;
-	Mon, 28 Apr 2025 08:36:53 -0700 (PDT)
-From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-To: ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com,
-	corbet@lwn.net,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	jean-philippe@linaro.org,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	akpm@linux-foundation.org,
-	paulmck@kernel.org,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	maz@kernel.org,
-	james.morse@arm.com,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	baohua@kernel.org,
-	david@redhat.com,
-	ioworker0@gmail.com,
-	jgg@ziepe.ca,
-	nicolinc@nvidia.com,
-	mshavit@google.com,
-	jsnitsel@redhat.com,
-	smostafa@google.com,
-	kevin.tian@intel.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev
-Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-Subject: [RESEND PATCH v6 3/3] arm64/mm: Elide tlbi in contpte_convert() under BBML2
-Date: Mon, 28 Apr 2025 15:35:18 +0000
-Message-ID: <20250428153514.55772-8-miko.lenczewski@arm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250428153514.55772-2-miko.lenczewski@arm.com>
-References: <20250428153514.55772-2-miko.lenczewski@arm.com>
+	s=arc-20240116; t=1745854544; c=relaxed/simple;
+	bh=A1H8cIFZbMQdQ5tSdCHnzznMerZGplQabykDkjjTZEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VM74EZ2lclJLxEPo3iG9g1pmb8IrRsaN9ianjaM1FBCF+s/sW329x5hx/vdZhpHlQtJZcInMvCrON4zYB6Y6d/PWVgi1OPs47u+dztrN2MbtkKnMUacSkeQMPn+icmX+GsJtQFQ18Ef7G+4YEK7TKnQU7rQH23wjfge3J+yo04Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vp+36QXB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1C89C4CEE4;
+	Mon, 28 Apr 2025 15:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745854543;
+	bh=A1H8cIFZbMQdQ5tSdCHnzznMerZGplQabykDkjjTZEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vp+36QXBQJeL8fkvJ9v1jnok9hrJiejCJ+9dhi/RYDeQQSv8RcyKU/Ws+3+GOklBW
+	 qQI9U1Si3sRgqdSgV2H04px6eFpVSzuiCiYq5WUjrUU+fuoBVIXcmJJ2MczJ4/WkUv
+	 +RwOAOGQeVbJZmyTvMS0cE8SPcFf8hXB/xEtIuRlshnOMAiwtH2G58ZHbEWeaTfSX6
+	 WWDSc0+cdvFs2wgmWI0cWyU5kd1fXXTM9JEd/KYLfZh0ZFkTi9VCPmiHZJYclgdeq0
+	 FY8m0b6TwSX4znMLMs9AnghtFDocIqfD5buplBCZX56ut5iaeSmQhjuucUBhZD4VPo
+	 cScIB/NtoNe3Q==
+Date: Mon, 28 Apr 2025 17:35:38 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v1 0/7] Add generated modalias to modules.builtin.modinfo
+Message-ID: <aA-gSp-nqPXP7wOz@example.org>
+References: <cover.1745591072.git.legion@kernel.org>
+ <65c912cc-3a27-4b0b-913e-784ff6d07221@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <65c912cc-3a27-4b0b-913e-784ff6d07221@suse.com>
 
-When converting a region via contpte_convert() to use mTHP, we have two
-different goals. We have to mark each entry as contiguous, and we would
-like to smear the dirty and young (access) bits across all entries in
-the contiguous block. Currently, we do this by first accumulating the
-dirty and young bits in the block, using an atomic
-__ptep_get_and_clear() and the relevant pte_{dirty,young}() calls,
-performing a tlbi, and finally smearing the correct bits across the
-block using __set_ptes().
+On Mon, Apr 28, 2025 at 03:47:06PM +0200, Petr Pavlu wrote:
+> On 4/26/25 18:16, Alexey Gladkov wrote:
+> > The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
+> > get information about builtin modules. Among other information about the module,
+> > information about module aliases is stored. This is very important to determine
+> > that a particular modalias will be handled by a module that is inside the
+> > kernel.
+> > 
+> > There are several mechanisms for creating modalias for modules:
+> > 
+> > The first is to explicitly specify the MODULE_ALIAS of the macro. In this case,
+> > the aliases go into the '.modinfo' section of the module if it is compiled
+> > separately or into vmlinux.o if it is builtin into the kernel.
+> > 
+> > The second is the use of MODULE_DEVICE_TABLE followed by the use of the
+> > modpost utility. In this case, vmlinux.o no longer has this information and
+> > does not get it into modules.builtin.modinfo.
+> > 
+> > For example:
+> > 
+> > $ modinfo pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+> > modinfo: ERROR: Module pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30 not found.
+> > 
+> > $ modinfo xhci_pci
+> > name:           xhci_pci
+> > filename:       (builtin)
+> > license:        GPL
+> > file:           drivers/usb/host/xhci-pci
+> > description:    xHCI PCI Host Controller Driver
+> > 
+> > The builtin module is missing alias "pci:v*d*sv*sd*bc0Csc03i30*" which will be
+> > generated by modpost if the module is built separately.
+> 
+> Could you explain what is currently broken because the device-table
+> alias information isn't available? I think adding this information is
+> reasonable, both for consistency and so kmod can display accurate
+> information, but is there more that I'm missing?
 
-This approach works fine for BBM level 0, but with support for BBM level
-2 we are allowed to reorder the tlbi to after setting the pagetable
-entries. We expect the time cost of a tlbi to be much greater than the
-cost of clearing and resetting the PTEs. As such, this reordering of the
-tlbi outside the window where our PTEs are invalid greatly reduces the
-duration the PTE are visibly invalid for other threads. This reduces the
-likelyhood of a concurrent page walk finding an invalid PTE, reducing
-the likelyhood of a fault in other threads, and improving performance
-(more so when there are more threads).
+Yes. Right now, aliases that are generated by modpost are not available
+for kmod because it's not in the modules.builtin.modinfo.
 
-Because we support via allowlist only bbml2 implementations that never
-raise conflict aborts and instead invalidate the tlb entries
-automatically in hardware, we can avoid the final flush altogether.
-
-However, avoiding the intermediate tlbi+dsb must be carefully considered
-to ensure that we remain both correct and performant. We document our
-reasoning and the expected interactions further in the contpte_convert()
-source. To do so we rely on the aarch64 spec (DDI 0487L.a D8.7.1.1)
-requirements RNGLXZ and RJQQTC to provide guarantees that the elision is
-correct.
-
-Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
----
- arch/arm64/mm/contpte.c | 139 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 138 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index bcac4f55f9c1..203357061d0a 100644
---- a/arch/arm64/mm/contpte.c
-+++ b/arch/arm64/mm/contpte.c
-@@ -68,7 +68,144 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
- 			pte = pte_mkyoung(pte);
- 	}
- 
--	__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-+	/*
-+	 * On eliding the __tlb_flush_range() under BBML2+noabort:
-+	 *
-+	 * NOTE: Instead of using N=16 as the contiguous block length, we use
-+	 *       N=4 for clarity.
-+	 *
-+	 * NOTE: 'n' and 'c' are used to denote the "contiguous bit" being
-+	 *       unset and set, respectively.
-+	 *
-+	 * We worry about two cases where contiguous bit is used:
-+	 *  - When folding N smaller non-contiguous ptes as 1 contiguous block.
-+	 *  - When unfolding a contiguous block into N smaller non-contiguous ptes.
-+	 *
-+	 * Currently, the BBML0 folding case looks as follows:
-+	 *
-+	 *  0) Initial page-table layout:
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |RO,n|RO,n|RO,n|RW,n| <--- last page being set as RO
-+	 *   +----+----+----+----+
-+	 *
-+	 *  1) Aggregate AF + dirty flags using __ptep_get_and_clear():
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |  0 |  0 |  0 |  0 |
-+	 *   +----+----+----+----+
-+	 *
-+	 *  2) __flush_tlb_range():
-+	 *
-+	 *   |____ tlbi + dsb ____|
-+	 *
-+	 *  3) __set_ptes() to repaint contiguous block:
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |RO,c|RO,c|RO,c|RO,c|
-+	 *   +----+----+----+----+
-+	 *
-+	 *  4) The kernel will eventually __flush_tlb() for changed page:
-+	 *
-+	 *                  |____| <--- tlbi + dsb
-+	 *
-+	 * As expected, the intermediate tlbi+dsb ensures that other PEs
-+	 * only ever see an invalid (0) entry, or the new contiguous TLB entry.
-+	 * The final tlbi+dsb will always throw away the newly installed
-+	 * contiguous TLB entry, which is a micro-optimisation opportunity,
-+	 * but does not affect correctness.
-+	 *
-+	 * In the BBML2 case, the change is avoiding the intermediate tlbi+dsb.
-+	 * This means a few things, but notably other PEs will still "see" any
-+	 * stale cached TLB entries. This could lead to a "contiguous bit
-+	 * misprogramming" issue until the final tlbi+dsb of the changed page,
-+	 * which would clear out both the stale (RW,n) entry and the new (RO,c)
-+	 * contiguous entry installed in its place.
-+	 *
-+	 * What this is saying, is the following:
-+	 *
-+	 *  +----+----+----+----+
-+	 *  |RO,n|RO,n|RO,n|RW,n| <--- old page tables, all non-contiguous
-+	 *  +----+----+----+----+
-+	 *
-+	 *  +----+----+----+----+
-+	 *  |RO,c|RO,c|RO,c|RO,c| <--- new page tables, all contiguous
-+	 *  +----+----+----+----+
-+	 *   /\
-+	 *   ||
-+	 *
-+	 *  If both the old single (RW,n) and new contiguous (RO,c) TLB entries
-+	 *  are present, and a write is made to this address, do we fault or
-+	 *  is the write permitted (via amalgamation)?
-+	 *
-+	 * The relevant Arm ARM DDI 0487L.a requirements are RNGLXZ and RJQQTC,
-+	 * and together state that when BBML1 or BBML2 are implemented, either
-+	 * a TLB conflict abort is raised (which we expressly forbid), or will
-+	 * "produce an OA, access permissions, and memory attributes that are
-+	 * consistent with any of the programmed translation table values".
-+	 *
-+	 * That is to say, will either raise a TLB conflict, or produce one of
-+	 * the cached TLB entries, but never amalgamate.
-+	 *
-+	 * Thus, as the page tables are only considered "consistent" after
-+	 * the final tlbi+dsb (which evicts both the single stale (RW,n) TLB
-+	 * entry as well as the new contiguous (RO,c) TLB entry), omitting the
-+	 * initial tlbi+dsb is correct.
-+	 *
-+	 * It is also important to note that at the end of the BBML2 folding
-+	 * case, we are still left with potentially all N TLB entries still
-+	 * cached (the N-1 non-contiguous ptes, and the single contiguous
-+	 * block). However, over time, natural TLB pressure will cause the
-+	 * non-contiguous pte TLB entries to be flushed, leaving only the
-+	 * contiguous block TLB entry. This means that omitting the tlbi+dsb is
-+	 * not only correct, but also keeps our eventual performance benefits.
-+	 *
-+	 * For the unfolding case, BBML0 looks as follows:
-+	 *
-+	 *  0) Initial page-table layout:
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |RW,c|RW,c|RW,c|RW,c| <--- last page being set as RO
-+	 *   +----+----+----+----+
-+	 *
-+	 *  1) Aggregate AF + dirty flags using __ptep_get_and_clear():
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |  0 |  0 |  0 |  0 |
-+	 *   +----+----+----+----+
-+	 *
-+	 *  2) __flush_tlb_range():
-+	 *
-+	 *   |____ tlbi + dsb ____|
-+	 *
-+	 *  3) __set_ptes() to repaint as non-contiguous:
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |RW,n|RW,n|RW,n|RW,n|
-+	 *   +----+----+----+----+
-+	 *
-+	 *  4) Update changed page permissions:
-+	 *
-+	 *   +----+----+----+----+
-+	 *   |RW,n|RW,n|RW,n|RO,n| <--- last page permissions set
-+	 *   +----+----+----+----+
-+	 *
-+	 *  5) The kernel will eventually __flush_tlb() for changed page:
-+	 *
-+	 *                  |____| <--- tlbi + dsb
-+	 *
-+	 * For BBML2, we again remove the intermediate tlbi+dsb. Here, there
-+	 * are no issues, as the final tlbi+dsb covering the changed page is
-+	 * guaranteed to remove the original large contiguous (RW,c) TLB entry,
-+	 * as well as the intermediate (RW,n) TLB entry; the next access will
-+	 * install the new (RO,n) TLB entry and the page tables are only
-+	 * considered "consistent" after the final tlbi+dsb, so software must
-+	 * be prepared for this inconsistency prior to finishing the mm dance
-+	 * regardless.
-+	 */
-+
-+	if (!system_supports_bbml2_noabort())
-+		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
- 
- 	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
- }
 -- 
-2.49.0
+Rgrds, legion
 
 
