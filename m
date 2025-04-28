@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-624116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B20A9FEEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475FFA9FEEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE3E7AC619
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC2E9174A49
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A00186E26;
-	Tue, 29 Apr 2025 01:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C0F1CAA80;
+	Tue, 29 Apr 2025 01:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nDxxYwYI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bil1vEEc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F16919C542
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500BE1C7007
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745889582; cv=none; b=Gqelt6RIofWVaUxkO1YK+0V50eaP4A/CRrGcWV86HS7uV7X8h+n2bvHNRmFnA2VA3n8bD+q7SZKjCRz0I/JtKotCY4Zk6IRii3wtyPeDUlIfjBCLODiqtX1WS6DxF4cWV4DHiz1OpR/IDBTfUQ0ofdBP+7eIZDzxcigffnK1u5s=
+	t=1745889587; cv=none; b=NKVPa4GJKqUao1Zgn8KoB9aIQgOsVUYhLwCBkM3Fp/i6sy0s4LlZ4zkmk0a1K0dOZS971HmBhGexSGlxuEsF+YIJGOtBH1WywvVuLMWnOfTO2FGUQr/ZvJIDVIFZDh3ku9EBbX3jj0ERiVfwW1POg9y4/VCShBqBsp50EOP6Wv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745889582; c=relaxed/simple;
-	bh=6lXCGWOXBlsuyFkmPwrGhHIUNi3cg7bVtcVuwOLUiWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GEV+TtpnR2S7H5DllWnofLJop9Dmi/2kpYdQyZ+fi5FTvnpkobY9xyzhGib1+eEae6KZR5gFcVzZAcTGAKCudmMHMjbtwdgB4NsVqEI9nfOjRR9wwYyTxzVvgkHeDmOMs3dPlw8R8NqbBQ4lrRGoAl4qQx+ymY9TwAJmp4FGOU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nDxxYwYI; arc=none smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1745889587; c=relaxed/simple;
+	bh=Pu2wLgfGRRq8hrC3IwkTdD3V5uw2TWb1PcFwwrUwlGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yk0m9H3FBCckLASUA7rZuUaCvYUCCRHxkcb/7IxmRZWMFN3BY81CSWlpsjiTeRbVBFaNSQ4qe7xD0ydWCbU/s731VROeEnyTaelM20qt8dETsEUB6SQAPnLDHGJDiS8EeNyjro6uMrzUYeOdHwZvgwMz68LUlfuSzdB+UkpJf0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bil1vEEc; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745889580; x=1777425580;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6lXCGWOXBlsuyFkmPwrGhHIUNi3cg7bVtcVuwOLUiWg=;
-  b=nDxxYwYIWPavYWB3Otig8GWulnvffMvzQctQ/r/5ynE1mV1mhZkwdz2f
-   IwTB8QY76ISPZ3bREkSk8uSjB4s66ADlPiNGSv6P1Ku2iYa2VmQm8G70/
-   ReoP4V2RRE0Yqg4P7pBvkyO4/+JcPr7Qbk6XrqXwDz0TIPTg3sESGkH3v
-   +LTmSEQ2BV2ycZHPnRlWwNM+QvRaORD3O4Se9BWD+s+IEkb+R3W+NQP7h
-   mme7B0KSt2uqP6WDobJGO3vlzIVVBt/Cie86o/wzz8zEp9Ff5j7iw40+V
-   dReLmLq6oRaGAksaaRhnNmrrgQLGZkzIgB0TpvXdepsQS8AB2VTvxEEoS
+  t=1745889585; x=1777425585;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Pu2wLgfGRRq8hrC3IwkTdD3V5uw2TWb1PcFwwrUwlGw=;
+  b=Bil1vEEcXVXsDqGie60LIAmr34YhNvv9eUNYCCn1OG4mFghNJRzxEuen
+   jXZM+ZxpPnpYegJ9c0iHFLiJjfwuTWixRbHQbbYkzu60V4TQ3gT6Oydg6
+   sj2JZDFEq4fChwiw+EG2ZsNA6XVopRiy7VibNAMHHq6Z4/6eh+j/xuVym
+   j5HnJbVINK4F9fjz9IvEEt87EX/5cg4PegV6vvputzHRmQo95UxSsd/DB
+   XMBEljqBWDocN5jTdrqe4KJzfSI9MH6KFB3T/QqzANuqa4UyJ5soya0+H
+   bGezNFZu32ZkpPvxEwFvgQYB7IwBvEAsnxUQfACK26YtvMPcXhG5/vwo6
    Q==;
-X-CSE-ConnectionGUID: V1iQQc1tSg2TuXHjyY8z0g==
-X-CSE-MsgGUID: 2diV6K0sRB23uypWgF/chw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="51313354"
+X-CSE-ConnectionGUID: CP5/mOHKRTGUZ0h+9GxUqQ==
+X-CSE-MsgGUID: G6TKP1YuScmhl9T6IFrQwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="51165279"
 X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
-   d="scan'208";a="51313354"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 18:19:40 -0700
-X-CSE-ConnectionGUID: TrsiJmNzSL6DkZdpoe+mFA==
-X-CSE-MsgGUID: VcHt/szfSnG0BCuuKFU5SQ==
+   d="scan'208";a="51165279"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 18:19:35 -0700
+X-CSE-ConnectionGUID: lkC3NN5QQKu5gK1cmNNkwA==
+X-CSE-MsgGUID: Xt1DrXtvTW+qYMXWaPwTCg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
-   d="scan'208";a="164637879"
+   d="scan'208";a="164775792"
 Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 28 Apr 2025 18:19:39 -0700
+  by fmviesa001.fm.intel.com with ESMTP; 28 Apr 2025 18:19:28 -0700
 Received: from kbuild by 1992f890471c with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1u9ZdI-0000Lq-0J;
-	Tue, 29 Apr 2025 01:19:36 +0000
+	id 1u9Zd7-00001Y-1n;
+	Tue, 29 Apr 2025 01:19:25 +0000
 Date: Tue, 29 Apr 2025 01:10:04 +0800
 From: kernel test robot <lkp@intel.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: arch/microblaze/boot/dts/system.dtb: flash@a0000000
- (xlnx,xps-mch-emc-2.00.a): Unevaluated properties are not allowed
- ('xlnx,family', 'xlnx,include-datawidth-matching-0',
- 'xlnx,include-datawidth-matching-1', 'xlnx,include-datawidth-matching-2',
- 'xlnx,incl...
-Message-ID: <202504290136.oY3KMgyd-lkp@intel.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: oe-kbuild-all@lists.linux.dev, thomas.petazzoni@bootlin.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Mark Yacoub <markyacoub@google.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH] drm: writeback: Fix drm_writeback_connector_cleanup
+ signature
+Message-ID: <202504290021.ZR6XX2Sc-lkp@intel.com>
+References: <20250428-drm-fix-writeback-cleanup-v1-1-e4c723868b73@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,101 +84,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250428-drm-fix-writeback-cleanup-v1-1-e4c723868b73@bootlin.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git =
-master
-head:   b4432656b36e5cc1d50a1f2dc15357543add530e
-commit: 9ea13d9e40cfb6675a299147bb89d6ca9e7aad9a dt-bindings: mtd: physmap:=
- Ensure all properties are defined
-date:   8 weeks ago
-config: microblaze-randconfig-052-20250428 (https://download.01.org/0day-ci=
-/archive/20250429/202504290136.oY3KMgyd-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 14.2.0
-dtschema version: 2025.3.dev21+ge6ea659
-reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archive=
-/20250429/202504290136.oY3KMgyd-lkp@intel.com/reproduce)
+Hi Louis,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new versio=
-n of
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on b848cd418aebdb313364b4843f41fae82281a823]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Louis-Chauvet/drm-writeback-Fix-drm_writeback_connector_cleanup-signature/20250428-163254
+base:   b848cd418aebdb313364b4843f41fae82281a823
+patch link:    https://lore.kernel.org/r/20250428-drm-fix-writeback-cleanup-v1-1-e4c723868b73%40bootlin.com
+patch subject: [PATCH] drm: writeback: Fix drm_writeback_connector_cleanup signature
+config: arm-randconfig-002-20250428 (https://download.01.org/0day-ci/archive/20250429/202504290021.ZR6XX2Sc-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250429/202504290021.ZR6XX2Sc-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504290136.oY3KMgyd-lkp@i=
-ntel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504290021.ZR6XX2Sc-lkp@intel.com/
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/microblaze/boot/dts/system.dtb: /: failed to match any schema with =
-compatible: ['xlnx,microblaze']
-   arch/microblaze/boot/dts/system.dtb: /cpus/cpu@0: failed to match any sc=
-hema with compatible: ['xlnx,microblaze-7.10.d']
-   arch/microblaze/boot/dts/system.dtb: plb@0 (xlnx,plb-v46-1.03.a): gpio-l=
-eds: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/microblaze/boot/dts/system.dtb: plb@0 (xlnx,plb-v46-1.03.a): gpio-r=
-estart: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/microblaze/boot/dts/system.dtb: plb@0 (xlnx,plb-v46-1.03.a): $noden=
-ame:0: 'plb@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi=
-|ahb|apb)(@.+)?$'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/microblaze/boot/dts/system.dtb: /plb@0: failed to match any schema =
-with compatible: ['xlnx,plb-v46-1.03.a', 'xlnx,plb-v46-1.00.a', 'simple-bus=
-']
-   arch/microblaze/boot/dts/system.dtb: /plb@0: failed to match any schema =
-with compatible: ['xlnx,plb-v46-1.03.a', 'xlnx,plb-v46-1.00.a', 'simple-bus=
-']
->> arch/microblaze/boot/dts/system.dtb: flash@a0000000 (xlnx,xps-mch-emc-2.=
-00.a): Unevaluated properties are not allowed ('xlnx,family', 'xlnx,include=
--datawidth-matching-0', 'xlnx,include-datawidth-matching-1', 'xlnx,include-=
-datawidth-matching-2', 'xlnx,include-datawidth-matching-3', 'xlnx,include-n=
-egedge-ioregs', 'xlnx,include-plb-ipif', 'xlnx,include-wrbuf', 'xlnx,max-me=
-m-width', 'xlnx,mch-native-dwidth', 'xlnx,mch-plb-clk-period-ps', 'xlnx,mch=
--splb-awidth', 'xlnx,mch0-accessbuf-depth', 'xlnx,mch0-protocol', 'xlnx,mch=
-0-rddatabuf-depth', 'xlnx,mch1-accessbuf-depth', 'xlnx,mch1-protocol', 'xln=
-x,mch1-rddatabuf-depth', 'xlnx,mch2-accessbuf-depth', 'xlnx,mch2-protocol',=
- 'xlnx,mch2-rddatabuf-depth', 'xlnx,mch3-accessbuf-depth', 'xlnx,mch3-proto=
-col', 'xlnx,mch3-rddatabuf-depth', 'xlnx,mem0-width', 'xlnx,mem1-width', 'x=
-lnx,mem2-width', 'xlnx,mem3-width', 'xlnx,num-banks-mem', 'xlnx,num-channel=
-s', 'xlnx,priority-mode', 'xlnx,synch-mem-0', 'xlnx,synch-mem-1', 'xlnx,syn=
-ch-mem-2', 'xlnx,synch-mem-3', 'xlnx,synch-pipedelay-0', 'xlnx,synch-pipede=
-lay-1', 'xlnx,synch-pipedelay-2', 'xlnx,synch-pipedelay-3', 'xlnx,tavdv-ps-=
-mem-0', 'xlnx,tavdv-ps-mem-1', 'xlnx,tavdv-ps-mem-2', 'xlnx,tavdv-ps-mem-3'=
-, 'xlnx,tcedv-ps-mem-0', 'xlnx,tcedv-ps-mem-1', 'xlnx,tcedv-ps-mem-2', 'xln=
-x,tcedv-ps-mem-3', 'xlnx,thzce-ps-mem-0', 'xlnx,thzce-ps-mem-1', 'xlnx,thzc=
-e-ps-mem-2', 'xlnx,thzce-ps-mem-3', 'xlnx,thzoe-ps-mem-0', 'xlnx,thzoe-ps-m=
-em-1', 'xlnx,thzoe-ps-mem-2', 'xlnx,thzoe-ps-mem-3', 'xlnx,tlzwe-ps-mem-0',=
- 'xlnx,tlzwe-ps-mem-1', 'xlnx,tlzwe-ps-mem-2', 'xlnx,tlzwe-ps-mem-3', 'xlnx=
-,twc-ps-mem-0', 'xlnx,twc-ps-mem-1', 'xlnx,twc-ps-mem-2', 'xlnx,twc-ps-mem-=
-3', 'xlnx,twp-ps-mem-0', 'xlnx,twp-ps-mem-1', 'xlnx,twp-ps-mem-2', 'xlnx,tw=
-p-ps-mem-3', 'xlnx,xcl0-linesize', 'xlnx,xcl0-writexfer', 'xlnx,xcl1-linesi=
-ze', 'xlnx,xcl1-writexfer', 'xlnx,xcl2-linesize', 'xlnx,xcl2-writexfer', 'x=
-lnx,xcl3-linesize', 'xlnx,xcl3-writexfer' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
-   arch/microblaze/boot/dts/system.dtb: /plb@0/xps-ll-temac@81c00000: faile=
-d to match any schema with compatible: ['xlnx,compound']
-   arch/microblaze/boot/dts/system.dtb: /plb@0/xps-ll-temac@81c00000/ethern=
-et@81c00000: failed to match any schema with compatible: ['xlnx,xps-ll-tema=
-c-1.01.b', 'xlnx,xps-ll-temac-1.00.a']
-   arch/microblaze/boot/dts/system.dtb: /plb@0/xps-ll-temac@81c00000/ethern=
-et@81c00000: failed to match any schema with compatible: ['xlnx,xps-ll-tema=
-c-1.01.b', 'xlnx,xps-ll-temac-1.00.a']
-   arch/microblaze/boot/dts/system.dtb: i2c@81600000 (xlnx,xps-iic-2.00.a):=
- 'clocks' is a required property
-   	from schema $id: http://devicetree.org/schemas/i2c/xlnx,xps-iic-2.00.a.=
-yaml#
-   arch/microblaze/boot/dts/system.dtb: i2c@81600000 (xlnx,xps-iic-2.00.a):=
- Unevaluated properties are not allowed ('xlnx,clk-freq', 'xlnx,family', 'x=
-lnx,gpo-width', 'xlnx,iic-freq', 'xlnx,scl-inertial-delay', 'xlnx,sda-inert=
-ial-delay', 'xlnx,ten-bit-adr' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/i2c/xlnx,xps-iic-2.00.a.=
-yaml#
-   arch/microblaze/boot/dts/system.dtb: gpio@81400000 (xlnx,xps-gpio-1.00.a=
-): Unevaluated properties are not allowed ('xlnx,family', 'xlnx,is-bidir', =
-'xlnx,is-bidir-2' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/gpio/xlnx,gpio-xilinx.ya=
-ml#
+All warnings (new ones prefixed by >>):
 
---=20
+>> drivers/gpu/drm/drm_writeback.c:354: warning: Function parameter or struct member 'data' not described in 'drm_writeback_connector_cleanup'
+>> drivers/gpu/drm/drm_writeback.c:354: warning: Excess function parameter 'wb_connector' description in 'drm_writeback_connector_cleanup'
+
+
+vim +354 drivers/gpu/drm/drm_writeback.c
+
+935774cd71fe60 Brian Starkey 2017-03-29  342  
+1914ba2b91ea8e Louis Chauvet 2025-01-16  343  /**
+1914ba2b91ea8e Louis Chauvet 2025-01-16  344   * drm_writeback_connector_cleanup - Cleanup the writeback connector
+1914ba2b91ea8e Louis Chauvet 2025-01-16  345   * @dev: DRM device
+1914ba2b91ea8e Louis Chauvet 2025-01-16  346   * @wb_connector: Pointer to the writeback connector to clean up
+1914ba2b91ea8e Louis Chauvet 2025-01-16  347   *
+1914ba2b91ea8e Louis Chauvet 2025-01-16  348   * This will decrement the reference counter of blobs and destroy properties. It
+1914ba2b91ea8e Louis Chauvet 2025-01-16  349   * will also clean the remaining jobs in this writeback connector. Caution: This helper will not
+1914ba2b91ea8e Louis Chauvet 2025-01-16  350   * clean up the attached encoder and the drm_connector.
+1914ba2b91ea8e Louis Chauvet 2025-01-16  351   */
+1914ba2b91ea8e Louis Chauvet 2025-01-16  352  static void drm_writeback_connector_cleanup(struct drm_device *dev,
+928d313d023526 Louis Chauvet 2025-04-28  353  					    void *data)
+1914ba2b91ea8e Louis Chauvet 2025-01-16 @354  {
+1914ba2b91ea8e Louis Chauvet 2025-01-16  355  	unsigned long flags;
+1914ba2b91ea8e Louis Chauvet 2025-01-16  356  	struct drm_writeback_job *pos, *n;
+928d313d023526 Louis Chauvet 2025-04-28  357  	struct drm_writeback_connector *wb_connector = data;
+1914ba2b91ea8e Louis Chauvet 2025-01-16  358  
+1914ba2b91ea8e Louis Chauvet 2025-01-16  359  	delete_writeback_properties(dev);
+1914ba2b91ea8e Louis Chauvet 2025-01-16  360  	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
+1914ba2b91ea8e Louis Chauvet 2025-01-16  361  
+1914ba2b91ea8e Louis Chauvet 2025-01-16  362  	spin_lock_irqsave(&wb_connector->job_lock, flags);
+1914ba2b91ea8e Louis Chauvet 2025-01-16  363  	list_for_each_entry_safe(pos, n, &wb_connector->job_queue, list_entry) {
+1914ba2b91ea8e Louis Chauvet 2025-01-16  364  		list_del(&pos->list_entry);
+ff3881cc6a588f Dan Carpenter 2025-02-12  365  		drm_writeback_cleanup_job(pos);
+1914ba2b91ea8e Louis Chauvet 2025-01-16  366  	}
+1914ba2b91ea8e Louis Chauvet 2025-01-16  367  	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+1914ba2b91ea8e Louis Chauvet 2025-01-16  368  }
+1914ba2b91ea8e Louis Chauvet 2025-01-16  369  
+
+-- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
