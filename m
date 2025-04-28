@@ -1,96 +1,181 @@
-Return-Path: <linux-kernel+bounces-623645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBCFA9F8AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8431A9F8B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1461A809A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C11A84FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A940F294A0F;
-	Mon, 28 Apr 2025 18:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB612951C9;
+	Mon, 28 Apr 2025 18:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBFt5NT+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKlBgZjU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB95288B1;
-	Mon, 28 Apr 2025 18:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72E11BBBFD;
+	Mon, 28 Apr 2025 18:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745865287; cv=none; b=LKY9nb9vAh+jn8+6A130d87qkAnX+7cv8Zncp6DVGZUSkPHPSRlKSXibWGfTMdvt5Hds0JZAOHtAKhw0jLfZv/le8xMfTQj0H4nyQfpCd9MogVSrRboNKjJEsQQP8fcJZMSKk+jxrUgIQU4dgJQ/9pFOcR72JVRxFs4UCgI/wGM=
+	t=1745865557; cv=none; b=Z9sAXjen5U3jAcZW9EV02RwFrfq22Lql9LWL3pX1X0TeLNtar4Y+g0wIeSiEZTCkmZMRmuOiewGPSGR8lGb39AdxBPhcuNTJSIiBPTP2dILmJhLsF7whqEa/rdFoI2tHEunCQ/Ktz3OPOIwGeIDP8uPhVXM7hkZS4syBLhQneWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745865287; c=relaxed/simple;
-	bh=kdC5V1GJVf0AYNDVDpETfg7feyFeCkn1u5NP5gc8Adk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6MCnT1cpm1EgtwDh/xLy6sYlhhiOn+T3hkzM2i00ix40nkUNrjXXXv/whmaY1NghYzKdly5zyFW0LIbeKw8XzFSEt2M0aYX0ZxaxDcqeDQN0wxz9wxB5cU/gr4xbV16J9z0Rc+9e0NQb0ZY/YTQs7yCS2sSbSTGOUclKVOqU+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBFt5NT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8AFC4CEE4;
-	Mon, 28 Apr 2025 18:34:46 +0000 (UTC)
+	s=arc-20240116; t=1745865557; c=relaxed/simple;
+	bh=1g5UsXA4X/cUaqdKytfkoN8xTqDuxiR3Ac2nTac0D0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eQTtfj3FulNodp7DhYIv5nzwG+Ll1tG/pXsytalCFAliylkEr7EFPto4FXbT9cWErUj8gVuWu1ySYHIZL0bzP1XVeQJFX0lg+8YzMy9WeX4w0lPbQV3gyKDPKfxKw/Ls8BVdGV42T5/9cfM2PNd3eSJVDATGQOxherfRqphDomc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKlBgZjU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDE0C4CEEC;
+	Mon, 28 Apr 2025 18:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745865286;
-	bh=kdC5V1GJVf0AYNDVDpETfg7feyFeCkn1u5NP5gc8Adk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QBFt5NT+Xr6LNbnOLRU/DXvOKowZJdVbMDR8bHSIaucTRowUy9MOTiIKO/QkbLJcY
-	 VzmRl72a4FnZWlxXbTIz3qaUPQC9vF++rfclh3CAyzJKG6f2q1s1fWyogug9fe/yaX
-	 VPgd/aiyeCEDipyz0CJ40OA23IhEESoWXSuRfQ4OUrf/OIcMIqPV72KRPQg9na0uCW
-	 XEp85y3vkTFjxWz9G0Jc2noseWWxcbwHVgQHBga4lYtn1t5DEWDmMIzg3EmHp33aqd
-	 JHgNtHctCLC1XKRMlKtfg1PPNGsdgJbBdU9PHRz1s7aHVLRFCEV1nfLDvZjqAZn141
-	 NyRm6WcVWLS+w==
-Date: Mon, 28 Apr 2025 08:34:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-	bpf <bpf@vger.kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr
-Subject: Re: [RFC][PATCH 2/2] treewide: Have the task->flags & PF_KTHREAD
- check use the helper functions
-Message-ID: <aA_KRQQXt646y37K@slm.duckdns.org>
-References: <20250425204120.639530125@goodmis.org>
- <20250425204313.784243618@goodmis.org>
- <202504251558.AA50716@keescook>
- <CAADnVQKdWSuDm52GmNor75rFZGNBLcoCto3oecA3D3QHD_MyCQ@mail.gmail.com>
+	s=k20201202; t=1745865555;
+	bh=1g5UsXA4X/cUaqdKytfkoN8xTqDuxiR3Ac2nTac0D0s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GKlBgZjUebfOQvhUlhLsa1Stsc986glohqumv/oxWqvv5Hy9tnBohba5TMspZSB25
+	 2fpLYfmBfzWNUdBwmCERcWDyV4HwKRy1RG0ogybvqJFO3WLcV8FJSAtxKI6TRF0x1K
+	 VI1mBKCEdkaSUktL2PGxeiPde0RMl8mRFftg+sQGmqHOlHxuUrepfimFa+JogETtWj
+	 AD/p/qPfPBCzGKhWduu4QP4GEm89FKTreIjZwv3BwgyRAfiXnT3XjNlXYh4vcPDe2Q
+	 ZsQaJe5hGA7o1If/PttqrnqY3+9LpBlv2k80zuHvXFN78R9aMOLfqcWEjSimD98ZCj
+	 jq1wjICWWAF/Q==
+From: Eric Biggers <ebiggers@kernel.org>
+To: x86@kernel.org,
+	linux-sgx@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH] x86/sgx: Use SHA-256 library API instead of crypto_shash API
+Date: Mon, 28 Apr 2025 11:38:38 -0700
+Message-ID: <20250428183838.799333-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAADnVQKdWSuDm52GmNor75rFZGNBLcoCto3oecA3D3QHD_MyCQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 25, 2025 at 08:22:59PM -0700, Alexei Starovoitov wrote:
-> > >  tools/sched_ext/scx_central.bpf.c          |  2 +-
-> > >  tools/sched_ext/scx_flatcg.bpf.c           |  2 +-
-> > >  tools/sched_ext/scx_qmap.bpf.c             |  2 +-
-> >
-> > I think these are fine. The Makefile is pulling in standard kbuild
-> > Makefiles, so I think the correct include directories (outside of
-> > tools/) are being used.
-> 
-> I suspect they are not fine.
-> I don't think they #include linux/sched.h
-> I would drop them for now.
+From: Eric Biggers <ebiggers@google.com>
 
-Oh, this won't work. Those get all the kernel defs from the BTF generated
-vmlinux.h file which doesn't include any inline functions or macros, so
-please don't include them in this conversion.
+This user of SHA-256 does not support any other algorithm, so the
+crypto_shash abstraction provides no value.  Just use the SHA-256
+library API instead, which is much simpler and easier to use.
 
-Thanks.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
+This patch is targeting the x86 tree for 6.16.
+
+ arch/x86/Kconfig                 |  3 +--
+ arch/x86/kernel/cpu/sgx/driver.h |  1 -
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 30 ++----------------------------
+ 3 files changed, 3 insertions(+), 31 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index faafd99e52292..bf4874ba4fcfb 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1880,12 +1880,11 @@ config X86_INTEL_TSX_MODE_AUTO
+ endchoice
+ 
+ config X86_SGX
+ 	bool "Software Guard eXtensions (SGX)"
+ 	depends on X86_64 && CPU_SUP_INTEL && X86_X2APIC
+-	depends on CRYPTO=y
+-	depends on CRYPTO_SHA256=y
++	select CRYPTO_LIB_SHA256
+ 	select MMU_NOTIFIER
+ 	select NUMA_KEEP_MEMINFO if NUMA
+ 	select XARRAY_MULTI
+ 	help
+ 	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index 4eddb4d571ef2..30f39f92c98fc 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -1,10 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ARCH_SGX_DRIVER_H__
+ #define __ARCH_SGX_DRIVER_H__
+ 
+-#include <crypto/hash.h>
+ #include <linux/kref.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/radix-tree.h>
+ #include <linux/rwsem.h>
+ #include <linux/sched.h>
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 776a20172867e..66f1efa16fbb7 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -1,10 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*  Copyright(c) 2016-20 Intel Corporation. */
+ 
+ #include <asm/mman.h>
+ #include <asm/sgx.h>
++#include <crypto/sha2.h>
+ #include <linux/mman.h>
+ #include <linux/delay.h>
+ #include <linux/file.h>
+ #include <linux/hashtable.h>
+ #include <linux/highmem.h>
+@@ -461,35 +462,10 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+ 		return -EFAULT;
+ 
+ 	return ret;
+ }
+ 
+-static int __sgx_get_key_hash(struct crypto_shash *tfm, const void *modulus,
+-			      void *hash)
+-{
+-	SHASH_DESC_ON_STACK(shash, tfm);
+-
+-	shash->tfm = tfm;
+-
+-	return crypto_shash_digest(shash, modulus, SGX_MODULUS_SIZE, hash);
+-}
+-
+-static int sgx_get_key_hash(const void *modulus, void *hash)
+-{
+-	struct crypto_shash *tfm;
+-	int ret;
+-
+-	tfm = crypto_alloc_shash("sha256", 0, CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(tfm))
+-		return PTR_ERR(tfm);
+-
+-	ret = __sgx_get_key_hash(tfm, modulus, hash);
+-
+-	crypto_free_shash(tfm);
+-	return ret;
+-}
+-
+ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 			 void *token)
+ {
+ 	u64 mrsigner[4];
+ 	int i, j;
+@@ -521,13 +497,11 @@ static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+ 
+ 	if (sigstruct->body.xfrm & sigstruct->body.xfrm_mask &
+ 	    sgx_xfrm_reserved_mask)
+ 		return -EINVAL;
+ 
+-	ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
+-	if (ret)
+-		return ret;
++	sha256(sigstruct->modulus, SGX_MODULUS_SIZE, (u8 *)mrsigner);
+ 
+ 	mutex_lock(&encl->lock);
+ 
+ 	/*
+ 	 * ENCLS[EINIT] is interruptible because it has such a high latency,
+
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
 -- 
-tejun
+2.49.0
+
 
