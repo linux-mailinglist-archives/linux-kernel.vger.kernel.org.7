@@ -1,66 +1,106 @@
-Return-Path: <linux-kernel+bounces-623631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8E6A9F888
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADEFA9F898
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1803E174D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CFD5A5444
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1142980BD;
-	Mon, 28 Apr 2025 18:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75922951DF;
+	Mon, 28 Apr 2025 18:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VuZGzYa5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8521C2973C7;
-	Mon, 28 Apr 2025 18:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IHQuDnbd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8480926B2A9
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864829; cv=none; b=s7iThdj9BMrRZaUc4kIrPkUiZwgKvhQ7Dtkrrc7OSqLsRCQp25SgtMqLuzpPfR5vZ5hKa49JB+s/6dCc7e8IYBIjQUNY/LuHVo3njHYBMrfHG6zoyGN/2/XpDZfmd+z/TqBKuc/0KDzfm7/dodj8s/Xfq8VdUECfRmdAUFayfW8=
+	t=1745864972; cv=none; b=ao6I7KEOlAMge8kmgPFxOJtD1c7l1bwW7FSDbVPoPCY1L5foyjc5KzAiDtoAukHfdjMJg3UdDYpU71PkZcwyleh7UX2GUWcO3SlyXo989gCByVdxjsrkxlbqS0oHgfundPwcTcca5Xxc6gCll2mzj7YVlpWbzrZHu9+GkjQZXrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864829; c=relaxed/simple;
-	bh=mnVuEzzKnWlv/nQRLNLHhAkHJNAFdbnYPNEz8+Lem3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MUy7Nrypx+1iTrcTWxpHed5KHyJuLhnNs4oY1cr0usNhrnt4gXdRYbUzZ71w7Nzz8iyIGqkkMDyZQSHeX230TNtV+SMldUfkjToXKlO4LyiUf1Uw8mUYRMo5ZP68yFJMj4uPgNxnMgoQ1LYuM+O+2RgA86W9FGbRpb419ppDbVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VuZGzYa5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.1.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id CF4DF211AD04;
-	Mon, 28 Apr 2025 11:27:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CF4DF211AD04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745864827;
-	bh=odUD3T8t5Lkk+UKOirjPVODDXixOQgFl1QOqXxw0tq4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VuZGzYa5lwnvS0IUOO/kU/cR0Bo+EeiH5efYye+cNhUAuK0jVAsr1fJfICHz3DAs4
-	 p7J8ho0x4+urO/SlxCRS+6eRU4+r0mCwXfrHuBp7pfJ/q2RsJyK7jwLRW6WB0LORbU
-	 07Ocv2psDMspPBbKCyaDlg/LknK/XFB9PuFHYWPg=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kys@microsoft.com,
-	mikelley@microsoft.com,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	tiala@microsoft.com,
-	wei.liu@kernel.org,
-	linux-hyperv@vger.kernel.org,
+	s=arc-20240116; t=1745864972; c=relaxed/simple;
+	bh=p13D1eVIQwiWavUWJs1JcoUqzsrV/zu2I5OyDrzN+DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U8iD7Rp+WKoSP50QevUG6ETMbqkCUpn/94AV0QJ/f7cGUZ02TSOl2E7ng9/ODM3SaXKGG2IJrxS0t9ejSHRuBm7qfbW2OSXB0OG8FlhIsFNDyCPlZ7CipMTuheXnn+WFN7AFlszuGaGcvM5DpGGBZfkT3PSp/TyzWxLllHRiWDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IHQuDnbd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745864969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vn6qN5R0W1vyV94Pxo62dc7PUSUH9kpksvjrmkO531Q=;
+	b=IHQuDnbdlL8pNreXcZ7emE1ag5jl5g9OoYJGiNSj6mm0gokQjuXIRzlXm/Nak9ry4V58+C
+	j3syju8pAkceWs26W8GzKlnc6qYvNIwPxfh1vlhOeGev2cyAfB+uGCAXDGnYhMzsR5LlNN
+	GnCso1AJ0EhR/fglu28GJ0uENcBkV2I=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-221-gKDvzwrDOpeQZ_TyPCDpuQ-1; Mon,
+ 28 Apr 2025 14:29:25 -0400
+X-MC-Unique: gKDvzwrDOpeQZ_TyPCDpuQ-1
+X-Mimecast-MFC-AGG-ID: gKDvzwrDOpeQZ_TyPCDpuQ_1745864961
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 708BE180036E;
+	Mon, 28 Apr 2025 18:29:20 +0000 (UTC)
+Received: from h1.redhat.com (unknown [10.22.65.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D2B9830001A2;
+	Mon, 28 Apr 2025 18:29:10 +0000 (UTC)
+From: Nico Pache <npache@redhat.com>
+To: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	bperkins@microsoft.com,
-	sunilmut@microsoft.com
-Subject: [PATCH hyperv-next v3] x86/hyperv: Fix APIC ID and VP index confusion in hv_snp_boot_ap()
-Date: Mon, 28 Apr 2025 11:27:05 -0700
-Message-ID: <20250428182705.132755-1-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
+	linux-kselftest@vger.kernel.org
+Cc: akpm@linux-foundation.org,
+	corbet@lwn.net,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	david@redhat.com,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	ryan.roberts@arm.com,
+	willy@infradead.org,
+	peterx@redhat.com,
+	shuah@kernel.org,
+	ziy@nvidia.com,
+	wangkefeng.wang@huawei.com,
+	usamaarif642@gmail.com,
+	sunnanyong@huawei.com,
+	vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com,
+	yang@os.amperecomputing.com,
+	kirill.shutemov@linux.intel.com,
+	aarcange@redhat.com,
+	raquini@redhat.com,
+	dev.jain@arm.com,
+	anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	tiwai@suse.de,
+	will@kernel.org,
+	dave.hansen@linux.intel.com,
+	jack@suse.cz,
+	cl@gentwo.org,
+	jglisse@google.com,
+	surenb@google.com,
+	zokeefe@google.com,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	hannes@cmpxchg.org,
+	rientjes@google.com,
+	mhocko@suse.com,
+	rdunlap@infradead.org
+Subject: [PATCH v5 0/4] mm: introduce THP deferred setting
+Date: Mon, 28 Apr 2025 12:29:00 -0600
+Message-ID: <20250428182904.93989-1-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,276 +108,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-To start an application processor in SNP-isolated guest, a hypercall
-is used that takes a virtual processor index. The hv_snp_boot_ap()
-function uses that START_VP hypercall but passes as VP index to it
-what it receives as a wakeup_secondary_cpu_64 callback: the APIC ID.
+This series is a follow-up to [1], which adds mTHP support to khugepaged.
+mTHP khugepaged support is a "loose" dependency for the sysfs/sysctl
+configs to make sense. Without it global="defer" and  mTHP="inherit" case
+is "undefined" behavior.
 
-As those two aren't generally interchangeable, that may lead to hung
-APs if the VP index and the APIC ID don't match up.
+We've seen cases were customers switching from RHEL7 to RHEL8 see a
+significant increase in the memory footprint for the same workloads.
 
-Update the parameter names to avoid confusion as to what the parameter
-is. Use the APIC ID to the VP index conversion to provide the correct
-input to the hypercall.
+Through our investigations we found that a large contributing factor to
+the increase in RSS was an increase in THP usage.
 
-Cc: stable@vger.kernel.org
-Fixes: 44676bb9d566 ("x86/hyperv: Add smp support for SEV-SNP guest")
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
----
-[V3]
-	- Removed the misleading comment about the APIC ID and VP indices.
-	- Removed the not sufficiently founded if statement that was added
-	  to the previous version of the patch to avoid the O(n) time complexity.
-	  I'll follow up with a separate patch to address that as that pattern
-	  has crept into other places in the code in the AP wakeup path.
-	- Fixed the logging message to use the "VP index" terminology
-	  consistently.
-    ** Thank you, Michael! **
+For workloads like MySQL, or when using allocators like jemalloc, it is
+often recommended to set /transparent_hugepages/enabled=never. This is
+in part due to performance degradations and increased memory waste.
 
-[V2]
-	https://lore.kernel.org/linux-hyperv/20250425213512.1837061-1-romank@linux.microsoft.com/
-    - Fixed the terminology in the patch and other code to use
-      the term "VP index" consistently
-    ** Thank you, Michael! **
+This series introduces enabled=defer, this setting acts as a middle
+ground between always and madvise. If the mapping is MADV_HUGEPAGE, the
+page fault handler will act normally, making a hugepage if possible. If
+the allocation is not MADV_HUGEPAGE, then the page fault handler will
+default to the base size allocation. The caveat is that khugepaged can
+still operate on pages that are not MADV_HUGEPAGE.
 
-    - Missed not enabling the SNP-SEV options in the local testing,
-      and sent a patch that breaks the build.
-    ** Thank you, Saurabh! **
+This allows for three things... one, applications specifically designed to
+use hugepages will get them, and two, applications that don't use
+hugepages can still benefit from them without aggressively inserting
+THPs at every possible chance. This curbs the memory waste, and defers
+the use of hugepages to khugepaged. Khugepaged can then scan the memory
+for eligible collapsing. Lastly there is the added benefit for those who
+want THPs but experience higher latency PFs. Now you can get base page
+performance at the PF handler and Hugepage performance for those mappings
+after they collapse.
 
-    - Added comments and getting the Linux kernel CPU number from
-      the available data.
+Admins may want to lower max_ptes_none, if not, khugepaged may
+aggressively collapse single allocations into hugepages.
 
-[V1]
-  https://lore.kernel.org/linux-hyperv/20250424215746.467281-1-romank@linux.microsoft.com/
----
- arch/x86/hyperv/hv_init.c       | 33 +++++++++++++++++++++++++
- arch/x86/hyperv/hv_vtl.c        | 44 +++++----------------------------
- arch/x86/hyperv/ivm.c           | 22 +++++++++++++++--
- arch/x86/include/asm/mshyperv.h |  6 +++--
- include/hyperv/hvgdk_mini.h     |  2 +-
- 5 files changed, 64 insertions(+), 43 deletions(-)
+TESTING:
+- Built for x86_64, aarch64, ppc64le, and s390x
+- selftests mm
+- In [1] I provided a script [2] that has multiple access patterns
+- lots of general use.
+- redis testing. This test was my original case for the defer mode. What I
+   was able to prove was that THP=always leads to increased max_latency
+   cases; hence why it is recommended to disable THPs for redis servers.
+   However with 'defer' we dont have the max_latency spikes and can still
+   get the system to utilize THPs. I further tested this with the mTHP
+   defer setting and found that redis (and probably other jmalloc users)
+   can utilize THPs via defer (+mTHP defer) without a large latency
+   penalty and some potential gains. I uploaded some mmtest results
+   here[3] which compares:
+       stock+thp=never
+       stock+(m)thp=always
+       khugepaged-mthp + defer (max_ptes_none=64)
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index ddeb40930bc8..3ca16e1dbbb8 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -706,3 +706,36 @@ bool hv_is_hyperv_initialized(void)
- 	return hypercall_msr.enable;
- }
- EXPORT_SYMBOL_GPL(hv_is_hyperv_initialized);
-+
-+int hv_apicid_to_vp_index(u32 apic_id)
-+{
-+	u64 control;
-+	u64 status;
-+	unsigned long irq_flags;
-+	struct hv_get_vp_from_apic_id_in *input;
-+	u32 *output, ret;
-+
-+	local_irq_save(irq_flags);
-+
-+	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-+	memset(input, 0, sizeof(*input));
-+	input->partition_id = HV_PARTITION_ID_SELF;
-+	input->apic_ids[0] = apic_id;
-+
-+	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-+
-+	control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_INDEX_FROM_APIC_ID;
-+	status = hv_do_hypercall(control, input, output);
-+	ret = output[0];
-+
-+	local_irq_restore(irq_flags);
-+
-+	if (!hv_result_success(status)) {
-+		pr_err("failed to get vp index from apic id %d, status %#llx\n",
-+		       apic_id, status);
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(hv_apicid_to_vp_index);
-diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-index 582fe820e29c..dba10a34c180 100644
---- a/arch/x86/hyperv/hv_vtl.c
-+++ b/arch/x86/hyperv/hv_vtl.c
-@@ -205,41 +205,9 @@ static int hv_vtl_bringup_vcpu(u32 target_vp_index, int cpu, u64 eip_ignored)
- 	return ret;
- }
- 
--static int hv_vtl_apicid_to_vp_id(u32 apic_id)
--{
--	u64 control;
--	u64 status;
--	unsigned long irq_flags;
--	struct hv_get_vp_from_apic_id_in *input;
--	u32 *output, ret;
--
--	local_irq_save(irq_flags);
--
--	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
--	memset(input, 0, sizeof(*input));
--	input->partition_id = HV_PARTITION_ID_SELF;
--	input->apic_ids[0] = apic_id;
--
--	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
--
--	control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_ID_FROM_APIC_ID;
--	status = hv_do_hypercall(control, input, output);
--	ret = output[0];
--
--	local_irq_restore(irq_flags);
--
--	if (!hv_result_success(status)) {
--		pr_err("failed to get vp id from apic id %d, status %#llx\n",
--		       apic_id, status);
--		return -EINVAL;
--	}
--
--	return ret;
--}
--
- static int hv_vtl_wakeup_secondary_cpu(u32 apicid, unsigned long start_eip)
- {
--	int vp_id, cpu;
-+	int vp_index, cpu;
- 
- 	/* Find the logical CPU for the APIC ID */
- 	for_each_present_cpu(cpu) {
-@@ -250,18 +218,18 @@ static int hv_vtl_wakeup_secondary_cpu(u32 apicid, unsigned long start_eip)
- 		return -EINVAL;
- 
- 	pr_debug("Bringing up CPU with APIC ID %d in VTL2...\n", apicid);
--	vp_id = hv_vtl_apicid_to_vp_id(apicid);
-+	vp_index = hv_apicid_to_vp_index(apicid);
- 
--	if (vp_id < 0) {
-+	if (vp_index < 0) {
- 		pr_err("Couldn't find CPU with APIC ID %d\n", apicid);
- 		return -EINVAL;
- 	}
--	if (vp_id > ms_hyperv.max_vp_index) {
--		pr_err("Invalid CPU id %d for APIC ID %d\n", vp_id, apicid);
-+	if (vp_index > ms_hyperv.max_vp_index) {
-+		pr_err("Invalid CPU id %d for APIC ID %d\n", vp_index, apicid);
- 		return -EINVAL;
- 	}
- 
--	return hv_vtl_bringup_vcpu(vp_id, cpu, start_eip);
-+	return hv_vtl_bringup_vcpu(vp_index, cpu, start_eip);
- }
- 
- int __init hv_vtl_early_init(void)
-diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-index c0039a90e9e0..5030992b7134 100644
---- a/arch/x86/hyperv/ivm.c
-+++ b/arch/x86/hyperv/ivm.c
-@@ -9,6 +9,7 @@
- #include <linux/bitfield.h>
- #include <linux/types.h>
- #include <linux/slab.h>
-+#include <linux/cpu.h>
- #include <asm/svm.h>
- #include <asm/sev.h>
- #include <asm/io.h>
-@@ -288,7 +289,7 @@ static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa)
- 		free_page((unsigned long)vmsa);
- }
- 
--int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
-+int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip)
- {
- 	struct sev_es_save_area *vmsa = (struct sev_es_save_area *)
- 		__get_free_page(GFP_KERNEL | __GFP_ZERO);
-@@ -297,10 +298,27 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
- 	u64 ret, retry = 5;
- 	struct hv_enable_vp_vtl *start_vp_input;
- 	unsigned long flags;
-+	int cpu, vp_index;
- 
- 	if (!vmsa)
- 		return -ENOMEM;
- 
-+	/* Find the Hyper-V VP index which might be not the same as APIC ID */
-+	vp_index = hv_apicid_to_vp_index(apic_id);
-+	if (vp_index < 0 || vp_index > ms_hyperv.max_vp_index)
-+		return -EINVAL;
-+
-+	/*
-+	 * Find the Linux CPU number for addressing the per-CPU data, and it
-+	 * might not be the same as APIC ID.
-+	 */
-+	for_each_present_cpu(cpu) {
-+		if (arch_match_cpu_phys_id(cpu, apic_id))
-+			break;
-+	}
-+	if (cpu >= nr_cpu_ids)
-+		return -EINVAL;
-+
- 	native_store_gdt(&gdtr);
- 
- 	vmsa->gdtr.base = gdtr.address;
-@@ -348,7 +366,7 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
- 	start_vp_input = (struct hv_enable_vp_vtl *)ap_start_input_arg;
- 	memset(start_vp_input, 0, sizeof(*start_vp_input));
- 	start_vp_input->partition_id = -1;
--	start_vp_input->vp_index = cpu;
-+	start_vp_input->vp_index = vp_index;
- 	start_vp_input->target_vtl.target_vtl = ms_hyperv.vtl;
- 	*(u64 *)&start_vp_input->vp_context = __pa(vmsa) | 1;
- 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 07aadf0e839f..323132f5e2f0 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -268,11 +268,11 @@ int hv_unmap_ioapic_interrupt(int ioapic_id, struct hv_interrupt_entry *entry);
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- bool hv_ghcb_negotiate_protocol(void);
- void __noreturn hv_ghcb_terminate(unsigned int set, unsigned int reason);
--int hv_snp_boot_ap(u32 cpu, unsigned long start_ip);
-+int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip);
- #else
- static inline bool hv_ghcb_negotiate_protocol(void) { return false; }
- static inline void hv_ghcb_terminate(unsigned int set, unsigned int reason) {}
--static inline int hv_snp_boot_ap(u32 cpu, unsigned long start_ip) { return 0; }
-+static inline int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip) { return 0; }
- #endif
- 
- #if defined(CONFIG_AMD_MEM_ENCRYPT) || defined(CONFIG_INTEL_TDX_GUEST)
-@@ -306,6 +306,7 @@ static __always_inline u64 hv_raw_get_msr(unsigned int reg)
- {
- 	return __rdmsr(reg);
- }
-+int hv_apicid_to_vp_index(u32 apic_id);
- 
- #else /* CONFIG_HYPERV */
- static inline void hyperv_init(void) {}
-@@ -327,6 +328,7 @@ static inline void hv_set_msr(unsigned int reg, u64 value) { }
- static inline u64 hv_get_msr(unsigned int reg) { return 0; }
- static inline void hv_set_non_nested_msr(unsigned int reg, u64 value) { }
- static inline u64 hv_get_non_nested_msr(unsigned int reg) { return 0; }
-+static inline int hv_apicid_to_vp_index(u32 apic_id) { return -EINVAL; }
- #endif /* CONFIG_HYPERV */
- 
- 
-diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-index abf0bd76e370..6f5976aca3e8 100644
---- a/include/hyperv/hvgdk_mini.h
-+++ b/include/hyperv/hvgdk_mini.h
-@@ -475,7 +475,7 @@ union hv_vp_assist_msr_contents {	 /* HV_REGISTER_VP_ASSIST_PAGE */
- #define HVCALL_CREATE_PORT				0x0095
- #define HVCALL_CONNECT_PORT				0x0096
- #define HVCALL_START_VP					0x0099
--#define HVCALL_GET_VP_ID_FROM_APIC_ID			0x009a
-+#define HVCALL_GET_VP_INDEX_FROM_APIC_ID			0x009a
- #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE	0x00af
- #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST	0x00b0
- #define HVCALL_SIGNAL_EVENT_DIRECT			0x00c0
+  The results show that (m)THPs can cause some throughput regression in
+  some cases, but also has gains in other cases. The mTHP+defer results
+  have more gains and less losses over the (m)THP=always case.
 
-base-commit: 628cc040b3a2980df6032766e8ef0688e981ab95
+V5 Changes:
+- rebased dependent series
+- added reviewed-by tag on 2/4
+
+V4 Changes:
+- Minor Documentation fixes
+- rebased the dependent series [1] onto mm-unstable
+    commit 0e68b850b1d3 ("vmalloc: use atomic_long_add_return_relaxed()")
+
+V3 Changes:
+- Combined the documentation commits into one, and moved a section to the
+  khugepaged mthp patchset
+
+V2 Changes:
+- base changes on mTHP khugepaged support
+- Fix selftests parsing issue
+- add mTHP defer option
+- add mTHP defer Documentation
+
+[1] - https://lore.kernel.org/lkml/20250428181218.85925-1-npache@redhat.com/
+[2] - https://gitlab.com/npache/khugepaged_mthp_test
+[3] - https://people.redhat.com/npache/mthp_khugepaged_defer/testoutput2/output.html
+
+Nico Pache (4):
+  mm: defer THP insertion to khugepaged
+  mm: document (m)THP defer usage
+  khugepaged: add defer option to mTHP options
+  selftests: mm: add defer to thp setting parser
+
+ Documentation/admin-guide/mm/transhuge.rst | 31 +++++++---
+ include/linux/huge_mm.h                    | 18 +++++-
+ mm/huge_memory.c                           | 69 +++++++++++++++++++---
+ mm/khugepaged.c                            |  8 +--
+ tools/testing/selftests/mm/thp_settings.c  |  1 +
+ tools/testing/selftests/mm/thp_settings.h  |  1 +
+ 6 files changed, 106 insertions(+), 22 deletions(-)
+
 -- 
-2.43.0
+2.48.1
 
 
