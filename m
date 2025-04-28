@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-623690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65676A9F951
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FD1A9F970
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795823BFA21
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FF5F17F3A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314412951B5;
-	Mon, 28 Apr 2025 19:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4D818DB0A;
+	Mon, 28 Apr 2025 19:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IrhGKyt/"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bXwpa9xG"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ED01FECB4;
-	Mon, 28 Apr 2025 19:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F502957CB;
+	Mon, 28 Apr 2025 19:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745867960; cv=none; b=TQlAnd7+PAiJXR9VE4FjNcbt1ybqgneB8hkUsZGqJ7cl8qCdeXlkIYZlsuaP/ruzod0hBwne8akx71cwz+4L61lbNqaq3d+vrnLF0v87z+L3Z4FVO28/L4dY3Y+Yu91hTE6RUcARhtFR5EzJG8ftZpazLD/C47ZxHcaQtDIh3+U=
+	t=1745868306; cv=none; b=SrXWKbHT5twNi8LBSJMgszXH5DH1yR8ueOp2utE1epCIBhzVofjR/mOsvOfvugURR+Jf3SmySNEDZwbQqoUqykYLXIAQpKRqZnLUNE6ek8cwvwQ+UCPSzUznq7N18ECFO3vMioMRAU585W+Rwq0XDbNB5cBC1oJ/ef7Dsep0GR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745867960; c=relaxed/simple;
-	bh=BrUp0nJxKY420p1grOxNlEERiDw8TRzTT9xqyvtD2fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KO4ihk1U4akqPnAVrXgw7g7XGDRtaDncctI+D89oaaqKLYUX74TjEq2zOvmJctTiNBb+CpVORZaGSjgR4G5cxz9waoL57r6oD7j3yRH3vU6NGV8r1It09cauVcTFYZJzPI/Sp2cMHjaQ+rDwyOS2k2jvV53IdQpUqsG5jjz9S/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IrhGKyt/; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3035858c687so4358278a91.2;
-        Mon, 28 Apr 2025 12:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745867958; x=1746472758; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BgCtF609xcKndtg2owySEhQv7l/vQGYnhH9MvvsxaGk=;
-        b=IrhGKyt/I+dzCrXRLTvOvN1CWb63qrIoRiIo24Gt7RcqJfm8czS0xjfNoycQD9ZteT
-         pKXTV7KChLjcxWdwt/jz7V0Gq08oblOODWhcgfrJMxEu30ZdO0fe9e2jvWh3ZQk+HWl+
-         83hti2vseXF/ryRA9+Lf9qZVcjvj/JBlgb4tMO/7uWz5XgUEnFfQXjepmBTUWqW1l8To
-         Jok59D5MmxQE+JT0aeqrhemgOJB5SpOSaBUAFJWIRRRfLVBmwHY5uGxBYTgfm8iah0C0
-         hPTBE4JpSjxxoUS5XuJcdWjHyVPJXllcomoHcOeDnPzB9UdED/UJAtOPamSidrxew5t0
-         e0Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745867958; x=1746472758;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BgCtF609xcKndtg2owySEhQv7l/vQGYnhH9MvvsxaGk=;
-        b=Typcl0tTF9J/buX2ILxHECZBD8ozikZ43w8BlZVJhXsM2FR7IYNI9eJh70bStD8YUK
-         /6QteVYyf34Ibou1uscUob6I5CJg3sAhbCdY68BsbQlWKhQkDXYbb1YPohtimBAbI3VP
-         s2WhGK6u0YcXiIIvbQARq8m5yjviY+m6TQNkb+PFcbIy6HZtDaHC+KOPda69fKQOMcIx
-         Zc3WDi7raQEEv/FzpRivAJd0uwYfRAXgkr6E+Hk5Kpedno1jdmeHMf9m9lsb2DgVJzc8
-         zJMozYQ/6ZkpY7lqRzeIzmbXxVYaglKcI6AzIwGo8OhaaSe4bPAlIQOF/QQ9vx9AjYWV
-         tmCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO5Cipxe+1qBnyxhDHK7hEuEhKvU/wvP4lt72iyQFnI+1eV8K/pe1JUGfHkl1jlI6XJyNlS7ek@vger.kernel.org, AJvYcCXZAHzVn/UBvowFWSrVDFI4xG9X4yBGWyERBcY1F3DLTwll7hNIiJQkTzR18J1PieVcFWJKCh9AJZXVOA==@vger.kernel.org, AJvYcCXsQdg9eQNIocxRZoOl0WAh13wVx5N7SpOtoeG+tVyProdQpUzP++RXRV5Almm64i4shgbuJMaHlFpfsbzY@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzx8g98XAHpc4fOpEI2dDNG3uqTPJQALRt9EGH9i+Q5JrA46T+
-	QATDQRRxwJJvvafxHWayKrR5q6+Hstzkssbdcnp9MzP+uIZiwGJo
-X-Gm-Gg: ASbGncv72cIVuS4SLwSwsq9wRqM7Likgvrf+p2DtkkQmceVNvqGT3++sBFS3FsNTJY6
-	Jr65z03vXLcVc5JbjtffvgX0LLzeUtHlRUojBXlQwSJqifWvREUk5B+fkUVuF6TlP7l95AktGqa
-	gFFl71b1EjraFRbjLzs0TSrxDxoJUKsTGk0hA7qPEY2amu5hzr07f+h2D/qyhqeS7frtTgYZFWo
-	liy1FsTJ0VkObOvfgP59RZkNRyOqKB/BXo3GWLZzRFXPHF/a5HGZD3j41DxKjrtAsKNSpVDWtuE
-	IocOCnpotq81xAgMHyux8DB9T52YOwE3mbWKt2fJ
-X-Google-Smtp-Source: AGHT+IGAjdKlZf7vr+mPAgNIF99JKmJUUGWr/DLExKdSgaX8/yizgBS5OVmBzIQD1SJYTXSWMF9CCg==
-X-Received: by 2002:a17:90b:384f:b0:2fc:ec7c:d371 with SMTP id 98e67ed59e1d1-30a215416b8mr1416965a91.3.1745867958254;
-        Mon, 28 Apr 2025 12:19:18 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:67d:4372:d1e6:def0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef03bb7fsm9424189a91.9.2025.04.28.12.19.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 12:19:17 -0700 (PDT)
-Date: Mon, 28 Apr 2025 12:19:14 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Maximilian Weigand <mweigand@mweigand.net>, Alistair Francis <alistair@alistair23.me>, 
-	Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>, stable@vger.kernel.org, 
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Input: cyttsp5 - fix power control issue on wakeup
-Message-ID: <4yohupeiamzt7sw3qvuj427xsulpk7jcwyixtljhmbih3mzos3@nwyuv6hbxvzz>
-References: <20250423135243.1261460-1-hugo@hugovil.com>
+	s=arc-20240116; t=1745868306; c=relaxed/simple;
+	bh=DqhCBORZabrZetFWeYqGmKDTEvSQs01PITSdbuZsiDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sqjs0DmBGA9ZL2MnddgwQKNmKpfXHHecbKb+sCVo5s52K2Tb5lwEffYjzI4Fsyl63aOQZZSubgeDbj1lkxoJMApFPybHPTnO47L7KxZJZx87/Qew4UURv5tPrfa66bFQak4jlPRSQQAW2i33HaSRwl+kayr3CA2HxYfGCdpHtoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bXwpa9xG; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.85] (unknown [50.39.103.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 4BC583F20C;
+	Mon, 28 Apr 2025 19:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1745867963;
+	bh=CJ1Lt/X5TLelWfyu6HGDlA8lp8TvsltXQtzRAAHAU14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=bXwpa9xGZz0lvdjuzPUTo1dzM328swN2lNTOTwGWvSeMO3iKtVr2OFD/CAe/DSCfJ
+	 wV/4b4n2p8dVUNsnl67OpebYYpmNCiV7E+XqpD/7zf7CCBw705TbTmunXnkxEDy1Je
+	 nPbbKa3MT+nEFdMk4eWjThRTP2bqtzcl5PjkJWJprdTR7NDN5aMRSxpF2AYcUddy/z
+	 /xYcq2zGRPuH7pxMagt7enqsrRA7qd+4XllUtc8qliYwnK8nvUv7v/x4+2TpftU+zs
+	 AgqesHCNKNgOmyLCUxBuGUVMvaM+tHbsiII/l4fgROE1tAZJe1xXepw02iPNKE0h2T
+	 wVElanxslpuHQ==
+Message-ID: <8fda1ea3-4349-4a15-a1ea-8c2c63d355e2@canonical.com>
+Date: Mon, 28 Apr 2025 12:19:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423135243.1261460-1-hugo@hugovil.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] security/apparmor: use kfree_sensitive() in
+ unpack_secmark()
+To: Zilin Guan <zilin@seu.edu.cn>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
+References: <20250418045250.1262935-1-zilin@seu.edu.cn>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20250418045250.1262935-1-zilin@seu.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 09:52:43AM -0400, Hugo Villeneuve wrote:
-> From: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+On 4/17/25 21:52, Zilin Guan wrote:
+> The unpack_secmark() function currently uses kfree() to release memory
+> allocated for secmark structures and their labels. However, if a failure
+> occurs after partially parsing secmark, sensitive data may remain in
+> memory, posing a security risk.
 > 
-> The power control function ignores the "on" argument when setting the
-> report ID, and thus is always sending HID_POWER_SLEEP. This causes a
-> problem when trying to wakeup.
+> To mitigate this, replace kfree() with kfree_sensitive() for freeing
+> secmark structures and their labels, aligning with the approach used
+> in free_ruleset().
 > 
-> Fix by sending the state variable, which contains the proper HID_POWER_ON or
-> HID_POWER_SLEEP based on the "on" argument.
+> I am submitting this as an RFC to seek freedback on whether this change
+> is appropriate and aligns with the subsystem's expectations. If
+> confirmed to be helpful, I will send a formal patch.
 > 
-> Fixes: 3c98b8dbdced ("Input: cyttsp5 - implement proper sleep and wakeup procedures")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> Signed-off-by: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
 
-Applied, thank you.
+sorry I am super behind on the backlog, I will get this in to my tree today
 
--- 
-Dmitry
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+> ---
+>   security/apparmor/policy_unpack.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index 992b74c50..610e09c76 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -598,8 +598,8 @@ static bool unpack_secmark(struct aa_ext *e, struct aa_ruleset *rules)
+>   fail:
+>   	if (rules->secmark) {
+>   		for (i = 0; i < size; i++)
+> -			kfree(rules->secmark[i].label);
+> -		kfree(rules->secmark);
+> +			kfree_sensitive(rules->secmark[i].label);
+> +		kfree_sensitive(rules->secmark);
+>   		rules->secmark_count = 0;
+>   		rules->secmark = NULL;
+>   	}
+
 
