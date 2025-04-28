@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-623456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B360A9F5F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:36:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3671A9F5FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F09C17B513
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38E03BCB7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA8F27A929;
-	Mon, 28 Apr 2025 16:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09B227C84A;
+	Mon, 28 Apr 2025 16:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LenyeSmo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIOOaaUu"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AD320ED;
-	Mon, 28 Apr 2025 16:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD8084A3E;
+	Mon, 28 Apr 2025 16:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745858207; cv=none; b=mqO5CETi+i10rpe6lP1iqns2527SZs7Tns9oaY5zdu9bwzAZKFtF7FPKdy+zH6KF6Gh40CvGcL2hOZ4Nkn0/4fw1I5W0Lor8h1nE9MYnAbYlafo4NkZTyaFNuX1sQSs6lsu5McPc5DVeZqzUmTtFNEUQrysUxnXIS5Fj0985Iv8=
+	t=1745858267; cv=none; b=mp+XNt7FGNvGeLsxWgzPrbfckmVvu5Kol8bLqREyFBWUAZTWInYcZnW1YIdDMmVk1grBgqN7zarGyFWl0O+AtYF07TvYQStMEVFZ5dxT2+WSYuadiAAjCwlGnFo/J1rh3HUSizA43onVZp101kj5ZB5Xlob7XOpqxTT5LW3w3xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745858207; c=relaxed/simple;
-	bh=UySdE4TPlecqxBiv4V8h6ZcS2TekfFhhH3Gx4Ou6UC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Db9p5ZkRmVkWRsy+Ez6YmbC4SZLDrTLOdhhHPICRyiK2DBz0RxEf4n5J4IPU37JbixQC9PALrKrErSxHKOcGvFot4HMNEsjOIvs/K5Tyfl/0B4rKtLs8H9AiGw8xQxrflkMn8s1M68cx4WxcnVR8aobipqeKhZP63+tgGt73DAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LenyeSmo; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745858206; x=1777394206;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UySdE4TPlecqxBiv4V8h6ZcS2TekfFhhH3Gx4Ou6UC8=;
-  b=LenyeSmomUCzKgAYlvkEav8NLPDtVv2nsmwqyAbzBAGTvFCQApoV22Fj
-   Uu0mhtrcm1tsEeYJg+yInVBnk+z+3+2KrlDNnu1avpEjidKKQBN0tV8EY
-   SulNTB/CmYQPR8pTpIzg++SvlZu17cqVlf79dm4GY4V4TaGQcsmqEig9J
-   p/yumRSV4Azd4Cl0kDGSV9VEpTPxzRlPByC5HYVnf0x6JpB1hj3I+uVDK
-   e1A0huH/kd78/x+g28mOMVJr2EUp0V4xEjx1rAroSn4aff7Y2FDAH2r45
-   LW6WwpqlFypWvZOzBoB7RnWQfeQsRJ3yJzHWbi+n6skvxhDMt/B3l0UXs
-   w==;
-X-CSE-ConnectionGUID: sEKz1XoORQekLuhWpQip5A==
-X-CSE-MsgGUID: UfDnRSz7SWuoq6cIsIT/iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="47590507"
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="47590507"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 09:36:45 -0700
-X-CSE-ConnectionGUID: dxFdpX51SrCzWcLbYI5D4g==
-X-CSE-MsgGUID: SCbQKQ0QTkibrdRRjPlpew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="134521731"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.222.199]) ([10.124.222.199])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 09:36:43 -0700
-Message-ID: <74d7d392-82ce-46b1-81ad-a5f1c1bdf62c@intel.com>
-Date: Mon, 28 Apr 2025 09:36:42 -0700
+	s=arc-20240116; t=1745858267; c=relaxed/simple;
+	bh=zyEHT53+4ffCvmFo8gh208mOKYSL0INBKJpE5tJuqSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ooi4UzS0tvniwOWRiQz1J5Oz1SQPnjSNPRL0Ju57ScnKcvtQv+SzDtCqaNtygY250u88tiLCrIjIxbrIlYJUaIRv9PGGStyN16qi4KcNtGa4D88zxmRvl6Ww3OZWizoho5TVwYvncXy12Eyz6u2zv6ts90A+pWjKXbQAflCk+/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIOOaaUu; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-736b0c68092so4409454b3a.0;
+        Mon, 28 Apr 2025 09:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745858265; x=1746463065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=15l+Ck2zVP5gQKV2uGWTazJsT4fiAOxVQx+2NTaLaec=;
+        b=HIOOaaUuG5885J8fP+omv6HaVjkhN14xW3GSllcNaChwfU8GP6ms51zTPNLo6GFThD
+         pLUCEvSpEy9s1XB33g3dUWZtZk+MjV0C8IwBU8e6gZixap74hPGK0PxEMKvpt+fP2z39
+         wpRorvKEhyp4uMK+PTgFAEdt8zi2e0BAerDxv+JBLNmxh9AYF2KUvBNKvGZJOKgQImnZ
+         XAsjqVZJ+EiE4TgB2Wa1dcd5p+jQ9nqCHY8r8u29Lz77qst9V6Rl77FJzxPPt/wyC51/
+         QPKyGxaG1DAh7Cnf+qnawJfeoblKGre9iB4fz4NtI894ZcULBTT+wbvKFKg67MQM9LOr
+         j/dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745858265; x=1746463065;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=15l+Ck2zVP5gQKV2uGWTazJsT4fiAOxVQx+2NTaLaec=;
+        b=he8MY2Vrgzy2+a0NIM54zXlT9/EF8LOiogtjibjHdO+ZAzA7WTzlTY6xryaI6hPw6F
+         cgZgVUtiy3sM8GIHJWJLYqntph75el5bzF92/1Tr8hn3fNYpM3mjmIGT88JxTUHTuFd5
+         MsGlzBRj42DG76qkzHualOVRM6NIPSq90/x5/BIHqyWkfPfC7XsGz9g662+iFrRB8bnH
+         vo96CgKO0YU+XZnv+5zB0LH2DPViDEdaQcakvwgQo+0Z8xZMyPRv+2jf6g+Jt2w9tZJB
+         ne0ZASWAv+uTaMQ7OTpQm8O1cRUf0o50SzzrYcJstccB5PXlxodlQx3Rss1jLBtk7BWo
+         l2bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUB2FxFhn1fK3ttxjkiIBmvF4Do/WHP58nnyz3rZb0G66P7MBQTQNtnlaMSplsgZxS3hDoKLGXPqNfB@vger.kernel.org, AJvYcCWGU9coW0MBukiNEX5PGFqyhmUOLfTA9Kg/1gLs9Ez8vUjUgHUF4+tOT9q5mgcPfxmjeGUJy4Bmkluw@vger.kernel.org, AJvYcCXBalz45jlXTX3Jg3VfZ5FAi2d2boQrwwOu7l2aRvKzIbTnC8oC+Q+pFSiO6nLMtGh+F1yqcb6pzSJDpTVm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLen/tnZcTaw43fEpFaVhAWd/Be5sGcRgk5gSABTanBXy0duvd
+	2MqW7hxVBey4FSVg5p0GJp+vlF1AaYXtnPtQOv9/SFasBc20vDo6
+X-Gm-Gg: ASbGnctLrj6q+SLo1NKiFFoLidoUDgMb8GoL9GhbKdI0Z8zMJBjGhYSb1WB3TGy+7vm
+	sFrRa6v9zv4WmWaAlQJUXiacmLeO4Ppyq4E2ix0WWfYbapmM+3F0eBpKKa4vcDtph8hd0IITv0k
+	qYRdsiJuPF75Q2PZkxX+UH/H5o/r2b8Re284WM1HAlIGmCPST/MiW4MxFkysFVjLxS1+aOaRUqz
+	uK4bgKaXVLg2j2IZGQv6EET8bKVBi6VrH2Bv12YAyaSF7iYO8oUKEOOLetn6x98p+/BhBm8iu1l
+	7r4hH+FAcO6SYRRBYy6QNjGUbanGUVSCVNinSJacPUf2Gu3iIJMDj8/SG2rXEQgi
+X-Google-Smtp-Source: AGHT+IGlOIxAliEh5JOjeMShPlEUUb+H4S5Pr3AtTiv9tWNQlP2KLvR8VlBIrHywr0e7xdeNjjCwnw==
+X-Received: by 2002:a05:6a00:2e88:b0:736:b101:aed3 with SMTP id d2e1a72fcca58-73fd6beb19emr14959366b3a.1.1745858264818;
+        Mon, 28 Apr 2025 09:37:44 -0700 (PDT)
+Received: from localhost.localdomain ([123.16.133.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25ac87d5sm8213532b3a.157.2025.04.28.09.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 09:37:44 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: andy@kernel.org
+Cc: geert@linux-m68k.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	christophe.jaillet@wanadoo.fr,
+	corbet@lwn.net,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix LED driver
+Date: Mon, 28 Apr 2025 23:37:18 +0700
+Message-Id: <20250428163718.15918-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAHp75Vch8i50stVO6nH0Tnn=g4xSMji_iPj6q-CE1tLnvesqcQ@mail.gmail.com>
+References: <CAHp75Vch8i50stVO6nH0Tnn=g4xSMji_iPj6q-CE1tLnvesqcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] x86/devmem: Drop /dev/mem access for confidential
- guests
-To: Jianxiong Gao <jxgao@google.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, dave.hansen@linux.intel.com,
- x86@kernel.org, Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Naveen N Rao <naveen@kernel.org>, Vishal Annapurve <vannapurve@google.com>,
- Kirill Shutemov <kirill.shutemov@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>, stable@vger.kernel.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <174491712829.1395340.5054725417641299524.stgit@dwillia2-xfh.jf.intel.com>
- <174500659632.1583227.11220240508166521765.stgit@dwillia2-xfh.jf.intel.com>
- <9a4b347f-9a18-4578-9031-0d1bc98e668d@intel.com>
- <CAMGD6P0ORZF6Tbkuedv99jEpk+6HjG=pyqCwTHKU5dVxt+kRCQ@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAMGD6P0ORZF6Tbkuedv99jEpk+6HjG=pyqCwTHKU5dVxt+kRCQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 4/28/25 09:30, Jianxiong Gao wrote:
-> On Mon, Apr 28, 2025 at 8:53 AM Dave Hansen <dave.hansen@intel.com> wrote:
->> Would most developers reading this know what an "SEPT violation" is or
->> what its implications are?
->>
->> This results in an immediate exit from and termination of the TDX guest,
->> right?
->>
-> In most cases yes but it depends on the settings.
+On Sun, 27 Apr 2025 Andy Shevchenko wrote:
 
-There's also disable_sept_ve() in the kernel.
+> On Sun, Apr 27, 2025 at 11:25 AM Nam Tran <trannamatk@gmail.com> wrote:
+> >
+> > This patch series adds support for the TI/National Semiconductor LP5812
+> > 4x3 matrix RGB LED driver. The driver supports features such as autonomous
+> > animation and time-cross-multiplexing (TCM) for dynamic LED effects.
+> >
+> > Signed-off-by: Nam Tran <trannamatk@gmail.com>
+> > ---
+> > Changes in v8:
+> > - Move driver to drivers/auxdisplay/ instead of drivers/leds/.
+> > - Rename files from leds-lp5812.c/.h to lp5812.c/.h.
+> > - Move ti,lp5812.yaml binding to auxdisplay/ directory,
+> >   and update the title and $id to match new path.
+> > - No functional changes to the binding itself (keep Reviewed-by).
+> > - Update commit messages and patch titles to reflect the move.
+> > - Link to v7: https://lore.kernel.org/linux-leds/20250422190121.46839-1-trannamatk@gmail.com/
+> 
+> Out of sudden without discussing with auxdisplay maintainers/reviewers?
+> Thanks, no.
+> Please, put into the cover letter the meaningful summary of what's
+> going on and why this becomes an auxdisplay issue. Brief review of the
+> bindings sounds more likely like LEDS or PWM subsystems.
 
-So perhaps I should have said:
+Apologies for moving the driver to auxdisplay without prior discussion with you
+and the other auxdisplay maintainers.
 
-	This <normally*> results in an immediate exit from and
-	termination of the TDX guest right?
+The decision to move it was based on advice from Lee Jones (LED subsystem co-maintainer).
+He reviewed the v7 series while it was still under drivers/leds/, and explicitly recommended
+that I move it to drivers/auxdisplay/.
+Reference: https://lore.kernel.org/linux-leds/20250425101112.GB1567507@google.com/
 
-	 * Ignoring debug and other non-production silliness
+Here’s a brief summary of why LP5812 fits better in auxdisplay than in LEDS or PWM subsystems:
+- 4 outputs drive 12 LEDs (4 RGB) using time-cross-multiplexing (TCM).
+- An autonomous animation engine creates complex visual effects without CPU intervention.
+- Supports analog current control, PWM dimming up to 24kHz, de-ghosting, and phase shifting,
+  all targeting dynamic visual outputs rather than static LED states.
 
+I will prepare a v9 with an updated cover letter summarizing this background.
+I am also happy to make further adjustments based on your and other auxdisplay maintainers’ guidance.
 
+Thanks for reviewing and helping me through the submission process.
+
+Best regards,
+Nam Tran
 
