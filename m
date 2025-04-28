@@ -1,81 +1,51 @@
-Return-Path: <linux-kernel+bounces-622664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4167BA9EA84
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:19:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FFAA9EA87
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5342F163A71
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7454E3B8E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BAC25E449;
-	Mon, 28 Apr 2025 08:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B001F25E82E;
+	Mon, 28 Apr 2025 08:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tPSN1mBn"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ce08QcIo"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69532528E5
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F4A25E47E;
+	Mon, 28 Apr 2025 08:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745828318; cv=none; b=fxB1YHlU0aDmhe5lzxvAFtTmAr80inRuKUp3zMFQ/EGm97QCau+4le+j71gKMFYTxGXhyXVwoU18qTrT7JWHXod3pqtMcThedmYwUSgjJ1cesmL107gqTx+w8KaJ2JIPm8YLLxW72H3+YMpUZbGe5sgOuUY2VC+u5wR68/jcbys=
+	t=1745828326; cv=none; b=lZlF8+Njuc1GN1pK+HuqG+Ta4Bgn1J/RSSlZilGDsV+uwyLcf2Hy9tPdM4DynOkBjum8DLgFG4FAiSAnzMyKZhntpAZDjE/9Gs7Ixu0oRwZ7T6k4xCjoN/Slen+07HDhuwVHIKOKgBYSMYeP890cGsq5k0cOC6bw9uqfOVvMXXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745828318; c=relaxed/simple;
-	bh=crOtzf5/6guJoCvf8cAZoi9PSosViFX25ektwm+jJ9c=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Tc36zaZ1TFTRIgDwoJJ2Fv4c2V0akIRvhEaXosX5f+49xS19o2JrrTsy0Vngp0nyulzVkDUo07kfQEDPCRjkl5DRxxS921/S/fppRpbsvmw82ed1pUgiT6ueJquUZ1aEHeQjDKKt/zTQE5iAe/fCqBFbvP9o7jL5qrWU3ODha0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tPSN1mBn; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so40563755e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 01:18:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745828315; x=1746433115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n8WqmCsZc7Afx8MDa3zXhmGTEdG/beqhVSCiHK9pXos=;
-        b=tPSN1mBnweiQUT45TzV5+ragvFkqUEuiNsTYTnvBP+6Pt4qiAERZV7mzOmavnwdZTA
-         bn+qwgHCunnSwm+QNeZLKXF22P7m80owXpqrh9rLanjRhpv8JV5TtVULfLS+HEwqj7t2
-         DVnuo0Ocg+XFy91rHZwiO3MK1yD3j+wnH1JlNyh4H/OkCIFafK1m7o3csRcLtZiYjpZM
-         QMM98Cb+Z/oUdpqfi4flUjjcL7Kx8bf446GxxKHX9EpRG0Qu3ZzrzUdUmpr/hkR/hkB2
-         iBM/DBBRuduuVy5GXk/X970b2VetJ3ocUBIFN1UcIjxM8xYyfLeV1oAliKIbHToXKfj3
-         ajeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745828315; x=1746433115;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n8WqmCsZc7Afx8MDa3zXhmGTEdG/beqhVSCiHK9pXos=;
-        b=tXKLY2WFj3sEgmAc5RQ0LGJ0fUrH8WHqoLpDq2pJ2KaNJVCmkpWUNgNSM0TTbglNFi
-         thKRUQjCtuQb3FE8O1/p5ebp4F0/EzRcHkygQeaWo6n0lW5mO3ACjmKkOIOvnXADaeN8
-         RrBwsohhfWgm2OYXhrEKL+Q44fanXssqELHssW+ORzMD/HWiq4hznWQl10pZ7UmVMtnP
-         rhLLAgXxmRZ1Z4ExHpLxHGerPMhxI8TqQniKUk8anw2S/h0J91uVa2vN4pg8JAh3g8KY
-         ECFO53SETVTvl1sjOfQf4yEowDe3Y1wVEuqrH9KcH7fyJLlL4xtRaiWRhXIDH/Dhr41A
-         1sUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6uderYgPfyiSN2c4BWXGhV9rSVHJUnspTT9VUUfOXR1yx5wJMdrJF7/6aU1iwGqzYHMCo8jYbu+wdxxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxWXrRcNfsXoKmHN4NDzXvfpL0SHKu96qPHFxbIMUOQIp9KLrr
-	w6ZcfHc3KDLuQAPf0f7/KQc//o05GwX36dYJdCZ6ahh/ywKSI2S8CJ5rQta8Y0I=
-X-Gm-Gg: ASbGncuPLWBtLcZRkK655p4KeHDx/rFNtI/BFC3I1mWAL9Do5Tk4FSSNR1sohKuhMn7
-	jbiYWe/4+Ot2VBF/NQ8M86WXArcZfaJazRlkO5XSdbAmnHufhVhI+x5LeVdvMV6SNjA6kkiI8tm
-	VJ+9KIBpNDftwovtoMa3eFbbRIGWISyI48XkNCavA9FOgxBzzg9CS9zIR9HK+BwijR15I4mBiZp
-	OKwWyzWGBpfmTiIYvWTiZ1n7D3+pUZfaLxwx8wPKm93vX3xEC4Em+WV4qR1/2nMsfQKA5tUPJLX
-	dKz3PHEX7jti+A5j3A/mB+AAbwTWdzAN1eaba+fQaX5WA6Sh01gVpwySWamjNivo3YlCkEJG+Xq
-	mXaTu0pUinMrLwNGICytzRz8oDady
-X-Google-Smtp-Source: AGHT+IEw8sBIV4QCGTp/d7f4QlX79Z+s4e4JXNT0qwvelGmJMAyIBDN/KZqeQrAxUXI5eMNAEi1orQ==
-X-Received: by 2002:a05:600c:3b89:b0:440:6a37:be30 with SMTP id 5b1f17b1804b1-440a9ec664fmr84526495e9.16.1745828314859;
-        Mon, 28 Apr 2025 01:18:34 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:e2bb:d0cc:c4c9:4442? ([2a01:e0a:3d9:2080:e2bb:d0cc:c4c9:4442])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a53044besm116320015e9.14.2025.04.28.01.18.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 01:18:34 -0700 (PDT)
-Message-ID: <db91a526-e2f8-48f8-a071-f3fcc75235be@linaro.org>
-Date: Mon, 28 Apr 2025 10:18:33 +0200
+	s=arc-20240116; t=1745828326; c=relaxed/simple;
+	bh=ciRTzwTD6czKOCbSsZO7wWnRwr4FT1Ezx9ne3KWUQgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0Au++5dg805yAoDuKhjICWtTngfJq2KTAShgFCO/1XdGVaiLo/MyO1LRICEWY/nCXk2gz02e8fuvDoCL2K0NVyMcwgpc1D9w3DsaAwrTO+roWNv4JIleTgxHd4WeYjsZT6u74flSWRD2jQzhuyTF3MwCeGKwLoPK5ZRdW+kPXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ce08QcIo; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F37481FD42;
+	Mon, 28 Apr 2025 08:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745828316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fBChbg8ZivUvBoE28brXLCEm1yU6k3LPyQKRm49KqPU=;
+	b=ce08QcIopAUYMleYELqXIL0FTG4h4DUyl9NOGFXVa2nxWyN+3WY0ZijwkFuvGqWuiCo4Ii
+	VlWalZw3gJciSnkT5DlgaiDRPNtybtFW7x8Dp5lgzUZVgBXMuD847+AUcpedQtja+fC0kp
+	ee1xvIfAzLFA7x+b3FPURcZaqOR2iBiR1QWKN0Arv4kVfj4NhM0Oyk+q1cnXTm04FhAFUe
+	KADa9UnKz88r+TtKmF3zONBxPZProdPgbCTvYvdhvFPkkMK0EZ6T/E5lAREpJDDYOFUX3E
+	69SkzjUaG+d2bW25Tc5AK7CPw/kMtp8l25oXXUDHTtYJTPT3pTAuZxUwndZpGA==
+Message-ID: <823d4d24-da80-4834-95ca-d5698edfe18f@bootlin.com>
+Date: Mon, 28 Apr 2025 10:18:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,174 +53,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: sm8650: add iris DT node
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250424-topic-sm8x50-upstream-iris-8650-dt-v2-1-dd9108bf587f@linaro.org>
- <3498cfda-a738-449d-9d9f-754bbc8125c2@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <3498cfda-a738-449d-9d9f-754bbc8125c2@oss.qualcomm.com>
+Subject: Re: [PATCH] drm/vkms: Adjust vkms_state->active_planes allocation
+ type
+To: Kees Cook <kees@kernel.org>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250426061431.work.304-kees@kernel.org>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250426061431.work.304-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedtgeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghmohhhrghmmhgvugdrshgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehmvghlihhsshgrrdhsrhifsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrn
+ hhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi,
 
-On 25/04/2025 23:49, Konrad Dybcio wrote:
-> On 4/24/25 6:32 PM, Neil Armstrong wrote:
->> Add DT entries for the sm8650 iris decoder.
->>
->> Since the firmware is required to be signed, only enable
->> on Qualcomm development boards where the firmware is
->> available.
->>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->> Changes in v2:
->> - removed useless firmware-name
->> - Link to v1: https://lore.kernel.org/r/20250418-topic-sm8x50-upstream-iris-8650-dt-v1-1-80a6ae50bf10@linaro.org
->> ---
-> 
-> [...]
-> 
->> +		iris: video-codec@aa00000 {
->> +			compatible = "qcom,sm8650-iris";
->> +			reg = <0 0x0aa00000 0 0xf0000>;
->> +
->> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH 0>;
->> +
->> +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
->> +					<&videocc VIDEO_CC_MVS0_GDSC>,
->> +					<&rpmhpd RPMHPD_MXC>,
->> +					<&rpmhpd RPMHPD_MMCX>;
->> +			power-domain-names = "venus",
->> +					     "vcodec0",
->> +					     "mxc",
->> +					     "mmcx";
->> +
->> +			operating-points-v2 = <&iris_opp_table>;
->> +
->> +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
->> +				 <&videocc VIDEO_CC_MVS0C_CLK>,
->> +				 <&videocc VIDEO_CC_MVS0_CLK>;
->> +			clock-names = "iface",
->> +				      "core",
->> +				      "vcodec0_core";
->> +
->> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
->> +					 &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
->> +					<&mmss_noc MASTER_VIDEO QCOM_ICC_TAG_ALWAYS
->> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->> +			interconnect-names = "cpu-cfg",
->> +					     "video-mem";
->> +
->> +			/* FW load region */
-> 
-> I don't think this comment brings value
 
-Right
+Le 26/04/2025 à 08:14, Kees Cook a écrit :
+> In preparation for making the kmalloc family of allocators type aware,
+> we need to make sure that the returned type from the allocation matches
+> the type of the variable being assigned. (Before, the allocator would
+> always return "void *", which can be implicitly cast to any pointer type.)
+> 
+> The assigned type is "struct vkms_plane_state **", but the returned type
+> will be "struct drm_plane **". These are the same size (pointer size), but
+> the types don't match. Adjust the allocation type to match the assignment.
 
-> 
->> +			memory-region = <&video_mem>;
->> +
->> +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
->> +				 <&videocc VIDEO_CC_XO_CLK_ARES>,
->> +				 <&videocc VIDEO_CC_MVS0C_CLK_ARES>;
->> +			reset-names = "bus",
->> +				      "xo",
->> +				      "core";
->> +
->> +			iommus = <&apps_smmu 0x1940 0>,
->> +				 <&apps_smmu 0x1947 0>;
-> 
-> I think you may also need 0x1942 0x0 (please also make the second value / SMR
-> mask hex)> +
+I think this is an issue, can you add the proper Fixup tag in this commit?
 
-I don't see 0x1942 in the downstream DT, and which mask should I set ? 0x1 ?
+With this:
 
->> +			dma-coherent;
->> +
->> +			/*
->> +			 * IRIS firmware is signed by vendors, only
->> +			 * enable in boards where the proper signed firmware
->> +			 * is available.
->> +			 */
-> 
-> Here's to another angry media article :(
-> 
-> Please keep Iris enabled.. Vikash reassured me this is not an
-> issue until the user attempts to use the decoder [1], and reading
-> the code myself I come to the same conclusion (though I haven't given
-> it a smoke test - please do that yourself, as you seem to have a better
-> set up with these platforms).
-> 
-> If the userland is sane, it should throw an error and defer to CPU
-> decoding.
-> 
-> This is >>unlike venus<< which if lacking firmware at probe (i.e. boot)
-> would prevent .sync_state
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Well sync with Bjorn who asked me to only enable on board with available firmware ;-)
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Louis Chauvet <louis.chauvet@bootlin.com>
+> Cc: Haneen Mohammed <hamohammed.sa@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Melissa Wen <melissa.srw@gmail.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: <dri-devel@lists.freedesktop.org>
+> ---
+>   drivers/gpu/drm/vkms/vkms_crtc.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+> index 12034ec12029..8c9898b9055d 100644
+> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
+> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+> @@ -194,7 +194,7 @@ static int vkms_crtc_atomic_check(struct drm_crtc *crtc,
+>   		i++;
+>   	}
+>   
+> -	vkms_state->active_planes = kcalloc(i, sizeof(plane), GFP_KERNEL);
+> +	vkms_state->active_planes = kcalloc(i, sizeof(*vkms_state->active_planes), GFP_KERNEL);
+>   	if (!vkms_state->active_planes)
+>   		return -ENOMEM;
+>   	vkms_state->num_active_planes = i;
 
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/98a35a51-6351-5ebb-4207-0004e89682eb@quicinc.com/
-> 
-> [...]
-> 
->> +
->> +				opp-480000000 {
->> +					opp-hz = /bits/ 64 <480000000>;
->> +					required-opps = <&rpmhpd_opp_turbo>,
->> +							<&rpmhpd_opp_turbo>;
-> 
-> nom (nom nom nom nom nom)
-> 
->> +				};
->> +
->> +				opp-533333334 {
->> +					opp-hz = /bits/ 64 <533333334>;
->> +					required-opps = <&rpmhpd_opp_turbo_l1>,
->> +							<&rpmhpd_opp_turbo_l1>;
-> 
-> turbo
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Ack
-
-> 
-> Konrad
-
-Thanks,
-Neil
 
