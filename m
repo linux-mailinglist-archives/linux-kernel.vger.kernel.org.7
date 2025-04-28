@@ -1,66 +1,52 @@
-Return-Path: <linux-kernel+bounces-623130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC28A9F14B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3D3A9F14D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A1631892CA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F761697EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F192426A090;
-	Mon, 28 Apr 2025 12:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evPeBLpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BE4F9D9;
-	Mon, 28 Apr 2025 12:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8830C264A84;
+	Mon, 28 Apr 2025 12:47:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6095D477;
+	Mon, 28 Apr 2025 12:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745844426; cv=none; b=rSrkyvz/qgIK2KpNwU2Wqh+Ap1x1w2ni0e57sp1xzSAJvDjgAFQRjNEofV1UqKuo64a6nwpFcXZZ1nLLloHyF+EweyeF9cJZOPaXuORudPVsvCrgQUnqIMAzuFFsdLdComNK1Ic1kawZ+DreZ5A2eJLXfARALdnz8cEVfAvMKSI=
+	t=1745844455; cv=none; b=RbbgQg8ov+by9Yjp/kmcGeGkzR0oPfimW8FccnQ+2TKKIOJrw6zLj0U5HNqX3wslvj0V/G7jAjjylhbAEyKxjvHOpYGR/auhT9RVvUUrd7D7IUghvmRD2D4MmuMzp2MG6xejGO1e2SXmkQL1QTnFLJ+gxttp+xDw9xcCquYz1cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745844426; c=relaxed/simple;
-	bh=HsH8nSf/ZGhRZOeMHnaNQznU6FZlvjFFRODGQYmj+JY=;
+	s=arc-20240116; t=1745844455; c=relaxed/simple;
+	bh=5tMjk79ViuaMPIJS0ozsIRLq0s0QRfWBrHGIrb8AZvU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRNRlu5+uOVJ3rSn/wosoUVzjyVLHujqiu+RK+mH10C/5Lw5OAcf/x2Lu04sACsGdLD1tP3iW8lGp8VwCFcyOnFi2SFT47YaCnDDnYTLftU3CkEWmSXOeZ/8Ae7hFqVE2JsthixKwVisHIqJPmDXH2PgNc6iB/Go1ntNLrjTfgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evPeBLpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B601CC4CEEE;
-	Mon, 28 Apr 2025 12:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745844424;
-	bh=HsH8nSf/ZGhRZOeMHnaNQznU6FZlvjFFRODGQYmj+JY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evPeBLpaoctrC5GT63OrxExzUsjgpxglDn0tp5Lk8sirEe7wne4kUoXS8RapfZ3Sl
-	 PDaO/2qt4VKJhE5rskd5h2CAlBlSniCYmN19BMYrch4HLuQYHBx6a+UFh6NLXuEgj8
-	 8sAeKb9tPeVHSJgLGxAPENU8bPkh/5cQQsGvx1qUWxZjfRxXL3YVoLhIhOrhQg9wl7
-	 Osm9FTUWcRiM5N1b7Y3JAQcf9CVdqiMDM8VCAQfzMgo3nln0KS4+qOMJUYRfSxEQWJ
-	 /fXC0xTXBPy9ko+uu/Dp1GG13ch0vhXPf+yGhnagiopkwzn4n4XCUA0RXKE5dYC4A5
-	 mezPocQXwjeDQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u9Nt2-000000004Gi-3jfr;
-	Mon, 28 Apr 2025 14:47:05 +0200
-Date: Mon, 28 Apr 2025 14:47:04 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	laurentiu.tudor1@dell.com, abel.vesa@linaro.org
-Subject: Re: drm/msm/dp: Introduce link training per-segment for LTTPRs
-Message-ID: <aA94yOjsayZHNDpx@hovoldconsulting.com>
-References: <20250417021349.148911-1-alex.vinarskis@gmail.com>
- <aA8yFI2Bvm-lFJTl@hovoldconsulting.com>
- <CAMcHhXpmii=Rc9YVeKXaB17mYv0piSFs02K=0r8kWe5tQGk7eA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lv4Kjqvx7e7ES5o4uT1Qm6xhueiT4RV0KWahYsyfNAaFsvi9NDhXynRHSLcvYDyWiIhgkt+CkWAZBBA1HxpPFJCZdIejOiLRi0G1FEKiwyn5VCJpHEt+JNGvnJk2oSXHtcNYbkRrohJZoy5Tyw+xe6RXI6rEdIftb1BciadsG3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52EEC1007;
+	Mon, 28 Apr 2025 05:47:26 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61DF63F66E;
+	Mon, 28 Apr 2025 05:47:32 -0700 (PDT)
+Date: Mon, 28 Apr 2025 13:47:27 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Wander Costa <wcosta@redhat.com>
+Subject: Re: [BUG] perf segfaults when combining --overwrite and intel_pt
+ event
+Message-ID: <20250428124727.GE551819@e132581.arm.com>
+References: <CAP4=nvTab7BnT4uu0iCuFJpZ-_MdY-MYU+Q25QnpygEZKmsQ8A@mail.gmail.com>
+ <20250428101234.GB551819@e132581.arm.com>
+ <CAP4=nvQ_7oS5ZAsKmOd_ORg0tyHS=B+i2m63K=TLg22rTEiRGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,71 +55,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMcHhXpmii=Rc9YVeKXaB17mYv0piSFs02K=0r8kWe5tQGk7eA@mail.gmail.com>
+In-Reply-To: <CAP4=nvQ_7oS5ZAsKmOd_ORg0tyHS=B+i2m63K=TLg22rTEiRGQ@mail.gmail.com>
 
-On Mon, Apr 28, 2025 at 11:06:39AM +0200, Aleksandrs Vinarskis wrote:
-> On Mon, 28 Apr 2025 at 09:45, Johan Hovold <johan@kernel.org> wrote:
-> > On Thu, Apr 17, 2025 at 04:10:31AM +0200, Aleksandrs Vinarskis wrote:
-> > > Recently added Initial LTTPR support in msm/dp has configured LTTPR(s)
-> > > to non-transparent mode to enable video output on X1E-based devices
-> > > that come with LTTPR on the motherboards. However, video would not work
-> > > if additional LTTPR(s) are present between sink and source, which is
-> > > the case for USB Type-C docks (eg. Dell WD19TB/WD22TB4), and at least
-> > > some universal Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
-> >
-> > Does this mean that the incomplete LTTPR support in 6.15-rc1 broke
-> > adapters or docks with retimers in transparent mode?
-> 
-> I am actually not 100% sure.
-> - If without LTTPR initialization, they default to transparent mode,
-> then yes, incomplete LTTPR support sets them to non-transparent
-> without per-segment training and breaks docks with retimers, while it
-> would've worked if LTTPR(s) would've been left in default transparent
-> mode. Note that in this case, X1E devices with ps883x are somehow an
-> exception, because without LTTPR initialization at all the training
-> always fails.
+On Mon, Apr 28, 2025 at 12:45:41PM +0200, Tomas Glozar wrote:
 
-Right, I'm concerned about breaking working setups for users of machines
-like the X13s.
+> Thank you for looking at this. The initial segfault on writing to
+> read-only page is fixed,
 
-> - If LTTPR has to be initialized either way, and explicitly set to
-> transparent mode if we do not want non-transparent, then no,
-> incomplete LTTPR support in 6.15-rcX did not explicitly break docks
-> with retimers, as those never worked in the first place. As per my
-> understanding, this is the case, unless something (firmware?) has
-> already placed LTTPR to transparent mode before the driver takes over
-> - then 1st case would be applicable.
-> 
-> Docks with retimers do not work in 6.15-rcX, but I am unable to verify
-> if it did work before, as I do not have a Qualcomm based device
-> without LTTPR on the baseboard.
+Thanks a lot for testing, Tomas!
 
-Abel (or anyone else), do you have one of these docks that you could
-test with the X13s to confirm whether this series fixes a regression or
-not?
+> however, perf now segfaults in a different place:
 
-> > You describe at least one of this patches as a fix but I'm not seeing
-> > any Fixes tags or indication that these need to go into 6.15-rc to fix
-> > a regression.
-> 
-> You are right, I will add Fixes tag to the 1st patch to make it clear:
-> Fixes 72d0af4accd (drm/msm/dp: Add support for LTTPR handling)
-> 
-> Or should I mark the entire series with Fixes, so that the docking
-> stations with retimers can be fixed in 6.15 already? Landing only the
-> 1st patch will fix inconsistency with DP spec, but will not fix
-> docking stations with retimers. I guess this comes down to whether
-> existing LTTPR (but not multiple LTTPRs) support is considered a bug
-> (and patches 2,3,4 are a fix) or lack of functionality (and patches
-> 2,3,4 are a new feature).
 
-Indeed. If LTTPR support broke existing setups, then I think all should
-be marked with a Fixes tag and merged for 6.15. If we can't get it into
-6.15 we may consider just disabling LTTPR support in 6.15 to address the
-regression and then enable it again once fixed in 6.16.
+> (gdb) r
+> Starting program: /home/tglozar/dev/linux/tools/perf/perf record
+> --overwrite -a -e intel_pt/cyc,noretcomp/k sleep 5
+> [Thread debugging using libthread_db enabled]
+> Using host libthread_db library "/lib64/libthread_db.so.1".
+> [Detaching after fork from child process 424037]
+> [New Thread 0x7ffff2df46c0 (LWP 424038)]
+> [ perf record: Woken up 1 times to write data ]
+> Thread 1 "perf" received signal SIGSEGV, Segmentation fault.
+> intel_pt_info_fill (itr=0x7a1e40, session=0x794ef0,
+> auxtrace_info=0x7cdfd0, priv_size=144) at arch/x86/util/intel-pt.c:361
+> 361             pc = session->evlist->mmap[0].core.base;
 
-But if this series is just enabling support for docks (and USB-C ports)
-that did not used to work, then I guess this can all wait for 6.16.
+Yes, this is a different issue, it would be fixed by:
 
-Johan
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index 8f235d8b67b6..42f0dbfa973c 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -322,7 +322,7 @@ static int intel_pt_info_fill(struct auxtrace_record *itr,
+ 	struct intel_pt_recording *ptr =
+ 			container_of(itr, struct intel_pt_recording, itr);
+ 	struct perf_pmu *intel_pt_pmu = ptr->intel_pt_pmu;
+-	struct perf_event_mmap_page *pc;
++	struct perf_event_mmap_page *pc = NULL;
+ 	struct perf_tsc_conversion tc = { .time_mult = 0, };
+ 	bool cap_user_time_zero = false, per_cpu_mmaps;
+ 	u64 tsc_bit, mtc_bit, mtc_freq_bits, cyc_bit, noretcomp_bit;
+@@ -358,7 +358,11 @@ static int intel_pt_info_fill(struct auxtrace_record *itr,
+ 	if (!session->evlist->core.nr_mmaps)
+ 		return -EINVAL;
+ 
+-	pc = session->evlist->mmap[0].core.base;
++	if (session->evlist->mmap)
++		pc = session->evlist->mmap[0].core.base;
++	else if (session->evlist->mmap_ovw)
++		pc = session->evlist->mmap_ovw[0].core.base;
++
+ 	if (pc) {
+ 		err = perf_read_tsc_conversion(pc, &tc);
+ 		if (err) {
+
+I would leave this fix to the Intel-PT developers, who know this part
+best.
+
+Thanks,
+Leo
 
