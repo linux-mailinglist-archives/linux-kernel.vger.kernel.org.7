@@ -1,142 +1,95 @@
-Return-Path: <linux-kernel+bounces-623000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BDCA9EF86
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:42:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCFBA9EF81
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF4017F988
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42AB217FC52
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9456E2638A6;
-	Mon, 28 Apr 2025 11:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1896D267F5B;
+	Mon, 28 Apr 2025 11:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GMlqDxrS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0EvwxCH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DCA264A67;
-	Mon, 28 Apr 2025 11:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721A3267B91;
+	Mon, 28 Apr 2025 11:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745840431; cv=none; b=mV4hdr9cOMnro8Qf01yNdO6F672CNoy6gVvsRyfYtqwl1KDLoSy75cdpzfy9JR3Pi+ZPeSe0rtFOY6reqmjQsqpnqS1YiXHndlXtD26dXzunMC5pEmsKEmmfJKT2GN52tCiKVZFX5aBf587IXc/kCwBQFDQPeQir7lovH+wVnbk=
+	t=1745840391; cv=none; b=VMOM/UmQ0Z5GsBHf9NPobS6uA5KaWfZZh693jibIJfzyK9syg5yLa43q7DSyl2DpFyecT2v4ToOURCR9N7CcSr2Mclq5ZmbqUdvz5EkqTQGQz6BfwaAt+2hhLPSu1izkCh8w1aMrkdhR+BNAIm9co8a3AFghpZMSzw0lrpUsbgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745840431; c=relaxed/simple;
-	bh=2ljdbjIEAmsAMoG7EZuv5JDe8PK4yJfG5z1oFt03uik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eVoH82UfIGuSH0n+dNyNGDFGTSh9+eWP9Bs4EzuCwCoTKys1uhYDoYtlqLTEisM5jCZSLIwaLnu7FTMAXxE/wB4d88Kx1TO8jNRmvehlCE5aRy5Pw7xwnv5mNs8lC/2AYrtwHLTby1aLt1Zcpt/+om47uovd7bPX3sIRzkYsIJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GMlqDxrS; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745840430; x=1777376430;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2ljdbjIEAmsAMoG7EZuv5JDe8PK4yJfG5z1oFt03uik=;
-  b=GMlqDxrSFE8HCHCRw35rYnGzBAXeCYZ3syfIsj2A+GkNkLAqzkG04rHi
-   LLjB0+qXPAqJFlSxR5Yto6JSlEspGZzrOKlv+H6Oe/I4Bwplnd/kCNY5A
-   58MgZnsnj2ZD8zHHweIGJUq/SKsG90XViJFv4BFYMn1+9m0/BXhFy/xaa
-   ONhUd9LmKMbJRrxl28UcbFbklcqVPmkOZpvN67kcPLP5aHbZKSTPQHvNj
-   5MxUkk1lxNDGknRaT82VC8kl1tk/f8HKG31RpGAb294sP6hcaFit0SsX0
-   zk6aAp+m+OYHwQk2CX4fyNYPtv/sTKub2FnqZMLiYVpvu3YTCqQOM3676
-   w==;
-X-CSE-ConnectionGUID: nOM4/Qr9QT6FqbjEeIqVYA==
-X-CSE-MsgGUID: X2YuJ8iUTDq6n3CcryODIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="69925580"
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="69925580"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 04:40:29 -0700
-X-CSE-ConnectionGUID: 5iHD+CUZTyKAnyN9TDF4lQ==
-X-CSE-MsgGUID: pHkfg4rhQkW7AMEaFOTh1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="170719838"
-Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.174])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 04:40:20 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>,
- Gustavo Sousa <gustavo.sousa@intel.com>, Andi Shyti
- <andi.shyti@linux.intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Gnattu
- OC <gnattuoc@me.com>, Nitin Gote <nitin.r.gote@intel.com>, Ranu Maurya
- <ranu.maurya@intel.com>, Ville =?utf-8?B?U3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>,
- Angus Chen <angus.chen@intel.com>, Juha-Pekka Heikkila
- <juhapekka.heikkila@gmail.com>, Yu Jiaoliang <yujiaoliang@vivo.com>,
- Dnyaneshwar Bhadane <dnyaneshwar.bhadane@intel.com>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] drm/i915/gt: Remove const from struct i915_wa list
- allocation
-In-Reply-To: <20250426061357.work.749-kees@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250426061357.work.749-kees@kernel.org>
-Date: Mon, 28 Apr 2025 14:40:16 +0300
-Message-ID: <874iy8y0nz.fsf@intel.com>
+	s=arc-20240116; t=1745840391; c=relaxed/simple;
+	bh=bQQYYw74YDFs1Z4DShazrLKKxfyUq8yNFZGDbTX3Q5s=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=mT9olICXoFgdNRyM8DCCYiqMv6qURZHElaZElPlGGWBEsh4dlkkodT9KSWD6X7LYOSuJJqmg+z0ccYrC3Y8Op57tduTQ/diXFnwZRX3J+JMCLWIox7sKRANQVfpYxtxjcQCIndR05VB5sM9edpBcV8Wbrbz2JQ0hVYLSOHrYQD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0EvwxCH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D861FC4CEE9;
+	Mon, 28 Apr 2025 11:39:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745840390;
+	bh=bQQYYw74YDFs1Z4DShazrLKKxfyUq8yNFZGDbTX3Q5s=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=B0EvwxCHVU8WcE+4K3NNFvG0KdcugDigsDsdbhxeLdtOpjOWbiA1a2u+pd+stbFo6
+	 PyYcx1D9QQNB+OMLvqZ4V0Nx8oRbNTfSno8jH+pyVF/tUQpCPYZg4q3QT9+vZCvDY2
+	 WhoWQJalq9TFx33tj+VrAvgudc79X23PPfSxRcmE9U8Xp1bZFJZ+XXeVeOGlXtfnfC
+	 ttIEZ9yJGJ1kLhnPKvHq/f0U4rSBRQLIupnjde4VSgjkkSzifPnidlf09PgxtCuA8b
+	 t5ORBfswvhCWwijDxMESikeu/fK6wb25BM4Bt0SVMgAsypUs6nO4WWclCvOHrFuo8C
+	 /KF4dro9LzX9g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADCB3806651;
+	Mon, 28 Apr 2025 11:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCHv3 net] bonding: assign random address if device address is
+ same as bond
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174584042976.546496.2585369633410205037.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Apr 2025 11:40:29 +0000
+References: <20250424042238.618289-1-liuhangbin@gmail.com>
+In-Reply-To: <20250424042238.618289-1-liuhangbin@gmail.com>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ razor@blackwall.org, horms@kernel.org, cratiu@nvidia.com,
+ linux-kernel@vger.kernel.org
 
-On Fri, 25 Apr 2025, Kees Cook <kees@kernel.org> wrote:
-> In preparation for making the kmalloc family of allocators type aware,
-> we need to make sure that the returned type from the allocation matches
-> the type of the variable being assigned. (Before, the allocator would
-> always return "void *", which can be implicitly cast to any pointer type.)
->
-> The assigned type is "struct i915_wa *". The returned type, while
-> technically matching, will be const qualified. As there is no general
-> way to remove const qualifiers, adjust the allocation type to match
-> the assignment.
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
+Hello:
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-for merging via whichever tree you find best; please let us know if you
-want us to pick this up via drm-intel.
+On Thu, 24 Apr 2025 04:22:38 +0000 you wrote:
+> This change addresses a MAC address conflict issue in failover scenarios,
+> similar to the problem described in commit a951bc1e6ba5 ("bonding: correct
+> the MAC address for 'follow' fail_over_mac policy").
+> 
+> In fail_over_mac=follow mode, the bonding driver expects the formerly active
+> slave to swap MAC addresses with the newly active slave during failover.
+> However, under certain conditions, two slaves may end up with the same MAC
+> address, which breaks this policy:
+> 
+> [...]
 
-> ---
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Matt Roper <matthew.d.roper@intel.com>
-> Cc: Gustavo Sousa <gustavo.sousa@intel.com>
-> Cc: Andi Shyti <andi.shyti@linux.intel.com>
-> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-> Cc: <intel-gfx@lists.freedesktop.org>
-> Cc: <dri-devel@lists.freedesktop.org>
-> ---
->  drivers/gpu/drm/i915/gt/intel_workarounds.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/gt/intel_workarounds.c b/drivers/gpu/drm/i915/gt/intel_workarounds.c
-> index 116683ebe074..b37e400f74e5 100644
-> --- a/drivers/gpu/drm/i915/gt/intel_workarounds.c
-> +++ b/drivers/gpu/drm/i915/gt/intel_workarounds.c
-> @@ -156,7 +156,7 @@ static void _wa_add(struct i915_wa_list *wal, const struct i915_wa *wa)
->  	if (IS_ALIGNED(wal->count, grow)) { /* Either uninitialized or full. */
->  		struct i915_wa *list;
->  
-> -		list = kmalloc_array(ALIGN(wal->count + 1, grow), sizeof(*wa),
-> +		list = kmalloc_array(ALIGN(wal->count + 1, grow), sizeof(*list),
->  				     GFP_KERNEL);
->  		if (!list) {
->  			drm_err(&i915->drm, "No space for workaround init!\n");
+Here is the summary with links:
+  - [PATCHv3,net] bonding: assign random address if device address is same as bond
+    https://git.kernel.org/netdev/net-next/c/5c3bf6cba791
 
+You are awesome, thank you!
 -- 
-Jani Nikula, Intel
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
