@@ -1,206 +1,174 @@
-Return-Path: <linux-kernel+bounces-623187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6ABA9F1FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:18:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B5CA9F20B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B77C1890AAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F1805A7AB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2C426A0C5;
-	Mon, 28 Apr 2025 13:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA00E26AA83;
+	Mon, 28 Apr 2025 13:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vKjNnPZu"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gwIgcoDE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B69E86323
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80BE86323;
+	Mon, 28 Apr 2025 13:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745846318; cv=none; b=OubHbK4Nlg9m2q8cPIb/0OxU+z2RnmvzcPOJpdb59VgIH2ufC2NDwQz8pCmoc7Uzi+ulxkiKSAUge2T84C7i+FxaDGZgVsFRPG8zt7oRupuipFEP3SvoBOJwnIXQEX7kLinuNjn6wIxsnsDjxEztLPNLhJUUxBCgFLIxD/367Kc=
+	t=1745846429; cv=none; b=dfjHmOqSrRBbru1s/KMYC9wsJrj7pa7cbiCoBshcKWnJoEWx1cfIlHh4ReeU4W9yv3a6zfV+4P/USbh8sW/h3SzNbRVBLgEJDSanvJp3Hs4pdfdmWIMUfOClf7KTeC4YWKHWSI1qKthaRV/3qEJ+nXuNdN7OCYe1tWqFyHjDtJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745846318; c=relaxed/simple;
-	bh=cgGOdJdQKd3Sd5NLjSW5tNE5E8ySLu8H4Y6uiXifc/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCuqJSxWtMlc2ureHFV7ljha4xxR0swhiJ7ZtN2nmdEjJhIX5Q3fkhpTiD3S477wEXe25VPq0ay3lXGFDTYA1HL1LHViIF+65dYrcTwfM1AA6To3HrlOi/m1Q7xOMYbvTmwxIO8NvkC//XB69Cvr+f4a5xng/Ru9SXlvJHEz9J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vKjNnPZu; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-440685d6afcso47087015e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 06:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745846314; x=1746451114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QLjtDonXd6nOPiRG5veDBiA9DDAtKfzTU28EI3o9QMU=;
-        b=vKjNnPZuUMWCMgarIuUnftlQ9fHDwAUQOpv4x2zGvZHrn0+9wge39X8AqAU9dg2O0G
-         0yx1kCJ6ILZw88U9NhGFqXlUTU8AMXzqyPy2L0TgVCtrqSzIGSo5xx+cAlRf4WJIUYse
-         UpwB0mXZ5r3qs1tgZCy5SoNZgXEHPt23RyTmicDc0Ba2VFXZyi9lmJzwCND6YYGD/ZPc
-         V7LF0dMuddTAPdz3k5NZXt5YsdMnEH2Jq2CFUFKR5UBRFaAPj4CxLQkeKLFlvCLV6Xto
-         /pDzFKCH0zbbh3R4DWdZMurEinVgCO05cVzaFL2juaijasPj0nX2Ln0EI5K1y8/CbOC6
-         bwBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745846314; x=1746451114;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QLjtDonXd6nOPiRG5veDBiA9DDAtKfzTU28EI3o9QMU=;
-        b=kKT+Sw0u+rVdFPex3PMoTMC4KBdbKNGe6L0PYXFuuNGL9x5T2t/Iy+eX3oG/JF/5VD
-         +5o6iC/K0hhqVDFTWqkib1URyTRLAwnFd4guUqkySQCMe54Ae2uGTa8XpmblFqOXKPL/
-         DljEMgK3cJRYRGwiXhdcZQFdWh/0Whq3VpJ5O27lQqYiR2K7ufL0xTEYaOZk/sSrd0/A
-         TEXxCtPB8HE14SLLKBMsbIFFsOxC4S67e3JNsz7Gu7oqKMGq/xN2xPzB/tHBqQXf9OIF
-         /Wd+ODbDGbCucXWHdQOQHiXOU3n6GooTE/9Dql56j6yYklTtf3S1Jtq99PvdKS+9C6lH
-         B0uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdDsZc/GjCfAfpX76LpRbv4TMgG16NbbVX4sIyCPnq1VwIsIkj6KUJto+IyjsHjtiF1Z04sViENpIyOO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2CabZw4y4TZkfbbvcyjPFdIyVKcrHIViU9mJGiwAClV1y4W74
-	VJAaEShji97zULvK2PmldpesxplITodVgXYzVwg9UvoefsWoS4e5Z4lMcwQdwdU=
-X-Gm-Gg: ASbGncvifZInynP6k2lseIgxJof+bNAn5Rk7l1TaQ4nwCl8qUbZb0JuqZuronNhvG3V
-	+yOU3UQ/k1DRjyq1pipvyjH0Kdsvt43PXKkyNGmIK11QoaG05+XbeRl/4t7W3mVTZOkesQsFXPL
-	ZNdC59Oa/nZYxT2aNg3B8Yf6WVcdSsMinl5kZsgb2IR52b8LpgQijYUHwG/7BBp8mmXYwCOqlVV
-	1F1GyNuYQSqRNNlZyNL5zLTVRRQNcCo0bRPFFVdn8LfGrTW2Yy7nSVuTFd/6TvMQMraIM0lvU5h
-	EHZH/gqWfvIibduILeU2uVoeYCbHArxcxdbXBDz90sAFxet7lA==
-X-Google-Smtp-Source: AGHT+IEstSuLcp0r6LTE8DVYxX00SLEy2jiuNAsyGuZuIWabf9Oo9L//GavpHSs2zltChGRSJdTLVA==
-X-Received: by 2002:a05:600c:a181:b0:43d:fa59:be38 with SMTP id 5b1f17b1804b1-440abe464eamr46893135e9.32.1745846314445;
-        Mon, 28 Apr 2025 06:18:34 -0700 (PDT)
-Received: from [192.168.0.14] ([82.76.212.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a538f4aasm122672975e9.38.2025.04.28.06.18.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 06:18:34 -0700 (PDT)
-Message-ID: <d8b619d7-6480-411d-95cb-496411b47ff8@linaro.org>
-Date: Mon, 28 Apr 2025 14:18:32 +0100
+	s=arc-20240116; t=1745846429; c=relaxed/simple;
+	bh=VNjy3RmJ0lOp0z/XLQWKz5ZhB98dzUQwS+M+YnrWGOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HQmtQLJP66dqY6+kT8iXCU+dVx2QtxiUh0s/gnaqt3bDqR2k1AHmW0JZH7zDmcWNQoq2F9NO8m10epfQ0KGRs8TwkJ94K5rIMnC0d6HAtlwtg0HZDuF3nTYyc3G9iNGgmpd4YVi9vsXDiiq6Jap3a/uX981Am7vxsq7BodFlhw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gwIgcoDE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SA4m0H029204;
+	Mon, 28 Apr 2025 13:20:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=mom3Z6GCnmxCCrmh/s8u73ghH34c
+	GZTax8lhSWhcWjc=; b=gwIgcoDE4fFjLtfmY/Ge1IvvbTHw+7Dda/qjEZ8MfqlO
+	wSzVO3Flf3K5cS4v80UXaAWi4UB7SFijWfUPuyTc0qaXTm/dtdteJA/SZb0JZL7n
+	VH0mWrTeaR9MKJM/wY/8OC2FmUBKVw2Fxhrv+LN/kOELtmCuxbqIQjJwEVnjLynX
+	t6tqJqbwWICfPKLl4CHXNsiKQDmUlQsECdo+2zbxBiAeZVgjW4LUoU4qYzePFycC
+	2ZNf0PhFtxiVJOfHdM8j24JaDSuUwa5bRDGE/LTChAk1BjcBAXbdRZSpRTHiUYAJ
+	YcNrRrTIFPHW+5wiaWwcssXfgeCCDafOC6x+Hy6AQg==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46a7kk0vd5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 13:20:04 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53SAZjga016174;
+	Mon, 28 Apr 2025 13:20:03 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469a706pet-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 13:20:02 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53SDJxK943057470
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 13:19:59 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F13C420043;
+	Mon, 28 Apr 2025 13:19:58 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6053620040;
+	Mon, 28 Apr 2025 13:19:55 +0000 (GMT)
+Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.ibm.com (unknown [9.124.219.50])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 28 Apr 2025 13:19:55 +0000 (GMT)
+From: "Nysal Jan K.A." <nysal@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, "Nysal Jan K.A." <nysal@linux.ibm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] selftests/mm: Fix build break when compiling pkey_util.c
+Date: Mon, 28 Apr 2025 18:49:34 +0530
+Message-ID: <20250428131937.641989-1-nysal@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in
- the future
-To: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
-Cc: Joe Damato <jdamato@fastly.com>, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>,
- Alexander Duyck <alexander.h.duyck@intel.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250416185826.26375-1-jdamato@fastly.com>
- <20250426-haben-redeverbot-0b58878ac722@brauner>
- <ernjemvwu6ro2ca3xlra5t752opxif6pkxpjuegt24komexsr6@47sjqcygzako>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <ernjemvwu6ro2ca3xlra5t752opxif6pkxpjuegt24komexsr6@47sjqcygzako>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=OYSYDgTY c=1 sm=1 tr=0 ts=680f8084 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=obKkJqyyVAjaa7KXnx4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: nexDyk0xDNlDCevnYb_Fu1jgIGHhDnee
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDEwOCBTYWx0ZWRfXxHGyuOKchSar B9IHLyd97mmtUQOyze8E4YvwwGwlaQC6DIaTheSGzkK3EtwK/f75LN1WQJYML6Jgz7DUR6Nja7p eKFvGIzOZaiQoNoJUVfmtZHdqIO7/WKSnk7svY9cE9MP9Gzzk8+A+TYy14tAL9llPM6qP04b5ZN
+ TsTP4I3DQygvNKItbD784sY4CsXvbkP3DhlD8pJOxANRKpso0+tLact/7ITlMTdUqhuajwSrYwH uxOxs0q3RuIAUWkpvX4isJHxX+uWcHWP9yKDPSSlR/vFCDSbam0jLPUFWg6wI7f2IVlZ+VQXJx8 StzLHwLHh2Ord9qJv9TcXJXR/ajRyvToxrsxMt2MLkd+1zr0yHlpH6t2/jYWKQZrbAzwIjiMA8T
+ 4zkslazeMp9tfkEhMICPStl4e+3d9MR/3ahVkA73+LfBwPT5fBlk9ZvXsJZf0OI8L9MN0/i9
+X-Proofpoint-ORIG-GUID: nexDyk0xDNlDCevnYb_Fu1jgIGHhDnee
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_05,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504280108
 
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
 
+Commit 50910acd6f615 ("selftests/mm: use sys_pkey helpers consistently")
+added a pkey_util.c to refactor some of the protection_keys functions accessible
+by other tests. But this broken the build in powerpc in two ways,
 
-On 4/28/25 1:14 PM, Jan Kara wrote:
-> On Sat 26-04-25 14:29:15, Christian Brauner wrote:
->> On Wed, Apr 16, 2025 at 06:58:25PM +0000, Joe Damato wrote:
->>> Avoid an edge case where epoll_wait arms a timer and calls schedule()
->>> even if the timer will expire immediately.
->>>
->>> For example: if the user has specified an epoll busy poll usecs which is
->>> equal or larger than the epoll_wait/epoll_pwait2 timeout, it is
->>> unnecessary to call schedule_hrtimeout_range; the busy poll usecs have
->>> consumed the entire timeout duration so it is unnecessary to induce
->>> scheduling latency by calling schedule() (via schedule_hrtimeout_range).
->>>
->>> This can be measured using a simple bpftrace script:
->>>
->>> tracepoint:sched:sched_switch
->>> / args->prev_pid == $1 /
->>> {
->>>   print(kstack());
->>>   print(ustack());
->>> }
->>>
->>> Before this patch is applied:
->>>
->>>   Testing an epoll_wait app with busy poll usecs set to 1000, and
->>>   epoll_wait timeout set to 1ms using the script above shows:
->>>
->>>      __traceiter_sched_switch+69
->>>      __schedule+1495
->>>      schedule+32
->>>      schedule_hrtimeout_range+159
->>>      do_epoll_wait+1424
->>>      __x64_sys_epoll_wait+97
->>>      do_syscall_64+95
->>>      entry_SYSCALL_64_after_hwframe+118
->>>
->>>      epoll_wait+82
->>>
->>>   Which is unexpected; the busy poll usecs should have consumed the
->>>   entire timeout and there should be no reason to arm a timer.
->>>
->>> After this patch is applied: the same test scenario does not generate a
->>> call to schedule() in the above edge case. If the busy poll usecs are
->>> reduced (for example usecs: 100, epoll_wait timeout 1ms) the timer is
->>> armed as expected.
->>>
->>> Fixes: bf3b9f6372c4 ("epoll: Add busy poll support to epoll with socket fds.")
->>> Signed-off-by: Joe Damato <jdamato@fastly.com>
->>> Reviewed-by: Jan Kara <jack@suse.cz>
->>> ---
->>>  v2: 
->>>    - No longer an RFC and rebased on vfs/vfs.fixes
->>>    - Added Jan's Reviewed-by
->>>    - Added Fixes tag
->>>    - No functional changes from the RFC
->>>
->>>  rfcv1: https://lore.kernel.org/linux-fsdevel/20250415184346.39229-1-jdamato@fastly.com/
->>>
->>>  fs/eventpoll.c | 10 +++++++++-
->>>  1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
->>> index 100376863a44..4bc264b854c4 100644
->>> --- a/fs/eventpoll.c
->>> +++ b/fs/eventpoll.c
->>> @@ -1996,6 +1996,14 @@ static int ep_try_send_events(struct eventpoll *ep,
->>>  	return res;
->>>  }
->>>  
->>> +static int ep_schedule_timeout(ktime_t *to)
->>> +{
->>> +	if (to)
->>> +		return ktime_after(*to, ktime_get());
->>> +	else
->>> +		return 1;
->>> +}
->>> +
->>>  /**
->>>   * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
->>>   *           event buffer.
->>> @@ -2103,7 +2111,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->>>  
->>>  		write_unlock_irq(&ep->lock);
->>>  
->>> -		if (!eavail)
->>> +		if (!eavail && ep_schedule_timeout(to))
->>>  			timed_out = !schedule_hrtimeout_range(to, slack,
->>>  							      HRTIMER_MODE_ABS);
->>
->> Isn't this buggy? If @to is non-NULL and ep_schedule_timeout() returns
->> false you want to set timed_out to 1 to break the wait. Otherwise you
->> hang, no?
-> 
-> Yep, looks like that. Good spotting!
-> 
+pkey-powerpc.h: In function ‘arch_is_powervm’:
+pkey-powerpc.h:73:21: error: storage size of ‘buf’ isn’t known
+   73 |         struct stat buf;
+      |                     ^~~
+pkey-powerpc.h:75:14: error: implicit declaration of function ‘stat’; did you mean ‘strcat’? [-Wimplicit-function-declaration]
+   75 |         if ((stat("/sys/firmware/devicetree/base/ibm,partition-name", &buf) == 0) &&
+      |              ^~~~
+      |              strcat
 
-I second that. Also, isn't ep_schedule_timeout buggy too? It compares a
-timeout value with the current time, that has to be reworked as well.
+Since pkey_util.c includes pkeys-helper.h, which in turn includes pkeys-powerpc.h,
+stat.h including is missing for "struct stat". This is fixed by adding "sys/stat.h"
+in pkeys-powerpc.h
 
-I see this patch already queued for stable/linux-6.14.y. What's the plan
-with it?
+Secondly,
 
-Thanks,
-ta
+pkey-powerpc.h:55:18: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   55 |         dprintf4("%s() changing %016llx to %016llx\n",
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                          __func__, __read_pkey_reg(), pkey_reg);
+      |                                    ~~~~~~~~~~~~~~~~~
+      |                                    |
+      |                                    u64 {aka long unsigned int}
+pkey-helpers.h:63:32: note: in definition of macro ‘dprintf_level’
+   63 |                 sigsafe_printf(args);           \
+      |                                ^~~~
+
+These format specifier related warning are removed by adding
+"__SANE_USERSPACE_TYPES__" to pkeys_utils.c.
+
+Fixes: 50910acd6f615 ("selftests/mm: use sys_pkey helpers consistently")
+Signed-off-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
+---
+ tools/testing/selftests/mm/pkey-powerpc.h | 2 ++
+ tools/testing/selftests/mm/pkey_util.c    | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/tools/testing/selftests/mm/pkey-powerpc.h b/tools/testing/selftests/mm/pkey-powerpc.h
+index 1bad310d282a..d8ec906b8120 100644
+--- a/tools/testing/selftests/mm/pkey-powerpc.h
++++ b/tools/testing/selftests/mm/pkey-powerpc.h
+@@ -3,6 +3,8 @@
+ #ifndef _PKEYS_POWERPC_H
+ #define _PKEYS_POWERPC_H
+ 
++#include <sys/stat.h>
++
+ #ifndef SYS_pkey_alloc
+ # define SYS_pkey_alloc		384
+ # define SYS_pkey_free		385
+diff --git a/tools/testing/selftests/mm/pkey_util.c b/tools/testing/selftests/mm/pkey_util.c
+index ca4ad0d44ab2..255b332f7a08 100644
+--- a/tools/testing/selftests/mm/pkey_util.c
++++ b/tools/testing/selftests/mm/pkey_util.c
+@@ -1,4 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++#define __SANE_USERSPACE_TYPES__
+ #include <sys/syscall.h>
+ #include <unistd.h>
+ 
+-- 
+2.47.0
+
 
