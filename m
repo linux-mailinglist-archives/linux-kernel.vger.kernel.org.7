@@ -1,393 +1,183 @@
-Return-Path: <linux-kernel+bounces-622842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACA4A9ED72
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBFCA9ED77
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D887C179B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442083B12FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8667E1B4236;
-	Mon, 28 Apr 2025 10:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6221525F974;
+	Mon, 28 Apr 2025 10:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Mr1+vSMz"
-Received: from mail-m19731119.qiye.163.com (mail-m19731119.qiye.163.com [220.197.31.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="XuDAen29"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0999BEEAA;
-	Mon, 28 Apr 2025 10:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CCD2036E2
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745834531; cv=none; b=qqa6OC2qo2VZOXL3gR7yy2keXthtCaDIyLBfNnIh0P51mCaVNyOC9URZtjAwQYKRjDWMA65HSeJflYv8wtWEsU5oYPpPNcINFphYSsmI1BJRyrVIoSNnT1ezzZsPstmNIcf6WCd1L4Cke/aea6uQRna18ypr+ffiXOvWLLfXyms=
+	t=1745834659; cv=none; b=GXQECKlXX6DeS786j7JuiPVaqQ+u1bOIjPvbuYLGsfr8WVdbxkJuSwi+wx7oKLU+c1l1SEnoHhNnxG0+uB3KIRyZ7mJavgeIotRFwUAMeBt1Fi0qOnanxb7GoLqCPUzMym5knWiWnIFfPl6qa/wlJeMRGkuJ20Ih7KjABBP7Z30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745834531; c=relaxed/simple;
-	bh=/XtTCFABOxSDPYqB/TpLDCSy5GtdVGuDeJGuqGtBvUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2/47Xqq/M8agJrpgXJEUjgVNrN9+tT1EX6ugNLPLrGGQzggShOlQMVUpMdP9oNUC86OtmMa4VIyw9c173NMpLp5Pzwgv3kHCQLhvTE8m8cDknFZw2xSTNKbh88J3zniujztI2HdWpzkIyr14BiO4zIYzTiABKIYhdN1n9oxoPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Mr1+vSMz; arc=none smtp.client-ip=220.197.31.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-3-entmail-virt135.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1365c5568;
-	Mon, 28 Apr 2025 18:01:56 +0800 (GMT+08:00)
-Message-ID: <cc0dd83c-a9f6-4c3d-b45f-29ce5480ae2c@rock-chips.com>
-Date: Mon, 28 Apr 2025 18:01:56 +0800
+	s=arc-20240116; t=1745834659; c=relaxed/simple;
+	bh=7fEi7r0yARLjuil18ZtvROfpnOhugcWbqFxzNrQ7poA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EY5HkecQpBigHbyT0EWhoZe7w3OY7wa6saKRbQ8e2E8WXFK94krhtjz0SEECi5Xvv3zYyHsVwPD2O7QsCJ1sX5S+vmM/1gVy0sQb/xM2HKxOwpJfgMhYev5+c0707B1iAaS/0yyKP+aKlNt/gpfJzRU1BDek3b90o1AWSJ2pOlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=XuDAen29; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ff1e375a47so47018767b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 03:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1745834656; x=1746439456; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ucZUAd/InboFfZClRnamk8ZirwH9aq8qtdNhcPq2zyw=;
+        b=XuDAen29ddH33YH+K6Bzi31F76xCI9G395V361MsYx+HnpruYe+JR6/IadUAKIkbWi
+         7nIdnGbgVzMP3ijtTnU2f5+YY5KEbgFxoqFaRi1n9SqrztbA5nvmIpBmm8MVbe2ebs8J
+         0Mj9sfYerMOU1U4ZwGncImyE5wOTMKGDW7WZWCvz9Q3e0PiC9KBJbPbS9ohQlH2j2bT2
+         qIsE0kUnf1ITEahJYNT6DKHpnf2RUitQe4r4BU6NQ+bW6Ul4J+9vuKm0WGYAX12GDpjN
+         EOkGBuu0rfK4oMhPgq87DhhGmi0ZF7koc5cN0kAU/kn1D8qKCu7eyRdD9r0GAFHSBenK
+         mMUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745834656; x=1746439456;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ucZUAd/InboFfZClRnamk8ZirwH9aq8qtdNhcPq2zyw=;
+        b=rN/UMSmgUg/dnuTmg1avVFqk8MfMMImfv5jRLisJG8+EyoaUaKQ1wlfr9qI1SArjMr
+         mWPGd2fklQ931N9QoposV9FhLnJAz1p2yFzy15q/7seu9p34sANQYzrNr6hEB4fIHMNb
+         XEcQaUp4D7xW4FyzMk5QnnlXDSm76+Ivuz/e4BcwNPzjBY8LAr6OBBS0QIV7YrBAUDm/
+         wz90VxZbIcVsodUpPphERg1uHUap1q1Rt3+XJqn0XrWaXLkqPOzVbfnknf4j0dingazx
+         Ebm3ukapgH+xWh7N7qNgf26zdeRJz4OeKn9C+NUhTOgdHwWl9v/IEnW3I7HRlnZN486z
+         CDNw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2fbarjL9KcfstFxWKaf7sgHCXu1Icq4p+fzj4Lx7XAsMpw4qmB2byA1vDJoEOQqo3Khq4CVaPswXPYAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfSJTzzb0yi0hE89bVwBUjnn+MARdYTMka70NcGu3IWgvKF0lH
+	BxBBXeqMCyAIQF4tszWYnJeTVg2p5aJEEyH1aBbw/awQ9AJnyhqYyzz0ctKZZkBW5EkA6o4aj55
+	ADs7+t8bPIfHJbL/+5v2luleTJ1cQLlzSgWWRBg==
+X-Gm-Gg: ASbGncvPmyteBlJkvwNFiZqtM0z4akbGS7SCP6N9jx1b6RA8bwet7hyeGgulF9vMZgJ
+	RVfPOVO3ROocTnv9+7Fg01YLgGMEtg8MtPKMhUwv6SzkFUWvIYroFOb7+iRsPusTYSyIHJUDSjN
+	wLddUp1jmBPbAEFZVIarBO+w==
+X-Google-Smtp-Source: AGHT+IHLAwgs2jvyhndbI9eeTcAvfYwmKCKu2Wwt19IFmNuoMlsiM2VhTNy+bvMEOC6zz520PPUY1yZ92SlmTgkYlVM=
+X-Received: by 2002:a05:690c:7084:b0:702:4eb0:6af with SMTP id
+ 00721157ae682-7085f252950mr116417097b3.31.1745834655665; Mon, 28 Apr 2025
+ 03:04:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add rk3399-evb-ind board
-To: Quentin Schulz <quentin.schulz@cherry.de>, Chaoyi Chen
- <kernel@airkyi.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
- Kever Yang <kever.yang@rock-chips.com>,
- Jianfeng Liu <liujianfeng1994@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
- Jimmy Hon <honyuenkwun@gmail.com>, FUKAUMI Naoki <naoki@radxa.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Alexey Charkov <alchark@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250427094211.246-1-kernel@airkyi.com>
- <20250427094211.246-3-kernel@airkyi.com>
- <561d13ec-c487-4695-b50f-af8f2a65c61c@cherry.de>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <561d13ec-c487-4695-b50f-af8f2a65c61c@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh9ITlZCGklKTR1PHk9IHkpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a967bd8a0e003abkunm1365c5568
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBQ6Pww6TjJOETRNDxE#KTMw
-	LDMwFBNVSlVKTE9OQ0hPTklPS05DVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBQk1PQjcG
-DKIM-Signature:a=rsa-sha256;
-	b=Mr1+vSMz1G1xqTNpa9kwj4mUF55N7iHA8PK+o9pSC/I2WBm/FAYsSodLTYiHFRwCBB1okowcpMitz98rSEThsGXOaa+RuO8AumPy3m6kGAmsC3+BBkFCDXBpfNCMu4wyOfZ9bnTvuWThnZqxLVUJqZELTNjHjU4YfN8bscfoBik=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=NL7rXic5Deq/XuNvQqdkSaO2B07wh3fSCUtIWJkyaKo=;
-	h=date:mime-version:subject:message-id:from;
+References: <20250423-media-rpi-hevc-dec-v3-0-8fd3fad1d6fb@raspberrypi.com>
+ <20250423-media-rpi-hevc-dec-v3-3-8fd3fad1d6fb@raspberrypi.com> <20250425-inescapable-beagle-of-bliss-8ae3ff@kuoka>
+In-Reply-To: <20250425-inescapable-beagle-of-bliss-8ae3ff@kuoka>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Mon, 28 Apr 2025 11:03:57 +0100
+X-Gm-Features: ATxdqUGx5uUk2kPmuSg5gFgBWEs3E2SY1xjorpWkszYXuV-kigFS84yL46qfHpo
+Message-ID: <CAPY8ntCWzp9cRKwLg44G20jG17q2KhavZa_8qpodhGUGS2Bc7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] media: dt-bindings: media: Add binding for the
+ Raspberry Pi HEVC decoder
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, John Cox <john.cox@raspberrypi.com>, 
+	Dom Cobley <dom@raspberrypi.com>, review list <kernel-list@raspberrypi.com>, 
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, John Cox <jc@kynesim.co.uk>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Quentin,
+Hi Krzysztof
 
-On 2025/4/28 16:19, Quentin Schulz wrote:
-> Hi Chaoyi,
+On Fri, 25 Apr 2025 at 08:53, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On 4/27/25 11:42 AM, Chaoyi Chen wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> General feature for rk3399 industry evaluation board:
->> - Rockchip RK3399
->> - 4GB LPDDR4
->> - emmc5.1
->> - SDIO3.0 compatible TF card
->> - 1x HDMI2.0a TX
->> - 1x HDMI1.4b RX with TC358749XBG HDMI to MIPI CSI2 bridge chip
->> - 1x type-c DisplayPort
->> - 3x USB3.0 Host
->> - 1x USB2.0 Host
->> - 1x Ethernet / USB3.0 to Ethernet
->>
+> On Wed, Apr 23, 2025 at 06:20:20PM GMT, Dave Stevenson wrote:
+> > Adds a binding for the HEVC decoder found on th +maintainers:
+> > +  - John Cox <john.cox@raspberrypi.com>
+> > +  - Dom Cobley <dom@raspberrypi.com>
+> > +  - Dave Stevenson <dave.stevenson@raspberrypi.com>
 >
-> Are there publicly available schematics by any chance?
+> > +  - Raspberry Pi internal review list <kernel-list@raspberrypi.com>
+>
+> Drop, no mailing lists in bindings maintainers. These must be people.
 
-Sorry, there is no publicly available information at present.
+Ack
 
+> > +
+> > +description:
+> > +  The Raspberry Pi HEVC decoder is a hardware video decode accelerator block
+> > +  found in the BCM2711 and BCM2712 processors used on Raspberry Pi 4 and 5
+> > +  boards respectively.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - brcm,bcm2711-hevc-dec
+> > +          - brcm,bcm2712-hevc-dec
+> > +      - const: raspberrypi,hevc-dec
+>
+> Not what Rob asked. You should use specific SoC compatible as fallback.
 
->
->> Tested with HDMI/GPU/USB2.0/USB3.0/Ethernet/TF card/emmc.
->>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->> ---
->>   arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->>   .../boot/dts/rockchip/rk3399-evb-ind.dts      | 222 ++++++++++++++++++
->>   2 files changed, 223 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/Makefile 
->> b/arch/arm64/boot/dts/rockchip/Makefile
->> index 3e8771ef69ba..8a3adb7482ca 100644
->> --- a/arch/arm64/boot/dts/rockchip/Makefile
->> +++ b/arch/arm64/boot/dts/rockchip/Makefile
->> @@ -40,6 +40,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-px5-evb.dtb
->>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-r88.dtb
->>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-eaidk-610.dtb
->>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-evb.dtb
->> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-evb-ind.dtb
->>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-ficus.dtb
->>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
->>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts 
->> b/arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
->> new file mode 100644
->> index 000000000000..a995d4ff202d
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts
->> @@ -0,0 +1,222 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
->> + */
->> +
->> +/dts-v1/;
->> +#include "rk3399-base.dtsi"
->> +
->> +/ {
->> +    model = "Rockchip RK3399 EVB IND LPDDR4 Board";
->> +    compatible = "rockchip,rk3399-evb-ind", "rockchip,rk3399";
->> +
->> +    aliases {
->> +        ethernet0 = &gmac;
->> +        mmc0 = &sdhci;
->> +        mmc1 = &sdmmc;
->> +    };
->> +
->> +    chosen {
->> +        stdout-path = "serial2:1500000n8";
->> +    };
->> +
->> +    clkin_gmac: external-gmac-clock {
->> +        compatible = "fixed-clock";
->> +        clock-frequency = <125000000>;
->> +        clock-output-names = "clkin_gmac";
->> +        #clock-cells = <0>;
->> +    };
->> +
->> +    vcc5v0_sys: regulator-vcc5v0-sys {
->> +        compatible = "regulator-fixed";
->> +        enable-active-high;
->> +        gpio = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
->> +        regulator-name = "vcc5v0_sys";
->> +        regulator-always-on;
->> +        regulator-boot-on;
->> +        regulator-max-microvolt = <5000000>;
->> +        regulator-min-microvolt = <5000000>;
->> +    };
->> +
->> +    vcc_phy: regulator-vcc-phy {
->> +        compatible = "regulator-fixed";
->> +        regulator-always-on;
->> +        regulator-boot-on;
->> +        regulator-name = "vcc_phy";
->> +    };
->> +};
->> +
->> +&emmc_phy {
->> +    status = "okay";
->> +};
->> +
->> +&gmac {
->> +    assigned-clocks = <&cru SCLK_RMII_SRC>;
->> +    assigned-clock-parents = <&clkin_gmac>;
->> +    pinctrl-names = "default";
->> +    pinctrl-0 = <&rgmii_pins>;
->> +    clock_in_out = "input";
->> +    phy-supply = <&vcc_phy>;
->> +    phy-mode = "rgmii";
->> +    snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
->> +    snps,reset-active-low;
->> +    snps,reset-delays-us = <0 10000 150000>;
->> +    tx_delay = <0x22>;
->> +    rx_delay = <0x23>;
->> +    status = "okay";
->> +};
->> +
->> +&gpu {
->> +    mali-supply = <&vdd_gpu>;
->> +    status = "okay";
->> +};
->> +
->> +&hdmi {
->> +    pinctrl-names = "default";
->> +    pinctrl-0 = <&hdmi_i2c_xfer>, <&hdmi_cec>;
->> +    status = "okay";
->> +};
->> +
->> +&hdmi_in_vopl {
->> +    status = "disabled";
->> +};
->> +
->
-> Why disabled?
-Will fix this on v2.
->
->> +&hdmi_sound {
->> +    status = "okay";
->> +};
->> +
->> +&i2c0 {
->> +    clock-frequency = <400000>;
->> +    i2c-scl-falling-time-ns = <4>;
->> +    i2c-scl-rising-time-ns = <168>;
->> +    status = "okay";
->> +
->> +    vdd_gpu: tcs4526@10 {
->> +        compatible = "tcs,tcs4525";
->> +        reg = <0x10>;
->> +        pinctrl-names = "default";
->> +        pinctrl-0 = <&vsel2_gpio>;
->> +        fcs,suspend-voltage-selector = <1>;
->> +        vin-supply = <&vcc5v0_sys>;
->> +        vsel-gpios = <&gpio1 RK_PB6 GPIO_ACTIVE_HIGH>;
->> +        regulator-compatible = "fan53555-reg";
->> +        regulator-always-on;
->> +        regulator-boot-on;
->> +        regulator-initial-state = <3>;
->> +        regulator-max-microvolt = <1500000>;
->> +        regulator-min-microvolt = <712500>;
->> +        regulator-name = "vdd_gpu";
->> +        regulator-ramp-delay = <1000>;
->> +        regulator-state-mem {
->> +            regulator-off-in-suspend;
->> +        };
->
-> No RK80x PMIC on this board?
+In which case I don't understand what Rob was asking for.
+I asked for clarification in [1], but got no reply. Sending a new
+version has at least got an answer, but I'm none the wiser.
 
-It has a RK809 PMIC on this board.  I will add this on v2.
+Staring at this trying to work out your meaning, you want the generic
+first, and SoC specific second? ie
++  compatible:
++    items:
++      - const: raspberrypi,hevc-dec
++      - enum:
++          - brcm,bcm2711-hevc-dec
++          - brcm,bcm2712-hevc-dec
 
+> You referred to file "raspberrypi,pisbe.yaml" before, but there is no
+> such file in the next.
 
->
->> +    };
->> +};
->> +
->
-> Missing io_domains here no? I guess it'll rely on the addition of the 
-> RK80x PMIC for this to work?
+Typo.
+https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/media/raspberrypi%2Cpispbe.yaml
+Reviewed by Rob only just over a year ago [2]
 
-Yes, I will add this on v2.
+> Before you reply that there is a binding using different rules: well,
+> there is always poor code. Above two comments are repeated, especially
+> this about specific compatible - all the time, so these are not new
+> rules. These are given in reviews since some years.
 
+My Google-foo is totally failing with the only directly relevant
+mention of "fallback compatible" I find is [3], which just says to use
+them.
 
->
->> +&sdmmc {
->> +    bus-width = <4>;
->> +    cap-mmc-highspeed;
->> +    cap-sd-highspeed;
->> +    cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
->> +    disable-wp;
->> +    max-frequency = <150000000>;
->
-> It's already defaulting to that frequency in rk3399-base.dtsi so no 
-> need to duplicate the info here.
-Will fix this on v2.
->
->> +    pinctrl-names = "default";
->> +    pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
->> +    status = "okay";
->> +};
->> +
->> +&sdhci {
->> +    bus-width = <8>;
->> +    keep-power-in-suspend;
->> +    mmc-hs400-1_8v;
->> +    mmc-hs400-enhanced-strobe;
->> +    no-sdio;
->> +    no-sd;
->> +    non-removable;
->> +    status = "okay";
->> +};
->> +
->> +&tcphy0 {
->> +    status = "okay";
->> +};
->> +
->> +&tcphy1 {
->> +    status = "okay";
->> +};
->> +
->> +&u2phy0 {
->> +    status = "okay";
->> +};
->> +
->> +&u2phy0_host {
->> +    status = "okay";
->> +};
->> +
->> +&u2phy0_otg {
->> +    status = "okay";
->> +};
->> +
->> +&u2phy1 {
->> +    status = "okay";
->> +};
->> +
->> +&u2phy1_host {
->> +    status = "okay";
->> +};
->> +
->> +&u2phy1_otg {
->> +    status = "okay";
->> +};
->> +
->> +&uart2 {
->> +    status = "okay";
->> +};
->> +
->> +&usbdrd_dwc3_0 {
->> +    status = "okay";
->> +};
->> +
->> +&usbdrd3_0 {
->> +    status = "okay";
->> +};
->> +
->> +&usbdrd3_1 {
->> +    status = "okay";
->> +};
->> +
->> +&usbdrd_dwc3_1 {
->> +    dr_mode = "host";
->> +    status = "okay";
->> +};
->> +
->> +&usb_host0_ehci {
->> +    status = "okay";
->> +};
->> +
->> +&usb_host0_ohci {
->> +    status = "okay";
->> +};
->> +
->> +&usb_host1_ehci {
->> +    status = "okay";
->> +};
->> +
->> +&usb_host1_ohci {
->> +    status = "okay";
->> +};
->> +
->> +&pinctrl {
->> +    pmic {
->> +        vsel2_gpio: vsel2-gpio {
->> +            rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
->> +        };
->> +    };
->> +};
->> +
->> +&vopb {
->> +    status = "okay";
->> +};
->> +
->> +&vopb_mmu {
->> +    status = "okay";
->> +};
->
-> Why no vopl?
-Will enable vopl in v2.
->
-> Cheers,
-> Quentin
->
->
+You're effectively saying I can't take anything in the kernel tree as
+being a valid example as it could be poor code, and a layman such as
+myself has no way of telling.
+Could you please point me at documentation and examples I can rely on,
+or educate me with what is wanted in this situation to avoid me having
+to guess?
 
+A further mailing list search has brought up [4] which is a thread
+with yourself from 2 years ago which looks to be a very similar
+situation. Other than missing the const on the SoC strings (although
+that isn't in the merged version of cnm,wave521c.yaml), and two SoC
+specific strings, I'm not seeing an obvious difference between there
+and here either.
 
+Many thanks
+  Dave
 
+> Best regards,
+> Krzysztof
+
+[1] https://lore.kernel.org/linux-media/CAPY8ntD3Frq5HzV06OrS1051QfjJFzvqs9H4mUkVnd4QKqiMhg@mail.gmail.com/
+[2] https://www.spinics.net/lists/linux-media/msg250095.html
+[3] https://www.kernel.org/doc/html/latest/devicetree/bindings/writing-bindings.html#properties
+[4] https://patchwork.kernel.org/project/linux-arm-kernel/patch/20230929-wave5_v13_media_master-v13-6-5ac60ccbf2ce@collabora.com/#25567148
 
