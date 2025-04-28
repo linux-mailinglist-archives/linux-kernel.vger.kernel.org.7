@@ -1,154 +1,177 @@
-Return-Path: <linux-kernel+bounces-623687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8B9A9F947
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:15:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A815FA9F94E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2B35A0251
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA55B465B44
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582091D5CC2;
-	Mon, 28 Apr 2025 19:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005972973A0;
+	Mon, 28 Apr 2025 19:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="paY4TVDu"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiUoHHBf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D6276C61
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 19:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527451A8F7F;
+	Mon, 28 Apr 2025 19:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745867737; cv=none; b=RTzdLficXv2CJmAv4+HEG5rTilfEgT7Az0zW3ZgO6Fm/J6xxQB0iMbnpS3K35/t4/1VKwM5TMBppm1r00KNhVS+aMi/dVFWe7Bu66THqhJUPF92t43bW2bHJE3Aaq7NS2Uam8dcjHEgQlfJogXWjEOWwBnNeo1NxhcfbI/fHo44=
+	t=1745867907; cv=none; b=TwSBjSs+wCqqBvi4GD20HY2EijqZcTOO78/c7S6x7QsBw4w23xl7DMpFbvNzu8WSiUr2No3AYxnsCoSbDmFrjYJCTWu8F6x3FgJng/fEPwDEZas8+NIMX6tsu4SfhuaP0DxRXYIMzvBupkT2ff5ENNbmHssKQVxYYEVvO5Y0jko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745867737; c=relaxed/simple;
-	bh=6EuACr52xq/37QMgatS0sOBdCCEvBQF2mWjnJc85ksI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OLfXFEwH0ajhjfIsIR6ZzmaCnkycyKnB2Ua/TCN6ygaXdonU7/Dikrt8toa3TVpKV7uS3CbmTYR04CnA0q4ljcsdnfWpwPpvepAtO5Vpf+06sIsDpYtPorK4Cy4As6LHaSbZyzZEcsQoIyiWeE9ivaOba1dDaXhSAruf8It/n1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=paY4TVDu; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53SJFQ4A3483992
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Apr 2025 14:15:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745867726;
-	bh=lBCJPzECeQ94pyLvoYBNYZYvuPQv+pUF49fQn7m2S6o=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=paY4TVDuTXutO7pM+NNIDs0LVN2B+hE4gQ/q8uG9n7nIZhh5fsJdClT60QCAGHPGn
-	 MlmpvvzW8gdmibeUGN3BhVFEOypPNlhE1rHT6ZvXOfUxZY70/4pHV0WGoJsV2HHyUS
-	 z91bBLmk4ul5PRMYkYDsxgUb0XaFst9rzXoglBpQ=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53SJFQCM127901
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 28 Apr 2025 14:15:26 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
- Apr 2025 14:15:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 28 Apr 2025 14:15:26 -0500
-Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53SJFPe6065459;
-	Mon, 28 Apr 2025 14:15:25 -0500
-Message-ID: <76193d4e-965b-4029-98ba-393870e5f86f@ti.com>
-Date: Mon, 28 Apr 2025 14:15:25 -0500
+	s=arc-20240116; t=1745867907; c=relaxed/simple;
+	bh=i/QKM52Nh1KGsdn9abmiVXQDvhwyr9YUB3yshFRt/jI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CBCwFX1XQGy7CsnozdlNRWy14/jgNMIgdOz+qDklDh4c9bGmtEL5NzYzG6hLaeN/CwkfpuZJS7tjtq91EQrl8yIt/6wVKla5xrQYjH6kIhYWets5BhJ0YNS16xkgDifTE+ePbJ0YrNJaocEfSBS4mFvwCKQrZqpl/zr4ytuekWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiUoHHBf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE04C4CEE4;
+	Mon, 28 Apr 2025 19:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745867906;
+	bh=i/QKM52Nh1KGsdn9abmiVXQDvhwyr9YUB3yshFRt/jI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SiUoHHBfFUaCjrcHhCWfjHbXTsrf6I4Ov+fNENselLjh993Gozy+iF9itHD21rRkM
+	 0uuk8If8HnS6gzaWAhO3mUDsdNgsEp6ItbhKdnQHoHuYItlQxEEpxhw1Uo/S1AAHhT
+	 eJ5ZRNMbUKiqnb7fqPvg5Y2/K3H/ft+KzigimMFAyziEYPCYilz9K9Zz5N29X2Ye4r
+	 0rTMOEOQn7dHiXU6iK8rhUnVSeQOogKGXJbdvtGyWBX3FzpPzi9TeAsida3waVOj7y
+	 dbsvweahRMoSUOm7D1r/L0y6KwvFk2tMmxPvejnEtUfzbCDvPbcH5E3cjMDGhBAWPy
+	 y/hU1TYTUoExg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	Hayes Wang <hayeswang@realtek.com>
+Subject: [PATCH net-next] r8152: use SHA-256 library API instead of crypto_shash API
+Date: Mon, 28 Apr 2025 12:16:06 -0700
+Message-ID: <20250428191606.856198-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: ti_sci: Convert CPU latency constraint from us
- to ms
-To: Nishanth Menon <nm@ti.com>
-CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <d-gole@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250425153754.2141984-1-k-willis@ti.com>
- <20250425190803.s7bag5fop7hsxcxe@sliced>
-Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20250425190803.s7bag5fop7hsxcxe@sliced>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On 4/25/25 14:08, Nishanth Menon wrote:
-> On 10:37-20250425, Kendall Willis wrote:
->> Fix CPU resume latency constraint units sent to TI SCI firmware.
->> CPU latency constraints are set using the PM QoS framework. The PM QoS
->> framework uses usecs as the units for latency whereas the device manager
->> uses msecs, so a conversion is needed before passing to device manager.
->>
-> 
-> If this is a bug fix (sounds like it), follow the stable kernel rules.
-> 
-> Also please do not expect reviewers in the community know what this
-> means, I think you intent to point folks to the url
-> https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html#tisci-msg-lpm-set-latency-constraint
-> 
-> If so, add the reference to your commit message.
->  >
->> Signed-off-by: Kendall Willis <k-willis@ti.com>
->> Reviewed-by: Dhruva Gole <d-gole@ti.com>
->> ---
->> Test log [1] shows entry to MCU Only low power mode by sending a CPU
->> resume latency constraint of 100000 us using PM QoS. MCU Only is shown
->> to be entered by 0x1 as the printed mode.
->>
->> [1] https://gist.github.com/kwillis01/059a2ca38232387b414bc6f4b87c7475
->> ---
->>   drivers/firmware/ti_sci.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index 806a975fff22..bc138a837430 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -3670,6 +3670,7 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
->>   	struct ti_sci_info *info = dev_get_drvdata(dev);
->>   	struct device *cpu_dev, *cpu_dev_max = NULL;
->>   	s32 val, cpu_lat = 0;
->> +	u16 cpu_lat_ms;
->>   	int i, ret;
->>   
->>   	if (info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
->> @@ -3682,9 +3683,13 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
->>   			}
->>   		}
->>   		if (cpu_dev_max) {
->> -			dev_dbg(cpu_dev_max, "%s: sending max CPU latency=%u\n", __func__, cpu_lat);
->> +			/* PM QoS latency unit is usecs, TI SCI uses msecs */
->> +			cpu_lat_ms = cpu_lat / USEC_PER_MSEC;
-> 
-> round_down or a round_up? I assume you intent round_down, please
-> document that in the comments.
-> 
->> +			dev_dbg(cpu_dev_max, "%s: sending max CPU latency=%u ms\n", __func__,
->> +				cpu_lat_ms);
->>   			ret = ti_sci_cmd_set_latency_constraint(&info->handle,
->> -								cpu_lat, TISCI_MSG_CONSTRAINT_SET);
->> +								cpu_lat_ms,
->> +								TISCI_MSG_CONSTRAINT_SET);
->>   			if (ret)
->>   				return ret;
->>   		}
->>
->> base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
->> -- 
->> 2.34.1
->>
-> 
+From: Eric Biggers <ebiggers@google.com>
 
-Thanks for looking this over, Nishanth. I will implement your comments 
-in V2.
+This user of SHA-256 does not support any other algorithm, so the
+crypto_shash abstraction provides no value.  Just use the SHA-256
+library API instead, which is much simpler and easier to use.
 
-Best,
-Kendall Willis
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ drivers/net/usb/Kconfig |  4 +---
+ drivers/net/usb/r8152.c | 46 +++++++----------------------------------
+ 2 files changed, 8 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
+index 3c360d4f06352..370b32fc25880 100644
+--- a/drivers/net/usb/Kconfig
++++ b/drivers/net/usb/Kconfig
+@@ -99,13 +99,11 @@ config USB_RTL8150
+ config USB_RTL8152
+ 	tristate "Realtek RTL8152/RTL8153 Based USB Ethernet Adapters"
+ 	select MII
+ 	select PHYLIB
+ 	select CRC32
+-	select CRYPTO
+-	select CRYPTO_HASH
+-	select CRYPTO_SHA256
++	select CRYPTO_LIB_SHA256
+ 	help
+ 	  This option adds support for Realtek RTL8152 based USB 2.0
+ 	  10/100 Ethernet adapters and RTL8153 based USB 3.0 10/100/1000
+ 	  Ethernet adapters.
+ 
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 2cab046749a92..67f5d30ffcbab 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -24,11 +24,11 @@
+ #include <linux/usb/cdc.h>
+ #include <linux/suspend.h>
+ #include <linux/atomic.h>
+ #include <linux/acpi.h>
+ #include <linux/firmware.h>
+-#include <crypto/hash.h>
++#include <crypto/sha2.h>
+ #include <linux/usb/r8152.h>
+ #include <net/gso.h>
+ 
+ /* Information for net-next */
+ #define NETNEXT_VERSION		"12"
+@@ -4626,52 +4626,20 @@ static bool rtl8152_is_fw_mac_ok(struct r8152 *tp, struct fw_mac *mac)
+  * make sure the file is correct.
+  */
+ static long rtl8152_fw_verify_checksum(struct r8152 *tp,
+ 				       struct fw_header *fw_hdr, size_t size)
+ {
+-	unsigned char checksum[sizeof(fw_hdr->checksum)];
+-	struct crypto_shash *alg;
+-	struct shash_desc *sdesc;
+-	size_t len;
+-	long rc;
+-
+-	alg = crypto_alloc_shash("sha256", 0, 0);
+-	if (IS_ERR(alg)) {
+-		rc = PTR_ERR(alg);
+-		goto out;
+-	}
+-
+-	if (crypto_shash_digestsize(alg) != sizeof(fw_hdr->checksum)) {
+-		rc = -EFAULT;
+-		dev_err(&tp->intf->dev, "digestsize incorrect (%u)\n",
+-			crypto_shash_digestsize(alg));
+-		goto free_shash;
+-	}
++	u8 checksum[sizeof(fw_hdr->checksum)];
+ 
+-	len = sizeof(*sdesc) + crypto_shash_descsize(alg);
+-	sdesc = kmalloc(len, GFP_KERNEL);
+-	if (!sdesc) {
+-		rc = -ENOMEM;
+-		goto free_shash;
+-	}
+-	sdesc->tfm = alg;
+-
+-	len = size - sizeof(fw_hdr->checksum);
+-	rc = crypto_shash_digest(sdesc, fw_hdr->version, len, checksum);
+-	kfree(sdesc);
+-	if (rc)
+-		goto free_shash;
++	BUILD_BUG_ON(sizeof(checksum) != SHA256_DIGEST_SIZE);
++	sha256(fw_hdr->version, size - sizeof(checksum), checksum);
+ 
+-	if (memcmp(fw_hdr->checksum, checksum, sizeof(fw_hdr->checksum))) {
++	if (memcmp(fw_hdr->checksum, checksum, sizeof(checksum))) {
+ 		dev_err(&tp->intf->dev, "checksum fail\n");
+-		rc = -EFAULT;
++		return -EFAULT;
+ 	}
+-
+-free_shash:
+-	crypto_free_shash(alg);
+-out:
+-	return rc;
++	return 0;
+ }
+ 
+ static long rtl8152_check_firmware(struct r8152 *tp, struct rtl_fw *rtl_fw)
+ {
+ 	const struct firmware *fw = rtl_fw->fw;
+
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+-- 
+2.49.0
+
 
