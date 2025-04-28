@@ -1,212 +1,224 @@
-Return-Path: <linux-kernel+bounces-623595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51775A9F81A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:11:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2304A9F827
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993CB1A80FE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:11:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22EB7A2655
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E32E294A1B;
-	Mon, 28 Apr 2025 18:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101E2296141;
+	Mon, 28 Apr 2025 18:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AUfIQcmV"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IbMUd4Us"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817F7289343;
-	Mon, 28 Apr 2025 18:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745863873; cv=fail; b=PTc4Hn6vSuLKOIe8uOOeng4qjTln5IdkpBBsK2P3tkHOyAHLLUPML+34NKNV0ipiiKnsRv0rle8nqnLQKzXtRym59GtxGGmxCqbG3CcDpbJExzaQWUWCVKPvPpXbUb2LnRWAGrPugRvJnUqTPTpPmRgoAEQf2gLDSjgw/UEdN28=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745863873; c=relaxed/simple;
-	bh=HOBx24mAHZ4stcX1n2kZvFLWlSUXlqyX75+Xqe0aTE8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COohnmaVd5NGu3CCgMBzdiPz/EMYf2ObhEefPtydTlmg5ImtdFJH4AOD3ToZGJlluopf6wa2biJdtzJlqW/a1lJ98LEALC0f9jyHUSlPDFWR82VvDDa/lLz4YSEtx/yviBSfekENKGjz+5NIaRVe/SRq1Gx0iaRba9UM8D9E/Zg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AUfIQcmV; arc=fail smtp.client-ip=40.107.93.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r9ajSM18K/BWH39N1cARLtUCECOxbAXPCtA5JKIYx6GWcx9+74K/W1hYUJkY905gT/tqx4z7ZAL/XfoIC3TkTAal7l6WFgptpDvGTDbjBezTZb7RL22gNsm96eFQBeDwlnQcq9NA45ESj+P+R9ROQbzseELrZgLV44/pM/FnNbTxRspBHr2dHh6irsnSoX3hWUR3HyoNKx5W+DlwArrnQANvMtBMG3gBbb0HpwGIkCVfrTd6n6vPepsKn2fuvBcgRjxD4w25MQyVhTTHdVmeuQQpXSUpoX37VXI7ybiwgQdE2yOeN00kHPICNolOUy1mrpQlmNAERh+b1fRYf0eU8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5863dNGJJp3eODoc18NgqrDBXKCW73pyjiHAStnh9lk=;
- b=yYYuUK5ICwOgPSDEi6AD0WTdYorXECoFGF4qN1qpjcIAGshNoZ1uCT1PZ4QF6lfsxrZE9Ata/HIa8xe7l9MfvYcCgW0eLpc9fSATaiD70GfMu+GpIkjrpNtkel5cNKBdPrCw5gIc2ewsNsmQBVUqVkxYfBLbeaKH03pFgoGoPt8+kSa06+4hESKkDfiIvByU8f5vk+OAjB45uEaw+uX6dcKckGQubzpzL990+dushqPVGuCR8qgIqDE3Ojo75geG6+HSil44j48z437ATyAicjXkxbU1WWPtlpVZOxTC403rA1Mxb/pachRZFR6SRtFGfnsbd6c10cvWNkqYqkgdjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5863dNGJJp3eODoc18NgqrDBXKCW73pyjiHAStnh9lk=;
- b=AUfIQcmVF+ksOXDbLhFp5+yx+kr0DgsgkJumJT4psfA1ofv3PDF3dqwfXpHb4VUhemOItnjttXSTTeJN6+5gOA2SmXIgfelqhZ6GUW5j2UmJtMoZoJ1U0x7vnA51GcoXnaqTC1FHHr92Gh872IupHehIoOaXgiMZ9sNLwZwnL3ooIL9tFMMV8ifWCJZBTH5uLErckHNYAcK6bRijYvhAvLEXUm4dVxCDg0j0fjLRtpAVXkpngltarcG0WoCxHuyGlLrdshNesb9fq863OOP6cvyoWkHLp3xMYvsfMeEG0sTYsmOu8NvX9a2kIsBkTgpNMeKzTI0U5fTwFkn424Z0VQ==
-Received: from BN9P221CA0018.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::35)
- by SA1PR12MB5659.namprd12.prod.outlook.com (2603:10b6:806:236::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Mon, 28 Apr
- 2025 18:11:04 +0000
-Received: from BL6PEPF00020E61.namprd04.prod.outlook.com
- (2603:10b6:408:10a:cafe::9c) by BN9P221CA0018.outlook.office365.com
- (2603:10b6:408:10a::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Mon,
- 28 Apr 2025 18:11:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF00020E61.mail.protection.outlook.com (10.167.249.22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 18:11:03 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Apr
- 2025 11:10:44 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 28 Apr
- 2025 11:10:44 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 28 Apr 2025 11:10:41 -0700
-Date: Mon, 28 Apr 2025 11:10:40 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <bagasdotme@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <shuah@kernel.org>, <jsnitsel@redhat.com>,
-	<nathan@kernel.org>, <peterz@infradead.org>, <yi.l.liu@intel.com>,
-	<mshavit@google.com>, <praan@google.com>, <zhangzekun11@huawei.com>,
-	<iommu@lists.linux.dev>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<patches@lists.linux.dev>, <mochs@nvidia.com>, <alok.a.tiwari@oracle.com>,
-	<vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 09/22] iommufd/viommu: Introduce IOMMUFD_OBJ_VCMDQ and
- its related struct
-Message-ID: <aA/EoEFtbnL2+zAw@Asurada-Nvidia>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <8bab0069503fa21b48298ed2ffe29a06963f71f5.1745646960.git.nicolinc@nvidia.com>
- <28e513ec-4d8b-4967-a241-d6f63d533050@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC2E2957B4
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745863989; cv=none; b=Hz6MiXjx365TQn+9kNkpf6CoWaTjzDEU34Qg6LbdhQUJMCwe5sVFBBRZT2qdhxNqoMtlL24HDQl1cr1XZ80VcwLSdmPblasYTFn/cZda0sq/NbhHAJ3oXN3U5mP5jNyaXkL843j+qSA7M5GN629XBRSxDVWJfH+UU5PUJtqLHaE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745863989; c=relaxed/simple;
+	bh=0V2JjE3fhf18iXjI31+v59bpfBYMnfwbOgXJPmCf99M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qIAFh54pl7bflUjJPX79PIPJuzKTGcrcG9owJLRG/P3f1WgKCfIem1qveydhSdnnmBVUnrERtgCfDSCphrDyJp3K9CM+sdH0MLitnR+F/ZiTXSEowHWyqEBODomRMrNC/dCuiSFmNVOIS/+iMT/EUAOuchsiA8mLAVBsS7ivA7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IbMUd4Us; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745863986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qwJ5fOhLfYkB64vfDIxnB9WO4IApdEDXEBQnxB264Hc=;
+	b=IbMUd4UstPv32c/b02lF2Ri8TK7FlfAYtv1XC0R6fyzEo7Vt1uoajtFXxR+pQzTwZn6h4+
+	VzKGD9Pffo6dBw3ADiKCar4E/2Eur+W5JWTZSdJN+CneaRWovZSKq0BmhvkiOeN8OXsPhi
+	XLOUwkGSw7vDH6xa7ElpMPgWiuiIZm8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-2Rz-fPRmOXGjMtgCkbqOWw-1; Mon,
+ 28 Apr 2025 14:13:02 -0400
+X-MC-Unique: 2Rz-fPRmOXGjMtgCkbqOWw-1
+X-Mimecast-MFC-AGG-ID: 2Rz-fPRmOXGjMtgCkbqOWw_1745863968
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B0461956077;
+	Mon, 28 Apr 2025 18:12:46 +0000 (UTC)
+Received: from h1.redhat.com (unknown [10.22.65.12])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2EC50180045B;
+	Mon, 28 Apr 2025 18:12:35 +0000 (UTC)
+From: Nico Pache <npache@redhat.com>
+To: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org,
+	corbet@lwn.net,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	david@redhat.com,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	ryan.roberts@arm.com,
+	willy@infradead.org,
+	peterx@redhat.com,
+	ziy@nvidia.com,
+	wangkefeng.wang@huawei.com,
+	usamaarif642@gmail.com,
+	sunnanyong@huawei.com,
+	vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com,
+	yang@os.amperecomputing.com,
+	kirill.shutemov@linux.intel.com,
+	aarcange@redhat.com,
+	raquini@redhat.com,
+	dev.jain@arm.com,
+	anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	tiwai@suse.de,
+	will@kernel.org,
+	dave.hansen@linux.intel.com,
+	jack@suse.cz,
+	cl@gentwo.org,
+	jglisse@google.com,
+	surenb@google.com,
+	zokeefe@google.com,
+	hannes@cmpxchg.org,
+	rientjes@google.com,
+	mhocko@suse.com,
+	rdunlap@infradead.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com
+Subject: [PATCH v5 00/12] khugepaged: mTHP support
+Date: Mon, 28 Apr 2025 12:12:06 -0600
+Message-ID: <20250428181218.85925-1-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <28e513ec-4d8b-4967-a241-d6f63d533050@linux.intel.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E61:EE_|SA1PR12MB5659:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f6293ef-6719-48e0-8e95-08dd86800a2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NFHjORpNmYiDZU/3jj6F3cLH/QGwqaiV+nZibujVSz4BDyd6H7naYTfQ849Y?=
- =?us-ascii?Q?Xdx2w54aYI274p84W4moDfD0Gm4mgdsQL04IrqxjDws0pBWr7Jt18EKssaXX?=
- =?us-ascii?Q?AwrIZK7d888McxDK9LDFq4JCL8NwcXvnAPXEjjFgij5bviyCVT3GO5QbkSdB?=
- =?us-ascii?Q?EDKwbQZjpjdWOvFIHp5iUL4aY1kFxVxlNvuTALVlS6gnxT4Ta5PsLfU8fVHj?=
- =?us-ascii?Q?T88/u9DWPQGEvW+BO77ga06h7DAKPxrWQa+auAluqQOq1T5mUQvtITFfyYPF?=
- =?us-ascii?Q?cjBIOFrkR23yUm0h0g3zLCcYSp7UKb2DwtspjFE7USuTjkZRlN37r+kKIzFH?=
- =?us-ascii?Q?0LeWWOY5MS9oc1x+tkrGVkVvlQlXkm87WwYqsdrY1yl8J2HpYl+OZotCxFSA?=
- =?us-ascii?Q?XSGwh9OnwXnco7Qg043BCN7US2XOrFQQ3sLOQLdZpEKcaU840fPpyF1mVWVs?=
- =?us-ascii?Q?LXdh9J69Vt8acRrwNmK2GfyM/Tck0EPMM8gi7a/VwWqqyZc2HUO04mpFg5T0?=
- =?us-ascii?Q?lUTfQ4CeUMQYXY9wNBQYdSLcm7CEBaOMlE5BQ/g8oex890UqcwdIMpOsfVyJ?=
- =?us-ascii?Q?UmD3n0HE1WAtDqop6lfW3Kabb5Nf1vXBYBiJ4SVSZqzxv1N8N4UeTVFjIC2v?=
- =?us-ascii?Q?YL57hzMoAB/K+/RIBZ3ABF3RByGKluPcig+sVzJE6l6g3fHS7HJV1aqHciTT?=
- =?us-ascii?Q?wgV3xu50rc742dYMSAGV8YUiC0STV2N38I85OhKTb04ZAXxOMlsNbYjsVYyX?=
- =?us-ascii?Q?QyQ17L9fA/g1oW9GMJVOIBlxnhSVIe+iOhnLyI2Ot33F3kUhbVIAft5wOKjp?=
- =?us-ascii?Q?ybe6KNbctoTVE1phiJq4LUGgHgexbPzvRpZnbRi1td7giKDmh2dcKhbZv8cv?=
- =?us-ascii?Q?vbMGxarX+o3romTeAUI3jJHYGdCFbkjq9/AX6d9z1L/er9kdsotmwvwooWCh?=
- =?us-ascii?Q?XGlU4hzN5jOixze+KqCu+NUr+wABjBaSeDBKFaFJpiVqgS08hKRuzm5t7AGA?=
- =?us-ascii?Q?r9hbpzMShhew6weM2SFj4MUwPs3kKI1ouYHhV4mmlUHLv0bCV6hYtPvR09Iw?=
- =?us-ascii?Q?1cz2UZ9l6aHcx6DikrtDii8gwslJsI24K9TfQMlj4uXWOISlnI2MAgIkBmof?=
- =?us-ascii?Q?d0Mm/1tYcaqxA0llN8+VzhuB4AY2X+N+/YIn9jMN53IZ6F+vs5ekkJzBUZ7W?=
- =?us-ascii?Q?mJwsJ5rlSheot5m/lK74tXWP8MM4vp+XMltEyn/F5uZuqxWcDzcz0+QeQ/93?=
- =?us-ascii?Q?x8/bFfI2i0xPgj8hVY7jFG2CmR3MK+ciIof7u6aP7de63gDzz5gtBnqin2NS?=
- =?us-ascii?Q?LT0oCMkb9ZrPlhzTk/tA+cD2L4ooRI+Zv6s4qvCHBj24CjusUW9QIsR07/TL?=
- =?us-ascii?Q?eiR0B0cXY3XGgwzD+r7e13FLK8to20XBpDMxuvJdBmWI0MP2VDEErm2imsZH?=
- =?us-ascii?Q?KV68XP4KOpEvPZmRCc60BoUMOvbtbRaXTxnroqjNDuxhcZ689wc8iS9OgKHc?=
- =?us-ascii?Q?955IK4EV4OtxOVFA6LlrVrGG9xwqB2Bi1S8n?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 18:11:03.9000
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f6293ef-6719-48e0-8e95-08dd86800a2c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E61.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5659
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Apr 28, 2025 at 09:09:19AM +0800, Baolu Lu wrote:
-> On 4/26/25 13:58, Nicolin Chen wrote:
-> > Add a new IOMMUFD_OBJ_VCMDQ with an iommufd_vcmdq structure, representing
-> > a command queue type of physical HW passed to a user space VM. This vCMDQ
-> > object, is a subset of vIOMMU resources of a physical IOMMU's, such as:
-> >   - NVIDIA's virtual command queue
-> >   - AMD vIOMMU's command buffer
-> > 
-> > Inroduce a struct iommufd_vcmdq and its allocator iommufd_vcmdq_alloc().
-> > Also add a pair of viommu ops for iommufd to forward user space ioctls to
-> > IOMMU drivers.
-> > 
-> > Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
-> 
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> 
-> with a small nit below ...
-> 
-> > ---
-> >   include/linux/iommufd.h | 35 +++++++++++++++++++++++++++++++++++
-> >   1 file changed, 35 insertions(+)
-> > 
-> > diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> > index ef0d3c4765cf..e91381aaec5a 100644
-> > --- a/include/linux/iommufd.h
-> > +++ b/include/linux/iommufd.h
-> > @@ -37,6 +37,7 @@ enum iommufd_object_type {
-> >   	IOMMUFD_OBJ_VIOMMU,
-> >   	IOMMUFD_OBJ_VDEVICE,
-> >   	IOMMUFD_OBJ_VEVENTQ,
-> > +	IOMMUFD_OBJ_VCMDQ,
-> >   #ifdef CONFIG_IOMMUFD_TEST
-> >   	IOMMUFD_OBJ_SELFTEST,
-> >   #endif
-> > @@ -112,6 +113,14 @@ struct iommufd_vdevice {
-> >   	u64 id; /* per-vIOMMU virtual ID */
-> >   };
-> > +struct iommufd_vcmdq {
-> > +	struct iommufd_object obj;
-> > +	struct iommufd_ctx *ictx;
-> > +	struct iommufd_viommu *viommu;
-> > +	dma_addr_t addr;
-> 
-> It's better to add a comment to state that @addr is a guest physical
-> address. Or not?
+The following series provides khugepaged and madvise collapse with the
+capability to collapse anonymous memory regions to mTHPs.
 
-Yea. Let's add one:
+To achieve this we generalize the khugepaged functions to no longer depend
+on PMD_ORDER. Then during the PMD scan, we keep track of chunks of pages
+(defined by KHUGEPAGED_MTHP_MIN_ORDER) that are utilized. This info is
+tracked using a bitmap. After the PMD scan is done, we do binary recursion
+on the bitmap to find the optimal mTHP sizes for the PMD range. The
+restriction on max_ptes_none is removed during the scan, to make sure we
+account for the whole PMD range. When no mTHP size is enabled, the legacy
+behavior of khugepaged is maintained. max_ptes_none will be scaled by the
+attempted collapse order to determine how full a THP must be to be
+eligible. If a mTHP collapse is attempted, but contains swapped out, or
+shared pages, we dont perform the collapse.
 
-	dma_addr_t addr; /* in guest physical address space */
+With the default max_ptes_none=511, the code should keep its most of its
+original behavior. To exercise mTHP collapse we need to set
+max_ptes_none<=255. With max_ptes_none > HPAGE_PMD_NR/2 you will
+experience collapse "creep" and constantly promote mTHPs to the next
+available size.
 
-Thanks
-Nicolin
+Patch 1:     Refactor/rename hpage_collapse
+Patch 2:     Some refactoring to combine madvise_collapse and khugepaged
+Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+Patch 6-9:   The mTHP patches
+Patch 10-11: Tracing/stats
+Patch 12:    Documentation
+
+---------
+ Testing
+---------
+- Built for x86_64, aarch64, ppc64le, and s390x
+- selftests mm
+- I created a test script that I used to push khugepaged to its limits
+   while monitoring a number of stats and tracepoints. The code is
+   available here[1] (Run in legacy mode for these changes and set mthp
+   sizes to inherit)
+   The summary from my testings was that there was no significant
+   regression noticed through this test. In some cases my changes had
+   better collapse latencies, and was able to scan more pages in the same
+   amount of time/work, but for the most part the results were consistent.
+- redis testing. I tested these changes along with my defer changes
+  (see followup post for more details).
+- some basic testing on 64k page size.
+- lots of general use.
+
+Changes since V4 [2]:
+- switched the order of patches 1 and 2
+- fixed some edge cases on the unified madvise_collapse and khugepaged
+- Explained the "creep" some more in the docs
+- fix EXCEED_SHARED vs EXCEED_SWAP accounting issue
+- fix potential highmem issue caused by a early unmap of the PTE
+
+Changes since V3:
+- Rebased onto mm-unstable
+   commit 0e68b850b1d3 ("vmalloc: use atomic_long_add_return_relaxed()")
+- small changes to Documentation
+
+Changes since V2:
+- corrected legacy behavior for khugepaged and madvise_collapse
+- added proper mTHP stat tracking
+- Minor changes to prevent a nested lock on non-split-lock arches
+- Took Devs version of alloc_charge_folio as it has the proper stats
+- Skip cases were trying to collapse to a lower order would still fail
+- Fixed cases were the bitmap was not being updated properly
+- Moved Documentation update to this series instead of the defer set
+- Minor bugs discovered during testing and review
+- Minor "nit" cleanup
+
+
+Changes since V1:
+- Minor bug fixes discovered during review and testing
+- removed dynamic allocations for bitmaps, and made them stack based
+- Adjusted bitmap offset from u8 to u16 to support 64k pagesize.
+- Updated trace events to include collapsing order info.
+- Scaled max_ptes_none by order rather than scaling to a 0-100 scale.
+- No longer require a chunk to be fully utilized before setting the bit.
+   Use the same max_ptes_none scaling principle to achieve this.
+- Skip mTHP collapse that requires swapin or shared handling. This helps
+   prevent some of the "creep" that was discovered in v1.
+
+[1] - https://gitlab.com/npache/khugepaged_mthp_test
+[2] - https://lore.kernel.org/lkml/20250417000238.74567-1-npache@redhat.com/
+
+Dev Jain (1):
+  khugepaged: generalize alloc_charge_folio()
+
+Nico Pache (11):
+  khugepaged: rename hpage_collapse_* to khugepaged_*
+  introduce khugepaged_collapse_single_pmd to unify khugepaged and
+    madvise_collapse
+  khugepaged: generalize hugepage_vma_revalidate for mTHP support
+  khugepaged: generalize __collapse_huge_page_* for mTHP support
+  khugepaged: introduce khugepaged_scan_bitmap for mTHP support
+  khugepaged: add mTHP support
+  khugepaged: skip collapsing mTHP to smaller orders
+  khugepaged: avoid unnecessary mTHP collapse attempts
+  khugepaged: improve tracepoints for mTHP orders
+  khugepaged: add per-order mTHP khugepaged stats
+  Documentation: mm: update the admin guide for mTHP collapse
+
+ Documentation/admin-guide/mm/transhuge.rst |  14 +-
+ include/linux/huge_mm.h                    |   5 +
+ include/linux/khugepaged.h                 |   4 +
+ include/trace/events/huge_memory.h         |  34 +-
+ mm/huge_memory.c                           |  11 +
+ mm/khugepaged.c                            | 464 ++++++++++++++-------
+ 6 files changed, 376 insertions(+), 156 deletions(-)
+
+-- 
+2.48.1
+
 
