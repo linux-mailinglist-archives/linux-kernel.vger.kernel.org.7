@@ -1,178 +1,227 @@
-Return-Path: <linux-kernel+bounces-622918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A81FA9EE6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B77A9EEB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 817A43B794B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F7C3A98D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34713262FCE;
-	Mon, 28 Apr 2025 10:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22536263C69;
+	Mon, 28 Apr 2025 11:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O6kLFuOe"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LqsobgHs"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2079.outbound.protection.outlook.com [40.107.22.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A7221CFEC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745837746; cv=none; b=nO4OOLZbyYtF6uTdfUhV7O+/nr+/0sIp1fYmkC3JR83xxNyafrI59ovls8KLHnYLx2KCFqulD7XcDUPkmmPXxtlN3O1gsAXZG4EL1KcxG3TmJOr68ofCYtjmaRHt6RHLRhDi0cASK7gWRT/cY6petr3VHPUqdf/1kqxfTRXQ+/Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745837746; c=relaxed/simple;
-	bh=Wey50fUT5Nf8jtt0fFzgyeoJOVVmx+3Cfd5R2oIoURI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjnIGyFfTuRvVbk+EZXqxhz+hhJONR1y/eoh/J8ZcoHdDoEveKHnVi5H5U6QSHEYo3vwOEhgTAUU2LMGcWA35olj4j3Cy5CXPA8zIqACuj3JeRCpywv2ZT2TIKxnGtGktmG0BkNa0XnYU5UdGJTPwC4G7r81TerfsBy0o9PtiRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O6kLFuOe; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3913b539aabso2529665f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 03:55:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745837741; x=1746442541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dFN7Y9ajG7mv/bsFcbVbsJZjkflbAhC0QhrNhHTmMUI=;
-        b=O6kLFuOeMyBeMlK9UpORuPrjcOw9Qq6UlkxhUN6yjLFPrp7QJg45iDvr2lvmsAJwGz
-         135jWC4vHYEDmaDVt4dGxCov3EzQpdbh6VWdoveoNHsSGiMqdYovn/oZJUWc2zp2I0rR
-         gRfgfd3vUjycLkPrDeRhy9RGC1t8ONOXaBkxY8I+1GRkwOhNqsc2P6pLv2uDpf6Ch/GU
-         2y19F81nHbotQT4RDzU62BZR0aKGr7RaX6i8VrFOg7dPTzM7TtmZB5mlPlDUJHhzLtMT
-         8aa8MAvGA0XgyB4AcXm7EywnKj+BYSf9MzMP8lccHJWVyA7w1vonqhVNM+XHRBr7yegg
-         ZC+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745837741; x=1746442541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dFN7Y9ajG7mv/bsFcbVbsJZjkflbAhC0QhrNhHTmMUI=;
-        b=HxJxUzps9UUmPgUVYV6tVpk/5xgpCKn39pioQt9tTzlFHwdJz9oAGKjbnjeh9iYdM2
-         VWvH/Lg903CUlGngqDond3XnVxScQOupO9tUk38aceRCGjQkhHnc3ddxRq4K/ZJZAh0f
-         LnCoO13Pz0f5hRSa3g9B7AcrBRg/akxU60ddS6PBrLOcxCvQYmr8HNO34iy5ckCULuzc
-         4Ex2qAu8Whj9Z4YkkCiI/pfJLc0jTqLib+r7rtJGUHE3iFAnyPGsxWshQ++KH7CjVIXX
-         4Gd2jiUE1vmpNdzPARCq+hjGKhOgrd+ReJCmc57W/F+5bw2TYEDFMgv2g5E5vowYZV+7
-         ACDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYQn/cfQad0zYRWMjfBn5qIVCfuX00vYyPWBK4L0wc32S7KfF5prx3yY1uHcuyn/8cD4n+JRFQr0dVnlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5DdJKHslazHOLraCE6ByFrFxGM5V0thFuMfQ6kwQ4MArhZIT5
-	FVt/vX66/uHQBjvqRh4zkk5SRSX+KG0CvVL+MozTBz/UUPUsRX8OhsU9m7v0Or0=
-X-Gm-Gg: ASbGnctFBwFW551SuIZHOh0tA2e/IHktpwYfCVBcSIs2vaRPw+V/9BKjQ/hM7XuWccq
-	viHoWO4KhXJqP1lIWPdAjO8hYmIpIkVPGX9ZKqDC3GNqudHjPUTBor0EOI5fGnNEydrJVUuX2Nz
-	YCuWri4Gv4G2sRrqmPtoCp0+S/P3jHtgtjYM5UiYqJLlgXqDd+JBiS1VrT882+ZUjRJ3KKNRSk3
-	oOJlXkkdcqrhOplVh7JEImYnyZqAUJlKwQWiOLW0USlMu0JogxV6MpsjV+GOMuxnyZ2+9cGQGja
-	5jWKGGHPYKyjiVPKFnxcZBMCw0ygRWBYy3/8EeUNxJ0/c7rVrQ3teqxW4o1syT+BqO5CAZq/W7v
-	wg+K+
-X-Google-Smtp-Source: AGHT+IEuL50Qb91w0VnQIGYw2e2ACPF850zzX/DeAKCpElcbElEkW0pFf9mYkjOQNgyB0LDalxJ54Q==
-X-Received: by 2002:a05:6000:400e:b0:39c:2669:d786 with SMTP id ffacd0b85a97d-3a07aa66708mr5765250f8f.19.1745837741235;
-        Mon, 28 Apr 2025 03:55:41 -0700 (PDT)
-Received: from [192.168.5.157] (88-127-185-231.subs.proxad.net. [88.127.185.231])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca56d5sm10907013f8f.32.2025.04.28.03.55.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 03:55:40 -0700 (PDT)
-Message-ID: <4f5bb188-1232-4642-ab7b-d985192f5085@baylibre.com>
-Date: Mon, 28 Apr 2025 12:55:39 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4011367;
+	Mon, 28 Apr 2025 11:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745838960; cv=fail; b=GZ1+ncEtrY1gTvaJumSLky6wNvZPfdLXeu6GhV4kRZtTvDaguV4lidf9kY3i6RMxX9XtmvgJVmGKDYHE7EblFGxkF+j507WoRuDN/hFhcc2x4UKh+ocOTPppUwtH3tGRvk7766hQS9NGZwI/7ORwiSvfcb6ydqR+0+WArKjzbCY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745838960; c=relaxed/simple;
+	bh=zxLrmQmn5VF8r2kYAoLdh+jHqghbzCMl4sWhEJLZnKc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=L3haJVQdzbydZXEdH35PXqFLlmeIJGF9EK5p+gW7TCz9p+ICaGKXWJGx27HAw7GY2JZUNt9sigB98SRFLsO54zM8MyCCv4WlIbo2j3OFAPmmd2LahbeyThczDocE1kqMG/tAVgHPGCCNiCOGAcKaOEJkMN/Qj+vceEDNlkobV8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LqsobgHs; arc=fail smtp.client-ip=40.107.22.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hIvbdXUBNd0a0XS9nhXgEFeRbB2Zhu9rLJ+gtOQon7FQRsPdGIZQUSSmvQITP19oWznKyAYvWDgzWND6a5me7ag7ygGRCUeTL4ASEv6T8RFr3rBG4MWwg0PHI3xz3PRjimrcWQ39bdSr/bN4dlWHBV/CaQW53LnE6FkssyPHM4+E17+2l2AXz4a3whBPNNEf/2mtKdRXMJvZnbc7EHOf14gaWzWwY3aH+As/gRV5KTwPQ+UGw/r9/qtMfVJSFTR+O0FLETWrryp7GXbX/GA6sbmzOFjqABa1r3rQOTcr3z3x0KvlJB3JxjnyMddqCNBu/4sUx3DJlln1sSBBFG/67g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QqBob/xRglktit8te2Z2QXwAFCEZPahTfIQzk4W7iuM=;
+ b=FT4mvPW++UVatfxrXCkm3MsPKHHaCQlQjlyf0Pecco0TtNEBq1RXtM5HtOjq/1rtAQRiqyqNLEXSjKY7VIRFYoQp+tD/kQBiVx3oX/wWzjHgvcHcAPN9PduZQZ3w1mIcjSl05a7bSnPJ8Hl3+i4tlf/nGT0IJ0nb/PJvtwWGtB/D3V/bJgxDrgoPPzdRH94J3FB12WTEtyt5naQ6vBB97EZLJyRlnbccvk/bD+oo5HcJ7yDSZyXy6vmW0/aa9DqhLEM6O8/WWYHFGPpHpCGICyncWjmva6/Ev2hzjOrhVENDXuCG7jW5rkQ5gAu9MeEF9Pmb8jRoXUlwnc2xJWAfBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QqBob/xRglktit8te2Z2QXwAFCEZPahTfIQzk4W7iuM=;
+ b=LqsobgHs9cTdbWJDZl89NfWkPlbbJn1QuAGmMbjktLjTKqa1erV+xX7Xn/0U3PLUfF3ISD49Va42aStWCSVeFlahGWY98cjqEwpnHLIzJsV5nv9+w2MtOpAgV6F5Wqv87+l2toOOg8s4HSsSoKmTMzIRg+Jng2j9ePKCli3yZVRYuLZATX4xLtTOGLjJ2flWqK4WdcqEvoExb+A13V8EP5kYvskWT+65LnnNvhk1odxqiyy+aWTb7I4B1s4NbqALWbVyUFq1syX7nI4KzYb05OAsdURrmjQ5Vt6+AHMPbmujNdXZgD8gRzaZmvOYBveL0j3cq31SVhT0ctQB4zltQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PA1PR04MB10360.eurprd04.prod.outlook.com (2603:10a6:102:44c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Mon, 28 Apr
+ 2025 11:15:55 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.8678.025; Mon, 28 Apr 2025
+ 11:15:55 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: christophe.leroy@csgroup.eu,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 net-next 00/14] Add more features for ENETC v4 - round 2
+Date: Mon, 28 Apr 2025 18:56:43 +0800
+Message-Id: <20250428105657.3283130-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0019.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::6)
+ To PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] Fix pre-1970 date handling
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-References: <20250428-enable-rtc-v4-0-2b2f7e3f9349@baylibre.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20250428-enable-rtc-v4-0-2b2f7e3f9349@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|PA1PR04MB10360:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7207322c-ffb1-4ac4-521c-08dd86460b27
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0Gyw/aUZSzUS3/fdKS+ZuQOS7Co3RmVPIn/hAri9sTtyqD2X+6V/mAsdlNQC?=
+ =?us-ascii?Q?bv7QsAb0Yby1tazU5KCmKZhJ9WldxqfbBrqe0wlB5wo82G0dQANHqRXL/WqF?=
+ =?us-ascii?Q?lWKVFf2LesQHoSIh8vAT8wSgU433mGQ+jiNH5tTgprv/5IzSI5YT9z4OmbHx?=
+ =?us-ascii?Q?ErJRDIXEUwpHmXHYs1Lm6TwjFndH1/ZYxJxatrYLzwFxPgVGn5D3iicEgPwf?=
+ =?us-ascii?Q?1sUT2wJ6sQOsy+emIw9M9a7dvo2uK3FnR3zQQaSrhlIiYoHa8ug+wlV50ap6?=
+ =?us-ascii?Q?c6DXMVGalN37RS+0/AQXT/i5Cxgu7+UJMd0Sx3PCiTWAcoJyCnYyzVcso/gK?=
+ =?us-ascii?Q?OF3tyJob/eXMruATUKfJX6bnn16eSyJa3RQ8mLK1O2JuxpmlTKCG6vyPJd9s?=
+ =?us-ascii?Q?fN60fSDm8IOHhmTLITP69s1bbHQ0PFUHqNI2b7tX1zirq+xe9/qCjQzj5gKL?=
+ =?us-ascii?Q?1QY82xLk23c1h5uw7w8OkmcqcIUHtGMudMc6J+pBmzH1Xr1olSL/lNQ8UpCK?=
+ =?us-ascii?Q?Qh0EQlHX4EF7ncxdNMDnwFNLql4bsTPSHLu8Knp8jZ4xQaBdskboRUhzyYqO?=
+ =?us-ascii?Q?LzsHSc71DDgrft93z5mxU6u47kf7lRE4UPY+rQfFdgL9XPB6qIPTQzg1fdu4?=
+ =?us-ascii?Q?6gM02C9yX4alMz9VvjEjxJ8kr3Elde7nA8WX+XX4H7Sp5RyY0mwMMDRXUYqP?=
+ =?us-ascii?Q?7dkZO1hpdqt4GPciU8BLOf5ZXrDeixMey6AhSc6cmf6Bg+dUPsv5HXDxURz0?=
+ =?us-ascii?Q?CtbKQffRo3DMVJgMdxz6mwY7LJ6Ferj7XtWyp0mw6/xTa1C4oUOcMRC17ZcN?=
+ =?us-ascii?Q?cPlJpt84j0FgNQ3Tjy8Y3XMvSIi77XydTZHXZ5iM0Dn0xqtG3u6BGEZIPQSJ?=
+ =?us-ascii?Q?HTE6If4mUtKYiss0wCmSWVFz7nszYg5R5huk825vUduHfYcaLaU8i1pfyAgc?=
+ =?us-ascii?Q?MYPWOVY2+uEai5hnpD4GCxvHjg2QfSdCRQpkw1TVijjbAdSPC9s9HzXhs8tu?=
+ =?us-ascii?Q?dkjwg0ofV4Wt77tbEAzSkilJfQLC9TlVX0VEo+UtcLiHvSem0oDmiGGX1JS0?=
+ =?us-ascii?Q?u5EmM1fRPSF1UuvpnUMfpBV8SjnQKeHA2AnWtDKS0C85HdnwY/zTWYsAsDHb?=
+ =?us-ascii?Q?wrRocO56CxKxBQFyF9BbRs7x9zVeMJmmLRplMnHmEVef6EwUzLfdFfbUuvmf?=
+ =?us-ascii?Q?n49x3gDylExYUzNSY6m0OGrxcnGVlQS2R2omPLPGkUPg5UjHVNb9K/4oqhjc?=
+ =?us-ascii?Q?DrBwblhvpiXJ7WAzW3NN622DPigwx5Li19e2Dzal844Wq2noXO+ZqtwXtoq8?=
+ =?us-ascii?Q?CvtVKCO9Ic7BmxhWBJCEmm//lFkY+UvUZfjPYERGCVuSRrSyy5fXjEzutVPO?=
+ =?us-ascii?Q?P+QAaHeqTXWDCVf3iHpU9WyjsVAbrIR6C5Wn5F2eUlA/W9bWKgPAvuJP8tRH?=
+ =?us-ascii?Q?1lRHwziV7tWlgnM3gHAooX74Hy4MBfj9oRX3Ka2HkkhDG445ZsVWYlIjPLX2?=
+ =?us-ascii?Q?e00A9JURWN3ydiE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WQUnFN6j0i2CD2Ddd5sWfC66xN8Q6szVwD2jDiU03iLi4Gqzfpqoe/De1ejS?=
+ =?us-ascii?Q?vv+m9pQfKM4BbVAqdVkTwGx9tuw7geolaF4Rn0q5DreELaKKOazKrvyCKOWH?=
+ =?us-ascii?Q?rNtVWPzt/36Whozwk87J4QeU1ZIVtBwMNy2gtOMHbE5FdvKqq0Ik56firFvp?=
+ =?us-ascii?Q?5u4B4eUeWvBHdEJwWDqTgDkSOd9ukcYMPGq/VeZXx1QWCKhjxFB2At/jqA/p?=
+ =?us-ascii?Q?QUmeu1eOiiIhHmJWeNoT02qxUAt7rvI0koX/gvLnEVZi0lbvuTJwRlpdVAT9?=
+ =?us-ascii?Q?Oo29KRx6VWRTALb2TaqD+ZrtMF9e3VPX6gAdQ5NoRd633NjjzKNF7e4sfV92?=
+ =?us-ascii?Q?qBMk40I3Ws/82AnXt3ALq3vnLNDW7+/LjkS0AFk5eHXd5DWQ0R8uPMV9VWq7?=
+ =?us-ascii?Q?zKZ3X1g/XLZiEanQmCS9lwS3j5lQJce1atyZdKX+A5X8KivUhVFrH4L0BNFh?=
+ =?us-ascii?Q?Z2Zi9VZiOgjJmeFkzeP3ppVo7T8v/ZD/5qhRFMe11KMDylHs8MvLMs37v5dE?=
+ =?us-ascii?Q?+3atWCIykGnnHAoeFs4xDndoM5je7cWb4libw+Zfo7dnsCwnLTjZhHeBS2Fl?=
+ =?us-ascii?Q?wt1h0uuQdmnqfReLXRKjFfMEdvSTJh4u1DcVA7kRLATelDnmoeAO8PKu2mSS?=
+ =?us-ascii?Q?jfVQTFW+V+Mvvm3iBsX+5xfbW7A5ran9Z2oSrJAM6Qnv0v8SYpK9UnbnYd0U?=
+ =?us-ascii?Q?tiWv1lDTvFbZVk7GZLZGvC3xP1zjaS9gHeJi3Pj38oPJCRxB/bSNjJc3943R?=
+ =?us-ascii?Q?U01h+c3EkUHSaspk3WF1F7+EPv1ActIMmGpkXrhaXJXIqpMK3CEmotvDdDBn?=
+ =?us-ascii?Q?1MIh7Rj9kIntL2UbxAHDVuvOPEgce6Wkgf6+Lfik+3jbtIpkCaC3JZQ4sfqV?=
+ =?us-ascii?Q?uww+5H1tRNoSL8UoQYxYhyR/u15UgtZKwDZapObqs4OLrRLLqEzW02rbAcEj?=
+ =?us-ascii?Q?PB8CFjaEZPwqmHmwxNO97l1jwWg3BqLrv/8f5PDupV5gvqndZy/gbaPbh7vA?=
+ =?us-ascii?Q?Y5zEnl5sOfNQIbRgKTRRww9eSAstBHVepmKpEw7gKNt5p9wDMnYLQlJpajXy?=
+ =?us-ascii?Q?Dt9VpRnv79ACEuwo3SZU9HMow5cDXLn1kKC9hpUxvOiqjgIwl3UyAV4eImUs?=
+ =?us-ascii?Q?CX/Aiiz2uWfO8cKYjGN9R7cZ3wiRshnMheAR9YusN3TSVtLZO2/QIaZypiGx?=
+ =?us-ascii?Q?GbiiNBwm4cA33q0m0iUCejrxqA3eoClrBs1nNmifP6Jxc8xS4I5zfmhdDQQy?=
+ =?us-ascii?Q?gDzUlOUfPFc+qZPS8R/ERTEwgJwZPKCxLTVqan8kdQUq9RVA+m1L9GabSNKO?=
+ =?us-ascii?Q?vNROClQRqs2DqaXaiB6CXQ2g/GM7+ewJnMfLk9Tws1bnEP5RzvmmIIJgfM7p?=
+ =?us-ascii?Q?qCxwz9floEbCevuDrgMchIT/nHEfBiASf+BCKm2JVTBuL8r1FXPIZgJD0ipi?=
+ =?us-ascii?Q?5WreMPKbgWljlUF2A5zPfHpjZsNEiECUp4CSngYnSCnJwKKzApwTFUO4yD2L?=
+ =?us-ascii?Q?bakcah/l6DrZrgVIrMzE0kVlUJ4luuao6oCaEOo9Qf3QJkMNtlv1EmUWQeZS?=
+ =?us-ascii?Q?b1MappVXgATtTcNCliQru3jMjIwHw11NqiwURSC4?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7207322c-ffb1-4ac4-521c-08dd86460b27
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 11:15:55.2230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bTqxe+fXBfCKBq0cAlDkWF/1SjkTl1Go/mb9ywxuVM0u9jcHotrc3uIF4QkEGULIWbZazNaLFERA/xO6W3g7xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10360
 
-Hi Angelo,
+This patch set adds the following features.
+1. Compared with ENETC v1, the formats of tables and command BD of ENETC
+v4 have changed significantly, and the two are not compatible. Therefore,
+in order to support the NETC Table Management Protocol (NTMP) v2.0, we
+introduced the netc-lib driver and added support for MAC address filter
+table and RSS table.
+2. Add MAC filter and VLAN filter support for i.MX95 ENETC PF.
+3. Add RSS support for i.MX95 ENETC PF.
+4. Add loopback support for i.MX95 ENETC PF.
 
-I failed to Cc: you for this new revision because it doesn't touch the mtk rtc driver any more. 
-Still you might be interested as it fixes the issues for this driver. I'm looking forward to feedback.
+---
+v1 Link: https://lore.kernel.org/imx/20250103060610.2233908-1-wei.fang@nxp.com/
+v2 Link: https://lore.kernel.org/imx/20250113082245.2332775-1-wei.fang@nxp.com/
+v3 Link: https://lore.kernel.org/imx/20250304072201.1332603-1-wei.fang@nxp.com/
+v4 Link: https://lore.kernel.org/imx/20250311053830.1516523-1-wei.fang@nxp.com/
+v5 Link: https://lore.kernel.org/imx/20250411095752.3072696-1-wei.fang@nxp.com/
+---
 
-On 28/04/2025 12:06, Alexandre Mergnat wrote:
-> This series fixes pre-1970 date handling in the RTC subsystem. The changes
-> are particularly important for MediaTek platforms using the rtc-mt6397
-> driver, which can only store dates from 1900-01-01 to 2027-12-31.
-> 
-> The handling of pre-1970 dates in time conversion functions is improved, which
-> is essential for hardware that must reuse earlier dates once their native format
-> limits are reached. Sign-related comparison issues causing incorrect offset
-> calculations are fixed, and the test infrastructure is enhanced to validate time
-> conversions across the entire date range.
-> 
-> These improvements ensure the RTC subsystem functions correctly when hardware
-> date limits are reached, particularly relevant as the rtc-mt6397 driver will
-> hit its upper limit in less than three years.
-> 
-> ---
-> Changes in v4:
-> - Remove "rtc: mt6359: Add mt6357 support" to send it in another serie.
-> - Change title serie to "Fix pre-1970 date handling " because MT6357
->    support is no more related to this.
-> - Remove "arm64: dts: mediatek: Set RTC start year property" because it
->    is not requiered to have MTK RTC working.
-> - Remove "rtc: mt6397: Remove start time parameters".
-> - Rework time comparison fix to avoid cast.
-> - Remove change in rtc_valid_tm.
-> - Improve rtc_time64_to_tm change for readability and efficiency.
-> - Extend conversion test cover to reach 1900 year value.
-> - Link to v3: https://lore.kernel.org/r/20250109-enable-rtc-v3-0-f003e8144419@baylibre.com
-> 
-> Changes in v3:
-> - Rebase on top of rtc-6.15
-> - Added explicit start-year property in DTSIs for MT6357, MT6358, and
->    MT6359 PMIC RTCs to ensure consistent values between hardware
->    registers and the RTC framework.
-> - Removed hardcoded offset and start_secs parameter in mt6397 driver
->    in favor of using the DTS start-year property.
-> - Fixed type comparison issues between signed time64_t and unsigned
->    range values to correctly handle dates before 1970.
-> - Added proper handling of negative time values (pre-1970 dates) in
->    time conversion functions.
-> - Modified rtc_time64_to_tm() to correctly handle negative timestamp
->    values.
-> - Removed the tm_year < 70 restriction in rtc_valid_tm() to allow
->    pre-1970 dates to be validated correctly .
-> - Link to v2: https://lore.kernel.org/all/20250109-enable-rtc-v2-0-d7ddc3e73c57@baylibre.com/
-> 
-> Changes in v2:
-> - Split the patch to have:
->    - Add MT6357 support
->    - Fix hwclock issue
-> - Handle the year offset in another way, but the V1 way still viable.
-> - Link to v1: https://lore.kernel.org/r/20250109-enable-rtc-v1-0-e8223bf55bb8@baylibre.com
-> 
-> ---
-> Alexandre Mergnat (2):
->        rtc: Make rtc_time64_to_tm() support dates before 1970
->        rtc: Fix offset calculation for .start_secs < 0
-> 
-> Uwe Kleine-König (3):
->        rtc: test: Emit the seconds-since-1970 value instead of days-since-1970
->        rtc: test: Also test time and wday outcome of rtc_time64_to_tm()
->        rtc: test: Test date conversion for dates starting in 1900
-> 
->   drivers/rtc/class.c    |  2 +-
->   drivers/rtc/lib.c      | 24 +++++++++++++++++++-----
->   drivers/rtc/lib_test.c | 27 ++++++++++++++++-----------
->   3 files changed, 36 insertions(+), 17 deletions(-)
-> ---
-> base-commit: 424dfcd441f035769890e6d1faec2081458627b9
-> change-id: 20250109-enable-rtc-b2ff435af2d5
-> 
-> Best regards,
+Wei Fang (14):
+  net: enetc: add initial netc-lib driver to support NTMP
+  net: enetc: add command BD ring support for i.MX95 ENETC
+  net: enetc: move generic MAC filtering interfaces to enetc-core
+  net: enetc: add MAC filtering for i.MX95 ENETC PF
+  net: enetc: add debugfs interface to dump MAC filter
+  net: enetc: add set/get_rss_table() hooks to enetc_si_ops
+  net: enetc: make enetc_set_rss_key() reusable
+  net: enetc: add RSS support for i.MX95 ENETC PF
+  net: enetc: change enetc_set_rss() to void type
+  net: enetc: enable RSS feature by default
+  net: enetc: extract enetc_refresh_vlan_ht_filter()
+  net: enetc: move generic VLAN hash filter functions to
+    enetc_pf_common.c
+  net: enetc: add VLAN filtering support for i.MX95 ENETC PF
+  net: enetc: add loopback support for i.MX95 ENETC PF
+
+ MAINTAINERS                                   |   1 +
+ drivers/net/ethernet/freescale/enetc/Kconfig  |   8 +
+ drivers/net/ethernet/freescale/enetc/Makefile |   4 +
+ drivers/net/ethernet/freescale/enetc/enetc.c  |  76 ++-
+ drivers/net/ethernet/freescale/enetc/enetc.h  |  45 +-
+ .../ethernet/freescale/enetc/enetc4_debugfs.c |  90 ++++
+ .../ethernet/freescale/enetc/enetc4_debugfs.h |  20 +
+ .../net/ethernet/freescale/enetc/enetc4_hw.h  |  12 +
+ .../net/ethernet/freescale/enetc/enetc4_pf.c  | 368 +++++++++++++-
+ .../net/ethernet/freescale/enetc/enetc_cbdr.c |  50 ++
+ .../ethernet/freescale/enetc/enetc_ethtool.c  |  74 ++-
+ .../net/ethernet/freescale/enetc/enetc_pf.c   | 105 +---
+ .../net/ethernet/freescale/enetc/enetc_pf.h   |  14 +-
+ .../freescale/enetc/enetc_pf_common.c         |  93 +++-
+ .../freescale/enetc/enetc_pf_common.h         |   3 +
+ .../net/ethernet/freescale/enetc/enetc_vf.c   |  10 +-
+ drivers/net/ethernet/freescale/enetc/ntmp.c   | 462 ++++++++++++++++++
+ .../ethernet/freescale/enetc/ntmp_private.h   | 103 ++++
+ include/linux/fsl/ntmp.h                      | 121 +++++
+ 19 files changed, 1485 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc4_debugfs.h
+ create mode 100644 drivers/net/ethernet/freescale/enetc/ntmp.c
+ create mode 100644 drivers/net/ethernet/freescale/enetc/ntmp_private.h
+ create mode 100644 include/linux/fsl/ntmp.h
 
 -- 
-Regards,
-Alexandre
+2.34.1
+
 
