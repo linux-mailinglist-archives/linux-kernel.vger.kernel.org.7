@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-622709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8965A9EB16
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:47:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4C0A9EB36
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B803BBF67
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83247AC2B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5D325DD15;
-	Mon, 28 Apr 2025 08:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E522425EF92;
+	Mon, 28 Apr 2025 08:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hx/1CHIk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TSBuK5Dr"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF3522FE11
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1C425E821
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745830039; cv=none; b=WdR6EdnsPqdMBU3KKcSJIt2IPQ+Cd895ab8D7IMP94v122j9bYQRhSEEUokBo5HH61H0KdNb+K7IttXIwit+E0vFgRtd1k7O6C+w5+1n7/Z0R92zfORWRgT4+Z6Y3d0HZaGM4tptPcmvgayKbWD42prAfyf7uQ71RxlGr+5UxGs=
+	t=1745830479; cv=none; b=GGvW9QLiH3Jo4JIv28CmoYZEdykoKbRjPyAvTn7cIJGLtyFEUwhObNohCzHUhLK941U2XHQ8qyFY4GtNYgm7bkXEgWL6iBxFogW19N8x0vPTMq1z42SlwlfFNQixeko9UW9ZfijKIhVY6f4ZuyOfd+dA9h1XO5/MgZTWWCyz5v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745830039; c=relaxed/simple;
-	bh=70oDwUtwYqEyETXz7oCBoL3rbNqfBiLdDstId/VbxTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTtteAEGnu06hmIcGOdAkFSolBx4w9wJejPOn3ZdjygHY5sVBQe1uPHoTv5jmsg+I1VMKRjLcEsq59RmuqqiO4bEmdbOYANwTQmUsX0GQ6fxjTzmZDHos+Gu4p2PRMi+InKUFg/1J2WPe3Rp25goHuAgl5c5MjxKMYczemX62D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hx/1CHIk; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745830038; x=1777366038;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=70oDwUtwYqEyETXz7oCBoL3rbNqfBiLdDstId/VbxTo=;
-  b=hx/1CHIkVe9yhkIjevbjduR0nM5zgUAxP9i0s+xFPpRe2OOVSUm4cwJb
-   MgVoBMndT350s+cLM6LKQWCgmTRjI6U1oeawAK+U7/2Asyy/DcK+pMmsA
-   DdaXtzrkJ9XSBbAtzsPUlxTZd2I6/8z9gY1HmJRXXz0VGd9F5+CnYTtYv
-   Hx3vyFalqiRxSjA4OOblftQLYoLGmgRW4rhlydun2PScNDkL95atXVRpR
-   Cmrcj5S+MlY7V2dx2bYP3urg+8yrpLHzZIPUXWLWBzYS8F35sbzzI1Zl1
-   PXzQeVuUhi+3wKScD/2hX6FX3c60QE6vo6Aneea+bZHPzMTAU+OgS7bRe
-   Q==;
-X-CSE-ConnectionGUID: H9OabOX5Tj6TXm9UGDStOQ==
-X-CSE-MsgGUID: /eSXcUoWRCCeanLvKuJCLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="47538243"
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="47538243"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 01:47:17 -0700
-X-CSE-ConnectionGUID: UeWbODFoQYKTPNSUv7pfkA==
-X-CSE-MsgGUID: lR2eVMfHQrmLY4hfOblAng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="138453577"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 28 Apr 2025 01:47:14 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u9K8t-0006lB-1R;
-	Mon, 28 Apr 2025 08:47:11 +0000
-Date: Mon, 28 Apr 2025 16:46:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Igor Belousov <igor.b@beldev.am>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev, akpm@linux-foundation.org,
-	hannes@cmpxchg.org, minchan@kernel.org, nphamcs@gmail.com,
-	senozhatsky@chromium.org, shakeel.butt@linux.dev,
-	yosry.ahmed@linux.dev, Igor Belousov <igor.b@beldev.am>
-Subject: Re: [PATCH mm-new] mm/zblock: avoid failing the build
-Message-ID: <202504281654.Cj20Gqsl-lkp@intel.com>
-References: <20250428065727.57990-1-igor.b@beldev.am>
+	s=arc-20240116; t=1745830479; c=relaxed/simple;
+	bh=ALaiR88qvXFJIUmu58oY0ESBsL6U0JAP269AMEHKkqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=WBM/YdlGTDXd8MclQQ/vC2yC/kZVv0gXfX4cYoXw6qgAE2vPcLGjd5kmoY5k6p7D01ZedMKHzHmRtq1n+WnCf+/rWQmwClYregHNT52qq5Wit3OThpyRUyHPMVAFMfS/m4379YIV4FgUGMcCtiP1VnV4CmSt37+ZKY3nFUJjJj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TSBuK5Dr; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250428084730epoutp031b120f3ebc95dd4acaa51038526abbd5~6by5TtXfx1341513415epoutp03C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:47:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250428084730epoutp031b120f3ebc95dd4acaa51038526abbd5~6by5TtXfx1341513415epoutp03C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745830050;
+	bh=p1+Lemg+qbGP6JCQYk04uUjgz5ILrVlgfWOlXzA9lNA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=TSBuK5DrZ531nBgpBoo7V2HYlUy3Ub4EUVoWTY1fWOP901k5jvcy4Yn0zvNm5Sgw0
+	 tiDcRVLL7eACFy1sOCg8oD5gbHVD/E9q4YcGsCJi+2AyVejDWH6eV1J6BWC6SpI5uh
+	 SoxEHs9yF3qP3NOOuDw1QzJHd/dxk07X4G6/kXIw=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250428084729epcas2p296c44e87443066ec54d24bbfa8a82374~6by4qJB9u2928529285epcas2p2Q;
+	Mon, 28 Apr 2025 08:47:29 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZmHBn2BQMz2SSKb; Mon, 28 Apr
+	2025 08:47:29 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250428084728epcas2p486ddfccc41bfba9830bde544b6c292e3~6by3m4Zwk0662806628epcas2p4u;
+	Mon, 28 Apr 2025 08:47:28 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250428084728epsmtrp25df5462bc512891301f9dab2ce97bbad~6by3lzUKR1061810618epsmtrp2F;
+	Mon, 28 Apr 2025 08:47:28 +0000 (GMT)
+X-AuditID: b6c32a2a-d63ff70000002265-12-680f40a06ee7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F4.92.08805.0A04F086; Mon, 28 Apr 2025 17:47:28 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250428084728epsmtip1f94ab56908a3859038aa68d6f3061eb1~6by3TJUDy1894718947epsmtip11;
+	Mon, 28 Apr 2025 08:47:28 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>
+Cc: Shin Son <shin.son@samsung.com>, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] add CPUCL1/2 clock support for exynosauto v920 SoC
+Date: Mon, 28 Apr 2025 17:47:18 +0900
+Message-ID: <20250428084721.3832664-1-shin.son@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428065727.57990-1-igor.b@beldev.am>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSnO4CB/4MgxlzRS0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxWLy8bWsFk3L1jM58Hu8v9HK7rFpVSebx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRv
+	l8CV0f1kP2PBM5aKFWfvMjYwfmTuYuTkkBAwkZg/aQp7FyMXh5DAbkaJrlXX2CASEhKHZ0xg
+	hLCFJe63HGGFKHrPKHFi60OmLkYODjYBVYlNv+VB4iICb5kklv8/wATSwCxwmlFi5xkZEFtY
+	wF1i3tt7LCA2C1D96teHwTbzClhLdPyeyA4yR0JAXqK/QwIiLChxcuYTFogx8hLNW2czT2Dk
+	m4UkNQtJagEj0ypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOCA19Lawbhn1Qe9Q4xM
+	HIyHGCU4mJVEeKsM+DOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpakFoE
+	k2Xi4JRqYKpL/FHsuN93xbWZiywyuJM9u+/FJnx9q7AvkOG23W3B7ZP+JvMqCGSXhckeu60W
+	9vvSv/h4YZEph27z7Ph0ML737Zd7QnM+W3VyzTnO+m9Cmv6LR/v+PI/6FS5199DBxEOzonc9
+	uqQrxmD1WGyf1JdXpzd+O7v8wY0Hj5JEPJQEIu2m60q5M/iuX/o6cv8etlQL+XzFLfaa02T+
+	8icePLIlJd5NWuMc5x++xDNCy+eeXHPnhLmE2aOzfPeXTr59cMKj6gUdDpODT6zh/8uQdVJl
+	w6/n8i275dSOzK+c7drxijntxOmsr1PtbO+0MB72VEti2xU8Idlyd7+M2OqdPYozZnSVWvzM
+	YvO5uyD9xjwtJZbijERDLeai4kQAlxOQ0OcCAAA=
+X-CMS-MailID: 20250428084728epcas2p486ddfccc41bfba9830bde544b6c292e3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250428084728epcas2p486ddfccc41bfba9830bde544b6c292e3
+References: <CGME20250428084728epcas2p486ddfccc41bfba9830bde544b6c292e3@epcas2p4.samsung.com>
 
-Hi Igor,
+This patchset adds the CMU_CPUCL1 and CMU_CPUCL2 block
+to support exynosauto v920 SoC.
 
-kernel test robot noticed the following build errors:
+Shin Son (3):
+  dt-bindings: clock: exynosautov920: add cpucl1/2 clock definitions
+  clk: samsung: exynosautov920: add cpucl1/2 clock support
+  arm64: dts: exynosautov920: add cpucl1/2 clock DT nodes
 
-[auto build test ERROR on akpm-mm/mm-everything]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Igor-Belousov/mm-zblock-avoid-failing-the-build/20250428-150012
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250428065727.57990-1-igor.b%40beldev.am
-patch subject: [PATCH mm-new] mm/zblock: avoid failing the build
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250428/202504281654.Cj20Gqsl-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250428/202504281654.Cj20Gqsl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504281654.Cj20Gqsl-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from mm/zblock.c:27:
->> mm/zblock.h:24:2: error: invalid preprocessing directive #warn; did you mean #warning?
-      24 | #warn This PAGE_SIZE is not quite supported yet
-         |  ^~~~
-         |  warning
-
-
-vim +24 mm/zblock.h
-
-    16	
-    17	#if PAGE_SIZE == 0x1000
-    18	/* max 128 slots per block, max table size 32 */
-    19	#define SLOT_BITS 7
-    20	#elif PAGE_SIZE == 0x4000
-    21	/* max 256 slots per block, max table size 64 */
-    22	#define SLOT_BITS 8
-    23	#else
-  > 24	#warn This PAGE_SIZE is not quite supported yet
-    25	#define SLOT_BITS 8
-    26	#endif
-    27	
+ .../clock/samsung,exynosautov920-clock.yaml   |  45 ++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  26 +++
+ drivers/clk/samsung/clk-exynosautov920.c      | 208 +++++++++++++++++-
+ .../clock/samsung,exynosautov920.h            |  32 +++
+ 4 files changed, 310 insertions(+), 1 deletion(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
