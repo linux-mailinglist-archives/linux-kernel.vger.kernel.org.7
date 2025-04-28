@@ -1,118 +1,168 @@
-Return-Path: <linux-kernel+bounces-622948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D79A9EED8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:19:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F55A9EEF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C9F5A1138
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719463BF746
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04847267B92;
-	Mon, 28 Apr 2025 11:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C569263C77;
+	Mon, 28 Apr 2025 11:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9ojCpq2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwGeB5/s"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592F6267B67;
-	Mon, 28 Apr 2025 11:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE401C5D63;
+	Mon, 28 Apr 2025 11:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745838993; cv=none; b=GuntIc3x2bHRHg3rLXLDcRLaWs5ytTRX8HcBmE7S58F+RZ6iC2xIbOyNP/I9KKXvIMVr1S8WRds+mDPCLmFbblX96n7OFQmzcz9GoePLGJwlBzDTfWPOIJEt8Gx3n7Q4qS82igQIcivrsM9IXFragc13Lkhdv/DPfy6GmJSXKhk=
+	t=1745839104; cv=none; b=Sswp0e7DpfOt9loJo3nmObeLKCdywaUC+vlfK1Tre6rvhCsnXsJbydqMY+U7Gtbm+HvhIdOLQRcNu0HnFoq826e3YHValn3jvoKAifoWbdNlI6lSTUjg1K67FjbyoNpWndGUojobXy5wn/LliPqrM/oshRsQo2rOemnQZbfNW+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745838993; c=relaxed/simple;
-	bh=ZHlHP1G+yKLerL6A3JQMfI+d7AtCg+sYXv3msXk4+Uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKt7W7LttTcPEWIYqvI6S5RGeVeuDC6x8gQv9eh6n9Zxkzp0cOwnq5IyRL0RcyUA6JdaSp2KQNQRRZxc4nBZ/8+aqbc1xXwBSYsw7wEBo/+g0zBwTlAu7PLeS31c7usWj+B1nQHLb0olgcq8MY4JEEBr00ezWfJe1cfVYSEFMWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9ojCpq2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE14C4CEE4;
-	Mon, 28 Apr 2025 11:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745838990;
-	bh=ZHlHP1G+yKLerL6A3JQMfI+d7AtCg+sYXv3msXk4+Uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r9ojCpq2Ycbah3dnNCGr/ENC8EAMQvNr7f1MbLb/7XVh4MvrZcaUCJGriFFkbOzRY
-	 yhxKDx7v5wQNhYiSaWRfpy4FHJJsyjodIC44J/+jfe5cTcPi+pMqZXQPrJgl/SR+UX
-	 H/i3ynfhzP4JOxDVvE1xG3/3Lmq6fUrXNtIkeHNOb1Sw3q5KTNZv6IvmnYI0bGQ/SP
-	 q2rmj19Q6+hnAlPGLmoEaaEX7X8Wgk4SUMqbJl6ToJr59gWHgGj3rwRhS4Ij3yqIJE
-	 eJ/g3z7ceN8yajGbUc9DhjJMwkOKyvezN8t5fjLMWj8dz6RdZAdxZ84mx3tywbYKzH
-	 eHAqjBpWVa9hw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u9MTP-000000002X9-11Rt;
-	Mon, 28 Apr 2025 13:16:31 +0200
-Date: Mon, 28 Apr 2025 13:16:31 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Wenbin Yao <quic_wenbyao@quicinc.com>, catalin.marinas@arm.com,
-	will@kernel.org, linux-arm-kernel@lists.infradead.org,
-	andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com,
-	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-	quic_cang@quicinc.com, quic_qianyu@quicinc.com
-Subject: Re: [PATCH v2 2/4] arm64: dts: qcom: x1e80100: add bus topology for
- PCIe domain 3
-Message-ID: <aA9jjyBR5DZcSbyQ@hovoldconsulting.com>
-References: <20250425092955.4099677-1-quic_wenbyao@quicinc.com>
- <20250425092955.4099677-3-quic_wenbyao@quicinc.com>
- <4bb58766-a080-4351-87f5-79a98219171c@oss.qualcomm.com>
- <aAt4TBrekUqyTjfi@hovoldconsulting.com>
- <306ce1fa-be83-4f13-bedd-97a20448d162@oss.qualcomm.com>
+	s=arc-20240116; t=1745839104; c=relaxed/simple;
+	bh=kE2q6PyfwIz3u3D35Rq0H6ItVVBQ6cZNkCx74Y+T4JA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IRAuOaMAhOgKqegWcHmgcZS7Mt1GLU+KqwUhgLOgUAq7AT1ZW77Wr7dRNOjkdf2hEaRJxeilK7PHf4Jlp1hZAvq/FfGMkWdgROqKXN8tuTQR9rmODN+0uRdlpiDL0qTb/rvx4vdURwQLW0ZygUdHRV1BsvyGDbOOKssXoao87Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwGeB5/s; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39efc1365e4so2188942f8f.1;
+        Mon, 28 Apr 2025 04:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745839101; x=1746443901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sLSrnCvsqMd1UKvovx8WYXrY84ebPf2yd+dETS/dXM0=;
+        b=FwGeB5/sbcV+PtGETeJNVHOEs5z9TRQ4pSZtRg0HuSF7c+MpuywEI5NEs0cTjOuMoU
+         RNAAObnpFjUF+aG9KPhkXnqznG8TsL5+yJH0+MJb8nIeksDWe6JzB2ow5Dxcog9SvlkR
+         m5kDQSbX8dg1JoUL2JroiSIL3fKcYuQzDOTacXSv2BALrmib5m+fkQJsDD3AHYW5/J+z
+         nWm1kJK3jnuSyNSJidLDWX82oJxbH15brD/jgW101ocCZi4EePe9oq0tcVgkm6lKb22a
+         H7gj/eENFZUZBRfrXOoBKVcaTj1zit+YNoNxDWAmiVUsEZAwlSVus9/3kUF/viMHb1vP
+         jseQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745839101; x=1746443901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sLSrnCvsqMd1UKvovx8WYXrY84ebPf2yd+dETS/dXM0=;
+        b=VAtEwJMIOhtTAebRp2KqrHivi13KEPNqHAk4YtZyry0OYY9X+EdFmn04fGMowZGExy
+         k5AT7uKA78zzZUQKsmuWpEPT831kEGNp6afTAILEGNFstjxPr7FEi3q+q5n9e4Y7gBeE
+         WqTyCPBn7cGt6o6JS+2v85D1iqD6zSsFX9mUct0PXT/tJOX5CQc+g1vMiVj7td3roIAJ
+         jVNe+0Lo8sXht8cr0On/r7AJB4d7DjaLOW4K57otRCOzkx1AWlHwZxIdJwf2fQOyskFt
+         l24s+B3PE5NCFEsIiHDGOeuyeWVZ7hzhUloZlJNTPVE9M66kFrFHsxJYmX2j1FKmtWCl
+         9vdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz6s43QLXWwQNtiaCBMudrn+lwMwJxiuj5hcAgYgAaQpdcLXnY9xd4hmpbK/bQmD5T779B4EfTOtBJUlo=@vger.kernel.org, AJvYcCVW0HN9ojq0JLdONGHMqRwpNyKWgfH3Mii31kilj/0siPKPGOIxYIwKU5zYQKfGYZYa2V+FNQuSXVbsx6EI9P8oYpY=@vger.kernel.org, AJvYcCWUM96PnsaReyn9A9REoBnIRlji3k5uvOEnVM+x/aW8WAxC/n4pR5LMlWKofE/oAUUgy3I/P5eduIxvRTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOf/s3VYS7SaiC34E9IcQTGMzUqR8ouDjeaf8vtGcG0rydpvHH
+	hzmvrxKvNmXygTvyBlkL4ScN9HiD9csMXxc8KxApzdQL6MW5q9yEsy9vGP98/CeGPkh9aKbVLGa
+	jRu0frnZQN7+4eBE8DcYrlg2jGXQ=
+X-Gm-Gg: ASbGnctW7IK668Y0oAnKUrGDXDvnTCnKaXBI/ENZpXolZ70PG8rSlPgShN0hxpAq8s1
+	nIAYE6pYpiqk2mLQ2IiTCuEmJ5ZGrhHgXElOMCy5brktFhXPGbPPq0P5APeoJj2OopYUzymtOvu
+	SKxsvrLRulOcZN0AV/7cPEYio=
+X-Google-Smtp-Source: AGHT+IHwF8neALcoTE/zLWU7CtLZPLtAC+f74+P4wnzqn5Yd2P+kde0y1wbgPUVpUUwdOFkNou8edbnrm28KiZwWAPA=
+X-Received: by 2002:a05:6000:420b:b0:3a0:8819:3b69 with SMTP id
+ ffacd0b85a97d-3a088193c8bmr452320f8f.21.1745839100653; Mon, 28 Apr 2025
+ 04:18:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <306ce1fa-be83-4f13-bedd-97a20448d162@oss.qualcomm.com>
+References: <20250428095208.99062-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250428095940.GE3371@pendragon.ideasonboard.com>
+In-Reply-To: <20250428095940.GE3371@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 28 Apr 2025 12:17:54 +0100
+X-Gm-Features: ATxdqUF7svHFGSaMoIsqW18j8sdGEYekSPY9dFmbjkkk5rXbhdt8zL2z0qp7a8Q
+Message-ID: <CA+V-a8taFdmCgiUAwmDG93OA+P9UH-FEw3PeMFW4sLQ2KPnEPQ@mail.gmail.com>
+Subject: Re: [PATCH] media: renesas: rzg2l-cru: Simplify FIFO empty check
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 26, 2025 at 12:44:57PM +0200, Konrad Dybcio wrote:
-> On 4/25/25 1:55 PM, Johan Hovold wrote:
-> > On Fri, Apr 25, 2025 at 12:22:56PM +0200, Konrad Dybcio wrote:
-> >> On 4/25/25 11:29 AM, Wenbin Yao wrote:
-> >>> From: Qiang Yu <quic_qianyu@quicinc.com>
-> >>>
-> >>> Add pcie3port node to represent the PCIe bridge of PCIe3 so that PCI slot
-> >>> voltage rails can be described under this node in the board's dts.
-> >>>
-> >>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> >>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 11 +++++++++++
-> >>>  1 file changed, 11 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >>> index 46b79fce9..430f9d567 100644
-> >>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >>> @@ -3287,6 +3287,17 @@ opp-128000000 {
-> >>>  					opp-peak-kBps = <15753000 1>;
-> >>>  				};
-> >>>  			};
-> >>> +
-> >>> +			pcie3port: pcie@0 {
-> >>
-> >> @0,0 for PCIe adressing (bus,device)
-> > 
-> > No, the bus number is not included in the unit address, so just the
-> > device number (0) is correct here (when the function is 0) IIUC.
-> 
-> Some DTs definitely have that, but I couldn't find any documentation to
-> back the syntax up or explain it properly
+Hi Laurent,
 
-It's part of the spec:
+Thank you for the review.
 
-	http://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+On Mon, Apr 28, 2025 at 10:59=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Mon, Apr 28, 2025 at 10:52:08AM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Simplify the `rzg2l_fifo_empty()` helper by removing the redundant
+> > comparison in the return path. Now the function explicitly returns `tru=
+e`
+> > if the FIFO write and read pointers match, and `false` otherwise, impro=
+ving
+> > readability without changing behavior.
+> >
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/all/aAtQThCibZCROETx@stanley.mountain/
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
+rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > index 067c6af14e95..97faefcd6019 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > @@ -348,7 +348,7 @@ bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru)
+> >       if (amnfifopntr_w =3D=3D amnfifopntr_r_y)
+> >               return true;
+> >
+> > -     return amnfifopntr_w =3D=3D amnfifopntr_r_y;
+> > +     return false;
+>
+> So the function always returned true. This seems to be a bug fix, please
+> add a Fixes: tag. The commit message should also make it clear that
+> you're fixing an issue, not just simplifying the code.
+>
+No, the function returned true only if the pointers matched;
+otherwise, amnfifopntr_w =3D=3D amnfifopntr_r_y would return false. I was
+simply removing the repetitive pointer check and directly returning
+false at the end of the function, as we can be certain at that point.
+Hence, I did not add a Fixes tag. Am I missing something?
 
-The first number is the device number and the second is the function
-which can be left out if zero.
+> Personally I'd have written
+>
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/dri=
+vers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 067c6af14e95..3d0810b3c35e 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -345,8 +345,6 @@ bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru)
+>         amnfifopntr_w =3D amnfifopntr & AMnFIFOPNTR_FIFOWPNTR;
+>         amnfifopntr_r_y =3D
+>                 (amnfifopntr & AMnFIFOPNTR_FIFORPNTR_Y) >> 16;
+> -       if (amnfifopntr_w =3D=3D amnfifopntr_r_y)
+> -               return true;
+>
+>         return amnfifopntr_w =3D=3D amnfifopntr_r_y;
+>  }
+>
+> but that's also a bit of a style preference.
+>
+I wanted to keep this consistent with the rz3e_fifo_empty(). If you
+prefer the above I'll do that in v2.
 
-Johan
+Cheers,
+Prabhakar
 
