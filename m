@@ -1,213 +1,197 @@
-Return-Path: <linux-kernel+bounces-623197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F14A9F221
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150F4A9F230
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C9D189E93D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:24:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245C7189EEC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222DD26A091;
-	Mon, 28 Apr 2025 13:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E9126E15A;
+	Mon, 28 Apr 2025 13:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="QNh+vskZ"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzA8AWEz"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FF9265CA3;
-	Mon, 28 Apr 2025 13:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6438F26D4F7;
+	Mon, 28 Apr 2025 13:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745846633; cv=none; b=sZ4s1D5hbXaOyrsuOrPMQjiNMCwCV0m8V5pM9mp7BU3FE4EIgaXestmbpQ4kUwaYNjzabiZbpgQqy5xMIPBO1D2CnhaTph2LIXJHYryhXH1y/Mov85rGzmVXBXQVWVcvOvtjCm2SgaMEpLgEygHehKYfQB3RBIvnYiA3eVqSV+0=
+	t=1745846645; cv=none; b=c99YCoSXaUaUdPwYyNAvvnOl4VBr6yF3kA8JX87dBSYItIi+BOUEyUO6C74PJiVeA0F60Cx1aUIuaWD4iHaGqDHivirFQcmF8+MTsPVwZyCAX4QTdb0trwi0iw2IGSVwI5Le7gLQvteg+kFobfe8OJeoXJeBIAaBvYD/rq6uzoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745846633; c=relaxed/simple;
-	bh=PZ58W/fh/oIsI/HU9YwpIcoWTv1ZA3v47t5escImeVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uopuIZzY1dDNe/wLCFcxCGoDI+N+FAtEF7/r64TnadfuB/kN8be4pEtlLU3cAu5OLLE/pu+gMcU+AxGWTsJSM98cHoyC8covxOHZnQUbfmv+pZN7HI+oJ0KtNa0uxo/7gxLqcaRML+KEjKGYC08C8DbjQqzgR0KmLyBNRxBvIVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=QNh+vskZ; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=iGXj63J8VBhZa0Z6vwO5joFqgsLfCrZn2O4wsUpwsxc=; t=1745846631;
-	x=1746278631; b=QNh+vskZIOm55U5hiFE7zkKhbbFSlRHD7CWjHdQMXyG5OdQC0PiQ07zWZGNUE
-	/BCdLYtH2zkzRxnKYebTyCsf2wp+8cXIEWrinWmX9JaXJ37ZCZUrliWlk07eP3srfY6lfnaQRqozw
-	mBbNU9+goohJ4ep75Q19ep7jM+E/StpxHgbCHlrBe/lQ5igSbuBDkC4qnAfRWD1HZ6xH2wDHpxVWD
-	SVo76ks157a9RITTB+V2ihEKlQd06YKUNTJvKevKzldxbu+82U4zn+fw22mIE4mvjwO+NdJ9JU09j
-	H/VMumqb7QYb0tQqxylxj4fkt8pHXBapwNllDY6srizARgJD/A==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1u9OSJ-0092j3-2B;
-	Mon, 28 Apr 2025 15:23:31 +0200
-Message-ID: <7703f88e-ccb7-4c98-9da4-8aad224e780f@leemhuis.info>
-Date: Mon, 28 Apr 2025 15:23:30 +0200
+	s=arc-20240116; t=1745846645; c=relaxed/simple;
+	bh=mtrVEBVbbyiGKphaour8tRsBUKQ2C3N58hxuZ7tmB7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O6p9CgDe4QrkgEeiDySyS++KLxFYvbibPjwWnKN6mc1KBRYGAMiZBm4zHMqua2Gpuy6QN0uoS7crxnOe18f1dORJ8eouL4hDDX2JUvn0xDLtBHMCJDtoHyvEi6rHN4+Ts92PZuOhPQKBz0YTHF0OlzY6arrPxWzYFajipWlqUL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GzA8AWEz; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf848528aso34195925e9.2;
+        Mon, 28 Apr 2025 06:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745846641; x=1746451441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KOt7LYP0o0MmNgKvBUgcQAjLHuks+2HD1Cd4VMcaKnY=;
+        b=GzA8AWEzNw9ATLKnxKqfP0fLlZc5vjTsmznCxCUj/rVEh68g2edSpGNPSwSJT2LtKm
+         8TqUGUsiU3H6rUuIREBCQgjAITDZwtLkxvb6Xx3pGaV97S/G7nVa8SvptmXbcV9zLtci
+         m2AoMIfv0KC0A29m1ete+CyZM10oXu2XHDF59hLeJbiaj0pF/aV3/rGotiJqa81A5Tb+
+         E3XHkg5rkIpaW9frC8QAF9oTSTsSyUpwvzsnrxWor24DLMsCXMG6IhOMUkk2wJ9OmdD0
+         7M45YdvGSq0hMEpOKqfutbDjRINVdCJJGLFN+OIvcABbM9MIct/8Pa/3V9YI7KJ7W4oS
+         5r7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745846641; x=1746451441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KOt7LYP0o0MmNgKvBUgcQAjLHuks+2HD1Cd4VMcaKnY=;
+        b=e+nHoO6yJHRKFnEBQo0QgAa5dV/bM1Ur1FIAZQOQhUDLZ7q3vHxqCPTNjHsakcQgEO
+         PReqneBVyPbGXxvVqxGMSnnB4Id2s3uyB5RYY29nw/HmgK5sU88R1jXkzMsTyZxrMn/T
+         03KHv0Ia/C6cCvEUc6nfsktnmOQr9Yz3RHMU9U1rgCS5iRE0o94+qQ3j8KajHRigKiVA
+         +hfpEvMAAF2UGvatU1+ARFEEhjr2HWu14NXesSfnN+qGZA50VWlBwg255i4BV6wNYop6
+         m52/PlXLHPn2dSlytOJCuekzLoibRcBbLahMkFHwCNihx+r3pQIzPXksn+DS/g3Ia4uX
+         t4ew==
+X-Forwarded-Encrypted: i=1; AJvYcCU4NYnKdSoYB49BxpfA7QlCZls0DsXhtVT1IWgWIIhKcUUv93cWmms2vBPnY3FFCgq6QdEPnY9RLwhUpGdXe/gzSqI=@vger.kernel.org, AJvYcCV1NxbWUrz6t3jUGT2fb9PYNiRBuJ2/PrSfQ8mMtSHwEq5YIqnIZlQvZg65iLBLORX8hjIDH+vUFxxEBHQ=@vger.kernel.org, AJvYcCV9+sQWC/Q3zIjwJVEaiWnt7szf8Nwk5LVreqM3RuFIPYVnUqV6hBNFBzdE/afX0hqdqQf8dEgbN16scFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8xl7Vt5G6O+98y9kji4abZSs+yFVxGhpryuAyZKyD9KvH3NX+
+	J5cNJmOXb2+DqaT3SMMX8FasNhr7t3qQmcalJiueatUVyneNfubaCH+HqUVASU0kiVgz9KRnmfR
+	62SV/xsIUUmpOq5SzUA0kBi6Uzhk=
+X-Gm-Gg: ASbGnctQthNhNaA/P70Suzheux/QZtQPYHbZpHdJL9hXD4iufdVUbt/Xzo46eIGP+Bz
+	5O7v4wWjKAmRehXWTCrLk0hHw0XB7STsp0k1Pl92UKW24nfaiqDMdbvYaQQQcNmAdMERGetL9Io
+	BpRdl9gjNNBx7UoAaEsyGT0lo=
+X-Google-Smtp-Source: AGHT+IGlN04rqVdFuOEepO7AbTc54inE06WheGOgH2LWChowLopCmMTshXJlj+WuBhyWSSFzB0OLlRXw+oR3SuKtF9Q=
+X-Received: by 2002:a05:600c:a403:b0:440:6a37:be09 with SMTP id
+ 5b1f17b1804b1-440a66d9b60mr96000095e9.16.1745846641251; Mon, 28 Apr 2025
+ 06:24:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tools: Fix arm64 build by generating unistd_64.h
-To: James Clark <james.clark@linaro.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, arnd@linaro.org
-Cc: Ingo Molnar <mingo@kernel.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250417-james-perf-fix-gen-syscall-v1-1-1d268c923901@linaro.org>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20250417-james-perf-fix-gen-syscall-v1-1-1d268c923901@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1745846631;3d1aed48;
-X-HE-SMSGID: 1u9OSJ-0092j3-2B
+References: <20250428095208.99062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250428095940.GE3371@pendragon.ideasonboard.com> <CA+V-a8taFdmCgiUAwmDG93OA+P9UH-FEw3PeMFW4sLQ2KPnEPQ@mail.gmail.com>
+ <20250428112516.GG3371@pendragon.ideasonboard.com> <CA+V-a8vDDLZ422nZds7pEEW+gZ1n7s-U3eJjmG8DsOJT9uJygQ@mail.gmail.com>
+ <TY3PR01MB11346E57A3DF8D8A90A405E4686812@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346E57A3DF8D8A90A405E4686812@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 28 Apr 2025 14:23:33 +0100
+X-Gm-Features: ATxdqUGy3JZEMMWjf_6t9qT30Fm5jALjd_OmhnbnS5rET1WZZxaFDyc23qTwKtg
+Message-ID: <CA+V-a8s8vRrN4+UWiovDvX4Rfj7veVUoQCerGKwPa2PnSvmWSQ@mail.gmail.com>
+Subject: Re: [PATCH] media: renesas: rzg2l-cru: Simplify FIFO empty check
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "laurent.pinchart" <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17.04.25 15:55, James Clark wrote:
-> Since pulling in the kernel changes in commit 22f72088ffe6 ("tools
-> headers: Update the syscall table with the kernel sources"), arm64 is
-> no longer using a generic syscall header and generates one from the
-> syscall table. Therefore we must also generate the syscall header for
-> arm64 before building Perf.
-> 
-> Add it as a dependency to libperf which uses one syscall number. Perf
-> uses more, but as libperf is a dependency of Perf it will be generated
-> for both.
-> 
-> Future platforms that need this will have to add their own syscall-y
-> targets in libperf manually. Unfortunately the arch specific files that
-> do this (e.g. arch/arm64/include/asm/Kbuild) can't easily be imported
-> into the Perf build. But Perf only needs a subset of the generated files
-> anyway, so redefining them is probably the correct thing to do.
+On Mon, Apr 28, 2025 at 12:36=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 28 April 2025 12:33
+> > Subject: Re: [PATCH] media: renesas: rzg2l-cru: Simplify FIFO empty che=
+ck
+> >
+> > Hi Laurent,
+> >
+> > On Mon, Apr 28, 2025 at 12:25=E2=80=AFPM Laurent Pinchart <laurent.pinc=
+hart@ideasonboard.com> wrote:
+> > >
+> > > On Mon, Apr 28, 2025 at 12:17:54PM +0100, Lad, Prabhakar wrote:
+> > > > On Mon, Apr 28, 2025 at 10:59=E2=80=AFAM Laurent Pinchart wrote:
+> > > > > On Mon, Apr 28, 2025 at 10:52:08AM +0100, Prabhakar wrote:
+> > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > >
+> > > > > > Simplify the `rzg2l_fifo_empty()` helper by removing the
+> > > > > > redundant comparison in the return path. Now the function
+> > > > > > explicitly returns `true` if the FIFO write and read pointers
+> > > > > > match, and `false` otherwise, improving readability without cha=
+nging behavior.
+> > > > > >
+> > > > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > > > Closes:
+> > > > > > https://lore.kernel.org/all/aAtQThCibZCROETx@stanley.mountain/
+> > > > > > Signed-off-by: Lad Prabhakar
+> > > > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > ---
+> > > > > >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git
+> > > > > > a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > > index 067c6af14e95..97faefcd6019 100644
+> > > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > > @@ -348,7 +348,7 @@ bool rzg2l_fifo_empty(struct rzg2l_cru_dev =
+*cru)
+> > > > > >       if (amnfifopntr_w =3D=3D amnfifopntr_r_y)
+> > > > > >               return true;
+> > > > > >
+> > > > > > -     return amnfifopntr_w =3D=3D amnfifopntr_r_y;
+> > > > > > +     return false;
+> > > > >
+> > > > > So the function always returned true. This seems to be a bug fix,
+> > > > > please add a Fixes: tag. The commit message should also make it
+> > > > > clear that you're fixing an issue, not just simplifying the code.
+> > > >
+> > > > No, the function returned true only if the pointers matched;
+> > > > otherwise, amnfifopntr_w =3D=3D amnfifopntr_r_y would return false.=
+ I
+> > > > was simply removing the repetitive pointer check and directly
+> > > > returning false at the end of the function, as we can be certain at=
+ that point.
+> > > > Hence, I did not add a Fixes tag. Am I missing something?
+> > >
+> > > Oops, you're right, my bad.
+> > >
+> > > > > Personally I'd have written
+> > > > >
+> > > > > diff --git
+> > > > > a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > index 067c6af14e95..3d0810b3c35e 100644
+> > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > @@ -345,8 +345,6 @@ bool rzg2l_fifo_empty(struct rzg2l_cru_dev *c=
+ru)
+> > > > >         amnfifopntr_w =3D amnfifopntr & AMnFIFOPNTR_FIFOWPNTR;
+> > > > >         amnfifopntr_r_y =3D
+> > > > >                 (amnfifopntr & AMnFIFOPNTR_FIFORPNTR_Y) >> 16;
+> > > > > -       if (amnfifopntr_w =3D=3D amnfifopntr_r_y)
+> > > > > -               return true;
+> > > > >
+> > > > >         return amnfifopntr_w =3D=3D amnfifopntr_r_y;  }
+> > > > >
+> > > > > but that's also a bit of a style preference.
+> > > >
+> > > > I wanted to keep this consistent with the rz3e_fifo_empty(). If you
+> > > > prefer the above I'll do that in v2.
+> > >
+> > > Up to you.
+> > >
+> > Thanks. OK, let's keep this patch as is to stay consistent with rz3e_fi=
+fo_empty().
+>
+> Looks a typo rz3e_fifo_empty()->rzg3e_fifo_empty(). Above as well.
+>
+Good catch, this typo needs fixing.
 
-FYI, my daily -next build for Fedora based on its RPM spec file broke
-on arm64 (x86_64 worked fine) while building libperf. I haven't checked
-yet, but due to the error messages and a quick look in the history I
-wonder if this is due to the quoted change, which showed up in -next
-today:
-
-"""
-kernel.spec:3115: build libperf
-+ /usr/bin/make -s 'EXTRA_CFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -mbranch-protection=standard -fasynchronous-unwind-tables -fstack-clash-protection  ' 'LDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' -C tools/lib/perf V=1 DESTDIR=/builddir/build/BUILD/kernel-6.15.0-build/BUILDROOT
-mkdir: cannot create directory â€˜/../archâ€™: Permission denied
-/builddir/build/BUILD/kernel-6.15.0-build/kernel-next-20250428/linux-6.15.0-0.0.next.20250428.435.vanilla.fc43.aarch64/scripts/syscallhdr.sh: line 98: /../arch/arm64/include/generated/uapi/asm/unistd_64.h: No such file or directory
-make[2]: *** [/builddir/build/BUILD/kernel-6.15.0-build/kernel-next-20250428/linux-6.15.0-0.0.next.20250428.435.vanilla.fc43.aarch64/scripts/Makefile.asm-headers:81: /../arch/arm64/include/generated/uapi/asm/unistd_64.h] Error 1
-make[1]: *** [Makefile:108: uapi-asm-generic] Error 2
-make: *** [Makefile:128: all] Error 2
-error: Bad exit status from /var/tmp/rpm-tmp.vAfil2 (%build)
-"""
-
-Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/08975350-next-next-all/builder-live.log.gz
-
-Ciao, Thorsten
- 
-> Fixes: 22f72088ffe6 ("tools headers: Update the syscall table with the kernel sources")
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  tools/lib/perf/Makefile    | 12 +++++++++++-
->  tools/perf/Makefile.config |  1 +
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-> index ffcfd777c451..1a19b5013f45 100644
-> --- a/tools/lib/perf/Makefile
-> +++ b/tools/lib/perf/Makefile
-> @@ -42,6 +42,7 @@ libdir_relative_SQ = $(subst ','\'',$(libdir_relative))
->  TEST_ARGS := $(if $(V),-v)
->  
->  INCLUDES = \
-> +-I$(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi \
->  -I$(srctree)/tools/lib/perf/include \
->  -I$(srctree)/tools/lib/ \
->  -I$(srctree)/tools/include \
-> @@ -99,7 +100,16 @@ $(LIBAPI)-clean:
->  	$(call QUIET_CLEAN, libapi)
->  	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) clean >/dev/null
->  
-> -$(LIBPERF_IN): FORCE
-> +uapi-asm := $(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi/asm
-> +ifeq ($(SRCARCH),arm64)
-> +	syscall-y := $(uapi-asm)/unistd_64.h
-> +endif
-> +uapi-asm-generic:
-> +	$(if $(syscall-y),\
-> +		$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-headers obj=$(uapi-asm) \
-> +		generic=include/uapi/asm-generic $(syscall-y),)
-> +
-> +$(LIBPERF_IN): uapi-asm-generic FORCE
->  	$(Q)$(MAKE) $(build)=libperf
->  
->  $(LIBPERF_A): $(LIBPERF_IN)
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index eea95c6c0c71..a52482654d4b 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -29,6 +29,7 @@ include $(srctree)/tools/scripts/Makefile.arch
->  $(call detected_var,SRCARCH)
->  
->  CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
-> +CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated/uapi
->  
->  # Additional ARCH settings for ppc
->  ifeq ($(SRCARCH),powerpc)
-> 
-> ---
-> base-commit: 2b70702917337a8d6d07f03eed961e0119091647
-> change-id: 20250414-james-perf-fix-gen-syscall-a8d9b4367d07
-> 
-> Best regards,
-
+Cheers,
+Prabhakar
 
