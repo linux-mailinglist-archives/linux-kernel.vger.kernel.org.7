@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-623959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6AB7A9FD26
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2792A9FD2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F270E465BB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366523A2AFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD082147E5;
-	Mon, 28 Apr 2025 22:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04884215058;
+	Mon, 28 Apr 2025 22:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIRmMbgH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bprNgRS3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE792144A4
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 22:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65507214A81
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 22:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745880019; cv=none; b=JFZOWXGwse+8vx/ltmD0t1kLkJAl5QJrX/Ia2Z2sRLB3lg5GZT95YI6Da2H+db+HTRQMGI1weZEkUsJFmieNa902tTp0Vm4r8b/uk2GLtnyMr1ohzRKVZg+smEVPyiimP14grdIaaEBPXyalekqXtkcUEGyzlF/H227iA75fCPA=
+	t=1745880021; cv=none; b=j25ceHYVWWGbUklgPQSzun01xEri4uEuPenBL0mvFrss3WqdREaEGRNNPHKmFF7Z4prUU1wIIMoDiTWW2wZaiRdGJ6kvv9ccthcXyM9qPFDkrCfSisVbircirH8yn8eK6qvdRQbfY/fcQmo2hzRjtE9Ow32oje6KOMWRDeEnZBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745880019; c=relaxed/simple;
-	bh=hW8OBlEtNhGteY8BD89YhPa5txGl0BrBpZfLGBY/d7A=;
+	s=arc-20240116; t=1745880021; c=relaxed/simple;
+	bh=wHUyCaPqsLAIqZ+Di8Jk8P2mpZYVmeP+9/4ZjPsMVG0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=J8kpgDfEMHhXdz7Tf7eI+jB+IxEq6Lpbkc/6/TtBxw+onNZx7W6WxJuIwE3g8Ia/BxR1RnX4a+CRCbxFUzWPB8oFU1jNfY9eRFH3PwGJ16I0JtHusaVPtrxhk2ZFWsCcPMhOtXlEAzWSM7uNCDviML8uRVhiUaJBbQeTH5zmLys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIRmMbgH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48802C4CEEE;
-	Mon, 28 Apr 2025 22:40:19 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Jq59rVfqmi/R021ctJODwZttG/GSVgF3X+UVxRRCNVwUPXKTl6Pog41rwCC5ZuayHnrho3OovOreauE0N37w2/zMdI3dhQIicxn6GjlKfxzM2HcagQJ7XZ3Qk7lcyPZnFII5Swh06/YC1eGhLjfGAtcDT7zt1wkf/zeOFusMmgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bprNgRS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C85DFC4CEED;
+	Mon, 28 Apr 2025 22:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745880019;
-	bh=hW8OBlEtNhGteY8BD89YhPa5txGl0BrBpZfLGBY/d7A=;
+	s=k20201202; t=1745880020;
+	bh=wHUyCaPqsLAIqZ+Di8Jk8P2mpZYVmeP+9/4ZjPsMVG0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lIRmMbgH90LNqQELKn/Ngr6Upt/UUJxwIUtHrjqPgugfamIJF1AL5FQcF2d4HfhNe
-	 fW7k1ZyHFwE8dTAxXS0ppCdOwividCqjAm/4iPkGhO5Zjx2xLgHI/LJ/x591fpBaYQ
-	 7kN7zsScKHBsS2bRjU0vb2hsz/MlB2WN4nuUjL/lBiFz3kGQiGx+3/OrEAGUsBogY7
-	 dIxaEhnsjK5jaIDQz+sZoj1HYIiZ1Prs/3S1Je/qJl3RG+53tGU4JDVXJ2k/Sxrt3n
-	 fSdczVIUHpxQcB5Q4DjTC6IksugcdbNOdjaJgS1dU+hmYV47a3rm3skSqi7CCH0xoa
-	 WHicYTqlkTXPw==
+	b=bprNgRS3Rh3chgh2Xg8e2YutiRFCBUFZ0nDIyzRlUcjXcQWnc+XlYnT5fH8ybjN/b
+	 Kt/OjRCtpGXmjC6b2kF5DrfDNyC+vAJc/YHNNzdsyRwAu6NACNr25mvJKWis2pUmSQ
+	 tjwxwq/7oZoDkhy7YvZLMaN4HBwKjbEdlxNDzXEylM+zd7OBgEdxuWdlwR70XPwv27
+	 y88GUIgKpmpi6h8jnHBaqSt4MFRTa9peoIpxtXOuT7c+Eom481tzqDtacYXCzNdmRN
+	 F4fDdW34JpaJGzPrYg1NQ5DIg/eeSBE/IX6dEgtrnDX8xWwA1DNnz7NX+/NjZdd4cd
+	 VEWkFXXU5jJhw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BFD3822D43;
-	Mon, 28 Apr 2025 22:40:59 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EABE83822D43;
+	Mon, 28 Apr 2025 22:41:00 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,35 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: handle error cases of memory donation
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to bail out in get_new_segment()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <174588005823.1067750.16743465439008922626.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Apr 2025 22:40:58 +0000
-References: <20250423204935.2335000-1-daeho43@gmail.com>
-In-Reply-To: <20250423204935.2335000-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com, daehojeong@google.com
+ <174588005948.1067750.7393632112050436477.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Apr 2025 22:40:59 +0000
+References: <20250422115638.123455-1-chao@kernel.org>
+In-Reply-To: <20250422115638.123455-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 23 Apr 2025 13:49:34 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> In cases of removing memory donation, we need to handle some error cases
-> like ENOENT and EACCES (indicating the range already has been donated).
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+On Tue, 22 Apr 2025 19:56:38 +0800 you wrote:
+> ------------[ cut here ]------------
+> WARNING: CPU: 3 PID: 579 at fs/f2fs/segment.c:2832 new_curseg+0x5e8/0x6dc
+> pc : new_curseg+0x5e8/0x6dc
+> Call trace:
+>  new_curseg+0x5e8/0x6dc
+>  f2fs_allocate_data_block+0xa54/0xe28
+>  do_write_page+0x6c/0x194
+>  f2fs_do_write_node_page+0x38/0x78
+>  __write_node_page+0x248/0x6d4
+>  f2fs_sync_node_pages+0x524/0x72c
+>  f2fs_write_checkpoint+0x4bc/0x9b0
+>  __checkpoint_and_complete_reqs+0x80/0x244
+>  issue_checkpoint_thread+0x8c/0xec
+>  kthread+0x114/0x1bc
+>  ret_from_fork+0x10/0x20
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: handle error cases of memory donation
-    https://git.kernel.org/jaegeuk/f2fs/c/ad5291e2c1e5
+  - [f2fs-dev] f2fs: fix to bail out in get_new_segment()
+    https://git.kernel.org/jaegeuk/f2fs/c/9cada264501c
 
 You are awesome, thank you!
 -- 
