@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-623811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1449FA9FAEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A06EEA9FBB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AED3B35E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC03C3BEFC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AAF1FDE12;
-	Mon, 28 Apr 2025 20:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06370A94A;
+	Mon, 28 Apr 2025 21:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnqEjJAg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EYLdwrEN";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CKVSmEDX"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239551F4C8E;
-	Mon, 28 Apr 2025 20:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C111F4C8E;
+	Mon, 28 Apr 2025 21:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745873793; cv=fail; b=qRzquNWPV23GC2QM9qS/+EPwnFMrfH6Po+qSj3efqskzFWd15OGmx60noGmpN7mh2gYLpIOJmoToQ5O3I5BBRMRIltm5cRGLcDp2lRSxkQbWIop2kSJeh64D9/wVG8c4bSU8LcnwI80RbASYbCWWQ17xKy/jPKI0Y+ZymdgIGcI=
+	t=1745874454; cv=fail; b=Bif3TqBfZP5DGQabXO6dOnt2iyxt4+SCzaOVmFg0bSspDWGlOsFnzutwAQymPgoZsh0XwGIU8TdIKTkkCVWvZkLovvvDhlLrAHMUGd+lVrG20q3qcEfMdXY8vVyyu8xhJtTT9EnYH3kP3VGeKSEvCigoVGuGt4CDenJv9n3qMFM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745873793; c=relaxed/simple;
-	bh=awQkZD+QztVtK+zI8F9W/JXhKOqIMSlmK+3MCQgj1Xw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SIJD1cnjvyFABSMerSDxAFQR99AAuY+VSiOERGUpUTyv9SdU5l6xgOU3FjzG8B9Ns+cykADsaFCF/TkXnzhZLybqfvqv8W3Gv64HtClNnHPLd9yY1WQ6ARQKzLFx6dusEFFzKmyp1Wiq1/2R+3+O6bhkTsdVB+WxYcvce0hRcl8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnqEjJAg; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745873791; x=1777409791;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=awQkZD+QztVtK+zI8F9W/JXhKOqIMSlmK+3MCQgj1Xw=;
-  b=BnqEjJAgaF0VuoEs3PpfaQ64rYU6JSlQCKYCtRkAw/cczD6UliI25c5f
-   dOAxKtOBMIWuWPmXdXGALwwxySt1DaQebcoccZyddLbxUQKm2DT60b9n9
-   T3XVMOIemQLg9ekX1oxRR6hZOtTN1wsUAGdB0zI+YApTKZAR9wxuRSiET
-   b2hxehGZw6IVczocJu1YW/0q+inZpUieeH6EFnhU+AcCkfzg0I4eIVDH7
-   Iv1nKtwJtQp0USS6QRr/dKspjMYd8q9heSyA1fP4wBscBRquEEsAzBHqz
-   cDxtDydO3D6A5ZY1kysnNHaxVviHdOesss9gK7cs4gVkbYqbiU/epqtIs
-   g==;
-X-CSE-ConnectionGUID: iP3Xb0UiRvCkAZUiWoxDXw==
-X-CSE-MsgGUID: HksUn8qAR4OPqaeK99+ncA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="57681861"
-X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
-   d="scan'208";a="57681861"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 13:56:30 -0700
-X-CSE-ConnectionGUID: SfArshZYSziayCRUVKFsIg==
-X-CSE-MsgGUID: cgDPM71RQgeuNCSm6RTxUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
-   d="scan'208";a="133940363"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 13:56:30 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 28 Apr 2025 13:56:29 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 28 Apr 2025 13:56:29 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 28 Apr 2025 13:56:28 -0700
+	s=arc-20240116; t=1745874454; c=relaxed/simple;
+	bh=a4pEyfVA7ETmpqb79t4L2r0cXOl/zs33dlGdsh6tkjw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IvEVNz1F031TJbseRdys7/s3BeMw6Niak4CtVzerLBEeMItAmZVNRniom3qgM9MRr5j4Rnwzw2B6mWxR26ZVL//MoW1rN8X7B9D6xGeDSste9Smwhyzg2uSzAhTBQAOPjUP7KZIleFOJtLGbZp33HWrbkop4Xu0tak9Dkcz4pxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EYLdwrEN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CKVSmEDX; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SKVuaZ029894;
+	Mon, 28 Apr 2025 21:07:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=Cht49A5gIspLiRO2i1pHbjrPytEkDiT+4OfKrIsQ3wI=; b=
+	EYLdwrENKTA8gkn5shj7JbyPu34Fb2nW3CQ7i9fxaqCyB3Ie6062+5WdVZgeXqoz
+	LFO6nPA+8baA8bHUF32ftDLN9WZqJeUoUPUfMQTvSG8GFa4NI4092ioILFEGx2Kt
+	2DdHEeIv54mOLtC1cmfj7wav89LDI97/IvQcqrGgeLF0dvFH7UCgmjn8188GMxqx
+	fo783OCqb8WEhDqurxfZp8Scr8QvGvfy9gh7PQfSJPR61lpb9eV1Z0JqWNHWsfMF
+	HtAM6jcuEr734j7MvinBMaKvTYdXU8KaWrAnvwpipESylzTNfC77n0Y8LsPSZWCA
+	7kpDlxCVSzrj3blh81fHiw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46agsug1u1-8
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 21:07:12 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53SK85DQ013809;
+	Mon, 28 Apr 2025 20:57:43 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2172.outbound.protection.outlook.com [104.47.58.172])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 468nx8yhad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 20:57:43 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z7mup4r/j/4JU4UYEeN3WhE2FCQ4l2hOgkznnmj/kytIEw9Q82N3S9wOjRR0UPv49COzaPtqnf1o++E3GdfXMdonAgnHFEh1fU8leqC/EVIcR03EBx2g1bf8h78NmmEKRXZIEFO3zWKeeapGKAE//yWhGJJQo3BUJ3ybypEEuNMtPLHouxNsACaO7o+FoVbBJPmPC3XSfFk8cU9JH76g3lygoHJ9jqBznKaT05BdjDTCWW8gRRVs2y7X5OaSolHrvILaLq4YbUCjyvBggAOqzM7YBPm1BLpb60PC/0ljK380hx3Q6VLv72DbbfaoYIiCYvRMp9FqGDhaWOXaUka+YQ==
+ b=WTBdYBOEFFQHC+OUVhstUr/xylRGSgRdECVdIYuncBwXZ3Ioid8qClPxmHcSx0ngQfax+Mih84ZN6pJn7g5fivT/iB7MYpUCdljn9EAfkTtBJMgA6ZrLR4fqQYZuxKBpLcLI/OFt6ZfdeU1OFYRIKP+8Sc/20t3SALtib8cyoiTMHK0SV1q5NzF4gXBDvLZp3djINJl/4CESwLU5Nk4dnE5hLZzRC1fnyhcCj5wXfQYH5MShZAAt31XkLjywLdryTuvdLQiW1pEL0Z4SWn/fz//MmcVRPm2SjSFFbrkAAVp+rCoLEGmud/1VaddP2UnsmZ/smhbXcZhhza8/+P4IGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z+zM2AF1VvuW39LnmZx3JM03W7W2eIsgWmglzYZlHsU=;
- b=gdOBl4K7PZ9CTvMrBu81xuYQOxEOCLPZhzdr8Ph7M8ADZYUgRlZ05G1FOP7woeCjDGloTqNT5wip9MFFSnvsV4kWHm9tcf1ub9R5PdMf+FiQqW+CT4wA5w26u5F94KTEWDSQzbUKA3OgGaCbBYZhQs2b29c9rOMq+qtLX5Kh1q+TZOCQ7gxjk+cRV1fxt+K3g85+aOcXVk9e1B52lg0sdunSNebGKqbD+hppGMD2cj/o0PZpi3lyCgimTBabg9CKDKHjkFZ9GEdcWlqEfEt/JC/MFpgeW65BhS87xjFNrQVKObH4YSr3rUM0lssuBz96cgds+zdHK9GS8ZrJ/mofOQ==
+ bh=Cht49A5gIspLiRO2i1pHbjrPytEkDiT+4OfKrIsQ3wI=;
+ b=I5MxXgWsB0m2c5QsX+7RAe1McCaCLhtPZTgu3qws9R6LFG2vkP9zU83ZLAKJ/T8HFU9Q2y1JO3ongaXKTcp9FMS0NHB+RTve0+RoH/PThywCRWyhvxoCMOCtPOmcq+voprtjfbZ8rcCoekdCx7m1AaklSWSbqExgbLDhnPyHhcEw0BmEWMs4HhoeYk0RJXVDMsCHbYb4ix4AVS4bz/y3Yf8bojs//9TL6ztyj1N32XvJ0dIzESiW2CMKLG/j6DtGMQ1sF6BvVi/BjwB7Qwr6+A1rGkTpzthLJTYLpevASFtIZI+RC1i+9BxuJ2qyzCm8rhmMKYZDYMkiODcditnBqg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by IA4PR11MB9418.namprd11.prod.outlook.com (2603:10b6:208:56f::14) with
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cht49A5gIspLiRO2i1pHbjrPytEkDiT+4OfKrIsQ3wI=;
+ b=CKVSmEDXo6cMXPqwWGU6JeQPqvdwFCQTPgt0qMEsaWcTaUr9r+gwuri7ZQkb3U6dPUjQwv0FGUNVhX+mps/yNctZ/zEis8Q/yBfoIuwW4VSHe6mbrRtLkwyWLwNMipo2d11K+tasQJVdwduuR3Ll3zJ4Q+ypbfZhQ5gyD8dNuGY=
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
+ by IA4PR10MB8544.namprd10.prod.outlook.com (2603:10b6:208:56d::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 28 Apr
- 2025 20:56:27 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8678.025; Mon, 28 Apr 2025
- 20:56:27 +0000
-Date: Mon, 28 Apr 2025 13:56:24 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: <akpm@linux-foundation.org>
-CC: Gregory Price <gourry@gourry.net>, <linux-cxl@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<kernel-team@meta.com>, <vishal.l.verma@intel.com>, <dave.jiang@intel.com>,
-	<jonathan.cameron@huawei.com>, <alison.schofield@intel.com>, "David
- Hildenbrand" <david@redhat.com>
-Subject: Re: [PATCH v3] DAX: warn when kmem regions are truncated for memory
- block alignment.
-Message-ID: <680feb78d4923_1d522947b@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250410142831.217887-1-gourry@gourry.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250410142831.217887-1-gourry@gourry.net>
-X-ClientProxiedBy: MW4PR03CA0327.namprd03.prod.outlook.com
- (2603:10b6:303:dd::32) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Mon, 28 Apr
+ 2025 20:57:39 +0000
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c]) by DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c%2]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
+ 20:57:39 +0000
+Message-ID: <b7d3a60a-7298-41ef-8f4e-7dc56c1ccc8a@oracle.com>
+Date: Tue, 29 Apr 2025 02:27:30 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : [PATCH v6 3/6] platform/x86: Add Lenovo WMI Events
+ Driver
+To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
+        Mario Limonciello <superm1@kernel.org>, Luke Jones <luke@ljones.dev>,
+        Xino Ni <nijs1@lenovo.com>, Zhixin Zhang <zhangzx36@lenovo.com>,
+        Mia Shao <shaohz1@lenovo.com>,
+        Mark Pearson <mpearson-lenovo@squebb.ca>,
+        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+        "Cody T . -H . Chiu" <codyit@gmail.com>,
+        John Martens <johnfanv2@gmail.com>,
+        platform-driver-x86@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@amd.com>
+References: <20250428012029.970017-1-derekjohn.clark@gmail.com>
+ <20250428012029.970017-4-derekjohn.clark@gmail.com>
+Content-Language: en-US
+From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+In-Reply-To: <20250428012029.970017-4-derekjohn.clark@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYCP286CA0306.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38b::13) To DS7PR10MB5328.namprd10.prod.outlook.com
+ (2603:10b6:5:3a6::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,104 +115,367 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA4PR11MB9418:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12b175aa-89ef-4bc3-1b0b-08dd869724ac
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5328:EE_|IA4PR10MB8544:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bdeb463-988d-4b32-aad2-08dd86974fca
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dj8ILjcS0HLvdtCaAAE0oqY7bZCkRZkV6vda6sN4u4XJwfrlamB9bJX4WpgN?=
- =?us-ascii?Q?qG5kRQSrkEjPahuLmaehbxo0nMNJTj2OENfmtO5hJS5q1vDSR946zQJ+8ocv?=
- =?us-ascii?Q?akuVoIHHGFNSQeHU134b1BzHqvNTSM9MOIM9HLTcExj3UzETKX+b6c31zUsx?=
- =?us-ascii?Q?cFEjyRFIy2suU7DRVCJ773NR/pwEAJMQG6sz1/hT/+7ruYOIN8R7z6jw4znv?=
- =?us-ascii?Q?rJKmmmGnwUWodvjEdNwN/hJub+3gczywmUT9f+CFzBpdIy4/2IqL5er8gxsm?=
- =?us-ascii?Q?572CUut91GJ03VoGBK/KbAfsDZ0XizHQ/lK72VdjtIFKJHX2B7nHgNAlszvN?=
- =?us-ascii?Q?F+RkahxzqpPwBqngZiBGAe9/BZ9WWgE50kfr9kdf2NJUUgdkOM0F8u0rldJv?=
- =?us-ascii?Q?vhufuRNiQ93ekElM2DwlF86io5+EOdsbtDIcWT4RWy3FWpBlnt71Tq0KoCoC?=
- =?us-ascii?Q?LlTnhfJcsDC58W0hsNkuGAbYIiTgf+ayOKPSD0tgmr1X6CVtoCnH4I+Bcb7y?=
- =?us-ascii?Q?NqLig2sLKQYRr1MTCfDBO8e5WQns9ciT9lYGUIMT1sq1QLpRp7pWKoLLAJ0K?=
- =?us-ascii?Q?Cd78zDHyx2FCHlXhwOkzHSrz1Rc6vKAk/UHATkJOM2eWX+nYe5NtrF247Ywv?=
- =?us-ascii?Q?lqB/fG6g9NUWtUasuOhgg/1oA/+E2S4+JC4AwGgO/tksq0qEB+uPX80fe1mF?=
- =?us-ascii?Q?sf6GWs8siVR6AVBORX+I6fxVIaQzZVxZGOvaWomuaQ6P1tdbC8w+ONMvgBgn?=
- =?us-ascii?Q?ocSjxfrUxTGg/uWt0vPUXvNXP1O0LuBmcEvxk6AZTORF8gCo25mj9rjwKQMk?=
- =?us-ascii?Q?xRkHeg87VSmPxVMqLXnw5b8r1xTho4M8NKP7/0r8j64Hgono+5vjWJvfhO6B?=
- =?us-ascii?Q?ZPqinbC6hEmwOvCBR8kzuUUih4lLuf+hxRCNFe+/v+2fFjQ1V5YIQpEFevTk?=
- =?us-ascii?Q?mG6E1Jlcxm2T2hEnuECwNEIIgIV1/l6fKessTfOeBzluVXiyNjmdmzflj/y3?=
- =?us-ascii?Q?RYj2wHY8oQPObK1domYV3j6DQCNmIYVBah1wGOY3IWVUJ2bk1TqtABbl2K5R?=
- =?us-ascii?Q?acAwklkO6eeIDXhMdeELnOZma33WM2n3wiYbHaxUnPzIYCh8PMXr4BUpSLvF?=
- =?us-ascii?Q?rKhmE7YW9VSvHB5eI6T9AwfS+0WoU437R0CocJYYq+NLjfCukV2r9/RXI31y?=
- =?us-ascii?Q?eCniF45HdEDMwmIw7xDmdhix/LX2XqHp6MMofq8XKtIOrdKRFRTS/jXL2fkN?=
- =?us-ascii?Q?uggvgJeyaQ39Hltlx+qkBVn7bGevTcWpCe12b6UVIHHSnknEUd9J0jE8uvMt?=
- =?us-ascii?Q?RrePUqTzdchAMQXWwkD/OMLRy2lj8YNCOeLhjvRlsfjgWcRw1+NQ6CX4a5y2?=
- =?us-ascii?Q?qJMjcHglPyvVxD3xKEqsGSAzSH2q7riUDzL1nHcYUSA5zyKJJw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NzNGaTZtdFhEV1ZSK2pid05icUZ3TE5OYk5EZ0E2a0RQSlJyVXV6b3FTcHQz?=
+ =?utf-8?B?UjhKb3JiSG5SMlNFYnYweVluaW9MYUZRZ0F4OFBjc0N2UVdVUisrdWhGRm0y?=
+ =?utf-8?B?dkh1cGE4cUNzV2dWcjNDZk9DL21ncjRMWkpvcmdxYjlBeWVCRW5QbFBmV2lh?=
+ =?utf-8?B?emxwRnZrVnZjSnY3bE9OVmo3M1FDbFo5VGY0NFN5VUhmUWc4QnhEYnRKcE8x?=
+ =?utf-8?B?WDRzSm9ZNDRCTVBSWTQ4SzF3WlRCRFhaKytnSUJhZFQxN2UrTlZCcGVaMFla?=
+ =?utf-8?B?TVlmTk5qYW9YM2tVQURRNUhrK295dmZPam00andRN0dkazBEQ1ZibVRkb2Rq?=
+ =?utf-8?B?ZjdlaEZ1a2pXTmF4dnk2ZWpaOVB5NFRkL1NVYzBJcE9pcjRiNFZsQmhHczlh?=
+ =?utf-8?B?V3VqN0ZMVzB0RDlJMXVJZDc2bEhBcVRmMEJudjBkMjdrbTMwK0Y2dWRLekFR?=
+ =?utf-8?B?ZGhEL2Z1eGtyanlOck5BMG1GeDJQakJieEtxZXFDTzdKcC95V1ZlOVRsanBw?=
+ =?utf-8?B?cWJ1K1VkdXMzZG5PNS9MVFdsdEZ5dGtUK2lUQ0xtNzQ5UytGYy84UWd6bVBQ?=
+ =?utf-8?B?TmpwTkRBN3Z3MGZqSVkwM1loSTBuZ3Yyd0ZoS0pTZGhybjNxT0w5SUxKWm5r?=
+ =?utf-8?B?bTZaRjlZeUtaYkxudEJLVHAzSklZRzdFSGZOSjNwa0dXczFTYjVPbFBFSndP?=
+ =?utf-8?B?V21IRWtybkF1c1pWNkJINUhEVzhKNTg4MnIxYnl3K3k0citRbGcyZmZiNHYw?=
+ =?utf-8?B?ek1XdUlBam5EbHBDbEN0eEZpcnB4ZFdzNXZQUURSL1lmTnBNYjdZVlJSQVJn?=
+ =?utf-8?B?VG1HUmc5NGlPTklKdDU5eEhxWUh6TlRqUHFObzBwelhjeENRaHJwNVF5bWlv?=
+ =?utf-8?B?U3Ntc0NDaTVNeSsrd1VyOVpTbnk1RWRIZ1J5ZjFYK2RDRCtidXBCOGxIU2lT?=
+ =?utf-8?B?NWU3a1hYS3l6TGpLbG1lU2NOdFdEcjE0VkovU1haY3BKTUdTdzg3OElPOFZl?=
+ =?utf-8?B?U2E4MkdNMFBTaHJFRmFmSEdRRzJlNGxBcWNxd1Rmd1pVMWdsSktIdmd0dEt4?=
+ =?utf-8?B?eFljMjNaTjBQbnliQytFK2liMEp0MVg4T2p6NzB3RGpDbjRtNm96M1BpSER2?=
+ =?utf-8?B?MXlaV3UyMG5JL1lRT2NwSGVKbDFKMzM5eXRqQTdOcXlFMzd4a0VBV042d1c3?=
+ =?utf-8?B?Y2JsVncrdW1ESVdUUnBHdGZoM3MxeEtkVUNOOVZIZ3g3SHhNTm9PUnA0YjJB?=
+ =?utf-8?B?d3ZBbW5DWm5mNkxicHdNRmlIRXlsc1gwdG53Q0hpTVhQVW56cHpCR1JRcmZx?=
+ =?utf-8?B?QVBxS1VYaWtsLzVoOTVoTk0zVzdiY0dQcDhtZkRTMGF6TGlKQnNWRjRVUVM4?=
+ =?utf-8?B?M1VNNjdtUGdhK2hIekg1cDFMc0tiRzk2cEk5b0ZlQnRIbzZBMElkSjJKVTJu?=
+ =?utf-8?B?UTJoTnRLcDBBUWRCdGZmVlJEQXlFV1ovUlVuYW5ZVDlHSStTaks0bkNTeWcy?=
+ =?utf-8?B?TWt1b3VUMzdvQTVGU2lLNEVyaXVBQ2xUUVllQ3BML2tMc01KcFhLTWZSUEFM?=
+ =?utf-8?B?WHd0WlZBMCtYTlY0cFAwNklCQTVVMFR3QitmMmh5Ly92UTM4bVpOT3FrZ0tu?=
+ =?utf-8?B?SnkvNFUvZFlSTUxhOWRDdE5DeHVLMFJrbkdNdmlKYjJaZ05GbHpTU3RDWXk4?=
+ =?utf-8?B?ZlVLSDJIUjZnTlNBS2g3VDM3bjM5VHZXRmd1Q2Z2SVBQd3lyU0ZPemZEVmFj?=
+ =?utf-8?B?bTZCWHhIemZZNjFKeHIxaURVcFd1RFZkbEtpUlZvUmVGUWdvWkJUaUNPOHMw?=
+ =?utf-8?B?dUx4SFltZ2dPZkZpd3lvNC9jS3pvcDNNYXduS3c3QXRBN242SkFGVzJCamtB?=
+ =?utf-8?B?andyU0hWd0cycWFoY1dUaktBdXRkZXVWeFJDNG9OcGJvWnowV0l4QVRoSmp3?=
+ =?utf-8?Q?YBO3KMvMN+Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5328.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RCqSXPFmnMtwesOC+jvnHA3lByI2X0czRUk0VrZRUS3YtV4r2+61OeBiONKx?=
- =?us-ascii?Q?GbgM8wx+cPUt4wkDaBr1dvt7KxMFDeLdka8ERyJswb2pQEyRmcw4OApT4owy?=
- =?us-ascii?Q?ALIymdfkuE7V5tC+mzUueAEGHf9tdNVQdJa5vZLFDCGKFTgK3YFpTcw6wlBz?=
- =?us-ascii?Q?iL6x6bkBq9HjGnWZsMOmV1u6l9SvAK0Qhbg8NuXzWhPLe2E9G0+MIVQ7VPzm?=
- =?us-ascii?Q?i1QdJWnPyLXq4NnV4PsbH9pAN5h2tBi0sxQCkzv1JkoMLyfxUHBWahAVUm5T?=
- =?us-ascii?Q?c9qN/XjCwfnU8sTSk/BEnNv7CG0/6a9bTSaPu0P00wsuY45dFQFq1g1ypRwY?=
- =?us-ascii?Q?unbN9QSbfaDds/qShg0vqF1cI+aRcC6/9tFxrcUj1ikSa7HgblMsANg0U/zv?=
- =?us-ascii?Q?4Ek6SfQE8Fugue+WwlKOAnNNekOJi3ba+s3yDeYMQ5MaCTEOlZJnZQ97bEh4?=
- =?us-ascii?Q?6bMrdNDTv+AAQ1pMQbP6/61z5y0tZCWIIVQMM71McNcGTjrpUHC5r/AXCk6B?=
- =?us-ascii?Q?G9lSVgSDpcEmOhEqyeb6pNm2wZz1ryFoyJ+BIx/WsgsOuBWV4iMXKNXPzq9K?=
- =?us-ascii?Q?LAjVyW/MFUUrIC2/zWwgrvGMzi2isLudDRh+qvJvlLLX/bfn3lctJ4B99z0f?=
- =?us-ascii?Q?sWgmZ/8zrytnRzj5yONnsplf+7Ljv8bAgP/iWoFNldigxyIQFf4zI25sU63x?=
- =?us-ascii?Q?hIuhK/5EfxcnxSftUNnP6PuxM+8tLBDc4I6EEUE6Z3zakl+x2/ZuU0GEXgVB?=
- =?us-ascii?Q?yRJ6HLPZfxxK4QLo1VO52X9eXKNlUwYlJpsTCKdFhyUqCbbrz7W9ur1uFTND?=
- =?us-ascii?Q?W1uj+BIuYQ7y0Obi9aJn6nBj90axDN011Lx58p59K3cHcdnV0tGybBDopL4S?=
- =?us-ascii?Q?ymfXD5/qjCFOnI6PPtWkje1Rnbz1bvv4wI2uHjDbudZtYYeAGe+qEF0ra/FH?=
- =?us-ascii?Q?Fn5hrh3ZuZ5t5+AntEuwQflR12Tyhoj79M3xzG0rNeKlp/HxnZXJyi4ZbYtR?=
- =?us-ascii?Q?YOYVswhScFZFOoevZvrSGbUXI1HhH5xIvJd6L4eKud3NzYgQNyWXgJLsUa9K?=
- =?us-ascii?Q?TrcXDPwTUUKY5icHjUdbsL/FHDf4UhrgLrFvoS3ynL+2zfBF7aZso6FGuVf/?=
- =?us-ascii?Q?aJmrVa1AOkR5baqFVqh3/B0rDA/IYeI3wfSB9ySKEPaZNG+2WGaSbLWZGRia?=
- =?us-ascii?Q?ua4UUvPSwwBTI1CqEBQGvWB1AzqqRkRSJCRQj0unX3+l6CYrRlaPiTTEwc0D?=
- =?us-ascii?Q?vP4bnXXXBtouyTy5ZA4N4SH8dHaU8jq+7AI6WTuo+TqCzk+GKNSu1X2HXjEf?=
- =?us-ascii?Q?bDOp2LnZULAinV35mv9/+pgG/PeIgqiSxEuUACF7EukXfr0FMTEflmQGt5JC?=
- =?us-ascii?Q?IyhmhC1esIe4CWS3u0G+JUGjioR/voMT+Nztppb6Xnd0rFx/HATZD8vhtOCR?=
- =?us-ascii?Q?bhwbj9VEddV/xBalgruOTWxavs95FxS9QihZatzQDCf3AzCmsPOLGPge57yr?=
- =?us-ascii?Q?PtCyYppEYciLNxOLIayUE1B+XZa7PNWLqC2RHYWVxkA36U0om/z8z/wEQG0g?=
- =?us-ascii?Q?VSCuQZkG6qepKMfWC1Pl4WG0O+nQoVJ8QzifJ0h+4g10UTFwjAzF0lSjzgeS?=
- =?us-ascii?Q?7A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12b175aa-89ef-4bc3-1b0b-08dd869724ac
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eGlGZnNMcU0ydFpRNmpWZHM5T3FNY2I2S2k3QUNnNU9tNmhxbys3YkhTSmlT?=
+ =?utf-8?B?R1JjUnJ4NllmMzRod0NvL3pqeWtjazM3a2RRVExsMVhoU1Q2M1pFY0xSeHVC?=
+ =?utf-8?B?eWJSTW5YYWdWeGR4UUFWamhtMzh5STNOMnM3Y0h5Y2RtVXE1MS9NRTUxMXpD?=
+ =?utf-8?B?WEJtdEErMis0ODFTVEdSbkRMV3RZZ09DRzBuWjIrVW44RzZCc3N1bnVteWl1?=
+ =?utf-8?B?V3JQSm11QnJLTW9UNWFUb2NnamtyZE9zMDlXbFhKMXAzL3FGMjJPUE5qSEdr?=
+ =?utf-8?B?cEp4amlkVUdKQlMyYkF5ZmhyK2FpWkNXUmYxN2JSb0MzcmNzUkJyVUx5NXdO?=
+ =?utf-8?B?dTFPUUo0cklIK0JkaGZ0TXRMa1FveVZBNjVucHZ2c0tFTnA4Zk1hb2tkMXpn?=
+ =?utf-8?B?UUg5Tk1GMkFZc1UxeE0yMXZONEZ4VmkxM21lcWFwc2w4MUh4bHFjc051bUdJ?=
+ =?utf-8?B?dDc2Z0ozTTZyejY1RDVvTjFxRmZpOEpCbmVNTlN0clBtd2l4VDd3OWdYdVR0?=
+ =?utf-8?B?bE82Z0hKNU1uUUtSSGtidytqa0ZxMVpCMHV0cUc4a0xDNWppaXFHUVBXVERh?=
+ =?utf-8?B?SHp4SHAxdlJCMk84aWR6K2J5RDB6eEU4ZTNVcU90ZTRkQkl4ZXVLeEI4MkND?=
+ =?utf-8?B?TW4yaHN5UVpXSnVScTZHRHFFTnM1eWttOEduOUNTdjRGMlltd1FMQUxtdkpy?=
+ =?utf-8?B?YWFzQm56T1BMWVJYY0k5N2V3aUNjMHJSSEVvdWZiNnJ6eUpOTm9YZFFZQVBU?=
+ =?utf-8?B?ZHZyOUNDblBrUVlXMFdUV0ZoQ1RCaWQwQlZhSE1xWHB2eGFuRTJPbk5VTEwx?=
+ =?utf-8?B?UGJ3Z0V4THlqYnF3ejc4aEhSeERuZ21FclRsZWMybXRUdTVHRld5a05GbU9K?=
+ =?utf-8?B?b1htd3JMdnYyNFBUSXJYWFR0NGVuZ2xhdVZZa0VlcEFPMW9vaXBGYzBVMDVq?=
+ =?utf-8?B?YmlKelRFb3Vid2JpQ1RTMTlYRS9oTzhzMG9SM2JvQU5CYTBWS0pYUnlNa0Vs?=
+ =?utf-8?B?QzZMSkQ2SjBFRDIweFpidmJadmlqTWZCWnFISTFhcXZCdHVLd2w1RGVBaSt0?=
+ =?utf-8?B?VnF5dUgxWWJjYzFtRDZrSCszVFJwbE1MbDZVK0xiNUpUY00zdzFuZXUxQ3Js?=
+ =?utf-8?B?THFjSUQ0NWJnU2ZNd0dkZHlNbElZY3kwUkpxemw0QVhMb3E2NklkNkNKVGJm?=
+ =?utf-8?B?MTJ5NkNwS29CQnVkL0VGWFNZR0hoTENUc0VCMFdLbWlJWFhRZDExMjRRTlQ5?=
+ =?utf-8?B?N25TWmVkUk95dnFQdTk2bE9XRUo3ano3SUZ1ZmhkeVFQMW1yUGJlRndDckc1?=
+ =?utf-8?B?TnVTSTdTYjV6VTNTWHBvKzl4WkZTVUl3MXZQMm5rZ0FURFZ2T09RWktYWWJI?=
+ =?utf-8?B?ZndwWUhsWGVMMFVPMDk1WjdkV2taYVNrbGJPMjdxZVEyWDR0SnFqaGp5MUxG?=
+ =?utf-8?B?NFJUbEpWTk1waHUxQzVzUHFmK2IxL0k0OG9rbHhpazBrRm5aM3RIQXNhc3pQ?=
+ =?utf-8?B?YlZVUjVYd0pCLzgzVjFPbDdiVmxUemZKOGZEWlY0d2FkWnJBcnlMUWFZQXhy?=
+ =?utf-8?B?bFhaSjIvWHNseGd5ZTdDc3RxeWpRYUZkN0N6MUlCeDV1ZlpGQmQ3ZGFBbjRP?=
+ =?utf-8?B?QVBITmJGTy9EVVFPN1krZWd5Y3BHRGRoc1FXRXZiTnd1b3FQdUdURDZaVTVk?=
+ =?utf-8?B?a2p5cklYNXAvYmdLVzVpZmovNnlQSnRqeThuaEFnSXJjRVZpNkR2bmp0Y2c3?=
+ =?utf-8?B?L3U2VEhNM2xjaERUWkF1QUVpZjJJVEZ6SFcxN3JFZUx4L1E5eWkxdmVtSEtY?=
+ =?utf-8?B?ZjB3ZnI0UG5CbzdSU1hrZzNjVjZvbng0S0FOY0crRkdFcE11OGVaVzJVUFR0?=
+ =?utf-8?B?YkVVb3A2ZmlRSlJCd1didlZPTUwzTzQzTnpXcGJKQldHaDJENEpSR2JXQm9j?=
+ =?utf-8?B?ZkJmeDl0YTZ5SUlJN3hhZ0hlOXFvc0hLV2xPcmRWTW5PZzVYNWNWd250b3hD?=
+ =?utf-8?B?QTJkeTNDelJlcDR0MUQwRXl2ekF0cVBnaExKK1drYzVrSDlXc2ZJTm9PS2Ja?=
+ =?utf-8?B?KzF2VUVlQkk3cW44OU5NWUx3SGlMRTdCUittM2RYbEQrQ3k2MEhUTjVEbDJZ?=
+ =?utf-8?B?SlgvNXNOQXpuaGNXQXhlaDBNZ3d2V04ySTNaUnVHWng4UitVRXZnYTdjSE5I?=
+ =?utf-8?B?eHc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	YqztrEgLcvr7Zfyhm3XIRPSsc6rXYthG02jU5AB5h815r4tLXbHLed64uSEBjycxbr8J4GhTGDwWt+KhrfeQ4+9D9Urq585gcqq0tIh9G5RWG/RQkZ7KGHLex3j8PLACP0cALCU8NuUnq+MiMCLnk0FfiT//p4GG0v9g+l0Q/+pRix1j+domGgrYmotONjFmcBSfrzJl+obBGnlKAoMha9D3VjjhRh5MlTqwIwAZNGW8eoYPcePWmoFg+lEpoA5OtO17dwHunsSmlfuUUAlbe+5VAeqRIxdf7/sRwn8vUJcv/MgH1pMHazI24jCCVJtN3XqdvWeI/MEO6Gytk2RyHdA3NVLFEqIsqoyx/z3NX2DGOOcSmQPmXQDcBwtZsZX2Tc3063mRoSClIumBdEm5N+9wH+iI3gFZ+5Yz5WSN5PeONGdd657yxBRMl7ZVOVVn0HB8NkVHQf4KRWDi7/KuHiU8C1+iEdnoxZWtqz3y7rUrsH5Ooyy6DC9mIGNmB4ecePTlcKiRoCbp1lL8s5PnuYWd6j288xpdDEvJabnmviEiMHr1QPXoSqvDBWXytlQM5Zz8JSD8tSQKcyAEV77Q1b9W4lo+eCYcHkw8tXx1pc4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bdeb463-988d-4b32-aad2-08dd86974fca
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 20:56:27.1597
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 20:57:39.7312
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +QlGHAfksmPkfzLb+nSQKHsF8D7LX216u5o0xyO0kWjVk7j6E+5/wOpY2EDWL94u61QgujCZXvDEQo389gdADjae4IMekSBT9YptOYwucdM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9418
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: goAWeLfOTTf7bO9b9514hHvJLD76hAQrbdFJg59tg0m8cWRE9uL1p37ZUaJmdzPjSJPKlKpYym+kFPVNIEO2lCjtoxuOn2o36aEZgCb+FSs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR10MB8544
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_08,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
+ definitions=main-2504280168
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDE3MCBTYWx0ZWRfX9m/hqk6gaTyK CKu3GaXnHxmneyjW6/+Updh+4ovf545FMa0z+dwsmfIGQO6Sa3LAAlKEjjHR1DCm9npv46w0d29 u0BZlrHSoXEnonsENcIwApS21sGITP9CY0GOUD12Jpw8M+iJeaiMAz4ctvgzG18uYqXo2PTlAR4
+ 3vDIVDTPODEAYBxn2C8x8/qvhER2S3aNXs89VEpOA0z8mgSb14Uclk0uNCqXiIkRgiIJ7ZHflCo 2eKD55oJNEAd4wlaC9tNofekGMfXRCPVC/KSyI8x61LVJjdPbhMYl5V/XE9Mas3l2yqAAQ+AWbF MQBOF8+y0UOG0aUgMZ9A3Fusu13qjX1gaIDaAm4Z43BJVhkZtM8PxVbES43sSHKL0SMlHmiFxVO QbqV26z2
+X-Proofpoint-GUID: 47AaNMvK8O9QBGjSG3rIdts2QuiqUbTw
+X-Proofpoint-ORIG-GUID: 47AaNMvK8O9QBGjSG3rIdts2QuiqUbTw
 
-Gregory Price wrote:
-> Device capacity intended for use as system ram should be aligned to the
-> architecture-defined memory block size or that capacity will be silently
-> truncated and capacity stranded.
-> 
-> As hotplug dax memory becomes more prevelant, the memory block size
-> alignment becomes more important for platform and device vendors to
-> pay attention to - so this truncation should not be silent.
-> 
-> This issue is particularly relevant for CXL Dynamic Capacity devices,
-> whose capacity may arrive in spec-aligned but block-misaligned chunks.
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Tested-by: Alison Schofield <alison.schofield@intel.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
 
-Hi Andrew, please pick up this patch:
 
-	msg-id: 20250410142831.217887-1-gourry@gourry.net
+On 28-04-2025 06:48, Derek J. Clark wrote:
+> --- /dev/null
+> +++ b/drivers/platform/x86/lenovo-wmi-events.c
+> @@ -0,0 +1,196 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Lenovo WMI Events driver. Lenovo WMI interfaces provide various
+> + * hardware triggered events that many drivers need to have propagated.
+> + * This driver provides a uniform entrypoint for these events so that
+> + * any driver that needs to respond to these events can subscribe to a
+> + * notifier chain.
+> + *
+> + * Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/export.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/types.h>
+> +#include <linux/wmi.h>
+> +
+> +#include "lenovo-wmi-events.h"
+> +#include "lenovo-wmi-gamezone.h"
+> +
+> +#define THERMAL_MODE_EVENT_GUID "D320289E-8FEA-41E0-86F9-911D83151B5F"
+> +
+> +#define LWMI_EVENT_DEVICE(guid, type)                        \
+> +	.guid_string = (guid), .context = &(enum lwmi_events_type) \
+> +	{                                                          \
+> +		type                                               \
+> +	}
+> +
+> +static BLOCKING_NOTIFIER_HEAD(events_chain_head);
+> +
+> +struct lwmi_events_priv {
+> +	struct wmi_device *wdev;
+> +	enum lwmi_events_type type;
+> +};
+> +
+> +/**
+> + * lwmi_events_register_notifier() - Add a notifier to the notifier chain.
+> + * @nb: The notifier_block struct to register
+> + *
+> + * Call blocking_notifier_chain_register to register the notifier block to the
+> + * lenovo-wmi-events driver blocking notifer chain.
 
-...for -mm. I now notice that MAINTAINERS does not make clear that you
-be Cc'd on driver/dax/ patch for eventual upstream merge.
+typo notifer -> notifier in all register/unregister
 
-I still support dax patches going through -mm given potential
-entanglements.
+> + *
+> + * Return: 0 on success, %-EEXIST on error.
+> + */
+> +int lwmi_events_register_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_register(&events_chain_head, nb);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(lwmi_events_register_notifier, "LENOVO_WMI_EVENTS");
+> +
+> +/**
+> + * lwmi_events_unregister_notifier() - Remove a notifier from the notifier
+> + * chain.
+> + * @nb: The notifier_block struct to register
+
+the @nb parameter is described inconsistently:
+@nb: The notifier_block struct to unregister
+
+> + *
+> + * Call blocking_notifier_chain_unregister to unregister the notifier block
+> + * from the lenovo-wmi-events driver blocking notifer chain.
+> + *
+> + * Return: 0 on success, %-ENOENT on error.
+> + */
+> +int lwmi_events_unregister_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_unregister(&events_chain_head, nb);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(lwmi_events_unregister_notifier, "LENOVO_WMI_EVENTS");
+
+can be consider lwmi_events_un/register_notifier as static
+if they are wrapper func?
+
+> +
+> +/**
+> + * devm_lwmi_events_unregister_notifier() - Remove a notifier from the notifier
+> + * chain.
+> + * @data: Void pointer to the notifier_block struct to register.
+
+* @data: Void pointer to the notifier_block struct to unregister.
+
+> + *
+> + * Call lwmi_events_unregister_notifier to unregister the notifier block from
+> + * the lenovo-wmi-events driver blocking notifer chain.
+> + *
+> + * Return: 0 on success, %-ENOENT on error.
+> + */
+> +static void devm_lwmi_events_unregister_notifier(void *data)
+> +{
+> +	struct notifier_block *nb = data;
+> +
+
+if (nb) Consider checking NULL pointer
+
+> +	lwmi_events_unregister_notifier(nb);
+> +}
+> +
+> +/**
+> + * devm_lwmi_events_register_notifier() - Add a notifier to the notifier chain.
+> + * @dev: The parent device of the notifier_block struct.
+> + * @nb: The notifier_block struct to register
+> + *
+> + * Call lwmi_events_register_notifier to register the notifier block to the
+> + * lenovo-wmi-events driver blocking notifer chain. Then add, as a device
+> + * managed action, unregister_notifier to automatically unregister the
+> + * notifier block upon its parent device removal.
+> + *
+> + * Return: 0 on success, or an error code.
+> + */
+> +int devm_lwmi_events_register_notifier(struct device *dev,
+> +				       struct notifier_block *nb)
+> +{
+> +	int ret;
+> +
+> +	ret = lwmi_events_register_notifier(nb);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return devm_add_action_or_reset(dev, devm_lwmi_events_unregister_notifier, nb);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(devm_lwmi_events_register_notifier, "LENOVO_WMI_EVENTS");
+> +
+> +/**
+> + * lwmi_events_notify() - Call functions for the notifier call chain.
+> + * @wdev: The parent WMI device of the driver.
+> + * @obj: ACPI object passed by the registered WMI Event.
+> + *
+> + * Validate WMI event data and notify all registered drivers of the event and
+> + * its output.
+> + *
+> + * Return: 0 on success, or an error code.
+> + */
+> +static void lwmi_events_notify(struct wmi_device *wdev, union acpi_object *obj)
+> +{
+> +	struct lwmi_events_priv *priv = dev_get_drvdata(&wdev->dev);
+> +	int sel_prof;
+> +	int ret;
+> +
+> +	switch (priv->type) {
+> +	case LWMI_EVENT_THERMAL_MODE:
+> +		if (obj->type != ACPI_TYPE_INTEGER)
+> +			return;
+> +
+> +		sel_prof = obj->integer.value;
+> +
+> +		switch (sel_prof) {
+> +		case LWMI_GZ_THERMAL_MODE_QUIET:
+> +		case LWMI_GZ_THERMAL_MODE_BALANCED:
+> +		case LWMI_GZ_THERMAL_MODE_PERFORMANCE:
+> +		case LWMI_GZ_THERMAL_MODE_EXTREME:
+> +		case LWMI_GZ_THERMAL_MODE_CUSTOM:
+> +			ret = blocking_notifier_call_chain(&events_chain_head,
+> +							   LWMI_EVENT_THERMAL_MODE,
+> +							   &sel_prof);
+> +			if (ret == NOTIFY_BAD)
+> +				dev_err(&wdev->dev,
+> +					"Failed to send notification to call chain for WMI Events\n");
+> +			return;
+> +		default:
+> +			dev_err(&wdev->dev, "Got invalid thermal mode: %x",
+> +				sel_prof);
+> +			return;
+> +		}
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +}
+> +
+> +static int lwmi_events_probe(struct wmi_device *wdev, const void *context)
+> +{
+> +	struct lwmi_events_priv *priv;
+> +
+> +	priv = devm_kzalloc(&wdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	if (!context)
+> +		return -EINVAL;
+> +
+
+might want to check context before using devm_kzalloc()
+to avoid unnecessary memory allocation
+
+> +	priv->wdev = wdev;
+> +	priv->type = *(enum lwmi_events_type *)context;
+> +
+> +	dev_set_drvdata(&wdev->dev, priv);
+> +	return 0;
+> +}
+> +
+> +static const struct wmi_device_id lwmi_events_id_table[] = {
+> +	{ LWMI_EVENT_DEVICE(THERMAL_MODE_EVENT_GUID, LWMI_EVENT_THERMAL_MODE) },
+> +	{}
+> +};
+> +
+> +static struct wmi_driver lwmi_events_driver = {
+> +	.driver = {
+> +		.name = "lenovo_wmi_events",
+> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> +	},
+> +	.id_table = lwmi_events_id_table,
+> +	.probe = lwmi_events_probe,
+> +	.notify = lwmi_events_notify,
+> +	.no_singleton = true,
+> +};
+> +
+> +module_wmi_driver(lwmi_events_driver);
+> +
+> +MODULE_DEVICE_TABLE(wmi, lwmi_events_id_table);
+> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
+> +MODULE_DESCRIPTION("Lenovo WMI Events Driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/platform/x86/lenovo-wmi-events.h b/drivers/platform/x86/lenovo-wmi-events.h
+> new file mode 100644
+> index 000000000000..e4c5459c2f24
+> --- /dev/null
+> +++ b/drivers/platform/x86/lenovo-wmi-events.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +
+> +/* Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com> */
+> +
+> +#ifndef _LENOVO_WMI_EVENTS_H_
+> +#define _LENOVO_WMI_EVENTS_H_
+> +
+> +struct device;
+> +struct notifier_block;
+> +
+> +enum lwmi_events_type {
+> +	LWMI_EVENT_THERMAL_MODE = 1,
+> +};
+> +
+> +int lwmi_events_register_notifier(struct notifier_block *nb);
+> +int lwmi_events_unregister_notifier(struct notifier_block *nb);
+> +int devm_lwmi_events_register_notifier(struct device *dev,
+> +				       struct notifier_block *nb);
+
+why devm_lwmi_events_unregister_notifier not here ?
+
+> +
+> +#endif /* !_LENOVO_WMI_EVENTS_H_ */
+
+
+Thanks,
+Alok
 
