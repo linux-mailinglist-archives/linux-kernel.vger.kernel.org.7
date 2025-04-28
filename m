@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-622327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C622A9E5C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 03:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AD1A9E5D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 03:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D310D7AABEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A243BA968
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DBB155C82;
-	Mon, 28 Apr 2025 01:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBCB145B16;
+	Mon, 28 Apr 2025 01:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIQJw4hI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pem8HCV4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2C83595D;
-	Mon, 28 Apr 2025 01:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682FA14F90;
+	Mon, 28 Apr 2025 01:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745803862; cv=none; b=QrXlHmHdsdC6mMopamyognq8ErxWmxsJj81Ut9VabNfrRHrPttdEiSQg+NUxjju0bOCwwtvGR4Gqg0pmaBHAsgih2pMoNB4aK9rT5h5SQO1k68mO4nvoJEnhIk36TZjVz8Re2XplAlLofyrBzoy9uFr5/LZiWLtPa7jJjE/xiao=
+	t=1745804183; cv=none; b=gWibSbQNRqrE4Mi1cEKZtN+tAKUpBsya0b+9bz5+6s51SFmAgyROPyBZlTzUiwOTcA+zfynyEBuM4lj+8KzFnV6WgjqeAuM5jnBrV550YEhl2V8SamO4kZGyIPJ++8D0rGzkfjYJ9QmQOV4Ar+QXCWLc2GQrbyKrXw9+N8h3qoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745803862; c=relaxed/simple;
-	bh=LtCEiezzdAb4Ir6Z+bIbN7I3Y0lzoYPI69aL8qow0Lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rm5m+9s7AlLTOyE2xqqNL0ljCEr/Ogk+sw+Zf9WqN4PS+yxjupPaw4QusZi572LIr0h1KSZuWMYZFdyUwNp1l+rxAUp9f9HJGRxBFZCJf6Myg5hbkG7Vq0LVq4Vd2eW2ty7sul/UD5MsUMP6tvxhkJ1iGJ/bHGYb9QJxlmEft3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIQJw4hI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379FAC4CEE3;
-	Mon, 28 Apr 2025 01:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745803861;
-	bh=LtCEiezzdAb4Ir6Z+bIbN7I3Y0lzoYPI69aL8qow0Lc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WIQJw4hI9rruo0Zkd27/+oIpA5J5+jnEMVRhtbPuF8RmDkxPW5uFH4YR2KKh9DKVe
-	 2sqtvyXjJ8vy4NEdwFgkKg3jSCZ+Np+ye4A33tW5UQZcIrXHKkk5xMy1zHvApHAewg
-	 tq3gKDgw7cbxOfUHCDywImfdb1i5mqI8jseeJwtTEwtZsAr/UxMr3WFNTAXSAj8aNg
-	 XK/8vOtf3XccUQ4S9Rd63p5rug43ut0tm9D7B7BQWh9zKF4iLhk2vL5XFh1qeeVgCH
-	 OCt+uRCWZ2y1fA5EpgZIy6UPVFzwVCBS6m4jAeunZZvRE8doApityDFRcVdxtOzWIl
-	 /Z+aEvsQc1dkg==
-Date: Sun, 27 Apr 2025 18:30:59 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, Theodore Ts'o <tytso@mit.edu>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-Message-ID: <20250428013059.GA6134@sol.localdomain>
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
- <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
- <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <aAvlM1G1k94kvCs9@casper.infradead.org>
- <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
+	s=arc-20240116; t=1745804183; c=relaxed/simple;
+	bh=ka5i6kOXSNGQcxxbduG/8nuC65hLt6QpSbzaVuD2Wr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b3XjUrunau+81CgUYdrRKb2SgVcNV7+Tc2ZoVj5et/SVxk2rLgTf2QM8Cx2jNrd4OssItFN7Y8k/e4fRp0r+thmiKdtOQ8T2uvykNonzGnfk4yPEBhr0PyOV1UMlRR4krTeXUpQ0Lz6fuH3b2MsrGhOBaLjACadzw0v3B6QTDbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pem8HCV4; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745804182; x=1777340182;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ka5i6kOXSNGQcxxbduG/8nuC65hLt6QpSbzaVuD2Wr0=;
+  b=Pem8HCV4UxyX+kLsW6WDADxP+ZZlpoXyPwuIm5bfVbOtlP6T6mlGnPxA
+   0SIj2s40zDUBIQbth/pl4gnYYTOrST/SD0WJ5KI3zBEv1w+ihwavf7AB0
+   raqXegQsd+0KUwn+mKzMZLuj4JtnPD6jNyy8yyFBCwDRLOTjFpjRhHczZ
+   /qER2kF9xPqUG2XVDNYyuK/gp1TZbEIiz3I2cY89Pi6+bakgXIMVsrI/o
+   7IEZsNO1JwmDqXtdr/KDf8otYARP+IOYCfGsaMr/IbpmGA92HUMgUucPn
+   ik5uTAvs7kecQXARXVd3bPNcYdxxCrGTcNEhDzlLNdKgw1HJXg/uWeSZJ
+   g==;
+X-CSE-ConnectionGUID: uPDbWgNIRaC9Lzq3hCKFoQ==
+X-CSE-MsgGUID: WU36sraISXupnaYWOgStbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="47511603"
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
+   d="scan'208";a="47511603"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 18:36:21 -0700
+X-CSE-ConnectionGUID: ks4dRZHRQR2z+gA9bUZEsQ==
+X-CSE-MsgGUID: 3TSRWkChRnOLfY4dm9t51g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
+   d="scan'208";a="137427362"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 18:36:14 -0700
+Message-ID: <dcfd9bfc-44db-4fd8-a49c-0c96c68f6b88@linux.intel.com>
+Date: Mon, 28 Apr 2025 09:32:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/22] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
+ ioctl
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ corbet@lwn.net, will@kernel.org
+Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+ peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+ praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
+ alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Apr 27, 2025 at 08:55:30PM -0400, Kent Overstreet wrote:
-> On Fri, Apr 25, 2025 at 08:40:35PM +0100, Matthew Wilcox wrote:
-> > On Fri, Apr 25, 2025 at 09:35:27AM -0700, Linus Torvalds wrote:
-> > > Now, if filesystem people were to see the light, and have a proper and
-> > > well-designed case insensitivity, that might change. But I've never
-> > > seen even a *whiff* of that. I have only seen bad code that
-> > > understands neither how UTF-8 works, nor how unicode works (or rather:
-> > > how unicode does *not* work - code that uses the unicode comparison
-> > > functions without a deeper understanding of what the implications
-> > > are).
-> > > 
-> > > Your comments blaming unicode is only another sign of that.
-> > > 
-> > > Because no, the problem with bad case folding isn't in unicode.
-> > > 
-> > > It's in filesystem people who didn't understand - and still don't,
-> > > after decades - that you MUST NOT just blindly follow some external
-> > > case folding table that you don't understand and that can change over
-> > > time.
-> > 
-> > I think this is something that NTFS actually got right.  Each filesystem
-> > carries with it a 128KiB table that maps each codepoint to its
-> > case-insensitive equivalent.  So there's no ambiguity about "which
-> > version of the unicode standard are we using", "Does the user care
-> > about Turkish language rules?", "Is Aachen a German or Danish word?".
-> > The sysadmin specified all that when they created the filesystem, and it
-> > doesn't matter what the Unicode standard changes in the future; if you
-> > need to change how the filesystem sorts things, you can update the table.
-> > 
-> > It's not the perfect solution, but it might be the least-bad one I've
-> > seen.
-> 
-> The thing is, that's exactly what we're doing. ext4 and bcachefs both
-> refer to a specific revision of the folding rules: for ext4 it's
-> specified in the superblock, for bcachefs it's hardcoded for the moment.
-> 
-> I don't think this is the ideal approach, though.
-> 
-> That means the folding rules are "whatever you got when you mkfs'd".
-> Think about what that means if you've got a fleet of machines, of
-> different ages, but all updated in sync: that's a really annoying way
-> for gremlins of the "why does this machine act differently" variety to
-> creep in.
-> 
-> What I'd prefer is for the unicode folding rules to be transparently and
-> automatically updated when the kernel is updated, so that behaviour
-> stays in sync. That would behave more the way users would expect.
-> 
-> But I only gave this real thought just over the past few days, and doing
-> this safely and correctly would require some fairly significant changes
-> to the way casefolding works.
-> 
-> We'd have to ensure that lookups via the case sensitive name always
-> works, even if the casefolding table the dirent was created with give
-> different results that the currently active casefolding table.
-> 
-> That would require storing two different "dirents" for each real dirent,
-> one normalized and one un-normalized, because we'd have to do an
-> un-normalized lookup if the normalized lookup fails (and vice versa).
-> Which should be completely fine from a performance POV, assuming we have
-> working negative dentries.
-> 
-> But, if the unicode folding rules are stable enough (and one would hope
-> they are), hopefully all this is a non-issue.
-> 
-> I'd have to gather more input from users of casefolding on other
-> filesystems before saying what our long term plans (if any) will be.
+On 4/26/25 13:58, Nicolin Chen wrote:
+> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> index a65153458a26..02a111710ffe 100644
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -170,3 +170,97 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>   	iommufd_put_object(ucmd->ictx, &viommu->obj);
+>   	return rc;
+>   }
+> +
+> +void iommufd_vcmdq_destroy(struct iommufd_object *obj)
+> +{
+> +	struct iommufd_vcmdq *vcmdq =
+> +		container_of(obj, struct iommufd_vcmdq, obj);
+> +	struct iommufd_viommu *viommu = vcmdq->viommu;
+> +
+> +	if (viommu->ops->vcmdq_destroy)
+> +		viommu->ops->vcmdq_destroy(vcmdq);
+> +	iopt_unpin_pages(&viommu->hwpt->ioas->iopt, vcmdq->addr, vcmdq->length);
+> +	refcount_dec(&viommu->obj.users);
+> +}
+> +
+> +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> +{
+> +	struct iommu_vcmdq_alloc *cmd = ucmd->cmd;
+> +	struct iommufd_viommu *viommu;
+> +	struct iommufd_vcmdq *vcmdq;
+> +	struct page **pages;
+> +	int max_npages, i;
+> +	dma_addr_t end;
+> +	int rc;
+> +
+> +	if (cmd->flags || cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT)
 
-Wouldn't lookups via the case-sensitive name keep working even if the
-case-insensitivity rules change?  It's lookups via a case-insensitive name that
-could start producing different results.  Applications can depend on
-case-insensitive lookups being done in a certain way, so changing the
-case-insensitivity rules can be risky.
+I don't follow the check of 'cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT'
+here. My understanding is that it states that "other values of type are
+not supported". If so, shouldn't it be,
 
-Regardless, the long-term plan for the case-insensitivity rules should be to
-deprecate the current set of rules, which does Unicode normalization which is
-way overkill.  It should be replaced with a simple version of case-insensitivity
-that matches what FAT does.  And *possibly* also a version that matches what
-NTFS does (a u16 upcase_table[65536] indexed by UTF-16 coding units), if someone
-really needs that.
+	if (cmd->flags || cmd->type != IOMMU_VCMDQ_TYPE_DEFAULT)
 
-As far as I know, that was all that was really needed in the first place.
+?
 
-People misunderstood the problem as being about language support, rather than
-about compatibility with legacy filesystems.  And as a result they incorrectly
-decided they should do Unicode normalization, which is way too complex and has
-all sorts of weird properties.
+> +		return -EOPNOTSUPP;
+> +	if (!cmd->addr || !cmd->length)
+> +		return -EINVAL;
+> +	if (check_add_overflow(cmd->addr, cmd->length - 1, &end))
+> +		return -EOVERFLOW;
 
-- Eric
+Thanks,
+baolu
 
