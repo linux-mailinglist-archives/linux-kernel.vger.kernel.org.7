@@ -1,192 +1,201 @@
-Return-Path: <linux-kernel+bounces-623279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF81DA9F380
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B112A9F386
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57B616E876
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEB9217D870
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A0226988A;
-	Mon, 28 Apr 2025 14:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghabFW4Q"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C975C2AD04;
-	Mon, 28 Apr 2025 14:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C998926E17F;
+	Mon, 28 Apr 2025 14:34:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65D2267B6F;
+	Mon, 28 Apr 2025 14:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745850835; cv=none; b=RUfhY6BUStYBWdWyHMWzg+342leONfzsfy7gOW6APiqf7id2V2EtW+HUSZtRoI7sdNfMt991vyZbLN6U6UG20QIrCEynqpCTP5zi0R6h00DL4yHMz9ujRM4t4ibDaZbgCmEzba2A1gNkBKM3c1yWjtvBYcjiuHtt1okjCj0C+gE=
+	t=1745850871; cv=none; b=eicP+RmOR7+IOO2vgUKIie/6PPnVkcz1hZduwCbTp7cpXv74ixCftFMRNF4LLsV/SQsb1ot6KByE+B/bGLuQJq7CK7/vOleK3EOXhSYo+w6oCTT+SN/+rse8QvEAwfd9TJtVtfBideeOAgJfaifBkz6eVWYICGq22URbxENyY3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745850835; c=relaxed/simple;
-	bh=d20GTipVbRB3l5zgAl3x510pauuP792d74b6b3Gl7js=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pAVcw+1zqjeCvAVh2ilpCOCtJas63zQwaZmU+UHNC9sgzRRFPWpyQJuBPthfd4KOTFNqRoKuOW33cLA4onWGKVmw1GB0k/cWUMppmPfaGb6q+oQvuqOKMK7EMnRWhZoNyphvBcmxgibOnlv5RQilVOWYPM0vU/louhqo0z9dAsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghabFW4Q; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39d83782ef6so4090706f8f.0;
-        Mon, 28 Apr 2025 07:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745850832; x=1746455632; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLMBJu2+m8wSyhJfUpw0sbyDZyeYRNuTT+ciFfWuFWs=;
-        b=ghabFW4QeQaTh0R/Yn/vre4oIFoWN4mooZOPggbvnvHCCh0Hz+81naBLJPX8j5HrId
-         G88Qo+Zlm0X8Kr+DT6L+cyBZNHqdL4i/kg2IC3n70jPmq+cJz4pC6Be2aTv4okilQsfv
-         mQBctZD1Ny1sAmeYt1t4I80gEOtRM1EwFrlKOiSkGylKK2QTH8gJI9FZqMj4zCn/me8o
-         Oq8vE2oCc/WE7krHne68bhdze6uiLC+Ga9OWcAFx2Gbqhi9uB9UT67mIYIV8Otv13Jk7
-         2GasXqzkerMXDVJma3KigI4HUGeL2TCtTvBsxD0/MdlBTiyb/+nq0hXznS3Rd5O8iMXl
-         mXQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745850832; x=1746455632;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eLMBJu2+m8wSyhJfUpw0sbyDZyeYRNuTT+ciFfWuFWs=;
-        b=O21EoqbCN52XKrhduXxFgiB5v9eocleSGwwu+ecFJQqDWoNFowJwl+/kCQQzpeyEMI
-         r4+uWBU34K/0IYqf0CJ+UggGCUAiBFBGQDNkRNo9L77kwPz6w2SaRsWTOLRFNFLGnN+b
-         9azaJoy5ezEpH0Ks46t2t4rDRJc5/i6noM/Kqhir7PRVbj7+44hnBS3SSuJJPX+iuv23
-         KQ9dC8/dyEwb27334XyUQmP4XNHO18oq9lh2G3Z1LyD3g4T6xalHQTSJR6HA9Unke3Oc
-         ROHI9dZNVYnB0nxNawHg/BuRYJDfeeTaAnjrPtwJMRbvJM8tG6nsQl/US6/1FawNYYUl
-         SGYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZjPeprLL9vBb+6dho4o5sE6c5vh1BDgI4JSPbsEm5UZO89TYSCb1gSq+YcHRpOMM0+4uagZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB0vYD/mgAEr3Cd+MPvK4hacnkjg5cQ19yySD4nkchE9AkBWoR
-	Epz0RLECe/ZCF5ZJ2BtX2huBl9FEgAgr9Y8Xn0cgv/ryjlRHAP5p
-X-Gm-Gg: ASbGncu1qr4K1ZoLlFqPn173xYmNnto77BbNfFII/XILB92+rAc6/+57/Wb1Z/8WPyH
-	sCMBCdxH9H+5BmefGLQnO5aejmTip3xEfFUxjRcQjDjQy8IwIVAThE5xFG1wazR1GFjxLMBDYq5
-	4rJdx9MrVVW4dM4faKSoYpk5dXxeRG2arjull3vRdvFnw1sZ1tfvgTiK4+zgGijZmMu4hUOVjdp
-	J+2os9qLlvmyEZs3Y3KrS7s50PrCsXyYFGIb7yee2iYc+vOJ1Wem/63zGQiC9KzRvEQZHHvPIoE
-	vfppNVb4B7+mHSVkvdd9wQju/htPRPuiAuS7zrLVhPeahKcsMFK1v3XCgEHYe65dk+bDKF61ok7
-	YPTY=
-X-Google-Smtp-Source: AGHT+IGVnfynXJTNx19/KSZv+fN8acHct+F6K+RgM/5Dfk7bEbpKJ2i4zN8ruNE8PUthruYMTtl7WQ==
-X-Received: by 2002:a5d:5885:0:b0:39c:266b:feec with SMTP id ffacd0b85a97d-3a074cf147cmr9963691f8f.7.1745850831806;
-        Mon, 28 Apr 2025 07:33:51 -0700 (PDT)
-Received: from fedora.advaoptical.com ([82.166.23.19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46a49sm11421823f8f.61.2025.04.28.07.33.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 07:33:51 -0700 (PDT)
-From: Sagi Maimon <maimon.sagi@gmail.com>
-X-Google-Original-From: Sagi Maimon <sagi.maimon@adtran.com>
-To: jonathan.lemon@gmail.com,
-	vadim.fedorenko@linux.dev,
-	richardcochran@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Sagi Maimon <sagi.maimon@adtran.com>
-Subject: [PATCH v1] ptp: ocp: Fix NULL dereference in Adva board SMA sysfs operations
-Date: Mon, 28 Apr 2025 17:33:47 +0300
-Message-ID: <20250428143347.23675-1-sagi.maimon@adtran.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1745850871; c=relaxed/simple;
+	bh=0l9dI7M8qx7oSnZvluNIbOgdc4+hwl5omhl0ehfQ9Y0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ov0RpnKguE9vnulFlIDpzM2eq86pOI5WET9RM9W5MWQdHstZnSZeEulZ08fsiU5prA+nNVzCLiQgWEZlXZshleGRjEgZ9p2e8tEfVZYHWULGDbfxTcO4mMCv1kkrlIOzIhxMGLUpzmxhXQootR0kSTBmhHmIx16i1g6OTUyh2GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C2FA1516;
+	Mon, 28 Apr 2025 07:34:16 -0700 (PDT)
+Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E3DB3F66E;
+	Mon, 28 Apr 2025 07:34:18 -0700 (PDT)
+From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+To: ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com,
+	corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	jean-philippe@linaro.org,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	maz@kernel.org,
+	james.morse@arm.com,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	baohua@kernel.org,
+	david@redhat.com,
+	ioworker0@gmail.com,
+	jgg@ziepe.ca,
+	nicolinc@nvidia.com,
+	mshavit@google.com,
+	jsnitsel@redhat.com,
+	smostafa@google.com,
+	kevin.tian@intel.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev
+Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+Subject: [PATCH v6 0/3] Initial BBML2 support for contpte_convert()
+Date: Mon, 28 Apr 2025 14:33:49 +0000
+Message-ID: <20250428143352.53761-2-miko.lenczewski@arm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Adva boards, SMA sysfs store/get operations can call
-__handle_signal_outputs() or __handle_signal_inputs() while the `irig`
-and `dcf` pointers are uninitialized, leading to a NULL pointer
-dereference in __handle_signal() and causing a kernel crash. Add
-Adva-specific callbacks ptp_ocp_sma_adva_set_outputs() and
-ptp_ocp_sma_adva_set_inputs() to the ptp_ocp driver, and include NULL
-checks for `irig` and `dcf` to prevent crashes.
+Hi All,
 
-Fixes: ef61f5528fca ("ptp: ocp: add Adva timecard support")
-Signed-off-by: Sagi Maimon <sagi.maimon@adtran.com>
----
- drivers/ptp/ptp_ocp.c | 62 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 60 insertions(+), 2 deletions(-)
+This patch series adds initial support for eliding Break-Before-Make
+requirements on systems that support BBML2 and additionally guarantee
+to never raise a conflict abort.
 
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index faf6e027f89a..3eaa2005b3b2 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -2578,12 +2578,70 @@ static const struct ocp_sma_op ocp_fb_sma_op = {
- 	.set_output	= ptp_ocp_sma_fb_set_output,
- };
- 
-+static int
-+ptp_ocp_sma_adva_set_output(struct ptp_ocp *bp, int sma_nr, u32 val)
-+{
-+	u32 reg, mask, shift;
-+	unsigned long flags;
-+	u32 __iomem *gpio;
-+
-+	gpio = sma_nr > 2 ? &bp->sma_map1->gpio2 : &bp->sma_map2->gpio2;
-+	shift = sma_nr & 1 ? 0 : 16;
-+
-+	mask = 0xffff << (16 - shift);
-+
-+	spin_lock_irqsave(&bp->lock, flags);
-+
-+	reg = ioread32(gpio);
-+	reg = (reg & mask) | (val << shift);
-+
-+	if (bp->irig_out)
-+		ptp_ocp_irig_out(bp, reg & 0x00100010);
-+	if (bp->dcf_out)
-+		ptp_ocp_dcf_out(bp, reg & 0x00200020);
-+
-+	iowrite32(reg, gpio);
-+
-+	spin_unlock_irqrestore(&bp->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int
-+ptp_ocp_sma_adva_set_inputs(struct ptp_ocp *bp, int sma_nr, u32 val)
-+{
-+	u32 reg, mask, shift;
-+	unsigned long flags;
-+	u32 __iomem *gpio;
-+
-+	gpio = sma_nr > 2 ? &bp->sma_map2->gpio1 : &bp->sma_map1->gpio1;
-+	shift = sma_nr & 1 ? 0 : 16;
-+
-+	mask = 0xffff << (16 - shift);
-+
-+	spin_lock_irqsave(&bp->lock, flags);
-+
-+	reg = ioread32(gpio);
-+	reg = (reg & mask) | (val << shift);
-+
-+	if (bp->irig_in)
-+		ptp_ocp_irig_in(bp, reg & 0x00100010);
-+	if (bp->dcf_in)
-+		ptp_ocp_dcf_in(bp, reg & 0x00200020);
-+
-+	iowrite32(reg, gpio);
-+
-+	spin_unlock_irqrestore(&bp->lock, flags);
-+
-+	return 0;
-+}
-+
- static const struct ocp_sma_op ocp_adva_sma_op = {
- 	.tbl		= { ptp_ocp_adva_sma_in, ptp_ocp_adva_sma_out },
- 	.init		= ptp_ocp_sma_fb_init,
- 	.get		= ptp_ocp_sma_fb_get,
--	.set_inputs	= ptp_ocp_sma_fb_set_inputs,
--	.set_output	= ptp_ocp_sma_fb_set_output,
-+	.set_inputs	= ptp_ocp_sma_adva_set_inputs,
-+	.set_output	= ptp_ocp_sma_adva_set_output,
- };
- 
- static int
+This support reorders and elides both a TLB invalidation and a DSB in
+contpte_convert(), when BBML2 is supported. This leads to a 12%
+improvement when executing a microbenchmark designed to force the
+pathological path where contpte_convert() gets called. This represents
+an 80% reduction in the cost of calling contpte_convert().
+
+We clarify both the correctness and performance benefits of this elision
+with respect to the relevant Arm ARM passages, via substantial comments
+in the contpte_convert() source.
+
+This series is based on v6.15-rc3 (9c32cda43eb7).
+
+Notes
+======
+
+Patch 1 implements an allow-list of cpus that support BBML2, but with
+the additional constraint of never causing TLB conflict aborts. We
+settled on this constraint because we will use the feature for kernel
+mappings in the future, for which we cannot handle conflict aborts
+safely.
+
+Yang Shi has a series at [1] that aims to use BBML2 to enable splitting
+the linear map at runtime. This series partially overlaps with it to add
+the cpu feature. We believe this series is fully compatible with Yang's
+requirements and could go first.
+
+Due to constraints with the current design of the cpufeature framework
+and the fact that our has_bbml2_noabort() check relies on both a MIDR
+allowlist and the exposed MMFR2 register value, if an implementation
+supports our desired BBML2+NOABORT semantics but fails to declare
+support for BBML2 via the id_aa64mmfr2.bbm field, the check will fail.
+
+Not declaring base support for BBML2 when supporting BBML2+NOABORT
+should be considered an erratum [2], and a workaround can be applied in
+__cpuinfo_store_cpu() to patch in support for BBML2 for the sanitised
+register view used by SCOPE_SYSTEM. However, SCOPE_LOCAL_CPU bypasses
+this sanitised view and reads the MSRs directly by design, and so an
+additional workaround can be applied in __read_sysreg_by_encoding()
+for the MMFR2 case.
+
+For situations where support for BBML2+NOABORT is claimed by an
+implementor and subsequently built into the kernel, but problems later
+arise that require user damage control [3], we introduce a kernel
+commandline parameter override for disabling all BBML2 support.
+
+[1]:
+  https://lore.kernel.org/linux-arm-kernel/20250304222018.615808-1-yang@os.amperecomputing.com/
+
+[2]:
+  https://lore.kernel.org/linux-arm-kernel/3bba7adb-392b-4024-984f-b6f0f0f88629@arm.com/
+
+[3]:
+  https://lore.kernel.org/all/0ac0f1f5-e4a0-46ae-8ea0-2eba7e21a7e1@arm.com/
+
+Changelog
+=========
+
+v6:
+  - clarify correctness and performance of elision of __tlb_flush_range()
+  - rebase onto v6.15-rc3
+
+v5:
+  - https://lore.kernel.org/all/20250325093625.55184-1-miko.lenczewski@arm.com/
+  - fixup coding style nits
+  - document motivation for kernel commandline parameter
+
+v4:
+  - https://lore.kernel.org/all/20250319150533.37440-2-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc5
+  - switch from arm64 sw feature override to hw feature override
+  - reintroduce has_cpuid_feature() check in addition to MIDR check
+
+v3:
+  - https://lore.kernel.org/all/20250313104111.24196-2-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc4
+  - add arm64.nobbml2 commandline override
+  - squash "delay tlbi" and "elide tlbi" patches
+
+v2:
+  - https://lore.kernel.org/all/20250228182403.6269-2-miko.lenczewski@arm.com/
+  - fix buggy MIDR check to properly account for all boot+late cpus
+  - add smmu bbml2 feature check
+
+v1:
+  - https://lore.kernel.org/all/20250219143837.44277-3-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc3
+  - remove kvm bugfix patches from series
+  - strip out conflict abort handler code
+  - switch from blocklist to allowlist of bmml2+noabort implementations
+  - remove has_cpuid_feature() in favour of MIDR check
+
+rfc-v1:
+  - https://lore.kernel.org/all/20241211154611.40395-1-miko.lenczewski@arm.com/
+  - https://lore.kernel.org/all/20241211160218.41404-1-miko.lenczewski@arm.com/
+
+Mikołaj Lenczewski (3):
+  arm64: Add BBM Level 2 cpu feature
+  iommu/arm: Add BBM Level 2 smmu feature
+  arm64/mm: Elide tlbi in contpte_convert() under BBML2
+
+ .../admin-guide/kernel-parameters.txt         |   3 +
+ arch/arm64/Kconfig                            |  19 +++
+ arch/arm64/include/asm/cpucaps.h              |   2 +
+ arch/arm64/include/asm/cpufeature.h           |   5 +
+ arch/arm64/kernel/cpufeature.c                |  71 +++++++++
+ arch/arm64/kernel/pi/idreg-override.c         |   2 +
+ arch/arm64/mm/contpte.c                       | 139 +++++++++++++++++-
+ arch/arm64/tools/cpucaps                      |   1 +
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |   3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |   3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   4 +
+ 11 files changed, 251 insertions(+), 1 deletion(-)
+
 -- 
-2.47.0
+2.49.0
 
 
