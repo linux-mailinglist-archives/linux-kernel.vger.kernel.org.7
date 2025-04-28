@@ -1,109 +1,91 @@
-Return-Path: <linux-kernel+bounces-623932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069F0A9FCB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880ACA9FDDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85E691A83944
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F1173BAF4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4F320A5D6;
-	Mon, 28 Apr 2025 22:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349EA213245;
+	Mon, 28 Apr 2025 23:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tImX1hhb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91261367;
-	Mon, 28 Apr 2025 22:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F5370831
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 23:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745877778; cv=none; b=TAnmczllshilX3IqypcGY9cuEiysQDqVmjp5fqBL2vkKGTMH50QTocrINsQT7QAdnxIWo2RirI2baBkPJjd/Rd/U9JNDqtaLbkIGk0vmz7SxxagH6nOOByiC56QRYp+K6KUXdnx3MlrecmTQho9MEgoGsfJcFRdHrnIPqNbTr3A=
+	t=1745883921; cv=none; b=IvQEKzcn+vLWslKEMfYJPOIm1bM/iBsDed1xOeCcU8ZgXnrmkZu4e7N0TIEUfcA+9uLfBYRihQN5EkklgP7Zh2ZcY3PsF49O1HeWGnkaBVRQZozz7Xl/bMgUOio60p3s2GvSwkkEdgey4J0bFh6fEmCpk+Ua5PqQkrxk+KyJ59Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745877778; c=relaxed/simple;
-	bh=W4YKhaHesIMWHxvP/qA3bz+J9Plo8P7isVbJBSL3WXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tRW1HbJJx/E3hLzQtEe3d1NTVRiBcUYUrCNqAag/z8RrUls9DS2Qy10WCq/tt7J5+GfsLnQLo0HM5mXd0bpWNcOKoUaHoyjZPtSzmuJKsaDRiddpjvGdxJqnTKAYaIUf21soNnxubexUUg/5eMxkTYuWWkXo6o7Ygrk/RdMSCYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FA0C4CEE4;
-	Mon, 28 Apr 2025 22:02:54 +0000 (UTC)
-Date: Mon, 28 Apr 2025 18:02:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>, Sam
- James <sam@gentoo.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jens
- Remus <jremus@linux.ibm.com>, Florian Weimer <fweimer@redhat.com>, Andy
- Lutomirski <luto@kernel.org>, Weinan Liu <wnliu@google.com>, Blake Jones
- <blakejones@google.com>, Beau Belgrave <beaub@linux.microsoft.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>
-Subject: Re: [PATCH v5 13/17] perf: Support deferred user callchains
-Message-ID: <20250428180253.1b1517a8@gandalf.local.home>
-In-Reply-To: <aA_oJ7tgGv-H4ocX@google.com>
-References: <20250424162529.686762589@goodmis.org>
-	<20250424162633.390748816@goodmis.org>
-	<aAupP56jOM_wul_8@google.com>
-	<20250425125815.5c5b33be@gandalf.local.home>
-	<aA_oJ7tgGv-H4ocX@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745883921; c=relaxed/simple;
+	bh=IN41MdVUBjlLlMwvoDgwbwFjqaZdapPOSR6HsNZcojE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=skI2n2Czs7OYNP4EpFOv0S6qE0GH++XUt3mMLiu7gbKWiD/GDFyRZ5X90N+JsAfboMMC4Mg88bwwriFKHT5mQUK82X9rsCBlgjKvkDoSi1m73qaNXAzNy/bY0IadSb875gOKTT/6oCExibvZxba0N5HpGpPVKkXMCRSv+ibSVaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tImX1hhb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C3BC4CEE4;
+	Mon, 28 Apr 2025 23:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745883921;
+	bh=IN41MdVUBjlLlMwvoDgwbwFjqaZdapPOSR6HsNZcojE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tImX1hhbPhVcJAAYIfQI9yKKmjWKOUwFWqkOZXTy/fU8rYn0DD5s4zoQcTIG+SFVA
+	 usI/s7HQxevT7FN2JQ/Fc2oNydmd7ZmIwVM1jR2+qRFFTVHIg0QZzrKuRwgC+RZ1Xa
+	 tihjkFzKVunwR7uh6K6fH6S++SaoA8G0Xy+TDjLsXW1twQx79aHfDZktEJMy9j7RSL
+	 eYo6vQZl7/BkCAPZ9EqCOdJpSB3PiSfF9n95uCSb6H/XlmRyowgB+btWlIgrjXIcNr
+	 GFlOybHaOENph/edqMLaE7HPnHL+WIO30VnVBV4YJpe/sIR2KVAQW88xhyUBlymwWD
+	 GEvsbyXcOQi5A==
+From: carlos.bilbao@kernel.org
+To: tglx@linutronix.de,
+	seanjc@google.com,
+	jan.glauber@gmail.com
+Cc: bilbao@vt.edu,
+	pmladek@suse.com,
+	akpm@linux-foundation.org,
+	jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	takakura@valinux.co.jp,
+	john.ogness@linutronix.de,
+	Carlos Bilbao <carlos.bilbao@kernel.org>
+Subject: [PATCH v2 0/2] panic: Reduce CPU consumption after panic
+Date: Mon, 28 Apr 2025 16:59:50 -0500
+Message-ID: <20250428215952.1332985-1-carlos.bilbao@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Apr 2025 13:42:15 -0700
-Namhyung Kim <namhyung@kernel.org> wrote:
+From: Carlos Bilbao <carlos.bilbao@kernel.org>
 
+Provide a priority-based mechanism to set the behavior of the kernel at
+the post-panic stage -- the current default is a waste of CPU except for
+cases with console that generate insightful output.
 
-> > 
-> > Could we just not use deferred when running with "-a" for now? Or could we
-> > possibly just make the deferred stacktrace its own event? Have it be
-> > possible that perf just registers a signal instance with the deferred
-> > unwinding logic, and then perf can handle where to write the information. I
-> > don't know perf well enough to implement that.  
-> 
-> Even if it excludes per-CPU events, per-task events also can attach to a
-> CPU and that's the default behavior of the perf record IIRC.  In that
-> case, it needs to be careful when it accesses the event since the task
-> can migrate to another CPU.  So I'm not sure if it's a good idea to
-> track event that requested the deferred callchains.
+In v1 [1], I illustrated the potential to reduce unnecessary CPU usage
+with an experiment with VMs. The main delta is that, instead of a weak
+function that archs can overwrite, we provide a flexible priority-based
+mechanism (following suggestions by Sean Christopherson),
+panic_set_handling().
 
-Wait? Even for per task, it uses per cpu?
+[1] https://lore.kernel.org/all/20250326151204.67898-1-carlos.bilbao@kernel.org/
 
-> 
-> Also it doesn't need to emit duplicate deferred callchains if a task
-> has multiple events and they are requesting callchains.  Unfortunately,
-> the kernel cannot know which events are related or profiled together.
-> 
-> Hmm.. maybe we can add a cookie to the event itself (by ioctl or
-> something) in order to group events in a profiling session and then use
-> that for deferred callchains?  Task should maintain a list of active
-> cookies (or sessions) somehow but then perf can check if the current CPU
-> has events with matching cookies and emit a deferred callchain.
+Carlos:
+  panic: Allow for dynamic custom behavior after panic
+  x86/panic: Add x86_panic_handler as default post-panic behavior
 
-Could we add a callchain event? It gets woken at any request but not
-triggered until the task returns. A way that there would be only a single
-event for every perf instance, but it can trace any task.
+---
+ arch/x86/kernel/setup.c | 12 ++++++++++++
+ include/linux/panic.h   |  2 ++
+ kernel/panic.c          | 27 +++++++++++++++++++++++++++
+ 3 files changed, 41 insertions(+)
 
-It could use the cookie method that ftrace uses, where the request gets a
-cookie, and can be recorded to the perf event in the interrupt. Then the
-callchain would record the cookie along with the stack trace, and then perf
-tool could just match up the kernel stacks with their cookies to the user
-stack with its cookie.
-
--- Steve
 
