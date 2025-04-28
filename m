@@ -1,88 +1,102 @@
-Return-Path: <linux-kernel+bounces-622631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA04BA9EA1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:56:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE34BA9E9FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B74D7A10DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:55:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ABB07A621E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35655212D7D;
-	Mon, 28 Apr 2025 07:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0258213E63;
+	Mon, 28 Apr 2025 07:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSvL4eLQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPximnop"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738DB211A0E;
-	Mon, 28 Apr 2025 07:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E282139AF;
+	Mon, 28 Apr 2025 07:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826524; cv=none; b=phPBdIjL0sZCn2vESeZKZtUSLKUyvx5GzugXnszwleqpKOkqRdsIykKpwiJ7ZjjGh+FCm6F5HPpIA+4iKFqgiO5Y6czTDTW+A80unQ/xz4Bp03mj/aolwaz53nFFQ5dTXs7O4Bd3AYX9ap3W0Tn4+lAPEDPrCctb/DIqYwlY+FM=
+	t=1745826573; cv=none; b=T1Esp8+CgjBilOUBWMQxCgF6Es3j9oydS3+0ZIEtfjbKV3u8W+jYkjWAaoI1vOkjuNehmURh5QKdSZKxF41uQ63m5sFCATXinhs5fh2eKyaSlokNpYusJBs4w6HN/0co/446sqCrL3/NMqRoMYZKa0uzzlSoHohNktW0FBWiD40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826524; c=relaxed/simple;
-	bh=XIum2Jp2SetQmeZuKWfStoEDCIoEugFgfOxrXV8EvhM=;
+	s=arc-20240116; t=1745826573; c=relaxed/simple;
+	bh=gz3v87ioQs5PO0ngRoziti1AQO3BGFw3wZSaC9CSs8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8CmI9WA/eNwURTTjzr6ak+2Q6pDTtw/UzNZRXG1ESV5zkS54RZLUjS4BPVlqAGtQAWc52qAhG++AfKDQuO15Sjdya7oJ8K2MFcEOhf+WlEPkyXEdiYRzn9Z1kF6EyQgtV7+UVkAwzPgFLRwG53n89xJPa+jsSFRX9O4v5l+na8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSvL4eLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775A7C4CEE4;
-	Mon, 28 Apr 2025 07:48:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaF7n/eO5FPvr+bJIcYxbyOsglq19OxJEU03iIKjxqkFhOUP9aS6Zuhm5bwI+174kbKCq5JmRDQqRxxsKGYD+PuboC+ER3D27mJ7zo8EibsFCUGV6EZ4BJrUaq89pWAdosYdNrHyjX2OvQam5xf0ReA07j8KP/Vq/b9G5KldL3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPximnop; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BD6C4CEEC;
+	Mon, 28 Apr 2025 07:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745826523;
-	bh=XIum2Jp2SetQmeZuKWfStoEDCIoEugFgfOxrXV8EvhM=;
+	s=k20201202; t=1745826572;
+	bh=gz3v87ioQs5PO0ngRoziti1AQO3BGFw3wZSaC9CSs8I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bSvL4eLQRxoOQECyI+1vl4D+9jez5mbHG3rxYtCbzKndtQrf5zv+QN5g4LDoeWTJy
-	 iFSgyyzGHrEBHOIOVcHMQS2DGOSawhKDijh5TESPXUvZLK2e3uvaXZnsWtfBOxSWz5
-	 xnog/XtUjYJOixhALrqUyFzcYEoelwMj91HcUP2mgVMc33XTSzcshmoZQPsqEhaTVZ
-	 LOrMeJ7DUBwzdYzCw/gWNh+/DshtrM6VRQgMYNzUKZ7iNua1eXI9WEE5VYuAipr47R
-	 gQAuB2rQu5cH/XdvFFbKQhLhnYKikJGhFPlP799mh7C0NXQbtsjXzkTLjYJVvFgjsC
-	 80XU1V46dlXow==
-Date: Mon, 28 Apr 2025 09:48:41 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lijuan Gao <quic_lijuang@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: remoteproc: qcom,sm8150-pas: Document
- QCS615 remoteproc
-Message-ID: <20250428-hopeful-mushroom-of-pleasure-1aef73@kuoka>
-References: <20250423-add_qcs615_remoteproc_support-v1-0-a94fe8799f14@quicinc.com>
- <20250423-add_qcs615_remoteproc_support-v1-1-a94fe8799f14@quicinc.com>
+	b=uPximnopkAxrgRV655KCEfhvJ1fjCkHn8Cnxg5LGMEmrjp+Wb0hcUOj1p00wqeqUO
+	 dzJlkTJF0OCpYhqD3T2sHusjTHmrV8HhuFPzeYoC9V6RUTrTkB/0j/UJBuE23ZJbIK
+	 TWcyt2JNxEdwdo7bsUjYx8qw7JVCoLMq6jNtjD7NTLAdkRqg7c9ooybXK1uMDVJDlo
+	 vfCdlKGblIlmWtEeht8ssisgKsw3pxrKias4RnPnfsZtslh2PmIMouwpR316bapMvJ
+	 8JhEytjwyJYy+Vj9ezr4IpLOfyTyA3Y3d6rwFgAw1qPRi8CXbojTuvkhgv2nhhkGjH
+	 iQMcp72gl2QeA==
+Date: Mon, 28 Apr 2025 13:19:24 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v3 3/4] tpm/tpm_ftpm_tee: support TPM_CHIP_FLAG_SYNC
+Message-ID: <aA8zBP6h8oG5m4w9@sumit-X1>
+References: <20250414145653.239081-1-sgarzare@redhat.com>
+ <20250414145653.239081-4-sgarzare@redhat.com>
+ <CAGxU2F5SJ9nQfAV-D1WKjsUow_01xjGBRXP4d+q4T=5Bw=yaOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250423-add_qcs615_remoteproc_support-v1-1-a94fe8799f14@quicinc.com>
+In-Reply-To: <CAGxU2F5SJ9nQfAV-D1WKjsUow_01xjGBRXP4d+q4T=5Bw=yaOg@mail.gmail.com>
 
-On Wed, Apr 23, 2025 at 05:17:37PM GMT, Lijuan Gao wrote:
->  
->    reg:
->      maxItems: 1
-> @@ -59,16 +68,17 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          enum:
-> -            - qcom,sc8180x-adsp-pas
-> -            - qcom,sc8180x-cdsp-pas
-> -            - qcom,sc8180x-slpi-pas
+On Mon, Apr 14, 2025 at 04:59:47PM +0200, Stefano Garzarella wrote:
+> On Mon, 14 Apr 2025 at 16:57, Stefano Garzarella <sgarzare@redhat.com> wrote:
+> >
+> > From: Stefano Garzarella <sgarzare@redhat.com>
+> >
+> > This driver does not support interrupts, and receiving the response is
+> > synchronous with sending the command.
+> >
+> > So we can set TPM_CHIP_FLAG_SYNC to support synchronous send() and
+> > return responses in the same buffer used for commands. This way we
+> > don't need the 4KB internal buffer used to cache the response before
+> > .send() and .recv(). Also we don't need to implement recv() op.
+> >
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> > v2:
+> > - set TPM_CHIP_FLAG_SYNC and support it in the new send()
+> > - removed Jens' T-b
+> 
+> @Jens @Sumit can you test/review this patch again since from v1 we
+> changed the core a bit adding TPM_CHIP_FLAG_SYNC instead of
+> send_recv() op?
 
-This needs fixes, but it is not related to this patch. I'll send a fix
-but might conflict in first diff chunk.
+Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+-Sumit
 
