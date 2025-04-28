@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-623071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFB6A9F083
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3257BA9F087
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B3318900AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD5A91898FD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0902268FEB;
-	Mon, 28 Apr 2025 12:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9341266EF1;
+	Mon, 28 Apr 2025 12:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4GQDDo4"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ry4+tPFP"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896E81D54D1;
-	Mon, 28 Apr 2025 12:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D74486323
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 12:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745842831; cv=none; b=MQ2V4PVLVYHv+yDz1Qf4XFNY+rVA9Axwe0fVXPf4Y2pKVWpAqmCFhMlOptWOugEUDjddWbJLjoBamYt8zK/GEi6t9xvR5EyxKhllDPrU1fU8iImd9aV/ylP92jX1KoJ46JYAuL/K7AAepmpketfn40qtrG47FI3KpZ1OsIyAeNQ=
+	t=1745842941; cv=none; b=P8yc2eifoKLTp8vkaPgJtLIAnef5sGiTlUZgUg3zazqgeUETyjWkzFjKpm9Hd0cvT1g1pGM7DPXzqw5mxldT9RPDf8a8qHKWO6W+DyFvc7dfi9ldqEsNiNXPy7BoNdA8HHdEDeEiAuIQC9N2fJp6emX2q81/99dWttpTcAgkJkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745842831; c=relaxed/simple;
-	bh=5LJVD7EEo2QIoCV1sD+YeaR74gXBmkqhDW5rQm+7VG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CM+fUbCx1u8eKrBOE/atWK7QKxknc50Wwofz1N6AffsJ8bZkJcpXS8123J1rkkI99hgotO1pQxkmj0VU/TI9k4QqdV7QJXiZaBZ/b8ny6b8jo1OPBYvoVDmzXAvnAMWqxMn/b3wCkaYOAzXScRYkPyOdg73Rh6Ppo13b50y7qWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4GQDDo4; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-310447fe59aso54014801fa.0;
-        Mon, 28 Apr 2025 05:20:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745842827; x=1746447627; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TWpWmVQh5LkKQ38Ckz6b68wz7ZGK8S3wIAjuRScvxvk=;
-        b=Y4GQDDo4D0JetboM2ofJnJCPDTEsngQR3nHR/tnu5SB/UTgTpmhOjV8OdCAd/Ptugi
-         FRJ7Gdrn12yHvl8R+B+dc3mk7LgbAUcMw949aBwPRnrrQbFqiq7IuyehHY6FCxA6plsL
-         PL0mF0Vshqi434Bd68SEihnzjPj6AlF3oZbrmfk0L6dPnwOAeflKtFVnwTbBFwgQiZAy
-         UUeei3IPU24MKFIESLFZLjoWDdQDSwmZgfgKdZvjoxYOUXZf8x/QKd1s26eM7+Ah9i5d
-         dFjHT/TATSK8AdJkL5NxPNpnXba+OGkfTgw2yyybVIe3RLcwYzeAAw3RPCn7C2MsA6GF
-         scIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745842827; x=1746447627;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TWpWmVQh5LkKQ38Ckz6b68wz7ZGK8S3wIAjuRScvxvk=;
-        b=J7CZZ34L5mpLDCxs15WNqK6m3UDVhpyFFApm09IQYeHUKwUl5XrPGrpBrSu+bCjOLx
-         jt5WArikpSx8Pi/8mPTFrLQeozWkQUEdg2ebvjlWjl2mFoZUV6+wb45Lg+9geeg+b8OX
-         A+i4pLQLm1GgkdW3li8dg6G25V8U+HkqnVWK5JtZ2lXo/kb6s7WbMnCSA3kd6gi7e1V0
-         N51a7ZfoRMSKWrl91uHdFH4VuHw6BBvS27f0SH+0zWutK0qYuSs9StIo4e7LgIR2b9tP
-         +wI54D3zH8/nRG49Op9Qcj2hmeqXh6gJ8moInDh/JXFbTKSynZ+UEI7yv33thCARtKqz
-         Duxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzNOywBae+hWxwsZVbmQ0cQ3zXm8VTJtbd5Hm6tR7SKjr0U4SxV+9CLYR8ZthIcPT2+yKjAdv1qj1Sixnn@vger.kernel.org, AJvYcCXnixzhUXFudiTGnLTAStfTrwVDJYRc8LO+CGLCMymI8YkY1osnzOVsdMkqI/Z+dgO1vOIh9c9F6f5K@vger.kernel.org, AJvYcCXrY+ibE2Lh3BAuP3jsrPuU6R1MWnG6fOJWzVN9AQsm+OsMLVwqCZ5kc2sqdXpyFIJkzI3Z5mzB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm6qncv/XoH0Dw5bd7wZzL8M8Og3mR9hIHan5J1T8GwyHuOxDs
-	o1cM8bz/F1MD3pXaoTmNIxhlnpQ9PFVQD8/DSiuPgk8QYj+UfoiMPGU2lGCIo2J16PZGi1PLFN0
-	6U4yrUZGx4pJzsJ17J6fEW5qYwtU=
-X-Gm-Gg: ASbGncsqAb8s/yECzhYaFK8e6IosrPDLQm9y8bTlTJ+soDJ9yPU9FW9DrBwQwtF56G2
-	79wmNiFMs3u8IZCRiYCrUH57ofYA29uU70soaUj2fxAx2u3nSwC5YeqqJMAWCuqX0F54dUXuK1h
-	oKfjeVbjc1QVMaSzNp/E958d3UZRzOUDROza4FhQoDiXYtbQENt5SMQLGOqmfN5c3g
-X-Google-Smtp-Source: AGHT+IEH7MzW5oALwsc/C1WmzilPjbYvu0ys4k1ey8nO0994HXLEhmlKcG8IDGOmdq5NvefT7TwCpG/T3Y0sA3Y96g4=
-X-Received: by 2002:a2e:8048:0:b0:31a:56a5:8454 with SMTP id
- 38308e7fff4ca-31a56a58783mr13285171fa.15.1745842827247; Mon, 28 Apr 2025
- 05:20:27 -0700 (PDT)
+	s=arc-20240116; t=1745842941; c=relaxed/simple;
+	bh=8yfEDGzbxCyfVYWEZnuO7W6XCL8lAe4+R3KqnXKNvWg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f83JelbLpoNLBb5NWzfZD5u3fVcHyQFUuTxHIsSm0ntduKC4A8enRhndGWwR30RUJ+MmVl4qZrtGkfgt07PTgFsN1dCAuVLhJyqsqWWZI1zQN2jY8uAo18QIcuPQjjtAIKT6mLe71kXtwbhXuinrZV8e7BWnWNfrvI9E9deBErg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ry4+tPFP; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53SCLrZi3537890
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 07:21:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745842913;
+	bh=KxTlyCZnOk5Fb5qZtA1PgQTQKjHe1tm0Wp5tPNo+aX4=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Ry4+tPFP/1qA0h38zaAAQ8ugHBdCOWy3FjsVUrxcRQJGm+z/52ogDKPxV6rUS/UZP
+	 OqsDfkMUW6qMx8qSnL8GuqxdHw+r7bv2RXhT7nu2LpAsgZ1d6yRZqNYhAMBqI6JZ+N
+	 erMOL43QAn2JSB2Kzq2irFCxIuKd3Q3Jsnsgreic=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53SCLrhu009229
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Apr 2025 07:21:53 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
+ Apr 2025 07:21:52 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 28 Apr 2025 07:21:52 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53SCLqlZ034680;
+	Mon, 28 Apr 2025 07:21:52 -0500
+Date: Mon, 28 Apr 2025 07:21:52 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Meghana Malladi <m-malladi@ti.com>
+CC: <vigneshr@ti.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <quic_tdas@quicinc.com>, <nfraprado@collabora.com>, <arnd@arndb.de>,
+        <lumag@kernel.org>, <geert+renesas@glider.be>,
+        <krzysztof.kozlowski@linaro.org>, <bjorn.andersson@oss.qualcomm.com>,
+        <will@kernel.org>, <catalin.marinas@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable XDP socket support for
+ high-performance networking
+Message-ID: <20250428122152.kfvliea3ragsmziy@askew>
+References: <20250428121025.246119-1-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428074424.3311978-1-lukma@denx.de> <20250428074424.3311978-2-lukma@denx.de>
-In-Reply-To: <20250428074424.3311978-2-lukma@denx.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 28 Apr 2025 09:20:15 -0300
-X-Gm-Features: ATxdqUF9vhWUQdAh6ucd_rpBTSQD6jiO0FGzDnLrY9eVB0nzIxQ7MHR_oHtFiUs
-Message-ID: <CAOMZO5CYq8YKZBM6nk2pk8W0005MBBPdVqS_qe-O4-ZzkUG0bA@mail.gmail.com>
-Subject: Re: [net-next v8 1/7] dt-bindings: net: Add MTIP L2 switch description
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Stefan Wahren <wahrenst@gmx.net>, 
-	Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250428121025.246119-1-m-malladi@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Lukasz,
+On 17:40-20250428, Meghana Malladi wrote:
+> From: MD Danish Anwar <danishanwar@ti.com>
+> 
+> Enable CONFIG_XDP_SOCKETS to allow for eXpress Data Path (XDP) socket
+> support specifically on TI SoC platforms such as the AM64x and AM65x.
+> This enables the use of XDP sockets for high-performance, low-latency
+> networking applications, allowing for efficient processing of network
+> packets and improved overall system performance.
 
-On Mon, Apr 28, 2025 at 4:44=E2=80=AFAM Lukasz Majewski <lukma@denx.de> wro=
-te:
+* What specific upstream supported boards benefits with this?
+* What is the size increase in vmlinux (use scripts/bloat-o-meter and
+  add that information in the commit message)
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 9e16b494ab0e..5c3abd51074d 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -130,6 +130,7 @@ CONFIG_MEMORY_FAILURE=y
+>  CONFIG_TRANSPARENT_HUGEPAGE=y
+>  CONFIG_NET=y
+>  CONFIG_PACKET=y
+> +CONFIG_XDP_SOCKETS=y
+>  CONFIG_UNIX=y
+>  CONFIG_INET=y
+>  CONFIG_IP_MULTICAST=y
+> 
+> base-commit: 2c9c612abeb38aab0e87d48496de6fd6daafb00b
+> -- 
+> 2.43.0
+> 
 
-> +            reset-gpios =3D <&gpio2 13 0>;
-
-The zero here means active high.
-
-I assume active low is more common, and you even used active low in
-the XEA board.
-
-I suggest using
-
- reset-gpios =3D <&gpio2 13 GPIO_ACTIVE_LOW>; in the dt-binding example.
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
