@@ -1,106 +1,184 @@
-Return-Path: <linux-kernel+bounces-622826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5177A9ED31
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A45BA9ED30
 	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA691885B1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8673AE702
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD6439ACC;
-	Mon, 28 Apr 2025 09:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30A3262FC3;
+	Mon, 28 Apr 2025 09:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="OVY4Cl7m";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="r4XAPYlg"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h04g84a7"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C12E35948;
-	Mon, 28 Apr 2025 09:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7409E1AC88A;
+	Mon, 28 Apr 2025 09:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745833620; cv=none; b=VDjOV4xGT8kYiswxsYbJZYG37jLhmMoTnzGUujCY2qOe6hG0nOG+VrBvoKL6+2RYVt2TUuhKwf/rTmDXtLBUvXyTvtYeGW3TeNkEBP6SeDV0qtgrjUDjcO3g9W3nWUWo+ZYlheVp2xZRcycZaf2U9qXRva4bmPjRAuVZZrOrjXw=
+	t=1745833258; cv=none; b=SHgOI6G1lYrcV4AbBWwSY9YxIZNkYD4ocgMwWKAiPhUabuFBP9hw24Rn+Nn4XhPsJZ7G+EEscYgidiOmACbvNIIuL5UwGIQmd/9zcj2CbMTcZjdBWu4JYwkMHKqnxM+FDAUqrhWfukrJg2e3JJusu+TkMA12+sxbHnKw8dMqRxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745833620; c=relaxed/simple;
-	bh=C8iPtrd8fB52Gd1GyUrGYVxOaqvoL/bDk0LqRSLid5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfK+zu3le5qmZpZsbrOfWz+ajaCxJcc77gojZrimvpOHwTw4nvJBgHtCK/YEAG3WaRH49KTlpE3AFjm7BHjwvWnlU1w4td63mDSrm8hyRGAhlk7j5OHOAnAAz4FoLsP2kTK7xuCVIQfrYSRd5WsAN3Y8NmSXQ46ZKvT1QvFTOJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=OVY4Cl7m; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=r4XAPYlg; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 968C6603AD; Mon, 28 Apr 2025 11:40:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1745833232;
-	bh=IfY/Hyz4Uq5w4aafjWmTBVFETfIHLFXDrW7Dref7PfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVY4Cl7mrYr9QAaz1+/xqfXx6t5Qz4MMOEYSoIjYRzNYvkCXf0DH3NtFsmYosJQNX
-	 HQXhDp3T7ErmwfRVPVwe0SniZDspGlbj69A/i89kftCma/okQgV+dOboCZ3btFnAoF
-	 +lWEsFmXY/Gnr91whID7pcFAzWdzXTWS2q7Wv+x05+2dtF31pBlFExA+ZFXuyGYPYF
-	 P2Yp55dy/HKyuPgaWqR2270xQfAFYeZH5voaEVRXp4Ld11As+VrS+WLhTAk2V6ppKb
-	 N5vz87vIhMVqURGBzJaiYGfEqSlIAc2xfhwhsU+esSIe1n9X90F5WEnbiLqxtTfMQ9
-	 G8FQli3fab/Cg==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id 5B84260353;
-	Mon, 28 Apr 2025 11:40:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1745833229;
-	bh=IfY/Hyz4Uq5w4aafjWmTBVFETfIHLFXDrW7Dref7PfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r4XAPYlgSMBXm6fsZ4DI1Z0s71BvbqUn+FMx2x9w1gTCVvWYzldUnf4l5UCWYfwQ4
-	 TRFtBGLRBQZ8dO5z1rWL0LocbDeYNydfj0fYPsNq6wKi5y0h07BmQjpEf9ubShNDNz
-	 EW8htwAq+kfD6gFcunGrRQF73LcteOJ8sJUGwcOB1tLQGnYoFj9nFPwIkpbSYOjjO6
-	 sdTLbB5n843nZI4I9StQzfGuI7ml6zv2e8TA3sD/4ITgr/nqbAeKbXzXemcAvTRlgI
-	 vWnoLoyjrPqsMEhH+bpvLHQBrxXCr5qJBx2mZWUA01PoG5f8peh64P7+mjJZZK8c8l
-	 n6F5BbnVYb8MA==
-Date: Mon, 28 Apr 2025 11:40:26 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: lvxiafei <xiafei_xupt@163.com>
-Cc: fw@strlen.de, coreteam@netfilter.org, davem@davemloft.net,
-	edumazet@google.com, horms@kernel.org, kadlec@netfilter.org,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com, netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH V6] netfilter: netns nf_conntrack: per-netns
- net.netfilter.nf_conntrack_max sysctl
-Message-ID: <aA9NCkhJrLeeig9X@calendula>
-References: <20250415090834.24882-1-xiafei_xupt@163.com>
- <20250427081420.34163-1-xiafei_xupt@163.com>
+	s=arc-20240116; t=1745833258; c=relaxed/simple;
+	bh=QtEl+2m1eYszmz+3dFc2Lm7goH/HtdUxHXhZ2+8CrUM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NKvWhx0YLDzmuewLO/yze02j1BrcA7KT258LKoOadsrclwx/ZTC6mFmZpxfB5ub0OSxkDQZriVC/SXWKws9ZZKAwZkzBGZKu3c22QppTsmViq2Rig8jfJJqq9IzJ8HNNE3gcxQyxp+ay8mLrr9SZC/0EZAfC7txlnYbT8gCdyZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h04g84a7; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso43521375e9.1;
+        Mon, 28 Apr 2025 02:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745833255; x=1746438055; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eWdl+Kqq58dT2qY6KpY9tsh+8ZNojmQ7ty0C+vUxAbM=;
+        b=h04g84a7jpDGBhGPaigWQdk+0AID4S7B5+IZlsA6oUG6xwpYXj46ejvglURbvLoRSz
+         bdcmHOwE7s+UW8hgnUYXTyGe3Rb3vwqCiVttmTBztuZrkmXSQ1hrAtAopw+yI+Q3yKcT
+         IqJk+ct3QXORxteNrljBBu4rn4Wm1qUHQcXbKjA+ryPOil90RVJNxvfJKeKyrh+pFOzT
+         YJy3NGBtNgayTRxOmi+sKyI1bn0+uq90Um7qgnanLZ2/nOo1pHwCMgdlO6TzvmZmj/3I
+         aNfNUp7GqBiJmHM3srjsA+6AaEsAVICTUyY36hOsafaTDqzvolLhXmBZdaGJuQeSdYNS
+         4Syg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745833255; x=1746438055;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eWdl+Kqq58dT2qY6KpY9tsh+8ZNojmQ7ty0C+vUxAbM=;
+        b=DyrFa31jEGUnR5mB1QS+ZDB1/5KmXeoAJsybq2YXP6c5Fdchv6InETI0VB/tTOh2rM
+         DFU07aWH0eMbpJu75AZsytgebU2V/LlTctOXu9TmDljOwE+EhLifPdkY2ae2ShoQ7Yjp
+         WrVj3j9tSpRRa7UsPVOcLQG7Nz1hVn9oo5asazcP8cBmZrDyFieWSnWWZSV6ZhJnf2Q2
+         Q0IT4gslXOt/y4x8ZKP02OL6Ita6V0wmVGcrbYTGkb55aodHDyZwbT70SNtPxTGkpRw0
+         Sdfhr5b5dOr0qoNQm5E9va277InoDbVjzvXvpAWNOfCrWWUO8y4BUsuZRVLZ5N10OAnA
+         XQbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnvkd40E9wf0tPiIxJkr1C3ptmzqV5rrqVwC3RcLQ90M5yptgy0FsPE6THJrLskbkPyNxCI2Db@vger.kernel.org, AJvYcCVyYp+/0Apniner+prjqnYRuhbiyLqUuKfakHDWWFwGr0MQ/fDf//keIcpZgz+5A8Bo224+Aq/XqubnOc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIQRnHOffK7pzDQ1GD+WoTrsNaNIHmBRsRP1vnYGt+PVArKxK/
+	Q8CtIvfM6hhoTf2GpWpkuUpUf+tsIFumSZtFdnvZwGi1iJK3kQbP
+X-Gm-Gg: ASbGncu158dVv/QmOq9uMrdX6HNeta3BTBs6KmQT9vRGwvMkiBNJM98sLGNUrSrNeON
+	wgiWy861ysMLPo6cCCzzFxgXLzPqsarzerCUMaM/NZmspnNADnRVtiH23R3mqttUYqGVks2ciIc
+	OFye1w3/11OTkMdb/XclPrH8qBfyS5IK7p51wJaUSLzDat4/LPdjuJJqv36nwd+VQ5lnzdGAPlw
+	grtNyZHBIl/mQ1y0GNt2HvdlWHoDt1FyPDxR+pciudqoExyfwEGqkjwPdyDHAIqSMZnn814SyXz
+	r/3ZBxt0i1uILo9kgIFUzsrw3NiRrOdSSzd0MA==
+X-Google-Smtp-Source: AGHT+IH5WZ2I2b6xONMXmkTLp55tTW8AkFEOLovibWPPY96a7fFSfSjudvpq3AXJ+RQ8zoo5DYpahA==
+X-Received: by 2002:a05:600c:5120:b0:43d:22d9:4b8e with SMTP id 5b1f17b1804b1-440a65d8e5bmr109031545e9.10.1745833254418;
+        Mon, 28 Apr 2025 02:40:54 -0700 (PDT)
+Received: from vitor-nb.. ([2001:8a0:e602:d900:4f54:7a4f:dfe1:ebb6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2d8343sm152687785e9.28.2025.04.28.02.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 02:40:54 -0700 (PDT)
+From: Vitor Soares <ivitro@gmail.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Vitor Soares <vitor.soares@toradex.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	ivitro@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v1] drm/bridge: cdns-dsi: Replace deprecated UNIVERSAL_DEV_PM_OPS()
+Date: Mon, 28 Apr 2025 10:40:48 +0100
+Message-Id: <20250428094048.1459620-1-ivitro@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250427081420.34163-1-xiafei_xupt@163.com>
+Content-Transfer-Encoding: 8bit
 
-Hi!
+From: Vitor Soares <vitor.soares@toradex.com>
 
-On Sun, Apr 27, 2025 at 04:14:20PM +0800, lvxiafei wrote:
-> Hello!
-> 
-> My name is Xiafei Lv, and I sent patch v6 on April 15, 2025. As of today, it
-> has been nearly two weeks, and I have not received any feedback. However, the
-> patch has been tested successfully, and you can view the details at this link:
-> https://patchwork.kernel.org/project/netdevbpf/patch/20250415090834.24882-1-xiafei_xupt@163.com/
->
-> I understand that kernel development is busy, and maintainers may have many
-> things to deal with and may not have time to review my patch. With this in mind,
-> I would like to politely ask what steps I should take next? If you have any
-> questions about my patch or need additional information from me, please feel
-> free to let me know and I will cooperate as soon as possible.
+The deprecated UNIVERSAL_DEV_PM_OPS() macro uses the provided callbacks
+for both runtime PM and system sleep. This causes the DSI clocks to be
+disabled twice: once during runtime suspend and again during system
+suspend, resulting in a WARN message from the clock framework when
+attempting to disable already-disabled clocks.
 
-You just have to wait. We will get back to you with more questions if
-needed.
+[   84.384540] clk:231:5 already disabled
+[   84.388314] WARNING: CPU: 2 PID: 531 at /drivers/clk/clk.c:1181 clk_core_disable+0xa4/0xac
+...
+[   84.579183] Call trace:
+[   84.581624]  clk_core_disable+0xa4/0xac
+[   84.585457]  clk_disable+0x30/0x4c
+[   84.588857]  cdns_dsi_suspend+0x20/0x58 [cdns_dsi]
+[   84.593651]  pm_generic_suspend+0x2c/0x44
+[   84.597661]  ti_sci_pd_suspend+0xbc/0x15c
+[   84.601670]  dpm_run_callback+0x8c/0x14c
+[   84.605588]  __device_suspend+0x1a0/0x56c
+[   84.609594]  dpm_suspend+0x17c/0x21c
+[   84.613165]  dpm_suspend_start+0xa0/0xa8
+[   84.617083]  suspend_devices_and_enter+0x12c/0x634
+[   84.621872]  pm_suspend+0x1fc/0x368
 
-> Thank you very much for taking the time to deal with my request, and I look
-> forward to your response.
+To address this issue, replace UNIVERSAL_DEV_PM_OPS() with
+DEFINE_RUNTIME_DEV_PM_OPS(), which avoids redundant suspend/resume calls
+by checking if the device is already runtime suspended.
 
-Thanks.
+Cc: <stable@vger.kernel.org> # 6.1.x
+Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
+Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+---
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+index b022dd6e6b6e..62179e55e032 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+@@ -1258,7 +1258,7 @@ static const struct mipi_dsi_host_ops cdns_dsi_ops = {
+ 	.transfer = cdns_dsi_transfer,
+ };
+ 
+-static int __maybe_unused cdns_dsi_resume(struct device *dev)
++static int cdns_dsi_resume(struct device *dev)
+ {
+ 	struct cdns_dsi *dsi = dev_get_drvdata(dev);
+ 
+@@ -1269,7 +1269,7 @@ static int __maybe_unused cdns_dsi_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused cdns_dsi_suspend(struct device *dev)
++static int cdns_dsi_suspend(struct device *dev)
+ {
+ 	struct cdns_dsi *dsi = dev_get_drvdata(dev);
+ 
+@@ -1279,8 +1279,8 @@ static int __maybe_unused cdns_dsi_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static UNIVERSAL_DEV_PM_OPS(cdns_dsi_pm_ops, cdns_dsi_suspend, cdns_dsi_resume,
+-			    NULL);
++static DEFINE_RUNTIME_DEV_PM_OPS(cdns_dsi_pm_ops, cdns_dsi_suspend,
++				 cdns_dsi_resume, NULL);
+ 
+ static int cdns_dsi_drm_probe(struct platform_device *pdev)
+ {
+@@ -1427,7 +1427,7 @@ static struct platform_driver cdns_dsi_platform_driver = {
+ 	.driver = {
+ 		.name   = "cdns-dsi",
+ 		.of_match_table = cdns_dsi_of_match,
+-		.pm = &cdns_dsi_pm_ops,
++		.pm = pm_ptr(&cdns_dsi_pm_ops),
+ 	},
+ };
+ module_platform_driver(cdns_dsi_platform_driver);
+-- 
+2.34.1
+
 
