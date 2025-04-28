@@ -1,154 +1,141 @@
-Return-Path: <linux-kernel+bounces-623101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F0EA9F0EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:39:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A85DA9F12E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776113B3AD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B808318944BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B075226A0C7;
-	Mon, 28 Apr 2025 12:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85D26A1C2;
+	Mon, 28 Apr 2025 12:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U/dOVDX9"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="ByNxamx+"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4F5269806
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 12:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745843948; cv=none; b=oxinDuX3dWCkisfydndUvktFY3OOthypxEDfLz+5EphmE7BeGYOknWEvct+obc9tH3t/hkZuUldzNr+m3cSnXmDV1IRt8VtiQBwqGn20Ii70lYui4d5hXu+MSvdVFHzVA64rjXDfrHDmDkmIGhXeQvVb4VcHkfb8rfe3mE61E54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745843948; c=relaxed/simple;
-	bh=5RTpoGxd0yln+rD+iVZT7mTbh5dja30gF/VvmJMuPCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VM2q8atUlsPyfywIz9Vj6ZoCX9BBbygwWDw5+7B5FfRYHcNVenfKwuNtdZfKOPd7BKuaATuZC08aCtcOxqPMzVdHLULP2bWt1Ox50XuP/S9J2bNqKdl+PTFgwiQ0BpgtA6rP980VLcYXl5MQCrYPU5WNOic94Zo88gg6T1OrEyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U/dOVDX9; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso3276021f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 05:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745843943; x=1746448743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kajF+eLdT9ofXGeTd3YYf3HoPa+dzTPyEOJzZGW/Z3k=;
-        b=U/dOVDX90X61jKy2N4cTdr2CnkzS3Dy9WHu8I7fD9N38vjtdThOlxKgPVAXJUzQslK
-         E13uqbf4sX96mtBHnTxX1SRf0flQ0YWr9upe+IgvnkLYM9PyqKOVGlDgYyuio/EShr0l
-         jH0s7pz2iYR09N5niQDUvKtmG3f+tawBTErbuQTM4h+YTtnM/+/DWf+TXoT1FcJbnLoH
-         ltitcxRSY7eK6lT9vS21llzRSo05eYE4/4C6+a9uOZkqXrMcaWv1sso9W6IxToh74FHI
-         Q5Db0MhSB7pYQI9xMOspOgkSI86h9/6kZBcHBk1gy6pzUKJoOIvF76bVRupCjeYcDumL
-         jQrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745843943; x=1746448743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kajF+eLdT9ofXGeTd3YYf3HoPa+dzTPyEOJzZGW/Z3k=;
-        b=gYw1OTT4JkXuYcYHbiVPt0R8ktoyUHnW4EBoNmNmne36CxFOeyk3BV8LezNhxrUEq8
-         HZLmXim5EU73NzOiMuWJf5yQTCOsOKQFJpHoGcfSLJ9bLyRacymv2zz7nvOa/14CC41/
-         rIuSWw9EU4pWspZyP74WCeOwcDO6chOBJxrF7salhToX/K95pFv+oOzX/IDxK8F1yQe7
-         XOMFFsmXlfMkdVaGZxJUvreYu3+4Cty9SMhEM5FMaIV1FP6utj+CfSVK74r9Zod76vzI
-         koGdQVXL3Ko0E1DORbZSNJEfKPXbeRrxMgLLuiDe3//K2I0UcxjIm6ZP0+wqLHGWu+K6
-         U9ig==
-X-Forwarded-Encrypted: i=1; AJvYcCV6oXbSEqXluhbnT8V0E7tF6EbAS+kn/b0dBL+vt3BORF0ELNP/CnS1bxd8SBNslN0cB6hE+uQBPQPWQWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2/45/5uFlJlzEyKzdsaWqO2o3BzCHFhBFXwLImMIEdU2kUVVT
-	cX70Um/wpxFjuHvoQi9lPSqUOx1conooMUdcdEn4OoDs5lxOQLtoLtusT02tX0w=
-X-Gm-Gg: ASbGncvutqouhwL7/W6ibYitN4Z7f9htOZTMGSdcl+d+OyCzwjhkLjh7bk+AeZGwB4z
-	b1eagJyDGx/eC5wnqb65nMJpBAEgJtB4xq83v8VsRmzTgyKJoNpecZyY+wqYPExwgNka+L9iq6/
-	QjrRyHQueo8hr+/WijORqo7Z+J2zED4GxRfXqJRznadmaI7WYyFlq2cDBW01k+XBnHOM05RPu+K
-	1zjD2Q4ZPzHOxvfDD76ebO6xpkpWUzJSxyJfCrsSm2isADqgTTyTPZOf8kxiQNJPcEU/bTCSW89
-	wV3nti+SBrkwULs2czVrYUobU5bSaswMMGITxqqCj+/+ow==
-X-Google-Smtp-Source: AGHT+IEZDN+foaMYfgyt9eU6rOly8IkdyLaoYyUZbXxe0vM6gzcu4bTy/soXgGRLxAd0ZxJ3sOA5TQ==
-X-Received: by 2002:a05:6000:1a88:b0:39c:1258:2dc9 with SMTP id ffacd0b85a97d-3a074fa73c6mr7995850f8f.58.1745843943130;
-        Mon, 28 Apr 2025 05:39:03 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073e5cffasm11177664f8f.96.2025.04.28.05.39.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 05:39:02 -0700 (PDT)
-Date: Mon, 28 Apr 2025 15:38:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	20250417-topic-sm8x50-iris-v10-v7-0-f020cb1d0e98@linaro.org,
-	20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 14/23] media: iris: Fix NULL pointer dereference
-Message-ID: <02824759-c468-4907-b0cd-554c28cc4de1@stanley.mountain>
-References: <20250428-qcom-iris-hevc-vp9-v2-0-3a6013ecb8a5@quicinc.com>
- <20250428-qcom-iris-hevc-vp9-v2-14-3a6013ecb8a5@quicinc.com>
- <7f37ec27-0221-4bb2-91f9-182244014b5a@stanley.mountain>
- <7ef2daa2-a6fa-2285-6619-b2f25baabc55@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99DC26A0F8;
+	Mon, 28 Apr 2025 12:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745844058; cv=pass; b=EAI8DaTtU4Ki0ojUqC359HBQgtXsad2FGA+Zc5BVSo6WU1ChZb5fa6X9w3/Qc/L319dq3N2U6GfSp8kl+kcU6vhAw20STHcdOz1XXEqVJwr11DfgKCHNeBeGbGEGpWYdBJMYlRs/Np18UjCu53ToUyqu15jgw6xmsSRsNO5k/K0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745844058; c=relaxed/simple;
+	bh=I2ykutjcqMllcHiAyUDYqj9tFTElKLZWG+XXLUCDh1o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OD8En353TRARv4bfoAKaJVgAd5XvISnffNY+g73jKyebuRyrqSWwxcqfu5OvCvkeHgQtfGleM5d8ZObeWS3RqLyArWApxjIg3cHPMaeD6Axg1Jkh4rMGG8+zV7sfmvfiSWSlUgb2nHI+338iMh7n2kb8MdsW5ssaE/rurTw7Au8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=ByNxamx+; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1745844025; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=b72DQ5n26fJtzQVXvruNxW6E2SVCIyBrz2X8MwKbNU/fkJMClkCBK5RbJzgdnM89Nw8dBAnYWaAXg+udyxipNuoqxEs1vVYfqTkZq8l8yErU6wSO7iOujuM1rh6yK/+1rB3p7eFUrskkIAlpAUpfcDKhgjNktfm3l7flFzhgIVI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745844025; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=nXleTA7okadGYMFVNlngNJxDP/GdcVzOQQaijYrWvNo=; 
+	b=nS5qrotf5PDGIK/CXWGbFFPnONSwM5FBHL6nDJ3uYnUi+h4J7MrrnRJPE6LKRpcO7Rq1dYGBipPcup/nzVvR7c/Yf7OcUTgT3UFXV27ayHUs88oNy2cYY2gPXM3mgbmnYp7VmlVgYtF7Z99NfH0wyBEx92A3noAHgS6fUcsNde0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745844025;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=nXleTA7okadGYMFVNlngNJxDP/GdcVzOQQaijYrWvNo=;
+	b=ByNxamx+1X0YI1lvAw3aRYsEQcMosXRbN/5u8Jux8v/0H7qY99nhrrT0+3uwY37O
+	7iNiFJdPq5rd4m/nozj21DjzMhpJZ5tQdPtVn7S5XwJlHP5TK7sQbwQuJORrxbJ983o
+	jwdBcTAkGtg29JQs6Dei4KNZ7RqhI1xNLBjYSOE4=
+Received: by mx.zohomail.com with SMTPS id 1745844023568786.1590715271197;
+	Mon, 28 Apr 2025 05:40:23 -0700 (PDT)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH v3 0/3] riscv: sophgo: add mailbox support for CV18XX
+ series SoC
+Date: Mon, 28 Apr 2025 20:39:43 +0800
+Message-Id: <20250428-cv18xx-mbox-v3-0-ed18dfd836d1@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ef2daa2-a6fa-2285-6619-b2f25baabc55@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA93D2gC/42NsQ6CMBRFf8V0FtK+FgpOloKLmhKRwRgHxaodF
+ AOGYAj/bmEzLm7v3Nx7XodqXRldo9mkQ5VuTG3KhwU6naDidnxctWPOlhFg8DAD4hQNCdrWuZ/
+ K1vEhgDPRhFNWILt4Vvpi2tG2P1i+mfpVVu9R3pAhRdkuSu1qHQHQIE5wLEgo/WTBCImAer6UT
+ CYw/6q5Is8GctONil2Vb1dKLV2p1mh40sCvGLzYCzHlnEch5SIQ9pRM4P/Ffd9/ACfv0HMcAQA
+ A
+X-Change-ID: 20250421-cv18xx-mbox-6282d1e1734c
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@gmail.com>, Yuntao Dai <d1581209858@live.com>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ sophgo@lists.linux.dev, linux-riscv@lists.infradead.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745844011; l=2219;
+ i=junhui.liu@pigmoral.tech; s=20250223; h=from:subject:message-id;
+ bh=I2ykutjcqMllcHiAyUDYqj9tFTElKLZWG+XXLUCDh1o=;
+ b=jJZ5IkLBg9NY7bPou7wzBf2FP56Akx1X5JSTpBbXUq7V+WdLTGNRIQpLLWB8Gbs1zSO4ApEu1
+ HBuQTWXJj01CK26Yd9GOaAZTXujQWw+WNjccjAxJtEQ06b4sFfWr49S
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=ZRZkOjG47iI+To+oAo2R4KIpMwtz8r0TffJ5/nO2tcg=
+X-ZohoMailClient: External
 
-On Mon, Apr 28, 2025 at 05:40:01PM +0530, Dikshita Agarwal wrote:
-> 
-> 
-> On 4/28/2025 3:10 PM, Dan Carpenter wrote:
-> > On Mon, Apr 28, 2025 at 02:59:02PM +0530, Dikshita Agarwal wrote:
-> >> A warning reported by smatch indicated a possible null pointer
-> >> dereference where one of the arguments to API
-> >> "iris_hfi_gen2_handle_system_error" could sometimes be null.
-> >>
-> >> To fix this, add a check to validate that the argument passed is not
-> >> null before accessing its members.
-> >>
-> >> Cc: stable@vger.kernel.org
-> >> Fixes: fb583a214337 ("media: iris: introduce host firmware interface with necessary hooks")
-> >> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> >> Closes: https://lore.kernel.org/linux-media/634cc9b8-f099-4b54-8556-d879fb2b5169@stanley.mountain/
-> >> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >> ---
-> >>  drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> >> index 1ed798d31a3f..cba71b5db943 100644
-> >> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> >> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> >> @@ -267,7 +267,8 @@ static int iris_hfi_gen2_handle_system_error(struct iris_core *core,
-> >>  {
-> >>  	struct iris_inst *instance;
-> >>  
-> >> -	dev_err(core->dev, "received system error of type %#x\n", pkt->type);
-> >> +	if (pkt)
-> >> +		dev_err(core->dev, "received system error of type %#x\n", pkt->type);
-> > 
-> > I feel like it would be better to do:
-> > 
-> > 	dev_err(core->dev, "received system error of type %#x\n", pkt ? pkt->type: -1);
-> we don't need to print anything if pkt is NULL.
+Sophgo CV18XX series SoC has a mailbox module used to pass messages to
+asymmetric processors. It has a total of 8 channels, each channel has a
+length of 64bit.
 
-Okay, fine by me then.
+Tested on Milk-V Duo with CV1800B SoC, Milk-V Duo256M with SG2002 SoC
+and Milk-V Duo S with SG2000 SoC by the mailbox-test client.
 
-regards,
-dan carpenter
+---
+Changes in v3:
+- Update cv18x to CV18XX in commit messages and descriptions.
+- Remove the `interrupt-names` property in dt-bindings, dts and driver.
+- Move the mailbox node in dts to satisfy the address order.
+- Remove `OF` dependency in Kconfig and the driver.
+- Add copyright in the driver.
+- Reorder the processes in dt-bindings and change the `RECV_CPU` macro
+  definition from 2 to 1 in the driver.
+- Clean up and improve macro definitions and register access methods in
+  the driver.
+- Improve the return value handling in the interrupt handler functions.
+- Implement the `cv1800_last_tx_done` function.
+- Link to v2: https://lore.kernel.org/r/SYBP282MB223825D5903777B937A8A377C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+
+Changes in v2:
+- drop 'recvid' 'sender' in dt-bindings
+- fix compatible to 'cv1800-mailbox', and change filenames too
+- change #mbox-cell to 2, for <channel tagert_cpu>
+- add struct cv1800_mbox_chan_priv and function cv1800_mbox_xlate to extract
+  informations in mbox devicetree node of mailbox client
+- Link to v1: https://lore.kernel.org/r/SYBP282MB2238DE0DA19C6EF411B2356CC4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+
+---
+Yuntao Dai (3):
+      dt-bindings: mailbox: add Sophgo CV18XX series SoC
+      riscv: dts: add mailbox for Sophgo CV18XX series SoC
+      mailbox: sophgo: add mailbox driver for CV18XX series SoC
+
+ .../bindings/mailbox/sophgo,cv1800b-mailbox.yaml   |  57 ++++++
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi             |   7 +
+ drivers/mailbox/Kconfig                            |  10 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/cv1800-mailbox.c                   | 218 +++++++++++++++++++++
+ 5 files changed, 294 insertions(+)
+---
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+change-id: 20250421-cv18xx-mbox-6282d1e1734c
+
+Best regards,
+-- 
+Junhui Liu <junhui.liu@pigmoral.tech>
 
 
