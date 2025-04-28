@@ -1,85 +1,92 @@
-Return-Path: <linux-kernel+bounces-623277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8848EA9F37B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:32:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF81DA9F380
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03DC318889EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57B616E876
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE53E269D09;
-	Mon, 28 Apr 2025 14:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A0226988A;
+	Mon, 28 Apr 2025 14:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="fp275xqJ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghabFW4Q"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B091F1AAA1E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C975C2AD04;
+	Mon, 28 Apr 2025 14:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745850745; cv=none; b=IfcrwzcZM6E6qQaHcBESO6pkGLhnRjXik3uUMg1fC7/DR2r3Zfpb3N9c8TbjazBgaAcmKSa5F8OLhXkvf2Il8i15Vr2fkmY+V4RJWOMB6pYloqZr7wPSczysNvlp09lmd1MJm5F8SjANdXB9HpW7RNBEOav1Rd64q/tmmbyzimI=
+	t=1745850835; cv=none; b=RUfhY6BUStYBWdWyHMWzg+342leONfzsfy7gOW6APiqf7id2V2EtW+HUSZtRoI7sdNfMt991vyZbLN6U6UG20QIrCEynqpCTP5zi0R6h00DL4yHMz9ujRM4t4ibDaZbgCmEzba2A1gNkBKM3c1yWjtvBYcjiuHtt1okjCj0C+gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745850745; c=relaxed/simple;
-	bh=e6iBIvRrCjrG+kwjv+jVID8U1/VKrlrNPYZnjI/EnAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bFsY1N5POCixIZZUp7EP1RyuGz9ZqLVth4acfm4zXTpBqDUiO0xYAvP+hIlfmE734C+5U6a8GUzHvsZb+qaSwEqFryR2QOWd7vfHhZLgcZY6NlEgWmdvLjizWR/16HC7TAlUgqcWZgUUiTBnp8eppwrMJx1PBZ70ftkeLnnLdnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=fp275xqJ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so44015705e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:32:22 -0700 (PDT)
+	s=arc-20240116; t=1745850835; c=relaxed/simple;
+	bh=d20GTipVbRB3l5zgAl3x510pauuP792d74b6b3Gl7js=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pAVcw+1zqjeCvAVh2ilpCOCtJas63zQwaZmU+UHNC9sgzRRFPWpyQJuBPthfd4KOTFNqRoKuOW33cLA4onWGKVmw1GB0k/cWUMppmPfaGb6q+oQvuqOKMK7EMnRWhZoNyphvBcmxgibOnlv5RQilVOWYPM0vU/louhqo0z9dAsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghabFW4Q; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39d83782ef6so4090706f8f.0;
+        Mon, 28 Apr 2025 07:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1745850741; x=1746455541; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745850832; x=1746455632; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7rJxcvfxmf0ceZVyKY/5V8iu1OWkb06zWKdp+678T0=;
-        b=fp275xqJmiHqYebqMNKPKdd8Bgveo8V+2j1U7fBWpn2hsYF4jDBikL74pna+t4P6Pc
-         Uh5myhoffjYqfQlaTRxvH5IykBIm53jQvBUhQ6nOCtYtWnPr+7UKK1TSDrV1PostIlql
-         /LRV/Hzj7YfwOtfXUmaPfTPiuW0m3KDU3q1CZO0yJEo2iyM6X48+IPy5jN4dMO8ycolL
-         2lO63DMjyzWi03kaTFI7elmeCgczQzh48unbU1kmrgjuVNxI3ruP41m6DKmQ0tyEU7rT
-         Bhn81106cX25msMT/AX3XNEBJZSXzWzI7sXcw8DvQGWvKg5kGpHkC1GsV0SZmYJQ6HDQ
-         zJ0g==
+        bh=eLMBJu2+m8wSyhJfUpw0sbyDZyeYRNuTT+ciFfWuFWs=;
+        b=ghabFW4QeQaTh0R/Yn/vre4oIFoWN4mooZOPggbvnvHCCh0Hz+81naBLJPX8j5HrId
+         G88Qo+Zlm0X8Kr+DT6L+cyBZNHqdL4i/kg2IC3n70jPmq+cJz4pC6Be2aTv4okilQsfv
+         mQBctZD1Ny1sAmeYt1t4I80gEOtRM1EwFrlKOiSkGylKK2QTH8gJI9FZqMj4zCn/me8o
+         Oq8vE2oCc/WE7krHne68bhdze6uiLC+Ga9OWcAFx2Gbqhi9uB9UT67mIYIV8Otv13Jk7
+         2GasXqzkerMXDVJma3KigI4HUGeL2TCtTvBsxD0/MdlBTiyb/+nq0hXznS3Rd5O8iMXl
+         mXQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745850741; x=1746455541;
+        d=1e100.net; s=20230601; t=1745850832; x=1746455632;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A7rJxcvfxmf0ceZVyKY/5V8iu1OWkb06zWKdp+678T0=;
-        b=WcctHEM4IzDs0wKglsCPMx8ZuHJTPUsXtvBLLGDVv1Nctrd5g35LQgdcvOXb95M6+R
-         BJkYwII4l3TqdnrNqO3JKICfgOdP1Of7z5v/7lE0JZoJcV9GLhsZguMiS7CrmoV9U9+7
-         JzCGNFUTPeIY4ZhA5GVLSm+QHZ1am4cJW1gpT6LC23lxgrse2vsBXgru586bKGHpNfxL
-         ovavmuEaOt73b9rF2JxQJVqiNrAnGpdQlSdhcRYmaj0S+SIh5bvP7vtCRzzH1VrTy/A+
-         y9nCtUZ31Ppar7N/PjAm4J8MDLHBxIpuVwYHVyUBZlJr313Aq3BO7NS6jcGXVzLimpDp
-         cNMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIqLxu+pgKEvvAIhGtghqI54tZxouhbL4Zgm5EjpTtgbl5K/IbQkAfxKliKrxzV/BZ//ui4G7TDZet0RI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfupL29Tiszu70+T7ir8kxUN+5SsNPbtAEFi6dkG/RbY1q/haD
-	SDYWlpE6W0ZidVWsBkIb7C1ykcXfp/kmt9TVztL9HUCj2rSVYHrmSiLTTepKy8GAwZebfKH+cW9
-	J
-X-Gm-Gg: ASbGncv7v3vAQgcPvoCcrGe815+ZL0VUWC/MbTfZHgYI2D1h2lAMbG8649CUUaopSUO
-	meaO3oTfBEXtA+A73CAOPdHi/EBTgSXB3yfNszT++SwhtTeMKhgyuaBlUIcGPnZxQ+04HaBoyN5
-	fSQlz1dI+iGWTjOQB+EJu1OAmOGFniU1+E3+cRZnfnlp31+TTAitNkmHzXGHPB7TpfaSnbzRzKH
-	A3TEHCo6GpLMr97AcAsXQCWF2Rnn9uTl5pLkxlnTub4/caGu4Z6S7JtWDMdtkFV4DCQ/75NbDc0
-	U+EE6EsfoyUL57C/FAZsuBsf0/Ng9d3Jd2b+ktGTVfobZgaVlSjWqgd30jDjxILbg9/xAggNIQJ
-	0LwaZCToVFFx6GyaJyH3F+9vJZA15+jryH4V7YSWT
-X-Google-Smtp-Source: AGHT+IHX0Lwtyuyo7ZtJiFuwKOdWkGwo/2whSkrPojV25UvEACyMAzULzUcwL5zkTjBa6aKQPVsEZg==
-X-Received: by 2002:a05:600c:154f:b0:43d:b51:46fb with SMTP id 5b1f17b1804b1-440a65ba6camr112281055e9.2.1745850741045;
-        Mon, 28 Apr 2025 07:32:21 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f46c100023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f46:c100:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a538747esm125073855e9.35.2025.04.28.07.32.20
+        bh=eLMBJu2+m8wSyhJfUpw0sbyDZyeYRNuTT+ciFfWuFWs=;
+        b=O21EoqbCN52XKrhduXxFgiB5v9eocleSGwwu+ecFJQqDWoNFowJwl+/kCQQzpeyEMI
+         r4+uWBU34K/0IYqf0CJ+UggGCUAiBFBGQDNkRNo9L77kwPz6w2SaRsWTOLRFNFLGnN+b
+         9azaJoy5ezEpH0Ks46t2t4rDRJc5/i6noM/Kqhir7PRVbj7+44hnBS3SSuJJPX+iuv23
+         KQ9dC8/dyEwb27334XyUQmP4XNHO18oq9lh2G3Z1LyD3g4T6xalHQTSJR6HA9Unke3Oc
+         ROHI9dZNVYnB0nxNawHg/BuRYJDfeeTaAnjrPtwJMRbvJM8tG6nsQl/US6/1FawNYYUl
+         SGYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZjPeprLL9vBb+6dho4o5sE6c5vh1BDgI4JSPbsEm5UZO89TYSCb1gSq+YcHRpOMM0+4uagZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB0vYD/mgAEr3Cd+MPvK4hacnkjg5cQ19yySD4nkchE9AkBWoR
+	Epz0RLECe/ZCF5ZJ2BtX2huBl9FEgAgr9Y8Xn0cgv/ryjlRHAP5p
+X-Gm-Gg: ASbGncu1qr4K1ZoLlFqPn173xYmNnto77BbNfFII/XILB92+rAc6/+57/Wb1Z/8WPyH
+	sCMBCdxH9H+5BmefGLQnO5aejmTip3xEfFUxjRcQjDjQy8IwIVAThE5xFG1wazR1GFjxLMBDYq5
+	4rJdx9MrVVW4dM4faKSoYpk5dXxeRG2arjull3vRdvFnw1sZ1tfvgTiK4+zgGijZmMu4hUOVjdp
+	J+2os9qLlvmyEZs3Y3KrS7s50PrCsXyYFGIb7yee2iYc+vOJ1Wem/63zGQiC9KzRvEQZHHvPIoE
+	vfppNVb4B7+mHSVkvdd9wQju/htPRPuiAuS7zrLVhPeahKcsMFK1v3XCgEHYe65dk+bDKF61ok7
+	YPTY=
+X-Google-Smtp-Source: AGHT+IGVnfynXJTNx19/KSZv+fN8acHct+F6K+RgM/5Dfk7bEbpKJ2i4zN8ruNE8PUthruYMTtl7WQ==
+X-Received: by 2002:a5d:5885:0:b0:39c:266b:feec with SMTP id ffacd0b85a97d-3a074cf147cmr9963691f8f.7.1745850831806;
+        Mon, 28 Apr 2025 07:33:51 -0700 (PDT)
+Received: from fedora.advaoptical.com ([82.166.23.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46a49sm11421823f8f.61.2025.04.28.07.33.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 07:32:20 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: dhowells@redhat.com,
-	netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] fs/netfs: remove unused source NETFS_INVALID_WRITE
-Date: Mon, 28 Apr 2025 16:32:18 +0200
-Message-ID: <20250428143218.3206453-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
+        Mon, 28 Apr 2025 07:33:51 -0700 (PDT)
+From: Sagi Maimon <maimon.sagi@gmail.com>
+X-Google-Original-From: Sagi Maimon <sagi.maimon@adtran.com>
+To: jonathan.lemon@gmail.com,
+	vadim.fedorenko@linux.dev,
+	richardcochran@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Sagi Maimon <sagi.maimon@adtran.com>
+Subject: [PATCH v1] ptp: ocp: Fix NULL dereference in Adva board SMA sysfs operations
+Date: Mon, 28 Apr 2025 17:33:47 +0300
+Message-ID: <20250428143347.23675-1-sagi.maimon@adtran.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,58 +95,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This enum choice was added by commit 16af134ca4b7 ("netfs: Extend the
-netfs_io_*request structs to handle writes") and its only user was
-later removed by commit c245868524cc ("netfs: Remove the old writeback
-code").
+On Adva boards, SMA sysfs store/get operations can call
+__handle_signal_outputs() or __handle_signal_inputs() while the `irig`
+and `dcf` pointers are uninitialized, leading to a NULL pointer
+dereference in __handle_signal() and causing a kernel crash. Add
+Adva-specific callbacks ptp_ocp_sma_adva_set_outputs() and
+ptp_ocp_sma_adva_set_inputs() to the ptp_ocp driver, and include NULL
+checks for `irig` and `dcf` to prevent crashes.
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Fixes: ef61f5528fca ("ptp: ocp: add Adva timecard support")
+Signed-off-by: Sagi Maimon <sagi.maimon@adtran.com>
 ---
- fs/netfs/write_collect.c     | 2 --
- include/linux/netfs.h        | 1 -
- include/trace/events/netfs.h | 3 +--
- 3 files changed, 1 insertion(+), 5 deletions(-)
+ drivers/ptp/ptp_ocp.c | 62 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 60 insertions(+), 2 deletions(-)
 
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 3fca59e6475d..17f4e4bcc789 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -495,8 +495,6 @@ void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error,
- 	case NETFS_WRITE_TO_CACHE:
- 		netfs_stat(&netfs_n_wh_write_done);
- 		break;
--	case NETFS_INVALID_WRITE:
--		break;
- 	default:
- 		BUG();
- 	}
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index c86a11cfc4a3..e9a155265758 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -48,7 +48,6 @@ enum netfs_io_source {
- 	NETFS_INVALID_READ,
- 	NETFS_UPLOAD_TO_SERVER,
- 	NETFS_WRITE_TO_CACHE,
--	NETFS_INVALID_WRITE,
- } __mode(byte);
+diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+index faf6e027f89a..3eaa2005b3b2 100644
+--- a/drivers/ptp/ptp_ocp.c
++++ b/drivers/ptp/ptp_ocp.c
+@@ -2578,12 +2578,70 @@ static const struct ocp_sma_op ocp_fb_sma_op = {
+ 	.set_output	= ptp_ocp_sma_fb_set_output,
+ };
  
- typedef void (*netfs_io_terminated_t)(void *priv, ssize_t transferred_or_error,
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index f880835f7695..59ecae3ad0fb 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -77,8 +77,7 @@
- 	EM(NETFS_READ_FROM_CACHE,		"READ")		\
- 	EM(NETFS_INVALID_READ,			"INVL")		\
- 	EM(NETFS_UPLOAD_TO_SERVER,		"UPLD")		\
--	EM(NETFS_WRITE_TO_CACHE,		"WRIT")		\
--	E_(NETFS_INVALID_WRITE,			"INVL")
-+	E_(NETFS_WRITE_TO_CACHE,		"WRIT")
++static int
++ptp_ocp_sma_adva_set_output(struct ptp_ocp *bp, int sma_nr, u32 val)
++{
++	u32 reg, mask, shift;
++	unsigned long flags;
++	u32 __iomem *gpio;
++
++	gpio = sma_nr > 2 ? &bp->sma_map1->gpio2 : &bp->sma_map2->gpio2;
++	shift = sma_nr & 1 ? 0 : 16;
++
++	mask = 0xffff << (16 - shift);
++
++	spin_lock_irqsave(&bp->lock, flags);
++
++	reg = ioread32(gpio);
++	reg = (reg & mask) | (val << shift);
++
++	if (bp->irig_out)
++		ptp_ocp_irig_out(bp, reg & 0x00100010);
++	if (bp->dcf_out)
++		ptp_ocp_dcf_out(bp, reg & 0x00200020);
++
++	iowrite32(reg, gpio);
++
++	spin_unlock_irqrestore(&bp->lock, flags);
++
++	return 0;
++}
++
++static int
++ptp_ocp_sma_adva_set_inputs(struct ptp_ocp *bp, int sma_nr, u32 val)
++{
++	u32 reg, mask, shift;
++	unsigned long flags;
++	u32 __iomem *gpio;
++
++	gpio = sma_nr > 2 ? &bp->sma_map2->gpio1 : &bp->sma_map1->gpio1;
++	shift = sma_nr & 1 ? 0 : 16;
++
++	mask = 0xffff << (16 - shift);
++
++	spin_lock_irqsave(&bp->lock, flags);
++
++	reg = ioread32(gpio);
++	reg = (reg & mask) | (val << shift);
++
++	if (bp->irig_in)
++		ptp_ocp_irig_in(bp, reg & 0x00100010);
++	if (bp->dcf_in)
++		ptp_ocp_dcf_in(bp, reg & 0x00200020);
++
++	iowrite32(reg, gpio);
++
++	spin_unlock_irqrestore(&bp->lock, flags);
++
++	return 0;
++}
++
+ static const struct ocp_sma_op ocp_adva_sma_op = {
+ 	.tbl		= { ptp_ocp_adva_sma_in, ptp_ocp_adva_sma_out },
+ 	.init		= ptp_ocp_sma_fb_init,
+ 	.get		= ptp_ocp_sma_fb_get,
+-	.set_inputs	= ptp_ocp_sma_fb_set_inputs,
+-	.set_output	= ptp_ocp_sma_fb_set_output,
++	.set_inputs	= ptp_ocp_sma_adva_set_inputs,
++	.set_output	= ptp_ocp_sma_adva_set_output,
+ };
  
- #define netfs_sreq_traces					\
- 	EM(netfs_sreq_trace_add_donations,	"+DON ")	\
+ static int
 -- 
-2.47.2
+2.47.0
 
 
