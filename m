@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-622843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DA5A9ED74
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:04:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CB0A9ED7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1B43B116F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EEC3188FF6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBC725EFBE;
-	Mon, 28 Apr 2025 10:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4F125E81D;
+	Mon, 28 Apr 2025 10:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICE4fLJd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F/szESDb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6790F2036E2;
-	Mon, 28 Apr 2025 10:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99F25F988;
+	Mon, 28 Apr 2025 10:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745834649; cv=none; b=DCcgAx7vnsVPqaZhTBLNhhvOx6T9GRL/iz4RuENfLBfvFNX8MKBeJ3LifACMwuhrai4Io4LvEZJvfWbLaW1FZLM32BoC4BYspHmhmDX6vQ2mdLd4b+PHGdNxANw6pehkhfX0rE8YG4CZ/4lLR2tmLyRauOLEhM7snWVXQdH0hlE=
+	t=1745834661; cv=none; b=fpzJzwBXPnWeJAFw0AtxZTyJyHUab5MZ314PIsf0jUKUXL1u/bTtNRn97kkEEbhlC3QzFqWMC7YVMBO5QiEvx7NJwC8uak2TJRiI4cNP2t5FFFou6FgbEEiB8XpSnr3IH7iVrKELeUCT+iHttcOSzaIAApQZg2AN0Nf68PInSoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745834649; c=relaxed/simple;
-	bh=vAoG5/xSEr/30IS/WDi1H6EZUnCxT0ydzdIngcc8O/M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I/ftaPRrf0bJeLqoBMtVlPb5N829MP8Q9HtRLS5GQhtjeEaOmhJqYcMvkh7xUX4z190lNuG9+a5+FaDjiPv868hZMTMMOb1GFzIyfI/FAN9ai0T5+5iGTsqU9QCoslITUtr6iWOs1/jDnqf7QDh+46BjIue0G5mc1sBRPrkPb7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICE4fLJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF3D8C4CEE4;
-	Mon, 28 Apr 2025 10:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745834648;
-	bh=vAoG5/xSEr/30IS/WDi1H6EZUnCxT0ydzdIngcc8O/M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ICE4fLJdboNxGzgGECHOJxbMT0kwWt5N6Tk6Zmc9mJZ+7/UZNh6fL9QaSAeOGAl1n
-	 K9oXqCtxqepMiutpU9RF+V+CewWe4EPURqQlNnh3Kc0oi6D0w4INU6dAKHpzwuAbe/
-	 jthwIm+cfrp9yUDQcKOyBJ2lY5dBuuacNFFu8KPgnyBKAelkWFFrZ2LQrTf7DszO62
-	 TqiZQLVScHQYv1A74qAGVALZ00WMlUoSTKy4hJkY36NdV8cvDDY3mwfiRmwvOClokE
-	 yy1WVcxokj5nvAdo4lI2hN3u/uti053EDaczhDzvjydieXIB/5WIgapTqSFo81Vj8T
-	 7aRxnlZALumZg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1u9LLK-009ToD-5g;
-	Mon, 28 Apr 2025 11:04:06 +0100
-Date: Mon, 28 Apr 2025 11:04:05 +0100
-Message-ID: <86a580k3fu.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Seongsu Park" <sgsu.park@samsung.com>
-Cc: "'Anshuman Khandual'" <anshuman.khandual@arm.com>,
-	<will@kernel.org>,
-	<catalin.marinas@arm.com>,
-	<suzuki.poulose@arm.com>,
-	<joey.gouly@arm.com>,
-	<oliver.upton@linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>,
-	<cpgs@samsung.com>
-Subject: Re: [PATCH] arm64: kvm: Replace ternary flags with str_on_off() helper
-In-Reply-To: <0fd501dbb80c$d5a91d30$80fb5790$@samsung.com>
-References: <CGME20250415012410epcas1p42b48977934c21b5db0b19f4185f7a63c@epcas1p4.samsung.com>
-	<1891546521.01744691102904.JavaMail.epsvc@epcpadp1new>
-	<f998cbba-bda0-472b-8f4a-a972a29f21ef@arm.com>
-	<0fd501dbb80c$d5a91d30$80fb5790$@samsung.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1745834661; c=relaxed/simple;
+	bh=rOFGbtpv4MrY1owxitYHQCckxfJhhUZ64PuiQrfe3co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TIBUqKFNSCtbtiH2k0rJfzdopOCEg8DVWBtQYt4kcufoTQ6M7IuW0NhkDrC1ENEtHoANPPgduZ4Y6V47EjWEQEuK2C5S1HyCOz208LbT2W5HCPrFNwdm+IYTr7RHcx2T6K9FIgEPbkRTXsW5DWPOkpdCWcTgAOLvS1ReJeBstdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F/szESDb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1E44C4CEE4;
+	Mon, 28 Apr 2025 10:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745834660;
+	bh=rOFGbtpv4MrY1owxitYHQCckxfJhhUZ64PuiQrfe3co=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F/szESDbkRIp609MnQsoIntZkEgl78J2QHxTxTRoi0r8bS+oKSHOooN4Ff0n94ubs
+	 LxJ4VdgumPFw3LH4zxYAM730ij+YcaAzhc3ySkPVbgSETvDJIipKp7C8fZIxKgUT58
+	 sJeZo1RV4aRf49dTgJZ1gvdHP8mM83XcC7mMN0Kc=
+Date: Mon, 28 Apr 2025 12:04:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Zongmin Zhou <min_halo@163.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+	Christoph Hellwig <hch@infradead.org>, i@zenithal.me,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	shuah@kernel.org, valentina.manea.m@gmail.com,
+	Zongmin Zhou <zhouzongmin@kylinos.cn>
+Subject: Re: [PATCH] usbip: set the dma mask to 64bit default for vhci-driver
+Message-ID: <2025042812-sinister-shaping-bded@gregkh>
+References: <3e1f8fab-0155-4ff9-800d-5fa9df88c48c@linuxfoundation.org>
+ <20250422063409.607859-1-min_halo@163.com>
+ <aAdEM0crDfSP9JYf@infradead.org>
+ <4c6660a6-29ce-4b97-b092-8fc15585e52a@163.com>
+ <2025042512-corsage-handpick-bf2a@gregkh>
+ <575ce02c-9128-4098-a852-d9e14f14010e@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sgsu.park@samsung.com, anshuman.khandual@arm.com, will@kernel.org, catalin.marinas@arm.com, suzuki.poulose@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, cpgs@samsung.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <575ce02c-9128-4098-a852-d9e14f14010e@163.com>
 
-On Mon, 28 Apr 2025 08:11:59 +0100,
-"Seongsu Park" <sgsu.park@samsung.com> wrote:
-> > On 4/15/25 06:54, Seongsu Park wrote:
-> > > Replace repetitive ternary expressions with the str_on_off() helper
-> > > function. This change improves code readability and ensures
-> > > consistency in tracepoint string formatting
-> > >
-> > > Signed-off-by: Seongsu Park <sgsu.park@samsung.com>
-> > > ---
-> > >  arch/arm64/kvm/trace_arm.h | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/kvm/trace_arm.h b/arch/arm64/kvm/trace_arm.h
-> > > index c18c1a95831e..9c60f6465c78 100644
-> > > --- a/arch/arm64/kvm/trace_arm.h
-> > > +++ b/arch/arm64/kvm/trace_arm.h
-> > > @@ -176,7 +176,7 @@ TRACE_EVENT(kvm_set_way_flush,
-> > >  	    ),
-> > >
-> > >  	    TP_printk("S/W flush at 0x%016lx (cache %s)",
-> > > -		      __entry->vcpu_pc, __entry->cache ? "on" : "off")
-> > > +		      __entry->vcpu_pc, str_on_off(__entry->cache))
-> > >  );
-> > >
-> > >  TRACE_EVENT(kvm_toggle_cache,
-> > > @@ -196,8 +196,8 @@ TRACE_EVENT(kvm_toggle_cache,
-> > >  	    ),
-> > >
-> > >  	    TP_printk("VM op at 0x%016lx (cache was %s, now %s)",
-> > > -		      __entry->vcpu_pc, __entry->was ? "on" : "off",
-> > > -		      __entry->now ? "on" : "off")
-> > > +		      __entry->vcpu_pc, str_on_off(__entry->was),
-> > > +		      str_on_off(__entry->now))
-> > >  );
-> > >
-> > >  /*
-> > 
-> > Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+A: http://en.wikipedia.org/wiki/Top_post
+Q: Were do I find info about this thing called top-posting?
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
+
+A: No.
+Q: Should I include quotations after my reply?
+
+http://daringfireball.net/2007/07/on_top
+
+On Mon, Apr 28, 2025 at 05:51:08PM +0800, Zongmin Zhou wrote:
+> Dear Greg and Shuah,
 > 
-> Dear Anshuman,
-> 
-> Do you have any feedback?
-> If you have, please let me know.
-> I think this patch is appropriate.
+> I found out that the vhci-hcd driver added this virtual device
+> as a platform device from the very beginning since 2014.
 
-There isn't much to add. This patch looks reasonable, but it also
-doesn't warrant being merged immediately (it is purely cosmetic).
+Ah, I should have caught it back then, but at the time there really
+wasn't another option.
 
-Once I start queuing patches for 6.16, I'll probably add it to the
-mix.
+> I'm just getting in touch with this module and
+> don't have a deep understanding of it，shuah should be clearer.
 
-Thanks,
+See the recent patches I did converting drivers to use the faux bus
+code, it should be pretty simple to do.
 
-	M.
+> I don't know if using the faux bus to replace the platform bus can solve the
+> problem that the error limitation on max_hw_sectors for usbip device
+> since commit d74ffae8b8dd applied.
 
--- 
-Without deviation from the norm, progress is not possible.
+That is for the storage driver, not usbip.  As the faux bus does not
+have any real dma operations, this should cause it to work properly
+given the default values involed, but that's up to you to test to verify
+it does just that.  Try it and see!
+
+> But this change will request user to update kernel version to support faux
+> bus.
+
+That's just a normal kernel update to a newer version, what is wrong
+with that?
+
+> This will also be an expensive change to fix the problem?
+
+Fixing things properly is the correct thing to do in all cases.
+
+thanks,
+
+greg k-h
 
