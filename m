@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-623523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD86A9F6F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE89A9F6E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C70D17A591
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD691888F92
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D810428A41B;
-	Mon, 28 Apr 2025 17:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495DE28B4F1;
+	Mon, 28 Apr 2025 17:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qRfgSULg"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57F327978F;
-	Mon, 28 Apr 2025 17:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tY3G8aUU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9467A266EE8;
+	Mon, 28 Apr 2025 17:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745860312; cv=none; b=XYOBWq1kxdB/T7PnGqywc1jhNRwOJvD9y3g4A0G/Qt4Nz+gdgWwW7hY4vSsskgIq1RTD0ewD7t5d6clSCNmS8n/k+2F4B3rze1/7FdHEYB/ut572TFc776bQ/gFXo4+xa13LaL+kcp88r6+va4JUtkU4eAy1ApiexYWicwUd1l4=
+	t=1745860245; cv=none; b=TxjHB9yXKM2sSYqrLlA0tBF+6TQD9qdbGSyISD4zUk1ktlvMSkChXPpKZ7SAE6mTYTII1JpFXY7xFlZD1FWrv5H+6hX7s+VfjozUH4hwbSLRF6zaUERHOnKrhaUYLIVOwAYMPUUeopQvgZfctvl9Zk0B7gOaeqeYmVh+h/Oi40A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745860312; c=relaxed/simple;
-	bh=ClPZna7i5122Wr09xYbtgoqUCmhyRpCbBMozYYurono=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YgTQZc6n5gEnHIzBnhfupnjmou1/FoLcvkLgW+DpMHNWdXoGAnlVNpBDRgs4fb8Cxz8IYUxxMUai/yx49csx8mtu4ikPc5Y4XhqYlRk1QP6cr/D33sjnvLOSlb4d2xPmDBc+aw3dCgVUjmL3hFuTlz/Cdv8s0DDepS9wmt+ppvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qRfgSULg; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=0l6Sm
-	MR9BzhKNVS+UMt/7W8m+RHOtktucSCIuVkRrGU=; b=qRfgSULgVssfAF7kJPd3D
-	ZITouP3cQhBbn3eqhGgRdFYM5bm5XaUukMRrFff/uQG9xJp1Tm+cds+Kfx5WLjKD
-	pPKV/XgRT0fygzyGa8iPpGf5tvYO2K5gOLfMw1Zoh80F7HIpXRQc3856SNPlb14Q
-	6SOR/Qrzwg/25gNgXBEtDY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCH4haitg9otPCfDA--.1694S5;
-	Tue, 29 Apr 2025 01:11:01 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com,
-	jingoohan1@gmail.com,
-	manivannan.sadhasivam@linaro.org
-Cc: cassel@kernel.org,
-	robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 3/3] PCI: cadence: Simplify j721e link status check
-Date: Tue, 29 Apr 2025 01:10:27 +0800
-Message-Id: <20250428171027.13237-4-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250428171027.13237-1-18255117159@163.com>
-References: <20250428171027.13237-1-18255117159@163.com>
+	s=arc-20240116; t=1745860245; c=relaxed/simple;
+	bh=5AgkR+22VDjIBm+J00qc5j3ln4mZEAFE46+wzRtBSgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBw3cVXcBl9wVeIU68cY5W9E+gKJOd0ZZKFMr1RJrThLZjxfYLrWTIJBtrcYuJyP2JJTZm92rjzsNw4SJs8ErJ5G+73gC23Eo8WsIAX/ShBK7Stsz7gqUNl8ajYDs9IgfPI5mkqDRombvARVS1+/KQvuelYdX0ZtZ57+1itoL/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tY3G8aUU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF00C4CEE4;
+	Mon, 28 Apr 2025 17:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745860245;
+	bh=5AgkR+22VDjIBm+J00qc5j3ln4mZEAFE46+wzRtBSgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tY3G8aUU7JZKmsYWpxRE1JAAsUEtYAgG3SSxEKSFzK4Q5ZNILSy/8AXziYAqsmV6T
+	 CAWnasTLDNL5BDx37i72roQIJoULZbs27Kw1vmZXX1gAvGbsgIQN6bSmNM2/Q/bdQ3
+	 OuwV2QlZ2uc01mW3mdUvK5A7+khDu+oI7lCc6zO8=
+Date: Mon, 28 Apr 2025 19:10:42 +0200
+From: 'Greg KH' <gregkh@linuxfoundation.org>
+To: Faraz Ata <faraz.ata@samsung.com>
+Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>, alim.akhtar@samsung.com,
+	jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, dev.tailor@samsung.com,
+	rosa.pila@samsung.com
+Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
+Message-ID: <2025042829-heroics-deskwork-e74d@gregkh>
+References: <CGME20250417042427epcas5p2df3d35803adcb24da7d83e5df586380d@epcas5p2.samsung.com>
+ <20250417043427.1205626-1-faraz.ata@samsung.com>
+ <d350841c-3560-4511-a866-9490737e48f7@kernel.org>
+ <06cb01dbaf5a$1ea1a8b0$5be4fa10$@samsung.com>
+ <2025042508-statute-pleading-df6f@gregkh>
+ <0ce801dbb837$19706530$4c512f90$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCH4haitg9otPCfDA--.1694S5
-X-Coremail-Antispam: 1Uf129KBjvdXoWruryDKrWxAr1kJF15ZFW5ZFb_yoWDArc_ZF
-	1rZF4IyFsrurZIkFy2yF4ayFyrAayIva12ga93tF15AFyxJr4UCF1UZrWDWa4xua15AFn8
-	Aw1qqFn8AryjyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjoUq5UUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwM9o2gPr6StOAAAs-
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ce801dbb837$19706530$4c512f90$@samsung.com>
 
-Replace explicit if-else condition with direct return statement in
-j721e_pcie_link_up(). This reduces code verbosity while maintaining
-the same logic for detecting PCIe link completion.
+On Mon, Apr 28, 2025 at 05:44:21PM +0530, Faraz Ata wrote:
+> HI Greg
+> 
+> > Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart ports
+> > 
+> > On Thu, Apr 17, 2025 at 11:02:24AM +0530, Faraz Ata wrote:
+> > > Hello Krzysztof
+> > >
+> > > > -----Original Message-----
+> > > > From: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > Sent: Thursday, April 17, 2025 10:50 AM
+> > > > To: Faraz Ata <faraz.ata@samsung.com>; alim.akhtar@samsung.com;
+> > > > gregkh@linuxfoundation.org; jirislaby@kernel.org
+> > > > Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> > > > soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > > > serial@vger.kernel.org; dev.tailor@samsung.com;
+> > > > rosa.pila@samsung.com
+> > > > Subject: Re: [PATCH v3] tty: serial: samsung_tty: support 18 uart
+> > > > ports
+> > > >
+> > > > On 17/04/2025 06:34, Faraz Ata wrote:
+> > > > > ExynosAutov920 SoC supports 18 UART ports, update the value of
+> > > > UART_NR
+> > > > > to accommodate the same.
+> > > > >
+> > > > > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+> > > > > ---
+> > > > > Changes in v3:
+> > > > > - Fixed review comments from Krzysztof
+> > > >
+> > > > Which ones? What changed?
+> > > >
+> > > While sending v2  change log was missed unintentionally.
+> > > Added missed change log in v3.
+> > 
+> > Can you add this properly and send a v4?
+> > 
+> This was a clarification given to Krzysztof.
+> The complete change-log was missed in v2, This was pointed out by Krzysztof.
+> Added those missed changes in v3.
+> Do you want me to add this clarification as well and send v4 ?
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/cadence/pci-j721e.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index ef1cfdae33bb..bea1944a7eb2 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -153,11 +153,7 @@ static bool j721e_pcie_link_up(struct cdns_pcie *cdns_pcie)
- 	u32 reg;
- 
- 	reg = j721e_pcie_user_readl(pcie, J721E_PCIE_USER_LINKSTATUS);
--	reg &= LINK_STATUS;
--	if (reg == LINK_UP_DL_COMPLETED)
--		return true;
--
--	return false;
-+	return (reg & LINK_STATUS) == LINK_UP_DL_COMPLETED;
- }
- 
- static const struct cdns_pcie_ops j721e_pcie_ops = {
--- 
-2.25.1
-
+Yes please.
 
