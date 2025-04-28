@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-623209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4AAA9F25E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02156A9F25B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 826B43B266C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E14E1A81912
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC5826B0BF;
-	Mon, 28 Apr 2025 13:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C129B26B2D8;
+	Mon, 28 Apr 2025 13:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6qNiVLe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD7QBfDg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7D827470;
-	Mon, 28 Apr 2025 13:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2975B1A072A;
+	Mon, 28 Apr 2025 13:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745847038; cv=none; b=UFC9vjbhaH0dO0t+uc1WMmopWweW/RmR/+8eA34LTxIkb+as1sYTjENdW98tJCTH0sTB4mg+ILttt+TUP+fJspECzx7A1fliSLQJrG6uEfE8bXMBgcc1pe0Yd3GmDBHXMSXVD2tdBJLXrXcebI2hFksUYNaH6Gqt3o4nJ5WcMLk=
+	t=1745846994; cv=none; b=tRBudqP2nXs8TqXCNzlKkwe6xffNrX18c01airQ8kprz5vpfrd0jY51ZgyLdXVtOF7ie4hoXA2bKIOl8y4j+KyaSGs+Q6lsINedmRTufsVH82Z+iY2fngDiPkUhpOVUPoNgOz6LrJxkqQeg3N6Zj0nBFhx0XE/aqIdaAIL2uqME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745847038; c=relaxed/simple;
-	bh=wcX0/Gbii5mG818cMWU1haHGSuHByWakDVyiTxnCZqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IjCf5ViXK8ToxdQwEfv5jN1LX1whVVRQzx+Jn8dLCzU3FoEGAiMIAg0eqEneDKxSNsLNRS4ic2m+7eZ7VBPNCOd0EKh8mUNvC0DMKdq6z6WQczwe2I9bsUthKGkYj2pENVJK4dr5Y90DK98JxlVdaRz68JlzFknxrU9exWhz+ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6qNiVLe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27773C4CEED;
-	Mon, 28 Apr 2025 13:30:38 +0000 (UTC)
+	s=arc-20240116; t=1745846994; c=relaxed/simple;
+	bh=elk4Zqa+3hCtmUiNsAt9MfBksCuGpsquiK6zsRxydTQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=WSx3OxkujX7yIn/vX3F894RxHrYsErfeNiyZAILdcFqKHvdX+5PzlvoRGbvZdGEW37B977NgXYcZbIACdnmkohZwjrzPZUHDunSWs6FaXBLnyFAtDzsNCvaXCC8FbA7iOjLCPRkn9Bv1AJK9yVrgxSsQBTnZH29akHCrmyQWYO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TD7QBfDg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0EBC4CEE4;
+	Mon, 28 Apr 2025 13:29:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745847038;
-	bh=wcX0/Gbii5mG818cMWU1haHGSuHByWakDVyiTxnCZqg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K6qNiVLeN/psgmTjMc+BMCDZpyoU8H+McSplnrtf9PPYhjtgp777bNNFwjvotTL7q
-	 svJgiMgZE6ZQe20Rtddm0NShuahrRGdKuk8YRFAbhfAxcPYblLfVZMXloeTTqdkXQ0
-	 Zs/+UTES1YoKci1JZrCH/gSVqvBlf22dRKQ0Ym9n6lEomTZf4mRlMn6D5sWSkAjeRh
-	 g1Y43WRBZfreK1FbLNev9ra9AQSoEV4sl6TyZBYBazmn99NjFI90xXpzYVB/pOZ3Be
-	 kgm0k+huj6Oau8PNELkeXoVn/CGNdGKF67Y30G4pyZGuhRv3eJOGJQHa2QGkVsMEoY
-	 DaQPBE484xL2A==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2d9b61e02d1so566872fac.2;
-        Mon, 28 Apr 2025 06:30:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdXMfgINVuvOqKvnCL6BbAUVwsE6z5nutg3bXLUbG7vUnPRHY5GqslKcsX0qLx0bq6bTMMqJIAJvs=@vger.kernel.org, AJvYcCWtlg4ax3lnXo63L0TnMkBKdFDX9cMWuWGQkAI/1EQ5SwisgaBHvJuzq8HUmYo7Jfoym5YGShlup2IX4dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1PyUREDx9hNhoGcyYX2auFOvpblV5x3bUGXECzk8m0XyUHejH
-	q47gIuCfHwmNqIhPlLie60bPcMywPz305pFPdxvRIIf/wtp5uK49zXEwEsnNwX8i7tfVN55YRgH
-	5UrjmbwCBCWOVtM2KZw/f+oEkEhs=
-X-Google-Smtp-Source: AGHT+IEct+NiFTV886e7v9qglyrvvU5cP2Spr1Eqhk7idTdAQcxrekH74EtkzDyQmOIRLV2dT5kQgEKGIgxTxvHR6cs=
-X-Received: by 2002:a05:6870:b010:b0:2d5:b914:fe38 with SMTP id
- 586e51a60fabf-2d9be923341mr4260391fac.37.1745847037425; Mon, 28 Apr 2025
- 06:30:37 -0700 (PDT)
+	s=k20201202; t=1745846993;
+	bh=elk4Zqa+3hCtmUiNsAt9MfBksCuGpsquiK6zsRxydTQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=TD7QBfDg6kXdOzjRs6gtAIizZopWFFNqcvzVQOUhE4adYd3tKK9ZWRiOnvUE6xSVd
+	 jqwrYMQ8+CvdekMObGo0NgaCNDmpuD0w0cXxKLSIz47iIeS/A+QYeABeLViatbJfgl
+	 WYuFL3DJJsVzqm0ssKDEWQxyOqyy4bbuIUxmpfwxhdut/618sWFo6Maqz94oacg6/C
+	 PFGArhwz0OFSGUVyUCsQRZIPi4wGKLvIrlI/LJUOfHZ/1qnX4nKj5+7grom/3aVSVM
+	 0hcg7j0y6Ieg1gwWvMRkF6+1AoV5y9QGkFI2DE13pzJZ78Bj3EwkJ7EatPc+D16aoT
+	 QizlVzaNHtOoQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BF93822D43;
+	Mon, 28 Apr 2025 13:30:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_7F99ED4767C1AF7889D0D8AD50F34859CE06@qq.com>
-In-Reply-To: <tencent_7F99ED4767C1AF7889D0D8AD50F34859CE06@qq.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 28 Apr 2025 15:30:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hM9KwdHRcoBjGRJq7y6wkQDFt+PMuU1k=3ARifDvOENA@mail.gmail.com>
-X-Gm-Features: ATxdqUHJ6_zXi_Wqvz4LXfPkTTFxOUk8hKFqRCdm1Z6TsdkGdSeODYP2FSMc5Ks
-Message-ID: <CAJZ5v0hM9KwdHRcoBjGRJq7y6wkQDFt+PMuU1k=3ARifDvOENA@mail.gmail.com>
-Subject: Re: [PATCH v4 RESEND] PM: EM: Fix potential division-by-zero error in em_compute_costs()
-To: Yaxiong Tian <iambestgod@qq.com>
-Cc: lukasz.luba@arm.com, rafael@kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/3] net: stmmac: socfpga: 1000BaseX support and
+ cleanups
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174584703225.917720.8866587140005702000.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Apr 2025 13:30:32 +0000
+References: <20250424071223.221239-1-maxime.chevallier@bootlin.com>
+In-Reply-To: <20250424071223.221239-1-maxime.chevallier@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, andrew@lunn.ch, linux@armlinux.org.uk,
+ kuba@kernel.org, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, horms@kernel.org, alexis.lothore@bootlin.com,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
 
-On Fri, Apr 18, 2025 at 3:19=E2=80=AFAM Yaxiong Tian <iambestgod@qq.com> wr=
-ote:
->
-> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
->
-> When the device is of a non-CPU type, table[i].performance won't be
-> initialized in the previous em_init_performance(), resulting in division
-> by zero when calculating costs in em_compute_costs().
->
-> Since the 'cost' algorithm is only used for EAS energy efficiency
-> calculations and is currently not utilized by other device drivers, we
-> should add the _is_cpu_device(dev) check to prevent this division-by-zero
-> issue.
->
-> Fixes: 1b600da51073 ("PM: EM: Optimize em_cpu_energy() and remove divisio=
-n")
-> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
-> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
->  kernel/power/energy_model.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index d9b7e2b38c7a..41606247c277 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -233,6 +233,10 @@ static int em_compute_costs(struct device *dev, stru=
-ct em_perf_state *table,
->         unsigned long prev_cost =3D ULONG_MAX;
->         int i, ret;
->
-> +       /* This is needed only for CPUs and EAS skip other devices */
-> +       if (!_is_cpu_device(dev))
-> +               return 0;
-> +
->         /* Compute the cost of each performance state. */
->         for (i =3D nr_states - 1; i >=3D 0; i--) {
->                 unsigned long power_res, cost;
-> --
+Hello:
 
-Applied as 6.16 material, thanks!
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 24 Apr 2025 09:12:19 +0200 you wrote:
+> Hi everyone,
+> 
+> This V3 is simply a re-send of V2, targeting net-next instead of net as
+> the V2 did by mistake.
+> 
+> No other changes besides a rebase on net-next were made.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v3,1/3] net: stmmac: socfpga: Enable internal GMII when using 1000BaseX
+    https://git.kernel.org/netdev/net-next/c/6fba40e7f610
+  - [net-next,v3,2/3] net: stmmac: socfpga: Don't check for phy to enable the SGMII adapter
+    https://git.kernel.org/netdev/net-next/c/3bf19459da62
+  - [net-next,v3,3/3] net: stmmac: socfpga: Remove unused pcs-mdiodev field
+    https://git.kernel.org/netdev/net-next/c/8fb33581bb8a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
