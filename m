@@ -1,246 +1,213 @@
-Return-Path: <linux-kernel+bounces-623195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB08A9F21A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F14A9F221
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB693ACF0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C9D189E93D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69B926A091;
-	Mon, 28 Apr 2025 13:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222DD26A091;
+	Mon, 28 Apr 2025 13:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+VNtlt7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="QNh+vskZ"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4897B70810;
-	Mon, 28 Apr 2025 13:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FF9265CA3;
+	Mon, 28 Apr 2025 13:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745846614; cv=none; b=k+wYGHzrmb5QqpACKxtObagVFSJwusgOaTnQ5lf5AOKgV3NAXPa8ykMtGTcHpIH+6CKPXSADCKX++vZiYvtdxxRwRTxsh/lTkyafZlVBYymlUchKgf1xapNOunzScT9aqWXS3TqNDHjKzBnOEmUCDHO5EgpWhTGVajAbAPD9VFo=
+	t=1745846633; cv=none; b=sZ4s1D5hbXaOyrsuOrPMQjiNMCwCV0m8V5pM9mp7BU3FE4EIgaXestmbpQ4kUwaYNjzabiZbpgQqy5xMIPBO1D2CnhaTph2LIXJHYryhXH1y/Mov85rGzmVXBXQVWVcvOvtjCm2SgaMEpLgEygHehKYfQB3RBIvnYiA3eVqSV+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745846614; c=relaxed/simple;
-	bh=335MrcHvnvENFyHo54UTERg/dHu7eoyK/wd1W1y27ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SI6OfGZORkp4G7N1Jri9Irdb7y8quC5uPlNLDPJ4EudkuoN38RSZ/Zf72tsXyrdT7wwZx6jYm49qeAMZf4B8I8Kp0sxeVCTikzKcu/KufAJiMtIiGlGJ+ZBkkSd3Z08Isvr2+aMKS8cH69fkluRxmuGVY7zNiETjUs7YNuRb9Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+VNtlt7; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745846612; x=1777382612;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=335MrcHvnvENFyHo54UTERg/dHu7eoyK/wd1W1y27ug=;
-  b=n+VNtlt7ZACCOGriZCkXBVlMtobkdKKBJWDkonwcpymNhbLd1B/qX2Hv
-   GJtc9wgnDO4e+m2mGNsb6wJLyEEiE4MFICeZrBvluIXZpeAHadEfLVu6Y
-   icDV5XiTyL0UsmKD2avru8hNAyaAdhF/HkrV5dPhRQb8X/LyP6nQh4m0w
-   Iws5rO2QfX/kNFufN0uj8qIHDj3QKlWFWGMk++qMQkVSx6qnIWKZMZcYt
-   XKuy/C4IzbGc463q4l29m74OIEPQ35Km9MMicHxvOg0Ki+U8wmekFpDm+
-   xjj+sbrNpWr8fSElLYgfzpVQdzLqXF8Jd1tAtv0ibKqJOtNQNphOUlKXT
-   w==;
-X-CSE-ConnectionGUID: DBAqw15jTKGSzPy1AGGHQA==
-X-CSE-MsgGUID: ASY64+tcQSWG4NvVzZ5Z6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="58422018"
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="58422018"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 06:23:31 -0700
-X-CSE-ConnectionGUID: CcSuqomNR++Tkv1FqcBimw==
-X-CSE-MsgGUID: qUzk6fo9TuKy8UWhQBuc7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
-   d="scan'208";a="164483064"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa002.jf.intel.com with SMTP; 28 Apr 2025 06:23:28 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 28 Apr 2025 16:23:26 +0300
-Date: Mon, 28 Apr 2025 16:23:26 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andrei Kuchynski <akuchynski@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Pooja Katiyar <pooja.katiyar@intel.com>,
-	Madhu M <madhu.m@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] usb: typec: ucsi: displayport: Fix deadlock
-Message-ID: <aA-BTrunTaYxtrps@kuha.fi.intel.com>
-References: <20250424084429.3220757-1-akuchynski@chromium.org>
- <20250424084429.3220757-2-akuchynski@chromium.org>
+	s=arc-20240116; t=1745846633; c=relaxed/simple;
+	bh=PZ58W/fh/oIsI/HU9YwpIcoWTv1ZA3v47t5escImeVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uopuIZzY1dDNe/wLCFcxCGoDI+N+FAtEF7/r64TnadfuB/kN8be4pEtlLU3cAu5OLLE/pu+gMcU+AxGWTsJSM98cHoyC8covxOHZnQUbfmv+pZN7HI+oJ0KtNa0uxo/7gxLqcaRML+KEjKGYC08C8DbjQqzgR0KmLyBNRxBvIVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=QNh+vskZ; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=iGXj63J8VBhZa0Z6vwO5joFqgsLfCrZn2O4wsUpwsxc=; t=1745846631;
+	x=1746278631; b=QNh+vskZIOm55U5hiFE7zkKhbbFSlRHD7CWjHdQMXyG5OdQC0PiQ07zWZGNUE
+	/BCdLYtH2zkzRxnKYebTyCsf2wp+8cXIEWrinWmX9JaXJ37ZCZUrliWlk07eP3srfY6lfnaQRqozw
+	mBbNU9+goohJ4ep75Q19ep7jM+E/StpxHgbCHlrBe/lQ5igSbuBDkC4qnAfRWD1HZ6xH2wDHpxVWD
+	SVo76ks157a9RITTB+V2ihEKlQd06YKUNTJvKevKzldxbu+82U4zn+fw22mIE4mvjwO+NdJ9JU09j
+	H/VMumqb7QYb0tQqxylxj4fkt8pHXBapwNllDY6srizARgJD/A==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1u9OSJ-0092j3-2B;
+	Mon, 28 Apr 2025 15:23:31 +0200
+Message-ID: <7703f88e-ccb7-4c98-9da4-8aad224e780f@leemhuis.info>
+Date: Mon, 28 Apr 2025 15:23:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250424084429.3220757-2-akuchynski@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf tools: Fix arm64 build by generating unistd_64.h
+To: James Clark <james.clark@linaro.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, arnd@linaro.org
+Cc: Ingo Molnar <mingo@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250417-james-perf-fix-gen-syscall-v1-1-1d268c923901@linaro.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20250417-james-perf-fix-gen-syscall-v1-1-1d268c923901@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1745846631;3d1aed48;
+X-HE-SMSGID: 1u9OSJ-0092j3-2B
 
-On Thu, Apr 24, 2025 at 08:44:28AM +0000, Andrei Kuchynski wrote:
-> This patch introduces the ucsi_con_mutex_lock / ucsi_con_mutex_unlock
-> functions to the UCSI driver. ucsi_con_mutex_lock ensures the connector
-> mutex is only locked if a connection is established and the partner pointer
-> is valid. This resolves a deadlock scenario where
-> ucsi_displayport_remove_partner holds con->mutex waiting for
-> dp_altmode_work to complete while dp_altmode_work attempts to acquire it.
+On 17.04.25 15:55, James Clark wrote:
+> Since pulling in the kernel changes in commit 22f72088ffe6 ("tools
+> headers: Update the syscall table with the kernel sources"), arm64 is
+> no longer using a generic syscall header and generates one from the
+> syscall table. Therefore we must also generate the syscall header for
+> arm64 before building Perf.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: af8622f6a585 ("usb: typec: ucsi: Support for DisplayPort alt mode")
-> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> Add it as a dependency to libperf which uses one syscall number. Perf
+> uses more, but as libperf is a dependency of Perf it will be generated
+> for both.
+> 
+> Future platforms that need this will have to add their own syscall-y
+> targets in libperf manually. Unfortunately the arch specific files that
+> do this (e.g. arch/arm64/include/asm/Kbuild) can't easily be imported
+> into the Perf build. But Perf only needs a subset of the generated files
+> anyway, so redefining them is probably the correct thing to do.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+FYI, my daily -next build for Fedora based on its RPM spec file broke
+on arm64 (x86_64 worked fine) while building libperf. I haven't checked
+yet, but due to the error messages and a quick look in the history I
+wonder if this is due to the quoted change, which showed up in -next
+today:
 
+"""
+kernel.spec:3115: build libperf
++ /usr/bin/make -s 'EXTRA_CFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -mbranch-protection=standard -fasynchronous-unwind-tables -fstack-clash-protection  ' 'LDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' -C tools/lib/perf V=1 DESTDIR=/builddir/build/BUILD/kernel-6.15.0-build/BUILDROOT
+mkdir: cannot create directory â€˜/../archâ€™: Permission denied
+/builddir/build/BUILD/kernel-6.15.0-build/kernel-next-20250428/linux-6.15.0-0.0.next.20250428.435.vanilla.fc43.aarch64/scripts/syscallhdr.sh: line 98: /../arch/arm64/include/generated/uapi/asm/unistd_64.h: No such file or directory
+make[2]: *** [/builddir/build/BUILD/kernel-6.15.0-build/kernel-next-20250428/linux-6.15.0-0.0.next.20250428.435.vanilla.fc43.aarch64/scripts/Makefile.asm-headers:81: /../arch/arm64/include/generated/uapi/asm/unistd_64.h] Error 1
+make[1]: *** [Makefile:108: uapi-asm-generic] Error 2
+make: *** [Makefile:128: all] Error 2
+error: Bad exit status from /var/tmp/rpm-tmp.vAfil2 (%build)
+"""
+
+Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/08975350-next-next-all/builder-live.log.gz
+
+Ciao, Thorsten
+ 
+> Fixes: 22f72088ffe6 ("tools headers: Update the syscall table with the kernel sources")
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  drivers/usb/typec/ucsi/displayport.c | 19 +++++++++-------
->  drivers/usb/typec/ucsi/ucsi.c        | 34 ++++++++++++++++++++++++++++
->  drivers/usb/typec/ucsi/ucsi.h        |  2 ++
->  3 files changed, 47 insertions(+), 8 deletions(-)
+>  tools/lib/perf/Makefile    | 12 +++++++++++-
+>  tools/perf/Makefile.config |  1 +
+>  2 files changed, 12 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/typec/ucsi/displayport.c b/drivers/usb/typec/ucsi/displayport.c
-> index 420af5139c70..acd053d4e38c 100644
-> --- a/drivers/usb/typec/ucsi/displayport.c
-> +++ b/drivers/usb/typec/ucsi/displayport.c
-> @@ -54,7 +54,8 @@ static int ucsi_displayport_enter(struct typec_altmode *alt, u32 *vdo)
->  	u8 cur = 0;
->  	int ret;
+> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
+> index ffcfd777c451..1a19b5013f45 100644
+> --- a/tools/lib/perf/Makefile
+> +++ b/tools/lib/perf/Makefile
+> @@ -42,6 +42,7 @@ libdir_relative_SQ = $(subst ','\'',$(libdir_relative))
+>  TEST_ARGS := $(if $(V),-v)
 >  
-> -	mutex_lock(&dp->con->lock);
-> +	if (!ucsi_con_mutex_lock(dp->con))
-> +		return -ENOTCONN;
+>  INCLUDES = \
+> +-I$(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi \
+>  -I$(srctree)/tools/lib/perf/include \
+>  -I$(srctree)/tools/lib/ \
+>  -I$(srctree)/tools/include \
+> @@ -99,7 +100,16 @@ $(LIBAPI)-clean:
+>  	$(call QUIET_CLEAN, libapi)
+>  	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) clean >/dev/null
 >  
->  	if (!dp->override && dp->initialized) {
->  		const struct typec_altmode *p = typec_altmode_get_partner(alt);
-> @@ -100,7 +101,7 @@ static int ucsi_displayport_enter(struct typec_altmode *alt, u32 *vdo)
->  	schedule_work(&dp->work);
->  	ret = 0;
->  err_unlock:
-> -	mutex_unlock(&dp->con->lock);
-> +	ucsi_con_mutex_unlock(dp->con);
->  
->  	return ret;
->  }
-> @@ -112,7 +113,8 @@ static int ucsi_displayport_exit(struct typec_altmode *alt)
->  	u64 command;
->  	int ret = 0;
->  
-> -	mutex_lock(&dp->con->lock);
-> +	if (!ucsi_con_mutex_lock(dp->con))
-> +		return -ENOTCONN;
->  
->  	if (!dp->override) {
->  		const struct typec_altmode *p = typec_altmode_get_partner(alt);
-> @@ -144,7 +146,7 @@ static int ucsi_displayport_exit(struct typec_altmode *alt)
->  	schedule_work(&dp->work);
->  
->  out_unlock:
-> -	mutex_unlock(&dp->con->lock);
-> +	ucsi_con_mutex_unlock(dp->con);
->  
->  	return ret;
->  }
-> @@ -202,20 +204,21 @@ static int ucsi_displayport_vdm(struct typec_altmode *alt,
->  	int cmd = PD_VDO_CMD(header);
->  	int svdm_version;
->  
-> -	mutex_lock(&dp->con->lock);
-> +	if (!ucsi_con_mutex_lock(dp->con))
-> +		return -ENOTCONN;
->  
->  	if (!dp->override && dp->initialized) {
->  		const struct typec_altmode *p = typec_altmode_get_partner(alt);
->  
->  		dev_warn(&p->dev,
->  			 "firmware doesn't support alternate mode overriding\n");
-> -		mutex_unlock(&dp->con->lock);
-> +		ucsi_con_mutex_unlock(dp->con);
->  		return -EOPNOTSUPP;
->  	}
->  
->  	svdm_version = typec_altmode_get_svdm_version(alt);
->  	if (svdm_version < 0) {
-> -		mutex_unlock(&dp->con->lock);
-> +		ucsi_con_mutex_unlock(dp->con);
->  		return svdm_version;
->  	}
->  
-> @@ -259,7 +262,7 @@ static int ucsi_displayport_vdm(struct typec_altmode *alt,
->  		break;
->  	}
->  
-> -	mutex_unlock(&dp->con->lock);
-> +	ucsi_con_mutex_unlock(dp->con);
->  
->  	return 0;
->  }
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index e8c7e9dc4930..01ce858a1a2b 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -1922,6 +1922,40 @@ void ucsi_set_drvdata(struct ucsi *ucsi, void *data)
->  }
->  EXPORT_SYMBOL_GPL(ucsi_set_drvdata);
->  
-> +/**
-> + * ucsi_con_mutex_lock - Acquire the connector mutex
-> + * @con: The connector interface to lock
-> + *
-> + * Returns true on success, false if the connector is disconnected
-> + */
-> +bool ucsi_con_mutex_lock(struct ucsi_connector *con)
-> +{
-> +	bool mutex_locked = false;
-> +	bool connected = true;
+> -$(LIBPERF_IN): FORCE
+> +uapi-asm := $(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi/asm
+> +ifeq ($(SRCARCH),arm64)
+> +	syscall-y := $(uapi-asm)/unistd_64.h
+> +endif
+> +uapi-asm-generic:
+> +	$(if $(syscall-y),\
+> +		$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-headers obj=$(uapi-asm) \
+> +		generic=include/uapi/asm-generic $(syscall-y),)
 > +
-> +	while (connected && !mutex_locked) {
-> +		mutex_locked = mutex_trylock(&con->lock) != 0;
-> +		connected = UCSI_CONSTAT(con, CONNECTED);
-> +		if (connected && !mutex_locked)
-> +			msleep(20);
-> +	}
-> +
-> +	connected = connected && con->partner;
-> +	if (!connected && mutex_locked)
-> +		mutex_unlock(&con->lock);
-> +
-> +	return connected;
-> +}
-> +
-> +/**
-> + * ucsi_con_mutex_unlock - Release the connector mutex
-> + * @con: The connector interface to unlock
-> + */
-> +void ucsi_con_mutex_unlock(struct ucsi_connector *con)
-> +{
-> +	mutex_unlock(&con->lock);
-> +}
-> +
->  /**
->   * ucsi_create - Allocate UCSI instance
->   * @dev: Device interface to the PPM (Platform Policy Manager)
-> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-> index 3a2c1762bec1..9c5278a0c5d4 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.h
-> +++ b/drivers/usb/typec/ucsi/ucsi.h
-> @@ -94,6 +94,8 @@ int ucsi_register(struct ucsi *ucsi);
->  void ucsi_unregister(struct ucsi *ucsi);
->  void *ucsi_get_drvdata(struct ucsi *ucsi);
->  void ucsi_set_drvdata(struct ucsi *ucsi, void *data);
-> +bool ucsi_con_mutex_lock(struct ucsi_connector *con);
-> +void ucsi_con_mutex_unlock(struct ucsi_connector *con);
+> +$(LIBPERF_IN): uapi-asm-generic FORCE
+>  	$(Q)$(MAKE) $(build)=libperf
 >  
->  void ucsi_connector_change(struct ucsi *ucsi, u8 num);
+>  $(LIBPERF_A): $(LIBPERF_IN)
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index eea95c6c0c71..a52482654d4b 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -29,6 +29,7 @@ include $(srctree)/tools/scripts/Makefile.arch
+>  $(call detected_var,SRCARCH)
 >  
-> -- 
-> 2.49.0.805.g082f7c87e0-goog
+>  CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
+> +CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated/uapi
+>  
+>  # Additional ARCH settings for ppc
+>  ifeq ($(SRCARCH),powerpc)
+> 
+> ---
+> base-commit: 2b70702917337a8d6d07f03eed961e0119091647
+> change-id: 20250414-james-perf-fix-gen-syscall-a8d9b4367d07
+> 
+> Best regards,
 
--- 
-heikki
 
