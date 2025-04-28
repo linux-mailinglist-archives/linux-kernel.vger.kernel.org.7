@@ -1,164 +1,246 @@
-Return-Path: <linux-kernel+bounces-622382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD0CA9E655
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 04:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCB5A9E65C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 04:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E6E1896748
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 02:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 884CD3B6D02
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 02:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5C7189BAC;
-	Mon, 28 Apr 2025 02:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A5718DF6E;
+	Mon, 28 Apr 2025 02:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WiI9H4TQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDZBpQq/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF03433A4;
-	Mon, 28 Apr 2025 02:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECB278F51;
+	Mon, 28 Apr 2025 02:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745808588; cv=none; b=OL/5g3Y2lHwzgcg3xZACdLy/zWpLhj0+NPm4sTaIZhvgkYkMqzUmb8oVF4kVfYQeW+Msu5+GOI3YfOPQjr+5/12wh2hF2y4SvaEf74qMleg7E/H7k9bHLMviPNNK6wBQIgbhVgnRZaG7ceS7nrRD/WYsbqMMzf/ZunDnAltSp2M=
+	t=1745808891; cv=none; b=dl8Pz+6UDdHCQxjdwG7ajsYUZWnrVSsGCOyLz9r6O3cdpgqW8oGkGGKRHyxBV1WsbSvwheFbSYzaN9FMmR5Rbh///5fZSdGlcAaK3AsljgNgSCr0arcOE8tJLmnGQvJYauuvM0eURHsj6fl///rRECp10bVjf7glqO8YnLLF9Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745808588; c=relaxed/simple;
-	bh=98HfE2dlq4WpfSJg1ONEisZcjBEtV62vo0nBKsafKPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCnLuJLwzkOQvG72mTOcYDLnh5EjiaEWAj9ZVFRxx6m4G1hdiALLzbIe2GbK7Ibfs9xZz1n/DvU1xh2nGAN2xkuNHXNNG/cjFeVgoflnI8E34Eojyfmsal5wp0/zjMVF271MP028oLBunjSaSf7cFqjK9jyZbpKPXYRT3/mjCB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WiI9H4TQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC99C4CEE3;
-	Mon, 28 Apr 2025 02:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745808587;
-	bh=98HfE2dlq4WpfSJg1ONEisZcjBEtV62vo0nBKsafKPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WiI9H4TQDt8j82A0Le+ljUnpZ6NNXsYQgnQ/u0OGoL6Dgd5u+qNvIb+G/vyiXAd2g
-	 WQMbAlKyYKs1zjhAkrplxdrtRuYTeuE/zKQv58EOB6BVIn7Zi8CQ/LducZAWsh91F6
-	 VoYbhoJ6dyTO3xUGLfiBOcnwGo0oKSmQYa0MOlTld0T20wQY0+xt1YoBHjgQbq/iHA
-	 mUckhk1eZ7cJBy9KekB49jKyAkbbM0UAntHDCu6Jkqbm+HRVVt4HeXotiesoe6FIhT
-	 JqVkMO7Jn2sZUC+biMF6K3r376tk2tbPe5L3BLtugDSJL/vAIlprf5FjzpEt5wqNst
-	 JJ+Hyv3bt4gkA==
-Date: Sun, 27 Apr 2025 19:49:45 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, Theodore Ts'o <tytso@mit.edu>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-Message-ID: <20250428024945.GD6134@sol.localdomain>
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
- <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
- <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <aAvlM1G1k94kvCs9@casper.infradead.org>
- <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
- <20250428013059.GA6134@sol.localdomain>
- <ytjddsxe5uy4swchkn2hh56lwqegv6hinmlmipq3xxinqzkjnd@cpdw4thi3fqq>
- <20250428021514.GB6134@sol.localdomain>
- <ogtnxaeyjldd6lapfbhwj3ptpvwkjpn66e3gejawdjs7s7hg2v@pksyrq3gzwal>
+	s=arc-20240116; t=1745808891; c=relaxed/simple;
+	bh=8UmPPcYF02m42D0X2SqZC95wLkwf70+0LBSPOHRvYHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AX/vaOchfY77SrTZW0bveZ9nkKhEZ4vCztdO+ZoPRsIYekO3WS1CZhG9VBAqXQIHyLycBOEbbyTU1wAzBDcMIH5e0VPfVsfsOKQ4CvQ1DtlVNbcjKZ8a0R0IHkelMlEI6mKFP8s/NtHBkgG9vN66wvxUhoFAqGDJHa8ddSXtyOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDZBpQq/; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745808889; x=1777344889;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8UmPPcYF02m42D0X2SqZC95wLkwf70+0LBSPOHRvYHs=;
+  b=dDZBpQq/PKKneUvivkfpooKtszHrCBTMZ6+xEBzNeOs4QV25b2GJiimP
+   Xy2VmrvHu1imxey68SY5xpZe3Ltp1ufqHJ59URIstSi/+gCsQnGf8Z5Ea
+   sU4SMzzBMSvsThPwFwxiB9HUPuGeFOhHgyLp/HNjACwA3exG4MLOow1k1
+   TvflDmpoxQ/VjpcFbjvhCLKtG1ot2nIKSQ/LhPtVI46i9SIEUnN4EGs8K
+   HWLbpu+q5seRwfuBS1TyqvNBSboOJXIItg2ygXEXb1aUOzDR10kQ5G7fR
+   odmQoIA+8cW+OnZvDvJ/J08v2as/8N0L6PcaeMxYL3ezXai6NujyvIGMS
+   A==;
+X-CSE-ConnectionGUID: k6P2DSigSySBOPgdkZc/Vg==
+X-CSE-MsgGUID: f9E9fVfGSfmCesjsD6/LgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="51191806"
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
+   d="scan'208";a="51191806"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 19:54:49 -0700
+X-CSE-ConnectionGUID: +mY80rqWTlmDXdkEN10FGw==
+X-CSE-MsgGUID: I+oqtZWeS3+OR7W5/JQ1Gw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
+   d="scan'208";a="133277233"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 19:54:42 -0700
+Message-ID: <c4d03b52-422e-41ab-845b-1d2eda7ca9e2@linux.intel.com>
+Date: Mon, 28 Apr 2025 10:50:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ogtnxaeyjldd6lapfbhwj3ptpvwkjpn66e3gejawdjs7s7hg2v@pksyrq3gzwal>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/22] iommufd: Add mmap interface
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ corbet@lwn.net, will@kernel.org
+Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+ peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+ praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
+ alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <7be26560c604b0cbc2fd218997b97a47e4ed11ff.1745646960.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <7be26560c604b0cbc2fd218997b97a47e4ed11ff.1745646960.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Apr 27, 2025 at 10:33:29PM -0400, Kent Overstreet wrote:
-> On Sun, Apr 27, 2025 at 07:15:14PM -0700, Eric Biggers wrote:
-> > On Sun, Apr 27, 2025 at 09:43:43PM -0400, Kent Overstreet wrote:
-> > > On Sun, Apr 27, 2025 at 06:30:59PM -0700, Eric Biggers wrote:
-> > > > On Sun, Apr 27, 2025 at 08:55:30PM -0400, Kent Overstreet wrote:
-> > > > > The thing is, that's exactly what we're doing. ext4 and bcachefs both
-> > > > > refer to a specific revision of the folding rules: for ext4 it's
-> > > > > specified in the superblock, for bcachefs it's hardcoded for the moment.
-> > > > > 
-> > > > > I don't think this is the ideal approach, though.
-> > > > > 
-> > > > > That means the folding rules are "whatever you got when you mkfs'd".
-> > > > > Think about what that means if you've got a fleet of machines, of
-> > > > > different ages, but all updated in sync: that's a really annoying way
-> > > > > for gremlins of the "why does this machine act differently" variety to
-> > > > > creep in.
-> > > > > 
-> > > > > What I'd prefer is for the unicode folding rules to be transparently and
-> > > > > automatically updated when the kernel is updated, so that behaviour
-> > > > > stays in sync. That would behave more the way users would expect.
-> > > > > 
-> > > > > But I only gave this real thought just over the past few days, and doing
-> > > > > this safely and correctly would require some fairly significant changes
-> > > > > to the way casefolding works.
-> > > > > 
-> > > > > We'd have to ensure that lookups via the case sensitive name always
-> > > > > works, even if the casefolding table the dirent was created with give
-> > > > > different results that the currently active casefolding table.
-> > > > > 
-> > > > > That would require storing two different "dirents" for each real dirent,
-> > > > > one normalized and one un-normalized, because we'd have to do an
-> > > > > un-normalized lookup if the normalized lookup fails (and vice versa).
-> > > > > Which should be completely fine from a performance POV, assuming we have
-> > > > > working negative dentries.
-> > > > > 
-> > > > > But, if the unicode folding rules are stable enough (and one would hope
-> > > > > they are), hopefully all this is a non-issue.
-> > > > > 
-> > > > > I'd have to gather more input from users of casefolding on other
-> > > > > filesystems before saying what our long term plans (if any) will be.
-> > > > 
-> > > > Wouldn't lookups via the case-sensitive name keep working even if the
-> > > > case-insensitivity rules change?  It's lookups via a case-insensitive name that
-> > > > could start producing different results.  Applications can depend on
-> > > > case-insensitive lookups being done in a certain way, so changing the
-> > > > case-insensitivity rules can be risky.
-> > > 
-> > > No, because right now on a case-insensitive filesystem we _only_ do the
-> > > lookup with the normalized name.
-> > 
-> > Well, changing the case-insensitivity rules on an existing filesystem breaks the
-> > directory indexing, so when the filesystem does an indexed lookup in a directory
-> > it might no longer look in the right place.  But if the dentry were to be
-> > examined regardless, it would still match.  (Again, assuming that the lookup
-> > uses a name that is case-sensitively the same as the name the file was created
-> > with.  If it's not case-sensitively the same, that's another story.)  ext4 and
-> > f2fs recently added a fallback to a linear search for dentries in "casefolded"
-> > directories, which handle this by no longer relying solely on the directory
-> > indexing.  See commits 9e28059d56649 and 91b587ba79e1b.
+On 4/26/25 13:58, Nicolin Chen wrote:
+> For vIOMMU passing through HW resources to user space (VMs), add an mmap
+> infrastructure to map a region of hardware MMIO pages.
 > 
-> bcachefs stores the normalized d_name, in addition to the
-> un-normalized version, so our low level directory indexing works just
-> fine if the normalization rules change.
-> 
-> That is, bcachefs could be changed to always load the latest unicode
-> normalization table, and internally everything will work completely
-> fine.
-> 
-> BUT:
-> 
-> If the normalization rules change for an existing dirent, then looking up
-> the un-normalized name with the new rules gives you a different
-> normalization than what's on disk and would return -ENOENT. You'd have
-> to look up the old normalized name, or something that normalized to the
-> old normalized name, to find it. Obviously, that's broken.
-> 
-> IOW: bcachefs doesn't have the linear search fallback, and that's not
-> something I'd ever add. That effectively means a silent fallback to
-> O(n^2) algorithms, and I don't want the bug reports that would someday
-> generate.
+> Maintain an mt_mmap per ictx for validations. To allow IOMMU drivers to
+> add and delete mmappable regions to/from the mt_mmap, add a pair of new
+> helpers: iommufd_ctx_alloc_mmap() and iommufd_ctx_free_mmap().
 
-Is there a reason why you don't just do what ext4 and f2fs does and store (only)
-the case-preserved original name on-disk?
+I am wondering why the dma_buf mechanism isn't used here, considering
+that this also involves an export and import pattern.
 
-Note that generic_ci_match() has a fast path that compares the bytes of the
-on-disk name to the bytes of the user-requested name.  Only if they don't match
-is the "casefolded" comparison done.  It's true that if the filesystem were to
-store the "casefolded" name on-disk too, then it wouldn't have to be computed
-for each "casefolded" comparison with that dentry.  But that's already the "slow
-path" that is executed only when the name wasn't case-sensitively the same.
+> 
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>   drivers/iommu/iommufd/iommufd_private.h |  8 +++++
+>   include/linux/iommufd.h                 | 15 ++++++++++
+>   drivers/iommu/iommufd/driver.c          | 39 +++++++++++++++++++++++++
+>   drivers/iommu/iommufd/main.c            | 39 +++++++++++++++++++++++++
+>   4 files changed, 101 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index b974c207ae8a..db5b62ec4abb 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -7,6 +7,7 @@
+>   #include <linux/iommu.h>
+>   #include <linux/iommufd.h>
+>   #include <linux/iova_bitmap.h>
+> +#include <linux/maple_tree.h>
+>   #include <linux/rwsem.h>
+>   #include <linux/uaccess.h>
+>   #include <linux/xarray.h>
+> @@ -44,6 +45,7 @@ struct iommufd_ctx {
+>   	struct xarray groups;
+>   	wait_queue_head_t destroy_wait;
+>   	struct rw_semaphore ioas_creation_lock;
+> +	struct maple_tree mt_mmap;
+>   
+>   	struct mutex sw_msi_lock;
+>   	struct list_head sw_msi_list;
+> @@ -55,6 +57,12 @@ struct iommufd_ctx {
+>   	struct iommufd_ioas *vfio_ioas;
+>   };
+>   
+> +/* Entry for iommufd_ctx::mt_mmap */
+> +struct iommufd_mmap {
+> +	unsigned long pfn_start;
+> +	unsigned long pfn_end;
+> +};
 
-- Eric
+This structure is introduced to represent a mappable/mapped region,
+right? It would be better to add comments specifying whether the start
+and end are inclusive or exclusive.
+
+> +
+>   /*
+>    * The IOVA to PFN map. The map automatically copies the PFNs into multiple
+>    * domains and permits sharing of PFNs between io_pagetable instances. This
+> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index 5dff154e8ce1..d63e2d91be0d 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -236,6 +236,9 @@ int iommufd_object_depend(struct iommufd_object *obj_dependent,
+>   			  struct iommufd_object *obj_depended);
+>   void iommufd_object_undepend(struct iommufd_object *obj_dependent,
+>   			     struct iommufd_object *obj_depended);
+> +int iommufd_ctx_alloc_mmap(struct iommufd_ctx *ictx, phys_addr_t base,
+> +			   size_t size, unsigned long *immap_id);
+> +void iommufd_ctx_free_mmap(struct iommufd_ctx *ictx, unsigned long immap_id);
+>   struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>   				       unsigned long vdev_id);
+>   int iommufd_viommu_get_vdev_id(struct iommufd_viommu *viommu,
+> @@ -262,11 +265,23 @@ static inline int iommufd_object_depend(struct iommufd_object *obj_dependent,
+>   	return -EOPNOTSUPP;
+>   }
+>   
+> +static inline int iommufd_ctx_alloc_mmap(struct iommufd_ctx *ictx,
+> +					 phys_addr_t base, size_t size,
+> +					 unsigned long *immap_id)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>   static inline void iommufd_object_undepend(struct iommufd_object *obj_dependent,
+>   					   struct iommufd_object *obj_depended)
+>   {
+>   }
+>   
+> +static inline void iommufd_ctx_free_mmap(struct iommufd_ctx *ictx,
+> +					 unsigned long immap_id)
+> +{
+> +}
+> +
+>   static inline struct device *
+>   iommufd_viommu_find_dev(struct iommufd_viommu *viommu, unsigned long vdev_id)
+>   {
+> diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
+> index fb7f8fe40f95..c55336c580dc 100644
+> --- a/drivers/iommu/iommufd/driver.c
+> +++ b/drivers/iommu/iommufd/driver.c
+> @@ -78,6 +78,45 @@ void iommufd_object_undepend(struct iommufd_object *obj_dependent,
+>   }
+>   EXPORT_SYMBOL_NS_GPL(iommufd_object_undepend, "IOMMUFD");
+>   
+> +/* Driver should report the output @immap_id to user space for mmap() syscall */
+> +int iommufd_ctx_alloc_mmap(struct iommufd_ctx *ictx, phys_addr_t base,
+> +			   size_t size, unsigned long *immap_id)
+> +{
+> +	struct iommufd_mmap *immap;
+> +	int rc;
+> +
+> +	if (WARN_ON_ONCE(!immap_id))
+> +		return -EINVAL;
+> +	if (base & ~PAGE_MASK)
+> +		return -EINVAL;
+
+Is it equal to PAGE_ALIGNED()?
+
+> +	if (!size || size & ~PAGE_MASK)
+> +		return -EINVAL;
+> +
+> +	immap = kzalloc(sizeof(*immap), GFP_KERNEL);
+> +	if (!immap)
+> +		return -ENOMEM;
+> +	immap->pfn_start = base >> PAGE_SHIFT;
+> +	immap->pfn_end = immap->pfn_start + (size >> PAGE_SHIFT) - 1;
+> +
+> +	rc = mtree_alloc_range(&ictx->mt_mmap, immap_id, immap, sizeof(immap),
+> +			       0, LONG_MAX >> PAGE_SHIFT, GFP_KERNEL);
+> +	if (rc < 0) {
+> +		kfree(immap);
+> +		return rc;
+> +	}
+> +
+> +	/* mmap() syscall will right-shift the immap_id to vma->vm_pgoff */
+> +	*immap_id <<= PAGE_SHIFT;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iommufd_ctx_alloc_mmap, "IOMMUFD");
+> +
+> +void iommufd_ctx_free_mmap(struct iommufd_ctx *ictx, unsigned long immap_id)
+> +{
+> +	kfree(mtree_erase(&ictx->mt_mmap, immap_id >> PAGE_SHIFT));
+
+MMIO lifecycle question: what happens if a region is removed from the
+maple tree (and is therefore no longer mappable), but is still mapped
+and in use by userspace?
+
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iommufd_ctx_free_mmap, "IOMMUFD");
+> +
+>   /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
+>   struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
+>   				       unsigned long vdev_id)
+
+Thanks,
+baolu
 
