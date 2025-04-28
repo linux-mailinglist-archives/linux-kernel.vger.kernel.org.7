@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-623520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC8EA9F6EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:11:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51216A9F6FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEDCC3B0FCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5853C3A4D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C142D284679;
-	Mon, 28 Apr 2025 17:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9883E28F529;
+	Mon, 28 Apr 2025 17:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcLaacM9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B9218F2FC;
-	Mon, 28 Apr 2025 17:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Nhtfs8GY"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8021A28BA85;
+	Mon, 28 Apr 2025 17:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745860224; cv=none; b=dTN6kcdAmt0GJsXHIQ/6KjKBfGsD+i38NMCja7hWkpE+1sV4vHQYVv8uLGu3R7/WlFKInT84C/mhkHqZ/TyqNf88MBmGEAqJ38j7IvD/jUFVvYEDlWf3oCq+u2hOyCogPOponVxeCYXUiof3ltcy6pXg2HYa+DGLcodKMvT3iKc=
+	t=1745860316; cv=none; b=lI1nxZhlMvBs4jJkskWXvMq4xnFb4DzzgKOXYzSYN3aQ/IUIDvnUwbo6LeSai6GouY6VNm5FriKWWcVPYlilrLKVWrfnPJRVjVOT8GI0KRjmqsu6ydfgpAaQJcq7sESapsdY+B+PzjfeovRaUWFzI/SSmi6y0dzXTTkkza/FdlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745860224; c=relaxed/simple;
-	bh=vEsR4ZoZHVFT1r5XJ/2XpS3u/EiMbzkKg8Uk1QA3N88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o7ZTkXt+k+7+4RmH7pGS9/WEpd/btA8lL6na9KOQAhcVduRFJQCByJ9sTg8QG19w4MgYPIZv0t+7GgPt/lO3LPjSoOonVzF66qvkUf53YwZKP2s5endWntRYyqY8JGzQ/xx6SGfKaSNBBeZIPwuof5k/6cVmugAdollw5fENCaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcLaacM9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9596DC4CEEF;
-	Mon, 28 Apr 2025 17:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745860223;
-	bh=vEsR4ZoZHVFT1r5XJ/2XpS3u/EiMbzkKg8Uk1QA3N88=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kcLaacM9dSPst3MiSqP7Zm8O+JfMHZjeRGZ39rlcN7LBHq0GLMJ+EEUyQFuEtSvtm
-	 bcY9cbZ3Hg9S6nfROUh3IjTDLsIUYHiD5w1KjnpdM1b5JiuxdsUGqD/efTJGEKReeB
-	 rcyFVIaC/JXRlvck7+893uvSqhaPNoT+FvbooRlQw45tJ4cR7D14PoNqwNDLzMxh54
-	 x7nmNsNp1OG1byl3jEVbi6BI+n53SgLojOhbRy6cww91XNB9kpI7TaOu5jIGlFshQ3
-	 0i9Tun+q2sO5IYIa8ko0aJrMFZViov7BADgr21gx2zGYNG4VizlpJU2bWElAy6Tm1i
-	 skQ1jyXWiy+Qw==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-702599fa7c5so47538427b3.1;
-        Mon, 28 Apr 2025 10:10:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULtAaDU7Id5kBs72I+ZxpsnRm/PFWYVPdgKV1G72ys9tzL4KT4iGn3YXAPbeQYMz63qWvNlspeJXIm@vger.kernel.org, AJvYcCXBS4NVevTnGfrvSskKJlPsHi8pCTRPxpfcuER1t7V6cyZpjMnpgo5ZouAsZaz4PfTt6EcJWeq18LUuWG/R@vger.kernel.org, AJvYcCXKdxglZZ2S4KcA3nBFlCnH90mVA5P+xdovBPKi0AFhnYDh9tke4aWTLtv5n901C4Xbmaw1NPD0cuZ9OINDhn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7gICgBkxTjB6tDIpQiV+9sD9J8aca0tPLnHFGUzXVI+y26svx
-	pM3NJudBbDtnbjFVdScYIM26y/hnXSsArza3xanTb74wQS1trKlF6ByCU4u7mq2tyfJ0Om5CNjH
-	gSruPBwoLWyJZ3XhbyrUb3nVuD/8=
-X-Google-Smtp-Source: AGHT+IEKXHx9WNrCJ8KbJwQVZLUmzNLo67P14iS+1D+DGqi2anctCFi1gSHert1yRUEn+tb5hg3VJLd15RlOg72/DNw=
-X-Received: by 2002:a05:690c:95:b0:6fe:5dba:b190 with SMTP id
- 00721157ae682-708418f3551mr216219627b3.11.1745860222795; Mon, 28 Apr 2025
- 10:10:22 -0700 (PDT)
+	s=arc-20240116; t=1745860316; c=relaxed/simple;
+	bh=fCsS8SVUonQ+8IdW0IZhO5lmrpWAhj+OAjCTb6i/g/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TXpnv0NEvUYMR92pCHoGrC0UJ7PJOC+Fgh4pHU/o1s90JzAYw6D0vspAhoIIe2wDraU1ddYbJlkMJAvNPWbvaI0Gy01hKBMyIOBKKOi4bj3Fj6u+IT9MFX5dfpJaEt2W6z4OubBZeMcTUImgYTKCfvdkgqm2liNwjpHMpKCiFbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Nhtfs8GY; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=MJ1Uv
+	YoXWhfZap7nd66XJTEzKwW73kWiiLL1y6iU2RM=; b=Nhtfs8GYLVIsgRYxsv26V
+	P3TBORYWw1lKtETEDGAHlvzbONVm0X5UiNpfqvTDV55VUIMxEiNN8QMKSoACbjvb
+	9XW6MZHn5IN5rR2tFioBMyBH6d42VBkmMo7dbdzCVLmPkCPwOids9bRfX7esuZ4L
+	gUPGCSfNmUGcyOqgrIGiRI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCH4haitg9otPCfDA--.1694S2;
+	Tue, 29 Apr 2025 01:10:59 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	jingoohan1@gmail.com,
+	manivannan.sadhasivam@linaro.org
+Cc: cassel@kernel.org,
+	robh@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH 0/3] Standardize link status check to return bool
+Date: Tue, 29 Apr 2025 01:10:24 +0800
+Message-Id: <20250428171027.13237-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422175918.585022-1-artur@conclusive.pl> <4854f6a248fdc501d4157339fdb21f9a3ca3097d.camel@sipsolutions.net>
- <9a657c02-b688-4f2f-bb0b-fd25d19a54be@broadcom.com>
-In-Reply-To: <9a657c02-b688-4f2f-bb0b-fd25d19a54be@broadcom.com>
-From: Josh Boyer <jwboyer@kernel.org>
-Date: Mon, 28 Apr 2025 13:10:11 -0400
-X-Gmail-Original-Message-ID: <CA+5PVA76ZT_NEe_xeoc55V0p7M4W8KneAPjUR78ja0q3aBUZ8A@mail.gmail.com>
-X-Gm-Features: ATxdqUG6CPojcKu3jjyuLJcZ_srrjoBPqUF0xD-D_e-j-2vGQSSJSpQ2NkABa2Y
-Message-ID: <CA+5PVA76ZT_NEe_xeoc55V0p7M4W8KneAPjUR78ja0q3aBUZ8A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/2] wifi: Nordic nRF70 series
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Artur Rojek <artur@conclusive.pl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-wireless@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jakub Klama <jakub@conclusive.pl>, Wojciech Kloska <wojciech@conclusive.pl>, 
-	Ulf Axelsson <ulf.axelsson@nordicsemi.no>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCH4haitg9otPCfDA--.1694S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFWDAFWfZw1xur4rJw4xZwb_yoW8Ww1Dpa
+	45tayxAF1rtF4YvF1Yy3WDC34Yq3ZrZF9rK393Wa4fWFyfCFWUXry5GFySqasxtrW0qw17
+	KF15t3W7JFs3JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zieOJUUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxw9o2gPr6StEQAAsJ
 
-On Mon, Apr 28, 2025 at 4:46=E2=80=AFAM Arend van Spriel
-<arend.vanspriel@broadcom.com> wrote:
->
-> + Josh
->
-> On 4/25/2025 8:11 PM, Johannes Berg wrote:
-> > On Tue, 2025-04-22 at 19:59 +0200, Artur Rojek wrote:
-> >> 1) Nordic gave us permission to upstream the firmware blob [1] require=
-d
-> >>     to use this driver. As that needs to go through separate
-> >>     linux-firmware repository and is subject to different licensing,
-> >>     should I try to upstream it in parallel with this series, or does =
-it
-> >>     need to wait until the kernel driver gets in?
-> >
-> > I have no idea. Chicken and egg, I guess.
+1. PCI: dwc: Standardize link status check to return bool.
+2. PCI: mobiveil: Refactor link status check.
+3. PCI: cadence: Simplify j721e link status check.
 
-Parallel is fine.
+Hans Zhang (3):
+  PCI: dwc: Standardize link status check to return bool.
+  PCI: mobiveil: Refactor link status check.
+  PCI: cadence: Simplify j721e link status check.
 
-> It used to be a check by the linux-firmware maintainer if the firmware
-> blob is referenced in kernel module info. I assume the main linux tree
-> is checked and not linux-next.
+ drivers/pci/controller/cadence/pci-j721e.c             | 6 +-----
+ drivers/pci/controller/dwc/pci-dra7xx.c                | 2 +-
+ drivers/pci/controller/dwc/pci-exynos.c                | 4 ++--
+ drivers/pci/controller/dwc/pci-keystone.c              | 5 ++---
+ drivers/pci/controller/dwc/pci-meson.c                 | 6 +++---
+ drivers/pci/controller/dwc/pcie-armada8k.c             | 6 +++---
+ drivers/pci/controller/dwc/pcie-designware.c           | 2 +-
+ drivers/pci/controller/dwc/pcie-designware.h           | 4 ++--
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c          | 2 +-
+ drivers/pci/controller/dwc/pcie-histb.c                | 9 +++------
+ drivers/pci/controller/dwc/pcie-keembay.c              | 2 +-
+ drivers/pci/controller/dwc/pcie-kirin.c                | 7 ++-----
+ drivers/pci/controller/dwc/pcie-qcom-ep.c              | 4 ++--
+ drivers/pci/controller/dwc/pcie-qcom.c                 | 2 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c            | 2 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c            | 7 ++-----
+ drivers/pci/controller/dwc/pcie-tegra194.c             | 2 +-
+ drivers/pci/controller/dwc/pcie-uniphier.c             | 2 +-
+ drivers/pci/controller/dwc/pcie-visconti.c             | 2 +-
+ drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 9 ++-------
+ drivers/pci/controller/mobiveil/pcie-mobiveil.h        | 2 +-
+ 21 files changed, 34 insertions(+), 53 deletions(-)
 
-Eh.  We check for net-new firmware just to make sure we aren't growing
-the repo for something that will never be used by an in-tree driver,
-but if the driver is in linux-next that's good enough.
 
-josh
+base-commit: 286ed198b899739862456f451eda884558526a9d
+-- 
+2.25.1
+
 
