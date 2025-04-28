@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-623945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A9BA9FCFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BDFA9FD02
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A151A87B0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D0A5A79BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4254A211A07;
-	Mon, 28 Apr 2025 22:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958092144BF;
+	Mon, 28 Apr 2025 22:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuUYy4aU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rr4FWUkF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C6015ECD7;
-	Mon, 28 Apr 2025 22:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E347920E6EC;
+	Mon, 28 Apr 2025 22:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745878790; cv=none; b=bUXJVUpbi5yeuQ23/BMSlLONSaRSbuDEqDczwxJ06knLMMzs69ng8onFp5Ltyn3u8yJ6PnM4ZHr4Pk5ZR9Dcvh1Wvy/CjBTLpz7yzanJ22lclznN/6PDWWVod5i71fzW+5LnolEFWDaTbOpLrwF7nqPB3guFbZfXqmUtUFpoUxg=
+	t=1745878800; cv=none; b=QEPBA61aINYlnZpIpdh6khThC490mFSfjhy3CPN3+EoIVjBFCSTc/ZFDixOmBqdzybhkUNksHYTpJnMPJdCXMCPWpFRWh9dUTIbOOEOPfD+I2p7QSdkT533sFtbae5ZG8RygvGuSzMAVThn5ZD7xL0WZmKHC4nI26f1I9zLgsaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745878790; c=relaxed/simple;
-	bh=TxMhwn7cp9w0K/g0g69tL17XWFr1iuc73PU8ZOzh1vs=;
+	s=arc-20240116; t=1745878800; c=relaxed/simple;
+	bh=6pcse9wbskV004iMqoCcdC1PU1qixiW4k4E9ldYBJxM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=i8UH86/Q7Zfsix6Y9SGjzlQ+YJha7InofryXAdNsv9bHooPgJSu3zUahu1y0sH6tOrpWoAG1a6xyDmcEmADPhyLlDojCgn9CeFK4Hq4WtSfkjflhuSuodAJByFwee7b9UhMoutgzPMuYc9F1Lr1upmgfczbvm86ZptlUo77sK9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuUYy4aU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C0BCC4CEEA;
-	Mon, 28 Apr 2025 22:19:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=V5dlX8+aca9B/fuubvhtvx3BrtVgpqJLwGXn/nAWr9GH2x0w7OEB1+bl3+ZbwAUAtWoDVTBv7gIzy+G09YxRR8/nCazXMk7tMzuEHTeIJKS1nlKzHBWbNilvP+IYwOJRQV1KgBTf4+Vv1bMEMtfxxAv9UK+L6fPgBXJEr3oFGBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rr4FWUkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51911C4CEE4;
+	Mon, 28 Apr 2025 22:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745878790;
-	bh=TxMhwn7cp9w0K/g0g69tL17XWFr1iuc73PU8ZOzh1vs=;
+	s=k20201202; t=1745878799;
+	bh=6pcse9wbskV004iMqoCcdC1PU1qixiW4k4E9ldYBJxM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NuUYy4aUE66I9IE1M+lRnbwMpt9VnTfcHul8i50csGbSqZIItacXLie/5/FuW7l8H
-	 lVelmmXsW6zLylokc7yopTAOcuwuVohTWMpvkimOZ8WuSuJbJx6HshS0pcDcpEjqXD
-	 94DxjoY3puWJujUcwPseP/5KjGEPzHasoSoZ/sSfMdnN/ePROntkvqRd5FPAVMf/nc
-	 T18fhnOyG1V2cEFsk+VQPrDDOKp211bMvx5qgiblD1qcAQTFTdRMF12+NSTjJLjMHI
-	 44PnWlfeOcAv+uqj2wXUTlFeCvvzK+CB2lj1reQk9C01HHdus7pCYNbRVVwjzj2qiQ
-	 XEkkAMMYGF91A==
+	b=rr4FWUkFYW3WnHWdUzvr68F09StbPoytD50/gmmVB6SOfCQSyK5yVEpOXQPM5e/R7
+	 YQ1LU/PNdizypiKpoCNsXQuAqqoAP/QjNrvJs1SGnsR1Zb+8PymAINM9vb2VBfp7Bs
+	 QG5OEuXFRKDhk+wtXspVzXe5DaEUc0ePCPo2wSC1+PhQa6+MwS3HqQGn3g+l3pkwQD
+	 tIWnWmu6pC3oe1YgYnIiSUbyVc/HTq8M5fbxeqH2Ra00guMsMyhOwssUwOCq7tgzig
+	 1meqGeeim+2s4ydqjIFvaup3gfyVPwc5Q3dzC6BCPudRYV2lAHlW2NslvbAOOICrJp
+	 KcXtvuPamciYQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D213822D43;
-	Mon, 28 Apr 2025 22:20:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CB23822D43;
+	Mon, 28 Apr 2025 22:20:39 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: ethernet: mtk_eth_soc: sync mtk_clks_source_name
- array
+Subject: Re: [PATCH] mdio: fix CONFIG_MDIO_DEVRES selects
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174587882900.1063939.12238416302643279123.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Apr 2025 22:20:29 +0000
-References: <d075e706ff1cebc07f9ec666736d0b32782fd487.1745555321.git.daniel@makrotopia.org>
-In-Reply-To: <d075e706ff1cebc07f9ec666736d0b32782fd487.1745555321.git.daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: nbd@nbd.name, sean.wang@mediatek.com, lorenzo@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
+ <174587883799.1063939.6255098697937333955.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Apr 2025 22:20:37 +0000
+References: <20250425112819.1645342-1-arnd@kernel.org>
+In-Reply-To: <20250425112819.1645342-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, hkallweit1@gmail.com,
+ jacob.e.keller@intel.com, chris.packham@alliedtelesis.co.nz, arnd@arndb.de,
+ claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, wei.fang@nxp.com,
+ xiaoning.wang@nxp.com, linux@armlinux.org.uk, Frank.Li@nxp.com,
+ imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 25 Apr 2025 05:29:53 +0100 you wrote:
-> When removing the clock bits for clocks which aren't used by the
-> Ethernet driver their names should also have been removed from the
-> mtk_clks_source_name array.
+On Fri, 25 Apr 2025 13:27:56 +0200 you wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Remove them now as enum mtk_clks_map needs to match the
-> mtk_clks_source_name array so the driver can make sure that all required
-> clocks are present and correctly name missing clocks.
+> The newly added rtl9300 driver needs MDIO_DEVRES:
+> 
+> x86_64-linux-ld: drivers/net/mdio/mdio-realtek-rtl9300.o: in function `rtl9300_mdiobus_probe':
+> mdio-realtek-rtl9300.c:(.text+0x941): undefined reference to `devm_mdiobus_alloc_size'
+> x86_64-linux-ld: mdio-realtek-rtl9300.c:(.text+0x9e2): undefined reference to `__devm_mdiobus_register'
+> Since this is a hidden symbol, it needs to be selected by each user,
+> rather than the usual 'depends on'. I see that there are a few other
+> drivers that accidentally use 'depends on', so fix these as well for
+> consistency and to avoid dependency loops.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: ethernet: mtk_eth_soc: sync mtk_clks_source_name array
-    https://git.kernel.org/netdev/net/c/8c47d5753a11
+  - mdio: fix CONFIG_MDIO_DEVRES selects
+    https://git.kernel.org/netdev/net-next/c/ccc25158c22b
 
 You are awesome, thank you!
 -- 
