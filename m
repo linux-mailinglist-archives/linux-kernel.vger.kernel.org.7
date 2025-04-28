@@ -1,139 +1,76 @@
-Return-Path: <linux-kernel+bounces-622328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F23A9E5C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 03:33:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACC1A9E5DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 03:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4986A3AF521
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F4BE3A883C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 01:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C51513CFB6;
-	Mon, 28 Apr 2025 01:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IfFAhSEZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A113042AB0
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 01:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4B61482F2;
+	Mon, 28 Apr 2025 01:38:32 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4DC8BF8;
+	Mon, 28 Apr 2025 01:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745804023; cv=none; b=UznE3UvXBKtV+HR6oUqwVSDeKLH/8W+51QtNF+lqbpYm/CYDYttWGEq1xs/IJkBBqoC0cZVpIaKvtUTRFoZ9lY9IoZr6qmo3h9dOsmbofp/plnmc7ZuP1xemkIPcGoenRzMZljAmn8LqEr8cBTMfdwFgbpW0cGuZFQYNtHh9+h8=
+	t=1745804312; cv=none; b=jTDR8AcYsYyROyGmVFlYCLKfAW9c/wUMwViku7TvOcQY74r/z1vkcoheKxqszstNPqil+P2LJsPhDCCzujyziq6q12+6xShBQx54IZNFX0nFU1XD+jPfD2retfpLY2TFhRJ3mlM/m1nXACexeBmQp9TzC38WfjkMUnpGTBTOKoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745804023; c=relaxed/simple;
-	bh=N9j+LnoWnXkXLj+vcCOoYJNwC5VYSgQCGoI8fIkpbdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P86G/RGM/0pLnEuNdss5Rt37b2K2TV2f5xfAB+upE5hvbHjW1+xEbvm6MgDc9HKnbs7gs4Co/TrpZbPQ7Cwh3Q3XSUIZuiZqfoMpwftpBmLssLNUOVveTCr2PIUPjRlx4KekwmgQyuh29Ys8Rt84l+MKIqCV3MWZHf6LI4VkQ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IfFAhSEZ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745804022; x=1777340022;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N9j+LnoWnXkXLj+vcCOoYJNwC5VYSgQCGoI8fIkpbdo=;
-  b=IfFAhSEZ+K6npGSxElOzTYMX/cGd9WAW5NYEH2Ef5mDW+an4uCDW4vv8
-   iBmGCsojwVFOi2/7YTvHhl8yq7akx8p7OuWhyiv0zaYz2H2w1poTDc/hp
-   4U7AezhaFDLpwXzwHqbXhW2SaVt+t1nkwGxVYKvcwhyZuso+oAUiJT2IS
-   7z1DVIPZhh5mMszMFLCZdYpF8G8TeR8dVVTcfzTrOObmNBys65+KEG1FV
-   fHYv/mN2w7XcMxuDP3IPVTudcIRHEVIuRSu9zssZ5B8z0oEy0LuSyX/M2
-   oC2LqaUPKtrk3xIhKsrQVx2jv1wqllyfUxv4AD/3ziC0r8vWpo/QLWIcs
-   w==;
-X-CSE-ConnectionGUID: pLeE4EX/TgiQrSrAhmM5XQ==
-X-CSE-MsgGUID: yf5lzsqbShOIW0dpJDlmCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="58746687"
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="58746687"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2025 18:33:41 -0700
-X-CSE-ConnectionGUID: 4BvdvFLeT3aTu51MF7FENA==
-X-CSE-MsgGUID: K6CQ2eFVTWaVpp5nrZdaeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="133113356"
-Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 27 Apr 2025 18:33:37 -0700
-Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u9DNH-0006Wv-0n;
-	Mon, 28 Apr 2025 01:33:35 +0000
-Date: Mon, 28 Apr 2025 09:32:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vitaly Wool <vitaly.wool@konsulko.se>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, minchan@kernel.org,
-	nphamcs@gmail.com, senozhatsky@chromium.org, shakeel.butt@linux.dev,
-	yosry.ahmed@linux.dev, Igor Belousov <igor.b@beldev.am>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: Re: [PATCH mm-new] mm/zblock: add debugfs
-Message-ID: <202504280934.X1Gqvqj1-lkp@intel.com>
-References: <20250427201958.491806-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1745804312; c=relaxed/simple;
+	bh=2kFp7r6fupdWFFANCr/4/j7ojmTs3iFY/1TiMfvtOE4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=js7qyHyWOfEXxGPqgCVvYIbaScFMXf0tMABWjHH2ga1Q0qMaECiwEJekRfkYLXueYlwQM7BPon5xJ4NVYWvnhtgnRQTb7cMdia2I587CN1RtpdjLfTfuTumX2uhpLOxunMyacu62gI4ge3GSV3XOY6aYl8zIMUwe5PW2Gfvv7cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 5634092009C; Mon, 28 Apr 2025 03:32:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 531F292009B;
+	Mon, 28 Apr 2025 02:32:55 +0100 (BST)
+Date: Mon, 28 Apr 2025 02:32:55 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Huacai Chen <chenhuacai@kernel.org>
+cc: Marco Crivellari <marco.crivellari@suse.com>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Frederic Weisbecker <frederic@kernel.org>, 
+    Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v7 1/2] MIPS: Fix idle VS timer enqueue
+In-Reply-To: <CAAhV-H6WszbD2o=fUqzz-FcOho-=ZxMQjW3EHKE5z=azntdbeQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.2504280224110.31828@angie.orcam.me.uk>
+References: <20250403161143.361461-1-marco.crivellari@suse.com> <20250403161143.361461-2-marco.crivellari@suse.com> <CAAhV-H6WszbD2o=fUqzz-FcOho-=ZxMQjW3EHKE5z=azntdbeQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250427201958.491806-1-vitaly.wool@konsulko.se>
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Vitaly,
+On Sun, 27 Apr 2025, Huacai Chen wrote:
 
-kernel test robot noticed the following build errors:
+> > +r4k_wait_exit:
+> > +       .set    mips0
+> > +       local_irq_disable
+> >         jr      ra
+> > -        nop
+> > -       .set    pop
+> > -       END(__r4k_wait)
+> > +       END(r4k_wait)
+> > +       .previous
+> I'm very sorry for the late response, but I think ".previous" should
+> be moved to the second patch.
 
-[auto build test ERROR on akpm-mm/mm-everything]
+ Indeed; does it even assemble?  Correctness aside I'd rather it didn't 
+cause someone a problem with bisecting sometime.  NB I had no opportunity 
+either to look at this version earlier.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vitaly-Wool/mm-zblock-add-debugfs/20250428-042209
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250427201958.491806-1-vitaly.wool%40konsulko.se
-patch subject: [PATCH mm-new] mm/zblock: add debugfs
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250428/202504280934.X1Gqvqj1-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250428/202504280934.X1Gqvqj1-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504280934.X1Gqvqj1-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> mm/zblock.c:125:46: error: no member named 'num_pages' in 'struct block_desc'
-     125 |                         i, block_list->block_count, block_desc[i].num_pages,
-         |                                                     ~~~~~~~~~~~~~ ^
-   mm/zblock.c:126:44: error: no member named 'num_pages' in 'struct block_desc'
-     126 |                         block_list->block_count * block_desc[i].num_pages);
-         |                                                   ~~~~~~~~~~~~~ ^
-   2 errors generated.
-
-
-vim +125 mm/zblock.c
-
-   115	
-   116	static int zblock_blocks_show(struct seq_file *s, void *v)
-   117	{
-   118		struct zblock_pool *pool = s->private;
-   119		int i;
-   120	
-   121		for (i = 0; i < ARRAY_SIZE(block_desc); i++) {
-   122			struct block_list *block_list = &pool->block_lists[i];
-   123	
-   124			seq_printf(s, "%d: %ld blocks of %d pages (total %ld pages)\n",
- > 125				i, block_list->block_count, block_desc[i].num_pages,
-   126				block_list->block_count * block_desc[i].num_pages);
-   127		}
-   128		return 0;
-   129	}
-   130	DEFINE_SHOW_ATTRIBUTE(zblock_blocks);
-   131	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  Maciej
 
