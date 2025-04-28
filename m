@@ -1,124 +1,100 @@
-Return-Path: <linux-kernel+bounces-622547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F07A9E8E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759E8A9E8EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800B3189955F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:11:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7FA216BAB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70EC1D8E07;
-	Mon, 28 Apr 2025 07:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002511DDC23;
+	Mon, 28 Apr 2025 07:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOv4NGuy"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lsw8lmeS"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82044610C;
-	Mon, 28 Apr 2025 07:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F581D63F8;
+	Mon, 28 Apr 2025 07:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745824245; cv=none; b=c/JPhJiUfpZg2EOfXpR0yPT80cPYcJ6+jPVLnDZUyeU0cXBvpnEHzdNXYhc75U/BLs8QvTGA6ag8Toe+lzs0nO9yd3m0qJDuLB4N8u+47vnfuFPer5g0JMB5oHTCNFzWIgLgVLDWrLmbHJyyGc4v1t2b41jUBtH5a9DvkpcGjnE=
+	t=1745824320; cv=none; b=q2meQNGTwbIkufty0+goSYuF785KzfZ+oerILlhwC3mno5QBCxrn8/qwMVecbEjjhUZ6wXCXracPHkb9lVlXVH6Rnk+hl+4rk9TwFSFr0ffV85W+HvC236CJj4kyagv1JyGhpAaBv+KErQXaZ4t+nS6OIJ2hWOxYqy1F8W8TS4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745824245; c=relaxed/simple;
-	bh=aySXpSXRWRRtP4dlGp4idY6DfXJvB6nPlOBjz2x0fls=;
+	s=arc-20240116; t=1745824320; c=relaxed/simple;
+	bh=eHVRbDXKY38c33YbYPTTECf5BbQnztaL3UmMw44Tt44=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cSbvUCaNLiMc8+YB/+S/6pz03j9E8pOZhg8MpADqOsh6Cffgov6vRpAfv0DRo2Tuiu27T7/jIPEysQ5eVYjyhClhM7A0UOp/x83/+qF7I7Oc/bZGaeqHmhUaqe44220OyNQgg0T7V29r3Z7mAOIjatISQ7OZxEz15EOtDMeDT70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOv4NGuy; arc=none smtp.client-ip=209.85.218.41
+	 To:Cc:Content-Type; b=si9CNue7+W/y4OHYgjhvPXAw5f/AORXkM37TIQ/DRY1zZebLcw79JiJdDfrJSnv2BU1T3iKt6+jaCK9uAqMVNMwdDPBHhBJ7q1rzU1/03IUkCBd0TjWAbTGgPX3rNMo/UL1/wdNmHj2MzqUjQ6pFQzCtwbQMo2w41VQN3gSDjYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lsw8lmeS; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so785526566b.1;
-        Mon, 28 Apr 2025 00:10:43 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c58974ed57so495407485a.2;
+        Mon, 28 Apr 2025 00:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745824242; x=1746429042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cqzLjPjkbpIKPWTWNjXwUoG3WgWvGtDW3UH4waTe6EU=;
-        b=HOv4NGuyYOtd0S3qpT+8LHU8+jYNv0kTcbWYnaUeMgQZk/cS13KtdNYpYmDUW6VBZ2
-         YHQ4+uV3Qg5bDjVk8OUI9Rq9IULG6Rk+EJNAr3db0K4jOe7TmTuDsZRd3khzpyRNs5j+
-         QA5D5cZ0U/PusvZxaJ1pVp+7V3TOJ5J+4WBgyV+yTMbVwdKNpsF1mz+k1WW3LJqX/DjS
-         G2d2YVZgOLmN5rsx0qc7bXYb7UqgukPcc2AnUnBb+TFaSNoGK1XqKlagO+Jl+Q8DmyGX
-         JSUDI7UmjOQIObPbkQq7MqwrXdNHYlVsbSxou1w6gyiDKmYicFZB8bh9WS+C0G7S2twq
-         D5TA==
+        d=gmail.com; s=20230601; t=1745824317; x=1746429117; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHVRbDXKY38c33YbYPTTECf5BbQnztaL3UmMw44Tt44=;
+        b=Lsw8lmeSGksMYVg/lF/RT+kUMhUMTOPqlDB/Mk4UD06YuIZ62bGD4g1TfxkWBx1/az
+         cKxpAam4vNleWCov20y6zOwtMF2NpH/XlQlxFjKXqerNFOxC/4nGCMj+m2WqwMspt7Mw
+         yHe64GVcAi1OkJT77a3snBP+jzhJXqQEv6fCY7hnFtQUAsSkfPv7gMUmg2C6hdJ4ud5C
+         CqVCkBaiTbT8MwYj25wovc8IZHhYEFFRTlCVzovGU3WWoZ1GKT0KxG1bH0BqtYOValcK
+         63i/swlhsyU6Ick7DpVcsP8HoyyvtwKmBoERxSWfay6vmNyi7+ZIyfe3whGLuBOYMWpx
+         exWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745824242; x=1746429042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cqzLjPjkbpIKPWTWNjXwUoG3WgWvGtDW3UH4waTe6EU=;
-        b=hOrcqxDluLrQx1cmvDi6Fp73Lxuz6pkEI+TuJXm9Ai4CpDiK81KMyn4oVafkMGTjOt
-         sYWudAvTC6n85sOWVwUzGmyITcFFpEm+qdS+tRo0gcSCNmUFxROpRAXFSkTv0kha9sE4
-         ox8/GI461LkH9JV/US9LD/G2Ct0KzrWF1V45ehRcoT2ECsLqHLq5JPNCbBLj0b5pxHtb
-         doAAo8eK9LDxLcy4xAdyN/+pJSxg7Bfen2jPKxzX9oTLH+22c124EXGDCHZUgkHt3P0+
-         sZLEJA4uy5w9XL4oU8QjMwCdFR3V36OzpFqCpuczMgGGhiIfeW4r0G8gI3QyZW2d7h3g
-         eYFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeD2+yBrOZ8VDLFkWTbV6XhWTaZwPVOJvwlm71xjVQUrd7t9ed9RxUxnqhCwOrF0FR8qGYnJboq6Du@vger.kernel.org, AJvYcCXaI9x5R+Sebocu/+5/mlsi8XU2Gomb8txkHyuPGksYhW3KlDq3TgiPwgAg1PHcMMhyLXU8ZBrjt3tVnw==@vger.kernel.org, AJvYcCXw5FTucRmxvnZAFWzdEb9uWW94bbmkJ3daIo27zldXnqDYuyQqVH12TqMc2uibrKLNdjx3yh1mGIs+uX+D@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeeQOYZ3hjEZ69adUVW+OUixZDhz267ongr3uBeEEYVagi0cK0
-	1MvDtngDD/1CQ1/+muw7EbyAktS2se6ffjQ3Hz9B7o6KM2APbfo3HRQAoUhLyRuQZMwVY5GODGv
-	1QMwY22EQGCZcH1PxWQrnBEqRmjU=
-X-Gm-Gg: ASbGncvPx2U8rr9LDsiHaXIVSTmFWyYg2hfnskvREPwR2f7ZNkUgmiqL1FYW41spZKQ
-	n3bn9uOZVdTAuELa0/w3VYaTUNy4G2ORJ/dYQltnezDPA/LV1QYhm3UlY7G4ZoAVXMJk4uOpmFz
-	OH3JWB52EU0K58fD7Yv3KDHOma
-X-Google-Smtp-Source: AGHT+IFRMuFZcNRNjfeF9AvnM7Bj9iBUzUeVmXdmu7ZHhNJMmpa4po14psUPiugLj18fOlz9Qi+euRe8nRR7W/lKtE8=
-X-Received: by 2002:a17:907:9816:b0:aca:cac6:3ca9 with SMTP id
- a640c23a62f3a-ace71107381mr984506166b.27.1745824241407; Mon, 28 Apr 2025
- 00:10:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745824317; x=1746429117;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eHVRbDXKY38c33YbYPTTECf5BbQnztaL3UmMw44Tt44=;
+        b=phKzBPupxEK4awjluT2DYquW2l1lbnUWe+ctYgimUFifPceEdbLUkPzYqC4gITsOAg
+         MpIK3OuOtLaMPHSfC9KehV9bxQs+cw2p/IiXN5ezuJlLbTpuA5kWRxBi1hIDXtcMs8YI
+         K5HoRRkIdNKdFpzTu0b4W2n4tRTWjfvcQqal7oxH7tQIJfAZr9fbFu3K4M+/I0RZzulH
+         vS1Ly9dg/Ny3zqrbufiiUMFhcdAy77chZhS2sJpjv8X/kLbOlf71ID1qAWw5Y/Kk/CKJ
+         NRO3/Tbuvfk0fUa1lQACOh0NMcmNC31U71hkpPDrBYEf3QvDZfkXJwrOWFPxZx59cEcb
+         pC5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV306ndLu4Ld3k34LS6IfPCpnPL9TTTPRj1TG1eUWN2pe3VGakxPjUox+8HposYkU3yA7RqqLGb9CiDTA==@vger.kernel.org, AJvYcCWz/eyin8Ez2cWHWWiQcXP8JlCQUo6w2xI7+mq0qBls5KK89we5LTjbAPtaJlQPz6E2S1PGv3mUZeZw1VyX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJfhmVycxKjayt2qAsO1tOr+9ao9pcdes1ed3eLmseAavrW3ZI
+	dSfpvGLaElb0jTWY+0NwkqnrZfT+iroIlbexDhkXoCRSwLgSGh5lubpFZ6aRsnnkGQqOg0SYTfd
+	W4FCExJSJlG6VzS2Cczw2h1T39HQ=
+X-Gm-Gg: ASbGnct4AhMUuG0o+gMpzqE3/8hbSUirOpQFteePZ+2q4eV2bPeJHxVnV0E38NEE4/V
+	hSpiyOR/hm2XQUdi//rE13Zvx1YKAmlB9hJuHyqYRnTACMLIeyOiIlLvjJ/AaCDF0UDw8fZqtZ+
+	MC4FCiHPlScQrb9eKO90xuq7cyJqzTJr9j4BPPE8uJgEHgd7I2d5uudA==
+X-Google-Smtp-Source: AGHT+IFGMjhnDOB+Jh/Sd7Ibapik1KwvYKBNgH00EIMQ4diYdjlZBvyLQLIPNpZSzOsmsWILBF+IOAwfbfv8vmTJuhI=
+X-Received: by 2002:a05:620a:17a6:b0:7c0:be39:1a34 with SMTP id
+ af79cd13be357-7c9619e841dmr1686156985a.43.1745824317544; Mon, 28 Apr 2025
+ 00:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1745605382.git.Jonathan.Santos@analog.com> <7c308dac8869a0152c09f6218df32bbc516594d4.1745605382.git.Jonathan.Santos@analog.com>
-In-Reply-To: <7c308dac8869a0152c09f6218df32bbc516594d4.1745605382.git.Jonathan.Santos@analog.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 28 Apr 2025 10:10:05 +0300
-X-Gm-Features: ATxdqUHWYVdMPoHiP_7ikj6eXNEtH7KvpMnnFIsMTk8-_2GRl2efruCjIZIF3uY
-Message-ID: <CAHp75Vc2AN0_KBDj--eaFYsQBzFJYiReXfweasuyntxdkP1Xhg@mail.gmail.com>
-Subject: Re: [PATCH v6 09/11] iio: adc: ad7768-1: replace manual attribute declaration
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, andy@kernel.org, 
-	nuno.sa@analog.com, Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, 
-	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	marcelo.schmitt1@gmail.com, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	lgirdwood@gmail.com, broonie@kernel.org, jonath4nns@gmail.com, 
-	dlechner@baylibre.com
+References: <20250425200051.2410-1-a.safin@rosa.ru>
+In-Reply-To: <20250425200051.2410-1-a.safin@rosa.ru>
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+Date: Mon, 28 Apr 2025 09:11:45 +0200
+X-Gm-Features: ATxdqUHFYkdiddYnu9pmWcmEs9oL6LQ2SO0G_nLPcU_kpOKZsy8TV6JKKeH4p2g
+Message-ID: <CAB95QATm-iNJokfcSxpen3YBbx6xNUrecELD44squoaqCQ-b7w@mail.gmail.com>
+Subject: Re: [PATCH v2] hwmon: (asus-ec-sensors) add WARN_ONCE() on invalid
+ sensor index
+To: Alexei Safin <a.safin@rosa.ru>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 3:14=E2=80=AFAM Jonathan Santos
-<Jonathan.Santos@analog.com> wrote:
+On Fri, 25 Apr 2025 at 22:00, Alexei Safin <a.safin@rosa.ru> wrote:
 >
-> Use read_avail callback from struct iio_info to replace the manual
-> declaration of sampling_frequency_available attribute.
+> Prevent undefined behavior by adding WARN_ONCE() when find_ec_sensor_index()
+> returns a negative value.
 
-...
+I'm not sure about WARN_ONCE, does it bring anything useful? Clients
+see the error in the return value, sensor reading is absent, do we
+need to duplicate that in the log? Guenter, may I leave it up to you,
+please?
 
-> +static void ad7768_fill_samp_freq_tbl(struct ad7768_state *st)
-> +{
-> +       int i;
-
-Why signed?
-
-> +       for (i =3D 0; i < ARRAY_SIZE(ad7768_clk_config); i++)
-
-Check that the driver includes array_size.h...
-
-> +               st->samp_freq_avail[i] =3D DIV_ROUND_CLOSEST(st->mclk_fre=
-q,
-> +                                                          ad7768_clk_con=
-fig[i].clk_div);
-
-...and math.h.
-
-> +}
-
---=20
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Eugene
 
