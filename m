@@ -1,243 +1,1177 @@
-Return-Path: <linux-kernel+bounces-623240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624B5A9F2FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E4BA9F305
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC371A826E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:59:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2EF11A83603
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FC126A0F8;
-	Mon, 28 Apr 2025 13:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A033C269D16;
+	Mon, 28 Apr 2025 13:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvJNgDk7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="LKXoYXOp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="aEFgnBMs"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3303920CCDF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF8426D4F3;
+	Mon, 28 Apr 2025 13:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745848761; cv=none; b=j0NSxDnC9d++cOzTvUCcJ1V1DmaIaqSTVEtwpHsITqf+8Al1qkgVgIKyu61DFwXp8S3U6sRWjgAafQlKw59OO0MmtCEY12zAiPQ+PDLi0gB4rqpx2sHP3gFgYfXun7gBEs/+tf1XCONkCUEt+09UrWuVxmSq5M9mArAS3W1TJW0=
+	t=1745848776; cv=none; b=ljguKWYUZL9a/SHnOd7I/NwDYiektWZZzYfmehT00Cn0UjE7Qv15kkC51cP5/CE9lBUbNprZfv6KRg7Cf7xOU0lt6hMK1QUMa1HXqdLtlPWfRW58jvUKaYyvNSRHYpNYzzsLVpS1Z1MyT2VnMu4K9BZBuQiFPIGAHfQyLXWmuIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745848761; c=relaxed/simple;
-	bh=Uq7kDaLQsiq2DVlLpdXKCNusHlTn4Pn7KrFEwPNnZ5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCh1nf3dkxse9NMnKWrJX9DPzsO/ZEWSPGYl8SjB+V0oHzUfBncTqu29c2dbVyh7CBPFw390txHFeDPM9hda//3WmwNuIx69zaf0xDXNw5IJ0YEuz6eHf+wjvSaF6bMeEaO2i6s+3sF9ZLfNzDU+8p0qhesRRFhJ5MDUfEyqOJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvJNgDk7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745848757;
+	s=arc-20240116; t=1745848776; c=relaxed/simple;
+	bh=tP/1gBM1HTAZ5XOatT5AcmD4n+LIO3hMz/m4yhhXaQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jFZRiq0q7Hkn35f3wA1RUfTuMGZU66rHFGjcpj5ZRK3mneU4g/PuQhsxH8VB4LEvgtC1DndiyAdRI0zauQwJ5epOuMRWfQIGuYp/r4bVotR/Dl5bH/kdy/vsixcWcA4Hs6iBjFg8Gg3zwrsDIYLCvU8Bu65y6Q7k8PM3+VgscyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=LKXoYXOp; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=aEFgnBMs reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1745848773; x=1777384773;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oHcKXZUY+x3ZDFgkBSjdOmkfwRLo8fJzRbtoS8w/hn8=;
+  b=LKXoYXOp9ITL9o+Kx8+r6e4/looLeKyAI4NUr1jkgUa/dxvLFZkek1fT
+   nyx3Q4LYS4sTuu3ppuXya6TMlj4eGbCYHxTcD5f9YaVBVe190SOZWflJp
+   aBFg30LUGOUBKBJ2pEsXbRrgFcFPKpRTDdBVePmIXPKuFQITKpq25feig
+   tHSRIB5ifws8dOUSFSvcM73c/I2Vct2sPgomuaccIjHgCb5zAhY7I6N2f
+   wn60/BT1xpL+H9WKSE7+OXRRWl6FLtI89f0hlMhJrYEyRd8PUEMvTBkrP
+   uYnys8XtxxWUToY/mtWLiicVeUL6iNcFjF9DrWPd5YelJs8twzokLwIC8
+   Q==;
+X-CSE-ConnectionGUID: A08J8cBIQ/Gjue7uFVPWCQ==
+X-CSE-MsgGUID: t0avlvUJQ/CYYpUX6+DNsQ==
+X-IronPort-AV: E=Sophos;i="6.15,246,1739833200"; 
+   d="scan'208";a="43759132"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Apr 2025 15:59:31 +0200
+X-CheckPoint: {680F89C3-5-B1D34AC3-DEA5B19F}
+X-MAIL-CPID: 8A5BA99B1E19ECC898367771400C9A89_4
+X-Control-Analysis: str=0001.0A006377.680F89C1.0066,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9132E169F19;
+	Mon, 28 Apr 2025 15:59:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1745848767;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XxlG6puHlddyEhXPEk0h0FDZBy95ZPaOFka0D29IyD0=;
-	b=UvJNgDk726UiMjvQq/ifr416atkvlxk9QTs0trstNrJgpo1/bsaBOxim4fWpMEItu2y/Mc
-	Y2Ax/LjzpfGLKIiMbKTGy/d44ASec2KI8BbW32zJ6dcwVRJBPhKgPEjUBTKWRtRVZxy9pR
-	ET62oOdkykO+qcekDk0Fa/4zgNnRjCQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-45-Bps4Mvx_OlS-ok6J1Zj7Og-1; Mon, 28 Apr 2025 09:59:11 -0400
-X-MC-Unique: Bps4Mvx_OlS-ok6J1Zj7Og-1
-X-Mimecast-MFC-AGG-ID: Bps4Mvx_OlS-ok6J1Zj7Og_1745848750
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39d9243b1c2so1497164f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 06:59:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745848750; x=1746453550;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XxlG6puHlddyEhXPEk0h0FDZBy95ZPaOFka0D29IyD0=;
-        b=wsQ57M/wOXxoFaHMlLGCpcrYZTPug6Q1Cn2T5xFwL9Bz45Cfs1n/MezEVsAA/CRTnC
-         X/z8/ZJiltTqxTzuG4UaOPcJvu6oomATBxjRvwqC16cMfKjO2Xecd9xVO5n1OOBCW7lo
-         oQJMozp/Fqe7BoQZ3WTkuU4U8jUt4Mj+9+Ddcbnd+AnRexwkuKwwrWhCk3ugFAGGTTMa
-         Re9xzFRmTh+5yJIEtqXTThhfMLotwxWfRtGgj4EanX2NGA4zSk/nOkIpOFK6l+9gep2P
-         SECULq1aqX91mO7P7zV0JQ4ohdX8tO+pqW4Rg56uLfQkkQauwH5a4PPmcJstq6x9qLdl
-         ya2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUF6+ixM52+FH9lfc+GZlCbDB0ZXYHFJNRKYcD5pnOTaFYMoRFw8PfXfxKB7mcgLrheBxGiIOpO0P9npRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWR6Co3vtKvdo9pFEMnQha0lgmk9KZfwyN6WS3wwz0rnX5AzcD
-	DmQWuq4ZS9urHB0YF4hBM87fIULBvf8WX6I/GPpy4Mnv0LI1OrAZuWBy2rPfkdJ3GrU2AHsPlTu
-	w8WeT877XBUfGzvIMXktZlFADNiaL7dNEcNkIBn84U+HyUO8CNWCUVsQzvrm1rw==
-X-Gm-Gg: ASbGncuxOAlRcRkyHYstFoNBXqXAtygpCmsxPX/38ozmAbOOS7dYtIrcq4bbefkyXfJ
-	ev5D97QqQpOOxURqmCnt5PmJ+kutNyS+mdKccfOhHcqCDhcFVwhzDcxryX5giE3XhK3zHfQ45RE
-	8+wWTk6i/hObU3W0MXdsQspT8u1QyV7z8QUDKyA34sjY5uiqXFl/FMepUrv9VU4ab4zAqWASbdc
-	mtT5p4Sa5O7Sbh7pXk4eeQnDTLwjOzYTCd+NEYk3J4Q8+BFP13TWYSLXFQ8XiPLh88lDV6xOjNu
-	o0V381w3uhLr1Mg0ZMG1b21cSvfQv3fIwjCJTkLHnFShIlnniNRcMkROjPDLe7oU4+5BYBQdgAO
-	yyKDecN9tahKFDZ8Hy7XJdYFGEy61ePpcQ9s8ehM=
-X-Received: by 2002:a5d:64e3:0:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3a07ab8c44cmr7296439f8f.52.1745848750139;
-        Mon, 28 Apr 2025 06:59:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGc4EgiPLN0E8wkd8kmozObQHNGClSAizw2DP7oZtiM0G6tDkJn+fCD8h1dQkAsLcgb1C1V0Q==
-X-Received: by 2002:a5d:64e3:0:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3a07ab8c44cmr7296409f8f.52.1745848749740;
-        Mon, 28 Apr 2025 06:59:09 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f32:c200:9add:4a7a:46aa:f740? (p200300d82f32c2009add4a7a46aaf740.dip0.t-ipconnect.de. [2003:d8:2f32:c200:9add:4a7a:46aa:f740])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca42cdsm11068682f8f.22.2025.04.28.06.59.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 06:59:09 -0700 (PDT)
-Message-ID: <f34bf704-6eb1-4591-ad0e-93641a2f1ad4@redhat.com>
-Date: Mon, 28 Apr 2025 15:59:08 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=oHcKXZUY+x3ZDFgkBSjdOmkfwRLo8fJzRbtoS8w/hn8=;
+	b=aEFgnBMsjsfPK1n6DtehLZkMBBsCwu3X4M0rMdAE/iMOheYrcZuPF4e+oZQH8dftxNHLXQ
+	1/Y5bR7yGFunrroyjYk8qbrVSQisfXXK1LbH2yKyXGZQi3htd6WOYNKdWb2Eo5/Ht0V6uu
+	mWYpWC6Kf2Akz22pxQrc9ESGcNzJall+1nYHa5KWvRNQCYQK18Jay+dmgrUX9n4iNJMBjG
+	z5jnWD1VeKz5RzVkFyRZV3jnKc2Yb8BB3T+T7nMtpcH5IPH3OuxA5UQsKHUnEFKdOefRLR
+	NdWwUYC/vmsSXjm+1251N9ceMDyhpRuljGfqV0fwSHj8ZiO4kXKX9szYN/+Vdw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] arm64: dt: imx95: Add TQMa95xxSA
+Date: Mon, 28 Apr 2025 15:59:09 +0200
+Message-ID: <20250428135915.520432-2-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250428135915.520432-1-alexander.stein@ew.tq-group.com>
+References: <20250428135915.520432-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: remove useless code
-To: Barry Song <21cnbao@gmail.com>
-Cc: Feng Lee <379943137@qq.com>, akpm@linux-foundation.org,
- ryan.roberts@arm.com, libang.li@antgroup.com, peterx@redhat.com,
- maobibo@loongson.cn, lance.yang@linux.dev, anshuman.khandual@arm.com,
- trivial@kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_C263C0783702591C464F887E3D3C496E6B08@qq.com>
- <CAGsJ_4wWK6B8GSc=cxPGnPU0Jt_o0YB55yk4+VNOm_hY_iditA@mail.gmail.com>
- <d8228c02-b5c0-47cd-927f-9054d412c7ea@redhat.com>
- <CAGsJ_4zn158TQV7Nc+vK-kmu6S4kOiFSZyUO7aK9dhwhrEq2cw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGsJ_4zn158TQV7Nc+vK-kmu6S4kOiFSZyUO7aK9dhwhrEq2cw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 28.04.25 13:03, Barry Song wrote:
-> On Mon, Apr 28, 2025 at 7:17 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 27.04.25 10:22, Barry Song wrote:
->>> On Sun, Apr 27, 2025 at 2:16 PM Feng Lee <379943137@qq.com> wrote:
->>>>
->>>> Remove unused conditional macros.
->>>>
->>>> Signed-off-by: Feng Lee <379943137@qq.com>
->>>> ---
->>>>    include/linux/pgtable.h | 2 --
->>>>    1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->>>> index b50447ef1c92..47c5a54b7551 100644
->>>> --- a/include/linux/pgtable.h
->>>> +++ b/include/linux/pgtable.h
->>>> @@ -1164,9 +1164,7 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
->>>>    }
->>>>    #endif
->>>>
->>>> -#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
->>>>    #define pgd_offset_gate(mm, addr)      pgd_offset(mm, addr)
->>>> -#endif
->>>
->>> Do you know who else had pgd_offset_gate() before except ia64?
->>>
->>> /* Look up a pgd entry in the gate area.  On IA-64, the gate-area
->>>      resides in the kernel-mapped segment, hence we use pgd_offset_k()
->>>      here.  */
->>> #define pgd_offset_gate(mm, addr) pgd_offset_k(addr)
->>>
->>> btw, do we still
->>> need pgd_offset_gate() given that nobody needs it now?
->>>
->>>      1   1168  include/linux/pgtable.h <<GLOBAL>>
->>>                #define pgd_offset_gate(mm, addr) pgd_offset(mm, addr)
->>>
->>>      2   1112  mm/gup.c <<get_gate_page>>
->>>                pgd = pgd_offset_gate(mm, address);
->>>
->>
->> Right, we should just remove pgd_offset_gate() completely in this patch
->> and simply make the single caller use pgd_offset().
-> 
-> Yes, exactly. The original patch doesn’t seem to be appropriate.
-> 
->>
->> I think we can even do:
->>
->> diff --git a/mm/gup.c b/mm/gup.c
->> index 84461d384ae2b..05dd87ccce155 100644
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@ -1106,10 +1106,7 @@ static int get_gate_page(struct mm_struct *mm,
->> unsigned long address,
->>           /* user gate pages are read-only */
->>           if (gup_flags & FOLL_WRITE)
->>                   return -EFAULT;
->> -       if (address > TASK_SIZE)
->> -               pgd = pgd_offset_k(address);
->> -       else
->> -               pgd = pgd_offset_gate(mm, address);
->> +       pgd = pgd_offset(address);
->>           if (pgd_none(*pgd))
->>                   return -EFAULT;
->>           p4d = p4d_offset(pgd, address);
->>
->> Unless I am missing something important :)
-> 
-> Technically, it appears to be correct. However, it seems that
-> pgd_offset_k is primarily used to improve readability by
-> distinguishing between kernel space and user space?
+Add initial support for TQMa95xxSA module compatible to SMARC-2.
+There is a common device tree for all variants with e.g. reduced CPU count.
+It supports LPUART7 for console, CAN, PCIe I2C, SPI, USB3.0, USB2.0, Audio,
+SDHC1/2 and QSPI as storage.
 
-Yeah, but this is GUP ... ("user") ... looks like that check/handling 
-was in there ever since git happened.
+[1] https://www.tq-group.com/en/products/tq-embedded/arm-architecture/tqma95xxsa/
 
-get_gate_vma() only exists on x86-64 and uml.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Thanks for the review.
 
-I wonder if that could ever actually reside > TASK_SIZE such that we 
-would even need that.
+Changes in v2:
+* Rebased to next-20250428
+* Fixed comments
+* Fix property order
+* Fix ethernet PHY interrupt type
+* Add & enable usb2 node
+  * Adjust commit message
 
-But this whole gate stuff is confusing ... IIRC it's a single VMA shared 
-by all processes, and not actually linked in the maple tree etc.
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../freescale/imx95-tqma9596sa-mb-smarc-2.dts | 324 ++++++++
+ .../boot/dts/freescale/imx95-tqma9596sa.dtsi  | 698 ++++++++++++++++++
+ 3 files changed, 1023 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
 
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 90652292a9111..0ac76a8259429 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -319,6 +319,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-var-som-symphony.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx95-tqma9596sa-mb-smarc-2.dtb
+ 
+ imx95-15x15-evk-pcie0-ep-dtbs = imx95-15x15-evk.dtb imx-pcie0-ep.dtbo
+ dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk-pcie0-ep.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts
+new file mode 100644
+index 0000000000000..5b6b2bb80b288
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dts
+@@ -0,0 +1,324 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++/*
++ * Copyright (c) 2024 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Alexander Stein
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/phy/phy-imx8-pcie.h>
++#include "imx95-tqma9596sa.dtsi"
++
++/ {
++	model = "TQ-Systems i.MX95 TQMa95xxSA on MB-SMARC-2";
++	compatible = "tq,imx95-tqma9596sa-mb-smarc-2", "tq,imx95-tqma9596sa", "fsl,imx95";
++
++	aliases {
++		gpio0 = &gpio1;
++		gpio1 = &gpio2;
++		gpio2 = &gpio3;
++		gpio3 = &gpio4;
++		i2c0 = &lpi2c1;
++		i2c1 = &lpi2c2;
++		i2c2 = &lpi2c3;
++		i2c3 = &lpi2c4;
++		i2c4 = &lpi2c5;
++		i2c5 = &lpi2c6;
++		i2c6 = &lpi2c7;
++		i2c7 = &lpi2c8;
++		mmc0 = &usdhc1;
++		mmc1 = &usdhc2;
++		rtc0 = &pcf85063;
++		rtc1 = &scmi_bbm;
++		serial0 = &lpuart1;
++		serial1 = &lpuart2;
++		serial2 = &lpuart3;
++		serial3 = &lpuart4;
++		serial4 = &lpuart5;
++		serial5 = &lpuart6;
++		serial6 = &lpuart7;
++		serial7 = &lpuart8;
++	};
++
++	chosen {
++		stdout-path = &lpuart7;
++	};
++
++	backlight_lvds0: backlight-lvds0 {
++		compatible = "pwm-backlight";
++		pwms = <&tpm3 0 100000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <7>;
++		enable-gpios = <&expander2 1 GPIO_ACTIVE_HIGH>;
++		power-supply = <&reg_12v0>;
++		status = "disabled";
++	};
++
++	backlight_lvds1: backlight-lvds1 {
++		compatible = "pwm-backlight";
++		pwms = <&tpm4 0 100000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <7>;
++		enable-gpios = <&expander2 3 GPIO_ACTIVE_HIGH>;
++		power-supply = <&reg_12v0>;
++		status = "disabled";
++	};
++
++	panel_lvds0: panel-lvds0 {
++		/*
++		 * Display is not fixed, so compatible has to be added from
++		 * DT overlay
++		 */
++		backlight = <&backlight_lvds0>;
++		power-supply = <&reg_lvds0>;
++		status = "disabled";
++
++		port {
++			panel_in_lvds0: endpoint {
++				/* TODO: LVDS0 out */
++			};
++		};
++	};
++
++	panel_lvds1: panel-lvds1 {
++		/*
++		 * Display is not fixed, so compatible has to be added from
++		 * DT overlay
++		 */
++		backlight = <&backlight_lvds1>;
++		power-supply = <&reg_lvds1>;
++		status = "disabled";
++
++		port {
++			panel_in_lvds1: endpoint {
++				/* TODO: LVDS1 out */
++			};
++		};
++	};
++
++	reg_1v8: regulator-1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "1V8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	reg_3v3: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
++
++	reg_12v0: regulator-12v0 {
++		compatible = "regulator-fixed";
++		regulator-name = "12V0";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-always-on;
++	};
++
++	reg_lvds0: regulator-lvds0 {
++		compatible = "regulator-fixed";
++		regulator-name = "LCD0_VDD_EN";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&expander2 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	reg_lvds1: regulator-lvds1 {
++		compatible = "regulator-fixed";
++		regulator-name = "LCD1_VDD_EN";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&expander2 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	sound {
++		compatible = "fsl,imx-audio-tlv320aic32x4";
++		model = "tqm-tlv320aic32";
++		audio-codec = <&tlv320aic3x04>;
++		audio-cpu = <&sai3>;
++	};
++};
++
++&enetc_port0 {
++	status = "okay";
++};
++
++&enetc_port1 {
++	status = "okay";
++};
++
++&expander2 {
++	pcie1-clk-en-hog {
++		gpio-hog;
++		gpios = <14 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PCIE1_CLK_EN";
++	};
++
++	pcie2-clk-en-hog {
++		gpio-hog;
++		gpios = <15 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PCIE2_CLK_EN";
++	};
++};
++
++&flexcan1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_flexcan1>;
++	xceiver-supply = <&reg_3v3>;
++	status = "okay";
++};
++
++&flexcan3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_flexcan3>;
++	xceiver-supply = <&reg_3v3>;
++	status = "okay";
++};
++
++&lpi2c1 {
++	tlv320aic3x04: audio-codec@18 {
++		compatible = "ti,tlv320aic32x4";
++		reg = <0x18>;
++		clocks = <&scmi_clk IMX95_CLK_SAI3>;
++		clock-names = "mclk";
++		iov-supply = <&reg_1v8>;
++		ldoin-supply = <&reg_3v3>;
++	};
++
++	eeprom2: eeprom@57 {
++		compatible = "atmel,24c32";
++		reg = <0x57>;
++		pagesize = <32>;
++		vcc-supply = <&reg_3v3>;
++	};
++};
++
++&lpspi3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpspi3>;
++	cs-gpios = <&gpio2 8 GPIO_ACTIVE_LOW>, <&gpio2 7 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++/* SER0 */
++&lpuart1 {
++	status = "disabled";
++};
++
++/* SER3 */
++&lpuart5 {
++	status = "okay";
++};
++
++/* SER1 */
++&lpuart7 {
++	status = "okay";
++};
++
++/* SER2 */
++&lpuart8 {
++	status = "okay";
++};
++
++/* X44 mPCIe */
++&pcie0 {
++	pinctrl-0 = <&pinctrl_pcie0>;
++	pinctrl-names = "default";
++	clocks = <&scmi_clk IMX95_CLK_HSIO>,
++		 <&pcieclk 1>,
++		 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
++		 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
++	clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
++	reset-gpio = <&expander2 9 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++/* X22 PCIe x1 socket */
++&pcie1 {
++	pinctrl-0 = <&pinctrl_pcie1>;
++	pinctrl-names = "default";
++	clocks = <&scmi_clk IMX95_CLK_HSIO>,
++		 <&pcieclk 0>,
++		 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
++		 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
++	clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
++	reset-gpio = <&expander2 10 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&reg_sdvmmc {
++	status = "okay";
++};
++
++&sai3 {
++	#sound-dai-cells = <0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai3>;
++	assigned-clocks = <&scmi_clk IMX95_CLK_AUDIOPLL1_VCO>,
++			  <&scmi_clk IMX95_CLK_AUDIOPLL2_VCO>,
++			  <&scmi_clk IMX95_CLK_AUDIOPLL1>,
++			  <&scmi_clk IMX95_CLK_AUDIOPLL2>,
++			  <&scmi_clk IMX95_CLK_SAI3>;
++	assigned-clock-parents = <0>, <0>, <0>, <0>,
++				 <&scmi_clk IMX95_CLK_AUDIOPLL1>;
++	assigned-clock-rates = <3932160000>,
++			       <3612672000>, <393216000>,
++			       <361267200>, <12288000>;
++	fsl,sai-mclk-direction-output;
++	status = "okay";
++};
++
++&sai5 {
++	#sound-dai-cells = <0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai5>;
++	assigned-clocks = <&scmi_clk IMX95_CLK_AUDIOPLL1_VCO>,
++			  <&scmi_clk IMX95_CLK_AUDIOPLL2_VCO>,
++			  <&scmi_clk IMX95_CLK_AUDIOPLL1>,
++			  <&scmi_clk IMX95_CLK_AUDIOPLL2>,
++			  <&scmi_clk IMX95_CLK_SAI5>;
++	assigned-clock-parents = <0>, <0>, <0>, <0>,
++				 <&scmi_clk IMX95_CLK_AUDIOPLL1>;
++	assigned-clock-rates = <3932160000>,
++			       <3612672000>, <393216000>,
++			       <361267200>, <12288000>;
++};
++
++/* X4 */
++&usb2 {
++	srp-disable;
++	hnp-disable;
++	adp-disable;
++	/* DR not yet supported */
++	dr_mode = "peripheral";
++	disable-over-current;
++	status = "okay";
++};
++
++
++/* X16 */
++&usdhc2 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
++	pinctrl-0 = <&pinctrl_usdhc2>;
++	pinctrl-1 = <&pinctrl_usdhc2_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc2_200mhz>;
++	pinctrl-3 = <&pinctrl_usdhc2>;
++	vmmc-supply = <&reg_sdvmmc>;
++	cd-gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
++	no-1-8-v;
++	no-mmc;
++	no-sdio;
++	disable-wp;
++	bus-width = <4>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
+new file mode 100644
+index 0000000000000..180124cc5bce1
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
+@@ -0,0 +1,698 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++/*
++ * Copyright (c) 2024 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Alexander Stein
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/net/ti-dp83867.h>
++#include <dt-bindings/phy/phy-imx8-pcie.h>
++#include <dt-bindings/usb/pd.h>
++#include "imx95.dtsi"
++
++/ {
++	aliases {
++		ethernet0 = &enetc_port0;
++		ethernet1 = &enetc_port1;
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		/*
++		 * DRAM base addr, size : 2048 MiB DRAM
++		 * should be corrected by bootloader
++		 */
++		reg = <0 0x80000000 0 0x80000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		linux_cma: linux,cma {
++			compatible = "shared-dma-pool";
++			reusable;
++			size = <0 0x28000000>;
++			alloc-ranges = <0 0x80000000 0 0x80000000>;
++			linux,cma-default;
++		};
++
++		vpu_boot: vpu_boot@a0000000 {
++			reg = <0 0xa0000000 0 0x100000>;
++			no-map;
++		};
++	};
++
++	clk_dp: clk-dp {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
++
++	clk_xtal25: clk-xtal25 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
++
++	reg_1v8: regulator-1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "V_1V8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	reg_3v3: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "V_3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
++
++	/* Controlled by system manager */
++	reg_sdvmmc: regulator-sdvmmc {
++		compatible = "regulator-fixed";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_sdvmmc>;
++		regulator-name = "SDIO_PWR_EN";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		status = "disabled";
++	};
++};
++
++&enetc_port0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enetc0>;
++	phy-handle = <&ethphy0>;
++	phy-mode = "rgmii-id";
++};
++
++&enetc_port1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enetc1>;
++	phy-handle = <&ethphy3>;
++	phy-mode = "rgmii-id";
++};
++
++&netc_timer {
++	status = "okay";
++};
++
++&flexspi1 {
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_flexspi1>;
++	pinctrl-1 = <&pinctrl_flexspi1>;
++	status = "okay";
++
++	flash0: flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <80000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
++		vcc-supply = <&reg_1v8>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++		};
++	};
++};
++
++&gpio1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gpio1>;
++	gpio-line-names = "", "", "", "",
++			  "", "", "", "",
++			  "", "", "GPIO7", "GPIO8",
++			  "", "GPIO9", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "";
++};
++
++&gpio2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gpio2>;
++	gpio-line-names = "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "SLEEP", "GPIO5",
++			  "", "", "GPIO6", "",
++			  "", "", "", "",
++			  "", "", "", "";
++};
++
++&lpi2c1 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_lpi2c1>;
++	pinctrl-1 = <&pinctrl_lpi2c1>;
++	status = "okay";
++
++	tmp1075: temperature-sensor@4a {
++		compatible = "ti,tmp1075";
++		reg = <0x4a>;
++		vs-supply = <&reg_1v8>;
++	};
++
++	eeprom_smarc: eeprom@50 {
++		compatible = "atmel,24c64";
++		reg = <0x50>;
++		pagesize = <32>;
++		vcc-supply = <&reg_1v8>;
++	};
++
++	pcf85063: rtc@51 {
++		compatible = "nxp,pcf85063a";
++		reg = <0x51>;
++		quartz-load-femtofarads = <7000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_pcf85063>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
++	};
++
++	m24c64: eeprom@54 {
++		compatible = "atmel,24c64";
++		reg = <0x54>;
++		pagesize = <32>;
++		vcc-supply = <&reg_1v8>;
++	};
++
++	/* protectable identification memory (part of M24C64-D @50) */
++	eeprom@58 {
++		compatible = "atmel,24c64d-wl";
++		reg = <0x58>;
++		vcc-supply = <&reg_1v8>;
++	};
++
++	/* protectable identification memory (part of M24C64-D @54) */
++	eeprom@5c {
++		compatible = "atmel,24c64d-wl";
++		reg = <0x5c>;
++		vcc-supply = <&reg_1v8>;
++	};
++
++	pcieclk: clock-generator@6a {
++		compatible = "renesas,9fgv0441";
++		reg = <0x6a>;
++		clocks = <&clk_xtal25>;
++		#clock-cells = <1>;
++	};
++
++	imu@6b {
++		compatible = "st,ism330dhcx";
++		reg = <0x6b>;
++		vdd-supply = <&reg_3v3>;
++		vddio-supply = <&reg_3v3>;
++	};
++
++	/* D23 */
++	expander2: gpio@74 {
++		compatible = "ti,tca9539";
++		reg = <0x74>;
++		vcc-supply = <&reg_1v8>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-line-names = "GPIO4", "LCD0_BLKT_EN", "LCD0_VDD_EN", "LCD1_BLKT_EN",
++				  "LCD1_VDD_EN", "ENET1_RESET#", "ENET2_RESET#", "GBE0_SDP_DIR",
++				  "GBE1_SDP_DIR", "PCIE1_RST#", "PCIE2_RST#", "DP_BRIDGE_EN",
++				  "HUB_RST#", "QSPI_RESET#", "PCIE1_CLK_EN", "PCIE2_CLK_EN";
++	};
++
++	/* D21 */
++	expander1: gpio@75 {
++		compatible = "ti,tca9539";
++		reg = <0x75>;
++		vcc-supply = <&reg_1v8>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_expander1>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
++		gpio-line-names = "GPIO10", "GPIO11", "GPIO12", "GPIO13",
++				  "CHG_PRSNT#", "CHARGING", "LID", "BATLOW#",
++				  "TEMP_EVENT#", "PGOOD_ARM", "PGOOD_SOC", "PCIE_WAKE#_1V8",
++				  "GPIO0", "GPIO1", "GPIO2", "GPIO3";
++	};
++};
++
++/* I2C_CAM0 */
++&lpi2c3 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_lpi2c3>;
++	pinctrl-1 = <&pinctrl_lpi2c3>;
++	status = "okay";
++
++	dp_bridge: dp-bridge@f {
++		compatible = "toshiba,tc9595", "toshiba,tc358767";
++		reg = <0x0f>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_tc9595>;
++		clock-names = "ref";
++		clocks = <&clk_dp>;
++		reset-gpios = <&expander2 11 GPIO_ACTIVE_HIGH>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <25 IRQ_TYPE_EDGE_RISING>;
++		toshiba,hpd-pin = <0>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				dp_dsi_in: endpoint {
++					/* TODO: DSI out */
++					data-lanes = <1 2 3 4>;
++				};
++			};
++		};
++	};
++};
++
++/* I2C_CAM1 */
++&lpi2c4 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_lpi2c4>;
++	pinctrl-1 = <&pinctrl_lpi2c4>;
++	status = "okay";
++};
++
++/* I2C_LCD */
++&lpi2c6 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_lpi2c6>;
++	pinctrl-1 = <&pinctrl_lpi2c6>;
++	status = "okay";
++};
++
++/* SER0 */
++&lpuart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpuart1>;
++};
++
++/* SER3 */
++&lpuart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpuart5>;
++};
++
++/* SER1 */
++&lpuart7 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpuart7>;
++};
++
++/* SER2 */
++&lpuart8 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpuart8>;
++};
++
++&netc_blk_ctrl {
++	status = "okay";
++};
++
++&netc_emdio {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_mdio>;
++	status = "okay";
++
++	ethphy0: ethernet-phy@0 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_ethphy0>;
++		reset-gpios = <&expander2 5 GPIO_ACTIVE_LOW>;
++		reset-assert-us = <500000>;
++		reset-deassert-us = <50000>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <13 IRQ_TYPE_LEVEL_LOW>;
++		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
++		ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
++		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++		ti,dp83867-rxctrl-strap-quirk;
++		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
++	};
++
++	ethphy3: ethernet-phy@3 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <3>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_ethphy3>;
++		reset-gpios = <&expander2 6 GPIO_ACTIVE_LOW>;
++		reset-assert-us = <500000>;
++		reset-deassert-us = <50000>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
++		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
++		ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
++		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++		ti,dp83867-rxctrl-strap-quirk;
++		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
++	};
++};
++
++&scmi_bbm {
++	linux,code = <KEY_POWER>;
++};
++
++&tpm3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_tpm3>;
++};
++
++&tpm4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_tpm4>;
++};
++
++&tpm5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_tpm5>;
++};
++
++&usb3 {
++	status = "okay";
++};
++
++&usb3_dwc3 {
++	dr_mode = "host";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	hub_2_0: hub@1 {
++		compatible = "usb451,8142";
++		reg = <1>;
++		peer-hub = <&hub_3_0>;
++		reset-gpios = <&expander2 12 GPIO_ACTIVE_LOW>;
++		vdd-supply = <&reg_3v3>;
++	};
++
++	hub_3_0: hub@2 {
++		compatible = "usb451,8140";
++		reg = <2>;
++		peer-hub = <&hub_2_0>;
++		reset-gpios = <&expander2 12 GPIO_ACTIVE_LOW>;
++		vdd-supply = <&reg_3v3>;
++	};
++};
++
++&usb3_phy {
++	status = "okay";
++};
++
++&usdhc1 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
++	pinctrl-0 = <&pinctrl_usdhc1>;
++	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
++	pinctrl-3 = <&pinctrl_usdhc1>;
++	bus-width = <8>;
++	non-removable;
++	no-sdio;
++	no-sd;
++	status = "okay";
++};
++
++&wdog3 {
++	status = "okay";
++};
++
++&scmi_iomuxc {
++	pinctrl_ethphy0: ethphy0grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO33__GPIO5_IO_BIT13				0x1100>;
++	};
++
++	pinctrl_ethphy3: ethphy3grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO34__GPIO5_IO_BIT14				0x1100>;
++	};
++
++	pinctrl_enetc0: enetc0grp {
++		fsl,pins = <IMX95_PAD_ENET1_RD0__NETCMIX_TOP_ETH0_RGMII_RD0		0x1100>,
++			   <IMX95_PAD_ENET1_RD1__NETCMIX_TOP_ETH0_RGMII_RD1		0x1100>,
++			   <IMX95_PAD_ENET1_RD2__NETCMIX_TOP_ETH0_RGMII_RD2		0x1100>,
++			   <IMX95_PAD_ENET1_RD3__NETCMIX_TOP_ETH0_RGMII_RD3		0x1100>,
++			   <IMX95_PAD_ENET1_RXC__NETCMIX_TOP_ETH0_RGMII_RX_CLK		0x1100>,
++			   <IMX95_PAD_ENET1_RX_CTL__NETCMIX_TOP_ETH0_RGMII_RX_CTL	0x1100>,
++			   <IMX95_PAD_ENET1_TD0__NETCMIX_TOP_ETH0_RGMII_TD0		0x11e>,
++			   <IMX95_PAD_ENET1_TD1__NETCMIX_TOP_ETH0_RGMII_TD1		0x11e>,
++			   <IMX95_PAD_ENET1_TD2__NETCMIX_TOP_ETH0_RGMII_TD2		0x11e>,
++			   <IMX95_PAD_ENET1_TD3__NETCMIX_TOP_ETH0_RGMII_TD3		0x11e>,
++			   <IMX95_PAD_ENET1_TXC__NETCMIX_TOP_ETH0_RGMII_TX_CLK		0x11e>,
++			   <IMX95_PAD_ENET1_TX_CTL__NETCMIX_TOP_ETH0_RGMII_TX_CTL	0x11e>,
++			   <IMX95_PAD_GPIO_IO23__GPIO2_IO_BIT23				0x51e>;
++	};
++
++	pinctrl_enetc1: enetc1grp {
++		fsl,pins = <IMX95_PAD_ENET2_RD0__NETCMIX_TOP_ETH1_RGMII_RD0		0x1100>,
++			   <IMX95_PAD_ENET2_RD1__NETCMIX_TOP_ETH1_RGMII_RD1		0x1100>,
++			   <IMX95_PAD_ENET2_RD2__NETCMIX_TOP_ETH1_RGMII_RD2		0x1100>,
++			   <IMX95_PAD_ENET2_RD3__NETCMIX_TOP_ETH1_RGMII_RD3		0x1100>,
++			   <IMX95_PAD_ENET2_RXC__NETCMIX_TOP_ETH1_RGMII_RX_CLK		0x1100>,
++			   <IMX95_PAD_ENET2_RX_CTL__NETCMIX_TOP_ETH1_RGMII_RX_CTL	0x1100>,
++			   <IMX95_PAD_ENET2_TD0__NETCMIX_TOP_ETH1_RGMII_TD0		0x11e>,
++			   <IMX95_PAD_ENET2_TD1__NETCMIX_TOP_ETH1_RGMII_TD1		0x11e>,
++			   <IMX95_PAD_ENET2_TD2__NETCMIX_TOP_ETH1_RGMII_TD2		0x11e>,
++			   <IMX95_PAD_ENET2_TD3__NETCMIX_TOP_ETH1_RGMII_TD3		0x11e>,
++			   <IMX95_PAD_ENET2_TXC__NETCMIX_TOP_ETH1_RGMII_TX_CLK		0x11e>,
++			   <IMX95_PAD_ENET2_TX_CTL__NETCMIX_TOP_ETH1_RGMII_TX_CTL	0x11e>,
++			   <IMX95_PAD_GPIO_IO24__GPIO2_IO_BIT24				0x51e>;
++	};
++
++	pinctrl_expander1: expander1grp {
++		fsl,pins = <IMX95_PAD_CCM_CLKO2__GPIO3_IO_BIT27				0x1100>;
++	};
++
++	pinctrl_flexcan1: flexcan1grp {
++		fsl,pins = <IMX95_PAD_PDM_BIT_STREAM0__AONMIX_TOP_CAN1_RX	0x1300>,
++			   <IMX95_PAD_PDM_CLK__AONMIX_TOP_CAN1_TX		0x31e>;
++	};
++
++	pinctrl_flexcan3: flexcan3grp {
++		fsl,pins = <IMX95_PAD_CCM_CLKO3__CAN3_TX		0x31e>,
++			   <IMX95_PAD_CCM_CLKO4__CAN3_RX		0x1300>;
++	};
++
++	pinctrl_flexspi1: flexspi1grp {
++		fsl,pins = <IMX95_PAD_SD3_CLK__FLEXSPI1_A_SCLK		0x11e>,
++			   <IMX95_PAD_SD3_CMD__FLEXSPI1_A_SS0_B		0x11e>,
++			   <IMX95_PAD_SD3_DATA0__FLEXSPI1_A_DATA_BIT0	0x11e>,
++			   <IMX95_PAD_SD3_DATA1__FLEXSPI1_A_DATA_BIT1	0x11e>,
++			   <IMX95_PAD_SD3_DATA2__FLEXSPI1_A_DATA_BIT2	0x11e>,
++			   <IMX95_PAD_SD3_DATA3__FLEXSPI1_A_DATA_BIT3	0x11e>;
++	};
++
++	pinctrl_gpio1: gpio1grp {
++		fsl,pins = <IMX95_PAD_PDM_BIT_STREAM1__AONMIX_TOP_GPIO1_IO_BIT10	0x111e>,
++			   <IMX95_PAD_SAI1_TXD0__AONMIX_TOP_GPIO1_IO_BIT13		0x111e>,
++			   <IMX95_PAD_SAI1_TXFS__AONMIX_TOP_GPIO1_IO_BIT11		0x111e>;
++	};
++
++	pinctrl_gpio2: gpio2grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO18__GPIO2_IO_BIT18		0x1100>,
++			   <IMX95_PAD_GPIO_IO19__GPIO2_IO_BIT19		0x111e>,
++			   <IMX95_PAD_GPIO_IO22__GPIO2_IO_BIT22		0x111e>;
++	};
++
++	pinctrl_lpi2c1: lpi2c1grp {
++		fsl,pins = <IMX95_PAD_I2C1_SCL__AONMIX_TOP_LPI2C1_SCL		0x4000191e>,
++			   <IMX95_PAD_I2C1_SDA__AONMIX_TOP_LPI2C1_SDA		0x4000191e>;
++	};
++
++	pinctrl_lpi2c3: lpi2c3grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO28__LPI2C3_SDA			0x4000191e>,
++			   <IMX95_PAD_GPIO_IO29__LPI2C3_SCL			0x4000191e>;
++	};
++
++	pinctrl_lpi2c4: lpi2c4grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO30__LPI2C4_SDA             0x4000191e>,
++			   <IMX95_PAD_GPIO_IO31__LPI2C4_SCL             0x4000191e>;
++	};
++
++	pinctrl_lpi2c6: lpi2c6grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO02__LPI2C6_SDA             0x4000191e>,
++			   <IMX95_PAD_GPIO_IO03__LPI2C6_SCL             0x4000191e>;
++	};
++
++	pinctrl_lpspi3: lpspi3grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO07__GPIO2_IO_BIT7		0x51e>,
++			   <IMX95_PAD_GPIO_IO08__GPIO2_IO_BIT8		0x51e>,
++			   <IMX95_PAD_GPIO_IO09__LPSPI3_SIN		0x51e>,
++			   <IMX95_PAD_GPIO_IO10__LPSPI3_SOUT		0x51e>,
++			   <IMX95_PAD_GPIO_IO11__LPSPI3_SCK		0x51e>;
++	};
++
++	pinctrl_lpuart1: lpuart1grp {
++		fsl,pins = <IMX95_PAD_UART1_RXD__AONMIX_TOP_LPUART1_RX		0x1300>,
++			   <IMX95_PAD_UART1_TXD__AONMIX_TOP_LPUART1_TX		0x31e>,
++			   <IMX95_PAD_UART2_TXD__AONMIX_TOP_LPUART1_RTS_B	0x1300>,
++			   <IMX95_PAD_UART2_RXD__AONMIX_TOP_LPUART1_CTS_B	0x31e>;
++	};
++
++	pinctrl_lpuart5: lpuart5grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO00__LPUART5_TX			0x31e>,
++			   <IMX95_PAD_GPIO_IO01__LPUART5_RX			0x1300>;
++	};
++
++	pinctrl_lpuart7: lpuart7grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO36__LPUART7_TX			0x31e>,
++			   <IMX95_PAD_GPIO_IO37__LPUART7_RX			0x1300>;
++	};
++
++	pinctrl_lpuart8: lpuart8grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO12__LPUART8_TX			0x31e>,
++			   <IMX95_PAD_GPIO_IO13__LPUART8_RX			0x1300>,
++			   <IMX95_PAD_GPIO_IO14__LPUART8_CTS_B			0x31e>,
++			   <IMX95_PAD_GPIO_IO15__LPUART8_RTS_B			0x1300>;
++	};
++
++	pinctrl_mdio: mdiogrp {
++		fsl,pins = <IMX95_PAD_ENET1_MDC__NETCMIX_TOP_NETC_MDC		0x51e>,
++			   <IMX95_PAD_ENET1_MDIO__NETCMIX_TOP_NETC_MDIO		0x51e>;
++	};
++
++	pinctrl_pcf85063: pcf85063grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO27__GPIO2_IO_BIT27			0x1100>;
++	};
++
++	pinctrl_pcie0: pcie0grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO32__HSIOMIX_TOP_PCIE1_CLKREQ_B	0x111e>;
++	};
++
++	pinctrl_pcie1: pcie1grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO35__HSIOMIX_TOP_PCIE2_CLKREQ_B	0x111e>;
++	};
++
++	pinctrl_sai3: sai3grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO16__SAI3_TX_BCLK			0x51e>,
++			   <IMX95_PAD_GPIO_IO17__SAI3_MCLK			0x51e>,
++			   <IMX95_PAD_GPIO_IO20__SAI3_RX_DATA_BIT0		0x1300>,
++			   <IMX95_PAD_GPIO_IO21__SAI3_TX_DATA_BIT0		0x51e>,
++			   <IMX95_PAD_GPIO_IO26__SAI3_TX_SYNC			0x51e>;
++	};
++
++	pinctrl_sai5: sai5grp {
++		fsl,pins = <IMX95_PAD_XSPI1_DATA4__SAI5_TX_DATA_BIT0		0x51e>,
++			   <IMX95_PAD_XSPI1_DATA5__SAI5_TX_SYNC			0x51e>,
++			   <IMX95_PAD_XSPI1_DATA6__SAI5_TX_BCLK			0x51e>,
++			   <IMX95_PAD_XSPI1_DATA7__SAI5_RX_DATA_BIT0		0x1300>;
++	};
++
++	pinctrl_sdvmmc: sdvmmcgrp {
++		fsl,pins = <IMX95_PAD_SD2_RESET_B__GPIO3_IO_BIT7		0x11e>;
++	};
++
++	pinctrl_tc9595: tc9595grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO25__GPIO2_IO_BIT25			0x1500>;
++	};
++
++	pinctrl_tpm3: tpm3grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO04__TPM3_CH0			0x51e>;
++	};
++
++	pinctrl_tpm4: tpm4grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO05__TPM4_CH0			0x51e>;
++	};
++
++	pinctrl_tpm5: tpm4grp {
++		fsl,pins = <IMX95_PAD_GPIO_IO06__TPM5_CH0			0x51e>;
++	};
++
++	pinctrl_usdhc1: usdhc1grp {
++		fsl,pins = <IMX95_PAD_SD1_CLK__USDHC1_CLK	0x158e>,
++			   <IMX95_PAD_SD1_CMD__USDHC1_CMD	0x138e>,
++			   <IMX95_PAD_SD1_DATA0__USDHC1_DATA0	0x138e>,
++			   <IMX95_PAD_SD1_DATA1__USDHC1_DATA1	0x138e>,
++			   <IMX95_PAD_SD1_DATA2__USDHC1_DATA2	0x138e>,
++			   <IMX95_PAD_SD1_DATA3__USDHC1_DATA3	0x138e>,
++			   <IMX95_PAD_SD1_DATA4__USDHC1_DATA4	0x138e>,
++			   <IMX95_PAD_SD1_DATA5__USDHC1_DATA5	0x138e>,
++			   <IMX95_PAD_SD1_DATA6__USDHC1_DATA6	0x138e>,
++			   <IMX95_PAD_SD1_DATA7__USDHC1_DATA7	0x138e>,
++			   <IMX95_PAD_SD1_STROBE__USDHC1_STROBE	0x158e>;
++	};
++
++	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
++		fsl,pins = <IMX95_PAD_SD1_CLK__USDHC1_CLK	0x158e>,
++			   <IMX95_PAD_SD1_CMD__USDHC1_CMD	0x138e>,
++			   <IMX95_PAD_SD1_DATA0__USDHC1_DATA0	0x138e>,
++			   <IMX95_PAD_SD1_DATA1__USDHC1_DATA1	0x138e>,
++			   <IMX95_PAD_SD1_DATA2__USDHC1_DATA2	0x138e>,
++			   <IMX95_PAD_SD1_DATA3__USDHC1_DATA3	0x138e>,
++			   <IMX95_PAD_SD1_DATA4__USDHC1_DATA4	0x138e>,
++			   <IMX95_PAD_SD1_DATA5__USDHC1_DATA5	0x138e>,
++			   <IMX95_PAD_SD1_DATA6__USDHC1_DATA6	0x138e>,
++			   <IMX95_PAD_SD1_DATA7__USDHC1_DATA7	0x138e>,
++			   <IMX95_PAD_SD1_STROBE__USDHC1_STROBE	0x158e>;
++	};
++
++	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
++		fsl,pins = <IMX95_PAD_SD1_CLK__USDHC1_CLK	0x15fe>,
++			   <IMX95_PAD_SD1_CMD__USDHC1_CMD	0x13fe>,
++			   <IMX95_PAD_SD1_DATA0__USDHC1_DATA0	0x13fe>,
++			   <IMX95_PAD_SD1_DATA1__USDHC1_DATA1	0x13fe>,
++			   <IMX95_PAD_SD1_DATA2__USDHC1_DATA2	0x13fe>,
++			   <IMX95_PAD_SD1_DATA3__USDHC1_DATA3	0x13fe>,
++			   <IMX95_PAD_SD1_DATA4__USDHC1_DATA4	0x13fe>,
++			   <IMX95_PAD_SD1_DATA5__USDHC1_DATA5	0x13fe>,
++			   <IMX95_PAD_SD1_DATA6__USDHC1_DATA6	0x13fe>,
++			   <IMX95_PAD_SD1_DATA7__USDHC1_DATA7	0x13fe>,
++			   <IMX95_PAD_SD1_STROBE__USDHC1_STROBE	0x15fe>;
++	};
++
++	pinctrl_usdhc2: usdhc2grp {
++		fsl,pins = <IMX95_PAD_SD2_CD_B__GPIO3_IO_BIT0			0x1100>,
++			   <IMX95_PAD_SD2_CLK__USDHC2_CLK			0x51e>,
++			   <IMX95_PAD_SD2_CMD__USDHC2_CMD			0x31e>,
++			   <IMX95_PAD_SD2_DATA0__USDHC2_DATA0			0x131e>,
++			   <IMX95_PAD_SD2_DATA1__USDHC2_DATA1			0x131e>,
++			   <IMX95_PAD_SD2_DATA2__USDHC2_DATA2			0x131e>,
++			   <IMX95_PAD_SD2_DATA3__USDHC2_DATA3			0x131e>,
++			   <IMX95_PAD_SD2_VSELECT__USDHC2_VSELECT		0x51e>;
++	};
++
++	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
++		fsl,pins = <IMX95_PAD_SD2_CD_B__GPIO3_IO_BIT0			0x1100>,
++			   <IMX95_PAD_SD2_CLK__USDHC2_CLK			0x158e>,
++			   <IMX95_PAD_SD2_CMD__USDHC2_CMD			0x138e>,
++			   <IMX95_PAD_SD2_DATA0__USDHC2_DATA0			0x138e>,
++			   <IMX95_PAD_SD2_DATA1__USDHC2_DATA1			0x138e>,
++			   <IMX95_PAD_SD2_DATA2__USDHC2_DATA2			0x138e>,
++			   <IMX95_PAD_SD2_DATA3__USDHC2_DATA3			0x138e>,
++			   <IMX95_PAD_SD2_VSELECT__USDHC2_VSELECT		0x51e>;
++	};
++
++	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
++		fsl,pins = <IMX95_PAD_SD2_CD_B__GPIO3_IO_BIT0			0x1100>,
++			   <IMX95_PAD_SD2_CLK__USDHC2_CLK			0x15fe>,
++			   <IMX95_PAD_SD2_CMD__USDHC2_CMD			0x13fe>,
++			   <IMX95_PAD_SD2_DATA0__USDHC2_DATA0			0x13fe>,
++			   <IMX95_PAD_SD2_DATA1__USDHC2_DATA1			0x13fe>,
++			   <IMX95_PAD_SD2_DATA2__USDHC2_DATA2			0x13fe>,
++			   <IMX95_PAD_SD2_DATA3__USDHC2_DATA3			0x13fe>,
++			   <IMX95_PAD_SD2_VSELECT__USDHC2_VSELECT		0x51e>;
++	};
++};
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
