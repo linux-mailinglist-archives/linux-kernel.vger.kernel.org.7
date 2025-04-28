@@ -1,129 +1,96 @@
-Return-Path: <linux-kernel+bounces-623262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B58EA9F34D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E092A9F36F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BDE7189E8E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A831A83378
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CA326D4FB;
-	Mon, 28 Apr 2025 14:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC48726FA4E;
+	Mon, 28 Apr 2025 14:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jDr2VHzL"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b="TYThmJvT"
+Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B941B1DED7C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFBA26FD8D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745849905; cv=none; b=pFfSif9ekcSnHBfmNOh6mf+tRDxZ0uNnpT/VLfm0KFxZD+Mq3k0A09+f/tLgPYdvUq4Q+/6YWVZMt1Dpe8gMYsb4SWB40qdwN81wnRtddfx4Tfg7n3zdeby33yH0+rMWeyZkkRrUQcCWl5jy50g7Apo9KLsIGM67iOLFWKt5Qbs=
+	t=1745850611; cv=none; b=M54UQWf54s3DH0AC3shdwcG6pa8VUkvNzOCV0+xAjR4fkQcmTow4A+ExKMlnCXLvDydA4V+EV3aeyhJcsZ6PK81mxt+LceC3iQLIfHQLdr08om6r6Gb6WN/Ok6uC9VKxuYGPreTec4YwKzHWzEeHbJweERHIxZ4B7SL8Fw28WP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745849905; c=relaxed/simple;
-	bh=PjRdXlsmJUpPvlWjlRcduIR1Eq5Vgg2u25y7fkkDmyw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YmJ4gXaVVG89qP1bP4g+x1e1Xx/LGXQVWteV8Fp1HhdPS7jAuRj9ut7fjzq71u+XOkT19faEaF17QH01pqX3UpPbcRu9VO/ygeuCiO7c5guzfFWoqBHip+mg0P4fhb7bioyQdfwUpzqnm6XqzMmjdn93Ug6rBBaZdZKWajgiA6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jDr2VHzL; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54e98f73850so946748e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:18:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745849902; x=1746454702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nXVvurz23J2+L5kt96WXTroBQ39jU0y6cCqiWeSQLFk=;
-        b=jDr2VHzLbJ50BiFc8j1G0V7lsRiKW0Se2ri1Et6wLxdaTxeg0lkudTAWLFGqdvz0AF
-         lD+teb4cYJzIBQ7buAdqQV78SOo7R6uod5Gh92hVNbqhSAOxQpqiu1kpyPXyZAjoGgSz
-         gmWDu67pV/X9SBZfns7cFhc+0Fip+luuTNVntv5/y61h7C6CclqkedG0nUlrYmAAYezP
-         UU2GrIxHri4vbhyGsNhoWp2UjyfANNbzCaN/JK16ZRU8JFPgZnCO1+7eDmVkQJyuHGh8
-         x9nPpSfMpXCPLHa6AbXE8KY7YhSYLyb4pUPdskyJOJvXiBis/yyZBkw21SuRGnOnKKM0
-         3GHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745849902; x=1746454702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nXVvurz23J2+L5kt96WXTroBQ39jU0y6cCqiWeSQLFk=;
-        b=nAHIkzssmAX9caWdzCy+DJMte+HFpoBg9PlVxzCa8O8g+tuQYDvPPBuNPHKIh2R3tS
-         1TIkIt6vGmFlLb2pGOnzyrwWtuIyu6vpNC3cd8Qff1aD0yeQctdDaTXpG/7c3jk1EDMD
-         9Y3mAfl2xP6juk5g6zatSFGVYstTW1wQrUdAl+x7L6GrCBzPXC8/fVTRiHRbosRAPdom
-         +DgaQuaNIGdRTrxmMmSsZsXHKB9JQnXIU/dNw2gVl809rt7ecreMYr3oU78kD8R7tnu5
-         yR3q8ZTrH0IPPO1f5pFzqD0oxNdHwRHQ2+H/MxBcjFQDoDWmcr6rWLP+sHQNKLlqDPn+
-         a0YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEAkH9k4BKvFxqvk+36FluMYhueOMRFxO7dMr87lOBV/fIywp03Ez/WUjGhVlYgDhqa58QaYm8OmTL/rA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN9RAIxgLemLjgzZp+KZmmVTreSAigBtKQxZKSNCsV0RrYJotE
-	RUHZTKTOTD87LSLuR0Re1n609S1rQXRkEnaq8OybMpg+YPGcNx61E87ODFU6NphqimsfZo3XI2o
-	vDLei+47EQdo84erCg8glc7EdKEPbbcRPWFHFhQ==
-X-Gm-Gg: ASbGnctA39zI44Tx322H0R8eFT1ecHjb1vUS//O+PCw8JjgXIVslxk84mtmPCz02FRB
-	YRe+YDrgajZ27zY3wGOpHVvm8I4eVkGrH6I9cUyZxVRSdlGUrAk8bT7bB8dFOUqt/b6+fsLj/++
-	MwbaQdJuHtTFgfjID5GW52Kg==
-X-Google-Smtp-Source: AGHT+IGvhJeqWQVl7wUSjEu9Tai7VZXnkdRdnljHuHSmsEW0zEOC9vXIPg78pJyadRV6QxI6VqKiX008Vk2HwfUHtNE=
-X-Received: by 2002:a05:6512:108f:b0:549:6cac:6717 with SMTP id
- 2adb3069b0e04-54e8cc0cb31mr3406763e87.53.1745849901807; Mon, 28 Apr 2025
- 07:18:21 -0700 (PDT)
+	s=arc-20240116; t=1745850611; c=relaxed/simple;
+	bh=zEMdjIk8RW3nE7SZBprDXtmorPtx/9VQt+qnPKRkz8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KVK5kRXmS/X1C6R18sADEXv0xHwQvvqjVTZCqwDD1YsPFB8ztp7QXhi2gD8CfTTHwv72DGEPImW0meCsEI7p/tEGYMkGVyQceSQffHsq1q44eD7TYuqkgIoyImnA5vYrWWfJ9lrmbrUXraqCDodIMKcDHmSKv+akUmHwIlvhTEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com; spf=pass smtp.mailfrom=yshyn.com; dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b=TYThmJvT; arc=none smtp.client-ip=185.26.156.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yshyn.com
+Received: from phoenix.uberspace.de (phoenix.uberspace.de [95.143.172.135])
+	by mailgate02.uberspace.is (Postfix) with ESMTPS id 0386E17FF6C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:23:04 +0200 (CEST)
+Received: (qmail 10346 invoked by uid 988); 28 Apr 2025 14:23:03 -0000
+Authentication-Results: phoenix.uberspace.de;
+	auth=pass (plain)
+Received: from unknown (HELO unkown) (::1)
+	by phoenix.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 28 Apr 2025 16:23:03 +0200
+From: Illia Ostapyshyn <illia@yshyn.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	Illia Ostapyshyn <illia@yshyn.com>
+Subject: [PATCH] scripts/gdb: Use d_shortname instead of d_iname
+Date: Mon, 28 Apr 2025 16:21:17 +0200
+Message-ID: <20250428142117.3455683-1-illia@yshyn.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424062017.652969-1-uwu@icenowy.me> <20250424062017.652969-2-uwu@icenowy.me>
- <CACRpkdaX0hTJSsZN6YNXASY3noZw=JsOSXzFBbxKegJ6A+2usA@mail.gmail.com>
- <7e62e720ccc51fb5c7d023adae3eab35aecf0bba.camel@icenowy.me>
- <CACRpkdY0DXxDixZVhnRuKvSVbKQ6pSfLMiT2hf9818sbNG-4hg@mail.gmail.com> <0606c146d97ff98ff1412b98f49e6da0071801d1.camel@icenowy.me>
-In-Reply-To: <0606c146d97ff98ff1412b98f49e6da0071801d1.camel@icenowy.me>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 28 Apr 2025 16:18:10 +0200
-X-Gm-Features: ATxdqUFE5Aj3lBDc4lYvvht68VXq-83pWEXQcwlO7tgbNAkueD3gpN4Y7TmGwKM
-Message-ID: <CACRpkdbPhKwjb0dkOom6HyzTrhPWvMPhX5M=nyxw1HBHNJa0fQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: starfive,jh7110: add
- PAD_INTERNAL_* virtual pins
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Bar: -
+X-Rspamd-Report: MID_CONTAINS_FROM(1) BAYES_HAM(-2.783733) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
+X-Rspamd-Score: -1.383733
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=yshyn.com; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=zEMdjIk8RW3nE7SZBprDXtmorPtx/9VQt+qnPKRkz8g=;
+	b=TYThmJvThWI8EHelpB/26MgIUQHSM6MBUJvfeZJUdhrcaOSkgcJCwXGvbfCAeEL1OIq7Ux/hVq
+	k5xi7bY1EO2dSgnXD6Xk20iHgAjezlnEe4WAanVIbYqzHVBEKffNMgM0kmmRWvwskT2aRA8x2n/G
+	0wEUxKsA1BupGiM+VG2pQB2HCjqALQtkib3ffhOxQ2aIprO3kkgJTWgkE+QFmy9yt3SSPXoYW+o7
+	k9mO8Lz/8ofrjL3GYCxsFAAppDziOYVaMF/LLFADnciy5yAjwlrhTlzPMjUEztgQjTdoT4MiBfOx
+	gkMBohujSV6q7QWF/iECMU9JTh5RqjSQbAopgS8g==
 
-On Thu, Apr 24, 2025 at 2:26=E2=80=AFPM Icenowy Zheng <uwu@icenowy.me> wrot=
-e:
-[Me]
-> > I guess what rubs me the wrong way is why the external users
-> > (devices, device drivers or even pin hogs) cannot trigger the chain
-> > of
-> > events leading to this configuration, instead of different "magic"
-> > configurations that are just set up in the pin controller itself.
->
-> Well I am just extending what's already in use...
->
-> Currently it's already supported to route GPIOs to GPI signals, I added
-> the support to route fixed level sources to them, in a similar way.
->
-> If any external users ever have the need of banging the internal
-> signals instead of tying it fixedly, maybe switching between different
-> pinctrl configuration sets is enough? (Because this kind of operation
-> could never be as high speed enough as real hardware pins)
+Commit 58cf9c383c5c68666808 ("dcache: back inline names with a
+struct-wrapped array of unsigned long") introduced a d_shortname union
+in place of d_iname.  However, the gdb scripts for vfs still reference
+the old field.  Update the scripts to reference the correct field and
+union member.
 
-What I am thinking is that one of the following must be true:
+Signed-off-by: Illia Ostapyshyn <illia@yshyn.com>
+---
+ scripts/gdb/linux/vfs.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. The internal pads are always set up the same way for this SoC
-  in which case they should be just hardcoded instead, or at
-  least just implied from the compatible string of the pin controller.
+diff --git a/scripts/gdb/linux/vfs.py b/scripts/gdb/linux/vfs.py
+index c77b9ce75f6d..b5fbb18ccb77 100644
+--- a/scripts/gdb/linux/vfs.py
++++ b/scripts/gdb/linux/vfs.py
+@@ -22,7 +22,7 @@ def dentry_name(d):
+     if parent == d or parent == 0:
+         return ""
+     p = dentry_name(d['d_parent']) + "/"
+-    return p + d['d_iname'].string()
++    return p + d['d_shortname']['string'].string()
+ 
+ class DentryName(gdb.Function):
+     """Return string of the full path of a dentry.
+-- 
+2.47.2
 
-2. The internal pads are routed differently depending on different
-  use cases, in which case they need to be set up or implied
-  from configuration in other DT nodes describing this use.
-
-I guess this binding if for (2)?
-
-Yours,
-Linus Walleij
 
