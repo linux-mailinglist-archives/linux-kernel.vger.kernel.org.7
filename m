@@ -1,205 +1,218 @@
-Return-Path: <linux-kernel+bounces-623726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658C2A9F9E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:49:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1C5A9F9EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B526117EAED
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C46E1A863CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9BD29115B;
-	Mon, 28 Apr 2025 19:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8192E2973D2;
+	Mon, 28 Apr 2025 19:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLOR2IVd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="MKzT0PgA"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A022E7083A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 19:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481837083A;
+	Mon, 28 Apr 2025 19:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745869761; cv=none; b=qDyHv/DjrpRd9UTQy8dfm46gtqDGjHjoeypYKZb26gg9pMqi4Gaz8J/0uUYRxS8DG5tZRZBMluZxqBlZq59fgWVr/ef76NCEvoHi1El+tNfmVy5saK0sRrg970q5Hu+eYv85ErDG5QvADY55+xaG37BsliNqm1Z+m46LIw251Ak=
+	t=1745869822; cv=none; b=TQU/8IXcI0uRdby+/RNOUsPDgaBIMqEWDQDtJ1AyKOlrYoYjMV0slZYaquS/D0GZ9NgqGdObZhyXv7GwSWECFqExfxJXWnuodkev9RULvShmyo/ElZbRxbFpUDk+NgpDcrvbotwTbADS3/IMM3unJqSdo/vG6Cxc9bUjQHAqVU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745869761; c=relaxed/simple;
-	bh=3gXmrcYdj9Gg8cyq0OuSZ9rTbwiNa/jM9SCJyzRX0xY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdZ2bUCElLDIFG6+tBMaMr8IlgwgCI8nm8vykzYCl3xTfqtEcIJ3ls2wL4I+vvJric7pdoXzoBehyd6KBJioCRJCRXiRu81Y9NSzpmQB7EkHQZtsqSbTnPTP+GMzVS0ohAYDQoTPE5tpIfqGRFxNtFWKGVvNe9VoRIgx899lW7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLOR2IVd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21710C4CEE9;
-	Mon, 28 Apr 2025 19:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745869760;
-	bh=3gXmrcYdj9Gg8cyq0OuSZ9rTbwiNa/jM9SCJyzRX0xY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=OLOR2IVd++SJZhFumRlgPaZ84LJZ6PWoV7TfSGZ+pnCLTi+yAsx+HjM8wl8398QiJ
-	 lrStoJRPfGtzNVWJed9YC+pamtFJtkPdqSQA0maeKp+bCVx2c60dj5fvefOo37MLsJ
-	 LUEjANYhzczk6SzjnxBIW9b/XnVeILo6JlHQIyEQ0xxhZRVRMjXNnQABxIaqU1ynrD
-	 PfwdX4mF0yFdqFEcemUKM5FcadIG3dpRxVKkk/WIkbrFk/mkMKSVLlEgmHyMa9lkmu
-	 yzr/Ms2iu9yIhI3Kh8KXXVhtS966gdmdmAz54yG8+2hH+2kBZyEk6D2D3q0wtKLs5G
-	 GoXuMDWSt3T4Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0FBA1CE0838; Mon, 28 Apr 2025 12:49:18 -0700 (PDT)
-Date: Mon, 28 Apr 2025 12:49:18 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>
-Subject: Re: [PATCH v3 11/20] ratelimit: Force re-initialization when
- rate-limiting re-enabled
-Message-ID: <58153904-1d2f-44aa-b97d-56486e91a787@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
- <20250425002826.3431914-11-paulmck@kernel.org>
- <aA-f0jpBBbdfsmn7@pathway.suse.cz>
+	s=arc-20240116; t=1745869822; c=relaxed/simple;
+	bh=rH7/HZOg7f1c+2LCP+NbsDn3L5NWlRBCV/YsyucQqgI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Um0mqmw31vOhI55PQkw8+yOYgZEpwyLvHcz9AbMwunk3IWTyhYFpa8BVcMADk+brycP4rr6RiOuUeKqmCGH0inhNPrYM5K23cQlgvXlibvhmX2wgvn5zbTHKAyr1qyEPImYiOKs3dFyWa5iFZJdGUkRbR6mA67xztd7azwdWAUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=MKzT0PgA; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [217.114.34.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 75F5566509C;
+	Mon, 28 Apr 2025 21:50:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1745869808;
+	bh=rH7/HZOg7f1c+2LCP+NbsDn3L5NWlRBCV/YsyucQqgI=;
+	h=From:Subject:Date;
+	b=MKzT0PgAJ4hSY2XBtf0JmfdNzpA2j45RxysfZm5APE3hZnytAkmhOHdcLUfeNemcK
+	 F4Pspqp+cYmoNxklzy1VFoNdXpMLmH2yJw3YV0rGa+dqM4Jkw4+gFf9eF/uhPCPydP
+	 2fPbNIlWaQRzfnyxKeQnxXZMl4OSZHrW2ixuIoYPGx1llq1C/tjFwJQ0nSVX+gGBFV
+	 Lf/MR7BQvW42lyTh4IBWp8EcFd4BSao9HL1zHFllyT3Oc98uF/mS1nuSrfXlMcBFVK
+	 aUCe/rOzGw5OvgtCc0cTVLwfrs9D9Yh4lFudwWHgdnYmQpB7drtpr87YYV1u+2LHdb
+	 GuRX9PVGGtJeA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Vinod Koul <vkoul@kernel.org>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, linux-sound@vger.kernel.org
+Subject:
+ [PATCH v2] soundwire: intel_auxdevice: Fix system suspend/resume handling
+Date: Mon, 28 Apr 2025 21:50:07 +0200
+Message-ID: <12680420.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aA-f0jpBBbdfsmn7@pathway.suse.cz>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 217.114.34.19
+X-CLIENT-HOSTNAME: 217.114.34.19
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedukeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepffffffekgfehheffleetieevfeefvefhleetjedvvdeijeejledvieehueevueffnecukfhppedvudejrdduudegrdefgedrudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedruddugedrfeegrdduledphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehvkhhouhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpihgvrhhrvgdqlhhouhhishdrsghoshhsrghrtheslhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeihuhhnghdqtghhuhgrnhdrlhhirghosehlihhnuhigrdh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Mon, Apr 28, 2025 at 05:33:38PM +0200, Petr Mladek wrote:
-> On Thu 2025-04-24 17:28:17, Paul E. McKenney wrote:
-> > Currently, rate limiting being disabled results in an immediate early
-> > return with no state changes.  This can result in false-positive drops
-> > when re-enabling rate limiting.  Therefore, mark the ratelimit_state
-> > structure "uninitialized" when rate limiting is disabled.
-> > 
-> > Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
-> > Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Petr Mladek <pmladek@suse.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> > Cc: Mateusz Guzik <mjguzik@gmail.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: John Ogness <john.ogness@linutronix.de>
-> > Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-> > ---
-> >  lib/ratelimit.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-> > index 7a7ba4835639f..52aab9229ca50 100644
-> > --- a/lib/ratelimit.c
-> > +++ b/lib/ratelimit.c
-> > @@ -35,11 +35,24 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
-> >  	unsigned long flags;
-> >  	int ret;
-> >  
-> > +	/*
-> > +	 * Zero interval says never limit, otherwise, non-positive burst
-> > +	 * says always limit.
-> > +	 */
-> >  	if (interval <= 0 || burst <= 0) {
-> >  		ret = interval == 0 || burst > 0;
-> > +		if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) ||
-> > +		    !raw_spin_trylock_irqsave(&rs->lock, flags)) {
-> 
-> I though more about this. And I am not sure if this is safe.
-> 
-> We are here when the structure has not been initialized yet.
-> The spin lock is going to be likely still initialized.
-> In theory, it might happen in parallel:
-> 
-> CPU0				CPU1
-> 
-> ___ratelimit()
->   if (interval <= 0 || burst <= 0)
->     // true on zero initialized struct
-> 
->     if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) ||
->       // same here
->       !raw_spin_trylock_irqsave(&rs->lock, flags)) {
->       // success???
-> 
-> 				ratelimit_state_init()
-> 				  raw_spin_lock_init(&rs->lock);
-> 
-> 
->       raw_spin_unlock_irqrestore(&rs->lock, flags);
-> 
-> BANG: Unlocked rs->lock which has been initialized in the meantime.
-> 
-> 
-> Note: The non-initialized structure can be used in ext4 code,
->       definitely, see
->       https://lore.kernel.org/r/aAnp9rdPhRY52F7N@pathway.suse.cz
-> 
->       Well, I think that it happens in the same CPU. So, it should
->       be "safe".
-> 
-> 
-> Sigh, I guess that this patch is needed to fix the lib/tests/test_ratelimit.c.
-> It works because the test modifies .burst and .interval directly.
-> 
-> What is a sane behavior/API?
-> 
-> IMHO:
-> 
-> 1. Nobody, including ext4 code, should use non-initialized
->    struct ratelimit_state. It is a ticking bomb.
-> 
->    IMHO, it should trigger a warning and the callers should get fixed.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I agree in principle, but in practice it will at best take some time to
-drive the change into the other systems.  So let's make the this code
-work with the existing client code, get that accepted, and then separately
-I can do another round of cleanup.  (Or you can, if you prefer.)
+Before commit bca84a7b93fd ("PM: sleep: Use DPM_FLAG_SMART_SUSPEND
+conditionally") the runtime PM status of the device in intel_resume()
+had always been RPM_ACTIVE because setting DPM_FLAG_SMART_SUSPEND had
+caused the core to call pm_runtime_set_active() for that device during
+the "noirq" resume phase.  For this reason, the pm_runtime_suspended()
+check in intel_resume() had never triggered and the code depending on
+it had never run.  That had not caused any observable functional issues
+to appear, so effectively the code in question had never been needed.
 
-After that, the WARN_ONCE() can be upgraded to complain if both interval
-and burst are zero.
+After commit bca84a7b93fd the core does not call pm_runtime_set_active()
+for all devices with DPM_FLAG_SMART_SUSPEND set any more and the code
+depending on the pm_runtime_suspended() check in intel_resume() runs if
+the device is runtime-suspended prior to a system-wide suspend
+transition.  Unfortunately, when it runs, it breaks things due to the
+attempt to runtime-resume bus->dev which most likely is not ready for a
+runtime resume at that point.
 
-> 2. Nobody, including the selftest, should modify struct ratelimit_state
->    directly.
-> 
->    This patchset adds ratelimit_state_reset_interval() for this
->    purpose. It clears ~RATELIMIT_INITIALIZED. So this patch won't
->    be needed when the API was used in the selftest.
-> 
-> It was actually great that ___ratelimit() was able to handle
-> non-initialized struct ratelimit_state without taking
-> the bundled lock.
-> 
-> What do you think, please?
+It also does other more-or-less questionable things.  Namely, it
+calls pm_runtime_idle() for a device with a nonzero runtime PM usage
+counter which has no effect (all devices have nonzero runtime PM
+usage counters during system-wide suspend and resume).  It also calls
+pm_runtime_mark_last_busy() for the device even though devices cannot
+runtime-suspend during system-wide suspend and resume (because their
+runtime PM usage counters are nonzero) and an analogous call is made
+in the same function later.  Moreover, it sets the runtime PM status
+of the device to RPM_ACTIVE before activating it.
 
-Hmmm...
+For the reasons listed above, remove that code altogether.
 
-It sounds like I need to avoid acquiring that lock if both interval
-and burst are zero.  A bit inelegant, but it seems to be what needs
-to happen.
+On top of that, add a pm_runtime_disable() call to intel_suspend() to
+prevent the device from being runtime-resumed at any point after
+intel_suspend() has started to manipulate it because the changes
+made by that function would be undone by a runtime-suspend of the
+device.
 
-In the short term, how about the patch shown below?
+Next, once runtime PM has been disabled, the runtime PM status of the
+device cannot change, so pm_runtime_status_suspended() can be used
+instead of pm_runtime_suspended() in intel_suspend().
 
-						Thanx, Paul
+Finally, make intel_resume() call pm_runtime_set_active() at the end to
+set the runtime PM status of the device to "active" because it has just
+been activated and re-enable runtime PM for it after that.
 
-------------------------------------------------------------------------
+Additionally, drop the setting of DPM_FLAG_SMART_SUSPEND from the
+driver because it has no effect on devices handled by it.
 
-diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 626f04cabb727..859c251b23ce2 100644
---- a/lib/ratelimit.c
-+++ b/lib/ratelimit.c
-@@ -42,7 +42,7 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	if (interval <= 0 || burst <= 0) {
- 		WARN_ONCE(interval < 0 || burst < 0, "Negative interval (%d) or burst (%d): Uninitialized ratelimit_state structure?\n", interval, burst);
- 		ret = interval == 0 || burst > 0;
--		if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) ||
-+		if (!(READ_ONCE(rs->flags) & RATELIMIT_INITIALIZED) || (!interval && !burst) ||
- 		    !raw_spin_trylock_irqsave(&rs->lock, flags))
- 			goto nolock_ret;
+Fixes: bca84a7b93fd ("PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally")
+Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Tested-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v1 -> v2: New changelog
+
+Since it fixes a recent regression in 6.15-rc, I can route it through the
+PM tree unless that would be a major concern.
+
+---
+ drivers/soundwire/intel_auxdevice.c |   36 +++++++++++++-----------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
+
+--- a/drivers/soundwire/intel_auxdevice.c
++++ b/drivers/soundwire/intel_auxdevice.c
+@@ -353,9 +353,6 @@
+ 	/* use generic bandwidth allocation algorithm */
+ 	sdw->cdns.bus.compute_params = sdw_compute_params;
  
+-	/* avoid resuming from pm_runtime suspend if it's not required */
+-	dev_pm_set_driver_flags(dev, DPM_FLAG_SMART_SUSPEND);
+-
+ 	ret = sdw_bus_master_add(bus, dev, dev->fwnode);
+ 	if (ret) {
+ 		dev_err(dev, "sdw_bus_master_add fail: %d\n", ret);
+@@ -640,7 +637,10 @@
+ 		return 0;
+ 	}
+ 
+-	if (pm_runtime_suspended(dev)) {
++	/* Prevent runtime PM from racing with the code below. */
++	pm_runtime_disable(dev);
++
++	if (pm_runtime_status_suspended(dev)) {
+ 		dev_dbg(dev, "pm_runtime status: suspended\n");
+ 
+ 		clock_stop_quirks = sdw->link_res->clock_stop_quirks;
+@@ -648,7 +648,7 @@
+ 		if ((clock_stop_quirks & SDW_INTEL_CLK_STOP_BUS_RESET) ||
+ 		    !clock_stop_quirks) {
+ 
+-			if (pm_runtime_suspended(dev->parent)) {
++			if (pm_runtime_status_suspended(dev->parent)) {
+ 				/*
+ 				 * paranoia check: this should not happen with the .prepare
+ 				 * resume to full power
+@@ -715,7 +715,6 @@
+ 	struct sdw_cdns *cdns = dev_get_drvdata(dev);
+ 	struct sdw_intel *sdw = cdns_to_intel(cdns);
+ 	struct sdw_bus *bus = &cdns->bus;
+-	int link_flags;
+ 	int ret;
+ 
+ 	if (bus->prop.hw_disabled || !sdw->startup_done) {
+@@ -724,23 +723,6 @@
+ 		return 0;
+ 	}
+ 
+-	if (pm_runtime_suspended(dev)) {
+-		dev_dbg(dev, "pm_runtime status was suspended, forcing active\n");
+-
+-		/* follow required sequence from runtime_pm.rst */
+-		pm_runtime_disable(dev);
+-		pm_runtime_set_active(dev);
+-		pm_runtime_mark_last_busy(dev);
+-		pm_runtime_enable(dev);
+-
+-		pm_runtime_resume(bus->dev);
+-
+-		link_flags = md_flags >> (bus->link_id * 8);
+-
+-		if (!(link_flags & SDW_INTEL_MASTER_DISABLE_PM_RUNTIME_IDLE))
+-			pm_runtime_idle(dev);
+-	}
+-
+ 	ret = sdw_intel_link_power_up(sdw);
+ 	if (ret) {
+ 		dev_err(dev, "%s failed: %d\n", __func__, ret);
+@@ -761,6 +743,14 @@
+ 	}
+ 
+ 	/*
++	 * Runtime PM has been disabled in intel_suspend(), so set the status
++	 * to active because the device has just been resumed and re-enable
++	 * runtime PM.
++	 */
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
++
++	/*
+ 	 * after system resume, the pm_runtime suspend() may kick in
+ 	 * during the enumeration, before any children device force the
+ 	 * master device to remain active.  Using pm_runtime_get()
+
+
+
 
