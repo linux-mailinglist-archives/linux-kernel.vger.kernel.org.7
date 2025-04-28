@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-622892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319EAA9EE20
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A05A9EE29
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B71217CD92
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F14189E57F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C1A25F7AE;
-	Mon, 28 Apr 2025 10:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69D725EFBE;
+	Mon, 28 Apr 2025 10:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NfuYgoI+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FqT7ii4x"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F3238F9C;
-	Mon, 28 Apr 2025 10:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE0038F9C;
+	Mon, 28 Apr 2025 10:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745836865; cv=none; b=RPUQ3+MpOFLjDqxjT3gl4rkpt49imw8Fye7W+Tw2Bsqw85sO9hZPl85PdJS4/j8hidEIqMqZ3Vndo8ApQTVGH/Zhp0XDr3WLkgURuq6wNlEqWdZg+Amk3TTQ94VRnL3cPNiYWx3bRFb0J2hnpfoxXwVNUcAnzPMG1prLhooTZes=
+	t=1745836901; cv=none; b=lS0mpW1lPpmNmVEvgTcVtH6+KENmWjstv+oMBN3COaydYZdWFvn3jkdYVwMlYUpC/TyGCDL3ckV87KLyKUFr8FXCX1I3i66PLBM8aZzxuWPB31m3Y4/nT/mMe6hj8yWEWzFwfWGE2xMTjRlCQXosSozAKrMqANB8Bel5GALLfIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745836865; c=relaxed/simple;
-	bh=PMBvLS3NVHJ/ZDWYVnxFM6aJG4Z0dOe09lzY9xEGW68=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eXXCz9itaJkzxL80dDVJZ4eG/eh5OvtzL27F7TO+KbMJnptUjMwCLBQLDUd083rWlH0087EeUVnTG5KeHIlfCmVr4RR0nbRO2zH6ZIfwZ4pDfj/8c585XIZLXi3ViCPH5KesRWGGSpOiFXyvTJ1e7JnXh7J9dOlwyN1RqZh0Ejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NfuYgoI+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1745836862;
-	bh=LN6OprujhlffQ3dP86stsT+uKyfbXf3NGXxVcRnucAU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NfuYgoI+FIrT2eX6FEIfLPjYm2iN1snmlNQ4krOQVSdg4IHZhTCfddERXeK5LY8Lp
-	 Y5aufoiikI/R7srV6jTq6xrJSdgdbIERW3bxdjTUtPsmgdsPoVZgXPsjufnKWM7chw
-	 bD5F52UC1sxynHRqM/MJb4YGDQVPPxslzDqAkqgeI6pCVj0z28ETqg1Jabmvmhbv+L
-	 skdcfA12kdCPldJjx+if412iY4hmAnb6k1vC08/KLhbjmzwXUS6STTU45C6CJ4q9du
-	 LQjPPUs6uUCO9gfSul+PiTmyNbfIa6AtSiZKAXaWB4BnsXoFi32ppV6oYaJqPbRfpB
-	 mz7p3BikUSgSg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1745836901; c=relaxed/simple;
+	bh=zpndmjIOJY0jV7iDNOvfLsb6vCnmy7a3L/TUik4yOh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FB2Km2PKO2f5s8UvRJ4LSWC5aJnEPFb2Y7iR5lrR/u9TOCw3VL2VviuvAFgElnkHX5pj8a+JstxyuHqKzHkkvVgcGTgCn/iTo1AiJwwflp/7YBiIj88b2CAjMGdEKBlr/8u4hlb8VyPcmNCk97EHZHzswmNCuDXEvjaUUew8rmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FqT7ii4x; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4F0AF40E0214;
+	Mon, 28 Apr 2025 10:41:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id RNVIay7sXf5f; Mon, 28 Apr 2025 10:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1745836891; bh=OBhff9tvGgMS25PpTWgAvD0r7/55ssc+Ah+E01cCjJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FqT7ii4xXPGSGobjl5jQCVxBharMhfoGOE9hWSzQ8eV9KmiNvfTXfK7C8kJCVT5xy
+	 mlIRtUA3jhjfJ61ODidQllkKW2JNLZJIb5m7qJaQbAbYcKYyTj0Mrpg2OhigjDRUTb
+	 hEVkTeeBXiVkMj2XlHfbN2PM7qTOuZG9I8UJSlk2gXh3nf3oQYCegobZSkuvBypwfF
+	 bT8Zq3ptqkwSZBEBdsDFWklLP5YKU+/H1gFmkuCfBRyGEgEaXrjFFhf+2GOQJ5LCno
+	 ndAZvYdoj9qsWVLvjK0OJ7FujPPqMKRzBwaPsuQpe2mV117XustfoI1ClBx9INfAOQ
+	 ugf1JToQczOR6Xw0lKqC1IeT8Dg/Kx+MFkTF0mX8C4t/ZDStI+tUMQWxGZrs19zTS7
+	 5A1S7eqy5EeLYeSxECqBuB/HOXKciWpQzVzH2OzIugcHACUKX+kwphJkp5uLBaiEP2
+	 hSvhcPEg/5D8nWPMV/Qsg4EMVlW/ArVfe7v6aztEqRxALjEpwOyBL5PKza/KtD/V9S
+	 /XCWlImkUfpXYgpPWCodd8UQ5UjW8E5lSGb8Bh+RVl9rQ0sHaGRalBOh9Da9nutFVR
+	 4ibSU9bO459lKZjfX8QnWwWzA27zIPYE97JzrclOcxl45WTMIk3Wv4+ZULG94aEJYq
+	 tijqHth0XIC48/I9egJ9ZJ4o=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZmKjp13cSz4wbv;
-	Mon, 28 Apr 2025 20:41:02 +1000 (AEST)
-Date: Mon, 28 Apr 2025 20:41:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andreas Hindborg <a.hindborg@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust-xarray tree
-Message-ID: <20250428204101.40a35c07@canb.auug.org.au>
-In-Reply-To: <20250428203943.51dd39d5@canb.auug.org.au>
-References: <20250428203943.51dd39d5@canb.auug.org.au>
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 06F7840E01FF;
+	Mon, 28 Apr 2025 10:41:22 +0000 (UTC)
+Date: Mon, 28 Apr 2025 12:41:15 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: dinguyen@kernel.org, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org, tthayer@opensource.altera.com,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] EDAC/altera: two bug fixes
+Message-ID: <20250428104115.GAaA9bSzXJg62faGc-@fat_crate.local>
+References: <20250425142640.33125-1-matthew.gerlach@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/s=muqbsDHtO+QuD2OBv2cc1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250425142640.33125-1-matthew.gerlach@altera.com>
 
---Sig_/s=muqbsDHtO+QuD2OBv2cc1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Apr 25, 2025 at 07:26:38AM -0700, Matthew Gerlach wrote:
+> This patch set contains two bug fixes for the Altera ECC manager.
+> 
+> Patch 1:
+>  - Fix bug testing the wrong structure member.
+> 
+> Patch 2:
+>  - Mask HW interrupts until handler registered.
+> 
+> Niravkumar L Rabara (2):
+>   EDAC/altera: fix cut and paste error
+>   EDAC/altera: Set DDR and SDMMC interrupt mask before registration
+> 
+>  drivers/edac/altera_edac.c | 9 +++++----
+>  drivers/edac/altera_edac.h | 2 ++
+>  2 files changed, 7 insertions(+), 4 deletions(-)
 
-Hi all,
+Applied, thanks.
 
-On Mon, 28 Apr 2025 20:39:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the rust-xarray tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+-- 
+Regards/Gruss,
+    Boris.
 
-error[E0308]: mismatched types
-  --> rust/kernel/auxiliary.rs:76:73
-   |
-55 | impl<T: Driver + 'static> Adapter<T> {
-   |      - found this type parameter
-...
-76 |                 unsafe { bindings::auxiliary_set_drvdata(adev.as_raw()=
-, data.into_foreign()) };
-   |                          -------------------------------              =
-  ^^^^^^^^^^^^^^^^^^^ expected `*mut c_void`, found `*mut T`
-   |                          |
-   |                          arguments to this function are incorrect
-   |
-   =3D note: expected raw pointer `*mut c_void`
-              found raw pointer `*mut T`
-note: function defined here
-  --> rust/bindings/bindings_helpers_generated.rs:5:12
-   |
-5  |     pub fn auxiliary_set_drvdata(adev: *mut auxiliary_device, data: *m=
-ut ffi::c_void);
-   |            ^^^^^^^^^^^^^^^^^^^^^
-
-error[E0308]: mismatched types
-  --> rust/kernel/auxiliary.rs:92:47
-   |
-55 | impl<T: Driver + 'static> Adapter<T> {
-   |      - expected this type parameter
-...
-92 |         drop(unsafe { KBox::<T>::from_foreign(ptr) });
-   |                       ----------------------- ^^^ expected `*mut T`, f=
-ound `*mut c_void`
-   |                       |
-   |                       arguments to this function are incorrect
-   |
-   =3D note: expected raw pointer `*mut T`
-              found raw pointer `*mut c_void`
-note: associated function defined here
-  --> rust/kernel/types.rs:63:15
-   |
-63 |     unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self;
-   |               ^^^^^^^^^^^^
-
-error[E0308]: mismatched types
-   --> rust/kernel/miscdevice.rs:256:66
-    |
-256 |         let device =3D unsafe { <T::Ptr as ForeignOwnable>::borrow(pr=
-ivate) };
-    |                               ---------------------------------- ^^^^=
-^^^ expected `*mut <... as ForeignOwnable>::PointedTo`, found `*mut c_void`
-    |                               |
-    |                               arguments to this function are incorrect
-    |
-    =3D note: expected raw pointer `*mut <<T as MiscDevice>::Ptr as Foreign=
-Ownable>::PointedTo`
-               found raw pointer `*mut c_void`
-    =3D help: consider constraining the associated type `<<T as MiscDevice>=
-::Ptr as ForeignOwnable>::PointedTo` to `c_void` or calling a method that r=
-eturns `<<T as MiscDevice>::Ptr as ForeignOwnable>::PointedTo`
-    =3D note: for more information, visit https://doc.rust-lang.org/book/ch=
-19-03-advanced-traits.html
-note: associated function defined here
-   --> rust/kernel/types.rs:98:15
-    |
-98  |     unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Self::Borrowed=
-<'a>;
-    |               ^^^^^^
-
-error: aborting due to 3 previous errors
-
-For more information about this error, try `rustc --explain E0308`.
-
-> I don't know what caused this, but it is presumably an interaction
-> between this tree and the mm-unstable and drm-nova trees.
->=20
-> I have dropped the rust-xarray tree for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/s=muqbsDHtO+QuD2OBv2cc1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgPWz0ACgkQAVBC80lX
-0GzSWggAoBG9ti+FfCoaqjh6jm57n/bqlzeOpqqJJceruvYLIPY+oFr2HSKn07T4
-MJ1+lliggTO2N1U9VBHyD5Ko3b/X7CZqaMsOrQipYZPwUbXR/+xgfmawQqM9O2Rq
-y9b81viLQkMmK2zamJKaRouovLSDrBoqlVcidBW69QURAcLvTDpHzgFZkzseLW8a
-0TvBw6FEwoCmDyCczOgi9ZQWiy5b47f4izA7BD8VeA+JeTzIOOvhf6tEnoihi+xE
-956YOVTNToWhZm6mMhbmhRf8yvNtFXt4QURVUh6XfwfFsXI/1/INezAtGK9UveIs
-InY19LJTD835+KDDBSYV7TPmMe81oQ==
-=iSoR
------END PGP SIGNATURE-----
-
---Sig_/s=muqbsDHtO+QuD2OBv2cc1--
+https://people.kernel.org/tglx/notes-about-netiquette
 
