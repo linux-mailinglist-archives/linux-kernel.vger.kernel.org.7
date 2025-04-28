@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-623617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEEFA9F84A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:17:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D50A9F859
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08FAB7AE772
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E383B7749
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3658127B506;
-	Mon, 28 Apr 2025 18:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD3D26AA8C;
+	Mon, 28 Apr 2025 18:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disterhof.eu header.i=@disterhof.eu header.b="dbhdAvtE"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JdFXuMHC"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF37B1B3934;
-	Mon, 28 Apr 2025 18:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E9C1B3934
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864224; cv=none; b=Hcx2XDu61oER/LuOZ4NaLPuneJh7pvFn5J1oIyH1vR4BX6sWFeKGCFKxCxrje+XZIb40QwOcJ1oGZAGkKUg2OUd+bqm1m1XeZ6P8GJzacEHnyCe40KiCmIq9xCNIO0iJzuyAmNjSYB2iIkQJjiKAxHzlK2mE0fcdWZ24xmCaGwI=
+	t=1745864251; cv=none; b=b17f5uMWSHv4W76rRYNCcuSx7ffxw7EFGcFy8YcpD3MSj1LHLgsJhTki1wW6ys4AB8iMUJ8WKEh5zFBemHWKHgLs7zS5SkQZGDSBwWc3vaXUWqjBPxQVPbnsXIL0UfOcUz4uxsQhdt3x+byuTT/RsIZdf+BEo5/oXAdJ7Ria+G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864224; c=relaxed/simple;
-	bh=3eJ7+1F6vKndxynrgWcSaZggI3ByYlMFxo9DcAdV4jQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pBVvYwcepGRADjGi08o94sMs6qmRosrunfaXiOTKhntPITNpsJNSJdjXqpuX4aWHK2LFTZyBCEOD4IPr/sObM242S0hDCPWxQSOFp/iKxvhVP7/zuMJE8Nw7243/G115xJQgZkJXudnHkY5eXjsExKaP9zlYQAy3NzIYy9DajR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=disterhof.eu; spf=pass smtp.mailfrom=disterhof.eu; dkim=pass (2048-bit key) header.d=disterhof.eu header.i=@disterhof.eu header.b=dbhdAvtE; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=disterhof.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disterhof.eu
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZmWqm3ql7z9tX4;
-	Mon, 28 Apr 2025 20:16:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=disterhof.eu;
-	s=MBO0001; t=1745864212;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=RBU3Rxa/SeWrdolSbblILy8+ZXtT8fErI4neuezE2pw=;
-	b=dbhdAvtEN4/lllBI4NhtqRkilnpOwGXWQx00tKIgBhRU15ZirnWByvf7M/Sxi8WQSKBziA
-	Wi7EkOOc7gJNGoom2bssEtU8YxoN0is5IYMMUojGswVvi+J3uEc2wZcPCKa6++K9crIYqE
-	Oqd7bRt69J64K8LDapvQYoeLCIVC2NghIplMbn0QawrYvJW/vwjaTPohysjS/Z2GB/Un5L
-	hVCbKyTs18f5XpkxMzC/IOl9t+pxH8A03ClNyXtCPtbMEjsy1uuK3GT2FaVg7IsS6iHsOU
-	IpxhmhiZYEaS44eBVOUbIVQk/JkUMUqWdGAwshCh86BXxRuuPJrKLjLTkM3NfA==
-Message-ID: <dd4693d2-3ecb-4081-8227-35e4e89ec7d4@disterhof.eu>
-Date: Mon, 28 Apr 2025 20:16:50 +0200
+	s=arc-20240116; t=1745864251; c=relaxed/simple;
+	bh=ihGPBiIAT0ONS82KUfYaHLC1u5yTJJn+nPz0lvfjuhM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m5ejMePPUOSHReZ6Yd374mgah9YKkhAaXDKTuxq8oJTZG/2RQN3vc4FmX1fNNbNZOUxOPQXdplrtCJZUZaarsdqju7ukxYEpa00atIfMLAKT86OkegvVtqQ59rpzGwA3zBp0iGjSQb61/kF4opJf6JQ03CsL9b59XZL0gT1+83U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JdFXuMHC; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39ee651e419so2692339f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 11:17:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745864248; x=1746469048; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ihGPBiIAT0ONS82KUfYaHLC1u5yTJJn+nPz0lvfjuhM=;
+        b=JdFXuMHCU1DfzzNlVbXseTflawSNktC+c3O+DAd3A6fNw5qiG3rUXBGxiivKGsdFRX
+         +mJvKKr8yJis1EEC6XTs8GRlV5CW6ptjR7W3pa6KsXbGRhHfoMPnqLY1xFNG2f16a/ik
+         JehXBwILuNkJG91COcWhoEKjnsyXCL8wzZLpes9tRblhttTzoxeAcpujMLL4LLA5VwDP
+         BMj4+hOP+9roV3fy0lqRs6kgZbk+vKhsJQjFPxejQdrZU8h5pPb3hkRtAuVP7aTWTfKH
+         c2HmClC1g9AR0HxfiwbQv6xOcjuXSAJRNROOvH9ud7YrwF7zXQdt6QoEVDmr1vcdgyu2
+         n2oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745864248; x=1746469048;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ihGPBiIAT0ONS82KUfYaHLC1u5yTJJn+nPz0lvfjuhM=;
+        b=mGYM5c4Z5ztH99mHUJI/YbYqt2iICjFFrjEVxraYw3YbiFjOn+3thqotrre8hzmK6e
+         2HZKPzyhiqRIt4R2fxex4QpQQJ9gsvAkNX/29pOF5tLafm21USrVNPM3a6L1gMVqyrID
+         i3iR113qTprFukGVVwh+osGVTCMj9X7/MyZ7J5a0iJw0ByBQS5Jr9b67VcHlLl8BCHgB
+         N1/SM2juRJ3PZqWm20UnOIMUgXzoXquGrXvLG/MCB5Ky/42KoERpWONL0AsIsqhZvuOl
+         7ekG88fPMpr1AAiA8lqWBYwR0f1kkYbJ9ExkZ443gzEDDtZ8zO4mhSIOiGxh9zkKZ4fz
+         MFBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ6WhBOML7axtn6a1hBDMMWpZydCUNb2SwtLXYLrlNvGpcbAQ4+yMk9/WwOX5asNBpNRwrtS61DLnzINQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCHUDIKPJm85TZHcCX9UFwMwTGhWF1wIIwGKjk/bR+hQiLkI2H
+	Af1ZOvXPtHbA3iy6KmApPUNd00/zotuivA6bOjQ6qatwJwNmxZWzZ1ttNMiS6MA=
+X-Gm-Gg: ASbGnctU8aAbYczOxMAXHa798Vl8C/kteIj/EO6Wsoea1a5pM81ZBIfybJp5xGYjMC4
+	kEyQqYCVEbd9ibYfWburJ0L6Jj3XIfDWys9TKV3k0sGkY8Ou/lKhdH98fSSCefSXFcW/PU7s+42
+	gmn90G7aadi8mmcNA4qalI9/2cavubFEiS2pUULh25M6NFSY68i9akctoxU4Z2cNW20IhpwXlbW
+	0Zm4Ke0NLxZPOQMJnxgC5j9xujeHxktQNp09C7NViT4iiY5Vkc2y4SF3y08MZP96XLPlcoAFzCP
+	F/lJ6xrG6RC8VuYDIG980Ixj1gOz8UV8q/E2qtq4BDg7ak5Kt5cHsrM=
+X-Google-Smtp-Source: AGHT+IFizjQdKkSD/fIMemBtF85cPFPzy/Yw/Dq5QRP9W6htVYIl18G4A6sBNzjsAqVDMr/gP96C0g==
+X-Received: by 2002:a05:6000:250e:b0:391:3157:7717 with SMTP id ffacd0b85a97d-3a08a371630mr250630f8f.34.1745864247691;
+        Mon, 28 Apr 2025 11:17:27 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca497esm11718402f8f.24.2025.04.28.11.17.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 11:17:27 -0700 (PDT)
+Message-ID: <24314441936d97a1892474eacdbbd690612de265.camel@linaro.org>
+Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Lee Jones
+	 <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King	
+ <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon	 <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Tudor
+ Ambarus	 <tudor.ambarus@linaro.org>, Will McVicker
+ <willmcvicker@google.com>, 	kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-rtc@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Mon, 28 Apr 2025 19:17:25 +0100
+In-Reply-To: <2025041715425693974c6d@mail.local>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+	 <20250415160212.GA372032@google.com> <2025041715425693974c6d@mail.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.3-2+build1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl
-From: Ludwig Disterhof <ludwig@disterhof.eu>
-Autocrypt: addr=ludwig@disterhof.eu; keydata=
- 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
-Subject: [PATCH] media: usbtv: Lock resolution while streaming
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-When an program is streaming (ffplay) and another program (qv4l2)
-changes the TV standard from NTSC to PAL, the kernel crashes due to trying
-to copy to unmapped memory.
+SGkgQWxleGFuZHJlLAoKT24gVGh1LCAyMDI1LTA0LTE3IGF0IDE3OjQyICswMjAwLCBBbGV4YW5k
+cmUgQmVsbG9uaSB3cm90ZToKPiBPbiAxNS8wNC8yMDI1IDE3OjAyOjEyKzAxMDAsIExlZSBKb25l
+cyB3cm90ZToKPiA+ID4gwqBkcml2ZXJzL21mZC9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDM1ICstCj4gPiA+
+IMKgZHJpdmVycy9tZmQvTWFrZWZpbGXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNSArLQo+ID4gPiDCoGRyaXZlcnMvbWZk
+L3NlYy1hY3BtLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8IDQ0MiArKysrKysrKysrKysrKysrKysrCj4gPiA+IMKgZHJpdmVycy9tZmQv
+c2VjLWNvbW1vbi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8IDMwMSArKysrKysrKysrKysrCj4gPiA+IMKgZHJpdmVycy9tZmQvc2VjLWNvcmUu
+Y8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHwgNDgxIC0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1jb3Jl
+LmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqAgMjMgKwo+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1pMmMuY8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAyMzkgKysrKysrKysr
+Kwo+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1pcnEuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA0NjAgKysrKysrKy0tLS0tLS0tLS0t
+LS0KPiA+IAo+ID4gPiDCoGRyaXZlcnMvcnRjL3J0Yy1zNW0uY8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxOTcgKysrKysrLS0tCj4g
+PiAKPiA+IE1GRCBwYXJ0cyBsb29rIG9rYXkgdG8gbWUgbm93Lgo+ID4gCj4gPiBXaXRoIEFja3Mg
+ZnJvbSB0aGUgQ2xrIGFuZCBSVEMgbWFpbnRhaW5lcnMsIEkgY2FuIG1lcmdlIGFsbCBvZiB0aGUK
+PiA+IGRyaXZlciBzdHVmZiB0b2dldGhlciBhbmQgc3VibWl0IGEgUFIgZm9yIG90aGVycyB0byBw
+dWxsIGZyb20uCj4gPiAKPiAKPiBJIGRvbid0IHRoaW5rIHRoZSBSVEMgcGFydCBkZXBlbmRzIG9u
+IHRoZSBNRkQgb25lIHNvIEkgd2FzIGdvaW5nIHRvCj4gYXBwbHkgdGhlIHBhdGNoZXMgaW4gbXkg
+dHJlZSBpZiB0aGlzIGlzIGZpbmUgZm9yIGV2ZXJ5b25lLgoKUlRDIHBhdGNoIDI3IGRvZXMgZGVw
+ZW5kIG9uIHRoZSBzMm1wZzEwIG1mZCBjb3JlIGRyaXZlciAoZHVlIHRvCnVzaW5nIGVudW1zIGFu
+ZCBtYWNyb3MgaW50cm9kdWNlZCB0aGVyZSkuCgpQYXRjaGVzIDI1LiAyNiwgMjgsIDI5LCAzMCwg
+MzEgaW5kZWVkIGRvbid0IHN0cmljdGx5IGRlcGVuZCBvbiB0aGUKTUZEIGNoYW5nZXMuIFdpdGhv
+dXQgcGF0Y2ggMjcgaW4gcGxhY2UsIHBhdGNoZXMgMjUgJiAyNSB3aWxsCmRlZmluaXRlbHkgc3Rp
+bGwgYXBwbHksIGFuZCBwYXRjaGVzIDI4Kysgd2lsbCBwcm9iYWJseSBhcHBseS4KCklmIHlvdSB3
+YW50IHRvIHRha2UgdGhlbSwgSSBjYW4gdGhlbiByZWJhc2UgdGhpcyBzZXJpZXMgaWYgeW91IHRo
+aW5rCnRoYXQncyBiZXR0ZXIuCgpJJ2xsIGRvIHdoYXRldmVyIGlzIHByZWZlcnJlZCwganVzdCBs
+ZXQgbWUga25vdyA6LSkKCgpDaGVlcnMsCkFuZHJlJwoK
 
-Changing from NTSC to PAL increases the resolution in the usbtv struct,
-but the video plane buffer isn't adjusted, so it overflows.
-
-Fixes: 0e0fe3958fdd13d ("[media] usbtv: Add support for PAL video source")
-
-Signed-off-by: Ludwig Disterhof <ludwig@disterhof.eu>
----
- drivers/media/usb/usbtv/usbtv-video.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/media/usb/usbtv/usbtv-video.c b/drivers/media/usb/usbtv/usbtv-video.c
-index be22a9697197..965a8ae82afe 100644
---- a/drivers/media/usb/usbtv/usbtv-video.c
-+++ b/drivers/media/usb/usbtv/usbtv-video.c
-@@ -73,6 +73,10 @@ static int usbtv_configure_for_norm(struct usbtv *usbtv, v4l2_std_id norm)
- 	}
- 
- 	if (params) {
-+		if (vb2_is_streaming(&usbtv->vb2q) &&
-+		    (usbtv->width != params->cap_width ||
-+		     usbtv->height != params->cap_height))
-+			return -EBUSY;
- 		usbtv->width = params->cap_width;
- 		usbtv->height = params->cap_height;
- 		usbtv->n_chunks = usbtv->width * usbtv->height
--- 
-2.43.0
 
