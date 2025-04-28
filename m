@@ -1,151 +1,129 @@
-Return-Path: <linux-kernel+bounces-622705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3150EA9EB0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:43:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F3BA9EAFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253C4188BAF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2963A3B301F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377142236E5;
-	Mon, 28 Apr 2025 08:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B386425E820;
+	Mon, 28 Apr 2025 08:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="D0fLs7gs"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="UmImgtO9"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E3125F79B;
-	Mon, 28 Apr 2025 08:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745829794; cv=none; b=D7s4GACFh/NgBMw2g1nh6EhXGYsR30PGrIhEAfL+hcThl88rOS7EtZNgcNkiDWb+NvNv3ME2c5rd5v+45pADzuM00+XYtfVsc08Xh7WkwHHG/Ilu5PIjqo9KUjH9vW3cczxA5NQUSQTUxE8ipmutZg/Ds6ldx3z/cB5BGy0/ENQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745829794; c=relaxed/simple;
-	bh=Gcds0uGVhApI2OBDfQK2o4mQTitj8FZo+k89iEOc5ZE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=LMjhqmgfbMfsEMpQ+8uQYIMcaSeJuFcZKYZz4BT9Y/LaYF/yUdmSw+f4a9Bn0B3gxb/SqHQPS8El/NDw3vpGlR1gOCTxEjbxA9ZbjC8mGpAqs2o6vwCUdOrSIHaRJJ4ky+sX2Y6FRzQCgf/UbpTqYX2YsOkSoodo1Jiv01Sb6vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=D0fLs7gs; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S10tV6012525;
-	Mon, 28 Apr 2025 10:42:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	sUoE004pjadBnoyOzbjhr4dsGQzt+uhGUkn+RUm/jfg=; b=D0fLs7gsxTlr5vFe
-	bsaxeq5KDUpHSQk/ga/QFmyYpn1ugJA5w7vupcWL0iYO4T/lOMVGUubA5RMbu8xI
-	UCJY2KGjHxML5SyOhnAYZ8zJI5FFmFPg/x9j4QeoXKrdsdzMW+VvinPd1skBTnuX
-	YRZm/i9C8aPtO0+Bn/G/44FTcWuTu1o72ixKOaoUckrwONEhR6G2YIDRbgWEqKgq
-	nsc3L+w5hyfs668Y8fAQNjWPloj/uuoaWH+3TJDjjCHA7cXGGQkBoMbpXeG/6VES
-	v6AwH9DsLxxVT7Oy0AABnOPs8zyMeXIWqR6xJfBDPn3wTGNP5DOjIxzJw0xYOfBz
-	SlxLsw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 468mwkx3pu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 10:42:57 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0115640051;
-	Mon, 28 Apr 2025 10:41:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 150F5A3D5A7;
-	Mon, 28 Apr 2025 10:40:47 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:40:46 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Mon, 28 Apr 2025 10:40:23 +0200
-Subject: [PATCH v9 3/3] arm64: dts: st: Add SPI NOR flash support on
- stm32mp257f-ev1 board
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C1BA55;
+	Mon, 28 Apr 2025 08:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745829684; cv=pass; b=EvzAh/PTVB8tAP/C5uP1L/8mQ/zDFrUbKOM7rQ5GbQLj5uh9mjUQRN8JaY6KM8RXhIOTWtrgBYDPjx8qyG844BEOHu7+EcffcsX9FAhG7bjflyG6EDiBTB0e/5COEU5lZx6qMHkcDoTko392GQuvML8cg5zHm9nlnxq8hfLLoaI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745829684; c=relaxed/simple;
+	bh=HyXSYfMMKQseO6ErwcJ30OkhOu+WTDjzD4zXwnMsaXQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FmXRvlrfFogoSVT2QToo1oNeGzQyql77XdQIJ/lCG2Drcmw/R1kaqRvfW3Dq9jb8tueryz3F/FyELowN0HvA5fIdHu/xSKlSUKM5w0pxUwfokEP4DcWh4eTB0mJnLPqzw+i7EXnc2sMznFr0z2ANk/8rxRc4eNgtxXjo0EUUIaQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=UmImgtO9; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1745829663; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=l9CCsdDAh6tsjxtN/TOfvG9j13fTA7TAWVCieAMPFSkEUmTpUcyZpbeppeIRZZbe7IltlqRQU7E6XtIw+iTIBxMjIMz/3bpla7I4LDAr8jsPeRbMdGZEClgqNAZU7av4KL8vuBLeiVaEHJcjbNOR4h9sIfzr6z/wp2Smv3vT3WQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745829663; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HyXSYfMMKQseO6ErwcJ30OkhOu+WTDjzD4zXwnMsaXQ=; 
+	b=SAj2s8b+YdFgoQ3vVB6eidZwAp3t3Xv2KMMZl+zoZZChQE0mGHD1zCj2t3TxOBqMnswbJVW4V5La9xre0hfHp+7+UUs675ZTikWhoKCcVBIeI3WwhHMx0GX8ZNhFrEa4LglHyXuLJDQYCj2rqDIPapgWBIAlksycNdRqrKjnXEs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745829663;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=HyXSYfMMKQseO6ErwcJ30OkhOu+WTDjzD4zXwnMsaXQ=;
+	b=UmImgtO9ZZV9yD7Ao2LiYfnGQirY4Hz8tHLBSxvm3yM1eOixPa/M0XMmHH33d7JI
+	SLP6g1M0p5f17dTV/q4ElH59zMBcdFuetwG9Pdqezt80dpmaV28om5dPGds5XBJNFVE
+	8ra4QnfNgSPSQpcLvBy4aH/e/RM1VzjngcZM4s7KRmmQWqqPKE8GJseMi5nTKT8Vxs7
+	oYUoeqRmLkGuXM3OVYjXi/8Uzut3+k0FPVKQVzuXnf1vcwdKgdZbE419fzMF5424q1P
+	wtGXXMPCgbXo3V10MFgAFKPa0FDDTKF5knNjqy33miArp74J55vDrt1ogyPFswH6dRk
+	5N0/jedw5g==
+Received: by mx.zohomail.com with SMTPS id 1745829661806841.7939793535281;
+	Mon, 28 Apr 2025 01:41:01 -0700 (PDT)
+Message-ID: <34c92033f4bbf289c6048a85f0f6ba04435e7bf8.camel@icenowy.me>
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: starfive,jh7110: add
+ PAD_INTERNAL_* virtual pins
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang
+ <jianlong.huang@starfivetech.com>, Hal Feng <hal.feng@starfivetech.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,  linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Date: Mon, 28 Apr 2025 16:40:56 +0800
+In-Reply-To: <20250428-smiling-azure-sunfish-7c1c25@kuoka>
+References: <20250424062017.652969-1-uwu@icenowy.me>
+	 <20250424062017.652969-2-uwu@icenowy.me>
+	 <20250428-smiling-azure-sunfish-7c1c25@kuoka>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250428-upstream_omm_ospi_dts-v9-3-62522b1b0922@foss.st.com>
-References: <20250428-upstream_omm_ospi_dts-v9-0-62522b1b0922@foss.st.com>
-In-Reply-To: <20250428-upstream_omm_ospi_dts-v9-0-62522b1b0922@foss.st.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
+X-ZohoMailClient: External
 
-Add SPI NOR flash nor support on stm32mp257f-ev1 board.
+=E5=9C=A8 2025-04-28=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 09:20 +0200=EF=BC=
+=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+> On Thu, Apr 24, 2025 at 02:20:15PM GMT, Icenowy Zheng wrote:
+> > The JH7110 SoC could support internal GPI signals to be routed to
+> > not
+> > external GPIO but internal low/high levels.
+> >=20
+> > Add two macros, PAD_INTERNAL_LOW and PAD_INTERNAL_HIGH, as two
+> > virtual
+> > "pads" to represent internal GPI sources with fixed low/high
+> > levels.
+> >=20
+> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > ---
+> > =C2=A0include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h | 4 ++++
+> > =C2=A01 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+> > b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+> > index 3865f01396395..3cca874b2bef7 100644
+> > --- a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+> > +++ b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+> > @@ -126,6 +126,10 @@
+> > =C2=A0#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0PAD_GMAC0_=
+TXEN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A018
+> > =C2=A0#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0PAD_GMAC0_=
+TXC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A019
+> > =C2=A0
+> > +/* virtual pins for forcing GPI */
+> > +#define PAD_INTERNAL_LOW=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0254
+> > +#define PAD_INTERNAL_HIGH=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0255
+>=20
+> Why this cannot be 20 and 21? These are not values for registers, but
+> abstract numbers.
 
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 32 ++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+The number must not collide with SYS GPIO pads too.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 1b88485a62a1f837770654eee6c970208fef6edc..9d1a1155e36ccc283cb73e51b91f3200ee54a4aa 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -80,6 +80,11 @@ fw@80000000 {
- 			reg = <0x0 0x80000000 0x0 0x4000000>;
- 			no-map;
- 		};
-+
-+		mm_ospi1: mm-ospi@60000000 {
-+			reg = <0x0 0x60000000 0x0 0x10000000>;
-+			no-map;
-+		};
- 	};
- };
- 
-@@ -190,6 +195,33 @@ &i2c8 {
- 	status = "disabled";
- };
- 
-+&ommanager {
-+	memory-region = <&mm_ospi1>;
-+	pinctrl-0 = <&ospi_port1_clk_pins_a
-+		     &ospi_port1_io03_pins_a
-+		     &ospi_port1_cs0_pins_a>;
-+	pinctrl-1 = <&ospi_port1_clk_sleep_pins_a
-+		     &ospi_port1_io03_sleep_pins_a
-+		     &ospi_port1_cs0_sleep_pins_a>;
-+	pinctrl-names = "default", "sleep";
-+	status = "okay";
-+
-+	spi@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		memory-region = <&mm_ospi1>;
-+		status = "okay";
-+
-+		flash0: flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-rx-bus-width = <4>;
-+			spi-tx-bus-width = <4>;
-+			spi-max-frequency = <50000000>;
-+		};
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
+Using 95 and 96 is okay, but dirty.
 
--- 
-2.25.1
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
 
