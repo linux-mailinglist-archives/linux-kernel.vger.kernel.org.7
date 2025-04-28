@@ -1,110 +1,53 @@
-Return-Path: <linux-kernel+bounces-623642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF32EA9F89B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:30:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D690FA9F8A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8861A85390
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6A61A8587A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CE4292916;
-	Mon, 28 Apr 2025 18:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC8725EF8E;
+	Mon, 28 Apr 2025 18:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T8mfQ1Yc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cc+mBvSU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB857297A53
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE94CE08;
+	Mon, 28 Apr 2025 18:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745865005; cv=none; b=NmhbWdbtCvk7L6wM72pFzGHZN2sg12XR5hBLO2CzE1S5LilEXK74iUJuWSd11P803JoyZyhkyTeZ9LbCnMrneM5ADtuUc6yM2EDumbRSaOHjFSHTAhPR7moXafxw3u3i1wTzZt5YSPqOo+nhBEZgqsOuI08q6NMK7UyDIynkw7o=
+	t=1745865077; cv=none; b=Mmkuvqal2vHpFfc9Y7DVSH2kam8Kt4dbOlgCZGdB1V9FFQrqOYLpDrLzzfjWpB9v+v9x7WN4tno8zyGZECCahEBOCE35k0bxkqbaYs52RgXfc0bsI3gCtL6gJ9xRWT7K1//zzb4m4nmOwTOOgKfFJ472NxR7hotmuF2VgM3oCpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745865005; c=relaxed/simple;
-	bh=al6SKl71NAiNJnVYkq84dOJI0VdWszLtxLtJW6ZOVVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XBsVNIuG64d5bi/aXfgRFtNbxrVxdfP+mo4FRoKWlYS0zhf3IkJCMaxaIWPpAWjFfdsNs6kfcKDaWuzGEq4zPwZm81M8o0xK4lPF2uuxDbp42ekPfGOitjwEMBlrw8+j9t3yoZBSMUTJEljShHayUXwtcRifPrfMr3OyZao6Rr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T8mfQ1Yc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745865002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7n76Fvpmfa8LN30y0qvCHdYcw71Um4Eimev9X0oBxqU=;
-	b=T8mfQ1YcRpR5k8avo06kEonkn2IGYlNBxhXN5BK1jC8PpcnGKZbRDxqq6XR468iD1DME90
-	T411Zp4uzmvcK3rVrgy2MbyEmu+6BBfZSUDgtDgfHt+Wovinpl5TQrLqT7KfvPUtpdqjx4
-	bVo3vT4ApvjdCs/gUOKyAkUFoKPbA6g=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-696-8mNvuNGgM0GU6SKQRbhLfA-1; Mon,
- 28 Apr 2025 14:29:59 -0400
-X-MC-Unique: 8mNvuNGgM0GU6SKQRbhLfA-1
-X-Mimecast-MFC-AGG-ID: 8mNvuNGgM0GU6SKQRbhLfA_1745864994
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C03BF1800877;
-	Mon, 28 Apr 2025 18:29:53 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.65.12])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ADB3330001A2;
-	Mon, 28 Apr 2025 18:29:45 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	corbet@lwn.net,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	david@redhat.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	ryan.roberts@arm.com,
-	willy@infradead.org,
-	peterx@redhat.com,
-	shuah@kernel.org,
-	ziy@nvidia.com,
-	wangkefeng.wang@huawei.com,
-	usamaarif642@gmail.com,
-	sunnanyong@huawei.com,
-	vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com,
-	yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com,
-	aarcange@redhat.com,
-	raquini@redhat.com,
-	dev.jain@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	tiwai@suse.de,
-	will@kernel.org,
-	dave.hansen@linux.intel.com,
-	jack@suse.cz,
-	cl@gentwo.org,
-	jglisse@google.com,
-	surenb@google.com,
-	zokeefe@google.com,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rdunlap@infradead.org
-Subject: [PATCH v5 4/4] selftests: mm: add defer to thp setting parser
-Date: Mon, 28 Apr 2025 12:29:04 -0600
-Message-ID: <20250428182904.93989-5-npache@redhat.com>
-In-Reply-To: <20250428182904.93989-1-npache@redhat.com>
-References: <20250428182904.93989-1-npache@redhat.com>
+	s=arc-20240116; t=1745865077; c=relaxed/simple;
+	bh=u/UEZ2LwoTe0u9ORsoPmYNUt+dowE6a64WYG1PeQFbE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q552ukYqrH2a2wLGTQcvRoQ7v5dFBFt38pW+cqXPkq2zm7QTS9X6jjxu0Jn6em3amA7hAsDmiWnuN2e2UgkXB+kILeBy3xCNTc83MXvDA0vdT81hpefV+hW4jwQ0t39vGiB0HBUDL9tiBrMinuyAA4AgFnORooNTXOpgM1qKzks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cc+mBvSU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DB59C4CEF0;
+	Mon, 28 Apr 2025 18:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745865076;
+	bh=u/UEZ2LwoTe0u9ORsoPmYNUt+dowE6a64WYG1PeQFbE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Cc+mBvSUUZe+z9eDqVN+ZtvZI6oNlF1nhdRuSvRvCY3AyK0A0tFfLsrffwsYiuu3R
+	 npMBys7Nm1A3TpenPLIkMhAGjNbXs3HKkxOgSE0rMuUkjG1Ud7DSFB866eesYESWzk
+	 WlbJNx0z+uFN4vfxfG6ahTJY1dytoI7bRIeXcsckyllRI1Z2NTCdiRaDKbkum3Bnaf
+	 nC9WanMzdWDufv++bU1bFtn+wIf1+1JvqUW5jzORoOVPl5GToxZsa90m+ac/YdOce6
+	 8c/sHqyEI5P4koYYy6YSLEO2hN/MwSJUni2a6+FB35bisun2FeVh8tejsTjXZ0xNgv
+	 2GLWv1qMRISzw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] x86/microcode/AMD: Use sha256() instead of init/update/final
+Date: Mon, 28 Apr 2025 11:30:06 -0700
+Message-ID: <20250428183006.782501-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,41 +55,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-add the defer setting to the selftests library for reading thp settings.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Nico Pache <npache@redhat.com>
+Just call sha256() instead of doing the init/update/final sequence.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- tools/testing/selftests/mm/thp_settings.c | 1 +
- tools/testing/selftests/mm/thp_settings.h | 1 +
- 2 files changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/mm/thp_settings.c b/tools/testing/selftests/mm/thp_settings.c
-index ad872af1c81a..b2f9f62b302a 100644
---- a/tools/testing/selftests/mm/thp_settings.c
-+++ b/tools/testing/selftests/mm/thp_settings.c
-@@ -20,6 +20,7 @@ static const char * const thp_enabled_strings[] = {
- 	"always",
- 	"inherit",
- 	"madvise",
-+	"defer",
- 	NULL
- };
+This patch is targeting the x86 tree.
+
+ arch/x86/kernel/cpu/microcode/amd.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 1798a6c027f89..f1fae6e282215 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -215,11 +215,10 @@ static bool need_sha_check(u32 cur_rev)
  
-diff --git a/tools/testing/selftests/mm/thp_settings.h b/tools/testing/selftests/mm/thp_settings.h
-index fc131d23d593..0d52e6d4f754 100644
---- a/tools/testing/selftests/mm/thp_settings.h
-+++ b/tools/testing/selftests/mm/thp_settings.h
-@@ -11,6 +11,7 @@ enum thp_enabled {
- 	THP_ALWAYS,
- 	THP_INHERIT,
- 	THP_MADVISE,
-+	THP_DEFER,
- };
+ static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, unsigned int len)
+ {
+ 	struct patch_digest *pd = NULL;
+ 	u8 digest[SHA256_DIGEST_SIZE];
+-	struct sha256_state s;
+ 	int i;
  
- enum thp_defrag {
+ 	if (x86_family(bsp_cpuid_1_eax) < 0x17)
+ 		return true;
+ 
+@@ -233,13 +232,11 @@ static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, unsi
+ 	if (!pd) {
+ 		pr_err("No sha256 digest for patch ID: 0x%x found\n", patch_id);
+ 		return false;
+ 	}
+ 
+-	sha256_init(&s);
+-	sha256_update(&s, data, len);
+-	sha256_final(&s, digest);
++	sha256(data, len, digest);
+ 
+ 	if (memcmp(digest, pd->sha256, sizeof(digest))) {
+ 		pr_err("Patch 0x%x SHA256 digest mismatch!\n", patch_id);
+ 
+ 		for (i = 0; i < SHA256_DIGEST_SIZE; i++)
+
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
 -- 
-2.48.1
+2.49.0
 
 
