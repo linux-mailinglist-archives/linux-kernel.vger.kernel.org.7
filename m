@@ -1,230 +1,149 @@
-Return-Path: <linux-kernel+bounces-623422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A411A9F589
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A369CA9F597
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C942A176773
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A1C1A82AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDB327A113;
-	Mon, 28 Apr 2025 16:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF0527B4E0;
+	Mon, 28 Apr 2025 16:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RP11Cptf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zadHl9Qt"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0608E25B69A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1532798FA
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745857286; cv=none; b=ZffHCEB8oP4bQpUR26wGvXZFNSsPlTi/GPYtlwngzbcAUWkGCOLLe7Ut3j8kUIKcjA/SkD6ogU4yL2RSguNqkj+VwseIxhFBkP/YlsZrokyPPieKeTQDlaUqhGsBpNQan7vPKoDDNPnJK2Ofh9tU1OVOfbskO/YqFwQpuaRtWQ4=
+	t=1745857321; cv=none; b=f+QCA8oayK+a7ZP6SMC3S7ai2J4R/xxxO1GfOShfHAbz8mJOl7cI/+v8xLCW9uEmlEvmbEQnxHLPq0pkwacVuMHwhkzsP3zBn0pD5L64VFFlkti2w5uHSc1VFLafT1xdE3ytsjmU7YJyVywiTuiDnQ2Of31U9tcy1b3u2DFrGug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745857286; c=relaxed/simple;
-	bh=KdmgYbVEvHpNB4umKfKlNnEfIJ8Wkfdg3a7ozzCxHn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTQqQ/g9nTSvADnz9iML7RDyl4DxaHI614eTBDdwZ6Cbu3y1yEioGi81Q3ojPD9Kq+/ZB/GIJOfc8oVbTleFvB8i1VRoJSQ1fOCBbFEkgIRiSTdaNDpdlZwZUwpo5ITn+E/IPQfR2psUupbbncAiOxR7ziuCPSRLbo44QadimjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RP11Cptf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745857284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ICKzzB8taBJD0eGbxcxv8f4DsFK3m+kwUBskNGBQM7I=;
-	b=RP11Cptf6B2oHHbDG8zp9ipsIcmI0sOuu+wB7F1ZY5+EObDRdVAYbJ2vKTOFfsNcS5TtUw
-	3lEnPW2aeI0UPi2WCt2WODN5ZhwlibjfOKpc9+fci5eUaf3wvZ1/g/wvCbag0QUUEmU0sP
-	4OY6XeoRppztbG/11vOUkNIWxxJ6TXk=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-hJgVMb0fONSmvUJECjNITw-1; Mon, 28 Apr 2025 12:21:22 -0400
-X-MC-Unique: hJgVMb0fONSmvUJECjNITw-1
-X-Mimecast-MFC-AGG-ID: hJgVMb0fONSmvUJECjNITw_1745857281
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c54e7922a1so1049493985a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:21:22 -0700 (PDT)
+	s=arc-20240116; t=1745857321; c=relaxed/simple;
+	bh=KI3uLgLFW84fzWp03LD3SbB/OJ/xdc09KEqlRVDDi0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dPNaZQYIGbUfSNqPUdpD5lkDwgUs40EmqB+NDHT3CWEJc1jdA4WFW4mUW78bI8vMFs16EfdYWNtt9CfpQk0XL9Bg56mBtjBovirUr/1QDBSO1GGd524rB6YTuU3zsqaQ9qLhOi6nMjvxMumLUDKFWX/6AVm1118ij9mdWK4qxAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zadHl9Qt; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7086dcab64bso16336557b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745857319; x=1746462119; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hJGeBPRLcR0oAYZ212tMSFi3+j040Yo0nz0+Wv6VWzQ=;
+        b=zadHl9QtUW1RHbj3DJsw+OLcDrTqEL/kxvQ/enSEXyZ2jj9Uc3ZPaRHfQV6xQY+jEy
+         qTH89M2PmA0owTDk9VrKBlg3DPDECcbG5jcw7WaURqGr4NaiyAfedPn1RyUqus+EGqPa
+         sNWSmwDq//0EsIO9sqT2QvzDbrxBhQ5I9ktcuIw9K56tYfDgW1QfIB3ZZLUQ+6rEjog0
+         pcnQ36WPuKm2n+9tgGTEOW0dYGZE2kotlfkUihSfzRT0tnKs2uuvHlsZFa0qU9QAjChn
+         GaRtQ/EyPIloRUA0h/LISp08Kk1UjZUYmEtPLXoLYzxnROuSXvyeCAyNjXppAQVl9aXd
+         LUUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745857281; x=1746462081;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ICKzzB8taBJD0eGbxcxv8f4DsFK3m+kwUBskNGBQM7I=;
-        b=QTp/oRBp5fkLwp9OJP93OURLiQ6CjKV9tRqu6WQGVqHkHwwjhOOL6SA0+29qYzQlhX
-         OqDc0iv6X2f12K7Exjua87TPux5LazuHLsnv1I7e0VgMu5+09FsT6raMr3HiVz1lZ/CI
-         uzHbKWXO1O3mWmDc4WgO67Spka5yDhojLr/B6PdQzxxQIbjyGTdXaTd3KlBBBxN/dXNX
-         RWlZXC8siDtVb/+VFdSA76dKrt0O6pWSbb7gG8o+n4hKIrj1TalaJ2HqJrZModU3W4s1
-         exxuYW1cU1wl+8ej5CrWzdQqsTJbEB2l69heTOixFLD8ZXyo1D74OdRdcpjm4hjGu9kk
-         Wqwg==
-X-Gm-Message-State: AOJu0YxOpV1HwRKAQD8EEeDRnJsQIubSrj8Z/QMiHowsSNiFk3b0Li4D
-	ad3YE3ZMZ/iMfuHFhYXfFNDNhpPgnw31t+pF+f8LNoEBoK4N7TOqX1NKofD9LdioCYcx7ayN1Cn
-	KsFCc7nGGEhZwbfz/pZ+gDBrdGm1Am9Qi6I+gBQ7Lrdp30U0RQkoxVLjIIUH0fQ==
-X-Gm-Gg: ASbGncuhOlx3etWVp/uYllCA1IM8Vl2TVdY7GqvNV4GE4Y2wjCR/2n9QoATsnjJ9CWT
-	MI4keN2fKgPzoKj1b39PvYEAmE1MCDAxDXVodnFG7kO4beYaB5dTWp5K5BTJtPHys/DO+laiHDY
-	CrPWRZB7shf+DH8KP+AYqMPJm3FPyXwkZ1LFFqsJthg86hUdTZnuYDXs/jA37s02fKAykBkaWGP
-	WOomBel6dUWDZ96jtKsmIcEGBExs13KNj2RqRl3imqcWLozIx7ryVqVzHg2KHhdMjIFrNVYpoIB
-	/rE=
-X-Received: by 2002:a05:620a:19a3:b0:7c5:7a03:8467 with SMTP id af79cd13be357-7c9668d1d61mr1640816685a.55.1745857281512;
-        Mon, 28 Apr 2025 09:21:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQz1zkMFXlMEPUAS7D8yAHGiL/XnLPod9B0w30kVOxZ+K3YH+CRaciRSMW1T3Yxr1P4D1AmQ==
-X-Received: by 2002:a05:620a:19a3:b0:7c5:7a03:8467 with SMTP id af79cd13be357-7c9668d1d61mr1640808385a.55.1745857280905;
-        Mon, 28 Apr 2025 09:21:20 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958e9fdaesm639851585a.95.2025.04.28.09.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 09:21:20 -0700 (PDT)
-Date: Mon, 28 Apr 2025 12:21:16 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-trace-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH v1 02/11] mm: convert track_pfn_insert() to
- pfnmap_sanitize_pgprot()
-Message-ID: <aA-q_PrThAw5v1PF@x1.local>
-References: <20250425081715.1341199-1-david@redhat.com>
- <20250425081715.1341199-3-david@redhat.com>
- <aAvjJOmvm5GsZ-JN@x1.local>
- <78f88303-6b00-42cf-8977-bf7541fa45a9@redhat.com>
- <aAwh6n058Hh490io@x1.local>
- <75998f7c-93d2-4b98-bb53-8d858b2c108e@redhat.com>
+        d=1e100.net; s=20230601; t=1745857319; x=1746462119;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hJGeBPRLcR0oAYZ212tMSFi3+j040Yo0nz0+Wv6VWzQ=;
+        b=bBW0Fcy+gnsgoo0iNRCur5lsX7KxhPP7CuBL5zcMff9tpO7jKUE8r4ukPcjLQ1HgZB
+         YXP9DtZjaVoNbjgcnnj+KS0odb3CUsnixUb7KeEshdKrmmpURJHI1T/8GwoWhShoNVsz
+         4/IAwxi5jmrCzQ630dnO0dMI5PHFXGi/whlJu41yZ3lpsKjo3KvDwab6H/8Zvv6fV6jx
+         xgZkcDBUqUO9+s5mGN3Xpw2yeX98bLUMNXqFPEPn/60kdQrc5QMuE0coM2K70yGzbonZ
+         ddHe5w4NcPrTl2CSjiV9EEYbLM1UwAeOQ0C03nPijOJW0C2VIJwurPQxNF8NLNqiIX64
+         P2Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPiL2wAKvBJzgxWhZU5rC6GVOxmE7PsjywxiC7btPGFsljgeFUUHk2KqXObVRjspoGTMzlXMbCqYwE9QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQSLdmCRvxp4KFx3JLPyoo1tQjhalj33HO2Rl/nUUSlgNx0d8H
+	5ESURgErgyRi7lvFL37ne1hOstoEDmyiXnWX7w1wmJDmqWrjV3tbqO2+Jl3QmhyBSW+DRcdivyU
+	R5VrD2f4TOeFx6rb6XQCcnjC7l2WSlunRjRc22g==
+X-Gm-Gg: ASbGncuIr9217VgaL8/250SmLxQ/HWcjKk01ShcRJBULuQnO4cAnu5bOhrSrdc1iG00
+	PyX7nVxlyTd9ZSRNlic9Cua2e1ydhu2Hf1XfmcHzB3KNAvcY9ocURYxJ2cqnkFKXv6UUefpob9q
+	dQOxZvuK3nBImo/HXTwSsgkac=
+X-Google-Smtp-Source: AGHT+IGrYKDES4LMpa+mIh07UTJ/v15OFEjt1tsB1hzJ8ctTDSYnqO23pd9t9YW+plDGT6Der9b8aB1xif3WroZEeyw=
+X-Received: by 2002:a05:690c:7242:b0:703:b313:5399 with SMTP id
+ 00721157ae682-70899689193mr5627207b3.18.1745857318743; Mon, 28 Apr 2025
+ 09:21:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <75998f7c-93d2-4b98-bb53-8d858b2c108e@redhat.com>
+References: <20250417092742.27887-2-phasta@kernel.org>
+In-Reply-To: <20250417092742.27887-2-phasta@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 28 Apr 2025 18:21:22 +0200
+X-Gm-Features: ATxdqUH6ctnF_T3pbMUAIl5-FXRkQ-V8HfKImBkR__1m7RCHSwSsQLKqxOF0BNM
+Message-ID: <CAPDyKFqqV2VEqi17UHmFE0b9Y+h5q2YaNfHTux8U=7DgF+svEw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: cavium-thunderx: Use non-hybrid PCI devres API
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Robert Richter <rric@kernel.org>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Apr 28, 2025 at 04:58:46PM +0200, David Hildenbrand wrote:
-> 
-> > > What it does on PAT (only implementation so far ...) is looking up the
-> > > memory type to select the caching mode that can be use.
-> > > 
-> > > "sanitize" was IMHO a good fit, because we must make sure that we don't use
-> > > the wrong caching mode.
-> > > 
-> > > update/setup/... don't make that quite clear. Any other suggestions?
-> > 
-> > I'm very poor on naming.. :( So far anything seems slightly better than
-> > sanitize to me, as the word "sanitize" is actually also used in memtype.c
-> > for other purpose.. see sanitize_phys().
-> 
-> Sure, one can sanitize a lot of things. Here it's the cachemode/pgrpot, in
-> the other functions it's an address.
-> 
-> Likely we should just call it pfnmap_X_cachemode()/
-> 
-> Set/update don't really fit for X in case pfnmap_X_cachemode() is a NOP.
-> 
-> pfnmap_setup_cachemode() ? Hm.
+On Thu, 17 Apr 2025 at 11:28, Philipp Stanner <phasta@kernel.org> wrote:
+>
+> cavium-thunderx enables its PCI device with pcim_enable_device(). This,
+> implicitly, switches the function pci_request_regions() into managed
+> mode, where it becomes a devres function.
+>
+> The PCI subsystem wants to remove this hybrid nature from its
+> interfaces. To do so, users of the aforementioned combination of
+> functions must be ported to non-hybrid functions.
+>
+> Moreover, since both functions are already managed in this driver, the
+> calls to pci_release_regions() are unnecessary.
+>
+> Remove the calls to pci_release_regions().
+>
+> Replace the call to sometimes-managed pci_request_regions() with one to
+> the always-managed pcim_request_all_regions().
+>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Sounds good here.
+Applied for next, thanks!
 
-> 
-> > 
-> > > 
-> > > > 
-> > > > > + * @pfn: the start of the pfn range
-> > > > > + * @size: the size of the pfn range
-> > > > > + * @prot: the pgprot to sanitize
-> > > > > + *
-> > > > > + * Sanitize the given pgprot for a pfn range, for example, adjusting the
-> > > > > + * cachemode.
-> > > > > + *
-> > > > > + * This function cannot fail for a single page, but can fail for multiple
-> > > > > + * pages.
-> > > > > + *
-> > > > > + * Returns 0 on success and -EINVAL on error.
-> > > > > + */
-> > > > > +int pfnmap_sanitize_pgprot(unsigned long pfn, unsigned long size,
-> > > > > +		pgprot_t *prot);
-> > > > >    extern int track_pfn_copy(struct vm_area_struct *dst_vma,
-> > > > >    		struct vm_area_struct *src_vma, unsigned long *pfn);
-> > > > >    extern void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-> > > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > > > index fdcf0a6049b9f..b8ae5e1493315 100644
-> > > > > --- a/mm/huge_memory.c
-> > > > > +++ b/mm/huge_memory.c
-> > > > > @@ -1455,7 +1455,9 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
-> > > > >    			return VM_FAULT_OOM;
-> > > > >    	}
-> > > > > -	track_pfn_insert(vma, &pgprot, pfn);
-> > > > > +	if (pfnmap_sanitize_pgprot(pfn_t_to_pfn(pfn), PAGE_SIZE, &pgprot))
-> > > > > +		return VM_FAULT_FALLBACK;
-> > > > 
-> > > > Would "pgtable" leak if it fails?  If it's PAGE_SIZE, IIUC it won't ever
-> > > > trigger, though.
-> > > > 
-> > > > Maybe we could have a "void pfnmap_sanitize_pgprot_pfn(&pgprot, pfn)" to
-> > > > replace track_pfn_insert() and never fail?  Dropping vma ref is definitely
-> > > > a win already in all cases.
-> > > 
-> > > It could be a simple wrapper around pfnmap_sanitize_pgprot(), yes. That's
-> > > certainly helpful for the single-page case.
-> > > 
-> > > Regarding never failing here: we should check the whole range. We have to
-> > > make sure that none of the pages has a memory type / caching mode that is
-> > > incompatible with what we setup.
-> > 
-> > Would it happen in real world?
-> > > IIUC per-vma registration needs to happen first, which checks for
-> memtype
-> > conflicts in the first place, or reserve_pfn_range() could already have
-> > failed.
-> > > Here it's the fault path looking up the memtype, so I would expect it is
-> > guaranteed all pfns under the same vma is following the verified (and same)
-> > memtype?
-> 
-> The whole point of track_pfn_insert() is that it is used when we *don't* use
-> reserve_pfn_range()->track_pfn_remap(), no?
-> 
-> track_pfn_remap() would check the whole range that gets mapped, so
-> track_pfn_insert() user must similarly check the whole range that gets
-> mapped.
-> 
-> Note that even track_pfn_insert() is already pretty clear on the intended
-> usage: "called when a _new_ single pfn is established"
+Kind regards
+Uffe
 
-We need to define "new" then..  But I agree it's not crystal clear at
-least.  I think I just wasn't the first to assume it was reserved, see this
-(especially, the "Expectation" part..):
 
-commit 5180da410db6369d1f95c9014da1c9bc33fb043e
-Author: Suresh Siddha <suresh.b.siddha@intel.com>
-Date:   Mon Oct 8 16:28:29 2012 -0700
-
-    x86, pat: separate the pfn attribute tracking for remap_pfn_range and vm_insert_pfn
-    
-    With PAT enabled, vm_insert_pfn() looks up the existing pfn memory
-    attribute and uses it.  Expectation is that the driver reserves the
-    memory attributes for the pfn before calling vm_insert_pfn().
-
--- 
-Peter Xu
-
+> ---
+>  drivers/mmc/host/cavium-thunderx.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/cavium-thunderx.c b/drivers/mmc/host/cavium-thunderx.c
+> index 2e2ff984f0b3..1373deb3f531 100644
+> --- a/drivers/mmc/host/cavium-thunderx.c
+> +++ b/drivers/mmc/host/cavium-thunderx.c
+> @@ -72,7 +72,7 @@ static int thunder_mmc_probe(struct pci_dev *pdev,
+>         if (ret)
+>                 return ret;
+>
+> -       ret = pci_request_regions(pdev, KBUILD_MODNAME);
+> +       ret = pcim_request_all_regions(pdev, KBUILD_MODNAME);
+>         if (ret)
+>                 return ret;
+>
+> @@ -164,7 +164,6 @@ static int thunder_mmc_probe(struct pci_dev *pdev,
+>                 }
+>         }
+>         clk_disable_unprepare(host->clk);
+> -       pci_release_regions(pdev);
+>         return ret;
+>  }
+>
+> @@ -183,7 +182,6 @@ static void thunder_mmc_remove(struct pci_dev *pdev)
+>         writeq(dma_cfg, host->dma_base + MIO_EMM_DMA_CFG(host));
+>
+>         clk_disable_unprepare(host->clk);
+> -       pci_release_regions(pdev);
+>  }
+>
+>  static const struct pci_device_id thunder_mmc_id_table[] = {
+> --
+> 2.48.1
+>
 
