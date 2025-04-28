@@ -1,216 +1,134 @@
-Return-Path: <linux-kernel+bounces-622967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8E1A9EF0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 906BBA9EF1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51AA117B918
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBB517DE99
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EC4263F49;
-	Mon, 28 Apr 2025 11:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8212641C6;
+	Mon, 28 Apr 2025 11:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mSOLakf2"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013010.outbound.protection.outlook.com [40.107.162.10])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OFdW8aC1"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349F61FFC45;
-	Mon, 28 Apr 2025 11:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745839608; cv=fail; b=WIq7ZpLHwaPNmrqVegTt2nNpoacwrsaGyLxa6kSqRr0056vCG62FU1IhASRr/KncxigRnpFSFQy7c0FJly0H+SxzFTN+aXYLKonHtBFqfi/AWNC2/xa4VDhFXZNts2XBpunukGBpXcqahGcNelDoT9WUa7yz6lwylc1wVNoc+jk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745839608; c=relaxed/simple;
-	bh=fNYtC69YVxrHp9Rc/ksTmWMMrHurnWztf7pG09sjCsQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=d/PvaC6K3bszhjfmKJS6xstvBYlNKB3RU0BYd7DMABBZHNuqRcHbXNWt7hR6ojROr6n21TI5yGBBxByrhMRLuv17c46CDXxYBvXm9/Ual/TBWatPRrftJrVU5Is/7O8lSYTE9sVqtFbR2CqE1WSRBm0a9JI4bsJk9BCzX1GjVIA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mSOLakf2; arc=fail smtp.client-ip=40.107.162.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mDCP3GJ7vqyR4Q9JVaVncxiZEd1E3MqOrsByqrpU3nJzea8VPcj7Y8pAFfxrqdoQoV9o3hsogTsPsn7b5Z0n67MZ6KablbGBwVoGh0lySpejimQLakn2Z7yrPmvjU2CAdpIj9BbCNY0WitD6Oz9R8EIfDLdlQeF3qgpLBrvMUqu9+hQkc/2ZuHxT/lyp2IUnrctHZCAMmXtjC7PYlTSn6oQVGDXtbaGhlKaEw0sfQccokEiEwYKXKrD1CHXYmkY+mfFcvdxrNqf19ujD3xfShXr0gmXu3WBzlx41idIWP5ld9v6Cm7a88TNwtS2GCwNFQb2rtWByI8SF+uZJH0u15w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E+/9sTRmW8QqIDEgsWdrVxIkRmWUzP7v5UX48LGWJek=;
- b=QHYqzHiWu4LcybU6C4VA8/SfiDN02BTHKigaZaBCOmVHev9qukuNKnQHQpM+WjI69Xhi0y70Fmw4R4itdrj20uN2cRu41lCGIB+20nhAr89BNMmlB5sN+ri+ofy2uL6jpvP4BTEwbCZ/sqKygfT0NCs1mhc/eEVmKFsR12fcDmcVQFH3pwX3nHhpcF0lsNmbqgndP3eKfjyPJfynsPMVYo8DJoq+JWbb/OWf2xBicZoFGYYBbGchQXCb62kLjnA3GzJt7YD7+DB5oDZxbDQoJJJ4FrLA4O8uZKrJGZRCDrSlpSkExOzaQ71GuQMN7YYyGreRFDK6fh4HP2K0RizKeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E+/9sTRmW8QqIDEgsWdrVxIkRmWUzP7v5UX48LGWJek=;
- b=mSOLakf2g0rT50tm2HG13ySRyUJav06UwejuSjU1HzQnVkDxUUNXlLhDxZtnDV1kWijYTwxt9ODQIel6AvljfoWa/4BB5JouXrkAv3GXWhI1zOh0BMX6c7DPVwnu/RhPwyxsayby96Hlj9bX4kcrPRXqL8wDNhb0TIMZsEjtSIzF9MkJuXvOmcXThdCWWwj2vF5VesbLx7qPBixCLU2bE2rG8FGzPb48QWCqPck3G5bUR98M6ETNqSRaouc/5Ze091HGOCzZfI78cCNpBUDMNfNfE9iOmDKpTtfz+9NKLDysgMIjI0shObWMgVRDpHhzaLH42IPDRfuBj02jTPbfsQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by GVXPR04MB9831.eurprd04.prod.outlook.com (2603:10a6:150:11c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.29; Mon, 28 Apr
- 2025 11:26:42 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.8678.025; Mon, 28 Apr 2025
- 11:26:42 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: "mattiasbarthel@gmail.com" <mattiasbarthel@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mattias
- Barthel <mattias.barthel@atlascopco.com>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH net] fec: Workaround for ERR007885 on
- fec_enet_txq_submit_skb()
-Thread-Topic: [PATCH net] fec: Workaround for ERR007885 on
- fec_enet_txq_submit_skb()
-Thread-Index: AQHbuC4luE/3sWfqf0Gwu5ESQD0x0LO47vEAgAABTiA=
-Date: Mon, 28 Apr 2025 11:26:42 +0000
-Message-ID:
- <PAXPR04MB85101DD9C5F45DC4BFB200A988812@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250428111018.3048176-1-mattiasbarthel@gmail.com>
- <PAXPR04MB8510E6D58457D057445BD66488812@PAXPR04MB8510.eurprd04.prod.outlook.com>
-In-Reply-To:
- <PAXPR04MB8510E6D58457D057445BD66488812@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|GVXPR04MB9831:EE_
-x-ms-office365-filtering-correlation-id: c48f666a-e771-4138-4f5b-08dd86478d3a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?byRHREHoJOecTJMJC7VdCAF5yjYpsA8wZrZcvEId6Fge6blGK1E8h1q5TveV?=
- =?us-ascii?Q?rtnFUr2BDEo/tzqM0M31plG5lGyIv3mQuvmSb1R86eu8xU3QIgMPZLNLHr2g?=
- =?us-ascii?Q?jjCT2PnoQuR2/Qydb9WZ4zTVTbAsF4RtjVqxFuBI/rpmRMhslBpLFDar421c?=
- =?us-ascii?Q?JBsXUpVwU7HlOqcajKVscnzAgLoaKhVh0KV5oZMQ8Xr+ChJzVpbIy8iQv0t+?=
- =?us-ascii?Q?CzImom5/zyEZz5vPk5UWASanXObRgrBWOMzO7qhfDk9Y909pnlFS7WbWH4dD?=
- =?us-ascii?Q?h4b38RBrpuFyVH79KEHgcA+pwjaNtpluA/JOlJVn6M5cgRs3lUxEFf5DQFFq?=
- =?us-ascii?Q?Yfv5icihwVdjW7IhvyIrF5sUZfDnTCrAWtTq85clDnKxpw8FIzjQOieaU52i?=
- =?us-ascii?Q?iId1U8KgpGKL9q28WmDQaIMqTT8S/qcLsJ7zl1Pu4lGx3SP12qkMFiVFbyh+?=
- =?us-ascii?Q?eINb75Q4uqTaxtqpD7PHSVbiHlS/lUdqm6mLzY77O/2oPNYcIVNieJc6Qb+J?=
- =?us-ascii?Q?vSfGW6nuEQDo9ySGwjQ/fHfkKjcZ/9mFXm8WLKWZ5KhCIwpVClCMWQCMM8KR?=
- =?us-ascii?Q?wV1CbbHXBkTgGDgjim8pipnDwOKDMrXDHNGV5sTV/JQGxvJhKqwRBuXmYfKa?=
- =?us-ascii?Q?IdlZ4hLEYjaRPb26Pb4ituumrFdqiuZqfwxY/KZLCPiFj/E1802nI2psuFBd?=
- =?us-ascii?Q?CPNbwMFDtlEyFrGfERKaJDlZeijgekkwS9zJCtDGKYdxpDtQXgAn3dSblTNB?=
- =?us-ascii?Q?aQvZp/eIsNh5QDaTCbd2yb5Rb7um/FJEcumDbmalbfEykee1Hej2KfRnsZXC?=
- =?us-ascii?Q?Ov4Q3FpAH5DByXWi4ak2vZddKdwi9w6W0eK9JrT/lLsLRHor6s7Sa0b2BWvr?=
- =?us-ascii?Q?Kf1cb/uwGN5CHAEkciW9CTR2919el7yUdfyC8/PX07C+eEwO3EaQ64bmtKbI?=
- =?us-ascii?Q?2rnqMuZGufi327aYwuRGKcS+lU9EUk/r3RZ2u8RCsJ1vCllBrqbQayH4gsZS?=
- =?us-ascii?Q?AqBOn4wvy9C6vxVfCWM3skmY6Ay7bDn9uaoO5Y5Od6oHj0Jm0LAzEP3IJXXu?=
- =?us-ascii?Q?cfNah7jyIMzT+wdsTVwMHARxl0CJ+SLUBWha2mngrMxEoWt8e6hTsTDcfapI?=
- =?us-ascii?Q?MXsDzIwL6n4xkwvuhKY+69cYtJ640s4WluYlvZpIBhtPyZGkEmTaZX9LipAs?=
- =?us-ascii?Q?mvQUbJhPA0J8orW6J6yHde6y+cfOTKcJ1Vl0mRCXQTWLLQhHO178IRbptdOm?=
- =?us-ascii?Q?xw6FADle0HYN0RYNfRizE5UH436MQCj4dROHIxP68LeWwxhjtTyGmYSFKgAg?=
- =?us-ascii?Q?lYsiDqm6HP6CwkJVyNOLu0+MCccFBikAYstRmzSKebLWl9e91+pA8IojKzqj?=
- =?us-ascii?Q?Kkw6OyFBfDp/4+wyjttG06f2U0HnLOIsgM36acG+hOHoHy818S8mHXV0+PrD?=
- =?us-ascii?Q?AmWa6fiaLTP5o2/sfKPbfjIcRI2CENE1bx5L2qtvGoWZWNSHd3ZNDg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?SRiK796oMuyZQKK9T3wUBWZiLSkLlj+lrtDxNKt404Qsp2xbgnA+NOwdJrCA?=
- =?us-ascii?Q?K68+1Oh1+zxVBuQN5ky8d1G+CDOCfJDmKb4pcdFrdRHlLBROILCKbJoPlhYq?=
- =?us-ascii?Q?oeA2yuf4AgB9F7/SLoT3LIrDwkvMlpFb5LqioX3sqoxXwaUfyJi4bxDRv2ND?=
- =?us-ascii?Q?Yu2jkL+YliSu3Wx40jpzBwm7yJFo2b6/7WN0Q51nSvDISewVrzllHbz62xrg?=
- =?us-ascii?Q?pOBCzQE4Md+RK0TZFBJEh6Ns8JuY3I74Rut0qaiFH8IVgB8Hq5ZE/l4Zc8nM?=
- =?us-ascii?Q?lVsAyuEOoWPv5hW2/MUIqA02gXgoVGKBpcf7BSDdINRNzdzA6Ry7lpHbo1SI?=
- =?us-ascii?Q?7dUY2Iz8YK1+sERRrhYs+L4f2/7lY7ECr9HByRRc+8AhMa8mAifGyMpAIMMb?=
- =?us-ascii?Q?dPACZcqAja9lApRaatxptjIWzccG7djS4DUKS9SVI6Vs4OU/fWASC0pPxHi+?=
- =?us-ascii?Q?Ysgti2F0gwDQULn2gUlESmFn6AfoYyjkvKX/YQpHlDazbyoTDDPjjS9xdAbH?=
- =?us-ascii?Q?G2yf83Ij8tiDrs6ybIaqDVr9jbFrOy271ENqujT4OOmfHX6idsRdpSLO2qYa?=
- =?us-ascii?Q?Jw3D5W8n1g0FTCA8vzScPXZ9tAjinzkcC2UV7Tvt9fwP9ugioPYMMA110Uh8?=
- =?us-ascii?Q?j4LRzzjD+U3YmFUzggOCBZV5zBRZGJ0zhmcFDWCY8GWCIKUOwDdvFJZvL/4V?=
- =?us-ascii?Q?LN9MkI35B6RALMJKv58rKEtmt/Y+SQ4ylWmHqcbxui9uI7QH7jVLR4a6xFnl?=
- =?us-ascii?Q?450XbS+ytm9dpc9cVGuRSFhvZRzo/K3bjuJejuZfc1KZfHQPqwnc15OZ9njm?=
- =?us-ascii?Q?911f7HYJIjZrTnUzNE4wC5FZO5iXp5GEmceB4zI9Y+t4uWZ1ADzH7Qb7k0mw?=
- =?us-ascii?Q?bSfkV4F36SSxUdl5OW67yG7iMvK2ITHMNwYiCK6bIfUJz8SJ66IHrZoL5QPT?=
- =?us-ascii?Q?X/kshyQXu410o8xKfOSZtHT/BLAfKuvXx7AmetTZNXE35X2+GgZc+patBMT6?=
- =?us-ascii?Q?hORzaHfSlVp1pIPcO1OqO+NcLUMe6f57RQ0ei3F7EyWjY0tC/Jy8yR47U3UI?=
- =?us-ascii?Q?coiGk1+UD4BAPV/Zfvp7JGR9FKpyk2OYKX6tOzS7vVgu2Yi0Ge16Xlh/GQIr?=
- =?us-ascii?Q?c922fJDgcauwXbOmpW4V9SzQDK7lLliM1lMDW1nXhW1ssHLysPvsNy50iBQT?=
- =?us-ascii?Q?mgN4d7Kcl90Jt/Urp/6m0A6Akb0Jrj4LndVRC7WRq2/lGRtg1QtHa9j0jxRP?=
- =?us-ascii?Q?dCmZtwShbXaBdqxxbyQ1QDSS+1dkyni0uGJqYDW2f8Z8/Gs5ybDbCO5kbNWh?=
- =?us-ascii?Q?20KoefjqzG3akj7BaUI3ZuDwn1biHnl+hTc+tahCO4Ced7m0H+qq8k3RB9jJ?=
- =?us-ascii?Q?PQZ3cfRvwRLM9cplZ9Vazutgz0MdAl/gUDUw6CZUa8qdGhK40Sfo7AO+lkY1?=
- =?us-ascii?Q?EqmU7NU9yuiVsULBYLnYjWNeKfPcpxNte/kvilRtWG7/6MUsF0IvSvCNbQ3q?=
- =?us-ascii?Q?BD+TVf1mk9mwofUu5jvlK6dj3cjFKBkJld/gomqXQNucnwdkGeJBVgewjgyN?=
- =?us-ascii?Q?HKnR/scmtlBGVTJvRb8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B61B202996
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 11:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745839815; cv=none; b=c4+V/bo6ZGhOVlp0zwoaqwk7a+TOqqmV6QlZHEcwsSOEOBfFCODGG9ZRW7GMNYAf20Uo8xu3dNrVdAGt9J2cDZA++gNEGkW8rXdY6+hbPIozKRc1ZL4YtRkfKpb8NYJ/AweexjsjN1TZRqjPpAmf7um09sXKCD+6qntdnFDm2/Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745839815; c=relaxed/simple;
+	bh=fwld4zkOzPn17td9PUrYMQ1ZtsLZ+Qvv0Fddj7pLU+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=DDnUW0rxWQ0VFdRv0OHNyupkVaiXymYQzwl5jsmHwykYdwczn+3CoqfjjKSwr9gk07OuFQ6gHXxXEIjwVfYviXuGx5B2rM9cqkg0uRiOtVC8cU6qHB1dYlgkILD80w9tpPfTinlU2mgZiGiorDQaiGB+0fK+f/bNWG/Cjaqt3ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OFdW8aC1; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250428113010epoutp0156e30de02c3cd1ce7535ca1eae7aa6a3~6eA63LOf70501205012epoutp01a
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 11:30:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250428113010epoutp0156e30de02c3cd1ce7535ca1eae7aa6a3~6eA63LOf70501205012epoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745839810;
+	bh=ZQy/46a1r4WAvJCApFWSuqNU0UpVfcMsny2biIWuzIE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=OFdW8aC1+zv0YZ0OsW6E0VMV3Yl7wSORCpL/RC+6+jYEVPAWwHdurf5XYBfSmEGSN
+	 l1b4qH0jRPa1p8wIysBhd1XiYtwvLFfCmGUX+al6fEXs53sX4eJFBzr3id8ACFs+dS
+	 YLa6BpaWr/qBAl5vavOiXO76sAlkvCZuvM+LLbSs=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250428113009epcas2p2f7a8cb332fc766d0a47a30fa93c12268~6eA6Ntvek0100801008epcas2p2N;
+	Mon, 28 Apr 2025 11:30:09 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.92]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZmLpT0y8pz3hhT7; Mon, 28 Apr
+	2025 11:30:09 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250428113008epcas2p327275651c8869ee5a113eda2f2ec1d30~6eA5Q6Qmo2967129671epcas2p3F;
+	Mon, 28 Apr 2025 11:30:08 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250428113008epsmtrp125683d16bb59170d7f0ca1f815620940~6eA5PPu1n2934329343epsmtrp1S;
+	Mon, 28 Apr 2025 11:30:08 +0000 (GMT)
+X-AuditID: b6c32a29-566fe7000000223e-4c-680f66c05646
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6D.81.08766.0C66F086; Mon, 28 Apr 2025 20:30:08 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250428113008epsmtip2cb6934ace77da911c6152dedc507572a~6eA4-N9DR1092810928epsmtip2R;
+	Mon, 28 Apr 2025 11:30:08 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>
+Cc: Shin Son <shin.son@samsung.com>, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Fix CPUCL0 add CPUCL1/2 clock support for exynosauto
+ v920 SoC
+Date: Mon, 28 Apr 2025 20:28:54 +0900
+Message-ID: <20250428112858.82434-1-shin.son@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c48f666a-e771-4138-4f5b-08dd86478d3a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Apr 2025 11:26:42.6286
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GMlX/EHNPxSWy36LTDh5pYVGeomBvXm26htbyg7R9vYaNcRwmzjFV3cQ20j5oBdhVxDU3Xa54IelkYXR5/9VUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9831
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsWy7bCSvO6BNP4Mg1nThC0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxWLy8bWsFk3L1jM58Hu8v9HK7rFpVSebx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRv
+	l8CVsXrRBcaCnWwVr34/Y25gnMfaxcjJISFgIvHj93PGLkYuDiGB3YwS626vYIdISEgcnjGB
+	EcIWlrjfcgSsQUjgPaPEifllXYwcHGwCqhKbfsuD9IoIvGWSWP7/ABNIDbPAaUaJnWdkQGxh
+	gVCJf7vesIHYLED1rbv/gs3hFbCUOLDgECPIHAkBeYn+DgmIsKDEyZlPWCDGyEs0b53NPIGR
+	bxaS1CwkqQWMTKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3MYLDXUtzB+P2VR/0DjEy
+	cTAeYpTgYFYS4a0y4M8Q4k1JrKxKLcqPLyrNSS0+xCjNwaIkziv+ojdFSCA9sSQ1OzW1ILUI
+	JsvEwSnVwBQ1c9eN5POvXd8vOtfXrLpCqnAp14mv9uockzzn7FefupYxW2zO6gs2m84942vM
+	+jqjveP1sQW1nu2T/sgtElu2fdKmusI5/UV+a6I+2fXMm7XEYBvLLfFfwYJNfZO5Fk94r5om
+	nrSdZbf9lG2TftVeuCujMuWtsAt3wm+JKxxRjA+8qnednz8pOFDR9kTOBsULST4tH21DfSZP
+	fFLg5topfpfbK1PbI7CJgeW+wO+JchFTp8nY/3haInf23EST1Xd143m4WpTPPWS/WlbPI3Pp
+	e/xrBXve2N13315rbp23b75tYJfdO7aI+exfvma4xYlI8b18qlCvYLr4V0FR/nNN9SMnQ9nU
+	pct/rLLJdVBiKc5INNRiLipOBACoSUGg5gIAAA==
+X-CMS-MailID: 20250428113008epcas2p327275651c8869ee5a113eda2f2ec1d30
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250428113008epcas2p327275651c8869ee5a113eda2f2ec1d30
+References: <CGME20250428113008epcas2p327275651c8869ee5a113eda2f2ec1d30@epcas2p3.samsung.com>
 
-> > From: Mattias Barthel <mattias.barthel@atlascopco.com>
-> >
-> > Activate workaround also in fec_enet_txq_submit_skb() for when TSO is
-> > not enbabled.
->=20
-> Each line of the commit message should not exceed 75 characters
->=20
-> >
-> > Errata: ERR007885
-> > Symptoms: NETDEV WATCHDOG: eth0 (fec): transmit queue 0 timed out
-> >
-> > reference commit 37d6017b84f7 ("net: fec: Workaround for imx6sx enet
-> > tx hang when enable three queues"),
-> >
->=20
-> Please add a Fixes tag before Signed-off-by tag, I think the Fixes tag sh=
-ould be:
->=20
-> Fixes: 53bb20d1faba ("net: fec: add variable reg_desc_active to speed thi=
-ngs up ")
-                                                                  ^
-Sorry, please remove this space when copying this line.
+This patchset fixes the incorrect CLKS_NR_CPUCL0 definition and
+adds the CMU_CPUCL1 and CMU_CPUCL2 block to support exynosauto v920 SoC.
 
->=20
-> > Signed-off-by: Mattias Barthel <mattias.barthel@atlascopco.com>
-> > ---
-> >  drivers/net/ethernet/freescale/fec_main.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/freescale/fec_main.c
-> > b/drivers/net/ethernet/freescale/fec_main.c
-> > index a86cfebedaa8..17e9bddb9ddd 100644
-> > --- a/drivers/net/ethernet/freescale/fec_main.c
-> > +++ b/drivers/net/ethernet/freescale/fec_main.c
-> > @@ -714,7 +714,12 @@ static int fec_enet_txq_submit_skb(struct
-> > fec_enet_priv_tx_q *txq,
-> >         txq->bd.cur =3D bdp;
-> >
-> >         /* Trigger transmission start */
-> > -       writel(0, txq->bd.reg_desc_active);
-> > +       if (!(fep->quirks & FEC_QUIRK_ERR007885) ||
-> > +           !readl(txq->bd.reg_desc_active) ||
-> > +           !readl(txq->bd.reg_desc_active) ||
-> > +           !readl(txq->bd.reg_desc_active) ||
-> > +           !readl(txq->bd.reg_desc_active))
-> > +               writel(0, txq->bd.reg_desc_active);
-> >
-> >         return 0;
-> >  }
-> > --
-> > 2.43.0
+Changes in v2:
+- Separate the fix into its own patch
+- Remove the extra blank line
+
+Shin Son (4):
+  dt-bindings: clock: exynosautov920: add cpucl1/2 clock definitions
+  clk: samsung: exynosautov920: add cpucl1/2 clock support
+  clk: samsung: exynosautov920: Fix incorrect CLKS_NR_CPUCL0 definition
+  arm64: dts: exynosautov920: add cpucl1/2 clock DT nodes
+
+ .../clock/samsung,exynosautov920-clock.yaml   |  44 ++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  26 +++
+ drivers/clk/samsung/clk-exynosautov920.c      | 208 +++++++++++++++++-
+ .../clock/samsung,exynosautov920.h            |  32 +++
+ 4 files changed, 309 insertions(+), 1 deletion(-)
+
+-- 
+2.49.0
 
 
