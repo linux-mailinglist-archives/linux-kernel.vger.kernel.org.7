@@ -1,332 +1,173 @@
-Return-Path: <linux-kernel+bounces-623624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC9EA9F86B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:24:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A02CA9F872
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7CEA1A83672
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7689217029B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E9F2951DC;
-	Mon, 28 Apr 2025 18:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0521A28DF09;
+	Mon, 28 Apr 2025 18:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HEQN5IvN"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EK5vlaER"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430BE7082F;
-	Mon, 28 Apr 2025 18:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864638; cv=fail; b=kpRVAOGZ811m5m0nN3gxcgUSFt43MqV7aDLfFB0nKbIzTMrB6jqPUxhQGZRLByzgfy1jXLzfwi/KJj88Pb4p1+S1EpWDQEBDu4StLyd1fzuqB6LJB57x5kkQva/8rIKE6sQ63Elw0b5vbN1GO0TRt7xsrGUmYtXz271NXoGsEm8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864638; c=relaxed/simple;
-	bh=58TyTTt90dqJZfsk9f7hpdKKCe/81e85P8wDhcDJdhM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eL/3U+h9VFpeKbshXattYmnNqYjOpft9lGsCOcqpbxVN+xki1EWfHKySXgr+0c/MANx5NfQUda2KVBypLbRHtsTcMw6aeUTr+qLik0717S4Sk+uT1AkDFK5EQPJx/qiMNlo+/JTww4OvG2KTx0FV21vXBmkuZDEGF66lEY/pVwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HEQN5IvN; arc=fail smtp.client-ip=40.107.220.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GcoyX92wRdk+GxQQ4/0UArdasGvDmyZZuH6VnRxpeD1lj2UFb7jtMCa1ImhuwfxV/7n2KNNzBsCkp/8M/VAPbr6IKFHfMQOLx/tifeTVEblGlzLVLC40zXj4+Hc5vmKc9bNUDsNMXlLiOjA/GcHQqIJXCqNUtLO7lfbZ9vi1/9ZKzO+eILEzQQCCat7zd/PN34S6Ha5Fh1MnM5Zbrm3B734DXMBT+fxqoV5sXcekPH/g4PiWpZIzLBUs8IYrlyY4K9JTX9QBh830EOwUpxTVsNR/wgXTGiqxwkuGsU1fh77wYd68UHFVCEQgSvMtdngEX3CS5z/LZwhd+Oy/ENJ55w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ga3eq+uR0/Bh0kcIlUjNPAHo0ZG7hoQNA3r7EafwX9M=;
- b=Sb5TbEVgNXqteY56a1WA9+TyPtjVPn3i9ai+pYXjc7xcEAWtOsOzIoraopcwHnTVo4MBTGRVBw99cIqHf7LKDb/0ijVFZuR/XlsOEIHaYbMde2XfrDvlKRfBdVyqGIaTc2pCMRIb1vZZE3REZ92rIjKWC7XcZ8IcgKKJ9DXlqBh1wwyvDSWi0jPXn3qzJh0uHvBPmRiOX5ZiLSTOXDja9b5aHUJktHDWBkf1HqgVoC7GWnpt2POrUnhUEKcDJEGCcBIbtkz6WurbK6TaxisQ8pvvJ+yJX8Hhyrc4MpOuo8uCnJgnPskfxr4Imb9y2Vd5GNgGCIAARSQu7/dtYLl4NA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ga3eq+uR0/Bh0kcIlUjNPAHo0ZG7hoQNA3r7EafwX9M=;
- b=HEQN5IvNBxaR5B8nd6ZT/ruzLZjHj8GYB+Hz71/VnGaFBiQ0jnRhjnsPpoFusahze7gFudCBqiQygW53dG5OdDkHptf8r18oX4Aj3sXxa7tE45fmflx2c1zAocV5QOVL6UIEqPzWchJqN2plrtizvyTGIR1A9dmXxrCf51HuOcs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SN7PR12MB7452.namprd12.prod.outlook.com (2603:10b6:806:299::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.28; Mon, 28 Apr
- 2025 18:23:53 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
- 18:23:53 +0000
-Message-ID: <e8129e3c-aba9-427e-ad63-bc1ea1bdf0f5@amd.com>
-Date: Mon, 28 Apr 2025 13:23:50 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Fix CPU frequency limitation on AMD platforms
- after suspend/resume
-To: Marcus Bergo <marcusbergo@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: mark.pearson@lenovo.com, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, lenb@kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <f5dd019ad4506.2100bf0f83374@gmail.com>
- <445f6320-698f-4d29-8556-665366668e4d@gmail.com>
- <b6fc4e66-b35a-41ce-a633-db3d660b88a2@amd.com>
- <106bd256-2c08-463f-8498-b68f2d5ccaca@amd.com>
- <9de18953-3f6d-447a-8274-c953bae64039@gmail.com>
- <a2747306-447c-432a-a926-e9d0473d9a0e@amd.com>
- <CAJOrcgV-5tr66YbDd_mCL00YHg7nPVdJUon9Az7pZQXpNtwUoA@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <CAJOrcgV-5tr66YbDd_mCL00YHg7nPVdJUon9Az7pZQXpNtwUoA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1PR02CA0005.namprd02.prod.outlook.com
- (2603:10b6:806:2cf::10) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5153526AF6;
+	Mon, 28 Apr 2025 18:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745864824; cv=none; b=nKhgRGRHXJR8stjVh4VhEQd3NnAvK5jN145X8f0oL5bpRAJ2ca294UlvYJ6vNls755q1qFrrDrXBOd3iEWEjJlaBSrgu8QNNf0G+UbM2dQRSxFAkfgUt41iOX23jp/ESTD8FVZR4CmFQ95mJB8C5A+matzMe0+HJxvUMnXHwCmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745864824; c=relaxed/simple;
+	bh=h5NvfaerCqqps0cYzgZ9hk6memBJ3cZgDY3NSZ5Txjs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hbMUz7f2TbgUBfAYPjK9tcavB+n0VBo8T+OnKWxOXGVNVTaR/9nRuXkU4XHQYj4o4WXvFJQmsHEdDFL/ByoXRRoznjnlSn6ONMLee2TMjimDtBG8sHKybi3DF+VqASDiO3/idovJChMRhBfxafT7vNunzUpUxX1vcUDC4nrLgX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EK5vlaER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071C0C4CEED;
+	Mon, 28 Apr 2025 18:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745864823;
+	bh=h5NvfaerCqqps0cYzgZ9hk6memBJ3cZgDY3NSZ5Txjs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=EK5vlaER0+czh36fiLkRaLGLy7vyk1yh6mCHlfaBDlhKdEcmsRi1oJs/h/HSsFGF0
+	 zOWVevDhweqDE9lkWZh0a9t47fvmXB+gUNBU0B3kx0MvZKsP83h7xeYdPrXAbLYEQ3
+	 8h9ogbtfVs8zaaG0nVY5kOLu5qlL1m2dSEzlOyg7WtOIq2jRFNIKErhIPW64lTgLvD
+	 weZSj/4fLeEhHJsntfqXCqRxTo54rc4MZP5FrJ6BwRNlcSs81mk72HJeuDeYmx2A/g
+	 FuzqDoewJWUX1RJhAjzbTlXRsYkNw5tDm5Rci4fVbrBc9UBexO3o/SPuBQKIr95f+E
+	 cC+8lJprhAHdg==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v5 00/10] ref_tracker: add ability to register a debugfs
+ file for a ref_tracker_dir
+Date: Mon, 28 Apr 2025 11:26:23 -0700
+Message-Id: <20250428-reftrack-dbgfs-v5-0-1cbbdf2038bd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB7452:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95131540-fa31-4176-1338-08dd8681d4bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QStJVXRpOG5ZQ0dxSUxYZG1LZVFnTE41cGJoL3JwZFdCaGdCRFo4NlhqVStm?=
- =?utf-8?B?TmZHN290dnE4N0hSMnhLQnAxRURxN1lNUGZITjBtM0hZd05aZEllZ1lxN3Vn?=
- =?utf-8?B?YnVYcy9sNnExOU0wanB2MXM1RXp3ajlqMjAzd2c1OXNmSUg2MVZkczFxV3lx?=
- =?utf-8?B?d0JCaWZRZEczU0IzY1htZUlPU3E3b3JVZjdvL1hJS2FhVDlESDM4VzhRK2tT?=
- =?utf-8?B?enUyaFd4RjU3YlJ2MHQ5K2dTbElGNGRJV2VhbTZ5R0YrWktnTmQ1cSsySEda?=
- =?utf-8?B?cHI3U2w5YzZzWDFZZ2cydXBwSUtUMVAyRGx1YzVUZ01Iais5MkJEcmt1NE5a?=
- =?utf-8?B?dmFMdm9hTm94RkorazZUZERUNWJkbGlyNWhpK25yZ1JIUkdnd0xlZjBEQmUx?=
- =?utf-8?B?WGt0MDNYWFZ2V3lPS1YzZTR2TzNnRTJPcm1HOW02cTlJQzJvRVkzZXRZOVdj?=
- =?utf-8?B?TDBGS29vTlVEVkN6Si94MzZsOFF3SmhMT3MwTjl3ZStsV1FkRTA1QXdlL2Ey?=
- =?utf-8?B?aTE0d1cyQ0pLNUpjOExqbjlScS81Ym4rc2ZnUW1iMVB6Ti9hVlpXOUdkTWc2?=
- =?utf-8?B?ZXo4SUF5NUtoVnpwQ3FCOWVuNTEydlhUMGhpS0NGT3AyM2QyWG1xeTUydTVH?=
- =?utf-8?B?VndWZFhDeFpHYW9HNGdlMVZ4a1hWMm8vQ3dmR3JvNExaQklxSmlsNG90bkxk?=
- =?utf-8?B?eGZieTl6Lzh4c0xGQ2hYSWRxamlvZnlPTWVGMGd1NEtDcXB3bzFIa3ZRdXRt?=
- =?utf-8?B?S1NodmNtSnkxeVhIQXI4U21NYW90RDJUR3dUeHMvQjlyWll0RjRJc2ljRjlN?=
- =?utf-8?B?ck4yR2phaG9NeGdEVFZLeGFQeHZCNGl4RTNyc3dPSkl1T1BQMjU4QzFsVlEr?=
- =?utf-8?B?bDBGc0hmUXdIRzhodk1ZQUVNZkxYUTVBUjg5bTNuV3prRGlNMm1aMFBncjcx?=
- =?utf-8?B?dVRkZWxnODZNd2pPZDFwRVB4RVBNd0R1T2hTUmhJZEEyWEFmbk1hUHlvUW5B?=
- =?utf-8?B?anBROGVhQWxIL0Z1UThwVVJUMld3TjdIWmVJSW1VeTNPaHV3VnFweGRkSzZI?=
- =?utf-8?B?bDAzaWNkOS9Fa2c4S0RoQllhWDZTSmV1a0JWeG1GOFdhd29vcjRxRjh4MUdN?=
- =?utf-8?B?eE1UMzEybHhvN3REMi9UaHZQTERSZWk1bGROZis5MXYrTFVRTERKUk5YUG5t?=
- =?utf-8?B?N1h5Q3gxZi9FTm0wNEgrK3lWR001ZzNObmFsQ2FsV1F1TzFHTXd4NTQ0aDcw?=
- =?utf-8?B?U0RPbFRld0pVZ1UrRDZ4bHMza0NvTlljbWtGNDZyTVhjV0VBMzlyRlBaek40?=
- =?utf-8?B?TG8wTTQyeWVocjBicmtiRENXdFpHN01XaFRLQ1RjL2wxNFFLM3JXRnppSG5D?=
- =?utf-8?B?T0phYXNQQkY1N29EV1ZTTDgxem4zZjR6N0ltTnFZeFMrNm9NYWhmNjNHczl3?=
- =?utf-8?B?LzEzQW5VUGt6VXFXaWkzV3FRV0NKYVljZHdvOWc1c053U04rUXlrMzhuUXhs?=
- =?utf-8?B?eG8weUVIcVY1MFhkUkNwaS9mS2Q5Vk84T3ZobWhSdzZ4RXBXWUFNMEkwRGVk?=
- =?utf-8?B?aWhiT2VDTnNhYXovaURNL3FIVCs5Z0NPamkzaWZVWHRUazVOZWxUSXdtdzRO?=
- =?utf-8?B?NG43aXQwT21kcDRqSUcxUjlRNkZOMjhmeWtpWUQvMUdmeVgwSHRKMCsvNDRj?=
- =?utf-8?B?TXh2U2dtWDZ1bmd2dFRKNTRuYi8wcFVFenR5bDNvQmNjYnNjTUc4RVZSNlJY?=
- =?utf-8?B?R1JJcmFETEVPN21NcENlZ1ZsWE9wNDhvSGNrbDViTm5vUEl0ajhWc1lTUWRM?=
- =?utf-8?B?QjY0UTF2UHBERncyc1RmS2Z3OEo1Ui93eDN0dWJQWDhtdGsxS3lpUlJBWDVm?=
- =?utf-8?Q?DqLLqQ5G+6VWT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGRRUkZHNE5iWmNSYWdUWE52NXlTQTVmdWZZS00yemlvRkV5V0oxOXRqK0l2?=
- =?utf-8?B?c1pVS2M2U2dtZTRYdEJ0QkZMWnM3TWJBZUU2amhCYXFFaVQ2TEszT1dvVEdH?=
- =?utf-8?B?eWxVTkkrL0g3Q1oxSzJ2dlBEWks5YVl2WXJqUTN2R2JwOVVtMFpZSDRaZTlF?=
- =?utf-8?B?bVdyMFVZSnF5SS9oOGtmSUkrNmJxZ3VjYnJ1TkVRblU3Y3J0cUxrdktrUzRS?=
- =?utf-8?B?ZmdEQ0VwcEh1dmQwMzFLTkR4MFV3OEFPNis5UGtNL3lUUEg1UVlSRnBkb09o?=
- =?utf-8?B?UHZsSllwUzBUUndHQVlRSm5sTGVkSFdNM1pwbDk5aXRtZU5KZVIrTlB5SXpV?=
- =?utf-8?B?UEN3aFhuWExKdnR1Wk14VG5YZlJUcE5acUtlc2FOQzFGU3JQTDRMNU5NNWxp?=
- =?utf-8?B?enh4SHlxbzY5bzUyN1orOGlOUVBGR2FhRFNuVVNSZnRWVk84VjJMTjd6MUZ1?=
- =?utf-8?B?YXFnay9ZalUvUmpOLzVtd2YyQU4rME83VkQ4bUwycjhOdlJnTDI5aEZoUTk3?=
- =?utf-8?B?WUR2c1ZoRW41R0JzN0diSzh6bDdRYzY0VkZxc3JTS2QvNE9CZ0t0ZThZaWNa?=
- =?utf-8?B?NGk1ZDYwWFhmbHVDNjFnR01PeGpPRzhpR3VjOWlCbXJlRGtkaGZSTWlHUzZa?=
- =?utf-8?B?UG5MVjFVL0NmR3RlakxHY2VUcEcyYlk1aDBsdGVBRVJuY1pBYUE5VzRLZ25W?=
- =?utf-8?B?TnpmMHlDSXd5NExXQ2lScEVPM0ZFbTgzdlczS3ovOFJQd2EzQWFEYmZNNFhY?=
- =?utf-8?B?K2MvYUFHa0tkdzdhcDRhd3lRaTc3MEpqZ1BzRnE3VlU0bXVENE1zNHZ2aDMz?=
- =?utf-8?B?M2ZHTHpYMktLZmVqNWRFdFhYVnZyY0hrVEZ2MndjdzgwWmExL2JZRzhFdkN6?=
- =?utf-8?B?MU9VczE2RyszMy9NWVNpbXlXdnlJcHZ5OGlSSlNLNnJwZEwwZVJZODAyREJU?=
- =?utf-8?B?ekd5Rks1dDBJK0xkWHdHNW02cXdxMlNxakg1eFoxb2pxTDYwWm9oOUZkTTZO?=
- =?utf-8?B?YUpUUk1VbXlVS1pmL1czcmlXcVdHOUt1SDRBUHAvTVBNeTZ5VkJlZXYySHUv?=
- =?utf-8?B?ZjlnbTVxQUhQMFNpdDNDb3FTQUNhSXp1SWJjUGFzck1pckk4L2w3Qk9pTVg4?=
- =?utf-8?B?YlNhNnRtMmJ3VzNMUnY4Y0tCaEhmRnYxZnZPN3NYczFhUWpUcStNNHVocytC?=
- =?utf-8?B?MDdkZFMvMDNYRWR5MTc3SFM1OG1zTnJlelFZQWl2c0Eyd3c5QThFL004bC84?=
- =?utf-8?B?emR1K2xXWFc4Wm9aMGxUc2pFb1RpSDFRTkFCaXB3L3poRGdqN3hKRWNSUmp5?=
- =?utf-8?B?a1FPY250VjY4Qm1CZEV4SzcyY0U0Qmx4WWgyMEx2YW5TM2xDY0MzRnlNTXdr?=
- =?utf-8?B?QVA5U3daWVI0ckZlRms3VTBSWE9CQkROTVpkTjBERzlGeTB1R25OZFBZVG1O?=
- =?utf-8?B?K0F3cDIzQSsyZ0N2SGVYQ09RZHlqcGJZeHMvMlp2ajRoYmFINGVtZUw1WUJ1?=
- =?utf-8?B?N3BTeXhvcWNpT2NBV29ZRzFvSWdKbDFuUGNsMGhRaVhzSGw2SnJrd3BzRVky?=
- =?utf-8?B?VlJocWJMYkpOV0RLUWtwU0FSb3UzU1hGajYxb0NNWW4vTDE0Z3lQR0x5VGF1?=
- =?utf-8?B?YW94V0hMa3hWVVVDV2pWWmZ6MDFQVXNzNFg5ODdFcUpZSmVKdEFRNk9GaFpC?=
- =?utf-8?B?QXdKdnYvZEdiSEJVRDBQcHdPU0hmUVZHY1hLeW5JS0lWK0R3RksyTW0ySVF2?=
- =?utf-8?B?RVpBTU1TczA2MnlHS1FFZ1h4Wmh6UXpGM0ZUYjhPS3dic3hlMXc2ckpUam9y?=
- =?utf-8?B?b2F6RzZqSHgvUEVRN2U4d2RpUkt6Um1rcis4ak9mZGhmOVJmZnA1WjBRSWZy?=
- =?utf-8?B?WjlhaEhOa3BETkpIZVYwbXA5dnpUVDdnMDQyUnlPSDk1bXMyM0FmQ3ZPb3ZJ?=
- =?utf-8?B?dEc5cWhFUjE4TUd4Smp2MWVVaXY5ZHRxK2dhYmNjTUZqNDNzOEpnZjh3S0lN?=
- =?utf-8?B?K0NadFByM0VML1duN2JMUzBDQUJJbmo3WTBvMHlGYjNJWDFLcjZzRnlRREdV?=
- =?utf-8?B?L3JIUWtWRkJUanFheDliVGV3VVFnNExxeEcydndobWFmclBzaHZWWFp2TUp4?=
- =?utf-8?Q?OFbZcE9g8Ui/sUhgIeoyKH5ld?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95131540-fa31-4176-1338-08dd8681d4bf
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 18:23:53.6706
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kHqREvStcCIU6FW3YcxW4grY2rdnIpDrKzDiCLydneiPe/0v7PGkupEFd0uMogQBdpZiaFdzlGlDrMBmUhGIJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7452
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFDID2gC/2XMQQ7CIBCF4asY1mJghrHUlfcwLoBCJZrWgGk0p
+ ncXTUyqLN9Mvv/Jsk/RZ7ZbPVnyU8xxHMqg9Yq5kxl6z2NXNgMBJJREnny4JePOvLN9yBybbWN
+ RoIdgWEHX8o/3T/BwLPsU821Mj09/ku/rN6X+U5PkggeBpEkjgMD92afBXzZj6tm7NcHSU+Whe
+ Cu1U8Z2EiBUHpe+qTwW71BSq0A7HWzl1dLryqviyRlyjW5bUurHz/P8AmLli/FtAQAA
+X-Change-ID: 20250413-reftrack-dbgfs-3767b303e2fa
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>, 
+ Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+ Jeff Layton <jlayton@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3743; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=h5NvfaerCqqps0cYzgZ9hk6memBJ3cZgDY3NSZ5Txjs=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBoD8h0Gv1hJSTC52TiQX1Rum6sG9p3zd0+46lkO
+ ABX5YCEVFmJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaA/IdAAKCRAADmhBGVaC
+ FWBlD/9nSekgdog3Y0VbADaub1JMYh6XgrPCxk66va48i1As/b4j+949889BsJXOuU5eo1qYYv5
+ 2ZBqcDue3RzxePkz9jw2cWg8Zo7YU/7//UKTqRVI6kG+vf4R2lhmLctKR3oWFuWWmwyh+IvuhNT
+ kFyYYZ12L2pvx12FFj9qkNPwHD9JUT0mkJztQjiysVueJqqHkGHkFbZPJ2YikAHu+vMmb/+Aqrm
+ utmSB/wIXxRezR0MERBzxEC0K9rcK07noF3B+8AfPrGrNkSYGjaqY8JDogMsFZdvjUIh9/4MZVg
+ arhS0Z8/l9qSi/rzz84Y3LuUrgwyGeQpl726/D3EXqZufPcdQi3/5Zy/5wgonetj1Z93I85Mlh8
+ oe1qOzLkBHWep2exCnUhuAhtaQE7oyuMh5Ko64JjTaI2Dfh7gnPP5vmhG0ffzPF4ej6ge2mb2qL
+ 5imTmUlovF/SI2qbppJZIdT/8wQtRXNIdQ8hBxJO/8vH1b2DgQ9ufuA/SDgrKbimiZhq1pmx+a0
+ CUZOYzRvsUW/yG3f0oTq2+NmVZglafk2dObXM6k7Rr3rNDQa+OjHpSp+JZrMVaWoDn6s79uiYW3
+ 2Mnqcyz470Ltg27ob5LIzJJ+MFF197KO6zixiHZ1+zuDUewp5jc9IJNQcpX02XDVQslelNckqCK
+ t+z/OEdbZsXRXiQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 4/28/2025 4:51 AM, Marcus Bergo wrote:
-> Yes, it does.
-> 
+This one is quite a bit of a change from the last set. I've gone back to
+auto-registering the debugfs files for every ref_tracker_dir. With this,
+the callers should pass in a static string as a classname instead of an
+individual name string that gets copied. The debugfs file is given a
+name "class@%px" The output format is switched to print "class@%p"
+instead of "name@%p".
 
-OK thanks for confirming.  Considering your finding with this patch 
-you've shared and knowing there is a timing dependency that delaying the 
-next s2idle cycle helps I do wonder if we should keep exploring.
+To allow for human-readable names, I've added the ability to add a
+symlink in the debugfs dir that can be set to an arbitrary name. This is
+optional. I've only added them to the netns and i915 trackers in this
+series.
 
-Rafael, do you have thoughts here?  Specifically do you think it's worth 
-revisiting if b5539eb5ee70 was the correct move.
+Finally, with the above changes, we can eliminate the "name" field in
+the ref_tracker_dir which shrinks it by 16 bytes on a 64 bit host.
 
-> On Sun, Apr 27, 2025 at 11:06 PM Mario Limonciello 
-> <mario.limonciello@amd.com <mailto:mario.limonciello@amd.com>> wrote:
-> 
->     On 4/27/2025 1:34 PM, M. Bergo wrote:
->      > It does make it work fine for me, I saw the clock/timing
->     interference
->      > and this sane this problem for Lenovo as well.
-> 
->     Huh?  I think you have a typo; but I don't know what you actually meant.
-> 
->     So you're saying the timing patch helps your system as well?
-> 
->     Thanks,
-> 
->      >
->      > On 4/24/25 11:11 AM, Mario Limonciello wrote:
->      >> On 4/19/2025 1:03 PM, Mario Limonciello wrote:
->      >>> On 4/19/2025 4:28 AM, M. Bergo wrote:
->      >>>>  From 881e57c87b9595c186c2ca7e6d35d0a52c1a10c2 Mon Sep 17
->     00:00:00 2001
->      >>>> From: Marcus Bergo <marcusbergo@gmail.com
->     <mailto:marcusbergo@gmail.com>>
->      >>>> Date: Sat, 19 Apr 2025 05:19:05 -0300
->      >>>> Subject: [PATCH] ACPI: EC: Fix CPU frequency limitation on AMD
->      >>>> platforms after
->      >>>>   suspend/resume
->      >>>>
->      >>>> Several AMD-based laptop models (Lenovo P15v Gen 3, P16v Gen
->     1, HP
->      >>>> EliteBook 845 G10)
->      >>>> experience a CPU frequency limitation issue where the
->     processor gets
->      >>>> stuck at
->      >>>> approximately 544MHz after resuming from suspend when the
->     power cord
->      >>>> is unplugged
->      >>>> during sleep. This issue makes the systems practically unusable
->      >>>> until a full
->      >>>> power cycle is performed.
->      >>>>
->      >>>> The root cause was traced to commit b5539eb5ee70 ("ACPI: EC: Fix
->      >>>> acpi_ec_dispatch_gpe()") which restored the behavior of
->     clearing the
->      >>>> GPE
->      >>>> in acpi_ec_dispatch_gpe() function to prevent GPE storms.
->     While this
->      >>>> fix is
->      >>>> necessary for most platforms to prevent excessive power
->     consumption
->      >>>> during
->      >>>> suspend-to-idle, it causes problems on certain AMD platforms by
->      >>>> interfering
->      >>>> with the EC's ability to properly restore power management
->     settings
->      >>>> after resume.
->      >>>>
->      >>>> This patch implements a targeted workaround that:
->      >>>> 1. Adds DMI-based detection for affected AMD platforms
->      >>>> 2. Adds a function to check if we're in suspend-to-idle mode
->      >>>> 3. Modifies the acpi_ec_dispatch_gpe() function to handle AMD
->      >>>> platforms specially:
->      >>>>     - For affected AMD platforms during suspend-to-idle, it
->     advances
->      >>>> the
->      >>>>       transaction without clearing the GPE status bit
->      >>>>     - For all other platforms, it maintains the existing
->     behavior of
->      >>>> clearing
->      >>>>       the GPE status bit
->      >>>>
->      >>>> Testing was performed on a Lenovo P16v Gen 1 with AMD Ryzen 7 PRO
->      >>>> 7840HS and
->      >>>> confirmed that:
->      >>>> 1. Without the patch, the CPU frequency is limited to 544MHz
->     after the
->      >>>>   suspend/unplug/resume sequence
->      >>>> 2. With the patch applied, the CPU properly scales up to its
->     maximum
->      >>>> frequency
->      >>>>     (5.1GHz) after the same sequence
->      >>>> 3. No regressions were observed in other EC functionality
->     (battery
->      >>>> status,
->      >>>>     keyboard backlight, etc.)
->      >>>> 4. Multiple suspend/resume cycles with different power states
->     were
->      >>>> tested
->      >>>>     without issues
->      >>>>
->      >>>> The patch was also verified not to affect the behavior on Intel-
->      >>>> based systems,
->      >>>> ensuring that the GPE storm prevention remains effective where
->     needed.
->      >>>>
->      >>>> Fixes: b5539eb5ee70 ("ACPI: EC: Fix acpi_ec_dispatch_gpe()")
->      >>>> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=218557
->     <https://bugzilla.kernel.org/show_bug.cgi?id=218557>
->      >>>> Reported-by: Mark Pearson <mark.pearson@lenovo.com
->     <mailto:mark.pearson@lenovo.com>>
->      >>>> Signed-off-by: Marcus Bergo <marcusbergo@gmail.com
->     <mailto:marcusbergo@gmail.com>>
->      >>>
->      >>> Great finding with this being a potential root cause of this
->     behavior
->      >>> (at least from a Linux perspective).
->      >>>
->      >>> Although this helps, I'm not really a fan of the tech debt
->      >>> accumulated by needing to quirk this on a system by system
->     basis as a
->      >>> bandage.
->      >>>
->      >>> At least for HP someone said that this commit happens to help them
->      >>> for the same issue you're describing:
->      >>>
->      >>> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-
->     <https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform->
->      >>> drivers- x86.git/commit/?
->      >>> h=fixes&id=9f5595d5f03fd4dc640607a71e89a1daa68fd19d
->      >>>
->      >>> That was surprising to me, but it must be changing the timing
->     of some
->      >>> of the code running in HP's EC.  Since you happen to have a Lenovo
->      >>> system does it happen to help the Lenovo EC too?
->      >>>
->      >>> Mark, comments please?
->      >>>
->      >> Someone just reported that the timing delay patch helped their
->     Lenovo
->      >> system as well.  Can you see if it helps you too?
-> 
-> 
-> 
-> -- 
-> 
-> 
-> *
-> *
-> *
-> Marcus Bergo*
+The original plan was to merge this via the networking tree. That's
+probably still doable but there are some display port and i915 changes
+in here too. Note that those are untested, mostly because I don't have
+the necessary hardware handy.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v5:
+- add class string to each ref_tracker_dir
+- auto-register debugfs file for every tracker in ref_tracker_dir_init
+- add function to allow adding a symlink for each tracker
+- add patches to create symlinks for netns's and i915 entries
+- change output format to print class@%p instead of name@%p
+- eliminate the name field in ref_tracker_dir
+- fix off-by-one bug when NULL terminating name string
+- Link to v4: https://lore.kernel.org/r/20250418-reftrack-dbgfs-v4-0-5ca5c7899544@kernel.org
+
+Changes in v4:
+- Drop patch to widen ref_tracker_dir_.name, use NAME_MAX+1 (256) instead since this only affects dentry name
+- Link to v3: https://lore.kernel.org/r/20250417-reftrack-dbgfs-v3-0-c3159428c8fb@kernel.org
+
+Changes in v3:
+- don't overwrite dir->name in ref_tracker_dir_debugfs
+- define REF_TRACKER_NAMESZ and use it when setting name
+- Link to v2: https://lore.kernel.org/r/20250415-reftrack-dbgfs-v2-0-b18c4abd122f@kernel.org
+
+Changes in v2:
+- Add patch to do %pK -> %p conversion in ref_tracker.c
+- Pass in output function to pr_ostream() instead of if statement
+- Widen ref_tracker_dir.name to 64 bytes to accomodate unique names
+- Eliminate error handling with debugfs manipulation
+- Incorporate pointer value into netdev name
+- Link to v1: https://lore.kernel.org/r/20250414-reftrack-dbgfs-v1-0-f03585832203@kernel.org
+
+---
+Jeff Layton (10):
+      ref_tracker: don't use %pK in pr_ostream() output
+      ref_tracker: add a top level debugfs directory for ref_tracker
+      ref_tracker: have callers pass output function to pr_ostream()
+      ref_tracker: allow pr_ostream() to print directly to a seq_file
+      ref_tracker: add a static classname string to each ref_tracker_dir
+      ref_tracker: automatically register a file in debugfs for a ref_tracker_dir
+      ref_tracker: add a way to create a symlink to the ref_tracker_dir debugfs file
+      net: add symlinks to ref_tracker_dir for netns
+      i915: add ref_tracker_dir symlinks for each tracker
+      ref_tracker: eliminate the ref_tracker_dir name field
+
+ drivers/gpu/drm/display/drm_dp_tunnel.c |   2 +-
+ drivers/gpu/drm/i915/intel_runtime_pm.c |   4 +-
+ drivers/gpu/drm/i915/intel_wakeref.c    |   3 +-
+ include/linux/ref_tracker.h             |  41 ++++++-
+ lib/ref_tracker.c                       | 194 +++++++++++++++++++++++++++++---
+ net/core/dev.c                          |   2 +-
+ net/core/net_namespace.c                |  32 +++++-
+ 7 files changed, 252 insertions(+), 26 deletions(-)
+---
+base-commit: 5bc1018675ec28a8a60d83b378d8c3991faa5a27
+change-id: 20250413-reftrack-dbgfs-3767b303e2fa
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
