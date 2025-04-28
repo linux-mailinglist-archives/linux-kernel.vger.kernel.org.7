@@ -1,180 +1,161 @@
-Return-Path: <linux-kernel+bounces-622930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89296A9EE94
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44618A9EE9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C3F189EDA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0DFD17DA73
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B0E263C6A;
-	Mon, 28 Apr 2025 11:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dIZem5C3"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7404262FC1
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 11:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF90C262FFA;
+	Mon, 28 Apr 2025 11:10:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369FE262FEE;
+	Mon, 28 Apr 2025 11:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745838550; cv=none; b=FTmI3nI3oGCe/PjrU/qVSL67Br9jgVxo0fnxI9yfoCDaLdXHFSXFd0qNR2lBqaIHQDV6QSXmXj8ZZCOUPGlXg0WKHHupiG1qOZ/H4k3zgyWahDMxI48Ck5mWlgalsf9uthjvwRLhFsEKsaXabjdYrFSgm6l+7SujNpyo2ZuByto=
+	t=1745838611; cv=none; b=gKTZWRlYXWvC+FF9NcgmbBfeVVp8Ts9LsIFGOKlP2kZGU3xZVYoOkeieVX6fg2yNihQ0pCuGSapyu4RycBXgyN9+cF1P/ZLi1Evzzo5QzPKKDKNgeBGRHq1ZFMkwgBYxClWu0qIEmL1AEtEQ5vznzkwCD2ZIncK+botCqzzVx0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745838550; c=relaxed/simple;
-	bh=UO7J2oJdaZ6eFcmWZ2Ha3oDv7n8CZchlBO538or7ACA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G/96kGmB8HKVLZPg11RwFN+Rp+86nXpYzufEoJarPxSLkNUU9diakS5PgpT+9A3luwdMp3kOCtbZdErbXUI6ZwM66ebb9K3zXucKXpOzM1SxXSB5rT+SxYj6ZnmAL5HfAjZvfAW1VU2vLKOkVmT5JyETCfKHk9PreIwM9ioZAxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dIZem5C3; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39ac56756f6so4678883f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 04:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745838547; x=1746443347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H3Iext1v0JcemyuBv4epctIApvlADaZRKwnLcwjpgzU=;
-        b=dIZem5C3NuRdwvxi77CXfxFfNK2NO5C8feHN5ES+m3RhIKmT10MEFokK0O6/AjoMH6
-         LWDX0RIAw0We4RDSc90DdgM96lC25ctB2wi91D9ONDMj21Lm7R8+TsFxDctCQNb5dUev
-         BV9KJ9HTzmZiQ39Z7uVeiiV5XkH4qk72PVjSeI/QUYtdUyNpd/ptteDerecCWp607nvS
-         6pem4ST7Al2lQTJxbeWb1mFyqfQbk9XiK+hWwQKcNf62SGMN/ETbIUwkTtIbLKIL3uxt
-         3h88aoDCt0ruVcdisfegsyW+wSIcJJxMb10b6OiwWawQXJK7pJgi9qLPd7qqKiN9V+LG
-         5ufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745838547; x=1746443347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3Iext1v0JcemyuBv4epctIApvlADaZRKwnLcwjpgzU=;
-        b=Nrisf/70xJOFFQfOb87+5YlUEldpFEf1UnP4FqbwE3BxRarmHMLV30ty1Yt2DC0HTW
-         5xDS+qJ1MbH86ym4WyeA3bPFKOhbDNaLWD/T/sb3X4b/5kaufVLfsMENLKyIag7uIj3i
-         UCDEp2ffexjk02ylhhHrTzb2mwisPMvkODVda2qxKmb+ZFLxtFXEd2ZS4mL+kJiyDuQj
-         N+JXFdo+gK4ZNVOC3vhftIU+ivN0hC145UWR/21EHfgqgLoablJ0EdYHuRlqIzZoOwT3
-         Ja7fXvc6QwRIDpXEDrnCkaQJNhV+CZ6NJOA+IA8ba5i9EjOGJVDCSijcH8sGVagJCJiu
-         lnTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4FwwHi8tbLH05Z3UDKZWm6h7zr2dcej5QJ6gZK6f6KcHiG79qWwYNRpcIIqflhxfUtC/BMC75H+bRj5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziHAelWSpEejPGkLJiWG4bQfPs5i8T462uQ9zWPnRIbbRSRQ15
-	c11e6iP51s9PZCL6zaZTtTGZSnXg2EBdcdbFWPEe5iN+Z3pgcEsouigIswv8ERQ=
-X-Gm-Gg: ASbGncsFmNt5jhq8iNL9DOn3xOZZ4VPt5wrklmqKyg+RdR1cCsk6uWhOPAc7fyT8RpE
-	qrj07SCP5V5JfrDb4KGgl/TtyBD9LsGRZ5qDQBD/S4aNgsj3T48qUf4lg/jpHXgMCtNTVwUWF5+
-	4nT3RJaNQpFR3SFo1Gkb+nSRkJIdrlHVT85xsWF6AWyaoKt7UzuKOksJ/e0rkIkE/NSUjRPUfaK
-	b3YbSwatkWQe4b8eONiAOtx1Lg77gRqVJ6WiNQdeKU1RgJJYs4RD0GhLvP5ynb8TArMn8XxxqeS
-	lw7p2WfV0OkosskxJfrZ2Hx668T4QYOmwzccbaJI8i6F/yhNVywjzDf6Lv/IYz9INDzRLr+nEoE
-	ysug96WkJcdXFsUIw
-X-Google-Smtp-Source: AGHT+IEQIpsf8GZoWzshfufjQ9ey+bXCZghfq/VC5/gL8/e0yZpaGRqIW9/smwUfizsp0r9wBNaNuw==
-X-Received: by 2002:a05:6000:401e:b0:39c:e0e:bb46 with SMTP id ffacd0b85a97d-3a07aa5fd30mr5223293f8f.4.1745838547199;
-        Mon, 28 Apr 2025 04:09:07 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5d4b0sm10741276f8f.89.2025.04.28.04.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 04:09:06 -0700 (PDT)
-Message-ID: <67b385cf-a953-4e40-a164-45535d6da212@linaro.org>
-Date: Mon, 28 Apr 2025 12:09:05 +0100
+	s=arc-20240116; t=1745838611; c=relaxed/simple;
+	bh=A9Okykt1CO9Gdzyw8Gz9j8J09jGfp2GgOobllD66Xws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftCqRPX3AQ8PiATPyJ3kgyQZHTE+Gurl76yiryPJE7EWRliAWRD/mPfg0TV2B1k3oLqap8sGbz46yMeXlPWlEAfS5i1VhlwglOF7LywlXxJO9/eeoAVc/HAY9IDpyfAB/NrA77r/pw5n2Tl3CzDFWZxJBBbDp3cYU4R2ZZmC0go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A2F11595;
+	Mon, 28 Apr 2025 04:10:02 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AB783F673;
+	Mon, 28 Apr 2025 04:10:08 -0700 (PDT)
+Date: Mon, 28 Apr 2025 12:10:03 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Aditya Gupta <adityag@linux.ibm.com>,
+	Eder Zulian <ezulian@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>,
+	Dirk Gouders <dirk@gouders.net>, Brian Geffon <bgeffon@google.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Jann Horn <jannh@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
+	Graham Woodward <graham.woodward@arm.com>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>, Hao Ge <gehao@kylinos.cn>,
+	Tengda Wu <wutengda@huaweicloud.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	Casey Chen <cachen@purestorage.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Li Huafei <lihuafei1@huawei.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Levi Yun <yeoreum.yun@arm.com>, Weilin Wang <weilin.wang@intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Andrew Kreimer <algonell@gmail.com>,
+	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Junhao He <hejunhao3@huawei.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	Steve Clevenger <scclevenger@os.amperecomputing.com>,
+	Zixian Cai <fzczx123@gmail.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Yujie Liu <yujie.liu@intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v1 09/48] perf tests: Silence -Wshorten-64-to-32 warnings
+Message-ID: <20250428111003.GC551819@e132581.arm.com>
+References: <20250401182347.3422199-1-irogers@google.com>
+ <20250401182347.3422199-10-irogers@google.com>
+ <20250402143541.GM115840@e132581.arm.com>
+ <CAP-5=fVqax8cxdZ4HLBP4AMxL6jADfYNrORC97T6F23mjf3N1w@mail.gmail.com>
+ <20250402163807.GP115840@e132581.arm.com>
+ <CAP-5=fVJkJ39_qx2T9ZHn-fdxjECP_2G+cyfRRAjLvZZt5vz2A@mail.gmail.com>
+ <Z-4URXOzsVHTY7zz@google.com>
+ <CAP-5=fXwAA0PNYAOLNLdHY8g+AyEB0UxmzgX5w-gGj_DZqUxtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: dt-bindings: Add OminiVision 0V02C10
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Bryan O'Donoghue <bod@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250426-b4-sailusfor-6-16-1-5-signed-ov02c10-yaml-v1-1-9a46124fae7b@linaro.org>
- <aA8uN5Y4MuqR-p7H@kekkonen.localdomain>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <aA8uN5Y4MuqR-p7H@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fXwAA0PNYAOLNLdHY8g+AyEB0UxmzgX5w-gGj_DZqUxtg@mail.gmail.com>
 
-On 28/04/2025 08:28, Sakari Ailus wrote:
-> Hi Bryan,
-> 
-> Thanks for the patch.
-> 
-> On Sat, Apr 26, 2025 at 11:35:21PM +0100, Bryan O'Donoghue wrote:
->> Extend the ov02e10 bindings yaml to describe the ov02c10 sensor which has
->> the same bindings with a different compat string and different i2c
->> address only.
->>
->> Other differences in sensor capabilities exist but are not expressed in
->> devicetree.
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
->> I previously submitted a standalone ov02c10 yaml file but, it was pointed
->> out to me by Krzysztof that the ov02e10 yaml has exactly the same bindings
->> and we should therefore extend the ov02e10 yaml.
->>
->> Link: https://lore.kernel.org/linux-media/da93bf6c-b4bc-4c4f-9373-583fbd0c031c@kernel.org/
->>
->> The accompanying patch:
->>
->> - Updates the overall description to differentiate between the two sensors
->> - Adds ovti,ov02c10 compat string
->> - Adds an example for the ov02c10
->>
->> Once merged we can also merge the ov02c10 driver, which contains a compat
->> string requiring yaml description as precursor to merge.
->> ---
->>   .../bindings/media/i2c/ovti,ov02e10.yaml           | 47 ++++++++++++++++++++--
->>   1 file changed, 43 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml
->> index 4ac4e11a16c8bb7a53db0c44289b1004dbdc282a..1561a3e96caa8b09a4c105b87536bb0d00b2adf8 100644
->> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml
->> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml
->> @@ -11,12 +11,22 @@ maintainers:
->>     - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>   
->>   description: |
->> -  The Omnivision OV02E10 is a 2 megapixel, CMOS image sensor which supports:
->> +  The Omnivision OV02E10 and 0V02C10 sensors are 2 megapixel, CMOS image sensors which support:
->>     - Automatic black level calibration (ABLC)
->>     - Programmable controls for frame rate, mirror and flip, binning, cropping
->>       and windowing
->> -  - Output formats 10-bit 4C RGB RAW, 10-bit Bayer RAW
->> -  - 2-lane MIPI D-PHY TX @ 720 Mbps per lane
->> +  - OVO2C10
->> +    - 10 bit 1920x1080 60 fps 2-lane @ 800 Mbps/lane
->> +    - 10 bit 1920x1080 60 fps 1-lane @ 1500 Mbps/lane
->> +    - 10 bit 1280x720 60 fps cropped 1-lane @ 960 Mbps/lane
->> +    - 10 bit RGB/BW 640x480 60 fps bin2 or skip2 1-lane @ 800 Mbps/lane
->> +    - 10 bit RGB/BW 480x270 60 fps bin4 or skip4 1-lane @ 800 Mbps/lane
->> +  - OV02E10
->> +    - 10 bit 1920x1088 60 fps 2-lane @ 720 Mbps/lane
->> +    - 10 bit 1280x1080 60 fps 2-lane @ 720 Mbps/lane
->> +    - 10 bit 960x540 60 fps 2-lane 4c1 360 Mbps/lane
->> +    - 8 bit 480x270 1/3/5/10 fps 4c1 sub2 288 Mbps/lane
->> +    - 8 bit 232x132 1/3/5/10 fps 4c1 sub4 144 Mbps/lane
-> 
-> These look like driver features rather than hardware properties. What are
-> the hardware differences of the two sensors that could be listed here?
+Hi Namhyung, Ian,
 
-The only real DT difference and its not something I think we usually 
-describe in a binding is the i2c address.
+On Thu, Apr 03, 2025 at 08:20:02AM -0700, Ian Rogers wrote:
 
-0x36 for the ov02c10
-0x10 for the ov02e10
+[...]
 
-It seems like "no harm" to list some of the non-DT hardware differences 
-for informational purposes anyway.
+> > > Anyway, I don't have time to do such a larger refactor so
+> > > somebody else is going to need to pick that up. I did refactor the
+> > > cases where I thought it mattered more, but as you say that does lead
+> > > to a feeling of inconsistency in the series.
+> >
+> > I'm curious there are any actual errorenous cases other than the return
+> > type of comparisons from Leo.
 
-You're right, these differences aren't manifest in the yaml/dt though.
+I am just wandering if we could give priority for errorenous cases.
 
-> The earlier description also said this is 4C which I understand is
-> Omnivision term for quad Bayer pattern. It'd be nice to refer to that, too.
-> (I'd use quad Bayer instead in fact.)np
+Could you send fixes for these cases firstly and leave out refactoring
+for later merging?
 
----
-bod
+[...]
+
+> There are lots of cases like:
+> ```
+>                 case ARM_SPE_COUNTER:
+>                        if (idx == SPE_CNT_PKT_HDR_INDEX_TOTAL_LAT)
+> -                               decoder->record.latency = payload;
+> +                               decoder->record.latency = (u32)payload;
+
+This would be fine.  Since Arm SPE implements a counter with a maximum
+of 16 bits, there will never be an overflow when storing the data in a
+32-bit unsigned integer.
+
+Thanks,
+Leo
 
