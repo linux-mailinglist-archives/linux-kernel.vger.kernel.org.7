@@ -1,152 +1,188 @@
-Return-Path: <linux-kernel+bounces-623425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B981CA9F593
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370DFA9F5A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0AFD176B1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14B31A82CF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF49E27A934;
-	Mon, 28 Apr 2025 16:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="drqJPcga"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE39A27A108
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF1E27A90D;
+	Mon, 28 Apr 2025 16:22:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED491FF60A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745857311; cv=none; b=WxBo+XyOjnI/JXNUxVRP4/rDLM3N/YhZXH4ZyisMzdtSx4C2kB50dVDth3Sxxu6uu+5Q56iS38V38ru712Osp4zQzdMOjGxoSRFmIZwx0Dy8a2WJERMqplLQ4g3st4/IttNFjLygetwWWC5VkyYnZ4B3xrK8/DHd7Vs34IBOGns=
+	t=1745857342; cv=none; b=gykPh2PZmZvsnlrYNhQiCtdYFr6h0KfNY0OmhFNijRh3a3Pa/Cd4gzTqfE4txkw/fTAnPLxsoxNnqGXUyKpJHV/+XGDeq7y9nQ8pDI6h7Z2EZLlSRKoDgSfLucf1m2r+6sriLX00Mq0k7M6XQfiuHPzDbz199ZIQBrH1n9lcgyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745857311; c=relaxed/simple;
-	bh=FAk+/hIlJrLqvDt63zVfUl7GDqkiGBuO0+vRufRCo78=;
+	s=arc-20240116; t=1745857342; c=relaxed/simple;
+	bh=FIJXx2gCEHGBvPacIp3M6Xrashazp6M6jGAoWWtkKGM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gbSZ6azJ2CJmUWuqwUWYMNJ8unSXnUfCxxk7KzVZXx5XuRCjkv0+Ft9R23RfDJTW13mf4Jj9XSK/+GooWSX3HbImT3MDRJEA5SqO8qJoLBxjn9p5ew0xwcayGkKPHTt1DyVaGOnYYBes9PO/jJJKZtbaGM59LPQnR1gW/TKPMss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=drqJPcga; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SACs8C002373
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:21:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zhk8zfFYK4MnpIXkJbMSmC3IFiPYjxX4pByTlAx/9gI=; b=drqJPcgaOkfRvzbc
-	q3Z7ZGrv42FsrIzKBCTn1tF1XqfIhOtPdqFUnT35mIocHjCauHomlDpn69PU8tms
-	eMGFSGoHDWDEf7A7V9hsq2LJ1v9/f67WnY8aHWql4Wie9NRtr4TwPR+dQ/x/50cg
-	V8cLTRb7tFFJDVtKheVEkiGbZtYIa4AZOdsmpLPbABaelNOdxO1M80xif8/rOEPp
-	8TapgnnX4LSdm2nLdH4btN2gBtt+OqAW7sZL2mCE+MH+UefTJkw0duv5+sxxyM0n
-	zDcXpX1zt9MbQvcpl2CEWH8gTCq38GZLna7oibbcFfVT1EaQhqvohxzSHI++tgRb
-	qecozg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468qv9hqdr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:21:48 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e900f6dcadso107365066d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:21:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745857307; x=1746462107;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhk8zfFYK4MnpIXkJbMSmC3IFiPYjxX4pByTlAx/9gI=;
-        b=b9o2FhlpHDXKEgN9kIvK/cOuVVrdJTxQjPoTaLB9/rU596+/EwaeyGI7XqynAp94gy
-         HXF2us4nEGXNrIgH0lgfYYs+EwRk215UBW9SUod7cdnLSVhgvHLU/LH0VuNWfwGqrMkp
-         cRD9Ay69JbBc8iVdn+c2cJINyBUdyOu0Ka8J16kZQD8hWOVikS5V9Ijjd9MmKk6XDxNh
-         lUWthpmbmTtVc9gHl4fjlxP0yp//57vScdlqjNhcaQN7dBPkzQq/CHYqYCzistHN7YTD
-         1Y9kHubSMYjRnERQkB/pkkycxPbYPoISfB5jkHhm+PfykPFkN51XV7KDPLz5dabsNz/1
-         54jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSGcJikM7W6Jz22cKG2MJ6Uxil/tLfCi8AiYHxdC96rErqbEr4Kp2ws9OM/XbJyEfTpofoIYYiW1UMR/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfzIFptNUUT8xMLrkjpk5pNIUFrrcvJTqUkTSdbBtaJddzAf08
-	OBRs5jrkh4EgaofbmBBX9PeupXAAxHgIjJH3Lvldh/CXU/C55m3RQuPOqlxjsx3ypHchyHMITrf
-	bffsUlJOXjm4KnARu1p7IY4mKlO3VIVO5s6l1C6S0p+nqXuOSzaQRc7REq2ze89s=
-X-Gm-Gg: ASbGnctS5BneTc5MChZp/xyz4ItjYz6pFGMmLvlkKyCP6NUn1yRrdbr3ycceB8cqAFd
-	OGsz9HCp5y8sXYLysbJ34ZlO+oeWnkpoDLLs5T3IKWLpGDRjhhavG8AJDepYE3IDKK5c0z26Xsq
-	gEmnG+527vzQMzhq2oit7vU98qf8p1326kbe3J0D1IClmbrF7zkDuQ8lTWwRuhBwS5HKri052zK
-	o9kGD4JDnSraq/pmfRyAZ/sdwHGCd0qDijRdgz62HKdgSbOP4QgSYeL79eGIBpJqhD+XEfY3W/4
-	KaecHpl9dXxOp7L6O9TR1ik9h9PU7j8jc4WOdDuwW0I1RqGu2Lojrba28NsS95Z42SWkH21+olA
-	=
-X-Received: by 2002:a05:6214:19c4:b0:6e8:ee68:b4a1 with SMTP id 6a1803df08f44-6f4f058f110mr8388566d6.8.1745857307499;
-        Mon, 28 Apr 2025 09:21:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIYoaNvRKG8//OnEjJanG3jFa3ZUwfVxoxZBR/HajeaP9e2qMwZlbuXIpdWarKogjDWjKqsg==
-X-Received: by 2002:a05:6214:19c4:b0:6e8:ee68:b4a1 with SMTP id 6a1803df08f44-6f4f058f110mr8387916d6.8.1745857307149;
-        Mon, 28 Apr 2025 09:21:47 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e8fd2d823sm1057195e87.194.2025.04.28.09.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 09:21:46 -0700 (PDT)
-Date: Mon, 28 Apr 2025 19:21:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: msm8998-lenovo-miix-630: add Venus
- node
-Message-ID: <vxwbzzds4lkixt2zsvjwnmfk22u3mmvp3cqk36aak2thomyagu@znr6b7gcue6w>
-References: <20250425-miix-630-venus-v2-1-cdfca385a0c8@oss.qualcomm.com>
- <CAOCk7NrcpwAnUKcVsc5D03Aazt=qWLZB034xa2FH2PF9LuL6ZA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVoOdiIRaiwNdMKTO3y+FZ0KXHQ+tXTeYrw+5LXXUFqKCWbfts2oDmXqMXGxyVr4KjzO+ClPAmDtSbHCQoXcY9bMCpcnsKZsai1p94x7IaSGb8MpMbnrmhnUEOucMAA27UaxCM7fV6h3rqdsLXYI4Ct+vQ3vHMWo8kEkKvwcjZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E9F11516;
+	Mon, 28 Apr 2025 09:22:13 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 370683F66E;
+	Mon, 28 Apr 2025 09:22:19 -0700 (PDT)
+Date: Mon, 28 Apr 2025 17:22:14 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] coresight: prevent deactivate active config while
+ enabling the config
+Message-ID: <20250428162214.GG551819@e132581.arm.com>
+References: <20250324191740.64964-1-yeoreum.yun@arm.com>
+ <20250325151803.GD604566@e132581.arm.com>
+ <Z+OuATAe31GbcKZ2@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOCk7NrcpwAnUKcVsc5D03Aazt=qWLZB034xa2FH2PF9LuL6ZA@mail.gmail.com>
-X-Authority-Analysis: v=2.4 cv=AO34vM+d c=1 sm=1 tr=0 ts=680fab1c cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=uAVbjTU27lTVuhHKzXQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: dUgjau0VcVqPb9rNEYrkDdGrHnZZC45T
-X-Proofpoint-ORIG-GUID: dUgjau0VcVqPb9rNEYrkDdGrHnZZC45T
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDEzNCBTYWx0ZWRfX8xfRvWNNqAlZ NkMGQj+hIdoc96CmeteRuNH0uOuyLC75DFp4bGWkxtIitZb+g3H6R6msSCBgHRi/vQsViQRP6Jx Lb8Bqpiks9aAn6XWRir0A8ukK4lU+AOH5lZO8WkJdzT19h5lsF4246zQSM8YiMDoBKO9F5+0h2z
- Xy/zZbN1CqurbC3SwF/fpTqSeLHpkZpNB5zSJe6VRqAq4iPnj78zGVeyiedMZHjiGnKwQ9PjUQQ zIqeVHM8o5IY93HBxcKdpAPVvZQVh1yp08sVe4Hzz7hEtx+M+bw9CCaHJuYuDI6DM+h9+FJtop/ Bz+MQqJzP+43GJy6+lh/nMoUgYeDG+b6Fj2UuCXmu5+bS6v5tdSyIQtgPAPh28ZyXzsnOvUKAES
- cK0klARF7FSRSr6LvxgUoKdFG8m3kYYd5yKMwEhUFCR2bLJCkLAwE5Y6SMfD1lbFvYRuclEl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504280134
+In-Reply-To: <Z+OuATAe31GbcKZ2@e129823.arm.com>
 
-On Mon, Apr 28, 2025 at 09:40:52AM -0600, Jeffrey Hugo wrote:
-> On Fri, Apr 25, 2025 at 12:28 PM Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+Hi Levi,
+
+On Wed, Mar 26, 2025 at 07:34:25AM +0000, Yeoreum Yun wrote:
+
+[...]
+
+> > > --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > > +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > > @@ -1020,6 +1020,9 @@ static void etm4_disable_sysfs(struct coresight_device *csdev)
+> > >  	smp_call_function_single(drvdata->cpu, etm4_disable_hw, drvdata, 1);
+> > >
+> > >  	raw_spin_unlock(&drvdata->spinlock);
+> > > +
+> > > +	cscfg_csdev_disable_active_config(csdev);
+> > > +
 > >
-> > Enable Venus on Lenovo Miix 630 and specify corresponding firmware file.
+> > In general, we need to split changes into several patches if each
+> > addresses a different issue.  From my understanding, the change above is
+> > to fix missing to disable config when disable Sysfs mode.
+> >
+> > If so, could we use a seperate patch for this change?
+> >
 > 
-> I'm curious, how did this get validated?  I didn't think there was
-> enough infrastructure enabled on this platform to check that the
-> lights were even on on in Venus.
+> It's not a differnt issue. Without this line, the active count wouldn't
+> decrese and it raise another issue -- unloadable moudle for active_cnt :(
+> So I think it should be included in this patch.
 
-I must admit, I basically checked that the firmware starts up. Marc
-Gonzalez worked on enablement of Venus on MSM8998 (on the freebox), so I
-didn't perform a thorough check.
+I read the code again and concluded the change above is not related to
+locking and would be a separate issue: when we close a Sysfs session,
+we need to disable a config on a CoreSight device.
 
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > ---
-> > Changes in v2:
-> > - Rebasde on top of linux-next
-> > - Link to v1: https://lore.kernel.org/r/20250408-miix-630-venus-v1-1-771c330ee279@oss.qualcomm.com
-> > ---
-> >  arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+Could you clarify what is meaning "unloadable moudle for active_cnt"?
+I only saw "cscfg_mgr->sys_active_cnt" is used for module unloading,
+but have no clue why "active_cnt" impacts module unloading.
+
+> > >  	cpus_read_unlock();
+> > >
+> > >  	/*
+> > > diff --git a/drivers/hwtracing/coresight/coresight-syscfg.c b/drivers/hwtracing/coresight/coresight-syscfg.c
+> > > index a70c1454b410..6d8c212ad434 100644
+> > > --- a/drivers/hwtracing/coresight/coresight-syscfg.c
+> > > +++ b/drivers/hwtracing/coresight/coresight-syscfg.c
+> > > @@ -391,14 +391,17 @@ static void cscfg_owner_put(struct cscfg_load_owner_info *owner_info)
+> > >  static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, void *load_owner)
+> > >  {
+> > >  	struct cscfg_config_csdev *config_csdev, *tmp;
+> > > +	unsigned long flags;
+> > >
+> > >  	if (list_empty(&csdev->config_csdev_list))
+> > >  		return;
+> > >
+> > > +	raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
 > >
+> > I think we should use spinlock to guard the condition checking
+> > list_empty().
+> >
+> > Here the race condition is the 'config_csdev_list' list and
+> > configurations on the list.  For atomicity, we should use lock to
+> > protect any operations on the list (read, add, delete, etc).
+> 
+> Interesting... Would you let me know which race it is?
+> here to check list_empty(), it already guarded with "cscfg_mutex".
 
--- 
-With best wishes
-Dmitry
+Thanks for pointing out this.  I read the code and understood that in
+some scenarios the list is protected by the mutex "cscfg_mutex".
+
+I would argue for using locking, we need to make clear for two thigns:
+
+- What is the race condition;
+- What locking is used to protect the race condition.
+
+For current case, a CoreSight device has a config list, the race
+condition is the config list will be manipulated by multiple places
+(e.g., for module loading / unloading, opening or closing a perf or
+SysFS session).  So a spinlock is used to to protect the config list.
+
+"cscfg_mutex" is a high level lock, my understanding is to protect the
+high level operations from the Sysfs knobs, though sometimes it can
+mitigate the race condition on configuration list mentioned above, but
+the spinlock is the locking mechanism for the low level's config list
+on a CoreSight device.
+
+> However list_del() is special case because iterating config_csdev_list
+> can be done without cscfg_mutex -- see
+> cscfg_csdev_enable_active_config().
+> This gurad with spinlock purpose to guard race unloading and
+> get the config in cscfg_csdev_enable_active_config()
+> (Please see my response below...).
+> 
+> the emptiness of config_csdev_list is guarded with cscfg_mutex.
+> therefore, It seems enough to guard iterating part with spinlock :)
+
+Mixed using cscfg_mutex and spinlock get code complexity, and I am a bit
+concerned this is not best practice.
+
+At a glance, I would say 'cscfg_mutex' is purposed to protect the global
+'cscfg_mgr', per CoreSight device's config list should be protected by
+'cscfg_csdev_lock'.
+
+> > A side topic, as here it adds locks for protecting 'config_csdev_list',
+> > I am wandering why we do not do the same thing for
+> > 'feature_csdev_list' (See cscfg_remove_owned_csdev_features() and
+> > cscfg_get_feat_csdev()).
+> 
+> In case of feature, It's okay since it couldn't be accessed when it
+> gets failed to get related config.
+
+I looked at cscfg_load_feat_csdev(), it uses 'cscfg_csdev_lock' to
+protect the feature list.  This is why I thought the feature list also
+need to be protected by the lock.  Now it is only partially protected.
+
+> When we see cscfg_csdev_enable_active_config(), the config could be
+> accessed without cscfg_mutex lock. so the config need to be guarded with
+> spin_lock otherwise it could be acquired while unload module
+> (after get active_cnt in search logic cscfg_csdev_enable_active_config()
+> and other running unloading process)
+
+To make things more clear, I have a questions.
+
+'cscfg_mgr->sys_active_cnt' is used in the cscfg_unload_config_sets()
+function to decide if can unload module, if any configuration is
+active, why this variable cannot prevent unloading module?
+
+Sorry for late replying.
+
+Leo
+
+> But feature list is depends on config, If config is safe from
+> load/unload, this is not an issue so we don't need it.
+> 
+> Thanks for your review!
 
