@@ -1,161 +1,225 @@
-Return-Path: <linux-kernel+bounces-622534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC490A9E8C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9755EA9E890
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F63188EEC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:03:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D87B3B29E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 06:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E081D5AC0;
-	Mon, 28 Apr 2025 07:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98501D61B7;
+	Mon, 28 Apr 2025 06:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b="N5UdO1p/"
-Received: from server4.hayhost.am (server4.hayhost.am [2.56.206.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkz8lfxH"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD9D1C3306
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=2.56.206.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C7E1CAA7B;
+	Mon, 28 Apr 2025 06:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745823782; cv=none; b=pT8GVxFg3H+06pQdphUsFG6q/vMAwf/n4ubBqkteR6wXGirwOTlHRlDL2uslLb7q00S9GLm+eejifFSMgv6h66tFi/JdI3OSLsIODyuqwqH/5WoBOC47hCUDV5wC5cHdqyrhJpDwvMHF8Yv1co8fllUrjZ1Q+bBAF8+eQatIckQ=
+	t=1745823084; cv=none; b=sagyGtXYR3hSRgJoILoqo7BhuCo1AE9ldI9oAiTJcrc9NCGjCPj8ZvH4VciYeKyvKhtHtn5mKi8T7JlifLoduxcjtkZjetCNMyida+CGAJndwQk6SdUTHqlrWss2fC0Nc12aaszLa595iTB3S7/o3WZflcTawQk55coTtxKyouA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745823782; c=relaxed/simple;
-	bh=t4Khpx8hn2lo70annBZ9O4ySJAXErt3B6azoxo+lUWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sO64bRJhEc6q63HjwoePxtl3qYbA98KXxuTX4XLdmOxtFU+8EF4gYg1SxJITj8GTLlfFOlb8DE/9GGj5s7Agpw3J1kkCUG2S+vD1FJ2amWtkb2h7g2R7gfDZlMBIUiHQ6BTtNo1td96ZV50Oi5Hahw+6gry4R3CzbjWHcSqPWnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am; spf=pass smtp.mailfrom=beldev.am; dkim=pass (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b=N5UdO1p/; arc=none smtp.client-ip=2.56.206.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beldev.am
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beldev.am;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=HcWpkWScFNwzU6aVkYjAiVBMgx2kahsBntXsipuyiz4=; b=N5UdO1p/XHbQX0d65roC68sd6z
-	TOe6vygEjYbZ296gjX4NPFYHbFC6EvALybWM4RXcL5ZGoUlCFj6+H17TzurVTm9GMgPFJ13gRMZ/e
-	UjZcp7zoRnSt/YQ9eAeCUj5VWEpQx4+mfI4yd3HDM2sBUEP4K3npcRFb3cj2K9xhYcGLbs+am7sF0
-	g99qJBC31Q5cWuPut7s7bVj2nQzA/Sw6q/r2CwhLJltAJNH4XaHYMgyiIA4GAF6u18bwcpk643EqF
-	7uEDfIPH/7UC0Vboa89KosTEkOvs7c1/euGIHAiDejAvhDTZCMh4BcluX45MYKnF4Xav+ubqg/Lwm
-	yARImijQ==;
-Received: from host-90-233-217-8.mobileonline.telia.com ([90.233.217.8]:64578 helo=localhost.localdomain)
-	by server4.hayhost.am with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <igor.b@beldev.am>)
-	id 1u9IJc-000000006yu-1kPD;
-	Mon, 28 Apr 2025 10:50:08 +0400
-From: Igor Belousov <igor.b@beldev.am>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	minchan@kernel.org,
-	nphamcs@gmail.com,
-	senozhatsky@chromium.org,
-	shakeel.butt@linux.dev,
-	yosry.ahmed@linux.dev,
-	Igor Belousov <igor.b@beldev.am>
-Subject: [PATCH mm-new v2] mm/zblock: add debugfs
-Date: Mon, 28 Apr 2025 08:49:24 +0200
-Message-ID: <20250428064924.53496-1-igor.b@beldev.am>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1745823084; c=relaxed/simple;
+	bh=0Pld1a2MzJofAsOTCHr+Q+IIwwPYL7BMWNwta9Ubkk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W5dpHuZ5t2jg6frhYfipthbDuOKRfAAvVtR5EtXnptAwRP8Ttpa+DuPQOKpQq1SoYNA+u5KMbUQfydAoyofimfDDB7KyAYvgJHgKuewTgaz3ELZLj4NpWSRZFfl+PTzX9rC6TznCjcoiZ2J0qOi2XSC+XHOpKzWiNQ9RTBYlx54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkz8lfxH; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso8358760a12.3;
+        Sun, 27 Apr 2025 23:51:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745823081; x=1746427881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hi43n4IcBdhVLvOaOx+3iA/0eX/Szd+TDDCfcl8t5Wg=;
+        b=nkz8lfxHJ6Ye+bWRMx87WwCsglQh0muZzSXnTQ6fS+ID5tiK+b/anRxurYkzLwr43d
+         YoV291U/brDQQ4rZZTJb26t+JCL8is1nVo6AxKyGoq74CddxyCaP4SPh/138j///Ax19
+         44ybWR6FIQmLqLbRj3b55H2ipOW8oB1ESvifjgVyRsqyiwz6qUxPVwZYa7FhkKiGEvFL
+         iWkbJpN8yqWDplga+K5xHaMgMSRV2ctmD6vso03OI0OG1HFInM/GMlpA/g5RfRKB5/xx
+         tKW1It7/OZdsvRra02f4cw6XvZUQilm8Jsi7WIrd0/Itsb7YruVaaLBN8FvqVkJQGbd7
+         c07w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745823081; x=1746427881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hi43n4IcBdhVLvOaOx+3iA/0eX/Szd+TDDCfcl8t5Wg=;
+        b=S8foysDNOdegJXUEmDOtllQHfcYGbtyK2HKrvtf9aDA2vcG3MsItL/k/Kj81joDEUM
+         idBKmodalGMT2954vLMQDssC7Mx//9h2JhXoVCOb0kjBCnNGuuPwxJptL2D6HLqrMfSS
+         WBiRY1mvdrCr5nO6q3imYMf3pBdplupbXVtr4CTyHOYBuFkX1OIn7w2O+pvlrsGfk+0f
+         pYMQKGF6PtaEFpyK2mbaB7JJDbuj7V6UTVzN6FDnybXeiFBXfmqeZ3t7/D48qczKk4Cy
+         Wt3k5uMR8/dc0TSHzjD/y+jNv7Eb+xFJRtqzL/ca9RVPJ5Ll42r1euqjGzWDFAiC2Pks
+         7/zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhJWwJg4qqDSmKC462cK2jTW/5Tm9m4z8uk0mUMLNJBQ0afcbstFG115WqVd15RvGPOOLLIqGG8Ctd@vger.kernel.org, AJvYcCV2soyz6M5BJbZ9u6I9P4R8763S8kO0nD87QQ/1zT9cwGMHBbTk6iLS+5B8FdNrGkk06V9H8fPBSeOIuQ==@vger.kernel.org, AJvYcCXEXZQNNl1L+hbW4n/NX1Pkcr+jijliYU7QCKB8JQ5CwSdtBIEuw/ZdSIoHka6ze9m4tuW/LxcFUF4tLrF7@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQoLMJCJCBtRBfMkglT0tvyZiSkvdtcGx3SLmnmnnUogx3L7MU
+	APP+wxWuEywQacJmIlq/NyJHY/Px43yFvrJBCAG781ZvnrqW7yC08CJdz/47I+IkuBJP8LH/1Qx
+	lYyiKPEOA5eMxxqBPj3goqV82U7A=
+X-Gm-Gg: ASbGncvh8J6RXSRiqJKQduqcgHfdY0jKrGivPbhGAvmroxv34WdGDSdsDEnDbTJsKjG
+	jdb77vrUtam44QGra8eMtJz1IYvanef4+c2jLPo6KjaqyunOIKcAjBLWvJcfhEtuSuqNKT1u3J0
+	PYXsEaTsC5yoPoAxEc1aJztujy
+X-Google-Smtp-Source: AGHT+IEkASV0hxNvYb5ls5XU6N8PiOuOxkodobZeYhl/S2nbHHdlz3AJ68sH/k9QmanKndXp09dW/wEfCx6omY9vxHE=
+X-Received: by 2002:a17:907:f509:b0:aca:c532:cf07 with SMTP id
+ a640c23a62f3a-ace711655e5mr928400766b.35.1745823080557; Sun, 27 Apr 2025
+ 23:51:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server4.hayhost.am
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - beldev.am
-X-Get-Message-Sender-Via: server4.hayhost.am: authenticated_id: igor.b@beldev.am
-X-Authenticated-Sender: server4.hayhost.am: igor.b@beldev.am
+References: <cover.1745605382.git.Jonathan.Santos@analog.com> <2a8a327e589703ee53dbfb5190d20680ac3b350f.1745605382.git.Jonathan.Santos@analog.com>
+In-Reply-To: <2a8a327e589703ee53dbfb5190d20680ac3b350f.1745605382.git.Jonathan.Santos@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 28 Apr 2025 09:50:43 +0300
+X-Gm-Features: ATxdqUEBba2M8zExxClBxVqYkvVQ1NpU-dNtSsRR8YiWUveJwNaf_wH1l9SpSQA
+Message-ID: <CAHp75VdbD4HTonEZT8O-3bsqQ70_XRnZd7vS7gdyrG2gKYBHPA@mail.gmail.com>
+Subject: Re: [PATCH v6 06/11] iio: adc: ad7768-1: Add GPIO controller support
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, andy@kernel.org, nuno.sa@analog.com, 
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	marcelo.schmitt1@gmail.com, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	lgirdwood@gmail.com, broonie@kernel.org, jonath4nns@gmail.com, 
+	dlechner@baylibre.com, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add debugfs entry to monitor number of blocks allocated for different
-block sizes.
+On Mon, Apr 28, 2025 at 3:13=E2=80=AFAM Jonathan Santos
+<Jonathan.Santos@analog.com> wrote:
+>
+> The AD7768-1 has the ability to control other local hardware (such as gai=
+n
+> stages),to power down other blocks in the signal chain, or read local
+> status signals over the SPI interface.
+>
+> Add direct mode conditional locks in the gpio callbacks to prevent regist=
+er
+> access when the device is in buffered mode.
+>
+> This change exports the AD7768-1's four gpios and makes them accessible
+> at an upper layer.
 
-Signed-off-by: Igor Belousov <igor.b@beldev.am>
+...
 
----
- mm/zblock.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> +#include <linux/gpio.h>
 
-diff --git a/mm/zblock.c b/mm/zblock.c
-index 6afe6986260d..e2036a6e1617 100644
---- a/mm/zblock.c
-+++ b/mm/zblock.c
-@@ -17,6 +17,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/atomic.h>
-+#include <linux/debugfs.h>
- #include <linux/list.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-@@ -27,6 +28,7 @@
- #include "zblock.h"
- 
- static struct rb_root block_desc_tree = RB_ROOT;
-+static struct dentry *zblock_debugfs_root;
- 
- /* Encode handle of a particular slot in the pool using metadata */
- static inline unsigned long metadata_to_handle(struct zblock_block *block,
-@@ -111,6 +113,22 @@ static struct zblock_block *alloc_block(struct zblock_pool *pool,
- 	return block;
- }
- 
-+static int zblock_blocks_show(struct seq_file *s, void *v)
-+{
-+	struct zblock_pool *pool = s->private;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(block_desc); i++) {
-+		struct block_list *block_list = &pool->block_lists[i];
-+
-+		seq_printf(s, "%d: %ld blocks of %d pages (total %ld pages)\n",
-+			i, block_list->block_count, 1 << block_desc[i].order,
-+			block_list->block_count << block_desc[i].order);
-+	}
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(zblock_blocks);
-+
- /*****************
-  * API Functions
-  *****************/
-@@ -140,6 +158,9 @@ static struct zblock_pool *zblock_create_pool(gfp_t gfp)
- 		INIT_LIST_HEAD(&block_list->active_list);
- 		block_list->block_count = 0;
- 	}
-+
-+	debugfs_create_file("blocks", S_IFREG | 0444, zblock_debugfs_root,
-+			    pool, &zblock_blocks_fops);
- 	return pool;
- }
- 
-@@ -426,12 +447,15 @@ static int __init init_zblock(void)
- 		return ret;
- 
- 	zpool_register_driver(&zblock_zpool_driver);
-+
-+	zblock_debugfs_root = debugfs_create_dir("zblock", NULL);
- 	return 0;
- }
- 
- static void __exit exit_zblock(void)
- {
- 	zpool_unregister_driver(&zblock_zpool_driver);
-+	debugfs_remove_recursive(zblock_debugfs_root);
- 	delete_rbtree();
- }
- 
--- 
-2.49.0
+No way. This header must not be in any of the code. (Yes, there are
+leftovers in the kernel, but work is ongoing to clean that up)
 
+> +#include <linux/gpio/driver.h>
+>  #include <linux/gpio/consumer.h>
+
+>  #include <linux/kernel.h>
+
+And since you are doing the big series for the driver, please drop
+this header and replace it (if required) with what is used. No driver
+code should use kernel.h.
+
+>  #include <linux/module.h>
+
+...
+
+> struct ad7768_state {
+
+>         struct regulator_dev *vcm_rdev;
+>         unsigned int vcm_output_sel;
+>         struct clk *mclk;
+> +       struct gpio_chip gpiochip;
+>         unsigned int mclk_freq;
+>         unsigned int samp_freq;
+>         struct completion completion;
+
+Btw, have you run `pahole`? Is this the best place for a new field in
+accordance with its output?
+
+...
+
+> +static int ad7768_gpio_set(struct gpio_chip *chip, unsigned int offset, =
+int value)
+> +{
+> +       struct iio_dev *indio_dev =3D gpiochip_get_data(chip);
+> +       struct ad7768_state *st =3D iio_priv(indio_dev);
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       if (!iio_device_claim_direct(indio_dev))
+> +               return -EBUSY;
+> +
+> +       ret =3D regmap_read(st->regmap, AD7768_REG_GPIO_CONTROL, &val);
+> +       if (ret)
+> +               goto err_release;
+> +
+> +       if (val & BIT(offset))
+> +               ret =3D regmap_update_bits(st->regmap, AD7768_REG_GPIO_WR=
+ITE,
+> +                                        BIT(offset), value << offset);
+
+And if value happens to be > 1?
+Also consider the use of regmap_assign_bits().
+
+> +err_release:
+> +       iio_device_release_direct(indio_dev);
+> +
+> +       return ret;
+> +}
+
+...
+
+> +static int ad7768_gpio_init(struct iio_dev *indio_dev)
+> +{
+> +       struct ad7768_state *st =3D iio_priv(indio_dev);
+> +       int ret;
+> +
+> +       ret =3D regmap_write(st->regmap, AD7768_REG_GPIO_CONTROL,
+> +                          AD7768_GPIO_UNIVERSAL_EN);
+> +       if (ret)
+> +               return ret;
+> +
+> +       st->gpiochip =3D (struct gpio_chip) {
+
+> +               .label =3D "ad7768_1_gpios",
+
+What is '_1' for?
+Also, what will happen if the device has two or more such ADCs
+installed? Will they all provide _the same_ label?!
+
+> +               .base =3D -1,
+> +               .ngpio =3D 4,
+> +               .parent =3D &st->spi->dev,
+> +               .can_sleep =3D true,
+> +               .direction_input =3D ad7768_gpio_direction_input,
+> +               .direction_output =3D ad7768_gpio_direction_output,
+> +               .get =3D ad7768_gpio_get,
+> +               .set_rv =3D ad7768_gpio_set,
+> +               .owner =3D THIS_MODULE,
+> +       };
+> +
+> +       return devm_gpiochip_add_data(&st->spi->dev, &st->gpiochip, indio=
+_dev);
+> +}
+
+...
+
+> +       /* Only create a Chip GPIO if flagged for it */
+> +       if (device_property_read_bool(&st->spi->dev, "gpio-controller")) =
+{
+> +               ret =3D ad7768_gpio_init(indio_dev);
+> +               if (ret < 0)
+
+Why ' < 0'?
+
+> +                       return ret;
+> +       }
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
