@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-623435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA70AA9F5BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:25:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2BEA9F5BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DE9189233C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86B8C7AC50B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD0627B51B;
-	Mon, 28 Apr 2025 16:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6E927BF78;
+	Mon, 28 Apr 2025 16:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BPDZRIut"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RjpQpXPu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7760B27935F;
-	Mon, 28 Apr 2025 16:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE1027A939
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745857461; cv=none; b=BofYacpVOdaChGaBNY/b2RYWK61HXJLQLUIP/LyUlmUicMpagQh4Rgd6b1ypD8qCwivBKSimAWxtfi2PsNuXMy8lBa7boo6NhF4qaPxG1DxmaAMBbtWT/SzwtnDKrJHDxqr5SSK73IlQpCvA540u6mRUCNhVKuzTeJQ+GtrO9mM=
+	t=1745857476; cv=none; b=RAR+CSp+/iiZhDq6MIkA1t5ETZ3/mf1avY99JcGAmhIkrN0GalzK8W7pfJD3lcPvClSp1zCKDySMpvTTxMHRenbBDKz0zsWLsa9fzFNkd9yvPL8NCe1/k/2WJxzZ5/tHJPt7+g9la0redWTCQ5I6fU68NknyPQTexSqiXe/34Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745857461; c=relaxed/simple;
-	bh=CHBCp6cdsJoZymwJjoigCt9VlbbXnAa9bSNchk1wmqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qj6LUSVC4KPcPTd1/Vd9vdYgYEY3/9jaUgaWi9iHjvopWCEJcBQEKl1dpYP5IMP1/Fx7YdlMaIZkc6XuAE3JsA0oouLgjM5xhYzYCq/iuM7sC4AtJRaWfVjpv9DkxaVxpTa0ctz/XGdwLNF1wflMgEF5uRCrhPMy27iren1YHgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BPDZRIut; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53SGOCqJ2821103
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Apr 2025 11:24:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745857452;
-	bh=pLCRaOu6Tt3QIEat0TyIkyelowGCiPWKGTNSyRo/nPE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BPDZRIutC8V4ELh+wV6b8dCune1mLxqJ2gVOwKmJ58FO2WOuRKvinMXHUI91+rEJF
-	 7upqnTaJpw5Q6Z+twKycCmru6wZ6qzJb7kkMfKCuFPwfflNzjIIVETWsprTrvxwLG+
-	 Rg37T5jK54Q3TIGJIq2jQfu9j4gT3b3VJoxUUH3w=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53SGOCPL028905
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 28 Apr 2025 11:24:12 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
- Apr 2025 11:24:12 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 28 Apr 2025 11:24:12 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53SGOB4S127609;
-	Mon, 28 Apr 2025 11:24:11 -0500
-Message-ID: <f8424c7e-e778-4140-9cf9-83f43cef1a04@ti.com>
-Date: Mon, 28 Apr 2025 11:24:11 -0500
+	s=arc-20240116; t=1745857476; c=relaxed/simple;
+	bh=gx7RtZXtXcXDCgsMk2d3JVtds6JRV5t+fEp5vL+9MQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIZYP/Ek9ytbi9ARwq4ZuYuiZySPxSzLs15Cm/zUr69AeC+fcgrAX8AChOqwXhO50Po2iirLjjZ+ywoe8bR7f6ENiY1AY1qYzwzi/h4Zrh4y2uATrrp9vHfnobAkNevOLC9O1QjPpTgR6swTfmyQcFDvj7kOZYINzjMYlR3bfiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RjpQpXPu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745857472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KRdiWHlG77Us6l2oFM6nu2eUggr09dOOElY1pvowm4s=;
+	b=RjpQpXPuCWq6gL9UFiXj/hsOoO/3pwepsXb756559WTebj+OHTS0QRcy/j+0F95QRE8qB7
+	L3aOq6WiCWd35U7A1nevgx+xu6DXDUEy0kD7H+qm+v6M1dp2u0d76QRlfzEowznxCS/edI
+	h/gurOtPqpRYeJ4GVJcy2YfjD1+QLzI=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-428-9ryKjGSPM7OGF2YR4kqDnw-1; Mon, 28 Apr 2025 12:24:28 -0400
+X-MC-Unique: 9ryKjGSPM7OGF2YR4kqDnw-1
+X-Mimecast-MFC-AGG-ID: 9ryKjGSPM7OGF2YR4kqDnw_1745857467
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4768488f4d7so70275631cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:24:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745857467; x=1746462267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KRdiWHlG77Us6l2oFM6nu2eUggr09dOOElY1pvowm4s=;
+        b=jJdKOYuPf+kQQho9Wf7Riflu7Gr0bNIbMnSD2IbWcu39rDJY0JSl8dmTSzNZ6XDn6g
+         fk9oWmOfshLQYlY5OEQ4Hvhv8kUm1OHCf16J7WSLyavvFQ0K80vkViUd43yfsOVuiAnj
+         axSrlb4quMTwdt/HOPx5ymmLjUGoTRCL9012LE8TAw2S0V6sGwXppVGH87tvYRvTE6WV
+         YNpbCtTUJwq+jrVZREOVAYKlvhPt3tfdDdZrpSoSpmvxoU6CUGCw5/kU9DhPpAX0dbXE
+         wNZMFQanbP8LRgzUFARukQnCiOegySpnC6VIQwOgLiffrHFpOoSiyUSahHrCOKBVrkaH
+         1J9w==
+X-Gm-Message-State: AOJu0YyPftS0PTZhG7fYqLQxxvLNlOrIaOCO2C8Gfs4138bvblYEJI31
+	yQ56aWjXNdBSPGTDW6Hzo39ddnSZO19DKbqOMMwyIIfqDXApQKM655jhJMGePmumbAqx+Pu/xdJ
+	ra3VQcEkiCIbfXbXnNB+OSlIyHqqNGHCpkklIgf5kQvoXYnv78WbjEhQIlQuz037P7hRguQ==
+X-Gm-Gg: ASbGncvZLzCEVLwoICrj3mu0PEZYMbBYSb7DrcO7wqHBVzZ8lhUEvvwihF0M59l9UQ0
+	dBwB0TqPNPy7JztHMQhAzf+Wsfp50dUY0q3lN744+yzc2X0C7ikKIX5gbBLSxUUs5oyj03jHfyb
+	z5KX+UbXhTktdz5tQmCHygRSqFh5/PgsyZFXVGxRc9JVLNCIDH5J8r6UNW1Jbm+y4NBLLjDpyph
+	DEubzqCboS6hjJzBADVWcn9b5wmNZ89vRDmOOWrtYiUWPxpnbaJUM1DP1JgUhAep4LCx1wa+Ew9
+	Le4=
+X-Received: by 2002:ac8:5885:0:b0:476:8ee8:d8a1 with SMTP id d75a77b69052e-48025238433mr189998661cf.45.1745857467084;
+        Mon, 28 Apr 2025 09:24:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbtfAYJXqWijuqC9qE1XAYSFE+Ms0Ul7NtVdmGjB5I/RjjP9FCiSLL88Eit0raUnSdKc6qiA==
+X-Received: by 2002:ac8:5885:0:b0:476:8ee8:d8a1 with SMTP id d75a77b69052e-48025238433mr189998431cf.45.1745857466831;
+        Mon, 28 Apr 2025 09:24:26 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9eaf264dsm70223561cf.10.2025.04.28.09.24.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 09:24:26 -0700 (PDT)
+Date: Mon, 28 Apr 2025 12:24:22 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-trace-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>
+Subject: Re: [PATCH v1 05/11] mm: convert VM_PFNMAP tracking to
+ pfnmap_track() + pfnmap_untrack()
+Message-ID: <aA-rtji7ujQgckbM@x1.local>
+References: <20250425081715.1341199-1-david@redhat.com>
+ <20250425081715.1341199-6-david@redhat.com>
+ <aAvvQ1h9bg11hiqI@x1.local>
+ <bbadf008-9ffc-4628-9809-2d8cf104a424@redhat.com>
+ <aA-n9hvSX9JLsRM-@x1.local>
+ <7a26e29c-d889-450a-a5e1-ce671f09e4c8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/11] arm64: dts: ti: k3-am62x-sk-common: Enable IPC
- with remote processors
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Hari Nagalla <hnagalla@ti.com>,
-        Beleswar
- Prasad <b-padhi@ti.com>,
-        Markus Schneider-Pargmann <msp@baylibre.com>,
-        Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>
-References: <20250415153147.1844076-1-jm@ti.com>
- <20250415153147.1844076-9-jm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250415153147.1844076-9-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7a26e29c-d889-450a-a5e1-ce671f09e4c8@redhat.com>
 
-On 4/15/25 10:31 AM, Judith Mendez wrote:
-> From: Hari Nagalla <hnagalla@ti.com>
+On Mon, Apr 28, 2025 at 06:16:21PM +0200, David Hildenbrand wrote:
+> > Probably due to what config you have.  E.g., when I'm looking mine it's
+> > much bigger and already consuming 256B, but it's because I enabled more
+> > things (userfaultfd, lockdep, etc.).
 > 
-> For each remote proc, reserve memory for IPC and bind the mailbox
-> assignments. Two memory regions are reserved for each remote processor.
-> The first region of 1MB of memory is used for Vring shared buffers
-> and the second region is used as external memory to the remote processor
-> for the resource table and for tracebuffer allocations.
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
+> Note that I enabled everything that you would expect on a production system
+> (incld. userfaultfd, mempolicy, per-vma locks), so I didn't enable lockep.
 
-Acked-by: Andrew Davis <afd@ti.com>
+I still doubt whether you at least enabled userfaultfd, e.g., your previous
+paste has:
 
->   .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 34 ++++++++++++++++---
->   1 file changed, 29 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> index d52cb2a5a589a..364b2ba6af958 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> @@ -70,6 +70,18 @@ mcu_m4fss_memory_region: m4f-memory@9cc00000 {
->   			no-map;
->   		};
->   
-> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9da00000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9da00000 0x00 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		wkup_r5fss0_core0_memory_region: r5f-memory@9db00000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x00 0x9db00000 0x00 0xc00000>;
-> +			no-map;
-> +		};
-> +
->   		secure_tfa_ddr: tfa@9e780000 {
->   			reg = <0x00 0x9e780000 0x00 0x80000>;
->   			alignment = <0x1000>;
-> @@ -82,11 +94,6 @@ secure_ddr: optee@9e800000 {
->   			no-map;
->   		};
->   
-> -		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9db00000 {
-> -			compatible = "shared-dma-pool";
-> -			reg = <0x00 0x9db00000 0x00 0xc00000>;
-> -			no-map;
-> -		};
->   	};
->   
->   	leds {
-> @@ -476,10 +483,17 @@ cpsw3g_phy0: ethernet-phy@0 {
->   };
->   
->   &mailbox0_cluster0 {
-> +	status = "okay";
-> +
->   	mbox_m4_0: mbox-m4-0 {
->   		ti,mbox-rx = <0 0 0>;
->   		ti,mbox-tx = <1 0 0>;
->   	};
-> +
-> +	mbox_r5_0: mbox-r5-0 {
-> +		ti,mbox-rx = <2 0 0>;
-> +		ti,mbox-tx = <3 0 0>;
-> +	};
->   };
->   
->   &mcu_m4fss {
-> @@ -489,6 +503,16 @@ &mcu_m4fss {
->   	status = "okay";
->   };
->   
-> +&wkup_r5fss0 {
-> +	status = "okay";
-> +};
-> +
-> +&wkup_r5fss0_core0 {
-> +	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-> +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-> +			<&wkup_r5fss0_core0_memory_region>;
-> +};
-> +
->   &usbss0 {
->   	bootph-all;
->   	status = "okay";
+  struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   176     0 */
+
+Not something that matters.. but just in case you didn't use the expected
+config file you wanted to use..
+
+-- 
+Peter Xu
+
 
