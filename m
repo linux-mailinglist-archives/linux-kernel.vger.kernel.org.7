@@ -1,64 +1,82 @@
-Return-Path: <linux-kernel+bounces-622623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D9DA9E9E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:47:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EE1A9E9F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43CCB7AEA4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4854E3AA885
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EED1E3787;
-	Mon, 28 Apr 2025 07:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7191F0E58;
+	Mon, 28 Apr 2025 07:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hddJxAKF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxXxFQUw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B961DE8BE;
-	Mon, 28 Apr 2025 07:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A890B1DF25C;
+	Mon, 28 Apr 2025 07:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826324; cv=none; b=tR5n2ZFmwG3s6WbINeSYAASh/55xoZb54tKIvGWbYJ6RCKUv3gsPN1y/oyrRkLjWEiT2xTOkZJNGx5zy59lqefFO55ZhIxzRtTq7+Vc6bhyQeSyKjVu8LhD0Dn1AkPdkFAxlNKXjLCa87QwRPC8RTvemdz9g9RtX6QxPESn6CUA=
+	t=1745826349; cv=none; b=mNAkwNxdpf8jJXUJXOwcF0dRKSW11/u4mPpmi5uw47l/8vv5SBbSi0P4yeSWEFBRiIBAvwQSQ0FQslZOizpOSLawZKPLHLOm9wLVYDUc7b9yy8RZrxBJ6isnJzW9jE/+ok3YvgQS2HzHC17BPFURIGG4OXiVfVSqzefLkw6XgfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826324; c=relaxed/simple;
-	bh=t0Da91DWrbzujPj1g6eKoWgpJ0WoF4h007/WWJU4frk=;
+	s=arc-20240116; t=1745826349; c=relaxed/simple;
+	bh=kppXuiS+8xqPRG5sBttxhO/jv23p9dH1yPP/0KlrHC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5YNIforn1TsV1mg0Q0azQfa0Z8oYyVSwyjHEFMy3RjYQJi8YECmZHSpJ1R0i1Isqou7+uHSI14rqjH48LfFQgxDfIjEnmF+uksQTqXHCYOMZvk9BxcXXOhO1C+8EvayMEBXpC7J71DL9TMQz+yB8paPQ2ra875U9pnlswLiOqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hddJxAKF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B8FC4CEE4;
-	Mon, 28 Apr 2025 07:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745826323;
-	bh=t0Da91DWrbzujPj1g6eKoWgpJ0WoF4h007/WWJU4frk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hddJxAKFJISn2zWBvXWpe1bcwMG1Bww03EhSUYat2xtGuVjmbgrwIntzPhyCCrgiS
-	 cYmxEfK2NNIHTvDlr2qg1U1Jk2rWeSJXf70ViBJ88dsFGuSFapG8lwRwuX7HXVTr89
-	 7TXSJB5eyt3X7uOQpQkJzmjY7/JtFQBgkvWc9kmPZEGxhkGEWvu3vG67vRokCrQkaC
-	 b5wDioRo90sKLnMQVxcRwqSbEvTniIb6etAYizIV6WPW5W/Oo03Fr7bOJM4xECu6vW
-	 es9P4uj9BUYolIcqqxSnPLFkWMR5hynxvveh71EjF2NDMcld/6VQc4UQ47ZuHF4Mrf
-	 G+KKVTDXJRZQQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u9JB6-000000004zK-0H1W;
-	Mon, 28 Apr 2025 09:45:24 +0200
-Date: Mon, 28 Apr 2025 09:45:24 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	laurentiu.tudor1@dell.com, abel.vesa@linaro.org
-Subject: Re: drm/msm/dp: Introduce link training per-segment for LTTPRs
-Message-ID: <aA8yFI2Bvm-lFJTl@hovoldconsulting.com>
-References: <20250417021349.148911-1-alex.vinarskis@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p29fammrfEQhE2Hqd3gSQzHrBKIDPq63KKRfw544XOBwj0reM2gyD+WaNtn4U5Ahh7JFPS8vDU05YIlau1CJ36PuP5cfkGX/UdsnULbD7X6vUaaWxTiLc85sh0LEGkssJm5AkL6c04Guq9qmZIUx6gj96zJXpB1YkYBG1L+fSA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxXxFQUw; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745826348; x=1777362348;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kppXuiS+8xqPRG5sBttxhO/jv23p9dH1yPP/0KlrHC8=;
+  b=UxXxFQUwIiNKBpG2M8qbfRf+/HV4GM97dene2lBAnPAv1BXxEi21kUMP
+   J3NKAEOCr9ZqgtUBFUC/JXCSCCkDokvv0I5s5ZCqjr4lGJv4C7Qx5DyT9
+   5TrKcf/znAiPcN7gimaMUcrD/VR/Og2LDsV2bsxd0jDTSYa2m8IR6txp1
+   Vv5kVCfNcKALPux4D5QQxGBSYAQBwRZOLsVzMMMgursifOzpHeG1SqNuA
+   BzEWTIxLa2T4jr8gW42UDGwaWkqjL0N0XFvIlgIPO/dfI6RnZkxEbEjAA
+   URhpWocEm0h6N52KrT0UlgIzvte74vIwABNeyEEbZVECWAJow8VQLpBjf
+   w==;
+X-CSE-ConnectionGUID: Nlp1091aRYaX2SKqepIHnw==
+X-CSE-MsgGUID: r1acmouuSRCA6QKLoAXH+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="47545062"
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
+   d="scan'208";a="47545062"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 00:45:47 -0700
+X-CSE-ConnectionGUID: gXt0AyZDRHGPDxmAVgVnuA==
+X-CSE-MsgGUID: IA9EteJAShyegnxW+Wef0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
+   d="scan'208";a="138617872"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 00:45:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u9JBM-000000011Kl-09HN;
+	Mon, 28 Apr 2025 10:45:40 +0300
+Date: Mon, 28 Apr 2025 10:45:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Kent Gustavsson <kent@minoris.se>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kent Gustavsson <nedo80@gmail.com>, devicetree@vger.kernel.org,
+	Lukas Rauber <lukas.rauber@janitza.de>
+Subject: Re: [PATCH v2 1/3] iio: adc: mcp3911: fix device dependent mappings
+ for conversion result registers
+Message-ID: <aA8yI27J4d_bFaGe@smile.fi.intel.com>
+References: <20250428-mcp3911-fixes-v2-0-406e39330c3d@gmail.com>
+ <20250428-mcp3911-fixes-v2-1-406e39330c3d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,44 +85,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250417021349.148911-1-alex.vinarskis@gmail.com>
+In-Reply-To: <20250428-mcp3911-fixes-v2-1-406e39330c3d@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Apr 17, 2025 at 04:10:31AM +0200, Aleksandrs Vinarskis wrote:
-> Recently added Initial LTTPR support in msm/dp has configured LTTPR(s)
-> to non-transparent mode to enable video output on X1E-based devices
-> that come with LTTPR on the motherboards. However, video would not work
-> if additional LTTPR(s) are present between sink and source, which is
-> the case for USB Type-C docks (eg. Dell WD19TB/WD22TB4), and at least
-> some universal Thunderbolt/USB Type-C monitors (eg. Dell U2725QE).
+On Mon, Apr 28, 2025 at 08:54:11AM +0200, Marcus Folkesson wrote:
+> The conversion result registers differs between devices. Make sure the
+> mapping is correct by using a device dependent .get_raw() callback function.
 
-Does this mean that the incomplete LTTPR support in 6.15-rc1 broke
-adapters or docks with retimers in transparent mode?
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-You describe at least one of this patches as a fix but I'm not seeing
-any Fixes tags or indication that these need to go into 6.15-rc to fix
-a regression.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> Changes in v3:
-> - Split 1st patch into 3
-> - Simplified handling of max_lttpr_lanes/max_lttpr_rate
-> - Moved lttpr_common_caps to msm_dp_link (not msm_dp_panel, as LTTPRs
->   are link related, not panel related)
-> - Picked Stefan's T-b tag (last patch only, as 1st one is getting split)
-> - Droped Abel's R-b tags from 1st patch that got split due to high diff
-> - Fixed alignment issues, initialization of variables, debug prints
-> - Moved lttpr_count to avoid ugly pointer
-> - Link to v2: https://lore.kernel.org/all/20250311234109.136510-1-alex.vinarskis@gmail.com/
 
-I tested v2 due to the dependencies in msm-next and DP altmode still
-works on my X13s and T14s (while not using any docks):
-
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-
-> Aleksandrs Vinarskis (4):
->   drm/msm/dp: Fix support of LTTPR initialization
->   drm/msm/dp: Account for LTTPRs capabilities
->   drm/msm/dp: Prepare for link training per-segment for LTTPRs
->   drm/msm/dp: Introduce link training per-segment for LTTPRs
-
-Johan
 
