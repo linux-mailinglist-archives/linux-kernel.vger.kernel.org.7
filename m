@@ -1,191 +1,193 @@
-Return-Path: <linux-kernel+bounces-623666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B3EA9F8FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB2CA9F910
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 970B73AA6E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A3A1A85BED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 19:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34AC288B1;
-	Mon, 28 Apr 2025 18:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136E5296163;
+	Mon, 28 Apr 2025 19:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gOdIjK2D"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2061.outbound.protection.outlook.com [40.107.223.61])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pm7ciZs6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF86626F478;
-	Mon, 28 Apr 2025 18:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745866737; cv=fail; b=TpvBnQaUjd/XVmsLry+8krGl397FHHDzSCYzuNAfVe7nlAGLNjlXqvDVwk+MEq2ElwsrzS1VXI+k4EmR1g59nhQDjpOsN2eC2OaaG0gPgEKKcNVHhOC+MXIA5ubllGwardELD99QuY6ULGo5Zjys16sxMAw3pCyxvstIMdQpVgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745866737; c=relaxed/simple;
-	bh=6Rcw+Z3pAPJ/5sFkPFayB37Uy5r+hkQ34xqD06iolk0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+F3kQ/wJQ5XEW3q9y10qFSNreE7UMPQ7M+bBv+sGOOW3YQFGTSA6bwJmHYdkqFXyqfc14uCeuBf04QhZ5k6DX4sy5qn46LQdqlMm7Wc/tNSZghOa88ztZhyrH7zOBlKvx37hFRBX7DYYHqMsCZV8c9HFjKgomOXs3hdxET5R10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gOdIjK2D; arc=fail smtp.client-ip=40.107.223.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D4+C35GFg2a2VngNKS8duTOUoi6JP7KDh8Nm1VX0j6Wv0OKJk1cMIaiee20YZI25nnQTzBlrpjRfaHv/Qd2M6bZ7Ip17TRv3HzXaH+o1gOf6SzUl7nYdjZbOTLdIvvWssPxk2/ZMShXt1gjWn4X01fwtCb8ajGTwJNa6STT552H57l6T+5+G2yDAlwYAbBi/HvqMg9rDJje1Pvsg5shv4v6QFqDmfCsesfkhiGmEem5yaWGZWJbyUF4KysH5vFuYa/vQXhK7Li0YOHB3EeLbZfIgPskVyT4jbLONpKwvpm2i0HTXwXjU0zeMEhCdN+AoLw3dvWTX6j3aBjXi7Nwv+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0tWACRV41wVnve2FZvUmFcDo6E/puNFtzF3f1VthyD8=;
- b=wPVxPDUppiPzc+5UfVK04HfLKyOdjhox+1IQq8uavHK3HSLnPqysbBMdW5CE9AjQoO/gWkVZzjlF466QugXaR0Tgj6Sowuf3hNdSSUwMrp6NZCJAhXFLXRHHyNiTESiglIdMc7lnhso/0WUOjgBhScGY4SPdQfX/hpx7pgMPBoHQ0QVssOTmukzIE9yNkrz7gaMqOKKU6Nst97P0Xuy9I8H4pErKaouuttltv6Muw1Yx8mBOYVRTfjS6czDskwac+5emfkV9Uu3HYWXhiIICrqN65l0AwrWgoBQTHnmFAht19/V1HLjqyqiWnhy+KAWrrfYPnhMbllYMrTIAImZ+7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0tWACRV41wVnve2FZvUmFcDo6E/puNFtzF3f1VthyD8=;
- b=gOdIjK2DZ016MFCNfGefR+wXehFhnqrsvTN7xj+ynY7hCOZrNk/U+HzoSV/6ZWGSxG2CU+K7gVV/wcFyzcm4VEVOppGRdpezed9fKXCio7V7/uIAkUVnsFQwzDs1kmicfwciJYQ8D5SdfpKnfTekt36wNiN8gKmNpKSIh2DPJ4NCAc4bmllV+8z28RQMWK2fJP7RZOXDHjkjX5IPrmK3t+WTlwsiFPp4SQbCkIf1TFw2LxbzO3IcE4N6ZVPlUunEKJxdqg8LecWdImrBMmvfAm2AFJCu0DWM2GIrKu2tc302bqKioCdFG/U9igmHxF5KbXZT9AElbrpemQOuJoBPeA==
-Received: from SJ2PR07CA0012.namprd07.prod.outlook.com (2603:10b6:a03:505::13)
- by PH0PR12MB7863.namprd12.prod.outlook.com (2603:10b6:510:28b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Mon, 28 Apr
- 2025 18:58:51 +0000
-Received: from CO1PEPF000044F1.namprd05.prod.outlook.com
- (2603:10b6:a03:505:cafe::75) by SJ2PR07CA0012.outlook.office365.com
- (2603:10b6:a03:505::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Mon,
- 28 Apr 2025 18:58:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000044F1.mail.protection.outlook.com (10.167.241.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 18:58:50 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Apr
- 2025 11:58:32 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 28 Apr
- 2025 11:58:32 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 28 Apr 2025 11:58:29 -0700
-Date: Mon, 28 Apr 2025 11:58:27 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <bagasdotme@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <shuah@kernel.org>, <jsnitsel@redhat.com>,
-	<nathan@kernel.org>, <peterz@infradead.org>, <yi.l.liu@intel.com>,
-	<mshavit@google.com>, <praan@google.com>, <zhangzekun11@huawei.com>,
-	<iommu@lists.linux.dev>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<patches@lists.linux.dev>, <mochs@nvidia.com>, <alok.a.tiwari@oracle.com>,
-	<vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 10/22] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
- ioctl
-Message-ID: <aA/P02wgX27/EjBS@Asurada-Nvidia>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
- <dcfd9bfc-44db-4fd8-a49c-0c96c68f6b88@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0E32973A3
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 19:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745866818; cv=none; b=dYSQSrpeg6RKvIUOcNrCUcEtHJ9n7O6gGCJGw5fFNMXkqvOHx6jHBzEQewsramiqXeaPmpOY4vaR5Nvc1oXqDactoK3uHZw98Kwro76VMBJu4bG1PEDRxAZc1AaC8UgkZLMusoK/foF/OaAJNIASpV6lFxftj/fZGgNjeZTHIZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745866818; c=relaxed/simple;
+	bh=cPxbDjS02lZQHnqt3nG3AuahmeKMMUQ5hR3l7SQkdO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuoeFv+ZVfcVm4dXtXs/Dtc/7YJKPoaLQKGkv7SvRLo/PO8HEehqytwTJ2bPgduNZPQMV4lI1Y64ri3kGUsSsFczFWP/5wpjk1XD80SypT/uxmPT5vtw5bhJcp9ETYkP5tlE+OePMlXrCvLDVDKsBHME2/RQHOCxvFzl7LBKCCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pm7ciZs6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CADF140E0196;
+	Mon, 28 Apr 2025 19:00:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id swwc5YK5Oeh9; Mon, 28 Apr 2025 19:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1745866800; bh=t9Xxe9oP3S7iGMk6Jr7yTH99bRAUyhYg/VVjUxd47X8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pm7ciZs617eKz1i79U/suMHJNnt2ub+6eywvrWCqUtwvm19knRrv4OuZ21izkdYzf
+	 7ICKrBvvOxQoS57wbDPHrZqo6ZqC4Hc962uFb6pBk338H9/Hztk8ZIDFjIS69Zru89
+	 AMzl0aW9ypv71wmHr9dNgW9PslqZ21WXuLWjPwIzfkbb+jR5qzU2VUh42TPSswBE1P
+	 oF+NFyWG3Uph3Db5i1KAFL71vdCGGLpBVhBbe8iGmfKnZUjTH0s4open6VKYqrJKaU
+	 dycwGU+r4/eJDnqFfe5Odv8cEwsoov03epJBtmgU7x30iCePshmFl+yWmEoL1wd4mM
+	 Sk2hp3HC7NUHxXgBrnV3BAB5JKQnZPGIXYhAFb6RLOBzj+4r7OVWlTcVjkzoRVKe5y
+	 b5ggiKZJMRHMRNI4aisX0eDsMhFKf2upGGFtZZbfdb7XQqzsDFJIbr4iFT33kGuVkW
+	 SQ6iaanIxluxEnD+Ydik6UpwJTz0NlCCOrgRROgX/POPGcAOpe4a4FB25dyQSaWhOC
+	 7hqFwM1dzLYY6LXVvJElapiDSIBLfKh+l5NamUOliqBzEo5uswQFlLVrBsF7rOglbO
+	 Tt3T9NmNb2xk7RTNHUrtLSEOyUtZ511T4zA5qUoNbfez7zq9TDNWtiq1nzdlWKgDNH
+	 jWWOug9F5nemvGSTI1NMeE7g=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9171740E01FA;
+	Mon, 28 Apr 2025 18:59:50 +0000 (UTC)
+Date: Mon, 28 Apr 2025 20:59:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/16] x86/bugs: Restructure retbleed mitigation
+Message-ID: <20250428185939.GBaA_QG-bWQ7WQ3vlY@fat_crate.local>
+References: <20250418161721.1855190-1-david.kaplan@amd.com>
+ <20250418161721.1855190-11-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dcfd9bfc-44db-4fd8-a49c-0c96c68f6b88@linux.intel.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F1:EE_|PH0PR12MB7863:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb0883be-9871-4256-9fab-08dd8686b691
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uVGanoWR5SHipaoNY2YVkpbjnP7em7L+mNEJMZv5gUI3UGv7/+FCZ+uUizs1?=
- =?us-ascii?Q?xPKA9oITd+mlYfHfWwGiHrBoiMwmLdFNYiDbjdO28bfDB66m9H4bJJTke1gH?=
- =?us-ascii?Q?OOQnXKo0jBuvdOLr2FBwuzn6Kkks5Ehpyk+uQLANVj5srlOykvIOQrHftBD2?=
- =?us-ascii?Q?KZ4+Y+bvgxlqxWjmevvXaaBfuHd/AoRk5YvSKnACpX5MLZaZXAmrWaEfpbWB?=
- =?us-ascii?Q?W0nORFAwVCr6mtygdQ+7GCQg1Egjl0e32jm4KCl8gV5G6WSosMZmMW8rKzqo?=
- =?us-ascii?Q?r0fYOO6J06rRv1aM3UOhUmpKWoIObtFmEUdP5ObEu6/Qu3vpDhDzDCPjHBvV?=
- =?us-ascii?Q?M17A9b1o35/2hDkIRkOaHyaMVfH9rToY7BdgOZK9yng/Ut8696JiY2X5P+DU?=
- =?us-ascii?Q?+aVgSXAKvZZ+shbl/1Mb3YGtwY+HhyToFM7R7cTQmTFsu6ki5/R9M1ztV1gY?=
- =?us-ascii?Q?h2AWr4d7sLkXmfEXqshStUiC4Zv8feHrGhij3kVybA6keZYBrvJsjlrAUcrN?=
- =?us-ascii?Q?JPjZwD9bzvedzTnC/DIw1Aw6dMwhYBVt+6wzBV1yk7/P9bn3gHZAuh0kxkR5?=
- =?us-ascii?Q?pSRfaocVpbpqEl9LUrnvZN/NDNk+qZ/YKhBo7iAx900Y7e82p8Bju3aBt4Zq?=
- =?us-ascii?Q?AxmH5IdiRsWlsZ+7mJT9Woj49cq4mYdJCJwjs2VARMTgk8CUPKn+zde1o2Aa?=
- =?us-ascii?Q?/e+gaZTryySispcbRHaFRSDnd1lMtRhlNZYIxc1pyWWq++RHbBw7h0/xMx+m?=
- =?us-ascii?Q?hyDyE8Koxoiknz3AaI3c8xo8PGiXhrSriqxAw0gVLSjj0gI1m8+Hmve6dtLf?=
- =?us-ascii?Q?GxRIVZ08Q9skwbkqNmGHTSnryePMV3hM2AiDDI3+GaB0uTFfWSIMs361I3Fs?=
- =?us-ascii?Q?pK7n6mA58NOWAyFmRVzq28b9fBOivfEMGDqapFbWWCzLVsivR0Bb8qTLZ3Ri?=
- =?us-ascii?Q?o2DLJpMBSDSOe826d8hwDrvfjb2v04CvL1a+c7HZpNXPD5QpKYH491RgF3s6?=
- =?us-ascii?Q?aAstI2k9Qn0CBMm3Cu2o/yOcIxsoWlDFjty6SaggeiWV1ovUkfG8VG1FnCJK?=
- =?us-ascii?Q?qZ9vmEttSZoMveAGPkTCfvicXoDZ/qHmv+Ua7h81xxXuvK265tjosVkeFyC/?=
- =?us-ascii?Q?pO/8dg1O9uEIRnKXy539XOlMaoPaEYxxroxXPHk2g81iPzxl6gSopww+88/Q?=
- =?us-ascii?Q?/L9/WRn3Ii+KGJKrE2eE4HVPq3PwF0ClfQ/VlGW6EqR8STHB2Qg2MTmpMXnO?=
- =?us-ascii?Q?gbj0vHds6n+fwjbxkMsovk5JKcA8fv1SNfALqB+Ltvik3bkZsf5pyvxtMpAn?=
- =?us-ascii?Q?CyPmhXQ1XLPATahm6RQ2SQbWlDsiso5Nf0blVAC0aeVMfSwwiEOcC5iyjjou?=
- =?us-ascii?Q?TsOKhmXJnj+YWy3QaeK8N2cElWj4G2MhqwA97Rxz70lDyxmk6VGPZCimORkX?=
- =?us-ascii?Q?ivptJDQpfwIAQMJ911563HcvOmYD7xhriEitP3zMA/S7zJmkWlkRsUw3G8H3?=
- =?us-ascii?Q?IwU0CoznDGVG4fKm7Ft4l5266cm7Wud7cMMY?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 18:58:50.2234
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb0883be-9871-4256-9fab-08dd8686b691
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7863
+In-Reply-To: <20250418161721.1855190-11-david.kaplan@amd.com>
 
-On Mon, Apr 28, 2025 at 09:32:04AM +0800, Baolu Lu wrote:
-> On 4/26/25 13:58, Nicolin Chen wrote:
-> > +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd)
-> > +{
-> > +	struct iommu_vcmdq_alloc *cmd = ucmd->cmd;
-> > +	struct iommufd_viommu *viommu;
-> > +	struct iommufd_vcmdq *vcmdq;
-> > +	struct page **pages;
-> > +	int max_npages, i;
-> > +	dma_addr_t end;
-> > +	int rc;
-> > +
-> > +	if (cmd->flags || cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT)
-> 
-> I don't follow the check of 'cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT'
-> here. My understanding is that it states that "other values of type are
-> not supported". If so, shouldn't it be,
-> 
-> 	if (cmd->flags || cmd->type != IOMMU_VCMDQ_TYPE_DEFAULT)
-> 
-> ?
+On Fri, Apr 18, 2025 at 11:17:15AM -0500, David Kaplan wrote:
+> @@ -187,11 +189,6 @@ void __init cpu_select_mitigations(void)
+>  	/* Select the proper CPU mitigations before patching alternatives: */
+>  	spectre_v1_select_mitigation();
+>  	spectre_v2_select_mitigation();
+> -	/*
+> -	 * retbleed_select_mitigation() relies on the state set by
+> -	 * spectre_v2_select_mitigation(); specifically it wants to know about
+> -	 * spectre_v2=ibrs.
+> -	 */
+>  	retbleed_select_mitigation();
+>  	/*
+>  	 * spectre_v2_user_select_mitigation() relies on the state set by
+> @@ -219,12 +216,14 @@ void __init cpu_select_mitigations(void)
+>  	 * After mitigations are selected, some may need to update their
+>  	 * choices.
+>  	 */
+> +	retbleed_update_mitigation();
 
-No. Only other (new) types will be supported. We have this:
-"* @IOMMU_VCMDQ_TYPE_DEFAULT: Reserved for future use"
-which means driver should define a new type.
+Is there any particular reason for the retbleed update function to go first...
 
-We have the same DEFAULT type in vIOMMU/vEVENTQ allocators by
-the way.
+>  	mds_update_mitigation();
+>  	taa_update_mitigation();
+>  	mmio_update_mitigation();
+>  	rfds_update_mitigation();
 
-Thanks
-Nicolin
+... before those?
+
+I'm under the assumption that the new scheme would get rid of this magical
+ordering requirement between the mitigations...
+
+Your commit message is alluding to that but we need to specify this clearly
+for future cleanups/changes here.
+
+>  	spectre_v1_apply_mitigation();
+> +	retbleed_apply_mitigation();
+
+This too.
+
+>  	mds_apply_mitigation();
+>  	taa_apply_mitigation();
+>  	mmio_apply_mitigation();
+
+...
+
+> -do_cmd_auto:
+> -	case RETBLEED_CMD_AUTO:
+> +	if (retbleed_mitigation == RETBLEED_MITIGATION_AUTO) {
+> +		/* Intel mitigation selected in retbleed_update_mitigation() */
+>  		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+>  		    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+>  			if (IS_ENABLED(CONFIG_MITIGATION_UNRET_ENTRY))
+> @@ -1212,18 +1187,65 @@ static void __init retbleed_select_mitigation(void)
+>  			else if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY) &&
+>  				 boot_cpu_has(X86_FEATURE_IBPB))
+>  				retbleed_mitigation = RETBLEED_MITIGATION_IBPB;
+> +			else
+> +				retbleed_mitigation = RETBLEED_MITIGATION_NONE;
+>  		}
+> +	}
+> +}
+
+I'd flip that outer check in order to save an indentation level here:
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 9d6ce4a167be..207a472d1a6e 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1182,18 +1182,19 @@ static void __init retbleed_select_mitigation(void)
+ 		break;
+ 	}
+ 
+-	if (retbleed_mitigation == RETBLEED_MITIGATION_AUTO) {
+-		/* Intel mitigation selected in retbleed_update_mitigation() */
+-		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-		    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+-			if (IS_ENABLED(CONFIG_MITIGATION_UNRET_ENTRY))
+-				retbleed_mitigation = RETBLEED_MITIGATION_UNRET;
+-			else if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY) &&
+-				 boot_cpu_has(X86_FEATURE_IBPB))
+-				retbleed_mitigation = RETBLEED_MITIGATION_IBPB;
+-			else
+-				retbleed_mitigation = RETBLEED_MITIGATION_NONE;
+-		}
++	if (retbleed_mitigation != RETBLEED_MITIGATION_AUTO)
++		return;
++
++	/* Intel mitigation selected in retbleed_update_mitigation() */
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		if (IS_ENABLED(CONFIG_MITIGATION_UNRET_ENTRY))
++			retbleed_mitigation = RETBLEED_MITIGATION_UNRET;
++		else if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY) &&
++			 boot_cpu_has(X86_FEATURE_IBPB))
++			retbleed_mitigation = RETBLEED_MITIGATION_IBPB;
++		else
++			retbleed_mitigation = RETBLEED_MITIGATION_NONE;
+ 	}
+ }
+ 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
