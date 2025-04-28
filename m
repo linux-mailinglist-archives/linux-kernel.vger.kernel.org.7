@@ -1,122 +1,136 @@
-Return-Path: <linux-kernel+bounces-624010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AF2A9FDDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:44:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4A8A9FDDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56C61A85F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:44:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81A667A4D72
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9ED2147EF;
-	Mon, 28 Apr 2025 23:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CAF7082D;
+	Mon, 28 Apr 2025 23:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvgwaKo/"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FUDiRG1l"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3780713AC1;
-	Mon, 28 Apr 2025 23:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E2C211A3D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 23:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745883876; cv=none; b=k1x4D17Xio4ZuPdN49NSd5GqEoq30ElnOJiJfsLJJHvQQeSxFUE8aTiS4rfaVvREj9NCRA9+mKBNfu89Vc10wTlhC8BSBfLJ8RgBCwxJQJ9CHzNc/Y0jSqOhzayyjCs3q6qqb+gb3dO3djuEMlUplFivlpDxmyL6EPExXwWJHQk=
+	t=1745883964; cv=none; b=BYsLEvSkOjlh6MbJ8WLjr3m7jx+xmLdFx5GPi50XiLL9v8gxrn0r2wxvb1AVY9AsrFAECYJKB+dcep9k1F2o9Ck1pSYej/BbajYY6e0psokQBD97iJlxS+RAeZcB0g1oIEUOrRdp4yUleCloLZFpcpYraO6xJ0ei1u1NFrzhync=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745883876; c=relaxed/simple;
-	bh=8xUo4fwlDVprEdPJtctVLsIXhF62wGUuKLnuzz87hEc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Mh8ffPHTdjoZ1FUvSV+omSM/nLLrJel84fO00ckTPUCcYkalWkjc8J6jgVO1AjzG6/R1bpCFZmdYj9Y2tCtMOzS10aEngWdOm+Pf/Xya+wGGSurwrV9/E5P9vZqHLdv8YQo81BvJV9NRzZDqBB9POhud4T5b8OAJ7wDCXdD1BCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvgwaKo/; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30db1bd3bddso54666421fa.3;
-        Mon, 28 Apr 2025 16:44:34 -0700 (PDT)
+	s=arc-20240116; t=1745883964; c=relaxed/simple;
+	bh=by91SW8m0U7AG3e8tvW7sekaz3lZRJOY/esWgdxCMJM=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gQrh0izVK0JwaqxZqnWYp7Xy0J3Rfc+AM3EuzHMefgK5QT9UTSHA8k498PZfvDKVkULNDNx3Qr2ejLPL9+fQc4l5CFwi+us8h6CedoiezvqM3Nr8BXC6BqHeRjJ/2mlxUeuztScIcXtuA0VsaU52jCEoDpeErxigeSVQV720LPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FUDiRG1l; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8fc176825so48316126d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745883873; x=1746488673; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XVMBeXUzUjIugw33Pd9iUMACoFXldM1xioz8Ye504KA=;
-        b=CvgwaKo/XqSSv+joefZSKnqbf5yD5O6Ye1thLEoh+Lw2V/IkhYwaBZyj2aOD2A2eHn
-         itWV/VStXbibEJqSwGZKUPDxvoYVs8m4Nw05fLSkvaRBOp3xZR4xCq2hxp7W6XM0ZnXb
-         391nCcUEIRPwquqcjhYYTNpFt0QSyghZFGBxjzbIvgdvOegd/i+Ju6nx+k36UfASD7wZ
-         RLS7+u5M2lraZgtYlOiyq6oQ+7OM1TMZ+uXy/Q3BCJLjXaGuQX1uJ3op94Bj1B8wzr9r
-         dgZa084zRZKKfpCmaKyBRBFQulkjbuSDcDKneHG6ssbEWfW5QXqzISIXTJp+PtGFxUI0
-         HGpg==
+        d=chromium.org; s=google; t=1745883961; x=1746488761; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2VE8Je+jYUaDWSmFxs8ADixhFpj6cC8hZZDrQSJNeCU=;
+        b=FUDiRG1lo4/H91J1D8aDQihTEgARVJGqF7zohvZZW1KquyaU/yMAp0KXM7IRHfRrK2
+         65Vx5HIc+SSpWeWh1osws/xAHIIhGu+c4jfqjKTZkZntKm6KqUFj6BnTbLLad8v910FA
+         isHK0uX+2tc6F/uF0Qbw7tH2L6IjcaZn1SVPQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745883873; x=1746488673;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XVMBeXUzUjIugw33Pd9iUMACoFXldM1xioz8Ye504KA=;
-        b=e8+5+XSbCj2EPK1abTvEidhl3NKWXgPVVpCCFdjPjbPQrzu6dhzBu/LB5h7/6KMIwo
-         7BfiiXcUJipZItKItNIGbRUxkrKpWE+ZvULEnJU4mYI+nASC2+fd4p1cxf6oZx1MQMSQ
-         y2Uwi4pb8Q4Ihkk2XKXcq/BwGrYip8keSyEWdjYWwsXIl6Pm4JH0StkaZTLi07hfIUVP
-         zqAmnjJF6W3GIGUrv9CWHDkWcCkICECWSMPMUx+7XBbb344WuVsB0AfW4U5JCrs/rVbx
-         3y885nmg3kJT80ehuiLW2hJvBhQbFUOeUFvruUBUx3z/F9iwOqph8facP15jeED0xsv9
-         UGMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEK0dT8ducCY5yRXTVI65CkzyTXN+jU1YFT9PzC59ETrEEuVclc9dmzZEzgI/0EbYJxpPHROFAOk5q@vger.kernel.org, AJvYcCWewHCK1goRV8nV7ys8e+80AzcnAfFRFXzM//uOPqbiE5knnDifwizLJAWQ3hO4M4ov2CWByh9oQ14m1Y/j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH/FAv1QlvX8EWDoOzsGkmAcdmzcBp+jh8EasRJndpCPoO1HU6
-	X4SwqXsofEvCtxl5oXj4VO+YsTpQCQAQFXbRB9xIH98nPF6bFw/aJcn8y+a3pHWgzt9EuI4CwBs
-	hrri93os7L6RPMda9FdAcGWguFBlgyrZ7
-X-Gm-Gg: ASbGncskOJu3o+/5GeswGI1nFlEs+JFMi8NNZ25duhmYh1PQKqZb2M6qQUX8W6GRsfH
-	ypYIzrGN4Khmj7+3IcPR+9RrAG4blisTk+F5UjR0DiaigJvPSfxUs5/OyH48L8YibknwVHJqmG6
-	Voy9Qzg7OzmSf7C6h07sGs+cvaZRFshG2Mx9k0gvxI4oMhwJp+Y8xg9OHi
-X-Google-Smtp-Source: AGHT+IE4d5npkYzDu77mN0vfvbu/xEDKNXuRxig8ID4Gf+tyZux/ZuTHTFtFVIv3lGsCfJJ48KZBAiZypEyZT/ztvPc=
-X-Received: by 2002:a05:651c:1144:b0:30b:c9cb:47e5 with SMTP id
- 38308e7fff4ca-319dba4f840mr40550611fa.8.1745883872908; Mon, 28 Apr 2025
- 16:44:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745883961; x=1746488761;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2VE8Je+jYUaDWSmFxs8ADixhFpj6cC8hZZDrQSJNeCU=;
+        b=fcF40fAI/JKZh4La9jNW6WSbbeKQJwicXK2mlzQ5vsnH92bv1xew8QtAuAK1fmKBOe
+         QVQqEWMwHJ2C973UFakYWcJ+yo2yr1BEuwR5b/nioWSD6Wi75urkdu2ApNGSu+jHhegQ
+         Fh1o2cJ/y8qzKu+RZuWlHfJUVd2bkc0Nncs4Q1FNQHfP3AWZdtKYmy3zW5vOlCQPA5Om
+         Y9kxLMtXmxrnVmctF0YaZ0eaW+Vcox8Pv3FlIwTSxZL8paUS02q2+buGN2tDzQGNiZQn
+         vJxYafnVV8LClyuZAM/EnJ/8bUDAYsd3hAbt5PzilMsO7QijShCNYMce+K4AIF+/x09m
+         uAtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqxYzNve+eRlgr/94nfboq7ChT3so9pAZsocCqkeqS//0uZKfWIKN6cl6q3jkSVP6HZddVuk4lO+EE7Co=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynbKq7F7IgfWH677ZKD41CHF835gpilUBznZouJOw0lGphb7Bz
+	v/KnlTENiVEyHQzOx7poG80NJsyReXFV2cpNU1AgHxYTfQLvUH44EoSOe7GEKjZlCIpHEYzozPo
+	W8weImjYsjl7EO7io1uFvvicpbLuakioUZ1HH
+X-Gm-Gg: ASbGncsT7AoWZijS3Hu0Qmhe9oGT3dCquqgGCtUysvXf24rFpfoW+6Cga5TR2hWYPQ4
+	453FzBJL6W8CYgXWSf07BlJLSnQadqF7sGxDl5638tVv8oZ4NKDlQs5eXbrTJgf9s9oZaVeP58/
+	OtsRbb4pc9+fbFcJtVJMVa4bOEGQN1FCpZG1ngFwcX2Zex9m+yXQ==
+X-Google-Smtp-Source: AGHT+IFT3g0BYPOptg37k21ZoiyICUp9dUnCNnXOjhOeBejDgO2ZHYly94hoOyehQ8LteVC6kVaQQcW7F1AvS61YrSk=
+X-Received: by 2002:ad4:5ccc:0:b0:6d8:ada3:26c9 with SMTP id
+ 6a1803df08f44-6f4f1ba925amr20159256d6.10.1745883961685; Mon, 28 Apr 2025
+ 16:46:01 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 28 Apr 2025 16:45:59 -0700
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 28 Apr 2025 16:45:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 28 Apr 2025 18:44:21 -0500
-X-Gm-Features: ATxdqUFd_hsU3qo067Z1iYW-p7hIANK9uQON8_8W3_z0T5qahti-S3e78A1GAU8
-Message-ID: <CAH2r5mtYUujsHMx28hNQdPOYLhgLTYMN6BypJhQ=28qSunocxg@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250422082957.2058229-4-treapking@chromium.org>
+References: <20250422082957.2058229-1-treapking@chromium.org> <20250422082957.2058229-4-treapking@chromium.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev8+g17a99a841c4b
+Date: Mon, 28 Apr 2025 16:45:59 -0700
+X-Gm-Features: ATxdqUGhJ84Msn7xBIME_dKVHCYNJ-hlMGgL-TiHFD5bx9lm_Zsl3wWl5GrA3mA
+Message-ID: <CAE-0n52cwBxJ3gYzSi1+nNcRRSgbMToYBFLJwdVWSMOxBmUN1A@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] dt-bindings: usb: realtek,rts5411: Adapt usb-hub.yaml
+To: Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, 
+	Pin-yen Lin <treapking@chromium.org>, Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Please pull the following changes since commit
-9c32cda43eb78f78c73aee4aa344b777714e259b:
+Quoting Pin-yen Lin (2025-04-22 01:28:29)
+> diff --git a/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml b/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
+> index 6577a61cc07531..a020afaf2d6e7a 100644
+> --- a/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
+> +++ b/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
+> @@ -10,7 +10,7 @@ maintainers:
+>    - Matthias Kaehlcke <mka@chromium.org>
+>
+>  allOf:
+> -  - $ref: usb-device.yaml#
+> +  - $ref: usb-hub.yaml#
+>
+>  properties:
+>    compatible:
+> @@ -19,61 +19,35 @@ properties:
+[...]
+>
+> -      port@4:
+> -        $ref: /schemas/graph.yaml#/properties/port
+> -        description:
+> -          4th downstream facing USB port
+> -
+> -patternProperties:
+> -  '^.*@[1-4]$':
+> -    description: The hard wired USB devices
+> -    type: object
+> -    $ref: /schemas/usb/usb-device.yaml
+> -    additionalProperties: true
+> +additionalProperties:
+> +  properties:
+> +    reg:
+> +      minimum: 1
+> +      maximum: 4
 
-  Linux 6.15-rc3 (2025-04-20 13:43:47 -0700)
+Is this limiting the 'reg' property of the hub node and not the child
+usb-device nodes?
 
-are available in the Git repository at:
+>
+>  required:
+>    - peer-hub
+>    - compatible
+>    - reg
 
-  git://git.samba.org/ksmbd.git tags/v6.15-rc4-ksmbd-server-fixes
-
-for you to fetch changes up to 2fc9feff45d92a92cd5f96487655d5be23fb7e2b:
-
-  ksmbd: fix use-after-free in session logoff (2025-04-25 18:22:26 -0500)
-
-----------------------------------------------------------------
-4 ksmbd SMB3 server fixes, most also for stable
-- Fix three potential use after frees: in session logoff and in krb5 auth and
-   in RPC open
-- Fix missing rc check in session setup authentication
-----------------------------------------------------------------
-Namjae Jeon (1):
-      ksmbd: fix use-after-free in ksmbd_session_rpc_open
-
-Salah Triki (1):
-      smb: server: smb2pdu: check return value of xa_store()
-
-Sean Heelan (2):
-      ksmbd: fix use-after-free in kerberos authentication
-      ksmbd: fix use-after-free in session logoff
-
- fs/smb/server/auth.c              | 14 +++++++++++++-
- fs/smb/server/mgmt/user_session.c | 20 ++++++++++++++------
- fs/smb/server/mgmt/user_session.h |  1 +
- fs/smb/server/smb2pdu.c           | 18 +++++++-----------
- 4 files changed, 35 insertions(+), 18 deletions(-)
-
--- 
-Thanks,
-
-Steve
+Can 'reg' be dropped because usb-hub.yaml requires it?
 
