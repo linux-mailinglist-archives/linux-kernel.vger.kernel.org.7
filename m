@@ -1,146 +1,272 @@
-Return-Path: <linux-kernel+bounces-623755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A39A9FA5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78494A9FA5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7423BF010
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0583BF642
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642991AD3E5;
-	Mon, 28 Apr 2025 20:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2225A1AD3E5;
+	Mon, 28 Apr 2025 20:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="X2sswUxg"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gh9WLH7k";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="i5QUrpmL"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAAB139CE3;
-	Mon, 28 Apr 2025 20:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745871524; cv=none; b=Y0mA1Ed55Kh8849k6upwPAWaUqnBEHIILWjCo9qL5kHO3CLVbRPPywpGOQFZcC6i8p1gMGuEoQ4oxn4p5V5KN6xbddN3gGvRtfCOJn/caEMOCqbjuDeT+t6bmMp6wwjndj7jUJAPB0bKf1/0d9I3yNkARiNomj86oXW4aT0RXPU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745871524; c=relaxed/simple;
-	bh=CJgeyPII8sNl4n2PbVSLEfScrAbVVGyzU+VjTIGFjJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2zfRPk0pffpSWa+I5OUkIfnSKf0Lz1OQWjjxh+qGWgRqJEp/hkr2PH7227VYpFhWiqDLYzScpKUPXcVXMc8YSy0749hL4u9MEONDG/smI9hwPEDi+J1Gta44jQAXcN+XsTcPCu0nQq8Ocjsyo0ImDTABApNxf6nwtR0c2+9Ovs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=X2sswUxg; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 6B5881C00B2; Mon, 28 Apr 2025 22:18:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1745871518;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pL7e0c02mbv/0vwsIMwslL/GXK+LDR2a6ftGA055ovQ=;
-	b=X2sswUxgS8rseE954SAultNrk/gSe6kFPYI/ahGW0v6GaxxwGRyoJwzni0/XGns+i6V6Gu
-	wegTZ0i5B0iAYmvz1ToPZrRese1ZzshF30N4j3q1qa/QuQ/siLpRc8Vsihus/YUYqiTfh9
-	CO/zM40LI8WPDX4dyrAoj25hoelcEOw=
-Date: Mon, 28 Apr 2025 22:18:37 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: geert@linux-m68k.org, andy@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	christophe.jaillet@wanadoo.fr, corbet@lwn.net,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
- LED driver
-Message-ID: <aA/ineUBAM5IU79J@duo.ucw.cz>
-References: <CAMuHMdVJNPRd3GMRV3=W0vsNW+fm4up-mWPOZ_W1-wQigQj8vw@mail.gmail.com>
- <20250428172917.25405-1-trannamatk@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6E1175D53;
+	Mon, 28 Apr 2025 20:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745871560; cv=fail; b=Z+2f/Kou9igLMz2tqyYsqB9nJd7hWq2E8DVN+q+dygnUbqg2/zbP71PO65niVsniYNt9DGPtfCs0vtpg//QyNFcHZDdDtfPUhdyfrtfwDyzpNJyB0u9FPwk0UNcEwfVeOXGHYGbo6pfQa0HgNc9tiwGYc27aNv0Hbtf7KweUFi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745871560; c=relaxed/simple;
+	bh=RIjzRe8DCMAKYR09kbcc9ZpFOsmKY5Dh4gurWy9KbDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ehqSH3GFHMiihk7G+/iefc1W3O/1UA5fkDKYFv21e+mgdXkmxvkTgoxoUJWHM+KO0qPQ+2/HX+ZNn8N9TnWrsXbIoMzNiiCUtEollD8NR4bgAcMuVRzICsSJK0PSne2chv1rgfD7FHZI5prEQ+uWh9mnE/G2TogxlrFPDlYbrXc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gh9WLH7k; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=i5QUrpmL; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SJbL6N020395;
+	Mon, 28 Apr 2025 20:18:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=osF0ZQwjYiX+IETldR
+	yrOe8UqMlSnbzh904SQRXm0CU=; b=gh9WLH7kYlbFWlhbU4x3gB29pQjGfds3i9
+	mtKS+L5IKyecDzdjivfji0xOG+CHMFDz4+8j1TMxmrSWfHxziL4vcWBGnnlyqhmt
+	wGW3AtYIb/MataCpq+I+CaKbvPw4rsXxQGbnTJIKkc7iFUkqsf/kF+oq7B2rQr9I
+	QAN5sXFUZlf0fs8ZKW13KauyQaEBkt2RPGdj97TtkDX3vH3yte8GfgYblWJS6NXH
+	RgdWA5klyTOLEZVonhfpPQSsMcyr4brWoOp7LiH2Nb0ufOfQ9iTVzTKvAepjFWpD
+	a+ck5V2u94sEtYxoTDsawDrLt3atPo9ip3QC8zxBQWdZN3PsvrEQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46afmc83n3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 20:18:47 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53SIU86s001329;
+	Mon, 28 Apr 2025 20:18:45 GMT
+Received: from cy4pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17010001.outbound.protection.outlook.com [40.93.6.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 468nx8wnmy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 20:18:45 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q9NumgV/fJlBVtg4Ayomt6Pq+a1Be9nbnYzB5AyKfu2GJ6gHPYVJadi7WJm5ALuhtfAoV7W9s2pXquNVM3N59OHxChw80+pXjiHqjP1YL38FTitFZGcSHs7EzzApI/CT8LvtPMdwSy521gE0Oo6XaKEdCeUKTXwYLr6bU8SznMeDKM1Lmq6P8B0nNawxgHfowksCnMYxkGLBcjFJnym3f4XOVyPGAYKIfjMUR7ozPh3mwF5RueX6K/I3CueNLW8dgBkP+rvoPnpFZO7tmh/G4/JCntRyR1urlqglXClC4PedM0Z+yEvZNz6CwFyNvF+BccDr9Yuw6ei+lOIhgZ2knw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=osF0ZQwjYiX+IETldRyrOe8UqMlSnbzh904SQRXm0CU=;
+ b=uwprgUX+MBIkBcGPhldShO0ii58nuRj9sULQF5csDqn1mh4YyUHKlQp2hQuS3s6MJDQPmlvkkLQJxl31JDRAqk3uNGLibCXb6TjcbbUq+HexA2mIz2InFcpJqAJz6xg+EBxVIxZYIo1c62O9lbRBdKoMeEyg6t+97OnFv0ZJqiFJgG9B6d1tYxgetFKTLr8Hfa4q9fcE7HWq1TmCMxdX4Ycu6khWAYf3tUS3/0wZzEs1al3BwvG+LxaJ+er7fV+OngspBxaJwAPNp7qUSRd4m7oE0pkWoGJSVJK8gjhSRI2a1/LLiPpsJpvSity9ZHXZYPBctI2BkOoAQ4+xVflToA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=osF0ZQwjYiX+IETldRyrOe8UqMlSnbzh904SQRXm0CU=;
+ b=i5QUrpmLrTNekBRWcFtE4XYsmVjQTsxE3DyEMsgErbBZqTQ2R9OTAlD0GL1WhPpSUqmk28p0NwH+U2CFpaXiRAMh99l6z9sOG7qU3zjN2+zY9gfmPPhTtissIlt7ZfUwZbnEX4GpeeG7dy7dLDfc2rHSSVn+0QFnu8xYfqNXfm4=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by LV3PR10MB7865.namprd10.prod.outlook.com (2603:10b6:408:1b8::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Mon, 28 Apr
+ 2025 20:18:43 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
+ 20:18:42 +0000
+Date: Mon, 28 Apr 2025 21:18:39 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-trace-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, Peter Xu <peterx@redhat.com>
+Subject: Re: [PATCH v1 08/11] x86/mm/pat: remove strict_prot parameter from
+ reserve_pfn_range()
+Message-ID: <fd641237-e412-4f32-98a6-b7d733e6819b@lucifer.local>
+References: <20250425081715.1341199-1-david@redhat.com>
+ <20250425081715.1341199-9-david@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425081715.1341199-9-david@redhat.com>
+X-ClientProxiedBy: LNXP123CA0002.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:d2::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MN9BK62TjYm6fNeb"
-Content-Disposition: inline
-In-Reply-To: <20250428172917.25405-1-trannamatk@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV3PR10MB7865:EE_
+X-MS-Office365-Filtering-Correlation-Id: d13ef4e1-c39b-44e3-34e2-08dd8691df23
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AlVEeZKYFeiT7WDuImncOY+gEPk/MMU9YE9zaEb+6k55pItf64Jn1hSQOFwU?=
+ =?us-ascii?Q?kepWJ+vATt6x9TdDSH9Zc/B6KLLjoellAooZR9eESRfs+UPkGSlWyBir/QpA?=
+ =?us-ascii?Q?A414KlsObI11o2n66SqThN9jR6znbBsuwQuREr8iIUTqc20ymbJjsBO6It3x?=
+ =?us-ascii?Q?3hbEa9j6Ue9q5r/UjWawV/GRBl5TXOfsxRXbDKaVaQNW9e2aNLcHNEJlqojV?=
+ =?us-ascii?Q?RFf9uNplN5fTFf2CBTfKV7NZUlMwNMMiBA/8iz2SKNOeZPFAbeEoVzjpUc23?=
+ =?us-ascii?Q?Ce0q1NAYRnB9wlOj3V2CX9M0L11s+fAxNXgsgqRrge/dBD0kEjXF5SIt3N+8?=
+ =?us-ascii?Q?6qL8L7COkRTKOHCqvlR/TcCzbMluF1BdK7gzxsF/H4ybm4kayx+fSS5CUmUv?=
+ =?us-ascii?Q?gPtXyV92Z3IEBlTNREkGEdw/IuK9djbonqs+3J45mWhXvskNvCdSqknQovVt?=
+ =?us-ascii?Q?/hsJxFueACCG9jcGDX3QzeDH4goNc7BsaOwCbD43V3moHROy6tS2LgBEH9YY?=
+ =?us-ascii?Q?zdT9W0VoHo1tUYZeQaaF6+VxDuLtXWWq0IXBaKc/5Zvb4/bmxivh0lJNjiSl?=
+ =?us-ascii?Q?Q1mf1+g3DthCWJPBcvd0xCIM8rkuL/aZnxz++32gv6MF1ihKb0NCJhVocbvX?=
+ =?us-ascii?Q?D7CnkEPWAnhhBz2SHe4IzDfIVjTNzYmMcB8WIAuofxuqC5hhDl8QMSTvbHxP?=
+ =?us-ascii?Q?70I39cURC3Hw4kb6EO6J/xog8NCcywbJthTfffrFmn0IyPNaNw7gM27X8oBo?=
+ =?us-ascii?Q?/m/jK7bcniUJhGT28fC/1Gm+MU3/PSiAj8OlMXRHsFQmiNACBE22qjthgEG0?=
+ =?us-ascii?Q?Xc+lYaP9MIDdyOuGQINC/+V7bXisWnMN6al6coW4HRSJNzU/CPCYpdSIVF9Y?=
+ =?us-ascii?Q?/AGnrFk0N4aqI0vWtqHm5rMvC/qB/A+Muw/Ls7rQFMTMZXo2ny4U7fNZseQn?=
+ =?us-ascii?Q?+gIDW3eC0uoyv6xQU+hueHUqt/hb/ljLh6qrdJ6L0YLys0AGrW7SCx6zsOJg?=
+ =?us-ascii?Q?Pjh1QK641zL8dLyFBrJO06j60wp8NyRolVNUh2AiSI9ft8WFWnfWCQ+bgXLl?=
+ =?us-ascii?Q?xpfFB6Q+TknNndOpAekwQmF0G5Im7h6e4KfFjhFySRyTTdXgiXmwxIiylUdn?=
+ =?us-ascii?Q?2FA391xP7uUYZSoIAcUO4Dep4aeceOyegt3u7bCoj39H0Rl1lDA+mejRFPR0?=
+ =?us-ascii?Q?A3PsyYvzS+NHxvQryc1W2zn2KLUslj3OfZfKHj1eDpsnzEceECPntWFMYh1K?=
+ =?us-ascii?Q?PIwhN/PHYJehyKc0zrS6Y4mLW7acXVN8/kwHFrs2O/Skvqp4tcHFv29mGsIs?=
+ =?us-ascii?Q?6gAxFXgWsUF/mkcE5jvnuA46cw9Usn11NEEltxV5tbBkVTxw6FelscaZxFfb?=
+ =?us-ascii?Q?ihKnoJsBLqKPRDpwL3oMFvWeG5tDGpkNaN2MnQnLp/aXmcnGA6Dyapyw8eDw?=
+ =?us-ascii?Q?t2iGYfUYZBk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WzkfwV68TiEHKHvV75iYszKZ8gPWZWQtu2KTnTpTX0dBCURner4TMb2n8Uan?=
+ =?us-ascii?Q?q3nt2i3faFAhQuw/VkpsFnFr04EAOH3wFpTZ+wWI9EmJr/JzlfLZQuQuhL4+?=
+ =?us-ascii?Q?9uG2g+MjvREXFW2+1ozvWM4r4pU7YB8AjVAGrZ6E1E3fdpRx9vKg+TRscYP1?=
+ =?us-ascii?Q?E/C+9EXwixiDTPxouVnWCkZP/O4BqwI8jtQ/CzLS7CrX6ZMN6cNY8tZUJ79x?=
+ =?us-ascii?Q?xpCpOHUVs8dkFEeQGPpEl5SOpYivzzMNln5hH6fKeFf0HvwaMsOYmcBojoyR?=
+ =?us-ascii?Q?uUWTDI3IY6ZDRQpvnVlHwWVMFPibGpAnGMRfK3WbOKf/giP7Qe2Q1ooCY8Nw?=
+ =?us-ascii?Q?RxrLOqNQLIW5/4A8L5BJZDBOa8yM+cjKR8VX0BIZ9cIxyC7J9e+n6XXwbsnH?=
+ =?us-ascii?Q?yONa6endLpEMb/oD9vdJy/nf9Rt8ALkhHV61qCeHFuYcMKJu6bJW4pTBCwq5?=
+ =?us-ascii?Q?YL58zr0ha5GZYkeSJyTdHODCuMHjt1obZJyn/7YwSOm8r4meWBLrDvDqsyJF?=
+ =?us-ascii?Q?kyO3V3IE420YyLHTu96I1oYd/pb75TCNZc6HHmbu5CoYv4P26N5Qbf4PMajr?=
+ =?us-ascii?Q?QQKR/20qCSOQnhsjJ8FNAx6+Fz0Nsfmjwm1CZrsHiRyYHx3iNKroNViX+KVX?=
+ =?us-ascii?Q?NFtiulMCt6oAaaST/2g7Zqkea+oHlWKFmFBlgGlfXNDq4053FMfXGGkyT8xW?=
+ =?us-ascii?Q?Tv7VhTnjWIlx8dcs+oJQsuOT0ITE2bg/pjvr3k0xLszGuq78Tj6P35TM8Yt3?=
+ =?us-ascii?Q?CDBbxPEoFXCb4bJvp1Ljr/zI/IxbgREXjouHWTOwAFumhpIXwhKqcCTdYys6?=
+ =?us-ascii?Q?+G9GVH7ZvbwliQKGLNFRG1Dx9xJjQrhh+vSJcnvr5EgUu0X3YcSFDmLghRlQ?=
+ =?us-ascii?Q?3bBq2XC3vqfnd37v8M7NR0gy8ug9wDYDzBAR1kdeaXzWgQgzvXdoKyhrENQk?=
+ =?us-ascii?Q?VaoflZh6PErYGimFqXoMe4oKerDmuVagi44X7vdxK1W7TemDNKUTZTWZgB6L?=
+ =?us-ascii?Q?o8cvKdXsMhIiN/OMInV7EB+GNOBKZZKg9zqbwmZkGNnc9CaeYGhofGx3jpLf?=
+ =?us-ascii?Q?1RE6BXggL9Gl4U3HOAds8Tap1B9Hnti8ZI4kSvYbhcXj5S2bonXl3FbkHVab?=
+ =?us-ascii?Q?9ZBApgib6WAP/6r9aPmPRNdeur8hNs9di90NY5fwPYlLh14ULp2xqM8urq2S?=
+ =?us-ascii?Q?tA2XpUyEWIuh7odf3kBQ7EoGFdmq59B/XIWqlDG/dNNhfmwwk+MBcdGBT7GF?=
+ =?us-ascii?Q?ubrhETdWfzfCtvZGz4E7bcNE5pLA+dKH/IQUdjITyWq3orsoUwWJBPAHCLQW?=
+ =?us-ascii?Q?0tLNEgbulozS4vM1JVYpYdIBhCCYMbR8SqQYlfHUpEvyz5MOzvvs+XBTdbQh?=
+ =?us-ascii?Q?z6seJiBJMR2jocNPamA+DB9ogNbuGLdRLwj8V/WnlXvxXnq87QHL8q9g+wv0?=
+ =?us-ascii?Q?xCCC4ujr8rJ35OgK7BwDIww4JqeK06fBPfA7AwFVbiYNSkHlq6ZeNn+8i0ov?=
+ =?us-ascii?Q?xRMmRilTF0mjaHpZurmPVHihU2aiF90jeyLFvKPvS26uOFXhtE7R4I5hrvb6?=
+ =?us-ascii?Q?dNytHt4Tf2eWwC44S8Di/xgvPM4demyFBJlRQy4pMuB1E7kMmCg58wAny60B?=
+ =?us-ascii?Q?bQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Z7oGIfn/3DJaBl92nAglFsOUnpi3Q8tdCTtE3sqqBUVpKeNr3LTDTe0bGetIWXolign/9aQb75RZ5zP+KRu1++es390aitm7jbZYgH9aSBWpvEkNxrdsK0fDaaiQUiQuV8wPD18CGV/gm/rO+TwFOtZD/eiiTwF7re3t2KxOkAZdn+qp+ZRwhTbnVlwrcRmQiCNfq2Vu6NSOLg4NGv8FVZoEeWybe2DaTRguz1T1R3kR8BXC9VIf9TsOn1O9REDLVeoHNOlgeXsn6mFpkPZRUareG0rKMr6QKVgrDYGxo6UnfN3p4IL+yJyiefB3A1/b1Rp6w0sBqp/HuX/kxGQHaXqAYXsitxHpj4Nq9yIL8zfUpcgU5mzyMojjLGHh5LNR+S9wETK95uvX7WO7uD5IzxknZJ3eheTUx0gowBVpOpjdGSCuG3JDSrLqBulNc8xn2NdAReVpKpBld/Uung6/vXYrIAUknQQHKd579ZT+DYxi1AcJn+P7Eijhk4C02dEU3eh76uwJigfr2O/MqDLjEvg1QxHF1kSSNAlzOu3v7fyVivW3gU0+bsNoZHiBO/PEaap8qqGDdufQjHZsgZ9ADyEDnjfRFa+BaCj6lhWd2jM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d13ef4e1-c39b-44e3-34e2-08dd8691df23
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 20:18:42.9401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6ZPilzX0J+L4iiPd0xn/H/Qpy0713izXSUgyvh3rQxhp/gu2bilWJaG2y0VfbkZ3Ih5fTVpOg5rgjllNxbqVwxviOdwBAQWKLk0oJyXU+l0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7865
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_08,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
+ definitions=main-2504280163
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDE2MyBTYWx0ZWRfX4vWawhs6M30q xCCcFtR1s2PywHhGvwKK147pgU8daDAPRwnQJYgHu4HheXqRqFiONFrVcTdqirO8VAncQcYcgjE c8xi4emFZwnx4N5IVc7Uvw1Fkmu6IZV0avPbcdHZ5qVttEXwm1RjrxyCERG9n2sHZ5JTiAvhHwJ
+ V5Bsk4bgMo+L1nkLHJal0l5NGia64qmemR63ex8o3rsjwNMB4y3cmcMPQIVtWZkWo09ypahATIp H5X6BNGBEVAFmCib1z6e8TnGwBV3jL+Bs9Y/6oUw2AQOpmsZ/qmTu7rCIm0G8LmVQYp4n79Njac frFqZvReZgPjeOiWxFLG0LGZUd1yM37KBHqxX/vyuf9SlcgClFhl3lJ9V89EtZU6OYLNmtMc1UJ nU881v14
+X-Proofpoint-ORIG-GUID: 5SikZ2JiooRpw1JPbGndlmI2x8EpICPE
+X-Proofpoint-GUID: 5SikZ2JiooRpw1JPbGndlmI2x8EpICPE
 
+On Fri, Apr 25, 2025 at 10:17:12AM +0200, David Hildenbrand wrote:
+> Always set to 0, so let's remove it.
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
---MN9BK62TjYm6fNeb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah yes here is where you remove it :)
 
-Hi!
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-> Thank you, Pavel, for the confirmation.
-> Thank you, Geert, for the review and the question.
->=20
-> I would like to make it clearer.
->=20
-> On Mon, 28 Apr 2025 Geert Uytterhoeven wrote:
->=20
-
-> > > > > - Move driver to drivers/auxdisplay/ instead of drivers/leds/.
-> > > > > - Rename files from leds-lp5812.c/.h to lp5812.c/.h.
-> > > > > - Move ti,lp5812.yaml binding to auxdisplay/ directory,
-> > > > >   and update the title and $id to match new path.
-> > > > > - No functional changes to the binding itself (keep Reviewed-by).
-> > > > > - Update commit messages and patch titles to reflect the move.
-> > > > > - Link to v7: https://lore.kernel.org/linux-leds/20250422190121.4=
-6839-1-trannamatk@gmail.com/
-> > > >
-> > > > Out of sudden without discussing with auxdisplay maintainers/review=
-ers?
-> > > > Thanks, no.
-> > > > Please, put into the cover letter the meaningful summary of what's
-> > > > going on and why this becomes an auxdisplay issue. Brief review of =
-the
-> > > > bindings sounds more likely like LEDS or PWM subsystems.
-> > >
-> > > It is 4x3 matrix. That means it is not suitable for LEDs. I don't
-> > > believe it is suitable for PWM, either -- yes, it is 36 PWM outputs,
-> > > but...
-> >=20
-> > Is it intended to be used as a 4x3 matrix, or is this just an internal
-> > wiring detail, and should it be exposed as 12 individual LEDs instead?
->=20
-> The 4=C3=973 matrix is a real and fundamental aspect of the LP5812=E2=80=
-=99s operation.
-> It is not just an internal wiring detail.
-> The device adopts a Time-Cross-Multiplexing (TCM) structure, where 4 outp=
-ut
-> pins control 12 LED dots individually through scanning. Each pin includes
-> both high-side and low-side drive circuits, meaning matrix multiplexing is
-> required for proper operation =E2=80=94 it cannot be treated as 12 comple=
-tely
-> independent LEDs.
-
-Scanning is really a detail.
-
-If this is used as rectangular 4x3 display, then it goes to auxdisplay.
-
-If this is used as a power LED, SD activity LED, capslock and numlock
-=2E.. placed randomly all around the device, then it goes LED subsystem.
-
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---MN9BK62TjYm6fNeb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaA/inQAKCRAw5/Bqldv6
-8uIbAJ9b7Wxw9w0XNXTWOjMbMpolG2mURwCfZJERufyKV1fAXGFzbOZeb+pFo7g=
-=PiIm
------END PGP SIGNATURE-----
-
---MN9BK62TjYm6fNeb--
+> ---
+>  arch/x86/mm/pat/memtype.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+> index 668ebf0065157..57e3ced4c28cb 100644
+> --- a/arch/x86/mm/pat/memtype.c
+> +++ b/arch/x86/mm/pat/memtype.c
+> @@ -858,8 +858,7 @@ int memtype_kernel_map_sync(u64 base, unsigned long size,
+>   * Reserved non RAM regions only and after successful memtype_reserve,
+>   * this func also keeps identity mapping (if any) in sync with this new prot.
+>   */
+> -static int reserve_pfn_range(u64 paddr, unsigned long size, pgprot_t *vma_prot,
+> -				int strict_prot)
+> +static int reserve_pfn_range(u64 paddr, unsigned long size, pgprot_t *vma_prot)
+>  {
+>  	int is_ram = 0;
+>  	int ret;
+> @@ -895,8 +894,7 @@ static int reserve_pfn_range(u64 paddr, unsigned long size, pgprot_t *vma_prot,
+>  		return ret;
+>
+>  	if (pcm != want_pcm) {
+> -		if (strict_prot ||
+> -		    !is_new_memtype_allowed(paddr, size, want_pcm, pcm)) {
+> +		if (!is_new_memtype_allowed(paddr, size, want_pcm, pcm)) {
+>  			memtype_free(paddr, paddr + size);
+>  			pr_err("x86/PAT: %s:%d map pfn expected mapping type %s for [mem %#010Lx-%#010Lx], got %s\n",
+>  			       current->comm, current->pid,
+> @@ -906,10 +904,6 @@ static int reserve_pfn_range(u64 paddr, unsigned long size, pgprot_t *vma_prot,
+>  			       cattr_name(pcm));
+>  			return -EINVAL;
+>  		}
+> -		/*
+> -		 * We allow returning different type than the one requested in
+> -		 * non strict case.
+> -		 */
+>  		pgprot_set_cachemode(vma_prot, pcm);
+>  	}
+>
+> @@ -959,7 +953,7 @@ int pfnmap_track(unsigned long pfn, unsigned long size, pgprot_t *prot)
+>  {
+>  	const resource_size_t paddr = (resource_size_t)pfn << PAGE_SHIFT;
+>
+> -	return reserve_pfn_range(paddr, size, prot, 0);
+> +	return reserve_pfn_range(paddr, size, prot);
+>  }
+>
+>  void pfnmap_untrack(unsigned long pfn, unsigned long size)
+> --
+> 2.49.0
+>
 
