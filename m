@@ -1,107 +1,142 @@
-Return-Path: <linux-kernel+bounces-623783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2B0A9FA9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3439A9FAA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 22:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A01D17C9E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A243B04CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F1E1EE7B7;
-	Mon, 28 Apr 2025 20:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A20E1DF742;
+	Mon, 28 Apr 2025 20:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sygfhLrR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxUZcQv4"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3EA1E1DF9;
-	Mon, 28 Apr 2025 20:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BDA1E51F6
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 20:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745872175; cv=none; b=eUz5rjClVbgUENBOx69RQBdvVn5hawpxeHzNN7er0hXiP+V9K5WQoMipUrzOJQVDkf0V8NyzWt/iLEcMfMO9ulN/2mKOLJlVeL0/89/hfIe5KMXPqJ4uCmFF3gFSj1jh7o8TN7xSyqcSq2Co6i51QTuDW4z1eUtI7r9yIcF/a8g=
+	t=1745872192; cv=none; b=dtY8zEJAAP1NlEpV0BF9IuteWHPJQUP2jyzPHh95HZTyOpgliXH2VJYlfrT/ErKwu9jNKi2iO14I09R0q2I0SrmtOYXGnrP0t/eXMI8GuOMG5dP8P3GGVz/CVLByG2K7xV/31UEcF2oIg6EmJ1120SilR55Qf21rsk+HSw2q1wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745872175; c=relaxed/simple;
-	bh=JEKRoGYDYh7GpfLKStdeDdeGx4K/HvHNWFPdi0kDiGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o9JitOmQkgyL80jMVhVKoFORZjLMhtglJCwQdWa8Aix89Rf9NfXur0U5Cz/EPqaqafXQEqtSFVeSK6M9SOfWoVWrRJIxsibURkWszIaFPzPxdIFdjuHCVJZXqzaADnZbuK9tXzSEGCCzhbZhsQ4AG/66xpIJ6sta6DukcW3GhTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sygfhLrR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED834C4CEE9;
-	Mon, 28 Apr 2025 20:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745872173;
-	bh=JEKRoGYDYh7GpfLKStdeDdeGx4K/HvHNWFPdi0kDiGk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sygfhLrR2KlkmM8Ef+lvuMO/+7q+Gb9e1Wkr3oSZAb+rneLJg1kfHDgpNpdgZJtek
-	 QFtSj3g9yjAGQkMIrhNmhNeysFDzGGUCcLkngMrJ1QMvHwFbJCa/CDtZhoG+C4zZFc
-	 dtGXoilUEPAeRszU2JSGKjKyu7EdMf5dok5/FBLTDOOPIHeL72WmPPWOKiqqSZZZmo
-	 WVr5x6KxpBnqDP/NBXBauIjm3tQLOGfDS8M3blQiED5Ty/puxt+C4icsk1MbIWVADj
-	 1QcM0WuUIu0lvQGCO5RQahGZOCor0Flwa625vQdBXvS8Ky6xp+TogRvEKbZJ7bwJoM
-	 MrfsV1L2iReFw==
-Date: Mon, 28 Apr 2025 13:29:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew@lunn.ch>
-Subject: Re: [net-next v8 4/7] net: mtip: The L2 switch driver for imx287
-Message-ID: <20250428132932.273fc568@kernel.org>
-In-Reply-To: <20250428074424.3311978-5-lukma@denx.de>
-References: <20250428074424.3311978-1-lukma@denx.de>
-	<20250428074424.3311978-5-lukma@denx.de>
+	s=arc-20240116; t=1745872192; c=relaxed/simple;
+	bh=9y0PfaE/6TV4pAXVufp0rlzILp7rIOKrXiLkxRqTKx0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qOO1TzAqVH2DF/060itVkTQJzLiRfbCsWuYVhUJQN+ZBbv9s7ue6TTNbWMjSeXWJIcQeMAF59CS2jYjJ8slm7Wfobks4XxVASTyfau3b4eKcoua0Ecw13s1IxYWXoLU7Oz9YaGjpvu9XmLMO4KYmulzyxbIIUIAz3KBmB8e7YVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxUZcQv4; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso745827a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745872190; x=1746476990; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=muruLZ8jDogUrA97U90RpTPwvwdtevKxgVq9iGiXD/0=;
+        b=JxUZcQv4OrARfCogIskNlkfC9FQ17opV0lIlJH3Xpwz3SOPOzlKPtqBaW+wZLO5lzA
+         uz02W24AW7OEb8rX3CPoZ0GfpvkPdYS0f6e+hBDSWKnXSMooNVX44IKCXLx2LDZuAFFM
+         EKvGO+TxSXLI1L1sYAHR0cowESXxy8oqbxEy37Ov1zRQouM8CQlARf45oybbE3hWcYWU
+         k6xksAwdCC/GuxdOm3+RftaBWMCz4ybylNmxaql1REO0ryq2sBV51sgSC69BEt+MBxMI
+         Tp1bQh5t149vHdGV5DAoqk+nfH9LjAUDi39V8mhQD/qbX2uf5t7wJmt/1nQEUkV2tD3H
+         tbXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745872190; x=1746476990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=muruLZ8jDogUrA97U90RpTPwvwdtevKxgVq9iGiXD/0=;
+        b=pZfmt38T9NjZzJPQOJ2LppT+sNsFLKkeUwYwwwuI5C35uKxivIBoXQl7zj4OLz2icm
+         jbLWXIQ86gIiZAlVso3Yk5IeZ7BSxVg0v6GoazoKYjKk3ikhQNwN42s2V/Poa2QJdVeI
+         MhNtugLwiW/bNPxUTArlPj9nKuYMOKHe7pDbf8uatqtGup+0FxP5Pq3hMCJfZ22UAEKe
+         N+Smlu/ek8sJoIcPl/KwvOEyI/NE10XZj3oYUvjqNlHYGRec7TNIttrhWEkt+YVoMYwh
+         zlfrbMIsy8U4K+UFmw4X1MEjQ464fHO5RGSIMjs1I1hahlhdmyBCE0/fDYvU+FOVlmfe
+         4Okg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/nUiI602vYfHtgewpXsP+wYPgyptY4lpFO8sQmd5ddD9FNARHu/DT/kt3d8ItN9TrA+qbtf5sO1UqZ6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsOs0CB2oUHZGUJRopA+Jd3gRjapffIqf2DhdwU7wR3t8XNPr5
+	LY/duN3rArowGzlV/Vx/bWGw92oxI81D0QWydWxJHVJWqK2HcCK0xp2u/NGGr+75/jdEBq0VEu7
+	OII+qhInXp80fw/cwAbW3w9pqDGE=
+X-Gm-Gg: ASbGncvQRs+I17RyN6fldNiAKDUIteYnCoNtb2VE0vSksLmlio2G/aPD8xkMKiNmhAw
+	cZrZP1tgD78t8HPvY7ShxTJrYbPu8eJIQRPHMCvn/SVRONGgNAdO5bgddERVaXAngDk/vA8Twgk
+	gYdx8MwmsyjN4pdnVTsHxT8A==
+X-Google-Smtp-Source: AGHT+IEUTtzLxs5g5kci6lKCF5KVuZ0xnaZX56Mvsf90g0KbQUQr8wiEQn+WQgoSjGtyk87mNvopu1KNHYsC8JAMUx4=
+X-Received: by 2002:a17:90b:4d08:b0:304:eacf:8bba with SMTP id
+ 98e67ed59e1d1-30a220c9efdmr372231a91.4.1745872190315; Mon, 28 Apr 2025
+ 13:29:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250114132856.19463-1-yangtiezhu@loongson.cn> <ab7f1ba8-a49c-41a1-9b6f-ca142fbbe9d2@aosc.io>
+In-Reply-To: <ab7f1ba8-a49c-41a1-9b6f-ca142fbbe9d2@aosc.io>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 28 Apr 2025 16:29:39 -0400
+X-Gm-Features: ATxdqUGv1ycYYD9t-wVox9vr8AM5Fx_3PDDiQ8wX5TQlGWUKZ2inXTmqYb8_VfM
+Message-ID: <CADnq5_PCMDBVQn6sL7_3C=aHk-b-wn-JzPnQoTun7DcqN1PNrQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] drm/amd/display: Stop control flow if the divisior
+ is zero
+To: Mingcong Bai <jeffbai@aosc.io>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Nathan Chancellor <nathan@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
+	amd-gfx@lists.freedesktop.org, llvm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Apr 2025 09:44:21 +0200 Lukasz Majewski wrote:
-> This patch series provides support for More Than IP L2 switch embedded
-> in the imx287 SoC.
-> 
-> This is a two port switch (placed between uDMA[01] and MAC-NET[01]),
-> which can be used for offloading the network traffic.
-> 
-> It can be used interchangeably with current FEC driver - to be more
-> specific: one can use either of it, depending on the requirements.
-> 
-> The biggest difference is the usage of DMA - when FEC is used, separate
-> DMAs are available for each ENET-MAC block.
-> However, with switch enabled - only the DMA0 is used to send/receive data
-> to/form switch (and then switch sends them to respecitive ports).
-> 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Tue, Apr 22, 2025 at 11:55=E2=80=AFPM Mingcong Bai <jeffbai@aosc.io> wro=
+te:
+>
+> Hi all,
+>
+> =E5=9C=A8 2025/1/14 21:28, Tiezhu Yang =E5=86=99=E9=81=93:
+> > As far as I can tell, with the current existing macro definitions, ther=
+e
+> > is no better way to do the minimal and proper changes to stop the contr=
+ol
+> > flow if the divisior is zero.
+> >
+> > In order to keep the current ability for the aim of debugging and avoid
+> > printing the warning message twice, it is better to only use ASSERT_BUG=
+()
+> > and SPL_ASSERT_BUG() directly after doing the following two steps:
+> >
+> > (1) Add ASSERT_BUG() macro definition
+> > (2) Add SPL_ASSERT_BUG() macro definition
+> >
+> > This version is based on 6.13-rc7, tested on x86 and LoongArch.
+> >
+> > Tiezhu Yang (3):
+> >    drm/amd/display: Add ASSERT_BUG() macro definition
+> >    drm/amd/display: Add SPL_ASSERT_BUG() macro definition
+> >    drm/amd/display: Harden callers of division functions
+> >
+> >   drivers/gpu/drm/amd/display/dc/basics/fixpt31_32.c  |  2 +-
+> >   drivers/gpu/drm/amd/display/dc/os_types.h           |  7 +++++++
+> >   drivers/gpu/drm/amd/display/dc/spl/spl_debug.h      | 11 +++++++++++
+> >   drivers/gpu/drm/amd/display/dc/spl/spl_fixpt31_32.c |  2 +-
+> >   4 files changed, 20 insertions(+), 2 deletions(-)
+> >
+>
+> Gentle ping on this series...
+>
+> Harry and Huacai, can you please take a look at this updated series
+> (since you have both provided comments on previous revisions?), thank you=
+!
 
-Linking fails with allmodconfig
+I grabbed this series, but after reading this thread:
+https://lists.freedesktop.org/archives/dri-devel/2025-April/503021.html
+I'm wondering if it wouldn't be better to just allow the divide by 0
+rather than triggering BUG().
 
-ERROR: modpost: missing MODULE_LICENSE() in drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.o
-ERROR: modpost: "mtip_forced_forward" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_port_learning_config" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_port_blocking_config" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_port_enable_config" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_port_broadcast_config" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_port_multicast_config" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_switch_en_port_separation" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_register_notifiers" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_unregister_notifiers" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw.ko] undefined!
-ERROR: modpost: "mtip_is_switch_netdev_port" [drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.ko] undefined!
-WARNING: modpost: suppressed 3 unresolved symbol warnings because there were too many)
+Alex
 
