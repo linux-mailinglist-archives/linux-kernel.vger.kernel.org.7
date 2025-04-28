@@ -1,382 +1,160 @@
-Return-Path: <linux-kernel+bounces-622416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741F5A9E6BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 05:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DACA9E6AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 05:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DDEF3A42C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 03:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C24B3BBE1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 03:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F520E32F;
-	Mon, 28 Apr 2025 03:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A111DE4D2;
+	Mon, 28 Apr 2025 03:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WoHk90vS"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xn1gKjTP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32D020A5EB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 03:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AE41DA617;
+	Mon, 28 Apr 2025 03:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745811432; cv=none; b=c0y4u6PtFkY3es1LaG9f2wBzgZNNcVjD2t6d4llaSyAjL0PgiZ5JrgAY6IoxMzQNTyCt/Eo3XYVxfmMBKaYxezDi2GQv+llO1T3KgW+CcYO2On12EQhEdY+xYWM3m/T2bnaWL1jA0BJGEInObwtGneMFFVY4J0NNcVriYav+xmY=
+	t=1745811415; cv=none; b=AB7NGljcQbH2PJu5T7MDcR9fJgzf1V9DQCue/DJNrk38ZAjoV/xzER9AmcPO4UUu7kTwOa4RNlG/9IJrIG/vRl1rdncmwMjS/8pHIY1LwMzSlYjpfbzwFlWwtfbLx+t0tA22OMak9bLKLBbABvZLt1cmmTUKHuaMv+/Lo8Ynh8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745811432; c=relaxed/simple;
-	bh=9m6dGm3hgSNWG+2WOSHP2KyLWYLAjePv7Lo4oUqmktU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YCfq4MrijBMkJ51Rv55s1k8vSyYKYToSpetBKicwIFuvNEmvug3AyifHYrUnEMC3RcR0mQIz9t7mkVJVqboTJtStaw/lJRfyZMlaJyuVflEPYRi5amtOV802o9NV4S8iTnUCs6h16KYfklwH9MdMzJPU1OFDH1uYQkdzK2E6nSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WoHk90vS; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745811429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PMD4alSuF/CQrdJat1BcZoxvyxgjdLtWthYldLJYf1E=;
-	b=WoHk90vSsCT6HqUIwr7zPvav48u2HbF9Fj+LO5seyFrEcCAO/yMDiQn7IpkGImXxA5Cx3W
-	jN5br5GN6WKkrp+RIO/MIO4P0oJHADYQOhd7umOi69q0P/NDHaILQKKI3xxLRvkpkvHRIX
-	Rab1/AQR2q1H72iYJeg+PrWNcLnEGGE=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Suren Baghdasaryan <surenb@google.com>,
-	David Rientjes <rientjes@google.com>,
-	Josh Don <joshdon@google.com>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	bpf@vger.kernel.org,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH rfc 12/12] bpf: selftests: psi handler test
-Date: Mon, 28 Apr 2025 03:36:17 +0000
-Message-ID: <20250428033617.3797686-13-roman.gushchin@linux.dev>
-In-Reply-To: <20250428033617.3797686-1-roman.gushchin@linux.dev>
-References: <20250428033617.3797686-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1745811415; c=relaxed/simple;
+	bh=+MrxUch6bxdnk9F4Z6rEd8TJ9lmxLd5+tI0u8ijYwVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XHaYnzaOIC819t1MOUJSzuikGmoFtCfnkgTU9jFl48nIi1Pmh2qsLnMYrqYqybXwOAap5rQbzWv2T0ipX7DbBHfhED6BrwwykkHeD/b+8o1Fp31EcMFtDE4p3pQMofsUzvaDhlXE2XQvs205IKYXu5PyjtCA+gOKso8DOM3608M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xn1gKjTP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53RKVhTm018434;
+	Mon, 28 Apr 2025 03:36:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	X3sHtR4L3+uYewQZpPX0fDuHsk1ARdQgCZJ72sppER4=; b=Xn1gKjTP/ijkljil
+	tHce/JJRu+YuMGSa11aOx0LTt/P6TW1Dzzk+k9F9MBmyfe0GJpbu/YgWDdsEh1H7
+	hupo6PDdYDf/h2Lz+4gAF/J2+W1s4jOsqXf5GPMffPxCULqQ5qIIbUtoyy3uLYwq
+	CJVhfwH6zSX9C9LNPdbOWMqUT1e3hRfzkMNNUG7T1Gin4+GDEwJmDWmS+HMwRtMb
+	3gQN9NFe8Bwbqm1PBJus2TbHj/JIG0xqAgGIwPN0qaGROQBrx9AAOBP61qnYAItH
+	2bVefhOBZnegRP8tQXaJl3GGNqOJ0edakNAgrfPRsu17O7dlLCDBjngj7r6fGP3f
+	HSbqnA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468r8hnksn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 03:36:49 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53S3amr5019166
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Apr 2025 03:36:48 GMT
+Received: from [10.216.36.164] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Apr
+ 2025 20:36:43 -0700
+Message-ID: <e638949d-befc-f181-84ee-1c8062099d35@quicinc.com>
+Date: Mon, 28 Apr 2025 09:06:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v5 4/5] arm64: dts: qcom: qcs8300: add support for video
+ node
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com>
+ <20250424-qcs8300_iris-v5-4-f118f505c300@quicinc.com>
+ <47dtgkfqcpalixg36vxcurkmh5z52kdp7rbcvwl56wsyjsisdo@ylmmrvwde4nz>
+ <d8db0361-b8d9-4ed5-0f92-f66f280f62e6@quicinc.com>
+ <00fb511e-80b5-494b-acce-23093932c4ad@linaro.org>
+ <fcf5eb3c-a2c4-41ec-8c6b-d8aee5a9f906@linaro.org>
+Content-Language: en-US
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <fcf5eb3c-a2c4-41ec-8c6b-d8aee5a9f906@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8Nk4jiXlezy56D0CCESMkHqCkA2q8bAv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDAyOSBTYWx0ZWRfX4TaRoEN8TcNq a5oN5+KC4Oq4OasNBbt3Ww0LZvFCTd7Vv5Ejxf26Y16ij9IDmplPPcMgT5Kfc4rHhYfCRpJPQ2a SqGDrczwPErFP33M9zH3BLW11RjjLZ3/t70ZG168yKIPXCVrsb4mBeCSAvAPtIW+d42J7k6GvNg
+ YnaLWEg9Yb2akXbt5cFrNaCWXzXsrSfWvjL0pLWh4rNpAR7TKi+jRI9eUQ++c90tPCCbwJMWpjQ Nru2kyr3Cv+5jMzzLl/I5+kk/kS/nKoZTNcBdscxuItrrbH3t3amRm2qw16ESTiKDINVbgI4L0k GtxC/qDRLe1FRlvyuO3GsI8IFN0k4ezImFPYCgnod3raE7z3oEJjJFoG4Qo+6NeWi6VfdmL83BJ
+ FbrJn45cx7gsC0wnfuG6ZF0KppwSsgHj+veFiQPz6aZ1tNVlHEBSWFWfbSFyWZdU5Y10zFcq
+X-Authority-Analysis: v=2.4 cv=cfzSrmDM c=1 sm=1 tr=0 ts=680ef7d1 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=njm8HryGEHwkoIhAl8AA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 8Nk4jiXlezy56D0CCESMkHqCkA2q8bAv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_01,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=786 adultscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504280029
 
-Add a psi handler test. The test creates a cgroup with two child
-sub-cgroups, sets up memory.high for one of those and puts
-memory hungry processes in each of them.
 
-Then it sets up a psi trigger for one of cgroups and waits
-till the process in this cgroup will be killed by the OOM killer.
-To make sure there was indeed an OOM event, it checks the
-corresponding memcg statistics.
 
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
----
- tools/testing/selftests/bpf/prog_tests/psi.c | 234 +++++++++++++++++++
- tools/testing/selftests/bpf/progs/test_psi.c |  43 ++++
- 2 files changed, 277 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/psi.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_psi.c
+On 4/28/2025 3:22 AM, Bryan O'Donoghue wrote:
+> On 24/04/2025 13:20, Bryan O'Donoghue wrote:
+>> On 24/04/2025 11:28, Vikash Garodia wrote:
+>>>
+>>> On 4/24/2025 2:51 PM, Dmitry Baryshkov wrote:
+>>>> On Thu, Apr 24, 2025 at 02:20:48PM +0530, Vikash Garodia wrote:
+>>>>> Add the IRIS video-codec node on QCS8300.
+>>>>
+>>>> Nit: you can not "add support for the video node". You can either add
+>>>> video node or add support for video en/decoding.
+>>> Makes sense. Will wait for any other comments, before resending.
+>>>
+>>> Regards,
+>>> Vikash
+>>>>
+>>>>>
+>>>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>>>> ---
+>>>>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 71 +++++++++++++++++++++++
+>>>>> ++++++++++++
+>>>>>   1 file changed, 71 insertions(+)
+>>>>>
+>>>>
+>>
+>> Unless you get another comment, there's no need to resend.
+>>
+>> I can fix the commit log for you on the way in.
+>>
+>> ---
+>> bod
+> 
+> Oops this is isn't one I can fix for you - dtsi.
+Will send out v6.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/psi.c b/tools/testing/selftests/bpf/prog_tests/psi.c
-new file mode 100644
-index 000000000000..99d68bc20eee
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/psi.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#define _GNU_SOURCE
-+
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <signal.h>
-+#include <sys/stat.h>
-+#include <test_progs.h>
-+#include <bpf/btf.h>
-+#include <bpf/bpf.h>
-+#include <errno.h>
-+#include <string.h>
-+
-+#include "cgroup_helpers.h"
-+#include "test_psi.skel.h"
-+
-+struct cgroup_desc {
-+	const char *path;
-+	int fd;
-+	unsigned long long id;
-+	int pid;
-+	size_t target;
-+	size_t high;
-+	bool victim;
-+	bool psi;
-+};
-+
-+#define MB (1024 * 1024)
-+
-+static struct cgroup_desc cgroups[] = {
-+	{ .path = "/oom_test" },
-+	{ .path = "/oom_test/cg1", .target = 100 * MB },
-+	{ .path = "/oom_test/cg2", .target = 500 * MB,
-+	  .high = 40 * MB, .psi = true, .victim = true },
-+};
-+
-+static int spawn_task(struct cgroup_desc *desc)
-+{
-+	char *ptr;
-+	int pid;
-+
-+	pid = fork();
-+	if (pid < 0)
-+		return pid;
-+
-+	if (pid > 0) {
-+		/* parent */
-+		desc->pid = pid;
-+		return 0;
-+	}
-+
-+	/* child */
-+	ptr = (char *)malloc(desc->target);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	memset(ptr, 'a', desc->target);
-+
-+	while (1)
-+		sleep(1000);
-+
-+	return 0;
-+}
-+
-+static int setup_psi_alert(struct cgroup_desc *desc)
-+{
-+	const char *trig = "some 100000 1000000";
-+	int fd;
-+
-+	fd = open_cgroup_file(desc->path, "memory.pressure", O_RDWR);
-+	if (fd < 0) {
-+		printf("memory.pressure open error: %s\n", strerror(errno));
-+		return 1;
-+	}
-+
-+	if (write(fd, trig, strlen(trig) + 1) < 0) {
-+		printf("memory.pressure write error: %s\n", strerror(errno));
-+		return 1;
-+	}
-+
-+	/* keep fd open, otherwise the psi trigger will be deleted */
-+	return 0;
-+}
-+
-+static void setup_environment(void)
-+{
-+	int i, err;
-+
-+	err = setup_cgroup_environment();
-+	if (!ASSERT_OK(err, "setup_cgroup_environment"))
-+		goto cleanup;
-+
-+	for (i = 0; i < ARRAY_SIZE(cgroups); i++) {
-+		cgroups[i].fd = create_and_get_cgroup(cgroups[i].path);
-+		if (!ASSERT_GE(cgroups[i].fd, 0, "create_and_get_cgroup"))
-+			goto cleanup;
-+
-+		cgroups[i].id = get_cgroup_id(cgroups[i].path);
-+		if (!ASSERT_GT(cgroups[i].id, 0, "get_cgroup_id"))
-+			goto cleanup;
-+
-+		if (i == 0) {
-+			/* Freeze the top-level cgroup */
-+			err = write_cgroup_file(cgroups[i].path, "cgroup.freeze", "1");
-+			if (!ASSERT_OK(err, "freeze cgroup"))
-+				goto cleanup;
-+		}
-+
-+		if (!cgroups[i].target) {
-+			/* Recursively enable the memory controller */
-+			err = write_cgroup_file(cgroups[i].path, "cgroup.subtree_control",
-+						"+memory");
-+			if (!ASSERT_OK(err, "enable memory controller"))
-+				goto cleanup;
-+		}
-+
-+		if (cgroups[i].high) {
-+			char buf[256];
-+
-+			snprintf(buf, sizeof(buf), "%lu", cgroups[i].high);
-+			err = write_cgroup_file(cgroups[i].path, "memory.high", buf);
-+			if (!ASSERT_OK(err, "set memory.high"))
-+				goto cleanup;
-+
-+			snprintf(buf, sizeof(buf), "0");
-+			write_cgroup_file(cgroups[i].path, "memory.swap.max", buf);
-+		}
-+
-+		if (cgroups[i].target) {
-+			char buf[256];
-+
-+			err = spawn_task(&cgroups[i]);
-+			if (!ASSERT_OK(err, "spawn task"))
-+				goto cleanup;
-+
-+			snprintf(buf, sizeof(buf), "%d", cgroups[i].pid);
-+			err = write_cgroup_file(cgroups[i].path, "cgroup.procs", buf);
-+			if (!ASSERT_OK(err, "put child into a cgroup"))
-+				goto cleanup;
-+		}
-+
-+		if (cgroups[i].psi) {
-+			err = setup_psi_alert(&cgroups[i]);
-+			if (!ASSERT_OK(err, "create psi trigger"))
-+				goto cleanup;
-+		}
-+	}
-+
-+	return;
-+
-+cleanup:
-+	cleanup_cgroup_environment();
-+}
-+
-+static int run_and_wait_for_oom(void)
-+{
-+	int ret = -1;
-+	bool first = true;
-+	char buf[4096] = {};
-+	size_t size;
-+
-+	ret = write_cgroup_file(cgroups[0].path, "cgroup.freeze", "0");
-+	if (!ASSERT_OK(ret, "freeze cgroup"))
-+		return -1;
-+
-+	for (;;) {
-+		int i, status;
-+		pid_t pid = wait(&status);
-+
-+		if (pid == -1) {
-+			if (errno == EINTR)
-+				continue;
-+			/* ECHILD */
-+			break;
-+		}
-+
-+		if (!first)
-+			continue;
-+
-+		first = false;
-+
-+		for (i = 0; i < ARRAY_SIZE(cgroups); i++) {
-+			if (!ASSERT_OK(cgroups[i].victim !=
-+				       (pid == cgroups[i].pid),
-+				       "correct process was killed")) {
-+				ret = -1;
-+				break;
-+			}
-+
-+			if (!cgroups[i].victim)
-+				continue;
-+
-+			size = read_cgroup_file(cgroups[i].path, "memory.events",
-+						buf, sizeof(buf));
-+			if (!ASSERT_OK(size <= 0, "read memory.events")) {
-+				ret = -1;
-+				break;
-+			}
-+
-+			if (!ASSERT_OK(strstr(buf, "oom_kill 1") == NULL,
-+				       "oom_kill count check")) {
-+				ret = -1;
-+				break;
-+			}
-+		}
-+
-+		for (i = 0; i < ARRAY_SIZE(cgroups); i++)
-+			if (cgroups[i].pid && cgroups[i].pid != pid)
-+				kill(cgroups[i].pid, SIGKILL);
-+	}
-+
-+	return ret;
-+}
-+
-+void test_psi(void)
-+{
-+	struct test_psi *skel;
-+	int err;
-+
-+	skel = test_psi__open_and_load();
-+	err = test_psi__attach(skel);
-+	if (!ASSERT_OK(err, "test_psi__attach"))
-+		goto cleanup;
-+
-+	setup_environment();
-+
-+	run_and_wait_for_oom();
-+
-+	cleanup_cgroup_environment();
-+cleanup:
-+	test_psi__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_psi.c b/tools/testing/selftests/bpf/progs/test_psi.c
-new file mode 100644
-index 000000000000..8cbc1e0a5b24
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_psi.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct mem_cgroup *bpf_get_mem_cgroup(struct cgroup_subsys_state *css) __ksym;
-+void bpf_put_mem_cgroup(struct mem_cgroup *memcg) __ksym;
-+int bpf_out_of_memory(struct mem_cgroup *memcg, int order) __ksym;
-+
-+SEC("fmod_ret.s/bpf_handle_psi_event")
-+int BPF_PROG(test_psi_event, struct psi_trigger *t)
-+{
-+	struct cgroup *cgroup = NULL;
-+	struct mem_cgroup *memcg;
-+	u64 cgroup_id;
-+
-+	if (!t->of || !t->of->kn) {
-+		bpf_out_of_memory(NULL, 0);
-+		return 1;
-+	}
-+
-+	cgroup_id = t->of->kn->__parent->id;
-+	cgroup = bpf_cgroup_from_id(cgroup_id);
-+	if (!cgroup)
-+		return 0;
-+
-+	memcg = bpf_get_mem_cgroup(&cgroup->self);
-+	if (!memcg) {
-+		bpf_cgroup_release(cgroup);
-+		return 0;
-+	}
-+
-+	bpf_out_of_memory(memcg, 0);
-+
-+	bpf_put_mem_cgroup(memcg);
-+	bpf_cgroup_release(cgroup);
-+
-+	return 1;
-+}
--- 
-2.49.0.901.g37484f566f-goog
-
+Regards,
+Vikash
+> 
+> ---
+> bod
 
