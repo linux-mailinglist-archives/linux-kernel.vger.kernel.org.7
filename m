@@ -1,160 +1,142 @@
-Return-Path: <linux-kernel+bounces-622594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9464A9E970
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA1EA9E984
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A43C188AD3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA1316FDF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F231DDC23;
-	Mon, 28 Apr 2025 07:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/o+5q3/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA571DE892;
+	Mon, 28 Apr 2025 07:38:35 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34F982866;
-	Mon, 28 Apr 2025 07:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EE41A3178;
+	Mon, 28 Apr 2025 07:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745825727; cv=none; b=Ote06Oc9hPQTPUe+sdDwFyR0iBnRa14kczG/dt696pn5bUkDgmvj8hCJQ6RgDC4fHyFNxMijLOfB0lBdvuPJsrYyFwSe3XRfIcoBOJi9trNtSDOBU3nG7PGtwkqfdPwWRxqkhenzsMDs8goIL9qBBp+vaNo3DI+Kw53lp+1mbM4=
+	t=1745825914; cv=none; b=QeQFi9v+uonKPJ+L+Ccgx6GRi8J2MzOFk45Yfs2epsDrG4HRA/k7p4nK3YmKMypwCfjavNrnXJfocl9h6PZ/4X7IJATi/5HWPwVq4u3VZpD/NcHCrKU2PtRkl+BHwBDOkmeknx+wU+uW/U2GDsbExO58WfXfvZ+67eKBODQz5k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745825727; c=relaxed/simple;
-	bh=mxdki93guRrPUqMnNg4vPPRG6mXLaz09PPXd+0S8V6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YLNibOVDvuxfTln550qTIflM5NkQJdaA377rYCqE+t9pDfcI8zov/LX7KDP+xIAaJe06CWFaUr+hGRLe4eZJzGELL+EM7aXniM4Hi3jwe2gHQ4wQ6K9xrpideK6/3Mp6wm7CZUDTMk06Xb64w1k+Ngxo/3AdyLLsD96RFXZ4lGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/o+5q3/; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745825726; x=1777361726;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mxdki93guRrPUqMnNg4vPPRG6mXLaz09PPXd+0S8V6E=;
-  b=K/o+5q3/oZSZ9H2GvLBUCgsdkIhrr7HyGZSiYuhvZJpMHF61piITfezC
-   6PTJXhm/EY6HscEGeMpWku0d+EylG+7DAqiUE6HxhQe2bFtraR4hhnU0P
-   M0t3goahERIA3ioUvKmqQwAbF8WIG4y07OyuhUoxZ16mUlcrjwX8ME7ug
-   lX6LJFk3Spn6IJQTbsvlXDr3gdeeJfL32PZYtewemEbYYWqTk6ZVNg4hG
-   /K3BNFt+/4drPHLb9vbPtW5iMNDfhg8stsijFlNe0Kkjxdh2AkC4tZWmZ
-   AJvA2QpWUS+/fXtrmwgITvjzjfgW4ualidysPT9mJn8HiOxsfElkk4lUI
-   Q==;
-X-CSE-ConnectionGUID: jcHnSpGGT5G2SK6lT6dfAA==
-X-CSE-MsgGUID: pY3iLgfvTimKgtxNqFkubg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="50058862"
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="50058862"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 00:35:24 -0700
-X-CSE-ConnectionGUID: tFG6ORSjTd2nkwZlwgLrJA==
-X-CSE-MsgGUID: vdPhjXp7RgOB/g6AJCI/RQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; 
-   d="scan'208";a="137491544"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 00:35:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1u9J1I-000000011Cw-0lnE;
-	Mon, 28 Apr 2025 10:35:16 +0300
-Date: Mon, 28 Apr 2025 10:35:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Akira Yokosawa <akiyks@gmail.com>, airlied@gmail.com, corbet@lwn.net,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-	masahiroy@kernel.org, mripard@kernel.org, nathan@kernel.org,
-	nicolas.schier@linux.dev, rodrigo.vivi@intel.com, simona@ffwll.ch,
-	tursulin@ursulin.net, tzimmermann@suse.de
-Subject: Re: [PATCH v4 0/4] Don't create Python bytecode when building the
- kernel
-Message-ID: <aA8vs8gw75aAfwYb@smile.fi.intel.com>
-References: <cover.1745453655.git.mchehab+huawei@kernel.org>
- <22d7bca2-cdfb-4e06-acb2-41363ba13333@gmail.com>
- <20250426205708.4f90a83d@sal.lan>
+	s=arc-20240116; t=1745825914; c=relaxed/simple;
+	bh=Xoz688GosEvH/cH2tKOpL/P96ikpFzwOy40NGEpmPj0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kseM1F7207EL7JtJsxV5gMnUfCPJfHHvraO2Ozx9fdkaVzsfRcXtFUrib8s34PI7fXExAgqJFh+gU3j3+MGv5r7yidq673IXTzw5nJHpPTm3yDQWTgJ1SUGAjG0PRMWsuyKyvEAxXeCuFm9klCv4Bwn7P2OLEKT4GFXCDLgIQAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [27.18.99.221])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 135f5a5ac;
+	Mon, 28 Apr 2025 15:38:17 +0800 (GMT+08:00)
+From: Ze Huang <huangze@whut.edu.cn>
+Subject: [PATCH 0/2] Add SpacemiT K1 USB3.0 host controller support
+Date: Mon, 28 Apr 2025 15:38:10 +0800
+Message-Id: <20250428-b4-k1-dwc3-v2-v1-0-7cb061abd619@whut.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250426205708.4f90a83d@sal.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGIwD2gC/3WOTU+DQBCG/wrZs0vYDzZI1IA1xoNiJenBmqZZl
+ pFuykfdRaQ2/e+ucDReJnkm87zvnJAFo8Gi2DshA4O2umsdkAsPqZ1sK8C6dIxoQMOA0wgXHO8
+ JLr8UwwPFIbmEiEtSUFUg5xwMvOtxynvbzGzg49PF9vMSFdICVl3T6D72BuGTEBtFft0GrJVTY
+ exdzX1EEBbywF0JGnFM8A6ONbTymPCS+p2pbv4TI8KdSHwqAiZ45FSoSzCJ0VbZXhrfvfBXXqS
+ L/LAv1yINxuc8f7lts2x5r7KHio2P1yu2HVMFy0beZWy7fn36tjJNGqlrv5rmlLk5n38AU/IvQ
+ lYBAAA=
+X-Change-ID: 20250428-b4-k1-dwc3-v2-519e84a1b2cb
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Ze Huang <huangze@whut.edu.cn>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745825898; l=3098;
+ i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
+ bh=Xoz688GosEvH/cH2tKOpL/P96ikpFzwOy40NGEpmPj0=;
+ b=8MMhjAex2KAUzW/ISYn7XtMeCGzs2LM18w8pHYrHurFCLFaF34nu+c03QZLw71T/hYll5IFAr
+ 2IBfL8HZym3DjlfKKUVZSDQ43/6tFqIC22XsMxCbROOO3Bl7cPh+quQ
+X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
+ pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGBkaVk9ITRoeGRgdS0pIT1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VCQlVJSUpZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVUpCS0
+	tZBg++
+X-HM-Tid: 0a967b551e6203a1kunm135f5a5ac
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PRw6SSo*DDJLFTVMNSEpAU0S
+	PjYKFDZVSlVKTE9OQ0lOQktITUNLVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VCQlVJSUpZV1kIAVlBT0NISTcG
 
-On Sat, Apr 26, 2025 at 08:57:08PM +0800, Mauro Carvalho Chehab wrote:
-> Em Sat, 26 Apr 2025 11:39:05 +0900
-> Akira Yokosawa <akiyks@gmail.com> escreveu:
-> 
-> > Bothering with might-become-incompatilbe-in-the-future python environment
-> > variables in kernel Makefiles looks over-engineering to me.
-> > Also, as Mauro says in 3/4, it is incomplete in that it does not cover
-> > the cases where those scripts are invoked outside of kernel build.
-> > And it will interfere with existing developers who want the benefit of
-> > bytecode caching.
-> > 
-> > I'm not precluding the possibility of incoherent bytecode cache; for example
-> > by using a shared kernel source tree among several developers, and only
-> > one of them (owner) has a write permission of it.  In that case, said
-> > owner might update the tree without running relevant python scripts.
-> > 
-> > I don't know if python can notice outdated cache and disregard it.
-> > 
-> > In such a situation, setting PYTHONPYCACHEPREFIX as an environment
-> > variable should help, for sure, but only in such special cases.
-> > 
-> > Andy, what do you say if I ask reverts of 1/4, 2/4/, and 3/4?
-> 
-> Patches 1 and 2 are, IMO, needed anyway, as they fix a problem:
-> KERNELDOC environment is not used consistently.
-> 
-> Now, patch 3 is the one that may require more thinking.
-> 
-> I agree with Andy that, when O=<dir> is used, nothing shall be
-> written to source dir.
-> 
-> There are a couple of reasons for that:
-> 
-> 1. source dir may be read only;
-> 2. one may want to do cross compilation and use multiple output
->    directories, one for each version;
-> 3. the source dir could be mapped via NFS to multiple machines
->    with different architectures.
-> 
-> For (3), it could mean that multiple machines may have different
-> Python versions, so, sharing the Python bytecode from source dir doesn't
-> sound a good idea. Also, I'm not sure if the pyc from different archs
-> would be identical.
-> 
-> With that, there are two options:
-> 
-> a. disable cache;
-> b. set PYTHONCACHEPREFIX.
+This patchset adds initial support for the USB 3.0 Dual-Role Device (DRD)
+controller[1] found in the SpacemiT K1 SoC. The controller is based on Synopsys
+DesignWare Core USB 3 (DWC3) IP, which already has mainline driver support.
 
-Thanks, Mauro, for replying. I'm with you on all of it.
+The DWC3 controller on SpacemiT K1 supports both Host and Device modes for
+USB 3.0 and USB 2.0, including High-Speed, Full-Speed, and Low-Speed operations.
 
-> We're currently doing (a). I guess everybody agrees that this is
-> is not ideal.
+The PHY interfaces required for the K1 USB subsystem, PIPE3 (for USB 3.0)
+and UTMI+ (for USB 2.0) have already been supported in a previous patchset[2].
 
-Yes, I also prefer to have cache working if it's possible. The only BUT here is
-that users should not suffer from it.
+This patchset is based on 6.15-rc1. Tested on BananaPi and Jupiter board.
 
-> So, ideally, we should move to (b). For Spinx, the easiest solution
-> is just to place it under Documentation/output, but this is not
-> generic enough: ideally, we should revert patch 3 and set
-> PYTHONCACHEPREFIX when O is used. Eventually, we can apply my
-> patch for Documentation/output, while we craft such logic.
+Link: https://developer.spacemit.com/documentation?token=AjHDwrW78igAAEkiHracBI9HnTb [1]
+Link: https://lore.kernel.org/linux-riscv/20250418-b4-k1-usb3-phy-v2-v2-0-b69e02da84eb@whut.edu.cn [2]
 
+Signed-off-by: Ze Huang <huangze@whut.edu.cn>
+---
+Changes in v2:
+- dt-bindings:
+  - add missing 'maxItems'
+  - remove 'status' property in exmaple
+  - fold dwc3 node into parent
+- drop dwc3 glue driver and use snps,dwc3 driver directly
+- rename dts nodes and reorder properties to fit coding style
+
+---
+Ze Huang (2):
+      dt-bindings: usb: dwc3: add support for SpacemiT K1
+      riscv: dts: spacemit: add usb3.0 support for K1
+
+ .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  | 95 ++++++++++++++++++++++
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    | 52 ++++++++++++
+ arch/riscv/boot/dts/spacemit/k1.dtsi               | 56 +++++++++++++
+ 3 files changed, 203 insertions(+)
+---
+base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+change-id: 20250428-b4-k1-dwc3-v2-519e84a1b2cb
+prerequisite-message-id: <20250416135406.16284-1-heylenay@4d2.org>
+prerequisite-patch-id: 19b7f061557b184b9565e10ccfc0aab5754dfa73
+prerequisite-patch-id: a56183c8b71a141ca6f5d401b67a5456f40d4a9c
+prerequisite-patch-id: a4a3c44d4c3e44f5209bff2b2bd0b49cd5a9eebe
+prerequisite-patch-id: 471fe02daa5297e85e9cee8dfef873375a348e9f
+prerequisite-patch-id: 717bc3d50f0924f7697312cb78280b15a029ce2c
+prerequisite-patch-id: 585a2a9ce37a5e2a036f7351ff8ff4ed859bbe3e
+prerequisite-message-id: <20250418145401.2603648-1-elder@riscstar.com>
+prerequisite-patch-id: a7769b6451bfd80d5e5366013753c5fc870b2255
+prerequisite-patch-id: 8a8d0eefd0b4423d87f3c093b451a0fa60622ec4
+prerequisite-patch-id: 30f92f93e5b3577bde61424303f21c709a715ec5
+prerequisite-patch-id: d774b8281b5c6a822445365ee94925e1ab6c7a93
+prerequisite-patch-id: 54a4f5d065eb9f212fd99efec6e7e06abbb9bad8
+prerequisite-patch-id: 93962be60d1b58a98d947edf51b4af9edf513785
+prerequisite-patch-id: 5f53f8bf16fb067628092daebc4831293261aa01
+prerequisite-message-id: <CACRpkdZ6A0xORRQBnNNPFcNHg3xL=U3_xAcePmaDN3_ZYMzsaA@mail.gmail.com>
+prerequisite-patch-id: a5d0181eb076c06b2147fb44a2400706bcad1ee3
+prerequisite-patch-id: 59a37da7d2319858de1779e1b60e5362a102cf24
+prerequisite-patch-id: a2fbaeda08eabbafcde1c9893dc82eddaef8f1b2
+prerequisite-patch-id: f44247679d46a51c242703eca370ce0e3db2e61f
+prerequisite-patch-id: 9d4cd8be42a37798815d0aaae21d3c022f815414
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Ze Huang <huangze@whut.edu.cn>
 
 
