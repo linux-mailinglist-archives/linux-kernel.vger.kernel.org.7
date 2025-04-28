@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-622469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEAA3A9E7CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A24A9E7D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3033A9543
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 05:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A946B17568B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 05:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6C21A5BBB;
-	Mon, 28 Apr 2025 05:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M0KwnD5i"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8259B1AC44D;
+	Mon, 28 Apr 2025 05:40:09 +0000 (UTC)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93E31917F4
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 05:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CF318BBBB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 05:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745818618; cv=none; b=k+whjcmNEQwPXY9GQ/m8HSNsSXbdaDYJxa3Z2vZWdABfgBiM3W3qJA+5OaS7RsvsJxiPsHblEq36wy4La3FnWUKl7gqeDqQghpMAKuG5daFMK4F5N/Inw1EHdtf/sSldCes8q/FnNfCA0SvkVRaUGwS1fH3i6ylrurO3upBhRx8=
+	t=1745818809; cv=none; b=i5j8+q9RUeDsBal2+hlx1U6+z6lROl+3rfr4Ydq0KlYXDhm8LEGGYFJabxjzBbs6q1U+71dmLzfr8RtA415+2wWwYmXwng+qXdo67VVoAXagFTeja8SftH+MW55Wo4AhDR5cqC1lZA/t9WZJLrG7D1u3Rpd50AGEnfH1Xh2ehYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745818618; c=relaxed/simple;
-	bh=UyBUln3dyMPnUouVES8zGryM/J3iqSjus+mRmlsJreI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=plpc0F1GKWWjXByPwhPQT1GAj1pS55KNuiFMos8hxz34P2049bcxeGhQ/aiTowyGU/1i7WEj1Rigf5dRu/Q66EbwRiteUKTqCRM6l9SecNXGOdJs/GAHBnRyV5roldeXT+ZEe1bvktFeXZ67H4cFeSRvb/WLyYmtMCTta0d3fNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M0KwnD5i; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72b0626c785so3936635a34.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 22:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745818616; x=1746423416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9DgXzVkgKs9qu56NnzAnpeis7CjshTrDPwgTt5feY58=;
-        b=M0KwnD5iY2SUXL4ur5XSEhnWHmcu2esRCo+ZWXroY5Z5RlcHBTvaLdAbBwwoeZQToR
-         SLb1lvI3Q1DIb5VSlLLoKj5zMuzgxDbRMAMN+mdRkVypdcqaL8pTbd63ZJ5qlKENIp2J
-         jFOzR3P8+HohNOtEZ8dJqZYd6k3G3K+TZ1mgo51XrIf81jLgZZk5fiy/qMpSXbd/wzEd
-         t7YpQduzwrx2/3gy+JpUayRzghQ6gIM4kOnxHq/Upgg6vtflS4eT+1ZmFnbODIZoFGpb
-         yrDqYZkBFc/ffVpEdsCgIEbMgHjWtS72dj7meUtYc5gHRdw/czabPQxUUa5i9lTgqRo1
-         pySw==
+	s=arc-20240116; t=1745818809; c=relaxed/simple;
+	bh=H3PzNC3xIhl0GKYFcLaLS3yXa7lBJR6UI7k7WiHNrxQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=SJItwJ5Twwm4zmp4m+4xzIdE1dYavRMZ2YiBJx2psXck2Dc/mX+G1WBZd9KoBG38lGxaXUXk2DdZ8lqfgbXXpj1FgJH7svxMC9DZpWFnXVahcYzQ9laPY4GmEv8MFcT+/Hc18SDOZlOlc9zlqAoQQ+hrhoWr7ZqlsE16LSoXDe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so3128086f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Apr 2025 22:40:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745818616; x=1746423416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9DgXzVkgKs9qu56NnzAnpeis7CjshTrDPwgTt5feY58=;
-        b=vc0QVWzb3p0P5z1cAv3Shy1CDGKkBOeHmbIZERRJJXq/4tQPvHuh61wLCD5JaHKDly
-         Br7BhtdIt08/qyPpVTaQRGOvrZJhAFxjBmUUl/nxsPvwpzOtgBfQrANoRXXFsFLfg94s
-         h7xEfdEjiLCA/3nx2dpgGwQOHaUFsGDF9cuJUDObyxdHUCt0pHTVuBN2iGLDz2YA2L0O
-         88+3LvJDksEheaasT6IRGtFUDRo/G/u5wCHMA4HZPoxHbobbeehBu5y9/RiMaNJ5XGXa
-         m/0LX2C89PSKjhCnQxnDGCW99I/n9tbRpG1YLxrNhSdqYzCVhAGLPj3xt5vJ/vMvU8n2
-         xl1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXymXxpemky2EFNa5/GxR66ikA9+4h881xKJQPDvKl/CoSyq12gXn9yODJf7Yr83256/fi/tIt+RWvd+W4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEOYrCj80ONmYIUZ62QyLkXxpvLPvdWYtEW44Qm1m5qzPiG1pm
-	Mp/Bxnq2eBSEWrlz1ivE1OZBjK91GT4xFm0cNI44u8/pfqc8RUbGQ7XUYOzsb9MQ5lG4Sn//KEf
-	fhiH2WQq4/9Bw5rYcZmfugENfTbQDWOgLjUg6Yw==
-X-Gm-Gg: ASbGnct89kGd6OoT8m4y2wtFldtkvYyxOhv3JMdhSRjVjngTKiXBiyvh7+f/92YNBgj
-	L89UXfMlFBXTPIM7CeqjMJMm+WSqHeD5zKl8DqmzHV6SnaqGDTAXoC27spgKu/lfUZp6U7hpqGP
-	4qqdbk4n4QG7MPDa98CtKbmtg=
-X-Google-Smtp-Source: AGHT+IFEAZRIecQs/5ho+4sdlKzcEtjRPiPl9mzAhAZQHqaaoNOnH2hh+V1py6BPhNxKIAQs/+qQPSSCiOojJ3R6MFo=
-X-Received: by 2002:a05:6870:5687:b0:2c1:5fe3:22eb with SMTP id
- 586e51a60fabf-2d99d7db482mr6183589fac.15.1745818615556; Sun, 27 Apr 2025
- 22:36:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745818806; x=1746423606;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ODFreraoz8xwp2joxLm36YvpQAUecMaSczh29u2bx2Q=;
+        b=bjf2UjO71W0dnnkFHSRTZv+88s0Ax9PGqCpEEptQLuew081Ypxsfq9droJp4xpNh5D
+         s/k5eN/oICsJbANsE2QJQujfiFyMaEns/pGzkgcYvEt+AcdnU9s8uNHDf5LNcPh29is+
+         RzApCxJkd44ap9o5zNoav8qJomGUCP9erSsBT8qzMqPeolbNnXksAhrlIS2R+0rKMhxt
+         d9cfDXdo/Ku2wpy/aNljOrzLJpH0VaXel8E0NU5TwX+uNNUSrbUQm/fsCjv90Z6nYUV8
+         7qZpkp9CUPjvlJS1cRVIS3z6qg0O0tZmsJkihqK6ddhVY5NvJePpoRl5pC8qfhAP9UG2
+         571A==
+X-Forwarded-Encrypted: i=1; AJvYcCUVkH2eKyQYEULGIVVGB2vsP6PYkwO/jvXoSpfPpTJ43FONaUG4v9VhQpHS0Z3q+OKKjNVvFpxVxJOWeDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDzJJnh8SW8dSlTsFBvkgq4mLs2vylFKT/Hufm0H2s4DMOhA0R
+	DuVQKguyeAWAVB1NucVPvz+xsbyayUtKiLgDNbl1XzR2iH3MyV7iPtbo8JrA
+X-Gm-Gg: ASbGncuyixvJIrLm1UveZtdCDNlCWG12H3KnuQNWy8JtTLtNPjXfxPAGEO9NTuEpXMn
+	QZRYJMUQeWfgkWH8LGlAHO7nEp+9OVtcKza/K/QiGeLJHzPwQux73TtRjGfeDcXJfTLcy5p1d9P
+	xNYOZqp0i9QU6tJkmiXGFsQ9B1Xb9cS2BR1H3kLkaweRUpW6GbF2EDiRLofXaxafKwgx5OINKmy
+	lcGkT4oRv00XkHk+7Bnd3LkRRWq0ruug6z2ZsbL0x79vTr8Yhfs82SZHRqNewLCqFc141Ut//Ds
+	1l+ppj79yHwIg2xjHgE/kAVN/gHhdZCz/6Z6FzbwPXmkle6CvJRbqLc=
+X-Google-Smtp-Source: AGHT+IFE8wKoBgBrSZvbT/aWoWWI27jmvxT9toKX9l+1LXwKfmg4jDTFGgvEC8ibUWGk7B/F7kbZgA==
+X-Received: by 2002:a5d:5886:0:b0:39c:310a:f87e with SMTP id ffacd0b85a97d-3a074e1f385mr8397682f8f.16.1745818805584;
+        Sun, 27 Apr 2025 22:40:05 -0700 (PDT)
+Received: from costa-tp.bos2.lab ([2a00:a041:e280:5300:9068:704e:a31a:c135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca56d5sm10118590f8f.32.2025.04.27.22.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Apr 2025 22:40:05 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: Costa Shulyupin <costa.shul@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v1] scripts/tags.sh: Don't tag usages of DEFINE_...PERCPU_RWSEM
+Date: Mon, 28 Apr 2025 08:38:59 +0300
+Message-ID: <20250428053907.2851864-1-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410075635.3558712-1-nichen@iscas.ac.cn> <aAnD4_WXl8gE2bGv@sumit-X1>
-In-Reply-To: <aAnD4_WXl8gE2bGv@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 28 Apr 2025 07:36:43 +0200
-X-Gm-Features: ATxdqUH8ERKDgz6d1jsWVyzs_lZV-J3m6BSoYXzVYfGcYlIFSHEr6PDO1MdfDa8
-Message-ID: <CAHUa44EHpcn8g0Cg-nvg+DskvbD5PZzEg9b7N_Uj4VGF53NF2g@mail.gmail.com>
-Subject: Re: [PATCH] tee: optee: smc: remove unnecessary NULL check before release_firmware()
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Chen Ni <nichen@iscas.ac.cn>, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 24, 2025 at 6:54=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
-wrote:
->
-> On Thu, Apr 10, 2025 at 03:56:35PM +0800, Chen Ni wrote:
-> > release_firmware() checks for NULL pointers internally.
-> > Remove unneeded NULL check for fmw here.
-> >
-> > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> > ---
-> >  drivers/tee/optee/smc_abi.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+For each semaphore declaration like
+DEFINE_PERCPU_RWSEM(x)
+DEFINE_STATIC_PERCPU_RWSEM(x)
+ctags generates multiple DEFINE_PERCPU_RWSEM and
+DEFINE_STATIC_PERCPU_RWSEM tags for each usage because it doesn't expand
+these macros.
 
-I'm picking up this.
+Configure ctags to skip generating tags for DEFINE_PERCPU_RWSEM and
+DEFINE_STATIC_PERCPU_RWSEM in such cases.
 
-Thanks,
-Jens
+The #define DEFINE_... itself and definitions of semaphores are
+tagged correctly.
 
->
-> -Sumit
->
-> >
-> > diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
-> > index f0c3ac1103bb..26f8f7bbbe56 100644
-> > --- a/drivers/tee/optee/smc_abi.c
-> > +++ b/drivers/tee/optee/smc_abi.c
-> > @@ -1551,8 +1551,7 @@ static int optee_load_fw(struct platform_device *=
-pdev,
-> >                 data_pa_high, data_pa_low, 0, 0, 0, &res);
-> >       if (!rc)
-> >               rc =3D res.a0;
-> > -     if (fw)
-> > -             release_firmware(fw);
-> > +     release_firmware(fw);
-> >       kfree(data_buf);
-> >
-> >       if (!rc) {
-> > --
-> > 2.25.1
-> >
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+---
+ scripts/tags.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 98680e9cd7be3..503371e59e366 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -271,6 +271,7 @@ exuberant()
+ 		ACPI_EXPORT_SYMBOL
+ 		DECLARE_BITMAP
+ 		DEFINE_{TRACE,MUTEX,TIMER}
++		DEFINE_{,STATIC_}PERCPU_RWSEM
+ 		EXPORT_SYMBOL EXPORT_SYMBOL_GPL
+ 		EXPORT_TRACEPOINT_SYMBOL EXPORT_TRACEPOINT_SYMBOL_GPL
+ 		____cacheline_aligned ____cacheline_aligned_in_smp
+-- 
+2.48.1
+
 
