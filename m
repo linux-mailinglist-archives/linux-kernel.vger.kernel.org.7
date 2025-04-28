@@ -1,211 +1,216 @@
-Return-Path: <linux-kernel+bounces-623660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7521CA9F8E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25300A9F8F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 20:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B4117FA8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761E646178F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58D294A19;
-	Mon, 28 Apr 2025 18:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4B2957CF;
+	Mon, 28 Apr 2025 18:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y41z2KU4"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tE7X3LMO"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2086.outbound.protection.outlook.com [40.107.101.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D4626F478
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745866493; cv=none; b=mrotAoWsMzXxKWk3tPC7CEp3L1iL90UiROftvVwnJJQYrUDvUG2qr+QBpM1KA8Fc7edYOTbm1oovlRP+eR11eZzVPN+qCicNhTZg+YYunzCSTywF8tJ4A54KicuAAo9ZAinYTQetBSbWMEzo1bwZstveUCcqja32g4BNBHDmq/M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745866493; c=relaxed/simple;
-	bh=glHgKvu5qMafceNRjAQWTK700+rJbJxcd7BLsI8dDKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=awCqvOLj9E1S8BLqu+BIPhQoJyzPSo7UqJxWAwTkix4a5NrZDsY3hP1/Hyr+WyaS2yt9C3f5EY23ez+OvRtwa71zSvAwkT+pLlL7RBlHmKv08Nfy4siQArtG1jUT2cnN7o3k+nvwGUcrzD3MItJJIreqYBkHdPhHzh4mCGWNIlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y41z2KU4; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54acc0cd458so6225437e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 11:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745866489; x=1746471289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I43ZMkcyctLc4IXUH1xZz0lw4Q70kaopNM4Qj8qwNVU=;
-        b=Y41z2KU4Pvqe9aU7ISlbJS/h3GUmaoPhYBAVTC+dNxvnsZJFmEd4r2p0tMi6kpfsTB
-         oaNwyKCx0XUV7F9Ks3x3SlI7uE5ZWTDx2wcwScIJNjCuThkQe0Oen3FTr2Bmx39YS5DJ
-         H1iEHuKmKslg6Ue6axr+oKEr3gOiftIO9c3UCIXttOf2ZfrE/JEHaGOz2Aa6zVbLhXhz
-         xAx6sX3ZW8YQ6h6jZ/ALe/vf/+uHkx2/Y/mmhov48yxbnh987JXbdD5Flk23CH5CsWhM
-         R5Lijn31/S2qvKP6GUMfg1sNtMCu7/jGoHlvHc1aTOOebU/kaM15JTADUAxaspNc1HHP
-         fdvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745866489; x=1746471289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I43ZMkcyctLc4IXUH1xZz0lw4Q70kaopNM4Qj8qwNVU=;
-        b=bgHjZCZ7sJtylcyIC1iWiqKp87MxyheKqzBJO3nkGt3+n8U2y/7CShCKqI+NCR2Hsu
-         b7fh/va8cOpj1mPE1guNbV/IIS2QMMrlg6uZRBjf1oM4C3nZMuUhv7MiWGsUlSzCqmMN
-         mjsSdYHBJ5K6XB9OBkcP3vdj7AtAoWdSn3aT1u3j87dNfkJ2omw/0BKA3ien5mMXMcJd
-         cJYuEI9Zajyge5MDIfObU4dKKybnjjUjLNCcwGNl3gHCAQOWvd3Flsq8CBzw6yaooRkU
-         kvuCYQY3yD9ikVRFvGlzlPzoCVBq+KMikz3FfQWC3RGwZNAE4XF6EGLwo7dMr6TrcPWX
-         EA6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVFojNMDUP76X+16prKe1M0ITnO9uLRH6FQEezZzzsfiJdBL2/xON9Ds2JRZBwxRt0AXdV8U5ta/EMWM+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrbMdoi0ofY+MJmSM09KwxUlcatFJUcohvbPyXnrOXEopI5Mq9
-	c8hZrgEhQypQR6y+7tBfyS1Z7JoWVYJ3BnpxldP1R9xXxTK0uuk86Lbv//GECsLjto2SNykSGyT
-	eqDITDvg4ogvbGrJsvsmpQxLjDYY=
-X-Gm-Gg: ASbGncveaTONxtvpq4O62jGUwEz9G9KIZANXGmW967e0Km5UX8UOEuTtJ9SirNBXs6A
-	QEHmzQqE6Wcp2dggz4NVVOH1GRiLybkjRr2u5aonrBlkbsvAzUsyG1Qkfox79G7PFdtjjO12tM4
-	J0gQFvO/CZ0gLidWHJwX6rFI+Do7uIJGSQ
-X-Google-Smtp-Source: AGHT+IF9eRxEXFP0PqUTdi5OB+NyL32hrHSn/QN5Rz+OLeR/LBUYz6Lcf+yPsBsCQWA8ErnM7X+ZLTIkTzXoCDz3N/Y=
-X-Received: by 2002:a05:6512:1288:b0:549:8d8d:2c62 with SMTP id
- 2adb3069b0e04-54e8cc0bfb1mr4067926e87.36.1745866488899; Mon, 28 Apr 2025
- 11:54:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57BB26F478;
+	Mon, 28 Apr 2025 18:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745866568; cv=fail; b=bwg4XCZI3xuAkxKqHX10ZKRYtFi0oTC1pD5NyVCb/NVp4XBzk1Sd8hKGAkGIC2dprHihOCbc5kN6T2ob0p8ABXd4CgdLFFDWFFaJ3omz2GbTUcTMv96Rax7s1bYbUK3ikj9FVq80s82ePhiRZ1OuCWaJkl0Jm/MdPVTTeWqeAeo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745866568; c=relaxed/simple;
+	bh=rGzQkblUQJ58ZDa090HkYLMIru3SHdA9DONBOqvqIiA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZHLrwwSp/a7uZ+nbny93mm0z3SdzpJ+vspIf22AFzlV/33jg7FpWc3m3M0yBleaYj2WJQyImvFx6nnT4pMSZETpF0coceDCxQgha9nPUXlSbsrURIaHyq6G+E0jWxgtRwnQkHqTStXv68yHTan0DeT5hvYlPlhmUjYNbDn/JseA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tE7X3LMO; arc=fail smtp.client-ip=40.107.101.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rSCG80+3ZNUoEnvY7mrhycMfTH+VZuWm2PL2H3NV1w1V5IuXyy4XMiXx7VZVwkstYWl+7YHUvz+J4vhP1ZAoI0d7gBYF2WARw185szyL8HSX8acdfQTPEBwo5MG0gRJdFvTa6YtgQPkk57EkqQms+7hHHrS1cx7qNz7eI8DBh+DF7gKTMfqjD0I58EPXatMEdaCarvk7YhSh4lAzevvica38lOzd3qDO/lhC6UA4wvNWKNgrj1WCDADs9kbYgOlZsI183BqvkW7hJjf+YdHHsKPyRQrWohvqVclUnmeJfIfnvJPXyn00rtT/Vlz7SY/d3/4WVJfMMPSNdgJm0ihycw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=orO2zDYqEWC6sv1W9FavRWeI0EJwnWu2GzMIp3xJRXU=;
+ b=JtIu+ANEIN/WgM/XFrc1GoouuXZ8Dkc7Jk6v8alLcMpQKRlhCa4zIRR6416yPz7vhFRwkEbiIJzwBZSlGzs0JynPFSB6Zze5F9Hhqnz3GIsspdZuxFx23tRZRtcR5c6p+oijNuA9Xkpy9NC5bUGBuzErpVeo9C5JD1pw8ivXzpRNXZ5lSnf+5S9fuCvgGFaXtj/XkBeuUQA4NjKY+dFtl81jWaaGPy2mq3yQVsuyB4keyTPnVidTF1KhuQ6lJICgrBw+xvDrSIxpPtHHh/XAy6ji6p6g96k9eXHkcc4TB8o+fx5Qk+pqxxoE3/qkYSfJMr0ByMc3RejSplyv3etCmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=orO2zDYqEWC6sv1W9FavRWeI0EJwnWu2GzMIp3xJRXU=;
+ b=tE7X3LMOPGBA77A9t6HzKodvvB0r0lICuH/T+53humHYtNY8mrA7C/+8Z6gRRWIhtLCkJGQsr8ILp+3ZL0bbMaX4cSXbQzRmro3O4T75Xz+5SNxq9chGlDgLxz1Ief2cQFmKLEOh9bKnYAsPcSeGWKvYGWoKjlZjVvBTWoQtNd4=
+Received: from MW4PR03CA0210.namprd03.prod.outlook.com (2603:10b6:303:b8::35)
+ by CH3PR12MB8726.namprd12.prod.outlook.com (2603:10b6:610:17b::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 28 Apr
+ 2025 18:56:02 +0000
+Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
+ (2603:10b6:303:b8:cafe::7b) by MW4PR03CA0210.outlook.office365.com
+ (2603:10b6:303:b8::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.36 via Frontend Transport; Mon,
+ 28 Apr 2025 18:56:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8678.33 via Frontend Transport; Mon, 28 Apr 2025 18:56:02 +0000
+Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
+ 2025 13:55:43 -0500
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+	<seanjc@google.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>
+Subject: [PATCH] KVM: SVM: Update dump_ghcb() to use the GHCB snapshot fields
+Date: Mon, 28 Apr 2025 13:55:31 -0500
+Message-ID: <8f03878443681496008b1b37b7c4bf77a342b459.1745866531.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250427185908.90450-1-ryncsn@gmail.com> <20250427185908.90450-5-ryncsn@gmail.com>
- <aA7PbiXv92WiTy8T@casper.infradead.org> <CAMgjq7CTtJ69W=6kOaEn740seY9Nh7To7WL+JTb_hFUHJ-TqAg@mail.gmail.com>
-In-Reply-To: <CAMgjq7CTtJ69W=6kOaEn740seY9Nh7To7WL+JTb_hFUHJ-TqAg@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 29 Apr 2025 02:54:31 +0800
-X-Gm-Features: ATxdqUGTKRvMzwE_TJQTNf0P4gIR58HJ_Mvs3Pnte5Lo9Mwe8Ge_8uqoDsRzE9U
-Message-ID: <CAMgjq7C7dxGqPu4=yLCrKe1vATemmXEgH6e-XyF+iQSSBYdiHA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] filemap: do not use folio_contains for swap cache folios
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, "Huang, Ying" <ying.huang@linux.alibaba.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|CH3PR12MB8726:EE_
+X-MS-Office365-Filtering-Correlation-Id: d498a802-3e34-4757-6250-08dd868652ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oO574gOmyNiGQDOv2IslB/zS3V51WpuspnwD/TaBOOCNFqA4f/IdK4mJqzh6?=
+ =?us-ascii?Q?bZJJ1BDYrjsIcrnx6BDbxK9K1ilf0eM0tQAMz1fhLYFytmooTE6DfR5/uxkx?=
+ =?us-ascii?Q?kJd9eNkuW8LOhoCzulpII/LnuxC9VOHc4PNyvRWuw7Ak9D6A08hx9GMmGdlE?=
+ =?us-ascii?Q?ANFgzsHwiz0OliQgU6aIpp9z1Z/eLg0QOY4rcfq6cjA7uRc+1Gw+M1T/oO8W?=
+ =?us-ascii?Q?drFZ6vT9wk9lYpwkC/4/jyEG6MfHVZHuL5bWy0vSMCMIpbIjsdFxr3APEnDo?=
+ =?us-ascii?Q?EWbXiXEANGD47Rle4CdbkOBx7Ir1sBtEtRcm2tA5owUvXOb4rTi3lYfzn2B/?=
+ =?us-ascii?Q?JZd8/s3BkZ/aIeGqVZiunI6I2vry/2QD12YsE5mp5NNlAoozTaE8hUtPmW7a?=
+ =?us-ascii?Q?0gzsAhjrjzxHEqHhgDOKzSc7TM0QWKyS1mzt5qmCppAQ+aCMZxvbKB+HXB6q?=
+ =?us-ascii?Q?49dJYycdfKh0e2xxIVsJTGscy55C2XLD3/zNNMixkjLpAkWQnPAuPQt0ArWf?=
+ =?us-ascii?Q?hdtllDEnsLAjP1ml+YqxtD7qxKSVBrSOebzdH7fqj8DEQSAbmy1ITukj47xV?=
+ =?us-ascii?Q?rd+r1MNbwFRy2p47W743p9UBvJWNodU1gF5O8BI3TX2eThgs88p92yvMIrwG?=
+ =?us-ascii?Q?yt1lbnKe2FJeDXf56HpTMU70juD0TQ//oDck50TzVLEVXC/2wLaVvA7zs+a9?=
+ =?us-ascii?Q?hrfwRIC25XCvhVqYYyl/O6oQTSVq5DeR8ExmJosE8n6be4+sWAfg/iukDCx5?=
+ =?us-ascii?Q?+NBJ4qN+0h1wG5nHGoxBXrCSmN1F8PjkpUwh7zdE+OkUBMhCwfChfkwtyhXO?=
+ =?us-ascii?Q?jdAqNYDsHldaOAY2nXqD3brpeSWqsuUl226OtFNDcmqY160zRM1nSydGu9Ej?=
+ =?us-ascii?Q?ZRU6xK50gl4XhVJWXTC6RGTAkFfMOSXg74UuqkZNFa0CsDQQLAAj5KENB5w/?=
+ =?us-ascii?Q?zNvawWIC525Bp6R6JOG69z+rTF1gifs9qmULUIZVieQwMGUjWmOxLBylyxyC?=
+ =?us-ascii?Q?9PHPUW5SMVTjd5T2u7H1K1EHevQ+vOXH6HpXgjYS3bKU2pEOpk3NXEJZxCCO?=
+ =?us-ascii?Q?YHVI8V7bmOfUyuo9bLbWrNo6Ov8nrZ0XP/Lxrn2Gcubyd3v4DSMRss2qY0cL?=
+ =?us-ascii?Q?2yCRyLqewNgwUhcJI7beJk6je+G6un4c4fbIG0snO4yu9pDU96/o/ZhJFmhv?=
+ =?us-ascii?Q?T+fBSZfycJZV7CopNbeIjYe7WRoDyJtj5KaRk9F5eRMsVNx9v2IpCxs65ceD?=
+ =?us-ascii?Q?DPOoAn3wNP2dOCNap9qbjqRlEpGd/xMw3VnTuC3YcLpbqHtJE/fTucE2yy5A?=
+ =?us-ascii?Q?EnBH9qWNfjjaKhzcyxXBjicF+OojnF+9YoR+1M8G16uUsAGtt9rI/UaEagt2?=
+ =?us-ascii?Q?JjKgpRh37cCBPOX0sRRx8vw3DJJgZNeV3M+wZlpjj0DcDj1cH+JK6JwZmyHJ?=
+ =?us-ascii?Q?yKzsIuFYNdCJG5R6+KhLAuAAyT5YdP79hDHtV6zp3zzUs/LDFJh4GZ57Y3OM?=
+ =?us-ascii?Q?4oUJ3UNdJvwMjo9eVkWbIjmme2hNEY1MTzqV?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 18:56:02.6629
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d498a802-3e34-4757-6250-08dd868652ba
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E3.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8726
 
-On Mon, Apr 28, 2025 at 10:58=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> On Mon, Apr 28, 2025 at 8:44=E2=80=AFAM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> >
-> > On Mon, Apr 28, 2025 at 02:59:06AM +0800, Kairui Song wrote:
-> > > For filemap and truncate, folio_contains is only used for sanity chec=
-ks
-> > > to verify the folio index matches the expected lookup/invalidation ta=
-rget.
-> > > The swap cache does not utilize filemap or truncate helpers in ways t=
-hat
-> > > would trigger these checks, as it mostly implements its own cache man=
-agement.
-> > >
-> > > Shmem won't interact with these sanity checks either unless thing wen=
-t
-> > > wrong, it would directly trigger a BUG, because swap cache index are
-> > > unrelated to shmem index, and would almost certainly mismatch (unless
-> > > on collide).
-> >
-> > It does happen though.  If shmem is writing the folio to swap at the
-> > same time that the file containing the folio is being truncated, we
-> > can hit this.
->
-> Thanks for the info! I didn't check it in detail because that would
-> likley trigger a BUG_ON but so far I didn't see any BUG_ON commit from
-> there.
->
-> Just checked there are two users in truncate:
->
-> One will lock the folio and check if `folio->mapping !=3D mapping`
-> first, on swapout shmem removes the folio from shmem mapping so this
-> check will skip the folio_contains check.
->
-> Another seems might hit the check, the time window is extremely tiny
-> though, only if the truncate's `xa_is_value(folio)` check passed while
-> another CPU is running between `folio_alloc_swap` and
-> `shmem_delete_from_page_cache` in shmem_writepage, then the next
-> VM_BUG_ON_FOLIO(!folio_contains) will fail as folio is now  a
-> swap cache, not shmem folio anymore. Let me double check if this needs
-> another fix.
+Commit 4e15a0ddc3ff ("KVM: SEV: snapshot the GHCB before accessing it")
+updated the SEV code to take a snapshot of the GHCB before using it. But
+the dump_ghcb() function wasn't updated to use the snapshot locations.
+This results in incorrect output from dump_ghcb() for the "is_valid" and
+"valid_bitmap" fields.
 
-Checking all the code path, shmem managed to avoid all possible ways
-to call into truncate_inode_pages_range, this is the only function
-that seemed may call folio_contains with a swap cache folio.
-(except tiny-shmem, it uses this function directly for truncate,
-we can ignore that as it's basically just ramfs).
+Update dump_ghcb() to use the proper locations.
 
-For truncate, shmem need to either zap a whole (large) swap/folio entry,
-or zero part of folio, or swapin a large folio so that part of it can be ze=
-ro'ed
-(using shmem_get_partial_folio), the swapin part is a bit special so
-calling generic truncate helpers might cause unexpected behaviour.
-
-Similar story for filemap lookup.
-
-So shmem won't call into the truncate helper here that may risk
-calling folio_contains with swap cache.
-Even if somehow it does, this commit won't change the BUG_ON
-behaviour, except now it tells the user the folio shouldn't be a swap cache
-at all, instead of reporting a buggy index. So I think this commit should
-be good to have to make the swap cache less exposed.
-
+Fixes: 4e15a0ddc3ff ("KVM: SEV: snapshot the GHCB before accessing it")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
-List of potential call chains that may call into the truncate helper
-here, and not initialized from other FS / block, none will be used by
-shmem.
+ arch/x86/kvm/svm/sev.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-do_dentry_open
-  /* filemap_nr_thps always 0 for shmem */
-  truncate_inode_pages
-    truncate_inode_pages_range
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 0bc708ee2788..91e514d07f8a 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3173,9 +3173,14 @@ void sev_free_vcpu(struct kvm_vcpu *vcpu)
+ 		kvfree(svm->sev_es.ghcb_sa);
+ }
+ 
++static u64 kvm_ghcb_get_sw_exit_code(struct vmcb_control_area *control)
++{
++	return (((u64)control->exit_code_hi) << 32) | control->exit_code;
++}
++
+ static void dump_ghcb(struct vcpu_svm *svm)
+ {
+-	struct ghcb *ghcb = svm->sev_es.ghcb;
++	struct vmcb_control_area *control = &svm->vmcb->control;
+ 	unsigned int nbits;
+ 
+ 	/* Re-use the dump_invalid_vmcb module parameter */
+@@ -3184,18 +3189,18 @@ static void dump_ghcb(struct vcpu_svm *svm)
+ 		return;
+ 	}
+ 
+-	nbits = sizeof(ghcb->save.valid_bitmap) * 8;
++	nbits = sizeof(svm->sev_es.valid_bitmap) * 8;
+ 
+ 	pr_err("GHCB (GPA=%016llx):\n", svm->vmcb->control.ghcb_gpa);
+ 	pr_err("%-20s%016llx is_valid: %u\n", "sw_exit_code",
+-	       ghcb->save.sw_exit_code, ghcb_sw_exit_code_is_valid(ghcb));
++	       kvm_ghcb_get_sw_exit_code(control), kvm_ghcb_sw_exit_code_is_valid(svm));
+ 	pr_err("%-20s%016llx is_valid: %u\n", "sw_exit_info_1",
+-	       ghcb->save.sw_exit_info_1, ghcb_sw_exit_info_1_is_valid(ghcb));
++	       control->exit_info_1, kvm_ghcb_sw_exit_info_1_is_valid(svm));
+ 	pr_err("%-20s%016llx is_valid: %u\n", "sw_exit_info_2",
+-	       ghcb->save.sw_exit_info_2, ghcb_sw_exit_info_2_is_valid(ghcb));
++	       control->exit_info_2, kvm_ghcb_sw_exit_info_2_is_valid(svm));
+ 	pr_err("%-20s%016llx is_valid: %u\n", "sw_scratch",
+-	       ghcb->save.sw_scratch, ghcb_sw_scratch_is_valid(ghcb));
+-	pr_err("%-20s%*pb\n", "valid_bitmap", nbits, ghcb->save.valid_bitmap);
++	       svm->sev_es.sw_scratch, kvm_ghcb_sw_scratch_is_valid(svm));
++	pr_err("%-20s%*pb\n", "valid_bitmap", nbits, svm->sev_es.valid_bitmap);
+ }
+ 
+ static void sev_es_sync_to_ghcb(struct vcpu_svm *svm)
+@@ -3266,11 +3271,6 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
+ 	memset(ghcb->save.valid_bitmap, 0, sizeof(ghcb->save.valid_bitmap));
+ }
+ 
+-static u64 kvm_ghcb_get_sw_exit_code(struct vmcb_control_area *control)
+-{
+-	return (((u64)control->exit_code_hi) << 32) | control->exit_code;
+-}
+-
+ static int sev_es_validate_vmgexit(struct vcpu_svm *svm)
+ {
+ 	struct vmcb_control_area *control = &svm->vmcb->control;
 
-dquot_disable /* No quota file for shmem */
-  truncate_inode_pages
-    truncate_inode_pages_range
+base-commit: 2d7124941a273c7233849a7a2bbfbeb7e28f1caa
+-- 
+2.46.2
 
-dquot_quota_sync /* No quota file for shmem */
-  truncate_inode_pages
-    truncate_inode_pages_range
-
-truncate_inode_pages_final /* Override by shmem_evict_inode */
-  truncate_inode_pages
-    truncate_inode_pages_range
-
-simple_setattr /* Override by shmem_setattr */
-  truncate_setsize
-    truncate_pagecache
-      truncate_inode_pages
-        truncate_inode_pages_range
-
-put_aio_ring_file /* AIO calls it for private file */
-  truncate_setsize
-    truncate_pagecache
-      truncate_inode_pages
-        truncate_inode_pages_range
-
-truncate_pagecache /* No user except other fs */
-  truncate_inode_pages
-    truncate_inode_pages_range
-
-truncate_pagecache_range /* No user except other fs  */
-  truncate_inode_pages_range
-
----
-
-invalidate_inode_pages2 /* No user except other fs */
-  invalidate_inode_pages2_range
-
-filemap_invalidate_pages /* only used by block / direct io */
-  invalidate_inode_pages2_range
-
-filemap_invalidate_inode /* No user except other fs */
-  invalidate_inode_pages2_range
-
-kiocb_invalidate_post_direct_write /* only used by block / direct io */
-  invalidate_inode_pages2_range
 
