@@ -1,135 +1,103 @@
-Return-Path: <linux-kernel+bounces-622622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF017A9E9E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:47:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E600A9E9C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BCC07AC188
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:45:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2A73A47B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3214A211A2A;
-	Mon, 28 Apr 2025 07:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604911DE887;
+	Mon, 28 Apr 2025 07:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="G8WL59Q8"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1rnsjNW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F6D207A0C;
-	Mon, 28 Apr 2025 07:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B970B1C5D4E;
+	Mon, 28 Apr 2025 07:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826308; cv=none; b=ZL2fzXuxDD9AattgZZYDobt3zgPhvIavi+E5ACUrHL+nM7C+H44Q/jEZf3Ikfvem0WVnMSA/rsS7LTI/OpzrmNFGm2vzdFQvdPWtvy8Q4dEEw2xGA0jVHR6VSBm+yaaT1y9zmkkJers+RfrgM6wqQtWTph660O6+IaPrgk4cQGc=
+	t=1745826279; cv=none; b=mxUODicblaMdc9h2NhF6LpenD4JHg53y453oVDk0HWk9pFBKqmqmun88J/BKQ1WRwwSGtRzcu5EcoYqqfyjfV9OEcvmHTcwVoVUudAUrJ3TsAkdrQMLfYwwrolhvyDuF8piHzSVLLRm9yikbtbnNNGL8lfhxodTOSVYtXIBg5wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826308; c=relaxed/simple;
-	bh=sYQ6B7NzsfvqX0//BLuWeqyxFo/2GSTdIjJU9ka+AVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QGprM3GCEx9juCgp1vS7wMIqhgYE1k/AK2K05i+xoIs+zYyihVLC701J3ZEeU/CH5DKWgv9rZ3Z2KtSKdT2twA+jiMTAbRAbVl9e8LFNABrchbyevXbybYQoJXGR0Aq6i8IUqH8j9k80wk0dKPN0am8jOVEmJMDhI/lqBbAmP0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=G8WL59Q8; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D536A1026E031;
-	Mon, 28 Apr 2025 09:45:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1745826304; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=VN3o0wFrWc57zwxhcG8RbbscKVODx7qIHApQnCHyMCM=;
-	b=G8WL59Q8+75X4Y2yXfprCsSM5C1bmMhplw49Cm/ImjpWNHUxrA542VF6TNkvqaRQmaEbql
-	Hw+nuguCj/kq3wP0XOchR9mb1OaxgHmMeqDLoC79zFOkfdgokA/4AZct/emv/lV3FlAJUZ
-	iWf1Y0ajdfdWjvDC6nCCwo0LZiI8Tcn9KSAJWd6IZpNEE1EBWLkfoCFOgwBdTBlXGDfOm4
-	He7Lp8uiDKu3uhQkKYvxJcQoihLUjFA6a3DcWcb01j5kCfvK0bh960YY5sATa0ZGadSgzs
-	ZxKKmNVglMRBhjHGjOiFmX2K51zWGIQt6N8DPj9BH1Xi+gWXNwRsRBIDbvC1LA==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v8 7/7] ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2 switch
-Date: Mon, 28 Apr 2025 09:44:24 +0200
-Message-Id: <20250428074424.3311978-8-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250428074424.3311978-1-lukma@denx.de>
-References: <20250428074424.3311978-1-lukma@denx.de>
+	s=arc-20240116; t=1745826279; c=relaxed/simple;
+	bh=iaOEkR7J0upw1H1sW/Gba6M32XBT6NbbB44yO9AFP40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u26ZWPvbBS+v3SGIxhOsoNKqPASzOrU4HbhKUrrtFXEN0l7joscDhe96Zo84/QoRmzTJHpr/jzvDXPzOJKCOdji8He8Ad6o9fbDWPPRm60HQAUZ3jBsdcvwWg7YsNHixK+j+lG26QOQHV2sNQIFIUDIR5XyT59Nsb56uoIchc5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1rnsjNW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CB8C4CEEC;
+	Mon, 28 Apr 2025 07:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745826279;
+	bh=iaOEkR7J0upw1H1sW/Gba6M32XBT6NbbB44yO9AFP40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G1rnsjNWP3ey3w5VHNKSOLAdfXR7x2aGaGIszhDbLvZAVcGD0HalBsWhLNF1Cj27Z
+	 au8hCz3MgBvvjqH9zQGHtdC4UPfAbxBLmUc8Y9xzNFLVDEzBXld+IKwhZtpeN8YNxU
+	 Y0feWYZaw/LFvdmswcY8jwEgrV7pNbS7tqsQaeSwDBoBMTFy1srphuMDtILZQ5KDzT
+	 y7jkBIQb4a0+zrS5P9c7l/RsoTWrqtXnXUBmhnDkKtLsAa+F68lnD9BBznN1SDljBU
+	 qtNTZNj6c1PtTV1gFRovCsP95APNsj6VxXb2zWL7tKIVuFt0TviMnYEHZjbYpOJjoz
+	 N/EYLtUJ4nMUw==
+Date: Mon, 28 Apr 2025 09:44:35 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Mikko Juhani Korhonen <mjkorhon@gmail.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ata: libata: disable LPM for WDC WD20EFAX-68FB5N0
+ hard drives
+Message-ID: <aA8x47kjcGAsFrTZ@ryzen>
+References: <CAAZ0mTfSFZoL_CS9s1L0JhfaoyMGJ6Up5Z9_YvU-pX05MOZ99w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAZ0mTfSFZoL_CS9s1L0JhfaoyMGJ6Up5Z9_YvU-pX05MOZ99w@mail.gmail.com>
 
-This patch enables support for More Than IP L2 switch available on some
-imx28[7] devices.
+On Fri, Apr 25, 2025 at 10:33:17PM +0300, Mikko Juhani Korhonen wrote:
+> Make WDC WD20EFAX-68FB5N0 hard drives work again after regression in
+> 6.9.0 when LPM was enabled, so disable it for this model.
+> 
+> Signed-off-by: Mikko Korhonen <mjkorhon@gmail.com>
+> ---
+> drivers/ata/libata-core.c | 5 +++++
+> 1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index 773799cfd443..5c2f26945d61 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -4239,6 +4239,11 @@ static const struct ata_dev_quirks_entry
+> __ata_dev_quirks[] = {
+>        { "WDC WD3000JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
+>        { "WDC WD3200JD-*",             NULL,   ATA_QUIRK_WD_BROKEN_LPM },
+> 
+> +       /*
+> +        * This specific WD SATA-3 model has problems with LPM.
+> +        */
+> +       { "WDC WD20EFAX-68FB5N0",       NULL,   ATA_QUIRK_NOLPM },
+> +
+>        /*
+>         * This sata dom device goes on a walkabout when the ATA_LOG_DIRECTORY
+>         * log page is accessed. Ensure we never ask for this log page with
+> 
+> base-commit: 14a3cc755825ef7b34c986aa2786ea815023e9c5
+> --
+> 2.47.2
 
-Moreover, it also enables CONFIG_SWITCHDEV and CONFIG_BRIDGE required
-by this driver for correct operation.
+When submitting a v4,
+please add:
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
-Changes for v4:
-- New patch
+Fixes: 7627a0edef54 ("ata: ahci: Drop low power policy board type")
 
-Changes for v5:
-- Apply this patch on top of patch, which updates mxs_defconfig to
-  v6.15-rc1
-- Add more verbose commit message with explanation why SWITCHDEV and
-  BRIDGE must be enabled as well
+So that Sasha's scripts will see it and backport it to stable kernels.
 
-Changes for v6:
-- None
 
-Changes for v7:
-- None
-
-Changes for v8:
-- None
----
- arch/arm/configs/mxs_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index b1a31cb914c8..ef4556222274 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -34,6 +34,8 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -52,6 +54,7 @@ CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+CONFIG_FEC_MTIP_L2SW=y
- CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
--- 
-2.39.5
-
+Kind regards,
+Niklas
 
