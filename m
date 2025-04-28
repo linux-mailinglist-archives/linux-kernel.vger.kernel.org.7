@@ -1,148 +1,134 @@
-Return-Path: <linux-kernel+bounces-623286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FB0A9F390
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:35:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A587A9F382
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993641A828E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FC946318F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765E62741BA;
-	Mon, 28 Apr 2025 14:34:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D7026FDAB;
-	Mon, 28 Apr 2025 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB5D26D4D5;
+	Mon, 28 Apr 2025 14:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sJPJraCH"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319322AD04;
+	Mon, 28 Apr 2025 14:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745850884; cv=none; b=PQmvSG3h246Q8OotTpAynzmXY2Dqo1SGyZcJeh0DMNaZ4fiwyDc02AcT7M4q+ifumgg1CJSTjGjguQD9pV0LZPgomP1dpKD1Itx+9humGZhtDr0N+768e6y+h2+cTyjaSkanM0ERF6djwC6aWqxoIXvgy+TOIBMqoHLSANwUKr4=
+	t=1745850859; cv=none; b=be0cqrd48eYwmb4GDX6wQDwnfttRU1Q/XM/g1pubbF/yeYVUf2qCnENTqtLxytzvFE0ite4qSQwvek64htMyz+8iCaXbQ7E4Rm/RmgoNSTC7FcEau/DRD0h+Opi/GalAVpiV+q6OgqYT/s+LB3MfJmd0UVRhkOQi5rBncCS+kLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745850884; c=relaxed/simple;
-	bh=gqzRvPHH1UIojM2UNCdLX39MukhbRoF0pmDB0Y3gGRY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Umh0OTBuvCI1urmpckzh8BYtsBpv89Zy2waODyR85KGzABdUDvq5VimDnP5yb42vx6gm2z9wIy+DuB4Qfj1D8q3vgj2Sag3pwxUsDy+BBNOHta8D98yrnGl/ziqHORgz8De3KZS2RAWsmg4yzyulDfyqNVUG4rDJbJRDxvyfmT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38EFF22BE;
-	Mon, 28 Apr 2025 07:34:35 -0700 (PDT)
-Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D7A63F66E;
-	Mon, 28 Apr 2025 07:34:37 -0700 (PDT)
-From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-To: ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com,
-	corbet@lwn.net,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	jean-philippe@linaro.org,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	akpm@linux-foundation.org,
-	paulmck@kernel.org,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	maz@kernel.org,
-	james.morse@arm.com,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	baohua@kernel.org,
-	david@redhat.com,
-	ioworker0@gmail.com,
-	jgg@ziepe.ca,
-	nicolinc@nvidia.com,
-	mshavit@google.com,
-	jsnitsel@redhat.com,
-	smostafa@google.com,
-	kevin.tian@intel.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev
-Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
-Subject: [PATCH v6 3/3] arm64/mm: Reorder tlbi in contpte_convert() under BBML2
-Date: Mon, 28 Apr 2025 14:33:53 +0000
-Message-ID: <20250428143352.53761-6-miko.lenczewski@arm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250428143352.53761-2-miko.lenczewski@arm.com>
-References: <20250428143352.53761-2-miko.lenczewski@arm.com>
+	s=arc-20240116; t=1745850859; c=relaxed/simple;
+	bh=YcDNryWhc6VcXftfwMsLAhE+X5MJo0OLW2P1BHqcGlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=umfeedR7UQxXZK4/++JFmGExcfEBMzvoN0iIR4IiEMUck4tjh6yGcILupV8JmH9RmwGgavWqmqrR6TycBpirBABQO2qGBHYOSaK9Fd4FOIsqDmimzwENd8D60YIoKRmSrwgm727khGkqot4qg14OaOv9s7pFinazEtFaxjOVwAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sJPJraCH; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53SEY5lE3573445
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 09:34:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745850845;
+	bh=M9fpsf78Paf5UKQYjLwaXjw5Gbg+DBdSCuZWocGOz1c=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=sJPJraCHbeaVGqjYkUiiMPpzHnnFG8SQopfpgOzkvwzdyi+athULzc9Z85/Xdmh0p
+	 Jw2rdrcfbsEiuyqqr0RQE36tlz2kOb7cXH/sVCMaESkPP1kYNjHnWGaHl+cmNm/y3J
+	 ijojrKrDNmId3wSTVy1gdlaNXLJRNkRFRfFhqwsM=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53SEY5uL003914
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Apr 2025 09:34:05 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
+ Apr 2025 09:34:03 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 28 Apr 2025 09:34:03 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53SEXxMp108147;
+	Mon, 28 Apr 2025 09:33:59 -0500
+Message-ID: <5619384e-28d4-48b9-99cc-dbf2e2375090@ti.com>
+Date: Mon, 28 Apr 2025 20:03:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: dts: ti: k3-j784s4-j742s2-main-common: add
+ ACSPCIE0 node
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <parth105105@gmail.com>,
+        <parth.pancholi@toradex.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <u-kumar1@ti.com>
+References: <20250422123218.3788223-1-s-vadapalli@ti.com>
+ <20250422123218.3788223-2-s-vadapalli@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250422123218.3788223-2-s-vadapalli@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-When converting a region via contpte_convert() to use mTHP, we have two
-different goals. We have to mark each entry as contiguous, and we would
-like to smear the dirty and young (access) bits across all entries in
-the contiguous block. Currently, we do this by first accumulating the
-dirty and young bits in the block, using an atomic
-__ptep_get_and_clear() and the relevant pte_{dirty,young}() calls,
-performing a tlbi, and finally smearing the correct bits across the
-block using __set_ptes().
 
-This approach works fine for BBM level 0, but with support for BBM level
-2 we are allowed to reorder the tlbi to after setting the pagetable
-entries. We expect the time cost of a tlbi to be much greater than the
-cost of clearing and resetting the PTEs. As such, this reordering of the
-tlbi outside the window where our PTEs are invalid greatly reduces the
-duration the PTE are visibly invalid for other threads. This reduces the
-likelyhood of a concurrent page walk finding an invalid PTE, reducing
-the likelyhood of a fault in other threads, and improving performance
-(more so when there are more threads).
+On 4/22/2025 6:02 PM, Siddharth Vadapalli wrote:
+> The ACSPCIE0 module on TI's J784S4 SoC is capable of driving the
+> reference clock required by the PCIe Endpoint device. It is an
+> alternative to on-board and external reference clock generators.
+> Add the device-tree node for the same.
+>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+>
+> The previous versions of this series were a single patch. Based on the
+> feedback received on previous versions, the SoC and Board support has
+> been split in order to allow reuse for other Boards based on the same
+> SoC.
+>
+> v2 patch:
+> https://lore.kernel.org/r/20250411121307.793646-1-s-vadapalli@ti.com/
+> Changes since v2 patch:
+> - The SoC and board changes have been split across:
+>    k3-j784s4-j742s2-main-common.dtsi and k3-j784s4-j742s2-evm-common.dtsi
+>    respectively.
+>
+> Regards,
+> Siddharth.
+>
+>   arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> index 1944616ab357..f03b2b6d5d03 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> @@ -126,6 +126,11 @@ audio_refclk1: clock@82e4 {
+>   			assigned-clock-parents = <&k3_clks 157 63>;
+>   			#clock-cells = <0>;
+>   		};
+> +
+> +		acspcie0_proxy_ctrl: clock-controller@1a090 {
+> +			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
+> +			reg = <0x1a090 0x4>;
 
-Because we support via allowlist only bbml2 implementations that never
-raise conflict aborts and instead invalidate the tlb entries
-automatically in hardware, we could avoid the final flush altogether.
+Reviewed-by: Udit Kumar <u-kumar1@ti.com>
 
-Unfortunately, certain implementations might implement bbml2 in such a
-way that avoiding the tlbi leads to a performance degradation. Thus,
-to remain both correct and performant, we simply switch from
-__flush_tlbi_range() to __flush_tlbi_range_nosync() and are thus
-guaranteed correctness (via BBML2 semantics) and performance (leaving
-the actual flush to the next DSB) in all cases.
 
-Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
----
- arch/arm64/mm/contpte.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index 55107d27d3f8..0cec1dad4922 100644
---- a/arch/arm64/mm/contpte.c
-+++ b/arch/arm64/mm/contpte.c
-@@ -68,9 +68,21 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
- 			pte = pte_mkyoung(pte);
- 	}
- 
--	__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-+	if (!system_supports_bbml2_noabort())
-+		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
- 
- 	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
-+
-+	/*
-+	 * Despite BBML2 allowing us to elide the following TLBI whilst remaining
-+	 * correct, there may be implementations where not issuing said TLBI
-+	 * is not performant. To handle this, we can issue a TLBI but delegate
-+	 * the flush to the next DSB (worst case, at the next context switch).
-+	 * This remains correct (due to BBML2 semantics) and fast (due to not
-+	 * waiting for a DSB) in all cases.
-+	 */
-+	if (system_supports_bbml2_noabort())
-+		__flush_tlb_range_nosync(&vma, start_addr, addr, PAGE_SIZE, true, 3);
- }
- 
- void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
--- 
-2.49.0
-
+> +		};
+>   	};
+>   
+>   	main_ehrpwm0: pwm@3000000 {
 
