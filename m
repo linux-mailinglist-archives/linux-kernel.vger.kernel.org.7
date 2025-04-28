@@ -1,99 +1,183 @@
-Return-Path: <linux-kernel+bounces-623207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02156A9F25B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72A9A9F26D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E14E1A81912
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:30:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9E93AE861
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C129B26B2D8;
-	Mon, 28 Apr 2025 13:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B51268C65;
+	Mon, 28 Apr 2025 13:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD7QBfDg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lf9J4TLd"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2975B1A072A;
-	Mon, 28 Apr 2025 13:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1AA14D428
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745846994; cv=none; b=tRBudqP2nXs8TqXCNzlKkwe6xffNrX18c01airQ8kprz5vpfrd0jY51ZgyLdXVtOF7ie4hoXA2bKIOl8y4j+KyaSGs+Q6lsINedmRTufsVH82Z+iY2fngDiPkUhpOVUPoNgOz6LrJxkqQeg3N6Zj0nBFhx0XE/aqIdaAIL2uqME=
+	t=1745847127; cv=none; b=PTe27g92t/fJ0RFIMoDSGpvmr0WMTvSxZgGXhUtgaROJJh6wmzBWJIRh+e1imz6kVYKY7IX18wiv8NkzaJfrW/njo9dSAMvUPlMt5YkMecpaoigruOcgA/SfoDV0nJOWqjc0Q2qjeKBxyIXDfglSflek2m+i8iZLcLHXICjqC90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745846994; c=relaxed/simple;
-	bh=elk4Zqa+3hCtmUiNsAt9MfBksCuGpsquiK6zsRxydTQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WSx3OxkujX7yIn/vX3F894RxHrYsErfeNiyZAILdcFqKHvdX+5PzlvoRGbvZdGEW37B977NgXYcZbIACdnmkohZwjrzPZUHDunSWs6FaXBLnyFAtDzsNCvaXCC8FbA7iOjLCPRkn9Bv1AJK9yVrgxSsQBTnZH29akHCrmyQWYO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TD7QBfDg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0EBC4CEE4;
-	Mon, 28 Apr 2025 13:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745846993;
-	bh=elk4Zqa+3hCtmUiNsAt9MfBksCuGpsquiK6zsRxydTQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TD7QBfDg6kXdOzjRs6gtAIizZopWFFNqcvzVQOUhE4adYd3tKK9ZWRiOnvUE6xSVd
-	 jqwrYMQ8+CvdekMObGo0NgaCNDmpuD0w0cXxKLSIz47iIeS/A+QYeABeLViatbJfgl
-	 WYuFL3DJJsVzqm0ssKDEWQxyOqyy4bbuIUxmpfwxhdut/618sWFo6Maqz94oacg6/C
-	 PFGArhwz0OFSGUVyUCsQRZIPi4wGKLvIrlI/LJUOfHZ/1qnX4nKj5+7grom/3aVSVM
-	 0hcg7j0y6Ieg1gwWvMRkF6+1AoV5y9QGkFI2DE13pzJZ78Bj3EwkJ7EatPc+D16aoT
-	 QizlVzaNHtOoQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BF93822D43;
-	Mon, 28 Apr 2025 13:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1745847127; c=relaxed/simple;
+	bh=nc8yTK5dhGO8d5YTqBVW17EzO8s7NYoklwiD8kavJa8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aofDQ7LMwNae7sN0zPIcNcV8gzL7YK1DvJ8aHF8BWK8BxYYlWpxTXbcg2Wiaq6xT7wvjmKuodbJytM4661JngFAGBHsskDHgcfkQyimbBaGQY5W5JsMGHjViqcW8Vh7xemT//8uj5aBrur/aUH4K2logaqM4MR6ZSuxbRi13Cng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lf9J4TLd; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2c70d515-f02e-477a-afc5-d3a25f6c9c0d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745847120;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1I1m/NMRedzmoEPaCinaZP4GnU/mr3udTbmFVWL9GKc=;
+	b=Lf9J4TLdsEL7qv8tRkyxqwiS2Mw9EzoicQ9mUKrPz/9krGq7uE4l+FoLo/dfhvmzEJc7fM
+	QtCdib57F8JZyzFQz9LA46XNFAA9ff00znw8ix8cwaIvQEZ9a98oRTz79TZeqPNdii253h
+	UhnJw+hpU0rcz3+blGmfL5Wg0DM6Tyg=
+Date: Mon, 28 Apr 2025 21:31:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH 0/7] Optimize mprotect for large folios
+Content-Language: en-US
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, david@redhat.com, willy@infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ vbabka@suse.cz, jannh@google.com, anshuman.khandual@arm.com,
+ peterx@redhat.com, joey.gouly@arm.com, ioworker0@gmail.com,
+ baohua@kernel.org, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, namit@vmware.com, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250428120414.12101-1-dev.jain@arm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250428120414.12101-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/3] net: stmmac: socfpga: 1000BaseX support and
- cleanups
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174584703225.917720.8866587140005702000.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Apr 2025 13:30:32 +0000
-References: <20250424071223.221239-1-maxime.chevallier@bootlin.com>
-In-Reply-To: <20250424071223.221239-1-maxime.chevallier@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, andrew@lunn.ch, linux@armlinux.org.uk,
- kuba@kernel.org, edumazet@google.com, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, horms@kernel.org, alexis.lothore@bootlin.com,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+I'm hitting the following compilation errors after applying this patch
+series:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+In file included from ./include/linux/kasan.h:37,
+                  from ./include/linux/slab.h:260,
+                  from ./include/linux/crypto.h:19,
+                  from arch/x86/kernel/asm-offsets.c:9:
+./include/linux/pgtable.h: In function ‘modify_prot_start_ptes’:
+./include/linux/pgtable.h:905:15: error: implicit declaration of 
+function ‘ptep_modify_prot_start’ [-Werror=implicit-function-declaration]
+   905 |         pte = ptep_modify_prot_start(vma, addr, ptep);
+       |               ^~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pgtable.h:905:15: error: incompatible types when 
+assigning to type ‘pte_t’ from type ‘int’
+./include/linux/pgtable.h:909:27: error: incompatible types when 
+assigning to type ‘pte_t’ from type ‘int’
+   909 |                 tmp_pte = ptep_modify_prot_start(vma, addr, ptep);
+       |                           ^~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pgtable.h: In function ‘modify_prot_commit_ptes’:
+./include/linux/pgtable.h:925:17: error: implicit declaration of 
+function ‘ptep_modify_prot_commit’ [-Werror=implicit-function-declaration]
+   925 |                 ptep_modify_prot_commit(vma, addr, ptep, 
+old_pte, pte);
+       |                 ^~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pgtable.h: At top level:
+./include/linux/pgtable.h:1360:21: error: conflicting types for 
+‘ptep_modify_prot_start’; have ‘pte_t(struct vm_area_struct *, long 
+unsigned int,  pte_t *)’
+  1360 | static inline pte_t ptep_modify_prot_start(struct 
+vm_area_struct *vma,
+       |                     ^~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pgtable.h:905:15: note: previous implicit declaration of 
+‘ptep_modify_prot_start’ with type ‘int()’
+   905 |         pte = ptep_modify_prot_start(vma, addr, ptep);
+       |               ^~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pgtable.h:1371:20: warning: conflicting types for 
+‘ptep_modify_prot_commit’; have ‘void(struct vm_area_struct *, long 
+unsigned int,  pte_t *, pte_t,  pte_t)’
+  1371 | static inline void ptep_modify_prot_commit(struct 
+vm_area_struct *vma,
+       |                    ^~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pgtable.h:1371:20: error: static declaration of 
+‘ptep_modify_prot_commit’ follows non-static declaration
+./include/linux/pgtable.h:925:17: note: previous implicit declaration of 
+‘ptep_modify_prot_commit’ with type ‘void(struct vm_area_struct *, long 
+unsigned int,  pte_t *, pte_t,  pte_t)’
+   925 |                 ptep_modify_prot_commit(vma, addr, ptep, 
+old_pte, pte);
+       |                 ^~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[2]: *** [scripts/Makefile.build:98: arch/x86/kernel/asm-offsets.s] 
+Error 1
+make[1]: *** 
+[/home/runner/work/mm-test-robot/mm-test-robot/linux/Makefile:1280: 
+prepare0] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-On Thu, 24 Apr 2025 09:12:19 +0200 you wrote:
-> Hi everyone,
+Based on:
+
+mm-unstable b18dec6a6ad3d051dadc3c16fb838e4abddf8d3c ("mm/numa: remove 
+unnecessary local variable in alloc_node_data()")
+
+
+Thanks,
+Lance
+
+
+
+On 2025/4/28 20:04, Dev Jain wrote:
+> This patchset optimizes the mprotect() system call for large folios
+> by PTE-batching.
 > 
-> This V3 is simply a re-send of V2, targeting net-next instead of net as
-> the V2 did by mistake.
+> We use the following test cases to measure performance, mprotect()'ing
+> the mapped memory to read-only then read-write 40 times:
 > 
-> No other changes besides a rebase on net-next were made.
+> Test case 1: Mapping 1G of memory, touching it to get PMD-THPs, then
+> pte-mapping those THPs
+> Test case 2: Mapping 1G of memory with 64K mTHPs
+> Test case 3: Mapping 1G of memory with 4K pages
 > 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v3,1/3] net: stmmac: socfpga: Enable internal GMII when using 1000BaseX
-    https://git.kernel.org/netdev/net-next/c/6fba40e7f610
-  - [net-next,v3,2/3] net: stmmac: socfpga: Don't check for phy to enable the SGMII adapter
-    https://git.kernel.org/netdev/net-next/c/3bf19459da62
-  - [net-next,v3,3/3] net: stmmac: socfpga: Remove unused pcs-mdiodev field
-    https://git.kernel.org/netdev/net-next/c/8fb33581bb8a
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> Average execution time on arm64, Apple M3:
+> Before the patchset:
+> T1: 7.9 seconds   T2: 7.9 seconds   T3: 4.2 seconds
+> 
+> After the patchset:
+> T1: 2.1 seconds   T2: 2.2 seconds   T3: 4.2 seconds
+> 
+> Observing T1/T2 and T3 before the patchset, we also remove the regression
+> introduced by ptep_get() on a contpte block. And, for large folios we get
+> an almost 276% performance improvement.
+> 
+> Dev Jain (7):
+>    mm: Refactor code in mprotect
+>    mm: Optimize mprotect() by batch-skipping PTEs
+>    mm: Add batched versions of ptep_modify_prot_start/commit
+>    arm64: Add batched version of ptep_modify_prot_start
+>    arm64: Add batched version of ptep_modify_prot_commit
+>    mm: Batch around can_change_pte_writable()
+>    mm: Optimize mprotect() through PTE-batching
+> 
+>   arch/arm64/include/asm/pgtable.h |  10 ++
+>   arch/arm64/mm/mmu.c              |  21 +++-
+>   include/linux/mm.h               |   4 +-
+>   include/linux/pgtable.h          |  42 ++++++++
+>   mm/gup.c                         |   2 +-
+>   mm/huge_memory.c                 |   4 +-
+>   mm/memory.c                      |   6 +-
+>   mm/mprotect.c                    | 163 +++++++++++++++++++++----------
+>   mm/pgtable-generic.c             |  16 ++-
+>   9 files changed, 198 insertions(+), 70 deletions(-)
+> 
 
 
