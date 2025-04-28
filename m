@@ -1,173 +1,201 @@
-Return-Path: <linux-kernel+bounces-622542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D97BA9E8D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:09:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E0EA9E8E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE70168678
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:09:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A33316BC00
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570E1D61B7;
-	Mon, 28 Apr 2025 07:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328701DE889;
+	Mon, 28 Apr 2025 07:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NWXgkX6B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WPoCqY/9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NWXgkX6B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WPoCqY/9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ji2r3HBs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1319B1C84AD
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6DD1DC9B8;
+	Mon, 28 Apr 2025 07:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745824140; cv=none; b=bYFLHlv57NxQMX1Gm5GTvQ1F4EmAS4CtwyDdPg+xgi2ero55jW8CqI9h58r84sxbCmOtLLwg73Cgk9GBiNDmFxcdn682LHKqlL+HBwzBjKuvp5Ilt+InXf9SUNIRNjJMDeNmPahXULU2c/jiaZf+UcWDD2DaJzg3846J99fFyGg=
+	t=1745824179; cv=none; b=UjaVTyleb2XwzVu91MLQggO4PHGHlOnbIWpRr5ytbFQzU3mehsVMjbQVfG/NfEjlAQ2H35P7sZx2mwjnXhEI3e6u3OpyqAW2ejiCIO5S/x6Iv1xwa2ZNs9Kx4dw9mxxv+QH4X7ViNjxyG+n0IwFmRvn2PXVSnchjmtVDy+iCiaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745824140; c=relaxed/simple;
-	bh=X/d8c9yK9dhj6foZwP5LprADsf/VKS7l6kuVoqJ0HmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EzB7N5L27dTVVTnc2JWirds36XPpcYP9o0K2nYMbfSAzC5nzFEGL7hQSwQ6WyRZcf7z132cAud/CcnZ8oXGS3M+01qTXKptEeaqnwmgj56J+kM/bur86cE/0AfX7xaTnONMgX26BRr/hbql5l8C2NkzN+lJ3uZrWakUlaYq2tJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NWXgkX6B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WPoCqY/9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NWXgkX6B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WPoCqY/9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 356561F79A;
-	Mon, 28 Apr 2025 07:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745824137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8sZmDOuIogPe7qEvLrhXcVBYttZaKXWZ8nMnVn+4+zY=;
-	b=NWXgkX6BzdbXDFFm26+TQqCBhjDzZvhjB5h9OkpJiL4ZOoMfiImGZvnIIPEPpVIJ8Ji63o
-	rm68FeyqtCJns9X823nwyr6eDpDbKbisR40oryeqmtHWpuybT+5o++BfjFxqaf+8R7hdHE
-	WmBa+PkMtVOQlX5W4REo8grxHoDWcw0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745824137;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8sZmDOuIogPe7qEvLrhXcVBYttZaKXWZ8nMnVn+4+zY=;
-	b=WPoCqY/9pFrNI+nVaceSjsOWEzDoKhr6pwqzpFEfhqvMu9mrcdaJTVF1o4PTYqLWtPFMSl
-	/WrmToKjtQ3MN8CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745824137; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8sZmDOuIogPe7qEvLrhXcVBYttZaKXWZ8nMnVn+4+zY=;
-	b=NWXgkX6BzdbXDFFm26+TQqCBhjDzZvhjB5h9OkpJiL4ZOoMfiImGZvnIIPEPpVIJ8Ji63o
-	rm68FeyqtCJns9X823nwyr6eDpDbKbisR40oryeqmtHWpuybT+5o++BfjFxqaf+8R7hdHE
-	WmBa+PkMtVOQlX5W4REo8grxHoDWcw0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745824137;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8sZmDOuIogPe7qEvLrhXcVBYttZaKXWZ8nMnVn+4+zY=;
-	b=WPoCqY/9pFrNI+nVaceSjsOWEzDoKhr6pwqzpFEfhqvMu9mrcdaJTVF1o4PTYqLWtPFMSl
-	/WrmToKjtQ3MN8CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1478713A25;
-	Mon, 28 Apr 2025 07:08:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iHCpBIkpD2hFZgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 28 Apr 2025 07:08:57 +0000
-Message-ID: <1ceedd5b-16c1-4844-815d-1623ab7e7ae8@suse.cz>
-Date: Mon, 28 Apr 2025 09:08:56 +0200
+	s=arc-20240116; t=1745824179; c=relaxed/simple;
+	bh=SGAP2U+4RvvXOSS+DtJ1gO8DuvWPLFnMBHZaP25912k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bk5+1cVU4xMTikawlzRvrmwj+rjPrKznlHA1RzTYN/wa2G4VbUQiWxwW+etzi1RvgpsbgKd+dqnHZyeDpGJyZXIPBUE3AqyuYe1fiYDQR+stgrdr7M+aee2TRmOFH/in1L3/pos2esK2TxWZWTj9RRbEuYMtgEbzoYobkaWNwRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ji2r3HBs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EE127C4CEED;
+	Mon, 28 Apr 2025 07:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745824179;
+	bh=SGAP2U+4RvvXOSS+DtJ1gO8DuvWPLFnMBHZaP25912k=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ji2r3HBshrqZEZWZoCRzNUy9lH6rzm3eMBBX9EKyRHhF+AFfCOBn+0HS6v7neKlnv
+	 TiZbLT47gBBmHpB6q4g2/2Kfga15hhuLJztWHE11bvNZPQmKKxoo0iqnRy1/rdsPyZ
+	 1BsafDh0+uh7b3YvaWuZerNSq7h9xduvWHiVarS/jhNAk7LcsjoRbI0/3WQjmmFA+1
+	 6UepAltDDDUEZnuSNQZSOS0W5w9pLkHs9OzYW4H18Q1scb3hrfhJjQKydOJXYjcvoq
+	 uy36TMNT0KSr/kz/xvt1OG+u4YdOwTWuWep1VooTVU+S8/9gqn4XW4VjBaDUvzaKor
+	 R90CUKqI6UK8g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD672C36005;
+	Mon, 28 Apr 2025 07:09:38 +0000 (UTC)
+From: Daniel Braunwarth via B4 Relay <devnull+daniel.braunwarth.kuka.com@kernel.org>
+Date: Mon, 28 Apr 2025 09:09:07 +0200
+Subject: [PATCH net-next] net: phy: realtek: Add support for WOL magic
+ packet on RTL8211F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 9/9] mm, slub: skip percpu sheaves for remote object
- freeing
-Content-Language: en-US
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250425-slub-percpu-caches-v4-0-8a636982b4a4@suse.cz>
- <20250425-slub-percpu-caches-v4-9-8a636982b4a4@suse.cz>
- <c60ae681-6027-0626-8d4e-5833982bf1f0@gentwo.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <c60ae681-6027-0626-8d4e-5833982bf1f0@gentwo.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Message-Id: <20250428-realtek_wol-v1-1-15de3139d488@kuka.com>
+X-B4-Tracking: v=1; b=H4sIAJMpD2gC/x3M0QpAMBSH8VfRubbihORVJC3+40SjbbGSd7dc/
+ i6+7yEPJ/DUZQ85XOLlsAllntG0artAyZxMXHBdVFwrB70HbON97KoBz6aFbifDlIrTwUj8bz1
+ ZBGURAw3v+wGUun0/ZwAAAA==
+X-Change-ID: 20250425-realtek_wol-6e2df8ea8cf2
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Daniel Braunwarth <daniel.braunwarth@kuka.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745824177; l=3620;
+ i=daniel.braunwarth@kuka.com; s=20250425; h=from:subject:message-id;
+ bh=gwVptqcSBToB7LxapLAcdpkwFvRzQXaqfiCXknN+ioA=;
+ b=aAVHeljm7rXfuaeD+CRsjGEUjPEMIKxdF078yC+p/gTJpu9UzyKz9FJhSpwdFUf4Ohq7SUQb3
+ nXyrXk0y3ToC6k5LKYsG77hr67h8Qllu1iHiLVFlb5OJwemO1LoCIN/
+X-Developer-Key: i=daniel.braunwarth@kuka.com; a=ed25519;
+ pk=fTSYKvKU5SCGGLHVz5NaznQ2MbXNWUZzdqPihgCfYms=
+X-Endpoint-Received: by B4 Relay for daniel.braunwarth@kuka.com/20250425
+ with auth_id=388
+X-Original-From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+Reply-To: daniel.braunwarth@kuka.com
 
-On 4/25/25 19:35, Christoph Lameter (Ampere) wrote:
-> On Fri, 25 Apr 2025, Vlastimil Babka wrote:
-> 
->> @@ -5924,8 +5948,15 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
->>  	if (unlikely(!slab_free_hook(s, object, slab_want_init_on_free(s), false)))
->>  		return;
->>
->> -	if (!s->cpu_sheaves || !free_to_pcs(s, object))
->> -		do_slab_free(s, slab, object, object, 1, addr);
->> +	if (s->cpu_sheaves) {
->> +		if (likely(!IS_ENABLED(CONFIG_NUMA) ||
->> +			   slab_nid(slab) == numa_node_id())) {
-> 
-> Ah. ok this removes remote object freeing to the pcs.
-> 
-> numa_mem_id() is needed to support memory less numa nodes.
+From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
 
-Ah right those... will fix, thanks.
+The RTL8211F supports multiple WOL modes. This patch adds support for
+magic packets.
 
->> +			free_to_pcs(s, object);
->> +			return;
->> +		}
->> +	}
->> +
->> +	do_slab_free(s, slab, object, object, 1, addr);
->>  }
->>
->>  #ifdef CONFIG_MEMCG
->>
->>
+The PHY notifies the system via the INTB/PMEB pin when a WOL event
+occurs.
+
+Signed-off-by: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+---
+ drivers/net/phy/realtek/realtek_main.c | 58 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
+index 893c824796715a905bab99646a474c3bea95ec11..ed2fd6a0d7466e9638ab988efb03934556f52794 100644
+--- a/drivers/net/phy/realtek/realtek_main.c
++++ b/drivers/net/phy/realtek/realtek_main.c
+@@ -10,6 +10,7 @@
+ #include <linux/bitops.h>
+ #include <linux/of.h>
+ #include <linux/phy.h>
++#include <linux/netdevice.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/clk.h>
+@@ -38,6 +39,10 @@
+ 
+ #define RTL8211F_INSR				0x1d
+ 
++#define RTL8211F_WOL_MAGIC			BIT(12)
++#define RTL8211F_WOL_CLEAR			(BIT(15) | 0x1fff)
++#define RTL8211F_WOL_INT_ENABLE			BIT(5)
++
+ #define RTL8211F_LEDCR				0x10
+ #define RTL8211F_LEDCR_MODE			BIT(15)
+ #define RTL8211F_LEDCR_ACT_TXRX			BIT(4)
+@@ -123,6 +128,7 @@ struct rtl821x_priv {
+ 	u16 phycr2;
+ 	bool has_phycr2;
+ 	struct clk *clk;
++	u32 saved_wolopts;
+ };
+ 
+ static int rtl821x_read_page(struct phy_device *phydev)
+@@ -354,6 +360,56 @@ static irqreturn_t rtl8211f_handle_interrupt(struct phy_device *phydev)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void rtl8211f_get_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
++{
++	struct rtl821x_priv *priv = dev->priv;
++
++	wol->supported = WAKE_MAGIC;
++	wol->wolopts = priv->saved_wolopts;
++}
++
++static int rtl8211f_set_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
++{
++	struct rtl821x_priv *priv = dev->priv;
++	const u8 *mac_addr = dev->attached_dev->dev_addr;
++	int oldpage;
++
++	oldpage = phy_save_page(dev);
++	if (oldpage < 0)
++		goto err;
++
++	if (wol->wolopts & WAKE_MAGIC) {
++		/* Store the device address for the magic packet */
++		rtl821x_write_page(dev, 0xd8c);
++		__phy_write(dev, 16, mac_addr[1] << 8 | (mac_addr[0]));
++		__phy_write(dev, 17, mac_addr[3] << 8 | (mac_addr[2]));
++		__phy_write(dev, 18, mac_addr[5] << 8 | (mac_addr[4]));
++
++		/* Clear WOL status and enable magic packet matching */
++		rtl821x_write_page(dev, 0xd8a);
++		__phy_write(dev, 16, RTL8211F_WOL_MAGIC);
++		__phy_write(dev, 17, RTL8211F_WOL_CLEAR);
++
++		/* Enable the WOL interrupt */
++		rtl821x_write_page(dev, 0xd40);
++		__phy_set_bits(dev, 0x16, RTL8211F_WOL_INT_ENABLE);
++	} else {
++		/* Disable the WOL interrupt */
++		rtl821x_write_page(dev, 0xd40);
++		__phy_clear_bits(dev, 0x16, RTL8211F_WOL_INT_ENABLE);
++
++		/* Clear WOL status and disable magic packet matching */
++		rtl821x_write_page(dev, 0xd8a);
++		__phy_write(dev, 16, 0x0);
++		__phy_write(dev, 17, RTL8211F_WOL_CLEAR);
++	}
++
++	priv->saved_wolopts = wol->wolopts;
++
++err:
++	return phy_restore_page(dev, oldpage, 0);
++}
++
+ static int rtl8211_config_aneg(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -1400,6 +1456,8 @@ static struct phy_driver realtek_drvs[] = {
+ 		.read_status	= rtlgen_read_status,
+ 		.config_intr	= &rtl8211f_config_intr,
+ 		.handle_interrupt = rtl8211f_handle_interrupt,
++		.set_wol	= rtl8211f_set_wol,
++		.get_wol	= rtl8211f_get_wol,
+ 		.suspend	= rtl821x_suspend,
+ 		.resume		= rtl821x_resume,
+ 		.read_page	= rtl821x_read_page,
+
+---
+base-commit: 4acf6d4f6afc3478753e49c495132619667549d9
+change-id: 20250425-realtek_wol-6e2df8ea8cf2
+
+Best regards,
+-- 
+Daniel Braunwarth <daniel.braunwarth@kuka.com>
+
 
 
