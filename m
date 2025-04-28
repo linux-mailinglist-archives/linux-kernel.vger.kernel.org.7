@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-622560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0CDA9E906
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:18:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1B2A9E90A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCEF87A47B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460BA18972AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7BF18C937;
-	Mon, 28 Apr 2025 07:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E1E1DE4C9;
+	Mon, 28 Apr 2025 07:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjjwhZaE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PF0WiXgd"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83211BE67
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0824BE67;
+	Mon, 28 Apr 2025 07:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745824709; cv=none; b=lRHZ2SxqPHw2RQAzNF0/iqJ3RJbs+02+rAN1wg/WbkdeDEdTJaKNPcnMpjuzqgrepdMSdlee411DENb1bkXsdj9uhZjcGYJeWkfYSBcFm0ZykbnjFagJGj5TS1X6AXm/8vz0XcUoufeYBrUHHfU1WIbBQNmzuJrEVECcM0Vl5zE=
+	t=1745824771; cv=none; b=Qcru2GqNW1fS91Q6IWwc2rjPf6jHXmQHbEcYsnvSwzAj9jGUezb7dqEOlbw8d3hBh3TpT/yafuZQTaemIDra90PGnDcRzrWoiF8WEB0+Is6QXd8L2mXwxt8VK3j+0Q3JrSqlsL/w3CJRq1LdITmz89A2lfVBvaxEZAZ3z1UZ520=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745824709; c=relaxed/simple;
-	bh=rM/M8U4Sk55XVsH8oXK18HsR+za+YhR8lTHSsQQ7e0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prmUUSH1FQRgrM2wtZX0g4cP83GrVk6Ymm4Zf9wIwoc07s/NEzeV+136soD+PW8iT7fBXQMwSUQWbWSNP/trg72IUd/a1VCpfgGokWz3nt6YQGiJAC11z0bPGLVBVIJkCEfz4+5ihqUOK/o0Sti1Hqiy/y6RWJopwKePfKSY+Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjjwhZaE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745824706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Hl/eg/Xd5t08sY71UU5pvHE5cX2PnfJ+PDNMH8JdN/k=;
-	b=SjjwhZaEGkylmLx813mP2PliJmTrDrLPDJDo44HFsyIln/Ra2UPYDeAt3bAMwT/bCN8yuk
-	/O+GH8SBPmTE7JgA6Nt+vVvNRg6blAnW4ofMZYip6dfgX+nbDQOVGJyC56I34OvQaTCH4O
-	8BCWRhHESNcmoVgZgnzNtc8apzE9HxM=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-118-t2BI90JqOZ2qKy03bkc34w-1; Mon, 28 Apr 2025 03:18:22 -0400
-X-MC-Unique: t2BI90JqOZ2qKy03bkc34w-1
-X-Mimecast-MFC-AGG-ID: t2BI90JqOZ2qKy03bkc34w_1745824701
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3912b54611dso2218106f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 00:18:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745824701; x=1746429501;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Hl/eg/Xd5t08sY71UU5pvHE5cX2PnfJ+PDNMH8JdN/k=;
-        b=ZPPo7i4jrEGG/TV7PADsvmFqEaqj8skJ1rwQABoGcfP5skliySIdLA9nrDvwbQSToU
-         6ybE8OrgGu35vBH7oEMf8BnfAa5kp9bvHs6LA4N23eIpvyxmEFKbDEbQuaRbIFB6SZ4P
-         MmaruoZTM0YNGkGyKZGXCwUPQcKj1CmocODlEGj6rnZWP+26b+Npm4lHewWdvR58oYjr
-         yr2tyDIiu1Qr3IBiScLbI3t+U/GkjpCoC01IPrg/pUeLvMzLlWPwnjfadR7R5Z9I7CtF
-         2kU3MWUJDD2cp5qBbHv5QjbUCeSf82xys/cEuyIF6VTY5HydXAGjVbgjgW0gK9w0m1ui
-         s7xQ==
-X-Gm-Message-State: AOJu0YyklfM0TITHxFl64OrytMDEQHoJTYrg1jmE8IahN7nCXEmBLGkX
-	QXkeQZHjXFTU/2TgMWerBtjQWHa9WQeaOSUZ4XGLSpyMrSwKDB2LV5tvqJ91fjhmkdjY+sV9Eds
-	tX/vlXf9wPMCSXdC59VBm2zH+feWUATd+AOYph7xT8LWV1qyAoCoYWLYAbZxQ5VsXN2Kzmw==
-X-Gm-Gg: ASbGncuZKYjNljjWZii7ko+1HgCJP+a/qIhFVC3Yb5jY0qwfYCY989XkLKX3EbQ5anL
-	b+6iSmgVJDMps4DvB+XXmwJxHu3Le6ItmGI2mes2FgbyOxgpTluY/Zt0sy3aqQxEuXSUG684HeK
-	IkTM3bQPuad05yTaTUW03CJAW7oJqCuGelZ1+SBWnTcB2AaftxZihz2mVy8Q4KQvtpK6+kxn4uj
-	VAhRJIrKpIDh9GNtQyiQv9Y2gPfsRHJTD0Nz7O5Hd31nJRy7bXp01kR9RBe6HDlCzjeWDBuoO/D
-	s0/MCcjscMVmczUuzqW5jmIi+FWW4s9WLuj+dir8sAaiamsmoy7Zcxb0Dy0LZS5X8lsYtdwlyvL
-	ZIQsNuPsHnmxbnPIfkx1y1s/42YJ+gCJXpZv8Bgg=
-X-Received: by 2002:a5d:5f82:0:b0:39c:30d9:3b5c with SMTP id ffacd0b85a97d-3a074f39730mr8804938f8f.39.1745824701045;
-        Mon, 28 Apr 2025 00:18:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8Z9SYwV7X/D46qnbh7MvRm+KRJA6BuSKYTHlRlSf9NZYpN57m1RNCkvqmYsbjHqGLwnfpgA==
-X-Received: by 2002:a5d:5f82:0:b0:39c:30d9:3b5c with SMTP id ffacd0b85a97d-3a074f39730mr8804905f8f.39.1745824700642;
-        Mon, 28 Apr 2025 00:18:20 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:ea00:2f00:e7e5:8875:a0ea? (p200300cbc72fea002f00e7e58875a0ea.dip0.t-ipconnect.de. [2003:cb:c72f:ea00:2f00:e7e5:8875:a0ea])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5e198sm10475664f8f.97.2025.04.28.00.18.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 00:18:20 -0700 (PDT)
-Message-ID: <f93dd717-f382-4fbf-a7cb-d9a395e283f2@redhat.com>
-Date: Mon, 28 Apr 2025 09:18:19 +0200
+	s=arc-20240116; t=1745824771; c=relaxed/simple;
+	bh=SK4ddA8HzYC+KUfP2k0/WCmcI111NkEGUqOsBHoq1Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cQilZcCiuyaZH02c9imMF29cLsdXho/eFfx5+3ZGXkQ369CrBE8CNXQkp2ww4qKAFx9edkf9yPYnQvDgtSNvTV/DiaUGI7SRX04/wuKwD2MbEgoAV/2+KBB3gEB/T6y/edQBbwu51cDUOLDN4yct+FI6AudnYeS8bxrGq2pIXKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PF0WiXgd; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1745824764;
+	bh=p5S7r+9+LrTkJDSOqXTMk9hxb/ouo5NJ7kDZBb+ZTeY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PF0WiXgdfX9wZkNfUwDzNXtb0R4B0QqwqGxor9KYF6QR87o2XdiDft+bW571PaZof
+	 8ok3jwqukcmSVAaBIgIQz8tQ4QlG2B/vrmA7OfmCKOlM7hklEQI2bn+WtjxtlVy9Ya
+	 +AfcggWWBqVcvXyowQxR9UIhG9ZJQKMrifXxh+y4f54NPhddXVKCCRxeg7M34Q10XU
+	 o3ufXmQR8yMoesGUftV4CDD9GbAxdqrjpI6r9sNTS131HQowvUc1oHA5pvkPL0jHS6
+	 54xG8Riu13GG11Vq2+pLa7hZAVTl4rISEvLS5dvDTScQImV0ao2UYcyenIHyxfvKEJ
+	 +skbepmE+aPjw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZmFF7648tz4wcy;
+	Mon, 28 Apr 2025 17:19:23 +1000 (AEST)
+Date: Mon, 28 Apr 2025 17:18:52 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>
+Cc: Athira Rajeev <atrajeev@linux.ibm.com>, Shrikanth Hegde
+ <sshegde@linux.ibm.com>, Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
+ <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20250428171852.36d8533a@canb.auug.org.au>
+In-Reply-To: <F5AD4FED-338E-4DC6-97BF-396F7EB73CA1@linux.ibm.com>
+References: <20250415133518.2c8d4325@canb.auug.org.au>
+	<20250417134959.37204d48@canb.auug.org.au>
+	<20250422163502.02ceeb0d@canb.auug.org.au>
+	<bb1f2928-617f-4943-bdd0-dfa74904ffb3@linux.ibm.com>
+	<D66D1529-714C-4700-BD74-AC6AFA7C97A8@linux.ibm.com>
+	<F5AD4FED-338E-4DC6-97BF-396F7EB73CA1@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mm/io-mapping: precompute remap protection flags for
- clarity
-To: Ye Liu <ye.liu@linux.dev>, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rppt@kernel.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, harry.yoo@oracle.com,
- riel@surriel.com, vbabka@suse.cz, liuye@kylinos.cn
-References: <20250427100442.958352-1-ye.liu@linux.dev>
- <20250427100442.958352-2-ye.liu@linux.dev>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250427100442.958352-2-ye.liu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/SEQCxJKfbwLlfkhccXJJfVY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 27.04.25 12:04, Ye Liu wrote:
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> In io_mapping_map_user(), precompute the page protection flags in a local
-> variable before calling remap_pfn_range_notrack().
-> 
-> No functional change.
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> ---
->   mm/io-mapping.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/io-mapping.c b/mm/io-mapping.c
-> index 01b362799930..f44a6a134712 100644
-> --- a/mm/io-mapping.c
-> +++ b/mm/io-mapping.c
-> @@ -21,9 +21,10 @@ int io_mapping_map_user(struct io_mapping *iomap, struct vm_area_struct *vma,
->   	if (WARN_ON_ONCE((vma->vm_flags & expected_flags) != expected_flags))
->   		return -EINVAL;
->   
-> +	pgprot_t remap_prot = __pgprot((pgprot_val(iomap->prot) & _PAGE_CACHE_MASK) |
-> +				       (pgprot_val(vma->vm_page_prot) & ~_PAGE_CACHE_MASK));
-> +
->   	/* We rely on prevalidation of the io-mapping to skip track_pfn(). */
-> -	return remap_pfn_range_notrack(vma, addr, pfn, size,
-> -		__pgprot((pgprot_val(iomap->prot) & _PAGE_CACHE_MASK) |
-> -			 (pgprot_val(vma->vm_page_prot) & ~_PAGE_CACHE_MASK)));
-> +	return remap_pfn_range_notrack(vma, addr, pfn, size, remap_prot);
->   }
->   EXPORT_SYMBOL_GPL(io_mapping_map_user);
+--Sig_/SEQCxJKfbwLlfkhccXJJfVY
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Hi all,
 
--- 
+On Thu, 24 Apr 2025 22:03:05 +0530 Athira Rajeev <atrajeev@linux.ibm.com> w=
+rote:
+>
+> > On 24 Apr 2025, at 8:07=E2=80=AFPM, Athira Rajeev <atrajeev@linux.ibm.c=
+om> wrote:
+> >  =20
+> >> On 22 Apr 2025, at 3:26=E2=80=AFPM, Shrikanth Hegde <sshegde@linux.ibm=
+.com> wrote:
+> >>=20
+> >> On 4/22/25 12:05, Stephen Rothwell wrote: =20
+> >>  =20
+> >>> On Thu, 17 Apr 2025 13:49:59 +1000 Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote: =20
+> >>>>=20
+> >>>> On Tue, 15 Apr 2025 13:35:18 +1000 Stephen Rothwell <sfr@canb.auug.o=
+rg.au> wrote: =20
+> >>>>>=20
+> >>>>> After merging the tip tree, today's linux-next build (native perf)
+> >>>>> failed like this:
+> >>>>>=20
+> >>>>> diff: tools/arch/x86/include/asm/amd/ibs.h: No such file or directo=
+ry
+> >>>>> In file included from util/amd-sample-raw.c:12:
+> >>>>> tools/include/../../arch/x86/include/asm/amd/ibs.h:10:10: fatal err=
+or: asm/msr-index.h: No such file or directory
+> >>>>>   10 | #include <asm/msr-index.h>
+> >>>>>      |          ^~~~~~~~~~~~~~~~~
+> >>>>> compilation terminated.
+> >>>>>=20
+> >>>>> Maybe caused by commit
+> >>>>>=20
+> >>>>>  3846389c03a8 ("x86/platform/amd: Move the <asm/amd-ibs.h> header t=
+o <asm/amd/ibs.h>")
+> >>>>> or associated commits?
+>
+> Posted the fix in mailing here: https://lore.kernel.org/linux-perf-users/=
+20250424163033.6601-1-atrajeev@linux.ibm.com/T/#u
+> Please share feedback if it fixes the compilation issue.
+
+OK, so to progress things ...
+
+Just reverting the changes to tools/perf in commit
+
+  3846389c03a8 ("x86/platform/amd: Move the <asm/amd-ibs.h> header to <asm/=
+amd/ibs.h>")
+
+Allows perf to build again on ppc64el (and gets rid of the warning), so
+is that a reasonable thing to do - and leave the tools perf update to
+the perf guys?
+
+If so, can that partial revert be added to the tip tree, please?
+--=20
 Cheers,
+Stephen Rothwell
 
-David / dhildenb
+--Sig_/SEQCxJKfbwLlfkhccXJJfVY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgPK9wACgkQAVBC80lX
+0GyBGgf8CvhUQl3Kd6I66RwI6x0BE4JTj41gBzuuE2A6hPKHypSEBIutoPTgruxK
+mp/TTcZHd027eDMCnyhsooovrwOZkhWNQ6zfZ4jHH9ZfpiryMXhwlsFzi3wvxQJa
+W3CQbLyPMnUGCGXdStheqoLWriK/RjzkiZurPBrg+5BapTAC5c4hHZ/EXbNKtG5C
+TMKRZOGyxzeg3J9HWXsLcPEMIANMmQp1TI7lC9c5svEvBYOOZQsSLJh16WXW9sbv
+gXv+YaLhsVflcdFkhxKeJhIjCXcITfNWLSozgqWCaJlEvTKRuOsuB9zxBtdxZymR
+OzQ08Vdvoam2ugQg4+6oWAtwCuXw5w==
+=4/IE
+-----END PGP SIGNATURE-----
+
+--Sig_/SEQCxJKfbwLlfkhccXJJfVY--
 
