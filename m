@@ -1,157 +1,201 @@
-Return-Path: <linux-kernel+bounces-623367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5836DA9F4C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:42:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6997EA9F49F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 17:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D87189C427
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2C93B4050
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC4627A12F;
-	Mon, 28 Apr 2025 15:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="GD3zPOXU"
-Received: from ksmg02.maxima.ru (ksmg02.mt-integration.ru [81.200.124.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F7525D8F7;
-	Mon, 28 Apr 2025 15:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3906225C6FF;
+	Mon, 28 Apr 2025 15:36:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDE61E008B;
+	Mon, 28 Apr 2025 15:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745854891; cv=none; b=ez0JNkGF7p6a/n8SnOy8z+LBg5rmTiIiFyRYxNzmE/o0TUYgq7pf0v4zyXj0DHu1G03dO2MjT8wkHzYYgaKLy/SQqYxB7Ml2pG/1ZbDYDIZvz0VQeXHlRoGMNKtcKHIRA3cH/55BkYRNP3Rm+WG3WwHOY8QyA1l7CBEaBpa7cEE=
+	t=1745854578; cv=none; b=LAa135IOF8HDGq3OWYVY3EP6Ph90xv8wAX7Sg1I+5iVr69LWu3KGvFt9UhD1cMkwOOFFPqNtYSUfYwPhamwUuTyeTW8ljWSmFakZnRc2NR5pAEDAcDFJNBYcpJjwyvFaA+436stnVjWFvsxdGl2IAer52y3C4lWqo0KSxMjTWoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745854891; c=relaxed/simple;
-	bh=MmonudeGDz60/8aF+AqdCoHsM+H7XLBAynEvf1Xu4ZE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VwovR3ibwuqnHYYR6r8oqVHg/Ob1Qt/h683+WuOeGosvNIkeWsm/n70msJJbipiEO+tcbirbaW3/lezFRzqNKZQHdRj8jJoGZDxpL7/2d0/IFmRO3yQVMZ6jfuIv8QHctqOXiFm/BzvQje4NAxEBP9tTPkV9JW5t2GwftzZF+ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=GD3zPOXU; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 52AEF1E0129;
-	Mon, 28 Apr 2025 18:34:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 52AEF1E0129
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1745854498; bh=bSsb8CFpXWK3m/gCcsHrngA9NoDgWQTFnJpm4oEfKY0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=GD3zPOXUgkRK1H2BPxcjDPBVy21HWE0LU6+Iy20vLHB5NoLASB+oabLP//xhs8YyD
-	 B8U7k5Qwe+K80k9Mi4OjMUvZwGOY/KG+g3hWEZHmy/zfHaqCEBYpqq0kvxDTLCoC/K
-	 eFi8UewREpeEyos74L+SX1Mk/tnPe2uthU7g3D24SxDcz0LNTkhNnn7nloTKmOt/R0
-	 5cXOPCvLf+7j4mGZalaPpOCgQTswe/uKBqJJZx+HBQ3YdIKEFelwTdENahe/kCKzG5
-	 xp8esyQKGeMfyJHbDntQfTpMxJgLMt7RzxV38/p0T1QMDslO7KN02NU8M+60i+iYzT
-	 gg57sLeeHN9Ig==
-Received: from ksmg02.maxima.ru (autodiscover.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (not verified))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Mon, 28 Apr 2025 18:34:58 +0300 (MSK)
-Received: from deb16-01-masimov-t-build.mti-lab.com (172.25.20.25) by
- mmail-p-exch02.mt.ru (81.200.124.62) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 28 Apr 2025 18:34:56 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: Simona Vetter <simona@ffwll.ch>
-CC: Helge Deller <deller@gmx.de>, Murad Masimov <m.masimov@mt-integration.ru>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	<linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH 2/2] fbdev: Fix fb_ser_var to prevent null-ptr-deref in fb_videomode_to_var
-Date: Mon, 28 Apr 2025 18:34:07 +0300
-Message-ID: <20250428153407.3743416-3-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250428153407.3743416-1-m.masimov@mt-integration.ru>
-References: <20250428153407.3743416-1-m.masimov@mt-integration.ru>
+	s=arc-20240116; t=1745854578; c=relaxed/simple;
+	bh=0l9dI7M8qx7oSnZvluNIbOgdc4+hwl5omhl0ehfQ9Y0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AA87I9F74laS4OdJ/0ExZznCwXMVDMICXTOiKaLmFZ4pcDApOvr6NCA7L2o4S0m+z8EQmGGLR57noBfxDcLANUSOC+kiyC7+f6ulNiuPMqqxM4BoWAeh3+unUy4nJmlyebElaOaD4re/imcimbRg9WoUkr86NcDztuE64fiODYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 739BF1516;
+	Mon, 28 Apr 2025 08:36:08 -0700 (PDT)
+Received: from mazurka.cambridge.arm.com (mazurka.cambridge.arm.com [10.2.80.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98FE33F673;
+	Mon, 28 Apr 2025 08:36:10 -0700 (PDT)
+From: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+To: ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com,
+	corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	jean-philippe@linaro.org,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	akpm@linux-foundation.org,
+	paulmck@kernel.org,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	maz@kernel.org,
+	james.morse@arm.com,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	baohua@kernel.org,
+	david@redhat.com,
+	ioworker0@gmail.com,
+	jgg@ziepe.ca,
+	nicolinc@nvidia.com,
+	mshavit@google.com,
+	jsnitsel@redhat.com,
+	smostafa@google.com,
+	kevin.tian@intel.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev
+Cc: =?UTF-8?q?Miko=C5=82aj=20Lenczewski?= <miko.lenczewski@arm.com>
+Subject: [RESEND PATCH v6 0/3] Initial BBML2 support for contpte_convert()
+Date: Mon, 28 Apr 2025 15:35:12 +0000
+Message-ID: <20250428153514.55772-2-miko.lenczewski@arm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch01.mt.ru (81.200.124.61) To
- mmail-p-exch02.mt.ru (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 56 0.3.56 52db7f275cc9b6820389ba9ab2ac225370e1c244, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;mt-integration.ru:7.1.1;81.200.124.62:7.1.2;ksmg02.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192977 [Apr 28 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/04/28 14:14:00 #27936619
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
 
-If fb_add_videomode() in fb_set_var() fails to allocate memory for
-fb_videomode, later it may lead to a null-ptr dereference in
-fb_videomode_to_var(), as the fb_info is registered while not having the
-mode in modelist that is expected to be there, i.e. the one that is
-described in fb_info->var.
+Hi All,
 
-================================================================
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 PID: 30371 Comm: syz-executor.1 Not tainted 5.10.226-syzkaller #0
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-RIP: 0010:fb_videomode_to_var+0x24/0x610 drivers/video/fbdev/core/modedb.c:901
-Call Trace:
- display_to_var+0x3a/0x7c0 drivers/video/fbdev/core/fbcon.c:929
- fbcon_resize+0x3e2/0x8f0 drivers/video/fbdev/core/fbcon.c:2071
- resize_screen drivers/tty/vt/vt.c:1176 [inline]
- vc_do_resize+0x53a/0x1170 drivers/tty/vt/vt.c:1263
- fbcon_modechanged+0x3ac/0x6e0 drivers/video/fbdev/core/fbcon.c:2720
- fbcon_update_vcs+0x43/0x60 drivers/video/fbdev/core/fbcon.c:2776
- do_fb_ioctl+0x6d2/0x740 drivers/video/fbdev/core/fbmem.c:1128
- fb_ioctl+0xe7/0x150 drivers/video/fbdev/core/fbmem.c:1203
- vfs_ioctl fs/ioctl.c:48 [inline]
- __do_sys_ioctl fs/ioctl.c:753 [inline]
- __se_sys_ioctl fs/ioctl.c:739 [inline]
- __x64_sys_ioctl+0x19a/0x210 fs/ioctl.c:739
- do_syscall_64+0x33/0x40 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x67/0xd1
-================================================================
+This patch series adds initial support for eliding Break-Before-Make
+requirements on systems that support BBML2 and additionally guarantee
+to never raise a conflict abort.
 
-The reason is that fb_info->var is being modified in fb_set_var(), and
-then fb_videomode_to_var() is called. If it fails to add the mode to
-fb_info->modelist, fb_set_var() returns error, but does not restore the
-old value of fb_info->var. Restore fb_info->var on fail the same way it
-is done earlier in the function.
+This support reorders and elides both a TLB invalidation and a DSB in
+contpte_convert(), when BBML2 is supported. This leads to a 12%
+improvement when executing a microbenchmark designed to force the
+pathological path where contpte_convert() gets called. This represents
+an 80% reduction in the cost of calling contpte_convert().
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+We clarify both the correctness and performance benefits of this elision
+with respect to the relevant Arm ARM passages, via substantial comments
+in the contpte_convert() source.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
----
- drivers/video/fbdev/core/fbmem.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This series is based on v6.15-rc3 (9c32cda43eb7).
 
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index e1557d80768f..eca2498f2436 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -328,8 +328,10 @@ fb_set_var(struct fb_info *info, struct fb_var_screeninfo *var)
- 	    !list_empty(&info->modelist))
- 		ret = fb_add_videomode(&mode, &info->modelist);
+Notes
+======
 
--	if (ret)
-+	if (ret) {
-+		info->var = old_var;
- 		return ret;
-+	}
+Patch 1 implements an allow-list of cpus that support BBML2, but with
+the additional constraint of never causing TLB conflict aborts. We
+settled on this constraint because we will use the feature for kernel
+mappings in the future, for which we cannot handle conflict aborts
+safely.
 
- 	event.info = info;
- 	event.data = &mode;
---
-2.39.2
+Yang Shi has a series at [1] that aims to use BBML2 to enable splitting
+the linear map at runtime. This series partially overlaps with it to add
+the cpu feature. We believe this series is fully compatible with Yang's
+requirements and could go first.
+
+Due to constraints with the current design of the cpufeature framework
+and the fact that our has_bbml2_noabort() check relies on both a MIDR
+allowlist and the exposed MMFR2 register value, if an implementation
+supports our desired BBML2+NOABORT semantics but fails to declare
+support for BBML2 via the id_aa64mmfr2.bbm field, the check will fail.
+
+Not declaring base support for BBML2 when supporting BBML2+NOABORT
+should be considered an erratum [2], and a workaround can be applied in
+__cpuinfo_store_cpu() to patch in support for BBML2 for the sanitised
+register view used by SCOPE_SYSTEM. However, SCOPE_LOCAL_CPU bypasses
+this sanitised view and reads the MSRs directly by design, and so an
+additional workaround can be applied in __read_sysreg_by_encoding()
+for the MMFR2 case.
+
+For situations where support for BBML2+NOABORT is claimed by an
+implementor and subsequently built into the kernel, but problems later
+arise that require user damage control [3], we introduce a kernel
+commandline parameter override for disabling all BBML2 support.
+
+[1]:
+  https://lore.kernel.org/linux-arm-kernel/20250304222018.615808-1-yang@os.amperecomputing.com/
+
+[2]:
+  https://lore.kernel.org/linux-arm-kernel/3bba7adb-392b-4024-984f-b6f0f0f88629@arm.com/
+
+[3]:
+  https://lore.kernel.org/all/0ac0f1f5-e4a0-46ae-8ea0-2eba7e21a7e1@arm.com/
+
+Changelog
+=========
+
+v6:
+  - clarify correctness and performance of elision of __tlb_flush_range()
+  - rebase onto v6.15-rc3
+
+v5:
+  - https://lore.kernel.org/all/20250325093625.55184-1-miko.lenczewski@arm.com/
+  - fixup coding style nits
+  - document motivation for kernel commandline parameter
+
+v4:
+  - https://lore.kernel.org/all/20250319150533.37440-2-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc5
+  - switch from arm64 sw feature override to hw feature override
+  - reintroduce has_cpuid_feature() check in addition to MIDR check
+
+v3:
+  - https://lore.kernel.org/all/20250313104111.24196-2-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc4
+  - add arm64.nobbml2 commandline override
+  - squash "delay tlbi" and "elide tlbi" patches
+
+v2:
+  - https://lore.kernel.org/all/20250228182403.6269-2-miko.lenczewski@arm.com/
+  - fix buggy MIDR check to properly account for all boot+late cpus
+  - add smmu bbml2 feature check
+
+v1:
+  - https://lore.kernel.org/all/20250219143837.44277-3-miko.lenczewski@arm.com/
+  - rebase onto v6.14-rc3
+  - remove kvm bugfix patches from series
+  - strip out conflict abort handler code
+  - switch from blocklist to allowlist of bmml2+noabort implementations
+  - remove has_cpuid_feature() in favour of MIDR check
+
+rfc-v1:
+  - https://lore.kernel.org/all/20241211154611.40395-1-miko.lenczewski@arm.com/
+  - https://lore.kernel.org/all/20241211160218.41404-1-miko.lenczewski@arm.com/
+
+Mikołaj Lenczewski (3):
+  arm64: Add BBM Level 2 cpu feature
+  iommu/arm: Add BBM Level 2 smmu feature
+  arm64/mm: Elide tlbi in contpte_convert() under BBML2
+
+ .../admin-guide/kernel-parameters.txt         |   3 +
+ arch/arm64/Kconfig                            |  19 +++
+ arch/arm64/include/asm/cpucaps.h              |   2 +
+ arch/arm64/include/asm/cpufeature.h           |   5 +
+ arch/arm64/kernel/cpufeature.c                |  71 +++++++++
+ arch/arm64/kernel/pi/idreg-override.c         |   2 +
+ arch/arm64/mm/contpte.c                       | 139 +++++++++++++++++-
+ arch/arm64/tools/cpucaps                      |   1 +
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |   3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |   3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   4 +
+ 11 files changed, 251 insertions(+), 1 deletion(-)
+
+-- 
+2.49.0
 
 
