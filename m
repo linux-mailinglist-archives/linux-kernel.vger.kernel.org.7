@@ -1,184 +1,233 @@
-Return-Path: <linux-kernel+bounces-622671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6918EA9EAA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 033E6A9EA7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B48B3BA09B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465703B7B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BF225EFBB;
-	Mon, 28 Apr 2025 08:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B61325DAFB;
+	Mon, 28 Apr 2025 08:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hdMwjSOR"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XLXd+Bzg"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8207725E818;
-	Mon, 28 Apr 2025 08:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A4D2356BC
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 08:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745828388; cv=none; b=gd2ozXF0WfUkYuTnf3EWw+aqdYJVlRmL8am3hZolYQwoCNSuDH/xjR2SXlN1PL0t4rQHLvhq4UzBiQPcwYuyAFj7l08r67tYGvQvFivMHZ5T6uTSbLdpZQSlwrKW7uiJs0IdN0RkoQbuuD7RG0Wl2mmfIsa4dX3lPZzfsez13Ik=
+	t=1745828294; cv=none; b=tKuVABwLuRiei1SC9h/GpaloGUwuNcrq6PLCjOfbOBm8SajpIngxGRKCqeuwuifZatEZicQ1G0FbN1u3ENv4zTmzK7kxsC2mubI4TgQB+exeQA7WL6K+vGGGQKMfXoyGxpMH1FAmWX65fADWdRIq2ahgAKVH6bjdwjmglrRrllA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745828388; c=relaxed/simple;
-	bh=VK0BrH3ZZDN9Jgn9dD1/pWlMvI7r00jAXZwatq9vcEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JXhkGvI6IwU/ZqUPszi8tAUAiZ0DX8ff/mjfKAYvIJhZVuJxyEx6Ke8UkVXifhoXsenSgqsNRFjwQc1/JWRNdrCkMlSZQJT0oQFtgHQxZFQ1djtTA6+nnw0s9DZpSnz45tdXpb61WhQt9TfEqe0gOh1iG+SxNkh0iO4r8F5Fqag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hdMwjSOR; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S10w7P021339;
-	Mon, 28 Apr 2025 10:19:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	yr7t1olrwsxTtck0/lM3DwdKRKb3Z1gEKVydU7fX9vg=; b=hdMwjSORmCF7wlLm
-	irCx7AnOE8qIJNbjPKSlLflA4pJaS5QX9+kDvKlOKc0Bryt1Z6wnrJJqERnf9NKD
-	c/3SU4ACwMwXZCt1byR8rs0K0MBb6CyEdDssM991Jrcw+OBgUW99LeD0Kml0SgsG
-	MqPhHzQYIEDEYR29tSwc4qAPBZQeG3+IFqbFliIB4E2AfL8rabyB5VxYeySrfx2M
-	6YEP1gmhXIxuN6EedCVN/QmI7Sg+leAeo3WruQudKtDMscZ/wXtdN4TMj0KCzzrt
-	cpWe80Mr2F2LtoOr0yOos5ZaBOWhByW6LWlANsoXQ0AwdHY6scYRQbTpxJMf5l+n
-	MGHDTg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 468mm9drpq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 10:19:25 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2352040048;
-	Mon, 28 Apr 2025 10:17:43 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 81ED0A2D14A;
-	Mon, 28 Apr 2025 10:16:05 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:16:05 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:16:04 +0200
-Message-ID: <698066cd-6fee-4fd8-9caf-0f5fbd19fda6@foss.st.com>
-Date: Mon, 28 Apr 2025 10:16:03 +0200
+	s=arc-20240116; t=1745828294; c=relaxed/simple;
+	bh=5MTSD89uQLdxjOEDGtXfl6lZjRZyJgPaZgvbDOijRMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AfDtf2Kmuz3Ftv8Hrfd5pRu02Q9hLLIfm54w5b9uTicHEc4xB2cgn85bjIx1Nbw/OFnj4A5Cz4mL3NQ519raBjO5Yuf9r3NKIoJlX/bxkVdt+tBq+rUaR2uwv+DFhqpizI8v+gO/ot/MmYrRowFYkUCb2Zac5SCA937mw5HyQQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XLXd+Bzg; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745828280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zT6mOl0s4GCyENEa7GwphEh7NFPUZucu05UFLnp5u20=;
+	b=XLXd+BzgGwZWzqC4NrSvNdilihWJmLSJvnIwaG7PtmMLU8kq9oWV1hmniFuqslGUpQS6LP
+	ycoXbrc9s5XTHqgo4n5v3BxQtSyDSNO9dQ/i/KtkHfhvTxdgkAZJlMUigXDXYuwGr/1gF4
+	nDE1YTkTuz2KTmzVLPTbcljqUehaZBg=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v1 0/3] bpf, sockmap: Improve performance with CPU affinity
+Date: Mon, 28 Apr 2025 16:16:51 +0800
+Message-ID: <20250428081744.52375-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] of: Common "memory-region" parsing
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        Saravana Kannan
-	<saravanak@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai
-	<wens@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Daniel Baluta
-	<daniel.baluta@nxp.com>
-References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+
+Abstract
+===
+This patchset improves the performance of sockmap by providing CPU affinity,
+resulting in a 1-10x increase in throughput.
 
 
+Motivation
+===
+Traditional user-space reverse proxy:
 
-On 4/23/25 21:42, Rob Herring (Arm) wrote:
-> While there's a common function to parse "memory-region" properties for
-> DMA pool regions, there's not anything for driver private regions. As a
-> result, drivers have resorted to parsing "memory-region" properties
-> themselves repeating the same pattern over and over. To fix this, this
-> series adds 2 functions to handle those cases:
-> of_reserved_mem_region_to_resource() and of_reserved_mem_region_count().
-> 
-> I've converted the whole tree, but just including remoteproc here as
-> it has the most cases. I intend to apply the first 3 patches for 6.16
-> so the driver conversions can be applied for 6.17.
-> 
-> A git tree with all the drivers converted is here[1].
-> 
-> v2:
-> - Fix of_dma_set_restricted_buffer() to maintain behavior on warning msg
-> - Export devm_ioremap_resource_wc()
-> - Rework handling of resource name to drop unit-address from name as it 
->   was before.
-> - Link to v1: 
->   https://lore.kernel.org/all/20250317232426.952188-1-robh@kernel.org
-> 
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/memory-region
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Rob Herring (Arm) (4):
->       of: reserved_mem: Add functions to parse "memory-region"
->       of: Simplify of_dma_set_restricted_buffer() to use of_for_each_phandle()
->       devres: Export devm_ioremap_resource_wc()
->       remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
-> 
->  drivers/of/device.c                       | 31 +++++-------
->  drivers/of/of_reserved_mem.c              | 80 +++++++++++++++++++++++++++++++
->  drivers/remoteproc/imx_dsp_rproc.c        | 45 +++++++----------
->  drivers/remoteproc/imx_rproc.c            | 68 +++++++++++---------------
->  drivers/remoteproc/qcom_q6v5_adsp.c       | 24 ++++------
->  drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++++---------------
->  drivers/remoteproc/qcom_q6v5_pas.c        | 69 ++++++++++----------------
->  drivers/remoteproc/qcom_q6v5_wcss.c       | 25 ++++------
->  drivers/remoteproc/qcom_wcnss.c           | 23 ++++-----
->  drivers/remoteproc/rcar_rproc.c           | 36 ++++++--------
->  drivers/remoteproc/st_remoteproc.c        | 41 ++++++++--------
->  drivers/remoteproc/stm32_rproc.c          | 44 ++++++++---------
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +++++------
->  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 28 +++++------
->  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +++++------
->  drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++++------------
->  include/linux/of_reserved_mem.h           | 26 ++++++++++
->  lib/devres.c                              |  1 +
->  18 files changed, 339 insertions(+), 369 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250423-dt-memory-region-v2-a2b15caacc63
-> 
+              Reserve Proxy
+            _________________
+client  -> | fd1  <->  fd2   | -> server
+           |_________________|
 
-Testing of the series on the STM32MP15 platform has passed.
+Using sockmap for reverse proxy:
 
-just one minor comment in patch 1/4.
+              Reserve Proxy
+            _________________
+client ->  |  fd1  <->  fd2  |  -> server
+         | |_________________| |
+         |      |       |      |
+         |      _________      |
+         |     | sockmap |     |
+          -->  |_________|  -->
 
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+By adding fds to sockmap and using a BPF program, we can quickly forward
+data and avoid data copying between user space and kernel space.
 
-Thanks,
-Arnaud
+Mainstream multi-process reverse proxy applications, such as Nginx and
+HAProxy, support CPU affinity settings, which allow each process to be
+pinned to a specific CPU, avoiding conflicts between data plane processes
+and other processes, especially in multi-tenant environments.
 
 
+Current Issues
+===
+The current design of sockmap uses a workqueue to forward ingress_skb and
+wakes up the workqueue without specifying a CPU
+(by calling schedule_delayed_work()). In the current implementation of
+schedule_delayed_work, it tends to run the workqueue on the current CPU.
+
+This approach has a high probability of running on the current CPU, which
+is the same CPU that handles the net rx soft interrupt, especially for
+programs that access each other using local interfaces.
+
+The loopback driver's transmit interface, loopback_xmit(), directly calls
+__netif_rx() on the current CPU, which means that the CPU handling
+sockmap's workqueue and the client's sending CPU are the same, resulting
+in contention.
+
+For a TCP flow, if the request or response is very large, the
+psock->ingress_skb queue can become very long. When the workqueue
+traverses this queue to forward the data, it can consume a significant
+amount of CPU time.
 
 
-> Best regards,
+Solution
+===
+Configuring RPS on a loopback interface can be useful, but it will trigger
+additional softirq, and furthermore, it fails to achieve our expected
+effect of CPU isolation from other processes.
+
+Instead, we provide a kfunc that allow users to specify the CPU on which
+the workqueue runs through a BPF program.
+
+We can use the existing benchmark to test the performance, which allows
+us to evaluate the effectiveness of this optimization.
+
+Because we use local interfaces for communication and the client consumes
+a significant amount of CPU when sending data, this prevents the workqueue
+from processing ingress_skb in a timely manner, ultimately causing the
+server to fail to read data quickly.
+
+Without cpu-affinity:
+./bench sockmap -c 2 -p 1 -a --rx-verdict-ingress --no-verify
+Setting up benchmark 'sockmap'...
+create socket fd c1:14 p1:15 c2:16 p2:17
+Benchmark 'sockmap' started.
+Iter   0 ( 36.031us): Send Speed 1143.693 MB/s ... Rcv Speed  109.572 MB/s
+Iter   1 (  0.608us): Send Speed 1320.550 MB/s ... Rcv Speed   48.103 MB/s
+Iter   2 ( -5.448us): Send Speed 1314.790 MB/s ... Rcv Speed   47.842 MB/s
+Iter   3 ( -0.613us): Send Speed 1320.158 MB/s ... Rcv Speed   46.531 MB/s
+Iter   4 ( -3.441us): Send Speed 1319.375 MB/s ... Rcv Speed   46.662 MB/s
+Iter   5 (  3.764us): Send Speed 1166.667 MB/s ... Rcv Speed   42.467 MB/s
+Iter   6 ( -4.404us): Send Speed 1319.508 MB/s ... Rcv Speed   47.973 MB/s
+Summary: total trans     7758 MB ± 1293.506 MB/s
+
+Without cpu-affinity(RPS enabled):
+./bench sockmap -c 2 -p 1 -a --rx-verdict-ingress --no-verify
+Setting up benchmark 'sockmap'...
+create socket fd c1:14 p1:15 c2:16 p2:17
+Benchmark 'sockmap' started.
+Iter   0 ( 28.925us): Send Speed 1630.357 MB/s ... Rcv Speed  850.960 MB/s
+Iter   1 ( -2.042us): Send Speed 1644.564 MB/s ... Rcv Speed  822.478 MB/s
+Iter   2 (  0.754us): Send Speed 1644.297 MB/s ... Rcv Speed  850.787 MB/s
+Iter   3 (  0.159us): Send Speed 1644.429 MB/s ... Rcv Speed  850.198 MB/s
+Iter   4 ( -2.898us): Send Speed 1646.924 MB/s ... Rcv Speed  830.867 MB/s
+Iter   5 ( -0.210us): Send Speed 1649.410 MB/s ... Rcv Speed  824.246 MB/s
+Iter   6 ( -1.448us): Send Speed 1650.723 MB/s ... Rcv Speed  808.256 MB/s
+
+With cpu-affinity(RPS disabled):
+./bench sockmap -c 2 -p 1 -a --rx-verdict-ingress --no-verify --cpu-affinity
+Setting up benchmark 'sockmap'...
+create socket fd c1:14 p1:15 c2:16 p2:17
+Benchmark 'sockmap' started.
+Iter   0 ( 36.051us): Send Speed 1883.437 MB/s ... Rcv Speed 1865.087 MB/s
+Iter   1 (  1.246us): Send Speed 1900.542 MB/s ... Rcv Speed 1761.737 MB/s
+Iter   2 ( -8.595us): Send Speed 1883.128 MB/s ... Rcv Speed 1860.714 MB/s
+Iter   3 (  7.033us): Send Speed 1890.831 MB/s ... Rcv Speed 1806.684 MB/s
+Iter   4 ( -8.397us): Send Speed 1884.700 MB/s ... Rcv Speed 1973.568 MB/s
+Iter   5 ( -1.822us): Send Speed 1894.125 MB/s ... Rcv Speed 1775.046 MB/s
+Iter   6 (  4.936us): Send Speed 1877.597 MB/s ... Rcv Speed 1959.320 MB/s
+Summary: total trans    11328 MB ± 1888.507 MB/s
+
+
+Appendix
+===
+Through this optimization, we discovered that sk_mem_charge()
+and sk_mem_uncharge() have concurrency issues. The performance improvement
+brought by this optimization has made these concurrency issues more
+evident.
+
+This concurrency issue can cause the WARN_ON_ONCE(sk->sk_forward_alloc)
+check to be triggered when the socket is released. Since this patch is a
+feature-type patch and does not intend to fix this bug, I will provide
+additional patches to fix this issue later.
+
+Jiayuan Chen (3):
+  bpf, sockmap: Introduce a new kfunc for sockmap
+  bpf, sockmap: Affinitize workqueue to a specific CPU
+  selftest/bpf/benchs: Add cpu-affinity for sockmap bench
+
+ Documentation/bpf/map_sockmap.rst             | 14 +++++++
+ include/linux/skmsg.h                         | 15 +++++++
+ kernel/bpf/btf.c                              |  3 ++
+ net/core/skmsg.c                              | 10 +++--
+ net/core/sock_map.c                           | 39 +++++++++++++++++++
+ .../selftests/bpf/benchs/bench_sockmap.c      | 35 +++++++++++++++--
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  6 +++
+ .../selftests/bpf/progs/bench_sockmap_prog.c  |  7 ++++
+ 8 files changed, 122 insertions(+), 7 deletions(-)
+
+-- 
+2.47.1
+
 
