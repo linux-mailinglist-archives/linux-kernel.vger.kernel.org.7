@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-623037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD2FA9F029
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 14:02:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FABDA9EE38
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A7C189F23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2B03BC6BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973931DED76;
-	Mon, 28 Apr 2025 12:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3AF262FED;
+	Mon, 28 Apr 2025 10:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="gFXSOlPl"
-Received: from smtp92.iad3b.emailsrvr.com (smtp92.iad3b.emailsrvr.com [146.20.161.92])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heTRi+Kn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B2C15747C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 12:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531CF25F79B;
+	Mon, 28 Apr 2025 10:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745841720; cv=none; b=BtK+3GtdJZNXGL6Dwn0gIUVDtTwxVhhx7sw8JmbQssyfV2nGPm1r9+WYQGLUrNp9f74qkuQld/e3plr2pBNzRUkfPZQyE8Xef4/YZWT2EAVPYgq5v1R0ID7zNSr7d53/DG730oZoDOyVhepYdjNl4Ls0gnt6H9AnhS8OvAvBiuI=
+	t=1745837071; cv=none; b=XM6FGaIhMW9EyOBNSsb5bExwCjNYvU0c8eQjMStKopoFeSyw8MZKydGwPWHZFwaVG9mF2xXdaoy9fHoMd59rHoiiQ7p+6hawq5a7KACe/7lZBIYnN+1yZEOziRgGDj2CWpiu2iHxXFlTYo6LCrCMergCInvhAKbqm2E7hJ/O5bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745841720; c=relaxed/simple;
-	bh=e4dCmy3mm0Bqqcnb0qH3Ef1Cls6IqvLXBdPTTIx71eA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XkhNJX2jspdwihqKCzwjYE46wLzXpamPtGWzs5iMb32Zy+irF5OTdVOhJQrMZpbZg5PsfITUM2wrnY1gSVlhLxe/tfLzX+bzR8dkmW+Cm/lSHk1c8yWthVLJVJzvlAJ+e+jj4dRJlJ/GSSEhApw/j8Y5+HwZzpBue+kJD7sHwzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=gFXSOlPl; arc=none smtp.client-ip=146.20.161.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1745837058;
-	bh=e4dCmy3mm0Bqqcnb0qH3Ef1Cls6IqvLXBdPTTIx71eA=;
-	h=Date:Subject:To:From:From;
-	b=gFXSOlPlrEDTR7vzED7QPLSass6TriPuF9MowgQHN7591YcnR2iu2UAy3NkG3b6yO
-	 EnTJbUE1xZ+UeQazonbVJT86H3iBvpX9V62UakpMLK0q9t9gWrAbx0s88ipOEGdKa0
-	 4NzGqYwXNGRN+q/r336dNL2s4rGCwEe6Woics6zw=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp20.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 86E68A0112;
-	Mon, 28 Apr 2025 06:44:17 -0400 (EDT)
-Message-ID: <d0feff64-af96-41f8-9c52-3dafeafd7871@mev.co.uk>
-Date: Mon, 28 Apr 2025 11:44:16 +0100
+	s=arc-20240116; t=1745837071; c=relaxed/simple;
+	bh=zoNoOQu9Fld7LEIioJ+wlApw7JJtAWg9ZZxxQWQdkQ0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hKocOWnCmDGR/FRAh4tGm+INaaQX0So4GkKZPHItT+rp4NwGVL0BdjzB/G+JJXwQ3KWeVFYylRNAMQM3tVg/9GE8QqhC8Wh1FLEmUk7jKuOFFXgZU09dqLIzQFNnfDn0pJlW+yW9AmYSWPr1UFVsjghjFsSXJOH+YRr4E1fZ9vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heTRi+Kn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CA6E7C4CEE4;
+	Mon, 28 Apr 2025 10:44:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745837070;
+	bh=zoNoOQu9Fld7LEIioJ+wlApw7JJtAWg9ZZxxQWQdkQ0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=heTRi+KnPNW2vy0rLctBRjFgRRBAennRpA8uIGdIiQhBNfvdzvqU6DnSTx1Zp4aFv
+	 TbYJag4bmzfvMg7TCShf9Wda8Mqd1/ZKQOFIVyCS5F0GsnBNvBI9goB7dYul1tltN/
+	 61rvK4ioEBvMCl7VN3aGW9PAojxwK0QT7YJfzWiPdFIfxNlTPhK9z6TlfKkZYDU+7T
+	 5Jg+d2eKCk7EJ+jE5dmO3E2LGhNGSZd5AJpnHmgk9d8ltqXuaAjkBP2P06cCgaPm6/
+	 JElbMQvL7w9txpTdN/eRb/CzMV6mKDCZLPsHaG6kccIIY8BGk5ejXsderrw7gHU8/9
+	 wkQhQsNZoVspw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F57C369D3;
+	Mon, 28 Apr 2025 10:44:30 +0000 (UTC)
+From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
+Subject: [PATCH v2 0/4] Board support for Fernsehfee 3.0
+Date: Mon, 28 Apr 2025 12:44:27 +0200
+Message-Id: <20250428-fernsehfee-v2-0-293b98a43a91@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: comedi: das16 : fixed a struct warning in code
-To: Darshan Rathod <darshanrathod475@gmail.com>
-Cc: hsweeten@visionengravers.com, linux-kernel@vger.kernel.org
-References: <20250426094145.13564-1-darshanrathod475@gmail.com>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20250426094145.13564-1-darshanrathod475@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: 88e79daf-92f8-4ed3-9c35-2f356a408816-1-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAtcD2gC/03MTQ7CIBiE4as031oMP2KjK+9husB2EDbQACGah
+ ruLjQuX7yTzbJSRPDJdh40Sqs8+hh7yMNDsTHiC+aU3SS41V0IzixQynAXYQxvYi+KzGUH9sCZ
+ Y/9qx+9Tb+Vxieu92Fd/1x0j1z1TBOJNnKdRJzIsazW2NuSAeAwpNrbUPE2O1saUAAAA=
+X-Change-ID: 20250315-fernsehfee-b5aef930ca7e
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745837069; l=1421;
+ i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
+ bh=zoNoOQu9Fld7LEIioJ+wlApw7JJtAWg9ZZxxQWQdkQ0=;
+ b=sloiws7PjerztavFOh+WRSwUGtcJ8z57ukYOGobwKBpWoMWMkPQdnhNLJFGvr24RatYRu5di8
+ GLTh5fOlEknAphpjgeeMJ/wjmSSrkPR/7ufDGiz/ou72uuoN0GwH3MD
+X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
+ pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
+X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
+ auth_id=156
+X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+Reply-To: j.ne@posteo.net
 
-On 26/04/2025 10:41, Darshan Rathod wrote:
-> fixed a warning messages for a struct
-> Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+Fernsehfee[1] ("TV fairy") is a family of set-top boxes marketed as
+ad-blocking appliances. This patchset adds board support in the form of
+a device tree for the third generation, Fernsehfee 3.0.
 
-There should be a blank line before that "Signed-off-by" line.
+[1]: https://fernsehfee.de/ (German), https://www.telefairy.com/ (English)
 
-The patch subject should not have the "staging:" tag since the code has 
-been moved out of the "drivers/staging" directory.
+Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+---
+Changes in v2:
+- Apply ACKs from Krzysztof Kozlowski and R-b from Neil Armstrong and Martin Blumenstingl
+- New patch 4/4 to describe PMIC regulators, after discussion with Martin Blumenstingl
+- Link to v1: https://lore.kernel.org/r/20250323-fernsehfee-v1-0-2621341cd37a@posteo.net
 
-> ---
->   drivers/comedi/drivers/das16.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/comedi/drivers/das16.c b/drivers/comedi/drivers/das16.c
-> index f5ca6c0d4d0c..73717f75d60f 100644
-> --- a/drivers/comedi/drivers/das16.c
-> +++ b/drivers/comedi/drivers/das16.c
-> @@ -956,8 +956,8 @@ static const struct comedi_lrange *das16_ai_range(struct comedi_device *dev,
->   
->   	/* get any user-defined input range */
->   	if (pg_type == das16_pg_none && (min || max)) {
-> -		struct comedi_lrange *lrange;
-> -		struct comedi_krange *krange;
-> +		const struct comedi_lrange *lrange;
-> +		const struct comedi_krange *krange;
->   
->   		/* allocate single-range range table */
->   		lrange = comedi_alloc_spriv(s,
-> @@ -990,8 +990,8 @@ static const struct comedi_lrange *das16_ao_range(struct comedi_device *dev,
->   
->   	/* get any user-defined output range */
->   	if (min || max) {
-> -		struct comedi_lrange *lrange;
-> -		struct comedi_krange *krange;
-> +		const struct comedi_lrange *lrange;
-> +		const struct comedi_krange *krange;
->   
->   		/* allocate single-range range table */
->   		lrange = comedi_alloc_spriv(s,
+---
+J. Neuschäfer (4):
+      dt-bindings: vendor-prefixes: Add TC Unterhaltungselektronik AG
+      dt-bindings: arm: amlogic: Add TCU Fernsehfee 3.0 board
+      ARM: dts: amlogic: Add TCU Fernsehfee 3.0
+      ARM: dts: amlogic: meson8-fernsehfee3: Describe regulators
 
-I do not see how these changes will fix any warning messages.  In fact, 
-they will produce compiler errors from the code further down the functions.
+ Documentation/devicetree/bindings/arm/amlogic.yaml |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm/boot/dts/amlogic/Makefile                 |   1 +
+ arch/arm/boot/dts/amlogic/meson8-fernsehfee3.dts   | 306 +++++++++++++++++++++
+ arch/arm/boot/dts/amlogic/meson8.dtsi              |  18 ++
+ 5 files changed, 328 insertions(+)
+---
+base-commit: 9c8bd75378d70cd6087d503eb8317d1eea67164a
+change-id: 20250315-fernsehfee-b5aef930ca7e
 
+Best regards,
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+J. Neuschäfer <j.ne@posteo.net>
+
+
 
