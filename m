@@ -1,78 +1,88 @@
-Return-Path: <linux-kernel+bounces-623450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7C5A9F5E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:33:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18825A9F5ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 18:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3AA189E6C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E953169DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 16:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA0E27A13A;
-	Mon, 28 Apr 2025 16:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqfLBTi8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B191727B4E3;
+	Mon, 28 Apr 2025 16:35:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A5726FDBF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC0984A3E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 16:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745858020; cv=none; b=aoKZDjbK9KUL47K27N2IAJqgpGzeeaX1ZT09WbnCRJy4APCZZEkAnDxqD3PhApaVBMpD7GJhVzHrRBYffs9blu3vtadgCtfGgpp9eT6FJm3vlStFX/7vjKIsVZjAa9OWS8jqumQb5mpgeXQCpK+2ta8uHSv47xUgGhazWyBNFqI=
+	t=1745858104; cv=none; b=djprp+eBX8r/T2aIS6WPMG65Dy9RVO+cirXrrJ+RRpey4JcCcx2f5GiSUuRfMKc/sNBahDXN0wu5uL9+YlLJJDsUkGcJZjNZ+IHCP0HBLRxLSjwHeMm57sy2uVEqzmG6suivNZH92h39DhZ1ygICbehr7oGNNOAJjjS3vg85bFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745858020; c=relaxed/simple;
-	bh=06W3RhuaA1KCx8LHfdM+UJUaup6l9lKuGtmqokMizFU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JpByfGiv/IGjidZDS9NXprHWyM8SKiMlUlIAsRNUsN5eOzZmIuDB5LFb0MyUbpB8vfZYRqXT8DCSEbgcl8EpagfRdR8v/ZVJN2izGPT+mVP6dOkD+/k0dMrgBXkdzcmUQ2QD6XtPM2TPJpDbKyRUszPI5huYJrwemRhaA+Vt8sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqfLBTi8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2F4C4CEE4;
-	Mon, 28 Apr 2025 16:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745858019;
-	bh=06W3RhuaA1KCx8LHfdM+UJUaup6l9lKuGtmqokMizFU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=kqfLBTi8CDSPQFwMZsj6zXiXb8eoh7O7CtMgYdImfa4kq/ErFjPYrZKkhIWL8yPbh
-	 Slv5cpgPwlA/OgIfSKXF1WaehbpLwJ08iMkv6FphvQlMd5+qCUwe0slQK8+u7hjgWi
-	 JdEiuNfaSBxfAFLY31gWXlBTWNMDl76MnhMr+j4xalpnWmPQin/YIOScykm52vt7TX
-	 81MgYv8b3I8Z8pppES+NyyoVqwPtiWs39pFyOT0pS7fUVtyxYGKu8CJnp19r1Ku09W
-	 FQh9PfDy8GTGAC7lDFyg04lsXacNWzQmY67ofLhEdA50B6GXaw5xAMY9HevQblZeCQ
-	 TIQ8k4YkSOlHg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE3F3822D43;
-	Mon, 28 Apr 2025 16:34:19 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.15-3 tag
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <fb634e22-a820-4c14-a8a9-5cccb37bedce@linux.ibm.com>
-References: <fb634e22-a820-4c14-a8a9-5cccb37bedce@linux.ibm.com>
-X-PR-Tracked-List-Id: <linuxppc-dev.lists.ozlabs.org>
-X-PR-Tracked-Message-Id: <fb634e22-a820-4c14-a8a9-5cccb37bedce@linux.ibm.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.15-3
-X-PR-Tracked-Commit-Id: e3f506b78d921e48a00d005bea5c45ec36a99240
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f15d97df5afae16f40ecef942031235d1c6ba14f
-Message-Id: <174585805854.971006.13862543469827952448.pr-tracker-bot@kernel.org>
-Date: Mon, 28 Apr 2025 16:34:18 +0000
-To: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ailiop@suse.com, donettom@linux.ibm.com, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, naveen@kernel.org, ritesh.list@gmail.com, Christophe Leroy <christophe.leroy@csgroup.eu>, Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>
+	s=arc-20240116; t=1745858104; c=relaxed/simple;
+	bh=yiIgGpFMHrWrqY91W1jx/2lbWpDB9chySq79yjUzOfw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=serqm1OMAnyjLpI5XE8DlzRHudNHlow6J+tTMhpyQ8KYJ8ucOgDGPlOInwDkdxhil85SqsBRz0Drnfc9ubxpCeJ40v7367jA0BYSHo3ZdAOC8MJ6Jgt0BY5ISX+XhNnWBUarnJRKLYjF903CjatCXQPVH/+A7yp2lpEY+PjqAzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d5da4fb5e0so47782955ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:35:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745858102; x=1746462902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/r0GpshaiTfkf3Jzhs7+blVX9kV/2/sBukHf0VpE9M=;
+        b=oYQzWQoFbmzwsENxybu1SVGxIKOGCAuWnObLnbP9Vkjy8MiyiMJPF/RKuCaSM7dqlR
+         8XipOcY3HwYqvLJJ4GxldsIztb+sZHvKOQZVzTTGRWljaFHv1YfwEMPD+hpEf74Elvbi
+         5flNrZzjVbMkU9PCH5Jlsuiwk02Y8QQpNZLkQygNp1T6e1/70azBgB3DOaV9akyNqTSE
+         b/fhuvrMOY8sH406B3w8Umuxdcds7WqhpZQNeVtrEn9vhtLBlcnpbkBF+3H3VaP4DB8B
+         h+b79kSsSbaRi15DRUExsv/2JlFpCKtugd382iebYtQzfvB32zzfvOdjUgKJcKCfoWQT
+         pOzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdpixnFJqGgAwkbB0lAaRkNAlRGnESMz2sK6ddJ4kpH0u4DcfXeFo04dtxGJj8dqG0mndnzTsiX8IqFnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdNfP2rXCqYvY0jYWakarda8nMwpDc9SdrSQlqiEanAFK/6uEE
+	bL7hjSsQm24a02dtoAd27647l3C1rOPQnCaOILWh7A4gIU3P5Z/hxE821lx4yYgJ7DGQxlvcaiu
+	RBY5QnxnEkox9w9/d/CXFxGHRYhdoXMqz7hfDvg60ShPJK5nkDceCnFk=
+X-Google-Smtp-Source: AGHT+IEgs1qYfXWS2ROxH3BfjLzrfX+CmIh0fNFRmiQySnncSit5H10zcDnfsSDAyjMguuYw+sYMK8bOyi6cK0c5LgqfxiKU/X9+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:1689:b0:85b:538e:1fad with SMTP id
+ ca18e2360f4ac-86467b1071amr1053843739f.6.1745858102043; Mon, 28 Apr 2025
+ 09:35:02 -0700 (PDT)
+Date: Mon, 28 Apr 2025 09:35:02 -0700
+In-Reply-To: <20250428160903.20110-1-contact@arnaud-lcm.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <680fae36.a70a0220.23e4d2.0032.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_str_hash_check_key
+From: syzbot <syzbot+843981bb836d699c07d1@syzkaller.appspotmail.com>
+To: contact@arnaud-lcm.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Mon, 28 Apr 2025 09:24:19 +0530:
+Hello,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.15-3
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f15d97df5afae16f40ecef942031235d1c6ba14f
+Reported-by: syzbot+843981bb836d699c07d1@syzkaller.appspotmail.com
+Tested-by: syzbot+843981bb836d699c07d1@syzkaller.appspotmail.com
 
-Thank you!
+Tested on:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+commit:         b4432656 Linux 6.15-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=150dd270580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a33ce5560507649
+dashboard link: https://syzkaller.appspot.com/bug?extid=843981bb836d699c07d1
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d7e368580000
+
+Note: testing is done by a robot and is best-effort only.
 
