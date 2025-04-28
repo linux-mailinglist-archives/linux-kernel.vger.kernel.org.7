@@ -1,117 +1,75 @@
-Return-Path: <linux-kernel+bounces-622872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD32A9EDC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03036A9EDCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67DF617B947
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E7168D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A977425F963;
-	Mon, 28 Apr 2025 10:23:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84691AC44D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3C525F964;
+	Mon, 28 Apr 2025 10:24:29 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F153B25F7A3;
+	Mon, 28 Apr 2025 10:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745835820; cv=none; b=JwrBHQhhXxy/QXYzHat564O9F3NRDPgodncKaeKMwwG2dfOJ1itROOYAkudAboIwgItZv/DDP77y3JDRbtmcwem6nSbBHbM2mVgRcbtxC45mpOUXc6CFneUfNp970qsi+dvfpaK/YX9beSVp3WVo/J8UNHOkcniY+YVA1pniowo=
+	t=1745835869; cv=none; b=RWRM/zf0MYSl9jSVhuJtjuZu5vHK5WY2odR7RFkpdSLhe47PbNGyUtAQQA7aejagAdOhf+Qlu+MoAGWznVlC0URvJSsvNxHfberXJqJonkkjxHAQMm4a6aMNhC0mAp8kipQlG6a1XuC1FsD7n83YVMl6BsLphyKzEsoMZoXHUlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745835820; c=relaxed/simple;
-	bh=VvqfnSYSI+u9mgJBtP5Bos4sR0waRhV6DE0yqdFGNVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkSGLzvKyrW99/l0BLVHLnzdyhcJNqppnX/dZUny3RdqR3FsmoZsYo8bVUVKL3hEpkgsV/+QAOSI2VLOYORBMbP9HnSyCy1dcvU5unLMhlHHBRzQWRqeSqKm0HIjQN2hcpPlA4e01xKSVKu5WM869grAzH7I/JouWuv79tQaRtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D1991515;
-	Mon, 28 Apr 2025 03:23:31 -0700 (PDT)
-Received: from [10.57.90.155] (unknown [10.57.90.155])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C9873F66E;
-	Mon, 28 Apr 2025 03:23:36 -0700 (PDT)
-Message-ID: <9f1cd31f-8e85-4ae6-9fa5-85db7a96d2fe@arm.com>
-Date: Mon, 28 Apr 2025 11:23:35 +0100
+	s=arc-20240116; t=1745835869; c=relaxed/simple;
+	bh=+kZVIERvcyGvWe3mkjV83hs94UpwZLtoI8+++t91CoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ofvaiwk7ahI6bkEJ+rNV84zg/5oqBFHCh+8Fvh/4hP61ccGUN+XCe61jGlOGQn7Gm5JS6viobATCrgd5fCbkOGloQMIO+KbHpeULDBix2LhUKOJP7lgPyML0I1IY9/bLWlUP76aOmqJger1Ga6rAlqKUxe0/+3vTBbFtzUUaAYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1u9Leo-0007dz-00; Mon, 28 Apr 2025 12:24:14 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id A4890C0895; Mon, 28 Apr 2025 12:23:50 +0200 (CEST)
+Date: Mon, 28 Apr 2025 12:23:50 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v7 2/2] MIPS: Move r4k_wait() to .cpuidle.text section
+Message-ID: <aA9XNgh7qGRZ5HBY@alpha.franken.de>
+References: <20250403161143.361461-1-marco.crivellari@suse.com>
+ <20250403161143.361461-3-marco.crivellari@suse.com>
+ <CAAhV-H4dQ8hRfBm2JWmgMzYH5tuy4ph6hyOSXQBLOvtCQ+K9dQ@mail.gmail.com>
+ <alpine.DEB.2.21.2504280426010.31828@angie.orcam.me.uk>
+ <CAAhV-H4WTrYecBj0wev8AUi_of_qAnvHCk4heTU5P_3pMZv4fA@mail.gmail.com>
+ <CAAofZF4J6H5jgqKu=KUowBrwfHJyGEzL5ThC_DOs-XPdgm497A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/testing/selftests: fix guard region test tmpfs
- assumption
-Content-Language: en-GB
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250425162436.564002-1-lorenzo.stoakes@oracle.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250425162436.564002-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAofZF4J6H5jgqKu=KUowBrwfHJyGEzL5ThC_DOs-XPdgm497A@mail.gmail.com>
 
-On 25/04/2025 17:24, Lorenzo Stoakes wrote:
-> The current implementation of the guard region tests assume that /tmp is
-> mounted as tmpfs, that is shmem.
+On Mon, Apr 28, 2025 at 12:20:31PM +0200, Marco Crivellari wrote:
+> Hi,
 > 
-> This isn't always the case, and at least one instance of a spurious test
-> failure has been reported as a result.
-> 
-> This assumption is unsafe, rushed and silly - and easily remedied by simply
-> using memfd, so do so.
-> 
-> We also have to fixup the readonly_file test to explicitly only be
-> applicable to file-backed cases.
-> 
-> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
-> Closes: https://lore.kernel.org/linux-mm/a2d2766b-0ab4-437b-951a-8595a7506fe9@arm.com/
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> If it sounds good also to Maciej, I will submit the new version with the
+> space before "ax" (and of course, the ".previous").
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+save your time, this is already applied and I won't rebase the branch
+just because of this minor bisection problem.
 
-> ---
->  tools/testing/selftests/mm/guard-regions.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/guard-regions.c b/tools/testing/selftests/mm/guard-regions.c
-> index c39dd26c47a3..0cd9d236649d 100644
-> --- a/tools/testing/selftests/mm/guard-regions.c
-> +++ b/tools/testing/selftests/mm/guard-regions.c
-> @@ -272,12 +272,16 @@ FIXTURE_SETUP(guard_regions)
->  	self->page_size = (unsigned long)sysconf(_SC_PAGESIZE);
->  	setup_sighandler();
->  
-> -	if (variant->backing == ANON_BACKED)
-> +	switch (variant->backing) {
-> +	case ANON_BACKED:
->  		return;
-> -
-> -	self->fd = open_file(
-> -		variant->backing == SHMEM_BACKED ? "/tmp/" : "",
-> -		self->path);
-> +	case LOCAL_FILE_BACKED:
-> +		self->fd = open_file("", self->path);
-> +		break;
-> +	case SHMEM_BACKED:
-> +		self->fd = memfd_create(self->path, 0);
-> +		break;
-> +	}
->  
->  	/* We truncate file to at least 100 pages, tests can modify as needed. */
->  	ASSERT_EQ(ftruncate(self->fd, 100 * self->page_size), 0);
-> @@ -1697,7 +1701,7 @@ TEST_F(guard_regions, readonly_file)
->  	char *ptr;
->  	int i;
->  
-> -	if (variant->backing == ANON_BACKED)
-> +	if (variant->backing != LOCAL_FILE_BACKED)
->  		SKIP(return, "Read-only test specific to file-backed");
->  
->  	/* Map shared so we can populate with pattern, populate it, unmap. */
+Thomas.
 
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
