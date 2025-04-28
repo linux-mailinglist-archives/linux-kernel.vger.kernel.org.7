@@ -1,90 +1,150 @@
-Return-Path: <linux-kernel+bounces-622786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927E0A9EC93
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845C4A9ECA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA87A7ADEB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63778188C233
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4062125FA11;
-	Mon, 28 Apr 2025 09:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="pgW8Tc3B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600D326773E;
+	Mon, 28 Apr 2025 09:27:31 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C91725F996
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E3A26770A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 09:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745832438; cv=none; b=qdV42JX8frdVt5whmlirJbiIyxFYlAAkqjtdU0JdCFqzDvKhtNJ2+62kvubmm0hLS4fzVkAiNF4+FkpnYPPgla+0cjk5+bSOWGd+wysIOXKq0k4LWPMCosQ2jaES0efSdkhlmxrM/2HapsRFFTPpFJbMuSCRxPGHKdQ9qj6vdxE=
+	t=1745832451; cv=none; b=CN5ne7uryHhM4Gl1Szxhlk0IZDtA+sOGu+q92J6yoBG+jhwfloMxhnYCJE0QCZFBAAUPUnYhnTHW5N4J2IEZh+mr9VKqlOybbBabaNqgUKJkA6xIIlJMKpRVat9B3RMalMcWUbq9yKpeH0f9RPt/OIT4g3YvVoisiAbrrjjFXXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745832438; c=relaxed/simple;
-	bh=UVd/rZR8AOYdXyQtZJAfNFYpT83jERDleZoZwn1jpHI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JiDb6r63PEyeCEGQ0W2KpYI/X0aE1FI9esrGbLo+cXsvLZ1Le4M0ImfTVApWTvblFAJ8CWITkJWRoL/TI/npcou4KRtSGNKtBLkmt+AgwntsuUkKtM0pOCkXIPY7EMUP2LAwnvGhMSt7UVgTFc31yh+0dsixNZT1Wjy6mHOb8RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=pgW8Tc3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4123C4CEE9;
-	Mon, 28 Apr 2025 09:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1745832437;
-	bh=UVd/rZR8AOYdXyQtZJAfNFYpT83jERDleZoZwn1jpHI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pgW8Tc3Blxaz/ouF3jFGGuHxZnfmv5VdmsIFhZq7gRB/LI9sACW5nzH4FwIpgNAUc
-	 cLeQv6K4j+6zt45EM7nSYHaVUKyROi5gR/MiMvNrEbsU8OjEIP1DlQEEDdDYg2Rftj
-	 1qaIWmKL1X+NcIPg/8HrWBjXNFgVNzD/uXTmo+gs=
-Date: Mon, 28 Apr 2025 02:27:16 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Igor Belousov <igor.b@beldev.am>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
- minchan@kernel.org, nphamcs@gmail.com, senozhatsky@chromium.org,
- shakeel.butt@linux.dev, yosry.ahmed@linux.dev
-Subject: Re: [PATCH mm-new] mm/zblock: avoid failing the build
-Message-Id: <20250428022716.99ee57590fe7878dccfaa6a0@linux-foundation.org>
-In-Reply-To: <20250428065727.57990-1-igor.b@beldev.am>
-References: <20250428065727.57990-1-igor.b@beldev.am>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745832451; c=relaxed/simple;
+	bh=C2IwoB62GsX3hNTk0ae5FPG+0sKvNLFRkU1NxbBlgg4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H8ZlNe09FS6j+SHtLSN/eWIh4bpFaJvp7Fhrq6LDzZB40KrHOd5H5NqjX52NxdtrIfxTpZEdcyl9KEaUxTu8enN9qPUnchx/OiqWuio2f549YE7vppsZZvzAE+F0dDesRsGPWSmMQwB0I/CH0gFthW0INgks+I5Qr3a3Xv/ok/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86186c58c41so444951139f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 02:27:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745832448; x=1746437248;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v+ebg1KbTm9vvKY1TuOB6zxAWxwzKfz0azG98FkmiYQ=;
+        b=H5MgVMu5Yt45hEeQAc4Xmm0dJ6CFPXoESlkj/Dp8qL/6uou80UCjXxSThPs2KJGt1d
+         Bs/oHJgi4wNtV6Gw+mYF8ALLlU3jN+uLzObZpBHswaJXG4Vio2ZMyMN2vksnC0yYE0NZ
+         y53C/AEAVb9Z3iOmE2a74nFua3KYO66vbaIkC+nQherDLNf0fHp7xFmTsmRhtCI5hScO
+         iFJMq36RAGiamLTfxJ+SAPquoBtLd26bHdsTvpozi05o8YPxh4JG3zG5B6tPONWIMOX7
+         B3BbFuNI7L7hm53/PTcD0ehgy1y27068qtoKdLtgO9o+repEUsTpz6p4k6Q+9dQhs63o
+         QTtg==
+X-Gm-Message-State: AOJu0Yy0ao0/xeVAAalYdsaAZs5vIttqa2XKwYjvzgDtFPtlUTubAdqf
+	WnpSG4w8womSzGXZ6KjaTN3n/W64n7ja6YYL6LSkpU/oQYgmzRr16EtrHMFvu+oktAb82cNmlJB
+	msg+y1uORmysnc5BT3mPEZ5AwD4vK8ZprXvTFpo2Yupij6dJ6kWgzIK7R7A==
+X-Google-Smtp-Source: AGHT+IGQs6sOsykJKYePy/3LjqotbpsJu1Amy4LjmJCjyaWW0LeEhrB360Ldj5/Xy3KLoBTr5wmutVFytf1mDj1omP5crV6Ql7/0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:4899:b0:864:589c:3264 with SMTP id
+ ca18e2360f4ac-86467ad2d22mr953533039f.4.1745832448455; Mon, 28 Apr 2025
+ 02:27:28 -0700 (PDT)
+Date: Mon, 28 Apr 2025 02:27:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <680f4a00.050a0220.2b69d1.032a.GAE@google.com>
+Subject: [syzbot] [kernel?] KCSAN: data-race in copy_mm / copy_page_range
+From: syzbot <syzbot+cfd78ff95994c614d233@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 28 Apr 2025 08:57:27 +0200 Igor Belousov <igor.b@beldev.am> wrote:
+Hello,
 
-> Don't break the build for a PAGE_SIZE that is not fully supported,
-> just print out a warning in that case.
-> 
+syzbot found the following issue on:
 
-I queued these two patches and this fix:
+HEAD commit:    5bc1018675ec Merge tag 'pci-v6.15-fixes-3' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152930d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc7049672597c030
+dashboard link: https://syzkaller.appspot.com/bug?extid=cfd78ff95994c614d233
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
 
---- a/mm/zblock.h~mm-zblock-avoid-failing-the-build-fix
-+++ a/mm/zblock.h
-@@ -21,7 +21,7 @@
- /* max 256 slots per block, max table size 64 */
- #define SLOT_BITS 8
- #else
--#warn This PAGE_SIZE is not quite supported yet
-+#warning This PAGE_SIZE is not quite supported yet
- #define SLOT_BITS 8
- #endif
- 
+Unfortunately, I don't have any reproducer for this issue yet.
 
-But please be aware that I consider the zblock zeries to be stuck until
-there is clarity that zblock is something we should add to Linux. 
-Let's continue to address this in the main thread(s), please.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b07ed9969a13/disk-5bc10186.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3abab03798d3/vmlinux-5bc10186.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8fca26b1845c/bzImage-5bc10186.xz
 
-Or perhaps to restart things, do a full resend after having reworked
-the [0/N] changelog to fully address the issues which have thus far
-been raised.  And Cc'ing the various individuals who have thus far
-commented.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cfd78ff95994c614d233@syzkaller.appspotmail.com
 
-Thanks.
+==================================================================
+BUG: KCSAN: data-race in copy_mm / copy_page_range
+
+write to 0xffff88810a1bc868 of 8 bytes by task 15516 on cpu 0:
+ __list_add include/linux/list.h:153 [inline]
+ list_add include/linux/list.h:169 [inline]
+ copy_nonpresent_pte mm/memory.c:803 [inline]
+ copy_pte_range mm/memory.c:1143 [inline]
+ copy_pmd_range mm/memory.c:1255 [inline]
+ copy_pud_range mm/memory.c:1292 [inline]
+ copy_p4d_range mm/memory.c:1316 [inline]
+ copy_page_range+0x2525/0x3760 mm/memory.c:1410
+ dup_mmap kernel/fork.c:726 [inline]
+ dup_mm kernel/fork.c:1734 [inline]
+ copy_mm+0xab6/0x1310 kernel/fork.c:1786
+ copy_process+0xcf1/0x1f90 kernel/fork.c:2429
+ kernel_clone+0x16c/0x5b0 kernel/fork.c:2844
+ __do_sys_clone kernel/fork.c:2987 [inline]
+ __se_sys_clone kernel/fork.c:2971 [inline]
+ __x64_sys_clone+0xe6/0x120 kernel/fork.c:2971
+ x64_sys_call+0x2c59/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:57
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff88810a1bc780 of 1344 bytes by task 12894 on cpu 1:
+ dup_mm kernel/fork.c:1728 [inline]
+ copy_mm+0xfb/0x1310 kernel/fork.c:1786
+ copy_process+0xcf1/0x1f90 kernel/fork.c:2429
+ kernel_clone+0x16c/0x5b0 kernel/fork.c:2844
+ __do_sys_clone kernel/fork.c:2987 [inline]
+ __se_sys_clone kernel/fork.c:2971 [inline]
+ __x64_sys_clone+0xe6/0x120 kernel/fork.c:2971
+ x64_sys_call+0x2c59/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:57
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 12894 Comm: syz-executor Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
