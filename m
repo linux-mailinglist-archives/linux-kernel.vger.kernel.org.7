@@ -1,205 +1,189 @@
-Return-Path: <linux-kernel+bounces-623191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6A1A9F210
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:21:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2988A9F213
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 15:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D251890F7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43623AB419
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 13:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7930F269883;
-	Mon, 28 Apr 2025 13:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6315126B948;
+	Mon, 28 Apr 2025 13:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dFdSM1hX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ds0IHOTw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dFdSM1hX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ds0IHOTw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Pjgf20Ef"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011034.outbound.protection.outlook.com [52.103.68.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3632F86323
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745846482; cv=none; b=K8hAQl4XJW4SB3k8+sTYa3EFrC9+xHDFYBOwT3xoh7wsws+bEAtDgrmt9Jq1rPgmAenWndIkwE6Y4hw45RrWYEpH1/70N4FYZs5Az7XUcfAviyBc+t8en0caU8X2GGTkM1AIol2IovEvkfxjXDtnsogkzMIjO+YpW56vLhnAd4s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745846482; c=relaxed/simple;
-	bh=T3rtYr3RqTLgly4xse6CBiPIQEj61xZdAIQ7m0HvvOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HatDPUq+/E73iMHHaf2ifuMB0EYdFzIMpnqw4v0aV1YXGGxEbof6CoOygLjtDpxpu0aOjOEDCyumJSGvwHWTjJB60fLRIoGB13tWC6Q+N2x+kt0HFkr1sF+Km8LkJCWi8cCBZlrY3EL3bSjx+Dsx+Ep405eZt+6L7+Pn/I6g3TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dFdSM1hX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ds0IHOTw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dFdSM1hX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ds0IHOTw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 332161F390;
-	Mon, 28 Apr 2025 13:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745846479; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKCfsUSiVgaMGLYlRKMuDqRi+jxJnou69nt3LDKwSkY=;
-	b=dFdSM1hXoQ/DErZ4LG7lSkry0rA/fgCYFkaoBc2RiJf4m1k+EEmCspgKpu6/C+YaRlExAX
-	HV+7xysk2dNcMbQTsn4YhrXZAHD5sS4ZSSOUcRJKvjV/pfIIyMQBOHPBr43t8fsJGhrzti
-	eoR/1FINAXmDDzdd+fsX2FNuemi2YHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745846479;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKCfsUSiVgaMGLYlRKMuDqRi+jxJnou69nt3LDKwSkY=;
-	b=Ds0IHOTwBrmtL9+kBlcqWdlfdH0ryq2b4FpcVnfjdrwA0NaRod110CF8WThug4H3+eBr+s
-	NM4y6ImOwJvap4Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745846479; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKCfsUSiVgaMGLYlRKMuDqRi+jxJnou69nt3LDKwSkY=;
-	b=dFdSM1hXoQ/DErZ4LG7lSkry0rA/fgCYFkaoBc2RiJf4m1k+EEmCspgKpu6/C+YaRlExAX
-	HV+7xysk2dNcMbQTsn4YhrXZAHD5sS4ZSSOUcRJKvjV/pfIIyMQBOHPBr43t8fsJGhrzti
-	eoR/1FINAXmDDzdd+fsX2FNuemi2YHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745846479;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKCfsUSiVgaMGLYlRKMuDqRi+jxJnou69nt3LDKwSkY=;
-	b=Ds0IHOTwBrmtL9+kBlcqWdlfdH0ryq2b4FpcVnfjdrwA0NaRod110CF8WThug4H3+eBr+s
-	NM4y6ImOwJvap4Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 12A7113A25;
-	Mon, 28 Apr 2025 13:21:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id blcPBM+AD2ikYAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 28 Apr 2025 13:21:19 +0000
-Message-ID: <9763c4cf-8ca5-45d4-b723-270548ca1001@suse.de>
-Date: Mon, 28 Apr 2025 15:21:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA5626A1C7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 13:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745846508; cv=fail; b=nzXcKMnzawYabZ7zw8YpMd+Y9yzhtQUhzKtssX4rHRjp8JpKNGLjnG9iRaGJbN4nqFF3TYwKKaUte0Bza7z31ujugKNZ86ErR0UlGf/xevgAVT1Dw0/+msDjrO5tlhVPicxu01zvMH7L1qUcE+qhhDOryPRaydF4ZPqsUaWaAUw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745846508; c=relaxed/simple;
+	bh=UU2hIPurDXGu5nXqpz5PA8H7J6bESWSmfQHwOjMP04g=;
+	h=Message-ID:Date:Subject:From:To:References:Cc:In-Reply-To:
+	 Content-Type:MIME-Version; b=jZV/gIFtzaL6WyOlVCI/RtzVp7laW3gv0iiP5gn/nSNFp21mN+npNq03bc/uCdJ/wSB5/uqoI45o9lXvZZOL+qzXI37tj+cWM9EfgMEgGLAgG1iMGPhnDFrFBTJYUmtAKVn6Ei95gkUmkCiYPddD50kByWvDT0+Rv0hO+sffXSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Pjgf20Ef; arc=fail smtp.client-ip=52.103.68.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bhfGezglWBPK1UrZ+MZo+zbevqMMxubnrQXaGndrUedscvrKU592dnzj6VxqHKLLpdp7gOIkLr/aLSKrUqD/IG5zLWDfbANnIsJr1a8KqqqzWuIYzUyYzOx2RlDIFwcH+T8UIVC49/PUXIgZ9kVX4RbStMKDAocjF2QazgKDi5h3uL7BvC1+0FFvjKDcv0B/STskR3rVQ6jnZSAt8mAPYVH68RZnxMxmfP0bQ/2fRwVd0Oxbk+1NOhbM0YeWgn5NiZoBcp6KgqZO8gZxT2L3SCR9bho7isQfIDHMndc4rv9hDy6uAgIQQz6a2LdyeuAkbGUCEHGlq1Dtjw7P2ZgdWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wi++58aweF6lUhWXjIZkLPNXcNXU5IKP2H/9muuuKF8=;
+ b=R4mRDHRzBbteMviR1QtaPO4WudNpltEEs67JPiIMJKvUDZBQn4JBO0ACVZVG6D2mvnSegfs0tZnSvZi43xx25rF2JTTwswEM2GOq6WhRQnhAKx47YqMXIw49+TpKgnlGVLfZbLHquNuBZmplbAmSZh7sXkN3BM3kZYIdqEeEeTJi7N3k9IWXp2VurminCJ2yfcvMiR14PkAXmArQfLjGfGVJbh1UEwre5cgR79W2vGfarJzuRyxhzvnM2yYQM6xR2/ETunXZUU1eyuO6aBGlYvd7j5+5eWm2KUCtdejr84gBjMILHYta9eGVGyStB90F1IVCHkdnMEF7+1GmCxUN/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wi++58aweF6lUhWXjIZkLPNXcNXU5IKP2H/9muuuKF8=;
+ b=Pjgf20EfgAN3FDDUnSyBCyUz3MyWJWnhYRaBRbqkij8g1k1JVJKAgqHNgAPVg580x5pJsIfE7RvAqpXJaKukUkbDYIe0U5vsJxcTmnI8AXACDHDbRSrCgrXLsgcObld/7oomFDByEjkrA98b7R88sy1qUoqur2JL2WUtJfmBVoL6WJpzxwv6IEcN2ZK9x7o2oBthP7kfNHbWXtpqVePYLz5T1x1XIYs2tdfij95ONxq+UDZFjBSS25eSXfwoBABdwkX5gVbxOUbuYb8PMeh0AVthTD7OGrx+8/60oU5NdmJTp9ZHwXw+ewhGM/PZ6UogTOqD0PY1YO6uUJnS5IO95Q==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by MAZPR01MB6353.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:4d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.34; Mon, 28 Apr
+ 2025 13:21:39 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
+ 13:21:39 +0000
+Message-ID:
+ <PN3PR01MB95971490B4D66F9CB2393E55B8812@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Date: Mon, 28 Apr 2025 18:51:35 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] drm/appletbdrm: Make appletbdrm depend on X86
+From: Aditya Garg <gargaditya08@live.com>
+To: "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+ Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+ Lizhi Hou <lizhi.hou@amd.com>, Aun-Ali Zaidi <admin@kodeit.net>
+References: <PN3PR01MB9597FC692410388F94BE6981B8812@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Language: en-US
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <PN3PR01MB9597FC692410388F94BE6981B8812@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0243.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::6) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:f7::14)
+X-Microsoft-Original-Message-ID:
+ <eb1aff1c-81a9-41f4-9f34-a615bcc321fa@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] nvme: only allow entering LIVE from CONNECTING state
-To: Daniel Wagner <dwagner@suse.de>, Guenter Roeck <linux@roeck-us.net>
-Cc: Daniel Wagner <wagi@kernel.org>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, James Smart <james.smart@broadcom.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250214-nvme-fc-fixes-v1-0-7a05d557d5cc@kernel.org>
- <20250214-nvme-fc-fixes-v1-1-7a05d557d5cc@kernel.org>
- <0134ea15-8d5f-41f7-9e9a-d7e6d82accaa@roeck-us.net>
- <cb46aa83-8033-4d64-a3c7-420172c3f3f5@flourine.local>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <cb46aa83-8033-4d64-a3c7-420172c3f3f5@flourine.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -8.30
-X-Spam-Flag: NO
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MAZPR01MB6353:EE_
+X-MS-Office365-Filtering-Correlation-Id: f815570a-e2bc-47f8-70ef-08dd86579c08
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|19110799003|5072599009|6090799003|461199028|15080799006|7092599003|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bjd0RGxPZ3F4LzcwaWJsYnNJWlRUVU5vaW1JeTNYYkZ3YmlLQXVSS01ISWdp?=
+ =?utf-8?B?ZmpibVFQYWE3YWh3N282TXVOL1lvd0tOSmFaSjJMd1pqaFpmSkd5V1pmM3JW?=
+ =?utf-8?B?Zi92VEcwSVlTSkJZZHo1V1dIWmc0NTdCUFd3dXFUUlhRV0k4czk1VnpQblYy?=
+ =?utf-8?B?alFqM0RLQlV1bmtVUXJTeWhpcDRyR3hUMi91L2c4eU11TytHSVRBMFhOQSti?=
+ =?utf-8?B?VlMrVXNUU2NScHJPZnV3RXhGTzFkZlA5eXJEaXpaL1JYYUFGcDJYWlVJb3F6?=
+ =?utf-8?B?cFd3TUlSTXBIK1R5b25uUm9ZSDZSSStoQjRnZlRJbHZ5SzBkNUNWRTRXb0FE?=
+ =?utf-8?B?RWxOQTFxTDl1WjRsSlRiemhPOFRJYkd2c1dzS1JyeDVrQVFpaStFRjlPTmNC?=
+ =?utf-8?B?Y0RIcE1LUCtpYVpyMDlEbVg2Y2lMRUNVbHB6Y2Y3UVhOVkVzOG0raHQ5VHd6?=
+ =?utf-8?B?ajRtakU4alc0clhMMGFNZXdTRk15U3Y3bzNHUTF3WmtEUm42Z1U5SnZIcm1T?=
+ =?utf-8?B?dWtCQzdKdUdUREJUbTc1bGxHNjQzR09BZzQvY0hDaUkvMzFoT0tyYWJrYTB5?=
+ =?utf-8?B?d0g0SU8xY1N5WFUvblV5a2ZERG1hb2t4S1pRRGpibWN1U3lvOWxWeXQ0cUNq?=
+ =?utf-8?B?eTdxK3I1S1dTS2pQY3RNMGtVVXd1SDY3bnQ2NTIzWkNOK0hDNmRtVk1KMjVR?=
+ =?utf-8?B?N2phd2NRS24yY1Nzd0tINkwwckFjZWxpODhNZm91enEzODZ5M2hLOTlWVExo?=
+ =?utf-8?B?N0tpbFkwL09NdmdZSUk1SmFLcmgyN1pJdVZvdUtzaXh3dTZIWmdqN0xUbk9C?=
+ =?utf-8?B?UzFmdCtmZmlvQmdndm5YQnVzdW5qL1ROVXpSSHZuTzgyNlg1d0tsa0QwYXNq?=
+ =?utf-8?B?UzFTeStsdmhEcXJXa1ZaRU00MzlhWi8ybitHTGJhc3YxdE83dERwQis3Z1Ra?=
+ =?utf-8?B?Mk1hblFDcHhCWUwzWVZaWGJ5M0pGQytBdWQraXI2ZDZSaVZYMXlkSkZnWkpi?=
+ =?utf-8?B?WmtLY2JONEVZcFV4cUgzWm5YNTlwS2FKWjByK0RQd3ppa1gvNnBpTnZVVGc0?=
+ =?utf-8?B?NW5wN1M5MW82NUlBNTY3T2RtdEtqc05OMWx3Wk13eXdhUFBwbkJoZFY0clVG?=
+ =?utf-8?B?bTJiczFERXdLMXA1Ym83ZlJ4dkwrM3RCNzBBNVF2UUtQWWdSQmszM3dhUWVL?=
+ =?utf-8?B?V0MydjdOMlRBMGtBdkN3QnVWS09FczFVQ1JtVC9SY1pacElwM0NYVGpaN3pE?=
+ =?utf-8?B?Qzh6eU9iMXlXYWtjOUdOK20wR3dtd0ZkemxZMThOLzUzSWk1SG41a0RTbEU2?=
+ =?utf-8?B?MU9naWhzbm9xUmFvZ0pOb1hDSjRwYlB2OXhPSUlwZlQwb3F4WWozMEVCUCtR?=
+ =?utf-8?B?Y0lML0hOamtRSzFaVzlaa2ltcy9lczlwQ0o3UFU5TFlUVWQvRGdpcWNzRjZ2?=
+ =?utf-8?B?eE1LcjY3QUdiY1dZQ1NzUFQvY3U1ekRSYitVMld4dm1MWnJSa09wL1pGZ0pK?=
+ =?utf-8?B?N1ZPYVU5cHFqSEJyTFZiT2VMbkxtOVZieFFXck9JM2JQaHRBbWNhQ00vTjNZ?=
+ =?utf-8?B?M3lvdz09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dTQzb3R0VDJua0VDMjFrNGI5Y0tVYWhOclhERDRDY3A1ajI4V1RLUEpaTlBH?=
+ =?utf-8?B?UDVnVzVGSlNsUjRTV25oNVk1ZmRIRFluKzdHSWlub3NCcGE2RjU3N2dYcXJh?=
+ =?utf-8?B?eFQybTZFMVFrM0lnWVFUVHYvMjkvMzNWa2dCMExtdkIyZGxrelQvMHVCU1N3?=
+ =?utf-8?B?SWRyR1FOT3hkd0tVY3ZFb1FFbnFXUW0xU1BiOHpnLzZqNnRGZldGVmxSNWJv?=
+ =?utf-8?B?aUtQdmtTN3B5TG5TTmFWR1dxbmlZUFZzUTNwU1g0UEl6VkF4Y051YkMzc2Fz?=
+ =?utf-8?B?NFNDTXY4RlpzQ1dld01uZUFjZWwvVERLOXY5aTBBalhxV20zckFNK0dycWhn?=
+ =?utf-8?B?NExvaEo3RFd0ZmdkYmE0ekV3Nnd3SzV2aHhSR2IvSjlNSHZLTWU5d0JnMVp4?=
+ =?utf-8?B?Q1Vjai95YXZqQ05USWlFQ0xUZkpSazJFdlZPSW9LcXZvZk0wZUNzblBFVnZ2?=
+ =?utf-8?B?NENyOHdvMU5nRGdhM3QxNDIwNXJlZ2l2WGRGNFVJS3oyM2VPd0lCUWR1cDJ5?=
+ =?utf-8?B?MGE0QzVhY1dnK0hQM05QSy8vRWdPdEVUbUxPSUNzYTUzYmtzS0FCc0N6WkRx?=
+ =?utf-8?B?SDJGSzhqWXAwQTBhZHNrNXlDcTRleXNuTnFwcDZZRmVLYlR6NXk3NU55dkZ5?=
+ =?utf-8?B?ZEJTeTNQSVRCYlcxdjVJYVExNktsOUt3ZDRxdzc4UncrZkpsQ2h4dEVkN3I0?=
+ =?utf-8?B?ejVnazVqajFibWFydUZsOENSMnJuQmlvbXdJUmd0YXo2WHJaNzUvN3QvRHNy?=
+ =?utf-8?B?eUs5QlAvVDNXc0lYR29ub2djc2ZkVnd5U25NdW4xRlFzQnAwKzlwb0lqcDln?=
+ =?utf-8?B?bWR0cGZrZ2twZERsOEoyWE1SRkJ6SHNsRVhMN0N6K3NRVENGeVZzaDBKRGl0?=
+ =?utf-8?B?Qy9lNW5QbjVsVUhSSExycVJQVWR5N3Z5SUZXeWlVaUp2THNzLzh2UDlwVXZ1?=
+ =?utf-8?B?VDlMTm51WXhiUkJVRzNRcFpCTGtDOXFFSnF2RldIRE8xVTNoUXRMSUlsOElT?=
+ =?utf-8?B?MStpbVNCY1lRQ2lLVm1rcDdpSTBPWUEvdmNsZ0Rzc1oxUWpnckpaMENOR1RS?=
+ =?utf-8?B?amRtSytGanJQMDlSMUpvbEJiWkxkUHZOUnYvNzdVTi9kWmVaNVVYY0NXS2hP?=
+ =?utf-8?B?M01OU05UT2hrTWk4MFpUdVhPTTdBbE11ekV3TzR6ZmE4anVxM2g0clRSZlNW?=
+ =?utf-8?B?NHBhQ2tXVHA3RmtSZDM5WXJ6WEx3MjNxREhJWGxVRXB3OEVTaDFDYTlSNTVu?=
+ =?utf-8?B?bnA1Zk51aVNEeUgxUWN6NzVZUlJtYmI5TVlCMUozd1VvT2Y1VXQ3WE5UQzM0?=
+ =?utf-8?B?M2IxVzdQb04vQjZYRkgwN3RybkNOUkc2Sjc0bFkxQkhpZncxQWZySnhDSTZY?=
+ =?utf-8?B?RlFXdjJGQTFjMmtRUmpyc216TEl0Q0FPSzNjaEJJTjBUTm4rNS9adWpwQmRY?=
+ =?utf-8?B?cWFGVGJPRTJuT2VnRWJ6Q25iZldTRm1IamVaSGxYMndWNHRnMFM1VERmT01z?=
+ =?utf-8?B?OFExVEQrNStlbnFmaWhNY05LVVF1RWlCTjlHZHU3NFc5NURGRkI0OGQzT3Zh?=
+ =?utf-8?B?ZkgrZlZBNFV3QytYUW5IRnlLRE84L0JlZE9RVWNxMU5rN1BHaFkycG9DVlNY?=
+ =?utf-8?B?dS92Tk5BekhWcnlmdG8vc2M0UHM5UUIzSXhMRGdjc2hvNkVURE5sRkIyWFEr?=
+ =?utf-8?B?SE0yYmVTQjZPVmdtd0tBZ2NiWXMvYzJEczFlenZTZjIvTzdBY3lCcWRUMXZY?=
+ =?utf-8?Q?jLXWPvj2iyIsAkqPrIiz90A89j8bAxgkJyszEM4?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: f815570a-e2bc-47f8-70ef-08dd86579c08
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 13:21:39.6797
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB6353
 
-On 4/28/25 14:44, Daniel Wagner wrote:
-> On Sun, Apr 27, 2025 at 08:59:13AM -0700, Guenter Roeck wrote:
->> Hi,
->>
->> On Fri, Feb 14, 2025 at 09:02:03AM +0100, Daniel Wagner wrote:
->>> The fabric transports and also the PCI transport are not entering the
->>> LIVE state from NEW or RESETTING. This makes the state machine more
->>> restrictive and allows to catch not supported state transitions, e.g.
->>> directly switching from RESETTING to LIVE.
->>>
->>> Signed-off-by: Daniel Wagner <wagi@kernel.org>
->>
->> nvme_handle_aen_notice(), when handling NVME_AER_NOTICE_FW_ACT_STARTING,
->> sets the state to RESETTING and and triggers a worker. This worker
->> waits for firmware activation to complete and then tries to set the
->> state back to LIVE. This step now fails.
->>
->> Possibly the handling of NVME_AER_NOTICE_FW_ACT_STARTING needs to be
->> improved. However, leaving the NVME in RESETTING state after an
->> NVME_AER_NOTICE_FW_ACT_STARTING event is worse.
->>
->> I think this patch should be reverted at least for the time being until
->> the handling of NVME_AER_NOTICE_FW_ACT_STARTING no longer relies on a
->> direct state change from RESETTING to LIVE.
+Ccing the mailing lists> From: Aditya Garg <gargaditya08@live.com>
 > 
-> ee59e3820ca9 ("nvme-fc: do not ignore connectivity loss during connecting")
-> f13409bb3f91 ("nvme-fc: rely on state transitions to handle connectivity loss")
+> The appletbdrm driver is exclusively for Touch Bars on x86 Intel Macs.
+> The M1 Macs have a separate driver. So, lets avoid compiling it for
+> other architectures.
 > 
-> are depending on the fact that is not possible to switch from
-> NEW/RESETTING directly into LIVE.
+> Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  drivers/gpu/drm/tiny/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I think it would be better to fix the worker instead dropping this patch
-> and the above fix for the fc transport.
-> 
-> What about:
-> 
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index b502ac07483b..d3c4eacf607f 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -4493,7 +4493,8 @@ static void nvme_fw_act_work(struct work_struct *work)
->                  msleep(100);
->          }
-> 
-> -       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
-> +       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING) ||
-> +           !nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
->                  return;
-> 
->          nvme_unquiesce_io_queues(ctrl);
+> diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
+> index 95c1457d7..d66681d0e 100644
+> --- a/drivers/gpu/drm/tiny/Kconfig
+> +++ b/drivers/gpu/drm/tiny/Kconfig
+> @@ -3,6 +3,7 @@
+>  config DRM_APPLETBDRM
+>  	tristate "DRM support for Apple Touch Bars"
+>  	depends on DRM && USB && MMU
+> +	depends on X86 || COMPILE_TEST
+>  	select DRM_GEM_SHMEM_HELPER
+>  	select DRM_KMS_HELPER
+>  	help
 
-I would rather have a separate state for firmware activation.
-(Ab-)using the 'RESETTING' state here has direct implications
-with the error handler, as for the error handler 'RESETTING'
-means that the error handler has been scheduled.
-Which is not true for firmware activation.
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
