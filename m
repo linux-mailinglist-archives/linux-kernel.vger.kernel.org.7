@@ -1,288 +1,106 @@
-Return-Path: <linux-kernel+bounces-622657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2A7A9EA60
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B34A9EA53
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D21189BA2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5897E3AF122
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 08:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691DE25D531;
-	Mon, 28 Apr 2025 08:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACCB2517B3;
+	Mon, 28 Apr 2025 08:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QwoydfmJ"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hNTJniPR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9223211476;
-	Mon, 28 Apr 2025 08:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7F525D1F0;
+	Mon, 28 Apr 2025 08:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745827891; cv=none; b=FS+W2UMCEtE8wt7lGdnBgTBWSg2AzahvqTUW2mOdcGGyo+xhfCvvyW6HmSOOx08yK612wJETmQida65VsURVF3/4UAU8o33sE4DDvnMukDWbYoOEIWeeIMBbFfBZ1Q0h3Qhvvq3PyTqK9G9Sj+cpG14cWTtQTMvaHVglUU3Ogew=
+	t=1745827733; cv=none; b=Muiht62Zb2NoNxkBish8avG5MApB+imaVEsBBGtUXWMxqYWf3P/bxX8aDuH+YXZBUsVCMZvcFi3J7Ld0e9pN0B+zLCBd13+E++15RV4OBc2GQnaB/IuYq6wWnYC0/aWG87kfmpXJ2+YQWH8du4aPPEENoZpTo+SWZaAerM2KDhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745827891; c=relaxed/simple;
-	bh=RZNWauRBZ77xwItbGqA7HuXfhu0XZkIoQCM+78qY6HM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eoZ7ZWH1JqWp0JIvYU+0xZ5pO8v++c64NujBhC23DJK0JfPedMKhwFBriv1kFPz/zV9pjgI8mU9S+TAYrt5tmvVdRXAmivrpEB9epC6Brk7QUimpURYO8Dw8V0MwKktYpULTNnfHjKBh0ExYHG0IY9paEwHEfufKgG6t3k2thyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QwoydfmJ; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S11XbV010761;
-	Mon, 28 Apr 2025 10:10:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	PQb6/JrtA/eLzoukWftU2fxvtoqJ28zJBaZAc0hVsHY=; b=QwoydfmJnqrIp1Bs
-	q/5op7P9yWgVMKAfoFEU1jyURgEx+qPUDq86ch/CQCNROm4Mxk9HC6YD7MH4Xtmi
-	3rQphDkC1+X5k47wruX25t+hfl48d3DGpsuF3Prb14wiAMj+EsbVHwphl0Fu3qJz
-	SmEK1tY8GUZaWs/i9ClheBgwg8NcYqTGZ+VSKcG1b0C7i2O4SBvWc3y/7E+zvtYc
-	NiEaxlGfyjdSwBnETaBtVc2kCpyyptb1Xq8l0qLOVuwN/IFbtdMo8w9pvWlHIbyO
-	23nxIBPn1Iz2uNbsjaTymfeLeJPQ8YA5tJnyzsDOlcOhxPHwotSdRgbyLDKFfAI7
-	tGWyzA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 468pcg5gx0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Apr 2025 10:10:53 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EF3BA4004F;
-	Mon, 28 Apr 2025 10:09:12 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C8252A342DD;
-	Mon, 28 Apr 2025 10:07:54 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:07:54 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Apr
- 2025 10:07:52 +0200
-Message-ID: <4e6840e5-34a7-4f15-a13a-1ff1ea5eff85@foss.st.com>
-Date: Mon, 28 Apr 2025 10:07:51 +0200
+	s=arc-20240116; t=1745827733; c=relaxed/simple;
+	bh=9dJD1kfcDp74fb2u2rSIT1WtOdxROPcPGxIZfBF2KkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P47Oj5hWe8Nfaj4w+4cOxvqhIQ25nnyPiTk3HuKzVqyjKNA95qvUaKD4s79b6d95YYOo7KhQ0PHYF3O11RAorhlZ3ic8R5iPu4ZNTx+onddm5fX3xsVhtOxpR8NHLRfcsx+2q3XXdxQWZQmx5obyp6WCCNFN83xqBIrhS40w8CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hNTJniPR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1745827727;
+	bh=uMYjoKTqTAsrvsdmx9JvrVMqXMtLshLTMIIPGCH9ycE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hNTJniPRNzNyhHEXVCAhR7T+5M7Oizn++wl0fNc+FVaxrKNn63L3ncvAEYB0fBAIk
+	 qEBXHrU5FyGAP6UMT5rlbd/yL6FRBlvfVJPc7nUwU+BLC4V5nHPalqBni++uFsu4BE
+	 KBkjONyxCCiIZOVqwc9WVbbKdg2CxMWxnNR8H12jztSyW3QOV7PleNJph+qMMR2S2L
+	 xuE7OEyfAmvpM2k/iuQcQkhEFO53dsUn20vTcWwBEsanFURCnL47cRrOnVXxKn2zFn
+	 ebOvLUm0uQa7Ha7RsPccRzOI1pIOLj2zuyq3dW2rKVQCYktZV1B0wGJA59fbtQV0wS
+	 kdlI1W+6LZZ4g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZmGL748Ntz4wbc;
+	Mon, 28 Apr 2025 18:08:46 +1000 (AEST)
+Date: Mon, 28 Apr 2025 18:08:45 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
+ <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
+ Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the paulmck tree
+Message-ID: <20250428175438.0209858e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] of: reserved_mem: Add functions to parse
- "memory-region"
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        Saravana Kannan
-	<saravanak@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai
-	<wens@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Daniel Baluta
-	<daniel.baluta@nxp.com>
-References: <20250423-dt-memory-region-v2-v2-0-2fbd6ebd3c88@kernel.org>
- <20250423-dt-memory-region-v2-v2-1-2fbd6ebd3c88@kernel.org>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20250423-dt-memory-region-v2-v2-1-2fbd6ebd3c88@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_03,2025-04-24_02,2025-02-21_01
+Content-Type: multipart/signed; boundary="Sig_/N_Wt==fayysKQyN4rTjekpR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello Rob,
+--Sig_/N_Wt==fayysKQyN4rTjekpR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 4/23/25 21:42, Rob Herring (Arm) wrote:
-> Drivers with "memory-region" properties currently have to do their own
-> parsing of "memory-region" properties. The result is all the drivers
-> have similar patterns of a call to parse "memory-region" and then get
-> the region's address and size. As this is a standard property, it should
-> have common functions for drivers to use. Add new functions to count the
-> number of regions and retrieve the region's address as a resource.
-> 
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> v2:
->  - Wrap function parameters
-> ---
->  drivers/of/of_reserved_mem.c    | 80 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/of_reserved_mem.h | 26 ++++++++++++++
->  2 files changed, 106 insertions(+)
-> 
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index ee2e31522d7e..f87915cce961 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -12,6 +12,7 @@
->  #define pr_fmt(fmt)	"OF: reserved mem: " fmt
->  
->  #include <linux/err.h>
-> +#include <linux/ioport.h>
->  #include <linux/libfdt.h>
->  #include <linux/of.h>
->  #include <linux/of_fdt.h>
-> @@ -740,3 +741,82 @@ struct reserved_mem *of_reserved_mem_lookup(struct device_node *np)
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(of_reserved_mem_lookup);
-> +
-> +/**
-> + * of_reserved_mem_region_to_resource() - Get a reserved memory region as a resource
-> + * @np:		node containing 'memory-region' property
-> + * @idx:	index of 'memory-region' property to lookup
-> + * @res:	Pointer to a struct resource to fill in with reserved region
-> + *
-> + * This function allows drivers to lookup a node's 'memory-region' property
-> + * entries by index and return a struct resource for the entry.
-> + *
-> + * Returns 0 on success with @res filled in. Returns -ENODEV if 'memory-region'
-> + * is missing or unavailable, -EINVAL for any other error.
-> + */
-> +int of_reserved_mem_region_to_resource(const struct device_node *np,
-> +				       unsigned int idx, struct resource *res)
-> +{
-> +	struct reserved_mem *rmem;
-> +
-> +	if (!np)
-> +		return -EINVAL;
-> +
-> +	struct device_node __free(device_node) *target = of_parse_phandle(np, "memory-region", idx);
-> +	if (!target || !of_device_is_available(target))
-> +		return -ENODEV;
-> +
-> +	rmem = of_reserved_mem_lookup(target);
-> +	if (!rmem)
-> +		return -EINVAL;
-> +
-> +	resource_set_range(res, rmem->base, rmem->size);
-> +	res->name = rmem->name;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(of_reserved_mem_region_to_resource);
-> +
-> +/**
-> + * of_reserved_mem_region_to_resource_byname() - Get a reserved memory region as a resource
-> + * @np:		node containing 'memory-region' property
-> + * @name:	name of 'memory-region' property entry to lookup
-> + * @res:	Pointer to a struct resource to fill in with reserved region
-> + *
-> + * This function allows drivers to lookup a node's 'memory-region' property
-> + * entries by name and return a struct resource for the entry.
-> + *
-> + * Returns 0 on success with @res filled in. Returns -ENODEV if 'memory-region'
-> + * is missing or unavailable, -EINVAL for any other error.
+Hi all,
 
-of_property_match_string() can return some other error values.
+The following commit is also in the rcu tree as a different commit
+(but the same patch):
 
-Thanks,
-Arnaud
+  5c9e0062989e ("tools/memory-model/Documentation: Fix SRCU section in expl=
+anation.txt")
 
-> + */
-> +int of_reserved_mem_region_to_resource_byname(const struct device_node *np,
-> +					      const char *name,
-> +					      struct resource *res)
-> +{
-> +	int idx;
-> +
-> +	if (!name)
-> +		return -EINVAL;
-> +
-> +	idx = of_property_match_string(np, "memory-region-names", name);
-> +	if (idx < 0)
-> +		return idx;
-> +
-> +	return of_reserved_mem_region_to_resource(np, idx, res);
-> +}
-> +EXPORT_SYMBOL_GPL(of_reserved_mem_region_to_resource_byname);
-> +
-> +/**
-> + * of_reserved_mem_region_count() - Return the number of 'memory-region' entries
-> + * @np:		node containing 'memory-region' property
-> + *
-> + * This function allows drivers to retrieve the number of entries for a node's
-> + * 'memory-region' property.
-> + *
-> + * Returns the number of entries on success, or negative error code on a
-> + * malformed property.
-> + */
-> +int of_reserved_mem_region_count(const struct device_node *np)
-> +{
-> +	return of_count_phandle_with_args(np, "memory-region", NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(of_reserved_mem_region_count);
-> diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
-> index e338282da652..f573423359f4 100644
-> --- a/include/linux/of_reserved_mem.h
-> +++ b/include/linux/of_reserved_mem.h
-> @@ -7,6 +7,7 @@
->  
->  struct of_phandle_args;
->  struct reserved_mem_ops;
-> +struct resource;
->  
->  struct reserved_mem {
->  	const char			*name;
-> @@ -39,6 +40,12 @@ int of_reserved_mem_device_init_by_name(struct device *dev,
->  void of_reserved_mem_device_release(struct device *dev);
->  
->  struct reserved_mem *of_reserved_mem_lookup(struct device_node *np);
-> +int of_reserved_mem_region_to_resource(const struct device_node *np,
-> +				       unsigned int idx, struct resource *res);
-> +int of_reserved_mem_region_to_resource_byname(const struct device_node *np,
-> +					      const char *name, struct resource *res);
-> +int of_reserved_mem_region_count(const struct device_node *np);
-> +
->  #else
->  
->  #define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
-> @@ -63,6 +70,25 @@ static inline struct reserved_mem *of_reserved_mem_lookup(struct device_node *np
->  {
->  	return NULL;
->  }
-> +
-> +static inline int of_reserved_mem_region_to_resource(const struct device_node *np,
-> +						     unsigned int idx,
-> +						     struct resource *res)
-> +{
-> +	return -ENOSYS;
-> +}
-> +
-> +static inline int of_reserved_mem_region_to_resource_byname(const struct device_node *np,
-> +							    const char *name,
-> +							    struct resource *res)
-> +{
-> +	return -ENOSYS;
-> +}
-> +
-> +static inline int of_reserved_mem_region_count(const struct device_node *np)
-> +{
-> +	return 0;
-> +}
->  #endif
->  
->  /**
-> 
+This is commit
+
+  8e40035aab95 ("tools/memory-model/Documentation: Fix SRCU section in expl=
+anation.txt")
+
+in the rcu tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/N_Wt==fayysKQyN4rTjekpR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgPN44ACgkQAVBC80lX
+0GwC0Af/Q/VcDJA4oIb6f3eMfswy/kD88rWdknuG5Co6J3V9J/id7HRGn7rQ8Z6n
+YY4eSMKJz2YHLWBVTn7A7u+RCvvHkNj/Ei4EL9Ka1zlAuFn0urO+2mZWNTpDdvbU
+l15UCk7KRWBIpiHnBqtY5hktfb6k0RWXefcEmo5gVkyLaY8BspSACJaQem3IyuN9
+B8nWb2IOENi+gC/WZfKZMlMCCEhlfwE5XRvFWpwzFBRtVMSzFgS7gucbqzGS5Kcc
+5Mp0E7UkhwPc4RyOGfawIWJoxo6DneRpVhXZvdnzyYJVTtS/mxaXFZY2FSSnYJ91
+xsk9l1tjI74RJWQes9qOMZS7xXELWA==
+=TakA
+-----END PGP SIGNATURE-----
+
+--Sig_/N_Wt==fayysKQyN4rTjekpR--
 
