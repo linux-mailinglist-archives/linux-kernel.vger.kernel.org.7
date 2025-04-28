@@ -1,145 +1,573 @@
-Return-Path: <linux-kernel+bounces-622871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C07A9EDC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:22:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4FB0A9EDC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EEA3B5F17
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83524167D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDE525FA01;
-	Mon, 28 Apr 2025 10:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01634253B43;
+	Mon, 28 Apr 2025 10:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OrEblxjZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DEA25F7A2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ICqoQGjj"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708311AC44D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745835743; cv=none; b=d2yNjMcAq+oU9WrpF68zbC1YzfAjG1Y31pyKKwiILKwgUXn0Zy/23xpKm6EpjDA+PNI0+CPlKX+fEB/CmmF1kFUZCjpfB59mHTXW5aE5191900nKtmoh4xcdeu+0xOf7u6ayOFt8Vem8piifFbK2EHxoEzc4n6Il/0YvKWgQHzs=
+	t=1745835839; cv=none; b=szBuXFans6Wva1I8xlQTNxr5CRPTi+NL2ZvEWla2hqS5hHLi/JiEL1yWBI5G+Aj28P33zTjrZ+PK8uhkT+vhsuhuNPF97pklsHffIhxMftLjns4I1IJvFfrq83e/3cfsJg/Vyr4jbDW73ka9kPQLy1oeN9q3W6o2aHB307834E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745835743; c=relaxed/simple;
-	bh=RqdM6tQLULttWm7Qo9KtY2xD21nhVT3B5OXxTPkQ95A=;
-	h=To:cc:Subject:MIME-Version:Content-Type:From:Date:Message-ID; b=gcgQPw4afeiNXoZrIWZvgQLDeRiCjHTr2QJs/LyRRs9adxE1O3oJQo73FJR4K8VmjggJTxz4Tw5S+YqiXJtVObdIp/WhbL0cNvkNBJ107bqVofKzgfy1YmwKJFT2I00SrpJhuI4eyVuu6SJ+yPa6kN21/nPHpOBpZQ5LkbbI2iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OrEblxjZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745835740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XZR60ryduJ6qSqqolVECpQBm6DPYshoNtZhT2Jgpp+U=;
-	b=OrEblxjZBzdeN47Qtl/RR87kOf3XLzRqXmfymrA9ildTdauAcM/u2PMieFNRHmiYU0cK09
-	ozNtJDzCHITN4MzYxmb8fhexCAqO4Yr8Hwub5AUlAPgq/oZcCunT+zHrUltqbdV//CD12p
-	gUdjbNv0p2whA2rQHL/sW6aaGwKaTjo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-uYhzPZYtOZicjZElV4RmHQ-1; Mon,
- 28 Apr 2025 06:22:16 -0400
-X-MC-Unique: uYhzPZYtOZicjZElV4RmHQ-1
-X-Mimecast-MFC-AGG-ID: uYhzPZYtOZicjZElV4RmHQ_1745835734
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D183319560A6;
-	Mon, 28 Apr 2025 10:22:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.188])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7E1901800367;
-	Mon, 28 Apr 2025 10:22:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-To: netdev@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S. Miller" <davem@davemloft.net>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
-    linux-nfs@vger.kernel.org, linux-crypto@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] crypto/krb5: Fix change to use SG miter to use offset
+	s=arc-20240116; t=1745835839; c=relaxed/simple;
+	bh=rOG4BNeXFd3zdMeoZ4/3aNsf54BD5lRm36BzK0SMTXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9KrVkDPK8B4wKSBHphhWGKb7vLwji7yx5sWBJhyJte7xaqlBqmKHyzt1mwtC8ob65dnLnF7lKcYfgGTe17Zir+S3YD+1BUZiNZ4NXblgKPeCQZtczTLQgqpb1OsNtXxM6uuOhNJSrPM8b9BWipQnZfz5CwxSXGMpvXCFYcpIVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ICqoQGjj; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=6sCIv
+	I1DWDP8J3OnEjie52hCc+L8DYiyY5nifNG4kyo=; b=ICqoQGjjKLuhxEzw/KxD/
+	K6y7Y7Hbq861tRUchInnjZRgjaOVF51ksO/2KTrw2je570anD1ndhB+TcEnKjop7
+	ZJ1btdYhMBZtVJ6rXIglAo1gUoMa/03XnlEJY2FXqzdxkMWz/DvHla3jeuI4/gvn
+	gZyPSP0w7ZOfY4SEdHZfiA=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD311sPVw9oDBZeDA--.10563S2;
+	Mon, 28 Apr 2025 18:23:14 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: mripard@kernel.org,
+	hjc@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH] drm/rockchip: rk3066_hdmi: switch to drm bridge
+Date: Mon, 28 Apr 2025 18:23:07 +0800
+Message-ID: <20250428102309.1501986-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3823907.1745835655.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 28 Apr 2025 11:22:06 +0100
-Message-ID: <3824017.1745835726@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD311sPVw9oDBZeDA--.10563S2
+X-Coremail-Antispam: 1Uf129KBjvAXoW3tr1Dtr1fZFW5WFyDZF1xGrg_yoW8AF1fXo
+	ZxJwn3Xw4rG348WFWvy3WUKr4jqa1ktr1fXw45GFWDua1DG3yqq347CryjqFW7WF1aqrW5
+	Z3Wvyr1fXFnrCF4kn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsUUUUUUUU
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqAk9XmgPURumhAABsM
 
-[Note: Nothing in linus/master uses the krb5lib, though the bug is there,
- but it is used by AF_RXRPC's RxGK implementation in net-next, so can it g=
-o
- through the net-next tree rather than directly to Linus or through
- crypto?]
+From: Andy Yan <andy.yan@rock-chips.com>
 
-The recent patch to make the rfc3961 simplified code use sg_miter rather
-than manually walking the scatterlist to hash the contents of a buffer
-described by that scatterlist failed to take the starting offset into
-account.
+Convert it to drm bridge driver, it will be convenient for us to
+migrate the connector part to the display driver later.
 
-This is indicated by the selftests reporting:
+Note: I don't have the hardware to test this driver, so for now
+I can only do the compilation test.
 
-    krb5: Running aes128-cts-hmac-sha256-128 mic
-    krb5: !!! TESTFAIL crypto/krb5/selftest.c:446
-    krb5: MIC mismatch
-
-Fix this by calling sg_miter_skip() before doing the loop to advance by th=
-e
-offset.
-
-This only affects packet signing modes and not full encryption in RxGK
-because, for full encryption, the message digest is handled inside the
-authenc and krb5enc drivers.
-
-Fixes: da6f9bf40ac2 ("crypto: krb5 - Use SG miter instead of doing it by h=
-and")
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Herbert Xu <herbert@gondor.apana.org.au>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Chuck Lever <chuck.lever@oracle.com>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-crypto@vger.kernel.org
-cc: netdev@vger.kernel.org
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 ---
- crypto/krb5/rfc3961_simplified.c |    1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/crypto/krb5/rfc3961_simplified.c b/crypto/krb5/rfc3961_simpli=
-fied.c
-index 79180d28baa9..e49cbdec7c40 100644
---- a/crypto/krb5/rfc3961_simplified.c
-+++ b/crypto/krb5/rfc3961_simplified.c
-@@ -89,6 +89,7 @@ int crypto_shash_update_sg(struct shash_desc *desc, stru=
-ct scatterlist *sg,
- =
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c | 315 ++++++++++++-------------
+ 1 file changed, 146 insertions(+), 169 deletions(-)
 
- 	sg_miter_start(&miter, sg, sg_nents(sg),
- 		       SG_MITER_FROM_SG | SG_MITER_LOCAL);
-+	sg_miter_skip(&miter, offset);
- 	for (i =3D 0; i < len; i +=3D n) {
- 		sg_miter_next(&miter);
- 		n =3D min(miter.length, len - i);
+diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+index f7a4601903134..a2268abc30c5b 100644
+--- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
++++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+@@ -5,6 +5,9 @@
+  */
+ 
+ #include <drm/drm_atomic.h>
++#include <drm/drm_bridge_connector.h>
++#include <drm/display/drm_hdmi_helper.h>
++#include <drm/display/drm_hdmi_state_helper.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_probe_helper.h>
+@@ -46,27 +49,20 @@ struct rk3066_hdmi {
+ 	struct clk *hclk;
+ 	void __iomem *regs;
+ 
+-	struct drm_connector connector;
++	struct drm_bridge bridge;
++	struct drm_connector *connector;
+ 	struct rockchip_encoder encoder;
+ 
+ 	struct rk3066_hdmi_i2c *i2c;
+-	struct i2c_adapter *ddc;
+ 
+ 	unsigned int tmdsclk;
+ 
+ 	struct hdmi_data_info hdmi_data;
+ };
+ 
+-static struct rk3066_hdmi *encoder_to_rk3066_hdmi(struct drm_encoder *encoder)
++static struct rk3066_hdmi *bridge_to_rk3066_hdmi(struct drm_bridge *bridge)
+ {
+-	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
+-
+-	return container_of(rkencoder, struct rk3066_hdmi, encoder);
+-}
+-
+-static struct rk3066_hdmi *connector_to_rk3066_hdmi(struct drm_connector *connector)
+-{
+-	return container_of(connector, struct rk3066_hdmi, connector);
++	return container_of(bridge, struct rk3066_hdmi, bridge);
+ }
+ 
+ static inline u8 hdmi_readb(struct rk3066_hdmi *hdmi, u16 offset)
+@@ -161,57 +157,40 @@ static void rk3066_hdmi_set_power_mode(struct rk3066_hdmi *hdmi, int mode)
+ 		hdmi->tmdsclk = DEFAULT_PLLA_RATE;
+ }
+ 
+-static int
+-rk3066_hdmi_upload_frame(struct rk3066_hdmi *hdmi, int setup_rc,
+-			 union hdmi_infoframe *frame, u32 frame_index,
+-			 u32 mask, u32 disable, u32 enable)
++static int rk3066_hdmi_bridge_clear_infoframe(struct drm_bridge *bridge,
++					      enum hdmi_infoframe_type type)
+ {
+-	if (mask)
+-		hdmi_modb(hdmi, HDMI_CP_AUTO_SEND_CTRL, mask, disable);
+-
+-	hdmi_writeb(hdmi, HDMI_CP_BUF_INDEX, frame_index);
+-
+-	if (setup_rc >= 0) {
+-		u8 packed_frame[HDMI_MAXIMUM_INFO_FRAME_SIZE];
+-		ssize_t rc, i;
++	struct rk3066_hdmi *hdmi = bridge_to_rk3066_hdmi(bridge);
+ 
+-		rc = hdmi_infoframe_pack(frame, packed_frame,
+-					 sizeof(packed_frame));
+-		if (rc < 0)
+-			return rc;
+-
+-		for (i = 0; i < rc; i++)
+-			hdmi_writeb(hdmi, HDMI_CP_BUF_ACC_HB0 + i * 4,
+-				    packed_frame[i]);
+-
+-		if (mask)
+-			hdmi_modb(hdmi, HDMI_CP_AUTO_SEND_CTRL, mask, enable);
++	if (type != HDMI_INFOFRAME_TYPE_AVI) {
++		drm_err(bridge->dev, "Unsupported infoframe type: %u\n", type);
++		return 0;
+ 	}
+ 
+-	return setup_rc;
++	hdmi_writeb(hdmi, HDMI_CP_BUF_INDEX, HDMI_INFOFRAME_AVI);
++
++	return 0;
+ }
+ 
+-static int rk3066_hdmi_config_avi(struct rk3066_hdmi *hdmi,
+-				  struct drm_display_mode *mode)
++static int
++rk3066_hdmi_bridge_write_infoframe(struct drm_bridge *bridge,
++				   enum hdmi_infoframe_type type,
++				   const u8 *buffer, size_t len)
+ {
+-	union hdmi_infoframe frame;
+-	int rc;
++	struct rk3066_hdmi *hdmi = bridge_to_rk3066_hdmi(bridge);
++	ssize_t i;
+ 
+-	rc = drm_hdmi_avi_infoframe_from_display_mode(&frame.avi,
+-						      &hdmi->connector, mode);
++	if (type != HDMI_INFOFRAME_TYPE_AVI) {
++		drm_err(bridge->dev, "Unsupported infoframe type: %u\n", type);
++		return 0;
++	}
+ 
+-	if (hdmi->hdmi_data.enc_out_format == HDMI_COLORSPACE_YUV444)
+-		frame.avi.colorspace = HDMI_COLORSPACE_YUV444;
+-	else if (hdmi->hdmi_data.enc_out_format == HDMI_COLORSPACE_YUV422)
+-		frame.avi.colorspace = HDMI_COLORSPACE_YUV422;
+-	else
+-		frame.avi.colorspace = HDMI_COLORSPACE_RGB;
++	rk3066_hdmi_bridge_clear_infoframe(bridge, type);
+ 
+-	frame.avi.colorimetry = hdmi->hdmi_data.colorimetry;
+-	frame.avi.scan_mode = HDMI_SCAN_MODE_NONE;
++	for (i = 0; i < len; i++)
++		hdmi_writeb(hdmi, HDMI_CP_BUF_ACC_HB0 + i * 4, buffer[i]);
+ 
+-	return rk3066_hdmi_upload_frame(hdmi, rc, &frame,
+-					HDMI_INFOFRAME_AVI, 0, 0, 0);
++	return 0;
+ }
+ 
+ static int rk3066_hdmi_config_video_timing(struct rk3066_hdmi *hdmi,
+@@ -324,9 +303,27 @@ static void rk3066_hdmi_config_phy(struct rk3066_hdmi *hdmi)
+ }
+ 
+ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
+-			     struct drm_display_mode *mode)
++			     struct drm_atomic_state *state)
+ {
+-	struct drm_display_info *display = &hdmi->connector.display_info;
++	struct drm_bridge *bridge = &hdmi->bridge;
++	struct drm_connector *connector;
++	struct drm_display_info *display;
++	struct drm_display_mode *mode;
++	struct drm_connector_state *new_conn_state;
++	struct drm_crtc_state *new_crtc_state;
++
++	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
++
++	new_conn_state = drm_atomic_get_new_connector_state(state, connector);
++	if (WARN_ON(!new_conn_state))
++		return -EINVAL;
++
++	new_crtc_state = drm_atomic_get_new_crtc_state(state, new_conn_state->crtc);
++	if (WARN_ON(!new_crtc_state))
++		return -EINVAL;
++
++	display = &connector->display_info;
++	mode = &new_crtc_state->adjusted_mode;
+ 
+ 	hdmi->hdmi_data.vic = drm_match_cea_mode(mode);
+ 	hdmi->hdmi_data.enc_out_format = HDMI_COLORSPACE_RGB;
+@@ -363,7 +360,7 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
+ 	if (display->is_hdmi) {
+ 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK,
+ 			  HDMI_VIDEO_MODE_HDMI);
+-		rk3066_hdmi_config_avi(hdmi, mode);
++		drm_atomic_helper_connector_hdmi_update_infoframes(connector, state);
+ 	} else {
+ 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK, 0);
+ 	}
+@@ -386,15 +383,15 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
+ 	return 0;
+ }
+ 
+-static void rk3066_hdmi_encoder_enable(struct drm_encoder *encoder,
++static void rk3066_hdmi_bridge_atomic_enable(struct drm_bridge *bridge,
+ 				       struct drm_atomic_state *state)
+ {
+-	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
++	struct rk3066_hdmi *hdmi = bridge_to_rk3066_hdmi(bridge);
+ 	struct drm_connector_state *conn_state;
+ 	struct drm_crtc_state *crtc_state;
+ 	int mux, val;
+ 
+-	conn_state = drm_atomic_get_new_connector_state(state, &hdmi->connector);
++	conn_state = drm_atomic_get_new_connector_state(state, hdmi->connector);
+ 	if (WARN_ON(!conn_state))
+ 		return;
+ 
+@@ -402,7 +399,7 @@ static void rk3066_hdmi_encoder_enable(struct drm_encoder *encoder,
+ 	if (WARN_ON(!crtc_state))
+ 		return;
+ 
+-	mux = drm_of_encoder_active_endpoint_id(hdmi->dev->of_node, encoder);
++	mux = drm_of_encoder_active_endpoint_id(hdmi->dev->of_node, &hdmi->encoder.encoder);
+ 	if (mux)
+ 		val = (HDMI_VIDEO_SEL << 16) | HDMI_VIDEO_SEL;
+ 	else
+@@ -413,13 +410,13 @@ static void rk3066_hdmi_encoder_enable(struct drm_encoder *encoder,
+ 	DRM_DEV_DEBUG(hdmi->dev, "hdmi encoder enable select: vop%s\n",
+ 		      (mux) ? "1" : "0");
+ 
+-	rk3066_hdmi_setup(hdmi, &crtc_state->adjusted_mode);
++	rk3066_hdmi_setup(hdmi, state);
+ }
+ 
+-static void rk3066_hdmi_encoder_disable(struct drm_encoder *encoder,
+-					struct drm_atomic_state *state)
++static void rk3066_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
++					      struct drm_atomic_state *state)
+ {
+-	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
++	struct rk3066_hdmi *hdmi = bridge_to_rk3066_hdmi(bridge);
+ 
+ 	DRM_DEV_DEBUG(hdmi->dev, "hdmi encoder disable\n");
+ 
+@@ -450,39 +447,34 @@ rk3066_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
+ static const
+ struct drm_encoder_helper_funcs rk3066_hdmi_encoder_helper_funcs = {
+ 	.atomic_check   = rk3066_hdmi_encoder_atomic_check,
+-	.atomic_enable  = rk3066_hdmi_encoder_enable,
+-	.atomic_disable = rk3066_hdmi_encoder_disable,
+ };
+ 
+ static enum drm_connector_status
+-rk3066_hdmi_connector_detect(struct drm_connector *connector, bool force)
++rk3066_hdmi_bridge_detect(struct drm_bridge *bridge)
+ {
+-	struct rk3066_hdmi *hdmi = connector_to_rk3066_hdmi(connector);
++	struct rk3066_hdmi *hdmi = bridge_to_rk3066_hdmi(bridge);
+ 
+ 	return (hdmi_readb(hdmi, HDMI_HPG_MENS_STA) & HDMI_HPG_IN_STATUS_HIGH) ?
+ 		connector_status_connected : connector_status_disconnected;
+ }
+ 
+-static int rk3066_hdmi_connector_get_modes(struct drm_connector *connector)
++static const struct drm_edid *
++rk3066_hdmi_bridge_edid_read(struct drm_bridge *bridge, struct drm_connector *connector)
+ {
+-	struct rk3066_hdmi *hdmi = connector_to_rk3066_hdmi(connector);
++	struct rk3066_hdmi *hdmi = bridge_to_rk3066_hdmi(bridge);
+ 	const struct drm_edid *drm_edid;
+-	int ret = 0;
+-
+-	if (!hdmi->ddc)
+-		return 0;
+ 
+-	drm_edid = drm_edid_read_ddc(connector, hdmi->ddc);
+-	drm_edid_connector_update(connector, drm_edid);
+-	ret = drm_edid_connector_add_modes(connector);
+-	drm_edid_free(drm_edid);
++	drm_edid = drm_edid_read_ddc(connector, bridge->ddc);
++	if (!drm_edid)
++		dev_dbg(hdmi->dev, "failed to get edid\n");
+ 
+-	return ret;
++	return drm_edid;
+ }
+ 
+ static enum drm_mode_status
+-rk3066_hdmi_connector_mode_valid(struct drm_connector *connector,
+-				 const struct drm_display_mode *mode)
++rk3066_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
++			      const struct drm_display_info *info,
++			      const struct drm_display_mode *mode)
+ {
+ 	u32 vic = drm_match_cea_mode(mode);
+ 
+@@ -492,82 +484,19 @@ rk3066_hdmi_connector_mode_valid(struct drm_connector *connector,
+ 		return MODE_BAD;
+ }
+ 
+-static struct drm_encoder *
+-rk3066_hdmi_connector_best_encoder(struct drm_connector *connector)
+-{
+-	struct rk3066_hdmi *hdmi = connector_to_rk3066_hdmi(connector);
+-
+-	return &hdmi->encoder.encoder;
+-}
+-
+-static int
+-rk3066_hdmi_probe_single_connector_modes(struct drm_connector *connector,
+-					 uint32_t maxX, uint32_t maxY)
+-{
+-	if (maxX > 1920)
+-		maxX = 1920;
+-	if (maxY > 1080)
+-		maxY = 1080;
+-
+-	return drm_helper_probe_single_connector_modes(connector, maxX, maxY);
+-}
+-
+-static void rk3066_hdmi_connector_destroy(struct drm_connector *connector)
+-{
+-	drm_connector_unregister(connector);
+-	drm_connector_cleanup(connector);
+-}
+-
+-static const struct drm_connector_funcs rk3066_hdmi_connector_funcs = {
+-	.fill_modes = rk3066_hdmi_probe_single_connector_modes,
+-	.detect = rk3066_hdmi_connector_detect,
+-	.destroy = rk3066_hdmi_connector_destroy,
+-	.reset = drm_atomic_helper_connector_reset,
+-	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+-	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
++static const struct drm_bridge_funcs rk3066_hdmi_bridge_funcs = {
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_reset = drm_atomic_helper_bridge_reset,
++	.atomic_enable = rk3066_hdmi_bridge_atomic_enable,
++	.atomic_disable = rk3066_hdmi_bridge_atomic_disable,
++	.detect = rk3066_hdmi_bridge_detect,
++	.edid_read = rk3066_hdmi_bridge_edid_read,
++	.hdmi_clear_infoframe = rk3066_hdmi_bridge_clear_infoframe,
++	.hdmi_write_infoframe = rk3066_hdmi_bridge_write_infoframe,
++	.mode_valid = rk3066_hdmi_bridge_mode_valid,
+ };
+ 
+-static const
+-struct drm_connector_helper_funcs rk3066_hdmi_connector_helper_funcs = {
+-	.get_modes = rk3066_hdmi_connector_get_modes,
+-	.mode_valid = rk3066_hdmi_connector_mode_valid,
+-	.best_encoder = rk3066_hdmi_connector_best_encoder,
+-};
+-
+-static int
+-rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
+-{
+-	struct drm_encoder *encoder = &hdmi->encoder.encoder;
+-	struct device *dev = hdmi->dev;
+-
+-	encoder->possible_crtcs =
+-		drm_of_find_possible_crtcs(drm, dev->of_node);
+-
+-	/*
+-	 * If we failed to find the CRTC(s) which this encoder is
+-	 * supposed to be connected to, it's because the CRTC has
+-	 * not been registered yet.  Defer probing, and hope that
+-	 * the required CRTC is added later.
+-	 */
+-	if (encoder->possible_crtcs == 0)
+-		return -EPROBE_DEFER;
+-
+-	drm_encoder_helper_add(encoder, &rk3066_hdmi_encoder_helper_funcs);
+-	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
+-
+-	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
+-
+-	drm_connector_helper_add(&hdmi->connector,
+-				 &rk3066_hdmi_connector_helper_funcs);
+-	drm_connector_init_with_ddc(drm, &hdmi->connector,
+-				    &rk3066_hdmi_connector_funcs,
+-				    DRM_MODE_CONNECTOR_HDMIA,
+-				    hdmi->ddc);
+-
+-	drm_connector_attach_encoder(&hdmi->connector, encoder);
+-
+-	return 0;
+-}
+ 
+ static irqreturn_t rk3066_hdmi_hardirq(int irq, void *dev_id)
+ {
+@@ -597,7 +526,7 @@ static irqreturn_t rk3066_hdmi_irq(int irq, void *dev_id)
+ {
+ 	struct rk3066_hdmi *hdmi = dev_id;
+ 
+-	drm_helper_hpd_irq_event(hdmi->connector.dev);
++	drm_helper_hpd_irq_event(hdmi->connector->dev);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -720,7 +649,7 @@ static struct i2c_adapter *rk3066_hdmi_i2c_adapter(struct rk3066_hdmi *hdmi)
+ 	strscpy(adap->name, "RK3066 HDMI", sizeof(adap->name));
+ 	i2c_set_adapdata(adap, hdmi);
+ 
+-	ret = i2c_add_adapter(adap);
++	ret = devm_i2c_add_adapter(hdmi->dev, adap);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(hdmi->dev, "cannot add %s I2C adapter\n",
+ 			      adap->name);
+@@ -735,6 +664,66 @@ static struct i2c_adapter *rk3066_hdmi_i2c_adapter(struct rk3066_hdmi *hdmi)
+ 	return adap;
+ }
+ 
++static int
++rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
++{
++	struct drm_encoder *encoder = &hdmi->encoder.encoder;
++	struct device *dev = hdmi->dev;
++	int ret;
++
++	encoder->possible_crtcs =
++		drm_of_find_possible_crtcs(drm, dev->of_node);
++
++	/*
++	 * If we failed to find the CRTC(s) which this encoder is
++	 * supposed to be connected to, it's because the CRTC has
++	 * not been registered yet.  Defer probing, and hope that
++	 * the required CRTC is added later.
++	 */
++	if (encoder->possible_crtcs == 0)
++		return -EPROBE_DEFER;
++
++	drm_encoder_helper_add(encoder, &rk3066_hdmi_encoder_helper_funcs);
++	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
++
++	hdmi->bridge.driver_private = hdmi;
++	hdmi->bridge.funcs = &rk3066_hdmi_bridge_funcs;
++	hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT |
++			   DRM_BRIDGE_OP_EDID |
++			   DRM_BRIDGE_OP_HDMI |
++			   DRM_BRIDGE_OP_HPD;
++	hdmi->bridge.of_node = hdmi->dev->of_node;
++	hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
++	hdmi->bridge.vendor = "Rockchip";
++	hdmi->bridge.product = "RK3066 HDMI";
++
++	hdmi->bridge.ddc = rk3066_hdmi_i2c_adapter(hdmi);
++	if (IS_ERR(hdmi->bridge.ddc))
++		return PTR_ERR(hdmi->bridge.ddc);
++
++	if (IS_ERR(hdmi->bridge.ddc))
++		return PTR_ERR(hdmi->bridge.ddc);
++
++	ret = devm_drm_bridge_add(dev, &hdmi->bridge);
++	if (ret)
++		return ret;
++
++	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
++	if (ret)
++		return ret;
++
++	hdmi->connector = drm_bridge_connector_init(drm, encoder);
++	if (IS_ERR(hdmi->connector)) {
++		ret = PTR_ERR(hdmi->connector);
++		dev_err(hdmi->dev, "failed to init bridge connector: %d\n", ret);
++		return ret;
++	}
++
++	drm_connector_attach_encoder(hdmi->connector, encoder);
++
++	return 0;
++}
++
+ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
+ 			    void *data)
+ {
+@@ -781,14 +770,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
+ 	/* internal hclk = hdmi_hclk / 25 */
+ 	hdmi_writeb(hdmi, HDMI_INTERNAL_CLK_DIVIDER, 25);
+ 
+-	hdmi->ddc = rk3066_hdmi_i2c_adapter(hdmi);
+-	if (IS_ERR(hdmi->ddc)) {
+-		ret = PTR_ERR(hdmi->ddc);
+-		hdmi->ddc = NULL;
+-		goto err_disable_hclk;
+-	}
+-
+-	rk3066_hdmi_set_power_mode(hdmi, HDMI_SYS_POWER_MODE_B);
++		rk3066_hdmi_set_power_mode(hdmi, HDMI_SYS_POWER_MODE_B);
+ 	usleep_range(999, 1000);
+ 	hdmi_writeb(hdmi, HDMI_INTR_MASK1, HDMI_INTR_HOTPLUG);
+ 	hdmi_writeb(hdmi, HDMI_INTR_MASK2, 0);
+@@ -798,7 +780,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
+ 
+ 	ret = rk3066_hdmi_register(drm, hdmi);
+ 	if (ret)
+-		goto err_disable_i2c;
++		goto err_disable_hclk;
+ 
+ 	dev_set_drvdata(dev, hdmi);
+ 
+@@ -813,10 +795,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
+ 	return 0;
+ 
+ err_cleanup_hdmi:
+-	hdmi->connector.funcs->destroy(&hdmi->connector);
+ 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+-err_disable_i2c:
+-	i2c_put_adapter(hdmi->ddc);
+ err_disable_hclk:
+ 	clk_disable_unprepare(hdmi->hclk);
+ 
+@@ -828,10 +807,8 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
+ {
+ 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
+ 
+-	hdmi->connector.funcs->destroy(&hdmi->connector);
+ 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+ 
+-	i2c_put_adapter(hdmi->ddc);
+ 	clk_disable_unprepare(hdmi->hclk);
+ }
+ 
+-- 
+2.43.0
 
 
