@@ -1,86 +1,57 @@
-Return-Path: <linux-kernel+bounces-622626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8DEA9E9F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AAFA9E9EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DB13BE834
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:47:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EF0179853
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAB5203716;
-	Mon, 28 Apr 2025 07:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RBbJO0bL"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E1920CCDF;
+	Mon, 28 Apr 2025 07:46:22 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2D81FFC5B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 07:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD5D1A7045;
+	Mon, 28 Apr 2025 07:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745826357; cv=none; b=WocIcwZD3DYuyAC2yHs4DR1nFhTZ6GUoJDG+spC/7GK1AwnuA0BKstp3jH98OaPakSjSuryA630NaqxS5Xji8PLoGy9Lfd4uY2y7WJlNfKJ4TISMuF1lJ3RRZabjtT5UQo6hoxlmRSyh4KteTVQryPleSkB25o+YEwMq/N1R/QY=
+	t=1745826381; cv=none; b=haeqx8/tmm8W1jzWtf5ji9N8Vza9x1hKuCyjo5Yi0gpCiq+1N9KKoZibECgQOpLiXnmrmsg6SLNWTd6zo/dDcYts9DGVcXeyNiky62vbfkp7eQHobqLFPAEuzdzOGnb+dC0bqIrnXBOx8PRUbgZDYZI/yp7dDQmdFQSWiZtOCRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745826357; c=relaxed/simple;
-	bh=A9JZF2x0XBPNe0xhvFBjMVJ04N3DDFd23ten+mIE6ZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c+dKQ0fYkvBl81Sc6pw4HGitpMLUAsIOo4l/excr8W60f9CiQesRD+DOO+Ct2A0pRtjF0OgPPrIG7OAvnIW3jWtc61H4Nh+S6WlAUIVxS2pX9eHFfmkqgXH8NIh01/RefONDRqZsDc25G+TNZUwBnf8DJAd9vbNJY/F/9giV1Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RBbJO0bL; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so29197665e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 00:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1745826353; x=1746431153; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cn3fzPLnrYDZ8b8q63yC0G6po3q9MyCtc16aUo0tzk0=;
-        b=RBbJO0bLPqiovucsfsoHIgzN6gC9ETDcQaWadaot+VSdpBc+8HV/C2iF2veZ6jBFJc
-         zVqnmoqOktwmiAVC0xMOf4cELe42E8+mbkW5oEma4l9K5lh8ARpg3Kc3LA5Gee1X81vp
-         OpW/15eb/MnCS9wvFUe5XSkS2/XZ4TuC8fq7JhIVCl/jDdugipQBH93Iveb5Tl9+QH2w
-         HvsNo/g+4MeBmvgQbxMywLD/S4eHqkvDPnluoREpumK8En4Ar71h9dKp1qyaUHosdcDK
-         m3iHIVlzrZZzalrhYlWHnwSsTuViIazrmKou4QsCD5hZKFAAgcXORlZtXuA8qfM+TNA+
-         E/CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745826353; x=1746431153;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cn3fzPLnrYDZ8b8q63yC0G6po3q9MyCtc16aUo0tzk0=;
-        b=YMoVl0WWXqc+X91vra+tgOVU1kiKd/zMydxJAzYgYDtSz+ZHZK12BcyraErMHclkK/
-         zxGmIwiln1ICbJCV4cUJkmuw9Uyz4VvzYQC7IIF+hK/NNcTVEfZ2OZFwNUB5gg+3by8f
-         f87dBvyBTZABUUOpM9UQIu7XiBbMRMtLBG/9nlkQzZCCHl9ugT5FneWPbPrmzMPY8kcy
-         6gw7POUGZ0O8PFkZbx+L41qkmrSEI1rBuH3IP5PDkrd/M9rbPmJXlgT0IPjoxclNrC9D
-         XnENOfWgBNKgzAOalBRR1vfPgTqJ73r7TBgi4rXUVWpCh4q5G2IKxnVaBdZhjYwbSk4D
-         FI4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOl1ZudcJu9PEVdXtxjJP1B3SO9RiaMvssHvEjT+ZiHNtv6MAApdxQunHr7BVgqNjX6JK1tVfx/TpckSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8S4qBCnUSCyPHJ+f6GEF3kmHOK61bYKsJOENy88Ms44cxRKqq
-	7mwUE/Yx09EPIoWwKqWcpnKGzKsqAqQMgsgBeeQgY4ewUqQa2HPQb93Ftv79flc=
-X-Gm-Gg: ASbGncurgdpqax5yJwkswVAYCtsenEE8qmRzDgXvLT3YDa6xi1erDIard54Phi16ID+
-	3sZv3pPlAmJ1o/klVMY1mkziO4toKb29Mv/tKOtPLRLwB2y2I7gPiB9NzFQ/BmkEJGL866+Y6kV
-	eMxVw321Mj7SmkFECs8GQNZrE/DVcs6geg4fNI5KdstPXrrgNtGTt21F8ornOtjlolN8uTxxW/s
-	TdXTZ7DX9R9P/ZceMtVItMsPfhIrPiQ4up92wH7M/lPRjPYAezf1zkIuwhOJCMTCskPvpLm69nI
-	D7M06Der5k2LjDA1DHJJDYoeo/J2kumP1LpQHnC4JA0CNBgtkmA=
-X-Google-Smtp-Source: AGHT+IFXl+ZQU0ypFUQJa+vOS+GCJuZ5zXtYcKI1hR5mhmtP9vTQGxLja6fjO+0lItJcB6b/6fvuwg==
-X-Received: by 2002:a7b:c305:0:b0:440:67d4:ec70 with SMTP id 5b1f17b1804b1-4409c48b0e9mr101655345e9.8.1745826353516;
-        Mon, 28 Apr 2025 00:45:53 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:96f1:a768:3c75:f123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a52f8909sm120179695e9.2.2025.04.28.00.45.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 00:45:53 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Raag Jadav <raag.jadav@intel.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio: immutable tag for the driver core for v6.16-rc1
-Date: Mon, 28 Apr 2025 09:45:50 +0200
-Message-ID: <20250428074550.16190-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1745826381; c=relaxed/simple;
+	bh=8DTAecAt9r8ellcs7EaFiom0OPFEFDsj/CyPT0H59Jw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CWm7ppZ9XvYg1UrTyTsfRhQntnfz6d8aj1ysX087/JiYHnJ6xn9vuxaVm0XwPgm5Z4kNEczA1dBxv9F+yTEM/CqB/vXRNjWwpIPvlDIHVRZr5cq2RSb35cXNjkY9IRCl5MSxAF2YfunyMSWWKm2QeyUdsL/TmBdt5eiDIHpvLz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53S4USKV031481;
+	Mon, 28 Apr 2025 07:45:56 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 468pf92kcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 28 Apr 2025 07:45:55 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 28 Apr 2025 00:45:54 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 28 Apr 2025 00:45:51 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <jianqi.ren.cn@windriver.com>, <jhs@mojatatu.com>,
+        <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>, <davem@davemloft.net>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <michal.swiatkowski@linux.intel.com>, <zhe.he@windriver.com>
+Subject: [PATCH 6.1.y v2] net/sched: act_mirred: don't override retval if we already lost the skb
+Date: Mon, 28 Apr 2025 15:45:50 +0800
+Message-ID: <20250428074550.4155739-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,41 +59,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: VFwVoa9xvISlTfXPcQrXoyM0FLbjBtAh
+X-Authority-Analysis: v=2.4 cv=EavIQOmC c=1 sm=1 tr=0 ts=680f3233 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8 a=A7XncKjpAAAA:8 a=J1Y8HTJGAAAA:8 a=t7CeM3EgAAAA:8
+ a=46DbhiKqDBczhwNKROYA:9 a=R9rPLQDAdC6-Ub70kJmZ:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDA2MyBTYWx0ZWRfX+ri3JQ2l4NZh hpQRsn7oGEnlYHXnxBebjYZ4rLaFklzJOoVuqhpZ9RcPS2mZlvy82kkEZI6ouLI7rqevKy4YrXe WwMwDAA67hSu+XyrkWU8htqB5thMGCr8odepqczsUtdXQsEIeorGwTP/uub9woTOUx0H5fmtC3Y
+ BKYJHM1Vpn2LLlicocwcAefdPio39YS+ZlLiUpzHE+yIhhdWrxe/2HhNAJHcNhjyQszsn6NbJzT /YBDIa9PxKX02bjQMqZTua3f9qSLstSZCPfyh07cZRgl+M+ER0r9oqaXCHN4Ljn8JsF7DDAIpzu ibet87itcqppLoqWl+4UvdDQtcLFgAvCrCKU9f9t4gsaQS+E+TULUu6x7019Syxtj+2rANPUe9C
+ qv2Ze+NK/axRY9soNcvV0MzrZTJP6DKvpC5dZpNmqfAS1S40QUwu4YD2+O9PKzGyR7qtqJ/w
+X-Proofpoint-ORIG-GUID: VFwVoa9xvISlTfXPcQrXoyM0FLbjBtAh
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 bulkscore=0
+ adultscore=0 suspectscore=0 phishscore=0 mlxscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
+ definitions=main-2504280063
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Jakub Kicinski <kuba@kernel.org>
 
-Here is the tag containing the driver core dependencies pulled into the
-GPIO tree to enable picking up the final commit from Andy's series[0].
+[ Upstream commit 166c2c8a6a4dc2e4ceba9e10cfe81c3e469e3210 ]
 
-Bart
+If we're redirecting the skb, and haven't called tcf_mirred_forward(),
+yet, we need to tell the core to drop the skb by setting the retcode
+to SHOT. If we have called tcf_mirred_forward(), however, the skb
+is out of our hands and returning SHOT will lead to UaF.
 
-[0] https://lore.kernel.org/all/20250220162238.2738038-4-andriy.shevchenko@linux.intel.com/
+Move the retval override to the error path which actually need it.
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Fixes: e5cf1baf92cb ("act_mirred: use TC_ACT_REINSERT when possible")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[Minor conflict resolved due to code context change.]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+v2: Fix the following issue
+net/sched/act_mirred.c:265:6: error: variable 'is_redirect' is used
+uninitialized whenever 'if' condition is true found by the following
+tuxmake(https://lore.kernel.org/stable/CA+G9fYu+FEZ-3ye30Hk2sk1+LFsw7iO5AHueUa9H1Ub=JO-k2g@mail.gmail.com/)
+tuxmake --runtime podman --target-arch arm --toolchain clang-20 --kconfig allmodconfig LLVM=1 LLVM_IAS=1
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+Verified the build test
 
-are available in the Git repository at:
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+---
+ net/sched/act_mirred.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpiod-devm-is-action-added-for-v6.16-rc1
+diff --git a/net/sched/act_mirred.c b/net/sched/act_mirred.c
+index 36395e5db3b4..bbc34987bd09 100644
+--- a/net/sched/act_mirred.c
++++ b/net/sched/act_mirred.c
+@@ -255,31 +255,31 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
+ 
+ 	m_mac_header_xmit = READ_ONCE(m->tcfm_mac_header_xmit);
+ 	m_eaction = READ_ONCE(m->tcfm_eaction);
++	is_redirect = tcf_mirred_is_act_redirect(m_eaction);
+ 	retval = READ_ONCE(m->tcf_action);
+ 	dev = rcu_dereference_bh(m->tcfm_dev);
+ 	if (unlikely(!dev)) {
+ 		pr_notice_once("tc mirred: target device is gone\n");
+-		goto out;
++		goto err_cant_do;
+ 	}
+ 
+ 	if (unlikely(!(dev->flags & IFF_UP)) || !netif_carrier_ok(dev)) {
+ 		net_notice_ratelimited("tc mirred to Houston: device %s is down\n",
+ 				       dev->name);
+-		goto out;
++		goto err_cant_do;
+ 	}
+ 
+ 	/* we could easily avoid the clone only if called by ingress and clsact;
+ 	 * since we can't easily detect the clsact caller, skip clone only for
+ 	 * ingress - that covers the TC S/W datapath.
+ 	 */
+-	is_redirect = tcf_mirred_is_act_redirect(m_eaction);
+ 	at_ingress = skb_at_tc_ingress(skb);
+ 	use_reinsert = at_ingress && is_redirect &&
+ 		       tcf_mirred_can_reinsert(retval);
+ 	if (!use_reinsert) {
+ 		skb2 = skb_clone(skb, GFP_ATOMIC);
+ 		if (!skb2)
+-			goto out;
++			goto err_cant_do;
+ 	}
+ 
+ 	want_ingress = tcf_mirred_act_wants_ingress(m_eaction);
+@@ -321,12 +321,16 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
+ 	}
+ 
+ 	err = tcf_mirred_forward(want_ingress, skb2);
+-	if (err) {
+-out:
++	if (err)
+ 		tcf_action_inc_overlimit_qstats(&m->common);
+-		if (tcf_mirred_is_act_redirect(m_eaction))
+-			retval = TC_ACT_SHOT;
+-	}
++	__this_cpu_dec(mirred_nest_level);
++
++	return retval;
++
++err_cant_do:
++	if (is_redirect)
++		retval = TC_ACT_SHOT;
++	tcf_action_inc_overlimit_qstats(&m->common);
+ 	__this_cpu_dec(mirred_nest_level);
+ 
+ 	return retval;
+-- 
+2.34.1
 
-for you to fetch changes up to e383bb8f958444620d96386811aacf6a49757996:
-
-  devres: Add devm_is_action_added() helper (2025-04-28 09:30:41 +0200)
-
-----------------------------------------------------------------
-Immutable tag for the driver core tree to pull from
-
-devres: Move devm_*_action*() APIs to devres.h
-devres: Add devm_is_action_added() helper
-
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      devres: Move devm_*_action*() APIs to devres.h
-      devres: Add devm_is_action_added() helper
-
- drivers/base/devres.c         | 11 +++++++++++
- include/linux/device.h        | 38 --------------------------------------
- include/linux/device/devres.h | 41 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+), 38 deletions(-)
 
