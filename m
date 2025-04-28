@@ -1,341 +1,334 @@
-Return-Path: <linux-kernel+bounces-623900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-623896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF41BA9FC44
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 370A3A9FC3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 23:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DCF81A82546
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B3211A816CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 21:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313BD2144D4;
-	Mon, 28 Apr 2025 21:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15928211A3F;
+	Mon, 28 Apr 2025 21:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LDfRaPk3"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vao2GL0e"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A32139B1
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 21:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E1220FA9E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 21:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745876066; cv=none; b=hmjdRINzqlzknArrb7pVQTfc9AQGctqRRLyFM1WpNAawqyEY7jwLaxS3SGhyTFZqE+HmHBBYXdV43p1bralDYW10+qirJ0N1FD/ZkC9MMrYyPe85jBr6dODkwRUonao9CdtuuUpEWXxWQNxAXRzcHGhoITMYz7iP9WZSE9jBtw0=
+	t=1745876060; cv=none; b=sldzinstGPNHTJp+AEyfMaAT1ZqYox+4ugXegUk7TawDCkoOvav//tZbuAElPCk4nR4OZbZYCqUFPb9WZ0xmojpzAeAV4vdStoU5Kz85AWcd7ZtMVJJsltvUtvMMjx97VFozi1hcFNDlbnzX7VSsWLShVo1dMC5enBLiOVZfXl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745876066; c=relaxed/simple;
-	bh=9lFs23nhfZvzu0Mj5gCbGsdPtLWWA75vQnigtb7zG2M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=POAXoKyG1ma51YlOpKJqsGRclw3s/lj+Zo/PlVh/lD8zHfbZ++pVtFpRvSI4fnrjn4Vm6Lj5NnBeIMyEeEeUbGvam1PJMqWFS1X97h1lp47K18uPuMBV5taHK33Ux5ePuFkqB9S+cZ3P4BjnCjNFGq+NJ//+9PRmG2mRqFJYH1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LDfRaPk3; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1745876060; c=relaxed/simple;
+	bh=NhoJqartshSidWBnqA3biJF0Iyls9l8gGjN8DFMEjgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IX0g5Kt69THBzw+o0S3wtuXPGwa91E/fYnHRzjwq6OLjfhjJM7/VqNh/rAwLqaa0ABsmbQhfUD6wOqxyrzgkB7pxFD5Gz7EKNj8uHVq1JjMAmNt4npxZgkxmTD8pxWC1gPDdHChm9T7ARe+mlJmS3BOvrE7qgfb22vU9f9lm6J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vao2GL0e; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af5156fbe79so6016154a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:34:24 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2264c9d0295so3975ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 14:34:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745876064; x=1746480864; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dzxXgRFN2UGn9FhDNQufHxyUI8OddqfRc8hra+lL44Y=;
-        b=LDfRaPk3iKTtlh/eEAsUOK8KqGwMISjiGPm6iRnX2dL397SEk0ZPJ74Dhcp7m2R+OV
-         1bzVgb3saTofowqdXcl1yBtfgidkomd7JbjrnuwlxrbPXLYTCgX6GAMkKVC3qv63hvx9
-         yBWhFuWbqWcJdf3oT4L8SFrk2Ub3AYfkAWA92mWcyvxl+1yx+HxJNojJ6yUTI+3s5teg
-         ixyWlglIYYeIi0FPrXm2NgoMkWHGvTZGWNb/mL1KM+csIvR4KPVIP1vi+Vaq0dkRk3XD
-         MQEyO2yZZJ9WZbEUceFBMZd/2VP82c65oxeNV2sgPhZUA6/9/+9F89mCUEpbG8TJLf2S
-         1qdA==
+        d=google.com; s=20230601; t=1745876057; x=1746480857; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZsfJi5GV4gNJPXGtyMAi/qAe8sWnYVRwN1YewUo6rSc=;
+        b=Vao2GL0eAqh6o3IilW9VNv7k7EWrikBA9VfzG7aQXUdpo/91eG6DpGBpx6rb6LlPIs
+         321UHrOddkkBMLbpqF3SnoGOVQEhSGsOya9kZD8YXZ/QW4RrX0ltwLregoKz4ToNezFZ
+         1u/xGqNqYtm+P0DCh64pnQyFJCRk+4VCl5YVnW9oYf9zXBNsQZ+OHG9dYF5LwJL+WUvm
+         4qkwCK14ngxJUMIE0UVMcpTXTmpXcTpO5Ljij0arUMepkGtyTHrvP7ciGnhU/x76Vgj1
+         IIlj34JCUn7kI0BPU45JJVwKFQKYs+GUkOpBtWMe58bBmkYZnw5MahCb9r2rmuTcNy9T
+         jAuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745876064; x=1746480864;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dzxXgRFN2UGn9FhDNQufHxyUI8OddqfRc8hra+lL44Y=;
-        b=caOB3cOE1uwHamBlxVNAMIaOeSOkyyVNnkgtbsgMQo+zLCiEsR9aKv9xTkAB0NH2S7
-         8r4OpBYRKHEHgvE7eHY0fdXeTwudkRlQcIKt8c+lmuVmIw/KbxPVAtBBsBs+0DwMx7qU
-         UEwNjFm/Jw3UvwbD31X/Nb9Gj4GwXBJKDRENJM4q23PyJkqwn8rw7+tjxlTQuN50eZe9
-         P2KAv1Rb6KsUsPRRFf8mSihTqQZ+pz2iCbiV81lHRDgL02PjdLwjOoLKcmXUXsOI6KRz
-         IUtWa/6lym7SY8ngIK4gyNtRMhomgcnb4pVb2Ths1HPznnW/LS9b4nu1tlXt3ehQrMTU
-         dbTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYR1kl4VAjzNAjTy7Nr4Ns+sLazymlbaO1FpY0My2uJ6TGzRMOY01HaQinuJQYQJGiA4CFV6oqRfpXNok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT+XgAU+7Bpm7ldDAoRot8ExiUPO6SFuYcc24idp7KAis9QxGg
-	qQ78ncaHzMmB1bMj38td87s4WWKeDBe7OA1zvqkI7D3GeTrefLbQc37/xDD2F4OXJtmmgjvloyH
-	TuIl+jQ==
-X-Google-Smtp-Source: AGHT+IHQ+3fvZJZBirX+hKlkf4n2BDlXYbytD3KHk+S5P5S4UjHXnDX8BeCp6mikTekER78DQoH9ifZMgv81
-X-Received: from pgar18.prod.google.com ([2002:a05:6a02:2e92:b0:af9:775:2e8b])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2d27:b0:1f5:60ce:6cc6
- with SMTP id adf61e73a8af0-2046a58d8c8mr13745484637.21.1745876063759; Mon, 28
- Apr 2025 14:34:23 -0700 (PDT)
-Date: Mon, 28 Apr 2025 14:34:05 -0700
-In-Reply-To: <20250428213409.1417584-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1745876057; x=1746480857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZsfJi5GV4gNJPXGtyMAi/qAe8sWnYVRwN1YewUo6rSc=;
+        b=KkFd4CfOMSsUxZw7ra7DxYJtIPb7KKj7/ni/LlJUrOgSorrChQ4FZHRr2hlSkfTa2S
+         rt4g6vW/hPMPRA+rKEffeVORLmvb0GnJ7IVjFWuug1iBUygPiWlsc4auN1AvW/SW5oWJ
+         RiY4P3r/Eyu74rHsUijoHbj3vMOnGooEtV+YvTgjGtYMchcg9kj6jjV48muhm2oUsFz0
+         /smBUfR5C0RsfphSINZABaS9WxqUUiTiMU7+Xyk5JN13cYQJzkb5z6rgtw1KPAF6h9OL
+         Kf9Ghqav1taJ/y93L6uzfs5lvv82bjpfSJ9zd03ovWr/2JFndXS22netDH4h+vF9LEuM
+         zRag==
+X-Forwarded-Encrypted: i=1; AJvYcCV1YmhgK2W/vDk0/Lwy0+KYYt9mU+swlHmZTQCLDfeQfcn7En+E7ssyB/I25X0vgcisgCDmDoSoPwnRFp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsGlxiG3rUNyuHxznvdQeYdrULlVX+Cm9j5wV3I1jMD5YVQnPw
+	nEjSgVLtBk0Sifo93RBnD1fHN8e3wEb+bmAtxFiSFV6QtgIQsgQQp1jL9x3pcw==
+X-Gm-Gg: ASbGnct01CpPlJi8UJpbY3w2SArKcoiokGAFBSJkobXXP30fQmENNSoAAqRdUks+DeV
+	PoGQXeZrmsEE8lHY/SoM6TEh1OiNpjmhPG1jfxaIheFtyWjDDTRuF+7ZS5dz/sXZMB0UTRwz6vd
+	0b7VkUPf7fffsvfMwO8TWN919qZn5iQ/Kq18xOoTHKZams22Hbc9pClFsyJkbFzuGzVZQA7NQK3
+	3VU4yf4xGxjLUSWQu8VCToWxcx8Tn1cAbcAw+4EmhGMAdjwKED5WLvu1wEZXmCgjmnW90Q7McI3
+	YkxyJ8D5uO8IrgJDubEBzoOwvtjFMoN5ugPubBeZBVnsN4AU+pPImrY41bj1kc3vJS5yHaiG
+X-Google-Smtp-Source: AGHT+IE+KaoUm6FAcva/asMGpdAdvSvxi6I/nzVOjZdBDcnh+kzvq6u61j/01qvHClHVKIVW/FIR3A==
+X-Received: by 2002:a17:903:124d:b0:223:37ec:63be with SMTP id d9443c01a7336-22de6c49626mr880365ad.4.1745876056773;
+        Mon, 28 Apr 2025 14:34:16 -0700 (PDT)
+Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e75fdsm88595955ad.120.2025.04.28.14.34.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 14:34:16 -0700 (PDT)
+Date: Mon, 28 Apr 2025 21:34:05 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+Subject: Re: [PATCH v2 10/22] iommufd/viommmu: Add IOMMUFD_CMD_VCMDQ_ALLOC
+ ioctl
+Message-ID: <aA_0TV0RkVOHk7Qj@google.com>
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250428213409.1417584-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
-Message-ID: <20250428213409.1417584-7-irogers@google.com>
-Subject: [PATCH v3 6/9] perf build-id: Ensure struct build_id is empty before use
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, James Clark <james.clark@linaro.org>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, 
-	"=?UTF-8?q?Krzysztof=20=C5=81opatowski?=" <krzysztof.m.lopatowski@gmail.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Zixian Cai <fzczx123@gmail.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Martin Liska <martin.liska@hey.com>, 
-	"=?UTF-8?q?Martin=20Li=C5=A1ka?=" <m.liska@foxlink.cz>, Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <094992b874190ffdcf6012104b419c8649b5e4b4.1745646960.git.nicolinc@nvidia.com>
 
-If a build ID is read then not all code paths may ensure it is empty
-before use. Initialize the build_id to be zero-ed unless there is
-clear initialization such as a call to build_id__init.
+On Fri, Apr 25, 2025 at 10:58:05PM -0700, Nicolin Chen wrote:
+> Introduce a new IOMMUFD_CMD_VCMDQ_ALLOC ioctl for user space to allocate
+> a vCMDQ for a vIOMMU object. Simply increase the refcount of the vIOMMU.
+> 
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h |  2 +
+>  include/uapi/linux/iommufd.h            | 41 +++++++++++
+>  drivers/iommu/iommufd/main.c            |  6 ++
+>  drivers/iommu/iommufd/viommu.c          | 94 +++++++++++++++++++++++++
+>  4 files changed, 143 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index 79160b039bc7..b974c207ae8a 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -611,6 +611,8 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>  void iommufd_viommu_destroy(struct iommufd_object *obj);
+>  int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>  void iommufd_vdevice_destroy(struct iommufd_object *obj);
+> +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd);
+> +void iommufd_vcmdq_destroy(struct iommufd_object *obj);
+>  
+>  #ifdef CONFIG_IOMMUFD_TEST
+>  int iommufd_test(struct iommufd_ucmd *ucmd);
+> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+> index cc90299a08d9..06a763fda47f 100644
+> --- a/include/uapi/linux/iommufd.h
+> +++ b/include/uapi/linux/iommufd.h
+> @@ -56,6 +56,7 @@ enum {
+>  	IOMMUFD_CMD_VDEVICE_ALLOC = 0x91,
+>  	IOMMUFD_CMD_IOAS_CHANGE_PROCESS = 0x92,
+>  	IOMMUFD_CMD_VEVENTQ_ALLOC = 0x93,
+> +	IOMMUFD_CMD_VCMDQ_ALLOC = 0x94,
+>  };
+>  
+>  /**
+> @@ -1147,4 +1148,44 @@ struct iommu_veventq_alloc {
+>  	__u32 __reserved;
+>  };
+>  #define IOMMU_VEVENTQ_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VEVENTQ_ALLOC)
+> +
+> +/**
+> + * enum iommu_vcmdq_type - Virtual Command Queue Type
+> + * @IOMMU_VCMDQ_TYPE_DEFAULT: Reserved for future use
+> + */
+> +enum iommu_vcmdq_type {
+> +	IOMMU_VCMDQ_TYPE_DEFAULT = 0,
+> +};
+> +
+> +/**
+> + * struct iommu_vcmdq_alloc - ioctl(IOMMU_VCMDQ_ALLOC)
+> + * @size: sizeof(struct iommu_vcmdq_alloc)
+> + * @flags: Must be 0
+> + * @viommu_id: Virtual IOMMU ID to associate the virtual command queue with
+> + * @type: One of enum iommu_vcmdq_type
+> + * @index: The logical index to the virtual command queue per virtual IOMMU, for
+> + *         a multi-queue model
+> + * @out_vcmdq_id: The ID of the new virtual command queue
+> + * @addr: Base address of the queue memory in the guest physical address space
+> + * @length: Length of the queue memory in the guest physical address space
+> + *
+> + * Allocate a virtual command queue object for a vIOMMU-specific HW-accelerated
+> + * feature that can access a guest queue memory described by @addr and @length.
+> + * It's suggested for VMM to back the queue memory using a single huge page with
+> + * a proper alignment for its contiguity in the host physical address space. The
+> + * call will fail, if the queue memory is not contiguous in the physical address
+> + * space. Upon success, its underlying physical pages will be pinned to prevent
+> + * VMM from unmapping them in the IOAS, until the virtual CMDQ gets destroyed.
+> + */
+> +struct iommu_vcmdq_alloc {
+> +	__u32 size;
+> +	__u32 flags;
+> +	__u32 viommu_id;
+> +	__u32 type;
+> +	__u32 index;
+> +	__u32 out_vcmdq_id;
+> +	__aligned_u64 addr;
+> +	__aligned_u64 length;
+> +};
+> +#define IOMMU_VCMDQ_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VCMDQ_ALLOC)
+>  #endif
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index 2b9ee9b4a424..ac51d5cfaa61 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -303,6 +303,7 @@ union ucmd_buffer {
+>  	struct iommu_ioas_map map;
+>  	struct iommu_ioas_unmap unmap;
+>  	struct iommu_option option;
+> +	struct iommu_vcmdq_alloc vcmdq;
+>  	struct iommu_vdevice_alloc vdev;
+>  	struct iommu_veventq_alloc veventq;
+>  	struct iommu_vfio_ioas vfio_ioas;
+> @@ -358,6 +359,8 @@ static const struct iommufd_ioctl_op iommufd_ioctl_ops[] = {
+>  	IOCTL_OP(IOMMU_IOAS_UNMAP, iommufd_ioas_unmap, struct iommu_ioas_unmap,
+>  		 length),
+>  	IOCTL_OP(IOMMU_OPTION, iommufd_option, struct iommu_option, val64),
+> +	IOCTL_OP(IOMMU_VCMDQ_ALLOC, iommufd_vcmdq_alloc_ioctl,
+> +		 struct iommu_vcmdq_alloc, length),
+>  	IOCTL_OP(IOMMU_VDEVICE_ALLOC, iommufd_vdevice_alloc_ioctl,
+>  		 struct iommu_vdevice_alloc, virt_id),
+>  	IOCTL_OP(IOMMU_VEVENTQ_ALLOC, iommufd_veventq_alloc,
+> @@ -501,6 +504,9 @@ static const struct iommufd_object_ops iommufd_object_ops[] = {
+>  	[IOMMUFD_OBJ_IOAS] = {
+>  		.destroy = iommufd_ioas_destroy,
+>  	},
+> +	[IOMMUFD_OBJ_VCMDQ] = {
+> +		.destroy = iommufd_vcmdq_destroy,
+> +	},
+>  	[IOMMUFD_OBJ_VDEVICE] = {
+>  		.destroy = iommufd_vdevice_destroy,
+>  	},
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/bench/inject-buildid.c  | 2 +-
- tools/perf/builtin-buildid-cache.c | 8 ++++----
- tools/perf/tests/pe-file-parsing.c | 2 +-
- tools/perf/tests/sdt.c             | 2 +-
- tools/perf/util/build-id.c         | 6 +++---
- tools/perf/util/debuginfo.c        | 2 +-
- tools/perf/util/probe-event.c      | 3 ++-
- tools/perf/util/probe-finder.c     | 3 ++-
- tools/perf/util/symbol-minimal.c   | 2 +-
- tools/perf/util/symbol.c           | 5 +++--
- tools/perf/util/synthetic-events.c | 2 +-
- 11 files changed, 20 insertions(+), 17 deletions(-)
+When do we expect the VMM to use this ioctl? While it's spawning a new
+VM? IIUC, one vintf can have multiple lvcmdqs and looking at the series
+it looks like the vcmdq_alloc allocates a single lvcmdq. Is the plan to
+dedicate one lvcmdq to per VM? Which means VMs can share a vintf?
+Or do we plan to trap access to trap the access everytime the VM
+accesses an lvcmdq base register?
 
-diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-index f55c07e4be94..aad572a78d7f 100644
---- a/tools/perf/bench/inject-buildid.c
-+++ b/tools/perf/bench/inject-buildid.c
-@@ -80,7 +80,7 @@ static int add_dso(const char *fpath, const struct stat *sb __maybe_unused,
- 		   int typeflag, struct FTW *ftwbuf __maybe_unused)
- {
- 	struct bench_dso *dso = &dsos[nr_dsos];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 
- 	if (typeflag == FTW_D || typeflag == FTW_SL)
- 		return 0;
-diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-index 3f7739b21148..e936a34b7d37 100644
---- a/tools/perf/builtin-buildid-cache.c
-+++ b/tools/perf/builtin-buildid-cache.c
-@@ -175,7 +175,7 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
- static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int err;
- 	struct nscookie nsc;
- 
-@@ -198,7 +198,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- static int build_id_cache__remove_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	struct nscookie nsc;
- 
- 	int err;
-@@ -275,7 +275,7 @@ static int build_id_cache__purge_all(void)
- static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
- {
- 	char filename[PATH_MAX];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 
- 	if (!dso__build_id_filename(dso, filename, sizeof(filename), false))
- 		return true;
-@@ -303,7 +303,7 @@ static int build_id_cache__fprintf_missing(struct perf_session *session, FILE *f
- static int build_id_cache__update_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	struct nscookie nsc;
- 
- 	int err;
-diff --git a/tools/perf/tests/pe-file-parsing.c b/tools/perf/tests/pe-file-parsing.c
-index fff58b220c07..30c7da79e109 100644
---- a/tools/perf/tests/pe-file-parsing.c
-+++ b/tools/perf/tests/pe-file-parsing.c
-@@ -24,7 +24,7 @@ static int run_dir(const char *d)
- {
- 	char filename[PATH_MAX];
- 	char debugfile[PATH_MAX];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	char debuglink[PATH_MAX];
- 	char expect_build_id[] = {
- 		0x5a, 0x0f, 0xd8, 0x82, 0xb5, 0x30, 0x84, 0x22,
-diff --git a/tools/perf/tests/sdt.c b/tools/perf/tests/sdt.c
-index 919712899251..de4c7916b40d 100644
---- a/tools/perf/tests/sdt.c
-+++ b/tools/perf/tests/sdt.c
-@@ -28,7 +28,7 @@ static int target_function(void)
- static int build_id_cache__add_file(const char *filename)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int err;
- 
- 	err = filename__read_build_id(filename, &bid);
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 3386fa8e1e7e..1abd5a670665 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -95,7 +95,7 @@ int build_id__snprintf(const struct build_id *build_id, char *bf, size_t bf_size
- int sysfs__snprintf_build_id(const char *root_dir, char *sbuild_id, size_t sbuild_id_size)
- {
- 	char notes[PATH_MAX];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int ret;
- 
- 	if (!root_dir)
-@@ -112,7 +112,7 @@ int sysfs__snprintf_build_id(const char *root_dir, char *sbuild_id, size_t sbuil
- 
- int filename__snprintf_build_id(const char *pathname, char *sbuild_id, size_t sbuild_id_size)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int ret;
- 
- 	ret = filename__read_build_id(pathname, &bid);
-@@ -849,7 +849,7 @@ static int filename__read_build_id_ns(const char *filename,
- 
- static bool dso__build_id_mismatch(struct dso *dso, const char *name)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	bool ret = false;
- 
- 	mutex_lock(dso__lock(dso));
-diff --git a/tools/perf/util/debuginfo.c b/tools/perf/util/debuginfo.c
-index b5deea7cbdf2..a44c70f93156 100644
---- a/tools/perf/util/debuginfo.c
-+++ b/tools/perf/util/debuginfo.c
-@@ -103,7 +103,7 @@ struct debuginfo *debuginfo__new(const char *path)
- 	char buf[PATH_MAX], nil = '\0';
- 	struct dso *dso;
- 	struct debuginfo *dinfo = NULL;
--	struct build_id bid;
-+	struct build_id bid = { .size = 0};
- 
- 	/* Try to open distro debuginfo files */
- 	dso = dso__new(path);
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 307ad6242a4e..3c87aa6f7d3b 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -1063,7 +1063,6 @@ static int sprint_line_description(char *sbuf, size_t size, struct line_range *l
- static int __show_line_range(struct line_range *lr, const char *module,
- 			     bool user)
- {
--	struct build_id bid;
- 	int l = 1;
- 	struct int_node *ln;
- 	struct debuginfo *dinfo;
-@@ -1088,6 +1087,8 @@ static int __show_line_range(struct line_range *lr, const char *module,
- 			ret = -ENOENT;
- 	}
- 	if (dinfo->build_id) {
-+		struct build_id bid;
-+
- 		build_id__init(&bid, dinfo->build_id, BUILD_ID_SIZE);
- 		build_id__sprintf(&bid, sbuild_id);
- 	}
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 3cc7c40f5097..1bbb91758316 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -848,7 +848,6 @@ static int probe_point_lazy_walker(const char *fname, int lineno,
- /* Find probe points from lazy pattern  */
- static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
- {
--	struct build_id bid;
- 	char sbuild_id[SBUILD_ID_SIZE] = "";
- 	int ret = 0;
- 	char *fpath;
-@@ -858,6 +857,8 @@ static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
- 
- 		comp_dir = cu_get_comp_dir(&pf->cu_die);
- 		if (pf->dbg->build_id) {
-+			struct build_id bid;
-+
- 			build_id__init(&bid, pf->dbg->build_id, BUILD_ID_SIZE);
- 			build_id__sprintf(&bid, sbuild_id);
- 		}
-diff --git a/tools/perf/util/symbol-minimal.c b/tools/perf/util/symbol-minimal.c
-index c6f369b5d893..6e3d79730538 100644
---- a/tools/perf/util/symbol-minimal.c
-+++ b/tools/perf/util/symbol-minimal.c
-@@ -343,7 +343,7 @@ int dso__load_sym(struct dso *dso, struct map *map __maybe_unused,
- 		  struct symsrc *runtime_ss __maybe_unused,
- 		  int kmodule __maybe_unused)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int ret;
- 
- 	ret = fd__is_64_bit(ss->fd);
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 30750ed313ca..41420d5f4001 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1804,7 +1804,6 @@ int dso__load(struct dso *dso, struct map *map)
- 	struct symsrc *syms_ss = NULL, *runtime_ss = NULL;
- 	bool kmod;
- 	bool perfmap;
--	struct build_id bid;
- 	struct nscookie nsc;
- 	char newmapname[PATH_MAX];
- 	const char *map_path = dso__long_name(dso);
-@@ -1865,6 +1864,8 @@ int dso__load(struct dso *dso, struct map *map)
- 	 */
- 	if (!dso__has_build_id(dso) &&
- 	    is_regular_file(dso__long_name(dso))) {
-+		struct build_id bid = { .size = 0, };
-+
- 		__symbol__join_symfs(name, PATH_MAX, dso__long_name(dso));
- 		if (filename__read_build_id(name, &bid) > 0)
- 			dso__set_build_id(dso, &bid);
-@@ -2113,7 +2114,7 @@ static bool filename__readable(const char *file)
- 
- static char *dso__find_kallsyms(struct dso *dso, struct map *map)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	char sbuild_id[SBUILD_ID_SIZE];
- 	bool is_host = false;
- 	char path[PATH_MAX];
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index 68bb7c5fe1b1..b7ebee95536f 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -368,7 +368,7 @@ static void perf_record_mmap2__read_build_id(struct perf_record_mmap2 *event,
- 					     struct machine *machine,
- 					     bool is_kernel)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	struct nsinfo *nsi;
- 	struct nscookie nc;
- 	struct dso *dso = NULL;
--- 
-2.49.0.901.g37484f566f-goog
+> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> index a65153458a26..02a111710ffe 100644
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -170,3 +170,97 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  	iommufd_put_object(ucmd->ictx, &viommu->obj);
+>  	return rc;
+>  }
+> +
+> +void iommufd_vcmdq_destroy(struct iommufd_object *obj)
+> +{
+> +	struct iommufd_vcmdq *vcmdq =
+> +		container_of(obj, struct iommufd_vcmdq, obj);
+> +	struct iommufd_viommu *viommu = vcmdq->viommu;
+> +
+> +	if (viommu->ops->vcmdq_destroy)
+> +		viommu->ops->vcmdq_destroy(vcmdq);
+> +	iopt_unpin_pages(&viommu->hwpt->ioas->iopt, vcmdq->addr, vcmdq->length);
+> +	refcount_dec(&viommu->obj.users);
+> +}
+> +
+> +int iommufd_vcmdq_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> +{
+> +	struct iommu_vcmdq_alloc *cmd = ucmd->cmd;
+> +	struct iommufd_viommu *viommu;
+> +	struct iommufd_vcmdq *vcmdq;
+> +	struct page **pages;
+> +	int max_npages, i;
+> +	dma_addr_t end;
+> +	int rc;
+> +
+> +	if (cmd->flags || cmd->type == IOMMU_VCMDQ_TYPE_DEFAULT)
+> +		return -EOPNOTSUPP;
 
+The cmd->type check is a little confusing here, I think we could
+re-order the series and add this check when we have the CMDQV type.
+Alternatively, we could keep this in place and add the driver-specific
+vcmdq_alloc op calls when it's added/available for Tegra CMDQV while
+stubbing out the rest of this function accordingly.
+
+> +	if (!cmd->addr || !cmd->length)
+> +		return -EINVAL;
+> +	if (check_add_overflow(cmd->addr, cmd->length - 1, &end))
+> +		return -EOVERFLOW;
+> +
+> +	max_npages = DIV_ROUND_UP(cmd->length, PAGE_SIZE);
+> +	pages = kcalloc(max_npages, sizeof(*pages), GFP_KERNEL);
+> +	if (!pages)
+> +		return -ENOMEM;
+> +
+> +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
+> +	if (IS_ERR(viommu)) {
+> +		rc = PTR_ERR(viommu);
+> +		goto out_free;
+> +	}
+> +
+> +	if (!viommu->ops || !viommu->ops->vcmdq_alloc) {
+> +		rc = -EOPNOTSUPP;
+> +		goto out_put_viommu;
+> +	}
+> +
+> +	/* Quick test on the base address */
+> +	if (!iommu_iova_to_phys(viommu->hwpt->common.domain, cmd->addr)) {
+> +		rc = -ENXIO;
+> +		goto out_put_viommu;
+> +	}
+> +
+> +	/* The underlying physical pages must be pinned in the IOAS */
+> +	rc = iopt_pin_pages(&viommu->hwpt->ioas->iopt, cmd->addr, cmd->length,
+> +			    pages, 0);
+> +	if (rc)
+> +		goto out_put_viommu;
+> +
+> +	/* Validate if the underlying physical pages are contiguous */
+> +	for (i = 1; i < max_npages && pages[i]; i++) {
+> +		if (page_to_pfn(pages[i]) == page_to_pfn(pages[i - 1]) + 1)
+> +			continue;
+> +		rc = -EFAULT;
+> +		goto out_unpin;
+> +	}
+> +
+> +	vcmdq = viommu->ops->vcmdq_alloc(viommu, cmd->type, cmd->index,
+> +					 cmd->addr, cmd->length);
+> +	if (IS_ERR(vcmdq)) {
+> +		rc = PTR_ERR(vcmdq);
+> +		goto out_unpin;
+> +	}
+> +
+> +	vcmdq->viommu = viommu;
+> +	refcount_inc(&viommu->obj.users);
+> +	vcmdq->addr = cmd->addr;
+> +	vcmdq->ictx = ucmd->ictx;
+> +	vcmdq->length = cmd->length;
+> +	cmd->out_vcmdq_id = vcmdq->obj.id;
+> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
+> +	if (rc)
+> +		iommufd_object_abort_and_destroy(ucmd->ictx, &vcmdq->obj);
+> +	else
+> +		iommufd_object_finalize(ucmd->ictx, &vcmdq->obj);
+> +	goto out_put_viommu;
+> +
+> +out_unpin:
+> +	iopt_unpin_pages(&viommu->hwpt->ioas->iopt, cmd->addr, cmd->length);
+> +out_put_viommu:
+> +	iommufd_put_object(ucmd->ictx, &viommu->obj);
+> +out_free:
+> +	kfree(pages);
+> +	return rc;
+> +}
+> -- 
+> 2.43.0
+> 
 
