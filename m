@@ -1,164 +1,148 @@
-Return-Path: <linux-kernel+bounces-622461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFC3A9E7B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:20:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930EFA9E7BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 07:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A28189D385
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 05:20:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D0E17A5247
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 05:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6974D20E71E;
-	Mon, 28 Apr 2025 05:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570B1B0F33;
+	Mon, 28 Apr 2025 05:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="CVAR2Ix3"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C1C209F5A;
-	Mon, 28 Apr 2025 05:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LQF4LCPc"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B86211C;
+	Mon, 28 Apr 2025 05:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745817459; cv=none; b=IQxLF5KBeTyEhMv3df02ixR0ce2i507F/rX92tfbwJmgJ5iPucAxGZreNiVYS9HYn/IkSuQF2F1Z9fWSGvurTeH47aSeKOCNvVoAb8bhoqc7SZC7nTX6eIWUgvwnjzavfNgzfujwyTKwpc69rrgzXR17TGuu0UxNWcoJxv6M2yA=
+	t=1745817774; cv=none; b=ZOiU5ecO1FdIQWUP3UeMXmKvP1KzDxLm90aVSN0TZEQ/D/m1ol4A6CSdzZn8U7ADq1EwCjVtMlJrqirHDtvCJgDOliprO17CjPzw5LcNFREj4Gidq1jCZzy+2aKEwKTJ+qt70tM/DVwSZjs0qiTKAXEoIguoEmkW9mz57B40SLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745817459; c=relaxed/simple;
-	bh=3Hr/NZujGM7tGbdFMXAHaZVvz0LsweGBPWUSdQ4mHvs=;
-	h=Date:Message-Id:In-Reply-To:References:From:Subject:To:Cc; b=ShIBMRzWnPdC6jOtPSEir5y01DQhqC+XHAqjALXbGz6bxM4uvV5qdb6kakDOF0gv6CPox9HKG9mkcIxew4GLTd4xiIfpG79xL1iwQR2W7w2x90A63/FVPLkDd1ZLFDKFynTc95zx/BkRKZCDlc332jFx8QLXjrDgmHUpajjiftw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=CVAR2Ix3; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Cc:To:Subject:From:References:In-Reply-To:Message-Id:Date:
-	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GB9/DZlVKQ+qX1C/pXbez0MkOkRiHenUXD6OWOuCEZs=; b=CVAR2Ix3IfhZQmpfOpkslfwtId
-	Hlx7GZhAXeDLd38FBrIcfXPECpLUEFQes2kYLfGw36skzAGoBU/HwsB+kw5lEV46hoFiABvWRp1YY
-	tIZvMun+xGqBsNvA53UxfPhPKi83+pWsISxJ1T8YnbiVOsCBh8/0AokycWgZy8BD/3/Az6gp/rLnG
-	GCI6x0zgmUWVZeZpSWuYSy7Ibvh+DaRPvp5QRZi+5JwBmrZ9j0JUcpzfDWU1eZtT142silVTEiDcK
-	Zmd+4T/ITi0Xd3Eso3737704RQM9K4xdXm9ZMzIpVdz45evkjIfv5r3ewihD74Y5i42P/J2W+ggEt
-	IFdqSL5w==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1u9Gs0-001WUX-0r;
-	Mon, 28 Apr 2025 13:17:33 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 28 Apr 2025 13:17:32 +0800
-Date: Mon, 28 Apr 2025 13:17:32 +0800
-Message-Id: <f97814714c68dcf60028a2927d541b2e8c81c3bf.1745816372.git.herbert@gondor.apana.org.au>
-In-Reply-To: <cover.1745816372.git.herbert@gondor.apana.org.au>
-References: <cover.1745816372.git.herbert@gondor.apana.org.au>
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [v3 PATCH 13/13] crypto: lib/sha256 - improve function prototypes
-To: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld " <Jason@zx2c4.com>, Linus Torvalds <torvalds@linux-foundation.org>
+	s=arc-20240116; t=1745817774; c=relaxed/simple;
+	bh=jtSfhfb2ioHRWbZWT+63t8YNhpIBQ0ZhuuyyvWSeItU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irSXyeqWFYq7Xginagk2wMLXinOoWTyhtoHVzLVUa1SNR5utabb3zCwKdA0e1HC3ROfKKkclY2w2BsJJLzxw2ZJZwfBpbXbkhQaZxdkXHc9hdNNLpEL3jQvWe6OEv75FRt9dApo9M/4zBZt7PTyg5n1LDbu2BPBc3Rx3VgpC7vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LQF4LCPc; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 76598204E7CD; Sun, 27 Apr 2025 22:22:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 76598204E7CD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745817772;
+	bh=D2m/5uVeF+LrzPXcvVJrndC9Z3eMXkYAhDUqE9KBCms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LQF4LCPcjReWNzV+bzz1eNshSYLiTWAb4Bv7KVnG7soq9x3lFuOzujz6HJzvw2Lap
+	 2Q6CS1WFf4WY5QuuzXjaH9h/WUC1HhQ7ldCXjmqql8bA/UJrywf+EyqyF+dA63w1I7
+	 VWUpC+XWaUvlyyIrfpHHFEjak/SlPV8R+rGK+124=
+Date: Sun, 27 Apr 2025 22:22:52 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nipun Gupta <nipun.gupta@amd.com>,
+	Yury Norov <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Wilczy??ski <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Simon Horman <horms@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Paul Rosswurm <paulros@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH v2 1/3] PCI: Export pci_msix_prepare_desc() for dynamic
+ MSI-X alloc
+Message-ID: <20250428052252.GA31705@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1745578437-14878-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <20250425163748.GA546623@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425163748.GA546623@bhelgaas>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-From: Eric Biggers <ebiggers@google.com>
+On Fri, Apr 25, 2025 at 11:37:48AM -0500, Bjorn Helgaas wrote:
+> On Fri, Apr 25, 2025 at 03:53:57AM -0700, Shradha Gupta wrote:
+> > For supporting dynamic MSI-X vector allocation by PCI controllers, enabling
+> > the flag MSI_FLAG_PCI_MSIX_ALLOC_DYN is not enough, msix_prepare_msi_desc()
+> > to prepare the desc is also needed.
+> > 
+> > Export pci_msix_prepare_desc() to allow PCI controllers to support dynamic
+> > MSI-X vector allocation.
+> > 
+> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> 
+> Thanks for the update and for splitting this from the hv driver
+> update.  Will watch for Thomas's ack here.
+> 
+> For future postings, you might consider limiting the "To:" line to
+> people you expect to actually act on the patch, and moving the rest to
+> "Cc:".
 
-Follow best practices by changing the length parameters to size_t and
-explicitly specifying the length of the output digest arrays.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
----
- include/crypto/internal/sha2.h |  2 +-
- include/crypto/sha2.h          |  8 ++++----
- lib/crypto/sha256.c            | 12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/include/crypto/internal/sha2.h b/include/crypto/internal/sha2.h
-index 09f622c2ae7d..421872a93a83 100644
---- a/include/crypto/internal/sha2.h
-+++ b/include/crypto/internal/sha2.h
-@@ -46,7 +46,7 @@ static inline void sha256_choose_blocks(
- 
- static __always_inline void sha256_finup(
- 	struct crypto_sha256_state *sctx, const u8 *src, unsigned int len,
--	u8 *out, size_t digest_size, bool force_generic,
-+	u8 out[SHA256_DIGEST_SIZE], size_t digest_size, bool force_generic,
- 	bool force_simd)
- {
- 	unsigned int bit_offset = SHA256_BLOCK_SIZE / 8 - 1;
-diff --git a/include/crypto/sha2.h b/include/crypto/sha2.h
-index a27e2bf1842d..4912572578dc 100644
---- a/include/crypto/sha2.h
-+++ b/include/crypto/sha2.h
-@@ -105,9 +105,9 @@ static inline void sha256_init(struct sha256_state *sctx)
- {
- 	sha256_block_init(&sctx->ctx);
- }
--void sha256_update(struct sha256_state *sctx, const u8 *data, unsigned int len);
--void sha256_final(struct sha256_state *sctx, u8 *out);
--void sha256(const u8 *data, unsigned int len, u8 *out);
-+void sha256_update(struct sha256_state *sctx, const u8 *data, size_t len);
-+void sha256_final(struct sha256_state *sctx, u8 out[SHA256_DIGEST_SIZE]);
-+void sha256(const u8 *data, size_t len, u8 out[SHA256_DIGEST_SIZE]);
- 
- static inline void sha224_block_init(struct crypto_sha256_state *sctx)
- {
-@@ -127,6 +127,6 @@ static inline void sha224_init(struct sha256_state *sctx)
- 	sha224_block_init(&sctx->ctx);
- }
- /* Simply use sha256_update as it is equivalent to sha224_update. */
--void sha224_final(struct sha256_state *sctx, u8 *out);
-+void sha224_final(struct sha256_state *sctx, u8 out[SHA224_DIGEST_SIZE]);
- 
- #endif /* _CRYPTO_SHA2_H */
-diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
-index d2bd9fdb8571..107d2bdea682 100644
---- a/lib/crypto/sha256.c
-+++ b/lib/crypto/sha256.c
-@@ -33,7 +33,7 @@ static inline void sha256_blocks(u32 state[SHA256_STATE_WORDS], const u8 *data,
- 			     sha256_force_generic(), false);
- }
- 
--void sha256_update(struct sha256_state *sctx, const u8 *data, unsigned int len)
-+void sha256_update(struct sha256_state *sctx, const u8 *data, size_t len)
- {
- 	size_t partial = sctx->count % SHA256_BLOCK_SIZE;
- 
-@@ -43,8 +43,8 @@ void sha256_update(struct sha256_state *sctx, const u8 *data, unsigned int len)
- }
- EXPORT_SYMBOL(sha256_update);
- 
--static void __sha256_final(struct sha256_state *sctx, u8 *out,
--			   size_t digest_size)
-+static void __sha256_final(struct sha256_state *sctx,
-+			   u8 out[SHA256_DIGEST_SIZE], size_t digest_size)
- {
- 	unsigned int len = sctx->count % SHA256_BLOCK_SIZE;
- 
-@@ -54,19 +54,19 @@ static void __sha256_final(struct sha256_state *sctx, u8 *out,
- 	memzero_explicit(sctx, sizeof(*sctx));
- }
- 
--void sha256_final(struct sha256_state *sctx, u8 *out)
-+void sha256_final(struct sha256_state *sctx, u8 out[SHA256_DIGEST_SIZE])
- {
- 	__sha256_final(sctx, out, SHA256_DIGEST_SIZE);
- }
- EXPORT_SYMBOL(sha256_final);
- 
--void sha224_final(struct sha256_state *sctx, u8 *out)
-+void sha224_final(struct sha256_state *sctx, u8 out[SHA224_DIGEST_SIZE])
- {
- 	__sha256_final(sctx, out, SHA224_DIGEST_SIZE);
- }
- EXPORT_SYMBOL(sha224_final);
- 
--void sha256(const u8 *data, unsigned int len, u8 *out)
-+void sha256(const u8 *data, size_t len, u8 out[SHA256_DIGEST_SIZE])
- {
- 	struct sha256_state sctx;
- 
--- 
-2.39.5
-
+Thanks Bjorn, Noted.
+> 
+> > ---
+> >  drivers/pci/msi/irqdomain.c | 5 +++--
+> >  include/linux/msi.h         | 2 ++
+> >  2 files changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+> > index d7ba8795d60f..43129aa6d6c7 100644
+> > --- a/drivers/pci/msi/irqdomain.c
+> > +++ b/drivers/pci/msi/irqdomain.c
+> > @@ -222,13 +222,14 @@ static void pci_irq_unmask_msix(struct irq_data *data)
+> >  	pci_msix_unmask(irq_data_get_msi_desc(data));
+> >  }
+> >  
+> > -static void pci_msix_prepare_desc(struct irq_domain *domain, msi_alloc_info_t *arg,
+> > -				  struct msi_desc *desc)
+> > +void pci_msix_prepare_desc(struct irq_domain *domain, msi_alloc_info_t *arg,
+> > +			   struct msi_desc *desc)
+> >  {
+> >  	/* Don't fiddle with preallocated MSI descriptors */
+> >  	if (!desc->pci.mask_base)
+> >  		msix_prepare_msi_desc(to_pci_dev(desc->dev), desc);
+> >  }
+> > +EXPORT_SYMBOL_GPL(pci_msix_prepare_desc);
+> >  
+> >  static const struct msi_domain_template pci_msix_template = {
+> >  	.chip = {
+> > diff --git a/include/linux/msi.h b/include/linux/msi.h
+> > index 86e42742fd0f..d5864d5e75c2 100644
+> > --- a/include/linux/msi.h
+> > +++ b/include/linux/msi.h
+> > @@ -691,6 +691,8 @@ struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
+> >  					     struct irq_domain *parent);
+> >  u32 pci_msi_domain_get_msi_rid(struct irq_domain *domain, struct pci_dev *pdev);
+> >  struct irq_domain *pci_msi_get_device_domain(struct pci_dev *pdev);
+> > +void pci_msix_prepare_desc(struct irq_domain *domain, msi_alloc_info_t *arg,
+> > +			   struct msi_desc *desc);
+> >  #else /* CONFIG_PCI_MSI */
+> >  static inline struct irq_domain *pci_msi_get_device_domain(struct pci_dev *pdev)
+> >  {
+> > -- 
+> > 2.34.1
+> > 
 
