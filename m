@@ -1,286 +1,133 @@
-Return-Path: <linux-kernel+bounces-622827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE6AA9ED33
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9060A9ED4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 11:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4B41882D96
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F004F3ADCD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 09:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB4B21CFEC;
-	Mon, 28 Apr 2025 09:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F5725E800;
+	Mon, 28 Apr 2025 09:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bXzdf7wa"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aa+v02s8"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD991CD15;
-	Mon, 28 Apr 2025 09:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E026D200138;
+	Mon, 28 Apr 2025 09:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745833743; cv=none; b=EAL5lgjFdYJn/VVeVdzVIXKzKj3skBmtOwLI16j5rhDBrVnyGM1l7XHZDrDsgM7HA37SDZ+GyHGZtcjDk2reQteNpaJlDdXcPDqvCfZCkNKm2CSWZ0NYS1GUwqL9vz9cnGze8d7S8A/gdXZDNrdfWbqhIZKI/11SufuH/GLTyIE=
+	t=1745833819; cv=none; b=tL0QxZONKUhfIB/L3LgnirnbzNv6uc9iW+1EK9fNHP5LmIzxwzS6SyuslfzKBgzGq3rVrPn3YJyO9Tw1ldyPdcA1l00pBFv6RG8HxOfVJn2UVtDgD6KP4Z9rcJbQLn4GlB7idK+ogBwXR+ej/HxOVaCe4YbouKDAqGFri3wmn6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745833743; c=relaxed/simple;
-	bh=rkVdXMNji/Q8YJWeGD3SoZ7/PCc07CvXWfGHgZMFQ3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fbd0zs3BREE6dawXRIGTSI1olMGKGBltG2xWcvFRmivhmSvOQjYG6e7ABAH2KKhJf9l2CBOk+2RBXJ5pFipOzPEbmf8gt6jHY8i/H8lMu/cSCeoMcopJ2OLmiy2ldARoHIk5nEPpdHmClIinFEtcVR+KQBrnAJts1OXvVQvps3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bXzdf7wa; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745833739;
-	bh=rkVdXMNji/Q8YJWeGD3SoZ7/PCc07CvXWfGHgZMFQ3U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bXzdf7wa/jyH7gtQ3uUcudJVVKls0Cyqc2LnVYU5vBYZACepzM9DE4xiN+KYjhlYQ
-	 0PPFQWV6dy/w4b1zyJFyTfrPbnFFeYAcPaSdGBvHIbM6WYHoG3VtuO6RqZNDNgbOCw
-	 mPAnsSwIJ9XlYDRLqH5YTIS6Go2EDwJ0oNmCYPlvxu8MV0B9AXraaVlIaAwV0eryGl
-	 r9Hc2ijA5xYtXaveGiLEDi09UhR30It37g6ey7DWJlZtZmLiVuireFZUzTGIwNshVW
-	 U1/OHDNXHegStr/8KoDL5d3pvnhl/wsUvA4hFSXvACUOIhyUPNK2cGLL16GhG/xwt4
-	 zSY3QpAtseppg==
-Received: from [IPV6:2a05:1141:1cc:8600:1cd7:9a7e:17d7:cd2c] (unknown [IPv6:2a05:1141:1cc:8600:1cd7:9a7e:17d7:cd2c])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 53CDC17E0809;
-	Mon, 28 Apr 2025 11:48:58 +0200 (CEST)
-Message-ID: <1b3245c1-2a4b-4854-ac2f-e89a52a454ec@collabora.com>
-Date: Mon, 28 Apr 2025 11:48:57 +0200
+	s=arc-20240116; t=1745833819; c=relaxed/simple;
+	bh=yiI0t3KzyC8xZVvbZpTX7rWg2qi61wN9oJC5TUMtQ4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UpVw8iUSaXrBUbNt3nBDsix8K92hacr10TrOksZMQh66TDTgyctYN9ZYtptHLD6RHzApxYI4t0y89gYp0cr2Lum5lNDQyghMFY3TO7ioH4QKh7YZrEob952JwBoIk9jlDXarjzTO1NYv8Z+amdsJth2R6A/6Q24/rJbYG+DAcCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aa+v02s8; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso5696524a12.3;
+        Mon, 28 Apr 2025 02:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745833816; x=1746438616; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PzNOPJFHfsN0QAsxHoXogR9GK+LlwG788CqeZ5YVfJg=;
+        b=Aa+v02s8k47BunStIr5siI/d/jNFtK3P6aazjZ2elzXO0cU3TmQLaNbYKh872GHjvJ
+         sUMrysQ/T7SlD1TmO57aj3on4Ds1VbAS6/1ZRc/BxYLzLEYYGNJRDmdsrXK60LJLAyUG
+         9mmwsKPuIroRl5FCRVSrnS9jYDGOtAxwy4DWisnAyhd9vd5cnNf+KVssmGLo1/U8Jn/t
+         VEHSNrwSKWV/Fpf6ZuR84aEvKJuXwyuUMPkN5LlRDE8ZmPnlBasJGFMElT89P/ROF77V
+         4gDiP555OqjVVmHYKmciBFMsiENkFnApWnt04psR0i/IcLvyU1wJDrlpgvdUB/QOUnWK
+         dZHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745833816; x=1746438616;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PzNOPJFHfsN0QAsxHoXogR9GK+LlwG788CqeZ5YVfJg=;
+        b=b1jt5Xh/pIBVdeFCs2WnhrwaZxaTnlZaoCekXlZk6nz8gY5fnULxPGbC56Y1w2qp/L
+         reaZrEqU9Tt/AeOwWqi+MsG1si/mQWadD4rI3iXCRq6pNfppfXh3TUdz2Q6kzhj9yUL6
+         CMW+dKcfPR60i0zR8rozLKCLuWtcYzzCMJKpsJTU/ZsIPZiVtkC3Sn4QscyIS8yb041Z
+         yWT4Bsq7qOVA7RY7TkJ8356ZVDj0uo1DSsE026nU6e6xuir5r0+fTrJA6xfXIXgZbZXk
+         Jup5/NeWvvYVyaoIbFS0+ChzwSu7gT5npLuPGuE++3Szk0WWzy/zTQdcAk5qbUziPZEs
+         RhbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmo0BBvcA4PLVGkH/05vJoPQRlSiTkkdkjm+s1bTyQvxeFumRZwxy3qab814z8CUWC1eKCLZr2Q8749+xC@vger.kernel.org, AJvYcCWnwLqa9FnItC0vKraABoMgw7NZJ+NaxMj059jpAyALg1OhyXNfKuR0UKrTp2qmFGw2QwR3M5pqt9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcVFvZn3xV2gWao7jfBhpuB4XV+nZh+LCqE16UxLAJYJciED/e
+	dXWY42KgKKWw8y0P49fSCGoeHj87tycMT7PsaEftzsypmkm1vEX83VFadlKBl7rRBlysh7Y863J
+	1LSPKlbl7/O7xdmnUhhHFUYir8KU=
+X-Gm-Gg: ASbGncs03MYu7WGhLzLnOwon+L+Rcszq0awSIpr8+KpZS7E109sDbdVH0cG2rinexnA
+	nY6e9mfJGwPW7UCN9NyIUWVNJrlcJ5+aWcS80vptRUU+VybcA1Pvalqn/ia4GxJRhWWkNaG/+mp
+	YWMt5Mo+aCHrAM/JiLStuFNhcc
+X-Google-Smtp-Source: AGHT+IG11ycFE2PkB61nFfebKSoqYyj5h8DU2gxlG9BQR8BD84DpNf0Wwl+tL1HVqWS1Vod5bJXy2iyXDrvW3yz3bw8=
+X-Received: by 2002:a17:906:6a21:b0:ac6:d142:2c64 with SMTP id
+ a640c23a62f3a-ace710c6b96mr990313266b.18.1745833816006; Mon, 28 Apr 2025
+ 02:50:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/11] media: dt-bindings: media: add bindings for
- rockchip rk3568 vicap
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Mehdi Djait <mehdi.djait@linux.intel.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250306-v6-8-topic-rk3568-vicap-v5-0-f02152534f3c@wolfvision.net>
- <20250306-v6-8-topic-rk3568-vicap-v5-3-f02152534f3c@wolfvision.net>
- <20250307-pink-dalmatian-of-kindness-f87ad2@krzk-bin>
- <Z8rBGHK9Tjx7D1D2@kekkonen.localdomain>
- <4a1e5834-df52-43d2-ab19-e3117840a001@collabora.com>
- <20250428092232.GC3371@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20250428092232.GC3371@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <59106e24332743a7f9eb0b13ad6a2f5595ab485a.1745823530.git.mazziesaccount@gmail.com>
+ <CAHp75VcUcrj-BLp9QDsYMDY_SeQS76LDGge5vVqrx-MVwukP0w@mail.gmail.com> <4085fd58-c92c-406b-842b-ecda2fb3c895@gmail.com>
+In-Reply-To: <4085fd58-c92c-406b-842b-ecda2fb3c895@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 28 Apr 2025 12:49:39 +0300
+X-Gm-Features: ATxdqUG23fvKHI445lKjGfN9VwwQ5k8wrBoZmew1lv4mNnMDTqG5MCm1Cojhs54
+Message-ID: <CAHp75VdAEefH5Vgk5BZz8vGDXyu0EmEy3hwoeRDJsKmkjaQW9w@mail.gmail.com>
+Subject: Re: [PATCH] iio: ti-adc128s052: Drop variable vref
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+On Mon, Apr 28, 2025 at 12:45=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+> On 28/04/2025 10:08, Andy Shevchenko wrote:
+> > On Mon, Apr 28, 2025 at 10:02=E2=80=AFAM Matti Vaittinen
+> > <mazziesaccount@gmail.com> wrote:
 
-On 4/28/25 11:22, Laurent Pinchart wrote:
-> On Mon, Apr 28, 2025 at 10:11:51AM +0200, Michael Riesch wrote:
->> Hi Krzysztof, Sakari,
->>
->> Thanks for your feedback! Also, sorry for the delayed response, but as
->> the e-mail address indicates, there has been a job change in between
->> that kept me busy :-)
->>
->> On 3/7/25 10:49, Sakari Ailus wrote:
->>> Hi Krzysztof, Michael,
->>>
->>> On Fri, Mar 07, 2025 at 08:51:54AM +0100, Krzysztof Kozlowski wrote:
->>>> On Thu, Mar 06, 2025 at 05:56:04PM +0100, Michael Riesch wrote:
->>>>> Add documentation for the Rockchip RK3568 Video Capture (VICAP) unit.
->>>>>
->>>>> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
->>>>
->>>> subject: only one media prefix, the first
->>>>
->>>> A nit, subject: drop second/last, redundant "bindings". The
->>>> "dt-bindings" prefix is already stating that these are bindings.
->>>> See also:
->>>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->>
->> Ack. Plain "media: dt-bindings: add rockchip rk3568 vicap" it is, then.
->>
->>>>
->>>>> ---
->>>>>  .../bindings/media/rockchip,rk3568-vicap.yaml      | 169 +++++++++++++++++++++
->>>>>  MAINTAINERS                                        |   1 +
->>>>>  2 files changed, 170 insertions(+)
->>>>>
->>>>
->>>> ...
->>>>
->>>>> +  clocks:
->>>>> +    items:
->>>>> +      - description: ACLK
->>>>> +      - description: HCLK
->>>>> +      - description: DCLK
->>>>> +      - description: ICLK
->>>>> +
->>>>> +  clock-names:
->>>>> +    items:
->>>>> +      - const: aclk
->>>>> +      - const: hclk
->>>>> +      - const: dclk
->>>>> +      - const: iclk
->>>>> +
->>>>> +  rockchip,cif-clk-delaynum:
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    minimum: 0
->>>>> +    maximum: 127
->>>>> +    description:
->>>>> +      Delay the DVP path clock input to align the sampling phase, only valid
->>>>> +      in dual edge sampling mode. Delay is zero by default and can be adjusted
->>>>> +      optionally.
->>>>
->>>> default: 0
->>
->> Ack.
->>
->>>
->>> And this is technically specific to the DVP port (0). Should (or could?) it
->>> be located there?
->>
->> "Should"? Yes, makes sense to me.
->> "Could"? I guess, as we are referencing port-base here it should be
->> feasible. Not an expert opinion, mind you.
->>
->>>
->>>>
->>>>> +
->>>>> +  iommus:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  resets:
->>>>> +    items:
->>>>> +      - description: ARST
->>>>> +      - description: HRST
->>>>> +      - description: DRST
->>>>> +      - description: PRST
->>>>> +      - description: IRST
->>>>> +
->>>>> +  reset-names:
->>>>> +    items:
->>>>> +      - const: arst
->>>>> +      - const: hrst
->>>>> +      - const: drst
->>>>> +      - const: prst
->>>>> +      - const: irst
->>>>> +
->>>>> +  rockchip,grf:
->>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>>> +    description: Phandle to general register file used for video input block control.
->>>>> +
->>>>> +  power-domains:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  ports:
->>>>> +    $ref: /schemas/graph.yaml#/properties/ports
->>>>> +
->>>>> +    properties:
->>>>> +      port@0:
->>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
->>>>> +        unevaluatedProperties: false
->>>>> +        description: The digital video port (DVP, a parallel video interface).
->>>>> +
->>>>> +        properties:
->>>>> +          endpoint:
->>>>> +            $ref: video-interfaces.yaml#
->>>>> +            unevaluatedProperties: false
->>>>> +
->>>>> +            properties:
->>>>> +              bus-type:
->>>>> +                enum: [5, 6]
->>>>> +
->>>>> +            required:
->>>>> +              - bus-type
->>>>> +
->>>>> +      port@1:
->>>>> +        $ref: /schemas/graph.yaml#/properties/port
->>>>> +        description: Internal port connected to a MIPI CSI-2 host.
->>>>> +
->>>>> +        properties:
->>>>> +          endpoint:
->>>>> +            $ref: video-interfaces.yaml#
->>>>> +            unevaluatedProperties: false
->>>>
->>>> Hm, does it actually work? graph/port does not allow any other
->>>> properties. You should use graph/port-base and probably still narrow
->>>> lanes for both of port@0 and port@1.
->>>
->>> I'd list the relevant properties for both DVP and CSI-2, either as
->>> mandatory or with defaults (could be reasonable for DVP signal polarities
->>> but not e.g. on number of CSI-2 lanes).
->>
->> Not sure whether we are on the same page here. As pointed out in the
->> last round of feedback
->> (https://lore.kernel.org/all/0b19c544-f773-435e-9829-aaaa1c6daf7a@wolfvision.net/),
->> port@1 is not MIPI CSI, but some internal interface.
->>
->> I tried to clarify this by changing the description of this port to
->> "Internal port connected to a MIPI CSI-2 host." The host (see
->> rockchip,rk3568-mipi-csi.yaml) has a port that is actually MIPI CSI and
->> one port that is the other end of port@1 here.
-> 
-> I'd write "Port connected to the MIPI CSI-2 receiver output". We use
-> "receiver" instead of "host".
+...
 
-Ack. I'll adjust the "host" -> "receiver" wording change in all the
-other places as well.
+> >> +       int vref_mv;
+> >
+> > vref_mV please. And yes, I know historical and other reasons for them
+> > all being small, but let's try to be more scientific in these crazy
+> > days.
+>
+> Sorry Andy but I see zero reason to use capital letters here. In my
+> opinion, this is perfectly clear as it is. Capital letters in variables
+> are ugly (to me) and absolutely not needed to explain the meaning.
 
-Regards,
-Michael
+And I see zero reason to not use the correct scientific unitis there.
+Note, that regulator framework and some other drivers are using that
+and I consider this is the correct way to go.
 
-> 
->> As to port@1 here, I am not aware of any properties that can be set. Not
->> even very peculiar ones similar to rockchip,cif-clk-delaynum. Should I
->> have overlooked something, I think we can relax the constraints, but we
->> should start strict, right?
->>
->>>>> +
->>>>> +required:
->>>>> +  - compatible
->>>>> +  - reg
->>>>> +  - interrupts
->>>>> +  - clocks
->>>>> +  - ports
->>>>> +
->>>>> +additionalProperties: false
->>>>> +
->>>>> +examples:
->>>>> +  - |
->>>>> +    #include <dt-bindings/clock/rk3568-cru.h>
->>>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>>>> +    #include <dt-bindings/power/rk3568-power.h>
->>>>> +    #include <dt-bindings/media/video-interfaces.h>
->>>>> +
->>>>> +    parent {
->>>>
->>>> soc {
->>
->> Ack.
->>
->>>>> +        #address-cells = <2>;
->>>>> +        #size-cells = <2>;
-> 
+...
 
+> > Or actually a time to introduce MILLIVOLT_PER_VOLT in units.h ?
+>
+> I really fail to see the benefit. Do you think we should add
+> MILLIx_PER_x for each unit we can imagine/use?
+>
+> That doesn't really scale or make sense to me. We have MILLI. It does
+> not really matter if it is volts, amps, ohms or horse heads - it's still
+> 1000. It just gets cumbersome to search the headers to see if we have
+> some fancy define for unit we have at our hands.
+
+In some contexts this gives the understanding of the units and how big
+the value is. Even with some defined constants it's not possible to
+describe in their names everything that this definition adds. I do see
+a benefit of it.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
