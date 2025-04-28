@@ -1,147 +1,99 @@
-Return-Path: <linux-kernel+bounces-622915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-622852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEF8A9EE68
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6170A9ED88
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 12:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0560B189F645
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:53:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 251D17A8C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Apr 2025 10:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE6F262FC7;
-	Mon, 28 Apr 2025 10:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4160825FA13;
+	Mon, 28 Apr 2025 10:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UIfkN/8d"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4d1kyeG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B31AC44D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C625F99C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745837591; cv=none; b=IxE028rzD2QCd4MIUZit1BFQXWIlctpR+om2PZJy7SpZWfkxBiVJkCxqTbY/VaWhOjjLw5c3aLk+qYiRP8mFOMLeqmzw/m0F7+L/mNuiujvzZhVepziWtWyTCSOAz7vy0ba63Es5YwIRs9aKyHzlCLEZPGeqBVhdqmb47DHhvaU=
+	t=1745834774; cv=none; b=c7rfdlgVp+or0znJUotnO/tpAX3YSSa+6k6xIyJXZaMS8n2ZQWmzrtP3e35WY0x9fgZXeEJUq2UIHak6NX8T9kyAHbt88GrWcX1SpWNkJ3WROVUA9t57W0jzn9gi5jk+ItWn2m2VnZv43Ey8CRDUOv9Ffl/Wb5kxcjvbulm8OxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745837591; c=relaxed/simple;
-	bh=LVQ136RWyYRc2fD+t9t3p/5kJXBOfZ/prV2pR22/y8I=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=K5QEe5dXI+R5x/E0MQG2nICZyu0EFETRCGL6Yjm83UFN2P/tKAMX+ovL5HktsvUmREa2GG16dOIgwd2C2x7NenhUBzwiBYYz3oJCTzvjWhxenK3A0mP3tgppjzkd438BTvFapK4f9SjOf1EsQsRG6DEdghBiUljGwTi4O5l9MXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UIfkN/8d; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250428105307epoutp02f8eea1988d88875268741ac778578373~6dgkm6qZU2676426764epoutp02D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 10:53:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250428105307epoutp02f8eea1988d88875268741ac778578373~6dgkm6qZU2676426764epoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745837587;
-	bh=ZpOykj4NyH8OeDmsrqGV4eLwknuE5Llb0rONDyJLoLM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=UIfkN/8dbmzA7aDQcVeanqNL6SDCSC8EpNW+N+dQuyzNDzCGv2RCnmvP+OuUhwc8J
-	 bKdb5RWEKGJl3raj2/tJDUW8d/JYGW+hEDHesJVYCwm8XDqN+DGY78ROocoRIfAUD6
-	 KRjGJAJta39e+WRlODxnnss6GI3QmyoH/A9k+u+w=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250428105306epcas5p10398f853ddd88927a174a6dba33abfe8~6dgkLeGqC3228032280epcas5p1O;
-	Mon, 28 Apr 2025 10:53:06 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZmKzj2Jhdz3hhTC; Mon, 28 Apr
-	2025 10:53:05 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14~6c425zY3r1485614856epcas5p3z;
-	Mon, 28 Apr 2025 10:07:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250428100738epsmtrp23a2e80870d794866303e307fb14311ae~6c425FNh62525625256epsmtrp29;
-	Mon, 28 Apr 2025 10:07:38 +0000 (GMT)
-X-AuditID: b6c32a2a-d63ff70000002265-7f-680f53698ae6
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.FA.08805.9635F086; Mon, 28 Apr 2025 19:07:37 +0900 (KST)
-Received: from green245.sa.corp.samsungelectronics.net (unknown
-	[107.99.41.245]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250428100736epsmtip11694115ac09e75b0c4231033e257f9a3~6c41j-q6U0417804178epsmtip1A;
-	Mon, 28 Apr 2025 10:07:36 +0000 (GMT)
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Christian Brauner
-	<brauner@kernel.org>, Keith Busch <kbusch@kernel.org>
-Cc: gost.dev@samsung.com, nitheshshetty@gmail.com, Nitesh Shetty
-	<nj.shetty@samsung.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] iov_iter: Use iov_offset for length calculation in
- iov_iter_aligned_bvec
-Date: Mon, 28 Apr 2025 15:28:48 +0530
-Message-Id: <20250428095849.11709-1-nj.shetty@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsWy7bCSnG5WMH+Gwc0kiznr17BZrL7bz2bx
-	+vAnRoubB3YyWUw6dI3R4vKuOWwWO540Mlps+z2f2eL83+OsDpweO2fdZfe4fLbUY9OqTjaP
-	EzN+s3j0bVnF6PF5k5zHpidvmQLYo7hsUlJzMstSi/TtErgypq76ylrwl6vi90vJBsY/HF2M
-	nBwSAiYSs97tY+pi5OIQEtjNKPH85nY2iISkxLK/R5ghbGGJlf+es0MUNTNJLG2fAuRwcLAJ
-	aEuc/s8BEhcROMYo8XPJZkaQBmaBGoktfW3sILawQIzEvok7wIayCKhKtG44CTaUV8BK4s2b
-	DnaIBfISqzccYJ7AyLOAkWEVo2RqQXFuem6xYYFRXmq5XnFibnFpXrpecn7uJkZwoGlp7WDc
-	s+qD3iFGJg7GQ4wSHMxKIrxVBvwZQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJ
-	zU5NLUgtgskycXBKNTDV3D6cNzVrjpZy+OKTx8Ij/5+WifXoM83d8f79kb7uJW/5qtWjmarZ
-	Kr6vvMZ1Watn+b9ktwPpESXvM7a03TKa86T9lv6Lj9I3ORovNdfecC73vps3pbJtb+KsrVum
-	evZ95dl0a/7F+vQbs6vKfyz+avHDc35V+0yT1xK3hT+m7srT0Nqn1a8jVfe5sSt++++IO1zb
-	l15VsRecpPhrXkTtpj2zl5WkKvd4/U0o6XSaLdH38Pe9gxfZL6bbi2zOyxHJDHmV8KKCYUv/
-	hbsbf4f2xcUEla6Rn7Zt5cnNn2b55LVodUhLlu0yLNgQLSy/nuuIPlf86eQGG9fABwVJ2VM7
-	HTVT1xpy50W9XLZMbbYSS3FGoqEWc1FxIgDsv7BFowIAAA==
-X-CMS-MailID: 20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14
-References: <CGME20250428100738epcas5p3eb82b4ea94b229634f9319d23d7d7e14@epcas5p3.samsung.com>
+	s=arc-20240116; t=1745834774; c=relaxed/simple;
+	bh=jdXhuVxKDtg1x66c6HWakEwrWte9k6LxtSt4bHr4TFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Os1daGfuO6p/j/O82CtCcqGdDmDNiQc4t/xmebikNk3xOHwPEqZDop4diUPu2GoxECXoxcy7/VU3gXATsHaAQgGvDjyhO7ycfvnBgPd4X4v5VA6acm1Oti8Vxct+8oZ+R6XXNYTCNiboLJhDeIiBPIXHx+0EOfcOTOezrouyT/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4d1kyeG; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745834771; x=1777370771;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jdXhuVxKDtg1x66c6HWakEwrWte9k6LxtSt4bHr4TFQ=;
+  b=i4d1kyeGE/m1I594fYdcaDOaH8QbEmUd9PAADQDUZHudrT4xn1lrT4OP
+   5fUEDlHEbjCjD3osDsHqRF+puiB0XHugvsHDevuOd+8Bx9jNQEFrMOexD
+   JHbbv8tVQC7JH2t1W67VI1RF3twoWm23cIdCrSIRwjAAOz3j7x9I98lGU
+   XTPEHI1RruIPwf27c5LdhskDcD/v69hRWt7n4XBvqj8IDzktxRRvScREK
+   Pf9YYVQxHbd87pXZ7WEOTunZPD9B8PB0RMadwcrbQAmCpOQMLbgYI3Voa
+   zfuYyqbcYcrU7n6wxpOD4/DuoNK42uaMA4Xo8r8jXCxhykUYXIIUg6g2n
+   Q==;
+X-CSE-ConnectionGUID: 1g0b6s/8QY6m5UKjGz0lIQ==
+X-CSE-MsgGUID: wtZg4ncoRwW7jKMNa32q8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="46652784"
+X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
+   d="scan'208";a="46652784"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 03:06:09 -0700
+X-CSE-ConnectionGUID: x0J3zSHdT3yCjNvUzPeB5w==
+X-CSE-MsgGUID: Ojjq9q4NToiOEwckh8DWKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,246,1739865600"; 
+   d="scan'208";a="133793092"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 03:06:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u9LNG-000000013QN-2HWC;
+	Mon, 28 Apr 2025 13:06:06 +0300
+Date: Mon, 28 Apr 2025 13:06:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexandru Ardelean <aardelean@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] util_macros.h: Make the header more resilient
+Message-ID: <aA9TDp7FF4rcNI6K@smile.fi.intel.com>
+References: <20250428072754.3265274-1-andriy.shevchenko@linux.intel.com>
+ <20250428023220.7cfab2286bb94f25c6bf7ca9@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428023220.7cfab2286bb94f25c6bf7ca9@linux-foundation.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-If iov_offset is non-zero, then we need to consider iov_offset in length
-calculation, otherwise we might pass smaller IOs such as 512 bytes, in
-below scenario[1].
-This issue is reproducible using lib-uring test/fixed-seg.c application
-with fixed buffer on a 512 LBA formatted device.
+On Mon, Apr 28, 2025 at 02:32:20AM -0700, Andrew Morton wrote:
+> On Mon, 28 Apr 2025 10:27:54 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > Add missing header inclusions and protect against double inclusion.
 
-[1]
-At present we pass the alignment check,
-for 512 LBA formatted devices, len_mask = 511
-when IO is smaller, i->count = 512
-has an offset, i->io_offset = 3584
-with bvec values, bvec->bv_offset = 256, bvec->bv_len = 3840.
-In short, the first 256 bytes are in the current page,
-next 256 bytes are in the another page.
-Ideally we expect to fail the IO.
+> The patch doesn't "protect against double inclusion"?
 
-Fixes: 2263639f96f2 ("iov_iter: streamline iovec/bvec alignment iteration")
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
-Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
----
- lib/iov_iter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm... Not really. This is a copy'n'paste leftover. Can you remove that part
+when applying or should I send a new version?
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index bc9391e55d57..9ce83ab71bac 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -820,7 +820,7 @@ static bool iov_iter_aligned_bvec(const struct iov_iter *i, unsigned addr_mask,
- 	size_t size = i->count;
- 
- 	do {
--		size_t len = bvec->bv_len;
-+		size_t len = bvec->bv_len - skip;
- 
- 		if (len > size)
- 			len = size;
-
-base-commit: 02ddfb981de88a2c15621115dd7be2431252c568
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
