@@ -1,90 +1,116 @@
-Return-Path: <linux-kernel+bounces-625561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269A4AA180B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FAC4AA11B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2B49A729F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D273D3B8E66
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE432517AF;
-	Tue, 29 Apr 2025 17:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C9524729A;
+	Tue, 29 Apr 2025 16:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="VOtLQ77d"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsAeS7Ww"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F79239072;
-	Tue, 29 Apr 2025 17:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAD2221719;
+	Tue, 29 Apr 2025 16:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745949062; cv=none; b=VhAdsCpJkkU1eyWdOPObPXnQW4yS7sJESS80FfkFHkBCoCeOdeO1+0e0c9ta4V4y3OkYcms32eCn5cbP08a2S1MxQCa4zWVKej2XkgtPU0gOsopIR2h1gEyydY3B1H034MGbnQgLW5tth1bNfzSg8MlXzYybcaCOMgmg7TBjQ48=
+	t=1745944753; cv=none; b=lcFfBb3oSyAFwHIhLNHkNpRkjjozWdz+tAVAR3g8kstmCH39xEo7xLfs1PG5+8f5bG3GTyOxd8R5jHFPnmTXCFdghbrKne0cwMb6r8vfGvTQ61hIFZseOHw0ZAwM6XvtIonCbNwFaASLlHSF54UCUOlbzN4zV4DiYUu9jhozfk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745949062; c=relaxed/simple;
-	bh=Iw8Wa9ZRgOojjhRhHP4GvLG9MuFK2w+E50QoyC4hl9o=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZlcGLcwZaZFoVDRI0892CMIHBhxJ8+E3kjwAobKqcOCaOcQ9DPyHw/0iSjrYsgttHOXR1BGbtYiEFR/jkQKqGj0J/ySNQwvkGtXIuQ9NYS+hR6DhAvZVufGAvhMOO7nSe4iEP2Nkszx7seCevvaat932iQFr14VcKfzCokGQAf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=VOtLQ77d; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1745944729;
-	bh=Iw8Wa9ZRgOojjhRhHP4GvLG9MuFK2w+E50QoyC4hl9o=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=VOtLQ77d9bEAh6Py00ThK7o9ARTip/gI+OiwbQ5xwG4pls1/BJvFgPuz9YlxB8MdU
-	 vx9YzPtsNJTA2qqHHAsFBiH5nlzRqVspHwUeziWJ86SejooDmGtPURI46gsy2l6Z1m
-	 GVnlmFoRBPV/qc9zHkOpq04XVhhrI9wTE4Zy9Z04=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 1EE09401FC; Tue, 29 Apr 2025 09:38:49 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 1C3E2400C6;
-	Tue, 29 Apr 2025 09:38:49 -0700 (PDT)
-Date: Tue, 29 Apr 2025 09:38:49 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Nico Pache <npache@redhat.com>
-cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org, 
-    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com, 
-    baohua@kernel.org, baolin.wang@linux.alibaba.com, ryan.roberts@arm.com, 
-    willy@infradead.org, peterx@redhat.com, ziy@nvidia.com, 
-    wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com, 
-    vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com, 
-    yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com, 
-    aarcange@redhat.com, raquini@redhat.com, dev.jain@arm.com, 
-    anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
-    will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, 
-    jglisse@google.com, surenb@google.com, zokeefe@google.com, 
-    hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com, 
-    rdunlap@infradead.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com
-Subject: Re: [PATCH v5 12/12] Documentation: mm: update the admin guide for
- mTHP collapse
-In-Reply-To: <20250428181218.85925-13-npache@redhat.com>
-Message-ID: <6fd003dc-2a2d-ca15-e7b6-9af988fdbc3f@gentwo.org>
-References: <20250428181218.85925-1-npache@redhat.com> <20250428181218.85925-13-npache@redhat.com>
+	s=arc-20240116; t=1745944753; c=relaxed/simple;
+	bh=9cnUo42bVH6Ako8kUSAekQfAcAXta7oVIeRa+ZeBl/E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UAhK8gltHnYRrREniE15dg9RbaffCUDqUY1Tl6XpEMG+Kme8Wex59dnVVNYslyvUSmwxUbx5eEGntNz5MvKxeYXpqKItJX+N1HQ5bMeFqH7XQIbsSes1w02gH9c+YCN+GXfgadl9Dfd8M8Z5zETvQHarSfGwZ3/SrsuUXwvEjyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsAeS7Ww; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so24545865e9.1;
+        Tue, 29 Apr 2025 09:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745944748; x=1746549548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfxB7ueWMJHOfVdTrigCt7WRfmfJvpUb5F90S4PMLb0=;
+        b=YsAeS7WwWTyz21+32JfiE165puqWH/VjGlL5wbqgRIJPJs2uLOGKFarDyFeIoW8jrf
+         SbxubVVh7SAZf8RGom2JM01EYQIKY22XhcAAhFCV+UppkTqGW49ldz1N5coIlWYaL2YH
+         CxE8VC0mXDJgJJjrOOzNaCtjicAntuvpRWE3idZsV6UNIyQ8jHMhEphxrjJ4xhwjQXN4
+         NhTmSLBWcgHCtzyIjwJGfhNBpi78tTqV8gnZug1/IeKE++qdqRw3ioi+UquPEZiopJj+
+         VlMWJ+U0VFTr4W+9GC+cUasFXqGLb06dphHhnHZpX9JkUoEOk32CGIETv0bkWJpy012P
+         5jmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745944748; x=1746549548;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OfxB7ueWMJHOfVdTrigCt7WRfmfJvpUb5F90S4PMLb0=;
+        b=STe8OFGepwyc5ZmtcdPlyvDGNtQ2SKddhPGFqZuoiXUaq0tWW39we40CcV7RMoMq5h
+         XiizInKmDwGk3USQkZLZPs7LeONxVlMA0N77Jahlt0Ti5ZQbr567HBsE/hLtBTxfe3fS
+         WDPuQtcVxa+Eome2uXgGcAsxzq0BqvtzpwZoNkM2G5CTTwyWaB2l+/HRep+tEl2zlvHJ
+         ZY3fQkh6NHx8TMUcsrtkooYjg8+jUApStCZ/Pcp82WoXINU3iexc09QgcBrvEXfXg2Pg
+         ukpleBEOzoMEbxPvsSL9ZHGzYK34inMy4z4UYBFN0hspx9IDUydM+IhzhJX8vZcc9pcG
+         Uxvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6YYFgffzVSst6ks6YZkHY2yOYABdFvM1C7NGm7TB3OHielRJreWa03ZFvE3JHFXoA8ooNE9ARNDcU+DAYSk=@vger.kernel.org, AJvYcCXHMFITRnuJaD/4QhUPTyre2CZXqUwpg/4lBqVJkvik2RWS7B4EQn0oMG+CEw83xJERgDbizIQUXJzeF3RT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbEtFSQjA091k8MLDuhm0nrR68OGxjQfgtWZIRHdv21sXULDKK
+	b3tIp7JuyOP4NpYkcGB8IW88kdKhjvJ901qCEFePTwTgjkcCvWnA
+X-Gm-Gg: ASbGnctzn3Q1Ot8arVnU2pL94kMI2QRejpqnmxCqXlcO7QOPxh+6S/gx62z9TI+Uq3b
+	dUm7Aa+IUyxSrfaVXMXwNwueKnxwz0iHB27Q+oNP097W6vh0UxQTywzPSs+vcGRmZgiw5+/dwII
+	9/LmxQYrlLFv2vZ6pUyeCdXxh02LFVG77iQbx4qdGAlL/rIzOc4NkZZ8mTh0LrXdaElzR+IZBxf
+	7MrpKvgO2Hf7sSkxYxuabQbIzP9mNVu8NtdUXkbVR1KCw8jeHlw83fvNgSShgq60szEHpsoNzr4
+	FPlRRqjCo906dMuMpbyFP69JAgkagRyeh5/wm8Q19A==
+X-Google-Smtp-Source: AGHT+IEwn1kuyd7yIBmkob/jd/orK5Et2W92kV3id4CopJGSgQ+gR90AEwMrSeL1WSrlpBwGddY34w==
+X-Received: by 2002:a05:600c:c0f:b0:43d:563:6fef with SMTP id 5b1f17b1804b1-440ab848800mr113084645e9.21.1745944747617;
+        Tue, 29 Apr 2025 09:39:07 -0700 (PDT)
+Received: from localhost ([194.120.133.77])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4409d2d8479sm200434295e9.29.2025.04.29.09.39.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 09:39:07 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tpm: remove extraneous space after newline \n
+Date: Tue, 29 Apr 2025 17:38:59 +0100
+Message-ID: <20250429163859.823531-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Apr 2025, Nico Pache wrote:
+There is an extraneous space after a \n in a printk statement.
+Remove it.
 
->  THP can be enabled system wide or restricted to certain tasks or even
->  memory ranges inside task's address space. Unless THP is completely
->  disabled, there is ``khugepaged`` daemon that scans memory and
-> -collapses sequences of basic pages into PMD-sized huge pages.
-> +collapses sequences of basic pages into huge pages.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/char/tpm/eventlog/tpm1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-huge pages usually have a fixed size like 2M and are tied to the page
-table levels.
-
-Would it not be advisable to use a different term here like "large folio"
-or "mTHP sized folio" or something like that?
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 12ee42a31c71..566f4df58d48 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -258,7 +258,7 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ 
+ 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+ 	if (!eventname) {
+-		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
++		printk(KERN_ERR "%s: ERROR - No Memory for event name\n",
+ 		       __func__);
+ 		return -EFAULT;
+ 	}
+-- 
+2.49.0
 
 
