@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-624775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E8BAA0770
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFD3AA0764
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C91176B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18F6F1888A7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0842BCF47;
-	Tue, 29 Apr 2025 09:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFF02BE7AB;
+	Tue, 29 Apr 2025 09:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dKdk1vTn"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hzLecNAs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84A6279786
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0642BE0EC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745919309; cv=none; b=RMUm9H4fBHJ8tRoaYoXsnihAV2I+HznLcNqcvVlSLRlMNk5o7xL4UX/RXb51GR0Y6EwWRPMtjcNqLZQ8rXVY+DEOhH2fsEreHcUK5pDYcJL2BJgxdMq/uM7/zQXcE+4MtSqUjUNgpYMFnGpoOi9uj+rL9tKe2NDESKUzqwmDmyY=
+	t=1745919042; cv=none; b=T32MYoxhkVTdt+tefTe7y6tQN/akDqEjaDtewMzHYKamLp44sOv4hG7VLbUQ0VcAeMz3q6xd2i7IJ0carf9/6XxBXZDhTsRnws+/agI+VkEmNHX3OOdFBy5fMh3ZXqWidFmQv7rstbgUltBRya5rX18wQdx3FUAe7o/3HSYSM9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745919309; c=relaxed/simple;
-	bh=guAD50gmgdf8dNbOSIkbRIT3QyGj4WLIcqax997RKGg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=qMCSnqgf+jaoBN0PayYXPAE+GR9WsN4WfLeDTtqQAj63Itjee7wzoiGO3z63nk1YqnG4FINHkMZ3GpSk8vDSSYk3THYEHFFQdu7wNaAPTgblyl2X14idl/g7XJd011bGpgyrR8iIrLOau5CKoiYcouGvy02C7G/D3qkgdplqy64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dKdk1vTn; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250429093458epoutp02bd0a73809caf79a2ed7a6e02e783fe13~6wFoWeWKa2214222142epoutp02r
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:34:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250429093458epoutp02bd0a73809caf79a2ed7a6e02e783fe13~6wFoWeWKa2214222142epoutp02r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745919298;
-	bh=Pi/iyF0IplJUPA7d0Z7gKsd7OHUodqqvbGsperI0axM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=dKdk1vTnFVWqBAR2SqLxsvkR24HZJehguH3rUbBAEJbVDuU068FhhwprcjuoWmYVD
-	 +QxiUfdPiLYwIKGECzqtXUifHOs/dwfFmc+0I/Biz153MLGw2my1Xp+dMw74C36bFL
-	 xPFKnHHjVFszrH1obIRaxQsXlhBd7RNLs5FtKlsw=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250429093457epcas5p2b0fbeb86b8e679376761a83858e6041e~6wFneFqts1952619526epcas5p26;
-	Tue, 29 Apr 2025 09:34:57 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZmwC41Dxcz6B9mH; Tue, 29 Apr
-	2025 09:34:56 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250429092957epcas5p264b0dfae6bae9179df57e520fc59f8b5~6wBQCY4K62748727487epcas5p2B;
-	Tue, 29 Apr 2025 09:29:57 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250429092957epsmtrp1a2a35e256eff10acc70d75b9a28f6bdb~6wBQBc9JQ2444424444epsmtrp1v;
-	Tue, 29 Apr 2025 09:29:57 +0000 (GMT)
-X-AuditID: b6c32a52-41dfa70000004c16-e5-68109c1514f7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FD.FD.19478.51C90186; Tue, 29 Apr 2025 18:29:57 +0900 (KST)
-Received: from INBRO002053 (unknown [107.122.2.234]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250429092955epsmtip192a33218257ecbc1e6673c37e238d0e8~6wBOVcwOw0967309673epsmtip1z;
-	Tue, 29 Apr 2025 09:29:55 +0000 (GMT)
-From: "Yashwant Varur" <yashwant.v@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <cs0617.lee@samsung.com>, <g.naidu@samsung.com>,
-	<niyas.ahmed@samsung.com>
-In-Reply-To: <73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
-Subject: RE: [PATCH] arm64: dts: exynos: Added the ethernet pin
- configuration
-Date: Tue, 29 Apr 2025 14:59:54 +0530
-Message-ID: <0ed501dbb8e9$45aa96e0$d0ffc4a0$@samsung.com>
+	s=arc-20240116; t=1745919042; c=relaxed/simple;
+	bh=hXonJzExV6f/cYOmpVW4RG/5EKao+OkAqFLmiQh/hcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VZZQO4/EaASibd2bYCmZloBIZI8Si6Th8lRbpnsfJOdlL+uK+NlpK6xMHYpqXp9bHlit4zSG+HR4+LkkesDuZ4YUALaGZLZYI9dErFm08ilal4mA/nPH+9IjVvIkz/l2M/JLZc3RAhWp22a5u/Y97kQFWrt3v2eiDCNggisCzk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hzLecNAs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745919038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aKFEHdgHcLwRfGZHvxEjeWO9rZ2vSungJ+/BDNwcd7k=;
+	b=hzLecNAsInqcDTm4hEwQkwkh2u4bak60DKiQNVjmHwaoiFBURZM4qDrInNKmzqzQ0l6xeW
+	6BgxRdjcK3w/YXkWJyvrE1N8AO0aMjIzAVLxEaGnqPs3gniA2ob0shuFD6eru12oKzZ10S
+	pBCmpvW8ITCSDq+SARo+qDNXUelYhxs=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-127-YIwONv6sMfOyPAo2Ar94zQ-1; Tue, 29 Apr 2025 05:30:36 -0400
+X-MC-Unique: YIwONv6sMfOyPAo2Ar94zQ-1
+X-Mimecast-MFC-AGG-ID: YIwONv6sMfOyPAo2Ar94zQ_1745919036
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5e5c1bb6a23so1397158a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:30:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745919036; x=1746523836;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKFEHdgHcLwRfGZHvxEjeWO9rZ2vSungJ+/BDNwcd7k=;
+        b=R73vGagNb6JeToRp0x9j2ax3NTXB6NTPL3M7Oi88cczo1i6bRrKtvCZTS59sGSxGws
+         hcr2NXLjh9d+yn+XQwP3p97K6bLcpIsr41cPpotqb4YaFZ1aVbc5syDhXegmUwt+u9Nk
+         EgGyYf7GnXvwwPlT7isaiXrwrvM6k1cCpS4+ylBJJUFp6XgteCju0LE3ngyMQh/NN6h/
+         Z9353ByOIZjf+U2uafTjCqkEUiPvli605ZKibe1UbiyQcAPYIZchq+X/B2FYyG3onBwB
+         wWc+QSnFkOe1HISWzgAahv80McsUSpzbdfWyBujFvzkgEZFmQh6CGpOTOqw22rWGKWff
+         cbTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXybSVHd8uP56NcrNmuRoW2661lx3yygquTgjswB+UKIpgj+KJvTqTGgHQDEP1blXYfGtvZthxMSMJxEfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZs/se/jyieOlKyBM0R0gqD0Z76fHwBYHUxW/lrzrPzDbhAPZs
+	W3zjRe6Y2oAl48f2IDjwOAxP0C32+PTPoJQrngeTZElDmJeH1/XcydiBxisqzwq3o7RkgNRFEay
+	RqImSx/mROjrVSqJZHdvWrXdOKgqLu8IDu9UMGbX5RYs+IyMww8SwuvzKimNl2w==
+X-Gm-Gg: ASbGncv4SPWnXnXOilcJcFeygUdCl66L2ZIK4qgcogpcxKVFtU56QpzlZTC2N8C3fQ4
+	Oe4XebWTMxc5NZxtZyxP2x0kk4SkwVa6wIBv4bnRqpL2c05GztCfmAOweF3SqYC0LxV7JYqANyX
+	HMd2+Pqjk+zBt6yyxeqzidXzpGHWsjr+xW2Pe/Z+ZJMIzkr7seW3VMR87riM6x4M4gAK6xqqvCB
+	7raCBf7Uskm4G0LNb5jQTdbfHD1k5HaR6m/HLzyYTHRGkow+SLr8/IAbr23y0W1+wjb+oJOChJC
+	bAhmRK9yzSx1B3KqkUUTVvwWdHSkcjpRwHfULsn5q8u4sX4sKrDSvcVfuu8=
+X-Received: by 2002:a05:6402:1e94:b0:5f4:c7b5:fd16 with SMTP id 4fb4d7f45d1cf-5f839224a59mr1942335a12.6.1745919035695;
+        Tue, 29 Apr 2025 02:30:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFS2Aal7Wz+dVWPGKPbDkIqlChFVLqNPD6xjJGGYetpQ28hV8efTZJRlGmop13TtQQ6QsChxw==
+X-Received: by 2002:a05:6402:1e94:b0:5f4:c7b5:fd16 with SMTP id 4fb4d7f45d1cf-5f839224a59mr1942313a12.6.1745919035327;
+        Tue, 29 Apr 2025 02:30:35 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2726:1910:4ca0:1e29:d7a3:b897? ([2a0d:3344:2726:1910:4ca0:1e29:d7a3:b897])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f5db6sm7332402a12.44.2025.04.29.02.30.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 02:30:34 -0700 (PDT)
+Message-ID: <60643797-2466-4200-9abe-9956bfdeaa73@redhat.com>
+Date: Tue, 29 Apr 2025 11:30:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI+tP5AvR0g22A5T67WLyfPVk3CYgKkYErqAxsAxq2yxm0V4A==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTld0jkCGwfVnKhYP5m1js1iz9xyT
-	xap3vBbzj5xjtdgy8zKzxctZ99gszp/fwG6x6fE1VovLu+awWcw4v4/J4smUR6wW//fsYHfg
-	8di0qpPNY/OSeo++LasYPT5vkgtgieKySUnNySxLLdK3S+DKePyvnbngJF/F31+32BsYF/N0
-	MXJySAiYSBz/+Jixi5GLQ0hgO6PE+Xsn2boYOYASUhINb8IhaoQlVv57zg5iCwk8Z5ToOSsG
-	YrMJ6Es833yNCaRXRGAxk8SXpoNgvcwCQRJfdgdCzNzLKDGvdzcLSAOngJ3E2a6HYIOEBXwl
-	dnecAbNZBFQlzk8+wgLSyytgKTHhqRpImFdAUOLkzCdgrcwC2hJPbz6Fs5ctfM0McZuCxM+n
-	y1hBbBEBJ4n9J9cyQtSIS7w8eoR9AqPwLCSjZiEZNQvJqFlIWhYwsqxiFE0tKM5Nz00uMNQr
-	TswtLs1L10vOz93ECI4zraAdjMvW/9U7xMjEwXiIUYKDWUmEt8qAP0OINyWxsiq1KD++qDQn
-	tfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qByTVe5u5+psuu9/VLDx8zV2Dd06M2
-	U/5eTdOpFhcWkyLO2j2MTFOv5Ksrsz76ZMC6Oe7E3uhFD6Ye5qo/+4/Fe2K99PLWjVbZVbOm
-	XjWt2R1u8Wzvb9m3ofMsExJ+9BpLcTItVY95vK2IiftEqvSLxvxdzuec7OI+OU6cZhUjMa23
-	2O76hv64q5esbufqpO/PVy7mVjdx9l5TN7uzK6FfPErf80bWfkeLHTU3JhxmWM5UpLBw0pTq
-	l3bJ3dcmyS/u4269orir5Dpv9KSC8iVhZa8O/Vqx/dY8rfS7zt8MGpo59/K6euTeZff64JOh
-	zi7mEff6f/1GXSvDF9slUtrunRCe+C15mlO3UMWj3/+UWIozEg21mIuKEwEo7Tz1IgMAAA==
-X-CMS-MailID: 20250429092957epcas5p264b0dfae6bae9179df57e520fc59f8b5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
-	<20250423060034.973-1-yashwant.v@samsung.com>
-	<73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 07/13] net: pse-pd: Add support for budget
+ evaluation strategies
+To: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Donald Hunter <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250422-feature_poe_port_prio-v9-0-417fc007572d@bootlin.com>
+ <20250422-feature_poe_port_prio-v9-7-417fc007572d@bootlin.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250422-feature_poe_port_prio-v9-7-417fc007572d@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 4/22/25 4:56 PM, Kory Maincent wrote:
+> @@ -223,6 +237,17 @@ struct pse_pi_pairset {
+>   * @rdev: regulator represented by the PSE PI
+>   * @admin_state_enabled: PI enabled state
+>   * @pw_d: Power domain of the PSE PI
+> + * @prio: Priority of the PSE PI. Used in static budget evaluation strategy
+> + * @isr_pd_detected: PSE PI detection status managed by the interruption
+> + *		     handler. This variable is relevant when the power enabled
+> + *		     management is managed in software like the static
+> + *		     budget evaluation strategy.
+> + * @pw_allocated_mW: Power allocated to a PSE PI to manage power budget in
+> + *		     static budget evaluation strategy.
+> + * @_isr_counter_mismatch: Internal flag used in PSE core in case of a
+> + *			   counter mismatch between regulator and PSE API.
+> + *			   This is caused by a disable call in the interrupt
+> + *			   context handler.
 
+The name itself of this field is somewhat concerning, and I don't see it
+set to any nonzero value here or in later patches.
 
------Original Message-----
-From: Krzysztof Kozlowski <krzk=40kernel.org>=20
-Sent: Wednesday, April 23, 2025 8:41 PM
-To: Yashwant Varur <yashwant.v=40samsung.com>; robh=40kernel.org; krzk+dt=
-=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com; devicetree=
-=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-samsung-s=
-oc=40vger.kernel.org; linux-kernel=40vger.kernel.org
-Cc: cs0617.lee=40samsung.com; g.naidu=40samsung.com; niyas.ahmed=40samsung.=
-com
-Subject: Re: =5BPATCH=5D arm64: dts: exynos: Added the ethernet pin configu=
-ration
+Possibly it should be removed entirely???
 
-On 23/04/2025 08:00, Yashwant Varur wrote:
-> This patch adds the ethernet pin configuration.
-
-
->=20
-> Signed-off-by: Yashwant Varur <yashwant.v=40samsung.com>
-> Signed-off-by: Changsub Lee <cs0617.lee=40samsung.com>
-
-Incorrect chain or confusing. Who was the author? What is the meaning of th=
-e last SoB?
->
-Sorry will correct the order.
-
-
-> ---
->  .../dts/exynos/exynosautov920-pinctrl.dtsi    =7C 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi=20
-> b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> index 663e8265cbf5..778584d339d5 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
-> =40=40 -166,6 +166,24 =40=40 gph6: gph6-gpio-bank =7B
->  		interrupt-controller;
->  		=23interrupt-cells =3D <2>;
->  	=7D;
-> +
-> +	eth0_pps_out: eth0_pps_out =7B
-
-Please follow DTS coding style carefully. This applies to all commits you t=
-ry to send from your downstream/vendor code.
->
-Sure, thanks
-
-What is more important, I don't really understand why you are doing this
-- there is no user of these entries - and commit msg does not help here.
->
-Understood, in v2 will add the Ethernet node as well.
-
-
-
-Best regards,
-Krzysztof
+/P
 
 
