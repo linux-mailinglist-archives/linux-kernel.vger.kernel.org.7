@@ -1,167 +1,166 @@
-Return-Path: <linux-kernel+bounces-625467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86171AA11DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E06FAA11BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CDC57B4438
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:45:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A7857B10F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2548248883;
-	Tue, 29 Apr 2025 16:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD4C24A044;
+	Tue, 29 Apr 2025 16:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YyayIQU/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HZvYhjBW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ECC216E30;
-	Tue, 29 Apr 2025 16:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9AC221719;
+	Tue, 29 Apr 2025 16:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945171; cv=none; b=QgN9sInUR/hmLLj7YbMBjtG7fy3wkQm/sSTNGmjn6X+PphEOApnp2dndCSlsY4+mdmNdNIB253Vi+WEG5qBMua9OQGSVZtWqouHo6hrshuDG1zgCVuf8yh0aVPJU1X+Hb83sOGbpgmGphU9RT1jwRrntYOv9LPPYPYkzGX+CB04=
+	t=1745944761; cv=none; b=W2m7614f2uTqKCd60pmgnlntYfvMUuyKHyaU+9135W1MlUpuApdK/MbiiD9d6IobgXRcMmwHYkPO79tMT7XBhUI1aTMgxBMlGT7JYhlHigrpl0FPwygqwAcMNRCIPHIe7MHEMujF5a2HuwMXyYz6ySysdYvkOJysoZzXIi6DMF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945171; c=relaxed/simple;
-	bh=PuyHt2z5ws0Bj3PmcY76iOFfGqQcCidK9QZfL9729/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gBpTwVM1r8IheftobvwjceUL7e6cQBnHQMaCjm/HahTVl+XNK7S2Wnx88wbyy+5N06AwY47OHeBFHVULhVHzI58TO/PomOdDFfDVeKG1AAIto9AqmTF4h9VVlG0FSos1cd3K9hl8FkEPAKSv3Qij8C54bHMPW1+AoYMmQs2SPPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YyayIQU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7511BC4CEE3;
-	Tue, 29 Apr 2025 16:46:10 +0000 (UTC)
+	s=arc-20240116; t=1745944761; c=relaxed/simple;
+	bh=IUKUx5rHs3y0JzulFjrxiQiR+dG93QZgEfRxFoGZczw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/8okBdXCMALyvriDTMBN4U0WUBG2j6jSYdnaDHNhquOnpCNKop3yHkXf06C7mgITA+VqmQjF26WzJv7W1rv2i6VYK87hDe/fZWm9AbCHljqK4N/zAE19oHBbRZ/dCqUvHyGPPMnjM0ghg17CNBDqu0eAmUZ3AAax10oBDoBCgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HZvYhjBW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E931EC4CEE3;
+	Tue, 29 Apr 2025 16:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745945170;
-	bh=PuyHt2z5ws0Bj3PmcY76iOFfGqQcCidK9QZfL9729/E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YyayIQU/IWnXVhuOkwZ9zQEMfn7kuqjBPu0qaOPq0ZvOHr3IpdKTP3l8bfc3bWEzB
-	 5K1eUvRIV7noqckPTlt4iVyZYVKbQJVrmQ6/QK+8pB8I5ZX525b6evZDnTI4Ngi3yz
-	 uVizybvXBXkGevX8jfT0EMU5hEsZlTt0ZPhmyqIE=
+	s=korg; t=1745944760;
+	bh=IUKUx5rHs3y0JzulFjrxiQiR+dG93QZgEfRxFoGZczw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HZvYhjBWJAWG88PFpWa0g8IHHenaqjt964kpD2VBxwvic8PB3n5xGhxKOVvyGtixn
+	 aoUwNKZxDEQ+l/eDF5n5nffas9V4ow3d9l/T1X4NA/Iir3GtEjuJpxpjsHrb6xj3Va
+	 OBMAjxKK6o2TsPE6+Uq4y0EuMyE3/2Ey4JoVR6p0=
+Date: Tue, 29 Apr 2025 18:39:17 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Max Grobecker <max@grobecker.info>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 008/179] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
-Date: Tue, 29 Apr 2025 18:39:09 +0200
-Message-ID: <20250429161049.730192467@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429161049.383278312@linuxfoundation.org>
-References: <20250429161049.383278312@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Jason Kridner <jkridner@beagleboard.org>,
+	Deepak Khatri <lorforlinux@beagleboard.org>,
+	Robert Nelson <robertcnelson@beagleboard.org>,
+	Dhruva Gole <d-gole@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: kernel: device: Add
+ devm_of_platform_populate/depopulate
+Message-ID: <2025042956-yelling-magnifier-5778@gregkh>
+References: <20250429-rust-of-populate-v2-1-0ad329d121c5@beagleboard.org>
+ <aBDi2LE3O1rIsGqn@pollux>
+ <2025042904-trade-leverage-0f98@gregkh>
+ <aBDl5oRIRpwbPrC1@pollux>
+ <2025042945-aviator-subzero-0263@gregkh>
+ <1fda026e-9ec5-46f6-84e8-4111263350ff@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1fda026e-9ec5-46f6-84e8-4111263350ff@beagleboard.org>
 
-5.4-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Apr 29, 2025 at 09:37:04PM +0530, Ayush Singh wrote:
+> On 4/29/25 20:27, Greg Kroah-Hartman wrote:
+> 
+> > On Tue, Apr 29, 2025 at 04:44:54PM +0200, Danilo Krummrich wrote:
+> > > On Tue, Apr 29, 2025 at 04:37:49PM +0200, Greg Kroah-Hartman wrote:
+> > > > On Tue, Apr 29, 2025 at 04:31:52PM +0200, Danilo Krummrich wrote:
+> > > > > On Tue, Apr 29, 2025 at 05:09:26PM +0530, Ayush Singh wrote:
+> > > > > > +    /// Remove devices populated from device tree
+> > > > > > +    pub fn devm_of_platform_depopulate(&self) {
+> > > > > > +        // SAFETY: self is valid bound Device reference
+> > > > > > +        unsafe { bindings::devm_of_platform_depopulate(self.as_raw()) }
+> > > > > > +    }
+> > > > > > +}
+> > > > > One additional question regarding devm_of_platform_depopulate(). This function
+> > > > > is only used once throughout the whole kernel (in [1]), and at a first glance
+> > > > > the usage there seems unnecessary.
+> > > > > 
+> > > > > In your upcoming driver you call devm_of_platform_depopulate() from a fallible
+> > > > > path [2].
+> > > > > 
+> > > > > So, I think we should change devm_of_platform_depopulate() to return an error
+> > > > > instead of WARN(ret).
+> > > > > 
+> > > > > If [1] needs it for some subtle reason I don't see, then I think we can still
+> > > > > call it from there as
+> > > > > 
+> > > > > 	WARN(devm_of_platform_depopulate())
+> > > > > 
+> > > > > [1] https://elixir.bootlin.com/linux/v6.15-rc4/source/drivers/soc/ti/pruss.c#L558
+> > > > > [2] https://github.com/Ayush1325/linux/commit/cdb1322b7166532445c54b601ad0a252866e574d#diff-7b9e3179e36732d5f3a681034d70c2fda4ff57745c79ad4a656f328c91e54b77R71
+> > > > Ugh, no, we should just delete this function entirely if only one driver
+> > > > is using it.  That implies it's not really needed at all.
+> > > Ayush's driver calls {de}populate() from a sysfs store path [2]; not sure what
+> > > it's doing semantically or if this is a valid use-case though.
+> > That's going to be rough, and full of tricky corner-cases and probably
+> > shouldn't be doing that at all :)
+> > 
+> > So let's hold off on this entirely until we see a real user that can
+> > actually pass review.  Trying to do system configuration like this in
+> > sysfs is a much larger discussion than just adding rust bindings.
+> > 
+> > (hint, configfs is for system configuration, not sysfs...)
+> > 
+> > Anyway, worst case, you just "open code" the single function call that
+> > this one binding was trying to "wrap".  which is what I think the
+> > in-kernel user should be doing now.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> 
+> Well, I don't really want to convert this discussion to addon board
+> connector setup discussions. So I will try to keep things as short as
+> possible here while linking to all the other discussions for the same.
+> 
+> For starters, what the driver does is as follows:
+> 
+> 1. Provide 3 sysfs entries:
+> 
+>     - New cape: Can write the name of the cape (I have not settled on the
+> naming convention yet). This name is then used to load appropriate overlay
+> from `/lib/firmware/` and populate all the devices. The overlay is applied
+> to the connector node. Only one cape overlay can be used at a time.
+> 
+>     - Current cape: Just a ro entry to get the name of any active cape.
+> 
+>     - Delete cape: Remove cape overlay and registered devices.
 
-------------------
+That's great, but I don't think that's what sysfs is good for, we can
+discuss that later when you submit your driver for review.
 
-From: Max Grobecker <max@grobecker.info>
+Again, look at configfs please, that's for "configuring" things.  sysfs
+is for basic device properties and some tunables, but is NOT a major api
+interface that requires a lot of logic like loading an overlay would
+require.
 
-[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
+Also, circumventing the "normal" device tree overlay interface and
+discussion isn't ok either, this needs to work for all types of devices,
+not just for "capes" like you have here.  To accept something like this
+would be going around all of those other maintainers with their strong
+views of how things should be done.
 
-When running in a virtual machine, we might see the original hardware CPU
-vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
-hypervisor. In case we run on AMD hardware and the hypervisor sets a model
-ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
-capabilities present to circumvent a bug with some BIOSes in conjunction with
-AMD K8 processors.
+Anyway, we can discuss that when you submit your code for review, but
+for now, I don't want to take this binding either as I think the whole
+function should just be removed from the kernel anyway :)
 
-Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
-bash scripts and prebuilt Docker containers, as it does not need to have
-additionals tools present â€“ even though more reliable ways like using "kcpuid",
-which calls the CPUID instruction instead of parsing a list, should be preferred.
-Scripts, that use /proc/cpuinfo to determine if the current CPU is
-"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
-claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
-in that flags list.
+thanks,
 
-This can prevent some docker containers from starting or build scripts to create
-unoptimized binaries.
-
-Admittably, this is more a small inconvenience than a severe bug in the kernel
-and the shoddy scripts that rely on parsing /proc/cpuinfo
-should be fixed instead.
-
-This patch adds an additional check to see if we're running inside a
-virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
-understanding, can't be present on a real K8 processor as it was introduced
-only with the later/other Athlon64 models.
-
-Example output with the "lahf_lm" flag missing in the flags list
-(should be shown between "hypervisor" and "abm"):
-
-    $ cat /proc/cpuinfo
-    processor       : 0
-    vendor_id       : AuthenticAMD
-    cpu family      : 15
-    model           : 6
-    model name      : Common KVM processor
-    stepping        : 1
-    microcode       : 0x1000065
-    cpu MHz         : 2599.998
-    cache size      : 512 KB
-    physical id     : 0
-    siblings        : 1
-    core id         : 0
-    cpu cores       : 1
-    apicid          : 0
-    initial apicid  : 0
-    fpu             : yes
-    fpu_exception   : yes
-    cpuid level     : 13
-    wp              : yes
-    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
-                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
-                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
-                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
-                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
-                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
-
-... while kcpuid shows the feature to be present in the CPU:
-
-    # kcpuid -d | grep lahf
-         lahf_lm             - LAHF/SAHF available in 64-bit mode
-
-[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
-
-Signed-off-by: Max Grobecker <max@grobecker.info>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 533451498c8f8..9bcc099484c89 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -808,7 +808,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 	 * (model = 0x14) and later actually support it.
- 	 * (AMD Erratum #110, docId: 25759).
- 	 */
--	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
-+	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
- 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
- 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
- 			value &= ~BIT_64(32);
--- 
-2.39.5
-
-
-
+greg k-h
 
