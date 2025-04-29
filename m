@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-625706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77AEEAA1BC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090F2AA1BC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134181B64859
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC1B4A15B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F9C25E477;
-	Tue, 29 Apr 2025 20:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EDA26159B;
+	Tue, 29 Apr 2025 20:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="yNxtPCwA"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nR9rDhYq"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E8B48CFC
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 20:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEEC2472B0;
+	Tue, 29 Apr 2025 20:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745957069; cv=none; b=cT/dCa9mSv+01qEeKZXX2oVwNzL9nL+LIjLT+jchKh6wRYRTOtvfE70xDi9cRQwzhJLQAKqKRS21mbsYjAQU8WYpMMZkbZhZXHJ9S/gB7bLypKSZ/oi0s4kFE/wTSI63wsHRCfgPSfADpKmZ1dC8Pr223CKctvnEpDWzT8kPLnw=
+	t=1745957129; cv=none; b=l/YtTJxpRZdKy5RWDgQ8Pzx2HLMIBi1oxEDWeJmR3WKAq9nyWWss6rOP+kjjOzu3ZgzMbAtB6Gn96OnszY/a904ngNvObzbHpSSjQg+xBtEIC4B9VEfTH6GFvTL82tbRx0/vKFk2mgKLYvJnt8Ye3WSXHvpo4gKdpAOGogAlBzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745957069; c=relaxed/simple;
-	bh=mIDBgyIrGai5i2PevDFrQWDS2WLUPqJT0lUwwpqkZqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQnStdYUGxg34kNWQ7xec1xMGMFIvDpo/h2giemloBDrkNX+/5X0lg2y3YSUD515URVJe/spAlPnp5oMwmyu4TbIWt6vJZj3PYswwtAigQGhYsUp3iBi18pWhhvbavAUxdWzy6iLHySPB0fTWqarUm6uby2fPxuki6ta8kjA9Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=yNxtPCwA; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-227d6b530d8so72195745ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:04:27 -0700 (PDT)
+	s=arc-20240116; t=1745957129; c=relaxed/simple;
+	bh=EPaDz9srlvFWoL0LgrmxpJ5HNRLE1J4tFa1bEpEb/Wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SlThINGr9bq+GelIYaCHjy34/8oCvM5HDp2S78QHIUtAZt71o1t5Vq8saN0tdH797N2PxiF4RJ84dCJJtYTZYyYl7cMK20aXAQ5ATdLosC5KU7/JhUw/rUATG44nGrWq7BS0BOs6CrMaM41a5KfhB9GqT298DCwa66K+ZIW3JQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nR9rDhYq; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-af90510be2eso773783a12.3;
+        Tue, 29 Apr 2025 13:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1745957067; x=1746561867; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LawO1f4/ezKmBz6/weBaTcmEk8JNPzax80742Sn6nQg=;
-        b=yNxtPCwAe7lD+ytg0a/9F15O/xnKFG1Gu/N7LEnq1KP4ncrUklaT3XbwjEPSyhipyD
-         XdSOmI1wqi2voj0p+JmqbMnxIfpqQ4I5S27k7VJySzNKGfpncpmZIP0nQ4JdcDnV8O1+
-         Hfpj2xWe1j+RF8EQ7C3mzeQiKFc6qwGkJC9d8=
+        d=gmail.com; s=20230601; t=1745957127; x=1746561927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EPaDz9srlvFWoL0LgrmxpJ5HNRLE1J4tFa1bEpEb/Wc=;
+        b=nR9rDhYqYAtUl+XmMfpYxLxsaX3VhDfcM5xiE13SIeyl3L243aKBNkEP6sqBIuDz09
+         MEZUNkxUZ6kxzNj8kFKLFnUS4uRxfZOFlb8/IaUFqHX1RdRW+y28ve4Wr/A1YajiiAwV
+         5s/4nuz3Y5OGPsb9GzFGkO+8nWJaWLl+CSE9O46SqUydcP3jR75WnwbtK2ayYry8w838
+         L9x5vK3gocZMBgssOIRM3lbECT58hUB5DV1Dbhw1IAIebcBW7e+NWJKG4VZh7vuSBDec
+         j5lqkWmUnx6vuAo9mjI9uHnawnBeHOs8oO1v75DtC86BQMmwdBem0NMo7rz3LgZ7Cd1+
+         4pnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745957067; x=1746561867;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LawO1f4/ezKmBz6/weBaTcmEk8JNPzax80742Sn6nQg=;
-        b=RQZtQ/WgtohtRwlLSXAvNLe90fUelka2/vSnGmnONF8zmCg8S2nPcGwGyPd6TYeEM1
-         +a2HU60TYi7LqwKmLN4dXfarQQAKMxltErEnwmED4loJcEJA2wK8xyhKqd5fEmuz3SFV
-         d+bEcMYwCNJwMTs8pgtkJuHV973ImwTS8P5kcoOEwPsS/3cR1rJiSHBlbHE3vpXKOfhd
-         D5OsSOksgnpUU8rIW08MNsIKrBoBWF9kjs+wNMdnajXS2jLtw+0NSxmqJFzXMqlWl//6
-         7rI+eHRozJZqc8O4NXw0EGUnV1CoSp//+eoUcQx/lcVh6TvlvVPhyjP5OAyrjMULvXq8
-         frsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWz9vygaFy2KH6eMETFqbqf3dlPy8EbkvIwlVFK435CwDSmTHvbgIL27PtHF7MZIMVPW6DLQNWIwqMNkjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp7LqfezGhtE4y2Gog8GUOote7ESX70IRH2p2lD0V0yx1HNwag
-	KUMqp6VLrAy9QyVo43MvqYAxlbvUDinOtQ7uFYIPEl69zZpa89ozJCExHSrXMUY=
-X-Gm-Gg: ASbGncuAajySMxc7eQ9C2kbkIjdCaAGKR7+jzFq21Vd7frl0zIAldkFp2OLycqdB/+i
-	9bIqexkofTP+QgQrkDT1M4YWyPR+EKZ/BfQxb2OYOOQx2tkElKlW7HJrFtdYWqAfZSFPCGmJ+QE
-	VG1MMncDa/E9mkAUDSD2WcXfIOjJ08BeUx7Vyf5j7or6CGkLlfqpPGYdf7GkW94RIAYKiV6GG4k
-	uNitwDlU44+yeAmb6XTwBqzqK1D5z9MtzAigni/0jRK2Fb8x7IMSHYUzRCPXNZE9TXscR+gKtBA
-	PyK7cZ/OgShyWyhZSEMaMYZdlxsbs9oqq+k7IH7YbVy3wlrhPJGTi/8yl0C4N4zNrr/cilmxhJe
-	UyabamnvYKVwY
-X-Google-Smtp-Source: AGHT+IGU1RP/mRANwzOjXe0cKgOZefEpYNYpcqI8RxMrlNXOANsV0zmRwyjxkpQy8QrrzJi5VwNW3w==
-X-Received: by 2002:a17:903:4405:b0:21a:8300:b9ce with SMTP id d9443c01a7336-22df35cad23mr8306975ad.49.1745957067559;
-        Tue, 29 Apr 2025 13:04:27 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4dc2119sm107243345ad.91.2025.04.29.13.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 13:04:26 -0700 (PDT)
-Date: Tue, 29 Apr 2025 13:04:24 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Mike Pagano <mpagano@gentoo.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH vfs.fixes] eventpoll: Prevent hang in epoll_wait
-Message-ID: <aBEwyNwBuihjvQ4g@LQ3V64L9R2>
-References: <20250429153419.94723-1-jdamato@fastly.com>
- <CAKPOu+980gvzd-uXUARnYQ4V++08spfBVj26nZapExVF80ryYg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1745957127; x=1746561927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EPaDz9srlvFWoL0LgrmxpJ5HNRLE1J4tFa1bEpEb/Wc=;
+        b=IfKY1F0hbuPVuQEYNQ4B4mkhHC8yJDuPuicY8XU3yfYU4+hxO1LIhxKGVkGWGurWBf
+         N4IAXCk770jnE5v+j99F/O4hth+NrVkMlAWjvb3E6EoCW4A04+DIoUHb7uIJ4rK/rXnW
+         yAqKQYjmLZlZenT/fPNYOAvcVdfi+xp4mJOX0G2cWG33cO4uitbsGgqGZCXAvnKKT4Cq
+         TDIaZRS9DEFKrry9wbSUO3m15gal/upkFjZWsyNEx1rfkW9c2F1U0/9ILbwGrugryvLw
+         NHAPgtge6w9kd+M3qvI+ng1RY1pgXo6Cu1USgr1thvTerHZxo2qipQusBEn9/af3WWe5
+         4YMw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9oyBPvSPejuvJ2Hc62X62C/hQEgZlesgg1KovmWDTNA/WT1W8/MqdcrZNZRLTy7kw0FTdfmCxTr+OBrw=@vger.kernel.org, AJvYcCVRMbfKdnz6aipoZ2vhXaAAlxxdpqBSexb+uaN/NyWpqJSU5UtHShOTPYli0OoygPbIVm2y9wQHK3Kz68m9XptHPA==@vger.kernel.org, AJvYcCWHIv4sBJUgQhEO9FZiv+Hh0nPT2IZx7xBl1qKOAr/9dE9fnfahejX4P8NOp6i23/tIkcDiLOwGTBKPf/JIPEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu5vdgiJ1MGg30fF1XGJ7PVWGwPq6SPlo7Z3rX/T1XW/X38gDY
+	B/1xgzgxvWejIE1mXZoxy/WU5n84EvNa3x+66w5r06qfJPP/GNTV+VBdOy27wycXzGJNxFE9IkS
+	Xj1Z+qaUuoYMqdPmNKswJYMzlua4=
+X-Gm-Gg: ASbGncsta+WA3x+7V3diiex6rAUfD0FuVcqLq7FEQqctFNfWvgVJxZUghHLbquMsuYJ
+	5bX0P4Fv6t2FI50eHk1+usakJDDSCdvYnWYXniAuQ5VSltLEJlTWM0CebKBdcbvmy1XoZ8T6eIP
+	99n5prnSlrW4YP/4heSkUg8g==
+X-Google-Smtp-Source: AGHT+IGWF+l7or88VbtVsoih9aXdUV02U9Qn+pFOHncarixgIstYhZ3FKuRbLZND0+TvviOL031nXIBqToZtnStd7r0=
+X-Received: by 2002:a17:90b:1d06:b0:30a:28e2:a003 with SMTP id
+ 98e67ed59e1d1-30a333537cbmr236830a91.3.1745957126955; Tue, 29 Apr 2025
+ 13:05:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+980gvzd-uXUARnYQ4V++08spfBVj26nZapExVF80ryYg@mail.gmail.com>
+References: <20250429185839.1807005-1-irogers@google.com> <20250429185839.1807005-4-irogers@google.com>
+In-Reply-To: <20250429185839.1807005-4-irogers@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 29 Apr 2025 22:05:14 +0200
+X-Gm-Features: ATxdqUHM5AHs_-EVk1tBU6W6vNSJKG_yZ1Vj6N1JMNl33Yw5FxIdRgkNWcOtSx4
+Message-ID: <CANiq72kw97U_5dy1MCVRHfKUVWDfrrE50anfEa1gL1qy=yQUxg@mail.gmail.com>
+Subject: Re: [PATCH v1 3/6] perf demangle-rust: Remove previous legacy rust decoder
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev, Daniel Xu <dxu@dxuuu.xyz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 09:28:50PM +0200, Max Kellermann wrote:
-> On Tue, Apr 29, 2025 at 9:22 PM Joe Damato <jdamato@fastly.com> wrote:
-> > In commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the
-> > future"), a bug was introduced causing the loop in ep_poll to hang under
-> > certain circumstances.
-> >
-> > When the timeout is non-NULL and ep_schedule_timeout returns false, the
-> > flag timed_out was not set to true. This causes a hang.
-> >
-> > Adjust the logic and set timed_out, if needed, fixing the original code.
-> 
-> Hi Joe,
-> 
-> we have been working on the fix at the same time, this is my fix:
-> 
->  https://lore.kernel.org/linux-fsdevel/20250429185827.3564438-1-max.kellermann@ionos.com/T/#u
-> 
-> I think mine is better because it checks "eavail" before setting
-> "timed_out", preserving the old behavior (before commit 0a65bc27bd64).
-> Your version may set "timed_out" and thus does an unnecessary
-> list_empty() call in the following block. (And maybe it can reset
-> "evail" to false?)
+On Tue, Apr 29, 2025 at 8:59=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Code is unused since the introduction of rustc-demangle demangler.
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-I think it's up to the maintainers to decide which patch is
-preferred; I don't really have a preference.
+Looks fine -- the only two calls I see are gone in the previous patch, so:
+
+Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+
+Cheers,
+Miguel
 
