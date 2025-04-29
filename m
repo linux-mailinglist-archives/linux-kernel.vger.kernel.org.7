@@ -1,190 +1,230 @@
-Return-Path: <linux-kernel+bounces-624883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D5FAA0906
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04CAAA0D63
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8BE1B6620F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5541893EA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF7C2C10A7;
-	Tue, 29 Apr 2025 10:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="DSa62Dg0"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2054.outbound.protection.outlook.com [40.107.104.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754F42C2ABC;
+	Tue, 29 Apr 2025 13:23:25 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B5F2BF3EA;
-	Tue, 29 Apr 2025 10:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745924273; cv=fail; b=DxQs8OojezNH2QB7r2KIxhJZMU5o8PfbzKBIHi5BI0epxf/yXYPYJj7XniaN7VJ9+qt9uxmkMZ6+CE0N/nGRIGJ8WhQc+RDv5CgxENNz4x9+hOSayYjQIbsw1WA27opHaIDc5cn/g3PZggOk3LyM3cddL6lAr/EmqrKLq8z5+bw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745924273; c=relaxed/simple;
-	bh=/D+Yy4U/arvyV2uhywXyGqHR+CSqJ3GI6GkPpIUpcLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AZ6laKtLfYqV7mFtT1nLN+rarMKANVId/RjFVhXHhHVOkWnb9v1SnR900hZc+3osYBKF7phrPM4CN+T/ASc5e/SoD3Jom04Kg3XqUJNTNynw+gM/dF0VOabkJwGdetecusFZuGXj8NS+hO42s5EgkoZAVLAh0bZB7sDxcE4uWQs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=DSa62Dg0; arc=fail smtp.client-ip=40.107.104.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pa7v74bUXMkb8Qd+bo7jTBW+pkZA3drxqxpgPrkAstoSQC3+SpcKhPW05lmLcPzRKEmJh2lnpAnqpBXstirCISMxCjRbIVheBng5wBP/+2yBIUK1b7yqugdvfi4oSmWW64mhIIHpj8Cn5fWvK5POL+gbzdiclLtHG2CzRsgLATJI7qtu4HSDnjIAHT/bBpKrZjEXk2yc/SL5UKWmXdLpkwgLSi+w5rB76N7RNuDJK93YJufSpImgglZVjDAA0mDH1M4x0vdA92BTuPLyFRVck8rJw+G/OEPaPDk0JWuUUeG+0ywPYvZAmyw/IArv8bkyp3es5KiTKo6gmT10dqr9zQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/D+Yy4U/arvyV2uhywXyGqHR+CSqJ3GI6GkPpIUpcLk=;
- b=HJ1nCnS0w53l7VMc9rOLUblJTpm+0P5GJma4VgI1iGguAcK0FDinbjrSjfrRY5jTnR7O3Sk7HletT9lGp6znHnuoR6CsGeuoupP+vH8yVzoRQXhv5vY666DrZ+FtcZjFdHNnkIVm0rgHIxH3P/sXUYyXU9mi/bOemzU+vrag7Iy9CNZBS7uFEgIS+Sgjv14q3ouvQlTxB6IbGJ/xt3ngD+2N1g4vKRHvS57BOLmeTfdZoCQJlatZn6KV2pRyXEdyk3MctIjwHcgqTgUP2R4a+XRn23wdWRixlUbfNBZZwRgyInAQXwSsZHF63pgIaq0wChe7Ij8IiTK+jy2VCOr3Kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/D+Yy4U/arvyV2uhywXyGqHR+CSqJ3GI6GkPpIUpcLk=;
- b=DSa62Dg0JXbdUN5qx7Or83fmzJ+uDRClWcFGMH2JT7gDrrH5pX/f7mjC77cIEvwvYQRMhtGHlKxQWT99F6ivS6F8304bW4nf5x62oVBV4P6PnkptlX7hAb/IsjRVsRu5TXPzd9PMrKDfxQozjSMX2pMhCZU/vkg2xL8dIXcn1SBUWRzjDFTD2LM0ZLA97N/te8lQlA98pKzStHzit73mlUecgkBrCGE4D5bDsSpEdTFCUWZQVVewmSr3tuoVmGHxa53KWx6y97HHdPruqA3tWk2kWt6bQPP4imMJ/fz0ztu5ux/B7adUhPQOa2QsaShDU5Cet4XLaR2aK6vJQxghYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB9060.eurprd04.prod.outlook.com (2603:10a6:102:223::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Tue, 29 Apr
- 2025 10:57:48 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8678.028; Tue, 29 Apr 2025
- 10:57:48 +0000
-Date: Tue, 29 Apr 2025 20:06:49 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
-Subject: Re: [PATCH 2/2] arm64: dts: freescale: Add PHYTEC
- phyBOARD-Nash-i.MX93 support
-Message-ID: <20250429120649.GC28789@nxa18884-linux>
-References: <20250425064107.174548-1-primoz.fiser@norik.com>
- <20250425064107.174548-2-primoz.fiser@norik.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425064107.174548-2-primoz.fiser@norik.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2P153CA0037.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::6)
- To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8A03207;
+	Tue, 29 Apr 2025 13:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745933005; cv=none; b=khDffkrSbT5eDScExh5v9IxV4uYSCxR8S0gKvPiVegWORkkfm+5Z+EqmJvLxMY62yEDvt6oNLg7/xqU0imRvmTJ/1mRux+yxL2R482TvLOu7tA42KmxyC1VpbknxRv84/8xnLQ8z7s3aJJadm0h8qRh3fOEmOWcxTYizvGA7XPQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745933005; c=relaxed/simple;
+	bh=0Df1tr9ESOUvh7LuwEp6gMMcbsbQJSkC5Q+o6OEkQQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m4F1ZqwBLhZQ1aacEEaoFL8f8N35XdPi2Ek32Gu7Xr9ymiDcOWcM5hENMBIDAFpqeIUxbx4vfVO7lQFi2my9Kl19983Q1/rWW036gstXqQVywaZdWgoQb4Gx/tBfa+7PGsnEaUlGps24FEFH3Yx9C8n4bTOeuCJL6iAF3XtAnWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowACHwwu60hBoFAOvDQ--.44558S2;
+	Tue, 29 Apr 2025 21:23:11 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	YiPeng.Chai@amd.com,
+	tao.zhou1@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] drm/amdgpu: Remove redundant return value checks for amdgpu_ras_error_data_init
+Date: Tue, 29 Apr 2025 13:22:39 +0800
+Message-ID: <20250429052240.963-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAXPR04MB9060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b9b1b85-c791-4bc9-e9bb-08dd870cade7
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PdDs3FbldAVdGsMuJHN+pzM9/FK80UkMJA32he0z8O79ZjSI/hTw39veHH1p?=
- =?us-ascii?Q?yfVI8WRQi08mruj+smEiEvFNMAnrhr8vnhAXAAVo/RMNiFRy3/dCgkneOKjf?=
- =?us-ascii?Q?L6ELMNwtjeb4ri34JDXrJmrgS23GlvYLnpwAs/q1Yc1sboYUvEe0ueBLCbbk?=
- =?us-ascii?Q?7LMfLD+Z/OGgeYO4RnbRoDyOPTUAA+8JkkcJLrJvhj2dMhgrDau+M5B9S66y?=
- =?us-ascii?Q?G9HcD87vN+MU+dtQ4iCTmKXaBHtObsl3PzcIANIAqeEiY7gOy9BUxPYLiA9q?=
- =?us-ascii?Q?DwlceBIdoViyLO4HTrVsz7gdrcopjvFBKYePklPC6mGxDkybPIKTuR+XjkZa?=
- =?us-ascii?Q?N01qE86hWos6uqP9ghYEfOrBteeFaz5OAJcZgIfutALIZaguSJqGDodMsLcP?=
- =?us-ascii?Q?J/U5LSmWxf8bspiNTc8KiNdNUADEaRqPgAdjGiIozKQE2uTvbBjbwBqe6GxX?=
- =?us-ascii?Q?iekyt+U3f5ss4GxH3mRCCIsGKFlYk1HR6DzhTUGBBPcR458eAsF2qbwXMXpz?=
- =?us-ascii?Q?Ir1TGG7wVXxeJ/fzJFpF41BSoH/ok43FHWIsUVcmHHOdXSkfbRJdB5PZHhqZ?=
- =?us-ascii?Q?z5eSEf8zGX+zxgLg4DuX80R+ryjBTqVsJkzaApg62AS77BkCLqZgLxO9gCRj?=
- =?us-ascii?Q?xl7cpjrwx/iwF7BDMDo1USn7DS0K4lHYBRKGzsiQy1JW12wHGkqr/muuvlNg?=
- =?us-ascii?Q?NBI5ZOgl0FSaq+DhE1z6oCL/uMcYmHBMpfiY/51q9rC/QKm16RnL0/3RhJPq?=
- =?us-ascii?Q?Z3Rh7nv67bT7Ip1ylsfeBZBp9lvHMbTe8QMh0jH97VWAoPWIbWO14JPGqs1L?=
- =?us-ascii?Q?ewk4LFTaQLN6ZCwyQf+xAx9GDDXsDVzs4mMeZFunyAmdE6z4bjcY/8/n6g8j?=
- =?us-ascii?Q?AlQeTZEZg6YtvAQIWsRehMnJsQYP0DDFJpchEMDwvkkPQjPGKRHEv/vHsusg?=
- =?us-ascii?Q?HQ94x922k54TYEFW1NW+VuJtUh13ponXGCEzdXvVuWdLHHLozWhC3QTZuJEs?=
- =?us-ascii?Q?Tx0+6ky5//Yl4RGQOpFFs42C06rDmPTTzCUlpOc2h5u4aR5IJ9meDhZzMUAm?=
- =?us-ascii?Q?k1PObrfVA16SydFUzGtwvLs0oKsnYHacJUX1YFyyIoUj/39xQe4FydwAoXQH?=
- =?us-ascii?Q?fAhjDGT2SJCkmBjWVI7Dfci7r/UnDrn0vasjz4odX+YAAm1Luc7OwCcokbb9?=
- =?us-ascii?Q?CovcVDHtW3E/OFOXKL+c7JEHM5ezW30n/CPzDqWsHL64M8gEuYptVbbvKSoi?=
- =?us-ascii?Q?8+I5QAuJtCOEHXLqdMFjQjd25GWvdHnyRJeDdJm2z1IfUnEbzeb/+D+zjQMF?=
- =?us-ascii?Q?QS9Z4h0acAy/9RMKWlih+apCo7KgY3+eTywmeXfU2aBEt2t/fgUADhzfM9cx?=
- =?us-ascii?Q?fOVwgwRC/8ZjWK5OCZiTxAb2hQS5NsJ4gt7bc4J+HcHDtKinUgbs9uELtsGo?=
- =?us-ascii?Q?OzRd4KkhAbs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3noZahmE2GdxnXvsofXK6emNbSiQeApBvxSyLdI7MExFwlFxw25xra1tSXn5?=
- =?us-ascii?Q?iQOvNNPvAmECWbhk9sslSVH2Fdi5lirPp0ahy6UZA4B1rzOHNuzrVO0Jj5E3?=
- =?us-ascii?Q?Zeu9+9hUgKWYYcHQN9YlflwxzwKUPBIOL8tczXVAJ0U3xrgywKhiSedQt+9+?=
- =?us-ascii?Q?6AE/nnIcNLB+2T8Z3kMeBMqJyi9F8tQG95abZwTcnRKj9fNad9Xs82l8KDIO?=
- =?us-ascii?Q?2v+qqV9036cfswGdxrAuoFoQKvVNc1IQ9DmQXDXbSFndtd1I/w7exHox/LNS?=
- =?us-ascii?Q?/k5Pi40QDkcuM0m7/EyCM0AGL7Jimsk4NiLc2EsgzDxEYCQZbXUlwCA7xX8A?=
- =?us-ascii?Q?aXG3VmCtXwUWiu5mejddO/s8NXuzUv4rtu5FumwoSdGsvWVxQjiRCgort++N?=
- =?us-ascii?Q?qeGzrXTwRYbaFKcXJalZ9kBaPt0oFk7MU/o+dDmRHl/HkQvEh61PeinnICOx?=
- =?us-ascii?Q?SkBXV4esB3R/ZSY8Ar7bnI5w1OmMaxpNW4kpbEYlqm63yLju+j43Ce4gCyK2?=
- =?us-ascii?Q?rIn7lBUKE+8CK+YMt80D1CFp+megFm8kI9uykoV50ebhKTU1J4ZkDSTIjxVI?=
- =?us-ascii?Q?BseKfMen/0sjnkQSzUkJ5E/IRFTCPF/QdWoAjBICQNdtuFgfM2e7SM0k7b/S?=
- =?us-ascii?Q?YlgqNWzBGrDszMaC+oIYEMC3Jgs4yLGe/8q4YhtN9hwaacOGCeYlzdm2mnD9?=
- =?us-ascii?Q?AYkC0rar5GQOKmb6DQVHwSsvAFZsCSctrf8lF+UpgC+yqCqC/rb/yFSNFHMO?=
- =?us-ascii?Q?ebXojljdBIHuBOllRXzwoR919d/HV+PPxp03oOuprAqdcGK5SKrKTWmfnxiA?=
- =?us-ascii?Q?TUfW4lkpaWGIY62tJv/fbi5/pgbj8B/Pk+K1lbkceC1GAgoeeD69EoZkPnL+?=
- =?us-ascii?Q?P5PKF/hhmgaCP/3VM5U5Bj6Aqqc7BZa/Ga7NHvrCTki6+3A0EfSQg66v5jx9?=
- =?us-ascii?Q?nzUPj+mZbZznQQjsc6Qo3gMsb1yPBbht5+zhP2qxAThPDZBX4j9Yq+B0vabz?=
- =?us-ascii?Q?GlVG4mcRiI9GUPEmoDSodU1o/VWqu0inl8Gr6c7sQXg8LbiU9GNjGY3JNkz8?=
- =?us-ascii?Q?KemD6Ybaf3dQ9WrM+wx9enLyPP20a1N3KoHgcmpyikIp+7c34o2L/RcpUBfM?=
- =?us-ascii?Q?S0f6TGmOLjWKrWlL0ikD/C4kTwXhfCHTqsI2OA62unojA5uBFSFULXykW1jC?=
- =?us-ascii?Q?hnFGL0auXrCZ/Oj1p0jaU8DB0K1mkI01THzzQpGNJl3D3vRHA39DaBTob21M?=
- =?us-ascii?Q?s8jPf3gAE62xl8BAYlJ863sh3OdoQ9TUapnMorMItRiNDfe8UyrvC3lj/0JO?=
- =?us-ascii?Q?K/zpKY9AJ9nMqqeO9GDRjnsMVa8RennIp6Y634HXunkhxKIv7QyuoaShh6AK?=
- =?us-ascii?Q?uvbGkaAjaNggYeGRxh4LL8pbS6KzYOQ51m22JmuhR96j8I6iBTlUEPT18H1v?=
- =?us-ascii?Q?Flh7AMial49S3AjY+kZAxKAgBUncP9m3eCy2i1/BiDo3ha3XxRweUbC9Y343?=
- =?us-ascii?Q?xmhZhSA2VpBW+zl7ulvlLmIFLWU97l7qEWf9y4RbKsv82o/t6i9ymBkMngZS?=
- =?us-ascii?Q?ZtLx/JKMBKIdaTF/0ZHxl0lNiWckT0vtl8JeEghA?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b9b1b85-c791-4bc9-e9bb-08dd870cade7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 10:57:48.5371
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /AdPwgY76Nnn1b55xTj6CyA+5cnHAggWL1jb27NSHJQ0CFx8Tsrc0NcFGaru95wHU6GX6AqXpFSLLkAgJgNyMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9060
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHwwu60hBoFAOvDQ--.44558S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuw17Xw4UJF1fuw18KFykKrg_yoWxJFyUpF
+	WrJw1DZryUZFnrJrykAFyUuasIyw1SvFy8KF40ya4I93W5CrW5XF1rtw40q3ZrKr4DCwsI
+	vrWDW3yUWF1qvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK6x804I0_JFv_Gryl8cAvFVAK0II2c7
+	xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE
+	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjc
+	xK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JV
+	WxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsHA2gQm1yCWwABsv
 
-On Fri, Apr 25, 2025 at 08:41:07AM +0200, Primoz Fiser wrote:
->Add initial support for PHYTEC phyBOARD-Nash-i.MX93 board [1] based on
->the PHYTEC phyCORE-i.MX93 SoM (System-on-Module) [2].
->
->Supported board features:
-> * ADC
-> * CAN
-> * Ethernet 2x
-> * EEPROM
-> * eMMC
-> * Heartbeat LED
-> * RTC
-> * RS-232/RS-485
-> * SD-card
-> * TPM 2.0
-> * USB
->
->For more details see the product pages for the development kit and the
->SoM:
->
->[1] https://www.phytec.eu/en/produkte/development-kits/phyboard-nash/
->[2] https://www.phytec.eu/en/produkte/system-on-modules/phycore-imx-91-93/
->
->Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+The function amdgpu_ras_error_data_init() always returns 0, making its
+return value checks redundant. This patch changes its return type to
+void and removes all unnecessary checks in the callers.
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+This simplifies the code and avoids confusion about the function's
+behavior. Additionally, this change keeps the usage consistent within
+amdgpu_ras_do_page_retirement(), which also does not check the return
+value.
+
+Fixes: 5b1270beb380 ("drm/amdgpu: add ras_err_info to identify RAS error source")
+Cc: stable@vger.kernel.org # 6.7+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+v2: Add a missing semicolon
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 19 +++++--------------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c |  8 ++------
+ drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c  |  3 +--
+ drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c  |  3 +--
+ 5 files changed, 10 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+index 4c9fa24dd972..5be391ebeca3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+@@ -182,9 +182,7 @@ static int amdgpu_reserve_page_direct(struct amdgpu_device *adev, uint64_t addre
+ 		return 0;
+ 	}
+ 
+-	ret = amdgpu_ras_error_data_init(&err_data);
+-	if (ret)
+-		return ret;
++	amdgpu_ras_error_data_init(&err_data);
+ 
+ 	memset(&err_rec, 0x0, sizeof(struct eeprom_table_record));
+ 	err_data.err_addr = &err_rec;
+@@ -687,8 +685,7 @@ static struct ras_manager *amdgpu_ras_create_obj(struct amdgpu_device *adev,
+ 	if (alive_obj(obj))
+ 		return NULL;
+ 
+-	if (amdgpu_ras_error_data_init(&obj->err_data))
+-		return NULL;
++	amdgpu_ras_error_data_init(&obj->err_data);
+ 
+ 	obj->head = *head;
+ 	obj->adev = adev;
+@@ -1428,9 +1425,7 @@ static int amdgpu_ras_query_error_status_with_event(struct amdgpu_device *adev,
+ 	if (!obj)
+ 		return -EINVAL;
+ 
+-	ret = amdgpu_ras_error_data_init(&err_data);
+-	if (ret)
+-		return ret;
++	amdgpu_ras_error_data_init(&err_data);
+ 
+ 	if (!amdgpu_ras_get_error_query_mode(adev, &error_query_mode))
+ 		return -EINVAL;
+@@ -2255,9 +2250,7 @@ static void amdgpu_ras_interrupt_umc_handler(struct ras_manager *obj,
+ 	if (!data->cb)
+ 		return;
+ 
+-	ret = amdgpu_ras_error_data_init(&err_data);
+-	if (ret)
+-		return;
++	amdgpu_ras_error_data_init(&err_data);
+ 
+ 	/* Let IP handle its data, maybe we need get the output
+ 	 * from the callback to update the error type/count, etc
+@@ -4623,13 +4616,11 @@ void amdgpu_ras_inst_reset_ras_error_count(struct amdgpu_device *adev,
+ 	}
+ }
+ 
+-int amdgpu_ras_error_data_init(struct ras_err_data *err_data)
++void amdgpu_ras_error_data_init(struct ras_err_data *err_data)
+ {
+ 	memset(err_data, 0, sizeof(*err_data));
+ 
+ 	INIT_LIST_HEAD(&err_data->err_node_list);
+-
+-	return 0;
+ }
+ 
+ static void amdgpu_ras_error_node_release(struct ras_err_node *err_node)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
+index 6db772ecfee4..5f88e70fbf5c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.h
+@@ -931,7 +931,7 @@ void amdgpu_ras_inst_reset_ras_error_count(struct amdgpu_device *adev,
+ 					   uint32_t reg_list_size,
+ 					   uint32_t instance);
+ 
+-int amdgpu_ras_error_data_init(struct ras_err_data *err_data);
++void amdgpu_ras_error_data_init(struct ras_err_data *err_data);
+ void amdgpu_ras_error_data_fini(struct ras_err_data *err_data);
+ int amdgpu_ras_error_statistic_ce_count(struct ras_err_data *err_data,
+ 					struct amdgpu_smuio_mcm_config_info *mcm_info,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
+index 896f3609b0ee..5de6e332c2cd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_umc.c
+@@ -52,9 +52,7 @@ int amdgpu_umc_page_retirement_mca(struct amdgpu_device *adev,
+ 	struct ras_err_data err_data;
+ 	int ret;
+ 
+-	ret = amdgpu_ras_error_data_init(&err_data);
+-	if (ret)
+-		return ret;
++	amdgpu_ras_error_data_init(&err_data);
+ 
+ 	err_data.err_addr =
+ 		kcalloc(adev->umc.max_ras_err_cnt_per_query,
+@@ -230,9 +228,7 @@ int amdgpu_umc_pasid_poison_handler(struct amdgpu_device *adev,
+ 			};
+ 			struct ras_manager *obj = amdgpu_ras_find_obj(adev, &head);
+ 
+-			ret = amdgpu_ras_error_data_init(&err_data);
+-			if (ret)
+-				return ret;
++			amdgpu_ras_error_data_init(&err_data);
+ 
+ 			ret = amdgpu_umc_do_page_retirement(adev, &err_data, NULL, reset);
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
+index a26a9be58eac..d4bdfe280c88 100644
+--- a/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
++++ b/drivers/gpu/drm/amd/amdgpu/nbio_v7_4.c
+@@ -364,8 +364,7 @@ static void nbio_v7_4_handle_ras_controller_intr_no_bifring(struct amdgpu_device
+ 	struct ras_err_data err_data;
+ 	struct amdgpu_ras *ras = amdgpu_ras_get_context(adev);
+ 
+-	if (amdgpu_ras_error_data_init(&err_data))
+-		return;
++	amdgpu_ras_error_data_init(&err_data);
+ 
+ 	if (adev->asic_type == CHIP_ALDEBARAN)
+ 		bif_doorbell_intr_cntl = RREG32_SOC15(NBIO, 0, mmBIF_DOORBELL_INT_CNTL_ALDE);
+diff --git a/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c b/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c
+index 8a0a63ac88d2..c79ed1adf681 100644
+--- a/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c
++++ b/drivers/gpu/drm/amd/amdgpu/nbio_v7_9.c
+@@ -537,8 +537,7 @@ static void nbio_v7_9_handle_ras_controller_intr_no_bifring(struct amdgpu_device
+ 	struct ras_err_data err_data;
+ 	struct amdgpu_ras *ras = amdgpu_ras_get_context(adev);
+ 
+-	if (amdgpu_ras_error_data_init(&err_data))
+-		return;
++	amdgpu_ras_error_data_init(&err_data);
+ 
+ 	bif_doorbell_intr_cntl = RREG32_SOC15(NBIO, 0, regBIF_BX0_BIF_DOORBELL_INT_CNTL);
+ 
+-- 
+2.42.0.windows.2
+
 
