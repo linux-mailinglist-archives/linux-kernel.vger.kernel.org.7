@@ -1,172 +1,127 @@
-Return-Path: <linux-kernel+bounces-625223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0862EAA0E69
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:14:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C16AA0E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B52167B03E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D804466D74
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5932D8DBD;
-	Tue, 29 Apr 2025 14:11:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC0E2D8DAA;
-	Tue, 29 Apr 2025 14:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5838E2D3A8E;
+	Tue, 29 Apr 2025 14:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="C8sz6Hri"
+Received: from mail-244108.protonmail.ch (mail-244108.protonmail.ch [109.224.244.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92562D3A79
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745935901; cv=none; b=YNREQ3cTlGS4jZbwPy5uev/Pn6HAR2rlRXwbKxqIeRcjnwPTzLT1Gg41d0DoQTcaj+49DRnJxBMwD0BXsv4qqKQ4PIaT1p6+hwkpe9GuYHxz/aBCYX0WTMOqne/dQ9AY+tfNDCayK+wk33breUfadChUvaIMQWhyOMuHSvuTAds=
+	t=1745935920; cv=none; b=ZsCE6qTwqbZuRFflDEIWRxgXGqeyP+PK2HSpD2ppOOi3tS2zbjdm5N3D66+Be+fK9eZdzWT2e94L/9DYfKt6zPKdpjSZKAHhZIs0qssqwgdiXydZA5WOnkaVeANqK2xrOEVzG8M/WSeK3s8UFg1eE8UsoJbc7VxawCGWIG1tFxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745935901; c=relaxed/simple;
-	bh=p+MF+cbIVqQ81P67tantyBp6k9dyANtN4BgAnfsJXNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cCpUgwkSMOqx6lqLPrDUelPv6+HwlOoHczerUl7m55aNmyHkjcpTqzyGmxpx2sRtibCFaDpPwlVABHEWI2QZavNZjHgVJs4aZc+1k080hh/iuvVCScn6syN3n2uGdctdku4wOEqvmHKi1Ww3BoP46jjo9u566zD2SgdERTdnksA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071E81516;
-	Tue, 29 Apr 2025 07:11:32 -0700 (PDT)
-Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FAF53F66E;
-	Tue, 29 Apr 2025 07:11:36 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org,
-	maz@kernel.org,
-	johan@kernel.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v3 3/3] firmware: arm_scmi: quirk: Fix CLOCK_DESCRIBE_RATES triplet
-Date: Tue, 29 Apr 2025 15:11:08 +0100
-Message-ID: <20250429141108.406045-4-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250429141108.406045-1-cristian.marussi@arm.com>
-References: <20250429141108.406045-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1745935920; c=relaxed/simple;
+	bh=EedXxP4H/gP9dZwClr0nJhcaeU3loAc85FlGQSOdHXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f9cUwfBk6NdUZ264sYbW6i4VnlmSXWsNY+L3xpUdBlwUtRAk22t/3eLwpjSG44myfyt2/sD+CL8F7YOb2JyiF0yFDLjnykMtk74skFDTuTQQ3qPexFXOYmBk3mDPN6Pz4lrCZYC+qmO+etZnvwanCjzaNSt3LlfLVi5IOKKLbXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=C8sz6Hri; arc=none smtp.client-ip=109.224.244.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1745935911; x=1746195111;
+	bh=EedXxP4H/gP9dZwClr0nJhcaeU3loAc85FlGQSOdHXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=C8sz6Hri6mhi7xT+Mx/PB/QQLCwvYIlcemsD0Dpvu366TnBRw6uQ8jtJBvMv0J9ZI
+	 LDcxJldaQyPWeEhWwDOFqZe20NYDkgUAbj2o3xSiLf1IgQ6rHbwt/NoNN+S9Wqy3S5
+	 t9wtOQWsHQkW4QV/sdyCdaIBrqMCWdfvix3mZNzYxYkf5qiwdnnJ3PGR911jgqXaSu
+	 T+ElYKfDScUICac9Xp5vS8fXp4qmCQ8xIx5bd1FrGRaHwnCjDTTrDjBDZgAOTgodfC
+	 7EaEMLHsrEgHstlpM2kUu3PlCHJOuUgwXUREyQ/UfXVfFp6m6QhZoIHF2JMUeaazNV
+	 psbjOxvbkQNqw==
+X-Pm-Submission-Id: 4Zn2LY4yQxz4wx0L
+From: Esben Haabendal <esben@geanix.com>
+To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>,  "Rob Herring"
+ <robh@kernel.org>,  "Krzysztof Kozlowski" <krzk+dt@kernel.org>,  "Conor
+ Dooley" <conor+dt@kernel.org>,  "Hans de Goede" <hdegoede@redhat.com>,
+  <linux-input@vger.kernel.org>,  <devicetree@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: input: touchscreen: goodix: Add
+ no-reset-pull-up property
+In-Reply-To: <23onpttl3w2wo3625c7flbljahojipsb4xznrx6xynr7rrzofr@2bcvjji7dpu6>
+	(Dmitry Torokhov's message of "Mon, 28 Apr 2025 12:30:47 -0700")
+References: <20250422-goodix-no-reset-pull-up-v1-0-3983bb65a1bf@geanix.com>
+	<20250422-goodix-no-reset-pull-up-v1-1-3983bb65a1bf@geanix.com>
+	<20250428-logical-successful-spoonbill-cd1c6b@kuoka>
+	<zkDFUv9azjyXaS--ufxgROyruM2mpckWkDNeHtAO160rM2DuaJthpjgN0c_L8QgTk8bNA7Km0UewYmp1rWENwg2x4ngP-8C1rYhHMgAz0OA=@geanix.com>
+	<gIFipXKkfBDfbZfwOS6mcggLQSkovy0HQrNkBpcZQNS4wc5y3ET_IR85NKxw5FB6_PDFgQaFgB0z3CRVvvNTSQ==@protonmail.internalid>
+	<23onpttl3w2wo3625c7flbljahojipsb4xznrx6xynr7rrzofr@2bcvjji7dpu6>
+Date: Tue, 29 Apr 2025 16:11:48 +0200
+Message-ID: <87wmb3t5uj.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Convert an existing quirk in CLOCK_DESCRIBE_RATES parsing to the new quirk
-framework. This is a sort of a peculiar quirk since it matches any platform
-and any firmware.
+"Dmitry Torokhov" <dmitry.torokhov@gmail.com> writes:
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-V1 -> V2
-- reduced the quirk size by placing the warn outside
-- using new compatibles conditions
----
- drivers/firmware/arm_scmi/clock.c  | 33 ++++++++++++++++++------------
- drivers/firmware/arm_scmi/quirks.c |  2 ++
- drivers/firmware/arm_scmi/quirks.h |  3 +++
- 3 files changed, 25 insertions(+), 13 deletions(-)
+> On Mon, Apr 28, 2025 at 07:58:55AM +0000, Esben Haabendal wrote:
+>> On Monday, April 28th, 2025 at 09:48, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> > On Tue, Apr 22, 2025 at 05:15:02PM GMT, Esben Haabendal wrote:
+>> >
+>> > > This should be added for boards where there is no pull-up on the reset pin,
+>> > > as the driver will otherwise switch the reset signal to high-impedance to
+>> > > save power, which obviously not safe without pull-up.
+>> > >
+>> > > Signed-off-by: Esben Haabendal esben@geanix.com
+>> > > ---
+>> > > Documentation/devicetree/bindings/input/touchscreen/goodix.yaml | 4 ++++
+>> > > 1 file changed, 4 insertions(+)
+>> > >
+>> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml b/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
+>> > > index eb4992f708b70fef93bd4b59b9565123f7c6ad5d..7e5c4b98f2cb1ef61798252ea5c573068a46d4aa 100644
+>> > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
+>> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
+>> > > @@ -45,6 +45,10 @@ properties:
+>> > > reset-gpios:
+>> > > maxItems: 1
+>> > >
+>> > > + no-reset-pull-up:
+>> >
+>> > Is this common property? Where is it defined? Otherwise missing vendor
+>> > prefix.
+>>
+>> Good question. When is something a common property?
+>>
+>> The idea of marking something as not having a pull-up on the reset pin could be considered a common thing I guess.
+>> But for now, I am defining it for the goodix driver only, as I am only aware of these devices needing to handle it in a special way.
+>>
+>> Should I rename it to goodix,no-reset-pull-up?
+>
+> We already have GPIO_PULL_UP/GPIO_PULL_DOWN flags available in GPIO
+> bindings. So maybe the correct way is to have the driver rely on them
+> and only leave the reset line in high-impedance mode if GPIO tells it
+> that there is a pull-up?
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index 2ed2279388f0..afa7981efe82 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -11,6 +11,7 @@
- 
- #include "protocols.h"
- #include "notify.h"
-+#include "quirks.h"
- 
- /* Updated only after ALL the mandatory features for that version are merged */
- #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
-@@ -429,6 +430,23 @@ static void iter_clk_describe_prepare_message(void *message,
- 	msg->rate_index = cpu_to_le32(desc_index);
- }
- 
-+#define QUIRK_OUT_OF_SPEC_TRIPLET					       \
-+	({								       \
-+		/*							       \
-+		 * A known quirk: a triplet is returned but num_returned != 3  \
-+		 * Check for a safe payload size and fix.		       \
-+		 */							       \
-+		if (st->num_returned != 3 && st->num_remaining == 0 &&	       \
-+		    st->rx_len == sizeof(*r) + sizeof(__le32) * 2 * 3) {       \
-+			st->num_returned = 3;				       \
-+			st->num_remaining = 0;				       \
-+		} else {						       \
-+			dev_err(p->dev,					       \
-+				"Cannot fix out-of-spec reply !\n");	       \
-+			return -EPROTO;					       \
-+		}							       \
-+	})
-+
- static int
- iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 			       const void *response, void *priv)
-@@ -450,19 +468,8 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 			 p->clk->name, st->num_returned, st->num_remaining,
- 			 st->rx_len);
- 
--		/*
--		 * A known quirk: a triplet is returned but num_returned != 3
--		 * Check for a safe payload size and fix.
--		 */
--		if (st->num_returned != 3 && st->num_remaining == 0 &&
--		    st->rx_len == sizeof(*r) + sizeof(__le32) * 2 * 3) {
--			st->num_returned = 3;
--			st->num_remaining = 0;
--		} else {
--			dev_err(p->dev,
--				"Cannot fix out-of-spec reply !\n");
--			return -EPROTO;
--		}
-+		SCMI_QUIRK(clock_rates_triplet_out_of_spec,
-+			   QUIRK_OUT_OF_SPEC_TRIPLET);
- 	}
- 
- 	return 0;
-diff --git a/drivers/firmware/arm_scmi/quirks.c b/drivers/firmware/arm_scmi/quirks.c
-index eff03a89de85..8958f1fa4c89 100644
---- a/drivers/firmware/arm_scmi/quirks.c
-+++ b/drivers/firmware/arm_scmi/quirks.c
-@@ -167,6 +167,7 @@ struct scmi_quirk {
- 	__DEFINE_SCMI_QUIRK_ENTRY(_qn, _ven, _sub, _impl, ##__VA_ARGS__)
- 
- /* Global Quirks Definitions */
-+DEFINE_SCMI_QUIRK(clock_rates_triplet_out_of_spec, NULL, NULL, NULL);
- 
- /*
-  * Quirks Pointers Array
-@@ -175,6 +176,7 @@ struct scmi_quirk {
-  * defined quirks descriptors.
-  */
- static struct scmi_quirk *scmi_quirks_table[] = {
-+	__DECLARE_SCMI_QUIRK_ENTRY(clock_rates_triplet_out_of_spec),
- 	NULL
- };
- 
-diff --git a/drivers/firmware/arm_scmi/quirks.h b/drivers/firmware/arm_scmi/quirks.h
-index 28829b4f0646..7fdc496c94c7 100644
---- a/drivers/firmware/arm_scmi/quirks.h
-+++ b/drivers/firmware/arm_scmi/quirks.h
-@@ -45,4 +45,7 @@ static inline void scmi_quirks_enable(struct device *dev, const char *vend,
- 
- #endif /* CONFIG_ARM_SCMI_QUIRKS */
- 
-+/* Quirk delarations */
-+DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
-+
- #endif /* _SCMI_QUIRKS_H */
--- 
-2.47.0
+As I understand GPIO_PULL_UP/GPIO_PULL_DOWN flags in bindings, they
+indicate that pull-up/pull-down is to be configured for the gpio.
 
+This is different to what I am expressing with goodix,no-reset-pull-up,
+as I am expressing the lack of external pull-up on the signal. Without
+that, the goodix driver assumes that an external pull-up is mounted, and
+that the gpio pin can be set to high impedance, and the external pull-up
+will ensure that it stays high.
+
+How do you propose that we can use GPIO_PULL_UP/GPIO_PULL_DOWN flags for
+this purpose?
+
+/Esben
 
