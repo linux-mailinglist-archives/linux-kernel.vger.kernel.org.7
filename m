@@ -1,155 +1,174 @@
-Return-Path: <linux-kernel+bounces-624770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A407AAA0750
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E8BAA0770
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B6F4847C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C91176B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26182BEC3C;
-	Tue, 29 Apr 2025 09:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0842BCF47;
+	Tue, 29 Apr 2025 09:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TLL21DKP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dKdk1vTn"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1791F8ADB;
-	Tue, 29 Apr 2025 09:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84A6279786
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745919002; cv=none; b=cKbHBPULQ/pvBDsh7ogvjgrIngjeSRmQy9oroYX1D/wOs+gAFGYoqkuPdejYOVvcASVPSy28qNkugACNe/pAECvczIfZCxmpPhdvMaR1kjF6x/4fOaxqDFPS0Eb1Gz1M3SIdze+TIJyQr+1jVPap9KR75W3//FikYZmOklbOV3k=
+	t=1745919309; cv=none; b=RMUm9H4fBHJ8tRoaYoXsnihAV2I+HznLcNqcvVlSLRlMNk5o7xL4UX/RXb51GR0Y6EwWRPMtjcNqLZQ8rXVY+DEOhH2fsEreHcUK5pDYcJL2BJgxdMq/uM7/zQXcE+4MtSqUjUNgpYMFnGpoOi9uj+rL9tKe2NDESKUzqwmDmyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745919002; c=relaxed/simple;
-	bh=rV3fNVF+RKVHDBR8b7t97VqNHhu8U4tlBBKQxYXBgaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sZPRkqzugZ3sKaM/mbbaH1hLKym243Am/NDONrrnQiajDtSd0imiNW7dSOvnGLZhDGppmyEZX/Pdx3i3T9aSWya9cZIHLmvzdAWyNVDL6ky5CfphlACqn2nW7EKIWbDFs5FE4dryH59WQLkPySrZvoNYVlgF1GaHa4a82vOBHfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TLL21DKP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SNq4xJ006066;
-	Tue, 29 Apr 2025 09:29:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tKsxwwTwrcojaoVm46oV1mFUk1zTWS6GX8b+TdqJTmM=; b=TLL21DKP6f/RsQhI
-	9NSR6PH61MsqA2gz06smFXA1K/2H1+NqZRiVi3e27OpS4IL6UnzUvHVBgbROWBvj
-	q1yczdjk8iHEa9r5Ic0u0UQeGXhDBrM87wYJdtClAKTTRcF2up+Np/oxjlbj+qRM
-	NrN/wo/1GyfCynCWchG6qy9wxzZjPLdI0q56lGRnDkPjGD19cHY3hMSr2vmS+x4Q
-	Jg+T7zNdXrjdnvUi6D1GizlOxxDF3zeJPNBVVJ2cyg3loQTc0gAB/I7IbAudj87S
-	u8mx8SIEE2/4v7U8P705fiZmO/zOeAduw/zggXMgWkZ/GgIOOO9FSe7Ffak1PShm
-	fwMksQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468ptmm0tu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 09:29:54 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53T9TrtC020860
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 09:29:53 GMT
-Received: from [10.50.27.172] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
- 2025 02:29:48 -0700
-Message-ID: <a8d49fc0-ade3-6793-d7b6-aa16a7501f31@quicinc.com>
-Date: Tue, 29 Apr 2025 14:59:45 +0530
+	s=arc-20240116; t=1745919309; c=relaxed/simple;
+	bh=guAD50gmgdf8dNbOSIkbRIT3QyGj4WLIcqax997RKGg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=qMCSnqgf+jaoBN0PayYXPAE+GR9WsN4WfLeDTtqQAj63Itjee7wzoiGO3z63nk1YqnG4FINHkMZ3GpSk8vDSSYk3THYEHFFQdu7wNaAPTgblyl2X14idl/g7XJd011bGpgyrR8iIrLOau5CKoiYcouGvy02C7G/D3qkgdplqy64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dKdk1vTn; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250429093458epoutp02bd0a73809caf79a2ed7a6e02e783fe13~6wFoWeWKa2214222142epoutp02r
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:34:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250429093458epoutp02bd0a73809caf79a2ed7a6e02e783fe13~6wFoWeWKa2214222142epoutp02r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745919298;
+	bh=Pi/iyF0IplJUPA7d0Z7gKsd7OHUodqqvbGsperI0axM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=dKdk1vTnFVWqBAR2SqLxsvkR24HZJehguH3rUbBAEJbVDuU068FhhwprcjuoWmYVD
+	 +QxiUfdPiLYwIKGECzqtXUifHOs/dwfFmc+0I/Biz153MLGw2my1Xp+dMw74C36bFL
+	 xPFKnHHjVFszrH1obIRaxQsXlhBd7RNLs5FtKlsw=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250429093457epcas5p2b0fbeb86b8e679376761a83858e6041e~6wFneFqts1952619526epcas5p26;
+	Tue, 29 Apr 2025 09:34:57 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZmwC41Dxcz6B9mH; Tue, 29 Apr
+	2025 09:34:56 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250429092957epcas5p264b0dfae6bae9179df57e520fc59f8b5~6wBQCY4K62748727487epcas5p2B;
+	Tue, 29 Apr 2025 09:29:57 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250429092957epsmtrp1a2a35e256eff10acc70d75b9a28f6bdb~6wBQBc9JQ2444424444epsmtrp1v;
+	Tue, 29 Apr 2025 09:29:57 +0000 (GMT)
+X-AuditID: b6c32a52-41dfa70000004c16-e5-68109c1514f7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FD.FD.19478.51C90186; Tue, 29 Apr 2025 18:29:57 +0900 (KST)
+Received: from INBRO002053 (unknown [107.122.2.234]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250429092955epsmtip192a33218257ecbc1e6673c37e238d0e8~6wBOVcwOw0967309673epsmtip1z;
+	Tue, 29 Apr 2025 09:29:55 +0000 (GMT)
+From: "Yashwant Varur" <yashwant.v@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc: <cs0617.lee@samsung.com>, <g.naidu@samsung.com>,
+	<niyas.ahmed@samsung.com>
+In-Reply-To: <73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
+Subject: RE: [PATCH] arm64: dts: exynos: Added the ethernet pin
+ configuration
+Date: Tue, 29 Apr 2025 14:59:54 +0530
+Message-ID: <0ed501dbb8e9$45aa96e0$d0ffc4a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 02/23] media: iris: Update CAPTURE format info based on
- OUTPUT format
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250428-qcom-iris-hevc-vp9-v2-0-3a6013ecb8a5@quicinc.com>
- <20250428-qcom-iris-hevc-vp9-v2-2-3a6013ecb8a5@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250428-qcom-iris-hevc-vp9-v2-2-3a6013ecb8a5@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tpEl32C9Lv8nZezt8AZHUiLbOgiMehD2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA3MCBTYWx0ZWRfX4yhIkF4+a6D1 q8yfd+9+doEEJ2Lj2R0J33/+8Qdte224VNI4uzpF8Ow8yBQIy9GC/ol1o9/LPFOxDrmbsbkqcN0 1zIaC/HCVfk4IJHYdKSwZvSQDa13SFh0E0y5da4pHtn3rMAr0xG3TMqQdhDzpSYMEyyQm3myGNg
- YMEXPsRggQyR2Lsy9PPailKTo8u1BgCLR5jhR3QybOIM41FjnUBiehfw7U0iku+zrekWBBmBArz yi8hJQy7IMQ/MIa6o4BXmDXnPvqA3XM/vHd8+fUNNw4Z04NbQM0Ldma4o+0+X/kCiyYECRh7vQA RlORiw0tqTNJU9I+6M8lf4UaYgKH6Zd8hGfNSuER6ovpnBonBbE5132cxNJAjmQH6Lw26i0UF8O
- EU3eLnqODtSoZuGIeeGlBU8tpti0LRvxKc6ZER100p2Tllw9jxznyYx386jJNPA9IRR/QFo8
-X-Proofpoint-GUID: tpEl32C9Lv8nZezt8AZHUiLbOgiMehD2
-X-Authority-Analysis: v=2.4 cv=DKWP4zNb c=1 sm=1 tr=0 ts=68109c13 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=tp3-aCPLWCMtretvahIA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_03,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290070
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQI+tP5AvR0g22A5T67WLyfPVk3CYgKkYErqAxsAxq2yxm0V4A==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTld0jkCGwfVnKhYP5m1js1iz9xyT
+	xap3vBbzj5xjtdgy8zKzxctZ99gszp/fwG6x6fE1VovLu+awWcw4v4/J4smUR6wW//fsYHfg
+	8di0qpPNY/OSeo++LasYPT5vkgtgieKySUnNySxLLdK3S+DKePyvnbngJF/F31+32BsYF/N0
+	MXJySAiYSBz/+Jixi5GLQ0hgO6PE+Xsn2boYOYASUhINb8IhaoQlVv57zg5iCwk8Z5ToOSsG
+	YrMJ6Es833yNCaRXRGAxk8SXpoNgvcwCQRJfdgdCzNzLKDGvdzcLSAOngJ3E2a6HYIOEBXwl
+	dnecAbNZBFQlzk8+wgLSyytgKTHhqRpImFdAUOLkzCdgrcwC2hJPbz6Fs5ctfM0McZuCxM+n
+	y1hBbBEBJ4n9J9cyQtSIS7w8eoR9AqPwLCSjZiEZNQvJqFlIWhYwsqxiFE0tKM5Nz00uMNQr
+	TswtLs1L10vOz93ECI4zraAdjMvW/9U7xMjEwXiIUYKDWUmEt8qAP0OINyWxsiq1KD++qDQn
+	tfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qByTVe5u5+psuu9/VLDx8zV2Dd06M2
+	U/5eTdOpFhcWkyLO2j2MTFOv5Ksrsz76ZMC6Oe7E3uhFD6Ye5qo/+4/Fe2K99PLWjVbZVbOm
+	XjWt2R1u8Wzvb9m3ofMsExJ+9BpLcTItVY95vK2IiftEqvSLxvxdzuec7OI+OU6cZhUjMa23
+	2O76hv64q5esbufqpO/PVy7mVjdx9l5TN7uzK6FfPErf80bWfkeLHTU3JhxmWM5UpLBw0pTq
+	l3bJ3dcmyS/u4269orir5Dpv9KSC8iVhZa8O/Vqx/dY8rfS7zt8MGpo59/K6euTeZff64JOh
+	zi7mEff6f/1GXSvDF9slUtrunRCe+C15mlO3UMWj3/+UWIozEg21mIuKEwEo7Tz1IgMAAA==
+X-CMS-MailID: 20250429092957epcas5p264b0dfae6bae9179df57e520fc59f8b5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
+References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
+	<20250423060034.973-1-yashwant.v@samsung.com>
+	<73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
 
 
 
-On 4/28/2025 2:58 PM, Dikshita Agarwal wrote:
-> Update the width, height and buffer size of CAPTURE based on the
-> resolution set to OUTPUT via VIDIOC_S_FMT. This is required to set the
-> updated capture resolution to firmware when S_FMT is called only for
-> OUTPUT.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: b530b95de22c ("media: iris: implement s_fmt, g_fmt and try_fmt ioctls")
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+-----Original Message-----
+From: Krzysztof Kozlowski <krzk=40kernel.org>=20
+Sent: Wednesday, April 23, 2025 8:41 PM
+To: Yashwant Varur <yashwant.v=40samsung.com>; robh=40kernel.org; krzk+dt=
+=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com; devicetree=
+=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-samsung-s=
+oc=40vger.kernel.org; linux-kernel=40vger.kernel.org
+Cc: cs0617.lee=40samsung.com; g.naidu=40samsung.com; niyas.ahmed=40samsung.=
+com
+Subject: Re: =5BPATCH=5D arm64: dts: exynos: Added the ethernet pin configu=
+ration
+
+On 23/04/2025 08:00, Yashwant Varur wrote:
+> This patch adds the ethernet pin configuration.
+
+
+>=20
+> Signed-off-by: Yashwant Varur <yashwant.v=40samsung.com>
+> Signed-off-by: Changsub Lee <cs0617.lee=40samsung.com>
+
+Incorrect chain or confusing. Who was the author? What is the meaning of th=
+e last SoB?
+>
+Sorry will correct the order.
+
+
 > ---
->  drivers/media/platform/qcom/iris/iris_vdec.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
-> index 2c1a7162d2da..71751365b000 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-> @@ -171,6 +171,11 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
->  		output_fmt->fmt.pix_mp.ycbcr_enc = f->fmt.pix_mp.ycbcr_enc;
->  		output_fmt->fmt.pix_mp.quantization = f->fmt.pix_mp.quantization;
->  
-> +		/* Update capture format based on new ip w/h */
-> +		output_fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, 128);
-> +		output_fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, 32);
-> +		inst->buffers[BUF_OUTPUT].size = iris_get_buffer_size(inst, BUF_OUTPUT);
+>  .../dts/exynos/exynosautov920-pinctrl.dtsi    =7C 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi=20
+> b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+> index 663e8265cbf5..778584d339d5 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+> =40=40 -166,6 +166,24 =40=40 gph6: gph6-gpio-bank =7B
+>  		interrupt-controller;
+>  		=23interrupt-cells =3D <2>;
+>  	=7D;
 > +
->  		inst->crop.left = 0;
->  		inst->crop.top = 0;
->  		inst->crop.width = f->fmt.pix_mp.width;
-> 
-Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> +	eth0_pps_out: eth0_pps_out =7B
+
+Please follow DTS coding style carefully. This applies to all commits you t=
+ry to send from your downstream/vendor code.
+>
+Sure, thanks
+
+What is more important, I don't really understand why you are doing this
+- there is no user of these entries - and commit msg does not help here.
+>
+Understood, in v2 will add the Ethernet node as well.
+
+
+
+Best regards,
+Krzysztof
+
 
