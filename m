@@ -1,178 +1,143 @@
-Return-Path: <linux-kernel+bounces-625922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71993AA3BDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EC8AA3BB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343C74A8870
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF961BA5F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1402DAF80;
-	Tue, 29 Apr 2025 23:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C84269806;
+	Tue, 29 Apr 2025 22:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="LlD/zErv"
-Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com [209.85.210.65])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="eEnYViyt"
+Received: from mail-il1-f228.google.com (mail-il1-f228.google.com [209.85.166.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CC525F794
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 23:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9925D7080E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745967816; cv=none; b=Ena1ARvwOWeA8gVjIp92Iysua/b3xoxy9Sv2VjYmejabCRQ9A22/TieLvNDx0DpCdIPalty9Z9j737gwO7ZMsc5IMuJtMrullzKJT4OMuio1TseyY+fgmoJyTh0bkFli25hprX3aUIWXrcNrDimQ3W8e84h/012ff4peYyNUmLw=
+	t=1745966781; cv=none; b=eLDGzA8GAis3sYzpjw1jIWdUoN8JqG5kqnui7xdLfpn1uRVkauaqg6Vt/ep3sPOXlOlju1IDooCD60vWmM0SOudiwYxZqPPtLXwj7609pOZ5dXZH0JVYjh0sATmZaosclsdKqyu/gimk+FSKvP1918WJbQ8HajkJOvuI31JF8TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745967816; c=relaxed/simple;
-	bh=WrTIC4Zu7w2DdsEvhxy1DYKPPbfJNE6tRFl78OegCRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1ajIHgMY82mplGhHexdsIEVL74mBlAt5nOjKsKj4YdTBOgd0cMPOwyPK/b9J8Dfu3vjTcXHq9rFOaNwUESZseyxfsouo/63kVUCmuz2KtSqYun6gLD051ZWIv9nCMmKdms9TWImq3Nj4my6bKoC3Wbld5vUzlTzC5rUyKlQvWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=LlD/zErv; arc=none smtp.client-ip=209.85.210.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
-Received: by mail-ot1-f65.google.com with SMTP id 46e09a7af769-72c3b863b8eso5142913a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:03:33 -0700 (PDT)
+	s=arc-20240116; t=1745966781; c=relaxed/simple;
+	bh=YQGldYYZN+M+lMKEvXamPZpN40rNMsoWh5qt4/JT0LA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zl7PiUxXkCbAOXD09gBzMBLr16eJABeRu1VP4dzDAAOpk1hWSvOh3y28QrIX0gDi1oeHj8UKQInp5H1RheWTYQHzy/XJtYGTbiKbwK4znnLCnjmZkEnrYaiKtAR0Nv4KFns0qsBlsT0BrZfNnXR/uXPsXuX9U9j7mNUfBjtBl7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=eEnYViyt; arc=none smtp.client-ip=209.85.166.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-il1-f228.google.com with SMTP id e9e14a558f8ab-3d91db4f0c3so32074555ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1745967813; x=1746572613; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o4h2Zx2ZJ3PJJWUHECtRl2VVxFz3+sw1JZ9JfZPVtSQ=;
-        b=LlD/zErvTsf+PGa5crn8cmTs0o6rnHg55J5oYW2It7WPtGl4NXrRsbu8UfVgeMhS1b
-         eusUU6I3R8/L3INJ4TPj9tTUAWZjaB4MfF15c0HlL6eiIEjXj7yftv5PlvGbxsNyKa++
-         9TirRu7jU8VgaD9MzJbLZF9UvHPwYhRjnA68Qa6gcG8tftvnCD5VumflL+uh42i2U0gO
-         8R8a6chVTtjiRC1E22dMxLD+D0Sw0q2IKoxaQu4dmvUdMlb8rTAMDPJYpY5QhGe7CMmo
-         0VKxZ5MiwYWN5jUMzzFZRjbNR8J6ICP9xSa96MBAcgW5P/tdu3leJ/rxnywKVbA/xszR
-         srbQ==
+        d=purestorage.com; s=google2022; t=1745966776; x=1746571576; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZCGCCKXBocwMhtCNRTkeUsgiaS7jZ1hs+w86svHkyjs=;
+        b=eEnYViytMzkG/tKt//nQPEIKIurRr5yfH+7MFcgmbfjzoaZRjAksLm+vk2PI0yNJ0a
+         cpZ+6rWpHJh02LBCjd8HJCDfmIUeipzDmXPar1rLxb0wIgDYFFsltEo8Y1GTFkaZx23n
+         /oS0o4vNO1Pf8w2Ouid91DFpI7rE6GO3zLCpUH9YtALvWQeKFYylKLBXpXrAX3w4Z85T
+         q8DcY4dx7/N0urlsiQ/MlBXk2oJ94xqa9kiBFTaAtQba7IDfW2N6fU+xMQhlqTdTWwIo
+         JedC+UIeBH0944n8c+1f06T2rXdgW8yKQ3LUWOwrZYxXa/nmczxJ5hpNjJ9QW1jIqLa8
+         6VaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745967813; x=1746572613;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4h2Zx2ZJ3PJJWUHECtRl2VVxFz3+sw1JZ9JfZPVtSQ=;
-        b=MpZsx2fm3Y8Sc8zsTDJxjP8IVYtBjV5mHBfobxYnEuQDRP7/68r/WiPRH9QzO/Ywbm
-         /oVq4FHGkHuIfe9CGRmrbBwq0Vvf9gRyD1qIKUiqzezmkDvlQwYzrSZOG2y/6OOPbjrl
-         qriAF8G4JPc0d/xIgBcNQs5V1tLtoAmLS4kHE43FS9yDbIZS8mN2H7ua20uJxJci4N+u
-         ekY4CWwy3nvV5YadMlHBZg9ugKknBFyVOxaqXfk06dnNQV6UL/PT261ZTnhXh8lQF9Fv
-         BFr+XD9EoXmAVrVxGMraDQMHwGHb4yf09PXcFttjHU4KbTPABQ4NpM4idRgjatDZTtt+
-         hwQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMG9f8w9eSKM6jdndOIn22II5Q17IGy1j9lDDewSjdBtBCWlGqO7cz7MlQDRSNSQSRtNTyNUU7g/6b99Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiaxAX6if1c3gH3DDp6XBZPv+DTMnlJ5onatJgytovPrmKcIzh
-	33xEqUmHpFZnPR/ztZBp4Ze4uLOgHbxF1YfJdGSHnHV4FlvF5pYrK2Sh+l+6RCQ=
-X-Gm-Gg: ASbGncuggdfZWXGpP3KlNrgByVLnKWPdcCfMFtONPgzYEgIWGzO4Lu2EAFmHZsDPa0y
-	JGtDvnkyXx0CtZsYHKVIFZjlqVww7y0oUZiU2QkVk7cTOZxKGYbYtDCYAMCMXEzJqBtP51997Xg
-	DbeUUrdhm+3Il4QxCqhb0UBeKHhoItueu/yfzBI4xF7HjTh5B9fwwS4kid6EweUviM14cSRVEnw
-	5d59Cy17GiOU2eTALbjQTU7ctefI66wpTX30OEFxR6z8hMZqI135cxDkwSkC71pmS5StDWKvPFa
-	n1efGHGRODbkPRmwnSOAe/SHk6W8trL6b+Eajy31wQaEWigXbsw26qrBMGsMzcb0EK2jNK4ylbA
-	q/2yfp6Q=
-X-Google-Smtp-Source: AGHT+IFSzc5QJatgIdXqD+DXzmM7zgwxRI5PeZqMUOs9h7WB/uYl4w/dFaI6QbQK1mGmIDai2DP4ow==
-X-Received: by 2002:a05:6830:2909:b0:72c:32a7:8830 with SMTP id 46e09a7af769-731c0babbebmr817146a34.26.1745967813046;
-        Tue, 29 Apr 2025 16:03:33 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7308b0f3ffdsm546230a34.9.2025.04.29.16.03.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 16:03:32 -0700 (PDT)
-Message-ID: <8e02de22-aaa0-413e-91fe-534d4a74c4e7@vt.edu>
-Date: Tue, 29 Apr 2025 16:39:22 -0500
+        d=1e100.net; s=20230601; t=1745966776; x=1746571576;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZCGCCKXBocwMhtCNRTkeUsgiaS7jZ1hs+w86svHkyjs=;
+        b=N7CKcNMY6Zv72VkZslKdvvenKraxt2aGer5pWxHeqGIOu7kLZCIro57MGBNHuBbyHo
+         zeJ520OgcINWROlYRh4RazowBJlm0iH3h+neXTTnfwuZmVSjRM+/33mSikMTxPz7Ob0y
+         aWQ/4keIJho1ddDjiTToGtp0RCc22AxvX+ReM8AMMbzLWE7pLQes7TSO65rA6BjcWx3H
+         pK1o1j25GvFNcY4pkvvABZL/v03wxwzzoa1/AmOLtgDdQqh1tp8QiJQgTuzXncMX6KN0
+         Cwq9Sy1kRrFMaBtMpJ/C3BX65M2J5so4I+kT5GeuC0XHrbityAKb8CCKufNYLQk+40ST
+         T8+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWv29noHaPjdv2WMNHSMY3/ztChzJsIbJgHkRuLVx1ApVdAiE4tsiVv+fKRH1dtBFOe7zHpwEaQSyOfY+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZUZ1cBSLU3qUjfKVlM3t4vu0Vy2A4sWaMAyySGtnqbD3PIpwa
+	pSoQ+FXAVPTcNj587i/gCoNxxTNlHSPbL2VCri8TMtoGe1XzIUkowpLXFNdKbhooFXtX3P+6T7t
+	Hiup+5X+XVZbkUGDPah+cbeSXM25YQx00
+X-Gm-Gg: ASbGnctTG5JYBkLfHVui3h/M4mJvPbKz1SHY79xL4Vwc6W/t6SXIKeVQUfrpQz7+vdf
+	Bjx1Q1v2RIffHjf9/d+68ShkUVwXVXD2jowlikkELDLyaVf+kmtBHQ6AO2oguE3dHr17evm9PHf
+	2rqa0yIT1FE0ENvj8iFke8UOlFwgh9gvlrxdgdCmVqx5mb4mPcwPKDYjdq1M5PqPLqLrlDw3319
+	l6+tmsDzYiOZJk6GrF62HUaWjiRzaJKKUcWteAAhJa6RpR/3W9vLYa9Wdvw7vuZfSqRydfK4eV2
+	86eRZtThAwFoalxogULC/nwTlDISfMFM1urVmoMFRsnCoQ==
+X-Google-Smtp-Source: AGHT+IE+G/JgBSc4QPhJO/JMssnCs47xAcdzkMDhhI6dkdMavoR9/32QK0KRcpc8my2GqlxfzQ2mMpfpLE2Y
+X-Received: by 2002:a05:6e02:b42:b0:3d9:644c:e3b7 with SMTP id e9e14a558f8ab-3d967ffec1dmr3337395ab.15.1745966776636;
+        Tue, 29 Apr 2025 15:46:16 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d967d2b553sm155645ab.25.2025.04.29.15.46.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 15:46:16 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 0BCFD3400C9;
+	Tue, 29 Apr 2025 16:46:15 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id A4D78E404E6; Tue, 29 Apr 2025 16:46:14 -0600 (MDT)
+Date: Tue, 29 Apr 2025 16:46:14 -0600
+From: Uday Shankar <ushankar@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>, linux-block@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] selftests: ublk: kublk: build with -Werror iff
+ CONFIG_WERROR=y
+Message-ID: <aBFWtvHv84aPTMvi@dev-ushankar.dev.purestorage.com>
+References: <20250428-ublk_selftests-v1-0-5795f7b00cda@purestorage.com>
+ <20250428-ublk_selftests-v1-1-5795f7b00cda@purestorage.com>
+ <aBAnKZCUZWyEJhfS@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] Reduce CPU consumption after panic
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: carlos.bilbao@kernel.org, tglx@linutronix.de, seanjc@google.com,
- jan.glauber@gmail.com, pmladek@suse.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- takakura@valinux.co.jp, john.ogness@linutronix.de, x86@kernel.org
-References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
- <20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
- <96516ac6-777a-469a-b5d3-9897a0e40de5@vt.edu>
- <20250429155329.73bd3f5835e8d6a2864873f9@linux-foundation.org>
-Content-Language: en-US
-From: Carlos Bilbao <bilbao@vt.edu>
-In-Reply-To: <20250429155329.73bd3f5835e8d6a2864873f9@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBAnKZCUZWyEJhfS@fedora>
 
-Hey Andrew,
-
-On 4/29/25 17:53, Andrew Morton wrote:
-> On Tue, 29 Apr 2025 15:17:33 -0500 Carlos Bilbao <bilbao@vt.edu> wrote:
+On Tue, Apr 29, 2025 at 09:11:05AM +0800, Ming Lei wrote:
+> On Mon, Apr 28, 2025 at 05:10:20PM -0600, Uday Shankar wrote:
+> > Compiler warnings can catch bugs at compile time. They can also produce
+> > annoying false positives. Due to this duality, the kernel provides
+> > CONFIG_WERROR so that the developer can choose whether or not they want
+> > compiler warnings to fail the build. Use this same config options to
+> > control whether or not warnings in building kublk fail its build.
+> > 
+> > Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> > ---
+> >  tools/testing/selftests/ublk/Makefile | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/ublk/Makefile b/tools/testing/selftests/ublk/Makefile
+> > index ec4624a283bce2ebeed80509be6573c1b7a3623d..86474cfe8d03b2df3f8c9bc1a5902701a0f72f58 100644
+> > --- a/tools/testing/selftests/ublk/Makefile
+> > +++ b/tools/testing/selftests/ublk/Makefile
+> > @@ -1,6 +1,8 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  
+> > -CFLAGS += -O3 -Wl,-no-as-needed -Wall -I $(top_srcdir)
+> > +CONFIG = $(top_srcdir)/include/config/auto.conf
+> > +WERROR = $(if $(shell grep CONFIG_WERROR=y ${CONFIG}),-Werror,)
+> > +CFLAGS += -O3 -Wl,-no-as-needed -Wall ${WERROR} -I $(top_srcdir)
+> >  LDLIBS += -lpthread -lm -luring
 > 
->> Hey Andrew,
->>
->> On 4/29/25 15:39, Andrew Morton wrote:
->>> (cc more x86 people)
->>>
->>> On Tue, 29 Apr 2025 10:06:36 -0500 carlos.bilbao@kernel.org wrote:
->>>
->>>> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->>>>
->>>> Provide a priority-based mechanism to set the behavior of the kernel at
->>>> the post-panic stage -- the current default is a waste of CPU except for
->>>> cases with console that generate insightful output.
->>>>
->>>> In v1 cover letter [1], I illustrated the potential to reduce unnecessary
->>>> CPU resources with an experiment with VMs, reducing more than 70% of CPU
->>>> usage. The main delta of v2 [2] was that, instead of a weak function that
->>>> archs can overwrite, we provided a flexible priority-based mechanism
->>>> (following suggestions by Sean Christopherson), panic_set_handling().
->>>>
->>>
->>> An effect of this is that the blinky light will never again occur on
->>> any x86, I think?  I don't know what might the effects of changing such
->>> longstanding behavior.
->>
->> Yep, someone pointed this out before. I don't think it's super relevant? 
+> I think it isn't good to reuse kernel CONFIG_WERROR for test code.
 > 
-> Why not?  It's an alteration in very longstanding behavior - nobody
-> knows who will be affected by this and how they will be affected.
-
-It’s difficult for me to imagine how someone might be negatively impacted,
-but I understand that it could happen.
-
+> But it can be done in the following way by passing 'WERROR=1' to make
+> command line:
 > 
->> Also, in the second patch, I added a check to see that there's no console
->> output left to be flushed.
-> 
-> It's unclear how this affects such considerations.  Please fully
-> changelog all these things.
-> 
->>
->>>
->>> Also, why was the `priority' feature added?  It has no effect in this
->>> patchset.
->>>
->>
->> This was done to allow for flexibility, for example, if panic devices
->> wish to override the default panic behavior.
-> 
-> There are no such callers.  We can add this feature later, if a need is
-> demonstrated.
+> +ifneq ($(WERROR),0)
+> +       CFLAGS += -Werror
+> +endif
 
-I think you'd then prefer what I originally proposed:
+I've taken this approach in [1]. It actually passes -Werror by default,
+but it gives the developer a way to disable it with
 
-https://lore.kernel.org/lkml/20250326151204.67898-1-carlos.bilbao@kernel.org/T/
+make WERROR=0 TARGETS=ublk kselftest
 
-IMHO it's true that this feature might not be necessary ATM, but as Sean
-pointed out, it could be useful in the future. I don't have strong
-preferences either way. Would you be happier with the current v3 approach
-if we add comments to the code explaining the purpose of the priority
-feature?
+[1] https://lore.kernel.org/linux-block/20250429-ublk_selftests-v2-1-e970b6d9e4f4@purestorage.com/
 
-> 
->> Other benefits of such
->> flexibility (as opposed to, for example, a weak function that archs can
->> override) were outlined by Sean here:
->>
->> https://lore.kernel.org/lkml/20250326151204.67898-1-carlos.bilbao@kernel.org/T/#m93704ff5cb32ade8b8187764aab56403bbd2b331
-> 
-> Again, please fully describe these matters in changelogging and code
-> comments.
-
-Thanks,
-Carlos
 
