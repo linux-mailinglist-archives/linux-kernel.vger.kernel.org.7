@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-624852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63426AA0895
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A88C6AA089C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25281B64AC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:31:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4E5F18885D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF85275100;
-	Tue, 29 Apr 2025 10:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C903B2C1085;
+	Tue, 29 Apr 2025 10:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OMaD7Voz"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="npr4iHht"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1A520FA90
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B988F77;
+	Tue, 29 Apr 2025 10:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745922655; cv=none; b=MWEt4MF/QJiuB1ySfCO8OuI8965kl12fB1e9iSLirIPvxunafbm6+MQPupaz/1asgA8A/1ayQVlMR8UffJHsI1y4yCDjqEiWKTC8Ld+Wo8f3lw111J32KV+31AHivCcCLC/UjViHBWa1zC5NHSv+Nfd5njcsr9eEoACG2VRm8pY=
+	t=1745922694; cv=none; b=MZGMF4QxKl+fObiFsrcMEZVE3jcl1yhay1e7Af8Wr16X55qsl9W8VZAA2Cs7V72kB8MGyQ8xqfe0qH0khD13rg1l+/ZcL8lLKfSwocZuSqBliWTkI/2R1sV/Yh35fSJ/6fp3XQLoSsQNtEpWICWy3SsY/RgRixEyXqVuRx83zFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745922655; c=relaxed/simple;
-	bh=04voz7/BTZUb5byXuw1Puz41gaRYXd2u6G7MthIyJKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CY2ZxWiRscUAZCqO5tTo5ymXFij83GkvosPZ2OJJZF3qILrOYBZy2/rHYvs51UnOMi9DIFX/0HVri3KTx6ChAVWRiALcQME6KniBPtZ2tcLR3x6eqQRxD+d4Kv0oyNNCdVZz8Iob46bmfsCkXXGhq7NKGThuagRcnIglFF4k6pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OMaD7Voz; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acec5b99052so136744466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 03:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745922652; x=1746527452; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WiBauZO2ElGRG8B3vbx0E57UweONyPLJm2l7Gk1dbO4=;
-        b=OMaD7VozvpMa4bkMVEieUrp5t3Ku1QDn9QTLxKgp+aiZwbOUoQe9VrgQQwsjM2SyrP
-         KSIo/qKYU9aSwegcncIM6FWe9SsSs0Xa0Pqjd3MIE7JIivLMZYK5Pb1rNn+vbTeoRX5A
-         iDvTrl7ICn0aKvdDbxC+4P3/PKbTD4wVp7Qh6i1C2iHlfdqGfbAcjcmsx5teBYKmxWPN
-         WbhjTOW5wu88XNR2em8t6vJHWB0aUTLEJBunir1g2XwOb/pkz9xPBk0YVs+GLr+hf28N
-         7c1rY4r4yHgtnI8xOfn84M0ZsOu2s6duICPq+IZ0rFmjSLMwm6ZOD5p0PamjR0Bzf9if
-         W2Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745922652; x=1746527452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WiBauZO2ElGRG8B3vbx0E57UweONyPLJm2l7Gk1dbO4=;
-        b=AntoxmrRWjQ9+3zB2InF/7lhW8q/7WtEeDq9pguzZBYsis8zTVJZ3XMv+Rp20325FQ
-         MRh8Iv++pA1agenld8oqjeFXQONfq5tmhy5v3jvnGGzbWWW2xyx3Pc0DpNggOyQjhuL3
-         TbMYik4s7k+fKVM8l5qQdaGLcg4vnAoWZIakyMjNIE6PEFYWdpmx2Qgx8Bnur86+18Rw
-         mv6OyIFRssMpDuainlyo5cfUQ1IdqlzKwLFFxZAGNjw8WM0jSQD6AEQuVjLg9CXMQ0TK
-         j1XuSf7bn6zAuyhnDMSJhkmy31VaWLptdys9P3J0BQMgdbOuoFVJdbb+dURKu5VIX2th
-         B86g==
-X-Forwarded-Encrypted: i=1; AJvYcCUf+Q/HADwQOqJJR4alPwOdXO2U/Yc5m1kyeoAhhmRziZUL17CSgTVEPmsmn5zHz9iBFwPbSMGgTX7dUzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxan9HAHudq0+OtJbvq1ept37ljo6HahPgQH06u64pvZROcPqwA
-	OjZ9MyS9a+1bhFepIgiVk1MHYCnasOzWI4Sq0y/qDeoV2zQNJtPA+oq48qfI54yD6pe2/91nsD6
-	cK75E7vqOvYvZsSvKLA9AOgSR0pp2PzBKik/IVmjd67WtwXFTBg+5
-X-Gm-Gg: ASbGnctZ/0eZF6Q6PkPPSQ5ukSgRh7sZmuL98ywgZ8G1TAe13rwQoj/l2qF8kvjHCR+
-	g2N18f3QUOSfA+1n/ieeCvAbCC/FdmIBXcpDj1zTd/lTCuMNd+GBT/00g5chkImk5dcDOdMnowO
-	X6aCWneKWHPN/X0l+07Xwa6NXBAkRVtDbnPHXeagUaFJCnWjxEspcTHhLEe2ClB9Y=
-X-Google-Smtp-Source: AGHT+IFmHKm9kqNhujcVpdgOw96B4rLpnKryxzvvMQ8LDiaaEUClLTQnJ9pgBvY5KlSnoISbcndqYP37rgcSfo6LGIU=
-X-Received: by 2002:a05:600c:3547:b0:43c:fe15:41c9 with SMTP id
- 5b1f17b1804b1-441ac853dc1mr23585585e9.9.1745922640597; Tue, 29 Apr 2025
- 03:30:40 -0700 (PDT)
+	s=arc-20240116; t=1745922694; c=relaxed/simple;
+	bh=E72IkalazZSH9hmLoh8WOuFfHOJ9Y7cbGMxlWZDqlaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t/5N9BnD7wFOULiJnD6TmdBwhx9MNVDXdV2MkXBInL7zUXB6HiiJCxHDIY/P/WmRmn+D/WAkdevOTOe+j/cf59dRh+76JCm4N80z6cJ3I/evGsEMCOMCN/vN2YK0ScR/b3ST9g38LUxMyIrLCNdvrNhBK1mOwx7yNxw56pnP0Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=npr4iHht; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T9l2Ah011871;
+	Tue, 29 Apr 2025 10:31:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	62H73I4+pk5Umqg8rnvLzTJpE7bmIFq2jzdCc1OA+z4=; b=npr4iHhtuT3+slqw
+	DNZFEtvQ00NYmUF+GEm52rGoJsVueDptHoI21pv1hLKnTnQJk5bGbXdyP/0cQ7AH
+	7m+skW6VSGOIPmc1DturlCxbl+AMJfxuMV9mQ6N9j2UZno2MS7lAAfkKgeBu1o/p
+	oFd/3a90wXdaGv9fUW7gm7NBsxU6yhL9dEzwohvWkh+cIgBdWTupgJL4nyUd7ZES
+	OS4fn/Y7nQNL/3LQPUO680k1eBfjFrDeEMcpF9ow5aOjH2MVkPUqISv8HnN5vg0o
+	ni4ePklhhqAErRLOGCYg0g+oxEkk1iPEztuLyda2FLwmsoepird8/ioHbksCIh8p
+	4gUu7A==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468pg9c813-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 10:31:26 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53TAVPaA000748
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 10:31:25 GMT
+Received: from [10.50.27.172] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
+ 2025 03:31:19 -0700
+Message-ID: <6f913d1a-bcbb-e620-a761-676e38bdd1b8@quicinc.com>
+Date: Tue, 29 Apr 2025 16:01:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-strncpy-from-user-v2-0-7e6facac0bf0@google.com>
- <20250429-strncpy-from-user-v2-1-7e6facac0bf0@google.com> <aBClyLz4y7a15WMg@pollux>
-In-Reply-To: <aBClyLz4y7a15WMg@pollux>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 29 Apr 2025 12:30:26 +0200
-X-Gm-Features: ATxdqUFa3J0LW17Z4A1KkrE2MYyUXXKuptQZ7VbxgSdoPeqBASznqKjNgJpcxCM
-Message-ID: <CAH5fLgj_wW=8XgdnceHGv=VL19X_c3es7w_-QDqgK7+PoEcdZw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] uaccess: rust: add strncpy_from_user
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 14/23] media: iris: Fix NULL pointer dereference
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Nicolas Dufresne
+	<nicolas.dufresne@collabora.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <20250417-topic-sm8x50-iris-v10-v7-0-f020cb1d0e98@linaro.org>,
+        <20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com>,
+        <stable@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250428-qcom-iris-hevc-vp9-v2-0-3a6013ecb8a5@quicinc.com>
+ <20250428-qcom-iris-hevc-vp9-v2-14-3a6013ecb8a5@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250428-qcom-iris-hevc-vp9-v2-14-3a6013ecb8a5@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ZpvtK87G c=1 sm=1 tr=0 ts=6810aa7e cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=Ge1I_e8bFEkiASVbsqMA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: tQfmm9M7hcs9hhOC6imbGR8A_09jxIKa
+X-Proofpoint-GUID: tQfmm9M7hcs9hhOC6imbGR8A_09jxIKa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA3OCBTYWx0ZWRfX/rrdyDmeRD2l Rsnd1RxGoe+VLxofoYJABHv83OWo7LaqsanMvh76zpRunZMkDkCDVLrmJka5lzCMI7JarF75o2R CSQ16h5V+srcIEBv0iVawdyY6w51h/OxCu9G+InulopvR3+96DehrhE47gjvc7mlTmK2DOw9cAq
+ pdV084pI2dITP5G9l9sDPXsLixzLKw7aNJLz3haqJ+DAFu4DtrYNVTNR8LHw+EENmUYisk05pof AWItrC5clxcMzzv9FiTENuXhQmg/VRDrruUts6GjvePSFgXKkQ/GLT5pJxovxkNwh4KiZE9uMCk w7yM6QsOcqFqu1f4SXWWD+LuJxgK+HfjhY6HycPktitgFTFOpak9gQay7Nsa5rw/6Sxc8k2rePO
+ M5g50AbWclRHaOkmZibBwIJzRDBRDyAlWW/1aMS4ngnZy5xVlLuTUjNvomC1hGAv0jTygpmX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290078
 
-On Tue, Apr 29, 2025 at 12:11=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> On Tue, Apr 29, 2025 at 09:02:22AM +0000, Alice Ryhl wrote:
-> > This patch adds a direct wrapper around the C function of the same name=
-.
-> > It's not really intended for direct use by Rust code since
-> > strncpy_from_user has a somewhat unfortunate API where it only
-> > nul-terminates the buffer if there's space for the nul-terminator. This
-> > means that a direct Rust wrapper around it could not return a &CStr
-> > since the buffer may not be a cstring. However, we still add the method
-> > to build more convenient APIs on top of it, which will happen in
-> > subsequent patches.
->
-> If we can't think of a use-case to be built upon outside of
-> rust/kernel/uaccess.rs, I'd make it private. We can still make it public =
-should
-> we find a use-case later on. If we have one already, it's fine of course.
->
-> With that,
->
->         Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-Ok, I can drop the pub.
 
-Alice
+On 4/28/2025 2:59 PM, Dikshita Agarwal wrote:
+> A warning reported by smatch indicated a possible null pointer
+> dereference where one of the arguments to API
+> "iris_hfi_gen2_handle_system_error" could sometimes be null.
+> 
+> To fix this, add a check to validate that the argument passed is not
+> null before accessing its members.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: fb583a214337 ("media: iris: introduce host firmware interface with necessary hooks")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-media/634cc9b8-f099-4b54-8556-d879fb2b5169@stanley.mountain/
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> index 1ed798d31a3f..cba71b5db943 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> @@ -267,7 +267,8 @@ static int iris_hfi_gen2_handle_system_error(struct iris_core *core,
+>  {
+>  	struct iris_inst *instance;
+>  
+> -	dev_err(core->dev, "received system error of type %#x\n", pkt->type);
+> +	if (pkt)
+> +		dev_err(core->dev, "received system error of type %#x\n", pkt->type);
+>  
+>  	core->state = IRIS_CORE_ERROR;
+>  
+> 
+Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
