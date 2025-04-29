@@ -1,96 +1,146 @@
-Return-Path: <linux-kernel+bounces-624892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCDEAA0923
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:03:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B71AA090F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F773483F23
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149EF3A956F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D59829E06C;
-	Tue, 29 Apr 2025 11:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E542C1097;
+	Tue, 29 Apr 2025 11:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="iDPMTwH5"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XH+gpxAg"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DEF1BD9D3
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E755176ADB;
+	Tue, 29 Apr 2025 10:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745924617; cv=none; b=M1YoXDwCvE2ETuWTeXHuZNXSGZXA3ey3igTOdWZsUKOEX/hplXUMkzOlLzU2/txgn9vhNJ6EieOOuBhQ9a40DoNLc6jDM1n1ehF3jtIa5sQ7hpRLF8BrF2LNSy10urtdSLRUlWVHYEJtWhrpmhjflVXsjRmRrPtafAPmS1FdqKY=
+	t=1745924401; cv=none; b=oPw4UUquHGMiiktN7z93OqnGJg2+vz+uIZrpIP/RVhm5OQ6/xbohr0sy8GZhtjXQ0aTNhAwJXZVOxxHs/D8SWG/0O0vSwkZL40B757ulWNWr/DzEm1SSAAEtm6F1CWQbzTZrg/p/GgYunDop3q5G530+Ni67QWLuS/imSoIWnkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745924617; c=relaxed/simple;
-	bh=AaLH6uCg2+cfL0N1DDYRdVbnzjm6lmUoPflwUpegUXg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=npQ7a79XKoy2G60ym1sLdofk5jjr2nYleaQCGAqb0ww4dtxsIrhY4xnRO8UFQBgFkZiHAB+/ePBcVWX+2DxPNZCDtvzWW/uh1DmBQuGdJn/1Sn7e2bHsLWMmBONuQHmGQbEAeulZHVo8cRJfDZ7Rh5YQhx2P/anuzgrG1avl2bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=iDPMTwH5; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1745924303; bh=9FbtqoKyWpjBpf6GFquu3nJaY8dh4VXPtaWhpXYMWi8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iDPMTwH59XkFlTDM9/aZI6SPs5E0Ld9xMoySmK237MU0IM4HUA5//pfi/4HXJ+Fu8
-	 tK460sSz6Y0w+1NhmLwWKelKmg1XNYpER/TAPxtAr5CBDk44u1G3BX6QnJKRvgQiD7
-	 H7qmllOGyAr5O0Fdoe0cmGWxIokPYPYyqiboX/0w=
-Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id E9586CCD; Tue, 29 Apr 2025 18:58:21 +0800
-X-QQ-mid: xmsmtpt1745924301t44441a9y
-Message-ID: <tencent_302C2D116C8C966CE90AEEAACC407A5E6F0A@qq.com>
-X-QQ-XMAILINFO: NWOHIAASQnT+gHABGBF6pKfNGU8Qwa+sy4GpdH7KLOLqeOCrqpwWENwFwbEQ/I
-	 ShGNhrXXzYEXg1TvjXW0miKhCDcqiromyPcqm1OPF19Y6LURt6bnj+tDxSbPDMO1qK5HI0Rw3IfF
-	 7/MF9mpCvxoQbGAzlYf7gZLxLbDSkiKMqK+uOGAyUfjJ4ZUN+bIKpViwIOk8wRlHCsh4ScHW2CmF
-	 XcuJaIKb84uOTxz1MhIJ2EhSmUZ1/sx3Tw/o87fFyFxtuzWfNMD8Fvopc+K2itF7c6neFRB4Nrjv
-	 F0VihzoWiZofBh6b/UkvHmBz6ecPUYvUQglsTl3YRaeTnBCG/0tSS+tMsM24oFcQT45eculCd/0g
-	 CNiFNpucqOSyNgNcg+cGCRX1zXbcikj1Jp8CS0hdkYEwaKcdbo0TVKGLVH1i3NsK+Wiex4eMR2ZL
-	 w+RMEeqZZTgS/EHFSJ3cxUVL9mWGKWHwMnCMuxwVEH7z75IKz5foBm8wB920uINcUjaNES+exDIh
-	 K9pT03JxCDVl9sp6YHQdUjia2gi68ruEZeBenoS/yAgIeN1DbfWGgN9BMj/NrgT9qaBun2brlT2x
-	 5rz+bEms4EK1MNfnnTUwC8C5JW3zFnM0M5e5alqaL9i6LCt8+e7N2Mp58iaI+qmKiuatgoXRnSGU
-	 iV4qZtJG9pJWQC2z/3MxHcCRxtw693nFCja8uj+CJdGIF0mpkY91CU9IzzSm7fDivkoAG7elC1XH
-	 IJwS//uvtcRJno3t741CbLFiMdWg5EDM3kEP/wME9qcN5T2UHW5oPeDXAdMb8jtjgwu3gh7mdiZk
-	 jZLK0V2yxCy2j/Iomv81c0OF0HEc6YuqNPG0kguUDdHW648TSMHAEUO7UsQkrorlhEyVBabwSgQF
-	 i58oyMikAJ4bkrzIA+4W2IMP7Z7ADWxYHjJJWwY22Yl9FT7mFLasRK26ga1C/mVAmvEUoA1i/gnI
-	 vaY4T0t419JSP4khsRUECAtILlsj0Rbczd5saGBzG195SpK+4hEA==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
-Date: Tue, 29 Apr 2025 18:58:22 +0800
-X-OQ-MSGID: <20250429105821.834028-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
-References: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
+	s=arc-20240116; t=1745924401; c=relaxed/simple;
+	bh=xYx7vVMODEw3waQ3jXqBqGbAJdRANkPSZXchstFSTSI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T+tM5e7FD9taq29lT+coWLNJrN0owM+0XWbjEzN3JvVyPRa7RNVdXLN5+bWCcozdI7JzgGCbeJCQ9BsbDdIlXVL+gTf4S4KPgU0Ria8iNSJvf58qqn/pM/oiyz6l5OC1MXfPtzd95Z2z6p8MKSycxfVGUaOCHfc+V59c3coKQr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XH+gpxAg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acbb48bad09so1091038966b.0;
+        Tue, 29 Apr 2025 03:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745924397; x=1746529197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gAhibOWntv/JIa0M4k74yL4qCdZZ5IyEkuemH9Z9jOg=;
+        b=XH+gpxAgKx9yVc+i6bzhNJ82faq9BJW0cjBbf/q+CzqiWCOYNyGCct3QRSDepPa66A
+         zNvyCp5dfBn9LXhltXBHrS1nNKso/pegFm18E9+62M75iYLZfJVgSUIWj0/FqGZ0EMzB
+         asroHfWGw7JnQB6aId6vze+6zRjv78U0nJuvbPJnMMdDJliOTUnhBJ7ZFHSNjDmA6rBs
+         J3ePYryhUSd1I767Jqrre8eSxSkxGjDaXr1RmWySowKBxzG3AwZGohG4zoiOojRpvKKK
+         ZRtOHj9vMQvRnrKO9e1YlmjlfOgPLcW6o0W+lOZQZmiu7Ykq+F7IlwzBdY3O47zUiPwq
+         ndXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745924397; x=1746529197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAhibOWntv/JIa0M4k74yL4qCdZZ5IyEkuemH9Z9jOg=;
+        b=vLQ/B2RLJXIdNA8Xs3lQmIEeSAjRA0yBGdqjsVVVhluGZ66fOpZecScD+/Ss71i4RL
+         RGpBP8I8mPSl1UaeDPbneEaW7hzOQe0U2yj7U1RRo7yulqKQkDzN0yBM3G5q8gSQx321
+         UJsmS7iSwhsLJ++ncPnjIDF0L2whrvyObC+oJD9vs3b0mwfnNEV41J/A8zr7aZLbcRwV
+         inf7Lm0GDaTgOcWABVK59kENtXNGJwCtcZknrbflQ+NJNy9ckg1oFyeo4ZI+gF2bBp5Q
+         CAOskM9r3DtBJ1iWlFIw1wyGHtwuE0fyw9C77Y4+8GvGe5KNpiWEjLREalQn8EHpcb8X
+         df5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVAKgm4McVnFo7Zv7dZYoB8fz5mgETNWhVpnsjX/jK1PKQPqM+KngQsfUeuFXIHPnIKb2v1FHVc3/oA@vger.kernel.org, AJvYcCVsY3wkmevBYmecQAM2WIJh5hGRJfV9Rf4asEe/TCJHCmko6JXKflDhkSt0jWJLEeLvGPTc8k+e6STkStbV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn5eoAwFy7TWcGhEw8PjaBLYcXBNyrrKXnmjaw6QqExV+yXq5c
+	CizXWkzGEoXpphqha23MYCe79Ie50JyGtufTOXFbSrpq/qOo610XFdQ683hEy3jcIApG/7d7h/V
+	cWmTvm1jyN9IGcZV2i/1VVYGUkoU=
+X-Gm-Gg: ASbGnctoee/VXaxVPXPgJcKY1VtDG/YJjvozWwbuPmlhJoEnRpwk29pIV6kIP4SdQSk
+	VAnAQIpvqF8qFD1Mh0rlrKiGUvOVxl93mjwg8u4kcDATxuZjR3WwBkAs4MPBQif5acw7+vyvJzl
+	afbvBrp9ipOMAEVknja8ksWw==
+X-Google-Smtp-Source: AGHT+IH/NXv8Ns/r4ELzIeUjCBq1C8X3IuRvUDL2M1p517q3J6szG3n+1EsZKhZkYWyLva+16eIhp/8IYP2isELwNdA=
+X-Received: by 2002:a17:907:7daa:b0:ace:6a25:f56a with SMTP id
+ a640c23a62f3a-ace8493cc59mr1172294666b.29.1745924397295; Tue, 29 Apr 2025
+ 03:59:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250428235610.11324-1-ariel@simulevski.at>
+In-Reply-To: <20250428235610.11324-1-ariel@simulevski.at>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 29 Apr 2025 13:59:20 +0300
+X-Gm-Features: ATxdqUFO3a5WRMEYxmo6NOZKv9hXMs8WfdDFruZ68XC6mnwev1lM-GgXl7oxlLw
+Message-ID: <CAHp75VccaDdzW7SUyLE6Y+HLFDHdcc78JZTFD5wbAeOOdPEqOA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: intel: Document Tiger Lake reuse on some Alder
+ Lake platforms
+To: Ariel Simulevski <ariel@simulevski.at>
+Cc: andy@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Tue, Apr 29, 2025 at 2:56=E2=80=AFAM Ariel Simulevski <ariel@simulevski.=
+at> wrote:
 
-diff --git a/net/mac80211/ibss.c b/net/mac80211/ibss.c
-index 4246d168374f..94eb2fb80aaf 100644
---- a/net/mac80211/ibss.c
-+++ b/net/mac80211/ibss.c
-@@ -1818,6 +1818,11 @@ int ieee80211_ibss_join(struct ieee80211_sub_if_data *sdata,
- 	sdata->deflink.needed_rx_chains = local->rx_chains;
- 	sdata->control_port_over_nl80211 = params->control_port_over_nl80211;
- 
-+	if (local && local->int_scan_req) {
-+		printk("sd: %p, l: %p, nch: %d, %s\n", sdata, local, local->int_scan_req->n_channels, __func__);
-+		if (!local->int_scan_req->n_channels)
-+			return -EINVAL;
-+	}
- 	wiphy_work_queue(local->hw.wiphy, &sdata->work);
- 
- 	return 0;
+Thank you for the patch. My comments below.
 
+First of all, the Subject should start with: "pinctrl: tigerlake: ..."
+
+> Some Alder Lake systems, such as those using the PixArt I2C touchpad (PIX=
+A3848),
+> reuse GPIO IP blocks similar to Tiger Lake. As a result, enabling
+> CONFIG_PINCTRL_TIGERLAKE may be required for proper I2C device detection.
+>
+> Document this in the Kconfig help text to assist users encountering this =
+issue.
+
+It's all nice, but can be written in much simpler way:
+
+"Some users may be confused on what to choose to support their chipsets,
+Document supported SoCs and PCHs by the driver in the Kconfig help text."
+
+Or something like that.
+
+(In other words the "touchpad", "some systems", etc are unneeded
+details. It may be other users who have different issues, you need to
+cover all of them.)
+
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D220056
+
+> Signed-off-by: Ariel Simulevski <ariel@simulevski.at>
+
+Reported-by: ... ?
+
+...
+
+> @@ -54,6 +54,11 @@ config PINCTRL_ALDERLAKE
+>           This pinctrl driver provides an interface that allows configuri=
+ng
+>           of Intel Alder Lake PCH pins and using them as GPIOs.
+>
+> +         Note: On some Alder Lake platforms, including systems with
+> +         the PixArt I2C touchpad (PIXA3848), the hardware reuses
+> +         Tiger Lake style GPIO blocks. For proper device detection,
+> +         enabling CONFIG_PINCTRL_TIGERLAKE may be necessary.
+> +
+
+This is too narrow and too detailed, nobody needs to know this. Just
+list the platforms the driver supports (take the example from the
+existing list, i.e. INTEL_PLATFORM):
+"Currently the following Intel SoCs / platforms require this to be function=
+al:
+  =E2=80=94 Tiger Lake (all variants) // needs to be double checked
+  =E2=80=94 Alder Lake-P
+"
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
