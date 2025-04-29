@@ -1,220 +1,118 @@
-Return-Path: <linux-kernel+bounces-624197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8FAAA001E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:55:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D416AA0018
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F2A3BC249
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFD11A87815
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725B029DB94;
-	Tue, 29 Apr 2025 02:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3fKHpbU"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D5F29B77D;
+	Tue, 29 Apr 2025 02:55:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F76729DB6F;
-	Tue, 29 Apr 2025 02:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2688C148
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745895320; cv=none; b=RfBlPv7S3ZLo08KUCcgZLStZz1DXUiUok5yDhkrVqHAx2EPP5Om5z985JSJ6tSqUklMzJK/Cr9kCsP0A1YKYoephU1djOLsJ+Mj6xIDl5ZPsLZZuprVJPPl25n7keJXvBf348JONe/PAgFZO95nKahneTbLAf4cHQtE8PWs1D2M=
+	t=1745895306; cv=none; b=rhpD1yECzM6la3Or2H5GQrU1rNZjU+nZcGN+02JhBGqtrzB9+MKuuCS17W1Z0ykAgGwnO2JbsT6sVLNND0HW7lYNryF+5djuQ1d6vB4aeu8CTS/FOa2fFPVT5WqbyCeBktOBnbHeRrkb5aQzbEIvAfxq0xlUBFzmmvfJu3JsHOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745895320; c=relaxed/simple;
-	bh=u/gkt65YsxAYLVH5HA5xMFkhW9HDYqtz7Kv98T5wR+0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rt7yPSCDRg1vm4VaObPMytVzyTaP+/cRl+d97I0AjM9naZ9q2LFkX8q4jutpFxOh26zsQySHpbDRgfUafO54ulhKuzqsxXQ4ch07/w9gY5x0P81I+OskkAYVJAHmGR8boclyAxkxwPEvlI0+WAS6qWbC7SO3g+lVKvWYBXqXZLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3fKHpbU; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736b98acaadso5250038b3a.1;
-        Mon, 28 Apr 2025 19:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745895318; x=1746500118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q5QvC8qiqI/gq+6b5wv9UzuN/+HiQgS4AGWjWEZLvDY=;
-        b=Q3fKHpbUlkX6T8ScipHqB5iDupIhrhGEDMb1VFz46jwTWi0X3kmpz5BzQgjuNUE+FT
-         QRub1m00n+zRiVVNtSwnYItzv5/BzZ/G4CSoA+Ki4XZX2oQVtyNN50W1PZUY8anhjHC2
-         LWoDOCXujVcQipT8n48GaMAcEDSs6bdb2ZmbX8FwlPogWPGNwKNSw0Yzlc0rwGDqA9jm
-         RI83FOzMjxwMVOlOxFnT43P5yfkSXDgK4UPpmE+yVWnYIvmz0g0koOup2ub8c6Igclxs
-         Mo+mx+alhAQ1uq3UfOp320Gb/0ZI8KG1AeNTXbbYXwQnah4Ph9uQ8nLB6y6S2DzOL5n0
-         jHnw==
+	s=arc-20240116; t=1745895306; c=relaxed/simple;
+	bh=63k2SaUvKAxfSAT3LAKwiaa8tdJ2Tji+K7s1YcGNGaY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=E1jhawIFU3gVOYwmo5aP+0KWd4V3oOnt9t5sXPAQxNypn9aaBHyrPhS6FW3f9VKlLwIfMlF2uKr058xB0fKw/twJx8hQ8ItZb29E1CrB4cGrHaD9e8FQIgWzBKXQviows3wt5WvCIPfkgIq8qEqKcxs6oFidOGPqrrNdKYu2+DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d817cf6e72so47134805ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 19:55:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745895318; x=1746500118;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5QvC8qiqI/gq+6b5wv9UzuN/+HiQgS4AGWjWEZLvDY=;
-        b=ssZBy4PBUs7pgspSiaClcZhphuybHu2DVkuOk8fXRu7ARCSYvRDH03mFVTSpgi9m6f
-         sxnWkwTCtRHjwh7TXjXFfrbp6y5OFNy4/n/cq1dyJiJWFvkX/xEfx1+mhUEAJrUXNaRl
-         4K9c6rO4T/RHU9XVu9mnnG4xhyOKiqAgRhPBakNa1dWXF9uLRUBGoarIj0fpytigqZm4
-         Zxbc8ehHJ8Ppg0HBKeV2KAmtWyTkteZuX88AVcSceWPGeZCTe/Bxa+YW4od6A5Dlxyub
-         fy32JRmsLfuJho9IxhDL1U4qSIe2yb6ExKNYoQK5JPsDDlzsk+LLve9yxxbxxjXXRhGi
-         beuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJjNhelE1K6xMoAV3Mhk22aYilQvDZMuRJVssahZZ0qkbj+bzQLBAy+J9OG+hrAqEa5bpZ1y+qCQC4KFmT@vger.kernel.org, AJvYcCW9AUeIts9m5BaXLhiieFq9Xq0xU6WrhfjxYZ0jJp6pdCw+9LylNNY2ZPLTouW8N5SsvrQ7mXkG39Sc@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIZR0Q4sjCWNjw6evspcRP7Iaem0M3laF4CQwXgArxcp1gngvK
-	AqYBWDJW9Kcf39eSIYMPw4y6ypHny4ggRsIkXZrz3HMbG4MCAAJP
-X-Gm-Gg: ASbGncvcjfnnllzFs4zkxDXNS2SQBDh7xb6sGURI3oyjrMilhwppPcfaDSV8o8HOJHq
-	xUw53Buno22mh7CBmMxgtzstb115M0h4E0SOOqTSVjD6ihrcB5dIdu97clmb2Ax1CW4SpvpWB4B
-	ztZIFhQWS5jjK3A5/GHk0y1rjj/tQAA7WmtuZyRnfz+X0HzDlpZEIblMsBatU/C8BRwewIosxbx
-	F9UxdeIIwFY03tFmYGOz304ZGpl90A3krTfBKGiBdgfq0UCDg3bSjusGKiA4CAmsDs4mYI6VAQ1
-	unHVhQu8htmDYNncYHET3sgCzJTwXShLFqe6lH/EAwB/3tAxPV80EAWdr/kgGVvwrWiByiX+
-X-Google-Smtp-Source: AGHT+IEEMsNPh39HCFTepwa6E/0jlVmaAmpHPW18q/Kqr0Jqjh8efv82q7Re5lhqYDCbaWPxVZajYw==
-X-Received: by 2002:a05:6a20:9f8f:b0:1f0:e706:1370 with SMTP id adf61e73a8af0-2095d49ca77mr2105970637.35.1745895318350;
-        Mon, 28 Apr 2025 19:55:18 -0700 (PDT)
-Received: from openbmc.. (211-23-34-211.hinet-ip.hinet.net. [211.23.34.211])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a6abcdsm8797905b3a.116.2025.04.28.19.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 19:55:17 -0700 (PDT)
-From: Eason Yang <j2anfernee@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	javier.carrasco.cruz@gmail.com,
-	tgamblin@baylibre.com,
-	olivier.moysan@foss.st.com,
-	alisadariana@gmail.com,
-	gstols@baylibre.com,
-	antoniu.miclaus@analog.com,
-	eblanc@baylibre.com,
-	andriy.shevchenko@linux.intel.com,
-	matteomartelli3@gmail.com,
-	marcelo.schmitt@analog.com,
-	chanh@os.amperecomputing.com,
-	KWLIU@nuvoton.com,
-	yhyang2@nuvoton.com
-Cc: linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eason Yang <j2anfernee@gmail.com>
-Subject: [PATCH v8 1/2] dt-bindings: iio: adc: add NCT7201 ADCs
-Date: Tue, 29 Apr 2025 10:55:04 +0800
-Message-Id: <20250429025505.3278016-2-j2anfernee@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250429025505.3278016-1-j2anfernee@gmail.com>
-References: <20250429025505.3278016-1-j2anfernee@gmail.com>
+        d=1e100.net; s=20230601; t=1745895304; x=1746500104;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bXZI1jHa0hVwyU1LvdZmT3i3tG8X/Q4ImaPz5nPoqSc=;
+        b=rCXlqqrceZH3jT4P+CArPAhpQT8r/XiM5J0xi9mimm7BKwIQb8rQ44EvpuD0HM9zIi
+         kxatiXipEzYf/+haZSW6O22L9QVydr5s32SeKUrknoZnaGtq8ULr1n3UGUjYnBQTripu
+         jLyIt0F7aWPhMzJuFAhwp00g/g5LjDRNHiwGvv8orIuKySzHDsYdGol9V5cQXznSrJ4/
+         6kwRB/74dUBhBUGCdGCuA0ETPY1JfmZCWcPjwrRtBN7ycn7/uUoDIys2dYMQRoqTZfem
+         MjUJcVpuyLJ6keFfS/whK3fJe2Vyk4fmOzTpsJ8uIdzgyIzUJKa80NMY7k/Z6D3NTpid
+         KLNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwd0m2RcPdBdBSVk8UUk23UnVVpKFnCqfBVV/5JpvjF6wHwmY8w6FTzfNVeT6Igk6js1l8i5hlIdocOxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWK2fE5mr9Ro5528kWZE1NSL7r+Zxle1wQkJjkmV71vyRV+RWF
+	391LZYgvhqFKYOPYw9w1oWSxy2VzK29ar1cuQTi/Mkd4oXFSdyZL7UU9YSsFboyBFrLDhVsZAf/
+	I2V8zIUExhMlJTWO1ZjIpHsXef4h6KlJGwiN0TZ3c9CYNF9Wt1KWBvR0=
+X-Google-Smtp-Source: AGHT+IGAz+bNifhLchCvech2/6KXOycukf8Mh4GgSKNfxSCqOqBnlt9m0ZA4sDTv4xNSvDYEEIMhM0T1EehJj4TH6rGl9z2zgAx3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:349f:b0:3d6:d147:c6a2 with SMTP id
+ e9e14a558f8ab-3d95d89a1c4mr18312415ab.8.1745895304091; Mon, 28 Apr 2025
+ 19:55:04 -0700 (PDT)
+Date: Mon, 28 Apr 2025 19:55:04 -0700
+In-Reply-To: <tencent_594577BB67C03CF3364296D2374E4ACA7509@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68103f88.a70a0220.23e4d2.0036.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+From: syzbot <syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add a binding specification for the Nuvoton NCT7201/NCT7202 up to 12-bit
-ADCs with I2C interface.
+Hello,
 
-Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
----
- .../bindings/iio/adc/nuvoton,nct7201.yaml     | 70 +++++++++++++++++++
- MAINTAINERS                                   |  6 ++
- 2 files changed, 76 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in ieee80211_request_ibss_scan
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-new file mode 100644
-index 000000000000..8ce7d415d956
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct7201.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Nuvoton nct7201 and similar ADCs
-+
-+maintainers:
-+  - Eason Yang <j2anfernee@gmail.com>
-+
-+description: |
-+  The NCT7201/NCT7202 is a Nuvoton Hardware Monitor IC, contains up to 12
-+  voltage monitoring channels, with SMBus interface, and up to 4 sets SMBus
-+  address selection by ADDR connection. It also provides ALERT# signal for
-+  event notification and reset input RSTIN# to recover it from a fault
-+  condition.
-+
-+  NCT7201 contains 8 voltage monitor inputs (VIN1~VIN8).
-+  NCT7202 contains 12 voltage monitor inputs (VIN1~VIN12).
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nuvoton,nct7201
-+      - nuvoton,nct7202
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd-supply:
-+    description:
-+      A 3.3V to supply that powers the chip.
-+
-+  vref-supply:
-+    description:
-+      The regulator supply for the ADC reference voltage.
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        adc@1d {
-+            compatible = "nuvoton,nct7202";
-+            reg = <0x1d>;
-+            vdd-supply = <&vdd>;
-+            vref-supply = <&vref>;
-+            interrupt-parent = <&gpio3>;
-+            interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
-+            reset-gpios = <&gpio3 28 GPIO_ACTIVE_LOW>;
-+        };
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3cbf9ac0d83f..f41f886face9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17373,6 +17373,12 @@ F:	drivers/nubus/
- F:	include/linux/nubus.h
- F:	include/uapi/linux/nubus.h
- 
-+NUVOTON NCT7201 IIO DRIVER
-+M:	Eason Yang <j2anfernee@gmail.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/adc/nuvoton,nct7201.yaml
-+
- NVIDIA (rivafb and nvidiafb) FRAMEBUFFER DRIVER
- M:	Antonino Daplas <adaplas@gmail.com>
- L:	linux-fbdev@vger.kernel.org
--- 
-2.34.1
+wlan1: Trigger new scan to find an IBSS to join
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 42 at net/mac80211/scan.c:1215 ieee80211_request_ibss_scan+0x83f/0x8c0 net/mac80211/scan.c:1215
+Modules linked in:
+CPU: 0 UID: 0 PID: 42 Comm: kworker/u4:3 Not tainted 6.15.0-rc4-syzkaller-gca91b9500108-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound cfg80211_wiphy_work
+RIP: 0010:ieee80211_request_ibss_scan+0x83f/0x8c0 net/mac80211/scan.c:1215
+Code: e8 16 68 f7 f6 eb 05 e8 0f 68 f7 f6 b8 ea ff ff ff e9 ea f8 ff ff e8 00 68 f7 f6 90 0f 0b 90 e9 aa f8 ff ff e8 f2 67 f7 f6 90 <0f> 0b 90 eb dd 48 c7 c1 50 f8 7e 8f 80 e1 07 80 c1 03 38 c1 0f 8c
+RSP: 0000:ffffc900005df8a0 EFLAGS: 00010293
+RAX: ffffffff8ac856de RBX: 0000000000000000 RCX: ffff88801d0cc880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000033 R08: 0000000000000000 R09: 1ffff920000bbec4
+R10: dffffc0000000000 R11: fffff520000bbec5 R12: ffff88803e1ca9a8
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88803e1c8e80
+FS:  0000000000000000(0000) GS:ffff88808d6cc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4a7adaf8e5 CR3: 0000000058672000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ieee80211_sta_find_ibss net/mac80211/ibss.c:-1 [inline]
+ ieee80211_ibss_work+0xde7/0x1060 net/mac80211/ibss.c:1670
+ cfg80211_wiphy_work+0x2dc/0x460 net/wireless/core.c:435
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+Tested on:
+
+commit:         ca91b950 Merge tag 'v6.15-rc4-ksmbd-server-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1059d374580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714654674710be70
+dashboard link: https://syzkaller.appspot.com/bug?extid=4bcdddd48bb6f0be0da1
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14a01374580000
 
 
