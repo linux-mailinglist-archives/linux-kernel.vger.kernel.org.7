@@ -1,140 +1,145 @@
-Return-Path: <linux-kernel+bounces-625260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE39AA0F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB23AA0F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CAB81890678
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770F54A1347
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4500D21765B;
-	Tue, 29 Apr 2025 14:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA8219A76;
+	Tue, 29 Apr 2025 14:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VtRl8Ac+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bqNzLyf9"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5703A40C03
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290A721773F;
+	Tue, 29 Apr 2025 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745937405; cv=none; b=CP6YXmyazFn0dO19aqP7otVmSPcElwFQ/c8teBDjJOtdp2o/wvzCJIJnuD0QVJargtXe4znxYF1OaiB+eOVSKysAc65WUIMMLP/xaCW1te97wTJastnzUfOOXw1Oc6YGajJMgVKCadqvaUKavV0KV5ei2LurvTcxf3oGZrwBEFs=
+	t=1745937446; cv=none; b=foes6EhM2thHJuB6+Sh0I6tTqCNyh316ItW3KUzV0DFyoKn7b5o1a2BYTTs+HjaYBHEYIcmAret9iI/s0D0Cw4WmZrW23wc6+3GU9oYEECIZk5QlzWJbeBjRMcqSh7GwFLnfu2/ejJ5UkngItCdAnKMud+RjLCCYRZr4W13xlAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745937405; c=relaxed/simple;
-	bh=UQgcJ6GoV/uLYNRxhueM8RM3nuaZhSLiXzzJTTtrZD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/wLlebHhCDmOe9uKbmsliXLQ+nUmULX24NoC3f0p9SAg7PbUK7XM5Xfz4wtbbUfhhma5MUtYcfBWSE5+VqP83yM67iq64oshcHuKsbldf6RDzsJA4iMjZvoxnPWR/QVSzsQJ12chO8zwocZGvDs5k6jnhpEG/r7bB8uTXVQmIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VtRl8Ac+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TA27Ng005256
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:36:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=J4vapM77cSti5bfb1sVRmOKt
-	P/l43U94DBDBHARRk/k=; b=VtRl8Ac+hVPXwWy3/5FThBwnFkxYES1cyFx9j5c5
-	hrB2Emh+tAttSdQ+cSoIFI6chbPBLR648bmTBP47f63eENqDm0QBDU4i/XYPRSiT
-	v06MrvR57ohjYvmvcb0vwmwCVGIzSPcP6qQhxm3nchPEZVN/5lRUM5VnfNVcQnZQ
-	k4ueE1E5Nri70Q8k5o3pDlSVz20AqlCjQPk2qSEp5tvq6qsQ2TCb54u7h5uKIXmg
-	a5oObn7EiZ95kkrm/mbYcM3oG2aLymTgEXXX28wPQQQxLl0puKP4CEvEy690RDlt
-	ZbYRERWS5C6ftUhef9uRSaBS96mGNu8f2od/7M3eWJETNg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468rsbbuup-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:36:43 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c0a3ff7e81so1113260285a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:36:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745937402; x=1746542202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4vapM77cSti5bfb1sVRmOKtP/l43U94DBDBHARRk/k=;
-        b=pxcVz1dJEjPC/A7Va2bPxuHH25Y9o7pJLcdVCPd0/DPb8cYm6LzO5oUFl2X328TgbR
-         M7rn0F8hRUsD1RkTb1t6yuOzCGazHA5Fp0x5T0Pc3BxJNkgD+VtmeIgDS8aCRTvhR946
-         TJeV7Xh2zUSTHAzMJz8ZkZrcqS9mT7FqlHa+MFna8fNMduVUvC4YRYe+qTbzsipsPFVU
-         h4rXL0NzeFWkL08VGDcaKPuBLa6jXqQxCHRis1ntMQt4p3LCXecbOWZ0qlUkR/I+vtVi
-         w1eJHMeeiySC1di5oVogRKuwjlsNGf+tk7eg78BkGf5F+n1KtzDUlT3IMWQNYk0Q5b3q
-         IW/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXQkyleqt8jqtgP8DTr9qdfZpBzs02sFfsO7PyPGoTwruvjWVXVUpFPtiO/6MQ92gek1iMvZQuEg6P2PK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykZEMMqZOr9bRgBmrZo1p1SsX8BdqMAwtALHGNEcvOmwRsdJuE
-	OMIGw5ZnuJ7j2/WtIoqbf0ccSe0x36FAAgoH+Wtcx1izGEmTgonTiOLvtSlvKd4pPZLw5OX3Elg
-	faDImGNsjh7VqA2cUa6Fcn0LLoCqFiQy1G9ezyy7gi/3Pdp2fj3JY0JzvcxAYLQA=
-X-Gm-Gg: ASbGncvr9vGly5L8vprptSp5sfEwz1str4RjIxgn4RYXYLtyg/kW5mvHx2ZCLKo2tSB
-	NFrvZ9dzDohA//mdSM1EwZwxO1s+OVDIIY0hxjMtOz0Kh6tWfxs4KTDpkb8k8T+XmIQE9lUR5c2
-	YSGepVhcEDIV0NfCX+1JfqtIh+tgQhoLslbju86kxbV6seGb19nL3X7FQ8hXHXYetVpJIRKh+zs
-	FfmYE4lSYGV/Cm6yKaehLb7P3ee90OvByB/2BTu4qKNJux16c/iRj0VqISewsfDtMlnt6Bij/sp
-	Fr/KxT1NEbzIK7NMIr45xt6h47D5NJfufFfHBov8aLo0GgQJip2ikqpUJwCct8g8vodsxwSd5U4
-	=
-X-Received: by 2002:a05:620a:4309:b0:7c7:b600:8368 with SMTP id af79cd13be357-7cabddb646cmr566807885a.38.1745937401973;
-        Tue, 29 Apr 2025 07:36:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvlRPDp4nVxPl5jkoeJcUjoMVkueqG9MbxVn9JenlF+X3kyGNQRHfqzf9TZwOykEYT4V2bWQ==
-X-Received: by 2002:a05:620a:4309:b0:7c7:b600:8368 with SMTP id af79cd13be357-7cabddb646cmr566804385a.38.1745937401635;
-        Tue, 29 Apr 2025 07:36:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317d16a833esm24539771fa.85.2025.04.29.07.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 07:36:40 -0700 (PDT)
-Date: Tue, 29 Apr 2025 17:36:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org,
-        quic_abhinavk@quicinc.com, lumag@kernel.org,
-        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: Convert comma to semicolon
-Message-ID: <67u334iujxbhkklsy2awxhmionha6b2qxshv4gjvjesudas2ie@6hhn6gxgjyqb>
-References: <20250410025221.3358387-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1745937446; c=relaxed/simple;
+	bh=YWFgEE/pYx43RIkZxqYPeNDBpIA1GTsKMfT06yg+9FY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rME7o+Bgic8e/W2l81sFwhqCiHvHkSPeyIoS+2kuaol7MnPX5+zBRCaEsh0T44Mj6YNOfJ9mYeL3nQ6pCmleZ6x4zCjvhw5kKb69QfxAPkt2248XgZLFPy5ZhbBzVk4b3/vfdfOpWCa25Wl4iquvk37tm+YIZD9WJ908SMggazQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bqNzLyf9; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53TEaw0f3867999
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 09:36:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745937418;
+	bh=DKk1xaSMzcGFiMWCM2d8Q1zeAjKKaHVkdez7w5iD168=;
+	h=From:To:CC:Subject:Date;
+	b=bqNzLyf9+Max/wk5qTUB3X8O/i8lA6biTrudCotisD35Tz+/Eo+v6Kr2612wSyZKf
+	 FRI8UQFKf+fyCpIVVhSe+jgoXdQ/+Lz5ysiTq1GCQqP9vSK82wa5I4NAMWR8a7VSeZ
+	 nlQtC2dHAEumm7apvuJjSZQ6PMaRBNFxQ4bXU+L0=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53TEawBI035775
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 29 Apr 2025 09:36:58 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Apr 2025 09:36:57 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 29 Apr 2025 09:36:57 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53TEav0N086083;
+	Tue, 29 Apr 2025 09:36:57 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
+        <airlied@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>, <simona@ffwll.ch>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
+        <s-jain1@ti.com>, <r-donadkar@ti.com>, <j-choudhary@ti.com>,
+        <h-shenoy@ti.com>, <devarsht@ti.com>
+Subject: [PATCH v5 0/3] Add support for AM62L DSS
+Date: Tue, 29 Apr 2025 20:06:53 +0530
+Message-ID: <20250429143656.3252877-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410025221.3358387-1-nichen@iscas.ac.cn>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEwOSBTYWx0ZWRfX+8D58NEaNHH8 F5wrGWVuu/khc4dBoc8CLcNmMxPs8CZx8lkhHz+WR2HCZJYe83wyokIQsv9/mtg3FOp99DtaxmV bIAbJr4/laL/l9PZtNgxvbHKmKFA4HY3+CGZpencRP4D4N5j7NR9T4mv6D7jr9RLsbifORHdMe3
- rh7AqS4pWuKi4YIZ8pxgn3z9UII2tgBpb1A7XOuqPrxePZZZ4Xi/Pc3+A0PBtCEtlclCN88NPjo C7Br6bqJompcDsOiDdOCf8JdOcLoKVPcrglv/ISNxS0mlCTsv1o3/2LVovY3VpMEg6EqKk2GpIb qJFHKbLPZbHEp/D6QB/E0LgY4TDcoAqqUalfSyCKsV9tBNypH12Vm8C9WX2dKkF298ideC6xt15
- qmnrduUSK4aS7Z7YbBzeHV2MQ8wthHWgCg5rSgCezpUTSov5eRT0Z9lh/0qzTYXnHYtgYJLr
-X-Proofpoint-GUID: IJoIlqA13KEnoVgC-QxgjGwRRaVkORJK
-X-Proofpoint-ORIG-GUID: IJoIlqA13KEnoVgC-QxgjGwRRaVkORJK
-X-Authority-Analysis: v=2.4 cv=I8ZlRMgg c=1 sm=1 tr=0 ts=6810e3fb cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=sNhlO-HqowW9r6Pg40gA:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 mlxscore=0 adultscore=0 spamscore=0
- mlxlogscore=794 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290109
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Apr 10, 2025 at 10:52:21AM +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
-> 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  drivers/gpu/drm/msm/msm_ringbuffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+This adds support for DSS subsystem present in TI's AM62L SoC
+which supports single display pipeline with DPI output which
+is also routed to DSI Tx controller within the SoC.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Change Log:
+V5:
+- Use hw_id instead of index for places where it was missed
+  so that we pick correct base address for vid region
+
+V4:
+- Update vid_info struct to keep hw_id and instantiate
+  only for actually existing pipes
+
+V3:
+- Make generic infra to support truncated K3 DSS IP's
+- Remove AM62A updates from AM62L DT binding updates
+
+V2:
+- Fix incorrect format of compatible string (comma instead of
+  hyphen) for AM62L SoC
+- Use separate register space and helper functions for AM62L
+  due to minor differences in register offset/bit position differences
+  for first plane
+
+Rangediff:
+V4->V5:
+- https://gist.github.com/devarsht/a0e6aa7b1c19f47facd0058962e3c3c2
+
+V3->V4:
+- https://gist.github.com/devarsht/1e75c9e1ac0cdfc01703a0776e31e782
+
+V2->V3:
+- https://gist.github.com/devarsht/24fa8dd2986861efa431352d19ebbb41
+
+V1->V2
+- https://gist.github.com/devarsht/11d47f25ca9fea6976e6284330ddf443
+
+Links to previous versions:
+V4: https://lore.kernel.org/all/20250326145736.3659670-1-devarsht@ti.com/
+V3: https://lore.kernel.org/all/20250306132914.1469387-1-devarsht@ti.com/
+V2: https://lore.kernel.org/all/20250204061552.3720261-1-devarsht@ti.com/
+V1: https://lore.kernel.org/all/20241231090432.3649158-1-devarsht@ti.com/
+
+Test logs:
+https://gist.github.com/devarsht/82505ca69f0bd5d9788bfc240d2e83d4
+
+Devarsh Thakkar (3):
+  dt-bindings: display: ti,am65x-dss: Add support for AM62L DSS
+  drm/tidss: Update infrastructure to support K3 DSS cut-down versions
+  drm/tidss: Add support for AM62L display subsystem
+
+ .../bindings/display/ti/ti,am65x-dss.yaml     |  21 +-
+ drivers/gpu/drm/tidss/tidss_crtc.c            |  11 +-
+ drivers/gpu/drm/tidss/tidss_dispc.c           | 193 ++++++++++++++----
+ drivers/gpu/drm/tidss/tidss_dispc.h           |  13 +-
+ drivers/gpu/drm/tidss/tidss_drv.c             |   1 +
+ drivers/gpu/drm/tidss/tidss_kms.c             |   2 +-
+ drivers/gpu/drm/tidss/tidss_plane.c           |   2 +-
+ 7 files changed, 195 insertions(+), 48 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.39.1
+
 
