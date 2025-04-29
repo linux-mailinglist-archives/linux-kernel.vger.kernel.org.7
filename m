@@ -1,154 +1,183 @@
-Return-Path: <linux-kernel+bounces-625302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4F4AA0FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87119AA0FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A40D3B2D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78413BE37C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DD7219A75;
-	Tue, 29 Apr 2025 14:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA7621A955;
+	Tue, 29 Apr 2025 14:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVt8DhaK"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M8GZ2FPf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0EB32C85;
-	Tue, 29 Apr 2025 14:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F423721A443;
+	Tue, 29 Apr 2025 14:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938324; cv=none; b=TxMV/Q3RGl1FUpFxRaPm0OtYiOSCtj7zPMyJpJrDdCHbZMshNs/du5+sXEe57M4flG6n4iiO2o2UosJHTPwXviCy1NWDpLXWvOjEvPy5KGQ7t7iWz4XoZE7MfPIF0QzRgMT8/xlOaGWN+oayz3NOudaEptjwdMzw1vLzU+rsu9E=
+	t=1745938346; cv=none; b=HZQWaBzL/LDlKM9sI3gUx+NpxhQO8lLJ48FMGIZRq42NFzlD6RNKFAONfzeQZn7IUY493NtzkGBhIqEib08gdyqbMyR8yCZHmj8SGQaGEs2j40HuX95MvvHdR07i2pUq5NqDRzzSlyb/TlOzX7IOvUzeuQO9vH+79IjAN3syCsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938324; c=relaxed/simple;
-	bh=ujLWWkmaRLLveVflcOWu68G29t6oIIc6pHVq9Ko9pzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a1pVRV7rJ0BaYv+yV2MqIq9TYx3hlRXE7oaSh8jKe08ZSLo6DJ0yDNzYOp2ID+PtOhDbFyp/C3po8FpEDEuUnNQ+O87azggUaZDX03T2U9hQgfbbCR/KJzzVeDK/cPFCZ/27vAmUciQvsmjMAEO5YX5izziABE2zuYpHy/Qhf6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVt8DhaK; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e8be1bdb7bso9796670a12.0;
-        Tue, 29 Apr 2025 07:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745938321; x=1746543121; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2j3vmWcblMpAFi5MSBk2qMdY2/rE/Q+wya2rcoXjQ98=;
-        b=gVt8DhaKo8cSQSPIe0mihl+A5hVEfoOHEpnZuwJRRfaBG2o2OIyDwvk/USbuul4E6H
-         U6/7pSVLY0jLBMIEnk2HNM5huaGP7H4cf28JnX4aPGI2OosdF2xB/d8KOnO2LUzA2NsN
-         fwt1ItFxBxNKcM533GmpyOSS+tJacffdxoyl5ltfqmC+13GadgxzGkCBda1eAXH4KEm7
-         /NojkfexEZt15D43CYyITgxslxp0TnBIjMnWkJh56wt5HuBSQMr6Hm//Si+my2xoqdt/
-         arYQMXUg3Ycdr9IFmXkhmXyUhjuTSVKqnor9CAsk70ngo90+D3jfyIKlbAd0X0BL9FTW
-         01iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745938321; x=1746543121;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2j3vmWcblMpAFi5MSBk2qMdY2/rE/Q+wya2rcoXjQ98=;
-        b=jMcirGL20E2pB7p1DiSmsGzc6VAY+RR7EMu8Z9v3q7KVbQtYziTAvMz3CD9F7JJYmg
-         nnTJOxtuNbS2IRasV8nGMOBrYL35F/19do887kr14JPS+rZujBZkn+CcZFh23Y63PZ+9
-         CneKdliQXNZ0yVUanZabzcquK2kbZbkNhE7CfOQnTdAoG/WTTC7n5kIJiKQLoUTq3c5H
-         kpGOZ8xrN2RmzkVwbvM2ofo3SClZCzwTp1xfrC7sCcj7xK2HecF0Xk6/OPWCM20r9NVG
-         pT/Az6yqYCymOlQ2UNE31HfehcWMu1XzvGIx4qqonDaLN0zls84UWRkJw1TX6LQC6L/G
-         YD6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUt47MKjBYlxxN9DssUvdPiPqtERfWwj+0AvNmpfsn+WnxGPlGYQ2DIAufN6TtowTCGz6+Ig6DCmzlZrsCI@vger.kernel.org, AJvYcCV97TZtIJstxbLyfYHkUWlZCEmAu5m7ca32xYrqu2XwImlTtOyQmgNZSkMF+41KDtudn910Nv50swav@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcIvng1nBqHOJIkUke4l0zTZFQ5sq9Sf3C44/HiLRHfG1/reTA
-	XyyRshVVywwyKf2YjgR29BAGMZF5fecFKT1Pci8ktOxF5URfeSGm
-X-Gm-Gg: ASbGncu77QGDoVzAOiaw7zCVWHgWKrZd3RlefTvsplY6vIJ5LiYmHy7KLnNez9grMKn
-	ugDuCkm2fYON4wofw7yzmN7poCzfkmNsHujasRO1+uMpJ4KyUX/kG7Hl1YHjwDu7PZGsm8HwC9A
-	fAHEAleSMHBhxIkvxb6uveU0+BF53ZIGFudRjIXJ4waGx2psOxxZj/XuxKktHknTfiG/zm+5Flk
-	eTyPUp4aLFaFEvbeyEeyAJMkj9xiqJqiHnOINpTqEU3eZ+gmN7hec7/qAY/NAIkKcC+9h/inZ1s
-	ghFemLBNRZtG8TWJGtBUTiWcNxJe6bdK85IsUuo0Opvh1gsLBp7shhQxQupp2jyQIjJdLHoKC/u
-	kyyXwLpJE5+lGMgm9
-X-Google-Smtp-Source: AGHT+IEz06/+DeCVuRvMFYjbMCHdLWSGqTMxg/VP6erFPSJQ+to0uxlq6imsOijDrrRMdG90WDzVxA==
-X-Received: by 2002:a05:6402:348f:b0:5f8:2436:1df9 with SMTP id 4fb4d7f45d1cf-5f83afc1b49mr2846758a12.10.1745938321060;
-        Tue, 29 Apr 2025 07:52:01 -0700 (PDT)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7038340b7sm7414214a12.79.2025.04.29.07.52.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 07:52:00 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andre Przywara <andre.przywara@arm.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, wens@csie.org, samuel@sholland.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: allwinner: h6: Add OrangePi 3 LTS DTS
-Date: Tue, 29 Apr 2025 16:51:59 +0200
-Message-ID: <5880182.DvuYhMxLoT@jernej-laptop>
-In-Reply-To: <34e30bf2-6f80-4c43-9e52-c1ebe0521c43@lunn.ch>
-References:
- <20250413134318.66681-1-jernej.skrabec@gmail.com>
- <2219754.irdbgypaU6@jernej-laptop>
- <34e30bf2-6f80-4c43-9e52-c1ebe0521c43@lunn.ch>
+	s=arc-20240116; t=1745938346; c=relaxed/simple;
+	bh=boO/GhDvwrGxI/EyyHhHi+l9iqRNhSy8IeYhe8K3POQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tgmmB3WUtm5lOYCNyxP6Ajqgc8Be976ZFGPgLe5RS8aVd8iLVO5lQhFhTvSHcuHtwt+N/nWJ9LK5ucJH3fxFiQc2g8sN0IIlkoeUdlp8jKft9Vc+wpgrW2ogB/itXaqe01DC2JdaXxsNALwGs1JIqqigkHsbVCh+yHORMYi7U60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M8GZ2FPf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T4ENbG028123;
+	Tue, 29 Apr 2025 14:52:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dNyeQB
+	obZcGmWUmeuxNsNV0sU1HqmfJw4D6Zghqc2QA=; b=M8GZ2FPfCgF6URMn+e0wRl
+	Vnp4MhQWo+QK6bpxtw0aSMhpyMWa0LTtqQIPOVAQ9LH/3i8np47niWQiYG7OWE6v
+	S05gHnGhHBtD1rtQ9iSoVVGCjF0C1pbFh3cK1j9du482RgA6r3poCLYIa1MiyD9j
+	w1NFidkuqWmZ703N3PTgfL4qVnuCC7HE0hTzaWl2GQCihvC+BXImjAln3VkWx6vS
+	Nsh7qHUzKpy7BznLMGnuU14N389JIHhZcN4oMbwjBBRX1EQVUryl0mkQfQbptKWQ
+	nIxK2b3zUtxdtc8G6EQ624ntyNsZr9XjibhjCTW3DYb5rRAq/xYD+xxkPDzoS9gQ
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ah8mbuf3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 14:52:09 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53TDotUM000675;
+	Tue, 29 Apr 2025 14:52:08 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469atpbprs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 14:52:08 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53TEq6Ye33358482
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 14:52:06 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08FBE20043;
+	Tue, 29 Apr 2025 14:52:06 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9873C2004B;
+	Tue, 29 Apr 2025 14:52:05 +0000 (GMT)
+Received: from thinkpad-T15 (unknown [9.111.6.190])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Tue, 29 Apr 2025 14:52:05 +0000 (GMT)
+Date: Tue, 29 Apr 2025 16:52:03 +0200
+From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List
+ <linux-mm@kvack.org>,
+        linux-s390@vger.kernel.org
+Subject: Re: drivers/s390/block/dcssblk.c:718:undefined reference to
+ `kill_dax'
+Message-ID: <20250429165203.48cc5baa@thinkpad-T15>
+In-Reply-To: <202504291604.pvjonhWX-lkp@intel.com>
+References: <202504291604.pvjonhWX-lkp@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: uCX2BGG2_SgjW4kDNt2jbAbAh0vUAzV3
+X-Proofpoint-GUID: uCX2BGG2_SgjW4kDNt2jbAbAh0vUAzV3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEwOSBTYWx0ZWRfX98AZux04bRMR xYURugpYfWDlGAxJavcAc7hN5HFhWkJkPA/ut2FEkBVb7L/QVrEK/64ZAtpaorz5XWQpTTTfr2o Jc/MHSKZsZfF6tCaUy2V9HeM3Opfox+AUwFxDcYWeua25nKSCvGFG0Cu0H4MeYOJyFsf0krbf6u
+ fb4WCd6B4XuramAKPZ2h/5x/KW7Bas/E6atC0o8YpSXOJbu6RwTJhSHKGube6imJ+1ypFORBnc7 RReqRSnh3fGjbMP68aaFOsPQ4d/cv9Wu2GX6j1+ptRqj72tRpfimWHZcjPhxda/i+e2Vbk8eTXd Q56ywcTBKNsg5XaIEV5D9ZpRNBipwQeFDqXmQh+hQKYeTd1vyO2B1Ji8uEyNyxGtajq4JgZSnWV
+ ruqr8HIS6fbkiAJqx2wloH5rqG1Rdi3eyMybx/H7nGsurXF7v8rbSVrEz+YKqOg62if8ZV4H
+X-Authority-Analysis: v=2.4 cv=QNRoRhLL c=1 sm=1 tr=0 ts=6810e799 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=NEAV23lmAAAA:8 a=Ikd4Dj_1AAAA:8
+ a=Hconwz5XVgyAt6oBMeoA:9 a=CjuIK1q_8ugA:10 a=mmqRlSCDY2ywfjPLJ4af:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_05,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1015 mlxscore=0 malwarescore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290109
 
-Dne ponedeljek, 28. april 2025 ob 14:37:48 Srednjeevropski poletni =C4=8Das=
- je Andrew Lunn napisal(a):
-> On Sat, Apr 26, 2025 at 08:00:49PM +0200, Jernej =C5=A0krabec wrote:
-> > Dne petek, 25. april 2025 ob 17:34:14 Srednjeevropski poletni =C4=8Das =
-je Andrew Lunn napisal(a):
-> > > > > +&emac {
-> > > > > +	pinctrl-names =3D "default";
-> > > > > +	pinctrl-0 =3D <&ext_rgmii_pins>;
-> > > > > +	phy-mode =3D "rgmii-rxid";
-> > > >=20
-> > > > So relating to what Andrew said earlier today, should this read rgm=
-ii-id
-> > > > instead? Since the strap resistors just set some boot-up value, but=
- we
-> > > > want the PHY driver to enable both RX and TX delay programmatically?
-> > >=20
-> > > Yes.
-> > >=20
-> > > There is a checkpatch.pl patch working its way through the system
-> > > which will add warning about any rgmii value other than rgmii-id. Such
-> > > values need a comment that the PCB has extra long clock
-> > > lines. Hopefully that will make people actually stop and think about
-> > > this, rather than just copy broken vendor code.
-> >=20
-> > I spent quite some time working on ethernet support for this board. Once
-> > I've found PHY datasheet, I confirmed that there is added delay. So this
-> > particular board needs "rgmii-rxid" mode.
+On Tue, 29 Apr 2025 16:27:39 +0800
+kernel test robot <lkp@intel.com> wrote:
+
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   ca91b9500108d4cf083a635c2e11c884d5dd20ea
+> commit: 653d7825c149932f254e0cd22153ccc945e7e545 dcssblk: mark DAX broken=
+, remove FS_DAX_LIMITED support
+> date:   6 weeks ago
+> config: s390-randconfig-r132-20250428 (https://download.01.org/0day-ci/ar=
+chive/20250429/202504291604.pvjonhWX-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f=
+819f46284f2a79790038e1f6649172789734ae8)
+> reproduce: (https://download.01.org/0day-ci/archive/20250429/202504291604=
+.pvjonhWX-lkp@intel.com/reproduce)
 >=20
-> There have been numerous discussions about what these rgmii modes
-> mean, because DT developers frequently get them wrong.
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202504291604.pvjonhWX-lkp=
+@intel.com/
 >=20
-> Does the PCB have an extra long clock line in the TX direction? That
-> is what rgmii-rxid means, the PCB is providing the TX delay, the
-> MAC/PHY pair needs to add the RX delay.
-
-While schematic is accessible, AFAIK PCB/gerbers are not, so I can't really
-tell how long it is. But without this extra delay, ethernet doesn't work.
-
+> All errors (new ones prefixed by >>):
 >=20
-> Ignore strapping. That is just a power on default which gets over
-> ridden once the PHY driver is running.
->=20
-> What PHY is this?
+>    s390x-linux-ld: drivers/s390/block/dcssblk.o: in function `dcssblk_add=
+_store':
+> >> drivers/s390/block/dcssblk.c:718:(.text+0x1b98): undefined reference t=
+o `kill_dax'
+> >> s390x-linux-ld: drivers/s390/block/dcssblk.c:719:(.text+0x1bb6): undef=
+ined reference to `put_dax' =20
+>    s390x-linux-ld: drivers/s390/block/dcssblk.o: in function `dcssblk_sha=
+red_store':
+>    drivers/s390/block/dcssblk.c:417:(.text+0x2c2a): undefined reference t=
+o `kill_dax'
+>    s390x-linux-ld: drivers/s390/block/dcssblk.c:418:(.text+0x2c48): undef=
+ined reference to `put_dax'
+>    s390x-linux-ld: drivers/s390/block/dcssblk.o: in function `dcssblk_rem=
+ove_store':
+>    drivers/s390/block/dcssblk.c:803:(.text+0x42e2): undefined reference t=
+o `kill_dax'
+>    s390x-linux-ld: drivers/s390/block/dcssblk.c:804:(.text+0x4300): undef=
+ined reference to `put_dax'
 
-Motorcomm YT8531C.
+This is because it's now possible to have CONFIG_DCSSBLK=3Dy, but CONFIG_DA=
+X=3Dm
+with randconfig, since commit 653d7825c149 ("dcssblk: mark DAX broken,
+remove FS_DAX_LIMITED support") moved the "select DAX" from config DCSSBLK
+to the new config DCSSBLK_DAX.
 
-Best regards,
-Jernej
+To fix this, I think the "select DAX" can be moved back to config DCSSBLK.
+It is still ensured that the dcssblk driver does not actually use DAX,
+because of the check for CONFIG_DCSSBLK_DAX in dcssblk_setup_dax(). The
+remaining calls to kill_dax() etc. will just pass NULL as dax_dev, and are
+ignored.
 
->=20
-> 	Andrew
->=20
+Will fix this via s390 tree.
 
+BTW, Dan, your commit said "remove FS_DAX_LIMITED support", but it does
+not really remove all the special handling in common code, only makes
+sure that dcssblk (the only user of it) does not use it anymore.
 
+I'm pretty sure that there initially also was a version that did remove
+all the now useless FS_DAX_LIMITED handling in common code. Did you leave
+that out on purpose, maybe defer until after Alistairs "Remove pXX_devmap
+page table bit and pfn_t type" series?
+(https://lore.kernel.org/lkml/cover.95ff0627bc727f2bae44bea4c00ad7a83fbbcfa=
+c.1739941374.git-series.apopple@nvidia.com/)
 
-
+=46rom s390/dcssblk perspective, FS_DAX_LIMITED can finally be removed.
+We will either switch to proper ZONE_DEVICE if Alistairs series makes it,
+and ZONE_DEVICE won't need the extra pagetable bit, or completely remove
+DAX support for dcssblk eventually.
 
