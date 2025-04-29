@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-625278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3820AA0F5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFB6AA0F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE32189EFE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E81F189F187
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD2C219A71;
-	Tue, 29 Apr 2025 14:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9830C219A7E;
+	Tue, 29 Apr 2025 14:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WSo1oPwh"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eROCJpyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C85218AC8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9091218EB0;
+	Tue, 29 Apr 2025 14:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745937880; cv=none; b=HORgCpoQQgyQC8c4Ak677RFfnnS8yhKNkiKMe3b9hkOyLRrZWkD7/5guzk3kCkGOXLw4geg+y7lWXJbx0WdEN1bmVI83iXlMVyCo56s8souwhvJOnTP56ej7Ib96T33nxPcKkDf21g6IeA8bZr+BCy0RrwYmnTEH5lsnoiNqu6Y=
+	t=1745937862; cv=none; b=QfQg2rlpdQijoLd5ROVtZ0hE+iiOYsh+PeQ+nhd8Hm5MwwM5j/zZdrX5Cf9uE+vEPXETuBRlm/dKRdAO49Le6eNlRS5p2ffdv/HJd2oX0guzh4lXLof8CTTkemg2rzjZtAmr9X1XwAQy+WzfrYtfMQAsbLq8DBR8QpxHJ0OCLMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745937880; c=relaxed/simple;
-	bh=BSx1hA9BCKf7vfVk9B/GGutgZvKoS5kqDfF56cj3Tmk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FZoevivsSpATePw6Cj8rBPQ1uF+aEHGTNDH+2g2QtKn3uCZq/4nC5hgJsHoYWrvqL2gbjyoQXhS4cTD9+E7UwVQdfli9nTMVe3hNsfXT/yuAA0xGou562CM+nllkBFyFCf2kVk2GujxVFxApSZvuREDegoEcQg7vPIEw/XF3ERw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WSo1oPwh; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so28980545e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:44:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745937877; x=1746542677; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nSYMO1K17AprWEG8CRL1vYqzgtCWcYCl8QaC6FEscPg=;
-        b=WSo1oPwh3pJZ077FEeQVi1bUPFs9uHrmqx/wotjOVw0jttmtFR62fReQDdRd9fuikZ
-         9PJs0u7zzNPpjsHnBr7B5a7x4kF49rKc0Ik9xH3RKlkZyZjzJIxE1e7QDY3KYvxXTNpp
-         F5UNW+zs1N8mmTH7VIvz7H9pef0Q28NSgrv3ccG3Ck3XtyYjUaQQBpqRge19G95RFG6P
-         O/6cXjHW53WD6MfCCE38TVoN7bVMHVczsCNLkakAHHiuEPB9GRrbcegI9UT4HsPoaZ4f
-         WDCOHmRYNiL8WGV2M6nCd+hw2ZiMQfxJdYfxaNUDLLcMYEzQupEXKh1qV65b+XEdOtVt
-         HnVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745937877; x=1746542677;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nSYMO1K17AprWEG8CRL1vYqzgtCWcYCl8QaC6FEscPg=;
-        b=OLCaMgeCRdWgn+T9slCFcRjVk2BHCTHerwcjSWcZOrGRMbUg26FPrWj55gTuNN7CeL
-         ItmuLj9pt7cQeHpDJfs+yl0p/MSAcNds3RdrJgg2g4Ykc+Pp+dkQc3oA7eTtH/ARAsq2
-         eGXkE+4IfEqdtVBx1KbjwfhpLaKwYcLKRWDamB6zcP0mrZVeIPVAFoVsl+o20eYNIot4
-         F61OYSGSiSvCbIA6PVE5DO8Vo7onEq+bLl7bkHezYbXYcHCyUpucDDJ7/VteQMWjzCEa
-         pmlWJbv9INLmjHcxA/A/EIibxUBFA+r0JpK6Oxj+0en557bDaLM6SW/mH1tUbVNwy7D3
-         KmLg==
-X-Forwarded-Encrypted: i=1; AJvYcCU35p7z0GHufNJ/PHn1bqaiAZ93N4rwN0QCtQK0JnrUPhNvspcitXEWiZH+hFtzQjp5Rpty8/OHQ7sl4W0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWUdSJt1mH/3lhsjL0zg+4zaELAQtEcwAC9B575wPjJyDTX863
-	/FVCrgGaCGxaoiDmPEXe7T34lxNKeaqqAFfylMmaEnhpYLCr5OGA7aeEV/PMq0QlQWhD7LGnhqP
-	bEo2E8UWKaayzcg==
-X-Google-Smtp-Source: AGHT+IGUXD8q4xktHbDiXYsgcqqkN2g/gcNCrPce1cVp7Q6SNy7YD/Odb79MRIkuNYorecnUkSE139kq34SH7+A=
-X-Received: from wmbev18.prod.google.com ([2002:a05:600c:8012:b0:43c:f8ae:4d6c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4f0f:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-441ac8f6276mr34684325e9.16.1745937877255;
- Tue, 29 Apr 2025 07:44:37 -0700 (PDT)
-Date: Tue, 29 Apr 2025 14:44:20 +0000
+	s=arc-20240116; t=1745937862; c=relaxed/simple;
+	bh=LHVJVK0rbY6GuJWRAkZUQjBOHR1SKdIg9gY/iiK7q28=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=QT/Ifex2Xx3VTEDjB+ku4PNvpovKhraNoylPPydhaIoS6XhYNNWfvh8O4B5dLQbD7Hpcv6bWeUZM7oUQyh0h3e2lFJ1Y90RcWIIZ4FBjkvzsdbISX3Zzh2QgiukWP3v77P9yZgCuQMld0R6NESfDOwszgSemzoc45tMWIzdbUp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eROCJpyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD25C4CEE3;
+	Tue, 29 Apr 2025 14:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745937861;
+	bh=LHVJVK0rbY6GuJWRAkZUQjBOHR1SKdIg9gY/iiK7q28=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=eROCJpyZ6M1RRu0FWP6gQWum9pIVYbL7D3H4SwVrn/vlFrOCnLvi2vRd6GL+LTruT
+	 OrsA2GLe9B+NOIivQ1cD8CuH+Uu0CfrQYnZY6+nRVJtIFQesD/zjvFj1hdXE4Smm+n
+	 x1vf1hIrY0WeJM7uJ11ACLt2t6bBSYzU9eR20XXPTR5lOuAbJpDO6uiU2JeuvPpEBL
+	 STceqralhlhi2eJGt2cEUHZ9COKigTXkcSM9Pkp66ntCzCYkbytjmM/gizD8rMUpu2
+	 HyH34nDipMDM0JDCUt50pXLNwE0W4huyiXi3W/WPqK+3twNJllyo8TlFtn20kClvRN
+	 /9Vkyoo0YNoQw==
+Date: Tue, 29 Apr 2025 09:44:20 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAMTlEGgC/23NQQ7CIBCF4as0rMXAALW68h7GBcLQkthioCGap
- neXdqONLt8k3z8TSRg9JnKqJhIx++TDUIbcVcR0emiRels2AQaKCWA0o6E9jl2wiWrrtOSolOC
- cFPGI6PxzrV2uZXc+jSG+1njmy/V/J3PK6ME6p4wD5bA5tyG0d9yb0JMllOEb8y2Ggmt7NI2Wt ZDm9oPFB0uALRYFWyyfEbWqG73B8zy/AbKU6UchAQAA
-X-Change-Id: 20250320-vec-methods-adfa41e55311
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1961; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=BSx1hA9BCKf7vfVk9B/GGutgZvKoS5kqDfF56cj3Tmk=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoEOXNhKOeT0n3lFq9lcCLWwTL9pWkOr5C9d2nO
- 6+qeVs5khCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaBDlzQAKCRAEWL7uWMY5
- RijGEACl5vwfekuS/4CiPcIR31y68TzH92n4aAiWYEO5Rd0fDIY+FPF6tsyCk+Cz5zfJbVpM13A
- /Ccgsqg991bR1vgUQtiwI52IVL7YbSXpMCtNZPV9OnC9oyRt5Dj00sy2pVO0q4tHioiohmoVZ1/
- trqzdooFOppepNCVBROTtB5icSh3cu+F1iryTUdd/1wUmBN5wwqbue94nXcpCMY5BfBPwjlI/bE
- O71IrbGnn68DRyUKPc+Dqba6Z5vdWkQSdq6MCzzjjhySfpqK3ysqH5Q7R/6Z4+YJLqzS1ymqZMk
- p9Fxx7H5rlHzk1y5NFIsdn5JIvvn97xUAY6Tc2y4wjLZmSESECwP4nxqMGE4jTc0+dxrZH2ZTRJ
- L9ShQGCGITTFRCS+kij3Q6QJaWxT6HyY3cYO2w05/a21m7+zg2XLvye3QB4r8HRikhgGNlSh7Ie
- TEH9LVvXa1KSQh9FHB/sTzeaMoqEE/Vian8IisClWWrzCZTcxQL0X4VmvdJvFFqzC6xYFrTc2ig
- ESnA+CGofu0l6wfM0yJuVumkgON6FD4kjfgKT3KmLHVhEjcGhqhwOOE5BWKUr+3KMmme5JArx6G
- TpMMaEWWMBi00xhjqmedfls2TIDFmbjcp8teKbcydg9JgaF2+TzOtgULU3K7fBcthIovvcXbH9q 5ltLjWAm4L4f1AQ==
-X-Mailer: b4 0.14.2
-Message-ID: <20250429-vec-methods-v4-0-dad4436ff82d@google.com>
-Subject: [PATCH v4 0/7] Additional methods for Vec
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Tamir Duberstein <tamird@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@quicinc.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ kernel@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>, 
+ devicetree@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+In-Reply-To: <20250429054906.113317-1-quic_wasimn@quicinc.com>
+References: <20250429054906.113317-1-quic_wasimn@quicinc.com>
+Message-Id: <174593770411.4057763.3388930802601980727.robh@kernel.org>
+Subject: Re: [PATCH v6 0/4] qcom: Add support for IQ-9075-evk board
 
-This adds various Vec methods. Some of them are needed by Rust Binder,
-and others are needed in other places. Each commit explains where it is
-needed.
 
-This series is based on top of alloc-next and rust: alloc: split
-`Vec::set_len` into `Vec::{inc,dec}_len`
-https://lore.kernel.org/rust-for-linux/20250416-vec-set-len-v4-0-112b222604cd@gmail.com/
+On Tue, 29 Apr 2025 11:19:00 +0530, Wasim Nazir wrote:
+> This series:
+> 
+> Add support for Qualcomm's iq9-evk board using QCS9075 SoC.
+> 
+> QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC.
+> Unlike QCS9100, it doesn't have safety monitoring feature of
+> Safety-Island(SAIL) subsystem, which affects thermal management.
+> 
+> In QCS9100 SoC, the safety subsystem monitors all thermal sensors and
+> does corrective action for each subsystem based on sensor violation
+> to comply safety standards. But as QCS9075 is non-safe SoC it requires
+> conventional thermal mitigation for thermal management.
+> In this series thermal mitigation changes are not included as it needs
+> more discussion whether to include the change in DT or in drivers.
+> 
+> Below are detailed informations on IQ-9075-evk HW:
+> ------------------------------------------------------
+> QCS9075M SoM is stacked on top of IQ-9075-evk board.
+> On top of IQ-9075-evk board additional mezzanine boards can be stacked
+> in future.
+> IQ-9075-evk is single board supporting these peripherals:
+>   - Storage: 2 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
+>     eMMC on mezzanine card
+>   - Audio/Video, Camera & Display ports
+>   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
+>   - Sensors: IMU
+>   - PCIe ports
+>   - USB & UART ports
+> 
+> Currently basic features are enabled to support 'boot to shell'.
+> 
+> ---
+> Changelog:
+> 
+> v6:
+>   - Splitting v5 and bringing only rb8/IQ-9075-evk changes.
+>   - IQ-9075-evk is the new marketing/product name for RB8 and files are
+>     renamed accordingly.
+>   - Introduce SoM for qcs9075 SoC.
+>   - Introduce Memory map changes for IQ9 boards, currently enabled
+>     for qcs9075 based boards only.
+>   - Remove l4c regulator as it needs more validation with UFS for
+>     over-current check.
+>   - Remove thermal mitigation change, needs more discussion for final
+>     change.
+>   - v5:
+>     https://lore.kernel.org/all/20241229152332.3068172-1-quic_wasimn@quicinc.com/
+> 
+> Pratyush Brahma (1):
+>   arm64: dts: qcom: iq9: Introduce new memory map for qcs9100/qcs9075
+> 
+> Wasim Nazir (3):
+>   dt-bindings: arm: qcom: Add bindings for QCS9075 SOC based board
+>   arm64: dts: qcom: qcs9075: Introduce QCS9075M SOM
+>   arm64: dts: qcom: Add support for qcs9075 IQ-9075-EVK
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |   8 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../boot/dts/qcom/iq9-reserved-memory.dtsi    | 108 +++++++
+>  .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 268 ++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/qcs9075-som.dtsi     |  10 +
+>  5 files changed, 395 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-som.dtsi
+> 
+> 
+> base-commit: 33035b665157558254b3c21c3f049fd728e72368
+> --
+> 2.49.0
+> 
+> 
+> 
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Changes in v4:
-- Add missing ? in some doc tests.
-- Fix safety comment in Vec::push_within_capacity.
-- Add panics section to Vec::remove docs.
-- Move self.dec_len(1) to end of Vec::remove.
-- Add kunit test for Vec::retain.
-- Link to v3: https://lore.kernel.org/r/20250422-vec-methods-v3-0-deff5eea568a@google.com
 
-Changes in v3:
-- Rebase on split `Vec::set_len` into `Vec::{inc,dec}_len`.
-- Various modifications to work with inc/dec_len instead of set_len,
-  with some Reviewed-by's dropped due to this.
-- Move push_within_capacity impl into an unchecked variant.
-- Link to v2: https://lore.kernel.org/r/20250321-vec-methods-v2-0-6d9c8a4634cb@google.com
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Changes in v2:
-- Add two more methods that I needed.
-- Introduce some uses of set_len.
-- Add example to retain.
-- Simplify pop.
-- Adjust 11 to 10 in push_within_capacity example.
-- Link to v1: https://lore.kernel.org/r/20250320-vec-methods-v1-0-7dff5cf25fe8@google.com
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
----
-Alice Ryhl (7):
-      rust: alloc: add Vec::clear
-      rust: alloc: add Vec::pop
-      rust: alloc: add Vec::push_within_capacity
-      rust: alloc: add Vec::drain_all
-      rust: alloc: add Vec::retain
-      rust: alloc: add Vec::remove
-      rust: alloc: add Vec::insert_within_capacity
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
- rust/kernel/alloc/kvec.rs | 299 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 296 insertions(+), 3 deletions(-)
----
-base-commit: 88d5d6a38d5161228fbfe017eb94d777d5e8a0e4
-change-id: 20250320-vec-methods-adfa41e55311
+  pip3 install dtschema --upgrade
 
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 33035b665157558254b3c21c3f049fd728e72368
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250429054906.113317-1-quic_wasimn@quicinc.com:
+
+arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dtb: display-controller@ae01000 (qcom,sa8775p-dpu): clock-names:0: 'nrt_bus' was expected
+	from schema $id: http://devicetree.org/schemas/display/msm/qcom,sm8650-dpu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dtb: rsc@18200000 (qcom,rpmh-rsc): 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+
+
+
+
 
 
