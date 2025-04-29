@@ -1,125 +1,271 @@
-Return-Path: <linux-kernel+bounces-624124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FA4A9FF01
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:24:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2319A9FF05
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9096E46509C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:24:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50222467F6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803A1197A8A;
-	Tue, 29 Apr 2025 01:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3189019A28D;
+	Tue, 29 Apr 2025 01:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mB0Wfnn0"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XqVd/DnK"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E13142900;
-	Tue, 29 Apr 2025 01:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DE354723
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745889869; cv=none; b=qmulJEC/JQRz9eVbteTx41zrDL6GnxdThFSIlY3muHu/bkWCyiIzBI1Ir/G7mySzo5FRDFd2RT58vMdV0Nmf9dXf/JpiAOw3N+caOxDjXhSuNfDW3KciuLnVfOompDAWcPpSTsvWD4hMzkG0Cf11GUlX0zVxjFe3be0LtRJmMVQ=
+	t=1745890001; cv=none; b=utOQpd9ieYFo9x7wP+lcsyNoRhsxtFy/k/fKtw76s7qZjs4N09wDlDIcOdIRWf9h6/saZXaVyhoAETu4K6vMCprFki+jtCfNXgKWjWkw6zSQmU5+YfDwiEuj3E5cfwkNS+vnejReM8vO5dUKmhPv35B606LDyPi3vPJWMww7uGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745889869; c=relaxed/simple;
-	bh=ZtxE0cyg4LN00rivesKyGI6iKLfGnmNQVRL/FHIyYAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMCAaCfynZgCykvUoPdoa7eKcZkUXQ5zaBu6v/JDh2Z3VWgAsbb6LHTAVg2/O5X8Aqwx+ECPtYJKfM20BVEjl6u2UTPir/k4tuCoFxKxpBCidDMScveWVxOokd8BCRjj29rYuNH/uzmGua5Sxkz1EppgClV4eMuHSdoPjUKGsEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mB0Wfnn0; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-736dd9c4b40so5700766b3a.0;
-        Mon, 28 Apr 2025 18:24:27 -0700 (PDT)
+	s=arc-20240116; t=1745890001; c=relaxed/simple;
+	bh=dUG2oOsPfvtlcbD7bd1owP0P2jOP6U4HVZnFVbTYyZI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BlA7ivq1ZHHXQXtbV7+yZFRlQlgjZJNk0dy6Ezuz+y+75ZMXWZFyUgy885o1o3aH7blnf96pQwixyB31dylh30gOGwanMFRBIUZ+3QX8MbB/xIcY6QiTjQ/lhhMyIZIYTNZGqKSFTJuP/ki4pvY0z6hj/VgvBlXmCDiM12wsZ5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XqVd/DnK; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-736a7d0b82fso5563247b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745889867; x=1746494667; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KyPoE7Ki+Stm1jCn5lhraUB7iivQ29gfAikoNMrY7EE=;
-        b=mB0Wfnn0ko47zRi9hEV3lvidS3YPZ/ojYyMzFKYkTlBULpOderIDvvtF6uHvIaDup9
-         4voVEALTTKq/w9RxW4hOSGlP2n+HOuTCNN3dkj3fz7Ke13CRLuU6LtZIPxurPQ5XrDZG
-         gtG1k6mt0EV5C9dynUunFiPXIbAtJHt++CEmep2qWIZPC4fxGroNL9GziGzhRONL0g0e
-         wizwCufDu3qWWmrg7ejdKrhaykQ4NLj7H3I0MrKYGserCIl+upGytafbtiYU1rVnQJbz
-         26INHDVncutJiuXa9vlsBRDMv0AWQ9p8UXozaFv/1lQIiAHdV9CZ001WfehhYpT5rUsZ
-         f93w==
+        d=google.com; s=20230601; t=1745889999; x=1746494799; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FzPz83nCmaRFrzD6Tg7DFnNEEe/hxmIWREdWcgNx64I=;
+        b=XqVd/DnKZ7JtlIbKipaJO/z15DY4h12+SQgkzzOF/jO6UklDy40GZg+FXoLLS+Osql
+         mMovP7Wo5s+7IiGSdR16h3Lbj31velgtm9plXcpckNMgqxV2Qk5FEOktxfqZE3MQpZ0p
+         kDNAhPvRNEPLHRU5eLasnZtpiG26sZdW44fC/8iNGlHIqdTM4KcPBfAro1O9qrBtptEC
+         8k/QQrtrStV5Ieuv+AnecRGnG+7G6+jySuQ7DKwzOLoOkSRt1Fm25z0mAmSmpjXa6etv
+         EaYQt57ohUAzcGk8rZ3Yxf2TKxB0WgsEjfN87+l3yfPVYT5hmAptv9IP6+5M/ovO5ofU
+         ZZ6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745889867; x=1746494667;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KyPoE7Ki+Stm1jCn5lhraUB7iivQ29gfAikoNMrY7EE=;
-        b=CrQ/CTi02dXhXQ5YO/LHwEQnT0on3QD4UanVjrlk8MqADsyQPFl8yxXvBmXfxqEvvU
-         5kJLPApTrnbmeuNVU9+mY3XbIsgTGMy/Gfz3kuNCIE/EccHKTteD8yNSuCJWS7OVKxYf
-         6+1KfW5MYDSyl89ErpEmco/Nec3SMifF27gCtxaAh4KAiwnN3wA7Aptio+/zefCIA2qF
-         J6RYsiRquFiHX6zvqW6M84tFuLd1vLDCTyCMcUux46u7hDdLYiRPtfxJuTi9HMOkf7NH
-         vi6G2rYNqS3ndRXi1HqMK8sD1U7zDbB+fEKdCB3EXdzL/qPnFpLHnWZ1Ny4VZz49aiBJ
-         YhPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf2rACw7Zn6HOoOfCyf5G4Z5JAZbNqDWgI8WIr3XvvvYF4SZ4y3zxkqD5OdOSMY8diuUF2K4Jm3BNweQ==@vger.kernel.org, AJvYcCVuiXJKDntfrAOMxv4tKQlT9NHcCfLgIcosZZHuc3y19GJhbgFe3THKuWiu0zaowdCOxUo54F3Z6djQm6mj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnKmfaNMo4HTTvvv+lrXkzowhV74WwMTBsXdjlvtWl8jXSDKk4
-	opI4acbasujDBMFBDblhsGkcQmuJI8ejWNi9WoO7tghKvxHeX0swObixRg==
-X-Gm-Gg: ASbGncsatdzULmzrpUjjNhdFLbqditU0lmgXMtXxR+Bqi0dSn7KoD+tkhzmPE/9nRiY
-	1VMI7yVwFXXzM2HBamgW/wMi0DRCMCxlYDlu+y3fAPp03PbSBopBS2iR0PGHwjibgns47ZWxWYQ
-	IE438Wvy7PQ5CZCaf03e3alQ8T0la44+1xFJ3cYG5naWcQZzSAi+SwuGv119CB+GPaRy/evhzA0
-	DyBs0qr5/J1jeI96X9aodIoCToBAElUNp3qYlgom39P8e+wdKmrbv8dwmRj/Xx/NXzNz2GF0PN+
-	otFrJfxAwhqLDgOHo4GnUyffaeYo3mJthvA5BOWgDJ02twvX8v5A
-X-Google-Smtp-Source: AGHT+IGkUBsywSb73JsJIWkm/g2pDHLdJTBuGbQbWm79sjTxxA5l9O6RtphUUdix9RaxkZ9qtgHWFA==
-X-Received: by 2002:a05:6a20:9f9a:b0:1e1:a449:ff71 with SMTP id adf61e73a8af0-2094f479376mr2033127637.1.1745889866630;
-        Mon, 28 Apr 2025 18:24:26 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:adc2:8397:4f51:d5a0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e259678acsm8719083b3a.80.2025.04.28.18.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 18:24:26 -0700 (PDT)
-Date: Mon, 28 Apr 2025 18:24:23 -0700
-From: "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
-To: Oliver Graute <oliver.graute@kococonnector.com>
-Cc: Purva Yeshi <purvayeshi550@gmail.com>, 
-	"yujiaoliang@vivo.com" <yujiaoliang@vivo.com>, "jkeeping@inmusicbrands.com" <jkeeping@inmusicbrands.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] input: ili210x: Fix uninitialized symbols in
- ili251x_firmware_to_buffer
-Message-ID: <k6giuutuolfpx4yozicqure3gfkijr3wfv5xxm6qnpk2rg7l7i@524rayrahmja>
-References: <20250419131315.24897-1-purvayeshi550@gmail.com>
- <aAiWvzzSSWraeRdr@graute-macos>
+        d=1e100.net; s=20230601; t=1745889999; x=1746494799;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FzPz83nCmaRFrzD6Tg7DFnNEEe/hxmIWREdWcgNx64I=;
+        b=B6pIKQDFZP2nGEbVsfjk5MtTuJP9qisjgPWqNGew4OAbtj6hTw8kqiKXPGIqmEkn+s
+         jhMS7x00Mgp+ATB3hZfN2DpaGC+lDYYLkxynPBVhQo3f8X3ZP+wAR994EwU3nnMZ5u/w
+         d82+4+HAqnM+P3VWwCrX3HJ/vYc0wwEOKPOB78o5hJ3jbe+sgo5oeDKvrssQHEU9ym67
+         FINgGdmvP6ybk3qhoqbKE6vdfsuzj+0V3mWwpq5kzHZtrKw7UbVo3P7UXLuV5dTD+2Lq
+         +I4StwPo6o1WB1RFUT/fyVvHyBNnK7+jfDpFyC38+R5D58jaRepUnyZDVFNubYi1Hf3n
+         Nd3A==
+X-Gm-Message-State: AOJu0YzgWPt6C944hVpe3CRymScF0CRx7/AjyKmf7oNyZYaVC0oabu+Z
+	fxxDcis8yHUQv4CN/CaRO4WoYEjXvGRdqenEI5UZdNnC3vhaTjeAaL78fgC81c25ZTlxkQjPGph
+	YQA==
+X-Google-Smtp-Source: AGHT+IFdAplx6Pc4h2/lcjb7odRL/b7FVo7qZsribFp1E+q08dxdOEn3s5HY2PVYghN3RsMron55exH2JbE=
+X-Received: from pfjj8.prod.google.com ([2002:a05:6a00:2348:b0:73e:b69:b0de])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2e1d:b0:73f:f816:dd78
+ with SMTP id d2e1a72fcca58-740271deb7emr2383676b3a.15.1745889999255; Mon, 28
+ Apr 2025 18:26:39 -0700 (PDT)
+Date: Mon, 28 Apr 2025 18:26:37 -0700
+In-Reply-To: <20250321221444.2449974-3-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAiWvzzSSWraeRdr@graute-macos>
+Mime-Version: 1.0
+References: <20250321221444.2449974-1-jmattson@google.com> <20250321221444.2449974-3-jmattson@google.com>
+Message-ID: <aBAqzZOiCCYWgOrM@google.com>
+Subject: Re: [PATCH v3 2/2] KVM: selftests: Test behavior of KVM_X86_DISABLE_EXITS_APERFMPERF
+From: Sean Christopherson <seanjc@google.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Apr 23, 2025 at 07:30:18AM +0000, Oliver Graute wrote:
-> On 19/04/25, Purva Yeshi wrote:
-> > Fix Smatch-detected issue:
-> > 
-> > drivers/input/touchscreen/ili210x.c:621 ili251x_firmware_to_buffer()
-> > error: uninitialized symbol 'fw_addr'.
-> > drivers/input/touchscreen/ili210x.c:621 ili251x_firmware_to_buffer()
-> > error: uninitialized symbol 'fw_len'.
-> > 
-> > Initialize 'fw_addr' and 'fw_len' to 0 in ili251x_firmware_to_buffer()
-> > to avoid uninitialized use warnings reported by smatch.
-> > 
-> > Although the while loop ensures both variables are always assigned before
-> > use, initializing them silences false positives.
-> > 
-> > Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> 
-> Reviewed-by: Oliver Graute <oliver.graute@kococonnector.com>
+On Fri, Mar 21, 2025, Jim Mattson wrote:
+> +#include <fcntl.h>
+> +#include <limits.h>
+> +#include <pthread.h>
+> +#include <sched.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdint.h>
+> +#include <unistd.h>
+> +#include <asm/msr-index.h>
+> +
+> +#include "kvm_util.h"
+> +#include "processor.h"
+> +#include "test_util.h"
+> +
+> +#define NUM_ITERATIONS 100
+> +
+> +static void pin_thread(int cpu)
+> +{
+> +	cpu_set_t cpuset;
+> +	int rc;
+> +
+> +	CPU_ZERO(&cpuset);
+> +	CPU_SET(cpu, &cpuset);
+> +
+> +	rc = pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
+> +	TEST_ASSERT(rc == 0, "%s: Can't set thread affinity", __func__);
 
-No, we will not be adding gratuitous initializations just to appease
-smatch.
+Heh, you copy-pasted this from hardware_disable_test.c, didn't you?  :-)
 
-That said, "do {} while (rec);" loop might work better here and also
-might allow smatch to recognize that both variables are not used
-uninitialized. I would accept such a patch.
+Would it make sense to turn this into a generic API that takes care of the entire
+sched_getcpu() => pthread_setaffinity_np()?  E.g. kvm_pin_task_to_current_cpu().
+I suspect there are other (potential) tests that don't care about what CPU they
+run on, so long as the test is pinned.
 
-Thanks.
+> +}
+> +
+> +static int open_dev_msr(int cpu)
+> +{
+> +	char path[PATH_MAX];
+> +	int msr_fd;
+> +
+> +	snprintf(path, sizeof(path), "/dev/cpu/%d/msr", cpu);
+> +	msr_fd = open(path, O_RDONLY);
+> +	__TEST_REQUIRE(msr_fd >= 0, "Can't open %s for read", path);
 
--- 
-Dmitry
+Please use open_path_or_exit().
+
+Hmm, and I'm planning on posting a small series to add a variant that takes an
+ENOENT message, and spits out a (hopefully) helpful message for the EACCES case.
+It would be nice to have this one spit out something like "Is msk.ko loaded?",
+but I would say don't worry about trying to coordinate anything.  Worst case
+scenario we can add a help message when the dust settles.
+
+> +	return msr_fd;
+> +}
+> +
+> +static uint64_t read_dev_msr(int msr_fd, uint32_t msr)
+> +{
+> +	uint64_t data;
+> +	ssize_t rc;
+> +
+> +	rc = pread(msr_fd, &data, sizeof(data), msr);
+> +	TEST_ASSERT(rc == sizeof(data), "Read of MSR 0x%x failed", msr);
+> +
+> +	return data;
+> +}
+> +
+> +static void guest_code(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < NUM_ITERATIONS; i++) {
+> +		uint64_t aperf = rdmsr(MSR_IA32_APERF);
+> +		uint64_t mperf = rdmsr(MSR_IA32_MPERF);
+> +
+> +		GUEST_SYNC2(aperf, mperf);
+
+Does the test generate multiple RDMSR per MSR if you do:
+
+		GUEST_SYNC2(rdmsr(MSR_IA32_APERF), rdmsr(MSR_IA32_MPERF));
+
+If the code generation comes out
+
+
+> +	}
+> +
+> +	GUEST_DONE();
+> +}
+> +
+> +static bool kvm_can_disable_aperfmperf_exits(struct kvm_vm *vm)
+> +{
+> +	int flags = vm_check_cap(vm, KVM_CAP_X86_DISABLE_EXITS);
+> +
+> +	return flags & KVM_X86_DISABLE_EXITS_APERFMPERF;
+> +}
+
+Please don't add one-off helpers like this, especially when they're the condition
+for TEST_REQUIRE().  I *want* the gory details if the test is skipped, so that I
+don't have to go look at the source code to figure out what's missing.
+
+And it's literally more code.
+
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	uint64_t host_aperf_before, host_mperf_before;
+> +	int cpu = sched_getcpu();
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm_vm *vm;
+> +	int msr_fd;
+> +	int i;
+> +
+> +	pin_thread(cpu);
+> +
+> +	msr_fd = open_dev_msr(cpu);
+> +
+> +	/*
+> +	 * This test requires a non-standard VM initialization, because
+> +	 * KVM_ENABLE_CAP cannot be used on a VM file descriptor after
+> +	 * a VCPU has been created.
+
+Hrm, we should really sort this out.  Every test that needs to enable a capability
+is having to copy+paste this pattern.  I don't love the idea of expanding
+__vm_create_with_one_vcpu(), but there's gotta be a solution that isn't horrible,
+and anything is better than endly copy paste.
+
+> +	 */
+> +	vm = vm_create(1);
+> +
+> +	TEST_REQUIRE(kvm_can_disable_aperfmperf_exits(vm));
+
+	TEST_REQUIRE(vm_check_cap(vm, KVM_CAP_X86_DISABLE_EXITS) &
+		     KVM_X86_DISABLE_EXITS_APERFMPERF);
+> +
+> +	vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS,
+> +		      KVM_X86_DISABLE_EXITS_APERFMPERF);
+> +
+> +	vcpu = vm_vcpu_add(vm, 0, guest_code);
+> +
+> +	host_aperf_before = read_dev_msr(msr_fd, MSR_IA32_APERF);
+> +	host_mperf_before = read_dev_msr(msr_fd, MSR_IA32_MPERF);
+> +
+> +	for (i = 0; i < NUM_ITERATIONS; i++) {
+> +		uint64_t host_aperf_after, host_mperf_after;
+> +		uint64_t guest_aperf, guest_mperf;
+> +		struct ucall uc;
+> +
+> +		vcpu_run(vcpu);
+> +		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
+> +
+> +		switch (get_ucall(vcpu, &uc)) {
+> +		case UCALL_DONE:
+> +			break;
+> +		case UCALL_ABORT:
+> +			REPORT_GUEST_ASSERT(uc);
+> +		case UCALL_SYNC:
+> +			guest_aperf = uc.args[0];
+> +			guest_mperf = uc.args[1];
+> +
+> +			host_aperf_after = read_dev_msr(msr_fd, MSR_IA32_APERF);
+> +			host_mperf_after = read_dev_msr(msr_fd, MSR_IA32_MPERF);
+> +
+> +			TEST_ASSERT(host_aperf_before < guest_aperf,
+> +				    "APERF: host_before (%lu) >= guest (%lu)",
+> +				    host_aperf_before, guest_aperf);
+
+Honest question, is decimal really better than hex for these?
+
+> +			TEST_ASSERT(guest_aperf < host_aperf_after,
+> +				    "APERF: guest (%lu) >= host_after (%lu)",
+> +				    guest_aperf, host_aperf_after);
+> +			TEST_ASSERT(host_mperf_before < guest_mperf,
+> +				    "MPERF: host_before (%lu) >= guest (%lu)",
+> +				    host_mperf_before, guest_mperf);
+> +			TEST_ASSERT(guest_mperf < host_mperf_after,
+> +				    "MPERF: guest (%lu) >= host_after (%lu)",
+> +				    guest_mperf, host_mperf_after);
+> +
+> +			host_aperf_before = host_aperf_after;
+> +			host_mperf_before = host_mperf_after;
+> +
+> +			break;
+> +		}
+> +	}
+> +
+> +	TEST_ASSERT_EQ(i, NUM_ITERATIONS);
+
+Why?
 
