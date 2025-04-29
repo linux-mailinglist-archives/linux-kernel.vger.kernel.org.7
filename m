@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-625738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F81DAA1C18
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545BBAA1C0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AA33A70DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68F21BA7690
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEE3266B43;
-	Tue, 29 Apr 2025 20:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25452262FD4;
+	Tue, 29 Apr 2025 20:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHeVE5pZ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U1RxXGYE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19062259C9D;
-	Tue, 29 Apr 2025 20:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FABD252900;
+	Tue, 29 Apr 2025 20:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745958274; cv=none; b=TSjhLqOskAIu+kqu9206Y0m5FpC4yEMhOoLhVXDuy7jLSbg98KGDKuXvZDcGZyvHeDLGsPfj3U7hPvMET5A3yd1yrNGQ4RFnQ+j8bV9U4F6WDKtGTrdNayqS5HfEo12qjYgnZdIBT9JGNBSJ/hfW35ActRX87iKhs1OQ+p/u0LU=
+	t=1745958261; cv=none; b=s824YS++F85EHayeR85FrqQ8FATXIoOy9sdTmpvchOz59/klC7AMky3mT22muZO+3pAeQ7Lf01NfOyjmnyrZuOber26HGXAPqsybYQdmJxn6allD+6JpoxYJnGEqpgbpD1xyFdqr2zfKNUwlSYzuLRp0QnNTk/+mgRwrCCfUI6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745958274; c=relaxed/simple;
-	bh=Sy++56/htz/lCFh726YRJErj1jbe/6zhip5jyJNmA0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MCtb0bV2r3745BkU6jMcPB6nfLAE/B4qjJjxWr3ZTO/mfc8QlJDr16EDnTzhI/5rIDLwJvNIGG0nQ7aRSFH1/aKF2UsWL20V12iz7cOf0hbnpL0ruCtlsWM6w56b34kJq4X8d3+uXQoxTFK7yFs1QS0zkUSuxvBqXHMVMlHXSCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHeVE5pZ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so953661966b.0;
-        Tue, 29 Apr 2025 13:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745958271; x=1746563071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D58KDEeeLFwkq7sOUEqzPBNZWBGghyoE7EpH9ga9vn0=;
-        b=SHeVE5pZn545dn5N0m+aDDrWc+M2zXHoQRUB/ggiS8+YaTJ7jzaDj+ln0CH9XIXWpz
-         P6xJ69L6n2Mtm1cJR2GepZFtPmXV12ToLt0qtwk5xB2sxjy1ViHf0nIynZDj3ZoZCQfR
-         GhOcW1wWY5YbH++U2VOIrT0H32zD/aNiP2TMceH5ounVcYO9B5c7SWyiCSSqwXVfPWTD
-         Lco7jGmGen8GV1sG7iOzOGkI8QanvrkGBYy5H2WjC2/xNFOYrQDdAbYwx8NRhUC3oub0
-         oBGO4Zh7UrCDxCUltwz8m4gCoX0J0yBayPdVWw7hpq6KXQIFm9w0Fk9KFROnLBVK+sJp
-         apQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745958271; x=1746563071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D58KDEeeLFwkq7sOUEqzPBNZWBGghyoE7EpH9ga9vn0=;
-        b=HsCn3mMphsxwyMMuEtCC1a/smufgAyA8FSLvysZXsRr4eRDjjVBm2DJw18dv0cLcLM
-         5cf0Bku3apWQ4LR/AHYX4jsexoPodNDZZYzl/hfKpWse97338ZBg8b/it2HutMecasxT
-         m0RMk3rOeX2gKXwsgFr6NcKi7Y8Aedqm/iekNAwb/95W9WqNHND17WIimbPE2+qCpKgt
-         U64z6tHSKIBW33gICcsOhl5iHVefqXy41LUI8CqynSXh1WSSmPxexYSRZ5ku2PCbU3Vq
-         Zdx0BoQUO7GWsqawJFD3MQv+qNMJlyPUsS4dfYVA6WTSAdiuVbwacpw6bHX/LQWE9XuE
-         RoSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJifMDGNoEZ8oAv10LJpa9NHqSMI82fJ7zZ1gdBTBs7PH6HTk8uADma36SsT2Xvn0wMmDRkVTHVQo+zE4G9dUA@vger.kernel.org, AJvYcCUev2wTmCsi+SSAqQxbfIC654JiKKnw8M0nxEyBEU+pf7e94/lNQPRmQrpoZ7SKcTt1SjbuR3qNQ/HXfpgv@vger.kernel.org, AJvYcCUgCw4iHYFP3DFHVEBgztGaKNdDmxv4t+grgktCRgVJxXoq2FfbcV8IRoUTDiwUn3Ht+opAHSmIYcvD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq+tKuHblyWvszoFjdkSyjrJjBhdhH2ppQP+qBolx2C8++uBWV
-	ApMhmHJA8qWLhsnivQWlOc/CmEQBWY1w0s71SPZEO2Ws9sfx6zLKl3QtbhfUObDp3gNHRkWYZ9G
-	zpAO5mBjvprFy+4NVw9OhF88g5Y4=
-X-Gm-Gg: ASbGncu+C5cwQs6i3WXpwGTkXKKD1d3OO2JlKpU2tNQ/Y1B4tDDIgZ8fo5YSK16Vbk5
-	KtUL0NZWLK0cdFXGk+GI71GVNnXVbwIy3hRBWEbJRUDNqMKehlbdqbKLqN9+QgO3CY1mHEQXY6+
-	xdWI5mrpxxKts871fxdCN2Vu0EFYmkDDEB
-X-Google-Smtp-Source: AGHT+IHBtv4uogaGVAMM2SvzDSyjPxbeQHFYr+EkNqAxs8XwhmNRc7T1jbj8mIckK4lVLCIwUGDnJNBgqMLcbM+C6Gk=
-X-Received: by 2002:a17:907:2d12:b0:aca:e2d6:508c with SMTP id
- a640c23a62f3a-acedc764c61mr73166166b.56.1745958271235; Tue, 29 Apr 2025
- 13:24:31 -0700 (PDT)
+	s=arc-20240116; t=1745958261; c=relaxed/simple;
+	bh=6BiOBBRPksYZ79Zl+8MOX/mVDJcU5/RCvN/jjbfh2To=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=swwfljwuK7kXV8SddC0MZ++jMTsDRfDren2d5hSMnJc9XVytjkARsMakj979uWH7Y030nmY9OPyUPZZIPrYFs8EhwRwmKSydlR9o6uIWaJvATVJ6ZboRo0p7PCUu8ZC9yQ3ZI/vHJCkIOJ7j5FJz9i2SDlXhzzu1h1lyOdD5Ok8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U1RxXGYE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745958260; x=1777494260;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6BiOBBRPksYZ79Zl+8MOX/mVDJcU5/RCvN/jjbfh2To=;
+  b=U1RxXGYEqI1KuKzUBgnUqsB4jtZzy/4z5iN2UyN/yLJ17Skjblvjeqw2
+   AaJu+shK5f2A7iABpeSc71HuRETxjsV1aeg/+Fb8H4qRAYbxgbRkCjq7J
+   JTXcHh+k9mjMLywNCUOf6EXz2XTVqP3knu9xlo+UE98sSK+1+foNvBwdC
+   ZBkf/3TaO/Ob2je5/1WzbGp/RED8R65CtyqozR59C83N46NnXFbLrZ9NM
+   syUn4dFuhK+tTwABmA7pwYdTJannaIK5pArerJAdEP6dcfvF3V4VXM6WG
+   uBA7w4MCZtisB+cG/nhNJBDxrj4yjMUJHrh1I86JGuKPb1n3RZcKaasKN
+   Q==;
+X-CSE-ConnectionGUID: yVPO5clCQzK/y7GNgm6FVA==
+X-CSE-MsgGUID: KmbqzxJQQViqll9RxLW1dA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="47314063"
+X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
+   d="scan'208";a="47314063"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 13:24:19 -0700
+X-CSE-ConnectionGUID: RI1MOyAVRkqbMRiE3WF4hg==
+X-CSE-MsgGUID: pF+gcqPGQnSzbcYU37YAzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
+   d="scan'208";a="139036124"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 13:24:18 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: rafael@kernel.org
+Cc: lenb@kernel.org,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v4 0/4] Add interfaces for ACPI MRRM table
+Date: Tue, 29 Apr 2025 13:24:07 -0700
+Message-ID: <20250429202412.380637-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-aaeon-up-board-pinctrl-support-v4-0-b3fffc11417d@bootlin.com>
- <20250429-aaeon-up-board-pinctrl-support-v4-9-b3fffc11417d@bootlin.com>
-In-Reply-To: <20250429-aaeon-up-board-pinctrl-support-v4-9-b3fffc11417d@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 29 Apr 2025 23:23:55 +0300
-X-Gm-Features: ATxdqUF3qdUj08hG6Po9xtoIg-BOJVobn2cE8_fU_bUd8MwIcsff-2XPlxW1o8k
-Message-ID: <CAHp75Vdgezkc3-4a0jSG7qkvL31xdde8jSwTtWqct3dUVBm8=w@mail.gmail.com>
-Subject: Re: [PATCH v4 09/12] gpio: aggregator: handle runtime registration of
- gpio_desc in gpiochip_fwd
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 5:08=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
->
-> Add request() callback to check if the GPIO descriptor was well registere=
-d
-> in the gpiochip_fwd before to use it. This is done to handle the case
+Memory used to be homogeneous. Then NUMA came along. Later different
+types of memory (persistent memory, on-package high bandwidth memory,
+CXL attached memory).
 
-to use --> using
+Each type of memory has its own performance characteristics, and users
+will need to monitor and control access by type.
 
-> where GPIO descriptor is added at runtime in the forwarder.
->
-> If at least one GPIO descriptor was not added before the forwarder
-> registration, we assume the forwarder can sleep as if a GPIO is added at
-> runtime it may sleep.
+The MRRM solution is to tag physical address ranges with "region IDs"
+so that platform firmware[1] can indicate the type of memory for each
+range (with separate tags available for local vs. remote access to
+each range). Note that these ranges can include addresses reserved
+for future hotplugged memory.
 
-...
+The region IDs will be used to provide separate event counts for each
+region for "perf" and for the "resctrl" file system to monitor and
+control memory bandwidth in each region.
 
-> +       /*
-> +        * get_direction() is called during gpiochip registration, return=
- input
-> +        * direction if there is no descriptor for the line
+Users will need to know the address range(s) that are part of each
+region. This patch series adds
+	/sys/firmware/acpi/memory_ranges/rangeX
+directories to provide user space accessible enumeration.
 
-Missing period at the end.
+-Tony
 
-> +        */
+[1] MRRM definition allow for future expansion for the OS to assign
+these region IDs.
 
-...
+Changes since version 3 here:
+https://lore.kernel.org/all/20250410223207.257722-1-tony.luck@intel.com/
 
-> -       if (fwd->descs[offset])
-> +       if (test_and_set_bit(offset, fwd->valid_mask))
->                 return -EEXIST;
+1) Rebase to v6.15-rc4
+2) Removed ugly #ifdef in acpi_mrrm.c with better fix for CONFIG_NUMA=n
+3) Moved stub for acpi_mrrm_max_mem_region() into #else !ACPI section
+   of <linux/acpi.h>
 
-Here you should add the entire conditional and not in the one of the
-previous patches.
+Tony Luck (4):
+  ACPICA: Define MRRM ACPI table
+  ACPI/MRRM: Minimal parse of ACPI MRRM table
+  ACPI/MRRM: Add /sys files to describe memory ranges
+  ACPI: Add documentation for exposing MRRM data
 
-...
+ include/linux/acpi.h                          |   9 +
+ include/acpi/actbl1.h                         |   7 +
+ include/acpi/actbl2.h                         |  42 ++++
+ drivers/acpi/acpi_mrrm.c                      | 183 ++++++++++++++++++
+ Documentation/ABI/testing/sysfs-firmware-acpi |  21 ++
+ arch/x86/Kconfig                              |   1 +
+ drivers/acpi/Kconfig                          |   3 +
+ drivers/acpi/Makefile                         |   1 +
+ 8 files changed, 267 insertions(+)
+ create mode 100644 drivers/acpi/acpi_mrrm.c
 
-> +       /*
-> +        * Some gpio_desc were not registered. They will be registered at=
- runtime
-> +        * but we have to suppose they can sleep.
-> +        */
 
-> +       if (bitmap_full(fwd->valid_mask, chip->ngpio))
+base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+-- 
+2.48.1
 
-I think I don't get this check. The bitmap_full() returns true if and
-only if _all_ bits up to the nbits are set. In accordance with the
-comment it seems you wanted something different (an opposite?).
-
-> +               chip->can_sleep =3D true;
-
---=20
-With Best Regards,
-Andy Shevchenko
 
