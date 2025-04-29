@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-624140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B674A9FF32
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88914A9FF3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54D1E5A82F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CC09207AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EDB1E25FA;
-	Tue, 29 Apr 2025 01:48:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2732054FD;
+	Tue, 29 Apr 2025 01:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtppYo2a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06321CA9C;
-	Tue, 29 Apr 2025 01:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B21EB5E0;
+	Tue, 29 Apr 2025 01:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745891298; cv=none; b=D6K/aK9HUnBHWKsd0RC4lP5TBZ+9iA5ApcQpYZg/zkgYmfWdmiIbxmDC/5t9Q3v8+h/hmgUUQEjKD//aiQp//A2uIi/Gs6B2mVkQNygLsRUDRHlRYBQmWBcTrihRZKNzqyP7HDGTgtX2DUtYVaNyv01IlFXV/8pO7rZoob9JMpc=
+	t=1745891538; cv=none; b=gncgioq7wpv9knfW1mLH6p4gEItO64RgOLBYbh/q/JwPE1fpSX9FedLzwL+WgTGD+Az73dFlvJ9LcUS5rWkRKaPP6p20Q1XpwjiINE9ABYjcyuViA5dlzbP4WA7mbGxmkt1uchv6vQUhdBGXKeilZZm5xeJpOgCf9d1u60/WEwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745891298; c=relaxed/simple;
-	bh=PJ40Ky8bkjg+BOc4I0/brfIGn/WDXPe1tD9/zb9a6Mg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GoveFgrWY0YbRP7a5nCLsgK/8O2sOI29MHMd6/gjvbn9CFCMC0fbt+oKe0JdJ/XOtB6nf0jLSwmholJUmEc5mcvrPa+HCSw22zstgfqxcH/c6gmyfWu18NrDxgsW7vwm4dUnHZODqEzOmZsq3ju4rYg6Y2Ih+ZUHoDhfE6wkAjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZmjrZ3vMbzYQttP;
-	Tue, 29 Apr 2025 09:48:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 06B341A0AF2;
-	Tue, 29 Apr 2025 09:48:14 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXOl_dLxBoVoqBKw--.58321S3;
-	Tue, 29 Apr 2025 09:48:13 +0800 (CST)
-Subject: Re: [PATCH v2 1/3] brd: protect page with rcu
-To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250427083925.157984-1-yukuai1@huaweicloud.com>
- <20250427083925.157984-2-yukuai1@huaweicloud.com>
- <20250428125207.GB27794@lst.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <cdca4c95-27a0-5964-e242-173281c4e8f9@huaweicloud.com>
-Date: Tue, 29 Apr 2025 09:48:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1745891538; c=relaxed/simple;
+	bh=3rBhkmDwlkecphkN0Dy6r3jKKnMCRAC/bfxsVRUq1Fg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tR2D6Agij8vKjEGzkf3dSBcXjCtMlVMIzZtKLrPB2AS9sh4k7rbbwHxzVPW8fe38nquowaJ1wiX2DNTjz4Nyj1+IBUsdz5ha4vad1zreyBoFImY/27NDrJkpvJi5u+URpwNuaxRjQ8HWbksvbFao6xSbxp6sApRJquUFiI1R0j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtppYo2a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id ABC7FC4CEE4;
+	Tue, 29 Apr 2025 01:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745891538;
+	bh=3rBhkmDwlkecphkN0Dy6r3jKKnMCRAC/bfxsVRUq1Fg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=WtppYo2ahciomp5MW2Niv+CiEfEy7I62HZ4O7Sqfi7BGs/KU6BtqKzwpjHMjldq/N
+	 zpyBetdp4LPyMsTTubWgW+K7igBC84av2Q7BvQiLxLIENWnFU8r1e7PWuQqL8733pi
+	 +HO4eW0MgszI6ifpzBDdRZMux6ZQiDHTK2N052diCkXFf6ZrXiFU0PkRgeKnaphPhP
+	 VV4IqA/fqdTf/BngGRkyhMPDHyFD07LEeCX0qlWN1O4zF7Chqm5O74M5SPbWi9ansL
+	 kKAOQQxebrVEjxFUW5ExoVz+eJu47fQZnIFlTaRBw0udPU/jPFnQEQWRbcWaRGRwmS
+	 7A9xbmar8fUDg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEFBC369D5;
+	Tue, 29 Apr 2025 01:52:18 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/2] arm64: tegra: Clean up serial nodes
+Date: Mon, 28 Apr 2025 20:51:46 -0500
+Message-Id: <20250428-tegra-serial-fixes-v1-0-4f47c5d85bf6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250428125207.GB27794@lst.de>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXOl_dLxBoVoqBKw--.58321S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr43tF1fAw4DJFWfGw17Jrb_yoWfCwbEka
-	13W3srta43ury0ya13W343X397tFWkCa1qvr1fAFs3XFW5JrZFyw4xJws5ta40qF1293yx
-	GF9rAa45G342qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbS8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUpwZcUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALIwEGgC/x3LQQqAIBBA0avErBswSbCuEi1ERxsIC40IxLtnL
+ T+fVyBTYsowdwUS3Zz5iC2GvgO7mRgI2bUGKaQSo9R4UUgGP2V29PxQxslbZ7V3SkgBDZ6J/tH
+ cstb6AtJhidpkAAAA
+X-Change-ID: 20250428-tegra-serial-fixes-9fcdc8fd5020
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745891537; l=989;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=3rBhkmDwlkecphkN0Dy6r3jKKnMCRAC/bfxsVRUq1Fg=;
+ b=XgXqQ+/gz4QT8jWarYRYNvBu3k28rMjaarAS+Pssbc5Lkd9qeoyB89au3NfrY6IasBFIFuAhX
+ H0Ttx7rJ6QdBg47ALj40ZFDx9qct4/GWVIW394GCu6BbYI9UIN+iNm8
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Hi,
+Several Tegra186 and Tegra194 serial nodes still have invalid properties
+and/or are missing dma properties. This series corrects those.
 
-ÔÚ 2025/04/28 20:52, Christoph Hellwig Ð´µÀ:
-> On Sun, Apr 27, 2025 at 04:39:23PM +0800, Yu Kuai wrote:
->>   	page = brd_lookup_page(brd, sector);
->>   
->>   	kaddr = bvec_kmap_local(&bv);
->>   	if (op_is_write(opf)) {
->> -		BUG_ON(!page);
->> -		memcpy_to_page(page, offset, kaddr, bv.bv_len);
->> +		if (page)
->> +			memcpy_to_page(page, offset, kaddr, bv.bv_len);
-> 
-> This could use a comment on why page can be NULL here.
-OK
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (2):
+      arm64: tegra: Drop remaining serial clock-names and reset-names
+      arm64: tegra: Add DMA properties for Tegra186 and Tegra194 UARTs
 
-> 
->>   	} else if (page) {
->>   		memcpy_from_page(kaddr, page, offset, bv.bv_len);
->>   	} else {
->>   		memset(kaddr, 0, bv.bv_len);
-> 
-> And why the above change my if/else cascade doesn't really make much sense
-> any more and this should become:
-> 
-> 	} else {
-> 		if (page)
-> 	 		memcpy_from_page(kaddr, page, offset, bv.bv_len);
-> 		else
-> 	 		memset(kaddr, 0, bv.bv_len);
->   	}
-OK, I will send a new version soon.
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  2 ++
+ .../dts/nvidia/tegra186-p3509-0000+p3636-0001.dts  |  2 ++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 26 ++++++++++----------
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  2 ++
+ arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi     |  2 ++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 28 ++++++++++++----------
+ 6 files changed, 38 insertions(+), 24 deletions(-)
+---
+base-commit: ca91b9500108d4cf083a635c2e11c884d5dd20ea
+change-id: 20250428-tegra-serial-fixes-9fcdc8fd5020
 
-Thanks for the review!
-Kuai
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> .
-> 
 
 
