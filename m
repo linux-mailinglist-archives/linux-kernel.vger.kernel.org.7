@@ -1,190 +1,179 @@
-Return-Path: <linux-kernel+bounces-624751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3512BAA0716
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:25:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FC3AA0703
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F89B1B614C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADA0F18989D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646D72BCF78;
-	Tue, 29 Apr 2025 09:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405C529DB69;
+	Tue, 29 Apr 2025 09:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SnPIe6pa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwF6du9/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B86129DB7B;
-	Tue, 29 Apr 2025 09:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA243279356
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745918698; cv=none; b=Lx/woz/PRoSOQHJZGenpdKCQAuQCF+5UmWhMoei1W97bzjYJ8lz6pmU2ChdkFkLHZ6U0xJvPOtYoLvA1Z9iZJi/zcrzBLN3NM/v2BjsMmkpJX39oqxo8OlB3BujtroLhl9VU8gIUCSr3pjs6o0N6Q8y2LnZ4Qy3c/GAeYPns7As=
+	t=1745918682; cv=none; b=qHBftWE+KY62W+ZxwaBkE/gxxxOiaPjA5tBIXYKh7fti0VzqQqngVgYvX6Ml2UAes6FfSk8kBffInRcEc7gs99/LVVekFpbx5MIlqfP4zfnV3N9ibIm0CJrodSs81kfM32GOnlF7UiOfxj+FvIDNUBkZEKg7GGJhTKyLsWREM8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745918698; c=relaxed/simple;
-	bh=3RZSDmtn9V1jZFssHSUe5AyPbnMYlwKqaJ3rJn90mCY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=m6V+Z4czA747cw7mMtDQyEOy8u6/Wrx1YO+RjyRazawm5jENlIy6C1ERlJOvm72x5fCFECx15cArJ03iM2z7BH8JJxv9u/U83IdYxXMFI3NO7YlgNYUACeM/+w2gHfFFtET9m7HlRfA3O1carVSq0/EBLr/D+Zt7exfFtZiJ03M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SnPIe6pa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SNr24Z032014;
-	Tue, 29 Apr 2025 09:24:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=7SCrIYkzDXXQwGrHRmtCxmwr3cj/cM0yK7gjtDX7VU8=; b=Sn
-	PIe6pacKFhBxQEU9zmSWB5XQGOKj4qVz7d8k4DpI4stc2v9uhf7NcuwLpUxrr70J
-	h2QpB6yC6LPkNWfM/9nVsVguyTn0iEVtMMYhW/kmtzn3Sflax8Beu6hwkDeGCI2F
-	HRNvLJl3BP4iFKjJfTZ4RTdnfcV9dJH+8DV7XtewnJZeFtojnZeKLzqoq7Uxlg2c
-	b79cMGZQ62Kme1/mYP8wzf6JoAGNwMxFDD4Ht1njtLFpjQIeZ9PddeZD5ELWrhbT
-	eNTgG8QxtiVv3qsTDwgd2HnEOmGKl+PmVBE+hKuEr9z40rRlCocKULzKXg/4ycT1
-	icv3plEeSmh5rAH67qow==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468pevk3mp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 09:24:52 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 53T9OlIL031624;
-	Tue, 29 Apr 2025 09:24:47 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 468rjmhb31-1;
-	Tue, 29 Apr 2025 09:24:47 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53T9OlaO031585;
-	Tue, 29 Apr 2025 09:24:47 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.213.109.81])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 53T9OlbA031560;
-	Tue, 29 Apr 2025 09:24:47 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3914174)
-	id 9231D604542; Tue, 29 Apr 2025 14:54:46 +0530 (+0530)
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
-        Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Subject: [PATCH v2 1/7] arm64: dts: qcom: qcs6490-audioreach: Add gpr node
-Date: Tue, 29 Apr 2025 14:54:24 +0530
-Message-Id: <20250429092430.21477-2-quic_pkumpatl@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250429092430.21477-1-quic_pkumpatl@quicinc.com>
-References: <20250429092430.21477-1-quic_pkumpatl@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ZNYaL4WuUGcLS9VBozJhZKtqFNN1F9aw
-X-Authority-Analysis: v=2.4 cv=aeBhnQot c=1 sm=1 tr=0 ts=68109ae4 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=Mhuy_G11ca2qzbwcTq0A:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: ZNYaL4WuUGcLS9VBozJhZKtqFNN1F9aw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA2OSBTYWx0ZWRfX6pCtDWR9JLEK GJX3UHc9p1xGl2kJnQS6GrkBOc6ydDEG4GV6GUEPm6p0PTSOf/qEQ1OI9JYMa2bpzUumOZFczOg TDTUduGregoyN3PkCkgJrsUrbNZz8WojVhm/IxMqFnYzPgSHQq7thsglVjrXA1zeQK3KyvHojGB
- BZ29x7FvllaF7kQUngBs9AHgCIXlDSNkTv5gDYlTDPh6vqv4KTYWPqAlPf09yI5k/aNVsEe+GDK 2dsULTfa3118Hc/Goc3jcIgn8zQhAJEL0xLmc9hofQaOtKgss6opCq/+dry6XOGv3JMsWN735Ov vRi6yogI3ThXJ0T189QlK/jAPOjXfkkFpzv3AxHLn/lJjWHxXlHVtXRbrdxT+Oe5u1d23CHrs4a
- xyw+2T5T4pHdTIAjvwo0YYY6Tf6ZyC6zdSZYz2AdOLKxaw3AfYpyhK5aSvyRc/fzaYr8mHGB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_03,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 spamscore=0
- mlxlogscore=782 phishscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290069
+	s=arc-20240116; t=1745918682; c=relaxed/simple;
+	bh=zLHwehuD0mmw4GsfL9VmQ60TLTqVqEnvOQvtJxzKq40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZV3GYz9pevdaNmpYNtvt6xJJ+2bcsyAV8kfziVEofWUu6iSNd7fhw5G4lmROu+PpgYilmXJK4d6lUXtQsdeXS2a3VSpJNnZD4lfOK6Qrk6t5tfzmGHPcnXkLhNKJ3kMPX1IOjqdbQn7PxEr5oWYXgRDuKtXoh5MPaB6/41At+cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MwF6du9/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745918679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8f8/JTNUvAATS4a0cTgJSetpgv+ZA4Ct8iWSSFOFVKg=;
+	b=MwF6du9/dZySChpz2T+RHF97ANef+YnOwyjNcpWUMGiSp7ZlTln/FTiIrwAScgTgoFWigZ
+	uDXMAZRWheM+8pR9psXGqsPxCSggOXMaEs7GAQkmEOeZMUXQpD5gOKS3Vyq4QdE+1PSwSC
+	DzgjqeJL7UpuWxM1/eva91AkvJ9ucXc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-31-h9cWAc0bNnGJqeGt5xLSSg-1; Tue, 29 Apr 2025 05:24:38 -0400
+X-MC-Unique: h9cWAc0bNnGJqeGt5xLSSg-1
+X-Mimecast-MFC-AGG-ID: h9cWAc0bNnGJqeGt5xLSSg_1745918677
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ce8f82e66so29923535e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:24:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745918677; x=1746523477;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8f8/JTNUvAATS4a0cTgJSetpgv+ZA4Ct8iWSSFOFVKg=;
+        b=JeaBwNcXt0XmHY/sWeQ5yBuBjzteZtYoELWB/4FGOLwaR2FH7dgkVyeF1+eoKDZUF1
+         PscV/cgbrqmv4T1Ev6VnYuD6YQ/8RieFjp8zei3Nm4SITFb0W/kA+zfQ7CwM9FmSDODy
+         R6UBC5rKfBlp03w6I88/Z4uIeh3X+ELRf1cKcJRTaGbhQQuL6Dxokzq7tRHsts8g9+8H
+         T6lC+qAT+qULVEhCLa3+ZSlSVpC7OlJ8Tovm2FhRD3dyi9McRs28rBoMDG7C76mFjwBZ
+         MtFC4rRqZEC+BdqULrm7xbL7Sz65Dn2MD74eo+42/hnT6tBMpBIYz63hrz9lp1feqtSd
+         ZvLw==
+X-Gm-Message-State: AOJu0Yz5H13rEFLVAkL3PMd9RASUpmBgtyio7iLWOTLIItY28uGM0x60
+	lmoKEEDgv0LMIv3FPJKGUBQIhKbhmNO/ATF4rx19ZF315m4pVItZEOci8qc3IvGSLPq/XsP5plD
+	ap2WR9FHY5KmOktCBdqwS6o2XZHKODPSFtiYMaFETSyR37sBDgwijAv9j+bqH9A==
+X-Gm-Gg: ASbGnctTkxm69Xl8DRnn3lIvIlxKJAUSythRgY/uecH3qUVsTtzldc/vruGcOylAa3N
+	xUdVl6k1zMqQzqJnQGQ4Kw1F9SdJ9piEDeoWwf1j4HetvKuBWTKfqlhZFDUwdLTi9f96HtKZwyD
+	leShLRfWLX7pIJgwNOv5B/uGUv7Oe0VtWKLHDGT7Jc/jtwrzpMKX3+65wcG8Celxk9kkM6cSvSD
+	oVH5qV8xiRvCJIz1bvN+nXJOcPRCN4b/z6Xcx4HU6xQ6in2QnhraFqOV6JIrGIvqtR24tRJjrFQ
+	hl4KWl7nK2nJm/njLgiwC/jnhLsXvXlCKYcpra55Hg==
+X-Received: by 2002:a05:6000:430c:b0:3a0:8492:e493 with SMTP id ffacd0b85a97d-3a0890a5862mr2543859f8f.6.1745918676878;
+        Tue, 29 Apr 2025 02:24:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlRGyoMuaoQU22X/g4xtU8aMmRSAwEOjcfpAQ1mIxF6t5wpgtAZW/V+biJWIOEGcMcIVTFzg==
+X-Received: by 2002:a05:6000:430c:b0:3a0:8492:e493 with SMTP id ffacd0b85a97d-3a0890a5862mr2543833f8f.6.1745918676431;
+        Tue, 29 Apr 2025 02:24:36 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.10.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5c68esm13285648f8f.82.2025.04.29.02.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 02:24:27 -0700 (PDT)
+Date: Tue, 29 Apr 2025 11:24:25 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
+Subject: Re: [PATCH v16 4/7] sched: Fix runtime accounting w/ split exec &
+ sched contexts
+Message-ID: <aBCayS_XuQX0EZxk@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250412060258.3844594-1-jstultz@google.com>
+ <20250412060258.3844594-5-jstultz@google.com>
+ <Z_zVULdTgt9J4rqf@jlelli-thinkpadt14gen4.remote.csb>
+ <CANDhNCq1X9dcLCwb9Uod=C-i7giwqWkTso+a6S8n+wXCghq+MQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCq1X9dcLCwb9Uod=C-i7giwqWkTso+a6S8n+wXCghq+MQ@mail.gmail.com>
 
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+On 16/04/25 16:30, John Stultz wrote:
+> On Mon, Apr 14, 2025 at 2:28 AM Juri Lelli <juri.lelli@redhat.com> wrote:
+> > On 11/04/25 23:02, John Stultz wrote:
+> > > +static s64 update_se_times(struct rq *rq, struct sched_entity *se)
+> > >  {
+> > >       u64 now = rq_clock_task(rq);
+> > >       s64 delta_exec;
+> > >
+> > > -     delta_exec = now - curr->exec_start;
+> > > +     delta_exec = now - se->exec_start;
+> > >       if (unlikely(delta_exec <= 0))
+> > >               return delta_exec;
+> > >
+> > > -     curr->exec_start = now;
+> > > -     curr->sum_exec_runtime += delta_exec;
+> > > +     se->exec_start = now;
+> > > +     if (entity_is_task(se)) {
+> > > +             struct task_struct *running = rq->curr;
+> > > +             /*
+> > > +              * If se is a task, we account the time against the running
+> > > +              * task, as w/ proxy-exec they may not be the same.
+> > > +              */
+> > > +             running->se.exec_start = now;
+> > > +             running->se.sum_exec_runtime += delta_exec;
+> > > +     } else {
+> > > +             /* If not task, account the time against se */
+> > > +             se->sum_exec_runtime += delta_exec;
+> > > +     }
+> >
+> > ...
+> >
+> > > @@ -1213,7 +1224,7 @@ s64 update_curr_common(struct rq *rq)
+> > >       struct task_struct *donor = rq->donor;
+> > >       s64 delta_exec;
+> > >
+> > > -     delta_exec = update_curr_se(rq, &donor->se);
+> > > +     delta_exec = update_se_times(rq, &donor->se);
+> > >       if (likely(delta_exec > 0))
+> > >               update_curr_task(donor, delta_exec);
+> >
+> > Considering that we calculate delta_exec in updated_se_times using
+> > exec_start of the sched_entity passed as argument, is it correct to use
+> > donor in the above?
+> 
+> Sorry, I'm not sure I quite understand your concern here.  Why are you
+> thinking using donor might be problematic here?  We're passing the
+> donor->se in to calculate the delta_exec.
+> 
+> I'll grant that "update_curr_common" maybe isn't the best name for the
+> calling function anymore, as we're really only working on the donor
+> here. Is that what your concern stems from?
 
-Add GPR(Generic Pack router) node along with
-APM(Audio Process Manager) and PRM(Proxy resource
-Manager) audio services.
+Ah, I think I was just confused similarly to Peter. A comment explaining
+this point might help (I believe you were going to add that based on
+the discussion with Peter).
 
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
----
- .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 51 +++++++++++++++++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi          |  2 +-
- 2 files changed, 52 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-new file mode 100644
-index 000000000000..b11b9eea64c1
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * qcs6490 device tree source for Audioreach Solution.
-+ * This file will handle the common audio device tree nodes.
-+ *
-+ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <dt-bindings/clock/qcom,lpass-sc7280.h>
-+#include <dt-bindings/soc/qcom,gpr.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
-+
-+&remoteproc_adsp_glink {
-+	/delete-node/ apr;
-+
-+	gpr {
-+		compatible = "qcom,gpr";
-+		qcom,glink-channels = "adsp_apps";
-+		qcom,domain = <GPR_DOMAIN_ID_ADSP>;
-+		qcom,intents = <512 20>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		q6apm: service@1 {
-+			compatible = "qcom,q6apm";
-+			reg = <GPR_APM_MODULE_IID>;
-+			#sound-dai-cells = <0>;
-+
-+			q6apmdai: dais {
-+				compatible = "qcom,q6apm-dais";
-+				iommus = <&apps_smmu 0x1801 0x0>;
-+			};
-+
-+			q6apmbedai: bedais {
-+				compatible = "qcom,q6apm-lpass-dais";
-+				#sound-dai-cells = <1>;
-+			};
-+		};
-+
-+		q6prm: service@2 {
-+			compatible = "qcom,q6prm";
-+			reg = <GPR_PRM_MODULE_IID>;
-+
-+			q6prmcc: clock-controller {
-+				compatible = "qcom,q6prm-lpass-clocks";
-+				#clock-cells = <2>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 8e86d75cc6b4..3453740c0d14 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -3778,7 +3778,7 @@
- 
- 			status = "disabled";
- 
--			glink-edge {
-+			remoteproc_adsp_glink: glink-edge {
- 				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
- 							     IPCC_MPROC_SIGNAL_GLINK_QMP
- 							     IRQ_TYPE_EDGE_RISING>;
--- 
-2.17.1
+Thanks,
+Juri
 
 
