@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-624741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6516BAA06FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:22:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE277AA06FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEA5188D5C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:23:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E6187ACD5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AF9279338;
-	Tue, 29 Apr 2025 09:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB52274FFA;
+	Tue, 29 Apr 2025 09:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KVcgsul6"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XVvJ7bvC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F60870800
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB572AEE1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745918566; cv=none; b=PdBz0CF5S/RS1diuBJIkcLPeHu+Y1HJuTqFh9cuwmY6jTVC8V5NK4dnW+0QSpqfMd6m0wg6i/wfl4Tq0rSlpnsW7A2YJ2W2t1crfSRtltenHHZ4dm27vkkbh8IcVr97RGpECvsSjPCa6lshH2UIW8/dafCxnzH0rvtTqV7Y2RQ8=
+	t=1745918594; cv=none; b=W137AYZySj5S75keIW+gmHGUAFj+w5YfCLZEutXIP02SqJF2exVtmztYpZFLHnRJQdIsyNtWsYkNmQEbxp+xA1I7tSItu9tIRSUyYqHGicvllWoP+mAfgBW4Rx4Fw8pBbpGxR9YkUwJ8nyUdTurGoaqJoIeiSfiSsv6mcGzCOAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745918566; c=relaxed/simple;
-	bh=NLgm3ww3YO6bjJtJrLFxAJyT6HFnEfsaguPcMB2rQd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+WSln8deD8MC9WyVBjXsaYv97Bm0zl3/tOs/cUyv+4s8PPehmFi5/05DrK25+uLiM887pOkgmVPiWT8iNHddcJWzu7MTpBIAfGCEmIpffO5OQUVQDrvUNiEHNmq4VXUkrhVCU+IVXnOQQN6qAKF6Pvd4axrLSRuV9mV5fLd4Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KVcgsul6; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso11145407a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:22:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745918563; x=1746523363; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m5ETyMiENat5qiMjmd1YZvsOVUVueP+Yn8LaPAo84g8=;
-        b=KVcgsul62aBxZC6OQVYyF4mWH+6lzbjdNJq0DU/ItduhtT1fi+VXwOr62ffQQEJVeg
-         8CTRguXUWLUPpq0+W1VF/pm9OsqOr5mYP99k3lEtcg+3o0PdAWP7HruKs5wdDtzhagQ8
-         /TVkm2QO6mPoD+6bn0HfP9RaJgKMXZGeTeV3k7Ni+7RY2EFJpZy/hnl57PdyYYyaDmHR
-         dgHb/LaL9yrLfLn7J5dMvjfZQ612m8G6rgDq9i5Ahe7ZN0i07Kgc4tJakRJslyiTX2eT
-         juBr4+CWLdVzMPH6ML56adUIRwD2uYPcya5HKM1elMWh1G+68DG21Wt8xhHwd8NOjBqo
-         l34g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745918563; x=1746523363;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5ETyMiENat5qiMjmd1YZvsOVUVueP+Yn8LaPAo84g8=;
-        b=ur8k5VMhTwnciv3IWlpZrXtW9FXa5YWM3R/OStwbU9IJBhrD0ttdts9VQlCq9zSpF2
-         nhk08CRKDjXO8nRMkREj/NnWFgqpiW7ANF1tYC9Wxx9OU3dKiGf+Ca9MpCjzPLg5PAyO
-         IvauutrDHmYTlO+L++N2LpXSr4E51fiBR9Biag5thKcMnwg+ODZPQ0EgeKolfDYq+j4K
-         OCNwR9X3R1JoZY5e4l6t2Do0eBXIbB9q/BgJavvFHUUN1gPW8hwfnEHss3oapuX3mJ7u
-         gX0jnhbKkrOBJ+azMu5g905jKfCDS225Shl1JYoz0y1rN3uV3F2i8uCtWztlLmm/O0Gx
-         xOVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyv3yhzfC3Xn3Sh5nOan3h6qn+zE9nI7Ah+LD1aOsY6f679TFP/hvA/cSZ+YHltBz1Pt3sqVWMk0aV9PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywki/PwBLtj2DDxmtMI65XaoF2+Ig8h10udAEe1nPBqilR7BGhq
-	y5aWUOy7lTy4uW7L6P5QKhdnpdSvP2yfzoJRSfKUBwuIT/7Zvd/uk/JGkbTajmILBtG6Ti9TALH
-	K
-X-Gm-Gg: ASbGnctPs14X3VRJWBxvFVOuBNWzYUPJDy+YxakmEj5kARM0hLGnJDW595QBM5VVnpz
-	U2Bhv/CwS2/mT/JBu+GNTkZrqjPY+Dwzdd1LoJk1pazIaLk2f5vxwV3dMyPpsqHWRAnUwsjj5rh
-	hu//f1Jrje4Bzst8FeoffQYVtFHzI5gYHMTbEmejCA2+H0LTJTbE7NWekQTKDbdrqkfMS7bEkjf
-	uMfWIZmsvn0UKVA8AkZsBEhu1436Z66NjcS3eVXJvMJI1rBaHV37vi6/X0o0NLyn+nrHEI7M6eF
-	bXHLv0zUiXJUml9ogm/C7KzGgWV/zK26D9IiAmUh2LQAb78wAQ==
-X-Google-Smtp-Source: AGHT+IGT47/KY+DVWifRNKDHeFCplx4qH6Vau0eK+jyg2W7wdu+e7jzwFboA4F0/aGKRwgS/kS3D5w==
-X-Received: by 2002:a05:6402:2b92:b0:5f6:44de:d97f with SMTP id 4fb4d7f45d1cf-5f83b24deeemr2182482a12.25.1745918562886;
-        Tue, 29 Apr 2025 02:22:42 -0700 (PDT)
-Received: from [192.168.0.14] ([82.76.212.167])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f66b7sm7340433a12.46.2025.04.29.02.22.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 02:22:42 -0700 (PDT)
-Message-ID: <10b40148-b949-442d-9d43-0db09517269a@linaro.org>
-Date: Tue, 29 Apr 2025 10:22:40 +0100
+	s=arc-20240116; t=1745918594; c=relaxed/simple;
+	bh=cf0GBv+iG/68uj4JtZfVgycYKG2hp8O3EeO6EJDN6+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpBe0k9P29LihBNc86w6Uz0P4g26FJ04Leh2CtCq58LHTZQddyLKWCWLbo74iEsUElLQeXN01d5hYi4nmJXvBiIC5S2t9AtTuXD6bblDbRlm0+rLhoOcjviU7DVpofJ54SpRk1rqCZHZO6swajWn/9Ta7DlKAQDym1KnYLIkmzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XVvJ7bvC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B74B840E0219;
+	Tue, 29 Apr 2025 09:23:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id nmFeE_18JCFV; Tue, 29 Apr 2025 09:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1745918585; bh=C9zANP39Kv0hkphILl1sT41JxxyiiWYJgiHSVr6v65c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XVvJ7bvCh/KXublAwnwCTMdKUoJfPlqKfkeHbWk1EDw3oCF77MwzIRCESnAkonhL3
+	 mN86KUpFLXNj/Qfn186qE6TQN1uiyKwm5cZ2m/8jDpHOFdPFQ8TCx2mXNGq4aPwrzT
+	 KtKKCH8gyzkK2z2d0qqalDRX4irVvAJmGjFrAHvPLhlTRorH2WODrPeaZhhd9UOpgO
+	 /Qxgj9R5KpMa+g4HoCHpW7sUh4IlNh0+G9INCC+GLIIVwPRSIdUzBHCFKVC2YNgO4L
+	 DaT9Jk/2GdzkketssDxZZF4tZWxIZSEIdIPL1T+1awvnEHn83TdCkFbXil7S6ktoq+
+	 O4cgM2JlNefhN3X9scu1KMgr/J5d4/2iwo8QH56iPsPp8oaXhN2WfvWeveAlWkIPcS
+	 YUnW3xgUaVgxnXFVyXhXXXO0eUpqAd0jMJRS6hPOdjuC7W/ArS5e1x9EuLxLWTYh0E
+	 8B0JuDF8O/WiYKPD13BYEobiZC8qyoJYL8VSC/pYGR5OnQ6tIaqYscKzPjJd2TkN3+
+	 lWc+JszlEQtURPm3mdiLbK2G0/J4KpVqnF1WXkfHkrx+Qrl+jEd++gI7v6ryrij7Ro
+	 AIAJRrMzh1j3MEa/O6rehFPWhIp1hXhyuGzcZMI7BI2nd5D9n/eY07oIvRB3JP0Ug0
+	 fjdBjPVLwnYjU2cUKN96S0lU=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 41B6140E01DA;
+	Tue, 29 Apr 2025 09:22:57 +0000 (UTC)
+Date: Tue, 29 Apr 2025 11:22:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Annie Li <jiayanli@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode/amd: fix the return value when microcode
+ has no update
+Message-ID: <20250429092251.GEaBCaa2Y1tVOnl77A@fat_crate.local>
+References: <20250429084317.1619909-1-jiayanli@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] mtd: spi-nor: core: avoid odd length/address
- writes in 8D-8D-8D mode
-To: Luke Wang <ziniu.wang_1@nxp.com>,
- "pratyush@kernel.org" <pratyush@kernel.org>
-Cc: "broonie@kernel.org" <broonie@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
- "michael@walle.cc" <michael@walle.cc>,
- "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
- "p.yadav@ti.com" <p.yadav@ti.com>, "richard@nod.at" <richard@nod.at>,
- "vigneshr@ti.com" <vigneshr@ti.com>, Bough Chen <haibo.chen@nxp.com>,
- Han Xu <han.xu@nxp.com>
-References: <DU2PR04MB85678048FE8B475B1E323E0AED802@DU2PR04MB8567.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <DU2PR04MB85678048FE8B475B1E323E0AED802@DU2PR04MB8567.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250429084317.1619909-1-jiayanli@google.com>
 
+On Tue, Apr 29, 2025 at 08:43:16AM +0000, Annie Li wrote:
+> In commit 6f059e634dcd("x86/microcode: Clarify the late load logic"), the
+> return value is UCODE_OK if the load is up-to-date in amd platform, which
+> leads to load_late_locked() returning -EBADFD.
+> 
+> This is different from the intel platform, which will return UCODE_NFOUND
+> and is more reasonable.
+> 
+> Fix the return to UCODE_NFOUND to avoid -EBADFD error.
 
+... and return -ENOENT instead?
 
-On 4/29/25 10:03 AM, Luke Wang wrote:
-> Hi Pratyush,
-> 
->  
-> 
-> I'm following up on this patch series [1] Avoid odd length/address read/
-> writes in 8D-8D-8D mode. While some of the series has been merged, the
-> patch 4-6 remains unmerged.
-> 
->  
-> 
-> In fact, we also encountered similar read/write issue of odd address/
-> length with NXP FSPI controller (spi-nxp-fspi.c). Currently, we handled
-> the odd address/length in the controller driver, but I think this should
-> be a common issue in the octal dtr mode. Was there a technical reason
-> for not merging the core layer solution?
+Is that better?
 
-I guess I stumbled on those small comments and did not consider the
-greater benefit of taking the patches. No one cared and we forgot about
-it. Please address the comments and resubmit.
-> 
->  
-> 
-> [1] Original submission:  https://lore.kernel.org/
-> all/20210531181757.19458-1-p.yadav@ti.com/ <https://lore.kernel.org/
-> all/20210531181757.19458-1-p.yadav@ti.com/>
-> 
->  
-> 
-> Regards,
-> 
-> Luke Wang
-> 
->  
-> 
+Or would it be even better for the switch-case to handle UCODE_OK too?
 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
