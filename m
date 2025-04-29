@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-625898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B720AA3B9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:41:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659C4AA3BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6A91B67B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:41:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8381F4C090F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A5427602E;
-	Tue, 29 Apr 2025 22:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240712797B3;
+	Tue, 29 Apr 2025 22:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRnKOfWZ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="e4efcvoR"
+Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9518B25F7B2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5172777EC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745966457; cv=none; b=M6eUqItwx9mMUiws7VeH3XlxTyW0UbPEbjoi/bcPPPitJItIbKlxDG+S/FUcprrsO0jZ1dp0TxR8uATEEW0q//4t9e+GyXRbS2v5YwQctrRDn0nHxNSyF10YPnlXy4Z+8z7GVbs2oWuVsSs3v6V033s+KadNxlb2WPO+Oz/Eg9Q=
+	t=1745966474; cv=none; b=f4Km0mv5a6MFcqX/M11SfMD4Dr895EXtXjutBH7BejwWMHw0VqIAfwbF+qqgfyjCZcN/iB72SJEEptqe8O1sGNCYcRg+xFyG91VCCcH9WucP9qNXZn9Cg92DmxHuvT5admEOk9EE04H+xBndTaB3IQmn6iyY3Q8e72hbe9+Ak78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745966457; c=relaxed/simple;
-	bh=rzblUjmuva03Jqa+IV3WtGt8yIVowSe+ChkqLl4IjY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/TmP6fIBiOw+kEMTzXAnlAlP3oT5gjAR322uJrHD6nCJG+Cqa2eCvK4eVN/DLImFfk6jH3LL+YqSFUOfMYYaXgMiSRQFmjvNy8HNzmUOJqiNXeBIQ+icz1tH1W5bjfV7v0NbbadWsEdi/BodtpIjM+jF3RclgDvRXHZ6Ma36fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRnKOfWZ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22423adf751so66754365ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:40:55 -0700 (PDT)
+	s=arc-20240116; t=1745966474; c=relaxed/simple;
+	bh=9WWclwrCg2TvbbTylHUPNf0AHpKWev2f2XnfjrSo0dg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dYHBvC4/QaUQiIRY41iBQLMon1ZYvGk309atNE3BBAVO9XDY4Apr7M1QD96qZNLazwdAx97ISVeDeSh2R1pTALNXKQmXnYW8FoJaaoleeGxFZ7q7KOn9tFjPsibI6jzXQp4BlfbB6VWn2MdTSZsRvtXq/p8bTdjgdkwTfGcvEsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=e4efcvoR; arc=none smtp.client-ip=209.85.166.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-3d9189e9a06so22636845ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:41:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745966455; x=1746571255; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yyTeZsz6IZ53slc/uXF/wiJNoEHlyhXOmtXLOMGmbDM=;
-        b=LRnKOfWZ9JfyoY/Hcwd2XJ3qXQ+V4XT1GVr/N7PefwCxyMh/i6tnZBu/c2vsKDJ4Vz
-         PD3NSMsVbl7H2LocAsCWHXlrZm8yVDSi/1o8uR23pwQcU4/Et/pxcKD9GfplYLsAf6+k
-         Xu5CsViBJTevxxejUcyDmXf6wq8bZKOipDAUVXV0tgB3RYCfxe+Z90vFerrpx+LLgipu
-         yIajHxa/jOVlDvtTSsiFtnh6mAxfo4if0WdLnvD5AJXW1qvJAow36QzuJTq5oekQwiI6
-         P48T5cFfjg7/obcquJK0rODxv40fIy4uMNe8c0/z45rUvtyUV3tpUJHK8FynEf/enGOW
-         7TOQ==
+        d=purestorage.com; s=google2022; t=1745966470; x=1746571270; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zfQT2w7zXD5LlB+aHplKgN57RpOC1FTB5zWyhqieJWc=;
+        b=e4efcvoR2C8bHWQtUEfzSUSTjBRt/bvr01PClQ13GPLnOvn9YIK+GF4Yiz7ReyOA0Q
+         qCmXJDoeCyZwtF2ubcZRYqJg8m+E/pVBUPmzJPlLidwJeDHbOY8y2IdoUm1BOmLmRlrU
+         BrCLoTUGpQcqiFHvN9hPcQQ3F4W+a6wKSBH6GBalhE6SwdtO/aLTrLDZF6Z564JhYp1A
+         2wAB/IPjKC3Iv63nkIV05vijAgtm/FTRYNuYDcRUamhRmRqeWZFd7a8Q8H2qzxOwqaGR
+         WdtKetcFO18I1yk/PJImRLi+VieV1Jx/yClhVWhuJx9TSnmcYcjN3+bS4VPrTBjtvV7D
+         Ejrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745966455; x=1746571255;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1745966470; x=1746571270;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yyTeZsz6IZ53slc/uXF/wiJNoEHlyhXOmtXLOMGmbDM=;
-        b=b04T3HmV6en21Xvnqi1tQ5t0amTxGgZehI9LjA3smBH/2nSmqXQl2j2QMuM7acpWoA
-         PTLmLSWmUMRP9rqCAywSLAHYP62FiiHwxI8TJlMevPFyFcGo0q0gDqnbvh7xMuoqPhq+
-         quNpjxIsjOPFPTRYnbFgcUP3u+bKkAVmFYRjGRxi7Vur8n6O6dulj5CQ5z5CIUO+E3Iv
-         DMab2yQ0uwYN6gv3Bn0sL+Iy2SJmqHswrgYHzIfOJdSOmmxdpS6TWu+LzJn0vTZBHPIe
-         natLZl1z/4MFX34kwwJe4AJe3z2n23rgUEWYrHqmZ+9F0Fh4OEVnLmRwGUCtjuLzRuzJ
-         ZZ9g==
-X-Gm-Message-State: AOJu0YyIMopgFk5YubFVga0cfPmbZk8+La0BHkf5WF/H5B06troTiRSt
-	4GKxA84w5bpk0fVKDCv8oU+MkhQr707qaoC37mu8HzijHNa6aSvN
-X-Gm-Gg: ASbGncu4YlUvizD4l6gpGkwfvCJDfZdJFs/Cu01XcQLy6zdTEU9FjoW1YUi9YIthxWX
-	K4rpVuiLp3ehK/RWW+E3fV61PpVjIp2aP6hi46h8pokMgmcBNhxOpn0b5ORHN8iOIAT2Fk1BvLT
-	8xVHTNDzHQZBiZDiYSn/8MgEdkd8sTFlOJarYya23+EceVtW6wqqjcpE8c/pxRE1I19CPyA7gQQ
-	76EHv8G36pQPFrhRnVhu1F28D11VGdWMThY5OzMf8d8wZfENq1OSraDSpEhYUvjcvz/L6l4CPUp
-	x8Jn54wHpuev+WiTKQn2tO5/D39Z2sAjzpFruaPRXrzcuc7IuhzaygEiIOFP1H9WOAhoIGvuxEX
-	EcuIYYzTVuFJKXYOfaeS/WJWovVmzrZ1DWu1fQ1eV+zi50LsnpQwny8cl
-X-Google-Smtp-Source: AGHT+IG/LcYTawggDwNx+7aZsKXZ7xv08EL1BPd6O9A7QWNZPdPJKyekrLT/6B7mGyw5UqbPrBFvuQ==
-X-Received: by 2002:a17:902:e741:b0:224:2201:84da with SMTP id d9443c01a7336-22df34b38bcmr12875565ad.6.1745966454671;
-        Tue, 29 Apr 2025 15:40:54 -0700 (PDT)
-Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db51025basm108642445ad.187.2025.04.29.15.40.51
+        bh=zfQT2w7zXD5LlB+aHplKgN57RpOC1FTB5zWyhqieJWc=;
+        b=nnGdkP7y5qZAt4S+Y9cmcI7Y+XpDdtB+4DT+FJ6laLCceFLoCxBOKatCS48p7xAph3
+         jo9o2kr845/LY3toXS54CaRHlfdoMtlDggNSZR++jep3m9bbF2UlwHeOzFjNl3xmK5nU
+         Arz4QivY2acisfGPog0pxixQGaivehK3cF2l070OC8YiHIqH9ug1rRsWCGc/WngsMsTX
+         oYza6K40t1vEQOPGyKxbnf/r7Pe/wIhWRxSdWmmQ/v+e7mc6PDkfO5pMOA7qiEWC1IGn
+         Zt/6tz0IyIOXycabnpQ0Bg9TwUFlWg3IHlXBx2ljq6SvQYZVK5aRIhjilFukwkcQQvuy
+         L7nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQYGbJJfIoPBsJbbZs6d2QdE2372ZiObr9gYnhoaWFUHY/QBOthoccbX3x9EA9OQBHbBr4OXFCaJnG5G0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT86a8CxNiT++vFzCFx2Xk+gOhLIJwGiaCkvIi1BqzLfmGVBlS
+	F1cQO0NQe26p25PHiYC3EZtada8nHf7VODpvBmu4DJR7c5ncm5z91SEOjof4MAV6ayCuP9HINrT
+	xBchJf5KmZVkrUNKs+G0v/YAJL3KMpRPq
+X-Gm-Gg: ASbGncveC7zicmA1x6RGMGd5oYjIRHYFPKFOCjCMH4UKFyDg35cfe+0RqvmK+EmNALk
+	qwgl9TkG9KVou247UtQUN6OxLdVfY+7l0HJoLRV1etsLnlw8rXbyGQvZtdzbmSyBxTU8r7Wn7QP
+	sw/U7NzPIzaNt/YqX/zCaJ6y5mEAcdVKa4C1Q2+dWfBu+7WkXAWv0ECgvWk/ChIFaOgLHn3+a2h
+	GxzRDJj134JBup/3SVF9/ohP/zAhgNmBdC+Z368TOB/R5Qg4gscdOfvcGeaxxBvcDSRsNJICZQw
+	fEdQcvAE8axM6Yo1U8/1T9zYf7gsAvCXuFUn8RVZr7eqPw==
+X-Google-Smtp-Source: AGHT+IHLrjPX8uIJEDj5oQlazw0ZvIAp6m9XfLG15y+LyDl9K6XmhE298LlPMgUlZIHAr8kwO+8SDz8hGUv0
+X-Received: by 2002:a05:6602:6a47:b0:85b:476e:ede2 with SMTP id ca18e2360f4ac-8649805ea02mr5457739f.13.1745966470122;
+        Tue, 29 Apr 2025 15:41:10 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id ca18e2360f4ac-8648bf34e49sm19972639f.7.2025.04.29.15.41.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 15:40:54 -0700 (PDT)
-From: Alistair Francis <alistair23@gmail.com>
-X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
-To: hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com,
-	linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	hare@suse.de,
-	alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH] nvme: select tls config when tcp tls is enabled
-Date: Wed, 30 Apr 2025 08:40:25 +1000
-Message-ID: <20250429224025.3077488-1-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.49.0
+        Tue, 29 Apr 2025 15:41:10 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id EC0BD3400C9;
+	Tue, 29 Apr 2025 16:41:08 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id DE629E40ECE; Tue, 29 Apr 2025 16:41:08 -0600 (MDT)
+From: Uday Shankar <ushankar@purestorage.com>
+Subject: [PATCH v2 0/3] selftests: ublk: more misc fixes
+Date: Tue, 29 Apr 2025 16:41:02 -0600
+Message-Id: <20250429-ublk_selftests-v2-0-e970b6d9e4f4@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH5VEWgC/3WMQQ6DIBAAv2L2XBoEidpT/9GYBnFVUiuGVdLG8
+ Pei9x5nkpkdCL1Fglu2g8dgybo5gbhkYEY9D8hslxgEF4oXomJbO72ehFO/Iq3E6kqKgndSS6E
+ gRYvH3n7O4aNJPFpanf+e/5Af9u8q5IwzVdaqL1vOTafvy+bxyPWAV+Pe0MQYf5wyVKCyAAAA
+X-Change-ID: 20250428-ublk_selftests-983240d3a325
+To: Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+X-Mailer: b4 0.14.2
 
-Ensure that TLS support is enabled in the kernel when
-NVME_TCP_TLSS is enabled. This allows TLS secure channels to be
-used out of the box.
+Fix some more minor issues in ublk selftests.
 
-Fixes: be8e82caa68 ("nvme-tcp: enable TLS handshake upcall")
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+The first patch is from
+https://lore.kernel.org/linux-block/20250423-ublk_selftests-v1-0-7d060e260e76@purestorage.com/
+with a modification requested by Jens. The others are new.
+
+Signed-off-by: Uday Shankar <ushankar@purestorage.com>
 ---
- drivers/nvme/host/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- Use a test-specific WERROR flag instead of reusing CONFIG_WERROR from
+  the kernel build for deciding whether or not to use -Werror for the
+  kublk build. The default behavior is to use -Werror (Ming Lei)
+- Link to v1: https://lore.kernel.org/r/20250428-ublk_selftests-v1-0-5795f7b00cda@purestorage.com
 
-diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
-index d47dfa80fb95..4d64b6935bb9 100644
---- a/drivers/nvme/host/Kconfig
-+++ b/drivers/nvme/host/Kconfig
-@@ -102,6 +102,7 @@ config NVME_TCP_TLS
- 	depends on NVME_TCP
- 	select NET_HANDSHAKE
- 	select KEYS
-+	select TLS
- 	help
- 	  Enables TLS encryption for NVMe TCP using the netlink handshake API.
- 
+---
+Uday Shankar (3):
+      selftests: ublk: kublk: build with -Werror iff WERROR!=0
+      selftests: ublk: make test_generic_06 silent on success
+      selftests: ublk: kublk: fix include path
+
+ tools/testing/selftests/ublk/Makefile           | 6 +++++-
+ tools/testing/selftests/ublk/kublk.h            | 1 -
+ tools/testing/selftests/ublk/test_generic_06.sh | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+---
+base-commit: 53ec1abce79c986dc59e59d0c60d00088bcdf32a
+change-id: 20250428-ublk_selftests-983240d3a325
+
+Best regards,
 -- 
-2.49.0
+Uday Shankar <ushankar@purestorage.com>
 
 
