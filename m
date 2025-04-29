@@ -1,109 +1,189 @@
-Return-Path: <linux-kernel+bounces-624688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74F6AA0667
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:58:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0644AA066C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BF057AE69E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F34F1B63DAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DE29E070;
-	Tue, 29 Apr 2025 08:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7XTGz+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E42929E04A;
-	Tue, 29 Apr 2025 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8517F29DB83;
+	Tue, 29 Apr 2025 08:59:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA3429DB9B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745917064; cv=none; b=bG47WioqxUn7+Ou+NNt7+v9Ya+uKBPL2ZROKayXDwM4t9LBIV7O4yXvR0f0sYxt6grnSmePfSb8kKkfjN48ZMobDL/0Ogmm9aLOIpW4khbdMEKdu3U8LwQwSCfz2N6ALtbACBq3MwCXV1wRlai8JBcTVK/WibuCoDgeYPn+txas=
+	t=1745917169; cv=none; b=H1Urzvl9TryvEijFOZxAr8wKR3IuMOyxeP1F+HDdvE6u1KLdZG3f76pxPUzF5JbONxbpM0e+8AvdAnHieL22+39oMtSPpNK4X/beCSJdPKjMpU/T0vQwMH6MHbQ1aZdT5yvrdBDCmzQSPKs3LZr4Mh1YLdSlby4xPbc5Ix9oE5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745917064; c=relaxed/simple;
-	bh=axarDXzssA2Bd+rC2EB5nm1vjnnM3xMlH6D/28yh/XI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAo288+2NGuSwqZtt0UJeXI+3tqDBa8h/+PLHlwJGzyI6fxymAlTii1tyoiV1M5WTJdk2386d0Pm1VgC/nIpbVsvfMAat+KnJwvk6CndENCzOe0F0gozOHyAXsCgZDDTNxVJOulcgMZm2C3teELTlcskhpzaG1Ki0DQsR2Yqj24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7XTGz+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84362C4CEEA;
-	Tue, 29 Apr 2025 08:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745917062;
-	bh=axarDXzssA2Bd+rC2EB5nm1vjnnM3xMlH6D/28yh/XI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L7XTGz+oWjLkIdTAZOrar6k05AHFuwkZnOU0BeVr0Wo4fhWmTmWtgkzRWDfMpcxsG
-	 cGvT/CY2G8VQV1321ZXUfBdTHrma/0/T1aOklwgARzcUyzskEpF6HK20DeSBdy+Ja9
-	 dtXf5NH9uUbDUSPeOe8R+oEta2w15gSRJBG4C5x46l+CVwCjE4tA9i99nHyZua3zTB
-	 nIsh+3Ul8Pm3chDELttp0lp0CB9eB1PrvxFVY+wvKGBN/KpE3svCA/AYaX0lyxfryZ
-	 X9DLO0kgR5OQUOwBa8Vo44O9mAa2dDHrCE1Jl5iO1V6BtABz/7kgZTMivWPofcnvdB
-	 dKx9KarmAaakg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u9gme-000000000ub-1OUg;
-	Tue, 29 Apr 2025 10:57:44 +0200
-Date: Tue, 29 Apr 2025 10:57:44 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Xilin Wu <wuxilin123@gmail.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>
-Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
- compatible override
-Message-ID: <aBCUiIrg3oehMVjx@hovoldconsulting.com>
-References: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
+	s=arc-20240116; t=1745917169; c=relaxed/simple;
+	bh=+GhfafEzYP5vPOgXCfvc8wvhKT0+V97ZCyBqu2nN76k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AuQUOgfhO+7n9vIw1DJoiuseAfWBQcEaPflhtoE3c2Oj3j3NBoimvCSRZ6nWn8QFqDd3+cchuKBj/nVE/NoszyTfYA/Uym6TRd/4av86CIxFGXMWiiNT0w2UZAOCJW7doTT7JEwmaR7Ql30mAOOIC8Aus9zo5cn9zayemal3FE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAC0A1515;
+	Tue, 29 Apr 2025 01:59:19 -0700 (PDT)
+Received: from [10.163.78.253] (unknown [10.163.78.253])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78FBB3F673;
+	Tue, 29 Apr 2025 01:59:16 -0700 (PDT)
+Message-ID: <33e8d9fe-d30a-4cbb-b141-133b8989019e@arm.com>
+Date: Tue, 29 Apr 2025 14:29:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] mm: Optimize mprotect() by batch-skipping PTEs
+To: Anshuman Khandual <anshuman.khandual@arm.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, david@redhat.com, willy@infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ vbabka@suse.cz, jannh@google.com, peterx@redhat.com, joey.gouly@arm.com,
+ ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
+ quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
+ yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
+ namit@vmware.com, hughd@google.com, yang@os.amperecomputing.com,
+ ziy@nvidia.com
+References: <20250429052336.18912-1-dev.jain@arm.com>
+ <20250429052336.18912-3-dev.jain@arm.com>
+ <ebf73f29-dab4-4551-b1a0-951cae76b5ce@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <ebf73f29-dab4-4551-b1a0-951cae76b5ce@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 29, 2025 at 10:42:28AM +0300, Abel Vesa wrote:
-> It all started with the support for CRD back when we had different
-> compatibles for eDP and DP. Meanwhile, that has been sorted out and it
-> is now figured out at runtime while using only the DP compatible.
-> 
-> It's almost funny how this got copied over from CRD and spread to all
-> X Elite platforms.
-> 
-> TBH, the best reason to drop it ASAP is to make sure this doesn't spread
-> beyond X Elite to newer platforms.
-> 
-> Functionally nothing changes.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> Abel Vesa (7):
->       arm64: dts: qcom: x1e-crd: Drop useless DP3 compatible override
->       arm64: dts: acom: x1e80100-qcp: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-t14s: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-s15: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-hp-x14: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-romulus: Drop useless DP3 compatible override
 
-Since this is essentially a clean up perhaps you should have squashed
-these into one patch.
 
-Either way:
+On 29/04/25 12:44 pm, Anshuman Khandual wrote:
+> On 4/29/25 10:53, Dev Jain wrote:
+>> In case of prot_numa, there are various cases in which we can skip to the
+>> next iteration. Since the skip condition is based on the folio and not
+>> the PTEs, we can skip a PTE batch.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   mm/mprotect.c | 27 ++++++++++++++++++++-------
+>>   1 file changed, 20 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/mm/mprotect.c b/mm/mprotect.c
+>> index 70f59aa8c2a8..ec5d17af7650 100644
+>> --- a/mm/mprotect.c
+>> +++ b/mm/mprotect.c
+>> @@ -91,6 +91,9 @@ static bool prot_numa_skip(struct vm_area_struct *vma, struct folio *folio,
+>>   	bool toptier;
+>>   	int nid;
+>>   
+>> +	if (folio_is_zone_device(folio) || folio_test_ksm(folio))
+>> +		return true;
+>> +
+> 
+> Moving these here from prot_numa_avoid_fault() could have been done
+> earlier, while adding prot_numa_skip() itself in the previous patch
+> (in case this helper is determined to be really required).
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+True. I'll do that.
+
+> 
+>>   	/* Also skip shared copy-on-write pages */
+>>   	if (is_cow_mapping(vma->vm_flags) &&
+>>   	    (folio_maybe_dma_pinned(folio) ||
+>> @@ -126,8 +129,10 @@ static bool prot_numa_skip(struct vm_area_struct *vma, struct folio *folio,
+>>   }
+>>   
+>>   static bool prot_numa_avoid_fault(struct vm_area_struct *vma,
+>> -		unsigned long addr, pte_t oldpte, int target_node)
+>> +		unsigned long addr, pte_t *pte, pte_t oldpte, int target_node,
+>> +		int max_nr, int *nr)
+>>   {
+>> +	const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+> 
+> Flags are all correct.
+> 
+>>   	struct folio *folio;
+>>   	int ret;
+>>   
+>> @@ -136,12 +141,16 @@ static bool prot_numa_avoid_fault(struct vm_area_struct *vma,
+>>   		return true;
+>>   
+>>   	folio = vm_normal_folio(vma, addr, oldpte);
+>> -	if (!folio || folio_is_zone_device(folio) ||
+>> -	    folio_test_ksm(folio))
+>> +	if (!folio)
+>>   		return true;
+>> +
+>>   	ret = prot_numa_skip(vma, folio, target_node);
+>> -	if (ret)
+>> +	if (ret) {
+>> +		if (folio_test_large(folio) && max_nr != 1)
+> 
+> Conditional checks are all correct.
+> 
+>> +			*nr = folio_pte_batch(folio, addr, pte, oldpte,
+>> +					      max_nr, flags, NULL, NULL, NULL);
+>>   		return ret;
+>> +	}
+>>   	if (folio_use_access_time(folio))
+>>   		folio_xchg_access_time(folio,
+>>   			jiffies_to_msecs(jiffies));
+>> @@ -159,6 +168,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   	bool prot_numa = cp_flags & MM_CP_PROT_NUMA;
+>>   	bool uffd_wp = cp_flags & MM_CP_UFFD_WP;
+>>   	bool uffd_wp_resolve = cp_flags & MM_CP_UFFD_WP_RESOLVE;
+>> +	int nr;
+>>   
+>>   	tlb_change_page_size(tlb, PAGE_SIZE);
+>>   	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+>> @@ -173,8 +183,10 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   	flush_tlb_batched_pending(vma->vm_mm);
+>>   	arch_enter_lazy_mmu_mode();
+>>   	do {
+>> +		nr = 1;
+> 
+> 'nr' resets each iteration.
+> 
+>>   		oldpte = ptep_get(pte);
+>>   		if (pte_present(oldpte)) {
+>> +			int max_nr = (end - addr) >> PAGE_SHIFT;
+> 
+> Small nit - 'max_nr' declaration could be moved earlier along with 'nr'.
+
+Sure.
+
+> 
+>>   			pte_t ptent;
+>>   
+>>   			/*
+>> @@ -182,8 +194,9 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   			 * pages. See similar comment in change_huge_pmd.
+>>   			 */
+>>   			if (prot_numa &&
+>> -			    prot_numa_avoid_fault(vma, addr,
+>> -						  oldpte, target_node))
+>> +			    prot_numa_avoid_fault(vma, addr, pte,
+>> +						  oldpte, target_node,
+>> +							  max_nr, &nr))
+>>   					continue;
+>>   
+>>   			oldpte = ptep_modify_prot_start(vma, addr, pte);
+>> @@ -300,7 +313,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   				pages++;
+>>   			}
+>>   		}
+>> -	} while (pte++, addr += PAGE_SIZE, addr != end);
+>> +	} while (pte += nr, addr += nr * PAGE_SIZE, addr != end);
+>>   	arch_leave_lazy_mmu_mode();
+>>   	pte_unmap_unlock(pte - 1, ptl);
+>>   
+> 
+> Otherwise LGTM
+
 
