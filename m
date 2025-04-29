@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-625862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A69AA3B10
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C55FAA3B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CB64C840B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E605F1BC4FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919F2749CA;
-	Tue, 29 Apr 2025 22:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F41F2741C4;
+	Tue, 29 Apr 2025 22:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qn29krBL"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXYK4D9W"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEC02741A3
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513F422170A;
+	Tue, 29 Apr 2025 22:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745964665; cv=none; b=sgNuTMPHFlf5bebciBIbafBlYQSAiiq5E6Z/yY5UO/yd85YQb/r6+o3zYszzvhWNpxmUsgHI7WkyevtyTFNBFBYYpPzi3MceCvz18xi16IRpnC0LyusB9Nhnw/OvfnrfYnGY73Ln7ifIyLAg6JRsRwopMMHazj6LRUyjkFL9WdQ=
+	t=1745964895; cv=none; b=n0s8RlVAS2F5+XZc2w9IcGLHA9/uE/myCjv689O7Y77zwC/RnyXTz49JN4zyLbofbtSrT+Q+bEWoOpLpCR0sJnTTCNHJsKIbOASHbVBZO4wNthckM/UTH7h9lWT6sJLLCO5t7c3IxIRxUN2ladt5v+IfmbTVgFR8BiBeKRwfUZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745964665; c=relaxed/simple;
-	bh=EHxrW5+M59gFfmAJH6ASgy3nRIK4N00qyyGpOKbGERc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LSZEMy3/jSvi8bP+KhoPfYY71Kq8ZX/oMVY2FAy3TTXqU2bUFnV+lFfoDwiOlwoiZqf2qfAprbtS2GSds4asbnBN8IrGCeV2BLYtYpHfNr0HJGxTma50+yhiJSIuQm3cnRw5fXTNhA7Wki2Mgp9E918eLZjmM69pwXsinjkUkHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qn29krBL; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UYPWLYPYgvmF8T81o4dpet2IMGEB9HwrOlbhEd4fYeU=; b=Qn29krBLvTiM9LRdXoRXXbTwyY
-	2KrqI2T5VZQ8vgWbP12BLJbmMd/HuggEKBHZlj1yMz0RVRQkJoS3UrGdBw9fiVA7+/bPOXA4R7AqE
-	F9YwC0oYkbiwyQiBZS6jRQuFjqH34pFaRJnlStB7XYE2pmt1oj0TzEdxwjzfB8moRVCnfv3QziMus
-	ENZH2EaNv+G7ALTIe2+wpbQVinCpzYKK/lW87Vm1+JAhUbc+VIe4Z2N9mjXQ7FqCYxTKHMUbgr0fY
-	LXP0Swo352LSOcj7JF4B4H8IbXMLfgL32g8TYxhI9g3L7bKaUTfuY+VX0JTRGT8R+UZaAPiGtbTaq
-	7Isx8TTg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u9tAA-0000000DXHC-07GT;
-	Tue, 29 Apr 2025 22:10:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8AAEF30057C; Wed, 30 Apr 2025 00:10:49 +0200 (CEST)
-Date: Wed, 30 Apr 2025 00:10:49 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Carlos Bilbao <bilbao@vt.edu>
-Cc: Andrew Morton <akpm@linux-foundation.org>, carlos.bilbao@kernel.org,
-	tglx@linutronix.de, seanjc@google.com, jan.glauber@gmail.com,
-	pmladek@suse.com, jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	takakura@valinux.co.jp, john.ogness@linutronix.de, x86@kernel.org
-Subject: Re: [PATCH v3 0/2] Reduce CPU consumption after panic
-Message-ID: <20250429221049.GG4439@noisy.programming.kicks-ass.net>
-References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
- <20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
- <20250429210650.GD4439@noisy.programming.kicks-ass.net>
- <433c6561-353e-4752-b9cf-155e49e62e63@vt.edu>
+	s=arc-20240116; t=1745964895; c=relaxed/simple;
+	bh=RIcWBY8Fo3GEKK8o+yGRNgc/nVuWgmxFuKTA1IIx/NE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xbjx8eYe9eJknE2Kc992YXhGPQfn/I2i+w6mAejs3EAVjmUtA1jqwGd5NBW9nvlQ/bcFX06rWREeapGOdh0562nBaJu/YIdy2ZuGtpfmmAc5tbvZQD8rr/A7tZIMA1rHiB0gQeq1co+aBPsT7BoU2Bt87SKsbek87hvBPrKA//U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXYK4D9W; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso1424978266b.0;
+        Tue, 29 Apr 2025 15:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745964892; x=1746569692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vCPGMV2iOcTy2jhzzFW4RAkJHqiM2kdCsOEs0l55zcU=;
+        b=JXYK4D9WJGO5Btx2Pm8rJnbDUAefdl+h+L3YKKvaZzqmzeQxACcLnEiz92cdJ28fMe
+         1yuTF2b96t9wBg9wQzFWJDRf68+AHeAZmbsKaxloMB30tfe6DwDgXZOXbRwJdXGMxBOZ
+         o/UG3WgORUk3cUY1D63jku1mbwzAewsFcX+Nq00ge6PQPAaB2TfmSil5ZQiocFwoMpfz
+         f1899t2GGfhvjBQisQV8LBWpZLX/JaG79gYIhA/4kWsK6+A9bRV6l9B9/FXucsxg3LHw
+         vzvMrhvNle2CKVTlhD9PSt/HXE022MwQlmmEMFoJjl7Lui9b6+gKlJJ7yyjW421Rjhrl
+         yviQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745964892; x=1746569692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vCPGMV2iOcTy2jhzzFW4RAkJHqiM2kdCsOEs0l55zcU=;
+        b=cnZvRqwqTzcTKkY7XotgKTL7LM4S2rQVB5c5Ms3NQtDJiEewBLGRvLHIqozGcI/f04
+         EVY1eEKCMGU5jV4yrpaI8mAHgx0ncPrGlNf1jn7/nUunLQaOa29yZhQbEubsTslb1M/W
+         oH7EvjARxxJ1aQMQGNQ4tYo3u8oOc9DQHBQS8rwlISy0ZFhTbicUwGSE27aPWV4RPNQr
+         tGmEfNwpjOu9M++akow3j+ZMHaHgGTLGuJAXfbaDnQA6ihbhtdZotV9yxmqQ9t0DkGN+
+         yNIWpQ3Ws9XM7uWgHC0T1qFuCVx61rFSrSeOCQ3x2aJK9yIsMPEGCZPMn5RmS6kiLE+h
+         EYzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcf16zrwRMNIzAdIvK7Q58ph3qu4YoG0xolEz0NwlgoO6Le3vu2T9rY3BkguG/LkrJdJK+JbzoRIDS@vger.kernel.org, AJvYcCVrMXrSAfsUEcWASElQBW+WmUTpwWyDOz6kx2gthfELyvcei48bEfxpRcoxsQ53zWFw381EF6C7wg+jjz1v@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDdmeFi0PoEUb7BaV4F9XpYJmwMabq6H830FKl0K0ZWx851TT3
+	CuVDV8T9KDP94+NjIF8tLNZwQnnswWLd1s6DIYFRofB97D+YHvfbixoPJA21Nh51XWkKbwlvXmD
+	8kYsaXG5K1H1Y5i1YoXzlk1q8HBE=
+X-Gm-Gg: ASbGncsLXbPkzHykmqJLQI7ktGeSPQG2Itx9sFrkfeDkr+q1tFIgVzd4QbyJJsl5bB/
+	dR8pwDp7wgoO3TnAoLTnWxu7recV8f63pVUZuqsNMhBSi7jYsbQQA60FL5pKx0OwjUCCS0QD4IL
+	b/keXIOYD4pl3lHMFdvp2Fja0T4DWq36KJ
+X-Google-Smtp-Source: AGHT+IF5k22LCWqIm1IKBib3ZCxfVAR9SkkoKIsyRXYzomlQDL/heybQBl/tfU6QyfbFPneWtOBItUISatf9RT2Q6fc=
+X-Received: by 2002:a17:907:94ca:b0:ac6:b639:5a1c with SMTP id
+ a640c23a62f3a-acedc610e2bmr95262866b.22.1745964892481; Tue, 29 Apr 2025
+ 15:14:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <433c6561-353e-4752-b9cf-155e49e62e63@vt.edu>
+References: <cover.1745841276.git.marcelo.schmitt@analog.com> <e4abdd44a28c395dd51c5a492aeda5074331e6ea.1745841276.git.marcelo.schmitt@analog.com>
+In-Reply-To: <e4abdd44a28c395dd51c5a492aeda5074331e6ea.1745841276.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 Apr 2025 01:14:16 +0300
+X-Gm-Features: ATxdqUFPvAPaawirq-Ww1Rjfr9-58GArZTeAVZQQzWAXckyhrqm6bPqILX_rwb8
+Message-ID: <CAHp75VfF2DJKghy47UP_GPtcfxKNFfJW2oWz4sUZ1XTCxOte9g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] iio: adc: ad4170: Add GPIO controller support
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 03:32:56PM -0500, Carlos Bilbao wrote:
+On Mon, Apr 28, 2025 at 3:29=E2=80=AFPM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
+>
+> The AD4170 has four multifunctional pins that can be used as GPIOs. The
+> GPIO functionality can be accessed when the AD4170 chip is not busy
+> performing continuous data capture or handling any other register
+> read/write request. Also, the AD4170 does not provide any interrupt based
+> on GPIO pin states so AD4170 GPIOs can't be used as interrupt sources.
+>
+> Implement gpio_chip callbacks to make AD4170 GPIO pins controllable throu=
+gh
+> the gpiochip interface.
 
-> Yes, the machine is effectively dead, but as things stand today,
-> it's still drawing resources unnecessarily.
-> 
-> Who cares? An example, as mentioned in the cover letter, is Linux running
+...
 
-Ah, see, I didn't have no cover letter, only akpm's reply.
+> +static int ad4170_gpio_set(struct gpio_chip *gc, unsigned int offset, in=
+t value)
+> +{
+> +       struct iio_dev *indio_dev =3D gpiochip_get_data(gc);
+> +       struct ad4170_state *st =3D iio_priv(indio_dev);
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       if (!iio_device_claim_direct(indio_dev))
+> +               return -EBUSY;
+> +
+> +       guard(mutex)(&st->lock);
+> +       ret =3D regmap_read(st->regmap, AD4170_GPIO_MODE_REG, &val);
+> +       if (ret)
+> +               goto err_release;
+> +
+> +       if (val & BIT(offset * 2 + 1))
+> +               ret =3D regmap_update_bits(st->regmap, AD4170_GPIO_OUTPUT=
+_REG,
+> +                                        BIT(offset), value << offset);
 
-> in VMs. Imagine a scenario where customers are billed based on CPU usage --
-> having panicked VMs spinning in useless loops wastes their money. In shared
-> envs, those wasted cycles could be used by other processes/VMs. But this
-> is as much about the cloud as it is for laptops/embedded/anywhere -- Linux
-> should avoid wasting resources wherever possible.
+Haven't you seen my previous review (v1)? I asked what if the value is > 1?
+I also recommended looking at regmap_assign_bits().
 
-So I don't really buy the laptop and embedded case, people tend to look
-at laptops when open, and get very impatient when they don't respond.
-Embedded things really should have a watchdog.
+> +       else
+> +               ret =3D -EPERM;
+> +
+> +err_release:
+> +       iio_device_release_direct(indio_dev);
+> +       return ret;
+> +}
 
-Also, should you not be using panic_timeout to auto reboot your machine
-in all these cases?
-
-In any case, the VM nonsense, do they not have a virtual watchdog to
-'reap' crashed VMs or something?
+--=20
+With Best Regards,
+Andy Shevchenko
 
