@@ -1,357 +1,211 @@
-Return-Path: <linux-kernel+bounces-624113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2CCEA9FEE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743DEA9FEF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDF01A84A3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73325A61D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E681957FF;
-	Tue, 29 Apr 2025 01:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C603F198E76;
+	Tue, 29 Apr 2025 01:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="386rQsjO"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C/lXMstJ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wILVmufU"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3756D13A41F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745889553; cv=none; b=a5mUFmKHw984DCQIIaUYCUUqpvupsQNNFlKcQ0NxLtd+a4eVficXmcL+PMyHeQdlKqQcN9vCrxSNxsw4VI8ai+xkedXPyyuCYJtHqBwUKyiVJs6fxtAz/49l/5z/wXO77s0kuI24/cilUYFkPSz79O9muNdf8tscQg2aS6DciUg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745889553; c=relaxed/simple;
-	bh=8oSsZIRrhqgjMG9L29Y+UGuvrGWsxwTQz535yyZMwqQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ezAiG1tb4aGvI988jl4Wv2Srrg7yQTHbmjeZ/9wmoG/4LmeGsBd0AZys6WPcI+UtAo1+piyT1gko0YSrfVmSY2B8b3CQiv1vOSx5gUMRppnXyU7Q+CpSOrzApSs6dx6oXpQI4K9kC6f/P/nkuA5nZtm/UuO5qYqdLFiEyv5NRqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=386rQsjO; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7369c5ed395so6176515b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 18:19:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A9F153836;
+	Tue, 29 Apr 2025 01:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745889627; cv=fail; b=HHtM0nWhOJbHQOdmYuKq2CRLQs5EJ80Sub3BryMAgpxnlouKM09pmJD85yDmG1SsiHq+OXhi4nYd+jJMq2GN4UuxCDGRHbsZmAOkwiObvxvgXP7O2F/kduMxihF4R9hxRc3CZ57t4iA3BLQ+jqG+neoRcRrGCFNS2uIAdBSIwOc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745889627; c=relaxed/simple;
+	bh=71gszcK9yhYg6elgsmltwCJartCijbpBq6l6T2vyX5c=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=eGKC6IvMiPjQQCyydgY7vLwp7N/bAkjnL42zoDjMcu5IcgagH2trQ6/9R3FqjWEltGot8m+NqAIYDUxha3ScBgbweB7ASK3EQ+K0LhuDiK1yTX6qBbQh1KSQ0nnMtuvkMG2mP4BF+fiJpIndA529IPi4cgeBers/Yfue21haxgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=C/lXMstJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wILVmufU; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T17JaI015479;
+	Tue, 29 Apr 2025 01:19:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=cAsXdxPLMmJ0aGMAuh
+	T/v/ahVv9wYavSTwDSr1tvyQ8=; b=C/lXMstJ3DR5Qqgnk5PYiIOXZgWyTvSVvH
+	P7Qzswn8V3jeIOaRTSuD9M8ZOTnlpkJvuvlvR5OfJKqRuA3gWXNICfsEf6QfPrd3
+	QNvO9cQn4fcw7YQauA+d5H9EO2Xr7h0W+RAWLj78O3trOIsoaw+JP8xrM4S+OA5c
+	X0VNjZWfhyHNw1s94t4oHvWXPuP74SG2Lyihttn66FOYoFyycO/v2aXAiBGNitih
+	2l1ex+o0qFxsvQL4ZaF/rXJcl+N39XisHomtk5v7+9WH27ISd01A2yqeEIzJjz9n
+	M7H+/44xENU6Zx32+t3X046+OPGCNIBWMPkJEcoWGQQ9UccqfmKg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46amtpg0g5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 01:19:56 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53T09NAx011323;
+	Tue, 29 Apr 2025 01:19:55 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2047.outbound.protection.outlook.com [104.47.70.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 468nx9ppjm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 01:19:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OmX7/+bXQ2m1avh3y6Ng6KtJLQV7FesVQrvv0s39HhafIRGj1mOozUxrj7jmthpI32MwgQrZzfzeYS6KY7MpfRw2q8z2YYTpIToIjR69uJ0BNvTzYmRMpO0K+d1zxrbgtEtvxXd0v+pxIy6/Mj3QR7NzZ/EJ4SZ5k9j6HmW+YCVFGaJWvkhp3zJduTR6PLzdBhEpY6lDsvL1IWvJr5+cgVwMTP3rU0VktWvoWhW+illSasHo9Sw0kSHDnpNfXjIuNh3eA0mTBJIQzT6INQaaK3VAVmRaSljKw3GigO/UhKLKUsfhEJ/AKTfSm51F5lFyGNnbnrd0dVEtGtzyOJrGvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cAsXdxPLMmJ0aGMAuhT/v/ahVv9wYavSTwDSr1tvyQ8=;
+ b=ZYgPxq5P3eKosZjGNH8zuUpHC5Vee2TCM8pg10qNE586JfpEG3M+OSU5YLR+fa4w4qsogrkdj0dFesJD0pV07vR+Za32YZkKP2JWaGe4CNtMr447FFcxKgfKiNAu0MDz2NAQrMbMBG7oQ+uMLECh1sCh5glByJ71QfOGB9GUmmHgit3qEWtpd7bya/ZAuabxJUTu5nmaFLhePwApshDP3EBjn+Ce1mlM71rLrLm9Y0dJLtajAEHMjk1ZAGXDbAeRB/HcXYt8ptw55lALd+n4ZMuft2DbzLD1KfRFLLvM1N8JfaE+bqRGDvsO83LJmmbQOwKQNDzar3LCAFbwhkc73w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745889551; x=1746494351; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IgdQOgaoElQqRGycTH5PUw+/zFDYClhZUhKSCH+8S4I=;
-        b=386rQsjO+nCy+CItozFbB0WsdccOGWrXAIVTy58x7N661m4alDxE9NZNFpAhPM0omf
-         /062jViU5LyBdR0SxgM+/RIiFjdi9qQdAyLa8mNhbk3C1If6vbt1kTIo5EAB0n8IWGiy
-         OzLU5iYx/KKOPboc3V5vHncbZn1c/59WTkAiowlI4gwZBAnGe6bgoPFPf+kkEaNA4c+E
-         thS1aviAzX7ZWHrVfUuW4++Qad1OBsHsy8ekMKVCgHyfXgFCCnULWSO39iQ1cLxogzl3
-         U2FvMz+O+suEzhRDUVvjfWfHja10tSomQ/RBotIZYUS88J8c3Q4T3iOJ4lWgg0PpYY0M
-         HWlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745889551; x=1746494351;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IgdQOgaoElQqRGycTH5PUw+/zFDYClhZUhKSCH+8S4I=;
-        b=iPPspbTw68l0DNHAW0ywOqdpwJdBcnpTqpFwC2k+AuGWudBeH1t5VlwEnsC7Aqg3jc
-         J64CDO2t9F0GxeSkQ4BfcogKmzEoESxGmBTXUZv1xP1POERg6Nb+klGzu9kKE4VYkQIV
-         6ntlbA+Nk65TdAUrevX0NyF9aP65zRB2EJLGMmChrGW6VrM5YLksIm3MnSD11IXrdbDi
-         MZFWwkmeoHE1NtOooG2+zmwlyZKne1Ni3E/fxzGnVRerjO95MitFhc2g9X2kTudZFiYQ
-         0kBhRtd5Z1EODX8XyFnPdZotuxHvbP+QGXd3oTCkUPq5GlSCpezQrgDTdGc9G0ekgVLy
-         9UUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVC1EfS490d/Qir6jpx7M46Z6oBj2seH33Z+7iVfyoayZ6Gw68Cz9y1s18PH4dz7sIxVExCaXK8STCijKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8hWj0wXNmx4S2m26CgfsNT6BrHAyWCYJdNMWgM7AJ5hOW0skC
-	Q1OUp4yaQqHSjOrDyaRgpIPLed0PLgPkirktM6q6SOIQWatUspO+IrLmyvhm+okg5wWhaMc3lCh
-	XpA==
-X-Google-Smtp-Source: AGHT+IFMVZIcEoYw8FABuJXXX8OutA5bqS+INEhWMiGnzilKwpVAX2SYR+yiUpwvIN/ITA/l63MsHdptzFA=
-X-Received: from pfgu8.prod.google.com ([2002:a05:6a00:988:b0:737:6b9f:8ab4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:78b:b0:1f5:837b:1868
- with SMTP id adf61e73a8af0-2046a646b03mr15898790637.29.1745889551303; Mon, 28
- Apr 2025 18:19:11 -0700 (PDT)
-Date: Mon, 28 Apr 2025 18:19:09 -0700
-In-Reply-To: <20250414200929.3098202-6-jthoughton@google.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cAsXdxPLMmJ0aGMAuhT/v/ahVv9wYavSTwDSr1tvyQ8=;
+ b=wILVmufUhgZ9pfYl9kRmMc4Pm+0DjAX90sazHFNfEgqGy7IyY9r2Z/wAbmEiI+PuiYFPLglhi4PkkN7yPA2vH9PgmNoBrqcmJ/dKU/873ZwjNWpOqr2+N97LkuSeF5pXN0CSVhu1mHbDvTw6rT+gU77YEG1KKKE4tm4/jagmldg=
+Received: from DS7PR10MB5344.namprd10.prod.outlook.com (2603:10b6:5:3ab::6) by
+ BN0PR10MB4997.namprd10.prod.outlook.com (2603:10b6:408:12b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.30; Tue, 29 Apr
+ 2025 01:19:39 +0000
+Received: from DS7PR10MB5344.namprd10.prod.outlook.com
+ ([fe80::b527:ca1f:1129:a680]) by DS7PR10MB5344.namprd10.prod.outlook.com
+ ([fe80::b527:ca1f:1129:a680%5]) with mapi id 15.20.8678.028; Tue, 29 Apr 2025
+ 01:19:39 +0000
+To: Huan Tang <tanghuan@vivo.com>
+Cc: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+        peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
+        quic_nguyenb@quicinc.com, luhongfei@vivo.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH] ufs: core: fix WB resize use wrong offset
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250423092917.1031-1-tanghuan@vivo.com> (Huan Tang's message of
+	"Wed, 23 Apr 2025 17:29:17 +0800")
+Organization: Oracle Corporation
+Message-ID: <yq14iy74vdq.fsf@ca-mkp.ca.oracle.com>
+References: <20250423092917.1031-1-tanghuan@vivo.com>
+Date: Mon, 28 Apr 2025 21:19:37 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BL0PR0102CA0017.prod.exchangelabs.com
+ (2603:10b6:207:18::30) To DS7PR10MB5344.namprd10.prod.outlook.com
+ (2603:10b6:5:3ab::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250414200929.3098202-1-jthoughton@google.com> <20250414200929.3098202-6-jthoughton@google.com>
-Message-ID: <aBApDSHblacSBaFH@google.com>
-Subject: Re: [PATCH v3 5/5] KVM: selftests: access_tracking_perf_test: Use
- MGLRU for access tracking
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: kvm@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, mkoutny@suse.com, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	Yu Zhao <yuzhao@google.com>, David Matlack <dmatlack@google.com>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5344:EE_|BN0PR10MB4997:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b18d94e-f1b5-46a4-d77e-08dd86bbe9a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?47dKrR1JshJpR1iFZsSjd1nk3xTXDxKcxChKT1NUHyDnrUPCvZ185jfdXLHn?=
+ =?us-ascii?Q?8mhBG6qHN6wxIRjngJ9tFLGN7b569/fl4CWWvUrgIfmHwYTOsd1knj1qBlCH?=
+ =?us-ascii?Q?MbHxHgzZCtTn56KOG3lgxo1LE1pcM+sX70PKTYTg+Iq7qXOiAmgDDt/pPiuC?=
+ =?us-ascii?Q?aA9Y0GovCULaaOwYvb79+PTvChHGvIRrwSb9d8SR0KgDIqbTp8w3YOd4pb6v?=
+ =?us-ascii?Q?A1CKDqQIQ3EfpV9MewEFG+AOes+WI96Wa0WrOcu/KSsPM2xWOqfU72cJ4JW9?=
+ =?us-ascii?Q?j0fy3b7KglzECL31Fss2L5M2Bid+ysSVr89YyR7HAVEiWbwOT4uiYcb3+H9Y?=
+ =?us-ascii?Q?5h1d/8ECgyZQYjsKgUqVAVvSoZgEgr0azmqRSbNpYKE72fG5nMHxc9m69wHW?=
+ =?us-ascii?Q?WOMzeNiL6s3TzVznL+YMmdrvMHtdQRwx0DvHFaaLeTBWZyXfDiHc8qE7BRue?=
+ =?us-ascii?Q?JIrTfUzpFMa9OZAXjPZFY65RVE67ZcHINGkL1lsP/ESyUrkoCBzoaqFtCqdl?=
+ =?us-ascii?Q?tucQYiq8TFcOvEvnUnyIbXjWQCNXfayshgA539gDF6TpF2zlRnn0UtJwoJRP?=
+ =?us-ascii?Q?ZQyQzQyeIkI52Lzcid3J6cJqAso++Q5UjJlED3FEPUfaXivkZfnfkG2gTYcc?=
+ =?us-ascii?Q?tccitvp6obifpwffGHLkgZdb1FAthl3k1s1eSWwvk8Lm+yMrPKsn8weaz2R+?=
+ =?us-ascii?Q?NWmE5dq5vcnw6vUxUtmIryHAiD2V7mpMpihn4XyleG/OIPTIZq0Km1roqGaa?=
+ =?us-ascii?Q?zJ0o3PHNmIcuQLXX0jQBSqQ8zNEingJ+8zwQNL0AB17VKN6BpfWwrl0K1XiU?=
+ =?us-ascii?Q?/24BBcbEFMPG9y+cpj/guBNvA59B0u5JUizyU8ka201LTx1em3/1Mcrn41oE?=
+ =?us-ascii?Q?RVrFw82AYDcdzwya3KBuKfgiCRwXDmEKar4MdHF+RnfKS5GOpO2aSJ4izw00?=
+ =?us-ascii?Q?5zy7S5dhkQ8QdzuD7BDGkqD1gP704DJyi61BsH+oRUqHuiMhhNlmcac53OhF?=
+ =?us-ascii?Q?0+4eC0i/5FiYvXf6tno/MWXaf8Bc0JZxppNj/wk2xNah7ZfIMMkqCcd0Oooz?=
+ =?us-ascii?Q?GDUA2h8Afne3vE1iYG/4MPpkHsV7K1xxrw0/cO8Tt3N8ZGwcEYIuq9kQsv57?=
+ =?us-ascii?Q?msNn2qK3ohrgfmPi6p6Zl0ftnSshydtIKHg1L13woavCgSaySRO7XMv89kkI?=
+ =?us-ascii?Q?blW9GMdnbDTovKiMZOUPucpId4kO6AsDE2uj3p6TJbXG0WfHPC/hlvd3ssSW?=
+ =?us-ascii?Q?8hTjmBxzMo+zQcgYJ/E1fO/yuXPXOl05qVF1JfNw93pLm8KqFPetOUSLxmVY?=
+ =?us-ascii?Q?RigtMzVAka3V3Ht/c8Lu4u+U5sCJ4BPGFgG2+N/7kjY0QuiBFrXBBOjuTlM7?=
+ =?us-ascii?Q?uEmBSBjulaUXdamXVenq4jKjGet5HDena+GFVyEbn6UWXLQTtw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5344.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?v5OKvQzpS9MjmTrYjOR/QbSnO2lT+fXLJ6gxxbWDm3BaBUmCFNuFCfBWTo8P?=
+ =?us-ascii?Q?lfdhOvTRs8M1hmleh2vJgZ/RIQxAEHKQP/UVxCuK8y1nIEI6y+4H9xTLCdyn?=
+ =?us-ascii?Q?ARS2o7k0LR7J+RlgN3R1/VUuIWf64jTPQ3OV9JD8PXZozWLtsFhH2D8394A9?=
+ =?us-ascii?Q?ErE9k0SqNlhjoNCcGwgKSi2VDp9gXjqXl6xF/uMknaAcooWvtIUwrU/Qgpmo?=
+ =?us-ascii?Q?AXlZbyf1KKcKa8FMtO515vLeWksX646Tqf3d6t+vthNDONZYEfmKtOyRJZvj?=
+ =?us-ascii?Q?N9ewACrDKwWifFFVVVpEX1lX3CPeLzghXO5QlQiVgphxsI0MXv8ThsL2hsdn?=
+ =?us-ascii?Q?sAw/Hf19F37bBBRRBHKEkGZscn5H4ZpriBWgv1hghXnHHRis+A/D4jMHRrsA?=
+ =?us-ascii?Q?ptBHwvEIa3PQFUfI9FXC09OoY3EQBeopL5/lZVlAHmCIhhlh4smGndMukNLY?=
+ =?us-ascii?Q?5eYyvHeZAa6AdiH3Z5KKApExpq01Yz9H19LHW6Hr2tRhdGAEtNof5Klul45g?=
+ =?us-ascii?Q?3eqdnwRE3tVd5UlB9dIVcAPnmrCiYyX0tBBQGdvogtG9qzbDgxfzLERbffU7?=
+ =?us-ascii?Q?42XL2htSk22FIFsR6ig+zwspFlOnegNSn0GOGiW1NL2kTh/pQW6CKubifqH3?=
+ =?us-ascii?Q?NHox6fLaiKjKOgTxeYm94TKIUEZpBns4riSCYbcNX1AFq3xPmaTo0mbwGQwz?=
+ =?us-ascii?Q?qoFfIOMi05+HxrwEbH9VV49FTmFMCbZJI1yM1x2FXS0Tr9l499mTWWyLubVM?=
+ =?us-ascii?Q?Z1tkVtg9ZzU2tMRDtd0z4Tmq1Jx2lhIOYbWnaw0ZRhc+JIzi/0+Fel8UzfdK?=
+ =?us-ascii?Q?0Ha5BAO4PssQ9oFmfJ1IScevcwzKGkaFyXxAv4SG4xCbmRcQhh5d/qp7tXum?=
+ =?us-ascii?Q?/6xn4i7nH3AGQ6xJGQiagan3Z4sN92Lfc947gKmJls6moRYbahTdv/CF6wNI?=
+ =?us-ascii?Q?xzco9neBd0ZD5pOk053K27Zr5v6xUN7Jb0/1ZrPb3PXXU93AewlilPgWmeEm?=
+ =?us-ascii?Q?7SzvZt4K2VfthGuTaJr4q1oEQI0+kS7AIhmwb9GxCCMMkMdBvbixuKtB72rb?=
+ =?us-ascii?Q?pGlCfCs+dQhjcoC7T+DJrNDJ2ax/vtVr9GABqLF3pRybtQEzNdRI2wp6MTry?=
+ =?us-ascii?Q?Bbpynp7A05dHLYGbNJnk0nE0KXTSnZzKWD3mD33GMSyAWjczqQhaqEKDvblT?=
+ =?us-ascii?Q?u2S2tF4CRQd2OwByPTE7F/oMX1GO4PtIaKAYdENQwVSJynbG2h8eZWD8ACrf?=
+ =?us-ascii?Q?LdhUadR9jji27kb9QnfXpcUh/WQK+jNzibB6V9490wi77E891ZdsbEAos1DO?=
+ =?us-ascii?Q?FglibqfV7uHResBXGeXFUZ3RG2sODQyDxRrcwDxAyUnQ3KENbdQ+KeLpXAXw?=
+ =?us-ascii?Q?w5E5J8lesLl1mG6ifQMQaUKyOa8M5EoAsgMVqwHSl/o3UaUrTJX7Sxqdy4cd?=
+ =?us-ascii?Q?m12M3cE4bXIiO6iV2lGVpmh535oVfp9sGI7aDo2FJN/KppBzjqS5uJa9tmeh?=
+ =?us-ascii?Q?Ysiu9YU8JBjpImFU2zqmiQ/hL2LyN5ONXNv0+fD7cAQ4E6woEeV6JlGeRVMZ?=
+ =?us-ascii?Q?nJRxe38kuBZD/kOuL7jsIA68wwLThsXhUEnWUWK8RQmBJJsvDSQlbAjzX0uZ?=
+ =?us-ascii?Q?uA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	huD3xeFjmRaolJtsHbPCdazX0sWRPcVJ+wWNELFxXUiCy/Rx3A+Jpazakfy9+t2bKNTpt2ZmZoaBTwfhwkTQ4aEM1zj+ap4cbsFSmkWeYcUp4GrGixchfzqlXcR2QKD0QvHy8UTxVYnyn/+Bxl+xTcT1Pz1I2R1iyErG53RS5o3QoXS8WD95UhNx4DgnYCoMpZlUFXzu1MUuKG/yQzEIFXp9YTAm+MxxTljRv5hPCfuIn+XkJejrSg5B4zWkhQLNsBrn5PUrpP+oIYdA/jLYXEXVoT5kM1nl4HfbVAg36hhkhBHN+k2VHIhqg1X9NfFGLvuLJu2alMry9CFCMT7gFOoeBW2u9kW1V5JQVLksV2gwa5CHr9FCYoe4/oBgHyKNbJy1zpaLM+b4YRDFArGjqGUdZG90QNn6+kc1/92755Y54wlbBjp82f2vQTbf0KPjxm0gLOt/ZJ9Y510AJ9wELsoetaBD2Thm1tnvEvOIJ2Iree+YWFXpFkRQbF/BrTuvySFpHkLt5c65bcJ56V8kZo4bW5KrKbXxQYMzI5IZ1s3UIjay0JB+mUHK+v2I8OuB2L6a1kxqDzyv1HhAo1Dek0eyn3NX+DxpqKd90EtPmfY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b18d94e-f1b5-46a4-d77e-08dd86bbe9a3
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5344.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 01:19:39.4388
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pD3Z2euLvvSlbY5QlWxyAn43elxcKFTVGNZmYQ/f94yumiGvlFsNIzqAwLRWMJWp0APrhQ4GmPMOedxeOXbT+SlHLcO1wjNh0YSH3uYriCY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4997
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_01,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 adultscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2504290008
+X-Proofpoint-GUID: JEsOm2CwCFtVxkh_p46nfn7lB4xk9EO2
+X-Proofpoint-ORIG-GUID: JEsOm2CwCFtVxkh_p46nfn7lB4xk9EO2
+X-Authority-Analysis: v=2.4 cv=cK7gskeN c=1 sm=1 tr=0 ts=6810293c cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10
+ a=XR8D0OoHHMoA:10 a=GoEa3M9JfhUA:10 a=q32mctcrirO_PcNCel4A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDAwOCBTYWx0ZWRfX47rPKKySEOV4 Ia45pjqeLZ14q3lb2WTikhpgXqb3pota5hkm8sxdPUcbAUNjLU754Ndyr9BmS0hFHYw95TtBrzK bL5uFdOcaGNmtgYJ/cnLIpFLcBQDit/xmtfg2QT4FAxDP0+f72dbltu76Jy6s+Pfb7jXqSkPfDf
+ VnfSwlDtxH0dYoLbhbUA9XLKx70AaS5sNTXj+EMyARmNxNvDPM5PIXkQcWl7JUcMNUlztKDBHE0 PYmKu+TOZA3hyT1499iMoNCYO7/b6OLW4UKjwTOHYTEcpJ+JjzpH8n9wW2cKntlTlq1af1VpsT8 1Vs+KfIitE8BMxqJoxnqFXXeynX+hHdWOfzxIjhSmuMFHXpiDMppkixqVY75H2aCIw2hNdKmbOH kLHzpN1K
 
-On Mon, Apr 14, 2025, James Houghton wrote:
-> By using MGLRU's debugfs for invoking test_young() and clear_young(), we
-> avoid page_idle's incompatibility with MGLRU, and we can mark pages as
-> idle (clear_young()) much faster.
-> 
-> The ability to use page_idle is left in, as it is useful for kernels
-> that do not have MGLRU built in. If MGLRU is enabled but is not usable
-> (e.g. we can't access the debugfs mount), the test will fail, as
-> page_idle is not compatible with MGLRU.
-> 
-> cgroup utility functions have been borrowed so that, when running with
-> MGLRU, we can create a memcg in which to run our test.
-> 
-> Other MGLRU-debugfs-specific parsing code has been added to
-> lru_gen_util.{c,h}.
 
-This is not a proper changelog, at least not by upstream KVM standards.  Please
-rewrite it describe the changes being made, using imperative mood/tone.  From
-Documentation/process/maintainer-kvm-x86.rst:
+Huan,
 
-  Changelog
-  ~~~~~~~~~
-  Most importantly, write changelogs using imperative mood and avoid pronouns.
+> 'Commit 500d4b742e0c ("scsi: ufs: core: Add WB buffer resize
+> support")' incorrectly reads the value of offset
+> "DEVICE_DESC_PARAM_EXT_UFS_FEATURE_SUP" to determine whether WB resize
+> is supported.
 
-> @@ -354,7 +459,12 @@ static int access_tracking_unreliable(void)
->  		puts("Skipping idle page count sanity check, because NUMA balancing is enabled");
->  		return 1;
->  	}
-> +	return 0;
-> +}
->  
-> +int run_test_in_cg(const char *cgroup, void *arg)
+Applied to 6.16/scsi-staging, thanks!
 
-static
-
-> +{
-> +	for_each_guest_mode(run_test, arg);
-
-Having "separate" flows for MGLRU vs. page_idle is unnecessary.  Give the helper
-a more common name and use it for both:
-
-static int run_test_for_each_guest_mode(const char *cgroup, void *arg)
-{
-	for_each_guest_mode(run_test, arg);
-	return 0;
-}
-
->  	return 0;
->  }
->  
-> @@ -372,7 +482,7 @@ static void help(char *name)
->  	printf(" -v: specify the number of vCPUs to run.\n");
->  	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
->  	       "     them into a separate region of memory for each vCPU.\n");
-> -	printf(" -w: Control whether the test warns or fails if more than 10%\n"
-> +	printf(" -w: Control whether the test warns or fails if more than 10%%\n"
->  	       "     of pages are still seen as idle/old after accessing guest\n"
->  	       "     memory.  >0 == warn only, 0 == fail, <0 == auto.  For auto\n"
->  	       "     mode, the test fails by default, but switches to warn only\n"
-> @@ -383,6 +493,12 @@ static void help(char *name)
->  	exit(0);
->  }
->  
-> +void destroy_cgroup(char *cg)
-
-static.  But this is a pointless wrapper, just delete it.
-
-> +{
-> +	printf("Destroying cgroup: %s\n", cg);
-> +	cg_destroy(cg);
-> +}
-> +
->  int main(int argc, char *argv[])
->  {
->  	struct test_params params = {
-> @@ -390,6 +506,7 @@ int main(int argc, char *argv[])
->  		.vcpu_memory_bytes = DEFAULT_PER_VCPU_MEM_SIZE,
->  		.nr_vcpus = 1,
->  	};
-> +	char *new_cg = NULL;
->  	int page_idle_fd;
->  	int opt;
->  
-> @@ -424,15 +541,53 @@ int main(int argc, char *argv[])
->  		}
->  	}
->  
-> -	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
-> -	__TEST_REQUIRE(page_idle_fd >= 0,
-> -		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-> -	close(page_idle_fd);
-> +	if (lru_gen_usable()) {
-
-Using MGLRU on my home box fails.  It's full cgroup v2, and has both
-CONFIG_IDLE_PAGE_TRACKING=y and MGLRU enabled.
-
-==== Test Assertion Failure ====
-  access_tracking_perf_test.c:244: false
-  pid=114670 tid=114670 errno=17 - File exists
-     1	0x00000000004032a9: find_generation at access_tracking_perf_test.c:244
-     2	0x00000000004032da: lru_gen_mark_memory_idle at access_tracking_perf_test.c:272
-     3	0x00000000004034e4: mark_memory_idle at access_tracking_perf_test.c:391
-     4	 (inlined by) run_test at access_tracking_perf_test.c:431
-     5	0x0000000000403d84: for_each_guest_mode at guest_modes.c:96
-     6	0x0000000000402c61: run_test_for_each_guest_mode at access_tracking_perf_test.c:492
-     7	0x000000000041d8e2: cg_run at cgroup_util.c:382
-     8	0x00000000004027fa: main at access_tracking_perf_test.c:572
-     9	0x00007fa1cb629d8f: ?? ??:0
-    10	0x00007fa1cb629e3f: ?? ??:0
-    11	0x00000000004029d4: _start at ??:?
-  Could not find a generation with 90% of guest memory (235929 pages).
-
-Interestingly, if I force the test to use /sys/kernel/mm/page_idle/bitmap, it
-passes.
-
-Please try to reproduce the failure (assuming you haven't already tested that
-exact combination of cgroups v2, MGLRU=y, and CONFIG_IDLE_PAGE_TRACKING=y). I
-don't have bandwidth to dig any further at this time.
-
-> +		if (cg_find_unified_root(cgroup_root, sizeof(cgroup_root), NULL))
-> +			ksft_exit_skip("cgroup v2 isn't mounted\n");
-> +
-> +		new_cg = cg_name(cgroup_root, TEST_MEMCG_NAME);
-> +		printf("Creating cgroup: %s\n", new_cg);
-> +		if (cg_create(new_cg) && errno != EEXIST)
-> +			ksft_exit_skip("could not create new cgroup: %s\n", new_cg);
-> +
-> +		use_lru_gen = true;
-> +	} else {
-> +		page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
-> +		__TEST_REQUIRE(page_idle_fd >= 0,
-> +			       "Couldn't open /sys/kernel/mm/page_idle/bitmap. "
-> +			       "Is CONFIG_IDLE_PAGE_TRACKING enabled?");
-> +
-> +		close(page_idle_fd);
-> +	}
-
-Splitting the "check" and "execute" into separate if-else statements results in
-some compilers complaining about new_cg possibly being unused.  The compiler is
-probably being a bit stupid, but the code is just as must to blame.  There's zero
-reason to split this in two, just do everything after the idle_pages_warn_only
-and total_pages processing.  Code at the bottom (note, you'll have to rebase on
-my not-yet-posted series, or undo the use of __open_path_or_exit()).
-
->  
->  	if (idle_pages_warn_only == -1)
->  		idle_pages_warn_only = access_tracking_unreliable();
->  
-> -	for_each_guest_mode(run_test, &params);
-> +	/*
-> +	 * If guest_page_size is larger than the host's page size, the
-> +	 * guest (memstress) will only fault in a subset of the host's pages.
-> +	 */
-> +	total_pages = params.nr_vcpus * params.vcpu_memory_bytes /
-> +		      max(memstress_args.guest_page_size,
-> +			  (uint64_t)getpagesize());
-> +
-> +	if (use_lru_gen) {
-> +		int ret;
-> +
-> +		puts("Using lru_gen for aging");
-> +		/*
-> +		 * This will fork off a new process to run the test within
-> +		 * a new memcg, so we need to properly propagate the return
-> +		 * value up.
-> +		 */
-> +		ret = cg_run(new_cg, &run_test_in_cg, &params);
-> +		destroy_cgroup(new_cg);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		puts("Using page_idle for aging");
-> +		for_each_guest_mode(run_test, &params);
-> +	}
-
-static int run_test_for_each_guest_mode(const char *cgroup, void *arg)
-{
-	for_each_guest_mode(run_test, arg);
-	return 0;
-}
-
-int main(int argc, char *argv[])
-{
-	struct test_params params = {
-		.backing_src = DEFAULT_VM_MEM_SRC,
-		.vcpu_memory_bytes = DEFAULT_PER_VCPU_MEM_SIZE,
-		.nr_vcpus = 1,
-	};
-	int page_idle_fd;
-	int opt;
-
-	guest_modes_append_default();
-
-	while ((opt = getopt(argc, argv, "hm:b:v:os:w:")) != -1) {
-		switch (opt) {
-		case 'm':
-			guest_modes_cmdline(optarg);
-			break;
-		case 'b':
-			params.vcpu_memory_bytes = parse_size(optarg);
-			break;
-		case 'v':
-			params.nr_vcpus = atoi_positive("Number of vCPUs", optarg);
-			break;
-		case 'o':
-			overlap_memory_access = true;
-			break;
-		case 's':
-			params.backing_src = parse_backing_src_type(optarg);
-			break;
-		case 'w':
-			idle_pages_warn_only =
-				atoi_non_negative("Idle pages warning",
-						  optarg);
-			break;
-		case 'h':
-		default:
-			help(argv[0]);
-			break;
-		}
-	}
-
-	if (idle_pages_warn_only == -1)
-		idle_pages_warn_only = access_tracking_unreliable();
-
-	/*
-	 * If guest_page_size is larger than the host's page size, the
-	 * guest (memstress) will only fault in a subset of the host's pages.
-	 */
-	total_pages = params.nr_vcpus * params.vcpu_memory_bytes /
-		      max_t(uint64_t, memstress_args.guest_page_size, getpagesize());
-
-	if (lru_gen_usable()) {
-		bool cg_created = true;
-		char *test_cg = NULL;
-		int ret;
-
-		puts("Using lru_gen for aging");
-		use_lru_gen = true;
-
-		if (cg_find_controller_root(cgroup_root, sizeof(cgroup_root), "memory"))
-			ksft_exit_skip("Cannot find memory group controller\n");
-
-		test_cg = cg_name(cgroup_root, TEST_MEMCG_NAME);
-		printf("Creating cgroup: %s\n", test_cg);
-		if (cg_create(test_cg)) {
-			if (errno == EEXIST)
-				cg_created = false;
-			else
-				ksft_exit_skip("could not create new cgroup: %s\n", test_cg);
-		}
-
-		/*
-		 * This will fork off a new process to run the test within
-		 * a new memcg, so we need to properly propagate the return
-		 * value up.
-		 */
-		ret = cg_run(test_cg, &run_test_for_each_guest_mode, &params);
-		if (cg_created)
-			cg_destroy(test_cg);
-		return ret;
-	}
-
-	puts("Using page_idle for aging");
-	page_idle_fd = __open_path_or_exit("/sys/kernel/mm/page_idle/bitmap", O_RDWR,
-					   "Is CONFIG_IDLE_PAGE_TRACKING enabled?");
-	close(page_idle_fd);
-	run_test_for_each_guest_mode(NULL, &params);
-	return 0;
-}
+-- 
+Martin K. Petersen
 
