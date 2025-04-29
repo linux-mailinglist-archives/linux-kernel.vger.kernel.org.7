@@ -1,148 +1,237 @@
-Return-Path: <linux-kernel+bounces-624623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1D8AA0586
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AC3AA05A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8157E1B60B45
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B689845B08
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376252857CF;
-	Tue, 29 Apr 2025 08:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0367F22C322;
+	Tue, 29 Apr 2025 08:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HTQfy4fe"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB48422C322;
-	Tue, 29 Apr 2025 08:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l/eMqVIJ"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CBD294A0E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745914913; cv=none; b=CdOX7DjGbUdp8YLMV6QE7qmAn1jiNzXp50BbesUgrk2fwy6fVN3HVFVA/UA4vryEfU5qd1/PhpuFUexHqJy6he9sprNag6ZDSXlf+r17UPEo5IzZgWQQWZvc3RMvMnit31aIRejpReFyi0zT1i2DrXiyDw2P7RYBViZP+tE1JZU=
+	t=1745914931; cv=none; b=NF1JZaVIYCwwTMblH0Mjz6KKCb5gREgFanGH7IjCqw/Wll3e7IMX3kj8ZxLYR4k8v+z6zGrNo08wszil71bwdHIXsS1khqLoVrlKRb2Wy6E2Ox0qFqyR79O35xxB6pYFNDlY9Z3qr0stSSrquNMn+nvlAkAvNd++zAWd3knh5lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745914913; c=relaxed/simple;
-	bh=hfARJH+hb2C8pVvsDrTYbRabCTh7pbTKHY20yzTw0l8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPaMea+irAQRqzeKIbn9XTI+WuYR7TGnjPm4ITbu8JdKakKnm2R1LK2DKfPY8Uu3mevVKjZwAZ+TgHsMItBc3HmwD1lhatqBVgMFcg2HJ0Aa4qpYxmQJqMahGGP8jkmRrCfwOGEj5+N7j7TrHFUeIUl/rTf/7FW4Dn1TZhGCL9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HTQfy4fe; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=nuxH+Of8rRFTD2XqTg1Wf3quV0CTP4pYPBGmAXtMjxc=;
-	b=HTQfy4feNPXIgLOXt9fV4rusLSYGDRcwhU7OtjOZL4mtuS4NFfFusN4anQZOvg
-	18wv/E/NrnKcD3wEQfw76dI20VoApk1W1xYl/6c5jm2+HPhhGAFnOMIrDcJ6rDvA
-	g1VhxmWyuV7YPZvhYPvw5PmL5mSyIv12V0Cq5w0AVuZu4=
-Received: from [192.168.142.52] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3F5X+ixBoNdwxDQ--.6758S2;
-	Tue, 29 Apr 2025 16:21:21 +0800 (CST)
-Message-ID: <cce60805-55e5-4fb8-9f71-7afcc496c689@163.com>
-Date: Tue, 29 Apr 2025 16:21:19 +0800
+	s=arc-20240116; t=1745914931; c=relaxed/simple;
+	bh=CC+x9TIuGKZlk9DpvDXPrvuJ/RoLRSdU1UZ8DDd6rSE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hHIjT3uNU7pVMv3XT+vDVXzmxOaSctPkEweQPa4Ww7E4jrQpzBjJhtmGrNfAUzeeklim8AZ7ebITpvbsBGS3qEPnzlSgW7X9oYEGABc6EUSwMdrZ3gD620jS2Xh7AZ9TjDzA5Q1PrfhkRti5WO6fix/gvqEukJYQQ1QqT7njOqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l/eMqVIJ; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac345bd8e13so812851566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745914927; x=1746519727; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjWwsLzQyeO/7s5cGzDJW5RdjgmzsifvXsymD4VMbYI=;
+        b=l/eMqVIJIHcrEJmrvHPlbCrIuL+TGqC/7BKBQxPadEs4Qsl9k2f8+q75iRIVI/6g2d
+         cA1ATZfBJaacUYBHGJ6fOZksxrXdc389nLin0CFOV8GzpNTIdCzs/j+tpTfcspnBfc5k
+         y+SraQvBPG5iQAeqhPSpmSB3B4oWignWN8unjw0Vqj9AxObzMF7id0NL4+FFFdd2x7E/
+         OEu2iUebEKb5/DfHmillvHNHCV1+FDl8JNUH1lQgCqj/cgkP1DpMVuNx4EkX3UftP9AI
+         r3pnDO15lDlYTBJ8Kmk4QuB2+G361r0nmf1kYVwDn4tA58jhECuWHi7pjBosp+H+ri16
+         KZTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745914927; x=1746519727;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XjWwsLzQyeO/7s5cGzDJW5RdjgmzsifvXsymD4VMbYI=;
+        b=W3CpkUiKyT7DVx3fQDRvSrHbN2Ganah1TeSfuGRsidxNfhVYAOgG28vZngvupcZSUi
+         f2l+ni9A4vyknXXquQvDUtQi0bpgUbZlcT5QfyyT9tp7U5XMF64HmfXqFdh5+FIGfadx
+         xq7mkh3hWWsSs6JJA5N3AzlEHcymzNdMGVy31to+FDuW6IdtNUegP/AGdBY7evaIKd6t
+         bdEPUx5L46dS7kAUzt58Pf9MPqPxL1UnQn6SYO56SHy9Zf0c6d8WzQ95tFbjDTLus/Me
+         ii39XZapqIV+Vds+E55TuOTJ2kWHoasVDvjXja9Oa7nlRje6/fhRLTdwgMOOipJQh5pT
+         XF9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUo75z7c26qVbhyXE3AC3wOoP3bLVwjo3iQK3bONTGQ1myZXLGhFDB6uwiOvhFK9OfY+VgzBu7zUauf4f0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd6xMe82L+XCVHXeO1BaRhVsH41JOlT5C1jzvfS2x8hM7BZ6A8
+	R65VJNvQeBRaUi9umJ5wlmTvxrDufLvNkvjF5LXMh+N5TvFzpko3Hf040xtlagk=
+X-Gm-Gg: ASbGncuUuXgy0BmhG3RAfNRX7N16G5YM0+N4Z1jfE8PVR3eElrRpJ1RkCqQEfRUi2vg
+	akc6oXoNMRUaXMn5TZ/mkqa3JnHszGhqp8IST0TYZJ0X02oyUeCJZhVDQxtqHzBkSvkB/sUWKUi
+	1tkX180yEzDInUf9X2UCkZ6PZloJdh0jM0Fu/n30nwnJPAsVJlJdffCTALRNdtKz7syp66xibpv
+	iKETX2rQ0JwQ3qa6eXy4E0bGifmLoSwB8n7fsu4f6tK5Eg2yEe18o6KhRiyjHh1l/7x/dcxf2VT
+	yb3dF4R3KyOlt0tqOw6czQ/aKWUDuOTxPhUaUJZUrWElXHyDy3L4aYWmIM7bYuph1TkHaGUJ3ve
+	OK9frYFs4/vRV1Vuq6W7hEgSi
+X-Google-Smtp-Source: AGHT+IEJLdAyByvjWpRoQZ5u+uEMWUik7hg7SKC/v1n2JhrHzJOvQXoId+i7WUJMsyDMVZ567KCnZw==
+X-Received: by 2002:a17:907:7f0f:b0:aca:c49a:aec5 with SMTP id a640c23a62f3a-acec84b7d10mr137455466b.8.1745914927052;
+        Tue, 29 Apr 2025 01:22:07 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41bbf4sm737905466b.36.2025.04.29.01.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 01:22:06 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v8 0/6] Maxim Integrated MAX77759 PMIC MFD-based drivers
+Date: Tue, 29 Apr 2025 09:21:36 +0100
+Message-Id: <20250429-max77759-mfd-v8-0-72d72dc79a1f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] PCI: dwc: Standardize link status check to return
- bool
-To: Niklas Cassel <cassel@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
- jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250428171027.13237-1-18255117159@163.com>
- <20250428171027.13237-2-18255117159@163.com> <aBCIXPc24daPPIxY@ryzen>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <aBCIXPc24daPPIxY@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3F5X+ixBoNdwxDQ--.6758S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFWfXr45ZF1DuFyDtr48Crg_yoW5ur1Dpa
-	y5tFWIyF18tF45ua1Yv3Wrur1Yv3ZrAFyDG393u342vFy29ayUJFyrJFyfta4ftr4UWr13
-	KF15ta47JFsxJFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHOJ5UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWx4+o2gQh+qXPgAAsk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABCMEGgC/33PTWrDMBCG4asErasyHksjuaveo3Qx+ksEjV3kY
+ lKC714lm7gW7fIbeF6Yq5hjyXEWL4erKHHJc57GOuzTQfgTj8coc6hbIKAGRCXPfDHG6EGeU5D
+ MbLjvsHOEopLPElO+3HNv73Wf8vw1le97felu1z9CSydBokuppzQE0Pr1I49cpuepHMWttOBW0
+ 05j1Uw6uojOAw+N7rfa7nRfNfie0ASFGqnR6qHrszutqnYD2EBA3nrXaL3RqHdaV02DC5TAsDG
+ tpv80Ve3BGvBMhI4bbR5aNX+bqmNIUYHvKEX7S6/r+gMULYNHHQIAAA==
+X-Change-ID: 20250224-max77759-mfd-aaa7a3121b62
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
 
+Hi,
 
+This series improves support for the Maxim Integrated MAX77759
+companion PMIC for USB Type-C applications using the MFD framework.
 
-On 2025/4/29 16:05, Niklas Cassel wrote:
-> Hello Hans,
-> 
-> On Tue, Apr 29, 2025 at 01:10:25AM +0800, Hans Zhang wrote:
->> Modify link_up functions across multiple DWC PCIe controllers to return
->> bool instead of int. Simplify conditional checks by directly returning
->> logical evaluations. This improves code clarity and aligns with PCIe
->> status semantics.
->>
->> Signed-off-by: Hans Zhang <18255117159@163.com>
->> ---
->>   drivers/pci/controller/dwc/pci-dra7xx.c       | 2 +-
->>   drivers/pci/controller/dwc/pci-exynos.c       | 4 ++--
->>   drivers/pci/controller/dwc/pci-keystone.c     | 5 ++---
->>   drivers/pci/controller/dwc/pci-meson.c        | 6 +++---
->>   drivers/pci/controller/dwc/pcie-armada8k.c    | 6 +++---
->>   drivers/pci/controller/dwc/pcie-designware.c  | 2 +-
->>   drivers/pci/controller/dwc/pcie-designware.h  | 4 ++--
->>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 2 +-
->>   drivers/pci/controller/dwc/pcie-histb.c       | 9 +++------
->>   drivers/pci/controller/dwc/pcie-keembay.c     | 2 +-
->>   drivers/pci/controller/dwc/pcie-kirin.c       | 7 ++-----
->>   drivers/pci/controller/dwc/pcie-qcom-ep.c     | 4 ++--
->>   drivers/pci/controller/dwc/pcie-qcom.c        | 2 +-
->>   drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 2 +-
->>   drivers/pci/controller/dwc/pcie-spear13xx.c   | 7 ++-----
->>   drivers/pci/controller/dwc/pcie-tegra194.c    | 2 +-
->>   drivers/pci/controller/dwc/pcie-uniphier.c    | 2 +-
->>   drivers/pci/controller/dwc/pcie-visconti.c    | 2 +-
->>   18 files changed, 30 insertions(+), 40 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
->> index 33d6bf460ffe..4ef25d14312b 100644
->> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
->> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
->> @@ -118,7 +118,7 @@ static u64 dra7xx_pcie_cpu_addr_fixup(struct dw_pcie *pci, u64 cpu_addr)
->>   	return cpu_addr & DRA7XX_CPU_TO_BUS_ADDR;
->>   }
->>   
->> -static int dra7xx_pcie_link_up(struct dw_pcie *pci)
->> +static bool dra7xx_pcie_link_up(struct dw_pcie *pci)
->>   {
->>   	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
->>   	u32 reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_PHY_CS);
->> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
->> index ace736b025b1..d4a25d376b11 100644
->> --- a/drivers/pci/controller/dwc/pci-exynos.c
->> +++ b/drivers/pci/controller/dwc/pci-exynos.c
->> @@ -209,12 +209,12 @@ static struct pci_ops exynos_pci_ops = {
->>   	.write = exynos_pcie_wr_own_conf,
->>   };
->>   
->> -static int exynos_pcie_link_up(struct dw_pcie *pci)
->> +static bool exynos_pcie_link_up(struct dw_pcie *pci)
->>   {
->>   	struct exynos_pcie *ep = to_exynos_pcie(pci);
->>   	u32 val = exynos_pcie_readl(ep->elbi_base, PCIE_ELBI_RDLH_LINKUP);
->>   
->> -	return (val & PCIE_ELBI_XMLH_LINKUP);
->> +	return !!(val & PCIE_ELBI_XMLH_LINKUP);
-> 
-> !! is not needed here, or in other places.
-> 
-> When assigning to the bool any non-zero value becomes 1.
-> 
-> !! is usually only needed when needing to store an explicit 1 or 0 in an int.
-> 
+This series must be applied in-order, due to interdependencies of some
+of the patches:
+* to avoid use of undocumented compatibles by the newly added drivers,
+  the bindings are added first in this series
+* patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
+  new MAINTAINERS entry, including a wildcard match for the other
+  bindings in this series
+* patch 3 ("dt-bindings: mfd: add max77759 binding") references the
+  bindings added in patch 1 and 2 and can not work if those aren't
+  available
+* patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
+  the core MFD driver, which also exposes an API to its leaf drivers
+  and is used by patches 5 and 6
+* patches 5 and 6 won't compile without patch 4
 
-Dear Niklas,
+The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
+sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
 
-Thank you very much for your reply and reminder. The next version will 
-be modified.
+This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
+
+This series adds support for the top-level MFD device, the gpio, and
+nvmem cells. Other components are excluded for the following reasons:
+
+    While in the same package, Fuel Gauge and TCPC have separate and
+    independent I2C addresses, register maps, interrupt lines, and
+    aren't part of the top-level package interrupt hierarchy.
+    Furthermore, a driver for the TCPC part exists already (in
+    drivers/usb/typec/tcpm/tcpci_maxim_core.c).
+
+    I'm leaving out temperature sensors and charger in this submission,
+    because the former are not in use on Pixel 6 and I therefore can
+    not test them, and the latter can be added later, once we look at
+    the whole charging topic in more detail.
+
+To make maintainers' work easier, I am planning to send the relevant
+DTS and defconfig changes via a different series, unless everything
+is expected to go via Lee's MFD tree in one series?
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v8:
+- gpio: switch to gpio_chip::set_rv() (Bartosz)
+- gpio, nvmem: replace MODULE_ALIAS() with .id_table (Krzysztof)
+- gpio, nvmem: drop previous tags due to above
+- Link to v7: https://lore.kernel.org/r/20250428-max77759-mfd-v7-0-edfe40c16fe8@linaro.org
+
+Changes in v7:
+- rebased against next-20250424
+- Link to v6: https://lore.kernel.org/r/20250325-max77759-mfd-v6-0-c0870ca662ba@linaro.org
+
+Changes in v6:
+- add one missing change in core driver
+- Link to v5: https://lore.kernel.org/r/20250325-max77759-mfd-v5-0-69bd6f07a77b@linaro.org
+
+Changes in v5:
+- core: incorporate Lee's comments (hoping I didn't miss any :-)
+- Link to v4: https://lore.kernel.org/r/20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org
+
+Changes in v4:
+- collect tags
+- mfd: add missing build_bug.h include
+- mfd: update an irq chip comment
+- mfd: fix a whitespace in register definitions
+- Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
+
+Changes in v3:
+- collect tags
+- mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
+  child (Rob)
+- gpio: drop duplicate init of 'handled' variable in irq handler
+- gpio: use boolean with IRQ_RETVAL() (Linus)
+- gpio: drop 'virq' variable inside irq handler to avoid confusion
+  (Linus)
+- gpio: drop assignment of struct gpio_chip::owner (Linus)
+- Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org
+
+Changes in v2:
+- reorder bindings patches to avoid validation failures
+- add dependency information to cover letter (Krzysztof)
+- fix max77759_gpio_direction_from_control() in gpio driver
+- gpio: drop 'interrupts' property from binding and sort properties
+  alphabetically (Rob)
+- nvmem: drop example from nvmem binding as the MFD binding has a
+  complete one (Rob)
+- nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
+- mfd: add kernel doc
+- mfd: fix an msec / usec typo
+- mfd: error handling of devm_mutex_init (Christophe)
+- whitespace fixes & tidy-ups (Christophe)
+- Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org
+
+---
+André Draszik (6):
+      dt-bindings: gpio: add max77759 binding
+      dt-bindings: nvmem: add max77759 binding
+      dt-bindings: mfd: add max77759 binding
+      mfd: max77759: add Maxim MAX77759 core mfd driver
+      gpio: max77759: add Maxim MAX77759 gpio driver
+      nvmem: max77759: add Maxim MAX77759 NVMEM driver
+
+ .../bindings/gpio/maxim,max77759-gpio.yaml         |  44 ++
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    |  99 +++
+ .../bindings/nvmem/maxim,max77759-nvmem.yaml       |  32 +
+ MAINTAINERS                                        |  10 +
+ drivers/gpio/Kconfig                               |  13 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max77759.c                       | 530 ++++++++++++++++
+ drivers/mfd/Kconfig                                |  20 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max77759.c                             | 690 +++++++++++++++++++++
+ drivers/nvmem/Kconfig                              |  12 +
+ drivers/nvmem/Makefile                             |   2 +
+ drivers/nvmem/max77759-nvmem.c                     | 162 +++++
+ include/linux/mfd/max77759.h                       | 165 +++++
+ 14 files changed, 1781 insertions(+)
+---
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+change-id: 20250224-max77759-mfd-aaa7a3121b62
 
 Best regards,
-Hans
-
+-- 
+André Draszik <andre.draszik@linaro.org>
 
 
