@@ -1,137 +1,152 @@
-Return-Path: <linux-kernel+bounces-624303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D5AAA01C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:25:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDB3AA01D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 812E2178C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06EE317A750
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B31F2741D6;
-	Tue, 29 Apr 2025 05:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1A5270ED5;
+	Tue, 29 Apr 2025 05:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7+Xl6FC"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cAYCecKS"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A3920D4E2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1006226F47F;
+	Tue, 29 Apr 2025 05:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745904289; cv=none; b=ULt02JJmawsrzqH5CE5wUBsWaw71ELV3IWJM1MGWGZNW1ER+L1TdidwR2Kebr4Moi1Fcn78ovQFGdGABNHWe+4yeaYsCITUAqIgbX40+JUT6xhmrs3F5uEFYhn4jnQsQenzVjAy0HWxE37JzdiCTfVG/GnZhqNgg5+PT+9zPxUw=
+	t=1745904577; cv=none; b=hyynznumzaug/gpMBcGYkJIvZGyhNuDPgxq+NE5dCWAMgRn70H5nnQSShIfUb5NV0MUSI2Ym5xJynU5aULhBkmvbnV8e1A3FV1xj0wp1wqsgnLiLuUVAFNZDvMR91UE0rOr6zzo1ffqIwUo32YL6F10rHfStIuEna10bUik+TRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745904289; c=relaxed/simple;
-	bh=/KC233azgY3A1MOqq8JrlK5M7xo9FxTg7CclfxXZFos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CKaFQRbDf5boIni2L/s1hsi4NTqE04P50wzgAh6UB/azSZ2NA39LHcfn6Bx4awDRkxd0ym8gpCq2cq7ywwwUmsQ2aAL20k6I7HgJ0byHrCBKbP7ef4Zotgl/eT6hVaAhK6yp38hI872OyyM5XYk/xs12glnua7kZwOL1/rvPSFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7+Xl6FC; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7376e311086so7541785b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 22:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745904287; x=1746509087; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEG2jELXd9nNPULNYZssLdKsrgNlc7ll4A8WlMh6fPs=;
-        b=E7+Xl6FCajASVSoHt0UJQwDwTAAd26NjQYqa4lw6+yg+N/lS6VEPOlbEYjbLL0CwYT
-         vw9IGKxxClC9tWXo8gjw+Xw1p2oETN/rYMQvkyP5sY7hJcz7NEtcTBG+YFRKSfVWqLpE
-         vcldfbrbTQrQjDdiGkLs55LJV7WfQeBNPhu5NdCS39Q09vCNmyl7YCKBWUBobWSixKCN
-         8lHOogX3XMGKv6qqNDwcZ59NCJz4BRraKrlxgdex087UWOT/EWsHKImigDDZE9UESdIR
-         J1qUtTuEII4f7qEv5hAsNiXZcvDBVtkh743GMINQAJGuQRjiMaPLy4aCgkotTvfzHEZ4
-         3TgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745904287; x=1746509087;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AEG2jELXd9nNPULNYZssLdKsrgNlc7ll4A8WlMh6fPs=;
-        b=bxjgt8nj1Mz2fyiVd6X53/nSI/qi6AADXaCJ7unJgymY8MVDfY48dcurxjkXkhjbBR
-         3Olq87uMUkv75XiLpUwhMv+lsw97u3BK7CqKpI50cUC0HzUgeGZtxT5vCWObqA0jJVBp
-         zLEr73qCOEoafZJXSK6/4nH0Qu5I1pRpxXx/IkQfwxIyM/Wk8DA3veaNOfV+YhiQJAm6
-         AKJGglNFjnwW4Nf3YyuNltuh0leuB1Sz7uoxNzzzs5jbC3YfrYEOyXKbsxDmma5PQ+ek
-         uzs+W0jnTChVLj7v6qtaCunoFt/AZvielq6cYbHwwPtFYGPhwoSKSXGvodDzjINF4VY8
-         f+OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPAX1DTbj5OVYHvLj35OGNvm/80qSz6cM5tooU9rOPaApq2kIRbSWXSM5Tk3VZOiOVHUVcVPD32HVuwnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhMjUSZlk7pTy7OAfMS0qipA4ghNNXmbvZmXrlJaZDFPlJbFpN
-	ArmhqOfJzGucoKBzyvvWBege+z2rtS5LX7WtmsVn96C3G83Oo7KSapUi+mDUe3VyCiJ+TduD09E
-	E
-X-Gm-Gg: ASbGncvz0ttqF7zZUgAJ/IHk5dGKAofRtexbckMCejjWEpmWeF0I+cQ0WSeGfu7VJXb
-	AWC+J+OkY1J47G93e/72+Uy//e2O8lEdGuRPSI5bgitbbxW1k6onC3iDubMWTcnXMA1elCu2tgG
-	YWwue7qJG/qQnVucJedaKn78pE33i5SWPAUIkg5f5FcEFU/X+XWF6WcUn3XFFBeNOqPKrcgiFxj
-	5YK6qHmFr3Z4INyi41Uz21kS8+4JPoJjFW2g13fL1vkVZrjjQmdcxGHYCgjeQxU2LFivp9iGiTF
-	zLWpk+GcZhIcyUwWAaHA8AIft9AVVgtOEa8tDrGFTg==
-X-Google-Smtp-Source: AGHT+IGacVDQkA79I4oerLjfSwtP2EnSgzoWaq7vlyI+ukjcLDfb1uzKM/LBC1AotrtWGv/r4XmSrA==
-X-Received: by 2002:a05:6a00:2410:b0:736:5e6f:295b with SMTP id d2e1a72fcca58-7402715dfc9mr3302755b3a.12.1745904287390;
-        Mon, 28 Apr 2025 22:24:47 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a6b1e7sm9311484b3a.108.2025.04.28.22.24.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 22:24:46 -0700 (PDT)
-Date: Tue, 29 Apr 2025 10:54:44 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Seyediman Seyedarab <imandevel@gmail.com>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2] cpufreq: fix locking order in store_local_boost to
- prevent deadlock
-Message-ID: <20250429052444.zfmfzjirkcaq3edh@vireshk-i7>
-References: <20250428171931.1850-1-ImanDevel@gmail.com>
+	s=arc-20240116; t=1745904577; c=relaxed/simple;
+	bh=Lv3e47k2fwPuD/LA71tXJaD4eBI796WRIGkmveFhIiY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GojUG9NkGdxO8uNam4e6s6mM9RA5hdQzMs72vU/QMWDTxS26MEYnLCy0yzeCcj3whI4lbBe8yPO3TEk4vKwpkv4DeCH8+iFiwWwj+hJ5A2WbrVuqvKYwxe/wntOFl1jqhYlqshruH9FcIWDJ64lsbYahtYMI/BclqtWCkcQO7MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cAYCecKS; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1745904575; x=1777440575;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Lv3e47k2fwPuD/LA71tXJaD4eBI796WRIGkmveFhIiY=;
+  b=cAYCecKSvRIAPyIFdw9kW2M9+IIMSsnrc7oVD8oOWTzHv0bJ8lOr8Qa8
+   Q3MnXjsPn6oRBqajtWMR0wE0RFAGKMMsHZZISbc8aPqI3cedJZo9c+Gwn
+   BNfHniMIYvfft/zvg+feYKWS+MjVSUbYOAazEcJLB76xFTzqy66x5igMF
+   bh9natYCBW45JFRpvS35iJjt6L78UJQmkxUGU5EZZ1RmCEPfdBtiAMdD7
+   p4UFOnmPfqMR1X7KpGfHnCDHsZ2FFbKYTDsups2ZYA0lVRk+XjJh6rqXL
+   kRE+T0BhgySrOgSW0CogIeHRo31UMIC7cfdA7QoPXfph8Y4BLmbF21X/v
+   g==;
+X-CSE-ConnectionGUID: cBTODZR3SKuLWw3lXtWFog==
+X-CSE-MsgGUID: nkpCiSi6Tdej7hMIR2hKDw==
+X-IronPort-AV: E=Sophos;i="6.15,248,1739862000"; 
+   d="scan'208";a="208513184"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Apr 2025 22:29:29 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 28 Apr 2025 22:28:49 -0700
+Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Mon, 28 Apr 2025 22:28:46 -0700
+From: Thangaraj Samynathan <thangaraj.s@microchip.com>
+To: <netdev@vger.kernel.org>
+CC: <bryan.whitehead@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 net] net: lan743x: Fix memleak issue when GSO enabled
+Date: Tue, 29 Apr 2025 10:55:27 +0530
+Message-ID: <20250429052527.10031-1-thangaraj.s@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428171931.1850-1-ImanDevel@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 28-04-25, 13:19, Seyediman Seyedarab wrote:
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index acf19b004..5464c8487 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -653,10 +653,7 @@ static ssize_t store_local_boost(struct cpufreq_policy *policy,
->  
->  	policy->boost_enabled = enable;
->  
-> -	cpus_read_lock();
->  	ret = cpufreq_driver->set_boost(policy, enable);
-> -	cpus_read_unlock();
-> -
->  	if (ret) {
->  		policy->boost_enabled = !policy->boost_enabled;
->  		return ret;
-> @@ -1045,11 +1042,17 @@ static ssize_t store(struct kobject *kobj, struct attribute *attr,
->  	if (!fattr->store)
->  		return -EIO;
->  
-> +	if (fattr == &local_boost)
-> +		cpus_read_lock();
-> +
+Always map the `skb` to the LS descriptor. Previously skb was
+mapped to EXT descriptor when the number of fragments is zero with
+GSO enabled. Mapping the skb to EXT descriptor prevents it from
+being freed, leading to a memory leak
 
-Please add a comment as well to explain why this is required here.
+Fixes: 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
+Signed-off-by: Thangaraj Samynathan <thangaraj.s@microchip.com>
+---
+v1
+-Intial Submission
 
->  	down_write(&policy->rwsem);
+v2
+-Modify the description to imperative mood
 
-And please rebase over PM tree's linux-next branch, your patch won't
-apply anymore due to recent changes.
+---
+ drivers/net/ethernet/microchip/lan743x_main.c | 8 ++++++--
+ drivers/net/ethernet/microchip/lan743x_main.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
->  	if (likely(!policy_is_inactive(policy)))
->  		ret = fattr->store(policy, buf, count);
->  	up_write(&policy->rwsem);
->  
-> +	if (fattr == &local_boost)
-> +		cpus_read_unlock();
-> +
->  	return ret;
->  }
-
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
+index 8b6b9b6efe18..73dfc85fa67e 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.c
++++ b/drivers/net/ethernet/microchip/lan743x_main.c
+@@ -1815,6 +1815,7 @@ static void lan743x_tx_frame_add_lso(struct lan743x_tx *tx,
+ 	if (nr_frags <= 0) {
+ 		tx->frame_data0 |= TX_DESC_DATA0_LS_;
+ 		tx->frame_data0 |= TX_DESC_DATA0_IOC_;
++		tx->frame_last = tx->frame_first;
+ 	}
+ 	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_tail];
+ 	tx_descriptor->data0 = cpu_to_le32(tx->frame_data0);
+@@ -1884,6 +1885,7 @@ static int lan743x_tx_frame_add_fragment(struct lan743x_tx *tx,
+ 		tx->frame_first = 0;
+ 		tx->frame_data0 = 0;
+ 		tx->frame_tail = 0;
++		tx->frame_last = 0;
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1924,16 +1926,18 @@ static void lan743x_tx_frame_end(struct lan743x_tx *tx,
+ 	    TX_DESC_DATA0_DTYPE_DATA_) {
+ 		tx->frame_data0 |= TX_DESC_DATA0_LS_;
+ 		tx->frame_data0 |= TX_DESC_DATA0_IOC_;
++		tx->frame_last = tx->frame_tail;
+ 	}
+ 
+-	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_tail];
+-	buffer_info = &tx->buffer_info[tx->frame_tail];
++	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_last];
++	buffer_info = &tx->buffer_info[tx->frame_last];
+ 	buffer_info->skb = skb;
+ 	if (time_stamp)
+ 		buffer_info->flags |= TX_BUFFER_INFO_FLAG_TIMESTAMP_REQUESTED;
+ 	if (ignore_sync)
+ 		buffer_info->flags |= TX_BUFFER_INFO_FLAG_IGNORE_SYNC;
+ 
++	tx_descriptor = &tx->ring_cpu_ptr[tx->frame_tail];
+ 	tx_descriptor->data0 = cpu_to_le32(tx->frame_data0);
+ 	tx->frame_tail = lan743x_tx_next_index(tx, tx->frame_tail);
+ 	tx->last_tail = tx->frame_tail;
+diff --git a/drivers/net/ethernet/microchip/lan743x_main.h b/drivers/net/ethernet/microchip/lan743x_main.h
+index 7f73d66854be..db5fc73e41cc 100644
+--- a/drivers/net/ethernet/microchip/lan743x_main.h
++++ b/drivers/net/ethernet/microchip/lan743x_main.h
+@@ -980,6 +980,7 @@ struct lan743x_tx {
+ 	u32		frame_first;
+ 	u32		frame_data0;
+ 	u32		frame_tail;
++	u32		frame_last;
+ 
+ 	struct lan743x_tx_buffer_info *buffer_info;
+ 
 -- 
-viresh
+2.25.1
+
 
