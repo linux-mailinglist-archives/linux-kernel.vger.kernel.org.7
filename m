@@ -1,202 +1,121 @@
-Return-Path: <linux-kernel+bounces-624429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A94AAA037B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:36:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94439AA0530
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BF3C7A68BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928303AE4D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B354E2749E1;
-	Tue, 29 Apr 2025 06:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA7527A92B;
+	Tue, 29 Apr 2025 08:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E/Yedh9q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DncP7Ez0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586D92749D8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D26230BDB;
+	Tue, 29 Apr 2025 08:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745908548; cv=none; b=qvfJFHQie0cc3MXfSmkzOYhd1+epHTJLSQC+MlvlL3p+LRCIg8xRz2kQ0KwkAGkC6YvYCe0APCa69q1VZFtTYOufM3GD++oMxs9eCcmH5tUuhoFqST1YqY9h33MTsss0MY8St02TnNkggMNT0fpZoed/u+nXywb65e8cTuMx730=
+	t=1745913967; cv=none; b=IxNe87ikB1h3xFlLgKbg4gzXV9IrPrIIh8vhA6mgLycXnTQIZHJJA682spLbmJl+p23JzPhwW5vblECePNzz4TUDPvrkmy9HfWFyLKsujTmOEi1bVCevpVmBWtW/4YpKUTXwTdLHGTpej5JUp3pRrt3emmX3U5LS7lpAf48LBZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745908548; c=relaxed/simple;
-	bh=kGVRxUlzoEJB4qXKwlBh+TaHXZU8T8gOZTim9slD8MM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c1Ibv/x6tQ9KyTSGQ58lPasWZxmE9SXc/30vEdW8fNJ4NCRJ9JOF2STex3BzfVgF/9oLKk7NPK1VIfmZsfmxtlduIzTtXtpNpHZ7ip1aq0HhTO2BlBdcAo+pXnVjAH2Jzr1Tjxk2TNVkRxW2Hy+OjMqcn/1SRs5T/KHTEo+TGjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E/Yedh9q; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1745913967; c=relaxed/simple;
+	bh=XJbOu8oe6MHnFoBGQc7cHTHtXhGx4hB36GKy8vSOICk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THi9X+z643gKRdotf0+ZSTX97C7YpCaeylEnE5p6l3ED9EeejbJtU9EPBdThVD4WScoQ/rrrgIHIHIKQ1dg2Pbb3FuJ3avWLhmDnvc6DDqclq5m7otiPgN0AQOYyzXKDxL3HHG8RJ3iMYXYcyUm9xAHkuxzP9lnPV41aZ87ab3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DncP7Ez0; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745908547; x=1777444547;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=kGVRxUlzoEJB4qXKwlBh+TaHXZU8T8gOZTim9slD8MM=;
-  b=E/Yedh9q/5q862LqhBYtRbu/mxWiqHqxc7q2IFJBZVIuvRy+RhwF042Q
-   a6QZHxwO/YeoB9pTU4sJZ114vdNZnE5APp+QkfITg/dWY0u4ZXVYbiztB
-   zRzwsLG92wtOHEwORTiTmOxgHofAvjDFkrMqUoxUZBsRvbv9t3kHusPvA
-   jDX7OHU0CoexzT4MfsTEdNfitZpSlKAtDBJNTs9X2fhi2nMTFLDhKRG2Z
-   wUtSHHbI8QjPM34JxoxbmflHIY8L1PNv7Cwqz2qIjdOjC4rH/2FLdL7IT
-   F7CtBiNpEaSuURRRFIO6BqD3e1+bs1b2a00iNBDYln3i9iKQQtM3Mdzi+
-   w==;
-X-CSE-ConnectionGUID: e3NmC6w7QlKM/pNK0jJuXQ==
-X-CSE-MsgGUID: Kj1WJOXyQUWLj73ckRzFXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="64937629"
+  t=1745913962; x=1777449962;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XJbOu8oe6MHnFoBGQc7cHTHtXhGx4hB36GKy8vSOICk=;
+  b=DncP7Ez0AcRr4WQ9aFrvdFs7nNl8rWvDzbQFZyzIhwr7AUIB3VBVXtHp
+   z3LRuytVcWVW8Nt0rLtEd+/l0awWz5c6X6HFkMNLe4Img8Iw4rrNwMNe0
+   xo21DkKVsT1HwMEnsNzsf7K15XPFzwc86RQRp6ReViXapVn5N6gQwZx/Z
+   QhDof6DVyZXMWytmePAcvdRRRP9gamFBIQ2eHCVVbFFK11374vhFC2pSp
+   /D6ApNNAmh+walnfFGDLwXmCwodEqQsyAUqk5LR2Pa40jxHQTb3a8cDUc
+   s6UgOJzUJyqDZ7VHUghSl5WHJ310s1RaDeKmqa8/AmTWqqBchj/Dkn76a
+   A==;
+X-CSE-ConnectionGUID: 1VUpMUMKRj6wp32414LRlw==
+X-CSE-MsgGUID: iqiyhQWPSFGI7wuOjeaJpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="47537527"
 X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="64937629"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 23:35:46 -0700
-X-CSE-ConnectionGUID: vi0G0E8RRb+fV6w4HGJ3UQ==
-X-CSE-MsgGUID: kK4hmxZUSpe7uRE8Ov9/vw==
+   d="scan'208";a="47537527"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 01:05:48 -0700
+X-CSE-ConnectionGUID: 98GuK9QCRYSrVo/7tNEo5g==
+X-CSE-MsgGUID: WIUxjBp3S2eSXWSWqrFQiw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="134254076"
-Received: from unknown (HELO CannotLeaveINTEL.bj.intel.com) ([10.238.153.146])
-  by fmviesa010.fm.intel.com with ESMTP; 28 Apr 2025 23:35:42 -0700
-From: Jun Miao <jun.miao@intel.com>
-To: kirill.shutemov@linux.intel.com,
-	dave.hansen@linux.intel.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de
-Cc: x86@kernel.org, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, jun.miao@intel.com,
-	fan.du.com@web.codeaurora.org, zhiquan1.li@intel.com
-Subject: [V2 PATCH] x86/tdx: add VIRT_CPUID2 virtualization if REDUCE_VE was not successful
-Date: Tue, 29 Apr 2025 10:31:14 -0400
-Message-ID: <20250429143114.1724280-2-jun.miao@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250429143114.1724280-1-jun.miao@intel.com>
-References: <20250429143114.1724280-1-jun.miao@intel.com>
+   d="scan'208";a="164699249"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 29 Apr 2025 01:05:44 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u9fyI-0000ZP-08;
+	Tue, 29 Apr 2025 08:05:42 +0000
+Date: Tue, 29 Apr 2025 16:05:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sai Sree Kartheek Adivi <s-adivi@ti.com>, peter.ujfalusi@gmail.com,
+	vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nm@ti.com, ssantosh@kernel.org,
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	praneeth@ti.com, vigneshr@ti.com, u-kumar1@ti.com, a-chavda@ti.com
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 6/8] dmaengine: ti: New driver for K3 BCDMA_V2
+Message-ID: <202504291527.tCMC8UGh-lkp@intel.com>
+References: <20250428072032.946008-7-s-adivi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428072032.946008-7-s-adivi@ti.com>
 
-From: Zhiquan Li <zhiquan1.li@intel.com>
+Hi Sai,
 
-The ENUM_TOPOLOGY and VIRT_CPUID2 virtualization control are the subset
-of the REDUCE_VE control, TD enabling REDUCE_VE will also implicitly
-enable ENUM_TOPOLOGY and VIRT_CPUID2.  Both features were introduced
-earlier than REDUCE_VE.  Now if enabling REDUCE_VE is failed
-will fall back to enabling ENUM_TOPOLOGY, the same reason is applicable
-for VIRT_CPUID2.
+kernel test robot noticed the following build warnings:
 
-The VIRT_CPUID2 feature allows TDX module provides fixed values
-eax=0x00feff01, ebx=0, ecx=0 and edx=0, meaning "cache data is returned
-by CPUID leaf 0x4" and "TLB data is returned by CPUID leaf 0x18" while
-TD guest execution of CPUID leaf 0x2, instead the kernel CPUID #VE
-handler returns all zeros.  It is quite useful for backward
-compatibility.
+[auto build test WARNING on vkoul-dmaengine/next]
+[also build test WARNING on linus/master v6.15-rc4]
+[cannot apply to next-20250428]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-REDUCE_VE can only be enabled if x2APIC_ID has been properly configured
-with unique values for each VCPU.  Check if VMM has provided an activated
-topology configuration first as it is the prerequisite of REDUCE_VE and
-ENUM_TOPOLOGY, so move it to reduce_unnecessary_ve().  The function
-enable_cpu_topology_enumeration() was very little and can be
-integrated into reduce_unnecessary_ve().
+url:    https://github.com/intel-lab-lkp/linux/commits/Sai-Sree-Kartheek-Adivi/dt-bindings-dma-ti-Add-document-for-K3-BCDMA-V2/20250428-152616
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
+patch link:    https://lore.kernel.org/r/20250428072032.946008-7-s-adivi%40ti.com
+patch subject: [PATCH 6/8] dmaengine: ti: New driver for K3 BCDMA_V2
+config: arm64-kismet-CONFIG_TI_K3_RINGACC-CONFIG_TI_K3_UDMA_V2-0-0 (https://download.01.org/0day-ci/archive/20250429/202504291527.tCMC8UGh-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250429/202504291527.tCMC8UGh-lkp@intel.com/reproduce)
 
-Only try to enable VIRT_CPUID2 when REDUCE_VE was not successful and the
-depended x2APIC_ID didn't set to each TD vCPU.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504291527.tCMC8UGh-lkp@intel.com/
 
-Fixes: cd9ce8217345 ("x86/tdx: Disable unnecessary virtualization exceptions")
-Co-developed-by: Jun Miao <jun.miao@intel.com>
-Signed-off-by: Jun Miao <jun.miao@intel.com>
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
----
- arch/x86/coco/tdx/tdx.c | 52 +++++++++++++++++++++++++++--------------
- 1 file changed, 34 insertions(+), 18 deletions(-)
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for TI_K3_RINGACC when selected by TI_K3_UDMA_V2
+   WARNING: unmet direct dependencies detected for TI_K3_RINGACC
+     Depends on [n]: SOC_TI [=y] && (ARCH_K3 [=y] || COMPILE_TEST [=y]) && TI_SCI_INTA_IRQCHIP [=n]
+     Selected by [y]:
+     - TI_K3_UDMA_V2 [=y] && DMADEVICES [=y] && ARCH_K3 [=y]
 
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index edab6d6049be..94062dbf57fd 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -247,43 +247,59 @@ static void disable_sept_ve(u64 td_attr)
- }
- 
- /*
-+ * Newer TDX modules provide a "REDUCE_VE" feature.  When enabled, it
-+ * drastically cuts cases when guests receive #VE on MSR and CPUID accesses,
-+ * and TDX module also forces ENUM_TOPOLOGY and VIRT_CPUID to enabled.
-+ *
-+ * But REDUCE_VE can only be enabled if x2APIC_ID has been properly configured
-+ * with unique values for each VCPU. So check if VMM has provided a valid
-+ * topology configuration first.
-+ *
-  * TDX 1.0 generates a #VE when accessing topology-related CPUID leafs (0xB and
-  * 0x1F) and the X2APIC_APICID MSR. The kernel returns all zeros on CPUID #VEs.
-  * In practice, this means that the kernel can only boot with a plain topology.
-  * Any complications will cause problems.
-  *
-  * The ENUM_TOPOLOGY feature allows the VMM to provide topology information.
-- * Enabling the feature  eliminates topology-related #VEs: the TDX module
-+ * Enabling the feature eliminates topology-related #VEs: the TDX module
-  * virtualizes accesses to the CPUID leafs and the MSR.
-  *
-- * Enable ENUM_TOPOLOGY if it is available.
-+ * The VIRT_CPUID2 feature allows TDX module provides fixed values
-+ * eax=0x00feff01, ebx=0, ecx=0 and edx=0, meaning "cache data is returned by
-+ * CPUID leaf 0x4" and "TLB data is returned by CPUID leaf 0x18" while TD
-+ * guest execution of CPUID leaf 0x2, instead the kernel CPUID #VE handler
-+ * returns all zeros. It is quite useful for backward compatibility.
-+ *
-+ * Both ENUM_TOPOLOGY and VIRT_CPUID2 are earlier than REDUCE_VE, fall back to
-+ * enable them if REDUCE_VE was not successful.
-  */
--static void enable_cpu_topology_enumeration(void)
-+static void reduce_unnecessary_ve(void)
- {
-+	u64 err = TDX_SUCCESS;
- 	u64 configured;
- 
- 	/* Has the VMM provided a valid topology configuration? */
- 	tdg_vm_rd(TDCS_TOPOLOGY_ENUM_CONFIGURED, &configured);
--	if (!configured) {
--		pr_err("VMM did not configure X2APIC_IDs properly\n");
--		return;
--	}
--
--	tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_ENUM_TOPOLOGY, TD_CTLS_ENUM_TOPOLOGY);
--}
- 
--static void reduce_unnecessary_ve(void)
--{
--	u64 err = tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_REDUCE_VE, TD_CTLS_REDUCE_VE);
-+	if (configured) {
-+		err = tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_REDUCE_VE, TD_CTLS_REDUCE_VE);
- 
--	if (err == TDX_SUCCESS)
--		return;
-+		/*
-+		 * Enabling REDUCE_VE includes ENUM_TOPOLOGY. Only try to
-+		 * enable ENUM_TOPOLOGY if REDUCE_VE was not successful.
-+		 */
-+		if (err != TDX_SUCCESS)
-+			tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_ENUM_TOPOLOGY, TD_CTLS_ENUM_TOPOLOGY);
-+	} else
-+		pr_err("VMM did not configure X2APIC_IDs properly\n");
- 
- 	/*
--	 * Enabling REDUCE_VE includes ENUM_TOPOLOGY. Only try to
--	 * enable ENUM_TOPOLOGY if REDUCE_VE was not successful.
-+	 * Enabling REDUCE_VE includes VIRT_CPUID2. Only try to enable
-+	 * VIRT_CPUID2 if REDUCE_VE was not successful.
- 	 */
--	enable_cpu_topology_enumeration();
-+	if (!configured || err != TDX_SUCCESS)
-+		tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_VIRT_CPUID2, TD_CTLS_VIRT_CPUID2);
-+
- }
- 
- static void tdx_setup(u64 *cc_mask)
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
