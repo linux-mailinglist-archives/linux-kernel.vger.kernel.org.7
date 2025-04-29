@@ -1,264 +1,170 @@
-Return-Path: <linux-kernel+bounces-625000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091E8AA0B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:04:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E71AA0AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4F91887B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:04:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1DA63A9163
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D8C2D8690;
-	Tue, 29 Apr 2025 12:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EAA2C1E1A;
+	Tue, 29 Apr 2025 12:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zDcHV0cO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xzDC6AYS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hx1JN+7L"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2A02D1F6F;
-	Tue, 29 Apr 2025 12:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F3E21325C;
+	Tue, 29 Apr 2025 12:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745928103; cv=none; b=d3V62f5THZ8zeak/2kU1tKm7h4vlQbLM9nVpxC/VXGlowEbnUp6Q5ZnYg/8BwjpKr2237+EKscDLlZBZMDQFJATBoqMtF/qugCLAUyiquC9JY4cBO6036mhT6Zue/OM6Vp8nwft8c2FAcEzrwPDW2XR21B8E7mFt48c9FDAbIFk=
+	t=1745928076; cv=none; b=jl7kIXRaYnVEq7g0fBAXFW6TFtWMbPHZegZRSZ3jAmqnJofMRsQ4w52G0Ekhl+lh1E1DSamWrL02Da+5pyLZMlg3WWzaQD9qPdRUGWFU11MuVVaUzPsjuoWtNnk800patD+/TFmxKnrpOAG+EpScpuJrbHr4bn0jEL4ik+5LmLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745928103; c=relaxed/simple;
-	bh=0nbGFHz+EXRaf6HbhDOYa35ky+Tb5QKBhB7slnQ3AcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rtTTqtDl5yI9DNiL0K4X/ykwPv5kQy3cBNSmURVe4WRTrlup6O7XW8vh30Lh5GlSPeeIKG/6SNqHSaOp8iPm/e47iPFL9fflzi7JVrPkdE+KqjnYX6rouJOoEk0OY+HnBbg3fwW2wfYuNPXWQHcql0Ws4JuzLjOG13qvJ741BVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zDcHV0cO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xzDC6AYS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745928094;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/CRVx+J40MgxXidQCXv41iZ3UaDjtbbKLpLCgWna06k=;
-	b=zDcHV0cO77/yi0Th9GtQcs/GdYkevsr/b9jpfgd7J1FxZh0JLMfqwB35YAn9GVjkGIYznD
-	0Zq/8DVRlHfK7OrVvRkATUwko0QmYp8dExPmKj9pSuOjOSxKxf+pakxHWV+zI8m7ADtPYa
-	hriPonq4uUlYUxY0rZA9OqMoWeOTGWbKkfegRDJAFtKQO3tx5COBqgskPIj//Wq3JVCVD7
-	sD+OkQzuSPpuEgd8WICi80nQ/bu29knOc+NtFWbvf8Ich8rDd8CSHgvED4DMXgQDAU8fOF
-	DRlVZk1OrA5sye3S7u4FA/lD0At4KjrWhtlsQJzdpeKFj/KQp+qo7nn/iNF1/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745928094;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/CRVx+J40MgxXidQCXv41iZ3UaDjtbbKLpLCgWna06k=;
-	b=xzDC6AYScSX6JskvBagRUAbJrreW2KxvC1hWEJo3BLZmCGBOvCDqJhq++0wqROtcE2UeZ3
-	kvI+V9yuxnJ+A7Bw==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: john.ogness@linutronix.de,
-	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v5 22/23] rv: Add documentation for rtapp monitor
-Date: Tue, 29 Apr 2025 14:01:07 +0200
-Message-Id: <5cd387ff9a7b894ae68762cffb5c93019c6859a9.1745926331.git.namcao@linutronix.de>
-In-Reply-To: <cover.1745926331.git.namcao@linutronix.de>
-References: <cover.1745926331.git.namcao@linutronix.de>
+	s=arc-20240116; t=1745928076; c=relaxed/simple;
+	bh=Nb6NfT8WKqkyzRVDy8XKyQ8nS6maQi397ouHJdzBsak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THIwN83SE+OCMtz687RdbUGULtiR95kdmP02BURDeER5fhU3KLfXZcMimyy7xgj/7bQrgSHhtKRdf8xETomJkEroan5/02inC3Eoy6L5MUC2HXCWuT6tK707zbLspI//cy6t+vR14yg0cY3r547M34zIHsMsXMzIAjcYLkaCHbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hx1JN+7L; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745928075; x=1777464075;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Nb6NfT8WKqkyzRVDy8XKyQ8nS6maQi397ouHJdzBsak=;
+  b=hx1JN+7L3+kkfH5reOxJaD1ZyFxnQrGipUtybUkwY+P+FAZCB+hlYj54
+   s+BD4QFGMHKU0QP3lfO2I6P41Sn9UTIcv6qYZq2THiyQL57jYdSYiOrcw
+   8N+AxlmjZirSKP39cgLtAEgJ1ZMIz5Zoj/vB7JRCnI7OEJe4yRS2kK806
+   Bmx9hUQHsEE20hhvMeCD1s0ur4fLIRTKXzONUUhFpsBOUobhpnJjDRjMM
+   Y+UP9DkAXWCd/zzR/IVAR3pAKMT9w5R8aeHHaFeXOLm3oF/he+OcMxTOJ
+   GSaJwsIR5hIIJbVtg0FPF2pLyKqyG1r4d85+dxI7RKc5OwiuUZOBYnYr1
+   g==;
+X-CSE-ConnectionGUID: EmG7Nl8TThSfn573jRsXJQ==
+X-CSE-MsgGUID: rXGVPnFIS/yz71OLO7SNgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="47635762"
+X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
+   d="scan'208";a="47635762"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 05:01:14 -0700
+X-CSE-ConnectionGUID: 0+AUv4gyQG+k9WOoOzxdLQ==
+X-CSE-MsgGUID: rV/r1IICSrekMBjrmlkzow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
+   d="scan'208";a="164751829"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 05:01:11 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id DAFFE11F944;
+	Tue, 29 Apr 2025 15:01:07 +0300 (EEST)
+Date: Tue, 29 Apr 2025 12:01:07 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] media: i2c: Add driver for ST VD55G1 camera sensor
+Message-ID: <aBC_gx8vFNWLacgB@kekkonen.localdomain>
+References: <20250407-b4-vd55g1-v6-0-1850f18b1f24@foss.st.com>
+ <20250407-b4-vd55g1-v6-2-1850f18b1f24@foss.st.com>
+ <aBCxpuppB6L-Ft2c@kekkonen.localdomain>
+ <70f7bc9b-4533-4c8e-a792-aad9a0b7a6d4@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70f7bc9b-4533-4c8e-a792-aad9a0b7a6d4@foss.st.com>
 
-Add documentation describing the rtapp monitor.
+Hi Benjamin,
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- Documentation/trace/rv/index.rst         |   1 +
- Documentation/trace/rv/monitor_rtapp.rst | 114 +++++++++++++++++++++++
- 2 files changed, 115 insertions(+)
- create mode 100644 Documentation/trace/rv/monitor_rtapp.rst
+On Tue, Apr 29, 2025 at 01:29:39PM +0200, Benjamin Mugnier wrote:
+> >> +static int vd55g1_check_csi_conf(struct vd55g1 *sensor,
+> >> +				 struct fwnode_handle *endpoint)
+> >> +{
+> >> +	struct i2c_client *client = sensor->i2c_client;
+> >> +	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
+> >> +	u8 n_lanes;
+> >> +	int ret;
+> >> +
+> >> +	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &ep);
+> >> +	if (ret)
+> >> +		return -EINVAL;
+> >> +
+> >> +	/* Check lanes number */
+> >> +	n_lanes = ep.bus.mipi_csi2.num_data_lanes;
+> >> +	if (n_lanes != 1) {
+> >> +		dev_err(&client->dev, "Sensor only supports 1 lane, found %d\n",
+> >> +			n_lanes);
+> >> +		ret = -EINVAL;
+> >> +		goto done;
+> >> +	}
+> >> +
+> >> +	/* Clock lane must be first */
+> >> +	if (ep.bus.mipi_csi2.clock_lane != 0) {
+> >> +		dev_err(&client->dev, "Clock lane must be mapped to lane 0\n");
+> >> +		ret = -EINVAL;
+> >> +		goto done;
+> >> +	}
+> >> +
+> >> +	/* Handle polarities in sensor configuration */
+> >> +	sensor->oif_ctrl = (ep.bus.mipi_csi2.lane_polarities[0] << 3) |
+> >> +			   (ep.bus.mipi_csi2.lane_polarities[1] << 6);
+> >> +
+> >> +	/* Check the link frequency set in device tree */
+> >> +	if (!ep.nr_of_link_frequencies) {
+> >> +		dev_err(&client->dev, "link-frequency property not found in DT\n");
+> >> +		ret = -EINVAL;
+> >> +		goto done;
+> >> +	}
+> >> +	if (ep.nr_of_link_frequencies != 1) {
+> >> +		dev_err(&client->dev, "Multiple link frequencies not supported\n");
+> >> +		ret = -EINVAL;
+> >> +		goto done;
+> > 
+> > Please check the link frequency matches with what the driver supports,
+> > using e.g. v4l2_link_freq_to_bitmap().
+> > 
+> 
+> Are you referring to checks performed in in vd55g1_prepare_clock_tree()
+> ? Keep in mind it will change a bit with Laurent's comments though.
+> The sensor supports a range of frequencies therefore I chose to check it
+> manually instead of v4l2_link_freq_to_bitmap().
 
-diff --git a/Documentation/trace/rv/index.rst b/Documentation/trace/rv/inde=
-x.rst
-index 2a27f6bc9429..a2812ac5cfeb 100644
---- a/Documentation/trace/rv/index.rst
-+++ b/Documentation/trace/rv/index.rst
-@@ -14,3 +14,4 @@ Runtime Verification
-    monitor_wip.rst
-    monitor_wwnr.rst
-    monitor_sched.rst
-+   monitor_rtapp.rst
-diff --git a/Documentation/trace/rv/monitor_rtapp.rst b/Documentation/trace=
-/rv/monitor_rtapp.rst
-new file mode 100644
-index 000000000000..f69f267a4e30
---- /dev/null
-+++ b/Documentation/trace/rv/monitor_rtapp.rst
-@@ -0,0 +1,114 @@
-+Real-time application monitors
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-+
-+- Name: rtapp
-+- Type: container for multiple monitors
-+- Author: Nam Cao <namcao@linutronix.de>
-+
-+Description
-+-----------
-+
-+Real-time applications may have design flaws such that they experience une=
-xpected latency and fail
-+to meet their time requirements. Often, these flaws follow a few patterns:
-+
-+  - Page faults: A real-time thread may access memory that does not have a=
- mapped physical backing
-+    or must first be copied (such as for copy-on-write). Thus a page fault=
- is raised and the kernel
-+    must first perform the expensive action. This causes significant delay=
-s to the real-time thread
-+  - Priority inversion: A real-time thread blocks waiting for a lower-prio=
-rity thread. This causes
-+    the real-time thread to effectively take on the scheduling priority of=
- the lower-priority
-+    thread. For example, the real-time thread needs to access a shared res=
-ource that is protected by
-+    a non-pi-mutex, but the mutex is currently owned by a non-real-time th=
-read.
-+
-+The `rtapp` monitor detects these patterns. It aids developers to identify=
- reasons for unexpected
-+latency with real-time applications. It is a container of multiple sub-mon=
-itors described in the
-+following sections.
-+
-+Monitor pagefault
-++++++++++++++++++
-+
-+The `pagefault` monitor reports real-time tasks raising page faults. Its s=
-pecification is::
-+
-+  RULE =3D always (RT imply not PAGEFAULT)
-+
-+To fix warnings reported by this monitor, `mlockall()` or `mlock()` can be=
- used to ensure physical
-+backing for memory.
-+
-+This monitor may have false negatives because the pages used by the real-t=
-ime threads may just
-+happen to be directly available during testing. To minimize this, the syst=
-em can be put under memory
-+pressure (e.g. invoking the OOM killer using a program that does `ptr =3D =
-malloc(SIZE_OF_RAM);
-+memset(ptr, 0, SIZE_OF_RAM);`) so that the kernel executes aggressive stra=
-tegies to recycle as much
-+physical memory as possible.
-+
-+Monitor sleep
-++++++++++++++
-+
-+The `sleep` monitor reports real-time threads sleeping in a manner that ma=
-y cause undesirable
-+latency. Real-time applications should only put a real-time thread to slee=
-p for one of the following
-+reasons:
-+
-+  - Cyclic work: real-time thread sleeps waiting for the next cycle. For t=
-his case, only the
-+    `clock_nanosleep` syscall should be used with `TIMER_ABSTIME` (to avoi=
-d time drift) and
-+    `CLOCK_MONOTONIC` (to avoid the clock being changed). No other method =
-is safe for real-time. For
-+    example, threads waiting for timerfd can be woken by softirq which pro=
-vides no real-time
-+    guarantee.
-+  - Real-time thread waiting for something to happen (e.g. another thread =
-releasing shared
-+    resources, or a completion signal from another thread). In this case, =
-only futexes with priority
-+    inheritance (PI) should be used. Applications usually do not use futex=
-es directly, but use PI
-+    mutexes and PI condition variables which are built on top of futexes. =
-Be aware that the C
-+    library might not implement conditional variables as safe for real-tim=
-e. As an alternative, the
-+    librtpi library exists to provide a conditional variable implementatio=
-n that is correct for
-+    real-time applications in Linux.
-+
-+Beside the reason for sleeping, the eventual waker should also be real-tim=
-e-safe. Namely, one of:
-+
-+  - An equal-or-higher-priority thread
-+  - Hard interrupt handler
-+  - Non-maskable interrupt handler
-+
-+This monitor's warning usually means one of the following:
-+
-+  - Real-time thread is blocked by a non-real-time thread (e.g. due to con=
-tention on a mutex without
-+    priority inheritance). This is priority inversion.
-+  - Time-critical work waits for something which is not safe for real-time=
- (e.g. timerfd).
-+  - The work executed by the real-time thread does not need to run at real=
--time priority at all.
-+    This is not a problem for the real-time thread itself, but it is poten=
-tially taking the CPU away
-+    from other important real-time work.
-+
-+Application developers may purposely choose to have their real-time applic=
-ation sleep in a way that
-+is not safe for real-time. It is debatable whether that is a problem. Appl=
-ication developers must
-+analyze the warnings to make a proper assessment.
-+
-+The monitor's specification is::
-+
-+  RULE =3D always ((RT and SLEEP) imply (RT_FRIENDLY_SLEEP or ALLOWLIST))
-+
-+  RT_FRIENDLY_SLEEP =3D (RT_VALID_SLEEP_REASON or KERNEL_THREAD)
-+                  and ((not WAKE) until RT_FRIENDLY_WAKE)
-+
-+  RT_VALID_SLEEP_REASON =3D PI_FUTEX
-+                       or RT_FRIENDLY_NANOSLEEP
-+
-+  RT_FRIENDLY_NANOSLEEP =3D CLOCK_NANOSLEEP
-+                      and NANOSLEEP_TIMER_ABSTIME
-+                      and NANOSLEEP_CLOCK_MONOTONIC
-+
-+  RT_FRIENDLY_WAKE =3D WOKEN_BY_EQUAL_OR_HIGHER_PRIO
-+                  or WOKEN_BY_HARDIRQ
-+                  or WOKEN_BY_NMI
-+                  or KTHREAD_SHOULD_STOP
-+
-+  ALLOWLIST =3D BLOCK_ON_RT_MUTEX
-+           or TASK_IS_RCU
-+           or TASK_IS_MIGRATION
-+
-+Beside the scenarios described above, this specification also handle some =
-special cases:
-+
-+  - `KERNEL_THREAD`: kernel tasks do not have any pattern that can be reco=
-gnized as valid real-time
-+    sleeping reasons. Therefore sleeping reason is not checked for kernel =
-tasks.
-+  - `KTHREAD_SHOULD_STOP`: a non-real-time thread may stop a real-time ker=
-nel thread by waking it
-+    and waiting for it to exit (`kthread_stop()`). This wakeup is safe for=
- real-time.
-+  - `ALLOWLIST`: to handle known false positives with the kernel.
-+  - `BLOCK_ON_RT_MUTEX` is included in the allowlist due to its implementa=
-tion. In the release path
-+    of rt_mutex, a boosted task is de-boosted before waking the rt_mutex's=
- waiter. Consequently, the
-+    monitor may see a real-time-unsafe wakeup (e.g. non-real-time task wak=
-ing real-time task). This
-+    is actually real-time-safe because preemption is disabled for the dura=
-tion.
---=20
-2.39.5
+Ok, that's fine then. But please check this results to the frequency that
+was requested, currently it may be off AFAIR.
 
+> >> +	ret = v4l2_async_register_subdev(&sensor->sd);
+> >> +	if (ret) {
+> >> +		dev_err(dev, "async subdev register failed %d\n", ret);
+> >> +		goto err_subdev;
+> >> +	}
+> > 
+> > Aren't you missing:
+> > 
+> > 	pm_runtime_put_autosuspend(dev);
+> > 
+> > here?
+> > 
+> 
+> Thank you. I'll add it to the pm_runtime block above.
+> I also noticed I miss the pm_runtime_dont_use_autosuspend() call in
+> err_power_off. I'll add that too.
+
+Ack, sounds good.
+
+-- 
+Regards,
+
+Sakari Ailus
 
