@@ -1,74 +1,80 @@
-Return-Path: <linux-kernel+bounces-624819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46139AA0819
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:08:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC9AAA087F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC5A188DAA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:08:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A64D1B6158C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C864A2BE0E1;
-	Tue, 29 Apr 2025 10:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65662BE7D2;
+	Tue, 29 Apr 2025 10:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZKOu799"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sFhTFzJx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C96629B77F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B004E2746A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745921291; cv=none; b=dVpMA7y7XhY5RXt35vviTmkyw8Eabkq1Dv5/v4yvVHJCq0YxNQgw1mQq7bK+/WehDWp9HKu09+xk6bB65PPrXYOT4vMXiINzqvbIACgjl9DrvmPBVtmC+2nfSkiAAv8ONZUggxjyU0rhWPQu0XqKJwj6lnRj0BgCu2/Fd6ZDVHA=
+	t=1745922376; cv=none; b=psOAZ0ORZZM3knkkP6+cJO+JqKvyb36gpxo3i5NQ93Z9mpNzhpVfnaMqHCz2Kw9WbhZbjDkc41/IQLy/DI8mNaWKoP+n8ZkiKlJj6PcqdyKpwdxqvCw9CPSufri5QYhuLgjuXbxwj0SJaRzw+mxtx0kJHr3NEUZtb8LXZrgqhK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745921291; c=relaxed/simple;
-	bh=FNkyaJGp8MfoVlpMeJugXq0KnLpj/jBe07Y8pBAACqE=;
+	s=arc-20240116; t=1745922376; c=relaxed/simple;
+	bh=DECGLCQlKzdICENdT1SAMdHUB8qJpQmLIj6F/5lt5cc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1RfUPq4iY+6fzWYoouC226kvH8wrOupGXE2VI9Myc+tnklECOkgbtlu+VtZYEkF3KKhDxIBb0+wLZX5cYrkXmxs+7wlQAcY3IkhudwRY1lGIW51Mz1T6U8l3xCxWYY7zRcdmcTdLUy4oMk1QGQufy3PWmgR6MB8TRj1tYKm2w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZKOu799; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E22C4CEE3;
-	Tue, 29 Apr 2025 10:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745921289;
-	bh=FNkyaJGp8MfoVlpMeJugXq0KnLpj/jBe07Y8pBAACqE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VZKOu799+4V5pW/WeIPX/qMOLrBUca2dqVJr++ECXW2r6WG/1H+svFEldDbiX7Oo/
-	 DY94o1FtmcdGss/70ZUqk4LKljL1SvgzZ16Pvv24LIf9hBcyY3/XJyf68AQiZDjjnH
-	 L59TxFlHG20sFn7drQpXUlPUJ8ThkOni004ozQLvINNZUhpm+KdEjz3/Qpbg7khDuH
-	 I3DrOfWwhOeomddlNJ2qQxoiV/uAX1X4erXjcI2/wTWBJc2z9ALHBdlzAJpLs36VLl
-	 yOaXD0OWQbj4s1mQ1vUixWVu+yj/43QylJFIKx1Vy87I6Ai25BDi8HqaBo91TVBiwI
-	 exBh1/FcloI/Q==
-Date: Tue, 29 Apr 2025 12:08:03 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-	Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mateusz =?utf-8?Q?Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
-	Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH] bitops/32: Convert variable_ffs() and fls() zero-case
- handling to C
-Message-ID: <aBClAy837xcLnVpp@gmail.com>
-References: <aAyiganPp_UsNlnZ@gmail.com>
- <d2b0e71c-e79b-40d6-8693-3202cd894d66@app.fastmail.com>
- <CAHk-=wh=TUsVv6xhtzYsWJwJggrjyOfYT3kBu+bHtoYLK0M9Xw@mail.gmail.com>
- <CAHk-=wgfk69H-T-vMWR33xUpVsWJLrF34d0OwUXa2sHhtpSwZg@mail.gmail.com>
- <e54f1943-e0ff-4f59-b24f-9b5a7a38becf@citrix.com>
- <CAHk-=wj0S2vWui0Y+1hpYMEhCiXKexbQ01h+Ckvww8hB29az_A@mail.gmail.com>
- <aA8nF0moBYOIgC5J@gmail.com>
- <aA8oqKUaFU-0wb-D@gmail.com>
- <aA8q4Ot-1zTzv_Kt@gmail.com>
- <CAHk-=wh5DUS+nhfTxPEEbaB9dsFib39gWatrX4NoFq_MpdOzGw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aEQsVJU6wT9uavdDt/tv+dp/Y4IE8iLAcEyKiyQX7IW43QvJuwswAFd9qo5wE1MZGNYApfgyuLpYcD0R6WqLxIAimf1hROsU/mGY5G7uycUowUYfk7eiG+n55VlwVjz9DnECvY7IajhvDYN33GROYvGZBETibjBcDvy9egyp9e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sFhTFzJx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T4Ec39007851;
+	Tue, 29 Apr 2025 10:25:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=ekglh/dA3wRPB8yYZpbO8TuZXP094A
+	b8hzDsZSCc+RI=; b=sFhTFzJxrIK7JX4TDyJmj3CAI5+FQcMuujEWTNX1svc7V4
+	iMx/EHyGL6BzdOXdQMUyRlwsJ7bnrRD1VDDPBz8FcBdiGgBh5KjuNQQL7czPF9OQ
+	GRPed/g+126gC0mvTYUrK4ymurYmFPcspBqnTeIGDD8PCe2OY3EfmylKH1biFcXx
+	F4xGyakZlbqFlsrHUZZ1FMcIqBvZPTYfLHlkBoKeSH0e28w9OdR6ifFYwvVcqHam
+	DrivzV7B7mQrduD4NZW07rz0t7QVxSlpHs9BEoIf/iDwN1izywT6l7LiAaHTqb6p
+	dWhmNcxFMBIfnv68WaP2Ve6cQ5bCEgm+7XmEW+dQ==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46akn0t26u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 10:25:59 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53TAGsKI024662;
+	Tue, 29 Apr 2025 10:25:58 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 469c1m2h92-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 10:25:58 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53TAPuII38601018
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 10:25:56 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8DEC820D02;
+	Tue, 29 Apr 2025 10:08:32 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 608D420D04;
+	Tue, 29 Apr 2025 10:08:32 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 29 Apr 2025 10:08:32 +0000 (GMT)
+Date: Tue, 29 Apr 2025 12:08:31 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm, swap: fix false warning for large allocation with
+ !THP_SWAP
+Message-ID: <20250429100831.8629C3b-hca@linux.ibm.com>
+References: <20250429094803.85518-1-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,67 +83,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh5DUS+nhfTxPEEbaB9dsFib39gWatrX4NoFq_MpdOzGw@mail.gmail.com>
+In-Reply-To: <20250429094803.85518-1-ryncsn@gmail.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=AeCxH2XG c=1 sm=1 tr=0 ts=6810a937 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=GvQkQWPkAAAA:8 a=aL_wZZtXDkcKPmASj-QA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: liS4cQCsfDwQjkie4Ouy93YR5RAYoAyp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA3NSBTYWx0ZWRfX8cx8t7EGE8DD nP9nHG7Rw+gognLiLCCxhjEDvBjf2N6sWjeOhUc/lhXSMxFEKrBYTW5W5au2G63928wSiofobxM S1oKLkOn9vGOE8nCeM0JVovcEV7U+OVOw2JoUgIw1ICfIcexNalppxUQF1++AV9QTu63/TBc2Vi
+ YjWoUG+w+5DW4uLvmpteAHBlWXPPFcHx51Jtur58JQOSzVMdjfu4vcL4ndyOILVSftALz3aqkgp tnLwsUhWoxzbo10k/ainfYse6cRK36x4TQtkw9tkS84Hp1EHpCoBUQjQlJj2xKb1ObXdKiYY9cE CrG8vhEJKCirxVZbwD+x8OFjpIsNDozCP4xNw6eIB7QQNLQFmtpESkZop7rLrQKC9+NPaKf1jq1
+ mhV6e8GdB48vzICcyTAY63zKFfNFvGLU2qsmPqvbn9pNuov48fUpzPGdHPL66aLVIfomng0o
+X-Proofpoint-GUID: liS4cQCsfDwQjkie4Ouy93YR5RAYoAyp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=814
+ spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1015 mlxscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290075
 
-
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Mon, 28 Apr 2025 at 00:14, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > And, just out of intellectual curiosity, I also tried to measure the
-> > code generation price of the +1 standards-quirk in the fls()/ffs()
-> > interface as well:
-> >
-> > ... and unless I messed up the patch, it seems to have a surprisingly
-> > low impact - maybe because the compiler can amortize its cost by
-> > adjusting all dependent code mostly at build time, so the +1 doesn't
-> > end up being generated most of the time?
+On Tue, Apr 29, 2025 at 05:48:03PM +0800, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
-> No, I think one issue is that most users actually end up subtracting
-> one from the return value of 'ffs()', because the "bit #0 returns 1"
-> semantics of the standard ffs() function really is insane.
+> The !CONFIG_THP_SWAP check existed before just fine because slot
+> cache would reject high order allocation and let the caller split
+> all folios and try again.
 > 
-> It's not just that it doesn't match sane hardware, it's also that it
-> doesn't match sane *users*. If bit #0 is set, people want '0', so they
-> typically subtract 1.
+> But slot cache is gone, so large allocation will directly go
+> to the allocator, and the allocator should just fail silently
+> to inform caller to do the folio split, this is totally fine
+> and expected.
 > 
-> So when you stop adding one, you aren't actually removing code -
-> you're often adding it.
+> Remove this meaning less warning.
 > 
-> Just see how many hits you get from
-> 
->     git grep '\<ffs(.*).*-.*1'
-> 
-> which is obviously not a very precise pattern, but just look at the
-> output and see just *how* common that "subtract one" thing is.
-> 
-> I really don't understand how anybody *ever* thought that the whole
-> "return one bigger" was a good idea for ffs().
+> Fixes: 0ff67f990bd4 ("mm, swap: remove swap slot cache")
+> Reported-by: Heiko Carstens <hca@linux.ibm.com>
+> Closes: https://lore.kernel.org/linux-mm/20250428135252.25453B17-hca@linux.ibm.com/
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  mm/swapfile.c | 23 ++++++++++++++++-------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
 
-Yeah. No argument from me that it's a badly thought out interface - I 
-was just surprised that it doesn't seem to impact performance as badly 
-as I expected. I have to add that a lot of work went into absorbing the 
-negative effects of the ffs()/fls() interfaces:
-
-  starship:~/tip> git grep -Ee '__ffs\(|__fls\(' | wc -l
-  1055
-
-So it impacts code quality negatively, which is arguably the worse side 
-effect.
-
-> But maybe people really were poisoned by the Pascal mindset. Or maybe 
-> it was invented by some ancient Roman who hadn't heard of the concept 
-> of zero. Who knows?
-
-Hey, ancient Romans didn't even have the concept of *whitespaces* and 
-punctuation to begin with:
-
-    https://historyofinformation.com/images/Vergilius_Augusteus,_Georgica_121.jpg
-
-Lazy stonemasons the lot of them.
-
-Romans were the worst ever coders too I suspect. What have the Romans 
-ever done for us??
-
-	Ingo
+Tested-by: Heiko Carstens <hca@linux.ibm.com>
 
