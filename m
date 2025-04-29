@@ -1,121 +1,165 @@
-Return-Path: <linux-kernel+bounces-624649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB1AAA05E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:35:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F98AA05E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613B23BBF80
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768684A039B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8102727F747;
-	Tue, 29 Apr 2025 08:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F4F27B505;
+	Tue, 29 Apr 2025 08:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y91tsDSK"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RSIFGIbC"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4347B27A911
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CCB18FDAB
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745915731; cv=none; b=jlomPvNMCuAbth+UbiTedDN3gtpqbD5+GDngZHo3GFu2OzRfwFPjzJ0KofDCOPGPBrld4KOOlURdHj0/CRB7ZsKkA7vdm2lLN7gx918cSr9zls1/+Zaig94cz8IqfzC4saOonOlUkkIBkKsGItPOutVf/KA9PGo90RCPiYvOXsw=
+	t=1745915796; cv=none; b=kwaazsdzRJXTqKpupRuLNY4i2yl8jcsDDomKmmfElPuMrqnyizAtbraDQ+fq9MLF47R/24EoXYksMRF4WHrPhn9kohKfg77ffE6N6t8Bz8Qi5dKS+o4WdWZ9ETXVkuEjNaYesEvKDw3AgDq/NN5zUNMOD3WG/c+1aRgzlWy/Gqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745915731; c=relaxed/simple;
-	bh=ydLDKnQ91OvT5IwY/23gzsrsTpAlhEMjzxMQZcD1sso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZNYGuJ5ZnmpHA6u7r5rFVFJx6yxCgaDsYCk3S6DbaGOMXjlOgo5cJdiQNi7DSJSOty2LFO7eIU39qWRnIN4ulfFgDy0IuKhf7AMsZuLpGyTXBUH8yGzSrgJO7ZoxnROaitceM3tnWMYr22rcrM2PM7J6w/blZhALpz+RX57y5x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y91tsDSK; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bef9b04adso55660091fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745915728; x=1746520528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ydLDKnQ91OvT5IwY/23gzsrsTpAlhEMjzxMQZcD1sso=;
-        b=Y91tsDSKXNbUMxI6xm/s20eo7WOsAA8RXL4vNxAMz7frt90kBek7h/Rt5h4cqvxZOn
-         TzvpyPsA/VjTr+A7J0JPaZ3bdahSZxMZnTPPTAUXSXRDVsy+R8UBjn4AL0kxkzWo4/j9
-         +h7ohyMRYO3wWSLDexJCcDgBif8Bc8viAGJtZD8qisaIOVE1ehewiDfhgBznmPajzmFR
-         Lxq6/+gk2oRojzZ1ckgPWF0jE/sb3+VNlM41cHQmsw7vvOWwhGEZTinXHovXO2FK3Wz0
-         yNqM564AknHtSjn8Yi7owQehobKHjwl5jJQ8kEiwvi9FFBI1wbpxrzvTqsD4y1qDTVUq
-         r9Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745915728; x=1746520528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ydLDKnQ91OvT5IwY/23gzsrsTpAlhEMjzxMQZcD1sso=;
-        b=hlmYSmLomeQnYVZ9r3gVsA6PVH+pvWLBZxwFz4m5E7sDqcZN7iDghO09omPJjPgDRt
-         BQx2HNeaxqEcL95sVV3IvZPhDO+QwVrSMmUbfRbRXz9sv+vf0dimnJ+yPnZgHY7Ukp0h
-         guSk3uKkH6o/673q+j9Tm1zwoqUtUX33GVPNTJUgU/wM0m3E4Ur23209p54bPzU4q/kT
-         Iq+dOAVmW/DwLc+m/Z+zri78vJfqIfwdpn4IdmhWOMX8Bua9pDOjcAp66iCkp4FuoRqZ
-         5CSCf0O8DNk8wo5aekdSwu/eA0h3o2yANhY89tEeJCoBg8OKM3hFvf7iuBnPw0euUWSk
-         y6tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDnyig6PH5hhmJ0UQvMZ12ciJmi/cmmjPhmniOcoItO/c67WTGduGuzTCr2xKBfTPM/3YxVojySVnhWD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQCb6AoIbjJ7eXoc0zGgrICp7rXn0V1NnG3k4enrtisLLzmawV
-	aYhUtMsRYoiBZhuqRXKF+EreWGBSuL20d12aPfz5GjyzWoV8hjJ9QEANRJjc49p6BdXLspDk56G
-	byw7FGmDAK1yWAjDZB81AWSN3/zO+jvp/+YFoEQ==
-X-Gm-Gg: ASbGncuw9lnhXFx1m51p1xbeDr5LjD4HHFC3FbIzn0gpyPP9ufZDdJedp3vKu1YDEfV
-	9p4MxnS0OJXLkji8VoxsnyoteE7tuya4JZ4aHTxGU0Ggi+maN6G1PLGsB2NjjmQ/dTAnWfUMBAK
-	eiKbnfx3DBnwDze5yPdi0ucQ==
-X-Google-Smtp-Source: AGHT+IEsezp5muMVAY/lE/H7DEdH8WV2VmTWB3mmT7yKNRZ/0B58jZOoyjXMik/+mxI9FIbD9XZIJdk/S7T9DrPLhZQ=
-X-Received: by 2002:a05:651c:30cb:b0:30b:b7c3:949a with SMTP id
- 38308e7fff4ca-31d5b13bdb9mr4753431fa.18.1745915728423; Tue, 29 Apr 2025
- 01:35:28 -0700 (PDT)
+	s=arc-20240116; t=1745915796; c=relaxed/simple;
+	bh=CD3pCW7rSNJV61xpSf6mpjklctqkwJQ6xLMNue4gAHE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=orxxDh4Db09vu2XH1kYJXSqZusxLyDsG7+pGqNVnJbX2p83n9JgPCjsWJYVNhiB8uqpSXlHMi7mQxkWvGlihlm89T/BV2rYJdF760xntOAVPdkrFjLjkhVL9Ry1/lafDySrmvCnf+n9a/Bp18dggSyt3wc21gk5A89FLoWcCYJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RSIFGIbC; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D52D1FCEA;
+	Tue, 29 Apr 2025 08:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745915786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=esHd36pt+N8ryAwFfhcdTZSNZRbzqDw4YcR4AKfDyms=;
+	b=RSIFGIbC2isNSHaUIMssleEx8oUn09KMV74iBNdBsc8Ljyi1ulehg9lrYgKkCmjHP6D0/z
+	g7BLt+v0UzpAWlxicIeqyh/PqNl3wmLl/xxNWIeEHkzdqD0NsGpceudUUCcacVA8lj9KEW
+	rwlod4zKqpfJBmBXPKdm15CB4tSalEVJphYA0DXymWcGpu2LXSfUCs7GjWTd2CMIpCQmB8
+	qq/DignU2f64SMAKvITf7d+vFikwc+YQZYJByZTH1XXvtvdR7TKHNMeCkpWmhhnqC6a8wh
+	1Zal3lmsikZmwip0ZMT9wvaEbCUw1R88g99FLQvhqJM3Pe6HF1ta+caYvVTOCg==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Tue, 29 Apr 2025 10:36:23 +0200
+Subject: [PATCH v2] drm: writeback: Fix drm_writeback_connector_cleanup
+ signature
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424-gpiochip-set-rv-pinctrl-part2-v1-0-504f91120b99@linaro.org>
- <20250424-gpiochip-set-rv-pinctrl-part2-v1-2-504f91120b99@linaro.org>
- <CAGb2v67jH2G_i51fg3T7qu2dDtj7FqUO7q9pBJJw_uKhdGV6uQ@mail.gmail.com> <CAMRc=McmRB8iNPrTztoSLbEXX2WxNp5d3t5--AAqzqU2LQ+FGw@mail.gmail.com>
-In-Reply-To: <CAMRc=McmRB8iNPrTztoSLbEXX2WxNp5d3t5--AAqzqU2LQ+FGw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 29 Apr 2025 10:35:17 +0200
-X-Gm-Features: ATxdqUFfjlFyz-8zlCBHswKX86tkhKgqvxLDp3L8XiORh1-aFhf72vJ7elWy1Tk
-Message-ID: <CACRpkdYRCx8_zLa_OtcFwjmL6_pCsU0hcUe0_PP3=EbukbM7Jg@mail.gmail.com>
-Subject: Re: [PATCH 02/12] pinctrl: axp209: use new GPIO line value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: wens@csie.org, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Paul Cercueil <paul@crapouillou.net>, 
-	Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
-	UNGLinuxDriver@microchip.com, 
-	Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250429-drm-fix-writeback-cleanup-v2-1-548ff3a4e284@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAIaPEGgC/42OzRLCIAyEX6XD2ahQtT8n38PpATDVjAIVaK3T6
+ buLdrx7y2az+2ViAT1hYHU2MY8DBXI2CbHKmL5Ke0Ggc9JMbMV+uxMlnL2BlkZ4eoqopL6BvqO
+ 0fQeS86Jqc1UdKs5SvvOYDr/dpybpK4Xo/OuLGvhn+0/rwIED7nQh8vJQqiI/KufinexaO8Oae
+ QF5fPTp97jQmJIBIfmGYp19ug0FvfkNYHGMKTq/AaPsiGz+AAAA
+X-Change-ID: 20250428-drm-fix-writeback-cleanup-a1179f3b9691
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Mark Yacoub <markyacoub@google.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2728;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=CD3pCW7rSNJV61xpSf6mpjklctqkwJQ6xLMNue4gAHE=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBoEI+Iu98lXztO/neTQJlRQ7TY60V6ITeCKFa8E
+ 7DJOQS56nuJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaBCPiAAKCRAgrS7GWxAs
+ 4jQjD/0eA941lwlgFehTz8o4ybkma1QDp/av7/CQAd2Hda/PSMxhsceoLfnWhyLJeZ2I+BLzeAf
+ dnAHDWVKnnKgrkusrb0uJ/hLv0s/XbJ9ZgyDw4aRVEB3k9Z6zXkfx5OUveudoUwxFVyOUiWZpmP
+ 9/9P0SFJYY2/jFmJBoBXnQGJD2N+xuV52xGYtonC2l3sqvlpbwFA3sS0UhZmeYAK82sLO9r+yTj
+ wTIotW/retw+k8vj4SQDcaZVIHtG+rHAQnBR22xaiuzdAZDDEi9ICObZhMkfDy0yzXsQvS/BO2z
+ KIB/3KA5dt7GNk7anZG1qJeNgXiUTY98LQ596pROQHaUNUOztz83UYmFPgmsqNHT+SemhPyYwEp
+ hPBsKFLqibJbOUhBM52zfyXzv4aEpJP9F2NkFzldZQ4W8InvwpzExd56YRQJF0P6sLIj8yoDE9w
+ hJPUu9quXd5qLD2gFaUbCpmDEqGI2GBwTCcH+6D6EdDSBinZJFUZqzl0R5iJyLnJchsoRLGAtV0
+ P8AcY8VAMixsz8IVz3Fye9VFNAHsFDd0PJwsHPzUj+GlapiTPajDULgUYxVA1dCCoswf7cnIbhu
+ 9MYilHyRRoashN/VS04Ns7cH1SQtYf/tub+FEcejq+0hsNIkatkfGlsxNQ2AOiBAO143r1lktRu
+ 0NHixcRxSbiSxhQ==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeffeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhhedtjeekhfdtteeftefgieffveeluedvueejleevfeevgedvjeevheehffehgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludejvddrudekrddtrddungdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvu
+ ggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Thu, Apr 24, 2025 at 8:55=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
-> On Thu, Apr 24, 2025 at 7:43=E2=80=AFPM Chen-Yu Tsai <wens@csie.org> wrot=
-e:
+The drm_writeback_connector_cleanup have the signature:
 
-> > I guess you could also drop the curly braces, but otherwise
-> >
-> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->
-> Right. Linus: can you remove them while applying?
+     static void drm_writeback_connector_cleanup(
+		struct drm_device *dev,
+		struct drm_writeback_connector *wb_connector)
 
-Fixed it!
+But it is stored and used as a drmres_release_t
 
-Yours,
-Linus Walleij
+    typedef void (*drmres_release_t)(struct drm_device *dev, void *res);
+
+While the current code is valid and does not produce any warning, the
+CFI runtime check (CONFIG_CFI_CLANG) can fail because the function
+signature is not the same as drmres_release_t.
+
+In order to fix this, change the function signature to match what is
+expected by drmres_release_t.
+
+Fixes: 1914ba2b91ea ("drm: writeback: Create drmm variants for drm_writeback_connector initialization")
+
+Suggested-by: Mark Yacoub <markyacoub@google.com>
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- Forgot to update the documentation
+- Link to v1: https://lore.kernel.org/r/20250428-drm-fix-writeback-cleanup-v1-1-e4c723868b73@bootlin.com
+---
+ drivers/gpu/drm/drm_writeback.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+index edbeab88ff2b..d983ee85cf13 100644
+--- a/drivers/gpu/drm/drm_writeback.c
++++ b/drivers/gpu/drm/drm_writeback.c
+@@ -343,17 +343,18 @@ EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
+ /**
+  * drm_writeback_connector_cleanup - Cleanup the writeback connector
+  * @dev: DRM device
+- * @wb_connector: Pointer to the writeback connector to clean up
++ * @data: Pointer to the writeback connector to clean up
+  *
+  * This will decrement the reference counter of blobs and destroy properties. It
+  * will also clean the remaining jobs in this writeback connector. Caution: This helper will not
+  * clean up the attached encoder and the drm_connector.
+  */
+ static void drm_writeback_connector_cleanup(struct drm_device *dev,
+-					    struct drm_writeback_connector *wb_connector)
++					    void *data)
+ {
+ 	unsigned long flags;
+ 	struct drm_writeback_job *pos, *n;
++	struct drm_writeback_connector *wb_connector = data;
+ 
+ 	delete_writeback_properties(dev);
+ 	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
+@@ -405,7 +406,7 @@ int drmm_writeback_connector_init(struct drm_device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = drmm_add_action_or_reset(dev, (void *)drm_writeback_connector_cleanup,
++	ret = drmm_add_action_or_reset(dev, drm_writeback_connector_cleanup,
+ 				       wb_connector);
+ 	if (ret)
+ 		return ret;
+
+---
+base-commit: a22e0051f9eb2281b181218d97f77cebc299310d
+change-id: 20250428-drm-fix-writeback-cleanup-a1179f3b9691
+
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
+
 
