@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-625593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB73CAA1A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:19:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033DFAA1A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3039A68C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9E516EA5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AD6188A0E;
-	Tue, 29 Apr 2025 18:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7516253B5F;
+	Tue, 29 Apr 2025 18:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aya0qzlz"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gjk0uBpd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DBE3FFD
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C56D155A4E;
+	Tue, 29 Apr 2025 18:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745950436; cv=none; b=DsDkgm+GQEP5IVpK2o6EIWyAZvvgANE/+N56wufX34SCUsTH3x64i2tAk4ugyS/QcNzx4j92tp+juTyw7AFY27VdpnEaSrBjiB4N/RT1EGahfUznKaqd+N94r/cc5qHDXHRYSeQeDpSxXJ0lQanDOO8/Ul5ZH75e9Jbu/6Kxgn4=
+	t=1745950596; cv=none; b=iDQPBpi6fi2DiNohUFiq5SgrugsefhChQSTPUUqqqh5O/ZVx1BOQW1TM6GnCH7+BvmyWFzc3OGtp5hCRGTCqvepALBtO5SrEOeGaX0aMgXS/UBGDToIqIXPmuYNEn4AL4ZwIaXnIhbMJTjtPWhpQrWxE4EEtoY3jxBX+yFV5DsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745950436; c=relaxed/simple;
-	bh=7KLFhpo7TQ1uAQoOU0I1z3Knl9gIW2GZLoY/PE9dL1c=;
+	s=arc-20240116; t=1745950596; c=relaxed/simple;
+	bh=X0uzYo7MqdZcxbZI0RKlEiQj1M9penRmqIMBo+SPXLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgSV1RrzyCLg/RtDFsNYCsVizEkNViwx0lo8GECrtl7gPXZj9FaNygt4/YVPRknrHsCcBsKPnQ38eKEDunalMtA2mIzIw9sFPOuuiy50M5ylIvYbOhk7MG1LIkigcHa0yEwKAOMloNgEe5inNY6MllvRCRlK0tCJ2sLVBpms+4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aya0qzlz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64FACC4CEE3;
-	Tue, 29 Apr 2025 18:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745950435;
-	bh=7KLFhpo7TQ1uAQoOU0I1z3Knl9gIW2GZLoY/PE9dL1c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQpkRsABIQj2ByBvAG4ncTCZMpbrvsAsXhSZ8NcPpvS4964Pfo44WEs+S+Y+mxU/thsb9RispMvTXcm2ow5iTFBC+Tf84oLz1+OqWlZk2Eq7TS/EKc2BjF8DryTiA4IRMgJ/UiZQtgDRnrWIWl+7EmblaG9mrUoRnFJsYXQnqX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gjk0uBpd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B8BC4CEE3;
+	Tue, 29 Apr 2025 18:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1745950596;
+	bh=X0uzYo7MqdZcxbZI0RKlEiQj1M9penRmqIMBo+SPXLI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aya0qzlzgpRzNk1R0C3VBxvKNxLBFeeUk+rkLGyhP13c55hQRbWI+wZFwxbzI9bs8
-	 wD9R2gm471vipnW8KqETrNRm1IcIOfekxZWPDKyRR4J8ltf4FkR/LzRN1cjfkV4Pgw
-	 m/6sq2vzChL8UErMmp+NYwT8eN9rYe9ZB8/Q9ZCOResNz102/RGDNYW334dEr6TrY3
-	 654Hu0p4/1+/LHVrk3ZEbaqtKNrinteWfbEABX9VOisX144QELJL5mtG+4/ITt3wcz
-	 1Q3ojD3aZyYqBtPxCYorY4gWMrzwXvkkDyGZuzRKcFt665BdzdiGPq90DTwXkb1dKf
-	 sKEY8Hy1XasZw==
-Date: Tue, 29 Apr 2025 11:13:53 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <dwagner@suse.de>, Guenter Roeck <linux@roeck-us.net>,
-	Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	James Smart <james.smart@broadcom.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] nvme: only allow entering LIVE from CONNECTING state
-Message-ID: <aBEW4W40ZelIXfs2@kbusch-mbp>
-References: <20250214-nvme-fc-fixes-v1-0-7a05d557d5cc@kernel.org>
- <20250214-nvme-fc-fixes-v1-1-7a05d557d5cc@kernel.org>
- <0134ea15-8d5f-41f7-9e9a-d7e6d82accaa@roeck-us.net>
- <cb46aa83-8033-4d64-a3c7-420172c3f3f5@flourine.local>
- <9763c4cf-8ca5-45d4-b723-270548ca1001@suse.de>
+	b=gjk0uBpd+L5Q98AN6nUI2N0SyZNHKHXkunnqhpGzfKzPoOMrsemnLtdbzXky3Uub5
+	 rjumDY4C5kVW2SS21+lrWOZs9BdmP/cNAePfLSH95RuSjLbPuwlRQKqkliTSQBY2Bq
+	 srgLcEJGZ35fIP23YECJAaRyegwOUPkhiGdgqfzo=
+Date: Tue, 29 Apr 2025 20:14:54 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: hoff.benjamin.k@gmail.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] usb: gadget: hid: allow dynamic interval
+ configuration via configfs
+Message-ID: <2025042929-activate-easter-77ae@gregkh>
+References: <20250429180128.806780-1-hoff.benjamin.k@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9763c4cf-8ca5-45d4-b723-270548ca1001@suse.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250429180128.806780-1-hoff.benjamin.k@gmail.com>
 
-On Mon, Apr 28, 2025 at 03:21:18PM +0200, Hannes Reinecke wrote:
-> > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> > index b502ac07483b..d3c4eacf607f 100644
-> > --- a/drivers/nvme/host/core.c
-> > +++ b/drivers/nvme/host/core.c
-> > @@ -4493,7 +4493,8 @@ static void nvme_fw_act_work(struct work_struct *work)
-> >                  msleep(100);
-> >          }
-> > 
-> > -       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
-> > +       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING) ||
-> > +           !nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
-> >                  return;
-> > 
-> >          nvme_unquiesce_io_queues(ctrl);
+On Tue, Apr 29, 2025 at 02:01:28PM -0400, hoff.benjamin.k@gmail.com wrote:
+> From: Ben Hoff <hoff.benjamin.k@gmail.com>
 > 
-> I would rather have a separate state for firmware activation.
-> (Ab-)using the 'RESETTING' state here has direct implications
-> with the error handler, as for the error handler 'RESETTING'
-> means that the error handler has been scheduled.
-> Which is not true for firmware activation.
+> This patch enhances the HID gadget driver to support dynamic configuration
+> of the interrupt polling interval (bInterval) via configfs.  A new
+> ‘interval’ attribute is exposed under each HID function’s configfs
+> directory, and any write to it will adjust the poll rate for all endpoints
+> without requiring a rebuild.
+> 
+> When the attribute has never been written, legacy defaults are preserved:
+>   • Full-Speed (FS) endpoints (IN & OUT) poll every 10 ms
+>   • High-Speed (HS) endpoints (IN & OUT) poll every 4 micro-frames
+>     (~1 ms)
+> 
+> To implement this cleanly:
+>   • Add two new fields to f_hid_opts and f_hidg:
+>       – unsigned char interval
+>       – bool           interval_user_set
+>   • Introduce dedicated f_hid_opts_interval_show/store functions.
+>     The store routine parses into an unsigned int, bounds‐checks against
+>     UCHAR_MAX, assigns to opts->interval, and sets
+>     opts->interval_user_set = true.
+>   • Remove the string-compare hack from the generic F_HID_OPT macro.
+>   • Initialize opts->interval = 4 and opts->interval_user_set = false in
+>     hidg_alloc_inst(), then copy both into the live f_hidg instance in
+>     hidg_alloc().
+>   • In hidg_bind(), set each endpoint’s bInterval based on whether the
+>   user has written the attribute:
+>       – If interval_user_set == false, use FS=10 / HS=4
+>       – If interval_user_set == true, use the user’s value for both FS
+>         & HS
+>   • Add <limits.h> to support UCHAR_MAX in the store helper.
+> 
+> Changes since v1:
+>   - Added dedicated interval_show/store helpers instead of macro hack.
+>   - Restored original default values (FS=10 ms, HS=4 µ-frame) for both
+>     IN and OUT when unset.
 
-But the point of having firmware activation set the state to RESETTING
-was to fence off error handling from trying to schedule a real reset.
-The fw activation work schedules its own recovery if it times out, but
-we don't want any other recovery action or user requested resets to
-proceed while an activation is still pending.
+The "changes" stuff goes below the --- line as per the documentation, as
+that's not needed in the changelog.
+
+Send a v3?
+
+thanks,
+
+greg k-h
 
