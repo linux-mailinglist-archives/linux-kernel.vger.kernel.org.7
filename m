@@ -1,145 +1,176 @@
-Return-Path: <linux-kernel+bounces-624633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 619F2AA05A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:26:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94B6AA05BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C1F16A5CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7DA3A2B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C392949FE;
-	Tue, 29 Apr 2025 08:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2103277808;
+	Tue, 29 Apr 2025 08:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p8tLJXsA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfmfVgS7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A552222CF;
-	Tue, 29 Apr 2025 08:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C022676FE;
+	Tue, 29 Apr 2025 08:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745915078; cv=none; b=i6p0T3rS05/e6LUHoOC0Z4g8LXTSS5inQSLP7hV7uxwbgqCdoQqLtR+p4Tn0MRJJ4bEjSaZIv3H66cn3g4q4rhGJM9ZdwOIjLnrrhAKpIJGMqDbeKrDYbVw5GF/mIvSF/vxqIh637N5K7v0Z7HZPy8xkUbwK80cr5o4BI9PwDLY=
+	t=1745915150; cv=none; b=lOiD0DWACPKtFc1ObnC5O/zokFLyhSI6KIL2jCqBRXtA64vok3HQ9aVwqvZ1ecNk2keS/W/J/zwgmGFhzSBN1KB5yMY5fXnRkRPDl6HUXGZIgyCr+1lTA/9bFRNBnzTBo6AkoLMh+HefafLu12RI0/hsjzNe/UzX0HMqeMlVAaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745915078; c=relaxed/simple;
-	bh=Zi1wuknYw1VFbk/DBuTb0zboIQo1+fYwJIqPBN1Xans=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rNtfICcWg76kqSwJbfy3rNzjNUg9XeP4kjyH9CJGm2vU3nWdhB0dcxAym4/I/iBc6InyIlC4UQdEqNGkWQx1wllPOMqZBZ2NYHCp7C0UUSIop8NAoWe1prZTPO90vr0rpYl8vkxvZOqv532P9UbBxoIXlYCLhGQBkgY7+mJH1gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p8tLJXsA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T86111028068;
-	Tue, 29 Apr 2025 08:24:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9fQR9meQutjblSLbJONQI/dFhf8KfiYCydP9hn7Oxus=; b=p8tLJXsADwi67NzI
-	JV38DIxAVlwD0kqP8QJa493ejLTGjJhiSV3yJ1gYr88O7VMZ//SkNwuJHXxff4U2
-	vYqx2O766uGGI7sgsy6CNJVMW5cWVMflypPjvSTYWMkQ0LA5fvJUQ+/hk7vZh+y4
-	46f+hmnvZYH8QOdHBPke0SUchj7QHAS+LJq69f+RkWH6FWCoIPM8A9bCROa10e81
-	TTFV5zElpWcegB1H5r8zTQz0LE5G/6+jRr8xziXumEJlgf99Iuw212gybuUBkJYt
-	yU8G9T3hsJlHlOeBO69NHo1wZvupYnRwcYi+WyiWL+N3VQIfwb/cRAqNkqPJyHvO
-	NpQ5GA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468muqm0g0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 08:24:25 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53T8OOef015164
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 08:24:24 GMT
-Received: from [10.239.29.178] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
- 2025 01:24:21 -0700
-Message-ID: <f44722a5-25b5-409c-baec-13d19af61d43@quicinc.com>
-Date: Tue, 29 Apr 2025 16:24:19 +0800
+	s=arc-20240116; t=1745915150; c=relaxed/simple;
+	bh=QgHt0DPwveKMPa/0IK3wVRz2UaQ2kbL35RtctM7eAlQ=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=HOIcD4+rroodqVHiHukwoDwSMgD4DanfXLwdyxCrT0uKE0o8X6jESMvFIpiDxgx4foUuGBvV5io/wlQIuNNY/7G4UjOVK2IHcwhXLEjlSH6ZLJd0US7iDTlK1cLVU+9vGY3A7g+mcFtBQXSmAoYMutb+xu8nhOdjsUFzEtmVd6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfmfVgS7; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745915149; x=1777451149;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QgHt0DPwveKMPa/0IK3wVRz2UaQ2kbL35RtctM7eAlQ=;
+  b=DfmfVgS7vpoWMULFvilfPebXl7qt10w+ZApAcg5JjZDqehH0yPcnXs8J
+   i8JEQcI1KgvKjYl7oT5oydHXQ1DnRGg3l+6A+zE0s3vPBqulExOqTjorF
+   mrRkAxZgaeQWXr7kzMlJ/my7KTrthQWNRSS1obITWPAORgs7CwsrzGo6O
+   cTl0QF7aeqGbqKim9XXdqKtRzo/yqHQh3eR0/PzwhTAbs0eP9TU6DUqga
+   9rgRkOVZ+zi6Fw9JtZRjc78FdOPcnnGbBbuvLzEPoAOCje/220VSBQEyt
+   y/5Z1aUgDf4IHm/HPv01U/na9+5/X8f73H/2btvWQoqaijrW/RGo7pBzO
+   g==;
+X-CSE-ConnectionGUID: rhN2uuSLS6SfJqild0JhPg==
+X-CSE-MsgGUID: iOL/VQsPTQmuo9OOHZFDvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="47663910"
+X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
+   d="scan'208";a="47663910"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 01:25:48 -0700
+X-CSE-ConnectionGUID: RDGw6uRNQtOe2o0wnDCcqg==
+X-CSE-MsgGUID: 9rGvZ+rjR92jwWhushJNEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
+   d="scan'208";a="134270744"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.205])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 01:25:46 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+Date: Tue, 29 Apr 2025 11:24:34 +0300
+Subject: [GIT PULL] platform-drivers-x86 for v6.15-4
+Message-ID: <pdx86-pr-20250429112434-323291040@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: qcom: qmp-pcie: drop bogus x1e80100 qref supply
-To: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>
-CC: Kishon Vijay Abraham I <kishon@kernel.org>,
-        Dmitry Baryshkov
-	<lumag@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa
-	<abel.vesa@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250429075440.19901-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <20250429075440.19901-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA2MiBTYWx0ZWRfX59sHWB4IckPG 3/F5gKpawQX9FbguZnwIRoJQI5HJrFCrrF8RYQb1ARL9ownoQDQ4yhfa7OtghIj5FKtz281WqRd VLY/fSvGviUExHNVqXYPnpEurnh5hBB1cmINyXY7bok2ofJ2eI3i+ykjsEPQzMPjWSVC4eBzm1m
- U8G8M95XQ1Jl+WBOextSdd4VKde7PB/A0bfjy0Trcfiye7owKSDlAOM168leG74/Am2b93UZLx2 HzWu9OQbOjYz+1AtQgDQ9SQef9FNf2YfIErJrNYRlOcKSw8FboP5t4WNJMbVd/i3ofdl+lS8WIg 07Hlnn3lC2AmIhvcJL7leTd73ZTv+hjlqun160oQrVT+mW076gshgA7rvKYdtOMy6wrj2Bnpaz+
- +Px393SUVgg1pBWAJ7nxwjUyPVnLySqrQYnHvwZxOLgPYLL775fV8N0xr4SfvYHK4Et3jiJ6
-X-Proofpoint-GUID: dhowlwmHCW6P3TOz1bGJt9SdELdlJJEg
-X-Proofpoint-ORIG-GUID: dhowlwmHCW6P3TOz1bGJt9SdELdlJJEg
-X-Authority-Analysis: v=2.4 cv=M/5NKzws c=1 sm=1 tr=0 ts=68108cb9 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=Pr32Oli86lQI5KhXujMA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxscore=0 spamscore=0 malwarescore=0 mlxlogscore=898
- adultscore=0 bulkscore=0 phishscore=0 clxscore=1011 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290062
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi Linus,
+
+Here is a platform-drivers-x86 fixes PR for v6.15.
+
+Fixes and new HW support
+
+- amd/pmc: Require at least 2.5 seconds between HW sleep cycles
+
+- alienware-wmi-wmax:
+  - Add support for Alienware m15 R7
+  - Fix error handling to avoid uninitialized variable
+
+- asus-wmi: Disable OOBE state also on resume
+
+- ideapad-laptop: Support a few new buttons
+
+- intel/hid: Add Panther Lake support
+
+- intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
+
+Regards, i.
 
 
-On 4/29/2025 3:54 PM, Johan Hovold wrote:
-> The PCIe PHYs on x1e80100 do not a have a qref supply so stop requesting
-> one. This also avoids the follow warning at boot:
->
-> 	qcom-qmp-pcie-phy 1be0000.phy: supply vdda-qref not found, using dummy regulator
->
-> Fixes: e961ec81a39b ("phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3")
-> Cc: Qiang Yu <quic_qianyu@quicinc.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-We have QREF for each PCIe port on the X1E80100, all of which consume 
-the regulator L3J. Although the PCIe PHY uses QREF indirectly, this 
-creates a dependency, right? If PCIe doesn't vote for it, how can the 
-PMIC driver decide when to disable L3J during system suspend or runtime 
-suspend? Is there a chance that L3J could be disabled while PCIe still 
-requires it?
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index c232b8fe9846..e5277ce9c136 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -4233,8 +4233,8 @@ static const struct qmp_phy_cfg x1e80100_qmp_gen4x8_pciephy_cfg = {
->   
->   	.reset_list		= sdm845_pciephy_reset_l,
->   	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-> -	.vreg_list		= sm8550_qmp_phy_vreg_l,
-> -	.num_vregs		= ARRAY_SIZE(sm8550_qmp_phy_vreg_l),
-> +	.vreg_list		= qmp_phy_vreg_l,
-> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
->   	.regs			= pciephy_v6_regs_layout,
->   
->   	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+The following changes since commit baf2f2c2b4c8e1d398173acd4d2fa9131a86b84e:
 
--- 
-With best wishes
-Qiang Yu
+  platform/x86: msi-wmi-platform: Workaround a ACPI firmware bug (2025-04-16 11:15:22 +0300)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-4
+
+for you to fetch changes up to 02c6e43397c39edd0c172859bf8c851b46be09a8:
+
+  platform/x86: ideapad-laptop: add support for some new buttons (2025-04-23 13:05:26 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.15-4
+
+Fixes and new HW support
+
+- amd/pmc: Require at least 2.5 seconds between HW sleep cycles
+
+- alienware-wmi-wmax:
+  - Add support for Alienware m15 R7
+  - Fix error handling to avoid uninitialized variable
+
+- asus-wmi: Disable OOBE state also on resume
+
+- ideapad-laptop: Support a few new buttons
+
+- intel/hid: Add Panther Lake support
+
+- intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
+
+The following is an automated shortlog grouped by driver:
+
+alienware-wmi-wmax:
+ -  Add support for Alienware m15 R7
+ -  Fix uninitialized variable due to bad error handling
+
+amd: pmc:
+ -  Require at least 2.5 seconds between HW sleep cycles
+
+asus-wmi:
+ -  Disable OOBE state after resume from hibernation
+
+ideapad-laptop:
+ -  add support for some new buttons
+
+intel: hid:
+ -  Add Pantherlake support
+
+intel-uncore-freq:
+ -  Fix missing uncore sysfs during CPU hotplug
+
+----------------------------------------------------------------
+Gašper Nemgar (1):
+      platform/x86: ideapad-laptop: add support for some new buttons
+
+Kurt Borja (2):
+      platform/x86: alienware-wmi-wmax: Fix uninitialized variable due to bad error handling
+      platform/x86: alienware-wmi-wmax: Add support for Alienware m15 R7
+
+Mario Limonciello (1):
+      platform/x86/amd: pmc: Require at least 2.5 seconds between HW sleep cycles
+
+Pavel Nikulin (1):
+      platform/x86: asus-wmi: Disable OOBE state after resume from hibernation
+
+Saranya Gopal (1):
+      platform/x86/intel: hid: Add Pantherlake support
+
+Shouye Liu (1):
+      platform/x86/intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
+
+ drivers/platform/x86/amd/pmc/pmc.c                  |  7 +++----
+ drivers/platform/x86/asus-wmi.c                     | 11 ++++++++++-
+ drivers/platform/x86/dell/alienware-wmi-wmax.c      | 14 ++++++++++----
+ drivers/platform/x86/ideapad-laptop.c               | 16 ++++++++++++++++
+ drivers/platform/x86/intel/hid.c                    | 21 +++++++++++----------
+ .../x86/intel/uncore-frequency/uncore-frequency.c   | 13 +++++++++----
+ 6 files changed, 59 insertions(+), 23 deletions(-)
 
