@@ -1,192 +1,153 @@
-Return-Path: <linux-kernel+bounces-624291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CCEAA019B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1D7AA017A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCEB188CBF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5741B613BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E172741D5;
-	Tue, 29 Apr 2025 05:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C97270EAD;
+	Tue, 29 Apr 2025 04:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O3/B9y4P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M8cC3Xge"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3201DE8B2;
-	Tue, 29 Apr 2025 05:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6435215041
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745902961; cv=none; b=kfokqoovuVNXVpz2wdojvSzuIVuLsezQH54XJX6YEGQ+vAGrGBOvL6sxuLAo4IwHq29beslTn3VFTWvOD8VTcsTEIOZdu5GO+8tyHUUmmAxrczD+mONdqDE/NX6S1Dsj5KvfQxHf8haOxcHsbpCc4AQf5UMpVj0pj69ajhz9DXA=
+	t=1745902744; cv=none; b=XtqX2EusL4Foh6WsUE4vna3rGsWqfIK6YEJ28Kx1ILI9rFBu5QYWlYw2v0Wk57VuZyop354/oidYowplvikU22p+3wFQ0rJ7RN4G0qgG5i9LmcYLBSOdGwv1og4guic8oJchgwdMPLTcImJgnrTjw8O8El+A1jNJmhqnL6f7SPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745902961; c=relaxed/simple;
-	bh=yJHygitItCE7AjT4PE9hDK5eTwShgF8pqCV5bUS99tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YUs1S8cIexrshtbv7ynAmgrXMdL8m0TdE9AL4nXK+zrchQBdChlWBxcG4pktN42JtYfBgfOgvWwnmff3Bd3x0iPqwS4IzyZ1Mt+ND/0H01JcvaocWOrMhwPNT7jOpmjjqcEPD4coLqXrLLtoVupxPoYAwUmDAHnOSi3QAG4RwjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O3/B9y4P; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745902960; x=1777438960;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yJHygitItCE7AjT4PE9hDK5eTwShgF8pqCV5bUS99tg=;
-  b=O3/B9y4PSKompQLB0b5RmqlYynOa+ey8T/WjvjEQApg2E8p9tNnzsvuv
-   GLK08LTAUYmruhTO0/EBvwgVXvWNbwxnazkIZtP/VDWUdsPI9jjlRkX/C
-   3GKfUol2SqoUKZ+75V+3vPWYVTn0I7IjZQmny0KRCdzJvJjIoWZovcFRX
-   eNC1RqscY22pE6/Cgj9ddVprRYiuZ53OEepRSXJ0SrUCZd94wz9EnlawQ
-   CNdLYxWnRBWvt6VHikTzmmxjg7zZqlCUZ8t3WR93VuxAab/1yzm5X8f6M
-   I6u1L2PDwDxAuiLHWQi86ksYUCQ4N0Zl8/qNlPwhucjXaFMvgCEYmNXPq
-   w==;
-X-CSE-ConnectionGUID: W7Z1V5aiQ/+jIW15i6Nc/w==
-X-CSE-MsgGUID: k9fEfIDTQ7We2T56517w2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="35121395"
-X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="35121395"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 22:02:39 -0700
-X-CSE-ConnectionGUID: a5E3m5JXQF+Vct9TFcNxPw==
-X-CSE-MsgGUID: WNPv/oL5TCup2x/mZ3mf+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="138896368"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 22:02:30 -0700
-Message-ID: <8416e94f-171e-4956-b8fe-246ed12a2314@linux.intel.com>
-Date: Tue, 29 Apr 2025 12:58:18 +0800
+	s=arc-20240116; t=1745902744; c=relaxed/simple;
+	bh=r2egfHG/o9rywaGhXtRfH5/dNsnyX7ka9ebavZJ3r/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LjaIGqwGUXSQ9b0bOl0naG9KI4cgoj3YebzV/jyRYOKD0CEP+OYK/B+tt69Gm9DZ75C4oU5qk6dSpvZtSdbEbanTDL90NMzOshXD3VEmbzWmSPCVtds/NWVOEZN+ha/9ZngplSdDtMD9YUng6x6TDLnNGfII02roF8hLFu0hrHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M8cC3Xge; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72bc3987a05so3213859a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 21:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1745902742; x=1746507542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPFbqY4TtlTgd9PBnL1wwi2MkEi4cL7dCryLXZhxk3M=;
+        b=M8cC3XgeaZM7FfUxf60NKn9KSOiTWHR6LR5MlYFmZuQM3a7daHl4SOvex+QCqzXdYI
+         uK5/fCUIx0ppJq5CmPP4gekWZeX920MUhMcs8z1me6RqH1QOIO61L8D6L6lr6qIAa9jb
+         HRoC4ySciciJ9hJ7BkuriWTeJ9wcfmKEgrV3E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745902742; x=1746507542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mPFbqY4TtlTgd9PBnL1wwi2MkEi4cL7dCryLXZhxk3M=;
+        b=PporvULBKBS+UKS3w8PyefsfuPpOPhmQdX58XG4tFpJsqBUCto+FrCnYS95Bh8G30y
+         904GWTjXkhvkdpgxAiqThYD5n/I1WDVbtjrXa+k2JoSi4OPlQKGpgbbfkCGHNh50bh5H
+         tpY9ED7dWPKTlTfPDYrOwnaV7hj6GAd20d80zOPQN2BpFq5Js0vddLj9JEBSo6ofUQzo
+         XpEXkRLLuiK1eBRUI1vRAhvsqt3Af2HAh/hWlWxhMUlL819BzVYY4tKYdqeVfLj/2oO3
+         Wl7DenxlvIONdzK1to9b6nbphWL4gaXDIH0OBviAbvTmsyc8ta2ml1lcqBKSodX0+YGY
+         JwWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAu2sCXEt31OtiW1kYTT+b9dlDptl2rLajI+dmnm4ItzcEm0VXzc6SdnH+xI4FxiERcixjhd3LF+DnXDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxexc3eTNxqIgKEE878SsEhytsqotsFaQ9RdKyp0ABMh6Muv2Fw
+	QPWknHYk6BEkTdvbYbjPGr0F+Iz/hL56HUqo4iCq6RziQECHByL0GCUF4aY7yhTcT9mY6O150M6
+	z1axVQQFut7lVbV/GqTyy5V3Yhf99TIfAKpGb
+X-Gm-Gg: ASbGncs1ATzwtE/B6Ab3mGx/LYC1rxEXWo083w79Ot6qUllC/mIipS2XAZt94BximQ2
+	1+SqookMaYBsa1PlP6yMH7/in+vM3OoxM76O0+Rnah8pMxfFv3IuwZuT4ZoKntpsGMqdQrRtyND
+	2N3aiOFxxCoQaGe3omD+JxvHqXFXSNzwsOG6d/6+9x7/ho2UdHLA==
+X-Google-Smtp-Source: AGHT+IEHHOhL3uf7p8RmbeVh74rw6IIF5gobTHqSM4O2V55sbl8D98HXGWB0umdEIN3BCAoM+7xDnqorwRMdjaKu6+I=
+X-Received: by 2002:a9d:7e8f:0:b0:72b:2513:ad54 with SMTP id
+ 46e09a7af769-730899335b9mr1135507a34.10.1745902741852; Mon, 28 Apr 2025
+ 21:59:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 06/24] iommu/dma: Factor out a iommu_dma_map_swiotlb
- helper
-To: Leon Romanovsky <leon@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-Cc: Jake Edge <jake@lwn.net>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Zhu Yanjun <zyjzyj2000@gmail.com>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
- Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>,
- Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
- kvm@vger.kernel.org, linux-mm@kvack.org,
- Niklas Schnelle <schnelle@linux.ibm.com>,
- Chuck Lever <chuck.lever@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Dan Williams
- <dan.j.williams@intel.com>, Kanchan Joshi <joshi.k@samsung.com>,
- Chaitanya Kulkarni <kch@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
-References: <cover.1745831017.git.leon@kernel.org>
- <f9a6a7874760a2919bea1f255bb3c81c6369ed1c.1745831017.git.leon@kernel.org>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <f9a6a7874760a2919bea1f255bb3c81c6369ed1c.1745831017.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250422082957.2058229-1-treapking@chromium.org>
+ <20250422082957.2058229-2-treapking@chromium.org> <CAE-0n52fsf37Xg+Qpj-VwAiUO-kOWFRXKtqLL4VmxtCzAck2dA@mail.gmail.com>
+In-Reply-To: <CAE-0n52fsf37Xg+Qpj-VwAiUO-kOWFRXKtqLL4VmxtCzAck2dA@mail.gmail.com>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Tue, 29 Apr 2025 12:58:51 +0800
+X-Gm-Features: ATxdqUGINPAVfcgBQD43dTdCzBEyRh3surtkZJHG52MVRPO0oFEKPZOMbVuvqvo
+Message-ID: <CAEXTbpcK_uP89431RJe9V9=hFFJ5iPc0rRNz+NZFCd6p=nUXLQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: usb: Introduce usb-hub.yaml
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/28/25 17:22, Leon Romanovsky wrote:
-> From: Christoph Hellwig<hch@lst.de>
-> 
-> Split the iommu logic from iommu_dma_map_page into a separate helper.
-> This not only keeps the code neatly separated, but will also allow for
-> reuse in another caller.
-> 
-> Signed-off-by: Christoph Hellwig<hch@lst.de>
-> Tested-by: Jens Axboe<axboe@kernel.dk>
-> Reviewed-by: Luis Chamberlain<mcgrof@kernel.org>
-> Signed-off-by: Leon Romanovsky<leonro@nvidia.com>
+Hi Stephen,
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+On Tue, Apr 29, 2025 at 7:47=E2=80=AFAM Stephen Boyd <swboyd@chromium.org> =
+wrote:
+>
+> Quoting Pin-yen Lin (2025-04-22 01:28:27)
+> > diff --git a/Documentation/devicetree/bindings/usb/usb-hub.yaml b/Docum=
+entation/devicetree/bindings/usb/usb-hub.yaml
+> > new file mode 100644
+> > index 00000000000000..5238ab10576308
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/usb-hub.yaml
+> > @@ -0,0 +1,84 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/usb-hub.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Generic USB Hub
+> > +
+> > +maintainers:
+> > +  - Pin-yen Lin <treapking@chromium.org>
+> > +
+> > +allOf:
+> > +  - $ref: usb-device.yaml#
+> > +
+> > +properties:
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  peer-hub:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      phandle to the peer hub on the controller.
+> > +
+> > +  ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +    description:
+> > +      The downstream facing USB ports
+> > +
+> > +    patternProperties:
+> > +      "^port@[1-9a-f][0-9a-f]*$":
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +
+> > +patternProperties:
+> > +  '^.*@[1-9a-f][0-9a-f]*$':
+> > +    description: The hard wired USB devices
+> > +    type: object
+> > +    $ref: /schemas/usb/usb-device.yaml
+> > +    additionalProperties: true
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+>
+> Can 'reg' be dropped because usb-device.yaml requires it?
 
-with a nit below ...
+As I replied in patch 3/4, I see other schemas still re-define them as
+required. I can send a new version to drop this if no one comes out
+and say this is actually a convention.
 
-> ---
->   drivers/iommu/dma-iommu.c | 73 ++++++++++++++++++++++-----------------
->   1 file changed, 41 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index d3211a8d755e..d7684024c439 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -1138,6 +1138,43 @@ void iommu_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sgl,
->   			arch_sync_dma_for_device(sg_phys(sg), sg->length, dir);
->   }
->   
-> +static phys_addr_t iommu_dma_map_swiotlb(struct device *dev, phys_addr_t phys,
-> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> +	struct iova_domain *iovad = &domain->iova_cookie->iovad;
-> +
-> +	if (!is_swiotlb_active(dev)) {
-> +		dev_warn_once(dev, "DMA bounce buffers are inactive, unable to map unaligned transaction.\n");
-> +		return (phys_addr_t)DMA_MAPPING_ERROR;
-> +	}
-> +
-> +	trace_swiotlb_bounced(dev, phys, size);
-> +
-> +	phys = swiotlb_tbl_map_single(dev, phys, size, iova_mask(iovad), dir,
-> +			attrs);
-> +
-> +	/*
-> +	 * Untrusted devices should not see padding areas with random leftover
-> +	 * kernel data, so zero the pre- and post-padding.
-> +	 * swiotlb_tbl_map_single() has initialized the bounce buffer proper to
-> +	 * the contents of the original memory buffer.
-> +	 */
-> +	if (phys != (phys_addr_t)DMA_MAPPING_ERROR && dev_is_untrusted(dev)) {
-> +		size_t start, virt = (size_t)phys_to_virt(phys);
-> +
-> +		/* Pre-padding */
-> +		start = iova_align_down(iovad, virt);
-> +		memset((void *)start, 0, virt - start);
-> +
-> +		/* Post-padding */
-> +		start = virt + size;
-> +		memset((void *)start, 0, iova_align(iovad, start) - start);
-> +	}
-> +
-> +	return phys;
-> +}
-> +
->   dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
->   	      unsigned long offset, size_t size, enum dma_data_direction dir,
->   	      unsigned long attrs)
-> @@ -1151,42 +1188,14 @@ dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
->   	dma_addr_t iova, dma_mask = dma_get_mask(dev);
->   
->   	/*
-> -	 * If both the physical buffer start address and size are
-> -	 * page aligned, we don't need to use a bounce page.
-> +	 * If both the physical buffer start address and size are page aligned,
-> +	 * we don't need to use a bounce page.
->   	 */
->   	if (dev_use_swiotlb(dev, size, dir) &&
->   	    iova_offset(iovad, phys | size)) {
-> -		if (!is_swiotlb_active(dev)) {
-
-... Is it better to move this check into the helper? Simply no-op if a
-bounce page is not needed:
-
-	if (!dev_use_swiotlb(dev, size, dir) ||
-	    !iova_offset(iovad, phys | size))
-		return phys;
-
-Thanks,
-baolu
+Regards,
+Pin-yen
 
