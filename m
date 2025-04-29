@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-625717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F16CAA1BEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:17:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65362AA1BF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751EB46795A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0D71BA7AA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1FF262FD9;
-	Tue, 29 Apr 2025 20:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0339F267B07;
+	Tue, 29 Apr 2025 20:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="XzHCLtkI"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDtx6dYH"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75F41DE4F3;
-	Tue, 29 Apr 2025 20:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A503E262813;
+	Tue, 29 Apr 2025 20:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745957830; cv=none; b=sXqk6KR27iuJJuXZ31qeQjW9GrmgBvpMz5xrYfU5QDm/uxjwvqPjhwx/ZiWsYWN/ym/RMvIKYtrMnDFv3DJv0ZUePWZUJ1pITiLQRpRSLa/LdROv0RWOXar/V53/UgQn58fY06uSsQfY5jyMXH2rhBZPeh3rhWCSwko7fjjwxgg=
+	t=1745957853; cv=none; b=D5e7Knq81IDU7YqmyCNEdSujEiPQdkwK38HGae2a8objOshlmGcwZAuL/Rua0KZoZFZOx7Yx/gh/3Wr2SUvV41TpzCGY+PV4thUu1MzsXwarSXATj5j4eqYBq35qBwnxunx8pwEu9quHkPptURL0Usf+o4+J3u8cun3zpvvaoAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745957830; c=relaxed/simple;
-	bh=hFBTMEmaHf6s2MBLUN+i3MPudnyjQ5inJc+P6QHb/FY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heFMMYbZoOAH3r/q7CH44+QztMrUSnHHcfoSCSC9dBBmj0OWWAxwdTQ1Z021TCw8DT1CaoHgAj0T94cymS+pGm5pMsqsQzjjEOGVBMIL34PHMYDIQT8SIVK3uHaH8QYV6YBLYZ5WbNCv7xSgS3ngN4aMAig0yKZzx3iuke2ilK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=XzHCLtkI; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0FC6710273DB0;
-	Tue, 29 Apr 2025 22:17:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1745957826; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=4j/yiV5NKpHHxjQpGZnyDBnPZwZOAa4wZQq4VLSzkoM=;
-	b=XzHCLtkIcE/RBYTqKDPlGdGI7OXx7+oZMHFlpZj9JK7HTCLhNKP6sdEpAcTf35uZGnmg9O
-	QWnosW5y9Rx3Dq4uPzv6MPVhj59WIjhdqW2dFB7T9NyEORHom71fYr5+STI3a+Jm+qJVs7
-	0zHoNRzb5hjXjohdyRlmuk1oS84NHfTiAyXEdcxNpxhA2oENcTpm5GQQ7PSSSjoiU+0F3L
-	nPbROe8ZuoWVPDPLYA1j2HWaCznUTGz2O73uyWIFCdF1yRrBp2D/6H9jaYZjoPvvY806yd
-	6wG6bI96jn4KAYDsXEXvYAE9Bg76lEPJ8xhL72IQ3IgWczfgyZFUemx5GJoQRQ==
-Date: Tue, 29 Apr 2025 22:16:59 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/167] 6.1.136-rc1 review
-Message-ID: <aBEzuzBVkyzGnm8w@duo.ucw.cz>
-References: <20250429161051.743239894@linuxfoundation.org>
+	s=arc-20240116; t=1745957853; c=relaxed/simple;
+	bh=nDXJMRI8RRGWu/sT7bwwt2Ds1ltVyY2w1KlKeqFxM3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VvJllRTu0/6aT/BqOoQuC79e/LnPw3NieELjxiiq7+R3s82CR64U0lbXntBO3NOaRdFndDh1NDq2Fs6wduy0C7IJHYpnHGjfVHsWUMqIXAYNECbxnpx1Wt8pF38ew3g4I3HGRETpEXjOAGxT/H4jPUcfGI5GgT+V3DG9WxQtQqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDtx6dYH; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54af20849adso221586e87.1;
+        Tue, 29 Apr 2025 13:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745957850; x=1746562650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NvC51MQbZRhHiX+q/EfkjiAsnNDHuxTQtXPBubp72ME=;
+        b=DDtx6dYHC0U9tp5jUUr+PEO8sf8QQAtCjGDUsSlxxU0S3oCtD9Fm8S6tCLjBsuMUV4
+         7kS3WWc41HUcmSkyIfFT0YyxKCecTHUJVUKyjPLou8iE+DK5RSGto//PcFQd6+aGGYKB
+         hbV68tAeUorViEnIU7BNRLPi/ob7Mc7zn/0RHlYOQli1vXQWTMD9RUGR0g8T+XKxwPE9
+         hvuYVivhCJe/UqX1tcRxMoPAQ271KezoRIDa9ivEeyyfWBA62+WKC6/1mHQ7KPLL6tdO
+         UEyBbBu4G+GwW/eWa1w4+D1/Z0IAHPMJQkCT4BWW/eEEYCTFQ85wWEGGyPVEa+cq2r9Q
+         gF8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745957850; x=1746562650;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NvC51MQbZRhHiX+q/EfkjiAsnNDHuxTQtXPBubp72ME=;
+        b=RbeD9I/Ryj67yzOH+F0h2K6+v+hKnV/nrhzcwfKUPOLgKwOpMAqtVngGihVPP62hcA
+         y4WdFR8cDkD1XAaqtyeO0cEcSNDAKsLqKJUd8BFsLeNbMFqPBAkHUU9Irx+wOmxBHcIO
+         u5R+umccSb1BiFVnNBfbE6gVdXO4PZP7Bgm9eHSIt9PlJ89VtyFSSueP8CIfo70nojtG
+         NXJNzbsOGY7CXugF0YNWuHl2mYcJjOeTQz2USYNNzPsZJy+OETcADaPL6AaL7SL64hib
+         0gr7U0tvVI4ip+x3gCIMvIsU/5uo/R7vNfFLQMReDY/MUbiysdCNqUGxTwA4Uc8OnaCP
+         /kIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqIpuvGnaKSvZT9Xbjjwt8rgbDtoJBLD+aoN5Lowx+WWYlCC7NZ1gPoxGET7/c5TCFBSvf9vr3Ol9aniM=@vger.kernel.org, AJvYcCWmDeUT2n+Rur1BT5YQjePpIqXxiHCzJmNXzyYkE8RNT4JftTX8qMwnJz0Dfo94EeXY1C81mg98@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkMUc4Y3T6MLIJDXHqR2ObVPK3CeBShQJsNWiM2vwpFr49xBXd
+	HkssR7BAQgPOk+bpvZQXokZwhgIh8wQuzmOgvLbzw643KSih72Oy
+X-Gm-Gg: ASbGnctx3BIYpJNhux3SCrcjLTUnujKKKs8D8wU/FBpEls+ahzf7GVo5Ofu+pLzF9M3
+	lCGjHBwe7w8eLCAUTqX+YvYLInXqA+Bicny81swtB6cmeNB0GumtQptJ8DMHWIYBNmivnh+p2zs
+	j3Z+95BEdXT3u057BM68eJ7JT5/7ItkVucKz5MEOqouSd8gNbD8mBPdWzBhy890hmiTP31nf7Cz
+	8N8CQjuqaH7vnZWUZXq+Yo5PdTdt5WDgd3QNWyo2+VfEo3LDAMva9pXVOv8NPkyrQpEQ2R9JQAe
+	i4YWvnNwBPYk7qY/Qd7VIPT3U2LVSQrY3kC9MYOMOFa53dU5Z37VloVspCn8wVX+mtYywTol1KQ
+	wMA7VDDlZmDTnZdNPeyg=
+X-Google-Smtp-Source: AGHT+IHIFuMg7jyYSGFsgMUD8LxKFxpwMNtRJOSrhtWUD8EnDztxeTKPlXhm8J16TdWRJem+yP+ADw==
+X-Received: by 2002:a05:6512:2206:b0:549:94c4:9f01 with SMTP id 2adb3069b0e04-54ea37d22cbmr80804e87.6.1745957849339;
+        Tue, 29 Apr 2025 13:17:29 -0700 (PDT)
+Received: from localhost (dslb-002-205-023-067.002.205.pools.vodafone-ip.de. [2.205.23.67])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f703831b5csm7863022a12.65.2025.04.29.13.17.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 13:17:27 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Kurt Kanzenbach <kurt@linutronix.de>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net 01/11] net: dsa: b53: allow leaky reserved multicast
+Date: Tue, 29 Apr 2025 22:17:00 +0200
+Message-ID: <20250429201710.330937-2-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250429201710.330937-1-jonas.gorski@gmail.com>
+References: <20250429201710.330937-1-jonas.gorski@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="w/80VTIZSwblmNnJ"
-Content-Disposition: inline
-In-Reply-To: <20250429161051.743239894@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+Allow reserved multicast to ignore VLAN membership so STP and other
+management protocols work without a PVID VLAN configured when using a
+vlan aware bridge.
 
---w/80VTIZSwblmNnJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 967dd82ffc52 ("net: dsa: b53: Add support for Broadcom RoboSwitch")
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+ drivers/net/dsa/b53/b53_common.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Hi!
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index e5ba71897906..62866165ad03 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -373,9 +373,11 @@ static void b53_enable_vlan(struct b53_device *dev, int port, bool enable,
+ 		b53_read8(dev, B53_VLAN_PAGE, B53_VLAN_CTRL5, &vc5);
+ 	}
+ 
++	vc1 &= ~VC1_RX_MCST_FWD_EN;
++
+ 	if (enable) {
+ 		vc0 |= VC0_VLAN_EN | VC0_VID_CHK_EN | VC0_VID_HASH_VID;
+-		vc1 |= VC1_RX_MCST_UNTAG_EN | VC1_RX_MCST_FWD_EN;
++		vc1 |= VC1_RX_MCST_UNTAG_EN;
+ 		vc4 &= ~VC4_ING_VID_CHECK_MASK;
+ 		if (enable_filtering) {
+ 			vc4 |= VC4_ING_VID_VIO_DROP << VC4_ING_VID_CHECK_S;
+@@ -393,7 +395,7 @@ static void b53_enable_vlan(struct b53_device *dev, int port, bool enable,
+ 
+ 	} else {
+ 		vc0 &= ~(VC0_VLAN_EN | VC0_VID_CHK_EN | VC0_VID_HASH_VID);
+-		vc1 &= ~(VC1_RX_MCST_UNTAG_EN | VC1_RX_MCST_FWD_EN);
++		vc1 &= ~VC1_RX_MCST_UNTAG_EN;
+ 		vc4 &= ~VC4_ING_VID_CHECK_MASK;
+ 		vc5 &= ~VC5_DROP_VTABLE_MISS;
+ 
+-- 
+2.43.0
 
-> This is the start of the stable review cycle for the 6.1.136 release.
-> There are 167 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---w/80VTIZSwblmNnJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBEzuwAKCRAw5/Bqldv6
-8pwBAKCF1Dfk/0Ah9a2XYAVlPz05ynfjdQCdGPK/d7s5QhrRhK01NG57uQY/8Hk=
-=Ijli
------END PGP SIGNATURE-----
-
---w/80VTIZSwblmNnJ--
 
