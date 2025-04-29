@@ -1,146 +1,91 @@
-Return-Path: <linux-kernel+bounces-624582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED51AA0515
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:59:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4B4AA04FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E11437A5C0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFACA48346E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1070826772E;
-	Tue, 29 Apr 2025 07:59:12 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD322472AC;
+	Tue, 29 Apr 2025 07:50:57 +0000 (UTC)
+Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D6322D79D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EB3127E18
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745913551; cv=none; b=dPAWR17iKoiDTjE4U7ciXxZgjg2HNaHdC9mUxnABpxXRiXKS+4udRZpYX48DcDc34qMosRii6HqxnTJx45oouzxnVj7j/7qqWs6lIwCFAJOzC5i2Axu1tjtxiVhlV0zS2tVh28QFfqDSWqYNQ3JNNHMvRReDp0Hfn7lxpFKMpkE=
+	t=1745913056; cv=none; b=d5uW6DbyXDvk2CMcXRah3+8QL9aSeA57PYFMdOSv+hH2+NWu5OI1pFumwxyYzI+914gKgBY+N1lj0UvbZmFhcqceKd+JHyriaihPBIz68N68nI8tjIh6SWtt8R9q5g5VwQYP5bPUkTlRRTBrqQK2kP8D+jOIgeMX/ioKBGKN5RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745913551; c=relaxed/simple;
-	bh=swxCFukqVYL++kIfVuki+6plLSjpjK3xthD6yhAzAPE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yz2v2BuaNCs+BYQQi8MoDB4uoO8eBpkXZvotP3ENhbdqsvthS3EpLMpeSGZOugJqsgDiyz1bdznZVmJQtko1bP/0TB15EHknbFobWpL/heT0zHxaflgl2KWtNL9ggA9jur3DW3IIDKLiHLbq2LgaRk1lMu/ZCsbQgICQVlJss9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Zmt291m0hz1R7cm;
-	Tue, 29 Apr 2025 15:57:05 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9653E1A0188;
-	Tue, 29 Apr 2025 15:59:07 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
- (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Apr
- 2025 15:59:07 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <xiang@kernel.org>, <chao@kernel.org>, <zbestahu@gmail.com>,
-	<jefflexu@linux.alibaba.com>
-CC: <dhavale@google.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v2] erofs: reject unknown option if it is not supported
-Date: Tue, 29 Apr 2025 07:50:29 +0000
-Message-ID: <20250429075029.689511-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1745913056; c=relaxed/simple;
+	bh=Nvb2gPai4A+s/3qme+cxcbZehIbNW24hp2k44LYLMts=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dN/c+BnBLA1HrTrTtBdRdTn4qldLvaeDnYk0Dq/yntkpA90r4Tt2qkQ26xOf2WbFf9AxaucEucgL1hDFTlLCVpGLv79wB5e1v2Xh8oERdCVzRPma0G46fiBd8q+8UzgBXQOKoM7dlvurrQAguWWFRRBS0PRs35aAilm7LeDpFEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
+Received: from exch03.asrmicro.com (exch03.asrmicro.com [10.1.24.118])
+	by spam.asrmicro.com with ESMTPS id 53T7oTFd037789
+	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
+	Tue, 29 Apr 2025 15:50:29 +0800 (GMT-8)
+	(envelope-from zhengyan@asrmicro.com)
+Received: from localhost (10.1.170.252) by exch03.asrmicro.com (10.1.24.118)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 29 Apr 2025 15:50:32
+ +0800
+From: zhengyan <zhengyan@asrmicro.com>
+To: <gregkh@linuxfoundation.org>
+CC: <arve@android.com>, <tkjos@android.com>, <maco@android.com>,
+        <joel@joelfernandes.org>, <brauner@kernel.org>, <cmllamas@google.com>,
+        <surenb@google.com>, <linux-kernel@vger.kernel.org>,
+        zhengyan
+	<zhengyan@asrmicro.com>
+Subject: [PATCH] binder: skip dead binder_proc during binder_open
+Date: Tue, 29 Apr 2025 07:50:30 +0000
+Message-ID: <20250429075030.305-1-zhengyan@asrmicro.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:spam.asrmicro.com 53T7oTFd037789
 
-Some options are supported depending on different compiling config,
-and these option will not fail during mount if they are not
-supported. This is very weird, so we can reject them if they are
-not supported.
+During binder_open, the binder_proc list is travesed to check
+for the existing binder_proc instances. binder_proc objects
+are async released in a deferred work after binder_release,
+and may remain temporarily on the binder_procs list even after
+being marked as dead.
 
-For (no)acl, (no)user_xattr and dax related option, these are common
-option in other fses, so we keep them in the old way (e.g.: will error
-out the log if they are not supported).
+Without checking the flag, binder_open may face a crash as
+"Unable to handle kernel paging request at virtual address
+dead000000000140"
 
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+Signed-off-by: zhengyan <zhengyan@asrmicro.com>
 ---
-v1: https://lore.kernel.org/all/20250428142545.484818-1-lihongbo22@huawei.com/
-  - Keep (no)acl and (no)user_xattr in old way.
----
- fs/erofs/super.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ drivers/android/binder.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index cadec6b1b554..45038981ea12 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -376,14 +376,20 @@ static const struct constant_table erofs_dax_param_enums[] = {
- static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_flag_no("user_xattr",	Opt_user_xattr),
- 	fsparam_flag_no("acl",		Opt_acl),
-+#ifdef CONFIG_EROFS_FS_ZIP
- 	fsparam_enum("cache_strategy",	Opt_cache_strategy,
- 		     erofs_param_cache_strategy),
-+#endif
- 	fsparam_flag("dax",             Opt_dax),
- 	fsparam_enum("dax",		Opt_dax_enum, erofs_dax_param_enums),
- 	fsparam_string("device",	Opt_device),
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
- 	fsparam_string("fsid",		Opt_fsid),
- 	fsparam_string("domain_id",	Opt_domain_id),
-+#endif
-+#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
- 	fsparam_flag_no("directio",	Opt_directio),
-+#endif
- 	{}
- };
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 76052006bd87..43ab4350e589 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -6041,6 +6041,8 @@ static int binder_open(struct inode *nodp, struct file *filp)
  
-@@ -444,13 +450,11 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		errorfc(fc, "{,no}acl options not supported");
- #endif
- 		break;
--	case Opt_cache_strategy:
- #ifdef CONFIG_EROFS_FS_ZIP
-+	case Opt_cache_strategy:
- 		sbi->opt.cache_strategy = result.uint_32;
--#else
--		errorfc(fc, "compression not supported, cache_strategy ignored");
--#endif
- 		break;
-+#endif
- 	case Opt_dax:
- 		if (!erofs_fc_set_dax_mode(fc, EROFS_MOUNT_DAX_ALWAYS))
- 			return -EINVAL;
-@@ -491,22 +495,15 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		if (!sbi->domain_id)
- 			return -ENOMEM;
- 		break;
--#else
--	case Opt_fsid:
--	case Opt_domain_id:
--		errorfc(fc, "%s option not supported", erofs_fs_parameters[opt].name);
--		break;
- #endif
--	case Opt_directio:
- #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
-+	case Opt_directio:
- 		if (result.boolean)
- 			set_opt(&sbi->opt, DIRECT_IO);
- 		else
- 			clear_opt(&sbi->opt, DIRECT_IO);
--#else
--		errorfc(fc, "%s option not supported", erofs_fs_parameters[opt].name);
--#endif
- 		break;
-+#endif
- 	}
- 	return 0;
- }
+ 	mutex_lock(&binder_procs_lock);
+ 	hlist_for_each_entry(itr, &binder_procs, proc_node) {
++		if (itr->is_dead)
++			continue;
+ 		if (itr->pid == proc->pid) {
+ 			existing_pid = true;
+ 			break;
 -- 
-2.22.0
+2.25.1
 
 
