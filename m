@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-625485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0BEAA12AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:57:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D70AA12B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E27098213C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8833B1BA571B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA2425178D;
-	Tue, 29 Apr 2025 16:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74594254850;
+	Tue, 29 Apr 2025 16:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VO+7bP1W";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+1FCOKXe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMCcA1od"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0E024E019
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92932522A2;
+	Tue, 29 Apr 2025 16:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945591; cv=none; b=QsHKlWm5Gi0KZdGLiZerfEkQ0ZXmDRldKf8FLJAyXimpf1FwlLMKogg/7gpvwwgOFD/p8ruMsJC5ebN4X17sIg1mIk/V1B9RbUDAlZ4nFAGUr1z0MuKtLlSgu6MPUKEpG5R7WRLFb02G/pKqyRJakrX/zsv6Hrhgq5pGZHeWoP0=
+	t=1745945666; cv=none; b=Z3O7aTpGnkhYtbC9AEkvtaxUjVHuFzalLGhhWh8V/HQ8gLFQBdoZuPEUqvWkntKfialJ5as+/zSXNfdKOcLzsYEO0D/Qn4ERRGbU5vTsLTsY1g5T159EQHgWvvoF3M8Yy3gOpcED71ZrB9+QlJ81bxpFmM6wQ89V85Q18eUQe48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945591; c=relaxed/simple;
-	bh=rvwMq98Jt3B7MUrEb6li9y6+5IG8nlslNnMRtOYSVD8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nb4ZUIl5NU+z4PKl6wGYmRnSMq90m6Q+Qm7E4D2ancLw1QoigJFIr5y/RthBwKAvi6WcIuaOsUcwLTqct237GhJUx71+acYbDzhXpaRAM6UKAdFnnJmgQ0Bs7TJN8MdLior1EDqt4g8QmtIdzPbXz2SydMUSh2s7ZLhNvK6wrHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VO+7bP1W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+1FCOKXe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745945587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WwmLgDT1WO4FJ/Bs9AFg3veV+pfKiE4cEwup8QWcbz8=;
-	b=VO+7bP1WdP/OS+2p+GoZn7eBoUerGIbD7HePipSVnm4ogbKWNAHcWb6rmzyNclWyQK06Oi
-	049uSv4E0ZPvswnFRvNe1Fb/0NIq9eaxtvjB/WSTtZ1tJkzseFMNIvmPlF1JzoDwd+5xOF
-	vrYis1NAEA37rOcEjribAA7uY8TDSIdXbfpQ1H/+U+6lYgWYn71WxKLtCktcCynROJGATV
-	59VM9DsyFQ+x9E0yKPbO7CBLYPN8+RHXkCsr2stTtGcaqKpAPrC5LO0dNsDU1EMGdrs6qQ
-	slTb9JZrTjXWjZv3BftR0Vm0jrdMPq4vMxwyol/sbUZBJFtFsnDK0Sa1SZpIUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745945587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WwmLgDT1WO4FJ/Bs9AFg3veV+pfKiE4cEwup8QWcbz8=;
-	b=+1FCOKXeX5IVkra6/CGRF/997U00GhA7QwKWQX0rmv0YFRE+asHHGwF82hcs8ww6g713Ju
-	0NEChJGMO8H8X5CQ==
-To: carlos.bilbao@kernel.org, tglx@linutronix.de, seanjc@google.com,
- jan.glauber@gmail.com
-Cc: bilbao@vt.edu, pmladek@suse.com, akpm@linux-foundation.org,
- jani.nikula@intel.com, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, takakura@valinux.co.jp, Carlos Bilbao
- <carlos.bilbao@kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/panic: Add x86_panic_handler as default
- post-panic behavior
-In-Reply-To: <20250428215952.1332985-3-carlos.bilbao@kernel.org>
-References: <20250428215952.1332985-1-carlos.bilbao@kernel.org>
- <20250428215952.1332985-3-carlos.bilbao@kernel.org>
-Date: Tue, 29 Apr 2025 18:59:07 +0206
-Message-ID: <84ldri7vv0.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1745945666; c=relaxed/simple;
+	bh=AdoYyKISP36xJeQD9woyN2YEZghocYxvykppZ9AflqU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fr8mieE96j94cMt/wnYY8R/S/ztsNGL0vBCqyrlyDP2EutBbj6Q2a9AUwzcIITeFS5czrogRg6++i97KY1ursM37ITSqqxdObZkTB5AINYh1IjVi1aMaTBMCdPJQxtPthmspeSowrfLtBrtW4BeEwX33REfTe31oJe8w9n8Fwk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMCcA1od; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9792FC4CEF7;
+	Tue, 29 Apr 2025 16:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745945666;
+	bh=AdoYyKISP36xJeQD9woyN2YEZghocYxvykppZ9AflqU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oMCcA1ody40ilGXC0Qybb7DD6sqJxB52dAXTz8M0wbK6IB+bf8EDHo+zzXnykV1B2
+	 ZI1MDHferuz/WYILmf64MfVy+QwDtMwoK9hJu5FENIHEjcHPdsmJr8V+2NcyUZWQR/
+	 Zdf6orSEajxT7dZqQA6CDJXGCy0o17kNrAxtAudher8AP/WyxvfA6LVxGJvT4OZ6pS
+	 0bIxAIDtB15QnFrdc3oEUAdhVzZGoHIszrH1ZT2KmV1CIzLZA5KlnpXlD58F78ji4B
+	 Ov8zQU6zZvoTI9gS8fwNBEguGszOBuHXgZ+V74f8H1IwxjKGkr04VtKNjQAL2PJNdg
+	 FAAdjY9cCvHBQ==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so1117676566b.1;
+        Tue, 29 Apr 2025 09:54:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVA6wy6LKyHIWE/uLdFhDoQrCh21Q5Mq21OOZjzan7z8Xv56yoO3P18NBME+R++5GiL8NmCnayM@vger.kernel.org, AJvYcCVQs0Y9bFooAFPxEFfnw5zELioFUW3uMJHjSt5bZmCwuTe54h65WT9JohIEQePN/4ebNRAuF9xeYgU6ASA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/eRoh90BjKxmXTGKInplZgFI7V+d58WIIZZZMvtX1s4LZotwv
+	3ZRkDqcjn7h5rKsMnV6zuJitYB3Qjvl30qFamazsi7gyPpC8ZUbUyZUakSQKC5Q8ECbSiScqXNs
+	1s3gtPcdFgEOBeeJTBvcR6T/Lf/E=
+X-Google-Smtp-Source: AGHT+IG7skFkYmrh78r3PBufunbwFhCyH6bMAAQyF6iwtL4SiSNbNImHJcW3bMTneYB2TP8fzRb2vISMbXZRWbUX/Vo=
+X-Received: by 2002:a17:907:3d0d:b0:ac7:eb12:dc69 with SMTP id
+ a640c23a62f3a-acedc6226e0mr11217966b.28.1745945665026; Tue, 29 Apr 2025
+ 09:54:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250428105657.3283130-1-wei.fang@nxp.com> <20250428105657.3283130-6-wei.fang@nxp.com>
+In-Reply-To: <20250428105657.3283130-6-wei.fang@nxp.com>
+From: Timur Tabi <timur@kernel.org>
+Date: Tue, 29 Apr 2025 11:53:47 -0500
+X-Gmail-Original-Message-ID: <CAOZdJXWxX6BKqt8=z-dWNO15AunjbhNBkSi5Cpfx6Dn3Yw4BaQ@mail.gmail.com>
+X-Gm-Features: ATxdqUH2vDIYWUftzeH4CwoDWqiZzAE9yKFOOu8ghijiqo79WRaU9jaZG_afqrM
+Message-ID: <CAOZdJXWxX6BKqt8=z-dWNO15AunjbhNBkSi5Cpfx6Dn3Yw4BaQ@mail.gmail.com>
+Subject: Re: [PATCH v6 net-next 05/14] net: enetc: add debugfs interface to
+ dump MAC filter
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, christophe.leroy@csgroup.eu, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-04-28, carlos.bilbao@kernel.org wrote:
-> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->
-> Add function x86_panic_handler() as the default behavior for x86 for
-> post-panic stage via panic_set_handling(). Instead of busy-wait loop, it
-> will halt if there's no console to save CPU cycles.
->
-> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
-> ---
->  arch/x86/kernel/setup.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 9d2a13b37833..3bfef55e9adb 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -16,6 +16,7 @@
->  #include <linux/initrd.h>
->  #include <linux/iscsi_ibft.h>
->  #include <linux/memblock.h>
-> +#include <linux/panic.h>
->  #include <linux/panic_notifier.h>
->  #include <linux/pci.h>
->  #include <linux/root_dev.h>
-> @@ -837,6 +838,15 @@ static void __init x86_report_nx(void)
->  	}
->  }
->  
-> +
-> +static void x86_panic_handler(void)
+On Mon, Apr 28, 2025 at 6:19=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
+> +void enetc_remove_debugfs(struct enetc_si *si)
 > +{
-> +	if (console_trylock()) {
-> +		console_unlock();
-> +		safe_halt();
-> +	}
+> +       debugfs_remove_recursive(si->debugfs_root);
 
-I do not understand what you are trying to accomplish with the
-console_trylock(). At this point in the panic, all the messages are
-already output. The console lock is totally irrelevant.
+You can just call debugfs_remove() here.  debugfs_remove_recursive()
+is deprecated:
 
-Also, the console lock is only valid for legacy consoles.
-
-I see no reason why you don't just use safe_halt() as your panic
-handler.
-
-John Ogness
+void debugfs_remove(struct dentry *dentry);
+#define debugfs_remove_recursive debugfs_remove
 
