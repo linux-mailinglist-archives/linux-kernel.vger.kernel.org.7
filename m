@@ -1,226 +1,194 @@
-Return-Path: <linux-kernel+bounces-624978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69997AA0AF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5D9AA08EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 450067A3124
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3FD33A63CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3342857CF;
-	Tue, 29 Apr 2025 11:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9B9270ED5;
+	Tue, 29 Apr 2025 10:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwScV3bW"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="I7kvtF3N"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012035.outbound.protection.outlook.com [52.101.66.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631551E0DBA
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745927902; cv=none; b=T0PfEK0uEAqTtMEAD7MXLqAGVdg047Y5Cp7WMh9RRQTFHmMVBRtmw9sopfpJqgPf3lH/wJ8TwztVJ2gcWqOMCFXWx/hZ3THCwvNbWwYBWu8vdEhD2PxuW3ixdbdJkNa1I52VuTUvXT9YWyVDTl2X5VWx5Vho9kqRRAJKjlpzXss=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745927902; c=relaxed/simple;
-	bh=MdFbKAOEQYCc1jkBKljdoNZaXqm8BPhMNW5HxkmA/Ac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MkFuBjNhvB2no0atcZ3bwAAJAEg6yWioxnvudoxYXPd+8Eb6s34Oip/9q7LQ/m34b7cw2qKfj3YqzrW9LOkWv7fRgwpzQIBamWPAZclcLfXYaHYcbSS7nqqC+rCz0w4BXwfV2nFIwIfype5a0HKM+RlOOjcwmQDq6OSAeCwK+Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZwScV3bW; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6e2971f79fso4564283276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745927897; x=1746532697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YC2LGGpE70kiPFeCCi72EkYRfCk+pYT/yGe+VdlkBmI=;
-        b=ZwScV3bWffdnhcHL+PtUDFKREP9TBZa0z+8a5ITYu4fq3GCks1m4JMO+cCcMPUPnjr
-         K2ONk0Y/thH+erfVCP6bgtwXciDNP/eKPZgeRg6b4XX/LO7g+//vbrrkQDTqiD2yQQYh
-         b18aGoYbZtNlJCDAsTyDkxyNFm9qXSSgcZzncq1lCIulkddWDYebRVESeo1guA6RVz+5
-         G01jF7qbw5bor3OK5u93HxRLI6j7XLm+/LophWgDFdcWXV4AYeJTXJwzn8FPxLFYK0CL
-         IOs4DEa0UqhS6Y83jxknY952u9r9lHmIJqBFv6ybt6eNEqv7C6FmiTZEfJdEvxKGf+68
-         jgig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745927897; x=1746532697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YC2LGGpE70kiPFeCCi72EkYRfCk+pYT/yGe+VdlkBmI=;
-        b=tGvYX1sBtw9ALEfjW6QndbALFGIWy/+yltAwfeXryFsoxRVTQxY+dlW7XMKWxckR58
-         m2HQbPcuROGXCZvuUq/ytbcao/TuzcFknfB6T4TTKqlh4QXoc7yy1OCyxLZbGWu1yd0d
-         A0OXkv2TPTTKln6PIjUIThW2xJH+Jju2HMPTajh2LFnSKEQKw3EkrUsagUjXopUBLy+i
-         nKQ3yCqr8tYvQ4s3boCN0uvcOUgwmxtbZJHHAEPZAvGMOPs1Jbml85xolYcOsFTrCi9k
-         qiChIqHmh85CDS2uqNz4igTfZRHUOwnwEpCEbh22RbFgzT3NBUuvuq7nFxf/LhffClMk
-         6o3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWCKGY+QCHBZVPBK67YgJDUp5puspbzGehVOQ8YHya8AvUw5Ff1hN6qA/fj0+DjZ8rbcao5MCc8DPmy4kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKFxb5WiiUGCIu7Fjxx2tXLlhKsotEpBG7ksi3ooPKdpr2gzXb
-	LNzKwrLpziX3xUyYrqLs22JnULJh4c5wBS9ymKtiuqvB3pwttdpwOMxUwg4vjbiqq+Wq6RjGDsE
-	Fp5vKQmSQHhwf/EcX3dxoSasIG1Q=
-X-Gm-Gg: ASbGncvLvf0QPfJjcMeI+pTtXhYkMrrrI3BN8TvVA77i15nQc4BwiHoH75hf26F0ngP
-	JmqGARFwYtrRNMlfogNfhDzUq/iFRpmLl0dlNt2Ft/nGTuc19Lmw1mPfesarROnqu79ZjK4WbjB
-	pERfZS1bk1HuGZCk12CZmqrw==
-X-Google-Smtp-Source: AGHT+IFZuUpUcT0FpWh/xFcN7YV8mTmhhmd1TfDP2Xpd6GzqIj7t/GP6ENv//lBM+JolYrLZVqHMwRl7cIw868ZvG+I=
-X-Received: by 2002:a05:6902:2085:b0:e73:9d0:1823 with SMTP id
- 3f1490d57ef6-e7323472933mr17628295276.47.1745927897185; Tue, 29 Apr 2025
- 04:58:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F57920F066;
+	Tue, 29 Apr 2025 10:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745923857; cv=fail; b=FemmYFKtDX2aW5j9kQqjthFOZwZLZr4Ib8EzH20Miv/i4L8eYpEeXqsgptzXOHt3sHz7S3iXdCrdy6YVCMxtZfc0bHAaksk/OFAPFXpNTuMHfivBycyJlxgmoovfftn+zkwkzYorI7ouCGl1kmNEMf037xQxfUJw3bUETj8tKLM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745923857; c=relaxed/simple;
+	bh=cCXuAQzyrYz4rF+QC9TBsnxbVmMJQnLqP2wUd2uLC7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=I1HDAWM7BIZwrwT5yWvAkoKKKwtIxA8nvZcWbhnbPfei24SAPFfZZfAkghpo2ys0EtMezwzUTPgEVj57EGj2tAhxnb1Vnl3zqE1ip6a49gRT5KmNRKBngPdq951AQbk0Zrqj3GaMzQy7kASNnEChiBuIASk07h+I3PlywSEtnI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=I7kvtF3N; arc=fail smtp.client-ip=52.101.66.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bk0474HkfbbUBkGneJhVCi9xYVAVTnWRVcRUnXtam0Rg7Pb7eTnrb7AqctahD9ziur/qNJKgX2C2hfmSs2qWPAlTP+KZEksEjv4e5QuJmc6vrVrbD/EOtHZz6KY7B0LweKWYro5PD8msenNvTLIX+fR6Y9xADr8w/x/gzOz560Bm7yXLIPH7532Gkc0g9BRBLtn5v3Cful6NyDTPb8Y6xfMKpYCsheD5RiraHa0iiOxE6/0YxrIurSflffoANfdXy/sFcMYhmVvC6mHh6YvkEbmCnHhESLt3uGo5oQNyaz1HBYD98BapXVkx/CxUzLzVs2Ecp3c5NRLvKw02kLi1QA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DF3W+qkapMQ1iwBQega5osTas6/XFQnb3X/mzgFNg94=;
+ b=jpBz6tR12y1rUP7Z58YEY7CciTwHDfAPf7N2i89RW7PtCW1XwRcfLfnr2sMIOhpIJCPXM2PbZDxeg4nSNoxjV+9k4vHpi9MATSmBdlwzi2dAkBD46J/iSjD2t56DmtKMKBrIXkX1B1HzXtXkbZ1geLDwRsufkEaGQ/2tdiIBvm/kBsXnJLUnqwcbztDwEAc3BHF/ssBwOpDsocAfqcI4Z1nt+B4dcLCozdBuLk3Kpo8cOEO8iafnLRZyTtouP/Z18q+qwgxlbL6D9dc/64iWPY8dkkkv9cQxtZAdzOxFq9Dc9HeXeFGsdRnFp88+e/UBMeIC/wdTIZfcqfBgd0sx3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DF3W+qkapMQ1iwBQega5osTas6/XFQnb3X/mzgFNg94=;
+ b=I7kvtF3NvUHsqZ07cnDOE7uH+RErABC4fHVtgLOJ+HXJvUq4LK6NYrvPotoUL5FqvBOb9Az13Cg6jyIkxF5F5hXvKIPxFNwFlIjEKtyw+FU/codO+9twjIT+jwr6SVC6SBGz7ulCdkJCte1RxS9yqqlB9E1XeUucsbSOCnO5Gzh6G2tzu34kGo+QkrU2VFyzKgeBk3nJv3hvyq17yoLGItpIhQ0f/XQNsLyqy7rhRfj9vegIZanv5xr/qftZwiHs1SldYJMB+AqGqljPnUFKZzXscGcAY1fingv7vP476ERp4azOvBMjZvVIXZaW3rKgqgCsd1ujvVj2ocx2bwMEow==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS8PR04MB7751.eurprd04.prod.outlook.com (2603:10a6:20b:2a2::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Tue, 29 Apr
+ 2025 10:50:52 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8678.028; Tue, 29 Apr 2025
+ 10:50:52 +0000
+Date: Tue, 29 Apr 2025 19:59:52 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 0/6] arm64: dts: imx: Move Ethernet aliases out of SoC
+ DTSI
+Message-ID: <20250429115952.GB28789@nxa18884-linux>
+References: <20250425-dts-imx-aliases-ethernet-v1-0-15b9d5cca611@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425-dts-imx-aliases-ethernet-v1-0-15b9d5cca611@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SG2P153CA0050.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::19)
+ To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119093949.3014-1-SkyLake.Huang@mediatek.com>
- <871pymtab3.fsf@bootlin.com> <c1e2d8ea-1b37-479d-8239-cb9bf0efdcaf@gmail.com> <87bjsfv0x1.fsf@bootlin.com>
-In-Reply-To: <87bjsfv0x1.fsf@bootlin.com>
-From: Chuanhong Guo <gch981213@gmail.com>
-Date: Tue, 29 Apr 2025 19:58:05 +0800
-X-Gm-Features: ATxdqUFw156jElhjP-eZDXnKLbf_YdyLPXPeNQmy3SBNzsMbmjDF-l2toZGqZGM
-Message-ID: <CAJsYDVKiMeYY2rw_BxuW4BAxvMcq5hDwzhiPoAR=tkXzZpRYiw@mail.gmail.com>
-Subject: Re: [PATCH nand/next] mtd: nand: spi: Use write_cache first and then
- update_cache in write operation
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Sky Huang <SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Daniel Golle <daniel@makrotopia.org>, 
-	Chia-Lin Kao <acelan.kao@canonical.com>, Cheng Ming Lin <chengminglin@mxic.com.tw>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Pratyush Yadav <pratyush@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Steven Liu <Steven.Liu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS8PR04MB7751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00b9ed5f-9b69-4f14-2924-08dd870bb5ba
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OGXyHYy8uu4A/WWzIsTK0+BYGQNjFHJCTE5yh7oQbWkigXVkyNV2VOjui6fx?=
+ =?us-ascii?Q?gj1S3KH8rTpw/WvOTu01GZkOWhbGeH4Rbtz1xD4o/GOhOfgWA0NTJJlOnzm9?=
+ =?us-ascii?Q?pMZWSdoY17cWz+/y5QgKEvEOlwN2jynclTmWfxuItQlDyoAtO8ICXShlm4vw?=
+ =?us-ascii?Q?agOEnWJGdlMiYd7KhfS5E0HNLDOjp76xgF5dLfW85XCkm/iQquTx7KRegaze?=
+ =?us-ascii?Q?RrRVOhMmwtLuGvdKqU+IDSzHk63FMZaZA6M8XFCcGxpgZJXAbo0SwvfmPIXN?=
+ =?us-ascii?Q?MmlYHwbRvldGoOD0u9QD842LavxIfA30RnOntA/nKloyai3kMEQW1/Qg+0eR?=
+ =?us-ascii?Q?cC743NPvSiE53kqxF4A2+0DhN/oVBBf483Xs38MwK9tH6ZbGsQWF4WOuBJEo?=
+ =?us-ascii?Q?BiiOgjvwCzfxaGfZ3zDdFip9HLvib/8+weJsoyIXvj13B0ynJuIE02XHml1o?=
+ =?us-ascii?Q?mKXhfil24dVT2UnPL5kXSJvHth3jI+NkVs21BCtwuFhXWGm8xc2LYydtI7ow?=
+ =?us-ascii?Q?lA+coEqiK1GmA+eduemUe6el+4ShnYP9MoS1+mMufLozCu6F2aZGBRQ2QEmc?=
+ =?us-ascii?Q?QIOWUscsNCd8EImxsv20zfPsu+VuxktPwVo0Hl5gzROF/Uqsvzpvn+VdFZRf?=
+ =?us-ascii?Q?A8B2rCNBBfnlQP4qBnCxtxyrjLKVwz8utUAnH39nEPSZN7GYTfr2EiRrAM7U?=
+ =?us-ascii?Q?TDWNmNa/+9Fot47NYRu1mjzeAnmSqEdPXTYsRNpql9BARS4DbxEjreFW6xh9?=
+ =?us-ascii?Q?YWV73oOJbRahWk1+WHLkAeLWvM/x9spdBUu5Gd91tkqNBCfaMxNVuu4frp+G?=
+ =?us-ascii?Q?34S0JLEvJl2bcQOMPH3InoTbFEmQmazvCMqpWuUnmLmFimmj6H9wdl1litQZ?=
+ =?us-ascii?Q?srQWBY5r7RVq/NrIdXV6P0MyUp4BhbLjpagWRhKWw0d+OkO+CODnPNf6Als6?=
+ =?us-ascii?Q?HOsIJ0Ag1RsMMw+8sjNubLU99naTGGe8+rNLMpZ+JzE7nYFG/CqFjq/K64WI?=
+ =?us-ascii?Q?exjWE8i3f83mCO+bWZ2e4ipaDcTBx4MSMs0idizbyQP4rh/77FBlc+KVXEVn?=
+ =?us-ascii?Q?//FnW7jRQ4QfKgY6/zJGqU6b7kW1LzhVVVcGHFdSEPHB2kJKiZQ1ZvrmWBeB?=
+ =?us-ascii?Q?Vb+GFMZcS5zmTDCdnEvMZJH4k0lKnnZ05uBU4hk1Fuy1pQeFB1b/h7r5fzpY?=
+ =?us-ascii?Q?zgmJkJI/s54Gpk7+pOgqjNL3FXNy5phYBOxF7vWzhXp1T5TXSrdBCXWfWnqf?=
+ =?us-ascii?Q?PId5vkbuIxzl23ggsqZ3/o2ap1W2gpxqdQxfiyS+SIwpiTQgGg5JOVIMbUgv?=
+ =?us-ascii?Q?BE52f2QfUkcvy7NsJjjwsNnhiY3ZTqWbo9sjXm/fvFLIcSaCbD0QqIxEwGPe?=
+ =?us-ascii?Q?R9NwqI4jNEYECFszpvUX6KBPSmSGjSNsu8tmZV3hpilA/aTnufXScd6yIzfo?=
+ =?us-ascii?Q?TVtj1/khQNDcuLCbznn1/NmJV9L9B6z+zpIQOKow4hky19UbqB/K890r5wOb?=
+ =?us-ascii?Q?hRhWzq3PUqVBVQ0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OiKgBgPvAIT8D8Njb2jqJWJayy9kXpjvh3n//CJN8+O1ohJG8KvxXhUbJEBY?=
+ =?us-ascii?Q?RLoa1dGBDLWi+soebF9Q/GPCL3Xkkv5eRNDIQEOE12s6pjYF+v6fapg03+yF?=
+ =?us-ascii?Q?qeZYszRj1cKiZ6Z8/BHsZrqiw+JM88YoSW26Zn2cFvT9Kr+FUni/P/3EOVqB?=
+ =?us-ascii?Q?BHxwPPb/K/omzhj2bPmWr3lk5MOAexnp7degYfNUTC8cc8EYmyTx3OSslhri?=
+ =?us-ascii?Q?gBPweiayHFPcMR0PggAI2uwGrZo4BH3HjpxeZGNswQdeayvDXx15CeyPW6jw?=
+ =?us-ascii?Q?VquiFs/BUMcgJnUhs3eUuzxYyYg7iTHGD3w99mTantAJGp0hh/gsYH5Rm5ce?=
+ =?us-ascii?Q?c/vQex1H+R1XjagmVIBT7yHagPUq2x8sWYB86pItcBrFficMiI6/Ypdi/1kN?=
+ =?us-ascii?Q?VFFkj+Rs55fQDkLyDhjzBqxL4YuXDAI9njRAZCbLFr2M5jE0M8Q3Zdz0nSh5?=
+ =?us-ascii?Q?e4CTEXRUV54C4f0KbW09qExKlgjXDKEv2w2k5syIFJAWx82orKlBBk+/Mv47?=
+ =?us-ascii?Q?lfZfflO/p/c5nDb32v3ksYTiLIGVbH00eMsR6s6joUo9YceQzveGrFqXC3WV?=
+ =?us-ascii?Q?mhICcUCQVxK+y9NH9ewJ9vck11hsrQHLQK/zwYX0kh178xFeAJNoI7dmsaiU?=
+ =?us-ascii?Q?83wRmexB1qGGhJ63YgA4GOmpp8yIEaKK8HU8s76+Oan2nFkLKtIXJlSP8+Ne?=
+ =?us-ascii?Q?NJzJWzkPxy8XlIZKVZtpDYXYmslnEygyyCQp1lmHqrVILMoeo1gtUKqZxAjD?=
+ =?us-ascii?Q?gIiiCN9tc67/h9R0otLBMDHokxiQW8NpQWjzLk/xgC3o9CtENX/mIOAwcfMm?=
+ =?us-ascii?Q?cibSY4gbthRWURUndCEkleK60jn2ENNwj3MJX/RHxyG7Ci9n6MwkX6SSEDt1?=
+ =?us-ascii?Q?JlB6EQNuuehPUIS1aA3Iq82TB0HMyxmrAnyuRq1lkhDt+8XN6SNX73jO1kRu?=
+ =?us-ascii?Q?2+WklIrsdOITKe6RKcctNOswujU6US5MF7co0QRriS6jUqDvIT4wCQTal95E?=
+ =?us-ascii?Q?DuRUF4jwWob0MNFkATWe33tVVijsr5Qa7iYjis0QVHzCMWmvZ0e05u8idF7n?=
+ =?us-ascii?Q?/Ngdj2TyXB9IaHvbpPmLGgW4DL0MriHNqwYkyPJKBWR1oQFwRb5eMIJlozQx?=
+ =?us-ascii?Q?wiJBKi+BPmtQQkppcnAIulEYwjPfzd144AxJfrM3wpPngB4ZdnQ8pCaimFvl?=
+ =?us-ascii?Q?unVacwJxLaiQofD6YhmuI49sNdta0GlYzvKq1eCRSY6gQocKc7L5YefV6va6?=
+ =?us-ascii?Q?LEYsg8IVKenfNsjb6v0bDt8N/J4VkC4Gp56VB87GX3c56vn/ZyhuC6iWGaEI?=
+ =?us-ascii?Q?S6iMYZCtbVaRaeo8vY3Mn1S5qYyGMKiIniRjTK9BSZ7CvgwOV42RJE6xksyV?=
+ =?us-ascii?Q?0OalVMgq9Nha+0zp48aXEuratRh3c39ymlgJLuVFTWVR6iKgpnN9trWY5fPe?=
+ =?us-ascii?Q?FcCfTJJVhdnHLBPlyq66DF52z37vbXczAwpgrYuILlFg43gtuB6Y1rXR+PYv?=
+ =?us-ascii?Q?pDxwZqEJzsJ/d3hhQiQJaveFWo10K9WfTJVkPxjyyI7DgOlloG4now/0xedr?=
+ =?us-ascii?Q?nwW5jW+XiyZSAy7HNnvj4f/dhqgyZ4rU2XahJXZn?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00b9ed5f-9b69-4f14-2924-08dd870bb5ba
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 10:50:52.2111
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5LnR2lQICg9aIjBoOkZabLSej50s/Xz9jBPXWk7GEqmvNA5DwywO6PT4HbFM6jB2B7uter2l9tAPexvKUGzZZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7751
 
-Hello, Miquel!
+On Fri, Apr 25, 2025 at 09:48:23PM +0200, Krzysztof Kozlowski wrote:
+>Not tested on hardware.
+>
+>Ethernet interface, like other exposed interfaces, aliases depend on
+>actual board configuration, e.g. its labeling, thus aliases should be
+>defined per each board or each SoM.
+>
+>Some boards (e.g. Gateworks) follow this convention but many do not.
+>
+>This is continuation of my comments from:
+>https://lore.kernel.org/r/16a98816-f43c-4f4d-940e-9da30cb1f73f@kernel.org
+>
+>Best regards,
+>Krzysztof
+>
+>---
+>Krzysztof Kozlowski (6):
+>      arm64: dts: imx8qxp: Move Ethernet aliases out of SoC DTSI
+>      arm64: dts: imx8dxl: Move Ethernet aliases out of SoC DTSI
+>      arm64: dts: imx8mm: Move Ethernet aliases out of SoC DTSI
+>      arm64: dts: imx8mn: Move Ethernet aliases out of SoC DTSI
+>      arm64: dts: imx8mq: Move Ethernet aliases out of SoC DTSI
+>      arm64: dts: imx8qm: Add Ethernet aliases
+>
 
-On Tue, Apr 29, 2025 at 4:15=E2=80=AFPM Miquel Raynal <miquel.raynal@bootli=
-n.com> wrote:
->
-> Hello,
->
-> On 22/04/2025 at 09:38:26 +08, Chuanhong Guo <gch981213@gmail.com> wrote:
->
-> > Hello!
-> > =E5=9C=A8 2024/12/5 23:32, Miquel Raynal =E5=86=99=E9=81=93:
-> >> Hello,
-> >> On 19/11/2024 at 17:39:49 +08, Sky Huang <SkyLake.Huang@mediatek.com>
-> >> wrote:
-> >>
-> >>> From: Sky Huang <skylake.huang@mediatek.com>
-> >>>
-> >>> According to discussion with Miquel Raynal <miquel.raynal@bootlin.com=
->
-> >>> and Chuanhong Guo <gch981213@gmail.com> on FORESEE F35SQA002G patch,
-> >>> Chuanhong recommmends that we can use the following sequence in
-> >>> spinand_write_to_cache_op():
-> >>>
-> >>> x1 mode:
-> >>> 02H(program data load) -> 84H(random program data load) -> 84H ...
-> >>>
-> >>> x4 mode:
-> >>> 32H(program data load x4) -> 34H(random program data load x4) -> 34H =
-...
-> >>>
-> >>> 02H or 32H commands will clear cache buffer on SPI-NAND and load
-> >>> data to it. For those SPI controllers which can't finish transmission
-> >>> in single step, 84H or 34H will be triggered for the rest data.
-> >>>
-> >>> We observe that some current SPI-NANDs, including FORESEE F35SQA001G =
-and
-> >>> F35SQA002G, must use 02H or 32H to reset cache buffer in flash before
-> >>> using 84H or 34H. Or users may encounter program failure issue. This =
-issue
-> >>> is not always reproducible, but it may occur and cause system instabi=
-lity.
-> >>>
-> >>> This sequence should work on all SPI-NANDs nowadays. I also check wit=
-h
-> >>> Foresee that the sequence can solve the above program failure issue.
-> >>>
-> >>> On my test platform (MT7988), SPI driver is drivers/spi/spi-mt65xx.c.
-> >>> And I limit MTK_SPI_IPM_PACKET_SIZE to SZ_1K to simulate lightweight =
-SPI
-> >>> controller which can only transmit 1024 bytes.
-> >>>
-> >>> The test step is the following:
-> >>> - mtd erase /dev/mtd2
-> >>> - dd if=3D/dev/zero bs=3D2048 count=3D1 | tr '\0' '\xA5' > output.bin
-> >>> - mtd write output.bin /dev/mtd2
-> >>>
-> >>> Before applying this patch, write operation uses only 34H(update_cach=
-e):
-> >>> [78.937720] OP code: 0x34, addr val: 0x0, data nbytes: 1020, data 1st=
- byte: 0xa5
-> >>> [78.945297] OP code: 0x34, addr val: 0x3fc, data nbytes: 1020, data 1=
-st byte: 0xa5
-> >>> [78.954251] OP code: 0x34, addr val: 0x7f8, data nbytes: 72, data 1st=
- byte: 0xa5
-> >>> [78.962966] OP code: 0x10, addr val: 0x300
-> >>> [78.968816] OP code: 0x34, addr val: 0x0, data nbytes: 1020, data 1st=
- byte: 0xff
-> >>> [78.977233] OP code: 0x34, addr val: 0x3fc, data nbytes: 1020, data 1=
-st byte: 0xff
-> >>> [78.985124] OP code: 0x34, addr val: 0x7f8, data nbytes: 72, data 1st=
- byte: 0xff
-> >>> [78.992527] OP code: 0x10, addr val: 0x301
-> >>> [78.996981] OP code: 0x34, addr val: 0x0, data nbytes: 1020, data 1st=
- byte: 0xff
-> >>> [79.004416] OP code: 0x34, addr val: 0x3fc, data nbytes: 1020, data 1=
-st byte: 0xff
-> >>> [79.012031] OP code: 0x34, addr val: 0x7f8, data nbytes: 72, data 1st=
- byte: 0xff
-> >>> [79.019435] OP code: 0x10, addr val: 0x302
-> >> I am sorry but above you said that we should not perform:
-> >>      0x32, 0x32, 0x32...
-> >> because the second time it would clear the cache again. And here
-> >> you tell us that actually the core already handles that by performing
-> >> instead:
-> >>      0x34, 0x34, 0x34...
-> >> So what is the problem?
-> >> Or maybe I misunderstood the issue, but I think Chuanhong raised an
-> >> issue that is already solved? Isn't it?
-> >>
-> >
-> > The issue is that the FORESEE NANDs require the first cache writing
-> > instruction to be WRITE_CACHE instead of UPDATE_CACHE. i.e. it needs a
-> > command sequence of:
-> >     0x32, 0x34, 0x34, 0x34...
->
-> So Foresee NANDs do not support update_cache, why are they advertised in
-> the first place? Could you we have a less impacting solution for the
-> other NANDs?
->
-> > This patch does exactly that, making the first instruction issued 0x32.
-> > It should be applied to fix the issue above.
->
-> My understanding is that this is very specific to FORESEE NANDs and you
-> are changing this for all NANDs. I have fears that it will break
-> everywhere else.
+For the patchset:
 
-I just checked a few datasheets of SPI-NANDs from
-Toshiba/Winbond/Etron/ESMT/GigaDevice/Macronix.
-All of them specify the programming sequence to be:
-write_enable->write_cache->update_cache if needed->
-program_execute->poll status.
-Some of them mentions that the only difference between write_cache
-and update_cache is whether the page cache is cleared before
-writing (Winbond), while others don't specifically say that.
-
-The original sequence doesn't seem to be following any manufacturers'
-instructions. We just haven't run into any problems until this FORESEE
-one.
-
->
-> Overall I understand the problem, but I disagree with the fix. Could you
-> propose something less impacting as hinted above?
->
-> Thanks and sorry for the delay.
-> Miqu=C3=A8l
-
---=20
-Regards,
-Chuanhong Guo
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
