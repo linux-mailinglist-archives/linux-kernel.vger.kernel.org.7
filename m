@@ -1,167 +1,145 @@
-Return-Path: <linux-kernel+bounces-625575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD1FAA1915
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:07:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F87CAA194D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EDFE9A7E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:02:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC149C2664
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3169250C0C;
-	Tue, 29 Apr 2025 18:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED82253328;
+	Tue, 29 Apr 2025 18:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ImGvbmLj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XJyFIw0W"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F041325394B;
-	Tue, 29 Apr 2025 18:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED87253327
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745949720; cv=none; b=C1kM0kntviZu9PKb8gg6yTD5MQWOwP6JbpNTORLAdj6y7+37XKg/yLMltmDnPwBj/aXV5ihr7Be2U4XWqmF1qCWnnLY5ZkDlrQyRFaA17RzCw5RVDy5Oq9rbMllb4u5Co3dODEvi/YWHNfo2zT3b4wxn6nLyWFqk1v6sf7Y+oNU=
+	t=1745949808; cv=none; b=haIjcb0/xISeH1tEaCszZqT4cjNI7x6zYRgYPKMjq3HcUmM/K8dJz4HqYhwzkddus74uWAwnryGYEvyY//lchoal+ASnvbs2/CDTb7X6kCZjHLna4/ee9rVIbzLDAvTF1vM8FkDCUrx59r8BQXrTiFm9BqYWI2a5Y/qLo5JHKDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745949720; c=relaxed/simple;
-	bh=592Ml20d/7CsLvSvbhwM3alxfNaRGpjjJKzbJ1oRFUU=;
+	s=arc-20240116; t=1745949808; c=relaxed/simple;
+	bh=/jKxrEccc/rxDV9flEdrkcq0R1bjej/EwSVckgQxFcs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njHvLfDI/mMxCOsj9z9+a4PaGcR9rLRRmQ5yVc4URhf0ttR2VrrYq1Ndwy0XPQix6ndtcvqPNwo6p+ajsnZ5vMsJu3ddGu4T72mNjFvYkQg+HOVgUH51WUjTJ3a4qXw7SHFpgJ2zWPYnQzE7xXNxIwDnwf/TAT21BClv6Ck7XQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ImGvbmLj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B81C4CEE3;
-	Tue, 29 Apr 2025 18:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745949719;
-	bh=592Ml20d/7CsLvSvbhwM3alxfNaRGpjjJKzbJ1oRFUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ImGvbmLj7vAizxTOJHyYd9JOx8FSRs9TsWm0qO7ao89jbgnThxRHV1dxIeUi01RwT
-	 TEbLv918l61ZCWv2mDJSXT68VUHZuUWtxPTTiVGjUVWZx/iVr9FU07u8BnzCxINJ+c
-	 +FsM1EFGjItysmxJ6rpj7MB5IkdOpneByK+6C1guefLvW4fXnUQTVpDjjWD+GKE0Sg
-	 EsXebkyWaRJNlMdOJVd9fzdUyWGxRCA5zKuMg+va5GwmGbj1ECn2WyDZ8KC9v25fRl
-	 OGb9QC7OuY1x2YAST72aRcom7u+uUcGrpeQPnRvCK8BUTrUlnhlOnsP+s6JhQ/XzvV
-	 KvoKVJksHt7GA==
-Date: Tue, 29 Apr 2025 15:01:56 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@linaro.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, linux@leemhuis.info,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Fix in-source libperf build
-Message-ID: <aBEUFK6o41mlkd9j@x1>
-References: <20250429-james-perf-fix-libperf-in-source-build-v1-1-a1a827ac15e5@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nA57FiEII7ziW+VrNL56KmyFfsW/80zfuG2Q6v7ke7WzfI9eB/BFcLGzjzM0LA3X9pHC8GdkP323QHYFErXhA3F1NEjGd2bDOKfsBEUkslC2+HUMW7Dfn3uQGUa5KJQq52JLUIGT5SByKKx4wCSZpnUfVRoRmrvZmc50PtjpXsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XJyFIw0W; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2264c9d0295so199285ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745949805; x=1746554605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5gO38QVftzp7foJd8AqWRzdImXv3oAewp8XDWFfWfG4=;
+        b=XJyFIw0WqXVVAB5105nnJ5HTLB/7M1krQYJt2wmsl61Cd9y0y7gQJ+hc266kTjRd98
+         GA0dZUH8IPjFpB3xeQrXG8DlIKm2Bw9OCVzJKXC3xUC2sF9mKKgmHjkvGtoTaNHjcg+o
+         gSN7JV2qfCr2sxAiJwbWozNlOYk41EazpNghNO+h1mbf55TfrJ8RNWzqPoGaMQV1LQpA
+         FcEvAAErdi7el76+xtKu1MHu0Qa9UY/flgM19bDvr2zHJQc+FD7FqwUraTOX71XrE4NJ
+         mOZF0ISLWI7ZXbywlj1Aq76hGnErag9DgkrRj//koa3ZvJvW50bCF6WxbfK+6kFnaeNq
+         Yb9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745949805; x=1746554605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5gO38QVftzp7foJd8AqWRzdImXv3oAewp8XDWFfWfG4=;
+        b=MwBxCFrUQiN+Jl5duHDQUQgTFgJXmURnUikQYuB0dQOCFilzOhIHiY3E+jFtlk2zeq
+         2/CJVJAm3/B7Xcoga/wrm/910z6rbCmC8t3yVUi4f7MLg4I7fqMbzCZ2tq2robo4caic
+         +NiG00UNY6T+B7HUWGdS0r6YZAdG2jkkCHdakpELQe1huxl98U5dN6+u+a5h1eqPVjif
+         PDOQYjwnfyiFOy//YbBbGERkYAztfPWbpA1EY4jbDiMSXDueBhptq5Jb2c9haK7CpxLG
+         oXRZpKIU/r2xaYiv1509lpN4LBrgtf7bzCCSaKN4OwUJXBQLtOBUNScnuavr+PZkdXp8
+         Siog==
+X-Forwarded-Encrypted: i=1; AJvYcCXy9knAU6YWZExtxTSHEKff+JzWHLXgOkSUxD/RsdXiHsd7H175b3vODc4O3HrwcINZKl9ruwFQAmE83As=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuesoYxRPxrbEGSmhHjtZgark0NTZigixkQXtmUpvKgrvw3qKS
+	Q/iQlNJKkM5hVtS6qb7wBh7cXB5mscyGXakGS+QN+u6l2vk9cbguRMNFhbUrYw==
+X-Gm-Gg: ASbGncuGiKmFj4ZL9R05lLpvumulD75xooJVW82TsgIcusbVXsJ4+zFyDDt/STYLFDT
+	ypoyKfwQsVjwZmpX/es1W0W++0E+7pEXy3o3ZfTFyglKwKxuUM6WQboPMs1so4TFJQgWo7ndBlJ
+	nYLeVsEkiMflY7yCLYQC+NBUk95U3yAaA0Yi5Rmq9StO0d1BRSrPJKQlkoBTLBe2P+OZ/sVrtEK
+	gJRAV18sQW+zHXJgmB1Pkvmjl6zKKRPUESx1BGVNZp/j3Y6p0obVtSgavR6aP6nLmUNG2yHit+g
+	VRKflkW4IfV5kqD++lRif5l/omhrNghgdLWRAdRvxn/g6zzVrtUriAyYtx9EYP3vEmOARt3b
+X-Google-Smtp-Source: AGHT+IHcbHv78LbKHTcjYARgVuVMIU3PlvzwcFa5Mynrm4iDVnN6pnPgBf3EmKTpPOmaL66ic8Z84Q==
+X-Received: by 2002:a17:902:f60a:b0:215:9ab0:402 with SMTP id d9443c01a7336-22df40757bemr145535ad.18.1745949804669;
+        Tue, 29 Apr 2025 11:03:24 -0700 (PDT)
+Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15faded711sm9272213a12.66.2025.04.29.11.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 11:03:24 -0700 (PDT)
+Date: Tue, 29 Apr 2025 18:03:13 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
+Subject: Re: [PATCH v2 08/22] iommufd: Abstract iopt_pin_pages and
+ iopt_unpin_pages helpers
+Message-ID: <aBEUYdlCLcH70UlT@google.com>
+References: <cover.1745646960.git.nicolinc@nvidia.com>
+ <d44272c153e7596c3cef716044de3dc6c2a8254a.1745646960.git.nicolinc@nvidia.com>
+ <aA_hm_AD4Xzm3qJZ@google.com>
+ <aA/9TZq99TF+MRYv@Asurada-Nvidia>
+ <aBAQdq0jeoCdKdsC@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250429-james-perf-fix-libperf-in-source-build-v1-1-a1a827ac15e5@linaro.org>
+In-Reply-To: <aBAQdq0jeoCdKdsC@Asurada-Nvidia>
 
-On Tue, Apr 29, 2025 at 03:22:18PM +0100, James Clark wrote:
-> When libperf is built alone in-source, $(OUTPUT) isn't set. This causes
-> the generated uapi path to resolve to '/../arch' which results in a
-> permissions error:
- 
->   mkdir: cannot create directory '/../arch': Permission denied
+On Mon, Apr 28, 2025 at 04:34:14PM -0700, Nicolin Chen wrote:
+> On Mon, Apr 28, 2025 at 03:12:33PM -0700, Nicolin Chen wrote:
+> > On Mon, Apr 28, 2025 at 08:14:19PM +0000, Pranjal Shrivastava wrote:
+> > > On Fri, Apr 25, 2025 at 10:58:03PM -0700, Nicolin Chen wrote:
+> > > > +	iopt_for_each_contig_area(&iter, area, iopt, iova, last_iova) {
+> > > > +		unsigned long last = min(last_iova, iopt_area_last_iova(area));
+> > > > +		unsigned long last_index = iopt_area_iova_to_index(area, last);
+> > > > +		unsigned long index =
+> > > > +			iopt_area_iova_to_index(area, iter.cur_iova);
+> > > > +
+> > > > +		if (area->prevent_access ||
+> > > 
+> > > Nit:
+> > > Shouldn't we return -EBUSY or something if (area->prevent_access == 1) ?
+> > > IIUC, this just means that an unmap attempt is in progress, hence avoid
+> > > accessing the area.
+> > 
+> > Maybe. But this is what it was. So we need a different patch to
+> > change that.
+> 
+> Rereading the code. The prevent_access is set by an unmap(), which
+> means there shouldn't be any pin() and rw() as the caller should
+> finish unmap() first.
+> 
+> In the newer use case of vCMDQ, it's similar. If VMM is unmapping
+> the stage-2 mapping, it shouldn't try to allocate a vCMDQ.
+> 
+> -EBUSY makes some sense, but -EINVAL could still stand.
+> 
+> So, I am leaving it as is, since this patch is just about moving
+> the functions for sharing.
 
-So this requires the only outstanding patch in perf-tools/perf-tools:
+Ack. I don't have a strong preference too. This should be fine, we can
+re-visit this if needed in the future.
 
-⬢ [acme@toolbx perf-tools-next]$ git log -5 --oneline perf-tools/perf-tools
-bfb713ea53c746b0 (perf-tools/tmp.perf-tools, perf-tools/perf-tools, perf-tools) perf tools: Fix arm64 build by generating unistd_64.h
-9c32cda43eb78f78 (tag: v6.15-rc3) Linux 6.15-rc3
-ac71fabf15679fc7 gcc-15: work around sequence-point warning
-05e8d261a34e5c63 gcc-15: add '__nonstring' markers to byte arrays
-be913e7c4034bd7a gcc-15: get rid of misc extra NUL character padding
-⬢ [acme@toolbx perf-tools-next]$
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-So probably should go to there, to be submitted to Linus in the current
-merge window, right?
+> 
+> Nicolin
 
-Namhyung?
-
-- Arnaldo
- 
-> Fix it by removing the preceding '/..' which means that it gets
-> generated either in the tools/lib/perf part of the tree or the OUTPUT
-> folder. Some other rules that rely on OUTPUT further refine this
-> conditionally depending on whether it's an in-source or out-of-source
-> build, but I don't think we need the extra complexity here. And this
-> rule is slightly different to others because the header is needed by
-> both libperf and Perf. This is further complicated by the fact that Perf
-> always passes O=... to libperf even for in source builds, meaning that
-> OUTPUT isn't set consistently between projects.
-> 
-> Because we're no longer going one level up to try to generate the file
-> in the tools/ folder, Perf's include rule needs to descend into libperf.
-> Also fix the clean rule while we're here.
-> 
-> Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
-> Closes: https://lore.kernel.org/linux-perf-users/7703f88e-ccb7-4c98-9da4-8aad224e780f@leemhuis.info/
-> Fixes: bfb713ea53c7 ("perf tools: Fix arm64 build by generating unistd_64.h")
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  tools/lib/perf/Makefile    | 6 +++---
->  tools/perf/Makefile.config | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-> index 1a19b5013f45..7fbb50b74c00 100644
-> --- a/tools/lib/perf/Makefile
-> +++ b/tools/lib/perf/Makefile
-> @@ -42,7 +42,7 @@ libdir_relative_SQ = $(subst ','\'',$(libdir_relative))
->  TEST_ARGS := $(if $(V),-v)
->  
->  INCLUDES = \
-> --I$(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi \
-> +-I$(OUTPUT)arch/$(SRCARCH)/include/generated/uapi \
->  -I$(srctree)/tools/lib/perf/include \
->  -I$(srctree)/tools/lib/ \
->  -I$(srctree)/tools/include \
-> @@ -100,7 +100,7 @@ $(LIBAPI)-clean:
->  	$(call QUIET_CLEAN, libapi)
->  	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) clean >/dev/null
->  
-> -uapi-asm := $(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi/asm
-> +uapi-asm := $(OUTPUT)arch/$(SRCARCH)/include/generated/uapi/asm
->  ifeq ($(SRCARCH),arm64)
->  	syscall-y := $(uapi-asm)/unistd_64.h
->  endif
-> @@ -130,7 +130,7 @@ all: fixdep
->  clean: $(LIBAPI)-clean
->  	$(call QUIET_CLEAN, libperf) $(RM) $(LIBPERF_A) \
->                  *.o *~ *.a *.so *.so.$(VERSION) *.so.$(LIBPERF_VERSION) .*.d .*.cmd tests/*.o LIBPERF-CFLAGS $(LIBPERF_PC) \
-> -                $(TESTS_STATIC) $(TESTS_SHARED)
-> +                $(TESTS_STATIC) $(TESTS_SHARED) $(syscall-y)
->  
->  TESTS_IN = tests-in.o
->  
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index a52482654d4b..b7769a22fe1a 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -29,7 +29,7 @@ include $(srctree)/tools/scripts/Makefile.arch
->  $(call detected_var,SRCARCH)
->  
->  CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
-> -CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated/uapi
-> +CFLAGS += -I$(OUTPUT)libperf/arch/$(SRCARCH)/include/generated/uapi
->  
->  # Additional ARCH settings for ppc
->  ifeq ($(SRCARCH),powerpc)
-> 
-> ---
-> base-commit: bfb713ea53c746b07ae69fe97fa9b5388e4f34f9
-> change-id: 20250429-james-perf-fix-libperf-in-source-build-15609cc212aa
-> 
-> Best regards,
-> -- 
-> James Clark <james.clark@linaro.org>
-> 
+Thanks!
 
