@@ -1,150 +1,138 @@
-Return-Path: <linux-kernel+bounces-624971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAF4AA0AD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:54:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40BCAA0ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4E61B60837
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F059A483907
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0989A18BBBB;
-	Tue, 29 Apr 2025 11:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCFE26FDA7;
+	Tue, 29 Apr 2025 11:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ices3CX3"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jdnx5YVa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006A12D322B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E79212F94
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745927444; cv=none; b=MhxZm4CshcNjViLkuoBi12waBRHjsxqfpXVHOYHqXa1ImLI5sHLonjPLGTwaSsGb7ps1hWybXIFk7ljKmZGIFBDYgqw3sYfPNUnsXfoTL8U7j/onItK3jjnBo2nxU/2Lg3R8QauUEKXzglWaMZ+MO232aVETGqm0n6t4wsi1Iz4=
+	t=1745927592; cv=none; b=aT0lLEPYQAyh0HdWZGOIr05b9j8ggUsFrEgL4wWepM7RVuurBsoouNe2tvJNfy9jRznQr+eP7+FWXOX+3w/PT+2XEu5YQbWLkb/J0VYKe0zHzKKHK1Li2b+NOkvr4nIxOMLjOvAlUyuLnlYMvH21ZJOxxd10vMfFcMda8Gtjn9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745927444; c=relaxed/simple;
-	bh=5wF15lZztxkwYWXqpSOs68VJh58ZU35XJoKkkZFV3vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y24RWWH1RWQ9I2Iw4Vko5n8FfAHJ7tgJ++RqxqI7K5cShrefteBR8HZQ4sUhZg6nODDYT3d2Xe6FTG+GsyXuHuiJqic6BE9dwm8QG/2kaxsbuk3h/VNrDOCbMXYNPrqxyo98/tJM5j84SpSNnHGF6TEimtTu5Wq8jUYcEiDFyEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ices3CX3; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b0b2ce7cc81so5813302a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745927442; x=1746532242; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1iyyLf3WUxORZOnWOPX6x4ocgIFr1IijLbgh6GePFQ0=;
-        b=ices3CX3PsghaoA706x6iR+VJIHrpHLcF9Y73lcqnSocTOtwFARiws86Duq/j/xrDx
-         fyV5Aqp2IhLo2GBssPw6Q0YegV0bpWghs49KXIBcHC/BFBI6Bb4LWwSaI2sUMxTCNPk1
-         bROMs4pCRi891fEeFmlSU/L0MbITEE2BNZxWJ8F2dQTbipBzZ5DwyWeWXA/V7u8BiNrv
-         qWvFIYR35aimySFMddV3Ut+3Ee7Q8ftYTuxuDC5PprqWGn6DREvNmARoxH+99uj41rBR
-         VSOFOkqxzlZsVhkcFN6lv3+mOtOPcIBDhzCTazfMJvGbYVfHbePylESWsX+M1MNoo1GK
-         bWYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745927442; x=1746532242;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1iyyLf3WUxORZOnWOPX6x4ocgIFr1IijLbgh6GePFQ0=;
-        b=gLAbD2QPjvkR/jlu1XbAA92yDtp6zv/QrYwfHK4LwdmuaPCkxNcgP2YhbRIf2WMSxn
-         3IR8VnCmwFmlsCwsuhTpF10GVtxLifxRVUo94Nyd7K6s/geBqtZIN9sor/joe1eMjNOa
-         P91fI58y0nOfYVGloCwtPxmtPAN+dj7FaUHGLAUBj30iLa3uAD6o+6nA5FpDoVte0Bxl
-         88hZq3Dz2j1XxvprgcahxJzqYVfMgAz0Jwwh23MhIrwiJPxOktdGMZ/MUUMakDdgnzGS
-         cRXzNqMvQscSRMPFLH6pVAm1T9GxHdMElE5E4VJdCJB2DyHbLRyUQK/a/HZ2EOTkJhV0
-         VurQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSm6/srveVxqT7ZXqXXJVFVozqLc/ud6PnwkMNxjYKvIQrq9Z4X7lYHuxyp8Olr8Yh7JaK+eT5heuASLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybYzoj+4jz6aphCcn8jFG7791aP4GKcU3QYltTK7n/fHwKbPH/
-	/6PpLVTw1oy7JBgAtYaMThIGFCHxcxrrp8o2rsmQxhB5cQ2mti/G
-X-Gm-Gg: ASbGncutQqVSpSXc6T1WrSBNgeSgFHyEzZaaJqf21M1dewQHoU2/FWBzXBCQ/lzLjTe
-	qs4qiHjDjuVl3rDe6GHZaOGlx8T49Hsyqfbn5OMCTR+N1MhVFub1hC8NiJuMkSJNjPNrnZLR/kq
-	Edr6OCijqVuZI9zGnm7kLb9nrRE6ia8HVCA0v+ya7ka0AEqZdY0Ai8hOBw5Grl7dJLJeXR+ZftO
-	ngYoRDvIo5L3QmCAQNRhSFDsEosdGidz8PZLFWMsV03Ud7iF0RwmvR6xt+aTEq8icnui7ILKh/Y
-	gsC5ekeVv671+uVuCDtDrSdIcLhJUxRwYTNmPLcGdgymcmi+CVnLCBVcSiexwc9T6KuHMn0=
-X-Google-Smtp-Source: AGHT+IHGZrBDHK1WbkvwgRv01O0LY6RBxT8KjFbk+mC347HBJHKGCCEDSTjXjALIl+WfaCFQil4KFg==
-X-Received: by 2002:a05:6a20:cd93:b0:1f5:8d91:293a with SMTP id adf61e73a8af0-2093e528fa6mr4122901637.41.1745927442169;
-        Tue, 29 Apr 2025 04:50:42 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([43.132.141.24])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25aca62csm9661644b3a.167.2025.04.29.04.50.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 29 Apr 2025 04:50:41 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v2 6/6] mm, swap: remove no longer used swap mapping helper
-Date: Tue, 29 Apr 2025 19:49:49 +0800
-Message-ID: <20250429114949.41124-7-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429114949.41124-1-ryncsn@gmail.com>
-References: <20250429114949.41124-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+	s=arc-20240116; t=1745927592; c=relaxed/simple;
+	bh=dOs92CKf0JhMagJiyIOByRh4TMYp16+L6S0KbSvHqB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HOdRtAVt0uuhZ1mTO93cO527BBgV7RoRj5lLVwTf/bbwN2gLYSVI8n079eDFhmYjk5jx/yceVUX1+xX6PT/7Va7XC2ShJrP2rdLA2R04OufUmJlmOJZMOF7HEQIUW7RenBWOTtiCqmmVdg97OPZb/cIIdrGpNMO7nMfBuRND6yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jdnx5YVa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED381C4CEED
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745927592;
+	bh=dOs92CKf0JhMagJiyIOByRh4TMYp16+L6S0KbSvHqB8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Jdnx5YVa8iTnPm4OVQaPtsNbH/eFhsv1mdPn+laK8veqx8RFTlOYKnIRrXxQcb2IH
+	 +WT6eWSb0OspWYUio/YT63ArpFsHuL2MDe8D/fPkYkXRJEkQQrYlXCghr8sGn8ND/N
+	 YNFKoBY+igMTRFi8Qxqe0m6h4YDhxD0LmH37wzmgtUakLa8TAbZE+rfKJ1whShQ74e
+	 SKmjP5hrexVF2FpMeypZgSD4cN+REtDBBqUMsSOh+205W3WkPmCJfGlhjpIgPhnb8A
+	 q3WMVmUZdwWtGw5mdLV20PtVVON4P2fXkPlgad+OSesewX5+occxfaOeNr95pHQ5OZ
+	 NLFc4ugACrghw==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac3b12e8518so996774466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:53:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYOLicbdhMIUasXQXTe3hGwgNyOc6hA+RUCfoYHxpLszbsWAX/ZlSSacHrJg1Khw8x5sr4+9t0WXkyBK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ8XFj9uG8TfJzeelt+anzLBxKcJv4JfN3wcI4f4RZRDJdcYnd
+	bcWKCcckd7f/h4lRFdkq8gILU6BMKF0UQqpAECV5EzAKjoQdVxgW5LF3vB/FH1JjphNIdXmhTku
+	Do34RgjSrAmkr6rlF5nffFDrZcg0=
+X-Google-Smtp-Source: AGHT+IEOc0slPQQuRPi+/t75tAzM7Kw+t3BjM1qUAK0bLzbKgCW9Ard89lg2K2P8XBa8OYHMFV6WKJ5Dqgb836X68W4=
+X-Received: by 2002:a17:907:3f9a:b0:ac7:c688:9fd7 with SMTP id
+ a640c23a62f3a-ace848f7749mr1229208766b.18.1745927590527; Tue, 29 Apr 2025
+ 04:53:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250429113356.17929-1-zhangtianyang@loongson.cn> <f0d7965a0016f458bb06e2968c15d8eb46be296e.camel@xry111.site>
+In-Reply-To: <f0d7965a0016f458bb06e2968c15d8eb46be296e.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 29 Apr 2025 19:52:59 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7BejoBtsGWP8tn99Pa93M0ij=yXg_E+GJKLETYWhCt3A@mail.gmail.com>
+X-Gm-Features: ATxdqUHO0eWqPX9CX9I_BHbVYAeYG8YI1PTfS3hUPzH80g1GxIrTZ8PAqX5drT0
+Message-ID: <CAAhV-H7BejoBtsGWP8tn99Pa93M0ij=yXg_E+GJKLETYWhCt3A@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch:support CONFIG_SCHED_MC
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Tianyang Zhang <zhangtianyang@loongson.cn>, kernel@xen0n.name, wanghongliang@loongson.cn, 
+	yangtiezhu@loongson.cn, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kairui Song <kasong@tencent.com>
+On Tue, Apr 29, 2025 at 7:44=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Tue, 2025-04-29 at 19:33 +0800, Tianyang Zhang wrote:
+> > From: wanghongliang <wanghongliang@loongson.cn>
+> >
+> > In order to achieve more reasonable load balancing behavior,
+> > support for SCHED_MC has been added.
+> > The LLC distribution of Loongarch now is consistent with numa-node,
+> > the balancing domain of SCHED_MC can effectively reduce the situation
+> > where processes are awakened to smt_slibing
+> >
+> > Co-developed-by: wanghongliang <wanghongliang@loongson.cn>
+> > Signed-off-by: wanghongliang <wanghongliang@loongson.cn>
+> > Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+> > ---
+> >  arch/loongarch/Kconfig                |  9 ++++++
+> >  arch/loongarch/include/asm/smp.h      |  1 +
+> >  arch/loongarch/include/asm/topology.h |  8 +++++
+> >  arch/loongarch/kernel/smp.c           | 46 +++++++++++++++++++++++++++
+> >  4 files changed, 64 insertions(+)
+> >
+> > diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> > index 1a2cf012b..72a142a85 100644
+> > --- a/arch/loongarch/Kconfig
+> > +++ b/arch/loongarch/Kconfig
+> > @@ -493,6 +493,15 @@ config NR_CPUS
+> >         This allows you to specify the maximum number of CPUs which thi=
+s
+> >         kernel will support.
+> >
+> > +config SCHED_MC
+> > +     def_bool y
+> > +     prompt "Multi-core scheduler support"
+> > +     depends on SMP
+> > +     help
+> > +       Multi-core scheduler support improves the CPU scheduler's decis=
+ion
+> > +       making when dealing with multi-core CPU chips at a cost of slig=
+htly
+> > +       increased overhead in some places. If unsure say N here.
+>
+> To me it's puzzling to say "if unsure say N here" while setting the
+> default to y.
+It seems copied from x86, I suggest to modify to
 
-This helper existed to fix the circular header dependency issue
-but it is no longer used since commit 0d40cfe63a2f ("fs: remove
-folio_file_mapping()"), remove it.
++config SCHED_MC
++ bool "Multi-core scheduler support"
++ depends on SMP
++ default y
++ help
++  Multi-core scheduler support improves the CPU scheduler's decision
++  making when dealing with multi-core CPU chips at a cost of slightly
++  increased overhead in some places.
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/pagemap.h | 1 -
- mm/swapfile.c           | 9 ---------
- 2 files changed, 10 deletions(-)
+And put it after SCHED_SMT.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 47b5746d5a65..a071cdc8f902 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -533,7 +533,6 @@ static inline void filemap_nr_thps_dec(struct address_space *mapping)
- }
- 
- struct address_space *folio_mapping(struct folio *);
--struct address_space *swapcache_mapping(struct folio *);
- 
- /**
-  * folio_flush_mapping - Find the file mapping this folio belongs to.
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index bf6c98009909..1a36e1f4f198 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3653,15 +3653,6 @@ struct swap_info_struct *swp_swap_info(swp_entry_t entry)
- 	return swap_type_to_swap_info(swp_type(entry));
- }
- 
--/*
-- * out-of-line methods to avoid include hell.
-- */
--struct address_space *swapcache_mapping(struct folio *folio)
--{
--	return swp_swap_info(folio->swap)->swap_file->f_mapping;
--}
--EXPORT_SYMBOL_GPL(swapcache_mapping);
--
- /*
-  * add_swap_count_continuation - called when a swap count is duplicated
-  * beyond SWAP_MAP_MAX, it allocates a new page and links that to the entry's
--- 
-2.49.0
+Huacai
 
+
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
