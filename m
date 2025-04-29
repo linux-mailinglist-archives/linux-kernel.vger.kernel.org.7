@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-625747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1140AA1C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:28:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8A2AA1C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523641A88668
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4C34A810E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE45F26B2BF;
-	Tue, 29 Apr 2025 20:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF22B26FA6E;
+	Tue, 29 Apr 2025 20:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umBlrp14"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EklBAx+S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FC5266EF8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 20:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DB426B09D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 20:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745958495; cv=none; b=eTl4ODzNWhRKyQR+KLZ3DdOZZRJhSY2l4l1cRU4osAFT95+9I6LE00hPej+tABChGlMCIr8k4kkV/BE7oz+uBXJPRG+UHd/ilZRJBpk7IihGMrSNP8gKErAeS/GTdhP/xs6l3jB64vjsqMuWGl+TGbcMr4f8jx2Bz/oOe29v698=
+	t=1745958497; cv=none; b=GHd9eBZOlz+dWVgxcq1YXwn+VRWMZJHTEuV/TXQTfXSl06cztn4n4Vl35OgzbSZn6B4JzP4w7sq1C/3v8HEPeg9p2a3T5l01QQaRPGaWusMDRoq1yHlh6nemNkMW6KPz9qdJfHIzTbrwSGWTnM6kwqq2ewrcRvNE1SxZKYW7kZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745958495; c=relaxed/simple;
-	bh=9FRjNM4uCLNjjY3QIHD4J298olP3+FXybe72CiKG8cA=;
+	s=arc-20240116; t=1745958497; c=relaxed/simple;
+	bh=j6cRsnJcuJGGzquyyvJ5hVFHCEDkziQIJdUywXnkqdc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UjsOcJKa9fxBNzJLwTXpX9j/POFQKlh3fF0ZtLo12PUeioWqh2ZNJUSonjaicTo2RfmWo5mrHXTRtIzH7z8UaS0kZw9vZEUvAsr7wT0jzp8/8C+CMuhHT6cQnHPyONZKUH1HXMI2W7rW906tY2Dd60h+20odF1cNeFku6zzHyGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umBlrp14; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73ACDC4CEEB;
-	Tue, 29 Apr 2025 20:28:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rz6ruhBn5PwkC+qX7EWl3xoT+DaVtTmH/AkOTvElPKFOOXe/jOG0Jl5MR9cDrf1LE7+PTsFxfKcIEOvRVkmzRqo8ZhEtkQ5XXsU3RKIwQxPK14yQwCUtTyJu4+Uf44o1NBwRb6vBi0OprrFyA/TsjigE1ZLaCTvExemUxWIejQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EklBAx+S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B92CC4CEE3;
+	Tue, 29 Apr 2025 20:28:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745958495;
-	bh=9FRjNM4uCLNjjY3QIHD4J298olP3+FXybe72CiKG8cA=;
+	s=k20201202; t=1745958497;
+	bh=j6cRsnJcuJGGzquyyvJ5hVFHCEDkziQIJdUywXnkqdc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=umBlrp14BgM85CcnRGvHfx5YjGLKhW0YiuigLlEVhBlL2UdMCpUN4xwfupHw2mHGn
-	 jBCCiGT31dPcHduZyWSxYfJSCEE5jznhY8tMGv7R2vLPvAZIlh+hOx99I8sGfOvmpa
-	 jK/NSSl7A9/WlblsB0JEUKtj9r5WRTV7a4/MDWdNxjwKG3QKtiJOya4RtYTJJA+Ync
-	 0Tc0FdZZDDILbBBwlepw5aBVqILFtc3eYvt/eh1akBg75C446+IJIyt5cieTETX52Z
-	 oj0tpus+I+0PB84InZPIbnd8OAccYCDox7p71DSs/SHTEWgOv3AlvZsSg1zqa783HX
-	 RJVJxc462Uisg==
+	b=EklBAx+Sk8O4MDypA+nM92eodqBUZf0kdoLrsXb+d2WOK1BU58bLd3a5sXIc62A6X
+	 er/oXBPQw2TWvWNyWIuXZt2mK82LBRX+7xXyQV17jPEGkuPJXDuyK0O2f//Bd3hdNV
+	 ZeJg1YvouKFQoecBZHnExac9vvKbsKVZ8ko3mnofvs6yPuAOUta+8QqrzqmMENxPAn
+	 /SdsjlE/DGEhU1XKnrIsGv0KgIVzpdYBhbrMxrItAEjSoS57ga4wqh0KHUhFhJxLG+
+	 eTzpLa6MbPkGYk1NoTQ3X+kKHz9gq0wM2S1HG4QOUGPl0Df0PCP8J488BT+AfNblFF
+	 L3WmnVM6fUT2g==
 From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	maz@kernel.org,
-	Breno Leitao <leitao@debian.org>
-Cc: kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
+To: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH] arm64: vdso: Use __arch_counter_get_cntvct()
-Date: Tue, 29 Apr 2025 21:27:49 +0100
-Message-Id: <174593151898.435692.885709123307410375.b4-ty@kernel.org>
+	Miaoqian Lin <linmq006@gmail.com>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] firmware: psci: Fix refcount leak in psci_dt_init
+Date: Tue, 29 Apr 2025 21:27:50 +0100
+Message-Id: <174592994212.427921.17461621351639066667.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250407-arm-vdso-v1-1-7012de25b195@debian.org>
-References: <20250407-arm-vdso-v1-1-7012de25b195@debian.org>
+In-Reply-To: <20250318151712.28763-1-linmq006@gmail.com>
+References: <20250318151712.28763-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +65,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 07 Apr 2025 04:33:25 -0700, Breno Leitao wrote:
-> While reading how `cntvct_el0` was read in the kernel, I found that
-> __arch_get_hw_counter() is doing something very similar to what
-> __arch_counter_get_cntvct() is already doing.
+On Tue, 18 Mar 2025 23:17:12 +0800, Miaoqian Lin wrote:
+> Fix a reference counter leak in psci_dt_init() where of_node_put(np) was
+> missing after of_find_matching_node_and_match() when np is unavailable.
 > 
-> Use the existing __arch_counter_get_cntvct() function instead of
-> duplicating similar inline assembly code in __arch_get_hw_counter().
 > 
-> [...]
 
-Applied to arm64 (for-next/vdso), thanks!
+Applied to arm64 (for-next/psci), thanks!
 
-[1/1] arm64: vdso: Use __arch_counter_get_cntvct()
-      https://git.kernel.org/arm64/c/00b39d150986
+[1/1] firmware: psci: Fix refcount leak in psci_dt_init
+      https://git.kernel.org/arm64/c/7ff37d29fd5c
 
 Cheers,
 -- 
