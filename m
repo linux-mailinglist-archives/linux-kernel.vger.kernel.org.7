@@ -1,111 +1,186 @@
-Return-Path: <linux-kernel+bounces-625412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD042AA1123
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ABDAA1132
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446597A48AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:02:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869284A2261
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908AA24290D;
-	Tue, 29 Apr 2025 16:03:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D61242D94;
+	Tue, 29 Apr 2025 16:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNAGb6Dy"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B6521A43B;
-	Tue, 29 Apr 2025 16:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849AE242917
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745942608; cv=none; b=EMHOaUhB0DAU/s/NuzCOQGW1sFZlD+y3xLWO1yJV22S0jygl87HW5n8A9QEdHeRtfP+xffkxt4dD/zVfRmMX496BTcNbB4JJvsdWsaGKHoSUCiYy03fexjkUY4d+RJT/fzZBgiDm2sf0AZRZw7/tD3gJ+OwyofJWy7769FGGkA0=
+	t=1745942816; cv=none; b=oofwPrfkCfwAjwtB5BzwIe9b+7j62RKsmsGYssaQ0KB8+3IoMz6qoPa4RiYHKulZZrslQvjThuadXENnKPwPikEV60YNBHbFpUca+KlE7U6Hm/ABWokg9TIsJK3awzmJltV2DNJIJrHGour36Ue2yKWEsuSkmZ9cEAok+0s3qcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745942608; c=relaxed/simple;
-	bh=5YaC2lcbO17IOdpWKRroIk4Ix6jjFeXEWRnyqsFLqTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UvrjSQQfhuI/ZeWHzuc5fZdINuq/we//rivu5F2BpVje6t4CdAv41oJR6fJAXAhshssEHj0XyOdTpFvesFmqehyXJKCJj/dT2Kv/CQHjDcuxKWX24F7tvry6DRznGWXy1TDz1XHWtcyMkeBzorOAgEDIpAxYuF1jNMFjq9idhhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0850DC4CEE3;
-	Tue, 29 Apr 2025 16:03:20 +0000 (UTC)
-Date: Tue, 29 Apr 2025 17:03:18 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Ankit Agrawal <ankita@nvidia.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Sean Christopherson <seanjc@google.com>,
-	Marc Zyngier <maz@kernel.org>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"sebastianene@google.com" <sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com" <gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com" <tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-Message-ID: <aBD4RsUZp-BmcLwC@arm.com>
-References: <20250422170324.GB1645809@nvidia.com>
- <aAgJ8g8Gbb06quSM@linux.dev>
- <20250422233556.GB1648741@nvidia.com>
- <aAjEsIwhYQpkphrW@arm.com>
- <20250423120243.GD1648741@nvidia.com>
- <aAjci3rddHt_R_x3@arm.com>
- <20250423130323.GE1648741@nvidia.com>
- <SA1PR12MB71996988916E1FB15149DD13B0802@SA1PR12MB7199.namprd12.prod.outlook.com>
- <aBDTpu_ACoXAPoE2@arm.com>
- <20250429141437.GC2260709@nvidia.com>
+	s=arc-20240116; t=1745942816; c=relaxed/simple;
+	bh=SbxUmzQDjpdWgXNW648mViR6ApjtgoTdBjGQY5wczao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nAonwXEDbQN+gCKQWjcPFxd2HVss+ShOUdbI3j8/ggF5WbJRC0i0rQGtmXpehILSOLS9kHY7eO1OZwQxelfNSHUDucOo7TS7Yk2C9PG+RVH3/yJhvP2DraM8vfmaAPUM4ghjNfiAFUCXaXhx6tDcEVtwlQcoUKOJa4SIoRXe3nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNAGb6Dy; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72b82c8230aso1622966a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745942812; x=1746547612; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0y1uS/4UQLFoz6lufgWT2BHmRa+Ve2aFRZxvFyt9eZw=;
+        b=aNAGb6DyuQY+HSgcTiDDQiTofgCg+QiFK5hXUmgPqNz3agpk0mOyGVZJn2LtW/wAUs
+         T8J6t5Td+kK+HpAwyalDf+cEzGTFwIihGkSMylpebMMG+9FWq6h1Qlw+E3IcfhQukA0M
+         s1zqC6zbgUytl1JTCdUrVUMH1/j6FzatSj60teM91F4m5tOjQgOpWEiC55v5AoHzMnM8
+         YCfipD7BriSx+Jm9LAGuVowiq3oCdpU0NoBpc5P3uhbMdMegsa7mhQ+GZSXhBjPb5mRd
+         8Moe2CC/ET/S6skAwe2qRBS0sqI3KxmWYDVtS0UMHPryZDIJgip/6i/Lmpfp5I/xames
+         ZIow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745942812; x=1746547612;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0y1uS/4UQLFoz6lufgWT2BHmRa+Ve2aFRZxvFyt9eZw=;
+        b=UlU/BkufGxR2imylbCXTHxSOk48KdPsycX/e/H40ZYq2MZ2N14t83Wzq14W3fMlFUC
+         mleodZ7ohAkG4RA3TieqpU70RJCxn8jQ64U50PhKGa5ao7Kl1j7om9nSosHiXm3/GJuA
+         y49P37B4oWyuIubqVS1NoSQGzl4MFzPUBcDSwXvO8qB/zak9OPmWaUVfnOr7jcEJ5P+u
+         DegBtFFdKfHWtoqPjOMBMI65CDh6fBTQk/6sTSlB4Spyji8no3AYdkn3VryQWtH9U5Hy
+         SQS/DmgPN75gKjiupH9NitUkOzKZTVOObZNpB1PS6lrItnBAZ/sNBMAG3AvCmzaiZbpm
+         UfFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFwsV+oxZeffNdsqyMtv5ihA236E2319u/RyHkZSg7tLN/IgjTVLTlWr9Jop0TTT+KK+nrABg9bOK4mDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVqjQWC4FMTJ0buoUIz6xQglb6mJPcKGyld7h6Lc0WbaxWkden
+	Aa3sOL6GcxRyrSjE/0dXkcvifVy2DG1tYUfQREzT2B19/6SPC7kU
+X-Gm-Gg: ASbGncthhAty3l7mFaCBQSOFr6eaU5YQxO8lfixmZVAHLLTJ/wbee8W9K56amat0aTl
+	3bXKln3ezESU8TX+Eb0toDuKl1k8JXMjV9QUjdmMvNlZjO2knBhT9BkSMwzCetB/v30qjXp05Eb
+	DRsID2lrjkccLhTFmni931FPAnX1oT4KY3BxGAwM8Fr4ksHfuSaQnmHzfQa8QN1rj5yKDEZAVNE
+	6EfrcY46oOoEiVaoju31O104hmySysj2Gdri7jp4o0d17OwhFm81eKI24oHgjbpeMMAIcjJ+72s
+	427/IWWBt6SghsasP4atNQZaJ76SEufQ/4cr/QURZmHJMrxj0DIpCI6zAv7cOZqpsVN4CLuz1Me
+	R4nnn3lVKsfXJ6SAlpSPgIOtHACVw1WSOCUK4khY=
+X-Google-Smtp-Source: AGHT+IFh0+T5Gd+4cRWPINK+2WBoodQXt786o46R/wK9FQFzK2WVcosDANx67GsA+xadi5LIf4OAMg==
+X-Received: by 2002:a05:6830:6990:b0:72f:ff8b:e123 with SMTP id 46e09a7af769-7308a4fece7mr2464328a34.12.1745942812618;
+        Tue, 29 Apr 2025 09:06:52 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7308b133d1asm341487a34.37.2025.04.29.09.06.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 09:06:51 -0700 (PDT)
+Message-ID: <5a5b1825-2ee7-455e-b52f-edc1a138d0dd@gmail.com>
+Date: Tue, 29 Apr 2025 09:25:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429141437.GC2260709@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] panic: Allow for dynamic custom behavior after
+ panic
+To: Sean Christopherson <seanjc@google.com>, carlos.bilbao@kernel.org
+Cc: tglx@linutronix.de, jan.glauber@gmail.com, bilbao@vt.edu,
+ pmladek@suse.com, akpm@linux-foundation.org, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+ takakura@valinux.co.jp, john.ogness@linutronix.de
+References: <20250428215952.1332985-1-carlos.bilbao@kernel.org>
+ <20250428215952.1332985-2-carlos.bilbao@kernel.org>
+ <aBDoJLyiBcSZiAHm@google.com>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <aBDoJLyiBcSZiAHm@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 29, 2025 at 11:14:37AM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 29, 2025 at 02:27:02PM +0100, Catalin Marinas wrote:
-> > BTW, we should reject exec mappings as well (they probably fail for S1
-> > VFIO since set_pte_at() will try to do cache maintenance).
-> 
-> To be clear the S2 should leave the mapping as execute allowed
-> though. Only the VM knows how it will use this memory and VM's do
-> actually execute out of the cachable PFNMAP VMA today. The VM will set
-> any execute deny/allow on its S1 table according to how it uses the
-> memory.
+Hello,
 
-If S2 is executable, wouldn't KVM try to invalidate the I-cache and it
-won't have an alias to do this? Unless it doesn't end up in
-stage2_map_walker_try_leaf() or the walk has been flagged as skipping
-the CMO.
 
--- 
-Catalin
+Sean, thanks for getting back to me so fast!
+
+
+On 4/29/25 09:54, Sean Christopherson wrote:
+> On Mon, Apr 28, 2025, carlos.bilbao@kernel.org wrote:
+>> diff --git a/kernel/panic.c b/kernel/panic.c
+>> index a3889f38153d..2cdd83b4afb6 100644
+>> --- a/kernel/panic.c
+>> +++ b/kernel/panic.c
+>> @@ -276,6 +276,30 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+>>  		crash_smp_send_stop();
+>>  }
+>>  
+>> +/*
+>> + * This is the default function called after a kernel panic has been
+>> + * handled. Higher priority alternatives can be set with function
+>> + * panic_set_handling()
+>> + *
+>> + */
+>> +static void after_panic_handling(void)
+>> +{
+>> +	mdelay(PANIC_TIMER_STEP);
+>> +}
+>> +
+>> +static void (*panic_halt)(void) = after_panic_handling;
+> The default implementation clearly doesn't halt, which makes this unnecessarily
+> confusing.  And if you're going to provide a default implementation, why bother
+> checking for NULL in panic()?  Just leave panic_halt NULL.
+
+
+Agreed.
+
+
+>
+>> +static int panic_hlt_priority;
+> Uber nit, pick one of halt or hlt.
+
+
+True, will use halt.
+
+
+>> +
+>> +void panic_set_handling(void (*fn)(void), int priority)
+>> +{
+>> +	if (priority <= panic_hlt_priority)
+> If panic_halt is NULL by default, maybe do?
+>
+> 	if (panic_halt && priority <= panic_halt_priority)
+>
+>> +		return;
+>> +
+>> +	panic_hlt_priority = priority;
+>> +	panic_halt = fn;
+>> +}
+>> +EXPORT_SYMBOL_GPL(panic_set_handling);
+> This doesn't seem like something that should be exported unless it's absolutely
+> necessary, and it shouldn't be necessary as of this series.
+>
+>> +
+>>  /**
+>>   *	panic - halt the system
+>>   *	@fmt: The text string to print
+>> @@ -467,6 +491,9 @@ void panic(const char *fmt, ...)
+>>  	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+>>  	nbcon_atomic_flush_unsafe();
+>>  
+>> +	if (panic_halt)
+>> +		panic_halt();
+>> +
+>>  	local_irq_enable();
+>>  	for (i = 0; ; i += PANIC_TIMER_STEP) {
+>>  		touch_softlockup_watchdog();
+>> -- 
+>> 2.47.1
+>>
+
+Agree with all. Will fix in v3.
+
+
+Thanks,
+
+Carlos
+
 
