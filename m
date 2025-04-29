@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-624323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC6DAA020E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0188DAA0214
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA878409C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 488691B62E5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4DB270ECE;
-	Tue, 29 Apr 2025 05:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4066270EB0;
+	Tue, 29 Apr 2025 05:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QIHC3Ey5"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Zu9L/7HS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="TBLMHc1q"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D419926A0AB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3377C14EC5B;
+	Tue, 29 Apr 2025 05:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745905815; cv=none; b=kvn4ksI5b6uPerLtmnb4s275p2sdVoUHie2YItWKszJ1Vv6nlJSzIkG+o25mquR6q9H8+2cgBAhPOhiKUV0Y2nqY2pab6ayeKClSs1aHv7TxjAf++74CUCNB1MJvv5VYmLKu1lbwCS5xQ5QI9J2RJHcHP5qBuQp5IEy5ErJwhw8=
+	t=1745905977; cv=none; b=hTNZe+L4dW/Ik0LfWMDWvlVJ5i0hvRQ9143bmam3kDbzaRDMowlwFlpJKzO2eMRGeCLLNH1kgiHdOyAu5e/rEsNnhDMR0G4xwcpgpQJe4wefSh/pbmVs3uN9bELoyudOu0XTdNBcjow/WLRm7TASgcJXjD9JWlH+bROpQzCRtDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745905815; c=relaxed/simple;
-	bh=TC1pQF5+8x3TfRsyAFIm5rUMUBIGwkayJC79GBtSdMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LoQZxIrXZC88MDbthXDw/3fdbY7R6XX6IHipb+DCoITCau2EmZyRw6dxl08ePdMzTFtKh+rDt+ZQ08SaF5CaMN98BdjiSO2uVfeOvvxFTWtrIQmhrGHXY2UyWAYY+iwIeKAxSIm4ojoPOHn0ba924wcYiFON4KYwyobG7ALMT8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QIHC3Ey5; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bf1d48843so49002761fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 22:50:13 -0700 (PDT)
+	s=arc-20240116; t=1745905977; c=relaxed/simple;
+	bh=d67rc5Pj7DKyx5hArOAJ+U2tD86Zu4dyIJvH1zZq6R4=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f+uY2Ty/PTc4SkUm29eZWMw65aLPbVbzxz8kFxyz7NwJJ6rnMDqMY9Ifk6cXGlDHHzspVmI2IWqZQ4Bx1bz8BIKV0mB0p+WvaUCZ3RWa60lyjgqGVlWF/HzhnBpWV3Ke74f2VvrdOHLvrxADP7EKFxsd3Qjr3fPYAkRheJ91bxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Zu9L/7HS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=TBLMHc1q reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745905812; x=1746510612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HWfOibW0zJXCdtORmeJHJfO7jAlDvwO4GvsgR2VT7fc=;
-        b=QIHC3Ey5/8YvPSYOJTKp/LRCAkdTM5zEwbX0jszmfbqizmNivX492lU/o4CRdv1Wtf
-         1ek59gQVykIyclnpwPnm1Z9Gb35V0WvhfKYDj/dUHs7pPh8JUb2L1DLMlrylIwjjii4Q
-         vQHUQ8CLZRivsfC876alucYmAR6ugln+FvyJ7C1dAe/eKVeAcu6BsdPE9CUgeXBVQWR7
-         qw+iDIxd5zjPksyWodtUSriqQgTZF6AWQtqTZbsRqTJjMXQTIu1W1rzj1sNEcvWEHB48
-         aOHM4BtPIR465AlcOHaeqw8RPEt3ssBz5WLzktMAzs81hnAXSRnp80pjWmYZdnxULgw+
-         aXuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745905812; x=1746510612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HWfOibW0zJXCdtORmeJHJfO7jAlDvwO4GvsgR2VT7fc=;
-        b=wMUyKZ/mo17byyHYauQecS+0Sb4VG6DMfd4hPDVnJgp2NdqRgs5QZe5JHWByK3Cihh
-         KXuZiP/KowlykbNA/yg6/5XkShC2o0vFbQHy2TB+LTIDAOz/yCHdQYZbrdQm7bOoFrx5
-         gAd9aCDfhZyx3xJ+EIxmsL0EyLNbpqAj0t8zBC4GrScKmUZlzbGl5PfTqz6L65MfDCgQ
-         HWNj7LwhlmDBXg89ljd3q8f/2kPsdy9HTV6BqdAaxQJxj/V32Eaj30i8wxNbuTrTHStp
-         yZgBzJ7xieMkKo2DOZRHJlz2Ux6YC5OU4EIiGwBPDn5V3gY7LiAaLE86nwQTh03WvO/C
-         0qYA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6o/e/Rs7g5TfG6T2C00rsz/6FCSSIu0lWGgKH74YcDowMDxV6VCCTWX2g+pc83oHPLhRngWsu5upa9KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdi055Ym/mpFHDOKZfd07/0O/wcd4NOfYycNG+ZuJ+4PfE2vVe
-	6hD8riTJqhwx3GWb1YVSwGZD4f0x14F8elGAFygDVl8hO8GLENrAxSEPjSCH79pnZuMNnb80KAF
-	GrxZqcjAJELw8Ya66JAi2/yxdqwUu/2gDrT2jNg==
-X-Gm-Gg: ASbGncsuYI7XImQHoGVWdriumpjrcX7SOg8eEAKCysGCYmVCqce94Xh4yrvajl5UrqV
-	WEvyF2pAGtKpRYVXfiEOUoG3OLgc6tV90+CUhiJ13dP3Hd8ULdJNf2eUHHF2c6cawnH4+U+rqMP
-	gqd7UHy4CelJXIJJK66dHYPZxesDSTC+x6+w==
-X-Google-Smtp-Source: AGHT+IEXIWagJECOG4RLoTrQYomZ3sHcSOAll8CYP8clhn9zHjblZNubHzN3OqgFWmMSijyY1wb9UjZJkI4zeEP4uLw=
-X-Received: by 2002:a2e:be9e:0:b0:30c:460f:f56 with SMTP id
- 38308e7fff4ca-31d34d60533mr6426041fa.20.1745905811969; Mon, 28 Apr 2025
- 22:50:11 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1745905973; x=1777441973;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=H+ePYln7tPjjBoVKR5HPMEIWQT/EraWtuD1GVt6HQFQ=;
+  b=Zu9L/7HS8GKXHM3Lm/A3tVQIeF/wsU8VJugAmDp+yMmo1jTHg2BjLZF8
+   tzU6HXw3qqGjQHqp/Dc234kbQdy2AOBNaaivQgM2tjB43LlHfRPjz+x0i
+   51dhmPX9KhqO5L3gLTtmDskWqQFWU2PhaK8VOHCv1++V8XBT9vaBsmlpS
+   rN+oa6WHBq72XUUeznwwU0foi8SrrGnB6eWyZ0POe56a2RpZSdN1+F+J+
+   /thByEYMip+MOaZg77lOeJDk5hCqGXucyGnwyImn5zaCY3wtwKeGbDyqW
+   3gIj9NMAMOkmnsu/jjZkNa3JS71/k5QgT39yRidYr9KKUF7zU1rLCaxQ5
+   Q==;
+X-CSE-ConnectionGUID: S+IJdN4BTNCSJu0p4aaddQ==
+X-CSE-MsgGUID: PJJbB2nYTaKOVHj4c7k3fQ==
+X-IronPort-AV: E=Sophos;i="6.15,248,1739833200"; 
+   d="scan'208";a="43769108"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 29 Apr 2025 07:52:50 +0200
+X-CheckPoint: {68106932-7-903EAEAC-E04C76C8}
+X-MAIL-CPID: 873A8EB189AFEA30A497699562E47968_5
+X-Control-Analysis: str=0001.0A006398.6810693E.0055,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 945A916AADE;
+	Tue, 29 Apr 2025 07:52:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1745905965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H+ePYln7tPjjBoVKR5HPMEIWQT/EraWtuD1GVt6HQFQ=;
+	b=TBLMHc1qj6p8JIsxAqlB6IGbirIcg2hrkGe1NspBevfecMRkvRfmAa+zmdyf/55v7iaABs
+	vtYVyApWu3GM0POM3BBmvkNZKwxW6soD462APIiKguDhKuXGIxA64Vdo0tufqD4gxqUW54
+	q59lL/AtXKDtgGcgeabeZ/S3PSUUVJtAk3+N5Wo8HyygS/ml5Yk5DwVyKCIuV4QQmBgsUb
+	K4S/5OLkhdJQjr14Mv/6Ntr2H2OqYrJnr24nFTjiJdTChIdLLTESnEdhNQykzO63tUAx5S
+	PywhHa6o2GpfAiwjkLJHPT3HhTQxG6Hl8WSG1wSe86BosPWqQBJL2VDLwyEOMw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com,
+ linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dt: imx95: Add TQMa95xxSA
+Date: Tue, 29 Apr 2025 07:52:44 +0200
+Message-ID: <2436245.ElGaqSPkdT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <aA-xLX_O94O_U5Mt@shikoro>
+References:
+ <20250428135915.520432-1-alexander.stein@ew.tq-group.com>
+ <20250428135915.520432-2-alexander.stein@ew.tq-group.com>
+ <aA-xLX_O94O_U5Mt@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com>
- <20250403112522.1566629-6-rkrcmar@ventanamicro.com> <CAAhSdy1RSpVCUzD+Aqbhh7aiQPmC2zdvuQfuOsmYNJrF3HxCsA@mail.gmail.com>
- <D9IGVF0OY4WJ.1O1BX0M2LWUVM@ventanamicro.com>
-In-Reply-To: <D9IGVF0OY4WJ.1O1BX0M2LWUVM@ventanamicro.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 29 Apr 2025 11:20:00 +0530
-X-Gm-Features: ATxdqUGsRoK2KaLKI32KI2F__RZN-02oqDCocnMiqzg_aZlzW8XBSk76LkacWdo
-Message-ID: <CAK9=C2W3gLpeOmOcX3sp+J1zuBkWek7nO8tV79=gaWx+QZ6rgQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] KVM: RISC-V: remove unnecessary SBI reset state
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>, kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Apr 28, 2025 at 11:31=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcm=
-ar@ventanamicro.com> wrote:
->
-> 2025-04-28T17:46:01+05:30, Anup Patel <anup@brainfault.org>:
-> > On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkr=
-cmar@ventanamicro.com> wrote:
-> >>
-> >> The SBI reset state has only two variables -- pc and a1.
-> >> The rest is known, so keep only the necessary information.
-> >>
-> >> The reset structures make sense if we want userspace to control the
-> >> reset state (which we do), but I'd still remove them now and reintrodu=
-ce
-> >> with the userspace interface later -- we could probably have just a
-> >> single reset state per VM, instead of a reset state for each VCPU.
-> >
-> > The SBI spec does not define the reset state of CPUs. The SBI
-> > implementations (aka KVM RISC-V or OpenSBI) or platform
-> > firmwares are free to clear additional registers as part system
-> > reset or CPU.
-> >
-> > As part of resetting the VCPU, the in-kernel KVM clears all
-> > the registers.
->
-> Yes, but instead of doing a simple memset(0), KVM carriers around a lot
-> of data with minimal information value.  Reset is not really a fast
-> path, so I think it would be good to have the code there as simple as
-> possible.
->
-> > The setting of PC, A0, and A1 is only an entry condition defined
-> > for CPUs brought-up using SBI HSM start or SBI System suspend.
->
-> That is why this patch has to add kvm_vcpu_reset_state, to remember the
-> state of pc and a1.  (a0 is hart id and can be figured out.)
->
-> > We should not go ahead with this patch.
->
-> This patch only does refactoring.  Do you think the current reset
-> structures are better?
->
+Hi Wolfram,
 
-I am fine getting rid of reset structures as long as we have
-memset(0) in-place to achieve the same thing.
+Am Montag, 28. April 2025, 18:47:41 CEST schrieb Wolfram Sang:
+>=20
+> > Add initial support for TQMa95xxSA module compatible to SMARC-2.
+> > There is a common device tree for all variants with e.g. reduced CPU co=
+unt.
+> > It supports LPUART7 for console, CAN, PCIe I2C, SPI, USB3.0, USB2.0, Au=
+dio,
+> > SDHC1/2 and QSPI as storage.
+>=20
+> Dunno why renesas-soc was CCed but since you are here... ;) do these
+> boards support I3C, too? I know that imx95 has I3C cores. Just out of
+> interest, not relevant for this series, of course.
 
-Regards,
-Anup
+get_maintainer.pl lists (among others) for this patch
+> linux-renesas-soc@vger.kernel.org (open list:ARM/RISC-V/RENESAS ARCHITECT=
+URE:Keyword:\brenesas,)
+
+because of this node
+> pcieclk: clock-generator@6a {
+>     compatible =3D "renesas,9fgv0441";
+>     reg =3D <0x6a>;
+>     clocks =3D <&clk_xtal25>;
+>     #clock-cells =3D <1>;
+> };
+
+renesas-soc gets triggered ;-) I'll pay attention for further patches.
+
+This is a SMARC-2 module, but there is no i3c interface in this standard.
+
+Best regards
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
