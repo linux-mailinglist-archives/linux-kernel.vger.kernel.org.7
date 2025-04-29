@@ -1,81 +1,204 @@
-Return-Path: <linux-kernel+bounces-625567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCEAAA1871
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F25AA1805
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 587089C0A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF85C1BC54D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168DC253F1D;
-	Tue, 29 Apr 2025 17:54:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1323D2522A5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6915925486D;
+	Tue, 29 Apr 2025 17:54:11 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED866254857
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745949262; cv=none; b=lJx6Dh3tDbXcM0hjbH1plZOYcH1gyZ4ulmuB2P/eKdVebZ3xfq2rtqzMKTNN906VMH1NdOg4rV2RXfE2eJ/stmeMfjOypCF15Cj//+qD67nhRaCz41/Tnl/Gp2zWEnGDADNMesDRwM7exCWdB94o1mAaFARuJPUS/Q6zHUk89iA=
+	t=1745949251; cv=none; b=R60jGvOB4LMbfJWQiaDxRrXom7g4Y+8SVbOAS7161TdaVzp8RpDDq0NUHZuAZu78LmR65LXZua0L6IKXBe9oP4goK/WoCKxhkzU3PDr9VzQd436ZrNAs1CHylAkA/cIrnIkIZ/+WiUSLxdh1YIL/oXV4yrH37gvFPpSGR+qXNZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745949262; c=relaxed/simple;
-	bh=Q04ONcVYPpGrnvBwLfqX3wWoUKQwyZPdV4UZZMvbL9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=phBTelnY1tzaz+kAAIwvwqUGNTRyR/JQTgvYYVxRRdItxAnzc4PV8choBD2PrU3oarqZ84tlKTEwzdcZPBiL64bfqrLIHR7GmOdot43iPfk1fmdjrUTmDQlPYQuLe0witwVWt5B2jwZqwXRAfPiJmS5TihxM4R4IsfDoBCg5Q0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 682B61424;
-	Tue, 29 Apr 2025 10:54:13 -0700 (PDT)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E50033F66E;
-	Tue, 29 Apr 2025 10:54:18 -0700 (PDT)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: anshuman.khandual@arm.com,
-	James Clark <james.clark@linaro.org>,
-	Junhao He <hejunhao3@huawei.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linuxarm@huawei.com,
-	jonathan.cameron@huawei.com,
-	yangyicong@huawei.com,
-	prime.zeng@hisilicon.com
-Subject: Re: [PATCH] coresight: Fixes device's owner field for registered using coresight_init_driver()
-Date: Tue, 29 Apr 2025 18:54:05 +0100
-Message-ID: <174594908200.12068.4532771871795444474.b4-ty@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240918035327.9710-1-hejunhao3@huawei.com>
-References: <20240918035327.9710-1-hejunhao3@huawei.com>
+	s=arc-20240116; t=1745949251; c=relaxed/simple;
+	bh=F0ylr18M3PB4jxzjybEJTtYecusyCt4iHA5PzXkBzuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k0DiKcJQhJZK1U/hap9PLM1RUgaYNDUyFsd7toK6I62LPgg3aZOsIN+HGay89IChUGOacL7KICpn+R/I+horHnqUTLCE48e1dnQUfwZUmyseZ7omxUoDdTv6FY/9sw8wJDx4S5t+EP7y0FtqZitebA2r/lhlvQoJPQQTytDzorw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BED961F391;
+	Tue, 29 Apr 2025 17:54:06 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E8011340C;
+	Tue, 29 Apr 2025 17:54:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bCabFT4SEWiINwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 29 Apr 2025 17:54:06 +0000
+Message-ID: <f0329c90-56d6-455a-8cbb-a4c28cb85057@suse.de>
+Date: Tue, 29 Apr 2025 19:54:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nvme: only allow entering LIVE from CONNECTING state
+To: Daniel Wagner <dwagner@suse.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Daniel Wagner <wagi@kernel.org>,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ James Smart <james.smart@broadcom.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250214-nvme-fc-fixes-v1-0-7a05d557d5cc@kernel.org>
+ <20250214-nvme-fc-fixes-v1-1-7a05d557d5cc@kernel.org>
+ <0134ea15-8d5f-41f7-9e9a-d7e6d82accaa@roeck-us.net>
+ <cb46aa83-8033-4d64-a3c7-420172c3f3f5@flourine.local>
+ <9763c4cf-8ca5-45d4-b723-270548ca1001@suse.de>
+ <6894c914-a734-4a7b-97cb-e9a344fa5560@flourine.local>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <6894c914-a734-4a7b-97cb-e9a344fa5560@flourine.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: BED961F391
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-
-On Wed, 18 Sep 2024 11:53:27 +0800, Junhao He wrote:
-> The coresight_init_driver() of the coresight-core module is called from
-> the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
-> amba_driver_register() and Platform_driver_register(), which are macro
-> functions that use the coresight-core's module to initialize the caller's
-> owner field.  Therefore, when the sub coresight device calls
-> coresight_init_driver(), an incorrect THIS_MODULE value is captured.
+On 4/29/25 15:55, Daniel Wagner wrote:
+> On Mon, Apr 28, 2025 at 03:21:18PM +0200, Hannes Reinecke wrote:
+>> On 4/28/25 14:44, Daniel Wagner wrote:
+>>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+>>> index b502ac07483b..d3c4eacf607f 100644
+>>> --- a/drivers/nvme/host/core.c
+>>> +++ b/drivers/nvme/host/core.c
+>>> @@ -4493,7 +4493,8 @@ static void nvme_fw_act_work(struct work_struct *work)
+>>>                   msleep(100);
+>>>           }
+>>>
+>>> -       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
+>>> +       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING) ||
+>>> +           !nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
+>>>                   return;
+>>>
+>>>           nvme_unquiesce_io_queues(ctrl);
+>>
+>> I would rather have a separate state for firmware activation.
+>> (Ab-)using the 'RESETTING' state here has direct implications
+>> with the error handler, as for the error handler 'RESETTING'
+>> means that the error handler has been scheduled.
+>> Which is not true for firmware activation.
 > 
-> [...]
+> Okay, so something like this here (untested, working on it)?
+> 
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index b502ac07483b..32482712d0f2 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -565,6 +565,7 @@ bool nvme_change_ctrl_state(struct nvme_ctrl *ctrl,
+>   	case NVME_CTRL_LIVE:
+>   		switch (old_state) {
+>   		case NVME_CTRL_CONNECTING:
+> +		case NVME_CTRL_FW_ACTIVATION:
+>   			changed = true;
+>   			fallthrough;
+>   		default:
+> @@ -575,6 +576,7 @@ bool nvme_change_ctrl_state(struct nvme_ctrl *ctrl,
+>   		switch (old_state) {
+>   		case NVME_CTRL_NEW:
+>   		case NVME_CTRL_LIVE:
+> +		case NVME_CTRL_FW_ACTIVATION:
+>   			changed = true;
+>   			fallthrough;
+>   		default:
+> @@ -596,6 +598,7 @@ bool nvme_change_ctrl_state(struct nvme_ctrl *ctrl,
+>   		case NVME_CTRL_LIVE:
+>   		case NVME_CTRL_RESETTING:
+>   		case NVME_CTRL_CONNECTING:
+> +		case NVME_CTRL_FW_ACTIVATION:
+>   			changed = true;
+>   			fallthrough;
+>   		default:
+> @@ -621,6 +624,15 @@ bool nvme_change_ctrl_state(struct nvme_ctrl *ctrl,
+>   			break;
+>   		}
+>   		break;
+> +	case NVME_CTRL_FW_ACTIVATION:
+> +		switch (old_state) {
+> +		case NVME_CTRL_LIVE:
+> +			changed = true;
+> +			fallthrough;
+> +		default:
+> +			break;
+> +		}
+> +		break;
+>   	default:
+>   		break;
+>   	}
+> @@ -4529,7 +4541,7 @@ static bool nvme_handle_aen_notice(struct nvme_ctrl *ctrl, u32 result)
+>   		 * recovery actions from interfering with the controller's
+>   		 * firmware activation.
+>   		 */
+> -		if (nvme_change_ctrl_state(ctrl, NVME_CTRL_RESETTING)) {
+> +		if (nvme_change_ctrl_state(ctrl, NVME_CTRL_FW_ACTIVATION)) {
+>   			requeue = false;
+>   			queue_work(nvme_wq, &ctrl->fw_act_work);
+>   		}
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 51e078642127..3a383225afed 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -247,6 +247,7 @@ static inline u16 nvme_req_qid(struct request *req)
+>    *				shutdown or removal. In this case we forcibly
+>    *				kill all inflight I/O as they have no chance to
+>    *				complete
+> + * @NVME_CTRL_FW_ACTIVATION:	Controller is in firmware activation state.
+>    */
+>   enum nvme_ctrl_state {
+>   	NVME_CTRL_NEW,
+> @@ -256,6 +257,7 @@ enum nvme_ctrl_state {
+>   	NVME_CTRL_DELETING,
+>   	NVME_CTRL_DELETING_NOIO,
+>   	NVME_CTRL_DEAD,
+> +	NVME_CTRL_FW_ACTIVATION,
+>   };
+> 
+>   struct nvme_fault_inject {
+> 
+Indeed, something like it.
 
-Applied, thanks!
+Cheers,
 
-[1/1] coresight: Fixes device's owner field for registered using coresight_init_driver()
-      https://git.kernel.org/coresight/c/9f52aecc
-
-Best regards,
+Hannes
 -- 
-Suzuki K Poulose <suzuki.poulose@arm.com>
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
