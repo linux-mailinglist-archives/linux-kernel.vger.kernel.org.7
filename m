@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-624801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C32EAA07D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627F9AA07D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B595F484DF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D61E3BD37F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509BE2BD581;
-	Tue, 29 Apr 2025 09:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23632BEC37;
+	Tue, 29 Apr 2025 09:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="OzCNh0Dr"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="t9LMIS//"
 Received: from mail-43171.protonmail.ch (mail-43171.protonmail.ch [185.70.43.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB732BCF54;
-	Tue, 29 Apr 2025 09:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BDB2BE7DE;
+	Tue, 29 Apr 2025 09:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745920594; cv=none; b=A9Ca4c4RmqKzgGWJYpKo+OrppzdNuLkKBcCqRHrCFfCt4XZZ6SS7Qe57pvMxbJYP6QylFQFbF4RBeiF74UEsP0Oss3NSA6C/rewMgHkzz/azF8r14mN0IWW3ulkV0L95bduc/7Ps/0Lxbol5vcAXmVMY6Ny+TEpsFcuMGUXYDeg=
+	t=1745920601; cv=none; b=oHo9VC5G9fwE4K19WP1lWdlZqtNeQb3ufZQ+s9OzyBUhTz65+Jg3f1f7zli4J5YCWMvQgLm1WI1z9d+Yqe+lJl8VmVxEKuYjzKtpVDTmAqylDNwiyZgWEwqcIob+nFB6vBYOTYUaK3Y6/8r22IOyUPxSMyeKu5j5cXWrUQozlwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745920594; c=relaxed/simple;
-	bh=QK/b73spM203lHmcwL4U06QdCZ6NzmAeNXW1+LR6zV8=;
+	s=arc-20240116; t=1745920601; c=relaxed/simple;
+	bh=TOitCNlEHavJgJ0406Fj4t6giqT2OUkC7+UWGeAosKA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KuHBpdW9zYB8ZShTzCxGoPga4wxo+O7XG8TQmikWJW0TAxK5Om31e/Fxc2yw81kDAuprkAssZbViKGG/mHe6x8iYmyyZ9S8QvxnIDbfAl10ffaMtl67Hl5xlnhityTapX8GCtvpD5viK6pjUwUtSz5FCR1KPobntN+d6hQgwphU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=OzCNh0Dr; arc=none smtp.client-ip=185.70.43.171
+	 In-Reply-To:To:Cc; b=BkxhkvEAu5cn+oJmfvLQClcx49qC9BF1L1ceY+MpNC9545i1z27lkUPIe7xnSztqQ81yAxgfPIqRgtB5qFZ0N5w0O4YZKXtYIqVoyL40eKYU1E+QDtJB9yEPJW03+zFAPXRTiwercZNJgUWChXdHZkDkrj5V8HBCmFE1v2CCY44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=t9LMIS//; arc=none smtp.client-ip=185.70.43.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail; t=1745920588; x=1746179788;
-	bh=5M8UB3lb8YXwFi4Sz7fw55A9f2CgUuDRhzX/fbPMljY=;
+	s=protonmail; t=1745920595; x=1746179795;
+	bh=BIj1PH3AC001SwYGa/4ndDv3Snnx5p8N27N5kIu5Rbc=;
 	h=From:Date:Subject:Message-Id:References:In-Reply-To:To:Cc:From:To:
 	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
 	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=OzCNh0DrIa20jkDePwlTQAFNS1mNkv50sYS9VmdUIhd7eitQYer9WkGfdJQRGCXdj
-	 iZzjjMNGpvewGakfhuOujoLw5Vz8uyb5UXZf03u3Usvz7giaeYBOal0AG0eVgcYHNg
-	 xVXCm6QQ+CGIs9h09iIxS7kUq69IeDuQ/kkhoHsmkOC0xfP1jQRSOFB2FnZTsQBtkL
-	 llNpNVHutE9TC77TVtQbpk/kWxWoFjlG8sbj9AV+rtH6Gj5FWTSIdG//TKcgD8DDB4
-	 9zMXq8LJKGcBB5IPQNy5F8dklqKtut7+lmCPvuvSX3q6ihl2CCoh9lfghA0UBngFR/
-	 vOur9/y2KyvAg==
+	b=t9LMIS//QjgJ8QRB7fuXYgrlz0+YSKRYLo2ZrufxkcAa4IbMTUWPW2b2feaamkQ0h
+	 zs9hlz8nKn9MeslWZ8iCOVmwjw2uL3lfVPzJzf/mjZ0dbhdHytrViLXIXAaaGE2LM8
+	 8Qc4P4lbMhJh92FyYUxRk8KcuXXXZm5+gtjwwJEWMOaijX8H8Hw+6h2liT+odhcnig
+	 9OZvu9xI6L8WF5hmpN4vp3/bgXetKc3TWSjj8ECQUZvL1m6oUAQxkEPTDA5Hdnyp4S
+	 lxA5nTPLGHTe4vNIWtL1L1TBVx5HTlvs2mNogIxJedz6LPWYIADJ9kdkPuYEq7D+wC
+	 aTqNbj9/9cJSA==
+X-Pm-Submission-Id: 4Zmwgx4bQDz44r
 From: Esben Haabendal <esben@geanix.com>
-Date: Tue, 29 Apr 2025 11:56:11 +0200
-Subject: [PATCH v2 1/2] dt-bindings: input: touchscreen: goodix: Add
- no-reset-pull-up property
+Date: Tue, 29 Apr 2025 11:56:12 +0200
+Subject: [PATCH v2 2/2] Input: goodix - Allow DT specification of missing
+ reset pull-up
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-goodix-no-reset-pull-up-v2-1-0687a4ad5a04@geanix.com>
+Message-Id: <20250429-goodix-no-reset-pull-up-v2-2-0687a4ad5a04@geanix.com>
 References: <20250429-goodix-no-reset-pull-up-v2-0-0687a4ad5a04@geanix.com>
 In-Reply-To: <20250429-goodix-no-reset-pull-up-v2-0-0687a4ad5a04@geanix.com>
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
@@ -63,38 +64,60 @@ To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Esben Haabendal <esben@geanix.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745920580; l=1033;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745920580; l=2058;
  i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=QK/b73spM203lHmcwL4U06QdCZ6NzmAeNXW1+LR6zV8=;
- b=HEYlnnKte1rhMuk+miZPOQL+TJM0j6OLfJCF8+SCpKWcfCo4y4gJAdHiJ3C9QGyau2cFHTc8S
- qRo3nP2K8gcAXWrZDFL2i1iDOE/hb6zlpozS5eT+blFs86JeyLz8Rh2
+ bh=TOitCNlEHavJgJ0406Fj4t6giqT2OUkC7+UWGeAosKA=;
+ b=LXGLbkRsBK9V1v9vARAI3xti/9Iwl1ti7/D+c9GdS507CofovXMkB2RdwJ2zMiUDgvauKGzB9
+ N6J9RfslxibA9p3OyEb9/8b6aDPK2+3ib3kDq0oqU/byGOJXhkohZro
 X-Developer-Key: i=esben@geanix.com; a=ed25519;
  pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
 
-This should be added for boards where there is no pull-up on the reset pin,
-as the driver will otherwise switch the reset signal to high-impedance to
-save power, which obviously not safe without pull-up.
+In commit a2fd46cd3dbb ("Input: goodix - try not to touch the reset-pin on x86/ACPI devices")
+a fix for problems on various x86/ACPI devices where external
+pull-up is missing were added. The same type of problem can exist on
+device-tree platforms, and the fix can be activated by adding the
+no-reset-pull-up device-tree property.
 
 Signed-off-by: Esben Haabendal <esben@geanix.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- Documentation/devicetree/bindings/input/touchscreen/goodix.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/input/touchscreen/goodix.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml b/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
-index eb4992f708b70fef93bd4b59b9565123f7c6ad5d..21ac13046b6e021eeb403d854aabc945801dd29f 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
-+++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.yaml
-@@ -45,6 +45,10 @@ properties:
-   reset-gpios:
-     maxItems: 1
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+index a3e8a51c91449533b4d5185746df6b98676053dd..ce4622bbcc89434a4d89c49bb97f084fb61aa448 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -772,10 +772,12 @@ int goodix_reset_no_int_sync(struct goodix_ts_data *ts)
  
-+  goodix,no-reset-pull-up:
-+    type: boolean
-+    description: There is no pull-up on reset pin
+ 	/*
+ 	 * Put the reset pin back in to input / high-impedance mode to save
+-	 * power. Only do this in the non ACPI case since some ACPI boards
+-	 * don't have a pull-up, so there the reset pin must stay active-high.
++	 * power.
++	 * Avoid doing this on boards that are known to not have external
++	 * pull-up, and all ACPI boards since some ACPI boards don't have a
++	 * pull-up. These boards need the reset pin to stay active-high.
+ 	 */
+-	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_GPIO) {
++	if (ts->gpiod_rst_flags == GPIOD_IN) {
+ 		error = gpiod_direction_input(ts->gpiod_rst);
+ 		if (error)
+ 			goto error;
+@@ -969,6 +971,13 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
+ 	 */
+ 	ts->gpiod_rst_flags = GPIOD_IN;
+ 
++	/*
++	 * Devices that does not have pull-up on reset signal should not be
++	 * changed to input
++	 */
++	if (device_property_read_bool(dev, "goodix,no-reset-pull-up"))
++		ts->gpiod_rst_flags = GPIOD_ASIS;
 +
-   AVDD28-supply:
-     description: Analog power supply regulator on AVDD28 pin
- 
+ 	ts->avdd28 = devm_regulator_get(dev, "AVDD28");
+ 	if (IS_ERR(ts->avdd28))
+ 		return dev_err_probe(dev, PTR_ERR(ts->avdd28), "Failed to get AVDD28 regulator\n");
 
 -- 
 2.49.0
