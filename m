@@ -1,304 +1,397 @@
-Return-Path: <linux-kernel+bounces-624051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62947A9FE45
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:32:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B6EA9FE49
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C35A4639DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC381A8644C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5AA3594D;
-	Tue, 29 Apr 2025 00:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7996538F80;
+	Tue, 29 Apr 2025 00:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xSqZFw8f"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WBA6URsp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684058F5B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 00:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A543A6AA7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 00:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745886751; cv=none; b=LO0Vm2PAG2PXTSp6gIeCIzzm1rjLtMGHkMst+Okg6mhxa7hPqOpZAavSdyAW6MCGRfmoO3SKPnHMKSVJ+pL+cPTtq176wpHdVz8t7k6V6bX/BxgvWDC8xDCPtMW5GQa0xb8S1tyz9H8An+RFResQ3Qs6ZTVDMjvh2lNxC4W77m0=
+	t=1745886851; cv=none; b=TUQBH8rLcCJjAdA7PbYTcnP+2k2Pfuh2+R0UbFZx5TqIG27uapyvnsE91X8BFz7hPC7QCBKPBDAnh+/CwnmQQ9U6dKJE4PTkd7jtgJrJA+rMqIY1nJKCT2emJndMis+EqCtW97ZFxZQe1+JdEQLkY3QylANspUPidHGcYBAiY8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745886751; c=relaxed/simple;
-	bh=Unk2CAHPd+6lyOn9/PGyMUXfh1Q6jOWDapwIV0oKUl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVURO8M0wFoqjCPdUoZjFYiKPifkjCMEW9kLe+h3kSyOZcX9der2vB5/3qlkZRYfJHTVEItVh+GLZ730CmKaiYSYCDSqPAVZzQ3KUtB2CRHb+8/5tBJ0ggMhyyYUb0R3TGbLsfLM6/iefTFw8Bl+TzVx2Hg7xb/bkQxby1wTznA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xSqZFw8f; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <30b2d279-8459-4a72-aad4-29c1ece622b8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745886736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMdD3vES5bpU+wy7U7dBxDmOnHQWWw6FHBBe4F+no+Q=;
-	b=xSqZFw8fHQ15CHKwURcoJYe3djPpqXdWQtBhK/gmbt8UlqfQRfGeG3ULvefmcbRI5qGjyU
-	JC9mDV9KQsPspVwprMucTbH06Er73Ib2ZuOJi9a0c1I8woTdgAW/8sHF+ohGErY5f4of6Z
-	5TCXZRa0ZAZgxnbeIiX4oDzGFS+Lmc4=
-Date: Mon, 28 Apr 2025 17:32:09 -0700
+	s=arc-20240116; t=1745886851; c=relaxed/simple;
+	bh=/uD6TXq0hfRNrcKx7TLvBkas8jHMpXBFd92jJOW7sSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VnzMlZRniex7KRbed5Pnt3kUTKquJs14PpojDbTzip5FrsUktxVeMiThkkPd1uyI+sokXgW4HS2kB1PoMNdMj1wVS1DVVhswCdEjdnOX1IS/1jPWq5qbVzjrX39+xIeZGySLWxn/+Xlr6ExZeC3ipj83f88GChrMXYJlvZaEKJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WBA6URsp; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745886847; x=1777422847;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/uD6TXq0hfRNrcKx7TLvBkas8jHMpXBFd92jJOW7sSQ=;
+  b=WBA6URspDK/xhSE5Q/c2GC9/h/dDeZ34a2d1Fc1//zddvwAFZ0pwc7Mm
+   hDANvBQFspCWborDSjm2jJFLsecpjNCNZ5FuPbJ+ywJEFMOIlAAY9zFbf
+   viUnrtM7yakcJktqyLFeCFgpR+PU/m3D4CIO6yOyWgeAymprv8pY/RIPQ
+   gQQNSaLlCbVAgiDnhOnPUp7SHgCfa0L3zIwrBkzzMOYxgmrDQrWECvYB2
+   GT/+c4nis6ET5U5VrmD86wiv7BG1HFxbtEKziwSSp7/5CgbB3tod7mPWq
+   RCyCXCDrDY7abPkzOBO5+khfuFvg0bpMucVGvYBQCbkjXlo1NJMzAmoiP
+   w==;
+X-CSE-ConnectionGUID: tpXDsDdvS02dzatJaiVkeA==
+X-CSE-MsgGUID: /bJtKuk+R5SFjwfAqtax4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="58148028"
+X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
+   d="scan'208";a="58148028"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 17:34:07 -0700
+X-CSE-ConnectionGUID: LxnZraZNSwS5RE08HBOl1Q==
+X-CSE-MsgGUID: GyLcNUKyREOwEUEWP5/Uuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
+   d="scan'208";a="133393944"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 17:34:06 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghuay@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v4 00/31] x86/resctrl telemetry monitoring
+Date: Mon, 28 Apr 2025 17:33:26 -0700
+Message-ID: <20250429003359.375508-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] KVM: riscv: selftests: Add vector extension tests
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250324-kvm_selftest_improve-v1-0-583620219d4f@rivosinc.com>
- <20250324-kvm_selftest_improve-v1-3-583620219d4f@rivosinc.com>
- <20250425-a2a40c6296018326cdcf7d24@orel>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Atish Patra <atish.patra@linux.dev>
-In-Reply-To: <20250425-a2a40c6296018326cdcf7d24@orel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+These patches are based on James Morse's latest patch set to:
+
+  "Move the resctrl filesystem code to /fs/resctrl"
+
+posted here:
+
+Link: https://lore.kernel.org/all/20250425173809.5529-1-james.morse@arm.com/
+
+Also available in the "mpam/move_to_fs/v9_final" branch of:
+Link: git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git
+
+I've pushed combination of James' series plus these patches to the
+rdt-aet-v4 branch at:
+
+Link: git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git
+
+Extensive changes (based on feedback from Reinette) since v3 was posted here:
+
+Link: https://lore.kernel.org/all/20250407234032.241215-1-tony.luck@intel.com/
+
+Major changes:
+
+1) Instead of using bits in the architecture local "rdt_mon_features"
+variable to keep track of enabled monitor events, use mon_evt::enabled
+to track at the file system layer. Architecture informs file system
+which events are enabled. This means that file system no longer needs
+any of the resctrl_arch_is_*_enabled() calls to architecture as it now
+has the array of mon_evt structures to check. This is one step in making
+the mon_evt structure the source of all information about each event.
+
+2) Split the v3 "Prepare for more monitor events" patch into three
+easier to digest pieces.
+
+3) Simplified the "Improve domain type checking" patch by making
+the rdt_resource type its own field in the rdt_domain_hdr structure
+instead of encoding it in a bit field combined with the CTRL/MON type.
+
+4) Added "l3" to a bunch of function and structure names to indicate
+that they are now specific to L3 events instead of generic monitoring.
+
+5) Struct mon_evt is also the source of truth for "can this event be
+read from any CPU?". Other structures (mon_data and rmid_read) now
+have pointers to mon_evt instead of their own field copied from
+mon_evt.
+
+6) Events that can be read on any CPU now bypass the
+cpumask_any_housekeeping() path that would have resulted in an
+IPI to the first CPU on a domain. mon_event_read() now directly
+calls mon_event_count() for these events.
+
+7) Renamed the per-mount hook and commented on (lack of) locking
+by the caller.
+
+8) Split the enumeration of telemetry events into easier to
+review chunks with more comments in the code at each stage.
+
+9) Simplified the intel_aet_read_event() code. No funky macros
+to pick up parameters for the MMIO address calculation. Added
+a sanity check that the computed MMIO register address is in
+the range provided by the aggregator.
+
+10) File system now owns the output format. Architecture cannot
+make choices. Every event is hard-coded to be displayed as
+integer or floating point.
+
+11) Added additional options to the rdt= boot option for the user
+to force opt-in or opt-out of telemetry events. Use these options
+to solve the "how many RMIDs can be used?" issue.
+
+12) Moved final calculation of available number of RMIDs to first
+mount of resctrl file system and make it determine smallest value
+across all mon_capable resources.
+
+13) Version 2 of the patch series included extra files in the info/
+directory to report some internal status values. V3 dropped that
+entirely because I couldn't see a good way to cross the fs<->arch
+boundary with extra architecture specific info files. Patches
+29-30 are an RFC way to bring this back when the file system is
+mounted with the "debug" option.
+
+Background
+----------
+
+Telemetry features are being implemented in conjunction with the
+IA32_PQR_ASSOC.RMID value on each logical CPU. This is used to send
+counts for various events to a collector in a nearby OOBMSM device to be
+accumulated with counts for each <RMID, event> pair received from other
+CPUs. Cores send event counts when the RMID value changes, or after each
+2ms elapsed time.
+
+Each OOBMSM device may implement multiple event collectors with each
+servicing a subset of the logical CPUs on a package.  In the initial
+hardware implementation, there are two categories of events: energy
+and perf.
+
+1) Energy - Two counters
+core_energy: This is an estimate of Joules consumed by each core. It is
+calculated based on the types of instructions executed, not from a power
+meter. This counter is useful to understand how much energy a workload
+is consuming.
+
+activity: This measures "accumulated dynamic capacitance". Users who
+want to optimize energy consumption for a workload may use this rather
+than core_energy because it provides consistent results independent of
+any frequency or voltage changes that may occur during the runtime of
+the application (e.g. entry/exit from turbo mode).
+
+2) Performance - Seven counters
+These are similar events to those available via the Linux "perf" tool,
+but collected in a way with much lower overhead (no need to collect data
+on every context switch).
+
+stalls_llc_hit - Counts the total number of unhalted core clock cycles
+when the core is stalled due to a demand load miss which hit in the LLC
+
+c1_res - Counts the total C1 residency across all cores. The underlying
+counter increments on 100MHz clock ticks
+
+unhalted_core_cycles - Counts the total number of unhalted core clock
+cycles
+
+stalls_llc_miss - Counts the total number of unhalted core clock cycles
+when the core is stalled due to a demand load miss which missed all the
+local caches
+
+c6_res - Counts the total C6 residency. The underlying counter increments
+on crystal clock (25MHz) ticks
+
+unhalted_ref_cycles - Counts the total number of unhalted reference clock
+(TSC) cycles
+
+uops_retired - Counts the total number of uops retired
+
+The counters are arranged in groups in MMIO space of the OOBMSM device.
+E.g. for the energy counters the layout is:
+
+Offset: Counter
+0x00	core energy for RMID 0
+0x08	core activity for RMID 0
+0x10	core energy for RMID 1
+0x18	core activity for RMID 1
+...
+
+Enumeration
+-----------
+
+The only CPUID based enumeration for this feature is the legacy
+CPUID(eax=7,ecx=0).ebx{12} that indicates the presence of the
+IA32_PQR_ASSOC MSR and the RMID field within it.
+
+The OOBMSM driver discovers which features are present via
+PCIe VSEC capabilities. Each feature is tagged with a unique
+identifier. These identifiers indicate which XML description file from
+https://github.com/intel/Intel-PMT describes which event counters are
+available and their layout within the MMIO BAR space of the OOBMSM device.
+
+Resctrl User Interface
+----------------------
+
+Because there may be multiple OOBMSM collection agents per processor
+package, resctrl accumulates event counts from all agents on a package
+and presents a single value to users. This will provide a consistent
+user interface on future platforms that vary the number of collectors,
+or the mappings from logical CPUs to collectors.
+
+Users will continue to see the legacy monitoring files in the "L3"
+directories and the telemetry files in the new "PERF_PKG" directories
+(with each file providing the aggregated value from all OOBMSM collectors
+on that package).
+
+$ tree /sys/fs/resctrl/mon_data/
+/sys/fs/resctrl/mon_data/
+├── mon_L3_00
+│   ├── llc_occupancy
+│   ├── mbm_local_bytes
+│   └── mbm_total_bytes
+├── mon_L3_01
+│   ├── llc_occupancy
+│   ├── mbm_local_bytes
+│   └── mbm_total_bytes
+├── mon_PERF_PKG_00
+│   ├── activity
+│   ├── c1_res
+│   ├── c6_res
+│   ├── core_energy
+│   ├── stalls_llc_hit
+│   ├── stalls_llc_miss
+│   ├── unhalted_core_cycles
+│   ├── unhalted_ref_cycles
+│   └── uops_retired
+└── mon_PERF_PKG_01
+    ├── activity
+    ├── c1_res
+    ├── c6_res
+    ├── core_energy
+    ├── stalls_llc_hit
+    ├── stalls_llc_miss
+    ├── unhalted_core_cycles
+    ├── unhalted_ref_cycles
+    └── uops_retired
+
+Resctrl Implementation
+----------------------
+
+The OOBMSM driver exposes "intel_pmt_get_regions_by_feature()"
+that returns an array of structures describing the per-RMID groups it
+found from the VSEC enumeration. Linux looks at the unique identifiers
+for each group and enables resctrl for all groups with known unique
+identifiers.
+
+The memory map for the counters for each <RMID, event> pair is described
+by the XML file. This is too unwieldy to use in the Linux kernel, so a
+simplified representation is built into the resctrl code. Note that the
+counters are in MMIO space instead of accessed using the IA32_QM_EVTSEL
+and IA32_QM_CTR MSRs. This means there is no need for cross-processor
+calls to read counters from a CPU in a specific domain. The counters
+can be read from any CPU.
+
+High level description of code changes:
+
+1) New scope RESCTRL_PACKAGE
+2) New struct rdt_resource RDT_RESOURCE_PERF_PKG
+3) Refactor monitor code paths to split existing L3 paths from new ones. In some cases this ends up with:
+        switch (r->rid) {
+        case RDT_RESOURCE_L3:
+                helper for L3
+                break;
+        case RDT_RESOURCE_PERF_PKG:
+                helper for PKG
+                break;
+        }
+4) New source code file "intel_aet.c" for the code to enumerate, configure, and report event counts.
+
+With only one platform providing this feature, it's tricky to tell
+exactly where it is going to go. I've made the event definitions
+platform specific (based on the unique ID from the VSEC enumeration). It
+seems possible/likely that the list of events may change from generation
+to generation.
+
+I've picked names for events based on the descriptions in the XML file.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+Tony Luck (31):
+  x86,fs/resctrl: Drop rdt_mon_features variable
+  x86,fs/resctrl: Prepare for more monitor events
+  fs/resctrl: Clean up rdtgroup_mba_mbps_event_{show,write}()
+  fs/resctrl: Change how and when events are initialized
+  fs/resctrl: Set up Kconfig options for telemetry events
+  x86/rectrl: Fake OOBMSM interface
+  x86,fs/resctrl: Improve domain type checking
+  x86/resctrl: Move L3 initialization out of domain_add_cpu_mon()
+  x86,fs/resctrl: Refactor domain_remove_cpu_mon() ready for new domain
+    types
+  x86/resctrl: Change generic monitor functions to use struct
+    rdt_domain_hdr
+  x86,fs/resctrl: Rename struct rdt_mon_domain and rdt_hw_mon_domain
+  fs/resctrl: Improve handling for events that can be read from any CPU
+  fs/resctrl: Add support for additional monitor event display formats
+  fs/resctrl: Add an architectural hook called for each mount
+  x86/resctrl: Add and initialize rdt_resource for package scope core
+    monitor
+  x86/resctrl: Add first part of telemetry event enumeration
+  x86/resctrl: Add second part of telemetry event enumeration
+  x86/resctrl: Add third part of telemetry event enumeration
+  x86,fs/resctrl: Fill in details of Clearwater Forest events
+  x86/resctrl: Check for adequate MMIO space
+  x86/resctrl: Add fourth part of telemetry event enumeration
+  x86/resctrl: Read core telemetry events
+  x86,fs/resctrl: Handle domain creation/deletion for
+    RDT_RESOURCE_PERF_PKG
+  fs/resctrl: Add type define for PERF_PKG files
+  x86/resctrl: Final steps to enable RDT_RESOURCE_PERF_PKG
+  x86/resctrl: Add energy/perf choices to rdt boot option
+  x86/resctrl: Handle number of RMIDs supported by telemetry resources
+  x86,fs/resctrl: Fix RMID allocation for multiple monitor resources
+  fs/resctrl: Add interface for per-resource debug info files
+  x86/resctrl: Add info/PERF_PKG_MON/status file
+  x86/resctrl: Update Documentation for package events
+
+ .../admin-guide/kernel-parameters.txt         |   2 +-
+ Documentation/filesystems/resctrl.rst         |  53 ++-
+ include/linux/resctrl.h                       |  51 ++-
+ include/linux/resctrl_types.h                 |  19 +
+ arch/x86/include/asm/resctrl.h                |  16 -
+ .../cpu/resctrl/fake_intel_aet_features.h     |  73 ++++
+ arch/x86/kernel/cpu/resctrl/internal.h        |  35 +-
+ fs/resctrl/internal.h                         |  42 ++-
+ arch/x86/kernel/cpu/resctrl/core.c            | 273 ++++++++++----
+ .../cpu/resctrl/fake_intel_aet_features.c     |  95 +++++
+ arch/x86/kernel/cpu/resctrl/intel_aet.c       | 343 ++++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/monitor.c         |  61 ++--
+ fs/resctrl/ctrlmondata.c                      |  93 ++---
+ fs/resctrl/monitor.c                          | 269 +++++++++-----
+ fs/resctrl/rdtgroup.c                         | 221 +++++++----
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/kernel/cpu/resctrl/Makefile          |   2 +
+ drivers/platform/x86/intel/pmt/Kconfig        |   7 +
+ 18 files changed, 1283 insertions(+), 373 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.h
+ create mode 100644 arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.c
+ create mode 100644 arch/x86/kernel/cpu/resctrl/intel_aet.c
 
 
-On 4/25/25 7:20 AM, Andrew Jones wrote:
-> On Mon, Mar 24, 2025 at 05:40:31PM -0700, Atish Patra wrote:
->> Add vector related tests with the ISA extension standard template.
->> However, the vector registers are bit tricky as the register length is
->> variable based on vlenb value of the system. That's why the macros are
->> defined with a default and overidden with actual value at runtime.
->>
->> Signed-off-by: Atish Patra <atishp@rivosinc.com>
->> ---
->>   tools/testing/selftests/kvm/riscv/get-reg-list.c | 111 ++++++++++++++++++++++-
->>   1 file changed, 110 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
->> index 8515921dfdbf..576ab8eb7368 100644
->> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
->> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
->> @@ -145,7 +145,9 @@ void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcpu_reg_list *c)
->>   {
->>   	unsigned long isa_ext_state[KVM_RISCV_ISA_EXT_MAX] = { 0 };
->>   	struct vcpu_reg_sublist *s;
->> -	uint64_t feature;
->> +	uint64_t feature = 0;
->> +	u64 reg, size;
->> +	unsigned long vlenb_reg;
->>   	int rc;
->>   
->>   	for (int i = 0; i < KVM_RISCV_ISA_EXT_MAX; i++)
->> @@ -173,6 +175,23 @@ void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcpu_reg_list *c)
->>   		switch (s->feature_type) {
->>   		case VCPU_FEATURE_ISA_EXT:
->>   			feature = RISCV_ISA_EXT_REG(s->feature);
->> +			if (s->feature == KVM_RISCV_ISA_EXT_V) {
->> +				/* Enable V extension so that we can get the vlenb register */
->> +				__vcpu_set_reg(vcpu, feature, 1);
-> We probably want to bail here if __vcpu_set_reg returns an error.
->
-Sure. What do you mean by bail here ?
-Continue to the next reg or just assert if it returns error.
+base-repository: git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git
+base-branch: mpam/move_to_fs/v9_final
+base-commit: dc979ecda2982f7c09de81cde1ec902fdc8e202f
+-- 
+2.48.1
 
-
->> +				/* Compute the correct vector register size */
->> +				rc = __vcpu_get_reg(vcpu, s->regs[4], &vlenb_reg);
-> I see regs[4] is the encoding for vlenb, but I think we need a comment or
-> a define or something in order to reduce head scratching.
->
-Sure. Defined a macro.
-
-
->> +				if (rc < 0)
->> +				/* The vector test may fail if the default reg size doesn't match */
-> I guess this comment should be below the break. We could probably use some
-> blank lines in this code too. But, more importantly, what does this
-> comment mean? That things may not work despite what we're doing here? Or,
-> I think it means that we're doing this just in case the default size we
-> already have set doesn't match. Can we reword it?
-
-It's the latter. I will try to reword it.
-
->> +					break;
->> +				size = __builtin_ctzl(vlenb_reg);
->> +				size <<= KVM_REG_SIZE_SHIFT;
->> +				for (int i = 0; i < 32; i++) {
->> +					reg = KVM_REG_RISCV | KVM_REG_RISCV_VECTOR | size |
->> +					      KVM_REG_RISCV_VECTOR_REG(i);
->> +					s->regs[5 + i] = reg;
->> +				}
->> +				__vcpu_set_reg(vcpu, feature, 0);
-> Switch this to vcpu_set_reg() since we want to assert it worked.
-Done.
->> +			}
-> This if (s->feature == KVM_RISCV_ISA_EXT_V) block can go above the switch
-> since it's not dependent on feature_type. I'd probably also create a
-> function for it in order to keep finalize_vcpu() tidy and help with the
-> indentation depth.
-done.
->>   			break;
->>   		case VCPU_FEATURE_SBI_EXT:
->>   			feature = RISCV_SBI_EXT_REG(s->feature);
->> @@ -408,6 +427,35 @@ static const char *fp_d_id_to_str(const char *prefix, __u64 id)
->>   	return strdup_printf("%lld /* UNKNOWN */", reg_off);
->>   }
->>   
->> +static const char *vector_id_to_str(const char *prefix, __u64 id)
->> +{
->> +	/* reg_off is the offset into struct __riscv_v_ext_state */
->> +	__u64 reg_off = id & ~(REG_MASK | KVM_REG_RISCV_VECTOR);
->> +	int reg_index = 0;
->> +
->> +	assert((id & KVM_REG_RISCV_TYPE_MASK) == KVM_REG_RISCV_VECTOR);
->> +
->> +	if (reg_off >= KVM_REG_RISCV_VECTOR_REG(0))
->> +		reg_index = reg_off -  KVM_REG_RISCV_VECTOR_REG(0);
->> +	switch (reg_off) {
->> +	case KVM_REG_RISCV_VECTOR_REG(0) ...
->> +	     KVM_REG_RISCV_VECTOR_REG(31):
->> +		return strdup_printf("KVM_REG_RISCV_VECTOR_REG(%d)", reg_index);
->> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vstart):
->> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vstart)";
->> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vl):
->> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vl)";
->> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vtype):
->> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vtype)";
->> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vcsr):
->> +		return "KVM_RISCV_VCPU_VECTOR_CSR_REG(vcsr)";
->> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vlenb):
->> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vlenb)";
->> +	}
->> +
->> +	return strdup_printf("%lld /* UNKNOWN */", reg_off);
->> +}
->> +
->>   #define KVM_ISA_EXT_ARR(ext)		\
->>   [KVM_RISCV_ISA_EXT_##ext] = "KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_" #ext
->>   
->> @@ -635,6 +683,9 @@ void print_reg(const char *prefix, __u64 id)
->>   	case KVM_REG_SIZE_U128:
->>   		reg_size = "KVM_REG_SIZE_U128";
->>   		break;
->> +	case KVM_REG_SIZE_U256:
->> +		reg_size = "KVM_REG_SIZE_U256";
->> +		break;
->>   	default:
->>   		printf("\tKVM_REG_RISCV | (%lld << KVM_REG_SIZE_SHIFT) | 0x%llx /* UNKNOWN */,\n",
->>   		       (id & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT, id & ~REG_MASK);
->> @@ -666,6 +717,10 @@ void print_reg(const char *prefix, __u64 id)
->>   		printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_FP_D | %s,\n",
->>   				reg_size, fp_d_id_to_str(prefix, id));
->>   		break;
->> +	case KVM_REG_RISCV_VECTOR:
->> +		printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_VECTOR | %s,\n",
->> +		       reg_size, vector_id_to_str(prefix, id));
->> +		break;
->>   	case KVM_REG_RISCV_ISA_EXT:
->>   		printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_ISA_EXT | %s,\n",
->>   				reg_size, isa_ext_id_to_str(prefix, id));
->> @@ -870,6 +925,54 @@ static __u64 fp_d_regs[] = {
->>   	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_D,
->>   };
->>   
->> +/* Define a default vector registers with length. This will be overwritten at runtime */
->> +static __u64 vector_regs[] = {
->> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
->> +	KVM_REG_RISCV_VECTOR_CSR_REG(vstart),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
->> +	KVM_REG_RISCV_VECTOR_CSR_REG(vl),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
->> +	KVM_REG_RISCV_VECTOR_CSR_REG(vtype),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
->> +	KVM_REG_RISCV_VECTOR_CSR_REG(vcsr),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR |
->> +	KVM_REG_RISCV_VECTOR_CSR_REG(vlenb),
-> Let these lines stick out to be easier to read and ensure one register
-> encoding per line (we don't care about line length at all in this file :-)
->
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(0),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(1),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(2),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(3),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(4),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(5),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(6),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(7),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(8),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(9),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(10),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(11),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(12),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(13),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(14),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(15),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(16),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(17),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(18),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(19),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(20),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(21),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(22),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(23),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(24),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(25),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(26),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(27),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(28),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(29),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(30),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(31),
->> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE |
->> +	KVM_RISCV_ISA_EXT_V,
-> should also stick out
->
->> +};
->> +
->>   #define SUBLIST_BASE \
->>   	{"base", .regs = base_regs, .regs_n = ARRAY_SIZE(base_regs), \
->>   	 .skips_set = base_skips_set, .skips_set_n = ARRAY_SIZE(base_skips_set),}
->> @@ -894,6 +997,10 @@ static __u64 fp_d_regs[] = {
->>   	{"fp_d", .feature = KVM_RISCV_ISA_EXT_D, .regs = fp_d_regs, \
->>   		.regs_n = ARRAY_SIZE(fp_d_regs),}
->>   
->> +#define SUBLIST_V \
->> +	{"v", .feature = KVM_RISCV_ISA_EXT_V, .regs = vector_regs, \
->> +		.regs_n = ARRAY_SIZE(vector_regs),}
-> I'd also let this stick out since it won't even be 100 chars.
->
-It is actually little longer than 100 (103) but it is definitely more 
-readable if it sticks out.
-Fixed all the truncated lines.
->> +
->>   #define KVM_ISA_EXT_SIMPLE_CONFIG(ext, extu)			\
->>   static __u64 regs_##ext[] = {					\
->>   	KVM_REG_RISCV | KVM_REG_SIZE_ULONG |			\
->> @@ -962,6 +1069,7 @@ KVM_SBI_EXT_SIMPLE_CONFIG(susp, SUSP);
->>   KVM_ISA_EXT_SUBLIST_CONFIG(aia, AIA);
->>   KVM_ISA_EXT_SUBLIST_CONFIG(fp_f, FP_F);
->>   KVM_ISA_EXT_SUBLIST_CONFIG(fp_d, FP_D);
->> +KVM_ISA_EXT_SUBLIST_CONFIG(v, V);
->>   KVM_ISA_EXT_SIMPLE_CONFIG(h, H);
->>   KVM_ISA_EXT_SIMPLE_CONFIG(smnpm, SMNPM);
->>   KVM_ISA_EXT_SUBLIST_CONFIG(smstateen, SMSTATEEN);
->> @@ -1034,6 +1142,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
->>   	&config_fp_f,
->>   	&config_fp_d,
->>   	&config_h,
->> +	&config_v,
->>   	&config_smnpm,
->>   	&config_smstateen,
->>   	&config_sscofpmf,
->>
->> -- 
->> 2.43.0
->>
-> Thanks,
-> drew
 
