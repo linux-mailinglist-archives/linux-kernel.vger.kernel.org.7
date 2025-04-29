@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-625405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CE5AA110A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:55:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BDFAA1113
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1808189A9D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:55:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7EC73B9E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E8923ED6A;
-	Tue, 29 Apr 2025 15:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73D924290B;
+	Tue, 29 Apr 2025 15:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fHpZJ9lc"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O/USvDw8"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F67E23E32B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C6C24167F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745942109; cv=none; b=vBKnE32SxwRr5gzDBDquNg6t51l+flAXBHNIfxqOoFz+cawp3LmhzWI/yoiCL52sSn2bWZx8bD1+2WOcCGEZ9NklJuGMzN4getHfpFMdAM43HCM7wroHhjSM17mRy/PLUoUL5GlDzQPiO+lunvMUoeyrRLD8xEwpPxG1PivEy3U=
+	t=1745942199; cv=none; b=ikfgDbLwLOwx1gSQBTK85AZ1f3DDMzDdsQFZdSjBNVHXy2oOQF+PHxEpKO72NP1H5ycMx7yfMYnLFLApSUcHp3C9ixg80rwtWyikHH8fPI3MHvEZm0IzOqfNDRAcVFZdJLW0qF73mBYExb0gCdWhzj0SH7iRYi3mExhBDwaPu/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745942109; c=relaxed/simple;
-	bh=C2yit2/4ph5Fuf8jW69Kb4trJBdX2LSCMXtWurKfb00=;
+	s=arc-20240116; t=1745942199; c=relaxed/simple;
+	bh=PksiWfpMfxllb9cMtMeDE5xqZSJKQGuK3D2npFWtovY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MVa6Ysrl9As7KnkkVSB0oTFZ/0sxziaRkkHYCLBq736zoQG5MJAqSINO4BqOnfq/Is5+1c/QKUi4NRVUpCwsGd7+ZF/dkad54FnO1BTVJqiNeWZ9IFQ/WKHw9ZArn5O7oE4fUMk7EQPtxVs/xr9x4NzDzgCZGC296Jut/m461Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fHpZJ9lc; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-74019695377so2005078b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:55:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=N39S6pP1ep/pC4fqFTjODihydJajbVLTusO6DLzHN1lWKm70Pd8d49bGcdV+4H/9aO8Oqecd6HPNkmkEv9pJ+dE53PA6dcYwDwYKbD8MBCAyXmx7MoZ5oo7ywbQf4V8pC6lCuMF9orQcud2B5V/ICnVP59JO5S4z8dvYWiBaHJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O/USvDw8; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso1992a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:56:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1745942102; x=1746546902; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745942196; x=1746546996; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yw4dRegYXEd+wmbXYe4jM8oKmljBSa+e8EyYUljkOc0=;
-        b=fHpZJ9lcGsnBhfcSKUz0nucxJ/w1Xt84sQ0aV4xrn4u1Nt1JggVlOWu3Mspc2D1bgD
-         DMY0K6WjxfEZ+ptBHpT31TqU4vM04c4QxVR+DRYfhxyex4eXKsJy1n8a94EM3XIlUIjE
-         RuG3VZAsswC8yEmp1o/1DYvW7AkWXOuNdjkXI=
+        bh=PksiWfpMfxllb9cMtMeDE5xqZSJKQGuK3D2npFWtovY=;
+        b=O/USvDw8of1oGQ9GiuPDnsjhFb+4Hax6Oh5hkKMjDJozdj2o1GWvM+XqwdOhdzlgDf
+         4MCRPNyTVTo3rrOYBImstWzN7PdKlwN6zIO5QMaRqgv2g9kNUb2JmWZpSUnwzJPASmvw
+         ojVKVpD5HoBJhaAn+n/Cl/Cj/LX9+PJMApIeIuVN3TKi6mCNqC4NbDsZEeZLhS5amTcX
+         6NiH9H1rkZNn//7U6BdmGEa/o9x3f1LnBQNSkT3fW+qtBaiaq0idGJHLqIW9IpoGLsEC
+         j5RH6TXJ/0fHjj9zb+PGhwVvYTR7OYo0ka98XXaLGv9wgvilcm7osgx1dKjYeywpsLQ6
+         mLnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745942102; x=1746546902;
+        d=1e100.net; s=20230601; t=1745942196; x=1746546996;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Yw4dRegYXEd+wmbXYe4jM8oKmljBSa+e8EyYUljkOc0=;
-        b=f9fgVbGMYIG8sOtfYsTeNoghEv2x7QyT1uvnCK7U4nvQRUCWPLeEkYnGe809wFWDma
-         GtWmCyvnlitdQPHCcA/wfRtEXt1WdvwA+Gd1Nn0Wru7Qp5ZsNLnvdFPqTouQkWdyrAmR
-         TYOnPJvhPGIgdLjoFNkQ8GSMdv5ca1GhVIfkiIRnOb9dgl6Zhrn4NIKGk8/CsS0wi1Yr
-         cY2d7BvNx5DcDkiN2ITYBnh6J9mH+iAvf95Jypr/psmSuAcGtXdcGg9ni55aNQtkPSRz
-         1G4xfxKCN8UFQiCDC0c3kJOjs3vddhay7MzvowFOGhszV7PqTRWzA1RAJL+DmA+UMAj/
-         t0tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiXEJjUx2qJWdxVVeQtauCVpDAhSd11sfGb/+eXDZLzpUA4dH4W8qIGksTI2V5Hq6sWFO+4f7+HxJTxxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFWBK7RjHmkO0ly3qtT2KU9CKdekBL4bcSvUYxFQhXUmnzjzco
-	+/5B1f5T9D7vmLmhezpVcSnKVCG07hmdbpNHt9jgXNKnDZEocMS3H7b47C6+v2SFggeJy8tC9hk
-	=
-X-Gm-Gg: ASbGncvTw7AulFghxkuLu0uy7v/x4hRASEaffF4PnaQwePbUJbAnvG9jlzq/hF6batN
-	8L++kbcCb8a+gUTcV5v6WIYCgBITlxSrwbbbyyvoSfsXv3cL6H6OOZCiUKpO6aRhjb6uaBi1NGG
-	DjzRZh2Nh0r0FYQNCfXzuyFoAoeNWOUqcTeenwAo6UdRvevHfn15wgZmEoUfEfc+9dFteZgE2xI
-	npAA46tAG5N9eDt9CKFstTx2hhHzZltmppqPwCeBfXCEPOc9fRX6MgqP1xk6AA2NghHfjr9DNJ0
-	+jcKckDCA3alGIKdwq4dBx23PGcgu2bxP0nBuYy5OKYTzNskLiuVyz5NRJyTb/bN+l1+EsOtK1j
-	NZfmB
-X-Google-Smtp-Source: AGHT+IF5bv4uiNyks8RRYjxvd0IE41mpvNsmFeqpfxdzLgptD1YT1Pxfpx7YnEWcU78z8jew7ij49g==
-X-Received: by 2002:a05:6a00:2446:b0:72f:590f:2859 with SMTP id d2e1a72fcca58-740271687dcmr5342887b3a.13.1745942102446;
-        Tue, 29 Apr 2025 08:55:02 -0700 (PDT)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com. [209.85.216.43])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25941be8sm10455244b3a.58.2025.04.29.08.55.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 08:55:00 -0700 (PDT)
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff64550991so4971205a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:55:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWs1IDSegQR71fPaUIIcRXuAn431uqlpyPJdA3iK6/YQIsoq2VJT3QPTbvnAj+lxN1x7qpRiEUYpV0xkO8=@vger.kernel.org
-X-Received: by 2002:a17:90b:55d0:b0:2ee:c2b5:97a0 with SMTP id
- 98e67ed59e1d1-30a21593a3emr5985847a91.25.1745942100102; Tue, 29 Apr 2025
- 08:55:00 -0700 (PDT)
+        bh=PksiWfpMfxllb9cMtMeDE5xqZSJKQGuK3D2npFWtovY=;
+        b=sGTUQvA3QenmkBMoyu2lv6/WAdGWpFSrU4TFdaNImJgst57fY3bV3qHXIlPSSM5tEY
+         y0FIUFSL8RkGGJSU2sixcGYi7Ykbag2hHJ0FQqomj/qMKjPm4YZZOxMICa9L0x6csPGG
+         ORHpPOe5IyfDtrpH40gPjsQvW2MiBsvYW6IfjU5vnaM2h9iw2oy9k0JqikHsZPjkBnZ3
+         SJ7BnEmS4BzFoEjkzVfS7tRmCW4jBKikHrt5ZeDwSrWiuFp1jtQWmd3VgOgOSes3JL92
+         eGgVDsi2nHKygqRoyT2p4ZQ9hTs/COyWCHQ8CvngPdXjCXhTKe7xk1zImqYieL9XAt0c
+         l9xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuQqziHXR8kFq8cpCmt0e5JPj3sA45h8n77yNjpwbYGrDvXkNnKLYgfLah2qRmS+adHeUnMAuIIkZXp9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP9jwnMqX2a5JsFXFf3ehDE2SWC1CH/fswicRM0GDcvwSmdJ8c
+	zr0L31IRDfNTNXDJzL+jpN9y/+IxoEhFNJRWz3v+Wo8mkfaybuSU0lUocGMIvQwQG6Bggz7CtBo
+	misToK1a+9HF3fEZalVx/VnA8u4xgow3TKXSY
+X-Gm-Gg: ASbGnctzYkFAxEEMh3v0QFsnjyOMavzIb3yCs/+I0QBgInnabk5kL0aHI3rpF/d7Vdj
+	woKuxwc2uK93vLc1KuBr/ec0/pQIB2kFsHSEaSCf0QjxlN3mkrDDpjQ2zgov7geUAxPsCV1+1gz
+	fTfx3Y4IMrHdUJjNxozkfT/1yADWI54cMGY4atU9WUu3mQo3r11w==
+X-Google-Smtp-Source: AGHT+IGtxlZGWu2Je/bOBDJTv80S1Q80Y7hLVWaw/Dsh1sFOZ7mVM95j4NTnHLX0IbqUIKK8zCAe/YhlOZPXyx67i/w=
+X-Received: by 2002:a50:cd0f:0:b0:5e5:7c1:43bd with SMTP id
+ 4fb4d7f45d1cf-5f83c1b5a74mr91868a12.1.1745942195429; Tue, 29 Apr 2025
+ 08:56:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-drm-msm-gpu-hot-devfreq-boot-v1-1-8aa9c5f266b4@linaro.org>
-In-Reply-To: <20250429-drm-msm-gpu-hot-devfreq-boot-v1-1-8aa9c5f266b4@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 29 Apr 2025 08:54:47 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UjtkFY=1V5mFpoyfe3yvxUaRLaqXy1cFfeXE_Ka9W1iQ@mail.gmail.com>
-X-Gm-Features: ATxdqUGCzdY0LXwBhAEJ2CeDRyHbock5i9Oan9LqNpeHcunKB9U1sJnJz2v4j0U
-Message-ID: <CAD=FV=UjtkFY=1V5mFpoyfe3yvxUaRLaqXy1cFfeXE_Ka9W1iQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/gpu: Fix crash when throttling GPU immediately
- during boot
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-9-surenb@google.com>
+ <CAEf4BzabPLJTy1U=aBrGZqKpskNYvj5MYuhPHSh_=hjmVJMvrg@mail.gmail.com>
+In-Reply-To: <CAEf4BzabPLJTy1U=aBrGZqKpskNYvj5MYuhPHSh_=hjmVJMvrg@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 29 Apr 2025 17:55:59 +0200
+X-Gm-Features: ATxdqUFo7EtQYKmtjBK-XwiZ1ZSWDYl5j8WIiYqQOeXkDF7OdcxVClYh41AITzo
+Message-ID: <CAG48ez29frEbJG+ySVARX-bO_QWe8eUbZiV8Jq2sqYemfuqP_g@mail.gmail.com>
+Subject: Re: [PATCH v3 8/8] mm/maps: execute PROCMAP_QUERY ioctl under RCU
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
+	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
+	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Apr 23, 2025 at 12:54=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Fri, Apr 18, 2025 at 10:50=E2=80=AFAM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> > Utilize speculative vma lookup to find and snapshot a vma without
+> > taking mmap_lock during PROCMAP_QUERY ioctl execution. Concurrent
+> > address space modifications are detected and the lookup is retried.
+> > While we take the mmap_lock for reading during such contention, we
+> > do that momentarily only to record new mm_wr_seq counter.
+>
+> PROCMAP_QUERY is an even more obvious candidate for fully lockless
+> speculation, IMO (because it's more obvious that vma's use is
+> localized to do_procmap_query(), instead of being spread across
+> m_start/m_next and m_show as with seq_file approach). We do
+> rcu_read_lock(), mmap_lock_speculate_try_begin(), query for VMA (no
+> mmap_read_lock), use that VMA to produce (speculative) output, and
+> then validate that VMA or mm_struct didn't change with
+> mmap_lock_speculate_retry(). If it did - retry, if not - we are done.
+> No need for vma_copy and any gets/puts, no?
 
-On Tue, Apr 29, 2025 at 1:34=E2=80=AFAM Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> There is a small chance that the GPU is already hot during boot. In that
-> case, the call to of_devfreq_cooling_register() will immediately try to
-> apply devfreq cooling, as seen in the following crash:
->
->   Unable to handle kernel paging request at virtual address 0000000000014=
-110
->   pc : a6xx_gpu_busy+0x1c/0x58 [msm]
->   lr : msm_devfreq_get_dev_status+0xbc/0x140 [msm]
->   Call trace:
->    a6xx_gpu_busy+0x1c/0x58 [msm] (P)
->    devfreq_simple_ondemand_func+0x3c/0x150
->    devfreq_update_target+0x44/0xd8
->    qos_max_notifier_call+0x30/0x84
->    blocking_notifier_call_chain+0x6c/0xa0
->    pm_qos_update_target+0xd0/0x110
->    freq_qos_apply+0x3c/0x74
->    apply_constraint+0x88/0x148
->    __dev_pm_qos_update_request+0x7c/0xcc
->    dev_pm_qos_update_request+0x38/0x5c
->    devfreq_cooling_set_cur_state+0x98/0xf0
->    __thermal_cdev_update+0x64/0xb4
->    thermal_cdev_update+0x4c/0x58
->    step_wise_manage+0x1f0/0x318
->    __thermal_zone_device_update+0x278/0x424
->    __thermal_cooling_device_register+0x2bc/0x308
->    thermal_of_cooling_device_register+0x10/0x1c
->    of_devfreq_cooling_register_power+0x240/0x2bc
->    of_devfreq_cooling_register+0x14/0x20
->    msm_devfreq_init+0xc4/0x1a0 [msm]
->    msm_gpu_init+0x304/0x574 [msm]
->    adreno_gpu_init+0x1c4/0x2e0 [msm]
->    a6xx_gpu_init+0x5c8/0x9c8 [msm]
->    adreno_bind+0x2a8/0x33c [msm]
->    ...
->
-> At this point we haven't initialized the GMU at all yet, so we cannot rea=
-d
-> the GMU registers inside a6xx_gpu_busy(). A similar issue was fixed befor=
-e
-> in commit 6694482a70e9 ("drm/msm: Avoid unclocked GMU register access in
-> 6xx gpu_busy"): msm_devfreq_init() does call devfreq_suspend_device(), bu=
-t
-> unlike msm_devfreq_suspend(), it doesn't set the df->suspended flag
-> accordingly. This means the df->suspended flag does not match the actual
-> devfreq state after initialization and msm_devfreq_get_dev_status() will
-> end up accessing GMU registers, causing the crash.
->
-> Fix this by setting df->suspended correctly during initialization.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 6694482a70e9 ("drm/msm: Avoid unclocked GMU register access in 6xx=
- gpu_busy")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->  drivers/gpu/drm/msm/msm_gpu_devfreq.c | 1 +
->  1 file changed, 1 insertion(+)
+I really strongly dislike this "fully lockless" approach because it
+means we get data races all over the place, and it gets hard to reason
+about what happens especially if we do anything other than reading
+plain data from the VMA. When reading the implementation of
+do_procmap_query(), at basically every memory read you'd have to think
+twice as hard to figure out which fields can be concurrently updated
+elsewhere and whether the subsequent sequence count recheck can
+recover from the resulting badness.
 
-Thanks!
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Just as one example, I think get_vma_name() could (depending on
+compiler optimizations) crash with a NULL deref if the VMA's ->vm_ops
+pointer is concurrently changed to &vma_dummy_vm_ops by vma_close()
+between "if (vma->vm_ops && vma->vm_ops->name)" and
+"vma->vm_ops->name(vma)". And I think this illustrates how the "fully
+lockless" approach creates more implicit assumptions about the
+behavior of core MM code, which could be broken by future changes to
+MM code.
 
