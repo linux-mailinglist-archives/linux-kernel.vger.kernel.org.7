@@ -1,150 +1,102 @@
-Return-Path: <linux-kernel+bounces-624799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602C1AA07D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51E1AA07DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BC5189244D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A4141A847A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35C629E066;
-	Tue, 29 Apr 2025 09:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BBF2BE7D1;
+	Tue, 29 Apr 2025 09:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JKcVKfH5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="YyoWkTsY"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD291C862F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE902BE7B1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745920538; cv=none; b=fdlWT/0SzJgaUb6kftpOHzuv5vvdPRyMfL4IajeAOwtQR5yqS3doYo8zdPBLB2+gz/JiDNFBIxxoRV3lmbwJEHOH7xi7hfuEXQJTpRpGTuZWEYNnrpj4gOndporLbpUULjhFJFe4qgF63nDh+rNAvx0XIZmOzI5YfhxjTTem180=
+	t=1745920597; cv=none; b=r+p0e3d0qo+MqKtMm1F6EDPBLOBhhNO7TaYfrhW0rjx9EBCbiU4YY4w/qYkiR6B00X0azu1vjhqiU6oFlJWAQrXe9J+dZRxRcUNL8TywN+i+nPh19uoudkwwkNELS1TKYs05jKoDgtJ6Xa6OA6kO+fkiyQHHg+aaEE98x/xzips=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745920538; c=relaxed/simple;
-	bh=keJfQAoUIwU/GXMp5g4AzFuoVvBz2pxzJTdJyj/jCAI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UfxN7ziB4lejr4YW+daz4R/Ao64lbf7FDi9+PEyQdO7VYhnatOP48GdwVibt4OMtB+uT7jeGQjL1QkMeShHjQtqFoAiNROug/V8Q+0EN96YszaKEpwIKewprX5UvaPfmvPfWK0LxEIZmVs9llS6VvSE67LD6x0Q3cVVyelXg13s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JKcVKfH5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745920535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xntjKgnfwZOTv8Lz3QOtpBAGgzG+hyrtl5zomojulJw=;
-	b=JKcVKfH5DPOdx1Dn63HCw0g6tyYgOJ9XZjIgjq8jcUtTzmwzUyjlW5ncVhScoNu33oSzWp
-	V94pRGpgrdsDfJeinjBhLG7h5ycxW/kCpBTmPeXIIq8cva1xFHb4pcevBwKy4V6YznxlLA
-	Ev4c5t0daOq1iKmbZRGoO/Rkn9kbY9Q=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-MG3wJZKpO8GDu05dvau4Hw-1; Tue, 29 Apr 2025 05:55:33 -0400
-X-MC-Unique: MG3wJZKpO8GDu05dvau4Hw-1
-X-Mimecast-MFC-AGG-ID: MG3wJZKpO8GDu05dvau4Hw_1745920532
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39d9243b1c2so1905026f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:55:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745920532; x=1746525332;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xntjKgnfwZOTv8Lz3QOtpBAGgzG+hyrtl5zomojulJw=;
-        b=h6oLyEUL3kem9mhojWfwMWHuvVxT5+gNeSNYgEUlAxXxhoRbrUtB3aSssYZoRUrr/b
-         qwZy7sAbfSsr4dhGvWAEsafTM6dslvNoa0ynA0e+Y66hui+2L9Ltuf1ZgeTBKHGgbszg
-         /DIPcKlVvnjzas3oWWL+VoVLWlaauMoSihuWGoYxfqRXPJAZU98Uu+sAwK8lY9N/Dwum
-         KVPKYxveTNIKiTwM5A16ViG87ThnpfIXOgbb8Cu8f5ERbMUOpMBQkRJYR6ro1ndVybg5
-         EEgna6RQdSp8vPRYeqsNhRwnaQGNoJRNExBfk5eFPikxW+UyfeJKxQLlOvWvMdmQ9kP0
-         Myaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUazRuG37nd1BZlpBnEz3/Z0cPFMJWE7WRC0p2ZYqZZTYlSILvrRAEQ9r1fAa0nFxMMfS7Cf1HNhGORgZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKLkkYiStmBwMTdZQ+KlxTTA2Tbugt32tEG/smoaVaTOHLvKHQ
-	rzGI99DuV0FDD2Fq9YnX4XqM4BwtVWMgQnpOV4wIWw7HkF4ZBHQ89qrkZ8nt/RJ3qTsQGoImp2s
-	xx5wZ/U/EHIZDEuT4tJ8cuT2Pqj65dHWPl6piwxVR0dUDkTUKD53c1BUpRAOcicnRaT/3bZMErw
-	v6vKlnMbXKhg4u9TrszofodTRCUgN/rP8jZI05jrlG8iQFUA==
-X-Gm-Gg: ASbGncuIAPuxSCIJ1nh7Dp2+aOv1qxsBc5m4JfT/7uABxeOzL89a2SimFz5F0NAR6hA
-	jAaX5cn6RnejaRPqxWtac6/t65q07nlA9YEURlX7LlvazohDl++r29H/QFBVfxOd9ZgK/SsGpVC
-	IqBtdH4QgcCrV7lrIhKTm/VNZJrwidI0ZHUuP7yTc3jns1ZkqeVvm6pOTvkBlEkHrd3FZZHLAhb
-	XRUWF2noCUcjK/2BNl7P8g71Ow70dndVWGr066TOm8cAqia8mAbj4S8e/H0w6oXJBBzYgX2yJgn
-	h3oZO+o=
-X-Received: by 2002:a05:6000:310f:b0:3a0:8ac0:e496 with SMTP id ffacd0b85a97d-3a08ac0e542mr1848879f8f.7.1745920532257;
-        Tue, 29 Apr 2025 02:55:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfIWeyLjpuG6s2coM0Lu8kDibF6g1giWUUP9D7vYfEQD+QdfZivGSCk1W0/tffaKL2WnLAcw==
-X-Received: by 2002:a05:6000:310f:b0:3a0:8ac0:e496 with SMTP id ffacd0b85a97d-3a08ac0e542mr1848828f8f.7.1745920531827;
-        Tue, 29 Apr 2025 02:55:31 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5c7d1sm13359287f8f.83.2025.04.29.02.55.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 02:55:31 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: x86@kernel.org, linux-efi@vger.kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Jones <pjones@redhat.com>, Daniel Berrange <berrange@redhat.com>, Emanuele
- Giuseppe Esposito <eesposit@redhat.com>, Gerd Hoffmann
- <kraxel@redhat.com>, Greg KH <gregkh@linuxfoundation.org>, Luca Boccassi
- <bluca@debian.org>, Peter Zijlstra <peterz@infradead.org>, Matthew Garrett
- <mjg59@srcf.ucam.org>, James Bottomley
- <James.Bottomley@hansenpartnership.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/efi: Implement support for embedding SBAT data
- for x86
-In-Reply-To: <CAMj1kXFMmhROmaDZ0gsw+ozG5iSkMvSXb15qexToUSAFyBn5hQ@mail.gmail.com>
-References: <20250424080950.289864-1-vkuznets@redhat.com>
- <20250424080950.289864-3-vkuznets@redhat.com>
- <CAMj1kXFMmhROmaDZ0gsw+ozG5iSkMvSXb15qexToUSAFyBn5hQ@mail.gmail.com>
-Date: Tue, 29 Apr 2025 11:55:29 +0200
-Message-ID: <87ikmn9tri.fsf@redhat.com>
+	s=arc-20240116; t=1745920597; c=relaxed/simple;
+	bh=bsesO5INjgJ4tFPSiwNnw0t550lxr2iNO7jBXLmqZdg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L4SmtmaFY1jbZjEwZ/8oDMnUr3BcgFadFEbbHEktPjtdK7pEL0bB3iweEO2rQuo1KuroOtVpIBgRT6weeZNOHJK6dA+lxvyKNb4J0wb6BqPlP9nVC4B2woHixeN5WrEFnHVpL8x+S8jdzvNrkHLBdNtZ0b1/0Z/aCnW8mBT5LkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=YyoWkTsY; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1745920584; x=1746179784;
+	bh=e7lRdKMVAWll060Jx1VwcjOha4eoXllb41i279BmXrk=;
+	h=From:Subject:Date:Message-Id:To:Cc:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector:List-Unsubscribe:
+	 List-Unsubscribe-Post;
+	b=YyoWkTsYuTVNJNIgYRFI3Zbo3S0jbeKL1ztrcAIsBSoUIh53SnnRAD2y1fXFiF8xl
+	 2FXxiPIaKsjYJXNYYM1AGYgwZS59ViMDif7zAssWeOJ7HxXKDWRWFL3THbdlUaTbEF
+	 l0tWbkM2COdfo9nGyXhzZTeHqzYakpLa0mAPV9KBOrC2TEW5hnG99TCEGLjyG3UNoT
+	 i3+7H4hfeDZuEn03TDGmLZnMFeQiuqaKBdQc47K57wTqtZk3pzmvRPKRB+NJ7WKTiV
+	 qyI2XvQof3zRLjUwPsENCZaAclmDYn6zxnDpWDle704vCpKzcgigIok8/M+lp9Pvqn
+	 20VqIXX7JwkWg==
+From: Esben Haabendal <esben@geanix.com>
+Subject: [PATCH v2 0/2] input: touch: goodix: Extend reset pull-up fix to
+ DT platforms
+Date: Tue, 29 Apr 2025 11:56:10 +0200
+Message-Id: <20250429-goodix-no-reset-pull-up-v2-0-0687a4ad5a04@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADqiEGgC/4WNQQ6CMBBFr0Jm7ZhSQIWV9zAsWhhgEmybFhoM4
+ e5WLuDyveS/v0MgzxSgyXbwFDmwNQnkJYNuUmYk5D4xSCErUUqJo7U9b2gsegq0oFvnGVeHvaR
+ S1aogcVeQ1s7TwNtZfrWJJw6L9Z/zKOY/+78ZcxRY1I9C61ulcj08R1KGt2tn39Aex/EFKzORQ
+ b8AAAA=
+X-Change-ID: 20250422-goodix-no-reset-pull-up-d2e4a9a3e07a
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745920580; l=951;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=bsesO5INjgJ4tFPSiwNnw0t550lxr2iNO7jBXLmqZdg=;
+ b=C20GlFKX0hPHfKIF6TVIZt5m8/eA5lFrv/t61lJ6y9g+Z1YKm6JSRJwkkAcEOIKyxCWnWZpIb
+ BF3xZT0LSVwBxTfQ6kBNc3PV7zoMcAuVDJjcXvpFqQHjle/ktJesH4Q
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
 
-Ard Biesheuvel <ardb@kernel.org> writes:
+This extends the fix for platforms without external pull-up on reset pin
+to device-tree platforms.
 
-> On Thu, 24 Apr 2025 at 10:10, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+Changes in v2:
+- Added vendor prefix to property (goodix,no-reset-pull-up)
+- Simplified check to only look at gpiod_rst_flags.
+- Link to v1: https://lore.kernel.org/r/20250422-goodix-no-reset-pull-up-v1-0-3983bb65a1bf@geanix.com
 
-...
+---
+Esben Haabendal (2):
+      dt-bindings: input: touchscreen: goodix: Add no-reset-pull-up property
+      Input: goodix - Allow DT specification of missing reset pull-up
 
->> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
->> index fdbce022db55..b9b80eccdc02 100644
->> --- a/arch/x86/boot/compressed/Makefile
->> +++ b/arch/x86/boot/compressed/Makefile
->> @@ -107,6 +107,8 @@ vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
->>  vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
->>  vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
->>
->> +vmlinux-objs-$(CONFIG_EFI_SBAT) += $(objtree)/drivers/firmware/efi/libstub/sbat.o
->> +
->
-> Please drop this, and put the .incbin directly into header.S
->
+ .../devicetree/bindings/input/touchscreen/goodix.yaml     |  4 ++++
+ drivers/input/touchscreen/goodix.c                        | 15 ++++++++++++---
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+---
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+change-id: 20250422-goodix-no-reset-pull-up-d2e4a9a3e07a
 
-I'm sorry I'm probably missing something important but my understanding
-is that that header.S is compiled into setup.elf:
-
- ld -m elf_x86_64 -z noexecstack --no-warn-rwx-segments  -m elf_i386 -z
- noexecstack -T arch/x86/boot/setup.ld  ... arch/x86/boot/header.o ...  -o arch/x86/boot/setup.elf
-
-and then the result gets concatenated with vmlinux.bin to get bzImage:
-
- objcopy  -O binary arch/x86/boot/setup.elf arch/x86/boot/setup.bin
- cp arch/x86/boot/setup.bin arch/x86/boot/bzImage; truncate -s %4K arch/x86/boot/bzImage; cat arch/x86/boot/vmlinux.bin >>arch/x86/boot/bzImage
-
-so if we want to have SBAT at the very end of bzImage without dirty
-tricks it must be at the very end of vmlinux.bin, not setup.bin. I can,
-of course, use some existing compilation unit but to be honest I can't
-find anything suitable.
-
+Best regards,
 -- 
-Vitaly
+Esben Haabendal <esben@geanix.com>
 
 
