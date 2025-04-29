@@ -1,167 +1,160 @@
-Return-Path: <linux-kernel+bounces-625549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C489AA1746
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75B2AA11B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9354A985C1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62C93B2805
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACF9253322;
-	Tue, 29 Apr 2025 17:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49902472A4;
+	Tue, 29 Apr 2025 16:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="J2J9hjcv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=easyb-ch.20230601.gappssmtp.com header.i=@easyb-ch.20230601.gappssmtp.com header.b="a4FKzEKN"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B36244686;
-	Tue, 29 Apr 2025 17:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879DD23F413
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745948456; cv=none; b=LfTuT3wifO6Ad9TBPPE92eZBD4d/72a0BVaDL4febpSrJNIcYSGKn+wNrjYI9IIpDzb9uKGoNoXz059ZBUm/DFlxawd9e79YlXd2vOxqA+CPrpfAs2UxdSORU4eEOrdpvvZCVGyD/2NOZ9CJ8tgv2rLydAfxKjH5k2kOpppctQ8=
+	t=1745944739; cv=none; b=GLDZN778awiO/THR8YGU5B6DevzdP+c9VbVFAAMbHk+5FGuCsZt6B/0xCcgxMEhaKfNTLs8Xj7f8bdsTY8gP4EJlAdr66eoTsSIYHDKJCaZr70I1vp/ZhkAp+GGdee9N7H+3rsq7NhVKLkzkyIMqkFJk2x50UO0brjP7HpZfpEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745948456; c=relaxed/simple;
-	bh=cHJ7dwYQ7n23rgXBlMOzmLnoczSe1Q7ISQAaHC2jCCI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sn8fm0HDxRqunmA7FXl3kFD3b/ib2Wi5J1gELu5PZ6y+ht79xVfwbbj7nSr99/GnCrWoj2NeG3cue/kr+2j2zlob8YZniu7H5q2/YxJrASN4E+VFos8Jm/Z4Nn2uKM+kxS7F0Fgzm9HhFswXx984HxGS7M1OERjhhlxo7OhHg0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=J2J9hjcv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73649C4CEE3;
-	Tue, 29 Apr 2025 17:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745948455;
-	bh=cHJ7dwYQ7n23rgXBlMOzmLnoczSe1Q7ISQAaHC2jCCI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J2J9hjcvpUFBzmvMxW7EkSiUfZMM/qvlqoO4SIWeeA+so4MCN1KfzHo9IA0T04zut
-	 05H2M2dXbTXIZV0bhUIen3jC4RcNks5KmUkderrcbG3wxfcqGxdnOZOoTPtjy/X/tw
-	 Nfiai9XAmLUQHjJz7uuCX33PTeOtB9NUhK/q3HjI=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Max Grobecker <max@grobecker.info>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 013/373] x86/cpu: Dont clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when running in a virtual machine
-Date: Tue, 29 Apr 2025 18:38:10 +0200
-Message-ID: <20250429161123.680833280@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429161123.119104857@linuxfoundation.org>
-References: <20250429161123.119104857@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1745944739; c=relaxed/simple;
+	bh=hR8Y+nK0cX/CZdCBzLn+W3sfxRoUxjFKeCQdBb+BaYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bGMmC7bPgFK0OPqd5jmIOyZ15Cn8UmgLH97GMx8Fe76HrbkmlSWIVM+d6qmNBFu21FPm5OhZDvRM+lbcyc0O1gbuf8vxbVvF3U3HoSdZU7ViFenSq+RnPzFWFS7UVK7ibhbXq56x1qFOe8gIaKVKpXxwgM55UCWaQB73h7Oa/WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=easyb.ch; spf=none smtp.mailfrom=easyb.ch; dkim=pass (2048-bit key) header.d=easyb-ch.20230601.gappssmtp.com header.i=@easyb-ch.20230601.gappssmtp.com header.b=a4FKzEKN; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=easyb.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easyb.ch
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e6a8aa771e8so5468624276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=easyb-ch.20230601.gappssmtp.com; s=20230601; t=1745944736; x=1746549536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mKJPPGmtZ4Q4FEXLrbVF+XChkMZLyTXErk0JCwdy/xQ=;
+        b=a4FKzEKN+YLks3QNu8GVGLGXipONF0ukBLVeDOqGDULOPB8dCvDeDGrOrnG2RF+Hbr
+         yj90RDrwwu4hbJr0gZpboNQ6SlQ1zmGb/Tj+8KbTvpeG0HhlV0AzKjtIxG3p9pFcFyTp
+         ifIAYzatPar1wSeTyGSSSr/NGndkUv9h4DG+tSibE0LLbjDpvGtNL3n1FhTPw8PYIYGA
+         ltEM8zccIR10PxRsidosJwORNXUeRMb0vFCFzaXakK+eYN2UMH+Fa/RBVpgbZMqZuyNO
+         T/7ZwWvxkJUCihGYXtlNRY2V2a03DMeuEPDaWouoIeRKqaxY1ily/jHzf8a8vNuyVUUn
+         cypQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745944736; x=1746549536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mKJPPGmtZ4Q4FEXLrbVF+XChkMZLyTXErk0JCwdy/xQ=;
+        b=reBSdE8X5CLf+3AVmV+5CisOj7LqsuHF3/aPTDaOvXbwXoN7uUGh/Iz813Yic17D2O
+         izZdq8jAHPrXsgYd3LKMzMQz13+5tBgMoNtcrdQAbatJVOJzs+3cxpSA3YYif9pgMas6
+         eTSAvkz3T64w761cvMdZHmz9p15zo7ga618zwaOw+gi933gxzVpQTfJRdykoyDB21NJB
+         66/vBoLlYvgaff/d2O0R6NdLK0H6ZGnrfd5NsKTlJlYPS7e4HuZDvJnlcvjY7njRg5fR
+         4Nc63m9cppjpOe86gyP5XSvdgFsKU1sl/N5XCSRO7NnRa58o6X8pDE45FoB6+mDiIgof
+         f+yA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6+67Ehty/tSCrGvFllFSbYF6BHypkcVuVvRU5s+Y41jEVUYLecxOsFIYIhmgOm1TxLjX/zhl0M3RCDow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpyRE2H6stzjoKNTQ5m94jcLfYejgLSDxij3RhmNRYL9qwtO1G
+	mxagfQdq1XEO1D6vcgVDJZYGM1Ki09u0eUHwNHsG7YZTCWCb/7RIz+5CJynmMXfh5E8Wx55ChPa
+	F3rQf3zJOKET2V33sJigrWjc5BDw3vh/mRoXluA==
+X-Gm-Gg: ASbGncu6NL26s05EAB94jtspfJtk47n4bBh4DRVW37AWVMy8Mg7Sn7GfnuOVGfU7MIy
+	5Ou+5GqAx0zUQXvnnJJxCryt97U+QaiSa9MfeaRMsifqyaPeh6yqt0AI9wp9TiFTKLdditVqCoS
+	l80dB6ZNB3JQyxKksGsylyg71wteMCWWhDPTQ3+gMdgMkBxY4ny1w=
+X-Google-Smtp-Source: AGHT+IEBBaq5tsglGxhuINvv6IZSxaRI9dE1eDAka1Xuo1qsb8GlnVfNRulVXOsQNgsWdqejnZiq9iGFOJQ10Z6pJ+o=
+X-Received: by 2002:a05:6902:154a:b0:e72:a02e:a797 with SMTP id
+ 3f1490d57ef6-e73511f984dmr5201544276.44.1745944736100; Tue, 29 Apr 2025
+ 09:38:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241107125209.1736277-1-michael.nemanov@ti.com>
+In-Reply-To: <20241107125209.1736277-1-michael.nemanov@ti.com>
+From: Ezra Buehler <ezra@easyb.ch>
+Date: Tue, 29 Apr 2025 18:38:20 +0200
+X-Gm-Features: ATxdqUHV5CP1dNwzjt8THrj9C95bgv7pJhkhoTGKgrCVvTrrD0jY5bAxDeZ-Gnw
+Message-ID: <CAM1KZSnvDqUHd2ENKyaZc=WyRgL18TrsF766_ZJVeeAiPth+Vw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/17] wifi: cc33xx: Add driver for new TI CC33xx
+ wireless device family
+To: Michael Nemanov <michael.nemanov@ti.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sabeeh Khan <sabeeh-khan@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+Hi Michael,
 
-------------------
+On Thu, Nov 7, 2024 at 1:51=E2=80=AFPM Michael Nemanov <michael.nemanov@ti.=
+com> wrote:
+> This series adds support for CC33xx which is a new family of WLAN IEEE802=
+.11 a/b/g/n/ax
+> and BLE 5.4 transceivers by Texas Instruments.
 
-From: Max Grobecker <max@grobecker.info>
+Thanks for going through the effort of upstreaming the driver.
 
-[ Upstream commit a4248ee16f411ac1ea7dfab228a6659b111e3d65 ]
+We have started looking into the CC33xx chips (in conjunction with the
+AM62L SoC) and noticed the following behavior:
 
-When running in a virtual machine, we might see the original hardware CPU
-vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
-hypervisor. In case we run on AMD hardware and the hypervisor sets a model
-ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
-capabilities present to circumvent a bug with some BIOSes in conjunction with
-AMD K8 processors.
+# curl https://speedtest.init7.net/1GB.dd >/dev/null
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Cur=
+rent
+                                 Dload  Upload   Total   Spent    Left  Spe=
+ed
+  4 1024M    4 42.4M    0     0  2358k      0  0:07:24  0:00:18  0:07:06   =
+  0
 
-Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
-bash scripts and prebuilt Docker containers, as it does not need to have
-additionals tools present – even though more reliable ways like using "kcpuid",
-which calls the CPUID instruction instead of parsing a list, should be preferred.
-Scripts, that use /proc/cpuinfo to determine if the current CPU is
-"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
-claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missing
-in that flags list.
+After downloading some megabytes of data, with reasonable speed,
+something seems to lock up and no further communication is possible
+through the Wi-Fi interface.
 
-This can prevent some docker containers from starting or build scripts to create
-unoptimized binaries.
+AFAICT nothing is logged, however, when I unload the driver, I see errors
+like:
 
-Admittably, this is more a small inconvenience than a severe bug in the kernel
-and the shoddy scripts that rely on parsing /proc/cpuinfo
-should be fixed instead.
+[16590.256433] cc33xx: ERROR failed to initiate cmd role disable
+[16590.256446] cc33xx: CC33xx driver attempting recovery
+[16590.256455] cc33xx: Driver being removed, recovery disabled
+[16590.272950] wlan0: deauthenticating from ab:cd:ef:01:23:45 by local
+choice (Reason: 3=3DDEAUTH_LEAVING)
+[16590.784390] cc33xx: WARNING Unable to flush all TX buffers, timed
+out (timeout 500 ms
+[16591.296388] cc33xx: WARNING Unable to flush all TX buffers, timed
+out (timeout 500 ms
+[16591.808379] cc33xx: WARNING Unable to flush all TX buffers, timed
+out (timeout 500 ms
+[16591.816792] wlan0: failed to remove key (0, ab:cd:ef:01:23:45) from
+hardware (-11)
+[16593.840379] cc33xx: WARNING CONFIGURE command NOK
+[16593.845172] cc33xx: WARNING tx param cfg failed: -5
+[16595.856352] cc33xx: WARNING CONFIGURE command NOK
+[16595.861159] cc33xx: WARNING tx param cfg failed: -5
+[16597.872323] cc33xx: WARNING CONFIGURE command NOK
+[16597.877079] cc33xx: WARNING tx param cfg failed: -5
+[16599.888317] cc33xx: WARNING CONFIGURE command NOK
+[16599.893069] cc33xx: WARNING tx param cfg failed: -5
+[16600.400303] cc33xx: WARNING Unable to flush all TX buffers, timed
+out (timeout 500 ms
+[16600.912270] cc33xx: WARNING Unable to flush all TX buffers, timed
+out (timeout 500 ms
+[16600.920388] wlan0: failed to remove key (1, ff:ff:ff:ff:ff:ff) from
+hardware (-11)
 
-This patch adds an additional check to see if we're running inside a
-virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
-understanding, can't be present on a real K8 processor as it was introduced
-only with the later/other Athlon64 models.
+We can easily reproduce this behavior on our ATMDS62LEVM board in
+conjunction with the M2-CC3351 card. We run a Yocto-based distribution
+(Scarthgap) using the latest linux-ti-staging-6.12 kernel recipe (Linux
+6.12.17+).
 
-Example output with the "lahf_lm" flag missing in the flags list
-(should be shown between "hypervisor" and "abm"):
+So far, I haven't tried to dig into this deeper. Any ideas on how to
+debug this further?
 
-    $ cat /proc/cpuinfo
-    processor       : 0
-    vendor_id       : AuthenticAMD
-    cpu family      : 15
-    model           : 6
-    model name      : Common KVM processor
-    stepping        : 1
-    microcode       : 0x1000065
-    cpu MHz         : 2599.998
-    cache size      : 512 KB
-    physical id     : 0
-    siblings        : 1
-    core id         : 0
-    cpu cores       : 1
-    apicid          : 0
-    initial apicid  : 0
-    fpu             : yes
-    fpu_exception   : yes
-    cpuid level     : 13
-    wp              : yes
-    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
-                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp
-                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
-                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt
-                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
-                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
-
-... while kcpuid shows the feature to be present in the CPU:
-
-    # kcpuid -d | grep lahf
-         lahf_lm             - LAHF/SAHF available in 64-bit mode
-
-[ mingo: Updated the comment a bit, incorporated Boris's review feedback. ]
-
-Signed-off-by: Max Grobecker <max@grobecker.info>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index ce5b27db65e10..a8dc7fe5f1003 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -811,7 +811,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 	 * (model = 0x14) and later actually support it.
- 	 * (AMD Erratum #110, docId: 25759).
- 	 */
--	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
-+	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
- 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
- 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
- 			value &= ~BIT_64(32);
--- 
-2.39.5
-
-
-
+Cheers,
+Ezra.
 
