@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-625911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A182DAA3BC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:53:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB7FAA3BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116085A8469
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0040A4624D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C2A2BCF4B;
-	Tue, 29 Apr 2025 22:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2YnkWT7k"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDB82BE0E5;
+	Tue, 29 Apr 2025 22:55:08 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD673C30
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1DA2BCF59;
+	Tue, 29 Apr 2025 22:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745967212; cv=none; b=W9vwQgRN4V3P6Qd5yBB0CNmoh4OjBSeH10g1KKHavSDCtImBChhAwpNjWKUKKiu72AIUuJim4FrzsywUFEplV6YUju2I5LlQpJoglm+fUUc5rPsGix10WWpz/aGMTxTgi4zRK2rn5CnLe1b+tS6HhAt8WmOLbOhu0Ke9jDA6SpE=
+	t=1745967308; cv=none; b=DEYjCkLCNWK4yenZpHSMtvqu8r73H6pGr/I4eY3Onu9lpdDrfCbMHJao0FJ7F6s6Rtw/CW3obcpvSjGWKhWkvJIO63mHuHaBbBcRlXWINZPhyuB0GXALtXBJ2sbr7ZftUF5SMWZqRkttSoLpS2KeVMEjgCcXbfbgAd4Kpn7gxy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745967212; c=relaxed/simple;
-	bh=xZFHk+WaVC7to2xxISx0Q9yhatntxEqd3v9nUB92JWI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mP1uwk+wFQreg0kiqOQeahfi2hK5zUSXxsg9WEkaMThze/vRN1z9cCgdHF8jblBm/g0lZqXdMhuZHpuxDnJFd/9pbGJVc2ghJ3cvPmVkmCaG5LFGO5zhUiTRIP3jCVnrN91Duwp0txBLCd25OFwk4tasjjf1oKAHUcqzJJB3Z6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2YnkWT7k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D900BC4CEE3;
-	Tue, 29 Apr 2025 22:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1745967210;
-	bh=xZFHk+WaVC7to2xxISx0Q9yhatntxEqd3v9nUB92JWI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2YnkWT7k85PFW7TJjBaN9M4mVpr/IK6zgOmOV/OCAIsk3n4lqIi0bv6UZPnfD1Nif
-	 pyEts6ZZyvsVV+rcHbquX1wg4SVUQUXNdiZLTWp+qU/ffJ7aqyv5nGOBIZcQDm/7hf
-	 6WWqpZhG3kb8F4zv8RKDpaLaB02Kq17aTLUw2dwM=
-Date: Tue, 29 Apr 2025 15:53:29 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Carlos Bilbao <bilbao@vt.edu>
-Cc: carlos.bilbao@kernel.org, tglx@linutronix.de, seanjc@google.com,
- jan.glauber@gmail.com, pmladek@suse.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- takakura@valinux.co.jp, john.ogness@linutronix.de, x86@kernel.org
-Subject: Re: [PATCH v3 0/2] Reduce CPU consumption after panic
-Message-Id: <20250429155329.73bd3f5835e8d6a2864873f9@linux-foundation.org>
-In-Reply-To: <96516ac6-777a-469a-b5d3-9897a0e40de5@vt.edu>
-References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
-	<20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
-	<96516ac6-777a-469a-b5d3-9897a0e40de5@vt.edu>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745967308; c=relaxed/simple;
+	bh=Qg7dbWo30d2R/S/bXavA5Q5cFMZ+5uXYXTvq8MvcP/I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YgH6muboJ4YS48iS3iu5o+OeEDSDm77XEL68czts/JeBZAuIRBVg5QVcaOdMNq/djxGZimHzwdOTOF42Qdip+HAB1gIGq8eNY/ViaeqsDEzQ+/lFI1313wT5irVHmUIJ3RkRe8MJ+Z5FnpAnAiAiV7Hyk+a+/tY0MKrWzlXCIeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB37C4AF09;
+	Tue, 29 Apr 2025 22:55:07 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 98054180E71; Wed, 30 Apr 2025 00:55:05 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v2 0/5] power: supply: core: convert to fwnode
+Date: Wed, 30 Apr 2025 00:54:22 +0200
+Message-Id: <20250430-psy-core-convert-to-fwnode-v2-0-f9643b958677@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ5YEWgC/33NwQqDMAzG8VeRnJeh1QrutPcYHmpNZ8E1I5VuI
+ r77OmHXXQL/HH7fBpHEU4RLsYFQ8tFzyKFOBdjJhDuhH3ODKpUularwGVe0LJRPSCQLLozuFXg
+ kHLXRTaOcrV0HGXgKOf8+8Fufe/JxYVmPrVR9vz9W/2NThWW2qanbrqvbYbhanmczsJiz5Qf0+
+ 75/AJ0ysxnIAAAA
+X-Change-ID: 20250221-psy-core-convert-to-fwnode-d5a5442fc3f9
+To: Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-phy@vger.kernel.org, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2174;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=Qg7dbWo30d2R/S/bXavA5Q5cFMZ+5uXYXTvq8MvcP/I=;
+ b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBoEVjHHm+QZt24518eVkCGiIkUGogfduz7bAMMN
+ yvsyzZuGiqJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaBFYxwAKCRDY7tfzyDv6
+ mrbED/9hlVlNL6cchpUTF8R47pd72Q/GXJxNpiukcKuEVW7zkhSwEwkxtnFH3gTUhmWO3oVO/GG
+ AinO9drL7hN4N+j9sGDkp1Y8szwd4Cb0r9qS+bKnKOQFEIWB2z+y3Kp97QRCkvpbCwmS1wymK7S
+ 3nupzUOda5hk/CKGadQi/aroM+UmUMhD5Pk5arlqtRaF8uuhxto3kFe6S1Qn3kGOw5O9GjsbRxe
+ j7rp8fkYtckUHR47ozkFHnl5RO1YaAHXfegxtHSoGM74BLZ15kEtRJvcbdKnU1I+6VgNnaefQ6b
+ FI/gtWbrVx+H3AeMWdGEZ6eSPx9Gq41NGrIid7aLdvQYgpPaIAuxTor1Ds/kzNC/uVVX5QJUamX
+ EjZqKUD6lqW0uj04aTzcS2tsrBYT+dTvofKxyOR8szCqn6CvrNJMQqRZbgUbRAcYMEpNgCCCjiQ
+ r/eOlTd0zfLYmZ/7RvpUEIN+xdhWvCWkJ15ZPzyW7hMAF/4QPobdwEEBWLNIyysGccwE7bahFbd
+ En8cNoMFe8tGwEHLp1jDM1sIG3oaVcuR5iYX0TtK1+ENh5QIy/hGJdkKeU6BHGPPBs8oYd/J92a
+ oE1sT0gjY04CQ5VNq76W7GdgL3H0T2xThU7EmlpwdutuOu0wcXEX/YBxUXLxxYVJ4MZXQLZVwS8
+ NC9cM/Jg+bxyM8A==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On Tue, 29 Apr 2025 15:17:33 -0500 Carlos Bilbao <bilbao@vt.edu> wrote:
+The goal of this series is to replace any OF specific code in the
+power-supply core with more generic fwnode code.
 
-> Hey Andrew,
-> 
-> On 4/29/25 15:39, Andrew Morton wrote:
-> > (cc more x86 people)
-> > 
-> > On Tue, 29 Apr 2025 10:06:36 -0500 carlos.bilbao@kernel.org wrote:
-> > 
-> >> From: Carlos Bilbao <carlos.bilbao@kernel.org>
-> >>
-> >> Provide a priority-based mechanism to set the behavior of the kernel at
-> >> the post-panic stage -- the current default is a waste of CPU except for
-> >> cases with console that generate insightful output.
-> >>
-> >> In v1 cover letter [1], I illustrated the potential to reduce unnecessary
-> >> CPU resources with an experiment with VMs, reducing more than 70% of CPU
-> >> usage. The main delta of v2 [2] was that, instead of a weak function that
-> >> archs can overwrite, we provided a flexible priority-based mechanism
-> >> (following suggestions by Sean Christopherson), panic_set_handling().
-> >>
-> > 
-> > An effect of this is that the blinky light will never again occur on
-> > any x86, I think?  I don't know what might the effects of changing such
-> > longstanding behavior.
-> 
-> Yep, someone pointed this out before. I don't think it's super relevant? 
+The first 2 patches of this series mostly take care of removing .of_node
+from power_supply_config in favor of using the existing .fwnode.
 
-Why not?  It's an alteration in very longstanding behavior - nobody
-knows who will be affected by this and how they will be affected.
+Patch 3 replaces the OF specific logic in battery-info. This will
+hopefully also allow Hans de Goede reusing the code with his Intel
+Dollar Cove TI CC battery driver series.
 
-> Also, in the second patch, I added a check to see that there's no console
-> output left to be flushed.
+Patch 4 replaces the OF phandle code with fwnode to have everything
+converted.
 
-It's unclear how this affects such considerations.  Please fully
-changelog all these things.
+Finally patch 5 renames some functions to remove the OF terminology
+and allows using them without CONFIG_OF being enabled.
 
-> 
-> > 
-> > Also, why was the `priority' feature added?  It has no effect in this
-> > patchset.
-> > 
-> 
-> This was done to allow for flexibility, for example, if panic devices
-> wish to override the default panic behavior.
+Note, that I do not own a single device making use of the
+"ocv-capacity-celsius" and "resistance-temp-table", which means patch 3
+is basically untested. I would really appreciate if somebody gives this
+series a test run on an affected device.
 
-There are no such callers.  We can add this feature later, if a need is
-demonstrated.
+Changes in PATCHv2:
+- Link to v1: https://lore.kernel.org/r/20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com
+- drop merged patches
+- add new patch renaming power_supply_get_by_phandle to power_supply_get_by_reference
+- rebase to latest power-supply for-next branch
+- collected Reviewed-by
+- rewrite cover letter accordingly
 
-> Other benefits of such
-> flexibility (as opposed to, for example, a weak function that archs can
-> override) were outlined by Sean here:
-> 
-> https://lore.kernel.org/lkml/20250326151204.67898-1-carlos.bilbao@kernel.org/T/#m93704ff5cb32ade8b8187764aab56403bbd2b331
+---
+Sebastian Reichel (5):
+      regulator: act8865-regulator: switch psy_cfg from of_node to fwnode
+      power: supply: core: remove of_node from power_supply_config
+      power: supply: core: battery-info: fully switch to fwnode
+      power: supply: core: convert to fwnnode
+      power: supply: core: rename power_supply_get_by_phandle to power_supply_get_by_reference
 
-Again, please fully describe these matters in changelogging and code
-comments.
+ drivers/phy/allwinner/phy-sun4i-usb.c    |   2 +-
+ drivers/power/supply/bq2415x_charger.c   |   2 +-
+ drivers/power/supply/power_supply_core.c | 193 +++++++++++++++++--------------
+ drivers/regulator/act8865-regulator.c    |   2 +-
+ include/linux/power_supply.h             |  16 +--
+ 5 files changed, 109 insertions(+), 106 deletions(-)
+---
+base-commit: fbc1d056d3f3d417bc9df521cb45a0f51758b64a
+change-id: 20250221-psy-core-convert-to-fwnode-d5a5442fc3f9
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
