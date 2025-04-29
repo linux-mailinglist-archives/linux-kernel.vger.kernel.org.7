@@ -1,175 +1,189 @@
-Return-Path: <linux-kernel+bounces-625225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D658FAA0E7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E72AA0E82
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8910184695D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA303BCA9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2993E2D8DDA;
-	Tue, 29 Apr 2025 14:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9732D29D6;
+	Tue, 29 Apr 2025 14:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uj/Y042B"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="Bb7Or9NV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160131EB5CE;
-	Tue, 29 Apr 2025 14:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A602F2D29D7;
+	Tue, 29 Apr 2025 14:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745935921; cv=none; b=OT5D+d/Kz1O1N6ukrQbO99/kBv3AHjmcat7FWrHfQFUkaRvtsgOC7YfwTBqQb/1xxvJbwGNW0CEg2YwrZIZzN/YJDUmj5kBTnz1cOzj6yrhhCeGYcVEmNAumIEb7EctbdbAfaKgijDgUgxdnPrXElGKbHAHWOQS7BLgTRZDPSYc=
+	t=1745935965; cv=none; b=Q6UgSTOUPjHqHQ97up/QwxPbS7T6Nxsvq5/D6mvrwrwENCFziVb8lxE8lFfm1eqy6W0808tW4oviTd1oka0E078WQ0pkUzUTUTWvpifzZhTErrcskqhs5D3bl/iLe5f4QsTL1LTln7lRAVzOO270nmki2YxWz+7xVLlkGPG/i7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745935921; c=relaxed/simple;
-	bh=0V9jMahAxYW8zbxd2kGc9AaAI9Gd2wiuBQJ9XabL0Ic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vi+Y8phtzKo5ahB0jQ4WU//PRIn0opBYkn5lDWRGYV5mUNvTCn2UCgx5soI4k2G6l9CO/ZT/Trr7SygNR6k8XMdMuA8zmqXdwInu4AvUlPSvVHUy6u0MvwF+v7pPPyAVqGskllyz2L1VZApcoT0+0XQEM2n3OPMzpquEgLZh0sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uj/Y042B; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30549dacd53so4857674a91.1;
-        Tue, 29 Apr 2025 07:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745935919; x=1746540719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ghLO85v0/fKsf8d4D5aFV15vBDjmZGdRu4B7/a9HdgA=;
-        b=Uj/Y042B5zObpZ5beVEXHGQcGoqVDvn62MX3F4YIuIFYNyRHFlQuTkv+rQVrN8Chge
-         YdEz2qgvat0HJg9Wg2eTU7V0GoZJaTaF4NXzFxtpmubEuc/xXZbypMAp7XmMMdd68wB3
-         hcdGHnnpsvh+20y1lwuENU2rPWwjpeBMdF8Bj+lsKUQzSVO/XgnnqG03ZTK2MyeepJ1i
-         5G+mGfxSG+luQV7oRYxrkee1KMWwvTDyjrW5xSMTQt1a/hKgjWPN+m++lARstr3LJwl5
-         v+1JBHsy9guBoY44OkRRP1vsUfPb/OnHPN/5Sdsf6mRin9ctQRh7k895Atq9sSPwoGQu
-         kLzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745935919; x=1746540719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ghLO85v0/fKsf8d4D5aFV15vBDjmZGdRu4B7/a9HdgA=;
-        b=qqNY6ZOkNvVP5OqBVtcM5zFhmlQhugxpmRI2f0hmtk0H4IOlNL64n61cXYKbuBwgcG
-         BirPg+v4h18AlLSVUSPYp+uMtBNkbX82sY2ckQGL6/8WPsKpELrk6zjvmxuwVd1Qbm/4
-         W6J4U/9LTA9UW7lXMx+jbxlM+LOIpxVkS8rxWBd1oqw1av4a/tAWx6jfEUQSnh5itGZw
-         5BiJ9IpGdRrYv2Hn5zbjJm1tXWD2Lm/9CFRDtCpaU3F6asbx+r4awHkS/4KfeDz12l0Z
-         /ca/6T6XZ69iyNgWdqcNvX87BTXD8rClGIinYne0zsywu14WB3x5NHJoSReJX+LZhW6y
-         HG+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUEFXW8R1Hv9lwMfk5ijMQBuYo/HfZmKUToR/4EDUgT6HuhgqVkmVmCcqj6W/fG55a+bGKdwaAaukQB@vger.kernel.org, AJvYcCWVuGPPZnd1BQ6X2+U+IpvhtVA/DNxFAczVVGsXO3Yh7GB7rv2p0Z4GTqTS+KrjOZ2/36viHzIdsHSsYNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3bqgVzkK56QzoL95EV1bwtXQ7VIeONxRxfi66X6Ay2/Lr9DcI
-	/8vfn4b8Y5cVVVjZWmW2L7cW+po+E7hn+RD2fQUy60KwY2XB9MjkD1lB0XXWms9r2Dit8+vaWfP
-	QdgPXqGtaqAhswRiaJVTDBqxoUMr06rzcGFEgDg==
-X-Gm-Gg: ASbGncvRNXoVNj9dnwrf9mDcDsQ1nCdBqjmLDYFZY5WR685mpx+qmmsAbjJBO/tcheM
-	lul4eukdzkAmoBCpd6sdw15gIljFlVABvVKG1ucQgh9vGeu2MYMhTHU1xd3Gs6/D3l7lHhX+vMy
-	vKbpJlxFKJF+3Yv6G7LHreDmS1uOG0t+I=
-X-Google-Smtp-Source: AGHT+IFGIJaXnUPI2CD5vwEPgXqAmwhf+WOG/jajlE048Ga1kc+i4yz/jRP2kw+bf/cOEgkA8sSkOIjBG6LR4KK8qMM=
-X-Received: by 2002:a17:90a:dfcc:b0:30a:1ebb:8dfb with SMTP id
- 98e67ed59e1d1-30a22456bccmr4003881a91.5.1745935919183; Tue, 29 Apr 2025
- 07:11:59 -0700 (PDT)
+	s=arc-20240116; t=1745935965; c=relaxed/simple;
+	bh=2cwFB8DtoLlkXn0pVIrWf4KCKsrM4yJaSqWNCg1DZ6g=;
+	h=Date:From:To:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qto2Lk1pbdkGW7otflwwo6YHHaOJqUPrZWuNuTlOECOM6knN+HqP1OO/E/dlAXwlrpTUx2tDF9b/CrcQtBQk5d8/XoUgKbWlvBB5QCJ3yGIE3oaNHy7ys+BAErp/gS57HPXOGb1QpoKtU3iIeTN9561LtSF1v4Zoadexqs2IAQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=Bb7Or9NV; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1745935945; x=1746540745; i=frank-w@public-files.de;
+	bh=imsoYydlGnAzqSvS+Cgaf9J/PO2EBb7ogqV0YK6n2ZE=;
+	h=X-UI-Sender-Class:Date:From:To:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Bb7Or9NVfzguMEnkuzp0m4GpQBTLG5zW9fGSeybTB5dL9qXZT9PU3phGLD3BeY1q
+	 AnSeuHg5wxb6FowfU38f7J9BhSfPSwYe0ckI+JCmkX2jBtSlNUF13NKOsZDcTWZ+G
+	 vxyz99NXJQuonSuJ5Fmpjlqrxc5E/TvxY23EqGgs5FMJ5aXV/v1hIqeEcpOS7qDyw
+	 iCQ+rA0a4uUbjSw7hWte0RX9y7gilxZk9SeWwq46/l+hHLkymgtqXJnE5izS7JW9M
+	 D/T8czDrtBHlcnFxYadqX2GhTHq819z7zpVNeyIAtjjiKgvUWkgfyGYP5dBuITumz
+	 VAF3PoqH8odLqnYlWQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([217.61.153.176]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MQ5rU-1uMshd2CsS-00VQEL; Tue, 29
+ Apr 2025 16:12:25 +0200
+Date: Tue, 29 Apr 2025 16:12:19 +0200
+From: Frank Wunderlich <frank-w@public-files.de>
+To: linux-mediatek@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>,
+ Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
+ Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+ Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+ Sky Huang <skylake.huang@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_net-next=5D_net=3A_ethernet=3A_mtk=5Feth=5F?=
+ =?US-ASCII?Q?soc=3A_add_support_for_MT7988_internal_2=2E5G_PHY?=
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <aAwV4AOKYs3TljM0@makrotopia.org>
+References: <ab77dc679ed7d9669e82d8efeab41df23b524b1f.1745617638.git.daniel@makrotopia.org> <aAwV4AOKYs3TljM0@makrotopia.org>
+Message-ID: <687380A7-A580-41EB-8278-73B9942E4280@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429133310.353977-1-hoff.benjamin.k@gmail.com> <af771944-8236-462f-9097-2bf2336b361c@oss.qualcomm.com>
-In-Reply-To: <af771944-8236-462f-9097-2bf2336b361c@oss.qualcomm.com>
-From: Ben Hoff <hoff.benjamin.k@gmail.com>
-Date: Tue, 29 Apr 2025 10:11:48 -0400
-X-Gm-Features: ATxdqUF7Aep6o1Op5JSRl8mp6bspZ5TAYbHexXD2Kq22HAs9nao-eQuJ7awo2Hs
-Message-ID: <CAMSzxxRfKA0CTi0x_FAohvf8buTJ+eaB-q2+qrnfTd7E6eTwrQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: hid: allow dynamic interval configuration
- via configfs
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LCZ0cZToW3QDgS4il2LDpUb80XsrcmZ8Bs18A2wtEoO1pa2kLQS
+ zYN+be3fphd6c2i93tEmaDrunFYtlUWaj/U0ncO1/kT+m4tztyCDr1V9yv8+XPv3+GOKp2G
+ uXzoYIxQaIsttmpcrvsukm55jp7fm59kvMuzGy/Cns56pboft4pCVmE9HgSBaw0S8+N0LIJ
+ STySUJpaJ30gtxJB71TKw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LYEblK1YRis=;yPsTQbRPNKDUObP2u7qs6CGmfF/
+ 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
 
-Hi Greg, Krishna,
+Am 26=2E April 2025 01:08:16 MESZ schrieb Daniel Golle <daniel@makrotopia=
+=2Eorg>:
+>On Fri, Apr 25, 2025 at 10:51:18PM +0100, Daniel Golle wrote:
+>> The MediaTek MT7988 SoC comes with an single built-in Ethernet PHY
+>> supporting 2500Base-T/1000Base-T/100Base-TX/10Base-T link partners in
+>> addition to the built-in MT7531-like 1GE switch=2E The built-in PHY onl=
+y
+>> supports full duplex=2E
+>>=20
+>> Add muxes allowing to select GMAC2->2=2E5G PHY path and add basic suppo=
+rt
+>> for XGMAC as the built-in 2=2E5G PHY is internally connected via XGMII=
+=2E
+>> The XGMAC features will also be used by 5GBase-R, 10GBase-R and USXGMII
+>> SerDes modes which are going to be added once support for standalone PC=
+S
+>> drivers is in place=2E
+>>=20
+>> In order to make use of the built-in 2=2E5G PHY the appropriate PHY dri=
+ver
+>> as well as (proprietary) PHY firmware has to be present as well=2E
+>>=20
+>> Signed-off-by: Daniel Golle <daniel@makrotopia=2Eorg>
+>> ---
+>> [=2E=2E=2E]
+>> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc=2Eh b/drivers/ne=
+t/ethernet/mediatek/mtk_eth_soc=2Eh
+>> index 88ef2e9c50fc=2E=2Ee3a8b24dd3d3 100644
+>> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc=2Eh
+>> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc=2Eh
+>> [=2E=2E=2E]
+>> @@ -587,6 +603,10 @@
+>>  #define GEPHY_MAC_SEL          BIT(1)
+>> =20
+>>  /* Top misc registers */
+>> +#define TOP_MISC_NETSYS_PCS_MUX	0x84
+>
+>This offset still assumes topmisc syscon to start at 0x11d10000=2E
+>If the pending series[1] adding that syscon at 0x11d10084 gets merged
+>first, this offset will have to be changed to
+>#define TOP_MISC_NETSYS_PCS_MUX	0x0
+>
+>[1]: https://patchwork=2Ekernel=2Eorg/project/linux-mediatek/patch/202504=
+22132438=2E15735-8-linux@fw-web=2Ede/
 
-Thanks for the feedback!
+Imho this should be changed as well
 
-You're right =E2=80=94 I should not have changed the default bInterval from=
- 4
-to 10 for all endpoints.
-To preserve the original behavior, I'll resend a v2 patch that:
+#define USB_PHY_SWITCH_REG	0x218
 
-- Sets the global default bInterval to 4 frames, matching the existing
-implementation.
-- Leaves the High-Speed interrupt-out endpoints
-(hidg_hs_descriptors_intout) at their historic 10-frame default unless
-explicitly overridden through configfs.
+To
 
-Thanks again for reviewing this =E2=80=94 I'll send an updated patch shortl=
-y.
+0x194
 
+It is used in mtk_eth_path=2Ec set_mux_u3_gmac2_to_qphy
 
-Ben
-
-On Tue, Apr 29, 2025 at 9:50=E2=80=AFAM Krishna Kurapati
-<krishna.kurapati@oss.qualcomm.com> wrote:
->
->
->
-> On 4/29/2025 7:03 PM, hoff.benjamin.k@gmail.com wrote:
-> > From: Ben Hoff <hoff.benjamin.k@gmail.com>
-> >
-> > This patch adds support for dynamically configuring the polling interva=
-l
-> > (bInterval) for HID function drivers using configfs. This enables
-> > custom HID gadgets with user-specified poll rates without recompilation=
-.
-> >
-> > Signed-off-by: Ben Hoff <hoff.benjamin.k@gmail.com>
-> > ---
-> >   drivers/usb/gadget/function/f_hid.c | 54 ++++++++++++++--------------=
--
-> >   drivers/usb/gadget/function/u_hid.h |  1 +
-> >   2 files changed, 27 insertions(+), 28 deletions(-)
-> >
->
-> [...]
->
-> > @@ -1468,6 +1462,9 @@ static struct usb_function_instance *hidg_alloc_i=
-nst(void)
-> >       if (!opts)
-> >               return ERR_PTR(-ENOMEM);
-> >       mutex_init(&opts->lock);
-> > +
-> > +     opts->interval =3D 10;
-> > +
->
-> The default value was 10 only for hidg_hs_descriptors_intout.
-> Aren't we now making it 10 for all other ep descriptors as well ?
->
-> Regards,
-> Krishna,
->
-> >       opts->func_inst.free_func_inst =3D hidg_free_inst;
-> >       ret =3D &opts->func_inst;
-> >
-> > @@ -1546,6 +1543,7 @@ static struct usb_function *hidg_alloc(struct usb=
-_function_instance *fi)
-> >       hidg->bInterfaceProtocol =3D opts->protocol;
-> >       hidg->report_length =3D opts->report_length;
-> >       hidg->report_desc_length =3D opts->report_desc_length;
-> > +     hidg->interval =3D opts->interval;
-> >       if (opts->report_desc) {
-> >               hidg->report_desc =3D kmemdup(opts->report_desc,
-> >                                           opts->report_desc_length,
-> > diff --git a/drivers/usb/gadget/function/u_hid.h b/drivers/usb/gadget/f=
-unction/u_hid.h
-> > index 84bb70292855..a29dcb14f738 100644
-> > --- a/drivers/usb/gadget/function/u_hid.h
-> > +++ b/drivers/usb/gadget/function/u_hid.h
-> > @@ -25,6 +25,7 @@ struct f_hid_opts {
-> >       unsigned short                  report_desc_length;
-> >       unsigned char                   *report_desc;
-> >       bool                            report_desc_alloc;
-> > +     unsigned char                   interval;
-> >
-> >       /*
-> >        * Protect the data form concurrent access by read/write
+regards Frank
 
