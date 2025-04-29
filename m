@@ -1,186 +1,143 @@
-Return-Path: <linux-kernel+bounces-624816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D024AA0812
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46139AA0819
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC09C464317
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC5A188DAA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4087729B77F;
-	Tue, 29 Apr 2025 10:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C864A2BE0E1;
+	Tue, 29 Apr 2025 10:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="Bx3WWgVL"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZKOu799"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FC32BE7D8;
-	Tue, 29 Apr 2025 10:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C96629B77F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745921218; cv=none; b=YE/8OBtAHJo2tT1SfjuG8M7yWIKdbcjKmDCI2C6JDrw8lzKdpUGZChWPULrd0I8P7GACf0NSkIXt+pXcjo5ChBi6s/M1Vb76wfwPHR01x3nybt/uQliJw9TsTvL1AkITckK5L0uErwIMECYrzT26YNYUtMN1lU7UmA6nVb7Fiug=
+	t=1745921291; cv=none; b=dVpMA7y7XhY5RXt35vviTmkyw8Eabkq1Dv5/v4yvVHJCq0YxNQgw1mQq7bK+/WehDWp9HKu09+xk6bB65PPrXYOT4vMXiINzqvbIACgjl9DrvmPBVtmC+2nfSkiAAv8ONZUggxjyU0rhWPQu0XqKJwj6lnRj0BgCu2/Fd6ZDVHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745921218; c=relaxed/simple;
-	bh=39pgH4p/ZTSPv29D5o3J2WLloPQmBCsigS4c8NDb+Ng=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=mCPgz4Y/4PZ8MuzCpz+9l14QXUGbz7eK41/48CRmCfXiJzSuS1QSX3x0gO76/L16arOgzQEruWH2XAfPrlBA/ju4bg3coqaXFZdXdftWkdJw6tO6hImulUmsY4CvnbdCUJD36e3L/90KpGSTads5x6slMt0/nAiDy0cu+69nuD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=Bx3WWgVL; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pRJpXxtXspf00/o6/ugq1hIMvacha4Xn4cBWyKfWYus=; b=Bx3WWgVLQvkl4QFHw+dWoUCys4
-	V8X70gKZz38WfqR9qD2N+N8vRNonmLt87sBOhMhsn7XEEDfiEhyVGGRYrs05GSejf/kv5x4KJBVew
-	0fv512iiizW1yXEhqddx+osiDVy5xb0lMglMn/8rEcojA7UnmYB4T0l4oE5LMq12KO6wLbUozVjMt
-	urNXDmhtMgENuVB5XU8yCZpb+JPv94Eq2N17MVYfJnuzmeKnzDU6zRg2/iZoNL932WcY74puK/zgY
-	URJm2bsZfExkCW2A6Hnglp4CaFyEWSxN7L2uVNXTIaRuP2z4N12VnYVxfWJZLKOD35fy4jYCYi/W1
-	GmpKZZlw==;
-Received: from [122.175.9.182] (port=52071 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1u9hrW-0000000005m-07gL;
-	Tue, 29 Apr 2025 15:36:50 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 3793E1783FDC;
-	Tue, 29 Apr 2025 15:36:44 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 0FF47178245B;
-	Tue, 29 Apr 2025 15:36:44 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CbIv-kPgtkN5; Tue, 29 Apr 2025 15:36:43 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id BB52B1782431;
-	Tue, 29 Apr 2025 15:36:43 +0530 (IST)
-Date: Tue, 29 Apr 2025 15:36:43 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: kuba <kuba@kernel.org>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
-	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
-	nm <nm@ti.com>, ssantosh <ssantosh@kernel.org>, 
-	tony <tony@atomide.com>, richardcochran <richardcochran@gmail.com>, 
-	glaroque <glaroque@baylibre.com>, schnelle <schnelle@linux.ibm.com>, 
-	m-karicheri2 <m-karicheri2@ti.com>, s hauer <s.hauer@pengutronix.de>, 
-	rdunlap <rdunlap@infradead.org>, diogo ivo <diogo.ivo@siemens.com>, 
-	basharath <basharath@couthit.com>, horms <horms@kernel.org>, 
-	jacob e keller <jacob.e.keller@intel.com>, 
-	m-malladi <m-malladi@ti.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	afd <afd@ti.com>, s-anna <s-anna@ti.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <619030056.1172946.1745921203564.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250424191741.55323f28@kernel.org>
-References: <20250423060707.145166-1-parvathi@couthit.com> <20250423072356.146726-6-parvathi@couthit.com> <20250424191741.55323f28@kernel.org>
-Subject: Re: [PATCH net-next v6 05/11] net: ti: prueth: Adds ethtool support
- for ICSSM PRUETH Driver
+	s=arc-20240116; t=1745921291; c=relaxed/simple;
+	bh=FNkyaJGp8MfoVlpMeJugXq0KnLpj/jBe07Y8pBAACqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W1RfUPq4iY+6fzWYoouC226kvH8wrOupGXE2VI9Myc+tnklECOkgbtlu+VtZYEkF3KKhDxIBb0+wLZX5cYrkXmxs+7wlQAcY3IkhudwRY1lGIW51Mz1T6U8l3xCxWYY7zRcdmcTdLUy4oMk1QGQufy3PWmgR6MB8TRj1tYKm2w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZKOu799; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E22C4CEE3;
+	Tue, 29 Apr 2025 10:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745921289;
+	bh=FNkyaJGp8MfoVlpMeJugXq0KnLpj/jBe07Y8pBAACqE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VZKOu799+4V5pW/WeIPX/qMOLrBUca2dqVJr++ECXW2r6WG/1H+svFEldDbiX7Oo/
+	 DY94o1FtmcdGss/70ZUqk4LKljL1SvgzZ16Pvv24LIf9hBcyY3/XJyf68AQiZDjjnH
+	 L59TxFlHG20sFn7drQpXUlPUJ8ThkOni004ozQLvINNZUhpm+KdEjz3/Qpbg7khDuH
+	 I3DrOfWwhOeomddlNJ2qQxoiV/uAX1X4erXjcI2/wTWBJc2z9ALHBdlzAJpLs36VLl
+	 yOaXD0OWQbj4s1mQ1vUixWVu+yj/43QylJFIKx1Vy87I6Ai25BDi8HqaBo91TVBiwI
+	 exBh1/FcloI/Q==
+Date: Tue, 29 Apr 2025 12:08:03 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+	Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mateusz =?utf-8?Q?Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+	Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] bitops/32: Convert variable_ffs() and fls() zero-case
+ handling to C
+Message-ID: <aBClAy837xcLnVpp@gmail.com>
+References: <aAyiganPp_UsNlnZ@gmail.com>
+ <d2b0e71c-e79b-40d6-8693-3202cd894d66@app.fastmail.com>
+ <CAHk-=wh=TUsVv6xhtzYsWJwJggrjyOfYT3kBu+bHtoYLK0M9Xw@mail.gmail.com>
+ <CAHk-=wgfk69H-T-vMWR33xUpVsWJLrF34d0OwUXa2sHhtpSwZg@mail.gmail.com>
+ <e54f1943-e0ff-4f59-b24f-9b5a7a38becf@citrix.com>
+ <CAHk-=wj0S2vWui0Y+1hpYMEhCiXKexbQ01h+Ckvww8hB29az_A@mail.gmail.com>
+ <aA8nF0moBYOIgC5J@gmail.com>
+ <aA8oqKUaFU-0wb-D@gmail.com>
+ <aA8q4Ot-1zTzv_Kt@gmail.com>
+ <CAHk-=wh5DUS+nhfTxPEEbaB9dsFib39gWatrX4NoFq_MpdOzGw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: prueth: Adds ethtool support for ICSSM PRUETH Driver
-Thread-Index: aOSvrMwlP2wLYvNaXDGDtXazpxI8Zw==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh5DUS+nhfTxPEEbaB9dsFib39gWatrX4NoFq_MpdOzGw@mail.gmail.com>
 
-Hi,
 
-> On Wed, 23 Apr 2025 12:53:50 +0530 Parvathi Pudi wrote:
->> From: Roger Quadros <rogerq@ti.com>
->> 
->> Changes for enabling ethtool support for the newly added PRU Ethernet
->> interfaces. Extends the support for statistics collection from PRU internal
->> memory and displays it in the user space. Along with statistics,
->> enable/disable of features, configuring link speed etc.are now supported.
->> 
->> The firmware running on PRU maintains statistics in internal data memory.
->> When requested ethtool collects all the statistics for the specified
->> interface and displays it in the user space.
->> 
->> Makefile is updated to include ethtool support into PRUETH driver.
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Mon, 28 Apr 2025 at 00:14, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > And, just out of intellectual curiosity, I also tried to measure the
+> > code generation price of the +1 standards-quirk in the fls()/ffs()
+> > interface as well:
+> >
+> > ... and unless I messed up the patch, it seems to have a surprisingly
+> > low impact - maybe because the compiler can amortize its cost by
+> > adjusting all dependent code mostly at build time, so the +1 doesn't
+> > end up being generated most of the time?
 > 
-> drivers/net/ethernet/ti/icssm/icssm_prueth.h:229: warning: Function parameter or
-> struct member 'stormprev_counter_bc' not described in 'port_statistics'
-> drivers/net/ethernet/ti/icssm/icssm_prueth.h:229: warning: Function parameter or
-> struct member 'stormprev_counter_mc' not described in 'port_statistics'
-> drivers/net/ethernet/ti/icssm/icssm_prueth.h:229: warning: Function parameter or
-> struct member 'stormprev_counter_uc' not described in 'port_statistics'
-> drivers/net/ethernet/ti/icssm/icssm_prueth.h:229: warning: Function parameter or
-> struct member 'cs_error' not described in 'port_statistics'
-> drivers/net/ethernet/ti/icssm/icssm_prueth.h:229: warning: Excess struct member
-> 'stormprev_counter' description in 'port_statistics'
+> No, I think one issue is that most users actually end up subtracting
+> one from the return value of 'ffs()', because the "bit #0 returns 1"
+> semantics of the standard ffs() function really is insane.
 > 
-
-We will address this in the next version.
-
->> +static const struct {
->> +	char string[ETH_GSTRING_LEN];
->> +	u32 offset;
->> +} prueth_ethtool_stats[] = {
->> +	{"txBcast", PRUETH_STAT_OFFSET(tx_bcast)},
->> +	{"txMcast", PRUETH_STAT_OFFSET(tx_mcast)},
->> +	{"txUcast", PRUETH_STAT_OFFSET(tx_ucast)},
->> +	{"txOctets", PRUETH_STAT_OFFSET(tx_octets)},
->> +	{"rxBcast", PRUETH_STAT_OFFSET(rx_bcast)},
->> +	{"rxMcast", PRUETH_STAT_OFFSET(rx_mcast)},
->> +	{"rxUcast", PRUETH_STAT_OFFSET(rx_ucast)},
->> +	{"rxOctets", PRUETH_STAT_OFFSET(rx_octets)},
->> +
->> +	{"tx64byte", PRUETH_STAT_OFFSET(tx64byte)},
->> +	{"tx65_127byte", PRUETH_STAT_OFFSET(tx65_127byte)},
->> +	{"tx128_255byte", PRUETH_STAT_OFFSET(tx128_255byte)},
->> +	{"tx256_511byte", PRUETH_STAT_OFFSET(tx256_511byte)},
->> +	{"tx512_1023byte", PRUETH_STAT_OFFSET(tx512_1023byte)},
->> +	{"tx1024byte", PRUETH_STAT_OFFSET(tx1024byte)},
->> +	{"rx64byte", PRUETH_STAT_OFFSET(rx64byte)},
->> +	{"rx65_127byte", PRUETH_STAT_OFFSET(rx65_127byte)},
->> +	{"rx128_255byte", PRUETH_STAT_OFFSET(rx128_255byte)},
->> +	{"rx256_511byte", PRUETH_STAT_OFFSET(rx256_511byte)},
->> +	{"rx512_1023byte", PRUETH_STAT_OFFSET(rx512_1023byte)},
->> +	{"rx1024byte", PRUETH_STAT_OFFSET(rx1024byte)},
->> +
->> +	{"lateColl", PRUETH_STAT_OFFSET(late_coll)},
->> +	{"singleColl", PRUETH_STAT_OFFSET(single_coll)},
->> +	{"multiColl", PRUETH_STAT_OFFSET(multi_coll)},
->> +	{"excessColl", PRUETH_STAT_OFFSET(excess_coll)},
+> It's not just that it doesn't match sane hardware, it's also that it
+> doesn't match sane *users*. If bit #0 is set, people want '0', so they
+> typically subtract 1.
 > 
-> Do not dump into ethtool -S what's reported via standard stats.
+> So when you stop adding one, you aren't actually removing code -
+> you're often adding it.
+> 
+> Just see how many hits you get from
+> 
+>     git grep '\<ffs(.*).*-.*1'
+> 
+> which is obviously not a very precise pattern, but just look at the
+> output and see just *how* common that "subtract one" thing is.
+> 
+> I really don't understand how anybody *ever* thought that the whole
+> "return one bigger" was a good idea for ffs().
 
-This is to align with firmware internal statistics layout. We will
-review and address this in the next version.
+Yeah. No argument from me that it's a badly thought out interface - I 
+was just surprised that it doesn't seem to impact performance as badly 
+as I expected. I have to add that a lot of work went into absorbing the 
+negative effects of the ffs()/fls() interfaces:
 
+  starship:~/tip> git grep -Ee '__ffs\(|__fls\(' | wc -l
+  1055
 
-Thanks and Regards,
-Parvathi.
+So it impacts code quality negatively, which is arguably the worse side 
+effect.
+
+> But maybe people really were poisoned by the Pascal mindset. Or maybe 
+> it was invented by some ancient Roman who hadn't heard of the concept 
+> of zero. Who knows?
+
+Hey, ancient Romans didn't even have the concept of *whitespaces* and 
+punctuation to begin with:
+
+    https://historyofinformation.com/images/Vergilius_Augusteus,_Georgica_121.jpg
+
+Lazy stonemasons the lot of them.
+
+Romans were the worst ever coders too I suspect. What have the Romans 
+ever done for us??
+
+	Ingo
 
