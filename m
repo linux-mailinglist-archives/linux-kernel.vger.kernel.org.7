@@ -1,102 +1,85 @@
-Return-Path: <linux-kernel+bounces-625607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A1BAA1A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:24:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F9DAA1A4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CA6188DE84
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:22:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983D11C01A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3011253F2C;
-	Tue, 29 Apr 2025 18:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256DB254AF6;
+	Tue, 29 Apr 2025 18:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AOTpAYgx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhNam745"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79DC224234
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D73D254861;
+	Tue, 29 Apr 2025 18:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745950894; cv=none; b=udl7mAS8QTKTEObTPLb6CdEtDbWkiBPDLsvxfaQnsV+1DzSk5WqvY4zi9ACQGCPhhHolnlNC4nyZQEmwhJwUA5Hm+hNW6bpXufasuLY8OjfZTs4C29KZhQRX7Fz6bMzDQjiBejOSkyfkRGmcKoa8efFmwxOY3GZ4xwUYlaKsGxE=
+	t=1745950756; cv=none; b=q3FwUu/NzzxiYdiquLwtS5qxa6InUhQOk0O956AlD8HYN50HgQcU/3saJHrjHs+GxS3InqJJucJv6pxTsJ2sofb6B48eMurgBSESQGmVtCVxOKzYOAsJdyydnCYN8CezZ4UMUqniFluJbXNul+J/3QiX4IejXZ+HbAoa48FBuEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745950894; c=relaxed/simple;
-	bh=RdP3O/juRVH9lxADbiwNKQ/bCCrReDlQbPwIO3aDojo=;
+	s=arc-20240116; t=1745950756; c=relaxed/simple;
+	bh=A5+DrCAn9M6+wxz5jRD2PElzZRM4ayte0Hxt1H5mz+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOimJY7sGJMlrQAXqe2oHXQAidhs4D0NcGTMJqE4ieeAT4Yh6+Fj21QSZLlifgA6BmaSzq9fgEBGEXvNZBhifI5IUbcIG7Jxq6+2PSK1aIR57pwA44qGLnwblEqNuju8CLbtTzWJ6zj3UQIdXI13XRU0nDExl/qnOWMIXZx5wug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AOTpAYgx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TA27nG019654
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:21:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=PmqoRG464qsnj0pu8T0c6779
-	M0hEG7ElmjAzQA6sfi0=; b=AOTpAYgxnyRsVZRjLRr7VXvigdkz/UwUlNRZ7MPu
-	qniHDYs5yr1d8BtuPkqTU/sBWuvBH24kVXmSiAqdM48hGYNC4P9TGyHn4S1IPOX+
-	bq5POuQZNvTrrtzgMxXGeXI/mROs3WLNUUY57vTXMmGHoH+Df/y5qSo0hzxJSH4B
-	HFaCBTDHCvcxGStbRR225+2yGvR5unAVw26dMVzYFlMy1RqDaDxtBzHmuAqJViDW
-	d3KX+41X+sHKyBPn8ZTkwNo8bFBhWuqnR7QVQHHnHuGos4shhcyJs6QQBL5g83Qy
-	xJChDYWnI9F2bIYsA5+2advFxHyL5VdS30mWOZS9y7UzzA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468n6jmsuj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:21:30 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5cd0f8961so1255180585a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:21:30 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bG+U3GhoCZBx2gN+Cwg81L4qXZT3qvPZa/hPI/FXHlEEYySlaUuOw5Xj+g8eX2gN6tUMoPeB6Gw1WFYIWhql/K7E5NMOkxVwzx+2FsAkWdvQL+wxGuHDtuoZ1rnpX736cjTWcXMd+r7dEzjWSdMIELKu+IY9+JxOrD8FdYrRP28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhNam745; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8f7019422so64673866d6.1;
+        Tue, 29 Apr 2025 11:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745950754; x=1746555554; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aqvYy3CZDC8z+XLmUbJgcn0ixQTVHuAMPBSfeUzVW+4=;
+        b=NhNam745EgWMJ+DGxS2aiSO8bzfvS+4QITjNgffGm/hExxbo8HmYf23B3DUUkhdbaJ
+         EFIqVjeKYMZmEoua3cOmb5mE/TrtUYPA24wLmvZLe6wW45cO7SgMivOxML9BFKDA9L/Y
+         5N/qZt0+Msm4NEFQOBcnkZto+ipZy0qpiht7M2oZQ+8h2Ue2koj5+1dIANZD/xSeARQR
+         ZfyfyaJM8SlnnyxFm0dGM3cPMr+lYAcMcrpott/n1ZtweHySu9zQh5Q4h2GDnlEL77I6
+         Ky44MIMcpcJ2FPHlXKwUkVTmDNZbDIABwu542hthGpK8AMuYOVpzWzq44b+QJdumwnzd
+         tEbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745950889; x=1746555689;
+        d=1e100.net; s=20230601; t=1745950754; x=1746555554;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PmqoRG464qsnj0pu8T0c6779M0hEG7ElmjAzQA6sfi0=;
-        b=DOt+HQ/cC/eDNR71cxFnP9wPQyWQoXa/j+l2hdtFpHnt4xT9qbcgnTA8n6YcpTI0F8
-         DlXtldTLfvqk38CQjA0oXIwMhrbYyD+haRXtsYPFebKkQnZJnbSwQC5N0xLEXmQMcHQ4
-         tJ4fzok+AhwrrqNKWLUfBwsfyoNtuwBj0vwVbsXyPzQpXOnwrm0MRafZm003jjbFpTty
-         OsZC0ZIZEqzPjWClSgYdHus9Vd2UIctZNBs++oRLZi6mvR9tQUdX+XBNdpVeli35sW1R
-         AWuNW6BqdivHuUZRLrE1awkMejHfvBhurAwurU/54DsPGq2KWNNMFwublU16g4qfNW9e
-         JE/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHHt7Sz4moSyAKwd8XvG2/zCT8y+K82S02QdrfuJynnFhEv4SUJ1Njv7Zl5eG4B+QGUhfIxQ915hamHmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqMmUX6sHmteZP0TRH+DBSvm/mJq3OjDq6ZzT/7WQPVjkOgzmO
-	9BlSX6f/J+pxJFGZVcsnHKqRh/63qvfk1YXWKX4nQ2q/BBCOSX4iGiauLKzKAcbrqBsS9gkYUnN
-	ZQTTdiPYws+1MIYz7667Y6V3gBnTVfR2D40j0Z8/jQ0OViTu5caoJ4QwZF/u6gQI=
-X-Gm-Gg: ASbGnctpyfg9Yu/tK+LExfVQeGBreOjAPU494in2MoE+47ER9pjcmmbn3ad47FbVWiE
-	8xGi2uQUdwa/rLRXQ+Mb2Q7qOAGpGYXaJy1npf7hxnNZQepUqCoa/Zu4XleBpelCi8nAN1AX1rD
-	u1aQCn2tvdfKUJDcXhQmIvGRNWz5a+FLLsZ39gl7/DMs8tGrHHCZ962BOohGOQ4jTWaLm3OfJJk
-	kX450Ars6EkAuXTWOZWrERFWghWDslctD9kaJwjV7MvUWpJxyvroaUEpi+UjnMnLnFWFVkWfD4A
-	hvKGKCPfJ5uL6TyIjQTF3LgsXAsKvq2VQnpnPzVM1z7d4FRDwwmDCcas5zcj1ssR4gYot8v9LC4
-	=
-X-Received: by 2002:a05:620a:c4c:b0:7c9:2612:32d6 with SMTP id af79cd13be357-7cac76deb67mr10119785a.48.1745950889447;
-        Tue, 29 Apr 2025 11:21:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpf9hzPxO+ornriQj5u2UWfhmL7wM+Z3TXsQc5Mtvy+HyZAWYphfNSkz3n79ilJezodpQzrA==
-X-Received: by 2002:a05:620a:c4c:b0:7c9:2612:32d6 with SMTP id af79cd13be357-7cac76deb67mr10115885a.48.1745950889098;
-        Tue, 29 Apr 2025 11:21:29 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e8fd2d823sm1322651e87.194.2025.04.29.11.21.27
+        bh=aqvYy3CZDC8z+XLmUbJgcn0ixQTVHuAMPBSfeUzVW+4=;
+        b=MaALqtI1s6OLG/TP1VTcOLowVCUTEmpsL7EY1KXbkV9hI+OuMTxQD2t1u9bgu9I0mb
+         bVED7MrKhm0gdPxO1MVcQuBqQLLGAiBXemwJeObU0QXe126/mV1/p8zhHAz6LNxA4qAu
+         VKD1L3dPKOMr/jHu6N+Wmb8jlozUV0reRU79sfFnSlwDGY1JdJQ5TzkiyL53yD5GWa1Y
+         DeEcjrS82NPZ8tUSHU4W6zoCwU9r+/zNO/8QpAFWjv2pOyNB9HuMG/jShZAaTSjb7RtZ
+         aW3mbQSJEa7DHLgcOGMczTlDUCo6+D6vfKRnfJKwpKSEni/iQDAeMA1jepJD/ahcQbf+
+         lSkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Bp+Vz3fm4JLgUSoVhk0AGpw3M9P0RWOVsCxcwvkn+qSkLNfQXjU0e0zn2HG6/Boa7QW33uzsTn3kp7I=@vger.kernel.org, AJvYcCXgStGvyki8mkyNeRnXIrp3a5zgiLhcf8U4/21e1svlfSrjsruIOtnDbNpuG7zNqkxZ2HaryjqJ5nM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1XGR8yqZSB73a64Ks/HFosKC/kT8CplmQJb+bUmHP0w866bb1
+	SnPlSZvGHp79qATI/RIV4FQDhgt5CvqTn97bIJCCz9E6JqvHEcgk
+X-Gm-Gg: ASbGncvcvFTwdRF9PQOsKQGs98KmQpRwJJn/0bL6nkhbp9LBi9jSyvLJNBnsxwZbkSP
+	hRSRQK7nVOoBk//ZtsorrTMGUg8oU9Htg2vy60T5bVAC8iqSuPGvtJPu7DKnwLyxr/VVWdxDOm2
+	zkk5xxK5xvvURU0ZjtSJTNFxCc10z7PCyLJck+CMf5dPbxY36k98SxeApanC/LJ/EFJKY3JAIe/
+	4u9dUzUdewhefUA8F9hUVuIuC/MIcLPMxDa1+AnXie9ji+sxnTmkhUPeKCrISLu1NUdcbNOkwwp
+	7KiemIBL6OosuOD60tH+eSQMc3K3kTW0Tayq5A==
+X-Google-Smtp-Source: AGHT+IEho+3WjiTT4Oby8bMTkwgpHxUSpTv0GDtLD75FE2xDGA85LjxZziuggH9k6T/JSdAgycTGSw==
+X-Received: by 2002:a05:6214:2523:b0:6e8:9321:87cd with SMTP id 6a1803df08f44-6f4fcfc7576mr5429086d6.40.1745950753728;
+        Tue, 29 Apr 2025 11:19:13 -0700 (PDT)
+Received: from localhost ([184.148.73.125])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f4c0938399sm74599306d6.40.2025.04.29.11.19.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 11:21:28 -0700 (PDT)
-Date: Tue, 29 Apr 2025 21:21:26 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: Daniel Stone <daniel@fooishbar.org>, dri-devel@lists.freedesktop.org,
-        daniels@collabora.com, helen.fornazier@gmail.com, airlied@gmail.com,
-        simona.vetter@ffwll.ch, robdclark@gmail.com,
-        guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
-        valentine.burley@collabora.com, lumag@kernel.org,
-        quic_abhinavk@quicinc.com, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] drm/ci: uprev mesa
-Message-ID: <rrrquzr4k64e6b74g4foio7z4pltfx3oxrqbrrw5w3frlmyzkd@x45yj42sgplt>
-References: <20250328110239.993685-1-vignesh.raman@collabora.com>
- <20250328110239.993685-4-vignesh.raman@collabora.com>
- <CAPj87rOPHqLaFn3r4rkeMMrQ=OSRQUJ2LLrQ4ZDE6eA1S6zybw@mail.gmail.com>
- <3a3107d4-cc59-42ff-b3f8-2280a357208b@collabora.com>
- <4cac94b9-2445-458c-a39f-5eb72537d6f6@collabora.com>
+        Tue, 29 Apr 2025 11:19:13 -0700 (PDT)
+Date: Tue, 29 Apr 2025 14:21:29 -0400
+From: Seyediman Seyedarab <imandevel@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: rafael@kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v2] cpufreq: fix locking order in store_local_boost to
+ prevent deadlock
+Message-ID: <laqfi4de6ang3ugwwpvdgpmwffk4ice6vcw34vdwgeo6fsixly@msdle5sobc7o>
+References: <20250428171931.1850-1-ImanDevel@gmail.com>
+ <20250429052444.zfmfzjirkcaq3edh@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,54 +88,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4cac94b9-2445-458c-a39f-5eb72537d6f6@collabora.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEzNSBTYWx0ZWRfX6+RyxeTmTj0c ufT0T5Cyw2H3AtHkJ5aT9wTXcJxgYxzPAB9WfmNI58/91epF+7i31xuirfp1YRZQfU04bZG85Am 75lnGC5Uso0DadIo0dItKXqyynJiWSSpLHBCd3fumWQh5U7b76Et/90M7ehzEst/dT9/VCgZ6Ca
- qQPvMJjKwPSz8aEiRBKjYyVtIIIQSznZ3PFo2t1hL1wGbwDi3mnygio7M9xNuUeY6h3IocVn9SV YhINoUtNf7ATiy3RZGH95U+GmV6/9GSoP6Ku+KR+mdU+Mmqc10rn6cPww9HLgrlpRTthM1ef/Cg VaqHKsDIRTsWtcZZZPivIpOFH2Q0wJxr/3M+aKJkGRSy9kQOfXIr03LvFP1JhLjcWF+nBezbiTz
- k8WKwF7fk28QIQMGYiI2CrKcZ2S9dEWHoeUkDP1Jo/zOZKLfPq6BGQuiU6MNtk1ENdUT0YHi
-X-Proofpoint-GUID: TPe3BUPmO3eCENWVKH3FYsvIP5EZsItN
-X-Proofpoint-ORIG-GUID: TPe3BUPmO3eCENWVKH3FYsvIP5EZsItN
-X-Authority-Analysis: v=2.4 cv=C8fpyRP+ c=1 sm=1 tr=0 ts=681118aa cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=QX4gbG5DAAAA:8 a=xA4-SxEZz4SaK2JE-80A:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290135
+In-Reply-To: <20250429052444.zfmfzjirkcaq3edh@vireshk-i7>
 
-On Thu, Apr 03, 2025 at 11:29:55AM +0530, Vignesh Raman wrote:
-> Hi Daniel,
-> 
-> On 28/03/25 17:29, Vignesh Raman wrote:
-> > Hi Daniel,
-> > 
-> > On 28/03/25 17:06, Daniel Stone wrote:
-> > > Hi Vignesh,
-> > > 
-> > > On Fri, 28 Mar 2025 at 11:03, Vignesh Raman
-> > > <vignesh.raman@collabora.com> wrote:
-> > > > The current s3cp implementation does not work anymore after the
-> > > > migration, and instead of fixing it and propagating the fix down to us,
-> > > > it's simpler to directly use curl. Uprev mesa [1][2] to adapt these
-> > > > changes. Also replace broken s3cp command with a curl wrapper call in
-> > > > drm-ci.
-> > > 
-> > > Thanks a lot for fixing this. Sorry the fallout has been so bad.
-> > > 
-> > > You can also upgrade ci-templates to get an s3cp which works again.
-> > 
-> > Thanks for fixing this. Will use the latest ci-templates and test it.
-> 
-> We need to update mesa to use the latest ci-templates and then uprev mesa in
-> drm-ci. I will send this in a separate series after fixing it in mesa.
+On 25/04/29 10:54AM, Viresh Kumar wrote:
+> On 28-04-25, 13:19, Seyediman Seyedarab wrote:
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index acf19b004..5464c8487 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -1045,11 +1042,17 @@ static ssize_t store(struct kobject *kobj, struct attribute *attr,
+> >  	if (!fattr->store)
+> >  		return -EIO;
+> >  
+> > +	if (fattr == &local_boost)
+> > +		cpus_read_lock();
+> > +
+> >  	down_write(&policy->rwsem);
+ 
+> And please rebase over PM tree's linux-next branch, your patch won't
+> apply anymore due to recent changes.
+ 
+Since the new code uses the guard() macro to lock the policy,
+I see two possible ways to address this:
+ 1. Switch to scoped_guard() and manually wrap the local boost case
+    in an if block, calling cpus_read_lock() and cpus_read_unlock()
+    around the scoped_guard(cpufreq_policy_write, policy) block.
 
-Vignesh, Daniel, any updates on this? Currently drm/ci is broken both in
-master and in drm-misc.
+ 2. Use DEFINE_GUARD() to create a cpu_hotplug_read guard, but this
+    requires introducing an empty struct to satisfy the macro. Feels
+    semantically awkward, since there's no actual object being guarded.
 
--- 
-With best wishes
-Dmitry
+Option 1 looks more reasonable to me, because it's more direct and avoids
+misusing the guard pattern for something that's not resource-based.
+
+Let me know if you'd prefer the second approach for consistency.
+
+Regards,
+Seyediman
 
