@@ -1,163 +1,162 @@
-Return-Path: <linux-kernel+bounces-625442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF85FAA118E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28414AA1192
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C45577B1E27
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:30:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777F77B08BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4492746A;
-	Tue, 29 Apr 2025 16:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919B624501B;
+	Tue, 29 Apr 2025 16:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL6T84iQ"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ELlwHHls"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB991DC988
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230F023E340
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745944309; cv=none; b=NYqIwgLZ1LFmBw5wpO1gMzQ6VUByPus5Fc7CjlYD0aLT1vcd4jbP2VTZ7uBAk9jkZPvQX+MmQrWY5H8Ye6eUdTvKnc+SFK29qLNKz7huFk1cBdt4JKV5KJpdEj6v9m7JgI9JFQ5dZYhRbKkV2Rk/v2xxkj3EKoacltVYSjAis6o=
+	t=1745944345; cv=none; b=CR8EsjFgJTy3F1vOJi8+Hdd1LY1byGNZSv/fSc1tFx3h8Ad5ZQf5bPQysy+QrS5qxb7/0XkX3mSiI8EtxtOnnzY3Gp8a6HEXOD0LxYpMK1RGV522POwUSCNH3wDUfH2ELn44gaowkQDDN5JJHy40ceyCnFjg7ac/aNld2dBVJsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745944309; c=relaxed/simple;
-	bh=QiN74z+CJEBXRYb/UPpnxQjD/3aQMsEEyVGv9MGEl1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nHuVShjaNZR2HBjYuwDpawNZBhZgDtzAcUaffPD89pHEnQq2RpUiK9PyUvZn2xk9dNYGPXW9aJ/51GR26SnUOEBUqB9IpVOxcHIURbOh4V5oY33fXloyACrl8Br3LgxgQxXTHlQIdgB5oJ8rLvjRFlzP/Zh3wECZwr0D3WN3qeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WL6T84iQ; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bfe0d2b6dso59553711fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:31:47 -0700 (PDT)
+	s=arc-20240116; t=1745944345; c=relaxed/simple;
+	bh=kxJijwJOOpyMIXcfCls3QqWyToNqydz2DXvZT0qcO1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E6Tv1TlCTgD/iRoWuaYkKgdhAes5pI4EvNQVew5owkq7fI5it5TNs3SRaCvuSQ6gKNxv9lePr/6u8i0yYFY41yeiSc29+d+ca2VEe1nvB635dpYTidbdBVvZQYFUrIfuINdUNoq62T3VfQVcfr+T6MqM5bMsxc4YK8mwbAbTQnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ELlwHHls; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-401c43671ecso15965b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745944305; x=1746549105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z4gyoyXQBZP5CNYAbU6ri0C7s2lZnMGSz9WMtHSn0K8=;
-        b=WL6T84iQh41CMvw3Zf+WcssIFOhcXzhvR7MJNAyVDUcO+hAVzhNinGAveYDgJMIPRB
-         Yxk2VDzrhOR1trnfPYLFTEp/Aaoms6hwTDY+lX78qfB+cVLyl8OXQNXzSU5MtNA7zT0P
-         qhFsw5mHip6Mk3U3Y26k6dwi9pTgJFrnqEEmaLJw7/hQ8XLvRvyp9Ji22Z43eqaBDcGc
-         OgngLbkedAx7BRREweRJGx0Ak7qFqPgVv8UpHvl5xOrLfV4naIrHKQEg191tih4c28gb
-         lKOcNy0gmatnXPuxlkHUYUeI7cq5ut+5PbRkgcMpo2sIKs2pzVOIiTNUc+WP5a2suWVd
-         W5IQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745944342; x=1746549142; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VlzV3aC3Ajcd4WwT0NS/l9ibLgDyq3ihO7Tsirhk0II=;
+        b=ELlwHHlsrW4x6siALslx2SQSxA7l8//pnnn/r1cacg4Kp8Q0AQNXaXrbSf3ZBBtZ/3
+         3L4dHQ5n40xTkPUBXHg1/eBR9k9ZvcPm6rkqk8xY/utc/aUw/JA/7wEQ3k0QgT5MGeTI
+         6V2d9iZNAnfZLOWkumB35RahyHKZHYWfuws+Ml/rsrrtVSduWe4YjUn2kiCo4GnqEIEu
+         QzbtP8TJkDFUa7cU1kCZevOyOFBB++REcnfhAaTVIjn/FoVVuYflKgBCUMY1hDrkH9Ek
+         V+zpPoBAr43pC9qnJa9xkuXyJja30QtwgDo6c27ACc4ToMl5dGZv69nFXgdE5FH7zC1R
+         AAiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745944305; x=1746549105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z4gyoyXQBZP5CNYAbU6ri0C7s2lZnMGSz9WMtHSn0K8=;
-        b=SxYYAKcJMgkEKIFtXQNa1NNsOfE2cYOsjDMiSIwHf9IsAM6VjquEElLRhcuHrEYzxo
-         w7VS/25pFxOF6jn4LdPxrRc0uWbeCiu0x9ZkAt1pQ4HbLMGc+Y0vTHXOFJi5NEfOvzdK
-         SJHApR4dNt6CK5YbPH0npUE+gbdi3jIF+SsBYpt658rv2+3vJoFotai7/dDUHxrV9K55
-         VbB1RE8aPAlF83BPEwtf6pXKl6pnA95+OPuC4uoHPVQwN3hY+2t5n1CUBXk66ygaU1Ok
-         Avvdm6Bx9D0N0eTHTNIQtyd4Bp/GKyWQ8M8BMgrPnYVrWXPE9bMUMqpLdAP2sk3swY45
-         WKMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbw1z6g3TJsdRYrQI0Musm142368c7vMxi7btNGIF3l/Dj6iASiHr696ZfOZ9mO8Nd5U/nJvWh/wR4WRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdPhxI2p7V0AYa+N3ab1bHhX+Gzvx+jZyds5aykOqupTlupy0U
-	TiuU+KkDBt9X4mWluVUS3SvLz+hh5mL+CnuhQzHaNKlAlPz0Xs92n9dPCgQhdoTSkMDH94fLRi+
-	dzvWZ09uzHk2ppK6s5p3dQ6LRyCM=
-X-Gm-Gg: ASbGncuXIBfNeaNc3hSulUa0TW7dMBGo6MDvECwZT2b1B4YrLmod7LQM5JGysYgdwvX
-	GD/vkuRYN376SUDWdupwfhVSshLRKbNUZWhLzmv8LhjYAwSmZwM5B7eSQwq53JCKRewF3NBdv5j
-	H4Nm0YaEDdtx+VxMILY9BcurPRDHUfyj7x
-X-Google-Smtp-Source: AGHT+IH7re8OZF5bBSB4k0ZAEY2C8Zq+JO8DnU0SlRx83CgjrM1oycE+00LS/WCWFBKeaAgxWkGcPHQ96qS0/rLqulw=
-X-Received: by 2002:a2e:a545:0:b0:30b:acad:d5ce with SMTP id
- 38308e7fff4ca-31d34d606ddmr13916301fa.21.1745944305393; Tue, 29 Apr 2025
- 09:31:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745944342; x=1746549142;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlzV3aC3Ajcd4WwT0NS/l9ibLgDyq3ihO7Tsirhk0II=;
+        b=v4Gc9CgL58fyFKdmRA5PrvVQ0inG5NUsnjFQyzzrr8n4tlJZ5y/G0royRFrYBZMROy
+         /4YUfdm4EmKMiA1y5HI/lYTZpb+Fqp7jS5Aw2/DqDHvwNkQAFk2s/8UPQ/UG2TH5txMB
+         PLXNSj817VpKfax1yIkXlOaRqn9Kkol7oj8Z44DESc5Tm9yA8Iq9rPKVBTWPAL336Vdz
+         CQu9hjHoEq9sKliMPH6GZqvcrmvV3tbx14OVEq7pXfHwI5WfqyfPpxLXYb3DnMq2Ohxy
+         cyortjpVV5IqBo4ahJHA8ecH+quDO+kgQ0fqG9k7mQFD9RMLLAjvM4U6O0CxlOUTETxr
+         VBMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwr0ZvkrZMt8WXS1Vl/rSRIhyyr7zdNEZ3xndotD2OIHh6Uq76yMH04NutyVaxAJNHtYX4HCDu5iwchmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaJHJv18Y/PPfBnXuVSoRCUFA+P489+WJCahQKd7PPf9Y8nfrL
+	koPW2T7AQVMRRKawaG9DQPKew5Eh+dx9Be7D817s8l4/13MPCQ80TyRb4Ry5kDo=
+X-Gm-Gg: ASbGncvMS0WpOV1obfngYd3MpLdPkXb81xQfR6IMjrdU/GvutaWGfO4OqczuW9Qtz//
+	6Um6qJdaC5G6Zde9XRYqrMhI479jB3ZkwGnv8M9z127ad4mOUwHQZGpxgFRFRRv8+ExXv69cnoJ
+	dkZjosdLiPERNOtH27q0K/QpjFJQD7fE/QvahUA/giSiVxBQvVk01Wnw33H8q9v6mujzye2BItr
+	a4ScVyo+z37vKcCJsqoVNRDW7LwLOdRsXSNGduYhziQZDrDU+1IhjBwBdSN8faXUMvZTn8wBv10
+	6x/JFwjymgxSebvlWGtMIqj3EmFMJEsXgN8XuhggQa6vXn59BUg5aWa6iBdUde0JdVurhpt+sis
+	KPviU6ySV2aktY775Og==
+X-Google-Smtp-Source: AGHT+IECXLQfMw4IHoT8sY1k3B5PGYoLM8POTBaiM9WXU5IhYjgdUCA4tjARzeoztfzPvG3hb3MlHw==
+X-Received: by 2002:a05:6808:22a9:b0:3f4:11b3:206b with SMTP id 5614622812f47-4021103ccb9mr2215175b6e.17.1745944342109;
+        Tue, 29 Apr 2025 09:32:22 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:dc17:157d:e8b2:3ad6? ([2600:8803:e7e4:1d00:dc17:157d:e8b2:3ad6])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40212c4dbe6sm315201b6e.49.2025.04.29.09.32.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 09:32:20 -0700 (PDT)
+Message-ID: <ad489cc7-8c89-44fa-bcec-5c4b9cbcab74@baylibre.com>
+Date: Tue, 29 Apr 2025 11:32:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231001131620.112484-1-ubizjak@gmail.com> <CAHk-=wg6P8pPg-x4BPUQj-wE0xC7HkGzFk89ftuji8MVo+RRxw@mail.gmail.com>
- <CAFULd4Y+HXuditB51Q0LznqiBsvxJr3BjEYvx4_224XmqrycCw@mail.gmail.com> <CAHk-=wh+cfn58XxMLnG6dH+Eb9-2dYfABXJF2FtSZ+vfqVvWzA@mail.gmail.com>
-In-Reply-To: <CAHk-=wh+cfn58XxMLnG6dH+Eb9-2dYfABXJF2FtSZ+vfqVvWzA@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Tue, 29 Apr 2025 18:31:33 +0200
-X-Gm-Features: ATxdqUFGYsvKCzBX1UDWQvn2O_lq9gpMRDEWpGUYKuz45NvPITjcFjU0ANZaygA
-Message-ID: <CAFULd4Y-gr+UAvi4m1-p4MnJyMv3NRcyH=TFLZfFfNngnE_Kpw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/percpu: Use segment qualifiers
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>, 
-	Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Josh Poimboeuf <jpoimboe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/2] iio: adc: add support for Nuvoton NCT7201
+To: Eason Yang <j2anfernee@gmail.com>, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, javier.carrasco.cruz@gmail.com, tgamblin@baylibre.com,
+ olivier.moysan@foss.st.com, alisadariana@gmail.com, gstols@baylibre.com,
+ antoniu.miclaus@analog.com, eblanc@baylibre.com,
+ andriy.shevchenko@linux.intel.com, matteomartelli3@gmail.com,
+ marcelo.schmitt@analog.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250429025505.3278016-1-j2anfernee@gmail.com>
+ <20250429025505.3278016-3-j2anfernee@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20250429025505.3278016-3-j2anfernee@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[Dead thread resurrection]
+On 4/28/25 9:55 PM, Eason Yang wrote:
+> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+> 
 
-On Sun, Oct 1, 2023 at 10:21=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+...
 
-> And indeed, the *very* first thing I tried shows that this is all very
-> very buggy in gcc.
->
-> What did I try? A simple memory copy with a structure assignment.
->
-> Try to compile this:
->
->     #include <string.h>
->     struct a { long arr[30]; };
->
->     __seg_fs struct a m;
->     void foo(struct a *dst) { *dst =3D m; }
->
-> using the kernel compiler options (it's the "don't use sse/avx" ones
-> that matter):
->
->     gcc -mno-avx -mno-sse -O2 -S t.c
->
-> and look at the end result. It's complete and utter sh*t:
->
->         foo:
->                 xorl    %eax, %eax
->                 cmpq    $240, %rax
->                 jnb     .L5
->         .L2:
->                 movzbl  %fs:m(%rax), %edx
->                 movb    %dl, (%rdi,%rax)
->                 addq    $1, %rax
->                 cmpq    $240, %rax
->                 jb      .L2
->         .L5:
->                 ret
->
-> to the point that I can only go "WTF"?
->
-> I mean, it's not just that it does the copy one byte at a time. It
-> literally compares %rax to $240 just after it has cleared it. I look
-> at that code, and I go "a five-year old with a crayon could have done
-> better".
->
-> In other words, no, we're not using this thing that generates that
-> kind of garbage.
->
-> Somebody needs to open a bugzilla entry for this kind of code generation.
+> +static int nct7201_init_chip(struct nct7201_chip_info *chip)
+> +{
+> +	struct device *dev = regmap_get_device(chip->regmap);
+> +	__le16 data = cpu_to_le16(GENMASK(chip->num_vin_channels - 1, 0));
+> +	unsigned int value;
+> +	int err;
+> +
+> +	err = regmap_write(chip->regmap, NCT7201_REG_CONFIGURATION,
+> +			   NCT7201_BIT_CONFIGURATION_RESET);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to reset chip\n");
+> +
+> +	/*
+> +	 * After about 25 msecs, the device should be ready and then the power-up
+> +	 * bit will be set to 1. If not, wait for it.
+> +	 */
+> +	fsleep(25 * USEC_PER_MSEC);
+> +
+> +	err = regmap_read(chip->regmap, NCT7201_REG_BUSY_STATUS, &value);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to read busy status\n");
+> +	if (!(value & NCT7201_BIT_PWR_UP))
+> +		return dev_err_probe(dev, -EIO, "Failed to power up after reset\n");
+> +
+> +	/* Enable Channel */
+> +	if (chip->num_vin_channels <= 8)
+> +		err = regmap_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE,
+> +				   GENMASK(chip->num_vin_channels - 1, 0));
+> +	else
+> +		err = regmap_bulk_write(chip->regmap, NCT7201_REG_CHANNEL_ENABLE,
+> +					&data, sizeof(data));
 
-FYI, after GCC PR 111657 [1] was fixed, gcc-16 will generate the following =
-code:
+Why does this use little-endian format for data but the later bulk_read of the
+same register uses CPU-endian?
 
-foo:
-       movl    $m, %esi
-       movl    $30, %ecx
-       rep movsq       %fs:(%rsi), (%rdi)
-       ret
-
-And adding -mtune=3Dskylake:
-
-foo:
-       movl    $m, %esi
-       movl    $240, %ecx
-       rep movsb       %fs:(%rsi), (%rdi)
-       ret
-
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D111657
-
-Uros.
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to enable channel\n");
+> +
+> +	err = regmap_bulk_read(chip->regmap, NCT7201_REG_CHANNEL_ENABLE,
+> +			       &chip->vin_mask, sizeof(chip->vin_mask));
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "Failed to read channel enable register\n");
+> +
+> +	/* Start monitoring if needed */
+> +	err = regmap_set_bits(chip->regmap, NCT7201_REG_CONFIGURATION,
+> +			      NCT7201_BIT_CONFIGURATION_START);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to start monitoring\n");
+> +
+> +	return 0;
+> +}
+> +
 
