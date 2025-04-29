@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-625131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2531AA0D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA39AA0B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D6017CE1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:17:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54C727B6387
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5292C374B;
-	Tue, 29 Apr 2025 13:17:33 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37C32C2579;
+	Tue, 29 Apr 2025 12:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F6A3lSBe"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12EA130A54
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9214D2C2593
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745932653; cv=none; b=hDTrXhejmu9mldvxnmuRn3yqO57ZzO1Odx+6FT3h6Shm9rXYh6xHM+pBsVqBwJKWDDYjL42FGrVV7/EIBo2xZ51M7dzUaCH82l9GnpxJ0B7DvNwZBa6Pt59fzbjXu2JDXcH0oGf0VIp6kbshE+dKetqUdMZ8vW7c9IV6w8TuzIc=
+	t=1745928409; cv=none; b=IvA+bcb5yv+UT9lC4LnzyrRfu3ncD0v4N0atTlUQBUWiw+BNl1iQpgflLA9qKyalR3Vyi+OOGsyif/BW9/1nf45r+U7LYN+OJJ3ODuXeJ5d2w54wF+C/y0tY4rlVCbywfQ3DkBdAko1VfvNjQdjVDiHyHQuLE3OsD7bA3UYagWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745932653; c=relaxed/simple;
-	bh=7Y5NTnCFDzXwCsD2wU9EAUF1uwpBd6usaQJu+svC4Sc=;
-	h=Message-Id:Date:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=d/nKc2Pljrilano95Tw5jZiltjy7gf9+SInw+PNKHNJ8HyrlzeZXhgA3Yf/Wwy9DCEOVsJ/a/wR49HcFhLqk8cGBdsIuNVzUaOtAol9sO9apUfxORAGaxUKAs3QkGKlyJ34SHP5o1yLVSQfrDc+b4bcLZ8CFjTm+/6GoFEa9ZDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-db.zte.com.cn (unknown [10.5.228.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Zn17j42NMz5B1Jt;
-	Tue, 29 Apr 2025 21:17:21 +0800 (CST)
-Received: (from root@localhost)
-	by mse-db.zte.com.cn id 53TDHHjY085301;
-	Tue, 29 Apr 2025 21:17:17 +0800 (+08)
-	(envelope-from liu.song13@zte.com.cn)
-Message-Id: <202504291317.53TDHHjY085301@mse-db.zte.com.cn>
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 53T9T3aU063440;
-	Tue, 29 Apr 2025 17:29:03 +0800 (+08)
-	(envelope-from liu.song13@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Tue, 29 Apr 2025 17:29:05 +0800 (CST)
-Date: Tue, 29 Apr 2025 17:29:05 +0800 (CST)
-X-Zmail-TransId: 2af968109be16a9-43a08
-X-Mailer: Zmail v1.0
-In-Reply-To: <0b1e1a00-2cb9-4793-a439-06fcec3e71ec@amd.com>
-References: 202504270413.53R4DUco001600@mse-db.zte.com.cn,0b1e1a00-2cb9-4793-a439-06fcec3e71ec@amd.com
+	s=arc-20240116; t=1745928409; c=relaxed/simple;
+	bh=u6IGIBto1xpKcUHgEQL32+myYLIW4UGqnHyagSe7Bwk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=a3a4//lo4ztXXaI2ZZYMKbptywh10c/f8C/646kijmUQlzT909dxB9C9B6l0CwdHAfOc6C9asws97aviEwB0gpnaitJgIr+WEQ9Mckncd+Z6LSar4y32NoEifnJY4czVNRN2/o0Ts9y+q3vK+sEnqNAL/kNPju4+BZOp43nmh+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F6A3lSBe; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250429120639epoutp04bbe17408277f740f6078bd355569c813~6yKDuqzvz2054020540epoutp04p
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:06:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250429120639epoutp04bbe17408277f740f6078bd355569c813~6yKDuqzvz2054020540epoutp04p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745928399;
+	bh=RSyKLRIDfZUqc02NXZVKLH+houRYwWh9aD2SxU7TZ8U=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=F6A3lSBe+gvEoieXDYc6jNW2TaNH7akSKj28hu5OkpvieEDc6N1UkDuQyQWBoGKCJ
+	 JxFaa6gqRAJhUTeFtyp1lWuuB2fzcSGfXefjxjY3nyKzHeRSYeao2LpqD/IpCm9z+6
+	 Qd1zsV+ejKla4KuHgtVTSpZt7kG1LZs4ZVk+4FIg=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250429120638epcas5p4b8f04554cb03b9b4817cea66fb3076ee~6yKDF0dl22706927069epcas5p4M;
+	Tue, 29 Apr 2025 12:06:38 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZmzZ42tHlz6B9m9; Tue, 29 Apr
+	2025 12:06:36 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4~6ws2Qmttv0416804168epcas5p4f;
+	Tue, 29 Apr 2025 10:19:53 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250429101953epsmtrp219cade6a3671e0473c443dd011e5dbab~6ws2PtFAG0222002220epsmtrp2q;
+	Tue, 29 Apr 2025 10:19:53 +0000 (GMT)
+X-AuditID: b6c32a28-460ee70000001e8a-d6-6810a7c9d902
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0D.23.07818.9C7A0186; Tue, 29 Apr 2025 19:19:53 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250429101951epsmtip16df3344d040194e5d7b75e331b376fdf~6ws0p8Gx50829508295epsmtip1s;
+	Tue, 29 Apr 2025 10:19:51 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: alim.akhtar@samsung.com, krzk@kernel.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	dev.tailor@samsung.com, rosa.pila@samsung.com, faraz.ata@samsung.com
+Subject: [PATCH v4] tty: serial: samsung_tty: support 18 uart ports
+Date: Tue, 29 Apr 2025 15:59:41 +0530
+Message-Id: <20250429102941.4138463-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <liu.song13@zte.com.cn>
-To: <felix.kuehling@amd.com>
-Cc: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <airlied@gmail.com>, <simona@ffwll.ch>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <liu.xuemei1@zte.com.cn>,
-        <jiang.xuexin@zte.com.cn>, <xue.zhihong@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gZHJtL2FtZGtmZDogZW5hYmxlIGtmZCBvbiBSSVNDViBzeXN0ZW1z?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-db.zte.com.cn 53TDHHjY085301
-X-MSS: AUDITRELEASE@mse-db.zte.com.cn
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6810D161.000/4Zn17j42NMz5B1Jt
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSnO7J5QIZBjueq1g8mLeNzeLejmXs
+	FtduLGS3aF68ns3i3VwZi/PnN7BbbHp8jdXi8q45bBYzzu9jsjizuJfd4svPB8wO3B6bVnWy
+	eeyfu4bdY/OSeo++LasYPT5vkgtgjeKySUnNySxLLdK3S+DK+D6nk61gNXfFt8MPWRsYv3N2
+	MXJySAiYSDzp+c7SxcjFISSwm1Hi3r817BAJSYnDT++yQtjCEiv/PWeHKHrLKPFz8zKwIjYB
+	dYmZN44AdXNwiAikSOy/ywRSwyxwk1Fia+tSsBphAWeJVQ8/MoLYLAKqEr+62phBbF4BG4md
+	U6YwQyyQl9h/8CxUXFDi5MwnLCA2M1C8eets5gmMfLOQpGYhSS1gZFrFKJlaUJybnptsWGCY
+	l1quV5yYW1yal66XnJ+7iREcyloaOxjffWvSP8TIxMF4iFGCg1lJhLfKgD9DiDclsbIqtSg/
+	vqg0J7X4EKM0B4uSOO9Kw4h0IYH0xJLU7NTUgtQimCwTB6dUA5PR+oOX0lM+375caTVp0Rz3
+	e59+fXd/kTXx27ziXXHZ0SuPdf27n3UhcfPXl6z7Z36L+z3765+WBHF/64bEm/f87vQ9Mniq
+	sWK/4Y1lGXpdj+VDXizNafzHanvRf+HBWfk3nnzmulf4Op3r0D873xWHPJo3u+Z8aPy1gvep
+	YSvvlE0LMg3/VldMs2RzD5DUzSpUE5HKZvntLmDlx7NYJW2Rqs6TG9EN/I2rzhk6ex350pyR
+	WPsjbL7joe3qjVwWXlPvW5534vOYZjfnh3ut1Fmr0mcbux/9Eop5o7hh6q2Xi33ddl5cFzhp
+	bXT7nvj5ch6cybOnH7iZf0vh+selEb0rub7e5F3/YFG197PASfv+KrEUZyQaajEXFScCACeH
+	nVHUAgAA
+X-CMS-MailID: 20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4
+References: <CGME20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4@epcas5p4.samsung.com>
 
->> From: Xuemei Liu <liu.xuemei1@zte.com.cn>
->>
->> KFD has been confirmed that can run on RISCV systems. It's necessary to
->> support CONFIG_HSA_AMD on RISCV.
-> 
-> Is there a public user mode branch with any changes needed to make ROCm 
-> user mode work with RISCV?
-> 
-> One more question inline.
-> 
-> 
->> Signed-off-by: Xuemei Liu <liu.xuemei1@zte.com.cn>
->> ---
->>   drivers/gpu/drm/amd/amdkfd/Kconfig | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig b/drivers/gpu/drm/amd/amdkfd/Kconfig
->> index d3c3d3ab7225..9d4a5f8ef43f 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/Kconfig
->> +++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
->> @@ -5,7 +5,7 @@
->>
->>   config HSA_AMD
->>    bool "HSA kernel driver for AMD GPU devices"
->> - depends on DRM_AMDGPU && (X86_64 || ARM64 || PPC64)
->> + depends on DRM_AMDGPU && (X86_64 || ARM64 || PPC64 || RISCV)
-> 
-> The KFD memory model only works on 64-bit architectures. Is there a way 
-> to express that in the RISCV dependency?
-> 
-> Regards,
->   Felix
+ExynosAutov920 SoC supports 18 UART ports, update
+the value of UART_NR to accommodate the same.
 
-Dear Felix:
+Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+---
+Changes in v4:
+- Updated v3 change-log as discussed with Greg[2]
+- The patch itself remains unchanged, only the change logs have been updated.
+- Link to v3: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250417043427.1205626-1-faraz.ata@samsung.com/
+- Reference: [2] https://lore.kernel.org/linux-samsung-soc/2025042829-heroics-deskwork-e74d@gregkh/
 
-  Thanks for your feedback.
-  Regarding the issues you've pointed out:
-  1. The adaptation work of ROCm user mode work on RISCV was done by my collegue. He replied that he made no changes in ROCm code.
-  2. I will send patch-v2 to satisfy KFD only work on 64-bit architectures.
+Changes in v3:
+- Added changes-log (as pointed by Krzysztof[1]
+- Link to v2: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250404135006.1263827-1-faraz.ata@samsung.com/
+- Reference: [1] https://lore.kernel.org/linux-samsung-soc/03cc01dbaaaa$4dea13f0$e9be3bd0$@samsung.com/
 
-Best regards,
-  Xuemei
+Changes in v2:
+- Rebased on the latest linux-next and added reviewers as per get_maintainer.
+- Link to v1: https://patchwork.kernel.org/project/linux-samsung-soc/patch/20250312061932.1797993-1-faraz.ata@samsung.com/
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 210fff7164c1..9a5211b730fb 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -52,7 +52,7 @@
+ #define S3C24XX_SERIAL_MINOR	64
+ 
+ #ifdef CONFIG_ARM64
+-#define UART_NR			12
++#define UART_NR			18
+ #else
+ #define UART_NR			CONFIG_SERIAL_SAMSUNG_UARTS
+ #endif
+-- 
+2.34.1
+
 
