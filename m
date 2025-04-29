@@ -1,231 +1,199 @@
-Return-Path: <linux-kernel+bounces-624599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E92AA0547
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:14:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABCCAA054F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468AB1A87FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080545A6802
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B6328F53E;
-	Tue, 29 Apr 2025 08:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3330327C862;
+	Tue, 29 Apr 2025 08:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1qucDkz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0bPOM4x"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B6327C150;
-	Tue, 29 Apr 2025 08:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B257F25F7AB;
+	Tue, 29 Apr 2025 08:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745914467; cv=none; b=jSXWnkm1skNsoP8EhjW5fLK6SK0U4LMXODYrZlBTtffkJr6dbtqS2z4glLwBIRC8e3hHv/NancEExLhEp5KBsccvf8oV8ThrM2sD7XOzTQYdLrmrQ+p1j+iX01GeyT/fHhguDb3WQbJvgHVPWDC5LHcNfr6SkkgR7eLPGumerqY=
+	t=1745914496; cv=none; b=AimPqsvPAk/jbSBj+pu7Ut9ooAZQmWEsITrgG1s5vVYczRolFXF4QG7Z93w0qAN6Snr7oFrI/WQS7LF/5q5jGCDe8UiZPZu7mvP4/6EFzfkA3sZQpEGPrO09TP1votvXEICirj0eUIpW5guajWJtd9nBL77w/BFoiPHtkzLq2/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745914467; c=relaxed/simple;
-	bh=1+DCRbeGHM7PQfOjrqPCPY/9L/UOCvZq4UXq4SRoJPs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZKXpK7NsAqU1Qb89n0NyE/yAvx5pJY2IXkXb+2PP7ej/UFU8CVXnOZi9hGJVi1ccsxEPC7y78Sh2bg4Rg4mBlFGXlf/qr/55XFNPuuETigugqZEyhe+vchiWMtuqXcXrUDDo9yWNrk7JrPRgPz/rcRhDGJ/8S7cfa7vn6cgnzmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1qucDkz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A86A2C4CEEF;
-	Tue, 29 Apr 2025 08:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745914466;
-	bh=1+DCRbeGHM7PQfOjrqPCPY/9L/UOCvZq4UXq4SRoJPs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=b1qucDkz7iOyfooAgJMp4MXEx3oS1KevmoImMsbj45NpWetaVOTmiXIAzKbFH9v7S
-	 j2PPA3Bk1CupMxDuQpuooa7JJRhJ/Bcd/oQqB37oY5SzVGfLQZI7qybnnnoyG0LiFW
-	 9tLc6wB3H5zl1qqtL7CwBCH1QWJfJ0LYhGJ4HhyuShr+FWqfm1tEw6nB77WUw1Ufeo
-	 o2lMWjUWODwN8jK98EDf4XZfsPBi4jIigoFp3ITchgMTKguuEoZYS/PUX7uqAU/mu/
-	 J8tleYtJYBFwk1SxMVoLc8MT2nkmE6jL6QZuBiUUbX3jtNmx8ruHs0K+CaUDkUWdRj
-	 B8r0hR+JEySOg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE79C369DC;
-	Tue, 29 Apr 2025 08:14:26 +0000 (UTC)
-From: Sung-Chi Li via B4 Relay <devnull+lschyi.chromium.org@kernel.org>
-Date: Tue, 29 Apr 2025 16:14:23 +0800
-Subject: [PATCH 3/3] hwmon: (cros_ec) register fans into thermal framework
- cooling devices
+	s=arc-20240116; t=1745914496; c=relaxed/simple;
+	bh=DfuiS9ywp+ZU4Ck3Hk6awbmMjHIGnG3GQm/4fFm6Gw0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iBm56zW3HSjzQ4h2idRegspqSlVHjDZx9ycBKY96GrDU22kM347zaZzfwMTQtbSXyUIyfyCYcaVRHjttkS0cH831+9N75ZooLacqQ67Ou+M2IMK5ozeqwFu+pQWXfmqtiKID4HYN+Rx4POIlRWtv3PKqRYvWRI2A6/A9pvoilXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0bPOM4x; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so37741855e9.1;
+        Tue, 29 Apr 2025 01:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745914493; x=1746519293; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sndv3w7Q8kDv9+q7MF+dib355lQod7g3DGJrt36mzys=;
+        b=M0bPOM4xRGb6h6sOYUeCGMOlJksRbau3zfn7NVCbod0VOtr13lfXyR+vUcfBC9Vw92
+         cS3ThgHB2gdaTle3beGm7nKP703a6wzgdly0iN4MJWJQtqqXQ9PopTogQ0OD37V9qfax
+         f6No0jA1/wdnGgVlUm7OIaev7yfnh/B2TkSud9ZCKSVznjJaMqMCXGhyjxZveUAW87Xa
+         m9YevJV7UqUUbD+JPEbXdr1mdIytAPRodQUQFhAziPoABaQhT+Q4QSCmHl+1Hy5j5J9Y
+         ffRM9zlx9bWBatMFKk4Uvzpo5Lta+21Xzq+jonvedgnjaDuQ7VZkME44AJ4UHgQEZPjf
+         jh3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745914493; x=1746519293;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sndv3w7Q8kDv9+q7MF+dib355lQod7g3DGJrt36mzys=;
+        b=d8iGaB8VPbFPJe0/E68dEZX8Er7h+R1NEJagi+KiLnvQk4Vz6NrZoNxlg6n2kSXkdM
+         kYZOlvMAKaW8dtnnv5SI6tot2i6btwaWVXH3xOzq7SdQQ6WJKv5q2VEBBr7wypGSTNzI
+         VPFxOv9F5uPCt5FyPMJ/x00KotTZji8tOZhRwln8BUWZakx+KVmHie+tZeCEDxE7O33I
+         3VIjodCsbqywv5QossY1fOCH7GZQHgKFhxinLCd00sd9giEu7acwTYftsUQTSOLOPUqZ
+         +qYAdDwGzC4mczrjLlYDOkWvHL2CQryoxFYdXFpzqzB458pcvaSTgIGutn7ncFaSDrTj
+         w+Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUa5/as7e2/gRvMEwDlzs36aVEVpU+u4iO6bqPLVIwQbXZXpo1AZo9vbAb7pJ0DwCz4EpwgXI8/bqv2@vger.kernel.org, AJvYcCUhgTK2GwGDHoKhSmUpdWTeOocMz37lCp3tlFpqJV07Uj+l7TqYcW6Q6VNVyaHi3axM8T7A4opTFMVF@vger.kernel.org, AJvYcCVX2G+zOZqAX2ZZzCDq6xVE5QCcQXZ7bw2EbpTqfx9L4oRwDqOAPVClHAepNfyVQcQXtwnSfGsV6yf2thC3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUJUd8QK6SM3n7jMgBlr+3KgslByvlBK/tghGcqDkhlzi0llDo
+	ywKTFWxNjGyGgD+T01zPP0h6ctM2EQrA2KSHv2w+qZw+uOC+VjChEOeG9dOCPJ0=
+X-Gm-Gg: ASbGncuOyEuuO1K3lX8SleNrFU8UFZDcJzqVTfLwxviQyTqPkUaqBUONUC821I8Qgr9
+	6FBHwyvqWd9u6ZdPkL7InwRWr6dBZDZni4n1dA06SD9d9lql/BnfIu6Y85xLVee0eMICqSY17aa
+	dyTQbCH6bDCirWd/cv29/SwDme1bb+UCByxb5DZKS5cHXth1XohGFFZSDtsYD7DANY6PLEGUKHa
+	z2YWAQUHcT6lgFo2oF5OeeY6lw0nY7dEUaXmWuf/Ah9bI1bLs2242YkYk2tiVIfvbl1Ze/AKnVW
+	hEtjWD3gComE+aK6zYdpV7XWIyOEA8A3/Gck7GqpFTfMeOpUjWP+9TWZ/s9yM17+Xoje1KqFgSg
+	L4Jwsc3rP62sT
+X-Google-Smtp-Source: AGHT+IGe/csrIqoHzRat1Mk0BnJwsWnqRjwYWgeJGxhqh7K08fEn/RPFJAlQAfOMl1xpWM90SO2eGQ==
+X-Received: by 2002:a05:600c:19c7:b0:43b:bfa7:c7d with SMTP id 5b1f17b1804b1-441acaa8d45mr16042955e9.2.1745914492757;
+        Tue, 29 Apr 2025 01:14:52 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a53874a9sm148102335e9.34.2025.04.29.01.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 01:14:52 -0700 (PDT)
+Message-ID: <23fbfcd79d2d8c924c84ea8a16ed28697bfd326b.camel@gmail.com>
+Subject: Re: [PATCH v3 01/11] iio: backend: add support for filter config
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 29 Apr 2025 09:14:56 +0100
+In-Reply-To: <20250425112538.59792-2-antoniu.miclaus@analog.com>
+References: <20250425112538.59792-1-antoniu.miclaus@analog.com>
+	 <20250425112538.59792-2-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-cros_ec_fan-v1-3-a8d9e3efbb1a@chromium.org>
-References: <20250429-cros_ec_fan-v1-0-a8d9e3efbb1a@chromium.org>
-In-Reply-To: <20250429-cros_ec_fan-v1-0-a8d9e3efbb1a@chromium.org>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
- Sung-Chi Li <lschyi@google.com>, Sung-Chi Li <lschyi@chromium.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745914465; l=5122;
- i=lschyi@chromium.org; s=20250429; h=from:subject:message-id;
- bh=CzzdhK1tpMOhvzur2FZyTlxUzTR8H+S2R1Q7+/4BMLA=;
- b=8m4Hke9PBnFU82gso9aL9qCn+SYp3bKudu0m/mK3sHYP/lWXlxINLK68OhfWnHS5ZCDfKzj4l
- iFhG6t6mxhvB7/9mEPWNu8IE8W7tsB45j2t+IqlZeSb7T1Cb8nGaqp0
-X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
- pk=9gCZPRJmYyHDt6VN9FV2UreFcUr73JFrwYvmsltW9Y8=
-X-Endpoint-Received: by B4 Relay for lschyi@chromium.org/20250429 with
- auth_id=392
-X-Original-From: Sung-Chi Li <lschyi@chromium.org>
-Reply-To: lschyi@chromium.org
 
-From: Sung-Chi Li <lschyi@chromium.org>
+On Fri, 2025-04-25 at 14:25 +0300, Antoniu Miclaus wrote:
+> Add backend support for digital filter type selection.
+>=20
+> This setting can be adjusted within the IP cores interfacing devices.
+>=20
+> The IP core can be configured based on the state of the actual
+> digital filter configuration of the part.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
 
-Register fans connected under EC as thermal cooling devices as well, so
-these fans can then work with the thermal framework.
+This one LGTM:
 
-During the driver probing phase, we will also try to register each fan
-as a thermal cooling device based on previous probe result (whether the
-there are fans connected on that channel, and whether EC supports fan
-control). The basic get max state, get current state, and set current
-state methods are then implemented as well.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
----
- Documentation/hwmon/cros_ec_hwmon.rst |  2 +
- drivers/hwmon/cros_ec_hwmon.c         | 72 +++++++++++++++++++++++++++++++++++
- 2 files changed, 74 insertions(+)
-
-diff --git a/Documentation/hwmon/cros_ec_hwmon.rst b/Documentation/hwmon/cros_ec_hwmon.rst
-index 5b802be120438732529c3d25b1afa8b4ee353305..82c75bdaf912a116eaafa3149dc1252b3f7007d2 100644
---- a/Documentation/hwmon/cros_ec_hwmon.rst
-+++ b/Documentation/hwmon/cros_ec_hwmon.rst
-@@ -27,3 +27,5 @@ Fan and temperature readings are supported. PWM fan control is also supported if
- the EC also supports setting fan PWM values and fan mode. Note that EC will
- switch fan control mode back to auto when suspended. This driver will restore
- the fan state before suspended.
-+If a fan is controllable, this driver will register that fan as a cooling device
-+in the thermal framework as well.
-diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-index 1139074d3eb003ee72bbe54a954647ced40f6d21..c38c61bba431fe25322793f7dd5db59fcc95daaf 100644
---- a/drivers/hwmon/cros_ec_hwmon.c
-+++ b/drivers/hwmon/cros_ec_hwmon.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/thermal.h>
- #include <linux/types.h>
- #include <linux/units.h>
- 
-@@ -30,6 +31,11 @@ struct cros_ec_hwmon_priv {
- 	u8 manual_fan_pwm_values[EC_FAN_SPEED_ENTRIES];
- };
- 
-+struct cros_ec_hwmon_cooling_priv {
-+	struct cros_ec_hwmon_priv *hwmon_priv;
-+	u8 index;
-+};
-+
- static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
- {
- 	int ret;
-@@ -340,6 +346,38 @@ static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
- 	NULL
- };
- 
-+static int
-+cros_ec_hwmon_cooling_get_max_state(struct thermal_cooling_device *cdev,
-+				    unsigned long *val)
-+{
-+	*val = 100;
-+	return 0;
-+}
-+
-+static int
-+cros_ec_hwmon_cooling_get_cur_state(struct thermal_cooling_device *cdev,
-+				    unsigned long *val)
-+{
-+	const struct cros_ec_hwmon_cooling_priv *priv = cdev->devdata;
-+	u8 raw_val;
-+	int ret = cros_ec_hwmon_read_pwm_raw_value(priv->hwmon_priv->cros_ec,
-+						   priv->index, &raw_val);
-+
-+	if (ret == 0)
-+		*val = raw_val;
-+	return ret;
-+}
-+
-+static int
-+cros_ec_hwmon_cooling_set_cur_state(struct thermal_cooling_device *cdev,
-+				    unsigned long val)
-+{
-+	const struct cros_ec_hwmon_cooling_priv *priv = cdev->devdata;
-+
-+	return cros_ec_hwmon_set_pwm_raw_value(priv->hwmon_priv, priv->index,
-+					       val);
-+}
-+
- static const struct hwmon_ops cros_ec_hwmon_ops = {
- 	.read = cros_ec_hwmon_read,
- 	.read_string = cros_ec_hwmon_read_string,
-@@ -347,6 +385,12 @@ static const struct hwmon_ops cros_ec_hwmon_ops = {
- 	.is_visible = cros_ec_hwmon_is_visible,
- };
- 
-+static const struct thermal_cooling_device_ops cros_ec_thermal_cooling_ops = {
-+	.get_max_state = cros_ec_hwmon_cooling_get_max_state,
-+	.get_cur_state = cros_ec_hwmon_cooling_get_cur_state,
-+	.set_cur_state = cros_ec_hwmon_cooling_set_cur_state,
-+};
-+
- static const struct hwmon_chip_info cros_ec_hwmon_chip_info = {
- 	.ops = &cros_ec_hwmon_ops,
- 	.info = cros_ec_hwmon_info,
-@@ -421,6 +465,33 @@ cros_ec_hwmon_probe_fan_control_supported(struct cros_ec_hwmon_priv *priv)
- 	priv->fan_control_supported = true;
- }
- 
-+static void
-+cros_ec_hwmon_register_fan_cooling_devices(struct device *dev,
-+					   struct cros_ec_hwmon_priv *priv)
-+{
-+	struct cros_ec_hwmon_cooling_priv *cpriv;
-+	size_t i;
-+
-+	if (!priv->fan_control_supported)
-+		return;
-+
-+	for (i = 0; i < EC_FAN_SPEED_ENTRIES; i++) {
-+		if (!(priv->usable_fans & BIT(i)))
-+			continue;
-+
-+		cpriv = devm_kzalloc(dev, sizeof(*cpriv), GFP_KERNEL);
-+		if (!cpriv)
-+			return;
-+
-+		cpriv->hwmon_priv = priv;
-+		cpriv->index = i;
-+		devm_thermal_of_cooling_device_register(
-+			dev, NULL,
-+			devm_kasprintf(dev, GFP_KERNEL, "cros-ec-fan%zu", i),
-+			cpriv, &cros_ec_thermal_cooling_ops);
-+	}
-+}
-+
- static int cros_ec_hwmon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -452,6 +523,7 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
- 	cros_ec_hwmon_probe_temp_sensors(dev, priv, thermal_version);
- 	cros_ec_hwmon_probe_fans(priv);
- 	cros_ec_hwmon_probe_fan_control_supported(priv);
-+	cros_ec_hwmon_register_fan_cooling_devices(dev, priv);
- 
- 	platform_priv->hwmon_dev = devm_hwmon_device_register_with_info(
- 		dev, "cros_ec", priv, &cros_ec_hwmon_chip_info, NULL);
-
--- 
-2.49.0.901.g37484f566f-goog
-
-
+> changes in v3:
+> =C2=A0- update function to set the actual filter type instead of just
+> enable/disable.
+> =C2=A0drivers/iio/industrialio-backend.c | 15 +++++++++++++++
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 13 +++++++++++++
+> =C2=A02 files changed, 28 insertions(+)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index d4ad36f54090..2d28eabb1607 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -778,6 +778,21 @@ static int __devm_iio_backend_get(struct device *dev=
+,
+> struct iio_backend *back)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +/**
+> + * iio_backend_filter_type_set - Set filter type
+> + * @back: Backend device
+> + * @type: Filter type.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_filter_type_set(struct iio_backend *back,
+> +				enum iio_backend_filter_type type)
+> +{
+> +	return iio_backend_op_call(back, filter_type_set, type);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_filter_type_set, "IIO_BACKEND");
+> +
+> =C2=A0/**
+> =C2=A0 * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate)=
+ mode
+> =C2=A0 * @back: Backend device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index e45b7dfbec35..5526800f5d4a 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -76,6 +76,14 @@ enum iio_backend_interface_type {
+> =C2=A0	IIO_BACKEND_INTERFACE_MAX
+> =C2=A0};
+> =C2=A0
+> +enum iio_backend_filter_type {
+> +	IIO_BACKEND_FILTER_TYPE_DISABLED,
+> +	IIO_BACKEND_FILTER_TYPE_SINC1,
+> +	IIO_BACKEND_FILTER_TYPE_SINC5,
+> +	IIO_BACKEND_FILTER_TYPE_SINC5_PLUS_COMP,
+> +	IIO_BACKEND_FILTER_TYPE_MAX
+> +};
+> +
+> =C2=A0/**
+> =C2=A0 * struct iio_backend_ops - operations structure for an iio_backend
+> =C2=A0 * @enable: Enable backend.
+> @@ -100,6 +108,7 @@ enum iio_backend_interface_type {
+> =C2=A0 * @read_raw: Read a channel attribute from a backend device
+> =C2=A0 * @debugfs_print_chan_status: Print channel status into a buffer.
+> =C2=A0 * @debugfs_reg_access: Read or write register value of backend.
+> + * @filter_type_set: Set filter type.
+> =C2=A0 * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
+> =C2=A0 * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
+> =C2=A0 * @data_stream_enable: Enable data stream.
+> @@ -150,6 +159,8 @@ struct iio_backend_ops {
+> =C2=A0					 size_t len);
+> =C2=A0	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int r=
+eg,
+> =C2=A0				=C2=A0 unsigned int writeval, unsigned int
+> *readval);
+> +	int (*filter_type_set)(struct iio_backend *back,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_filter_type typ=
+e);
+> =C2=A0	int (*ddr_enable)(struct iio_backend *back);
+> =C2=A0	int (*ddr_disable)(struct iio_backend *back);
+> =C2=A0	int (*data_stream_enable)(struct iio_backend *back);
+> @@ -190,6 +201,8 @@ int iio_backend_data_sample_trigger(struct iio_backen=
+d
+> *back,
+> =C2=A0int devm_iio_backend_request_buffer(struct device *dev,
+> =C2=A0				=C2=A0=C2=A0=C2=A0 struct iio_backend *back,
+> =C2=A0				=C2=A0=C2=A0=C2=A0 struct iio_dev *indio_dev);
+> +int iio_backend_filter_type_set(struct iio_backend *back,
+> +				enum iio_backend_filter_type type);
+> =C2=A0int iio_backend_ddr_enable(struct iio_backend *back);
+> =C2=A0int iio_backend_ddr_disable(struct iio_backend *back);
+> =C2=A0int iio_backend_data_stream_enable(struct iio_backend *back);
 
