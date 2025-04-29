@@ -1,184 +1,146 @@
-Return-Path: <linux-kernel+bounces-625378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080D3AA10A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:40:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0E6AA10AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B943AB83C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8109A1BA1412
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E793227BA5;
-	Tue, 29 Apr 2025 15:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647E922A4F1;
+	Tue, 29 Apr 2025 15:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJMKZghg"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YcjTq8pj"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4448C2D1;
-	Tue, 29 Apr 2025 15:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E817A227E97
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745941202; cv=none; b=u2u5OtXRF7PuTda0yiC68nsXmXQ3A1EKLz7X6psddK0LrKAPbrXMc9eOqMN+PL+tBsJJmjmWu59HJ4M6nTf0SzVDBmICEWstH4XoORNFE8cClVfqDPM3Qp+ZzuKeaqFGlLAgkjDNcV3j40oTvHZjVwSLOQrkb9KFFw/083d4+9Y=
+	t=1745941219; cv=none; b=miuRKpvDoiVOR13gc25Pls0aziuHb9+EkW3VGSY9URwWBmCwyZ/GMP/q/ZgSiAQ6WWYXJqrGsSTEluDNwslVn99TqqTIWpMHPrfLKRPsr0pyQf/6HNEQMnP8pVwcvv51ram/uHnmsKwVxmFf5T3gvWzCuzZ9YynALFgBwxEYp64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745941202; c=relaxed/simple;
-	bh=CrN6P12JVoXq0VzTYIezovmF77P97iZPbBUkrdCau7s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y5hk+lAozR8gGnFeVKl7pO9bw3o3ylkk4e0yXbsidCcSJSQNQcnS42vmulWyS/eOLzLsbCQA2V2MfnkxYhs7df5r3IFO58JpNWc+sdui6oESiVmYjFGoxBBenTP6stw6NJbJb46L8Ua0eyEHhJgzo88NjdGUCT8esLUTyeX8ers=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJMKZghg; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so4046097f8f.3;
-        Tue, 29 Apr 2025 08:40:00 -0700 (PDT)
+	s=arc-20240116; t=1745941219; c=relaxed/simple;
+	bh=ZSlaSOOnAD2Cp1tBIlvme8AqpEDC6hlg0gqvRaVTa9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SMBemEw7Bff9rfnXSUvyvjXR+0dN5rv8OI5MTzfRjeyDZsX6rn56Q710xq1SrxfC4CjDnGexVOPlzFWoWzmawNw7l50jal6MsGzXGX3pgyoJWtYHVNa4vbDTet5Igl0vQ9RsFT/xT04b0L+TPc0elQ0CQ5tUUzdZ17F52f/Gmjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YcjTq8pj; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3fea0363284so4130333b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745941199; x=1746545999; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uRRV5VQKmG7WVso+6vlqTuY2N9DktX999E0cQzgs5ls=;
-        b=FJMKZghgcZY+pnR3AnxVLdR2Xmoyl/Ni/QAWsOdmyEPb7k5c7cYqer1A1FMAUC6kLG
-         Lqnbv7t697qh2zd8vjCHsbB4Xg5+sdDkCHPbsXcOTD3HSB+vK05+I5E7L+UT8I5aofUQ
-         hI7s38iclle1BoWY1mlMu62rBv48MG0x0csbbnrWs8VsmOTBChTOuur1IlCs/GaGVlyN
-         5UOq9zhylir6zamKiVhOTSHyD0af6Z1KqFEcKBBH65zqGzmVDZmqVXhjhZ8qq1JNykdx
-         lADir4B0v/O+F/8fpTJRGgW3NpKUfawb+kBqSJmCHtNzkSOGkahg5pJvnKd137PoXU8e
-         sJtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745941199; x=1746545999;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745941217; x=1746546017; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uRRV5VQKmG7WVso+6vlqTuY2N9DktX999E0cQzgs5ls=;
-        b=j6ii+deqVZ7Qk5yVLQeTiCAR4NWbI6cVxAMz+46tYyr+D1k9EsDAWddgk1HQO0vN6R
-         h8ph/4IFuVWAb7B/pS7TnNJiBSh0yB51Dr+aeMcIgTQW/Q7gvtu23iXEyqgBwUix5+jN
-         JVuNkyMmpa+INH2hugOq3EjaPvlqJHGCLJ7hlFoefeoYl488XxlkUEsC5oBSKb8iAVpu
-         lMxZHHrUifmBoLich4kZ4iYuYS/f6FA496yM8tnMYXQ3l164wD7YmCKPXKLq3ak0T2br
-         62e9x5uXwHYrNv4PXWFVRixr9zHR75+YQs+004YwfLWctRw6L5wGpaHQfqssx3N64TFM
-         IbmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiCaT8N8dpSOx8hTPNhja8TLP1lHsHodH191EI0Mu6v3w66eiIPdwnnJJNtKyFCLReDG/xAMHX9AdE97w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlNs6FTv5Gr2Os/hpAonztKlKdtJWIwMZZEKEcHjBMwrGjpLi6
-	hbY/uPBxaDpJKSCWz3OZ1DbuNXtg8aEt4GIPtXV7MBXJDTPiNuoS8xPndxru
-X-Gm-Gg: ASbGnct317MjVE1l6UPyOnWQ2qtdhDb+xvXNpFhqo3i76ZR68S4H1WmL+zEQjpeyEIg
-	F8SS10gTWrHv0eMai7lTP430r4BrhyaKKCJzT/bu5cU1huJ/ep2qYyIKQkso/osHomFexVnTLa0
-	IAIfkKVmTYHSAUqZvPZ0m/SmEtfBFkn0m/N2yrH5KePWiy95hyxfhHvfAiMID5M6eKC30EhB8Oa
-	MO/oJFEgQWDuz41nKnvSjth6q0HRrng1/tSo1JFJrSUt3tqCA+2F/tJ1lVhwauihMMwC+KQQTfD
-	GuGrIndzRMjrkiz8obTa+d+k8t/bS4kHI/CpV/wRr3+w4onZrouRklSj5LrPMJXbm629s5jy0id
-	PPp1khlYjvyK+
-X-Google-Smtp-Source: AGHT+IEvNOkswmzuTDrFfDXMdU1HhqIZ6y2XMAglm3nMj1C1EkfGRBxuFw3NEa1k/GsIAgd7gHE8Bg==
-X-Received: by 2002:a05:6000:2489:b0:39e:e499:3efd with SMTP id ffacd0b85a97d-3a08ad7764fmr2604535f8f.42.1745941198769;
-        Tue, 29 Apr 2025 08:39:58 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e461casm14562706f8f.74.2025.04.29.08.39.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 08:39:58 -0700 (PDT)
-Message-ID: <a380702d474e9b1f361f7224e20e40bdfb8a810b.camel@gmail.com>
-Subject: Re: [PATCH 2/4] spi: axi-spi-engine: don't repeat mode config for
- offload
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Michael Hennerich	
- <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 29 Apr 2025 16:40:03 +0100
-In-Reply-To: <f68231bc-6546-4eaf-a8b2-fc31add33a1f@baylibre.com>
-References: <20250428-adi-main-v1-0-4b8a1b88a212@baylibre.com>
-	 <20250428-adi-main-v1-2-4b8a1b88a212@baylibre.com>
-	 <ca7708856683596894b5fb9cfd6caa164535a50a.camel@gmail.com>
-	 <f68231bc-6546-4eaf-a8b2-fc31add33a1f@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+        bh=IKHZLFnrfagn8Gc44g2MZTpXJ9t5oidezhlrUDWVs0Y=;
+        b=YcjTq8pjS1P3iyQIQa+y+f0PTT18kC5URqpqC9eSdoczJ6mSQCMKAsI7zZbclH4vdV
+         HqaQfHUEd7ZmdewTEWlob4/Yo7EF5XyM8iH2A4SKgdq/Der4dxzrXCW3zsXwDofH2gHj
+         3+gBjYxeR3a2bCKBoKBdhdY+hU++Cvw32RsEZ/x6ZmbGygg1VyCTEyNzKp0r+EDN6drJ
+         jjYYPGdxTvwkPHX6c5FAZ0D7+2jhC9wQLn1z5mw0SJTVzYcyzXmGZm7e1QEMOf/IIPkj
+         CTcD37u/Qmw9ggMLLHLLW7v41et1kE4yrw33wtRjv7LA17ZtgYwBPY6G5jJ9WdrBg74H
+         pSeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745941217; x=1746546017;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKHZLFnrfagn8Gc44g2MZTpXJ9t5oidezhlrUDWVs0Y=;
+        b=gGWYYsaqDeeDM/mfqUpz1VeOeHuLX0wpiHcZiawyk+RHWCGi1bimvW3jYiHpaxNYM7
+         Ji4KFfNZd/HKaS0dsqIDN2GaOxDlcWB0dmOarx+nimaZaQ8X9pk2uw74ClFwaEg4vDAV
+         5IzVif03D3sp7UYOYJkhmkRYZ0hhYF9QkfIr91QfFl1DeuId01069qcR8nwUj0UJ3TgK
+         TXpZTGE8mznyclxue1Pvgq6T7tVDT4a3KjEP/uPehRP1tYTDf9t4msSrxvdn4Mcmam48
+         dAc5LGhOXv0x9f3qZR+2sW8n8UEuReE6/+FtOj4tJGZKvarulVfyYcPMpy6/andblLPa
+         zvUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXU+PKIPjLwWNZaT5DJMUK4/4efqMqltwz3/Dzprvn7kozZpBfKuCCNe279CPoyJgmmYMoLW+WW/TM+wq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytZUyT3pPv5VJoSudVZI8w7Bci8+9dzK5pYsDbsimGwIQxJvl+
+	527L08AYzKwlD9pWwAR5cLgxW1rU5P2Chn5fMc+u9DUgkrxM9Xns16v8eK1osNM=
+X-Gm-Gg: ASbGncv/TmJcpqTuhGgV5cVLIm/vv7jLKOyku3QXm+GXJGpVldoRlIEH2eYF1pj4O9I
+	IPVfPP837p2KCvx72LnTAD5m6cTwzv3tasD9SgCkzbW2UdTECGpthjeZXn9UHu6/Z6jMZxNW4z0
+	tizsliEpYV9LH6ZUHULOjcqci64c2PFTcUloRzrCSiDowvAOb/knC5lMU9m/ORUGkLouqX9fPtw
+	fMhGN9w9HE7DcyPCgWgAWrYnIQWbh0Dez7PowieiyOtelKuKKgzAy1q9FYxFI2LrrnIpHeG8cO2
+	K9RYl5l5tKYd6/eWQQHECRa/Il5RS125bx21yxhDN2YMQrfNxiUbIAsi2l8MJP7Mk7tKL/A1RnX
+	TpUfIySVh5nnt6ap/AogyiuirXC5l
+X-Google-Smtp-Source: AGHT+IEoUSoJwOEaMAzGJzx8g+iEjy8VILrk9/hm7FHFKGMS1oJnNn7zWdRkCw1+SUiqaiAkTKDS6w==
+X-Received: by 2002:a05:6808:2214:b0:400:7dd3:2dbe with SMTP id 5614622812f47-402110303f0mr1770338b6e.14.1745941216954;
+        Tue, 29 Apr 2025 08:40:16 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:dc17:157d:e8b2:3ad6? ([2600:8803:e7e4:1d00:dc17:157d:e8b2:3ad6])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40212c4d567sm293636b6e.43.2025.04.29.08.40.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 08:40:16 -0700 (PDT)
+Message-ID: <5aa4d76f-6f16-40ae-9dbf-767c63aa0a3d@baylibre.com>
+Date: Tue, 29 Apr 2025 10:40:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] Documentation: ABI: add oversampling frequency in
+ sysfs-bus-iio
+To: Jorge Marques <gastmaier@gmail.com>, Andy Shevchenko <andy@kernel.org>
+Cc: Jorge Marques <jorge.marques@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20250422-iio-driver-ad4052-v2-0-638af47e9eb3@analog.com>
+ <20250422-iio-driver-ad4052-v2-1-638af47e9eb3@analog.com>
+ <aAe6u6NhAsgjaL5_@smile.fi.intel.com>
+ <c3i7g273lgvx7rpihzq6r7exxxnglbwrqwfryyz6ciqo52tszf@cvi7pz4bmkvq>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <c3i7g273lgvx7rpihzq6r7exxxnglbwrqwfryyz6ciqo52tszf@cvi7pz4bmkvq>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-04-29 at 10:24 -0500, David Lechner wrote:
-> On 4/29/25 4:08 AM, Nuno S=C3=A1 wrote:
-> > Hi David,
-> >=20
-> > The whole series LGTM but I do have a small concern (maybe an hypotheti=
-cal
-> > one)
-> > in this one...
-> >=20
-> >=20
-> > On Mon, 2025-04-28 at 15:58 -0500, David Lechner wrote:
->=20
->=20
-> ...
->=20
-> > > +
-> > > +	writel_relaxed(SPI_ENGINE_CMD_SYNC(0),
-> > > +		spi_engine->base + SPI_ENGINE_REG_CMD_FIFO);
-> > > +
-> > > +	writel_relaxed(SPI_ENGINE_CMD_WRITE(SPI_ENGINE_CMD_REG_CONFIG,
-> > > +					=C2=A0=C2=A0=C2=A0 priv->spi_mode_config),
-> > > +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spi_engine->base + SPI_ENGINE=
-_REG_CMD_FIFO);
-> > > +
-> > > +	writel_relaxed(SPI_ENGINE_CMD_SYNC(1),
-> > > +		spi_engine->base + SPI_ENGINE_REG_CMD_FIFO);
-> > > +
-> >=20
-> > I would assume that SPI_ENGINE_CMD_SYNC(0) + SPI_ENGINE_CMD_SYNC(1) sho=
-uld
-> > be
-> > executed in order by the core? I think all this relaxed API's don't giv=
-e any
-> > guarantee about store completion so, in theory, we could have SYNC(0) a=
-fter
-> > SYNC(1). Even the full barrier variants don't guarantee this I believe =
-[1].
-> > There's ioremap_np() variant but likely not supported in many platforms=
-.
-> > Doing a
-> > read() before SYNC(1) should be all we need to guarantee proper orderin=
-g
-> > here.
-> >=20
-> > Or maybe this is all theoretical and not an issue on the platforms this
-> > driver
-> > is supported but meh, just raising the possibility.
-> >=20
-> >=20
-> > [1]:
-> > https://elixir.bootlin.com/linux/v6.12-rc6/source/Documentation/driver-=
-api/device-io.rst#L299
-> >=20
->=20
-> The way I am reading this, relaxed isn't "no barriers", just "weaker
-> barriers".
+On 4/29/25 8:47 AM, Jorge Marques wrote:
+> 
+> Hi Andy,
+> 
+> I agree with your suggestion, and in this case the appropriate kernel
+> version is 3.10.
+> 
+>>
+>>> +What:		/sys/bus/iio/devices/iio:deviceX/oversampling_frequency
+>>> +KernelVersion:	6.15
+>>
+>> Then why don't you put the real version of the first release that has it?
+>>
+>>> +Contact:	linux-iio@vger.kernel.org
+>>> +Description:
+>>> +		Some devices have internal clocks for oversampling.
+>>> +		Sets the resulting frequency in Hz to trigger a conversion used by
+>>> +		the oversampling filter.
+>>> +		If the device has a fixed internal clock or is computed based on
+>>> +		the sampling frequency parameter, the parameter is read only.
+>>> +
+>>> +What:		/sys/bus/iio/devices/iio:deviceX/oversampling_frequency_available
+>>> +KernelVersion:	6.15
+>>
+>> Ditto.
+>>
+>>> +Contact:	linux-iio@vger.kernel.org
+>>> +Description:
+>>> +		Hardware dependent values supported by the oversampling
+>>> +		frequency.
 
-Yes, sometimes just compiler ones. Bad phrasing from me...
 
-> Quoting from the linked doc:
->=20
-> 	On architectures that require an expensive barrier for serializing
-> 	against DMA, these =E2=80=9Crelaxed=E2=80=9D versions of the MMIO access=
-ors only
-> 	serialize against each other, but contain a less expensive barrier
-> 	operation.
->=20
-> So that sounds like we should not have a problem to me. (And if there is =
-a
-> problem, then it would affect other parts of the driver, like when we loa=
-d
-> the fifos with tx data in a loop.)
+I don't see oversampling_frequency used in any existing driver, so how could
+it be introduced in kernel 3.10? I think you confuse it with
+events/sampling_frequency.
 
-Well that just ensures that they are issued by the order you wrote them but=
- it
-does not guarantee that they end up in the same order on the peripheral its=
-elf.
-
-Anyways, likely not an issue on the arches we care and as you mentioned it,
-there are other places of the driver where this could matter. So, I guess n=
-ot
-material for this series.
-
-- Nuno S=C3=A1
+oversampling_frequency is new and so 6.16 should be correct if Jonathan picks
+this up in the next few weeks, otherwise it will be 6.17.
 
 
