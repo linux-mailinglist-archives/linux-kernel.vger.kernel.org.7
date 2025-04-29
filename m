@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-624717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C886AA06B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:13:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C330AA06BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A80424667AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278457A289A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2257229E05A;
-	Tue, 29 Apr 2025 09:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F0D29E059;
+	Tue, 29 Apr 2025 09:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZssbhFc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="drkHza+a"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7910F288CAD;
-	Tue, 29 Apr 2025 09:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D74527B4E3;
+	Tue, 29 Apr 2025 09:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745917983; cv=none; b=KRcm0aq39AwlqXjpGpcpNLBXekuOP/Wm1Hp1YE5DAglFi6G8jZFDgoK6gMYtdYg7GgvGhwpxutXJg8s5KI4RzQG9xAfGRJJKn3bkdNpUhds61uLveyXnBMMxyiFfpYeXuDVLLs1GDvq9QAN63ihEgZ1yhQXoYKxMiEUpDjgi6fs=
+	t=1745918031; cv=none; b=KYk/KMBjU9B//PMC5zs2UEV5takPkkzfhEmMj/Q87Hm5ypOdKmOiQJFZDDGhiThJHMpezxjJEBSHyz1SkM4eBmyo8WzBzPKejZ9zC3uCR9UZGyJ2h6qEEqhk7bDjhNK/WafFGd5EC6o41LrupPE77DeBOLNSnx2hqambseqEEho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745917983; c=relaxed/simple;
-	bh=Wbe2M0VWW0l3TpFJbV/zwwleX2QVAjqwy64HzEhZniQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gnTIFUOecjD3UlmwrUebcvEM6T7YgL/lQqJYVEONz+6pUbABpxCDsspeayLZDVAn8pHY6ZZLI557OvwqImithh/PIysVgMjP6qwe1oLXQBCzDb3D00snAGiXdtvVNFw8ApihSCsN37A9q4PXAJ9tjQl90qZmeDbaT+aFimM2mi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZssbhFc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D715DC4CEE3;
-	Tue, 29 Apr 2025 09:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745917982;
-	bh=Wbe2M0VWW0l3TpFJbV/zwwleX2QVAjqwy64HzEhZniQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mZssbhFclDQ7ndTaodsXm6/kASD92fVbnD9t8cGcpzKx42f5vBUao/ozjjGPhdqYu
-	 53vipy8Oc9rI2qieXq98MHsr8M83eK+fEtQHnlO3/8wZNWCv1abSg4VFCLpogv3Wsx
-	 /Lvuh/cc1oRNTtDxa9BqFR6ns0ZV34qzupn7fbO6A5WTo8faaVgh8WYg4bmlHroyDF
-	 DdhdTh3kNFvedMszyDRmtNvSVpjr6PyGeMCKaotjpdyUE26/VUObIE+fvn4B9CTNxh
-	 1RkaXQrxohiriRWedHOfxC+GxuahoVvJ7TVo2+qTd6ndhpD5mkLbnD2L0CI1Q6Lf1X
-	 VA1vl2FeX6LKg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u9h1U-000000001GF-2nZH;
-	Tue, 29 Apr 2025 11:13:04 +0200
-Date: Tue, 29 Apr 2025 11:13:04 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Xilin Wu <wuxilin123@gmail.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>
-Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
- compatible override
-Message-ID: <aBCYIMdEPrhMzNxi@hovoldconsulting.com>
-References: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
- <aBCUiIrg3oehMVjx@hovoldconsulting.com>
- <aBCWdpk2HXPaJPlH@linaro.org>
+	s=arc-20240116; t=1745918031; c=relaxed/simple;
+	bh=5p3qEb/ybhkFw2CwEPCg2C54zVmZViW95eK/iKZg5Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ErjTVQHOSieEHS3Cj29jW4DeIqIpL670g+1G0SiB577ETXpojQmsRDoaKCllzfscTI995BWTPQfiCHWHLckeDwwz6EKt6Kix1JpF7hakZ+p/P6v08dtrjoQltugCxlvWblh1vLyMdohs0OFmZV6UvcZ9LsW42eObCWyuzj4oh/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=drkHza+a; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1745918025;
+	bh=DDgBDQI4GrTOTDHvczy7eKvqksRP3PBcLTl0DqrYnnU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=drkHza+al0v9TFR6xx5PB0t6BxmVS1pgGW6qjincwkH1rxxOQZzm5Dcpq56c29i4V
+	 S3Y168gk/NLrBPGVRPv54PQ/YM97qB1nqLo/6eenyQNHXB8Pb4rWHDuS0e/FzUiAsC
+	 Y2y8RRQhJsDrfKeURDMoRD0ki6YTLJ/l2blBWNCemX9H17qocSmaSM9paRxmo/M9Iw
+	 WsNlG0Snhm7ipag8YLEJzw2Vy364MdWOa7qbyYWvYxn2Wncbgt8fCzTNacwYxBzb6V
+	 JHPJkVYpPc969MLGuXgmrmVnLf0sbxplT/Kmyz8/2jBSKuMzW5IDDuAgw/i4ynEN/M
+	 i1CKNzRvLPqUA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Zmvkd0fTFz4wcd;
+	Tue, 29 Apr 2025 19:13:44 +1000 (AEST)
+Date: Tue, 29 Apr 2025 19:13:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the vfs-fixes tree
+Message-ID: <20250429191343.2d3d44f9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBCWdpk2HXPaJPlH@linaro.org>
+Content-Type: multipart/signed; boundary="Sig_/gT=_TWWKMVRmlQO3sv1.uzD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Apr 29, 2025 at 12:05:58PM +0300, Abel Vesa wrote:
-> On 25-04-29 10:57:44, Johan Hovold wrote:
-> > On Tue, Apr 29, 2025 at 10:42:28AM +0300, Abel Vesa wrote:
-> > > It all started with the support for CRD back when we had different
-> > > compatibles for eDP and DP. Meanwhile, that has been sorted out and it
-> > > is now figured out at runtime while using only the DP compatible.
-> > > 
-> > > It's almost funny how this got copied over from CRD and spread to all
-> > > X Elite platforms.
-> > > 
-> > > TBH, the best reason to drop it ASAP is to make sure this doesn't spread
-> > > beyond X Elite to newer platforms.
-> > > 
-> > > Functionally nothing changes.
-> > > 
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > ---
-> > > Abel Vesa (7):
-> > >       arm64: dts: qcom: x1e-crd: Drop useless DP3 compatible override
-> > >       arm64: dts: acom: x1e80100-qcp: Drop useless DP3 compatible override
-> > >       arm64: dts: qcom: x1e80100-t14s: Drop useless DP3 compatible override
-> > >       arm64: dts: qcom: x1e80100-s15: Drop useless DP3 compatible override
-> > >       arm64: dts: qcom: x1e80100-hp-x14: Drop useless DP3 compatible override
-> > >       arm64: dts: qcom: x1e80100: Drop useless DP3 compatible override
-> > >       arm64: dts: qcom: x1e80100-romulus: Drop useless DP3 compatible override
-> > 
-> > Since this is essentially a clean up perhaps you should have squashed
-> > these into one patch.
-> 
-> I was actually thinking that before sending, but then I decided to add
-> the Fixes tag to each one. Since it's such a trivial worthless cleanup,
-> I wasn't sure if the Fixes tags were worth it either.
+--Sig_/gT=_TWWKMVRmlQO3sv1.uzD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Right, since it's not a bug you should probably have skipped the Fixes
-tags too.
- 
-> I can squash them if the consensus is that it's not backporting.
+Hi all,
 
-We should definitely not backport these as they are not fixing any bugs.
+In commit
 
-Johan
+  93ddd3942493 ("do_move_mount(): don't leak MNTNS_PROPAGATING on failures")
+
+Fixes tag
+
+  Fixes: 064fe6e233e8 "mount: handle mount propagation for detached mount t=
+rees" v6.15+
+
+has these problem(s):
+
+  - Subject has leading but no trailing quotes
+  - Subject does not match target commit subject
+    Just use
+        git log -1 --format=3D'Fixes: %h ("%s")'
+
+So:
+
+Fixes: 064fe6e233e8 ("mount: handle mount propagation for detached mount tr=
+ees")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gT=_TWWKMVRmlQO3sv1.uzD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgQmEcACgkQAVBC80lX
+0Gz3xAf/T8f64uBJnGk/icxCJy/rX80VPhOnpipBBlLduGXKwZcDVKwDWtP3Kjp/
+YP8TEzjhAwIfEWoDPjZYKosOhI+cjMlMDIbc3/8ruBhIn21tD3vv4imye9Aa+M+2
+hVZIL77tj2jsSuSMoiRAFJrfXYzljS9UQcVEO6+3CwCjxWL3jQzDOCgoqJKXEHSd
+NfEyRKkRO8I7NOExi+iWoU/l6iuqtHBm9LKPf8lxSkI9q0aR5uYqE51XrJPcSCss
+U0+aW5emW9TNcKj1sOsfqadkrAbW1uNx0hkJ1VG36r9bqhL6fNX3kG46TNfMECUn
+we7a39mQAejrVF5ex8bmJzKqiVnybQ==
+=pJ6c
+-----END PGP SIGNATURE-----
+
+--Sig_/gT=_TWWKMVRmlQO3sv1.uzD--
 
