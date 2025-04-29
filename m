@@ -1,237 +1,150 @@
-Return-Path: <linux-kernel+bounces-624774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB667AA076D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE7EAA0776
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1C7172252
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8BC48414B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037922BCF41;
-	Tue, 29 Apr 2025 09:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73255297A40;
+	Tue, 29 Apr 2025 09:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OvSqyyzR"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Amj03N3C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81452227EAE
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2201629DB69
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745919281; cv=none; b=c5deFQ/gMwcZIFrkXiFagD6LWi6TEemNmfPEjLqaRoItD6cz0OvQsdlzEOr/5WTG8JLyjsXLFQU655OjKCe1SO7Pky2Ow2TZdFe41fcVPoMO++rCQatQkKaAWcHVNPgJJ9z33ve8/8YTtYD/Ck79q9Gon4yLX5fkF4zp/y7FUJ0=
+	t=1745919351; cv=none; b=mppC5yUCwLpjexYy8LYf52HKOQbtUiSknHcoClLvYzDiMXsIGi93HrRAc4kFATPNVfjVjN7kaqxbEuU1o+7cwbhA80WPVphBMzZVQySQdffObB6AYoL/ZCsyeoKa4GOb9SfO4xIfJF26yHR9ksOTvZNDtDYaGw0PgXVuN8HQ7S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745919281; c=relaxed/simple;
-	bh=ZNA/YfWSdVwWVC2UvpKCFkOunox/kHXL7eFHYnV//XY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SO60Qcafj+EWovnMUyTLJ7HZqXdy6C4QtKM7BKOI193QTxzspPYd7xUgVttew3vAC2eD6O+9ovfB2TKeE4UY03BwVUWwRHi/jA0ydlfIuwAItCiL9BGEfKSWkJnAlwO/Fs+epOg71Nlp28EOXkRr07rPQPxb/IF6vlpRCHjOq00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OvSqyyzR; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3913b539aabso3108658f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745919277; x=1746524077; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Za4U3xRAsortMbeBuio1B55CAmLpnNgYQPUZfqFH4oU=;
-        b=OvSqyyzRrkHyD9Nr/RQByUFY0XaGG+U8N16oQm9zK+akUt6IzfDdEeqGDd6wOY+Fam
-         Yfs3cz5xSm0GTu+uwYi0SDL3LOg3wzBVP1uAZQ7tJIo8g5V/t/6CsHsd4b2UGlmpeOXr
-         vkmDQKUoxwWMyI1eUYrIV2CUonadfWOpR6vlPuQrC2WmIbKWOfzixZDcWrQ9p76v+JKD
-         k10GBs8WL324uzxb1pYJ/TPBRe2nwP6E4OTaWLOgsGXHNDQ1TQQfGmJzXLbN2EsUKAgY
-         UZoPqwCxIepyNSW3cJUXjFTS6HBvixFD8fuuoxyI6kfTYhZEINi/ZLy4ANUhyhvxKcsU
-         vZmg==
+	s=arc-20240116; t=1745919351; c=relaxed/simple;
+	bh=tN2UB+TuaaaUXFFeK9YzWMWFKp9AS22wgI840ZDQ9sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0UWPKtq6EBe6Fvsrpj+ObIiAfTiZFIyw+hG1nklKGgYc2TJDyVpuCjIfLg+sNqiRjvN6KTFfZQXWxGL5mYmjmU/sqNkb4uRY7+SQbrgjEM4Pq30ZxswTqcWW79eHMCbHxD+7Davp0rtb2pwRznuGCZJBii1RCsph5pnoYxEQHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Amj03N3C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745919348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ya1y/PIPsUcPJdbK+tBdJ/PntQDR0r5QpbF6nQFyMU=;
+	b=Amj03N3C4gm8z7mKzVq7VgtrW7Dc8UsSERm5xrdKvmCyl0qu9lRjd6LlwBSQm/eSpwXNQ9
+	RoBoIO4x0DymxU3bY9z0zDWCvMyn6SYEq61hUYxSFocwJxh1gKC/vBVAdx0DxYfDKpdSYf
+	McnxdQXdwyaRY6ZNW0DTaWc9qO+pM2A=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-3CE3clVbMRidFER-7F3UVg-1; Tue, 29 Apr 2025 05:35:47 -0400
+X-MC-Unique: 3CE3clVbMRidFER-7F3UVg-1
+X-Mimecast-MFC-AGG-ID: 3CE3clVbMRidFER-7F3UVg_1745919346
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-739764217ecso5030730b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:35:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745919277; x=1746524077;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Za4U3xRAsortMbeBuio1B55CAmLpnNgYQPUZfqFH4oU=;
-        b=Rfh102omitiYgS0MpnUWTLR6GV05s2tzIGM1ghk2errmV0QeHYR2O22v+LIwOlyT3h
-         FZ95zZvCyiKX7URXdlSwMir/OkaIykfrjZgyyOL2amNVtQAVl+pGXnY8WPhtaFSpOsgA
-         3W6XipNb81ERqMVpHG2jrySAzHJME+3CP5LYadbsLastweQ7r/cmMTuxx+gnZRZbMQM+
-         SB5B9gbyN+RBGmHyTt5yifRPyxUPN+Q5oqGq5zvg/xaYZ56s7lS4y1npadjk/oBcv0hU
-         32UxJ05JdWIBuANu/L4tvMxfbn0srSNiJ2PsBgeb3BS7nHZYlu5urPAKvIQ7ys+1ZcUr
-         xNuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJVQOQhJX1raj6h/3RYnVCg6NiNrG3gzFNC+VwXrmIFYXNiesqWvo6zXqBzun4YlmkYV14xcPWP52GTX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE5nlsRyglbVr9WQQOM9c+qEjE3LsOg3+cMZwSGcIC8S9jQTGK
-	VXWf6k3Uydq3EKQEcSl5rZe0+mntetqWc4BK4HrgUqFUXiVZPNYY21t53lsijYY=
-X-Gm-Gg: ASbGncsCkUxuV8s6XXeynwh5iYEAdTjt0n7tGZdunvkHDRe7CDOyDyAFg/ahyDbA6M3
-	dWKq3dEZr7g3Gml/f71UL4Lw35yAV5zrnsAnh60lhojtjc7MBOrpBDjJtGULeFrch50r+hKNgA3
-	9VsMw8huogDeLmaNqbb3rABHOtrh8pt0gTS4IjFbKZWSh7htjHVboQI25ubPEsWwUGJQGi2CKk5
-	0WhHxH3RZWfYHnLRqeuROqjydoOFtQJ+RgvSpK159z4C2++xzp8I4X70vfU99eqBeTtScJeXdxv
-	faU2yr+/xL1Mj2b4GK19r2dTTIfWls4klOxgCik7zqHfCchl0UwgQF3QtF/Yssbl/0HtIN0toKZ
-	N/0NMyg==
-X-Google-Smtp-Source: AGHT+IGVw2ZBwIFw8ZZVZzgJZsi/4nV3k/NK0Kh7uHF7vho5Ug5zLb1wnxqp1qar9eVXOIxtUTAlMQ==
-X-Received: by 2002:a05:6000:18af:b0:391:43cb:43fa with SMTP id ffacd0b85a97d-3a07ab8c3d0mr8438370f8f.51.1745919276760;
-        Tue, 29 Apr 2025 02:34:36 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46a54sm13677677f8f.67.2025.04.29.02.34.35
+        d=1e100.net; s=20230601; t=1745919346; x=1746524146;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5ya1y/PIPsUcPJdbK+tBdJ/PntQDR0r5QpbF6nQFyMU=;
+        b=SE/l0MVEKPfnYmpVh99YMCE5lNixVCce43zGnC+Nd1MNHcPOFa0+Du6o0RuVtUW8y/
+         2CLD+prwMt6V2+NM0jU37bwB5FA0lME5IVAy0F16l1tpZ1jfouvVZstsSSR7JkloeKDb
+         SguW5XTdYC6kFlM4PR0LT6SmO52u0yVjrTybQQjposlGyyDIN3ny8MU7mdnnalXghbms
+         xq2ECFC6J/GmuRsCukdRD4q65nE/mA+D415CNPh+yyPVAAvRh90p1sYkCgSjjyj2sEUA
+         5JL0i092KZWzC57axGD+98m2e2cdPC1oPXpBDuUscqQ0U2bSi6wJpMQTC18IewvvucXX
+         8/zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQkr/ICtpJGeIOYV7pIYicEOj9GZxZsN0Cnqy1peklYnfs9/UIeNfEM3aThLjWdkRHlQSwL/YnP+D0+Vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPqSbeK/Q4phcty+W5XOnGz4IByU1sz4lrtGVqbGwBzP0AFQQa
+	CMLcKoULzAzIeOozZIRdmxb1nfFU7nWoDUgYJ9UzDm0PQcZovx8BU4McJvRp/gzKIIhqzBH9TcE
+	cNODxCz+asuqNyJojnHLW32eEhqgLNzy3A5J9CkZAr34XU+ERlEFUvlRyG/qZ2w==
+X-Gm-Gg: ASbGncsjbYGjhayxuGBeiOxGWwMRwlrcXKkhdXpVZzRGyDcT/V7cWSHEPia7R1T7/eN
+	nPsDmA0Sx5603e91bUJl/sRwW2gHfMIh3yGlaJnQ2miP+P6WA+1bh948i+Lz3Wx+X7Yc4vIpLha
+	j9kZuyS7irMfS1gSnBR04jw2qwcwo///6hg39L4SCTXKABG5nuUq9R+gw+DE2wZOJj232rNwBe8
+	OrLBRQd9tOErIqlM82BJKEgyzWe0VcFWl+LUNJKemVngTD9xqh+SZ/U9ZPiWSQJO7uIZoCmR881
+	XiQ=
+X-Received: by 2002:a05:6a00:39a2:b0:73d:fdd9:a55 with SMTP id d2e1a72fcca58-74028a64220mr3881932b3a.8.1745919346343;
+        Tue, 29 Apr 2025 02:35:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcRRRYCT0Ey5PUAul1cem5LsfGawyLhW7VHOQTRyfJoa6t9dY828zqrHeMujEDVJTxyYQbsw==
+X-Received: by 2002:a05:6a00:39a2:b0:73d:fdd9:a55 with SMTP id d2e1a72fcca58-74028a64220mr3881906b3a.8.1745919345989;
+        Tue, 29 Apr 2025 02:35:45 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a99a9esm9731097b3a.140.2025.04.29.02.35.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 02:34:36 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Tue, 29 Apr 2025 10:34:34 +0100
-Subject: [PATCH v2] media: dt-bindings: Add OminiVision 0V02C10
+        Tue, 29 Apr 2025 02:35:45 -0700 (PDT)
+Date: Tue, 29 Apr 2025 17:34:57 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Arnaud Lefebvre <arnaud.lefebvre@clever-cloud.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
+	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
+	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
+	Pingfan Liu <kernelfans@gmail.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v8 2/7] crash_dump: make dm crypt keys persist for the
+ kdump kernel
+Message-ID: <mrvtghwiry77qwiakyjft3mt2po5rdntjrl7btlkmgnvgjrlru@lnkoytr3ozzh>
+References: <20250207080818.129165-1-coxu@redhat.com>
+ <20250207080818.129165-3-coxu@redhat.com>
+ <q3l724gslm3kzljjdo42l5murdw4pclpnmmtzu5jvqv4gwyxma@ek4jucbut32i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-b4-sailusfor-6-16-1-5-signed-ov02c10-yaml-v2-1-7f9946f2c8f8@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACmdEGgC/52NTQrDIBSErxJc9xU1xv6seo+ShTGaPEi1PFtpC
- N69NkcozOabgfk2lhyhS+zabIxcxoQxVJCHhtnZhMkBjpWZ5LLjSmoYFCSDyzv5SKBB1EAHCaf
- gRoiZSys4rOaxgD7bdmhHbb33rP49yXn87K57X3nG9Iq07uosfu0/lizqdDFKC6m8cafhtmAwF
- I+RJtaXUr4SxqLF4wAAAA==
-X-Change-ID: 20250426-b4-sailusfor-6-16-1-5-signed-ov02c10-yaml-68c3b3d6cfff
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bryan O'Donoghue <bod@kernel.org>, Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4533;
- i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
- bh=ZNA/YfWSdVwWVC2UvpKCFkOunox/kHXL7eFHYnV//XY=;
- b=owEBbQKS/ZANAwAIASJxO7Ohjcg6AcsmYgBoEJ0r7+cdhBucbidk3RNPLVQrcDwlHunhY7/G4
- wUgVUkyBq+JAjMEAAEIAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCaBCdKwAKCRAicTuzoY3I
- OqvAD/48m6S7FG5H9NOllxSytTUGIvsN+VcjZ87J6wPc6T4eRHw/3hFM62mqn3LtK9dtHuVvjLg
- lT5Fw9mR8q5yVOvlvOASTxtUxe3aId4RNV32WBh+mvhRbH6iEa3so2vuufSaOwoISyUxuj10iTq
- dyPre8eucun5EVOtNjVGz1NrccnD1S3h20VpdsBDP2JfUQHWD8jSbfKsy30FOd6Z6aXXPcjOaZr
- zRDqtOBNutVR5VnN671fEVu9+nFKInRvtwbkpNs+IN/oAGlJq2kFTrEq/sOgh9rwCK/O99Xza8F
- xubBSwiLhDJJnW+EoqD+nSUTGV8qjfWxCg2FY03U3sud5rIUrYG3hXew0X8sBoV2Pro8O7EKUup
- cJRYKtQlrmjrJze2xH375MMuLHMZobC1ZsuXwY5PoS202Hi+TXRUOOYkOCOCxx1+rfgSlq2khFD
- 7LvC31ABk961NrspDf6P66io5LCSSmijEQQ+mqFlBB2O19sbranRRrAFDIcuM8dpVRlApEG1fB0
- 3seYTbKNeajdgkbCtBVIw2v0Ls/BdUJD3GIPLXmXhFozXgyL9GkpUYP1dO0/nGOcBx3VY0dnoR/
- cbB1gKVqigHIxMn4rWlG81dQ/P3xTDPWN8eq6P7tbvkhtEWifngYFJBjRtKskIzisNFIe5boO5f
- G/BZzcmre/yXkng==
-X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
- fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <q3l724gslm3kzljjdo42l5murdw4pclpnmmtzu5jvqv4gwyxma@ek4jucbut32i>
 
-Extend the ov02e10 bindings yaml to describe the ov02c10 sensor which has
-the same bindings with a different compat string and different i2c
-address only.
+On Wed, Apr 23, 2025 at 10:44:22PM +0200, Arnaud Lefebvre wrote:
+>On Fri, Feb 07, 2025 at 04:08:10PM +0800, Coiby Xu wrote:
+>>+config CRASH_DM_CRYPT
+>>+	bool "Support saving crash dump to dm-crypt encrypted volume"
+>>+	depends on KEXEC_FILE
+>>+	depends on CRASH_DUMP
+>>+	depends on DM_CRYPT
+>>+	help
+>>+	  With this option enabled, user space can intereact with
+>>+	  /sys/kernel/config/crash_dm_crypt_keys to make the dm crypt keys
+>>+	  persistent for the dump-capture kernel.
+>>+
+>
+>Maybe also add CONFIG_CONFIGFS_FS option? Without it this series code doesn't compile:
 
-Other differences in sensor capabilities exist but are not expressed in
-devicetree.
+I'll add the dependency on CONFIG_CONFIGFS_FS, thanks for your
+suggestion!
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
-v2:
-- Updates the pixel formats in the description 4c1 -> Quad Bayer - Sakari
-- Aside form the i2c address there's no hardware level differentiation
-  I can think of to document ov02c10 (v) ov02e10 - Sakari/bod
-- Adds RB - Krzysztof
-- Link to v1: https://lore.kernel.org/r/20250426-b4-sailusfor-6-16-1-5-signed-ov02c10-yaml-v1-1-9a46124fae7b@linaro.org
+>
+>Last build lines:
+>
+>   GEN     modules.builtin
+>   MODPOST vmlinux.symvers
+>   UPD     include/generated/utsversion.h
+>   CC      init/version-timestamp.o
+>   KSYMS   .tmp_vmlinux0.kallsyms.S
+>   AS      .tmp_vmlinux0.kallsyms.o
+>   LD      .tmp_vmlinux1
+> ld: vmlinux.o: in function `config_keys_make_item':
+> /usr/src/linux/kernel/crash_dump_dm_crypt.c:250:(.text+0x228028): undefined reference to `config_item_init_type_name'
+> ld: vmlinux.o: in function `configfs_dmcrypt_keys_init':
+> /usr/src/linux/kernel/crash_dump_dm_crypt.c:442:(.init.text+0x71e5c): undefined reference to `config_group_init'
+> ld: /usr/src/linux/kernel/crash_dump_dm_crypt.c:444:(.init.text+0x71e82): undefined reference to `configfs_register_subsystem'
+> ld: /usr/src/linux/kernel/crash_dump_dm_crypt.c:454:(.init.text+0x71ef7): undefined reference to `configfs_unregister_subsystem'
+> make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
+> make[1]: *** [/usr/src/linux/Makefile:1226: vmlinux] Error 2
+> make: *** [Makefile:251: __sub-make] Error 2
 
-v1:
-I previously submitted a standalone ov02c10 yaml file but, it was pointed
-out to me by Krzysztof that the ov02e10 yaml has exactly the same bindings
-and we should therefore extend the ov02e10 yaml.
 
-Link: https://lore.kernel.org/linux-media/da93bf6c-b4bc-4c4f-9373-583fbd0c031c@kernel.org/
 
-The accompanying patch:
-
-- Updates the overall description to differentiate between the two sensors
-- Adds ovti,ov02c10 compat string
-- Adds an example for the ov02c10
-
-Once merged we can also merge the ov02c10 driver, which contains a compat
-string requiring yaml description as precursor to merge.
----
- .../bindings/media/i2c/ovti,ov02e10.yaml           | 47 ++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml
-index 4ac4e11a16c8bb7a53db0c44289b1004dbdc282a..0eb769708e2727776eb8a832bb0a765dd6facf9d 100644
---- a/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov02e10.yaml
-@@ -11,12 +11,22 @@ maintainers:
-   - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- 
- description: |
--  The Omnivision OV02E10 is a 2 megapixel, CMOS image sensor which supports:
-+  The Omnivision OV02E10 and 0V02C10 sensors are 2 megapixel, CMOS image sensors which support:
-   - Automatic black level calibration (ABLC)
-   - Programmable controls for frame rate, mirror and flip, binning, cropping
-     and windowing
--  - Output formats 10-bit 4C RGB RAW, 10-bit Bayer RAW
--  - 2-lane MIPI D-PHY TX @ 720 Mbps per lane
-+  - OVO2C10
-+    - 10 bit RAW Bayer 1920x1080 60 fps 2-lane @ 800 Mbps/lane
-+    - 10 bit RAW Bayer 1920x1080 60 fps 1-lane @ 1500 Mbps/lane
-+    - 10 bit RAW Bayer 1280x720 60 fps cropped 1-lane @ 960 Mbps/lane
-+    - 10 bit RGB/BW 640x480 60 fps bin2 or skip2 1-lane @ 800 Mbps/lane
-+    - 10 bit RGB/BW 480x270 60 fps bin4 or skip4 1-lane @ 800 Mbps/lane
-+  - OV02E10
-+    - 10 bit RAW Bayer 1920x1088 60 fps 2-lane @ 720 Mbps/lane
-+    - 10 bit RAW Bayer 1280x1080 60 fps 2-lane @ 720 Mbps/lane
-+    - 10 bit Quad Bayer 960x540 60 fps 2-lane 360 Mbps/lane
-+    - 8 bit Quad Bayer 480x270 1/3/5/10 fps sub2 288 Mbps/lane
-+    - 8 bit Quad Bayer 232x132 1/3/5/10 fps sub4 144 Mbps/lane
-   - Dynamic defect pixel cancellation
-   - Standard SCCB command interface
- 
-@@ -25,7 +35,9 @@ allOf:
- 
- properties:
-   compatible:
--    const: ovti,ov02e10
-+    enum:
-+      - ovti,ov02c10
-+      - ovti,ov02e10
- 
-   reg:
-     maxItems: 1
-@@ -109,5 +121,32 @@ examples:
-                 };
-             };
-         };
-+
-+        ov02c10: camera@36 {
-+            compatible = "ovti,ov02c10";
-+            reg = <0x36>;
-+
-+            reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&cam_rgb_defaultt>;
-+
-+            clocks = <&ov02c10_clk>;
-+
-+            assigned-clocks = <&ov02c10_clk>;
-+            assigned-clock-parents = <&ov02c10_clk_parent>;
-+            assigned-clock-rates = <19200000>;
-+
-+            avdd-supply = <&vreg_l7b_2p8>;
-+            dvdd-supply = <&vreg_l7b_1p8>;
-+            dovdd-supply = <&vreg_l3m_1p8>;
-+
-+            port {
-+                ov02c10_ep: endpoint {
-+                    remote-endpoint = <&csiphy4_ep>;
-+                    data-lanes = <1 2>;
-+                    link-frequencies = /bits/ 64 <400000000>;
-+                };
-+            };
-+        };
-     };
- ...
-
----
-base-commit: 8b5b11babc761c25602230260fb001267645b9a1
-change-id: 20250426-b4-sailusfor-6-16-1-5-signed-ov02c10-yaml-68c3b3d6cfff
-
-Best regards,
 -- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Best regards,
+Coiby
 
 
