@@ -1,131 +1,104 @@
-Return-Path: <linux-kernel+bounces-625337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EB4AA1022
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:15:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751AEAA1026
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C071B62475
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:15:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB45917E74B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6793221DB6;
-	Tue, 29 Apr 2025 15:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAD2221548;
+	Tue, 29 Apr 2025 15:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w7xNdG8K"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSK+laBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED20221554
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6B784D02;
+	Tue, 29 Apr 2025 15:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745939707; cv=none; b=iHrQZFZVqCMWafQDiICadO8c+6rKURI7prVkzONKw00baywBiEGJiddpTGUwuXVg3tMQ40Rq3Islry8QksHsYYbqZ3UdlWDvS+t47f6UkwPI6oA4V40mLtJHumw3FsQGQ64iJCHatvnl4UfSFlA0bdCUuSWPVzSkf0aTnLyh6jw=
+	t=1745939719; cv=none; b=cGqJv9jBAjYq8U5DEqZL9NRROMj7VIrFeZlCIdc6b69lKjTRsyOvG+YuAz4Nqblmk9rSRbx40pkNZNUj7DMi4RUgvUN31p9PT/4pxUh9iAx2GT8JLGEGaYzuy515mnlnL7r5OU4dIpeZKrnq4fJufYWhhD2vd8eNYdHmUqCV/To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745939707; c=relaxed/simple;
-	bh=dxm1FrsGgVlgCCLy0I4UJE6TNbX3UhsbJHvGbXkPNP0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XBhP3qf42EGdT7O75wssUb06cWQM4xEOGpV3BEUaE9VKBamFecrLVrGd3GCf5hAQJTEysmwvIWReHn+Ip95r/qmlBh4K/7shF2amaQSUgkQpJ/TDu/wokeQBOwxvlRNMYJoZt7kW3TM1I82F32apCSZrck0+Yv0pVxODunzUmYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w7xNdG8K; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so32051405e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745939704; x=1746544504; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sHfLJ7igAkbrZ0VODeWyutAbR2LaZATT/RXEe3Pu998=;
-        b=w7xNdG8Kuo7rjdYhuS8IeATeFxuynpMS1YXALetANLLRfcketgjzGp8H6W888KIDwt
-         nmZIjrhc0O8SqudLsFaHa5e7phlDdpBjD7XrzWpF2t9hbuAXrLXwNoMKVzpS+AVVlxti
-         aKfmDQUjYCWVWHmRu92/s1ZnKsFuQp4R7tPvIpX/nYl1JwIwM38L1wNv3WuhzUtxlrqA
-         tBpH0NBbL3LTUSWKZvTtwHa1ySqWyoHRUWUlA3pZFAfpXC+RducRmd1pTg9RfV9T4NEt
-         Ko5v15r/C56l+bERXnWfel/j2MDjbY8tMRs7cnWN4fEIQWzf/3dT54ndX7XO59HbLe6Y
-         c6Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745939704; x=1746544504;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sHfLJ7igAkbrZ0VODeWyutAbR2LaZATT/RXEe3Pu998=;
-        b=OHcqjZhRWMp1hlQOEewteReGJUfW7PeNVL++i7ToumueGVt5S1GMiaSwCVlsk0mTyG
-         LXz9dwDwSZblMmdz0S930dJ78HAob/A+29lyc8ex2aW8ZBxg5dkIciY+aPeJSZM+hVhm
-         mxvdpKSDWIx68pXq1V8WfDPEPU2MiP/jfJTql5lP9Qgyi0L/WFZw7vGMd7qo2+fx3oOu
-         c3bLR6Cjn48QKwiA40ekGOlIFWtgJ1ibtGwPnIPVID9rEgcE+Hp01nO2wh72OYhmXonO
-         FlESXuGLwl1HA1B+qTyolCqMpWYNmNVFpBUIl+UEnsqDlva3qBZprE/X5julH7a7hs9q
-         BYtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZdcHlZz62SHip6Z9VS62sPz5clA8SLnC1GpvuIblnQewwUDLF2my21VrYF263M900v8E+XGKrw1/0E+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz25jlXszAij5g3awrZYF6hQnFhc8yvJLg2XZl/ftDIIRwKXux3
-	79HPxVwBtYL6d6c4uSs9EPEZLBo9AKGbCyK/r4B2hqogz56Ku7sbk2yWH40K4TPB25yNx03WMtz
-	JFDDz+EuVaO7J6w==
-X-Google-Smtp-Source: AGHT+IGxOCFCik8aNb38CvI8deht3xDhuNeNmMopB2k9LMWwBUjROgjf7yKI30OtFVYebpDz75VrLlr4INjPSV4=
-X-Received: from wmco6.prod.google.com ([2002:a05:600c:a306:b0:43c:f6b3:fa10])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3585:b0:43d:649:4e50 with SMTP id 5b1f17b1804b1-440ab7be061mr114041135e9.13.1745939703803;
- Tue, 29 Apr 2025 08:15:03 -0700 (PDT)
-Date: Tue, 29 Apr 2025 15:15:01 +0000
-In-Reply-To: <2025042946-accustom-bankroll-d934@gregkh>
+	s=arc-20240116; t=1745939719; c=relaxed/simple;
+	bh=d3x/fAE3L3P7Ahk/PHPiq5UGFIghmwq9vcT+jdkOIpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMktxLALEMhyp8s1Xj69OVUgFNy07KxQNjQztFuug9xNUwd/O7R9xaACPaNfbJyRsnLrNgmZ65PyVhq1nwDU8GaSU7n5hZhTnBEEDrptQvjpw9M+t7MsQiEJnYbGynUWGD6i9hnhLKjn42Xm06l67wnhQG9R/H9lrB/TVHws1b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSK+laBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE2DC4CEE9;
+	Tue, 29 Apr 2025 15:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745939715;
+	bh=d3x/fAE3L3P7Ahk/PHPiq5UGFIghmwq9vcT+jdkOIpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KSK+laBaCMabYZa8QGurmlVl1zbRlv8bMW8+qOB8UZOJY6w1vEHTMsmPtfMJbCwZJ
+	 uBz86V+4wnBw2zDC+re4NT2qs/wKPKTG7vIxg87i1/ZO0QvJYFte87xu3pWOs+vxMZ
+	 PzfAbdJyOtcwH3Jt9ilPcvx2fr8X1lq5gmCzaponcBpsjjrEVGMG9h1rjPEVBvpsa8
+	 4/tl3AUhynEJKpyUqUdB+XY8GdAzHDAcnJq+RabKQAKOhgWJ5UtmOP/m6WPhNhzn6p
+	 GsuCP4YpvFmCwa8RlI0ymMoOYbKffdiQns6ndKZRoQ/EgFKrBBV3RAR5aiXSoMCM50
+	 WvcODUxwQvb/A==
+Date: Tue, 29 Apr 2025 17:15:09 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v1 5/7] modpost: Create modalias for builtin modules
+Message-ID: <aBDs_Unta7-vOPk4@example.org>
+References: <cover.1745591072.git.legion@kernel.org>
+ <bb0d887760a474e5e7f9db0e9933eee81a5d9ea3.1745591072.git.legion@kernel.org>
+ <cf3ff619-6177-42e1-8f64-74cf4cbb8672@suse.com>
+ <aBCkNh0Q2hwpMchj@example.org>
+ <aBDK0G6OUUcEmzvZ@example.org>
+ <7b13da9f-39f2-4007-931b-519d8e7d1ab6@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250429-strncpy-from-user-v2-0-7e6facac0bf0@google.com>
- <20250429-strncpy-from-user-v2-2-7e6facac0bf0@google.com> <2025042919-varsity-registrar-fb45@gregkh>
- <4b54a2385923b1312606dbb5b651e163@dakr.org> <2025042946-accustom-bankroll-d934@gregkh>
-Message-ID: <aBDs9aMQSCLIqD96@google.com>
-Subject: Re: [PATCH v2 2/2] uaccess: rust: add UserSliceReader::strcpy_into_buf
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Danilo Krummrich <kernel@dakr.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7b13da9f-39f2-4007-931b-519d8e7d1ab6@suse.com>
 
-On Tue, Apr 29, 2025 at 01:48:19PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Apr 29, 2025 at 01:38:26PM +0200, Danilo Krummrich wrote:
-> > On 2025-04-29 13:09, Greg Kroah-Hartman wrote:
-> > > On Tue, Apr 29, 2025 at 09:02:23AM +0000, Alice Ryhl wrote:
-> > > > +        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-> > > > +        if len < dst.len() {
-> > > > +            // Add one to include the NUL-terminator.
-> > > > +            len += 1;
-> > > > +        } else if len < buf.len() {
-> > > > +            // We hit the `self.length` limit before `buf.len()`.
-> > > > +            return Err(EFAULT);
-> > > 
-> > > How can this happen?
+On Tue, Apr 29, 2025 at 04:14:13PM +0200, Petr Pavlu wrote:
+> On 4/29/25 14:49, Alexey Gladkov wrote:
+> > On Tue, Apr 29, 2025 at 12:04:44PM +0200, Alexey Gladkov wrote:
+> >>> I'm not sure it's best to overload this data in this way. I think mixing
+> >>> actual files and "logical" modules in the modules list is somewhat
+> >>> confusing.
+> >>>
+> >>> An alternative would be to keep a single module struct for vmlinux and
+> >>> record the discovered aliases under it?
+> >>
+> >> It is possible to extend struct module_alias and add the module name. The
+> >> problem is that alias is added by module_alias_printf() and we will have
+> >> to add the module name to the arguments to each do_entry handler in
+> >> addition to struct module where there is already a name (but in our case
+> >> it is vmlinux).
+> >>
+> >> I can do that if you think it's a better way.
 > > 
-> > See my reply here (if I did not get it wrong):
-> > 
-> > https://lore.kernel.org/rust-for-linux/aBCrqJe4two4I45G@pollux/
+> > If I don't add separate entries for each builtin module, the patch will
+> > look like this:
+> > [...]
 > 
-> Ah, I should have read ahead :)
-> 
-> I agree, some comments here would be good.  We want everyone to be able
-> to easily read and understand this code, off-by-one errors are rough.
+> I see, that didn't turn out as well as I envisioned. One more approach
+> would be to track builtin modules separately. A patch is below. I'm not
+> sure if it's better.
 
-I will add this comment:
+I'm not sure I get it. What do you mean when you say I need to track
+builtin modules separately ?
 
-if len < dst.len() {
-    // Add one to include the NUL-terminator.
-    len += 1;
-} else if len < buf.len() {
-    // This implies that len == dst.len() < buf.len().
-    //
-    // This means that we could not fill the entire buffer, but we had
-    // to stop reading because we hit the `self.length` limit of this
-    // `UserSliceReader`. Since we did not fill the buffer, we treat
-    // this case as if we tried to read past the `self.length` limit and
-    // received a page fault, which is consistent with other
-    // `UserSliceReader` methods that also return page faults when you
-    // exceed `self.length`.
-    return Err(EFAULT);
+-- 
+Rgrds, legion
 
-Alice
 
