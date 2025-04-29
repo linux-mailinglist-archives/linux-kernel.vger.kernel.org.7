@@ -1,238 +1,133 @@
-Return-Path: <linux-kernel+bounces-625889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF715AA3B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA70AA3B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA679984FCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 378979873ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210212741A3;
-	Tue, 29 Apr 2025 22:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C14E27780A;
+	Tue, 29 Apr 2025 22:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rwWvexLT"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ja9SKEOa"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C622526A0A6
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1333127605C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745965953; cv=none; b=I5PdcDJFaE7CQ3T4MqQiKSHmsGAaLgWkHaPW5P3qJZb9hBaUhu1Biz34KGnTl7VsK0rCZCIo6E1UwYi9hxDp5L2YN/jDlnNh4ct43nu1AIcWHsjA9gAbpmZQK/De9twxjr+T0aTM7la3xLgee9j1CJBLEeLSSJxIssMMl0EMVSE=
+	t=1745966093; cv=none; b=XSX3MhcFS4Jstq1kKS1DOawy4S7QaR7jXOrNL2ArXJB3F7i5cyXgsS5u5ReMF1fd98UHWCwfpWaW3oT2o4by0ive4G9oZgUs4ZETxPOKJl0B4RuTGasiYkHvbo+5YXwV6FeQLtORU7xS93aJAN8vk520kY+4oV0uLVd2XL0qT1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745965953; c=relaxed/simple;
-	bh=XyBy/9ECM3Ji4+OBncyGrKzNcU3QNO+8BOFD1+2XlAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYyDPmq4Ehy93c15e3OtH4r6nS1XY8oX5u0UfUUt2AnfrtNU599VtQ8E8EOZU4u29PMkjsSeCrMn0PO54/lKq+qYTyFWQupaxDRc40dSn8gdal5NX6W/iORHpYU4fBjoIhu4Y2VUvFv/q0QDzxH88e7o6AlKNrcadcKcN/BEt+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rwWvexLT; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2263428c8baso88135ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:32:31 -0700 (PDT)
+	s=arc-20240116; t=1745966093; c=relaxed/simple;
+	bh=gAr+BrqBJITgHMHyo/kDsJnGM8ocNeBKLWFTo9CH5Jg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jNRiZX6qik4BdN7fyBwLPWGg23O6xAKbpy9Mia/AeKGGl1q+UnPsmoukvX1asaBbU29DmVSpMeMhcI23raw34it75mltq/9soAqPn4ozM2xqfVes+2MYIs6HnAW249pxP3lKT38bYFzW3qdUn/NO4DkhE+/0syRAn8KR4s9dnwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ja9SKEOa; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac7bd86f637so59625566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745965951; x=1746570751; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AnNdE+HhwllnOl/nQBW5AcYsgv32dfnq2/SzhhfRlf8=;
-        b=rwWvexLTBdEWejSdxauOPCNpXzoZ9paZdJBwWQybvKf7xKXfHvi3y/7Io2hVYwmOrQ
-         wXFBCF1Ia3MSMqI3+szJNyc5GxkwJR5cGs5OChQ2FACg8mkDGxzuJzggVaC/rRjyyals
-         SfSt/4RSYtBxtFmzXJKkXrv+70QaQuLDi2wD7rwd2M0SeCSDJq7LdsuqWrY7p9rjX5sx
-         raMfYPyv69hsPVZnMA/2MwiaEMFzEO+UpRnATSq2t9I41l+5jRpnihcqWvcm1gVyjryX
-         +uNOYFSLtl67QgqBFZXzBpXi9nwFVNNgFf51MvskDcCNS+2Pq82HK37B/VnK+FJgjx9+
-         oysA==
+        d=linux-foundation.org; s=google; t=1745966089; x=1746570889; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oc5Kg3k3xlsA9pOUU6bgWUdMQMuuSGtxKsnW3LcmO1M=;
+        b=Ja9SKEOasKq+F2Y+7d5++a4ZSM9IqL70aJJyVaxPzL0QYcRXnvfamDzy44cEuRLiRp
+         hA+oKgBYJ1w5RLpHODvEm8p39aCOd5ZmQLGGVbI34JR/Yi6Y9QW3pHypF+k29+/p2EuT
+         tJwWxUibm+O5jOqzAGtV7imFDKskqL7tezoWA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745965951; x=1746570751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AnNdE+HhwllnOl/nQBW5AcYsgv32dfnq2/SzhhfRlf8=;
-        b=KF9CCTqI/EqAEQOOMB7E7kzj6UkQQE+h07mC2Sx48B1C55syNJfUtNSzcwIylNhKuJ
-         BVAclwXWxaGN5rb9Fomi72kWfd/K657ulpCqWMvxx7pq035PEw0cSPZnoWwb3zwRO+Mg
-         fcUUp8b/beQph1ge9K+VXhMKcAYlFlbXpYJXlbIc7MAh0+mjjrZeMOV8I+QF5G6F+xsS
-         OODCjXblzPFMtf45WXGQwtw4K9ndLStItnkNuGlhdTIuGU99oDCyNWRTJQh9VWNP8EKN
-         NRX2P3bU3o2WjdC8F+aOXYweHKRWCPOkf13sn6Kzp4NROawytkcIRDb3Pg6w2qqguWbb
-         kqVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHr/fY1D2ssYCLsA7MovVRz8D1IFnB2Utie2c96FOsOCuEEgn2PaY8SAYRQGAIB6eXREmHIMOZA2F7jZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywluyr2zxzIRpSC/GfYbjR1GsFVe0j8L8N2Xs/4ad89X6JNSlh
-	+xInTBKTcBA/dq1WR+fJhe1+MUsqTj5rryOeKL9YVW9nZCBhdLpzK6Rpi1DpNQ==
-X-Gm-Gg: ASbGncvv3qgJka+Rh6nS7km+BLTHRcb+Yqm3rMxQuHyec+UQfp//pU8nu1+XT4m7X0p
-	IohRv/2Kb0N0KrqjqEFnUIM9gL7T02luuL7rza2JlH2aTfDADyFuCiPn6RI6jwI82azuk6jNpQm
-	isEqVTjMUG0Di3X+N6UTlAWqbl723PSodYzQrR+9xZx6XfELmuJtMySfh33CKy9Izr1T9PJ264a
-	B5qATepU2EPHlK+T/QBvCSnHCbWp7qe9LPhfCAvX3Vf+HT4gMk/niOzH+orWHWCHgD4WZDgUxVm
-	g5vsBh7/mwqaO7CTK+fCpmOno6FycBDLFD/k0d3SmsvjKyyCZgajyhmI4GjwMhAURDqZSXux
-X-Google-Smtp-Source: AGHT+IEjjGwm4LgyP1atx5l0JHqL9FPxuMAodaX4BR9dLcCBJPPs8xL/z9odFgYaKsV2MBnWB05wdw==
-X-Received: by 2002:a17:903:1a24:b0:223:4b4f:160c with SMTP id d9443c01a7336-22df5496af5mr477235ad.27.1745965950581;
-        Tue, 29 Apr 2025 15:32:30 -0700 (PDT)
-Received: from google.com (2.210.143.34.bc.googleusercontent.com. [34.143.210.2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7403991f046sm236228b3a.41.2025.04.29.15.32.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 15:32:30 -0700 (PDT)
-Date: Tue, 29 Apr 2025 22:32:19 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com
-Subject: Re: [PATCH v2 20/22] iommu/tegra241-cmdqv: Do not statically map
- LVCMDQs
-Message-ID: <aBFTc1Q1r_jrnJ63@google.com>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <3981a819a4714b21d11d5c6de561a2d0c6411947.1745646960.git.nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1745966089; x=1746570889;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Oc5Kg3k3xlsA9pOUU6bgWUdMQMuuSGtxKsnW3LcmO1M=;
+        b=qZKslvky53vSX4RSy3Her9cX94a7YH+oeiqe7GtTPelXuDsEkN3/LM/H4wj1o408Lo
+         P2IlMVWnCSpgltKiaSQewdUYK0uZYnR6MxqIliRM/7oGo9JrkUzDGN68kOrdE8rDBXWF
+         HhmcjAIqLHCA0xULO1RZpm1CqaoK669t9C/Lvzy3Cz1ndU1sVoS6ahKk0247IyvV9zkp
+         OjMzdknWgZEybWrgYNhG4y+/4XampAHSt97qj3nG9UHm+yOnXmUK/APfm69iPPRNnRbq
+         TWXXGF8BfNmT0R6Txc87iK0sBiiTx2iDSoKnu8vrLY96nffxanNiQE1S1EljIpmAVHV1
+         +HgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiGyHF2UoGWmFUnoXqiQ1nHEEoyGKSr0NBewpKkr7IDxMDsUMDgmlfhyM9Kl3wMybSNrbxuwy7OpoGJ8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylpdER2s4uDi/DKpSGky4zZ5nWyPlGEg2hwjZFCiFRnm9Kumwo
+	a+iTxVE5/bN09jDnM+JWfjC9f7XT0VTjJw1irGUXWbpwTrj4wRjHNXDfXRaY6LHEeKGZVWVctQT
+	pBrvd5g==
+X-Gm-Gg: ASbGnctBqHABy199ASwAi5CczdSmDrjTZhc80fhnIyZ4KubofxoZjX8nzG0isk/3zwn
+	iD2UcxB8+lzT4hLL8WMS8W2DoluCj+mlrGrVg2sllwFUFUMZ8AynXbrpUs13122MbWlhDKIiNOU
+	cBixaGztYzVmwUc0QgAvvbc9+npOOSlFZ9s8A7FFbB1W/rnI7z4FYAY6bRmz9zs5XcAxrkmXIM5
+	Ize4EZPFfH2O5AMAYt9cMWjGX3AYuD2/jM2p3rhsRkeIeKHa29ri6hbHJ3xtpeFNZlpE2WwW00M
+	3Jy7kKTqleAy7o24EPujXx6V5RFqtQcr1wn6bbVo6VNU+hmwjpYHQg6GJfV06bkCxcDnYjUiLOD
+	Kg0K1+584eFwtNlY=
+X-Google-Smtp-Source: AGHT+IEvE8AOwLAPw15D0uhiREVfZSAP8kBgZgVPvOyYqVlok6DzDz0AWHiFww/Ez8tuh3ykjmy5ag==
+X-Received: by 2002:a17:906:f049:b0:acb:aa75:2b3b with SMTP id a640c23a62f3a-acedf68dda4mr54162566b.10.1745966089245;
+        Tue, 29 Apr 2025 15:34:49 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1ac8sm831176766b.182.2025.04.29.15.34.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 15:34:47 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f63ac6ef0fso704423a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:34:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUR9hICGJBypJzFCv0pN800qM0iI/svAnLGCtokXyzxGTrYxe39alQrLwsG0E5+SiNrpgFHR/gHD6Y8YxA=@vger.kernel.org
+X-Received: by 2002:a05:6402:3488:b0:5f6:4a5b:930d with SMTP id
+ 4fb4d7f45d1cf-5f89fe51d37mr514981a12.11.1745966086672; Tue, 29 Apr 2025
+ 15:34:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3981a819a4714b21d11d5c6de561a2d0c6411947.1745646960.git.nicolinc@nvidia.com>
+References: <20250425141740.734030-1-arnd@kernel.org> <CAHk-=wj0S2vWui0Y+1hpYMEhCiXKexbQ01h+Ckvww8hB29az_A@mail.gmail.com>
+ <aA8nF0moBYOIgC5J@gmail.com> <aA8oqKUaFU-0wb-D@gmail.com> <CAHk-=wgJfWfWa2NTiTmev+Xr=e8Uo=aFkrXujLAQBVAVN-VigQ@mail.gmail.com>
+ <B364FF6D-DFCC-42A7-ACA1-6A74E27EE57E@zytor.com> <67be5eee-b67b-409a-8309-829f891b9944@citrix.com>
+ <916BD58C-E6A7-495E-9A60-722E130AC7A7@zytor.com> <e5e97ff8-9670-40d1-a0fa-69504d34c4c4@citrix.com>
+ <956DB0ED-F3DB-456D-8D06-6F40DBDB815A@zytor.com> <06d04c13-76e8-45fb-a563-e365e1f19362@citrix.com>
+ <CAHk-=wig1E4B-e1_6=it1LfVQ64DJsVgO6f6Ytnbzm2qChbAdw@mail.gmail.com>
+ <81ed8b53-1a40-4777-ab87-4f4abe032dbc@citrix.com> <CAHk-=wiAPQFf-RUr=8ra1sYdfGPGLb4QbV8THE9zY3n820L94g@mail.gmail.com>
+ <72078B8D-F03E-4783-8AC2-A36464A4B6A1@zytor.com> <CAHk-=wi=nuDW6yCXSA-dEztZhXNuzLOaH--s_V7GOAE7n6RsRw@mail.gmail.com>
+ <565ac06a-005f-4b77-930e-d63285c025b9@citrix.com> <CAHk-=wiMN7eMYE=SiA07f2aFFeuEV0YJ-ewoW4rJ3yQfbviuJA@mail.gmail.com>
+ <7e0c2b99-00c1-4e64-ac68-50ba7500fd20@citrix.com>
+In-Reply-To: <7e0c2b99-00c1-4e64-ac68-50ba7500fd20@citrix.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 29 Apr 2025 15:34:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjpUbDYw5O+zXWMq8yq91zaZFLUgZJ0Y1PU1g-OCiftrQ@mail.gmail.com>
+X-Gm-Features: ATxdqUG9ooiLW1FjokHyuPv-6NWWppXUVmXsmKprDfDV5sYeskxfWUGa3Yy8OuE
+Message-ID: <CAHk-=wjpUbDYw5O+zXWMq8yq91zaZFLUgZJ0Y1PU1g-OCiftrQ@mail.gmail.com>
+Subject: Re: [PATCH] bitops/32: Convert variable_ffs() and fls() zero-case
+ handling to C
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Alexander Usyskin <alexander.usyskin@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>, 
+	Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Apr 25, 2025 at 10:58:15PM -0700, Nicolin Chen wrote:
-> To simplify the mappings from global VCMDQs to VINTFs' LVCMDQs, the design
-> chose to do static allocations and mappings in the global reset function.
-> 
-> However, with the user-owned VINTF support, it exposes a security concern:
-> if user space VM only wants one LVCMDQ for a VINTF, statically mapping two
-> LVCMDQs creates a hidden VCMDQ that user space could DoS attack by writing
-> ramdon stuff to overwhelm the kernel with unhandleable IRQs.
-> 
+On Tue, 29 Apr 2025 at 15:22, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+>
+> Oh, I didn't realise there was also a perf difference too, but Agner Fog
+> agrees.
 
-Nit: I think it's worth mentioning that the current HW only supports 2
-LVCMDQs. Since it's not clear from the driver as it calculates this by:
+The perf difference is exactly because of the issue where the non-rep
+one acts as a cmov, and has basically two inputs (the bits to test in
+the source, and the old value of the result register)
 
-        regval = readl_relaxed(REG_CMDQV(cmdqv, PARAM));
-        cmdqv->num_vintfs = 1 << FIELD_GET(CMDQV_NUM_VINTF_LOG2,regval);
-        cmdqv->num_vcmdqs = 1 << FIELD_GET(CMDQV_NUM_VCMDQ_LOG2, regval);
-	cmdqv->num_lvcmdqs_per_vintf = cmdqv->num_vcmdqs / cmdqv->num_vintfs;
+I guess it's not "fundamental", but lzcnt is basically a bit simpler
+for hardware to implement, and the non-rep legacy bsf instruction
+basically has a dependency on the previous value of the result
+register.
 
-Or maybe, re-word it to "if user space VM only wants one LVCMDQ for a
-VINTF, the current driver statically maps num_lvcmdqs_per_vintf which
-creates hidden vCMDQs [..]"
+So even when it's a single uop for both cases, that single uop can be
+slower for the bsf because of the (typically false) dependency and
+extra pressure on the rename registers.
 
-> Thus, to support the user-owned VINTF feature, a LVCMDQ mapping has to be
-> done dynamically.
-> 
-> HW allows pre-assigning global VCMDQs in the CMDQ_ALLOC registers, without
-> finalizing the mappings by keeping CMDQV_CMDQ_ALLOCATED=0. So, add a pair
-> of map/unmap helper that simply sets/clears that bit.
-> 
-> Delay the LVCMDQ mappings to tegra241_vintf_hw_init(), and the unmappings
-> to tegra241_vintf_hw_deinit().
-> 
-> However, the dynamic LVCMDQ mapping/unmapping can complicate the timing of
-> calling tegra241_vcmdq_hw_init/deinit(), which write LVCMDQ address space,
-> i.e. requiring LVCMDQ to be mapped. Highlight that with a note to the top
-> of either of them.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 37 +++++++++++++++++--
->  1 file changed, 33 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> index 8d418c131b1b..869c90b660c1 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> @@ -351,6 +351,7 @@ tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
->  
->  /* HW Reset Functions */
->  
-> +/* This function is for LVCMDQ, so @vcmdq must not be unmapped yet */
->  static void tegra241_vcmdq_hw_deinit(struct tegra241_vcmdq *vcmdq)
->  {
->  	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
-> @@ -379,6 +380,7 @@ static void tegra241_vcmdq_hw_deinit(struct tegra241_vcmdq *vcmdq)
->  	dev_dbg(vcmdq->cmdqv->dev, "%sdeinited\n", h);
->  }
->  
-> +/* This function is for LVCMDQ, so @vcmdq must be mapped prior */
->  static int tegra241_vcmdq_hw_init(struct tegra241_vcmdq *vcmdq)
->  {
->  	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
-> @@ -404,16 +406,42 @@ static int tegra241_vcmdq_hw_init(struct tegra241_vcmdq *vcmdq)
->  	return 0;
->  }
->  
-> +/* Unmap a global VCMDQ from the pre-assigned LVCMDQ */
-> +static void tegra241_vcmdq_unmap_lvcmdq(struct tegra241_vcmdq *vcmdq)
-> +{
-> +	u32 regval = readl(REG_CMDQV(vcmdq->cmdqv, CMDQ_ALLOC(vcmdq->idx)));
-> +	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
-> +
-> +	writel(regval & ~CMDQV_CMDQ_ALLOCATED,
-> +	       REG_CMDQV(vcmdq->cmdqv, CMDQ_ALLOC(vcmdq->idx)));
-> +	dev_dbg(vcmdq->cmdqv->dev, "%sunmapped\n", h);
-> +}
-> +
->  static void tegra241_vintf_hw_deinit(struct tegra241_vintf *vintf)
->  {
-> -	u16 lidx;
-> +	u16 lidx = vintf->cmdqv->num_lvcmdqs_per_vintf;
->  
-> -	for (lidx = 0; lidx < vintf->cmdqv->num_lvcmdqs_per_vintf; lidx++)
-> -		if (vintf->lvcmdqs && vintf->lvcmdqs[lidx])
-> +	/* HW requires to unmap LVCMDQs in descending order */
-> +	while (lidx--) {
-> +		if (vintf->lvcmdqs && vintf->lvcmdqs[lidx]) {
->  			tegra241_vcmdq_hw_deinit(vintf->lvcmdqs[lidx]);
-> +			tegra241_vcmdq_unmap_lvcmdq(vintf->lvcmdqs[lidx]);
-> +		}
-> +	}
->  	vintf_write_config(vintf, 0);
->  }
->  
-> +/* Map a global VCMDQ to the pre-assigned LVCMDQ */
-> +static void tegra241_vcmdq_map_lvcmdq(struct tegra241_vcmdq *vcmdq)
-> +{
-> +	u32 regval = readl(REG_CMDQV(vcmdq->cmdqv, CMDQ_ALLOC(vcmdq->idx)));
-> +	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
-> +
-> +	writel(regval | CMDQV_CMDQ_ALLOCATED,
-> +	       REG_CMDQV(vcmdq->cmdqv, CMDQ_ALLOC(vcmdq->idx)));
-> +	dev_dbg(vcmdq->cmdqv->dev, "%smapped\n", h);
-> +}
-> +
->  static int tegra241_vintf_hw_init(struct tegra241_vintf *vintf, bool hyp_own)
->  {
->  	u32 regval;
-> @@ -441,8 +469,10 @@ static int tegra241_vintf_hw_init(struct tegra241_vintf *vintf, bool hyp_own)
->  	 */
->  	vintf->hyp_own = !!(VINTF_HYP_OWN & readl(REG_VINTF(vintf, CONFIG)));
->  
-> +	/* HW requires to map LVCMDQs in ascending order */
->  	for (lidx = 0; lidx < vintf->cmdqv->num_lvcmdqs_per_vintf; lidx++) {
->  		if (vintf->lvcmdqs && vintf->lvcmdqs[lidx]) {
-> +			tegra241_vcmdq_map_lvcmdq(vintf->lvcmdqs[lidx]);
->  			ret = tegra241_vcmdq_hw_init(vintf->lvcmdqs[lidx]);
->  			if (ret) {
->  				tegra241_vintf_hw_deinit(vintf);
-> @@ -476,7 +506,6 @@ static int tegra241_cmdqv_hw_reset(struct arm_smmu_device *smmu)
->  		for (lidx = 0; lidx < cmdqv->num_lvcmdqs_per_vintf; lidx++) {
->  			regval  = FIELD_PREP(CMDQV_CMDQ_ALLOC_VINTF, idx);
->  			regval |= FIELD_PREP(CMDQV_CMDQ_ALLOC_LVCMDQ, lidx);
-> -			regval |= CMDQV_CMDQ_ALLOCATED;
->  			writel_relaxed(regval,
->  				       REG_CMDQV(cmdqv, CMDQ_ALLOC(qidx++)));
->  		}
-
-I can't confirm HW behaviour but the changes make sense to me.
-
-Acked-by: Pranjal Shrivastava <praan@google.com>
-
-Thanks!
-
-> -- 
-> 2.43.0
-> 
+       Linus
 
