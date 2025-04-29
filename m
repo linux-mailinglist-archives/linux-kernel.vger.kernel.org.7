@@ -1,178 +1,283 @@
-Return-Path: <linux-kernel+bounces-624779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DDBAA077F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6E2AA078C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09653466B68
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD853B52EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C4229E056;
-	Tue, 29 Apr 2025 09:39:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8E12BD593;
+	Tue, 29 Apr 2025 09:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="FUWvce3l"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF922949F7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745919580; cv=none; b=I4sWdPKoQPZZxC5DIqHGmgXgjh5HOXs20Fn/UKCJdNhEimviHW2spjaMt2dw7XQ2+MDBHFTyGW551aUKqnHOxHA1pThUDmrjszmR6eRxW4eZHNaoXKg68Y4T2mZe8jeKsUD2BK7qydWq/qJv5MebWjP2gcVygf0vIsoYgd2XxCc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745919580; c=relaxed/simple;
-	bh=wff8gluj3VBQRHUO2dAZPoDwcc7HlG1ihchdsWbgGBQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dzGstWOLBKbSiVyB35Xdj45biDKKBX13+U3UKm/cwcU5XqR2jwb7ZLdfrYtPKTL3i2m1hRzcU84DiYvgjwToJfMgZE6UmRPK8TANI8ChQ4i6oB/otiC3JMBFxGi/PgSA1Z5yWHpsQEGF/a/sDQCDL1TH/Ri2pUXtNPns2GddX+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1u9hQw-0004du-Pm; Tue, 29 Apr 2025 11:39:22 +0200
-Message-ID: <e97d3388a5b4272d70d7379b020843a47874a104.camel@pengutronix.de>
-Subject: Re: [PATCH 0/6] arm64: dts: imx: Move Ethernet aliases out of SoC
- DTSI
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, Francesco Dolcini <francesco@dolcini.it>, 
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-Date: Tue, 29 Apr 2025 11:39:20 +0200
-In-Reply-To: <20250425-dts-imx-aliases-ethernet-v1-0-15b9d5cca611@linaro.org>
-References: <20250425-dts-imx-aliases-ethernet-v1-0-15b9d5cca611@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF532279338;
+	Tue, 29 Apr 2025 09:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745919638; cv=pass; b=Vbm4IWnml/yc+MZTo0/RSTrc8w3AreS/QqhlhMJsAR6Ry7iYN8rO6tZ9+/UGqzN8HCxxueEUe8xY1kDlw1xvhu49h6ALYy/J0qPM512pNdXhjhH44dknUnqsdswbo4WAyVZs/uF0dBXPoVd86jkOJ1bECSp4WU4+0/u3wnX2Gqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745919638; c=relaxed/simple;
+	bh=zK5JT1R+mOl1khjhnDdRHszcCX1G7PYj23hCYVADR+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U2zI3hV2u9YG+D3Wte/A1urYggwT0ZPM1oqGtPkJxL0acPaGdpMNr3dANS345ey3KeTgu1StIuLtBSpQZXod5wihdqV7obohrmmc9NSPslUCmU8959GzFwlED6EP0bqhe9/gblqrxIxial1fSMvjoFeehP3mp095+y0TmQUXS44=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=FUWvce3l; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1745919602; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CrRxVW/rjrrTpEX877OQp09PyFktoNq4tLm8pehDoxuZm9tRiQej5iH1DAx5qDT9Lc4NOb6SmFIJhPQWWjj3NXtAVhj7dwEyFkZR+qD6SRCsZSDTo3irFeJnHxGrejqVL7as981LljIPT+GW/s6CBivRwxQj3gYeaX4+BVwzJ7M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745919602; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hLcmBIsCACJDjUqAJtkO3HjgZL+AZDeLLjzKL5Mpp1Q=; 
+	b=GPZeeF9NHa0+ftrpZl4aZ8Mop5XFx2Ruj4qp5aB37/XaCRaadIfTDNlR2t4LuGXZAcebXlk8pR5Mhj+rsWbtSPnWUbHIcrnEvSnlGG2jGoEyw4XjVKvqCCHrL4bNDIQsz5OoEM6oSBdpbndb2kqeSi87n6aaTXIWYRJOD5iRSck=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745919602;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=hLcmBIsCACJDjUqAJtkO3HjgZL+AZDeLLjzKL5Mpp1Q=;
+	b=FUWvce3l0LAyC3oL+PJY12QkqhLVXz42z07AN6mnx/ARAY67DZuYjHPP+ne+jW8q
+	gI8fLDMp8XW+4rLBKWxRzGoc90GHy3t3UK0r6m9ZX4b/ekFufCgRHaBKLUpepFbtKtL
+	LPD2Ge/TYfWhDsirdN40DB7REFsV5aAKJ3Ago1+Q=
+Received: by mx.zohomail.com with SMTPS id 1745919600383113.998544462219;
+	Tue, 29 Apr 2025 02:40:00 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-rockchip@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ Tomeu Vizoso <tomeu@tomeuvizoso.net>, Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Subject: Re: [PATCH v2 4/7] accel/rocket: Add a new driver for Rockchip's NPU
+Date: Tue, 29 Apr 2025 11:39:52 +0200
+Message-ID: <12654406.O9o76ZdvQC@workhorse>
+In-Reply-To: <20250225-6-10-rocket-v2-4-d4dbcfafc141@tomeuvizoso.net>
+References:
+ <20250225-6-10-rocket-v2-0-d4dbcfafc141@tomeuvizoso.net>
+ <20250225-6-10-rocket-v2-4-d4dbcfafc141@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi Krzysztof,
-
-Am Freitag, dem 25.04.2025 um 21:48 +0200 schrieb Krzysztof Kozlowski:
-> Not tested on hardware.
->=20
-> Ethernet interface, like other exposed interfaces, aliases depend on
-> actual board configuration, e.g. its labeling, thus aliases should be
-> defined per each board or each SoM.
->=20
-> Some boards (e.g. Gateworks) follow this convention but many do not.
->=20
-> This is continuation of my comments from:
-> https://lore.kernel.org/r/16a98816-f43c-4f4d-940e-9da30cb1f73f@kernel.org
->=20
-The i.MX boards have traditionally listed aliases for many hardware
-peripherals with the same numbering that's used in the SoC reference
-manual. Boards always have the option to override those aliases if they
-have a good reason to do so, e.g. labeling on the physical device.
-
-Other users besides Linux rely on fixed numbering provided by the
-aliases. Both barebox and U-Boot number their ethernet interfaces
-according to the alias.
-
-While you seem to add back aliases for in-tree boards, this breaks the
-majority of boards that include the kernel DTSI from an out-of-tree
-board. I can understand that we can't always accommodate these users,
-but I simply don't see the strong benefit of this patch to justify
-creating churn and possible regressions with those OOT users.
-
-Having those aliases in the DTSI has been common practice on the i.MX
-platform since 2012, long before there was any strong consensus on how
-those aliases should be used. Breaking existing users for the sake of
-aligning the i.MX platform with more idiomatic DT usage does not seem
-to be a worthwhile trade-off to me.
-
-Regards,
-Lucas
-
-> Best regards,
-> Krzysztof
->=20
+On Tuesday, 25 February 2025 08:55:50 Central European Summer Time Tomeu Vizoso wrote:
+> This initial version supports the NPU as shipped in the RK3588 SoC and
+> described in the first part of its TRM, in Chapter 36.
+> 
+> This NPU contains 3 independent cores that the driver can submit jobs
+> to.
+> 
+> This commit adds just hardware initialization and power management.
+> 
+> v2:
+> - Split cores and IOMMUs as independent devices (Sebastian Reichel)
+> - Add some documentation (Jeffrey Hugo)
+> - Be more explicit in the Kconfig documentation (Jeffrey Hugo)
+> - Remove resets, as these haven't been found useful so far (Zenghui Yu)
+> - Repack structs (Jeffrey Hugo)
+> - Use DEFINE_DRM_ACCEL_FOPS (Jeffrey Hugo)
+> - Use devm_drm_dev_alloc (Jeffrey Hugo)
+> - Use probe log helper (Jeffrey Hugo)
+> - Introduce UABI header in a later patch (Jeffrey Hugo)
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 > ---
-> Krzysztof Kozlowski (6):
->       arm64: dts: imx8qxp: Move Ethernet aliases out of SoC DTSI
->       arm64: dts: imx8dxl: Move Ethernet aliases out of SoC DTSI
->       arm64: dts: imx8mm: Move Ethernet aliases out of SoC DTSI
->       arm64: dts: imx8mn: Move Ethernet aliases out of SoC DTSI
->       arm64: dts: imx8mq: Move Ethernet aliases out of SoC DTSI
->       arm64: dts: imx8qm: Add Ethernet aliases
->=20
->  arch/arm64/boot/dts/freescale/imx8-apalis-eval.dtsi           | 2 ++
->  arch/arm64/boot/dts/freescale/imx8-apalis-ixora-v1.1.dtsi     | 1 +
->  arch/arm64/boot/dts/freescale/imx8-apalis-ixora-v1.2.dtsi     | 1 +
->  arch/arm64/boot/dts/freescale/imx8dxl-evk.dts                 | 1 +
->  arch/arm64/boot/dts/freescale/imx8dxl.dtsi                    | 2 --
->  arch/arm64/boot/dts/freescale/imx8mm-beacon-som.dtsi          | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-data-modul-edm-sbc.dts   | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-emcon.dtsi               | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-emtop-baseboard.dts      | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi                 | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-icore-mx8mm-ctouch2.dts  | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-icore-mx8mm-edimm2.2.dts | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-innocomm-wb15-evk.dts    | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-kontron-bl-osm-s.dts     | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-kontron-bl.dts           | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-mx8menlo.dts             | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-nitrogen-r2.dts          | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-phg.dts                  | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi         | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-ucm-som.dtsi             | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-var-som.dtsi             | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw700x.dtsi       | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts        | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts        | 1 +
->  arch/arm64/boot/dts/freescale/imx8mm-verdin-dahlia.dtsi       | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-verdin-dev.dtsi          | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-verdin-ivy.dtsi          | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-verdin-mallow.dtsi       | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm-verdin-yavia.dtsi        | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mm.dtsi                     | 1 -
->  arch/arm64/boot/dts/freescale/imx8mn-beacon-som.dtsi          | 1 +
->  arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-common.dtsi   | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi                 | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mn-var-som.dtsi             | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts        | 1 +
->  arch/arm64/boot/dts/freescale/imx8mn.dtsi                     | 1 -
->  arch/arm64/boot/dts/freescale/imx8mq-evk.dts                  | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-kontron-pitx-imx8m.dts   | 1 +
->  arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts       | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-mnt-reform2.dts          | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dts             | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-phanbell.dts             | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts              | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-sr-som.dtsi              | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-thor96.dts               | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8mq-zii-ultra.dtsi           | 1 +
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi                     | 1 -
->  arch/arm64/boot/dts/freescale/imx8qm-mek.dts                  | 5 +++++
->  arch/arm64/boot/dts/freescale/imx8qxp-ai_ml.dts               | 1 +
->  arch/arm64/boot/dts/freescale/imx8qxp-mek.dts                 | 4 ++++
->  arch/arm64/boot/dts/freescale/imx8qxp.dtsi                    | 2 --
->  arch/arm64/boot/dts/freescale/imx8x-colibri-aster.dtsi        | 6 ++++++
->  arch/arm64/boot/dts/freescale/imx8x-colibri-eval-v3.dtsi      | 1 +
->  arch/arm64/boot/dts/freescale/imx8x-colibri-iris.dtsi         | 1 +
->  arch/arm64/boot/dts/freescale/mba8mx.dtsi                     | 4 ++++
->  arch/arm64/boot/dts/freescale/mba8xx.dtsi                     | 2 ++
->  56 files changed, 143 insertions(+), 7 deletions(-)
-> ---
-> base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
-> change-id: 20250425-dts-imx-aliases-ethernet-37d8552939de
->=20
-> Best regards,
+>  Documentation/accel/index.rst           |    1 +
+>  Documentation/accel/rocket/index.rst    |   19 +
+>  MAINTAINERS                             |    8 +
+>  drivers/accel/Kconfig                   |    1 +
+>  drivers/accel/Makefile                  |    1 +
+>  drivers/accel/rocket/Kconfig            |   25 +
+>  drivers/accel/rocket/Makefile           |    8 +
+>  drivers/accel/rocket/rocket_core.c      |   71 +
+>  drivers/accel/rocket/rocket_core.h      |   29 +
+>  drivers/accel/rocket/rocket_device.c    |   29 +
+>  drivers/accel/rocket/rocket_device.h    |   29 +
+>  drivers/accel/rocket/rocket_drv.c       |  273 ++
+>  drivers/accel/rocket/rocket_drv.h       |   13 +
+>  drivers/accel/rocket/rocket_registers.h | 4425 +++++++++++++++++++++++++++++++
+>  14 files changed, 4932 insertions(+)
+
+Hi Tomeu,
+
+I've got some more comments on the driver, this time specific to some power
+management stuff I've noticed.
+
+> +++ b/drivers/accel/rocket/rocket_core.c
+>
+> [...]
+>
+> +int rocket_core_init(struct rocket_core *core)
+> +{
+> +	struct device *dev = core->dev;
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	uint32_t version;
+> +	int err = 0;
+> +
+> +	err = rocket_clk_init(core);
+> +	if (err) {
+> +		dev_err(dev, "clk init failed %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	core->iomem = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(core->iomem))
+> +		return PTR_ERR(core->iomem);
+> +
+> +	pm_runtime_use_autosuspend(dev);
+
+We're enabling autosuspend here, but don't use
+  pm_runtime_dont_use_autosuspend(core->dev);
+in rocket_core_fini. dont_use_autosuspend is only handled for us automagically
+on driver unload if we use devm wrappers for pm_runtime_enable, so this is most
+definitely an oversight.
+
+> +	pm_runtime_set_autosuspend_delay(dev, 50); /* ~3 frames */
+
+The 50 = 3 frames thing here seems suspect. 3 frames of what, and why? If it's
+3 frames of something the hardware processed, then doesn't that depend on the
+specific hardware and its clock rate, which may change? Plus, shouldn't auto-
+suspend be blocked anyway when there's still a job processing? The RK3588 TRM
+doesn't make a mention of "frame" in the RKNN section, so if this refers to a
+specific workload then that will be another parameter.
+
+> +	pm_runtime_enable(dev);
+> +
+> +	err = pm_runtime_get_sync(dev);
+
+No error checking done here, so if a clock fails to enable, we just hang on the
+read later if it was the register's clock. Though that particular error case is
+never passed out from the runtime resume callback, which should probably be
+fixed as well. 
+
+> +
+> +	version = rocket_read(core, REG_PC_VERSION);
+> +	version += rocket_read(core, REG_PC_VERSION_NUM) & 0xffff;
+> +
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	dev_info(dev, "Rockchip NPU core %d version: %d\n", core->index, version);
+> +
+> +	return 0;
+> +}
+> +
+> +void rocket_core_fini(struct rocket_core *core)
+> +{
+> +	pm_runtime_disable(core->dev);
+> +}
+>
+> [...]
+>
+> diff --git a/drivers/accel/rocket/rocket_drv.c b/drivers/accel/rocket/rocket_drv.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c22d965f20f1239a36b1d823d5fe5f372713555d
+> --- /dev/null
+> +++ b/drivers/accel/rocket/rocket_drv.c
+>
+> [...]
+>
+> +static int rocket_device_runtime_resume(struct device *dev)
+> +{
+> +	struct rocket_device *rdev = dev_get_drvdata(dev);
+> +
+> +	for (unsigned int core = 0; core < rdev->num_cores; core++) {
+> +		if (dev != rdev->cores[core].dev)
+> +			continue;
+> +
+> +		if (core == 0) {
+> +			clk_prepare_enable(rdev->clk_npu);
+> +			clk_prepare_enable(rdev->pclk);
+> +		}
+> +
+> +		clk_prepare_enable(rdev->cores[core].a_clk);
+> +		clk_prepare_enable(rdev->cores[core].h_clk);
+> +	}
+> +
+> +	return 0;
+> +}
+
+Here is where we will probably want to check the return code of each
+clk_prepare_enable, and potentially do quite ugly "always return hardware to
+known state" handling if any of them fails to enable, i.e. unwind the enables
+in the function exit before returning the error code.
+
+Seems pointless because if a clock fails to enable it's a nuclear meltdown type
+situation anyway, but especially when people are writing DTSes or porting things
+to new SoCs, it can be nicer to have the driver fail rather than the whole SoC.
+
+I do wish we had cleanup.h helpers for clock enables though...
+
+> +
+> +static int rocket_device_runtime_suspend(struct device *dev)
+> +{
+> +	struct rocket_device *rdev = dev_get_drvdata(dev);
+> +
+> +	for (unsigned int core = 0; core < rdev->num_cores; core++) {
+> +		if (dev != rdev->cores[core].dev)
+> +			continue;
+> +
+> +		clk_disable_unprepare(rdev->cores[core].a_clk);
+> +		clk_disable_unprepare(rdev->cores[core].h_clk);
+> +
+> +		if (core == 0) {
+> +			clk_disable_unprepare(rdev->pclk);
+> +			clk_disable_unprepare(rdev->clk_npu);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +EXPORT_GPL_DEV_PM_OPS(rocket_pm_ops) = {
+> +	RUNTIME_PM_OPS(rocket_device_runtime_suspend, rocket_device_runtime_resume, NULL)
+> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+> +};
+> +
+> +static struct platform_driver rocket_driver = {
+> +	.probe = rocket_probe,
+> +	.remove = rocket_remove,
+> +	.driver	 = {
+> +		.name = "rocket",
+> +		.pm = pm_ptr(&rocket_pm_ops),
+> +		.of_match_table = dt_match,
+> +	},
+> +};
+> +module_platform_driver(rocket_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("DRM driver for the Rockchip NPU IP");
+> +MODULE_AUTHOR("Tomeu Vizoso");
+>
+> [...]
+
+I'll send a second reply with PM comments on the job stuff in the patch that
+adds it, since I found something peculiar there while experimenting on RK3576.
+
+Kind regards,
+Nicolas Frattaroli
+
 
 
