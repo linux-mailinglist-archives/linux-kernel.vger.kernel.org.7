@@ -1,77 +1,128 @@
-Return-Path: <linux-kernel+bounces-624800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FD9AA07D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B37AA07DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4066C484D0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E743ACBC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB312BE0E3;
-	Tue, 29 Apr 2025 09:56:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B6E2741C2;
-	Tue, 29 Apr 2025 09:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F722BE0FF;
+	Tue, 29 Apr 2025 09:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WAHjDIQw"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430472BE0F7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745920591; cv=none; b=azDveMGa1DcdD0vq2dHB7Y3waVGuug81DiTh6h29rly4BQbc2QneZcPIFln6c/3ABvl6zfzfqHuF1dSIsOz/6Rl514MxS5TvURjmMht+aLjhi+/A5aqqj6D2vW05SlSUGf5nPPuvl4kYYqhR0x2SiH/Dp8TRGtrP00JTfQDg7Lc=
+	t=1745920738; cv=none; b=AVhqvdH6JF20tLXFtc9vp4ZbGlS8++YSByH+Jh+UiXi6jzGSCURQLDegAR15JI99bBBZQ4F7QfMA3Wm/qn23uNmNCFuZHLxzMN03E10kJgJrEBNHH1Wd7fBUVMW0p5YBIFzgNwJmdRAkn504a0kawCMuQfan8Bi8aIZdTD0Bb3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745920591; c=relaxed/simple;
-	bh=873o4zG4rWdsqZx5RoDf2BmYwZe7j3rvQ8zTJTDrBNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jir1D0OC7TsuUBH/pBfWC7nVpguGw+HWxfrIt4yznYDjQoY/LV4NpV0ArJ4mo0vIdFExQh/Cx5k+kQd5OeGuEtVe1aSmCw0Lo0B89UV9l6lfoJSrLFGoIXbWD6VdURvBmhMy6wywb5a+U8sW1hdBDeIJ5XJl9u0Xl305MV1a70w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92FC11515;
-	Tue, 29 Apr 2025 02:56:22 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3C4D3F66E;
-	Tue, 29 Apr 2025 02:56:28 -0700 (PDT)
-Date: Tue, 29 Apr 2025 10:56:27 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Wander Costa <wcosta@redhat.com>
-Subject: Re: [BUG] perf segfaults when combining --overwrite and intel_pt
- event
-Message-ID: <20250429095627.GI551819@e132581.arm.com>
-References: <CAP4=nvTab7BnT4uu0iCuFJpZ-_MdY-MYU+Q25QnpygEZKmsQ8A@mail.gmail.com>
- <20250428101234.GB551819@e132581.arm.com>
- <CAP4=nvQ_7oS5ZAsKmOd_ORg0tyHS=B+i2m63K=TLg22rTEiRGQ@mail.gmail.com>
- <20250428124727.GE551819@e132581.arm.com>
- <CAP4=nvTdD=eKcO_sJL3G7U0KxRTQ6XjJeJxNrmeD3n8UGBv5+g@mail.gmail.com>
+	s=arc-20240116; t=1745920738; c=relaxed/simple;
+	bh=YPTPXj7GXADEHXOMx1Z4O90ixxizjLkgmi0Dh6J7BJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AX3og9SezzmWoWMlQEUmMk7IaaaWuYJAJXbrBRU5pUHsXrTbAIc4EgkjSLqxG4u7dBT5AAXAKaADKdIKn7Y5niqo6v8jn/3Uybdc8zHDOm+YrHnShsLPnYNaGP4Jr6iNCOVPm+TJ5/fpsMUSZ2HCKOm/Mxt9y+gol7lp5hTXch8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WAHjDIQw; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1745920734;
+	bh=YPTPXj7GXADEHXOMx1Z4O90ixxizjLkgmi0Dh6J7BJs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WAHjDIQwAJc3o5uxAknbJm5ETVG6FNj2CmTb9v3QxDNUMLgfs1h/Pt/ma+auHcAv0
+	 YKkl3a3Uv4AGD21pLRgKMt0JBb4bGixVubdE9T2Ycme2PiS274+JonPQGDfi3NBbOX
+	 EuCg7RdpbeuJgUTYYoylSZnxBFlduZhF42jBYCNMii+f6+3DVzLC1e6EWew/NjbF25
+	 QglkBRm4moWj4DM0Xxea2dWm2+GPYna1uB516wz/iAUSDcutWRo7LOMjBTe1fDczAP
+	 8WeBbgbtpBYFM10q3faLrDz100X6epUwmulqFqC3ZnvFnr5cYILcSgwIOHtLrmpaWw
+	 cM4E50wBKGCrQ==
+Received: from [192.168.1.90] (unknown [84.232.140.122])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EA34E17E1073;
+	Tue, 29 Apr 2025 11:58:53 +0200 (CEST)
+Message-ID: <e54a7f29-c0a0-406a-b907-bb612d80e612@collabora.com>
+Date: Tue, 29 Apr 2025 12:58:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP4=nvTdD=eKcO_sJL3G7U0KxRTQ6XjJeJxNrmeD3n8UGBv5+g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/23] drm/tests: hdmi: Add macro to simplify EDID
+ setup
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
+ <20250425-hdmi-conn-yuv-v4-8-5e55e2aaa3fa@collabora.com>
+ <87cycwy5n4.fsf@intel.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <87cycwy5n4.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 28, 2025 at 04:16:58PM +0200, Tomas Glozar wrote:
+Hi Jani,
 
-[...]
-
-> However, the data cannot be read:
+On 4/28/25 12:52 PM, Jani Nikula wrote:
+> On Fri, 25 Apr 2025, Cristian Ciocaltea <cristian.ciocaltea@collabora.com> wrote:
+>> Factor out the HDMI connector initialization from
+>> drm_kunit_helper_connector_hdmi_init_funcs() into a common
+>> __connector_hdmi_init() function, while extending its functionality to
+>> allow setting custom (i.e. non-default) EDID data.
+>>
+>> Introduce a macro as a wrapper over the new helper to allow dropping the
+>> open coded EDID setup from all test cases.
+>>
+>> The actual conversion will be handled separately; for now just apply it
+>> to drm_kunit_helper_connector_hdmi_init() helper.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 46 +++++++++++++---------
+>>  1 file changed, 28 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+>> index c8dc6fa0f925e35e9903a18bac7f78f9d8165960..36734639d19a3f279abc4631eb19d5c2b20ca315 100644
+>> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+>> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+>> @@ -140,10 +140,11 @@ static const struct drm_connector_funcs dummy_connector_funcs = {
+>>  
+>>  static
+>>  struct drm_atomic_helper_connector_hdmi_priv *
+>> -drm_kunit_helper_connector_hdmi_init_funcs(struct kunit *test,
+>> -					   unsigned int formats,
+>> -					   unsigned int max_bpc,
+>> -					   const struct drm_connector_hdmi_funcs *hdmi_funcs)
+>> +__connector_hdmi_init(struct kunit *test,
+>> +		      unsigned int formats,
+>> +		      unsigned int max_bpc,
+>> +		      const struct drm_connector_hdmi_funcs *hdmi_funcs,
+>> +		      const char *edid_data, size_t edid_len)
 > 
-> $ perf report
-> 0x7620 [0x30]: failed to process type: 71 [Invalid argument]
+> char* is weird for EDID data, but it's a pre-existing thing, and
+> actually making it unsigned char or u8 isn't much better.
+> 
+> A follow-up could switch edid_data to just const void *, and ditto for
+> set_connector_edid() and current_edid member in struct
+> drm_atomic_helper_connector_hdmi_priv.
 
-I can reproduce this issue, it is likely caused by failing parsing the
-PERF_RECORD_AUXTRACE sample.  I will look into it.
+Noted for next revision (if required), otherwise I'll handle it separately.
 
-Thanks for reporting the issue.
-
-Leo
+Thanks,
+Cristian
 
