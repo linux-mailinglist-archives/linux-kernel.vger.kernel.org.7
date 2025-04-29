@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-843926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB87BC09C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC927BC09CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BAAA3AD5D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEB23C53D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417AC253F1A;
-	Tue,  7 Oct 2025 08:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADB92D47F3;
+	Tue,  7 Oct 2025 08:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hhBevQ4F"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h94yckcC"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504F8747F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CC02D3EF5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825405; cv=none; b=fjCRWmmH2VO/suS1LpCpClGi84zMNunLAkPDrbYK5wgnHH9jx32KKUfhS9XUL2CSw+myA5JaH62ZrctU1QmPq1dOgSoe+LUd0dqxFfTGdJ+a3qkc2U2Of9EMDDRIfvDrhQlc7kCTOaalVDVQissk+TAj5b/iM9U6bMk7RAVnbB8=
+	t=1759825425; cv=none; b=lnIE7ohhWmuXbtKZW6N22WS3tzJ44IO6i3zNNsmqFz+wXzFQZtP1zRPwBjhOxCddCH5BmCeGkgTpnECJd45+hmYLu/AA+x0imGNcd5iOppJJHvX7vSaanNA4EEeFtKxRbKsfcelPZHuz1CoIRAzUm0N7ZV2EMd0MY1UQRlcIxhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825405; c=relaxed/simple;
-	bh=jZGhVKHkpRai0Y2/EIkeTlYu8tYQjbtzz7neJZoq66Q=;
+	s=arc-20240116; t=1759825425; c=relaxed/simple;
+	bh=MajXR+eDQMdIEwqLUWV9WRQsZnhgMUSoAq1t5bSMaXY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TdJpb7aJGs+eD1XCxKxr5BXDeuoa/ZfTwxD5JSMm9hB7fSjY1D7L160g3NWnck3PQuAdZ+Lvh3glNg2umPWa4epxUhJkeLp8js/zSBsko7uioTLWQ2NEjonVMeU6nN1XPZ7XABAgrrEiKeqK8J7giM+gIQR2IEyKVqFkOkWxrzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hhBevQ4F; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=dxPWYMC02SaqJgVUB11Rfna5UEsvACjNpBMtgF0Qzm9HQR7fgplkLMyibvyrWma+zM0Hmfi8y9d3uuUHA/gNFZtyinAWzsGupF35PoY1zJyfDJByiLcDw6Oo0A1BsJF0wAsJ0GcsGMyCHpY3wlmjB+1EWbyLe74tTls+gCvB3HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h94yckcC; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759825400;
-	bh=jZGhVKHkpRai0Y2/EIkeTlYu8tYQjbtzz7neJZoq66Q=;
+	s=mail; t=1759825421;
+	bh=MajXR+eDQMdIEwqLUWV9WRQsZnhgMUSoAq1t5bSMaXY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hhBevQ4FxG0mKuDSwCVH9MUQZUzbI9dc4vsE9e4IxI0SJ7ZQBa3/U4BjqS4QQoIrE
-	 442WDmAKxaMvnFPlBlIMaVSDDB/CTF7keuQohdSUR9/q3oc+Qa6Uiiea3DL+wasEw4
-	 3RJeS0nrJQLFqijuxIdhBzrgoiL8vB0Ba5TVbs3lTXBP7aINAkMBWxlAsdu0KhHeC7
-	 BMIS6TpDQ0RS+nIEiEv9Ffv8IEtU7dazF6F472jdXZX/+W888gFYCswmVbgsi9PTW5
-	 omc948QAAwAy3p+bc5bCqGyNVV33FnczE8K2rtefkwmB8oYFGOXF5qTP9v8LtQ9jwi
-	 pl2FIE3Jh1oEw==
+	b=h94yckcCqavoDlxoyOxLv6t2EuQBAVlYln19rbbJL3vxd3gzo3WYckwrR+GLDXwVH
+	 GwKPb+AZiOg5PDlB6i+yEZiQ4pr8pDWs38o5FizNRmB/xgBEJVgYn3ECztmStmB4cS
+	 EJ+N6ef0gZlpk/Dq6rWieTUvt9R2ISU56qO9EeXXBE/NyWFktQTVZHpKj981jpSmIt
+	 SbTu9YX159OmzzSyQvqlDgEiy2Z8MhEv5m5vBapAZW7JPPYVFuQymU/756VZyv/ehy
+	 Kz2v8h3L4Fl8R50f8B9Vrm5h2BV0wpz7FGbvImBDI/I1JzEw/TtRnA6GX8n7Rl3xoC
+	 DF16N9yKm98OA==
 Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E56B117E0A28;
-	Tue,  7 Oct 2025 10:23:19 +0200 (CEST)
-Date: Tue, 29 Apr 2025 18:13:05 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6706C17E0A28;
+	Tue,  7 Oct 2025 10:23:41 +0200 (CEST)
+Date: Tue, 29 Apr 2025 18:16:05 +0200
 From: Boris Brezillon <boris.brezillon@collabora.com>
 To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Steven Price <steven.price@arm.com>, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ kernel@collabora.com, Rob Herring <robh@kernel.org>, Steven Price
+ <steven.price@arm.com>, Maarten Lankhorst
  <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
  Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/panthor: Fix build warning when DEBUG_FS is
- disabled
-Message-ID: <20250429181305.47d65c9a@collabora.com>
-In-Reply-To: <20250424184041.356191-1-adrian.larumbe@collabora.com>
-References: <20250424184041.356191-1-adrian.larumbe@collabora.com>
+ Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH 1/3] drm/panfrost: Add BO labelling to Panfrost
+Message-ID: <20250429181030.6a81a2ea@collabora.com>
+In-Reply-To: <20250424022138.709303-2-adrian.larumbe@collabora.com>
+References: <20250424022138.709303-1-adrian.larumbe@collabora.com>
+	<20250424022138.709303-2-adrian.larumbe@collabora.com>
 Organization: Collabora
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
@@ -71,89 +71,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-ZM-MESSAGEID: 1745943243961134400
+X-ZM-MESSAGEID: 1745943481827134300
 
-On Thu, 24 Apr 2025 19:40:34 +0100
+On Thu, 24 Apr 2025 03:21:30 +0100
 Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-> Commit a3707f53eb3f ("drm/panthor: show device-wide list of DRM GEM
-> objects over DebugFS") causes a build warning and linking error when
-> built without support for DebugFS, because of a non-inline non-static
-> function declaration in a header file.
+> Unlike in Panthor, from where this change is based on, there is no need
+> to support tagging of BO's other than UM-exposed ones, so all strings
+> can be freed with kfree().
 >=20
-> On top of that, the function is only being used inside a single
-> compilation unit, so there is no point in exposing it as a global
-> symbol.
+> This commit is done in preparation of a following one that will allow
+> UM to set BO labels through a new ioctl().
 >=20
-> This is a follow-up from Arnd Bergmann's first fix.
-> Also move panthor_gem_debugfs_set_usage_flags() into panthor_gem.c and
-> declare it static.
->=20
-> Fixes: a3707f53eb3f ("drm/panthor: show device-wide list of DRM GEM objec=
-ts over DebugFS")
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Closes: https://lore.kernel.org/dri-devel/20250424142419.47b9d457@collabo=
-ra.com/T/#t
 > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-
-Queued to drm-misc-next.
-
 > ---
->  drivers/gpu/drm/panthor/panthor_gem.c | 5 +++++
->  drivers/gpu/drm/panthor/panthor_gem.h | 8 --------
->  2 files changed, 5 insertions(+), 8 deletions(-)
+>  drivers/gpu/drm/panfrost/panfrost_gem.c | 19 +++++++++++++++++++
+>  drivers/gpu/drm/panfrost/panfrost_gem.h | 16 ++++++++++++++++
+>  2 files changed, 35 insertions(+)
 >=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
-hor/panthor_gem.c
-> index 2dcf308094b2..7c00fd77758b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -42,11 +42,16 @@ static void panthor_gem_debugfs_bo_rm(struct panthor_=
-gem_object *bo)
->  	mutex_unlock(&ptdev->gems.lock);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_gem.c
+> index 963f04ba2de6..a7a29974d8b1 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
+> =20
+> +#include <linux/cleanup.h>
+>  #include <linux/err.h>
+>  #include <linux/slab.h>
+>  #include <linux/dma-buf.h>
+> @@ -35,6 +36,9 @@ static void panfrost_gem_free_object(struct drm_gem_obj=
+ect *obj)
+>  	 */
+>  	WARN_ON_ONCE(!list_empty(&bo->mappings.list));
+> =20
+> +	kfree(bo->label.str);
+> +	mutex_destroy(&bo->label.lock);
+> +
+>  	if (bo->sgts) {
+>  		int i;
+>  		int n_sgt =3D bo->base.base.size / SZ_2M;
+> @@ -260,6 +264,7 @@ struct drm_gem_object *panfrost_gem_create_object(str=
+uct drm_device *dev, size_t
+>  	mutex_init(&obj->mappings.lock);
+>  	obj->base.base.funcs =3D &panfrost_gem_funcs;
+>  	obj->base.map_wc =3D !pfdev->coherent;
+> +	mutex_init(&obj->label.lock);
+> =20
+>  	return &obj->base.base;
 >  }
+> @@ -302,3 +307,17 @@ panfrost_gem_prime_import_sg_table(struct drm_device=
+ *dev,
 > =20
-> +static void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_objec=
-t *bo, u32 usage_flags)
+>  	return obj;
+>  }
+> +
+> +void
+> +panfrost_gem_set_label(struct drm_gem_object *obj, const char *label)
 > +{
-> +	bo->debugfs.flags =3D usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INIT=
-IALIZED;
+> +	struct panfrost_gem_object *bo =3D to_panfrost_bo(obj);
+> +	const char *old_label;
+> +
+> +	scoped_guard(mutex, &bo->label.lock) {
+> +		old_label =3D bo->label.str;
+> +		bo->label.str =3D label;
+> +	}
+> +
+> +	kfree(old_label);
 > +}
->  #else
->  static void panthor_gem_debugfs_bo_add(struct panthor_device *ptdev,
->  				       struct panthor_gem_object *bo)
->  {}
->  static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo) {}
-> +static void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_objec=
-t *bo, u32 usage_flags) {}
->  #endif
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/pa=
+nfrost/panfrost_gem.h
+> index 7516b7ecf7fe..c0be2934f229 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
+> @@ -41,6 +41,20 @@ struct panfrost_gem_object {
+>  	 */
+>  	size_t heap_rss_size;
 > =20
->  static void panthor_gem_free_object(struct drm_gem_object *obj)
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
-hor/panthor_gem.h
-> index 4641994ddd7f..4dd732dcd59f 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> @@ -212,14 +212,6 @@ void panthor_kernel_bo_destroy(struct panthor_kernel=
-_bo *bo);
->  #ifdef CONFIG_DEBUG_FS
->  void panthor_gem_debugfs_print_bos(struct panthor_device *pfdev,
->  				   struct seq_file *m);
-> -static inline void
-> -panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 u=
-sage_flags)
-> -{
-> -	bo->debugfs.flags =3D usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INIT=
-IALIZED;
-> -}
-> -
-> -#else
-> -void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, =
-u32 usage_flags) {};
->  #endif
+> +	/**
+> +	 * @label: BO tagging fields. The label can be assigned within the
+> +	 * driver itself or through a specific IOCTL.
+> +	 */
+> +	struct {
+> +		/**
+> +		 * @label.str: Pointer to NULL-terminated string,
+> +		 */
+> +		const char *str;
+> +
+> +		/** @lock.str: Protects access to the @label.str field. */
+> +		struct mutex lock;
+> +	} label;
+
+Should we have a panfrost_gem_debugfs where we put all the debugfs
+fields, like we have in panthor?
+
+> +
+>  	bool noexec		:1;
+>  	bool is_heap		:1;
+>  };
+> @@ -89,4 +103,6 @@ void panfrost_gem_teardown_mappings_locked(struct panf=
+rost_gem_object *bo);
+>  int panfrost_gem_shrinker_init(struct drm_device *dev);
+>  void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
 > =20
->  #endif /* __PANTHOR_GEM_H__ */
->=20
-> base-commit: 3a2b7389feea9a7afd18d58cda59b7a989445f38
+> +void panfrost_gem_set_label(struct drm_gem_object *obj, const char *labe=
+l);
+> +
+>  #endif /* __PANFROST_GEM_H__ */
 
 
