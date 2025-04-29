@@ -1,119 +1,146 @@
-Return-Path: <linux-kernel+bounces-625110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97802AA0CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:08:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5779EAA0CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE7A7B3FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523C04855D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978072D192D;
-	Tue, 29 Apr 2025 13:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E060A2D3239;
+	Tue, 29 Apr 2025 13:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iutp6+ZY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dTqUYaw2"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FFF2C2ACE;
-	Tue, 29 Apr 2025 13:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48832C2AD4
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745931955; cv=none; b=cOf47L/F345Zj3Kp+vU7xzlu9/F5qhQoaEyPS8RbiUG72xn4XxMDW6PI5bD4iQ1918hLxvTVL6Z8b1XUYeCwUxsMUK48GzKq+psgU4HGv46xpZA0rd0Fdqc8lJDrxYoWmretJgTOmR5Hvn4SJ0rrzp9Nl5VKbVhXpcT9o1KDW6g=
+	t=1745932086; cv=none; b=LMNf1wFk5ndh6fhZz3QPVKviP9vxBJBskoQmHMxBq33ZROCZYQlQZaCQ0to/TJdn6AOxt6JH7udFDpsqTHiKK6HZ3icn2zzZoYfQPE7bV6sj1eiMWrxBEDJOW5wcFstScCBzrHGJNb+CEnxz64cRZcrlvdxeKSXj6f97SAFqekI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745931955; c=relaxed/simple;
-	bh=CyJN33OKpiyB3H+RaMMXug2TVr9R3h4wpkJGQqwoUJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bAFewl2nF7VFL9lhE3N2dkb+/OKKcz6DZRe6Nxc936muuS21bcWc4y1TH3mSxwLjvT0K98lCdjPU6+0LB2Tb2YK2GucJc4ZKtpFwW38ly7DI0aCnfWOtVdehhhe7wUAYV+Vr3aGbc6aqA4bk0dMAysedOeeasMndpkG0VShLGmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iutp6+ZY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F63C4CEE3;
-	Tue, 29 Apr 2025 13:05:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745931954;
-	bh=CyJN33OKpiyB3H+RaMMXug2TVr9R3h4wpkJGQqwoUJg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Iutp6+ZYwNoeZeaLM1M9CYUq7xOe58XWW60+k2Ij5iz3w8JSRwTJNWZliKq8lr5e9
-	 Wocdlu4AD0zdKm72O+8FYHfPN+sFLWlwofa6qRGhHy+mZrsEoRefLB+iIEI2m7aCIn
-	 fVbrm1slTGF22TPms1nT5yp08r308nWC3xK/JW9Lf8OTqaGqvtsL6NhkH3K0+QJgCl
-	 UYm2fecWOyWKyld2xp0QEdCysvsia/BeV5A7ydN1UjQfTMJizBIpSlKJ0qtWayDEms
-	 Tt6kzs+aTau4iFeaiDITl7UuHDKzZzPR9196XhnV4rTvd5PCXlnvHWTcTOyBlyJuPP
-	 XU7BusJzH6q6g==
-Message-ID: <baa21129-287b-4c94-93ad-ff859bdd1698@kernel.org>
-Date: Tue, 29 Apr 2025 15:05:49 +0200
+	s=arc-20240116; t=1745932086; c=relaxed/simple;
+	bh=FIbVVo0rbRRf8O8fRJ5PXCBl/H6IaHSYl1ya1qer2mU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kKFdIRMwX00xbo7LCC2k+5iiFqj4Pl2MQeUbnuBpjjd43bMIlHSXciv1mHSMUmtzeeNdhEQqd2xkOB4+RF/l6qQErlyVMk9s0Dvb/A25r+dGAcnCGDeCnoEqaHSSgfRhzoxHGp6PDR8fvZ+fFH5QLwY660W1H5hwkdCd0X8VfuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dTqUYaw2; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso53290765e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745932081; x=1746536881; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rq7rXh1qobsxmTnH95x5w2HXYH7sLiudkYRgxpX7OF4=;
+        b=dTqUYaw2SODnCmkeuWbsEOkHFBD/aJgkdMQeXBRBOh6XYyE5oAxz2C3zqgsKcotJad
+         C9TfGxYMrpD7Ih3tB0nseQjD1I1ExH0VE68WnSU/jnExynBdNQwDKlNhM5bBef+3nTjo
+         HXs4I23orxEDg9wdvriu15jPA7FKkZIY6KaG2hU3Ae0uumY8J+i4VAwOlWLXX+NXPrGV
+         Ts8izUBI8PNP5ciEyLqSya6mlnOWF/SUVyU4wd1TIXgIETDPBW60MUXs++8Noa85IRgL
+         GrRUDItsS1HK0OLbMIoBa7QUst99Lr+nKbUOn+NQNmrULsyVV6TQGPN2CXXmFj9zW/di
+         ujVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745932081; x=1746536881;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rq7rXh1qobsxmTnH95x5w2HXYH7sLiudkYRgxpX7OF4=;
+        b=vAOQKdeAerUZTc4hMB+vboCg/w4jYhsB+ZvzQXmQ7qRtjoG9YXsSxM+3Qlp6TmHGE6
+         YVm/YZM2g0BW36bsavgRaYKAvwdFVAdlthMYzSTXj8xsC00uEht2gHud6PRBJnoGsux4
+         3puKu/rOXO2/5orZxDtYX+IcMcUiFic//H8xXF6EdJQ6sx/3MohZrmiRRvudjgaTEUNs
+         XQhFaYCoUH8bL1ysV/yDt/FMH2KAtaHG0TdlRJBmZeKMMKYbRDELj6ZFS1VkCei28IHT
+         V8KOIGGVuXmhrxrFzJDzDh5tIN9iB6vGlBODfKPr6BbEaZMxBvUMaPccQYdqF3osHCA0
+         vuDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2YuwXyLlcKPDIeePg/qtJpcc1/sSF+YBAnwdUgQguIPuq4Fg5GAKrs8dQP83Ppovez44cN223PoCeSRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVewFNQy9rWf9QQiiLKJxdFi8jPPZ4k5IJuW+oH3pvFqPjdM+2
+	+APPGj84RxG1046fF6pI5AAD1AWy8+S9YmA3+epkeVoDdSPTMShtqbNV/5dpoNOSPAAH+QcLkgv
+	e
+X-Gm-Gg: ASbGnctxaiGFVjhj1SMLIcryViWc5c8uQQNnRkYHvUEETurUxKYhtzWBbVjhDhicjR6
+	5lJ9rLclJcbjE4Ng6G0MDxYdST9iScoWazl96Q/ChH5UBTAjuwG45fiuUyO7xopu/4ZfySSG/io
+	TGM+CyBet2tnApgmiayCTwoj2/Rjyrdojpfdmek7gRu3fqkxfi7AFam9mbmPTfJQRX8pkfKT+i5
+	isNFJKy74q79lBk5gT7qqyt6Ux5vMBJf2Wb6YNBxuyUSfZF0mOGNGVTfJjaiGoLidmijjZHxByw
+	34WlQlwvkcxYxDyGMroc0kmSmpjTmLoI6ZJWeIMVp+pvWM01IoqeE2zz1DSdI2HleoY5BFmG7ym
+	C2hPnM1SEbEMD
+X-Google-Smtp-Source: AGHT+IHH7kPdFloz0enES8t+pHJLMxDsC3PA7QswfkYDa1uwoQfq8JQ8Oti/EC5RpCr0OlT7L+7QAw==
+X-Received: by 2002:a05:600c:83ce:b0:43c:f87c:24ce with SMTP id 5b1f17b1804b1-440ab8460fcmr106121275e9.21.1745932080995;
+        Tue, 29 Apr 2025 06:08:00 -0700 (PDT)
+Received: from [192.168.0.2] (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5310ad2sm155550565e9.21.2025.04.29.06.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 06:08:00 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH 0/5] iio: adc: add ad7606 calibration support
+Date: Tue, 29 Apr 2025 15:06:44 +0200
+Message-Id: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] tty: serial: samsung_tty: support 18 uart ports
-To: Faraz Ata <faraz.ata@samsung.com>, alim.akhtar@samsung.com,
- gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- dev.tailor@samsung.com, rosa.pila@samsung.com
-References: <CGME20250429101953epcas5p4604a6bd79548ebc29e1c72bdc64965a4@epcas5p4.samsung.com>
- <20250429102941.4138463-1-faraz.ata@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250429102941.4138463-1-faraz.ata@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOTOEGgC/x3MQQqEMAxA0atI1hPIpNpBrzK4iBo1ICqtqCDe3
+ eLyL96/IGowjVBlFwTdLdoyp/h+MmhHmQdF61IDExeUc4mHrdhMKN3Pk8dWJmuCbEkhk7jSiyd
+ XMCS/Bu3tfN//+r4f/5nzV2sAAAA=
+X-Change-ID: 20250429-wip-bl-ad7606-calibration-20a396a60352
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1455;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=FIbVVo0rbRRf8O8fRJ5PXCBl/H6IaHSYl1ya1qer2mU=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYsgQOPfcgcvmpc7GWyE/xGfcN7mw9FsBR9IZ7/krjwpzJ
+ eUKJkeodpSyMIhxMciKKbLUJUaYhN4OlVJewDgbZg4rE8gQBi5OAZiI4VuGf3oLT9/976hx87vC
+ Wh+jq/e0oy23mP07y1+emTXXSXlH02+G/7HZzA/CZn2pm6D87sSOZyce+V00/1Oz8HDvz4kXmWt
+ UHnICAA==
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On 29/04/2025 12:29, Faraz Ata wrote:
-> ExynosAutov920 SoC supports 18 UART ports, update
-> the value of UART_NR to accommodate the same.
-> 
-> Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+Add gain, offset and phase (as a delay) calibration support, for
+ad7606b, ad7606c16 and ad7606c18.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Calibration is available for devices with software mode capability. 
+
+Offset and phase calibration is configurable by sysfs attributes, while
+gain calibration value in ohms must match the external RFilter value,
+when an external RFilter is available, so implemented through a specific
+devicetree "adi,rfilter-ohms" property.
+
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Angelo Dureghello (5):
+      Documentation: ABI: IIO: add calibphase_delay documentation
+      iio: core: add ADC phase calibration definition
+      iio: adc: ad7606: add offset and phase calibration support
+      dt-bindings: iio: adc: adi,ad7606: add gain calibration support
+      iio: adc: ad7606: add gain calibration support
+
+ Documentation/ABI/testing/sysfs-bus-iio            |  20 ++
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  14 ++
+ drivers/iio/adc/ad7606.c                           | 213 +++++++++++++++++++++
+ drivers/iio/adc/ad7606.h                           |  13 ++
+ drivers/iio/industrialio-core.c                    |   1 +
+ include/linux/iio/types.h                          |   1 +
+ 6 files changed, 262 insertions(+)
+---
+base-commit: e22e3d5089987cb4250801623026992b2ba4645d
+change-id: 20250429-wip-bl-ad7606-calibration-20a396a60352
 
 Best regards,
-Krzysztof
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
+
 
