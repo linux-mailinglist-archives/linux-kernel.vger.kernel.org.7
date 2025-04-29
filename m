@@ -1,187 +1,154 @@
-Return-Path: <linux-kernel+bounces-624147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED04A9FF49
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:57:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99709A9FF4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889751B606D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0963AE65D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 01:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D3920FAB3;
-	Tue, 29 Apr 2025 01:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB59921147C;
+	Tue, 29 Apr 2025 01:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BN1zu4gy"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcKwdWrq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2967082D;
-	Tue, 29 Apr 2025 01:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1EE1EF01;
+	Tue, 29 Apr 2025 01:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745891855; cv=none; b=QrjEthlm0zZBhxKAWA1z0KsWs/Xd1YEh6tJSDi3NlZwt4Dz1japs+3VKm5VNLJI8mT/4oA+cfssn6zinTO8z4r+2HVfWfYOqfVpNe8IimVpCaf1mRM0l+ua7nxee9JYctMn1S1tJKlS6H66XSQVQ8Ln2gwHYMb0Nz7rN2rS+Ul8=
+	t=1745891903; cv=none; b=uYBaxkTfhQpnrPj5Gdi3XFv7IAv+p/IVbXJ5r+HmcJ/fj7tXPUUOeXk8BpPYlQA9+RwaRGLiDSsUO3POB1D3s36XO58sRaO18VSOaby7Itca/9nH3Xtw5nmybjQvn1D5QF09vXXN3+E5pZCdjrR3xhX8cS02Qe8IrADbvKOjc1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745891855; c=relaxed/simple;
-	bh=0aVd5JM1SATlQkOEKpKHvyBCifj+Y1pNPtszkHc0MDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ddsrt8+J6gsrr8/v8v7f87SuwUHoalQhj/k1rQlcxYwoR6kJDxglIK8BB1T0rzcBsu8WUALAqhd2fvhB91NLYTvmJuRpcvdCwLkHujcCarxqd0tIuf3A7XiMUt1D9BLCBQCodLYSOnDYEzALgRmhUhN7CKnFjcc1MgR8Dz0cwdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BN1zu4gy; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso1047402a12.3;
-        Mon, 28 Apr 2025 18:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745891851; x=1746496651; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TcbnWyvi1dis9SuCZ1/SKbV8UgckR1GJ3YAyTppIVtA=;
-        b=BN1zu4gy69wbKMIWSNQdHqhc0ynSALiseJlBwd1Sl2pCK66t4N01jO022WPybXi6+E
-         EpX6R+RdrlYGC3d13KP/PpLzVS2Y72BxwmVW7irMlq2swAV1cM2MmZgVl/LwwPVCemUd
-         4qPZ2ORdbqIFNuEMBq2vd5NkT77BjTHVdbPvsd6iUXgadBea/xZA1o1IOav6qcl2coWM
-         kW6rRM3GGyfReLEyEE5n/3dO5sxSOH7adFSySsJWWHFVGjBb6yKn8JouWBUZNwlb90Ej
-         Fcf7lgeB8H6SoEIuAyVj7adL5db+J5fJT83WK1i4SasOrt5qRtxoqQJ3v8SFdPWYuiF9
-         ftdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745891851; x=1746496651;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TcbnWyvi1dis9SuCZ1/SKbV8UgckR1GJ3YAyTppIVtA=;
-        b=MMfxlmAgifHGDQj5j95wI7bY0txppLNKr9vGmdGoV8v8iHLgKRqObr/KsTlBh8gBdf
-         x2S63K4253N4hwsoeIakrYYhrGVib2J25mlhzIZOLy1dxW9+c3aRYnhvUULgOTJH12N8
-         mBsSSFOCctMDGJetfBM3Tc7lg63kxuA3LxKtWLybjvUffBHm67rMoFchPZt/q65tCZ14
-         mj+zVISv1qhhX+gfKa5qeJSZc/Cra8Og6roQakRSFwtiJZ9psT78Ylss8+n1SFfTBQFe
-         vIbuEfsG/W6c7wxNsYhseaz3yV6AnvjfyQxslE+LQnrpDlIX9CWGdH3LMjhrADhkSEgi
-         MP3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1IZc3U3WeXDBhYu4TYPZFhPZvCIMfR+Ld7zoFGqY0k5qcdYCNzAuw2GFMr8Jd1FaLCM2z3t4+uA==@vger.kernel.org, AJvYcCWphEDOiJh91rikDOwlBCGy/hLEedCpNb4Fe41bdS8YlcVlyxUdrd3Ud+0UoVkZM2ZXCoM=@vger.kernel.org, AJvYcCXppP0grYV2baXsdPqTTc7PlvFmSWhtCfE8ZMbHtcGZW6f+NbuQ2CQOc3fr5i57Ats2BZIQ8LN7Kbcp8Z2t@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx71zmE8NGaXmfvpb8aqiyDhVYmQNPRKVBIx6TEyp1f/UoxQwV1
-	49F/lGnC9URLpUV//Zp0TSNq91pcwRKKy6bT0E9Fd4aRUV5wbasIvtLFKdmSsTl1G3iGupZuf7K
-	fwRczt3qplwYYRhaxYhEjrQS33qQ=
-X-Gm-Gg: ASbGncsP90bwqwLmQGDSCyF7MtBXSnHwoZPG9rZ8qRYT+qcf+UlIBqCDH4378iOrr+Z
-	YozU5Nn26H1kpwhmIynbxCqVhPhxrhUYAeYdx6eebN+VAdRMjfeA1Fhz+QzTAFboEHok59t9XkK
-	/WNwshpIuwxt/vuqKwdVzhPtycwXbIVDBg/B7GMsEGl+4=
-X-Google-Smtp-Source: AGHT+IGOWEHRraH/2R9p5mFTxnX5r73jmgvEf14qIKTjllHFXZonneNpk+KF0w0p4HhcLjQZwdv7Ae+C7fdY42nuL00=
-X-Received: by 2002:a05:6402:1d51:b0:5e5:cb92:e760 with SMTP id
- 4fb4d7f45d1cf-5f73960b9dfmr10033682a12.17.1745891851157; Mon, 28 Apr 2025
- 18:57:31 -0700 (PDT)
+	s=arc-20240116; t=1745891903; c=relaxed/simple;
+	bh=r6Eqx4vQPJ/sbEzTmwfcYb+QRd2YEHOWgQzVfEbb/cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKYRUcuOEWINOaTGt+Cs/wA2CVhHfHpMltZMw/NMiNbxkDJdHtcK9+LO3jLC2KVYM2gK9C2aAD1F6oe+FvrjQ0C4S5W7U67+W8i7h4iOWAKtfM4Cbw8NFkFwdgTIQX3DfqJ56BWIdPwjcJi6APuiPcaDTKG9FlcbNh+Rqtzm/I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcKwdWrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842FCC4CEE4;
+	Tue, 29 Apr 2025 01:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745891902;
+	bh=r6Eqx4vQPJ/sbEzTmwfcYb+QRd2YEHOWgQzVfEbb/cs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dcKwdWrqcggvCNj6nHvFDtB6vzii8ZK4V/Z4ckm0LZD2LoXD/a6qjf3yjbdQu/Juo
+	 tVt8odskcKO9vuCGrJxXPpmIu30KFfl/YCoC73/RmsKC+XBDBV3LueueW8v7pEegPl
+	 uhSAvjYfr9LCR8yrgjvs7zQ6kKM4yoOtHK3sIe/pgDG05XORNrh6iRhikaGjXvfm/r
+	 5OHY0C8/6JoaieGHQhpJnEhkEPF560doDBylAgQeGzNKPiChKiQRDhc7rv+gmkYpLw
+	 aNhxcPInRY8kcOefQ7+EhUjwQWM33+QtKa04jOoL8AV0myPeFEktIxrQZdI+2eXAPN
+	 ExGYZqT1N+JFw==
+Date: Tue, 29 Apr 2025 09:58:14 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: cdnsp: fix L1 resume issue for
+ RTL_REVISION_NEW_LPM version
+Message-ID: <20250429015814.GA3615063@nchen-desktop>
+References: <20250425054934.507320-1-pawell@cadence.com>
+ <PH7PR07MB9538B55C3A6E71F9ED29E980DD842@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428033617.3797686-1-roman.gushchin@linux.dev>
- <aA9bu7UJOCTQGk6L@google.com> <aA-5xX10nXE2C2Dn@google.com>
-In-Reply-To: <aA-5xX10nXE2C2Dn@google.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Tue, 29 Apr 2025 03:56:54 +0200
-X-Gm-Features: ATxdqUFdh-Baw2wdCT7Q9ZoFIPb0JFBuAYBmlyEh_Ms9YrPmoZBG5fJLOSMLFxg
-Message-ID: <CAP01T76Wv+swbT9xuQ-YhQ=-qOFggw6u1RziJNGjJBiNO233OQ@mail.gmail.com>
-Subject: Re: [PATCH rfc 00/12] mm: BPF OOM
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Matt Bobrowski <mattbobrowski@google.com>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Suren Baghdasaryan <surenb@google.com>, 
-	David Rientjes <rientjes@google.com>, Josh Don <joshdon@google.com>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR07MB9538B55C3A6E71F9ED29E980DD842@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-On Mon, 28 Apr 2025 at 19:24, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->
-> On Mon, Apr 28, 2025 at 10:43:07AM +0000, Matt Bobrowski wrote:
-> > On Mon, Apr 28, 2025 at 03:36:05AM +0000, Roman Gushchin wrote:
-> > > This patchset adds an ability to customize the out of memory
-> > > handling using bpf.
-> > >
-> > > It focuses on two parts:
-> > > 1) OOM handling policy,
-> > > 2) PSI-based OOM invocation.
-> > >
-> > > The idea to use bpf for customizing the OOM handling is not new, but
-> > > unlike the previous proposal [1], which augmented the existing task
-> > > ranking-based policy, this one tries to be as generic as possible and
-> > > leverage the full power of the modern bpf.
-> > >
-> > > It provides a generic hook which is called before the existing OOM
-> > > killer code and allows implementing any policy, e.g.  picking a victim
-> > > task or memory cgroup or potentially even releasing memory in other
-> > > ways, e.g. deleting tmpfs files (the last one might require some
-> > > additional but relatively simple changes).
-> > >
-> > > The past attempt to implement memory-cgroup aware policy [2] showed
-> > > that there are multiple opinions on what the best policy is.  As it's
-> > > highly workload-dependent and specific to a concrete way of organizing
-> > > workloads, the structure of the cgroup tree etc, a customizable
-> > > bpf-based implementation is preferable over a in-kernel implementation
-> > > with a dozen on sysctls.
-> > >
-> > > The second part is related to the fundamental question on when to
-> > > declare the OOM event. It's a trade-off between the risk of
-> > > unnecessary OOM kills and associated work losses and the risk of
-> > > infinite trashing and effective soft lockups.  In the last few years
-> > > several PSI-based userspace solutions were developed (e.g. OOMd [3] or
-> > > systemd-OOMd [4]). The common idea was to use userspace daemons to
-> > > implement custom OOM logic as well as rely on PSI monitoring to avoid
-> > > stalls. In this scenario the userspace daemon was supposed to handle
-> > > the majority of OOMs, while the in-kernel OOM killer worked as the
-> > > last resort measure to guarantee that the system would never deadlock
-> > > on the memory. But this approach creates additional infrastructure
-> > > churn: userspace OOM daemon is a separate entity which needs to be
-> > > deployed, updated, monitored. A completely different pipeline needs to
-> > > be built to monitor both types of OOM events and collect associated
-> > > logs. A userspace daemon is more restricted in terms on what data is
-> > > available to it. Implementing a daemon which can work reliably under a
-> > > heavy memory pressure in the system is also tricky.
-> > >
-> > > [1]: https://lwn.net/ml/linux-kernel/20230810081319.65668-1-zhouchuyi@bytedance.com/
-> > > [2]: https://lore.kernel.org/lkml/20171130152824.1591-1-guro@fb.com/
-> > > [3]: https://github.com/facebookincubator/oomd
-> > > [4]: https://www.freedesktop.org/software/systemd/man/latest/systemd-oomd.service.html
-> > >
-> > > ----
-> > >
-> > > This is an RFC version, which is not intended to be merged in the current form.
-> > > Open questions/TODOs:
-> > > 1) Program type/attachment type for the bpf_handle_out_of_memory() hook.
-> > >    It has to be able to return a value, to be sleepable (to use cgroup iterators)
-> > >    and to have trusted arguments to pass oom_control down to bpf_oom_kill_process().
-> > >    Current patchset has a workaround (patch "bpf: treat fmodret tracing program's
-> > >    arguments as trusted"), which is not safe. One option is to fake acquire/release
-> > >    semantics for the oom_control pointer. Other option is to introduce a completely
-> > >    new attachment or program type, similar to lsm hooks.
-> >
-> > Thinking out loud now, but rather than introducing and having a single
-> > BPF-specific function/interface, and BPF program for that matter,
-> > which can effectively be used to short-circuit steps from within
-> > out_of_memory(), why not introduce a
-> > tcp_congestion_ops/sched_ext_ops-like interface which essentially
-> > provides a multifaceted interface for controlling OOM killing
-> > (->select_bad_process, ->oom_kill_process, etc), optionally also from
-> > the context of a BPF program (BPF_PROG_TYPE_STRUCT_OPS)?
->
-> It's certainly an option and I thought about it. I don't think we need a bunch
-> of hooks though. This patchset adds 2 and they belong to completely different
-> subsystems (mm and sched/psi), so Idk how well they can be gathered
-> into a single struct ops. But maybe it's fine.
->
-> The only potentially new hook I can envision now is one to customize
-> the oom reporting.
->
+On 25-04-25 05:55:40, Pawel Laszczak wrote:
+> The controllers with rtl version larger than
+> RTL_REVISION_NEW_LPM (0x00002700) has bug which causes that controller
+> doesn't resume from L1 state. It happens if after receiving LPM packet
+> controller starts transitioning to L1 and in this moment the driver force
+> resuming by write operation to PORTSC.PLS.
+> It's corner case and happens when write operation to PORTSC occurs during
+> device delay before transitioning to L1 after transmitting ACK
+> time (TL1TokenRetry).
+> 
+> Forcing transition from L1->L0 by driver for revision larger than
+> RTL_REVISION_NEW_LPM is not needed, so driver can simply fix this issue
+> through block call of cdnsp_force_l0_go function.
+> 
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 
-If you're considering scoping it down to a particular cgroup (as you
-allude to in the TODO), or building a hierarchical interface, using
-struct_ops will be much better than fmod_ret etc., which is global in
-nature. Even if you don't support it now. I don't think a struct_ops
-is warranted only when you have more than a few callbacks. As an
-illustration, sched_ext started out without supporting hierarchical
-attachment, but will piggy-back on the struct_ops interface to do so
-in the near future.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-> Thanks for the suggestion!
->
->
+Peter
+
+> ---
+> Changelog:
+> v2:
+> - improved patch description
+> - changed RTL_REVISION_NEW_LPM value
+> 
+>  drivers/usb/cdns3/cdnsp-gadget.c | 2 ++
+>  drivers/usb/cdns3/cdnsp-gadget.h | 3 +++
+>  drivers/usb/cdns3/cdnsp-ring.c   | 3 ++-
+>  3 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+> index 87f310841735..e64c8f7eb0c5 100644
+> --- a/drivers/usb/cdns3/cdnsp-gadget.c
+> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
+> @@ -1773,6 +1773,8 @@ static void cdnsp_get_rev_cap(struct cdnsp_device *pdev)
+>  	reg += cdnsp_find_next_ext_cap(reg, 0, RTL_REV_CAP);
+>  	pdev->rev_cap  = reg;
+>  
+> +	pdev->rtl_revision = readl(&pdev->rev_cap->rtl_revision);
+> +
+>  	dev_info(pdev->dev, "Rev: %08x/%08x, eps: %08x, buff: %08x/%08x\n",
+>  		 readl(&pdev->rev_cap->ctrl_revision),
+>  		 readl(&pdev->rev_cap->rtl_revision),
+> diff --git a/drivers/usb/cdns3/cdnsp-gadget.h b/drivers/usb/cdns3/cdnsp-gadget.h
+> index 84887dfea763..357ddbe53917 100644
+> --- a/drivers/usb/cdns3/cdnsp-gadget.h
+> +++ b/drivers/usb/cdns3/cdnsp-gadget.h
+> @@ -1357,6 +1357,7 @@ struct cdnsp_port {
+>   * @rev_cap: Controller Capabilities Registers.
+>   * @hcs_params1: Cached register copies of read-only HCSPARAMS1
+>   * @hcc_params: Cached register copies of read-only HCCPARAMS1
+> + * @rtl_revision: Cached controller rtl revision.
+>   * @setup: Temporary buffer for setup packet.
+>   * @ep0_preq: Internal allocated request used during enumeration.
+>   * @ep0_stage: ep0 stage during enumeration process.
+> @@ -1411,6 +1412,8 @@ struct cdnsp_device {
+>  	__u32 hcs_params1;
+>  	__u32 hcs_params3;
+>  	__u32 hcc_params;
+> +	#define RTL_REVISION_NEW_LPM 0x2700
+> +	__u32 rtl_revision;
+>  	/* Lock used in interrupt thread context. */
+>  	spinlock_t lock;
+>  	struct usb_ctrlrequest setup;
+> diff --git a/drivers/usb/cdns3/cdnsp-ring.c b/drivers/usb/cdns3/cdnsp-ring.c
+> index 46852529499d..fd06cb85c4ea 100644
+> --- a/drivers/usb/cdns3/cdnsp-ring.c
+> +++ b/drivers/usb/cdns3/cdnsp-ring.c
+> @@ -308,7 +308,8 @@ static bool cdnsp_ring_ep_doorbell(struct cdnsp_device *pdev,
+>  
+>  	writel(db_value, reg_addr);
+>  
+> -	cdnsp_force_l0_go(pdev);
+> +	if (pdev->rtl_revision < RTL_REVISION_NEW_LPM)
+> +		cdnsp_force_l0_go(pdev);
+>  
+>  	/* Doorbell was set. */
+>  	return true;
+> -- 
+> 2.43.0
+> 
+
+-- 
+
+Best regards,
+Peter
 
