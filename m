@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-625382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B23AA10B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80661AA10C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3032D7A8773
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2949845795
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666E4227E97;
-	Tue, 29 Apr 2025 15:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C5922A1EF;
+	Tue, 29 Apr 2025 15:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yA5Esrqc"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HSY4/2HK"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3733021ADC2;
-	Tue, 29 Apr 2025 15:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541B52288F4;
+	Tue, 29 Apr 2025 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745941322; cv=none; b=j7DGd7wGpsgMieTC9ZcaUSAK3Ohg9yn4px8EDCQ71NMPLgKLgase3Ysbm2TFf8rBeejwFMCYpr1wMitLhE3euNtsFSrWE6fKO3HaI8nj96HiMlAmmx+WYOawEm6CImHP4hv07Aw0tRGTdbGHm09yvH4OyfL5IvBzZN9g/DwbDVg=
+	t=1745941332; cv=none; b=PjwAH3QjqLaVaT1rVeJU7Jrx29pau0pH+e54cZ4Zt6V5rQbxlJIpxlLxrQ54PLXA3I1QpPb9MwSjtGtFVnqt1YgHix6ThGExkQanrb1T576siqquvudj/wU7xlKFdGrhqNZ2+UigcWaWqFWTL4nZb4gBsMnwf/ljMG7/BvjSENc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745941322; c=relaxed/simple;
-	bh=dsii4oi3H46e0QZ7ppmuIIVNb+nc35GjgaQSU1WGPy0=;
+	s=arc-20240116; t=1745941332; c=relaxed/simple;
+	bh=z5J2FZvUSjnGNDOw2uHg7deIo5Db3GAUN8fCXNdKkIo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CIrkS585GAEfWDXQXh3/jeqKpSrQyM9RQlP20hn5mXl/suz5FOSDdgONkLeFKSTG1WP1weBbelUCpqoECzLYD6t2CztnNb87/7U2e4PNwZ2EwalP0k4MUTkroydwkutVffaR+1y2VFuuUNJsvQ3Wh4GOd2LgWswQTQ9QCccqDfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yA5Esrqc; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=P3pslxnh3SxHRCe1hh6pJgyeSQronAwuvoqzs2W9ntbbk5ZZR4RhQxWGx5Kktm1z0EdUZ18I9E6A/0v5yg35aHFoWLcFc0vBEhlXEADxDTh2vJlIMYAj24quqvLboc+h9C1Hbrmp2GpaDavMGHdQs24ek3aNjHoVFatH7ukKzi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HSY4/2HK; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53TFfnMl3882267
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53TFfsWP3121150
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Apr 2025 10:41:49 -0500
+	Tue, 29 Apr 2025 10:41:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745941309;
-	bh=9djZgw6Hj9gUyVv79ArAsFuTfqHYi4Rxedw6oJnHtNY=;
+	s=ti-com-17Q1; t=1745941314;
+	bh=gJgbkV8i90NX7w2aPougX5WmrW0AYrDoDIjTZ/TZan4=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=yA5Esrqc4sv17iUK44Pbns/57RK0u/2WJ8w9TD4enrHUlV387QyPlaoYkMJ5ED8se
-	 wdrFUCET06nVSySIK5zD/FfZMPIcdaojI4VYJdtx7EN44U6HfB1Oles26DRTPHuxaZ
-	 HUZpB3uzQb9okE+fOeZ6TL3QCQvrlWnBAIiZqnAM=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53TFfnGd111701
+	b=HSY4/2HKss9uB6cJgLGswZFbevDKATwVWwHP2AOrI2C96GPe78yx+hD58iLA3K0Pw
+	 0cF42kt+0WZzDmiQtxbOaH8XU8ekunIs1L30qE72c1JrCCsAgf41z71V7i1D1zz6w4
+	 WEvuwcTzrbVvSIj20dRDB4zIrVaqYIGhao4HzGRQ=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53TFfsvk111721
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Apr 2025 10:41:49 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 29 Apr 2025 10:41:54 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
- Apr 2025 10:41:49 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 10:41:54 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 29 Apr 2025 10:41:49 -0500
+ Frontend Transport; Tue, 29 Apr 2025 10:41:53 -0500
 Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [10.24.69.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53TFfXVr030051;
-	Tue, 29 Apr 2025 10:41:44 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53TFfXVs030051;
+	Tue, 29 Apr 2025 10:41:49 -0500
 From: Rishikesh Donadkar <r-donadkar@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
@@ -64,9 +64,9 @@ CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <jai.luthra@ideasonboard.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <imx@lists.linux.dev>, <r-donadkar@ti.com>
-Subject: [PATCH v1 2/4] arm64: dts: ti: k3-am62x: Add required voltage supplies for IMX219
-Date: Tue, 29 Apr 2025 21:11:31 +0530
-Message-ID: <20250429154133.3377962-3-r-donadkar@ti.com>
+Subject: [PATCH v1 3/4] arm64: dts: ti: k3-am62x: Add required voltage supplies for OV5640
+Date: Tue, 29 Apr 2025 21:11:32 +0530
+Message-ID: <20250429154133.3377962-4-r-donadkar@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250429154133.3377962-1-r-donadkar@ti.com>
 References: <20250429154133.3377962-1-r-donadkar@ti.com>
@@ -80,25 +80,27 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The device tree overlay for the IMX219 sensor requires three voltage
-supplies to be defined: VANA (analog), VDIG (digital core), and VDDL
-(digital I/O).
+The device tree overlay for OV5640 requires following voltage
+supplies:
 
-Add the corresponding voltage supply definitions to avoid dtbs_check
-warnings.
+AVDD-supply: Analog voltage supply, 2.8 volts
+DOVDD-supply: Digital I/O voltage supply, 1.8 volts
+DVDD-supply: Digital core voltage supply, 1.5 volts
+
+Add them in the overlay.
 
 Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 ---
- .../boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso  | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ .../boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso  | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
-index dd090813a32d6..149c59c071823 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
-@@ -15,6 +15,33 @@ clk_imx219_fixed: imx219-xclk {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
+index 7fc7c95f5cd57..fc77fc77fe0b1 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
+@@ -15,6 +15,33 @@ clk_ov5640_fixed: ov5640-xclk {
  		#clock-cells = <0>;
- 		clock-frequency = <24000000>;
+ 		clock-frequency = <12000000>;
  	};
 +
 +	reg_2p8v: regulator-2p8v {
@@ -119,26 +121,27 @@ index dd090813a32d6..149c59c071823 100644
 +		regulator-always-on;
 +	};
 +
-+	reg_1p2v: regulator-1p2v {
++	reg_1p5v: regulator-1p5v {
 +		compatible = "regulator-fixed";
-+		regulator-name = "1P2V";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
++		regulator-name = "1P5V";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
 +		vin-supply = <&vcc_3v3_sys>;
 +		regulator-always-on;
 +	};
  };
  
  &main_i2c2 {
-@@ -40,6 +67,10 @@ ov5640: camera@10 {
+@@ -40,6 +67,11 @@ ov5640: camera@3c {
  
- 				clocks = <&clk_imx219_fixed>;
- 
-+				VANA-supply = <&reg_2p8v>;
-+				VDIG-supply = <&reg_1p8v>;
-+				VDDL-supply = <&reg_1p2v>;
+ 				clocks = <&clk_ov5640_fixed>;
+ 				clock-names = "xclk";
 +
- 				reset-gpios = <&exp1 13 GPIO_ACTIVE_HIGH>;
++				AVDD-supply = <&reg_2p8v>;
++				DOVDD-supply = <&reg_1p8v>;
++				DVDD-supply = <&reg_1p5v>;
++
+ 				powerdown-gpios = <&exp1 13 GPIO_ACTIVE_LOW>;
  
  				port {
 -- 
