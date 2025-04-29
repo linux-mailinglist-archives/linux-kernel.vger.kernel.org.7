@@ -1,116 +1,190 @@
-Return-Path: <linux-kernel+bounces-625241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7225AA0EAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1350AA0EB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D647F16B00C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1687C1B6401E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAA22C179F;
-	Tue, 29 Apr 2025 14:25:08 +0000 (UTC)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D92D3A94;
+	Tue, 29 Apr 2025 14:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WGVBBsbV"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA6727CCD7;
-	Tue, 29 Apr 2025 14:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10D22D321B;
+	Tue, 29 Apr 2025 14:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745936708; cv=none; b=sLfL8kS22KOK7INKX1NJH0eDtPcqzSzLmXuJByOXybqXR+fCE0ZWpUihLThWOmCZVX0/XKJhK8xaHiT0vLgZBknQFoqpiEFEp9ew2Z+WGMVjshP8a/XYZajnnrHq4gPfzlA3kMildtNRbh5aw9xaAxsHXgGVtj2Gt7ECK/gUEYU=
+	t=1745936739; cv=none; b=DpW/miOa/SjbSlaPPbZA18RXrXCdZLa3yfIApdV0VX+EXXahN911WxLdq5DsnJH5/316I5hr1zzGkfcdPxe3t8dpsfMHIEfRgIXI6XpbalsRc4oPgmyQPW6Zw2UD2bzHVBoAjSoxVrB9VZqO+jTTyYTK5VOdyYCMX0QyO3/mCZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745936708; c=relaxed/simple;
-	bh=DX19r16KLz2YlQBtpGqVjz7Hv8n8PkjImtOOoYr43l8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q5rz9hQmOnz3mwJJynG41yvK0dDB1dFqvYDAteotdn6kHg3/iF2Qo4z3C5OHnaOa9ySbWtd1yRIKfj04Zr9YgWfRbWNzPwVbB6ITJrr2XbeTmyPyKMG2ZCh/yoif8aFTWZnpYJLab/kFfy3NVGfp+Np1L1AQ15UYNTc6b1/BrsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c5568355ffso554059285a.0;
-        Tue, 29 Apr 2025 07:25:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745936704; x=1746541504;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kPRdC5iy2IMbXuhbS37MgOLZ/VT/r6x/KR0GknHB3LE=;
-        b=szNrgc3eDC3i7VdZpS32yjFB02aHAGqTUm/knUNT204jOanpdpq+wborRcCJeYr5Yz
-         XQ4GAnWVLTiQOGUtmxVOOBfeOkFFKGo1otNERgezOd1Jj686LAva5vHl+q2CBBYMPGqQ
-         M5ySmo56hBB5eCbL1dTOqQ0fryhBn3Zg4kNRfN2rtzB2aT2IYsnP43S9K9k5n4+XucOG
-         B4sJZL0WqEwTED5+meVEhubz3G2HGiP7i4BkXacIW8e0IwmN/c/4TYTlLMH4V4xBV0GK
-         orEVGiOQOHKdXJ//CKMwa+Uv0FhwGBZGZzrHLm6ylnjuLpb6IyW72qOca8SUxjX3IYYL
-         2ZeA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+McisDgWrwSiINQqe1BzM2f50xn3gdid2HzqrSjj28btgCEfCANw02Ovh2IsS3jtLxqVYFW26pbSNeeE=@vger.kernel.org, AJvYcCUrKDO7XrUrEbT2paFMWF87XPqziOOTJQKhtjkYXfBJVR7gD2XsN4qq3LRkiztgoji7Cf5Fff85g50LHV4=@vger.kernel.org, AJvYcCWbPaBgkPNuX+jlHptf9xRxO7/ZAywp4nNCzIVEUd8+ol77m9+2oCeLnytqcV/DyakByz/c2QFz0YkxIiWVWF1OERw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuhEDna0TDJYs2MdeHWW3HECLuTqBThreGr3Kqb9cKtiag8Y38
-	GQmgfcV9CRvQ8o+w1kKPPk34G79JzzXR6oSBqcht5Dw3gUiPZDNfw0OCOia8
-X-Gm-Gg: ASbGncuon5wKyKini2N3ck/2RyFtksVCB53LzK/BQRZ2s9urfOsVI02hV/9cwnYtJla
-	3mdhz3ghn5m2M3WxLS1nzRPfJjb47yH8U4iQhJcugA67rX17aAn+1gxJhVBRyLaLMAcpTHdP+/s
-	wOdty6P+ZoQuIsNM99Ya/FHrPk6jQBYqRa6GVyJJ3kEgv/S00jHGMDiRg7+PWZaRqRKnvzbGc5r
-	LiTNFcdpgLOGKGHJ+lltr9U0/vqCgDz/TyBQsd/RtyHJ7YnCHUU+SxWNWtgmD3NLBYGdeYxXXEn
-	N5rljhn1J8H+INXZ0YiksBD0SY3TPO0iGiTR4n7gFJqup1jNSY+sA3N2fYh8zpHMZSlDGC5Ur4x
-	iR0l+9ttLkTgP4nPWnw==
-X-Google-Smtp-Source: AGHT+IEfSypkfjJl3AO0hG44VdBvb+wJmWPi4X5qZLgUXKanArekPPbgIRA42HLRqCuJFIdS2OlXcQ==
-X-Received: by 2002:a05:620a:f15:b0:7c5:4b6a:d862 with SMTP id af79cd13be357-7cabe6042d0mr403995485a.33.1745936703520;
-        Tue, 29 Apr 2025 07:25:03 -0700 (PDT)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958c91a6asm743795485a.17.2025.04.29.07.25.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 07:25:03 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c07cd527e4so655600485a.3;
-        Tue, 29 Apr 2025 07:25:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWxVfzdz6k9tCHVQhVMZHSNpbaO3feSCWBLW5OqJILCGKBSnJPvL9istNaqwwDFCzE88jBxKKHf5dZT2Hg=@vger.kernel.org, AJvYcCX+rnRdNsj9/0uKZSoiHQiJBFNWKSFEM7LKyNo6gjuTIE3kJUrEvywQxzhcNYI4y0NjTewvWHWuZtZuvyg=@vger.kernel.org, AJvYcCXPjIa8paWQyYAcgK//HUXcI8fn0D9/T2xC5i6/CxAAjUq/R+m0Ui4RxefItBtFzj3HDIwlUErtMQQE2jqGZTGC85I=@vger.kernel.org
-X-Received: by 2002:a05:620a:298f:b0:7c5:ccc0:2382 with SMTP id
- af79cd13be357-7cabe664725mr414807985a.52.1745936702330; Tue, 29 Apr 2025
- 07:25:02 -0700 (PDT)
+	s=arc-20240116; t=1745936739; c=relaxed/simple;
+	bh=L0Bez4zWVrlwauQ1MnYALwpvxMsSNYXYNxE7pfwLXaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ntDuC91on0h52YqS52y9gwBgeA35aQDWnMbMxGiQ0XMINYCm0BCsfYOin5W75bQGvm2d+8bfrwdlFjXwZAKHHM49QzoUm6lEoTcFQMfa2wAufv6pLOuJX9ucsBfGJAZTMbo/2VhBojWQ2oGGaa8zTDl/t5jTq9nhLC2oyxYCiqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WGVBBsbV; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0vA9Rec61rX04rxqvUMiHk6ImQ7asJ7mfPfkjKKAiA8=; b=WGVBBsbVVEPSajhc0uRNknEfrv
+	pZGzepnQDbgwUi1ty4f7yqdC5CDC5Tq1kLehk6qqejbN9+/st2TkhJpOugwvF13Lad67bGme2ryg0
+	MVDlg0cTXX6sjbvWvEbClJkIOEa9c5/b2pvNGF/ILuMcRV0ruFfpQ7B2Yzjf3jhf3DnAwfaKboYGc
+	G9PKsqZMtpKcEVtAXBkb0ju9wQbmoS2bCrNTjyKSLQZZRNklP/KrlN87NpGY9/vFQktt+7xr7KwLd
+	bU/nx6/NnB+JXKb6m4/tWCzbIA0gVOG96K5zt/mKixdUnw7NpMI/fi16At4iZrUh/VVyc35rMqOfY
+	7LJgCnZw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37870)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u9ltb-0005xf-01;
+	Tue, 29 Apr 2025 15:25:15 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u9ltV-0006D4-07;
+	Tue, 29 Apr 2025 15:25:09 +0100
+Date: Tue, 29 Apr 2025 15:25:08 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] dt-bindings: net: ethernet-controller: Add
+ informative text about RGMII delays
+Message-ID: <aBDhRH2TlyxKmaaW@shell.armlinux.org.uk>
+References: <20250429-v6-15-rc3-net-rgmii-delays-v1-1-f52664945741@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429091609.9947-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250429091609.9947-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250429091609.9947-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Apr 2025 16:24:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUamzW-EHWGTYkQ6kpd-9MCv--EEPEvLsEcTqhYD0tRKg@mail.gmail.com>
-X-Gm-Features: ATxdqUG_PvP853fKenNijxNbhg8xA687vv2RiNUNugVRz_EZt1svi55PqUibURk
-Message-ID: <CAMuHMdUamzW-EHWGTYkQ6kpd-9MCv--EEPEvLsEcTqhYD0tRKg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] media: renesas: rzg2l-cru: Simplify FIFO empty check
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429-v6-15-rc3-net-rgmii-delays-v1-1-f52664945741@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, 29 Apr 2025 at 11:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Collapse FIFO empty helper into a single return statement by removing the
-> redundant `if (amnfifopntr_w == amnfifopntr_r_y) return true;` path. Make
-> `rzg2l_fifo_empty()` directly return `amnfifopntr_w == amnfifopntr_r_y`
-> to improve readability without changing behavior.
->
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aAtQThCibZCROETx@stanley.mountain/
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Apr 29, 2025 at 07:55:14AM -0500, Andrew Lunn wrote:
+> +# Informative
+> +# ===========
+> +#
+> +# 'phy-modes' & 'phy-connection-type' properties 'rgmii', 'rgmii-id',
+> +# 'rgmii-rxid', and 'rgmii-txid' are frequently used wrongly by
+> +# developers. This informative section clarifies their usage.
+> +#
+> +# The RGMII specification requires a 2ns delay between the data and
+> +# clock signals on the RGMII bus. How this delay is implemented is not
+> +# specified.
+> +#
+> +# One option is to make the clock traces on the PCB longer than the
+> +# data traces. A sufficiently difference in length can provide the 2ns
+> +# delay. If both the RX and TX delays are implemented in this manor,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+manner
 
-Gr{oetje,eeting}s,
+> +# 'rgmii' should be used, so indicating the PCB adds the delays.
+> +#
+> +# If the PCB does not add these delays via extra long traces,
+> +# 'rgmii-id' should be used. Here, 'id' refers to 'internal delay',
+> +# where either the MAC or PHY adds the delay.
+> +#
+> +# If only one of the two delays are implemented via extra long clock
+> +# lines, either 'rgmii-rxid' or 'rgmii-txid' should be used,
+> +# indicating the MAC or PHY should implement one of the delays
+> +# internally, while the PCB implements the other delay.
+> +#
+> +# Device Tree describes hardware, and in this case, it describes the
+> +# PCB between the MAC and the PHY, if the PCB implements delays or
+> +# not.
+> +#
+> +# In practice, very few PCBs make use of extra long clock lines. Hence
+> +# any RGMII phy mode other than 'rgmii-id' is probably wrong, and is
+> +# unlikely to be accepted during review.
 
-                        Geert
+Maybe add "without details provided in the commit description."
+
+> +#
+> +# When the PCB does not implement the delays, the MAC or PHY must.  As
+> +# such, this is software configuration, and so not described in Device
+> +# Tree.
+> +#
+> +# The following describes how Linux implements the configuration of
+> +# the MAC and PHY to add these delays when the PCB does not. As stated
+> +# above, developers often get this wrong, and the aim of this section
+> +# is reduce the frequency of these errors by Linux developers. Other
+> +# users of the Device Tree may implement it differently, and still be
+> +# consistent with both the normative and informative description
+> +# above.
+> +#
+> +# By default in Linux, the MAC is expected to read the 'phy-mode' from
+> +# Device Tree, not implement any delays, and pass the value to the
+> +# PHY.
+
+I'd suggest "By default in Linux, when using phylib/phylink, "... as
+we do have MACs that do not use phylib but talk to the PHY, and may be
+cross-platform drivers that follow some other methodology.
+
+> The PHY will then implement delays as specified by the
+> +# 'phy-mode'. The PHY should always be reconfigured to implement the
+> +# needed delays, replacing any setting performed by strapping or the
+> +# bootloader, etc.
+> +#
+> +# Experience to date is that all PHYs which implement RGMII also
+> +# implement the ability to add or not add the needed delays. Hence
+> +# this default is expected to work in all cases. Ignoring this default
+> +# is likely to be questioned by Reviews, and require a strong argument
+> +# to be accepted.
+> +#
+> +# There are a small number of cases where the MAC has hard coded
+> +# delays which cannot be disabled. The 'phy-mode' only describes the
+> +# PCB.  The inability to disable the delays in the MAC does not change
+> +# the meaning of 'phy-mode'. It does however mean that a 'phy-mode' of
+> +# 'rgmii' is now invalid, it cannot be supported, since both the PCB
+> +# and the MAC and PHY adding delays cannot result in a functional
+> +# link. Thus the MAC should report a fatal error for any modes which
+> +# cannot be supported. When the MAC implements the delay, it must
+> +# ensure that the PHY does not also implement the same delay. So it
+> +# must modify the phy-mode it passes to the PHY, removing the delay it
+> +# has added. Failure to remove the delay will result in a
+> +# non-functioning link.
+> +#
+> +# Sometimes there is a need to fine tune the delays. Often the MAC or
+> +# PHY can perform this fine tuning. In the MAC node, the Device Tree
+> +# properties 'rx-internal-delay-ps' and 'tx-internal-delay-ps' should
+> +# be used to indicate fine tuning performed by the MAC. The values
+> +# expected here are small. A value of 2000ps, i.e 2ns, and a phy-mode
+> +# of 'rgmii' will not be accepted by Reviewers.
+> +#
+> +# If the PHY is to perform fine tuning, the properties
+> +# 'rx-internal-delay-ps' and 'tx-internal-delay-ps' in the PHY node
+> +# should be used. When the PHY is implementing delays, these
+> +# properties should have a value near to 2000ps.
+
+... according to the phy-mode used (as they're documented to be
+dependent on that.)
+
+I'm wondering whether they should be dependent on which rgmii-* mode
+is being used, as delays << 2ns could be used to finely adjust the
+PCB delays if the PHY supports that. I haven't looked closely enough
+at PHY datasheets to know whether that's possible or not though.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
