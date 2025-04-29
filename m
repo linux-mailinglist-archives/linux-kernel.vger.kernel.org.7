@@ -1,302 +1,204 @@
-Return-Path: <linux-kernel+bounces-625502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28211AA139D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDF2AA1324
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2583AB587
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:02:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 385697B650E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98CC243371;
-	Tue, 29 Apr 2025 17:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5055E24C098;
+	Tue, 29 Apr 2025 17:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O20Q4UWy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2vO0mrBT"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9638924A07B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FFA24A06A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745946131; cv=none; b=GpWuG43k1je7vx9fNIEXOqGSTUhhFuKt4hcSMa43FyPvfdu05pGLKOyBncQo/VihL9UqjHWm6G9SbOWJmDVzzU0ewV3B5uMvfNeqNSWDKd4gDY1UT1FVE0IpUKAwycI09G3tPuOvoUxDSyhyOs2ICQehslRUArtA+ErH3OhUswY=
+	t=1745946144; cv=none; b=Ap6IiKoM4/6vDo5fjS7lUUdspZ7tw4S4S0oQXexQ3kHGGScw/JJH29rz1AlhkE+6RnYbbsI3MIpQolJWnzQ5Uj5oQ0z8b/p6vH0uUtnpQr5yM/wjD4fIDnCSoXYRfhltRVPxOtTOYDIxk/24iw0pcr/Y2j8/SR9cbJcBLZgwQt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745946131; c=relaxed/simple;
-	bh=tX07ibvubTNZuG4eWUqG+QU03556YHXhSrXwyBwZdPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2QMIdCnY3uuLiDJIBYQjd+0yyvC6Ciq/hOzdJndgHZV6K0sOkrWg56ikplZyLRA4XjrZpuyR6IsvqOLzh70z84t/5XfW9XBpx7CCmwCNDTErV2Ni9oT9pk4ca1NEZM3CEdqLa3nvfOYlyrTtR0yP2g3fqix62JvRInHs4i5LwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O20Q4UWy; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745946130; x=1777482130;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tX07ibvubTNZuG4eWUqG+QU03556YHXhSrXwyBwZdPI=;
-  b=O20Q4UWyBwYHCneGSfJbS5pehpdqDamG5ruu1BR/jGwTE6Lqeeu1OKKz
-   4dDeOsHEwtwDGbarCkBmjkKCx+mI0NvxrFdJLzkcO7S+6v+5mktH4PFFC
-   +1gX8A/ZueOL0q0sduQLCzLTmDVcwRquoKFIZ7FeY6vZlA2PO9fuyxG5E
-   mFOr2afIbJGJ+TN8AGX3sua0sE6mrK/4q3mftXjtaGfPw7G7gp9JV5hj/
-   DOtg4An8RMqglmXPqOWRtuQToSRuibxMnKU4sQySUSya1voev7wecHxfG
-   RSJI78RRTVFoeOUmy4GL2USRdkf+NM/ZHfnaybBuAmyIwz4oR2GcVqMG3
-   g==;
-X-CSE-ConnectionGUID: q0X2XIDISTuGcZ1Noey9nA==
-X-CSE-MsgGUID: TObTB87PT/+UCi98DCAZ4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="70084322"
-X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
-   d="scan'208";a="70084322"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 10:02:09 -0700
-X-CSE-ConnectionGUID: 9s6T2LBeSban2xPiVXaiGw==
-X-CSE-MsgGUID: U4UqeuqLQEuiIBqhX13hcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
-   d="scan'208";a="133825211"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 29 Apr 2025 10:02:05 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u9oLK-0001Br-2Z;
-	Tue, 29 Apr 2025 17:02:02 +0000
-Date: Wed, 30 Apr 2025 01:01:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Donet Tom <donettom@linux.ibm.com>, Mike Rapoport <rppt@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>, rafael@kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-	Donet Tom <donettom@linux.ibm.com>
-Subject: Re: [PATCH v2 1/2] driver/base: Optimize memory block registration
- to reduce boot time
-Message-ID: <202504300024.YxAyenLy-lkp@intel.com>
-References: <fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com>
+	s=arc-20240116; t=1745946144; c=relaxed/simple;
+	bh=Qz4OGEmbuVrrrJNZqV3Ij3zwJSPUvCrZnG//EyAPLT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cwPoCMBRLcs9pAw1cgRIifP5QzT8dpvQiF+67yPoVKbGVWQ/8USORM5OqRIILGd3DwtLW5xmmO7zbwKA+b+Wvw+bAaLy6LAkN70pExFbCslH7QkbmjieqKYONs5Tf+quTihGwtPwKGmtxjSd0E+YpiZST/BtFbLH9niMxtzUDgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2vO0mrBT; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so86562696d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745946142; x=1746550942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6qHWKZeK4ritAUfK+7VjAlw31q6vqsBixsKT44Ec01E=;
+        b=2vO0mrBTrglDrl6fWf8IgldkMC3zNXQrn4xio7vB1jFGMF508H8JzdVoepZVNHL1Lb
+         U9A6gihekaeEHCWRXkqwTCW0r7RIuLKAqHReBDVPw23Kvg8Y0elqxQeu6DtachIxMjDa
+         /pPJr29I6RBzi2wQlSwS+3Qx8xp193PP93xymlwjvab8kFHEqyigRGE7q/hW6iQa4+hg
+         ueFG8xWV/R74Y+JVgTabwtoROEbijeqSNEUKnfm06ng4dD6sdjOCpuZhYyYZQeieiKlO
+         SPsIOgq6c1UgFHuCKb+Ijp9++nr3brO5lGhzTP9RiXMNG7FBXDs262uRewsxNUOSSi33
+         V08A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745946142; x=1746550942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6qHWKZeK4ritAUfK+7VjAlw31q6vqsBixsKT44Ec01E=;
+        b=GZQ9zr6A7xB0O9zq374mMKmqsPM1rdpcn4VINon11bzyev+o5Y7NuL06R5URQYzZek
+         eGqAd7mMzwj7lkdhCpSV235bdgZr1A1lDj0lh1zJkaBSVO5dfvetPihin6Q5f+P9zimn
+         tcLQoqwY1jrW6PXSuPS1Z4OgL5Y1vzexeVUhFi4SAHSlkQNTpXuT1cbQgy1CNc7VpeLV
+         5jcBsdhlrATo27Za9eQmmhnmWWpBtjBzd1X/MSZJ8eCf3IVaC7QY7uaAqdcpOAlWBE+d
+         sljJlOn5Dy2NG/0Ih8xj65D/uT8PUTjChJR5k7+Ra/4svb9CCXcjAlLEPxoJjebKKJDp
+         Y1bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+VfgG+3ZjzXBoSA9IU8Jg2AEOpB7X/xHXt8z0pTzy4xKKanVU0SIQrCHPb1xYb878+ck339aoQ6MjcaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd9xKJ746c6225CCsNqzw39dkQEJNZPZT++ipYesDBuLbvomOQ
+	NVxW3FfGAEUrEsaNpHmu35BAHORZCDwKZ2OGLxuvA7XAFB0SlmBN9SdSMINmDtVeirwpjPdmZ/n
+	kbFnpJ/3Z5ynk8BoKsFSbk/VjWq3Ll+Sg6iY=
+X-Gm-Gg: ASbGncuMFuO59jpLiZTHpkgBcwXzIjP33zvGgQ/1vKiWKto3++94KcONV2R0Oh8LX/N
+	S6VVV3PAUxw5we0o1PlcHZsoF/ZKCAMdlThekjmkqBl+JTRYAcPt+kAhW0+95RZpD+WYKIAAnsm
+	urjKqpkNzPHyUX0bgcltvyzFK0af109vhO6W4okmopYqsMrQgpkJQ=
+X-Google-Smtp-Source: AGHT+IGJ2FFd6Eiwu9oIiINLmRXDdz0Z5mu/0T6rc0ayxYrgV8A3GYGLzgZnX06XlBBhgN6OaBE8Qx+Gn+Z+i3mrGnw=
+X-Received: by 2002:a05:6214:2247:b0:6d4:238e:35b0 with SMTP id
+ 6a1803df08f44-6f4fce9dc4dmr2026256d6.17.1745946141318; Tue, 29 Apr 2025
+ 10:02:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com>
+References: <20250421215818.3800081-1-yabinc@google.com> <20250421215818.3800081-2-yabinc@google.com>
+ <48640298-effa-42d4-9137-a18a51637f03@linaro.org> <aAeQcgmL-iqGbG_g@gmail.com>
+ <20250422141026.GH28953@e132581.arm.com> <CALJ9ZPNLgEBxOmDim-vztUknEETwdL-Z2gJ8K9s44TiPgKZgHg@mail.gmail.com>
+ <f03715ac-a4ac-415d-8daa-1914384319fb@linaro.org>
+In-Reply-To: <f03715ac-a4ac-415d-8daa-1914384319fb@linaro.org>
+From: Yabin Cui <yabinc@google.com>
+Date: Tue, 29 Apr 2025 10:02:09 -0700
+X-Gm-Features: ATxdqUESro1ma6kgnDZ_JUnNPtdCVCZAaJx-9arTO5zJv1h0N-wUAHCe0Ud_CwE
+Message-ID: <CALJ9ZPMiJ4oZerKWb4TL8swh8K3tfj70LTL+WibTRN-vB8rqvw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: Allow non-contiguous AUX buffer pages via PMU capability
+To: James Clark <james.clark@linaro.org>
+Cc: Leo Yan <leo.yan@arm.com>, Ingo Molnar <mingo@redhat.com>, Ingo Molnar <mingo@kernel.org>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Mike Leach <mike.leach@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Donet,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.15-rc4 next-20250429]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Donet-Tom/driver-base-Remove-unused-functions/20250429-010442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom%40linux.ibm.com
-patch subject: [PATCH v2 1/2] driver/base: Optimize memory block registration to reduce boot time
-config: x86_64-buildonly-randconfig-004-20250429 (https://download.01.org/0day-ci/archive/20250430/202504300024.YxAyenLy-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250430/202504300024.YxAyenLy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504300024.YxAyenLy-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/linux/swap.h:11,
-                    from include/linux/suspend.h:5,
-                    from arch/x86/kernel/asm-offsets.c:14:
->> include/linux/node.h:124:6: warning: no previous prototype for 'register_memory_blocks_under_node_early' [-Wmissing-prototypes]
-     124 | void register_memory_blocks_under_node_early(int nid)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   ld: security/keys/encrypted-keys/masterkey_trusted.o: in function `register_memory_blocks_under_node_early':
->> security/keys/encrypted-keys/masterkey_trusted.c:125: multiple definition of `register_memory_blocks_under_node_early'; security/keys/encrypted-keys/encrypted.o:include/linux/node.h:125: first defined here
---
-   In file included from include/linux/cpu.h:17,
-                    from include/linux/static_call.h:135,
-                    from include/linux/tracepoint.h:22,
-                    from include/trace/events/tlb.h:9,
-                    from arch/x86/include/asm/mmu_context.h:9,
-                    from include/linux/mmu_context.h:5,
-                    from include/linux/cpuset.h:18,
-                    from include/linux/sched/isolation.h:5,
-                    from kernel/sched/build_policy.c:19:
->> include/linux/node.h:124:6: warning: no previous prototype for 'register_memory_blocks_under_node_early' [-Wmissing-prototypes]
-     124 | void register_memory_blocks_under_node_early(int nid)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from kernel/sched/build_policy.c:52:
-   kernel/sched/rt.c:9:18: warning: 'max_rt_runtime' defined but not used [-Wunused-const-variable=]
-       9 | static const u64 max_rt_runtime = MAX_BW;
-         |                  ^~~~~~~~~~~~~~
---
-   ld: drivers/usb/host/xhci-mem.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/host/xhci.o:include/linux/node.h:125: first defined here
-   ld: drivers/usb/host/xhci-ring.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/host/xhci.o:include/linux/node.h:125: first defined here
-   ld: drivers/usb/host/xhci-hub.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/host/xhci.o:include/linux/node.h:125: first defined here
-   ld: drivers/usb/host/xhci-trace.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/host/xhci.o:include/linux/node.h:125: first defined here
-   ld: drivers/usb/host/xhci-dbgcap.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/host/xhci.o:include/linux/node.h:125: first defined here
---
-   In file included from include/linux/acpi.h:18,
-                    from include/linux/i2c.h:13,
-                    from drivers/power/supply/sbs-battery.c:13:
->> include/linux/node.h:124:6: warning: no previous prototype for 'register_memory_blocks_under_node_early' [-Wmissing-prototypes]
-     124 | void register_memory_blocks_under_node_early(int nid)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/power/supply/sbs-battery.c: In function 'sbs_get_property':
-   drivers/power/supply/sbs-battery.c:834:30: warning: '%04x' directive writing between 4 and 8 bytes into a region of size 5 [-Wformat-overflow=]
-     834 |         sprintf(sbs_serial, "%04x", ret);
-         |                              ^~~~
-   In function 'sbs_get_battery_serial_number',
-       inlined from 'sbs_get_property' at drivers/power/supply/sbs-battery.c:965:9:
-   drivers/power/supply/sbs-battery.c:834:29: note: directive argument in the range [0, 2147483647]
-     834 |         sprintf(sbs_serial, "%04x", ret);
-         |                             ^~~~~~
-   drivers/power/supply/sbs-battery.c:834:9: note: 'sprintf' output between 5 and 9 bytes into a destination of size 5
-     834 |         sprintf(sbs_serial, "%04x", ret);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   In file included from include/linux/swap.h:11,
-                    from include/linux/suspend.h:5,
-                    from include/linux/regulator/consumer.h:35,
-                    from include/linux/phy/phy.h:17,
-                    from include/linux/usb/otg.h:13,
-                    from include/linux/usb/of.h:11,
-                    from drivers/usb/core/usb.c:41:
->> include/linux/node.h:124:6: warning: no previous prototype for 'register_memory_blocks_under_node_early' [-Wmissing-prototypes]
-     124 | void register_memory_blocks_under_node_early(int nid)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/usb/core/usb.c: In function 'usb_alloc_dev':
-   drivers/usb/core/usb.c:706:37: warning: '%d' directive output may be truncated writing between 1 and 11 bytes into a region of size between 0 and 15 [-Wformat-truncation=]
-     706 |                                 "%s.%d", parent->devpath, port1);
-         |                                     ^~
-   drivers/usb/core/usb.c:706:33: note: using the range [-2147483648, 2147483647] for directive argument
-     706 |                                 "%s.%d", parent->devpath, port1);
-         |                                 ^~~~~~~
-   drivers/usb/core/usb.c:705:25: note: 'snprintf' output between 3 and 28 bytes into a destination of size 16
-     705 |                         snprintf(dev->devpath, sizeof dev->devpath,
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     706 |                                 "%s.%d", parent->devpath, port1);
-         |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   ld: drivers/i3c/master.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/device.o:include/linux/node.h:125: first defined here
---
-   ld: drivers/i3c/master/mipi-i3c-hci/ext_caps.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/pio.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/dma.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/cmd_v1.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/cmd_v2.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/dat_v1.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/dct_v1.o: in function `register_memory_blocks_under_node_early':
-   drivers/i3c/master/mipi-i3c-hci/dct_v1.c:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
-   ld: drivers/i3c/master/mipi-i3c-hci/hci_quirks.o: in function `register_memory_blocks_under_node_early':
-   drivers/i3c/master/mipi-i3c-hci/hci_quirks.c:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/i3c/master/mipi-i3c-hci/core.o:include/linux/node.h:125: first defined here
---
-   In file included from include/linux/acpi.h:18,
-                    from include/linux/i2c.h:13,
-                    from drivers/hwmon/pmbus/ibm-cffps.c:11:
->> include/linux/node.h:124:6: warning: no previous prototype for 'register_memory_blocks_under_node_early' [-Wmissing-prototypes]
-     124 | void register_memory_blocks_under_node_early(int nid)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hwmon/pmbus/ibm-cffps.c: In function 'ibm_cffps_debugfs_read':
-   drivers/hwmon/pmbus/ibm-cffps.c:169:60: warning: '%02X' directive output may be truncated writing between 2 and 8 bytes into a region of size 3 [-Wformat-truncation=]
-     169 |                                 snprintf(&data[i * 2], 3, "%02X", rc);
-         |                                                            ^~~~
-   drivers/hwmon/pmbus/ibm-cffps.c:169:59: note: directive argument in the range [0, 2147483647]
-     169 |                                 snprintf(&data[i * 2], 3, "%02X", rc);
-         |                                                           ^~~~~~
-   drivers/hwmon/pmbus/ibm-cffps.c:169:33: note: 'snprintf' output between 3 and 9 bytes into a destination of size 3
-     169 |                                 snprintf(&data[i * 2], 3, "%02X", rc);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hwmon/pmbus/ibm-cffps.c:180:60: warning: '%04X' directive output may be truncated writing between 4 and 8 bytes into a region of size 5 [-Wformat-truncation=]
-     180 |                                 snprintf(&data[i * 4], 5, "%04X", rc);
-         |                                                            ^~~~
-   drivers/hwmon/pmbus/ibm-cffps.c:180:59: note: directive argument in the range [0, 2147483647]
-     180 |                                 snprintf(&data[i * 4], 5, "%04X", rc);
-         |                                                           ^~~~~~
-   drivers/hwmon/pmbus/ibm-cffps.c:180:33: note: 'snprintf' output between 5 and 9 bytes into a destination of size 5
-     180 |                                 snprintf(&data[i * 4], 5, "%04X", rc);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   ld: drivers/usb/typec/tipd/trace.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/typec/tipd/core.o:include/linux/node.h:125: first defined here
---
-   ld: drivers/usb/cdns3/drd.o: in function `register_memory_blocks_under_node_early':
->> include/linux/node.h:125: multiple definition of `register_memory_blocks_under_node_early'; drivers/usb/cdns3/core.o:include/linux/node.h:125: first defined here
-..
-
-
-vim +125 security/keys/encrypted-keys/masterkey_trusted.c
-
-b886d83c5b621a Thomas Gleixner     2019-06-01   1  // SPDX-License-Identifier: GPL-2.0-only
-982e617a313b57 Mimi Zohar          2011-08-27   2  /*
-982e617a313b57 Mimi Zohar          2011-08-27   3   * Copyright (C) 2010 IBM Corporation
-982e617a313b57 Mimi Zohar          2011-08-27   4   * Copyright (C) 2010 Politecnico di Torino, Italy
-c9fecf505a3421 Alexander A. Klimov 2020-07-05   5   *                    TORSEC group -- https://security.polito.it
-982e617a313b57 Mimi Zohar          2011-08-27   6   *
-982e617a313b57 Mimi Zohar          2011-08-27   7   * Authors:
-982e617a313b57 Mimi Zohar          2011-08-27   8   * Mimi Zohar <zohar@us.ibm.com>
-982e617a313b57 Mimi Zohar          2011-08-27   9   * Roberto Sassu <roberto.sassu@polito.it>
-982e617a313b57 Mimi Zohar          2011-08-27  10   *
-5395d312dff00d Kees Cook           2017-05-13  11   * See Documentation/security/keys/trusted-encrypted.rst
-982e617a313b57 Mimi Zohar          2011-08-27  12   */
-982e617a313b57 Mimi Zohar          2011-08-27  13  
-982e617a313b57 Mimi Zohar          2011-08-27  14  #include <linux/uaccess.h>
-cc100551b4d92f Stephen Rothwell    2011-09-15  15  #include <linux/err.h>
-982e617a313b57 Mimi Zohar          2011-08-27  16  #include <keys/trusted-type.h>
-ee0b31a25a0101 Mimi Zohar          2012-01-17  17  #include <keys/encrypted-type.h>
-ee0b31a25a0101 Mimi Zohar          2012-01-17  18  #include "encrypted.h"
-982e617a313b57 Mimi Zohar          2011-08-27  19  
-982e617a313b57 Mimi Zohar          2011-08-27  20  /*
-982e617a313b57 Mimi Zohar          2011-08-27  21   * request_trusted_key - request the trusted key
-982e617a313b57 Mimi Zohar          2011-08-27  22   *
-982e617a313b57 Mimi Zohar          2011-08-27  23   * Trusted keys are sealed to PCRs and other metadata. Although userspace
-982e617a313b57 Mimi Zohar          2011-08-27  24   * manages both trusted/encrypted key-types, like the encrypted key type
-982e617a313b57 Mimi Zohar          2011-08-27  25   * data, trusted key type data is not visible decrypted from userspace.
-982e617a313b57 Mimi Zohar          2011-08-27  26   */
-982e617a313b57 Mimi Zohar          2011-08-27  27  struct key *request_trusted_key(const char *trusted_desc,
-146aa8b1453bd8 David Howells       2015-10-21  28  				const u8 **master_key, size_t *master_keylen)
-982e617a313b57 Mimi Zohar          2011-08-27  29  {
-982e617a313b57 Mimi Zohar          2011-08-27  30  	struct trusted_key_payload *tpayload;
-982e617a313b57 Mimi Zohar          2011-08-27  31  	struct key *tkey;
-982e617a313b57 Mimi Zohar          2011-08-27  32  
-028db3e290f15a Linus Torvalds      2019-07-10  33  	tkey = request_key(&key_type_trusted, trusted_desc, NULL);
-982e617a313b57 Mimi Zohar          2011-08-27  34  	if (IS_ERR(tkey))
-982e617a313b57 Mimi Zohar          2011-08-27  35  		goto error;
-982e617a313b57 Mimi Zohar          2011-08-27  36  
-982e617a313b57 Mimi Zohar          2011-08-27  37  	down_read(&tkey->sem);
-146aa8b1453bd8 David Howells       2015-10-21  38  	tpayload = tkey->payload.data[0];
-982e617a313b57 Mimi Zohar          2011-08-27  39  	*master_key = tpayload->key;
-982e617a313b57 Mimi Zohar          2011-08-27  40  	*master_keylen = tpayload->key_len;
-982e617a313b57 Mimi Zohar          2011-08-27  41  error:
-982e617a313b57 Mimi Zohar          2011-08-27  42  	return tkey;
-982e617a313b57 Mimi Zohar          2011-08-27  43  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Mon, Apr 28, 2025 at 1:56=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>
+>
+>
+> On 23/04/2025 8:52 pm, Yabin Cui wrote:
+> > On Tue, Apr 22, 2025 at 7:10=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote=
+:
+> >>
+> >> On Tue, Apr 22, 2025 at 02:49:54PM +0200, Ingo Molnar wrote:
+> >>
+> >> [...]
+> >>
+> >>>> Hi Yabin,
+> >>>>
+> >>>> I was wondering if this is just the opposite of
+> >>>> PERF_PMU_CAP_AUX_NO_SG, and that order 0 should be used by default
+> >>>> for all devices to solve the issue you describe. Because we already
+> >>>> have PERF_PMU_CAP_AUX_NO_SG for devices that need contiguous pages.
+> >>>> Then I found commit 5768402fd9c6 ("perf/ring_buffer: Use high order
+> >>>> allocations for AUX buffers optimistically") that explains that the
+> >>>> current allocation strategy is an optimization.
+> >>>>
+> >>>> Your change seems to decide that for certain devices we want to
+> >>>> optimize for fragmentation rather than performance. If these are
+> >>>> rarely used features specifically when looking at performance should
+> >>>> we not continue to optimize for performance? Or at least make it use=
+r
+> >>>> configurable?
+> >>>
+> >>> So there seems to be 3 categories:
+> >>>
+> >>>   - 1) Must have physically contiguous AUX buffers, it's a hardware A=
+BI.
+> >>>        (PERF_PMU_CAP_AUX_NO_SG for Intel BTS and PT.)
+> >>>
+> >>>   - 2) Would be nice to have continguous AUX buffers, for a bit more
+> >>>        performance.
+> >>>
+> >>>   - 3) Doesn't really care.
+> >>>
+> >>> So we do have #1, and it appears Yabin's usecase is #3?
+> >
+> > Yes, in my usecase, I care much more about MM-friendly than a little po=
+tential
+> > performance when using PMU. It's not a rarely used feature. On Android,=
+ we
+> > collect ETM data periodically on internal user devices for AutoFDO opti=
+mization
+> > (for both userspace libraries and the kernel). Allocating a large
+> > chunk of contiguous
+> > AUX pages (4M for each CPU) periodically is almost unbearable. The kern=
+el may
+> > need to kill many processes to fulfill the request. It affects user
+> > experience even
+> > after using PMU.
+> >
+> > I am totally fine to reuse PERF_PMU_CAP_AUX_NO_SG. If PMUs don't want t=
+o
+> > sacrifice performance for MM-friendly, why support scatter gather mode?=
+ If there
+> > are strong performance reasons to allocate contiguous AUX pages in
+> > scatter gather
+> > mode, I hope max_order is configurable in userspace.
+> >
+> > Currently, max_order is affected by aux_watermark. But aux_watermark
+> > also affects
+> > how frequently the PMU overflows AUX buffer and notifies userspace.
+> > It's not ideal
+> > to set aux_watermark to 1 page size. So if we want to make max_order us=
+er
+> > configurable, maybe we can add a one bit field in perf_event_attr?
+> >
+> >>
+> >> In Yabin's case, the AUX buffer work as a bounce buffer.  The hardware
+> >> trace data is copied by a driver from low level's contiguous buffer to
+> >> the AUX buffer.
+> >>
+> >> In this case we cannot benefit much from continguous AUX buffers.
+> >>
+> >> Thanks,
+> >> Leo
+>
+> Hi Yabin,
+>
+> So after doing some testing it looks like there is 0 difference in
+> overhead for max_order=3D0 vs ensuring the buffer is one contiguous
+> allocation for Arm SPE, and TRBE would be exactly the same. This makes
+> sense because we're vmapping pages individually anyway regardless of the
+> base allocation.
+>
+> Seems like the performance optimization of the optimistically large
+> mappings is only for devices that require extra buffer management stuff
+> other than normal virtual memory. Can we add a new capability
+> PERF_PMU_CAP_AUX_PREFER_LARGE and apply it to Intel PT and BTS? Then the
+> old (before the optimistic large allocs change) max_order=3D0 behavior
+> becomes the default again, and PREFER_LARGE is just for those two
+> devices. Other and new devices would get the more memory friendly
+> allocations by default, as it's unlikely they'll benefit from anything
+> different.
+>
+Good suggestion! I will upload a v2 patch for that.
+>
+> Thanks
+> James
+>
 
