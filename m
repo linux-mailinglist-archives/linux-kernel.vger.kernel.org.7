@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-625980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89176AA3CD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CA8AA3CF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83F77983A17
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5C09A4B08
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A362D231836;
-	Tue, 29 Apr 2025 23:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777A52BE0F0;
+	Tue, 29 Apr 2025 23:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jtfFETES"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m2Oten3T"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721602222A3;
-	Tue, 29 Apr 2025 23:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A853255F50
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 23:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745970385; cv=none; b=EIIXt0BRKys5r76nqDR7s6/xOhAXB2NOnoKWfiLtcRJzEPKhtmfXLmxYGWVXdzg9Exclz7U/AQ11+NnDO27QgTCtty7624Z2meEuZ3dAW7pu8BTX4q/E2drsouzmVsp0N8Xj3uLVmCLGYb/WUHOXxZkYd2CtrNV2A21dxL+aRbk=
+	t=1745970430; cv=none; b=gdkfhRIAOQE0y16iav5BulPsfJGf2E3TmA1LAU/oqkKE6ky33gpd5msd9N2+0v+JLLn8v/0bkTyf77JRN3dXFYxZxO5Tciv8viXI8TbBidFkJfJo+dlpAXhI0QgU2iitCDXVcW1WNEO7toZ4Mqq4D5zUuyr36z+0JVX0sINt594=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745970385; c=relaxed/simple;
-	bh=NGaIyrfLvZYm2Bbqj86f7XJVeWE52V6E339DRzSa20w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dMamOO3THuqS57cb3v/RfGgha+owjk7uYfqcwlH+9kpN3rB1P4SaS7U4A5Sj2uD3cZQ2N4jdIrboUJk9xSil5LcKFxmYmiK3Ovqcj/wTkox421TI9ayBdQA+Qpk1L0G4OGHzsk/k9R8Znkg1ueV8vYzVNGT5+KY0r2qumzmcovU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jtfFETES; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=SrpJl8aswLmDlKg/oEU55Eu7Y/A7GY9f/+w2KaZJniM=; b=jtfFETESGjVlJ+3P
-	ztmtGff/8bCt5BaU0drQID5thdVjuAF/Y8r0L1WeeeBB5+h+0xiq8yeI9zAVKszMsmHF23Gy0r2IH
-	sYcJV371+suYiJucgwfrAzf1ioqHIiGnCdd+KcLgkrv/hkKkxRHKcInwamBHB8IpCJiz/J5+jPpWr
-	sZfaOlYPPCJaGjbiEVHHktkFxRnETaOsOvEIPDvFxD3nNjW7fvnrP/uPHfWlYQK/ipaObId7LXYBc
-	J8yA77KRfYjRpuaWe3HH04O+Dk7BZIOo0kR11phwAsucDJZ/k87qCrokLBZLZ13j1I+Rn3iHs40/6
-	QgN+iczIc1EO++J9JQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1u9ueQ-000WFz-2H;
-	Tue, 29 Apr 2025 23:46:10 +0000
-From: linux@treblig.org
-To: arnaud.pouliquen@foss.st.com,
-	andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: corbet@lwn.net,
-	linux-remoteproc@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v3 3/3] rpmsg: Remove unused method pointers *send_offchannel
-Date: Wed, 30 Apr 2025 00:45:59 +0100
-Message-ID: <20250429234600.301083-4-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429234600.301083-1-linux@treblig.org>
-References: <20250429234600.301083-1-linux@treblig.org>
+	s=arc-20240116; t=1745970430; c=relaxed/simple;
+	bh=lqFpTzBKH0n+hLPP3D74zDTrtj3ZCOQgeEHM7+9pKZ4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=AQEnRsf4mfO3eTY9oOk9k2z1hw7Az+Aoy+5+I325DPLuRFV0V0w5ogHa3M49csnk/c21e6zTo/MtxL9QeHbLRSVk8gwFHb87Bhukmmj0LGbD6AV9LMBGThJxEfoRdyIxFSZK56zc0QgP2CT1Q3SHFswdhBTdEAh0gu4JcC2xGBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rdbabiera.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m2Oten3T; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rdbabiera.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-73c09e99069so6555692b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745970428; x=1746575228; darn=vger.kernel.org;
+        h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rHgN+FCfcpWxKWmUBcvDV+CDR/OsUBfRs2x102Mf4zk=;
+        b=m2Oten3TacdjncZXnZwfYz/0bAs35CDRIRa3B6apFcHEWS124i3a4+mSgrLAn186Ca
+         8a4rjrF0qHBNKhWXPolP+HnFxqd61iHlDF0Rf/SNdzBi7KhyBcdbrBWTUQDQ2u9a0tbZ
+         6dWtN2wg+cmeFSLobbRs7cxj5d9B0nUC6/1EpteOTFcGErTne1fNHzHZ7f8a0GlS83WC
+         2O/we83avKo8JAQGU5KnzomJviYacpgJGH+mc+X0hi7kLGlYDmak+UL3eHkttSVSusx8
+         oer7vkXC3D2dfYB65q0q2HwH94Hf98L0hVnDaL/1dsjZ5nGwso9MzlDMDZ5NE5cfkiRe
+         syqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745970428; x=1746575228;
+        h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rHgN+FCfcpWxKWmUBcvDV+CDR/OsUBfRs2x102Mf4zk=;
+        b=bJmBvV2VdLhAuMdHwyvb1RkD5mhaQ+hUeWQVSnKd+TO5MFVM+bMIsdpCtCAhcz4Agc
+         ADpyDHqnX+cU91rrkoMylb0TW4/A6kCNr0Ki3fZgyjtJULdLh/FA/WweuMTRYDcUFb6R
+         hd5BNyV5EeOf9PLynzM9fhSdUXOCn6QHiZSfdFE0yTGYb6LA7fSr4ozN15Fwqyp5DUVi
+         hEA0ii7WsMBEwR8pqYEvcd5qhssfV8pInpfXXvEXVAeQRmQWLs6gAKp3eWcl6/+roEYq
+         /GX/Dw4tbPM2BxfRRBlJWF3H8lxAkC0UVXhk3J5o4RS4MTnnxS6JxwOzGb+yu+9Fsb+K
+         c60w==
+X-Forwarded-Encrypted: i=1; AJvYcCWMZHJ6LMgSAH6HkjxTrGtg2Pa2cbo/TcIVcMTh8+WU+L9z/oJFgIeLcC9l/WvhBmrw6knNdu497K8l8Rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSxLT3Z10wnn1tU/FCG5QJEhWuHvtNzfAwsdKP0kZ+9YXlR/JX
+	DCeUYIx+62/onIrU2xaNU0sjgHI5NzUL8SYO5qLpgW9nxEN0Bek2nCUFTgTHkc5E8OlhaH7GiC7
+	DoLCJ4QMBc8uL8Q==
+X-Google-Smtp-Source: AGHT+IHJSCSltg+/WIvPA6Nl6fDGEhdVNbCCtrD4AIszlnjDqDNJCFlblYduUzbVm4fXKSyRzxB9EK7JCUQkCWs=
+X-Received: from pgnm17.prod.google.com ([2002:a63:7d51:0:b0:b15:84fa:ff1f])
+ (user=rdbabiera job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:e94:b0:1f5:7280:1cf7 with SMTP id adf61e73a8af0-20a87c542bamr1146783637.16.1745970428604;
+ Tue, 29 Apr 2025 16:47:08 -0700 (PDT)
+Date: Tue, 29 Apr 2025 23:47:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Developer-Key: i=rdbabiera@google.com; a=openpgp; fpr=639A331F1A21D691815CE090416E17CA2BBBD5C8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1469; i=rdbabiera@google.com;
+ h=from:subject; bh=lqFpTzBKH0n+hLPP3D74zDTrtj3ZCOQgeEHM7+9pKZ4=;
+ b=owGbwMvMwCFW0bfok0KS4TbG02pJDBmCKd9jVzPEWE+SSrfKeOVlefIr47ZZgRELovtfTD78I
+ zOVdXdlRykLgxgHg6yYIouuf57BjSupW+Zw1hjDzGFlAhnCwMUpABP58Z2R4Z39tc+rWv++8FLm
+ FvHh9P/j6cJSI/Uy9HDYjEsd03i38DD84c25lzGD5yy3dIz5rdjZusJGkve3vA/pufQr/I70Zd9 1nAA=
+X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
+Message-ID: <20250429234703.3748506-2-rdbabiera@google.com>
+Subject: [PATCH v1] usb: typec: tcpm: delay SNK_TRY_WAIT_DEBOUNCE to
+ SRC_TRYWAIT transition
+From: RD Babiera <rdbabiera@google.com>
+Cc: heikki.krogerus@linux.intel.com, badhri@google.com, 
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, RD Babiera <rdbabiera@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+This patch fixes Type-C Compliance Test TD 4.7.6 - Try.SNK DRP Connect
+SNKAS.
 
-After the previous patch, there are no implementers of the
-send_offchannel() and trysend_offchannel() methods.
+The compliance tester moves into SNK_UNATTACHED during toggling and
+expects the PUT to apply Rp after tPDDebounce of detection. If the port
+is in SNK_TRY_WAIT_DEBOUNCE, it will move into SRC_TRYWAIT immediately
+and apply Rp. This violates TD 4.7.5.V.3, where the tester confirms that
+the PUT attaches Rp after the transitions to Unattached.SNK for
+tPDDebounce.
 
-Remove them.
+Change the tcpm_set_state delay between SNK_TRY_WAIT_DEBOUNCE and
+SRC_TRYWAIT to tPDDebounce.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Fixes: a0a3e04e6b2c ("staging: typec: tcpm: Check for Rp for tPDDebounce")
+Cc: stable@vger.kernel.org
+Signed-off-by: RD Babiera <rdbabiera@google.com>
+Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
 ---
- drivers/rpmsg/rpmsg_internal.h | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/usb/typec/tcpm/tcpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 42c7007be1b5..397e4926bd02 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -50,10 +50,8 @@ struct rpmsg_device_ops {
-  * @destroy_ept:	see @rpmsg_destroy_ept(), required
-  * @send:		see @rpmsg_send(), required
-  * @sendto:		see @rpmsg_sendto(), optional
-- * @send_offchannel:	see @rpmsg_send_offchannel(), optional
-  * @trysend:		see @rpmsg_trysend(), required
-  * @trysendto:		see @rpmsg_trysendto(), optional
-- * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-  * @set_flow_control:	see @rpmsg_set_flow_control(), optional
-  * @get_mtu:		see @rpmsg_get_mtu(), optional
-@@ -67,13 +65,9 @@ struct rpmsg_endpoint_ops {
- 
- 	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
- 	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
--	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--				  void *data, int len);
- 
- 	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
- 	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
--	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
--			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
- 	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool pause, u32 dst);
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 784fa23102f9..87d56ac4565d 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -6003,7 +6003,7 @@ static void _tcpm_cc_change(struct tcpm_port *port, enum typec_cc_status cc1,
+ 	case SNK_TRY_WAIT_DEBOUNCE:
+ 		if (!tcpm_port_is_sink(port)) {
+ 			port->max_wait = 0;
+-			tcpm_set_state(port, SRC_TRYWAIT, 0);
++			tcpm_set_state(port, SRC_TRYWAIT, PD_T_PD_DEBOUNCE);
+ 		}
+ 		break;
+ 	case SRC_TRY_WAIT:
+
+base-commit: 615dca38c2eae55aff80050275931c87a812b48c
 -- 
-2.49.0
+2.49.0.967.g6a0df3ecc3-goog
 
 
