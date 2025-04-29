@@ -1,1445 +1,400 @@
-Return-Path: <linux-kernel+bounces-625546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF7CAA16B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:40:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7898AA16D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8579846BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:33:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 170CF7AF305
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD2021883E;
-	Tue, 29 Apr 2025 17:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A201252914;
+	Tue, 29 Apr 2025 17:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lzSDBjNr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="ZzO3k6xX"
+Received: from monticello.secure-endpoints.com (monticello.secure-endpoints.com [208.125.0.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5B2253326;
-	Tue, 29 Apr 2025 17:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254A02517AF
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745948028; cv=none; b=VZ0B4InfUna6HyThmLh5rGD3LLOJe+vbxc2T61Ig8NdktmPPtwtmEYcXSyW2seCb++oyIaGLFcBKJONRslgSkitrXstcPBBN9wYkr/dxC5Dc1WoZgG/IFYMXQDXwML94UUyuZL3vkTyoWNHToYOveMi0U0ILUjDmBvrD4+yw28w=
+	t=1745948437; cv=none; b=SP+qaaLKUxj2TtqAkob7jl0Xx158otHpE5lX315GeAlPeMHQJyIk1V9K9JEjuKn97SrhG2A+f+PpDmAAgV0ZMgw6Qi8rARuQbeZQOodxhvFqqvo9yHQMK3p4nlCFpKMwor0pwAUHbPpjsBwM9WOQcLmHZ86YULSyBYldeFgvI+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745948028; c=relaxed/simple;
-	bh=t6/hWCA1grGHoIHiFtvOmFAEBTfNbaRNZd2pncBhxus=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uf5AQBMCcloND/vH4qDtnlWHaEpUPjOMPAFZPtnx1QMiloH3dkGJBolkY3acd431evBTFbjRb3XjlI5RQ/LWYMXX91U7xuQUZVeBnNuXf94DTTLShtmpnH1ukyP0JThCkOurC8fO7L9CiFpfXRppkefLSw9m2dpXEIxuF9FKFAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lzSDBjNr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TA1wrN020416;
-	Tue, 29 Apr 2025 17:33:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=XEJ8wBoGTSbgfPw8axk/vj/pO/WGoBzlNOx
-	8Anv+Ta4=; b=lzSDBjNrHK+77mrXJJ2gYkN2BzdpwBqtuxMSaXtHRaCV6niFasL
-	lLmL5QgCvpZC4wvorD4UKs7EMb0QUdOnWoXYkGNzCCNNKhH/+KGQUqh+RNTeLrk1
-	jvS6Nk2tJoXf0PH7DvX+eci6TP8zSUFPpvbBy/nC5Rsz1DQyvJXdb0YsYY/7bcAp
-	UIGgPoXfu9wUuFinsLcm2IToyEpLK2M+ULtDJ+fpTZrmVBOfoFRAM0XGaixay8T3
-	bICoA4pN/xHm+puukBZdRbqsUUbO9Z3JEBC3QNQ0rYieYcYzdFSdQoJdOUSQ2RLa
-	Df11MePERg+9JLGkJ6icx+hJcqRjOiOU3qg==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468n6jmnqd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 17:33:40 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 53THXbXb009354;
-	Tue, 29 Apr 2025 17:33:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 468rjm1s8f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 17:33:37 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53THXbhw009349;
-	Tue, 29 Apr 2025 17:33:37 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 53THXba0009346
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 17:33:37 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
-	id 802F956E; Tue, 29 Apr 2025 23:03:36 +0530 (+0530)
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Subject: [PATCH v3] arm64: dts: qcom: sa8775p: Add default pin configurations for QUP SEs
-Date: Tue, 29 Apr 2025 23:03:34 +0530
-Message-Id: <20250429173334.303003-1-quic_vdadhani@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1745948437; c=relaxed/simple;
+	bh=Hh3yu1tEMBDI+kSG+2n4BjMf00rlxq7LLRi9lmCPQYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l239Rvw0IAejZ7gEJGqTiDRr35CGNUpzsnMEQKiD5QQ0q9H1xwgaBzKaAslcffPkblVaAp7HozNVmF5c484BY7PZU9K0qsa+h3i6eKOg0k3fr6ugkgik6F58qeOMbBhwW3m3npGIfZe1UeEDp6Sike82dj1BTTsQMVOyPPkEBE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=ZzO3k6xX; arc=none smtp.client-ip=208.125.0.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=auristor.com; s=MDaemon; r=y; l=20787; t=1745948133;
+	x=1746552933; i=jaltman@auristor.com; q=dns/txt; h=Message-ID:
+	Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	Content-Language:From:Organization:Disposition-Notification-To:
+	In-Reply-To:Content-Type; z=Received:=20from=20[IPV6=3A2603=3A70
+	00=3A73c=3Abb00=3Afcd9=3Ace91=3A29c5=3A5ab0]=20by=20auristor.com
+	=20(IPv6=3A2001=3A470=3A1f07=3Af77=3Affff=3A=3A312)=20(MDaemon=2
+	0PRO=20v25.0.2)=20=0D=0A=09with=20ESMTPSA=20id=20md5001004668994
+	.msg=3B=20Tue,=2029=20Apr=202025=2013=3A35=3A32=20-0400|Message-
+	ID:=20<3d19dc03-72aa-46de-a6cc-4426cc84eb51@auristor.com>|Date:=
+	20Tue,=2029=20Apr=202025=2013=3A35=3A36=20-0400|MIME-Version:=20
+	1.0|User-Agent:=20Mozilla=20Thunderbird|Subject:=20Re=3A=20[PATC
+	H]=20afs,=20bash=3A=20Fix=20open(O_CREAT)=20on=20an=20extant=20A
+	FS=20file=20in=20a=0D=0A=20sticky=20dir|To:=20David=20Howells=20
+	<dhowells@redhat.com>,=0D=0A=20Alexander=20Viro=20<viro@zeniv.li
+	nux.org.uk>,=0D=0A=20Christian=20Brauner=20<brauner@kernel.org>|
+	Cc:=20Etienne=20Champetier=20<champetier.etienne@gmail.com>,=0D=
+	0A=20Marc=20Dionne=20<marc.dionne@auristor.com>,=20Chet=20Ramey=
+	20<chet.ramey@case.edu>,=0D=0A=20Steve=20French=20<sfrench@samba
+	.org>,=20linux-afs@lists.infradead.org,=0D=0A=20openafs-devel@op
+	enafs.org,=20linux-cifs@vger.kernel.org,=0D=0A=20linux-fsdevel@v
+	ger.kernel.org,=20linux-kernel@vger.kernel.org|References:=20<43
+	3928.1745944651@warthog.procyon.org.uk>|Content-Language:=20en-U
+	S|From:=20Jeffrey=20E=20Altman=20<jaltman@auristor.com>|Organiza
+	tion:=20AuriStor,=20Inc.|Disposition-Notification-To:=20Jeffrey=
+	20E=20Altman=20<jaltman@auristor.com>|In-Reply-To:=20<433928.174
+	5944651@warthog.procyon.org.uk>|Content-Type:=20multipart/signed
+	=3B=20protocol=3D"application/pkcs7-signature"=3B=20micalg=3Dsha
+	-256=3B=20boundary=3D"------------ms040907060507070909050309";
+	bh=Hh3yu1tEMBDI+kSG+2n4BjMf00rlxq7LLRi9lmCPQYc=; b=ZzO3k6xXUk/MC
+	cRemm22wDanhnc82sMYmrgUjHTPoIISucSE/GuonMTDmnzXwI5VZ/OUey77efoEu
+	wsm10MKOKMM6yU5q4PG+jt7c3V8BFabL+5TNDxFOv3Qa9XBkuY+mf14nQkUkns9c
+	zm1zTim0hD4nnK6v3iCyHIFGZhiudA=
+X-MDAV-Result: clean
+X-MDAV-Processed: monticello.secure-endpoints.com, Tue, 29 Apr 2025 13:35:33 -0400
+Received: from [IPV6:2603:7000:73c:bb00:fcd9:ce91:29c5:5ab0] by auristor.com (IPv6:2001:470:1f07:f77:ffff::312) (MDaemon PRO v25.0.2) 
+	with ESMTPSA id md5001004668994.msg; Tue, 29 Apr 2025 13:35:32 -0400
+X-Spam-Processed: monticello.secure-endpoints.com, Tue, 29 Apr 2025 13:35:32 -0400
+	(not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2603:7000:73c:bb00:fcd9:ce91:29c5:5ab0
+X-MDHelo: [IPV6:2603:7000:73c:bb00:fcd9:ce91:29c5:5ab0]
+X-MDArrival-Date: Tue, 29 Apr 2025 13:35:32 -0400
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=1214c8d193=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
+Message-ID: <3d19dc03-72aa-46de-a6cc-4426cc84eb51@auristor.com>
+Date: Tue, 29 Apr 2025 13:35:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEyOSBTYWx0ZWRfX0Z+7Iyju49ug p5GTr3m/R0idHAZK2zKYR3ZqqNBDttjBppSO1Xp/qAzAc6gfRhNCVrf/nIaKqqUr5CS1WNnO30I gDMScuTsl52cI2kVLOIKfh3sOeIV7v2wJQoDIc78pneIQ56UWAfP1iL9LXVjfOLURqiWdtVVPZJ
- IyceL/VTflfdskgQTkGa08hLmmGlUVPXy89/6Bg0vP4CHHpfAJAuFwnP4PKuD1N5jCsbmxm0LEF Rhnhr3XOWeqj7C/XuuvvN+pzZXu59empHSTGfNKBunJWpjRKzAtLSbwaXcuynpLn+vgJG1xXzf1 gUQC1TX3hHv5MCad7/6rN6JcxYJvtJdQRme2RJIJUD1IlrSjjnv9hrdZfivIGg4DpBSx0D/SQGW
- Vk0O14t2b3kNmcckmQNVkezKl/mIpr+vOWNiabogWfJYgAd8iwkgqb/FYSBnGVotqm+gzNH6
-X-Proofpoint-GUID: uUeIVF0JF6e_SBjNSrQeLcncATl_YsQm
-X-Proofpoint-ORIG-GUID: uUeIVF0JF6e_SBjNSrQeLcncATl_YsQm
-X-Authority-Analysis: v=2.4 cv=C8fpyRP+ c=1 sm=1 tr=0 ts=68110d75 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=OHcT9Z7ZhKYpY54tha0A:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290129
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
+ sticky dir
+To: David Howells <dhowells@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Etienne Champetier <champetier.etienne@gmail.com>,
+ Marc Dionne <marc.dionne@auristor.com>, Chet Ramey <chet.ramey@case.edu>,
+ Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org,
+ openafs-devel@openafs.org, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <433928.1745944651@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Jeffrey E Altman <jaltman@auristor.com>
+Organization: AuriStor, Inc.
+Disposition-Notification-To: Jeffrey E Altman <jaltman@auristor.com>
+In-Reply-To: <433928.1745944651@warthog.procyon.org.uk>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms040907060507070909050309"
+X-MDCFSigsAdded: auristor.com
 
-Default pinctrl configurations for all QUP (Qualcomm Universal Peripheral)
-Serial Engines (SEs) are missing in the SoC device tree. These
-configurations are required by client teams when enabling any SEs as I2C,
-SPI, or Serial protocols.
+This is a cryptographically signed message in MIME format.
 
-Add default pin configurations for Serial Engines (SEs) for all supported
-protocols, including I2C, SPI, and UART, to the sa8775p device tree.  This
-change facilitates slave device driver clients to enable usecase with
-minimal modifications.
+--------------ms040907060507070909050309
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Remove duplicate pin configurations from target-specific file as same pin
-configuration is included in the SoC device tree.
+RGF2aWQsDQoNClRoYW5rcyBmb3IgdGhpcyBwYXRjaC7CoMKgIEkgYmVsaWV2ZSB0aGVyZSBp
+cyBvbmUgbWlzdGFrZSBpbiANCmFmc19oYXZlX3NhbWVfb3duZXIoKS4NCg0KSSd2ZSBhZGRl
+ZCBhIGJpdCBtb3JlIGJhY2tncm91bmQgd2hpY2ggbWlnaHQgYmUgaW5jb3Jwb3JhdGVkIGlu
+dG8gYSANCmZ1dHVyZSBjb21taXQgbWVzc2FnZS4NCg0KSSBoYXZlIGFsc28gYXNrZWQgaW5s
+aW5lIGFib3V0IHRoZSBzYWZldHkgb2YgdGhlIHVzZSBvZiBpZC1tYXBwZWQgdWlkcyANCmZv
+ciB0aGUgb3duZXJzaGlwIGNoZWNrcy4NCg0KT24gNC8yOS8yMDI1IDEyOjM3IFBNLCBEYXZp
+ZCBIb3dlbGxzIHdyb3RlOg0KPiAgICAgIA0KPiBCYXNoIGhhcyBhIHdvcmsgYXJvdW5kIGlu
+IHJlZGlyX29wZW4oKSB0aGF0IGNhdXNlcyBvcGVuKE9fQ1JFQVQpIG9mIGEgZmlsZQ0KPiBp
+biBhIHN0aWNreSBkaXJlY3RvcnkgdG8gYmUgcmV0cmllZCB3aXRob3V0IE9fQ1JFQVQgaWYg
+YmFzaCB3YXMgYnVpbHQgd2l0aA0KPiBBRlMgd29ya2Fyb3VuZHMgY29uZmlndXJlZDoNCj4N
+Cj4gICAgICAgICAgI2lmIGRlZmluZWQgKEFGUykNCj4gICAgICAgICAgICAgICAgaWYgKChm
+ZCA8IDApICYmIChlcnJubyA9PSBFQUNDRVMpKQ0KPiAgICAgICAgICAgICAgew0KPiAgICAg
+ICAgICAgICAgICBmZCA9IG9wZW4gKGZpbGVuYW1lLCBmbGFncyAmIH5PX0NSRUFULCBtb2Rl
+KTsNCj4gICAgICAgICAgICAgICAgZXJybm8gPSBFQUNDRVM7ICAgIC8qIHJlc3RvcmUgZXJy
+bm8gKi8NCj4gICAgICAgICAgICAgIH0NCj4NCj4gICAgICAgICAgI2VuZGlmIC8qIEFGUyAq
+Lw0KDQpJIHRoaW5rIGl0cyB3b3J0aCBjbGFyaWZ5aW5nIHRoZSBwdXJwb3NlIG9mIHRoaXMg
+ZmFsbGJhY2sgbG9naWMgYW5kIHdoeSANCml0IGV4aXN0cy7CoCBUaGUgZmFsbGJhY2sNCmxv
+Z2ljIHdhcyBhZGRlZCB0byBiYXNoIDEuMTQuNyBhcyBwYXJ0IG9mIHRoZSBpbnRyb2R1Y3Rp
+b24gb2Ygc3VwcG9ydCANCmZvciBJQk0vVHJhbnNhcmMgQUZTIDMuNC4NCkl0IHdhcyBub3Rl
+ZCB0aGF0IHNvbWV0aW1lcyBFRVhJU1Qgd291bGQgYmUgcmV0dXJuZWQgZnJvbSBvcGVuKGZp
+bGVuYW1lLCANCmZsYWdzIHwgT19DUkVBVCkNCmJ1dCB3b3VsZCBzdWNjZWVkIGlmIG9wZW4o
+ZmlsZW5hbWUsIGZsYWdzICYgfk9fQ1JFQVQpIHdhcyBjYWxsZWQuwqAgVGhlcmUgDQppcyBu
+byBldmlkZW5jZSB0aGF0DQp0aGUgQUZTIGRldmVsb3BlcnMgd2VyZSBhd2FyZSBvZiB0aGUg
+cHJvYmxlbS4NCg0KSSBjYW4gcmVwb3J0IHRoYXQgdGhlIGNhdXNlIG9mIHRoaXMgYmVoYXZp
+b3IgaXMgdGhlIEFGUyBmaWxlc2VydmVyJ3MgDQpjaGVja2luZyBmb3IgUFJTRlNfSU5TRVJU
+DQpyaWdodHMgb24gdGhlIGRpcmVjdG9yeSBwcmlvciB0byBwZXJmb3JtaW5nIHRoZSBDcmVh
+dGVGaWxlIGFjdGlvbi7CoCBJZiANCnRoZSBjYWxsZXIgaXMgbm90IHBlcm1pdHRlZA0KdG8g
+Y3JlYXRlIGEgZGlyZWN0b3J5IGVudHJ5IHRoZSBhY3Rpb24gZmFpbHMgd2l0aCBFQUNDRVMg
+ZXZlbiBpZiB0aGUgDQpyZXF1ZXN0ZWQgZmlsZW5hbWUgYWxyZWFkeQ0KZXhpc3RzLsKgIFRo
+ZSBtb3N0IHJlY2VudCB2ZXJzaW9ucyBvZiBJQk0gQUZTIDMuNiwgT3BlbkFGUywgYW5kIA0K
+QXVyaVN0b3JGUyBmaWxlc2VydmVycyBhbGwNCmNvbnRpbnVlIHRvIGV4aGliaXQgdGhpcyBi
+ZWhhdmlvciB0b2RheS4NCg0KVGhpcyBsb2dpYyBwcmVkYXRlZCAzMGFiYTY2NTZmNjFlZDQ0
+Y2JhNDQ1YTNjMGQzOGIyOTZmYTllOGY1ICgibmFtZWk6IA0KYWxsb3cgcmVzdHJpY3RlZA0K
+T19DUkVBVCBvZiBGSUZPcyBhbmQgcmVndWxhciBmaWxlcyIpIGJ5IGRlY2FkZXMuwqAgQXMg
+YSBzaWRlIGVmZmVjdCwgd2hlbiANCnRoZSBmaWxlc3lzdGVtIGlzIGFuDQppbi10cmVlIG9y
+IG91dC1vZi10cmVlIEFGUy1mYW1pbHkgZmlsZXN5c3RlbSAuLi4NCg0KPiBUaGlzIHdvcmtz
+IGFyb3VuZCB0aGUga2VybmVsIG5vdCBiZWluZyBhYmxlIHRvIHZhbGlkbHkgY2hlY2sgdGhl
+DQo+IGN1cnJlbnRfZnN1aWQoKSBhZ2FpbnN0IGlfdWlkIG9uIHRoZSBmaWxlIG9yIHRoZSBk
+aXJlY3RvcnkgYmVjYXVzZSB0aGUNCj4gdWlkc3BhY2VzIG9mIHRoZSBzeXN0ZW0gYW5kIG9m
+IEFGUyBtYXkgd2VsbCBiZSBkaXNqb2ludC4gIFRoZSBwcm9ibGVtIGxpZXMNCj4gd2l0aCB0
+aGUgdWlkIGNoZWNrcyBpbiBtYXlfY3JlYXRlX2luX3N0aWNreSgpLg0KPg0KPiBIb3dldmVy
+LCB0aGUgYmFzaCB3b3JrIGFyb3VuZCBpcyBnb2luZyB0byBiZSByZW1vdmVkOg0KPg0KPiAg
+ICAgICAgICBodHRwczovL2dpdC5zYXZhbm5haC5nbnUub3JnL2NnaXQvYmFzaC5naXQvdHJl
+ZS9yZWRpci5jP2g9YmFzaC01LjMtcmMxI243MzMNCj4NCj4gRml4IHRoaXMgaW4gdGhlIGtl
+cm5lbCBieToNCj4NCj4gICAoMSkgUHJvdmlkZSBhbiAtPmlzX293bmVkX2J5X21lKCkgaW5v
+ZGUgb3AsIHNpbWlsYXIgdG8gLT5wZXJtaXNzaW9uKCksDQo+ICAgICAgIGFuZCwgaWYgcHJv
+dmlkZWQsIGNhbGwgdGhhdCB0byBkZXRlcm1pbmUgaWYgdGhlIGNhbGxlciBvd25zIHRoZSBm
+aWxlDQo+ICAgICAgIGluc3RlYWQgb2YgY2hlY2tpbmcgdGhlIGlfdWlkIHRvIGN1cnJlbnRf
+ZnN1aWQoKS4NCj4NCj4gICAoMikgUHJvdmlkZSBhIC0+aGF2ZV9zYW1lX293bmVyKCkgaW5v
+ZGUgb3AsIHRoYXQsIGlmIHByb3ZpZGVkLCBjYW4gYmUNCj4gICAgICAgY2FsbGVkIHRvIHNl
+ZSBpZiBhbiBpbm9kZSBoYXMgdGhlIHNhbWUgb3duZXIgYXMgdGhlIHBhcmVudCBvbiB0aGUg
+cGF0aA0KPiAgICAgICB3YWxrZWQuDQo+DQo+IEZvciBrYWZzLCB1c2UgdGhlIGZpcnN0IGhv
+b2sgdG8gY2hlY2sgdG8gc2VlIGlmIHRoZSBzZXJ2ZXIgaW5kaWNhdGVkIHRoZQ0KPiBBRE1J
+TklTVEVSIGJpdCBpbiB0aGUgYWNjZXNzIHJpZ2h0cyByZXR1cm5lZCBieSB0aGUgRlMuRmV0
+Y2hTdGF0dXMgYW5kDQo+IHN1Y2hsaWtlDQoNClRoZSBBRlNGZXRjaFN0YXR1cy5DYWxsZXJB
+Y2Nlc3MgZmllbGQgcmV0dXJuZWQgZm9yIGEgbm9uLWRpcmVjdG9yeSANCm9iamVjdCBpbmNs
+dWRlcyB0aGUNClBSU0ZTX0FETUlOSVNURVIgYml0IHNldCBpZiB0aGUgY2FsbGVyIGlzIGF1
+dGhlbnRpY2F0ZWQgYW5kIHRoZSANCmF1dGhlbnRpY2F0ZWQgaWRlbnRpdHkNCmlzIHRoZSBB
+RlMgSUQgcmV0dXJuZWQgaW4gdGhlIEFGU0ZldGNoU3RhdHVzLk93bmVyIGZpZWxkLg0KDQo+
+IGFuZCB0aGUgc2Vjb25kIGhvb2sgdG8gY29tcGFyZSB0aGUgQUZTIHVzZXIgSURzIHJldHJp
+ZXZlZCBieQ0KPiBGUy5GZXRjaFN0YXR1cyAod2hpY2ggbWF5IG5vdCBmaXQgaW4gYSBrdWlk
+IGlmIEF1cmlTdG9yJ3MgWUZTIHZhcmlhbnQpLg0KDQpQZXJoYXBzIG1vcmUgaW1wb3J0YW50
+bHksIHRoZSBBRlMgSURzIHNwZWNpZmllZCBpbiB0aGUgDQpBRlNGZXRjaFN0YXR1cy5Pd25l
+ciBmaWVsZCBvZnRlbg0KaGF2ZSBubyByZWxhdGlvbnNoaXAgdG8gdGhlIGxvY2FsIHN5c3Rl
+bSdzIHVpZCBuYW1lc3BhY2UgYW5kIG1pZ2h0IA0KY29sbGlkZSB3aXRoIHZhcmlvdXMNCnVp
+ZCByYW5nZXMgd2hpY2ggbWlnaHQgYmUgdXNlZCBmb3IgaWQtbWFwcGluZyBieSBjb250YWlu
+ZXIgbWFuYWdlcnMuDQoNCj4gVGhpcyBjYW4gYmUgdGVzdGVkIGJ5IGNyZWF0aW5nIGEgc3Rp
+Y2t5IGRpcmVjdG9yeSAodGhlIHVzZXIgbXVzdCBoYXZlIGENCj4gdG9rZW4gdG8gZG8gdGhp
+cykgYW5kIGNyZWF0aW5nIGEgZmlsZSBpbiBpdC4gIFRoZW4gc3RyYWNlIGJhc2ggZG9pbmcg
+ImVjaG8NCj4gZm9vID4+ZmlsZSIgYW5kIGxvb2sgYXQgd2hldGhlciBiYXNoIGRvZXMgYSBz
+aW5nbGUsIHN1Y2Nlc3NmdWwgT19DUkVBVCBvcGVuDQo+IG9uIHRoZSBmaWxlIG9yIHdoZXRo
+ZXIgdGhhdCBvbmUgZmFpbHMgYW5kIHRoZW4gYmFzaCBkb2VzIG9uZSB3aXRob3V0DQo+IE9f
+Q1JFQVQgdGhhdCBzdWNjZWVkcy4NCj4NCj4gUmVwb3J0ZWQtYnk6IEV0aWVubmUgQ2hhbXBl
+dGllciA8Y2hhbXBldGllci5ldGllbm5lQGdtYWlsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTog
+RGF2aWQgSG93ZWxscyA8ZGhvd2VsbHNAcmVkaGF0LmNvbT4NCj4gY2M6IE1hcmMgRGlvbm5l
+IDxtYXJjLmRpb25uZUBhdXJpc3Rvci5jb20+DQo+IGNjOiBKZWZmcmV5IEFsdG1hbiA8amFs
+dG1hbkBhdXJpc3Rvci5jb20+DQo+IGNjOiBDaGV0IFJhbWV5IDxjaGV0LnJhbWV5QGNhc2Uu
+ZWR1Pg0KPiBjYzogQWxleGFuZGVyIFZpcm8gPHZpcm9AemVuaXYubGludXgub3JnLnVrPg0K
+PiBjYzogQ2hyaXN0aWFuIEJyYXVuZXIgPGJyYXVuZXJAa2VybmVsLm9yZz4NCj4gY2M6IFN0
+ZXZlIEZyZW5jaCA8c2ZyZW5jaEBzYW1iYS5vcmc+DQo+IGNjOiBsaW51eC1hZnNAbGlzdHMu
+aW5mcmFkZWFkLm9yZw0KPiBjYzogb3BlbmFmcy1kZXZlbEBvcGVuYWZzLm9yZw0KPiBjYzog
+bGludXgtY2lmc0B2Z2VyLmtlcm5lbC5vcmcNCj4gY2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5r
+ZXJuZWwub3JnDQo+IC0tLQ0KPiAgIGZzL2Fmcy9kaXIuYyAgICAgICB8ICAgIDIgKysNCj4g
+ICBmcy9hZnMvZmlsZS5jICAgICAgfCAgICAyICsrDQo+ICAgZnMvYWZzL2ludGVybmFsLmgg
+IHwgICAgMyArKysNCj4gICBmcy9hZnMvc2VjdXJpdHkuYyAgfCAgIDUyICsrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gICBmcy9uYW1l
+aS5jICAgICAgICAgfCAgIDIyICsrKysrKysrKysrKysrKysrKy0tLS0NCj4gICBpbmNsdWRl
+L2xpbnV4L2ZzLmggfCAgICAzICsrKw0KPiAgIDYgZmlsZXMgY2hhbmdlZCwgODAgaW5zZXJ0
+aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2ZzL2Fmcy9kaXIu
+YyBiL2ZzL2Fmcy9kaXIuYw0KPiBpbmRleCA5ZTdiMWZlODJjMjcuLjYzNjBkYjE2NzNiMCAx
+MDA2NDQNCj4gLS0tIGEvZnMvYWZzL2Rpci5jDQo+ICsrKyBiL2ZzL2Fmcy9kaXIuYw0KPiBA
+QCAtNjUsNiArNjUsOCBAQCBjb25zdCBzdHJ1Y3QgaW5vZGVfb3BlcmF0aW9ucyBhZnNfZGly
+X2lub2RlX29wZXJhdGlvbnMgPSB7DQo+ICAgCS5wZXJtaXNzaW9uCT0gYWZzX3Blcm1pc3Np
+b24sDQo+ICAgCS5nZXRhdHRyCT0gYWZzX2dldGF0dHIsDQo+ICAgCS5zZXRhdHRyCT0gYWZz
+X3NldGF0dHIsDQo+ICsJLmlzX293bmVkX2J5X21lCT0gYWZzX2lzX293bmVkX2J5X21lLA0K
+PiArCS5oYXZlX3NhbWVfb3duZXIgPSBhZnNfaGF2ZV9zYW1lX293bmVyLA0KPiAgIH07DQo+
+ICAgDQo+ICAgY29uc3Qgc3RydWN0IGFkZHJlc3Nfc3BhY2Vfb3BlcmF0aW9ucyBhZnNfZGly
+X2FvcHMgPSB7DQo+IGRpZmYgLS1naXQgYS9mcy9hZnMvZmlsZS5jIGIvZnMvYWZzL2ZpbGUu
+Yw0KPiBpbmRleCBmYzE1NDk3NjA4YzYuLjAzMTdmMGEzNmNmMiAxMDA2NDQNCj4gLS0tIGEv
+ZnMvYWZzL2ZpbGUuYw0KPiArKysgYi9mcy9hZnMvZmlsZS5jDQo+IEBAIC00Nyw2ICs0Nyw4
+IEBAIGNvbnN0IHN0cnVjdCBpbm9kZV9vcGVyYXRpb25zIGFmc19maWxlX2lub2RlX29wZXJh
+dGlvbnMgPSB7DQo+ICAgCS5nZXRhdHRyCT0gYWZzX2dldGF0dHIsDQo+ICAgCS5zZXRhdHRy
+CT0gYWZzX3NldGF0dHIsDQo+ICAgCS5wZXJtaXNzaW9uCT0gYWZzX3Blcm1pc3Npb24sDQo+
+ICsJLmlzX293bmVkX2J5X21lCT0gYWZzX2lzX293bmVkX2J5X21lLA0KPiArCS5oYXZlX3Nh
+bWVfb3duZXIgPSBhZnNfaGF2ZV9zYW1lX293bmVyLA0KPiAgIH07DQo+ICAgDQo+ICAgY29u
+c3Qgc3RydWN0IGFkZHJlc3Nfc3BhY2Vfb3BlcmF0aW9ucyBhZnNfZmlsZV9hb3BzID0gew0K
+PiBkaWZmIC0tZ2l0IGEvZnMvYWZzL2ludGVybmFsLmggYi9mcy9hZnMvaW50ZXJuYWwuaA0K
+PiBpbmRleCA0NDBiMGU3MzEwOTMuLmZiZmJmNjE1YWJlMyAxMDA2NDQNCj4gLS0tIGEvZnMv
+YWZzL2ludGVybmFsLmgNCj4gKysrIGIvZnMvYWZzL2ludGVybmFsLmgNCj4gQEAgLTE0OTUs
+NiArMTQ5NSw5IEBAIGV4dGVybiBzdHJ1Y3Qga2V5ICphZnNfcmVxdWVzdF9rZXkoc3RydWN0
+IGFmc19jZWxsICopOw0KPiAgIGV4dGVybiBzdHJ1Y3Qga2V5ICphZnNfcmVxdWVzdF9rZXlf
+cmN1KHN0cnVjdCBhZnNfY2VsbCAqKTsNCj4gICBleHRlcm4gaW50IGFmc19jaGVja19wZXJt
+aXQoc3RydWN0IGFmc192bm9kZSAqLCBzdHJ1Y3Qga2V5ICosIGFmc19hY2Nlc3NfdCAqKTsN
+Cj4gICBleHRlcm4gaW50IGFmc19wZXJtaXNzaW9uKHN0cnVjdCBtbnRfaWRtYXAgKiwgc3Ry
+dWN0IGlub2RlICosIGludCk7DQo+ICtpbnQgYWZzX2lzX293bmVkX2J5X21lKHN0cnVjdCBt
+bnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKmlub2RlKTsNCj4gK2ludCBhZnNfaGF2
+ZV9zYW1lX293bmVyKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKmlu
+b2RlLA0KPiArCQkJc3RydWN0IGRlbnRyeSAqZGVudHJ5KTsNCj4gICBleHRlcm4gdm9pZCBf
+X2V4aXQgYWZzX2NsZWFuX3VwX3Blcm1pdF9jYWNoZSh2b2lkKTsNCj4gICANCj4gICAvKg0K
+PiBkaWZmIC0tZ2l0IGEvZnMvYWZzL3NlY3VyaXR5LmMgYi9mcy9hZnMvc2VjdXJpdHkuYw0K
+PiBpbmRleCA2YTc3NDRjOWUyYTIuLmNjOTY4OWZiZWQ0NyAxMDA2NDQNCj4gLS0tIGEvZnMv
+YWZzL3NlY3VyaXR5LmMNCj4gKysrIGIvZnMvYWZzL3NlY3VyaXR5LmMNCj4gQEAgLTQ3Nyw2
+ICs0NzcsNTggQEAgaW50IGFmc19wZXJtaXNzaW9uKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFw
+LCBzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiAgIAlyZXR1cm4gcmV0Ow0KPiAgIH0NCj4gICAN
+Cj4gKy8qDQo+ICsgKiBEZXRlcm1pbmUgaWYgYW4gaW5vZGUgaXMgb3duZWQgYnkgJ21lJyAt
+IHdoYXRldmVyIHRoYXQgbWVhbnMgZm9yIHRoZQ0KPiArICogZmlsZXN5c3RlbS4gIEluIHRo
+ZSBjYXNlIG9mIEFGUywgdGhpcyBtZWFucyB0aGF0IHRoZSBmaWxlIGlzIG93bmVkIGJ5IHRo
+ZQ0KPiArICogQUZTIHVzZXIgcmVwcmVzZW50ZWQgYnkgdGhlIHRva2VuIChlLmcuIGZyb20g
+YSBrZXJiZXJvcyBzZXJ2ZXIpIGhlbGQgaW4gYQ0KPiArICoga2V5LiAgUmV0dXJucyAwIGlm
+IG93bmVkIGJ5IG1lLCAxIGlmIG5vdDsgY2FuIGFsc28gcmV0dXJuIGFuIGVycm9yLg0KPiAr
+ICovDQo+ICtpbnQgYWZzX2lzX293bmVkX2J5X21lKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFw
+LCBzdHJ1Y3QgaW5vZGUgKmlub2RlKQ0KPiArew0KPiArCXN0cnVjdCBhZnNfdm5vZGUgKnZu
+b2RlID0gQUZTX0ZTX0koaW5vZGUpOw0KPiArCWFmc19hY2Nlc3NfdCBhY2Nlc3M7DQo+ICsJ
+c3RydWN0IGtleSAqa2V5Ow0KPiArCWludCByZXQ7DQo+ICsNCj4gKwlrZXkgPSBhZnNfcmVx
+dWVzdF9rZXkodm5vZGUtPnZvbHVtZS0+Y2VsbCk7DQo+ICsJaWYgKElTX0VSUihrZXkpKQ0K
+PiArCQlyZXR1cm4gUFRSX0VSUihrZXkpOw0KPiArDQo+ICsJLyogR2V0IHRoZSBhY2Nlc3Mg
+cmlnaHRzIGZvciB0aGUga2V5IG9uIHRoaXMgZmlsZS4gKi8NCj4gKwlyZXQgPSBhZnNfY2hl
+Y2tfcGVybWl0KHZub2RlLCBrZXksICZhY2Nlc3MpOw0KPiArCWlmIChyZXQgPCAwKQ0KPiAr
+CQlnb3RvIGVycm9yOw0KPiArDQo+ICsJLyogV2UgZ2V0IHRoZSBBRE1JTklTVEVSIGJpdCBp
+ZiB3ZSBvd24gdGhlIGZpbGUuICovDQo+ICsJcmV0ID0gKGFjY2VzcyAmIEFGU19BQ0VfQURN
+SU5JU1RFUikgPyAwIDogMTsNCj4gK2Vycm9yOg0KPiArCWtleV9wdXQoa2V5KTsNCj4gKwly
+ZXR1cm4gcmV0Ow0KPiArfQ0KPiArDQo+ICsvKg0KPiArICogRGV0ZXJtaW5lIGlmIGEgZmls
+ZSBoYXMgdGhlIHNhbWUgb3duZXIgYXMgaXRzIHBhcmVudCAtIHdoYXRldmVyIHRoYXQgbWVh
+bnMNCj4gKyAqIGZvciB0aGUgZmlsZXN5c3RlbS4gIEluIHRoZSBjYXNlIG9mIEFGUywgdGhp
+cyBtZWFucyBjb21wYXJpbmcgdGhlaXIgQUZTDQo+ICsgKiBVSURzLiAgUmV0dXJucyAwIGlm
+IHNhbWUsIDEgaWYgbm90IHNhbWU7IGNhbiBhbHNvIHJldHVybiBhbiBlcnJvci4NCj4gKyAq
+Lw0KPiAraW50IGFmc19oYXZlX3NhbWVfb3duZXIoc3RydWN0IG1udF9pZG1hcCAqaWRtYXAs
+IHN0cnVjdCBpbm9kZSAqaW5vZGUsDQo+ICsJCQlzdHJ1Y3QgZGVudHJ5ICpkZW50cnkpDQo+
+ICt7DQo+ICsJc3RydWN0IGFmc192bm9kZSAqdm5vZGUgPSBBRlNfRlNfSShpbm9kZSk7DQo+
+ICsJc3RydWN0IGRlbnRyeSAqcGFyZW50Ow0KPiArCXM2NCBvd25lcjsNCj4gKw0KPiArCS8q
+IEdldCB0aGUgb3duZXIncyBJRCBmb3IgdGhlIGRpcmVjdG9yeS4gIElkZWFsbHksIHdlJ2Qg
+dXNlIFJDVSB0bw0KPiArCSAqIGFjY2VzcyB0aGUgcGFyZW50IHJhdGhlciB0aGFuIGdldHRp
+bmcgYSByZWYuDQo+ICsJICovDQo+ICsJcGFyZW50ID0gZGdldF9wYXJlbnQoZGVudHJ5KTsN
+Cj4gKwl2bm9kZSA9IEFGU19GU19JKGRfYmFja2luZ19pbm9kZShwYXJlbnQpKTsNClRoaXMg
+bGluZSBpcyBvdmVyd3JpdGluZyAndm5vZGUnIHdpdGggdGhlIHBhcmVudC7CoMKgIEkgdGhp
+bmsgdGhlcmUgbmVlZHMgDQp0byBiZSBhIHNlcGFyYXRlIHB2bm9kZSBvciBzb21ldGhpbmcu
+DQo+ICsJb3duZXIgPSB2bm9kZS0+c3RhdHVzLm93bmVyOw0KPiArCWRwdXQocGFyZW50KTsN
+Cj4gKw0KPiArCXJldHVybiB2bm9kZS0+c3RhdHVzLm93bmVyICE9IG93bmVyOw0KPiArfQ0K
+PiArDQo+ICAgdm9pZCBfX2V4aXQgYWZzX2NsZWFuX3VwX3Blcm1pdF9jYWNoZSh2b2lkKQ0K
+PiAgIHsNCj4gICAJaW50IGk7DQo+IGRpZmYgLS1naXQgYS9mcy9uYW1laS5jIGIvZnMvbmFt
+ZWkuYw0KPiBpbmRleCA4NGEwZTBiMDExMWMuLjc5ZThlZjFiNjkwMCAxMDA2NDQNCj4gLS0t
+IGEvZnMvbmFtZWkuYw0KPiArKysgYi9mcy9uYW1laS5jDQo+IEBAIC0xMzE4LDExICsxMzE4
+LDI1IEBAIHN0YXRpYyBpbnQgbWF5X2NyZWF0ZV9pbl9zdGlja3koc3RydWN0IG1udF9pZG1h
+cCAqaWRtYXAsIHN0cnVjdCBuYW1laWRhdGEgKm5kLA0KPiAgIA0KPiAgIAlpX3Zmc3VpZCA9
+IGlfdWlkX2ludG9fdmZzdWlkKGlkbWFwLCBpbm9kZSk7DQoNClVucmVsYXRlZCB0byB0aGlz
+IGNoYW5nZSBidXQgaXMgdXNlIG9mIGlkLW1hcHBlZCB1aWQgdmFsdWVzIHNhZmUgZm9yIA0K
+dGhpcyBwdXJwb3NlPw0KDQpJc24ndCBpdCBwb3NzaWJsZSBmb3IgbW9yZSB0aGFuIG9uZSB1
+aWQgdG8gYmUgbWFwcGVkIHRvIHRoZSBzYW1lIHZmc3VpZCANCnZhbHVlPz0NCg0KPiAtCWlm
+ICh2ZnN1aWRfZXEoaV92ZnN1aWQsIGRpcl92ZnN1aWQpKQ0KPiAtCQlyZXR1cm4gMDsNCj4g
+KwlpZiAodW5saWtlbHkoaW5vZGUtPmlfb3AtPmhhdmVfc2FtZV9vd25lcikpIHsNCj4gKwkJ
+aW50IHJldCA9IGlub2RlLT5pX29wLT5oYXZlX3NhbWVfb3duZXIoaWRtYXAsIGlub2RlLCBu
+ZC0+cGF0aC5kZW50cnkpOw0KPiAgIA0KPiAtCWlmICh2ZnN1aWRfZXFfa3VpZChpX3Zmc3Vp
+ZCwgY3VycmVudF9mc3VpZCgpKSkNCj4gLQkJcmV0dXJuIDA7DQo+ICsJCWlmIChyZXQgPD0g
+MCkNCj4gKwkJCXJldHVybiByZXQ7DQo+ICsJfSBlbHNlIHsNCj4gKwkJaWYgKHZmc3VpZF9l
+cShpX3Zmc3VpZCwgZGlyX3Zmc3VpZCkpDQo+ICsJCQlyZXR1cm4gMDsNCj4gKwl9DQo+ICsN
+Cj4gKwlpZiAodW5saWtlbHkoaW5vZGUtPmlfb3AtPmlzX293bmVkX2J5X21lKSkgew0KPiAr
+CQlpbnQgcmV0ID0gaW5vZGUtPmlfb3AtPmlzX293bmVkX2J5X21lKGlkbWFwLCBpbm9kZSk7
+DQo+ICsNCj4gKwkJaWYgKHJldCA8PSAwKQ0KPiArCQkJcmV0dXJuIHJldDsNCj4gKwl9IGVs
+c2Ugew0KPiArCQlpZiAodmZzdWlkX2VxX2t1aWQoaV92ZnN1aWQsIGN1cnJlbnRfZnN1aWQo
+KSkpDQo+ICsJCQlyZXR1cm4gMDsNCj4gKwl9DQo+ICAgDQo+ICAgCWlmIChsaWtlbHkoZGly
+X21vZGUgJiAwMDAyKSkgew0KPiAgIAkJYXVkaXRfbG9nX3BhdGhfZGVuaWVkKEFVRElUX0FO
+T01fQ1JFQVQsICJzdGlja3lfY3JlYXRlIik7DQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
+bnV4L2ZzLmggYi9pbmNsdWRlL2xpbnV4L2ZzLmgNCj4gaW5kZXggMDE2YjBmZTE1MzZlLi5l
+YzI3OGQyZDM2MmEgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvZnMuaA0KPiArKysg
+Yi9pbmNsdWRlL2xpbnV4L2ZzLmgNCj4gQEAgLTIyMzYsNiArMjIzNiw5IEBAIHN0cnVjdCBp
+bm9kZV9vcGVyYXRpb25zIHsNCj4gICAJCQkgICAgc3RydWN0IGRlbnRyeSAqZGVudHJ5LCBz
+dHJ1Y3QgZmlsZWF0dHIgKmZhKTsNCj4gICAJaW50ICgqZmlsZWF0dHJfZ2V0KShzdHJ1Y3Qg
+ZGVudHJ5ICpkZW50cnksIHN0cnVjdCBmaWxlYXR0ciAqZmEpOw0KPiAgIAlzdHJ1Y3Qgb2Zm
+c2V0X2N0eCAqKCpnZXRfb2Zmc2V0X2N0eCkoc3RydWN0IGlub2RlICppbm9kZSk7DQo+ICsJ
+aW50ICgqaXNfb3duZWRfYnlfbWUpKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3Qg
+aW5vZGUgKmlub2RlKTsNCj4gKwlpbnQgKCpoYXZlX3NhbWVfb3duZXIpKHN0cnVjdCBtbnRf
+aWRtYXAgKmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiArCQkJICAgICAgIHN0cnVj
+dCBkZW50cnkgKmRlbnRyeSk7DQo+ICAgfSBfX19fY2FjaGVsaW5lX2FsaWduZWQ7DQo+ICAg
+DQo+ICAgc3RhdGljIGlubGluZSBpbnQgY2FsbF9tbWFwKHN0cnVjdCBmaWxlICpmaWxlLCBz
+dHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkNCg0KDQpKZWZmcmV5IEFsdG1hbg0KDQoNCg==
 
-Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
----
-v2 -> v3:
 
-- Remove duplicate pin configurations from target-specific file.
+--------------ms040907060507070909050309
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-v2 Link: https://lore.kernel.org/lkml/20250324151047.842648-1-quic_vdadhani@quicinc.com/
-
-v1 -> v2:
-
-- Drop drive-strength and bias property from soc dtsi.
-- Update commit log.
-
-v1 Link: https://lore.kernel.org/lkml/20250225154136.3052757-1-quic_vdadhani@quicinc.com/
----
----
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  35 -
- arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 750 +++++++++++++++++++++
- 2 files changed, 750 insertions(+), 35 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 967913169539..3b4243ef37e7 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -508,15 +508,11 @@ queue3 {
- 
- &i2c11 {
- 	clock-frequency = <400000>;
--	pinctrl-0 = <&qup_i2c11_default>;
--	pinctrl-names = "default";
- 	status = "okay";
- };
- 
- &i2c18 {
- 	clock-frequency = <400000>;
--	pinctrl-0 = <&qup_i2c18_default>;
--	pinctrl-names = "default";
- 	status = "okay";
- };
- 
-@@ -678,8 +674,6 @@ &sleep_clk {
- };
- 
- &spi16 {
--	pinctrl-0 = <&qup_spi16_default>;
--	pinctrl-names = "default";
- 	status = "okay";
- };
- 
-@@ -712,80 +706,53 @@ ethernet0_mdio: ethernet0-mdio-pins {
- 		};
- 	};
- 
--	qup_uart10_default: qup-uart10-state {
--		pins = "gpio46", "gpio47";
--		function = "qup1_se3";
--	};
--
- 	qup_spi16_default: qup-spi16-state {
--		pins = "gpio86", "gpio87", "gpio88", "gpio89";
--		function = "qup2_se2";
- 		drive-strength = <6>;
- 		bias-disable;
- 	};
- 
- 	qup_i2c11_default: qup-i2c11-state {
--		pins = "gpio48", "gpio49";
--		function = "qup1_se4";
- 		drive-strength = <2>;
- 		bias-pull-up;
- 	};
- 
- 	qup_i2c18_default: qup-i2c18-state {
--		pins = "gpio95", "gpio96";
--		function = "qup2_se4";
- 		drive-strength = <2>;
- 		bias-pull-up;
- 	};
- 
- 	qup_uart12_default: qup-uart12-state {
- 		qup_uart12_cts: qup-uart12-cts-pins {
--			pins = "gpio52";
--			function = "qup1_se5";
- 			bias-disable;
- 		};
- 
- 		qup_uart12_rts: qup-uart12-rts-pins {
--			pins = "gpio53";
--			function = "qup1_se5";
- 			bias-pull-down;
- 		};
- 
- 		qup_uart12_tx: qup-uart12-tx-pins {
--			pins = "gpio54";
--			function = "qup1_se5";
- 			bias-pull-up;
- 		};
- 
- 		qup_uart12_rx: qup-uart12-rx-pins {
--			pins = "gpio55";
--			function = "qup1_se5";
- 			bias-pull-down;
- 		};
- 	};
- 
- 	qup_uart17_default: qup-uart17-state {
- 		qup_uart17_cts: qup-uart17-cts-pins {
--			pins = "gpio91";
--			function = "qup2_se3";
- 			bias-disable;
- 		};
- 
- 		qup_uart17_rts: qup0-uart17-rts-pins {
--			pins = "gpio92";
--			function = "qup2_se3";
- 			bias-pull-down;
- 		};
- 
- 		qup_uart17_tx: qup0-uart17-tx-pins {
--			pins = "gpio93";
--			function = "qup2_se3";
- 			bias-pull-up;
- 		};
- 
- 		qup_uart17_rx: qup0-uart17-rx-pins {
--			pins = "gpio94";
--			function = "qup2_se3";
- 			bias-pull-down;
- 		};
- 	};
-@@ -917,8 +884,6 @@ &remoteproc_gpdsp1 {
- 
- &uart10 {
- 	compatible = "qcom,geni-debug-uart";
--	pinctrl-0 = <&qup_uart10_default>;
--	pinctrl-names = "default";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 5bd0c03476b1..3261c243940c 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -913,6 +913,8 @@ i2c14: i2c@880000 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c14_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -938,6 +940,8 @@ spi14: spi@880000 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi14_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -961,6 +965,8 @@ uart14: serial@880000 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart14_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -978,6 +984,8 @@ i2c15: i2c@884000 {
- 				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c15_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1003,6 +1011,8 @@ spi15: spi@884000 {
- 				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi15_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1026,6 +1036,8 @@ uart15: serial@884000 {
- 				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart15_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1043,6 +1055,8 @@ i2c16: i2c@888000 {
- 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c16_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1066,6 +1080,8 @@ spi16: spi@888000 {
- 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi16_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1091,6 +1107,8 @@ uart16: serial@888000 {
- 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart16_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1108,6 +1126,8 @@ i2c17: i2c@88c000 {
- 				interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c17_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1133,6 +1153,8 @@ spi17: spi@88c000 {
- 				interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi17_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1156,6 +1178,8 @@ uart17: serial@88c000 {
- 				interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart17_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1171,6 +1195,8 @@ i2c18: i2c@890000 {
- 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c18_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1198,6 +1224,8 @@ spi18: spi@890000 {
- 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi18_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1221,6 +1249,8 @@ uart18: serial@890000 {
- 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart18_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1238,6 +1268,8 @@ i2c19: i2c@894000 {
- 				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c19_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1263,6 +1295,8 @@ spi19: spi@894000 {
- 				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi19_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1286,6 +1320,8 @@ uart19: serial@894000 {
- 				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart19_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1303,6 +1339,8 @@ i2c20: i2c@898000 {
- 				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c20_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1328,6 +1366,8 @@ spi20: spi@898000 {
- 				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi20_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1351,6 +1391,8 @@ uart20: serial@898000 {
- 				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart20_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1404,6 +1446,8 @@ i2c0: i2c@980000 {
- 				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c0_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1429,6 +1473,8 @@ spi0: spi@980000 {
- 				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi0_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1452,6 +1498,8 @@ uart0: serial@980000 {
- 				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart0_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1469,6 +1517,8 @@ i2c1: i2c@984000 {
- 				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c1_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1494,6 +1544,8 @@ spi1: spi@984000 {
- 				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi1_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1517,6 +1569,8 @@ uart1: serial@984000 {
- 				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart1_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1534,6 +1588,8 @@ i2c2: i2c@988000 {
- 				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c2_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1559,6 +1615,8 @@ spi2: spi@988000 {
- 				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi2_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1582,6 +1640,8 @@ uart2: serial@988000 {
- 				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart2_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1599,6 +1659,8 @@ i2c3: i2c@98c000 {
- 				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c3_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1624,6 +1686,8 @@ spi3: spi@98c000 {
- 				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi3_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1647,6 +1711,8 @@ uart3: serial@98c000 {
- 				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart3_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1664,6 +1730,8 @@ i2c4: i2c@990000 {
- 				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c4_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1689,6 +1757,8 @@ spi4: spi@990000 {
- 				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi4_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1712,6 +1782,8 @@ uart4: serial@990000 {
- 				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart4_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1729,6 +1801,8 @@ i2c5: i2c@994000 {
- 				interrupts = <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c5_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1754,6 +1828,8 @@ spi5: spi@994000 {
- 				interrupts = <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi5_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1777,6 +1853,8 @@ uart5: serial@994000 {
- 				interrupts = <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart5_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1829,6 +1907,8 @@ i2c7: i2c@a80000 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c7_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1854,6 +1934,8 @@ spi7: spi@a80000 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi7_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1877,6 +1959,8 @@ uart7: serial@a80000 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
-+				pinctrl-0 = <&qup_uart7_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-@@ -1895,6 +1979,8 @@ i2c8: i2c@a84000 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c8_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1920,6 +2006,8 @@ spi8: spi@a84000 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi8_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1943,6 +2031,8 @@ uart8: serial@a84000 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
-+				pinctrl-0 = <&qup_uart8_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-@@ -1961,6 +2051,8 @@ i2c9: i2c@a88000 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c9_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1986,6 +2078,8 @@ spi9: spi@a88000 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi9_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2009,6 +2103,8 @@ uart9: serial@a88000 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart9_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2026,6 +2122,8 @@ i2c10: i2c@a8c000 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c10_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2051,6 +2149,8 @@ spi10: spi@a8c000 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi10_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2074,6 +2174,8 @@ uart10: serial@a8c000 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
-+				pinctrl-0 = <&qup_uart10_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 0
- 						 &clk_virt SLAVE_QUP_CORE_1 0>,
-@@ -2092,6 +2194,8 @@ i2c11: i2c@a90000 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c11_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2117,6 +2221,8 @@ spi11: spi@a90000 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi11_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2140,6 +2246,8 @@ uart11: serial@a90000 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
-+				pinctrl-0 = <&qup_uart11_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-@@ -2158,6 +2266,8 @@ i2c12: i2c@a94000 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c12_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2183,6 +2293,8 @@ spi12: spi@a94000 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi12_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2206,6 +2318,8 @@ uart12: serial@a94000 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart12_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2223,6 +2337,8 @@ i2c13: i2c@a98000 {
- 				interrupts = <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c13_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2276,6 +2392,8 @@ i2c21: i2c@b80000 {
- 				interrupts = <GIC_SPI 831 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c21_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
- 						&clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
- 					   <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2301,6 +2419,8 @@ spi21: spi@b80000 {
- 				interrupts = <GIC_SPI 831 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi21_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
- 						&clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
- 					   <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2325,6 +2445,8 @@ uart21: serial@b80000 {
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
- 				interconnect-names = "qup-core", "qup-config";
-+				pinctrl-0 = <&qup_uart21_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -4412,6 +4534,634 @@ tlmm: pinctrl@f000000 {
- 			#interrupt-cells = <2>;
- 			gpio-ranges = <&tlmm 0 0 149>;
- 			wakeup-parent = <&pdc>;
-+
-+			qup_i2c0_default: qup-i2c0-state {
-+				pins = "gpio20", "gpio21";
-+				function = "qup0_se0";
-+			};
-+
-+			qup_i2c1_default: qup-i2c1-state {
-+				pins = "gpio24", "gpio25";
-+				function = "qup0_se1";
-+			};
-+
-+			qup_i2c2_default: qup-i2c2-state {
-+				pins = "gpio36", "gpio37";
-+				function = "qup0_se2";
-+			};
-+
-+			qup_i2c3_default: qup-i2c3-state {
-+				pins = "gpio28", "gpio29";
-+				function = "qup0_se3";
-+			};
-+
-+			qup_i2c4_default: qup-i2c4-state {
-+				pins = "gpio32", "gpio33";
-+				function = "qup0_se4";
-+			};
-+
-+			qup_i2c5_default: qup-i2c5-state {
-+				pins = "gpio36", "gpio37";
-+				function = "qup0_se5";
-+			};
-+
-+			qup_i2c7_default: qup-i2c7-state {
-+				pins = "gpio40", "gpio41";
-+				function = "qup1_se0";
-+			};
-+
-+			qup_i2c8_default: qup-i2c8-state {
-+				pins = "gpio42", "gpio43";
-+				function = "qup1_se1";
-+			};
-+
-+			qup_i2c9_default: qup-i2c9-state {
-+				pins = "gpio46", "gpio47";
-+				function = "qup1_se2";
-+			};
-+
-+			qup_i2c10_default: qup-i2c10-state {
-+				pins = "gpio44", "gpio45";
-+				function = "qup1_se3";
-+			};
-+
-+			qup_i2c11_default: qup-i2c11-state {
-+				pins = "gpio48", "gpio49";
-+				function = "qup1_se4";
-+			};
-+
-+			qup_i2c12_default: qup-i2c12-state {
-+				pins = "gpio52", "gpio53";
-+				function = "qup1_se5";
-+			};
-+
-+			qup_i2c13_default: qup-i2c13-state {
-+				pins = "gpio56", "gpio57";
-+				function = "qup1_se6";
-+			};
-+
-+			qup_i2c14_default: qup-i2c14-state {
-+				pins = "gpio80", "gpio81";
-+				function = "qup2_se0";
-+			};
-+
-+			qup_i2c15_default: qup-i2c15-state {
-+				pins = "gpio84", "gpio85";
-+				function = "qup2_se1";
-+			};
-+
-+			qup_i2c16_default: qup-i2c16-state {
-+				pins = "gpio86", "gpio87";
-+				function = "qup2_se2";
-+			};
-+
-+			qup_i2c17_default: qup-i2c17-state {
-+				pins = "gpio91", "gpio92";
-+				function = "qup2_se3";
-+			};
-+
-+			qup_i2c18_default: qup-i2c18-state {
-+				pins = "gpio95", "gpio96";
-+				function = "qup2_se4";
-+			};
-+
-+			qup_i2c19_default: qup-i2c19-state {
-+				pins = "gpio99", "gpio100";
-+				function = "qup2_se5";
-+			};
-+
-+			qup_i2c20_default: qup-i2c20-state {
-+				pins = "gpio97", "gpio98";
-+				function = "qup2_se6";
-+			};
-+
-+			qup_i2c21_default: qup-i2c21-state {
-+				pins = "gpio13", "gpio14";
-+				function = "qup3_se0";
-+			};
-+
-+			qup_spi0_default: qup-spi0-state {
-+				pins = "gpio20", "gpio21", "gpio22", "gpio23";
-+				function = "qup0_se0";
-+			};
-+
-+			qup_spi1_default: qup-spi1-state {
-+				pins = "gpio24", "gpio25", "gpio26", "gpio27";
-+				function = "qup0_se1";
-+			};
-+
-+			qup_spi2_default: qup-spi2-state {
-+				pins = "gpio36", "gpio37", "gpio38", "gpio39";
-+				function = "qup0_se2";
-+			};
-+
-+			qup_spi3_default: qup-spi3-state {
-+				pins = "gpio28", "gpio29", "gpio30", "gpio31";
-+				function = "qup0_se3";
-+			};
-+
-+			qup_spi4_default: qup-spi4-state {
-+				pins = "gpio32", "gpio33", "gpio34", "gpio35";
-+				function = "qup0_se4";
-+			};
-+
-+			qup_spi5_default: qup-spi5-state {
-+				pins = "gpio36", "gpio37", "gpio38", "gpio39";
-+				function = "qup0_se5";
-+			};
-+
-+			qup_spi7_default: qup-spi7-state {
-+				pins = "gpio40", "gpio41", "gpio42", "gpio43";
-+				function = "qup1_se0";
-+			};
-+
-+			qup_spi8_default: qup-spi8-state {
-+				pins = "gpio42", "gpio43", "gpio40", "gpio41";
-+				function = "qup1_se1";
-+			};
-+
-+			qup_spi9_default: qup-spi9-state {
-+				pins = "gpio46", "gpio47", "gpio44", "gpio45";
-+				function = "qup1_se2";
-+			};
-+
-+			qup_spi10_default: qup-spi10-state {
-+				pins = "gpio44", "gpio45", "gpio46", "gpio47";
-+				function = "qup1_se3";
-+			};
-+
-+			qup_spi11_default: qup-spi11-state {
-+				pins = "gpio48", "gpio49", "gpio50", "gpio51";
-+				function = "qup1_se4";
-+			};
-+
-+			qup_spi12_default: qup-spi12-state {
-+				pins = "gpio52", "gpio53", "gpio54", "gpio55";
-+				function = "qup1_se5";
-+			};
-+
-+			qup_spi14_default: qup-spi14-state {
-+				pins = "gpio80", "gpio81", "gpio82", "gpio83";
-+				function = "qup2_se0";
-+			};
-+
-+			qup_spi15_default: qup-spi15-state {
-+				pins = "gpio84", "gpio85", "gpio99", "gpio100";
-+				function = "qup2_se1";
-+			};
-+
-+			qup_spi16_default: qup-spi16-state {
-+				pins = "gpio86", "gpio87", "gpio88", "gpio89";
-+				function = "qup2_se2";
-+			};
-+
-+			qup_spi17_default: qup-spi17-state {
-+				pins = "gpio91", "gpio92", "gpio93", "gpio94";
-+				function = "qup2_se3";
-+			};
-+
-+			qup_spi18_default: qup-spi18-state {
-+				pins = "gpio95", "gpio96", "gpio97", "gpio98";
-+				function = "qup2_se4";
-+			};
-+
-+			qup_spi19_default: qup-spi19-state {
-+				pins = "gpio99", "gpio100", "gpio84", "gpio85";
-+				function = "qup2_se5";
-+			};
-+
-+			qup_spi20_default: qup-spi20-state {
-+				pins = "gpio97", "gpio98", "gpio95", "gpio96";
-+				function = "qup2_se6";
-+			};
-+
-+			qup_spi21_default: qup-spi21-state {
-+				pins = "gpio13", "gpio14", "gpio15", "gpio16";
-+				function = "qup3_se0";
-+			};
-+
-+			qup_uart0_default: qup-uart0-state {
-+				qup_uart0_cts: qup-uart0-cts-pins {
-+					pins = "gpio20";
-+					function = "qup0_se0";
-+				};
-+
-+				qup_uart0_rts: qup-uart0-rts-pins {
-+					pins = "gpio21";
-+					function = "qup0_se0";
-+				};
-+
-+				qup_uart0_tx: qup-uart0-tx-pins {
-+					pins = "gpio22";
-+					function = "qup0_se0";
-+				};
-+
-+				qup_uart0_rx: qup-uart0-rx-pins {
-+					pins = "gpio23";
-+					function = "qup0_se0";
-+				};
-+			};
-+
-+			qup_uart1_default: qup-uart1-state {
-+				qup_uart1_cts: qup-uart1-cts-pins {
-+					pins = "gpio24";
-+					function = "qup0_se1";
-+				};
-+
-+				qup_uart1_rts: qup-uart1-rts-pins {
-+					pins = "gpio25";
-+					function = "qup0_se1";
-+				};
-+
-+				qup_uart1_tx: qup-uart1-tx-pins {
-+					pins = "gpio26";
-+					function = "qup0_se1";
-+				};
-+
-+				qup_uart1_rx: qup-uart1-rx-pins {
-+					pins = "gpio27";
-+					function = "qup0_se1";
-+				};
-+			};
-+
-+			qup_uart2_default: qup-uart2-state {
-+				qup_uart2_cts: qup-uart2-cts-pins {
-+					pins = "gpio36";
-+					function = "qup0_se2";
-+				};
-+
-+				qup_uart2_rts: qup-uart2-rts-pins {
-+					pins = "gpio37";
-+					function = "qup0_se2";
-+				};
-+
-+				qup_uart2_tx: qup-uart2-tx-pins {
-+					pins = "gpio38";
-+					function = "qup0_se2";
-+				};
-+
-+				qup_uart2_rx: qup-uart2-rx-pins {
-+					pins = "gpio39";
-+					function = "qup0_se2";
-+				};
-+			};
-+
-+			qup_uart3_default: qup-uart3-state {
-+				qup_uart3_cts: qup-uart3-cts-pins {
-+					pins = "gpio28";
-+					function = "qup0_se3";
-+				};
-+
-+				qup_uart3_rts: qup-uart3-rts-pins {
-+					pins = "gpio29";
-+					function = "qup0_se3";
-+				};
-+
-+				qup_uart3_tx: qup-uart3-tx-pins {
-+					pins = "gpio30";
-+					function = "qup0_se3";
-+				};
-+
-+				qup_uart3_rx: qup-uart3-rx-pins {
-+					pins = "gpio31";
-+					function = "qup0_se3";
-+				};
-+			};
-+
-+			qup_uart4_default: qup-uart4-state {
-+				qup_uart4_cts: qup-uart4-cts-pins {
-+					pins = "gpio32";
-+					function = "qup0_se4";
-+				};
-+
-+				qup_uart4_rts: qup-uart4-rts-pins {
-+					pins = "gpio33";
-+					function = "qup0_se4";
-+				};
-+
-+				qup_uart4_tx: qup-uart4-tx-pins {
-+					pins = "gpio34";
-+					function = "qup0_se4";
-+				};
-+
-+				qup_uart4_rx: qup-uart4-rx-pins {
-+					pins = "gpio35";
-+					function = "qup0_se4";
-+				};
-+			};
-+
-+			qup_uart5_default: qup-uart5-state {
-+				qup_uart5_cts: qup-uart5-cts-pins {
-+					pins = "gpio36";
-+					function = "qup0_se5";
-+				};
-+
-+				qup_uart5_rts: qup-uart5-rts-pins {
-+					pins = "gpio37";
-+					function = "qup0_se5";
-+				};
-+
-+				qup_uart5_tx: qup-uart5-tx-pins {
-+					pins = "gpio38";
-+					function = "qup0_se5";
-+				};
-+
-+				qup_uart5_rx: qup-uart5-rx-pins {
-+					pins = "gpio39";
-+					function = "qup0_se5";
-+				};
-+			};
-+
-+			qup_uart7_default: qup-uart7-state {
-+				qup_uart7_cts: qup-uart7-cts-pins {
-+					pins = "gpio40";
-+					function = "qup1_se0";
-+				};
-+
-+				qup_uart7_rts: qup-uart7-rts-pins {
-+					pins = "gpio41";
-+					function = "qup1_se0";
-+				};
-+
-+				qup_uart7_tx: qup-uart7-tx-pins {
-+					pins = "gpio42";
-+					function = "qup1_se0";
-+				};
-+
-+				qup_uart7_rx: qup-uart7-rx-pins {
-+					pins = "gpio43";
-+					function = "qup1_se0";
-+				};
-+			};
-+
-+			qup_uart8_default: qup-uart8-state {
-+				qup_uart8_cts: qup-uart8-cts-pins {
-+					pins = "gpio42";
-+					function = "qup1_se1";
-+				};
-+
-+				qup_uart8_rts: qup-uart8-rts-pins {
-+					pins = "gpio43";
-+					function = "qup1_se1";
-+				};
-+
-+				qup_uart8_tx: qup-uart8-tx-pins {
-+					pins = "gpio40";
-+					function = "qup1_se1";
-+				};
-+
-+				qup_uart8_rx: qup-uart8-rx-pins {
-+					pins = "gpio41";
-+					function = "qup1_se1";
-+				};
-+			};
-+
-+			qup_uart9_default: qup-uart9-state {
-+				qup_uart9_cts: qup-uart9-cts-pins {
-+					pins = "gpio46";
-+					function = "qup1_se2";
-+				};
-+
-+				qup_uart9_rts: qup-uart9-rts-pins {
-+					pins = "gpio47";
-+					function = "qup1_se2";
-+				};
-+
-+				qup_uart9_tx: qup-uart9-tx-pins {
-+					pins = "gpio44";
-+					function = "qup1_se2";
-+				};
-+
-+				qup_uart9_rx: qup-uart9-rx-pins {
-+					pins = "gpio45";
-+					function = "qup1_se2";
-+				};
-+			};
-+
-+			qup_uart10_default: qup-uart10-state {
-+				pins = "gpio46", "gpio47";
-+				function = "qup1_se3";
-+			};
-+
-+			qup_uart11_default: qup-uart11-state {
-+				qup_uart11_cts: qup-uart11-cts-pins {
-+					pins = "gpio48";
-+					function = "qup1_se4";
-+				};
-+
-+				qup_uart11_rts: qup-uart11-rts-pins {
-+					pins = "gpio49";
-+					function = "qup1_se4";
-+				};
-+
-+				qup_uart11_tx: qup-uart11-tx-pins {
-+					pins = "gpio50";
-+					function = "qup1_se4";
-+				};
-+
-+				qup_uart11_rx: qup-uart11-rx-pins {
-+					pins = "gpio51";
-+					function = "qup1_se4";
-+				};
-+			};
-+
-+			qup_uart12_default: qup-uart12-state {
-+				qup_uart12_cts: qup-uart12-cts-pins {
-+					pins = "gpio52";
-+					function = "qup1_se5";
-+				};
-+
-+				qup_uart12_rts: qup-uart12-rts-pins {
-+					pins = "gpio53";
-+					function = "qup1_se5";
-+				};
-+
-+				qup_uart12_tx: qup-uart12-tx-pins {
-+					pins = "gpio54";
-+					function = "qup1_se5";
-+				};
-+
-+				qup_uart12_rx: qup-uart12-rx-pins {
-+					pins = "gpio55";
-+					function = "qup1_se5";
-+				};
-+			};
-+
-+			qup_uart14_default: qup-uart14-state {
-+				qup_uart14_cts: qup-uart14-cts-pins {
-+					pins = "gpio80";
-+					function = "qup2_se0";
-+				};
-+
-+				qup_uart14_rts: qup-uart14-rts-pins {
-+					pins = "gpio81";
-+					function = "qup2_se0";
-+				};
-+
-+				qup_uart14_tx: qup-uart14-tx-pins {
-+					pins = "gpio82";
-+					function = "qup2_se0";
-+				};
-+
-+				qup_uart14_rx: qup-uart14-rx-pins {
-+					pins = "gpio83";
-+					function = "qup2_se0";
-+				};
-+			};
-+
-+			qup_uart15_default: qup-uart15-state {
-+				qup_uart15_cts: qup-uart15-cts-pins {
-+					pins = "gpio84";
-+					function = "qup2_se1";
-+				};
-+
-+				qup_uart15_rts: qup-uart15-rts-pins {
-+					pins = "gpio85";
-+					function = "qup2_se1";
-+				};
-+
-+				qup_uart15_tx: qup-uart15-tx-pins {
-+					pins = "gpio99";
-+					function = "qup2_se1";
-+				};
-+
-+				qup_uart15_rx: qup-uart15-rx-pins {
-+					pins = "gpio100";
-+					function = "qup2_se1";
-+				};
-+			};
-+
-+			qup_uart16_default: qup-uart16-state {
-+				qup_uart16_cts: qup-uart16-cts-pins {
-+					pins = "gpio86";
-+					function = "qup2_se2";
-+				};
-+
-+				qup_uart16_rts: qup-uart16-rts-pins {
-+					pins = "gpio87";
-+					function = "qup2_se2";
-+				};
-+
-+				qup_uart16_tx: qup-uart16-tx-pins {
-+					pins = "gpio88";
-+					function = "qup2_se2";
-+				};
-+
-+				qup_uart16_rx: qup-uart16-rx-pins {
-+					pins = "gpio89";
-+					function = "qup2_se2";
-+				};
-+			};
-+
-+			qup_uart17_default: qup-uart17-state {
-+				qup_uart17_cts: qup-uart17-cts-pins {
-+					pins = "gpio91";
-+					function = "qup2_se3";
-+				};
-+
-+				qup_uart17_rts: qup0-uart17-rts-pins {
-+					pins = "gpio92";
-+					function = "qup2_se3";
-+				};
-+
-+				qup_uart17_tx: qup0-uart17-tx-pins {
-+					pins = "gpio93";
-+					function = "qup2_se3";
-+				};
-+
-+				qup_uart17_rx: qup0-uart17-rx-pins {
-+					pins = "gpio94";
-+					function = "qup2_se3";
-+				};
-+			};
-+
-+			qup_uart18_default: qup-uart18-state {
-+				qup_uart18_cts: qup-uart18-cts-pins {
-+					pins = "gpio95";
-+					function = "qup2_se4";
-+				};
-+
-+				qup_uart18_rts: qup-uart18-rts-pins {
-+					pins = "gpio96";
-+					function = "qup2_se4";
-+				};
-+
-+				qup_uart18_tx: qup-uart18-tx-pins {
-+					pins = "gpio97";
-+					function = "qup2_se4";
-+				};
-+
-+				qup_uart18_rx: qup-uart18-rx-pins {
-+					pins = "gpio98";
-+					function = "qup2_se4";
-+				};
-+			};
-+
-+			qup_uart19_default: qup-uart19-state {
-+				qup_uart19_cts: qup-uart19-cts-pins {
-+					pins = "gpio99";
-+					function = "qup2_se5";
-+				};
-+
-+				qup_uart19_rts: qup-uart19-rts-pins {
-+					pins = "gpio100";
-+					function = "qup2_se5";
-+				};
-+
-+				qup_uart19_tx: qup-uart19-tx-pins {
-+					pins = "gpio84";
-+					function = "qup2_se5";
-+				};
-+
-+				qup_uart19_rx: qup-uart19-rx-pins {
-+					pins = "gpio85";
-+					function = "qup2_se5";
-+				};
-+			};
-+
-+			qup_uart20_default: qup-uart20-state {
-+				qup_uart20_cts: qup-uart20-cts-pins {
-+					pins = "gpio97";
-+					function = "qup2_se6";
-+				};
-+
-+				qup_uart20_rts: qup-uart20-rts-pins {
-+					pins = "gpio98";
-+					function = "qup2_se6";
-+				};
-+
-+				qup_uart20_tx: qup-uart20-tx-pins {
-+					pins = "gpio95";
-+					function = "qup2_se6";
-+				};
-+
-+				qup_uart20_rx: qup-uart20-rx-pins {
-+					pins = "gpio96";
-+					function = "qup2_se6";
-+				};
-+			};
-+
-+			qup_uart21_default: qup-uart21-state {
-+				qup_uart21_cts: qup-uart21-cts-pins {
-+					pins = "gpio13";
-+					function = "qup3_se0";
-+				};
-+
-+				qup_uart21_rts: qup-uart21-rts-pins {
-+					pins = "gpio14";
-+					function = "qup3_se0";
-+				};
-+
-+				qup_uart21_tx: qup-uart21-tx-pins {
-+					pins = "gpio15";
-+					function = "qup3_se0";
-+				};
-+
-+				qup_uart21_rx: qup-uart21-rx-pins {
-+					pins = "gpio16";
-+					function = "qup3_se0";
-+				};
-+			};
- 		};
- 
- 		sram: sram@146d8000 {
--- 
-2.34.1
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
+MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
+xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
+fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
+EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
+9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
+IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
+gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
+eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
+WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
+utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
+Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
+a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
+AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
+Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
+wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
+15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
+o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
+3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
+VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
+CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
+dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
+L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
+5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
+dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
+eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
+YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
+dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
+Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
+dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
+bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
+CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
+bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
+0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
+6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
+QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
+Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
+db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
+rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
+UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
+p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
+MDGCBAEwggP9AgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
+A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
+ggKEMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDQyOTE3
+MzUzNlowLwYJKoZIhvcNAQkEMSIEILDaUCA3Mj8M1xaZqBzRCklnvEs4epgeUdi/7QKXr7r+
+MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
+MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
+AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
+dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMIIBVwYJKoZIhvcNAQkPMYIBSDCCAUQw
+CwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzANBggqhkiG9w0DAgIBBTAN
+BggqhkiG9w0DAgIBBTAHBgUrDgMCBzANBggqhkiG9w0DAgIBBTAHBgUrDgMCGjALBglghkgB
+ZQMEAgEwCwYJYIZIAWUDBAICMAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZIAWUD
+BAIHMAsGCWCGSAFlAwQCCDALBglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3DQEB
+ATALBgkrgQUQhkg/AAIwCAYGK4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EEAQsD
+MAsGCSuBBRCGSD8AAzAIBgYrgQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQBDgMw
+DQYJKoZIhvcNAQEBBQAEggEAN3ne4fgscLmjZj/cHpco9SsAf+S8PyECg+XCJO/oi+dHbswP
+Gb8S3eVXuczUUuK4dThsnV7qjF6/YLsUaUNuc9xl7ANCptKFNUuu0pnQJAMnZp29icrjiCoW
+wOaOcevmRz8W9m/IbMmLjfQ1xQDQUiDHuJnmULm5cqu6D6qDP8ayqCA3Ty7ysRJiQ27An1yc
+Cw/fkuYWa7BSwQGWXSr0dxOV4IyNMw8mmNYQIdNX5MiqOMPLoUvfrJzlm5p+1jahJ90zEycy
+tyHzAlpeEF/KV6q1d43jwKgSvjkz7UbPPsppmvdb5Q7L6Kn8SJF8dYx56sY9ORZ75bdneK1+
+2ZxoaQAAAAAAAA==
+--------------ms040907060507070909050309--
 
 
