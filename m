@@ -1,186 +1,139 @@
-Return-Path: <linux-kernel+bounces-625860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528BFAA3B04
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DFAAA3B4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DF607B79A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:05:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F189A0E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC0126B972;
-	Tue, 29 Apr 2025 22:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BB8274FCD;
+	Tue, 29 Apr 2025 22:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1FaOVp4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="FbS3Woau"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D86B268FF9;
-	Tue, 29 Apr 2025 22:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234B1274678
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745964420; cv=none; b=HjXSorIwfkOz3Xlccl33VH7xEt9F9kdy/ix1l09OJFjKUGQOKdiaMxFaD9DumNceDyK7HC8bQbqEplc64Csm+cFMX0o96T6V3WC4xXwDHjUYT7SuB1Zuwuqz+UxmjYq8dw1k9WQaMyc8xU1T2VSRpgwWqS7KTy0P7DCwOKvw8Sc=
+	t=1745965181; cv=none; b=mGu/bY47cCC9UWHTfItIwb8R/tad5KbT0nErkj1qzWmvq0scgP6GYjzFrv2ni3Aq16U3I/36bv2i0GPPMEKs6z5+eRC+YPM0UM4kvILOC80RYo6JcsjCtF766VSIrbWJsnaDMuxkKm/KzfWbnukykESIG4DK9wvgXgdcBptsd34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745964420; c=relaxed/simple;
-	bh=rbjUHm4vjSzvx1jL+WAkU6QZDtxg0tARkYNO803VokE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TuvmgiK6ALWj5/qgwctTINCTGF8p6fLTAInL45xG/7CLtxle7TIMXJunMaJnEVoXEkGETWRwACoBjN/3jKrnTIjV4ZTWyvzmycfI4UZlRu2do4FBNr9TiP1Do4HQlM/1XJrcUu5VjL+nClAtzTLsrp+PCPykdZWeV7FvM/I6Vbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1FaOVp4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA51AC4CEE3;
-	Tue, 29 Apr 2025 22:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745964419;
-	bh=rbjUHm4vjSzvx1jL+WAkU6QZDtxg0tARkYNO803VokE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W1FaOVp4vPjJOVaFgQpccjGeKpQRbecEknN1GqBvoKOQ6E4P+nz6dbQYNZEXu9IpE
-	 JbcKLRKLakHdWad43gUWHVGnNso8m1GCmEfEIqM9E6TkRF+qDdo89DaJYjLlXqWVfM
-	 2nzBDx99ftFBXBozrFAI4jsCUwwaP4JyKf482eyaRqs+hORdoM39rctNgXC6rYRb7g
-	 dkow2i/PFMI+7XCgvNZh5g/440VEVK+SOhceTnB0roYTnQdfG2xV+96kJcwSStSrYm
-	 xIsP+a81krD7lAB/TWTjwaFfSp+5zIXranaMwrCFST2+gdEdmqrXk0QSjPtrl1Fwc+
-	 ns1LNv2vE+5Qg==
-Date: Tue, 29 Apr 2025 15:06:57 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Jason Xing <kernelxing@tencent.com>, Richard Cochran
- <richardcochran@gmail.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, "Russell King (Oracle)"
- <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next] net: Add support for providing the PTP
- hardware source in tsinfo
-Message-ID: <20250429150657.1f32a10c@kernel.org>
-In-Reply-To: <20250425-feature_ptp_source-v1-1-c2dfe7b2b8b4@bootlin.com>
-References: <20250425-feature_ptp_source-v1-1-c2dfe7b2b8b4@bootlin.com>
+	s=arc-20240116; t=1745965181; c=relaxed/simple;
+	bh=npwFnTkq6ClVsZtyhYC8oM+YtbGVUvfrZIC3pUaRyjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gs0bUssTXfFfDlAg/3wSdEWtuo+Sl8sViL+ihHJfO5GSnzg+J6DqMaxOnpJzVkPzwOzWj9ggeiy8nc1TpjeVVI1ut9vojrHMdmmJoGLpzssqLI5/a+MV/PTWIVJb4j3QEW+WNfOFaQZjoYb6MKoUU/yduuplSQiFci4Sop5AOCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=FbS3Woau; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72bb9725de1so1312063a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1745965178; x=1746569978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=et/K/MNghigKGWczEEZX99Lv+RpVbFTZl6Eg9jXsd/g=;
+        b=FbS3WoauLsv3CHDOf2vKYAYTcYlr454zQ86OZYI75TuUHPe0Xsp+sCmA8TrlwOJkG8
+         6ma870VDjtqbzUDyJpW0cXIdYv2bWzwro+VJzpG0boniR75gLCAdKwEy5lMqiEneVCLa
+         8oR8X+NAKXvrItlW4cofKL+8wLi1nKGhFUUI/7QjVf6S48kjdWzyULI30XR9y4cT8Kb7
+         Nd+6zNirChEt2e64dn5lSgwTIW04nb8ULIwvfA6YiMPVaFLoMZ0P4aIrHKswargdrn3G
+         DUieavxFN4HEwREc7JAqLeUkHYVTxZMJbrXDm6lJuCA9mU5k0kY7fX44QNpRhC9q+xTt
+         YyLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745965178; x=1746569978;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=et/K/MNghigKGWczEEZX99Lv+RpVbFTZl6Eg9jXsd/g=;
+        b=UyUjIMaNy8oPyY9jQVLxttNwDx2Q1nUZ9OqOXaqEGe3SLJcryW4IeWz9h0K2sKosPy
+         8c1fBRfvVastkXB+V0+tFLhcF0erLonSd26OuZucr/dbFN0J+r/XkypytsPPDAdqGOJB
+         8tL8oZxLYBzqw1d+WvHgPZxbBTDubCEMw5Azp6n894G64yeFy+MHCBgV1ySrPRKlJPFh
+         l/4wRlJhZzvtJuP/hX/oJDb8tAXMZtb5SJLgvMIsoYgDpiaMfPa1Zd5beBH+X3UIXPzk
+         bPBGDtb2kIfakEYQBA25z9VP9DwDGTfjP7JBU8xhEFsBbn7GhaeK4E7npr8GRxg9N/p4
+         ez4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXPnV3deuQJj/UbKtrVsqOkkILNVeMqMYRt69/I/f8tKlHnG3G2cnaDBu3/xfSg5K+f+CaWKU4KMVNsB+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBpf3GSSzn5XQQoJd9U2rDF0b3HCAE1TUKEdcUUnOBrpyxwMQ/
+	tyXh+ZhxFZnmWA+Tyr0J50VuDAyLl4cEP4sa5dQd9XAvwp0eAv+Fiuby+YsLKSU=
+X-Gm-Gg: ASbGncsHQ+NVdhVwdTXvu5H8rYhWXYOhBudvRH7U9xLIZlZ08Ats9hSbN428A9wCD5e
+	3gGE0l0TF8kpeoujPg2QTXRoNDzwf/V1Cnqd0YilBlhr4R3eC53nfRY0wGxOuBjuCv/8RZ+b1Mn
+	tVqreKmvn5RLzR7/oqyiRpjShWeToKJzhvT+PFHR+/B1FVfG6SNZV64wKmmNJ0GOI0GIn7uLGiB
+	391yC7A/UUXBQYSV21bzoHQAPwC6+DKawkAZVAMJq9w/tzDNSnxpB96GlLlLPvyXpyZwKRGaRzz
+	dPxNeyJvVviAIn27gU02wBRm2ysmI7/kvELsW+oBDiKSiIorDqCc7Ls/SIO5HvGRqNErMxPLjPq
+	UjyGiSkY=
+X-Google-Smtp-Source: AGHT+IGspJVlKsD2nNxDA5jmTflNeQsTYpJafp1NHFwSsJfZ8IPEGuUMeZp4V9HwbgY2c0zlDT2u5g==
+X-Received: by 2002:a05:6808:6095:b0:3fe:aeaf:316d with SMTP id 5614622812f47-402c7267c82mr215187b6e.20.1745965177994;
+        Tue, 29 Apr 2025 15:19:37 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40212c4dbf2sm473764b6e.47.2025.04.29.15.19.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 15:19:37 -0700 (PDT)
+Message-ID: <94faa778-38d5-4ea5-aa0d-9259b56999a4@vt.edu>
+Date: Tue, 29 Apr 2025 15:52:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] Reduce CPU consumption after panic
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, carlos.bilbao@kernel.org,
+ tglx@linutronix.de, seanjc@google.com, jan.glauber@gmail.com,
+ pmladek@suse.com, jani.nikula@intel.com, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, takakura@valinux.co.jp,
+ john.ogness@linutronix.de, x86@kernel.org
+References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
+ <20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
+ <20250429210650.GD4439@noisy.programming.kicks-ass.net>
+ <433c6561-353e-4752-b9cf-155e49e62e63@vt.edu>
+ <20250429221049.GG4439@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Carlos Bilbao <bilbao@vt.edu>
+In-Reply-To: <20250429221049.GG4439@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Apr 2025 19:42:43 +0200 Kory Maincent wrote:
-> Multi-PTP source support within a network topology has been merged,
-> but the hardware timestamp source is not yet exposed to users.
-> Currently, users only see the PTP index, which does not indicate
-> whether the timestamp comes from a PHY or a MAC.
+Hello,
+
+On 4/29/25 17:10, Peter Zijlstra wrote:
+> On Tue, Apr 29, 2025 at 03:32:56PM -0500, Carlos Bilbao wrote:
 > 
-> Add support for reporting the hwtstamp source using a
-> hwtstamp-source field, alongside hwtstamp-phyindex, to describe
-> the origin of the hardware timestamp.
+>> Yes, the machine is effectively dead, but as things stand today,
+>> it's still drawing resources unnecessarily.
+>>
+>> Who cares? An example, as mentioned in the cover letter, is Linux running
 > 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
-> Not sure moving the hwtstamp_source enum to uapi/linux/net_tstamp.h and
-> adding this header to ynl/Makefile.deps is the best choice. Maybe it is
-> better to move the enum directly to ethtool.h header.
+> Ah, see, I didn't have no cover letter, only akpm's reply.
+> 
+>> in VMs. Imagine a scenario where customers are billed based on CPU usage --
+>> having panicked VMs spinning in useless loops wastes their money. In shared
+>> envs, those wasted cycles could be used by other processes/VMs. But this
+>> is as much about the cloud as it is for laptops/embedded/anywhere -- Linux
+>> should avoid wasting resources wherever possible.
+> 
+> So I don't really buy the laptop and embedded case, people tend to look
+> at laptops when open, and get very impatient when they don't respond.
+> Embedded things really should have a watchdog.
+> 
+> Also, should you not be using panic_timeout to auto reboot your machine
+> in all these cases?
+> 
+> In any case, the VM nonsense, do they not have a virtual watchdog to
+> 'reap' crashed VMs or something?
 
-Weak preference for the YAML and therefore ethtool.h from my side.
-That way the doc strings will propagate to more places, like the HTML
-docs.
+The key word here is "should." Should embedded systems have a watchdog?
+Maybe. Should I've auto reboot set? Maybe. Perhaps I don’t want to reboot
+until I’ve root-caused the crash. But my patch set isn’t about “shoulds.”
+What I’m discussing here is (1) the default Linux behavior, and (2)
+providing people with the flexibility to do what THEY think they should do,
+not what you think they should do.
 
-> diff --git a/include/linux/net_tstamp.h b/include/linux/net_tstamp.h
-> index ff0758e88ea1008efe533cde003b12719bf4fcd3..1414aed0b6adeae15b56e7a99a7d9eeb43ba0b6c 100644
-> --- a/include/linux/net_tstamp.h
-> +++ b/include/linux/net_tstamp.h
-> @@ -13,12 +13,6 @@
->  					 SOF_TIMESTAMPING_TX_HARDWARE | \
->  					 SOF_TIMESTAMPING_RAW_HARDWARE)
->  
-> -enum hwtstamp_source {
-> -	HWTSTAMP_SOURCE_UNSPEC,
-
-when is unspec used in practice? Only path I could spot that may not
-set it is if we fetch the data by PHC index?
-
-> -	HWTSTAMP_SOURCE_NETDEV,
-> -	HWTSTAMP_SOURCE_PHYLIB,
-> -};
-> -
->  /**
->   * struct hwtstamp_provider_desc - hwtstamp provider description
->   *
-
-> diff --git a/include/uapi/linux/net_tstamp.h b/include/uapi/linux/net_tstamp.h
-> index a93e6ea37fb3a69f331b1c90851d4e68cb659a83..bf5fb9f7acf5c03aaa121e0cda3c0b1d83e49f71 100644
-> --- a/include/uapi/linux/net_tstamp.h
-> +++ b/include/uapi/linux/net_tstamp.h
-> @@ -13,6 +13,19 @@
->  #include <linux/types.h>
->  #include <linux/socket.h>   /* for SO_TIMESTAMPING */
->  
-> +/**
-> + * enum hwtstamp_source - Source of the hardware timestamp
-> + * @HWTSTAMP_SOURCE_UNSPEC: Source not specified or unknown
-> + * @HWTSTAMP_SOURCE_NETDEV: Hardware timestamp comes from the net device
-
-We should probably document that netdev here means that the timestamp
-comes from a MAC or device which has MAC and PHY integrated together?
-
-> + * @HWTSTAMP_SOURCE_PHYLIB: Hardware timestamp comes from one of the PHY
-> + *			    devices of the network topology
-> + */
-> +enum hwtstamp_source {
-> +	HWTSTAMP_SOURCE_UNSPEC,
-> +	HWTSTAMP_SOURCE_NETDEV,
-> +	HWTSTAMP_SOURCE_PHYLIB,
-> +};
-
-> --- a/net/ethtool/common.c
-> +++ b/net/ethtool/common.c
-> @@ -920,12 +920,20 @@ int ethtool_get_ts_info_by_phc(struct net_device *dev,
->  		struct phy_device *phy;
->  
->  		phy = ethtool_phy_get_ts_info_by_phc(dev, info, hwprov_desc);
-> -		if (IS_ERR(phy))
-> +		if (IS_ERR(phy)) {
->  			err = PTR_ERR(phy);
-> -		else
-> -			err = 0;
-> +			goto out;
-> +		}
-> +
-> +		info->phc_source = HWTSTAMP_SOURCE_PHYLIB;
-> +		info->phc_phyindex = phy->phyindex;
-> +		err = 0;
-> +		goto out;
-
-The goto before the else looks a bit odd now.
-Can we return directly in the error cases?
-There is no cleanup to be done.
-
-> +	} else {
-> +		info->phc_source = HWTSTAMP_SOURCE_NETDEV;
->  	}
->  
-> +out:
->  	info->so_timestamping |= SOF_TIMESTAMPING_RX_SOFTWARE |
->  				 SOF_TIMESTAMPING_SOFTWARE;
->  
-> @@ -947,10 +955,14 @@ int __ethtool_get_ts_info(struct net_device *dev,
->  
->  		ethtool_init_tsinfo(info);
->  		if (phy_is_default_hwtstamp(phydev) &&
-> -		    phy_has_tsinfo(phydev))
-> +		    phy_has_tsinfo(phydev)) {
->  			err = phy_ts_info(phydev, info);
-> -		else if (ops->get_ts_info)
-> +			info->phc_source = HWTSTAMP_SOURCE_PHYLIB;
-> +			info->phc_phyindex = phydev->phyindex;
-> +		} else if (ops->get_ts_info) {
->  			err = ops->get_ts_info(dev, info);
-> +			info->phc_source = HWTSTAMP_SOURCE_NETDEV;
-
-Let's move the assignment before the calls if we can?
-Otherwise someone adding code below may miss the fact that err may
-already be carrying an unhandled error.
-
+Thanks,
+Carlos
 
