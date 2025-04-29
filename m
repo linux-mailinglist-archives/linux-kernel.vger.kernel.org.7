@@ -1,175 +1,133 @@
-Return-Path: <linux-kernel+bounces-624595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB4CAA053B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:14:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CA6AA054A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 702D57A6F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:13:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67905A13FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641C727A12F;
-	Tue, 29 Apr 2025 08:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B725B280A57;
+	Tue, 29 Apr 2025 08:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jekk/LWd"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPt7ClTT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5188921CC43
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0188527B505;
+	Tue, 29 Apr 2025 08:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745914455; cv=none; b=VJlnRlnmNMwjXPfoF8ek5SVlmzIlJviS6oM5xPA4D9lLhtrsbnVvZEGrYXd7j6PRcAd0FF1mlPZolCBq6hivGnuSYrrjhe9yfWLyRcbxZOvOzU6E7qgJZk757iIDwizCVd8Dtryv5Dh3kNSeA823WX938xVWpLX9W/lOXkcSvQ0=
+	t=1745914467; cv=none; b=BDEA65ykd8NRx0wp7B+zY/D8Qt0zKkUsRRca3DCGqXkyvalU8ZtoiGdSUGUGnlT06r0hQFysJQAmEkfTIgYk3J1rAHQy/FelY8bv+PIiDo37NUlL1G1UPZYJ2i+1Rp8vNO8pce5e0v+MxU4/kY+Z3nz2idxkdbt812stO31pVQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745914455; c=relaxed/simple;
-	bh=Iu48VWXxfYE4qOtSs1aZeE/0tS1/xAFzJuATkvzf+Do=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dQ3E4Zd9j6QbVA5DFXznA1ZzgX+XJg8TrEW1H9EthNzUQWovXbYlhk6OuwzjTodEdAESbYWLSd4RsnzLa0KZSp5qzVyMPsLa0q5GeqkSYHMsxPpHq4vNErHB3z/0POlhgQu0fn1PKH3qGjYIX5l7q8ESJks+7wsON4Mhx/XVn1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jekk/LWd; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1745914445; bh=5AGJx+jsSbqy04UgbIsPfGmH+wCakCo1sPHJB3LsiSg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jekk/LWdLY14eqN9rI07k/Xvwwdxr3i2BWZTa5GYagjs0bjOwjy1ZlwLKNI+uOqRV
-	 a6aepq6IVTtnX8iwrSQcKqJ1VzzzYhERm11RaNZ3fQWe1MnVTk8d+KLleByuqvWZg2
-	 LnbA0qzIG95yuxgJIKo5KDg02kLfLqjigKSIFdLk=
-Received: from localhost.localdomain ([36.111.64.85])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 37B18054; Tue, 29 Apr 2025 16:13:59 +0800
-X-QQ-mid: xmsmtpt1745914439te7xwq5mq
-Message-ID: <tencent_2759B6462D88873D9249986B03C0E237EA08@qq.com>
-X-QQ-XMAILINFO: N2zgDHximsrqvlBh7+K6XVa8JoDBlSiCexDqHwpV1q03j44E+wmnOyXe3KJUnA
-	 QEIoLy82kd121OSZOrqFFcMyijnA7yu4fBsl4XLKWsWfOGKvyr24qwHq1D6jyKNSGu9Jx6mWaxGT
-	 EoO23m06BYhOmgNd9yhjRpxIo1iWitrwgmPzktHsVmtT0jydmpSe3uZ9FgHWHb84XAyhOY47mL1t
-	 D6L8FBZA4yx4lHBtgiHLGGWg5HBtB+U3dyTz0QBtkF4l6SqJ36pS1Ip5p14utdsBp86uzE8YsZka
-	 vyp0v+s6Hyvaj/beU397lejWdbQ+V1WeW3JxnUDmpu8MQyO+4sFLmhrn9kYq3+r8p58d/opVrRsh
-	 9rluUOufR0QGkVbKNv7P2PSoFFLInjtIYKDHZme8fpm5p2or5COTd/LJ1K/fZ1/+TG9Sx2yOt9vs
-	 BgS7EhESn2MPj/IIZxaO1Uu1ZrjxIkLGuHXzOwG08hbpnmgV0gL71ZbO5IchHxNKC0MgrBbDwaiN
-	 DJRjDkewfKCSZf6Zjg5pndjv2W+dMzVxzu/fTm5SG6Rm6BDQaEienFY9M3/CXevyC6acO1B7yxSm
-	 Mo2oZIqC32JKk7+ku67nTlX6kUHqUoJXgjj3Hxau36VBk/pDO8L5pS2cH9fYSrUCKvyi6QpEnzlP
-	 JTD/6jFHU+uqgqW9PRfw/+IPeex8EW2FTOHNjJgOcagl63RDbb5xmknxbYJDR5L1Kziaz81MNYAV
-	 tmjjO/l+JKFiaToxn/cvCpDGu0KGJRxVF/hr9Ry/70rx4CoPZjrtEW4JX5/EOH1BMiw2lZxtKCVt
-	 ofAJOn22ZsR8nvIeOREABCAIlJS/9rwNlybicpCspQ8yk3QgHEcJTgqEhjRCrb3lM4CTjgubZxgC
-	 eXPBGM0DlDuAyc8Qp2tEW0Bo5n0OFLibnyDM2yspAL/A8fFFxij3LGY69idt4pHcecPbd5APZUPP
-	 zmpNymX5QX44UNbFU5SSCoI6zAgDzqpVhDH9IDI9+dEkoh2T/mqA==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Feng Lee <379943137@qq.com>
-To: 21cnbao@gmail.com
-Cc: david@redhat.com,
-	akpm@linux-foundation.org,
-	ryan.roberts@arm.com,
-	libang.li@antgroup.com,
-	peterx@redhat.com,
-	maobibo@loongson.cn,
-	lance.yang@linux.dev,
-	anshuman.khandual@arm.com,
-	trivial@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: remove useless code
-Date: Tue, 29 Apr 2025 16:13:00 +0800
-X-OQ-MSGID: <20250429081322.7791-1-379943137@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <CAGsJ_4zn158TQV7Nc+vK-kmu6S4kOiFSZyUO7aK9dhwhrEq2cw@mail.gmail.com>
-References: <CAGsJ_4zn158TQV7Nc+vK-kmu6S4kOiFSZyUO7aK9dhwhrEq2cw@mail.gmail.com>
+	s=arc-20240116; t=1745914467; c=relaxed/simple;
+	bh=Plr+eKET24dQ8Cc4qkU4oOyv/FkIHbVvHYuJwqLayx0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qnBzD30hCOTxHB0t9GUkKPYg1cQ20GzVf03SZN1MFX7ni6PFXIMgpoTvzU1Kr8MANWfwxWK3i5jETbS94f8tdVFcXb/VuZbEOvDIKhv4mBG/Y/6UiycFLgzdcXISXqo77VWy4357ITiWXKd+flKibMVrYIMnpFB5VnDf3c3CZe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPt7ClTT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 77B59C4CEE3;
+	Tue, 29 Apr 2025 08:14:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745914466;
+	bh=Plr+eKET24dQ8Cc4qkU4oOyv/FkIHbVvHYuJwqLayx0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=bPt7ClTTXxsUQx8mrVoF2onrKglSrN/BqoMcoM6bNf+s7k1J7LcCmkgbOBNJi1FDp
+	 QRk3+HYJ7ijCSV+pnWtTEdzG/liAmBeIhPajnktEcD9P3AhxBPx2zbvHuC48MOUVbS
+	 TKl0d+79JOdfOfcpl2tnekYWJ5IKfYJoFhnbxqtgFH/V2l+Nm2E3HfdanJsn/pwKxy
+	 E1DJXuQOLG162moUWnI/bh3G4RFZMOkV1QXtEOsy+O43O+YIWdR02BGsqJnXxU2hMM
+	 7g0KACYpTXISsiLnJwgiD7gBriiEUqs2kHUjSWWTjBupquBkctYl0F33VbRteBWNnp
+	 0G/Z/FcS7hFpg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8B4C369DC;
+	Tue, 29 Apr 2025 08:14:26 +0000 (UTC)
+From: Sung-Chi Li via B4 Relay <devnull+lschyi.chromium.org@kernel.org>
+Subject: [PATCH 0/3] Export fan control and register fans as cooling
+ devices
+Date: Tue, 29 Apr 2025 16:14:20 +0800
+Message-Id: <20250429-cros_ec_fan-v1-0-a8d9e3efbb1a@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFyKEGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEyNL3eSi/OL41OT4tMQ83ZRE4yQzk8Rky2RDAyWgjoKi1LTMCrBp0bG
+ 1tQBABFOaXQAAAA==
+X-Change-ID: 20250429-cros_ec_fan-da3b64ac9c10
+To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Sung-Chi Li <lschyi@google.com>, Sung-Chi Li <lschyi@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745914465; l=2176;
+ i=lschyi@chromium.org; s=20250429; h=from:subject:message-id;
+ bh=Plr+eKET24dQ8Cc4qkU4oOyv/FkIHbVvHYuJwqLayx0=;
+ b=B+aPviG+tNfkDTwtlggR0zOZTRRU03+WGP9jdqEtermjB3Z2bUBztZ357bM6C4CzxoEjJuoBK
+ exqeoiWY7LmAU6Nr6j7XhC29otBOCoENKGoq0Y5jQaso56VLRpwqrBw
+X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
+ pk=9gCZPRJmYyHDt6VN9FV2UreFcUr73JFrwYvmsltW9Y8=
+X-Endpoint-Received: by B4 Relay for lschyi@chromium.org/20250429 with
+ auth_id=392
+X-Original-From: Sung-Chi Li <lschyi@chromium.org>
+Reply-To: lschyi@chromium.org
 
-> On Mon, Apr 28, 2025 at 7:17 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 27.04.25 10:22, Barry Song wrote:
->>> On Sun, Apr 27, 2025 at 2:16 PM Feng Lee <379943137@qq.com> wrote:
->>>>
->>>> Remove unused conditional macros.
->>>>
->>>> Signed-off-by: Feng Lee <379943137@qq.com>
->>>> ---
->>>>   include/linux/pgtable.h | 2 --
->>>>   1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->>>> index b50447ef1c92..47c5a54b7551 100644
->>>> --- a/include/linux/pgtable.h
->>>> +++ b/include/linux/pgtable.h
->>>> @@ -1164,9 +1164,7 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
->>>>   }
->>>>   #endif
->>>>
->>>> -#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
->>>>   #define pgd_offset_gate(mm, addr)      pgd_offset(mm, addr)
->>>> -#endif
->>>
->>> Do you know who else had pgd_offset_gate() before except ia64?
->>>
->>> /* Look up a pgd entry in the gate area.  On IA-64, the gate-area
->>>     resides in the kernel-mapped segment, hence we use pgd_offset_k()
->>>     here.  */
->>> #define pgd_offset_gate(mm, addr) pgd_offset_k(addr)
->>>
->>> btw, do we still
->>> need pgd_offset_gate() given that nobody needs it now?
->>>
->>>     1   1168  include/linux/pgtable.h <<GLOBAL>>
->>>               #define pgd_offset_gate(mm, addr) pgd_offset(mm, addr)
->>>
->>>     2   1112  mm/gup.c <<get_gate_page>>
->>>               pgd = pgd_offset_gate(mm, address);
->>>
->>
->> Right, we should just remove pgd_offset_gate() completely in this patch
->> and simply make the single caller use pgd_offset().
->
-> Yes, exactly. The original patch doesn’t seem to be appropriate.
->
->>
->> I think we can even do:
->>
->> diff --git a/mm/gup.c b/mm/gup.c
->> index 84461d384ae2b..05dd87ccce155 100644
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@ -1106,10 +1106,7 @@ static int get_gate_page(struct mm_struct *mm,
->> unsigned long address,
->>          /* user gate pages are read-only */
->>          if (gup_flags & FOLL_WRITE)
->>                  return -EFAULT;
->> -       if (address > TASK_SIZE)
->> -               pgd = pgd_offset_k(address);
->> -       else
->> -               pgd = pgd_offset_gate(mm, address);
->> +       pgd = pgd_offset(address);
->>          if (pgd_none(*pgd))
->>                  return -EFAULT;
->>          p4d = p4d_offset(pgd, address);
->>
->> Unless I am missing something important :)
->
-> Technically, it appears to be correct. However, it seems that
-> pgd_offset_k is primarily used to improve readability by
-> distinguishing between kernel space and user space?
+This is a continuation of the previous series "Export the target RPM fan
+control by ChromeOS EC under hwmon"
+(https://lore.kernel.org/lkml/20250313-extend_ec_hwmon_fan-v1-0-5c566776f2c4@chromium.org/T/#t).
+There is a change from controlling the target fan RPM value to control
+the PWM value.
 
-Agreed, readability seems to be the key consideration here.
+We anticipate to involve fans connected to EC as thermal cooling
+devices, so we can utilize the thermal framework to have further thermal
+control strategies.
 
->
->>
->> --
->> Cheers,
->>
->> David / dhildenb
->>
->
-> Thanks
-> Barry
+This series updates the required EC controls definitions, implements the
+mechanism for controlling fan PWM values, and registers these fans under
+thermal framework as cooling devices.
+
+Adapting comments from the previous series, the driver probes the host
+command capability at beginning to see whether a fan is controllable:
+  - if command `EC_CMD_PWM_GET_FAN_DUTY` is supported (v0, this is a
+    new command).
+  - if command `EC_CMD_THERMAL_AUTO_FAN_CTRL` v2 is supported.
+  - if command `EC_CMD_PWM_SET_FAN_DUTY` v1 is supported.
+
+This combination is selected as this is the minimum requirement for a
+fan to be fully controllable under hwmon framework.
+
+The driver supports changing the fan control mode, and allows to change
+the fan PWM value only if the fan is in manual control mode. The power
+management hook is implemented as well for keeping the fan control
+settings, as EC will automatically restore the control method to auto
+when device is suspended.
+
+Change-Id: I4e2fdc8c4bc50778c0d04cfbefeaab7088d3181e
+Signed-off-by: Sung-Chi Li <lschyi@google.com>
+---
+Sung-Chi Li (3):
+      platform/chrome: update pwm fan control host commands
+      hwmon: (cros_ec) add PWM control over fans
+      hwmon: (cros_ec) register fans into thermal framework cooling devices
+
+ Documentation/hwmon/cros_ec_hwmon.rst          |   7 +-
+ drivers/hwmon/cros_ec_hwmon.c                  | 309 ++++++++++++++++++++++++-
+ include/linux/platform_data/cros_ec_commands.h |  29 ++-
+ 3 files changed, 339 insertions(+), 6 deletions(-)
+---
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+change-id: 20250429-cros_ec_fan-da3b64ac9c10
 
 Best regards,
-Feng
+-- 
+Sung-Chi Li <lschyi@chromium.org>
+
 
 
