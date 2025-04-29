@@ -1,243 +1,217 @@
-Return-Path: <linux-kernel+bounces-625879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FD2AA3B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F04DAA3B75
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3256898382B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1279A3BA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B001427465F;
-	Tue, 29 Apr 2025 22:24:29 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A1D278E6B;
+	Tue, 29 Apr 2025 22:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJ6KqqbV"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7370E7E9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 22:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FD92749ED;
+	Tue, 29 Apr 2025 22:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745965469; cv=none; b=d9y0c0VyPB8YIH4blPe9fuYhz8hCj2Bp7o4r9vg+Veq+e/ciqNBtc+0K7wBnIWYvgHyqXt7b1EILeM0qKBcHoBpXp+X22DJ7RrcQzyYvSEPWobkXClFYRv+ol4d/LMw70081GIyZN9LBsM82xiqF5MHFPTc9UJ/BgSZ4XfvHlKI=
+	t=1745965641; cv=none; b=kcwXP2a5LukXJPto3XO6jMiuyh01uM7tcwoDtOoDIoZs7EDfaVk1QfveLZDYXyfIk8zQ9ptLAySA+NqNY4DE+SBzED5M1SGqDOy+QPrynci4qun563tg9PiGH+ME49sBK0xNpQUkHamg9hLDoR6aUxvDkfd55eTsLF1EidgcaN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745965469; c=relaxed/simple;
-	bh=ZxjSSO3zSdfQ+0uQV9kS+bFB1X651PDwoMLjLyWGzPI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Si4pOORXZgPkeSxIRPUh/eu9b1Wcae/1mZ178Epkg6T3JTSQZUN5+a4kuzY2v4eUlmdCkWHlA0DUn0Bt0K3AJWrlEhwf2uE95TwTbdqK8MTN29L0rr/KlSp50X53pbdZ6zvCkK2xWwJutKm5OnvSEXup4fKIhc18R90OUTyRnZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-85e7e0413c2so573801139f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:24:27 -0700 (PDT)
+	s=arc-20240116; t=1745965641; c=relaxed/simple;
+	bh=OtGRqdpcH2U0CtLkLJmpDiCYxHQ/nTJLUL4O01UeOIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MRj5cxxWGbGcy/Iq6y/xlA5D67Ei/IAU/1SLMWLgvO70WU47irwp/S9v7UX8BiH5wpoTz2MnzUtEnBPHJu4YRBlLTmzHPBoW0bKeA7W91CFp1gHI2ds4XjUPzVfzHzDYS9fmelSuFzLfgBEdd7pPMgRY42/70PexSixQX3qdTpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJ6KqqbV; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso1165083366b.0;
+        Tue, 29 Apr 2025 15:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745965638; x=1746570438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zd9gQCsKJpq8vf5tNDACpW4tnOCKgHHE95O2VfBWGgw=;
+        b=lJ6KqqbVnwOBoeuLZFoL3MQeu6BYOV7II8KbYTTDkM97GSbMsO7aNQFFgteV7lv8Fj
+         34kyMk0F7vmVp4o1AmPsaKdIpoTivsHF2Z92R1SEe7su2Dd0wnQbr98COshv5wx8xuJh
+         xRQObbUx3m3cu3hvplVf4SV8LN6r0O4zQL3xF0nr+14bdzvq8I4aTqvuT42AWWYuZV9u
+         fn8HqJHh8fomlbl8R6dVa0Su8RpH3Yn+4or8I7rKv0svE1HCvHcyHC6MZ/wy/wurDlnw
+         n7N89wiqctqA3qQ9og3xQuA/V0m6mMvkcL+XruWcVjOsUcbyg07uF72nMhWqmYYpkyGR
+         UqMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745965466; x=1746570266;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IdNXUZqQeuiW9B9XnKTAPLYvVVlrDQjOW3qEnnYK9gQ=;
-        b=pXSMa4TISctM/lyXMsd8dVBe+7egGlptB2mn3v+WTrmsCkB7it+XDwBmsgg0M2hqti
-         wJCQQKndf1Ezonnl2sVCgwHPA8oCnHm/xoW9ZfrpDRMZ2C90BDSwVafUaYXDhPOBEBPT
-         mBHhgByWMmdaLujtwHtrQhnaWpn3iFkIQxVe6aurL6M68MyqFrIBy3d1/8LT2HzUEe+D
-         n1G8roJj9q5y/4jMvnoVCnQwsaca61LYBvWlLlakO8bny8jyzOe4YbRmTC5H0ZxrzWlu
-         lhVxlxNuBWjCwJuhn+d7QGkUaBAiT4cVTCSERa1fhU+AzSTMA+u7KQjY50S8mmeAjN1u
-         yApw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXFBmmPKktdU9c+ivY+4L47FZfFKzq5sPOKDsUJcQR6OSoOnH3wGNLn0W3JyHxxj0ELsZwn+w6eKAoFrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6wug2LXCq2MFXuKwY9hMwKOOPr09upj1e1SJ0jD6ijkwAlhJ6
-	mn+ELKHcrqsWxKwR2rL+ppgpK8QDtOhEiTonpdcNs5j3BBjDjUIQI5LjW/63V8ov5j5ggxgyJBB
-	2xup47Tk53a0XMqCg0o5cNB4DgL88V8Mo9Nv7AXIAKRtyCJkGfnFQRYE=
-X-Google-Smtp-Source: AGHT+IG3BV9QV3T1xpNWUZM+44RrpkkuPVTnvQP0+PP2B8noLWzU3V0Zb6ry2PiikVafiQM5UcCgqe0GikC6NRLq1VaLIVh1onl2
+        d=1e100.net; s=20230601; t=1745965638; x=1746570438;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zd9gQCsKJpq8vf5tNDACpW4tnOCKgHHE95O2VfBWGgw=;
+        b=IUe3fZLPpgL4XqxO9Td/YI7q061GQ+F6FKh55Qx4RDj3lmoUNxX17BUqk6+1S4oKCc
+         ehM1BZfAAgACgXjxytJFlCpKlr6CbMUkHNPkD4vnisIr+HFQTF9CJnYxdSG2gVfdZ5hI
+         QsMeBd/OS+qav+zMMD9Sf2nSgytwvWR4YIWdAcBevptngLXpbZukaGp5GNe0CI0nBVYw
+         TPf4qhl9If+OtlXW6c5+Zh2rPjra0Te5A/Jf5m2g7bFu9SauGUa3ewUzq4YuC5ksX/9Z
+         eOPZ84/+wR6uSlz6yoGfIHhkZ0IlKDr+MBKzoqWn61CiaT5cAh3phdx8pbN39xHoQ2d4
+         W1sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNTkoTEZNA1iXIE+Oo4AUf9cwBHDA6G2qTmmvP8z4JcBTKX4T6vwSPKQnKZO+6+Nn+e8eEv3Trw8mW@vger.kernel.org, AJvYcCVdzymBQ7A/LtsrZ0bxNtOAc59CfnXO7kBe093Ae+uaVHH9ZvvomJFS6hEONxlh0KPDiPpWbC/otx+DwJjn@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe6gq3OZCO4njNJIEz8lf94cui1wykurt8nxuB991ag4WeYA7c
+	b2rxZkdMd4HyTqVBxevvgt5PBxdf6QI7zwkXTSgd825svV029fRj4XSQU0X1PcxnvAMTKzSB/ii
+	hjFS4e7aL4uRAeQdGLKaGIpQmMls=
+X-Gm-Gg: ASbGnct72OMHKjFEmWbQXfgwx407kk5mrj2cZ1HQNTJ6MLKcBTiQleZzQZS7+HWy6E7
+	dLhO3IVRttNOAVn261b+U/kq6C/mBgoPvCP+4cFkvxhXJcnD3g7l8NQUNSfFMyfslc5eaevirUt
+	5adO8mDpuxZ1JtbMB4lL+98A==
+X-Google-Smtp-Source: AGHT+IGyPe8/uaDOHmjcGbfNVqIL3Y3TgPPVPT9WBKU8oWu6v5eOMjG3nnoHsGqwoKvwkgL/6GUeyG2HdpbTIWpYj0w=
+X-Received: by 2002:a17:907:1c96:b0:ace:c3a9:81bb with SMTP id
+ a640c23a62f3a-acedc593309mr104325266b.5.1745965637879; Tue, 29 Apr 2025
+ 15:27:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:298b:b0:864:4a9b:f1f1 with SMTP id
- ca18e2360f4ac-86495f33807mr136127039f.14.1745965466554; Tue, 29 Apr 2025
- 15:24:26 -0700 (PDT)
-Date: Tue, 29 Apr 2025 15:24:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6811519a.050a0220.39e3a1.0c93.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fill_extent
-From: syzbot <syzbot+150f08265580ecb7c31f@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <cover.1745841276.git.marcelo.schmitt@analog.com> <3687a9e0a479aef9736ad557b341ed2e7d4f5756.1745841276.git.marcelo.schmitt@analog.com>
+In-Reply-To: <3687a9e0a479aef9736ad557b341ed2e7d4f5756.1745841276.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 Apr 2025 01:26:41 +0300
+X-Gm-Features: ATxdqUGegN2_s_sjODFS8rtIi860gHJiqkmftv0vqgAn_mQCpAdd8_T7EXvMtwA
+Message-ID: <CAHp75VerW=GnsomWLqUyK6AWU+dVDPxhAVmafuwy4cDpbyPVUA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] iio: adc: ad4170: Add support for weigh scale and
+ RTD sensors
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	marcelo.schmitt1@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Apr 28, 2025 at 3:30=E2=80=AFPM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
+>
+> The AD4170 design has features to aid interfacing with weigh scale and RT=
+D
+> sensors that are expected to be setup with external circuitry for proper
+> sensor operation. A key characteristic of those sensors is that the circu=
+it
+> they are in must be excited with a pair of signals. The external circuit
+> can be excited either by voltage supply or by AD4170 excitation signals.
+> The sensor can then be read through a different pair of lines that are
+> connected to AD4170 ADC.
+>
+> Configure AD4170 to handle external circuit sensors.
 
-syzbot found the following issue on:
+...
 
-HEAD commit:    c3137514f1f1 Merge tag 'riscv-for-linus-6.15-rc4' of git:/.=
-.
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D10da10d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D90837c100b88a63=
-6
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D150f08265580ecb7c=
-31f
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-=
-1~exp1~20250402004600.97), Debian LLD 20.1.2
+> +static const unsigned int ad4170_iout_current_ua_tbl[] =3D {
+> +       0, 10, 50, 100, 250, 500, 1000, 1500
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Leave trailing comma.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
-b34a89c2a/non_bootable_disk-c3137514.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/467c03afa53b/vmlinux-=
-c3137514.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ea8b6881765e/bzI=
-mage-c3137514.xz
+> +};
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+150f08265580ecb7c31f@syzkaller.appspotmail.com
+...
 
-bcachefs (loop0): Version upgrade required:
-Version upgrade from 0.24: unwritten_extents to 1.7: mi_btree_bitmap incomp=
-lete
-Doing incompatible version upgrade from 0.24: unwritten_extents to 1.25: ex=
-tent_flags
-  running recovery passes: check_allocations,check_alloc_info,check_lrus,ch=
-eck_btree_backpointers,check_backpointers_to_extents,check_extents_to_backp=
-ointers,check_alloc_to_lru_refs,bucket_gens_init,check_snapshot_trees,check=
-_snapshots,check_subvols,check_subvol_children,delete_dead_snapshots,check_=
-inodes,check_extents,check_indirect_extents,check_dirents,check_xattrs,chec=
-k_root,check_unreachable_inodes,check_subvolume_structure,check_directory_s=
-tructure,check_nlinks,set_fs_needs_rebalance
-bcachefs (loop0): dropping and reconstructing all alloc info
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): check_allocations...
-bcachefs (loop0): pointer to nonexistent device 237
- =20
-bcachefs (loop0): pointer to missing device 237
-  while marking u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durab=
-ility: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4=
- ptr: 237:893353206280 gen 0, fixing
- done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay... done
-bcachefs (loop0): check_alloc_info... done
-bcachefs (loop0): check_lrus... done
-bcachefs (loop0): check_btree_backpointers... done
-bcachefs (loop0): check_backpointers_to_extents... done
-bcachefs (loop0): check_extents_to_backpointers...
-bcachefs (loop0): scanning for missing backpointers in 9/128 buckets
- done
-bcachefs (loop0): check_alloc_to_lru_refs... done
-bcachefs (loop0): bucket_gens_init... done
-bcachefs (loop0): check_snapshot_trees... done
-bcachefs (loop0): check_snapshots...
-bcachefs (loop0): snapshot points to missing/incorrect tree:
-  u64s 8 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 pa=
-rent          0 children          0          0 subvol 1 tree 0, fixing
- done
-bcachefs (loop0): check_subvols... done
-bcachefs (loop0): check_subvol_children... done
-bcachefs (loop0): delete_dead_snapshots... done
-bcachefs (loop0): check_inodes... done
-bcachefs (loop0): check_extents... done
-bcachefs (loop0): check_indirect_extents... done
-bcachefs (loop0): check_dirents... done
-bcachefs (loop0): check_xattrs... done
-bcachefs (loop0): check_root... done
-bcachefs (loop0): check_unreachable_inodes... done
-bcachefs (loop0): check_subvolume_structure... done
-bcachefs (loop0): check_directory_structure... done
-bcachefs (loop0): check_nlinks...
-bcachefs (loop0): inode 536870914 type reg has wrong i_nlink (2780562353, s=
-hould be 1), fixing
- done
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): set_fs_needs_rebalance... done
-bcachefs (loop0): done starting filesystem
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/fs.c:1327!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5313 Comm: syz.0.0 Not tainted 6.15.0-rc3-syzkaller-0024=
-4-gc3137514f1f1 #0 PREEMPT(full)=20
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
-.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_fill_extent+0x96e/0x970 fs/bcachefs/fs.c:1327
-Code: 0f 0b e8 d5 c2 8d fd 90 0f 0b e8 cd c2 8d fd e9 f7 fe ff ff e8 c3 c2 =
-8d fd 90 0f 0b e8 bb c2 8d fd 90 0f 0b e8 b3 c2 8d fd 90 <0f> 0b 90 90 90 9=
-0 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-RSP: 0018:ffffc9000d6c7420 EFLAGS: 00010287
-RAX: ffffffff8431fbed RBX: 0000000000000014 RCX: 0000000000100000
-RDX: ffffc9000e0f2000 RSI: 00000000000015b3 RDI: 00000000000015b4
-RBP: 0000000000000001 R08: ffff88801f690000 R09: 0000000000000004
-R10: 0000000000000012 R11: 0000000000000002 R12: 0000000000000000
-R13: ffffc9000d6c78a8 R14: 0000000000000002 R15: 0000000000000002
-FS:  00007fc1fa9426c0(0000) GS:ffff88808d6cd000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc1f9dae0a0 CR3: 000000003f77c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_fiemap+0x2764/0x2970 fs/bcachefs/fs.c:1540
- ioctl_fiemap fs/ioctl.c:220 [inline]
- do_vfs_ioctl+0x1638/0x1eb0 fs/ioctl.c:840
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl+0x82/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc1f9b8e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 =
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
-f 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc1fa942038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fc1f9db5fa0 RCX: 00007fc1f9b8e969
-RDX: 0000200000000100 RSI: 00000000c020660b RDI: 0000000000000004
-RBP: 00007fc1f9c10ab1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fc1f9db5fa0 R15: 00007fff94ccddb8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_fill_extent+0x96e/0x970 fs/bcachefs/fs.c:1327
-Code: 0f 0b e8 d5 c2 8d fd 90 0f 0b e8 cd c2 8d fd e9 f7 fe ff ff e8 c3 c2 =
-8d fd 90 0f 0b e8 bb c2 8d fd 90 0f 0b e8 b3 c2 8d fd 90 <0f> 0b 90 90 90 9=
-0 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-RSP: 0018:ffffc9000d6c7420 EFLAGS: 00010287
-RAX: ffffffff8431fbed RBX: 0000000000000014 RCX: 0000000000100000
-RDX: ffffc9000e0f2000 RSI: 00000000000015b3 RDI: 00000000000015b4
-RBP: 0000000000000001 R08: ffff88801f690000 R09: 0000000000000004
-R10: 0000000000000012 R11: 0000000000000002 R12: 0000000000000000
-R13: ffffc9000d6c78a8 R14: 0000000000000002 R15: 0000000000000002
-FS:  00007fc1fa9426c0(0000) GS:ffff88808d6cd000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc1f9dae0a0 CR3: 000000003f77c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> +       if (st->pins_fn[ain_n] & AD4170_PIN_VBIAS) {
+> +               *ain_voltage =3D (st->vrefs_uv[AD4170_AVDD_SUP]
+> +                               - st->vrefs_uv[AD4170_AVSS_SUP]) / 2;
 
+Don't wrap like this, keep the logical split, and looking at this I
+would just put it either on a single line, or use a temporary variable
+for the expression in parentheses.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +               return 0;
+> +       }
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+...
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> +static int ad4170_validate_excitation_pins(struct ad4170_state *st,
+> +                                          u32 *exc_pins, int num_exc_pin=
+s)
+> +{
+> +       struct device *dev =3D &st->spi->dev;
+> +       int ret, i;
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Should 'i' be signed?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> +       for (i =3D 0; i < num_exc_pins; i++) {
+> +               unsigned int pin =3D exc_pins[i];
+> +
+> +               ret =3D ad4170_find_table_index(ad4170_iout_pin_tbl, pin)=
+;
+> +               if (ret < 0)
+> +                       return dev_err_probe(dev, ret,
+> +                                            "Invalid excitation pin: %u\=
+n",
+> +                                            pin);
+> +
+> +               if (pin <=3D AD4170_MAX_ANALOG_PINS) {
+> +                       if (st->pins_fn[pin] !=3D AD4170_PIN_UNASIGNED)
+> +                               return dev_err_probe(dev, -EINVAL,
+> +                                                    "Pin %u already used=
+ with fn %u\n",
+> +                                                    pin, st->pins_fn[pin=
+]);
+> +
+> +                       st->pins_fn[pin] |=3D AD4170_PIN_CURRENT_OUT;
+> +               } else {
+> +                       unsigned int gpio =3D pin - AD4170_CURRENT_SRC_I_=
+OUT_PIN_GPIO0;
+> +
+> +                       if (st->gpio_fn[gpio] !=3D AD4170_GPIO_UNASIGNED)
+> +                               return dev_err_probe(dev, -EINVAL,
+> +                                                    "GPIO %u already use=
+d with fn %u\n",
+> +                                                    gpio, st->gpio_fn[gp=
+io]);
+> +
+> +                       st->gpio_fn[gpio] |=3D AD4170_GPIO_AC_EXCITATION;
+> +               }
+> +       }
+> +       return 0;
+> +}
 
-If you want to undo deduplication, reply with:
-#syz undup
+...
+
+Also consider inverting the conditional in ad4170_setup_bridge() to
+drop indentation level in a lot of LoCs.
+
+...
+
+> +       switch (s_type) {
+> +       case AD4170_ADC_SENSOR:
+> +               ret =3D ad4170_parse_adc_channel_type(dev, child, chan);
+> +               if (ret < 0)
+
+Why ' < 0'?
+
+> +                       return ret;
+> +
+> +               break;
+> +       case AD4170_WEIGH_SCALE_SENSOR:
+> +               fallthrough;
+> +       case AD4170_THERMOCOUPLE_SENSOR:
+> +               fallthrough;
+> +       case AD4170_RTD_SENSOR:
+> +               ret =3D ad4170_parse_external_sensor(st, child, setup, ch=
+an,
+> +                                                  s_type);
+> +               if (ret < 0)
+
+Ditto.
+
+> +                       return ret;
+>
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
