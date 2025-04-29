@@ -1,252 +1,221 @@
-Return-Path: <linux-kernel+bounces-624344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C0EAA0254
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB8DAA022B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C40468FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B068B465F45
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AB92749C5;
-	Tue, 29 Apr 2025 06:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D61025DB0C;
+	Tue, 29 Apr 2025 06:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cs3CrsLt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cWofjm0J"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F1126B080;
-	Tue, 29 Apr 2025 06:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745906548; cv=none; b=cYY/L798EkIapnix4QJ2OB9X98jaI5HKFOGCuPaeTF64zKQrRQobQMDaP3LsqKrENOSEAqMFtRlYV5M9Q+Ki1sm2caqSbWqwOIAgdD+e6NXHkhCf0YrbEE0uIPetXqiYitLm/1Ze2UrPS1WbHsCMCKg06n9rJo2cdy/S2muwRe8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745906548; c=relaxed/simple;
-	bh=GGOZBkZPXbXcgYWtmEjaWNBSh9vK7IAgAJHtHjY5RGk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZIdmHQr9b/kI9OHjJ0pCs5hUD4OPdUYJEtLx2cPVlva5vwnbzk8FqbkMrqfeb2eEz/GpbKwDCp90gKsYvO6TiKHu6POwytSobGj0JDbhLGdzj6ByPk3Yw+lAJbhwRwOri/i0ONrZcfVwTWh2RQfECnlFc/VPojFqjCfRh+rdLME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cs3CrsLt; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745906547; x=1777442547;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GGOZBkZPXbXcgYWtmEjaWNBSh9vK7IAgAJHtHjY5RGk=;
-  b=cs3CrsLtcywzIDWhehr2+2I0xo1z0iAcY6R3d9NMyFBcaxisWpP/tOyM
-   q2+TRmM0GZu2gcR5WRVsVZK30l2HpZo8rKmvE0QKaMINpSa6cVN97ACd6
-   Gy2nSrVFPKouz1NWobSG2arMop28f3L/vqjARyA/WFTHa/mrpl3vv2bvU
-   60Jn31frNVHAlYfGqyycmtiMteyUgDRuq5WkGQGX60hjRAU7GHeYbODR2
-   dLtlcq+8CCUSWvQ7aZibQdHESYAHcSB50nOG0Tb9Q0QBaaQ/MPR0DOSwC
-   kLgq3KKqP3o88egOFFxVkTaN+f24TCN3fypqlqFiUoARH2PP6FNaAB0+I
-   A==;
-X-CSE-ConnectionGUID: LnBFU2J7R/SrGJ9s8XNc4w==
-X-CSE-MsgGUID: jiGU4zN9RNeS+6vBI00hpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="72891417"
-X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="72891417"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 23:02:25 -0700
-X-CSE-ConnectionGUID: B6mYu5WYR6y4hHVzuSOAgA==
-X-CSE-MsgGUID: KHRkdKHCSYO/GfkXnTeDdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="134708735"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 23:02:18 -0700
-Message-ID: <9d1abdbc-4b21-47e2-bcaf-6bc8ca365b01@linux.intel.com>
-Date: Tue, 29 Apr 2025 13:58:06 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0412741B7;
+	Tue, 29 Apr 2025 06:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745906406; cv=fail; b=fMnpjm4OUAFJiBBu/KNGvCYg6cdRhjhsVxnYMzh3HqCkPM2AzloKNZepx5HhEn1p7p8ZA8ZPaMlTFUxloajxI6NCCZHdCZHW5oYKvqSDqdjH0IxsTZqNNu8VLNDBkvmH5agEei6O43EpJ1UsCpCPJ3YfYRPGamKacaT7qXRdGUc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745906406; c=relaxed/simple;
+	bh=VoaeShd5qnYFMoQI7QdF3Gt+GCTEley5gVvCohftv9I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VWE7rCQIuPNAa1hlp/zCY4pZb698OY4V3Zfn4+8GS8GLn8kzKS/JXhtOw7hfSKXa1/NcFuhenInzqyoYVp+b4V4fitrEgkMhLkEO5usVQqUXXMx3FcYbOpGPh+2QxmTtJWOIPHmOiqH1kghKR4ImOG7iikYPjdW4evJa4OfTiJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cWofjm0J; arc=fail smtp.client-ip=40.107.220.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KDjCASQZ2d29z1GRghFajc2wMkBaxRjtLZSZtJnqayyBNhS3bRkmwF43NBuxgVGzg6L5VMH+SLWXF3qH+Attc3i/9PupYJrvOoqwffrkcFFD6tfUpiTdR2JHiNnipEItfgwJMJroPwcOtRRYq0RxKkogHXkYfaw/Fc1nDeiL+KWUoA2up+mk5KCHJSAdQ6nTfyQG3Vwc2mqP3/vpaSa4SXEo/0Nktly2Z3d1uNP2YbKvfiPPLSz7EKmvRal0Gtq9p5fkDenk6mJBYFmzuifNWZv+Ncx5j+FsXE4+d13Cjq0Ls5hhu0KhWsBVY+WRRmetxMY8FTNICMXVw7SP2qgYzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dS+TnySPBdQA7YIM51xt4HxlpqfBy/hpBb1B9mEx+1Q=;
+ b=TNonf87oZ6TWToLULYAbRuZIalcldVFOHBQO76x0ywe3d2btWJR9clGTkHNC0mikvQj3EAByl2vOWR3FdxtmyrHCM4YTmp+3DR4Q26QC81KCR6OQq5QgNnUkw/kSra4Spjql+TSOmSm7jXX5YKjit9ii+NeNzAlcjpLs3+RP6BMPw/erPANNhooKU6KC+0ZXIZGaugUAR/yUm8jlZ6zkdrrWU/8k5Sx1WdlkBclsYhvgrrRGiOoK74tumpNV1Ujm8FeVOoCsYoUDklu97IRHyIPomjhHK8XPehP8ifPy8CAEQd9tSkIpPu3rDcr67euTHKX58Sqd1OQz/YS0STcrLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dS+TnySPBdQA7YIM51xt4HxlpqfBy/hpBb1B9mEx+1Q=;
+ b=cWofjm0JmOEVXO76q/rBoQKBLUw5HaVrOnpGakIBATJ2nOb8LziPapslrr5UkAYvwX9uTBrU+aJVuCCCOdr8/JCEiHiB9CZ9IdVLXH+d7SW4dFmFk7Ong7xw9HyR55FLS3u1psy5GG4FvIMwCH/Oy45ghy+Ly/MabBD4liVUr5Xe2z/w6MABnK2RKuqdLINjJ+jsxkimeEE3wee1+e+2kEUFCX1Xukab/KDdE4wpkE1QYBVUf+MGWF8TzXkuEpm/GXWwBiiENbi4EUSmsowIYLlvHORn7afyRgg7EtW0pT24DdhbveCjYjBsApYSpMbptwPjm2V2BjUw3ohVSvCT8Q==
+Received: from CH5PR03CA0007.namprd03.prod.outlook.com (2603:10b6:610:1f1::25)
+ by SJ2PR12MB9008.namprd12.prod.outlook.com (2603:10b6:a03:543::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Tue, 29 Apr
+ 2025 06:00:01 +0000
+Received: from DS3PEPF000099D4.namprd04.prod.outlook.com
+ (2603:10b6:610:1f1:cafe::66) by CH5PR03CA0007.outlook.office365.com
+ (2603:10b6:610:1f1::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.38 via Frontend Transport; Tue,
+ 29 Apr 2025 06:00:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF000099D4.mail.protection.outlook.com (10.167.17.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8678.33 via Frontend Transport; Tue, 29 Apr 2025 06:00:00 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Apr
+ 2025 22:59:43 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 28 Apr
+ 2025 22:59:43 -0700
+Received: from build-sheetal-bionic-20250305.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via
+ Frontend Transport; Mon, 28 Apr 2025 22:59:42 -0700
+From: "Sheetal ." <sheetal@nvidia.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<lgirdwood@gmail.com>, <broonie@kernel.org>
+CC: <perex@perex.cz>, <tiwai@suse.com>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <spujar@nvidia.com>, <mkumard@nvidia.com>, Sheetal
+	<sheetal@nvidia.com>
+Subject: [PATCH v2 00/11] Add Tegra264 support in AHUB drivers
+Date: Tue, 29 Apr 2025 05:59:30 +0000
+Message-ID: <20250429055941.901511-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 06/24] iommu/dma: Factor out a iommu_dma_map_swiotlb
- helper
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Jens Axboe
- <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Keith Busch <kbusch@kernel.org>, Jake Edge <jake@lwn.net>,
- Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
- Zhu Yanjun <zyjzyj2000@gmail.com>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
- Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
- kvm@vger.kernel.org, linux-mm@kvack.org,
- Niklas Schnelle <schnelle@linux.ibm.com>,
- Chuck Lever <chuck.lever@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Dan Williams
- <dan.j.williams@intel.com>, Kanchan Joshi <joshi.k@samsung.com>,
- Chaitanya Kulkarni <kch@nvidia.com>
-References: <cover.1745831017.git.leon@kernel.org>
- <f9a6a7874760a2919bea1f255bb3c81c6369ed1c.1745831017.git.leon@kernel.org>
- <8416e94f-171e-4956-b8fe-246ed12a2314@linux.intel.com>
- <20250429055339.GJ5848@unreal>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250429055339.GJ5848@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D4:EE_|SJ2PR12MB9008:EE_
+X-MS-Office365-Filtering-Correlation-Id: c81f4a1e-4cfd-4381-93c3-08dd86e31437
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dWVlbURHVVZ1RUNBaWZBRjJDc1VnbUtVekRsMzVlMllvejNJQ2JUS05xMzlW?=
+ =?utf-8?B?cUFXZzdKbnFJUS9oenpObXI5SzI4WXVWblpYTTNxL3ZYeE9pYlh2N1pVaFN1?=
+ =?utf-8?B?ZEdkOWxDM2hSZENvS01KNXdaaDRaRzYxZUVIL3BkSDhYTkVKU3o0ck1Gb2Uv?=
+ =?utf-8?B?WnQxR25NYVJ5MTU3NEs2U2Y2SEkwZDZHMUhGWXY4cjFkZUV1OUQ2aG40VHJP?=
+ =?utf-8?B?NFBaN0tvc3dKSjAvVXpGWGtlKzRsN1I1VUhtOUtydlRQSnR5WUdEaklZb3lR?=
+ =?utf-8?B?TDg1aHBSQXRPSGZadldxS0hWbXVId2dZUEU3aitaWmp0TFh0SzAveWlPSkFa?=
+ =?utf-8?B?VDJnUTNwN1R2MnpjL0w0N043d2V3U2I0Mk1heG9yVTVwUlRnd2dGUnJLMmpG?=
+ =?utf-8?B?eFBjbDN3d1cyZ0ZZRi9SamNrYU5ERW0xRGFTdllzSTFsWE9McmY4K1Izd2dh?=
+ =?utf-8?B?bHlQRUVoT2dTL2lpR3VZaGpVcGtUTjJsLzZIUzdMdW8wQS8wb0t4WjMrTzRo?=
+ =?utf-8?B?alVZN0w0cGFXcFZZaHkyK0U1MHAyWTJIdWR0MWFGSmhiY1pjdGV5bE9jZytu?=
+ =?utf-8?B?MnI3dlFocGFZZVdCNjBFQnU1RjFjVDdNU3BIUHI4bWR4Vkd4K1VSaEVBUVlZ?=
+ =?utf-8?B?ODlsUU4yNW93ZXVkVTJqKzJIUG5lZldzdzBOVnhEazhyUVVscGtiYTRkSDFl?=
+ =?utf-8?B?MzJzaHVEK3RuNk1ybElLWTZ6U0h5cVhPbUozeXdjbGU0L0ZPelU4UzhsOTV3?=
+ =?utf-8?B?aldLWC9tbjhYRW1WcE1RMGVKYXI5RGRHbi9ESVBVcWg0cVZhRkF2cVhSdVl2?=
+ =?utf-8?B?UGdZMmR1a25Pall4TGViaVVNS1laczF2Z25EQkN1MGx4UlY5aDZrOTg0U3Jr?=
+ =?utf-8?B?QTdsMGJsK2xMVjJRSHBGN3N6M2VrUEpFcXhxYUZicXgvSnRMUGZkQTZQM3B0?=
+ =?utf-8?B?RHcvNnhFUTgvN0N5emtCOVIvYmZvVkt1UXZvbENOSTh5ajVxUHNQUGt4T3ow?=
+ =?utf-8?B?TGE5aUNCR2JXbVhIV3BtZnVQU2lHSjFrSUVRZGhrNXZEMWhQNEJ2Sm53ZFA1?=
+ =?utf-8?B?QUJ6QzMxa3EyL0tsMXdacGV2cmZaQ3ZIODhrb0pnc3hOOTJOMDhoRW5TbFhE?=
+ =?utf-8?B?Zmp1cWFueUg3ZTVMcnVmVjUvUUJNeFB1LzZtZjVBbHgwOXd6Rm1PTzZ4S1J1?=
+ =?utf-8?B?ODcvS2I0c25uWGx4UGU3b29KTlVxbVcrZVQxOWw3d2V2bEovR3JiQUkvSncv?=
+ =?utf-8?B?d1R5MkdFZ1Nwa2RLRjh4M0RyOU8xZFpjSmNJazdkVGE1QmFUUlBRbkVnbmJJ?=
+ =?utf-8?B?Ylp5WjdQbEwrTkRTbjdTZ3JXcUxEWjUzZGE1c3d0NDVEa2NpR1FYaE01d2hS?=
+ =?utf-8?B?MThKaWZWOU5HYkdoUnpUNnZMd3dLTkhIbVFOZlM2dDd0WTkxZzlZb0t5anRk?=
+ =?utf-8?B?dzBlOER1djFkckI4WE9LbnJwRGxPZW1ha3VjUGxqWnZqbkFFVEFURCt3aWly?=
+ =?utf-8?B?Z1M5akRnU2FjcnNqVVdwL2ZNOFRuSmhuL3ppQlM3ZFNoUE5Rci9FT2RudDJt?=
+ =?utf-8?B?S0dOa28rU0E5REsyUXQvU2dTd252UFB2YWtKYzV1NVIwcjlZY2lsMUVuUS9y?=
+ =?utf-8?B?MVRjN0FmYnliUXlqY1FTdmdobE1tV04rcFJVQ0JtYmljdUxCa3FjNFZGRG1j?=
+ =?utf-8?B?Y1FlNTkwQzV4NTViWlo3T1F0cEFXVmczTmY0dGw3ME5sTkliMGlHRGFRclRr?=
+ =?utf-8?B?Um9icStwTGVMY01VZjVNTm56c3hnWGtuQXVzbXRiTUJiSzFpZENpS2g4RWdX?=
+ =?utf-8?B?VEZLQm5uMGViYnVXQktPRTV0ZGhsSGJTWHVkN1VDVHRrdWExTmpJSGdXb0Zv?=
+ =?utf-8?B?SURNUjVCcnU2TVBuYXVtVllVN3o0c1RuTVViMWFVeFJ1cS9qUlUvYlBJSnph?=
+ =?utf-8?B?U2JCQmwya3JwYzFubEhqcDRuajkrTzNXRHcyQjJQS0l0N3NrUWFtdHFhQlFR?=
+ =?utf-8?B?QnZWMWVIV1FYcjZxQWo5WTh6LytNb3VKNjYvbmpoblVlaC9UbDArOVBNUHpN?=
+ =?utf-8?Q?m75tmJ?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 06:00:00.9961
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c81f4a1e-4cfd-4381-93c3-08dd86e31437
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D4.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9008
 
-On 4/29/25 13:53, Leon Romanovsky wrote:
-> On Tue, Apr 29, 2025 at 12:58:18PM +0800, Baolu Lu wrote:
->> On 4/28/25 17:22, Leon Romanovsky wrote:
->>> From: Christoph Hellwig<hch@lst.de>
->>>
->>> Split the iommu logic from iommu_dma_map_page into a separate helper.
->>> This not only keeps the code neatly separated, but will also allow for
->>> reuse in another caller.
->>>
->>> Signed-off-by: Christoph Hellwig<hch@lst.de>
->>> Tested-by: Jens Axboe<axboe@kernel.dk>
->>> Reviewed-by: Luis Chamberlain<mcgrof@kernel.org>
->>> Signed-off-by: Leon Romanovsky<leonro@nvidia.com>
->>
->> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
->>
->> with a nit below ...
->>
->>> ---
->>>    drivers/iommu/dma-iommu.c | 73 ++++++++++++++++++++++-----------------
->>>    1 file changed, 41 insertions(+), 32 deletions(-)
->>>
->>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
->>> index d3211a8d755e..d7684024c439 100644
->>> --- a/drivers/iommu/dma-iommu.c
->>> +++ b/drivers/iommu/dma-iommu.c
->>> @@ -1138,6 +1138,43 @@ void iommu_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sgl,
->>>    			arch_sync_dma_for_device(sg_phys(sg), sg->length, dir);
->>>    }
->>> +static phys_addr_t iommu_dma_map_swiotlb(struct device *dev, phys_addr_t phys,
->>> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
->>> +{
->>> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
->>> +	struct iova_domain *iovad = &domain->iova_cookie->iovad;
->>> +
->>> +	if (!is_swiotlb_active(dev)) {
->>> +		dev_warn_once(dev, "DMA bounce buffers are inactive, unable to map unaligned transaction.\n");
->>> +		return (phys_addr_t)DMA_MAPPING_ERROR;
->>> +	}
->>> +
->>> +	trace_swiotlb_bounced(dev, phys, size);
->>> +
->>> +	phys = swiotlb_tbl_map_single(dev, phys, size, iova_mask(iovad), dir,
->>> +			attrs);
->>> +
->>> +	/*
->>> +	 * Untrusted devices should not see padding areas with random leftover
->>> +	 * kernel data, so zero the pre- and post-padding.
->>> +	 * swiotlb_tbl_map_single() has initialized the bounce buffer proper to
->>> +	 * the contents of the original memory buffer.
->>> +	 */
->>> +	if (phys != (phys_addr_t)DMA_MAPPING_ERROR && dev_is_untrusted(dev)) {
->>> +		size_t start, virt = (size_t)phys_to_virt(phys);
->>> +
->>> +		/* Pre-padding */
->>> +		start = iova_align_down(iovad, virt);
->>> +		memset((void *)start, 0, virt - start);
->>> +
->>> +		/* Post-padding */
->>> +		start = virt + size;
->>> +		memset((void *)start, 0, iova_align(iovad, start) - start);
->>> +	}
->>> +
->>> +	return phys;
->>> +}
->>> +
->>>    dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
->>>    	      unsigned long offset, size_t size, enum dma_data_direction dir,
->>>    	      unsigned long attrs)
->>> @@ -1151,42 +1188,14 @@ dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
->>>    	dma_addr_t iova, dma_mask = dma_get_mask(dev);
->>>    	/*
->>> -	 * If both the physical buffer start address and size are
->>> -	 * page aligned, we don't need to use a bounce page.
->>> +	 * If both the physical buffer start address and size are page aligned,
->>> +	 * we don't need to use a bounce page.
->>>    	 */
->>>    	if (dev_use_swiotlb(dev, size, dir) &&
->>>    	    iova_offset(iovad, phys | size)) {
->>> -		if (!is_swiotlb_active(dev)) {
->>
->> ... Is it better to move this check into the helper? Simply no-op if a
->> bounce page is not needed:
->>
->> 	if (!dev_use_swiotlb(dev, size, dir) ||
->> 	    !iova_offset(iovad, phys | size))
->> 		return phys;
-> 
-> Am I missing something? iommu_dma_map_page() has more code after this
-> check, so it is not correct to return immediately:
-> 
->    1189 dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
->    1190               unsigned long offset, size_t size, enum dma_data_direction dir,
->    1191               unsigned long attrs)
->    1192 {
-> 
-> <...>
-> 
->    1201         /*
->    1202          * If both the physical buffer start address and size are page aligned,
->    1203          * we don't need to use a bounce page.
->    1204          */
->    1205         if (dev_use_swiotlb(dev, size, dir) &&
->    1206             iova_unaligned(iovad, phys, size)) {
->    1207                 phys = iommu_dma_map_swiotlb(dev, phys, size, dir, attrs);
->    1208                 if (phys == (phys_addr_t)DMA_MAPPING_ERROR)
->    1209                         return DMA_MAPPING_ERROR;
->    1210         }
->    1211
->    1212         if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
->    1213                 arch_sync_dma_for_device(phys, size, dir);
->    1214
->    1215         iova = __iommu_dma_map(dev, phys, size, prot, dma_mask);
->    1216         if (iova == DMA_MAPPING_ERROR)
->    1217                 swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs);
->    1218         return iova;
->    1219 }
+From: Sheetal <sheetal@nvidia.com>
 
-static phys_addr_t iommu_dma_map_swiotlb(struct device *dev, phys_addr_t 
-phys,
-		size_t size, enum dma_data_direction dir, unsigned long attrs)
-{
-<...>
-	/*
-	 * If both the physical buffer start address and size are page aligned,
-	 * we don't need to use a bounce page.
-	 */
-	if (!dev_use_swiotlb(dev, size, dir) ||
-	    !iova_offset(iovad, phys | size))
-		return phys;
-<...>
-}
+The patch series includes the necessary changes to enable
+support for the Tegra264 platforms in AHUB drivers.
 
-Then,
+Changelog
+=========
 
-dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
-	unsigned long offset, size_t size, enum dma_data_direction dir,
-	unsigned long attrs)
-{
-<...>
-	phys = iommu_dma_map_swiotlb(dev, phys, size, dir, attrs);
-	if (phys == (phys_addr_t)DMA_MAPPING_ERROR)
-		return DMA_MAPPING_ERROR;
-<...>
-}
+v1 -> v2:
+---------
+ - Patch 1/11: New patch to resolve the dtbs_check error on base yaml
+   file which is modified in Patch2 for Tegra264 support.
+ - Patch 2/11: Fix Tegra264 SoC compatible string order.
 
-Thanks,
-baolu
+Sheetal (11):
+  dt-bindings: ASoC: admaif: Add missing properties
+  dt-bindings: ASoC: Document Tegra264 APE support
+  ASoC: tegra: CIF: Add Tegra264 support
+  ASoC: tegra: ADMAIF: Add Tegra264 support
+  ASoC: tegra: ASRC: Update ARAM address
+  ASoC: tegra: Update PLL rate for Tegra264
+  ASoC: tegra: I2S: Add Tegra264 support
+  ASoC: tegra: AMX: Add Tegra264 support
+  ASoC: tegra: ADX: Add Tegra264 support
+  ASoC: tegra: AHUB: Add Tegra264 support
+  ASoC: tegra: Tegra264 support in isomgr_bw
+
+ .../bus/nvidia,tegra210-aconnect.yaml         |   1 +
+ .../sound/nvidia,tegra-audio-graph-card.yaml  |   1 +
+ .../bindings/sound/nvidia,tegra186-asrc.yaml  |   4 +-
+ .../bindings/sound/nvidia,tegra186-dspk.yaml  |   1 +
+ .../sound/nvidia,tegra210-admaif.yaml         |  14 +
+ .../bindings/sound/nvidia,tegra210-adx.yaml   |   4 +-
+ .../bindings/sound/nvidia,tegra210-ahub.yaml  |   1 +
+ .../bindings/sound/nvidia,tegra210-amx.yaml   |   6 +-
+ .../bindings/sound/nvidia,tegra210-dmic.yaml  |   1 +
+ .../bindings/sound/nvidia,tegra210-i2s.yaml   |   4 +-
+ .../bindings/sound/nvidia,tegra210-mbdrc.yaml |   1 +
+ .../bindings/sound/nvidia,tegra210-mixer.yaml |   1 +
+ .../bindings/sound/nvidia,tegra210-mvc.yaml   |   1 +
+ .../bindings/sound/nvidia,tegra210-ope.yaml   |   1 +
+ .../bindings/sound/nvidia,tegra210-peq.yaml   |   1 +
+ .../bindings/sound/nvidia,tegra210-sfc.yaml   |   1 +
+ sound/soc/tegra/tegra186_asrc.c               |  18 +-
+ sound/soc/tegra/tegra186_asrc.h               |  12 +-
+ sound/soc/tegra/tegra210_admaif.c             | 223 ++++-
+ sound/soc/tegra/tegra210_admaif.h             |  78 ++
+ sound/soc/tegra/tegra210_adx.c                | 229 ++++-
+ sound/soc/tegra/tegra210_adx.h                |  36 +-
+ sound/soc/tegra/tegra210_ahub.c               | 848 +++++++++++++++++-
+ sound/soc/tegra/tegra210_ahub.h               |  52 +-
+ sound/soc/tegra/tegra210_amx.c                | 229 ++++-
+ sound/soc/tegra/tegra210_amx.h                |  34 +-
+ sound/soc/tegra/tegra210_i2s.c                | 231 ++++-
+ sound/soc/tegra/tegra210_i2s.h                |  51 +-
+ sound/soc/tegra/tegra_audio_graph_card.c      |  14 +-
+ sound/soc/tegra/tegra_cif.h                   |  30 +-
+ sound/soc/tegra/tegra_isomgr_bw.c             |   7 +-
+ 31 files changed, 1978 insertions(+), 157 deletions(-)
+
+-- 
+2.17.1
+
 
