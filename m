@@ -1,128 +1,154 @@
-Return-Path: <linux-kernel+bounces-624960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52586AA0AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F058FAA0AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F5FB7AFE1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F543B5302
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57FC2D8686;
-	Tue, 29 Apr 2025 11:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98702DA0E3;
+	Tue, 29 Apr 2025 11:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="IN0QNytk"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qO0gXZor"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0B02BEC49;
-	Tue, 29 Apr 2025 11:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4302D4B79;
+	Tue, 29 Apr 2025 11:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745927211; cv=none; b=ckmUL4IYaaB6OGABO0PwfZIpRk/MDzOXhlDw14h2hn8hyXGfQa5oxWHeQW1cKsDgCcyiSSJMD3q4gcIhJNLaXD/AI0fClUnSt4540IS/KzKZZPBKCVlY4DOQpsWPW5GVl7sYAQiJSpRdKaEuPs+P4vxyj0U3hQvAB1pkI6cMy2Y=
+	t=1745927192; cv=none; b=rtpK09U5Z6bvKta6uS3rA/QqrqNKc911jN5ex0yOq1X02fMoaSsYRZyXuYABTLMLxyDT69liUKko6RCpQ3NOMB1br7LxWq6k63YpdoZyeGhLk3AbUHB0ZG5NNh62SW/Yt6OZ2aLTbBfB2PEvFoFgYHJbok/b6ppjL/hzPv3PO+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745927211; c=relaxed/simple;
-	bh=3dh4cSlwqNafxDi1eoskuMMskOU14nSu2voZZz+IISI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Reyi0Qb5suO/NS7kOVdeQP2wifbPea53GBRjZQgho+h8k7GvcNt4nBXxlga+Mea30GlmQLW9H5COJKY0/CCoIm7LtQ0boZ9Na9LdNEBnzJgyBfMHBk5nDWUYg87whLL8nE2qGsZ9ExCZfW5bl9hJiZtt1zZP+Y1WJLQnAyLrtAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=IN0QNytk; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T6nggI024868;
-	Tue, 29 Apr 2025 04:46:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=lMYcX+6NRtn1bfaz92OoF0m
-	EjFbSPiTLQI7sXGqkxkE=; b=IN0QNytkIeursvsjY1jMvW2fmWYQETH/EFMcHuD
-	1NPCS4y/c3rPYaUcSGFSTlixcL0mb3ByYzmz92ihgQsZF2DbQW1RroGVmjL1Ivlv
-	jQ3muIKe+3HxEkBd6E+QgeCN5SZAHIMqAqpN283L2zCY4SerD6/ZycQsb0nj0GRQ
-	VjCLCufpZNiNKx97f4qZLtu4AF41OcLxl16hxEI1N9ZA/WJ1ESlXyftL62ggFZJe
-	5v4b+3UEpASYSLFiSLXU7kPgm3wKEGm5skeLTFnJwH+jCVyCSzExBNvsRHxJq5hJ
-	focFQetyE8P+gUebZ8UrJRQdSOMhHM5TI/vfV0P+crQbifQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 469krcccsb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 04:46:29 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 29 Apr 2025 04:46:29 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 29 Apr 2025 04:46:28 -0700
-Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
-	by maili.marvell.com (Postfix) with ESMTP id 58B2D3F70D9;
-	Tue, 29 Apr 2025 04:46:28 -0700 (PDT)
-From: Sathesh B Edara <sedara@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <hgani@marvell.com>, <vimleshk@marvell.com>,
-        Veerasenareddy Burru
-	<vburru@marvell.com>,
-        Sathesh Edara <sedara@marvell.com>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric
- Dumazet" <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Abhijit Ayarekar <aayarekar@marvell.com>
-Subject: [PATCH net] octeon_ep: Fix host hang issue during device reboot
-Date: Tue, 29 Apr 2025 04:46:24 -0700
-Message-ID: <20250429114624.19104-1-sedara@marvell.com>
-X-Mailer: git-send-email 2.36.0
+	s=arc-20240116; t=1745927192; c=relaxed/simple;
+	bh=KTAtU4yj15U90cJiCtm0L7dTLDIMSAa27/+94PyZbI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=usIChWZGM5XmQ9H/OrIZu5OsZVDHCPvjMPgNF6iEBfULPDDTrl+2gcYmTDLimWeWbMyBrcqnAJzCJcnetZ8hawZveCbGujNzxp9K1oKHKHUcoI3f1aUzSqJ3bmPObmt4LJoUhLEL7bhyspOMBlYXfEQR2QdkHxVWOCQPjLQeS78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qO0gXZor; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4782217D1;
+	Tue, 29 Apr 2025 13:46:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745927182;
+	bh=KTAtU4yj15U90cJiCtm0L7dTLDIMSAa27/+94PyZbI4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qO0gXZorPc1fkwF6rtaGqeEOcPizhAWJh3rjotlLKUkSU1WnL9AdBWwXuwiWDjxRk
+	 UVeFEXn5NUueE0yfBayxotSCDq9PSFHSnZe1eNLGerEQoqNyW0FLPOrqeYulQDfju3
+	 ac1L1b+hNo8XJOzed2UK3j/ve2GOc0wUvZloy84k=
+Message-ID: <9918a4e1-e3fa-4577-ac06-46efeab12507@ideasonboard.com>
+Date: Tue, 29 Apr 2025 14:46:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: Gdk_q4JLrARwBEnrBMpTqzczb2E_F_0o
-X-Authority-Analysis: v=2.4 cv=f61IBPyM c=1 sm=1 tr=0 ts=6810bc18 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=Bsf_nmtMMKoVPQtrbQ8A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA4NyBTYWx0ZWRfXyJ5Z+YjPySVu csjnui5hfng4OityfJxwmo32k3qeyMj2l7HWYXqVvm75qOJ8t7E+oO0JLoGl9z6tyWHVsda9MZ8 ugviDjePM2si4BSidHRFkFFgaipV4FiuQSG9ghUEqaUSQMdI0yrq1QWrL54iLopiYzTwuAUNOd/
- abzSUuKM0Ej/hKdHoklYEoWs/mJjy7nQi5AEddWHL13JWUDX/+z1awtRZme1kcsfTo/+HTQGdfD uhe4PrReOfBYtPsGBt/Fb5WcPN8huhF1lIWo+NzkoG5eyJ06vGvrnOJ+8sMo6Mfe199aEyTIouq ACOcTdwkQ/RznQVnGxPDrAQpwDQdobnK8QvMUuFO0rXufqf7F0X7BlkhM/LRVdjx3yY9iBMAkdw
- Z4aTbmXPjbx+UUck8l3kJM/uE+KBefWNpgiJljrEgBLsXs/LWnW6Tf6UAlpL5E9RNGl3Rs2J
-X-Proofpoint-ORIG-GUID: Gdk_q4JLrARwBEnrBMpTqzczb2E_F_0o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_04,2025-04-24_02,2025-02-21_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with the i2c tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Jai Luthra <jai.luthra@ideasonboard.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250428104905.2b54643f@canb.auug.org.au>
+ <20250428112200.6f5cf3bd@canb.auug.org.au>
+ <20250428113052.38cf10da@canb.auug.org.au>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250428113052.38cf10da@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When the host loses heartbeat messages from the device,
-the driver calls the device-specific ndo_stop function,
-which frees the resources. If the driver is unloaded in
-this scenario, it calls ndo_stop again, attempting to free
-resources that have already been freed, leading to a host
-hang issue. To resolve this, dev_close should be called
-instead of the device-specific stop function.dev_close
-internally calls ndo_stop to stop the network interface
-and performs additional cleanup tasks. During the driver
-unload process, if the device is already down, ndo_stop
-is not called.
+Hi,
 
-Fixes: 5cb96c29aa0e ("octeon_ep: add heartbeat monitor")
-Signed-off-by: Sathesh B Edara <sedara@marvell.com>
----
- drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 28/04/2025 04:30, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 28 Apr 2025 11:22:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> On Mon, 28 Apr 2025 10:49:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>> Today's linux-next merge of the v4l-dvb tree got a conflict in:
+>>>
+>>>    drivers/media/i2c/ds90ub960.c
+>>>
+>>> between commits:
+>>>
+>>>    3ec29d51b546 ("media: i2c: ds90ub960: Protect alias_use_mask with a mutex")
+>>>    818bd489f137 ("i2c: use client addresses directly in ATR interface")
+>>>
+>>> from the i2c tree and commits:
+>>>
+>>>    24868501a744 ("media: i2c: ds90ub9xx: Add err parameter to read/write funcs")
+>>>    2ca499384e98 ("media: i2c: ds90ub960: Add RX port iteration support")
+>>>
+>>> from the v4l-dvb tree.
+>>>
+>>> I fixed it up (see below) and can carry the fix as necessary. This
+>>> is now fixed as far as linux-next is concerned, but any non trivial
+>>> conflicts should be mentioned to your upstream maintainer when your tree
+>>> is submitted for merging.  You may also want to consider cooperating
+>>> with the maintainer of the conflicting tree to minimise any particularly
+>>> complex conflicts.
+>>
+>> The actual resolution is below ...
+> 
+> I hit the wrong key :-(   Resolution below.
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-index 0a679e95196f..24499bb36c00 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-@@ -1223,7 +1223,7 @@ static void octep_hb_timeout_task(struct work_struct *work)
- 		miss_cnt);
- 	rtnl_lock();
- 	if (netif_running(oct->netdev))
--		octep_stop(oct->netdev);
-+		dev_close(oct->netdev);
- 	rtnl_unlock();
- }
- 
--- 
-2.36.0
+I came up with the same resolution, so looks correct to me.
+
+  Tomi
 
 
