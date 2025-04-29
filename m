@@ -1,74 +1,92 @@
-Return-Path: <linux-kernel+bounces-625244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1350AA0EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:26:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F80BAA0EAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1687C1B6401E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B39C8427DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810D92D3A94;
-	Tue, 29 Apr 2025 14:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26FA2D321B;
+	Tue, 29 Apr 2025 14:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WGVBBsbV"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jbg0RkWi"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10D22D321B;
-	Tue, 29 Apr 2025 14:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181A92D320D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745936739; cv=none; b=DpW/miOa/SjbSlaPPbZA18RXrXCdZLa3yfIApdV0VX+EXXahN911WxLdq5DsnJH5/316I5hr1zzGkfcdPxe3t8dpsfMHIEfRgIXI6XpbalsRc4oPgmyQPW6Zw2UD2bzHVBoAjSoxVrB9VZqO+jTTyYTK5VOdyYCMX0QyO3/mCZI=
+	t=1745936726; cv=none; b=R4dj8Ocx96h2s9Pra189wewV7D4GqxT3HxTe50UtCqg5f637LczD/vNCf+kjS9j21GAeDx+L4baG8OZeiG/vDIeAsPq3kCXUUKqJU5x2SbR99/k5dPQXWgQShq+JyzWmBFlYactdJbdoxD1ee/Bu/VHPMd6ZkrS4o+B9cIHpCG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745936739; c=relaxed/simple;
-	bh=L0Bez4zWVrlwauQ1MnYALwpvxMsSNYXYNxE7pfwLXaM=;
+	s=arc-20240116; t=1745936726; c=relaxed/simple;
+	bh=mUpSfE2Rfdt8A2E6mNSWKRYmnN8XOD8gnmdgTI66IFw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntDuC91on0h52YqS52y9gwBgeA35aQDWnMbMxGiQ0XMINYCm0BCsfYOin5W75bQGvm2d+8bfrwdlFjXwZAKHHM49QzoUm6lEoTcFQMfa2wAufv6pLOuJX9ucsBfGJAZTMbo/2VhBojWQ2oGGaa8zTDl/t5jTq9nhLC2oyxYCiqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WGVBBsbV; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0vA9Rec61rX04rxqvUMiHk6ImQ7asJ7mfPfkjKKAiA8=; b=WGVBBsbVVEPSajhc0uRNknEfrv
-	pZGzepnQDbgwUi1ty4f7yqdC5CDC5Tq1kLehk6qqejbN9+/st2TkhJpOugwvF13Lad67bGme2ryg0
-	MVDlg0cTXX6sjbvWvEbClJkIOEa9c5/b2pvNGF/ILuMcRV0ruFfpQ7B2Yzjf3jhf3DnAwfaKboYGc
-	G9PKsqZMtpKcEVtAXBkb0ju9wQbmoS2bCrNTjyKSLQZZRNklP/KrlN87NpGY9/vFQktt+7xr7KwLd
-	bU/nx6/NnB+JXKb6m4/tWCzbIA0gVOG96K5zt/mKixdUnw7NpMI/fi16At4iZrUh/VVyc35rMqOfY
-	7LJgCnZw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37870)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1u9ltb-0005xf-01;
-	Tue, 29 Apr 2025 15:25:15 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1u9ltV-0006D4-07;
-	Tue, 29 Apr 2025 15:25:09 +0100
-Date: Tue, 29 Apr 2025 15:25:08 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] dt-bindings: net: ethernet-controller: Add
- informative text about RGMII delays
-Message-ID: <aBDhRH2TlyxKmaaW@shell.armlinux.org.uk>
-References: <20250429-v6-15-rc3-net-rgmii-delays-v1-1-f52664945741@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gw/KcGOHAU2xXbk0JEL/cZYD06/1eyG81ohgiuxXXfMaB0y5R2jsc0+iOTMGFgu2NxW4XaMdKgqPswD2blEbSfwubMyAnX3Wyb750qyyepear5XBSXkKfR2D4NTQ5KgCMUwovfhH3gJwRFeKdghvBSfAAYgYpDgYog6nOE0wH1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jbg0RkWi; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acbb85ce788so1186058966b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:25:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745936722; x=1746541522; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=InMRIAu+YVbN2ROxaPK1QyyPvyBxh0KaL1h40gmjQIE=;
+        b=Jbg0RkWiHm3k3DNOP1Od6FerFDX9roLRK5UuPzJQxDry6IyaYFE73Rx/vUJwHqTEsJ
+         CKKGO6+N4XQNKksaXBiXIc+t+YmFCA8TwsVP6R9o7AqygYJ2MSLyVxOmq2aAaychvPNh
+         Qo+ywd1+JbsWqLaqbfU/TiOKTp+Peh20v3IC+l52LFTw9uIAutEjx9qEo5ZHERZ5upDD
+         hwvcKdvFz52n02TrWkX+Qh9WkxqhKopzOEimsK2jpcVDPs6qZgnT44eQMbkl1RmCdEfX
+         EFfgqV5rigxVAzCrrCF+E9YmA+o2jPjjai15xQiA6oPRKv3LkAU9Ad4+sZmhEa9iXXq8
+         vW4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745936722; x=1746541522;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=InMRIAu+YVbN2ROxaPK1QyyPvyBxh0KaL1h40gmjQIE=;
+        b=o9msXcF3pomCpFHf+tJWEiSfEDmtcrQMjhaMAMebTDoK5eTSyyBOCksJmJggZnvM4X
+         a0JfxBnfBuwRHgRRwNpKEPf2O2E62EYnovqhb/b9JNgRBNmRHA+X/GsyfLW1jI2AE0PL
+         QRtqJRaQS3XhTE1dYhcO1J4tJrZ4awhj66L3kxoH2gEK8hODEXgNrRW2SfEI6vQFTK0I
+         0xa2g/dA9tRD3V5CNAtmDVEYauM8FRKGzbqbmGXVwZ+cKX+QLS53C7yPzfRWIS5WIfTV
+         2s2I0bZR8FqdlXQjvLTvUkaJsg94Bj07wJMxXGaJ57CZhYquuMh80oaZHdrFO/M0UYW6
+         wlEg==
+X-Gm-Message-State: AOJu0YxO1hy7JUDc/YcNf+GCDHz+YHnN71184QahseHFVZrZ9gmNLwpj
+	d/A5d+lfnIc+Twzi1s9zFiKyHv8pUHo9aBCscaelnntAJcl0fOi9BxuuqjK+ZfNZLeVRmKtO9x7
+	K
+X-Gm-Gg: ASbGncsNNPtKabQo2Zj8/Due1p0G7/7n8pgi51EwBalvgOMW5UgA3NVo68TYKTXuq7l
+	z2mCGI4SfRScbKDUO+E4yBc4QU4kbOSvnAP2KWaeyYlAQsRDSWeYrd+tRhAx5/hHblQc5OFnq9S
+	gfUQtvqViOJv9qHuMRwFlb5w2jLRyM/OHUXepGcKUNTXyOoJBFDyFNc16+9t2RWZQYTeV9oIanB
+	nIzS7IREtXhywnxvLv5Q38QR8AoYf/H68uzijfSxVDrFoqIZBAvp4N0cPYMAdz1Lo79q29Bj2cZ
+	Y8AOtJwlPpbB4g1gNgQuhxCHKMf6godvL7SSAnzgZQMT0RLhzfc=
+X-Google-Smtp-Source: AGHT+IHrMDPANgorP5TPzRVdxzGSy94esjJoDUu+iiC16mR+If56ds0hWBl3ZAqA5T61YSusBEj8TA==
+X-Received: by 2002:a17:907:868b:b0:ace:3a3d:7e35 with SMTP id a640c23a62f3a-acec87b9062mr306128966b.53.1745936722409;
+        Tue, 29 Apr 2025 07:25:22 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41b5e7sm807013166b.13.2025.04.29.07.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 07:25:22 -0700 (PDT)
+Date: Tue, 29 Apr 2025 16:25:20 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>
+Subject: Re: [PATCH v3 16/20] ratelimit: Simplify common-case exit path
+Message-ID: <aBDg-3SP_p-lCo7V@pathway.suse.cz>
+References: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
+ <20250425002826.3431914-16-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,114 +95,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250429-v6-15-rc3-net-rgmii-delays-v1-1-f52664945741@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250425002826.3431914-16-paulmck@kernel.org>
 
-On Tue, Apr 29, 2025 at 07:55:14AM -0500, Andrew Lunn wrote:
-> +# Informative
-> +# ===========
-> +#
-> +# 'phy-modes' & 'phy-connection-type' properties 'rgmii', 'rgmii-id',
-> +# 'rgmii-rxid', and 'rgmii-txid' are frequently used wrongly by
-> +# developers. This informative section clarifies their usage.
-> +#
-> +# The RGMII specification requires a 2ns delay between the data and
-> +# clock signals on the RGMII bus. How this delay is implemented is not
-> +# specified.
-> +#
-> +# One option is to make the clock traces on the PCB longer than the
-> +# data traces. A sufficiently difference in length can provide the 2ns
-> +# delay. If both the RX and TX delays are implemented in this manor,
+On Thu 2025-04-24 17:28:22, Paul E. McKenney wrote:
+> By making "ret" always be initialized, and moving the final call to
+> ratelimit_state_inc_miss() out from under the lock, we save a goto and
+> a couple lines of code.  This also saves a couple of lines of code from
+> the unconditional enable/disable slowpath.
+> 
+> Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
+> Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
-manner
+Looks good to me:
 
-> +# 'rgmii' should be used, so indicating the PCB adds the delays.
-> +#
-> +# If the PCB does not add these delays via extra long traces,
-> +# 'rgmii-id' should be used. Here, 'id' refers to 'internal delay',
-> +# where either the MAC or PHY adds the delay.
-> +#
-> +# If only one of the two delays are implemented via extra long clock
-> +# lines, either 'rgmii-rxid' or 'rgmii-txid' should be used,
-> +# indicating the MAC or PHY should implement one of the delays
-> +# internally, while the PCB implements the other delay.
-> +#
-> +# Device Tree describes hardware, and in this case, it describes the
-> +# PCB between the MAC and the PHY, if the PCB implements delays or
-> +# not.
-> +#
-> +# In practice, very few PCBs make use of extra long clock lines. Hence
-> +# any RGMII phy mode other than 'rgmii-id' is probably wrong, and is
-> +# unlikely to be accepted during review.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Maybe add "without details provided in the commit description."
-
-> +#
-> +# When the PCB does not implement the delays, the MAC or PHY must.  As
-> +# such, this is software configuration, and so not described in Device
-> +# Tree.
-> +#
-> +# The following describes how Linux implements the configuration of
-> +# the MAC and PHY to add these delays when the PCB does not. As stated
-> +# above, developers often get this wrong, and the aim of this section
-> +# is reduce the frequency of these errors by Linux developers. Other
-> +# users of the Device Tree may implement it differently, and still be
-> +# consistent with both the normative and informative description
-> +# above.
-> +#
-> +# By default in Linux, the MAC is expected to read the 'phy-mode' from
-> +# Device Tree, not implement any delays, and pass the value to the
-> +# PHY.
-
-I'd suggest "By default in Linux, when using phylib/phylink, "... as
-we do have MACs that do not use phylib but talk to the PHY, and may be
-cross-platform drivers that follow some other methodology.
-
-> The PHY will then implement delays as specified by the
-> +# 'phy-mode'. The PHY should always be reconfigured to implement the
-> +# needed delays, replacing any setting performed by strapping or the
-> +# bootloader, etc.
-> +#
-> +# Experience to date is that all PHYs which implement RGMII also
-> +# implement the ability to add or not add the needed delays. Hence
-> +# this default is expected to work in all cases. Ignoring this default
-> +# is likely to be questioned by Reviews, and require a strong argument
-> +# to be accepted.
-> +#
-> +# There are a small number of cases where the MAC has hard coded
-> +# delays which cannot be disabled. The 'phy-mode' only describes the
-> +# PCB.  The inability to disable the delays in the MAC does not change
-> +# the meaning of 'phy-mode'. It does however mean that a 'phy-mode' of
-> +# 'rgmii' is now invalid, it cannot be supported, since both the PCB
-> +# and the MAC and PHY adding delays cannot result in a functional
-> +# link. Thus the MAC should report a fatal error for any modes which
-> +# cannot be supported. When the MAC implements the delay, it must
-> +# ensure that the PHY does not also implement the same delay. So it
-> +# must modify the phy-mode it passes to the PHY, removing the delay it
-> +# has added. Failure to remove the delay will result in a
-> +# non-functioning link.
-> +#
-> +# Sometimes there is a need to fine tune the delays. Often the MAC or
-> +# PHY can perform this fine tuning. In the MAC node, the Device Tree
-> +# properties 'rx-internal-delay-ps' and 'tx-internal-delay-ps' should
-> +# be used to indicate fine tuning performed by the MAC. The values
-> +# expected here are small. A value of 2000ps, i.e 2ns, and a phy-mode
-> +# of 'rgmii' will not be accepted by Reviewers.
-> +#
-> +# If the PHY is to perform fine tuning, the properties
-> +# 'rx-internal-delay-ps' and 'tx-internal-delay-ps' in the PHY node
-> +# should be used. When the PHY is implementing delays, these
-> +# properties should have a value near to 2000ps.
-
-... according to the phy-mode used (as they're documented to be
-dependent on that.)
-
-I'm wondering whether they should be dependent on which rgmii-* mode
-is being used, as delays << 2ns could be used to finely adjust the
-PCB delays if the PHY supports that. I haven't looked closely enough
-at PHY datasheets to know whether that's possible or not though.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Best Regards,
+Petr
 
