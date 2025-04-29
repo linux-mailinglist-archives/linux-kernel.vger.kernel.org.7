@@ -1,165 +1,97 @@
-Return-Path: <linux-kernel+bounces-624837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A406AA0861
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:23:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B3DAA088C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F041A83A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0786F3AF303
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7F529B23E;
-	Tue, 29 Apr 2025 10:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBE62BE7DF;
+	Tue, 29 Apr 2025 10:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfO0rC5/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="hiuDa4pP"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE8121C19E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E81525D8E8
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745922175; cv=none; b=qbDvmOd9abVhWJg2kk2IQ5fIi4hS5rPUyDX+K9Qt2zzh662Rv3kzhG59uHdFtNQJpHdRxBSXf/1gleDFZg5/5+qFDtBG8qrIb4lOmzhVanMgkx+KEPEHLLJ2OrX+Mg0eqXlFCteyRKoY7w2Y7roh2VJ5MVHzjDAEUC8vFtGBSzI=
+	t=1745922566; cv=none; b=hUdqB9rEA7djYqK7sbM+OLQ6UCxeEBXJqfnNm9CcxdDXw+zS30X5aTwWRSv2/OLQbzAbBKZCKEwjh2WcX4tuoxhktA3cFZ/J+LqEYwQM4lAHPxq/jYY+AhhhfVNIciCBiv1b28zIoHG/5WY23bnOe8vXs2b+LrZ3kvQYG4LZ05s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745922175; c=relaxed/simple;
-	bh=GIACiLW/Jc4x3T5Rk4tqtDYhcuUuBK/CdC2s1tOxhQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TAxMneJJMETmIaNVKkyXRCLfKxzVidX54s0X+ExNnOnrqoul3E8B1SJ5oaGufv5LIDDr2M4cbcSWiQH8KvFz6m3K8ubv+CD1qRMdzZE9WNrl2p/ykVApmjLiAEicr/C4eyb8PWciCNgFhpWt7sZlBygLQzV/OUjNetjK6ZGSHPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfO0rC5/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82414C4CEE3;
-	Tue, 29 Apr 2025 10:22:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745922174;
-	bh=GIACiLW/Jc4x3T5Rk4tqtDYhcuUuBK/CdC2s1tOxhQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SfO0rC5/VXc5qDLoOLhdLx0vN9mBZR0Izmz+5iUIqrfvPcoTG8R+fDeJ5Lu1YBiD+
-	 lx4nd7hKv0tlZAzoIPLAQ6MmSW6bjgqohil+cfHkgRznVbaH+UWGOEcnCzakPnP9Te
-	 7MkmBA1TokaAR75nF+14pTpbE7+XvrqMeRxhZ9x6h5PFq+LEwiaJN8Eb//ZxWg806B
-	 o3T/6ocG2oeq1UgJ8fN116uE0M9mobcucJbwvM1GiIS9+q12hCOfpNhj0em8kP21pb
-	 Gt2MimkXwdqAwzQMRQzizFVi/lpkmLGEGJ93tPJ2S22QA1Jg4fkE7FA+n7E+lm1IpF
-	 hESrD4KdGBWXQ==
-Date: Tue, 29 Apr 2025 12:22:50 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	"Ahmed S . Darwish" <darwi@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 13/15] x86/cpu: Make CONFIG_X86_CX8 unconditional
-Message-ID: <aBCoesvpVU0-njjH@gmail.com>
-References: <20250425084216.3913608-1-mingo@kernel.org>
- <20250425084216.3913608-14-mingo@kernel.org>
- <956412a3-43c2-4d6e-bea2-2573c98233ae@app.fastmail.com>
- <8D770F85-5417-4A9E-80DE-1B6A890DECEF@zytor.com>
- <1d4ddcab-cf46-4d7e-9e33-de12b6bd350c@app.fastmail.com>
- <aA34I9rY1-1QQo0R@gmail.com>
- <b97650f6-b541-4496-b84d-862fc7fd711b@app.fastmail.com>
- <aA9HaA2u-tdVA2ET@gmail.com>
- <6c363c6f-7152-4d09-96db-861eda759a35@app.fastmail.com>
+	s=arc-20240116; t=1745922566; c=relaxed/simple;
+	bh=5RrDLi3PZzyNGGnZ9negfTwgCdp5O8QJQ2VcaXdGPb8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ptudD4UUGjUlh1w3lTWOXCutNprnJscJG58DF3rsqIebWAAPSamRR22ISUwcQTHfcQSZHbg9YsmkjhQpVhFb0ymQ6eL5NLD6xu6XlCei48a6joFofelf8hekEK+AjbbP4Bj8/YLVsYd/HaXoQPeNsdTBUcHtJDD0jqU/JgapofY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=hiuDa4pP; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1745922551; bh=EzkTMPalhiZ+t3ncZHFG2Y4CwLhlWITD7mdAZZ8jkuo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=hiuDa4pPBKV2l3eRl10s7YpdVR1zrBjvpwwc4bNmyZaKReq43LCJuo/iftdyjVVAu
+	 TDnylyty/nuFhU1MJ/F6LlOTyjGpzjXpctMIxxtddDpHxDp+1ZcEX7luTJDJHxK3ud
+	 d+BFZPwB47jJ9e/qcj9kLogO7+qbNnWIWc20s9c8=
+Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 5C587E89; Tue, 29 Apr 2025 18:23:05 +0800
+X-QQ-mid: xmsmtpt1745922185tjdi1nepa
+Message-ID: <tencent_7212DF0676098EEEF9EECD0C9F27D686DC06@qq.com>
+X-QQ-XMAILINFO: OdDhBiKk1LgM6k2GFuIG/QaMOz6EAIEnfQGjRze4Zf/h72JRI4GSn3SpWZYKdj
+	 5vthzPx7ir3Y8grqPpswKXWpvCexGKsfH079B5po7Gi9fQ9EZYZA76u0OW0uRiyBPVK4t+QRmNGo
+	 dfwYzv/Ohm/+ko/327d1tg03aGEqBxt2kEYN1Qk6AeaJq6uqcpNu0q/U91OnoQu1nivvjO9MVUa3
+	 CyYnFOi3UU0B4SdqqHTeZQqt6BBb6Wzdym2C7npLKINydipeKxEN0Ld4EpLWO3dVroxGtDLGJL56
+	 tuYBI8MGMidYBHSu7NN3Zrej1XKAMoyDd0RuXIa1TDX11NtPKB2MNtItZ3UWP8+wBBWv64sN+ziL
+	 EpxjO6fubPOfCY8nBD5KIo+RIXPSthPwa+Ba+Y3tjIPe+AMLV/1COWA2DpclfbOHfuXqqCSvu1ND
+	 AiXs6wxUIxSb3G957PDqn6abK14Nk7fK1Q0LTfGmkv4l5qlwN1fxB2vRVkMgufBouCkQYjNfU/xv
+	 uZ5/Zx1McqBAY7+XhFyDlh8JaWuNW8jHU3x6zInIJiPVtj9HVmQ8RFg5lxuJG71SGkiTPJfjp7uc
+	 fjEtIFDZd5EgLJQtKlhO05Yee1pU2sZtA6oGQTZ1OM9AfSxTUgSH7dGXRh1s1ioCOTIua8eUDChM
+	 RckFP/d42T+9sdcdBKFNgEcUqjLPaTQdRDPmQD5UmKCrMBE+QtiCC433T8XJdKR5uuisuryQZDsO
+	 XTurFt4dLYGBJnhMvvAV8b2mW2twrAC8qHlQHGONXJXiGuAyBsJo+ZpHF4fkUShh2qRyrqqEVMr8
+	 a21JAJahl9dC5euc9bOMqfDPaq5eUg4xYqbyFSQtCFyIqHIXWqDNKsHJC3ZlqwDkc7T8LrcfvrUb
+	 jXzn4tTA7nnU4UR/OnXOcg6/09U69NrQxsgGOEjiUhCci0Fb2VnNo4HjY6SQe2ScRq6/7wvrGN86
+	 v1Wx2vyLU=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+Date: Tue, 29 Apr 2025 18:23:06 +0800
+X-OQ-MSGID: <20250429102305.805209-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
+References: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c363c6f-7152-4d09-96db-861eda759a35@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
+#syz test
 
-* Arnd Bergmann <arnd@kernel.org> wrote:
+diff --git a/net/mac80211/ibss.c b/net/mac80211/ibss.c
+index 4246d168374f..b709864c7ceb 100644
+--- a/net/mac80211/ibss.c
++++ b/net/mac80211/ibss.c
+@@ -1818,6 +1818,12 @@ int ieee80211_ibss_join(struct ieee80211_sub_if_data *sdata,
+ 	sdata->deflink.needed_rx_chains = local->rx_chains;
+ 	sdata->control_port_over_nl80211 = params->control_port_over_nl80211;
+ 
++	struct ieee80211_local *local = sdata->local;
++	if (local && local->int_scan_req) {
++		printk("sd: %p, l: %p, nch: %d, %s\n", sdata, local, local->int_scan_req->n_channels, __func__);
++		if (!local->int_scan_req->n_channels)
++			return -EINVAL;
++	}
+ 	wiphy_work_queue(local->hw.wiphy, &sdata->work);
+ 
+ 	return 0;
 
-> On Mon, Apr 28, 2025, at 11:16, Ingo Molnar wrote:
-> > * Arnd Bergmann <arnd@kernel.org> wrote:
-> >> 
-> >> b) always build with -march=i586 and leave only the -mtune
-> >>    flags; see if anyone cares enough to even benchmark
-> >>    and pick one of the other options if they can show
-> >>    a meaningful regression over -march=i686 -mtune=
-> >
-> > That's actually a good idea IMO. I looked at the code generation with 
-> > current compilers and it turns out that M686 is *substantially* worse 
-> > in code generation than M586, as apparently the extra CMOV instructions 
-> > bloat up the generated code:
-> >
-> >       text	   data	    bss	    dec	    hex	filename
-> >   15427023	7601010	1744896	24772929	17a0141	vmlinux.M586
-> >   16578295	7598826	1744896	25922017	18b89e1	vmlinux.M686
-> >
-> >  - +7.5% increase in text size (5.6% according to bloatometer),
-> >  - +2% increase in instruction count,
-> >  - while number of branches increases by +1.3%.
-> >
-> > But it's not about CMOV: I checked about a dozen functions that end up 
-> > using CMOV, and the 'conditional' part of CMOV does seem to reduce 
-> > branches for those functions by a minor degree and ends up reducing 
-> > their size as well. So CMOV helps, a bit.
-> >
-> > The substantial code bloat comes from some other aspect of GCC's 
-> > march=i686 flag ... I bet it's primarily inlining: there's a 0.7% 
-> > reduction in number of calls done.
-> 
-> I had tried the same thing already, but saw a different result,
-
-Just to clarify, my measurements only compare -march=i586 to 
--march=i686, not -mtune. Your results are primarily -mtune figures.
-
-So unless you see something different from my figures with -march only, 
-it's an apples to oranges comparison.
-
-> There is a good chance that the -mtune= optimizations totally dwarf 
-> cmov not just in code size difference but also actual performance, 
-> the bit I'm unsure about is whether we still need to worry about any 
-> core where this is not the case (I'm guessing not but have no way to 
-> prove that).
-
-I didn't use -mtune - I only tested two Kconfig variants:
-
-  CONFIG_M686=y vs. CONFIG_M586TSC=y
-
-... which map to two -march flags, not different -mtune flags:
-
-  arch/x86/Makefile_32.cpu:cflags-$(CONFIG_M586TSC)       += -march=i586
-  ...
-  arch/x86/Makefile_32.cpu:cflags-$(CONFIG_M686)          += -march=i686
-
-This is the current upstream status quo of x86-32 compiler flags, which 
-results in significant .text bloat:
-
-      text         data     bss     dec     hex filename
-  15427023      7601010 1744896 24772929        17a0141 vmlinux.M586
-  16578295      7598826 1744896 25922017        18b89e1 vmlinux.M686
-
- - +7.5% increase in text size (+5.6% according to bloatometer),
- - +2% increase in instruction count,
- - the number of branches increases by +1.3%,
- - while there's a -0.7% reduction in number of CALLs done.
-
-I believe this is mostly the result of increased amount of inlining GCC 
-14.2.0 does on march=i686 vs. march=i586.
-
-The extra CMOV use on -march=i686 helps a bit but is overwhelmed by the 
-effects of inlining.
-
-Obviously these metrics cannot be automatically transformed into 
-performance figures, but such inlining driven bloat almost always 
-reduces the kernel's performance even on CPUs with large caches, for 
-most but a few select 'hot' functions.
-
-An interesting 'modern' twist: the reduced number of CALLs due to 
-increased inlining is almost certainly reflected in a reduced number of 
-CALLs in real workloads as well, which would be a disproportionately 
-positive factor on x86 kernels and CPUs with retbleed-style mitigations 
-activated (which is almost all of them).
-
-Thanks,
-
-	Ingo
 
