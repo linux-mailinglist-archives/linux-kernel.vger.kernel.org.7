@@ -1,141 +1,82 @@
-Return-Path: <linux-kernel+bounces-624545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868E4AA04A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B5FAA04AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366575A568E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:36:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A731A861A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE5B278E7F;
-	Tue, 29 Apr 2025 07:36:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF5827C84E;
+	Tue, 29 Apr 2025 07:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwbvq8HQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEAC278E6B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC9E27991F;
+	Tue, 29 Apr 2025 07:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745912215; cv=none; b=qCKDcvEoqBSuj+vli+KZnaz0iATk1I/vUQwNh+lsobIwkteS2e2HofvQNqZYf/jFoYl/PW/M+aOGy44ZlLqDHlK356Ldf5hMXVi5Vxa7lrEtivbCj/LelQSlOABuATsuNkSXoo6iLFVT2uAgocNpHq5XwQJnASpUnj2iLRicBG4=
+	t=1745912217; cv=none; b=u4qAQSbnXNrXULIeVFEgm6LY/k4baAjLajMtbEsYKOfO6dL7MPciq5Os3+YkVkmpDCvAYpISlhbhHRXsuTH8yQ6PZGe67xGIkDZmtWt0IurqtfqSy0EpnULjKaaGoKBcIGoDuU+8Y73dFmzhFeK6jRKtod4Rmv0QDNpOJ70WFPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745912215; c=relaxed/simple;
-	bh=VGUYVw6QW+wGdP57zdeokyo5cVDXcXvy4Co08zbuMzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EUAZr4wQHsTFyBKeR1TMka0MQm2CyGluACZ+ay7sr7sFIDSet+HTPCc/gIMMYu1X4SHGdyU1ceI/6AZIrdsDMVMR0wu5nM6fh9j8Aj4JMpMkBXcWUDVfEDvZVTRRTXKUfW+1a+xS9gOmZAT7R3cE83XbPr/h176L4fuwJuDrMus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u9fWI-0004BD-1d; Tue, 29 Apr 2025 09:36:46 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u9fWH-000E2Y-26;
-	Tue, 29 Apr 2025 09:36:45 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u9fWH-00CX8f-1q;
-	Tue, 29 Apr 2025 09:36:45 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	stable@vger.kernel.org,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: [PATCH net v3 2/2] net: phy: micrel: remove KSZ9477 EEE quirks now handled by phylink
-Date: Tue, 29 Apr 2025 09:36:44 +0200
-Message-Id: <20250429073644.2987282-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250429073644.2987282-1-o.rempel@pengutronix.de>
-References: <20250429073644.2987282-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1745912217; c=relaxed/simple;
+	bh=/arAgy+mMya1qUnC9q22rUDb6dDI78ZEwALTr9bZUoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWRISIdP/Ivz1BeFX2eH71z1Vo5S/RDyLiIsHlrB4/a3MOr1NK4ZKuYwloPWPFrP33WREWIZbcWBaAVHYHmTfUZbp+t0h6SoVvS4l92PZe74gHh2mlevsN0U9UfUeWqU9E+KLwtibxgpyuoI4Up5q9oWuzx+GG86wvhOI0mX7BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwbvq8HQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEBCC4CEED;
+	Tue, 29 Apr 2025 07:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745912217;
+	bh=/arAgy+mMya1qUnC9q22rUDb6dDI78ZEwALTr9bZUoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hwbvq8HQK0zIFFIztCfOVgYWBn0eMcwEuZ9nmB3EsbdcdZyBWFjWTxOFBkGNFZmKk
+	 381+AyTqawT6XvCasSoB7sW4qnkdIkFwFjehiyeaBkTqeNFGOC6Vy57gLCAyFaR4gM
+	 xAzG932mn4xx93kmL9asWO68SOhYCRWul/L+ldwRoXPEGrTLocl34J3Rrr/UKMAKCL
+	 BMU1wwMIfmMtt7Zph+a9/eyHwpb38SBdNhjXCTfqnam4rTlB5e97DSX0YyxSl1Yrjo
+	 f1AAQvV1oAgT+5jj3ju1lcHKRaHBJo4BbLmzyOjYxJGIeBNFEFdbT9acMB9kZfAGG6
+	 LO8HqVo9UqKaw==
+Date: Tue, 29 Apr 2025 09:36:54 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Eason Yang <j2anfernee@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	javier.carrasco.cruz@gmail.com, tgamblin@baylibre.com, olivier.moysan@foss.st.com, 
+	alisadariana@gmail.com, gstols@baylibre.com, antoniu.miclaus@analog.com, 
+	eblanc@baylibre.com, andriy.shevchenko@linux.intel.com, matteomartelli3@gmail.com, 
+	marcelo.schmitt@analog.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
+	yhyang2@nuvoton.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] dt-bindings: iio: adc: add NCT7201 ADCs
+Message-ID: <20250429-sensible-subtle-cobra-badedb@kuoka>
+References: <20250429025505.3278016-1-j2anfernee@gmail.com>
+ <20250429025505.3278016-2-j2anfernee@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250429025505.3278016-2-j2anfernee@gmail.com>
 
-The KSZ9477 PHY driver contained workarounds for broken EEE capability
-advertisements by manually masking supported EEE modes and forcibly
-disabling EEE if MICREL_NO_EEE was set.
+On Tue, Apr 29, 2025 at 10:55:04AM GMT, Eason Yang wrote:
+> Add a binding specification for the Nuvoton NCT7201/NCT7202 up to 12-bit
+> ADCs with I2C interface.
+> 
+> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
 
-With proper MAC-side EEE handling implemented via phylink, these quirks
-are no longer necessary. Remove MICREL_NO_EEE handling and the use of
-ksz9477_get_features().
+NAK
 
-This simplifies the PHY driver and avoids duplicated EEE management logic.
+This never happened. Don't add fake tags.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: stable@vger.kernel.org # v6.14+
----
-changes v3:
-- included missing CC
----
- drivers/net/phy/micrel.c   | 7 -------
- include/linux/micrel_phy.h | 1 -
- 2 files changed, 8 deletions(-)
-
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 71fb4410c31b..c2e5be404f07 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -2027,12 +2027,6 @@ static int ksz9477_config_init(struct phy_device *phydev)
- 			return err;
- 	}
- 
--	/* According to KSZ9477 Errata DS80000754C (Module 4) all EEE modes
--	 * in this switch shall be regarded as broken.
--	 */
--	if (phydev->dev_flags & MICREL_NO_EEE)
--		phy_disable_eee(phydev);
--
- 	return kszphy_config_init(phydev);
- }
- 
-@@ -5698,7 +5692,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.handle_interrupt = kszphy_handle_interrupt,
- 	.suspend	= genphy_suspend,
- 	.resume		= ksz9477_resume,
--	.get_features	= ksz9477_get_features,
- } };
- 
- module_phy_driver(ksphy_driver);
-diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
-index 591bf5b5e8dc..9af01bdd86d2 100644
---- a/include/linux/micrel_phy.h
-+++ b/include/linux/micrel_phy.h
-@@ -44,7 +44,6 @@
- #define MICREL_PHY_50MHZ_CLK	BIT(0)
- #define MICREL_PHY_FXEN		BIT(1)
- #define MICREL_KSZ8_P1_ERRATA	BIT(2)
--#define MICREL_NO_EEE		BIT(3)
- 
- #define MICREL_KSZ9021_EXTREG_CTRL	0xB
- #define MICREL_KSZ9021_EXTREG_DATA_WRITE	0xC
--- 
-2.39.5
+Best regards,
+Krzysztof
 
 
