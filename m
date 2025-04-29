@@ -1,100 +1,93 @@
-Return-Path: <linux-kernel+bounces-625707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F23AA1BC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4A7AA18DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F3B9A303D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29EB39A277A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0609E25E80E;
-	Tue, 29 Apr 2025 20:05:17 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68ADF253B42;
+	Tue, 29 Apr 2025 17:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdypGX9E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E3048CFC;
-	Tue, 29 Apr 2025 20:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A8A248883;
+	Tue, 29 Apr 2025 17:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745957116; cv=none; b=jw+7mjUGjDMYElDXvZ2qi9p3oSHX2ryVl7+FIdBtLrdDdTgTTE20n0FqeIzOwpl1vxUoHvV7xnpj2NilHoQlNGNbq2fk46j5LRnkXOz41FFew4xzkk4ID745ZpKP+A9ehJBdnZBbsoxLH69pdBFkdeUiy5noDygxrxHpUOqN/xU=
+	t=1745949590; cv=none; b=ER7JUI8m+EPeoTVQS++ugVe9H/MEDrXvLBaUIvf57qod6w3QiZNxNYRFJCE1iiqRU3x1Mvd0clX2eauHbHAdDGEJLDEuMQ02k/YhaP/zeAittuzSchPevrvWPdngHtfhr4iEH8zB15C55GtYwxs5+rm5tXoDhoV9vcLJx3sxr2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745957116; c=relaxed/simple;
-	bh=CH8sSlpxog/OcbKyxWb4I/Q8dJEc4mRErAiIp6l4Ju8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MDPxB+EdzJK4iGmOczDGL5E0lFT857a2Ib2oiVoKTdxwUNZSHe7AxnPdLoNDKpjeoD0VAZ4xaIvXQu0LvZPQP9BUTe5Kv3lOB7oS+wC6G/CsVOSKGl2FeMO84PjLtnYoxDOpqe0E46j2/Wht2lvhshFAEpARv2svFKeB5vr7M6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 3286D1CF6EA;
-	Tue, 29 Apr 2025 17:36:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id 934AA20011;
-	Tue, 29 Apr 2025 17:35:50 +0000 (UTC)
-Message-ID: <1490923bf0b7d5e32ded1393c1f7a3e4e640de5b.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: remove %p4cn
-From: Joe Perches <joe@perches.com>
-To: Aditya Garg <gargaditya08@live.com>, pmladek@suse.com
-Cc: admin@kodeit.net, airlied@redhat.com, akpm@linux-foundation.org, 
-	alyssa@rosenzweig.io, andriy.shevchenko@linux.intel.com, apw@canonical.com,
- 	asahi@lists.linux.dev, corbet@lwn.net, dri-devel@lists.freedesktop.org, 
-	dwaipayanray1@gmail.com, geert@linux-m68k.org, kees@kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@rasmusvillemoes.dk, lukas.bulwahn@gmail.com, marcan@marcan.st, 
-	mripard@kernel.org, rostedt@goodmis.org, senozhatsky@chromium.org,
- simona@ffwll.ch, 	sven@svenpeter.dev, tamird@gmail.com, tzimmermann@suse.de
-Date: Tue, 29 Apr 2025 10:35:48 -0700
-In-Reply-To: <PN3PR01MB95971954FC5E026C59B6F8EDB8802@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <20250428123132.578771-1-pmladek@suse.com>
-	 <PN3PR01MB95971954FC5E026C59B6F8EDB8802@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1745949590; c=relaxed/simple;
+	bh=Mlv5QPLKqqnLLlp3l4YB9mb0TbR4nnACnfhCeWOJ2qA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZsLTwHop0rjL122qlo4gv18tsGEYj2CaPiNCB577iFAvFPBqYF8Lk5WaXo7FKEl/Sp/rFIoGz3RLWkerz12m4H5WaiRrVAKdLSqt8hKDnIhnXrsB7pq/L2mFFe+6WeDin3k/bKFaWPqHHpZrgCZXXzMwJQJHYVHI6JAKkz8t1+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdypGX9E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4733EC4CEE3;
+	Tue, 29 Apr 2025 17:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745949590;
+	bh=Mlv5QPLKqqnLLlp3l4YB9mb0TbR4nnACnfhCeWOJ2qA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jdypGX9EoMqhhPmCwvvegpsjmhqEgXTFWnH4WpuPGQ4+/8hsuc1tcsk2l0TpBC/zF
+	 AHgeIkuc+4KzHbJWvcqnnv/0Aq578yjcI/+Jt5KQD1JRNOWfKVV8QrN6KDXYSxIK9O
+	 zv1BJoArVE6EoVUSz+4Q5LSEL5B51N/2tegpShYs70D5B3iAf5BupfX8jSh3J8hXVp
+	 K6rG/19hqLBSA9SL8C6Igw7FoG2/pvd5+VEDrAU6mHMzL1+lTWNvvoVU/puLKUNLQn
+	 qPXonvrb5MCSQIu+XsTpNiR1vL9NT+X1Azoi/dY5zTnxIFx7tKlC9Xev74XhLUWlnX
+	 xvmwew0w3wu+g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D7E3822D4C;
+	Tue, 29 Apr 2025 18:00:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 934AA20011
-X-Stat-Signature: ty3t4amg1am4wfranj4it66hgc5ywusk
-X-Rspamd-Server: rspamout01
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/Pi+sZD950+7lYGkQr89DieUnwzGYH3J8=
-X-HE-Tag: 1745948150-531653
-X-HE-Meta: U2FsdGVkX1/F/WflSpAiJ6Heq+tSmgatCv6cN3WW0dk6b5ZPd+jMUMgkgjrAVyTPWC1efrCNTJDnLnXh91eX/OoUJU0btcvbXg4J60vd7JqFt34/NaVW+QRRNzNuF0kha7z0aCOJ2COg6+11wgZuD5Wkuetnuh2tOR3bfaEG14K5bxuu589aJQuZvYWDkIT1pqWusGBVw0brO2eEyTKfCxszgF1+zDiCMvANHDIbyQj+boU7QSiHxFVCMNzUeqeWvHpGJMOekc7SvDDFtH+DJ+mkKclqXy6GXWFeuEh0L8GGQi07oZHfPs5cMjaFnGUG8NJdfCJSN3/s513PP4ctRcSx11Qd6FNK
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ipv4: fib: Fix fib_info_hash_alloc() allocation type
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174594962925.1753982.13626856832986893239.git-patchwork-notify@kernel.org>
+Date: Tue, 29 Apr 2025 18:00:29 +0000
+References: <20250426060529.work.873-kees@kernel.org>
+In-Reply-To: <20250426060529.work.873-kees@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 
-On Tue, 2025-04-29 at 16:07 +0000, Aditya Garg wrote:
-> %p4cn was recently removed and replaced by %p4chR in vsprintf. So,
-> remove the check for %p4cn from checkpatch.pl.
->=20
-> Fixes: 37eed892cc5f ("vsprintf: Use %p4chR instead of %p4cn for reading d=
-ata in reversed host ordering")
->=20
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> ---
->  scripts/checkpatch.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 44e233b6f..f79f0a085 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -6891,7 +6891,7 @@ sub process {
->  					    ($extension eq "f" &&
->  					     defined $qualifier && $qualifier !~ /^w/) ||
->  					    ($extension eq "4" &&
-> -					     defined $qualifier && $qualifier !~ /^c[hnlbc]/)) {
-> +					     defined $qualifier && $qualifier !~ /^c[hlbc]/)) {
+Hello:
 
-Probably needs to be something like:
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-					$qualifier !~ /^c(?:[hlbc]|cR)$/
+On Fri, 25 Apr 2025 23:05:30 -0700 you wrote:
+> In preparation for making the kmalloc family of allocators type aware,
+> we need to make sure that the returned type from the allocation matches
+> the type of the variable being assigned. (Before, the allocator would
+> always return "void *", which can be implicitly cast to any pointer type.)
+> 
+> This was allocating many sizeof(struct hlist_head *) when it actually
+> wanted sizeof(struct hlist_head). Luckily these are the same size.
+> Adjust the allocation type to match the assignment.
+> 
+> [...]
 
->  						$bad_specifier =3D $specifier;
->  						last;
->  					}
+Here is the summary with links:
+  - ipv4: fib: Fix fib_info_hash_alloc() allocation type
+    https://git.kernel.org/netdev/net-next/c/fca6170f5a03
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
