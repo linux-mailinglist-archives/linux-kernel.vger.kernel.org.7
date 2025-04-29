@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-625243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DD5AA0EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D7BAA0EB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CD987AD619
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815F43A6213
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C9D2D3A6B;
-	Tue, 29 Apr 2025 14:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0JJAKMS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863C52D321A;
-	Tue, 29 Apr 2025 14:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462162D3219;
+	Tue, 29 Apr 2025 14:26:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D06A2C179F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745936735; cv=none; b=oMY+tQuVev0pahFrS8oOCjw/s1d7i1Ox9UOcYXwa7BRXX0hZVMjbCNvznzcT3nKZiS2mOvf8YwZWE2s0rhfQ68DX+qhTahT7pUuMoV09qhFTfxzhZ14z0U4UN8SORJ3rpr1iayUvtJ6nu9C+lYyNO5ZMI55tM/R2h0gKMT6Y5y0=
+	t=1745936771; cv=none; b=Od2vycsKRs1MP6hbI9Dl1CniCeXmwgnUu7+YYd3uQZGPzVgUlpoyMHUB87L7X3erYjkXvVosQ5X6yxFYzW58ODiuHnSyZoXLgPcPN4GeB8h4g2K2TyQIb7wHN9oR7kQvftJLS5fUiUURyHhYR4SWJR04VXIxwJs1rdJFpULmXA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745936735; c=relaxed/simple;
-	bh=HHHetzLClcVyYWk8l98u58LIcuM9dJ1z/dYCNokcUQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kjJSLotYhPQ9E9cSPax24pxgxiIhxpJUnlGm4MJ01Apy6odOlT7TfYJX5ufMg6w/ygBA7Zg/Rkz8uHMR71CWEjK1rSqSuXkbh5VRiZ8tmef6RbvTNhgB5u1kLq3bdb5FH2f5yxcW1Whm3t4pA/oQoIqiRPKPrBb+8j8EOoXpSAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0JJAKMS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01254C4CEEE;
-	Tue, 29 Apr 2025 14:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745936735;
-	bh=HHHetzLClcVyYWk8l98u58LIcuM9dJ1z/dYCNokcUQA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V0JJAKMSEGVTjCwPFtyo8go+iibWfKjH21D3IHWH/elVlYCuBN6XNSH8v3feeDIRj
-	 4DduDmZNPcPI00kLYwDAtJRtRtrf23mVgOcgzRGRGqG8DZMLXcX/HIW0VHzAAEDpgf
-	 t3OHbqJAMKEHDxRciwllPq6taUB1x7mNMTzvSnXA48xZXrJ3uqFUIfNusUAp7BamBG
-	 A/6qGRqV+k3nBx5tVaghxlU8bBd2265WD7ojHMsEg3C3JIO4PDTqmBg6JEA8Raekmc
-	 7fpXRCbUDgPqY0W868RyW1OFiGhLNTTwY5oi7VTc5ygv4cwX8FmB2Ddp5UJob9jPzx
-	 RjjA1XGQhWQcQ==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5f63ac6ef0fso7807846a12.1;
-        Tue, 29 Apr 2025 07:25:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXDqE5mnSIiiToCACsLun7epkHLfErzHK0hss3fAvACBMHqQCCWtMTCRqJELOwmzuKnmo+YsFOfuHuz3Vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFGchZh7xdCaHC4LYgyK1VnO2U1+uciTCnhDiErVlSJKGnVFg0
-	ATcZCCJ5XC3zGRftFntscEZqDd+lRZ/CDpDts/JptyhHpvdlO58FTLN3v49Sf9hzl+UvV2Fj3E5
-	Vqgm+pBnPFnjslLnHirfU3Eor9w==
-X-Google-Smtp-Source: AGHT+IHfroQjiVVCpl99LNHJxjRUar4RVaGCvkl0v3xBaP9iBGHIfGCUcloWbvPs8CSF2by68p4lpBN+j6whe6viwkg=
-X-Received: by 2002:a05:6402:4304:b0:5e0:752a:1c7c with SMTP id
- 4fb4d7f45d1cf-5f839204819mr3535728a12.1.1745936733598; Tue, 29 Apr 2025
- 07:25:33 -0700 (PDT)
+	s=arc-20240116; t=1745936771; c=relaxed/simple;
+	bh=FV9zsPW+AHUsqrVyH1X01rs3cKB0bQsJYt5QiL09+Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuNDa/suktiwbNgCh2R7m8N5hnqx9mWWfu84OgySh4lqdiEFgwXHqfjBawqqOuwhy6LfAbV4cPnkUOe/SmPBEEvRWzy2EFVlXSuUfKTTa7wrezR4MKizYIWak1uLss4YzjyMIkzp9uZN8YUGcT7NCklQ91s8BSXmmYaCULfalkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF8AB1515;
+	Tue, 29 Apr 2025 07:26:01 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97E263F66E;
+	Tue, 29 Apr 2025 07:26:04 -0700 (PDT)
+Date: Tue, 29 Apr 2025 15:25:54 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
+Subject: Re: [PATCH v9 27/27] MAINTAINERS: Add reviewers for fs/resctrl
+Message-ID: <aBDhcnqKabZCLhf4@e133380.arm.com>
+References: <20250425173809.5529-1-james.morse@arm.com>
+ <20250425173809.5529-28-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422084340.457-1-alireza.sanaee@huawei.com>
-In-Reply-To: <20250422084340.457-1-alireza.sanaee@huawei.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 Apr 2025 09:25:21 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+mDoT=XFcPzx5V4dREGfBSGpWo6cnVo0-dsa+dD2tc2A@mail.gmail.com>
-X-Gm-Features: ATxdqUEHELZ1OjOnNJfx6ZMPIlivh56dcvLWcKfe4o76j4u1lowH3t3yLvFF3WI
-Message-ID: <CAL_Jsq+mDoT=XFcPzx5V4dREGfBSGpWo6cnVo0-dsa+dD2tc2A@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] DT: Enable sharing resources for SMT threads
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-Cc: devicetree-spec@vger.kernel.org, mark.rutland@arm.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com, 
-	linuxarm@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425173809.5529-28-james.morse@arm.com>
 
-On Tue, Apr 22, 2025 at 3:43=E2=80=AFAM Alireza Sanaee
-<alireza.sanaee@huawei.com> wrote:
->
-> This patchset allows for sharing resources between SMT threads in the
-> device tree (DT).
->
-> WHY? Given the current use of the DT, it is not possible to share L1
-> caches, as well as other resources such as clock among SMT threads.
-> However, DT spec in section Section 3.8.1 [1], describes how SMT threads
-> can be described in the reg array, this is how PowerPC describes SMT
-> threads in DT.
->
-> CHALLENGE: Given discussions with the community [2], it was apparent
-> that it is not straightforward to implement this, since cpu-maps must
-> point to a particular CPU node in DT [3], Section 2.1. However, it is
-> not only the cpu-map but also there other nodes that point to cpu nodes
-> which indeed need care and changes.
->
-> SOLUTION: This led to more discussions on what the solution should look
-> like and based on recent converstations we ended up with the following
-> approach [4].
->
-> core0 {
->   thread0 {
->     cpu =3D <&cpu0 0>;
->   };
->   thread1 {
->     cpu =3D <&cpu0 1>;
->   };
-> };
->
-> In this layout, first parameter is the phandle to cpu-node and second
-> index would be the local-thread index in the reg array available in the
-> cpu-node reg property. Further, when reading the property in the cpu-map
-> we must know how many parameters phandle has in cpu property. Therefore,
-> we optionally introduced "#cpu-cells" property to indicate the number of
-> cells.
->
-> [1] https://github.com/devicetree-org/devicetree-specification/releases/d=
-ownload/v0.4/devicetree-specification-v0.4.pdf
-> [2] https://lore.kernel.org/linux-arm-kernel/Z4FJZPRg75YIUR2l@J2N7QTR9R3/
-> [3] https://www.kernel.org/doc/Documentation/devicetree/bindings/cpu/cpu-=
-topology.txt
-> [4] https://lore.kernel.org/devicetree-spec/CAL_JsqK1yqRLD9B+G7UUp=3DD8K+=
-+mXHq0Rmv=3D1i6DL_jXyZwXAw@mail.gmail.com/
->
-> Alireza Sanaee (5):
->   DT: add infra for finding CPU id from phandle.
->   arm64: of: handle multiple threads in ARM cpu node
+Hi,
 
->   driver/base/arch_topology: update CPU map to use the new API.
->   driver/hwtracing/coresight: Use of_cpu_phandle_to_id for grabbing CPU
->     id.
+On Fri, Apr 25, 2025 at 05:38:09PM +0000, James Morse wrote:
+> resctrl has existed for quite a while as a filesystem interface private to
+> arch/x86. To allow other architectures to support the same user interface
+> for similar hardware features, it has been moved to /fs/.
+> 
+> Add those with a vested interest in the common code as reviewers.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  MAINTAINERS | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 46f7365bb9ac..3a878ca99a78 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20338,6 +20338,8 @@ F:	tools/testing/selftests/net/rds/
+>  RDT - RESOURCE ALLOCATION
+>  M:	Tony Luck <tony.luck@intel.com>
+>  M:	Reinette Chatre <reinette.chatre@intel.com>
+> +R:	Dave Martin <Dave.Martin@arm.com>
 
-You kind of have the path, but it's 'drivers' not 'driver'. In any
-case, that should be dropped. Use the prefix of the particular
-subsystem (git log --oneline path should tell you).
+I'm happy to do this, though my conributions may continue to be a bit
+intermittent.
 
-These 2 patches do the same change. Use a consistent subject.
+Acked-by: Dave Martin <Dave.Martin@arm.com>
 
->   DT: of_cpu_phandle_to_id to support SMT threads
+> +R:	James Morse <james.morse@arm.com>
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Supported
+>  F:	Documentation/filesystems/resctrl.rst
 
-Patches 1, 3, and 4 are useful refactoring regardless. They should
-come first in the series.
+[...]
 
->  arch/arm64/kernel/smp.c                       | 74 ++++++++++---------
->  drivers/base/arch_topology.c                  | 12 +--
->  .../coresight/coresight-cti-platform.c        | 15 +---
->  .../hwtracing/coresight/coresight-platform.c  | 14 +---
->  drivers/of/cpu.c                              | 45 +++++++++++
->  include/linux/of.h                            |  3 +
->  6 files changed, 100 insertions(+), 63 deletions(-)
->
-> --
-> 2.43.0
->
+Cheers
+---Dave
+> 
+> 
 
