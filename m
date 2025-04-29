@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-624846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94695AA087D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648E3AA0881
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905C9841DCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B3F17239C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027422BEC4C;
-	Tue, 29 Apr 2025 10:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781E22BE7D2;
+	Tue, 29 Apr 2025 10:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="BGEHGN5A"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JDb3R9EU"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCA42BE7DF
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33E72BE7B4;
+	Tue, 29 Apr 2025 10:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745922339; cv=none; b=SrkvIu01/UpCIzg9HkPVjD0ussVamx9+Y9LDWshWnJn15IXMxxMGSwMQ6B9u5AjtIgpziivZptRff0/JomdeNoVROmPFwg3GTBSTMP2Hhxj3TepurSbJv/p58G1k0C+R29HrAsZejJ40lO7wp/6QpPcDCbB6ozOF4loPrgAJgrU=
+	t=1745922403; cv=none; b=CSjZO+kDNvHY6hLqjPWNvn0804xAI5bsjlKOIZC0XAbqsdpECcmJ0n0o9jELk3iWi7gHN9ag6dkBhznlZ8SiOmr0YTaXU9K7UhzjcJFBr+MphFkoHjNzzfoGVATj3Z1iLhw6M9KCr6IFTQsG9AgjKc4vcqoqVuFElTLH2ERvwdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745922339; c=relaxed/simple;
-	bh=Sz4clg6K/zfuAweaf2ZHVfowXiOQZLM+vN+jJWsg3fI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=Zaeehtr6ijw47FjpHwdtjmyLowHCfvNjptFJY06/yeamAVCxPohAtJn1X9plCEbaoaeeSPNnfEEffnH7SieutcKQCDLpcWS2iNIXiBaN+cL3PQVNXJX7nDk8JkACdmFx6WZaEQyjbJW3fl94jTz8XR/qNSohUTuLkMpuS9d/6pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=BGEHGN5A; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ceeb85ab2so3305315e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 03:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745922336; x=1746527136; darn=vger.kernel.org;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1TusfjoOZJ9Q4uXowiWjYTIz+Nnd7Ky1WuLL0Fm5qU4=;
-        b=BGEHGN5AjpGxWNAEud1yBjmadBdWxab9spx88F+Bkn0zjaeCG1EQ+SNxD0GkrFHnxP
-         JzLWPYD7hulwGONnzuxB3My/ZBHhIQqPo8x+6uaVoO7ulw1dYmPii/By8GDDAEvDOh5t
-         cALQvz/rSfBcgZsCbgsYznuDUK+cYpOd3p4vT4rDEF8z7UVRdIHbhRllmHq3uV9esyx7
-         Pj2SoehES7CXivisNcMb9p1ZBWMDC5NfgIdtV9fZJatq0OUnpfjYoD/Hi+GYnk9SuYvI
-         SWZPotKEfrtb+jFUKq7n15JgM3bYTYITokSTEmZRc4s148E+aoVjcZw74Vw33e0BqLcd
-         gH4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745922336; x=1746527136;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1TusfjoOZJ9Q4uXowiWjYTIz+Nnd7Ky1WuLL0Fm5qU4=;
-        b=qoDvp8GhVfuVEIRyLNnJ7icLy2/mXiPeZp7lwOwkFkCxiqAWYvK5j/p6Cg1+TJoZfT
-         itia4KOUUHBrSr7IqeQaZkj+v8mMaQMZYmLM36Y0EV2fPRNx+V7hhpWxR0li77HmsnJq
-         DI2QPtolJjC8zDoYdvPaOB3SvZRv3IzzCUkXR2rCNBtD7240zjaFfhRdz0kvpUzTaNzt
-         60J/FRQQzJ3qi++tiqPHMT5cKITBboJ6tS4gYI+UCuxZmUnKNQ2T/E4XGBKiyI/Hp6Fu
-         2L4zLaFFsY6XS+qTZKcQ8xWm5Ws0BkT74AEyrwce/i2wQ3EOW/JrCOrlUBg5vuEUNymf
-         HV9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwQfphQ/3PNkhq09ds8EVM/htZPs5Sa9j3eXAQqKw3rIiQG9P+NPJfzw+9TmX1ar7andZ/TYYC8XgbhbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw35AMNS3gZ+I4YMlDeALgKedMPATAIpNlkZlTTQfjmHRvXwWbc
-	rQAJjwBSBUoOKLcRde5GRdmptxXjL+kigjWmOj8KaEvFy+FtNaiq9hqYL/oG502mg1SKOlXdqFx
-	T5L8=
-X-Gm-Gg: ASbGncvxylr/ZFc95bJoCXxpg1JOH/eb5VG4EqB+ttd8BjV8i8oPIJ61rCjYPn+L8Sk
-	J4j7Sz/8G0jcfS7qqThUGKk+RRYrQoZJCsQskkqQtRD6F1Z7SpkPhFrG3H3cPiRtzhFcrNr7/fh
-	AhkfFHKdnz6a+SsINV+UsCqcq0Yax+tpdGNBOUzWl1mOLbmH4+jM6QqxeUVP9zkn5ZvXwljLOvR
-	Rv3c1SlC0FavAYWvoWAkSR4pA2EHlkvhOdPriQh8gNtzkRSO8N7/MJf4nKQlTK6swqfDR/WAuFZ
-	b8FDmFXjLiqcDRxfvg1mQfQf0nW5iD+cy+gt89fps6FeXj57
-X-Google-Smtp-Source: AGHT+IFSvfqpgAXd79kfkhiAw4afJN5Oi0WwlrlH7IsWV6fC8ECQn6pF0EjB3PiabWQYmavQwiPMEQ==
-X-Received: by 2002:a05:600c:3c86:b0:43d:745a:5a49 with SMTP id 5b1f17b1804b1-441ac890c15mr8097375e9.4.1745922335484;
-        Tue, 29 Apr 2025 03:25:35 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:b996:f7e3:35e8:5091])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a5369cdasm154999805e9.31.2025.04.29.03.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 03:25:34 -0700 (PDT)
+	s=arc-20240116; t=1745922403; c=relaxed/simple;
+	bh=dmg0TUHM8w36Iq6ZAgI2ielBvGHctCL1QDiPgfZ18z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aro1LkC1GOz28s9KfnlMAWVid8nFKEiPmpUUiLVwM94c00OB5J7jXJudI8MY2DBgdLVAPehGImc+jUGRXRYpzUwT8xiq7aF8n4Wh74KjfcJROdB3nH6zlo3zgkIbHoIERxbfQ/uAz6o0vNlkGTSXaix4jBlK/V/kTjrWs86lS7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JDb3R9EU; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=8GP+n
+	pVX+iv9UUdWPJRMpZv3Pc8wAEAmhISDscAl75Q=; b=JDb3R9EUxgjVHs5Wwcy3H
+	uvHnrjjKMCLgpyCnRD9vjCenkkT7lR7P9wwmAbpTUQF6Jnqph1JKryQT/gx8yFKs
+	S+8HuLJRlXkdyk0A4qvo3qLvWo+u0BM/2qxHCUzQPdVbLacCiGJEWOd7EGqONDGb
+	u3bo9NjquAzt+myjmx7XWs=
+Received: from fzy-XPS-15-9570.lenovo.com (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgBHWWxDqRBoX4iyBQ--.41706S2;
+	Tue, 29 Apr 2025 18:26:13 +0800 (CST)
+From: Ziyan Fu <13281011316@163.com>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ahuang12@lenovo.com,
+	Ziyan Fu <fuzy5@lenovo.com>
+Subject: [PATCH] watchdog: iTCO_wdt: Update the heartbeat value after clamping timeout
+Date: Tue, 29 Apr 2025 18:25:33 +0800
+Message-ID: <20250429102533.11886-1-13281011316@163.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Apr 2025 12:25:33 +0200
-Message-Id: <D9J1TBKYC8YH.1OPUI289U0O2C@ventanamicro.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-Subject: Re: [PATCH 4/5] KVM: RISC-V: reset VCPU state when becoming
- runnable
-Cc: "Anup Patel" <anup@brainfault.org>, <kvm-riscv@lists.infradead.org>,
- <kvm@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, "Atish Patra" <atishp@atishpatra.org>,
- "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
- <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
- Ghiti" <alex@ghiti.fr>, "Andrew Jones" <ajones@ventanamicro.com>, "Mayuresh
- Chitale" <mchitale@ventanamicro.com>
-To: "Anup Patel" <apatel@ventanamicro.com>
-References: <20250403112522.1566629-3-rkrcmar@ventanamicro.com>
- <20250403112522.1566629-7-rkrcmar@ventanamicro.com>
- <CAAhSdy0e3HVN6pX-hcX2N+kpwsupsCf6BqrYq=bvtwtFOuEVhA@mail.gmail.com>
- <D9IGJR9DGFAM.1PVHVOOTVRFZW@ventanamicro.com>
- <CAK9=C2Woc5MtrJeqNtaVkMXWEsGeZPsmUgtFQET=OKLHLwRbPA@mail.gmail.com>
-In-Reply-To: <CAK9=C2Woc5MtrJeqNtaVkMXWEsGeZPsmUgtFQET=OKLHLwRbPA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgBHWWxDqRBoX4iyBQ--.41706S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7XrW5GrWxCw1rAF48JFykAFb_yoW8Jr1kpF
+	Z5AFy8Ary8XF4xWw1Iyan7ZF47Wa48WF47ArZYg3409398Jw1UGF4SkayDK3WkAF9xJw15
+	A3W0q348Wa9xZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnfHUUUUUU=
+X-CM-SenderInfo: bprtjmyrqrijirw6il2tof0z/xtbBkA4+8WgQYfT4nwABsa
 
-2025-04-29T11:25:35+05:30, Anup Patel <apatel@ventanamicro.com>:
-> On Mon, Apr 28, 2025 at 11:15=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkr=
-cmar@ventanamicro.com> wrote:
->>
->> 2025-04-28T17:52:25+05:30, Anup Patel <anup@brainfault.org>:
->> > On Thu, Apr 3, 2025 at 5:02=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rk=
-rcmar@ventanamicro.com> wrote:
->> >> For a cleaner solution, we should add interfaces to perform the KVM-S=
-BI
->> >> reset request on userspace demand.  I think it would also be much bet=
-ter
->> >> if userspace was in control of the post-reset state.
->> >
->> > Apart from breaking KVM user-space, this patch is incorrect and
->> > does not align with the:
->> > 1) SBI spec
->> > 2) OS boot protocol.
->> >
->> > The SBI spec only defines the entry state of certain CPU registers
->> > (namely, PC, A0, and A1) when CPU enters S-mode:
->> > 1) Upon SBI HSM start call from some other CPU
->> > 2) Upon resuming from non-retentive SBI HSM suspend or
->> >     SBI system suspend
->> >
->> > The S-mode entry state of the boot CPU is defined by the
->> > OS boot protocol and not by the SBI spec. Due to this, reason
->> > KVM RISC-V expects user-space to set up the S-mode entry
->> > state of the boot CPU upon system reset.
->>
->> We can handle the initial state consistency in other patches.
->> What needs addressing is a way to trigger the KVM reset from userspace,
->> even if only to clear the internal KVM state.
->>
->> I think mp_state is currently the best signalization that KVM should
->> reset, so I added it there.
->>
->> What would be your preferred interface for that?
->>
->
-> Instead of creating a new interface, I would prefer that VCPU
-> which initiates SBI System Reset should be resetted immediately
-> in-kernel space before forwarding the system reset request to
-> user space.
+From: Ziyan Fu <fuzy5@lenovo.com>
 
-The initiating VCPU might not be the boot VCPU.
-It would be safer to reset all of them.
+When executing "modprobe iTCO_wdt heartbeat=700", the user-specified
+'heartbeat' parameter exceeds the valid range, the driver clamps the
+timeout to default 30s but fails to update the logged 'heartbeat' value,
+resulting in misleading log output:
 
-You also previously mentioned that we need to preserve the pre-reset
-state for userspace, which I completely agree with and it is why the
-reset happens later.
+iTCO_wdt iTCO_wdt: timeout value out of range, using 30
+iTCO_wdt iTCO_wdt: initialized. heartbeat=700 sec (nowayout=0)
 
->             This way we also force KVM user-space to explicitly
-> set the PC, A0, and A1 before running the VCPU again after
-> system reset.
+After validating the range, update the 'heartbeat' value with the clamped
+timeout value to ensure that log messages accurately reflect the actual
+runtime parameters.
 
-We also want to consider reset from emulation outside of KVM.
+Signed-off-by: Ziyan Fu <fuzy5@lenovo.com>
+---
+ drivers/watchdog/iTCO_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-There is a "simple" solution that covers everything (except speed) --
-the userspace can tear down the whole VM and re-create it.
-Do we want to do this instead and drop all resets from KVM?
+diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+index 7672582fa407..3391abacaae2 100644
+--- a/drivers/watchdog/iTCO_wdt.c
++++ b/drivers/watchdog/iTCO_wdt.c
+@@ -604,6 +604,7 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
+ 		iTCO_wdt_set_timeout(&p->wddev, WATCHDOG_TIMEOUT);
+ 		dev_info(dev, "timeout value out of range, using %d\n",
+ 			WATCHDOG_TIMEOUT);
++		heartbeat = WATCHDOG_TIMEOUT;
+ 	}
+ 
+ 	watchdog_stop_on_reboot(&p->wddev);
+-- 
+2.34.1
+
 
