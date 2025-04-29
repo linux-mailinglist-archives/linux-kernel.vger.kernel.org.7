@@ -1,270 +1,173 @@
-Return-Path: <linux-kernel+bounces-625928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209B6AA3BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19517AA3BED
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268814E0475
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749C44E0B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F0C2DCB6D;
-	Tue, 29 Apr 2025 23:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C082DAF94;
+	Tue, 29 Apr 2025 23:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LEi8J/fT"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SQ7xDq8l"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95A62DCB40
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 23:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0645F13A3F7;
+	Tue, 29 Apr 2025 23:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745967921; cv=none; b=ALGTfmT4s9bgsZwgn3KKiBz/fDhQa9i8XIjyUEInYbrhy/Wy1cu+LBovOws6l69GuwtW2OgiSN9XG7K0dGieRd/lxdBRI3fpvWEjEz+DdIBSJf++ZVfIG1WLCsYeoyVuYrG5pF3lAdpCd+oPiBVbos5JUYSc4u6ZJTwBdK59G3c=
+	t=1745968054; cv=none; b=HdMhTa/giI9bOaofnfVKSuNAbB6Zz+cWkaDh3XOtvPWg6yv3J8kc7b2YPQZkr0VvTZuEqmbYMTV0j0vKeuOuQmoo9G+MCVrWdT9AzjEegCzDH1c39JZE8IqStwoo7ST5t+0YeOmvKxGSFO33NrNSTU3iVQIItpt2CeM9NJX0lvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745967921; c=relaxed/simple;
-	bh=wKpQ2zpAHbQxRjpmRKw2Q6HoFTAs9gaEa2OoClEUtco=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gcwbCSpT7EdZmlHmnFNFH8Big+zkO1VbLV7ancvZnRMmwOnnHX42Ouw6bTLL08g9ArNyd9oH6pKGYYWuEHbc08Uif/lTTsgKkucBpXjGRShLvlBZTcL+n/A/K27gtNkGxgc6TLKrdESxKRpnPvuI4jY/6ni5qqulYJ5UNF5uHL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEi8J/fT; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b19226b5f7dso215116a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745967919; x=1746572719; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9GFiJRsSYTyPAXrhNaWQT1b/jnx69ee7FboyvHeBQWw=;
-        b=LEi8J/fTEd/e3xQLVK0Z2lc+pCVlyQCII4aY8Cm9QhXjxd7Y+LbtK3UTp0kxJnEQPg
-         aEu+CHJRzOSm+Ehm4WA3heDbeSqdxyNzpdvyAxX6ydqwPtilZpB8gteZRA7wb+6RAGhM
-         K3wY4Z4Fqjg0IquVwWvFY46X96dudlyYLWvCTiFhDo3tXti4RRpACeX3MPO4vo2H2Ys2
-         pD4erpCJKS4JHpSFj0SngBjgNp8i7c/Sv2KxgoVBCsPWrM5Po+VBHFLwmScYCsW6D4LX
-         4sHiFpEZx9C2YumfpgI6M6mrGAvwYO8ETBrl0F/3gQUTwrSnBilsgw0GkBb+Cf5SVaf/
-         LLGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745967919; x=1746572719;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9GFiJRsSYTyPAXrhNaWQT1b/jnx69ee7FboyvHeBQWw=;
-        b=usCkr8GncLr5VzcusEscrhizTkitNE9sLBPhXQCo1gl6Dke5iER7rw+vu5wde+wjvh
-         hY1g0WKaBbihKxtC7gXBwzk/E9rebNhGBpkDeu4kgjdwoP4zjjcS+b3tjITtvlPTQ0qq
-         +jGSRi1zl9ag1Ml1sCjewA6T5hpSf/phPNQr3PS29eOaNnK7Fpo2dgOVoM5LrBCzGcxq
-         bCxnLqlCpziavOQA5uMUl9dx+2yQ7Xuj3NCckaP3F9Aa2AtRoMqKmBYmP5tafgQPjHsZ
-         voJcjrbq17mFiBCJqHBY3xMyeRT94aTQNw5W6xL5nvrBR1BfYWnXKXQudAId/+OPSKs0
-         Gsgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjCbvgLEmh3byw4jruwWkINJfy9rs2uTJyr+RuxcRxdQ3s3PxN3jac4t0uDtYEdhEiucFdirtUYDi6aXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOtsYe9FamOshI8nfdggSec0V/mdiGHRjV8y7YHqUR094ZsFm5
-	j1Nx1VCubqN+0vr5zM/0rtxEyART88SAHJE1ZTunmgAXR/gxE+q8tQXSBFbGaU33EpRgS+d/UEp
-	R
-X-Google-Smtp-Source: AGHT+IE0PWA7WS7Lu00x6+TazDT2LPv2nCnsOi9/Lrjv+V/EJAq9DaNIm6TCSJBFMF+6b3GjArs3Y5cEKfA=
-X-Received: from pgba24.prod.google.com ([2002:a63:4d18:0:b0:aee:900e:e3d6])
- (user=yabinc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:439f:b0:1ee:c830:abdc
- with SMTP id adf61e73a8af0-20a90c09495mr788906637.15.1745967918935; Tue, 29
- Apr 2025 16:05:18 -0700 (PDT)
-Date: Tue, 29 Apr 2025 16:05:15 -0700
+	s=arc-20240116; t=1745968054; c=relaxed/simple;
+	bh=sQyQcn/NJDF0PMJuRn0HWiah8ew+Af20fUs0fgdqzX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BlnuFlnE4X6eQXLH/4FeTLLjGcMDgi5p2d7YFwTtGzPa9oS4bfhSYTj9AZB2APBxbop+vHDqio5lZDUevUcAfoUxYQV2Ie/D5cqMBzL6ohLxNCZuUwx9KOR9B2oTVvls25M7/J5DLfb4L/Hx3bCEm7nGKdaHRrEtrtRrXIlvUAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SQ7xDq8l; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TLaR2B012228;
+	Tue, 29 Apr 2025 23:07:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jaV5N0qvUnZDuYjp+FnsHmSl9vOLniX82vpDUzJOuwg=; b=SQ7xDq8lBCSmkhnJ
+	yoAbUB8+VWn9ubzIbLGhJSZe12NttIZ6+uD938zydWrVcbHn9BrhzxsxbxG++eh9
+	G27+8p5Hf0idbKSexEoS6x/zmDMlCzl7tQtPr2kLWcnrvIJVZnrruTC5uX1SEgEs
+	Vq2IwboEYg9N3Sy/I7LH7YvjeHVQaN2qHpjMaq62Ey5DrZlL0uoao80ea8XMlpXB
+	RGRhxEp0qhdNdPP7CbSA3VAwDIYepY+O98MXevAF7XC7MtimmEsDRKCHt+4nibM5
+	LvliQV5c8C+B8uiiNQDhnMDhFI1pVsElX2n1x82/pM0/u1DRKvJsEPquW0bTD6Kr
+	DJz/2g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u3r5bc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 23:07:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53TN7QBj031444
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 23:07:26 GMT
+Received: from [10.110.114.218] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
+ 2025 16:07:25 -0700
+Message-ID: <97ae84c6-0807-4b19-a474-ba76cc049da9@quicinc.com>
+Date: Tue, 29 Apr 2025 16:07:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
-Message-ID: <20250429230515.1906253-1-yabinc@google.com>
-Subject: [PATCH v2] coresight: trbe: Save/restore state across CPU low power state
-From: Yabin Cui <yabinc@google.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Leo Yan <leo.yan@arm.com>, Jie Gan <quic_jiegan@quicinc.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Yabin Cui <yabinc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC/WIP 1/4] arm64: dts: qcom: sm8750: Add display (MDSS)
+ with Display CC
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Jessica Zhang <jesszhan@quicinc.com>,
+        Abhinav Kumar
+	<abhinavk@quicinc.com>,
+        Abel Vesa <abel.vesa@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
+ <20250424-sm8750-display-dts-v1-1-6fb22ca95f38@linaro.org>
+ <81205948-ae43-44ee-aa07-e490ea3bba23@oss.qualcomm.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <81205948-ae43-44ee-aa07-e490ea3bba23@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Bv6dwZX5 c=1 sm=1 tr=0 ts=68115baf cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=aYvukNd2sAEyGAm9ZjkA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 2VlkCAuuU0yLdCc2gPV0we-DqBowCEBd
+X-Proofpoint-ORIG-GUID: 2VlkCAuuU0yLdCc2gPV0we-DqBowCEBd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDE3MSBTYWx0ZWRfXz25DB8MGcPw6 gadCEwiVhQKt2VrWI+WhSHF69+XkqswHIz3O1Xcn3MKVWn006slBll8NSqEN9LlgIV+g/SPbyGU 3Nr0efmC3pRbuuoQODOk7R6oMIg09/0EJPFXCzrDzYISS7wLvHgLPD/I3F4eIQlmT4ku5jnSbLz
+ LPObPTHakgzmkynJIvPHFa/fTvjlQPM0ZSCF0ZYtDT8ULdUl0RHodKn4SjTU84vRgVkgwWQgKyX KtT73ny/qzTsLlRQaewkPFlQoOOcRRNERCACvFErLyq+xfhIw7IS1inmKSTXxzMb9kTX5q5rW3R HRiulJth3ESdTwJgUDkIneV+sKx2xXS5i+aVeISDImy1Lprk3ZgvL/kYds/jRfVGs13M7lqVV0C
+ +qHhbmeDsQehKNS163Mk+EDvqA8TxCFLTZqpeZqWa7OQZ67zHekrW/pkWe5wGl0p2Hol7dPp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_08,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ mlxlogscore=702 phishscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290171
 
-Similar to ETE, TRBE may lose its context when a CPU enters low
-power state. To make things worse, if ETE is restored without
-TRBE being restored, we have an enabled source device with no
-enabled sink devices, which can cause CPU hang on some devices
-(Pixel 9).
 
-This patch adds sink operations to save and restore state for TRBE,
-and calls them when saving and restoring state for ETE. This is
-to ensure that we always restore the state of TRBE before ETE.
 
-Signed-off-by: Yabin Cui <yabinc@google.com>
----
- .../coresight/coresight-etm4x-core.c          | 13 ++++-
- drivers/hwtracing/coresight/coresight-trbe.c  | 58 +++++++++++++++++++
- include/linux/coresight.h                     |  6 ++
- 3 files changed, 76 insertions(+), 1 deletion(-)
+On 4/28/2025 2:31 PM, Konrad Dybcio wrote:
+> On 4/24/25 3:04 PM, Krzysztof Kozlowski wrote:
+>> Add device nodes for entire display: MDSS, DPU, DSI, DSI PHYs,
+>> DisplayPort and Display Clock Controller.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
+> 
+> [...]
+> 
+>> +				mdp_opp_table: opp-table {
+>> +					compatible = "operating-points-v2";
+>> +
+> 
+> The computer tells me there's also a 156 MHz rate @ SVS_D1
+> 
+> Maybe Abhinav could chime in whether we should add it or not
+> 
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 2b8f10463840..aaabbda97afc 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -1863,6 +1863,7 @@ static int __etm4_cpu_save(struct etmv4_drvdata *drvdata)
- static int etm4_cpu_save(struct etmv4_drvdata *drvdata)
- {
- 	int ret = 0;
-+	struct coresight_device *sink;
- 
- 	/* Save the TRFCR irrespective of whether the ETM is ON */
- 	if (drvdata->trfcr)
-@@ -1871,8 +1872,14 @@ static int etm4_cpu_save(struct etmv4_drvdata *drvdata)
- 	 * Save and restore the ETM Trace registers only if
- 	 * the ETM is active.
- 	 */
--	if (coresight_get_mode(drvdata->csdev) && drvdata->save_state)
-+	if (coresight_get_mode(drvdata->csdev) && drvdata->save_state) {
- 		ret = __etm4_cpu_save(drvdata);
-+		if (ret == 0) {
-+			sink = coresight_get_percpu_sink(drvdata->cpu);
-+			if (sink && sink_ops(sink)->percpu_save)
-+				sink_ops(sink)->percpu_save(sink);
-+		}
-+	}
- 	return ret;
- }
- 
-@@ -1977,6 +1984,10 @@ static void __etm4_cpu_restore(struct etmv4_drvdata *drvdata)
- 
- static void etm4_cpu_restore(struct etmv4_drvdata *drvdata)
- {
-+	struct coresight_device *sink = coresight_get_percpu_sink(drvdata->cpu);
-+
-+	if (sink && sink_ops(sink)->percpu_restore)
-+		sink_ops(sink)->percpu_restore(sink);
- 	if (drvdata->trfcr)
- 		write_trfcr(drvdata->save_trfcr);
- 	if (drvdata->state_needs_restore)
-diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-index fff67aac8418..d94d1a7a2330 100644
---- a/drivers/hwtracing/coresight/coresight-trbe.c
-+++ b/drivers/hwtracing/coresight/coresight-trbe.c
-@@ -115,6 +115,20 @@ static int trbe_errata_cpucaps[] = {
-  */
- #define TRBE_WORKAROUND_OVERWRITE_FILL_MODE_SKIP_BYTES	256
- 
-+/*
-+ * struct trbe_save_state: Register values representing TRBE state
-+ * @trblimitr	- Trace Buffer Limit Address Register value
-+ * @trbbaser	- Trace Buffer Base Register value
-+ * @trbptr	- Trace Buffer Write Pointer Register value
-+ * @trbsr	- Trace Buffer Status Register value
-+ */
-+struct trbe_save_state {
-+	u64 trblimitr;
-+	u64 trbbaser;
-+	u64 trbptr;
-+	u64 trbsr;
-+};
-+
- /*
-  * struct trbe_cpudata: TRBE instance specific data
-  * @trbe_flag		- TRBE dirty/access flag support
-@@ -123,6 +137,8 @@ static int trbe_errata_cpucaps[] = {
-  * @cpu			- CPU this TRBE belongs to.
-  * @mode		- Mode of current operation. (perf/disabled)
-  * @drvdata		- TRBE specific drvdata
-+ * @state_needs_restore	- Whether TRBE state has been saved and can be restored
-+ * @save_state		- Saved TRBE state
-  * @errata		- Bit map for the errata on this TRBE.
-  */
- struct trbe_cpudata {
-@@ -133,6 +149,8 @@ struct trbe_cpudata {
- 	enum cs_mode mode;
- 	struct trbe_buf *buf;
- 	struct trbe_drvdata *drvdata;
-+	bool state_needs_restore;
-+	struct trbe_save_state save_state;
- 	DECLARE_BITMAP(errata, TRBE_ERRATA_MAX);
- };
- 
-@@ -1187,12 +1205,51 @@ static irqreturn_t arm_trbe_irq_handler(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
-+static void arm_trbe_cpu_save(struct coresight_device *csdev)
-+{
-+	struct trbe_cpudata *cpudata = dev_get_drvdata(&csdev->dev);
-+	struct trbe_save_state *state;
-+
-+	if (cpudata->mode == CS_MODE_DISABLED)
-+		return;
-+
-+	state = &cpudata->save_state;
-+	state->trbbaser = read_sysreg_s(SYS_TRBBASER_EL1);
-+	state->trbptr = read_sysreg_s(SYS_TRBPTR_EL1);
-+	state->trblimitr = read_sysreg_s(SYS_TRBLIMITR_EL1);
-+	state->trbsr = read_sysreg_s(SYS_TRBSR_EL1);
-+	cpudata->state_needs_restore = true;
-+}
-+
-+static void arm_trbe_cpu_restore(struct coresight_device *csdev)
-+{
-+	struct trbe_cpudata *cpudata = dev_get_drvdata(&csdev->dev);
-+	struct trbe_save_state *state;
-+
-+	if (cpudata->state_needs_restore) {
-+		/*
-+		 * To avoid disruption of normal tracing, restore trace
-+		 * registers only when TRBE lost power (TRBLIMITR == 0).
-+		 */
-+		if (read_sysreg_s(SYS_TRBLIMITR_EL1) == 0) {
-+			state = &cpudata->save_state;
-+			write_sysreg_s(state->trbbaser, SYS_TRBBASER_EL1);
-+			write_sysreg_s(state->trbptr, SYS_TRBPTR_EL1);
-+			write_sysreg_s(state->trbsr, SYS_TRBSR_EL1);
-+			set_trbe_enabled(cpudata, state->trblimitr);
-+		}
-+		cpudata->state_needs_restore = false;
-+	}
-+}
-+
- static const struct coresight_ops_sink arm_trbe_sink_ops = {
- 	.enable		= arm_trbe_enable,
- 	.disable	= arm_trbe_disable,
- 	.alloc_buffer	= arm_trbe_alloc_buffer,
- 	.free_buffer	= arm_trbe_free_buffer,
- 	.update_buffer	= arm_trbe_update_buffer,
-+	.percpu_save	= arm_trbe_cpu_save,
-+	.percpu_restore	= arm_trbe_cpu_restore,
- };
- 
- static const struct coresight_ops arm_trbe_cs_ops = {
-@@ -1358,6 +1415,7 @@ static void arm_trbe_probe_cpu(void *info)
- 	cpudata->trbe_flag = get_trbe_flag_update(trbidr);
- 	cpudata->cpu = cpu;
- 	cpudata->drvdata = drvdata;
-+	cpudata->state_needs_restore = false;
- 	return;
- cpu_clear:
- 	cpumask_clear_cpu(cpu, &drvdata->supported_cpus);
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index cfcf6e4707ed..098c04c4a59d 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -362,6 +362,10 @@ enum cs_mode {
-  * @alloc_buffer:	initialises perf's ring buffer for trace collection.
-  * @free_buffer:	release memory allocated in @get_config.
-  * @update_buffer:	update buffer pointers after a trace session.
-+ * @percpu_save:	saves state when CPU enters idle state.
-+ *			Only set for percpu sink.
-+ * @percpu_restore:	restores state when CPU exits idle state.
-+ *			only set for percpu sink.
-  */
- struct coresight_ops_sink {
- 	int (*enable)(struct coresight_device *csdev, enum cs_mode mode,
-@@ -374,6 +378,8 @@ struct coresight_ops_sink {
- 	unsigned long (*update_buffer)(struct coresight_device *csdev,
- 			      struct perf_output_handle *handle,
- 			      void *sink_config);
-+	void (*percpu_save)(struct coresight_device *csdev);
-+	void (*percpu_restore)(struct coresight_device *csdev);
- };
- 
- /**
--- 
-2.49.0.967.g6a0df3ecc3-goog
+Yes I also see a 156Mhz for LOW_SVS_D1 but we had a similar entry even 
+for sm8650 and did not publish it in the dt.
+
+It was present till sm8450.dtsi but dropped in sm8550/sm8650 even though 
+LOW_SVS_D1 is present even on those.
+
+I think the reason could be that the displays being used on the 
+reference boards will need a pixel clock of atleast >= low_svs and the 
+MDP clock usually depends on the value of the DSI pixel clock (which has 
+a fixed relationship to the byte clock) to maintain the data rate. So as 
+a result perhaps even if we add it, for most displays this level will be 
+unused.
+
+If we end up using displays which are so small that the pixel clock 
+requirement will be even lower than low_svs, we can add those.
+
+OR as an alternative, we can leave this patch as it is and add the 
+low_svs_d1 for all chipsets which support it together in another series 
+that way it will have the full context of why we are adding it otherwise 
+it will look odd again of why sm8550/sm8650 was left out but added in 
+sm8750.
+
+> [...]
+> 
+>> +				mdss_dsi_opp_table: opp-table {
+>> +					compatible = "operating-points-v2";
+>> +
+> 
+> Similarly there's a 140.63 MHz rate at SVS_D1, but it seems odd
+> with the decimals
+
+For this one, yes its true that LOW_SVS_D1 is 140.63Mhz for sm8750 but 
+this voltage corner was somehow never used for DSI byte clock again I am 
+thinking this is because for the display resolutions we use, we will 
+always be >= low_svs so the low_svs_d1 will never hit even if we add it.
+
+
+> 
+> Konrad
+> 
 
 
