@@ -1,105 +1,142 @@
-Return-Path: <linux-kernel+bounces-625295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37256AA0F94
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5623AA0FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53BD5A573A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2C95A15F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8335218AC8;
-	Tue, 29 Apr 2025 14:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790982185AA;
+	Tue, 29 Apr 2025 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zWLAEv8P"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="YRBmW7Jo"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC01D215F6C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2494921883E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938189; cv=none; b=GsIyX49eOvFcjvsWC0xA3RSsXdoEbPDweX/oHW/dCE2dv5bk/2XRnFUrd2pLesLDbV+Rd8rR6CRg7c9nVTMB9ne8Ttp/KUsj9PMb8F2IS3yDIXOUi+/uqDjHVz+HfqtlP9H+2hkBteDyIb0uwDqx3XYMOYeSR7JR6Ry3Iqtkbzo=
+	t=1745938717; cv=none; b=kZTc8Eun0E+lv/F/deSKfHV1V72WfZPB9u0lrVHa25nD8L/B1O5Ks8ggG7TC84LWUFbZM6QAM9WJUBXpcBx1mrqM+/go8Lcc9nU+C57F5iMLAyeg4MMhQuYAgbEwg6SdrTFztY4yJvNgTbewjz1m4/U54enXZVSHM/JvYM2kvF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938189; c=relaxed/simple;
-	bh=zPKqDubqGQlbbZ0ERGazpJ4D1rDz8spLOm/r4Uz2J70=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=raS78pIlUbhcLhRbU1wlOhDuFhypaDQq/rikPdz5shHsr5JOuCJ753bAOtIxzlU74gZ/4bW+das2CCs61rdvWLDXd7y7BNexMmK0jRYgcEoStSUz8ggRt/mbuFvvBznSbdpxYgsWgx5467KX+EkUZK64ZauxixgAxH8yIdkWLxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zWLAEv8P; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-73dcce02a5cso3461240b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:49:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745938187; x=1746542987; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zPKqDubqGQlbbZ0ERGazpJ4D1rDz8spLOm/r4Uz2J70=;
-        b=zWLAEv8PmUgMnNAstxttD1v9ti2O1GDd2QoqMajXyXJu2P+ERV9ieuSacdw6X5LgZp
-         4TD4cgZGiiovQx/K0qrz4CyzAMRcxAzoNQw9rJYUIbd0amXyJ8tv87ybBjicYh16XryP
-         Kb8yNa1+xn/kPMwy030Lsj97k6bb+V6rBP8vMbMnjeHKWNjgHlJBKnaFpEy7DRFDTseY
-         7dR87hHSHtqR4x7DksTE+fIQy6gjI4RogOioUW7O8MNooEDO/uPbvf2HxhvNkBfvi14w
-         p0GkD75U37F7NxSarfYrQ9tuJeAF79QxrhN3Tnjd8nxZW/ubWBh4utWfQkXUebeEhiAF
-         o3Gw==
+	s=arc-20240116; t=1745938717; c=relaxed/simple;
+	bh=2PdqbEbagwoDuKzEj0IRmpbhZpPVeui/bIiI8irZQ4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M9Bn9e0CRsIrvnwBxsrY6DejpoNiutG6v3C6vFl6wWqZZpO0/pcOHWQxVqA0I9olNQxMPfh+W23xWJyvQQ//BoqpeMmcrh6P3Vl6EkXsnFvSTM2AxVJ2poMviz9JB0LG/sjisK3VPJug1+PZLpuY+MC/0yxT9e9REaW4fKG4VDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=YRBmW7Jo; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 099243F54D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1745938202;
+	bh=52MijEJOA2wvCQcL6Go5NIekwbrP8EYQEpSc/TVugz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version;
+	b=YRBmW7JoKiSIAha/Nr78pmeKdcbBSOQ1Bu7jq+vxh8np5ZS7NENj1RYYlORijaVXl
+	 9JXzD3FT0XJQCoqt1DapTbv7qgusyHWqhEorw+klAwxcBpLu1Oa9adxK7W9+3JXTxe
+	 Hn2oG1WaeyOFB4Lr9J2QQCkKHBzanhotR3DV9Q14AQf4s8sC/TX/a18Wii5R1ErZvJ
+	 h7xYfxJC++WUO2QPoOub6jrj4W03bafnPdG5LYTc11JklFwcwirRePiczL7SRJl0Ns
+	 eunPYf07SP2Gbc2ipGaWXW8KlG2VijSAcnChaBmpy/6NAZtAkCsyiRGsurlbIwcn0r
+	 03hDFI0m6ZIog==
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39135d31ca4so2340882f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:50:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745938187; x=1746542987;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zPKqDubqGQlbbZ0ERGazpJ4D1rDz8spLOm/r4Uz2J70=;
-        b=Mz9cNr/qnmGGTsud1pMHkQTs1aVUTe6bbchvWptlszZ1X89hQxp9yyE+ZFMJiQbCqU
-         IncXETxY4bxZeNpegXISHWwlRqeOs01nl/48vVxcoowElVQz2YeRd5grLteTGc3aMbrA
-         o65qkyaMaUNceoVwfQb+ghXzIpscflP6+hvNORk94Bkn5ss8S+jr1eqhGCpHGBe/r8tM
-         2Bqvu0567o46OzhepSwWeLEBbz/I8FFhRnTjLgMp68XZi+rD0woRIY9jMYB1VW+82RDQ
-         fkKVC070Ce6wKFjLXhVLHOMJ7vZk2rpNOIoo06PXYhMab0CK39SZxQpvdWxWiY/98ngA
-         u37A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJnuk2MnojX1DPuNYrb+MNu7523mh5blnaZfk5p9iAane16Y4JTPTFQrBHfvOTOARz7zWv4TvYjNBAWOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1k3cbTeG4AmBN+ZZu5uhSkVxoWz2RNny0UtmwbXhcdAGnGgz7
-	8YpCD1T7cPJzYoImx/C1+OEit0tHMQpKPnm9ar2iIIAGwN3iA0ZyxziWYE2AZJBHv60/GuYLCMv
-	hfp5yqtecKx2BA2ofBYlvng==
-X-Google-Smtp-Source: AGHT+IEzQrNdrD5XZ5oQkHZCt1a4CsXs91g+AUEFyHlMqs7LdvOItt0h12zoq6RDItWNFBq3wzeuMH6n8vWHqqoYsA==
-X-Received: from pfbbj22.prod.google.com ([2002:a05:6a00:3196:b0:736:b315:f15e])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:2286:b0:739:4a93:a5db with SMTP id d2e1a72fcca58-73ff7396ad8mr16428620b3a.22.1745938186941;
- Tue, 29 Apr 2025 07:49:46 -0700 (PDT)
-Date: Tue, 29 Apr 2025 07:49:45 -0700
-In-Reply-To: <20250402002936.960678-1-seanjc@google.com> (message from Sean
- Christopherson on Tue,  1 Apr 2025 17:29:36 -0700)
+        d=1e100.net; s=20230601; t=1745938201; x=1746543001;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=52MijEJOA2wvCQcL6Go5NIekwbrP8EYQEpSc/TVugz0=;
+        b=Aj/YhY6Ubeg/5GYdUhbH8v10kEXCcqsxr43o+ZRGmAyAw/IfOGhNPJzMH7+dFiWQu8
+         XA8vHOyQtCkpJC0XehJabSnf3kbwb7lnEqNCC6OupUodDZ+UNU4hMNn9NDMJmjk1TPt0
+         ZjbI3V/iE9hjI8BGIrWKv6Zq9JnhBe235CXmH8ufCBJiPXRpiiKXjPtbuuVmogosUsBD
+         z0Ej57zCs3WsLRGs+J0O9XwMwHCcneDutNgtEGLacOB6kPELHsDtTnxnpokkfx9XBjvC
+         FCZDoeUmu1e4y2yfa8FYXccuftb7cu5FaW2GqMf1/7zdtkNc7RSZ7Ul4CbsjkuzV1nA0
+         o/1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6jstI7Upx9KdUW5mJRNHKp9aJgREVNUiJcEHn7LAx0gfS768spn7nzDdaQXA4wGqL9Geuiwpxfcua2/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrl62oRgkUDTgjPnzfYRQ3QCa1xlPOh8Yeli6wxiN/ER/FM5Rh
+	qr0X24k5G/ci0rs9Bn9H+oemkamMeLg2TjYdC0iV1xBXf6nIj5bBNJEwbMU27NIRlsyPGo2bdzh
+	A8S47DxxECH6RtJUk159et/wVKf1ttvdbFviSBx3oYVoYh1iZhMF2tvwUYMTGVFUeA4YZXdJEh8
+	anzw==
+X-Gm-Gg: ASbGncsyAewdjyOkM7SMOH31Wh8C3mlvcbb5gAC84VC9mm/3j0pnpjQjYNKWm20O34B
+	SPhpZrW6rpcMFSlILwVyY89XrDYBs4JAUD5BA5UqQXjggqPLGtdJUvPphcOnLfNIIjq5iI4d0ti
+	4cuxO5oegK+qC8nF1AMVR3D3oVmPmTMriCRFFjnA3osa1ZzIUUyFE4JXM2fE/6RG6v+rW2T1bmU
+	oNsBHl9yZv9M1Wh0LfQynpg7w741l+9T+wYcKsJb7ue47W4gGQA05TwYb6PImv9MWmBVhyux7xK
+	FyYLRgagllYsp/sgJS5fmFQ5552b9Q0wvD7r2qGMUEI1zPNLPQ5q7JFR
+X-Received: by 2002:a05:6000:18a5:b0:3a0:8c01:d463 with SMTP id ffacd0b85a97d-3a08c01d90bmr2630921f8f.9.1745938200825;
+        Tue, 29 Apr 2025 07:50:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnKBHWKNLptuYZLJZBRUoe7eBhk55Kl8aqDH7g/w/SK5bZ6Awe0yTGofYm3mWix+gf5bziAw==
+X-Received: by 2002:a05:6000:18a5:b0:3a0:8c01:d463 with SMTP id ffacd0b85a97d-3a08c01d90bmr2630899f8f.9.1745938200468;
+        Tue, 29 Apr 2025 07:50:00 -0700 (PDT)
+Received: from localhost (151-243-191-194.pool.dsl-net.ch. [194.191.243.151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073c8d1a5sm14498765f8f.13.2025.04.29.07.49.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 07:49:59 -0700 (PDT)
+From: Juerg Haefliger <juerg.haefliger@canonical.com>
+To: juerg.haefliger@canonical.com
+Cc: andersson@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: [PATCH v4 0/4] HP EliteBook Ultra G1q support
+Date: Tue, 29 Apr 2025 16:49:53 +0200
+Message-ID: <20250429144957.2088284-1-juerg.haefliger@canonical.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250416094236.312079-1-juerg.haefliger@canonical.com>
+References: <20250416094236.312079-1-juerg.haefliger@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqzplgvxbsm.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [ANNOUNCE] PUCK Agenda - 2025.04.02 - No Topic
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: seanjc@google.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	roypat@amazon.co.uk, kalyazin@amazon.com, Fuad Tabba <tabba@google.com>, 
-	Vishal Annapurve <vannapurve@google.com>, david@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+Add support for the HP EliteBook Ultra G1q 14" AI laptop.
+
+Based on HWINFO64 and APCI tables, it seems to be the same HW as the
+HP OmniBook X 14.
+
+v3->v4:
+  - Bring the sound model back to the node
+  - Split the driver change into a separate commit
+v2->v3:
+  - Drop status properties from nodes in patch 3/3
+  - Add acked-by-krzk to patch 2/3
+v1->v2:
+  - Don't rename the X14 dts to dtsi and directly include the dts
+  - Add a label to the sound node and use that to override the model
+  - Reorder the dt doc patch before the dt usage
 
 
-Would like to add an agenda item for 2025-04-30's PUCK meeting: KVM
-memory attributes vs guest_memfd shareability.
+Juerg Haefliger (4):
+  arm64: dts: qcom: x1e80100-hp-omnibook-x14: add sound label
+  dt-bindings: arm: qcom: Document HP EliteBook Ultra G1q
+  arm64: dts: qcom: x1e80100-hp-elitebook-ultra-g1q: DT for HP EliteBook
+    Ultra G1q
+  firmware: qcom: scm: Allow QSEECOM for HP EliteBook Ultra G1q
 
-guest_memfd tracks shareability to determine whether a page can be
-faulted by the host into userspace.
+ .../devicetree/bindings/arm/qcom.yaml         |  1 +
+ arch/arm64/boot/dts/qcom/Makefile             |  1 +
+ .../qcom/x1e80100-hp-elitebook-ultra-g1q.dts  | 30 +++++++++++++++++++
+ .../dts/qcom/x1e80100-hp-omnibook-x14.dts     |  2 +-
+ drivers/firmware/qcom/qcom_scm.c              |  1 +
+ 5 files changed, 34 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dts
 
-pKVM does not use kvm->mem_attr_array for tracking private/shared status
-of a page, and for Coco VMs like TDX, there seems to be duplicate
-tracking of private/shared status in guest_memfd's shareability and in
-KVM's memory attributes.
+-- 
+2.43.0
 
-I would like to discuss a proposal for shared/private conversions to be
-performed through a guest_memfd (not KVM) ioctl instead of using
-KVM_SET_MEMORY_ATTRIBUTES, where Coco VMs using guest_memfd for both
-shared and private memory can be able to (with some other changes around
-KVM memory attributes) skip tracking private/shared in KVM's memory
-attributes.
-
-
-Thank you!
 
