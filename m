@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-624302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2E7AA01C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:25:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F08AA01C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAB9176F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0721B62F76
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0DE26FD82;
-	Tue, 29 Apr 2025 05:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042A622371B;
+	Tue, 29 Apr 2025 05:24:58 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46803210F59
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41622741A9
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745904283; cv=none; b=uvFNcIaK3swzCLXJ7Ewe39VnlYti2kfsoDrRJoakcIU11RfVoi6hCTCaJtIvOZnK5Amxr1p428sKYEeyCF5PORYH22oP949z2KB9TdeJoJpsuBEz1Rw/AIQaTgmwqDtsqhcC9J37RyAX9KDL1la8UoYmXRnzHgfUCKHIG1O+aDA=
+	t=1745904297; cv=none; b=dysSLfE86e3+3gWh9fWa0hccJyib7W2ZDUM3D4cyhK+eU7rOtzOB/n6pMP9O7a4LpsBkM+Muq6puUkpghXkrNlA8SSof+kCs4xzr/lfHFT6gyrKxAxmpFBvT21ywYYqLKIclsI2cRHvPGal0nkDELXx0zTcKuyoINOF07dLZhSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745904283; c=relaxed/simple;
-	bh=FPC3c1UtZeXKvhNu9xElMb/9OS9+eIdnWELS1tZE6Ww=;
+	s=arc-20240116; t=1745904297; c=relaxed/simple;
+	bh=CNCr1BK1I5eNOQUzCtO35c3OcbzUiLc3O9lx/hnWPRk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bEasQCUs9VKKaW/FyPcWHkRkL82jjTgzKqHQpSRcq8rDl//Auh0l/JWyCA4o50+sqVuWeep+tAGV35YW/RFwlHaX0fFN24rHxox5kk1wI7VckI5jdHNpP/jU1lO+vev0yi0gsW9d6uanP9zBsf/vhmjHK2UmZZOuEnENN8TMGrg=
+	 MIME-Version; b=tc0up4BB2Q0DQaAjIJeKl1V8YO4Swsx6n6iuJtLtKNummgQGXLh2TsJZur3IR2tmIxgLc5vIJDtHCX3Q0+JDLKCOfTGy1L2vusPxZR0PwyXbrvepcuJEZDHLpjsefntDr5o5wsa6WhHylRKei3CI0WNq/rEjZ404KjGgXbT9gIk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8AEE1515;
-	Mon, 28 Apr 2025 22:24:34 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 748811515;
+	Mon, 28 Apr 2025 22:24:45 -0700 (PDT)
 Received: from K4MQJ0H1H2.arm.com (unknown [10.163.78.253])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7C8C03F5A1;
-	Mon, 28 Apr 2025 22:24:32 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4330A3F5A1;
+	Mon, 28 Apr 2025 22:24:41 -0700 (PDT)
 From: Dev Jain <dev.jain@arm.com>
 To: akpm@linux-foundation.org
 Cc: ryan.roberts@arm.com,
@@ -60,9 +60,9 @@ Cc: ryan.roberts@arm.com,
 	yang@os.amperecomputing.com,
 	ziy@nvidia.com,
 	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v2 5/7] arm64: Add batched version of ptep_modify_prot_commit
-Date: Tue, 29 Apr 2025 10:53:34 +0530
-Message-Id: <20250429052336.18912-6-dev.jain@arm.com>
+Subject: [PATCH v2 6/7] mm: Batch around can_change_pte_writable()
+Date: Tue, 29 Apr 2025 10:53:35 +0530
+Message-Id: <20250429052336.18912-7-dev.jain@arm.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <20250429052336.18912-1-dev.jain@arm.com>
 References: <20250429052336.18912-1-dev.jain@arm.com>
@@ -74,54 +74,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Override the generic definition to simply use set_ptes() to map the new
-ptes into the pagetable.
+In preparation for patch 7, we need to properly batch around
+can_change_pte_writable(). We batch around pte_needs_soft_dirty_wp() by
+the corresponding fpb flag, we batch around the page-anon exclusive check
+using folio_maybe_mapped_shared(); modify_prot_start_ptes() collects the
+dirty and access bits across the batch, therefore batching across
+pte_dirty(): this is correct since the dirty bit on the PTE really
+is just an indication that the folio got written to, so even if
+the PTE is not actually dirty (but one of the PTEs in the batch is),
+the wp-fault optimization can be made.
 
 Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
- arch/arm64/include/asm/pgtable.h | 5 +++++
- arch/arm64/mm/mmu.c              | 9 ++++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ include/linux/mm.h |  4 ++--
+ mm/gup.c           |  2 +-
+ mm/huge_memory.c   |  4 ++--
+ mm/memory.c        |  6 +++---
+ mm/mprotect.c      | 11 ++++++-----
+ 5 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 8872ea5f0642..0b13ca38f80c 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -1558,6 +1558,11 @@ extern pte_t modify_prot_start_ptes(struct vm_area_struct *vma,
- 				    unsigned long addr, pte_t *ptep,
- 				    unsigned int nr);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 21dd110b6655..2f639f6d93f9 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2487,8 +2487,8 @@ int get_cmdline(struct task_struct *task, char *buffer, int buflen);
+ #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
+ 					    MM_CP_UFFD_WP_RESOLVE)
  
-+#define modify_prot_commit_ptes modify_prot_commit_ptes
-+extern void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-+				    pte_t *ptep, pte_t old_pte, pte_t pte,
-+				    unsigned int nr);
-+
- #ifdef CONFIG_ARM64_CONTPTE
+-bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte);
++bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned long addr,
++			     pte_t pte, struct folio *folio, unsigned int nr);
+ extern long change_protection(struct mmu_gather *tlb,
+ 			      struct vm_area_struct *vma, unsigned long start,
+ 			      unsigned long end, unsigned long cp_flags);
+diff --git a/mm/gup.c b/mm/gup.c
+index f32168339390..c39f587842a0 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -614,7 +614,7 @@ static inline bool can_follow_write_common(struct page *page,
+ 		return false;
  
- /*
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index fe60be8774f4..5f04bcdcd946 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1543,10 +1543,17 @@ pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte
- 	return modify_prot_start_ptes(vma, addr, ptep, 1);
+ 	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
++	 * See can_change_ptes_writable(): we broke COW and could map the page
+ 	 * writable if we have an exclusive anonymous page ...
+ 	 */
+ 	return page && PageAnon(page) && PageAnonExclusive(page);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2780a12b25f0..a58445fcedfc 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2032,12 +2032,12 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
+ 		return false;
+ 
+ 	if (!(vma->vm_flags & VM_SHARED)) {
+-		/* See can_change_pte_writable(). */
++		/* See can_change_ptes_writable(). */
+ 		page = vm_normal_page_pmd(vma, addr, pmd);
+ 		return page && PageAnon(page) && PageAnonExclusive(page);
+ 	}
+ 
+-	/* See can_change_pte_writable(). */
++	/* See can_change_ptes_writable(). */
+ 	return pmd_dirty(pmd);
  }
  
-+void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-+			     pte_t *ptep, pte_t old_pte, pte_t pte,
-+			     unsigned int nr)
-+{
-+	set_ptes(vma->vm_mm, addr, ptep, pte, nr);
-+}
-+
- void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep,
- 			     pte_t old_pte, pte_t pte)
+diff --git a/mm/memory.c b/mm/memory.c
+index 68c1d962d0ad..e7ebc6b70421 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -750,7 +750,7 @@ static void restore_exclusive_pte(struct vm_area_struct *vma,
+ 		pte = pte_mkuffd_wp(pte);
+ 
+ 	if ((vma->vm_flags & VM_WRITE) &&
+-	    can_change_pte_writable(vma, address, pte)) {
++	    can_change_ptes_writable(vma, address, pte, NULL, 1)) {
+ 		if (folio_test_dirty(folio))
+ 			pte = pte_mkdirty(pte);
+ 		pte = pte_mkwrite(pte, vma);
+@@ -5796,7 +5796,7 @@ static void numa_rebuild_large_mapping(struct vm_fault *vmf, struct vm_area_stru
+ 			ptent = pte_modify(ptent, vma->vm_page_prot);
+ 			writable = pte_write(ptent);
+ 			if (!writable && pte_write_upgrade &&
+-			    can_change_pte_writable(vma, addr, ptent))
++			    can_change_ptes_writable(vma, addr, ptent, NULL, 1))
+ 				writable = true;
+ 		}
+ 
+@@ -5837,7 +5837,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	 */
+ 	writable = pte_write(pte);
+ 	if (!writable && pte_write_upgrade &&
+-	    can_change_pte_writable(vma, vmf->address, pte))
++	    can_change_ptes_writable(vma, vmf->address, pte, NULL, 1))
+ 		writable = true;
+ 
+ 	folio = vm_normal_folio(vma, vmf->address, pte);
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index ec5d17af7650..baff009fc981 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -40,8 +40,8 @@
+ 
+ #include "internal.h"
+ 
+-bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte)
++bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, struct folio *folio, unsigned int nr)
  {
--	set_pte_at(vma->vm_mm, addr, ptep, pte);
-+	modify_prot_commit_ptes(vma, addr, ptep, old_pte, pte, 1);
- }
+ 	struct page *page;
  
- /*
+@@ -67,8 +67,9 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+ 		 * write-fault handler similarly would map them writable without
+ 		 * any additional checks while holding the PT lock.
+ 		 */
+-		page = vm_normal_page(vma, addr, pte);
+-		return page && PageAnon(page) && PageAnonExclusive(page);
++		if (!folio)
++			folio = vm_normal_folio(vma, addr, pte);
++		return folio_test_anon(folio) && !folio_maybe_mapped_shared(folio);
+ 	}
+ 
+ 	VM_WARN_ON_ONCE(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte));
+@@ -222,7 +223,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+ 			 */
+ 			if ((cp_flags & MM_CP_TRY_CHANGE_WRITABLE) &&
+ 			    !pte_write(ptent) &&
+-			    can_change_pte_writable(vma, addr, ptent))
++			    can_change_ptes_writable(vma, addr, ptent, folio, 1))
+ 				ptent = pte_mkwrite(ptent, vma);
+ 
+ 			ptep_modify_prot_commit(vma, addr, pte, oldpte, ptent);
 -- 
 2.30.2
 
