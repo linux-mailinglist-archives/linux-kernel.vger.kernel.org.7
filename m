@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-625322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BF2AA0FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:04:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199C6AA0FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39E05A2110
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B4F18944B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5BE21CA0E;
-	Tue, 29 Apr 2025 15:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208DA21CC4F;
+	Tue, 29 Apr 2025 15:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4rRxEN7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNPrl6JG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A706A21C19F;
-	Tue, 29 Apr 2025 15:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BD515ECD7;
+	Tue, 29 Apr 2025 15:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938945; cv=none; b=lTGUoGXyf39zIdL5WoOhQThCczgpptOeX5XFu9YFTMOwft08Xqw1Yw7UpJk0PwCCCmzqGE77SbnvlrBeUh7ktFJnnYzts8og9MhIJYH1MIUhHcZFWu1jYugYSJy3itxQIOuT70Fc3lbpaNGn1qQyamyv79rTkQkMf1EjqyhYPss=
+	t=1745939073; cv=none; b=jQ8PFy2baGGQKUTZDxvdwPl4ximRggO2knv1c09HSjscmfpQhB/vy2EdexopA4U422jfxZS0OTKHd+KyzajScqu+i5pQtnqvOxpjMHdVGbuOFetYopBDUoWJTCHwiCJMeLtnDDODX2kccHR0Ym2+mmf4eHW76gKyoX553qfasRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938945; c=relaxed/simple;
-	bh=aUl3rcsG/8z0/NS/eNGxVItw66jXfL3nPszPiTNdHeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+zbrrKSPK1rSxuV5ZueA3kusyIGx4HFtvzDrt2aXoi8y01YIHzooows+5qOwmRRlfQ1Wa4Lwz7YynGmyF1X2Lz1RPP+bh8NT1SSupxZN/MgfJe1xla9EuLJsbgUjxIZdWUziTwE/JEKcY0Dzo96FCeFyvmHWdI5eSLp/T8pqZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4rRxEN7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83039C4CEE9;
-	Tue, 29 Apr 2025 15:02:22 +0000 (UTC)
+	s=arc-20240116; t=1745939073; c=relaxed/simple;
+	bh=s+dqfUER89a3JkvdwJj38VZEwi2MYDoscKEOg30Hc2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qtww1vUyoUhLnv/cncyXWXjuSJOTFhH4lhWBb8FFwqRc/8VXaTl/ZAq9Vzz6AV24A4sWOlpkGctr4RdIndAXueWil/VyjoKlNzA5CGZjCk8l18SoJ5/r2PN8lOGwBdDdnFMptIkJOmXJ5164iLiNfFnVKAW04B9vWwRi544axK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNPrl6JG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86A4C4CEE3;
+	Tue, 29 Apr 2025 15:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745938945;
-	bh=aUl3rcsG/8z0/NS/eNGxVItw66jXfL3nPszPiTNdHeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n4rRxEN7TRovLBU5VyEyt6ayZgpAnH0OlZRpx/1mTnItGK/A7um+DboOmu9SETnSF
-	 mIhjyt4ertWEkeMqQ1w/Dcez6ZlZnbiRHoeKet8jNnDMUoRnmAPOVPFq4n2ojCoPi2
-	 zSy8jTIlc4dGLDQepxNvCTpapE2ftyycrXO2N+u34m+NLXo2Lrw1Iw9xpolXaDYYi3
-	 +mcc/KaGoqE3w75S5qKBG9IhVRn9lHseGxJCshUhLKwKuVjIK7y9aPdDHAxBcltmI2
-	 aAXLvd0StaQdPYZVF+hbB3l2rmVrWD+iO3/Qq+iNj9alS7TeYtNd6lbwnzdNM5dacm
-	 S/WU/iWAwIUEw==
-Date: Tue, 29 Apr 2025 12:02:13 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Jakub Brnak <jbrnak@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	mpetlan@redhat.com, tglozar@redhat.com,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3] perf test probe_vfs_getname: Skip if no suitable line
- detected
-Message-ID: <aBDp9fU5qJJeP9z3@x1>
-References: <20250324144523.597557-1-jbrnak@redhat.com>
- <Z_fWa093x33Wcwrw@jbrnak-thinkpadx1carbongen9.tpbc.csb>
- <Z_gw-xw97c_IWdXw@google.com>
+	s=k20201202; t=1745939072;
+	bh=s+dqfUER89a3JkvdwJj38VZEwi2MYDoscKEOg30Hc2k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XNPrl6JGv+VPNanarkk/lmzMuu6C6MbsA/LPJZquW9xxwX3kaRXRQYY2x0hKn3O7T
+	 ofcUwG30PxA3YlubAEOXm9hFwAOD//lYJ1OZZkZSYYYP9XlWmulhG1lTdqAvstPsDS
+	 FBtaWO3JNFSFvBiZ5Ixz4vMl5YHvp1Qwi9TlgZ9LTOiRTro1Qy5NR7m+gNsE+6/1tz
+	 h9sfv25yRbubVlLko7k9dwwS2reCPYxIrT3PBL0KnwTYXaQtiUzuFrWyEz6YaSrhsi
+	 8g6LECvMGlFyvT1Nt3hiBVHhgKkM7r4+F7HpTTVhjhyRjC4nJCCZZuWcBWHt+6rjfJ
+	 CN81DIHHvvY0Q==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: device: allow `dead_code` for `Device<>::parent()`
+Date: Tue, 29 Apr 2025 17:03:46 +0200
+Message-ID: <20250429150346.392050-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_gw-xw97c_IWdXw@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 10, 2025 at 01:58:35PM -0700, Namhyung Kim wrote:
-> Hello,
-> 
-> On Thu, Apr 10, 2025 at 04:32:11PM +0200, Jakub Brnak wrote:
-> > On Mon, Mar 24, 2025 at 03:45:23PM +0100, Jakub Brnak wrote:
-> > > In some cases when calling function add_probe_vfs_getname, line number
-> > > can't be detected by perf probe -L getname_flags:
-> > > 
-> > >   78         atomic_set(&result->refcnt, 1);
-> > > 
-> > > 	     // one of the following lines should have line number
-> > > 	     // but sometimes it does not because of optimization
-> > > 	     result->uptr = filename;
-> > >              result->aname = NULL;
-> > > 
-> > >   81         audit_getname(result);
-> > > 
-> > > To prevent false failures, skip the affected tests
-> > > if no suitable line numbers can be detected.
-> > > 
-> > > Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
-> 
-> Sorry for the long delay.  It looks ok to me.
-> 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+When `CONFIG_AUXILIARY_BUS` is disabled, `parent()` is still dead code:
 
-Thanks, applied to perf-tools-next,
+    error: method `parent` is never used
+      --> rust/kernel/device.rs:71:19
+       |
+    64 | impl<Ctx: DeviceContext> Device<Ctx> {
+       | ------------------------------------ method in this implementation
+    ...
+    71 |     pub(crate) fn parent(&self) -> Option<&Self> {
+       |                   ^^^^^^
+       |
+       = note: `-D dead-code` implied by `-D warnings`
+       = help: to override `-D warnings` add `#[allow(dead_code)]`
 
-- Arnaldo
+Thus reintroduce the `expect`, but now as an `allow`, and do so as
+`dead_code` since that is narrower.
+
+Fixes: ce735e73dd59 ("rust: auxiliary: add auxiliary device / driver abstractions")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+I should have noticed this earlier, sorry. Please feel free to rebase to
+fix it directly there if you prefer.
+
+ rust/kernel/device.rs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index 40c1f549b0ba..e8ab4b9617db 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -68,6 +68,7 @@ pub(crate) fn as_raw(&self) -> *mut bindings::device {
+     }
+
+     /// Returns a reference to the parent device, if any.
++    #[allow(dead_code)]
+     pub(crate) fn parent(&self) -> Option<&Self> {
+         // SAFETY:
+         // - By the type invariant `self.as_raw()` is always valid.
+
+base-commit: ce735e73dd59b169b877cedd0753297c81c2a091
+--
+2.49.0
 
