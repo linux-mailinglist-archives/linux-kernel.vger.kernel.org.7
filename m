@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-624972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E4FAA0AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:54:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7210AA0AD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013DD1B60811
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:54:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D677A747F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA792C257E;
-	Tue, 29 Apr 2025 11:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833F22D4B64;
+	Tue, 29 Apr 2025 11:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="BR/xMWVP"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a7C2cKzz"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C02C256B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077372D4B51
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745927530; cv=none; b=jzYjAnbIIJGXwaM9nesefobrCmNRHOVoMqiLBTzgGH5rq3g6WvQ2gHxFTqYQ7JR63yp05jnNw3ugPACyfGKe9SG0uikne6wo2NGdI3ZS03hu3eTSfb/Aj1NXE81BKQed5wDKA2vx78XkdAC1M04IFwpSaiOfm34s/zcli71VBFU=
+	t=1745927172; cv=none; b=jl3AUKa/z6vEHmh8qW87oR3MZWohUCDFkSQEMNDWHhBSU7w8HvO3eN8dHbSN0pnQDLCseRf2p0bznqluLHMTBqjd3oXnkHYumUtKmDdCFtKc92zL8yW6ixF8nhmKEod/E8FKuMe4ROPMHj6jGf+XMs+olENn6AjvHZyCTC+SkCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745927530; c=relaxed/simple;
-	bh=YSi+2pk2Y0OakkzAIbd3npt05KKhla52x73T72f+oCo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jEcvXGMnOvZq/4tcl3aRCqFSSLdC9aXqItL6uf2qxxcXxQJjkSMobthjY5iRz6K5A1v0rE5Jf/EJ1OQfVKDPGEUeAlVuMNyOIo6KOhvQFZVx5U23qdAMF5fnFJGE1iTgCN841Sr9h2jbglQ0dFeOIefNqwboe47RuPTLhbosDWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=BR/xMWVP; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1745927090;
-	bh=NskZHmQ3jsP9LjMN23KzcSCE5zyblLz8whIXfHKEw1E=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BR/xMWVP9VHC673+uC1BXyT6rTRpWcLKNfObTS7QVorwlWUDZok9NIhzj041nMOTF
-	 x95AduzZnykXxd5prsoIbMnmsBy7044afBCGDYktkeQf5xrTF7uyrMHH3xeUcY8JZC
-	 rK4jg3h32n/SKMxpJx3RFa5j5/90xdyk0szueYc4=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 217CC65997;
-	Tue, 29 Apr 2025 07:44:47 -0400 (EDT)
-Message-ID: <f0d7965a0016f458bb06e2968c15d8eb46be296e.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch:support CONFIG_SCHED_MC
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org, 
-	kernel@xen0n.name, wanghongliang@loongson.cn, yangtiezhu@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Tue, 29 Apr 2025 19:44:44 +0800
-In-Reply-To: <20250429113356.17929-1-zhangtianyang@loongson.cn>
-References: <20250429113356.17929-1-zhangtianyang@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1745927172; c=relaxed/simple;
+	bh=ULcK5tqpMbySYpVfeIJT28xVpefLfkaAs7WExUaK2V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOOsWgJMEGq1gdqx1BBuF1hLZ3O/ymw20BXCAcmcsGimjc6ZTNZzhzFtjNZ2rFZMVa198Ke3rUE4NIooe+jBHeQHli4xjqu0BNo7JfA1KuWLITMAP43V8No1Gh+HeSs08U0rTUBqJ5UhYh3jLd3MJHXhyN/dDzzMR/MNmXKUHXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a7C2cKzz; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f5bef591d6so11323670a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745927169; x=1746531969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=znQpdTxcq5Q59q25hWrDZ7jqcfAs7XVIcl5H5jOTHxU=;
+        b=a7C2cKzzs5yVR2SxJNS71x0+DFcvalG3AghOtS2uiVLM5AZ76PHFlHPLtsu+ES8sed
+         dF3/kWuVEjSlUIFMzEOd6nSF7Vfjm6vI6/iaC3zfpvzaqJhVoSapa0yfYBhifS9YysHR
+         Epy9teKgO4XaTz3RKnVxaNOHW+xfh4m0R3RZqyrl9yJZaXa222G1KsxfJYmOjD8V+tyW
+         ocd1SHaDznCXG0cIoctclzO700ie6+UkRtK6f642d/JD4a4bc0pEyk1KHU6yvSJL9xiN
+         HJHcwE2yCQ8nsdCv65douqA26vAUpeeXtT2busSV/SXz5AluR/fletWR4Q33uH9cibEo
+         l6Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745927169; x=1746531969;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=znQpdTxcq5Q59q25hWrDZ7jqcfAs7XVIcl5H5jOTHxU=;
+        b=I1+GJMi6b2IXyqVBkexnhM0e3WabzW1kB1mh+UZme7k/5LlN3WNtML/+ALPAl6Wf+P
+         AfmJzWVA1IqNmk8mufsJbaaeY3WZ8/NYU/4NrPxYqB7e/naFaN3RLQDgN6y4g1Ry7GDV
+         V0cGRG9QbW/MabZHFiSA+URhs2Cy4QUZNj0QKJR52e3ceYHNu7ztWvNHV+AFeRuOqYNk
+         gcbaKWD/ILQy8tlY9tp/a4RlzH2Wc03Hlcgrwx9uJ43ifmNVWmGWXQNyo36vDxHfPdIc
+         G4YW7zyZ0vaytvqRgpo4gJJ874d6OemU0kfLBxkrap2GEhgbpdPGc4DIZDFKBYh5UQ98
+         Xrbw==
+X-Gm-Message-State: AOJu0YxLeB+LzJKnFeph+zOhtAc5FYgOXuMw8x631O6ltPA12bEHi8rh
+	exXITMWT0ShFVZUj2msZilJXbewslZph2wPOSxJ2gtl4vneymgR29T64DmiO7ls=
+X-Gm-Gg: ASbGnctYJyEQpUUYghuTbwpKn3WxYkaEC7GeVphe1vJvq/X6XyYno2taH12vVnbQEzu
+	ebFjMLEe3BDFUUL+54XZVf/yNN1dBcDOsQuTlLMjfZTNdoU+TO+ZO4cdfdbL8gNkL8adbrTpDda
+	OKkUYhIAziKfBfdkSHJyhharoXTewwc1denSWSzqEWwqvO3MNoeVn2wLCPdm5egPPjr1zg4bywJ
+	KPazX08899nfBPz8+b7zcTplKe+ahi1tuAkoxB9cG8EwRAt08OEhE5S9iw886rqnXIAqYPC6dS5
+	7ZXWMb8Sa0dpRARqGVEO1dGc5J2QJ8iFLrTh24zBIxbKiexjOcU3rA==
+X-Google-Smtp-Source: AGHT+IHdwrLpQIpUiiyBR38B/ZttRSS4g/Wv80xkTkGlVkMPcowVbaa+12lFPhCvhIOfAu66scr/kQ==
+X-Received: by 2002:a17:907:60c9:b0:ac7:cfcc:690d with SMTP id a640c23a62f3a-acec6ab3db1mr282121166b.40.1745927168683;
+        Tue, 29 Apr 2025 04:46:08 -0700 (PDT)
+Received: from localhost (109-81-85-148.rct.o2.cz. [109.81.85.148])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ace6ecfa33csm760681066b.119.2025.04.29.04.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 04:46:08 -0700 (PDT)
+Date: Tue, 29 Apr 2025 13:46:07 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>,
+	David Rientjes <rientjes@google.com>, Josh Don <joshdon@google.com>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, bpf@vger.kernel.org
+Subject: Re: [PATCH rfc 10/12] mm: introduce bpf_out_of_memory() bpf kfunc
+Message-ID: <aBC7_2Fv3NFuad4R@tiehlicka>
+References: <20250428033617.3797686-1-roman.gushchin@linux.dev>
+ <20250428033617.3797686-11-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428033617.3797686-11-roman.gushchin@linux.dev>
 
-On Tue, 2025-04-29 at 19:33 +0800, Tianyang Zhang wrote:
-> From: wanghongliang <wanghongliang@loongson.cn>
->=20
-> In order to achieve more reasonable load balancing behavior,
-> support for SCHED_MC has been added.
-> The LLC distribution of Loongarch now is consistent with numa-node,
-> the balancing domain of SCHED_MC can effectively reduce the situation
-> where processes are awakened to smt_slibing
->=20
-> Co-developed-by: wanghongliang <wanghongliang@loongson.cn>
-> Signed-off-by: wanghongliang <wanghongliang@loongson.cn>
-> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> ---
-> =C2=A0arch/loongarch/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 ++++++
-> =C2=A0arch/loongarch/include/asm/smp.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 1 +
-> =C2=A0arch/loongarch/include/asm/topology.h |=C2=A0 8 +++++
-> =C2=A0arch/loongarch/kernel/smp.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 46 +++++++++++++++++++++++++++
-> =C2=A04 files changed, 64 insertions(+)
->=20
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 1a2cf012b..72a142a85 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -493,6 +493,15 @@ config NR_CPUS
-> =C2=A0	=C2=A0 This allows you to specify the maximum number of CPUs which=
- this
-> =C2=A0	=C2=A0 kernel will support.
-> =C2=A0
-> +config SCHED_MC
-> +	def_bool y
-> +	prompt "Multi-core scheduler support"
-> +	depends on SMP
-> +	help
-> +	=C2=A0 Multi-core scheduler support improves the CPU scheduler's decisi=
-on
-> +	=C2=A0 making when dealing with multi-core CPU chips at a cost of sligh=
-tly
-> +	=C2=A0 increased overhead in some places. If unsure say N here.
+On Mon 28-04-25 03:36:15, Roman Gushchin wrote:
+> Introduce bpf_out_of_memory() bpf kfunc, which allows to declare
+> an out of memory events and trigger the corresponding kernel OOM
+> handling mechanism.
+> 
+> It takes a trusted memcg pointer (or NULL for system-wide OOMs)
+> as an argument, as well as the page order.
+> 
+> Only one OOM can be declared and handled in the system at once,
+> so if the function is called in parallel to another OOM handling,
+> it bails out with -EBUSY.
 
-To me it's puzzling to say "if unsure say N here" while setting the
-default to y.
+This makes sense for the global OOM handler because concurrent handlers
+are cooperative. But is this really correct for memcg ooms which could
+happen for different hierarchies? Currently we do block on oom_lock in
+that case to make sure one oom doesn't starve others. Do we want the
+same behavior for custom OOM handlers?
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+-- 
+Michal Hocko
+SUSE Labs
 
