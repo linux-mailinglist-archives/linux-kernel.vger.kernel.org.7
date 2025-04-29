@@ -1,212 +1,207 @@
-Return-Path: <linux-kernel+bounces-624408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6398BAA0332
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:24:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530BBAA0331
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61646482B0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69FA3B5A0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E1629E077;
-	Tue, 29 Apr 2025 06:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4610D274FCC;
+	Tue, 29 Apr 2025 06:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P8P2FUSp"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pxPPNgVk"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ECC2749E9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA632144DE
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745907588; cv=none; b=OxWed2X8yJK4HIPn6/rmXdjssUJD8rlY2nuW4vr3yQN5ZfQEuGRWumzICSqnYMtvufa9cLk9J9R/NmeXL37ygQSod44Gqt84nzUokXFUiGdOCo2X0IFVZGFDE5BEmyKTKA5Ta0JGaO5RWJEYNZBh4M/AN03riq8u7aiMLndCtZ4=
+	t=1745907586; cv=none; b=JFhVXBxwsXlSzE2IfxLbW5SG2B9SilN1blj+OHNdY4k4fcgqBLBhhFtZKvos8x+4/EFH9pGPCSbIykGpGoexs7Eng+ilkaz4QnwzIz6swJjekVg9vMzNuirIBmosIxZrJcxwyxhrih/BAUcyvQqN/hxgh9E4nZcsEhZqpgYpJk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745907588; c=relaxed/simple;
-	bh=KERr5ATA8PcWGtC8VcDS5QHP9VkzbQhQz1o8bndHHvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSoNVB12fcw8Pp7jK7Io0+naVY/Fvi7O25K44U2Deox9T9L0aYUmNpcfQ9S+dCSgD/VwOK+EXKSHzl5bkA7VMxm0LlLFDfBzfOR7DXQ7s0LHNhSvMi8bcjhCAWr3s/KekfbceamMj5zoDKUAjPa0qwIAaoLbRgmjlt4ixrhBtHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P8P2FUSp; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T4EZkH007143;
-	Tue, 29 Apr 2025 06:19:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7EkTj8
-	zjQNiIWy2SSyHfpedL42RKtKz8QhkEGfsAEbE=; b=P8P2FUSplh1vHaGEmAbdUU
-	eGuG0h2UKkRxj/WjlDDdFZRN4FyIcw6CaQkAh81rOOt9LGwIMHIovuPqEIEmPxsI
-	9nxykKwUskeu2aq8kLhRRJjeAIxSKy0076WvkqB5Q4mctMJ7xMBkUOpQbRHOl0uB
-	XIYkiQ7l4EwQ39ZCuZ27kJrTBXhqYWwKXkzXKTwjAa3SWO0i0e0RiuzxXLqpcFSa
-	N9v6EPHVnwhTORHkQocr2lL/iTbvzOPv64BWr5OzpldlyPbdAQaJ6K/SYbFT7F1J
-	FUszx3AL/EfQiU62DM8I7twMrlqRjncHnE/KR7eAJlAgYyxK/7G3lJmccSfTaU9g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ahs99h1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 06:19:29 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53T6JSQq002020;
-	Tue, 29 Apr 2025 06:19:28 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ahs99h1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 06:19:28 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53T1i8th008542;
-	Tue, 29 Apr 2025 06:19:27 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 469ch31mqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 06:19:27 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53T6JOIB58458594
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Apr 2025 06:19:24 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0B5AA2004B;
-	Tue, 29 Apr 2025 06:19:24 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 601C520040;
-	Tue, 29 Apr 2025 06:19:21 +0000 (GMT)
-Received: from [9.124.218.151] (unknown [9.124.218.151])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 29 Apr 2025 06:19:21 +0000 (GMT)
-Message-ID: <7596af4a-e3aa-4aad-bc29-1cbfb4dfbc3d@linux.ibm.com>
-Date: Tue, 29 Apr 2025 11:49:20 +0530
+	s=arc-20240116; t=1745907586; c=relaxed/simple;
+	bh=RuZmshfx0WMimIm7Tn9iytcwybbaUd3KhINLT19ml28=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AOyh4Tr4lvrn7zxzZeycUDdqR4sL3zuUyaDeH8ihb4VgDMuDomreGvCi24/WrDYKmuBTd/gKpqrgideJKqEutMm4cgzqPoJ6+jBhENzVZTcwOJfpR1VDNUytnyUVo01y7ekyWUXhO49jk8Rno9h1OjL/BK4y/0hTXTfvnhCL2pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pxPPNgVk; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c30d9085aso4077952f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 23:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745907582; x=1746512382; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uFyZjvPBAmbsxn7nEC7C02rpwZ1NH2zXCqf0IPWpsAQ=;
+        b=pxPPNgVkKXp4UlS3/CiuLXny6rHNv5fd5eVuMa5NT7JcmWKBXrrF67D5uDTlnaO9Ug
+         R4I91r7tG9cVv2pUfiTbl/GXfWsSRLVpwvZl9sYiyngQzcbNzdB/0k5nAYGP5dDCxAlS
+         MNuV6+29PjtviSfNCZAU1+QOIi5Hp8+XM2hIoxaWHH18Edv/cVJgybV/DGBntkX1ZF/3
+         2EbNWP+Lt154DXmQWff3tUb7SF9vJZBWamNnW6VxOjB+bmLIAPdz3CvyUXz4q95qpFZV
+         ikiiWSICsOGHT/9YDzICXUHmjhPJC/fcZBojCTvU7Ui8eaORHUIJ41hrDRQGfltXojm+
+         KqDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745907582; x=1746512382;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uFyZjvPBAmbsxn7nEC7C02rpwZ1NH2zXCqf0IPWpsAQ=;
+        b=Re5ao0FYkERQQ1IsuV/9c+4Z5kLNkSodG9h0tVgxfPM23JXy6sp/zaF0kO3BgV7V/e
+         Y284BUrGBSo2JlpU7Tb0mw66jpmG3i0UwfmX4Ejqq+5FfxuqzdKn6gASI6sJSor/EfQv
+         sfh3OfOh4+xPvQREpmB1mllNBPo+yX0H4xUVS4uMq58hr0o3j3dK7AGhbpkgSyelo+ST
+         rvGvRdVRkiShvh9lMGRmZaCOacAou467meldrQTzgETAPCsfNGuN/nGdawx88db5vOik
+         EoMZVCA69J5hce7szmaNOAY+TCHt6p0/N1SJHVVozaZP05sbjvN8UCIprhtqgLjsObp3
+         ifPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWLlREdjQnY3cE3fVXZai1MJm3bbaELC2UdK+2v+sDY+tllB8Rf/86ZeJ3JE3D2yH+yOb6BrgcdCDtWdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUD0SQ0eIDg9EtlLG+zqSyjkVOuD6z78qYyxQU+OUNIwYT4sl3
+	dydJNGZleL0iHjYwTjxbI9M2la/ZjhzQB3qcwpcB11xj0WrBvNPoFq4yy0YsWfs=
+X-Gm-Gg: ASbGnct/4JJ2Sn1GAin4ZH6WHsXm5MVK4JEq1cbX5mlu3fLm3xlGBLKUtBY7Hjh8uzp
+	Hb8/OGY2I85nVunmlMJ0h1dLeHDdw5xVJmRCbksVDIehjnJNXRmieQZp7Ku7qBkxu5HW4rei9av
+	tv04JExEmw4j5zcdiKHG1eaTxwt27rQbm7HW08EyBEXVSmnrODtgDIb4FkZj5uD7IA2xKNhTgth
+	UeroAQQR2FG+Y0wSxpjW+2ZBNO2xRHuQJX2zp0KnCfa/6Akz3ryVo0O6VMwqrY0LWCnItY9bhqp
+	A0e1a5PybrBKXiJ3hcUo8ETB3zfVXSu3ozQSB8oIb757g1jpiX8e10Eoa0dLuGSnqlnzgcM=
+X-Google-Smtp-Source: AGHT+IGzg8u5L2WOlzYwTof6+sSIg8lXFgr3pYwOWiVWKlAozVNfU+0kERbCJNCsNMAIv+NpvoSqVA==
+X-Received: by 2002:a05:6000:4382:b0:390:fe8b:f442 with SMTP id ffacd0b85a97d-3a07ab8c463mr9060355f8f.54.1745907582493;
+        Mon, 28 Apr 2025 23:19:42 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.90.246])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca4e50sm13302616f8f.30.2025.04.28.23.19.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 23:19:42 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v3 0/5] Fix gs101 CPU hotplug support
+Date: Tue, 29 Apr 2025 07:19:36 +0100
+Message-Id: <20250429-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v3-0-1bcc44fb1d55@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc: kvm: use generic transfer to guest mode work
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: npiggin@gmail.com, vaibhav@linux.ibm.com, maddy@linux.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu,
-        gautam@linux.ibm.com, linux-kernel@vger.kernel.org
-References: <20250421102837.78515-1-sshegde@linux.ibm.com>
- <20250421102837.78515-2-sshegde@linux.ibm.com>
- <20250424144215._ooDjDz9@linutronix.de>
- <365ba747-9311-45ab-b798-80ba4e578796@linux.ibm.com>
- <20250424183811.7_MLThpt@linutronix.de>
- <2891b989-6249-4e84-969e-f11af3f92b0b@linux.ibm.com>
- <20250425133131.DTvWJE29@linutronix.de>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250425133131.DTvWJE29@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=LuKSymdc c=1 sm=1 tr=0 ts=68106f71 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=eUDsRD9QmrZOUdxpPkMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: _fMU_bGpcceVIh_J-soShGWwknXpVTbL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA0NSBTYWx0ZWRfXylq8sOFmwNoa OpiCmkmj1IVxVxTduM7c//hqVDmXg3DapEB3tMc64lAE7BMubDCLpmA9mKOhGLNQb7Mht/dc9Cw pWC8FhslsIJjKdZiEVnOaEH5gQq6fIlUtd0U4/ujpgTzIcPPyjQ1dBFiFws6IdtIk8rFVlouLxy
- ZxyYkIJBS877E8V/Od+/YK4L4bF1EcrR7WhphtYOehkU8EcK1yiALPadfoRYsQT7PgkGSauwNXA f7ndS60DZ7KKwnquU2BwOZXUTLfXckxmMOUOHulLpMjBvOojwWheGqbEaG7Ln0QRo1r75nHFGdK xC18zqFpH0hihut4Rrz8abCEQCicXHDY3wMQOOv4IqUpkJZE7xN0ytvXDmOQcG1b8hDkVOjGONn
- LHsDurNThXiVCBShEC166KWPISvyLUic7U1CwV95zQMyqLX/ryVAVm0G52p4D3PW7OsyllTy
-X-Proofpoint-GUID: 05VXkeVRbrhdKPel1PaYX5LPwtcodsDr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- mlxlogscore=999 clxscore=1015 spamscore=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290045
+X-B4-Tracking: v=1; b=H4sIAHhvEGgC/52NQQ7CIBBFr2JYOwYGaq0r72FcINCWpAKBlmia3
+ l3axIVLTWbz5ifvzSSZaE0i591Mosk2We8K8P2OqF66zoDVhQlSFAwZB+XdGO0dQgcqTND7MQx
+ TB2lKwTiNUT6gtU+TIDNgbS21UKJqKCPFGKLZtiK83gr3No0+vrZ4Zuv3v045CqrGpj61R14zf
+ hmsk9EffOzIGsr4kVdUYPWbHIu8ZRWn2jRaCvySL8vyBuHNM4NEAQAA
+X-Change-ID: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4126;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=RuZmshfx0WMimIm7Tn9iytcwybbaUd3KhINLT19ml28=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoEG976bf5mwHz8je/RtwgP6enUETGQ+/11sFwd
+ G9ztnqgr0yJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaBBvewAKCRDO6LjWAjRy
+ upJED/0euGHEqK1Y6ppKAivCbCa/3MatUq0YyXDb0CCelsbCJFnbI1Pi6hWJExhx5UYK64lvIMW
+ GmFozjAZD48cC9MBvoTweUds2QFBKToCjzMvhHlIBIjUrOzogPze9Uyr9hSD4miZCwu8+gqY5f+
+ FTK/ZJRKVMQ6eLEb+cACcLWHIC6TEaNRnb7XpjDmkPbNOPzGmIq+pTruJDRPiQwEVGMX1TOUukJ
+ r4aAZOGtcgGcXUk6XJ86OYx01cNBYkcSSaxHffjFJg0EE31laGnGuQLNP6JRPUzsa8Bc9vHclp0
+ awLE9X3ubQ5CRXHiSqh5ahOt50NNIdnoBBImX9b/3Xu4p8elNQjcdyzQAuFpQDEYHdfDWL3Y6x8
+ 6yAWT6PX7j/HKWF6D8ZwGTFGI8ymfQZgjMRYLFHwHVxnJKBIEq7UKpLPPh4UNElqfZKMBMlB6KZ
+ YnwwMNXF+dn0fQWSbr0HRhBav1uU1Ei6nuCsZ7h6ajZRo8YcUZLrPa2lBGOyoYahi/NdLp1cCZN
+ OSuT7Q8tIypLXtfF9hOBs5wpBfg2Y/gV7aDDs+VlK5kOZdhgaPgM+Fzntl9nUjT17S8kovnIkhJ
+ SsOQKQ1uuZOtyg4Mxo6pT0z86yCQqLIG52iviGixThe3BX2h512A4H2lkWvBXK+QkrP9xORYnV2
+ NI4mJ1dZYDEAjtw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
+Hi folks,
 
+As part of an effort to make suspend to RAM functional upstream on
+Pixel 6 I noticed that CPU hotplug leads to a system hang.
 
-On 4/25/25 19:01, Sebastian Andrzej Siewior wrote:
-> On 2025-04-25 16:49:19 [+0530], Shrikanth Hegde wrote:
->> On 4/25/25 00:08, Sebastian Andrzej Siewior wrote:
->>> On 2025-04-24 21:27:59 [+0530], Shrikanth Hegde wrote:
->>>>>> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
->>>>>> index 19f4d298d..123539642 100644
->>>>>> --- a/arch/powerpc/kvm/book3s_hv.c
->>>>>> +++ b/arch/powerpc/kvm/book3s_hv.c
->>>>>> @@ -4901,7 +4901,7 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u64 time_limit,
->>>>>>     	}
->>>>>>     	if (need_resched())
->>>>>> -		cond_resched();
->>>>>> +		schedule();
->>>>>
->>>>
->>>>
->>>>> This looks unrelated and odd. I don't why but this should be a
->>>>> cond_resched() so it can be optimized away on PREEMPT kernels.
->>>>
->>>> This is needed, otherwise KVM on powerVM setup gets stuck on preempt=full/lazy.
->>>
+After debugging and comparing with downstream drivers it became clear
+that some extra register writes are required to make CPU hotplug
+functional on these older devices which use a el3mon firmware.
 
-When i look back, i think below makes sense, since this is what even the 
-generic framework will do and it would work for all preemption models.
+This series adds support for that programming the CPU_INFORM register
+hint required by the firmware and also adds support for the pmu-intr-gen
+register region which is now modelled as it's own syscon. With these
+changes CPU hotplug is now functional.
 
-Since this happens in a loop, it is necessary to check for reschedule.
+It can be tested with commands such as
 
-if need_resched()
-	schedule()
+echo 0 > /sys/devices/system/cpu/cpu6/online
+echo 1 > /sys/devices/system/cpu/cpu6/online
+[   15.880597][    T0] Detected PIPT I-cache on CPU6
+[   15.880638][    T0] GICv3: CPU6: found redistributor 600 region 0:0x0000000010500000
+[   15.880685][    T0] CPU6: Booted secondary processor 0x0000000600 [0x411fd440]
 
-Ideal would be call xfer_to_guest_mode_handle_work in the loop, which 
-would handle the above too.
+This would (prior to this series) hang the system.
 
->>> But this makes no sense. On preempt=full the cond_resched() gets patched
->>> out while schedule() doesn't. Okay, this explains the stuck.
->>
->> cond_resched works. What you said is right about schedule and preemption models.
->> Initially I had some other code changes and they were causing it get stuck. i retested it.
-> 
-> so it is unrelated then ;)
-> 
->> But looking at the semantics of usage of xfer_to_guest_mode_work
->> I think using schedule is probably right over here.
->> Correct me if i got it all wrong.
-> 
-> No, if you do xfer_to_guest_mode_work() then it will invoke schedule()
-> when appropriate. It just the thing in kvmhv_run_single_vcpu() looks odd
-> and might have been duct tape or an accident and could probably be
-> removed.
-> 
->> on x86:
->> kvm_arch_vcpu_ioctl_run
->> 	vcpu_run
->> 		for () {
->> 			.. run guest..
->> 			xfer_to_guest_mode_handle_work
->> 				schedule
->> 		}
->>
->>
->> on Powerpc:  ( taking book3s_hv flavour):
->> kvm_arch_vcpu_ioctl_run
->> kvmppc_vcpu_run_hv  *1
->> 	do while() {
->> 		kvmhv_run_single_vcpu or kvmppc_run_vcpu
->> 			-- checking for need_resched and signals and bails out *2
->> 	}
->>
->>
->> *1 - checks for need resched and signals before entering guest
-> I don't see the need_resched() check here.
-> 
->> *2 - checks for need resched and signals while running the guest
->>
->>
->> This patch is addressing only *1 but it needs to address *2 as well using generic framework.
->> I think it is doable for books3s_hv atleast. (though might need rewrite)
->>
->> __kvmppc_vcpu_run is a block box to me yet. I think it first makes sense
->> to move it C and then try use the xfer_to_guest_mode_handle_work.
->> nick, vaibhav, any idea on __kvmppc_vcpu_run on how is it handling signal pending, and need_resched.
->>
->>
->> So this is going to need more work specially on *2 and doing that is also key for preempt=lazy/full to work
->> for kvm on powepc. will try to figure out.
-> 
-> Okay.
-> 
-> Sebastian
+As more of a stress test, I ran a script hotplugging CPUs 1 to 7 in a
+loop 200 times which also completed suucessfully. In addition using the
+recent fuel gauge series from Thomas we can also verify that the power
+reduces once the CPU's are offlined.
+
+Note 1: It is highly likely that similar changes are required for other
+Exynos based SoCs using el3mon. For anyone following along who is
+accustomed to looking at downstream Exynos based drivers this replaces
+register writes defined in
+
+drivers/soc/<google|samsung>/cal-if/<socname>/flexpmu_cal_cpu_<socname>.h
+
+Which are used by files in the cal-if folder and exynos-cpupm.c driver.
+
+For the moment I've used the GS101 CPU inform register offsets directly
+but these can be moved to driver data once we've established other SoCs
+benefit from this.
+
+Note 2: To ensure older DTs which don't specify google,pmu-intr-gen-syscon
+phandle still work. The driver only issues a warning if the syscon can't
+be obtained, and the behaviour remains the same as today (system boots, but
+CPU hotplug will not be functional).
+
+Note 3: I've added the bindings doc google,gs101-pmu-intr-gen.yaml in a new
+google folder as it seemed odd to have it in the soc/samsung directory, but
+it's likely this may be re-used by other Exynos SoCs that use APM/ACPM.
+
+kind regards,
+
+Peter
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v3:
+- Fix  $id, relative path/filename doesn't match actual path or filename (Robs patch bot)
+- Link to v2: https://lore.kernel.org/r/20250425-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v2-0-f1530de9da42@linaro.org
+
+Changes in v2:
+* Use BIT macro (Kryzstof)
+* Use gs101_ prefix for cpuhp functions (Kryzstof)
+* Model pmu-intr-gen SFR region as it's own syscon (Kryzstof)
+* Use regmap_update_bits() API (Kryzstof)
+* Program hint on current processor (Peter)
+- Link to v1: https://lore.kernel.org/r/20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org
+
+---
+Peter Griffin (5):
+      dt-bindings: soc: google: Add gs101-pmu-intr-gen binding documentation
+      dt-bindings: soc: samsung: exynos-pmu: gs101: add google,pmu-intr-gen phandle
+      MAINTAINERS: Add google,gs101-pmu-intr-gen.yaml binding file
+      arm64: dts: exynos: gs101: add pmu-intr-gen syscon node
+      soc: samsung: exynos-pmu: enable CPU hotplug support for gs101
+
+ .../soc/google/google,gs101-pmu-intr-gen.yaml      | 35 ++++++++++
+ .../bindings/soc/samsung/exynos-pmu.yaml           | 15 ++++
+ MAINTAINERS                                        |  1 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  6 ++
+ drivers/soc/samsung/exynos-pmu.c                   | 80 +++++++++++++++++++++-
+ drivers/soc/samsung/exynos-pmu.h                   |  1 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        | 11 +++
+ 7 files changed, 148 insertions(+), 1 deletion(-)
+---
+base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+change-id: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
 
 
