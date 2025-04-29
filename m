@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-624763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B618AA073C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C051AA0725
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640E04841D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830371B655C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9A62C17A6;
-	Tue, 29 Apr 2025 09:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572E1274FFA;
+	Tue, 29 Apr 2025 09:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caRYV4q4"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZNRcfM8Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1772C1794;
-	Tue, 29 Apr 2025 09:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E18B2BCF5F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745918859; cv=none; b=qPPAmbctQdrn67pboX2MOvHTyCUwaUs9cgQrTyh4yhuxK6M4jS+P+OIubL47X4TUMbunAOjFKvjCKQivWafJDrEv4t29YdMy8Kr0pGaiod1023kxNw6ci1UNqS02GKBz+I4txxl8bKvlvaRUaRmLv0KxmNg48ROOgEo0sLy+4rc=
+	t=1745918735; cv=none; b=s3mFbNXnAfreZ+GDl5gSVSpo+04Q3+lD6Xtz57lGlfCOvovkFRWi1XxOKRBb2/Zoyw+FDIDgTpYQ8Kwlqw6SpeC61ui5h8MxYYi1N4YXMwUYQr42olIwI1sNyr4JjVys4h2XUtj2MuU/oRjaaYk6Eu0dekL6pIYEV3vU6vOlm58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745918859; c=relaxed/simple;
-	bh=pKdrAsC78yKJBlRfTV47EWhjNqUPsyLtnbdr254TIak=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=qUDQO5B2qZHnERkX3nzzo/xLtwYl3+8v84DYBzRoJQVswOcHVIW1LPEw/Lddn9RZC+tz8WByJRwVkxtw4/2k9F+wMi4cRY2yVjdfK76NKZ2NQSHduMQd+I2RyHwfmlZEurcB1OuiSQ2PQW61fiGhEAYUvQp82RVkSlsdkv9IVT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caRYV4q4; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso50965425e9.2;
-        Tue, 29 Apr 2025 02:27:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745918856; x=1746523656; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKdrAsC78yKJBlRfTV47EWhjNqUPsyLtnbdr254TIak=;
-        b=caRYV4q4JnXKLHRzvs49gXoDqFG3DZtgRWuPpGitqJXaQkx9Cf/cgaTTbpbWrMwAG6
-         j+cfP/tvjMPz3Ca/S3KIRKiU8betiqkavlp3XGEvPsQRmqj1yZwOimoHVLzywmlr0ucW
-         0po5k2VyVJtcDSVS8MXwABFOM49nGxUmICL2uWBdgDSrlV803rfevkdKxzpv9FJ7kO9M
-         CXIisRyHMjUzTo9M4SiEaA7De6xvMGxo7UQMxSkH27oTIpZZZtO4JTXRCe9gwKdHXNsc
-         OYwJbvsHVlJIU0k5jX8vgsHAbHtV9L4j5tuDH8mDAzg98sYNsNE3nMWDgVhdQHE/bqf4
-         RD+w==
+	s=arc-20240116; t=1745918735; c=relaxed/simple;
+	bh=xERf7vHlFIL2VDrHQAot2BofgGPAsHr+KMDATnN/iow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jFlnf/d0Eu9SgqrR86pHPEXzr+Npy67uSGhspVabMI6ZVnLZFUUG4blUwkjTkADC9CdQj2HZzgKRwOwavlhjvFQF3QsBtU/mBHm3Ypf8dE6wkChz2CekEiOnaq1s7Yh1+ANjdKgB8uqT1zKwjE7hZhzq8Hp2LFsnXilUII7D6/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZNRcfM8Y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745918731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xERf7vHlFIL2VDrHQAot2BofgGPAsHr+KMDATnN/iow=;
+	b=ZNRcfM8YCR7uTdim8WJjJjPkkR26aVUvzBfoZQKuO/NiET785Qw46QocdqMgpRKPzjXD1/
+	3ILQeMdLdp30rzrL+V6YJtnX9tbLRE1PcnL9erADt6H5fOPwopxcUdZK5t+mtPn+KmmaIE
+	QEYMssKIoddxC2jeAYsl6tY6Rw7diLg=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-118-YBmfERpSPIqnEwdUiWbqZQ-1; Tue, 29 Apr 2025 05:25:28 -0400
+X-MC-Unique: YBmfERpSPIqnEwdUiWbqZQ-1
+X-Mimecast-MFC-AGG-ID: YBmfERpSPIqnEwdUiWbqZQ_1745918728
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2241e7e3addso49456025ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:25:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745918856; x=1746523656;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pKdrAsC78yKJBlRfTV47EWhjNqUPsyLtnbdr254TIak=;
-        b=UFnJwegMbDrXndUfSty25cRwyYXvJz5bXp5jzAtT6Qt9bwtr3zwkYZWLoVrgZ46Bte
-         az/cIxbsYs6zJa82XS2ZGpAfyt+iEZ4+S4hPNCMZkAmMO/6BDyOWKcHb/7JzKuf4/f3T
-         Yxd14VFwc7dOfHU7nHITxaqk3lO1WzDqwWztxNOaqGkYMATCqnWditIJ7Uoc7xlK6KZh
-         HMosz+LTKRALQaiJ99K6hSoeeExMUUOm/9lUmA4lm4O3qsQrw/N7w2vdz4eQb+I2n3pi
-         WuXrw4tff9+Q9Bhs6c346AsUIa6/S2lUvlBP1pXung3b4g0rIucDU34gTNV9I1ItpkOK
-         03cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR7iL3pbzz15BvMih4ruU6ggAFbwLv9UxSrc/1UA9ZMn3LVl68liEyC9BHzwhhjikbupcoLRiEASF9S5U=@vger.kernel.org, AJvYcCVTejEWfnuuGCrpKf32HcQk1sTrEd9J13on/8JlSlo3y9JMvMK9QkWlzh2ApHvV4IMymDtjhxkB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIY2EJ+X25BikskyGRk8PBtDcHEBzhiE3E6ruGx9D3SdG3cJo1
-	7i0D4EWJRU5QJkiFFu7D0IAUov7lXkpDF8SCzR4GviO0YbV2bSXxNgbvfQ==
-X-Gm-Gg: ASbGnct6oJLRx0lFJPZTapLYkkgFg9uoWcgMaKKWQzFo+p06h9e2tN4t2m6LqAlsZ/Z
-	Ys2FutdfN9RMRdgaUAnE9Pmycvz+62LzIXLwjCjz+NAF3jlRhNX1oRyoxyNv94RzBDtGsCrZC5B
-	PTC2Gmry6a+TAMtdw1xBpgdA1Qke39N/EsKrSiSVxCqysnoEzkFiD2XlzOhTDvUp6GjyPD7vjuH
-	E1+bdRLi8eYluVChu0mk6YIexKMMvDcapvtkl+pXIGYWeE1fnolhqhAs0MUT5vwE7uL7x3tEDSh
-	rlQdpF7fLNucgblEVEqwJgxrt+da9hDBr1aE915BooIic61DKaSASAYe6yR83cws
-X-Google-Smtp-Source: AGHT+IE8JSijoGNvW4HYfi5pARde+mkn5gH6F7xQrm36fW+QYoBBa/pBtyJZpJfc5TEgBKoY19TQcA==
-X-Received: by 2002:a05:6000:3112:b0:3a0:8ac6:d5b8 with SMTP id ffacd0b85a97d-3a08ac6d5d6mr1645390f8f.53.1745918855945;
-        Tue, 29 Apr 2025 02:27:35 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:251e:25a2:6a2b:eaaa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073c8c973sm13445245f8f.5.2025.04.29.02.27.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 02:27:35 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Ruben Wauters <rubenru09@aol.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Paolo Abeni
- <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] tools: ynl: fix typo in info string
-In-Reply-To: <20250428215541.6029-1-rubenru09@aol.com> (Ruben Wauters's
-	message of "Mon, 28 Apr 2025 22:51:09 +0100")
-Date: Tue, 29 Apr 2025 10:24:52 +0100
-Message-ID: <m2v7qnpbff.fsf@gmail.com>
-References: <20250428215541.6029-1-rubenru09.ref@aol.com>
-	<20250428215541.6029-1-rubenru09@aol.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=1e100.net; s=20230601; t=1745918728; x=1746523528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xERf7vHlFIL2VDrHQAot2BofgGPAsHr+KMDATnN/iow=;
+        b=dLi/FrkaczceTxos60lRhjQ6vwAhoEPCtZ8v5RyhCdxnkQbeOvKW4OC29+zwhzmsdF
+         DzElLcTaClzRSbVbN760UdNIFDETD4qKwBBUGRuezMjeiIrqwZ9cW3DMK42QaLHARofo
+         Q8FDmCH9gahzB/kLuUMbJkJNBIgq/4bje5b29sy9NsdsTKFnpolRYjcVmIA34R19LN8E
+         DFO0Y/n/fQbCXeLfBNRClGxSrbRT6sVw9jHdjpaFy7774ltO38NQPxcMf8uMDYhZK9M/
+         k9S4yeGN2EJP3KBmgleK8HVNu4UAdCNBztgLpG89OqBzgr2cfOc01uO7/g59N3AY1AGq
+         h8tA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEanBhTLcI+li0uDCqqxowriG82xzECu0GFA2W4IlW98RR0Z6Zken+sOnfM/I8My9ZSaoQuNpL6gItwrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPvSRJqnFZIohoAhZ4nfgFGYs2aI8/rr1aSiwRwpXdD99KyXwL
+	rcUDtnJLqaS8ay4Zk8Vl1QIinSyrkq7yFO0R2l0394dVX7bEp366tx4LJk1VobALdULTzmL0j6w
+	7SRcTvVuP8JZc5OTHP+l7/f62RZHnBZaNmj8X88Im0MCffRDexPTmS4iAK7u0UocHMy6ajEvtwi
+	bDlZTn+7nHQ619CdrXqfx3dq+CjGz2aI3QO2Z9
+X-Gm-Gg: ASbGncthKrF7NU8f0zTGYc+TGGKPlXCKFXfcYcC54zYgnG1gNzwFL032t7Fs8Wob+j4
+	HEjdlC57wGNfU42+3hEQWst61Yy9n4DztV9Yh8butjO6xyOtM8yraCItH8rMu74xnrsQ=
+X-Received: by 2002:a17:903:1aa6:b0:224:2201:84da with SMTP id d9443c01a7336-22de6e9398fmr27498415ad.6.1745918727847;
+        Tue, 29 Apr 2025 02:25:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGVqkYKPDA3m8eZjQYkl9+oqiAw3JmlRKFlZJFTl3uMOmJOX0LPCdF+LXHVZBxZ09wACQxTwiZJFceKQ5kkHxk=
+X-Received: by 2002:a17:903:1aa6:b0:224:2201:84da with SMTP id
+ d9443c01a7336-22de6e9398fmr27498245ad.6.1745918727570; Tue, 29 Apr 2025
+ 02:25:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250429054916.2343-1-liubo03@inspur.com>
+In-Reply-To: <20250429054916.2343-1-liubo03@inspur.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Tue, 29 Apr 2025 11:25:15 +0200
+X-Gm-Features: ATxdqUFmtaHxt2eRXopHROg80aacxgsBoKLG4yU5neNp4VgR_wOY5W-IVEtIS08
+Message-ID: <CAHc6FU4wHTMaJqe-kijPrNQ2j83xqp-JeO3UtLiN7fCm91mL3w@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: Remove set but not used variable 'xattr_initialized'
+To: Bo Liu <liubo03@inspur.com>
+Cc: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ruben Wauters <rubenru09@aol.com> writes:
+Hello,
 
-> replaces formmated with formatted
-> also corrects grammar by replacing a with an, and capitalises RST
->
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+On Tue, Apr 29, 2025 at 7:52=E2=80=AFAM Bo Liu <liubo03@inspur.com> wrote:
+> The variable xattr_initialized is assigned and never used, so can be remo=
+ved.
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Thanks, but this patch is against a broken version of "gfs2:
+deallocate inodes in gfs2_create_inode" that has since been fixed. As
+a consequence, this patch is no longer applicable.
+
+Andreas
+
 
