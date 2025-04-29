@@ -1,137 +1,155 @@
-Return-Path: <linux-kernel+bounces-624737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF08AA06F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241E4AA06E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1433B771F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791F74823FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA202BCF51;
-	Tue, 29 Apr 2025 09:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2C274FFA;
+	Tue, 29 Apr 2025 09:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="V3DX1sa/"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DT+peg/j"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1DF2BCF7E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563ACEEAA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745918445; cv=none; b=UnGVn9a3AChClkXofjUIQabPewL7vM0dCe3iHhw3jp58PJlvk5ReyPdrUtS5uHAHCzZze+8KGEYIsh0lQEELBX4Q0ItpBjX9aQ+w3odFFUHZe2HM6xiGm5HVjoYdo0fTVRifGDnlJ9QDpG6vuPUQ8e0ubn6WCmmm/ZJlG91LKv0=
+	t=1745918435; cv=none; b=DS/QGcdI2EMB+41f1Lrf6DsfucX/zx4zDycASwSlgUqr2OjTrLGPKRyO8dz6Xn/AueeeyrAQkyF8oY0datZLdNjRInYFILMLwRjag08cXkffuVxKok0I5xanz5HMY6DXJnOYHkAtUmKh3KQGp0VlWtYy3QgO8tODEs/902ilVTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745918445; c=relaxed/simple;
-	bh=QePSLtnZw1BPrtbLbCz1Oico6u1oYlKPCkToaNnKsGo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=VjEr3RFTiyEoRkIbTq3UmSJ6u3KOMHtbJK0D/CLnZrQcsJ50T5IL/VE3es8Wo57S9XEurrsP/huqldvW50R4ouiSq0vY5TUvn9geDQcYIL8MjORR1ew+IKPycFpkV0vPdW8MBAFOh2AMPkPsFTYCIMGnRdD915wyIH+kVDbGUTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=V3DX1sa/; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-73de140046eso683984b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:20:43 -0700 (PDT)
+	s=arc-20240116; t=1745918435; c=relaxed/simple;
+	bh=ojbFBLxBWOLMeVLLG0/bl+j+vkEZBTO/8Glt+HvSLY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9vJxnpk1GPZpOp0b1kQNdbnEorLy8rRyw6sJv292cvl3J2nlTrORzfIbruLQ6r05Jt2K9Vesh1N0H+qri3ff4pp2DJUN82bv3lkQZEGmqRSdZGMFNHEZvhmC2dAH1Ss6F47KsTbk+65PBXd1WVmDqNwunsYdRsSp8LMRCfeqvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DT+peg/j; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acae7e7587dso846707666b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:20:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1745918443; x=1746523243; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ExKjWtsve78lQi8SE/lpl6CdGXeN4uhSj147JMScLyA=;
-        b=V3DX1sa/r5gWAxgEOgONSSWIvk6OlyiQ82FM9D1PYcVA/DBDj6Bf7I88V8S2ZKDFiY
-         TkEg0XOa35I/ArIOXocRHHOiisJi2V7IspvplB5qnWl6NDUtEJCVNpYwclf06hosvdLQ
-         8LHP4PC9V+Wi+/bfHFqHqGx4RFVnA2oARQB4gUNEowsoO9zFekzD6WIfvki33cfyn8p6
-         TXNRfB/bVUIWHP6maD7M7YVLg09Kw1Ud0iWqlEGVJD2sPIWvt64yJR0FM8lR7WZWQQ1/
-         gaLKnyQJP9P1Y/aRn3T7vnIhXs0SxECP0I6xQ/s1EZJ4wvTExwYPzSqRvCkc3SisJ+9E
-         fF/w==
+        d=linaro.org; s=google; t=1745918432; x=1746523232; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JISw0yLJ6jc6YcIfOl+PZCpgyVPc2PxKayyj8MnuyZc=;
+        b=DT+peg/jt7NusEASE+dd8vQQuSCdbC+jD2sIMCGJKR3zB9dyV44Do3C/gpFuMPxUgl
+         GztEPNwCxm3UxND6+ROSCmQ9ArG166Fda8GyANTPINyh3Qh4QszdanSPNp4E9nSrBcun
+         hhKa8d/egWYre9AjziauY+FsG8euA2gmk737x8hIXA0qSG+HsfyPqhXvsQ3BeRRnhNDO
+         Upe40DKX2EdpRaohDwDkAOr/0SyMVttciaKE4aA0dahGy4geQBO+C5F7Z+KXuhrk2RU0
+         H0CppnE5IQGGpQLVvBT4T+Ai1RwN/WwKLRjoALS6ckb8GlUTmrO4FBdZgvMArO+1Gxu0
+         zF9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745918443; x=1746523243;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ExKjWtsve78lQi8SE/lpl6CdGXeN4uhSj147JMScLyA=;
-        b=mKbDtDkZ1sIwoLp0i+ksSqLM7pJLjXD2gBqQmj9XraitWTvXM0UuR6PeWy4/iBq3xe
-         Fot2xYq9S9wDfoWd4WevwD9MaeCQexLKWGjmoR3uRt3eBLyHIbgsli/TDhojfUfX9N5D
-         LHKYr24sVPQ8nG5cpx5O3vLC0DMT4DUCc8ULtsyU3Y+Geav6hPdIfL9JVDQnCssc9gvR
-         qKCoYVgaqMyMDNtZ0/IW7I/p/AlQwacwXgNF2xS200ZPn8b78B76zLk4kHiA6HnBwT+c
-         ayyNGOtfupmIbXdxoyr8MCLEWw5WQQ+WYR22C1FEDk/qEZjd+armEfsZ/RLzYhWng7sh
-         F10w==
-X-Forwarded-Encrypted: i=1; AJvYcCWNp/z1VgNDT2Shjp1kG0stGlvgIPHefTh4MYMxsu9ykCquVP07nldssi1zOib7md8X00Ln4JaCaexZzjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6DglodTD0CfOC9UVDHKNlUiFFXF5wrPMCXB2ABsl8jHIq1RHi
-	ZIQV+YX0VJBulANhcjCP29PJbdItMuRP3VSZSVyxiA/39ITQBjmqJ74OevOycMk=
-X-Gm-Gg: ASbGncuIutVdxXBMLwJjNw+E7ncMX2wZzVNKD7enwSEfDs14e83cuVpaXaA3zMcwUo6
-	MKKB1/Y0tCrNRYoOZWEXohxaq+iey+pOhS5rTqmSPNWum6CdDFpIA9ZCHFfHuXHi9K78AszXTnZ
-	xOArKxc5DSn7dZ0MX2QaZggdg0AgVeXTQO3+xQF5wxNt+IVcjdqhOceMrcRHMiAeK5Uz/aepMuE
-	Olb7XNPImKDN40G+XQoJgwqiRE9isP5CLd87CVEVj9Bmh4S89iPfWyXO5+O91irMLpUupNpzYU8
-	hdI00duNMaKz1GDq0nx2qjuG/5wBvYxlesGS6cEQeKee5KXHAV627l6WkSPnh3tkd3ysCUBUEel
-	fTGkz9zxVtVNSY5g=
-X-Google-Smtp-Source: AGHT+IH2iMzn53CRF+NGQzGZLWpsfyRGmknpAdNrvp1TjSVKEinECj9Y8/CPcYuQ77gfTWQW6bwtWA==
-X-Received: by 2002:aa7:9a89:0:b0:730:f1b7:9ba9 with SMTP id d2e1a72fcca58-74029152ec2mr1011875b3a.7.1745918442626;
-        Tue, 29 Apr 2025 02:20:42 -0700 (PDT)
-Received: from ubuntu.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a9d44esm9722786b3a.148.2025.04.29.02.20.40
+        d=1e100.net; s=20230601; t=1745918432; x=1746523232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JISw0yLJ6jc6YcIfOl+PZCpgyVPc2PxKayyj8MnuyZc=;
+        b=eCgXB5QrUVQXFaBOxmDCzVMmHNqtaMJM+gGetfJbDO+Liz8LHaQsP466P4qkTH5FxO
+         8vAt7//Pknr/FuNABeqS+aLVu8JahQ6wLldDekVygxWAs1FlBUdhOHceoZwhFvY8nxTG
+         6Nkj0HyoViyFXrK91QKCLBOnHde0twBVHmmoR0d8eifL3jiV0QxqpeMKDs3sAVuNNRA6
+         pXaZ9dj3vAHRjG2fO6eAKfezAp2ztr19C5mkZ8Ix49JLARUfPo2kdpEy/dl+sE0n8chh
+         dJxksorUsa7AJ2Q9IbLyxtL2IEdac+bYLW1hFPu3py8iUptI3Nq8pGX4WtloaxMhg2bD
+         ExHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVypafgLRzWgAy6Ap/3yTn7TTcPMNGx5wk4hKvUXNyreTcHgvIiN11LfDIkOn0NwqbwCnI/hYXx2/t4bC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzWBfgVRykUjtSVQfIu25wfPi4NuBRgcwgNXqXOtHv3Gy7IqBD
+	Q9x0jFqaNjKIlMOiamXhGp6zmKUe10E0m3Thyh9bj6UOTaoAp8TDNDQMQ8AjK7Y=
+X-Gm-Gg: ASbGncsiE8ZoTRaFspQYkKDl1mQmtNdogivEKsoOPyESntIopzAuMIuNT4+bn4HBh+t
+	E3P0krkZJXTnKnrP//hgHr4d/R+5ZXpbcQpRiNfZkjuKtQGgV08tsueFp8WEO7yQTIG5hQeABQs
+	Y0GGTat5oEjPJXa/4Tl5oG8mkrZXe+n8DK8vg8rOmrKqiDM5aSNpax41gIEHzWX/pBeKrGHigCE
+	eOEAyVndL4LcvpKbpCYLqhyY+PqpDY7kysFoIbkGiL/EBHcChOW5VKMiewI+3UljpcQy172HfBx
+	Sz7BfAyovd1mieTqIGiJw3VvX7jPMatKwAYyTw==
+X-Google-Smtp-Source: AGHT+IHXCvI79vYcat7eXaaL38RE1k9oXOfuLxqW5Qzh+w3vq5VGil+ken99T8Fm/ePM4FpoPbzouA==
+X-Received: by 2002:a17:907:9446:b0:acb:5adb:bd4a with SMTP id a640c23a62f3a-acec4b41c5bmr311410066b.12.1745918431535;
+        Tue, 29 Apr 2025 02:20:31 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acec3933a0dsm128713766b.21.2025.04.29.02.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 02:20:42 -0700 (PDT)
-From: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-To: dianders@chromium.org,
-	neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
+        Tue, 29 Apr 2025 02:20:30 -0700 (PDT)
+Date: Tue, 29 Apr 2025 12:20:29 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Xilin Wu <wuxilin123@gmail.com>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-Subject: [PATCH v3 2/3] drm/panel-edp: Add support for BOE NE140WUM-N6S panel
-Date: Tue, 29 Apr 2025 17:20:29 +0800
-Message-Id: <20250429092030.8025-3-xiazhengqiao@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250429092030.8025-1-xiazhengqiao@huaqin.corp-partner.google.com>
-References: <20250429092030.8025-1-xiazhengqiao@huaqin.corp-partner.google.com>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Konrad Dybcio <quic_kdybcio@quicinc.com>
+Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
+ compatible override
+Message-ID: <aBCZ3RpfuK0DsoQ1@linaro.org>
+References: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
+ <aBCUiIrg3oehMVjx@hovoldconsulting.com>
+ <aBCWdpk2HXPaJPlH@linaro.org>
+ <aBCYIMdEPrhMzNxi@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBCYIMdEPrhMzNxi@hovoldconsulting.com>
 
-BOE NE140WUM-N6S EDID:
-edid-decode (hex):
+On 25-04-29 11:13:04, Johan Hovold wrote:
+> On Tue, Apr 29, 2025 at 12:05:58PM +0300, Abel Vesa wrote:
+> > On 25-04-29 10:57:44, Johan Hovold wrote:
+> > > On Tue, Apr 29, 2025 at 10:42:28AM +0300, Abel Vesa wrote:
+> > > > It all started with the support for CRD back when we had different
+> > > > compatibles for eDP and DP. Meanwhile, that has been sorted out and it
+> > > > is now figured out at runtime while using only the DP compatible.
+> > > > 
+> > > > It's almost funny how this got copied over from CRD and spread to all
+> > > > X Elite platforms.
+> > > > 
+> > > > TBH, the best reason to drop it ASAP is to make sure this doesn't spread
+> > > > beyond X Elite to newer platforms.
+> > > > 
+> > > > Functionally nothing changes.
+> > > > 
+> > > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > > > ---
+> > > > Abel Vesa (7):
+> > > >       arm64: dts: qcom: x1e-crd: Drop useless DP3 compatible override
+> > > >       arm64: dts: acom: x1e80100-qcp: Drop useless DP3 compatible override
+> > > >       arm64: dts: qcom: x1e80100-t14s: Drop useless DP3 compatible override
+> > > >       arm64: dts: qcom: x1e80100-s15: Drop useless DP3 compatible override
+> > > >       arm64: dts: qcom: x1e80100-hp-x14: Drop useless DP3 compatible override
+> > > >       arm64: dts: qcom: x1e80100: Drop useless DP3 compatible override
+> > > >       arm64: dts: qcom: x1e80100-romulus: Drop useless DP3 compatible override
+> > > 
+> > > Since this is essentially a clean up perhaps you should have squashed
+> > > these into one patch.
+> > 
+> > I was actually thinking that before sending, but then I decided to add
+> > the Fixes tag to each one. Since it's such a trivial worthless cleanup,
+> > I wasn't sure if the Fixes tags were worth it either.
+> 
+> Right, since it's not a bug you should probably have skipped the Fixes
+> tags too.
+>  
+> > I can squash them if the consensus is that it's not backporting.
+> 
+> We should definitely not backport these as they are not fixing any bugs.
 
-00 ff ff ff ff ff ff 00 09 e5 73 0d 00 00 00 00
-32 22 01 04 a5 1e 13 78 07 13 45 a6 54 4d a0 27
-0c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-01 01 01 01 01 01 03 3e 80 a0 70 b0 48 40 30 20
-36 00 2e bc 10 00 00 1a 00 00 00 fd 00 1e 78 99
-99 20 01 0a 20 20 20 20 20 20 00 00 00 fc 00 4e
-45 31 34 30 57 55 4d 2d 4e 36 53 0a 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 45
+Sure. Will drop Fixes tags and squash in the next version.
 
-70 20 79 02 00 22 00 14 33 d8 04 85 7f 07 9f 00
-2f 00 1f 00 af 04 47 00 02 00 05 00 81 00 13 72
-1a 00 00 03 01 1e 78 00 00 5a 4a 5a 4a 78 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 ad 90
+> 
+> Johan
 
-Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
----
- drivers/gpu/drm/panel/panel-edp.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index a7ada5382c82..4bbd11d57b28 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1939,6 +1939,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c93, &delay_200_500_e200, "Unknown"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
-+	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0d73, &delay_200_500_e80, "NE140WUM-N6S"),
- 
- 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1130, &delay_200_500_e50, "N116BGE-EB2"),
- 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1132, &delay_200_500_e80_d50, "N116BGE-EA2"),
--- 
-2.17.1
-
+Abel
 
