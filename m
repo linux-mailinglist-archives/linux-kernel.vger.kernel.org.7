@@ -1,218 +1,236 @@
-Return-Path: <linux-kernel+bounces-624922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B4DEAA09C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:35:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DB7AA09D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F60461EA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:34:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E107B0B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111D32C1E1E;
-	Tue, 29 Apr 2025 11:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGS28uN1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C621277808;
-	Tue, 29 Apr 2025 11:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAB92C2AD8;
+	Tue, 29 Apr 2025 11:34:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E696A2C179F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745926421; cv=none; b=TwA5HrbLLSoHpZOU65jH4/CHsu1m6hcJpTnWm7qwKSHy4cVUMlBGFUfCAUvP4mEvMY8Mb2YhCvxp6A6l0DYK1U1BVs5tkDfrIS2l6ILQsj1YIOhculmLLnJl1FYATORpqet4k1KbJS8GR/cWyo6Q7l/6v3AjGQnBjEC2Y99pUPk=
+	t=1745926451; cv=none; b=IbdDIHNtggFBfc7W39nmVpFtKA4ex1Rjmzl2zaFKNhG5eZFo0YMvAIauKDaPJknkWfau/EuCUqnM5we2oIRssXwiMTxtj+84x/t4n7pD0g9p9oRaoOl52t4YZfiLzVkApv5PdszVwUE+1TLYAtfD/2g3OzqP798ch4ByvrDuiw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745926421; c=relaxed/simple;
-	bh=l6P88ZvKx9SHY+7Cw/SBc0i2yBfXPm2GWkr2HlIxcmQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AIAj2FAxgkMD9BY1ONRGRv+KkFC9zzRHRmIj2ZcfkWPfHN9p5U1bi2ONusSj886YVwZ+7kxSu0LRZK7FGIUwjCEME4SvnY6EdeC9Wx4/bzX5PVK5XoMyiB4o+uT0hV5XzmJ1G+cYQqy5X+U8vOO/PceWJNHbyglC+i29iAW5a6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGS28uN1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BF002C4CEE3;
-	Tue, 29 Apr 2025 11:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745926420;
-	bh=l6P88ZvKx9SHY+7Cw/SBc0i2yBfXPm2GWkr2HlIxcmQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=dGS28uN1Ik9Isvs+4hNd2wUTX21ViVfHfuqPHYYFsd9rfFaw0YhMb3w9eywN8jee1
-	 0euGyfdV10VvnyjKnt0lC6HpqCCAx6sxXMxqEoxyQ9gzgobIbCxHXHP7kXIoY8SBCx
-	 sHRy0EHvihTRTUU7UpKGUW/vG5YtRiFIozhTG4TzeMmEipyDX7VSTwWKTD2dwZGna3
-	 BfheG0WleyFlIwmNZkhUxKRDfWQsLHwQiI+lrgnDzbpkRb7vIQ0unflpD0o+duUh3I
-	 ff+nDM4rb64E3XGxi3nv6KkjVKb0/62qekzmAk1o+13IDJf5AKoWcV3QvjURj4Tmz7
-	 35MMjq/jgVR/w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4F2C369DC;
-	Tue, 29 Apr 2025 11:33:40 +0000 (UTC)
-From: Daniel Braunwarth via B4 Relay <devnull+daniel.braunwarth.kuka.com@kernel.org>
-Date: Tue, 29 Apr 2025 13:33:37 +0200
-Subject: [PATCH net-next v2] net: phy: realtek: Add support for WOL magic
- packet on RTL8211F
+	s=arc-20240116; t=1745926451; c=relaxed/simple;
+	bh=KWEB8PMtnhPIlHb205F+2wsaPBR3GxRNp19huh8bJYo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=laIYN9QcK62GvQSE5lkYo5gMNMSyR0n3bcRksIf6/r5ARmUkmBVah/HNGt9TWynKgt89b+KhCSaBZ3LXhFW9DBDE7UIE+LA+VmeCbAX85TLno0u67k7Bb+lU9k4FxhDjz6RBH8wjkIwN6Qu1MHQO+Mr/4z1rUINiWC/P9i+pCBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8AxbeImuRBoaNHJAA--.33962S3;
+	Tue, 29 Apr 2025 19:33:58 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by front1 (Coremail) with SMTP id qMiowMDx_MQmuRBoUcadAA--.896S2;
+	Tue, 29 Apr 2025 19:33:58 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	wanghongliang@loongson.cn,
+	yangtiezhu@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tianyang Zhang <zhangtianyang@loongson.cn>
+Subject: [PATCH] LoongArch:support CONFIG_SCHED_MC
+Date: Tue, 29 Apr 2025 19:33:56 +0800
+Message-Id: <20250429113356.17929-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-realtek_wol-v2-1-8f84def1ef2c@kuka.com>
-X-B4-Tracking: v=1; b=H4sIABC5EGgC/1WNQQrCMBREr1L+2kjz20p05T2kSEh+bGhNShJrp
- eTuhuJGZvUY5s0GkYKlCJdqg0CLjda7AnioQA3SPYhZXRiwxq5usWOB5JRovL/9xE6E2giSQhm
- EspgDGbvuths4SszRmqAvzWBj8uGz3yx8739G8WdcOCvpNDW8OetWiOv4GuVR+Sf0OecvlqjPA
- K8AAAA=
-X-Change-ID: 20250425-realtek_wol-6e2df8ea8cf2
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Daniel Braunwarth <daniel.braunwarth@kuka.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745926419; l=4645;
- i=daniel.braunwarth@kuka.com; s=20250425; h=from:subject:message-id;
- bh=ChV+u/ks2Uqcp91+NgxHSn2KSL8dX25AcJihbW7i1X8=;
- b=BA5/W37PJ/01mpYTddzw6c/DQFIjmwfcLaa4gaEhNK4XOKB7AwCgRC8N3HZXubbIY2rXgeWr6
- eq7RFbM5sxKD6FOdsJ9K107LG0Yx5ZvNdAKfnOfsT6aAnDmG2yH0MOT
-X-Developer-Key: i=daniel.braunwarth@kuka.com; a=ed25519;
- pk=fTSYKvKU5SCGGLHVz5NaznQ2MbXNWUZzdqPihgCfYms=
-X-Endpoint-Received: by B4 Relay for daniel.braunwarth@kuka.com/20250425
- with auth_id=388
-X-Original-From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
-Reply-To: daniel.braunwarth@kuka.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDx_MQmuRBoUcadAA--.896S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3Ww1kXFWDGrW5Jr13uryDurX_yoW7Wr43pr
+	nruFyrGrW8WFn3A3yYq3yrur95urn7Gry2qa13KFyfAFsrXw1UJr1vqFZxXF1UG395XrWS
+	gr98GFWFgay8X3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUUUUU==
 
-From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+From: wanghongliang <wanghongliang@loongson.cn>
 
-The RTL8211F supports multiple WOL modes. This patch adds support for
-magic packets.
+In order to achieve more reasonable load balancing behavior,
+support for SCHED_MC has been added.
+The LLC distribution of Loongarch now is consistent with numa-node,
+the balancing domain of SCHED_MC can effectively reduce the situation
+where processes are awakened to smt_slibing
 
-The PHY notifies the system via the INTB/PMEB pin when a WOL event
-occurs.
-
-Signed-off-by: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+Co-developed-by: wanghongliang <wanghongliang@loongson.cn>
+Signed-off-by: wanghongliang <wanghongliang@loongson.cn>
+Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
 ---
-Changes in v2:
-- Read current WOL configuration from PHY
-- Replace magic numbers with defines
-- Link to v1: https://lore.kernel.org/r/20250428-realtek_wol-v1-1-15de3139d488@kuka.com
----
- drivers/net/phy/realtek/realtek_main.c | 69 ++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+ arch/loongarch/Kconfig                |  9 ++++++
+ arch/loongarch/include/asm/smp.h      |  1 +
+ arch/loongarch/include/asm/topology.h |  8 +++++
+ arch/loongarch/kernel/smp.c           | 46 +++++++++++++++++++++++++++
+ 4 files changed, 64 insertions(+)
 
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index 893c824796715a905bab99646a474c3bea95ec11..05c4f4d394a5ff32b43dd51f0bff08f437ad0494 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -10,6 +10,7 @@
- #include <linux/bitops.h>
- #include <linux/of.h>
- #include <linux/phy.h>
-+#include <linux/netdevice.h>
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/clk.h>
-@@ -38,6 +39,24 @@
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 1a2cf012b..72a142a85 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -493,6 +493,15 @@ config NR_CPUS
+ 	  This allows you to specify the maximum number of CPUs which this
+ 	  kernel will support.
  
- #define RTL8211F_INSR				0x1d
++config SCHED_MC
++	def_bool y
++	prompt "Multi-core scheduler support"
++	depends on SMP
++	help
++	  Multi-core scheduler support improves the CPU scheduler's decision
++	  making when dealing with multi-core CPU chips at a cost of slightly
++	  increased overhead in some places. If unsure say N here.
++
+ config NUMA
+ 	bool "NUMA Support"
+ 	select SMP
+diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
+index b87d1d5e5..13955d726 100644
+--- a/arch/loongarch/include/asm/smp.h
++++ b/arch/loongarch/include/asm/smp.h
+@@ -26,6 +26,7 @@ extern int num_processors;
+ extern int disabled_cpus;
+ extern cpumask_t cpu_sibling_map[];
+ extern cpumask_t cpu_core_map[];
++extern cpumask_t cpu_llc_shared_map[];
+ extern cpumask_t cpu_foreign_map[];
  
-+/* RTL8211F WOL interrupt configuration */
-+#define RTL8211F_INTBCR_PAGE			0xd40
-+#define RTL8211F_INTBCR				0x16
-+#define RTL8211F_INTBCR_INTB_PMEB		BIT(5)
-+
-+/* RTL8211F WOL settings */
-+#define RTL8211F_WOL_SETTINGS_PAGE		0xd8a
-+#define RTL8211F_WOL_SETTINGS_EVENTS		16
-+#define RTL8211F_WOL_EVENT_MAGIC		BIT(12)
-+#define RTL8211F_WOL_SETTINGS_STATUS		17
-+#define RTL8211F_WOL_STATUS_RESET		(BIT(15) | 0x1fff)
-+
-+/* RTL8211F Unique phyiscal and multicast address (WOL) */
-+#define RTL8211F_PHYSICAL_ADDR_PAGE		0xd8c
-+#define RTL8211F_PHYSICAL_ADDR_WORD0		16
-+#define RTL8211F_PHYSICAL_ADDR_WORD1		17
-+#define RTL8211F_PHYSICAL_ADDR_WORD2		18
-+
- #define RTL8211F_LEDCR				0x10
- #define RTL8211F_LEDCR_MODE			BIT(15)
- #define RTL8211F_LEDCR_ACT_TXRX			BIT(4)
-@@ -123,6 +142,7 @@ struct rtl821x_priv {
- 	u16 phycr2;
- 	bool has_phycr2;
- 	struct clk *clk;
-+	u32 saved_wolopts;
- };
+ void loongson_smp_setup(void);
+diff --git a/arch/loongarch/include/asm/topology.h b/arch/loongarch/include/asm/topology.h
+index 50273c918..dfaf45d57 100644
+--- a/arch/loongarch/include/asm/topology.h
++++ b/arch/loongarch/include/asm/topology.h
+@@ -36,6 +36,14 @@ void numa_set_distance(int from, int to, int distance);
+ #define topology_sibling_cpumask(cpu)		(&cpu_sibling_map[cpu])
+ #endif
  
- static int rtl821x_read_page(struct phy_device *phydev)
-@@ -354,6 +374,53 @@ static irqreturn_t rtl8211f_handle_interrupt(struct phy_device *phydev)
- 	return IRQ_HANDLED;
++/*
++ * return cpus that shares the last level cache.
++ */
++static inline const struct cpumask *cpu_coregroup_mask(int cpu)
++{
++	return &cpu_llc_shared_map[cpu];
++}
++
+ #include <asm-generic/topology.h>
+ 
+ static inline void arch_fix_phys_package_id(int num, u32 slot) { }
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index 4b24589c0..7b9e996a1 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -50,6 +50,9 @@ EXPORT_SYMBOL(cpu_sibling_map);
+ cpumask_t cpu_core_map[NR_CPUS] __read_mostly;
+ EXPORT_SYMBOL(cpu_core_map);
+ 
++cpumask_t cpu_llc_shared_map[NR_CPUS] __read_mostly;
++EXPORT_SYMBOL(cpu_llc_shared_map);
++
+ static DECLARE_COMPLETION(cpu_starting);
+ static DECLARE_COMPLETION(cpu_running);
+ 
+@@ -66,6 +69,10 @@ static cpumask_t cpu_sibling_setup_map;
+ /* representing cpus for which core maps can be computed */
+ static cpumask_t cpu_core_setup_map;
+ 
++/* representing cpus for which llc sibling maps can be computed */
++static cpumask_t cpu_llc_shared_setup_map;
++
++
+ struct secondary_data cpuboot_data;
+ static DEFINE_PER_CPU(int, cpu_state);
+ 
+@@ -102,6 +109,42 @@ static inline void set_cpu_core_map(int cpu)
+ 	}
  }
  
-+static void rtl8211f_get_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
++static inline bool cpus_are_shared_llc(int cpua, int cpub)
 +{
-+	wol->supported = WAKE_MAGIC;
-+	if (phy_read_paged(dev, RTL8211F_WOL_SETTINGS_PAGE, RTL8211F_WOL_SETTINGS_EVENTS)
-+	    & RTL8211F_WOL_EVENT_MAGIC)
-+		wol->wolopts = WAKE_MAGIC;
++	if (cpu_to_node(cpua) != cpu_to_node(cpub))
++		return false;
++
++	return true;
 +}
 +
-+static int rtl8211f_set_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
++static inline void set_cpu_llc_shared_map(int cpu)
 +{
-+	const u8 *mac_addr = dev->attached_dev->dev_addr;
-+	int oldpage;
++	int i;
 +
-+	oldpage = phy_save_page(dev);
-+	if (oldpage < 0)
-+		goto err;
++	cpumask_set_cpu(cpu, &cpu_llc_shared_setup_map);
 +
-+	if (wol->wolopts & WAKE_MAGIC) {
-+		/* Store the device address for the magic packet */
-+		rtl821x_write_page(dev, RTL8211F_PHYSICAL_ADDR_PAGE);
-+		__phy_write(dev, RTL8211F_PHYSICAL_ADDR_WORD0, mac_addr[1] << 8 | (mac_addr[0]));
-+		__phy_write(dev, RTL8211F_PHYSICAL_ADDR_WORD1, mac_addr[3] << 8 | (mac_addr[2]));
-+		__phy_write(dev, RTL8211F_PHYSICAL_ADDR_WORD2, mac_addr[5] << 8 | (mac_addr[4]));
++	for_each_cpu(i, &cpu_llc_shared_setup_map) {
++		if (cpus_are_shared_llc(cpu, i)) {
++			cpumask_set_cpu(i, &cpu_llc_shared_map[cpu]);
++			cpumask_set_cpu(cpu, &cpu_llc_shared_map[i]);
++		}
++	}
++}
 +
-+		/* Enable magic packet matching and reset WOL status */
-+		rtl821x_write_page(dev, RTL8211F_WOL_SETTINGS_PAGE);
-+		__phy_write(dev, RTL8211F_WOL_SETTINGS_EVENTS, RTL8211F_WOL_EVENT_MAGIC);
-+		__phy_write(dev, RTL8211F_WOL_SETTINGS_STATUS, RTL8211F_WOL_STATUS_RESET);
++static inline void clear_cpu_llc_shared_map(int cpu)
++{
++	int i;
 +
-+		/* Enable the WOL interrupt */
-+		rtl821x_write_page(dev, RTL8211F_INTBCR_PAGE);
-+		__phy_set_bits(dev, RTL8211F_INTBCR, RTL8211F_INTBCR_INTB_PMEB);
-+	} else {
-+		/* Disable the WOL interrupt */
-+		rtl821x_write_page(dev, RTL8211F_INTBCR_PAGE);
-+		__phy_clear_bits(dev, RTL8211F_INTBCR, RTL8211F_INTBCR_INTB_PMEB);
-+
-+		/* Disable magic packet matching and reset WOL status */
-+		rtl821x_write_page(dev, RTL8211F_WOL_SETTINGS_PAGE);
-+		__phy_write(dev, RTL8211F_WOL_SETTINGS_EVENTS, 0);
-+		__phy_write(dev, RTL8211F_WOL_SETTINGS_STATUS, RTL8211F_WOL_STATUS_RESET);
++	for_each_cpu(i, &cpu_llc_shared_setup_map) {
++		if (cpus_are_shared_llc(cpu, i)) {
++			cpumask_clear_cpu(i, &cpu_llc_shared_map[cpu]);
++			cpumask_clear_cpu(cpu, &cpu_llc_shared_map[i]);
++		}
 +	}
 +
-+err:
-+	return phy_restore_page(dev, oldpage, 0);
++	cpumask_clear_cpu(cpu, &cpu_llc_shared_setup_map);
 +}
 +
- static int rtl8211_config_aneg(struct phy_device *phydev)
+ static inline void set_cpu_sibling_map(int cpu)
  {
- 	int ret;
-@@ -1400,6 +1467,8 @@ static struct phy_driver realtek_drvs[] = {
- 		.read_status	= rtlgen_read_status,
- 		.config_intr	= &rtl8211f_config_intr,
- 		.handle_interrupt = rtl8211f_handle_interrupt,
-+		.set_wol	= rtl8211f_set_wol,
-+		.get_wol	= rtl8211f_get_wol,
- 		.suspend	= rtl821x_suspend,
- 		.resume		= rtl821x_resume,
- 		.read_page	= rtl821x_read_page,
-
----
-base-commit: 4acf6d4f6afc3478753e49c495132619667549d9
-change-id: 20250425-realtek_wol-6e2df8ea8cf2
-
-Best regards,
+ 	int i;
+@@ -406,6 +449,7 @@ int loongson_cpu_disable(void)
+ #endif
+ 	set_cpu_online(cpu, false);
+ 	clear_cpu_sibling_map(cpu);
++	clear_cpu_llc_shared_map(cpu);
+ 	calculate_cpu_foreign_map();
+ 	local_irq_save(flags);
+ 	irq_migrate_all_off_this_cpu();
+@@ -573,6 +617,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	loongson_prepare_cpus(max_cpus);
+ 	set_cpu_sibling_map(0);
+ 	set_cpu_core_map(0);
++	set_cpu_llc_shared_map(0);
+ 	calculate_cpu_foreign_map();
+ #ifndef CONFIG_HOTPLUG_CPU
+ 	init_cpu_present(cpu_possible_mask);
+@@ -614,6 +659,7 @@ asmlinkage void start_secondary(void)
+ 
+ 	set_cpu_sibling_map(cpu);
+ 	set_cpu_core_map(cpu);
++	set_cpu_llc_shared_map(cpu);
+ 
+ 	notify_cpu_starting(cpu);
+ 
 -- 
-Daniel Braunwarth <daniel.braunwarth@kuka.com>
-
+2.43.0
 
 
