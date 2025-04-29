@@ -1,125 +1,77 @@
-Return-Path: <linux-kernel+bounces-624803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627F9AA07D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:57:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FD9AA07D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D61E3BD37F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4066C484D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23632BEC37;
-	Tue, 29 Apr 2025 09:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="t9LMIS//"
-Received: from mail-43171.protonmail.ch (mail-43171.protonmail.ch [185.70.43.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BDB2BE7DE;
-	Tue, 29 Apr 2025 09:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB312BE0E3;
+	Tue, 29 Apr 2025 09:56:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B6E2741C2;
+	Tue, 29 Apr 2025 09:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745920601; cv=none; b=oHo9VC5G9fwE4K19WP1lWdlZqtNeQb3ufZQ+s9OzyBUhTz65+Jg3f1f7zli4J5YCWMvQgLm1WI1z9d+Yqe+lJl8VmVxEKuYjzKtpVDTmAqylDNwiyZgWEwqcIob+nFB6vBYOTYUaK3Y6/8r22IOyUPxSMyeKu5j5cXWrUQozlwE=
+	t=1745920591; cv=none; b=azDveMGa1DcdD0vq2dHB7Y3waVGuug81DiTh6h29rly4BQbc2QneZcPIFln6c/3ABvl6zfzfqHuF1dSIsOz/6Rl514MxS5TvURjmMht+aLjhi+/A5aqqj6D2vW05SlSUGf5nPPuvl4kYYqhR0x2SiH/Dp8TRGtrP00JTfQDg7Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745920601; c=relaxed/simple;
-	bh=TOitCNlEHavJgJ0406Fj4t6giqT2OUkC7+UWGeAosKA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BkxhkvEAu5cn+oJmfvLQClcx49qC9BF1L1ceY+MpNC9545i1z27lkUPIe7xnSztqQ81yAxgfPIqRgtB5qFZ0N5w0O4YZKXtYIqVoyL40eKYU1E+QDtJB9yEPJW03+zFAPXRTiwercZNJgUWChXdHZkDkrj5V8HBCmFE1v2CCY44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=t9LMIS//; arc=none smtp.client-ip=185.70.43.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail; t=1745920595; x=1746179795;
-	bh=BIj1PH3AC001SwYGa/4ndDv3Snnx5p8N27N5kIu5Rbc=;
-	h=From:Date:Subject:Message-Id:References:In-Reply-To:To:Cc:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=t9LMIS//QjgJ8QRB7fuXYgrlz0+YSKRYLo2ZrufxkcAa4IbMTUWPW2b2feaamkQ0h
-	 zs9hlz8nKn9MeslWZ8iCOVmwjw2uL3lfVPzJzf/mjZ0dbhdHytrViLXIXAaaGE2LM8
-	 8Qc4P4lbMhJh92FyYUxRk8KcuXXXZm5+gtjwwJEWMOaijX8H8Hw+6h2liT+odhcnig
-	 9OZvu9xI6L8WF5hmpN4vp3/bgXetKc3TWSjj8ECQUZvL1m6oUAQxkEPTDA5Hdnyp4S
-	 lxA5nTPLGHTe4vNIWtL1L1TBVx5HTlvs2mNogIxJedz6LPWYIADJ9kdkPuYEq7D+wC
-	 aTqNbj9/9cJSA==
-X-Pm-Submission-Id: 4Zmwgx4bQDz44r
-From: Esben Haabendal <esben@geanix.com>
-Date: Tue, 29 Apr 2025 11:56:12 +0200
-Subject: [PATCH v2 2/2] Input: goodix - Allow DT specification of missing
- reset pull-up
+	s=arc-20240116; t=1745920591; c=relaxed/simple;
+	bh=873o4zG4rWdsqZx5RoDf2BmYwZe7j3rvQ8zTJTDrBNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jir1D0OC7TsuUBH/pBfWC7nVpguGw+HWxfrIt4yznYDjQoY/LV4NpV0ArJ4mo0vIdFExQh/Cx5k+kQd5OeGuEtVe1aSmCw0Lo0B89UV9l6lfoJSrLFGoIXbWD6VdURvBmhMy6wywb5a+U8sW1hdBDeIJ5XJl9u0Xl305MV1a70w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92FC11515;
+	Tue, 29 Apr 2025 02:56:22 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3C4D3F66E;
+	Tue, 29 Apr 2025 02:56:28 -0700 (PDT)
+Date: Tue, 29 Apr 2025 10:56:27 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Wander Costa <wcosta@redhat.com>
+Subject: Re: [BUG] perf segfaults when combining --overwrite and intel_pt
+ event
+Message-ID: <20250429095627.GI551819@e132581.arm.com>
+References: <CAP4=nvTab7BnT4uu0iCuFJpZ-_MdY-MYU+Q25QnpygEZKmsQ8A@mail.gmail.com>
+ <20250428101234.GB551819@e132581.arm.com>
+ <CAP4=nvQ_7oS5ZAsKmOd_ORg0tyHS=B+i2m63K=TLg22rTEiRGQ@mail.gmail.com>
+ <20250428124727.GE551819@e132581.arm.com>
+ <CAP4=nvTdD=eKcO_sJL3G7U0KxRTQ6XjJeJxNrmeD3n8UGBv5+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-goodix-no-reset-pull-up-v2-2-0687a4ad5a04@geanix.com>
-References: <20250429-goodix-no-reset-pull-up-v2-0-0687a4ad5a04@geanix.com>
-In-Reply-To: <20250429-goodix-no-reset-pull-up-v2-0-0687a4ad5a04@geanix.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Esben Haabendal <esben@geanix.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745920580; l=2058;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=TOitCNlEHavJgJ0406Fj4t6giqT2OUkC7+UWGeAosKA=;
- b=LXGLbkRsBK9V1v9vARAI3xti/9Iwl1ti7/D+c9GdS507CofovXMkB2RdwJ2zMiUDgvauKGzB9
- N6J9RfslxibA9p3OyEb9/8b6aDPK2+3ib3kDq0oqU/byGOJXhkohZro
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP4=nvTdD=eKcO_sJL3G7U0KxRTQ6XjJeJxNrmeD3n8UGBv5+g@mail.gmail.com>
 
-In commit a2fd46cd3dbb ("Input: goodix - try not to touch the reset-pin on x86/ACPI devices")
-a fix for problems on various x86/ACPI devices where external
-pull-up is missing were added. The same type of problem can exist on
-device-tree platforms, and the fix can be activated by adding the
-no-reset-pull-up device-tree property.
+On Mon, Apr 28, 2025 at 04:16:58PM +0200, Tomas Glozar wrote:
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/input/touchscreen/goodix.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+[...]
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index a3e8a51c91449533b4d5185746df6b98676053dd..ce4622bbcc89434a4d89c49bb97f084fb61aa448 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -772,10 +772,12 @@ int goodix_reset_no_int_sync(struct goodix_ts_data *ts)
- 
- 	/*
- 	 * Put the reset pin back in to input / high-impedance mode to save
--	 * power. Only do this in the non ACPI case since some ACPI boards
--	 * don't have a pull-up, so there the reset pin must stay active-high.
-+	 * power.
-+	 * Avoid doing this on boards that are known to not have external
-+	 * pull-up, and all ACPI boards since some ACPI boards don't have a
-+	 * pull-up. These boards need the reset pin to stay active-high.
- 	 */
--	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_GPIO) {
-+	if (ts->gpiod_rst_flags == GPIOD_IN) {
- 		error = gpiod_direction_input(ts->gpiod_rst);
- 		if (error)
- 			goto error;
-@@ -969,6 +971,13 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
- 	 */
- 	ts->gpiod_rst_flags = GPIOD_IN;
- 
-+	/*
-+	 * Devices that does not have pull-up on reset signal should not be
-+	 * changed to input
-+	 */
-+	if (device_property_read_bool(dev, "goodix,no-reset-pull-up"))
-+		ts->gpiod_rst_flags = GPIOD_ASIS;
-+
- 	ts->avdd28 = devm_regulator_get(dev, "AVDD28");
- 	if (IS_ERR(ts->avdd28))
- 		return dev_err_probe(dev, PTR_ERR(ts->avdd28), "Failed to get AVDD28 regulator\n");
+> However, the data cannot be read:
+> 
+> $ perf report
+> 0x7620 [0x30]: failed to process type: 71 [Invalid argument]
 
--- 
-2.49.0
+I can reproduce this issue, it is likely caused by failing parsing the
+PERF_RECORD_AUXTRACE sample.  I will look into it.
 
+Thanks for reporting the issue.
+
+Leo
 
