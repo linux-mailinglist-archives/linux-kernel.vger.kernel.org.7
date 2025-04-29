@@ -1,61 +1,76 @@
-Return-Path: <linux-kernel+bounces-625333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E46AA101A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFABAA1023
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779F31B62367
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:15:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0B617D58E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728512206AB;
-	Tue, 29 Apr 2025 15:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF67221F2E;
+	Tue, 29 Apr 2025 15:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIv2lRzt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UKMn933M"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C629521883E;
-	Tue, 29 Apr 2025 15:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62005221568;
+	Tue, 29 Apr 2025 15:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745939703; cv=none; b=tguIBsUqBgvg+uXGYpLu3585zRBvspW1lcdIJOb3jb359bfCnTOUn5aos1kjtzsHt5jGS7ozOZ5V0uBEpNFh/Re7N83ivwAQkTevP5XBwxvaa748vrIUNrDlM2Rgg1qcMN2Ol/RnJk9i5lPcw0PBdMy7M3T28NoTb3yxTe7Gu7A=
+	t=1745939708; cv=none; b=W4tKNDT7UEs8hsEv19yE/cYlOyiKehNFmJxO/KjhxvPRtDBxwMsEv61U8yWtkuEM9ZCTq8DVbIJ2kfCom0Lx4T89o0BrQAB5+B+05gFdLKFzzgnBGMhIkw5/DN4KkX/x12yKKE7rDTau2bJTRLymM0z6C1T7Heu7CvkHKwr6dew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745939703; c=relaxed/simple;
-	bh=4rd1e341L6i1cZWsBMYLUAsiEO5EFbOGKdSPZbP0RKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FEdWgIOTu+pszJk/Szti3QrCA5JiPmNf1zcawsjVnanVwcEf7VgcKCzmEMsjgjxd0X1S7/YsmK2t5SGu4YSsuEMEfMYWVzFGr5QCegmaiju6rNYv6K0Lmll87a9/r3Y3w7e9VdRAULzKd+OFtpz+MNuJE0oENnTXlVY7aof4MhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIv2lRzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4174C4CEED;
-	Tue, 29 Apr 2025 15:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745939703;
-	bh=4rd1e341L6i1cZWsBMYLUAsiEO5EFbOGKdSPZbP0RKM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AIv2lRztIVYaVUvc1ZaQL5gP4oHxoWz4g73VZFXeaSNNx2mZXBfQ/Bj55G90wyEfH
-	 khs+8J0dLg+1mFNni7TddDsZ04Kx9MIpei5ijBQR7KiuJw+OzD4opaZpFNKBZgDPXj
-	 dhhFoyJWPWu+tKW4qAXyuiJJ94wUWz0iD09Xd9DMXTPaghx9woogi4R02idzS6+E50
-	 D1fgca4EEkPU7nr7vlIoIiTINmMOoIrl5N0aTHF8AXWio6ZD0RboPvbzGRGAwLCfNL
-	 eZEby/T/MN1NBU2EmhCfeioCCv5HDYVgQKStanMMocNcqdCLBIBpwBB/yTVAdzQJ+9
-	 1AAfyI0km556Q==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: uaccess: take advantage of the prelude and `Result`'s defaults
-Date: Tue, 29 Apr 2025 17:14:45 +0200
-Message-ID: <20250429151445.438977-1-ojeda@kernel.org>
+	s=arc-20240116; t=1745939708; c=relaxed/simple;
+	bh=IJXZD13G+pdSX+EY4hqx15yCpjPmA9iatMu/62EMdmY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E6ctiW6ipjmUnHiujfuVpPST0PgubTShDuQBB+ZkksNmeKWB14XLVLnHRDeDKRdOMYiNzrBe9qT7aEdYLouStgx6sBQrgN+QuUI6ObEv5BTskSqtZWkUit5XDVvYA7m+BggZ09xWXFc691gnsfe8cX7CZNdL4vbC7AFw/tcLzxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UKMn933M; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53TFEtE43129345
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 10:14:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745939695;
+	bh=eT1vk5XLAjl/TpZqvTHxGOR9jCT9UoSjSIUIYdqBtkE=;
+	h=From:To:CC:Subject:Date;
+	b=UKMn933M0o57lbaJ4fAAZ1jCkSHygKp9fWbNCyGFcDEk2b6xTPkjRQSmV2a0zrtKS
+	 Z5Bde8Gn0XzjbSTkeifW6x1TwWC6F327OHjWjEh4xxwkElPFfh5kVYa1no1tx5KDAu
+	 meC+vuHu3RzlqPlnPmeRfOnBOXvViDvMlMfPwSwQ=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53TFEtoW032103
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 29 Apr 2025 10:14:55 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Apr 2025 10:14:54 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 29 Apr 2025 10:14:54 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53TFEslu129369;
+	Tue, 29 Apr 2025 10:14:54 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>,
+        Udit Kumar
+	<u-kumar1@ti.com>
+Subject: [PATCH v3 0/3] Misc MMC updates
+Date: Tue, 29 Apr 2025 10:14:51 -0500
+Message-ID: <20250429151454.4160506-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,47 +78,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The `kernel` prelude brings `Result` and the error codes; and the prelude
-itself is already available in the examples automatically.
+This patch series includes updates for eMMC and SD nodes across
+Sitara K3 SoC boards:
 
-In addition, `Result` already defaults to `T = ()`.
+Add boot phase flag to MMC nodes and dependency nodes to support SD and
+eMMC boot. 
+Add non-removable flag to eMMC nodes to void having to redetect
+eMMC after suspend/resume.
+Remove disable-wp for eMMC nodes since property is specific to SD.
 
-Thus simplify.
+Changes since v2:
+- Split out patches meant for stable
+- add review tags
 
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-A quick thing I noticed looking at something else...
+Link to v2:
+https://lore.kernel.org/linux-devicetree/20250417233040.3658761-1-jm@ti.com/
+Link to v1:
+https://lore.kernel.org/linux-devicetree/20241014194722.358444-1-jm@ti.com/
 
- rust/kernel/uaccess.rs | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Judith Mendez (3):
+  arm64: dts: ti: k3-am6*: Add boot phase flag to support MMC boot
+  arm64: dts: ti: k3-am62*: Add non-removable flag for eMMC
+  arm64: dts: ti: k3-am6*: Remove disable-wp for eMMC
 
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index 80a9782b1c6e..7e4c953ba8a1 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -46,10 +46,9 @@
- ///
- /// ```no_run
- /// use kernel::ffi::c_void;
--/// use kernel::error::Result;
- /// use kernel::uaccess::{UserPtr, UserSlice};
- ///
--/// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result<()> {
-+/// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result {
- ///     let (read, mut write) = UserSlice::new(uptr, len).reader_writer();
- ///
- ///     let mut buf = KVec::new();
-@@ -68,7 +67,6 @@
- ///
- /// ```no_run
- /// use kernel::ffi::c_void;
--/// use kernel::error::{code::EINVAL, Result};
- /// use kernel::uaccess::{UserPtr, UserSlice};
- ///
- /// /// Returns whether the data in this region is valid.
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts             | 12 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi      |  1 -
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts       |  2 +-
+ arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi     |  1 -
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts              |  3 ++-
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts              |  2 +-
+ arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi       |  2 +-
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts              |  1 -
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts       |  1 -
+ .../dts/ti/k3-am6548-iot2050-advanced-common.dtsi    |  1 -
+ arch/arm64/boot/dts/ti/k3-am69-sk.dts                |  1 -
+ 11 files changed, 17 insertions(+), 10 deletions(-)
 
-base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
---
+
+base-commit: d864bb528a6725e775d564fd4430762acbb9dd0d
+-- 
 2.49.0
+
 
