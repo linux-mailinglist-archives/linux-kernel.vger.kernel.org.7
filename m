@@ -1,275 +1,169 @@
-Return-Path: <linux-kernel+bounces-625614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92A3AA1A95
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:26:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C62CAA1A9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5A0617FE8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:26:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6C4188861D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0649253B73;
-	Tue, 29 Apr 2025 18:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCD725484E;
+	Tue, 29 Apr 2025 18:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvNPXjMa"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kVELap5K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD03253B5F;
-	Tue, 29 Apr 2025 18:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78044253959;
+	Tue, 29 Apr 2025 18:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745951193; cv=none; b=sZKHTg5MkJUCPfkcVb+tPUgMDkFrvL4xP3DxBoe8GxWcePLioNLVbMWcimxychnl4YYlRf6CjJliE+Ka6YK7crBsKwRQaqo5Knh6pnwTgIN3d3y1jUDEd66yYK1ECNloIu/N7BFCcI5TQrEjbft0W3VLuzeQBSX0aZIhcGyRLJs=
+	t=1745951315; cv=none; b=JqCqFJMW8Ntzsb4DYru3wbLutIQ9HfZ71yO+jO4o8fvDJGG3QsoOSZenZ3tQSfXOwVJiD4DxxtTMZOsjlHvR9eLCt4ANVCdnnxPqsa972/e9oFs7HqmmhLcHn1YDCsAQrZcBX6dkTbe8JfMKuvtYPfjRZ2aDJgQqNZmEAI2/PTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745951193; c=relaxed/simple;
-	bh=Qt0O5aXD9M4vN/ee2pglHz9B5Ra1h2NHSV/CGGJ9Vg4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaoX5HtPLffwpqCSXtRUvlvOhKSqWJkFPWakda0xoTvLrVDSEmEgu0NXoEmaP47GtyTT4KGwhlnfZ16DM4IZ3HumhJkTfANqELWOxY1NfR39vXQcsZZXUM/uC/0GTl+/bOUclPsOqfEA6kvy/nMYyV4UVGVcHNIJLJDULinyODM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvNPXjMa; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f0c30a1cf8so95602926d6.2;
-        Tue, 29 Apr 2025 11:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745951190; x=1746555990; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9WoU0GW4y61Gc49/8+e+Q1KRDruLEK6VrGCzBGIpsD8=;
-        b=DvNPXjMaDezswtfoVZzOv3KW6fCmoslVDe49giBrTItQvHXesy0GsW6dWQqFsEI214
-         KZ62E2dch7onei3wD8M4jVC/clALc9lwsxVjbEmrhDzBPvn50hMbLoS1HdGZiw0/Q4BI
-         yV7fLTrR9OW9l02YhH5quxCf1I5m52TT0zPfqTIv+gvyDXsf5Q3hGTM19Q1lBJPrBaZe
-         RaPfw6shhCQU5/Lid9YrW/Moln+kM7syYlm4sVNYPIFrY+ZJdz1uNa+7g0h0zELgVbrD
-         2V3Dcwa83SnOEEgXpo5gdnKI7O33AjACybX32T5b97jrdBM6T2kMUvO1yDA6rIVG5RIK
-         W5eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745951190; x=1746555990;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9WoU0GW4y61Gc49/8+e+Q1KRDruLEK6VrGCzBGIpsD8=;
-        b=Qly7yG1m+5MTiXf/WCuNiiEvUfNyjUm7tadr5Nbu/PY14iYNyhCFWaZuhk+WLbp/ME
-         z580NAqz+Wc5Y/TpwKcviFqd48c/a6qRMEYwyPtygrU+hYktEhJvuGC4AXD+6O2U0cJW
-         aSRkccnTuDXgMAUkxCLP3CIuwtwfl8M0zhTtPBgw4TFFqEwvLZt/uU6Fb+2F+D3bqmhm
-         b2bu+XEmRpc12ineZtoV5PtfcEPv5loEtNRect+y5Km3nmNESZYfCbL5vQ8yTLMbyFux
-         Ql/dMAKX7+nGCbPaQYOuWhts28DG6JLKYLv52vm17j+HKKoOFsK6mktRMef8V2iTH3Ss
-         5s1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUectOED4kM88YhLX0JxluahS5upo6vmkYAPDejnrg5stFZ9A6+phIjxhHM/xed1r/SGaTD07TOoeZ8ht8=@vger.kernel.org, AJvYcCVqUA5ecnJ/KqWsGVa7bB7rD//gI0VTAkNdyxyOp6bfhnULO+Zyap0CXIXjM00s4YWft4VlC0uz+CFzf8V+C+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNVxplb8ll8xKnclBNlkjzC3cn82KKeld8rS+tzlGQkX1YUD89
-	mtYmcJbRgSAJrsnpZ7JXcTaN0wjZRpE1oqC41m+zF+G5PAVUd1n2H4vQlA==
-X-Gm-Gg: ASbGncueC6yk1gByK53fTKnG2HPUhdmKAbP6gtwN26Rh18K3vtWMNiGF/mQUUFZ+GR4
-	7jmaTzAbX4Zp0SrkAF6HjZyeo1XNlm8LgS3CNUmd+mp9aSamnSjuSSj+MVWEx5UPFOGU7NmYzqS
-	29q/uys6UoJbM5DETFiQryUqd22w9HdTYa5LqZvuLr5SZH3kKlQCk7nAPSy2jiBAiMOg8zNsl6D
-	Q1CDOAbQ7ZLwwkYLeEQjlcGJeR8sk4FXQxCNcYr0A4YtIyYDmmI5Utp3tagg0YEaNdwf1Q0ILtZ
-	TIziEQBbEG0hloxkL9SvPZaawv1hdBvc7CAvO6vPoqn6j2xs/TCJSLo1Qw6YFOqFBaUEV415Bf6
-	0BIhSrWvr7Td7eRUO3VLgXYF7Lkaqdqg=
-X-Google-Smtp-Source: AGHT+IGcFK5n6H/TczUbQHoWyJaQHLs7ueOQSWswuT8trnaUPPdeISMu+angHYf5m8qkMKgKWape+w==
-X-Received: by 2002:ad4:5dcd:0:b0:6f4:c84d:d1bd with SMTP id 6a1803df08f44-6f4fce573b7mr6710496d6.6.1745951190214;
-        Tue, 29 Apr 2025 11:26:30 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9efdaa41sm83040061cf.19.2025.04.29.11.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 11:26:29 -0700 (PDT)
-Message-ID: <681119d5.c80a0220.198533.556d@mx.google.com>
-X-Google-Original-Message-ID: <aBEZ0zkDMO8QIVn1@winterfell.>
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 45D7B120006A;
-	Tue, 29 Apr 2025 14:26:29 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 29 Apr 2025 14:26:29 -0400
-X-ME-Sender: <xms:1RkRaOEccOkT6hQg5YpFv1-3VF6fo_7saXZieOuKtFM27WkbbyAmHA>
-    <xme:1RkRaPWNECQ8su0LMIXBgMfwxPZTOMPN2mXKyHMcI_oc6XM72mJ--snhS0cvQP4D3
-    YmSEBv-kK8d5S5JLg>
-X-ME-Received: <xmr:1RkRaILn0oWcRq6SWFPcuqTYEflNqieOwaxhBhoz6NVrLG2jXflWX-OpjsI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieegheefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedv
-    teehuddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepohhjvggu
-    rgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunh
-    gurghtihhonhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidr
-    ohhrghdruhhkpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhioh
-    hnrdhorhhgpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthht
-    ohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsg
-    gvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprgdrhhhinhgu
-    sghorhhgsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:1RkRaIHKhuN-DM4trB7wOnAFk_4WsVRDVNNEwKNyslKndkH2mcUA4w>
-    <xmx:1RkRaEXjg8N8_LLpd5Ej18DNeVvzC3Wpe4ZwpGrWIPyA2nwOtJoH6Q>
-    <xmx:1RkRaLNe2pd5pKHz_7_Eb2dlWWN4zgrifhKZdN6_hP_5RxLfAW6dqA>
-    <xmx:1RkRaL21sNIieS1qjKz3Oh2W_76iftpJyII5VUzzCvMBOcY7gorBfg>
-    <xmx:1RkRaFX8cfH4EgI_PPRxu1VAG0JsjpdKfrEmGaxzAuNPQJSC2pwm9pDO>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Apr 2025 14:26:28 -0400 (EDT)
-Date: Tue, 29 Apr 2025 11:26:27 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] uaccess: rust: add
- UserSliceReader::strcpy_into_buf
-References: <20250429-strncpy-from-user-v2-0-7e6facac0bf0@google.com>
- <20250429-strncpy-from-user-v2-2-7e6facac0bf0@google.com>
- <68111422.050a0220.e6713.25af@mx.google.com>
+	s=arc-20240116; t=1745951315; c=relaxed/simple;
+	bh=rVlyHHBmvxzN6Yhvxe2/pnmAc6udljIbbCM/oGG0CY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aW5XS+GB7qs39tucLGvrskT/8ULfYL+0juNcl2wx//PEO+/V/wlbAivLLhgJURNb2PqNEUNRhMiW1jfJCnFKqeARG8civK98FB5jz8OgJvboNkLMjvr5FJj1xwmNGVrC5kNvM1+NP58quu3G4Qag6r0x4HJDSrFDVM5v9DcN8UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kVELap5K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T9rPe2015584;
+	Tue, 29 Apr 2025 18:28:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KHrirrwEEhP7dVGPE5PTtRGopr7invnnEA+2AoG5Z+Q=; b=kVELap5KcmN5MELI
+	UdPuDSDs7tUZ0vtFJFH4YeHUceQkGfrrhPIIZwYxh/89OV0P2shmjTKhDgWxv00M
+	1PGhH3ZdA1DpRT+SZoehljrlHfNkBoupSwsnSD79tKrLD43crZuwNzWqkeH3Q7fT
+	Y34UsYLEGHHFMwtI0ENeLmeGpQWTvodYaGR0Wiznq+CXlERm3oRO+BXsGyxMfUSW
+	LuuezjZLvAPIpJbeXtZQQuAu3O/M7V87cjwpIpyiaaY8ukJaOei8PkN/gTa+KnY7
+	N6m6H9k2lvfD5iaRUYawmakyjZdirlxLvhZ5ZO3NPe/65otqXRxF8btnAtRZCUx3
+	Is1hJA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468qjwwhdj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 18:28:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53TIRgNK003705
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 18:27:42 GMT
+Received: from [10.110.114.218] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
+ 2025 11:27:41 -0700
+Message-ID: <c430aabe-cdf1-431b-b86e-e0b7939a21da@quicinc.com>
+Date: Tue, 29 Apr 2025 11:27:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68111422.050a0220.e6713.25af@mx.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] drm/msm/dpu: drop TE2 definitions
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?=
+	<barnabas.czeman@mainlining.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20250301-dpu-fix-catalog-v2-0-498271be8b50@linaro.org>
+ <20250301-dpu-fix-catalog-v2-4-498271be8b50@linaro.org>
+ <628f3361-6795-4e69-aac2-f9f3200eb6fe@quicinc.com>
+ <iabwfwus4ze3jwekayyfgwhu5bdoerebp3sehisc7rfeic63xh@552zbik6uvmm>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <iabwfwus4ze3jwekayyfgwhu5bdoerebp3sehisc7rfeic63xh@552zbik6uvmm>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _6Z3lfSm-YiEN5UEX7BjNWzFEBognFCT
+X-Proofpoint-GUID: _6Z3lfSm-YiEN5UEX7BjNWzFEBognFCT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEzNiBTYWx0ZWRfX56TIBUNIWWnC DJUR3s6RNxVY5NDwUo2XPgLfnqmA0UZv6xC55rQPWAgcyOXDFKSLUJ8rCVW+Cv8v5lbdSWuSYV0 S2g4fHNRZFUEAAJFxO7ja0ML7XFFY/821a9OnDt9dke5eqQ86XB7x1IzdGIaKQ1xJmXBfdlfXnt
+ f5xqgM58bjPRcNmbwTs51WtTrx7ayMWsAzAYFLtZw9RYBO5WP5OTc+Cub8aFn9o+W4mDZioebdU 9hA9aGGo3zX/AAfEK0iqU3VInvsRV50Y3lm5NGSDc0zglNzVnSyX2v1ZZpR72FrWRWs3ZCps5yg ZFj+MTijlpB0FJOnDCN//6+pq/dh8MfT9cwO1LsFbOg+ZVjMSQ9OMz3Esg3dOnlv7oZvsVO4kmi
+ IP22KfTlnEcd/uuUl0X6bmpEFAevvEid6duY/DggXy5JdSjj3RSAJ/z8vi9YHQTnVfhQIOCw
+X-Authority-Analysis: v=2.4 cv=c/urQQ9l c=1 sm=1 tr=0 ts=68111a3d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=JL4gRZoSgvqUWVuLL9IA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_07,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=883
+ phishscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290136
 
-On Tue, Apr 29, 2025 at 11:02:07AM -0700, Boqun Feng wrote:
-> On Tue, Apr 29, 2025 at 09:02:23AM +0000, Alice Ryhl wrote:
-> > This patch adds a more convenient method for reading C strings from
-> > userspace. Logic is added to NUL-terminate the buffer when necessary so
-> > that a &CStr can be returned.
-> > 
-> > Note that we treat attempts to read past `self.length` as a fault, so
-> > this returns EFAULT if that limit is exceeded before `buf.len()` is
-> > reached.
-> > 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/uaccess.rs | 35 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 35 insertions(+)
-> > 
-> > diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> > index acb703f074a30e60d42a222dd26aed80d8bdb76a..7cec1b62bd8b816f523c8be12cb29905740789fc 100644
-> > --- a/rust/kernel/uaccess.rs
-> > +++ b/rust/kernel/uaccess.rs
-> > @@ -293,6 +293,41 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec<u8, A>, flags: Flags) -> R
-> >          unsafe { buf.set_len(buf.len() + len) };
-> >          Ok(())
-> >      }
-> > +
-> > +    /// Read a NUL-terminated string from userspace and append it to `dst`.
-> 
-> s/`dst`/`buf`
-> 
-> ?
-> 
-> > +    ///
-> > +    /// Fails with [`EFAULT`] if the read happens on a bad address.
-> > +    pub fn strcpy_into_buf<'buf>(&mut self, buf: &'buf mut [u8]) -> Result<&'buf CStr> {
-> > +        if buf.is_empty() {
-> > +            return Err(EINVAL);
-> > +        }
-> > +
-> > +        // SAFETY: The types are compatible and `strncpy_from_user` doesn't write uninitialized
-> > +        // bytes to `buf`.
-> > +        let mut dst = unsafe { &mut *(buf as *mut [u8] as *mut [MaybeUninit<u8>]) };
-> 
-> maybe:
-> 
-> 	let mut dst = unsafe { &mut *(ptr::from_mut(buf).cast() };
-> 
-> ? To align with:
-> 
-> 	https://lore.kernel.org/rust-for-linux/20250418-ptr-as-ptr-v10-0-3d63d27907aa@gmail.com/	
-> 
-> > +
-> > +        // We never read more than `self.length` bytes.
-> > +        if dst.len() > self.length {
-> > +            dst = &mut dst[..self.length];
-> > +        }
-> > +
-> > +        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-> > +        if len < dst.len() {
-> > +            // Add one to include the NUL-terminator.
-> > +            len += 1;
-> > +        } else if len < buf.len() {
-> > +            // We hit the `self.length` limit before `buf.len()`.
-> > +            return Err(EFAULT);
-> > +        } else {
-> > +            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-> > +            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-> > +        }
-> > +        self.skip(len)?;
-> > +
-> 
-> So if the UserSlice content is "abcdefg" (not tailing NUL), and the buf
-> size is 4, after a strcpy_into_buf(), the return would be a CStr "abc"
-> (with a tailing NUL), and the UserSlice would move 4 bytes and become
-> "edg" (not tailing NUL), is this a desired behavior?
-> 
-> Alternatively, we can make `dst` always 1 byte less then `buf`, so that
 
-Hmm.. this part is not correct, what we should do is:
 
-        // We never read more than `self.length` bytes.
-        if dst.len() > self.length {
-            dst = &mut dst[..self.length];
-        }
-
-        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-        if len < dst.len() {
-            // Add one to include the NUL-terminator.
-            len += 1;
-	    self.skip(len)?;
-        } else if len < buf.len() {
-            // We hit the `self.length` limit before `buf.len()`.
-            return Err(EFAULT);
-        } else {
-            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-
-	    // if any copy really happened, and we don't find a NUL char
-	    // until the end of the buf/dst, we will add a NUL char as
-	    // above, but in this case, we need to not skip the last
-	    // char in `self` (because it's overwritten in the returning
-	    // string by a NUL char).
-	    if dst.len() != 0 { 
-	        self.skip(len - 1)?;
-	    }
-        }
-
-Of course, the code can be re-organized, but this is the idea.
-
-Regards,
-Boqun
-
-> in the above case, UserSlice will only move 3 bytes and become "defg",
-> and the return CStr is still "abc" (with a tailing NUL).
+On 4/29/2025 5:16 AM, Dmitry Baryshkov wrote:
+> On Mon, Apr 28, 2025 at 06:33:05PM -0700, Abhinav Kumar wrote:
+>>
+>>
+>> On 3/1/2025 1:24 AM, Dmitry Baryshkov wrote:
+>>> Neither DPU driver nor vendor SDE driver do not use TE2 definitions
+>>> (and, in case of SDE driver, never did). Semantics of the TE2 feature
+>>> bit and .te2 sblk are not completely clear. Drop these bits from the
+>>> catalog with the possibility of reintroducing them later if we need to
+>>> support ppsplit.
+>>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h |  8 ++++----
+>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h |  8 ++++----
+>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_2_sdm660.h  |  8 ++++----
+>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h  |  4 ++--
+>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h  |  8 ++++----
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c          | 17 -----------------
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h          |  6 +-----
+>>>    7 files changed, 19 insertions(+), 40 deletions(-)
+>>>
+>>
+>> <snip>
+>>
+>>> @@ -465,22 +459,11 @@ static const struct dpu_dspp_sub_blks sdm845_dspp_sblk = {
+>>>    /*************************************************************
+>>>     * PINGPONG sub blocks config
+>>>     *************************************************************/
+>>> -static const struct dpu_pingpong_sub_blks msm8996_pp_sblk_te = {
+>>> -	.te2 = {.name = "te2", .base = 0x2000, .len = 0x0,
+>>> -		.version = 0x1},
+>>> -};
+>>>    static const struct dpu_pingpong_sub_blks msm8996_pp_sblk = {
+>>>    	/* No dither block */
+>>>    };
+>>> -static const struct dpu_pingpong_sub_blks sdm845_pp_sblk_te = {
+>>> -	.te2 = {.name = "te2", .base = 0x2000, .len = 0x0,
+>>> -		.version = 0x1},
+>>> -	.dither = {.name = "dither", .base = 0x30e0,
+>>> -		.len = 0x20, .version = 0x10000},
+>>> -};
+>>> -
+>>
+>> Agreed about TE2. I do not see even te2 sub-block programming in
+>> dpu_hw_pingpong but why do we also need to drop dither?
 > 
-> The current behavior makes me feel like we can lose some information,
-> for example, if the user-kernel protocol is that "a userslice that
-> contains 4 64-byte strings which don't have a tailing NUL", we cannot do
-> 4 strcpy_into_buf() to get them, right? But of course, the scenario is
-> completely made up, just food for thoughts.
+> sdm845_pp_sblk has the dither block. If you scroll the original patch,
+> you'd see PPs being switched to that sblk definition.
 > 
-> Regards,
-> Boqun
-> 
-> > +        // SAFETY: `raw_strncpy_from_user` guarantees that this range of bytes represents a
-> > +        // NUL-terminated string with the only NUL byte being at the end.
-> > +        Ok(unsafe { CStr::from_bytes_with_nul_unchecked(&buf[..len]) })
-> > +    }
-> >  }
-> >  
-> >  /// A writer for [`UserSlice`].
-> > 
-> > -- 
-> > 2.49.0.901.g37484f566f-goog
-> > 
+
+Ack,
+
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+
+
 
