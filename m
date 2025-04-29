@@ -1,138 +1,99 @@
-Return-Path: <linux-kernel+bounces-624253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F25AA00EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649A3AA00FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B1A1A86167
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62B216C631
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D2826FDA2;
-	Tue, 29 Apr 2025 03:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CE326FDA7;
+	Tue, 29 Apr 2025 03:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXPe+xK7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkFvo6e+"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B34205E25;
-	Tue, 29 Apr 2025 03:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934FD1876
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 03:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745898784; cv=none; b=sWajYS36IQQzGjMV5K/1qlZo6iHmCP9n+27b0FM3Sq4ley+0BipsJKnMzx8hHyZZVky/THBkjT6FZ3hQyzEuazt/ZC6fOMHuGAmP7selE2pbnodjUO1ROd3yXsrj2K0EqHvUeuLQC/iEa+vmBQnwG4vhHFPeH4KY1LthKkvLiEw=
+	t=1745899095; cv=none; b=QyMjkkD5fLNyUahjZdYKWmttOqJoriTEutoo+0gxxCUB7aB5wv/E7ZW9+rMAET5tCotEa3KfhGsvkkx5K3Tkfr+D4iKQNnAaDOo+9oLXzVewXAJD/Uiwww/SlvhJUPY0NzNelYYQ+rWfVxO91F7Wpbgf9Trw3HI5uJo8e+l0dws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745898784; c=relaxed/simple;
-	bh=JWP+LbOHv+wP6QUKbnuoS82KW8BLjO/OX50Wl4RrBvA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Y9K89FjMTOD0MQc9XuoZi1oPOY+HoTBeJ8NHsDt+Qy0U3FS4HqQRIYDAZIV6+IFU0XzSZSoHWxUZGbwJG32uNnTPEngKO21CKVkhOqvH/SjN4akGrc9f+3B7DvCmfKow1OWP70DWKjt+EbgUK/XkTZkdd1FyBMQtGGbgRLIMmT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXPe+xK7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9267C4CEE3;
-	Tue, 29 Apr 2025 03:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745898783;
-	bh=JWP+LbOHv+wP6QUKbnuoS82KW8BLjO/OX50Wl4RrBvA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=UXPe+xK7W1n6JfmrEvk3rT8BlQ5a83ZevoU2kyn+wzd8Ar7yChP+jqoJfqqsfi/m4
-	 lxtZUIlU53ngV541nq+Q8TGiLWcXTbwtMCXuGiS5GjIt/8arD37Tm4YJ508NGThi2q
-	 hPj9pGmrJa0tUWwoVZm3t8ogVz7x+AIIwhhLxmdunt6dUGYa0Ii7btT5RQLcH4st5l
-	 xlQ5Z9ebYjqHs25Hs1OJ3QQC442cXCu6Ulhazo9ByaFjO9QSSYgyeZ2ebThmLkZmFj
-	 qF/hWhAhCIuaDfOozGzGl9M4T9na4MDLAfbGDB4fUsQXCPuIOyx2zLZqX+H8fVFfcm
-	 GrMCC6O5hXJSQ==
-Date: Mon, 28 Apr 2025 20:52:59 -0700
-From: Kees Cook <kees@kernel.org>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>, dsahern@kernel.org
-CC: davem@davemloft.net, edumazet@google.com, horms@kernel.org, kuba@kernel.org,
- kuniyu@amazon.com, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH] ipv4: fib: Fix fib_info_hash_alloc() allocation type
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250429004310.52559-1-kuniyu@amazon.com>
-References: <12141842-39ff-47fc-ac2b-7a72d778117a@kernel.org> <20250429004310.52559-1-kuniyu@amazon.com>
-Message-ID: <89BC8935-21D1-45A9-AEA1-A4E52D193434@kernel.org>
+	s=arc-20240116; t=1745899095; c=relaxed/simple;
+	bh=AWEAszHixMabaHum7/doBO6Caip/PQgW7hNPrb1Yb0c=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:Content-Type; b=axEeLvFZww+4/7j/mSwJBQ/JPKPpdE4jMJJxBaK91njE0SKoUT9JBlqLPWnUizOswQhXFO2waW5uZhBh0xE2jnex2kdzgg0TrBTc1qkCpTqEXC0jpGlQoPmAL0fPfaJC3TuI70YsDhlk17pcdXtP/fMqivbs8vDyXte+E4wxcsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkFvo6e+; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39ee651e419so2850088f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 20:58:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745899091; x=1746503891; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:to:from:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AWEAszHixMabaHum7/doBO6Caip/PQgW7hNPrb1Yb0c=;
+        b=DkFvo6e+EXyXuAR+971bx89uQ3zGI6I0yC5u6uayOMvPjJT2W+ka7fYWBkmbVv1sVA
+         Mfq2nR4k1tcl4EY6cJxNolyr+xDKuBirrJ3zUoHhuCOG7jntzbWaKLZ3MPKjufcECeAk
+         1EbODeyPwgl3gDZuttddrCuQdwv9m3B3KlcELKoG/GSaCbwyH6I/hnuue+0wB+0kMZTR
+         bxvOFrZM0ZVO2fmI+sGx6HLUuMKkjBWLxqD1Zard9g2frKb5N6dRYxAVBYRIMUMSIF7y
+         +pKVTgIqV5vDgThkwN9Ga70tDC5alB3uvl7/M4GMeF5Bada/jSDRC2zGUAbEWyP0gyIZ
+         g11A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745899091; x=1746503891;
+        h=content-transfer-encoding:subject:to:from:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AWEAszHixMabaHum7/doBO6Caip/PQgW7hNPrb1Yb0c=;
+        b=dIlzvXyJo/rYJ80RtMPs5fB5Q8o4BbH6nBgBpR9iJHHOMHt4ggcNMAo6n5l1DkyNvx
+         P+FNG7NU0g02KmI3IkbzXbiNOAqXJjQpVqNglhLbC5Hd1ZgHTSSE4W3jZ3g//q1uzVxK
+         UNE2FszvmF+He+cwZUp7rSJwW/2RgcdyBgnTlNIlu3aMAU4HLrBvix2eC5616W1V0e85
+         wWrQX9sprMdS47L/IaYaF8mT8DnN7WcoiOahJluuqPp76mapPiN6WEjmVAvWpYLk8VXz
+         6ayKQq9SykxoXoU24WMYxRjWZ/Vi3XDm+YACssziTVXXz9msFipEsElpk4SqWFjcdNlY
+         8ZTQ==
+X-Gm-Message-State: AOJu0YxNmxaoDDhnW6MhEktGZnyFOm63ocBawPIMC428ty4AtKJCqwYI
+	8xybO5gf5v8vn80Mi0fblQAhCmvEfeS0AeeV0wz6wsWbH+KKWed87nZ+oQ==
+X-Gm-Gg: ASbGncsBIJINYz0E9aKaYKEO4z/fCjULJ+7H8Md3OAhCa/gadrfDNmatsHpZQTX19MI
+	GBKmbx63gwDKNMKZg6/xN5dx3jDIyuq6NIf5e4U61qO3cOG7wrOfweWVfl+nDPUdyrWonox6bv9
+	65LZWU7ACE0AV5utTlVlluD7zpp8ZP/ZNwdVMMfonotQnSAYG3JZ1lmEFRF393141jUOAD/SkKt
+	xW2W1Tjh0HlfhU3XiZtpCSZDWy+ExapmGy177THKGHW/opsRzYWZcJR0HboquYp67ESybbYLXxu
+	n34ZjYqi5Leb34NmreP1
+X-Google-Smtp-Source: AGHT+IFFtMNz+meWKvqnaAOv52krr/e7GNjsBo+8cbhfdeUJmMGE1g73n0dA9AcHiLPqcNEnkgNCow==
+X-Received: by 2002:a05:6000:1a8d:b0:3a0:8020:c5c5 with SMTP id ffacd0b85a97d-3a08a3c9b56mr904558f8f.58.1745899091297;
+        Mon, 28 Apr 2025 20:58:11 -0700 (PDT)
+Received: from ULRICH ([197.234.221.241])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2d86f7sm172359135e9.32.2025.04.28.20.58.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Mon, 28 Apr 2025 20:58:10 -0700 (PDT)
+Message-ID: <68104e52.050a0220.25c915.b635@mx.google.com>
+Date: Mon, 28 Apr 2025 20:58:10 -0700 (PDT)
+X-Google-Original-Date: 29 Apr 2025 04:58:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: rotanphelima11@gmail.com
+To: linux-kernel@vger.kernel.org
+Subject: Privatkredit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
+R3V0ZW4gTW9yZ2VuLA0KSWNoIGJpZXRlIEtyZWRpdGzDtnN1bmdlbiwgZGllIElocmVu
+IEJlZMO8cmZuaXNzZW4gZW50c3ByZWNoZW4uIFdlbm4gU2llIMO8YmVyIGVpbmVuIFBy
+aXZhdGtyZWRpdCBvZGVyIGFuZGVyZSBPcHRpb25lbiBuYWNoZGVua2VuLCBzdGVoZSBp
+Y2ggSWhuZW4gZ2VybmUgenVyIFZlcmbDvGd1bmcuIEJldHLDpGdlIHZvbiAxMC4wMDAg
+YmlzIDUwMC4wMDAsIG1pdCBmbGV4aWJsZW4gUsO8Y2t6YWhsdW5nc2JlZGluZ3VuZ2Vu
+LiBLb250YWt0aWVyZW4gU2llIG1pY2guDQoNCkJvbmpvdXIsIA0KSmUgdm91cyBwcm9w
+b3NlIGRlcyBzb2x1dGlvbnMgZGUgcHLDqnQgcXVpIHLDqXBvbmRlbnQgw6Agdm9zIGJl
+c29pbnMuIFNpIHZvdXMgZW52aXNhZ2V6IHVuIHByw6p0IHBlcnNvbm5lbCBvdSBkJ2F1
+dHJlcyBvcHRpb25zLCBqZSBzdWlzIMOgIHZvdHJlIGRpc3Bvc2l0aW9uLiBNb250YW50
+cyBkZSAxMCAwMDAgw6AgNTAwIDAwMCwgYXZlYyBkZXMgZHVyw6llcyBkZSByZW1ib3Vy
+c2VtZW50IGZsZXhpYmxlcy4gQ29udGFjdGV6LW1vaS4=
 
-
-On April 28, 2025 5:43:05 PM PDT, Kuniyuki Iwashima <kuniyu@amazon=2Ecom> =
-wrote:
->Thanks for CC me, David=2E
->
->From: David Ahern <dsahern@kernel=2Eorg>
->Date: Mon, 28 Apr 2025 16:50:53 -0600
->> On 4/25/25 11:05 PM, Kees Cook wrote:
->> > In preparation for making the kmalloc family of allocators type aware=
-,
->> > we need to make sure that the returned type from the allocation match=
-es
->> > the type of the variable being assigned=2E (Before, the allocator wou=
-ld
->> > always return "void *", which can be implicitly cast to any pointer t=
-ype=2E)
->> >=20
->> > This was allocating many sizeof(struct hlist_head *) when it actually
->> > wanted sizeof(struct hlist_head)=2E Luckily these are the same size=
-=2E
->> > Adjust the allocation type to match the assignment=2E
->> >=20
->> > Signed-off-by: Kees Cook <kees@kernel=2Eorg>
->> > ---
->> > Cc: "David S=2E Miller" <davem@davemloft=2Enet>
->> > Cc: David Ahern <dsahern@kernel=2Eorg>
->> > Cc: Eric Dumazet <edumazet@google=2Ecom>
->> > Cc: Jakub Kicinski <kuba@kernel=2Eorg>
->> > Cc: Paolo Abeni <pabeni@redhat=2Ecom>
->> > Cc: Simon Horman <horms@kernel=2Eorg>
->> > Cc: <netdev@vger=2Ekernel=2Eorg>
->> > ---
->> >  net/ipv4/fib_semantics=2Ec | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >=20
->> > diff --git a/net/ipv4/fib_semantics=2Ec b/net/ipv4/fib_semantics=2Ec
->> > index f68bb9e34c34=2E=2E37d12b0bc6be 100644
->> > --- a/net/ipv4/fib_semantics=2Ec
->> > +++ b/net/ipv4/fib_semantics=2Ec
->> > @@ -365,7 +365,7 @@ static struct hlist_head *fib_info_laddrhash_buck=
-et(const struct net *net,
->> >  static struct hlist_head *fib_info_hash_alloc(unsigned int hash_bits=
-)
->> >  {
->> >  	/* The second half is used for prefsrc */
->> > -	return kvcalloc((1 << hash_bits) * 2, sizeof(struct hlist_head *),
->> > +	return kvcalloc((1 << hash_bits) * 2, sizeof(struct hlist_head),
->> >  			GFP_KERNEL);
->> >  }
->> > =20
->>=20
->> Reviewed-by: David Ahern <dsahern@kernel=2Eorg>
->>=20
->> Fixes: fa336adc100e ("ipv4: fib: Allocate fib_info_hash[] and
->> fib_info_laddrhash[] by kvcalloc()=2E)
->
->I agree this should target net=2Egit as the last statement
->will be false with LOCKDEP=2E
-
-Which will be false with lockdep? Unless I'm missing it, I think hlist_hea=
-d is always pointer sized:
-
-struct hlist_head {
-	struct hlist_node *first;
-};
-
->
->Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon=2Ecom>
-
-Thanks!
-
---=20
-Kees Cook
 
