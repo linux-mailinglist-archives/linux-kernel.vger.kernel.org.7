@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-624055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B05A9FE4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BF9A9FE4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BFFD1A863D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:34:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB3F1A88168
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 00:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD3C13BC3F;
-	Tue, 29 Apr 2025 00:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F32154BE2;
+	Tue, 29 Apr 2025 00:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THKhrLCn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SwnShG5v"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048FB1EB39
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 00:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D770813
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 00:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745886852; cv=none; b=VfwMdueSixMPhIu8B1tR1IdU/9EZUTFjADu3oSgjvEQe3hJbPSwabeFq3KTltZYeQYE+y6v9+77kp5hJq+kDLMbxo+77poW3U6c8q/LZkMAuOQ40wrR8RDB8XU79BY0vD6ev950ThJISaIicN2ZKrmuhLz+CVXoTf+5d1YD1/uU=
+	t=1745886853; cv=none; b=PYQgNG002XYuuOJ8jqaSQmQrwT+ergioT/ABjLU7YvgP97x+aeNWU+7IhTi/OK6cJj/WV5kbsn8XJ4/yoH2xU6XaRIBfyUy/dKKe/RrsYqBAvOwJBTSfPaJpbHoxft7mPninGqb4Yo93TBHCwx3nYGRnzt7yfwojVqc1mNBiCsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745886852; c=relaxed/simple;
-	bh=s89vn9sB0pME8BKV2D41d5tcrp9Oq8gVpwGbRH8WjSA=;
+	s=arc-20240116; t=1745886853; c=relaxed/simple;
+	bh=L1d/vvYdkqDxKWY4/nne6uJtR33vIUzSRBs3GCk6o/w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gx+Ko9fCNSAQCaqr3lGqHsgz874PZoAu/5Cs4Jf3YXxBLAg92snafWdPqdnLqVg0oeS5muaHaNBMmWV3QpHTvLP5tlW9phnu+j0PEm9l30RDmM/IFc6ECdpiZHBKTe6svRn2E43ncXGn1mJXRvEAe/+1Lhw+A0WGqSJ5yszsK+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THKhrLCn; arc=none smtp.client-ip=192.198.163.9
+	 MIME-Version; b=uCQXqi/T5VCjLeOB5y41agBum94XyygSanvc8hGsPIlth9OZbsAJfvflF6oUa86zHv1yl+9ChwQ6Y/ym24F9N3CPAeoznv3GWXXiPcGapiJPNouMIZ9UIVkfIONoQlcFq9q/IyBClgc8x1xbicNCkajlEwgKNOK4rQhREjLgj0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SwnShG5v; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1745886851; x=1777422851;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=s89vn9sB0pME8BKV2D41d5tcrp9Oq8gVpwGbRH8WjSA=;
-  b=THKhrLCnFDTTHrWx8RpKZJK4Q3LvBH7Ai+F/w+cBEhfcOdKKXT75WAlO
-   UxCTCrJtCDrOroprm3Wiw9JImmEIMO6gnHaUogGVp1yGy+hJgDlCFAqHt
-   AKkhwcUuKtY4mDbxDgu/kLDnzk1Z5whHPGmv6VYHfzkZTN0EMjUpH84w9
-   zSxEt+QNqD11ZyIdbUCZTJyjCeyCt5FCuMHw2Md4Aov0IG/ReCjt+xheb
-   n/iWNxbm6pE0jOZdYCna1WcIOAgBGxPLqKWg0G/HuSufhx8dluV9pbJst
-   0trIhdMmtTfstYJFUhmTbkIk/wbue2tsCRV+ITDzxSJ3V1QmmfccnytZ/
-   g==;
-X-CSE-ConnectionGUID: FEI/AMfjTX6bU9KpXE4tgw==
-X-CSE-MsgGUID: trJLVPgIQfqYwWFhWt6a5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="58148051"
+  bh=L1d/vvYdkqDxKWY4/nne6uJtR33vIUzSRBs3GCk6o/w=;
+  b=SwnShG5vdPTsnwig3+XO6Pymr4X5LQ8SlBqEL7d8vaHVnbRZhI/Z+RT7
+   9d502ogcSFk+dm7Zsxm7BaH0wZMF8wGPDC0ZHZsnJLjYAuMNUC3DrsOsC
+   Xb/wDGdRJ+Oq9eXYaNc1QL+iKvoWO59IGVmFNwyuyVb8040vFtIjN1KRQ
+   M1e75qwl7GOTxjQk+BVkDqWS75IoJtifA4USzcXp8XiHtmMFMYr1I4J1d
+   efClIuAp13gEZHtJW1FvT6vgnuq5jp4NxfnfvTzx+bxUK8Kc8/ej6dFb0
+   vNlwgV1X5azjJ3xJh98bXSSRJ+BGr8gegpJCij72bUMpU45GhJpcWL62+
+   A==;
+X-CSE-ConnectionGUID: Fl6tXGPwRAKs0PHgaWTVGQ==
+X-CSE-MsgGUID: Nkmun5jjS6KrXTZasuFAMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="58148059"
 X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
-   d="scan'208";a="58148051"
+   d="scan'208";a="58148059"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 17:34:08 -0700
-X-CSE-ConnectionGUID: a2HYZkUQR2K2myOHNarE9w==
-X-CSE-MsgGUID: pj3P/77hScSOowQJaZ4xeQ==
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 17:34:09 -0700
+X-CSE-ConnectionGUID: p29M5rZHSuqVhD+JJa7eGw==
+X-CSE-MsgGUID: NAh4lRZmSn2gkE6Qqvy+tg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,247,1739865600"; 
-   d="scan'208";a="133393958"
+   d="scan'208";a="133393964"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 17:34:08 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v4 03/31] fs/resctrl: Clean up rdtgroup_mba_mbps_event_{show,write}()
-Date: Mon, 28 Apr 2025 17:33:29 -0700
-Message-ID: <20250429003359.375508-4-tony.luck@intel.com>
+Subject: [PATCH v4 04/31] fs/resctrl: Change how and when events are initialized
+Date: Mon, 28 Apr 2025 17:33:30 -0700
+Message-ID: <20250429003359.375508-5-tony.luck@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250429003359.375508-1-tony.luck@intel.com>
 References: <20250429003359.375508-1-tony.luck@intel.com>
@@ -86,122 +86,144 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These routines hard-code the two legacy mbm events.
+Existing code assumes that all monitor events are associated with
+the RDT_RESOURCE_L3 resource. Also that all event enumeration is
+complete during early resctrl initialization. Neither of these
+assumptions remain true for new events.
 
-Change to allow for other mbm events in the future.
+Each resource must include a list of enabled events that is used
+to add appropriately named files when creating mon_data directories
+and to for the contents of "info/{resource}_MON/mon_features" file.
+
+Move the building of enabled event lists for each resource from
+resctrl_mon_resource_init() to rdt_get_tree() to delay it until
+mount of the resctrl file system.
+
+Add a new field to struct mon_evt to record which resource each
+event is associated with so that events are added to the correct
+resource event list.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- fs/resctrl/internal.h    |  4 ++++
- fs/resctrl/ctrlmondata.c | 39 +++++++++------------------------------
- fs/resctrl/monitor.c     | 16 ++++++++++++++++
- 3 files changed, 29 insertions(+), 30 deletions(-)
+ fs/resctrl/internal.h |  4 ++++
+ fs/resctrl/monitor.c  | 33 ++++++++++++++++++++++-----------
+ fs/resctrl/rdtgroup.c |  2 ++
+ 3 files changed, 28 insertions(+), 11 deletions(-)
 
 diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index ff89a0ca130e..6029b3285dd3 100644
+index 6029b3285dd3..b69170760316 100644
 --- a/fs/resctrl/internal.h
 +++ b/fs/resctrl/internal.h
-@@ -393,6 +393,10 @@ bool closid_allocated(unsigned int closid);
+@@ -68,6 +68,7 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
+ /**
+  * struct mon_evt - Entry in the event list of a resource
+  * @evtid:		event id
++ * @rid:		index of the resource for this event
+  * @name:		name of the event
+  * @configurable:	true if the event is configurable
+  * @enabled:		true if the event is enabled
+@@ -75,6 +76,7 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
+  */
+ struct mon_evt {
+ 	enum resctrl_event_id	evtid;
++	enum resctrl_res_level	rid;
+ 	char			*name;
+ 	bool			configurable;
+ 	bool			enabled;
+@@ -397,6 +399,8 @@ enum resctrl_event_id resctrl_get_mon_event_by_name(char *name);
  
- int resctrl_find_cleanest_closid(void);
+ char *resctrl_mon_event_name(enum resctrl_event_id evt);
  
-+enum resctrl_event_id resctrl_get_mon_event_by_name(char *name);
-+
-+char *resctrl_mon_event_name(enum resctrl_event_id evt);
++void resctrl_init_mon_events(void);
 +
  #ifdef CONFIG_RESCTRL_FS_PSEUDO_LOCK
  int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
  
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index b17b60114afd..53388281ff7d 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -472,26 +472,17 @@ ssize_t rdtgroup_mba_mbps_event_write(struct kernfs_open_file *of,
- 	}
- 	rdt_last_cmd_clear();
- 
--	if (!strcmp(buf, "mbm_local_bytes")) {
--		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
--			rdtgrp->mba_mbps_event = QOS_L3_MBM_LOCAL_EVENT_ID;
--		else
--			ret = -EINVAL;
--	} else if (!strcmp(buf, "mbm_total_bytes")) {
--		if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
--			rdtgrp->mba_mbps_event = QOS_L3_MBM_TOTAL_EVENT_ID;
--		else
--			ret = -EINVAL;
--	} else {
-+	ret = resctrl_get_mon_event_by_name(buf);
-+	if (ret < 0 || !resctrl_is_mon_event_enabled(ret) || !resctrl_is_mbm_event(ret)) {
-+		rdt_last_cmd_printf("Unsupported event id '%s'\n", buf);
- 		ret = -EINVAL;
-+	} else {
-+		rdtgrp->mba_mbps_event = ret;
- 	}
- 
--	if (ret)
--		rdt_last_cmd_printf("Unsupported event id '%s'\n", buf);
--
- 	rdtgroup_kn_unlock(of->kn);
- 
--	return ret ?: nbytes;
-+	return ret < 0 ? ret : nbytes;
- }
- 
- int rdtgroup_mba_mbps_event_show(struct kernfs_open_file *of,
-@@ -502,22 +493,10 @@ int rdtgroup_mba_mbps_event_show(struct kernfs_open_file *of,
- 
- 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
- 
--	if (rdtgrp) {
--		switch (rdtgrp->mba_mbps_event) {
--		case QOS_L3_MBM_LOCAL_EVENT_ID:
--			seq_puts(s, "mbm_local_bytes\n");
--			break;
--		case QOS_L3_MBM_TOTAL_EVENT_ID:
--			seq_puts(s, "mbm_total_bytes\n");
--			break;
--		default:
--			pr_warn_once("Bad event %d\n", rdtgrp->mba_mbps_event);
--			ret = -EINVAL;
--			break;
--		}
--	} else {
-+	if (rdtgrp)
-+		seq_printf(s, "%s\n", resctrl_mon_event_name(rdtgrp->mba_mbps_event));
-+	else
- 		ret = -ENOENT;
--	}
- 
- 	rdtgroup_kn_unlock(of->kn);
- 
 diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index ef33970166af..625cd328c790 100644
+index 625cd328c790..a5a523f73249 100644
 --- a/fs/resctrl/monitor.c
 +++ b/fs/resctrl/monitor.c
-@@ -869,6 +869,22 @@ bool resctrl_is_mon_event_enabled(enum resctrl_event_id evtid)
- 	return evtid < QOS_NUM_EVENTS && mon_event_all[evtid].enabled;
+@@ -845,14 +845,17 @@ struct mon_evt mon_event_all[QOS_NUM_EVENTS] = {
+ 	[QOS_L3_OCCUP_EVENT_ID] = {
+ 		.name	= "llc_occupancy",
+ 		.evtid	= QOS_L3_OCCUP_EVENT_ID,
++		.rid	= RDT_RESOURCE_L3,
+ 	},
+ 	[QOS_L3_MBM_TOTAL_EVENT_ID] = {
+ 		.name	= "mbm_total_bytes",
+ 		.evtid	= QOS_L3_MBM_TOTAL_EVENT_ID,
++		.rid	= RDT_RESOURCE_L3,
+ 	},
+ 	[QOS_L3_MBM_LOCAL_EVENT_ID] = {
+ 		.name	= "mbm_local_bytes",
+ 		.evtid	= QOS_L3_MBM_LOCAL_EVENT_ID,
++		.rid	= RDT_RESOURCE_L3,
+ 	},
+ };
+ 
+@@ -886,21 +889,31 @@ char *resctrl_mon_event_name(enum resctrl_event_id evt)
  }
  
-+enum resctrl_event_id resctrl_get_mon_event_by_name(char *name)
-+{
-+	enum resctrl_event_id evt;
-+
-+	for (evt = 0; evt < QOS_NUM_EVENTS; evt++)
-+		if (mon_event_all[evt].name && !strcmp(name, mon_event_all[evt].name))
-+			return evt;
-+
-+	return -EINVAL;
-+}
-+
-+char *resctrl_mon_event_name(enum resctrl_event_id evt)
-+{
-+	return evt < QOS_NUM_EVENTS && mon_event_all[evt].name ? mon_event_all[evt].name : "unknown";
-+}
-+
  /*
-  * Initialize the event list for the resource.
+- * Initialize the event list for the resource.
++ * Initialize the event list for all mon_capable resources.
   *
+- * Note that MBM events are also part of RDT_RESOURCE_L3 resource
+- * because as per the SDM the total and local memory bandwidth
+- * are enumerated as part of L3 monitoring.
++ * Called on each mount of the resctrl file system when all
++ * events have been enumerated. Only needs to build the per-resource
++ * event lists once.
+  */
+-static void l3_mon_evt_init(struct rdt_resource *r)
++void resctrl_init_mon_events(void)
+ {
+ 	enum resctrl_event_id evt;
++	struct rdt_resource *r;
++	static bool only_once;
++
++	if (only_once)
++		return;
++	only_once = true;
+ 
+-	INIT_LIST_HEAD(&r->evt_list);
++	for_each_mon_capable_rdt_resource(r)
++		INIT_LIST_HEAD(&r->evt_list);
+ 
+-	for (evt = 0; evt < QOS_NUM_EVENTS; evt++)
+-		if (mon_event_all[evt].enabled)
+-			list_add_tail(&mon_event_all[evt].list, &r->evt_list);
++	for (evt = 0; evt < QOS_NUM_EVENTS; evt++) {
++		if (!mon_event_all[evt].enabled)
++			continue;
++		r = resctrl_arch_get_resource(mon_event_all[evt].rid);
++		list_add_tail(&mon_event_all[evt].list, &r->evt_list);
++	}
+ }
+ 
+ /**
+@@ -927,8 +940,6 @@ int resctrl_mon_resource_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	l3_mon_evt_init(r);
+-
+ 	if (resctrl_arch_is_evt_configurable(QOS_L3_MBM_TOTAL_EVENT_ID)) {
+ 		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].configurable = true;
+ 		resctrl_file_fflags_init("mbm_total_bytes_config",
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index c06752dfcb7c..e66dc041be5f 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -2591,6 +2591,8 @@ static int rdt_get_tree(struct fs_context *fc)
+ 		goto out;
+ 	}
+ 
++	resctrl_init_mon_events();
++
+ 	ret = rdtgroup_setup_root(ctx);
+ 	if (ret)
+ 		goto out;
 -- 
 2.48.1
 
