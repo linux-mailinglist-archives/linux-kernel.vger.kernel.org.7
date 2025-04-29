@@ -1,97 +1,84 @@
-Return-Path: <linux-kernel+bounces-625823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05094AA39F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674A6AA3A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 216324C211A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AE371BA76CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD36426C3A6;
-	Tue, 29 Apr 2025 21:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0CE26B2BF;
+	Tue, 29 Apr 2025 21:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLWHhuxb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udVGbX89"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6FF2528EC;
-	Tue, 29 Apr 2025 21:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545412701C4;
+	Tue, 29 Apr 2025 21:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745962793; cv=none; b=mpaT5mC9lFjsmlGPHhncaiWsr5vkfcewEpN2+B6N6rSM2ctUbbd+Gv8/bCfaZLCKLjmE/OZwc8xzMN97CdIXBPYovceRjqnomtc2uTPr9/9+heGS9cUctoUpMtM7x+h2E39xiFUo1hvGz1LiB0Wd6M2S9Yvh1nzTL9QT/VhNBUo=
+	t=1745962942; cv=none; b=uMqo7LsBKQRoZfxpLt6lG1FrywmDiPQbND1mwEKoWf7yE1vwIcM5Yx+AESVAnHkPzOrZ2tCGKHEPNI8yOwpLMeNAx1Hldu/c1TqSiumZqv1auuraxXYSozKcJmRWrHwROQc9aZwVXnXFQ8qMk0MoSHRsOgYEjf/XNpLLteyNkVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745962793; c=relaxed/simple;
-	bh=RAx7Zevt4MDRSQBBDsoltAbofA76l+6apvnhqXBCE+Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JjqciaXR5J8jGWIGa5ivQ/Hh8LzRFpE3zmCw5KkRi8s3ldnEZvLMxUODIuswyOFBJyqDIKefzfCYo+xf3R+OYPM3ROPzzGxiei+ivMjxLLs5r6SlEzoz7eCh1LWA/cDqjPJP2thHwsEYE/a9IwMgSXXXBcZr73PaYSiZbY2IgdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLWHhuxb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A57C4CEE3;
-	Tue, 29 Apr 2025 21:39:52 +0000 (UTC)
+	s=arc-20240116; t=1745962942; c=relaxed/simple;
+	bh=ZcjOsmCvWQ9kEExyzI58z4KQxafFY5Y4gSQ0njQDjII=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BC+oAycd8n52k7wqPlqKfWIoUY4fzeAVM+V6iXgdC4CmhdUc5Sl+3v+NvBC71ChhNb0dL0Jrs7+L+7x/5+Ga3lTTNzmPzc3kj9qD1dUEcbyQLasmR068HdZjszlqv5EoOWMNtkxWFcrDtTCrI6IbNYh0jpoQ/BNPlJNoO3tP2ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udVGbX89; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C0DFC4CEE3;
+	Tue, 29 Apr 2025 21:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745962792;
-	bh=RAx7Zevt4MDRSQBBDsoltAbofA76l+6apvnhqXBCE+Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DLWHhuxbmdOVcXLhXFCY47SMIR5lT68LqIZC/0b435p0RH31elOT1KKGdczMIdPel
-	 TOQWBtrbo1A0MJKQYbn7tUq4zO/cgu9T/GTMfnNNK1ppkPqBR/7kPpNu89St+2PDCa
-	 8F5BHFrbgluCRAZHjkQAPawK15eBie0AO9Ju/EZV0xvfdWvxIZQDbf1+1WEqk8Nlcv
-	 jggMbBSRilz29+UstWOBIT8Fg4j59yg+lsyVGktigVDh8nvqmAi8esp3SgmyXwtn/v
-	 a7Gr9q/uA1nZdq6iOs8qLR3zVKvO4G0UKkjjjokpzLhBhnOwjhLJh+S97hDD9d39Sz
-	 JQhzhWe9Hm7rw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCAD3822D4E;
-	Tue, 29 Apr 2025 21:40:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1745962941;
+	bh=ZcjOsmCvWQ9kEExyzI58z4KQxafFY5Y4gSQ0njQDjII=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=udVGbX89zU8DeYmtFGU+gzWJlcMtURBcxIH4Psb+cVWjOfnZupIH1yPFYAcfS2wpH
+	 8vxF5+/cJtINC7hRKLxvR8VVewkoJjKdxjFpi/3OFf+rs43TeGnIo72DrUTimtSMEP
+	 NWnq94MKjTZvke7TabGqu/VEfkZZ1Dgb8JUPz5r5gyKaNClUv3kHTP7BI84oaSRpLR
+	 uHZlXnMon8R4kZjlXXXlwPxWCQ3qI1E8cuPwEBWJXYNeVMP6na6Ne5cgbE3hG1IpK0
+	 p+CAet7cAUBatY9HTflZ3Lm4C22ZXKusib7ZZ6WvnspIt8R7UK2u1tK/snOxJ2lgBQ
+	 A6YG+6b3YwIsA==
+Date: Tue, 29 Apr 2025 14:42:20 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Chad Monroe <chad@monroe.io>, Felix Fietkau <nbd@nbd.name>, Bc-Bocun
+ Chen <bc-bocun.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net v2] net: ethernet: mtk_eth_soc: fix SER panic with
+ 4GB+ RAM
+Message-ID: <20250429144220.5d22fc1f@kernel.org>
+In-Reply-To: <4adc2aaeb0fb1b9cdc56bf21cf8e7fa328daa345.1745715843.git.daniel@makrotopia.org>
+References: <4adc2aaeb0fb1b9cdc56bf21cf8e7fa328daa345.1745715843.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/2] xsk: respect the offsets when copying frags
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174596283150.1804413.6332242799239007270.git-patchwork-notify@kernel.org>
-Date: Tue, 29 Apr 2025 21:40:31 +0000
-References: <20250426081220.40689-1-minhquangbui99@gmail.com>
-In-Reply-To: <20250426081220.40689-1-minhquangbui99@gmail.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: netdev@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, maciej.fijalkowski@intel.com, aleksander.lobakin@intel.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sun, 27 Apr 2025 02:05:44 +0100 Daniel Golle wrote:
+> +		if (MTK_HAS_CAPS(eth->soc->caps, MTK_36BIT_DMA)) {
+> +			if (unlikely(dma_addr =3D=3D DMA_MAPPING_ERROR))
+> +				addr64 =3D FIELD_GET(RX_DMA_ADDR64_MASK,
+> +						   rxd->rxd2);
+> +			else
+> +				addr64 =3D RX_DMA_PREP_ADDR64(dma_addr);
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+I guess it's correct but FWIW it reads slightly weird that in one
+branch we use FIELD_GET() and in the other "PREP". I get that the
+macros are a bit complicated but to the reader its not obvious whether
+the value stored in addr64 is expected to be shifted or not =F0=9F=A4=B7=EF=
+=B8=8F
 
-On Sat, 26 Apr 2025 15:12:18 +0700 you wrote:
-> Hi everyone,
-> 
-> In commit 560d958c6c68 ("xsk: add generic XSk &xdp_buff -> skb
-> conversion"), we introduce a helper to convert zerocopy xdp_buff to skb.
-> However, in the frag copy, we mistakenly ignore the frag's offset. This
-> series adds the missing offset when copying frags in
-> xdp_copy_frags_from_zc(). This function is not used anywhere so no
-> backport is needed.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v2,1/2] xsk: respect the offsets when copying frags
-    https://git.kernel.org/netdev/net-next/c/ebaebc5eaf43
-  - [net-next,v2,2/2] xsk: convert xdp_copy_frags_from_zc() to use page_pool_dev_alloc()
-    https://git.kernel.org/netdev/net-next/c/7ead4405e06f
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> + rxd->rxd2 =3D RX_DMA_PREP_PLEN0(ring->buf_size) | addr64;=20
 
