@@ -1,130 +1,223 @@
-Return-Path: <linux-kernel+bounces-625816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E64AA3980
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:34:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E06AA3982
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17DED9A6D3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7521BA7173
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5DD27464F;
-	Tue, 29 Apr 2025 21:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FF526B2B1;
+	Tue, 29 Apr 2025 21:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPAIY7fK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sOj3kzS9"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E3226988C;
-	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA8525E47D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 21:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745962428; cv=none; b=SRD1VvOGR6wD1po35+ulaREc1LHslcUluSzQO11+J7Z3jxZl2D1PgCP4jCMWjFgB9NfrpTh/3l1nCWGkQptHMAEu8xwN5yl0kFeDAVO1PYSlqDzsO18OysNkVuLQ2pDHe0H9u+I6mAFNJNP986J6eyPnVe3CSc8rFV/kE1nVebE=
+	t=1745962516; cv=none; b=rZeFRTn43fvX8QEhd50kuw02Ffai4r1dgWyt+5aegP0AnHeFxmqjsuQYlTgUD7XBwMYJLQZ5qaRF1Vs0o9/3LXZj/p6sqGDjhldTYoFFuqwQURzPnBf1FkuX50VxHMzRhyBbv4Gz4B1fk4mFMP3Ykyw/Bv+hHiUAbHexaZmbua0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745962428; c=relaxed/simple;
-	bh=XLawiZSXPo98FH4XDvhI8c6FZC3Krxw6e6hl73tNG2g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XKdkwixCjw70yaasfPcQ6m3EO3e9ol1zAdfsX/EJa3xhXFTcj61B0BtI4t73ayQPqM2jyrixCkbTez18Mp6+/91NoIJUyUx8RzJtB2a93slcshLqYxK2VE6ISkS6E5gejM9s68CnBHoCt18PlwHOoDsTg0eQxSAFR1DnwMfl1qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPAIY7fK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 87BCDC4CEEE;
-	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745962427;
-	bh=XLawiZSXPo98FH4XDvhI8c6FZC3Krxw6e6hl73tNG2g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dPAIY7fKukFwxqTyPJVm9IizvHsGdiYZ2QkSpkdOP1i5UI1Z4W87FVcweP1l6tL1/
-	 fWR63BnL0PC6BZQeHbr0L9wFKDvVYcwZ6eX/k7hK3gGzXYzpnf9FENFu/+VbmzNFHt
-	 NetSjEXFT1PMLyEnMYO8FQ+Y+9YVPdaKnUnFn9tkP2yJGL61O2+GU90kdQJEd67OKW
-	 b5RNZDQI/l3/E8b7GjTtn+nL80EoOAByq+vBa3LW56kFX161gQFaWY56Sm547NfUHT
-	 HLnFX0vbW220t4P6ziT5a9PqPbIlNcCL788leR2ZH6dQgYv3eR2z3GGjlqCarWF8Bb
-	 VBTSPRKZH1yhA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E41DC3ABAA;
-	Tue, 29 Apr 2025 21:33:47 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 29 Apr 2025 16:33:33 -0500
-Subject: [PATCH 4/4] arm64: tegra: Add Tegra186 pin controllers
+	s=arc-20240116; t=1745962516; c=relaxed/simple;
+	bh=Th8FT/kGvlr9TA9yY+YuPhwVkQ7i6L0YkGhRHWZuh6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VQSawvbr1JO84szhXsDLsTJzPUc73x+1mfrW3pdbutGB7rIUZdq4rzycDfhNaFO3N01CamN2RPYYsV1cuFfi9gK0vs5wkOXaSUEjpcOnCMHBhmo50x3aDmTDAmbBbVcFZvEOQRNHcED8EIhP2oHnqj5xrdNFQQ+V5d9ivbWEbNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sOj3kzS9; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6ecfbf8fa76so90172716d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:35:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745962513; x=1746567313; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y1nuu73zjClx2psq7xdas0e4BatM4ucgjTEBi/N9T8k=;
+        b=sOj3kzS9RL73f1zsPCO7syubfneUDCEc5y5Obo6vA00Ty8Qf4F8obSfgRqJkSP+WPf
+         fd+hEiyKZrc10gYMwhY1MhlrndLuct4nPamWkMC7utMt1DpbzytM1FJj9+1webwAm0D/
+         IsUbf7X5QLS3cKjjlqUXuZuU3nDvl2piRehgSDAkm1u6unLWDzvl3xACJIKC8Whcqhwv
+         dXlBlLgWQeQqc+YbRerKxnVA8G75tp/k2i1y5wPD9Cylo7benWJKINZDZWybqNmmrOYj
+         MKMtBoM6WhY5dyMLlJKCaolSuPkhk1WCksSWyGxcZ52ntj14xK9yRNBkm8uQyHy7MakE
+         vr4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745962513; x=1746567313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y1nuu73zjClx2psq7xdas0e4BatM4ucgjTEBi/N9T8k=;
+        b=HKVh8KD1aHIeQgWqSM/BeAOXV86p5Eee1jCo8G9FMDR2O7U5LLBm4VEUzFThVHDJyT
+         c7seD9BWk+kWvogH+F5zBiCMBXdkuhsEEZCbYc3guf9DZpN6mwAHg/ywgj3NK5uu1f4H
+         bPD6gXonV07mcg61Aytu7QL6Mtze/4nwFREJ0xnCpT0wVXJ4ieni672O+JLXbkeEp/Or
+         yZ6CcwBFLOGouhAMocY+q9gdzL1/kpAvCWnKhnC00H4KJFDcIywn8EjU0TTT0dAnG6dc
+         wYk1mnesFfY/+XOHDxypxyWG/GW196tHc77lulwrPGnvoV4vl10bYcKkZpNF35jEGdlS
+         CX2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXWNIRtnxcIFi980XlEwvulk4sRl1zBL/+j77knZ5mIc1wArwqMf7/EoPvY0FOgmmqCpGsSbalcuzobXqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwSuOyNUUhzE5CEVKwDbehSMqNuzM6CYZ99CGF/DfBWM8Z1gSk
+	bV0scgXLebv0WGeMArZogDXOXC9Az6nY8jUTqlRA9AyJVf7zpMiCOTw3zDLoAwuu2fdQsNnUorm
+	oVFJTDyWeN/tLJBQQOjVKq8EveeAGV/9nqpc=
+X-Gm-Gg: ASbGncsDNw/jvBUZk5Kk/tBmb1TLxXiTuVpoiR+miARgYaYlgtAnR66S96GakkL6L3q
+	snpLeB1QcZrbUwZaWMULkcdCfGvKX9T7pFDYHgm+xdYrP0o/5N+giPa3kRac1MgrgwxlsGimHHe
+	fNQ3xl+aq4YkF3sbErEj1/nx6HGC0K/5YjOdQo2Ls8iIqyHCmcl2Y=
+X-Google-Smtp-Source: AGHT+IHdGBlsyLmHS0F3JdjDWgppCwC6kObHYfd9Irsj3QIg9RtclmbdpOnv6QueauuKbKvJEGgnE7theqdRIDiBF68=
+X-Received: by 2002:a05:6214:2525:b0:6f2:d25e:8cfc with SMTP id
+ 6a1803df08f44-6f4fe03cfccmr6404496d6.9.1745962512631; Tue, 29 Apr 2025
+ 14:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-tegra186-pinctrl-v1-4-722c7c42394e@gmail.com>
-References: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
-In-Reply-To: <20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745962426; l=1340;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=nlBNe2tmaWa/9hjMpL12OUQ3+yLCwSi7g9iNZUe7fx0=;
- b=PHL9o8X4kHc29B9os6pRSftB7NaZVGlgAwJuzza09Hgm8RUkBw/gVAFXOneY0Wf464twm7ADu
- t0sq/QfFL05D93yKmq1qEJgHdHTFEg+uajuCZxr7jmIyD4WRkjHsIWK
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <20250421215818.3800081-1-yabinc@google.com> <20250421215818.3800081-2-yabinc@google.com>
+ <48640298-effa-42d4-9137-a18a51637f03@linaro.org> <aAeQcgmL-iqGbG_g@gmail.com>
+ <20250422141026.GH28953@e132581.arm.com> <CALJ9ZPNLgEBxOmDim-vztUknEETwdL-Z2gJ8K9s44TiPgKZgHg@mail.gmail.com>
+ <f03715ac-a4ac-415d-8daa-1914384319fb@linaro.org> <CALJ9ZPMiJ4oZerKWb4TL8swh8K3tfj70LTL+WibTRN-vB8rqvw@mail.gmail.com>
+In-Reply-To: <CALJ9ZPMiJ4oZerKWb4TL8swh8K3tfj70LTL+WibTRN-vB8rqvw@mail.gmail.com>
+From: Yabin Cui <yabinc@google.com>
+Date: Tue, 29 Apr 2025 14:35:00 -0700
+X-Gm-Features: ATxdqUH8QFOp7_4_6WS0YFJZ66Ou2QkaCWdN15e__QKEKbCxBuIPL53duQQlwB8
+Message-ID: <CALJ9ZPNPDtSy2rSeZ04bzXp+OFDTDJ5_he5e9raBbd022Hr5ig@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: Allow non-contiguous AUX buffer pages via PMU capability
+To: James Clark <james.clark@linaro.org>
+Cc: Leo Yan <leo.yan@arm.com>, Ingo Molnar <mingo@redhat.com>, Ingo Molnar <mingo@kernel.org>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Mike Leach <mike.leach@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On Tue, Apr 29, 2025 at 10:02=E2=80=AFAM Yabin Cui <yabinc@google.com> wrot=
+e:
+>
+> On Mon, Apr 28, 2025 at 1:56=E2=80=AFAM James Clark <james.clark@linaro.o=
+rg> wrote:
+> >
+> >
+> >
+> > On 23/04/2025 8:52 pm, Yabin Cui wrote:
+> > > On Tue, Apr 22, 2025 at 7:10=E2=80=AFAM Leo Yan <leo.yan@arm.com> wro=
+te:
+> > >>
+> > >> On Tue, Apr 22, 2025 at 02:49:54PM +0200, Ingo Molnar wrote:
+> > >>
+> > >> [...]
+> > >>
+> > >>>> Hi Yabin,
+> > >>>>
+> > >>>> I was wondering if this is just the opposite of
+> > >>>> PERF_PMU_CAP_AUX_NO_SG, and that order 0 should be used by default
+> > >>>> for all devices to solve the issue you describe. Because we alread=
+y
+> > >>>> have PERF_PMU_CAP_AUX_NO_SG for devices that need contiguous pages=
+.
+> > >>>> Then I found commit 5768402fd9c6 ("perf/ring_buffer: Use high orde=
+r
+> > >>>> allocations for AUX buffers optimistically") that explains that th=
+e
+> > >>>> current allocation strategy is an optimization.
+> > >>>>
+> > >>>> Your change seems to decide that for certain devices we want to
+> > >>>> optimize for fragmentation rather than performance. If these are
+> > >>>> rarely used features specifically when looking at performance shou=
+ld
+> > >>>> we not continue to optimize for performance? Or at least make it u=
+ser
+> > >>>> configurable?
+> > >>>
+> > >>> So there seems to be 3 categories:
+> > >>>
+> > >>>   - 1) Must have physically contiguous AUX buffers, it's a hardware=
+ ABI.
+> > >>>        (PERF_PMU_CAP_AUX_NO_SG for Intel BTS and PT.)
+> > >>>
+> > >>>   - 2) Would be nice to have continguous AUX buffers, for a bit mor=
+e
+> > >>>        performance.
+> > >>>
+> > >>>   - 3) Doesn't really care.
+> > >>>
+> > >>> So we do have #1, and it appears Yabin's usecase is #3?
+> > >
+> > > Yes, in my usecase, I care much more about MM-friendly than a little =
+potential
+> > > performance when using PMU. It's not a rarely used feature. On Androi=
+d, we
+> > > collect ETM data periodically on internal user devices for AutoFDO op=
+timization
+> > > (for both userspace libraries and the kernel). Allocating a large
+> > > chunk of contiguous
+> > > AUX pages (4M for each CPU) periodically is almost unbearable. The ke=
+rnel may
+> > > need to kill many processes to fulfill the request. It affects user
+> > > experience even
+> > > after using PMU.
+> > >
+> > > I am totally fine to reuse PERF_PMU_CAP_AUX_NO_SG. If PMUs don't want=
+ to
+> > > sacrifice performance for MM-friendly, why support scatter gather mod=
+e? If there
+> > > are strong performance reasons to allocate contiguous AUX pages in
+> > > scatter gather
+> > > mode, I hope max_order is configurable in userspace.
+> > >
+> > > Currently, max_order is affected by aux_watermark. But aux_watermark
+> > > also affects
+> > > how frequently the PMU overflows AUX buffer and notifies userspace.
+> > > It's not ideal
+> > > to set aux_watermark to 1 page size. So if we want to make max_order =
+user
+> > > configurable, maybe we can add a one bit field in perf_event_attr?
+> > >
+> > >>
+> > >> In Yabin's case, the AUX buffer work as a bounce buffer.  The hardwa=
+re
+> > >> trace data is copied by a driver from low level's contiguous buffer =
+to
+> > >> the AUX buffer.
+> > >>
+> > >> In this case we cannot benefit much from continguous AUX buffers.
+> > >>
+> > >> Thanks,
+> > >> Leo
+> >
+> > Hi Yabin,
+> >
+> > So after doing some testing it looks like there is 0 difference in
+> > overhead for max_order=3D0 vs ensuring the buffer is one contiguous
+> > allocation for Arm SPE, and TRBE would be exactly the same. This makes
+> > sense because we're vmapping pages individually anyway regardless of th=
+e
+> > base allocation.
+> >
+> > Seems like the performance optimization of the optimistically large
+> > mappings is only for devices that require extra buffer management stuff
+> > other than normal virtual memory. Can we add a new capability
+> > PERF_PMU_CAP_AUX_PREFER_LARGE and apply it to Intel PT and BTS? Then th=
+e
+> > old (before the optimistic large allocs change) max_order=3D0 behavior
+> > becomes the default again, and PREFER_LARGE is just for those two
+> > devices. Other and new devices would get the more memory friendly
+> > allocations by default, as it's unlikely they'll benefit from anything
+> > different.
+> >
+> Good suggestion! I will upload a v2 patch for that.
 
-Add the device tree nodes for the MAIN and AON pin controllers found on
-the Tegra186 family of SoCs.
+Hi everyone,
+I have sent the v2 patch for review, with the title
+"[PATCH v2] perf: Allocate non-contiguous AUX pages by default".
+Please help review it. Thanks!
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..576a4d8e0f9dbe4ef43f60b9222c1c03f7440aab 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -36,6 +36,12 @@ gpio: gpio@2200000 {
- 		interrupt-controller;
- 		#gpio-cells = <2>;
- 		gpio-controller;
-+		gpio-ranges = <&pinmux 0 0 140>;
-+	};
-+
-+	pinmux: pinmux@2430000 {
-+		compatible = "nvidia,tegra186-pinmux";
-+		reg = <0x0 0x2430000 0x0 0x15000>;
- 	};
- 
- 	ethernet@2490000 {
-@@ -1272,10 +1278,16 @@ gpio_aon: gpio@c2f0000 {
- 		interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&pinmux_aon 0 0 47>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
- 
-+	pinmux_aon: pinmux@c300000 {
-+		compatible = "nvidia,tegra186-pinmux-aon";
-+		reg = <0x0 0xc300000 0x0 0x4000>;
-+	};
-+
- 	pwm4: pwm@c340000 {
- 		compatible = "nvidia,tegra186-pwm";
- 		reg = <0x0 0xc340000 0x0 0x10000>;
-
--- 
-2.48.1
-
-
+> >
+> > Thanks
+> > James
+> >
 
