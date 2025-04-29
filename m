@@ -1,172 +1,140 @@
-Return-Path: <linux-kernel+bounces-624188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26469AA0001
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD66EAA0011
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745D91B61E7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA8E16F99F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 02:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09BD29CB46;
-	Tue, 29 Apr 2025 02:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C5A29CB54;
+	Tue, 29 Apr 2025 02:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IR4ajaxR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="rxu3yHkM"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1939C148;
-	Tue, 29 Apr 2025 02:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745894367; cv=none; b=koTEzxLMIHCHkzoPuxIOMSpEHkdo8KiU1EX7I+kPbE8FlJf+L78NRvtu8x8dOhHg/smkr0j8NcdlttinONFuejf7uw7k2uhQNNCujPxP5GVbR02XztYj4a9pp8g0dVLgW9iTOaTbXBCXYWh0woq7TkyVmjAT0mMV8uh1Lt14CkM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745894367; c=relaxed/simple;
-	bh=CrwT/ljPsJFDXtcbdCiabcYKmXMKrWVP8Z31dUUNNA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tb6JmDfnvjSKdq6YAurUPW6kAr49cN9xZ2OwcdFagshDbPMZg7I8usW4v21SvrMVKEKU8AO8PXgr6DitNsAmBQVgpI47Y3PP5HwySfB72lpVu0QUUtELByn5ycX7he2n/pfhmkN+3nmFeoyXKKIdtASvftHFD3XMNkMYIe0GStw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IR4ajaxR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SNqEg5025873;
-	Tue, 29 Apr 2025 02:39:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NKktZXjUVHJTf01+SeFofdJnC/BYWnl8koKOQ2R+rp0=; b=IR4ajaxRVA6arZQq
-	Xyn9Yc1IamGIubk8l+gDMRwVv0fzEyE3FFWhSI/atsW7o3zHbM1uHsodP6mq5+H0
-	XwqGa/cEkaimj/yAAfIc7I77FSpSMkzAqghLCpatshwCJuo9j2PVnuWGvrUyRe/r
-	oGV5k+vkrogZldvsV5qJW7hzt7Ae3njUZQJRVfsk+ixlc7UBBppLlI4i1MevJBSO
-	0vtRdap3I6bGcBSF/RnEuI20hTLZbZRZm7GoPZGTagGcqyFS10oUQ1DH2WxK/EYx
-	vc7wGqVN0/FnK2YHN8hStdfjfqMGsdy/gNw3KZncel4I6YuGC13Xke5euyD0bVhY
-	kvefFw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468qq5j4tq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 02:39:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53T2dG5P007055
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 02:39:17 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Apr
- 2025 19:39:14 -0700
-Message-ID: <f574983e-bd12-4d8b-b294-87c5e554f784@quicinc.com>
-Date: Tue, 29 Apr 2025 10:39:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198D520D4E2;
+	Tue, 29 Apr 2025 02:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745894694; cv=pass; b=p22AEQz+9VsIIvUOaLFUcf8JvdikN6QscMZ9l5+XIqRIj4tZyF5toksOPlTOiXGr8RpZhthWdK2HcfUule6SVDD2uMRsAOzVFQ6cf4s5PhRy6Y3cyMc9yTml0ni786Nay5TUi0DaCo0mqIjS69r9xk9/M9rCBDfJZSFZM0GpsVY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745894694; c=relaxed/simple;
+	bh=80hSbyKne/0EugL7CapBvsxNWe+IjuzVuUn1HpWWPrc=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=W8oo9ovWK8WK6qPYg/GJ3TFpcOH+Xipb4/tZMMx8R9SBEFKUKiTv1VYj4xo9mO7VNN47ui+vJ2nAvaPcpEGFvGo693ImyYPy/026/JzbaUAi0WcyRlE0VKxd/z+JFxWcS1ZHdtIS0GCNlY4gE7NuU6vn0akA7q7aepmjclP9Ak8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=rxu3yHkM; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1745894658; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=W7Yqbl3KpTat/YCL5zO60BQism51l0PaZskt2Vj3NMRX7/ATEeDYjoIbfFXiqp9Redyr6QPoajgVisPtElobNqgguNSYYBvcWvTa1ZcmBE+geEWfZJUHcf8URe2450CtFeuXEcA52oRitOHYJ+gkZ1fHPEjNHw+FIGzqoA3gL+o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745894658; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Y8qohLpxxXxjlKsGCMSvmJyXGDphODOZWso+yF8m3A0=; 
+	b=YeU8SaNId4zOrIMVHLz8bFrSr9UiTlEtuGhiOiak6R54fg53lmOnTdh4NN+X3TSyItXEZTVlPtjNOxQoG1U7KQuEa5IhgUHJu8luYh/6585S3LnbomIVE8azzmUU41iK+1AcpxWFt0rkFIHw+fnIJ8KnmfD3Snfi2KN+Co4qD/M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745894658;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Y8qohLpxxXxjlKsGCMSvmJyXGDphODOZWso+yF8m3A0=;
+	b=rxu3yHkMtXenqyShakil1PCUh7UQ7F9cG2qo8QLzJXOwSBpHvYGMOCDE4HwX2Gg3
+	1qHPo9fVI3cYtJ8l5W0dPJ68jFneYBTM8DjWZ7e9Q8U1PHpRIW1/jx9bImqvok5Niyn
+	ZPKBoZd3avLaZz+kdP/h12Z0oZ00DKDUiKpldNqw=
+Received: by mx.zohomail.com with SMTPS id 1745894656786665.8936609850081;
+	Mon, 28 Apr 2025 19:44:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] wifi: ath11k: Fix memory reuse logic
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        <jeff.johnson@oss.qualcomm.com>, Jeff Johnson <jjohnson@kernel.org>
-CC: <kernel@collabora.com>, <linux-wireless@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250428080242.466901-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20250428080242.466901-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jep2DKH73GU4AkaTDt10RXB5OvepQmwV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDAxOCBTYWx0ZWRfX6XHN9NauGqYO ER9JmSwSW4mDiLyflRcUjdBr7pAgY+55VbAMv2QXcOGf6wY72O+nWzdVEATLcxGgNPCU5CnGwHk W0ACY3bm4n/gJkTzAJT7vs7SgJEWUcwjsOADy77swkrpb5SdNSyxfjfhXYj/har6+hzC/jBvIfC
- fimFqae+f9Lbq3hNip18GO6nf+iPWDLhI9mGdOvShOkfcLY42PPZ0hAZ5bMYeNNX74mfrwZwodk Ev0D5ZhxxfpF1T+Xw13XEzsh0gaaU6vBpYVwo0zLRISz/1dbsIxVq4Ja209VKU2vyQm4kputsiC JiwlxO6FOicKbPgKEmG+lVDjfHNoA6h4Hx/vpw53VpQKwEroj6czezc286Eq9VkNEx7HYQHYXuU
- Zd01KuzXATHapr7KrdhevpzD1g+jcAW1N9ksdtkFyQsYgB0e5kY3PdIS9qDQbpfhWOtoNWbH
-X-Authority-Analysis: v=2.4 cv=QP1oRhLL c=1 sm=1 tr=0 ts=68103bd5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=QX4gbG5DAAAA:8 a=COk6AnOGAAAA:8 a=7xKvOyCpBhAOSqRoKRkA:9
- a=QEXdDO2ut3YA:10 a=AbAUZ8qAyYyZVLSsDulk:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: jep2DKH73GU4AkaTDt10RXB5OvepQmwV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_01,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- clxscore=1015 mlxlogscore=999 lowpriorityscore=0 adultscore=0 mlxscore=0
- bulkscore=0 phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290018
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Conor Dooley" <conor@kernel.org>
+In-Reply-To: <20250428-water-sermon-eefdfa511f8d@spud>
+Cc: "Jassi Brar" <jassisinghbrar@gmail.com>, 
+	"Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Chen Wang" <unicorn_wang@outlook.com>, 
+	"Inochi Amaoto" <inochiama@gmail.com>, "Yuntao Dai" <d1581209858@live.com>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, <linux-kernel@vger.kernel.org>, 
+	<devicetree@vger.kernel.org>, <sophgo@lists.linux.dev>, 
+	<linux-riscv@lists.infradead.org>, "Junhui Liu" <junhui.liu@pigmoral.tech>
+Subject: Re: [PATCH v3 2/3] riscv: dts: add mailbox for Sophgo CV18XX series
+	 SoC
+Message-ID: <183aa9ef25290278.6bcb31a17e34dfae.e6a8b825df767676@Jude-Air.local>
+Date: Tue, 29 Apr 2025 02:44:10 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
+Hi Conor,
+Thanks for you review.
 
+The previous email accidentally lost some Cc lists :(, I'm sorry to
+harass you.
 
-On 4/28/2025 4:02 PM, Muhammad Usama Anjum wrote:
-> Firmware requests 2 segments at first. The first segment is of 6799360
-> whose allocation fails due to dma remapping not available. The success
-> is returned to firmware. Then firmware asks for 22 smaller segments
-> instead of 2 big ones. Those get allocated successfully. At suspend/
-> hibernation time, these segments aren't freed as they will be reused
-> by firmware after resuming.
-> 
-> After resuming, the firmware asks for the 2 segments again with the
-> first segment of 6799360 size. Since chunk->vaddr is not NULL, the
-> type and size are compared with the previous type and size to know if
-> it can be reused or not. Unfortunately, it is detected that it cannot
-> be reused and this first smaller segment is freed. Then we continue to
-> allocate 6799360 size memory which fails and ath11k_qmi_free_target_mem_chunk()
-> is called which frees the second smaller segment as well. Later success
-> is returned to firmware which asks for 22 smaller segments again. But
-> as we had freed 2 segments already, we'll allocate the first 2 new
-> smaller segments again and reuse the remaining 20. Hence 20 small
-> segments are being reused instead of 22.
-> 
-> Add skip logic when vaddr is set, but size/type don't match. Use the
-> same skip and success logic as used when dma_alloc_coherent() fails.
-> By skipping, the possibility of resume failure due to kernel failing to
-> allocate memory for QMI can be avoided.
-> 
-> 	kernel: ath11k_pci 0000:03:00.0: failed to allocate dma memory for qmi (524288 B type 1)
-> 	ath11k_pci 0000:03:00.0: failed to allocate qmi target memory: -22
-> 
-> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Changes since v1:
-> - Update description
-> 
-> Changes since v2:
-> - Update description and title of patch
-> 
-> Changes since v3:
-> - Update description and title of patch
-> 
-> Changes since v4:
-> - Update title of the patch
-> ---
->  drivers/net/wireless/ath/ath11k/qmi.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
-> index 47b9d4126d3a9..2782f4723e413 100644
-> --- a/drivers/net/wireless/ath/ath11k/qmi.c
-> +++ b/drivers/net/wireless/ath/ath11k/qmi.c
-> @@ -1993,6 +1993,15 @@ static int ath11k_qmi_alloc_target_mem_chunk(struct ath11k_base *ab)
->  			    chunk->prev_size == chunk->size)
->  				continue;
->  
-> +			if (ab->qmi.mem_seg_count <= ATH11K_QMI_FW_MEM_REQ_SEGMENT_CNT) {
-> +				ath11k_dbg(ab, ATH11K_DBG_QMI,
-> +					   "size/type mismatch (current %d %u) (prev %d %u), try later with small size\n",
-> +					    chunk->size, chunk->type,
-> +					    chunk->prev_size, chunk->prev_type);
-> +				ab->qmi.target_mem_delayed = true;
-> +				return 0;
-> +			}
-> +
->  			/* cannot reuse the existing chunk */
->  			dma_free_coherent(ab->dev, chunk->prev_size,
->  					  chunk->vaddr, chunk->paddr);
+On 28/04/2025 17:55, Conor Dooley wrote:
+> On Mon, Apr 28, 2025 at 08:39:45PM +0800, Junhui Liu wrote:
+>> From: Yuntao Dai <d1581209858@live.com>
+>>=20
+>> Add mailbox node for Sophgo CV18XX series SoC.
+>>=20
+>> Signed-off-by: Yuntao Dai <d1581209858@live.com>
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>=20
+>> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts=
+/sophgo/cv18xx.dtsi
+>> index c18822ec849f353bc296965d2d600a3df314cff6..f7277288f03c024039054bdc4=
+176fc95c2c8be52 100644
+>> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+>> @@ -55,6 +55,13 @@ soc {
+>>  		dma-noncoherent;
+>>  		ranges;
+>> =20
+>> +		mailbox: mailbox@1900000 {
+>> +			compatible =3D "sophgo,cv1800b-mailbox";
+>> +			reg =3D <0x01900000 0x1000>;
+>> +			interrupts =3D <101 IRQ_TYPE_LEVEL_HIGH>;
+>> +			#mbox-cells =3D <2>;
+>> +		};
+>=20
+> No user added here, is there another series in the works that adds a
+> user of the mailbox?
+>=20
 
-Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
+There isn't an actual user node in this specific patch. I used a
+`mailbox-test` node to verify the functionality in this patch series.
 
+The intended user for this mailbox is the `remoteproc` node. I plan to
+submit the `remoteproc` driver patches once the corresponding reset
+driver [1] is ready and merged.
 
+link: https://lore.kernel.org/linux-riscv/20250209122936.2338821-1-inochiama=
+@gmail.com/ [1]
+
+>> +
+>>  		clk: clock-controller@3002000 {
+>>  			reg =3D <0x03002000 0x1000>;
+>>  			clocks =3D <&osc>;
+>>=20
+>>
+
+--=20
+Best regards,
+Junhui Liu
 
