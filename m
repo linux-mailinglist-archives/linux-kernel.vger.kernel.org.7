@@ -1,225 +1,265 @@
-Return-Path: <linux-kernel+bounces-625688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2748FAA1B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:48:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33405AA1B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D633B367A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4CE986AC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5869125EF89;
-	Tue, 29 Apr 2025 19:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8971A25F7A9;
+	Tue, 29 Apr 2025 19:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBLtxZ8P"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="13u6SNBJ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D2B208D0;
-	Tue, 29 Apr 2025 19:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A227453
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 19:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745956079; cv=none; b=bk51U+/zatK7FEVGKKuDPD1IcdL/ggnaXT4NSQkoejyX5xQ7umo5VZKXWJHKMP4qcvYNADLmzB2F5ucmNSUfjv18rKMZcYIv2YF4mcN3AEVSabZzB2OmOxVUNsKobQe7EDgdN0pmu1ztDVlvesSOcpWbscaonEM+w5oM4ttso20=
+	t=1745956164; cv=none; b=q7VqDIUeJorgkC3WDQx26lnjLtFAVzeqykQePhix6ibhXuhD3G/Yd4308RCpEb75UbolIwu8t/ddYxNaNNMaOY9BzQIRZS8lkGrtxEb6UQrBJmwhwzVwsfV3ktSbciy4RxiLX3SjGWhQPBz444JuleQE6V6LSnAxKMAC6VjKl30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745956079; c=relaxed/simple;
-	bh=iO8BQMjsWG8aVmJrmu3RUdpRg/mY29X5nv5NOPh5RGs=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twCe7NhHNEqHEfluKPz8WktsyQqHgCq+4oYkzC27pB47PboxagEGFxmsc2OkS8TAHRHCrhFYtbb46Mtx4lxVN4PAuCn1V7zJ6Zrao/vZWes6FgIfCSBLCFszjnzinygs0jodAhOQ2Am5eWaZmeBTGCc4VhFv03pq0FlX505Cet8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBLtxZ8P; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c58974ed57so710929185a.2;
-        Tue, 29 Apr 2025 12:47:57 -0700 (PDT)
+	s=arc-20240116; t=1745956164; c=relaxed/simple;
+	bh=2EHDMWqXIotZFZATkaTcYHUnyAW55GV0o6mUZkjGoUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t+5Di80MDKMPCjRU3FM0eMaU3+xP6uWB14ou99PHLZi8/W0vHNsBMm/Zeow6NS5qHP5yw+rfD2WtHRJ5w+CdvRd0rVNtnbOkt1jPd1Jo7gLYLmSxiqe+kDJp5KFAMADv/RyCxvg4aoHv4hTCS98vjTHv6mbm8Cu3/jnBDkQWIX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=13u6SNBJ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d5f10e1aaso66245e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:49:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745956077; x=1746560877; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=N94/S8f4FA3mT8/S6kAiZQTgDSrbdfUuUxD7gFGGZLM=;
-        b=dBLtxZ8Pw86hObB8n4+RHC44+lIVXarIqHp7V2xmA0fPe//wYxClODoUpP8uILgLYl
-         pkoH2ME5O5zAhk1qxs0y1O5g8Bf46T8vA0P88lgXbN0b+rX8gIzh6BEL311rwVfoIaFc
-         a6m2BoWmmtp+fmcaWW0DwOmdupNymgNn98mx4HxHGQdNzATXLhCgAWAWAzU5tP5byQ8E
-         U+UQSMkfU8Ynhi4rKox/nbo+n8m7hJtmeMeS/Sy58J8YIY2JLnOG83otCMYLs0+zgRiR
-         lKOEpNxyXle9xuJ+D5Goq+Ubx+9kSa5uYn5NnqKKDIwe4TG8sOQmCntkY62WeUzrkblJ
-         8sVg==
+        d=google.com; s=20230601; t=1745956161; x=1746560961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TzKOWzU43LrPmkFzN5+2z6l0zJFMgpGF/vX9S5W3V2I=;
+        b=13u6SNBJPmtIV3wLM89mzGyIX19AL/6LdxBDLfYD6atoMi5uHc9nQfEr5iw9HY7Slw
+         VJI/wdc3HfVdMgn0wnjTX0CRD37LnDtfHCCJ2SZTKdw7QyV6NPHJ/CP2ZMPK+pXfurFr
+         5NDYD9OYO25q7KqbOKt3Pucouiocfy4IBOlPqtHatXtEuwZ+jp+v730tXplr0q028NY/
+         tvJM9PZNmXZiT7mLmg2i4sGFA6WZAU6K2CqAr1htIl4i+73z0O68PNKNOOYKvdEH4RQU
+         ZIiVraXt/uipvHBgnjZLxrRYaImFbf7lTm8yP/rUu5goXVPD0wnbZ302eRKVl/vlzehs
+         ytSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745956077; x=1746560877;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N94/S8f4FA3mT8/S6kAiZQTgDSrbdfUuUxD7gFGGZLM=;
-        b=g1nGez5NrpueswmStWo7EWtzFoopS6AiV9ZEmcAEDoA7BVfGDUK1UNi90SUaCLVUJo
-         1N0PMoMg8miVjXRHAi6183Z39vnF7VxN8aTnM4aZmuRU75fz0G1o2GqwAHG8DpbqQ8w8
-         ieJM8JA6cBcdms5MgLBR7bR4QKAuXMhOIOH1dQSJfqtgU66QzwgajmkR3O7a4jlWozl9
-         MzsqBOvddOVjgl19m6zySI+gQn6FhEpnVRPKvDUJYWwjSFsWVaYoe8Qer/s+Ox8vcP3A
-         oYL4A14R2eyAOfH9MWa78JV0t+ENgRcf7a5FuHApIxdyaJ53AHR+0hEJUq+YfiHjODA9
-         eRmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuedg/bGmAgFgkiCKcqeyqKN9iMgAOCKhO8ojVc3/rGpixfrgaMBetUdn0TQxLApygCbtgsZ8zz5P61/I=@vger.kernel.org, AJvYcCW+SD+6+nBWvKmG/thBWWfu0rOaybO/CdP5U779wTnLb2sbiVhQbAeuvGsu7xhST4e6dpu7p+LySr8f/F/kbQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrkbywKjL6whk59dSojR3deEqwL6oq/u96uL5KX5xLpwwD+wCi
-	q8p72rgrd8apAgpZTAz2BL4p2GNBF3GzvUUAzjpemGQ5q1MUO4To
-X-Gm-Gg: ASbGncteoji2i9OCtPjq9gxFedgxrJrm6VFzRIiWrh5TcQWIPFMNrcn21gQT72AHytt
-	LUWuYKx8QYsENmcckIIkTkFbiQwm8R8S7tLsDRzKXgY5wPdySB5xcigPv4QOUsyKm7HARnAEcrh
-	kuOpz/hN+QhNcYnomUfzGO1BS9qE/K54ihceg7a1XNgIGlCwXiASKwW0eWQDsphwOz5qD5C66FK
-	UT75yJAd/qKya4ucMnouhPTV2KUqbPu8lScbz5T52IloK3qH/vASnlfXNpvlqVT4GmwcaQgKlaO
-	pRblc1I1JlN1EY/NV+RSW+GZ0CR92bZ3POBQGhviCBC+TIFxj6OicCzj55/4CZ7P3HgE9+zRyDG
-	3QtRk8Y5WfRjU/+YmL0WRWffql5UWY3KQgy9fnLizRQ==
-X-Google-Smtp-Source: AGHT+IFekPV+ZaYBT3WSBsNsZgNSp5wvbAICRIDDUzJn+YCZzzBLVFqbU37dOu46mPM1PbmQMZAjXg==
-X-Received: by 2002:a05:620a:1a0e:b0:7c5:5794:3e66 with SMTP id af79cd13be357-7cac762200cmr66576885a.31.1745956076716;
-        Tue, 29 Apr 2025 12:47:56 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958e9fdfbsm769933185a.94.2025.04.29.12.47.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 12:47:56 -0700 (PDT)
-Message-ID: <68112cec.050a0220.acb70.2c9c@mx.google.com>
-X-Google-Original-Message-ID: <aBEs6pqObHQ2SBiJ@winterfell.>
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E867D1200066;
-	Tue, 29 Apr 2025 15:47:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 29 Apr 2025 15:47:55 -0400
-X-ME-Sender: <xms:6ywRaAF9DQi_fx58yomZvjp0VXGT-VaVdvRK61tfmtikC-1wDsgO1Q>
-    <xme:6ywRaJU77-76Z8kCDXjk79trnJH0WstjkrjlE-gJifnhlNhh45aWG7368OHbW3M8-
-    kwTWEX9XPw6jNDAMA>
-X-ME-Received: <xmr:6ywRaKKUIMZtsDoIMu0tn7mNL5ay29ajcgqdJyOkR-P5BLzDSdMH-16ISA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieegjedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeel
-    tdfhgfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhope
-    hvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepghhrvghg
-    khhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepghgrrhihse
-    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
-    mhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonh
-    drmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:6ywRaCFBpGfqjdRkPjU1G-XufRh84WZqJB5Au4uUmwtXjKHI8Los9g>
-    <xmx:6ywRaGUlI5hrHiSaGqNBC8l91GAgVVv73v0IXQc-EMCWKOjH95crvg>
-    <xmx:6ywRaFNGkur3tY--Aq1KVplaNUJjNq-YoP05vavtcyNTDqxUryYfWg>
-    <xmx:6ywRaN0UmIyigHTPW2ht7RFZfQ06KBs1CNdWaUSkKo8XUAG_bKKePA>
-    <xmx:6ywRaPU87GkfMGNnWnX4UKcaCCHQM_i9B4hfGkBJ_hVyQbJrpx6C49h0>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Apr 2025 15:47:55 -0400 (EDT)
-Date: Tue, 29 Apr 2025 12:47:54 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] uaccess: rust: add
- UserSliceReader::strcpy_into_buf
-References: <20250429-strncpy-from-user-v2-0-7e6facac0bf0@google.com>
- <20250429-strncpy-from-user-v2-2-7e6facac0bf0@google.com>
- <68111422.050a0220.e6713.25af@mx.google.com>
- <CAH5fLggj-Mfhd3311aKUt9go_+FeAuXdPxditW26QL5VtLD3iQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1745956161; x=1746560961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TzKOWzU43LrPmkFzN5+2z6l0zJFMgpGF/vX9S5W3V2I=;
+        b=V3re8z3CIRtfCVkIY7gjqGADJ/WJKTk4o4vv4CUd8vJjJYmtA6EDvW+51DzSH1+lns
+         GkEYfqMtXb/CW7vrw9/ZRCCgnpr3HVpbwjGqSSjaxMngnoINffhQj1+zfqG5FaGbvunC
+         2oZvi6beQ+AwdF19A2KUpfpa33FUWe7MYOvszM3V9/eN5PpFC4eLMpY2KCgKvYfj2LJ4
+         +Q+r7tB3gzz9BNeMvYWgCX328hGXlpT1++88yp6jUQwF4hR+cFZoZJuVGT84Dr3tPeoU
+         95lzpcCeqN9+lBfwhgZuV+hID0L+yCV8wCUofQkzTCkSGlmzg0hrbIVbtg9QiIZtHtKs
+         2Lzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXek7GqsM9GXG5x7HzzSH7TyFq2ng/d+eJOaAJNd9xDOO+/2X5vc/NQ7HEA6KtXtjMlCUWD3UkXVcLboIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo96YZ+pkD3HfvKUF+tmJQ1ehjyEQeLsWbVfnpY9rBy7N5+vk1
+	+NQ4KnT1B6Awbt73kwhOcuAaJIEQ54oxUUA9EY04G2uPM+hVfNMrfXQemoccBu5TjxYhSoM4Dsr
+	fXszIayzeUgSO4qPBblIOqW941OhQQdjo8VgB
+X-Gm-Gg: ASbGncthBKxInj8mFKjkmTtgOCatKQ+Q/f4rrDGSMt7EQIjkAVxGaVHo9fh8ZMmiXop
+	jjgGF1ctB4Z3MC+nMHNRs7+zFZqA57nh1g5a0r3Tqlf81EoWFASZp983XSDV0oEZfmswgOLajQ8
+	yWvi6q+LHR/GOzeM+dIyDkSs8OmDzU+9mFepaAfl/ws+6bacjQlg==
+X-Google-Smtp-Source: AGHT+IHWvQ/UxjzUUwRECNcfgu+uE4CxuQo4Yg/huZ0f0f8fGXRQAw3hQFkIdxjr0XHLMAHxPwRY62fHbX9JtKGOg54=
+X-Received: by 2002:a05:600c:63cb:b0:43d:5b3a:18cc with SMTP id
+ 5b1f17b1804b1-441b200a129mr152725e9.2.1745956161141; Tue, 29 Apr 2025
+ 12:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggj-Mfhd3311aKUt9go_+FeAuXdPxditW26QL5VtLD3iQ@mail.gmail.com>
+References: <20250417180943.1559755-1-tjmercier@google.com>
+ <a4f72149-70a0-4bbe-bdcc-70384c152f83@amd.com> <CABdmKX2-innZC65Fut6wc2MFUNwO2g6w=_iLv9EBkDn+6LQs5w@mail.gmail.com>
+In-Reply-To: <CABdmKX2-innZC65Fut6wc2MFUNwO2g6w=_iLv9EBkDn+6LQs5w@mail.gmail.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Tue, 29 Apr 2025 12:49:09 -0700
+X-Gm-Features: ATxdqUHw3CpDYUbqlneqXa6xD7zi73EGyL_HFvk88E824RQ0483hIO9wIhSzBDw
+Message-ID: <CABdmKX0pjGn85CLFgwauBop8i=WThnpUNkDfFhV3hMe19dDuyA@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf: system_heap: No separate allocation for
+ attachment sg_tables
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 09:29:07PM +0200, Alice Ryhl wrote:
-> On Tue, Apr 29, 2025 at 8:02 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+On Tue, Apr 22, 2025 at 9:17=E2=80=AFAM T.J. Mercier <tjmercier@google.com>=
+ wrote:
+>
+> On Tue, Apr 22, 2025 at 1:24=E2=80=AFAM Christian K=C3=B6nig
+> <christian.koenig@amd.com> wrote:
 > >
-> > On Tue, Apr 29, 2025 at 09:02:23AM +0000, Alice Ryhl wrote:
-> > > This patch adds a more convenient method for reading C strings from
-> > > userspace. Logic is added to NUL-terminate the buffer when necessary so
-> > > that a &CStr can be returned.
+> > Am 17.04.25 um 20:09 schrieb T.J. Mercier:
+> > > struct dma_heap_attachment is a separate allocation from the struct
+> > > sg_table it contains, but there is no reason for this. Let's use the
+> > > slab allocator just once instead of twice for dma_heap_attachment.
 > > >
-> > > Note that we treat attempts to read past `self.length` as a fault, so
-> > > this returns EFAULT if that limit is exceeded before `buf.len()` is
-> > > reached.
-> > >
-> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> >
+> > I'm not *that* expert for this code, but looks totally reasonable to me=
+.
+>
+> I noticed this while reviewing Maxime Ripard's recent carveout heap
+> patches, where I was confused about sg_free_table() until I realized
+> it doesn't free the underlying allocation. Then I started looking at
+> other heaps and found that most of them do it this way (including the
+> cma heap), and figured it was a nice cleanup here.
+>
+> > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> >
+> > Let me know if I should push that to drm-misc-next.
+> >
+> > Regards,
+> > Christian.
+>
+> Thanks, yes please!
+
+Hi Christian, could you push this please? I don't have write permissions.
+
+Thanks,
+T.J.
+
+>
+>
+>
 > > > ---
-> > >  rust/kernel/uaccess.rs | 35 +++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 35 insertions(+)
+> > >  drivers/dma-buf/heaps/system_heap.c | 43 ++++++++++++---------------=
+--
+> > >  1 file changed, 17 insertions(+), 26 deletions(-)
 > > >
-> > > diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> > > index acb703f074a30e60d42a222dd26aed80d8bdb76a..7cec1b62bd8b816f523c8be12cb29905740789fc 100644
-> > > --- a/rust/kernel/uaccess.rs
-> > > +++ b/rust/kernel/uaccess.rs
-> > > @@ -293,6 +293,41 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec<u8, A>, flags: Flags) -> R
-> > >          unsafe { buf.set_len(buf.len() + len) };
-> > >          Ok(())
-> > >      }
-> > > +
-> > > +    /// Read a NUL-terminated string from userspace and append it to `dst`.
+> > > diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/he=
+aps/system_heap.c
+> > > index 26d5dc89ea16..bee10c400cf0 100644
+> > > --- a/drivers/dma-buf/heaps/system_heap.c
+> > > +++ b/drivers/dma-buf/heaps/system_heap.c
+> > > @@ -35,7 +35,7 @@ struct system_heap_buffer {
+> > >
+> > >  struct dma_heap_attachment {
+> > >       struct device *dev;
+> > > -     struct sg_table *table;
+> > > +     struct sg_table table;
+> > >       struct list_head list;
+> > >       bool mapped;
+> > >  };
+> > > @@ -54,29 +54,22 @@ static gfp_t order_flags[] =3D {HIGH_ORDER_GFP, H=
+IGH_ORDER_GFP, LOW_ORDER_GFP};
+> > >  static const unsigned int orders[] =3D {8, 4, 0};
+> > >  #define NUM_ORDERS ARRAY_SIZE(orders)
+> > >
+> > > -static struct sg_table *dup_sg_table(struct sg_table *table)
+> > > +static int dup_sg_table(struct sg_table *from, struct sg_table *to)
+> > >  {
+> > > -     struct sg_table *new_table;
+> > > -     int ret, i;
+> > >       struct scatterlist *sg, *new_sg;
+> > > +     int ret, i;
+> > >
+> > > -     new_table =3D kzalloc(sizeof(*new_table), GFP_KERNEL);
+> > > -     if (!new_table)
+> > > -             return ERR_PTR(-ENOMEM);
+> > > -
+> > > -     ret =3D sg_alloc_table(new_table, table->orig_nents, GFP_KERNEL=
+);
+> > > -     if (ret) {
+> > > -             kfree(new_table);
+> > > -             return ERR_PTR(-ENOMEM);
+> > > -     }
+> > > +     ret =3D sg_alloc_table(to, from->orig_nents, GFP_KERNEL);
+> > > +     if (ret)
+> > > +             return ret;
+> > >
+> > > -     new_sg =3D new_table->sgl;
+> > > -     for_each_sgtable_sg(table, sg, i) {
+> > > +     new_sg =3D to->sgl;
+> > > +     for_each_sgtable_sg(from, sg, i) {
+> > >               sg_set_page(new_sg, sg_page(sg), sg->length, sg->offset=
+);
+> > >               new_sg =3D sg_next(new_sg);
+> > >       }
+> > >
+> > > -     return new_table;
+> > > +     return 0;
+> > >  }
+> > >
+> > >  static int system_heap_attach(struct dma_buf *dmabuf,
+> > > @@ -84,19 +77,18 @@ static int system_heap_attach(struct dma_buf *dma=
+buf,
+> > >  {
+> > >       struct system_heap_buffer *buffer =3D dmabuf->priv;
+> > >       struct dma_heap_attachment *a;
+> > > -     struct sg_table *table;
+> > > +     int ret;
+> > >
+> > >       a =3D kzalloc(sizeof(*a), GFP_KERNEL);
+> > >       if (!a)
+> > >               return -ENOMEM;
+> > >
+> > > -     table =3D dup_sg_table(&buffer->sg_table);
+> > > -     if (IS_ERR(table)) {
+> > > +     ret =3D dup_sg_table(&buffer->sg_table, &a->table);
+> > > +     if (ret) {
+> > >               kfree(a);
+> > > -             return -ENOMEM;
+> > > +             return ret;
+> > >       }
+> > >
+> > > -     a->table =3D table;
+> > >       a->dev =3D attachment->dev;
+> > >       INIT_LIST_HEAD(&a->list);
+> > >       a->mapped =3D false;
+> > > @@ -120,8 +112,7 @@ static void system_heap_detach(struct dma_buf *dm=
+abuf,
+> > >       list_del(&a->list);
+> > >       mutex_unlock(&buffer->lock);
+> > >
+> > > -     sg_free_table(a->table);
+> > > -     kfree(a->table);
+> > > +     sg_free_table(&a->table);
+> > >       kfree(a);
+> > >  }
+> > >
+> > > @@ -129,7 +120,7 @@ static struct sg_table *system_heap_map_dma_buf(s=
+truct dma_buf_attachment *attac
+> > >                                               enum dma_data_direction=
+ direction)
+> > >  {
+> > >       struct dma_heap_attachment *a =3D attachment->priv;
+> > > -     struct sg_table *table =3D a->table;
+> > > +     struct sg_table *table =3D &a->table;
+> > >       int ret;
+> > >
+> > >       ret =3D dma_map_sgtable(attachment->dev, table, direction, 0);
+> > > @@ -164,7 +155,7 @@ static int system_heap_dma_buf_begin_cpu_access(s=
+truct dma_buf *dmabuf,
+> > >       list_for_each_entry(a, &buffer->attachments, list) {
+> > >               if (!a->mapped)
+> > >                       continue;
+> > > -             dma_sync_sgtable_for_cpu(a->dev, a->table, direction);
+> > > +             dma_sync_sgtable_for_cpu(a->dev, &a->table, direction);
+> > >       }
+> > >       mutex_unlock(&buffer->lock);
+> > >
+> > > @@ -185,7 +176,7 @@ static int system_heap_dma_buf_end_cpu_access(str=
+uct dma_buf *dmabuf,
+> > >       list_for_each_entry(a, &buffer->attachments, list) {
+> > >               if (!a->mapped)
+> > >                       continue;
+> > > -             dma_sync_sgtable_for_device(a->dev, a->table, direction=
+);
+> > > +             dma_sync_sgtable_for_device(a->dev, &a->table, directio=
+n);
+> > >       }
+> > >       mutex_unlock(&buffer->lock);
+> > >
+> > >
+> > > base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
 > >
-> > s/`dst`/`buf`
-> >
-> > ?
-> 
-> Hm, append is also wrong. Thanks.
-> 
-> > > +
-> > > +        // We never read more than `self.length` bytes.
-> > > +        if dst.len() > self.length {
-> > > +            dst = &mut dst[..self.length];
-> > > +        }
-> > > +
-> > > +        let mut len = raw_strncpy_from_user(self.ptr, dst)?;
-> > > +        if len < dst.len() {
-> > > +            // Add one to include the NUL-terminator.
-> > > +            len += 1;
-> > > +        } else if len < buf.len() {
-> > > +            // We hit the `self.length` limit before `buf.len()`.
-> > > +            return Err(EFAULT);
-> > > +        } else {
-> > > +            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-> > > +            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-> > > +        }
-> > > +        self.skip(len)?;
-> > > +
-> >
-> > So if the UserSlice content is "abcdefg" (not tailing NUL), and the buf
-> > size is 4, after a strcpy_into_buf(), the return would be a CStr "abc"
-> > (with a tailing NUL), and the UserSlice would move 4 bytes and become
-> > "edg" (not tailing NUL), is this a desired behavior?
-> >
-> > Alternatively, we can make `dst` always 1 byte less then `buf`, so that
-> > in the above case, UserSlice will only move 3 bytes and become "defg",
-> > and the return CStr is still "abc" (with a tailing NUL).
-> 
-> Maybe we just have this method consume the UserSliceReader and avoid
-> thinking about what happens if you use it afterwards.
-> 
-> > The current behavior makes me feel like we can lose some information,
-> > for example, if the user-kernel protocol is that "a userslice that
-> > contains 4 64-byte strings which don't have a tailing NUL", we cannot do
-> > 4 strcpy_into_buf() to get them, right? But of course, the scenario is
-> > completely made up, just food for thoughts.
-> 
-> But then you should probably just read the [u8;64] type four times?
-> 
-
-Ah, that makes sense. Seems I was trying to over-task this method ;-)
-
-Regards,
-Boqun
-
-> Alice
 
