@@ -1,173 +1,282 @@
-Return-Path: <linux-kernel+bounces-625031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34940AA0B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:24:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77233AA0B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C953B83F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DC6B3B6E18
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58182C1E3B;
-	Tue, 29 Apr 2025 12:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205712C17AB;
+	Tue, 29 Apr 2025 12:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jepv/vp+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AldBfz7f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53172C10A2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A4A524F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745929434; cv=none; b=rdzChga0RPEFCgEyujlT2tl0asb7PeyFTI+4OYW7wU5UfAu1K43Q5WijOc/nWS2/3cesmgM/Yj7OeL+ek6rsxsF7Oa8L7r1ZC8dE6Rf7mm4u+phRaizRwAsZ0ENw+ej+SRzt7FsCYP4oJBETcfJJfYQSU7qSupHFZZKT76j+tx8=
+	t=1745929463; cv=none; b=f+e4JyU1sNE6SiuxXxu1VPcmtfu5+g71QczZnAe4CruKIVQdvEx3HD0R5RgBVVZ4S3FyArW0hbJ5o1VWJLzGkWcEpJZBB0dwGAbu6dYVaQsorASB4IDJKtBUXzi6WuggE1aJ376bz7ODHb1vd/+JuHH3/rCt0fG6M4NRjXhiI6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745929434; c=relaxed/simple;
-	bh=E57J4dCmvgqlt1ThO9CEVN44k9zEWXIKqQnEEIIZA7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUGKe+Vj3MHiOKOIyvHA0tFhMg8y5ZnH0kY9B5yuBjjADZTnDwMjoEuHBTuxTCRjEOQO4BxaNH4vIRUaS6ZPNAe48Gbn+Xad/ms1GGB0+j4ozpW+wSwQaNtn166TEmIhcdugzRzPXicWJ+Qz281C6wqq9iPCK4vkaJpicGM+CgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jepv/vp+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T8G4Tx007452
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:23:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mWPI8IBrH7hlnkBmEO8Qt52b
-	2JZ2LdgusDzm/ZmxwCM=; b=Jepv/vp+wV4PAFttjELu8cAbXFsPwIV29w+Gx0Eg
-	6S+1lTWzJKVUDMIkSbq6iFufXGAxdwdKKH0zRx4sHPHG6oUGySHVy768YCLlOjP2
-	rtNOBox+emSg593ZEVQzvX63vlYUoH2ss/j6MlyHNXdUgFAAXIFLffIxRHsue1Fd
-	xXRd9NnBe+c9Cjbzjru6lrF677kA5dn2oj5SFr40nVn+fruysjAKcfM4fSLqnKut
-	K9tqjhzUxj1ml3GGZ/rTteRcjB5eTMK0W5yu4qKSsWJfuQmfCicudCMvJvnxqN1b
-	GNqm4yJshWEACANApoM2uKrrekgVxI4/0RGTkjSDab5XWQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468pg9chv4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:23:51 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5f876bfe0so1031686685a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:23:51 -0700 (PDT)
+	s=arc-20240116; t=1745929463; c=relaxed/simple;
+	bh=qmMGWA/AIFo6ntAEJl+Qb+o22lKemZQZVjbDbsxSyps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jopOXnn3qjbGzVqfXJlCDiyW1N9cMk8ReHu+iXvusJNRZ6t37nUh9I65QXij299OTd4KvoMqkxN1WFX5kUa7ucuFRUvy1K9GrtUu6Lrt+gRVnuHgURzqYe1Ich3TlSrWgBza7zjOk+OsKIdzfyusZ0ny2uxVnHJnnrNXd4fLSeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AldBfz7f; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745929460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mFCOqPchENkCt7pSLEqwciB6yES/jFgTN8NWHGJtHGI=;
+	b=AldBfz7fvnWW26yBLT1Y6RVMPPwm55F5gPHyCASzMSOBxZu3YoS2tMytBhLPF3OMj28aHX
+	sJ1bo5I5zvOgzFV7ecOyFlV1vEm/+ylbQL4LcZ7JNPtU3ILa8oKv2fRKKczdVCLRH0Bz0s
+	tm5n8Z0NQhHTpILVFHXU9nOsgilL2lk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-9vZh6eR9NdePAOl4zQFbjg-1; Tue, 29 Apr 2025 08:24:19 -0400
+X-MC-Unique: 9vZh6eR9NdePAOl4zQFbjg-1
+X-Mimecast-MFC-AGG-ID: 9vZh6eR9NdePAOl4zQFbjg_1745929458
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d01024089so39580815e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:24:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745929430; x=1746534230;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mWPI8IBrH7hlnkBmEO8Qt52b2JZ2LdgusDzm/ZmxwCM=;
-        b=gZp0zhMiDjYW8EcSp79V7AAmdXPl1U0HaKTMGU3jNrsJALwGzxo4x0+rPDF4IsoAj7
-         dCM5hDnvZkpQcQQB29eB92mOnBYyNxfDpx+PV2KmudR3Ya9H65mxLKm7t+J27o1n/N9E
-         Bo1b81dBkqw0/SJjbgdy9lIaskSfdGinSn5dxMD+AxI3a535927VViSudWV206p0i2u+
-         IDbbLu8O39LovrL68fj4qLBbqzEOxwWbNfv2JmCHhl7wM5p/xiofLwOprduu1oXQ5Wdw
-         l3+wmrD/Rjvm/JzxswAhkCLobJQvC4AOZlTRxN3NGivCUa7X5slHT+26xKmY+vr/Y66S
-         Vc6w==
-X-Forwarded-Encrypted: i=1; AJvYcCV8RA7x2iX4Nh6yGfCcUokU1FiA4Af+qini8iJB9KosOTvVfxPjlSjzZkqnAWBjb7+tgpN4uJ2UDWF3deo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ku3z+MPr89YQJ9k+8rf4OTFqjUN0s6NCIQlc1aeh9bdDT3FM
-	EFy0nTgJdB4pBI6OKIrCWjrr+GlNNIoVmV8DN+uCtPqHuiJNXJhrMVjLzrDprgMEOziGBV2Ginr
-	XvYUF471CB9BeuPCFZZO5ZWluiyN325hy2StOhdyRhSxwLyEpcIgTZ9Zk+VY3n5o=
-X-Gm-Gg: ASbGncvb4V3B4f4q/LKlyvQRm2Wd4mdmhRsmJnO5M9753XSadazEH9kn+TP0fOp20Wy
-	+2xHpFp5ceT93LkV81ekkhr23ktkmrzzUdKzFYhgS5Iwu+Wpffj2MQPkfBYTraTvCieELWbrYoD
-	tZRCvwyF3XOKRj6hU3yKaPX2GJHscfkzXBuPP+7ZMqlx4EIiWKdZKqW5jsJHfzozZNoXg9lDwzJ
-	MNSJ2AC4PBArHmiIynclcpIXXekSGBkA1r/9qLCChdlzRcEMdzziZyySQBSWV4QIrUAbSpD65pF
-	Y1ZBjmrvnu+zKT2viJdPQXnFs/pCP1TT3dFFzAeO8T7mp8i3yxX0Ea+XI65RkCq2oGnnXNpU5dA
-	=
-X-Received: by 2002:a05:620a:6117:b0:7ca:c5bb:3007 with SMTP id af79cd13be357-7cac5bb32b5mr25636785a.37.1745929430402;
-        Tue, 29 Apr 2025 05:23:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/YVYTF7AsqT0sUlkNbluJNYqiS/QEjcLK0UlrF+CJVw0ltMIa46t+oqSpGCfKt2bt7Fmb9w==
-X-Received: by 2002:a05:620a:6117:b0:7ca:c5bb:3007 with SMTP id af79cd13be357-7cac5bb32b5mr25634585a.37.1745929430043;
-        Tue, 29 Apr 2025 05:23:50 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317cfb49872sm24408651fa.35.2025.04.29.05.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 05:23:49 -0700 (PDT)
-Date: Tue, 29 Apr 2025 15:23:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Lee Jones <lee@kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linux.dev>, David Heidelberg <david@ixit.cz>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 01/11] Revert "dt-bindings: mfd: syscon: Add
- qcom,apq8064-mmss-sfpb"
-Message-ID: <igei6wspjs7qetjx7nrhr42kbvb25yaldpfx32hyrjalajmcfg@qcshsrzwejxe>
-References: <20250425-fix-nexus-4-v3-0-da4e39e86d41@oss.qualcomm.com>
- <20250425-fix-nexus-4-v3-1-da4e39e86d41@oss.qualcomm.com>
- <20250428-prudent-hasty-pheasant-aecec4@kuoka>
- <29d15e93-8f5e-4cec-97b8-8592beb01d6a@kernel.org>
- <CAO9ioeUo_vO+-wuC4JGi4JfSMZx+JZkvLvsi=ppBD_LvuV2ZLA@mail.gmail.com>
- <676324e0-43a7-4227-8b6f-3fec97a484b0@kernel.org>
+        d=1e100.net; s=20230601; t=1745929458; x=1746534258;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mFCOqPchENkCt7pSLEqwciB6yES/jFgTN8NWHGJtHGI=;
+        b=aN8Sb3t4OXvAciBmIIhJZm2RitsAFrdJUltL/eyuMz1IzXdM+mw8Kse4mBkz4+Ui71
+         VwigGEfiOGJkI32A/baPXmADjrBo3Jh3PaDlf1Gaf5EjWlOhKRRKBUcDDTSAGqOju1SQ
+         4VFkBXB/h3hrtNZh0HJRkBmgASzZX3TpfkEtwWafv4EKJZshN7ruZcXV6afaMakUCniD
+         K0s1WYn/9wPbeMnEy2KV1OJAEB60aX8hWnNgxVHlvYgKL17MYygUCR0x27Z6Hho5hlB/
+         7nQoyNDGcYb99UNrYZcFTr0R4Bw54G/rA/CpoSJyOeCCHm0aCZ4Ot4GoD2Y3ruUBkJgE
+         s7pw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1gfe3URSFom1lsHkr3QpGeUHMC7o5h53JHElYwx8OkIGH52zIhMlgQfWDhKPu2dKCrvGevaZEGmCyC3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRpGwmovKbH3AibQSp5kShkAHrexZ8SeGNAbZ6e/8+pltartrg
+	cFk0W8Y2OR5Vj4mvPHKU1r3i2q425NSFCS/qKxi7DlidkTAvgT+Er6zLlLHIoUcmU/iwo/XDIfc
+	z8yEWlAMIjtOdmHI4Len7oiof+/91WWCQ3ndnqdgjP/Hm9zreJO2zZOXWDSINIA==
+X-Gm-Gg: ASbGncvMEKP83o3IcY4bEJBf3jMbggDeABYKyiWSR0sZRR4yHf53VAFZWEsQ6oDz9+F
+	TaNSvxdyl1aY/9vLZrmCAxEj43uYAa5YqRucS3CDcOFALK8ZmQGqNzeCtMO6kTSrL8eqqV2fojC
+	069I/inEQKRHP6QtDqklZT2U18WYnBhqxnisSX90oa2pijH0Vhg0pg6H+H0xMvvS5gVOXTb6jDW
+	JNJg+EgtSriB7hYvM2NeXTT5fE040mllAzrsvp9FV57ZT7mxameelupz7GiYeyxDB0sagmESNBn
+	dJJoAFTpTc2AhTTyTSY4ik7HmaIa1+Em5E0TN8OZdkfdNPYw2v/YaqZdgpaJK7K8a2pQFEh+UZQ
+	NKugonrWVvELPpTzqtvdPXEvQXwy6Y8vRfhyt5d0=
+X-Received: by 2002:a05:600c:ccc:b0:43c:fb95:c752 with SMTP id 5b1f17b1804b1-440ab76a757mr127614135e9.3.1745929458065;
+        Tue, 29 Apr 2025 05:24:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGB58JE5GowtO4QYchEok3cHSeflvTfBzriOg4o+ZqIS+VlarLKiblTC7Qc6GXW6gJFSyvDqQ==
+X-Received: by 2002:a05:600c:ccc:b0:43c:fb95:c752 with SMTP id 5b1f17b1804b1-440ab76a757mr127613815e9.3.1745929457630;
+        Tue, 29 Apr 2025 05:24:17 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73b:fa00:8909:2d07:8909:6a5a? (p200300cbc73bfa0089092d0789096a5a.dip0.t-ipconnect.de. [2003:cb:c73b:fa00:8909:2d07:8909:6a5a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2d88cdsm186505745e9.25.2025.04.29.05.24.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 05:24:17 -0700 (PDT)
+Message-ID: <78487605-8b83-4b77-8147-9e34e4f8fda2@redhat.com>
+Date: Tue, 29 Apr 2025 14:24:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <676324e0-43a7-4227-8b6f-3fec97a484b0@kernel.org>
-X-Authority-Analysis: v=2.4 cv=ZpvtK87G c=1 sm=1 tr=0 ts=6810c4d7 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=CcgAk7be1liTUAj5SvwA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: L7A6di8UlKhuBXxIXUhYOgSac8fdS_EM
-X-Proofpoint-GUID: L7A6di8UlKhuBXxIXUhYOgSac8fdS_EM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA5MiBTYWx0ZWRfXx2foD+LxpNyX /ONTmcTtC1UGE4OpDB4o2CXm2Cg9IsikQ04XbqobT9zGHJOVS2a6Spz5zDPzPW2Pji2G3a/fCkX thM5Vazy9hJHG0+6wjnQGsbACmgozoynqtjB6Qv8sSlOvJ/XkayCXnZZh5xPFaEqZr6Whf2qpqq
- +pVMIA3jNzP3Vp44FPvBE4QgLPk8BMrPaBCziYv9MmojbKz5uTzettx2ypVnBRxxz6N5tFzBTDm UhYiF8NgP3I/NCSKqEJVov8MTUtTu1CkKaMOP5iM2S4q8tIhpYLK/tV7/DqEf/jNBfKTuDjV/bS 52Q5MlaoO5x2h9uLitKTYll1mpkW+NCXh7b8ae+MI/9wMU1t6hmy9idg/sDPLW46RXvO41LHgdg
- mNt/k6BTkV1FU4IdFE++XN/ijnMdXPaP0KVOZ0gzqEIpKB/dvxjC/gxfWTohPCZqpW8a+yWH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_04,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290092
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] mm: move folio_index to mm/swap.h and remove no
+ longer needed helper
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Chris Li <chrisl@kernel.org>, Yosry Ahmed <yosryahmed@google.com>,
+ "Huang, Ying" <ying.huang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org
+References: <20250429114949.41124-1-ryncsn@gmail.com>
+ <20250429114949.41124-6-ryncsn@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250429114949.41124-6-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 28, 2025 at 07:50:04PM +0200, Krzysztof Kozlowski wrote:
-> On 28/04/2025 12:49, Dmitry Baryshkov wrote:
-> > On Mon, 28 Apr 2025 at 10:09, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>
-> >> On 28/04/2025 09:07, Krzysztof Kozlowski wrote:
-> >>> On Fri, Apr 25, 2025 at 08:47:01PM GMT, Dmitry Baryshkov wrote:
-> >>>> For some reason Lee has mis-squashed two commits, picking up one chunk
-> >>>> from the first patch and one chunk from the second one. Rather than
-> >>>> trying to fix it, revert commit 2c8de7df7418 ("dt-bindings: mfd: syscon:
-> >>>> Add qcom,apq8064-mmss-sfpb").
-> >>>
-> >>> I don't understand: that commit looks like direct, proper result for
-> >>> https://lore.kernel.org/all/20250318-fix-nexus-4-v2-5-bcedd1406790@oss.qualcomm.com/
-> >>> so where is squashing two commits? The diff markers have offset by few
-> >>> lines, but it's still just few lines and they do not matter - there is
-> >>> no diff/patch mismatch from that point of view.
-> >>
-> >> Ah, difference in compatibles. I see the error. Anyway, I don't think
-> >> revert is correct. Just add missing compatibles.
-> > 
-> > Why? The commit that went in is invalid, didn't come from my patches
-> > and was produced in some weird way.
-> And revert is pointless if you immediately add the same changes. Just
-> make the changes.
+On 29.04.25 13:49, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
-> When we see a bug, we do not revert the feature and then re-add that
-> feature corrected.
+> There are no remaining users of folio_index() outside the mm subsystem.
+> Move it to mm/swap.h to co-locate it with swap_cache_index(), eliminating
+> a forward declaration, and a function call overhead.
+> 
+> Also remove the helper that was used to fix circular header dependency
+> issue.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>   include/linux/pagemap.h | 20 --------------------
+>   mm/memfd.c              |  1 +
+>   mm/migrate.c            |  1 +
+>   mm/swap.h               | 23 +++++++++++++++++++++++
+>   mm/swapfile.c           |  6 ------
+>   5 files changed, 25 insertions(+), 26 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 1dc3416a9c0d..47b5746d5a65 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -884,26 +884,6 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
+>   			mapping_gfp_mask(mapping));
+>   }
+>   
+> -extern pgoff_t __folio_swap_cache_index(struct folio *folio);
+> -
+> -/**
+> - * folio_index - File index of a folio.
+> - * @folio: The folio.
+> - *
+> - * For a folio which is either in the page cache or the swap cache,
+> - * return its index within the address_space it belongs to.  If you know
+> - * the page is definitely in the page cache, you can look at the folio's
+> - * index directly.
+> - *
+> - * Return: The index (offset in units of pages) of a folio in its file.
+> - */
+> -static inline pgoff_t folio_index(struct folio *folio)
+> -{
+> -	if (unlikely(folio_test_swapcache(folio)))
+> -		return __folio_swap_cache_index(folio);
+> -	return folio->index;
+> -}
+> -
+>   /**
+>    * folio_next_index - Get the index of the next folio.
+>    * @folio: The current folio.
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index c64df1343059..ab367e61553d 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/memfd.h>
+>   #include <linux/pid_namespace.h>
+>   #include <uapi/linux/memfd.h>
+> +#include "swap.h"
+>   
+>   /*
+>    * We need a tag: a new tag would expand every xa_node by 8 bytes,
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index f3ee6d8d5e2e..662e5dc44b33 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -50,6 +50,7 @@
+>   #include <trace/events/migrate.h>
+>   
+>   #include "internal.h"
+> +#include "swap.h"
+>   
+>   bool isolate_movable_page(struct page *page, isolate_mode_t mode)
+>   {
+> diff --git a/mm/swap.h b/mm/swap.h
+> index 6f4a3f927edb..91439d0ce50b 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -50,6 +50,24 @@ static inline pgoff_t swap_cache_index(swp_entry_t entry)
+>   	return swp_offset(entry) & SWAP_ADDRESS_SPACE_MASK;
+>   }
+>   
+> +/**
+> + * folio_index - File index of a folio.
+> + * @folio: The folio.
+> + *
+> + * For a folio which is either in the page cache or the swap cache,
+> + * return its index within the address_space it belongs to.  If you know
+> + * the folio is definitely in the page cache, you can look at the folio's
+> + * index directly.
+> + *
+> + * Return: The index (offset in units of pages) of a folio in its file.
+> + */
+> +static inline pgoff_t folio_index(struct folio *folio)
+> +{
+> +	if (unlikely(folio_test_swapcache(folio)))
+> +		return swap_cache_index(folio->swap);
+> +	return folio->index;
+> +}
+> +
+>   void show_swap_cache_info(void);
+>   void *get_shadow_from_swap_cache(swp_entry_t entry);
+>   int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
+> @@ -125,6 +143,11 @@ static inline pgoff_t swap_cache_index(swp_entry_t entry)
+>   	return 0;
+>   }
+>   
+> +static inline pgoff_t folio_index(struct folio *folio)
+> +{
+> +	return folio->index;
+> +}
+> +
 
-That depends. If the original patch went really bad, we sometimes revert
-it and add a clear implementation rather than just trying to fix the
-damaged state.
+Could we just have a single generic function that does something like:
 
-> 
-> Instead we correct the feature.
-> 
-> Best regards,
-> Krzysztof
+static inline pgoff_t folio_index(struct folio *folio)
+{
+	if (unlikely(IS_ENABLED(CONFIG_SWAP) &&
+		     folio_test_swapcache(folio)))
+		return swap_cache_index(folio->swap);
+	return folio->index;
+}
+
 
 -- 
-With best wishes
-Dmitry
+Cheers,
+
+David / dhildenb
+
 
