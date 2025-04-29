@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-624679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7A5AA064C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9B7AA0639
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EFA43AEF22
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B941189B2C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D001728D83D;
-	Tue, 29 Apr 2025 08:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C1029DB64;
+	Tue, 29 Apr 2025 08:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="SCRRoWfe"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22D527CB18
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cgjw/DkY"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1E9296D05;
+	Tue, 29 Apr 2025 08:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745916762; cv=none; b=GL6T7JsWE4mQzrBJtorIDX1iOZNP+yhSxH/ETyg2FXO0kTmL8XViTRf/M6GE7R0eO+STCJ2+CrpN6q9+KIsAq3gqWuqXcDF8QCg9pfJ9BUVyCr/aEYDvHD4mUfY7LdYDjOAtHC/ow3I+0J6+1nX8ovSftq6haVFNmsQYz86pAiA=
+	t=1745916686; cv=none; b=k3rF/+/BbdtIYxAmWDaxmMjFX7+J9vK5cOMjD2m9du5ht/b9zADQItDL3XXBXv1w+/7EVso7GDE3qkkd6L+5Q75w35ZENM9mSj2gQEgidapgGO/eu5nOik5Aqvcn6balSwGYs67gTHY3F7OCOMuq/qCY1pxaHQEch6Jf5VjZHVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745916762; c=relaxed/simple;
-	bh=snO5UlRxqymfMmKvVew8ZDq0Uh+aBwp66nsHilnsiK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bqRmxZKewkG4SFtuyHiPsZxlv7C2KitFZWXyQZ5Bku9T34t1nsJGahQFZyHM9dZbGOIbp4gGngtEhhIrnFydNxmKcYuV+6PAO+Gq4uprkWZSm6k0nmtQShP0dqMW8qPGkDHFLz+eRezGLu+hdveKFI5gTFESG80WzgfzkCqNiJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=SCRRoWfe; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-227b828de00so57021025ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1745916760; x=1746521560; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mEqVehBRCDyoxu9q2vBqacMHsZUXwyFpRPZVYhXUX8=;
-        b=SCRRoWfedbJL16NYxzyE8b4wtFlqY+PhCtRsg9BMzyqBc0SP7X0aAgB2Ovr4QF3vGE
-         K6XhrgoT+/iiL4CFUsNoUkMUyw2gdLDw/4tu7l/BGk7tg+dm2zHDnjcKB83LYceZNIxB
-         73vZG66nl44xhHJLJcoZcZNGVCTGXIukd+lynH2uAPkrR0ofw16DgFLrHBcZNvAhFuAw
-         CjmLGkh28N6YLXYW2qbk/43Au2eQe7fmvZ1aycQquA5UniCWtvlZECoXMG3nCdI/x+HZ
-         uI5Uh5YSbVxtw3frS2Ac3CcPWfJPhqlEHhTUUzWh5oEgeP5hCrKWRIxnabJ+dDPFCKAV
-         T1Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745916760; x=1746521560;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2mEqVehBRCDyoxu9q2vBqacMHsZUXwyFpRPZVYhXUX8=;
-        b=aGITa26GaCmv12e/cVUpEGRexRrjO0v3c0F9cr1gNfPXjeWvrLq1SRTeee97NuM0uV
-         EJB5hE+Ud/5zbyDDpa+jIhZtcU7/eWxkSfns+d8063XxMpQr9trNZ4kBB2E1cs1cXoXH
-         hoool3CXiW01rHQw33ytMOuCfb6ubN9aG91GmNNfQnflPxXKHiy8DAtBdWodJtqSMQzj
-         mB54CmG+Mxmfa/2oArYIWLAjNOBFw43c3JdEUybcpJmWkoO8U8DBsmmA10caNN+ywo4n
-         Qq4Ue4qCAvrQFVmEbNnPy6rbfagvJqL5UU/Xb3NOF5h6+A8cmbzyhBQDUMBOVE+P7HkK
-         cLzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxN5ssb0PXtfMsuEQQB2z0uB8n5alwMRrkqv+dTcMPLBvOsUeFRwRCj/k7dFExNYTYUcZAhzHSDLMLtPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCyYHQaB4IGqlXLGj5JT5YexYK/YzqX9tS2E6JoMxieVP+0ZKZ
-	M6Elov4RSxIzgty761TSXtIt1udBoa185OwG4Q+yzWtm6b3h+wEimWTGkrvEPHM=
-X-Gm-Gg: ASbGncsZ5fWwFJ4EPH3UFX/m0m9YO0FcEOfoC+DK7W6G9AwFOo/6Ww5b8NhATPpc8wB
-	gMlU95xexMCCK+qUPTu3k5sV9F4huWT/TI7I+HbWsiEfBZ+4VOnebMC5nuX3ODcdnqoxwTiPcJY
-	BjHaQVTi+zbgpExXhlmaE1bMXCWiMeHPGT38DaFSW/6Iwl5xOuhflQqA9YdAJNIxCFL2vRUtK00
-	khnMijEUvuDbZ7DYhKwnx61BYfq0VQiQdIyyRT8AUbIKJ5L36d/T/4doq8Qyu8d/5Emi0lzkzG5
-	pz4d0SftDeJxddhtVYyFDPFlnm24v/728OZZJ5yJ5krZqwPyX+af64kSW2pImD6/cT2Cob8fZoO
-	t4J3PZHEAKuCbQSomj0NluFXSVw==
-X-Google-Smtp-Source: AGHT+IGnvzbUWhLI/YOaGHPG2HlwGVUVLczRsChSXyhLNMaAX1vRU5+feyFIpxGpmIkb1IMqyytUCA==
-X-Received: by 2002:a17:902:e5cd:b0:220:fe50:5b44 with SMTP id d9443c01a7336-22de7037cb5mr28009905ad.31.1745916760002;
-        Tue, 29 Apr 2025 01:52:40 -0700 (PDT)
-Received: from localhost.localdomain (210-61-187-174.hinet-ip.hinet.net. [210.61.187.174])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f8597e0bsm8550119a12.44.2025.04.29.01.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 01:52:39 -0700 (PDT)
-From: Guodong Xu <guodong@riscstar.com>
-To: ukleinek@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org,
-	p.zabel@pengutronix.de,
-	drew@pdp7.com,
-	inochiama@gmail.com,
-	geert+renesas@glider.be,
-	heylenay@4d2.org,
-	tglx@linutronix.de,
-	hal.feng@starfivetech.com,
-	unicorn_wang@outlook.com,
-	duje.mihanovic@skole.hr,
-	heikki.krogerus@linux.intel.com
-Cc: elder@riscstar.com,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	guodong@riscstar.com
-Subject: [PATCH v3 6/6] riscv: defconfig: Enable PWM support for SpacemiT K1 SoC
-Date: Tue, 29 Apr 2025 16:50:48 +0800
-Message-ID: <20250429085048.1310409-7-guodong@riscstar.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250429085048.1310409-1-guodong@riscstar.com>
-References: <20250429085048.1310409-1-guodong@riscstar.com>
+	s=arc-20240116; t=1745916686; c=relaxed/simple;
+	bh=i/zN+eLtunYqB8Jo8o4ZtByDNbSfXn6uTc2DKMgPDy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TaAVX2F6QANt9Ad88eKir1Yk9KdmAIZ84Avy6sBcbHYKEkrFhw+ElAr/EvQxRR6GK1Pq44gorIKACdKK1OZH1X0+kGFYgs9kDlqThGRW/qnvpSSa2XTHMJ0bukTf0YCP3f65+QnC7NEwbKdw2lUbj5N6m7S+10g/xPWNQ1ofwRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cgjw/DkY; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id E3B2320BCAD1; Tue, 29 Apr 2025 01:51:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E3B2320BCAD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745916684;
+	bh=bH/gRq3HkYAXOdTEm1wWVnhs8e9j9zydL0IGXdJm9z4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cgjw/DkYa5RLPVsfa6JDQm+dTp5wS2msU1njQGR9PFHfHPdRXRN/MfFd7Cdtsqceo
+	 51OTUVgym3hohVal4H1IaQ9w9ihTFNs5egVT7EOIdvMsRPX0H3Beyoe3k6dpDz5hyG
+	 fLNGYYUCi3uj3ZLKjhLc5V89rUxB75dSa7hMu7+w=
+Date: Tue, 29 Apr 2025 01:51:24 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nipun Gupta <nipun.gupta@amd.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Wilczy??ski <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Simon Horman <horms@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Paul Rosswurm <paulros@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH v2 3/3] net: mana: Allocate MSI-X vectors dynamically as
+ required
+Message-ID: <20250429085124.GC10839@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1745578407-14689-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <1745578478-15195-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <aA-Evojnzt2z0RdH@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aA-Evojnzt2z0RdH@yury>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Enable CONFIG_PWM and CONFIG_PWM_PXA in the defconfig
-to support the PWM controller used on the SpacemiT K1 SoC.
+On Mon, Apr 28, 2025 at 09:38:06AM -0400, Yury Norov wrote:
+> On Fri, Apr 25, 2025 at 03:54:38AM -0700, Shradha Gupta wrote:
+> > Currently, the MANA driver allocates MSI-X vectors statically based on
+> > MANA_MAX_NUM_QUEUES and num_online_cpus() values and in some cases ends
+> > up allocating more vectors than it needs. This is because, by this time
+> > we do not have a HW channel and do not know how many IRQs should be
+> > allocated.
+> > 
+> > To avoid this, we allocate 1 MSI-X vector during the creation of HWC and
+> > after getting the value supported by hardware, dynamically add the
+> > remaining MSI-X vectors.
+> > 
+> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> > ---
+> >  Changes in v2:
+> >  * Use string 'MSI-X vectors' instead of 'pci vectors'
+> >  * make skip-cpu a bool instead of int
+> >  * rearrange the comment arout skip_cpu variable appropriately
+> >  * update the capability bit for driver indicating dynamic IRQ allocation
+> >  * enforced max line length to 80
+> >  * enforced RCT convention
+> >  * initialized gic to NULL, for when there is a possibility of gic
+> >    not being populated correctly
+> > ---
+> >  .../net/ethernet/microsoft/mana/gdma_main.c   | 323 ++++++++++++++----
+> >  include/net/mana/gdma.h                       |  11 +-
+> >  2 files changed, 269 insertions(+), 65 deletions(-)
+> 
+> To me, this patch looks too big, and it doesn't look like it does
+> exactly one thing.
+> 
+> Can you split it to a few small more reviewable chunks? For example,
+> I authored irq_setup() helper. If you split its rework and make it
+> a small preparation patch, I'll be able to add my review tag.
+> 
+> Thanks,
+> Yury
 
-Signed-off-by: Guodong Xu <guodong@riscstar.com>
----
-v3: No change
-v2: Changed PWM_PXA from built-in to a loadable module (=m)
+Thank you for the comments Yury. I think I can split this patch into the 
+irq_setup() preparation patch and other functionalities. Would also
+investigate if these other functionalities can also be split, before sending
+out the next version.
 
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 3c8e16d71e17..3c4d9bb8f01e 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -257,6 +257,8 @@ CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_VIRTIO=y
- CONFIG_PM_DEVFREQ=y
- CONFIG_IIO=y
-+CONFIG_PWM=y
-+CONFIG_PWM_PXA=m
- CONFIG_THEAD_C900_ACLINT_SSWI=y
- CONFIG_PHY_SUN4I_USB=m
- CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
--- 
-2.43.0
-
+Regards,
+Shradha.
 
