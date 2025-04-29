@@ -1,89 +1,115 @@
-Return-Path: <linux-kernel+bounces-624733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2062FAA06E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:20:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED0BCAA06ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12273AEB49
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:20:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC327AD807
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6850129DB9A;
-	Tue, 29 Apr 2025 09:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4584F2BD586;
+	Tue, 29 Apr 2025 09:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H63MdByW"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="1wfMONlD"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFA3274FFA
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFC62BCF7E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745918422; cv=none; b=bfoFZLvVsl8p3FIPOs1zTXhkn8C6NUqlQP6aSl3K/svdZF+p2H394w44OnuaYIN+NKrX8QHAaSvcZ0AmqotZFNc3rB55/iwC55S/CGJk4chkVeyCW/xzfpmGZ6/HSgcG60STRylc1kEBTJrmsLZDgjT5pDXocNtqiCASO7UKVZ0=
+	t=1745918439; cv=none; b=kz0OXXtHo5k+al0CkUFPrf7OM+PNHE8tZ8Vk7wXytNOjdcc/QRe+C7VWzSXVJXrWHK0zErnBDI/GxojPn63/ohHt+ZxmPIUTAgJxbrX7CfmcQ1J/Ubwl9F4gy93aEBGZFdL0HRzg8mWEfES0vGVVV7lPuFZD5t89LdO60oeZ1Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745918422; c=relaxed/simple;
-	bh=dj+H+iOhdi29XKdZQG0oJDdhSShr8NT/AcgPxZGfZQs=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aqWDi5IOpUbBHdqiGnXEavdrbOy8SqQC7V4GRGZd4enNGodK1ozPegsbscFCh7AWDIGZUEWd72Cq4n1AAQLcz30vdsZMUxDqKLs3yIAAZdJ55mxZPzxEn6L+c8rbwsHqFDegaTUPhvirAM5rs5ZSAkFNaK4nvefbttGPENDmCUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H63MdByW; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9333843214;
-	Tue, 29 Apr 2025 09:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745918419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Za7lweaPx3/h71Ujv+ZsakGXEjzK+xddax/L9YP3OSU=;
-	b=H63MdByW8Lv5bFIZsgpDAyJIUVJrtcY86NumkBFNLSWJapl8H890wC1jPdcKlWtuYM+sL+
-	uC3neJftOFjWFTTFNOkp9hrTfolaHcAbT+tVIsg8oH5foHsliU0UEgcatNu4f6cJlzFROt
-	S0ds0Rjgxb6fvJVLi6Ibegk6oq1rWbJTLkUyFV2TZGJlmIT5+rk1fSOxkh+YYU1/0tvM7a
-	xKt5j46T8sorm1xMX0iuMSVqJyK0aDRe065TXxsgcELl50tIYBZQrwqBFL05k2vylg0cRL
-	fUJGCU+nqQqEuEQezKif5nyKO0aLcn3wF3K756XTkeE/pi6TJdjOBvIn+82WPw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250417074653.81593-1-krzysztof.kozlowski@linaro.org>
-References: <20250417074653.81593-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] mtd: Do not enable by default during compile testing
-Message-Id: <174591841848.992719.6666489302913958102.b4-ty@bootlin.com>
-Date: Tue, 29 Apr 2025 11:20:18 +0200
+	s=arc-20240116; t=1745918439; c=relaxed/simple;
+	bh=Mtubd7kcUTSuCVjg0jfNXyqdjQoCE84ajtDBpsHqT5k=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Ai+jX7ODEgg5fMHDXrKhWW8TWwsZRlEnvAEsv+Qax3IwfNbxUFxSwIqs3prgQQmMuLZxKqmxV6ffFhcgR9znmZxUztEiN+fdJ6wduSk+/JbN8SEDI/1FG6mlTOSDYQw3i7EIUJq1/VYWlbqJz312jOtDnvhcAaPBBQJFVB+hF8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=1wfMONlD; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7393eab4a75so805925b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1745918437; x=1746523237; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BvaliSErUYZ24zOy24oW0l9inFOug0V/EfItbz4+qJY=;
+        b=1wfMONlDQxJ2V/NRZJBNkfXlS3UZB5SRspIXThQ6rlrC3VWUr4Z4cKnHSgNUJFKmDK
+         +2Jx6OgIPLSv1AtmKefvWPvhXoaEwEOUFNTn6ErLwPb8CNmIuiixOjri+XHw8J/9b7W+
+         xsS8m+EYB8KYXC8tGuyfzSI36dkvT9A+b4kKe+tfeMKsODLXx8Bg5pbYK1ganXlocKRS
+         3lpSERI/lRzbt1TxMLtBPfu+ksrh2lEO8N7EanJhqTMThIjX6I8ZsIx6Iwqlfour3+XP
+         oPOKdSmddQX4Ge7pvun8WBwtqUAXUFa9jl5qWG21cABSp1hhuCZ7cd5q8hIdYZexWTGc
+         D4MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745918437; x=1746523237;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BvaliSErUYZ24zOy24oW0l9inFOug0V/EfItbz4+qJY=;
+        b=nLKjPuTE2WiVBYMbm3GtYv5oTqLkV24oDdgcoVjBnwicJQ7156ziwYdki6PQKpsu7H
+         D1943/JC7hc1p4Ok4le6TIUkX7MZyTKYcZ0EhoNgEOtvZnpVSzLnJ5f9SiOkcXqtaSis
+         9cxJxKFtW6LCx+5GuCZg9dmaN3FGFFLn2ObTE4Bb52FXvenElyCwaJ9+4WhDBGRvy/nw
+         eOdteRKUnxBlvxfBzp2wxD9h9USJoNCz1bm/q09AYHHlrrhs5a5smYwyi5J5FUyunq62
+         cfUep9PLsTUTRkyDNB6ke4sriD2tcYZqDlj4QgztOU2MEpc1ILKkS8EtAr63lH/KA0yy
+         7UkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlpcURsGaWz7nSoN8H9yYXfLKWjKWom/YX6I6bXcIoQCUVkCJPBHO+awQG+cNFbwtr8GXo8+n87pLWKUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpYPokP73TpNQtrKwshSibNXT6NKPYeJ9ulrpDpFCOoqezbJEs
+	NPdLeFxwDxFTgphJIZGEpZr9ClXM4J0nCf0/HkGaEaH0RuBNFkIH2SDgN/CiX9M=
+X-Gm-Gg: ASbGncvN0CX6dKEoJbV7u+AnRsik6calEjAz2vRiuRZt6474V6yXpzsqzrLgVk2g52g
+	mPjbkQYvc9VPMMAj+LA4xgO2VTPMUBONsXlq4DngigqAiMxsDM5kSzw1nPiMSxTBU/zNIttFEyX
+	V+cu988/t/iB7B0mIPEetkS+jimYwoSfOKo31IjP+u6LpXDi0CofSeDePBR3na/JjcH4Q+FXVKL
+	kQCo+2yiwNyoi4czcAdLGnR1t8AsQ39Y5ndQhksp5rat2ObQqE8ra5C3+txOBJVmKNPWb3ueOQY
+	rtid0/ztuXadxPClECLa68HIruQRZxwL/kyBEWJj3UwwoAIWjx7qGo1xQqRrBIEHIUYlSvsFe8o
+	ZFO19nqVtEkHfm2A=
+X-Google-Smtp-Source: AGHT+IEV5ogys0l2vXW3zP5HCQ1ycfry815W3wpmmpb0QJkuLBL078T8CYF88qMpcAKeaw6hSxPNRA==
+X-Received: by 2002:a05:6a21:1349:b0:1ee:d047:ec23 with SMTP id adf61e73a8af0-20942f162f0mr1518908637.11.1745918436818;
+        Tue, 29 Apr 2025 02:20:36 -0700 (PDT)
+Received: from ubuntu.huaqin.com ([116.66.212.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a9d44esm9722786b3a.148.2025.04.29.02.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 02:20:36 -0700 (PDT)
+From: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
+To: dianders@chromium.org,
+	neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
+Subject: [PATCH v3 0/3] drm/panel-edp: Add support for several panels
+Date: Tue, 29 Apr 2025 17:20:27 +0800
+Message-Id: <20250429092030.8025-1-xiazhengqiao@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieefgeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfgjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfffhudefgfeuueehueevudeiieejhfejudevudevieetvdetfedtfffhjeeileefnecukfhppeelvddrudekgedruddtkedrvdehheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddtkedrvdehhedphhgvlhhopegludelvddrudeikedruddruddtiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihsk
- hhisehlihhnrghrohdrohhrgh
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, 17 Apr 2025 09:46:52 +0200, Krzysztof Kozlowski wrote:
-> Enabling the compile test should not cause automatic enabling of all
-> drivers, but only allow to choose to compile them.
-> 
-> 
+AUO B140QAN08.H
+BOE NE140WUM-N6S
+CSW MNE007QS3-8
 
-Applied to mtd/next, thanks!
+Changes in v3:
+- PATCH 1/3: Sort the list
+- PATCH 2/3: remove delay_200_500_e80_p2e80 and Sort the list
+- PATCH 3/3: The test timing of hpd_absent meets spec, don't modify
+- Link to v2: https://patchwork.kernel.org/project/dri-devel/cover/20250421113637.27886-1-xiazhengqiao@huaqin.corp-partner.google.com/
 
-[1/1] mtd: Do not enable by default during compile testing
-      commit: 91b7163b1ff37d24ba3a9d98f3b53f3fecfc69a5
+Zhengqiao Xia (3):
+  drm/panel-edp: Add support for AUO B140QAN08.H panel
+  drm/panel-edp: Add support for BOE NE140WUM-N6S panel
+  drm/panel-edp: Add support for CSW MNE007QS3-8 panel
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
+ drivers/gpu/drm/panel/panel-edp.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Kind regards,
-Miquèl
+-- 
+2.17.1
 
 
