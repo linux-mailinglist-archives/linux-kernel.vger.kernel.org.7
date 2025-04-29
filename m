@@ -1,134 +1,306 @@
-Return-Path: <linux-kernel+bounces-625068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0071CAA0C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:53:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C6FAA0C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1DF71B6803C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:52:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5763D481E1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B19F2D0261;
-	Tue, 29 Apr 2025 12:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D912D1F75;
+	Tue, 29 Apr 2025 12:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="Dn7mn+UJ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="klSOr//a"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A44A2C17A7;
-	Tue, 29 Apr 2025 12:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745931118; cv=pass; b=VQDvyATm6/Cuebb/jdvw7T+lPSqyG9tSukNKmwF4xpvo8zeU6c5abrE6eNuZoXWSkBoOVFZHQ+ooWJBOmiw3mqawvJPTXy2H6O7uYeWZQ+zhhSzMmErTO68ZYV9MKLGekKJ3miVr+5v3wvovH16gssJ1dsHAYJlKdVYigKItSA4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745931118; c=relaxed/simple;
-	bh=DEQeFsMbhzlHPT/Sx8vc3XKjQ6HtI/zCWH8m7IsAtG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gN+I+mkdVP3aozmgAIt4hw4bW09e8BYipPuzWBJsF6AQhT/6i62S9VllIvgL1NJqxCFdeB91+NnM1wmqymmPPbXxErs6u8nBfTv2g4Q8BNnN3Erk0VBs1wOFotnYC3tndAiKcTsue24c4GJ6QPVaF0Jrwtb44esEf5ltU0VhcMc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=Dn7mn+UJ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1745931096; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LP4S9htb/tdPQTA3dqPD4Eu5tvwNdQS9ERqyw4qzqIOVSFZWqRLPR3P03Uqp20uF0+wyoQMIBoe7NlNfw4gts3e4KQafXgjKYpt/Jb+jVD3vhgmMTRgOUMxxxJGRYiozBNE/zbvwOD7yAPKHApCUHE0FsRMFEHzdUH5ci4SFTI0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745931096; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wAqddgCvCAXmKLXb0X53fyiZ4qXPPUZR54/Xu7bltQs=; 
-	b=DAyh9eHU8Fl/fxMo2EBlE00D71Yb1Wiwc1Yb0lkBwAOQRu5ZFUBq7oLbqmPEKmwqg2qqHLM4j5uejbanXByLdLyN3+hg3/xYbJEfykwpJd+rr75d7OzjoaZYQdaTBDihqjJ5tQfHS+iQuYUnhA90irck6RFMBkSOhTsHgPN+UY4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745931096;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=wAqddgCvCAXmKLXb0X53fyiZ4qXPPUZR54/Xu7bltQs=;
-	b=Dn7mn+UJnXsXb8xFEEs9Tsu9KdhEDs9rWgBgndz7C+uX1fPse/Zq2PDJRV5pytYY
-	UCoZKhbdT4o/doQlSseVlwKcvtREcpR92n8HIxk/ehXiTv5QVgDhyM3X7HK6faheHDQ
-	+0XElXoFKUZsOUWkV6VbmneN1WisJojwYPztEMEY=
-Received: by mx.zohomail.com with SMTPS id 1745931094377930.5836650113462;
-	Tue, 29 Apr 2025 05:51:34 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH] media: verisilicon: Free post processor buffers on error
-Date: Tue, 29 Apr 2025 08:51:32 -0400
-Message-ID: <2782084.mvXUDI8C0e@earth>
-In-Reply-To: <d901822b2710a2d642f1372fbfb53f99f1e60b2e.camel@collabora.com>
-References:
- <20250425192447.227063-1-detlev.casanova@collabora.com>
- <d901822b2710a2d642f1372fbfb53f99f1e60b2e.camel@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40EC2C2ABF;
+	Tue, 29 Apr 2025 12:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745931300; cv=none; b=lJX65i5WY0Z6biLZANAxMYJDSuQkLuyl2f0UPJ1I6yQr/H3HKW80icXDutrnOWDQE3YbBqhh87hDa4Jt953qwc77nfwE/hLXHKOgkCAmR7XrXNFyYhnsrf60reTTIaDP8fbtdX+emg4XDCHh+t1teI2z4MLj/+apJs4fLoj0S3E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745931300; c=relaxed/simple;
+	bh=1SGEnF4/9TakbDkU2bjvjWnbZwqNoZ3b+Nm0Y4ux24E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K3VMGunAUwqvBvj/gNRNwCOhlX8/MtLU7iRmVQfGinOIWR46nwCquaqMEtlh6ZjQTCiQ34/iHzk+JLaQxxrHaEbsf/EwlfYU4Nysj0OfYGO2Q7uH/4k1ME1eqd5hba55nE6euxSWA/YEtQzIfgm95fecf6b370J91G+W0QD+D3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=klSOr//a; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TBEmsK010884;
+	Tue, 29 Apr 2025 14:54:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Bf4Jif3iTwu6xhT/icuxJcCkmXcEX9OzuYCH60IJsfg=; b=klSOr//ak+Jo4+Wc
+	HpAbR5TH3+oTliLKBCO0UFpYd0Cv/lsNabdrgGOJy4EYAkR7mOxtzJuPP3anp+C8
+	N/h98ogWlOeyt5gzJMIe+x/i2oqJZgQIB6ba/SaxfUhSJFL0JRUGc6fb9+XJ9+Eb
+	ElVW4AF6erQiJZHYK3j5EsPY5cB8NtQwfwDrkKTQvrvAmfzcCBbsgCXWO2UVWXJ0
+	UbKkcKKVLPEGIFsJN5dd99Q8+mjeSeSnEg2czpRvzuG4kpWrrtGpdZPLt2LpJUvb
+	91h2WftSmZxP3gU3kgPDiBxFFTBcMtbVfimBmNXaPQRTzWNCrksN2l+4+ZfyYyEz
+	rvRCoA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 469aengsj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 14:54:48 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 28D3A40081;
+	Tue, 29 Apr 2025 14:53:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D61FA7FB54;
+	Tue, 29 Apr 2025 14:51:51 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Apr
+ 2025 14:51:50 +0200
+Received: from localhost (10.252.5.160) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Apr
+ 2025 14:51:50 +0200
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+To: <daniel.lezcano@linaro.org>, <lee@kernel.org>,
+        <alexandre.torgue@foss.st.com>, <tglx@linutronix.de>
+CC: <ukleinek@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <jic23@kernel.org>, <robh@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>, <fabrice.gasnier@foss.st.com>
+Subject: [PATCH v6 6/7] arm64: dts: st: add low-power timer nodes on stm32mp251
+Date: Tue, 29 Apr 2025 14:51:32 +0200
+Message-ID: <20250429125133.1574167-7-fabrice.gasnier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
+References: <20250429125133.1574167-1-fabrice.gasnier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_04,2025-04-24_02,2025-02-21_01
 
-On Monday, 28 April 2025 13:25:59 EDT Nicolas Dufresne wrote:
-> Le vendredi 25 avril 2025 =C3=A0 15:24 -0400, Detlev Casanova a =C3=A9cri=
-t :
-> > When initializing the post processor, it allocates the same number of
->=20
-> What do you think reworking as:
->=20
->   During initialization, the post processor allocates the same number of
->=20
-> > buffers as the buf queue.
-> > As the init function is called in streamon(), if an allocation fails,
-> > streamon will return an error and streamoff() will not be called, keepi=
-ng
-> > all post processor buffers allocated.
-> >=20
-> > To avoid that, all post proc buffers are freed in case of an allocation
-> > error.
-> >=20
-> > Fixes: 26711491a807 ("media: verisilicon: Refactor postprocessor to sto=
-re
-> > more buffers") Signed-off-by: Detlev Casanova
-> > <detlev.casanova@collabora.com>
->=20
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->=20
-> If you are fine with the suggestion, I can make the changes while
-> applying.
+Add low-power timer (LPTimer) support on STM32MP25 SoC.
+The full feature set is implemented in LPTIM1/2/3/4. LPTIM5 supports a
+smaller set of features (no capture/compare) channel. Still, LPTIM5 can
+be used as single PWM, counter, trigger or timer.
 
-Yes, that's goot for me.
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+---
+Changes in V2:
+- Adopt two compatibles: newly introduced "st,stm32mp25-..." compatible,
+  and fallback "st,stm32-...".
+---
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 177 +++++++++++++++++++++++++
+ 1 file changed, 177 insertions(+)
 
-Detlev.
-
-> > ---
-> >  drivers/media/platform/verisilicon/hantro_postproc.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/media/platform/verisilicon/hantro_postproc.c
-> > b/drivers/media/platform/verisilicon/hantro_postproc.c index
-> > c435a393e0cb7..9f559a13d409b 100644
-> > --- a/drivers/media/platform/verisilicon/hantro_postproc.c
-> > +++ b/drivers/media/platform/verisilicon/hantro_postproc.c
-> > @@ -250,8 +250,10 @@ int hantro_postproc_init(struct hantro_ctx *ctx)
-> > =20
-> >  	for (i =3D 0; i < num_buffers; i++) {
-> >  		ret =3D hantro_postproc_alloc(ctx, i);
-> > -		if (ret)
-> > +		if (ret) {
-> > +			hantro_postproc_free(ctx);
-> >  			return ret;
-> > +		}
-> >  	}
-> > =20
-> >  	return 0;
-
-
-
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index f3c6cdfd7008..505176276e72 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -238,6 +238,78 @@ rifsc: bus@42080000 {
+ 			#access-controller-cells = <1>;
+ 			ranges;
+ 
++			lptimer1: timer@40090000 {
++				compatible = "st,stm32mp25-lptimer", "st,stm32-lptimer";
++				reg = <0x40090000 0x400>;
++				interrupts-extended = <&exti1 47 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_LPTIM1>;
++				clock-names = "mux";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				access-controllers = <&rifsc 17>;
++				power-domains = <&RET_PD>;
++				wakeup-source;
++				status = "disabled";
++
++				counter {
++					compatible = "st,stm32mp25-lptimer-counter", "st,stm32-lptimer-counter";
++					status = "disabled";
++				};
++
++				pwm {
++					compatible = "st,stm32mp25-pwm-lp", "st,stm32-pwm-lp";
++					#pwm-cells = <3>;
++					status = "disabled";
++				};
++
++				timer {
++					compatible = "st,stm32mp25-lptimer-timer", "st,stm32-lptimer-timer";
++					status = "disabled";
++				};
++
++				trigger@0 {
++					compatible = "st,stm32mp25-lptimer-trigger", "st,stm32-lptimer-trigger";
++					reg = <0>;
++					status = "disabled";
++				};
++			};
++
++			lptimer2: timer@400a0000 {
++				compatible = "st,stm32mp25-lptimer", "st,stm32-lptimer";
++				reg = <0x400a0000 0x400>;
++				interrupts-extended = <&exti1 48 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_LPTIM2>;
++				clock-names = "mux";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				access-controllers = <&rifsc 18>;
++				power-domains = <&RET_PD>;
++				wakeup-source;
++				status = "disabled";
++
++				counter {
++					compatible = "st,stm32mp25-lptimer-counter", "st,stm32-lptimer-counter";
++					status = "disabled";
++				};
++
++				pwm {
++					compatible = "st,stm32mp25-pwm-lp", "st,stm32-pwm-lp";
++					#pwm-cells = <3>;
++					status = "disabled";
++				};
++
++				timer {
++					compatible = "st,stm32mp25-lptimer-timer", "st,stm32-lptimer-timer";
++					status = "disabled";
++				};
++
++				trigger@1 {
++					compatible = "st,stm32mp25-lptimer-trigger", "st,stm32-lptimer-trigger";
++					reg = <1>;
++					status = "disabled";
++				};
++			};
++
+ 			i2s2: audio-controller@400b0000 {
+ 				compatible = "st,stm32mp25-i2s";
+ 				reg = <0x400b0000 0x400>;
+@@ -799,6 +871,111 @@ i2c8: i2c@46040000 {
+ 				status = "disabled";
+ 			};
+ 
++			lptimer3: timer@46050000 {
++				compatible = "st,stm32mp25-lptimer", "st,stm32-lptimer";
++				reg = <0x46050000 0x400>;
++				interrupts-extended = <&exti2 29 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_LPTIM3>;
++				clock-names = "mux";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				access-controllers = <&rifsc 19>;
++				wakeup-source;
++				status = "disabled";
++
++				counter {
++					compatible = "st,stm32mp25-lptimer-counter", "st,stm32-lptimer-counter";
++					status = "disabled";
++				};
++
++				pwm {
++					compatible = "st,stm32mp25-pwm-lp", "st,stm32-pwm-lp";
++					#pwm-cells = <3>;
++					status = "disabled";
++				};
++
++				timer {
++					compatible = "st,stm32mp25-lptimer-timer", "st,stm32-lptimer-timer";
++					status = "disabled";
++				};
++
++				trigger@2 {
++					compatible = "st,stm32mp25-lptimer-trigger", "st,stm32-lptimer-trigger";
++					reg = <2>;
++					status = "disabled";
++				};
++			};
++
++			lptimer4: timer@46060000 {
++				compatible = "st,stm32mp25-lptimer", "st,stm32-lptimer";
++				reg = <0x46060000 0x400>;
++				interrupts-extended = <&exti2 30 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_LPTIM4>;
++				clock-names = "mux";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				access-controllers = <&rifsc 20>;
++				wakeup-source;
++				status = "disabled";
++
++				counter {
++					compatible = "st,stm32mp25-lptimer-counter", "st,stm32-lptimer-counter";
++					status = "disabled";
++				};
++
++				pwm {
++					compatible = "st,stm32mp25-pwm-lp", "st,stm32-pwm-lp";
++					#pwm-cells = <3>;
++					status = "disabled";
++				};
++
++				timer {
++					compatible = "st,stm32mp25-lptimer-timer", "st,stm32-lptimer-timer";
++					status = "disabled";
++				};
++
++				trigger@3 {
++					compatible = "st,stm32mp25-lptimer-trigger", "st,stm32-lptimer-trigger";
++					reg = <3>;
++					status = "disabled";
++				};
++			};
++
++			lptimer5: timer@46070000 {
++				compatible = "st,stm32mp25-lptimer", "st,stm32-lptimer";
++				reg = <0x46070000 0x400>;
++				interrupts-extended = <&exti2 31 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_KER_LPTIM5>;
++				clock-names = "mux";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				access-controllers = <&rifsc 21>;
++				wakeup-source;
++				status = "disabled";
++
++				counter {
++					compatible = "st,stm32mp25-lptimer-counter", "st,stm32-lptimer-counter";
++					status = "disabled";
++				};
++
++				pwm {
++					compatible = "st,stm32mp25-pwm-lp", "st,stm32-pwm-lp";
++					#pwm-cells = <3>;
++					status = "disabled";
++				};
++
++				timer {
++					compatible = "st,stm32mp25-lptimer-timer", "st,stm32-lptimer-timer";
++					status = "disabled";
++				};
++
++				trigger@4 {
++					compatible = "st,stm32mp25-lptimer-trigger", "st,stm32-lptimer-trigger";
++					reg = <4>;
++					status = "disabled";
++				};
++			};
++
+ 			csi: csi@48020000 {
+ 				compatible = "st,stm32mp25-csi";
+ 				reg = <0x48020000 0x2000>;
+-- 
+2.25.1
 
 
