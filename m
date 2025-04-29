@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-624847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC9AAA087F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:26:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CC4AA0822
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A64D1B6158C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E22842049
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65662BE7D2;
-	Tue, 29 Apr 2025 10:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8F92BE7BB;
+	Tue, 29 Apr 2025 10:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sFhTFzJx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YP5FMcM8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B004E2746A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6548A2949F7;
+	Tue, 29 Apr 2025 10:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745922376; cv=none; b=psOAZ0ORZZM3knkkP6+cJO+JqKvyb36gpxo3i5NQ93Z9mpNzhpVfnaMqHCz2Kw9WbhZbjDkc41/IQLy/DI8mNaWKoP+n8ZkiKlJj6PcqdyKpwdxqvCw9CPSufri5QYhuLgjuXbxwj0SJaRzw+mxtx0kJHr3NEUZtb8LXZrgqhK8=
+	t=1745921330; cv=none; b=XafF1URw24KWRwPmXexVWUUqDelKO0tW57y1jU8vW5VA07tGrhyZ67t3yT6KotKonl2yd2r0lZcVi71J+s9ok1GaV5djC1R1Q2oQ2Mw32D5dH8PNp0dUwsWQzW9GENrz3eGrVeFtIhVJUXiw6CtJs/mMdVuSbFGVFpZYIravN2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745922376; c=relaxed/simple;
-	bh=DECGLCQlKzdICENdT1SAMdHUB8qJpQmLIj6F/5lt5cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aEQsVJU6wT9uavdDt/tv+dp/Y4IE8iLAcEyKiyQX7IW43QvJuwswAFd9qo5wE1MZGNYApfgyuLpYcD0R6WqLxIAimf1hROsU/mGY5G7uycUowUYfk7eiG+n55VlwVjz9DnECvY7IajhvDYN33GROYvGZBETibjBcDvy9egyp9e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sFhTFzJx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T4Ec39007851;
-	Tue, 29 Apr 2025 10:25:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ekglh/dA3wRPB8yYZpbO8TuZXP094A
-	b8hzDsZSCc+RI=; b=sFhTFzJxrIK7JX4TDyJmj3CAI5+FQcMuujEWTNX1svc7V4
-	iMx/EHyGL6BzdOXdQMUyRlwsJ7bnrRD1VDDPBz8FcBdiGgBh5KjuNQQL7czPF9OQ
-	GRPed/g+126gC0mvTYUrK4ymurYmFPcspBqnTeIGDD8PCe2OY3EfmylKH1biFcXx
-	F4xGyakZlbqFlsrHUZZ1FMcIqBvZPTYfLHlkBoKeSH0e28w9OdR6ifFYwvVcqHam
-	DrivzV7B7mQrduD4NZW07rz0t7QVxSlpHs9BEoIf/iDwN1izywT6l7LiAaHTqb6p
-	dWhmNcxFMBIfnv68WaP2Ve6cQ5bCEgm+7XmEW+dQ==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46akn0t26u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 10:25:59 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53TAGsKI024662;
-	Tue, 29 Apr 2025 10:25:58 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 469c1m2h92-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 10:25:58 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53TAPuII38601018
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Apr 2025 10:25:56 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8DEC820D02;
-	Tue, 29 Apr 2025 10:08:32 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 608D420D04;
-	Tue, 29 Apr 2025 10:08:32 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 29 Apr 2025 10:08:32 +0000 (GMT)
-Date: Tue, 29 Apr 2025 12:08:31 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm, swap: fix false warning for large allocation with
- !THP_SWAP
-Message-ID: <20250429100831.8629C3b-hca@linux.ibm.com>
-References: <20250429094803.85518-1-ryncsn@gmail.com>
+	s=arc-20240116; t=1745921330; c=relaxed/simple;
+	bh=0r7/u/RghNb9eJUw5r37qjxwNthSPVY+EKxonqbSJIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tMz+/C1YapTXb5yOXSMp4AWakwBNTDaSgKXQTe0p8M2nHzX8YzsaYF8O1R+Anm6X9jTkC67VFHm6P777O6pB7Laxk4qKJINBV+UXaAWKpl6Ar3gQth7F6OaEgZaIKs7Zok5XdEyPmIR1AYLXU8cMqdFvb6a886ZWUG95cmWD+i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YP5FMcM8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF446C4CEE3;
+	Tue, 29 Apr 2025 10:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745921329;
+	bh=0r7/u/RghNb9eJUw5r37qjxwNthSPVY+EKxonqbSJIA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YP5FMcM8WaU9sCyDg1yg8xDL6okyXuUGf7VBD4GerghsL/DxoUbdreuRFdB9oSQsA
+	 +sQnUmJmbLTnOqpNWttPa1M64wuCcTqMf4rbevJvOHyttpg90QUY9lrnyjXDPnRvzC
+	 xYT0NmA4AIZ9Xj2Zy8i2oT3h9JrIURDS5jBc3V6VkuVuGkfGZh0TYdHkSP/vvKjG08
+	 GbErrLhKqOzNrw39wwY92AYw6X6C9jv67FXF8AsMxBRV48BFTENWMJNkLuHfMAcVGk
+	 sOaV8ZqLIDpK9j3HBs4dccU7Dpgs1DCya+/twsIBL5NBg/2XDrbJqWcDy6dPFbQBDq
+	 El17NM0lDLWAA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu <rcu@vger.kernel.org>
+Subject: [PATCH v2] rcu: Robustify rcu_is_cpu_rrupt_from_idle()
+Date: Tue, 29 Apr 2025 12:08:40 +0200
+Message-ID: <20250429100840.13917-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429094803.85518-1-ryncsn@gmail.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=AeCxH2XG c=1 sm=1 tr=0 ts=6810a937 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=GvQkQWPkAAAA:8 a=aL_wZZtXDkcKPmASj-QA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: liS4cQCsfDwQjkie4Ouy93YR5RAYoAyp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA3NSBTYWx0ZWRfX8cx8t7EGE8DD nP9nHG7Rw+gognLiLCCxhjEDvBjf2N6sWjeOhUc/lhXSMxFEKrBYTW5W5au2G63928wSiofobxM S1oKLkOn9vGOE8nCeM0JVovcEV7U+OVOw2JoUgIw1ICfIcexNalppxUQF1++AV9QTu63/TBc2Vi
- YjWoUG+w+5DW4uLvmpteAHBlWXPPFcHx51Jtur58JQOSzVMdjfu4vcL4ndyOILVSftALz3aqkgp tnLwsUhWoxzbo10k/ainfYse6cRK36x4TQtkw9tkS84Hp1EHpCoBUQjQlJj2xKb1ObXdKiYY9cE CrG8vhEJKCirxVZbwD+x8OFjpIsNDozCP4xNw6eIB7QQNLQFmtpESkZop7rLrQKC9+NPaKf1jq1
- mhV6e8GdB48vzICcyTAY63zKFfNFvGLU2qsmPqvbn9pNuov48fUpzPGdHPL66aLVIfomng0o
-X-Proofpoint-GUID: liS4cQCsfDwQjkie4Ouy93YR5RAYoAyp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_03,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=814
- spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 mlxscore=0 phishscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290075
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 05:48:03PM +0800, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> The !CONFIG_THP_SWAP check existed before just fine because slot
-> cache would reject high order allocation and let the caller split
-> all folios and try again.
-> 
-> But slot cache is gone, so large allocation will directly go
-> to the allocator, and the allocator should just fail silently
-> to inform caller to do the folio split, this is totally fine
-> and expected.
-> 
-> Remove this meaning less warning.
-> 
-> Fixes: 0ff67f990bd4 ("mm, swap: remove swap slot cache")
-> Reported-by: Heiko Carstens <hca@linux.ibm.com>
-> Closes: https://lore.kernel.org/linux-mm/20250428135252.25453B17-hca@linux.ibm.com/
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  mm/swapfile.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
+RCU relies on the context tracking nesting counter in order to determine
+if it is running in extended quiescent state.
 
-Tested-by: Heiko Carstens <hca@linux.ibm.com>
+However the context tracking nesting counter is not completely
+synchronized with the actual context tracking state:
+
+* The nesting counter is set to 1 or incremented further _after_ the
+  actual state is set to RCU watching.
+
+* The nesting counter is set to 0 or decremented further _before_ the
+  actual state is set to RCU not watching.
+
+Therefore it is safe to assume that if ct_nesting() > 0, RCU is
+watching. But if ct_nesting() <= 0, RCU is not watching except for tiny
+windows.
+
+This hasn't been a problem so far because rcu_is_cpu_rrupt_from_idle()
+has only been called from interrupts. However the code is confusing
+and abuses the role of the context tracking nesting counter while there
+are more accurate indicators available.
+
+Clarify and robustify accordingly.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/rcu/tree.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 90d0214c05c7..cbcd579c5630 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -377,7 +377,7 @@ EXPORT_SYMBOL_GPL(rcu_momentary_eqs);
+  */
+ static int rcu_is_cpu_rrupt_from_idle(void)
+ {
+-	long nesting;
++	long nmi_nesting = ct_nmi_nesting();
+ 
+ 	/*
+ 	 * Usually called from the tick; but also used from smp_function_call()
+@@ -389,21 +389,28 @@ static int rcu_is_cpu_rrupt_from_idle(void)
+ 	/* Check for counter underflows */
+ 	RCU_LOCKDEP_WARN(ct_nesting() < 0,
+ 			 "RCU nesting counter underflow!");
+-	RCU_LOCKDEP_WARN(ct_nmi_nesting() <= 0,
+-			 "RCU nmi_nesting counter underflow/zero!");
+ 
+-	/* Are we at first interrupt nesting level? */
+-	nesting = ct_nmi_nesting();
+-	if (nesting > 1)
++	/* Non-idle interrupt or nested idle interrupt */
++	if (nmi_nesting > 1)
+ 		return false;
+ 
+ 	/*
+-	 * If we're not in an interrupt, we must be in the idle task!
++	 * Non nested idle interrupt (interrupting section where RCU
++	 * wasn't watching).
+ 	 */
+-	WARN_ON_ONCE(!nesting && !is_idle_task(current));
++	if (nmi_nesting == 1)
++		return true;
+ 
+-	/* Does CPU appear to be idle from an RCU standpoint? */
+-	return ct_nesting() == 0;
++	/* Not in an interrupt */
++	if (!nmi_nesting) {
++		RCU_LOCKDEP_WARN(!in_task() || !is_idle_task(current),
++				 "RCU nmi_nesting counter not in idle task!");
++		return !rcu_is_watching_curr_cpu();
++	}
++
++	RCU_LOCKDEP_WARN(1, "RCU nmi_nesting counter underflow/zero!");
++
++	return false;
+ }
+ 
+ #define DEFAULT_RCU_BLIMIT (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) ? 1000 : 10)
+-- 
+2.48.1
+
 
