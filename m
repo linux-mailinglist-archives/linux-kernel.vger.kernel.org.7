@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-624606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54AFAA055D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F26AAA0563
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E3D483FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0663BFAA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D3227A934;
-	Tue, 29 Apr 2025 08:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F220027C844;
+	Tue, 29 Apr 2025 08:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfNywPqL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/2odkZ8"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D60827604B;
-	Tue, 29 Apr 2025 08:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ED7279780;
+	Tue, 29 Apr 2025 08:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745914700; cv=none; b=aG6FPqK5wTLbejNWUAcIoRed1XspQPPQwvGw3p8AQqVVpBiCn2Akl2a+BALNLu07S9peL22LjQ/pn15TjS0gKJX8jV7YIaX3JiOFHNfClwX4Xiaxm3ZwibItKZNp+2x7eeXHgLu/agvHLvkGKzP+jSd9k1iLai7T2l9oFnVgt9s=
+	t=1745914744; cv=none; b=W/KgpcXmmY+fySySZzcW3rC0042kFGYL3YQl31n2Ws7FPrjWDj/NSKA87nNDdsn72oXLnjYP0Z7wiIxuq3rhu8vq9VLgtCl2K/AewvL8Tys3essdWp9x+DCGSK59ksLCEIh1sU8FKr7jSL3H5hhsT1Yy7O4iI/DUY5uRFhCaHzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745914700; c=relaxed/simple;
-	bh=UU272B4ISUmQPUHG+vKGbR6DIbnnLc12LpxeY58WgzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RHHw8nu+7xmTG2T0hjySuYefuaP8u7ofowdEMz7nuK/0Q6JY9sqWTkeK8Y9pSi0BUD9quIbfCx3lyuJ2zk/0F8jz5Sl+lKCayDBZV2nsfduaqfBLcvqrEKozhdCZjJmcTvcfzid9u0+2Z/lAZ8ievDT8zsNnLrdwCmg9I0AH1ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfNywPqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1FDC4CEED;
-	Tue, 29 Apr 2025 08:18:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745914699;
-	bh=UU272B4ISUmQPUHG+vKGbR6DIbnnLc12LpxeY58WgzA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HfNywPqL/EmOeMd0nv9Lj+ENZGdB1GdlRBerMYfwMOMK2grKuM7xmrJwKEdr3Eppk
-	 HWC2Z046bBueEqBYkaYPharFVnxl8+pqGPtI9ZVREO2F64m3mBG/UOZwZiCCYKy7B/
-	 U79xj16QhiqsUbouS5EkUwtfMH4YkCNqtpw3J3VpFYLPDhi/sa0bJ4Mwp6ORPGJ6OR
-	 lQZGFOkgsXOr+Vo2V4qgkaMmLFIBhx8sz9Wn7Ex4rkayKrqIhJFvp8ZbxIYpssG99n
-	 UemJ2gXopw6O6J0K85E2RgnQJmXNFiF9xwDTZiDmWsnCIDwp11Ti44yVPurnJDoJUt
-	 /zuuGaStqq7Xg==
-Message-ID: <84fd01d9-d320-4296-9c42-0fb5238a8505@kernel.org>
-Date: Tue, 29 Apr 2025 10:18:16 +0200
+	s=arc-20240116; t=1745914744; c=relaxed/simple;
+	bh=zdQtr5BpDPtn4WyFu7EVp2u6hZD6bKnsxFgAh2z2mkY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DxKz531ZIGzL2r4cwuneyU1h0PPZIjt83CHEAfI2Zr+2VX5dODn3ybDUnNSypAiI8gvLxZLhjsQer3MLIABMEXKMf9T/M9ADNGiLRlS3zOOuYx5lxVWbdx+uxmu0QoLqs26zYz+1fofBU2QURGtURa83gRfDeCbwr6NcBpS7Fxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/2odkZ8; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so47630365e9.1;
+        Tue, 29 Apr 2025 01:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745914741; x=1746519541; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=thr7s8KgPtJ22/lvJstaJ+JSkl/4Ybu6j+EVbeRWoxo=;
+        b=X/2odkZ8fQ/xa+dGHfc8L4pCEkTpiktXzP6LCPI3B4ystUvP9Vc/5GsIwNKHlLgbAS
+         D58myk4ND7G3D5c8DnUOBzXqzUJWyQCFjoxOlvL3/x9NDvZncdKoTy9WiZ3TE4OCyEvE
+         u7kib0/tsVg10W2P9eWC0y4YtQ1rDRpEeP2iimEirF0foiLBVL3EEx4HoHQho3RomSaT
+         qA04yLVEbs9RClep384NkuAlWew6QF7bvf6ir8+W/UuqT62U/q6S1reqGJX9bWBKl5kn
+         o5nCwfPApUdGpiuU/mth016flcNOfRemFApcvF9XAXb1KrbeTIb5v8oV4rwqm0I9vhgr
+         9rJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745914741; x=1746519541;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=thr7s8KgPtJ22/lvJstaJ+JSkl/4Ybu6j+EVbeRWoxo=;
+        b=OqtedupjDq/qLSJLY7P+KhKT9+hIwjBVpMJek9uRF9guQ0grJ2h4wZ7YBnf7ynNmHV
+         DJVigfrQf2raynay5HTJ4GxVkP5nbo3p+1bxT649gt5DJojhMZR5jwC0wvtzYu9ZTOpk
+         df88VzMS01pcFkBOiaiCt0Yt3WbtOZvDn8FfGnBN3AwvGltbjMJQD55UUzQzJvHPna+k
+         KeTCCOOtNk385iWuHYBpjgNRXE+LTPPWiAyKqG/oUa6nbz17f/bwzv5ec3r52fyvkZQs
+         w1OBw5tJDepzkp2kp5NPbYEHE7rm4/otXcmcGWPMVfgAIAvjABcVdkWMnWJV9ibm/a1s
+         IdwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Nt+g6HxekqPbxJhqI6GmDYJ3vGsMhujT0dozXULd8ezkBCbfg9ZGTy/rPGTRU8FIu92ZzZc5ItTK@vger.kernel.org, AJvYcCW3iSP4TobDL2kAZTLuwIWemZe3kx0gLtAXyEJNDP7lZIJK6BPP6AnP89MIZ1Thi+/fJBzfQscJM70H@vger.kernel.org, AJvYcCWgQt7Cl11SyawvRSYWnyZC4qMfVgyUPHIsuAdjWFnDk4ZOubUUwFY1GC8mv2bNF4lBulzGueE6bsL39Odf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQiUUbZiMu3Iliy8/DKnwKRddEMqSGNgxZEPe6KFzghS/6bs69
+	yJF6Lp/SKH1VoXT+PAVfwA97rxPKapb+pxshKO0euMI8+gj/+5sh
+X-Gm-Gg: ASbGncsg5WC9DUmYU341imDtNTTWKaOYgrYaPyfVmngFZDN6ujstgLS7KCPyIAX5sz7
+	ORoEtbPM0gAIm3Eve4G3w+7VbBrPW0y62OrWgqeq65rZSb5zVBmIj4WP/QLE6K5JXTLhaH+tF2x
+	U/7PWDBU1SwyO8ng+3UNrdhUQAvHE9Xh6EcZaEmb05jIVYnhgu13CuZahhXCiLWrdLmSH34NKaz
+	jiK9O24PwqlFnkOcRUU4xHPhJUylFV2plp2rLfEAvl3d4vYCmLAINtzM9t7dRB81Be2d1yPAx2a
+	LVL6JvW/0q0xvqI21bENKqub7v2orrqVuLJR3DOhv14ioMagpv3OuYDepELgy7ktkz2VcJw/x5D
+	PA9n9j6cMiGxB
+X-Google-Smtp-Source: AGHT+IG9xrL2a3oUvPs5IPfumvNNsNytaMGFbF33fTsC07NjkBLJzwQI4qV/tm6k4I2C3MF3ub89aA==
+X-Received: by 2002:a7b:cb88:0:b0:43b:baf7:76e4 with SMTP id 5b1f17b1804b1-441acaa8d6amr14442345e9.1.1745914740585;
+        Tue, 29 Apr 2025 01:19:00 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2e00e3sm183004705e9.34.2025.04.29.01.18.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 01:19:00 -0700 (PDT)
+Message-ID: <dc2a7cd3bff229dc70255ed1d2def98739754a4c.camel@gmail.com>
+Subject: Re: [PATCH v3 04/11] iio: backend: add support for number of lanes
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 29 Apr 2025 09:19:04 +0100
+In-Reply-To: <20250425112538.59792-5-antoniu.miclaus@analog.com>
+References: <20250425112538.59792-1-antoniu.miclaus@analog.com>
+	 <20250425112538.59792-5-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: sound/soc/qcom/sdw.c:93: warning: cannot understand function
- prototype: 'ret = sdw_enable_stream(sruntime); '
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>
-References: <202504262154.sBmNTrcB-lkp@intel.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <202504262154.sBmNTrcB-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 26/04/2025 15:32, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   02ddfb981de88a2c15621115dd7be2431252c568
-> commit: db7e59e6a39a4d3d54ca8197c796557e6d480b0d ASoC: qcom: sc7280: Fix missing Soundwire runtime stream alloc
-> date:   6 months ago
-> config: sh-randconfig-002-20250426 (https://download.01.org/0day-ci/archive/20250426/202504262154.sBmNTrcB-lkp@intel.com/config)
-> compiler: sh4-linux-gcc (GCC) 12.4.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250426/202504262154.sBmNTrcB-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202504262154.sBmNTrcB-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->>> sound/soc/qcom/sdw.c:93: warning: cannot understand function prototype: 'ret = sdw_enable_stream(sruntime); '
+On Fri, 2025-04-25 at 14:25 +0300, Antoniu Miclaus wrote:
+> Add iio backend support for number of lanes to be enabled.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
 
-This looks like compiler issue. I check the config and SOUNDWIRE is
-selected thus sdw_enable_stream() is reachable. I also cannot reproduce
-it sh4-linux-gnu-gcc v14.2.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Best regards,
-Krzysztof
+> no changes in v3.
+> =C2=A0drivers/iio/industrialio-backend.c | 17 +++++++++++++++++
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 3 +++
+> =C2=A02 files changed, 20 insertions(+)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index f7c8167a248d..1063935cd808 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -833,6 +833,23 @@ int iio_backend_sync_status_get(struct iio_backend *=
+back,
+> bool *sync_en)
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_sync_status_get, "IIO_BACKEND");
+> =C2=A0
+> +/**
+> + * iio_backend_num_lanes_set - Number of lanes enabled.
+> + * @back: Backend device
+> + * @num_lanes: Number of lanes.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_num_lanes_set(struct iio_backend *back, unsigned int
+> num_lanes)
+> +{
+> +	if (!num_lanes)
+> +		return -EINVAL;
+> +
+> +	return iio_backend_op_call(back, num_lanes_set, num_lanes);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_num_lanes_set, "IIO_BACKEND");
+> +
+> =C2=A0/**
+> =C2=A0 * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate)=
+ mode
+> =C2=A0 * @back: Backend device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index e93d1a98e066..c8bcfe96c542 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -112,6 +112,7 @@ enum iio_backend_filter_type {
+> =C2=A0 * @data_alignment_enable: Enable sync process.
+> =C2=A0 * @data_alignment_disable: Disable sync process.
+> =C2=A0 * @sync_status_get: Get the syncronization status (enabled/disable=
+d).
+> + * @num_lanes_set: Set the number of lanes enabled.
+> =C2=A0 * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
+> =C2=A0 * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
+> =C2=A0 * @data_stream_enable: Enable data stream.
+> @@ -167,6 +168,7 @@ struct iio_backend_ops {
+> =C2=A0	int (*data_alignment_enable)(struct iio_backend *back);
+> =C2=A0	int (*data_alignment_disable)(struct iio_backend *back);
+> =C2=A0	int (*sync_status_get)(struct iio_backend *back, bool *sync_en);
+> +	int (*num_lanes_set)(struct iio_backend *back, unsigned int
+> num_lanes);
+> =C2=A0	int (*ddr_enable)(struct iio_backend *back);
+> =C2=A0	int (*ddr_disable)(struct iio_backend *back);
+> =C2=A0	int (*data_stream_enable)(struct iio_backend *back);
+> @@ -212,6 +214,7 @@ int iio_backend_filter_type_set(struct iio_backend *b=
+ack,
+> =C2=A0int iio_backend_data_alignment_enable(struct iio_backend *back);
+> =C2=A0int iio_backend_data_alignment_disable(struct iio_backend *back);
+> =C2=A0int iio_backend_sync_status_get(struct iio_backend *back, bool *syn=
+c_en);
+> +int iio_backend_num_lanes_set(struct iio_backend *back, unsigned int
+> num_lanes);
+> =C2=A0int iio_backend_ddr_enable(struct iio_backend *back);
+> =C2=A0int iio_backend_ddr_disable(struct iio_backend *back);
+> =C2=A0int iio_backend_data_stream_enable(struct iio_backend *back);
 
