@@ -1,182 +1,129 @@
-Return-Path: <linux-kernel+bounces-625753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0192AA1C37
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:31:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9430DAA1C6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5887D1A88726
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8B417BDF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70E8266572;
-	Tue, 29 Apr 2025 20:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfWfKxXQ"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF0A25FA07;
+	Tue, 29 Apr 2025 20:48:05 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE038155333;
-	Tue, 29 Apr 2025 20:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6C253B5F;
+	Tue, 29 Apr 2025 20:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745958666; cv=none; b=eMHprqtHDoaY8tMsx3492l0kOCT/CQIlD7MCUICdD51g5ijKC/CdPKWYbxoKyZt7mHy5gO593zuEPj9+F8JzDs8iE4xQXDqYZcMR9f7byIXS4kIH992+B8b8HBvSC/F/PM5pmDrL63NPNdOfzSTdYhtfht/H9E9g0oZidFiV8KI=
+	t=1745959685; cv=none; b=mITSBkKLZ/nVLZ/Xc0BiQAHQDxIdb/CnXVy4sVf6+oEJVfdMbNKU6jajOlIco/M12r6NaU0eKaCM1YEZl3KHBbP+QjZvgxuLvU4sW/DkI86v7PFUsMO54YK3R6II7SRK3wgrmv9QLxqXc66EjsRnh0yiXTIxaAuYoXrmd47cLK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745958666; c=relaxed/simple;
-	bh=3NAiBmHtTUvBukAq3tzhCK3XveFMPNrqWEs6lnHu918=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqVoOXkCQRSk09upJ/vW2aHt9o4AqMd69wl1yWLThHyQACi2v+ZFoR7uZWeH83CXZedo4LWuHYEHRCidSpk4iuCFoUj4pIc5LO9QJvfSCVb0jiAg7NmlVOMIiM8eU7dO/hI7rw6RRAd7mJNYGgtMCHcL9DKWAPkThWLDI0RJfAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfWfKxXQ; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c08f9d0ef3so409290985a.2;
-        Tue, 29 Apr 2025 13:31:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745958663; x=1746563463; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8IrVLu+xbZHw86gSzaTwHKCDaUis8qZ1FxmdJF1+Lbs=;
-        b=cfWfKxXQK+p8C6WLNaYwR75OonY5lOwpoW3ftOHQf5kazK7zBg8q4o63/bO6BBd64w
-         rn/LV2HwCLsl1p0yDPQyui+EBOmW6i8sFXC/A1RfNewoiL2Sbi7OdZxphfIBIdrEnf7X
-         9DOYF0rNF4GPg684LMNKXxou8P3GrvO6DYf5rolvdZ+iNUcRE7Jr3Z6DBVJ3hhQ0dIYJ
-         DgdvL+k/6X95k1IfC4XRyvUgWWMZT/VWrTaJfpSRqSCctCJblepzVx7OH9hLzStnd9bE
-         lmsKvegEJu0mwFmF7wFCywK9/rUZKPuHZ/vouMw99smEWY/rTMETKgkPhvoCkjsIcJZN
-         vG6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745958663; x=1746563463;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8IrVLu+xbZHw86gSzaTwHKCDaUis8qZ1FxmdJF1+Lbs=;
-        b=T4+0DMAvn9X+cjbdibc3HyvDmao58XeXOTYY8Xs4SxzCNk1xg/RN2l+CIxfPfaWCUb
-         AS104p9Qie8mz3SDOwkRzWQhjTro4x7b/JHR4ch9PScXtoIQPX9+PZ76kUeGDY/Ba8Yb
-         ZJbPdKCn48+PFPjD12r/8eHm1nTkg0YT3q8hifw8Xrx2NEhhxvB+kuDvFBjXya+qoTv4
-         sfgT2UphQDN77pq6Nu2tO7ns5vIaS//3/UHaRMGSkfIJQp12ASHDOV2J4vfqLDxBaDc1
-         /WY2jQnx0t9rlzxFhlEB+XgxZ3q2/2cCW8kFBPph6YcmO88udYn42R0AfJoiFSA6mJRD
-         AAFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPdaJ3gEkDX/mzf7mJ/1OtleaUEvIEKKYqRGh2RLx8NW9BSZO0+dM3gtWcXe9K6DLKpC+u4MzZq6kg2Vg=@vger.kernel.org, AJvYcCVe7GJTdJuOscc4sYmSBq7HFB7XF/Rpoaeh5fj38fuXtOI+5qEIouifd3eG39f6sX9xaCauhC3VHLlh9jLUuBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4aYNmmuzyAavF8QVvJZ43LM+f8ueMHEyznRzLgPJoEutaGD+I
-	LXpaeTXpr6fb4WYxEMIv1QiA6x3qKFASV/Oxhwsjfxs1a6sMnd9d
-X-Gm-Gg: ASbGnctCI0FARMORKW29TdH7oC10i7r30dSFr+DkryfHvMqyO8NpZ1oz2RHrkYFGuYy
-	YUP+mbZoaMsyzX1hVcTOLYZ8q2ZHD9k4EDwpw01KixU9s+JwgEw3z1mhur51NpfEXPYru64mVZZ
-	ZSyJihgKt41A0fiXUvXnDDcW9c0e5d7PPbPTgwVMGjlH+QwzkaxAAYe7RMvTto1rrIlPY6d/ayo
-	2aVIri9kOpJogJwpNemuz6pcSQtWmAEggDGy1W3bFOAeoa6Vb31x5tGir7WBWH/9CaF9Qma0Lpi
-	RudYddPjM4vIGfqzMJsvjURPy7OO3MlENs/AGgE0blabQMEalcVFI0/NLmUAtKKCA0yGXCDgXVo
-	qi78vdfzOZslziZNuT6CXoSZfcc1QrEM=
-X-Google-Smtp-Source: AGHT+IEcOIrfRiXTPMTDAZWmyvM0oVtrhQUVxPQtYuNRlmJlRbTPqMTxAo3h4mtkWiO8Ui2T9KmTiQ==
-X-Received: by 2002:a05:620a:2951:b0:7c5:9b12:f53c with SMTP id af79cd13be357-7cac7408a09mr88102985a.5.1745958663599;
-        Tue, 29 Apr 2025 13:31:03 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958cbd21dsm775902185a.42.2025.04.29.13.31.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 13:31:03 -0700 (PDT)
-Message-ID: <68113707.050a0220.17967c.36c7@mx.google.com>
-X-Google-Original-Message-ID: <aBE3BGLH8fQxzdVP@winterfell.>
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 9362D1200068;
-	Tue, 29 Apr 2025 16:31:02 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 29 Apr 2025 16:31:02 -0400
-X-ME-Sender: <xms:BjcRaGMRRvXPDNcwoOSYjkqhqAeRm01t8yR1zAR5e2N9RwqTdQZVkA>
-    <xme:BjcRaE91rosMSAvrkcU1ZrzhDW7Ivs5geQ38NY9JpwdymJSq4ahr1OuHthI6fwXOK
-    pUxwgZGRhlh4b5DfA>
-X-ME-Received: <xmr:BjcRaNRE4dR4ciaQFCGOXVf8yOOblDuLGTd1qgycHvRJ4_0ghyqeHwj6-3A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieegjeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
-    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudehpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehjhhhusggsrghrugesnhhvihguihgrrd
-    gtohhmpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghp
-    thhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlih
-    hnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhi
-    vhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfh
-    houhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhn
-    vghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpd
-    hrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:BjcRaGsyFJjzTs_PPgw-L5y0-vh9LrlUp4d1vfKFfwtWcyGEvGtJ7g>
-    <xmx:BjcRaOddzWY3owJSYqOkXK8w7NhJ1xw0qWdO85hsBULW5BOTqrZmlQ>
-    <xmx:BjcRaK0hqavGQ-WxVaP8oNu0OLV2WcqAxCLhorUqsRr94d5fqK_rLg>
-    <xmx:BjcRaC9WXo_Z221RcA1ZN0TxNnCoWljy2rsNAvOGO_Sa6Cy6fh2yeg>
-    <xmx:BjcRaN-4nQq7N_2vsNTtXg-6oZs6DdludsQT7hBIuLm-qJlA07-1Jexu>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Apr 2025 16:31:01 -0400 (EDT)
-Date: Tue, 29 Apr 2025 13:31:00 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] uaccess: rust: add strncpy_from_user
-References: <20250429-strncpy-from-user-v2-0-7e6facac0bf0@google.com>
- <20250429-strncpy-from-user-v2-1-7e6facac0bf0@google.com>
- <68110cce.c80a0220.3b03fb.43d0@mx.google.com>
- <0ac7cfba-6b69-439e-a9ee-1175ca8d0913@nvidia.com>
+	s=arc-20240116; t=1745959685; c=relaxed/simple;
+	bh=3QG6bD1fHB8Qpdf5IMGGkVLMPiekodAvyL68jjwpSkQ=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=nRsEBPQPhV/9LpN2cFAVGFjc2eNQ0otABugvrvgXtFB/zaiz3Bl2pucarzlF8fqyAUYpALB6REh7gX70UoahB69yvzmvj6vjxFI/3Wp/Jd7N7Nu6TFQq9UP5F2KT9dd/N2OmAkpLR1cJczd+XSowrEjQGMoRDDk1qEBoMEDOKsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.130.43) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 29 Apr
+ 2025 23:32:37 +0300
+Message-ID: <0e61b364-8f26-4f98-9f10-9b9800b1cd41@omp.ru>
+Date: Tue, 29 Apr 2025 23:32:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ac7cfba-6b69-439e-a9ee-1175ca8d0913@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<linux-usb@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Fedor
+ Pchelkin <pchelkin@ispras.ru>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH] usb: gadget: composite: fix possible kernel oops in
+ composite_setup()
+Organization: Open Mobile Platform
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 04/29/2025 20:17:26
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 193027 [Apr 29 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 56 0.3.56
+ 52db7f275cc9b6820389ba9ab2ac225370e1c244
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.130.43
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 04/29/2025 20:19:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 4/29/2025 5:44:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Tue, Apr 29, 2025 at 01:28:09PM -0700, John Hubbard wrote:
-> On 4/29/25 10:30 AM, Boqun Feng wrote:
-> > On Tue, Apr 29, 2025 at 09:02:22AM +0000, Alice Ryhl wrote:
-> ...
-> >> +#[inline]
-> >> +pub fn raw_strncpy_from_user(ptr: UserPtr, buf: &mut [MaybeUninit<u8>]) -> Result<usize> {
-> >> +    // CAST: Slice lengths are guaranteed to be `<= isize::MAX`.
-> >> +    let len = buf.len() as isize;
-> >> +
-> >> +    // SAFETY: `buf` is valid for writing `buf.len()` bytes.
-> >> +    let res = unsafe {
-> >> +        bindings::strncpy_from_user(buf.as_mut_ptr().cast::<c_char>(), ptr as *const c_char, len)
-> >> +    };
-> >> +
-> >> +    if res < 0 {
-> >> +        return Err(Error::from_errno(res as i32));
-> >> +    }
-> >> +
-> > 
-> > Nit: this can be a
-> > 
-> > 	let copy_len = kernel::error::to_result(res)?;
-> > 
-> 
-> Doesn't that discard the length, though, by returning Ok(()) ?
-> 
+list_first_entry() should never return NULL -- which makes Svace complain
+about the next *if* statement's condition being always false. What's worse,
+list_first_entry() won't work correctly when the list is empty -- in that
+case, passing config->descriptors[0] to memcpy() further below will cause
+dereferencing of a garbage pointer read from cdev->qw_sign[] and so (most
+probably) a kernel oops. Use list_first_entry_or_null() that returns NULL
+if the list is empty; fix the strange indentation below, while at it...
 
-Oh, you're right, so probably we need a to_result_i32():
+TTBOMK, this situation shouldn't happen with the current gadget drivers --
+however there's no guarantee that usb_add_config[_only]() is called by any
+gadget driver; and anyway, Svace's complaints would be silenced...
 
-    pub fn to_result_i32() -> Result<i32>
+Found by Linux Verification Center (linuxtesting.org) with the Svace static
+analysis tool.
 
-, so we don't have to open-code "if res < 0" every time.
+Fixes: 53e6242db8d6 ("usb: gadget: composite: add USB_DT_OTG request handling")
+Suggested-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-Regards,
-Boqun
+---
+This patch is against the usb-linus branch of Greg KH's usb.git repo.
 
-> 
-> thanks,
-> -- 
-> John Hubbard
-> 
+ drivers/usb/gadget/composite.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: usb/drivers/usb/gadget/composite.c
+===================================================================
+--- usb.orig/drivers/usb/gadget/composite.c
++++ usb/drivers/usb/gadget/composite.c
+@@ -1887,8 +1887,8 @@ composite_setup(struct usb_gadget *gadge
+ 				if (cdev->config)
+ 					config = cdev->config;
+ 				else
+-					config = list_first_entry(
+-							&cdev->configs,
++					config = list_first_entry_or_null(
++						&cdev->configs,
+ 						struct usb_configuration, list);
+ 				if (!config)
+ 					goto done;
 
