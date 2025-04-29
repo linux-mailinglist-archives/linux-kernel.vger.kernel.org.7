@@ -1,62 +1,48 @@
-Return-Path: <linux-kernel+bounces-625109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7FBAA0D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:10:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47D2AA0C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1D0188DFFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38CA91BA0265
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51672D0279;
-	Tue, 29 Apr 2025 13:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21262D3A9E;
+	Tue, 29 Apr 2025 12:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="YjFoloqp"
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="zfSbCkQD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC653B2A0;
-	Tue, 29 Apr 2025 13:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827152D029A;
+	Tue, 29 Apr 2025 12:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745931905; cv=none; b=hLP1eYHjJnvv6ibE0hml8qUXzwZTNJ2bx5nLUiTltJkhT8ajFFPn2GNOgevO6qEFvO576afzmjnENvnUIW5rF4uvV5RLyTnHbJykVKltHLY+LaSY2QY+jeochFHKZkFdka8bndrqXF5D+4VlVY4FagvprfDjTwnKyLHkS/MeIsc=
+	t=1745931557; cv=none; b=QSbDMfSqMFfN68DKfwGv0uVTgMxaCtLGSFoSSPi0VQw9xLYPgk+xtD20Xnbicr/lsFomiBl48BgySG4nRit04ZLNisFzWtpDG/AdCJfyoyw54HcZMVhiwyE12B8BbU6Jv6NxAf+6+BIkdLIbttgGs30E8RltCsQGgP9Gx/txhDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745931905; c=relaxed/simple;
-	bh=2oCW7m9ifAETTD8BGa4ZwZTAQDr4NgniCQNg5GmjRAw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DTO7atwnFl63Nrno0xHjx7mVTAuecGrXrvipfBrg36ycMN4Q6ME7uEDBgN+uW6MIgACeojoyHA2/xXCgmM/b+mYOwY+XuMjk0WxOJrUniEKo+KG5gt9X+FSDioe/nXE4iogqnI6WHa2jl4zT82sRpHyipifkXcxWQLi1umbpMuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=YjFoloqp; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1745931564; bh=2oCW7m9ifAETTD8BGa4ZwZTAQDr4NgniCQNg5GmjRAw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=YjFoloqpivBQWbE2WbnVfmpW9INRZv5pF97PSlPvPpjYmE5QnLma127gievqZpwLn
-	 awLAmpdVAlI9GiNBwWETkl2DXJgX4SvT7RRiDrXZk+iHRj6wOaYXbcG3GDYhj3xn/F
-	 hxDj6DBJ+so86j1avhozwnD2lEFWKcIDlSvnawCE=
-Received: from [212.42.244.71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.52.1)
-	(envelope-from <n.schier@avm.de>)
-	id 6810cd2c-0395-7f0000032729-7f000001d2ce-1
-	for <multiple-recipients>; Tue, 29 Apr 2025 14:59:24 +0200
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Tue, 29 Apr 2025 14:59:24 +0200 (CEST)
-Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
-	by mail-auth.avm.de (Postfix) with ESMTPA id 3397880838;
-	Tue, 29 Apr 2025 14:59:25 +0200 (CEST)
-Received: from l-nschier-z2.ads.avm.de (unknown [IPv6:fde4:4c1b:acd5:7792::1])
-	by buildd.core.avm.de (Postfix) with ESMTP id 1038F181BA4;
-	Tue, 29 Apr 2025 14:59:24 +0200 (CEST)
-Received: from localhost ([::1] helo=l-nschier-z2.ads.avm.de)
-	by l-nschier-z2.ads.avm.de with esmtp (Exim 4.98.2)
-	(envelope-from <n.schier@avm.de>)
-	id 1u9kYh-000000089kf-3Z1r;
-	Tue, 29 Apr 2025 14:59:23 +0200
-From: Nicolas Schier <n.schier@avm.de>
+	s=arc-20240116; t=1745931557; c=relaxed/simple;
+	bh=KqwmKaB6GKLqmk1IDrdd2LBBIit07TUTil2D5DQEQVI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=V4oAQI8/RB112qbvuuoQ3A/3tufKGXdPtbbLcHFzbi0rwDMhJl1pTcZ7I2bOY/hL0WHi+9BRhHm2kUyTSYS+vTPV1AR71mKziFHHccLT0vhzVvepYzks2W88iclF1dNDiIVSOVRU/UNGfkxbt559nAvFMuqQquBQBHZv38sww+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=zfSbCkQD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6A95C4CEFA;
+	Tue, 29 Apr 2025 12:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1745931556; bh=KqwmKaB6GKLqmk1IDrdd2LBBIit07TUTil2D5DQEQVI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=zfSbCkQDRcCYWLTrAwEhYaRjSBSyhPO4R+tVKpqS/zZSJy8YVhPoEyelYvExXWdH+
+	 AqmWkcBjA+Son8uu+NIfsqcYUYJPyJEcUECN3IhRI5uk1e4bZoHfvlzU6rPNyeS8+E
+	 AZS2CYA2r14Nzfpy3f8BYv8ugIz6bUu0n0naZrsQ=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FC5C3ABB0;
+	Tue, 29 Apr 2025 12:59:16 +0000 (UTC)
+From: Richard Leitner <richard.leitner@linux.dev>
 Date: Tue, 29 Apr 2025 14:59:13 +0200
-Subject: [PATCH] randstruct: Rebuild completely if randstruct.seed changes
+Subject: [PATCH v3 8/9] media: i2c: ov9282: add strobe_duration v4l2
+ control
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,99 +50,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-rebuild-on-randstruct-seed-changes-v1-1-16a74fe65538@avm.de>
-X-B4-Tracking: v=1; b=H4sIACHNEGgC/yWNwQqDQAwFf0VybkBXrdhfKT247rMGZC2JFkH8d
- xc9zmFmdjKowOiV7aT4i8kcExSPjPqxi1+whMTkclfnlWtZ4VeZAs+RtYvBFl37hQ0IfAvGT1/
- VKF0z+LKgFPopBtmuyftzHCfjBAZUdAAAAA==
-X-Change-ID: 20250429-rebuild-on-randstruct-seed-changes-6b45e327fb31
-To: Kees Cook <kees@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, linux-hardening@vger.kernel.org, 
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Nicolas Schier <nicolas.schier@linux.dev>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250429-ov9282-flash-strobe-v3-8-2105ce179952@linux.dev>
+References: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
+In-Reply-To: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ Richard Leitner <richard.leitner@linux.dev>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2055; i=n.schier@avm.de;
- h=from:subject:message-id; bh=2oCW7m9ifAETTD8BGa4ZwZTAQDr4NgniCQNg5GmjRAw=;
- b=owEBbQKS/ZANAwAIAYjGvJyImm24AcsmYgBoEM0r7k1GoafcbnAfvnDJSYJVnnD7bEOXWjP81
- 0bR68QzE3aJAjMEAAEIAB0WIQQO/4WJ63TpgecLpGmIxryciJptuAUCaBDNKwAKCRCIxryciJpt
- uIRGEACOJz1v3io+I/0Iq/QaOAt9e5NEWGXdxwDGtLA7Y2x68gbBJ/vP8LbsdBaWWsxB/UFbrQY
- vvKHTmvRJAS3/giVw19jr/D/Owa5/B6r3AtW4mFjot52X021vK4TjKgQGpeW6c3qiSJGaMx8K4J
- X8eeq1HaBiXV8TEBW/eTOL4fX/OtkdP0T9wNRkccBc+u9eVFX0PUSGt/6i/CrvbV76FGBDE76rI
- SsIB/gWyB13ao6UrnTjnubpLsff+3B5kOV57e6kpDNmv0tqDsWa8X25IaDJrB8s3rGHo0AFhXWF
- trhjeBANONIXzGZlzbpR6KYx3a2nJwB3INiQOxp1iLrPUohT4bky0u8OOArvzfBvTzmMlOvAsXh
- nViGbseZ6QVGYU6UIlf/o/zMXQyrZJ1htk9lbHXWGCryqLxK0XxxYxMRQcey+QFzzmU9wEhoua6
- klLOyP9K5U0Wh0cpUOxt6dZxA3H2b+IMtdPhstfopAk1j0/dIe4gpKW5b91VlXTBThesRZXMfTQ
- 1pfz+D3NnkU84IWXW2XzSU4wTNkjtnd/1ljrM0vkc8i8ulMtbAGJMScE4CoAxf6mxwMeJiGSfTf
- CY+XVxQcmGdVtMfUtCj7E/TGWWmdVFjcFz//pCo1cGQrcMnRQNWXTaGBywMoHr2lfAMmkWXUlKw
- om2l5UNdKfJ8Ekg==
-X-Developer-Key: i=n.schier@avm.de; a=openpgp;
- fpr=7CF67EF8868721AFE53D73FDBDE3A6CC4E333CC8
-X-purgate-ID: 149429::1745931564-2D629E09-1E870DB7/0/0
-X-purgate-type: clean
-X-purgate-size: 2057
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745931554; l=3208;
+ i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
+ bh=KqwmKaB6GKLqmk1IDrdd2LBBIit07TUTil2D5DQEQVI=;
+ b=FPmrvZuqGWuVMzpzlDHRfMya1Rx5xlnOKZO9TUkY8yuQ9qHSX6Km1Qq3IAio8yucC5An7IwOk
+ FejJiYmDfRRBagxQqj9gs7nihjc7S2m7SG09xoFc9TV/bIMCTc1hDXa
+X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
+ pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
+X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
+ with auth_id=350
 
-Include generated/randstruct_hash.h in linux/compiler-version.h to force
-a complete rebuild if CONFIG_RANDSTRUCT is enabled and randstruct.seed
-changes.
+Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
+feature of the sensor. This is implemented by transforming the given µs
+value by an interpolated formula to a "span step width" value and
+writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
+PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
 
-Removal or change of scripts/basic/randstruct.seed leads to a remake of
-generated/randstruct_hash.h.  As linux/compiler-version.h is a
-hard-coded include for every kbuild induced compilation, conditionally
-adding generated/randstruct_hash.h there adds it as build-dependency to
-each object file.
+The maximum control value is set to the period of the current default
+framerate.
 
-Reported-by: Kees Cook <kees@kernel.org>
-Closes: https://lore.kernel.org/linux-kbuild/202504161928.17A90D9B@keescook/
-Signed-off-by: Nicolas Schier <n.schier@avm.de>
+All register values are based on the OV9281 datasheet v1.53 (jan 2019)
+and tested using an ov9281 VisionComponents module.
+
+Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 ---
-As I have no rust experience at all, yet: Do we have to consider
-something for rust?
----
- include/linux/compiler-version.h | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/media/i2c/ov9282.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/include/linux/compiler-version.h b/include/linux/compiler-version.h
-index 573fa85b6c0cd314dfeec66e8c77342798aa7e62..523eacf80c1a6149c513dccfd0dd9fd388e909a4 100644
---- a/include/linux/compiler-version.h
-+++ b/include/linux/compiler-version.h
-@@ -6,9 +6,19 @@
- #define __LINUX_COMPILER_VERSION_H
+diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+index 35edbe1e0efb61a0e03da0ed817c4c4ec0ae9c35..5ddbfc51586111fbd2e17b739fb3d28bfb0aee1e 100644
+--- a/drivers/media/i2c/ov9282.c
++++ b/drivers/media/i2c/ov9282.c
+@@ -97,6 +97,10 @@
+ #define OV9282_REG_MIPI_CTRL00	0x4800
+ #define OV9282_GATED_CLOCK	BIT(5)
  
- /*
-- * This header exists to force full rebuild when the compiler is upgraded.
-+ * This header exists to force full rebuild when the compiler is upgraded or
-+ * the randstruct is changed.
-  *
-  * When fixdep scans this, it will find this string "CONFIG_CC_VERSION_TEXT"
-  * and add dependency on include/config/CC_VERSION_TEXT, which is touched
-  * by Kconfig when the version string from the compiler changes.
-  */
-+#ifdef CONFIG_RANDSTRUCT
-+/*
-+ * If CONFIG_RANDSTRUCT is enabled and scripts/basic/randstruct.seed changes,
-+ * randstruct_hash.h is updated.  Including it here, makes it a build
-+ * dependency for all build objects.
-+ */
-+#include <generated/randstruct_hash.h>
-+#undef RANDSTRUCT_HASHED_SEED
-+#endif
++/* Flash/Strobe control registers */
++#define OV9282_REG_FLASH_DURATION	0x3925
++#define OV9282_FLASH_DURATION_DEFAULT	0x0000001A
++
+ /* Input clock rate */
+ #define OV9282_INCLK_RATE	24000000
+ 
+@@ -687,6 +691,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
+ 				current_val);
+ }
+ 
++static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, int value)
++{
++	/* Calculate "strobe_frame_span" increments from a given value (µs).
++	 * This is quite tricky as "The step width of shift and span is
++	 * programmable under system clock domain.", but it's not documented
++	 * how to program this step width (at least in the datasheet available
++	 * to the author at time of writing).
++	 * The formula below is interpolated from different modes/framerates
++	 * and should work quite well for most settings.
++	 */
++	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
++
++	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
++	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
++	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
++	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
++}
++
+ /**
+  * ov9282_set_ctrl() - Set subdevice control
+  * @ctrl: pointer to v4l2_ctrl structure
+@@ -756,6 +778,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_FLASH_LED_MODE:
+ 		ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
+ 		break;
++	case V4L2_CID_FLASH_DURATION:
++		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
++		break;
+ 	default:
+ 		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+ 		ret = -EINVAL;
+@@ -1418,6 +1443,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+ 			       (1 << V4L2_FLASH_LED_MODE_TORCH),
+ 			       V4L2_FLASH_LED_MODE_NONE);
+ 
++	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
++			  0, 13900, 1, 8);
++
+ 	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+ 	if (!ret) {
+ 		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
 
----
-base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
-change-id: 20250429-rebuild-on-randstruct-seed-changes-6b45e327fb31
-
-Best regards,
 -- 
-Nicolas Schier
+2.47.2
+
 
 
