@@ -1,255 +1,116 @@
-Return-Path: <linux-kernel+bounces-625921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634F7AA3BD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:02:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F56BAA3C15
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1573B9A3076
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA504C8235
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACC726F44C;
-	Tue, 29 Apr 2025 23:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F016D2DAF82;
+	Tue, 29 Apr 2025 23:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="To5cAwJ6"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Ugm7iWVf"
+Received: from sonic315-55.consmr.mail.gq1.yahoo.com (sonic315-55.consmr.mail.gq1.yahoo.com [98.137.65.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC06B2BCF6F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 23:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E5826C3A7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 23:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745967726; cv=none; b=tAipOBQ1ARTHVxqhkd2bzlr+kXvCKHH01zwp7OCELDUUTE7sBA4n+9e1Vi9GoJ+PvRg/ol/kPxT591qIUm1NsBy4kXQzev1omLfXI7cteKZ8J2g15ntr10UahDcOZYiB9HqQ5+SUrWPwkrSsDw/LbcegZKaU6+lpVi9QQaHYta4=
+	t=1745969269; cv=none; b=YUI3HzKKRmvgf6BxV2nasSOBQi6/IGYChTEVSsbavhF0/5k1RWsrMflbwaOaLAvc35AJWqgVu9ZUCAhR2v1B6/GAs6H8+MJ7M7qOu/oHx1Jy++JG/woBh5mOzkS0j6dXvAd3ZQB4ptoOaWRSOI+4PKKQ8bJapjc/Sp0/nijk7MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745967726; c=relaxed/simple;
-	bh=xGHK2nnUOwrFV1pwM0pJFjXnuJW4DB86YngBLtbQbM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LOL/3vYwVEYDUkNmYPySRdyjWqCz8/gWanEGgJEi6t6KeI8v5Uwpva4d8VwxDPecqDvyyLUNAPCvg8WmNIWaniCtZ/PBJCJQi2Y8NNrVoNEnG475UUhDpoBfwmDb7AJWJe3aExPQ3NgHxrFAoKj8pgBYtF/FNRmMZU1jlKHc+AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=To5cAwJ6; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47e9fea29easo182341cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745967723; x=1746572523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D3cBPfGnbz/yvJrhNx9adzzOV771Og4uaUmsjg7veAQ=;
-        b=To5cAwJ6n6m8eNjibng1FrCtYEY8UaUA60x156K0i2X2fYMNZSvuv9GQkLw0X7xf4w
-         PNCRQ84MWK98QzZOJSLHtzHN6h6h6j6L0cvVJj0swVcigDZZF62/Pooe++OegCTXkNtn
-         BRgmbDmtxMXcaHoMyxtvbC9Fc7IE2vP0egMGoUqPHAioNbCEfprvjTKh8wO2HZHhzcpK
-         FX3b5tQnX+r/rXbRsx5I/0XfLUAviWsjmWl7jnbRo4BYwIQmk7RE3DMTNuZkFPLPx3Lr
-         SavxywLrHehcZHs0jbQ7E1FuT079lVRQyKSjMgohwSMFVC0twtXgkPoCfD3KJS5boXx9
-         6zfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745967723; x=1746572523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D3cBPfGnbz/yvJrhNx9adzzOV771Og4uaUmsjg7veAQ=;
-        b=kUDAqZY81ayOHnvf+Y1vlNQMiwwD8Voa1dV4a3EqQqYAzyotJR/xbh4KX19j8Anjyg
-         gT0wtpmUZTq7tZJnE/56J+qD2dPUQmFcjn9JsI1g5qJk5h5KshyHZx9aKIz8u1P2LBx7
-         XAtLxwzrkfP+P1IA8mC2w969hEihEFhH880XlprrTSyKR9CWs6KSkM1mwXXvWKLHt6o4
-         /r/fpo1QCpB8bdrbtW73a8QzVHzq1hQEPf0XtJXvAOYfMSo2ynzkAtzkqEUn3DhnrtQf
-         PC2soLATzNM5gOEkIG78LSr5xGiVae1WFA6CTHidm3Ig78ixSiki9+nSkUKpyY76wAKw
-         ZRGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHgplEB0LwNdgZbpUXxCLhabcnwyHdYXGlgO+XCySERqdZEVS2LZouvkaknac0iXsJn7/bUKwJBIY0XtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTQ9XWXd1rfMKoA0b+JhN5xkqXxw1yTyv+NJQPScCJ2VyZwSaT
-	Q4olmsFzM91kjMaoc9p5RnVBeMO8JW0SaYiEKRjGSXgyCxX5KxH95U10PiJBxrxN0T65Omi8pJZ
-	m17zwu1kR0cDYYoz6zUCpyN2hUttUVTxuE9Q4
-X-Gm-Gg: ASbGncuFa3aQGL+2yB2yiqX4+b1UevKUD9cW3fSub8zM22ipawvdU2FnrAeFL140F4N
-	TeePKeCw3ldIiehJXPniAL2g7FKDacas8EFTOBqjPqKQrJIPvRCJyRx9Jrf7rLW5AV1UvkmdcBf
-	fjmgJVqgU0btEn6vHqqP6YJ7RpO1g3b29DMSwsBgzDpI78KvhVsCEY
-X-Google-Smtp-Source: AGHT+IF0gr5CtAes59SO6D9Xj0Aw+uB4nzgHygdR3Y4wolPVTp2LjDG4D3xn7ja/TpQ6TJvn+4y3ap8WAP2rwioNkhA=
-X-Received: by 2002:a05:622a:148:b0:486:8d63:2dfc with SMTP id
- d75a77b69052e-489b9838ba4mr1552441cf.2.1745967723192; Tue, 29 Apr 2025
- 16:02:03 -0700 (PDT)
+	s=arc-20240116; t=1745969269; c=relaxed/simple;
+	bh=sFBNCy9z9muzy6OhI8yB0F3qil0Q+xdlTlNWoXxq9pM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=e+kASaDwz/Vx7EIIN76KuAH+Ny9v50YDJSRaY7gD2qCSlrCYluDVMQDYZ3hqka4/nrhlYY29qnfXtD7r9zbgncMZpR2aglKII6x1i7Guxf73kIYfLqMcwgNOVQEnssRK2YvAlVf5m1ef7VFc4Ly+cZmFvN/biBILCiYAtgbtMC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Ugm7iWVf; arc=none smtp.client-ip=98.137.65.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1745969261; bh=emx91ZQiV4dAWiUpLmrlXmVyrQJzAqT2QW5vSV4K2CM=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=Ugm7iWVf/XnKmUZftUNBSIlwMd6hhkxYYOD1NBvddpcTbrcBX9XUZPCtVn3dmv7gkaSvi9SiWj0bi6HAtkoZVdZykUYWj+UeFhl/+/3zopT01LYaqndYTISdzWX8P3sky1aAZOsuy4gfRneangOwWrM4dQHK5K/6464nsqx7WE+J98kR531g/HJU4hA/dqMmpiCuZ+wc4vnVmRJIUG9BVFJ3OLcEB6vBkEt7TWkAJxj1Ho2GZwr0ETcoU4R6SPuMH0WjcalnFSKMrFip1A5uapnQHe09NNn1CDsNhTloE5aI1JjU5TnPE1KY0HEUlW6mChYbyqGlVH33p36aZIZkWQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745969261; bh=zSiwtPiEM8CgN+YRXZ1MtQGYBQW0Nn6FTErn79+qfTY=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=cxBv1cdvpABwCnBWJcOD4NTBOjvkY7u4ynvLsyiyDGpfYgH6FPilI2fWxZvMNPpUs3+Rhi0qWfVzJN+mDi/0eRa8TttWltADd0zp1ediDOBHQD7j5bABxVAbLryYdBQDXutAaM2oQAAnCvWVps28OBMClJkGU6ASQMeNbcYD2qAKWwm8aCmqsnRo8DCHF3/svZdzNhM/FtBeDbaqYxnTVTsXSNV9s5WVaA//0EiMMIQcB1S7ahjdSIAv2ZR/Mi6p0ZU+qaaQSWo5prV2xI4zwkPnn8PFeWe0TgckFpZQpaWWjNsYmRrSRq8NRd9GDsSndIvm3VUWCdSmDeOUVYXfFg==
+X-YMail-OSG: pjCZUsUVM1mmRG7osglAnyVO8T9xYFlWi2evKcY.ZlkTDslS7cRxhtwIbpyIn9s
+ aTI3PJ6YSg9xxfQAMmXT.SxsJHANxWHleTv.ZdDEBpUBIq52ixCzvoE95HRYbdyLxso4DVSBUNv3
+ q5Lt8bHBazxOQGH0Gmr2qQ3xWOMNmEjPWGaVvtggSiK4VDs4wQukSIgNknlIIWBpBvg.hjYnS_m9
+ nsQQgv1KVtksvh2PnDuFmwA6WKvcWxCVyzUoNGhTKiKfBwDXy4ahg3dPAAOM2_BQCpgjZzz.8hk6
+ I62Vg2HyZzo4GjbrcxPj.UdmHgbh3zaVgyEolSmJtUuwMYWqdDwexpIrk4UcvFZgqaTKESbtqv05
+ GRps.4phD20mRYCTDZ5UJ7lV7seYCs9Oq97WJqxozs1WNjH.FZaRXMLsqscrP8PotWPvdRYcnlgK
+ Ob8na5BDLD1oJlhRgIanwouynO1UarPzmMDe9C1ZXBpnLSWqQj7FaV_5gyqtpEnS9CEe4Z3remsq
+ 9.p47OvgxkLQhnlVt9JVJFaCQFUWBLp1rZ9OGECFAv80u9B5vc3PmZvSpDz_ScODpPgGFK7J0SAw
+ 0FELlYUwkv7K_kKXaSrSKNUKwLmRw6ULbVrg6WaTnm1rmwdjJ5aogmpH0yv7uktOyvV6rPtM_Rt.
+ CU5.OVnJp518O.jjLHnGYcjRKOvsb609wutstqFOAnNWC7SYNeUeAY5NEvA0DNWkgQLUCaphGHPO
+ xeEFgP5N_l7G4FlvSDMOJsLx2f3IpDXgX90JoeKSJlPQyM.uX4FCOpfVh4wpU7m4nI.Nyin9DgzT
+ 3jwDuEgm.e1GfWyK4VJ4dxQRWD.afAml80zqMFh_AAZ7GLWeNn97Qpa2mwglxy..xZKGikC.uL3J
+ piwNw3HTOFdLP5Qds7YLERBfudRCEGycrBr0ly0V1VDhnXvIIQniEpFkcoM2vcOpJbA.PxlWDfF4
+ x_2lxjbRLFLG2XiFqZXYWLXgkJ_F2LLZzuXBhWCdpennTvjUjarb3Gr3IzIi0PaomEvFnN3V3.xd
+ 15mnOW.qlBI6yqHA6KqcAmaSd3xtX1Jqv4ms8kNllLuhpXTAAQP5iPk7E5htxKzRgc24A85CQzaW
+ aVnNZPafwbGQL1hEKKfUuS3OlOxXSldjarIuKK2EEF9PlMRgsCRlj3SkNTHuzbwfQe8YM5l8oA41
+ PYUTWnXf7IyIJEqNTQSUXhTxF3dnBgM4urAgxSSGaJLHIvckbN6w2SzTgSEUrlBHurpt1qJHYUqv
+ dDDMSr9veVf6anN0HkW5iUCCxfL5oQ8H7msA7C8ihyEl.XfAF8euxpXtuVIz2k9rQ_3SxlmaRPZE
+ qnH.FaWgMh8UbBn4Z89Fve9ee2QMSPV7Iajolb7YvR0wBUU4dwPKofgdbow2zeg9NNuhsdQ1vVMW
+ eb9QIJzWPNvNfQESUi71aUGu.u4eqyAQr_NwSRX7cQZYieeKLkzZmejlwHz1zydWYBynWmYb15Mq
+ t9ggou1nUz__aJa3VktE1juW98n4Av3E0pWfNxxliMdIPhPLgzdccWzn783diaB1SnSQ9aK.NmpV
+ AoZFBej.iiMehz_.J7LhpngtDdmkGFMgzvE7E3rdDRGeD4K6286QIAyUd1z9lZsM8jeVxLZetd0c
+ Y8Lei69w8gAkwAgHXw6d7e9za5cPMugbobD9mD0dr1BNSvwOl6b.mEFyDyKKC0DQmXz6dfyRVtuo
+ KM48_LCsaiRVPLVz.aCQFREF6atMxrdzGKf9oPdhpIclNRAaNAH6NuCZ_zRAw.N9nzYPhVNBnleN
+ sqIkXBQy0xJzLxzS7Xtjk6ZprrQeEX7RD4_sbKV1AmxZMUSS_vMEP2MKsA84rJQUxDzcx2TIGgh.
+ 31YuiKx0RXYw1__UQJfXrcVdnCNqwAlykAS1IUQexNxSfqklJBbnmsgCZYhnunVB7UVqZ.bLQycY
+ 9Y0nXK2vquPrch3rTppEGEQ3mfF5E57eIEJP9Vy.9rrgax.dtsbgEKpS.Ctf9mc5bnkpcTPzEqtU
+ GOR1ad2quPyhz..5HWqj68_iG5RtzfG2a8xOd8auWgfwcIgOPNBZSdl9g_iRE9Tpq6g.nXMUWmDh
+ fy_.QQyvHAMNd7b5KDbSW5r2v27obbtJ3o4z66RBabK2ps2KD.hvB7Sh.ZYn9tSv8jRXLKBhUtj9
+ 8p.vpZHe.UXGhi8BQrzis9yI5EWAF2dDx1nGrLAyivIEiM87AXife0iiuhYAQKMKZ9BvkRR8VF4_
+ A4F_u0m2I_8Gf_e2YT_S7OY9uc8TJToK9maYLYziQeyI43UU73cniun75vBJHplu8lERctQPS
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: a4333197-3717-43d7-9df5-623143b9edae
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Tue, 29 Apr 2025 23:27:41 +0000
+Received: by hermes--production-ir2-858bd4ff7b-vm54s (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 69d7b9f68847b859787e0cd3e413d376;
+          Tue, 29 Apr 2025 23:07:22 +0000 (UTC)
+From: Ruben Wauters <rubenru09@aol.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Ruben Wauters <rubenru09@aol.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu/amd: replace strcpy with strscpy
+Date: Wed, 30 Apr 2025 00:03:59 +0100
+Message-ID: <20250429230710.54014-1-rubenru09@aol.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428033617.3797686-1-roman.gushchin@linux.dev>
- <aBC7E487qDSDTdBH@tiehlicka> <87selrrpqz.fsf@linux.dev>
-In-Reply-To: <87selrrpqz.fsf@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 29 Apr 2025 16:01:52 -0700
-X-Gm-Features: ATxdqUEHJ0lKafIQLl6tuQKVn2J6UGA75Kfzy8FGMf24UMiPODsN3bv6xf3NM-k
-Message-ID: <CAJuCfpFUBkNQS_851=L3PKH231VPKpAL7CRNEKj0_3Nhpxsysg@mail.gmail.com>
-Subject: Re: [PATCH rfc 00/12] mm: BPF OOM
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	David Rientjes <rientjes@google.com>, Josh Don <joshdon@google.com>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+References: <20250429230710.54014-1-rubenru09.ref@aol.com>
 
-On Tue, Apr 29, 2025 at 7:45=E2=80=AFAM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
->
-> Michal Hocko <mhocko@suse.com> writes:
->
-> > On Mon 28-04-25 03:36:05, Roman Gushchin wrote:
-> >> This patchset adds an ability to customize the out of memory
-> >> handling using bpf.
-> >>
-> >> It focuses on two parts:
-> >> 1) OOM handling policy,
-> >> 2) PSI-based OOM invocation.
-> >>
-> >> The idea to use bpf for customizing the OOM handling is not new, but
-> >> unlike the previous proposal [1], which augmented the existing task
-> >> ranking-based policy, this one tries to be as generic as possible and
-> >> leverage the full power of the modern bpf.
-> >>
-> >> It provides a generic hook which is called before the existing OOM
-> >> killer code and allows implementing any policy, e.g.  picking a victim
-> >> task or memory cgroup or potentially even releasing memory in other
-> >> ways, e.g. deleting tmpfs files (the last one might require some
-> >> additional but relatively simple changes).
-> >
-> > Makes sense to me. I still have a slight concern though. We have 3
-> > different oom handlers smashed into a single one with special casing
-> > involved. This is manageable (although not great) for the in kernel
-> > code but I am wondering whether we should do better for BPF based OOM
-> > implementations. Would it make sense to have different callbacks for
-> > cpuset, memcg and global oom killer handlers?
->
-> Yes, it's certainly possible. If we go struct_ops path, we can even
-> have both the common hook which handles all types of OOM's and separate
-> hooks for each type. The user then can choose what's more convenient.
-> Good point.
->
-> >
-> > I can see you have already added some helper functions to deal with
-> > memcgs but I do not see anything to iterate processes or find a process=
- to
-> > kill etc. Is that functionality generally available (sorry I am not
-> > really familiar with BPF all that much so please bear with me)?
->
-> Yes, task iterator is available since v6.7:
-> https://docs.ebpf.io/linux/kfuncs/bpf_iter_task_new/
->
-> >
-> > I like the way how you naturalely hooked into existing OOM primitives
-> > like oom_kill_process but I do not see tsk_is_oom_victim exposed. Are
-> > you waiting for a first user that needs to implement oom victim
-> > synchronization or do you plan to integrate that into tasks iterators?
->
-> It can be implemented in bpf directly, but I agree that it probably
-> deserves at least an example in the test or a separate in-kernel helper.
-> In-kernel helper is probably a better idea.
->
-> > I am mostly asking because it is exactly these kind of details that
-> > make the current in kernel oom handler quite complex and it would be
-> > great if custom ones do not have to reproduce that complexity and only
-> > focus on the high level policy.
->
-> Totally agree.
->
-> >
-> >> The second part is related to the fundamental question on when to
-> >> declare the OOM event. It's a trade-off between the risk of
-> >> unnecessary OOM kills and associated work losses and the risk of
-> >> infinite trashing and effective soft lockups.  In the last few years
-> >> several PSI-based userspace solutions were developed (e.g. OOMd [3] or
-> >> systemd-OOMd [4]). The common idea was to use userspace daemons to
-> >> implement custom OOM logic as well as rely on PSI monitoring to avoid
-> >> stalls.
-> >
-> > This makes sense to me as well. I have to admit I am not fully familiar
-> > with PSI integration into sched code but from what I can see the
-> > evaluation is done on regular bases from the worker context kicked off
-> > from the scheduler code. There shouldn't be any locking constrains whic=
-h
-> > is good. Is there any risk if the oom handler took too long though?
->
-> It's a good question. In theory yes, it can affect the timing of other
-> PSI events. An option here is to move it into a separate work, however
-> I'm not sure if it worth the added complexity. I actually tried this
-> approach in an earlier version of this patchset, but the problem was
-> that the code for scheduling this work should be dynamically turned
-> on/off when a bpf program is attached/detached, otherwise it's an
-> obvious cpu overhead.
-> It's doable, but Idk if it's justified.
+strcpy is deprecated due to issues with bounds checking and overflows
+this patch replaces strcpy with the preferred strscpy
 
-I think this is a legitimate concern. bpf_handle_psi_event() can block
-update_triggers() and delay other PSI triggers.
+Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+---
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> >
-> > Also an important question. I can see selftests which are using the
-> > infrastructure. But have you tried to implement a real OOM handler with
-> > this proposed infrastructure?
->
-> Not yet. Given the size and complexity of the infrastructure of my
-> current employer, it's not a short process. But we're working on it.
->
-> >
-> >> [1]: https://lwn.net/ml/linux-kernel/20230810081319.65668-1-zhouchuyi@=
-bytedance.com/
-> >> [2]: https://lore.kernel.org/lkml/20171130152824.1591-1-guro@fb.com/
-> >> [3]: https://github.com/facebookincubator/oomd
-> >> [4]: https://www.freedesktop.org/software/systemd/man/latest/systemd-o=
-omd.service.html
-> >>
-> >> ----
-> >>
-> >> This is an RFC version, which is not intended to be merged in the curr=
-ent form.
-> >> Open questions/TODOs:
-> >> 1) Program type/attachment type for the bpf_handle_out_of_memory() hoo=
-k.
-> >>    It has to be able to return a value, to be sleepable (to use cgroup=
- iterators)
-> >>    and to have trusted arguments to pass oom_control down to bpf_oom_k=
-ill_process().
-> >>    Current patchset has a workaround (patch "bpf: treat fmodret tracin=
-g program's
-> >>    arguments as trusted"), which is not safe. One option is to fake ac=
-quire/release
-> >>    semantics for the oom_control pointer. Other option is to introduce=
- a completely
-> >>    new attachment or program type, similar to lsm hooks.
-> >> 2) Currently lockdep complaints about a potential circular dependency =
-because
-> >>    sleepable bpf_handle_out_of_memory() hook calls might_fault() under=
- oom_lock.
-> >>    One way to fix it is to make it non-sleepable, but then it will req=
-uire some
-> >>    additional work to allow it using cgroup iterators. It's intervened=
- with 1).
-> >
-> > I cannot see this in the code. Could you be more specific please? Where
-> > is this might_fault coming from? Is this BPF constrain?
->
-> It's in __bpf_prog_enter_sleepable(). But I hope I can make this hook
-> non-sleepable (by going struct_ops path) and the problem will go away.
->
-> >
-> >> 3) What kind of hierarchical features are required? Do we want to nest=
- oom policies?
-> >>    Do we want to attach oom policies to cgroups? I think it's too comp=
-licated,
-> >>    but if we want a full hierarchical support, it might be required.
-> >>    Patch "mm: introduce bpf_get_root_mem_cgroup() bpf kfunc" exposes t=
-he true root
-> >>    memcg, which is potentially outside of the ns of the loading proces=
-s. Does
-> >>    it require some additional capabilities checks? Should it be remove=
-d?
-> >
-> > Yes, let's start simple and see where we get from there.
->
-> Agree.
->
-> Thank you for taking a look and your comments/ideas!
->
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 1f7925e45b46..32c78784f96e 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -643,7 +643,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	}
+ 
+ 	if (!c->x86_model_id[0])
+-		strcpy(c->x86_model_id, "Hammer");
++		strscpy(c->x86_model_id, "Hammer");
+ 
+ #ifdef CONFIG_SMP
+ 	/*
+-- 
+2.48.1
+
 
