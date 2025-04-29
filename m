@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-625445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B38EAA119C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:33:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBBFAA11A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C31925925
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:32:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36891758C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849942459D0;
-	Tue, 29 Apr 2025 16:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796C723E329;
+	Tue, 29 Apr 2025 16:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGIHmtRo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uUi4JEz2"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D1C22539D;
-	Tue, 29 Apr 2025 16:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2E924290C;
+	Tue, 29 Apr 2025 16:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745944368; cv=none; b=LyhvopFmnlbUA2m+4a2SNysb5cAPygC3AA+2OweOiRVhhN27CRa4LX/DNf3qkPeNKm1l4It+WgXFpJ44WnAs079XAKy7bRlpswCa06qyj7Al/MGhc+/AKEhOz6lwg4YRCEU5suuniGy97boswLrOF8iLlE+QwA0HAYfeOWIWqZ8=
+	t=1745944431; cv=none; b=gJ3tHbzZpkOff1+57/sCqCRJh4EtSkiEFTeIPMYz99bzazfUC917kzfWj3Ow2lJ/A+PPgS03W5EzS98+/ft+NkaiZo7UWut+NLuPYgu4RDZJQemMtYdM5nk6fzs658PghuT8FcG9Ozp8aPGqcmeH4wwu3X4BKj82M+RMYL7uWko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745944368; c=relaxed/simple;
-	bh=feUIYWjgsatR0wsDBnR320zo35FzttrKF/ike0EndGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWBSxcAhV9ytSHIaFGohhOjjCnsqqjOJ4hRqPu2tlYanG1u8MnA3sBb19gbZlwvtsrNWqbj104rxyvAEF1MwnybCOlylbCGbrCFkEyf0XPXSELU9Bq53lGP+HUlIZ8+oPpSumOSmmaOfvG4C2bLgN6TiXn6zEioWnZld0q0l80c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGIHmtRo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54235C4CEE3;
-	Tue, 29 Apr 2025 16:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745944368;
-	bh=feUIYWjgsatR0wsDBnR320zo35FzttrKF/ike0EndGM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gGIHmtRoeMc5skK+Uret9+sNF7RFNy3BEWPrbyWSDJ+5SRrf7mtw1bAaMaUc6Xpj8
-	 cYPvdk+7/ciq2q8+VgFYyN7TT6ImhpLntVfyBRLNgAZjSDnD9Id6MvYJbX/7QMkwCm
-	 OActXunbzjeRJyiT8rrBVDY9bRcxWjIjlkS79dq1HDDVQSGzoyxM2WU1eGEaBF3nEo
-	 Ov0OcO8fHJCJgb5p86Z9lkWvoV9LqaeYYsDCuW1pKfMqxL2G7G7BdHP0mkU+FKXbR4
-	 cOVOWOMT+9kujdP/3J71kDyjtlIDIzSdgSPSHd7D6d+NXNL58zUquXaMgCAakyuoel
-	 J6QVYo/6Endyw==
-Date: Tue, 29 Apr 2025 19:32:33 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de,
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de,
-	catalin.marinas@arm.com, corbet@lwn.net,
-	dave.hansen@linux.intel.com, devicetree@vger.kernel.org,
-	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com,
-	hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org,
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
-	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com,
-	pbonzini@redhat.com, peterz@infradead.org, ptyadav@amazon.de,
-	robh@kernel.org, rostedt@goodmis.org, saravanak@google.com,
-	skinsburskii@linux.microsoft.com, tglx@linutronix.de,
-	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
-Subject: Re: [PATCH v6 11/14] x86: add KHO support
-Message-ID: <aBD_IUE6xmbphB5R@kernel.org>
-References: <20250411053745.1817356-1-changyuanl@google.com>
- <20250411053745.1817356-12-changyuanl@google.com>
- <35c58191-f774-40cf-8d66-d1e2aaf11a62@intel.com>
- <aBCIhQjKKyaAuvC9@kernel.org>
- <d64a4593-c9bd-42c7-81f6-137a22ff5caa@intel.com>
+	s=arc-20240116; t=1745944431; c=relaxed/simple;
+	bh=u2nnUWFZyeaUlcKUTzRvXJUSJDS/GwSvtgl2IU4J2UA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AkxRCWttbcNWsLdTIIFQFi3Nm9NR1Kr9cUyeBoaO5vfI3l2widGTRF8elDNr5aavPpvUeeMUs3mn8TlryZphxpT4sfTbem2b1on94Bnz+zcjkIdkpaqESH2wfMVoCzbGS/l1nOv69sxQ6vaht0qcbYBU+/nw6zLTTI0AF/s3JlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uUi4JEz2; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53TGXbFq3722128
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 11:33:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1745944417;
+	bh=phAgRZDLcEJL+2Qt4p20wfF/jzjcFFMyigWTHHdSwyM=;
+	h=From:To:CC:Subject:Date;
+	b=uUi4JEz2qI1eDMijaOFWC73rACjTB3ACNAB3xU0K0w+jMXJH5+v1oZ0k5wovH/oVJ
+	 0w0Id6pHxRrpM+eFC8bSW3JyGabij8aLfl6L7zBfV1xKKU+sRYuCvcLgkI2DhrcMyo
+	 F2eO1QVzLUANxxsLC5z/jbcnx3j5EKgTL/hLykxo=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53TGXbE8019666
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 29 Apr 2025 11:33:37 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Apr 2025 11:33:37 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 29 Apr 2025 11:33:37 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53TGXb2J093065;
+	Tue, 29 Apr 2025 11:33:37 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>,
+        Udit Kumar
+	<u-kumar1@ti.com>, Bryan Brattlof <bb@ti.com>
+Subject: [PATCH v2 0/3] Set eMMC clock parent to default
+Date: Tue, 29 Apr 2025 11:33:34 -0500
+Message-ID: <20250429163337.15634-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d64a4593-c9bd-42c7-81f6-137a22ff5caa@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Apr 29, 2025 at 09:06:19AM -0700, Dave Hansen wrote:
-> On 4/29/25 01:06, Mike Rapoport wrote:
-> > On Mon, Apr 28, 2025 at 03:05:55PM -0700, Dave Hansen wrote:
-> >> On 4/10/25 22:37, Changyuan Lyu wrote:
-> >>> From: Alexander Graf <graf@amazon.com>
-> >>>
-> >>> @@ -1300,6 +1300,24 @@ void __init e820__memblock_setup(void)
-> >>>  		memblock_add(entry->addr, entry->size);
-> >>>  	}
-> >>>  
-> >>> +	/*
-> >>> +	 * At this point with KHO we only allocate from scratch memory.
-> >>> +	 * At the same time, we configure memblock to only allow
-> >>> +	 * allocations from memory below ISA_END_ADDRESS which is not
-> >>> +	 * a natural scratch region, because Linux ignores memory below
-> >>> +	 * ISA_END_ADDRESS at runtime. Beside very few (if any) early
-> >>> +	 * allocations, we must allocate real-mode trapoline below
-> >>
-> >> 						trampoline ^
-> >>
-> >>> +	 * ISA_END_ADDRESS.
-> >>> +	 *
-> >>> +	 * To make sure that we can actually perform allocations during
-> >>> +	 * this phase, let's mark memory below ISA_END_ADDRESS as scratch
-> >>> +	 * so we can allocate from there in a scratch-only world.
-> >>> +	 *
-> >>> +	 * After real mode trampoline is allocated, we clear scratch
-> >>> +	 * marking from the memory below ISA_END_ADDRESS
-> >>> +	 */
-> >>> +	memblock_mark_kho_scratch(0, ISA_END_ADDRESS);
-> >>
-> >> This isn't making a whole ton of sense to me.
-> >>
-> >> Is this *only* to facilitate possible users that need <ISA_END_ADDRESS
-> >> allocations? If so, please say that.
-> >>
-> >> I _think_ this is trying to say that KHO kernels are special and are
-> >> trying to only allocate from scratch areas. But <ISA_END_ADDRESS
-> >> allocations are both necessary and not marked by KHO _as_ a scratch area
-> >> which causes a problem.
-> > 
-> > Yes :)
-> 
-> So, on both of these, could the submitters please add or revise the
-> comments to make it more clear?
+This series was split-off from "Misc MMC updates" patch series [0] and the
+original patch further divided into three to help with backporting as per
+review comments [1].
 
-Is this one clearer?
+This series sets clock parent for eMMC to the default clock parent
+MAIN_PLL0_HSDIV5_CLKOUT for am62, am62a, & am62p/j722s SoCs. Software (DM)
+does not switch MMC clock parent correctly as per the Arasan IP requirement
+to hold the IP in reset while clock source is switched. Since muxes to
+switch clock parent are not glitch-free and the default parent is tested
+and working fine, switch to the default as a preventative action.
 
-	/*
-	 * At this point memblock is only allowed to allocate from memory
-	 * below 1M (aka ISA_END_ADDRESS) up until direct map is completely set
-	 * up in init_mem_mapping().
-	 *
-	 * KHO kernels are special and use only scratch memory for memblock
-	 * allocations, but memory below 1M is ignored by kernel after early
-	 * boot and cannot be naturally marked as scratch.
-	 *
-	 * To allow allocation of the real-mode trampoline and a few (if any)
-	 * other very early allocations from below 1M forcibly mark the memory
-	 * below 1M as scratch.
-	 *
-	 * After real mode trampoline is allocated, we clear that scratch
-	 * marking.
-	 */
-	memblock_mark_kho_scratch(0, SZ_1M);
+Changes since v1:
+- split original patch into three
+- add cover-letter
+- reword patch descriptions
+- add review tags
 
+[0] https://lore.kernel.org/linux-devicetree/20250417233040.3658761-1-jm@ti.com/
+[1] https://lore.kernel.org/linux-devicetree/20250429142825.bvrbpoc5iz32wh35@garment/
+
+Link to v1:
+https://lore.kernel.org/linux-devicetree/20250429142333.4140010-1-jm@ti.com/
+
+Judith Mendez (3):
+  arm64: dts: ti: k3-am62-main: Set eMMC clock parents to default
+  arm64: dts: ti: k3-am62a-main: Set eMMC clock parents to default
+  arm64: dts: ti: k3-am62p-j722s-common-main: Set eMMC clock parents to
+    default
+
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 --
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi              | 2 --
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 2 --
+ 3 files changed, 6 deletions(-)
+
+
+base-commit: d864bb528a6725e775d564fd4430762acbb9dd0d
 -- 
-Sincerely yours,
-Mike.
+2.49.0
+
 
