@@ -1,173 +1,131 @@
-Return-Path: <linux-kernel+bounces-624646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AE3AA05D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330BDAA05DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91A04A0324
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FC261B6199F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139F027F747;
-	Tue, 29 Apr 2025 08:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7968027B505;
+	Tue, 29 Apr 2025 08:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ni/wmpFK"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jPPFzB0N"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CCB25F7AB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCF825F7AB
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745915660; cv=none; b=RA4S4Clz52ilKOnCl+igN0bBsv2hDgJSu4ggSdBMRigNvuCGJ1QGa1sCG3VBGjuZtCfpS7RxcjBHYZ8fQGPRGcp+nlnAo50XqWhxLSLgzbHhM/985Hs74RKUvQTGRNf1GssPDwkNM521UYiIZzOHngOYAMga+XiOp5LAn8zO2BM=
+	t=1745915731; cv=none; b=TZVu1pUrsqy4sHEPcC1McIk72DIBr7LX8VAD/BzIYuFOsEnLZMInd5BrBGxaTNPqIgmHnlLWgofMg3ezsur0AKmZAx1q59Fna5CItsUb0M4Pnh/3OFZqRXJ75j6npo0Ui+R2pEiT6CyPNnBJUJ2rFZWBzlHEtZIsbTFteI4ecJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745915660; c=relaxed/simple;
-	bh=tpUZldhhx68mPtneCbwiKIZGOi+g9xKmfcLubVxZP5U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sI8qJ1J/SlBfmJZytLE4p12hsbX+SSzn0+FKWz2k69cL7A3zec/c+/a977daPiCTnx5hwaoZzK5mQjPm/1ATbBRTOp/BgcyDrG0nNziGizNVX5nDkR/iU3cJ4iAbtlFPWNtxBJYMgCqrwBdXELSgk0VjZfnWNjoerAjRBWMwLBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ni/wmpFK; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39bf44be22fso3851020f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:34:18 -0700 (PDT)
+	s=arc-20240116; t=1745915731; c=relaxed/simple;
+	bh=ZaO56ejThSxRzS1nBO1hWUV9qmuFiNNZzzBGRbfNtPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLc3S1DurEiUNU0Sb/IC1qbisIUEGA29YB0h6Th4lICgnkEbOQrrtDO2na+zqo7Fq1uO4/o2vq12dvuW6HapZhmRgqixnA2N6uWl3/NOC4P/zz+/KEpSR6YOnbjwXMCPE4jzoMGVtz9Silm0B+wuSs0AMRZ6dHkr6uBkSULVjiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jPPFzB0N; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso55430445e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:35:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745915657; x=1746520457; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iNXiDOKt5wVqJ89pAp1nvo84uzdzWuqVd3C2tenlIjY=;
-        b=Ni/wmpFKOcpF38hECi/cGGUnE70GBM6Rjje7Y3q2xcJ3NPPO6l5WUjhFJRTyvSQIES
-         WQinKAE+QmFEo39EBhcxoPtpbJf9FQ+2OO2a49SqjCG9tM0MRftuZoA/1fHBik7Bc27l
-         58x/ckqLUJgiZXNbNU28VM1PwjRjc6q7pMFQ0zoKtVLsn8ZeCnHMNxAnBwrkoWGmIgOa
-         NlKaA2BzW6HD3wYgM1TGMfpjDtwgbHk4rzakvyaI9r35RVYfIAPUegMpqvYYJtrr2DVa
-         WEb1VG23VOkFotoGJKw0DnQT5hWnmvddRkS621CvNqSNDVTptna6C3GfTu5pm80qkfBx
-         hEOg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745915727; x=1746520527; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hyI+vkzvATQ+oPRkGM6xS0Ik29eThJkeSR9qIvKwiD4=;
+        b=jPPFzB0NH5NI/kMCO7W/4UoWXwo87888+JuHw6RINARoMGZOLdQWwidTpuww86xo9P
+         Yqr/EknhyW2azq+2QfyUFORDA6o8NhMYplWJ6NCYSp6LM7DziAL0Ft7tTDLbPkbbj2Hx
+         BA9Okf6G6H9DAIH1PlJhGbunQbrWc9bO5kbjykh+A7MwaFxiqKTLXKQhnHYGMtM7TvNn
+         4sZdLJqgqIxqzCjlDQa9on6zpvE/IM6WX89TD4QvHYNyfAw1mGLgc8zRPn0q8SvEEgPS
+         rLjj/NExwt8C7JGndnzvvB+0HJkIxf9dN2Fuk8axLyWUSgoh6gkDACVUZtIKV6TQINhf
+         6k9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745915657; x=1746520457;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iNXiDOKt5wVqJ89pAp1nvo84uzdzWuqVd3C2tenlIjY=;
-        b=cwJHNzgUH8pDIpt12t/UAnOcKZqUGJztnUV7/Xcu0HgyhkQntSf5MPiSW+WmR7ZaLd
-         3AhSv2EJqn257g2Ih2nAgxxY25iqVh1qpN149hDpfs7tIkFfXOEDRd8sRbgF/xlJV+oW
-         gMIW99TFk4AbKb9BZih82uWGWtyxmmSq6uYN6NM2/tVSFLofu3HWtD4OCFXnUs1Nj8qt
-         mefor5RZlVSVRNprMrD7RGWq4ggvBZX/HxHMUWn3FzNJqWqQVv0/rQ/fdpa3NndSkh0i
-         3kIstGMffJAjtwhjoYp4epG3YKzVA4J050xT/wDzQgUTYcuYQbxolfEfvYl/6ZI8jXE1
-         EEIw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8mwNu0vMHq3fIpgyuz89H8g/wkMzNX52dzwI7ylOJje8bh1JMyDucdsnI9g5lC/FchXDZQrUN+9dWM5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2+8AvtrBDSCxZhKboaJeZ46iig3UuR5AsjvORODYXnAV48kx9
-	1v+VPqswzL7Y5jOVqMMtwj6d83tU9IMkqNGDXo59IsO0MDIqs9pKek65sOChk+8=
-X-Gm-Gg: ASbGncuBmcU8nkchJijksYhxPaB6hOCv/QYVkrESuIIxxoI0/k1MhXEGs+pLIoMWEvN
-	6aS0WgjRbs02zkrES63oxqboofjo1zc/E1Ix34PrNQKVDjydSYI4DpoFm43JGz1UXZAmHnmthNy
-	yCNHfF2m9FZiKGJSdTWnohwFIIW3rGoh4OgvYWNgufdQWzazAeAuY+ycSmKLiqeKho9+uFvSQaq
-	2fjlb/xoF5bqBDY0YAuH3Pdy5NKcRllPH1Dl1PkIAMlrK0iK8oYGR8HOTyxyzYjKWKvbKEOtJlN
-	iDW+ZfTn6JiqPp17VzR+Se0vlV0IqPNYUTx3XJ2WI9C1hPW0021JCf+nRzMJi4h8
-X-Google-Smtp-Source: AGHT+IGm++8YhzXKzd/TlXniHWTMKoC7/6DztZvja5ARxvPDFybJgSY++E3QiFogsvSRHpnptLZgXQ==
-X-Received: by 2002:a5d:5f4a:0:b0:3a0:7139:d176 with SMTP id ffacd0b85a97d-3a08ad33226mr1224276f8f.19.1745915656791;
-        Tue, 29 Apr 2025 01:34:16 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:3891:fa3e:aac:d0b8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46517sm13315292f8f.71.2025.04.29.01.34.15
+        d=1e100.net; s=20230601; t=1745915727; x=1746520527;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hyI+vkzvATQ+oPRkGM6xS0Ik29eThJkeSR9qIvKwiD4=;
+        b=lHqWgYRsx8PkYqW+yfbM/wBrdORghIQao4OTO6e+f5n0UQjVwhFsDnLOapxnSDm0qE
+         1yUgyQpijGzKxsee56jt3Vamk+gxjL1UOZUzlO8+/JRsl0/jNXdwiQGCriVdIfrVy37U
+         hNIC/GMJSaSnJeuAlcUbcLPHEFpNJM6prDOa2WzsfjILaOmtUGFBFUqlNCU3ICVscULs
+         2qsBqOh3RDypEmpQbqashmxO3xaGInOpuDh28Xh8fV6QdVZknp2A/o3iuaViA/ZU1DDH
+         ZirmxraMItAfu4KPzhJFMCYZnddL0DtxfcbYWh+XXr1n/E+79V6zRWa99gScZS0/tLqn
+         ncJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6fseVS4SOGDGNmhhuA8xgDp4Hi/hIJ6Bi1hsK0uz2zGLP0deair5614M78pWV0gjQUUeeehBdfcFRZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLRFOfQP2XdEZSC5KUOC4qHBhFaLlPp/WtJ2z2e3puKuOvb1Wy
+	vmTcZYS8rbP3oiHGYCtY/zHo98KRMT+C+s8ixIxnezHBNc80lS/p4Nkl+nnKO2I=
+X-Gm-Gg: ASbGncvfCqwJZuQ7tjt6Trps9xSvy3Nz+jDSMqUZ3j6gjCpR0tTpIFwkBGAyZmyk6WA
+	4u14AfvKIpP762Ac28N8ReOL3dV+dLNk/voRYzbFIYfrQXmxoRV7McUupuJ9FhaiBBzrFx0hagZ
+	+3UtdYLixdOhw5mXuIhyH5yAtCzLOipyIfytFCXkjvEjtNjCACgRM0crNPa6TPRK6M3NvTPzT61
+	B1+tdoTjdoPZufGIfYxmJ+bAQyqiAU3WZVeUCmR0yH+M+S/4/hn4Qy8Cqh+yia1kDZmqgee7kBk
+	Dj5Q7W6BAlaCWwzeNCEAaQHK4EPw3IAJ07YC4dRBAD2ymdLdsYKCuL3rEla0q1mKjDVokHKWU52
+	iijzeYQ0=
+X-Google-Smtp-Source: AGHT+IFZhCkQOIyJ9oPlNzZA28oEmoeLDHWRYZCNcJUG9KfhtjcqugnktaaeS4AF/qgx1AjGsb+yrw==
+X-Received: by 2002:a05:6000:188c:b0:3a0:82de:f228 with SMTP id ffacd0b85a97d-3a082def248mr6959999f8f.45.1745915727089;
+        Tue, 29 Apr 2025 01:35:27 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e461bfsm13422566f8f.79.2025.04.29.01.35.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 01:34:16 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Tue, 29 Apr 2025 10:33:56 +0200
-Subject: [PATCH] drm/msm/gpu: Fix crash when throttling GPU immediately
- during boot
+        Tue, 29 Apr 2025 01:35:26 -0700 (PDT)
+Date: Tue, 29 Apr 2025 10:34:14 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Beniamin Bia <beniamin.bia@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7606_spi: fix reg write value mask
+Message-ID: <upz2umlx6qjnfiw5wvheukvfvolvea4anq7hky2vz5yi2w5wea@ormxyycioexv>
+References: <20250428-iio-adc-ad7606_spi-fix-write-value-mask-v1-1-a2d5e85a809f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-drm-msm-gpu-hot-devfreq-boot-v1-1-8aa9c5f266b4@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPOOEGgC/x3MSw5AMBAA0KvIrE1S9Y2riAU6mEWVKY1E3F1j+
- TbvAU/C5KFNHhAK7NltEVmawLQO20LIJhq00qUqdINGLFpvcdkvXN2JhsIsdODoIvIqawozTrW
- qS4jFLjTz/fdd/74fHWB/G24AAAA=
-X-Change-ID: 20250428-drm-msm-gpu-hot-devfreq-boot-36184dbc7075
-To: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428-iio-adc-ad7606_spi-fix-write-value-mask-v1-1-a2d5e85a809f@baylibre.com>
 
-There is a small chance that the GPU is already hot during boot. In that
-case, the call to of_devfreq_cooling_register() will immediately try to
-apply devfreq cooling, as seen in the following crash:
+On 28.04.2025 20:55, David Lechner wrote:
+> Fix incorrect value mask for register write. Register values are 8-bit,
+> not 9. If this function was called with a value > 0xFF and an even addr,
+> it would cause writing to the next register.
+> 
+> Fixes: f2a22e1e172f ("iio: adc: ad7606: Add support for software mode for ad7616")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7606_spi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+> index bd05357a542cf7234d5bb6b718829d6b720262cd..6c1228c7b1b11058cb5186513f032f7c8c8aa8f4 100644
+> --- a/drivers/iio/adc/ad7606_spi.c
+> +++ b/drivers/iio/adc/ad7606_spi.c
+> @@ -127,7 +127,7 @@ static int ad7606_spi_reg_write(struct ad7606_state *st,
+>  	struct spi_device *spi = to_spi_device(st->dev);
+>  
+>  	st->d16[0] = cpu_to_be16((st->bops->rd_wr_cmd(addr, 1) << 8) |
+> -				  (val & 0x1FF));
+> +				  (val & 0xFF));
+>  
+>  	return spi_write(spi, &st->d16[0], sizeof(st->d16[0]));
+>  }
+> 
+> ---
+> base-commit: aa1bd0b0ad048855d9efbee4ee8b9a6eee536256
+> change-id: 20250428-iio-adc-ad7606_spi-fix-write-value-mask-7acdcca46227
 
-  Unable to handle kernel paging request at virtual address 0000000000014110
-  pc : a6xx_gpu_busy+0x1c/0x58 [msm]
-  lr : msm_devfreq_get_dev_status+0xbc/0x140 [msm]
-  Call trace:
-   a6xx_gpu_busy+0x1c/0x58 [msm] (P)
-   devfreq_simple_ondemand_func+0x3c/0x150
-   devfreq_update_target+0x44/0xd8
-   qos_max_notifier_call+0x30/0x84
-   blocking_notifier_call_chain+0x6c/0xa0
-   pm_qos_update_target+0xd0/0x110
-   freq_qos_apply+0x3c/0x74
-   apply_constraint+0x88/0x148
-   __dev_pm_qos_update_request+0x7c/0xcc
-   dev_pm_qos_update_request+0x38/0x5c
-   devfreq_cooling_set_cur_state+0x98/0xf0
-   __thermal_cdev_update+0x64/0xb4
-   thermal_cdev_update+0x4c/0x58
-   step_wise_manage+0x1f0/0x318
-   __thermal_zone_device_update+0x278/0x424
-   __thermal_cooling_device_register+0x2bc/0x308
-   thermal_of_cooling_device_register+0x10/0x1c
-   of_devfreq_cooling_register_power+0x240/0x2bc
-   of_devfreq_cooling_register+0x14/0x20
-   msm_devfreq_init+0xc4/0x1a0 [msm]
-   msm_gpu_init+0x304/0x574 [msm]
-   adreno_gpu_init+0x1c4/0x2e0 [msm]
-   a6xx_gpu_init+0x5c8/0x9c8 [msm]
-   adreno_bind+0x2a8/0x33c [msm]
-   ...
+Reviewed-by: Angelo Dureghello <adureghello@baylibre.com>
 
-At this point we haven't initialized the GMU at all yet, so we cannot read
-the GMU registers inside a6xx_gpu_busy(). A similar issue was fixed before
-in commit 6694482a70e9 ("drm/msm: Avoid unclocked GMU register access in
-6xx gpu_busy"): msm_devfreq_init() does call devfreq_suspend_device(), but
-unlike msm_devfreq_suspend(), it doesn't set the df->suspended flag
-accordingly. This means the df->suspended flag does not match the actual
-devfreq state after initialization and msm_devfreq_get_dev_status() will
-end up accessing GMU registers, causing the crash.
-
-Fix this by setting df->suspended correctly during initialization.
-
-Cc: stable@vger.kernel.org
-Fixes: 6694482a70e9 ("drm/msm: Avoid unclocked GMU register access in 6xx gpu_busy")
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- drivers/gpu/drm/msm/msm_gpu_devfreq.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/msm/msm_gpu_devfreq.c b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
-index 6970b0f7f457c8535ecfeaa705db871594ae5fc4..2e1d5c3432728cde15d91f69da22bb915588fe86 100644
---- a/drivers/gpu/drm/msm/msm_gpu_devfreq.c
-+++ b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
-@@ -156,6 +156,7 @@ void msm_devfreq_init(struct msm_gpu *gpu)
- 	priv->gpu_devfreq_config.downdifferential = 10;
- 
- 	mutex_init(&df->lock);
-+	df->suspended = true;
- 
- 	ret = dev_pm_qos_add_request(&gpu->pdev->dev, &df->boost_freq,
- 				     DEV_PM_QOS_MIN_FREQUENCY, 0);
-
----
-base-commit: 33035b665157558254b3c21c3f049fd728e72368
-change-id: 20250428-drm-msm-gpu-hot-devfreq-boot-36184dbc7075
-
-Best regards,
--- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
-
+> 
+> Best regards,
+> -- 
+> David Lechner <dlechner@baylibre.com>
+> 
 
