@@ -1,122 +1,279 @@
-Return-Path: <linux-kernel+bounces-625377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BB2AA10A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:39:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1424AA10AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5F9844E51
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:39:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B980E174E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8689C227BA2;
-	Tue, 29 Apr 2025 15:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B7822A7F8;
+	Tue, 29 Apr 2025 15:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaU/RjCz"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="igkPu5v2"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE0A226D02;
-	Tue, 29 Apr 2025 15:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE6227E97
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 15:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745941154; cv=none; b=DKGa8KTKCipOf3Yxg/bBLysmW/keor7dLkyfj6FEQMMEGbODTPMQd3vL2vJ3PVQC/iFRv68fYwIQUQ+v4fepTGziBNHbJgVjBvkPRwsXCOGE5ZbMcXEderVDfGbLK6WTt7oMDY8XQzZqjFkXkMRxYVlCo+W12sQV5x+OfKY4O0Y=
+	t=1745941205; cv=none; b=rAr1AQiiIqOaTMvoMV0326nEXzmR9bosYIZN/tkTcv/zkOLnxPckhUfnnO6EuMTlM5rxe9veieSy6p1t6EUX3GyiGO0wEFfRxfkVPZ4aKOyHveCfYdGOXHZuo6VOMtMqOPcTpIOO/W3SJL17SHOPxWfEvNkIHnHVokLgYeRyIuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745941154; c=relaxed/simple;
-	bh=QhFPVaf4amAKFUGFo+zlluLEqsyqJjY7i+9JLGQ9+YY=;
+	s=arc-20240116; t=1745941205; c=relaxed/simple;
+	bh=m4RIdnC33T+0DzN2pkMUmi2ZJdkLEyYSorF3bzhZmQI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rwyR4mjXKfwKhKFMQZjQBFYt2eDMsqpNJVnWC8VcWWJ714g7pbqJFnHbWqMffQnb5RVnFwkqxcG+UOSdxd0F//WoqowP5RhhAl37m1Ds9sshzdjP49K3UM2uQNS3cRzonh0HUnSKKsVZATuJtRNptab2SzyhaYWpL6eL1sS4kfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaU/RjCz; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7398d65476eso4929119b3a.1;
-        Tue, 29 Apr 2025 08:39:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=s+CClPklu3hZNfclLlxNGbLthNHasDUhGDgax0F/xWlzAhapEn9IsVgu4GEU2pkGl0L2P3I5msVkuOCs2DU/K6Ggcrp4UmdQyvB7FVSjecnEZxGkJbQpHF2Q+kQwMw9xav0veULIO/MPbHX4zqIZ07+Sc1lJpgYbIITlMVQJE7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=igkPu5v2; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso1739a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:40:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745941152; x=1746545952; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745941202; x=1746546002; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QhFPVaf4amAKFUGFo+zlluLEqsyqJjY7i+9JLGQ9+YY=;
-        b=KaU/RjCzUV/cO8tWYDQ2O0rCozWI0KWY8e5cytaIcEjC3ImdZ17vuwAL3cOpPVvSl4
-         DjROl2AkvibiWKXMRdArrPO1+DuA5GXofxFlGa3sRkvvJAD+T8JkkjmlKmOw6KNDq0ES
-         NOaJrqOChUCXUlKFPSKe3/JYqGybrtgZL+mfJEHxrrbtI6DTB/rfaFh18Sa/AIzOYnFA
-         cPRuEohP0D7biIQYi2ADbkgPbbIjh0/CvkTYFAGZPiFxTBe7VVUXx28U/m1QY6BI7NLr
-         FI1Tc7ya28APh12bWmSHx64nn+anyr9Pa18oSBf1c1OnTzbdwpI8XuR2uVfaXPhTU0Jl
-         Zvvg==
+        bh=nrLjz0SO4NLZaGlZgmJ5ANLBwSUMQ+H6anEYSpKzKcw=;
+        b=igkPu5v2E8TpJbmhkZaYMFhSI1L7Qtv4eKmpWL0Gina+4r8Qxihkactxa3ckTeS4it
+         klnhE32dMbujO+Y1KfmfAdI/redH2erF39k/0T2zCF7m3MkvGKuASkcokX3gsONoO68/
+         LydkD1sZwjDOA3Myo288fcZKl32BA7nsAQGdw849qvnwfoxKWl2XKBwf1ZEEMS+1rCEH
+         RQxTEkCwT10Rh2ceVGJ83RsiN8VL7N0yaJU0Z2JOERwHvrc+VmDTm6UlvuoZ5WyTyTgb
+         nxQstjnbhFD+H81RHNvsjTv55sCMOuTd+eSfh+LS7BQIlxa6CmKS9VqyBsL7/8285pz9
+         0Enw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745941152; x=1746545952;
+        d=1e100.net; s=20230601; t=1745941202; x=1746546002;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QhFPVaf4amAKFUGFo+zlluLEqsyqJjY7i+9JLGQ9+YY=;
-        b=ldxWh193S8PyBTMBro50kr/k8bC3SILkbgYei5+twN7vvfUK09jgHgutjjmTfKz/tA
-         35YcU/hTj1GX7nbFMjqf3e5IE7hLvoKkAFkl9kzLaZSampzZmfKgt1IhevgJyQ4vnLbo
-         fHgXm9XOrckveNLzKXQNEC86wGi6nkLaEdTAkkn5Gsc59oYND0YYrI+kXhTHjqgh7x1V
-         zSPoGzGLFcx6cwp/HV1IEb6AFf960yh63MoXXvGFVcCGiyTis8JaIA+tXS8JgO9ULYWX
-         9cX6tzsLzINLqIaLjIpwrT9OSt7NMyEo5g0B7LDDHBw0fYDJZW25Sjh8rQs9U6/ekOpt
-         e7hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeH1m5knaO4yKv3gekMTqP7UTLXjKf4DINEEmYQIM3CJwgxouVp/xbFwy3DiRmdYY+vwA=@vger.kernel.org, AJvYcCXVToEUCn6WsE4yE6iHd1RP0FRHWjGegYT+hx8IMOf7j/srRzlWd3SQEVhqKiwCNL632MKnEa8FC1n+xNfV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAHbZ2fb7rlwhLcZhp/WTx3BMWX3QqNVHObDASCuwe3KSaSEVT
-	0a1sR9TSt/7tc0f8KRvTd5z+6H5Enh+A9o5d892cPoyv1z0ewD7OpS1je5CH7Lq/LYtumsrc1AC
-	+joEQ36n/F+ngQDEHtmLtfpylp9A=
-X-Gm-Gg: ASbGncs+ZAP5G4MwYQXiyKGNo8FOY8KMqDdhQr+6c3bGxEDtJH9Vt5NECU8zto3xkW7
-	6sX8GWvpCeW5NAeqDHQeZeH7EXauFPBOl7m6Y/Hw/9cBEcoMipQyUt5JW0hdtYeSNGEFpiPw7Bi
-	IQVYLlCs53hkupZVHSV+sZDAE5b+x+VI6aPP0FAQ==
-X-Google-Smtp-Source: AGHT+IFyqBmaS2dGSanUgSTQWaeJyclP2LYpd2raqBEFUZwtbBCXKxuWIZr/jVuBUx3pCBPzl+w/Cgeno47Z7y91Td0=
-X-Received: by 2002:a05:6a00:1310:b0:736:5969:2b6f with SMTP id
- d2e1a72fcca58-74028a3d42bmr4656093b3a.6.1745941151880; Tue, 29 Apr 2025
- 08:39:11 -0700 (PDT)
+        bh=nrLjz0SO4NLZaGlZgmJ5ANLBwSUMQ+H6anEYSpKzKcw=;
+        b=p9F8pI46Miejo79mE5ER0/8rZAjFtutAGkkNj/szIBblm16zsU6cIebQuaMQ1H1aXI
+         lfCDas6E77Q/0d8VdL8vz8qTf1F8UAcrhjbaidtLRQ2V/70spd5nNwOxCNfA+B2zQPOI
+         n4A2yc+ZjY7BvBROM10adit3y0xsH7efBEJvD3gHVCgOTcUPeebqskOsdIS1hN24VdZ+
+         ZpU6SaRYSVfg9x7xnQhGsXc5AMbQFTC0octSw70XbL5ghKMjmU4ZX9WTt5gQ0Br4GCvm
+         4XH6Vrl1LDBZelzbFsGf9uA+O0dr7LpRqe1WIufI5aFUGr8/+gDC0n8w8V9f2jOuaJwN
+         tyOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7ZxISguUFgaBPliMfWgOPM0D6EC7XU6e1nzIM890abZU7ZdK+P0WuwMAhgePv7tPVmRXRf6UUyi2pLpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0WmBDtM4jWeXSbeT+XrpZhmbMZb3CfOuySm5f8+/08wItTWGL
+	1JJLY9m+utJoF9pDM5qQki6VPu/voRJRPrxg5hOZBKzvpLI3DxfvruZ9sJ+84xbG0z2qsUkpfSr
+	npRM09zJJzN4JoG7yZSqTxkPADdqUsSTMTzFJ
+X-Gm-Gg: ASbGncuQJ/9OXyNw8fiYAys5jFHq/TlZx15V1k5jPZ+NUhVNcHeriPQYiWO0LlxFn26
+	oeFqU4tHoMS4Xl/D3MB8jmn5jPHAb5ySK42yGyFYB9ndtGemLiW5fUSIfDGQOfxaGqaZpRdd9jS
+	NTK5Y9kJzT0QyX8bwf1D6pco4z3MYcZbbdga7uU3NKNBahJGHSVg==
+X-Google-Smtp-Source: AGHT+IGTmRrDj58386rjJZziDq63lizkFMzj1lu/PM65c5dMEelMGMumc3qFR5YFmPkjXr20u694i69kdm2X64XfN50=
+X-Received: by 2002:a50:8713:0:b0:5de:bcd9:4aa with SMTP id
+ 4fb4d7f45d1cf-5f83c1b5a2bmr96410a12.3.1745941201725; Tue, 29 Apr 2025
+ 08:40:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423163901.2983689-1-chen.dylane@linux.dev>
- <0a25f585-de46-4e3e-8ec2-47df25947df1@linux.dev> <CALOAHbBUaSw=LYYYPwqM+HQz_8t5_g43Y7ARdvMZ-7rBTvS+Aw@mail.gmail.com>
-In-Reply-To: <CALOAHbBUaSw=LYYYPwqM+HQz_8t5_g43Y7ARdvMZ-7rBTvS+Aw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 29 Apr 2025 08:38:58 -0700
-X-Gm-Features: ATxdqUHRmH32NAWB2RwKq8pPP4h6dJ1sU7iW-pVcfqUpbO9Zgm6wdjCsH95Q1-g
-Message-ID: <CAEf4BzaJ1dbnkabR19qK_bpRp=v369vEYeB63FbVUiv_2P5SKQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] libbpf: remove sample_period init in perf_buffer
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Tao Chen <chen.dylane@linux.dev>, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>
+References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-8-surenb@google.com>
+In-Reply-To: <20250418174959.1431962-8-surenb@google.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 29 Apr 2025 17:39:25 +0200
+X-Gm-Features: ATxdqUE5eaCYmwGd2V3bpxMHfmJQqwTFsFKw7F4dJMhdfNXiMK8VuoXSkdfNDiE
+Message-ID: <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
+To: Suren Baghdasaryan <surenb@google.com>, Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
+	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
+	shuah@kernel.org, adobriyan@gmail.com, josef@toxicpanda.com, 
+	yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org, 
+	osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com, 
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 11:19=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com>=
- wrote:
->
-> On Tue, Apr 29, 2025 at 1:48=E2=80=AFPM Tao Chen <chen.dylane@linux.dev> =
-wrote:
-> >
-> > =E5=9C=A8 2025/4/24 00:39, Tao Chen =E5=86=99=E9=81=93:
-> >
-> > ping...
->
-> The patch has already been accepted and merged into bpf-next:
-> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/commit/?=
-id=3D64821d25f05ac468d435e61669ae745ce5a633ea
->
-> Interestingly, patchwork-bot+netdevbpf@kernel.org didn't send a
-> notification about this.
+On Fri, Apr 18, 2025 at 7:50=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+> With maple_tree supporting vma tree traversal under RCU and vma and
+> its important members being RCU-safe, /proc/pid/maps can be read under
+> RCU and without the need to read-lock mmap_lock. However vma content
+> can change from under us, therefore we make a copy of the vma and we
+> pin pointer fields used when generating the output (currently only
+> vm_file and anon_name). Afterwards we check for concurrent address
+> space modifications, wait for them to end and retry. While we take
+> the mmap_lock for reading during such contention, we do that momentarily
+> only to record new mm_wr_seq counter. This change is designed to reduce
+> mmap_lock contention and prevent a process reading /proc/pid/maps files
+> (often a low priority task, such as monitoring/data collection services)
+> from blocking address space updates.
+[...]
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index b9e4fbbdf6e6..f9d50a61167c 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+[...]
+> +/*
+> + * Take VMA snapshot and pin vm_file and anon_name as they are used by
+> + * show_map_vma.
+> + */
+> +static int get_vma_snapshot(struct proc_maps_private *priv, struct vm_ar=
+ea_struct *vma)
+> +{
+> +       struct vm_area_struct *copy =3D &priv->vma_copy;
+> +       int ret =3D -EAGAIN;
+> +
+> +       memcpy(copy, vma, sizeof(*vma));
+> +       if (copy->vm_file && !get_file_rcu(&copy->vm_file))
+> +               goto out;
 
-Yeah, we had a day or two of patchwork not working. The patch was
-applied. Sorry, I forgot to reply manually to let everyone know.
+I think this uses get_file_rcu() in a different way than intended.
 
+As I understand it, get_file_rcu() is supposed to be called on a
+pointer which always points to a file with a non-zero refcount (except
+when it is NULL). That's why it takes a file** instead of a file* - if
+it observes a zero refcount, it assumes that the pointer must have
+been updated in the meantime, and retries. Calling get_file_rcu() on a
+pointer that points to a file with zero refcount, which I think can
+happen with this patch, will cause an endless loop.
+(Just as background: For other usecases, get_file_rcu() is supposed to
+still behave nicely and not spuriously return NULL when the file* is
+concurrently updated to point to another file*; that's what that loop
+is for.)
+(If my understanding is correct, maybe we should document that more
+explicitly...)
+
+Also, I think you are introducing an implicit assumption that
+remove_vma() does not NULL out the ->vm_file pointer (because that
+could cause tearing and could theoretically lead to a torn pointer
+being accessed here).
+
+One alternative might be to change the paths that drop references to
+vma->vm_file (search for vma_close to find them) such that they first
+NULL out ->vm_file with a WRITE_ONCE() and do the fput() after that,
+maybe with a new helper like this:
+
+static void vma_fput(struct vm_area_struct *vma)
+{
+  struct file *file =3D vma->vm_file;
+
+  if (file) {
+    WRITE_ONCE(vma->vm_file, NULL);
+    fput(file);
+  }
+}
+
+Then on the lockless lookup path you could use get_file_rcu() on the
+->vm_file pointer _of the original VMA_, and store the returned file*
+into copy->vm_file.
+
+> +       if (!anon_vma_name_get_if_valid(copy))
+> +               goto put_file;
+> +
+> +       if (!mmap_lock_speculate_retry(priv->mm, priv->mm_wr_seq))
+> +               return 0;
+
+We only check for concurrent updates at this point, so up to here,
+anything we read from "copy" could contain torn pointers (both because
+memcpy() is not guaranteed to copy pointers atomically and because the
+updates to the original VMA are not done with WRITE_ONCE()).
+That probably means that something like the preceding
+anon_vma_name_get_if_valid() could crash on an access to a torn
+pointer.
+Please either do another mmap_lock_speculate_retry() check directly
+after the memcpy(), or ensure nothing before this point reads from
+"copy".
+
+> +       /* Address space got modified, vma might be stale. Re-lock and re=
+try. */
+> +       rcu_read_unlock();
+> +       ret =3D mmap_read_lock_killable(priv->mm);
+> +       if (!ret) {
+> +               /* mmap_lock_speculate_try_begin() succeeds when holding =
+mmap_read_lock */
+> +               mmap_lock_speculate_try_begin(priv->mm, &priv->mm_wr_seq)=
+;
+> +               mmap_read_unlock(priv->mm);
+> +               ret =3D -EAGAIN;
+> +       }
+> +
+> +       rcu_read_lock();
+> +
+> +       anon_vma_name_put_if_valid(copy);
+> +put_file:
+> +       if (copy->vm_file)
+> +               fput(copy->vm_file);
+> +out:
+> +       return ret;
+> +}
+[...]
+> @@ -266,39 +399,41 @@ static void get_vma_name(struct vm_area_struct *vma=
+,
+>                 } else {
+>                         *path =3D file_user_path(vma->vm_file);
+>                 }
+> -               return;
+> +               goto out;
+>         }
 >
-> You can check the current status of your patches on Patchwork:
-> https://patchwork.kernel.org/project/netdevbpf/list/?delegate=3D121173&st=
-ate=3D*
+>         if (vma->vm_ops && vma->vm_ops->name) {
+>                 *name =3D vma->vm_ops->name(vma);
+
+This seems to me like a big, subtle change of semantics. After this
+change, vm_ops->name() will no longer receive a real VMA; and in
+particular, I think the .name implementation special_mapping_name used
+in special_mapping_vmops will have a UAF because it relies on
+vma->vm_private_data pointing to a live object.
+
+I think you'll need to fall back to using the mmap lock and the real
+VMA if you see a non-NULL vma->vm_ops->name pointer.
+
+>                 if (*name)
+> -                       return;
+> +                       goto out;
+>         }
 >
+>         *name =3D arch_vma_name(vma);
+>         if (*name)
+> -               return;
+> +               goto out;
 >
-> --
-> Regards
-> Yafang
+>         if (!vma->vm_mm) {
+>                 *name =3D "[vdso]";
+> -               return;
+> +               goto out;
+>         }
+>
+>         if (vma_is_initial_heap(vma)) {
+>                 *name =3D "[heap]";
+> -               return;
+> +               goto out;
+>         }
+>
+>         if (vma_is_initial_stack(vma)) {
+>                 *name =3D "[stack]";
+> -               return;
+> +               goto out;
+>         }
+>
+>         if (anon_name) {
+>                 *name_fmt =3D "[anon:%s]";
+>                 *name =3D anon_name->name;
+> -               return;
+>         }
+> +out:
+> +       if (anon_name && !mmap_locked)
+> +               anon_vma_name_put(anon_name);
+
+Isn't this refcount drop too early, causing UAF read? We drop the
+reference on the anon_name here, but (on some paths) we're about to
+return anon_name->name to the caller through *name, and the caller
+will read from it.
+
+Ah, but I guess it's actually fine because the refcount increment was
+unnecessary in the first place, because the vma pointer actually
+points to a copy of the original VMA, and the copy has its own
+refcounted reference to the anon_name thanks to get_vma_snapshot()?
+It might be helpful to have some comments documenting which VMA
+pointers can point to copies.
 
