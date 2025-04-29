@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-625375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68182AA10A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:38:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FF6AA10A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2291BA10C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7F2844C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CD6226177;
-	Tue, 29 Apr 2025 15:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AAF22541F;
+	Tue, 29 Apr 2025 15:38:44 +0000 (UTC)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EE3225A32;
-	Tue, 29 Apr 2025 15:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BBD224891;
+	Tue, 29 Apr 2025 15:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745941093; cv=none; b=rH8YpuvD1B7esy7m1o3L8O8EFIpHOmsOjRjKgU0JQZQcIGvJlB1bGfQ/C5SVSGw4ytajm5McwhDOuNG8us8D7Hc9sPpFdYzGgWDmc8EQT5+E2R0fO0XzE0UlZp24emp0FzIKzvZJeaap94Ko5/yODlO8td6XEWJ3+mA2eM8dzZI=
+	t=1745941124; cv=none; b=V5KMV6nDvapLnOmADMuYszGOOFp6cGI8QG77//U8TBlKmrsznO3gJMl5nFe9y+X86u6pDgnafkN6TRdaE99J4iZ7qvq+ZSaoTksNluTXOHCx8sKIh65w41+pIPny+EegJm01Nqvps7u3c7vbqIlrxPqB+GAgcD5iEXWR3JODqy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745941093; c=relaxed/simple;
-	bh=HYavvVebq5zJiQqsirFBwl7rFYFkEzFw+qDi5Stqkqc=;
+	s=arc-20240116; t=1745941124; c=relaxed/simple;
+	bh=me9CAjuh9mBidyld5Fir3rpXNQ04l2/D0L58Psf5jt4=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nvKXMoRXAURfhnnNhIMzjNQmFZ2GjlzcokHU1z0+uOQ0UrB06NRBWG3FjYCOcpeT4nxTtgU5S9v3tZQPB0la7NLHiQUtK4O/oK/86RIPZ5jp4HSCY9eogKhxOSQvDyU00uoJOS5p0JIE5VYqP54mJiV6ak5qyj6/TNU0KB4EmsA=
+	 MIME-Version:Content-Type; b=dRabX909KPIusprFP8NClwh33QtWzVuztpUqHqAvKWPENmaiefsY2kOOajNpbZFvo3kC9JftptX113vei24Xuf8lgtVqWaeR8iDbyyPSSkAmiPKk38bjbVOviS2csKA7fYQrGOnK9bC13QeQt1X7/nVcBAWBzDGzl8Mh81XXPvY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Zn4986Rgzz6M4fS;
-	Tue, 29 Apr 2025 23:33:48 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Zn4DP219bz6L5Dw;
+	Tue, 29 Apr 2025 23:36:37 +0800 (CST)
 Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8F5101402F0;
-	Tue, 29 Apr 2025 23:38:07 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id B9777140447;
+	Tue, 29 Apr 2025 23:38:39 +0800 (CST)
 Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
  (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Apr
- 2025 17:38:07 +0200
-Date: Tue, 29 Apr 2025 16:38:05 +0100
+ 2025 17:38:39 +0200
+Date: Tue, 29 Apr 2025 16:38:38 +0100
 From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 To: Robert Richter <rrichter@amd.com>
 CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
@@ -50,7 +50,7 @@ CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
 	<terry.bowman@amd.com>
 Subject: Re: [PATCH v5 08/14] cxl/port: Replace put_cxl_root() by a cleanup
  helper
-Message-ID: <20250429163805.000034ff@huawei.com>
+Message-ID: <20250429163838.000070ae@huawei.com>
 In-Reply-To: <20250428214318.1682212-9-rrichter@amd.com>
 References: <20250428214318.1682212-1-rrichter@amd.com>
 	<20250428214318.1682212-9-rrichter@amd.com>
@@ -73,5 +73,6 @@ Robert Richter <rrichter@amd.com> wrote:
 > function entirely and only use the helper.
 > 
 > Signed-off-by: Robert Richter <rrichter@amd.com>
-Reviewed-by: Jonathan Cameron < Jonathan.Cameron@huawei.com>
+Oops. I had a bonus space, but missed the cancel button
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
