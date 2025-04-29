@@ -1,127 +1,220 @@
-Return-Path: <linux-kernel+bounces-625693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0AAA1B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9946BAA1B8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41CE83A9357
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C9A4C64A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C88B25F978;
-	Tue, 29 Apr 2025 19:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2760262FD4;
+	Tue, 29 Apr 2025 19:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqoXRHI0"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GcD7tVsY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0495253B71;
-	Tue, 29 Apr 2025 19:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5C8259CAF;
+	Tue, 29 Apr 2025 19:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745956276; cv=none; b=AU2SdAGfrXnEIB8Wv5HtFW/IlggxP8AAeQ/LODOWckVouKT0sLXjV/orEpIkCGR3nE9FfFIYyZ5I5uz286W3LdouYxvPkSzeJdTMwRIsqiPENipM9yyKrFiPkBXKKwkT2wCblfZxEriBi5ageHIHy3q9cMZJNmAFXts8EyBEKmk=
+	t=1745956287; cv=none; b=Ey3jDw61hIBsjOXc7sZ81iqIfLz5HCLegGEW1WCaIxovBslcz0xBQcICSmaSb7DuDc1zTdchb2oofLK8DUUPkYdV1Rrz2N5BHGaqRr6LoeRo0VvdF+FHpbY28DTndSvklM2wJBr1sGJj/gBWvakHKfayhKeTS+0Azx8AAHPol9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745956276; c=relaxed/simple;
-	bh=DpuU/QbbCsDjn7g/5fZL7Kv0FMaEuMia8xRIYO6BRcY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=RQ3GACest8vCgqpXUfC+qKhosNw5qfHvOlAPJMuvpRjK6bvM1EIVp/rxtUkZEy57opeRKjWH5zRaVGhMy0iM/HtZoxXaSCRUYscmUDdpa4kKXMqILPjkJHbDDioFz/2+wXncuiXOQ+CVfUWJHKOo2coEpduls3IONO0Vk6M4aOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqoXRHI0; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c1ee0fd43so5889222f8f.0;
-        Tue, 29 Apr 2025 12:51:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745956273; x=1746561073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DpuU/QbbCsDjn7g/5fZL7Kv0FMaEuMia8xRIYO6BRcY=;
-        b=VqoXRHI0Idp9t5Z/hwoYNE/qfiP712gltugKamwo9NF10pbOoa3SIRMKXa1lk8GY3r
-         +6q5v+dCPd7cn9aP254vveCZ43o7d2EbJf1EXZ7RFsFElegh3PC1xTPz+YEXzS2065kP
-         p40LHYSaMpxGefaw26hVW2L2xDfUZJtYsa0GVL95y2NlR21JTZ16g6wiHPj84CPXjIYL
-         /z7b5cxffcKKCz5Q0EIOwji3Ia9kpPdl3Nzvzq3uXiqYieqdm5mi5v7DN1tJs0I5ytNp
-         MlpZSUmtItK2p2JTr0tIPWb/wILKn+3opQs+xUzJEJz3dHJCS+em1WIULlaucSHERk6V
-         rIOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745956273; x=1746561073;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DpuU/QbbCsDjn7g/5fZL7Kv0FMaEuMia8xRIYO6BRcY=;
-        b=SSJAOvjEr848XA/XhO7UUcHWtRfWzrCkiC/rR1eILIPK7K93cKTiDlkmL5JYrFtBIN
-         TCThCeaZuiUR8DF4aaREAzuAfxrhVdTuZPEEK/D5qsqX0OuEi89WCAUO7FHL0G7NjbN+
-         AvtmlzA+qEpwBdlZ3tlRbKYb8GOF24IftiAnr7HLRhR304GxIeRXp5Dr1FXkbVPMqW0j
-         YP3bfHGdEU30yDbtuZtnv16macwUWoFXt4nOZj9QFv/N0cUzDlsnHTzioOMyZ29D590F
-         sszhtbkKb8jG6Hco5Wqp5ykhZwcWdaZUlxgak4AGcIk0o1EgbA1753aZ24Otclx2b5ca
-         GN8g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Y+6PMOrp2mq3B2o/gOZK9cJoKlLM36YgKX2BmYCPIKQ3bjnXJju8mOLH1YvQiaZjyjwqYpbiOFB8LhT7@vger.kernel.org, AJvYcCXygh/EN+//5vHwzITBoASwK0/FRR/eon81rzGc0HijPI7BIwKx3S7L8gxugwkgUFqBFjlfUSYkL4rX3IXM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhR+KFNl6GQK+hs1M7qfSFlnwn40wLy96PbhCFRqp93x51+uX+
-	XVes3OCNzXb87+87LYhbN807fy1EPP20kycKCIwtf/PGM/1Xe0O/
-X-Gm-Gg: ASbGnctyN3eM6pwxUuePA4VpBXQVgIkZ23y71FYkHbJMXNVonbkhDmmm/8lAtryHthX
-	31mNCzu7saAjbi6B61U0XYBWnhicIWxHJ8WhBtnRHxBvXa88DNGia5nnjONGs1qaMyFtRERaTcz
-	olvD14X/opsnxLhOt/C2+RyrTAeOltk4twr/I1SdwGK9ZU/Odt4HSM/vRFiVzejtQ0VRkstu0mg
-	B12zai0/4kuGWpH8g88aEvlK9H2M2Fqvp8MMiQzXl8WZD5VPA8hqMjtEc/Sh9Kcwo3fW/nMsCuN
-	IM/aG9imMD5dGn/3+rOEDcQRtm1ZFH4mH4C0MMfzCrrFupPnaNhf
-X-Google-Smtp-Source: AGHT+IEjgsJPfac2XxBU5WYmuZlZ/uRKQBSizR1fl3RJO5bgEc0OUCbXE2MDpOf6drk91+Ec3iF26w==
-X-Received: by 2002:a05:6000:420e:b0:39e:dd1e:f325 with SMTP id ffacd0b85a97d-3a08f77c26fmr606792f8f.31.1745956273149;
-        Tue, 29 Apr 2025 12:51:13 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.99.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46869sm14883373f8f.72.2025.04.29.12.51.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 12:51:12 -0700 (PDT)
-Message-ID: <c84e8246-8104-4409-8d95-389d61bc07af@gmail.com>
-Date: Tue, 29 Apr 2025 21:51:12 +0200
+	s=arc-20240116; t=1745956287; c=relaxed/simple;
+	bh=VJTYJ+DRSOZ7GY8qrph88f8OFS52yzkIz78IYtEQHco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cYGKlP9OOx0yKvfqrXN356HfYmX316Tq+YGnvhNmb27563Un2PTKjBhc1yr+FkYEx3unixM0no2skXYVSvJe8be7bz+zG0RWEDdL/fsAOkJSvfLM9cNQvDpeUOQklCFWEV3UIZ8a2bXQIqKhPPJVWhM0FpVV7GH1Gp4kyQcGcL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GcD7tVsY; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745956286; x=1777492286;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=VJTYJ+DRSOZ7GY8qrph88f8OFS52yzkIz78IYtEQHco=;
+  b=GcD7tVsY1TN0SPLyuWhmiOJWcXe3tcjo+K5CYODSiGv8Pk7ZJzf2oA5g
+   06+gf6yD//TKHHAGksO4qnia4UnPF+8ZuUZorPX0Sn4FJ2tBKG69TtnXM
+   xxwsRTxrDEMEA8WhWgmD+9PFh6/H+MnPjpubsnbxr7xNMFjRNT+yd5HNZ
+   SJg5iSO9kB3lxFsVphFuKhyAyDQZeT+BWg9HufjEm+AVDAoGDpDr/QBJE
+   WybIhg8TiORrQ4Ib6KPdRl6UMtECMoE5bJuK1azQx55ykjq/KqsA3zgzP
+   fb7UZVExc14dvrEtdLsRCe3T4fg+OPd9okKxBsEz+jw4jxO8r6jKWOlN6
+   g==;
+X-CSE-ConnectionGUID: XcXhtjlMTZmC8LjrDX/wCA==
+X-CSE-MsgGUID: 995BFKt2Sxqis8TxeEVYJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="65009684"
+X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
+   d="scan'208";a="65009684"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 12:51:25 -0700
+X-CSE-ConnectionGUID: Nyl775vaQ86rWQdZs/rvnA==
+X-CSE-MsgGUID: gOyjbdY+Qn24s/zSN/8koQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
+   d="scan'208";a="139102749"
+Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
+  by orviesa005.jf.intel.com with SMTP; 29 Apr 2025 12:51:19 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 29 Apr 2025 22:51:17 +0300
+Date: Tue, 29 Apr 2025 22:51:17 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ben Hutchings <ben@decadent.org.uk>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: make all file references relative to source
+ root
+Message-ID: <aBEttQH4kimHFScx@intel.com>
+References: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-Subject: Cannot boot imx8mm symphony board
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
+X-Patchwork-Hint: comment
 
-Hello,
+On Sat, Mar 15, 2025 at 02:20:14PM +0100, Thomas Weiﬂschuh wrote:
+> -fmacro-prefix-map only affects __FILE__ and __BASE_FILE__.
+> Other references, for example in debug information, are not affected.
+> This makes handling of file references in the compiler outputs harder to
+> use and creates problems for reproducible builds.
+> 
+> Switch to -ffile-prefix map which affects all references.
+> 
+> Also drop the documentation section advising manual specification of
+> -fdebug-prefix-map for reproducible builds, as it is not necessary
+> anymore.
 
-I write this to ask for help in booting linux on a slight variation of the development board imx8mm-var-symphony.
+Hi,
 
-At the moment I am using an u-boot version that can boot a linux 6.6 kernel and a 5.15.60 that I have
-adapted to my custom board: https://github.com/NeroReflex/linux-imx/tree/old
+This broke 'objdump -S' completely for me.
 
-I can boot that without any problem: the gpu works as well as networking, backlight, RTC and every other device on the board; however I want to use either 6.14.4 or linux-next.
+I see the following difference in the debug info:
+-    <12>   DW_AT_name        : (indirect line string, offset: 0): drivers/gpu/drm/i915/i915_config.c
+-    <16>   DW_AT_comp_dir    : (indirect line string, offset: 0x23): /home/.../src/linux-2.6/build
++    <12>   DW_AT_name        : (indirect line string, offset: 0): ../drivers/gpu/drm/i915/i915_config.c
++    <16>   DW_AT_comp_dir    : (indirect line string, offset: 0x26): /home/.../src/linux-2.6/build
 
-On that version I can see a device tree arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dts
-that, from my understanding, is supposed to at least arrive at the point of printing something from the debug serial, where I can actually pick up and start figuring out what's missing/wrong.
+Looks like I can work around it with some combination of --prefix and
+--prefix-strip, but that seems far too tedious to have to do every
+time I need to decode an oops.
 
-My problem is that u-boot (the same u-boot version that can boot v6.6 just fine) works flawlessly, the fdt is
-loaded into memory as well as the kernel, but then I have no output on the debug serial, no backlight is turned on (I tried adding my screen to the device tree) and the ethernet controller on my board does not reset as
-it usually does when a working kernel is booted: this lead me into thinking there is a problem somewhere in
-the early boot sequence.
+> 
+> Suggested-by: Ben Hutchings <ben@decadent.org.uk>
+> Link: https://lore.kernel.org/lkml/c49cc967294f9a3a4a34f69b6a8727a6d3959ed8.camel@decadent.org.uk/
+> Acked-by: Borislav Petkov (AMD) <bp@alien8.de> # arch/x86/
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+> Changes in v2:
+> - Pick up Ack from Borislav
+> - Merge all changes into single patch
+> - Also drop link to KCFLAGS from docs
+> - Link to v1: https://lore.kernel.org/r/20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net
+> ---
+>  Documentation/kbuild/reproducible-builds.rst | 17 -----------------
+>  Makefile                                     |  2 +-
+>  arch/x86/boot/Makefile                       |  2 +-
+>  arch/x86/boot/compressed/Makefile            |  2 +-
+>  4 files changed, 3 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/kbuild/reproducible-builds.rst
+> index f2dcc39044e66ddd165646e0b51ccb0209aca7dd..a7762486c93fcd3eba08b836bed622a41e829e41 100644
+> --- a/Documentation/kbuild/reproducible-builds.rst
+> +++ b/Documentation/kbuild/reproducible-builds.rst
+> @@ -46,21 +46,6 @@ The kernel embeds the building user and host names in
+>  `KBUILD_BUILD_USER and KBUILD_BUILD_HOST`_ variables.  If you are
+>  building from a git commit, you could use its committer address.
+>  
+> -Absolute filenames
+> -------------------
+> -
+> -When the kernel is built out-of-tree, debug information may include
+> -absolute filenames for the source files.  This must be overridden by
+> -including the ``-fdebug-prefix-map`` option in the `KCFLAGS`_ variable.
+> -
+> -Depending on the compiler used, the ``__FILE__`` macro may also expand
+> -to an absolute filename in an out-of-tree build.  Kbuild automatically
+> -uses the ``-fmacro-prefix-map`` option to prevent this, if it is
+> -supported.
+> -
+> -The Reproducible Builds web site has more information about these
+> -`prefix-map options`_.
+> -
+>  Generated files in source packages
+>  ----------------------------------
+>  
+> @@ -131,7 +116,5 @@ See ``scripts/setlocalversion`` for details.
+>  
+>  .. _KBUILD_BUILD_TIMESTAMP: kbuild.html#kbuild-build-timestamp
+>  .. _KBUILD_BUILD_USER and KBUILD_BUILD_HOST: kbuild.html#kbuild-build-user-kbuild-build-host
+> -.. _KCFLAGS: kbuild.html#kcflags
+> -.. _prefix-map options: https://reproducible-builds.org/docs/build-path/
+>  .. _Reproducible Builds project: https://reproducible-builds.org/
+>  .. _SOURCE_DATE_EPOCH: https://reproducible-builds.org/docs/source-date-epoch/
+> diff --git a/Makefile b/Makefile
+> index 5c333682dc9142b1aacfe454a5c77f5923554b7d..4f920187cee658ae4d1b807fca365f6994274828 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1067,7 +1067,7 @@ endif
+>  
+>  # change __FILE__ to the relative path to the source directory
+>  ifdef building_out_of_srctree
+> -KBUILD_CPPFLAGS += $(call cc-option,-fmacro-prefix-map=$(srcroot)/=)
+> +KBUILD_CPPFLAGS += $(call cc-option,-ffile-prefix-map=$(srcroot)/=)
+>  KBUILD_RUSTFLAGS += --remap-path-prefix=$(srcroot)/=
+>  endif
+>  
+> diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+> index 9cc0ff6e9067d574488a35573eff4d0f8449e398..f500f82864aae80deb74faa3df9a8b6333d6c4ca 100644
+> --- a/arch/x86/boot/Makefile
+> +++ b/arch/x86/boot/Makefile
+> @@ -54,7 +54,7 @@ targets += cpustr.h
+>  
+>  KBUILD_CFLAGS	:= $(REALMODE_CFLAGS) -D_SETUP
+>  KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
+> -KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
+> +KBUILD_CFLAGS	+= $(call cc-option,-ffile-prefix-map=$(srctree)/=)
+>  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+>  KBUILD_CFLAGS	+= $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+>  
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 5edee7a9786c67e13c295473751b82387bcbd67e..ad324978b2e5b1b6f8be82647769c99db8257ac7 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -38,7 +38,7 @@ KBUILD_CFLAGS += -fno-stack-protector
+>  KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+>  KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+>  KBUILD_CFLAGS += -Wno-pointer-sign
+> -KBUILD_CFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
+> +KBUILD_CFLAGS += $(call cc-option,-ffile-prefix-map=$(srctree)/=)
+>  KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+>  KBUILD_CFLAGS += -D__DISABLE_EXPORTS
+>  # Disable relocation relaxation in case the link is not PIE.
+> 
+> ---
+> base-commit: a57512d6cd88eba04cdc1fb83832c00d248bd0d1
+> change-id: 20250312-kbuild-prefix-map-5ae76c209e7a
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <linux@weissschuh.net>
+> 
 
-Therefore I attempted to use the previously working device tree, the one from 5.15, but to no avail.
-
-At this time I think my problem can only be either one of these:
-- u-boot I am using is not suitable to boot kernels past 6.6
-
-- I have a problem in my config
-
-I also tried using the following patch as it appears to be relevant for this hardware:
-
-https://lore.kernel.org/all/20250311-wip-obbardc-qcom-defconfig-interconnects-builtin-v1-1-675b6bc57176@linaro.org
-
-but again to no avail.
-
-Can someone please point me in the right direction? What config am I supposed to be using to boot that board?
-What version of u-boot (and configuration) should I be using?
-
-Thanks in advice,
-Denis
-
+-- 
+Ville Syrj‰l‰
+Intel
 
