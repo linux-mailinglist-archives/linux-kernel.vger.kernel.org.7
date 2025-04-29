@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-625631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88361AA1ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:42:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB4AAA1AD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72294A2C36
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDE21892904
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FA2253934;
-	Tue, 29 Apr 2025 18:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEAB25485D;
+	Tue, 29 Apr 2025 18:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9P4/WXV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CgzuBq/n"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9A6213E67
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FD22459E1;
+	Tue, 29 Apr 2025 18:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745952148; cv=none; b=sWx8QsocAV7sXXvnuznWqC+gMcc0s6kaK52ZX4lTN6L0My8efnxVLDfEfNHS2UJBbordeKiHpBLNP5iMmBtSisDtLrfJPoSNU6kk9ysEVveYVWcA/8FXQS5VL9tu2cgIIcmmRBIqPKFSGLf4rQhskbiZfc7QkMSfn/supKxtAP0=
+	t=1745952226; cv=none; b=tnlvBfmBtju60APpIGLt19HPA+fP3Z3wm6p6YbdpZDbksGhn434uC8XhUYwCJmvzLVJpDWHwGtUPJ9nFPv6Qko3AGxMFnFqzefGu6OIRN2z/Zvjo9IMa0mwtx9RQEKXX1oUsjPsj9KuAmszA/8SLotCzBf9yW1jybRIFJWXVCps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745952148; c=relaxed/simple;
-	bh=AVZaIFfl3C3AnVUI9WWYbfNoTf+Ot9B32U+3KMaA6gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTcCXAuoiUzFFDumm3FPr/zN72A758KfFKo+7WJo0NH0CyyRwIBbQMoQVF+6N7sNgyap+sFUGkp5rshU6RhSi27AYnhLrr4xHkEX7icDOadwhx9HAfadHPCmOMZdyT9jhY3zf0uSuYLCf6pAzSTMckwPTaxRHVXIawhW0tAdWXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9P4/WXV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505F3C4CEE3;
-	Tue, 29 Apr 2025 18:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745952147;
-	bh=AVZaIFfl3C3AnVUI9WWYbfNoTf+Ot9B32U+3KMaA6gw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N9P4/WXVd/gQqKxGxomjEWqs7DXWROTnaKEREvwt8cX/apG6nNxCNoyrydDT5RFqU
-	 P9swB3/9KtuyKXLKhHwiEO/1gjBwfGdc2wRxeWeLV9r20rE9/qj66/TMAqvzbTcGud
-	 DGO/vx2pj5agTujUhkZWkX7/JKxqJ4fUltcWbTqO1RdhJh7utmw6JcWpXkII05YO5w
-	 vxDIQdrixgH56yIaow+40iObKhhVvEiadQMjrvUme2TMsqEnBI069p/OyxceBaNNzz
-	 02FOBa2AJfs2MXC+9BZsT9s7N9onkKEx4ijK8C9+cNSlRDrS7VrVs049b/X/H3ZH4S
-	 RZ+AJqpdW0F9Q==
-Date: Tue, 29 Apr 2025 11:42:25 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Hannes Reinecke <hare@suse.de>, Daniel Wagner <dwagner@suse.de>,
-	Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	James Smart <james.smart@broadcom.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] nvme: only allow entering LIVE from CONNECTING state
-Message-ID: <aBEdkUky_-bfgISv@kbusch-mbp>
-References: <20250214-nvme-fc-fixes-v1-0-7a05d557d5cc@kernel.org>
- <20250214-nvme-fc-fixes-v1-1-7a05d557d5cc@kernel.org>
- <0134ea15-8d5f-41f7-9e9a-d7e6d82accaa@roeck-us.net>
- <cb46aa83-8033-4d64-a3c7-420172c3f3f5@flourine.local>
- <9763c4cf-8ca5-45d4-b723-270548ca1001@suse.de>
- <aBEW4W40ZelIXfs2@kbusch-mbp>
- <253e0551-d4d7-4ffe-8842-daecf1f6c753@roeck-us.net>
+	s=arc-20240116; t=1745952226; c=relaxed/simple;
+	bh=Z6mkwjng3lmvVlSacVSrnsXJZ8Ei6AdhSYHxjE5y7dU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cSOsHQjmsYTVzD+sq09B6+00EOLJtoxxRGzL+DK0k0mr5ogc2qcjAQdig6i5SXTS7RclDMRrvNY3jgVXJ8i0sBUs5p0cPwlM0jTguVQXokgfXKyo4vZJLXdCQuo/WrukdslkwVkc4TnLWC9I4aXXcrHiF71ThOzk2vdimnB0GH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CgzuBq/n; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 9pu4uBT2Jo24u9pu7u4D40; Tue, 29 Apr 2025 20:42:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1745952124;
+	bh=CJfmyDLx95cl/rb5U922mRDjqr6hA8J5X+u9yZBBAeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CgzuBq/nmkWps0gTHn2AcWgwonPp6PPhhuouN4u2i99q71QzTJuNnNgATt4c2SdoN
+	 K8LLf80TPbF5HXwVdWDc0KuvAXlguqhfXq4jG2Is4rtNOdxPbTjYqhmct8mlZgg25G
+	 qplJbHA3m23BCOGbOYSswlx0AXUUXSbl/0IbBhsJz+ChGQQGLKfyOxSZQZngMoi6Bh
+	 rst00Vm/PTCAIxHPlCSlccvBlBtSDkp0JKlezR77iK1MMFs2vXmUk0QJ4PlkiBDMv1
+	 lgHd5VgZ84Va9jnRiewNlp6//V3p28Yjr2LeRlye36pYHBQC5uOFhoKeRMI6zWoeTi
+	 dOCa+5WIp4ipw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 29 Apr 2025 20:42:04 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <a07bec9d-26db-4270-bb75-49c9d3b6b91b@wanadoo.fr>
+Date: Tue, 29 Apr 2025 20:42:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <253e0551-d4d7-4ffe-8842-daecf1f6c753@roeck-us.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] tpm: remove kmalloc failure error message
+To: Colin Ian King <colin.i.king@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429171454.828003-1-colin.i.king@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250429171454.828003-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 11:23:25AM -0700, Guenter Roeck wrote:
-> On 4/29/25 11:13, Keith Busch wrote:
-> > On Mon, Apr 28, 2025 at 03:21:18PM +0200, Hannes Reinecke wrote:
-> > > > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> > > > index b502ac07483b..d3c4eacf607f 100644
-> > > > --- a/drivers/nvme/host/core.c
-> > > > +++ b/drivers/nvme/host/core.c
-> > > > @@ -4493,7 +4493,8 @@ static void nvme_fw_act_work(struct work_struct *work)
-> > > >                   msleep(100);
-> > > >           }
-> > > > 
-> > > > -       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
-> > > > +       if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING) ||
-> > > > +           !nvme_change_ctrl_state(ctrl, NVME_CTRL_LIVE))
-> > > >                   return;
-> > > > 
-> > > >           nvme_unquiesce_io_queues(ctrl);
-> > > 
-> > > I would rather have a separate state for firmware activation.
-> > > (Ab-)using the 'RESETTING' state here has direct implications
-> > > with the error handler, as for the error handler 'RESETTING'
-> > > means that the error handler has been scheduled.
-> > > Which is not true for firmware activation.
-> > 
-> > But the point of having firmware activation set the state to RESETTING
-> > was to fence off error handling from trying to schedule a real reset.
-> > The fw activation work schedules its own recovery if it times out, but
-> > we don't want any other recovery action or user requested resets to
-> > proceed while an activation is still pending.
+Le 29/04/2025 à 19:14, Colin Ian King a écrit :
+> The kmalloc failure message is just noise. Remove it.
 > 
-> Not only that; there are various checks against NVME_CTRL_RESETTING
-> sprinkled through the code. What is the impact of introducing a new state
-> without handling all those checks ?
+> ---
+> 
+> V2: remove entire message, originally just removed a trailing space
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Good point, bad things will happen if these checks are not updated to
-know about the new state. For example, nvme-pci will attempt aborting IO
-or disabling the controller on a timeout instead of restarting the timer
-as desired.
+Hi,
 
-Can we just revert the commit that prevented the RESETTING -> LIVE
-transtion for now?
+The S-o-b tag is not correctly placed.
+
+CJ
+
+> ---
+>   drivers/char/tpm/eventlog/tpm1.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+> index 12ee42a31c71..773e9e537991 100644
+> --- a/drivers/char/tpm/eventlog/tpm1.c
+> +++ b/drivers/char/tpm/eventlog/tpm1.c
+> @@ -257,11 +257,8 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+>   	    (unsigned char *)(v + sizeof(struct tcpa_event));
+>   
+>   	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+> -	if (!eventname) {
+> -		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
+> -		       __func__);
+> +	if (!eventname)
+>   		return -EFAULT;
+> -	}
+>   
+>   	/* 1st: PCR */
+>   	seq_printf(m, "%2d ", do_endian_conversion(event->pcr_index));
+
 
