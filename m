@@ -1,295 +1,199 @@
-Return-Path: <linux-kernel+bounces-624312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2AF5AA01E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F10AA01ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA943BBE65
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88351896CFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64932741A1;
-	Tue, 29 Apr 2025 05:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A5825E819;
+	Tue, 29 Apr 2025 05:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LREXRJ3h"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hMyHlbH8"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2057.outbound.protection.outlook.com [40.107.21.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD3B21ABC8;
-	Tue, 29 Apr 2025 05:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745905327; cv=none; b=qwoRrfpuD76U7uoiE7rVnVdIEv7JxlPk8O4aoMdI0IshK862VZvTEg0NkWU84bqQEUKfXgK5nBIXkYUxn9ViuN8PVJVhCs9tdUblqJTF4JXgWLTUyyKyEu3vjGk9eg+nEhuH2813Uq0PYzJRs4fUTgcEgMN3ieKmJSOt3L1Yahc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745905327; c=relaxed/simple;
-	bh=0e5uxumMVgB+gJ4af5LiBNwBiNJ/RjGAyjB6I+PjhB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QB22yxP09X34JqWNGKRtl6yo1Xpgx1o9SQLrwkDRag3n/jDFXbpnUDcRt3UJeO58WdMiWCkWZVz66uiyw4gnMwsX7QV6vKP5A3m58Cps8aqfQ3A/ds6R2Qk7qG64UY3S4nRgLMoYsCw3YuHZmphMzcQoMcAJGE9ci/azyGVfNNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LREXRJ3h; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c1efbefc6so3782540f8f.1;
-        Mon, 28 Apr 2025 22:42:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745905324; x=1746510124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VB5Wtwbx78r+orlHKCiKwe2I8rH2J7zEjSM0oCRsjK0=;
-        b=LREXRJ3hUgTGSCbQSam9d+zA+OJBJZZR9CegKE5Nhdo8gLPJk+pr0uJdibjX3CUF8g
-         m/TlXJrYMgiXdjEYIkYz4zUtW41v4C8Ucv6ZhM5SChHgoMVz5SA1QVXfhnStjvACNN8F
-         bDUfCzMPd+4OoD2z4GRzAGX5WmlogTAk4leaD9aOUkgIagZJ9SbCWPZM4BzxvxatGKBj
-         10QKvICszuHEdRld4IIH/kfgxorzYa/PigD/y5Ws0nGbfsVuZugkqCnvT4FpSFcDoc4t
-         R6F8iUFriaYCNnFwfCV3/WRIRT7ul1otCcPZaN2GfXp9Gp11/1s2hN6WGLBHn1PumqJa
-         Bukw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745905324; x=1746510124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VB5Wtwbx78r+orlHKCiKwe2I8rH2J7zEjSM0oCRsjK0=;
-        b=wnXT9ho21rQodxOJ0k260kwr5B5Kz7IAXyqBzk0uB1G9x2APGXwrFMyL5MgEdWa0N0
-         DYvEjxOqv3p5NYDU0l4CXo5PzzFAyMDzbYbPPpYZtANlZLynH3bReAOzBVvplMyey9I/
-         Cj/PXhIzwHRV+olhTZkAjbqqlo967L3OcpSJ86m3lnJcU7l+GMss7K0E3AUOOeFUxZiH
-         6m0APmCp423Ou39zhZC0bEqF901Y1zj46Vvz/cMldazpJ8aj7f0ZhT0TQSEofZo3Xk8r
-         jsVVmiaJHXf3wTln0kVWbvDvzn01OWs3hNLQovnu/eZYiMUS+gs/nwyidU4GJH7PG8Hv
-         LeFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQydoO/WQBWEXl6joHXQ1env6t8HC9L8wo/szRoEIljF4WUUxx+jJzMZ7QAzKEN/J6TvzNtpBkp2Uhs09e@vger.kernel.org, AJvYcCVwfDwdeTPcCwdOWIGxw80hoRHFKtIL8kvR5t6P3t+EcJdtigPz+UD9DBK5w1ZyjzoR0TZgdE7NIsa5Kac=@vger.kernel.org, AJvYcCWwHPClbYAFyg2WCdpba3jxVWPitkS1uA3oVBt4Ok6kiwXvmYKjRTFV/sR570EalUrUNFRrwhp0QGo=@vger.kernel.org, AJvYcCXQCmXkB/wX8cAubGy7584I86GHqmmU6qvItOeTN2oI8HsumXrM7nm2S5NNM6/52nI8Debvq8PBnrm3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH8DOI5kaQpUZoBDGXp2HSh4PxDO84Gxta0Vq2txqwRBkrq3F2
-	rdplA3ayrYVTkBzHhhkBhRafh25+MJ+p6bcS6NTmr8sAeW0R0t+cqInU4LyfEoYW4DPapLbMx/V
-	shUnQ+ciNtOVrSDktomSzCGhXPNM=
-X-Gm-Gg: ASbGncvhl2XxmnjuGtl5J0WopVAFbMvsQSUpZhVqSlJkus8CzLfm6OanyNUpQdrRDaN
-	pJtZqtk0Jab81E7l39TYSQPC1TOuv3JfIgrLDf2fFpl6NN1qFZkH8gMsxYwiq7oFX1zbev3+8an
-	fTR518oFy0Oq3tt2KV1IroIvOKmenDKTEo/w==
-X-Google-Smtp-Source: AGHT+IH4r75txm4cCS97/f9OrI2KG8AGYPc0bAJ+UQrYpFpQsY0S4uUNIdOxBS8MjpbL6UUQkSMtW3X5+RcM0EVnkBQ=
-X-Received: by 2002:a05:6000:402b:b0:3a0:7a5d:96dc with SMTP id
- ffacd0b85a97d-3a08ad32e13mr831956f8f.13.1745905324117; Mon, 28 Apr 2025
- 22:42:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A1A23370C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745905382; cv=fail; b=kjMdgZEmu55MsEQqUyC66P++wKCmIAYwGhmOW6CmdyPky+hbXHq75Qt60n55/9isJHcXilZqK9DyGRogw5lTrvqJjIq5bnNmWfDHP2dN/AhDGnaqueot6WxklkLUOANNkIddSGIh93JxNIJDrLO8eov0nzESuzezHnUxhS1GiHc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745905382; c=relaxed/simple;
+	bh=d6JImn4RhzHBg6isYVvrUdlqSiNQLiyUw3nBHJBmSwQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jfMm/sWIu0+iOjc4PQd4yUnVUwAfWhEjNiApUikpMoeLDeY80cwDa8FWXT5gd5a/Zdeoct/o+VG+XdOTIo1YYTfC7wYPvrpu3VsFo/LCkCsSb1UBjns7s0I12JEsyZ2ok0j1NEOKlaxTNCNmD2PTtQTJjPGcf+sUMI00Z4LpFUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hMyHlbH8; arc=fail smtp.client-ip=40.107.21.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DuJRXuVlLvau4IGmerTH87j7eIN8PIlpII4Stm4P5j+Rcz/0wDbJBjLu2EG04BHcKZz0m4knU9bpnFGYER4gS2dC7lOnR77zG+2XMu7neOmukn/dZ6fW1304iZzeaRmwJVja2UyEDnp8H0iN4LKH5/V1ufJQLUZwuS3+i6IEiwWdctDfbqFsLwRlGa1VmgyyBeAsQeF6it6g15cogCXMD644LU9FlccvyzhhklsMP7A68P0BKeUWbxqiNK7/AsBLSBlTAVgHDa7A8a4RPW62ZeHv1stwUXBjbl06SdbT2E5BokDUxWMVTU9FKBD8hJz4H9pPDpfUdszcOciPXSUiNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s0GMoWtH01qkuAr8hbkxTGLYawJ+5aby8JPRnyKLEzM=;
+ b=hV4g4c+hEsu84FuCkTb3CQdkGenWAP7D19aXuLxFPiaLM4NrK1tQo7OIhZ6HEgvxynLS7AV34xT6TXNisAOD0l5IqquNS7HG0Aht4gfcTZqeMFw1ksiMGriTjldWPrcbLiIwxUo7szAB7+nowuquHaqXFrzNa17v/nZblymv+ZmFVhOT+U/o6SKO7d7mpTKrjOhsmyb0BH6DBG9dy1iSPsCFOlQG5xQ2Yyy0DCcLdn8BzUbidoTS8tlzqmAxbXiHs22ybAM3wm5FsekdeH7R+FqsWoa9Mf0Orxo/ECkrH1GkZZpJmWr/OZMFpStt7XfTzp87+d5XHyFf7Fc1D7/M3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s0GMoWtH01qkuAr8hbkxTGLYawJ+5aby8JPRnyKLEzM=;
+ b=hMyHlbH8YW1Om+VRWfEDYyUKpL4qJIUKdTknFYXTzZ3YefJWiFine69vBOo/7JUWnA/Jm7Xq+x3Yq4XjzS1VYE3V8dVeiirhjS+BKb49biwiVnQwAubfdyOvzBzeGjz8gw1yPN4kbUhMa5+DWkj0h3g/ZDs6XS9NIH9zPvvFcRckoMqBpl6d839VklHVh6kivE9PrZiGajMieem2K0HcyP2WDytbBCxu8WYZE2Rdjh6KemGaCV1uYg4IMoNoL62M5Y4fGCY7SVPXdFkS0Zd54/LyCSMaPFXX7eh2DCtpYbhVK17kXcFQeEfNlfirnvIidX2AUXMCUkzjfiHNcaP8Wg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM9PR04MB8424.eurprd04.prod.outlook.com (2603:10a6:20b:3b5::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Tue, 29 Apr
+ 2025 05:42:57 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8678.028; Tue, 29 Apr 2025
+ 05:42:57 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-i3c@lists.infradead.org (moderated list:SILVACO I3C DUAL-ROLE MASTER),
+	imx@lists.linux.dev (open list:SILVACO I3C DUAL-ROLE MASTER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] i3c: master: svc: skip address resend on repeat START
+Date: Tue, 29 Apr 2025 01:42:34 -0400
+Message-Id: <20250429054234.4013929-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH8PR05CA0011.namprd05.prod.outlook.com
+ (2603:10b6:510:2cc::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250413111033.11408-1-clamor95@gmail.com> <20250413111033.11408-4-clamor95@gmail.com>
- <22du3s2n3pcyivw7ktpqcvyvady24qggiqouz5hqzoca2tzyqd@vdi5qbtdkrgj>
-In-Reply-To: <22du3s2n3pcyivw7ktpqcvyvady24qggiqouz5hqzoca2tzyqd@vdi5qbtdkrgj>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 29 Apr 2025 08:41:52 +0300
-X-Gm-Features: ATxdqUElrxNQVvYfTDSXnijX_xzVnVpoe4pcjetfMWxSULzsIaUGPBLP-yAkRuE
-Message-ID: <CAPVz0n0Qcu7NAsqiRRrUjZLhRhNp=rmtdM9XLnf2XTiTpDyJgg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] power/supply: Add driver for Pegatron Chagall battery
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Heiko Stuebner <heiko@sntech.de>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Aradhya Bhatia <a-bhatia1@ti.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8424:EE_
+X-MS-Office365-Filtering-Correlation-Id: b16be04e-c887-45cb-7cc2-08dd86e0b102
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D6Y9nVgKWUsJEh7VaHAeV0IWe3VqvTFdXymT3Spsc/Kpuw/zZILO/FLr5Ytd?=
+ =?us-ascii?Q?O3vgeiSyNKT7+eVnc3qftRH4xnBCS+ps7XyIKIVlPJIrscrHg38vWFvwG9mp?=
+ =?us-ascii?Q?Vi7fOLs4vQXePj0ZaJpV5OfhK3WX2ffqYf75GrYSFB/vptmWF58aIgDuytda?=
+ =?us-ascii?Q?X0gVkfp63/NN1cOPVuD9ds0HqtabYt0qxsJkch5+TcXl9iekGEz8OJsgmilN?=
+ =?us-ascii?Q?OGFLduOfi0bcbEbb4PFXLyAHlxY44vo67fkAjhdirjDtiaPhRbD7+H9bJp3f?=
+ =?us-ascii?Q?dJQFh3E1ucZt/cfxCx9NHfmyr6HJ8jxYexhRO+3Z8DB49GBeaZ/hhJ4kbDdo?=
+ =?us-ascii?Q?OmB5UbPPTbfadUmNLGJZDHzPZ6C8tFB6JLzKa9DiXgacFhtJl9chjERS1MXo?=
+ =?us-ascii?Q?qbnxZIt96V6tU40skUbdbplOyQgPmKVMTZu9SNr0XyGWNGKPfazlF3ptGrge?=
+ =?us-ascii?Q?ZpY8VwFGVvkkKS/fbtr8U84hgDwvoWDuyydc9jE++wluGwr2fOy0hAXZH3zy?=
+ =?us-ascii?Q?KWiC/6EErkjz021BgE7C4zMiX+mxWma9PTnevgUojpzY6uGkjBLp1PA+4O0V?=
+ =?us-ascii?Q?UW9GbmMbw19PVzqqUGPoduH5Mc8ZYOQthPTbSaGyVx0WlxxSn7PcGdrWyJmZ?=
+ =?us-ascii?Q?yiWcIasOxPSQVDhLwXN1JGhmGTveqNZtM2SddZKkdORng41kp+8kCpR+SSOH?=
+ =?us-ascii?Q?4nmbBR14xBGMjMVdh+DK4B4SOATuYSS73LAKnLyG8O11/dIA8t5zEAbFDlAv?=
+ =?us-ascii?Q?6u+0h8bzGVFFnIaATWBIXgyqWVPV9luQoVWs3J0hxDTvyy5zaW54y4X9RJ2+?=
+ =?us-ascii?Q?PyLyfqGIKTeGaxccJ622CdHgSxXohuXgEkFj0/zJ40dt3BOrMsTQPjXQhMTt?=
+ =?us-ascii?Q?slimmM6bKjwdD+O2soRLYDwdpm/9ymkz3mFEmNf3uYlIxY/DksDC27HbQRue?=
+ =?us-ascii?Q?4wph/meBzAefyEFPIh+POJC5Kf32bnkuniCJVhNUFkv1xffV45vBjxgaFUhZ?=
+ =?us-ascii?Q?knqu+WvmYdjPe47k4XtwZ8nMoU3d7+VOQYPooY3jMH6c+WZcv8yIYmqOebgD?=
+ =?us-ascii?Q?E9VY9d1xd2Ha+t7Z7yTlujybDDUgJFJ5imrunMypFyglgsXTqTEvmId+MChP?=
+ =?us-ascii?Q?4esQlJQMCx31eumXN3F/J8BDrOcRQFjyLDI/CvyGweqAk/iRE4KRxrwHIrJE?=
+ =?us-ascii?Q?vqOqWekYnjltIyLhb/vIXfhZ888JmLtoU7cK2uVJXJRnv1pIRDhwxTyYShVL?=
+ =?us-ascii?Q?Y2/GJiEQKCWT0gXMcCE9Fjo60X96mmc7ore/UOI6DtQoU+E2vyRAoYeD9EuI?=
+ =?us-ascii?Q?Y6fRxuYxgUs4TWzho2WTBQ/CO97EWPn0aWdA03lD1G53V978Zyjqx2xQ8hnS?=
+ =?us-ascii?Q?ZPFO+CohdgL9AYQDReIKy/9rXbULnVmy3PClcIOvbkCaoUviQ7iSNPV/S95Y?=
+ =?us-ascii?Q?7CUAd5SySKcYQIwkYSEL8+rFovjvizOxx/5ZVWbU3jNpG+43g50zfA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?G1sXpZVZfgZO2WI0JehE4Ep5RqzS1hleIqf/jmTD5see5ueeOCoy8dfsYTon?=
+ =?us-ascii?Q?cL7sX7MlwPn6H4q8aP1bW2T5n8RIAID0pXQyT1J30IZm/ON7rhDJ4QvJCGVk?=
+ =?us-ascii?Q?mOIIO4IlZot5LjcxMuzMlHTe3Pen0/JDw5xMdVmLHm3JyHixdk3yBjcs+pQc?=
+ =?us-ascii?Q?O4O4NauG2WR0oTfjusaYgLO1HNkqlIquyA0Ur3nAYnZy7Rt4ndVePwauaQIi?=
+ =?us-ascii?Q?pWKRw3lQSFd34stL5hgoJSgdixjFq4z5NSkZmw8RpgsAYlj5ue9U7K6O7DMt?=
+ =?us-ascii?Q?f4YnlrgxRk1uqAtyXTgn1akoQ1yG1BMCBsj4wKCJk0fFXhuEe6lbBCvA0E79?=
+ =?us-ascii?Q?7PUPoDGh+pcvzMbuDv+ifyxiZmAUp6YdmWuKN1x/RjfvvsS/BWBIh+AEborc?=
+ =?us-ascii?Q?uhvMNLMI906XKMIa6rOWJmozAKYPh32UFaDnSqIvTrq5/dK9ThJzpmYEo0QL?=
+ =?us-ascii?Q?0JtJkVOfQcwESJvtjl70zX5PL5Yx2q61yNLQbuC4B6rQ29p3VE/GivjFt+61?=
+ =?us-ascii?Q?WS4gxLCXMxhAlwUJfR1u4Lko7MF7cUiJfjBH6Za2iao5XrsIKmL1+hVWeWpZ?=
+ =?us-ascii?Q?Rdr0JgA+t+9iZ5mxJkJ+53Jg1aSsNSEI1pxOH5jk0IdeDFrIp8VIJzw+Fjbc?=
+ =?us-ascii?Q?LTdk6RIVT/Vyr9pTD7LzyxcYoyWrP2IC7WbsbkrGTiU93zI3E77EVcHH7M0f?=
+ =?us-ascii?Q?8XfDnK7HTzq3/DeDZcvPn1Ji3JGO3tDDWkX5jVTC9oUeS8VP7vhmF3kqylhi?=
+ =?us-ascii?Q?eJHMIZT1xsARNo8EfGjAMpTOL8NBlVqKPXYNOFvhzcpvKc5vqCHCV4ZbB8W3?=
+ =?us-ascii?Q?1blLZoWPiNtOB2c2Nynwo8tCz0OpYa9WZWwrDBxHdzGc7glZKy5qwGacv6rT?=
+ =?us-ascii?Q?jLThqNQuqTtkT/mC3D+sY6g++EANxRC83vqnEMe9Jo9zgQErfjXsawjKKTM/?=
+ =?us-ascii?Q?72nsnuzROnRGbXmXlPyIrqXPefm0uMfxDeW1Z/4Iuys+lowGsAcf9ei3I35X?=
+ =?us-ascii?Q?utQFixxprQFIfbOaQA0wMMBgXMkSwujInI2QpHMEkgzxwRz2uKR0/C9arBy7?=
+ =?us-ascii?Q?NeJjvXrw20tFko4wvcivhKtXa6mbysLaUapO7DymRcOBnUfEVPLBALAfH+j5?=
+ =?us-ascii?Q?+7LWOqLc6NB+g3XGiWnW1EstRhZodn5Mx6QA75XFdrGs2z5wt6nwG4rmja5/?=
+ =?us-ascii?Q?Pv6dOIdBjy0KMGC8BpbIUjowbNLyMUTxIwqHDRGdYHSwH6ds50W2mUxfSNM5?=
+ =?us-ascii?Q?n0AlS1is5ZZNmEeU9MiiG97vcODW4MeU8wat9a6vvlTsIyxTPml/5O3uBUPh?=
+ =?us-ascii?Q?ue6hNayLS1QDxAPnayy9eGYH8gq1cIedszfDpUkROf1vUc0UcFdXVNauAfPA?=
+ =?us-ascii?Q?qU1HFDB+HsBVIBEb/HmFwK5b5RT46bUaLUt96C649KoXb7ICbCt2ox16jHK/?=
+ =?us-ascii?Q?ke54BKaMD2b7ak3orq13/Y02e1wiJkrH2CinWd7G9bbvmTSQqjmxc3n2VJYp?=
+ =?us-ascii?Q?D7dQcLcvfELzEwGks7vJbC8esBKEPx8y2Afza7eNg/2hFmkycqD8ORm9l1lr?=
+ =?us-ascii?Q?DxgJfyztvw8YSqzQnaQ=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b16be04e-c887-45cb-7cc2-08dd86e0b102
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 05:42:56.9913
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v2gpeqCMv2KUcauf7jvQ26Am2rTeM4sWcmrRDDh/gawZ5alBVim2KuUsCBMGzcFlcz/87MZ9+hxxr4qbscYuwg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8424
 
-=D0=B2=D1=82, 29 =D0=BA=D0=B2=D1=96=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 02:0=
-2 Sebastian Reichel
-<sebastian.reichel@collabora.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi,
->
-> On Sun, Apr 13, 2025 at 02:10:32PM +0300, Svyatoslav Ryhel wrote:
-> > The Pegatron Chagall is an Android tablet utilizing a customized Cypres=
-s
-> > CG7153AM microcontroller (MCU) as its battery fuel gauge. It supports a
-> > single-cell battery and features a dual-color charging LED.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
->
-> This looks mostly good to me, but I have some comments.
->
-> >  drivers/power/supply/Kconfig           |  12 +
-> >  drivers/power/supply/Makefile          |   1 +
-> >  drivers/power/supply/chagall-battery.c | 308 +++++++++++++++++++++++++
-> >  3 files changed, 321 insertions(+)
-> >  create mode 100644 drivers/power/supply/chagall-battery.c
->
-> [...]
->
-> > +static void chagall_leds_status_update(struct chagall_battery_data *cg=
-, int state)
-> > +{
-> > +     switch (state) {
-> > +     case POWER_SUPPLY_STATUS_FULL:
-> > +             led_set_brightness(&cg->amber_led, LED_OFF);
-> > +             led_set_brightness(&cg->white_led,  LED_ON);
-> > +             break;
-> > +
-> > +     case POWER_SUPPLY_STATUS_CHARGING:
-> > +             led_set_brightness(&cg->white_led, LED_OFF);
-> > +             led_set_brightness(&cg->amber_led,  LED_ON);
-> > +             break;
-> > +
-> > +     default:
-> > +             led_set_brightness(&cg->amber_led, LED_OFF);
-> > +             led_set_brightness(&cg->white_led, LED_OFF);
-> > +             break;
-> > +     }
-> > +}
->
-> Instead of doing this, you should setup LED triggers when
-> registering the LEDs. The white LED can use power-supply's full_trig
-> and the orange LED can use power-supply's charging_trig, which
-> should have the same effect.
->
-> > +static const enum power_supply_property chagall_battery_properties[] =
-=3D {
-> > +     POWER_SUPPLY_PROP_STATUS,
-> > +     POWER_SUPPLY_PROP_PRESENT,
-> > +     POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> > +     POWER_SUPPLY_PROP_VOLTAGE_MAX,
-> > +     POWER_SUPPLY_PROP_CURRENT_NOW,
-> > +     POWER_SUPPLY_PROP_CURRENT_MAX,
-> > +     POWER_SUPPLY_PROP_CAPACITY,
-> > +     POWER_SUPPLY_PROP_TEMP,
-> > +     POWER_SUPPLY_PROP_CHARGE_FULL,
-> > +     POWER_SUPPLY_PROP_CHARGE_NOW,
-> > +};
-> > +
-> > +static const unsigned int chagall_battery_prop_offs[] =3D {
-> > +     [POWER_SUPPLY_PROP_TEMP] =3D CHAGALL_REG_BATTERY_TEMPERATURE,
-> > +     [POWER_SUPPLY_PROP_VOLTAGE_NOW] =3D CHAGALL_REG_BATTERY_VOLTAGE,
-> > +     [POWER_SUPPLY_PROP_CURRENT_NOW] =3D CHAGALL_REG_BATTERY_CURRENT,
-> > +     [POWER_SUPPLY_PROP_CAPACITY] =3D CHAGALL_REG_BATTERY_CAPACITY,
-> > +     [POWER_SUPPLY_PROP_CURRENT_MAX] =3D CHAGALL_REG_BATTERY_CHARGING_=
-CURRENT,
-> > +     [POWER_SUPPLY_PROP_VOLTAGE_MAX] =3D CHAGALL_REG_BATTERY_CHARGING_=
-VOLTAGE,
-> > +     [POWER_SUPPLY_PROP_STATUS] =3D CHAGALL_REG_BATTERY_STATUS,
-> > +     [POWER_SUPPLY_PROP_CHARGE_NOW] =3D CHAGALL_REG_BATTERY_REMAIN_CAP=
-ACITY,
-> > +     [POWER_SUPPLY_PROP_CHARGE_FULL] =3D CHAGALL_REG_BATTERY_FULL_CAPA=
-CITY,
-> > +};
->
-> Please use the same order for chagall_battery_prop_offs and
-> chagall_battery_properties. Makes it a lot easier to see
-> that all options have been covered.
->
-> > +static int chagall_battery_get_value(struct chagall_battery_data *cg,
-> > +                                  enum power_supply_property psp, u32 =
-*val)
-> > +{
-> > +     if (psp >=3D ARRAY_SIZE(chagall_battery_prop_offs))
-> > +             return -EINVAL;
-> > +     if (!chagall_battery_prop_offs[psp])
-> > +             return -EINVAL;
-> > +
-> > +     /* Battery data is stored in 2 consecutive registers with little-=
-endian */
-> > +     return regmap_bulk_read(cg->regmap, chagall_battery_prop_offs[psp=
-], val, 2);
-> > +}
-> > +
-> > +static int chagall_battery_get_property(struct power_supply *psy,
-> > +                                     enum power_supply_property psp,
-> > +                                     union power_supply_propval *val)
-> > +{
-> > +     struct chagall_battery_data *cg =3D power_supply_get_drvdata(psy)=
-;
-> > +     int ret;
-> > +
-> > +     switch (psp) {
-> > +     case POWER_SUPPLY_PROP_PRESENT:
-> > +             val->intval =3D 1;
-> > +             break;
-> > +
-> > +     default:
-> > +             ret =3D chagall_battery_get_value(cg, psp, &val->intval);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             switch (psp) {
-> > +             case POWER_SUPPLY_PROP_TEMP:
-> > +                     val->intval -=3D TEMP_CELSIUS_OFFSET;
-> > +                     break;
-> > +
-> > +             case POWER_SUPPLY_PROP_VOLTAGE_MAX:
-> > +             case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> > +             case POWER_SUPPLY_PROP_CURRENT_MAX:
-> > +             case POWER_SUPPLY_PROP_CURRENT_NOW:
-> > +             case POWER_SUPPLY_PROP_CHARGE_FULL:
-> > +             case POWER_SUPPLY_PROP_CHARGE_NOW:
-> > +                     val->intval *=3D 1000;
-> > +                     break;
-> > +
-> > +             case POWER_SUPPLY_PROP_STATUS:
-> > +                     if (val->intval & BATTERY_FULL_CHARGED)
-> > +                             val->intval =3D POWER_SUPPLY_STATUS_FULL;
-> > +                     else if (val->intval & BATTERY_FULL_DISCHARGED)
-> > +                             val->intval =3D POWER_SUPPLY_STATUS_NOT_C=
-HARGING;
->
-> Have you tested this path? POWER_SUPPLY_STATUS_NOT_CHARGING is
-> intended to be used when the battery is neither charging nor
-> discharging. Does BATTERY_FULL_DISCHARGED mean, that the battery
-> is fully depleted and not providing any energy at all? Or is this
-> some kind of "battery level is criticial, you should attach a
-> power-supply now or the system will be turn off by itself soon"?
->
+According to the I3C specification, address arbitration only happens during
+the START. Repeated START do not initiate arbitration, and In-Band
+Interrupts (IBIs) cannot occur at this stage.
 
-This one is tricky. I have transferred this logic from downstream
-kernel and couldn't trigger BATTERY_FULL_DISCHARGED ever. It might be
-a brief state you describe as "battery level is criticial, you should
-attach a power-supply now or the system will be turn off by itself
-soon" but there is no such entry in POWER_SUPPLY_STATUS enum, so I
-assumed that  POWER_SUPPLY_STATUS_NOT_CHARGING co-responds to such
-state. If this is not the case I will just remove this entry.
+Resending the address upon a NACK in a repeat START is therefore redundant
+and unnecessary. Avoid redundant retries, improving efficiency and ensuring
+protocol compliance.
 
-> > +                     else if (val->intval & BATTERY_DISCHARGING)
-> > +                             val->intval =3D POWER_SUPPLY_STATUS_DISCH=
-ARGING;
-> > +                     else
-> > +                             val->intval =3D POWER_SUPPLY_STATUS_CHARG=
-ING;
-> > +                     break;
-> > +
-> > +             default:
-> > +                     break;
-> > +             }
-> > +
-> > +             break;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void chagall_battery_poll_work(struct work_struct *work)
-> > +{
-> > +     struct chagall_battery_data *cg =3D
-> > +             container_of(work, struct chagall_battery_data, poll_work=
-.work);
-> > +     u32 state;
-> > +     int ret;
-> > +
-> > +     ret =3D chagall_battery_get_value(cg, POWER_SUPPLY_PROP_STATUS, &=
-state);
-> > +     if (ret)
-> > +             return;
-> > +
-> > +     if (state & BATTERY_FULL_CHARGED)
-> > +             state =3D POWER_SUPPLY_STATUS_FULL;
-> > +     else if (state & BATTERY_DISCHARGING)
-> > +             state =3D POWER_SUPPLY_STATUS_DISCHARGING;
-> > +     else
-> > +             state =3D POWER_SUPPLY_STATUS_CHARGING;
->
-> This basically duplicates the logic from chagall_battery_get_property(),
-> so put the translation logic into a helper function and use it in
-> both places.
->
-> Greetings,
->
-> -- Sebastian
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change from v1 to v2
+- change !!i  to i > 0
+---
+ drivers/i3c/master/svc-i3c-master.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 85e16de208d3b..c5e4f7c0f47e2 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -1281,9 +1281,9 @@ static int svc_i3c_master_write(struct svc_i3c_master *master,
+ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ 			       bool rnw, unsigned int xfer_type, u8 addr,
+ 			       u8 *in, const u8 *out, unsigned int xfer_len,
+-			       unsigned int *actual_len, bool continued)
++			       unsigned int *actual_len, bool continued, bool repeat_start)
+ {
+-	int retry = 2;
++	int retry = repeat_start ? 1 : 2;
+ 	u32 reg;
+ 	int ret;
+ 
+@@ -1468,7 +1468,7 @@ static void svc_i3c_master_start_xfer_locked(struct svc_i3c_master *master)
+ 		ret = svc_i3c_master_xfer(master, cmd->rnw, xfer->type,
+ 					  cmd->addr, cmd->in, cmd->out,
+ 					  cmd->len, &cmd->actual_len,
+-					  cmd->continued);
++					  cmd->continued, i > 0);
+ 		/* cmd->xfer is NULL if I2C or CCC transfer */
+ 		if (cmd->xfer)
+ 			cmd->xfer->actual_len = cmd->actual_len;
+-- 
+2.34.1
+
 
