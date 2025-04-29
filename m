@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-625463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF54EAA11CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:45:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE6CAA11D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6811B669DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4429266E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6002472AA;
-	Tue, 29 Apr 2025 16:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A734424E01F;
+	Tue, 29 Apr 2025 16:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqXL/HRC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8Y4FB3z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2548023FC7D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1234624BC04
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945120; cv=none; b=MJ+57MijjjirDHmn/uUXbZey5IdQBUSH73qvAWfGz0oodZ+9ZYh5lqkTvK9XrDCS9wYJzbjVXMEPxr7/xczxaVGamqVxSCIm63n0JXrgEWx156MQy65SdPE0I2aYAf4zvLD/ZnrLT6lkh0jDu3P35H9b0Su6pXBfmUYmNnw3tpA=
+	t=1745945122; cv=none; b=eJHWSkqtg1Fa7AmKUhWTmBAex5zY28kGxSwE+pCzXMDd+C1wteURXC7ckcCHGqi1qAzs7lrbZYUfSgIgEAf5jRq3rlUz1m1+SiiSTXUhbwdHTQrWC2hzgELO6MIy/WbaH4KAY1acWIFt/C/TyZbuSp1FslSsTqv8iqE689XyBqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945120; c=relaxed/simple;
-	bh=lEwmq7bj2YIf2fOKIkICfPl3oC8yqKYgyFS1caz+Aqo=;
+	s=arc-20240116; t=1745945122; c=relaxed/simple;
+	bh=dLT1+0GKhKxrYcniloaHh94nznCqQy65KWvfOLGDkEs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HRCXq6VRxtPACoHpxQ9dluuf5yRYJu3Yc450rg9js6mqu1V+g6bcL6Aizg9WFYfKTK6kmVWIx0JqaoKnTEoW0oUW2pxlwkv4PUDt65dkJfQxpDR/PsndWKc1NGV9Jmfw+6CqdAL02bFaH38Tlt+h9hRySQsoJlPfYWShz2gc5oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqXL/HRC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C309C4CEE9;
-	Tue, 29 Apr 2025 16:45:18 +0000 (UTC)
+	 MIME-Version; b=ZB5wtRwhzFCq1pkuFE1LxqUXI1CF8TJXzLkoDidhg+h7CfjzxXua4tJHfY1LlxG25NvzsCjaU+yY6AYyPX5BJ50T1MjpuFL3DrN8yvgWa0fb6TvdrM99Z3VPi62zjDUB8JEUvMGuwnPxdNCV0zkqLj6VTViyLBwbE47paa53wLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8Y4FB3z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D96C4CEE3;
+	Tue, 29 Apr 2025 16:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745945119;
-	bh=lEwmq7bj2YIf2fOKIkICfPl3oC8yqKYgyFS1caz+Aqo=;
+	s=k20201202; t=1745945121;
+	bh=dLT1+0GKhKxrYcniloaHh94nznCqQy65KWvfOLGDkEs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lqXL/HRCMU/lrBaf9lX3mTYuST2StOFq9o7ox8z4hUHLPol+F6gPyzREkeTNM0gU0
-	 FogbuOllCL4wiKK6J0DbkGMr/846nz1/vLG/PCg35O04U5zrH/vWI+A1cc6/GyDKqj
-	 SSeCpF+PFt6TCzWwmO5bs8MS2An7LCN0XjaOGOY7iqwo03zqM0gEBXdcUyaOgohMtA
-	 WkLVnQlupIrm9610BPAxvZ6S1NGtiuChYYF0TnpvDNtfa9xiXMHZ7dslhBGuV+Ws+o
-	 Ls2foZv3SEzx57K4V2tdNxiN7m19H9n7p+QpSlvYGr7Qp2TRffN/aHqCUAf5bBdsHh
-	 kVYU7DMLJklmw==
+	b=Y8Y4FB3z8SR4PFSf6QPg86VmWnBdUybnUTqEwTi+H9FkZcSEBYQZh8jjl0MMJhmce
+	 AH+IQCkUs08IPLU5AfVv6UQAmpI/GSQedJOMQf+0RsMsxUW5pyGsccTWY79ZUfecQX
+	 3/A8brNId5iep9n5mY2DE7a6wJnfvU+UeKsyGmbGPElcdLt4wYLMoWROdXjUN53s+4
+	 mKir+L+ddLcjJgUZjCItXyICYErSK0VEjIqU/V2PWCVbliZ1/jmsJ3Tv86yLhjr7d0
+	 OaBmEAHZETB+Du+y1nez2jfDn0Un6oJidZAHgrDgbUPVnko5v2fJiL8J9E3k3BQEKK
+	 yGG8V4wwUkVDA==
 From: carlos.bilbao@kernel.org
 To: tglx@linutronix.de,
 	seanjc@google.com,
@@ -53,9 +53,9 @@ Cc: bilbao@vt.edu,
 	takakura@valinux.co.jp,
 	john.ogness@linutronix.de,
 	Carlos Bilbao <carlos.bilbao@kernel.org>
-Subject: [PATCH v3 1/2] panic: Allow for dynamic custom behavior after panic
-Date: Tue, 29 Apr 2025 10:06:37 -0500
-Message-ID: <20250429150638.1446781-2-carlos.bilbao@kernel.org>
+Subject: [PATCH v3 2/2] x86/panic: Add x86_panic_handler as default post-panic behavior
+Date: Tue, 29 Apr 2025 10:06:38 -0500
+Message-ID: <20250429150638.1446781-3-carlos.bilbao@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
 References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
@@ -69,67 +69,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Carlos Bilbao <carlos.bilbao@kernel.org>
 
-Introduce panic_set_handling() to allow overriding the default post-panic
-behavior with a priority-based mechanism.
+Add function x86_panic_handler() as the default behavior for x86 for
+post-panic stage via panic_set_handling(). Instead of busy-wait loop, it
+will halt if there's no console to save CPU cycles.
 
 Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
 Reviewed-by: Jan Glauber (DigitalOcean) <jan.glauber@gmail.com>
 ---
- include/linux/panic.h |  2 ++
- kernel/panic.c        | 22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ arch/x86/kernel/setup.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/include/linux/panic.h b/include/linux/panic.h
-index 2494d51707ef..cf8d4a944407 100644
---- a/include/linux/panic.h
-+++ b/include/linux/panic.h
-@@ -98,4 +98,6 @@ extern void add_taint(unsigned flag, enum lockdep_ok);
- extern int test_taint(unsigned flag);
- extern unsigned long get_taint(void);
- 
-+void panic_set_handling(void (*fn)(void), int priority);
-+
- #endif	/* _LINUX_PANIC_H */
-diff --git a/kernel/panic.c b/kernel/panic.c
-index a3889f38153d..559304546f2e 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -276,6 +276,25 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
- 		crash_smp_send_stop();
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 9d2a13b37833..abca4a9b5e0a 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -16,6 +16,7 @@
+ #include <linux/initrd.h>
+ #include <linux/iscsi_ibft.h>
+ #include <linux/memblock.h>
++#include <linux/panic.h>
+ #include <linux/panic_notifier.h>
+ #include <linux/pci.h>
+ #include <linux/root_dev.h>
+@@ -837,6 +838,20 @@ static void __init x86_report_nx(void)
+ 	}
  }
  
 +/*
-+ * If set, this function is called after a kernel panic is handled. It can
-+ * be assigned using panic_set_handling(), which supports priority-based
-+ * logic. For example, specific architectures may provide a default handler
-+ * (priority 0) that halts the system to conserve CPU resources.
++ * Halt the CPU to save resources after panic is handled. If
++ * console_trylock() succeeds, no other CPU is currently writing to the
++ * console
++ *
 + */
-+static void (*panic_halt)(void);
-+
-+static int panic_halt_priority;
-+
-+void panic_set_handling(void (*fn)(void), int priority)
++static void x86_panic_handler(void)
 +{
-+	if (panic_halt && priority <= panic_halt_priority)
-+		return;
-+
-+	panic_halt_priority = priority;
-+	panic_halt = fn;
++	if (console_trylock()) {
++		console_unlock();
++		safe_halt();
++	}
 +}
 +
- /**
-  *	panic - halt the system
-  *	@fmt: The text string to print
-@@ -467,6 +486,9 @@ void panic(const char *fmt, ...)
- 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
- 	nbcon_atomic_flush_unsafe();
+ /*
+  * Determine if we were loaded by an EFI loader.  If so, then we have also been
+  * passed the efi memmap, systab, etc., so we should use these data structures
+@@ -1252,6 +1267,8 @@ void __init setup_arch(char **cmdline_p)
+ #endif
  
-+	if (panic_halt)
-+		panic_halt();
+ 	unwind_init();
 +
- 	local_irq_enable();
- 	for (i = 0; ; i += PANIC_TIMER_STEP) {
- 		touch_softlockup_watchdog();
++	panic_set_handling(x86_panic_handler, 0);
+ }
+ 
+ #ifdef CONFIG_X86_32
 -- 
 2.47.1
 
