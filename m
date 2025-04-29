@@ -1,247 +1,184 @@
-Return-Path: <linux-kernel+bounces-625202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D264AAA0E30
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:08:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32652AA0E37
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6448424D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B244884327B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AD72D029B;
-	Tue, 29 Apr 2025 14:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD752D29CB;
+	Tue, 29 Apr 2025 14:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pX843usy"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c5d2yTg+"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37F92BEC2D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76C52C17AE;
+	Tue, 29 Apr 2025 14:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745935683; cv=none; b=Lc6FvAxmOHoDcFPWE7/AzTALdHqFn076URLr8HRLrZxKXdeaIUWT8xGFJYGPwTIWoA86+j1eZ7vfoxEL6WbC+Tb2Eo5anhehq/0SR1Pz1rp39VL/Uy/gn9CReyGGKCyFR+lGCT9mPb6AWYwJaVDMjPl9r2MjHKPAouzgedp7/O0=
+	t=1745935713; cv=none; b=b6cgBhLdoMN+YvTsYekpj7I7dDSnXs+Jkkm3IbBlbizpU2pqFpQl+AC7ZtsUeASOJ8+WXLYoJfSp0h40n8He2NCt5p94wWgymz4hTz1PaEi95ayweW3gvvsmgKW2evhRMMMwseNqEtuJLOyN/kIYc0Qe6sX9ctlX6s/fl8rhfYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745935683; c=relaxed/simple;
-	bh=vn36GFjJZ1A1NTowwe4JWwzZyw8NyQKZGayqkcTUxZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dYwrHSq51/X1q5L1bKTVLtH6zooOVNIempIcchpoWayWO6ztEe0W+HhsXm32UjxB4MNeR+ckbX+vfXrcSdpt11ckqu5AQsjJVwPt130rE+9eMh2slLH8kPJfxHgrP7yjWG0Vgi4YwfDq9HO9nXIHzHDKQlyvdhVEvNLf4IHdEYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pX843usy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T4EUAc028438;
-	Tue, 29 Apr 2025 14:07:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=4ANy9/
-	EczFuUjhJitpOM30hVh4s65NGc7ToL1CG3Sw4=; b=pX843usywT5bKMtteodxHY
-	hGhnsGUFWMlNm+kN9KFOzAOazvLAswxTZK2RtVWZKB0dcWnbadhFca20GoVKFbH9
-	GnFKPOzJ4bgrRocwdKgRa+993+/kHZKT21IrnKx9TSeObivLef59/EzrH6ADzLnF
-	IvgzlHtFMlAXljpE/fFRVLpcRqL8i6R4wWvFwNfdkH0DZIl5GG3tr8mK9kLN2CwL
-	NtzVRoHlLUWfYhqgfR24RnOe+nkYfSvuhchs/0BgIcLYrmnOHE9tl2hl1ioVXwcU
-	3yfR8SmdaeJdF9ir958WNYxp9cWlkhJF736LA22oAOpnRenkQCHkkY860mDkPgEw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ah8mbkht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 14:07:38 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53TE2bHa022565;
-	Tue, 29 Apr 2025 14:07:38 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46ah8mbkhp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 14:07:37 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53TAw0YP024643;
-	Tue, 29 Apr 2025 14:07:37 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 469c1m39a5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 14:07:37 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53TE7aHj30409312
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Apr 2025 14:07:36 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 906C958059;
-	Tue, 29 Apr 2025 14:07:36 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 14D2958063;
-	Tue, 29 Apr 2025 14:07:32 +0000 (GMT)
-Received: from [9.39.31.64] (unknown [9.39.31.64])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 29 Apr 2025 14:07:31 +0000 (GMT)
-Message-ID: <bad53e57-3186-4945-8d88-10fedc0c9218@linux.ibm.com>
-Date: Tue, 29 Apr 2025 19:37:30 +0530
+	s=arc-20240116; t=1745935713; c=relaxed/simple;
+	bh=a/KaADWjzPD1n6XSIisEkuXyI9Rpb5lCP8//NIJqlZw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OuKiWI3Ll3OLX4liyc4h5E1lpnQqBxu1dp+eirFWaGNkuY4N2w1AeITrBiH590LiRC++ylJq1eM5hHlARHvUmS/fO1o8K7StZA23V8Zd3BKZGbmvXWpaTlHoS0yjt86H1h2CayAZ7aK+K056KfzOiky1s1JKCx0lUGOAs5JGI/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c5d2yTg+; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D3F5438C6;
+	Tue, 29 Apr 2025 14:08:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745935708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ATsPUSdXr60F20JAZF5BOD3B44pL6Xwbcrn3rluDAJA=;
+	b=c5d2yTg+LJwLH26q4ShU3GUXiRLNl6PLZemPbA5pqVpL0f5XSmdHf7Lb80A5VjVHLykEio
+	qbIOwwtDaSODRVlaTCaYUXQHdEMwO857sshqdG9GSwx/KtaXVtSUFEi4AKrBnOOw7jAvV6
+	1g/RBnFn2jQ6As5ZWZoXEH7s+YvZIKjqbdvSfgxCpsEuXOd0guAtERieP6vdB6vOgD+nga
+	GiHaYQhcfqLjVuWLZdgH62qqZ4uZfphVBFKfJHyx5Ii6vi5eWQm/SO22FTvW/8GAGDuvPl
+	YKSmQbZ62lO8PzuU6JA0j9XFpsTX+rrQAGm94vXaQ46NQQ9gIqHKWjC8ysa/5A==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH v4 00/12] Add pinctrl support for the AAEON UP board FPGA
+Date: Tue, 29 Apr 2025 16:08:14 +0200
+Message-Id: <20250429-aaeon-up-board-pinctrl-support-v4-0-b3fffc11417d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] driver/base: Remove unused functions
-To: David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, rafael@kernel.org,
-        Danilo Krummrich <dakr@kernel.org>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com>
- <273649393600cb33ac3eec0e9a523c2d1853a47c.1745852397.git.donettom@linux.ibm.com>
- <7b63f0d4-b1d7-4f91-8a80-3a147aeab46a@redhat.com>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <7b63f0d4-b1d7-4f91-8a80-3a147aeab46a@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZmZWjSRLsQEqRsPwtZsPTKggjhIdSUD3
-X-Proofpoint-GUID: lQdQbucS_1XYMRlz5fd2pX5iH55DPw6u
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEwNSBTYWx0ZWRfX8vxf7gyRJUg7 SBSCa/F5G7bNXthattgvbn7zUEhJpS6m94IluHCg/r8p349NfAOkytxt4hluIk4HbWVWuIIlinu jtowK/QKnqX8PvIBIjUJaLTwtUjxspOaTdZcPPiTQAeirv/d1/51ka2M7iuXaR0usxtr/2Qmf79
- yQgfheHbrb4f7gLM8HfVv3OGkOaQmg1QFqp0v0R/bu8Ac75WAfVjgZGWSjMEOZQ0ySMRpJo9EJm tWnv8HMlK6M3Z1vs8+H1UJ/xBU4AgWJZjBJ1LN7o4c3vy+P+TmKvsYEATX0hEtb2bEv1O7fBdhC tcAc+VdvUkPKiXhjtr7FfThIYPfeqDS6gBW3fR7QzwzXzo6pFTUDVxmaPaZ/5FcrBf11Knx3XHY
- Ctc8HNEY4nqEGUs6F7xki2roHuuB/VyhgrtC9BjSYpssuh62tm7HpPRvP5o1kQzVCz4JI3b/
-X-Authority-Analysis: v=2.4 cv=QNRoRhLL c=1 sm=1 tr=0 ts=6810dd2a cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=9b70nzvd1x3ZB6tWZBUA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290105
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE7dEGgC/4XOQU7DMBAF0KtEXjPVjO3apCvugVg4yYRaamNjO
+ xGoyt1xUyGEWGT5R6P3/01kTp6zODU3kXjx2YepBv3UiP7spncGP9QsJEqNrUJwjsMEc4QuuDR
+ A9FNf0gXyHGNIBdrn0WmHCnWLoiIx8eg/t4LXt0dO/DHXnvI4is5lhj5cr76cmsUc6Aipl+L+f
+ Pa5hPS1jVto+77vIEm0t2MhQJDaUtuxtEbRSxdCufjpUKs2fJE/4BEV2V1QVlAZkoYVOmfkf1D
+ 9gprMLqgqOGq01nQDGua/4Lqu3wDao+OdAQAA
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+ linux-hardening@vger.kernel.org, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieegtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegteeijeduffelvdevuedvieeuvdeugfekgeehjedufefgkedtueduvdffhffggfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgdphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhto
+ heprghnugihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopeffrghnihgvlhgvvehlvghrihesrggrvghonhdrvghupdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: thomas.richard@bootlin.com
 
+This is the fourth version of this series.
 
-On 4/29/25 2:51 AM, David Hildenbrand wrote:
-> On 28.04.25 19:03, Donet Tom wrote:
->
-> Nit: I'd call this patch
->
->     "driver/base: remove register_mem_block_under_node_early()"
->
-> And then just naturally remove get_nid_for_pfn() with it, as it is the 
-> last user and it resides in the same file.
+The main change is the way the forwarder type is exported, now gpiochip_fwd
+is an opaque structure.
+In the forwarder, a valid_mask was added to track registered GPIO
+descriptors, and it is now possible to remove a GPIO at runtime using the new
+gpio_fwd_gpio_free() helper.
 
-Sure, I will change it.
+Two new patches were added, the first one to remove extern specifier in
+machine.h, the second one to define new helpers str_input_output() and
+str_output_input().
 
+Other minor changes address Andy's comments, see below for more details in the
+changelog.
 
->
->> The functions register_mem_block_under_node_early and get_nid_for_pfn
->> are not used, as register_memory_blocks_under_node_early is now used
->> to register memory blocks during early boot. Therefore, these unused
->> functions have been removed.
->>
->> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->> ---
->>   drivers/base/node.c | 54 +--------------------------------------------
->>   1 file changed, 1 insertion(+), 53 deletions(-)
->>
->> diff --git a/drivers/base/node.c b/drivers/base/node.c
->> index 4869333d366d..59ec507fc97d 100644
->> --- a/drivers/base/node.c
->> +++ b/drivers/base/node.c
->> @@ -748,15 +748,6 @@ int unregister_cpu_under_node(unsigned int cpu, 
->> unsigned int nid)
->>   }
->>     #ifdef CONFIG_MEMORY_HOTPLUG
->> -static int __ref get_nid_for_pfn(unsigned long pfn)
->> -{
->> -#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
->> -    if (system_state < SYSTEM_RUNNING)
->> -        return early_pfn_to_nid(pfn);
->> -#endif
->> -    return pfn_to_nid(pfn);
->> -}
->> -
->>   static void do_register_memory_block_under_node(int nid,
->>                           struct memory_block *mem_blk,
->>                           enum meminit_context context)
->> @@ -783,46 +774,6 @@ static void 
->> do_register_memory_block_under_node(int nid,
->>                       ret);
->>   }
->>   -/* register memory section under specified node if it spans that 
->> node */
->> -static int register_mem_block_under_node_early(struct memory_block 
->> *mem_blk,
->> -                           void *arg)
->> -{
->> -    unsigned long memory_block_pfns = memory_block_size_bytes() / 
->> PAGE_SIZE;
->> -    unsigned long start_pfn = 
->> section_nr_to_pfn(mem_blk->start_section_nr);
->> -    unsigned long end_pfn = start_pfn + memory_block_pfns - 1;
->> -    int nid = *(int *)arg;
->> -    unsigned long pfn;
->> -
->> -    for (pfn = start_pfn; pfn <= end_pfn; pfn++) {
->> -        int page_nid;
->> -
->> -        /*
->> -         * memory block could have several absent sections from start.
->> -         * skip pfn range from absent section
->> -         */
->> -        if (!pfn_in_present_section(pfn)) {
->> -            pfn = round_down(pfn + PAGES_PER_SECTION,
->> -                     PAGES_PER_SECTION) - 1;
->> -            continue;
->> -        }
->> -
->> -        /*
->> -         * We need to check if page belongs to nid only at the boot
->> -         * case because node's ranges can be interleaved.
->> -         */
->> -        page_nid = get_nid_for_pfn(pfn);
->> -        if (page_nid < 0)
->> -            continue;
->> -        if (page_nid != nid)
->> -            continue;
->> -
->> -        do_register_memory_block_under_node(nid, mem_blk, 
->> MEMINIT_EARLY);
->> -        return 0;
->> -    }
->> -    /* mem section does not span the specified node */
->> -    return 0;
->> -}
->> -
->>   /*
->>    * During hotplug we know that all pages in the memory block belong 
->> to the same
->>    * node.
->> @@ -895,10 +846,7 @@ void register_memory_blocks_under_node(int nid, 
->> unsigned long start_pfn,
->>   {
->>       walk_memory_blocks_func_t func;
->>   -    if (context == MEMINIT_HOTPLUG)
->> -        func = register_mem_block_under_node_hotplug;
->> -    else
->> -        func = register_mem_block_under_node_early;
->> +    func = register_mem_block_under_node_hotplug;
->>         walk_memory_blocks(PFN_PHYS(start_pfn), PFN_PHYS(end_pfn - 
->> start_pfn),
->>                  (void *)&nid, func);
->
-> You can pass func directly here and avoid the temporary variable.
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Changes in v4:
+- gpiolib: use positive conditonal in gpiochip_add_pin_range_with_pins().
+- pinctrl: fix warning reported by kernel robot in
+  include/linux/pinctrl/machine.h.
+- pinctrl: add a patch to remove the extern specifier in machine.h.
+- pinctrl: use devm_add_action_or_reset() in
+  devm_pinctrl_register_mappings().
+- string_choices: add a patch to define str_input_output() and
+  str_output_input() helpers.
+- gpio: aggregator: set gpiochip_fwd as opaque and define getters
+  gpio_fwd_get_gpiochip() and gpio_fwd_get_data().
+- gpio: aggregator: add valid_mask in gpiochip_fwd struct to track already
+  registered gpio descs.
+- gpio: aggregator: add gpio_fwd_gpio_free() helper.
+- gpio: aggregator: add kdoc sections for exported functions.
+- gpio: aggregator: fix some nitpicks.
+- pinctrl-upboard: use str_input_output() helper.
+- pinctrl-upboard: fix some nitpicks.
+- pinctrl-upboard: add missing headers stddef.h and types.h.
+- pinctrl-upboard: add intermediate cast (unsigned long) for dmi_id->driver_data.
+- pinctrl-upboard: use getter gpio_fwd_get_gpiochip() and
+  gpio_fwd_get_data().
+- pinctrl-upboard: fix kernel robot warning 'unmet direct dependencies detected
+  for GPIO_AGGREGATOR when selected by PINCTRL_UPBOARD'.
+- pinctrl-upboard: use gpio_fwd_gpio_free() helper.
+- Link to v3: https://lore.kernel.org/r/20250416-aaeon-up-board-pinctrl-support-v3-0-f40776bd06ee@bootlin.com
 
-ok. I will change it.
+Changes in v3:
+- pinctrl: add devm_pinctrl_register_mappings()
+- gpiolib: rename gpiochip_add_pin_range() to
+  gpiochip_add_pin_range_with_pins() and add pins parameter
+- gpiolib: add stubs gpiochip_add_pin_range() and 
+  gpiochip_add_sparse_pin_range()
+- aggregator: split to more simpler patches
+- aggregator: add a namespace for the forwarder library
+- aggregator: rename header file to forwarder.h
+- aggregator: add some missing headers and declaration in forwarder.h
+- aggregator: forwarder.h provides consumer.h and driver.h
+- aggregator: fix error code returned by gpio_fwd_request()
+- pinctrl-upboard: fix order of header files
+- pinctrl-upboard: fix some nitpicks
+- pinctrl-upboard: rework macros to define pin groups
+- pinctrl-upboard: add missing container_of.h and err.h header files
+- pinctrl-upboard: handle correctly pointer returned by dmi_first_match()
+- pinctrl-upboard: use devm_pinctrl_register_mappings()
+- pinctrl-upboard: import GPIO_FORWARDER namespace
+- Link to v2: https://lore.kernel.org/r/20250317-aaeon-up-board-pinctrl-support-v2-0-36126e30aa62@bootlin.com
 
->
-> Very nice!
->
-> Acked-by: David Hildenbrand <david@redhat.com>
+Changes in v2:
+- mfd: removed driver (already merged)
+- led: removed driver (already merged)
+- gpio-aggregator: refactor code to create a gpio-fwd library
+- pinctrl: refactor gpio part to use the gpio-fwd library
+- pinctrl: add pinctrl mappings for each board
 
-Thanks David
+---
+Thomas Richard (12):
+      gpiolib: add support to register sparse pin range
+      pinctrl: remove extern specifier for functions in machine.h
+      pinctrl: core: add devm_pinctrl_register_mappings()
+      gpio: aggregator: move GPIO forwarder allocation in a dedicated function
+      gpio: aggregator: refactor the code to add GPIO desc in the forwarder
+      gpio: aggregator: refactor the forwarder registration part
+      gpio: aggregator: update gpiochip_fwd_setup_delay_line() parameters
+      gpio: aggregator: export symbols of the GPIO forwarder library
+      gpio: aggregator: handle runtime registration of gpio_desc in gpiochip_fwd
+      gpio: aggregator: add possibility to attach data to the forwarder
+      lib/string_choices: Add str_input_output() helper
+      pinctrl: Add pin controller driver for AAEON UP boards
 
-I will address the review comments and submit the next version.
+ drivers/gpio/gpio-aggregator.c    |  344 +++++++++---
+ drivers/gpio/gpiolib.c            |   29 +-
+ drivers/pinctrl/Kconfig           |   19 +
+ drivers/pinctrl/Makefile          |    1 +
+ drivers/pinctrl/core.c            |   27 +
+ drivers/pinctrl/pinctrl-upboard.c | 1068 +++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h       |   51 +-
+ include/linux/gpio/forwarder.h    |   51 ++
+ include/linux/pinctrl/machine.h   |   20 +-
+ include/linux/string_choices.h    |    6 +
+ 10 files changed, 1538 insertions(+), 78 deletions(-)
+---
+base-commit: 8a834b0ac9ceb354a6e0b8cf5b363edca8221bdd
+change-id: 20240930-aaeon-up-board-pinctrl-support-98fa4a030490
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
 
 
