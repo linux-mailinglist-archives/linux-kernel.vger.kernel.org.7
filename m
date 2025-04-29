@@ -1,51 +1,58 @@
-Return-Path: <linux-kernel+bounces-625185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA170AA0DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF40AA0DA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5AB3B6F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:51:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA257B1547
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B502D1901;
-	Tue, 29 Apr 2025 13:51:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9ABE21ABA0;
+	Tue, 29 Apr 2025 13:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJVqqGVg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179FB2C3773
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B39218ABD;
+	Tue, 29 Apr 2025 13:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745934700; cv=none; b=lnZB+h5N/cnsIGgKDPHNLx8w8eNDZOYyp5WEohEuVXdz0vJiXRgu3MIba/t+MYjNw08n++nHj6LUS4T+GNk6MNZJ7kHWt9EA2pm4Z40JYK/BFmPbjwsW1GAnSmTNJ8HsVHr6Bp65UeuNiUNVayVXy5Wbfw3AifwCFuhOhYl+hGM=
+	t=1745934192; cv=none; b=tqTZo8P/ZaaeZg2Xoa7liUkJ6KGGokBymRvg6P+r1Dw1mxceo77+J0gyBBzXFu1e6sQJNP+995bKsgEaOlQma5oP3CfM2YDVZiZ3VM8Tgy/nS+ap+AK9g2hYQTvDXFfO3qxNIwH2aadRJF+3gzwyiEokpXwZIgSj39akqFTCqdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745934700; c=relaxed/simple;
-	bh=fFDbqgqFiZt077xEgbscizOMbqRmCMRwUWEaBivfL6o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eqKaGKC5Abqr8vrlR7PN42ww3P0RxTkru2M2Z2Nb+8ddPa3tRxD8+fU386M5wpuS1JkoT03VKOOBkWqcyCUP0fOI8tmGnwvUBtzXLD+j0ELV8HHSvO2DFvl7snjSVe0AqV64wSGojwr6SDX839BAGiy2jZlTkr/eJS5gPmM+rtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Zn1sv5gDnz13LKP;
-	Tue, 29 Apr 2025 21:50:27 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id C2989180B46;
-	Tue, 29 Apr 2025 21:51:34 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
- (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Apr
- 2025 21:51:34 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <xiang@kernel.org>, <chao@kernel.org>, <zbestahu@gmail.com>,
-	<jefflexu@linux.alibaba.com>
-CC: <dhavale@google.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v3] erofs: fix file handle encoding for 64-bit NIDs
-Date: Tue, 29 Apr 2025 13:42:57 +0000
-Message-ID: <20250429134257.690176-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1745934192; c=relaxed/simple;
+	bh=awpWUW8mvjtF+SUzNKdmRxVqYYyqG3/AjBsrH4n7waM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B3jTyKtZLqzzg24UiQ4jjI30UB4I3dpNZSqS8AN8D31R+3TCrY7K55tAPUh5aVY9ifRDraP0Lzp0rpkuvpFQpT5J6uTaGfouasSOgGzWNdhwEDnmQDQ3tS+sAUClse0I5zWvsAgMUC1YRKM4UbkoTRcGilSWchdZvu9cI70qXU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJVqqGVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F43C4CEE3;
+	Tue, 29 Apr 2025 13:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745934191;
+	bh=awpWUW8mvjtF+SUzNKdmRxVqYYyqG3/AjBsrH4n7waM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HJVqqGVgynNyfLlFHDKUTVX5xGX38NVb4+0wdnAgRCZTcYcOvri1w/8VTe2zEMQ1Y
+	 GEe/oaUfb8dQPwg03GeSt8STk43waG7vF5iBLfGS34orXjnzFe8dQ65zpSaQgbaXuz
+	 a68L2wWtSYitFq2SLS8gcfABt8feU2MqH80G5qWoHht/qTPn2n+Xbcpz6j96j4PM2w
+	 JZVVSgS/MgHrJVwJZpx1h5dt6U3aGTW8LsDt79ReDn33K3Ao0QlMN7/9BVEI1abIsJ
+	 s8C4PyVaVAjwz0lGznd3PlgIVG0I1r/ZMiiqOMrzOTu3PO0P9sXuKQnb/EKHvjS/oo
+	 Ow9l+V5p5Ltdg==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu <rcu@vger.kernel.org>
+Subject: [PATCH 0/5 v3] rcu/exp updates
+Date: Tue, 29 Apr 2025 15:42:59 +0200
+Message-ID: <20250429134304.3824863-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,123 +60,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemo500009.china.huawei.com (7.202.194.199)
 
-In erofs, the inode number has the location information of
-files. The default encode_fh uses the ino32, this will lack
-of some information when the file is too big. So we need
-the internal helpers to encode filehandle.
+Hi,
 
-It is easy to reproduce test:
-  1. prepare an erofs image with nid bigger than UINT_MAX
-  2. mount -t erofs foo.img /mnt/erofs
-  3. set exportfs with configuration: /mnt/erofs *(rw,sync,
-     no_root_squash)
-  4. mount -t nfs $IP:/mnt/erofs /mnt/nfs
-  5. md5sum /mnt/nfs/foo # foo is the file which nid bigger
-     than UINT_MAX.
-For overlayfs case, the under filesystem's file handle is
-encoded in ovl_fb.fid, it is same as NFS's case.
+No real updates in this set. Just collected a few tags.
 
-Fixes: 3e917cc305c6 ("erofs: make filesystem exportable")
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
-v2: https://lore.kernel.org/all/20250429074109.689075-1-lihongbo22@huawei.com/
-  - Assign parent nid with correct value.
+Thanks.
 
-v1: https://lore.kernel.org/all/20250429011139.686847-1-lihongbo22@huawei.com/
-   - Encode generation into file handle and minor clean code.
-   - Update the commiti's title.
----
- fs/erofs/super.c | 54 +++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 46 insertions(+), 8 deletions(-)
+Frederic Weisbecker (5):
+  rcu/exp: Protect against early QS report
+  rcu/exp: Remove confusing needless full barrier on task unblock
+  rcu/exp: Remove needless CPU up quiescent state report
+  rcu/exp: Warn on QS requested on dying CPU
+  rcu/exp: Warn on CPU lagging for too long within hotplug IPI's
+    blindspot
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index cadec6b1b554..28b3701165cc 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -511,24 +511,62 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 	return 0;
- }
- 
--static struct inode *erofs_nfs_get_inode(struct super_block *sb,
--					 u64 ino, u32 generation)
-+static int erofs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-+			   struct inode *parent)
- {
--	return erofs_iget(sb, ino);
-+	int len = parent ? 6 : 3;
-+	erofs_nid_t nid;
-+	u32 generation;
-+
-+	if (*max_len < len) {
-+		*max_len = len;
-+		return FILEID_INVALID;
-+	}
-+
-+	nid = EROFS_I(inode)->nid;
-+	generation = inode->i_generation;
-+	fh[0] = (u32)(nid >> 32);
-+	fh[1] = (u32)(nid & 0xffffffff);
-+	fh[2] = generation;
-+
-+	if (parent) {
-+		nid = EROFS_I(parent)->nid;
-+		generation = parent->i_generation;
-+
-+		fh[3] = (u32)(nid >> 32);
-+		fh[4] = (u32)(nid & 0xffffffff);
-+		fh[5] = generation;
-+	}
-+
-+	*max_len = len;
-+	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
- }
- 
- static struct dentry *erofs_fh_to_dentry(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
- {
--	return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
--				    erofs_nfs_get_inode);
-+	erofs_nid_t nid;
-+
-+	if ((fh_type != FILEID_INO64_GEN &&
-+	     fh_type != FILEID_INO64_GEN_PARENT) || fh_len < 3)
-+		return NULL;
-+
-+	nid = (u64) fid->raw[0] << 32;
-+	nid |= (u64) fid->raw[1];
-+	return d_obtain_alias(erofs_iget(sb, nid));
- }
- 
- static struct dentry *erofs_fh_to_parent(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
- {
--	return generic_fh_to_parent(sb, fid, fh_len, fh_type,
--				    erofs_nfs_get_inode);
-+	erofs_nid_t nid;
-+
-+	if (fh_type != FILEID_INO64_GEN_PARENT || fh_len < 6)
-+		return NULL;
-+
-+	nid = (u64) fid->raw[3] << 32;
-+	nid |= (u64) fid->raw[4];
-+	return d_obtain_alias(erofs_iget(sb, nid));
- }
- 
- static struct dentry *erofs_get_parent(struct dentry *child)
-@@ -544,7 +582,7 @@ static struct dentry *erofs_get_parent(struct dentry *child)
- }
- 
- static const struct export_operations erofs_export_ops = {
--	.encode_fh = generic_encode_ino32_fh,
-+	.encode_fh = erofs_encode_fh,
- 	.fh_to_dentry = erofs_fh_to_dentry,
- 	.fh_to_parent = erofs_fh_to_parent,
- 	.get_parent = erofs_get_parent,
+ kernel/rcu/tree.c        |  8 +++--
+ kernel/rcu/tree_exp.h    | 69 +++++++++++-----------------------------
+ kernel/rcu/tree_plugin.h |  1 -
+ 3 files changed, 25 insertions(+), 53 deletions(-)
+
 -- 
-2.22.0
+2.48.1
 
 
