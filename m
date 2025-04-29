@@ -1,90 +1,121 @@
-Return-Path: <linux-kernel+bounces-625483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B076FAA1287
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:54:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0BEAA12AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771291BA44E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E27098213C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D67B2512F3;
-	Tue, 29 Apr 2025 16:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA2425178D;
+	Tue, 29 Apr 2025 16:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbVoZggt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VO+7bP1W";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+1FCOKXe"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9935A24A047;
-	Tue, 29 Apr 2025 16:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0E024E019
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945577; cv=none; b=cJ8NHcJdkzsyiMjoPySGdbDP1HiVADqUJpsHfLZsYpMj8YHIjIcVuxe1T4tXVR3A8rQ1OhgOI4uMj9z/zoblH231q/ZdVr9bEeLDSSXzJ2KG/b04YaeSsUTl6FB6/oIE80w/suqrmIbJUXPKE2M0EBxMUarGjpOuqKkFd3FIHuk=
+	t=1745945591; cv=none; b=QsHKlWm5Gi0KZdGLiZerfEkQ0ZXmDRldKf8FLJAyXimpf1FwlLMKogg/7gpvwwgOFD/p8ruMsJC5ebN4X17sIg1mIk/V1B9RbUDAlZ4nFAGUr1z0MuKtLlSgu6MPUKEpG5R7WRLFb02G/pKqyRJakrX/zsv6Hrhgq5pGZHeWoP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945577; c=relaxed/simple;
-	bh=aOnvrbKGCd6oZtAZ+WNZIUoYtPamcTbmixwVmPQzSX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wxif/6/eZWGMiASOnQe5G0Apqk8Ae7GH8I2Cm3mrrbJkQEyXf2OE/LexTVmODh1RJrrJP4BxZYtqtgdkHE2ELSntStONpkcr14zdFMqqbYJS9T+E1wqRYvlxG3M6/sDoQoVpv1ANOeMtDCGRXc/3pUnwG/KgTkf2Oh1ARWypkf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbVoZggt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B93FC4CEE9;
-	Tue, 29 Apr 2025 16:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745945577;
-	bh=aOnvrbKGCd6oZtAZ+WNZIUoYtPamcTbmixwVmPQzSX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbVoZggtxb56N/IORSBXBpTc4lh3NOkTRToTPMaFsJYwTRlD6ghYVlPEkfnoLP4ao
-	 v0PKVd3FFlFCiNH2jiXzIgej3wk9uJs3BckkbVwzlW04KXAtCxtJQGQRi1/v4RSivc
-	 h3OIAB2KF8wKt5siG65a4l0yoV6ov+R2FOXR2UhdK43FeZT9e6FdWM5TIiwbarbSEX
-	 CuUwTebiDJVI1nMFcGHpMben6YlRjiSOd8oswG6xR4NaNeQSq2JRqtI9z7K/erTp3j
-	 Tp/HY8S4mwIaDeoGWfHbPb7+NIl3wkgTTSK1x8nae3kxhpVjqfs88qCb5DYUq5FfZm
-	 LzmD9Q+O8EHtg==
-Date: Tue, 29 Apr 2025 09:52:54 -0700
-From: Kees Cook <kees@kernel.org>
-To: Nicolas Schier <n.schier@avm.de>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] randstruct: Rebuild completely if randstruct.seed changes
-Message-ID: <202504290951.8C3D7C7653@keescook>
-References: <20250429-rebuild-on-randstruct-seed-changes-v1-1-16a74fe65538@avm.de>
+	s=arc-20240116; t=1745945591; c=relaxed/simple;
+	bh=rvwMq98Jt3B7MUrEb6li9y6+5IG8nlslNnMRtOYSVD8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nb4ZUIl5NU+z4PKl6wGYmRnSMq90m6Q+Qm7E4D2ancLw1QoigJFIr5y/RthBwKAvi6WcIuaOsUcwLTqct237GhJUx71+acYbDzhXpaRAM6UKAdFnnJmgQ0Bs7TJN8MdLior1EDqt4g8QmtIdzPbXz2SydMUSh2s7ZLhNvK6wrHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VO+7bP1W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+1FCOKXe; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745945587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WwmLgDT1WO4FJ/Bs9AFg3veV+pfKiE4cEwup8QWcbz8=;
+	b=VO+7bP1WdP/OS+2p+GoZn7eBoUerGIbD7HePipSVnm4ogbKWNAHcWb6rmzyNclWyQK06Oi
+	049uSv4E0ZPvswnFRvNe1Fb/0NIq9eaxtvjB/WSTtZ1tJkzseFMNIvmPlF1JzoDwd+5xOF
+	vrYis1NAEA37rOcEjribAA7uY8TDSIdXbfpQ1H/+U+6lYgWYn71WxKLtCktcCynROJGATV
+	59VM9DsyFQ+x9E0yKPbO7CBLYPN8+RHXkCsr2stTtGcaqKpAPrC5LO0dNsDU1EMGdrs6qQ
+	slTb9JZrTjXWjZv3BftR0Vm0jrdMPq4vMxwyol/sbUZBJFtFsnDK0Sa1SZpIUg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745945587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WwmLgDT1WO4FJ/Bs9AFg3veV+pfKiE4cEwup8QWcbz8=;
+	b=+1FCOKXeX5IVkra6/CGRF/997U00GhA7QwKWQX0rmv0YFRE+asHHGwF82hcs8ww6g713Ju
+	0NEChJGMO8H8X5CQ==
+To: carlos.bilbao@kernel.org, tglx@linutronix.de, seanjc@google.com,
+ jan.glauber@gmail.com
+Cc: bilbao@vt.edu, pmladek@suse.com, akpm@linux-foundation.org,
+ jani.nikula@intel.com, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, takakura@valinux.co.jp, Carlos Bilbao
+ <carlos.bilbao@kernel.org>
+Subject: Re: [PATCH v2 2/2] x86/panic: Add x86_panic_handler as default
+ post-panic behavior
+In-Reply-To: <20250428215952.1332985-3-carlos.bilbao@kernel.org>
+References: <20250428215952.1332985-1-carlos.bilbao@kernel.org>
+ <20250428215952.1332985-3-carlos.bilbao@kernel.org>
+Date: Tue, 29 Apr 2025 18:59:07 +0206
+Message-ID: <84ldri7vv0.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429-rebuild-on-randstruct-seed-changes-v1-1-16a74fe65538@avm.de>
+Content-Type: text/plain
 
-On Tue, Apr 29, 2025 at 02:59:13PM +0200, Nicolas Schier wrote:
-> Include generated/randstruct_hash.h in linux/compiler-version.h to force
-> a complete rebuild if CONFIG_RANDSTRUCT is enabled and randstruct.seed
-> changes.
-> 
-> Removal or change of scripts/basic/randstruct.seed leads to a remake of
-> generated/randstruct_hash.h.  As linux/compiler-version.h is a
-> hard-coded include for every kbuild induced compilation, conditionally
-> adding generated/randstruct_hash.h there adds it as build-dependency to
-> each object file.
+On 2025-04-28, carlos.bilbao@kernel.org wrote:
+> From: Carlos Bilbao <carlos.bilbao@kernel.org>
+>
+> Add function x86_panic_handler() as the default behavior for x86 for
+> post-panic stage via panic_set_handling(). Instead of busy-wait loop, it
+> will halt if there's no console to save CPU cycles.
+>
+> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
+> ---
+>  arch/x86/kernel/setup.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index 9d2a13b37833..3bfef55e9adb 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/initrd.h>
+>  #include <linux/iscsi_ibft.h>
+>  #include <linux/memblock.h>
+> +#include <linux/panic.h>
+>  #include <linux/panic_notifier.h>
+>  #include <linux/pci.h>
+>  #include <linux/root_dev.h>
+> @@ -837,6 +838,15 @@ static void __init x86_report_nx(void)
+>  	}
+>  }
+>  
+> +
+> +static void x86_panic_handler(void)
+> +{
+> +	if (console_trylock()) {
+> +		console_unlock();
+> +		safe_halt();
+> +	}
 
-This does technically work, but this feels like the wrong solution.
-Also, this won't work for another case where I need a similar thing: if
-the .scl file for the integer sanitizer changes, we need to do the same
-full rebuild, and that's not a C file.
+I do not understand what you are trying to accomplish with the
+console_trylock(). At this point in the panic, all the messages are
+already output. The console lock is totally irrelevant.
 
-I think we need to explicitly inject something into fixdep...
+Also, the console lock is only valid for legacy consoles.
 
--- 
-Kees Cook
+I see no reason why you don't just use safe_halt() as your panic
+handler.
+
+John Ogness
 
