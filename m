@@ -1,116 +1,140 @@
-Return-Path: <linux-kernel+bounces-625447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BFEAA11A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:34:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71C8AA11A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2FC27ADC46
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:32:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 215A01B64D88
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8CB247288;
-	Tue, 29 Apr 2025 16:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A902459EE;
+	Tue, 29 Apr 2025 16:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fYjs0bYu"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv4+V9oE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE51244685;
-	Tue, 29 Apr 2025 16:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213581EB5CE;
+	Tue, 29 Apr 2025 16:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745944425; cv=none; b=rmI8zJsuHH0pGU3ofCpQrxJl/JTprPWt3pyxsU9RlQmArOoIurW5p+9kdmOJRq4imNp7RGjSz5zUMwE9eEutiEt8BmaL6U7nSUFUJxVzKf7WFJnrJDlfeMtQ/z8JRtQhABNF88vj3AwBf/lSEnhGoUtJ1HB2kfOs1EGWiNPNMk0=
+	t=1745944507; cv=none; b=VYbNNP5HLSqrRNCt8KPOvrdA/nlGEoM/9qqqH66YvjNXoFXItjsvQh4J85iKYmsZu7z/VXjN9RNi1uWT4ptIfqo2nKX/Rp86V4lklLoSdNzgrmifg9c5Ceb/+A/1l9rh348Cfn43lOCEBOcAEjkaI/vbcJ9LJDUERg+PkB+YZKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745944425; c=relaxed/simple;
-	bh=ITMZtQtSCuisMtzmkO5p3sYMeGrtIHcslnCAPyofEKA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KyvWmIyZGCAmwj52byFRPFv4z6MriqRl0qmz65IDGav0qxdFiAalEL5Y2A5EDhYLXWKUaCTGPQbWDxtKWNh1kZFK5N513Zk/GbrlLSYclIVQ0li2AC6wFjBIoMUS+jD/la0rGguU0niUrxcDAsTYgUyJi546J56jkclC2SBbQHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fYjs0bYu; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53TGXbOi3141150
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Apr 2025 11:33:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1745944418;
-	bh=5fX3jYJgv1EleTFgsZUPSUMZTMUNaUj98y/1xoV41i4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=fYjs0bYuFHT7zL4SZzIgI8b/J56WClYfJ1W11ll8slcpdOOs6O7chpbXtJ885yL5x
-	 dyyWesZ5oS6CqApQzu8jmD+ikyKX8lMa/2VMrqaRc8kAHsc2kYTwJbGsPtZL8qmCM/
-	 OQ1+pDrJkRa3Cy5EBVnXmoO6oiOElf7SNrbGTavM=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53TGXbBY108651
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Apr 2025 11:33:37 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
- Apr 2025 11:33:37 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 29 Apr 2025 11:33:37 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53TGXb2M093065;
-	Tue, 29 Apr 2025 11:33:37 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Moteen Shah <m-shah@ti.com>,
-        Udit Kumar
-	<u-kumar1@ti.com>, Bryan Brattlof <bb@ti.com>
-Subject: [PATCH v2 3/3] arm64: dts: ti: k3-am62p-j722s-common-main: Set eMMC clock parent to default
-Date: Tue, 29 Apr 2025 11:33:37 -0500
-Message-ID: <20250429163337.15634-4-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250429163337.15634-1-jm@ti.com>
-References: <20250429163337.15634-1-jm@ti.com>
+	s=arc-20240116; t=1745944507; c=relaxed/simple;
+	bh=+UGyRtEyWANVYEtyHHifh4EloDW/BOB+dVBrXx8R5aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZXfK2uyondqImB4nCu7pjFWPzXgJ7Np6dHk/1It3UtNyF2KGCtyMO3cwwWtKjtEQWGzAZ8OBekrwAut85HoUGE7AOHE93HaoqYbMVqbAj+dUgrGiS4N6xCTwZ8dGYD3OAu7ZswTdCXuRNYzZmKD9Icj4QQmbSZjqoPMtMPIH6S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv4+V9oE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C094CC4CEE3;
+	Tue, 29 Apr 2025 16:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745944506;
+	bh=+UGyRtEyWANVYEtyHHifh4EloDW/BOB+dVBrXx8R5aE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hv4+V9oEHFFoqPKi4JJC4Rggve0BsZAvaDzvh4SEQuECW785vJ5yPZ4AatV4KqWu6
+	 wuF2qFRqPfjjSeYHDw7enNzhmN+iUgUUbapSZvr+Dz1qVv8qFyUfXoil/gPujvw11w
+	 qoFYOIY78wNSefF32YipQjxSwHAcW3XOmHqgg1S2VM0PWb8PBDGDdDJRkMRAooSKa4
+	 dtKpsbh7N+d9YIvzbEGIi3+RyayqE2xFI+WA5HeWOtGFHWzSkmRs90NjfbDCTTecMx
+	 dcRb1imHHNN+d2crW1PnDFXSnrtBlXapjqWlicbZjIMRypxWwu/J1ycGlUtEr3CMqd
+	 0B2+9D5ZaXxeQ==
+Date: Tue, 29 Apr 2025 19:34:52 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de,
+	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de,
+	catalin.marinas@arm.com, corbet@lwn.net,
+	dave.hansen@linux.intel.com, devicetree@vger.kernel.org,
+	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com,
+	hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org,
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
+	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com,
+	pbonzini@redhat.com, peterz@infradead.org, ptyadav@amazon.de,
+	robh@kernel.org, rostedt@goodmis.org, saravanak@google.com,
+	skinsburskii@linux.microsoft.com, tglx@linutronix.de,
+	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
+Subject: Re: [PATCH v6 11/14] x86: add KHO support
+Message-ID: <aBD_rOvMPk5_iT9J@kernel.org>
+References: <20250411053745.1817356-1-changyuanl@google.com>
+ <20250411053745.1817356-12-changyuanl@google.com>
+ <35c58191-f774-40cf-8d66-d1e2aaf11a62@intel.com>
+ <aBD165pVhOIl3_by@kernel.org>
+ <e90b81a4-a912-4174-b6e9-46a6ddd92ee3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e90b81a4-a912-4174-b6e9-46a6ddd92ee3@intel.com>
 
-Set eMMC clock parents to the defaults which is MAIN_PLL0_HSDIV5_CLKOUT
-for eMMC. This change is necessary since DM is not implementing the
-correct procedure to switch PLL clock source for eMMC and MMC CLK mux is
-not glich-free. As a preventative action, lets switch back to the defaults.
+On Tue, Apr 29, 2025 at 09:05:02AM -0700, Dave Hansen wrote:
+> On 4/29/25 08:53, Mike Rapoport wrote:
+> > On Mon, Apr 28, 2025 at 03:05:55PM -0700, Dave Hansen wrote:
+> >> On 4/10/25 22:37, Changyuan Lyu wrote:
+> >>> From: Alexander Graf <graf@amazon.com>
+> >>>
+> >>> +#ifdef CONFIG_KEXEC_HANDOVER
+> >>> +static bool process_kho_entries(unsigned long minimum, unsigned long image_size)
+> >>> +{
+> >>> +	struct kho_scratch *kho_scratch;
+> >>> +	struct setup_data *ptr;
+> >>> +	int i, nr_areas = 0;
+> >>
+> >> Do these really need actual #ifdefs or will a nice IS_ENABLED() check
+> >> work instead?
+> >>
+> >>> +	ptr = (struct setup_data *)(unsigned long)boot_params_ptr->hdr.setup_data;
+> >>
+> >> What's with the double cast?
+> > 
+> > The double cast is required for this to be compiled on 32 bits (just like
+> > in mem_avoid_overlap). The setup_data is all u64 and to cast it to a
+> > pointer on 32 bit it has to go via unsigned long.
+> 
+> Let's just make KHO depend on 64BIT, at least on x86.
+ 
+Ok, so we are keeping #ifdef and dropping double cast here.
 
-Fixes: b5080c7c1f7e ("arm64: dts: ti: k3-am62p: Add nodes for more IPs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Judith Mendez <jm@ti.com>
-Acked-by: Udit Kumar <u-kumar1@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+> >>> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> >>> index 68530fad05f74..518635cc0876c 100644
+> >>> --- a/arch/x86/kernel/kexec-bzimage64.c
+> >>> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> >>> @@ -233,6 +233,31 @@ setup_ima_state(const struct kimage *image, struct boot_params *params,
+> >>>  #endif /* CONFIG_IMA_KEXEC */
+> >>>  }
+> >>>  
+> >>> +static void setup_kho(const struct kimage *image, struct boot_params *params,
+> >>> +		      unsigned long params_load_addr,
+> >>> +		      unsigned int setup_data_offset)
+> >>> +{
+> >>> +#ifdef CONFIG_KEXEC_HANDOVER
+> >>
+> >> Can this #ifdef be replaced with IS_ENABLED()?
+> > 
+> > The KHO structures in kexec image are under #ifdef, so it won't compile
+> > with IS_ENABLED().
+> 
+> They shouldn't be. Define them unconditionally, please.
+> 
+> ...
+> >> Please axe the #ifdef in the .c file if at all possible, just like the
+> >> others.
+> > 
+> > This one follows IMA, but it's easy to make it IS_ENABLED(). It's really up
+> > to x86 folks preference.
+> 
+> Last I checked, I'm listed under the big M: for "X86 ARCHITECTURE". ;)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-index 7b65538110e8..fa55c43ca28d 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-@@ -573,8 +573,6 @@ sdhci0: mmc@fa10000 {
- 		power-domains = <&k3_pds 57 TI_SCI_PD_EXCLUSIVE>;
- 		clocks = <&k3_clks 57 1>, <&k3_clks 57 2>;
- 		clock-names = "clk_ahb", "clk_xin";
--		assigned-clocks = <&k3_clks 57 2>;
--		assigned-clock-parents = <&k3_clks 57 4>;
- 		bus-width = <8>;
- 		mmc-ddr-1_8v;
- 		mmc-hs200-1_8v;
+I remember :)
+
 -- 
-2.49.0
-
+Sincerely yours,
+Mike.
 
