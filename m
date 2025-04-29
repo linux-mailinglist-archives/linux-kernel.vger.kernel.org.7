@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-624986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18063AA0AFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:02:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78184AA0B07
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C9C483DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D636845E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685912D191F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27CA2C1094;
 	Tue, 29 Apr 2025 12:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DrsxavYH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aBo2qxxR"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cNvYUkIY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aW4t+tNw"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85BB2C2AC3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B425F2C2AB8;
 	Tue, 29 Apr 2025 12:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745928098; cv=none; b=h9+wN1hJ3bf3SjeUBONH0lbLwtmiYO+YdaO9KU+g8uzjethPI8jq7rbcRzohs2SbSwz//DEmd0SehYkpqmvoTxH6qClrE1EmZjwIVA96vXYAETQ8dRmkDRb7Q2FEOswZ1h3cPl/ho+sYJ5nr9ufzQWRLihapfRECFBEUiVv/img=
+	t=1745928099; cv=none; b=Kb6Kuk04g5V7Kfek+4V9yRv7pz65W6DSpIRlhU8E4ws1vATiT3+VK4YjK5JIGv+WkBH+3WN3cUVkjc7cdshFIDWBhf3EchfbxXHmGi6/eYX7J4xJQXOkMKjdPLvqa6entkvtYwUCDg40IRlSbGVpVc9rZ+a/MZWhjTRs/co4Mdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745928098; c=relaxed/simple;
-	bh=2mK6sinmKtyV1wCugMEgB2iIJSIT6o63JPL6+Fwhw2w=;
+	s=arc-20240116; t=1745928099; c=relaxed/simple;
+	bh=H9V8DEOULiOnbQER9jdq86jI9UV0AVKo/mqnQ8wukQU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aHa44/+xRdvY9IF+o1nEfPBNUw+VU5D4EKFlM8a7AcU10XUNhauYi8DR2sQchwqHAKh2J1VknzHMSH7UsCJiTJFPkVpnIJT2be2G+hGXKl53EDYKCBcBa54NfDE+GLnk8cyxyW1kBDm/QXObfdXqBcCRMQUuYCKXY32ZzfjBVrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DrsxavYH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aBo2qxxR; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=HccH9JYAfyXuGiMJyNd5h2a7y/SwkZa4BC4hQQCftMOCXtCnGLE8VfilofD8EqvvKGFrFqZiaNd2+1z5TBswyuYpKwRjWRrsbzGIX2L1oTHjjPLvsPiN+B1upbA6sTDmENgqxiwBR/Dd1ENlEv73/YADb2lwhPNvUBZgYslQ3KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cNvYUkIY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aW4t+tNw; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,30 +38,30 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+WCyvCXKRf/F4qW3dfDg+7ZIfppz2CYPNGxpMfZcwg0=;
-	b=DrsxavYHNdhibVhTWVKj6PFhrk6heJXEM56KIYExib3XWZk3dWMElbz0+w7NJGPGzd8Tfy
-	L25cuAU6lQTDzAmV8y5PYFMulve0hlMOtuvo8D6jaNzVK+tv1YuHcYiNOvk4lHXqWFuk1/
-	61FKEjEkEwi4Ppz1rya2hwJ4b88FJp8Mwdp17Gu7IBu5IECcx+aFN7HBzz3WwAeyosDnSb
-	iYoy8u7k+KT05rg2cMWoUN8hsxAbGfv/S+/n3ECOinlqdZzO1HFhLrhbBhHKuGjH3UuxMg
-	XMPt5LzUIfBAfDgQicufhTIW68mGnFjJt6ylw7eHkwuWtvtXUIH8NlbVLPFy8Q==
+	bh=CbJkEpwB3OdGpjoifJXvu2A5D6lki3gos/XOzAV2UjA=;
+	b=cNvYUkIY7nElJ7MYfPvMOp0AjH1NrRm92rEodLAZab8xO+A8KGyUBShcrT6QyO0O60Maz/
+	QZzTe+itTgpxVmwCrmsMmV+YPeo0vuPAizobx/9C2JDE6wHY1WR1+5NF3wOFpRdj7vxbtf
+	uuPbG0q9CuryQOrI9IPs9wh2C13LeFMlz9FvZILoRKWFVG/7J5kTao9fB1Tp/VcBxD62PD
+	hqwWd0YoIfEwq5vv/etbiv6La7fpdcremzgV9jSMk4hcIGwOKAXDmA8IAZxGzBn9VRgo+v
+	qqnegeSuUA50OjCwWINIbJsd0KkF+H5bJsJJQk+NVHtb6lCknsCKGwOuP1Fp4A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1745928088;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+WCyvCXKRf/F4qW3dfDg+7ZIfppz2CYPNGxpMfZcwg0=;
-	b=aBo2qxxR9Bibs4mq0H7BF0Z0d4SMrtRTnb4lXvdwTjbahGD5iWWjTlhu/xMT6U1g0cr805
-	DrcKYW9Gbzk+6dBA==
+	bh=CbJkEpwB3OdGpjoifJXvu2A5D6lki3gos/XOzAV2UjA=;
+	b=aW4t+tNw2L1oUdJmNxk/enl5zA9oGIT8F9jncGLhDjeRVIU5UzKQUXgAxCLOT42F4MrNSr
+	faizPNqMJTB9nEAg==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: john.ogness@linutronix.de,
 	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v5 06/23] verification/dot2k: Remove __buff_to_string()
-Date: Tue, 29 Apr 2025 14:00:51 +0200
-Message-Id: <31b140d97e79d8619c69b681d0cd750809b48ada.1745926331.git.namcao@linutronix.de>
+Subject: [PATCH v5 07/23] verification/dot2k: Replace is_container() hack with subparsers
+Date: Tue, 29 Apr 2025 14:00:52 +0200
+Message-Id: <673d86384e3117fae2ccffe2e03e5c48e501655a.1745926331.git.namcao@linutronix.de>
 In-Reply-To: <cover.1745926331.git.namcao@linutronix.de>
 References: <cover.1745926331.git.namcao@linutronix.de>
 Precedence: bulk
@@ -72,89 +72,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-str.join() can do what __buff_to_string() does. Therefore replace
-__buff_to_string() to make the scripts more pythonic.
+dot2k is used for both generating deterministic automaton (DA) monitor and
+generating container monitor.
+
+Generating DA monitor and generating container requires different
+parameters. This is implemented by peeking at sys.argv and check whether
+"--container" is specified, and use that information to make some
+parameters optional or required.
+
+This works, but is quite hacky and ugly.
+
+Replace this hack with Python's built-in subparsers.
+
+The old commands:
+
+  python3 dot2/dot2k -d wip.dot -t per_cpu
+  python3 dot2/dot2k -n sched --container
+
+are equivalent to the new commands:
+
+  python3 dot2/dot2k monitor -d wip.dot -t per_cpu
+  python3 dot2/dot2k container -n sched
 
 Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- tools/verification/dot2/dot2k.py | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ tools/verification/dot2/dot2k    | 37 +++++++++++++++++---------------
+ tools/verification/dot2/dot2k.py |  2 +-
+ 2 files changed, 21 insertions(+), 18 deletions(-)
 
+diff --git a/tools/verification/dot2/dot2k b/tools/verification/dot2/dot2k
+index 767064f415e7..133fb17d9d47 100644
+--- a/tools/verification/dot2/dot2k
++++ b/tools/verification/dot2/dot2k
+@@ -13,30 +13,33 @@ if __name__ =3D=3D '__main__':
+     import argparse
+     import sys
+=20
+-    def is_container():
+-        """Should work even before parsing the arguments"""
+-        return "-c" in sys.argv or "--container" in sys.argv
+-
+     parser =3D argparse.ArgumentParser(description=3D'transform .dot file =
+into kernel rv monitor')
+-    parser.add_argument('-d', "--dot", dest=3D"dot_file", required=3Dnot i=
+s_container())
+-    parser.add_argument('-t', "--monitor_type", dest=3D"monitor_type", req=
+uired=3Dnot is_container(),
+-                        help=3Df"Available options: {', '.join(dot2k.monit=
+or_types.keys())}")
+-    parser.add_argument('-n', "--model_name", dest=3D"model_name", require=
+d=3Dis_container())
+     parser.add_argument("-D", "--description", dest=3D"description", requi=
+red=3DFalse)
+     parser.add_argument("-a", "--auto_patch", dest=3D"auto_patch",
+                         action=3D"store_true", required=3DFalse,
+                         help=3D"Patch the kernel in place")
+-    parser.add_argument("-p", "--parent", dest=3D"parent",
+-                        required=3DFalse, help=3D"Create a monitor nested =
+to parent")
+-    parser.add_argument("-c", "--container", dest=3D"container",
+-                        action=3D"store_true", required=3DFalse,
+-                        help=3D"Create an empty monitor to be used as a co=
+ntainer")
++
++    subparsers =3D parser.add_subparsers(dest=3D"subcmd", required=3DTrue)
++
++    monitor_parser =3D subparsers.add_parser("monitor")
++    monitor_parser.add_argument('-n', "--model_name", dest=3D"model_name")
++    monitor_parser.add_argument("-p", "--parent", dest=3D"parent",
++                                required=3DFalse, help=3D"Create a monitor=
+ nested to parent")
++    monitor_parser.add_argument('-d', "--dot", dest=3D"dot_file")
++    monitor_parser.add_argument('-t', "--monitor_type", dest=3D"monitor_ty=
+pe",
++                                help=3Df"Available options: {', '.join(dot=
+2k.monitor_types.keys())}")
++
++    container_parser =3D subparsers.add_parser("container")
++    container_parser.add_argument('-n', "--model_name", dest=3D"model_name=
+", required=3DTrue)
++
+     params =3D parser.parse_args()
+=20
+-    if not is_container():
+-        print("Opening and parsing the dot file %s" % params.dot_file)
+     try:
+-        monitor=3Ddot2k(params.dot_file, params.monitor_type, vars(params))
++        if params.subcmd =3D=3D "monitor":
++            print("Opening and parsing the dot file %s" % params.dot_file)
++            monitor =3D dot2k(params.dot_file, params.monitor_type, vars(p=
+arams))
++        else:
++            monitor =3D dot2k(None, None, vars(params))
+     except Exception as e:
+         print('Error: '+ str(e))
+         print("Sorry : :-(")
+@@ -45,7 +48,7 @@ if __name__ =3D=3D '__main__':
+     print("Writing the monitor into the directory %s" % monitor.name)
+     monitor.print_files()
+     print("Almost done, checklist")
+-    if not is_container():
++    if params.subcmd =3D=3D "monitor":
+         print("  - Edit the %s/%s.c to add the instrumentation" % (monitor=
+.name, monitor.name))
+         print(monitor.fill_tracepoint_tooltip())
+     print(monitor.fill_makefile_tooltip())
 diff --git a/tools/verification/dot2/dot2k.py b/tools/verification/dot2/dot=
 2k.py
-index dd4b5528a4f2..0922754454b9 100644
+index 0922754454b9..9ec99e297012 100644
 --- a/tools/verification/dot2/dot2k.py
 +++ b/tools/verification/dot2/dot2k.py
-@@ -109,15 +109,6 @@ class dot2k(Dot2c):
-         fd.close()
-         return content
+@@ -19,7 +19,7 @@ class dot2k(Dot2c):
+     monitor_type =3D "per_cpu"
 =20
--    def __buff_to_string(self, buff):
--        string =3D ""
--
--        for line in buff:
--            string =3D string + line + "\n"
--
--        # cut off the last \n
--        return string[:-1]
--
-     def fill_monitor_type(self):
-         return self.monitor_type.upper()
+     def __init__(self, file_path, MonitorType, extra_params=3D{}):
+-        self.container =3D extra_params.get("container")
++        self.container =3D extra_params.get("subcmd") =3D=3D "container"
+         self.parent =3D extra_params.get("parent")
+         self.__fill_rv_templates_dir()
 =20
-@@ -148,19 +139,19 @@ class dot2k(Dot2c):
-                 buff.append("\tda_%s_%s(%s%s);" % (handle, self.name, even=
-t, self.enum_suffix));
-             buff.append("}")
-             buff.append("")
--        return self.__buff_to_string(buff)
-+        return '\n'.join(buff)
-=20
-     def fill_tracepoint_attach_probe(self):
-         buff =3D []
-         for event in self.events:
-             buff.append("\trv_attach_trace_probe(\"%s\", /* XXX: tracepoin=
-t */, handle_%s);" % (self.name, event))
--        return self.__buff_to_string(buff)
-+        return '\n'.join(buff)
-=20
-     def fill_tracepoint_detach_helper(self):
-         buff =3D []
-         for event in self.events:
-             buff.append("\trv_detach_trace_probe(\"%s\", /* XXX: tracepoin=
-t */, handle_%s);" % (self.name, event))
--        return self.__buff_to_string(buff)
-+        return '\n'.join(buff)
-=20
-     def fill_main_c(self):
-         main_c =3D self.main_c
-@@ -210,7 +201,7 @@ class dot2k(Dot2c):
-         buff =3D self.fill_model_h_header()
-         buff +=3D self.format_model()
-=20
--        return self.__buff_to_string(buff)
-+        return '\n'.join(buff)
-=20
-     def fill_monitor_class_type(self):
-         if self.monitor_type =3D=3D "per_task":
-@@ -242,7 +233,7 @@ class dot2k(Dot2c):
-         tp_args_c =3D ", ".join([b for a,b in tp_args])
-         buff.append("	     TP_PROTO(%s)," % tp_proto_c)
-         buff.append("	     TP_ARGS(%s)" % tp_args_c)
--        return self.__buff_to_string(buff)
-+        return '\n'.join(buff)
-=20
-     def fill_monitor_deps(self):
-         buff =3D []
-@@ -250,7 +241,7 @@ class dot2k(Dot2c):
-         if self.parent:
-             buff.append("	depends on RV_MON_%s" % self.parent.upper())
-             buff.append("	default y")
--        return self.__buff_to_string(buff)
-+        return '\n'.join(buff)
-=20
-     def fill_trace_h(self):
-         trace_h =3D self.trace_h
 --=20
 2.39.5
 
