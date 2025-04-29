@@ -1,173 +1,164 @@
-Return-Path: <linux-kernel+bounces-625689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243A0AA1B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF4DAA1B78
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CF537B6B37
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:47:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329A94C56FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9542620CE;
-	Tue, 29 Apr 2025 19:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF86325E83C;
+	Tue, 29 Apr 2025 19:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHj8wW34"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gdesoaGn"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E3725F978;
-	Tue, 29 Apr 2025 19:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3815A208D0
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 19:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745956082; cv=none; b=P6Yq874zoWjmBjYXK9FM+QwTTlGxktMqyV+FD1uDLeTOQ4pGwZwCIdKOXIV4BsXkedeuqZew+yS09oTOL2aXNimqgK17hA97QPVtJEzC7mQU5OjUjzr5xrA0nJ5kiIRvBrmQ/AzqZJZ1HQTgZPkFLbnkza887H17Nsnl0aU/ozc=
+	t=1745956066; cv=none; b=s8Lhgny1bp7OqEPxl5jf5hq5zxC8+RBUejaW9fAwFMdiQkGSCn3b8okdi/j61CPPtm1luoulkYB8LZpXH2Bx87RU1Y7QZd5n2km5jgGd/P6nNvxGyJN51lCdVZB0nN0CA2CItu4Bb//cKqiIvq5507rEvqgmS+2VxMuOEqL87h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745956082; c=relaxed/simple;
-	bh=5sF17zBSWsEu1wpW4T/aKuh7B90BT+uOCbFZt5HIb/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pf5D5By8FQTpD0+R4wSxF6FBqkMIrQy1AaTNoeDDmjZLBCR7EKGEzKMdw7Z0EUHU0CEIkYeB2RdTa0/dGizarVFzNc7MRtKKXJ/6WZgZ+N754Oa6eXUWnd2MYdBUxSonPRms1dP/Saiu2QIRUUMDPKnDpXRnh+5D7Nsg8MRGKQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WHj8wW34; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac7bd86f637so36609366b.1;
-        Tue, 29 Apr 2025 12:48:00 -0700 (PDT)
+	s=arc-20240116; t=1745956066; c=relaxed/simple;
+	bh=ugjyf/jMyKKt/zcQVDlLaFsLZEJxdrKZne7xK3f5sUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pd7qhwr5ZlTLFdVgCVHp5/QMHhaNTsYWO9uHEEVuOmQ0lkz22zdKBLhwu4mh3O4YmmYn7FxZ60E20pGjckgpAMBPJtVU9Qs8VdVru2/fexYrQytuwJ/3GCB6CyEnepkJz5c0SjFs2LjF2BAgLt7nuxf5dP+tNDufJYz/AZ32cSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gdesoaGn; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2d071fcd89bso1841299fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:47:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745956079; x=1746560879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=31hHt99eQ7ecxAQBYo10uCFCGHQn8F86JxoMvBp/XTs=;
-        b=WHj8wW340mrXuwj0f3NAIPIvy19wrpRXOU0c+RIQ9zlE/tCq1BmYpCx0AREwpTCG2U
-         hsJpIayXJz5zk3oM2LZT00YmSmKg/Vvfe9C+OoehCQPQ3OWGfseDuEJZJL0zH4qM0oeh
-         Ox/WAnH8rhuQCGOTvf3GzN+d1ydq5V3ftzRFQ5+qVBZLaljykoiHNevHNnaUOaqARhxd
-         AEVV8Ml4p1Q4jkuvZIkHABZbr8wb7mnKPmItsqfWAwgU+jzhCUwZzOTzGgmpdaiRk51g
-         xrmXa4215VQh/00UwmqyYuEJv+HCM0eS3XvmDr7ZKSKvCabO8B1Yb64vuTbW5IZWt2ik
-         ohog==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745956063; x=1746560863; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PNMUgH5uNY4IqYIYRqaJEMyg/HY2VEe42NNCO90DOAc=;
+        b=gdesoaGnaIjkBQMOEMiWnQSmtkpyMRn3qpZSwNEDsPhqZ7kppm7tIXCviOdpJqlVQv
+         bACpzRAZwNkkBNj8TBN2JAiHLCdSqgMP89TnRrlq57hGtL8ntn6kAVCAheqP+ncIzEX9
+         AnSf/NsZ5SR284jJW4QVa21xCDe11O4t4nAWfxiCE/hy/uyZllX2vjhd+BTFrKNLS6cq
+         ya6pZw3FESzLyNkRDvz7yfMi28DdgwpzSUIQ11nrvIesdcgMA1OPsgQeOSNc/jj8SB9N
+         Woq1xyuJvDX9GgSttyVU+oKWirh7x7ben88mKeuXzZwnmdmxt2+7/pO3CvqWC45RM5Wb
+         lA5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745956079; x=1746560879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=31hHt99eQ7ecxAQBYo10uCFCGHQn8F86JxoMvBp/XTs=;
-        b=PPukRNKcBf5kdL+40GkNZLimw48LLoS9o+PltCwpzE9ve4OJZT5NIftsaN+0Tsl7IW
-         Q+qXfMxCSHlWUvhh+yvjk56lbMZmaQnl7S7ROpbJ8w7C4Zk1NCQBK7AGry4XAFForBoJ
-         qRk10+TQOugr3r6Y0FYY32cW2XFOTawYlZYzqQWDyzuNvqMSDRifpWMQ5n5qSIrf//vX
-         MzMdh/K4YcW/FFVxAVCyPcPOyAHqlhOYKoYAzIUXz2tC2xLAGLy4+qd4XOSh6gJcYuS6
-         AaI1D7di8Q/wa9x1VEN78dd6SrVNMWiUX6IRcwdNKVOAeDS6bJQFjaoKhqvWO91F9GwP
-         oiNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8mcuR4QYY8E5n/rmtDUhZgz4s50P+IZUh17PGgzhhrtOueVouiHx/9KLoBila43d8WHhaGS5yqQsO@vger.kernel.org, AJvYcCV3VotOoRca+oFtQJLtjPI2sPd7j4J6bNn4x1N+cUEdbO/67OX09Zx8F7+En4MGn/T4jUBcV9QplhX/Mswf@vger.kernel.org, AJvYcCXhyMsblXjBRWymoOPzhliH6gMkCOdDaOWwueyC53wu3g22PPo15bF2vFtJkm6sDCNDF2fpAMDBvu/O@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5V+gOAsEaIIrdYBnafYK2fw5TCGth03pl0Q+MxMyajTpD0vZq
-	1t6v0rrSINiyLxoJdQLluZmlL4z0Ju63wV+wU0wlWVNG5/7WrrVmcAU8tMAUOwVNrZsn0emsLnO
-	IxsWOJhMm3fatgaEcinMer3WPLzs=
-X-Gm-Gg: ASbGncvNduOQXtEfat45RheJik3xAQfe4ty/EjO8entOxlTB1dnz9ECzcPZsrlfwuNs
-	9EyYD+V2UeNC6R4dUj9dUJWTU9ZlKK8zDpfdBErKp1ZYNhn70kNwUKLMoRHdCv8/mT8Ja1EpU+i
-	ogxq8+YUBKM3LsnH3sqXn8sA==
-X-Google-Smtp-Source: AGHT+IG053NtJm0hR+FwHICAyS7gp+M4t3UZk6wbhjh4+xpcE871md/xia3GNq0/H3rfYdZZf6GCNx2EKnYMhYJ4isw=
-X-Received: by 2002:a17:907:7ba8:b0:aca:d276:fa5 with SMTP id
- a640c23a62f3a-acedf349707mr18697166b.0.1745956078998; Tue, 29 Apr 2025
- 12:47:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745956063; x=1746560863;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PNMUgH5uNY4IqYIYRqaJEMyg/HY2VEe42NNCO90DOAc=;
+        b=V5iUhHICxv5/sjQn9W2ElTYQZAD/arYMzDbPbUoENw1WxMfhG6sbj+W/SkkdcOt/9n
+         ln3RQ+0+JopryOLAgDFX1aSIGSHjcnAdjdqoKeHWosFcDJZrjd27r6pt937/nV4aEMIF
+         iTNCneaq3cV1LZvnHm0xTyvvv4P6u2Ak1Azt5psVBIrbHnmZ0xTy/Nk5HCmE6CdkSTta
+         pNZRVtaXmfdVCaK5nB7qsv9Prvqi1PUDq1Bqy8kJ//hPXBJKGgEW+RFWGTVE3dtI3Ue4
+         aTuI2AsV4VChMdGXBCFx9AsuMu7jBbOY53bqAJyQ98T6yB5IAjongoaDBtt9WvJ8+6hO
+         XmPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyvjidcJ25NxicF4hp/85d36spn57PqUPYkYYnntxWu9xVSuHV6e3Fm6mUJiW4T/KAeBqyPULH7tDIlSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4hbCtoc+yOQW49rxRfgsSdCRFqdQMi1dx5OaORD0hzqNiu83u
+	QFnQTXXWlD4IPVh/3WX8cVSc1BHQXWTX8pszaza0POonk+6oak9JkKd1HmP7oGs=
+X-Gm-Gg: ASbGncs/0aKxKsJbLA98Axs1ebXd7ZAl07vvW+tbSAjjdB2on5VaauuOXAdQBnvffyD
+	Tx5jxWsjirXfEu8rCMqWChmZOsisFo5QOOTWMlaRM8/7eNEvE3FbnD3q3/Gsa8dXSPA1CFqU2y1
+	wAaGOd2uL236YQnWeJIOeaFwIyCKH8DnHZ/tMa2EUVux70e+ZhK2zm4NpKLzJsrqDYGR8uJ7rA+
+	aqEBgIF/ecgMFzZS8sLTm/OPhnbu/WVGrYYePDTcQfgFtSiaMjl1YfgE3y3Dv/nZRiKCf2iulFN
+	Y9VWzKuxrObql91XaX9oOto6DFvR4HqcmoAjyy/d4zttqHn0dmjDWt0lfTzmaJJjfH99FmITrgt
+	+ALOnN5OuEIsf1GHuuRQzgg6N/FdM
+X-Google-Smtp-Source: AGHT+IF2u4BGVcklS8e42c3uNUIrh7aRuex4nRoeOZeNBykrvHleyFegxvqc61saZCq3sjivYkKrMA==
+X-Received: by 2002:a05:6871:358f:b0:2d0:3078:e72f with SMTP id 586e51a60fabf-2da6a2b0b6fmr225244fac.26.1745956063148;
+        Tue, 29 Apr 2025 12:47:43 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:dc17:157d:e8b2:3ad6? ([2600:8803:e7e4:1d00:dc17:157d:e8b2:3ad6])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2d973c18da5sm2955704fac.47.2025.04.29.12.47.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 12:47:42 -0700 (PDT)
+Message-ID: <38e243b0-e81b-4d4d-97fe-91ea2bec6270@baylibre.com>
+Date: Tue, 29 Apr 2025 14:47:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aA/ineUBAM5IU79J@duo.ucw.cz> <20250429170220.8145-1-trannamatk@gmail.com>
-In-Reply-To: <20250429170220.8145-1-trannamatk@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 29 Apr 2025 22:47:22 +0300
-X-Gm-Features: ATxdqUHg7vLAt0poth2caA_g2wxqIwhzv8QInVAHWSoWODRta2Iw45WeEjT2sDc
-Message-ID: <CAHp75VcVmTwS-zw=o5=m1-x0XC67BKBVWae2mMKZQH=qLCxZwg@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] auxdisplay: add support for TI LP5812 4x3 Matrix
- LED driver
-To: Nam Tran <trannamatk@gmail.com>
-Cc: pavel@ucw.cz, andy@kernel.org, geert@linux-m68k.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, christophe.jaillet@wanadoo.fr, 
-	corbet@lwn.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, florian.fainelli@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] iio: introduce IIO_DECLARE_BUFFER_WITH_TS macros
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Eugen Hristev <eugen.hristev@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250428-iio-introduce-iio_declare_buffer_with_ts-v4-0-6f7f6126f1cb@baylibre.com>
+ <20250428-iio-introduce-iio_declare_buffer_with_ts-v4-1-6f7f6126f1cb@baylibre.com>
+ <1d90fae5-9c58-4a77-b81c-2946e7cc74d4@baylibre.com>
+ <5c762653-b636-45bd-8800-e804ad8dfda5@baylibre.com>
+ <CAHp75VfcmvLhBDjbu6x46wGyzG+i7=rVypzSm11qzWN9Qq_rew@mail.gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <CAHp75VfcmvLhBDjbu6x46wGyzG+i7=rVypzSm11qzWN9Qq_rew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 8:02=E2=80=AFPM Nam Tran <trannamatk@gmail.com> wro=
-te:
-> On Mon, 28 Apr 2025 Pavel Machek wrote:
-> > > On Mon, 28 Apr 2025 Geert Uytterhoeven wrote:
-> >
-> > > > > > > - Move driver to drivers/auxdisplay/ instead of drivers/leds/=
-.
-> > > > > > > - Rename files from leds-lp5812.c/.h to lp5812.c/.h.
-> > > > > > > - Move ti,lp5812.yaml binding to auxdisplay/ directory,
-> > > > > > >   and update the title and $id to match new path.
-> > > > > > > - No functional changes to the binding itself (keep Reviewed-=
-by).
-> > > > > > > - Update commit messages and patch titles to reflect the move=
-.
-> > > > > > > - Link to v7: https://lore.kernel.org/linux-leds/202504221901=
-21.46839-1-trannamatk@gmail.com/
-> > > > > >
-> > > > > > Out of sudden without discussing with auxdisplay maintainers/re=
-viewers?
-> > > > > > Thanks, no.
-> > > > > > Please, put into the cover letter the meaningful summary of wha=
-t's
-> > > > > > going on and why this becomes an auxdisplay issue. Brief review=
- of the
-> > > > > > bindings sounds more likely like LEDS or PWM subsystems.
-> > > > >
-> > > > > It is 4x3 matrix. That means it is not suitable for LEDs. I don't
-> > > > > believe it is suitable for PWM, either -- yes, it is 36 PWM outpu=
-ts,
-> > > > > but...
-> > > >
-> > > > Is it intended to be used as a 4x3 matrix, or is this just an inter=
-nal
-> > > > wiring detail, and should it be exposed as 12 individual LEDs inste=
-ad?
-> > >
-> > > The 4=C3=973 matrix is a real and fundamental aspect of the LP5812=E2=
-=80=99s operation.
-> > > It is not just an internal wiring detail.
-> > > The device adopts a Time-Cross-Multiplexing (TCM) structure, where 4 =
-output
-> > > pins control 12 LED dots individually through scanning. Each pin incl=
-udes
-> > > both high-side and low-side drive circuits, meaning matrix multiplexi=
-ng is
-> > > required for proper operation =E2=80=94 it cannot be treated as 12 co=
-mpletely
-> > > independent LEDs.
-> >
-> > Scanning is really a detail.
-> >
-> > If this is used as rectangular 4x3 display, then it goes to auxdisplay.
-> >
-> > If this is used as a power LED, SD activity LED, capslock and numlock
-> > ... placed randomly all around the device, then it goes LED subsystem.
->
-> The LP5812 is used for LED status indication in devices like smart speake=
-rs,
-> wearables, and routers, not as a structured rectangular display.
->
-> Given that, it seems to match the LED subsystem better than auxdisplay, d=
-oesn't it?
+On 4/29/25 2:36 PM, Andy Shevchenko wrote:
+> On Tue, Apr 29, 2025 at 10:31 PM David Lechner <dlechner@baylibre.com> wrote:
+>> On 4/28/25 9:12 PM, David Lechner wrote:
+>>> On 4/28/25 3:23 PM, David Lechner wrote:
+>>>> Add new macros to help with the common case of declaring a buffer that
+>>>> is safe to use with iio_push_to_buffers_with_ts(). This is not trivial
+>>>> to do correctly because of the alignment requirements of the timestamp.
+>>>> This will make it easier for both authors and reviewers.
+>>>>
+>>>> To avoid double __align() attributes in cases where we also need DMA
+>>>> alignment, add a 2nd variant IIO_DECLARE_DMA_BUFFER_WITH_TS().
+> 
+> ...
+> 
+>>>> +/**
+>>>> + * IIO_DECLARE_DMA_BUFFER_WITH_TS() - Declare a DMA-aligned buffer with timestamp
+>>>> + * @type: element type of the buffer
+>>>> + * @name: identifier name of the buffer
+>>>> + * @count: number of elements in the buffer
+>>>> + *
+>>>> + * Same as IIO_DECLARE_BUFFER_WITH_TS(), but is uses __aligned(IIO_DMA_MINALIGN)
+>>>> + * to ensure that the buffer doesn't share cachelines with anything that comes
+>>>> + * before it in a struct. This should not be used for stack-allocated buffers
+>>>> + * as stack memory cannot generally be used for DMA.
+>>>> + */
+>>>> +#define IIO_DECLARE_DMA_BUFFER_WITH_TS(type, name, count)   \
+>>>> +    __IIO_DECLARE_BUFFER_WITH_TS(type, name, count)         \
+>>>> +    /* IIO_DMA_MINALIGN may be 4 on some 32-bit arches. */  \
+>>>> +    __aligned(MAX(IIO_DMA_MINALIGN, sizeof(s64)))
+>>>
+>>> I just realized my logic behind this is faulty. It assumes sizeof(s64) ==
+>>> __alignof__(s64), but that isn't always true and that is what caused the builds
+>>> to hit the static_assert() on v3.
+>>>
+>>> We should be able to leave this as __aligned(IIO_DMA_MINALIGN)
+>>>
+>>> And have this (with better error message):
+>>>
+>>> static assert(IIO_DMA_MINALIGN % __alignof__(s64) == 0);
+>>
+>> I was working late yesterday and should have saved that reply until morning
+>> to think about it more!
+>>
+>> We do want to align to to sizeof(s64) instead of __alignof__(s64) to avoid
+>> issues with, e.g. 32-bit kernel and 64-bit userspace (same reason that
+>> aligned_s64 exists and always uses 8-byte alignment).
+>>
+>> So I think this patch is correct as-is after all.
+> 
+> I'm wondering, shouldn't it be better just to make sure that
+> IIO_DMA_MINALIGN is always bigger or equal to sizeof(s64)?
+> 
 
-I have mixed feelings about all this. As per hardware organisation it
-sounds more like a matrix (for example. keyboard), where all entities
-are accessed on a scanline, but at the same time each of the entities
-may have orthogonal functions to each other. Have you checked with DRM
-for the sake of completeness?
-Personally I lean more to the something special, which doesn't fit
-existing subsystems. Auxdisplay subsystem more or less about special
-alphanumeric displays (with the exception of some FB kinda devices,
-that were even discussed to have drivers be removed). Also maybe FB
-might have something suitable, but in any case it looks quite
-non-standard...
+Sounds reasonable to me. From what I have seen while working on this is that
+there are quite a few drivers using IIO_DMA_MINALIGN expecting it to be
+sufficient for timestamp alignment, which as it seems is not always the case.
 
-
---=20
-With Best Regards,
-Andy Shevchenko
+I'll wait for Jonathan to weigh in though before spinning up a new patch.
 
