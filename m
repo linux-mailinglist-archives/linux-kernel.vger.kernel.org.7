@@ -1,141 +1,124 @@
-Return-Path: <linux-kernel+bounces-625045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13E4AA0BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:30:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110D2AA0BB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416E13A44C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0D4460D70
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A812C3779;
-	Tue, 29 Apr 2025 12:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782772D1930;
+	Tue, 29 Apr 2025 12:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="LDGT+Bjv"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c5BJl+7K"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6712BEC35;
-	Tue, 29 Apr 2025 12:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C0F524F;
+	Tue, 29 Apr 2025 12:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745929771; cv=none; b=tGzbsGwy/7ht2fR46udSanG4k3Jzt3GxfJS6P9xSzgeOuHpEUtVF6+d1gzQypCLJ8fQk7mMZx8Qn3sxtau0gdk7+5daANCff1576iolECRPAVs8QOlC462qlWFMJvXDG24l4tDmAbOwkcO5R64Ko5jW8Z7MDYUMcxE49lBZODkc=
+	t=1745929779; cv=none; b=O/GAyftsfEUKRpu4dsJZ4XmgQ4YO0XVo1IJH6Dm5Xq47+9QqM4POtRCHmSsfhZAc1dhYdMIkN5q+r24fpxuBkF7cdwxukxV/Od0XDysMYs/rJAe9RzttVQRzHoDsCX1lZpdnQvTWxbRRN+pJiJyiXWmSwWBLk0/GDJ0fVbAx3bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745929771; c=relaxed/simple;
-	bh=FbzQ5xgMLQCmABRpj7905rWZk9UuHcSN1po5XTM5cog=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D/Zk+UqZnHFgAVzxa/Nr6sASLJjCEwa7RLZLjlM8cu051xUwi6tocFz0DhsjpKKyLage1YOmY7x9t8fl4VxDW1zI+FnlhQ3aSEytuaasochIgrlEaag+sNFYuZ02x4kwZz/3SJnch/wbAZVM1odHr7TIdeojFACvSArfrw9Ik6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=LDGT+Bjv; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1745929765; bh=FbzQ5xgMLQCmABRpj7905rWZk9UuHcSN1po5XTM5cog=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=LDGT+BjvnoBzvkcQR3mok7nNt0/Coy26foIRZLH9JB7a0buy41Y7pWwbMX8LzRi0f
-	 5grLeqzy2NIbAPEH/tdYGQAyDbOjm9u0UQ+mdJBAA95OXtNbMhNf6idWQb4xbJLn4z
-	 qNXDEovmq3yD2urOf5OJaBkcBz2gkKZw37lKCapg=
-From: =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Ondrej Jirman <megi@xff.cz>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rtw-next v3 2/2] wifi: rtw89: Fix inadverent sharing of struct ieee80211_supported_band data
-Date: Tue, 29 Apr 2025 14:29:11 +0200
-Message-ID: <20250429122916.1734879-3-megi@xff.cz>
-In-Reply-To: <20250429122916.1734879-1-megi@xff.cz>
-References: <20250429122916.1734879-1-megi@xff.cz>
+	s=arc-20240116; t=1745929779; c=relaxed/simple;
+	bh=R4hIbiasEfWJ6KpbYMDWZDcsupzXecQo/dfwa/BA+Y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m2ndm0DCaa0MvEXquYd2sJmL9WznTyIbS5slqcS3sGitNAKvotXbsHiifRBXwYXfVWwxIHEa0yG1M8jlrNsaLR0qFfsIuPKkrFIcDEh8YLbrwFHATApEgB2l7x0byscxvbd6eUaXnQcGZ8RqYfkuv+8z7+pBWS1P9qiId9cV+H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c5BJl+7K; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4381243AF0;
+	Tue, 29 Apr 2025 12:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745929775;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=omuNp2b6rybMb7GMAP26voHy5cNldstelBvz6qt6wuY=;
+	b=c5BJl+7KmJVkPYdSDB5vSRXnvCdO1iSQhgT6po339KJX9iYhcnvYkj8SCRk1eiBGkCLVzB
+	NGwM6Atw+QlakitMYQQwOGboBiKAAB+Xvk/i0GWFs8bWzvaza0n05VWKpOG0vOOYmvADQE
+	UUCyjGq23ka66F5kt1HgrF3XpHqqihb6TpaI3WAHZJQIZtqZJTD+0bf/SYaBJP7PBCPCI0
+	0q5tAgboqQsKKOtzOhjefCpmpYcyvyONVR5H0yNahEL8RW4z/2xynLxM5PUx7kFhsio2Ya
+	MAgbY+QC2U4nn+TFQeLBkGlATZyztb9awAC+YXZZaMH9tEy+kWb3X4Zpo0itPA==
+Date: Tue, 29 Apr 2025 14:29:32 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
+ <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
+ <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v9 03/13] net: pse-pd: tps23881: Add support
+ for PSE events and interrupts
+Message-ID: <20250429142932.718a8415@kmaincent-XPS-13-7390>
+In-Reply-To: <366c8743-224b-4715-a2ff-399b16996621@redhat.com>
+References: <20250422-feature_poe_port_prio-v9-0-417fc007572d@bootlin.com>
+	<20250422-feature_poe_port_prio-v9-3-417fc007572d@bootlin.com>
+	<366c8743-224b-4715-a2ff-399b16996621@redhat.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieefkedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughum
+ hgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-From: Ondrej Jirman <megi@xff.cz>
+On Tue, 29 Apr 2025 11:07:04 +0200
+Paolo Abeni <pabeni@redhat.com> wrote:
 
-Internally wiphy writes to individual channels in this structure,
-so we must not share one static definition of channel list between
-multiple device instances, because that causes hard to debug
-breakage.
+> On 4/22/25 4:56 PM, Kory Maincent wrote:
+> > +/* Convert interrupt events to 0xff to be aligned with the chan
+> > + * number.
+> > + */
+> > +static u8 tps23881_irq_export_chans_helper(u16 reg_val, u8 field_offse=
+t)
+> > +{
+> > +	u8 val;
+> > +
+> > +	val =3D (reg_val >> (4 + field_offset) & 0xf0) |
+> > +	      (reg_val >> field_offset & 0x0f); =20
+>=20
+> I'm probably low on coffee but I don't see why the above could not be
+> replaced with:
+>=20
+> 	return reg_val >> field_offset;
+>=20
+> (given that the return type is u8)
 
-For example, with two rtw89 driven devices in the system, channel
-information may get incoherent, preventing channel use.
+Shift takes precedence to bit operation.
+So the calculation is like:
+val =3D ((reg_val >> (4 + field_offset)) & 0xf0) |=20
+      ((reg_val >> field_offset) & 0x0f)
 
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
----
- drivers/net/wireless/realtek/rtw89/core.c | 33 +++++++++++++++++++----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+Supposing reg_val =3D 0xabcd;
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index b164bc767e82..bc26790ed313 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -4400,17 +4400,40 @@ static int rtw89_init_he_eht_cap(struct rtw89_dev *rtwdev,
- 	return 0;
- }
- 
-+static struct ieee80211_supported_band *
-+rtw89_core_sband_dup(struct rtw89_dev *rtwdev,
-+		     const struct ieee80211_supported_band *sband)
-+{
-+	struct ieee80211_supported_band *dup;
-+
-+	dup = devm_kmemdup(rtwdev->dev, sband, sizeof(*sband), GFP_KERNEL);
-+	if (!dup)
-+		return NULL;
-+
-+	dup->channels = devm_kmemdup(rtwdev->dev, sband->channels,
-+				     sizeof(*sband->channels) * sband->n_channels,
-+				     GFP_KERNEL);
-+	if (!dup->channels)
-+		return NULL;
-+
-+	dup->bitrates = devm_kmemdup(rtwdev->dev, sband->bitrates,
-+				     sizeof(*sband->bitrates) * sband->n_bitrates,
-+				     GFP_KERNEL);
-+	if (!dup->bitrates)
-+		return NULL;
-+
-+	return dup;
-+}
-+
- static int rtw89_core_set_supported_band(struct rtw89_dev *rtwdev)
- {
- 	struct ieee80211_hw *hw = rtwdev->hw;
- 	struct ieee80211_supported_band *sband;
--	u32 size = sizeof(struct ieee80211_supported_band);
- 	u8 support_bands = rtwdev->chip->support_bands;
--	struct device *dev = rtwdev->dev;
- 	int ret;
- 
- 	if (support_bands & BIT(NL80211_BAND_2GHZ)) {
--		sband = devm_kmemdup(dev, &rtw89_sband_2ghz, size, GFP_KERNEL);
-+		sband = rtw89_core_sband_dup(rtwdev, &rtw89_sband_2ghz);
- 		if (!sband)
- 			return -ENOMEM;
- 		rtw89_init_ht_cap(rtwdev, &sband->ht_cap);
-@@ -4421,7 +4444,7 @@ static int rtw89_core_set_supported_band(struct rtw89_dev *rtwdev)
- 	}
- 
- 	if (support_bands & BIT(NL80211_BAND_5GHZ)) {
--		sband = devm_kmemdup(dev, &rtw89_sband_5ghz, size, GFP_KERNEL);
-+		sband = rtw89_core_sband_dup(rtwdev, &rtw89_sband_5ghz);
- 		if (!sband)
- 			return -ENOMEM;
- 		rtw89_init_ht_cap(rtwdev, &sband->ht_cap);
-@@ -4433,7 +4456,7 @@ static int rtw89_core_set_supported_band(struct rtw89_dev *rtwdev)
- 	}
- 
- 	if (support_bands & BIT(NL80211_BAND_6GHZ)) {
--		sband = devm_kmemdup(dev, &rtw89_sband_6ghz, size, GFP_KERNEL);
-+		sband = rtw89_core_sband_dup(rtwdev, &rtw89_sband_6ghz);
- 		if (!sband)
- 			return -ENOMEM;
- 		ret = rtw89_init_he_eht_cap(rtwdev, NL80211_BAND_6GHZ, sband);
--- 
-2.49.0
+- If field_offset =3D 0, we return 0xbd;
+- If field_offset =3D 4, we return 0xac
 
+Regards
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
