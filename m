@@ -1,205 +1,190 @@
-Return-Path: <linux-kernel+bounces-624266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43FDAA010F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB6CAA012E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234EF1783E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2BA481EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 04:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B7427055C;
-	Tue, 29 Apr 2025 04:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7FC2749E2;
+	Tue, 29 Apr 2025 04:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OEysBOZd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrpjRytR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD1B210F59
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502F726FDAF;
+	Tue, 29 Apr 2025 04:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745899559; cv=none; b=Nub58fxmaTM46GCfaGFUEUgAVBNZspfyWqOE9/K114m8mi5XcAfuz568iz4f31OO8EaqSlR1ONf/Bdo4Yh3Uqjfcm/TtOIfWu++gsBfa+j6w6pPkTvhxjAYhtspL4fkweASdUCrBnEk2JDFHm8eZxkOD4jFgeTjhAw6yCpm/lfo=
+	t=1745899577; cv=none; b=Gw1+egBs19bbL0dGs+LzmkKo3TrdfBcqIQKDqm2Sbk3MppBb1PMzOc+Gm5rss4XnafQjhYBAlh06tMCBjYTRiVFuvppKzk8wArzpqy1d6342X6qzCG2sIumAkJvZJ4N/f1aTOuK17000fslbb1OJtgtLAMoQIUIGKAZoZVlR1Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745899559; c=relaxed/simple;
-	bh=mC064HA8cxmc5ppK0VWh3u7DcKPWkvHvnlU7CKsJHgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZsZmEf+goi2daogLWQFaAJOzKcM73POnCdUXqrDjbXn3SfEtRAzJY9EUbmPPYU9fOAdqPO0nC4JehnOnbNXrte2p1PX/rDCb5GRroFvNi/UGsvNIZjA8KWsVoyqKdc0ml0gDndFuJxbi4KHRX1m/FbQ+0BwDd2JRv6dT/7sTRUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OEysBOZd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745899557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T35C5vWq4hYFn/I8gNZPS9eGF+vOp3+hGnioAT17dSw=;
-	b=OEysBOZd1ke+JxWptzHfzmqQnspCQkl5lq/0o48dJzKoJX5Mvmjx/PUkSL2k8OUtHhwfK2
-	eXbSf5+9f8phP566EiSgmgm+nrTuq1ENI2PZSoepFYdLX86KHuDH1R8reM9ANv+viv/BJ7
-	h0oWzKL1dffG5AB2Mfp6LpJHvXl1PvI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-i0h5bgxMMbShf-Hlnf_5MQ-1; Tue,
- 29 Apr 2025 00:05:50 -0400
-X-MC-Unique: i0h5bgxMMbShf-Hlnf_5MQ-1
-X-Mimecast-MFC-AGG-ID: i0h5bgxMMbShf-Hlnf_5MQ_1745899542
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 815081800264;
-	Tue, 29 Apr 2025 04:05:42 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.57])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27B8319560AB;
-	Tue, 29 Apr 2025 04:05:38 +0000 (UTC)
-Date: Tue, 29 Apr 2025 12:05:34 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Uday Shankar <ushankar@purestorage.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] ublk: factor out ublk_start_io() helper
-Message-ID: <aBBQDjLDkGWE63vT@fedora>
-References: <20250427045803.772972-1-csander@purestorage.com>
- <20250427045803.772972-6-csander@purestorage.com>
- <aA4rqcpC01SzUn_g@fedora>
- <CADUfDZpEGVLzEZJtPiScWgf6PVroQvKKhGed1cb8AJiyUr_RYg@mail.gmail.com>
- <CADUfDZqqeeBTbgvCfHa8sr7Y7BetGbPzHYA1hMoN83kz+Bi54A@mail.gmail.com>
+	s=arc-20240116; t=1745899577; c=relaxed/simple;
+	bh=V+YDfvUyGy5qM6nqWNSGKKulp2fwuDLB1gLxIkj/Hno=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W6GeJSDAnLq2E7z0fLkp1aNh5vQO+DX+UWvv28BMhp0b0yeO2sr7zj2ACTbuq2SSNSEGbH6LfOfywMS/Eab1CrMfwvdpNpxMBYsiwjOff3inch4rJ5ILXIWahbMEqGVoWxtsugGOosCf7uYBWfqtwZum444G2hi8oIsfdulBxyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrpjRytR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AF344C4CEE3;
+	Tue, 29 Apr 2025 04:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745899576;
+	bh=V+YDfvUyGy5qM6nqWNSGKKulp2fwuDLB1gLxIkj/Hno=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=JrpjRytRVQqTzmvDN6tW8YwWy5LZEcqe6LwvOCY/SquzF6mxh4RHWz4fLI7DHh+Q6
+	 OIk1xHUupRbL7YZJ6VPBb5I/Cqe1L8DRA43HCUDBtHqFaVGf0cAm9sPKUqLs5nmFys
+	 hcjlxVCHe61nmaW0bNMqcoYxGsf/Gj0KWmWjwk0jnsS7P81OWOSUTyOHasEJpPtzsT
+	 WkB3ojGfh670XtC3ltZq9dxNP1wwvpx6uNHneQD55VGNpzCOJIw3LaE9t8IR8WsOAz
+	 HhVjN8ByZI/ZAVMh+pwvU8yzJR+3XjfSUGjQ9ENcQzkgQOmbRX7izujoWnKPklrAFY
+	 eiZ7yDwkQxZpw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98151C369CB;
+	Tue, 29 Apr 2025 04:06:16 +0000 (UTC)
+From: Chen Linxuan via B4 Relay <devnull+chenlinxuan.uniontech.com@kernel.org>
+Subject: [PATCH RFC v3 0/8] kernel-hacking: introduce CONFIG_NO_AUTO_INLINE
+Date: Tue, 29 Apr 2025 12:06:04 +0800
+Message-Id: <20250429-noautoinline-v3-0-4c49f28ea5b5@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZqqeeBTbgvCfHa8sr7Y7BetGbPzHYA1hMoN83kz+Bi54A@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACxQEGgC/22OzQ6CMBCEX4X0qiXdpQXqyQTCA3g1HhBXaaKt4
+ S8YwrtbG0/G48xkvpmF9dQZ6tkuWlhHk+mNs14k24g1bW1vxM3Fa4YClZCQcuvqcXDG3o0lnpM
+ +a1KJkgqZrzw7upo54I7sUBXs5M3W9IPrXmFighAlUEksc5BQlCWWYvPFAwgFEuNco0458Kalz
+ 9A81nY/Wn9toKaNG/cI4AkD7P+1CbnglOoaM8hUIq6/gHVd37l4dtL+AAAA
+X-Change-ID: 20250416-noautoinline-8e9b9e535452
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, 
+ Kevin Tian <kevin.tian@intel.com>, 
+ Alex Williamson <alex.williamson@redhat.com>, 
+ Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Peter Zijlstra <peterz@infradead.org>, 
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+ Juergen Gross <jgross@suse.com>, 
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-mm@kvack.org, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-integrity@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ llvm@lists.linux.dev, Winston Wen <wentao@uniontech.com>, 
+ kasan-dev@googlegroups.com, xen-devel@lists.xenproject.org, 
+ Chen Linxuan <chenlinxuan@uniontech.com>, 
+ Changbin Du <changbin.du@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2639;
+ i=chenlinxuan@uniontech.com; h=from:subject:message-id;
+ bh=V+YDfvUyGy5qM6nqWNSGKKulp2fwuDLB1gLxIkj/Hno=;
+ b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoEFAt1A5qQ0LESAzipTR7awHbnQPj78n5atow0
+ tiwIctZ69yJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaBBQLQAKCRB2HuYUOZmu
+ ixgVD/9iV08f+Vs6eS/LbQDJ7q+zM9yfQ97NvSrbN+MQtFOdOOX/B9DDWjz07bMvwZeoSrnuWD8
+ Hp2NCMdUMvn/XAg8tY/cC0FeuznQPAg5DIqOw8e+jaILOgWNROimjgixLuhTr6WiaM0KrcZDHBL
+ OCFiXr8cJEoV5nmHDZpwmsRyfhwIkYxKUiqVZvxYPnX5Mq0jdE9cE129yrf++c0rJHV7tiA9m3m
+ 3Dgfo4EYCqhLMhujPTgQnqrtD260ZB/BDOIDT/4pmvjfuO7SVexQMqaZ6VD9Zv6g3IpgG//tHdW
+ YqgmY8n2rOMhJaDXULwLGpK32HY5uEPSykT3U8ytrJs1vPonlNQ+Yl1jBUOMiJd28s6gMWhAfNF
+ 7DhrCdUVPQITzQ3hp7+hMavCnibw1bsO70Q1Jyoe/HbpVw+jgqinhhqNY/q95Z3kUEjgZ70wbQz
+ J4+fpvQceoLTw3aPUBwT4AgmFYItGhMG/oWciNlmNPDr/PkMdez2OuxVUBnKvMvmy4yNtOyF82f
+ vhAi9OSPoii6ldf1OcZLCU7qEMXlU9dM1KhX437xOQ4ZbW31J0vPnuqxW9b5BE8+hsNfWWLyt/z
+ sTJSwkwcY3PBvFzx6dDyI4Q7JC83rCdQ6Bpw8f+o9IgK2kSIMrG0t4mrxG3OSfZB8NXalFg40yK
+ bumZ9NWzca7x0hA==
+X-Developer-Key: i=chenlinxuan@uniontech.com; a=openpgp;
+ fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
+X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
+ auth_id=380
+X-Original-From: Chen Linxuan <chenlinxuan@uniontech.com>
+Reply-To: chenlinxuan@uniontech.com
 
-On Mon, Apr 28, 2025 at 08:12:52AM -0700, Caleb Sander Mateos wrote:
-> On Mon, Apr 28, 2025 at 7:28 AM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
-> >
-> > On Sun, Apr 27, 2025 at 6:05 AM Ming Lei <ming.lei@redhat.com> wrote:
-> > >
-> > > On Sat, Apr 26, 2025 at 10:58:00PM -0600, Caleb Sander Mateos wrote:
-> > > > In preparation for calling it from outside ublk_dispatch_req(), factor
-> > > > out the code responsible for setting up an incoming ublk I/O request.
-> > > >
-> > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > > ---
-> > > >  drivers/block/ublk_drv.c | 53 ++++++++++++++++++++++------------------
-> > > >  1 file changed, 29 insertions(+), 24 deletions(-)
-> > > >
-> > > > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> > > > index 01fc92051754..90a38a82f8cc 100644
-> > > > --- a/drivers/block/ublk_drv.c
-> > > > +++ b/drivers/block/ublk_drv.c
-> > > > @@ -1151,17 +1151,44 @@ static inline void __ublk_abort_rq(struct ublk_queue *ubq,
-> > > >               blk_mq_requeue_request(rq, false);
-> > > >       else
-> > > >               blk_mq_end_request(rq, BLK_STS_IOERR);
-> > > >  }
-> > > >
-> > > > +static void ublk_start_io(struct ublk_queue *ubq, struct request *req,
-> > > > +                       struct ublk_io *io)
-> > > > +{
-> > > > +     unsigned mapped_bytes = ublk_map_io(ubq, req, io);
-> > > > +
-> > > > +     /* partially mapped, update io descriptor */
-> > > > +     if (unlikely(mapped_bytes != blk_rq_bytes(req))) {
-> > > > +             /*
-> > > > +              * Nothing mapped, retry until we succeed.
-> > > > +              *
-> > > > +              * We may never succeed in mapping any bytes here because
-> > > > +              * of OOM. TODO: reserve one buffer with single page pinned
-> > > > +              * for providing forward progress guarantee.
-> > > > +              */
-> > > > +             if (unlikely(!mapped_bytes)) {
-> > > > +                     blk_mq_requeue_request(req, false);
-> > > > +                     blk_mq_delay_kick_requeue_list(req->q,
-> > > > +                                     UBLK_REQUEUE_DELAY_MS);
-> > > > +                     return;
-> > > > +             }
-> > > > +
-> > > > +             ublk_get_iod(ubq, req->tag)->nr_sectors =
-> > > > +                     mapped_bytes >> 9;
-> > > > +     }
-> > > > +
-> > > > +     ublk_init_req_ref(ubq, req);
-> > > > +}
-> > > > +
-> > > >  static void ublk_dispatch_req(struct ublk_queue *ubq,
-> > > >                             struct request *req,
-> > > >                             unsigned int issue_flags)
-> > > >  {
-> > > >       int tag = req->tag;
-> > > >       struct ublk_io *io = &ubq->ios[tag];
-> > > > -     unsigned int mapped_bytes;
-> > > >
-> > > >       pr_devel("%s: complete: qid %d tag %d io_flags %x addr %llx\n",
-> > > >                       __func__, ubq->q_id, req->tag, io->flags,
-> > > >                       ublk_get_iod(ubq, req->tag)->addr);
-> > > >
-> > > > @@ -1204,33 +1231,11 @@ static void ublk_dispatch_req(struct ublk_queue *ubq,
-> > > >               pr_devel("%s: update iod->addr: qid %d tag %d io_flags %x addr %llx\n",
-> > > >                               __func__, ubq->q_id, req->tag, io->flags,
-> > > >                               ublk_get_iod(ubq, req->tag)->addr);
-> > > >       }
-> > > >
-> > > > -     mapped_bytes = ublk_map_io(ubq, req, io);
-> > > > -
-> > > > -     /* partially mapped, update io descriptor */
-> > > > -     if (unlikely(mapped_bytes != blk_rq_bytes(req))) {
-> > > > -             /*
-> > > > -              * Nothing mapped, retry until we succeed.
-> > > > -              *
-> > > > -              * We may never succeed in mapping any bytes here because
-> > > > -              * of OOM. TODO: reserve one buffer with single page pinned
-> > > > -              * for providing forward progress guarantee.
-> > > > -              */
-> > > > -             if (unlikely(!mapped_bytes)) {
-> > > > -                     blk_mq_requeue_request(req, false);
-> > > > -                     blk_mq_delay_kick_requeue_list(req->q,
-> > > > -                                     UBLK_REQUEUE_DELAY_MS);
-> > > > -                     return;
-> > > > -             }
-> > >
-> > > Here it needs to break ublk_dispatch_req() for not completing the
-> > > uring_cmd, however ublk_start_io() can't support it.
-> >
-> > Good catch. How about I change ublk_start_io() to return a bool
-> > indicating whether the I/O was successfully started?
+This series introduces a new kernel configuration option NO_AUTO_INLINE,
+which can be used to disable the automatic inlining of functions.
 
-That is doable.
+This will allow the function tracer to trace more functions
+because it only traces functions that the compiler has not inlined.
 
-> 
-> Thinking a bit more about this, is the existing behavior of returning
-> early from ublk_dispatch_req() correct for UBLK_IO_NEED_GET_DATA? It
+Previous discussions can be found at
 
-The requeue isn't related with UBLK_IO_NEED_GET_DATA actually, when
-UBLK_IO_FLAG_NEED_GET_DATA is cleared.
+Link: https://lore.kernel.org/all/20181028130945.23581-3-changbin.du@gmail.com/
 
-It is usually caused by running out of pages, so we have to requeue until
-ublk_map_io() can make progress.
+This patch depends on
 
-> makes sense for the initial ublk_dispatch_req() because the req will
-> be requeued without consuming the ublk fetch request, allowing it to
-> be reused for a subsequent I/O. But for UBLK_IO_NEED_GET_DATA, doesn't
-> it mean the io_uring_cmd will never complete? I would think it would
-> be better to return an error code in this case.
+  [PATCH] drm/i915/pxp: fix undefined reference to
+          `intel_pxp_gsccs_is_ready_for_sessions'
 
-The same request will be requeued and re-dispatched to ublk driver after
-a short delay, so the uring_cmd won't be never complete.
+which can be found at
 
-Anyway, it isn't another story, which shouldn't be added into this
-cleanup patch.
+  https://lore.kernel.org/all/20250415090616.2649889-1-jani.nikula@intel.com/
 
-Thanks,
-Ming
+as well as
+
+  [RFC PATCH 5/7] RDMA/hns: initialize db in update_srq_db()
+
+which can be found at
+
+  https://lore.kernel.org/all/FF922C77946229B6+20250411105459.90782-5-chenlinxuan@uniontech.com/
+
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+---
+Changes in v3:
+- Fix some modpost and objtool warnings
+- Try support clang as Bart Van Assche suggested.
+- Remove architecture depends as Bart Van Assche suggested.
+- Link to v2: https://lore.kernel.org/r/20250416-noautoinline-v2-0-e69a2717530f@uniontech.com
+
+Changes in v2:
+- Resend via b4 to correct Message-ID and recipients.
+- Update commit message following suggestions from Jarkko Sakkinen 
+- Link to v1: https://lore.kernel.org/r/31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com
+
+---
+Chen Linxuan (4):
+      rseq: add __always_inline for rseq_kernel_fields
+      kcov: add __always_inline for canonicalize_ip
+      x86/xen: add __init for xen_pgd_walk
+      lib/Kconfig.debug: introduce CONFIG_NO_AUTO_INLINE
+
+Winston Wen (4):
+      nvme: add __always_inline for nvme_pci_npages_prp
+      mm: add __always_inline for page_contains_unaccepted
+      vfio/virtio: add __always_inline for virtiovf_get_device_config_size
+      tpm: add __always_inline for tpm_is_hwrng_enabled
+
+ Makefile                            | 16 ++++++++++++++++
+ arch/x86/xen/mmu_pv.c               |  2 +-
+ drivers/char/tpm/tpm-chip.c         |  2 +-
+ drivers/nvme/host/pci.c             |  2 +-
+ drivers/vfio/pci/virtio/legacy_io.c |  2 +-
+ kernel/kcov.c                       |  2 +-
+ kernel/rseq.c                       |  2 +-
+ lib/Kconfig.debug                   | 21 +++++++++++++++++++++
+ lib/Makefile                        |  3 +++
+ mm/page_alloc.c                     |  2 +-
+ 10 files changed, 47 insertions(+), 7 deletions(-)
+---
+base-commit: ca91b9500108d4cf083a635c2e11c884d5dd20ea
+change-id: 20250416-noautoinline-8e9b9e535452
+
+Best regards,
+-- 
+Chen Linxuan <chenlinxuan@uniontech.com>
+
 
 
