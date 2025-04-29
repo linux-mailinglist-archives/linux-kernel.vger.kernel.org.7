@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-625255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AF5AA0EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3398AAA0EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72AFA1BA0973
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C88162E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4474E2144D4;
-	Tue, 29 Apr 2025 14:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81055217659;
+	Tue, 29 Apr 2025 14:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J12JJMR9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ymv23thJ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165A319D8AC
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015EC216E2B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745937166; cv=none; b=cqTANrinaskEqMgHZgbIGZaso4mosnvHBl3/e6J68pKS1tJeg8I17uJxcMB7+wmrVvQD5Z6o1NkRGLnESbYVpixuAiwarhG2H4Xn34wqdMU3dWZeMhPZ1BaLEcInu+62KPIfX3Iyl1jOL/WBs2D7rE7JzDNtO3QxoQEugFKXYRQ=
+	t=1745937253; cv=none; b=YP1DGVnY6ZxslQx5qvMWLbk7cu8kv+z759gVMTiFVTlG+YmPcneU3pE/IFstCDPn/TxBCnUaX12RfBANchmou25gM311OkjhM625DlUs5Nn1GVRBmtnFcF56Zbpqtkp2CsXitFVI60aG0WrVp4+qAUK96FYqVcxh/WK9XoY0xbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745937166; c=relaxed/simple;
-	bh=CAjD/KK2jdzq9tsIIkgeEOC7cVQjgSZn3t9Wd39MQXM=;
+	s=arc-20240116; t=1745937253; c=relaxed/simple;
+	bh=lmnxHLF68riBzOKcdJcpU+85GKfF7cyH/K4951Aw5B4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4g++2vnBa+Fo0hvVtoR+HPbQZ7xP7CtPGLIc1pr7msSrs4AyhMZh6WI7YkONmyn337Tyakn7+fNriYESBZ4AVR9xbPd2XeIlV/RJiHnJL/RRsHmshdCDJ1UN/QgG5Zc9Pb+ftDRqmay4gl+rZwOqV9p6Q0Zp1jecLjLLa5Oya8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J12JJMR9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TA1BZV006805
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:32:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=bPriHSZx3KQJP/KsDQOWzlOT
-	mChm8sjxQPQzHrr/5WY=; b=J12JJMR9Q7NMWgxDtjREBVcwp4RzpJ5+02SMlUX4
-	qVgDGXteJgupzg7oZ5a0Ewx2671aEd1SzhiO9/H8SGrnSsAstywaK+KnSTQCzMKm
-	OzVftgwcJoCv0VCRLjooCp+6O4EDafmLLWX51ffh7cYkAScLWyaM0ZePtOWz8/ya
-	Wj6QrtpRz0croBpfkTmRT63iScrCDoUAgHAan7vVwxILXq0AbfMLgLYiACH2GKKZ
-	G0eyAoprIyDtOryovl9CY5A80QgjWUwM2hdCS+PhY00qa6C9kcwh1dGR0ulSkhIj
-	lnAzHx9VnmbmM2ECcHfPNQIhrus7mEpk/56biYdFgdo06g==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468ptmmucb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:32:43 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c9255d5e8cso1062674685a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:32:43 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DmNx67P+3YYx1zU9QUSQCZpEFY8wRV/7iRtdcRgMT4S1Sfm+6Qut4/78Qk+FiCjYd8Zz7ubP1nAr0xQ3QotcJNQroxOLLQW99JvViVZzoH5uF6zwSRyk9e0A7wxq48QYqQGllKiubI++3Glk6jxjWmkkhnxg/tv83nAS0x4Qocc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ymv23thJ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43690d4605dso46776605e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745937250; x=1746542050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bgm1hI8+hceaGAXwVfwpPvCd/kO4SsvuWHjINi5EhqY=;
+        b=ymv23thJSwg9o/lVvcIIUrqYxumM702nerPYUBJ9GdKaxEEiF2s/bBYtk+cKRYfuOC
+         dLgcbK1FOdIrEya7oa/Kd1ojQwO0CPa7Ah8QjKneXd/8ejbCZOqv1VGCXS9EEMJERrJ1
+         HaY6o1tGP+qnoWRemzTCe1DD5EVpAQjPcRn2+vQegsxRCLxOnFWWHJvspak7Cryl4D9P
+         NZzxJW2tT1v/nex9hqU0OeMMGGJjsHR2ldAGhs6hdq8sdAWi/rIdIFanqaD+x32x3vPM
+         ycdPRQ6INaM4G8D3awSfrf61D6ibd9jtTSyUk57/g0bpLELLRghk3tWQtbUME9jfyxva
+         16BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745937163; x=1746541963;
+        d=1e100.net; s=20230601; t=1745937250; x=1746542050;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bPriHSZx3KQJP/KsDQOWzlOTmChm8sjxQPQzHrr/5WY=;
-        b=HZUtbjMkDzdiorH2bGrqagFftS/8r6KrwzXPdAE8rIXE6k/pWzWfEgwC/yhoCLLPv7
-         q3L6jEFR1casbQX5f7vPpZYjhSLq5EYvCFAnOAYTJePEY8uTcVMIEHwVk0plYDLyuZRI
-         NYFBlUe+0iD9GSkj+jKBUOc9YkIhMl3oQ6Yu65xKSwEFevi8Pq7aoGdjtjUWKs62PXpl
-         TTMPdgw2HQpgy2XMuU47skniZjKv6WiR2Uur4E5fU+vBP0PYBrGRgcPrnHTaQ12ceF8A
-         AIDYFXktKMkK/md8WOb1Dgy5oVvN05DYJC3v+KAvg5vhG1/RJuL9A6E8TRyCzZJ23qXs
-         W1Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLkpBo1T7SIhE43Z5DWfYg7R1PBt3VxWHmvY1KD4ss78p/Otq8Kde6F1BtGVY+SPM4PBnkT7dz/QU7Dlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLCTY4pol4u2mvZCet1W5KG2dsLFqvAJY8I0/cQOM1aSYKZAjB
-	pocdv2bWyR8IeqhRuDDLOu5WyuySRx992+A2FxxNbDre3yPhkHcH92CKFAyNzWHOwrV1Z6c5yZT
-	Cwvw6Hr3LL2qnhg1LY87X5Ki3jYFZwMvog1n1fGGu2hFEmI8m3v9qXxY4dGe7pMo=
-X-Gm-Gg: ASbGncut4A7WGLOkEk76nGfvTQUDMnI8ycRHMmS6wdLmPPwFQCc5rCBfQtDyYpES1gT
-	y+uxmxuEquVvjjazlVYta2ZqVGTuzaT6p+UBCNNfrSFpw/7JI+UYg/SpSsiI/fn3u7URerr3cmx
-	f4M4WEct40/ma9bTS23b1HJh+ThIPuaz4PZPUvTvK4xD6kfLnZmgioxHXzDiLwEGjbxvlbiJ1Pz
-	IXH+vGJvVXBy0XMBfAnlyyUcvrWHGVonseMMuRu7mm2DJUeukwpMk759AYbpJ3K8QKtbLe3WATc
-	R+0VZP5ErI8FYcV/xpznYOpfT8Kr5N1KfY2m2OXM3EiW4M3mkaqWdiP97K0GrcIXHMmLD9C2FS4
-	=
-X-Received: by 2002:a05:620a:3184:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7cabdd823cdmr635635585a.23.1745937162993;
-        Tue, 29 Apr 2025 07:32:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWF2xshAzyNqq5fdOAsbkOvEB3opt7kXShCLYeUNW9cmZ74LfQEMRBALbW7HQGg1CwIOtf9Q==
-X-Received: by 2002:a05:620a:3184:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7cabdd823cdmr635632385a.23.1745937162672;
-        Tue, 29 Apr 2025 07:32:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cc9eb8dsm1880507e87.135.2025.04.29.07.32.41
+        bh=bgm1hI8+hceaGAXwVfwpPvCd/kO4SsvuWHjINi5EhqY=;
+        b=MgBvGm30v6G2H3Y7YiZsjpJy6aBDv2RVh/o2lqO8171Nuywb0vDHlyZ0x8p93we3pT
+         DwBdq/29JwuWmnKn936G4CO+UtBz8IYYYfF8GeCD3UcqV/D65gTIg5PaLHyWMqR26aSQ
+         2kUwnDEXunrboh2BNQQS/jo44BH4lxtsuJNoXVC8bIiosEb7e5uXNpm/+/svc1shCcwt
+         p0+UUfHKE3ZoJbJ9730qf7awQfU/i5RHCAF/B5OfjW4U4Qb4oxjzhxUPN+pey/9V3g82
+         Ophus740dHaDaFlW6uzRDfzQSlNiQYfMBC8TqflCjO4MC9GOIa2MFzvXxGsBGXbInwkG
+         vRAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq9k2cKdgP2T+JrQpJhrP2TjcOdKwbQpD1kMSnkYxcXzmOeLffPm8GlgIq0lHeLswxIxkwMrS2ZawhCH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYrFbY7/howIslZLgzg6q2JBRtRJqtR2orWouhMtw/1DGtagLb
+	mY2k/2Jkztaxqfa1fYe2JsM82kM8dwmFgnXAQbp83NDtkhOlQF4LHdHXD61Nq3s=
+X-Gm-Gg: ASbGncseybCBH+bNlktcrgmvAJwM58Z/ZpjzoCABsali9dT/BGr430xGjzyoKDVVLlH
+	PnHNw1KmlCWAzGyhZpCNTEjdz8f42U6zP/r80rPqlkR0P44ykqkd9AH+MwHrmlqhMQ88kEQP8zI
+	p5oU1owq8SpIlnFOSZbvkxV4Y4l0uihjRBfhN0wANJt7QE11S4YudmG8UsHWUH0tE3crr+CYEKS
+	x2NPO9RCeGY+tXZGJqkGdkVuziA4NBRSKC7aHRCRofPcS/u0zsAxfGmQ9WzI1z7FTAPGyH2VSjF
+	kq/6EAfNAiINVWllhIxups0rRT8sDucDNprUM6YXvTGb0dNlg7712cntmopZRa5wT5nKgh0uegi
+	EDtijyPE=
+X-Google-Smtp-Source: AGHT+IE1rlODd7Ymc+mVPNqfJSWt71txKxyIzWpUA/SAeTWDWH9SzzrOEc7XraHSBNM+FxFeWIKGvA==
+X-Received: by 2002:a05:600c:4708:b0:43c:fe15:41dd with SMTP id 5b1f17b1804b1-440ab77d015mr101725595e9.6.1745937250205;
+        Tue, 29 Apr 2025 07:34:10 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d29b990sm196420085e9.4.2025.04.29.07.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 07:32:41 -0700 (PDT)
-Date: Tue, 29 Apr 2025 17:32:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH v4 16/19] drm/msm/dpu: Implement 10-bit color alpha for
- v12.0 DPU
-Message-ID: <oibskwq6gk234lu6bymqlrtgt2yd7o4qbpk46snhba66uqbupi@lwwcfmgp7bul>
-References: <20250311-b4-sm8750-display-v4-0-da6b3e959c76@linaro.org>
- <20250311-b4-sm8750-display-v4-16-da6b3e959c76@linaro.org>
+        Tue, 29 Apr 2025 07:34:09 -0700 (PDT)
+Date: Tue, 29 Apr 2025 16:32:57 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 2/2] iio: dac: adi-axi-dac: use unique bus free check
+Message-ID: <udqm2qkw3yrewmovua54twfzbsfduojc5f5uoj4nptxldpbbr5@75bb2pldwq7f>
+References: <20250409-ad3552r-fix-bus-read-v2-0-34d3b21e8ca0@baylibre.com>
+ <20250409-ad3552r-fix-bus-read-v2-2-34d3b21e8ca0@baylibre.com>
+ <Z_alpFoaQQUlWdfo@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,41 +91,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250311-b4-sm8750-display-v4-16-da6b3e959c76@linaro.org>
-X-Proofpoint-ORIG-GUID: NnW8BDRQoz7dHIqT97arV_Jeh8RfzQ7R
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEwOCBTYWx0ZWRfXw/F9rWoniHG2 f/1AtDGW1A2yYtnKzv6/gYqfeMbgjOrfqOaSo+bPFNL08pMLaBur06F4w3LkC+ZThcLCPGa3XTF MUzqVAcJJDb1ZQTMdWHUu8usrigE54kWJ8roXl22KmLYKtDaBj5lZ52MOCrVVYedbh6ucI43WSj
- FfIZ7+MBdA/xET7Wsk2fZnDIvTeiKGoLLq+MM+xNyF76tr+ObfMuNAuyk9hCKByuqugZFHaTgoW Zy5ApyI7HeXx45C7uIY4gWX984HF9pRf+Hnt6b8RUeCEo5eVZZCaWy+FMOA48d+Ts2AosVh0sru Ao/AMByy79JOhpi+BIfIvS+gBcje4ni4nqNNCFDvWJ2AqQOJMyHXF1c/0T7RUN+GB2uTcD/X0VP
- GdcEPF2mLDOnjfDdwhSdsITXx1ahuM5VDbbETV8uT8OqucBxMFCj7X7JTQs/e+uVP2atr+90
-X-Proofpoint-GUID: NnW8BDRQoz7dHIqT97arV_Jeh8RfzQ7R
-X-Authority-Analysis: v=2.4 cv=DKWP4zNb c=1 sm=1 tr=0 ts=6810e30b cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=0cLWEtKbF7AIdJ2SciEA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_05,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=832 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290108
+In-Reply-To: <Z_alpFoaQQUlWdfo@smile.fi.intel.com>
 
-On Tue, Mar 11, 2025 at 08:02:06PM +0100, Krzysztof Kozlowski wrote:
-> v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
-> differences and new implementations of setup_alpha_out,
-> setup_border_color and so one for this.
+Hi Andy,
+
+sorry, seen this message now only, for some reason sometimes your emails
+goes to the spam. Now i marked all as "not spam", let's see.
+
+On 09.04.2025 19:51, Andy Shevchenko wrote:
+> On Wed, Apr 09, 2025 at 11:16:55AM +0200, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Use a unique function for the bus free check by polling, to reduce
+> > duplicated code. An error is always thrown in case of timeout.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ...
 > 
-> ---
+> > +static int axi_dac_wait_bus_free(struct axi_dac_state *st)
+> > +{
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read_poll_timeout(st->regmap, AXI_DAC_UI_STATUS_REG, val,
+> > +		FIELD_GET(AXI_DAC_UI_STATUS_IF_BUSY, val) == -1, 10,
+> > +		100 * KILO);
 > 
-> Changes in v4:
-> 1. Lowercase hex, use spaces for define indentation
-> 2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
+> Same comment as in the previous patch. Okay, it seems more than in the single
+> case. Perhaps to change that as well here?
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+for my personal taste would not use more specific named defines here,
+would not change this, in case we can send a separate patch to fix
+them all. 
 
--- 
-With best wishes
-Dmitry
+> > +	if (ret == -ETIMEDOUT)
+> > +		dev_err(st->dev, "AXI bus timeout\n");
+> 
+> Why do you need this? The error code will go to the user space at the end? If
+> yes, it will be enough to have it printed there, no?
+> 
+
+This warning means something very bad happen at AXI level. I never seen
+this warning issued, but it may help to debug AXI/HDL issues, would not 
+remove it. 
+
+> > +	return ret;
+> > +}
+> 
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
+Regards,
+angelo
 
