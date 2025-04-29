@@ -1,179 +1,255 @@
-Return-Path: <linux-kernel+bounces-625246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3C6AA0EB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:27:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD78FAA0EA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B573AAE99
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:26:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8376A7A3C57
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817672D3235;
-	Tue, 29 Apr 2025 14:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A666C2D321A;
+	Tue, 29 Apr 2025 14:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIdt539Q"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b="nrBrd94S"
+Received: from gmmr-3.centrum.cz (gmmr-3.centrum.cz [46.255.225.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E810810942
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C22A1F76A5;
+	Tue, 29 Apr 2025 14:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.225.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745936775; cv=none; b=XWM3gZUIBYs5bx5rbldEZVPxC3/0KOnw94HGecFAS1lVkjWIMyeIsQDIzettWw3ORE2S9op14FiaJUetqkfytrHZ/6nxS3sCB+6GcMFWpS0UbiLXPzgG3D9rldXOKVC+iJZTBefci6BPY4Rn0mvP8jDpCetZQLxiakwNBqFCRus=
+	t=1745936584; cv=none; b=L5iU2UWfhwAcDCf0cF6+UDGuLfpvLGXU5Qi8PJp2+O0M39KEUPaGHrfpPgisZjVJLUO6uSRsiXAAU/iPJemKLzx8J2ajPfeK2ByizRYQaCUgCXYKUz2INBxHrGEmaRb2XgR9Y1RQjoT0ZFl32rysLpgQ3k/vo+xcamrQu3sRzfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745936775; c=relaxed/simple;
-	bh=tB7/loLzLj9Ek5QQ1tIEhY+6tK+s52+u1vt2qFEYnkM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=deNLFcnTfj6BrmrJ383mkjf1NEcxNgrrHCc3j7Dup67MI64S+qgtY5dPLoXfZoNYaMfcli385N0XK0/9bBMqR4vsp3Lkm04iDHiAcx2xWaFeNax1Dii/Nr0CYES036mK6svfqiyqfi80Xnd8atGMiL/12Q4dMhmP+V2LWdfPqzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XIdt539Q; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39efc1365e4so2856464f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745936772; x=1746541572; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cc7LY54K4yJW7U5wYxUM6Alr8WN7qWZLxLYuvii4gnw=;
-        b=XIdt539QcfQftnt9jSLEXlj/FbjTvYOGWQ29FX8NtCsAVg/8f19ABivhwX4cueBQtD
-         MvER/i+qdrgV42snw8aUPuMz+pDGhX45+Y+OymuS8OIjZNtHWqBpa7rbc82yPiSCxEOh
-         uepyzDDNjvMDDh86m/8x8t1+utrLFNp7m+FCO6zW/t/NhZq117qxmR/q6rwZLSx/FKpi
-         GVy37b6LIbdFTvdwge5YeT4sFNK8HoZDD5Uo556Uzc8FikldKJh9RQp6ARWL9sHczbCi
-         /9J74EEyE8L8RCmpfMcbhdWlsTLluBz+XS3H7ErdeJY/l7qeq488wqXn5xDgM4cCd/gV
-         NatQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745936772; x=1746541572;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cc7LY54K4yJW7U5wYxUM6Alr8WN7qWZLxLYuvii4gnw=;
-        b=kx9cM6ShW3MUf72eMPuj61IsFZYjbEWkGKfSVf1e/O7mzC6Sd0ST4u/LF6X8EhXagd
-         GuUNrbucG6GUg0sDptKUDGlHAUXF/gqBplfVCQA9brYOiV7DFdjcG4XU03kc8NBHD0Az
-         IhDXtUS8E02siv++ICJmk7zMMkj2JUlxg0ZN9WBZnYmdj5FQUjcQgUqewwBKGEsO0Xys
-         qUdCeo/wBBn6o3rDsNoZxLeA7oRD60UGzSQUIefFKuWDSnAqsD2gD9up1kuQJs0l//n9
-         LB1hTacIPALHDACVEr3+VVVIs/jwMU5/fLz672ZqmlR0fhVeRQVDpz3hCCaZu6eevgiN
-         3hlg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ZTkYgcb7JBe9gD7ITigfqWz8VIIg6erkSqptQc6coa4VIdztV8XYSrXiPwob8DrM2pmVXw5ohv1bF7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAZIxnLLRNHtTaAi2Y/uZRPKnwWEL4fLWvucuHT17xwPkF+/TN
-	pzRQAn7rumgBQSTo/tHjyARRirgzP6FkAgCAB53FeBWtWFRWptLtM5p2Ls5f1F0=
-X-Gm-Gg: ASbGncsPiT0lr72QXYRb3PM3MRypyNy5mWe5X1UHlyrzE5JQ0lYEbdalbeon6cHUaAX
-	n9VZ+dfoxcravDJGAfp4jB6+u8HkvYNJ+nZqj38QEhB4m46vHPIWay5khZPL0dOUJprvD7ourBU
-	yz0qyQ96mHS5pSrjR1NJ7Bq49I1e29VBRJ+N/fd5x8vDcVIml1cEjG6/UxeyRXGyfFt8JkvV2F6
-	l3XzvRJLKbRTKqXDsIP4wfalpQ9rE4r7DKPv5vPAsJF4raF31BL+U5vO5UK24A9H5IFTqqqjSTz
-	Tv3tWPedzGEjopek9xuIcrt+EYFJAfi+NTlc+7VrgTQvK6U=
-X-Google-Smtp-Source: AGHT+IHTa4dQspGAilQgnI1Rsq4mem9tVKEBYTiYbLMCHi8QW4B9v2n1Jb9lnZPY/Osg2Q72p116qg==
-X-Received: by 2002:a05:6000:40df:b0:397:5de8:6937 with SMTP id ffacd0b85a97d-3a08a3baa71mr2933824f8f.41.1745936772106;
-        Tue, 29 Apr 2025 07:26:12 -0700 (PDT)
-Received: from ho-tower-lan.lan ([77.81.75.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ccb8e1sm14275192f8f.59.2025.04.29.07.26.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 07:26:11 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Tue, 29 Apr 2025 15:22:18 +0100
-Subject: [PATCH] perf tools: Fix in-source libperf build
+	s=arc-20240116; t=1745936584; c=relaxed/simple;
+	bh=rRpCkUF+vCL5Wzdq2xxwkjXQnIKw0HmuK4vE3i14w7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LUuvZVNU3M6VUuPUoWCS3F9u6IOW6UdsCE8Utu9x+5cxnvrou1KRayl88Ra9ukkvjhxCBYCm0paE1MsVxh+G7zneGcSh91H7WnEXm1O8UbI7Z/ZjLxNTvw/3yEHqsjpp7Ny65w3Trg5DVQSjKPiAxyj4ngyfbPxRgytWhOvO9lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz; spf=pass smtp.mailfrom=atlas.cz; dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b=nrBrd94S; arc=none smtp.client-ip=46.255.225.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atlas.cz
+Received: from gmmr-3.centrum.cz (localhost [127.0.0.1])
+	by gmmr-3.centrum.cz (Postfix) with ESMTP id 8DCFF20320DD;
+	Tue, 29 Apr 2025 16:22:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atlas.cz; s=mail;
+	t=1745936571; bh=27BxSawsDTpmtQopOmEMuk8bqM4mrWb7IAxrUPyws5A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nrBrd94S3DOUoa4MYb8I51iy6z0n1ba3QOkhYWf72b3+53KOh1SOdEei8OF0btki/
+	 dtJ2OFZzPIs7Sknww2VzXZY5bSykNEkMCDSrKHn2RGOmK7lW4lNcoVZXgKxlFXyNAZ
+	 aIj+nYkKmliwFdXnh7geefm2a4r+2voGCebceSgo=
+Received: from antispam23.centrum.cz (antispam23.cent [10.30.208.23])
+	by gmmr-3.centrum.cz (Postfix) with ESMTP id 899C220320FE;
+	Tue, 29 Apr 2025 16:22:51 +0200 (CEST)
+X-CSE-ConnectionGUID: mJtWwQDJT2+6ktytlqCXSA==
+X-CSE-MsgGUID: p5WUAkcYQ3W2PGgrxng0rQ==
+X-ThreatScanner-Verdict: Negative
+X-IPAS-Result: =?us-ascii?q?A2HDAADU3xBo/03h/y5aGwEBAQEBAQEBBQEBARIBAQEDA?=
+ =?us-ascii?q?wEBAUAJgUqDNIZGkXGBFopjhVFijWkPAQEBAQEBAQEBCUQEAQE+AYQ+Cos1J?=
+ =?us-ascii?q?zgTAQIEAQEBAQMCAwEBAQEBAQEBAQ0BAQYBAQEBAQEGBgECgR2FNVOCYgGEK?=
+ =?us-ascii?q?Q8BRigNAiYCg3OCMAE0smWBMhoCZdxwAoEjZIEpgRsuiFABhHxvAYU5gg2BF?=
+ =?us-ascii?q?YJyB2+BBQGHGIJpBIItgQIUiieDEoVVixJIgQUcA1ksAVUTDQoLBwWBaQM1D?=
+ =?us-ascii?q?AsuFTI8Mx2CEYUhghGCBIkKhFAtT4UxgSUdQAMLGA1IESw3FBsGPQFuB5knB?=
+ =?us-ascii?q?wGBDUyBJQiUG5AHoyiEJYROnHsaM5dSHgOSZJh+G6MVZTeEaYF+gX8zIjCDI?=
+ =?us-ascii?q?1EZjjkDBAcLvCmBMgIHAQoBAQMJgjuNYWtgAQE?=
+IronPort-PHdr: A9a23:+7BlJRHXFR/aWvjQe7I5YZ1Gf0RKhN3EVzX9CrIZgr5DOp6u447ld
+ BSGo6k21hmRBc6Bta4c16L/iOPJZy8p2d65qncMcZhBBVcuqP49uEgNJvDAImDAaMDQUiohA
+ c5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFRrwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/I
+ RuooQnLqsUanYRuJrgwxxbGvndFdPldyH91K16Ugxvz6cC88YJ5/S9Nofwh7clAUav7f6Q8U
+ 7NVCSktPn426sP2qxTNVBOD6HQEXGoZixZFHQfL4gziUpj+riX1uOx92DKHPcLtVrA7RS6i7
+ 6ZwRxD2jioMKiM0/3vWisx0i6JbvQ6hqhliyIPafI2ZKPxzdb7GcNgEWWROQNpeVy1ZAoO9c
+ YQPCfYBPf1FpIX5vlcCsAeyCRWpCO7p1zRGhGL53bci3uohDw/LwhEuEdwNvnrTo9r6KKgcX
+ PupzKTL1zjPc+lb1Sv/5YXObxsvoeuMXbV1ccfJ00cgCR/Fjk+NooPqJTyV0PoIs2uG5OdnT
+ +2vkW0npBt0oje13MchkZPGhp4Ryl/e7iV12po6JNyhRUN9fNWrH4deuTuAOItqXsMtXXtou
+ CAix7AapZK2eDYHxIknyhPRd/GKcoaF7gz9WeieLzl1mWxpdK+jihuw7EWt1+/xW8i13VtLr
+ CdIk8TAu3AC2hHO68WKTOZ28ES52TuX2A3e6/tILV40mKfbMZIt3KA8m5oJvUnBHCL6gFv6g
+ LKYe0k+5OSk9fjrbq/4qpKTK4N4kAXzP6Uol8eiG+o3KBIOUHKe+emk0b3j+lD2T6tSg/0tl
+ 6nZrIjaJcMGpq6lGwNV0pgs6xK4Dzq+39QYmGALLElAeBKbl4jlJk3CLOrkAvihhVSsjC1rx
+ +3DPrH7HprML2DPkLbnfblj905R0AU+wNFF655KCrwMIOj/VlHvuNHYFBM0MQ65z/7iCNpn1
+ 4MeXWyPArWeMKPXqVKH/PgvI+qWa48Qojn9MeMo6OTyjX89g1AdZrOl0ocWaXygBPRpP12ZY
+ WbwgtcGCWoKpAo/Q/bsiFGYSz5TYG29ULwm5jEnE4KrFp3MRpqogLCbwCi7GZhWanhcCl+QC
+ Xfoa5mEW/AUZS2IOM9hkSYLVb27RI87zhyhrhP6y759IerP4CEXqZPi2MBv5+LPjREy6SB0D
+ 8OF3mGJTmF0mH4IRjAv0KB6pExw0VSD0bZijPNEFtxf/fRJUh01NZLE1ex1F8jyWh7dfteOU
+ FupWNamASk0Tt8qx98OYkB9G8itjxza0SqqBKIVl7qWC5Mu7qLc3n/xJ8Bnx3bBzqkhgEEqQ
+ tFTOm2+mq5/6w/TCpbUnEqDiaaqdLkT0TXX9Gid0GWOvFtXUBJqXarZWnAfY1Parc7l6UPaU
+ 7+uFbMnPxNFyc6DLKtKd9LogUxFRPj9ItTeZXy+m2OrCBaWybODcpDqd38e3CrDEkgElR4c/
+ XKcOQg5HCehrHrSDCZyGlL3f0Ps7e5+pWugTk8o1Q6FdElh2KSu9x4LivyTVekT0qgHuCg/s
+ TV0Gkiy39bMB9qHvQphc71QYdUm71hfz2LWqxR9PoC8L6BlnlMTcVc/g0S70xRxF5UFksUwq
+ n4u5BR9JLje015bcT6cm5fqNe75MG73qSiid7Se5FjYc9Xerq4V6/09ok/LtR2tH1Fk+Gcxg
+ Iod6GeV+pifVFlaapn2SEtiskEi/9nn
+IronPort-Data: A9a23:lyOliqmuCYgC4/USepH5QQzo5gxHJ0RdPkR7XQ2eYbSJt1+Wr1Gzt
+ xJODWqHOv2IMDCmKt53O4u09RtVupKAndAwHQRlpSAxF1tH+JHPbTi7wuYcHM8wwunrFh8PA
+ xA2M4GYRCwMZiaB4Erra/658CQUOZigHtLUEPTDNj16WThqQSIgjQMLs+Mii+aEu/Dga++2k
+ Y20+pC31GONgWYubzpIsfPb8nuDgdyr0N8mlg1jDRx0lACG/5UlJMp3Db28KXL+Xr5VEoaSL
+ 87fzKu093/u5BwkDNWoiN7TKiXmlZaPVeQmoiM+t5mK2nCulARrukoIHKZ0hXNsttm8t4sZJ
+ ONl7sXsFFhzbsUgr8xGO/VQO3kW0aSrY9YrK1Dn2SCY5xWun3cBX5yCpaz5VGEV0r8fPI1Ay
+ RAXADUvci+cvs6U/Oj4FOpwl9gnNeLbB6pK7xmMzRmBZRonaZ/GBr7P+ccBhHE7i8ZSB+vbI
+ cELAdZtREieJUcSZxFNUs94w7jAanrXKlW0rHqcv6k+5mHJ5AVt1LH2dtHHEjCPbZ4MwRrE/
+ TydoAwVBDkCaeOi4DmOw0v3ubX3sizhSIQdTKeBo6sCbFq7gzZ75ActfUGqqP//kEm0VshDM
+ GQd4C9opq83nGSiVNr0WhSiiHeYuhcHHdFCe8U+6QeQ2u/R5i6aGGEPTXhGctNOnMY1XTkC0
+ l6PgsOsCztytrGcVXOa8PGTtzzaESQcM24OTTUJQQsM/5/op4RbphbOSMtzVa24lNv4HRnuz
+ D2Q6isznbMeiYgMzarT1Uvbijioq7DXQQMvoAbaRGSo6kV+foHNWmCzwQSFq6wdccDDFATH4
+ ydsd9Wi0d3ixKqlzESlKNjh1pnyjxpZGFUwWWJSIqQ=
+IronPort-HdrOrdr: A9a23:ufbKSahU84r5YcjFBxAysu/IC3BQXssji2hC6mlwRA09TyVXra
+ yTdZMgpHrJYVcqKRMdcL+7VpVoLUm3yXcX2/hzAV7BZmjbUQKTRekI0WKI+VLd8kPFm9K1rZ
+ 0BT5RD
+X-Talos-CUID: 9a23:nlqkoWEp+0O/PIvmqmJi1lIrBfkJUEGHjynTP16kDX9CeIa8HAo=
+X-Talos-MUID: 9a23:QMLgtQVrf6hxY1rq/CexuwxLN8xZ2v+RUngino8WvcbcLxUlbg==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.15,249,1739833200"; 
+   d="scan'208";a="317443637"
+Received: from unknown (HELO gm-smtp10.centrum.cz) ([46.255.225.77])
+  by antispam23.centrum.cz with ESMTP; 29 Apr 2025 16:22:51 +0200
+Received: from localhost.localdomain (ip-213-220-240-96.bb.vodafone.cz [213.220.240.96])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by gm-smtp10.centrum.cz (Postfix) with ESMTPSA id 1BAEA808C14C;
+	Tue, 29 Apr 2025 16:22:51 +0200 (CEST)
+From: =?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	linux-mm@kvack.org,
+	stable@vger.kernel.org,
+	=?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>
+Subject: [PATCH 0/1] mm: Fix regression after THP PTE optimization on Xen PV Dom0
+Date: Tue, 29 Apr 2025 16:22:36 +0200
+Message-ID: <20250429142237.22138-1-arkamar@atlas.cz>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-james-perf-fix-libperf-in-source-build-v1-1-a1a827ac15e5@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJngEGgC/x2N0QqDMAxFf0XyvEAbptD9iuyh1nRmaJUEZSD++
- 4pv58Dh3hOMVdjg1ZygfIjJWqr4RwNpiuXDKGN1IEete1LAb1zYcGPNmOWHsww3S0Fbd02Mwy7
- ziL7tXEiJPMUIdWxTrvl91L+v6w/JRAXaeAAAAA==
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, linux@leemhuis.info
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When libperf is built alone in-source, $(OUTPUT) isn't set. This causes
-the generated uapi path to resolve to '/../arch' which results in a
-permissions error:
+Hi all,
 
-  mkdir: cannot create directory '/../arch': Permission denied
+I have found a problem in recent kernels 6.9+ when running under the Xen
+hypervisor as a PV dom0. In my setup (PV Dom0 with 4G RAM, using XFS), I
+shrink memory to 256M via the balloon driver after boot:
 
-Fix it by removing the preceding '/..' which means that it gets
-generated either in the tools/lib/perf part of the tree or the OUTPUT
-folder. Some other rules that rely on OUTPUT further refine this
-conditionally depending on whether it's an in-source or out-of-source
-build, but I don't think we need the extra complexity here. And this
-rule is slightly different to others because the header is needed by
-both libperf and Perf. This is further complicated by the fact that Perf
-always passes O=... to libperf even for in source builds, meaning that
-OUTPUT isn't set consistently between projects.
+  xl mem-set Domain-0 256m
 
-Because we're no longer going one level up to try to generate the file
-in the tools/ folder, Perf's include rule needs to descend into libperf.
-Also fix the clean rule while we're here.
+Once memory is reduced, even running a simple command like ls usually
+triggers the following warning:
 
-Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
-Closes: https://lore.kernel.org/linux-perf-users/7703f88e-ccb7-4c98-9da4-8aad224e780f@leemhuis.info/
-Fixes: bfb713ea53c7 ("perf tools: Fix arm64 build by generating unistd_64.h")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/lib/perf/Makefile    | 6 +++---
- tools/perf/Makefile.config | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+[   27.963562] [ T2553] page: refcount:88 mapcount:21 mapping:ffff88813ff6f6a8 index:0x110 pfn:0x10085c
+[   27.963564] [ T2553] head: order:2 mapcount:83 entire_mapcount:0 nr_pages_mapped:4 pincount:0
+[   27.963565] [ T2553] memcg:ffff888003573000
+[   27.963567] [ T2553] aops:0xffffffff8226fd20 ino:82467c dentry name(?):"libc.so.6"
+[   27.963570] [ T2553] flags: 0x2000000000416c(referenced|uptodate|lru|active|private|head|node=0|zone=2)
+[   27.963573] [ T2553] raw: 002000000000416c ffffea0004021e88 ffffea0004021908 ffff88813ff6f6a8
+[   27.963574] [ T2553] raw: 0000000000000110 ffff88811bf06b60 0000005800000014 ffff888003573000
+[   27.963576] [ T2553] head: 002000000000416c ffffea0004021e88 ffffea0004021908 ffff88813ff6f6a8
+[   27.963577] [ T2553] head: 0000000000000110 ffff88811bf06b60 0000005800000014 ffff888003573000
+[   27.963578] [ T2553] head: 0020000000000202 ffffea0004021701 0000000400000052 00000000ffffffff
+[   27.963580] [ T2553] head: 0000000300000003 8000000300000002 0000000000000014 0000000000000004
+[   27.963581] [ T2553] page dumped because: VM_WARN_ON_FOLIO((_Generic((page + nr_pages - 1), const struct page *: (const struct folio *)_compound_head(page + nr_pages - 1), struct page *: (struct folio *)_compound_head(page + nr_pages - 1))) != folio)
+[   27.963590] [ T2553] ------------[ cut here ]------------
+[   27.963591] [ T2553] WARNING: CPU: 1 PID: 2553 at include/linux/rmap.h:427 __folio_rmap_sanity_checks+0x1a0/0x270
+[   27.963596] [ T2553] CPU: 1 UID: 0 PID: 2553 Comm: ls Not tainted 6.15.0-rc4-00002-ge0363f942651 #270 PREEMPT(undef)
+[   27.963599] [ T2553] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-20240910_120124-localhost 04/01/2014
+[   27.963601] [ T2553] RIP: e030:__folio_rmap_sanity_checks+0x1a0/0x270
+[   27.963603] [ T2553] Code: 89 df e8 b3 7d fd ff 0f 0b e9 eb fe ff ff 48 8d 42 ff 48 39 c3 0f 84 0e ff ff ff 48 c7 c6 e8 49 5b 82 48 89 df e8 90 7d fd ff <0f> 0b e9 f8 fe ff ff 41 f7 c4 ff 0f 00 00 0f 85 b2 fe ff ff 49 8b
+[   27.963605] [ T2553] RSP: e02b:ffffc90040f8fac0 EFLAGS: 00010246
+[   27.963608] [ T2553] RAX: 00000000000000e5 RBX: ffffea0004021700 RCX: 0000000000000000
+[   27.963609] [ T2553] RDX: 0000000000000000 RSI: 0000000000000001 RDI: 00000000ffffffff
+[   27.963610] [ T2553] RBP: ffffc90040f8fae0 R08: 00000000ffffdfff R09: ffffffff82929308
+[   27.963612] [ T2553] R10: ffffffff82879360 R11: 0000000000000002 R12: ffffea0004021700
+[   27.963613] [ T2553] R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000005
+[   27.963625] [ T2553] FS:  00007ff06dafe740(0000) GS:ffff8880b7ccb000(0000) knlGS:0000000000000000
+[   27.963627] [ T2553] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   27.963628] [ T2553] CR2: 000055deb932f630 CR3: 0000000002844000 CR4: 0000000000050660
+[   27.963630] [ T2553] Call Trace:
+[   27.963632] [ T2553]  <TASK>
+[   27.963633] [ T2553]  folio_remove_rmap_ptes+0x24/0x2b0
+[   27.963635] [ T2553]  unmap_page_range+0x132e/0x17e0
+[   27.963638] [ T2553]  unmap_single_vma+0x81/0xd0
+[   27.963640] [ T2553]  unmap_vmas+0xb5/0x180
+[   27.963642] [ T2553]  exit_mmap+0x10c/0x460
+[   27.963644] [ T2553]  mmput+0x59/0x120
+[   27.963647] [ T2553]  do_exit+0x2d1/0xbd0
+[   27.963649] [ T2553]  do_group_exit+0x2f/0x90
+[   27.963651] [ T2553]  __x64_sys_exit_group+0x13/0x20
+[   27.963652] [ T2553]  x64_sys_call+0x126b/0x1d70
+[   27.963655] [ T2553]  do_syscall_64+0x54/0x120
+[   27.963657] [ T2553]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   27.963659] [ T2553] RIP: 0033:0x7ff06dbdbe9d
+[   27.963660] [ T2553] Code: Unable to access opcode bytes at 0x7ff06dbdbe73.
+[   27.963661] [ T2553] RSP: 002b:00007ffde44f9ac8 EFLAGS: 00000206 ORIG_RAX: 00000000000000e7
+[   27.963664] [ T2553] RAX: ffffffffffffffda RBX: 00007ff06dce4fa8 RCX: 00007ff06dbdbe9d
+[   27.963665] [ T2553] RDX: 00000000000000e7 RSI: ffffffffffffff88 RDI: 0000000000000000
+[   27.963666] [ T2553] RBP: 0000000000000000 R08: 00007ffde44f9a70 R09: 00007ffde44f99ff
+[   27.963667] [ T2553] R10: 00007ffde44f9980 R11: 0000000000000206 R12: 00007ff06dce3680
+[   27.963668] [ T2553] R13: 00007ff06dd010e0 R14: 0000000000000002 R15: 00007ff06dce4fc0
+[   27.963670] [ T2553]  </TASK>
+[   27.963671] [ T2553] ---[ end trace 0000000000000000 ]---
 
-diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-index 1a19b5013f45..7fbb50b74c00 100644
---- a/tools/lib/perf/Makefile
-+++ b/tools/lib/perf/Makefile
-@@ -42,7 +42,7 @@ libdir_relative_SQ = $(subst ','\'',$(libdir_relative))
- TEST_ARGS := $(if $(V),-v)
- 
- INCLUDES = \
---I$(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi \
-+-I$(OUTPUT)arch/$(SRCARCH)/include/generated/uapi \
- -I$(srctree)/tools/lib/perf/include \
- -I$(srctree)/tools/lib/ \
- -I$(srctree)/tools/include \
-@@ -100,7 +100,7 @@ $(LIBAPI)-clean:
- 	$(call QUIET_CLEAN, libapi)
- 	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) clean >/dev/null
- 
--uapi-asm := $(OUTPUT)/../arch/$(SRCARCH)/include/generated/uapi/asm
-+uapi-asm := $(OUTPUT)arch/$(SRCARCH)/include/generated/uapi/asm
- ifeq ($(SRCARCH),arm64)
- 	syscall-y := $(uapi-asm)/unistd_64.h
- endif
-@@ -130,7 +130,7 @@ all: fixdep
- clean: $(LIBAPI)-clean
- 	$(call QUIET_CLEAN, libperf) $(RM) $(LIBPERF_A) \
-                 *.o *~ *.a *.so *.so.$(VERSION) *.so.$(LIBPERF_VERSION) .*.d .*.cmd tests/*.o LIBPERF-CFLAGS $(LIBPERF_PC) \
--                $(TESTS_STATIC) $(TESTS_SHARED)
-+                $(TESTS_STATIC) $(TESTS_SHARED) $(syscall-y)
- 
- TESTS_IN = tests-in.o
- 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index a52482654d4b..b7769a22fe1a 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -29,7 +29,7 @@ include $(srctree)/tools/scripts/Makefile.arch
- $(call detected_var,SRCARCH)
- 
- CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
--CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated/uapi
-+CFLAGS += -I$(OUTPUT)libperf/arch/$(SRCARCH)/include/generated/uapi
- 
- # Additional ARCH settings for ppc
- ifeq ($(SRCARCH),powerpc)
+Later on bigger problems start to appear:
 
----
-base-commit: bfb713ea53c746b07ae69fe97fa9b5388e4f34f9
-change-id: 20250429-james-perf-fix-libperf-in-source-build-15609cc212aa
+[   69.035059] [ T2593] BUG: Bad page map in process ls  pte:10006c125 pmd:1003dc067
+[   69.035061] [ T2593] page: refcount:8 mapcount:20 mapping:ffff88813fd736a8 index:0x110 pfn:0x10006c
+[   69.035064] [ T2593] head: order:2 mapcount:-2 entire_mapcount:0 nr_pages_mapped:8388532 pincount:0
+[   69.035066] [ T2593] memcg:ffff888003573000
+[   69.035067] [ T2593] aops:0xffffffff8226fd20 ino:82467c dentry name(?):"libc.so.6"
+[   69.035069] [ T2593] flags: 0x2000000000416c(referenced|uptodate|lru|active|private|head|node=0|zone=2)
+[   69.035072] [ T2593] raw: 002000000000416c ffffea0004002348 ffffea0004001d08 ffff88813fd736a8
+[   69.035074] [ T2593] raw: 0000000000000110 ffff888100d19860 0000000800000013 ffff888003573000
+[   69.035076] [ T2593] head: 002000000000416c ffffea0004002348 ffffea0004001d08 ffff88813fd736a8
+[   69.035078] [ T2593] head: 0000000000000110 ffff888100d19860 0000000800000013 ffff888003573000
+[   69.035079] [ T2593] head: 0020000000000202 ffffea0004001b01 ffffffb4fffffffd 00000000ffffffff
+[   69.035081] [ T2593] head: 0000000300000003 0000000500000002 0000000000000013 0000000000000004
+[   69.035082] [ T2593] page dumped because: bad pte
+[   69.035083] [ T2593] addr:00007f6524b96000 vm_flags:00000075 anon_vma:0000000000000000 mapping:ffff88813fd736a8 index:110
+[   69.035086] [ T2593] file:libc.so.6 fault:xfs_filemap_fault mmap:xfs_file_mmap read_folio:xfs_vm_read_folio
 
-Best regards,
+The system eventually becomes unusable and typically crashes.
+
+I was able to bisect this issue to the commit: 10ebac4f95e7 ("mm/memory:
+optimize unmap/zap with PTE-mapped THP").
+
+If I understand correctly, the folio from the first warning has 4 pages,
+but folio_pte_batch incorrectly counts 5 pages, because expected_pte and
+pte are both zero-valued PTEs, and the loop is not broken in such a case
+because pte_same() returns true.
+
+[   27.963266] [ T2553] folio_pte_batch debug: printing PTE values starting at addr=0x7ff06dc11000
+[   27.963268] [ T2553]   PTE[ 0] = 000000010085c125
+[   27.963272] [ T2553]   PTE[ 1] = 000000010085d125
+[   27.963274] [ T2553]   PTE[ 2] = 000000010085e125
+[   27.963276] [ T2553]   PTE[ 3] = 000000010085f125
+[   27.963277] [ T2553]   PTE[ 4] = 0000000000000000 <-- not present
+[   27.963279] [ T2553]   PTE[ 5] = 0000000102e47125
+[   27.963281] [ T2553]   PTE[ 6] = 0000000102e48125
+[   27.963283] [ T2553]   PTE[ 7] = 0000000102e49125
+
+As a consequence, zap_present_folio_ptes() is called with nr = 5, which
+later calls folio_remove_rmap_ptes(), where __folio_rmap_sanity_checks()
+emits the warning log.
+
+The patch in the following message fixes the problem for me. It adds a
+check that breaks the loop when encountering non-present PTE, before the
+!pte_same() check.
+
+I still don't fully understand how the zero-valued PTE appears there or
+why this issue is triggered only when xen-balloon driver shrinks the
+memory. I wasn't able to reproduce it without shrinking.
+
+Cheers,
+Petr
+
+Petr Vaněk (1):
+  mm: Fix folio_pte_batch() overcount with zero PTEs
+
+ mm/internal.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
 -- 
-James Clark <james.clark@linaro.org>
+2.48.1
 
 
