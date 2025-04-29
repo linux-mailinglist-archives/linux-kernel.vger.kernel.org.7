@@ -1,136 +1,118 @@
-Return-Path: <linux-kernel+bounces-625474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453B7AA1233
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6217CAA126E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC2B16DA0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223291BA3090
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1B2472B0;
-	Tue, 29 Apr 2025 16:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AC9242934;
+	Tue, 29 Apr 2025 16:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cK0sIncI"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAYa6pG2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121F121772B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD6F2405E5
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945421; cv=none; b=KhjNXIpdI0aNnw05mEoci03CMB6E5T944SlPfGm0JqhlpZJ3NKN/dNAwRJnXD9WzhL9HdsUi6Y/QTZpK/A4JQFdMh0ezN1w8IFMWBLeCRDbo2DFZlZV7dZbthZjBlNVEGbrRFXPmRd6xC0Sr8Cp5ncSokuN5b1Dj67ZK/2u74JM=
+	t=1745945535; cv=none; b=t214mWbmXUpP+zwtjeygumUBc6etjBOh/ltt4IgRX27OL0PIiW+ITCGym2YVJFoAn7LQSYvepvCBnBofD2f6h4F0CYMoFHE6sAVh/Ha91TRcpLPWA35yxj6WueOUMEY+J0mxVy+YyCfbPk7irVN4Hrv4gXvO/7+w76jUeJu7wys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945421; c=relaxed/simple;
-	bh=JN4D2Zk5rI7nByYKsBZdJAGWppeR8Kb9krtx05j2M/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UXu5J5zFF+ZhaZnCrHiAl7DB3ZggFYT3OHDd/4WBqHawL549sFABvk9FHJCBj9zXO15cASd6qeztxnYGycxhy3cZ+Bxql6XLZ7BxpdlV3P2hR/k8t/F+1zrq1G24ElIEM68qu4fhOMOJZEtUn0OEWgnaem5AZZsnRSbNI0D5dAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cK0sIncI; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso9749452a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745945416; x=1746550216; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bax2H6y3LHulnVcF9K5n+9AvR5ikjgjeo/HnvQSbdRc=;
-        b=cK0sIncIg/+N6+0A+01JcNsX7GlgdrG6uZuZ/+vcHcWhteMRgPsl4QNtRczMR4RigL
-         YxNnBGRhbR8+Qh46H0ZbFV6hEEG16HLgxhhOhLqoedMXj8o7SAwvDFuekOXrHObEohlT
-         wlBPzTwusu+FdLs+MiLsrkjPwMWkPILKPcF3k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745945416; x=1746550216;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bax2H6y3LHulnVcF9K5n+9AvR5ikjgjeo/HnvQSbdRc=;
-        b=g7lzVhYjEhxpOW6pRxV349FSikQoOitXdiqfJNgdl0POrMepuL3mt/i5RaSFO4Lt0W
-         kdtxlkc33H0EbMB6ldq2DW+jOyCPO8hAT0BvcOth1v/Tb4QvMh/YsRkBYRRMGmu4+JG5
-         arJL5TDQf8H55vLK0FAFjUR8nKyi/sVpmX4ufUHpzTDwD57SPKDdbKrV6WrlZK3EpLGh
-         mZX0F8Kxfw0ApnTCT4yx9fKgSfqR3mp/X23WtGNuHM6Ux00unrrBGAAfwM14nKgjQzNj
-         Xk9Ms13c5qvzHDgDul0KmYTTtcOVMerZcDN5sWBY0NSwRwlHltz4vYeA2stBSIDysZBU
-         BFBA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2icnRS3EeeNlt41CyF+UDl9yig6jvOUlXEWl2a1RFjI6RpIowU+/jf91kgM0zsjvZMa9TcgbEdKsZIko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOGJi7NQn+wxtzu5e98xt16gZ+5DSD4XVufSqQovZXvav3F+Qx
-	bcgSOqbUolini3cn3+wVN0DO/P6MXQwEFXZD2rXEI12IRPRvEyvbfHANTKFOHiDqq+NYxu8wEzI
-	Lj405mg==
-X-Gm-Gg: ASbGncsKYbOI6qvRmW0CobRYBykDevvc6SDnHseZoG2o2dA/JDVOzrF0OkQ8On6LdMp
-	9qkxx8P424xlb6fKA4Vi7IVf4VNGNZnqMELdHPkPO+9ITG8odj1GZw8RkaW10Up5/J+KiA69vcZ
-	uFatGEQHqna/D+9TiOEEWTMOUUETiSIcTuJLJDvNDpyzSr6CrmgDP3jipNhEjvTi4CqlHInyvCT
-	tZdmqMRYrDofhZ/Ysc0yJfHFWua0zDRh0JH47ArkfYH3NOLsc3gnvgcW0cfNcPNclVhuQYCpWel
-	8HFvA3yFypvnzloyAG5TYUsnFBuO9LUEjgzAsv/liqUFOFnT8qOYbCvcU2+8rrgwIWeKhVCQg0Q
-	1dLJG3on+yWCP1+8=
-X-Google-Smtp-Source: AGHT+IF3v5ZY2aypq5SLPcTsi+QR9KKQmrW0a+W9JaPgxx+qXR9mni9CgG5P0ni1nmKYuQmUnWmqtQ==
-X-Received: by 2002:a05:6402:3586:b0:5e8:bf2a:7e8c with SMTP id 4fb4d7f45d1cf-5f83b0c3df0mr3639747a12.11.1745945416246;
-        Tue, 29 Apr 2025 09:50:16 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f5dccsm7659208a12.37.2025.04.29.09.50.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 09:50:14 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso9749395a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:50:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXyRJgWbg7FFHh55FdENaAhKSyS02sFWCHavu/6fd3u024yfPmhoyWnc/3ctatMKufEqc9KnPp2QTMWzaA=@vger.kernel.org
-X-Received: by 2002:a17:906:f596:b0:ace:3a3d:7e35 with SMTP id
- a640c23a62f3a-acedc7528b0mr8000466b.53.1745945414375; Tue, 29 Apr 2025
- 09:50:14 -0700 (PDT)
+	s=arc-20240116; t=1745945535; c=relaxed/simple;
+	bh=qrEOMHmtTp7OFHh8ZgfaWUBX6cj24khtRPb/lao4Adk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OTHiL7RCdcftDUrY0IhXPUt02PKNCtpi4smYPWuluitmH2Spt8PLtnT1/7BBGat5t6lTMmWAlQLewfz2dgwP5gOJtx5qXuDJUMqv7SDEXJ+eQZGbjHTb9twyVYwPIBRNNO/huekg8hh8SHoGuzdQhm6wp/zDIVxm/EpKeUdp0Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAYa6pG2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745945532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pCP+Jn5db3OWqLaQDlXS5vWrXACMSWyu8xwgwx1Ls7M=;
+	b=fAYa6pG2brX02RdLRCjXDm2Vd5Ov69wKTIJD/14sWigNc0+X7pE2ngEG+smoj2Dw8R7z9l
+	ZSIG/SAkpYJniWo4ikp6z0j+zs1bibqjacKrE8gFcAMjKgwxMytIEwehZ0QQWleHOaFq8w
+	LG/Il94Us3jkgUQXjo8iBKSmzqZqAx8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-FfRgJyh9OQemIzvpxLE6MQ-1; Tue,
+ 29 Apr 2025 12:52:08 -0400
+X-MC-Unique: FfRgJyh9OQemIzvpxLE6MQ-1
+X-Mimecast-MFC-AGG-ID: FfRgJyh9OQemIzvpxLE6MQ_1745945527
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9274F1800EC8;
+	Tue, 29 Apr 2025 16:52:07 +0000 (UTC)
+Received: from merkur.redhat.com (unknown [10.44.34.64])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1CE381956094;
+	Tue, 29 Apr 2025 16:52:04 +0000 (UTC)
+From: Kevin Wolf <kwolf@redhat.com>
+To: dm-devel@lists.linux.dev
+Cc: kwolf@redhat.com,
+	hreitz@redhat.com,
+	mpatocka@redhat.com,
+	snitzer@kernel.org,
+	bmarzins@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] dm mpath: Interface for explicit probing of active paths
+Date: Tue, 29 Apr 2025 18:50:16 +0200
+Message-ID: <20250429165018.112999-1-kwolf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231001131620.112484-1-ubizjak@gmail.com> <CAHk-=wg6P8pPg-x4BPUQj-wE0xC7HkGzFk89ftuji8MVo+RRxw@mail.gmail.com>
- <CAFULd4Y+HXuditB51Q0LznqiBsvxJr3BjEYvx4_224XmqrycCw@mail.gmail.com>
- <CAHk-=wh+cfn58XxMLnG6dH+Eb9-2dYfABXJF2FtSZ+vfqVvWzA@mail.gmail.com> <CAFULd4Y-gr+UAvi4m1-p4MnJyMv3NRcyH=TFLZfFfNngnE_Kpw@mail.gmail.com>
-In-Reply-To: <CAFULd4Y-gr+UAvi4m1-p4MnJyMv3NRcyH=TFLZfFfNngnE_Kpw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 29 Apr 2025 09:49:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi4ji10PR35r0FqiKA_XYO38gLbZmPN4SYursP9fiUcXQ@mail.gmail.com>
-X-Gm-Features: ATxdqUFO5AtgHfDl3tSQG_ott7SOcnzAYniamHpACqHfjo7yPxS6fSz3muFWdf8
-Message-ID: <CAHk-=wi4ji10PR35r0FqiKA_XYO38gLbZmPN4SYursP9fiUcXQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/percpu: Use segment qualifiers
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>, 
-	Brian Gerst <brgerst@gmail.com>, Denys Vlasenko <dvlasenk@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Josh Poimboeuf <jpoimboe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, 29 Apr 2025 at 09:31, Uros Bizjak <ubizjak@gmail.com> wrote:
->
-> FYI, after GCC PR 111657 [1] was fixed, gcc-16 will generate the following code:
+Multipath cannot directly provide failover for ioctls in the kernel
+because it doesn't know what each ioctl means and which result could
+indicate a path error. Userspace generally knows what the ioctl it
+issued means and if it might be a path error, but neither does it know
+which path the ioctl took nor does it necessarily have the privileges to
+fail a path using the control device.
 
-Well, that's certainly a lot better than the horrible byte-at-a-time loop.
+This series adds an interface that userspace can use to probe paths and
+fail the bad ones after seeing a potential path error in an ioctl
+result. Once the bad paths are eliminated, the ioctl can be retried.
 
-Did you verify doing a structure copy the other way?
+While the fundamental problem is relatively broad and can affect any
+sort of ioctl, the immediate motivation for this is the use of SG_IO in
+QEMU for SCSI passthrough. A preliminary QEMU side patch that makes use
+of the new interface to support multipath failover with SCSI passthrough
+can be found at:
 
-Because the segment override on 'rep movs' only works one way - it
-only affects the source, not the destination.
+https://repo.or.cz/qemu/kevin.git/commitdiff/78a474da3b39469b11fbb1d4e0ddf4797b637d35
 
-So while
+Kevin Wolf (2):
+  dm: Allow .prepare_ioctl to handle ioctls directly
+  dm mpath: Interface for explicit probing of active paths
 
-      #include <string.h>
-      struct a { long arr[30]; };
+ include/linux/device-mapper.h |  9 +++-
+ include/uapi/linux/dm-ioctl.h |  9 +++-
+ drivers/md/dm-dust.c          |  4 +-
+ drivers/md/dm-ebs-target.c    |  3 +-
+ drivers/md/dm-flakey.c        |  4 +-
+ drivers/md/dm-ioctl.c         |  1 +
+ drivers/md/dm-linear.c        |  4 +-
+ drivers/md/dm-log-writes.c    |  4 +-
+ drivers/md/dm-mpath.c         | 95 ++++++++++++++++++++++++++++++++++-
+ drivers/md/dm-switch.c        |  4 +-
+ drivers/md/dm-verity-target.c |  4 +-
+ drivers/md/dm-zoned-target.c  |  3 +-
+ drivers/md/dm.c               | 17 ++++---
+ 13 files changed, 142 insertions(+), 19 deletions(-)
 
-      __seg_fs struct a m;
-      void foo(struct a *dst) { *dst = m; }
+-- 
+2.49.0
 
-works with 'rep movs', changing it do do
-
-      __seg_fs struct a m;
-      void foo(struct a *src) { m = *src; }
-
-can only work with a loop of explicit stores.
-
-And I see in the gcc bugzilla that some gcc developer was confused,
-and thought this was about calling "memcpy()" (which should complain
-about address spaces rather than generate code).
-
-But structure assignment is a different thing.
-
-             Linus
 
