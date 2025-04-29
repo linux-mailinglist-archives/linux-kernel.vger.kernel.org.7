@@ -1,187 +1,196 @@
-Return-Path: <linux-kernel+bounces-625511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F627AA13F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:11:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2739AA149E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 013A77B0B69
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133BC98036B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F8024728A;
-	Tue, 29 Apr 2025 17:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F97D24BC1A;
+	Tue, 29 Apr 2025 17:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sORLEGud"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUpAU/UI"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D21DF73C;
-	Tue, 29 Apr 2025 17:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745946656; cv=fail; b=ICCFu5PUYwL03QoBobIhujEFu9JH5zy4j8gOaIpatYqJXCxulCMc7/1CWAdeayFKKc6yPiWue7revTnG278FrjBPOOn+V9XtasF7tlTThMUF//K/jA6AxAiHnk2zPFDpdBoU+Wvhpt9DDVFFXqJeQ1tYq5YzXSeAIY7xpjp10sU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745946656; c=relaxed/simple;
-	bh=3Qm5oojHNGMyDGQe3QFz7Hhhp5HTrhg7CIldgoM2mJE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JR/39mil4t74/+loBWuVRM1EX7UU709MHXQcgYQHU+m9pVXo0lXCdEsfbUTX34dFJJfCf6FExGU/OPN1EuMNLyuVcdPOYDVIh3oeAt4leFSg/eEr09Qp8Eu6hfrcy2IeAsBy06mY8cDNbvlgvHZ1KWuigqtFYe57Vk++PV3IAeo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sORLEGud; arc=fail smtp.client-ip=40.107.237.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MAPtA37D2HG2n8Fv27VB33FpBdPsGVZ17giWDv1hb4G4QivTwLT2gpC1sGGBSQlUNxJ2otnUP2h2g/kSkvly51hs1rh+CQ3S9aIDWnXLkTdt6qoZlFfdRgJb9IIVh3iWeaLOsFg1blZlt1Y64Ga8Lzq9XumcEOcbD0/xX4E6jZgT/G5T7E/ephjY2bN093ludzVczYFLCUDOlZhshQqqcRFdklARsKILjcNN2dH4t9UQzAXfdT5/o9SRv7nwv379SZjsBCshKSw9P+p8kUqGHI7beFWLLjhjsaPeSVc8u1bbp2VTRHLLzJeDLG2sfX2uM/pKSxQCL7pJnc35Q5EfYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xH//tbfB8ZvbQC2Z7CBZ43RpuiqFuQWtDv72Nrv6IMw=;
- b=EaYapucddJRIgIXTcxdM3JeiaXFPRJBv4kGSU2tl6gc1ISMEEXAYe70Gok/mx4mP2vjwRUJMevNpNI7bvQwvQAQw+D4C7sgfuXxmgkxOhAjUmf2LFo/7BBXw1zE4G8HiXfCxjq0X7XZV89EpXduXzlNqiE144xIbNISw2U8A8lUqJ3Z6EO52oNBdje1Dn2aKDq0AhlfLrmyiTqXHirGsVgZJBLlpAS81yPYO28hrH7fIK6EvOpZCrXEV6K7xkbO4N04BpME91AmfXvkVd4H+Voh1GL9eOIRYjRk2P+CUPD54oSBzPWHKCmVztTZBwa+Fz6kjGBunDdFPugRFsonYXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xH//tbfB8ZvbQC2Z7CBZ43RpuiqFuQWtDv72Nrv6IMw=;
- b=sORLEGudqfCA/CG12jJj84M0WjpdJ8QxVKvaY8BSp7uMG7cirix2PVSb4NEQTc5Y1+xrVUBA3xaAsQGse8PfEv/d1W9aQh3/FNUBzjkck6+93U3y/0c1XI30fzFIWfS0Zcc6caXrj2NbOqRnBYvQd3I721cPPeTald2aDCH34NOXA72RJ5zFWUeI1PpFigqJW1M6KnBEF5qvMFFeWra1o3+WN3rtjlpD9H8r5O4W6tTL4ZQEI7lmv1uhHCuQ6s16MhrhV33DGCmPy83XHgihhL7v+ppRKHwZHK8I0mOfyUWQRDMMduMzd6pO3ssuTRJThT+UkdVnzEee6KEaUJG1uQ==
-Received: from BN0PR04CA0171.namprd04.prod.outlook.com (2603:10b6:408:eb::26)
- by SJ2PR12MB9192.namprd12.prod.outlook.com (2603:10b6:a03:55d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.30; Tue, 29 Apr
- 2025 17:10:47 +0000
-Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
- (2603:10b6:408:eb:cafe::7a) by BN0PR04CA0171.outlook.office365.com
- (2603:10b6:408:eb::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.25 via Frontend Transport; Tue,
- 29 Apr 2025 17:10:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.2 via Frontend Transport; Tue, 29 Apr 2025 17:10:46 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 29 Apr
- 2025 10:10:33 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 29 Apr 2025 10:10:32 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 29 Apr 2025 10:10:30 -0700
-Date: Tue, 29 Apr 2025 10:10:28 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Pranjal Shrivastava <praan@google.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <bagasdotme@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <shuah@kernel.org>, <jsnitsel@redhat.com>,
-	<nathan@kernel.org>, <peterz@infradead.org>, <yi.l.liu@intel.com>,
-	<mshavit@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
-	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 11/22] iommufd: Add for-driver helpers
- iommufd_vcmdq_depend/undepend()
-Message-ID: <aBEIBKdjuecVHgpU@Asurada-Nvidia>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <a25c9454c17663f9e79b37bc2908bf3a99856be6.1745646960.git.nicolinc@nvidia.com>
- <aBDIpz7w8wxIn_AF@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76AD248889;
+	Tue, 29 Apr 2025 17:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745946770; cv=none; b=sIqFUEIvfzkUwO3obD9DpCTWaPSLwYFaO8AMEC+qUtoyZIIRLU7+67w52gNdTDDPnHF8joHVx3UhCBEfZH/2/j0uScZjpULhJFD0x7eY5n59gXNThtAOxOC9EpEziLWH0e0KbgMZDl8gwSwjvfm3GB5/7/t3AXvALo9ZmbdYVAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745946770; c=relaxed/simple;
+	bh=hgJY3wh6a6UeaEJse5LqpLhP5AnH9wkmWf2TvEMe+u4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DbT7dhxEK/2MzJ02G/38EXUeUiLzO2mKw0GlfHbU9dFqGP/ffIUrOgFVnQuq+u1PAwJBzPG65UBjXJ+z/fzxl/28IJrctRRdFbyPdok13y9fjm77JTb5x6kk13qFdes0eGGBdDITZWGqoY6ZyQ9eKQqZkTb58NZ5gmcmiPKKtQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUpAU/UI; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f6222c6c4cso9837885a12.1;
+        Tue, 29 Apr 2025 10:12:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745946767; x=1746551567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SsfvUz+i23ivaruHjbfi9ou4xDoXYHDfMl7yFqsBNNY=;
+        b=VUpAU/UIBzNBVWj9MhlFiQsswEJebnpEQhmfFdiQ6CYYavHKECm4i6z0dKhMm0ALKy
+         yq7VJb9gDHbQuiV0Z8S3UH6hNPCkvTAj6n2HiirjcrWI3WNWHTqrfqe61o2eczVf7yQm
+         enXKJ3v2I1f1BMCMgdQliEBCzDFfa3pNT1FwTlnV8GCccunYcGFYGwA8NaAl//zqQPBe
+         2ACqT3olUP2KgzxDodVYI/SvgTqQvyPqQwOUdGX1FzUv2rl3ZzVJen9yvI2GZz9+AeIF
+         wa2DK4s9k9OUfM8EhsMxoY+pLwdbVvi1ZeCN7vmJXwGdjiQzxS/XIbwNDIJei4FRtfiy
+         gq9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745946767; x=1746551567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SsfvUz+i23ivaruHjbfi9ou4xDoXYHDfMl7yFqsBNNY=;
+        b=UQM1ijXJRaffRHj2A7es3DGh9zVLnMTSr1oNXjIKSZ2MqG0n6P2DFpjmQTgWOyjDmp
+         X5nAlz0NegyTDWVc3jEYbH5WcunJG60Ums6LAL4VR5A1YHjwnMvzCKrsVnhKs7miNbsf
+         U+y9GQ9OSfSE/1z+s5F6Akh2pz8cUXlsq6GSg8PYEAiPvUGXU6yw5zvTm2ruTw1zWWg5
+         OWhSnK7XAx+/ZbYWORTfOHrP3ZEVf6c0T3PAa0M1lhreVZadJxoGBlKF44iRw7HjToyc
+         6CDcMRCQ91kYw3Lza1HEcnntl01sftCGkIEnw1JdP5jnBLwCdVf6jNnOHkBKEWAemsI5
+         kNWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFgCkIpBpF5zkNW2r4yz0QPrJz+kc4b4mZqn/52PgJqi39G75eqncipcZJo9tHGob6cY+B1xz10ySL933I@vger.kernel.org, AJvYcCX8G1G8pevAyXgdFi79ofzwbryo+kLEtNihvalv8KuOOY2SmtYnvmKElbP4zOaXPLuAnIqoeQVg6Kbf2NLB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxas/v3fv/gU32TAnf2SckQPjEAg3dzo2tuVJnWtbB0/NER8I36
+	k6NpsxFztFjc88BN5z2XRkvz8nG7bsAKrWhhL38RJjOgz0L2kcSh17vSV7rbpw7uR+mE3S5QXc6
+	dt/zqZh50KEcCCuSpXB/xmLPtQayMz7XQ
+X-Gm-Gg: ASbGncsgAP1jrV1tzIgTmjRXk9Q/JZyMBPDMv6tFEjdGiVUeh49MgCAEKJi0zHCWkSM
+	VbnmBNxzC0L3bhxHqfuOoZk9SjG0TTmreffKIY6tx4ko+03p7KbdQmCxaWE2uOsufbMFoq3POsx
+	juYSk9gOSFj0+7o7M5hjPU
+X-Google-Smtp-Source: AGHT+IEFhOpRJtHhdameANKEr4F4uoVUaEZAhtAMKro2joPY0ijis9Vj5f2jUhCYho2E3q3oqxjBEekqlySWOza8xhU=
+X-Received: by 2002:a05:6402:370c:b0:5f4:d60f:93f0 with SMTP id
+ 4fb4d7f45d1cf-5f83889e7bamr3636129a12.31.1745946766822; Tue, 29 Apr 2025
+ 10:12:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aBDIpz7w8wxIn_AF@google.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|SJ2PR12MB9192:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d970dde-838e-42d9-25f8-08dd8740c8a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cpJ6GwYTmxqcWzqVV9pMy+n9hLpHKru4eML91WqCZDwatEmIGSXcuFq+RMSK?=
- =?us-ascii?Q?H2LGxbP+eklnY3udutrOAOW1fGKaaIiI1HQjBziKE+xvheHW4EyUJrf//qFC?=
- =?us-ascii?Q?bV+KXYRemhSt24Mz/AvirCMi2k/ija9eks4iLAY6QwR2Mbyyo8chFNi/xQIG?=
- =?us-ascii?Q?ChG/o6gn7zSCNHL+l/ahMuJhzv/Eupiz7QeDbNyHklYCCSC1Pw5dyi/dXXyz?=
- =?us-ascii?Q?leaZH9M6C3KMfwWaaqS8DZBxJhQ9i8+D5OoBUhLnbI/jga5a+VR4CaUm4ABk?=
- =?us-ascii?Q?/Y45vaeydC8hy6UU7ODSAwuCHWs3g8n/WC8rcGQA60lMU3DpdmK8X01rGD7u?=
- =?us-ascii?Q?1mMbQr4eHmoWaYXi3zA0o8nVG1fMZCpfsIgujyPk15fP0qjckd+Yl1zAQ1nI?=
- =?us-ascii?Q?0VhuJ66nknA7OmxwlpdCrG+MPKMJ65q7tbD2/+ZM/Y+lEdSQe9wolVNiQsNn?=
- =?us-ascii?Q?dQT/pcWwFFVNYkRQozVjSSABy2P5MccS7U84UMOEPUgS4TdcAy/3661DqcQa?=
- =?us-ascii?Q?btbRP4K6mgQnV7z1ZpDBr8evVvdkO6O6H0oTYuw7f4liQ/ZEBDWqVv20RMU2?=
- =?us-ascii?Q?Z9XmZX0Yix7sz1MXxWDE29Zkt+FviFS6AlwXuQnFtDvUciLBwisHlwRw2l2i?=
- =?us-ascii?Q?1W/kPVMOdwQDGY9+RxSaKzDB1hYM6TG6rEb7gnqgpNJ+N/PRQCMDspiw0h/1?=
- =?us-ascii?Q?vF9Ii/c2udyO/dLxPHoc9cfE01YQR+kLM7jbZApLhJZnLKduqxvbhyxkjv4b?=
- =?us-ascii?Q?bI1ebEGQIfuXHdear7lbmmB8zk5tBWMwd44RRfOYqi65SlzW/XvNyC8szceP?=
- =?us-ascii?Q?x84cbacf6CnLx63Rhx2mgwhWYp9xLxQl/9nTsmSXv4Ee9gFnyXiQJsKW+9E0?=
- =?us-ascii?Q?wj+d6pav6judJ4Hl7yJ0R8Y312X/mDR99ahPvrFplENLK+U8bMiZ/7vKI/Ng?=
- =?us-ascii?Q?VFjQv19c/ySSpzopwTZFJXsMMxvQSLsBM4EkSlCyuFwDxvd59LtpPzlgvflB?=
- =?us-ascii?Q?Uj+hvY3OGhS8BNOSpeiWAQNf2e/RDS7IK2WGus7UKkaNFiDV8wYsOQtT4KBH?=
- =?us-ascii?Q?RenK+NxWD9ztzA+kbD6+KUIgfLXmm1CI1amxNpuTmmy/Fpc7gnBRJfv7G97Y?=
- =?us-ascii?Q?FhBUk2vcqu+pvoYFh37dPk+kFQK4IXEZWg9Kp2M109MU4tNS+WG7MnQ4SrDS?=
- =?us-ascii?Q?AmXlxKYcJPK8Au10oHRz+ib6FMz2EU0pmO1K55tMJoGfe+Sj1NDvDoNrRokb?=
- =?us-ascii?Q?0/Bsb1ZHGuHa1Dfz4Zqf5nt175rysamu9XN4dslcI+pkjPE7smBHh/LIFcrV?=
- =?us-ascii?Q?QRwmiGMlqCKF8ojF4jKWGnkgU8Jo0wmXsu1ND+lncw7L+6cX1IWXkkVNJC9A?=
- =?us-ascii?Q?MXEUfD9mbEG2ZU9cMCf8ZmPwghOM3DsnDoIhexNPY8YvD8XbwIC6dV8zGPKJ?=
- =?us-ascii?Q?NIIREMomObprfeKum4DcOr0DYZV+7JTOAsTBicQsQMcIHgasJHsGU8ZM8Yob?=
- =?us-ascii?Q?Tl7+D1XNO9d+0cS2pnaTa4KTmAPyyzXw28rK?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 17:10:46.8461
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d970dde-838e-42d9-25f8-08dd8740c8a4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06B.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9192
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com>
+ <20250429154944.GA18907@redhat.com>
+In-Reply-To: <20250429154944.GA18907@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 29 Apr 2025 19:12:34 +0200
+X-Gm-Features: ATxdqUEx3Vi0APNX--GO3y5NvRxsG1VNhvPaOpzMVNW8AhLlmPepqTW-UkJkA5E
+Message-ID: <CAGudoHGeMmv0n8rujNdPiwZHa+JtDfBS1ym2C41iBpKzzLkUtQ@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
+	Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 12:40:07PM +0000, Pranjal Shrivastava wrote:
-> On Fri, Apr 25, 2025 at 10:58:06PM -0700, Nicolin Chen wrote:
-> >  /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
-> >  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
-> >  				       unsigned long vdev_id)
-> 
-> If I'm getting this right, I think we are setting up dependencies like:
-> vcmdq[2] -> vcmdq[1] -> vcmdq[0] based on refcounts of each object,
-> which ensures that the unmaps happen in descending order..
+On Tue, Apr 29, 2025 at 5:50=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+>
+> Damn, I am stupid.
+>
+> On 03/24, Oleg Nesterov wrote:
+> >
+> > check_unsafe_exec() sets fs->in_exec under cred_guard_mutex, then execv=
+e()
+> > paths clear fs->in_exec lockless. This is fine if exec succeeds, but if=
+ it
+> > fails we have the following race:
+> >
+> >       T1 sets fs->in_exec =3D 1, fails, drops cred_guard_mutex
+> >
+> >       T2 sets fs->in_exec =3D 1
+> >
+> >       T1 clears fs->in_exec
+>
+> When I look at this code again, I think this race was not possible and th=
+us
+> this patch (applied as af7bb0d2ca45) was not needed.
+>
+> Yes, begin_new_exec() can drop cred_guard_mutex on failure, but only afte=
+r
+> de_thread() succeeds, when we can't race with another sub-thread.
+>
+> I hope this patch didn't make the things worse so we don't need to revert=
+ it.
+> Plus I think it makes this (confusing) logic a bit more clear. Just, unle=
+ss
+> I am confused again, it wasn't really needed.
+>
+> -------------------------------------------------------------------------=
+----
+> But. I didn't read the original report from syzbot,
+> https://lore.kernel.org/all/67dc67f0.050a0220.25ae54.001f.GAE@google.com/=
+#t
+> because I wasn't CC'ed. and then - sorry Kees!!! - I didn't bother to rea=
+d
+> your first reply carefully.
+>
+> So yes, with or without this patch the "if (fs->in_exec)" check in copy_f=
+s()
+> can obviously hit the 1 -> 0 transition.
+>
+> This is harmless, but should be probably fixed just to avoid another repo=
+rt
+> from KCSAN.
+>
+> I do not want to add another spin_lock(fs->lock). We can change copy_fs()=
+ to
+> use data_race(), but I'd prefer the patch below. Yes, it needs the additi=
+onal
+> comment(s) to explain READ_ONCE().
+>
+> What do you think? Did I miss somthing again??? Quite possibly...
+>
+> Mateusz, I hope you will cleanup this horror sooner or later ;)
+>
+> Oleg.
+> ---
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 5d1c0d2dc403..42a7f9b43911 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1495,7 +1495,7 @@ static void free_bprm(struct linux_binprm *bprm)
+>         free_arg_pages(bprm);
+>         if (bprm->cred) {
+>                 /* in case exec fails before de_thread() succeeds */
+> -               current->fs->in_exec =3D 0;
+> +               WRITE_ONCE(current->fs->in_exec, 0);
+>                 mutex_unlock(&current->signal->cred_guard_mutex);
+>                 abort_creds(bprm->cred);
+>         }
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 4c2df3816728..381af8c8ece8 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1802,7 +1802,7 @@ static int copy_fs(unsigned long clone_flags, struc=
+t task_struct *tsk)
+>                 /* tsk->fs is already what we want */
+>                 spin_lock(&fs->lock);
+>                 /* "users" and "in_exec" locked for check_unsafe_exec() *=
+/
+> -               if (fs->in_exec) {
+> +               if (READ_ONCE(fs->in_exec)) {
+>                         spin_unlock(&fs->lock);
+>                         return -EAGAIN;
+>                 }
+>
 
-Yes.
+good grief man ;)
 
-> If that's right, Is it fair to have iommufd_vcmdq_depend/undepend in the
-> core code itself? Since it's a driver-level limitation, I think we
-> should just have iommufd_object_depend/undepend in the core code and the
-> iommufd_vcmdq_depend/undepend can move into the CMDQV driver?
+I have this on my TODO list, (un)fortunately $life got in the way and
+by now I swapped out almost all of the context. I mostly remember the
+code is hard to follow. ;)
 
-The moment we added iommufd_object_depend/undepend, we already had
-a blur boundary here since we had no choice to handle in the driver
-but to ask core for help.
-
-The iommufd_vcmdq_depend/undepend is just a pair of macros to help
-validating the structure inputs that are core defined. It is quite
-fair to put next to the raw functions. I also had the notes on top
-of the raw functions suggesting callers to use the macros instead.
-
-Thanks
-Nicolin
+that said, maybe i'll give it a stab soon(tm). I have a testcase
+somewhere to validate that this does provide the expect behavior vs
+suid, so it's not going to be me flying blindly.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
