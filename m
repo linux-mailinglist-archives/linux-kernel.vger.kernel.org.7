@@ -1,172 +1,157 @@
-Return-Path: <linux-kernel+bounces-624557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5590AA04CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853E9AA04D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0704E843181
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0691B65FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D8B278172;
-	Tue, 29 Apr 2025 07:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAB6278E6B;
+	Tue, 29 Apr 2025 07:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="g/POtmvm"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sEFom6vH"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B53427703B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9F6277010
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745912556; cv=none; b=Eli5oQc6y7MsaoZ4i25UtOGgC6f9WZ8Cbvv3x9LiFYwh7Gr1CNNCWVpWGzc2d1Hq0hPoiPOOnQXBYONPIhezgLV6UL+1bcC/mF96LF6Du3w3dPUtRkuLR3dhttt4o1xKKm0Y9MO3g/yjnbVdfrxsf7uc1WTiT152XOkrAW31cE4=
+	t=1745912585; cv=none; b=nZonkMYInFjXxbflX0N4Dkqnx+VJy/R4IteRcs49xEt4DOsMbuK1FRFCZgE8Y1KVauVg1JI/fjieHzCdOT+b2R8bqQjWK/anUaL/l5iB/TzlfEdwx+BWaNcpe/37Khtqgr5NiQg1s7umx7Ez7fMA0jZkhvy1YjPJSAX48M+ifg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745912556; c=relaxed/simple;
-	bh=cXh6n3R/2spicCV4mVF9GE4UenvDP0RDHyXj9ySykjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ND5hGicSdUm4/kg7wv+7NdD7XBhLnejQh7txzd5hjpovQL4ECnYx/nIDCILOS/Rg+uuE+t94rzLSKyQNW7hkgZ3egbVY6VM2nr3a+fMrml7uEPRMAbQz6F3J7+hy4YjIC+o9nkS+fxmTb25I2GwK5Qt4Rx7kmgYTjNG5S/JH3rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=g/POtmvm; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39c14016868so5647131f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 00:42:34 -0700 (PDT)
+	s=arc-20240116; t=1745912585; c=relaxed/simple;
+	bh=dYvB61tFWaA6yh8/duxHkHb9Z9xmEpElUy7jETtqYYQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ovEkaxzLDKOdn+VzT6tYSi4W/EA0j1t5TEOZNtM/iqlZHNIQ2+JI7c04v68nxNmJpzqyJMHIwFDYe3sf6dpX8q7GKur8LWFh5tQxZoDBqrGse/MOSnz6nIoqAbw8QjLXu/lElC+KHUOHO001hGhnLwUIrlLNKkh2jAwJrbEANYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sEFom6vH; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-acec5b99052so111469966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 00:43:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1745912553; x=1746517353; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmXhjsMt+xKQfrIkn2BMfGMkwVl49+1kW9h4RzMS49c=;
-        b=g/POtmvmfn6HKeGS12nXZkvhxO6DnCrkpES+zCRCJa6pcax/hVDd1pqaOTDVdRY5Pq
-         drDu/zEzblKoxyqAqC3t8MGo2SspgIQ1cBY9z287f+cRIS/y7XcyXUuYM+nDFidrR0Yw
-         bHIvkGISLvEt8U3eKEWKi58TnO80woAij/MLKRj5rzj2WeYlJCsb2FkBzusEnDODCZ3D
-         AGL2v0obWepH3FU1kvi2zq5RF7eb39fUBHKOpzj3RR5lyXWnhXEWvURdykzsFsYNk/YR
-         Rx1IY84UboAb/5De1n6Q+GzN92Xzm8gOEXkAEFu7Dy6GajsB2E+JcjD29qSAyvPEiDco
-         8I0g==
+        d=linaro.org; s=google; t=1745912581; x=1746517381; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F+uTNBkxVqUzOlu1JM6vCecH5db95DiIuI060h8Clm0=;
+        b=sEFom6vHqF6TpBxqXZ2vDfjMZG3Dt93eaHkldtOe0kwFJOTo73UUwWH8tpPVCHKzlL
+         MI5KRUoyGiRdaa7R+PvjbVpY56WNFBDyL6zRd6vjxh+wJMFgRpi5RiHg5BCHENQiCevw
+         tFByb0IvG7M4o74NpLKdZlR5gR2ecylE7i5HMbTENxAud8Uor8hbjVNIeNwnSTJQ5arw
+         IJe9MHKXV1mpKkxFTFIa9OZ1F0KJBP8g6dxIaIYKeAzdJeuqC19umK4gM2/Ts1foQFy8
+         2V56wNPpODUXk7A/FJLKdzQD7YFYaxBxibPO7HaLz13rvSp6wvcWeSA/MbxfXWph4RUJ
+         E34w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745912553; x=1746517353;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmXhjsMt+xKQfrIkn2BMfGMkwVl49+1kW9h4RzMS49c=;
-        b=GVWlTDxJkOIama32Vd57rcnWfHLfqh+SJGNQwzIuSjAD4+jyzqONRv1UdZuLYjsu/j
-         F8zaVmDf76fJm24m3HEBsM9sb+2dPZND2uouEEzQc+H5aQXzr9EompqCQe48VQ864ZLj
-         k3HdxGZecRmrtgv49eUFpb175rrfsnpzRqjqfbFEA03yWWHekV/ZkCp+Gnnpd4xRQvPF
-         JERAe/9MK+byIZhZHV3LjG/2xWAIcL/1E9A6phbGU2gx9yNY7GS6OHyaVyBTXjAOTxal
-         K2JBSBRTqRyWXC94INnFubdX7UJH02OF6frYRsnXY7kKDPHJOJXkDWSHTf0+UcDiAUzu
-         n2lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJla2Zb7/0xZt/gaP4XqjJrLEwJOmkvLZ9xAl1cDIrRDvNsKKZP7OaMwmeFyuUSZB7J+XcN8etWIHmx+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLIwGB+/gBfhT9FzbuLQmlb972fqh42Vr4BIkGSiQ8j24NEltg
-	1SwGJpezYyVGePAQ6OlQWHOBclscubg78Pua6UJoEhzoFZKwcj4bvuygV0HE0o0=
-X-Gm-Gg: ASbGncsQzpx7VzFkgfzvQpuT+kQY85MZJaFL8uNLQYnP5qP1SsWOhcjFxXEaDI1rUvM
-	BLAiOVUDRa2s1/bfPaz8KdK+9Cesl5BQsMBZzn/0ayQhHOGGanZMp8/oz8zPdvcVHnfwFpMoyoK
-	N6NMcEmNl2XUgiAeQ7wUwrvFMOZoahd5X9P3GxTkUKUH4bcrSLNFeo3pS5TtDJ+hqNFBhwqI6z9
-	enNnZhNE67V25nm8YzFVOHbqd7A7cJsbBbTqU2r82Fr/hEBbhmESc9D6hEg27GHFLeLw87y7aZn
-	nfVIStK5d2RFTcbbuigvFltidhVgH/gcyKap8mq74L7Zy/uT+/D2SZnqs7DsxSIc/QOf
-X-Google-Smtp-Source: AGHT+IFB6M3h2/QAqZRTSqmWfE0T/sZTOTsikAFH4/HacDiwPy4iAluW2Tcmy7T4w32lfBObI+Wfqw==
-X-Received: by 2002:a05:6000:188c:b0:391:1458:2233 with SMTP id ffacd0b85a97d-3a0890a50a8mr2130171f8f.11.1745912552763;
-        Tue, 29 Apr 2025 00:42:32 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4dbc0c6sm95603765ad.81.2025.04.29.00.42.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 00:42:32 -0700 (PDT)
-Message-ID: <021ca5c7-bdf8-4ec1-b59f-dce8333fe158@suse.com>
-Date: Tue, 29 Apr 2025 17:12:27 +0930
+        d=1e100.net; s=20230601; t=1745912581; x=1746517381;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F+uTNBkxVqUzOlu1JM6vCecH5db95DiIuI060h8Clm0=;
+        b=mo+2ZTg9b1DaNpRdGgykxtYzm2mFHg0FLw1M8mRPF6H4j9BHm3KQZDru+z1aD1ILPE
+         od5gc9691/kNB/MqA4eX78jKtkPdrNyQ9AiDl8UmEIK6efrsw61t9gVzCOunU7Hlv13u
+         Yh7+bSNYQfZQrxJgHWg/6ZZVE/Cv7yHwEnQAxkNlfqXEKZpUYFqeueflNm+2M5BGtvcq
+         CU++CkzU7O8W9LsebUG/EfJK0If7LMOcMGkgtrOdoFeeja+qa5gFOcL/8WajNcXZqVA5
+         92TJz0pVjUJjCuC0V7vfMpxTmk+oCkPD9Da0/+Mln67IHZJ2XcvIioRn/SavekMNNnwF
+         sMzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiH+XyfdT0JB50wrkF+jhOd5O54+Jp13OON9ToXrCRthHQBzMNQc0ruyhDy3RPZxJZQLKo8nJ356m3gFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz67hSMql86DpeLqAQEgCy/ABJOB4H6mpM11Q0xpcBam40FR/Xa
+	4OOgor7aBAStIwambaD52yKtHo8Qv4LE5sjv5mS3h6VQnCW5YWOsKzVhCGuDtlU=
+X-Gm-Gg: ASbGncv3OMd1Wz2mewhdGlFKxShJzRAz4uUVYqS9Ok4Fw4uFz9/OhKniIvhh7jzqCx1
+	1N2glxicbQcy9gCk8gAyn+FulKTHjG5Uua5v8r4gwPyQoGWOeSo+02gpIgyu5toPIOyyJN8zf95
+	3EtIJF7Xp+17oz0Jiw10z84BCMlDMyCXo3BYEawZXrQgJWcbF9RJLr864vh084xhMOT1k1jvN7y
+	xY3VKpoEEZD97vPmlPTKZide7AB+ivlCpuoi02p9bSeQUmLNlE5bQ/HMTL3fE4Ba4MhS8lMGEd4
+	17vaDh8yeGDSDXxJEvE2pdgG3eM8wXrH0IIv+oA=
+X-Google-Smtp-Source: AGHT+IGFbkcLdkOebqlvhktc4XxOR+kPFeyvv1NmZrdv/VsALlmOV+cvbZCLiOzMiV42WIgb7kMs1g==
+X-Received: by 2002:a17:907:7208:b0:ace:3c0b:1965 with SMTP id a640c23a62f3a-acec4eadb28mr219125866b.39.1745912580861;
+        Tue, 29 Apr 2025 00:43:00 -0700 (PDT)
+Received: from [127.0.1.1] ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7013ff4e7sm7048114a12.22.2025.04.29.00.42.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 00:43:00 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
+ compatible override
+Date: Tue, 29 Apr 2025 10:42:28 +0300
+Message-Id: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: Use refcount_t instead of atomic_t for mmap_count
-To: Bo Liu <liubo03@inspur.com>, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250429072033.3382-1-liubo03@inspur.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20250429072033.3382-1-liubo03@inspur.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOSCEGgC/x3NwQqDMAyA4VeRnBdoizq3Vxk72CbbAs6WxIkgv
+ rtlx+/y/zsYq7DBvdlBeRWTPFf4SwPpM85vRqFqCC50rg033DwPzjuHtBiS5oI/44mtomDK3zI
+ uEifGvLKqECPFoetD6uM1EdRsUX7J9l8+nsdxAiAXmvmCAAAA
+X-Change-ID: 20250429-x1e80100-dts-drop-useless-dp-compatible-override-db8562c6b7cd
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Konrad Dybcio <quic_kdybcio@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1759; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=dYvB61tFWaA6yh8/duxHkHb9Z9xmEpElUy7jETtqYYQ=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBoEILuUvIun7C9opgeq7YaOnb/BTs/CChz/FbDv
+ 5NoEh5Nn/WJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaBCC7gAKCRAbX0TJAJUV
+ VqkcEACwAL7XbUoToWC2EYt1kXamDT3RaIr6kpc57YKTrNux1sQZhZCohb49PD5xlzXAZxPoqNH
+ vyBjG+hPkFq1qeJoTyZAZwu0+iDMzE5M+HInhHU/0ZzvlmcES1zZrGEMHRu+M+SUbS1wnHFgpUw
+ CfBmMbAycDh9gbCLqcmUhF8iy4Io78PTsJTqNq6sAXjf4leJz+HhqQDvTgFopeZIQaU+IUXKxTN
+ qV/zOjB5dWucAAQdaixnBZk1jV/gU9WkqD7s0CiApU4owqAwwow2h9AvnPUhD1wRJga5SzVM7K0
+ fe1DwDTGU8biiFo2163uIt25c5VktpG+L7isNPplazwZOkAscAuEckCCfudtHGncz9o09Pps792
+ 3rB2dqgBvbQFnLpKqDuI+PrW3//t6FeP1Rqk6JNFNx2gvckix2aWzn9Kd4uUCpZ2zivkIxftQP+
+ GyNrXWlGgrNhY1W/lUyWbGP6l4T3te3e/1mXKj2VGyZnsWeVOFQyImeNo2HXB3qMiyVxqtre1BG
+ lgP4sZkkLPn+QvBImpDYlLODAioYW0r0bwz2SQZH+iywl0pE3DQir9CEiwKmleWD3S+niX4wm7c
+ 0/zFaZ9ozD2OiQqUiktnnbV2Bd2bUcEqRDoNxbqXo6kaS0zJzB/gomu7ApHe8s5/J2BznkV9OxC
+ unDP2g1+IcZEFrQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
+It all started with the support for CRD back when we had different
+compatibles for eDP and DP. Meanwhile, that has been sorted out and it
+is now figured out at runtime while using only the DP compatible.
 
+It's almost funny how this got copied over from CRD and spread to all
+X Elite platforms.
 
-在 2025/4/29 16:50, Bo Liu 写道:
-> Use an API that resembles more the actual use of mmap_count.
-> Found by cocci:
-> fs/btrfs/bio.c:153:5-24: WARNING: atomic_dec_and_test variation before object free at line 155
+TBH, the best reason to drop it ASAP is to make sure this doesn't spread
+beyond X Elite to newer platforms.
 
-Please explain this better, I didn't see anything wrong about the 
-decreasing the atomic to zero then freeing it.
+Functionally nothing changes.
 
-Thanks,
-Qu>
-> Signed-off-by: Bo Liu <liubo03@inspur.com>
-> ---
->   fs/btrfs/bio.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-> index a3ee9a976f6f..353c61936cd6 100644
-> --- a/fs/btrfs/bio.c
-> +++ b/fs/btrfs/bio.c
-> @@ -23,7 +23,7 @@ static mempool_t btrfs_failed_bio_pool;
->   struct btrfs_failed_bio {
->   	struct btrfs_bio *bbio;
->   	int num_copies;
-> -	atomic_t repair_count;
-> +	refcount_t repair_count;
->   };
->   
->   /* Is this a data path I/O that needs storage layer checksum and repair? */
-> @@ -150,7 +150,7 @@ static int prev_repair_mirror(struct btrfs_failed_bio *fbio, int cur_mirror)
->   
->   static void btrfs_repair_done(struct btrfs_failed_bio *fbio)
->   {
-> -	if (atomic_dec_and_test(&fbio->repair_count)) {
-> +	if (refcount_dec_and_test(&fbio->repair_count)) {
->   		btrfs_bio_end_io(fbio->bbio, fbio->bbio->bio.bi_status);
->   		mempool_free(fbio, &btrfs_failed_bio_pool);
->   	}
-> @@ -235,10 +235,10 @@ static struct btrfs_failed_bio *repair_one_sector(struct btrfs_bio *failed_bbio,
->   		fbio = mempool_alloc(&btrfs_failed_bio_pool, GFP_NOFS);
->   		fbio->bbio = failed_bbio;
->   		fbio->num_copies = num_copies;
-> -		atomic_set(&fbio->repair_count, 1);
-> +		refcount_set(&fbio->repair_count, 1);
->   	}
->   
-> -	atomic_inc(&fbio->repair_count);
-> +	refcount_inc(&fbio->repair_count);
->   
->   	repair_bio = bio_alloc_bioset(NULL, 1, REQ_OP_READ, GFP_NOFS,
->   				      &btrfs_repair_bioset);
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Abel Vesa (7):
+      arm64: dts: qcom: x1e-crd: Drop useless DP3 compatible override
+      arm64: dts: acom: x1e80100-qcp: Drop useless DP3 compatible override
+      arm64: dts: qcom: x1e80100-t14s: Drop useless DP3 compatible override
+      arm64: dts: qcom: x1e80100-s15: Drop useless DP3 compatible override
+      arm64: dts: qcom: x1e80100-hp-x14: Drop useless DP3 compatible override
+      arm64: dts: qcom: x1e80100: Drop useless DP3 compatible override
+      arm64: dts: qcom: x1e80100-romulus: Drop useless DP3 compatible override
+
+ arch/arm64/boot/dts/qcom/x1-crd.dtsi                        | 1 -
+ arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 1 -
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts     | 1 -
+ arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts       | 1 -
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 1 -
+ arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi    | 1 -
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                   | 1 -
+ 7 files changed, 7 deletions(-)
+---
+base-commit: 7e69ad9a1f7ba8554c4d3d1ccbffcccafcd45c2e
+change-id: 20250429-x1e80100-dts-drop-useless-dp-compatible-override-db8562c6b7cd
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
 
