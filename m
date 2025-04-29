@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-625013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2ABAA0B3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47458AA0B46
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896C73A5175
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C3C4603C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAB72C1E3A;
-	Tue, 29 Apr 2025 12:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BAB2D029B;
+	Tue, 29 Apr 2025 12:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL83D+qR"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D510520F066;
-	Tue, 29 Apr 2025 12:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VtxfA8w1"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3AA2D0277;
+	Tue, 29 Apr 2025 12:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745928666; cv=none; b=jHlWfzU4RIHADbFAn0xANc8y4cFjS64HJl8nQyPgE+iqpqGqvmf8im5GK9pgTyFUpIE7z7BLZWCsy6RZBKGXJcHEL0aNalnphZRZJX5LLVf67HomseLAzXmJD6qP8jUc2/K9P2IdsdF+9sTsAaqTy50MxSZqvbHCzgEYc1qkloY=
+	t=1745928719; cv=none; b=Kyek558235G/aLOxmbs1IOmHKqvkrUPmnwQwYmL0qCt75OZUrf7IliZpYUgA5QpvCzmP4QDdEeck6kZ9p18NxpXwaM67t4PLACui6PSun4YZGvjDUe1gdwbPnJ5nP7g1SPWTB33jM+0el2nG5+spiz3fg2KQNa8VUB4vmFVyWnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745928666; c=relaxed/simple;
-	bh=yNEyqYG3GckGSFFv6aBQ4pUR10hoGY2aFo1t828Mwi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IE8+IUySAmbKoA2wpjMlkH5PyWTiFUQXCOB+vV4PP9cMkD++sxpV18v6eSaaDPj2tzkHG3U2x5uYHPvW0YTi1Oa9YU8LmD79cX2YpbSS5y6B6G9zygF31RONQg50vCQBk7pQ2LjoiTIBNmUExMY3lIAhwcEwXy37quDhdU/inBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL83D+qR; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-225887c7265so11087065ad.0;
-        Tue, 29 Apr 2025 05:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745928664; x=1746533464; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=20qeUKkaMbvWbqATJAd/aBKlKoQKEizD0yoS5BHg7sc=;
-        b=gL83D+qRW++SeL3lPMA6LQ5XlcABHOkWidrzfB2AS1a3q9+j5+DdMEuwcr6E+AO5N2
-         AzM3fQtHY2ySi4G9Z52AEeaNZhDutSa4FjJvM2jng9QDD/fCLaK4sR2j/NEBsCi60kkU
-         i1ihTO/bTTrFED41bvowrFWdcgoJGlHZrYixjhfxdNLpBd0FRhO6K1hc/5zZ+j1qQoRT
-         GgS1AwnUlfM2g0LPdw1aqs5MQtqH9F2Ph1CnHYIk17CkT+Am4Ikim4uXQvY3QvpxK0r3
-         PI5VBG36ovsNxgNmMlxEiW6lFk9DCxoZRLDJB7m4DlJuej380fomhDBGXsdr5avSZWC5
-         xXAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745928664; x=1746533464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=20qeUKkaMbvWbqATJAd/aBKlKoQKEizD0yoS5BHg7sc=;
-        b=CTEtsteT28Kc86z5g0INQH76RqUgWW0G8QJRjzbN2DPWIjWS7VzYdhSjW0NFbqPsNy
-         FeX3Xp+Uu8ZJWGD97SH69axjioE1JkC+r3N7IVyhayW73R9EDfWSZPpkH41q9oygKFqL
-         kn7kVYwV/HXCkcMgJk2n+rqY4jKTTKE0djcG2BjxY2Pso9pu1Q/gmqWxjoWFNilAaIwH
-         ciKN0SzFEIsp6XRuRdkAY3YAU89uguq/GP+QuZC2L9l7XrDls/XdIPep+QXOf3CRpafu
-         TgSV7oFrBrp2fUR3Z9vqwBGlcfO3ZZxNIZCIry7x7JNlZmoLpwr/bxEk4/KpXZJjSwKJ
-         XTBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUE4Dbbfnfx9wYnmervN7kJ/8HFcD2cFY7+pgbalrKE9TvC17vF3IYc+SQ0kHOriAvO4p6egD9pneOAMbY=@vger.kernel.org, AJvYcCVLm+sjteRQI4mvRWqem2BV/gqSv20fMp4XNGGapRX3VV6kbg7LdvhY//v8WkCBRsIUL53neL5o0iRGMxCLvnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf/HeCB7xTEFy5Y7mZWjdfUjd2jGN3YmwVDAX/D0yjRWZGbzoW
-	mVZ4AGzPckRSpVfEER4B6y8Hy5MI2zUKjTbI62jHcRHcv2t2wQ8+j+oElLS0O/yVwow88Ci2t1/
-	J/1grAVf6mSJ5yX6RU0fO7HZNSm0=
-X-Gm-Gg: ASbGncs/go273TW/EqwNnTfrrFgD84K4/R0Z7vb+odzDQxT2ZR3Lid9Hz8jZ8V4QpN8
-	qyw5O9wuoWsjsFeiju/+OhC2By/XsrximLFcD2uuD+Q/pDsTmBGPiUPYeJ2XRG91ex3Fp8Hb8m8
-	QTVFEZDOVEHCvPsuUpuyjHXg==
-X-Google-Smtp-Source: AGHT+IFnZkMiz7gm785M26PmoO1U++D0GLVdIxG/BJXcTd15QPowgI2xJoKOCOrCVFa6pMFdGyp9GSVgsdVND+88ARw=
-X-Received: by 2002:a17:903:2a88:b0:223:28a8:610b with SMTP id
- d9443c01a7336-22dbf740e51mr84157215ad.14.1745928663902; Tue, 29 Apr 2025
- 05:11:03 -0700 (PDT)
+	s=arc-20240116; t=1745928719; c=relaxed/simple;
+	bh=V/Ie+ZwTST3Gao5+19A/LCA6skSpyushVizMP3n59hg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lP5POrziLtUHxb0JhrsUxJlClg/7oIGWdQehNRbUAXeZbRb12ozBtD0pGINREyljoDOSvtJwFogexOeMIRcktRJ5fTiTW9j2XWH86bknP8HLJtWbpF+1DOS6zDlnSxevmFq/w2rehK3r30rPb+uHVdPORo0BAtjZDSaKxF/SCV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VtxfA8w1; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=FCDaB
+	JfvI36gqhZRVHJX8XImVX7IwQoIXehlt+PgFmI=; b=VtxfA8w1/u9AKunanELhV
+	ShH81ap/U24Cd9ILWNbisnH29NaW9Sma6gYHa9iM3QBCRkpW8viANp0PhGUDCGqX
+	0KLWvQEv4UAxg9M8bHB2xPpYz20o7MbGl0q8NSNjw0xEFfhT0fHkzU8yEXW0vnR3
+	by973SQuXaWX4jFp2gtK9Q=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCHUkXjwRBoU_m0DA--.22532S2;
+	Tue, 29 Apr 2025 20:11:17 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	bhelgaas@google.com,
+	jingoohan1@gmail.com,
+	manivannan.sadhasivam@linaro.org
+Cc: cassel@kernel.org,
+	robh@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v2 0/3] Standardize link status check to return bool
+Date: Tue, 29 Apr 2025 20:11:06 +0800
+Message-Id: <20250429121109.16864-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-rust-of-populate-v2-1-0ad329d121c5@beagleboard.org>
-In-Reply-To: <20250429-rust-of-populate-v2-1-0ad329d121c5@beagleboard.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 29 Apr 2025 14:10:51 +0200
-X-Gm-Features: ATxdqUFSP3hAwaq7OiNlYETkDcEGRBn-sNeCxUzPcMDK7fwPyqS4nAob7jv1aw0
-Message-ID: <CANiq72nkPW3oG8bzxV_=dqNFTDAiMr+viRE9ttG8P1d3Ug7vzg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: kernel: device: Add devm_of_platform_populate/depopulate
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Jason Kridner <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>, 
-	Robert Nelson <robertcnelson@beagleboard.org>, Dhruva Gole <d-gole@ti.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHUkXjwRBoU_m0DA--.22532S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFWDAw1UZFW8Jr43Aw43ZFb_yoW8Zr15pa
+	45tayxAF1rtF4Y9F1Yq3WDCa4Yq3ZrAasrK393Wa4fXFy3uFWUXr15GFySqasrJrW0qr17
+	KF15t3W7GFs3JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zEna9cUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwQ+o2gQwOccoAAAs1
 
-On Tue, Apr 29, 2025 at 1:41=E2=80=AFPM Ayush Singh <ayush@beagleboard.org>=
- wrote:
->
-> +    /// Populate platform_devices from device tree data
-> +    pub fn devm_of_platform_populate(&self) -> crate::error::Result<()> =
-{
-> +        // SAFETY: self is valid bound Device reference
+1. PCI: dwc: Standardize link status check to return bool.
+2. PCI: mobiveil: Refactor link status check.
+3. PCI: cadence: Simplify j721e link status check.
 
-If you import the prelude, then you could use just `Result`. Also,
-please try to follow the style of the rest of the code, e.g. use
-Markdown in both comments and documentation and finish sentences with
-a period.
+---
+Changes for v2:
+- Remove the return of some functions (!!) .
+- Patches 2/3 and 3/3 have not been modified.
 
-Thanks!
+Based on the following branch:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dw-rockchip
+---
 
-Cheers,
-Miguel
+Hans Zhang (3):
+  PCI: dwc: Standardize link status check to return bool
+  PCI: mobiveil: Refactor link status check
+  PCI: cadence: Simplify j721e link status check
+
+ drivers/pci/controller/cadence/pci-j721e.c             | 6 +-----
+ drivers/pci/controller/dwc/pci-dra7xx.c                | 4 ++--
+ drivers/pci/controller/dwc/pci-exynos.c                | 4 ++--
+ drivers/pci/controller/dwc/pci-keystone.c              | 5 ++---
+ drivers/pci/controller/dwc/pci-meson.c                 | 6 +++---
+ drivers/pci/controller/dwc/pcie-armada8k.c             | 6 +++---
+ drivers/pci/controller/dwc/pcie-designware.c           | 2 +-
+ drivers/pci/controller/dwc/pcie-designware.h           | 4 ++--
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c          | 2 +-
+ drivers/pci/controller/dwc/pcie-histb.c                | 9 +++------
+ drivers/pci/controller/dwc/pcie-keembay.c              | 2 +-
+ drivers/pci/controller/dwc/pcie-kirin.c                | 7 ++-----
+ drivers/pci/controller/dwc/pcie-qcom-ep.c              | 2 +-
+ drivers/pci/controller/dwc/pcie-qcom.c                 | 4 ++--
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c            | 2 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c            | 7 ++-----
+ drivers/pci/controller/dwc/pcie-tegra194.c             | 4 ++--
+ drivers/pci/controller/dwc/pcie-uniphier.c             | 2 +-
+ drivers/pci/controller/dwc/pcie-visconti.c             | 4 ++--
+ drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 9 ++-------
+ drivers/pci/controller/mobiveil/pcie-mobiveil.h        | 2 +-
+ 21 files changed, 37 insertions(+), 56 deletions(-)
+
+
+base-commit: 286ed198b899739862456f451eda884558526a9d
+-- 
+2.25.1
+
 
