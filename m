@@ -1,203 +1,238 @@
-Return-Path: <linux-kernel+bounces-624699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543ECAA0684
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:03:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DEBAA067A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D04E188FD69
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2127B14D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD3D2BCF6E;
-	Tue, 29 Apr 2025 09:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2877229DB81;
+	Tue, 29 Apr 2025 09:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zE6Qk84l"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKMLxt3g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080A82BD5BF;
-	Tue, 29 Apr 2025 09:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745917271; cv=fail; b=F3mW1AOL2EA9ELG6sSwIEnWezyfg3LbemV20pQ+20LQRwMyrrD6G0XqaBms/Jw8Yv8+szckvRHE9T/QB3Od0Xa4xbKCAgp8f3EATkz//AUXY+byxSSwCAyimPvXuIefW9NxPcJcRwduQA5tH5ZgENKhqRu18B6+SzO9DDXoM9yQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745917271; c=relaxed/simple;
-	bh=GckNKdDr9Kvx7WEKG0XK/HTkOyd5f6moDbvdfeCqREc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qCPg7C1hJGxfGiY4L6m1IMZ7zvI9hKnPJRPJze133a7qAzPEWXX7Ngngf3uWW1inG6dJ+RspNDgKTtGK9QxdfblYgLNwt2DTh037m3U0evONHgXqMWmBR4wxmWOoHvRPXQn5fSgiiiYwhPiD6P0fLvWTRaJkZzK6SmP7750wWLw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zE6Qk84l; arc=fail smtp.client-ip=40.107.93.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IyD0DaJrVMpfj8EEKqnVoQe3lgldPgR40n1L4ljwCgNEH6nRMgGkgFTbOFnEi/OMHgnixuZaDPvhE+MZ1FwS9mIIruwETAahgmd2jDsy02cyy19gIEaZwJQ5zKJJ3/OhVpg0ub0RycUVHo/5cFAdwtsBcLijTJKu9iPH7B7EiGZhrn6SjPvTbXF4zu7AQN4sF2tF3fqgtD5SxNes3ea1HcJUX3CP09s6qkJ/+0/ABEZ5rCmYmzRxCNFZeNYySFIDbFDJSjn31tkeCMz+5o/SO5HoCpzgVxlZoRbFswpKI4rPr06hxPGBlw/BONfEYivJ6WdL0BjkezOke6/Z0zX5Lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N7nMRYTKe2AM33GuS7VMEbv1ayq+5Ia243eZXkrSAy0=;
- b=YF2CoI8zwQv3wQ9sPkI9MuQBBZPN4TdPF7nsrysiICCgcTLxhPq0g0F5+OIYg8NpXJReawiUZ7azO+zNxX3pqWHYNJw2JCqMJt/6UbpJzP0jyJmNULykSZYkRsuVARLgGJ71rzoHyzezr8iMXm9lFngYyfseHjsbCiw1R0cwi92GaTy5+JVkjIh5QqK50PuUCsY9Jk6NIurh9rsmuxcguWreFObaRWb0eXEQYvu7tBVaOJcUCvFTDHNfEIbk86CEaJ2MhHNIkdbXL+OxkhuFk9ABq9C6vWxumsozPsXaOqiHCVAsXBAcmxl+dBEGuIWG7UGz/al/yGRsRtMne3raAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N7nMRYTKe2AM33GuS7VMEbv1ayq+5Ia243eZXkrSAy0=;
- b=zE6Qk84lFDKeSgdS2/2h+/K5pURzGPoW8Q89im7bH+nL024I6m2WcaLan/H/L1Awh4RS527T8Qm3PsMD2+Qi8UFeL8XsByS0smFUM3Pb5rti9IOtRHrCVvpf1p4d18aeccJghe6q69+4G59RWZX15AEgpVIO7NyrTv2RRTL2UwA=
-Received: from BLAPR03CA0172.namprd03.prod.outlook.com (2603:10b6:208:32f::12)
- by IA0PR12MB8328.namprd12.prod.outlook.com (2603:10b6:208:3dd::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.29; Tue, 29 Apr
- 2025 09:01:05 +0000
-Received: from BN2PEPF000044A1.namprd02.prod.outlook.com
- (2603:10b6:208:32f:cafe::25) by BLAPR03CA0172.outlook.office365.com
- (2603:10b6:208:32f::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.40 via Frontend Transport; Tue,
- 29 Apr 2025 09:01:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000044A1.mail.protection.outlook.com (10.167.243.152) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8699.20 via Frontend Transport; Tue, 29 Apr 2025 09:01:05 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Apr
- 2025 04:01:04 -0500
-Received: from xhdlc201955.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 29 Apr 2025 04:01:00 -0500
-From: Sai Krishna Musham <sai.krishna.musham@amd.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <cassel@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
-	<bharat.kumar.gogada@amd.com>, <thippeswamy.havalige@amd.com>,
-	<sai.krishna.musham@amd.com>
-Subject: [PATCH v2 2/2] PCI: amd-mdb: Add support for PCIe RP PERST# signal handling
-Date: Tue, 29 Apr 2025 14:30:46 +0530
-Message-ID: <20250429090046.1512000-3-sai.krishna.musham@amd.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20250429090046.1512000-1-sai.krishna.musham@amd.com>
-References: <20250429090046.1512000-1-sai.krishna.musham@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3EC22A7EA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745917256; cv=none; b=KSQj6OQ5nXlyxZ0Zgrreu8Tnk8Wpzi0p21A10H6xrrih3sk+T6JiUxareIuw3C/AN2pBerfJmavA5wF+SiY2VmiXUxTCTsr+h45fd2b9yWX7U0dx7nuVOFk8yLQZAcUBXHbc9GskFk4+NSndg9UUWCWBgUa5a8jIC7tO8wCqxs4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745917256; c=relaxed/simple;
+	bh=WmDkklVX0n6c5Sf9WXGX/saBkZRthPM5qFFF2hWXnAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ecass3EhpOvckCNdBvAr8qG5TpV3jEBDrQRuM2QB1hqRUyk2NLqgnLDpxbfCfO5Dwbjbl53lzpi/FqGkc2tr5t/u1tLlqobLf3L2TdAq4LxORlE5EAI08ZshL7VybWzlS+66jFLdY2E+DdTzcgl5pLTCI6Sv7UWll+w5IjjCmMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKMLxt3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887A6C4CEE3;
+	Tue, 29 Apr 2025 09:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745917255;
+	bh=WmDkklVX0n6c5Sf9WXGX/saBkZRthPM5qFFF2hWXnAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oKMLxt3guip2uuqX65oh55j5gqp8qGQenthu2QNHbxJx3g7C8fY4EeLkZH+CKdBN7
+	 j4No5cHK/LfNTpBycUEYKINFFveKaJVH/5rAve+TDYaBdMCOCp/qZ9oZnm6+p+swoS
+	 stPcS58kXN4SgAp4NjSEIG6hUwxppwcxLw/oWqmW3O3wHRjSKEAXLVjD4BVL43eRl0
+	 6gBmafl+7gKET9NLGgicX9Tn5CHdfmUR4dx6IfwN9eKj9CI7AL4bSfjfI6kHfDmNMh
+	 XzS46YDYE8ww2bV1jQllldYOr1sPJwGge/PZz5LOX7aKB3g0juBSlnVYMdaf05M9/r
+	 yZ11j6w6d+bfw==
+Date: Tue, 29 Apr 2025 11:00:53 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+Message-ID: <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
+References: <20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com>
+ <20250331-b4-panel-refcounting-v4-2-dad50c60c6c9@redhat.com>
+ <87y0vkw8ll.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: sai.krishna.musham@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A1:EE_|IA0PR12MB8328:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11affb38-426d-490c-f023-08dd86fc5ffc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7qX6NF4O2hS3PqYgJ1MG7u9ZyNLQwDNghDMv+zXwo9d7ccyv8gn3AaMD8NXJ?=
- =?us-ascii?Q?5E6GBJDwgVAQPKmHKIBN9xpzoMymSfftT9RzYbmUDQHPc/3gKdDYhmWuJl0w?=
- =?us-ascii?Q?jbwgbYoo0VLGl8DNXkjZMRUGvUL9J5SVAOmtWBobvoaR75U4p9RN+2WhvP1X?=
- =?us-ascii?Q?jWA3KbBRSDkMvM7uKYMYp82aJySjGZo68hLnteuGMwe6z/TPWp8SLoV0Xy/A?=
- =?us-ascii?Q?hI/KaB649ecg3ggOi51Xn2yqnBg+sYHRLjRRYtxc0VNZ647LDfCNUBrX/JpO?=
- =?us-ascii?Q?Sm33Q6cY0FYjwB3lX1OohTgQkbpNM2gyuPZe6zU1YswKqlTHFnuIiPGrag0H?=
- =?us-ascii?Q?aWbIz3g+Tka9ZNzVlJSwcHgiF7W1DfsWZuzItmmtF//YwzBk0nzHj14XYVDH?=
- =?us-ascii?Q?STbAumwy92BX0ZASU5P7g01itH07Nb1naXUxJEHqOwzPK5ItvxJZoIZDg5mq?=
- =?us-ascii?Q?QoQVkZ7wJRch89b0d8cMcSZoGVg7Rph2QBalNJoX00aoIqt7XELBJ0slyXIk?=
- =?us-ascii?Q?+ZHl9/aLfdig3oPRKdB7T94CBFqppD7343+llQuISKVropVDhpoLk1JyAb6p?=
- =?us-ascii?Q?wk8P/8mGzd72gEL8Z/1tf4OzhLg4CRi8pgoM5h3RJ761p+UCs235KGbh8NMA?=
- =?us-ascii?Q?Ux8u4C5EZAX/XXH63GC3XPB1GxbwhUYMvEYlvoygZnPz57lv7Lgh2bFLkFgF?=
- =?us-ascii?Q?yR2aAlLVdjRs+57xMGBezLMODkDB5spRtev0FRuM4vrtkt2d51xYETFrjvrf?=
- =?us-ascii?Q?URYZVlXvgwTjhWxES43RQCT7OvKSN+oDcqzj9hlOS5UnMMwabUV4sOFs8Zm0?=
- =?us-ascii?Q?3q1VHjaNb9rxzWh/8dQ81xWzxwOjrfUCK3P++nRzRFh+NVkPicZBa3QGjiiB?=
- =?us-ascii?Q?oUQm19Cx0/76OUJkiAnNCRV+kgka1mO7GMNt6edSYhU5LfqKhhYuLTzAn5YC?=
- =?us-ascii?Q?kC0ma9cbWVFji1mclUMULPlEga5i4SdUEd5U9W2p6PQp1rvfVIl5llJzUp0M?=
- =?us-ascii?Q?jHMKDVKU01Wck1IVm9paRJJZiVkPdSBEOcoW5NcZ7X1KvAj7OudUcGjM1m+9?=
- =?us-ascii?Q?6o9Oo/SMZdg3pMU2SSrcfcV57DaNLDlZ+HigqtbcopLsUSxnwMjq1ZguuFKB?=
- =?us-ascii?Q?OphvrF47qUbOMoomdcRLWIdu5woh2G312dX21wPkAzBf2cqmTlUyByNM2VqY?=
- =?us-ascii?Q?ynEAAG50QjbGCKFBYuPRW1ubnLp0FGheFqFyoVui+1PA7uh3myQUEhAIghLr?=
- =?us-ascii?Q?VuBDdkgJ/YhBTc8W0oNUfEr5DMBsCtM4kfQ8iRlQgRBcUleZGuIN1M5UMf+B?=
- =?us-ascii?Q?TtNznkHJprV6Ho9GghSyKNi0KW094MrbHi6MNz0CtINwHoLQDT4OIWa+eiyR?=
- =?us-ascii?Q?UTRkdry/SBNR8XChL7XQYddstrfh2+0IRE4Yubxyp4smaCyo/PHJqrzRSpzb?=
- =?us-ascii?Q?ozWeQNAE7WFt00NeVRHJJzIYNHCW09zbdt+6orlejtOk1HkVcb0icydJHARB?=
- =?us-ascii?Q?KZudERQYYHuR9eyeUkYYuEIXB1ZDg3aVknKF?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 09:01:05.6342
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11affb38-426d-490c-f023-08dd86fc5ffc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8328
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ngzh5a5h63dgkx3v"
+Content-Disposition: inline
+In-Reply-To: <87y0vkw8ll.fsf@intel.com>
 
-Add GPIO based PERST# signal handling for AMD Versal Gen 2 MDB
-PCIe Root Port.
 
-Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
----
-Changes in v2:
-- Change delay to PCIE_T_PVPERL_MS
----
- drivers/pci/controller/dwc/pcie-amd-mdb.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+--ngzh5a5h63dgkx3v
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+MIME-Version: 1.0
 
-diff --git a/drivers/pci/controller/dwc/pcie-amd-mdb.c b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-index 4eb2a4e8189d..763265e86db5 100644
---- a/drivers/pci/controller/dwc/pcie-amd-mdb.c
-+++ b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-@@ -18,6 +18,7 @@
- #include <linux/resource.h>
- #include <linux/types.h>
- 
-+#include "../../pci.h"
- #include "pcie-designware.h"
- 
- #define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
-@@ -408,6 +409,7 @@ static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
- 	struct dw_pcie *pci = &pcie->pci;
- 	struct dw_pcie_rp *pp = &pci->pp;
- 	struct device *dev = &pdev->dev;
-+	struct gpio_desc *reset_gpio;
- 	int err;
- 
- 	pcie->slcr = devm_platform_ioremap_resource_byname(pdev, "slcr");
-@@ -426,6 +428,20 @@ static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
- 
- 	pp->ops = &amd_mdb_pcie_host_ops;
- 
-+	/* Request the GPIO for PCIe reset signal and assert */
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-+				     "Failed to request reset GPIO\n");
-+
-+	if (reset_gpio) {
-+		mdelay(PCIE_T_PVPERL_MS);
-+
-+		/* Deassert the reset signal */
-+		gpiod_set_value_cansleep(reset_gpio, 0);
-+		mdelay(PCIE_T_RRS_READY_MS);
-+	}
-+
- 	err = dw_pcie_host_init(pp);
- 	if (err) {
- 		dev_err(dev, "Failed to initialize host, err=%d\n", err);
--- 
-2.44.1
+Hi Jani,
 
+On Mon, Apr 28, 2025 at 07:31:50PM +0300, Jani Nikula wrote:
+> On Mon, 31 Mar 2025, Anusha Srivatsa <asrivats@redhat.com> wrote:
+> > Allocate panel via reference counting. Add _get() and _put() helper
+> > functions to ensure panel allocations are refcounted. Avoid use after
+> > free by ensuring panel pointer is valid and can be usable till the last
+> > reference is put.
+> >
+> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> >
+> > ---
+> > v4: Add refcounting documentation in this patch (Maxime)
+> >
+> > v3: Add include in this patch (Luca)
+> >
+> > v2: Export drm_panel_put/get() (Maxime)
+> > - Change commit log with better workding (Luca, Maxime)
+> > - Change drm_panel_put() to return void (Luca)
+> > - Code Cleanups - add return in documentation, replace bridge to
+> > panel (Luca)
+> > ---
+> >  drivers/gpu/drm/drm_panel.c | 64 +++++++++++++++++++++++++++++++++++++=
++++++++-
+> >  include/drm/drm_panel.h     | 19 ++++++++++++++
+> >  2 files changed, 82 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> > index bdeab5710ee324dc1742fbc77582250960556308..7b17531d85a4dc303170991=
+9564d2e4d8332f748 100644
+> > --- a/drivers/gpu/drm/drm_panel.c
+> > +++ b/drivers/gpu/drm/drm_panel.c
+> > @@ -355,24 +355,86 @@ struct drm_panel *of_drm_find_panel(const struct =
+device_node *np)
+> >  }
+> >  EXPORT_SYMBOL(of_drm_find_panel);
+> > =20
+> > +static void __drm_panel_free(struct kref *kref)
+> > +{
+> > +	struct drm_panel *panel =3D container_of(kref, struct drm_panel, refc=
+ount);
+> > +
+> > +	kfree(panel->container);
+> > +}
+> > +
+> > +/**
+> > + * drm_panel_get - Acquire a panel reference
+> > + * @panel: DRM panel
+> > + *
+> > + * This function increments the panel's refcount.
+> > + * Returns:
+> > + * Pointer to @panel
+> > + */
+> > +struct drm_panel *drm_panel_get(struct drm_panel *panel)
+> > +{
+> > +	if (!panel)
+> > +		return panel;
+> > +
+> > +	kref_get(&panel->refcount);
+> > +
+> > +	return panel;
+> > +}
+> > +EXPORT_SYMBOL(drm_panel_get);
+> > +
+> > +/**
+> > + * drm_panel_put - Release a panel reference
+> > + * @panel: DRM panel
+> > + *
+> > + * This function decrements the panel's reference count and frees the
+> > + * object if the reference count drops to zero.
+> > + */
+> > +void drm_panel_put(struct drm_panel *panel)
+> > +{
+> > +	if (panel)
+> > +		kref_put(&panel->refcount, __drm_panel_free);
+> > +}
+> > +EXPORT_SYMBOL(drm_panel_put);
+> > +
+> > +/**
+> > + * drm_panel_put_void - wrapper to drm_panel_put() taking a void point=
+er
+> > + *
+> > + * @data: pointer to @struct drm_panel, cast to a void pointer
+> > + *
+> > + * Wrapper of drm_panel_put() to be used when a function taking a void
+> > + * pointer is needed, for example as a devm action.
+> > + */
+> > +static void drm_panel_put_void(void *data)
+> > +{
+> > +	struct drm_panel *panel =3D (struct drm_panel *)data;
+> > +
+> > +	drm_panel_put(panel);
+> > +}
+> > +
+> >  void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t o=
+ffset,
+> >  			     const struct drm_panel_funcs *funcs,
+> >  			     int connector_type)
+> >  {
+> >  	void *container;
+> >  	struct drm_panel *panel;
+> > +	int err;
+> > =20
+> >  	if (!funcs) {
+> >  		dev_warn(dev, "Missing funcs pointer\n");
+> >  		return ERR_PTR(-EINVAL);
+> >  	}
+> > =20
+> > -	container =3D devm_kzalloc(dev, size, GFP_KERNEL);
+> > +	container =3D kzalloc(size, GFP_KERNEL);
+> >  	if (!container)
+> >  		return ERR_PTR(-ENOMEM);
+> > =20
+> >  	panel =3D container + offset;
+> > +	panel->container =3D container;
+> >  	panel->funcs =3D funcs;
+> > +	kref_init(&panel->refcount);
+>=20
+> Hi Anusha, this should be done in drm_panel_init() instead.
+>
+> There are many users of drm_panel that don't use devm_drm_panel_alloc()
+> but allocate separately, and call drm_panel_init() only.
+
+That wouldn't really work, because then drivers would have allocated the
+panel with devm_kzalloc and thus the structure would be freed when the
+device is removed, no matter the reference counting state.
+
+> They'll all have refcount set to 0 instead of 1 like kref_init() does.
+>=20
+> This means all subsequent get/put pairs on such panels will lead to
+> __drm_panel_free() being called! But through a lucky coincidence, that
+> will be a nop because panel->container is also not initialized...
+>=20
+> I'm sorry to say, the drm refcounting interface is quite broken for such
+> use cases.
+
+The plan is to convert all panel drivers to that function, and Anusha
+already sent series to do. It still needs a bit of work, but it should
+land soon-ish.
+
+For the transitional period though, it's not clear to me what you think
+is broken at the moment, and / or what should be fixed.
+
+Would you prefer an explicit check on container not being 0, with a
+comment?
+
+Maxime
+
+--ngzh5a5h63dgkx3v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaBCVQAAKCRAnX84Zoj2+
+dlcyAYCLuYsYcSdc9dAOHTQk8MikEMnbO5BDgHiHrjAVnO3r3ut6hDDT2xkOq5jD
+VEFQDJUBgM7QSkS+kyu4+sK/D1Up5XXZm221iSF4xBdNY+1p4V2UacWKP0+iKa5T
+ITyHBMOVvQ==
+=2qUE
+-----END PGP SIGNATURE-----
+
+--ngzh5a5h63dgkx3v--
 
