@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-624459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFF2AA03D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:56:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93358AA03D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4475A1A84B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81FD1A83D44
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDAF276027;
-	Tue, 29 Apr 2025 06:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CB1276048;
+	Tue, 29 Apr 2025 06:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2JWA+rR6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vJQo7D06"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VeKO/AHP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8CthQKMc"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B128278170
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243561E515
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745909700; cv=none; b=rCJT/7zvhN2lRgDI1rfveoOLLWDJ/4nsQV78sGwSuG7rEgUrfpIc9i/6wsZEB2xC5WATcSZezhgB0Yn5BaaE6GGtRPYz0N2UyXE5AGe3IF/k7Rx0TVSyQgDsLhV/Y0i/gIagtUO5jpnc9hm9BpSmQNtKjnB7VLak9q5oL5RqqOY=
+	t=1745909695; cv=none; b=ubd+B5Fn/cbN9Bkjrg93B1jV530cuuGhqaPxeUFOmFhQ9hAqOlqhWIWa/Z8o9tAbHEEgY30YJpokyiX2HTmtx6WI9JSfe0IOxx4UEZzTQRUJmrIQ3+dmxvwJucp920uoRTTMO78ffuNAut83FMumFgTF7SIn4dfoALwjmmk3Q20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745909700; c=relaxed/simple;
-	bh=BWVRW9YA5cTKoCcGVsxNlU8n1clFrzbVU2pWay4GD/k=;
+	s=arc-20240116; t=1745909695; c=relaxed/simple;
+	bh=AvMfWLvTTNlSaZzhYJRzJ22Y5akNCKwEDl/ms22zTVU=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=JZoMWDGMr9vbIZlctWHnfzkj7ZQTXqFCMr3/9tulqw3svYuyRxajsVMqFiQB85Edcl++IEtAVS+g1UruZhcRPSnvU/tVf/T0IsZwcmEwFMkwzhdJK92CuorDl+FMMS5HMQVDsn8A0QQoxeUBOLfVcKmhIJlmq4mVSoSh9ljU2pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2JWA+rR6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vJQo7D06; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=XcZ6+n+DJDjbEUlxZMOQLNfZfJ4s/PKXZRzVcppuYrreUorvaHkquwqxW1J/fBVjx2LgUQOZHKiEK5diXtZPAZQM7K8zSfX6Cd4XCjCx+p/1KlIT2hh1k4z01320thVuxLhNDKLv7pbfqj+mDQ3OxjY+A1p4lphM7y2Od/qIpZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VeKO/AHP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8CthQKMc; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250429065420.061659985@linutronix.de>
+Message-ID: <20250429065420.125439431@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745909697;
+	s=2020; t=1745909691;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=8wB5bfUxsIJlccvcP/91E0ttQd1d4YLJbnfb/Vr+Klg=;
-	b=2JWA+rR6h2drRLE6gM2WioHseeMQH6z76rUbb0urwyKCKCXAqEw5i60PgSIB3kov2p/jnm
-	Bwuiw89TR9gznCbjuXNZhOKZJAOxusKSk4R3hDNPlXczge/wyq44x2f5W198EFP/RLgj3k
-	UXZlou2hjnyrFx/PAdmgf9cczgaFA0KsLCrc4TmnkyvAA/LpOcI/r8ZucTEJMlop2FDbVb
-	yDatqQCaq0G+/DFRTN+n0+rFoJeSw9XrJjlcMeTmJ0MzSc9WeXo7RCTyTf7G7qwy7S0cDb
-	xAfMBaB1+EK2Zh84HyWzMM6M/KXM0MnjQdIdlnglR8co72U+tP6hhPDaOB8tMQ==
+	 references:references; bh=dzosJNCvmzKIX9RdmCBoR9wrniXmPjUK+yULOxcvuuE=;
+	b=VeKO/AHPNroIZTKJ5iP49KHuGZDccYESayyG87yQrtH0RH76kREPD9E82VFb4Wt4E2QyPE
+	7xJmWpKVTkAKwocyw34yq0g/e5of6zwqK7ZJbRz6y0+kqO4Rdidmk3bKE3Kj7njU00/bbX
+	L8/UIBe/Jglv5PmDIZN2FFNuPtO1E1Rrusa4aVSE5oxhHbTesPKd4jYIXsFqdcFzjdXcTW
+	rj09ioYHN4IwsIbAEtzAYdKKXMlx9hQ70x4YVuOsT1XqvpaBse2sRsFf3ubVXPiU4rB4Ju
+	RHwYuC1bGdrt7NfQp86fNFUXNr/7E4u08U1e2DRx0gsAkdlFj3nbCUbXeQWkNg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745909697;
+	s=2020e; t=1745909691;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=8wB5bfUxsIJlccvcP/91E0ttQd1d4YLJbnfb/Vr+Klg=;
-	b=vJQo7D06i+KPtlm2WvIAiPfPgVXz0jAyK2OXY+GSmu6nxxCubkWaGgIiAwqSr2bBwbSesH
-	mEWawn8Qx0Ut/5Ag==
+	 references:references; bh=dzosJNCvmzKIX9RdmCBoR9wrniXmPjUK+yULOxcvuuE=;
+	b=8CthQKMcLK7Pt9tLeSJfrWQluJfOf2GiwZAEr7PJNCiGoRdq+3iyW5Z2bGS4y62nyrfoJz
+	mXVT6Dui6fU/P2Bg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jiri Slaby <jirislaby@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Subject: [patch V2 01/45] genirq: Provide conditional lock guards
+Subject: [patch V2 02/45] genirq/irqdesc: Switch to lock guards
 References: <20250429065337.117370076@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,81 +62,278 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Apr 2025 08:54:49 +0200 (CEST)
+Date: Tue, 29 Apr 2025 08:54:50 +0200 (CEST)
 
-The interrupt core code has an ever repeating pattern:
+Replace all lock/unlock pairs with lock guards and simplify the code flow.
 
-    unsigned long flags;
-    struct irq_desc *desc = irq_get_desc_[bus]lock(irq, &flags, mode);
-
-    if (!desc)
-       return -EINVAL;
-    ....
-    irq_put_desc_[bus]unlock(desc, flags);
-
-That requires gotos in failure paths and just creates visual clutter.
-
-Provide lock guards, which allow to simplify the code.
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiri Slaby <jirislaby@kernel.org>
 
 ---
- kernel/irq/internals.h |   35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+ kernel/irq/irqdesc.c |  127 +++++++++++++++++----------------------------------
+ 1 file changed, 43 insertions(+), 84 deletions(-)
 
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -141,6 +141,10 @@ extern int irq_setup_affinity(struct irq
- static inline int irq_setup_affinity(struct irq_desc *desc) { return 0; }
- #endif
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -246,8 +246,7 @@ static struct kobject *irq_kobj_base;
+ #define IRQ_ATTR_RO(_name) \
+ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
  
-+
-+#define for_each_action_of_desc(desc, act)			\
-+	for (act = desc->action; act; act = act->next)
-+
- /* Inline functions for support of irq chips on slow busses */
- static inline void chip_bus_lock(struct irq_desc *desc)
+-static ssize_t per_cpu_count_show(struct kobject *kobj,
+-				  struct kobj_attribute *attr, char *buf)
++static ssize_t per_cpu_count_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
  {
-@@ -160,14 +164,33 @@ static inline void chip_bus_sync_unlock(
- #define IRQ_GET_DESC_CHECK_GLOBAL	(_IRQ_DESC_CHECK)
- #define IRQ_GET_DESC_CHECK_PERCPU	(_IRQ_DESC_CHECK | _IRQ_DESC_PERCPU)
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+ 	ssize_t ret = 0;
+@@ -266,99 +265,75 @@ static ssize_t per_cpu_count_show(struct
+ }
+ IRQ_ATTR_RO(per_cpu_count);
  
--#define for_each_action_of_desc(desc, act)			\
--	for (act = desc->action; act; act = act->next)
+-static ssize_t chip_name_show(struct kobject *kobj,
+-			      struct kobj_attribute *attr, char *buf)
++static ssize_t chip_name_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+-	ssize_t ret = 0;
+ 
+-	raw_spin_lock_irq(&desc->lock);
++	guard(raw_spinlock_irq)(&desc->lock);
+ 	if (desc->irq_data.chip && desc->irq_data.chip->name)
+-		ret = sysfs_emit(buf, "%s\n", desc->irq_data.chip->name);
+-	raw_spin_unlock_irq(&desc->lock);
 -
--struct irq_desc *
--__irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus,
--		    unsigned int check);
-+struct irq_desc *__irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus,
-+				     unsigned int check);
- void __irq_put_desc_unlock(struct irq_desc *desc, unsigned long flags, bool bus);
+-	return ret;
++		return sysfs_emit(buf, "%s\n", desc->irq_data.chip->name);
++	return 0;
+ }
+ IRQ_ATTR_RO(chip_name);
  
-+__DEFINE_CLASS_IS_CONDITIONAL(irqdesc_lock, true);
-+__DEFINE_UNLOCK_GUARD(irqdesc_lock, struct irq_desc,
-+		      __irq_put_desc_unlock(_T->lock, _T->flags, _T->bus),
-+		      unsigned long flags; bool bus);
-+
-+static inline class_irqdesc_lock_t class_irqdesc_lock_constructor(unsigned int irq, bool bus,
-+								  unsigned int check)
-+{
-+	class_irqdesc_lock_t _t = {
-+		.bus	= bus,
-+		.lock	= __irq_get_desc_lock(irq, &_t.flags, bus, check),
-+	};
-+	return _t;
-+}
-+
-+#define scoped_irqdesc_get_and_lock(_irq, _check)		\
-+	scoped_guard(irqdesc_lock, _irq, false, _check)
-+
-+#define scoped_irqdesc_get_and_buslock(_irq, _check)		\
-+	scoped_guard(irqdesc_lock, _irq, true, _check)
-+
-+#define scoped_irqdesc		((struct irq_desc *)(__guard_ptr(irqdesc_lock)(&scope)))
-+
- static inline struct irq_desc *
- irq_get_desc_buslock(unsigned int irq, unsigned long *flags, unsigned int check)
+-static ssize_t hwirq_show(struct kobject *kobj,
+-			  struct kobj_attribute *attr, char *buf)
++static ssize_t hwirq_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
  {
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+-	ssize_t ret = 0;
+ 
++	guard(raw_spinlock_irq)(&desc->lock);
+ 	raw_spin_lock_irq(&desc->lock);
+ 	if (desc->irq_data.domain)
+-		ret = sysfs_emit(buf, "%lu\n", desc->irq_data.hwirq);
+-	raw_spin_unlock_irq(&desc->lock);
+-
+-	return ret;
++		return sysfs_emit(buf, "%lu\n", desc->irq_data.hwirq);
++	return 0;
+ }
+ IRQ_ATTR_RO(hwirq);
+ 
+-static ssize_t type_show(struct kobject *kobj,
+-			 struct kobj_attribute *attr, char *buf)
++static ssize_t type_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+-	ssize_t ret = 0;
+-
+-	raw_spin_lock_irq(&desc->lock);
+-	ret = sysfs_emit(buf, "%s\n", irqd_is_level_type(&desc->irq_data) ? "level" : "edge");
+-	raw_spin_unlock_irq(&desc->lock);
+ 
+-	return ret;
++	guard(raw_spinlock_irq)(&desc->lock);
++	return sysfs_emit(buf, "%s\n", irqd_is_level_type(&desc->irq_data) ? "level" : "edge");
+ 
+ }
+ IRQ_ATTR_RO(type);
+ 
+-static ssize_t wakeup_show(struct kobject *kobj,
+-			   struct kobj_attribute *attr, char *buf)
++static ssize_t wakeup_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+-	ssize_t ret = 0;
+-
+-	raw_spin_lock_irq(&desc->lock);
+-	ret = sysfs_emit(buf, "%s\n", str_enabled_disabled(irqd_is_wakeup_set(&desc->irq_data)));
+-	raw_spin_unlock_irq(&desc->lock);
+-
+-	return ret;
+ 
++	guard(raw_spinlock_irq)(&desc->lock);
++	return sysfs_emit(buf, "%s\n", str_enabled_disabled(irqd_is_wakeup_set(&desc->irq_data)));
+ }
+ IRQ_ATTR_RO(wakeup);
+ 
+-static ssize_t name_show(struct kobject *kobj,
+-			 struct kobj_attribute *attr, char *buf)
++static ssize_t name_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+-	ssize_t ret = 0;
+ 
+-	raw_spin_lock_irq(&desc->lock);
++	guard(raw_spinlock_irq)(&desc->lock);
+ 	if (desc->name)
+-		ret = sysfs_emit(buf, "%s\n", desc->name);
+-	raw_spin_unlock_irq(&desc->lock);
+-
+-	return ret;
++		return sysfs_emit(buf, "%s\n", desc->name);
++	return 0;
+ }
+ IRQ_ATTR_RO(name);
+ 
+-static ssize_t actions_show(struct kobject *kobj,
+-			    struct kobj_attribute *attr, char *buf)
++static ssize_t actions_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+ 	struct irq_desc *desc = container_of(kobj, struct irq_desc, kobj);
+ 	struct irqaction *action;
+ 	ssize_t ret = 0;
+ 	char *p = "";
+ 
+-	raw_spin_lock_irq(&desc->lock);
+-	for_each_action_of_desc(desc, action) {
+-		ret += sysfs_emit_at(buf, ret, "%s%s", p, action->name);
+-		p = ",";
++	scoped_guard(raw_spinlock_irq, &desc->lock) {
++		for_each_action_of_desc(desc, action) {
++			ret += sysfs_emit_at(buf, ret, "%s%s", p, action->name);
++			p = ",";
++		}
+ 	}
+-	raw_spin_unlock_irq(&desc->lock);
+ 
+ 	if (ret)
+ 		ret += sysfs_emit_at(buf, ret, "\n");
+-
+ 	return ret;
+ }
+ IRQ_ATTR_RO(actions);
+@@ -414,19 +389,14 @@ static int __init irq_sysfs_init(void)
+ 	int irq;
+ 
+ 	/* Prevent concurrent irq alloc/free */
+-	irq_lock_sparse();
+-
++	guard(mutex)(&sparse_irq_lock);
+ 	irq_kobj_base = kobject_create_and_add("irq", kernel_kobj);
+-	if (!irq_kobj_base) {
+-		irq_unlock_sparse();
++	if (!irq_kobj_base)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* Add the already allocated interrupts */
+ 	for_each_irq_desc(irq, desc)
+ 		irq_sysfs_add(irq, desc);
+-	irq_unlock_sparse();
+-
+ 	return 0;
+ }
+ postcore_initcall(irq_sysfs_init);
+@@ -569,12 +539,12 @@ static int alloc_descs(unsigned int star
+ 	return -ENOMEM;
+ }
+ 
+-static int irq_expand_nr_irqs(unsigned int nr)
++static bool irq_expand_nr_irqs(unsigned int nr)
+ {
+ 	if (nr > MAX_SPARSE_IRQS)
+-		return -ENOMEM;
++		return false;
+ 	nr_irqs = nr;
+-	return 0;
++	return true;
+ }
+ 
+ int __init early_irq_init(void)
+@@ -652,11 +622,9 @@ EXPORT_SYMBOL(irq_to_desc);
+ static void free_desc(unsigned int irq)
+ {
+ 	struct irq_desc *desc = irq_to_desc(irq);
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&desc->lock, flags);
+-	desc_set_defaults(irq, desc, irq_desc_get_node(desc), NULL, NULL);
+-	raw_spin_unlock_irqrestore(&desc->lock, flags);
++	scoped_guard(raw_spinlock_irqsave, &desc->lock)
++		desc_set_defaults(irq, desc, irq_desc_get_node(desc), NULL, NULL);
+ 	delete_irq_desc(irq);
+ }
+ 
+@@ -677,14 +645,13 @@ static inline int alloc_descs(unsigned i
+ 
+ static int irq_expand_nr_irqs(unsigned int nr)
+ {
+-	return -ENOMEM;
++	return false;
+ }
+ 
+ void irq_mark_irq(unsigned int irq)
+ {
+-	mutex_lock(&sparse_irq_lock);
++	guard(mutex)(&sparse_irq_lock);
+ 	irq_insert_desc(irq, irq_desc + irq);
+-	mutex_unlock(&sparse_irq_lock);
+ }
+ 
+ #ifdef CONFIG_GENERIC_IRQ_LEGACY
+@@ -823,11 +790,9 @@ void irq_free_descs(unsigned int from, u
+ 	if (from >= nr_irqs || (from + cnt) > nr_irqs)
+ 		return;
+ 
+-	mutex_lock(&sparse_irq_lock);
++	guard(mutex)(&sparse_irq_lock);
+ 	for (i = 0; i < cnt; i++)
+ 		free_desc(from + i);
+-
+-	mutex_unlock(&sparse_irq_lock);
+ }
+ EXPORT_SYMBOL_GPL(irq_free_descs);
+ 
+@@ -844,11 +809,10 @@ EXPORT_SYMBOL_GPL(irq_free_descs);
+  *
+  * Returns the first irq number or error code
+  */
+-int __ref
+-__irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
+-		  struct module *owner, const struct irq_affinity_desc *affinity)
++int __ref __irq_alloc_descs(int irq, unsigned int from, unsigned int cnt, int node,
++			    struct module *owner, const struct irq_affinity_desc *affinity)
+ {
+-	int start, ret;
++	int start;
+ 
+ 	if (!cnt)
+ 		return -EINVAL;
+@@ -866,22 +830,17 @@ int __ref
+ 		from = arch_dynirq_lower_bound(from);
+ 	}
+ 
+-	mutex_lock(&sparse_irq_lock);
++	guard(mutex)(&sparse_irq_lock);
+ 
+ 	start = irq_find_free_area(from, cnt);
+-	ret = -EEXIST;
+ 	if (irq >=0 && start != irq)
+-		goto unlock;
++		return -EEXIST;
+ 
+ 	if (start + cnt > nr_irqs) {
+-		ret = irq_expand_nr_irqs(start + cnt);
+-		if (ret)
+-			goto unlock;
++		if (!irq_expand_nr_irqs(start + cnt))
++			return -ENOMEM;
+ 	}
+-	ret = alloc_descs(start, cnt, node, affinity, owner);
+-unlock:
+-	mutex_unlock(&sparse_irq_lock);
+-	return ret;
++	return alloc_descs(start, cnt, node, affinity, owner);
+ }
+ EXPORT_SYMBOL_GPL(__irq_alloc_descs);
+ 
 
 
