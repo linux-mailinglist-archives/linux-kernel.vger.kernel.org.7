@@ -1,212 +1,347 @@
-Return-Path: <linux-kernel+bounces-625152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C8CAA0D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:33:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F133BAA0D70
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE88174EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F813AC4AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DF42D029B;
-	Tue, 29 Apr 2025 13:33:18 +0000 (UTC)
-Received: from smtp.uniroma2.it (smtp.uniroma2.it [160.80.4.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827A52D027F;
+	Tue, 29 Apr 2025 13:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RJCVeCeL"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5090284A35;
-	Tue, 29 Apr 2025 13:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.80.4.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE9442C;
+	Tue, 29 Apr 2025 13:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745933598; cv=none; b=nNbuSPbQvIntdqruFyXzJmrLWhg/Az6BAdI+yxr5uab/ow09o2O3VouP4bRG8fQeZJ6b4apVX4neVZy8v8vgCfzE4pDVTA28uE2W3tp011C8fpvN7bQrRz7m29/Gj0s+dnixoOyD29gSdlKWq/8m9XDvgcqpuvuZvTZMZ9eu+vM=
+	t=1745933177; cv=none; b=sd1oDFvwBnuVMuztXbaaKGaaxY5dW17u6NgKhNCzmYrK4pkDf4hYysTApfmEjv5jQQfl/isP0D/EbxG0qxzXb25SNri/lCpLIeySpQTvpgIi/6dc6OSAroiaNDjgJeFnIh2RTjgi55SVwXRAZEbSQY93fXYSTQN3UqxBmo6i79o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745933598; c=relaxed/simple;
-	bh=dhfOGYE/ifFpnk7DyKqjBVByUrNA1ms2k80mmNiL4Mw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cuYhryYh1PGbvQJHemRmDuiIRLevySOsr9V2xLmzFlt7eA9U8DGebUjuAnSManF8+Dgvazodj55ELFnFOsj69rAcCYGuJg+Soc6yO1ea0qtW0m08S1SSSEI5Y04EW45RkA6ZEp0WC9tgSIaVvL0gRxokYBV/aBXsd1i94pGNIjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniroma2.it; spf=pass smtp.mailfrom=uniroma2.it; arc=none smtp.client-ip=160.80.4.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniroma2.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniroma2.it
-Received: from localhost.localdomain ([160.80.103.126])
-	by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 53TDPMc6009034
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 29 Apr 2025 15:25:23 +0200
-From: Andrea Mayer <andrea.mayer@uniroma2.it>
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
-        Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc: Stefano Salsano <stefano.salsano@uniroma2.it>,
-        Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
-        Ahmed Abdelsalam <ahabdels.dev@gmail.com>,
-        Andrea Mayer <andrea.mayer@uniroma2.it>
-Subject: [net-next] ipv6: sr: switch to GFP_ATOMIC flag to allocate memory during seg6local LWT setup
-Date: Tue, 29 Apr 2025 15:24:53 +0200
-Message-Id: <20250429132453.31605-1-andrea.mayer@uniroma2.it>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1745933177; c=relaxed/simple;
+	bh=WqkAevnq1qIHx5UgfotpwNCiOEt7kjRpESqmPILC7pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1ooIVSOpaHFmRcYutA7US+OpcUWKtciTqsyUfKZYxbAgonauXotpiZWb4Rgl3US5vwyWvdEGfOhKFBS9iRngH9ESsB+bs/a2Fa+WTEsK/MyimGe//XG2NjZGNVtiMvQriXVMoUBs4mUN+E5myO7RXJLwybHD0ia4o/GpVXohhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RJCVeCeL; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EDF9E40E0219;
+	Tue, 29 Apr 2025 13:26:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id DHONXOjktnEZ; Tue, 29 Apr 2025 13:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1745933165; bh=Fir+epn6yfQ3pe4y7dsEdSkkFAODV1gWds5t0ksNP2w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RJCVeCeLpYM5RKB9fpHF8+qeO5UmK7yvHPg8gKuV44c82sHVN8Va5I5vmsfXEXh0G
+	 bKHaEQcEqzJbifwq31HdeFCV4VRx4d+M2YayT11V/AIfURHV1PNXib2IVk1H4URmbG
+	 dQdJ0qQh1c1n0S3Tn3TuNTKU8q11tnLQpWjXCMOEfw76vgndG4ZHCR48TcmNEORmKM
+	 xQdsLluKuFMr27WxSPe9f/+mvqb1yMJJ9ygzHwKLFkyAbtdS+oA53UhCMWPEOl8Egh
+	 PyyXon1csd4aK/ovMvaTelW2OcQvhHB7AEbkTL9xEdc8XmpFHmHBoMu8d+IbJ0doWs
+	 8Bh0mTx70GfY2sbG9qVOJZR/AkaAxdcBZsCLn8ZyJVfu5efkSmOhV5B39vXdN8VWkN
+	 +gL6jt46kFWRkJcKDtjzi0w6Hs8/YQJII0+mPo1IWQQuvXWsmkKUCPeU2KEnxPeyQf
+	 9SFuZF7NJJ0U27TStaLgC8huIv9H1hyBzCjcNldWnB6YQvkoM8m5QLgn9/c4VqXTJd
+	 KE/UIz1OzE2dDB6PE3K79LyZ7eqInNwt0VkI2qXZuKtDVmOaK8udnfxUREU9SvX1If
+	 LtClkAhwMgKoLl3xmaWRSyqLv1dHI0loU23oOYS2RlklNfcuqCjBhjse9TBF5N36Ew
+	 KYDco4HkyqqnTTr8RSHbotMc=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3FD6D40E0173;
+	Tue, 29 Apr 2025 13:25:52 +0000 (UTC)
+Date: Tue, 29 Apr 2025 15:25:46 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Patrick Bellasi <derkling@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Patrick Bellasi <derkling@matbug.net>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Kaplan <David.Kaplan@amd.com>,
+	Michael Larabel <Michael@michaellarabel.com>
+Subject: Re: x86/bugs: KVM: Add support for SRSO_MSR_FIX, back for moar
+Message-ID: <20250429132546.GAaBDTWqOsWX8alox2@fat_crate.local>
+References: <20250213142815.GBZ64Bf3zPIay9nGza@fat_crate.local>
+ <20250213175057.3108031-1-derkling@google.com>
+ <20250214201005.GBZ6-jHUff99tmkyBK@fat_crate.local>
+ <20250215125307.GBZ7COM-AkyaF8bNiC@fat_crate.local>
+ <Z7LQX3j5Gfi8aps8@Asmaa.>
+ <20250217160728.GFZ7NewJHpMaWdiX2M@fat_crate.local>
+ <Z7OUZhyPHNtZvwGJ@Asmaa.>
+ <20250217202048.GIZ7OaIOWLH9Y05U-D@fat_crate.local>
+ <f16941c6a33969a373a0a92733631dc578585c93@linux.dev>
+ <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local>
 
-Recent updates to the locking mechanism that protects IPv6 routing tables
-[1] have affected the SRv6 networking subsystem. Such changes cause
-problems with some SRv6 Endpoints behaviors, like End.B6.Encaps and also
-impact SRv6 counters.
+On Tue, Feb 18, 2025 at 12:13:33PM +0100, Borislav Petkov wrote:
+> So,
+> 
+> in the interest of finally making some progress here I'd like to commit this
+> below (will test it one more time just in case but it should work :-P). It is
+> simple and straight-forward and doesn't need an IBPB when the bit gets
+> cleared.
+> 
+> A potential future improvement is David's suggestion that there could be a way
+> for tracking when the first guest gets started, we set the bit then, we make
+> sure the bit gets set on each logical CPU when the guests migrate across the
+> machine and when the *last* guest exists, that bit gets cleared again.
 
-Starting from commit 169fd62799e8 ("ipv6: Get rid of RTNL for SIOCADDRT and
-RTM_NEWROUTE."), the inet6_rtm_newroute() function no longer needs to
-acquire the RTNL lock for creating and configuring IPv6 routes and set up
-lwtunnels.
-The RTNL lock can be avoided because the ip6_route_add() function
-finishes setting up a new route in a section protected by RCU.
-This makes sure that no dev/nexthops can disappear during the operation.
-Because of this, the steps for setting up lwtunnels - i.e., calling
-lwtunnel_build_state() - are now done in a RCU lock section and not
-under the RTNL lock anymore.
+Well, that "simplicity" was short-lived:
 
-However, creating and configuring a lwtunnel instance in an
-RCU-protected section can be problematic when that tunnel needs to
-allocate memory using the GFP_KERNEL flag.
-For example, the following trace shows what happens when an SRv6
-End.B6.Encaps behavior is instantiated after commit 169fd62799e8 ("ipv6:
-Get rid of RTNL for SIOCADDRT and RTM_NEWROUTE."):
+https://www.phoronix.com/review/linux-615-amd-regression
 
-[ 3061.219696] BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
-[ 3061.226136] in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 445, name: ip
-[ 3061.232101] preempt_count: 0, expected: 0
-[ 3061.235414] RCU nest depth: 1, expected: 0
-[ 3061.238622] 1 lock held by ip/445:
-[ 3061.241458]  #0: ffffffff83ec64a0 (rcu_read_lock){....}-{1:3}, at: ip6_route_add+0x41/0x1e0
-[ 3061.248520] CPU: 1 UID: 0 PID: 445 Comm: ip Not tainted 6.15.0-rc3-micro-vm-dev-00590-ge527e891492d #2058 PREEMPT(full)
-[ 3061.248532] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[ 3061.248549] Call Trace:
-[ 3061.248620]  <TASK>
-[ 3061.248633]  dump_stack_lvl+0xa9/0xc0
-[ 3061.248846]  __might_resched+0x218/0x360
-[ 3061.248871]  __kmalloc_node_track_caller_noprof+0x332/0x4e0
-[ 3061.248889]  ? rcu_is_watching+0x3a/0x70
-[ 3061.248902]  ? parse_nla_srh+0x56/0xa0
-[ 3061.248938]  kmemdup_noprof+0x1c/0x40
-[ 3061.248952]  parse_nla_srh+0x56/0xa0
-[ 3061.248969]  seg6_local_build_state+0x2e0/0x580
-[ 3061.248992]  ? __lock_acquire+0xaff/0x1cd0
-[ 3061.249013]  ? do_raw_spin_lock+0x111/0x1d0
-[ 3061.249027]  ? __pfx_seg6_local_build_state+0x10/0x10
-[ 3061.249068]  ? lwtunnel_build_state+0xe1/0x3a0
-[ 3061.249274]  lwtunnel_build_state+0x10d/0x3a0
-[ 3061.249303]  fib_nh_common_init+0xce/0x1e0
-[ 3061.249337]  ? __pfx_fib_nh_common_init+0x10/0x10
-[ 3061.249352]  ? in6_dev_get+0xaf/0x1f0
-[ 3061.249369]  ? __rcu_read_unlock+0x64/0x2e0
-[ 3061.249392]  fib6_nh_init+0x290/0xc30
-[ 3061.249422]  ? __pfx_fib6_nh_init+0x10/0x10
-[ 3061.249447]  ? __lock_acquire+0xaff/0x1cd0
-[ 3061.249459]  ? _raw_spin_unlock_irqrestore+0x22/0x70
-[ 3061.249624]  ? ip6_route_info_create+0x423/0x520
-[ 3061.249641]  ? rcu_is_watching+0x3a/0x70
-[ 3061.249683]  ip6_route_info_create_nh+0x190/0x390
-[ 3061.249715]  ip6_route_add+0x71/0x1e0
-[ 3061.249730]  ? __pfx_inet6_rtm_newroute+0x10/0x10
-[ 3061.249743]  inet6_rtm_newroute+0x426/0xc50
-[ 3061.249764]  ? avc_has_perm_noaudit+0x13d/0x360
-[ 3061.249853]  ? __pfx_inet6_rtm_newroute+0x10/0x10
-[ 3061.249905]  ? __lock_acquire+0xaff/0x1cd0
-[ 3061.249962]  ? rtnetlink_rcv_msg+0x52f/0x890
-[ 3061.249996]  ? __pfx_inet6_rtm_newroute+0x10/0x10
-[ 3061.250012]  rtnetlink_rcv_msg+0x551/0x890
-[ 3061.250040]  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
-[ 3061.250065]  ? __lock_acquire+0xaff/0x1cd0
-[ 3061.250092]  netlink_rcv_skb+0xbd/0x1f0
-[ 3061.250108]  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
-[ 3061.250124]  ? __pfx_netlink_rcv_skb+0x10/0x10
-[ 3061.250179]  ? netlink_deliver_tap+0x10b/0x700
-[ 3061.250210]  netlink_unicast+0x2e7/0x410
-[ 3061.250232]  ? __pfx_netlink_unicast+0x10/0x10
-[ 3061.250241]  ? __lock_acquire+0xaff/0x1cd0
-[ 3061.250280]  netlink_sendmsg+0x366/0x670
-[ 3061.250306]  ? __pfx_netlink_sendmsg+0x10/0x10
-[ 3061.250313]  ? find_held_lock+0x2d/0xa0
-[ 3061.250344]  ? import_ubuf+0xbc/0xf0
-[ 3061.250370]  ? __pfx_netlink_sendmsg+0x10/0x10
-[ 3061.250381]  __sock_sendmsg+0x13e/0x150
-[ 3061.250420]  ____sys_sendmsg+0x33d/0x450
-[ 3061.250442]  ? __pfx_____sys_sendmsg+0x10/0x10
-[ 3061.250453]  ? __pfx_copy_msghdr_from_user+0x10/0x10
-[ 3061.250489]  ? __pfx_slab_free_after_rcu_debug+0x10/0x10
-[ 3061.250514]  ___sys_sendmsg+0xe5/0x160
-[ 3061.250530]  ? __pfx____sys_sendmsg+0x10/0x10
-[ 3061.250568]  ? __lock_acquire+0xaff/0x1cd0
-[ 3061.250617]  ? find_held_lock+0x2d/0xa0
-[ 3061.250678]  ? __virt_addr_valid+0x199/0x340
-[ 3061.250704]  ? preempt_count_sub+0xf/0xc0
-[ 3061.250736]  __sys_sendmsg+0xca/0x140
-[ 3061.250750]  ? __pfx___sys_sendmsg+0x10/0x10
-[ 3061.250786]  ? syscall_exit_to_user_mode+0xa2/0x1e0
-[ 3061.250825]  do_syscall_64+0x62/0x140
-[ 3061.250844]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[ 3061.250855] RIP: 0033:0x7f0b042ef914
-[ 3061.250868] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b5 0f 1f 80 00 00 00 00 48 8d 05 e9 5d 0c 00 8b 00 85 c0 75 13 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 41 54 41 89 d4 55 48 89 f5 53
-[ 3061.250876] RSP: 002b:00007ffc2d113ef8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[ 3061.250885] RAX: ffffffffffffffda RBX: 00000000680f93fa RCX: 00007f0b042ef914
-[ 3061.250891] RDX: 0000000000000000 RSI: 00007ffc2d113f60 RDI: 0000000000000003
-[ 3061.250897] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000008
-[ 3061.250902] R10: fffffffffffff26d R11: 0000000000000246 R12: 0000000000000001
-[ 3061.250907] R13: 000055a961f8a520 R14: 000055a961f63eae R15: 00007ffc2d115270
-[ 3061.250952]  </TASK>
+Sean, how about this below?
 
-To solve this issue, we replace the GFP_KERNEL flag with the GFP_ATOMIC
-one in those SRv6 Endpoints that need to allocate memory during the
-setup phase. This change makes sure that memory allocations are handled
-in a way that works with RCU critical sections.
+It is hacky and RFC-ish - i.e., don't look too hard at it - but basically
+I'm pushing down into arch code the decision whether to enable virt on load.
 
-[1] - https://lore.kernel.org/all/20250418000443.43734-1-kuniyu@amazon.com/
+And it has no effects on anything else but machines which have this
+SRSO_MSR_FIX (Zen5).
 
-Fixes: 169fd62799e8 ("ipv6: Get rid of RTNL for SIOCADDRT and RTM_NEWROUTE.")
-Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+And it seems to work here - the MSR is set only when I create a VM - i.e., as
+expected.
+
+Thoughts? Better ideas?
+
+Thx.
+
 ---
- net/ipv6/seg6_local.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/seg6_local.c b/net/ipv6/seg6_local.c
-index ac1dbd492c22..ee5e448cc7a8 100644
---- a/net/ipv6/seg6_local.c
-+++ b/net/ipv6/seg6_local.c
-@@ -1671,7 +1671,7 @@ static int parse_nla_srh(struct nlattr **attrs, struct seg6_local_lwt *slwt,
- 	if (!seg6_validate_srh(srh, len, false))
- 		return -EINVAL;
+diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+index 823c0434bbad..6cc8698df1a5 100644
+--- a/arch/x86/include/asm/kvm-x86-ops.h
++++ b/arch/x86/include/asm/kvm-x86-ops.h
+@@ -16,6 +16,7 @@ BUILD_BUG_ON(1)
+ KVM_X86_OP(check_processor_compatibility)
+ KVM_X86_OP(enable_virtualization_cpu)
+ KVM_X86_OP(disable_virtualization_cpu)
++KVM_X86_OP_OPTIONAL(enable_virt_on_load)
+ KVM_X86_OP(hardware_unsetup)
+ KVM_X86_OP(has_emulated_msr)
+ KVM_X86_OP(vcpu_after_set_cpuid)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 3131abcac4f1..c1a29d7fee45 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1664,6 +1664,7 @@ struct kvm_x86_ops {
  
--	slwt->srh = kmemdup(srh, len, GFP_KERNEL);
-+	slwt->srh = kmemdup(srh, len, GFP_ATOMIC);
- 	if (!slwt->srh)
- 		return -ENOMEM;
+ 	int (*enable_virtualization_cpu)(void);
+ 	void (*disable_virtualization_cpu)(void);
++	bool (*enable_virt_on_load)(void);
+ 	cpu_emergency_virt_cb *emergency_disable_virtualization_cpu;
  
-@@ -1911,7 +1911,7 @@ static int parse_nla_bpf(struct nlattr **attrs, struct seg6_local_lwt *slwt,
- 	if (!tb[SEG6_LOCAL_BPF_PROG] || !tb[SEG6_LOCAL_BPF_PROG_NAME])
- 		return -EINVAL;
+ 	void (*hardware_unsetup)(void);
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 67657b3a36ce..dcbba55cb949 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -693,6 +693,16 @@ static int svm_enable_virtualization_cpu(void)
+ 	return 0;
+ }
  
--	slwt->bpf.name = nla_memdup(tb[SEG6_LOCAL_BPF_PROG_NAME], GFP_KERNEL);
-+	slwt->bpf.name = nla_memdup(tb[SEG6_LOCAL_BPF_PROG_NAME], GFP_ATOMIC);
- 	if (!slwt->bpf.name)
- 		return -ENOMEM;
++static bool svm_enable_virt_on_load(void)
++{
++	bool ret = true;
++
++	if (cpu_feature_enabled(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
++		ret = false;
++
++	return ret;
++}
++
+ static void svm_cpu_uninit(int cpu)
+ {
+ 	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
+@@ -5082,6 +5092,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+ 	.hardware_unsetup = svm_hardware_unsetup,
+ 	.enable_virtualization_cpu = svm_enable_virtualization_cpu,
+ 	.disable_virtualization_cpu = svm_disable_virtualization_cpu,
++	.enable_virt_on_load = svm_enable_virt_on_load,
+ 	.emergency_disable_virtualization_cpu = svm_emergency_disable_virtualization_cpu,
+ 	.has_emulated_msr = svm_has_emulated_msr,
  
-@@ -1994,7 +1994,7 @@ static int parse_nla_counters(struct nlattr **attrs,
- 		return -EINVAL;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 4c6553985e75..a09dc8cbd59f 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -12576,9 +12576,15 @@ void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector)
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_sipi_vector);
  
- 	/* counters are always zero initialized */
--	pcounters = seg6_local_alloc_pcpu_counters(GFP_KERNEL);
-+	pcounters = seg6_local_alloc_pcpu_counters(GFP_ATOMIC);
- 	if (!pcounters)
- 		return -ENOMEM;
+-void kvm_arch_enable_virtualization(void)
++bool kvm_arch_enable_virtualization(bool allow_arch_override)
+ {
++	if (allow_arch_override)
++		if (!kvm_x86_call(enable_virt_on_load)())
++			return false;
++
+ 	cpu_emergency_register_virt_callback(kvm_x86_ops.emergency_disable_virtualization_cpu);
++
++	return true;
+ }
  
+ void kvm_arch_disable_virtualization(void)
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 291d49b9bf05..4353ef54d45d 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1599,7 +1599,7 @@ static inline void kvm_create_vcpu_debugfs(struct kvm_vcpu *vcpu) {}
+  * kvm_usage_count, i.e. at the beginning of the generic hardware enabling
+  * sequence, and at the end of the generic hardware disabling sequence.
+  */
+-void kvm_arch_enable_virtualization(void);
++bool kvm_arch_enable_virtualization(bool);
+ void kvm_arch_disable_virtualization(void);
+ /*
+  * kvm_arch_{enable,disable}_virtualization_cpu() are called on "every" CPU to
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index e85b33a92624..0009661dee1d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -143,8 +143,8 @@ static int kvm_no_compat_open(struct inode *inode, struct file *file)
+ #define KVM_COMPAT(c)	.compat_ioctl	= kvm_no_compat_ioctl,	\
+ 			.open		= kvm_no_compat_open
+ #endif
+-static int kvm_enable_virtualization(void);
+-static void kvm_disable_virtualization(void);
++static int kvm_enable_virtualization(bool allow_arch_override);
++static void kvm_disable_virtualization(bool allow_arch_override);
+ 
+ static void kvm_io_bus_destroy(struct kvm_io_bus *bus);
+ 
+@@ -1187,7 +1187,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 	if (r)
+ 		goto out_err_no_arch_destroy_vm;
+ 
+-	r = kvm_enable_virtualization();
++	r = kvm_enable_virtualization(false);
+ 	if (r)
+ 		goto out_err_no_disable;
+ 
+@@ -1224,7 +1224,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 		mmu_notifier_unregister(&kvm->mmu_notifier, current->mm);
+ #endif
+ out_err_no_mmu_notifier:
+-	kvm_disable_virtualization();
++	kvm_disable_virtualization(false);
+ out_err_no_disable:
+ 	kvm_arch_destroy_vm(kvm);
+ out_err_no_arch_destroy_vm:
+@@ -1320,7 +1320,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+ #endif
+ 	kvm_arch_free_vm(kvm);
+ 	preempt_notifier_dec();
+-	kvm_disable_virtualization();
++	kvm_disable_virtualization(false);
+ 	mmdrop(mm);
+ }
+ 
+@@ -5489,9 +5489,9 @@ static DEFINE_PER_CPU(bool, virtualization_enabled);
+ static DEFINE_MUTEX(kvm_usage_lock);
+ static int kvm_usage_count;
+ 
+-__weak void kvm_arch_enable_virtualization(void)
++__weak bool kvm_arch_enable_virtualization(bool)
+ {
+-
++	return false;
+ }
+ 
+ __weak void kvm_arch_disable_virtualization(void)
+@@ -5589,8 +5589,9 @@ static struct syscore_ops kvm_syscore_ops = {
+ 	.shutdown = kvm_shutdown,
+ };
+ 
+-static int kvm_enable_virtualization(void)
++static int kvm_enable_virtualization(bool allow_arch_override)
+ {
++	bool do_init;
+ 	int r;
+ 
+ 	guard(mutex)(&kvm_usage_lock);
+@@ -5598,7 +5599,9 @@ static int kvm_enable_virtualization(void)
+ 	if (kvm_usage_count++)
+ 		return 0;
+ 
+-	kvm_arch_enable_virtualization();
++	do_init = kvm_arch_enable_virtualization(allow_arch_override);
++	if (!do_init)
++		goto out;
+ 
+ 	r = cpuhp_setup_state(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
+ 			      kvm_online_cpu, kvm_offline_cpu);
+@@ -5631,11 +5634,13 @@ static int kvm_enable_virtualization(void)
+ 	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
+ err_cpuhp:
+ 	kvm_arch_disable_virtualization();
++
++out:
+ 	--kvm_usage_count;
+ 	return r;
+ }
+ 
+-static void kvm_disable_virtualization(void)
++static void kvm_disable_virtualization(bool allow_arch_override)
+ {
+ 	guard(mutex)(&kvm_usage_lock);
+ 
+@@ -5650,7 +5655,7 @@ static void kvm_disable_virtualization(void)
+ static int kvm_init_virtualization(void)
+ {
+ 	if (enable_virt_at_load)
+-		return kvm_enable_virtualization();
++		return kvm_enable_virtualization(true);
+ 
+ 	return 0;
+ }
+@@ -5658,10 +5663,10 @@ static int kvm_init_virtualization(void)
+ static void kvm_uninit_virtualization(void)
+ {
+ 	if (enable_virt_at_load)
+-		kvm_disable_virtualization();
++		kvm_disable_virtualization(true);
+ }
+ #else /* CONFIG_KVM_GENERIC_HARDWARE_ENABLING */
+-static int kvm_enable_virtualization(void)
++static int kvm_enable_virtualization(bool allow_arch_override)
+ {
+ 	return 0;
+ }
+@@ -5671,7 +5676,7 @@ static int kvm_init_virtualization(void)
+ 	return 0;
+ }
+ 
+-static void kvm_disable_virtualization(void)
++static void kvm_disable_virtualization(bool allow_arch_override)
+ {
+ 
+ }
+
+
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
