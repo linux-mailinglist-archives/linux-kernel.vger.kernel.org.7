@@ -1,238 +1,133 @@
-Return-Path: <linux-kernel+bounces-624695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DEBAA067A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FEFAA0682
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2127B14D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5594A189C63C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2877229DB81;
-	Tue, 29 Apr 2025 09:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKMLxt3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487302BD5B6;
+	Tue, 29 Apr 2025 09:01:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3EC22A7EA
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341D72BCF6D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745917256; cv=none; b=KSQj6OQ5nXlyxZ0Zgrreu8Tnk8Wpzi0p21A10H6xrrih3sk+T6JiUxareIuw3C/AN2pBerfJmavA5wF+SiY2VmiXUxTCTsr+h45fd2b9yWX7U0dx7nuVOFk8yLQZAcUBXHbc9GskFk4+NSndg9UUWCWBgUa5a8jIC7tO8wCqxs4=
+	t=1745917266; cv=none; b=XA2xsCIGclSZoEGaKazKpyflsUlz+0YjPs4Wt3yVWx+8ghe2UDyyhysX2XBjioZ4RLO7deYtoTY5UpYkkOCICx6w2yzkAcfPQqvivsQMuyX115OfNFKTxiffEPNZ9gTVgyQIxtqcWkpDmonMY2dIdoKXqd7tlbzsYiH6vkBpJO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745917256; c=relaxed/simple;
-	bh=WmDkklVX0n6c5Sf9WXGX/saBkZRthPM5qFFF2hWXnAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ecass3EhpOvckCNdBvAr8qG5TpV3jEBDrQRuM2QB1hqRUyk2NLqgnLDpxbfCfO5Dwbjbl53lzpi/FqGkc2tr5t/u1tLlqobLf3L2TdAq4LxORlE5EAI08ZshL7VybWzlS+66jFLdY2E+DdTzcgl5pLTCI6Sv7UWll+w5IjjCmMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKMLxt3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887A6C4CEE3;
-	Tue, 29 Apr 2025 09:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745917255;
-	bh=WmDkklVX0n6c5Sf9WXGX/saBkZRthPM5qFFF2hWXnAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oKMLxt3guip2uuqX65oh55j5gqp8qGQenthu2QNHbxJx3g7C8fY4EeLkZH+CKdBN7
-	 j4No5cHK/LfNTpBycUEYKINFFveKaJVH/5rAve+TDYaBdMCOCp/qZ9oZnm6+p+swoS
-	 stPcS58kXN4SgAp4NjSEIG6hUwxppwcxLw/oWqmW3O3wHRjSKEAXLVjD4BVL43eRl0
-	 6gBmafl+7gKET9NLGgicX9Tn5CHdfmUR4dx6IfwN9eKj9CI7AL4bSfjfI6kHfDmNMh
-	 XzS46YDYE8ww2bV1jQllldYOr1sPJwGge/PZz5LOX7aKB3g0juBSlnVYMdaf05M9/r
-	 yZ11j6w6d+bfw==
-Date: Tue, 29 Apr 2025 11:00:53 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Anusha Srivatsa <asrivats@redhat.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-Message-ID: <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
-References: <20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com>
- <20250331-b4-panel-refcounting-v4-2-dad50c60c6c9@redhat.com>
- <87y0vkw8ll.fsf@intel.com>
+	s=arc-20240116; t=1745917266; c=relaxed/simple;
+	bh=hiabI30mRZZ4MdJcsJi8SMGD5sfa+ucxvEPRBH/zqwM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=k5ZtFmc7WMgZTnrB9ctaiJ6e4ECITzrRb/Zakiuwx4KexpdUQ5BnqlqmtjzgoYHmpp9vNdmtENm646oTRxM7DRolnhhvmv/MQ6FIVzKhXw7J7cyXC/SmnXy5c8Mfg5dPdyM/cnXrUX4ZmJo/3hoc10k+FndvBot96T+BgfgKlb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85b402f69d4so558839739f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 02:01:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745917264; x=1746522064;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2lC+GUJOB/mLT9V86EV+PtfcC1K+rrVOrQZHYwtXgY=;
+        b=D6Up45q+PGltDUcRJncCCMCNFj9KG1M8HSzUUba8KdZSM0od2QjGs13WKpeKS1oSnI
+         u6tvRcLjoG/nwtDIGuDVMPnF+Jx+zfS6b9hG3yF5dy3ILiWtbdNDisUs+gqvlFRW9PFf
+         G4wF+yt9W/vi0/uvUZe2dbKWOxlcYtVWAuqysp54U0TS0vtQ4fd51VYSR6LECml11ARR
+         23W6Se7b6MLz8Q/KttRhykVjzqy5kJ6OtKetasioZFqh8HVmkyzYpMGRmkslqVm3KKfn
+         tKZuzaNZO9ZsC2VabQMbUEf696jF5ykEongQYDcdgsBgEDjIa6oUCXPb+J8mAzwHTQoN
+         fWdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPdLFi/5YRrx80SJbElX3mQHorvxqnj2QfDwdlZmSe8FC/nvlX12EhykPLylWkT0Dgh9/98XVWWDJ+3mM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYGjdJPwlTFT4vamPUyZxyEjtqX46p4vzhfBtmH/sWr2hwFtW
+	VOAXdgafecKowwbaeQ/mCh/umLLLxt90oJYEhpVhT0cwK6LAq3AhEqBHW7KZj830TmRNA95BOiQ
+	nkgTLKdS1REDNClEhjVFUg8R2svs2mKcjqIPbHLH/JAqp5P5zO8G3+uI=
+X-Google-Smtp-Source: AGHT+IFI/ihTqoFT04GJTHQXB2LR/lP+hUvXL7whIC+MXMoBW5uZXRy+q7Txv8rywiSrGjm5Ii/4BJnLm1M2N3g62RpprByLcgN5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ngzh5a5h63dgkx3v"
-Content-Disposition: inline
-In-Reply-To: <87y0vkw8ll.fsf@intel.com>
+X-Received: by 2002:a05:6602:1401:b0:864:48f7:56aa with SMTP id
+ ca18e2360f4ac-86467b0da7dmr1337945739f.7.1745917264273; Tue, 29 Apr 2025
+ 02:01:04 -0700 (PDT)
+Date: Tue, 29 Apr 2025 02:01:04 -0700
+In-Reply-To: <tencent_40C361A96683BE84519777576D06D0737D05@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68109550.050a0220.2b69d1.05ca.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+From: syzbot <syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+
+wlan1: Trigger new scan to find an IBSS to join
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:1208:5
+index 0 is out of range for type 'struct ieee80211_channel *[] __counted_by(n_channels)' (aka 'struct ieee80211_channel *[]')
+CPU: 0 UID: 0 PID: 1038 Comm: kworker/u4:7 Not tainted 6.15.0-rc4-syzkaller-gca91b9500108-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound cfg80211_wiphy_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:231
+ __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:453
+ ieee80211_request_ibss_scan+0x600/0x8b0 net/mac80211/scan.c:1208
+ ieee80211_sta_find_ibss net/mac80211/ibss.c:-1 [inline]
+ ieee80211_ibss_work+0xde7/0x1060 net/mac80211/ibss.c:1670
+ cfg80211_wiphy_work+0x2dc/0x460 net/wireless/core.c:435
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+---[ end trace ]---
+Kernel panic - not syncing: UBSAN: panic_on_warn set ...
+CPU: 0 UID: 0 PID: 1038 Comm: kworker/u4:7 Not tainted 6.15.0-rc4-syzkaller-gca91b9500108-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound cfg80211_wiphy_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x99/0x250 lib/dump_stack.c:120
+ panic+0x2db/0x790 kernel/panic.c:354
+ check_panic_on_warn+0x89/0xb0 kernel/panic.c:243
+ __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:453
+ ieee80211_request_ibss_scan+0x600/0x8b0 net/mac80211/scan.c:1208
+ ieee80211_sta_find_ibss net/mac80211/ibss.c:-1 [inline]
+ ieee80211_ibss_work+0xde7/0x1060 net/mac80211/ibss.c:1670
+ cfg80211_wiphy_work+0x2dc/0x460 net/wireless/core.c:435
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
---ngzh5a5h63dgkx3v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
-MIME-Version: 1.0
+Tested on:
 
-Hi Jani,
+commit:         ca91b950 Merge tag 'v6.15-rc4-ksmbd-server-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12847374580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714654674710be70
+dashboard link: https://syzkaller.appspot.com/bug?extid=4bcdddd48bb6f0be0da1
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10911374580000
 
-On Mon, Apr 28, 2025 at 07:31:50PM +0300, Jani Nikula wrote:
-> On Mon, 31 Mar 2025, Anusha Srivatsa <asrivats@redhat.com> wrote:
-> > Allocate panel via reference counting. Add _get() and _put() helper
-> > functions to ensure panel allocations are refcounted. Avoid use after
-> > free by ensuring panel pointer is valid and can be usable till the last
-> > reference is put.
-> >
-> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> >
-> > ---
-> > v4: Add refcounting documentation in this patch (Maxime)
-> >
-> > v3: Add include in this patch (Luca)
-> >
-> > v2: Export drm_panel_put/get() (Maxime)
-> > - Change commit log with better workding (Luca, Maxime)
-> > - Change drm_panel_put() to return void (Luca)
-> > - Code Cleanups - add return in documentation, replace bridge to
-> > panel (Luca)
-> > ---
-> >  drivers/gpu/drm/drm_panel.c | 64 +++++++++++++++++++++++++++++++++++++=
-+++++++-
-> >  include/drm/drm_panel.h     | 19 ++++++++++++++
-> >  2 files changed, 82 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> > index bdeab5710ee324dc1742fbc77582250960556308..7b17531d85a4dc303170991=
-9564d2e4d8332f748 100644
-> > --- a/drivers/gpu/drm/drm_panel.c
-> > +++ b/drivers/gpu/drm/drm_panel.c
-> > @@ -355,24 +355,86 @@ struct drm_panel *of_drm_find_panel(const struct =
-device_node *np)
-> >  }
-> >  EXPORT_SYMBOL(of_drm_find_panel);
-> > =20
-> > +static void __drm_panel_free(struct kref *kref)
-> > +{
-> > +	struct drm_panel *panel =3D container_of(kref, struct drm_panel, refc=
-ount);
-> > +
-> > +	kfree(panel->container);
-> > +}
-> > +
-> > +/**
-> > + * drm_panel_get - Acquire a panel reference
-> > + * @panel: DRM panel
-> > + *
-> > + * This function increments the panel's refcount.
-> > + * Returns:
-> > + * Pointer to @panel
-> > + */
-> > +struct drm_panel *drm_panel_get(struct drm_panel *panel)
-> > +{
-> > +	if (!panel)
-> > +		return panel;
-> > +
-> > +	kref_get(&panel->refcount);
-> > +
-> > +	return panel;
-> > +}
-> > +EXPORT_SYMBOL(drm_panel_get);
-> > +
-> > +/**
-> > + * drm_panel_put - Release a panel reference
-> > + * @panel: DRM panel
-> > + *
-> > + * This function decrements the panel's reference count and frees the
-> > + * object if the reference count drops to zero.
-> > + */
-> > +void drm_panel_put(struct drm_panel *panel)
-> > +{
-> > +	if (panel)
-> > +		kref_put(&panel->refcount, __drm_panel_free);
-> > +}
-> > +EXPORT_SYMBOL(drm_panel_put);
-> > +
-> > +/**
-> > + * drm_panel_put_void - wrapper to drm_panel_put() taking a void point=
-er
-> > + *
-> > + * @data: pointer to @struct drm_panel, cast to a void pointer
-> > + *
-> > + * Wrapper of drm_panel_put() to be used when a function taking a void
-> > + * pointer is needed, for example as a devm action.
-> > + */
-> > +static void drm_panel_put_void(void *data)
-> > +{
-> > +	struct drm_panel *panel =3D (struct drm_panel *)data;
-> > +
-> > +	drm_panel_put(panel);
-> > +}
-> > +
-> >  void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t o=
-ffset,
-> >  			     const struct drm_panel_funcs *funcs,
-> >  			     int connector_type)
-> >  {
-> >  	void *container;
-> >  	struct drm_panel *panel;
-> > +	int err;
-> > =20
-> >  	if (!funcs) {
-> >  		dev_warn(dev, "Missing funcs pointer\n");
-> >  		return ERR_PTR(-EINVAL);
-> >  	}
-> > =20
-> > -	container =3D devm_kzalloc(dev, size, GFP_KERNEL);
-> > +	container =3D kzalloc(size, GFP_KERNEL);
-> >  	if (!container)
-> >  		return ERR_PTR(-ENOMEM);
-> > =20
-> >  	panel =3D container + offset;
-> > +	panel->container =3D container;
-> >  	panel->funcs =3D funcs;
-> > +	kref_init(&panel->refcount);
->=20
-> Hi Anusha, this should be done in drm_panel_init() instead.
->
-> There are many users of drm_panel that don't use devm_drm_panel_alloc()
-> but allocate separately, and call drm_panel_init() only.
-
-That wouldn't really work, because then drivers would have allocated the
-panel with devm_kzalloc and thus the structure would be freed when the
-device is removed, no matter the reference counting state.
-
-> They'll all have refcount set to 0 instead of 1 like kref_init() does.
->=20
-> This means all subsequent get/put pairs on such panels will lead to
-> __drm_panel_free() being called! But through a lucky coincidence, that
-> will be a nop because panel->container is also not initialized...
->=20
-> I'm sorry to say, the drm refcounting interface is quite broken for such
-> use cases.
-
-The plan is to convert all panel drivers to that function, and Anusha
-already sent series to do. It still needs a bit of work, but it should
-land soon-ish.
-
-For the transitional period though, it's not clear to me what you think
-is broken at the moment, and / or what should be fixed.
-
-Would you prefer an explicit check on container not being 0, with a
-comment?
-
-Maxime
-
---ngzh5a5h63dgkx3v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaBCVQAAKCRAnX84Zoj2+
-dlcyAYCLuYsYcSdc9dAOHTQk8MikEMnbO5BDgHiHrjAVnO3r3ut6hDDT2xkOq5jD
-VEFQDJUBgM7QSkS+kyu4+sK/D1Up5XXZm221iSF4xBdNY+1p4V2UacWKP0+iKa5T
-ITyHBMOVvQ==
-=2qUE
------END PGP SIGNATURE-----
-
---ngzh5a5h63dgkx3v--
 
