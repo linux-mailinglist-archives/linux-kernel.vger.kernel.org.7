@@ -1,130 +1,93 @@
-Return-Path: <linux-kernel+bounces-624654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1617BAA05EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EDEAA0608
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB661B62895
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:40:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4454A0C1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAA328D850;
-	Tue, 29 Apr 2025 08:40:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D6A2741CC
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BB61A7262;
+	Tue, 29 Apr 2025 08:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="T6O9qygh"
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58452F56
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745916003; cv=none; b=Sf8InK0wjSwL/NNAD4tnCz7pMll1Ys9rSFDx9mMznLY1IdWsV3IVtI7JleFcfDQ8VfoR3wttwEPh0cyTPzSGduqf3pjToF6ouI4Pc15EmCgaFYYrGFgkQxFNaQONne3Or6bWKBnRO59GW1t7x0xmPEvThluVxfnbV6d8BoyJVfs=
+	t=1745916333; cv=none; b=kYbsFpUXVRQJagwUUa9mW6TIII2bftKoB+139XzV62GxOWEZUYPyAxAUzLoFfNOIx+xXMZDuJLJbaI3nMRHPWWOcyGcW/f21okTdqsBleLdvwv24wsqQENxdVRcFmtfxY25hCzHcxjry3gSOJveV/tQgnB/K3hVJlAHDSI5Olpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745916003; c=relaxed/simple;
-	bh=M1c6jlLbe4Ax87QcLh2zMwyAKz1WIbajcF4qOaYlfoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ncroVpXA2puGx43sTjDg8dZT1drWlmyxpqsfgeMeJq5eqyVVya+pxdOtdqvB53FK9yNk4XQTlh8dkLkYX4oyhGZ6PQMSEORxszSXre6psrGSHgwdQqbEtIW1h+pzGZUjsaQ+Gj5iHvlfAqXH3DzdhXt3DgODwc/ZV5EXHQFPKzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D69421515;
-	Tue, 29 Apr 2025 01:39:53 -0700 (PDT)
-Received: from [10.163.52.122] (unknown [10.163.52.122])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97EBB3F66E;
-	Tue, 29 Apr 2025 01:39:50 -0700 (PDT)
-Message-ID: <93411699-2e36-4a4e-bc3a-3efeb8e2260b@arm.com>
-Date: Tue, 29 Apr 2025 14:09:46 +0530
+	s=arc-20240116; t=1745916333; c=relaxed/simple;
+	bh=oRAa5mnOrowLtFslmNlY4yDQXQYBw9BfKvTiAtzpUMA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Kje7FrYOU/oOjt9uyeu9FxzCSzDlKT0m1+7m0t4jdfXsIYL0yq1i2RNpq/Kr7r6aPq9mCaFnKcTKrheeSeePMIjGTKE2XKw8X4kPhbEZOpOsKLbomvo+I3knIy1a788sYC9TBWDFqQet1W22h7f9WZUPIQp4CEBUiyW2Eajl1aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=T6O9qygh; arc=none smtp.client-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1745916026; bh=Ch1JB0gV+OI9f2n8oy7YDjOdh6rDxEJQw7f3tYeima8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=T6O9qyghZ4nVPjnXEFRMuQwj4TlV4xaUZtlcc1sllpBMJxr24K9Qk1JN8TJVBT+Qg
+	 rnKDCGa/7n1nuNtrMC531zCJCNb3lugqIwPVQmjtQ1b2cFGZDCAJleSIEOHbXdfLI4
+	 uY+Oyq8lTsMGMhi+ZjnI0iFX0wwTetN1yVgQUDEU=
+Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id A18B24ED; Tue, 29 Apr 2025 16:40:24 +0800
+X-QQ-mid: xmsmtpt1745916024tjmj3adz1
+Message-ID: <tencent_40C361A96683BE84519777576D06D0737D05@qq.com>
+X-QQ-XMAILINFO: MmPNY57tR1XnKo04IUVr9r7gMcPx0djPqHxvIXMN4YKG9c5p3tSWLKA+PzxSdL
+	 JVqyklJG5uXEuTLD9MV6BW8D/mByCDh37UuE9aNtgk7gDp6B5r3GQfG4dxpGjwdBZRQoyAbtZhJw
+	 /kQUrEfquHXN//N92C+CxdFmFVtiDwrDgWz/wIjWdRxTGi20OhVMMeik2S54l03XDrPsbFnoJrzL
+	 x3q779k1yvuzH0knS6++Furk4Zzi/FDBlFuUuyIP5WuPLXc1h39UxordzZOTMWsKFEfWLwjYEm7j
+	 z5SRVBVmskgINQTeYEcKFJtBt2v/il6OCIp1ghWZo4qKGCGuAzoI0/J82gH/DYqx0PMt5J5smtaQ
+	 G9pKl+uSfkiPjt0B3p5ajJDM9g4V9eUmfXGIh0FIrFaL417cxO1pe9kvFODCkjD/ncgn+oWEBPG9
+	 h7ebweU3zJJz2iXu4oKEwbF1lFIrYHU8+tVgPgMqY6oEtQq8iY1D+pEJ7+gTdouUYvp2HdGBtLjX
+	 Hm39/xk5XTPWpdIpJXt5Ex2mQkfuyQonv9/DaolS053lZyxjoa8wPgxCS45xBMMzIRQcpIBPDZAN
+	 9lIIS58CfOAsy5kOU7hGDRggtuEW7bqeUVxmm8Z3bJKDXaBBUZZ2Rb1cloQW8E+ciF5BxLmp5qBU
+	 dFrznUpPn5Hx3KfkjoX66nYDDjmgJN2EHlHY3hiSKbN7eyoJPIfA4phy5H31alj1IeABLE5eYA/D
+	 lvvJLLZiUbkSGfFeUil21YoBtcvYhduFmM9VPOLTHNxBGpMMgza1HGsG3imjAFnHZMgDmUgOjjhO
+	 AP1vKAiWGyJ/pzogo0JBgbMPWCD68lo1wQMe3OVpsCRrLb5Z+7KjJixnqrh7xrC1mQvs9i1P6Wb0
+	 2wfMQFbWpvN3pMb0oKtRY1+MDyFH9dLcN6TKq84K/gN/gbca56OT/TWTU8mfRxfG86qvLEMQDXDr
+	 micXgfMQM=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+Date: Tue, 29 Apr 2025 16:40:25 +0800
+X-OQ-MSGID: <20250429084024.715217-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
+References: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] mm: Add batched versions of
- ptep_modify_prot_start/commit
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, david@redhat.com, willy@infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
- will@kernel.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, jannh@google.com, peterx@redhat.com, joey.gouly@arm.com,
- ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
- quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
- yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
- namit@vmware.com, hughd@google.com, yang@os.amperecomputing.com,
- ziy@nvidia.com
-References: <20250429052336.18912-1-dev.jain@arm.com>
- <20250429052336.18912-4-dev.jain@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250429052336.18912-4-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+#syz test
 
+diff --git a/net/mac80211/main.c b/net/mac80211/main.c
+index 741e6c7edcb7..6842c3011a99 100644
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -1353,6 +1353,8 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
+ 	hw->wiphy->interface_modes |= BIT(NL80211_IFTYPE_MONITOR);
+ 	hw->wiphy->software_iftypes |= BIT(NL80211_IFTYPE_MONITOR);
+ 
++	if (!channels)
++		return -EINVAL;
+ 
+ 	local->int_scan_req = kzalloc(sizeof(*local->int_scan_req) +
+ 				      sizeof(void *) * channels, GFP_KERNEL);
 
-On 4/29/25 10:53, Dev Jain wrote:
-> Batch ptep_modify_prot_start/commit in preparation for optimizing mprotect.
-> Architecture can override these helpers.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->  include/linux/pgtable.h | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index b50447ef1c92..ed287289335f 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -891,6 +891,44 @@ static inline void wrprotect_ptes(struct mm_struct *mm, unsigned long addr,
->  }
->  #endif
->  
-> +/* See the comment for ptep_modify_prot_start */
-> +#ifndef modify_prot_start_ptes
-> +static inline pte_t modify_prot_start_ptes(struct vm_area_struct *vma,
-> +		unsigned long addr, pte_t *ptep, unsigned int nr)
-> +{
-> +	pte_t pte, tmp_pte;
-> +
-> +	pte = ptep_modify_prot_start(vma, addr, ptep);
-> +	while (--nr) {
-> +		ptep++;
-> +		addr += PAGE_SIZE;
-> +		tmp_pte = ptep_modify_prot_start(vma, addr, ptep);
-> +		if (pte_dirty(tmp_pte))
-> +			pte = pte_mkdirty(pte);
-> +		if (pte_young(tmp_pte))
-> +			pte = pte_mkyoung(pte);
-> +	}
-> +	return pte;
-> +}
-> +#endif
-> +
-> +/* See the comment for ptep_modify_prot_commit */
-> +#ifndef modify_prot_commit_ptes
-> +static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-> +		pte_t *ptep, pte_t old_pte, pte_t pte, unsigned int nr)
-> +{
-> +	for (;;) {
-> +		ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
-> +		if (--nr == 0)
-> +			break;
-> +		ptep++;
-> +		addr += PAGE_SIZE;
-> +		old_pte = pte_next_pfn(old_pte);
-> +		pte = pte_next_pfn(pte);
-> +	}
-> +}
-> +#endif
-
-Is there any particular reason why the first loop here is while { }
-based where as the second one is a for { } loop ?
-
-> +
->  /*
->   * On some architectures hardware does not set page access bit when accessing
->   * memory page, it is responsibility of software setting this bit. It brings
-
-These helpers should be added with at least a single caller using them.
 
