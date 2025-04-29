@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-624552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAD4AA04B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:41:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D325AA04BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DE41727B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105D23B8E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAAB278E4E;
-	Tue, 29 Apr 2025 07:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C62D279338;
+	Tue, 29 Apr 2025 07:41:14 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640A214225
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6390C26FD9C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745912473; cv=none; b=hxQZsWuexhKpvAD71vq1Gy2qhytcBUp17yz6Khr7khg4sH1i0k8YpeN0+O3BuWDLoQarHCdpfEVgN6CqoSoYjHAcP/VmhqPf2j/CGOP5OswCAWD1IPqFTvJmaZJaZRQxzIA3pDkNSGprBAiSIzbMq2/b6tO02nU3uelYMf2JNJ0=
+	t=1745912473; cv=none; b=K/LiUAcHNlCIIEDOeHOHjsDPCTjEDLuWMuXqr/nSQ97fVM17B3jrP9mqfQ+tHydB8SHVy7Mdd8Z5SHzn6LD5RXhfSf59IEYs/+z+P2750a7xUZgStUdjABB+SzYDDdNU3n2azd9XhokfwVtBYO4q1aQi7Aj2l53nskeUiwcV23k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745912473; c=relaxed/simple;
-	bh=0Pe2j0oXCZbo69Dqx7B15NyJMv5NjWuFBulofgo6Jhc=;
+	bh=1k8DD7DU6StfRskpYGO/JVOEw0YmLwAKC4vCqPkq0s4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W8yi5Pc+OAvQ9kyKW7R4BeFohO+oxnlZxLkH5lFxRRgAd3wVM9CcSkwbbg7ju2pGmA3s+92czp8amHUEp8rOYZd+DKofnjGB3S+q6+7qSpjP1/EDH/pWrr1bduwsM4KuXaxf4LEkClfRAlIuaxXZVRDkggeccztwHgxECxYMqUg=
+	 MIME-Version; b=KRXAl7+3NBVrlEbRL9gWIHlDnYCYSmgXE3FAWLQPp2DcAxVb/9HA+ixZkYkexve1pTXPoGPIRmPKBdIv3wKTeqhoduV++A8nDiiSBYDNLHXcdni44ivJP6C3eKvROlASIBznoc4TM+AUTZYM5sMEiqYQr1kmhmGPuvwACclT52w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1u9faT-0006KO-Sj; Tue, 29 Apr 2025 09:41:05 +0200
+	id 1u9faT-0006KP-Sj; Tue, 29 Apr 2025 09:41:05 +0200
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1u9faS-000E3C-1R;
+	id 1u9faS-000E3D-1W;
 	Tue, 29 Apr 2025 09:41:04 +0200
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1u9faS-00CY6e-1E;
+	id 1u9faS-00CY6o-1J;
 	Tue, 29 Apr 2025 09:41:04 +0200
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -54,9 +54,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v3 1/4] net: selftests: drop test index from net_selftest_get_strings()
-Date: Tue, 29 Apr 2025 09:41:00 +0200
-Message-Id: <20250429074103.2991006-2-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v3 2/4] net: selftests: prepare for detailed error handling in net_test_get_skb()
+Date: Tue, 29 Apr 2025 09:41:01 +0200
+Message-Id: <20250429074103.2991006-3-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250429074103.2991006-1-o.rempel@pengutronix.de>
 References: <20250429074103.2991006-1-o.rempel@pengutronix.de>
@@ -72,41 +72,41 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The test index is redundant and reduces available space for test names,
-which are already limited to ETH_GSTRING_LEN (32 bytes). Removing the
-index improves readability in tools like `ethtool -t`, especially when
-longer test names are used.
+Replace NULL return with ERR_PTR(-ENOMEM) in net_test_get_skb() and
+update the caller to use IS_ERR/PTR_ERR.
 
-Before this change:
-  3. PHY internal loopback, enab
-  7. PHY internal loopback, disa
-
-After this change:
-  PHY internal loopback, enable
-  PHY internal loopback, disable
+This prepares the code for follow-up changes that will return more
+specific error codes from net_test_get_skb().
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Reviewed-by: Simon Horman <horms@kernel.org>
 ---
-changes v2:
-- use ethtool_puts instead of ethtool_sprintf
----
- net/core/selftests.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/core/selftests.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/net/core/selftests.c b/net/core/selftests.c
-index 35f807ea9952..9146e33db25a 100644
+index 9146e33db25a..3f82a5d14cd4 100644
 --- a/net/core/selftests.c
 +++ b/net/core/selftests.c
-@@ -408,8 +408,7 @@ void net_selftest_get_strings(u8 *data)
- 	int i;
+@@ -74,7 +74,7 @@ static struct sk_buff *net_test_get_skb(struct net_device *ndev,
  
- 	for (i = 0; i < net_selftest_get_count(); i++)
--		ethtool_sprintf(&data, "%2d. %s", i + 1,
--				net_selftests[i].name);
-+		ethtool_puts(&data, net_selftests[i].name);
- }
- EXPORT_SYMBOL_GPL(net_selftest_get_strings);
+ 	skb = netdev_alloc_skb(ndev, size);
+ 	if (!skb)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	prefetchw(skb->data);
+ 
+@@ -267,8 +267,8 @@ static int __net_test_loopback(struct net_device *ndev,
+ 	dev_add_pack(&tpriv->pt);
+ 
+ 	skb = net_test_get_skb(ndev, attr);
+-	if (!skb) {
+-		ret = -ENOMEM;
++	if (IS_ERR(skb)) {
++		ret = PTR_ERR(skb);
+ 		goto cleanup;
+ 	}
  
 -- 
 2.39.5
