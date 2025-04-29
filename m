@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-625482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E01AA1277
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:54:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8AA2AA1288
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20DF1886E33
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C782164186
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183EC24EABF;
-	Tue, 29 Apr 2025 16:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31A224EAB2;
+	Tue, 29 Apr 2025 16:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="biT+Ta/N"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="CbMj1bGv"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1519A24BC04
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 16:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8007624C08D;
+	Tue, 29 Apr 2025 16:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945558; cv=none; b=E3hzLc5yp5aRCOjXBkZAZkbzVkEh3IhZ0F11N/dtlR+n/j+uv7sQAT42CT3TUPmV/y8paDsf6l5fJoUIuYDAX+/3qZoP/5o+8PFOZbIUR39StND8fuGZ1v+pOtVF569ZpJSdWNXrTA50b4fPkRkPqtuI0VRCXNAfix4J3ZeHzts=
+	t=1745945591; cv=none; b=V0xE8LNupGpjSrkn8T8fiUnRt1b2mJYwHwUmge3OTc+UQMXeB9S9Z8t5lIa2j4jjrcdD1yXsDGZBm+B/m6a4MHM/B6DSd4M65Qsv3vm6tabzYRrteIZt5HFDtCr4glGlU3KZZ1kpUFLI7NxzmuOsP7R0fwIsP3CedgdCaMAWg9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945558; c=relaxed/simple;
-	bh=9/DyTaXRRRhmMtYj7n0VE2ZpY/dcBTLDTDYYO1pk/Ks=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Qkb0tNMdBOJ08rWRsVXF3+t79Egac4mEGwZqzXzUVuW/abFxbfEkkhi9CwuNAKkpo7EGBylg4FFbJNMTSdI+NeLsSiy+4ddKizmoFRDtgeaXq2g79rxE7TV+DLs2BXezoD5ENd8Q3Eh1219Hc1cPDmM8xSbkST45E4iyEhKg0ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=biT+Ta/N; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3086107d023so5389624a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 09:52:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745945556; x=1746550356; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9/DyTaXRRRhmMtYj7n0VE2ZpY/dcBTLDTDYYO1pk/Ks=;
-        b=biT+Ta/NIhhq59VVxrszBNMy57vHcDctJN8ACrHPcI5+krqhLahkm6SdKkA/jnHuQz
-         zOHWWbhPOCXQQcHQ3NmHyxQSNjg/9wNaJmKROe7EPnUOfMaCAJWVCnfuFynCUNKleZo9
-         ni0wl2GZmJFh4yslLJR5V//hZIkD/ytn9SfMIjxQ+JDm/IPOj6MHq2QX6AlAP2Shs2+2
-         RYR7iilsQ7AksezOr4uyKbwLRpXyUP19q7+SEx9p4L64gN/7pDU6vrFIJJ7+Octr9Erp
-         1nsN8qP79WHSIfZ+xxDO/Tcr9b1wfqGak3/ts9rHGLoNkVMzPkuDUaQwy/Jh+YrTCZNZ
-         iqmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745945556; x=1746550356;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/DyTaXRRRhmMtYj7n0VE2ZpY/dcBTLDTDYYO1pk/Ks=;
-        b=NcPsRnxox9dWgHXTP8QSYL8T8p9HoZp+WsE9hGoieF2IsdWYSeJONOLPLcXoU+pu42
-         M3MRsGFegz5tHLT++xWOZuR1O0GsSY+2gyf2maElIrb4/kyAQ2GeV46h+jJ9xHdpo/Qu
-         ObHAxOBQkKlyJY+nRdPvJceytMn6TB1oRalFjUms+XcU6ilqxyWqRXw7NS0IUIfvGIzY
-         4vbKn4IgFaEGI4YfHk7h6uEHD4gpC/azMc116SnwWe9BrWkOPCpg4twQXfg0IS/PNA5W
-         O/tmx1L8J39HrMzpgED1NetZuCdKhdqrRnts8/xkPaUnYkvdpt8+bjqQly2/siVi822Y
-         AlJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaZeLPlIbzjAHIQ1edJJlQStXNHcKz/8aHmFY1nLTE3GjarrANRd3MLm0Y8Ev4XYYSlnP60lEnTktRT3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC3BvtGRHqi+zVTyQUpq3Ihbya7iPaNJYJk4e0XTLdKzwOZW3Z
-	PAgDAMQCoM7qZ4V6SQOAC9p4EHR8vzydiI94AsgR2VxTasD2v7pK4xNUzgpeWfwhr/Ay8pqvP3Y
-	J9w==
-X-Google-Smtp-Source: AGHT+IFEE6LO1G7pamWoVl2A8JQIOWisDuS/kml2oFH5sEgf3g81yBC6JuYkTpidKh/jeQ32pw+x5WUisOE=
-X-Received: from pjbsy12.prod.google.com ([2002:a17:90b:2d0c:b0:2fc:1158:9fe5])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:568c:b0:2ee:d433:7c50
- with SMTP id 98e67ed59e1d1-30a23e262eamr3924343a91.23.1745945556371; Tue, 29
- Apr 2025 09:52:36 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 29 Apr 2025 09:52:27 -0700
+	s=arc-20240116; t=1745945591; c=relaxed/simple;
+	bh=+hdnXxC4NDXKRuT9lf143RB20lIGAAYL/7bIxsAcRxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ek+4Zq+s0X9SORTNaL6wUk4cMAxnmsVPgvVo4DM31+peTzD8oYv3F4FMw+qOvwstT2/773YiKFrTSQRGpzfo00jVXhzmK/iMDS3ih5uLskkFrGFZNUxqSUDiGgIo7oRN3SEvr4VxFcW4yCC6x6xXox/StD6QFj1RXIJMFGkiDL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=CbMj1bGv; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=BRcdsk3TvN9DaRVrtf6cpw/TXDjhWY1fpqAdozY9Je8=; b=CbMj1bGv+IDiuOe7R1UP+3WL+L
+	Ydm6RfJ6+DMJ8mQuvD3ph9vGzJqtzdNisv9ILwwp0UPRwqY5Iow3eeD256Jt8SIrTHzGfTTOJ355x
+	B65qbfTWCcMCK7XdV7tm6xkxgYJH19FqETb9tk8uyJGeGNhwbwg7LFTCbsmGH846xIROGXrQeYUSr
+	XNiDFqKxjj2ZQmYEFaaEctxRGJMEJ7Hg7SomZUyc/0/23P/pEegMfVpF0pCJKpRC6z3W9VcuKkz4X
+	SVnl3pPRFQS1wPd9W8H5FpdAvbU3KVYaHMJsVrNPKND8CoKBGI4rJ3H78bv5UTtNwOvjWdj+conKe
+	onqFKxrg==;
+Date: Tue, 29 Apr 2025 18:52:40 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Jerome Neanne <jneanne@baylibre.com>, Shree Ramamoorthy
+ <s-ramamoorthy@ti.com>, Mark Brown <broonie@kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo
+ <kristo@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: tps65219/am62p kernel oops
+Message-ID: <20250429185240.6a7644bf@akair>
+In-Reply-To: <aBDSTxALaOc-PD7X@gaggiata.pivistrello.it>
+References: <aBDSTxALaOc-PD7X@gaggiata.pivistrello.it>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
-Message-ID: <20250429165227.153943-1-seanjc@google.com>
-Subject: [ANNOUNCE] PUCK Agenda - 2025.04.30 - CANCELED
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ackerley Tng <ackerleytng@google.com>, roypat@amazon.co.uk, kalyazin@amazon.com, 
-	Fuad Tabba <tabba@google.com>, Vishal Annapurve <vannapurve@google.com>, david@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-PUCK is canceled this week, as I managed to pick up a conflict (at 6am...).
+Am Tue, 29 Apr 2025 15:21:19 +0200
+schrieb Francesco Dolcini <francesco@dolcini.it>:
 
-Future Schedule
-May 7th - guest_memfd initiated private/shared conversions (tenative)
+> Hello all,
+> while working on adding support in mainline for a new board based on TI
+> AM62P SoC I noticed the following Kernel Oops.
+> 
+> This oops was reproduced running current Linux
+> master, 6.15.0-rc4+, ca91b9500108d4cf083a635c2e11c884d5dd20ea, but I was able
+> to reproduce the same with 6.14.4.
+> 
+
+[...]
+> [  +0.000022] Call trace:
+> [  +0.000011]  regulator_notifier_call_chain+0x20/0xa4 (P)
+> [  +0.000018]  tps65219_regulator_irq_handler+0x34/0x80
+
+wild guessing: maybe because irqdata->rdev is not initalized in
+_probe()? At least I do not see where it would be initialized.
+
+Regards,
+Andreas
+
 
