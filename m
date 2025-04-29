@@ -1,204 +1,286 @@
-Return-Path: <linux-kernel+bounces-625583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A59BAA1945
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21A6AA1957
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92154460DC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A911BC7AF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 18:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97623227E95;
-	Tue, 29 Apr 2025 18:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40B6253B7E;
+	Tue, 29 Apr 2025 18:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XLOM3K7X"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2075.outbound.protection.outlook.com [40.107.100.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KAh+uwPi"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D861A5BBB;
-	Tue, 29 Apr 2025 18:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745950087; cv=fail; b=tTEBxyxhwKOuHVdCTiWsDO+3j/2XCnMuk2SVHyZ5ynkg4f7xqTGa3XLsaFrMeQL/RFH6aT7zkaMjyH+nACtLUVjR7FJJLzP/f1eI9W2ZuTb5NVgiSdq5xe833rumMOea9HGlo4Sj/tLAVGYe740uANjRl8a1Wq4sdXl+uRmtC+8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745950087; c=relaxed/simple;
-	bh=Vy9BXMe31Vjpq2lw4by066RvSjaoPvtnjK+NXrpoDgQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTGxsY2BujygBltIJ1rwC9JEZzjlWgVhjjfnqSSmMl9mdOS8XYeFk75JL15UFfMoUfAIm4DWLSK4zr7yDOzoMHYSt5KGCRoU/xrZN6hJEz+dIimbZxbL1ePbLpW8k7cZXdUMiOzP/jHB+NvJ5/iPDELm+venCWmo5OxR12HYAvo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XLOM3K7X; arc=fail smtp.client-ip=40.107.100.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=etGMzzT+QFgLPQRK+EyJAd3fFondOXZFjVYPDovXaesxHzrubFuD90lDCf/jJLc+Vr4fC5yJ3NJq4dFiCJKu6U+IpvRzFCUzzBFg12ZQjkeQtkqG0G+VdXzsYXjyfQLLk5qs+MbfuoEA53z3CuWLJGXvdK0FhwADLQB0zIfDZeEhebjH4UAtzZnSv4K9L/CH5lJJcut1ZKDSvsyTd7Wm6tGSHL1UTfSRl0hltBLt73/nQQZNzjMihPp5bU0GehKVrFm40pLt2adQk54ve/z7DtLkhYLcXeMEl5d8+N48ifsOt5C9EZ7lXkrFExQWqhbMQ9H37VlJvoFGcNVpI7MxDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VIAa8RR+zLmb/ttWvevJREq2xpQTYD3f65jtS+/vWFA=;
- b=rFwL7bAe7KkR0vIT+NwQUQ0JP0xthUfr8q8kTjKuR/ltE48vq/Iv1tUDVMmr2oq8hYQQRx7w7NtoO2ABygXizJOOMiU27A9yYeDrt5Su9ADXFJY2NxGFNsdU9DoWz7gVnpnU6wd7A71rxDr5fBnSMrKx26v0QZRlvdjYqJyJAw+F62RyHvmV0kOjjW/DCkmFcrJxIHvSP50pkUMBhmUbpRze9mbJ/UDPQXMPhpJlxwyVlnA5gw+mFwnHAj4SQVp0XTSk2cm18d9kVqHXJR+0SvJZk2H4fFE6XMEJmg6CvhKNy0jRrduwvWJC/gksog/iDDR7y4/lx1N+pbX1ZN0cNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VIAa8RR+zLmb/ttWvevJREq2xpQTYD3f65jtS+/vWFA=;
- b=XLOM3K7XwMZhjpRn3amBAPWCN57MBkamMBSdFD+Urt0B9fYnTcZI0kMIXDydaUSp+k47gepMoD6XpuoPGC/Y1Sxpd/ZDMsQaezYEWozZb8qlQr/83ggIPJlbu1IVaT0qj42TrNSBJcMwIPH5gedZ7yUMWycqlfzlhYTe2aFfPv8BulZaSTSVjsSH4qBJq+004AcwpfNiJOc+flaGr0aW9U5UmZFQbdXugVh3QqmMfDZ8fxfXDpvUyJMxab90Bvvt8oI9kVRKs7Nepdb69hqfEvuaPS1oMkpPhTRFLaEK9lVMV6l88uTUFr0aDnldWwxOPjY0YIznWdcZfKFZnXAdyA==
-Received: from MW4P222CA0017.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::22)
- by DS0PR12MB7928.namprd12.prod.outlook.com (2603:10b6:8:14c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.36; Tue, 29 Apr
- 2025 18:08:00 +0000
-Received: from SJ1PEPF00002315.namprd03.prod.outlook.com
- (2603:10b6:303:114:cafe::69) by MW4P222CA0017.outlook.office365.com
- (2603:10b6:303:114::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Tue,
- 29 Apr 2025 18:08:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF00002315.mail.protection.outlook.com (10.167.242.169) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8699.20 via Frontend Transport; Tue, 29 Apr 2025 18:08:00 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 29 Apr
- 2025 11:07:46 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 29 Apr
- 2025 11:07:46 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 29 Apr 2025 11:07:44 -0700
-Date: Tue, 29 Apr 2025 11:07:42 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Pranjal Shrivastava <praan@google.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<will@kernel.org>, <bagasdotme@gmail.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
-	<jonathanh@nvidia.com>, <shuah@kernel.org>, <jsnitsel@redhat.com>,
-	<nathan@kernel.org>, <peterz@infradead.org>, <yi.l.liu@intel.com>,
-	<mshavit@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
-	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>
-Subject: Re: [PATCH v2 11/22] iommufd: Add for-driver helpers
- iommufd_vcmdq_depend/undepend()
-Message-ID: <aBEVboMt0OtZmt4Y@Asurada-Nvidia>
-References: <cover.1745646960.git.nicolinc@nvidia.com>
- <a25c9454c17663f9e79b37bc2908bf3a99856be6.1745646960.git.nicolinc@nvidia.com>
- <aBDIpz7w8wxIn_AF@google.com>
- <aBEIBKdjuecVHgpU@Asurada-Nvidia>
- <aBEThP2Bn0YDgXfu@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002D02517A6
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745950192; cv=none; b=GBza6Souxw0lLgpHw+Ds4tZPozu4NezL70sE6Ew5DrE2C2PRhidPlBYZ9qFqEF66gYPZ8Uy0l9E84TcmJ/AeWv+skWqBdqy861+XiuG7drRcyYv7zrmNipGP9JJNwahDKOM6KQtML+G550F2sk0cPKvYXneq6e92IixXktmgQJc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745950192; c=relaxed/simple;
+	bh=NRmEFA1cMtNTKkdV4Kz76ZxAsSzC6Ex/40jCfiCBdlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z5mNQV4UFQAColEM2g/iASdrEPaRjKkSvrUefeYayJP+RGy+3sips35x3qmYjoI2o2uSOusScr+tTgoEdoZXG23U5gy1icXhnKut5jwsoKOJLz2xpLWvWPW+hPw95vGB4nc1CkH7JDkJhGSntwNoj/5lBp6Kybn3glnzB5r9pGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KAh+uwPi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf861f936so11169645e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:09:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745950188; x=1746554988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w/rG6AWXGoekxcd3LHIxXcRgVm+0IkNESPaRkmBuBd8=;
+        b=KAh+uwPip5xvNkGr24FODNbDLIbya8rebcJAlZte5lZJYz+zdFJoUJcZIrtMF0F+bU
+         wey5YgHsPQiBn0j2aBSELFHviC/Hwz6RbyFXhKr/xUwMr8NWY9X48qjrDxB/tffnVrIh
+         rCi296Tl3L1DCorFwDf/sLcicnxGwmQHVZpiFaiYBXtu6rGWodRDKYDp4rhPwIWV2hEm
+         d1O80BjHRg1wV9Sxd9jCixTXWc8S884qNQpEiA5M5B+EPslZOF9JrUw6kEE66wF/CxmJ
+         BDyyNG8U0dGRIvGqp0SB0G+kZHQHSFcK9V4NexlA9lREfNf5ZmDAZ94qZXK5mc4Vk5IE
+         0/mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745950188; x=1746554988;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w/rG6AWXGoekxcd3LHIxXcRgVm+0IkNESPaRkmBuBd8=;
+        b=TEkmHyvt6LSqImq8FAQOEAK7n28fXZjqaKuwNbHgUPjyphlJu0BGGXmBJU8oPfodMs
+         NPdCKKxJRuhkDj8jGAGQ0rR/ujN29w3rDoLTC///n3MaQEaOWJug/eKbQfwDUPX0yN5y
+         YmfGXSHGSfZrmu71gCyoizQoKdlisaS8m4MrFAkl8nf2yTaskhkmYU66V2qTTv6fOqII
+         aE5EhnFgZyf5X7tDj2Rcl3oA6IESTjj23qalezNr5PuWLEd9gLIOXSIniN21ghJzOigT
+         2/2uVSxZ71A7TxO+PNzXycSLX2Uks+SdbhS+xBZVmhzx+CsF1iREh+MSfqBKuvQZX5x7
+         X1oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqQWK4+IAojkZ18Z4zM7Wxxx2VtCoOjAdkDft7NfFy+ldABguG1M4QghoqRV91aNo8FkFCwXr7N7Y3+4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ6n2wvWnrCm4OnC9kkeSm0QmlpEBEg2hdDS7jAwY94Lxmg82P
+	txwN17ZFYiztCZjzoMXGE7S6LlYtXltWxYCia8c80l0N1W6TzPjVivgnOMceg/I=
+X-Gm-Gg: ASbGnctJR17lopPkYhkEPbmtuEN/8U939ZHTTrmK1bDom9h71R1sWZz76YW/V/drENl
+	Tottcfa5kq3tMjsYLGZV+LDQV+yXC8UGLR/XEGFRYyjM9bZgIyhf5fabWKXGvrendio9ehXllSR
+	2GT92D46gBa10ucGr6hZBD4F/cK8sqaq9ZFIPQJfxN/BXeQGIaxvy1KpGqJbO+xaoYDn+weh93u
+	78lSnYw7ItBUeDDQ+sg1yg5j947tvAy2+V25Jvh6h4+5ECT5stMYSmbd/N/xC3SFlVzi8HZBvmy
+	6KJHloZQ1NJxp+7hEbvf7NDZreET9FEgOiDhoQj6DzU+TRJy7w==
+X-Google-Smtp-Source: AGHT+IGEAvfTMVbPsHmLNZ+IkEuAjoyB8jaVAoucK/+s16SnbjUKJ7712NKpLTFsRw8wJ6RbZnh36Q==
+X-Received: by 2002:a05:6000:420e:b0:391:3110:dff5 with SMTP id ffacd0b85a97d-3a08f79e75emr121818f8f.5.1745950188236;
+        Tue, 29 Apr 2025 11:09:48 -0700 (PDT)
+Received: from kuoka.. ([178.197.207.88])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5d52bsm15028818f8f.90.2025.04.29.11.09.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 11:09:47 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Robert Foss <rfoss@kernel.org>,
+	Todor Tomov <todor.too@gmail.com>,
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with version
+Date: Tue, 29 Apr 2025 20:08:29 +0200
+Message-ID: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aBEThP2Bn0YDgXfu@google.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002315:EE_|DS0PR12MB7928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 163d541c-ca00-4a4e-bae8-08dd8748c6ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ppra6eN75TASdIUrhblXnbohqu29kNJ+aeK7/tSM1hAG9dpcbbn48h7hHl6b?=
- =?us-ascii?Q?yGDRDoqOq0pUZ8F/1A9JJhI+f5fJcnn5T6cqYrgSO5vtkQIg/G0/HfhzCgJ7?=
- =?us-ascii?Q?rzPSCW+k7IR53YshSTdAbz4Apmyk8HxfKzUpb2K0+Wb4RnNFn+vt56uSkc/g?=
- =?us-ascii?Q?R3QewYbKdyKXwaVQfOkPtSw0ZXW2MGA5M+5LrC6DASk9Oit2bLPsmNxTDdBT?=
- =?us-ascii?Q?vFqnNpYYtzWjJhkFs2pTCcVqSMrsWuhEbZlu7B7+1wlKFJbmsBfg+pDaIuVp?=
- =?us-ascii?Q?9dl/85209rOv2ZY2936hWRzwRXMN18+9Tn/F1EAeoXBUEMklr4RLozuQ5yBy?=
- =?us-ascii?Q?gYRp+w86DEOvawB6ZHtvlo/g/XzgNIsBDveygY5M5LIcMeii5s9mDlC4IRQm?=
- =?us-ascii?Q?Qw+uVivOW9I0OuteJF272zX8g3arESZDfHaWilM0ZcjhaaEtad727GDfyyFa?=
- =?us-ascii?Q?aKlodCdqDQHNStuwl45QDimUolCRBbrX4fbErWEp2L0CuYxeBXz/TCLRPcip?=
- =?us-ascii?Q?YHfEapjHh6Nilu/8o75FgPp7eJk4Zaqw/8+g26owUDSc1N0Q5zj9cKUmzBca?=
- =?us-ascii?Q?+68UFlabt5QY/cRyfBDoF1an2ww7/5aiHnxJxdBx4TDI7azgWS0irE4GEJyU?=
- =?us-ascii?Q?VgrFl/fcFsilpNIvToAjQnfZKycdrRR9DKTBEjwIZS3pznx1OdvUgo2vI154?=
- =?us-ascii?Q?I8lKmPBSSC+p5LkDdIJrUZnV1snAMa2n4zxcrUzuBFlomZNZzORHXZKgs4KB?=
- =?us-ascii?Q?56nggJDEQK7j6s+LnbgT69E0VGKB04hsWkFJs5aWAqgHzV15vyZTYUGRlFr1?=
- =?us-ascii?Q?asmq3+6DZwQ20/06zjqXdlBCvdn4J4GtBMDrYX0aA4kWjn6tZ/BH2+Il+DK4?=
- =?us-ascii?Q?qs8Qm1/iRXE7B/z1IPmxMTOGnV5qYeCaz3x/STMr5+A/cPsAxPgFPu0lQdVE?=
- =?us-ascii?Q?mHKAve9pRjUNdR4X5rit+yLN7iu7ZmI6Gdh2yCTI2ID5RSz2ZRY2uB1G+sLr?=
- =?us-ascii?Q?MtbcuuxmILs0tdSP9jqDMTSNIstrExVHr5psV/NhY7daLHjdGh30/NV5AicO?=
- =?us-ascii?Q?esZeEwBe0PsvuFlO9RKk5899rlq0nSOayzX9OItbuiM+zG6En4xvLDWeBdCR?=
- =?us-ascii?Q?lLDLpmfTgI3c8lSey/yRKMhZTQ77jk+nqjYjnwqEGac6oyFs1/82PdLWHtaB?=
- =?us-ascii?Q?xPh3tZ9iQbeFaADh99d9ZZ8lMovrVp7XVDqk16P7imUEhBBTxgVF8N9H+H4b?=
- =?us-ascii?Q?Z9irjofWWJgda2YtFwvZCFsbfoor2oJnjxvQg4rkUPxBnn1/cYOdfQtI+Bz5?=
- =?us-ascii?Q?Z2LdOtiPxCDVBeaqwoZrIQXAbZBRNSPB7Wu4mmNi1AjUeiF7IcixOqwixe7C?=
- =?us-ascii?Q?nQTozv7F9+SH4b5HLlqxtHeVBTV0roHQI+b0UTFPIj79ST4vNMesRCsfQQZ1?=
- =?us-ascii?Q?6EDtzU3HkeDlvUxvghn9fdP3BsKA2OiFtkQmZeoSM6DPpwPwDNIjVpatvpP/?=
- =?us-ascii?Q?59VFcEt9p5LKhG/vyWsNRLxVS8MEfKlYFknl?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 18:08:00.0934
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 163d541c-ca00-4a4e-bae8-08dd8748c6ee
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002315.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7928
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7342; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=NRmEFA1cMtNTKkdV4Kz76ZxAsSzC6Ex/40jCfiCBdlA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoERWcIyDAxAv9TbP2GAMiw/QCHluBg1AQUDsz4
+ TNetsccTP2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBEVnAAKCRDBN2bmhouD
+ 139PD/9UaFPoTNGrGk3Kxu3/I1Xj66yiTsYIU0lLxXCKXqQ6e02DHsVQdoGqUJ1kSElO9ycyRrZ
+ V9CC/NCXFRd4nWNHfIzp3akwKAiPIlt4OoAkzuhGyRoWHIuORF5kDC90Vj/7+UDDUTksSxP7rwE
+ JcNHpi71hbxfyrgPYhWGYxgLXqh/hDTA1hzZoTM4dcp/kYOARoF/xpYlZQTXoNrf0TZmmI3oU2Y
+ kgzzGAMC2hDB92Kf8rheFfQDgpI0DvrwLU8BV2Ue0iiqRW0VVHkvREf3ZVHCuLa1hP31KGvGGhS
+ QLHQh0rrkDp59k8qrU0DT6aovnM1WX4OWXz3zUpZeQN3MdUY5kQAx524Zfmflk3KldG3drLyKC9
+ sQYpx/ShKlbqgG+bSM7EWzsmyT194pSlQZSPRljtu//3t8FsCsV3MgLr9sqbdluD4Ah62t8DmH2
+ 1WB0oFH2OmRU/vepKdp18ZCDtA19HJKdVm5icnu+N+/30meTorALrisI26cqJh4CpZiWJq7v8Tu
+ GW7DGP8Jx73SOpKu6ECJEInMf+Cq4lzd1UWgNj0v6IaMHb/AAByAUIeU1Qf0UhXsp6c2t/kRJd8
+ 3kFLQYFLwdkQ5xVa+GqUi+x8Yx6hXpM8qWchpbjmy7sMmrdb/3Q0CwI0EqRAQ5ra6JyRXBO4x+C 3PAh9BQL1KrHDsQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 05:59:32PM +0000, Pranjal Shrivastava wrote:
-> On Tue, Apr 29, 2025 at 10:10:28AM -0700, Nicolin Chen wrote:
-> > On Tue, Apr 29, 2025 at 12:40:07PM +0000, Pranjal Shrivastava wrote:
-> > > On Fri, Apr 25, 2025 at 10:58:06PM -0700, Nicolin Chen wrote:
-> > > >  /* Caller should xa_lock(&viommu->vdevs) to protect the return value */
-> > > >  struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
-> > > >  				       unsigned long vdev_id)
-> > > 
-> > > If I'm getting this right, I think we are setting up dependencies like:
-> > > vcmdq[2] -> vcmdq[1] -> vcmdq[0] based on refcounts of each object,
-> > > which ensures that the unmaps happen in descending order..
-> > 
-> > Yes.
-> > 
-> > > If that's right, Is it fair to have iommufd_vcmdq_depend/undepend in the
-> > > core code itself? Since it's a driver-level limitation, I think we
-> > > should just have iommufd_object_depend/undepend in the core code and the
-> > > iommufd_vcmdq_depend/undepend can move into the CMDQV driver?
-> > 
-> > The moment we added iommufd_object_depend/undepend, we already had
-> > a blur boundary here since we had no choice to handle in the driver
-> > but to ask core for help.
-> > 
-> > The iommufd_vcmdq_depend/undepend is just a pair of macros to help
-> > validating the structure inputs that are core defined. It is quite
-> > fair to put next to the raw functions. I also had the notes on top
-> > of the raw functions suggesting callers to use the macros instead.
-> > 
-> 
-> Well, yes.. in that case let's call the macros something else? The
-> current names suggest that the macros only setup dependencies for vcmdq
-> and not any "two sibling structures created by one of the allocators
-> above" as mentioned by the note. Maybe we could rename the macro to
-> something like: `iommufd_container_obj_depend`?
+Camss drivers spam kernel dmesg with 64 useless messages during boot:
 
-That's the intention of the macros: to validate vCMDQ structure
-and help covert a driver-defined vcmdq structure to the required
-core field, as we only have vCMDQ objects using them.
+  qcom-camss acb7000.isp: VFE:1 HW Version = 3.0.2
+  qcom-camss acb7000.isp: VFE:2 HW Version = 2.4.0
 
-If we have use case for other objects in the future, we should
-add another iommufd_vxxxx_depend/undepend macros.
+All of these messages are the same, so it makes no sense to print same
+information 32 times.
 
-Nicolin
+The driver does not use read version at all, so if it was needed for any
+real debugging purpose it would be provided via debugfs interface.
+However even then printing this is pointless, because version of
+hardware block is deducible from the compatible.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../media/platform/qcom/camss/camss-vfe-17x.c |  1 -
+ .../media/platform/qcom/camss/camss-vfe-4-1.c |  1 -
+ .../media/platform/qcom/camss/camss-vfe-4-7.c |  1 -
+ .../media/platform/qcom/camss/camss-vfe-4-8.c |  1 -
+ .../media/platform/qcom/camss/camss-vfe-480.c |  1 -
+ .../media/platform/qcom/camss/camss-vfe-680.c |  1 -
+ .../media/platform/qcom/camss/camss-vfe-780.c |  1 -
+ drivers/media/platform/qcom/camss/camss-vfe.c | 22 -------------------
+ drivers/media/platform/qcom/camss/camss-vfe.h |  8 -------
+ 9 files changed, 37 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-17x.c b/drivers/media/platform/qcom/camss/camss-vfe-17x.c
+index e5ee7e717b3b..e0d12c3f6015 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-17x.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-17x.c
+@@ -577,7 +577,6 @@ static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
+ 
+ const struct vfe_hw_ops vfe_ops_170 = {
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr_read = vfe_isr_read,
+ 	.isr = vfe_isr,
+ 	.pm_domain_off = vfe_pm_domain_off,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-1.c b/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
+index 901677293d97..7620ce42b49b 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
+@@ -993,7 +993,6 @@ static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
+ 
+ const struct vfe_hw_ops vfe_ops_4_1 = {
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr_read = vfe_isr_read,
+ 	.isr = vfe_isr,
+ 	.pm_domain_off = vfe_4_1_pm_domain_off,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-7.c b/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
+index 76729607db02..b3b6ccb4748e 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
+@@ -1145,7 +1145,6 @@ static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
+ 
+ const struct vfe_hw_ops vfe_ops_4_7 = {
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr_read = vfe_isr_read,
+ 	.isr = vfe_isr,
+ 	.pm_domain_off = vfe_pm_domain_off,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-8.c b/drivers/media/platform/qcom/camss/camss-vfe-4-8.c
+index b2f7d855d8dd..5a4b4f486aca 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-4-8.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-4-8.c
+@@ -1135,7 +1135,6 @@ static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
+ 
+ const struct vfe_hw_ops vfe_ops_4_8 = {
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr_read = vfe_isr_read,
+ 	.isr = vfe_isr,
+ 	.pm_domain_off = vfe_pm_domain_off,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-480.c b/drivers/media/platform/qcom/camss/camss-vfe-480.c
+index 4feea590a47b..edd92308af62 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-480.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-480.c
+@@ -278,7 +278,6 @@ static void vfe_buf_done_480(struct vfe_device *vfe, int port_id)
+ const struct vfe_hw_ops vfe_ops_480 = {
+ 	.enable_irq = vfe_enable_irq,
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr = vfe_isr,
+ 	.isr_read = vfe_isr_read,
+ 	.reg_update = vfe_reg_update,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-680.c b/drivers/media/platform/qcom/camss/camss-vfe-680.c
+index 99036e7c1e76..96a927acc6bb 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-680.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-680.c
+@@ -227,7 +227,6 @@ static inline void vfe_reg_update_clear(struct vfe_device *vfe,
+ 
+ const struct vfe_hw_ops vfe_ops_680 = {
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr = vfe_isr,
+ 	.pm_domain_off = vfe_pm_domain_off,
+ 	.pm_domain_on = vfe_pm_domain_on,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe-780.c b/drivers/media/platform/qcom/camss/camss-vfe-780.c
+index b9812d70f91b..e5023eb7ad60 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe-780.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe-780.c
+@@ -142,7 +142,6 @@ static int vfe_halt(struct vfe_device *vfe)
+ 
+ const struct vfe_hw_ops vfe_ops_780 = {
+ 	.global_reset = vfe_global_reset,
+-	.hw_version = vfe_hw_version,
+ 	.isr = vfe_isr,
+ 	.pm_domain_off = vfe_pm_domain_off,
+ 	.pm_domain_on = vfe_pm_domain_on,
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index 4bca6c3abaff..1ae523219525 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -415,26 +415,6 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+ 	return 0;
+ }
+ 
+-/*
+- * vfe_hw_version - Process write master done interrupt
+- * @vfe: VFE Device
+- *
+- * Return vfe hw version
+- */
+-u32 vfe_hw_version(struct vfe_device *vfe)
+-{
+-	u32 hw_version = readl_relaxed(vfe->base + VFE_HW_VERSION);
+-
+-	u32 gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
+-	u32 rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
+-	u32 step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
+-
+-	dev_dbg(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
+-		vfe->id, gen, rev, step);
+-
+-	return hw_version;
+-}
+-
+ /*
+  * vfe_buf_done - Process write master done interrupt
+  * @vfe: VFE Device
+@@ -1088,8 +1068,6 @@ int vfe_get(struct vfe_device *vfe)
+ 		vfe_reset_output_maps(vfe);
+ 
+ 		vfe_init_outputs(vfe);
+-
+-		vfe->res->hw_ops->hw_version(vfe);
+ 	} else {
+ 		ret = vfe_check_clock_rates(vfe);
+ 		if (ret < 0)
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.h b/drivers/media/platform/qcom/camss/camss-vfe.h
+index a23f666be753..1553ca89bd86 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.h
++++ b/drivers/media/platform/qcom/camss/camss-vfe.h
+@@ -101,7 +101,6 @@ struct vfe_device;
+ struct vfe_hw_ops {
+ 	void (*enable_irq)(struct vfe_device *vfe);
+ 	void (*global_reset)(struct vfe_device *vfe);
+-	u32 (*hw_version)(struct vfe_device *vfe);
+ 	irqreturn_t (*isr)(int irq, void *dev);
+ 	void (*isr_read)(struct vfe_device *vfe, u32 *value0, u32 *value1);
+ 	void (*pm_domain_off)(struct vfe_device *vfe);
+@@ -259,13 +258,6 @@ void vfe_put(struct vfe_device *vfe);
+  */
+ bool vfe_is_lite(struct vfe_device *vfe);
+ 
+-/*
+- * vfe_hw_version - Process write master done interrupt
+- * @vfe: VFE Device
+- *
+- * Return vfe hw version
+- */
+-u32 vfe_hw_version(struct vfe_device *vfe);
+ /*
+  * vfe_enable - Enable streaming on VFE line
+  * @line: VFE line
+-- 
+2.45.2
+
 
