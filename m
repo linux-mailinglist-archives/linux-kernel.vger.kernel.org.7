@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-624957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7210AA0AD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52586AA0AD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D677A747F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:49:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F5FB7AFE1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 11:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833F22D4B64;
-	Tue, 29 Apr 2025 11:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57FC2D8686;
+	Tue, 29 Apr 2025 11:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a7C2cKzz"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="IN0QNytk"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077372D4B51
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 11:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0B02BEC49;
+	Tue, 29 Apr 2025 11:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745927172; cv=none; b=jl3AUKa/z6vEHmh8qW87oR3MZWohUCDFkSQEMNDWHhBSU7w8HvO3eN8dHbSN0pnQDLCseRf2p0bznqluLHMTBqjd3oXnkHYumUtKmDdCFtKc92zL8yW6ixF8nhmKEod/E8FKuMe4ROPMHj6jGf+XMs+olENn6AjvHZyCTC+SkCQ=
+	t=1745927211; cv=none; b=ckmUL4IYaaB6OGABO0PwfZIpRk/MDzOXhlDw14h2hn8hyXGfQa5oxWHeQW1cKsDgCcyiSSJMD3q4gcIhJNLaXD/AI0fClUnSt4540IS/KzKZZPBKCVlY4DOQpsWPW5GVl7sYAQiJSpRdKaEuPs+P4vxyj0U3hQvAB1pkI6cMy2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745927172; c=relaxed/simple;
-	bh=ULcK5tqpMbySYpVfeIJT28xVpefLfkaAs7WExUaK2V8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOOsWgJMEGq1gdqx1BBuF1hLZ3O/ymw20BXCAcmcsGimjc6ZTNZzhzFtjNZ2rFZMVa198Ke3rUE4NIooe+jBHeQHli4xjqu0BNo7JfA1KuWLITMAP43V8No1Gh+HeSs08U0rTUBqJ5UhYh3jLd3MJHXhyN/dDzzMR/MNmXKUHXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a7C2cKzz; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f5bef591d6so11323670a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 04:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1745927169; x=1746531969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=znQpdTxcq5Q59q25hWrDZ7jqcfAs7XVIcl5H5jOTHxU=;
-        b=a7C2cKzzs5yVR2SxJNS71x0+DFcvalG3AghOtS2uiVLM5AZ76PHFlHPLtsu+ES8sed
-         dF3/kWuVEjSlUIFMzEOd6nSF7Vfjm6vI6/iaC3zfpvzaqJhVoSapa0yfYBhifS9YysHR
-         Epy9teKgO4XaTz3RKnVxaNOHW+xfh4m0R3RZqyrl9yJZaXa222G1KsxfJYmOjD8V+tyW
-         ocd1SHaDznCXG0cIoctclzO700ie6+UkRtK6f642d/JD4a4bc0pEyk1KHU6yvSJL9xiN
-         HJHcwE2yCQ8nsdCv65douqA26vAUpeeXtT2busSV/SXz5AluR/fletWR4Q33uH9cibEo
-         l6Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745927169; x=1746531969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=znQpdTxcq5Q59q25hWrDZ7jqcfAs7XVIcl5H5jOTHxU=;
-        b=I1+GJMi6b2IXyqVBkexnhM0e3WabzW1kB1mh+UZme7k/5LlN3WNtML/+ALPAl6Wf+P
-         AfmJzWVA1IqNmk8mufsJbaaeY3WZ8/NYU/4NrPxYqB7e/naFaN3RLQDgN6y4g1Ry7GDV
-         V0cGRG9QbW/MabZHFiSA+URhs2Cy4QUZNj0QKJR52e3ceYHNu7ztWvNHV+AFeRuOqYNk
-         gcbaKWD/ILQy8tlY9tp/a4RlzH2Wc03Hlcgrwx9uJ43ifmNVWmGWXQNyo36vDxHfPdIc
-         G4YW7zyZ0vaytvqRgpo4gJJ874d6OemU0kfLBxkrap2GEhgbpdPGc4DIZDFKBYh5UQ98
-         Xrbw==
-X-Gm-Message-State: AOJu0YxLeB+LzJKnFeph+zOhtAc5FYgOXuMw8x631O6ltPA12bEHi8rh
-	exXITMWT0ShFVZUj2msZilJXbewslZph2wPOSxJ2gtl4vneymgR29T64DmiO7ls=
-X-Gm-Gg: ASbGnctYJyEQpUUYghuTbwpKn3WxYkaEC7GeVphe1vJvq/X6XyYno2taH12vVnbQEzu
-	ebFjMLEe3BDFUUL+54XZVf/yNN1dBcDOsQuTlLMjfZTNdoU+TO+ZO4cdfdbL8gNkL8adbrTpDda
-	OKkUYhIAziKfBfdkSHJyhharoXTewwc1denSWSzqEWwqvO3MNoeVn2wLCPdm5egPPjr1zg4bywJ
-	KPazX08899nfBPz8+b7zcTplKe+ahi1tuAkoxB9cG8EwRAt08OEhE5S9iw886rqnXIAqYPC6dS5
-	7ZXWMb8Sa0dpRARqGVEO1dGc5J2QJ8iFLrTh24zBIxbKiexjOcU3rA==
-X-Google-Smtp-Source: AGHT+IHdwrLpQIpUiiyBR38B/ZttRSS4g/Wv80xkTkGlVkMPcowVbaa+12lFPhCvhIOfAu66scr/kQ==
-X-Received: by 2002:a17:907:60c9:b0:ac7:cfcc:690d with SMTP id a640c23a62f3a-acec6ab3db1mr282121166b.40.1745927168683;
-        Tue, 29 Apr 2025 04:46:08 -0700 (PDT)
-Received: from localhost (109-81-85-148.rct.o2.cz. [109.81.85.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ace6ecfa33csm760681066b.119.2025.04.29.04.46.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 04:46:08 -0700 (PDT)
-Date: Tue, 29 Apr 2025 13:46:07 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Suren Baghdasaryan <surenb@google.com>,
-	David Rientjes <rientjes@google.com>, Josh Don <joshdon@google.com>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, bpf@vger.kernel.org
-Subject: Re: [PATCH rfc 10/12] mm: introduce bpf_out_of_memory() bpf kfunc
-Message-ID: <aBC7_2Fv3NFuad4R@tiehlicka>
-References: <20250428033617.3797686-1-roman.gushchin@linux.dev>
- <20250428033617.3797686-11-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1745927211; c=relaxed/simple;
+	bh=3dh4cSlwqNafxDi1eoskuMMskOU14nSu2voZZz+IISI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Reyi0Qb5suO/NS7kOVdeQP2wifbPea53GBRjZQgho+h8k7GvcNt4nBXxlga+Mea30GlmQLW9H5COJKY0/CCoIm7LtQ0boZ9Na9LdNEBnzJgyBfMHBk5nDWUYg87whLL8nE2qGsZ9ExCZfW5bl9hJiZtt1zZP+Y1WJLQnAyLrtAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=IN0QNytk; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T6nggI024868;
+	Tue, 29 Apr 2025 04:46:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=lMYcX+6NRtn1bfaz92OoF0m
+	EjFbSPiTLQI7sXGqkxkE=; b=IN0QNytkIeursvsjY1jMvW2fmWYQETH/EFMcHuD
+	1NPCS4y/c3rPYaUcSGFSTlixcL0mb3ByYzmz92ihgQsZF2DbQW1RroGVmjL1Ivlv
+	jQ3muIKe+3HxEkBd6E+QgeCN5SZAHIMqAqpN283L2zCY4SerD6/ZycQsb0nj0GRQ
+	VjCLCufpZNiNKx97f4qZLtu4AF41OcLxl16hxEI1N9ZA/WJ1ESlXyftL62ggFZJe
+	5v4b+3UEpASYSLFiSLXU7kPgm3wKEGm5skeLTFnJwH+jCVyCSzExBNvsRHxJq5hJ
+	focFQetyE8P+gUebZ8UrJRQdSOMhHM5TI/vfV0P+crQbifQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 469krcccsb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 04:46:29 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 29 Apr 2025 04:46:29 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 29 Apr 2025 04:46:28 -0700
+Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
+	by maili.marvell.com (Postfix) with ESMTP id 58B2D3F70D9;
+	Tue, 29 Apr 2025 04:46:28 -0700 (PDT)
+From: Sathesh B Edara <sedara@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <hgani@marvell.com>, <vimleshk@marvell.com>,
+        Veerasenareddy Burru
+	<vburru@marvell.com>,
+        Sathesh Edara <sedara@marvell.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric
+ Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>,
+        Abhijit Ayarekar <aayarekar@marvell.com>
+Subject: [PATCH net] octeon_ep: Fix host hang issue during device reboot
+Date: Tue, 29 Apr 2025 04:46:24 -0700
+Message-ID: <20250429114624.19104-1-sedara@marvell.com>
+X-Mailer: git-send-email 2.36.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428033617.3797686-11-roman.gushchin@linux.dev>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Gdk_q4JLrARwBEnrBMpTqzczb2E_F_0o
+X-Authority-Analysis: v=2.4 cv=f61IBPyM c=1 sm=1 tr=0 ts=6810bc18 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=Bsf_nmtMMKoVPQtrbQ8A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA4NyBTYWx0ZWRfXyJ5Z+YjPySVu csjnui5hfng4OityfJxwmo32k3qeyMj2l7HWYXqVvm75qOJ8t7E+oO0JLoGl9z6tyWHVsda9MZ8 ugviDjePM2si4BSidHRFkFFgaipV4FiuQSG9ghUEqaUSQMdI0yrq1QWrL54iLopiYzTwuAUNOd/
+ abzSUuKM0Ej/hKdHoklYEoWs/mJjy7nQi5AEddWHL13JWUDX/+z1awtRZme1kcsfTo/+HTQGdfD uhe4PrReOfBYtPsGBt/Fb5WcPN8huhF1lIWo+NzkoG5eyJ06vGvrnOJ+8sMo6Mfe199aEyTIouq ACOcTdwkQ/RznQVnGxPDrAQpwDQdobnK8QvMUuFO0rXufqf7F0X7BlkhM/LRVdjx3yY9iBMAkdw
+ Z4aTbmXPjbx+UUck8l3kJM/uE+KBefWNpgiJljrEgBLsXs/LWnW6Tf6UAlpL5E9RNGl3Rs2J
+X-Proofpoint-ORIG-GUID: Gdk_q4JLrARwBEnrBMpTqzczb2E_F_0o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_04,2025-04-24_02,2025-02-21_01
 
-On Mon 28-04-25 03:36:15, Roman Gushchin wrote:
-> Introduce bpf_out_of_memory() bpf kfunc, which allows to declare
-> an out of memory events and trigger the corresponding kernel OOM
-> handling mechanism.
-> 
-> It takes a trusted memcg pointer (or NULL for system-wide OOMs)
-> as an argument, as well as the page order.
-> 
-> Only one OOM can be declared and handled in the system at once,
-> so if the function is called in parallel to another OOM handling,
-> it bails out with -EBUSY.
+When the host loses heartbeat messages from the device,
+the driver calls the device-specific ndo_stop function,
+which frees the resources. If the driver is unloaded in
+this scenario, it calls ndo_stop again, attempting to free
+resources that have already been freed, leading to a host
+hang issue. To resolve this, dev_close should be called
+instead of the device-specific stop function.dev_close
+internally calls ndo_stop to stop the network interface
+and performs additional cleanup tasks. During the driver
+unload process, if the device is already down, ndo_stop
+is not called.
 
-This makes sense for the global OOM handler because concurrent handlers
-are cooperative. But is this really correct for memcg ooms which could
-happen for different hierarchies? Currently we do block on oom_lock in
-that case to make sure one oom doesn't starve others. Do we want the
-same behavior for custom OOM handlers?
+Fixes: 5cb96c29aa0e ("octeon_ep: add heartbeat monitor")
+Signed-off-by: Sathesh B Edara <sedara@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeon_ep/octep_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+index 0a679e95196f..24499bb36c00 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+@@ -1223,7 +1223,7 @@ static void octep_hb_timeout_task(struct work_struct *work)
+ 		miss_cnt);
+ 	rtnl_lock();
+ 	if (netif_running(oct->netdev))
+-		octep_stop(oct->netdev);
++		dev_close(oct->netdev);
+ 	rtnl_unlock();
+ }
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.36.0
+
 
