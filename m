@@ -1,239 +1,99 @@
-Return-Path: <linux-kernel+bounces-625308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA77AA0FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE23AA0FC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4665166B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AAF165834
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4395A21B18A;
-	Tue, 29 Apr 2025 14:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07C21ABAE;
+	Tue, 29 Apr 2025 14:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Hl4XiLXn"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PK41a2TV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260FB199920
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0A1DE4F3;
+	Tue, 29 Apr 2025 14:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938527; cv=none; b=UzZQbayIWGo1UjRDscEo0ZRlT/j79HIAzqIFxFJIKfH3mJeA3N1Qo8T1N9GoBkAgpbTMz5+k6O/czCOXAwRAg3OVB/lyx4GAk3Y8+1EqNFjbINsXpTSOX+dJCQL9/PpIweZupRfeyJihRWnjZvTmyEcfAgkFyIk1EpNyCMkBPBo=
+	t=1745938616; cv=none; b=rCQ3gDltrl8c5T9xtuRWG+RwFA9d9Q9pXmV7qh/0Ho1nBt8ocQTNGgu8Wmu3q9mO9OO6tRlR562Z6e5r+W/Mmxswha6mPYpdfuwGZ1EmWNlM/qsD18VJJXHOYsNA1DbuFcid/uE5G7tNkF6dDkis9kN177S4bHPsQpM3RTurDDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938527; c=relaxed/simple;
-	bh=6pjN8xbnxV9pDtEawDx5cmq+vBu7qG8f7meQFUIddqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hi+coEU6z3SVl0q7C2g7dKO77L7Eo/4i/m15ToPL4HkniQTKl1MCcpTB15Tw1/JdcemfxD+TrxQXSkqvy/XwfLASd8P3j7L6jacxpBUD1LFv0nVbjfmMFOr/CHMlJkekd1gRbp4QWc9epBhxAIKmBPCkYsOTms+5oy5bd9jYPf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Hl4XiLXn; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b01d8d976faso496710a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 07:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1745938523; x=1746543323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eF2cytyryKmEKcUAK+pBobxZN4rDC3VGSqrUogsqSw0=;
-        b=Hl4XiLXnT1BlgiDRyDEmLJAGKCZNjFzl4ExL78v+EgpFLoy/xapT0WmzQ+PdZOZE8N
-         dP64A7fxULN1D4AyvpoAQS6ZRs0SbM1YzhIq9XgShABTD1NzqJ34qzJUC/SpU6xavAWF
-         ZOafFcQZ2jmxxCPCQ6gLz4eEiYySs/Bo93ZIPPBgq/lT4R8ZMKnkhusFmOojTAJZI2dp
-         +blU9l3O8mDEG0r4MBmN5f4faA91TrYDsKGGI/reVDJlz9a1TPJ3o0vvcw5Rhu+GnS2R
-         b0fKMRBt7VAHTwdGWO7rJ0y9LfLbskbiD1Axgg9d3FV5d2ciX18wQWvivSr3pl2EhhXS
-         ed7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745938523; x=1746543323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eF2cytyryKmEKcUAK+pBobxZN4rDC3VGSqrUogsqSw0=;
-        b=lzLLcsScHPhBowPsd5+VjUAHkXnGcRzwKLmYSYTNyf4xAV4Uzx13ns9IXDpCuZGmwY
-         Oi5XsEDZusJAQh25SVtX5nAlDE/LwFeRoLAuB6IwwbY1Z8r7M20o0mUXIkKdIWPQojCt
-         v6T8IBkgEkin+EEAiae0Y/UnpPZmfj1J3GLTG2/vvRefxumVw4NzZKpPV6mSywZh56PW
-         B/u3d0xYLXMFZINLL4m16Y86AzZtr0JEM2heNTHF+TQjmQT8xkU4hmK5ksuct5cCyTky
-         FsqIBeNPOxiZbN/SEL+8RNt3BYGjA0lbjrSshgAR8Ar9gt6uIdgd8v+wAvg9721Tei+B
-         6fBg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1CTFR10v2yj57JtVkRcl9wHU2xhbrj+dO2HIcVDKr70r0V72NTVIbKUA9w0/p1jc2Wu4Lt/I3g347pT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAPe7a2QdMcvGA2eIN1tpK/GOdRG5rBRKJOUdLK68V8vug0bU4
-	zYXXJUfPPFHWSxir18T7cGKtuwYG4pe2j6RGbojDXZ3hsXnbJB/b1wNtBQdptGOVdTNl6zM4qi2
-	j3o2dNRRrQ44ayNdzFIdwDLNLL5U4ojvK7SgZ2A==
-X-Gm-Gg: ASbGncu+szJETib85bgg8bBgfpkAj+a/K3AvjB0+D+5EWazR5aYRlp4FUqiKu+JZcqF
-	Iw2pTauoprBqpL+0z8MaTdwL/9IvNU/zh0uuGM5edtsOeX+fRN+uWmHzOI7VtBHZmALiSWuhFOi
-	6BwnQuqEqoQvxSBrGXZdjs
-X-Google-Smtp-Source: AGHT+IEZdJ+noq7oxgaFMD1JayQtdWBsSaMvnm7kH5BOp2vha1U9lmP2efZQGH+3bkKDZG9FbSMQqHluyZa5+swZHyI=
-X-Received: by 2002:a17:90b:4a05:b0:2ff:7970:d2b6 with SMTP id
- 98e67ed59e1d1-309f7e9e312mr8896247a91.5.1745938523216; Tue, 29 Apr 2025
- 07:55:23 -0700 (PDT)
+	s=arc-20240116; t=1745938616; c=relaxed/simple;
+	bh=TrUU+M1F4SQVXD7iadCxRa4FaQ+mnKlBzxagUQ1A3Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPd+6kETB5wKwksf1UCF6ZfGy19b7RC5aGiDTC2HyBEFqTxUIiod9zlChVYNarx7uGeFW811gv+ZmancHCx1Z56nnILNLX3HHdt6vYbkBV0sdTb+FHQCbdccr6MTK555+XZUBJttxP7BDowAwTKCz1zNjLoAWEAwAR5LbQ7rSaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PK41a2TV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E605CC4CEE3;
+	Tue, 29 Apr 2025 14:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745938614;
+	bh=TrUU+M1F4SQVXD7iadCxRa4FaQ+mnKlBzxagUQ1A3Yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PK41a2TVkkURAhJcJlYrBHdcjcLNua9tmjhOd9oe0wEb7v3lCEWM3PwhQQFcfZTt2
+	 lbpIEIiaDTP9zUTOOXJGhJxjWYxar0k8WJfr2re/cH53Bu8pK9cC0dIOkgu+d14liD
+	 XPIkkjbKRPdYICmyZRjsV8XrHCrmhbzmJpXYH/BlhNYACHMHWP5JB9gEOoJiaI/C+f
+	 58fjYrI6FWSLU+pe8d93wnEsWRuwBov+DPYcNR7Z+TfI8SEABTrdNhGzxd7BIcOrVI
+	 HGhsAsgNdnDu7/98LUEOMmrE7E3H/4J3Fnpxqq/lIkOA/paoSv67P4aUJ7V3xmL/VE
+	 sNgBcYgSSnPRQ==
+Date: Tue, 29 Apr 2025 15:56:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: iio: adc: adi,ad7606: add gain
+ calibration support
+Message-ID: <20250429-irritably-cacti-b7287dbdc3d8@spud>
+References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
+ <20250429-wip-bl-ad7606-calibration-v1-4-eb4d4821b172@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250427045803.772972-1-csander@purestorage.com>
- <20250427045803.772972-6-csander@purestorage.com> <aA4rqcpC01SzUn_g@fedora>
- <CADUfDZpEGVLzEZJtPiScWgf6PVroQvKKhGed1cb8AJiyUr_RYg@mail.gmail.com>
- <CADUfDZqqeeBTbgvCfHa8sr7Y7BetGbPzHYA1hMoN83kz+Bi54A@mail.gmail.com> <aBBQDjLDkGWE63vT@fedora>
-In-Reply-To: <aBBQDjLDkGWE63vT@fedora>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 29 Apr 2025 07:55:10 -0700
-X-Gm-Features: ATxdqUH5bTmTqX44Hzi533MxE4zSI0TaCZXtg4vOlrldrq4Do_Wue3jkeG-JLN4
-Message-ID: <CADUfDZroQ4zHanPjytcEUhn4tQc3BYMPZD2uLOik7jAXvOCjGg@mail.gmail.com>
-Subject: Re: [PATCH 5/8] ublk: factor out ublk_start_io() helper
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Uday Shankar <ushankar@purestorage.com>, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="u3SN/e233iO0AJsN"
+Content-Disposition: inline
+In-Reply-To: <20250429-wip-bl-ad7606-calibration-v1-4-eb4d4821b172@baylibre.com>
+
+
+--u3SN/e233iO0AJsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 9:05=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> On Mon, Apr 28, 2025 at 08:12:52AM -0700, Caleb Sander Mateos wrote:
-> > On Mon, Apr 28, 2025 at 7:28=E2=80=AFAM Caleb Sander Mateos
-> > <csander@purestorage.com> wrote:
-> > >
-> > > On Sun, Apr 27, 2025 at 6:05=E2=80=AFAM Ming Lei <ming.lei@redhat.com=
-> wrote:
-> > > >
-> > > > On Sat, Apr 26, 2025 at 10:58:00PM -0600, Caleb Sander Mateos wrote=
-:
-> > > > > In preparation for calling it from outside ublk_dispatch_req(), f=
-actor
-> > > > > out the code responsible for setting up an incoming ublk I/O requ=
-est.
-> > > > >
-> > > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > > > ---
-> > > > >  drivers/block/ublk_drv.c | 53 ++++++++++++++++++++++------------=
-------
-> > > > >  1 file changed, 29 insertions(+), 24 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> > > > > index 01fc92051754..90a38a82f8cc 100644
-> > > > > --- a/drivers/block/ublk_drv.c
-> > > > > +++ b/drivers/block/ublk_drv.c
-> > > > > @@ -1151,17 +1151,44 @@ static inline void __ublk_abort_rq(struct=
- ublk_queue *ubq,
-> > > > >               blk_mq_requeue_request(rq, false);
-> > > > >       else
-> > > > >               blk_mq_end_request(rq, BLK_STS_IOERR);
-> > > > >  }
-> > > > >
-> > > > > +static void ublk_start_io(struct ublk_queue *ubq, struct request=
- *req,
-> > > > > +                       struct ublk_io *io)
-> > > > > +{
-> > > > > +     unsigned mapped_bytes =3D ublk_map_io(ubq, req, io);
-> > > > > +
-> > > > > +     /* partially mapped, update io descriptor */
-> > > > > +     if (unlikely(mapped_bytes !=3D blk_rq_bytes(req))) {
-> > > > > +             /*
-> > > > > +              * Nothing mapped, retry until we succeed.
-> > > > > +              *
-> > > > > +              * We may never succeed in mapping any bytes here b=
-ecause
-> > > > > +              * of OOM. TODO: reserve one buffer with single pag=
-e pinned
-> > > > > +              * for providing forward progress guarantee.
-> > > > > +              */
-> > > > > +             if (unlikely(!mapped_bytes)) {
-> > > > > +                     blk_mq_requeue_request(req, false);
-> > > > > +                     blk_mq_delay_kick_requeue_list(req->q,
-> > > > > +                                     UBLK_REQUEUE_DELAY_MS);
-> > > > > +                     return;
-> > > > > +             }
-> > > > > +
-> > > > > +             ublk_get_iod(ubq, req->tag)->nr_sectors =3D
-> > > > > +                     mapped_bytes >> 9;
-> > > > > +     }
-> > > > > +
-> > > > > +     ublk_init_req_ref(ubq, req);
-> > > > > +}
-> > > > > +
-> > > > >  static void ublk_dispatch_req(struct ublk_queue *ubq,
-> > > > >                             struct request *req,
-> > > > >                             unsigned int issue_flags)
-> > > > >  {
-> > > > >       int tag =3D req->tag;
-> > > > >       struct ublk_io *io =3D &ubq->ios[tag];
-> > > > > -     unsigned int mapped_bytes;
-> > > > >
-> > > > >       pr_devel("%s: complete: qid %d tag %d io_flags %x addr %llx=
-\n",
-> > > > >                       __func__, ubq->q_id, req->tag, io->flags,
-> > > > >                       ublk_get_iod(ubq, req->tag)->addr);
-> > > > >
-> > > > > @@ -1204,33 +1231,11 @@ static void ublk_dispatch_req(struct ublk=
-_queue *ubq,
-> > > > >               pr_devel("%s: update iod->addr: qid %d tag %d io_fl=
-ags %x addr %llx\n",
-> > > > >                               __func__, ubq->q_id, req->tag, io->=
-flags,
-> > > > >                               ublk_get_iod(ubq, req->tag)->addr);
-> > > > >       }
-> > > > >
-> > > > > -     mapped_bytes =3D ublk_map_io(ubq, req, io);
-> > > > > -
-> > > > > -     /* partially mapped, update io descriptor */
-> > > > > -     if (unlikely(mapped_bytes !=3D blk_rq_bytes(req))) {
-> > > > > -             /*
-> > > > > -              * Nothing mapped, retry until we succeed.
-> > > > > -              *
-> > > > > -              * We may never succeed in mapping any bytes here b=
-ecause
-> > > > > -              * of OOM. TODO: reserve one buffer with single pag=
-e pinned
-> > > > > -              * for providing forward progress guarantee.
-> > > > > -              */
-> > > > > -             if (unlikely(!mapped_bytes)) {
-> > > > > -                     blk_mq_requeue_request(req, false);
-> > > > > -                     blk_mq_delay_kick_requeue_list(req->q,
-> > > > > -                                     UBLK_REQUEUE_DELAY_MS);
-> > > > > -                     return;
-> > > > > -             }
-> > > >
-> > > > Here it needs to break ublk_dispatch_req() for not completing the
-> > > > uring_cmd, however ublk_start_io() can't support it.
-> > >
-> > > Good catch. How about I change ublk_start_io() to return a bool
-> > > indicating whether the I/O was successfully started?
->
-> That is doable.
->
-> >
-> > Thinking a bit more about this, is the existing behavior of returning
-> > early from ublk_dispatch_req() correct for UBLK_IO_NEED_GET_DATA? It
->
-> The requeue isn't related with UBLK_IO_NEED_GET_DATA actually, when
-> UBLK_IO_FLAG_NEED_GET_DATA is cleared.
->
-> It is usually caused by running out of pages, so we have to requeue until
-> ublk_map_io() can make progress.
->
-> > makes sense for the initial ublk_dispatch_req() because the req will
-> > be requeued without consuming the ublk fetch request, allowing it to
-> > be reused for a subsequent I/O. But for UBLK_IO_NEED_GET_DATA, doesn't
-> > it mean the io_uring_cmd will never complete? I would think it would
-> > be better to return an error code in this case.
->
-> The same request will be requeued and re-dispatched to ublk driver after
-> a short delay, so the uring_cmd won't be never complete.
+On Tue, Apr 29, 2025 at 03:06:48PM +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Add gain calibration support by a per-channel resistor value.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 
-I am referring to the UBLK_IO_NEED_GET_DATA uring_cmd, not the FETCH
-one. Doesn't the early return in ublk_dispatch_req() mean
-ublk_complete_io_cmd() won't be called? How else can the
-UBLK_IO_NEED_GET_DATA complete?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
->
-> Anyway, it isn't another story, which shouldn't be added into this
-> cleanup patch.
+--u3SN/e233iO0AJsN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I agree it belongs in a separate patch.
+-----BEGIN PGP SIGNATURE-----
 
-Best,
-Caleb
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBDosQAKCRB4tDGHoIJi
+0n7VAP9zBmDK1EdgInc5dNcBH+0CC1vKZpP5v6NG2zoBXcWc/wD/RCJONyK9ylp2
+dH/IUzZo0vEQoP1ZpeYMXVOf8XU16Qs=
+=V640
+-----END PGP SIGNATURE-----
+
+--u3SN/e233iO0AJsN--
 
