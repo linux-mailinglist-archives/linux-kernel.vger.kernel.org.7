@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-625125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBDDAA0D2C
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F126AA0D2D
 	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA0077B6A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:11:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1087B6602
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629D62D4B64;
-	Tue, 29 Apr 2025 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C0F2D3235;
+	Tue, 29 Apr 2025 13:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAr7LmjX"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtnUICMD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD8D2D1F57;
-	Tue, 29 Apr 2025 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1312C17A8;
+	Tue, 29 Apr 2025 13:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745932249; cv=none; b=kQcRHeCmGUuZ4CIvGLh9wqdt4Tby815cdaZriqQUuyfSqZjLzpdMAtZzZPDdK1GW3tDovSsyvl4inYMOnha325HmpwZFjUwtXcrbaKRXWaGVPk1NCMqu/hp4toBp7FcpTLCbC+MkHg1+TCwCpNV2mQ7v8ZSJZcFylI1jM8Q1vdc=
+	t=1745932219; cv=none; b=a+hoMbwLy/qdCIIxAnR9dv2sXY34mrkHS6MBap5vOLe6sQDcoAe6wFgJBzX3nshvoCuLyFLVdtNMV8oekiIXogT85gJ3DgpMACeIhDwfEOG7D65xNEgKz/jWMedY1SMUgD1UjyNI7t7W15PJ+VaH8fUdsmqz67RgfCyoohaGrQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745932249; c=relaxed/simple;
-	bh=mG/3cBPhWoZ4//uiwOPbYdE5LxoJHw8wteYclJkBm04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=SCMo6/oRzvWhP+/VrienVXiwstN2/WJtl02iKfB6yGeP1hpqtfGyGpJIYNQHzPdxCwSfqJGYCb4pyHwk3pekb+OJpUNy2Dlkm63NAmyVuUXzTeNhG94UPF3bZfBit6pknJmBl2Uv0lzDNdnpc3tu04iD2pxVqw+dyuongh2BKEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAr7LmjX; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e8be1c6ff8so162678a12.1;
-        Tue, 29 Apr 2025 06:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745932246; x=1746537046; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mG/3cBPhWoZ4//uiwOPbYdE5LxoJHw8wteYclJkBm04=;
-        b=MAr7LmjXKeSoUr4zpKea/OVmZqlaKbl9M2qmXxUFRFhHa74+9MPNU6I6+BjQKNg/p/
-         fwpY3egsLUd/1/JOlSYQvxzjO8CKc8+e4TxZ8+eaoMEig+T4IGOdA3cB467WwtX03aHY
-         FtPMp4ckgYlQTpyytbbJjXcFAbP08DGyFMshiY5IIIO4jd3EIl57Y75xlTCpgBcpVJj6
-         V32MC5uSUqk/uxuuxVG87kpqBLjwvuqStUf756bvsq3p4OX47742udN2QOK1FVGL060l
-         mmidICh6QmOWt51S19qojKuWgtq1RmjhkGyNEkxgxhHl1W5xcSEc1/SLENfMWsarOU60
-         enHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745932246; x=1746537046;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mG/3cBPhWoZ4//uiwOPbYdE5LxoJHw8wteYclJkBm04=;
-        b=YPS06ndWlhWNwJJxHmczZ1t+fzwYyJ3y9NbaNM/idqQVJ6iosvHNDUwJvyShwV2SlC
-         k/9GnzSDdASpkUVlhQVHchJCTn+UAAppw+mFNoAPfdJlVXCkAlg7tiZD0tDYf80HSrQS
-         o2NKFa8GRKuQnJ/VJw6mki8TyUW7LjDuFk5Ty8E9Netz19uDVUZrHHjRXfzwT0MZYUND
-         40SiJTFkug9wn9WmbOE4c9sUItoFFe8zSvLOPBWqCkbyPkMJY+PsIIsgTu43bUe5w1+m
-         ttOknR79rmrRSmWotVP+tr/ITpwRdNzwuG7U2OcYFLi1WQ+Lbw1K2snqQ7OEqJebweuF
-         nRSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNkzTRuStlJ4sPT+y0z5l6qsbEksJg1ivOMR2yIZSe2CumPtd5W41tbYo0OWG8LrCP2ljOerK9P3SEMmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQLtGUDeC5B3v/va/4vlFjDHl6WpjQ1ccDLn3Dnd9pDDfD+4uy
-	awIP6DpCEl8kepfIVHfjKkhdyvzvWQ0WRT23D+VlOXvdbKgBeTpWu8yd/fviO1t25xGAoZT9xpX
-	sOkURNzMeJ8jIkkqenESFz/E7qPsJSA==
-X-Gm-Gg: ASbGncttf6aXRfxTQ2icLNBrTwM48ubheF7tOemP5YRiv7zv3TFfSYQ4dcaZbOggj2k
-	fqPwIQiNdhctiVJVmQH51lQkpGKhxuQsO2wXfchN5IU5sfBcYVZHVgNVuW8Ow4xy3pmP+N2KHXW
-	eMC4ncopf/md2YkJoioaxXwg==
-X-Google-Smtp-Source: AGHT+IHQL3YrPJ78P0Nn0UgfG6GQBhKUiP1vhNl4VHz6hEbH8sVpjgXhCCcqLmPt7HqeDGRnvC0+Uk72gKjgnAXLohM=
-X-Received: by 2002:a05:6402:268d:b0:5f3:7fe3:6838 with SMTP id
- 4fb4d7f45d1cf-5f838891c1emr3482576a12.22.1745932245672; Tue, 29 Apr 2025
- 06:10:45 -0700 (PDT)
+	s=arc-20240116; t=1745932219; c=relaxed/simple;
+	bh=IzrxC7he26apAHDDvv+KYJMiYGUo/4A40rCRLAjQJbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NWT3bWwr1w6hpWLpipZJ58NfqOngIdvb9BfVDlivFJ3zpgpngrVlHWFhlcb4WyDoH2KT6xPL9R1HXVdF5wPRzYcnwBnfy9pP6VDDSUDXuNqCun/aU9QPdWvDcQ2HJbqFzBFs8FSvO9sDHBH9ULnsDKn5frcbI8m3flcgpBeQ7YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtnUICMD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EDB6C4CEE3;
+	Tue, 29 Apr 2025 13:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745932217;
+	bh=IzrxC7he26apAHDDvv+KYJMiYGUo/4A40rCRLAjQJbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WtnUICMD6mSY/gijnrYmtmk1l0kXZTjRECImDuNETF/3jr6KvOb288LMMQzSqezBb
+	 xrFOvfejp1VzhEvBqj4sCz/b5qmaw2BLK9iGSJP9ShIUGgb1AsaiK5Bs5hS3849HLo
+	 a2acwngDr1jthX+8M0vjdtIaw5NneU+REYx+okI5MYXKvQQl3C5OWjJLMkK+PKcY6f
+	 VDhPZDAJtaPu6fDmWJfeWlvPjFvtW9T0UYaAZkjGcFzJxYOtQCJu9bS0LfFxzKgKE2
+	 a4Hrn7rC8gyRorCpdS2Int/7F4r0xkmH76xaXisBI2aNZOkDuYqJgm0VBR+rsFBZKe
+	 tBTVd+bWt0MVA==
+Date: Tue, 29 Apr 2025 15:10:13 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vignesh R <vigneshr@ti.com>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
+	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
+	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jayesh Choudhary <j-choudhary@ti.com>
+Subject: Re: [PATCH] i2c: omap: fix deprecated of_property_read_bool() use
+Message-ID: <hn3gsrizar6xbr4seclnb6xot4fo4ztryks4w7exvztsdzj4f6@jhobhujf3ezi>
+References: <20250415075230.16235-1-johan+linaro@kernel.org>
+ <vcwjwrjgzwoil5ydds4findhcgl2ujoxwia7eh7yrbdc45yx26@kmpmvataffzr>
+ <aAIiJQVAUdWJFVy7@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHnbEGLHGX2rMnf=S6CasoNyc939DTe-whcsjt9WhSWG920OoA@mail.gmail.com>
- <434f6474-b960-4383-8d61-0705632b4c33@oracle.com>
-In-Reply-To: <434f6474-b960-4383-8d61-0705632b4c33@oracle.com>
-From: Sebastian Feld <sebastian.n.feld@gmail.com>
-Date: Tue, 29 Apr 2025 15:10:08 +0200
-X-Gm-Features: ATxdqUEzYJh-ZDH8rsCb57P0tiaf5FqyKuM1gdw0oyv9XhS5uDa8nJMbvwAKOEY
-Message-ID: <CAHnbEGJq-w4CMS1dg8UBraV+6kLMkmC-hO4Dq7f4z8Af6maitA@mail.gmail.com>
-Subject: Re: fattr4_hidden and fattr4_system r/w attributes in Linux NFSD?
-To: Linux NFS Mailing List <linux-nfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAIiJQVAUdWJFVy7@hovoldconsulting.com>
 
-On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
-> wrote:
->
-> Hi Sebastian -
->
-> On 4/28/25 7:06 AM, Sebastian Feld wrote:
-> > I've been debating with Opentext support about their Windows NFS4.0
-> > client about a problem that the Windows attributes HIDDEN and SYSTEM
-> > work with a Solaris NFSD, but not with a Linux NFSD.
-> >
-> > Their support said it's a known bug in LInux NFSD that "fattr4_hidden
-> > and fattr4_system, specified in RFC 3530, are broken in Linux NFSD".
->
-> RFC 7530 updates and replaces RFC 3530.
->
-> Section 5.7 lists "hidden" and "system" as RECOMMENDED attributes,
-> meaning that NFSv4 servers are not required to implement them.
->
-> So that tells me that both the Solaris NFS server and the Linux NFS
-> server are spec compliant in this regard. This is NOTABUG, but rather it
-> is a server implementation choice that is permitted by RFC.
->
-> It is more correct to say that the Linux NFS server does not currently
-> implement either of these attributes. The reason is that native Linux
-> file systems do not support these attributes, and I believe that neither
-> does the Linux VFS. So there is nowhere to store these, and no way to
-> access them in filesystems (such as the Linux port of NTFS) that do
-> implement them.
->
-> We want to have a facility that can be used by native applications
-> (such as Wine), Samba, and NFSD. So implementing side-car storage
-> for such attributes that only NFSD can see and use is not really
-> desirable.
+Hi Johan,
 
-I did a bit of digging, that debate started in 2002.
+On Fri, Apr 18, 2025 at 11:57:57AM +0200, Johan Hovold wrote:
+> On Thu, Apr 17, 2025 at 11:41:51PM +0200, Andi Shyti wrote:
+> > On Tue, Apr 15, 2025 at 09:52:30AM +0200, Johan Hovold wrote:
+> > > Using of_property_read_bool() for non-boolean properties is deprecated
+> > > and results in a warning during runtime since commit c141ecc3cecd ("of:
+> > > Warn when of_property_read_bool() is used on non-boolean properties").
+> > > 
+> > > Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
+> > > Cc: Jayesh Choudhary <j-choudhary@ti.com>
+> > > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> > 
+> > Thanks for your patch! I'm going to drop the Fixes tag, as this
+> > isn't really a bug fix but rather a warning suppression during
+> > boot time.
+> 
+> Thanks, but I think you should have kept the Fixes tag and merged this
+> for 6.15 (i2c-host-fixes) since this is a new warning in 6.15-rc1 (and
+> that does warrant a Fixes tag). Perhaps I should have highlighted that
+> better.
+> 
+> If the offending patch had been posted or merged before such uses
+> started generating warnings in 6.14-rc1 then that would have been a
+> different matter.
 
-23 years later, nothing happened. No Solution.
-Very depressing.
+I'm sorry, but as I understand it, the Fixes tag should be used
+only when an actual bug is being fixed. I've seen stable
+maintainers getting annoyed when it's used for non-bug issues.
 
-Sebi
---=20
-Sebastian Feld - IT security consultant
+The system works perfectly fine even with the warning printed.
+It might confuse CI systems, but that shouldn't really be our
+concern.
+
+In any case, I see your point and I'm open to hearing a third
+opinion.
+
+Thanks,
+Andi
 
