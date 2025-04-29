@@ -1,111 +1,98 @@
-Return-Path: <linux-kernel+bounces-625141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B00CAA0D6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:26:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB44AA0B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91183B780F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0931B62596
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FC02D0266;
-	Tue, 29 Apr 2025 13:25:45 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBAE2C3759
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282182C1E18;
+	Tue, 29 Apr 2025 12:20:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA17225768
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745933145; cv=none; b=YeHksFZ4rot6bDet7y2Cegk/Doylc6ufbuj5YRYW7vT5YhWWfeIrvqeGCd+HUP95WewcZJErduI1o91VNMCF0fOTMPwwqIDCj9sXjVqnYcJCA7g15vZt2zED/CNhBTTOGEDOzTPrvIAVoBIWrmd14h5MIhsCroh7na2KhXJUevI=
+	t=1745929237; cv=none; b=O0hwF2MA3owaVVwtTurU1TuSbJqv3qpXOUNHhTauAn971d47gHRyEShF8ZYTLFQoWfy5kho2qD34sZY3FKKjYz0pRu0BVErqRlQGdfVjeZkdieKaPzVlktpaF6U4Kq++mEX62S36zA7Iu2jf0hEka97n3SumbLGXVGX3/J0jHxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745933145; c=relaxed/simple;
-	bh=mo5bwpzzs1WWHWgDYxJ2Z6p6LRBwgBcy8oP1NmRLw9A=;
-	h=Message-Id:Date:Mime-Version:From:To:Cc:Subject:Content-Type; b=ZjTQbIunLLOGxmEou5QBTVoF6WDvYZeJbwdv7Xk9FX9WvMJGAwqKVbCrQpa8IShPAtlnsq7AA26CGU7iqRF9RoiWTxR3MRrqD5RlPbcddraNsVHfnbhV4VZeY53LCBNAGuEz2x8eBv8DvZYXhxzs/nz7lNl4iUBm00XZ6mwo5Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Zn1833mpyzW7n
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 21:17:39 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.137])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Zn17y4yVczBRHKP
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 21:17:34 +0800 (CST)
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Zn17j4H41z8R049
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 21:17:21 +0800 (CST)
-Received: from mse-db.zte.com.cn (unknown [10.5.228.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Zn17W5ltPz51SYN;
-	Tue, 29 Apr 2025 21:17:11 +0800 (CST)
-Received: (from root@localhost)
-	by mse-db.zte.com.cn id 53TDHCXI085256;
-	Tue, 29 Apr 2025 21:17:12 +0800 (+08)
-	(envelope-from liu.song13@zte.com.cn)
-Message-Id: <202504291317.53TDHCXI085256@mse-db.zte.com.cn>
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 53TAhmmO003471;
-	Tue, 29 Apr 2025 18:43:48 +0800 (+08)
-	(envelope-from liu.song13@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Tue, 29 Apr 2025 18:43:51 +0800 (CST)
-Date: Tue, 29 Apr 2025 18:43:51 +0800 (CST)
-X-Zmail-TransId: 2afb6810ad675fe-954e2
-X-Mailer: Zmail v1.0
+	s=arc-20240116; t=1745929237; c=relaxed/simple;
+	bh=K5XX62vEbOYhpHhxRl2d8OTgf+JX7nvoBnPZLwugcV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LJQ2Qvh+3Q5Rlxqqzd5Mnph+KAFg5CyXPgbQ5rqqeF1+MTXbp/eZV5n16C2XrpWdI//DL03N9BZEOeP++yGMCNb8vtpm3JcqudsVnq0mAhPSTnTj6/1K4BTgmER8Q4CBjnXTriRvat8zOtpBuKQ3g+LmV/NeQLsk2BXBE4so0LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4ZmzNt5G8Rz9sB2;
+	Tue, 29 Apr 2025 13:58:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id EuswGPPqwCmv; Tue, 29 Apr 2025 13:58:38 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZmzNt4bxgz9s92;
+	Tue, 29 Apr 2025 13:58:38 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 992A18B766;
+	Tue, 29 Apr 2025 13:58:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id kJveHg6ejLpf; Tue, 29 Apr 2025 13:58:38 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D42D8B763;
+	Tue, 29 Apr 2025 13:58:38 +0200 (CEST)
+Message-ID: <17c35382-36c2-44e6-b553-e66a32a8c47e@csgroup.eu>
+Date: Tue, 29 Apr 2025 13:58:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <liu.song13@zte.com.cn>
-To: <felix.kuehling@amd.com>
-Cc: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <airlied@gmail.com>, <simona@ffwll.ch>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <liu.xuemei1@zte.com.cn>,
-        <jiang.xuexin@zte.com.cn>, <xue.zhihong@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBkcm0vYW1ka2ZkOiBlbmFibGUga2ZkIG9uIFJJU0NWIHN5c3RlbXM=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-db.zte.com.cn 53TDHCXI085256
-X-MSS: AUDITRELEASE@mse-db.zte.com.cn
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6810D172.000/4Zn1833mpyzW7n
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] bus: fsl-mc: Use strscpy() instead of
+ strscpy_pad()
+To: Ioana Ciornei <ioana.ciornei@nxp.com>,
+ Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20250429104149.66334-1-thorsten.blum@linux.dev>
+ <kko4akbacnugkdughit5ty6vpzg4wjiif3rh4w75hd67v34nre@ngpqhwjb5l4p>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <kko4akbacnugkdughit5ty6vpzg4wjiif3rh4w75hd67v34nre@ngpqhwjb5l4p>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Xuemei Liu <liu.xuemei1@zte.com.cn>
 
-KFD has been confirmed that can run on RISCV systems. It's necessary to
-support CONFIG_HSA_AMD on RISCV.
 
-Signed-off-by: Xuemei Liu <liu.xuemei1@zte.com.cn>
----
- drivers/gpu/drm/amd/amdkfd/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Le 29/04/2025 à 13:47, Ioana Ciornei a écrit :
+> On Tue, Apr 29, 2025 at 12:41:48PM +0200, Thorsten Blum wrote:
+>> Both destination buffers are already zero-initialized, making strscpy()
+>> sufficient for safely copying 'obj_type'. The additional NUL-padding
+>> performed by strscpy_pad() is unnecessary.
+>>
+>> If the destination buffer has a fixed length, strscpy() automatically
+>> determines its size using sizeof() when the argument is omitted. This
+>> makes the explicit size arguments unnecessary.
+>>
+>> No functional changes intended.
+>>
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> 
+> Reviewed-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> 
+> Christophe, could you also pick-up this patch when you have a chance?
+> 
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig b/drivers/gpu/drm/amd/amdkfd/Kconfig
-index d3c3d3ab7225..62e88e5362e9 100644
---- a/drivers/gpu/drm/amd/amdkfd/Kconfig
-+++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
-@@ -5,7 +5,7 @@
+Sure I will take it when time comes, but again I'd expect an explanation 
+inside the patch (below the ---) for the resend. I now have this patch 
+twice in the list and don't know why, see 
+https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=&submitter=&state=&q=&archive=&delegate=61610
 
- config HSA_AMD
-  bool "HSA kernel driver for AMD GPU devices"
-- depends on DRM_AMDGPU && (X86_64 || ARM64 || PPC64)
-+ depends on DRM_AMDGPU && (X86_64 || ARM64 || PPC64 || (RISCV && 64BIT))
-  select HMM_MIRROR
-  select MMU_NOTIFIER
-  select DRM_AMDGPU_USERPTR
--- 
-2.25.1
+Christophe
 
