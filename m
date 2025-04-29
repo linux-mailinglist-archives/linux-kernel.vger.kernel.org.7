@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-624665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8A8AA0618
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:48:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5287AA0607
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ECBE4A0CE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9DD15A0462
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5836B288CAD;
-	Tue, 29 Apr 2025 08:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6989296D09;
+	Tue, 29 Apr 2025 08:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JbdS+SNQ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A07125DB15
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="DfMUzp7s"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB21322422F;
+	Tue, 29 Apr 2025 08:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745916482; cv=none; b=IKalRbdZ2aVEU5Uac/ia2Hk+gYlesCY2l2AjujIpDK0WMAu+8yNgc/N6BKgHkx+xoMvq3vxQDKKhkSxV9sf7OyFAnv2OkHwRJZkgq1ipZDho4iioBFc7rnOtpTeKDAv4H4R44sS7FgyGt1csyS7Fiones0YDC2e0WWLWUz4vTes=
+	t=1745916222; cv=none; b=gOP8YY1SE/UK2N90UBUiwQJ1nMdlAuz5/w3sme4YHjE8dBru8ObDuIBL36W5CZDDj/Z+VaTLKkwPaX04rYgC5VUI3yaVFFjkEvDQiM41dOeWbqW82dodeEeRZQlzaxJrqxf0Zmeoxgs+XMg88P6rZhsRpY1uEWWu0Gp8fvfYuw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745916482; c=relaxed/simple;
-	bh=+ZagfuJC2OTd2P7p3HpRdZfwzsuJtYmVYIRoQXL/BBA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QuMa949GTjbpgqxQJhO2oD2AExOqIXdgaymGNbBHHGwLrkV8RejsYb5d/SQIIRv6pqMaQBWJDfztDyOUOF21kueCJa+6qccDn9NcePjluY0q7S6qyvjchhfaWwrB+Y2+8j663vLxnVFW5jigQe3sf93vdXNxupg4RtMpJDdf5nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiayanli.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JbdS+SNQ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiayanli.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso6631901a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745916480; x=1746521280; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KYd3MUONGEmmtl9SUW3Ij+b6oXTZesvP0uBT5hlQeAc=;
-        b=JbdS+SNQ1PFyVdJ95ov+Uh1CVf3VI//6JCRFkw8QboPaZ9WxORWaGwaluJH2FJUmaV
-         vMyY90I4/KyiWYYMlrfvePokGM89OO+QHvaJuQyp7ORO9pLSgLiMpO8PWLitxP2Kg9Xh
-         ayXg2d0scfHVpkXm4LkB4aHReVYZKH7Z2TwosBbW2+MaK1WR4MEgD+lz3sb1CUipvExl
-         /iUUr7XAsNKxtymO9qzr5q+F15rK8SxN9Em1rnPg4R+1Dht0JJ2SymaVwliBDfHiabsd
-         tX0ruOeKrFRTdAlXqO01/rt+fs+f3qnY1rODWF+lCmt5SKnBrlj+oQygrlV4fuqJ7BL1
-         ueaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745916480; x=1746521280;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KYd3MUONGEmmtl9SUW3Ij+b6oXTZesvP0uBT5hlQeAc=;
-        b=KunekDvrCRBV+iSFVJQd7as3sD6rvdphENKc2oAx8d+3zLg8OlooaNfL3fIUq9Y8k5
-         U2l2DkdF+G88LXumoJnWXtGsqbpBrfX3qbMSJAfF+41FMyZy/HA1mXDs7cNXPOasp4g3
-         r7QCkS+3aWcZHw7kiR4Pa5ljPBa7RW1ODtLslGE0clEPJgiVwBFYqs2fyoYrWssYHZ/i
-         ruWqgltceMn6q1SsqlfxL3n9B9zFPbgx/7MuooyNCs31AWP+rNIJvSdmIK/5c3Noe5jv
-         hgPnb1SofikNuMjHZYQfUyOU9bQmvh2bG9VlObrTNSQaHvi3/sinEaQW1uFJwCV5XzaX
-         BOEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeR/ahyOZhhik3pc5phbTaUvhDPc1ui9mRcN7kLUONXKw34DpM+6WtbNZly0lfaysqFN/olMJeN8QDxEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUc6rIO6U7mfyszjk76f4Ykln3pJj8WIfCJaFn242kly+uM3Sv
-	ub3T4X2k7bpEtC07DTUK/u91irbQn6bN6LKRfiTILfOvXov9sjNcqmhA6aaHYvcrjuViu8Sx4L7
-	/xsCCbaoCcg==
-X-Google-Smtp-Source: AGHT+IHHq8YG/UfRHBfkc3mFLRSiExeXVTakUlQOc/lfIufC0Uu3iS0szmQe7j0vFj8WM66psVsi10s8SMyc/A==
-X-Received: from pjuu13.prod.google.com ([2002:a17:90b:586d:b0:308:7499:3dfc])
- (user=jiayanli job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:5826:b0:2ff:693a:7590 with SMTP id 98e67ed59e1d1-30a21597ae5mr4908479a91.33.1745916480638;
- Tue, 29 Apr 2025 01:48:00 -0700 (PDT)
-Date: Tue, 29 Apr 2025 08:43:16 +0000
+	s=arc-20240116; t=1745916222; c=relaxed/simple;
+	bh=gt9yqUMAyVr3pWh2vCa1j58/QxEYy6y71QRDSOzfzsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAPlccNHFTJ+aSSz3hq9oVnjsgXWEaxgzkfZ1LGOqwhdIOQQ0yGELWeV1siEumxRZLafX4a97DdDfrZvi9K5aUtJzDZZunQOTPPyaKeWETkqYUSQSmU16vVfxirCMsXUn2sJKKkaFcISZ8KGe0O3F/40fXNHLPXEFdll+UQ/9TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=DfMUzp7s; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 1967920BCAD1; Tue, 29 Apr 2025 01:43:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1967920BCAD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745916214;
+	bh=MLMI0YGgePRRieH5KhOgSTTxPGhA0u8+OCwx8w9CvY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DfMUzp7s2Yb7IFsfitPC0jmnzTNngOmgTbu0WzU27qJqIjE5K4rlQSVrhqBrtC6hd
+	 Jqhv7WgTVOO/XMQTG3FcYuT+LGzqC2r0WJeZgdIVAYk0g+fawZ/g+ICp5WaU0pBBJk
+	 YEl7ZuFlmttDh59oXrIo9omNL43JHUpxcsTXROhQ=
+Date: Tue, 29 Apr 2025 01:43:34 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-hyperv@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Yury Norov <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Wilczy??ski <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Simon Horman <horms@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Paul Rosswurm <paulros@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH v2 1/3] PCI: Export pci_msix_prepare_desc() for dynamic
+ MSI-X alloc
+Message-ID: <20250429084334.GA10839@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20250425163748.GA546623@bhelgaas>
+ <87ldrkqxum.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
-Message-ID: <20250429084317.1619909-1-jiayanli@google.com>
-Subject: [PATCH] x86/microcode/amd: fix the return value when microcode has no update
-From: Annie Li <jiayanli@google.com>
-To: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Annie Li <jiayanli@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldrkqxum.ffs@tglx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-In commit 6f059e634dcd("x86/microcode: Clarify the late load logic"), the
-return value is UCODE_OK if the load is up-to-date in amd platform, which
-leads to load_late_locked() returning -EBADFD.
+On Mon, Apr 28, 2025 at 02:22:57PM +0200, Thomas Gleixner wrote:
+> On Fri, Apr 25 2025 at 11:37, Bjorn Helgaas wrote:
+> 
+> Subject prefix wants to be PCI/MSI
+> 
+>   git log --format=oneline path/to/file
+> 
+> gives you a pretty decent hint
+> 
+> 
+> 
+> > On Fri, Apr 25, 2025 at 03:53:57AM -0700, Shradha Gupta wrote:
+> >> For supporting dynamic MSI-X vector allocation by PCI controllers, enabling
+> >> the flag MSI_FLAG_PCI_MSIX_ALLOC_DYN is not enough, msix_prepare_msi_desc()
+> >> to prepare the desc is also needed.
+> 
+> Please write things out: ... to prepare the MSI descriptor ....
+> 
+> This is not twitter.
+> 
+> >> Export pci_msix_prepare_desc() to allow PCI controllers to support dynamic
+> >> MSI-X vector allocation.
+> >> 
+> >> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> >> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> 
+> > Thanks for the update and for splitting this from the hv driver
+> > update.  Will watch for Thomas's ack here.
+> 
+> Other than that:
+> 
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-This is different from the intel platform, which will return UCODE_NFOUND
-and is more reasonable.
+Thank you for all the comments Thomas.
+I'll be mindful of these going forward.
 
-Fix the return to UCODE_NFOUND to avoid -EBADFD error.
-
-Fixes: 6f059e634dcd ("x86/microcode: Clarify the late load logic")
-Signed-off-by: Annie Li <jiayanli@google.com>
----
- arch/x86/kernel/cpu/microcode/amd.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index b61028cf5c8a3..f90779dc1cac5 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -1074,6 +1074,8 @@ static enum ucode_state load_microcode_amd(u8 family, const u8 *data, size_t siz
- 	if (ret != UCODE_OK)
- 		return ret;
- 
-+	ret = UCODE_NFOUND;
-+
- 	for_each_node_with_cpus(nid) {
- 		cpu = cpumask_first(cpumask_of_node(nid));
- 		c = &cpu_data(cpu);
--- 
-2.49.0.901.g37484f566f-goog
-
+regards,
+Shradha.
 
