@@ -1,113 +1,200 @@
-Return-Path: <linux-kernel+bounces-624670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7921AA0629
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:50:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1F9AA062F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7D0188B17A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C86C188B55D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617B829B22D;
-	Tue, 29 Apr 2025 08:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889FE2951AD;
+	Tue, 29 Apr 2025 08:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtZWEZj6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="UhdSu1Us"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78DA28C5DC;
-	Tue, 29 Apr 2025 08:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E0A27F75A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745916625; cv=none; b=m4KOZdLDzL3WJ1mZxoyNrzOnRPlafydnQ2vUaZWMJ9LGhRJMTl1vLu31HAxHFiIEDoC6SVOJTR3u83Tq3h1KeSM50h/biWOBgUvCab1E5pTZuphxHrV09ig4ffRuWqYOxVO05P67mfiCCSdd4AHIKPrHKExCM1CQFAttbIhFvVU=
+	t=1745916674; cv=none; b=nDHKtDHNFG5nggyuwEgoNhcdoIA5hzBvnKIy+99E/zE2XGtgkOVWauGj826afS2M9mAHZ1sfaSsrsd7TcArUBvB8cuFMLHeNaPMcjfxv45TIDjiBnaof7fE1QNfv4FOUGKTnaUNtZ3yeHjN/Ox2FBbnC8+kv+SHAO3fV0mtXexs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745916625; c=relaxed/simple;
-	bh=Ml/13q0vC95SyVzhWSFXBnPjXdnRbqMxvb9SdPD+jS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LoZwphIPmc4OVoNpp1KH2Mlgk9XrsGmlMtUs9/m0HA0H0KkBCP51xUEfYfbIST2IXiNeXYQjruxaJwNIQG23HdDGqT43I8AyIDwJmShjAhc4YLijdpeScLnKG9lmvWL4/kXwkOt0xYP5mfO7yxxbuxS9SyIRD41ZAQvXS1yAiBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtZWEZj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73009C4CEE3;
-	Tue, 29 Apr 2025 08:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745916625;
-	bh=Ml/13q0vC95SyVzhWSFXBnPjXdnRbqMxvb9SdPD+jS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YtZWEZj6zIU8Jbq5ysBhy3/KTtuWI44HUn+4eAGzkqrPdwNZxU8E2kzHDW/4NxkeZ
-	 4VNDlXFEOzZVaj5PGu0xGc7pChvECFgnoEBTlflGnCONJgDVTzpi2XvzRnaWtJCo/H
-	 BDrobDQ8VgELEIH51GNKXyIwjgqSPZzHQh3n5wMhDQ0NjNOOf2WDZn8zbBBmSKPpO8
-	 iO4PwsReqwe0png7H7HRjuFbNz/5M9qzCTFmhDSPSgKfCNXxRPYHABBwLYSiH7SrJw
-	 0oPxrxvTlhtZ3DvLCuKa4eIOU1U9oPVfyZUuXnrityvWZBcLtbQdOIPg6I5PwYpt1Z
-	 eKQD9kryqH+NQ==
-Date: Tue, 29 Apr 2025 10:50:18 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Rob Herring <robh@kernel.org>, Dirk Behme <dirk.behme@de.bosch.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] rust: property: Introduce PropertyGuard
-Message-ID: <aBCSymzemg_6Fy2h@pollux>
-References: <aAuryiI0lY4qYyIt@pollux>
- <81a65d89-b3e1-4a52-b385-6c8544c76dd2@gmail.com>
- <aAyyR5LyhmGVNQpm@pollux>
- <0756503c-02e7-477a-9e89-e7d4881c8ce6@gmail.com>
- <aA4ht5sUic39mnHj@pollux>
- <ee888c8f-4802-48a1-bd08-b454b782fff4@de.bosch.com>
- <aA-oQAol8rAU7vzg@cassiopeiae>
- <20250428204840.GB1572343-robh@kernel.org>
- <aA_xUWQt6-UCdlGM@cassiopeiae>
- <D9ILR2IG980H.34N8WNWKWJJO3@buenzli.dev>
+	s=arc-20240116; t=1745916674; c=relaxed/simple;
+	bh=YsDFhu4HcEnff3t1qXe/L3ejyCjNlMTtIe/MIcb0h08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bIr1rW8fz5+1JBXGWEpeMzxwBYWWVcb6t10Ft+B+RiXMtJaF93XpQu4l+B6EfBDRtBI/l9cAKJN2EjRLWLTlYQKIKIgnGNzzCedykDbDYYAhgY1T82H0a+cvzm1eCCbKWOTcfeZldYBr3sO5QMkKkZ8Ofx/WbBn5n/BlfAxl5eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=UhdSu1Us; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso5208667b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1745916671; x=1746521471; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YxwsaEgj+Q0Omu+vZ1eyC37eLFX1X+cgZiMPV4Vs2Kw=;
+        b=UhdSu1Us6iRu8aXXyY6WAJLdee4YB5yKjO02A136Q1NEt41nblNqRFdlwtNkY7blxS
+         xtY9OcftB5a73NVYgjiEmU7j8+SZPSsl6Jwk+rnSGgk23lXKj/WM1sK/3enkkDHawTPy
+         /zTfBR9PWDfIP7Hgwdz3aT7NG05e+C6RvIwD1999qBaTsnM+lMhfV5QhJyuT0HbisVzM
+         X0A8m4XPjcCC9cOF/eBfLtVU5gfF0D3fuXYZBgIDgxQtx35WHE2fW3eVjJIpzTEUqzsU
+         atQ/lueHzp2jt4MPjRTyvBMVy9w8eNUpo5Xzj+1ALDriYdCc6RrPDNvuzcwWvBRW3xcW
+         0N6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745916671; x=1746521471;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YxwsaEgj+Q0Omu+vZ1eyC37eLFX1X+cgZiMPV4Vs2Kw=;
+        b=Vq6nUheiivTfzDbBJCQxvaLXOqgtXsMpfIwYx8Rb9i768I3j8MkUOhdWLcv+KcWrFY
+         KqvmXV5olJy5Oy3coAfvEBhitoAjE6m2llYypARZ5+cKb27THPIZikPM9vrpX6GCsQQC
+         CpDRPr1gouXzBBSCDQURysKa/BVTnV9PHIh5UXvXmjq01zcnjMxQ0xi/nxwxbNIkZ0Je
+         YnSrQfbLdHhVDEmzbD/fH0cYYe+gGHMUrTn9SRdX/tft3C+ewgLypVd6OnABprsDlm98
+         u0T9DvbgTEaSoBAJ7sdAlO6scPmwXqmaB/Z28ZCDJfh86dYuCVHSv8fYuLYLnX/ANfqE
+         b0Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2GI7xA5TuurcDBMZEgNKz3f53z6FtRSlXxdpiet4604JJ/X/Lw0p5z/tb5EIhmjfLD38g0LrWv7FOrw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+jP+G/a5zaRcf8A3tIhqsCARgcsVBuNXezwwYpZpBpgYVi1qG
+	daWg08KwqAKBPriSXTNB5EIGlpFMV/RPWQe900FwzosjQIUoNRPu6l93f0CWYRU=
+X-Gm-Gg: ASbGncsCXlq6HDVWugItcZfORNqeiRAZUK6OxNXFvpGzyCFgTS/nY6tcLNKAydEiu9D
+	qEDhpIkeNMFfoenoJhOtUBkIxbiBlPY3dnOKC5oeUe7pZt6UBLQ6TcWkXw1ftTYzyP1kB10CozX
+	s09hxOtSg3txPRl15L8cQOlG8ABfDa0edhd6ISmbRLiVeXaSpxT0gbIb0qZq3htuOY/yBKo5/vV
+	1uEIqq4fsCCSvzuzjDt0T4IoTGdYU4otSPAZtewI9RiFSmbcWJwRovw9UOcSKXnsGoUYb1yZSeG
+	fmPFJ2LVQE/2XNtTKOaLmKFXZckyC1sFjUScCJF2PWnuJ9zrRjA2BIOFxYvFkvm8o5nN9qT+XKE
+	d0LGrIOtRhQn40ms=
+X-Google-Smtp-Source: AGHT+IEctMKqKIxfKHwBx6+1Ghb0+9YYYgqcw8OVqlt6Q6s6LPNYwZUXZToj5U3b66+aQrGv2/impw==
+X-Received: by 2002:a05:6a21:3a44:b0:1f5:93cd:59b5 with SMTP id adf61e73a8af0-2046a646f3cmr19836662637.28.1745916671308;
+        Tue, 29 Apr 2025 01:51:11 -0700 (PDT)
+Received: from localhost.localdomain (210-61-187-174.hinet-ip.hinet.net. [210.61.187.174])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f8597e0bsm8550119a12.44.2025.04.29.01.51.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 01:51:10 -0700 (PDT)
+From: Guodong Xu <guodong@riscstar.com>
+To: ukleinek@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	dlan@gentoo.org,
+	p.zabel@pengutronix.de,
+	drew@pdp7.com,
+	inochiama@gmail.com,
+	geert+renesas@glider.be,
+	heylenay@4d2.org,
+	tglx@linutronix.de,
+	hal.feng@starfivetech.com,
+	unicorn_wang@outlook.com,
+	duje.mihanovic@skole.hr,
+	heikki.krogerus@linux.intel.com
+Cc: elder@riscstar.com,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	guodong@riscstar.com
+Subject: [PATCH v3 0/6] pwm: Update PWM_PXA driver for SpacemiT K1
+Date: Tue, 29 Apr 2025 16:50:42 +0800
+Message-ID: <20250429085048.1310409-1-guodong@riscstar.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D9ILR2IG980H.34N8WNWKWJJO3@buenzli.dev>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 28, 2025 at 11:50:19PM +0200, Remo Senekowitsch wrote:
-> On Mon Apr 28, 2025 at 11:21 PM CEST, Danilo Krummrich wrote:
-> > On Mon, Apr 28, 2025 at 03:48:40PM -0500, Rob Herring wrote:
-> >> 
-> >> One thing that's really hard to debug in C drivers is where an 
-> >> error came from. You can for example turn on initcall_debug and see that 
-> >> a driver probe returned an error. It's virtually impossible to tell 
-> >> where that originated from. The only way to tell is with prints. That is 
-> >> probably the root of why probe has so many error prints. I think we can 
-> >> do a lot better with rust given Result can hold more than just an int. 
-> >
-> > This I fully agree with, not sure if the solution is to put more stuff into the
-> > Result type though. However, there are things like #[track_caller] (also
-> > recently mentioned by Benno), which might be a good candidate for improving this
-> > situation.
-> >
-> > As mentioned, for now let's go with
-> >
-> > 	pub fn required_by(self, dev: &Device) -> Result<T>
-> >
-> > additional to required() for this purpose to get a proper dev_err() print.
-> 
-> Could it make sense to _replace_ `required` with `required_by` ?
-> Otherwise `required` sits a little awkwardly between `optional` and
-> `required_by`. I can't think of a situation where `required` would be
-> preferred.
+This patchset adds support for the SpacemiT K1 SoC in the PWM_PXA driver
+and updates related device tree bindings. The changes enable PWM
+functionality on the K1 platform through driver enhancements,
+configuration updates, and device tree additions.
 
-Fine with me; required() also seems not useful to implement required_by().
+Functionality has been verified on the Banana Pi BPI-F3 board using PWM14,
+configured as a pwm-backlight. Per community feedback, the actual
+pwm-backlight node is not included in this patchset but can be found in
+patch 7 of the v1 series, with modification of pwms property to 4-cell
+format to match updated binding (#pwm-cells = <3>) since v3.
 
-However, I think we should revisit those generic error prints once we tackled
-the issue of ergonomics in finding the source of an error in general.
++		pwms = <&pwm14 0 2000 0>;
+
+This patchset is based on [spacemit/for-next]
+  base: https://github.com/spacemit-com/linux for-next
+
+Plus the following dependencies:
+1. Clock controller driver, posted by Heylen Chu (v8), with most of it has
+   been accepted:
+https://lore.kernel.org/all/20250416135406.16284-1-heylenay@4d2.org/
+2. Reset controller driver, posted by Alex Elder (v5):
+https://lore.kernel.org/all/20250418145401.2603648-1-elder@riscstar.com/
+
+Major differences between v3 and v2:
+ - Patch 1:
+    - Added: Reviewed-by: Rob Herring (Arm) <robh@kernel.org> # v2.
+    - When compatible string contains "spacemit,k1-pwm",
+      #pwm-cells must be 3.
+ - Patch 2:
+    - Dropped the addition of a reset_control field to struct pxa_pwm_chip.
+    - Using a local variable in pwm_probe() instead.
+ - Patch 3:
+    - In k1.dtsi, changed #pwm-cells = <1> to <3>.
+
+Major differences between v2 and v1:
+ - Dropped the addition of spacemit,k1-pwm as a compatible string in the
+   PWM_PXA driver; instead, it now falls back to marvell,pxa910-pwm.
+ - Removed pinctrl settings for all PWM nodes (pwm0-pwm14); only the
+   pwm14_1 configuration is included in this version.
+ - Changed PWM_PXA from built-in to a loadable module (=m) in the
+   riscv defconfig.
+
+v2 consists of the following patches:
+Patch 1: Add spacemit,k1-pwm compatible string (with fallback to
+           marvell,pxa910-pwm) and support optional resets property.
+Patch 2: Add reset controller support to the PWM_PXA driver.
+Patch 3: Add device tree nodes for all 20 PWM instances on K1.
+Patch 4: Add pinctrl settings for PWM14.
+Patch 5: Add ARCH_SPACEMIT dependency to the PWM_PXA Kconfig entry.
+Patch 6: Enable PWM and PWM_PXA in riscv defconfig for SpacemiT K1.
+
+v2:
+https://lore.kernel.org/all/20250420070251.378950-1-guodong@riscstar.com/
+
+v1:
+https://lore.kernel.org/all/20250411131423.3802611-1-guodong@riscstar.com/
+
+Best regards,
+Guodong Xu
+
+Guodong Xu (6):
+  dt-bindings: pwm: marvell,pxa-pwm: Add SpacemiT K1 PWM support
+  pwm: pxa: add optional reset control
+  riscv: dts: spacemit: add PWM support for K1 SoC
+  riscv: dts: spacemit: add pwm14_1 pinctrl setting
+  pwm: Kconfig: add depends on ARCH_SPACEMIT to PWM_PXA
+  riscv: defconfig: Enable PWM support for SpacemiT K1 SoC
+
+ .../bindings/pwm/marvell,pxa-pwm.yaml         |  35 +++-
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |   7 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 180 ++++++++++++++++++
+ arch/riscv/configs/defconfig                  |   2 +
+ drivers/pwm/Kconfig                           |   2 +-
+ drivers/pwm/pwm-pxa.c                         |   7 +
+ 6 files changed, 225 insertions(+), 8 deletions(-)
+
+
+base-commit: cb9c3aeae509b36afbdf46942a7a0a0dfc856ce7
+prerequisite-patch-id: a5d2fb43fd88525fa6c8ee767c31adfee87f1012
+prerequisite-patch-id: 8a8d0eefd0b4423d87f3c093b451a0fa60622ec4
+prerequisite-patch-id: 30f92f93e5b3577bde61424303f21c709a715ec5
+prerequisite-patch-id: d774b8281b5c6a822445365ee94925e1ab6c7a93
+prerequisite-patch-id: 54a4f5d065eb9f212fd99efec6e7e06abbb9bad8
+prerequisite-patch-id: 93962be60d1b58a98d947edf51b4af9edf513785
+prerequisite-patch-id: 5f53f8bf16fb067628092daebc4831293261aa01
+-- 
+2.43.0
+
 
