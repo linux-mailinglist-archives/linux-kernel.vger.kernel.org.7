@@ -1,191 +1,139 @@
-Return-Path: <linux-kernel+bounces-624833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD73AAA0852
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:19:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659ECAA085C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C49117EF84
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6A0462F86
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E0D2BD58E;
-	Tue, 29 Apr 2025 10:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E8D2BEC2D;
+	Tue, 29 Apr 2025 10:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uEPmOZ5H";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MWAXJuoI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uEPmOZ5H";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MWAXJuoI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dQ9JAecL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3044211A0B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C954E1DF73C;
+	Tue, 29 Apr 2025 10:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745921959; cv=none; b=O8iz/MiKbd+ZMq9LtXARSXRIueywEqVQ2q7wUbEZhEV5JLkckK4Sb2QZKK0IrRnrw+g/eeKsw5Vmbr0JS3Cqdk2tEJCy/XvATjdgHQbNDCpEahN2YC9U4TxyD9KeuKuTi+2Dl/XD47tCXamC1ChNsfft6Ki/lZNnRk690IP7aco=
+	t=1745922064; cv=none; b=PVqxIZVW8DX8bD3SUpEyruiLTuPu/KxVMOKNV/CY1HNhKGS5t2RJCB0NOjcSftxe3DU84Rk6+EtjylKevaMpEJDftsa/7RaPKXAPkS3NcjUGTBpLx3lH+0P5DVaT29DLqAtGsTyx0/U3zMEy0Ssm3gMqIGphlhsZa9VovRtPI+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745921959; c=relaxed/simple;
-	bh=4QzkBVmmHsWN4OZnWCSRRaBIew+nm1KtZg3/1hqRiVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDlsA3iHuyC3wF0ajkUbdEAMS2XSwKtHAEvt0oJ4Yl6cb9FgEatKddvj4xS/05iSmbPTuKt0MRLi4MeSIvRV1htC3rIjhPURu7BkHogP5C/OC5kDkUkpZ/fsQhVkeUKMf+WoFwBHQFNHBomnzt9hPdlBKR5vwAvoP8xt1nGwrmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uEPmOZ5H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MWAXJuoI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uEPmOZ5H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MWAXJuoI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 166DC1F391;
-	Tue, 29 Apr 2025 10:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745921956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FojJjMlWLIACBAIrNYwWPoVZQRrjQQxZ7P50XQnrvLM=;
-	b=uEPmOZ5HSLeDXHB+/QLxg4hkLqdEVZhQm34yN2cqvajNTyMftZUcLfUcOOz0hopKEAFG1E
-	J/0I4C7WvMcCVGzQGcgps1eVUpnflFRtembc0UofYWdHrPkMfw5aTRWJT/JIxvdMFV16Yc
-	pw5oAtu65gWZSdDGoYjFOtfFTxP51SU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745921956;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FojJjMlWLIACBAIrNYwWPoVZQRrjQQxZ7P50XQnrvLM=;
-	b=MWAXJuoI9N+y0T6Vas3sAOy2gxu3Wyd/APynkhGhk8aoCcBmAdgQVRzaCxn8TEzy8sqCB1
-	gxmYnnOo8dWgMEDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745921956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FojJjMlWLIACBAIrNYwWPoVZQRrjQQxZ7P50XQnrvLM=;
-	b=uEPmOZ5HSLeDXHB+/QLxg4hkLqdEVZhQm34yN2cqvajNTyMftZUcLfUcOOz0hopKEAFG1E
-	J/0I4C7WvMcCVGzQGcgps1eVUpnflFRtembc0UofYWdHrPkMfw5aTRWJT/JIxvdMFV16Yc
-	pw5oAtu65gWZSdDGoYjFOtfFTxP51SU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745921956;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FojJjMlWLIACBAIrNYwWPoVZQRrjQQxZ7P50XQnrvLM=;
-	b=MWAXJuoI9N+y0T6Vas3sAOy2gxu3Wyd/APynkhGhk8aoCcBmAdgQVRzaCxn8TEzy8sqCB1
-	gxmYnnOo8dWgMEDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0989313931;
-	Tue, 29 Apr 2025 10:19:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EnpPAqSnEGihKwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 29 Apr 2025 10:19:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B2221A0952; Tue, 29 Apr 2025 12:19:15 +0200 (CEST)
-Date: Tue, 29 Apr 2025 12:19:15 +0200
-From: Jan Kara <jack@suse.cz>
-To: Joe Damato <jdamato@fastly.com>
-Cc: Carlos Llamas <cmllamas@google.com>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>, 
-	Alexander Duyck <alexander.h.duyck@intel.com>, open list <linux-kernel@vger.kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, William McVicker <willmcvicker@google.com>
-Subject: Re: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in
- the future
-Message-ID: <zvkvenkysbzves2qzknju5pmaws322r3lugzbstv6kuxcbw23k@mtddhwfxj3ce>
-References: <20250416185826.26375-1-jdamato@fastly.com>
- <20250426-haben-redeverbot-0b58878ac722@brauner>
- <ernjemvwu6ro2ca3xlra5t752opxif6pkxpjuegt24komexsr6@47sjqcygzako>
- <aA-xutxtw3jd00Bz@LQ3V64L9R2>
- <aBAB_4gQ6O_haAjp@google.com>
- <aBAEDdvoazY6UGbS@LQ3V64L9R2>
+	s=arc-20240116; t=1745922064; c=relaxed/simple;
+	bh=uR6VaioCimeVIQ8bNRlrgSUX6z+R8FlO4/2NaftC328=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i8/7j1y+xf8/SO5zhP391qbyGGnAZGxi0/tdqzRhjpl6G1FPbXCC62ODs6R0Nzdkckamz1m748oaSSf4ldsr83TmC2Z9WlyVzxLPcuNyLrLZ3VSOapz0fuKqnqAVwpvkDut7PA2UO/+eA2rjRNWtGRH+PQzwI5T17E/fS9iAWYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dQ9JAecL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T9rPq3015584;
+	Tue, 29 Apr 2025 10:20:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EIbRRhBoADcI+1rAWz3pn4vq2fzm9cFIBshsTy1XdCw=; b=dQ9JAecLAzkwoqc9
+	q7DDZNAH3aXnJXTq0Wws6gnWoDqsVzo3JMIDQkdr2mMzg8yi9/DxCK4bqgU5QPYA
+	x+3454539bvNAVxXTC37HpX95gpu7LdBuFdrUTCCZFvbOPlvIbI07A0l/0XjqL/R
+	oMkMtVslfxTBc2/xqQpEL8K5Ywb8g4Wc4F7F34OhSFn2uBzeShi2w6yHbdzP9n/Y
+	R5JZCyF8CBCgSYleKqu25XXvmTWschb802jsZkpmZstQkyDHeT+hF7ck4mMGa6YY
+	ROZs53EU0zNEq+Kyr9yL2n514wqNq0pkIqFhMifFAYmBSo5XTbqYNuMlM9QgCBb7
+	g1tAtg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468qjwv4kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 10:20:50 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53TAKbHT026640
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Apr 2025 10:20:37 GMT
+Received: from [10.151.36.30] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
+ 2025 03:20:34 -0700
+Message-ID: <ab24fa96-8c2a-8be3-bcb2-f31e9e6f1ec6@quicinc.com>
+Date: Tue, 29 Apr 2025 15:50:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBAEDdvoazY6UGbS@LQ3V64L9R2>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] spi: spi-qpic-snand: fix NAND_READ_LOCATION_2 register
+ handling
+Content-Language: en-US
+To: Gabor Juhos <j4g8y7@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Sricharan Ramabadhran" <quic_srichara@quicinc.com>,
+        Varadarajan Narayanan
+	<quic_varada@quicinc.com>
+CC: <linux-spi@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250428-qpic-snand-readloc2-fix-v1-1-50ce0877ff72@gmail.com>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20250428-qpic-snand-readloc2-fix-v1-1-50ce0877ff72@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cheBpp22EDXEz9QtfgNkn56uxQHyxvKc
+X-Proofpoint-GUID: cheBpp22EDXEz9QtfgNkn56uxQHyxvKc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA3NyBTYWx0ZWRfX3RVWVafmDu3r aiVKwtepLBdc4DmaFd1072webve7JoHqsJolLlzIj0+M9wu9uHNwimZ4LOtrNU7OSMq4V04CIqS pPiXV9fv52MDG5A11domMkWxenTTj2j+kFBJ/ZUeNibFyhySO34l+ojWpYGkeuwb5VGelHSXz7f
+ YGcZ5UjXHRwPtSM8X3tp0F7FehEAc3JLUxJd2pfdI1dvSUhGn0KtUoSWqYiNXt2y1H4/TLqqCmb YbWBXDB9jy/kVURRSNquO1IUNvVBhfoCNKbloJBdTpQ8Bnt1/BDs80O7GpMFwR4J8Amk6KUOHy3 7jIaJrnP8ADYFSIMtb2jQpdFFylfVF9BlqFeb0Re/rLbYlx1NhnM9Rwm3LVAUYIcyV+2pDWnYVw
+ TrIRhD1ZRelo9FZmbgI1G09Tz6D9sWRODhSjSKALusW7vff/S7iAyPd1eYy/mddiwWTHWfAQ
+X-Authority-Analysis: v=2.4 cv=c/urQQ9l c=1 sm=1 tr=0 ts=6810a802 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8 a=2CvQLFO0oMS28NyxHQUA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=995
+ phishscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504290077
 
-On Mon 28-04-25 15:41:17, Joe Damato wrote:
-> On Mon, Apr 28, 2025 at 10:32:31PM +0000, Carlos Llamas wrote:
-> > On Mon, Apr 28, 2025 at 09:50:02AM -0700, Joe Damato wrote:
-> > > Thank you for spotting that and sorry for the trouble.
-> > 
-> > This was also flagged by our Android's epoll_pwait2 tests here:
-> > https://android.googlesource.com/platform/bionic/+/refs/heads/main/tests/sys_epoll_test.cpp
-> > They would all timeout, so the hang reported by Christian fits.
-> > 
-> > 
-> > > Christian / Jan what would be the correct way for me to deal with
-> > > this? Would it be to post a v3 (re-submitting the patch in its
-> > > entirety) or to post a new patch that fixes the original and lists
-> > > the commit sha from vfs.fixes with a Fixes tag ?
-> > 
-> > The original commit has landed in mainline already, so it needs to be
-> > new patch at this point. If if helps, here is the tag:
-> > Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
-> > 
-> > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > > index 4bc264b854c4..1a5d1147f082 100644
-> > > --- a/fs/eventpoll.c
-> > > +++ b/fs/eventpoll.c
-> > > @@ -2111,7 +2111,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> > > 
-> > >                 write_unlock_irq(&ep->lock);
-> > > 
-> > > -               if (!eavail && ep_schedule_timeout(to))
-> > > +               if (!ep_schedule_timeout(to))
-> > > +                       timed_out = 1;
-> > > +               else if (!eavail)
-> > >                         timed_out = !schedule_hrtimeout_range(to, slack,
-> > >                                                               HRTIMER_MODE_ABS);
-> > >                 __set_current_state(TASK_RUNNING);
-> > 
-> > I've ran your change through our internal CI and I confirm it fixes the
-> > hangs seen on our end. If you send the fix feel free to add:
-> > 
-> > Tested-by: Carlos Llamas <cmllamas@google.com>
+
+
+On 4/28/2025 1:00 PM, Gabor Juhos wrote:
+> The precomputed value for the NAND_READ_LOCATION_2 register should be
+> stored in 'snandc->regs->read_location2'.
 > 
-> Thanks, will do.
+> Fix the qcom_spi_set_read_loc_first() function accordingly.
 > 
-> I was waiting to hear back from Christian / Jan if they are OK with
-> the proposed fix before submitting something, but glad to hear it
-> fixes the issue for you. Sorry for the trouble.
+> Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> ---
+>   drivers/spi/spi-qpic-snand.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+> index ae32c452d0bcf852b69b76e595f3588ea7e1a670..94948c8781e83f30650e5fbac56897daf5eb3c2c 100644
+> --- a/drivers/spi/spi-qpic-snand.c
+> +++ b/drivers/spi/spi-qpic-snand.c
+> @@ -142,7 +142,7 @@ static void qcom_spi_set_read_loc_first(struct qcom_nand_controller *snandc,
+>   	else if (reg == NAND_READ_LOCATION_1)
+>   		snandc->regs->read_location1 = locreg_val;
+>   	else if (reg == NAND_READ_LOCATION_2)
+> -		snandc->regs->read_location1 = locreg_val;
+> +		snandc->regs->read_location2 = locreg_val;
+>   	else if (reg == NAND_READ_LOCATION_3)
+>   		snandc->regs->read_location3 = locreg_val;
+>   }
+> 
+> ---
+> base-commit: 15cfe55ec58ace931a73e19e5367598734ceb074
+> change-id: 20250428-qpic-snand-readloc2-fix-bccd07cf26d3
 
-Yep, a new patch submission with proper Fixes tag is needed at this point.
+Reviewed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> Best regards,
 
