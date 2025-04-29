@@ -1,129 +1,146 @@
-Return-Path: <linux-kernel+bounces-624222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0350BAA00A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D1AAA00A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 05:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E7C481B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95609481D09
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 03:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3F327054D;
-	Tue, 29 Apr 2025 03:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E527055B;
+	Tue, 29 Apr 2025 03:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="boH5feWJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HnwXSCt9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE2E19F40F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 03:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D10270542;
+	Tue, 29 Apr 2025 03:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745897841; cv=none; b=RhbfOqWwn6q6MKEyxfYhUFC+7XozdDCrCagqkinq6mYxLh3xOuc5KEB62C40jvHwAX/0w3PC4FwYXsqimzuXyQfYzLiSDxsbtGD0p6vdfJ3Ozm+HpT0FV5oNpiHxMc/RWsWyHhUaoutXrbIObC1WP9uM72IHCD0tpqukHjneRSM=
+	t=1745897866; cv=none; b=CPbYCXrGeZHo/h+p0mvFWQiBBow5hxBA4uwhMVECjlLwUTiVPQGkoMN2Z4KtI7uNm4JQea56914R21Sd8P3OJyyAD7QK7g/Nxs4D/78vqkJ4jfXwIqdggvKMWUrCsnMdl6dt34/6/Gcu3IvFg/GsMMX//N/zbimDw6MusvzNRmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745897841; c=relaxed/simple;
-	bh=vZnrLPvp1SezavRSb+3blfciooE35zWcwCY/HASVrFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Df9Ukp7JQDTlVv0ymvD6RKsEFpx30jsMNcGf8vEiB2NV5N+RephariCorQPR2zAt2jLxdP/tVKBfw3jrPueJX3ehIhFoTJpWsv4VfgfNDlB4+xnFVNnJYq35xYIsmoq+YInsFYI3AdD8Jti0cScw/K1YBwSrEZicClOtkXmqwWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=boH5feWJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745897838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KtBx4B5toFccZ4nF29kycNJ0OC1KNDOrp48cQ3Ehw34=;
-	b=boH5feWJT5Z4lS6HyrV6ftSRPQ61Ydqo/qgkuTnejJA6A6qHDAWXXK7C/1Xe+sjE5WBroC
-	AcjzteHT0/Qc3FsLodoefbFuRk8mZAkp2BpK1O7kTetJ9/e4g/bSrAYSiaZNU/W2Zs2VDU
-	uK6gCVXQ1nLJkZUH7T2ngMQ6BMw4k0o=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-s5CiLIo8NuScP41WIxRqmA-1; Mon, 28 Apr 2025 23:37:17 -0400
-X-MC-Unique: s5CiLIo8NuScP41WIxRqmA-1
-X-Mimecast-MFC-AGG-ID: s5CiLIo8NuScP41WIxRqmA_1745897836
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2240a960f9cso42083525ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Apr 2025 20:37:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745897836; x=1746502636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KtBx4B5toFccZ4nF29kycNJ0OC1KNDOrp48cQ3Ehw34=;
-        b=FRTIg/k+lpwAmsGcqHoHaviHFpywm8U9N2YTLRvVMCNboAs+bwxqvfDGCbIyl+SH6y
-         R+cndocQqgRUZ0Vge6VmZdQ//y7x6nomwG+GM0FdXaKDP96peE7wStEkrSan5Nl08tAI
-         39cV40OMcb881b+lo03/dqDL4awwW1LK0nfIFxGFpi/nHaJyEhjjpHhLtbkGlndyDEwD
-         BkZrt8F6viP29VjIV1hR4e1ZR9PX3OHW8Irwcun8XEXwMP36fuWtg9NGdNfFBw04wWwz
-         OFPmZuLzoXTG6X7eFFAxKXZTzoUC00kb/zIEc8iDaOCBR5rcBJGokvqEcj0zXN4yoEM9
-         7LOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXovOv7vV24dbzRfi2wGsUg2pasmRhpb0D4Pwb5C8K0++W9vJUhgMDeapXT05+MwCxUasiZ/EEgNLllRIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCH21R1/TSIUVW9h9sWiP506e/WnrRdljDiX8bEZRKu5y9lofX
-	gh1IEwoTozyJuI+UQPthQmX30XqDxfZT2TZ9Dhn3pymK/TUuooZTCj8fR1s/xkkNY4Mazblv49u
-	RSQTZG2vyoAuyjPDuLRPkVankWA1Q+wzBSdTQ0w67afk6u0yfbp9+4j2zflHqcis8Afbe//0n59
-	a4d2i4RocXPMMM1ktwkthwye2VjAhQ2+OERgzl
-X-Gm-Gg: ASbGncun0EWRAJb4PYh/nCK/rf/HSX8L4pbEJ2sFgg+oIXw/0M0nIuouzcV8vZew3+B
-	JQyBWxt8uqjkD9fS6ROQl3GR3FnB7uDRmlXqaU/Cm+CRL0Zm3dkLUR10kasmLbt7scA==
-X-Received: by 2002:a17:902:cf05:b0:220:e1e6:4457 with SMTP id d9443c01a7336-22dc6a0f26dmr163635365ad.26.1745897836324;
-        Mon, 28 Apr 2025 20:37:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLe9pBRSxy4N+dD8KJSBtALGak10QhPScgb+yK1nBfP5vXL9NgrfdYgJEs/q16qDKuA3cYH0GoD1aU/5P+RTM=
-X-Received: by 2002:a17:902:cf05:b0:220:e1e6:4457 with SMTP id
- d9443c01a7336-22dc6a0f26dmr163634775ad.26.1745897835513; Mon, 28 Apr 2025
- 20:37:15 -0700 (PDT)
+	s=arc-20240116; t=1745897866; c=relaxed/simple;
+	bh=Lw15oqLnhXwkvSM1IfzQNus6FFUCQ7g9dkiYGODFx+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uPKeGO45Fr6DqiAl+u1GSi567aKrgZrBzmZNj+hLArcQ6nmwSslUYyNvW9ZM41T+SnTC1BJ7NxI5gzbvNfTp463rGMh8K3szcHYRrnAI5cMb4qOHXpXPAs4Zvn2BDpSqMUFzBG+ivaRJbY3mPXOOTTKV8t/aUOjyailu8aKv+ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HnwXSCt9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745897865; x=1777433865;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Lw15oqLnhXwkvSM1IfzQNus6FFUCQ7g9dkiYGODFx+s=;
+  b=HnwXSCt9uw/2hlXqRg70D64qSBmufhPhErjCljmUXnCuXuSHE/YMYNrx
+   PUYZA4kXVi+iaUZqqTe+sO/7L0uuJRr/pmjdr7USZx/aXPFqTIJLq5Kq/
+   3VUYIXvpctTdmEUcMTkpsJoZxJnIuQHvqpocG3Mdlb2VxoMo7xpJ58OQ8
+   9EguSJ9r7VPOLATI+I3YXFRBaiG9zxc3EG+vurD4jUJGq44RIV4NFcX29
+   idBEF5kF2K2A2rYFM1Ll5u0etX9pSQFv51jFfqUqR5vGR8OSBOoDcKBC3
+   5Kz3z1N7sDhfdN3Xcb+UcGFtxPpLmyiR6Aad7Wwfk3Ev+ZIhrng3V/qe2
+   A==;
+X-CSE-ConnectionGUID: VkaRDc+rRWOfrCsVCUotBg==
+X-CSE-MsgGUID: oOKhlqlXR+OCnta8p9NS/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="58873354"
+X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
+   d="scan'208";a="58873354"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 20:37:44 -0700
+X-CSE-ConnectionGUID: HAZIXdtSQjWvHz2KC+mD2w==
+X-CSE-MsgGUID: lsT1kMi0R9KOe9J+zJsXpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
+   d="scan'208";a="156932034"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.22.166]) ([10.247.22.166])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2025 20:37:42 -0700
+Message-ID: <549c15f4-8bdf-4823-ae2d-95d2861325d3@linux.intel.com>
+Date: Tue, 29 Apr 2025 11:37:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250426062214.work.334-kees@kernel.org>
-In-Reply-To: <20250426062214.work.334-kees@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 29 Apr 2025 11:37:03 +0800
-X-Gm-Features: ATxdqUHKrokOvlJhfFqnRSp5WKJr5Ro9UGb-ViD4ru9HrHYYXv8eFZRyEkZAZdA
-Message-ID: <CACGkMEtPmDBsyHTsAMZ7aygPQ1CVELd8H4_1u4ySH4sMQXe=qw@mail.gmail.com>
-Subject: Re: [PATCH] vhost: vringh: Use matching allocation type in resize_iovec()
-To: Kees Cook <kees@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-next v1 2/8] igc: add TXDCTL prefix
+ to related macros
+To: "Ruinskiy, Dima" <dima.ruinskiy@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Chwee-Lin Choong <chwee.lin.choong@intel.com>
+References: <20250428060225.1306986-1-faizal.abdul.rahim@linux.intel.com>
+ <20250428060225.1306986-3-faizal.abdul.rahim@linux.intel.com>
+ <524a13fa-eca1-4741-aa70-265a10cf96cb@intel.com>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <524a13fa-eca1-4741-aa70-265a10cf96cb@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 26, 2025 at 2:22=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> In preparation for making the kmalloc family of allocators type aware,
-> we need to make sure that the returned type from the allocation matches
-> the type of the variable being assigned. (Before, the allocator would
-> always return "void *", which can be implicitly cast to any pointer type.=
-)
->
-> The assigned type is "struct kvec *", but the returned type will be
-> "struct iovec *". These have the same allocation size, so there is no
-> bug:
->
-> struct kvec {
->         void *iov_base; /* and that should *never* hold a userland pointe=
-r */
->         size_t iov_len;
-> };
->
-> struct iovec
-> {
->         void __user *iov_base;  /* BSD uses caddr_t (1003.1g requires voi=
-d *) */
->         __kernel_size_t iov_len; /* Must be size_t (1003.1g) */
-> };
->
-> Adjust the allocation type to match the assignment.
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Acked-by: Jason Wang <jasowang@redhat.com>
 
-Thanks
+On 28/4/2025 2:57 pm, Ruinskiy, Dima wrote:
+> On 28/04/2025 9:02, Faizal Rahim wrote:
+>> Rename macros to include the TXDCTL_ prefix for consistency and clarity.
+>> This aligns naming with the register they configure and improves code
+>> readability.
+>>
+>> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+>> ---
+>>   drivers/net/ethernet/intel/igc/igc.h      | 6 +++---
+>>   drivers/net/ethernet/intel/igc/igc_main.c | 6 +++---
+>>   2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/ 
+>> intel/igc/igc.h
+>> index e9d180eac015..bc37cc8deefb 100644
+>> --- a/drivers/net/ethernet/intel/igc/igc.h
+>> +++ b/drivers/net/ethernet/intel/igc/igc.h
+>> @@ -487,10 +487,10 @@ static inline u32 igc_rss_type(const union 
+>> igc_adv_rx_desc *rx_desc)
+>>    */
+>>   #define IGC_RX_PTHRESH            8
+>>   #define IGC_RX_HTHRESH            8
+>> -#define IGC_TX_PTHRESH            8
+>> -#define IGC_TX_HTHRESH            1
+>> +#define IGC_TXDCTL_PTHRESH        8
+>> +#define IGC_TXDCTL_HTHRESH        1
+>>   #define IGC_RX_WTHRESH            4
+>> -#define IGC_TX_WTHRESH            16
+>> +#define IGC_TXDCTL_WTHRESH        16
+>>   /* Additional Transmit Descriptor Control definitions */
+>>   /* Ena specific Tx Queue */
+>> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ 
+>> ethernet/intel/igc/igc_main.c
+>> index 27575a1e1777..725c8f0b9f3d 100644
+>> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+>> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+>> @@ -749,9 +749,9 @@ static void igc_configure_tx_ring(struct igc_adapter 
+>> *adapter,
+>>       wr32(IGC_TDH(reg_idx), 0);
+>>       writel(0, ring->tail);
+>> -    txdctl |= IGC_TX_PTHRESH;
+>> -    txdctl |= IGC_TX_HTHRESH << 8;
+>> -    txdctl |= IGC_TX_WTHRESH << 16;
+>> +    txdctl |= IGC_TXDCTL_PTHRESH;
+>> +    txdctl |= IGC_TXDCTL_HTHRESH << 8;
+>> +    txdctl |= IGC_TXDCTL_WTHRESH << 16;
+>>       txdctl |= IGC_TXDCTL_QUEUE_ENABLE;
+>>       wr32(IGC_TXDCTL(reg_idx), txdctl);
+> 
+> If you do this, I think you should apply the same change to the RXDCTL 
+> macros that are right next to the TXDCTL ones. Otherwise you are trading 
+> one inconsistency for another. :)
+
+Will update
 
 
