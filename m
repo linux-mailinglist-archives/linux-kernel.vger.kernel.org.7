@@ -1,176 +1,222 @@
-Return-Path: <linux-kernel+bounces-624636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94B6AA05BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:28:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D30AA05AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7DA3A2B86
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC9317F04A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2103277808;
-	Tue, 29 Apr 2025 08:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A47826772E;
+	Tue, 29 Apr 2025 08:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfmfVgS7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dELq2YZa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="a8EezwbS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dELq2YZa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="a8EezwbS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C022676FE;
-	Tue, 29 Apr 2025 08:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCBC2459F2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745915150; cv=none; b=lOiD0DWACPKtFc1ObnC5O/zokFLyhSI6KIL2jCqBRXtA64vok3HQ9aVwqvZ1ecNk2keS/W/J/zwgmGFhzSBN1KB5yMY5fXnRkRPDl6HUXGZIgyCr+1lTA/9bFRNBnzTBo6AkoLMh+HefafLu12RI0/hsjzNe/UzX0HMqeMlVAaQ=
+	t=1745915125; cv=none; b=AaNC/oJdSxSysHmW84o+ibDyHhS0ScyJxNY39a1XRjdH99sCphO5MQDzYtk+9ZBZgWji4+wwx/WunmyhSfCSppl1zcuV2KYh3f6P6f9tYAdRASOhh+Ibd2Yd70Np7lehCKiV3DImH+isme3RAPNk06oigzhldHztLeBXJvhj8I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745915150; c=relaxed/simple;
-	bh=QgHt0DPwveKMPa/0IK3wVRz2UaQ2kbL35RtctM7eAlQ=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=HOIcD4+rroodqVHiHukwoDwSMgD4DanfXLwdyxCrT0uKE0o8X6jESMvFIpiDxgx4foUuGBvV5io/wlQIuNNY/7G4UjOVK2IHcwhXLEjlSH6ZLJd0US7iDTlK1cLVU+9vGY3A7g+mcFtBQXSmAoYMutb+xu8nhOdjsUFzEtmVd6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfmfVgS7; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745915149; x=1777451149;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QgHt0DPwveKMPa/0IK3wVRz2UaQ2kbL35RtctM7eAlQ=;
-  b=DfmfVgS7vpoWMULFvilfPebXl7qt10w+ZApAcg5JjZDqehH0yPcnXs8J
-   i8JEQcI1KgvKjYl7oT5oydHXQ1DnRGg3l+6A+zE0s3vPBqulExOqTjorF
-   mrRkAxZgaeQWXr7kzMlJ/my7KTrthQWNRSS1obITWPAORgs7CwsrzGo6O
-   cTl0QF7aeqGbqKim9XXdqKtRzo/yqHQh3eR0/PzwhTAbs0eP9TU6DUqga
-   9rgRkOVZ+zi6Fw9JtZRjc78FdOPcnnGbBbuvLzEPoAOCje/220VSBQEyt
-   y/5Z1aUgDf4IHm/HPv01U/na9+5/X8f73H/2btvWQoqaijrW/RGo7pBzO
-   g==;
-X-CSE-ConnectionGUID: rhN2uuSLS6SfJqild0JhPg==
-X-CSE-MsgGUID: iOL/VQsPTQmuo9OOHZFDvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11417"; a="47663910"
-X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="47663910"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 01:25:48 -0700
-X-CSE-ConnectionGUID: RDGw6uRNQtOe2o0wnDCcqg==
-X-CSE-MsgGUID: 9rGvZ+rjR92jwWhushJNEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,248,1739865600"; 
-   d="scan'208";a="134270744"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.205])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 01:25:46 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Tue, 29 Apr 2025 11:24:34 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.15-4
-Message-ID: <pdx86-pr-20250429112434-323291040@linux.intel.com>
+	s=arc-20240116; t=1745915125; c=relaxed/simple;
+	bh=rH9UccWYWgoC73rk59ha/zTWI5jwNxSAoFCv2UVXiks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fhvOKcmRI1adU0wt3mFxS3KmZzyYPn3GvGLQWsAmKql53gNeYvMMEyKgVpihXiKd43owGGnHj6ETzK727I+tBILMdStCC67oy42VtKijTEoe5UVpPny2fVF7VZlajjpeH3n0elp551nZhLEbJK7jw1HZeZaZrjelKgBy8tCwrzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dELq2YZa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=a8EezwbS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dELq2YZa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=a8EezwbS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C0D402174D;
+	Tue, 29 Apr 2025 08:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745915115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TT1i3hdS9mC/hejBjLiByhI9VE+EVpILxulgUDs+hHA=;
+	b=dELq2YZaKtBY7eVjiL8nHE2AhixSZMqmIVjkj95xbNc3uZeuvrbIWvAAO1iHDHW71KSoRo
+	ocIW5Ti9xvfuR0NPUMJsndZkdUM65cxUhIUPR4Yv2/Vl6JqC9u4ZIASwa9xVXGy5goOPcF
+	kipmKieIZ1JJ95ksgnVruPfkcwVgAAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745915115;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TT1i3hdS9mC/hejBjLiByhI9VE+EVpILxulgUDs+hHA=;
+	b=a8EezwbSKoJNBw6rWyp3fwavY0Z3JHCJnQvBVO71F6uGIgeVxvSrOhXRJwhBomXP+Pd4b4
+	FiYxAEUM6GfNGBDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dELq2YZa;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=a8EezwbS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745915115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TT1i3hdS9mC/hejBjLiByhI9VE+EVpILxulgUDs+hHA=;
+	b=dELq2YZaKtBY7eVjiL8nHE2AhixSZMqmIVjkj95xbNc3uZeuvrbIWvAAO1iHDHW71KSoRo
+	ocIW5Ti9xvfuR0NPUMJsndZkdUM65cxUhIUPR4Yv2/Vl6JqC9u4ZIASwa9xVXGy5goOPcF
+	kipmKieIZ1JJ95ksgnVruPfkcwVgAAQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745915115;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TT1i3hdS9mC/hejBjLiByhI9VE+EVpILxulgUDs+hHA=;
+	b=a8EezwbSKoJNBw6rWyp3fwavY0Z3JHCJnQvBVO71F6uGIgeVxvSrOhXRJwhBomXP+Pd4b4
+	FiYxAEUM6GfNGBDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9FC6513931;
+	Tue, 29 Apr 2025 08:25:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id J7PNJOuMEGgABQAAD6G6ig
+	(envelope-from <iivanov@suse.de>); Tue, 29 Apr 2025 08:25:15 +0000
+Date: Tue, 29 Apr 2025 11:25:15 +0300
+From: "Ivan T. Ivanov" <iivanov@suse.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Brian Norris <briannorris@chromium.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Subject: Re: [PATCH do not merge 4/4] wifi: mwifiex: add iw61x support
+Message-ID: <20250429082515.45yiafmd7uhyw66p@localhost.localdomain>
+References: <20250326-mwifiex-iw61x-v1-0-ff875ed35efc@pengutronix.de>
+ <20250326-mwifiex-iw61x-v1-4-ff875ed35efc@pengutronix.de>
+ <Z-Pxx983jcb0GTtg@gaggiata.pivistrello.it>
+ <Z-QHG0fyM8wRy2FH@pengutronix.de>
+ <Z-UbXduYmx2i0kxz@gaggiata.pivistrello.it>
+ <Z-a75VNI9liliHz1@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-a75VNI9liliHz1@pengutronix.de>
+X-Rspamd-Queue-Id: C0D402174D
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,nxp.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Hi Linus,
+Hi,
 
-Here is a platform-drivers-x86 fixes PR for v6.15.
+Thank you for your work on this!
 
-Fixes and new HW support
+On 03-28 16:10, Sascha Hauer wrote:
+> On Thu, Mar 27, 2025 at 10:33:17AM +0100, Francesco Dolcini wrote:
+> > On Wed, Mar 26, 2025 at 02:54:35PM +0100, Sascha Hauer wrote:
+> > > On Wed, Mar 26, 2025 at 01:23:35PM +0100, Francesco Dolcini wrote:
+> > > > On Wed, Mar 26, 2025 at 01:18:34PM +0100, Sascha Hauer wrote:
+> > > > > This adds iw61x aka SD9177 support to the mwifiex driver. It is named
+> > > > > SD9177 in the downstream driver, I deliberately chose the NXP name in
+> > > > > the driver.
+> > > > > 
+> > > > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > > ---
+> > > > >  drivers/net/wireless/marvell/mwifiex/sdio.c | 79 +++++++++++++++++++++++++++++
+> > > > >  drivers/net/wireless/marvell/mwifiex/sdio.h |  3 ++
+> > > > >  include/linux/mmc/sdio_ids.h                |  3 ++
+> > > > >  3 files changed, 85 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.c b/drivers/net/wireless/marvell/mwifiex/sdio.c
+> > > > > index cbcb5674b8036..7b4045a40df57 100644
+> > > > > --- a/drivers/net/wireless/marvell/mwifiex/sdio.c
+> > > > > +++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
+> > > > 
+> > > > ...
+> > > > 
+> > > > > @@ -3212,3 +3289,5 @@ MODULE_FIRMWARE(SD8978_SDIOUART_FW_NAME);
+> > > > >  MODULE_FIRMWARE(SD8987_DEFAULT_FW_NAME);
+> > > > >  MODULE_FIRMWARE(SD8997_DEFAULT_FW_NAME);
+> > > > >  MODULE_FIRMWARE(SD8997_SDIOUART_FW_NAME);
+> > > > > +MODULE_FIRMWARE(IW612_DEFAULT_FW_NAME);
+> > > > > +MODULE_FIRMWARE(IW612_SDIOUART_FW_NAME);
+> > > > > diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.h b/drivers/net/wireless/marvell/mwifiex/sdio.h
+> > > > > index 65d142286c46e..97759456314b0 100644
+> > > > > --- a/drivers/net/wireless/marvell/mwifiex/sdio.h
+> > > > > +++ b/drivers/net/wireless/marvell/mwifiex/sdio.h
+> > > > > @@ -29,6 +29,9 @@
+> > > > >  #define SD8987_DEFAULT_FW_NAME "mrvl/sd8987_uapsta.bin"
+> > > > >  #define SD8997_DEFAULT_FW_NAME "mrvl/sdsd8997_combo_v4.bin"
+> > > > >  #define SD8997_SDIOUART_FW_NAME "mrvl/sdiouart8997_combo_v4.bin"
+> > > > > +#define IW612_DEFAULT_FW_NAME "nxp/sdsd_nw61x.bin"
+> > > > > +#define IW612_SDIOUART_FW_NAME "nxp/sd_w61x.bin"
+> > > > 
+> > > > Is there a way to have BT over SDIO with iw61x? I was sure only sd-uart was
+> > > > possible.
+> > > 
+> > > The communication to the Bluetooth module indeed is UART only.
+> > > 
+> > > I think nxp/sdsd_nw61x.bin contains firmwares for both the WiFi and
+> > > Bluetooth chip. When using this you can use the Bluetooth UART directly
+> > > without uploading a separate Bluetooth firmware.
+> > > 
+> > > nxp/sd_w61x.bin only contains the WiFi firmware, so you have to
+> > > upload a separate Bluetooth firmware over the UART interface.
+> > 
+> > If that the case what you did here is not correct.
+> > 
+> > The 2 firmware files here are used file depending on the BT host interface used
+> > on the Wi-Fi/BT chip, and this is read from some strapping register. See commit
+> > 255ca28a659d ("mwifiex: Select firmware based on strapping").
+> > 
+> > BTW, this name sdsd_nw61x.bin is confusing, I would have expected this to be
+> > something like sduart_nw61x.bin.
+> 
+> You are right, there seem to be some things mixed up. I'll have a look
+> into it for the next round.
+> 
 
-- amd/pmc: Require at least 2.5 seconds between HW sleep cycles
+Looking at downstream driver looks like based on chip revision firmware
+files will be different. My best finding on the firmware files naming about
+this chip was this thread [1] on the NXP forums.
 
-- alienware-wmi-wmax:
-  - Add support for Alienware m15 R7
-  - Fix error handling to avoid uninitialized variable
+Regards,
+Ivan
 
-- asus-wmi: Disable OOBE state also on resume
+[1] https://community.nxp.com/t5/Other-NXP-Products/NXP-IW612-Kernel-Integration-amp-Firmware-Flashing-Issues/m-p/2056699#M27741
 
-- ideapad-laptop: Support a few new buttons
-
-- intel/hid: Add Panther Lake support
-
-- intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
-
-Regards, i.
-
-
-The following changes since commit baf2f2c2b4c8e1d398173acd4d2fa9131a86b84e:
-
-  platform/x86: msi-wmi-platform: Workaround a ACPI firmware bug (2025-04-16 11:15:22 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-4
-
-for you to fetch changes up to 02c6e43397c39edd0c172859bf8c851b46be09a8:
-
-  platform/x86: ideapad-laptop: add support for some new buttons (2025-04-23 13:05:26 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.15-4
-
-Fixes and new HW support
-
-- amd/pmc: Require at least 2.5 seconds between HW sleep cycles
-
-- alienware-wmi-wmax:
-  - Add support for Alienware m15 R7
-  - Fix error handling to avoid uninitialized variable
-
-- asus-wmi: Disable OOBE state also on resume
-
-- ideapad-laptop: Support a few new buttons
-
-- intel/hid: Add Panther Lake support
-
-- intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
-
-The following is an automated shortlog grouped by driver:
-
-alienware-wmi-wmax:
- -  Add support for Alienware m15 R7
- -  Fix uninitialized variable due to bad error handling
-
-amd: pmc:
- -  Require at least 2.5 seconds between HW sleep cycles
-
-asus-wmi:
- -  Disable OOBE state after resume from hibernation
-
-ideapad-laptop:
- -  add support for some new buttons
-
-intel: hid:
- -  Add Pantherlake support
-
-intel-uncore-freq:
- -  Fix missing uncore sysfs during CPU hotplug
-
-----------------------------------------------------------------
-Gašper Nemgar (1):
-      platform/x86: ideapad-laptop: add support for some new buttons
-
-Kurt Borja (2):
-      platform/x86: alienware-wmi-wmax: Fix uninitialized variable due to bad error handling
-      platform/x86: alienware-wmi-wmax: Add support for Alienware m15 R7
-
-Mario Limonciello (1):
-      platform/x86/amd: pmc: Require at least 2.5 seconds between HW sleep cycles
-
-Pavel Nikulin (1):
-      platform/x86: asus-wmi: Disable OOBE state after resume from hibernation
-
-Saranya Gopal (1):
-      platform/x86/intel: hid: Add Pantherlake support
-
-Shouye Liu (1):
-      platform/x86/intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
-
- drivers/platform/x86/amd/pmc/pmc.c                  |  7 +++----
- drivers/platform/x86/asus-wmi.c                     | 11 ++++++++++-
- drivers/platform/x86/dell/alienware-wmi-wmax.c      | 14 ++++++++++----
- drivers/platform/x86/ideapad-laptop.c               | 16 ++++++++++++++++
- drivers/platform/x86/intel/hid.c                    | 21 +++++++++++----------
- .../x86/intel/uncore-frequency/uncore-frequency.c   | 13 +++++++++----
- 6 files changed, 59 insertions(+), 23 deletions(-)
 
