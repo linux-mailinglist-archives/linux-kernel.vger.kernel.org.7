@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-625951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD7FAA3C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:28:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9CAAA3C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3822B4C831B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:28:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6423B75A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FCB2DAF96;
-	Tue, 29 Apr 2025 23:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B57259C8A;
+	Tue, 29 Apr 2025 23:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNDWABjU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iwb9hoy9"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1AE26F44C;
-	Tue, 29 Apr 2025 23:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197513EFF3;
+	Tue, 29 Apr 2025 23:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745969285; cv=none; b=tQGab5D5hPL4WzaMTBWqeZAsWZyLaJvZ8EgT/1ta5rIvPxOPJEPEMc8hn9z7XbXi9xSvpZgHnxF1zln6FQrrkDo9NXLwH86P6tLdwJGrMp8izVo53JEBMkcF9bcsSQu8SC2Qw/3wOdCThdgKJjpE8ARnrCIb2F3BkjufLsLn6x8=
+	t=1745969483; cv=none; b=W4xN2CJW1UNkTo7+vJPJwxefc/gYVQP6jqeGjEn9KHopJCCehI73k7axJVk8FxCtyGu2PTB+0NfqvmHhEtUaVwVKzRmKs9pC3uBdxrBogXrVVlzjApXf/LSpEaeSQoBIDWwq6x9zynSQXyDD16TIfOJrZ0jPzjWGpE7XhMSOSEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745969285; c=relaxed/simple;
-	bh=fAlX+Lt5V+LaI4Cx7JCgzZ4OfSfzgUpstMeIReZB04I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LOFetZDFt5o9TDR2JBkBXQ72zGaK0bgtazHiuLpbs0tD8k0wDqjPNF7E0Sz4i28vvr8/u9TMMsBGXG1Ec/djf/cF2wVkY42N/xamkYQdfgpH6bjCJqdQA+/3EXKG4PP2s8Rjqjr8DlqqlnIcWBeO3IDpjvCd3cDAtDHz+n5xeo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNDWABjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64247C4CEE3;
-	Tue, 29 Apr 2025 23:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745969284;
-	bh=fAlX+Lt5V+LaI4Cx7JCgzZ4OfSfzgUpstMeIReZB04I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HNDWABjUCuxF00cC9YWvNiQ8OU5jvdWg7bBD0p3gIf9J642Uy2Xim02rHkhS9VZ55
-	 q+1jSQoOhuKJftYcrZKtOSRXeaEKhl6VF6o011qWYpTnu6fZqDL+fBNu55L08bPL6s
-	 m49lLVHGUd7VCHkZ/e2AwphSTC6dhHGpCwxmo0Zvt1DN4kcNmG8k6S/3KCmdRP/2aR
-	 PTOvyNbPaSr2Oo7IKUBGmF2iLhwoIBs3FWWuh+7wy5qx+nEzyooPzsq/aiT1Se0tYJ
-	 bjNcm0koXh2cRD0BaZpsgReR2g4kDY9uKuTDrld0C+7ca3NphgWr436tLmK4bOqPh0
-	 jSxjiNEpPgJoQ==
-Date: Tue, 29 Apr 2025 16:28:02 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Kuniyuki
- Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>, Nathan
- Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH v5 06/10] ref_tracker: automatically register a file in
- debugfs for a ref_tracker_dir
-Message-ID: <20250429162802.1cfc3965@kernel.org>
-In-Reply-To: <20250428-reftrack-dbgfs-v5-6-1cbbdf2038bd@kernel.org>
-References: <20250428-reftrack-dbgfs-v5-0-1cbbdf2038bd@kernel.org>
-	<20250428-reftrack-dbgfs-v5-6-1cbbdf2038bd@kernel.org>
+	s=arc-20240116; t=1745969483; c=relaxed/simple;
+	bh=ws68QzpNPRXm5iYQ1h9ZNWvh8nFaDQz+1EoAmh1h7/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kSG7uz8Ys0b2Djycy5RI3qyx31yaeF6R+IDjiM8kGaXcihXPofYrOKVN+wYScA82vO2vba5tAEQFlk2hrnPPQtIbDUkdOJDxFKF95+my5iXHZkg8YEQBcf/iRQyLT9MyB0aHgyt4L6H1nNkLmHnIzWutoROJfnoJP5JP+k25DgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iwb9hoy9; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30c0517142bso59659811fa.1;
+        Tue, 29 Apr 2025 16:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745969480; x=1746574280; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m7fJoBZtpYgaIvTV/F7OH7KKN0eVTfYC0ZzUcBf7L8g=;
+        b=Iwb9hoy9FAq22xvVFb8ao/WIqmEbi72mbIJJEX/Dtn/N03t5FhgedL8pA9Ptxs3J11
+         NAt9g6UoipxolhfO0OVAhMH+B4XjEQcd/xI7Z/Mb1bxkD0T4ojRFwcpZgbZBZs8ZCXh4
+         Nvbb4DQ+aDZaaptm8Vn2c5lXPgFtFSNHJkTBXFFU6juKZfbqWAKpzhXsBXwQrHdmGnHv
+         zVpBigNw5H5uo7E7+cKMDkRF2uZP4obXDaFmMbfPUUA4QtFrsse4J8Mbvpdq1/ujYFmq
+         UCpuJ5mrD+uxxLM7GJ74EQpJ6c+mCy4OBtfbCVriIQ3v8QR6rYqPZ4Nao0LlxPeLCLro
+         +9LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745969480; x=1746574280;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m7fJoBZtpYgaIvTV/F7OH7KKN0eVTfYC0ZzUcBf7L8g=;
+        b=KnJ0WZV9chGL75f365N6cAFTTcNlkrFTa1PCRgo6NYkISfktuJV5HtDdr7Zc6g+b/U
+         t6PJYuuecJWGBFDbYZdVaAr9dxIxXYDWDo5M2dUyVZiyOJS7dnXF17hdgbP2Al9hA4kG
+         fTErmqh17Nz2seS95QG0pt5CaUxhe60xFy2wZSha6bwtm5RhYM0LMq692ynspoPiD6Z8
+         iOi1BBmH81QenAHi5xHOSa0V2hmZWidjMa6EJAbDcb/TECF4lqfWBJs3sGRRX3f/c9xT
+         srBEcOyty2YjKf17D0jFP38NyHk+93PY/8qP3Ow28xCenKng8GgubpJlPDZH8P1PFCKm
+         AaQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdQM8vcJ4pO+a0MU93qwYQNHbxY952Otz3SHWgyfo2muvrvpI2jpVBGLIraFWrs8D/9xNm6o6cGngeoH8=@vger.kernel.org, AJvYcCXpdhSHIHthjfGlPCMiVZtJaMX8TnxS+gOrzqpgKzDkzvkweKdmW9jTfhB1Q/FXWnSC5BwhMvmH17cAwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygypi3O7GLP0+bIaM880K/FZcjibuDlJNZkSBghqLAkRieIvci
+	w3dgrHEAvPLbVhOElqePutOftNVm1gCgW7CHgIMRQgoO9nc74c3l/2yrUQ40CqaIxkdtxtFCe1c
+	gd1Qm/Wrxd2b1H4iQCTAetud5jkAQHfaJupM=
+X-Gm-Gg: ASbGncs/H+Q14myUWLlzpHTZGKqodxu7yVCLAztux/VeJoof0fS/3o7fxSZnXiReCy2
+	lzFoKVEtdAgw6VSewHysYMYawObAVLja9NmCp86l6w3fLJ+gkkLI+LjX3hzvPPb1VdppVDH2RdJ
+	XOGQgv1sXqiqnoOkVVs+EEjbtQ09fwRnWq0mSYwg==
+X-Google-Smtp-Source: AGHT+IGZbgaQDM+jrVUhnFwMeBSwgcPEn9veOUHjPNsPAmBhZbLljwyfVK8I7b+PE1k0uVKIFtiezDRUe7FgQ2PGLvg=
+X-Received: by 2002:a05:651c:516:b0:30b:f775:baf5 with SMTP id
+ 38308e7fff4ca-31e679063dfmr3306271fa.0.1745969479441; Tue, 29 Apr 2025
+ 16:31:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250430085544.12800bdd@canb.auug.org.au>
+In-Reply-To: <20250430085544.12800bdd@canb.auug.org.au>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 29 Apr 2025 16:30:43 -0700
+X-Gm-Features: ATxdqUE_jSUTq76ft0MU4jdlmTlKyDAuL9_Ho4QcMk-fYYVNebDbOcc8v2pLiXc
+Message-ID: <CAJ-ks9mQfDwmz=chKjjcjv2KxPk1su4NWfZXey7nNgQWYXzaWA@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, gldrk <me@rarity.fan>, Kees Cook <kees@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Apr 2025 11:26:29 -0700 Jeff Layton wrote:
-> +/**
-> + * ref_tracker_dir_debugfs - create debugfs file for ref_tracker_dir
-> + * @dir: ref_tracker_dir to be associated with debugfs file
-> + * @fmt: format string for filename
-> + * @...: arguments for the format string
-> + *
-> + * Call this function to create a debugfs file for your ref_tracker_dir that
-> + * displays the current refcounts for the object. It will be automatically
-> + * removed when the ref_tracker_dir exits. The filename must be unique. If
-> + * the creation fails then the pr_warn will be emitted.
-> + */
-> +void ref_tracker_dir_debugfs(struct ref_tracker_dir *dir)
+On Tue, Apr 29, 2025 at 3:55=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> Commits
+>
+>   9eef70365d71 ("ACPICA: Introduce ACPI_NONSTRING")
+>   ac9334785c75 ("ACPICA: utilities: Fix overflow check in vsnprintf()")
+>   5de20bc939b0 ("ACPICA: Apply pack(1) to union aml_resource")
+>
+> are missing a Signed-off-by from their authors.
 
-lib/ref_tracker.c:374: warning: Excess function parameter 'fmt' description in 'ref_tracker_dir_debugfs'
-lib/ref_tracker.c:374: warning: Excess function parameter '...' description in 'ref_tracker_dir_debugfs'
+Hi Stephen, how can I remedy this for 5de20bc939b0 ("ACPICA: Apply
+pack(1) to union aml_resource")?
 
