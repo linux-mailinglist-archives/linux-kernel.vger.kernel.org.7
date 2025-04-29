@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-625732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797C8AA1C0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F81DAA1C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED633AA719
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AA33A70DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0860226771F;
-	Tue, 29 Apr 2025 20:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEE3266B43;
+	Tue, 29 Apr 2025 20:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jITlPYfD"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHeVE5pZ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3735A247299
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 20:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19062259C9D;
+	Tue, 29 Apr 2025 20:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745957993; cv=none; b=Q0ZJCrTcIPaXPfwBg7rfzSB6YxwGAgf6m9TZMKrpjql0oe8KFBNCl59KYTvd6xrY/QCkkDF+XTnzFr8cW4ILkQdTsBmsrQP3g3E7at1ues5jIubKCX4sdy/e7xec2bmSe+ZYu5kL0A69TlQURbsD02FeAhXlpcUBNaFxL6Y6xH4=
+	t=1745958274; cv=none; b=TSjhLqOskAIu+kqu9206Y0m5FpC4yEMhOoLhVXDuy7jLSbg98KGDKuXvZDcGZyvHeDLGsPfj3U7hPvMET5A3yd1yrNGQ4RFnQ+j8bV9U4F6WDKtGTrdNayqS5HfEo12qjYgnZdIBT9JGNBSJ/hfW35ActRX87iKhs1OQ+p/u0LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745957993; c=relaxed/simple;
-	bh=jZGhVKHkpRai0Y2/EIkeTlYu8tYQjbtzz7neJZoq66Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ROHMhcNbfbQkxSEs9+iE6z1zfUJNFyPVQ4xy4x/W1OukxaKFznhkjlDlbK34f6h3hj82DU9+pVGuUwOoFz4ZyHvvSzuTln88BMZ722bq75tBsLV0DWSIiPeMrrlIwjjv7ARHsUnaezAO8LJpsxccvq8Rxu4IxcbSvUwm9P7IFRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jITlPYfD; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1745957989;
-	bh=jZGhVKHkpRai0Y2/EIkeTlYu8tYQjbtzz7neJZoq66Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jITlPYfDQ/id0t99pwZkpoU/2TR+rQ+XvgxpzVJS3VVbGxJF2VO19OTOxMWLHUp8U
-	 Kc5NNRgafkbAyvVnO2zrmKBZ8TTJOqUbXEuN2L4WdJfyd5N2uVJlwIowDKCZtAZV2x
-	 FRAoaDWqYL4LFXOpnX6IhBENO5Wv2eJ00wEAeOTfMRvpgdrB4+kU+8iURJJigYg4Tb
-	 vLKoQIwLIKx5Nd5sRfFuQkVsJ/reDxVh7+1rihIomiTiWzInLb1svQ8X5LuBtrl7g1
-	 3BCnbWOm91/4XOo/yEesCjuxrrCRNABYwUDklKbNbN98SFZKATgUoh0hfCNotAt5mC
-	 CO30rEN3EQzWQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8965A17E09B5;
-	Tue, 29 Apr 2025 22:19:48 +0200 (CEST)
-Date: Tue, 29 Apr 2025 22:19:43 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Steven Price <steven.price@arm.com>, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/panthor: Fix build warning when DEBUG_FS is
- disabled
-Message-ID: <20250429182207.11a26b68@collabora.com>
-In-Reply-To: <20250424184041.356191-1-adrian.larumbe@collabora.com>
-References: <20250424184041.356191-1-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1745958274; c=relaxed/simple;
+	bh=Sy++56/htz/lCFh726YRJErj1jbe/6zhip5jyJNmA0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MCtb0bV2r3745BkU6jMcPB6nfLAE/B4qjJjxWr3ZTO/mfc8QlJDr16EDnTzhI/5rIDLwJvNIGG0nQ7aRSFH1/aKF2UsWL20V12iz7cOf0hbnpL0ruCtlsWM6w56b34kJq4X8d3+uXQoxTFK7yFs1QS0zkUSuxvBqXHMVMlHXSCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHeVE5pZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so953661966b.0;
+        Tue, 29 Apr 2025 13:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745958271; x=1746563071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D58KDEeeLFwkq7sOUEqzPBNZWBGghyoE7EpH9ga9vn0=;
+        b=SHeVE5pZn545dn5N0m+aDDrWc+M2zXHoQRUB/ggiS8+YaTJ7jzaDj+ln0CH9XIXWpz
+         P6xJ69L6n2Mtm1cJR2GepZFtPmXV12ToLt0qtwk5xB2sxjy1ViHf0nIynZDj3ZoZCQfR
+         GhOcW1wWY5YbH++U2VOIrT0H32zD/aNiP2TMceH5ounVcYO9B5c7SWyiCSSqwXVfPWTD
+         Lco7jGmGen8GV1sG7iOzOGkI8QanvrkGBYy5H2WjC2/xNFOYrQDdAbYwx8NRhUC3oub0
+         oBGO4Zh7UrCDxCUltwz8m4gCoX0J0yBayPdVWw7hpq6KXQIFm9w0Fk9KFROnLBVK+sJp
+         apQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745958271; x=1746563071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D58KDEeeLFwkq7sOUEqzPBNZWBGghyoE7EpH9ga9vn0=;
+        b=HsCn3mMphsxwyMMuEtCC1a/smufgAyA8FSLvysZXsRr4eRDjjVBm2DJw18dv0cLcLM
+         5cf0Bku3apWQ4LR/AHYX4jsexoPodNDZZYzl/hfKpWse97338ZBg8b/it2HutMecasxT
+         m0RMk3rOeX2gKXwsgFr6NcKi7Y8Aedqm/iekNAwb/95W9WqNHND17WIimbPE2+qCpKgt
+         U64z6tHSKIBW33gICcsOhl5iHVefqXy41LUI8CqynSXh1WSSmPxexYSRZ5ku2PCbU3Vq
+         Zdx0BoQUO7GWsqawJFD3MQv+qNMJlyPUsS4dfYVA6WTSAdiuVbwacpw6bHX/LQWE9XuE
+         RoSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJifMDGNoEZ8oAv10LJpa9NHqSMI82fJ7zZ1gdBTBs7PH6HTk8uADma36SsT2Xvn0wMmDRkVTHVQo+zE4G9dUA@vger.kernel.org, AJvYcCUev2wTmCsi+SSAqQxbfIC654JiKKnw8M0nxEyBEU+pf7e94/lNQPRmQrpoZ7SKcTt1SjbuR3qNQ/HXfpgv@vger.kernel.org, AJvYcCUgCw4iHYFP3DFHVEBgztGaKNdDmxv4t+grgktCRgVJxXoq2FfbcV8IRoUTDiwUn3Ht+opAHSmIYcvD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq+tKuHblyWvszoFjdkSyjrJjBhdhH2ppQP+qBolx2C8++uBWV
+	ApMhmHJA8qWLhsnivQWlOc/CmEQBWY1w0s71SPZEO2Ws9sfx6zLKl3QtbhfUObDp3gNHRkWYZ9G
+	zpAO5mBjvprFy+4NVw9OhF88g5Y4=
+X-Gm-Gg: ASbGncu+C5cwQs6i3WXpwGTkXKKD1d3OO2JlKpU2tNQ/Y1B4tDDIgZ8fo5YSK16Vbk5
+	KtUL0NZWLK0cdFXGk+GI71GVNnXVbwIy3hRBWEbJRUDNqMKehlbdqbKLqN9+QgO3CY1mHEQXY6+
+	xdWI5mrpxxKts871fxdCN2Vu0EFYmkDDEB
+X-Google-Smtp-Source: AGHT+IHBtv4uogaGVAMM2SvzDSyjPxbeQHFYr+EkNqAxs8XwhmNRc7T1jbj8mIckK4lVLCIwUGDnJNBgqMLcbM+C6Gk=
+X-Received: by 2002:a17:907:2d12:b0:aca:e2d6:508c with SMTP id
+ a640c23a62f3a-acedc764c61mr73166166b.56.1745958271235; Tue, 29 Apr 2025
+ 13:24:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250429-aaeon-up-board-pinctrl-support-v4-0-b3fffc11417d@bootlin.com>
+ <20250429-aaeon-up-board-pinctrl-support-v4-9-b3fffc11417d@bootlin.com>
+In-Reply-To: <20250429-aaeon-up-board-pinctrl-support-v4-9-b3fffc11417d@bootlin.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 29 Apr 2025 23:23:55 +0300
+X-Gm-Features: ATxdqUF3qdUj08hG6Po9xtoIg-BOJVobn2cE8_fU_bUd8MwIcsff-2XPlxW1o8k
+Message-ID: <CAHp75Vdgezkc3-4a0jSG7qkvL31xdde8jSwTtWqct3dUVBm8=w@mail.gmail.com>
+Subject: Re: [PATCH v4 09/12] gpio: aggregator: handle runtime registration of
+ gpio_desc in gpiochip_fwd
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 24 Apr 2025 19:40:34 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Tue, Apr 29, 2025 at 5:08=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+>
+> Add request() callback to check if the GPIO descriptor was well registere=
+d
+> in the gpiochip_fwd before to use it. This is done to handle the case
 
-> Commit a3707f53eb3f ("drm/panthor: show device-wide list of DRM GEM
-> objects over DebugFS") causes a build warning and linking error when
-> built without support for DebugFS, because of a non-inline non-static
-> function declaration in a header file.
->=20
-> On top of that, the function is only being used inside a single
-> compilation unit, so there is no point in exposing it as a global
-> symbol.
->=20
-> This is a follow-up from Arnd Bergmann's first fix.
-> Also move panthor_gem_debugfs_set_usage_flags() into panthor_gem.c and
-> declare it static.
->=20
-> Fixes: a3707f53eb3f ("drm/panthor: show device-wide list of DRM GEM objec=
-ts over DebugFS")
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Closes: https://lore.kernel.org/dri-devel/20250424142419.47b9d457@collabo=
-ra.com/T/#t
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+to use --> using
 
-Queued to drm-misc-next.
+> where GPIO descriptor is added at runtime in the forwarder.
+>
+> If at least one GPIO descriptor was not added before the forwarder
+> registration, we assume the forwarder can sleep as if a GPIO is added at
+> runtime it may sleep.
 
-> ---
->  drivers/gpu/drm/panthor/panthor_gem.c | 5 +++++
->  drivers/gpu/drm/panthor/panthor_gem.h | 8 --------
->  2 files changed, 5 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/pant=
-hor/panthor_gem.c
-> index 2dcf308094b2..7c00fd77758b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -42,11 +42,16 @@ static void panthor_gem_debugfs_bo_rm(struct panthor_=
-gem_object *bo)
->  	mutex_unlock(&ptdev->gems.lock);
->  }
-> =20
-> +static void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_objec=
-t *bo, u32 usage_flags)
-> +{
-> +	bo->debugfs.flags =3D usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INIT=
-IALIZED;
-> +}
->  #else
->  static void panthor_gem_debugfs_bo_add(struct panthor_device *ptdev,
->  				       struct panthor_gem_object *bo)
->  {}
->  static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo) {}
-> +static void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_objec=
-t *bo, u32 usage_flags) {}
->  #endif
-> =20
->  static void panthor_gem_free_object(struct drm_gem_object *obj)
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
-hor/panthor_gem.h
-> index 4641994ddd7f..4dd732dcd59f 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> @@ -212,14 +212,6 @@ void panthor_kernel_bo_destroy(struct panthor_kernel=
-_bo *bo);
->  #ifdef CONFIG_DEBUG_FS
->  void panthor_gem_debugfs_print_bos(struct panthor_device *pfdev,
->  				   struct seq_file *m);
-> -static inline void
-> -panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, u32 u=
-sage_flags)
-> -{
-> -	bo->debugfs.flags =3D usage_flags | PANTHOR_DEBUGFS_GEM_USAGE_FLAG_INIT=
-IALIZED;
-> -}
-> -
-> -#else
-> -void panthor_gem_debugfs_set_usage_flags(struct panthor_gem_object *bo, =
-u32 usage_flags) {};
->  #endif
-> =20
->  #endif /* __PANTHOR_GEM_H__ */
->=20
-> base-commit: 3a2b7389feea9a7afd18d58cda59b7a989445f38
+...
 
+> +       /*
+> +        * get_direction() is called during gpiochip registration, return=
+ input
+> +        * direction if there is no descriptor for the line
+
+Missing period at the end.
+
+> +        */
+
+...
+
+> -       if (fwd->descs[offset])
+> +       if (test_and_set_bit(offset, fwd->valid_mask))
+>                 return -EEXIST;
+
+Here you should add the entire conditional and not in the one of the
+previous patches.
+
+...
+
+> +       /*
+> +        * Some gpio_desc were not registered. They will be registered at=
+ runtime
+> +        * but we have to suppose they can sleep.
+> +        */
+
+> +       if (bitmap_full(fwd->valid_mask, chip->ngpio))
+
+I think I don't get this check. The bitmap_full() returns true if and
+only if _all_ bits up to the nbits are set. In accordance with the
+comment it seems you wanted something different (an opposite?).
+
+> +               chip->can_sleep =3D true;
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
