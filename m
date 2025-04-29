@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-624489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A84AA03F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:01:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF8FAA03F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 09:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A38C1A86C59
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:01:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46A117A3C5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 07:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1A02C17A4;
-	Tue, 29 Apr 2025 06:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A272C17BE;
+	Tue, 29 Apr 2025 06:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nWhVKtSk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="grGXVVIj"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ffhiiDhB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cexvem7N"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5ED2C10B9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FB22C1797
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745909742; cv=none; b=dV8kUVr5LqyL0vLpX/7Rlf937qbKcYKWsa1C/GBKpNXT+dhWcMysCPQe2Z/tycZJP0/xfGQeQs1X8JFwF7i5xlBE2Kpx9wgcVcaqWr0jx+bbJmsQxxUToj7bnHLmXkDI4RfayP6F/6b3K4WVHwiCNpI4dUUU/epbQFU9wule6vs=
+	t=1745909743; cv=none; b=OGdIkrAqs2gmFJiEYjutXo3luASrBpHKp0IuM+zPWuZMcc2WmpFB9FatdJ5QEFM2Zo0ZEJyne3C+tw2TLG40zbda8fjxLIPi6Sb1WR8KxZMXuxQw8ONOBtblppNYHokaBg8WsXXYIDlSgdtBBUlbEWgHRktJZp/TT1TKeHpOKRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745909742; c=relaxed/simple;
-	bh=BeD5kZT74bu3qyAzu3fyRx9ZyaUisi/okyxKpdNbjSY=;
+	s=arc-20240116; t=1745909743; c=relaxed/simple;
+	bh=EuLYauwadghvJEvsNd6VI6s0gL8WDpjyJCnEyNnJjlI=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=JbBXxrAvFSDpDnpLXatUIk4frThKbFjcJVuTuwnlbv0kTe9KS0yL6KPXWxyz+iaZf5hzadVUGRr78+pOYy/Q6LKtg2YZA9HGmtQhKrR/OoqqxscGAlkCnSlnLJ4uXmNmYzxAjaIhZr+miF6AU/iv6Ax4u+az3+D8tVHaE7fKook=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nWhVKtSk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=grGXVVIj; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=MoDUnlrsFJHL3vTun/fVLitXJwiloAkypv3xnDSP1ck3WBsTIXmtgGpeJy0Zp4PxeDC2FSID7g/cOyXE2eweTaf/CJORG0hqkT9HMxAp48RCBBTwWXueH7ndCaLxmOyLXdAHSsQ5CiLQ1nSdVM1zJmA+Xw/dHHO5UAI0jg1CL/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ffhiiDhB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cexvem7N; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250429065422.071157729@linutronix.de>
+Message-ID: <20250429065422.128859754@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745909739;
+	s=2020; t=1745909740;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=oRbFP2vqazsQwq3w2vtQwN8kPro/wwr3nyA7EAA8DbE=;
-	b=nWhVKtSkWMo1lTQqzeMWKJe5HV7E1xkRvPMXzQHpwNkZoNr4rgxKlDbwHOwRNMfO7WHDJy
-	62Ic8qG1hQfBQfeEvYqMaPX3sMZb+1/OX2NQq/ITO/QeAGiDUn6AKb63VuoBYLubFbL9u+
-	kUHEbrAo6tbS+pAMzu650SIEhbmoqWHEQ8sskIV+2ocDFw/JnUMMhiufkLCdvyIvlpp1vJ
-	076caJA4aiQGSLxdpTR85lIOi9eIYhnOEs/sgty3t6be7P+zxfSfG1vkg83B8o0LZq5QaK
-	Ovr19kw6l/snFTNGdJIiOQcLjydMQH+XXdc5BWUGsKzSmArLrl3cr2EFsp51JQ==
+	 references:references; bh=HsKlxOdXhcjf92lznpzYlonKTEkeL+LMzog3zS1q83Y=;
+	b=ffhiiDhBgstfmBgasZPSHm7SzZZrXIyY/RYMxBOgZmEgbGrF3ccMtyZ7dea6KOvmuGl0ZE
+	Nnw7CDAvELM8ibLJZr2oLT7l4vdoWEmdNAW+/WhiBOfJtFLwkNYRzL9JCFnh5o+QZEWW3B
+	wn05si7mswUZOsaIeOjytkTPkb/tMBDfka1fQpsZljqZTW4NInNqkHSywSAdeBh0kcC3C+
+	iSulyE/UIvJ24h2odbY2Itx45p9hRAXqnf/zgiKIhqs4QWdKMz+XHhg9R7Iw8+972RWcdD
+	+nFEY7CTIyy1gkPlaRN4RC/5pG1kND9PSQDr0znfv/1LlMlMtpJ1o5nZfn/8tw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745909739;
+	s=2020e; t=1745909740;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=oRbFP2vqazsQwq3w2vtQwN8kPro/wwr3nyA7EAA8DbE=;
-	b=grGXVVIjqeruCd2YEMqJ7gthA+2wTKP3qyxH62JFFQYdkSJeS2IBdaJB6QrWx2i9uDJDfv
-	qCIm6zndJDNwJwBA==
+	 references:references; bh=HsKlxOdXhcjf92lznpzYlonKTEkeL+LMzog3zS1q83Y=;
+	b=Cexvem7N6BM01y9ddj3F7PhILxJX8v3Onwit+nLxdUBk877q4KvoJstToeFlg03BB3S83W
+	d/c3XyPLe6Qg/QDQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Jiri Slaby <jirislaby@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Subject: [patch V2 34/45] genirq/manage: Rework enable_irq()
+Subject: [patch V2 35/45] genirq/manage: Rework irq_set_irq_wake()
 References: <20250429065337.117370076@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,7 +62,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Apr 2025 08:55:38 +0200 (CEST)
+Date: Tue, 29 Apr 2025 08:55:40 +0200 (CEST)
 
 Use the new guards to get and lock the interrupt descriptor and tidy up the
 code.
@@ -72,36 +72,84 @@ No functional change.
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- kernel/irq/manage.c |   17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ kernel/irq/manage.c |   61 +++++++++++++++++++++++-----------------------------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
 
 --- a/kernel/irq/manage.c
 +++ b/kernel/irq/manage.c
-@@ -788,18 +788,13 @@ void __enable_irq(struct irq_desc *desc)
+@@ -845,44 +845,39 @@ static int set_irq_wake_real(unsigned in
   */
- void enable_irq(unsigned int irq)
+ int irq_set_irq_wake(unsigned int irq, unsigned int on)
  {
 -	unsigned long flags;
 -	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, IRQ_GET_DESC_CHECK_GLOBAL);
+-	int ret = 0;
++	int ret = -EINVAL;
+ 
+-	if (!desc)
+-		return -EINVAL;
 +	scoped_irqdesc_get_and_lock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
 +		struct irq_desc *desc = scoped_irqdesc;
  
--	if (!desc)
--		return;
--	if (WARN(!desc->irq_data.chip,
--		 KERN_ERR "enable_irq before setup/request_irq: irq %u\n", irq))
--		goto out;
--
--	__enable_irq(desc);
--out:
--	irq_put_desc_busunlock(desc, flags);
-+		if (WARN(!desc->irq_data.chip, "enable_irq before setup/request_irq: irq %u\n", irq))
-+			return;
-+		__enable_irq(desc);
-+	}
- }
- EXPORT_SYMBOL(enable_irq);
+-	/* Don't use NMIs as wake up interrupts please */
+-	if (irq_is_nmi(desc)) {
+-		ret = -EINVAL;
+-		goto out_unlock;
+-	}
++		/* Don't use NMIs as wake up interrupts please */
++		if (irq_is_nmi(desc))
++			return -EINVAL;
  
+-	/* wakeup-capable irqs can be shared between drivers that
+-	 * don't need to have the same sleep mode behaviors.
+-	 */
+-	if (on) {
+-		if (desc->wake_depth++ == 0) {
+-			ret = set_irq_wake_real(irq, on);
+-			if (ret)
+-				desc->wake_depth = 0;
+-			else
+-				irqd_set(&desc->irq_data, IRQD_WAKEUP_STATE);
+-		}
+-	} else {
+-		if (desc->wake_depth == 0) {
+-			WARN(1, "Unbalanced IRQ %d wake disable\n", irq);
+-		} else if (--desc->wake_depth == 0) {
+-			ret = set_irq_wake_real(irq, on);
+-			if (ret)
+-				desc->wake_depth = 1;
+-			else
+-				irqd_clear(&desc->irq_data, IRQD_WAKEUP_STATE);
++		/*
++		 * wakeup-capable irqs can be shared between drivers that
++		 * don't need to have the same sleep mode behaviors.
++		 */
++		if (on) {
++			if (desc->wake_depth++ == 0) {
++				ret = set_irq_wake_real(irq, on);
++				if (ret)
++					desc->wake_depth = 0;
++				else
++					irqd_set(&desc->irq_data, IRQD_WAKEUP_STATE);
++			}
++		} else {
++			if (desc->wake_depth == 0) {
++				WARN(1, "Unbalanced IRQ %d wake disable\n", irq);
++			} else if (--desc->wake_depth == 0) {
++				ret = set_irq_wake_real(irq, on);
++				if (ret)
++					desc->wake_depth = 1;
++				else
++					irqd_clear(&desc->irq_data, IRQD_WAKEUP_STATE);
++			}
+ 		}
+ 	}
+-
+-out_unlock:
+-	irq_put_desc_busunlock(desc, flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(irq_set_irq_wake);
 
 
 
