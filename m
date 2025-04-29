@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-625150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54066AA0D85
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22388AA0D7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8343AD5A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50963AE421
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 13:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3562D191C;
-	Tue, 29 Apr 2025 13:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF192D1917;
+	Tue, 29 Apr 2025 13:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Puib2IAs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="ROw1RHi0"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2601270EB8;
-	Tue, 29 Apr 2025 13:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE692C3759
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745933387; cv=none; b=HXgWnqkhZM967mWXX22bT4yg08DiVtKROsLy1yiFZxFdZJGNaIbiO0U2W56tHApynU6xr6znYJKJF+jtLMIc1wMlk96PmDOFpFna997JvYfJhijd7EeLGDvljm/NtyrMRQvqJZqRZ6Hcssgokz3c1Lp6mjQfJeAM8fVz0ZbLM3k=
+	t=1745933348; cv=none; b=illWlDGSDJPI/RmTxZcNgMhWYkcwIHRjHdnhzaHqwKec/7lwy2s3dYG8szxg4Nhoi9QuwDqibMSf/4ibpIRQakRH2aunadXRklNvQQQk5qn8cEcsIowDookQMCNS2m/mRtDsGLsrho9MfAv61sADQsc76lnhW8yZ+cOkLBDpVSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745933387; c=relaxed/simple;
-	bh=Whwr+9l41YP9STYkQ/1ThI+dnOqAHdVf9Mdd37OTqX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usTeb8zF1eYF3WctuAPgYxu3L6ESWXVjj+eEeoPqhzSieSpaRF+KwO38kiwF41Kp8Yf2ElVFqezALHTPOVOI1aoe2JWtCXUuKrexedLTKqP1AFJIAhCd4Hmr9aIqBiU2WbVs/FvS1kd8C9uW0T9dk3H2259cA5q736567OSZjQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Puib2IAs; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745933386; x=1777469386;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Whwr+9l41YP9STYkQ/1ThI+dnOqAHdVf9Mdd37OTqX0=;
-  b=Puib2IAsekkIOc3pOqXOGPjPtchNqdRSRLdOFJb8UNfepmt3GT6z927u
-   7HzymygwOr2n40b5EyieUF75h9FlXdkrpBkJHlLdxNQxQtwkdlCh9SaGM
-   59rDtbGTdmBNEIAhNg5PcYF9RwBMN2ZSz4dGHjhpGQ1UI+cAPz5wyRcrE
-   b9Ahc8vg0VjRXhgs80qbm6jd6JlFfXO1z46h66rjqx3Z7tszApvht68Qu
-   QH6Kvdg4UnnAgunHjuceaUctXhGLxjBsXTRbq+pKSXFBDZqXesurhYWe6
-   QmJBoogbm4LJ0UrUfWfKKLdudOWu6F1jyaxd/u1pBYY0rL3iLbQPe4i8Y
-   Q==;
-X-CSE-ConnectionGUID: 5D2hWhKdTnCGVAj7Mh8JWQ==
-X-CSE-MsgGUID: 1Grr92+XT9qwpunxRJstCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="51376310"
-X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
-   d="scan'208";a="51376310"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 06:29:45 -0700
-X-CSE-ConnectionGUID: cmBLZoefS7Cieu8WlhaxWg==
-X-CSE-MsgGUID: /eu5IBmfRHSlYrIGiT80og==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
-   d="scan'208";a="133775633"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 29 Apr 2025 06:29:41 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u9l1n-0000jn-0k;
-	Tue, 29 Apr 2025 13:29:39 +0000
-Date: Tue, 29 Apr 2025 21:28:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pawel Dembicki <paweldembicki@gmail.com>, linux-hwmon@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Pawel Dembicki <paweldembicki@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Greg KH <greg@kroah.com>,
-	Shen Lichuan <shenlichuan@vivo.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Charles Hsu <ythsu0511@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 5/5] dt-bindings: hwmon: Add bindings for mpq8785 driver
-Message-ID: <202504291853.nDOvzGEJ-lkp@intel.com>
-References: <20250428221420.2077697-6-paweldembicki@gmail.com>
+	s=arc-20240116; t=1745933348; c=relaxed/simple;
+	bh=kDv0l15rAK7bZZq1e1Vseo/zrn4ABP5F9SmziT3xyZI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EKBU0K/FyR6N7aK0BGomVXi+kL0R+r5o1wt/5pvu+pzb3/vOUM3G7IzUl3XxYFopDKl0cgOeTCBoJUbnZu/UiIQFGbq9o1oxe3dj0Js4VcjVP8KqvWElrZSjANtpGHAKz860UFqqbaLsktii8yuzgosKzGNKeWQiL5++Pl3+o4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=ROw1RHi0; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1745933344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4DytQf8/knSTl8uN0E/2GEj/HCfcYQColb3vJTlNtko=;
+	b=ROw1RHi0HM04vTWcet5QsVpmmPhfbXa4hwH6n+xgsKwc32TKuztrJt44PvMGB5AL0YyL4a
+	zoQOfN6SH0Nt23ov4l80WjBYo1jgFf90uj/2I55trX8KrCqO3ijmILGzu7hdWk7MAtSfuP
+	qGPXenuw1BgxPHRVa9AQeyou0Uv3lrFSlaRrm4c2RuM74s1VpkTgu1rcuJ0nk/PDxpNF1W
+	dvmgYpbo+Q3KOzWX9yFd9oxrzEgw3wxmobR2n340M8A9i8iImAwXErfSfFVhv4RpPVzEBA
+	Ynyq3VtD+PaWFbAjOWA3VjyOVfrTxJqHn1/q4+5+FzGnF846uhJpgGKqFaOeSA==
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Neal Gompa <neal@gompa.dev>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Janne Grunau <j@jannau.net>
+Cc: dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250428-drm_adp_fixes-v2-0-912e081e55d8@jannau.net>
+References: <20250428-drm_adp_fixes-v2-0-912e081e55d8@jannau.net>
+Subject: Re: [PATCH v2 0/4] Apple Display Pipe driver fixes
+Message-Id: <174593334122.31053.18397299595093842185.b4-ty@rosenzweig.io>
+Date: Tue, 29 Apr 2025 09:29:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428221420.2077697-6-paweldembicki@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Pawel,
 
-kernel test robot noticed the following build warnings:
+On Mon, 28 Apr 2025 13:37:12 +0200, Janne Grunau wrote:
+> While looking at a suspend issue in the Asahi downstream kernel I
+> noticed several issues in the the ADP driver. This series fixes those
+> issue.
+> 
+> The root cause of the issue was that the device is unexpectedly powered
+> down on suspend. The driver relies on initialization done by the boot
+> loader and can not bring the device up from reset. The change in [1]
+> annotates the power-domain used by ADP as always-on. This ensure the
+> touchbar is useable when the adpdrm module is loaded after boot.
+> 
+> [...]
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.15-rc4 next-20250428]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Applied, thanks!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pawel-Dembicki/hwmon-pmbus-mpq8785-Prepare-driver-for-multiple-device-support/20250429-061658
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20250428221420.2077697-6-paweldembicki%40gmail.com
-patch subject: [PATCH 5/5] dt-bindings: hwmon: Add bindings for mpq8785 driver
-config: csky-randconfig-052-20250429 (https://download.01.org/0day-ci/archive/20250429/202504291853.nDOvzGEJ-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 11.5.0
-dtschema version: 2025.3.dev21+ge6ea659
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250429/202504291853.nDOvzGEJ-lkp@intel.com/reproduce)
+[1/4] drm: adp: Use spin_lock_irqsave for drm device event_lock
+      (no commit info)
+[2/4] drm: adp: Handle drm_crtc_vblank_get() errors
+      (no commit info)
+[3/4] drm: adp: Enable vblank interrupts in crtc's .atomic_enable
+      (no commit info)
+[4/4] drm: adp: Remove pointless irq_lock spin lock
+      (no commit info)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504291853.nDOvzGEJ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: Duplicate compatible "mps,mpq8785" found in schemas matching "$id":
-   	http://devicetree.org/schemas/trivial-devices.yaml#
-   	http://devicetree.org/schemas/hwmon/pmbus/mps,mpq8785.yaml#
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Alyssa Rosenzweig <alyssa@rosenzweig.io>
+
 
