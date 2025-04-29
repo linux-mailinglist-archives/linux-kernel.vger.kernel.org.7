@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-624664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5ADAA0617
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C16AA061B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 10:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2A14A0D8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:47:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95501798FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5E0297A54;
-	Tue, 29 Apr 2025 08:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6858728C5DC;
+	Tue, 29 Apr 2025 08:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwu95V8J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s7vK1rL1"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8632C28C5DC;
-	Tue, 29 Apr 2025 08:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2206125D913
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 08:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745916465; cv=none; b=X6KguyPeitNh5UOxojy3RC4WdmrZX2zYlucz9iixr3I+H3upZUTPJXJpVg2DFh3mjDbjjBT25HcomKS6Co9JjOs7aQEYxRqgcfXaHPm66V03is8odaLjay32uIpLXtUF7AHb6lJwAeL5gTud5CPspwSC+PhKQzNof61i5DPQ3pM=
+	t=1745916570; cv=none; b=VWKbuzfXTdwOsgp/+8zI/NF5ll5iggrh44bi3PbLz9mcg1hiBcD8fFHi5AohZgmzWcVrx3b7XWx3UxG1mwZqG3CDdu5L2s1gTHPXVaRFqZUUUhhdN8i1n64rFr5zlAAh3zHb+hK5T/Mc9X+2u9omcxKIhd5v3npu/TV5ah4mgIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745916465; c=relaxed/simple;
-	bh=0JH0Z7oTPN0PihVowtifv52lUTa+jlkr/MLQBRnPoFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihMJazCkAk4HvBtATBN/l30S8j6tfI4HJlef1Tbxj7UMgraQ2kWh8ePoyOppJOQOFFzbnX2JS34GU8YrZ9JWlQxVHdVnHYhZbwLROwFX/J9sQ+NLJkyJna4TETzGuSaemv+XNMEn7C2Xgn+G4OgjDs9teC0oh0FIR4ESG+zec4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwu95V8J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEFE5C4CEED;
-	Tue, 29 Apr 2025 08:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745916464;
-	bh=0JH0Z7oTPN0PihVowtifv52lUTa+jlkr/MLQBRnPoFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bwu95V8Jxq0ApZ/A8MUaQ76OxAAD8CpamSIc8KQkl61x+99eL7RVBgCEw4bqJUphg
-	 t6QF65fNipJ00S0Kf3VhVkEUWnUpK8riojOzxwlo6jeJCpahPvyOC3GA0Jc5cDJBJr
-	 vF1ZNdDh5oVjXNtCab0Y/1P+bgZ3d7US27chWydRXBVDwIgm5scEWGtqZqgZpPZFPj
-	 ncWFnLKXoYlGO16/XznYJMYEKZzGHUQVVyzG87F04CF/4g8I4eT464a3Sh3cd6dprp
-	 Ofgw43I7VZid7Ly6zlTSiloN04N368hqq3KMzmNgSBHBrlUbCzabz3iz2Rs6GpTc/p
-	 rY3r8f4MJ+SuA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u9gcz-000000008FN-10kp;
-	Tue, 29 Apr 2025 10:47:45 +0200
-Date: Tue, 29 Apr 2025 10:47:45 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom: qmp-pcie: drop bogus x1e80100 qref supply
-Message-ID: <aBCSMaZ7_tl-dEkB@hovoldconsulting.com>
-References: <20250429075440.19901-1-johan+linaro@kernel.org>
- <f44722a5-25b5-409c-baec-13d19af61d43@quicinc.com>
+	s=arc-20240116; t=1745916570; c=relaxed/simple;
+	bh=qQIdLk+FJaJTOLKosG3vFjdckw+iVeZ0wt9NMsX3AJU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZjnVfaIlhUkVYoNNOQ6AHWX/skUX6ZYDq6x0nNSzLk72/0tUtvXbMfXDY1ura307ZAmWGLAZC04ou3prk5iUzT4KXNt0jBG9IlKAURLWmdclVoXPDUlvJJS1JCD7QW9+iji3kTh/NcIi+pGKcd7CNWxrJao5l7jCBI+MfCQIYGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s7vK1rL1; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5f435c9f2f9so8061578a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 01:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745916567; x=1746521367; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bQ3Du2msqS99gBPXd5VzJGX2ImDSOyuqnj7RIZBT6Dg=;
+        b=s7vK1rL1C1ykAxg8McqfapjcTr4o3AEs93znL6fNn3EKhUCKw7SQbeWawn3jmKI4NE
+         T4TB9CFT9AodMPoo/KoTVb/jecQBhLzB7V1Q4mIHq6vqwzOpM8lQ1VUwEw5M3IX+0WiV
+         XGq6f1LQsxkyLVz+CHo9xmd94YQ65BFDvWH4RodJLD0WX11QXXlHc2/QZB2lcRvP8Ev1
+         +5dJec9ZVdM3ADW49YQlPzrJClVj3RGS4ugo4SWot4TK1JM36OQEZHKd7z8QMsJ8Jb3N
+         DYtyNyf2O7eRhrQ8xC09SeymsUIwpbfzdCpg2QBWdpR7EhMTUw9f5Fz5wufLnGlnE6LP
+         h2vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745916567; x=1746521367;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQ3Du2msqS99gBPXd5VzJGX2ImDSOyuqnj7RIZBT6Dg=;
+        b=YZPmimetacEOqTh5B7818afYMz+kyIR98ZKvsqg6IWapRYVGORVMXRsL77hBbP1UBg
+         lC288T1RK7KJ2wTriGZ9Yn1vCnzbR9FQ/t/jJQuYT5Ab5dtovnMm8H0jIXQO5xRWk+Ic
+         qfIzX6OUxocSDfzjhakvayc7Lh4Chmuk7UfGi7VcLeFlee9DmsBAFZFK/WZYJWsHctcR
+         pL0S760tfDdR2yE2zrCdAiak4e2Iv1ssYLqn0VJ+imVy4vI1QtodQ3q1qyRmGzekC5Ze
+         ztNhW/GyUoDvXQkEOzcG3sl+G7vyOgqqOjOPJw8kzM/L/q3q4j8eFeaJ3faBswmj14q3
+         fQjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdVOtFktLiurUAxrKdnWQdZnNgv/5iCD8vkOCsUpOeK90iqc8AejNQEYgjsbTQlOnKjObkCG2ktCOTOX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhWoRoIGumyhChQ7VQB9zSgyPzQLpuDY7wUiuLBS6TkDTCzzs2
+	tEEnboQRMRcsKaR/nGGwcFiyCuWAXHMq5FG1YO7iAflbmCxwt86fAjyRbpxwbUI=
+X-Gm-Gg: ASbGncvPObXE9jW3Coc/+/xjiNdV5ApGQ9EeTy22OiwXdwxB5xBE0qQriIDQPVJ1g9z
+	vSw3IlmgvtG+tIpMrDdgH/wjyBbAfBr+sj8PVnTs2Km3zZ+XrGCJpjj+hvbEAVdze8soY9MmmT7
+	86H7vTLVhkyvabs93roljkianW6a2kHrtA+Y4Uw8iMcInpswLh3G4gwEkpRxZdpl+e+emt8PUcY
+	DCSrDML8eu5RQzJO1CQpPKDIjbPFT5XTh5c8mCi+AG8Hwnx0bnZ9VsueiA7D72s5m1UxUj1hZUY
+	pAr3R7FA9pnOM3Y8sY48czhVtu4UPwyXgKKoDCzB01WHhrbdFpA+xbBXL5735wd6Of0O7BXIRGg
+	daXtTOHOy1l8fOPNtLSWfsvUd
+X-Google-Smtp-Source: AGHT+IGUOSkbNQi0TijAb91lwptPj1wuZauO4Jmzd3aIvKCh68E4hLv9NlgmiXg+nD07/oJegV0vGg==
+X-Received: by 2002:a17:906:6a23:b0:ac6:bca0:eb70 with SMTP id a640c23a62f3a-ace84b55d83mr1224307466b.56.1745916567365;
+        Tue, 29 Apr 2025 01:49:27 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7ec0e6331sm3546619a12.78.2025.04.29.01.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 01:49:26 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/2] phy: exynos5-usbdrd: FIELD_PREP fixes
+Date: Tue, 29 Apr 2025 09:49:23 +0100
+Message-Id: <20250429-exynos5-phy-field-prep-v1-0-39eb279a3e0e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f44722a5-25b5-409c-baec-13d19af61d43@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJSSEGgC/x2MWwqAIBAArxL73UL5wOgq0YflmgthohBFdPekz
+ xmYeaBQZiowNg9kOrnwESv0bQNrsHEjZFcZRCd0p8SAdN3xKBpTuNEz7Q5TpoT9Iska6ZQxEmp
+ cpefrH0/z+37CgqzVaAAAAA==
+X-Change-ID: 20250428-exynos5-phy-field-prep-1b3ea73d4773
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Tue, Apr 29, 2025 at 04:24:19PM +0800, Qiang Yu wrote:
-> 
-> On 4/29/2025 3:54 PM, Johan Hovold wrote:
-> > The PCIe PHYs on x1e80100 do not a have a qref supply so stop requesting
-> > one. This also avoids the follow warning at boot:
-> >
-> > 	qcom-qmp-pcie-phy 1be0000.phy: supply vdda-qref not found, using dummy regulator
-> >
-> > Fixes: e961ec81a39b ("phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3")
-> > Cc: Qiang Yu <quic_qianyu@quicinc.com>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
+These patches fix some recently introduced usage issues of
+FIELD_PREP().
 
-> We have QREF for each PCIe port on the X1E80100, all of which consume 
-> the regulator L3J. Although the PCIe PHY uses QREF indirectly, this 
-> creates a dependency, right? 
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (2):
+      phy: exynos5-usbdrd: fix setting LINKSYSTEM_FLADJ on exynos7870
+      phy: exynos5-usbdrd: s/FIELD_PREP_CONST/FIELD_PREP where appropriate
 
-The PHY binding should describe the direct dependencies for the PHY, so
-the addition of qref for sm8550/sm8650 was probably also a mistake.
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 63 +++++++++++++++-----------------
+ 1 file changed, 29 insertions(+), 34 deletions(-)
+---
+base-commit: 33035b665157558254b3c21c3f049fd728e72368
+change-id: 20250428-exynos5-phy-field-prep-1b3ea73d4773
 
-From what I could tell there is not even a one-to-one mapping of qref
-supplies to PCIe ports, but perhaps you can provide more details on how
-this fits together here?
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
-> If PCIe doesn't vote for it, how can the 
-> PMIC driver decide when to disable L3J during system suspend or runtime 
-> suspend? Is there a chance that L3J could be disabled while PCIe still 
-> requires it?
-
-If the QREF supplies can be turned off, you may need to mark them as
-always-on until things are described properly. But whether that's needed
-is not even clear at this point:
-
-	https://lore.kernel.org/lkml/17a1a4d9-fdc5-477a-bf4e-91cae5a62479@oss.qualcomm.com/
-
-Johan
 
