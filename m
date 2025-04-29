@@ -1,176 +1,179 @@
-Return-Path: <linux-kernel+bounces-625764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F23AA1C5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D59AA1C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11831701C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C9D1BA501E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ACE2686AD;
-	Tue, 29 Apr 2025 20:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08E6259CB4;
+	Tue, 29 Apr 2025 20:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E3XptLNU"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XQQZ67x3"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF122522A0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 20:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93AE2528FC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 20:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745959431; cv=none; b=ni9cnVJWuCpLDPSjs4ZPQumyeWk5OCBExSzeQZl/HnzimjN6HCNzcVovoDVjc6M780bgqTa9J8xt21D1eEruZ92E0Pm6Hx69EeVJSr0UZUQ3VgZJf28r0S6y9GvUVlQHxPAoQgHILN7FbiKy6L9UwpEJIKXIgxCqG1sktIfa+wE=
+	t=1745959617; cv=none; b=JE8gu/n5EcRksfYdheh2YKuZ3pGL8DZtDWAH4hQ3ccOd5XffMYCY2zE56hyxFgA+rEebkXZ04yRuMzn3oNetqxf6m30A55NbI1tMALP64zTtbEzgnCcKlESbogy0D/SDLo3tmWhMHQG8JE3daFO1mCKC7QEFLb6y/4L3AIPCx8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745959431; c=relaxed/simple;
-	bh=LkyLQBwTJJGrpnl1CxZI8tvol6HSznSH55H78Vjrl60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TsWRX+SmchcB/ENXQFljoy4CQfUB4XyoRkXPpdHBqgskiWDh9jDLRPBm6HBzFr/c4stFDUgjKqDWR/FZesSN5pcYVSvtwwB3DCq3tku5KumRBswhmujdtZMpDij9MJFRLuUk5ZtcCDz+SfRQW9OjluBqtlFIW1hT9HiPob3Q0JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E3XptLNU; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso6059a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:43:49 -0700 (PDT)
+	s=arc-20240116; t=1745959617; c=relaxed/simple;
+	bh=D/9Y5YifH1074wJb/GS4vtYd+k1QQYAwDd3xbHbVoJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OreTnjrnTWMEQNU9qp3596C7wKWyHomwGyLGxkRR3HrgCQ2w1QiBpuOzOlqOv2X+zhXLl3M844b4uZtsCw8tXS6pEeQfzNw+Erg9vwIYLJX7DXCGBqHIC/lRR2mSxrGaPpWvr/wjGLQ3mf7Hhk70cs16Bmb6nCw4d8p2hwE6QFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XQQZ67x3; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfe574976so45539545e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 13:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745959428; x=1746564228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LkyLQBwTJJGrpnl1CxZI8tvol6HSznSH55H78Vjrl60=;
-        b=E3XptLNUg/wymo+FIfGVkQiWi+w8I8L5TP+SWtfvnvUJFJs+KLhmdczklK2HzZK6gg
-         7Y7siAKdD2ZonjAqG0+w9voLPGpm5xHHWzRsDXUhQea87WJhmCXcjxWLx7DjPBIwwBlh
-         G9X/X58rOGqgZCsnRC3JkmzGA7xV+qTJ1yD0Pke16W9I2ZNWuzZWFW9i8zgzEqma98R2
-         doivSSxy73MT8RuVztlEHeJ0isvIorxXW8GY0ADlKxHhz70S2ZhFX8XvXafX84xg5AKl
-         DezH2wJ1WeTGW3tiqZA8kzTqmC+IIUqY5Y6T6KqQpLUv+zOsVi1hM7VDpV3vmqG9LzOq
-         KUBg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745959613; x=1746564413; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ZJ8j8Oe72qFBaNxqjkDCbDD8XAvsg/lPShitQQ2048=;
+        b=XQQZ67x3sPK3FBhXBNJPT15x8eb/HfFmjOKB3VNN3UWQRaAIhFahpAW/1LpPWUQFlu
+         qlZ1cTf06rzXsooNIQF2TsU0tIBaechMrDiGt4b4hoeoujBUlgUH5ugB3l0p+tBjbgIl
+         7i9WsDR0Ib2kBwCTtnEeD12eE0xzrQZh6u7/xm7xVCrNmIk072axrKDQvoUPHjkK9+aR
+         +tR+dkPwvwgbZdQdUssw9/PzjABwZbeKEdZdAf2oOhNGz1ILaB+I+12IzFfczLgeux4d
+         BDbiCSvljvXJk2l5VT7I/fpwgbrXo4VksucOZUq10fkiWx+h4LTV7vI7HcEgfSymq2tq
+         SWMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745959428; x=1746564228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LkyLQBwTJJGrpnl1CxZI8tvol6HSznSH55H78Vjrl60=;
-        b=OvsHhwH59npL15rtUSomvOtGoT2Iph84NxZpCCTU2RrR9XsN7oQHivUdL0Te66ynMu
-         Eq+8VXdpBu077l7/7CiJ7L/CaCCoEduq8ITzT5LtBQnxb0/Ye8Dat2oWlJj9ntv/6z9Q
-         cGKfpE7uNASldHs9ZIHEVJR/U7eV4/U55s0n6oNHH8hkhTpfptLA4w13CQ7J9ZbvP5oy
-         iUcWHsNucBt7LOllvNszAnNKEGg9w06wyl7iGej4Nit3opDx942APQYw4id+d/QcdxL2
-         9RSP0z+pAyyw+JBhlaasj0PU/VI81kKGFHOW/2ZEs76Nv6Q9edPgm0rdn56og9Tavi1d
-         b5tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPvFek+5wzfrBIuso3ppUucDcIEZHQ00WmxIH5IVgy3piLzvSa1GC5FptK4tJxDW02MQM44MT0s8cfoks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFIxwKGdc3oBLai9SquD1z7V6teZQuyAXlLHP6HcGs/m6ZPXQ6
-	CtNOndbbIvfu95mjyVFGwsZJy/aXQ0CcdYGOQrzoelVhuRqwWlx2aWjfwT4TrSu1HyWFEadKyY6
-	15RNVZNbAfFjTTpmDvVsZACQ175Ihrd6LVJAU
-X-Gm-Gg: ASbGncs8lewKY0VN2AgWD60raLWLiCMQqeId/UErHmXsyFzq5QuwFmvxyftTgFDzJhG
-	xYRZHtZJ9xCgLB3ohRnOnD5n+tJGn5+sfMFqO7BZx5eeqqEhBrkZ40KNU15Vo3F8JUBezujUsmL
-	GphTPEqgVFrKnROC7rkyuNFsXvdmb+jubpGgaZq7dfi8NyPq/mdg==
-X-Google-Smtp-Source: AGHT+IEIgZvYUxouglxxEc1B25bVszxW3uDj1Plpsi1Xo6RrFU9lPw27AjHq3/sFGlfsqKdKORoMM5aPYW2Otdj+c1I=
-X-Received: by 2002:a05:6402:1d21:b0:5f6:c48e:82bf with SMTP id
- 4fb4d7f45d1cf-5f89409483amr28294a12.0.1745959428013; Tue, 29 Apr 2025
- 13:43:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745959613; x=1746564413;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ZJ8j8Oe72qFBaNxqjkDCbDD8XAvsg/lPShitQQ2048=;
+        b=gzP61A5/yw+Surxwegb9MtUE2tFZTtOvcVZYVRNqOLluMzLQtQrtde2fnmgI7p8biB
+         /2BbziJHXdeww01C2NiGYYk9+rs5f1xVD+csgyoxia/efjk/LeyllGUmEEkQYLmnD3xH
+         kybetCC7TpXZp0zDGz0YJty08gWgbPRG78xXgHGgjFg27B0AgJkDuvZnwc/spv6naES6
+         IugjTPs3FsG8aGxRHd9oM8KG+1GYN4ryTYTxkpOW/m4GL9Lv1wbWi2HFuxObWNAsFByP
+         jKefoSmgCTNxJ3NaQurkwlOR/cqfEfOo/fS/kHwmz+pZQY0x37gl0Ok4eRxSBoUJVWMS
+         JZpg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Fn+K9I26f/VGxA2EesFwVxCM660xeuihX06dvVHDokaoPqLt7nsT2remrdtfNPNDsATYU7HZ/ai2lHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlRSyNxyJd73DsHClr/bot1Mo4gHXkvuXRMCwU3a5iTQ1hvMXE
+	TsDe+bzsmdkO5ZhKLKsS4uC/PyyxqCfzt06VBjAuDegj8h8iupmM4tY2w+MnDuE=
+X-Gm-Gg: ASbGncvvnCLZ5rQ6L7UTwu0FWHjQm93wzBO6HYURcOVDVVZMwlMlO10tnBKzVhMiWZD
+	LhRVbRlP1qiuirDGEE5r1HxhFvV4YUc4A+lutBEHbtiw5uVXsCZu6QIKpF+dt6+9a/LZV+HQE9r
+	7yGwCukRQBtRuAbYj2/R5T/QQTXPVq/DRCPqgG0P6nGGoNqicFFW0vfqjicjC905Y83LPtXRdXe
+	3FTfm9h37/igqtizQWwaVq5f2nVZOQOjaWvFsgGN660U/2+u/s8QQ3026jtDRE/aAZ+zwOiDpIC
+	00GYZ/nS+9eYCAur2MY/CypwJ1+l6gDdMKOPks1aG9Y03edvr3wvrnagD/FwF6Em1Fnbjtlw3Tv
+	LpKqcyJY=
+X-Google-Smtp-Source: AGHT+IF9bv2cflSgAvGwtlEqK/Tpat8aDUtOYB8YNh//4MAjWZJ7TTuhWab4KG2FTzCSpSxKDA3ETQ==
+X-Received: by 2002:a05:6000:4014:b0:3a0:7a5d:96f8 with SMTP id ffacd0b85a97d-3a08f7a2755mr614243f8f.31.1745959613249;
+        Tue, 29 Apr 2025 13:46:53 -0700 (PDT)
+Received: from archlinux (host-87-8-31-78.retail.telecomitalia.it. [87.8.31.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2afc6b3sm80455e9.31.2025.04.29.13.46.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 13:46:52 -0700 (PDT)
+Date: Tue, 29 Apr 2025 22:45:39 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: iio: adc: adi,ad7606: add gain
+ calibration support
+Message-ID: <uyreqaazupbt23vmf3pwxsaneimtahsuinlfmc77aaavt4nyl6@yofmvw3rndtx>
+References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
+ <20250429-wip-bl-ad7606-calibration-v1-4-eb4d4821b172@baylibre.com>
+ <d13e3671-9330-419c-acf6-97f33060116c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-8-surenb@google.com>
- <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
- <CAJuCfpGGiwTbMeGAeYNtQ5SsFenUw8up6ToLy=VstULM_TSoXA@mail.gmail.com>
- <CAG48ez15g5n9AoMJk1yPHsDCq2PGxCHc2WhCAzH8B2o6PgDwzQ@mail.gmail.com>
- <CAJuCfpG+YjyVE-6TaAQEjwc0iixqN8Epf25jo2awtL=gqY=afA@mail.gmail.com>
- <CAG48ez0ntTH_sOaPiqML715jyTCujwyh3Og1wBq9RNLbu55C5Q@mail.gmail.com> <CAJuCfpFA0Kqt_KOceq6bxbJG80z-RaxcFbC+-59F_sPOXAorQA@mail.gmail.com>
-In-Reply-To: <CAJuCfpFA0Kqt_KOceq6bxbJG80z-RaxcFbC+-59F_sPOXAorQA@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 29 Apr 2025 22:43:11 +0200
-X-Gm-Features: ATxdqUEqqoG4LoIyZ4OwQmz6A4H2tBfAsqh63IM1Om7wtHRV6kYoe8YBb1fcZ7Q
-Message-ID: <CAG48ez0qqFenDtrWu6xB+5voYMYX9VRiEpe3_8NOZjT8Wz4eFg@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
-To: Suren Baghdasaryan <surenb@google.com>, Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, 
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d13e3671-9330-419c-acf6-97f33060116c@baylibre.com>
 
-On Tue, Apr 29, 2025 at 10:33=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
-> On Tue, Apr 29, 2025 at 11:55=E2=80=AFAM Jann Horn <jannh@google.com> wro=
-te:
-> > On Tue, Apr 29, 2025 at 8:04=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > > On Tue, Apr 29, 2025 at 10:21=E2=80=AFAM Jann Horn <jannh@google.com>=
- wrote:
-> > > >
-> > > > Hi!
-> > > >
-> > > > (I just noticed that I incorrectly assumed that VMAs use kfree_rcu
-> > > > (not SLAB_TYPESAFE_BY_RCU) when I wrote my review of this, somehow =
-I
-> > > > forgot all about that...)
-> > >
-> > > Does this fact affect your previous comments? Just want to make sure
-> > > I'm not missing something...
-> >
-> > When I suggested using "WRITE_ONCE(vma->vm_file, NULL)" when tearing
-> > down a VMA, and using get_file_rcu() for the lockless lookup, I did
-> > not realize that you could actually also race with all the other
-> > places that set ->vm_file, like __mmap_new_file_vma() and so on; and I
-> > did not think about whether any of those code paths might leave a VMA
-> > with a dangling ->vm_file pointer.
+On 29.04.2025 10:26, David Lechner wrote:
+> On 4/29/25 8:06 AM, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Add gain calibration support by a per-channel resistor value.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
+> >  Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> > index 29f12d650442b8ff2eb455306ce59a0e87867ddd..df30545fb52c89a814257443183303775a06a7f2 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> > @@ -204,6 +204,15 @@ patternProperties:
+> >            considered a bipolar differential channel. Otherwise it is bipolar
+> >            single-ended.
+> >  
+> > +      adi,rfilter-ohms:
+> > +        description:
+> > +          For ADCs that supports gain calibration, this property must be set to
+> > +          the value of the external RFilter resistor. Proper gain error
+> > +          correction is applied based on this value.
+> > +        default: 0
+> > +        minimum: 0
+> > +        maximum: 65536
+> > +
+> >      required:
+> >        - reg
+> >        - bipolar
+> > @@ -271,6 +280,10 @@ allOf:
+> >      then:
+> >        properties:
+> >          adi,sw-mode: false
+> > +      patternProperties:
+> > +        "^channel@[0-9a-f]+$":
+> > +          properties:
+> > +            adi,rfilter-ohms: false
+> 
+> I think this is in the wrong place. It would allow this property on ad7616, but
+> ad7616 does not have this feature.
 >
-> So, let me summarize my understanding and see if it's correct.
->
-> If we copy the original vma, ensure that it hasn't changed while we
-> were copying (with mmap_lock_speculate_retry()) and then use
-> get_file_rcu(&copy->vm_file) I think we are guaranteed no UAF because
-> we are in RCU read section. At this point the only issue is that
-> copy->vm_file might have lost its last refcount and get_file_rcu()
-> would enter an infinite loop.
 
-Yeah. (Using get_file_active() would avoid that.)
+Looks like it cannot work on ad7616 due to
 
-> So, to avoid that we have to use the
-> original vma when calling get_file_rcu()
+  - if:
+      not:
+        properties:
+          compatible:
+            enum:
+              - adi,ad7606c-16
+              - adi,ad7606c-18
+    then:
+      patternProperties:
+        "^channel@[1-8]$": false
 
-Sorry - I originally said that, but I didn't think about
-SLAB_TYPESAFE_BY_RCU when I had that in mind.
 
-> but then we should also
-> ensure that vma itself does not change from under us due to
-> SLAB_TYPESAFE_BY_RCU used for vm_area_struct cache. If it does change
-> from under us we might end up accessing an invalid address if
-> vma->vm_file is being modified concurrently.
+But maybe an additional patch should be added to add also adi,ad7606b
+to the above enum.
 
-Yeah, I think in theory we would have data races, since the file*
-reads in get_file_rcu() could race with all the (plain) ->vm_file
-pointer stores. So I guess it might actually be safer to use the
-copied VMA's ->vm_file for this, with get_file_active(). Though that
-would be abusing get_file_active() quite a bit, so brauner@ should
-probably look over this early and see whether he thinks that's
-acceptable...
+Regards,
+angelo
 
-> > I guess maybe that means you really do need to do the lookup from the
-> > copied data, as you did in your patch; and that might require calling
-> > get_file_active() on the copied ->vm_file pointer (instead of
-> > get_file_rcu()), even though I think that is not really how
-> > get_file_active() is supposed to be used (it's supposed to be used
-> > when you know the original file hasn't been freed yet). Really what
-> > you'd want for that is basically a raw __get_file_rcu(), but that is
-> > static and I think Christian wouldn't want to expose more of these
-> > internals outside VFS...
-> > (In that case, all the stuff below about get_file_rcu() would be moot.)
-> >
-> > Or you could pepper WRITE_ONCE() over all the places that write
-> > ->vm_file, and ensure that ->vm_file is always NULLed before its
-> > reference is dropped... but that seems a bit more ugly to me.
->
-> Ugh, yes. We either ensure no vma->vm_file tearing or use
-> __get_file_rcu() on a copy of the vma. Or we have to stabilize the vma
-> by locking it... Let me think about all these options. Thanks!
+
+ 
+> 
+> >      else:
+> >        properties:
+> >          pwms:
+> > @@ -398,6 +411,7 @@ examples:
+> >                  reg = <8>;
+> >                  diff-channels = <8 8>;
+> >                  bipolar;
+> > +                adi,rfilter-ohms = <2048>;
+> >              };
+> >  
+> >          };
+> > 
+> 
 
