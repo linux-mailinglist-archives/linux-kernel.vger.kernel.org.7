@@ -1,144 +1,134 @@
-Return-Path: <linux-kernel+bounces-625294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E0DAA0F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:49:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41E1AA0F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 16:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 695D67A9913
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6B6188E1D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142FE217F26;
-	Tue, 29 Apr 2025 14:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4822192E5;
+	Tue, 29 Apr 2025 14:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="hyHYGP6P"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfK2BZ12"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2773D17588;
-	Tue, 29 Apr 2025 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721E21504F;
+	Tue, 29 Apr 2025 14:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938132; cv=none; b=PoOT9fG9wrVoDc4wTIu6SYxbLjSd1flOr/CkmP3HmXa1qEmBx8cVtVz7cAnUkdpOBHfHn8QxtkaWRU1GIK/cXrc0cO1WyPppvE/hPFZ+tdNxrQ2F/z5BAFAhDu2XQZ2yO3GRo/1fJF9t1+lYd5F3L3dS4F8N0P29dTFEjj8JuwM=
+	t=1745938212; cv=none; b=J3GwZGgqaSbuDg3khRV4M5qWqhn304fDYDV0ZqLRra4RlklO39FwtWNdQzZPmIErrzKtDYJo/2pq8AwTE55+a+XxAulp4578YDZG9TnJ/y2GbvUKhMzLthod4zIsqtGgADEgR73VjgPuTbCzxp+xiljoGLLaz8JUkeMzOb/RxnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938132; c=relaxed/simple;
-	bh=oRNnnrKfvMB4H1OFL2yJMG5d6+mfssjvCvQkeRgaUD0=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=jLLXFATkOa3E/lK8JSA7nwfgugcWAgMZYix6JX5X+aXEKvElhDiqxhjNGBxFhx2MLNtj8MrbrRVD6hVzJUSxQKf06xfAUnK9QCQUR2HHbYquI62otG82Gd5lrRoLqwaAiLfClEqTIwzE6A/JtgoFqeQ/T10qT1+6ET55L+iR8Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=hyHYGP6P; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=eHqUkt7UJKIIILzl5IsZ8pSRFP8K0RvUiP7Kb3bGmWM=; b=hyHYGP6PdBOx/kyS79n0aakn/5
-	M1gPdPU8xqoR/Q2VGFhLc+fj61VjGuIiQH4W3jIik9IPXJ/+W2TVDGZ9nVEPAWTLTUE8uAhX3aA5O
-	rpaJ2Qq+xuHdHpAsDUC38bMzz70bp/KuREdHqe3ftAx0rxH/zsF81STIE7V9x69TLBXE=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:57924 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1u9mGG-0001yT-85; Tue, 29 Apr 2025 10:48:40 -0400
-Date: Tue, 29 Apr 2025 10:48:38 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
- geert@linux-m68k.org, paul.barker.ct@bp.renesas.com, Geert Uytterhoeven
- <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org
-Message-Id: <20250429104838.a8da03da8f30ede5adc38765@hugovil.com>
-In-Reply-To: <20250429081956.3804621-2-thierry.bultel.yh@bp.renesas.com>
-References: <20250429081956.3804621-1-thierry.bultel.yh@bp.renesas.com>
-	<20250429081956.3804621-2-thierry.bultel.yh@bp.renesas.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1745938212; c=relaxed/simple;
+	bh=Uy3lf6ShP5oCjnAZKa0yP+gSLA9pi9fUNrGuoryF1I4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JZdgS/BN/Q8AxkrIWkZHtlb2NPLdmrqViPALpwHLmSgl4/EUJjq8sg5l+TTsV9/sJs5OXgsnbqR1xpGuFzH9JYxt92fnxUsmWnN0wkiXzJV5hkFvussi/W8dguvjwVF/ncbaXan0c9VH8/+i2oG9iXlVuRerSV2y3qi57/V9y7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfK2BZ12; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A860C4CEEE;
+	Tue, 29 Apr 2025 14:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745938212;
+	bh=Uy3lf6ShP5oCjnAZKa0yP+gSLA9pi9fUNrGuoryF1I4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=QfK2BZ122ILkjblPC2DYF+bxXv42KhvQwhWqsSqsxuA5D74qHtB2+g1MVGuZ/LtUO
+	 XW8L9dvTznLyrJiANqh6fg5wIxTjQq9PQhQyk9xTCwgTNFRsNL6sa9oh3iTDiuAMAM
+	 lwTTmeuu+P87+9qCodwqXdDxsmLA3hqzNbwafJoozojfbXp7TDXM79cGWg/GcgO4EJ
+	 GqZQ7cPMS5RquwS9pQA1b4MvXBsKl0s0LgiizDJS7QBRU+537yYYIZIwVRGm9qkOtA
+	 ArrbcdxQ8KHhgZl6ZT8umokghx96VqCMn/+lpq6ZRbdgkgeUHRwKISX9vP/Mtnm4A/
+	 Ubv4eZG378VfA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113E7C369DC;
+	Tue, 29 Apr 2025 14:50:12 +0000 (UTC)
+From: Levi Zim via B4 Relay <devnull+rsworktech.outlook.com@kernel.org>
+Date: Tue, 29 Apr 2025 22:49:37 +0800
+Subject: [PATCH net v2] docs: tproxy: fix code block style
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -3.1 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v8 01/11] dt-bindings: serial: Added secondary clock for
- RZ/T2H RSCI
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+Message-Id: <20250429-tproxy-docs-fix-v2-1-20cbe0d91827@outlook.com>
+X-B4-Tracking: v=1; b=H4sIAADnEGgC/3WNwQ7CIBBEf6XZs2taQiP15H+YHoQulqjdBpC0a
+ fh3CXeP8ybz5oBA3lGAa3OAp+SC46UEcWrAzI/lSeimkkG0om+luGBcPW87TmwCWrehMVprK0U
+ vBwtltXoquBrvsFCEscDZhch+ry+pq9VfYeqww0EpGqSSsuhv/I1v5tfZ8AfGnPMP4NGXbbUAA
+ AA=
+X-Change-ID: 20250427-tproxy-docs-fix-ccbbbf42549f
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>, 
+ Levi Zim <rsworktech@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1513;
+ i=rsworktech@outlook.com; s=not_default; h=from:subject:message-id;
+ bh=NKjV0mTkVlgZ5Qae4uXgQi5NGdHyS6jBKgNza+UO9ck=;
+ b=owEBbQKS/ZANAwAIAW87mNQvxsnYAcsmYgBoEOcaFCexvq7uGJB1WvGKOAK/+N2YlYX7U4MvE
+ Xj/h1GjLKuJAjMEAAEIAB0WIQQolnD5HDY18KF0JEVvO5jUL8bJ2AUCaBDnGgAKCRBvO5jUL8bJ
+ 2GzgD/9ioRWNEeQIjH1V0ALiE+1n0soTvI/Ck2yvHO7h9Byser86y8ZveLp5TV2+jvQME2HtupI
+ UecwXF/GWFqM3aWN3+D3j4bzW72yxxP+9EtL90PIiZWdB48sgGae02oMFnQIH45gISVANiWwg8Q
+ 5E/sCCopJEObePMgvy6FHgoRk6l4Qh+nxqGMYfbgpBIHoWloWy89s/+r5OFc9jJ9y5i4qkqtvZf
+ IIJH9Wm/qDX3W2gY9Q8RzIAedV2LXI44dGGEMaA5AUA8o//PvMSOjyTi1bQ9QcvIYgoS2sWVKjn
+ arViX4i3ZgTNDxcXyeE2oYNrrQ4OOQjKuAlyIkMIXWuVimRTnAvpPKBaj6h8O0iJQAJupDhhZVi
+ gfn1gpLrqENeq5nSqNrn853Bt1dU3ui+gH5xKa4vJrMckhl/R00YAXwUVNpzetuWHbvtkUxdMH6
+ qlRZxgr05Pzsursh/JK9smWnwW18I4NFfz+kjfiWrcuHgVvdzcLE4M+PKeihWxkgGKgkZSz3QIS
+ 95/wypwNELvyBbP5zgyJ+h9b7ph7mAc9dzmo+W4+Y/TBk0uKyvZV5a8bW8GGciudPG4kkhjLoRa
+ 4qEUMZAiPyWKWMSFmoLTpyY3U2RjvxJjKbNy5+cJSZmyyPBxtTbeu7BKE7qwq5CJ3Y0ziSYB1nR
+ Nt7QWQk4zLEhCtA==
+X-Developer-Key: i=rsworktech@outlook.com; a=openpgp;
+ fpr=17AADD6726DDC58B8EE5881757670CCFA42CCF0A
+X-Endpoint-Received: by B4 Relay for rsworktech@outlook.com/not_default
+ with auth_id=390
+X-Original-From: Levi Zim <rsworktech@outlook.com>
+Reply-To: rsworktech@outlook.com
 
-Hi Thierry,
+From: Levi Zim <rsworktech@outlook.com>
 
-On Tue, 29 Apr 2025 10:19:43 +0200
-Thierry Bultel <thierry.bultel.yh@bp.renesas.com> wrote:
+The last command is not indented thus does not show as code block when
+rendered. This patch fixes it.
 
-> At boot, the default clock is the PCLKM core lock (synchronous
+Fixes: 4ac0b122ee63 ("docs: networking: convert tproxy.txt to ReST")
+Signed-off-by: Levi Zim <rsworktech@outlook.com>
+---
+Changes in v2:
+- Add double colons to the end of paragraph before the code block
+- Link to v1: https://lore.kernel.org/r/20250427-tproxy-docs-fix-v1-1-988e94844ccb@outlook.com
+---
+ Documentation/networking/tproxy.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-lock -> clock?
+diff --git a/Documentation/networking/tproxy.rst b/Documentation/networking/tproxy.rst
+index 7f7c1ff6f159ed98d96c63d99c98ddbaefd47124..72ba41a10bb22b1f1054af55702423fa8086d98d 100644
+--- a/Documentation/networking/tproxy.rst
++++ b/Documentation/networking/tproxy.rst
+@@ -69,9 +69,9 @@ add rules like this to the iptables ruleset above::
+     # iptables -t mangle -A PREROUTING -p tcp --dport 80 -j TPROXY \
+       --tproxy-mark 0x1/0x1 --on-port 50080
+ 
+-Or the following rule to nft:
++Or the following rule to nft:::
+ 
+-# nft add rule filter divert tcp dport 80 tproxy to :50080 meta mark set 1 accept
++    # nft add rule filter divert tcp dport 80 tproxy to :50080 meta mark set 1 accept
+ 
+ Note that for this to work you'll have to modify the proxy to enable (SOL_IP,
+ IP_TRANSPARENT) for the listening socket.
 
-> clock, which is enabled by the bootloader).
-> For different baudrates, the asynchronous clock input must be used.
-> Clock selection is made by an internal register of RCSI.
-> 
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> ---
->  .../bindings/serial/renesas,rsci.yaml          | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> index ea879db5f485..aa2428837a2f 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> @@ -35,10 +35,14 @@ properties:
->        - const: tei
->  
->    clocks:
-> -    maxItems: 1
-> +    items:
-> +      - description: serial functional clock
-> +      - description: default core clock
->  
->    clock-names:
-> -    const: fck # UART functional clock
-> +    items:
-> +      - const: async
-> +      - const: bus
->  
->    power-domains:
->      maxItems: 1
-> @@ -58,11 +62,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
-> -    #include <dt-bindings/clock/renesas-cpg-mssr.h>
-> -
-> -    aliases {
-> -        serial0 = &sci0;
-> -    };
-> +    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
->  
->      sci0: serial@80005000 {
->          compatible = "renesas,r9a09g077-rsci";
-> @@ -72,7 +72,7 @@ examples:
->                       <GIC_SPI 592 IRQ_TYPE_EDGE_RISING>,
->                       <GIC_SPI 593 IRQ_TYPE_LEVEL_HIGH>;
->          interrupt-names = "eri", "rxi", "txi", "tei";
-> -        clocks = <&cpg CPG_MOD 108>;
-> -        clock-names = "fck";
-> +        clocks = <&cpg CPG_MOD 108>, <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-> +        clock-names = "async", "bus";
->          power-domains = <&cpg>;
->      };
-> -- 
-> 2.43.0
-> 
-> 
+---
+base-commit: f73f05c6f711fd1628c7565441b9febc0c4d6c58
+change-id: 20250427-tproxy-docs-fix-ccbbbf42549f
 
-
+Best regards,
 -- 
-Hugo Villeneuve
+Levi Zim <rsworktech@outlook.com>
+
+
 
