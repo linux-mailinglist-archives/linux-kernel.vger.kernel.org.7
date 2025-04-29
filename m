@@ -1,222 +1,117 @@
-Return-Path: <linux-kernel+bounces-624453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0367AA03CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:55:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB8DAA03D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA1B16923E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:55:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DD0B7AE9A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC12274FF8;
-	Tue, 29 Apr 2025 06:54:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128B624EAB3
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699D280A52;
+	Tue, 29 Apr 2025 06:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tIxprtYt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="23EC4lUj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB4C27A10F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 06:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745909694; cv=none; b=JXxR3wnKXsv9LDFW40phXyugquzjpbmrATMuK1z5kDM9Z6HloAgdz8ml8mz4vabZooYF9vPBIXDRUC/+Oyu/RXX8qmP2xn0WHwFOCqGbFv1zCNYKcwDSfLCwUZjCwtYH0VYGYOhPx/tlp0kfBuZwcIK56iH9GPYsV/msdfcZ/Bg=
+	t=1745909702; cv=none; b=kaEi7ahATAMKH3RXf9BpkAw553kCHtQQtiad6bfR/7ozrh8PzqLJwbFiLFqGhrmIx3Jfkmf8maKKbBBmTItnuU44ReJ9uGmL+jjoyjmfpT8HisQvZAVBOIp0c2LVzyldtAH6IoqD/SiPDQNbnJyNTC3uCj5IU5g/P4xrl9uoRVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745909694; c=relaxed/simple;
-	bh=yAfxxEt3u2cGWEC1v5XC7vdbYm+8s7aIBUQAa+eMuVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tAEQNJb9KSN64JwXfmFaAZzhZckmsF4XG1r/PfxE01LFwYbxCDB2+9cDHQsN7/CkukmpTA519qJh9ynFIG3nEnqJR/2NPA8b/oLgIIk+/TZugq9ZPb9pYaZ/iwfQGGZ+meRqRtulCIYNvw50qVHsUryyBR3qFWRRGgUmsaUqlNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7693D1515;
-	Mon, 28 Apr 2025 23:54:44 -0700 (PDT)
-Received: from [10.163.78.253] (unknown [10.163.78.253])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 647323F5A1;
-	Mon, 28 Apr 2025 23:54:41 -0700 (PDT)
-Message-ID: <b780d1b8-d6f0-42f1-aa5c-c6e016bbd9ae@arm.com>
-Date: Tue, 29 Apr 2025 12:24:37 +0530
+	s=arc-20240116; t=1745909702; c=relaxed/simple;
+	bh=Efc28UI0TELlOA0c5EdrNjTiDCYUoXeOH5VEJZfc9a4=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=nfhfdvAKCKr2GXYlfD1xbpWX89tDT8+u2/jym4rSy2fxnHxQAQqdiRDVpOD6olADXdtvYCpK/Z9SM/Dv+ADWOjLNU5ZVE+UdFuba0WYAl2egY+gebOh+wPZhM+iDH3+OhNSgK4xiBN9V65WXTOSE1z8SXoCqOFiyzGhgnxNbkcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tIxprtYt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=23EC4lUj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250429065337.117370076@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745909699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=DDY5kh4BbgYkVfb6FnZEI2S/u32O42fJeAeFc9IoR20=;
+	b=tIxprtYts19Evdxacecf3yreuiavEjqgDfXXK61831h5AvcF3v/tn4vsHp89aoAL4G9o7T
+	r7LiqfnmpbZA3ZM0WfRvtexK0JRFWOrVDk0DgEHO6AaeWS6J7UnOEFfYV25cm+c3i2HgIv
+	/XT2ORSys40bDARY8+Qhy/tsiiEgdn8pMetdEFvu0kMOSYZRFwhLmg5KWg5iCKdglVF4Uk
+	gIPw9axQxjGqxkOwTsBU1jmn9HWlXgLBpFRR4iKEUaWtXtctVfyyvUEUy/3YWPcpXqB1aK
+	RyGHGgAlMcMqzGnLQrvYiObFs4jInrhifJSj2MWeDiZPiBj4hgNxqS0Rv82J4w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745909699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=DDY5kh4BbgYkVfb6FnZEI2S/u32O42fJeAeFc9IoR20=;
+	b=23EC4lUjO+WTk9iFo3Qii8F9yb0++VsL/UlWQ+zP6/cqdBc8oBiKMqAfyZFuOd4HiNX08A
+	3Fho6QgZWb3p7GDg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: [patch V2 00/45] genirq: Cleanups and conversion to lock guards
+Date: Tue, 29 Apr 2025 08:54:47 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] mm: Refactor code in mprotect
-To: Anshuman Khandual <anshuman.khandual@arm.com>, akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, david@redhat.com, willy@infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
- will@kernel.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, jannh@google.com, peterx@redhat.com, joey.gouly@arm.com,
- ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
- quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
- yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
- namit@vmware.com, hughd@google.com, yang@os.amperecomputing.com,
- ziy@nvidia.com
-References: <20250429052336.18912-1-dev.jain@arm.com>
- <20250429052336.18912-2-dev.jain@arm.com>
- <43dc2d0b-1ce9-4d56-a260-d1dfc4545c99@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <43dc2d0b-1ce9-4d56-a260-d1dfc4545c99@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+This is V2 of the generic interrupt locking overhaul. V1 can be found here:
 
+   https://lore.kernel.org/all/20250313154615.860723120@linutronix.de
 
-On 29/04/25 12:11 pm, Anshuman Khandual wrote:
-> 
-> 
-> On 4/29/25 10:53, Dev Jain wrote:
->> Reduce indentation in change_pte_range() by refactoring some of the code
->> into a new function. No functional change.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->>   mm/mprotect.c | 116 +++++++++++++++++++++++++++++---------------------
->>   1 file changed, 68 insertions(+), 48 deletions(-)
->>
->> diff --git a/mm/mprotect.c b/mm/mprotect.c
->> index 88608d0dc2c2..70f59aa8c2a8 100644
->> --- a/mm/mprotect.c
->> +++ b/mm/mprotect.c
->> @@ -83,6 +83,71 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
->>   	return pte_dirty(pte);
->>   }
->>   
->> +
->> +
->> +static bool prot_numa_skip(struct vm_area_struct *vma, struct folio *folio,
->> +		int target_node)
->> +{
->> +	bool toptier;
->> +	int nid;
->> +
->> +	/* Also skip shared copy-on-write pages */
->> +	if (is_cow_mapping(vma->vm_flags) &&
->> +	    (folio_maybe_dma_pinned(folio) ||
->> +	     folio_maybe_mapped_shared(folio)))
->> +		return true;
->> +
->> +	/*
->> +	 * While migration can move some dirty pages,
->> +	 * it cannot move them all from MIGRATE_ASYNC
->> +	 * context.
->> +	 */
->> +	if (folio_is_file_lru(folio) &&
->> +	    folio_test_dirty(folio))
->> +		return true;
->> +
->> +	/*
->> +	 * Don't mess with PTEs if page is already on the node
->> +	 * a single-threaded process is running on.
->> +	 */
->> +	nid = folio_nid(folio);
->> +	if (target_node == nid)
->> +		return true;
->> +	toptier = node_is_toptier(nid);
->> +
->> +	/*
->> +	 * Skip scanning top tier node if normal numa
->> +	 * balancing is disabled
->> +	 */
->> +	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
->> +	    toptier)
->> +		return true;
->> +	return false;
->> +}
->> +
->> +static bool prot_numa_avoid_fault(struct vm_area_struct *vma,
->> +		unsigned long addr, pte_t oldpte, int target_node)
->> +{
->> +	struct folio *folio;
->> +	int ret;
->> +
->> +	/* Avoid TLB flush if possible */
->> +	if (pte_protnone(oldpte))
->> +		return true;
->> +
->> +	folio = vm_normal_folio(vma, addr, oldpte);
->> +	if (!folio || folio_is_zone_device(folio) ||
->> +	    folio_test_ksm(folio))
->> +		return true;
->> +	ret = prot_numa_skip(vma, folio, target_node);
-> 
-> What purpose does it solve to create additional helper prot_numa_skip().
-> IOW - why cannot all of these be inside prot_numa_avoid_fault() itself.
+The generic interrupt core code has accumulated quite some inconsistencies
+over time and a common pattern in various API functions is:
 
-That is in preparation for patch 2, so that I can skip a PTE batch.
+    unsigned long flags;
+    struct irq_desc *desc = irq_get_desc_[bus]lock(irq, &flags, mode);
 
-> 
->> +	if (ret)
->> +		return ret;
->> +	if (folio_use_access_time(folio))
->> +		folio_xchg_access_time(folio,
->> +			jiffies_to_msecs(jiffies));
->> +	return false;
->> +}
->> +
->>   static long change_pte_range(struct mmu_gather *tlb,
->>   		struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
->>   		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
->> @@ -116,56 +181,11 @@ static long change_pte_range(struct mmu_gather *tlb,
->>   			 * Avoid trapping faults against the zero or KSM
->>   			 * pages. See similar comment in change_huge_pmd.
->>   			 */
->> -			if (prot_numa) {
->> -				struct folio *folio;
->> -				int nid;
->> -				bool toptier;
->> -
->> -				/* Avoid TLB flush if possible */
->> -				if (pte_protnone(oldpte))
->> -					continue;
->> -
->> -				folio = vm_normal_folio(vma, addr, oldpte);
->> -				if (!folio || folio_is_zone_device(folio) ||
->> -				    folio_test_ksm(folio))
->> -					continue;
->> -
->> -				/* Also skip shared copy-on-write pages */
->> -				if (is_cow_mapping(vma->vm_flags) &&
->> -				    (folio_maybe_dma_pinned(folio) ||
->> -				     folio_maybe_mapped_shared(folio)))
->> -					continue;
->> -
->> -				/*
->> -				 * While migration can move some dirty pages,
->> -				 * it cannot move them all from MIGRATE_ASYNC
->> -				 * context.
->> -				 */
->> -				if (folio_is_file_lru(folio) &&
->> -				    folio_test_dirty(folio))
->> +			if (prot_numa &&
->> +			    prot_numa_avoid_fault(vma, addr,
->> +						  oldpte, target_node))
->>   					continue;
->>   
->> -				/*
->> -				 * Don't mess with PTEs if page is already on the node
->> -				 * a single-threaded process is running on.
->> -				 */
->> -				nid = folio_nid(folio);
->> -				if (target_node == nid)
->> -					continue;
->> -				toptier = node_is_toptier(nid);
->> -
->> -				/*
->> -				 * Skip scanning top tier node if normal numa
->> -				 * balancing is disabled
->> -				 */
->> -				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
->> -				    toptier)
->> -					continue;
->> -				if (folio_use_access_time(folio))
->> -					folio_xchg_access_time(folio,
->> -						jiffies_to_msecs(jiffies));
->> -			}
->> -
->>   			oldpte = ptep_modify_prot_start(vma, addr, pte);
->>   			ptent = pte_modify(oldpte, newprot);
->>   
+    if (!desc)
+       return -EINVAL;
+    ....
+    irq_put_desc_[bus]unlock(desc, flags);
+
+That's awkward and requires gotos in failure paths.
+
+This series provides conditional lock guards and converts the core code
+over to use those guards. Along with that it converts the other open coded
+lock/unlock pairs and fixes up coding and kernel doc formatting.  The
+conversions were partially done with Coccinelle where possible.
+
+Changes vs. V1:
+
+  - Rebase on latest tip irq/core
+
+  - Make coding style consistent (Jiri, Shrikanth)
+
+The series applies on
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+
+and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git irq/core
+
+Thanks,
+
+	tglx
+
+---
+ include/linux/irq.h     |    2 
+ kernel/irq/autoprobe.c  |   26 -
+ kernel/irq/chip.c       |  609 ++++++++++---------------
+ kernel/irq/cpuhotplug.c |   10 
+ kernel/irq/debugfs.c    |    3 
+ kernel/irq/internals.h  |   47 -
+ kernel/irq/irqdesc.c    |  127 +----
+ kernel/irq/manage.c     | 1154 ++++++++++++++++++++----------------------------
+ kernel/irq/pm.c         |   38 -
+ kernel/irq/proc.c       |   65 --
+ kernel/irq/resend.c     |   50 --
+ kernel/irq/spurious.c   |  104 +---
+ 12 files changed, 913 insertions(+), 1322 deletions(-)
+
 
 
