@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-625867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9951AAA3B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B19AA3B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA601BC502B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA83C985104
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1872027466D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2718274FF7;
 	Tue, 29 Apr 2025 22:15:31 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA911C173F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA2A84E1C;
 	Tue, 29 Apr 2025 22:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745964930; cv=none; b=Lah1pXPk3IM2t4kvZZ/kBkxt/n84sEofIHvvtqEuukioBgqBi+fmPTn7yH3/lrmGbJZK/rUqsyie0p9WUP27wbO7cL4QVcO5LAlJKzavD8zVPDZrgd3UGjyy0hRuHPXYsEtN3IF6gPKvlbteaolD1xbjRAYNbUmtM6TlSGNOLEg=
+	t=1745964931; cv=none; b=IHchlCCzgGAUZA8JI44/PJRZdhYMIaIPykuocDYKcDKVlVxCUXMKZ3FUks5tR76N2s2A5q48VttRNFRLbL4QCa/I7Wi9UUmlnLlQ+bg+a/l43UAXIqZNmK+K49bIowRG65uvNZMeBwGXBhgweH2M06gx+xD+9lk0Ni/H61p6dew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745964930; c=relaxed/simple;
+	s=arc-20240116; t=1745964931; c=relaxed/simple;
 	bh=wrBHs/aqHxzTH+bd+y8ax+TSaJ65FScsY+QL7p5N2eY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aSVGLZoMj1knSrWA6VbgIW+yrmxrg7gzZ/Ot+U5ULFpkaoVKUwIht52HW93wgCBZDGYUtBkbRNbkHj072KSlf3xw9C0JdC+Aig7yxzqH762pQ3qitCsfV5c3GA7pd8A1Qrqss9q9UpkNpTcN4/diSFGsiZfcf2Yp1kLLCZZF8Yo=
+	 MIME-Version; b=JyfjyvgOMMQZbplvST/KAkt4Bsc9lw7hFQZXAu7Oz0jc2kKy8QKpzOISbF4wP97l6TewKOgHXn4KwlzGIzQCKpvHHoZKM7hqo4/I8kSWoh+E1tRK+P/D64kgfmBrnnwkTr9kg5E6aVlSDbsrqRxqyJ8cWVstmBy/nckIBOo2OFo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5BF31515;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD8FE175A;
 	Tue, 29 Apr 2025 15:15:20 -0700 (PDT)
 Received: from beelzebub.ast.arm.com (u203013-lin.austin.arm.com [10.118.28.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A48E63F77D;
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BBDEE3F66E;
 	Tue, 29 Apr 2025 15:15:27 -0700 (PDT)
 From: Stuart Yoder <stuart.yoder@arm.com>
 To: linux-integrity@vger.kernel.org,
@@ -39,9 +39,9 @@ To: linux-integrity@vger.kernel.org,
 	jgg@ziepe.ca,
 	sudeep.holla@arm.com
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm_crb: ffa_tpm: update comment to include 64-bit calling convention
-Date: Tue, 29 Apr 2025 17:15:18 -0500
-Message-Id: <20250429221519.1022170-2-stuart.yoder@arm.com>
+Subject: [PATCH 2/2] tpm_crb: ffa_tpm: update comment to include 64-bit calling convention
+Date: Tue, 29 Apr 2025 17:15:19 -0500
+Message-Id: <20250429221519.1022170-3-stuart.yoder@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250429221519.1022170-1-stuart.yoder@arm.com>
 References: <20250429221519.1022170-1-stuart.yoder@arm.com>
