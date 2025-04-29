@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-625503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDF5AA139B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:07:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BECAA14C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2BB189380A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1652B4C4B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3832517BE;
-	Tue, 29 Apr 2025 17:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A773F21ADC7;
+	Tue, 29 Apr 2025 17:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLg+UI3D"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="Qt59iGP5"
+Received: from smtp116.iad3b.emailsrvr.com (smtp116.iad3b.emailsrvr.com [146.20.161.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A558B2512D8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6486024397A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745946137; cv=none; b=ATvXvNnXHTSLykof+iRu9xp/ZIxNmNeJqlvwP1O1jeF7ICs6/t4BtXjYrWExqfKZoSm1jfo78kMZTtxrrsi/6ck6zFwc7XzyXKRqWjiVLhfdkP0+aEczOPmH/izzX9TBeK7XsLIAkfvTifUPKstgJJv/adTr9D1/JKl5eXWwmD0=
+	t=1745947020; cv=none; b=WKj5gYVR+qqhGom1UboQrGvszgGj3Wm63DpTQ8vbnHCwkNJaTIHY2eaktV9Ga9p2evezkm3K0v9Yp2YTFxuBih5Q9ZSgQ/PANvwT5kfdwHtwdQjv0Mguk4fWcgQAF2byqiB472w3npPqrqUIityYrqPObQEyrp2JEm7ilY6XTN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745946137; c=relaxed/simple;
-	bh=+gsvmBh20Knx07j4AfwEXPaisMHBTHSRoOqPOI0jUKk=;
+	s=arc-20240116; t=1745947020; c=relaxed/simple;
+	bh=qbNf/BglnOnpaq0ZIO90vZjsm4NGpFlHPSiTeYpNijQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XyGmmwXOp9AIePu9uB7d7AlDakN7rlV9GIjTQxSkfM3yciDCD/7l4XyjmiKHiy3j5mGEK0tbz/XUDYiQn2IFd/KhSajMGr/CfcnAza+GMMhpEAActFp3TWnsSt1m8z+DuWUlzhQdb9ePaGVIdDzQuOw5QSaXDc2Ue4lLt0cR8N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLg+UI3D; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-73044329768so4965886a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 10:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745946134; x=1746550934; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ui//EJYGAYt2drqdb2r1Vk+rY3bamOchMf6Nr2rIwsg=;
-        b=kLg+UI3Dx9q48JTX1CJTYfUIJCt3KWFa5SXiCjaYm2ljIFwsLA+bKGvVPXF/acMOnV
-         qKx8Bc/DjraqUk47ht2ErJUKDEJ6u87NGHvAAnP+w3rjnwPdLjzs/9NZTcqzN47m+wei
-         5iH/8+B5SI1amyYHNP8xSDLc+pmD7uLODp98wZpPCPSrFvB9KSMWTJYkuEdM93A6bTn3
-         kqt9Fk10mjS1v1wtoSw/I8Z9a/R8G74Ag017CmYAn5iS+9mxX3/dn6saeoTxQdVRg5FD
-         neGPiKPoIh/nbS2dtR43I8Gg8Ga5CdBe3gtu6Djas3bRBXlZ9R2MIYElphQtQOg7jQ+1
-         MjGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745946134; x=1746550934;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ui//EJYGAYt2drqdb2r1Vk+rY3bamOchMf6Nr2rIwsg=;
-        b=WFw5rBGAnJ+puSgLGfbtca35rDilcR9CwlFz+umbUwQHnsDaX9ExZB0IJZ5NHPTN7w
-         u8q2Mq08woHHBHYR2VPcZRPrwYcyVaZ3VZcegVXIPBmgr1lRrQyOGSZtgYTy5L7lfSj+
-         5XcuFI1TTnd3DP3UGNuRojRPhbTZqtx09rzosKl/jak0pmpfIxykH9eC44UCB9/Mvy7E
-         aizkmltMVPr7MFgtmEZHWWXkC0gYFk2PHwQ8BgvlXUP66/wsEnLrJzoM95npVJ0nK+j3
-         ShQYSbQQIoQsM7+sBSI+eiia/UttXL34gjF+yA0R6XH4C+193KjzUpJRt93kS2Fjercg
-         vdKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU03HAPFXGrNd9+a7hVuOb3QLAm96qrX14YicYeTLO6JNqevQv0rKcSbzV4kwzd+JLMPts5Ue5w8zBbF+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9l+CX0ukvPAmPYvPiFzCz333LEUvQPR7oPD5n71RidPNAbrcY
-	wSuFrav4K0AJRd0ZiH1iX7AdLkxfJN+uJKfqfOegvgaAVcejgPyz
-X-Gm-Gg: ASbGnctqf4fvRGX4tWlB2IRWnDu9TRRjld+BHbQzsS/N0dUla3bO3HYt/YiLlGiA5Ux
-	YA0TXNqlzRsAYrCkmeIXfbEY6HHuq0ZI5SKD83EtBRva2MrFlhFGxN8FjVJZrxNl8BubWtRuE+Z
-	rfn1BOQl9jeuJbdW023Ls3TzlpJwZEDKXz50FFakcMOKzxCAkX4N5T7ag+Zd86EF/C5LaG2Qhy7
-	OZ3qtmHujejcBRea4qlRdvSRNS8wiEKNefHBTtghvfGTpY/wKWPWjxGQoLE2BgxNNCv0uG1eUWu
-	/Ud/NLRP19aecAn5FuA7E/qJ9qk/uZbZ+a7SC9xGmDhJM7V2FI3eFO0G4fqHEZYpT1xGHubDjoz
-	kDiTKobnH5WaejqV4zBDoyJLP5ew9
-X-Google-Smtp-Source: AGHT+IGQ4JRdodikPJDHVEDlNU/DxLkruCkD5xLMuaL8pqIWImZbIq8DCALeHILJpnJwduxHMYAQqw==
-X-Received: by 2002:a05:6830:43a1:b0:72c:10db:f210 with SMTP id 46e09a7af769-73088b63ce8mr2847176a34.13.1745946134577;
-        Tue, 29 Apr 2025 10:02:14 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7308b0077fdsm373355a34.0.2025.04.29.10.02.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 10:02:14 -0700 (PDT)
-Message-ID: <781ef1d7-f9c6-4a15-b94d-c735e83e7d01@gmail.com>
-Date: Tue, 29 Apr 2025 10:25:04 -0500
+	 In-Reply-To:Content-Type; b=WYGlqI0PnJu2GMsQD3O+lAN3bJ3vb26taZP6k+plkUTdztZ/rtD0f0TITE+sv0YsEVtjKsBDMuy+qygsQvcZU1d4I7T2Tv4Ggld3N4xiChx4axciYlS+8x8WgtvihKOZlyJ1uQJSFT19nP0kGdibx8hmuKuMyr5Br0Z4xyr/UKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=Qt59iGP5; arc=none smtp.client-ip=146.20.161.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1745942378;
+	bh=qbNf/BglnOnpaq0ZIO90vZjsm4NGpFlHPSiTeYpNijQ=;
+	h=Date:Subject:To:From:From;
+	b=Qt59iGP5O6240eOxD48APw85G7SSnBkxrOU+GPSNwpXpkPXEwBtUduCeDN7WZSNTf
+	 n/RKUfktKKQ2Y66M2EEyXLwRg52ypsAeQJV7ZdaE4Gcj/cleR0J2/gYRD0gQqVrj5y
+	 jV9/+FzkQUVOA0u7FMhtpdkoOvBty9e5Ho/0sR4w=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp23.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id D0738A01E6;
+	Tue, 29 Apr 2025 11:59:37 -0400 (EDT)
+Message-ID: <3cabb8d7-0b1f-4c95-a3d0-cc0d957354a1@mev.co.uk>
+Date: Tue, 29 Apr 2025 16:59:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,82 +49,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] x86/panic: Add x86_panic_handler as default
- post-panic behavior
-To: John Ogness <john.ogness@linutronix.de>, carlos.bilbao@kernel.org,
- tglx@linutronix.de, seanjc@google.com, jan.glauber@gmail.com
-Cc: bilbao@vt.edu, pmladek@suse.com, akpm@linux-foundation.org,
- jani.nikula@intel.com, linux-kernel@vger.kernel.org,
- gregkh@linuxfoundation.org, takakura@valinux.co.jp
-References: <20250428215952.1332985-1-carlos.bilbao@kernel.org>
- <20250428215952.1332985-3-carlos.bilbao@kernel.org>
- <84ldri7vv0.fsf@jogness.linutronix.de>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <84ldri7vv0.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 4/4] comedi: allocate DMA coherent buffer as individual
+ pages
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>,
+ Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+References: <20250415114008.5977-1-abbotti@mev.co.uk>
+ <20250415114008.5977-5-abbotti@mev.co.uk>
+ <CGME20250428125655eucas1p105937dfbffe2d5f3e0ed6a46772bb2f0@eucas1p1.samsung.com>
+ <20250428125648.GC27794@lst.de>
+ <d37ccb03-0d03-46ff-b62f-2fcb78263fe7@samsung.com>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <d37ccb03-0d03-46ff-b62f-2fcb78263fe7@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Classification-ID: 996621d9-fa40-4a61-b733-68d474ae896a-1-1
 
-Hello John,
+On 28/04/2025 16:33, Marek Szyprowski wrote:
+> On 28.04.2025 14:56, Christoph Hellwig wrote:
+>> On Tue, Apr 15, 2025 at 12:35:59PM +0100, Ian Abbott wrote:
+>>> +			vma->vm_start = start;
+>>> +			vma->vm_end = start + PAGE_SIZE;
+>>> +			retval = dma_mmap_coherent(bm->dma_hw_dev, vma,
+>>> +						   buf->virt_addr,
+>>> +						   buf->dma_addr, PAGE_SIZE);
+>> I'm not  fan of the vm_start/vm_end manipulation, but I've seen it in
+>> other places.  In a perfect world we'd have a dma_mmap_coherent_offset
+>> or similar helper that encapsulates it, and then maybe later replace
+>> that hack with passing on the offset.
+> 
+> Indeed the dma_mmap_*() makes too many assumptions about the vma. The
+> case You mentioned is probably in drivers/infiniband/hw/hfi1/file_ops.c
+> but I also see that the vma->vm_pgoff is being adjusted before most
+> dma_mmap_*() calls, which proves that the current API is somehow
+> limited. It would be great to fix this too while touching the
+> dma_mmap_attrs() API.
 
-On 4/29/25 11:53, John Ogness wrote:
-> On 2025-04-28, carlos.bilbao@kernel.org wrote:
->> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->>
->> Add function x86_panic_handler() as the default behavior for x86 for
->> post-panic stage via panic_set_handling(). Instead of busy-wait loop, it
->> will halt if there's no console to save CPU cycles.
->>
->> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
->> ---
->>  arch/x86/kernel/setup.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
->> index 9d2a13b37833..3bfef55e9adb 100644
->> --- a/arch/x86/kernel/setup.c
->> +++ b/arch/x86/kernel/setup.c
->> @@ -16,6 +16,7 @@
->>  #include <linux/initrd.h>
->>  #include <linux/iscsi_ibft.h>
->>  #include <linux/memblock.h>
->> +#include <linux/panic.h>
->>  #include <linux/panic_notifier.h>
->>  #include <linux/pci.h>
->>  #include <linux/root_dev.h>
->> @@ -837,6 +838,15 @@ static void __init x86_report_nx(void)
->>  	}
->>  }
->>  
->> +
->> +static void x86_panic_handler(void)
->> +{
->> +	if (console_trylock()) {
->> +		console_unlock();
->> +		safe_halt();
->> +	}
-> I do not understand what you are trying to accomplish with the
-> console_trylock(). At this point in the panic, all the messages are
-> already output. The console lock is totally irrelevant.
->
-> Also, the console lock is only valid for legacy consoles.
->
-> I see no reason why you don't just use safe_halt() as your panic
-> handler.
+Drivers would probably have to continue manipulating vma->vm_pgoff 
+anyway if they use its value in a special way, like 
+drivers/infiniband/hw/hfil/file_ops.c or drivers/uio/uio.c.  The 
+dma_mmap_*() calls already use vma->vm_pgoff as an offset into the VMA 
+area, so I think all the new API would need is a parameter to restrict 
+the number of pages being mapped, or something similar.
 
+The new API doesn't necessarily have to be reflected all the way down to 
+the dma_mmap_direct(), iommu_dma_mmap(), and ops->mmap() functions, as 
+the new dma_mmap_*() function could modify vma->vm_end temporarily in 
+order to restrict the number of pages being mapped by the lower-level 
+functions.
 
-Yes, in my original implementation I simply used halt, but I was trying to
-be cautious in case any remaining messages hadn't flushed. I wonder, can we
-be certain that, as you said, all output (e.g., a backtrace) has already
-been displayed on screen at this point? I'm not sure.
-
-
->
-> John Ogness
-
-
-Thanks,
-
-Carlos
-
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
