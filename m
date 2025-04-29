@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-625729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28220AA1C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 22:20:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC692AA3A1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 23:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5910F9A5DD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 20:20:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11F827A7452
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 21:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38C427990E;
-	Tue, 29 Apr 2025 20:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4ED25F7AD;
+	Tue, 29 Apr 2025 21:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="GQ9pi4lc"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="bLd9qiQj"
+Received: from mail-oa1-f67.google.com (mail-oa1-f67.google.com [209.85.160.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB6D270ECD;
-	Tue, 29 Apr 2025 20:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF93218845
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 21:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745957864; cv=none; b=mJ8+t6UX7uB+nV0XV49hnIZ7z/SCiIJ7nbOLvWfAvWpck+wFqyzcBUEFM5HU1HhhLEoF22Rdsg0iJV5ahtz+s2x7+Ilg7fO6QDh6oZYLqcmwxWdQVG/7v0D0w4VyEoP22vnWbGjwqY80N0Qx7vU7lfr0HWXdM3Jdn53E8TRUh5c=
+	t=1745963268; cv=none; b=H7Lym6QAeK9oB9OqM+E6s+/9lmcOHiq5I1ZDT5O55qRCA40CfGaHWluDMVJtJVDmmpBsuoiKSnu7SyoeacNhpkLjAnDTuNlGdU8ZI223MyHPNRIWrDZtSG8D0oyi0dyqvQYvIu30E1VwCmGpj4e3bteUs3iaZQFkI+WzcUeDcsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745957864; c=relaxed/simple;
-	bh=57G6+sYgoPGvBp3XvDWaCzrP6B3TqYTwiNHfa7VcEN0=;
+	s=arc-20240116; t=1745963268; c=relaxed/simple;
+	bh=60HC5hl084HV4sAOk0rkV79U5WuEgMld2i2WU275q9k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fUfQ2Jib3PyZdUoIms6mqck+K+h9lC7TmR8hj2f9aFWiswQD7rvmwjn8i2w82qvD7kgBcxAuCQ5WcWqLstN+dHB0eo4HYz2l7d6LVYscjZfChC0mXEyA432PCKPVilaZWM2eNxQxpc4twuppqWT2Dg6YszfLyaiVstdecWQedIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=GQ9pi4lc; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1745957848; x=1746562648; i=deller@gmx.de;
-	bh=Iowk4z8QtWkm4Y0YZCudQi3a8iJL7SyIX74+qCqJ5JY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=GQ9pi4lcu5J0lZxU5aw/2jpoKMS6q9j1vV0YEJFkGcbrVN7seuWV7hTH3FlrFrm/
-	 T10XqhfnpKp7TZFZt8x6Yrt5CiBYKmiDL/QfZThA6ZNFr9iFQ1mPl94Ibr3X1X7Cc
-	 1p1tVmHdsFnZlVH+RRtvX8kDpy8AvE2uHCqY/Fgsl8z2SAWBvAQeF3HEU0gZ5urMb
-	 18eHeP+msw2sfMb0ZshEggVsdFNumbVZQoGR7RotGmWOFYhBpxtIbievEvazARSfg
-	 qKoGTb3I8XIqNjx00v/NPm1oM8KomG2e/B4WqDQL8r9dCY7mfdG1HJql1GmUsOdWJ
-	 dZLTgr20FvWiLb981w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.173] ([109.250.63.181]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MYvY2-1uVsMK1tJ2-00Xq2X; Tue, 29
- Apr 2025 22:17:28 +0200
-Message-ID: <e68c6218-6055-45a6-b96e-9c8381a4b409@gmx.de>
-Date: Tue, 29 Apr 2025 22:17:26 +0200
+	 In-Reply-To:Content-Type; b=iuK/2zRKvm/c7RJw56k6DZwEHuw8j5NU1NmhsWyPKQSTqX3s/jNnx9ml5bPZQNA7Wqub//QsoDNIcnLELIYnuNOhWXogQG6kBF80nW1fk1xfKh28h5gkigJvbkHYJaToIHoxOq4PGHh3wet3Vv+Fe4zV1uV/v1gWBbOGTAu7OpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=bLd9qiQj; arc=none smtp.client-ip=209.85.160.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
+Received: by mail-oa1-f67.google.com with SMTP id 586e51a60fabf-2d4cefac09dso3383119fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 14:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1745963266; x=1746568066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tSWrqsC9GfGsHtl4CWY3xltKXxokb1XJ2kwgO66HPZY=;
+        b=bLd9qiQjpVep7phXNFVd7YiPu1XOeqz0eF1yw8lAKCC+vvNEhKBSLL6TH4VIzbJ2Q2
+         sjX6zo4G4y4BrhgOOvt1By9eeUHYclOqKZHAaUmyX3+jzqu/4VPwyjA2PZYk74DXRKhN
+         Ke720NeJVhkFaOmvhlBmNGPECXVcdrKOvfVvTc4AWWQWa6liApRsqkQOqXoMIKe2fIsw
+         6Y6Ussl1Yq9zp9NDVPDIFtGLiNxNHVwPYq15OwJDDIZBjec287uw+NVR4Y3zuN1y4ztu
+         SjBSwWMPsORIK8GrNo4FBYm03ASb0zBkulmHHV9y0z6UtI8uDUZZ+si7A+e4gvhnSbhO
+         1fMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745963266; x=1746568066;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tSWrqsC9GfGsHtl4CWY3xltKXxokb1XJ2kwgO66HPZY=;
+        b=fu8t01NpM0yX4gqblIQdpOYlvXf6+urSQFvRoCdNkKyf8+6jh0P4h1hI5OC5jhAciI
+         dUDA6rs7MyRhRSE4wXSo2x9pulKnPfLuGzhkV7as+or+Ladi73sqlsmGsWa5J2Y/o3xo
+         H6Nn1bVtAQNSA6FU8D4Mrqy+i3Lso9iR8rvvxHGi12GX+Nip9Ca7l5WPdQbvsPMiiamE
+         SWSIRNaKzvISHRC5Sjed/EY/qvlhNqyigFgPD5lOghPAyKJETWEC2i3XFmh0Cm50GL84
+         tE4ZAxUBNEkr5bK9mphusvt38wfyyCDfVkUXwVERmrpgdwAn/YHnX9m/jvlb2cOmG0Q0
+         X6Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVu4XiONZMH3I8pLUt/9GUY8E1oI4Fsrn3jq6bkhumnBhnQYheuq0qIxcMI6yZq2iBXdX47Srs8mmxbmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB0rm3f+yP/aj8SKUOL55d4ep0bSRKXuU0N7P8XWhQ7ZiOxEa9
+	Y2mMWpOgfu1QkxnDL35QIojRNTvXMB4sWIrvucl6wtCCLKx4b2ulQ3KjrICW4p0=
+X-Gm-Gg: ASbGncvwaVIZaD1aoBSkQ3adr3qQvDWNSuTL9ZLKnWXasCYhBrZRwjbDJpiSv1QQ2h8
+	TSnVTkgVIDI03XcAUhd1a7xfM1woY/CDUHMm8Eq8Wv//prT/r+Yxc/KSklBviP1qMhSeZDujw3p
+	1C/MPhr34EWctJ+N8Bcqct70XVRjB3bAQU9W6aqXexeryFot0X6fp8yQ/rpqtAcohIcuJF+3zKK
+	57kdsm2OKhD6oIUsbhW1uawcKFWCVcscklwTNG8HEKdv0ZjRR+IM67cNBkVoCiYeXNZNgadsBmY
+	74Gfn0xcJW30o5i4LGtQ1pDeNS7KqwD0anB4GqkiPHq66jOO4eVTE3Lore7h89zjlAqrSo2p3Hc
+	H68X+o6M=
+X-Google-Smtp-Source: AGHT+IGokKX79prC++GTKkCLJs2GivzGD/e0wkcCPTDvZNHacdckEDJVBuObcGp5UlJ46GtNpb0VKA==
+X-Received: by 2002:a05:6870:4790:b0:2bc:9787:affe with SMTP id 586e51a60fabf-2da69ee28ecmr433077fac.10.1745963265701;
+        Tue, 29 Apr 2025 14:47:45 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2da6e4f19easm26098fac.38.2025.04.29.14.47.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 14:47:44 -0700 (PDT)
+Message-ID: <96516ac6-777a-469a-b5d3-9897a0e40de5@vt.edu>
+Date: Tue, 29 Apr 2025 15:17:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,164 +81,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] video: fbdev: arkfb: Cast ics5342_init() allocation type
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Zheyu Ma <zheyuma97@gmail.com>,
- Samuel Thibault <samuel.thibault@ens-lyon.org>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250426062305.work.819-kees@kernel.org>
- <b982d4f1-6ed8-490b-8d47-6dc5231913e7@gmx.de>
- <CAMuHMdVY1_gEqULGD0BzdTd05OAkodhk+RXKRAy-T-0+RJt7yQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] Reduce CPU consumption after panic
+To: Andrew Morton <akpm@linux-foundation.org>, carlos.bilbao@kernel.org
+Cc: tglx@linutronix.de, seanjc@google.com, jan.glauber@gmail.com,
+ pmladek@suse.com, jani.nikula@intel.com, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, takakura@valinux.co.jp,
+ john.ogness@linutronix.de, x86@kernel.org
+References: <20250429150638.1446781-1-carlos.bilbao@kernel.org>
+ <20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
 Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
- HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
- r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
- CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
- 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
- dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
- Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
- GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
- aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
- 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
- ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
- FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
- uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
- uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
- REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
- qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
- iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
- gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
- Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
- qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
- 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
- dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
- rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
- UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
- eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
- ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
- dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
- lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
- 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
- xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
- wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
- fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
- Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
- l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
- RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
- BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
- Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
- XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
- MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
- FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
- 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
- ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
-In-Reply-To: <CAMuHMdVY1_gEqULGD0BzdTd05OAkodhk+RXKRAy-T-0+RJt7yQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OD3iOLWk7bbSwxeCWT3VGHi1hyS4DZIvlVShNIzJqeeJmM+HjLy
- ehQQmTvkg8wqUAnyL+ObCFaxRWjtUvoFBf8KtPMLsZc+pnhf+G3KqR+zAOfOu6bUHBA5B7W
- 80sGo7htpuyJ+pUZ7j2KtgjWAdh8yRsrgS5xkiW6Sr0vXZFdyeSnpFBQuUvFCI7fL1VIhvQ
- QFzr3Nfuj1Q+D5s5tqZhA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oKxxmtUB4NI=;2Hq7UhfBDuuwJzLSfqtaxRLznMd
- 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
- iQQXUFQNy4SUM20mTc00y8=
+From: Carlos Bilbao <bilbao@vt.edu>
+In-Reply-To: <20250429133941.063544bb4731df0ef802440c@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 4/28/25 08:36, Geert Uytterhoeven wrote:
-> Hi Kees,
->=20
-> On Sat, 26 Apr 2025 at 13:33, Helge Deller <deller@gmx.de> wrote:
->> On 4/26/25 08:23, Kees Cook wrote:
->>> In preparation for making the kmalloc family of allocators type aware,
->>> we need to make sure that the returned type from the allocation matche=
-s
->>> the type of the variable being assigned. (Before, the allocator would
->>> always return "void *", which can be implicitly cast to any pointer ty=
-pe.)
->>>
->>> The assigned type is "struct dac_info *" but the returned type will be
->>> "struct ics5342_info *", which has a larger allocation size. This is
->>> by design, as struct ics5342_info contains struct dac_info as its firs=
-t
->>> member. Cast the allocation type to match the assignment.
->>>
->>> Signed-off-by: Kees Cook <kees@kernel.org>
->=20
-> Thanks for your patch, which is now commit 8d2f0f5bbac87b9d ("fbdev:
-> arkfb: Cast ics5342_init() allocation type") in fbdev/for-next.
->=20
->> I applied your patch, but wouldn't this untested patch be cleaner and f=
-ulfill the
->> same purpose to match a kzalloc return type?
+Hey Andrew,
+
+On 4/29/25 15:39, Andrew Morton wrote:
+> (cc more x86 people)
+> 
+> On Tue, 29 Apr 2025 10:06:36 -0500 carlos.bilbao@kernel.org wrote:
+> 
+>> From: Carlos Bilbao <carlos.bilbao@kernel.org>
 >>
->> diff --git a/drivers/video/fbdev/arkfb.c b/drivers/video/fbdev/arkfb.c
->> index 7d131e3d159a..a57c8a992e11 100644
->> --- a/drivers/video/fbdev/arkfb.c
->> +++ b/drivers/video/fbdev/arkfb.c
->> @@ -431,7 +431,8 @@ static struct dac_ops ics5342_ops =3D {
+>> Provide a priority-based mechanism to set the behavior of the kernel at
+>> the post-panic stage -- the current default is a waste of CPU except for
+>> cases with console that generate insightful output.
 >>
->>    static struct dac_info * ics5342_init(dac_read_regs_t drr, dac_write=
-_regs_t dwr, void *data)
->>    {
->> -       struct dac_info *info =3D (struct dac_info *)kzalloc(sizeof(str=
-uct ics5342_info), GFP_KERNEL);
->> +       struct ics5342_info *ics_info =3D kzalloc(sizeof(struct ics5342=
-_info), GFP_KERNEL);
->=20
-> sizeof(*ics_info)?
->=20
->> +       struct dac_info *info =3D &ics_info->dac;
->=20
-> Exactly my thought when I noticed this commit.  Adding casts makes
-> it harder to notice any future discrepancies.
+>> In v1 cover letter [1], I illustrated the potential to reduce unnecessary
+>> CPU resources with an experiment with VMs, reducing more than 70% of CPU
+>> usage. The main delta of v2 [2] was that, instead of a weak function that
+>> archs can overwrite, we provided a flexible priority-based mechanism
+>> (following suggestions by Sean Christopherson), panic_set_handling().
+>>
+> 
+> An effect of this is that the blinky light will never again occur on
+> any x86, I think?  I don't know what might the effects of changing such
+> longstanding behavior.
 
-I've changed it accordingly.
+Yep, someone pointed this out before. I don't think it's super relevant? 
 
-Helge
+Also, in the second patch, I added a check to see that there's no console
+output left to be flushed.
+
+
+> 
+> Also, why was the `priority' feature added?  It has no effect in this
+> patchset.
+> 
+
+This was done to allow for flexibility, for example, if panic devices
+wish to override the default panic behavior. Other benefits of such
+flexibility (as opposed to, for example, a weak function that archs can
+override) were outlined by Sean here:
+
+https://lore.kernel.org/lkml/20250326151204.67898-1-carlos.bilbao@kernel.org/T/#m93704ff5cb32ade8b8187764aab56403bbd2b331
+
+Thanks,
+Carlos
 
