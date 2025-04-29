@@ -1,203 +1,151 @@
-Return-Path: <linux-kernel+bounces-625523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB86BAA14D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4809EAA14E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 19:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6FE57AB5DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:20:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A3457B08D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E002512F3;
-	Tue, 29 Apr 2025 17:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B1E2528F3;
+	Tue, 29 Apr 2025 17:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YmjFN5B5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TPmdesmg"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lJuLm9EW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477E6242D94;
-	Tue, 29 Apr 2025 17:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1ADA82C60;
+	Tue, 29 Apr 2025 17:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745947266; cv=none; b=DvBy2xIOgzp/BtGy9+CcHja0rKQ99+T3Hgs1Dt+/xH5tprmDCrYrz0HCxUazCx3xv/5uIJkRAqYat96obq1ZvZ9QDEEZVxvwBAsX+o9M1CVgWeFL6kdZZ12RYKadyHU2B5K/VfN8KWe4KlxLVZGVjaTEs+Mh1H6RfdiWXwKrJTw=
+	t=1745947282; cv=none; b=TYxYxnOWlKZRZa2YzDA4yji6M3bjWGPqO6TREMaH3LMgZd6efNS121pywGgIQb8fUV1hxrwvWcpH8haGs92eVW7WQoqc6OLG07tb1a/wBFPPc6/gm3oVW/jqnPU09Iizs+Mjhk9b/ihHemvZqnWt0YSrYX9AKfLCVa1MKENzD2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745947266; c=relaxed/simple;
-	bh=5KfUoxuj2Ypz6ZoAyfBGDzaZ0Pi1H2k4Cuu/w10QqF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aU6NuigMWRM8KxtXzcR217S9TNOtQLz4RTgd1JlOyDoRFAsC3Rg08NUAhMItTt//fYAU/W+UIZ+a2lzzHfFH0SXuTd5qCbqc8PwoOIRFIk1LSxuKxyg4zt6/UtJpJt3J5P8x5SD3QWqAPqTiQpw3lyXuPv3ieZqKbA1c5+CsO1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YmjFN5B5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TPmdesmg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 29 Apr 2025 19:20:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745947260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=77pFmmYX/3Jq91aWz+oVkLom07ek+rcUaCtouMmiqYM=;
-	b=YmjFN5B5BOgZRH2SzUnqhk8r6v9eLz1h2wcY4WxXmUiYaKaQR7I9JRyJeyR1AQA1/4HN0e
-	OgSt/LW/c/ntDMO/aeDtlgDhHmhvk5pwL0YuX7hQyZb8E4qvWqxZq7TTxh3PJ/AEIWszM2
-	CJg0OJaaQPQTveXCqDaC1u01Tt7uYIiGzGolSUCt2C7+rGkBqaMCwk5AW4E1r8Tl5aVUyx
-	beExDdKqJB5GdF9I1GxdzqCbFD8qUs6IQF6D9vQftF0fD/hqYBSROgsheDBV9X19QylKqJ
-	tegoILegcuwIRvlQcarY044611bZbSCQJxZPB+1LGl4S6i8fwjrR7F+4AfGNVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745947260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=77pFmmYX/3Jq91aWz+oVkLom07ek+rcUaCtouMmiqYM=;
-	b=TPmdesmgBaHdgmnWyzG3AtOEr+hVGALk+s2q1mhS02/Aqy7n7Pt7D0Sw+2VlFmCJVHey84
-	DPE/AfIkLXBbchDA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v5 21/23] rv: Add rtapp_sleep monitor
-Message-ID: <20250429172055.QICnVQ2s@linutronix.de>
-References: <cover.1745926331.git.namcao@linutronix.de>
- <57ea14992e148121fc010a200986e4db60ac2de0.1745926331.git.namcao@linutronix.de>
- <bfe8322cf5817037af57f10ffbffcd9b30f43b42.camel@redhat.com>
+	s=arc-20240116; t=1745947282; c=relaxed/simple;
+	bh=vYY2zbE6OK0wScySObCKJRjYLAvY/gAV9CwgCR4nPcw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gt95Lsazm8X5izGnujeGFjYUAg94uttxt+M6JSMRIlTOYiOpfoVrsncFNgXCuVsGjvUUZT0Wx4IB5i1xtXSvSOm1LjSLySfoYL75ctHHK7fz0Nh3BdT+hKCSeNPyHZRkviOIOnuzTxSId3+hJtP92DwkCSC3Y7XCm4D6bVBhUEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lJuLm9EW; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745947281; x=1777483281;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vYY2zbE6OK0wScySObCKJRjYLAvY/gAV9CwgCR4nPcw=;
+  b=lJuLm9EW5I1rvGoJhBGB0iikbdDB/5tMuGr0oQTnF5myfe5xKt/zCfvR
+   NKsmPk5l0UMuNFZz+H6RIxpJVowuwS7vittyOUxDdky5tjm6Caw07QJbM
+   hrWmwZjpxI1Dq0YA+F5Az133/H1o5BeW+Li4LDIwO7Ma9LvQE4wOca/yR
+   IN6Ya922YKxSqoWxGeF8RG5yawv9C7nwjrGeUzuSmbv/flcXkBx6B+9ai
+   oTLaN8ET/JLgqFIeParChHjz9DwfoQJKUf9RB/abBzlGMNyrUhBTYicvC
+   Gi/9K/sGPck+WvGTcf/oeMCOmp0tSw/GkgoNHoHVRQ/UQI0IHc7kisEud
+   A==;
+X-CSE-ConnectionGUID: P4OYuo27QOuArCUuORCVJw==
+X-CSE-MsgGUID: hm8/o+pzTkKit0jNTNjjMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="64996929"
+X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
+   d="scan'208";a="64996929"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 10:21:20 -0700
+X-CSE-ConnectionGUID: 8vZD04tyRg2Aa5RoJMWkAg==
+X-CSE-MsgGUID: mHsBn+CMR4uPyr9hrkfPSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,249,1739865600"; 
+   d="scan'208";a="139073305"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO fdefranc-mobl3.intel.com) ([10.245.246.45])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 10:21:14 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-pci@vger.kernel.org,
+	linux-edac@vger.kernel.org
+Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: [PATCH 0/4 v2] Make ELOG log and trace consistently with GHES
+Date: Tue, 29 Apr 2025 19:21:05 +0200
+Message-ID: <20250429172109.3199192-1-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bfe8322cf5817037af57f10ffbffcd9b30f43b42.camel@redhat.com>
 
-On Tue, Apr 29, 2025 at 06:01:01PM +0200, Gabriele Monaco wrote:
-> On Tue, 2025-04-29 at 14:01 +0200, Nam Cao wrote:
-> > Add a monitor for checking that real-time tasks do not go to sleep in
-> > a
-> > manner that may cause undesirable latency.
-> > 
-> > Also change
-> > 	RV depends on TRACING
-> > to
-> > 	RV select TRACING
-> > to avoid the following recursive dependency:
-> > 
-> >  error: recursive dependency detected!
-> > 	symbol TRACING is selected by PREEMPTIRQ_TRACEPOINTS
-> > 	symbol PREEMPTIRQ_TRACEPOINTS depends on TRACE_IRQFLAGS
-> > 	symbol TRACE_IRQFLAGS is selected by RV_MON_SLEEP
-> > 	symbol RV_MON_SLEEP depends on RV
-> > 	symbol RV depends on TRACING
-> > 
-> > Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-> > Signed-off-by: Nam Cao <namcao@linutronix.de>
-> > ---
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Waiman Long <longman@redhat.com>
-> > ---
-> > 
-> > [...]
-> > 
-> > +RULE = always ((RT and SLEEP) imply (RT_FRIENDLY_SLEEP or
-> > ALLOWLIST))
-> > +
-> > +RT_FRIENDLY_SLEEP = (RT_VALID_SLEEP_REASON or KERNEL_THREAD)
-> > +                and ((not WAKE) until RT_FRIENDLY_WAKE)
-> > +
-> > +RT_VALID_SLEEP_REASON = PI_FUTEX
-> > +                     or RT_FRIENDLY_NANOSLEEP
-> > +
-> > +RT_FRIENDLY_NANOSLEEP = CLOCK_NANOSLEEP
-> > +                    and NANOSLEEP_TIMER_ABSTIME
-> > +                    and NANOSLEEP_CLOCK_MONOTONIC
-> > +
-> > +RT_FRIENDLY_WAKE = WOKEN_BY_EQUAL_OR_HIGHER_PRIO
-> > +                or WOKEN_BY_HARDIRQ
-> > +                or WOKEN_BY_NMI
-> > +                or KTHREAD_SHOULD_STOP
-> > +
-> > +ALLOWLIST = BLOCK_ON_RT_MUTEX
-> > +         or TASK_IS_RCU
-> > +         or TASK_IS_MIGRATION
-> 
-> So, just thinking out loud, PI_FUTEX is a valid sleep reason,
-> technically also BLOCK_ON_RT_MUTEX is something you are allowing.
-> 
-> In my understanding, the contention tracepoints already in the kernel
-> can track all contention by kernel code and are leaving aside the PI
-> futexes, which use the untracked rt_mutex_wait_proxy_lock.
-> 
-> In your case, you are tracking PI_FUTEX via the system call, which
-> should cover the above scenario.
->
-> Do you really need extra tracepoints to track this too? Or is there any
-> other use of start_proxy_lock/wait_proxy_lock I'm missing here?
-> 
-> I see the only case in which rt_mutex_start_proxy_lock is called with a
-> task different than current is via FUTEX_CMP_REQUEUE_PI, wouldn't
-> considering this one too make the new tracepoints superfluous (assuming
-> this one is even needed to be tracked before FUTEX_WAIT_REQUEUE_PI).
+When Firmware First is enabled, BIOS handles errors first and then it
+makes them available to the kernel via the Common Platform Error Record
+(CPER) sections (UEFI 2.10 Appendix N). Linux parses the CPER sections
+via one of two similar paths, either ELOG or GHES.
 
-The monitor allows PI_FUTEX and allows BLOCK_ON_RT_MUTEX in different
-manners.
+Currently, ELOG and GHES show some inconsistencies in how they print to
+the kernel log as well as in how they report to userspace via trace
+events.
 
-PI_FUTEX is only a valid sleep reason. If a task sleeps with PI_FUTEX=true,
-it still has to obey ((not WAKE) until RT_FRIENDLY_WAKE)
+Make the two mentioned paths act similarly for what relates to logging
+and tracing.
 
-On the other hand, BLOCK_ON_RT_MUTEX alone is good enough. Waker is not
-checked due to how rt_mutex is implemented: when a task unlocks an rt_mutex
-and wakes waiter, the task is priority-deboosted first before doing the
-wakeup, and we would see a false positive warning. See
-rt_mutex_slowunlock().
+--- Changes for v2 ---
 
-In the case of futex_lock_pi(), both PI_FUTEX and BLOCK_ON_RT_MUTEX is
-true. Therefore we don't check the waker.
+	- Add a patch to pass log levels to pci_print_aer() (Dan)
+	- Add a patch to trace CPER CXL Protocol Errors
+	- Rework commit messages (Dan)
+	- Use log_non_standard_event() (Bjorn)
 
-However, in the case of futex_wait_requeue_pi(), PI_FUTEX is true but
-BLOCK_ON_RT_MUTEX is false. In this case, we check the waker.
+--- Changes for v1 ---
 
-So, what happens if we don't have the tracepoint in *_proxy_lock()? The
-futex_lock_pi() may generate a false positive warning, because we check the
-waker and the waker may have lower priority.
+	- Drop the RFC prefix and restart from PATCH v1
+	- Drop patch 3/3 because a discussion on it has not yet been
+	  settled
+	- Drop namespacing in export of pci_print_aer while() (Dan)
+	- Don't use '#ifdef' in *.c files (Dan)
+	- Drop a reference on pdev after operation is complete (Dan)
+	- Don't log an error message if pdev is NULL (Dan)
 
-But now that you mention it, perhaps instead of PI_FUTEX, we could define
-FUTEX_LOCK_PI and FUTEX_WAIT_REQUEUE_PI separately. And we don't check the
-waker if FUTEX_LOCK_PI=true. Something like the diff below.
+--- Changes for RFC v2 ---
+	
+	- 0/3: rework the subject line and the letter.
+        - 1/3: no changes.
+        - 2/3: trace CPER PCIe Section only if CONFIG_ACPI_APEI_PCIEAER
+          is defined; the kernel test robot reported the use of two
+          undefined symbols because the test for the config option was
+          missing; rewrite the subject line and part of commit message.
+        - 3/3: no changes.
 
-Then we wouldn't need the block_on_rt_mutex tracepoints anymore. And the
-specification is a bit more obvious.
 
-Having a second pair of eyes is great, thanks!
+Fabio M. De Francesco (4):
+  ACPI: extlog: Trace CPER Non-standard Section Body
+  PCI/AER: Modify pci_print_aer() to take log level
+  ACPI: extlog: Trace CPER PCI Express Error Section
+  ACPI: extlog: Trace CPER CXL Protocol Errors
 
-Nam
+ drivers/acpi/acpi_extlog.c | 96 ++++++++++++++++++++++++++++++++++++++
+ drivers/cxl/core/pci.c     |  2 +-
+ drivers/cxl/core/ras.c     |  6 +++
+ drivers/pci/pcie/aer.c     | 18 +++----
+ drivers/ras/ras.c          |  1 +
+ include/cxl/event.h        |  2 +
+ include/linux/aer.h        | 13 +++++-
+ 7 files changed, 126 insertions(+), 12 deletions(-)
 
-diff --git a/tools/verification/models/rtapp/sleep.ltl b/tools/verification/models/rtapp/sleep.ltl
-index 6e2f1ff31163..1f26e58e72f8 100644
---- a/tools/verification/models/rtapp/sleep.ltl
-+++ b/tools/verification/models/rtapp/sleep.ltl
-@@ -3,7 +3,7 @@ RULE = always ((RT and SLEEP) imply (RT_FRIENDLY_SLEEP or ALLOWLIST))
- RT_FRIENDLY_SLEEP = (RT_VALID_SLEEP_REASON or KERNEL_THREAD)
-                 and ((not WAKE) until RT_FRIENDLY_WAKE)
- 
--RT_VALID_SLEEP_REASON = PI_FUTEX
-+RT_VALID_SLEEP_REASON = FUTEX_WAIT_REQUEUE_PI
-                      or RT_FRIENDLY_NANOSLEEP
- 
- RT_FRIENDLY_NANOSLEEP = CLOCK_NANOSLEEP
-@@ -16,5 +16,6 @@ RT_FRIENDLY_WAKE = WOKEN_BY_EQUAL_OR_HIGHER_PRIO
-                 or KTHREAD_SHOULD_STOP
- 
- ALLOWLIST = BLOCK_ON_RT_MUTEX
-+         or FUTEX_LOCK_PI
-          or TASK_IS_RCU
-          or TASK_IS_MIGRATION
+-- 
+2.48.1
+
 
