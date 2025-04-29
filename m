@@ -1,104 +1,91 @@
-Return-Path: <linux-kernel+bounces-625014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22D1AA0B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90CAAA0B4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 14:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B571A81F7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7388F3A6AFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 12:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D1A2C2572;
-	Tue, 29 Apr 2025 12:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E0E2C2585;
+	Tue, 29 Apr 2025 12:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZzPs8XHl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TazUkZnT"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77B32C17A9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5945D1519BF
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745928706; cv=none; b=HafIBC1ziMegwZjB3We50Iq78HLz9xG/i4ITL6HV3Dbk+9Op2JT7a/T9PD+rjzQTVMF9fY+ppfLAwejXpiRGPyuQ7/CNkmZdQJEZe/47dGBvtqvvFvU4YX61Fipt5wzTRtL3VfHQmECn1cO1CzLTrBmk9gaIpNOmge1X3MX1MGc=
+	t=1745928802; cv=none; b=FiQHdVsba1JATSYI3ET9ERisC0VXR7WXHM8fNa/ZgokpjPqJdcuUczeB+5QUCQMYdrzAPwJphMN+K9T8An1qHwRuh5hryY55UzSqEARVYH5APaUwnqHLbeOTMHwpJEA3Qzmk1H1qOlZMKPlO+0xR06rTx1ay4f6D8lYzn7LWI6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745928706; c=relaxed/simple;
-	bh=baK6jno6CnUVkoUHnmEbtLiQyefylSMvn3JT1bVnQnQ=;
+	s=arc-20240116; t=1745928802; c=relaxed/simple;
+	bh=GQiTk/htn7/1BJVac7ftCVKE98dbVakVfVbslKTnr/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9zUiSnI0MQqsmSX0NUGTmvt5OCQdqvcSOjrHjBScVr5IcrEVAmOc2YbItBnmJ0n2AonLMWPuhJJn+5upsZQrxlIpV255mRntObwHdcJjBXDqRtbG2JsM45Ssn8A/MdeAehxLfM2fqX8FlxZoO+XOcbFcrSmbO7JQIUZcTzlMFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZzPs8XHl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TA45gi000499
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:11:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=rPfDc2j4zIQ8zpqodkBZ1iAk
-	HQ4HDml1Yp0gv+Nadas=; b=ZzPs8XHlsSBUiBDfKYd0oHV2su9LS+ytFBkNoqVG
-	bYxayKJka7L8CEF+zZBzwkBZrVtHs+5HoJlnjR89+8/pXRRb00kgKWlMQblCjceL
-	iF+AMIARq6cARt+S+DtW2UgGAjW+F6xcZJoByZnrztocArqJrDf7PT0FkEd7JmRy
-	4Ww4RbEG35i9C979Q2b9CFZ6S2+w2zX7PdrjNmn6b+dwAoSttiXBY6fuNyFxo7R2
-	WtXpCCJw9J7othlkqxEmZvRyevu5rWkscV6Aec7KQEVCZ0cw2cgXZWEP1ZKu/cN/
-	VZIz8Zx2rUZwHYem/pxYIFJVjyUXQ+He6bu3T4x9wC81dw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468qv9mfdc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 12:11:42 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c543ab40d3so932979585a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:11:42 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EoGKRcoK5/StR3R1O9Cn6F5Ja1ZS2Z5L8rHZTdRBP4zaz5+trWHUEgUpzN/ADVMycSviaVF4u+698EUN+1ltl/STA6cNcE8nLNR5Bq9LRMrit0Rsol2q7zadux7UfuO726mqzvg0c8ETx42btKaijv+zjuPtuZz3lt5IVj3Yb5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TazUkZnT; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f63ac6ef0fso7457048a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 05:13:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1745928798; x=1746533598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGwtrgjfssbRJnnLGAioENkMU7oIKogOgkQ9Ev2GRas=;
+        b=TazUkZnT+3u7GG3XZtebYztPDVTZ2sRpxc52gskp937d5dikBOAFCCWOU6YrS3zjqu
+         gt1whZRuJOBHd9KXPCK65YkuLzcMKTh3GeC+JvTNqZMSDnG6weU1zjfmy4IQaruyOX/r
+         GMxVGUpu4+uxQEQXc+R/mWlegAybsB4Wpdkbq6XEIPhLCAvVp7TPpy0obTQMRe0KK2Wm
+         zARFY8dbXaib5uDeyPnzqKz57vgXxkSWGQZK+xvzBkxH3ZgccEcmJYW/XuhdHsfN2ELX
+         3uB2WD3gbpNBVRrqmtvJrTezgGJJ7R/1qSy00JJOaZUFklZmra5cd/JUV2oNpRhvnOBj
+         hr6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745928702; x=1746533502;
+        d=1e100.net; s=20230601; t=1745928798; x=1746533598;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rPfDc2j4zIQ8zpqodkBZ1iAkHQ4HDml1Yp0gv+Nadas=;
-        b=oCHvstcDQR3oz50Pbi6RSikpm6gw0im+TkwBAj2ZRtcjZ1Cl2QGwPv8HeVXGVQFh7V
-         LoOynSsto0Nxe+/4bNjYIUFK0ArRTPbCffPTlXMdBxaSXOeWawGooCUMIzS5nRPiUEro
-         8jbKjl/DI718oEZ6tixBNEuE66hEv/YIQ970mifhtRSVTrsCAP3HPd1CVlJoJRX/M86E
-         VZMZEv7tWRrLkM0bEpD4R1Z+oKu9u43KaV1LvmXZM3i/c+XKMK9njredQWjJNcdyFttF
-         wV0P/hVRKOY1/7FM0nhwzUDn4Q4oJb7rN8vnANSXUySnOoURpYzW7+ZHVvDOQm4mkmuc
-         PsuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMTMyAYY4/5t5fbT99za29v93pwziN3D7nA3TAGilLizllMd2d7GZimop/D17Ee+C0hEOv0eoLl09qW7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza8gdlnFxuxhKNr+80BxD2dFSC86VNipSSPVh2Rjj7exLPKBWh
-	Al937UwaW/2wioDECzrMqg2ENQ/YFhDkvBNUzowcdzEZC4hwGz+iaNBY2Eg8ejRtXhFPQLMnkNj
-	xfItR5AcgReC4XtcuyHfU3SiKlLrZwbkTPp7LZ9gkxbW6v37Nc+UoD887ep/Iq+s=
-X-Gm-Gg: ASbGncsGVsL6YufZDRcJ1OfiaOj4PfKx4NSxLcCpFpY6xxIme6j9iYVfnrKh+UJQ/q8
-	ZBo9YqfXR23VQgiDUVpxyEUstExRBpinYIfqkss6Dqioa+DIUScA5EVcWv0AqylwDp14mXVk1BP
-	2Wl/mvHtW1cBVNZX86jlqAIblCJ4VwEA3sQ5GzFYC/MxPwr9fEvk8UhgXgEtCBVH/ycq8q2dRLW
-	EeqUGTCnoEy4Dhspnj9diEiK8WA8OjeVPnIaGSHZmQNfq9Lr31DQ+3WZubAF7MgnzgNnbXLe4Ca
-	iKZz23k8z94tzToXf2fc7c5nLnVRvs7A9VYjFKkJxN+cyLcFjapGj8yf1xmIdbuFKZtXoyMNQhI
-	=
-X-Received: by 2002:a05:620a:d8b:b0:7c5:f6be:bdae with SMTP id af79cd13be357-7cabe6a77e8mr347149585a.20.1745928701716;
-        Tue, 29 Apr 2025 05:11:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkEoObvl5ITpCCRC9WTTdJ8+eec2qadspvMIHzjKAj6kGxUV25FPfPKOPPn0iY6tiCGewDRg==
-X-Received: by 2002:a05:620a:d8b:b0:7c5:f6be:bdae with SMTP id af79cd13be357-7cabe6a77e8mr347145285a.20.1745928701382;
-        Tue, 29 Apr 2025 05:11:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb26dcdsm1855850e87.33.2025.04.29.05.11.40
+        bh=XGwtrgjfssbRJnnLGAioENkMU7oIKogOgkQ9Ev2GRas=;
+        b=pFSK1gWjRUNw4XxyhwWFYHgDU5SNYC7l7dEfN0nqM6YAKGIUFWKWrpf3Kexe99Pxk+
+         dt1gJSUP+cLNwTajlfybyta0a0cu0sJQJULTMJasKPT/qX5xNi+rAp8EO04+Dv5YTiXT
+         50cclLDhrei+e/G0aOBEEN5GK5KFOgtAqxNZ2l/7qnxMNMWMzSN0UmUuLIo4WF0oKRlo
+         8kRMq/6QDvbBN/GZc4csILMOi5MrbalUjV1x+6koNyLC2egvhGmuYAD6gitpCfa0zuvh
+         DQmJcjfTl53BMFHe08tD0BbfDq6v2YRhoVLYJlwx6B8P7Esd3Rgl/0B3Vii2NNNpJxSU
+         8CMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUex3cGtcCWIbrJvw+7mtp3yWhF4Y1rFXdxahrZz2hOXP01Jgnd91zG9RDmN7xKNfAaNGXl4u8gq7Ie/SY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq6uwk8vPisdcSAx20Kkip2tNgsp03wcgsArbGBTVaSP7Dd9s9
+	vLEifWFLArZGk2Tttlf84PZ9vUmqmC8VHXk+j9gaK5q6xmj1kwbSCufXUFyMuRM=
+X-Gm-Gg: ASbGncvIWIIhU6QITy3wWbgXY8yhGgWE2z5FMdqgzu7YIvBjsAWa74QqyHGm9vN5qpM
+	diCVKDm32mJAtPfBWpbJfrbGqFv+vLKIq35gKYEha/bywgCM4u/N+N6+phCExirLzzeJZfahA1Z
+	8T6TRDS30VzBkWG3PeOReb4vVQYhnGx+hKSgFp2FhLbpXn/Lc8cjPRdocJYvFbtwizqYiPkNuRM
+	gtRcCpgJfN9/PKhwQNi0h5s7XkEX8UYMiMtBRgArKJEIU8FQ8aTe1nK48oCgznnvVqmJ6wWvStO
+	PHTKBmr9mVnbiTDEMLyZDQwwMmxsbaaRGUirojCd4+vK12lgWcRL+A==
+X-Google-Smtp-Source: AGHT+IEo5qlskE04ChdYwUfeG14jGRzrfDGg7ko0hloQlCXfAEEdIv4iz53wIbhKxTpKz7/q/ZoqMg==
+X-Received: by 2002:a05:6402:5112:b0:5ed:bab5:3093 with SMTP id 4fb4d7f45d1cf-5f839b24397mr2697613a12.16.1745928797630;
+        Tue, 29 Apr 2025 05:13:17 -0700 (PDT)
+Received: from localhost (109-81-85-148.rct.o2.cz. [109.81.85.148])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5f7038328f1sm7319317a12.70.2025.04.29.05.13.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 05:11:40 -0700 (PDT)
-Date: Tue, 29 Apr 2025 15:11:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Xilin Wu <wuxilin123@gmail.com>,
-        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Konrad Dybcio <quic_kdybcio@quicinc.com>
-Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
- compatible override
-Message-ID: <oxckk4kizbml7dy4uvcb2hhkl4f72dp5axmtkwhk4duevhlpbs@4pi3roor6pp4>
-References: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
+        Tue, 29 Apr 2025 05:13:17 -0700 (PDT)
+Date: Tue, 29 Apr 2025 14:13:16 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: multi-memcg percpu charge cache
+Message-ID: <aBDCXB_Tb2Iaihua@tiehlicka>
+References: <20250416180229.2902751-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,73 +94,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
-X-Authority-Analysis: v=2.4 cv=AO34vM+d c=1 sm=1 tr=0 ts=6810c1fe cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=L7NATBzoXS_OuuUMTpMA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: CwjmPSwB6O2sFpYu0iYV2wJtU8FW4Tmo
-X-Proofpoint-ORIG-GUID: CwjmPSwB6O2sFpYu0iYV2wJtU8FW4Tmo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDA5MSBTYWx0ZWRfX2wPTd6jMBwZn FlFDsQNjZGKk2qdCMB8OTZxwp7kPlrMBNJKekUJdszVtMqbgLRQtaDPrRWBmNVfXNqZ/GDaDKjG x8D0ns1sAI/6sS0i7p+Q/r5mYM3JLPtCsgWQzsrFyL8jwoNa3fBqG0HreJnB+VrGn66TvGcXvzG
- 85+Toei+orNSe+Rz2GqbjPSmSnko/Ar3TS5ZEGbahKVl+S5p5fgJ1F+C6CJciqUAVLwf1AmWMTY qLFl0t3X7DfLTTbhlqdzxWWt9zxGWpy8MZt1hxe8/e4PxRuZBodep8lWCKFZGpuW8Fnuoh51fD3 r5Psfsy+3FcBmM+GKIVQWfr04Yw+qniKPeAuKfSZX/Yc2KhnGdjv74hG5YE51ZBVehmAgy9LzP3
- TAlK8d3Oudj7jwF/jKygYpJ3pnpMxWTaZ6EjLT05DlbL1J2UZZy9P+Yxm1jOQFc8/3sMGxcZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_04,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- mlxlogscore=768 mlxscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290091
+In-Reply-To: <20250416180229.2902751-1-shakeel.butt@linux.dev>
 
-On Tue, Apr 29, 2025 at 10:42:28AM +0300, Abel Vesa wrote:
-> It all started with the support for CRD back when we had different
-> compatibles for eDP and DP. Meanwhile, that has been sorted out and it
-> is now figured out at runtime while using only the DP compatible.
+On Wed 16-04-25 11:02:29, Shakeel Butt wrote:
+> Memory cgroup accounting is expensive and to reduce the cost, the kernel
+> maintains per-cpu charge cache for a single memcg. So, if a charge
+> request comes for a different memcg, the kernel will flush the old
+> memcg's charge cache and then charge the newer memcg a fixed amount (64
+> pages), subtracts the charge request amount and stores the remaining in
+> the per-cpu charge cache for the newer memcg.
 > 
-> It's almost funny how this got copied over from CRD and spread to all
-> X Elite platforms.
+> This mechanism is based on the assumption that the kernel, for locality,
+> keep a process on a CPU for long period of time and most of the charge
+> requests from that process will be served by that CPU's local charge
+> cache.
 > 
-> TBH, the best reason to drop it ASAP is to make sure this doesn't spread
-> beyond X Elite to newer platforms.
+> However this assumption breaks down for incoming network traffic in a
+> multi-tenant machine. We are in the process of running multiple
+> workloads on a single machine and if such workloads are network heavy,
+> we are seeing very high network memory accounting cost. We have observed
+> multiple CPUs spending almost 100% of their time in net_rx_action and
+> almost all of that time is spent in memcg accounting of the network
+> traffic.
 > 
-> Functionally nothing changes.
+> More precisely, net_rx_action is serving packets from multiple workloads
+> and is observing/serving mix of packets of these workloads. The memcg
+> switch of per-cpu cache is very expensive and we are observing a lot of
+> memcg switches on the machine. Almost all the time is being spent on
+> charging new memcg and flushing older memcg cache. So, definitely we
+> need per-cpu cache that support multiple memcgs for this scenario.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> This patch implements a simple (and dumb) multiple memcg percpu charge
+> cache. Actually we started with more sophisticated LRU based approach but
+> the dumb one was always better than the sophisticated one by 1% to 3%,
+> so going with the simple approach.
+
+Makes sense to start simple and go for a more sophisticated (has table
+appraoch maybe) later when a clear gain could be demonstrated.
+
+> Some of the design choices are:
+> 
+> 1. Fit all caches memcgs in a single cacheline.
+
+Could you be more specific about the reasoning? I suspect it is for the
+network receive path you are mentioning above, right?
+
+> 2. The cache array can be mix of empty slots or memcg charged slots, so
+>    the kernel has to traverse the full array.
+> 3. The cache drain from the reclaim will drain all cached memcgs to keep
+>    things simple.
+> 
+> To evaluate the impact of this optimization, on a 72 CPUs machine, we
+> ran the following workload where each netperf client runs in a different
+> cgroup. The next-20250415 kernel is used as base.
+> 
+>  $ netserver -6
+>  $ netperf -6 -H ::1 -l 60 -t TCP_SENDFILE -- -m 10K
+> 
+> number of clients | Without patch | With patch
+>   6               | 42584.1 Mbps  | 48603.4 Mbps (14.13% improvement)
+>   12              | 30617.1 Mbps  | 47919.7 Mbps (56.51% improvement)
+>   18              | 25305.2 Mbps  | 45497.3 Mbps (79.79% improvement)
+>   24              | 20104.1 Mbps  | 37907.7 Mbps (88.55% improvement)
+>   30              | 14702.4 Mbps  | 30746.5 Mbps (109.12% improvement)
+>   36              | 10801.5 Mbps  | 26476.3 Mbps (145.11% improvement)
+> 
+> The results show drastic improvement for network intensive workloads.
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+
+Just a minor suggestion below. Other than that looks good to me (with
+follow up fixes) in this thread.
+Acked-by: Michal Hocko <mhocko@suse.com>
+Thanks!
+
 > ---
-> Abel Vesa (7):
->       arm64: dts: qcom: x1e-crd: Drop useless DP3 compatible override
->       arm64: dts: acom: x1e80100-qcp: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-t14s: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-s15: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-hp-x14: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100: Drop useless DP3 compatible override
->       arm64: dts: qcom: x1e80100-romulus: Drop useless DP3 compatible override
-
-For the series:
-
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
+>  mm/memcontrol.c | 128 ++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 91 insertions(+), 37 deletions(-)
 > 
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi                        | 1 -
->  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 1 -
->  arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts     | 1 -
->  arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts       | 1 -
->  arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 1 -
->  arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi    | 1 -
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                   | 1 -
->  7 files changed, 7 deletions(-)
-> ---
-> base-commit: 7e69ad9a1f7ba8554c4d3d1ccbffcccafcd45c2e
-> change-id: 20250429-x1e80100-dts-drop-useless-dp-compatible-override-db8562c6b7cd
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
-> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 1ad326e871c1..0a02ba07561e 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1769,10 +1769,11 @@ void mem_cgroup_print_oom_group(struct mem_cgroup *memcg)
+>  	pr_cont(" are going to be killed due to memory.oom.group set\n");
+>  }
+>  
 
+/* Make sure nr_pages and cached fit into a single cache line */
+> +#define NR_MEMCG_STOCK 7
+>  struct memcg_stock_pcp {
+>  	local_trylock_t stock_lock;
+> -	struct mem_cgroup *cached; /* this never be root cgroup */
+> -	unsigned int nr_pages;
+> +	uint8_t nr_pages[NR_MEMCG_STOCK];
+> +	struct mem_cgroup *cached[NR_MEMCG_STOCK];
+>  
+>  	struct obj_cgroup *cached_objcg;
+>  	struct pglist_data *cached_pgdat;
+[...]
 -- 
-With best wishes
-Dmitry
+Michal Hocko
+SUSE Labs
 
