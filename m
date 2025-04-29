@@ -1,78 +1,98 @@
-Return-Path: <linux-kernel+bounces-624388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-624390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7DF2AA02FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9FDAA02FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 08:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D573C3BDB1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EBD81B64194
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 06:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE75276052;
-	Tue, 29 Apr 2025 06:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5251529290D;
+	Tue, 29 Apr 2025 06:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqYlT4kR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="KOsN9BR6"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4605276046;
-	Tue, 29 Apr 2025 06:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D5C288CB2;
+	Tue, 29 Apr 2025 06:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745907367; cv=none; b=pcu8g8/hkgmxA7q1D/hBy8c1UtPSk9Vx3SCO7HO3qUd42lv56lnmUyaLtsol/kCmlgaH8LFAcWTNm7Ro1/XM5AJqtURPgEY++++aETA4iVPfhxa4JMIzMLMtJ1Un2bwjSTw5zmTjid7nXUe9h7HKxilHFAcZKqWbZ9+KUE4AzlM=
+	t=1745907373; cv=none; b=AWQZUViSeYfYYxefwgczrY4VSNNjnbpEhA6DLYC43d6xpoZRcruYrLzdxtpd1R02pLm9j+RPNLRt79oS+qp5L3AOhaNRwjRyIktpJ7weSTscywbusezGnok6LkimujSTBvCwFnosB5xuKXSHsZwcxIn7Ab0Vt9C9CLB3wKVMKe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745907367; c=relaxed/simple;
-	bh=oyeXyN7fnpjRZjowKm5X0d/XENf9UP5i7hKi/3hn5bQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PuN59QRBXdgURsiVkl0YU3SZzgxLUftYkvkFYKSFtFIYwoivzl8765trR2EKtbJ9JTGppg+jLzRJ9Hfir7MnDXMTMdBiwp2MLj8AwOOhKWDeXxJURfhgFEm9L9+Cj6EcjrESF8Htj63uVylrlondwylxXxMYNYZcYs9rWgFoUCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqYlT4kR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B982FC4CEE9;
-	Tue, 29 Apr 2025 06:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745907367;
-	bh=oyeXyN7fnpjRZjowKm5X0d/XENf9UP5i7hKi/3hn5bQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WqYlT4kRH9qmHpwzLGbxsr7NANEuuxo8ITxvw/K6IU7gkIVg3nNgiUCmHoRmWOSov
-	 qJz0EQYq+e9fjczGjcBg7kfOUM66HxFx9nkWcDR3C/UzifUgGakr2yrGl6fWQhOtj1
-	 uxUMzDt4Np/CjXCycbqnithkwajYtt52GC9daMqiUmXPnrJDlZklotZBTAWbB3S0Q/
-	 NZD33Tb/BBTwKh1kr7KooEEridwO6S2sKVwfzs7I3M2kWfKeJfPF7qV8FkFsUdjHQk
-	 XmHikRR0/KazWE6WYrJEaFBEdiUPdap1wGiNYvs4Xcds14N7LbqRzv9msxp6L4auAe
-	 LmK6bkyGPH+TA==
-Date: Tue, 29 Apr 2025 08:16:02 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Romain Gantois <romain.gantois@bootlin.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
-Message-ID: <krkppjdlgtcc7h7pg4e7vvwe46hu44jv2cngp3g63dx55rrbdb@frztorpfnfdf>
-References: <aAijRtGLzKLdwP0-@stanley.mountain>
+	s=arc-20240116; t=1745907373; c=relaxed/simple;
+	bh=hjSDGBDMpJQPYz8STB7s85ztFBwW+FizW4l63DRd5S8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=itiygFVFHbM/2G7we43HvUVwaxdGATLa00R7mfmaG2oKZIE302/VnTkR1M41HKDXcXsPeUuya7o1/qs5qoYcLffqNvUCVu31Ir4+SGRSxoEbppzUXY2qj7774u6mZJ7/ve00e1oitVt/GwOVEy8XHFIfJ6wWlyAolNL8oYO4jLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=KOsN9BR6; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53T6G4v14214305, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1745907364; bh=hjSDGBDMpJQPYz8STB7s85ztFBwW+FizW4l63DRd5S8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=KOsN9BR6rAfDjvOe9rzuKPKXos9stR844fBMhdQG9gUgJxmmr52lNDk5eE0Qn30tL
+	 Eno7j4CpnPepn4m5BwT8TXaSbYaUkK2/v12X87/6I2OUUeR2NNA2R8DfgrjO+4uf7u
+	 66K+7GlNm9U9aTkXpeE/X6WwnBhBjciK8axDgrsVSrN+0MXJWX2mVNdJQay+FncEDV
+	 lrsXpiuCG4DXzF6zAn8Lw+zIJmW+inwE54wjsj6Sme00tjNJGRsfhyl9gNowsgzNOO
+	 6kHvWYHFtQEnDwB6zdvAG7D8KbzMQIqBYRQ+xplVSCrRoEDnN8A6oRbXq+dWKTtjnV
+	 itHpYOwH75OCw==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53T6G4v14214305
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Apr 2025 14:16:04 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 29 Apr 2025 14:16:04 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 29 Apr 2025 14:16:04 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Tue, 29 Apr 2025 14:16:04 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: =?iso-8859-2?Q?Ond=F8ej_Jirman?= <megi@xff.cz>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/2] Fix inadverent sharing of struct ieee80211_supported_band data
+Thread-Topic: [PATCH v2 0/2] Fix inadverent sharing of struct
+ ieee80211_supported_band data
+Thread-Index: AQHbuK1smA8zMS1NHESwt0pIpj/QeLO6KnYA
+Date: Tue, 29 Apr 2025 06:16:04 +0000
+Message-ID: <32a588f367824aa59b35564d8075fd45@realtek.com>
+References: <20250429022046.1656056-1-megi@xff.cz>
+In-Reply-To: <20250429022046.1656056-1-megi@xff.cz>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
 
-Hi Dan,
+Ond=F8ej Jirman <megi@xff.cz> wrote:
+>=20
+> This is a series of patches requested by Ping-Ke Shih in response to
+> https://lore.kernel.org/lkml/20250427002414.410791-1-megi@xff.cz/
+>=20
+> Please take a look.
+>=20
+> (hw->wiphy->bands[*] are no longer being NULLed when probe fails and on
+> remove(), but I guess that should not be an issue? I tried unbinding the
+> device and it worked fine without any crash)
 
-On Wed, Apr 23, 2025 at 11:22:30AM +0300, Dan Carpenter wrote:
-> The "port_id" is used as an array index into the struct fpc202_priv
-> priv->addr_caches[] array in fpc202_write_dev_addr().  It's a 2 by 2
-> array so if "port_id" is FPC202_NUM_PORTS (2) then it's one element
-> out of bounds.  Change the > to >= to fix this bug.
-> 
-> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+The original code set bands[] to NULL, because the error path could call
+free function twice, so set NULL to prevent double free. After using
+devm_ series, it becomes unnecessary.=20
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-Thanks,
-Andi
 
