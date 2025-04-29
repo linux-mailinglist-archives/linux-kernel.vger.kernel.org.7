@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-625350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-625354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D79EAA105D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:23:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D023DAA1067
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 17:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E83647AF8C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:21:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 710467B158F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Apr 2025 15:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECBD221554;
-	Tue, 29 Apr 2025 15:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0472221703;
+	Tue, 29 Apr 2025 15:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xz3vLE3Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77F1D2FB;
-	Tue, 29 Apr 2025 15:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Gc1sewHC"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9B5221555;
+	Tue, 29 Apr 2025 15:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745940167; cv=none; b=puLXp09J5QFARGM8WzAtErLS518QTj9bf1mK4mB21mic/8Ck+sw0v/AnTGEwN6G+lr110OCq6dMg1RoUQtv37VW+9NGhBtQeI++97VT0iQTMyCGkAITFBXxyw/Ets+IBu9CIMff6XGcVHEdccwUECKQe0VZ0Y+l4E409VPMsG5s=
+	t=1745940326; cv=none; b=sic4NbjIu3ZZwkHX03mXBBDMwfle05lRWmpw9yeDTz2inTK37+GGpksKoL0u4q64m4FsoykWydyLjA7cWLWOztZYIfsd/El695YGMTVFsjlFlTFOdJkVb7WrHCN1/QKmAasJhC37SV8hWQCxdeIq6RzA99HxC9YyPFzWldNAMiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745940167; c=relaxed/simple;
-	bh=sLZTqkYX+I6t5xbGQiBFcDp6YarT8zcQhgI0CSYOOCQ=;
+	s=arc-20240116; t=1745940326; c=relaxed/simple;
+	bh=oYAdU0jkvuI+0Ij59NKXPgF9vmCiJv8dZouUG1rcl6w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LnVZbKUON/nF56bjIf55csPTa0ZjFWLCHLh7bfo7QMbWzjC+4zRd09UPCzOGYYTEAI3OIoiDFA4/orXGYGqc6dsmgasJTwgSLg6MAx7OBhipWvA+erB1KMKHB9WklhKQnAgCythDPbzOMc4dTbcN/g1RjXRjxg8X0gpVUtGoZzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xz3vLE3Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CDBC4CEE3;
-	Tue, 29 Apr 2025 15:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745940167;
-	bh=sLZTqkYX+I6t5xbGQiBFcDp6YarT8zcQhgI0CSYOOCQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xz3vLE3YgOtNoghCWwd+di0me0x3CibIHQ6DTZE5k5vBifjscY/i/WSHYvlG+i/Z4
-	 yCUXEGZv0LKOy014aI7FyfqUWvmD9dfmyvu3kSmzlax7y//kLQ6UUItr/8dJi60sIp
-	 vhqdbgXDVYEyPmfxEBD6GTBuHmWaIJBdO1fZbgQL60af5yBx0yl/5k8A3dqOSiTkYl
-	 sRSNUJYGikrZEYts+C1wO8RrlTpepXL3zORcrY8aUJNscuUCdxMmrf4/HfPZxpae05
-	 EekrL2CWwW44KPdkIKp2hQgefenk2N3n/0pS8enatpwTkJcNOEYwmpfx1UMOpKzXvy
-	 rluDQZwMtX0/A==
-Message-ID: <c3855595-d8b4-4b4b-b1fb-0efa44d064b0@kernel.org>
-Date: Tue, 29 Apr 2025 09:22:46 -0600
+	 In-Reply-To:Content-Type; b=l8gwyhstpQ6BgtQPOjo+kNiwCScnlKNyfKG3eKOaEdQiDqzTxlVqKuQyP4AOgigop/sxtUg1d+FjA6RnHqmIRcPxl9w6bulRGLRvkq9f/R3+BA0QuFLX7z1IGIEhaA4EyVhqHfoRCOtHTIesmCZEsPwx6LRzXbJTd7Te+Lcn6oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Gc1sewHC; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=x+SauMl1lNpFDwDKg4OnckesseNQRn5XI+n9hs9dTi8=;
+	b=Gc1sewHC2v57NYJF+0dbcNruGB6y9pQkSF3Zu2AbfhDINXlJ8M8iBr2163GlRb
+	4zPiAX8h5wJAr4DQof0AAjh5Sb+kU6NOL76KzXndoQq+ysdWD99ght77/4yMTNhg
+	sHzsJaXiSTToeN9BQtV3l53AzpkkAaRDFr1E8DETOh348=
+Received: from [192.168.71.93] (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAX1PQP7xBo7IxcDQ--.2207S2;
+	Tue, 29 Apr 2025 23:24:00 +0800 (CST)
+Message-ID: <2e502bf0-d65e-4394-9629-55392e496ed5@163.com>
+Date: Tue, 29 Apr 2025 23:23:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,65 +46,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next] ipv6: sr: switch to GFP_ATOMIC flag to allocate memory
- during seg6local LWT setup
+Subject: Re: [PATCH v10 2/6] PCI: Clean up __pci_find_next_cap_ttl()
+ readability
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com,
+ manivannan.sadhasivam@linaro.org, kw@linux.com, cassel@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, thomas.richard@bootlin.com,
+ linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250429125036.88060-1-18255117159@163.com>
+ <20250429125036.88060-3-18255117159@163.com>
+ <66cdb108-80f5-fe7c-329b-8c60caf55b64@linux.intel.com>
 Content-Language: en-US
-To: Andrea Mayer <andrea.mayer@uniroma2.it>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org
-Cc: Stefano Salsano <stefano.salsano@uniroma2.it>,
- Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
- Ahmed Abdelsalam <ahabdels.dev@gmail.com>
-References: <20250429132453.31605-1-andrea.mayer@uniroma2.it>
-From: David Ahern <dsahern@kernel.org>
-In-Reply-To: <20250429132453.31605-1-andrea.mayer@uniroma2.it>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <66cdb108-80f5-fe7c-329b-8c60caf55b64@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAX1PQP7xBo7IxcDQ--.2207S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFWrKw18tw1xCw4fXrWfuFg_yoW5XFWfpF
+	98CFy7AF48JFyjka1v9w1ayF12qayDKFW8KryYg3WUZFy2yr1xGw4vkr1Y9FnrZrWvvF10
+	q34q93s5uryYyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRP8n5UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgU+o2gQ7ZYkXQAAsY
 
-On 4/29/25 6:24 AM, Andrea Mayer wrote:
-> Recent updates to the locking mechanism that protects IPv6 routing tables
-> [1] have affected the SRv6 networking subsystem. Such changes cause
-> problems with some SRv6 Endpoints behaviors, like End.B6.Encaps and also
-> impact SRv6 counters.
-> 
-> Starting from commit 169fd62799e8 ("ipv6: Get rid of RTNL for SIOCADDRT and
-> RTM_NEWROUTE."), the inet6_rtm_newroute() function no longer needs to
-> acquire the RTNL lock for creating and configuring IPv6 routes and set up
-> lwtunnels.
-> The RTNL lock can be avoided because the ip6_route_add() function
-> finishes setting up a new route in a section protected by RCU.
-> This makes sure that no dev/nexthops can disappear during the operation.
-> Because of this, the steps for setting up lwtunnels - i.e., calling
-> lwtunnel_build_state() - are now done in a RCU lock section and not
-> under the RTNL lock anymore.
-> 
-> However, creating and configuring a lwtunnel instance in an
-> RCU-protected section can be problematic when that tunnel needs to
-> allocate memory using the GFP_KERNEL flag.
-> For example, the following trace shows what happens when an SRv6
-> End.B6.Encaps behavior is instantiated after commit 169fd62799e8 ("ipv6:
-> Get rid of RTNL for SIOCADDRT and RTM_NEWROUTE."):
-> 
 
-...
+
+On 2025/4/29 23:17, Ilpo Järvinen wrote:
+> On Tue, 29 Apr 2025, Hans Zhang wrote:
+> 
+>> Refactor the __pci_find_next_cap_ttl() to improve code clarity:
+>> - Replace magic number 0x40 with PCI_STD_HEADER_SIZEOF.
+>> - Use ALIGN_DOWN() for position alignment instead of manual bitmask.
+>> - Extract PCI capability fields via FIELD_GET() with standardized masks.
+>> - Add necessary headers (linux/align.h, uapi/linux/pci_regs.h).
+>>
+>> The changes are purely non-functional cleanups, ensuring behavior remains
+>> identical to the original implementation.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>> Changes since v9:
+>> - None
+>>
+>> Changes since v8:
+>> - Split into patch 1/6, patch 2/6.
+>> - The
+>>   drivers/pci/pci.c             | 10 ++++++----
+>>   include/uapi/linux/pci_regs.h |  2 ++
+>>   2 files changed, 8 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 4d7c9f64ea24..1c29e8f20cb5 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -9,6 +9,7 @@
+>>    */
+>>   
+>>   #include <linux/acpi.h>
+>> +#include <linux/align.h>
+>>   #include <linux/kernel.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/dmi.h>
+>> @@ -30,6 +31,7 @@
+>>   #include <asm/dma.h>
+>>   #include <linux/aer.h>
+>>   #include <linux/bitfield.h>
+>> +#include <uapi/linux/pci_regs.h>
+> 
+> linux/pci.h will pull this in through <uapi/linux/pci.h> so you don't need
+> to add it (basically anywhere).
+> 
+>>   #include "pci.h"
+>>   
+>>   DEFINE_MUTEX(pci_slot_mutex);
+>> @@ -432,17 +434,17 @@ static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+>>   	pci_bus_read_config_byte(bus, devfn, pos, &pos);
+>>   
+>>   	while ((*ttl)--) {
+>> -		if (pos < 0x40)
+>> +		if (pos < PCI_STD_HEADER_SIZEOF)
+>>   			break;
+>> -		pos &= ~3;
+>> +		pos = ALIGN_DOWN(pos, 4);
+>>   		pci_bus_read_config_word(bus, devfn, pos, &ent);
+>>   
+>> -		id = ent & 0xff;
+>> +		id = FIELD_GET(PCI_CAP_ID_MASK, ent);
+>>   		if (id == 0xff)
+>>   			break;
+>>   		if (id == cap)
+>>   			return pos;
+>> -		pos = (ent >> 8);
+>> +		pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, ent);
+>>   	}
+>>   	return 0;
+>>   }
+>> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+>> index ba326710f9c8..b59179e1210a 100644
+>> --- a/include/uapi/linux/pci_regs.h
+>> +++ b/include/uapi/linux/pci_regs.h
+>> @@ -206,6 +206,8 @@
+>>   /* 0x48-0x7f reserved */
+>>   
+>>   /* Capability lists */
+>> +#define PCI_CAP_ID_MASK		0x00ff
+>> +#define PCI_CAP_LIST_NEXT_MASK	0xff00
+> 
+> Consider adding a comment after the value as is done for most  defines in
+> this file.
+
+Dear Ilpo,
+
+Thank you very much for your reply. Will add.
+
+Best regards,
+Hans
 
 > 
-> To solve this issue, we replace the GFP_KERNEL flag with the GFP_ATOMIC
-> one in those SRv6 Endpoints that need to allocate memory during the
-> setup phase. This change makes sure that memory allocations are handled
-> in a way that works with RCU critical sections.
+>>   
+>>   #define PCI_CAP_LIST_ID		0	/* Capability ID */
+>>   #define  PCI_CAP_ID_PM		0x01	/* Power Management */
+>>
 > 
-> [1] - https://lore.kernel.org/all/20250418000443.43734-1-kuniyu@amazon.com/
-> 
-> Fixes: 169fd62799e8 ("ipv6: Get rid of RTNL for SIOCADDRT and RTM_NEWROUTE.")
-> Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
-> ---
->  net/ipv6/seg6_local.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-
-Reviewed-by: David Ahern <dsahern@kernel.org>
 
 
