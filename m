@@ -1,251 +1,242 @@
-Return-Path: <linux-kernel+bounces-626561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD129AA4491
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:57:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC96FAA4488
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218105A25EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 813163AEEBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80EE20FAB0;
-	Wed, 30 Apr 2025 07:57:29 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189B4211A15;
-	Wed, 30 Apr 2025 07:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A56220E318;
+	Wed, 30 Apr 2025 07:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a140BBS1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AmxW53oN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a140BBS1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AmxW53oN"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C3B19048A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745999849; cv=none; b=dfpvjCIs/LYnym9lrRhlndMGvyuqQ9ngQlEZ2Uxq6vp5ZuxO0Uk1v370M6RFRzKqMEEpKJcLv1fIu+eUP2eET95oEAeGi+J4l7ArYreHgEZ3vfIGr4zwezWcWuhFkssUcKtvXBJ10Yv3Fj88pQjDnG2+lOTupp8rt0KDPq/CJCg=
+	t=1745999742; cv=none; b=uGI5W81Dtr7HQsdsW6Dci7vZ4XJeNL7aU3xwSyDpJq509DlKVBLFVDMBAbJivFZ0aXKDfwijGIOYmktqtqe22WXVpTw/KidWyXjFsZHZ830uV1jH4jjzoz9VSArM2ct0vdngOctndpZyrLzMIFh/wyLp9+Kq26AY797iY0agfEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745999849; c=relaxed/simple;
-	bh=Te/psvuoE4DPXalvViQ5WNlPpel1jC36ND+0Plf7xC8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tuCVUH4y1JgQpQd1O8fHWi5NiATSlgTmcMqvNIf61JEvA4IdYrFncnXWds6WmHUcy1uZUqfTk90CKLMUr4kfu8q7jG+c+uBnqX2CZZYBsmp7RN4fGz9MCujmeJ4hAOOEkaHWPbN0q+BZ7FXTe8m6H23ja2SyZQvhcBrI9t59UBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8CxaWra1xFoTu_KAA--.10311S3;
-	Wed, 30 Apr 2025 15:57:14 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front1 (Coremail) with SMTP id qMiowMBxGcTU1xFoWd+fAA--.41512S2;
-	Wed, 30 Apr 2025 15:57:10 +0800 (CST)
-Subject: Re: [PATCH v8 4/5] tpm: Add a driver for Loongson TPM device
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, peterhuewe@gmx.de,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linux-crypto@vger.kernel.org, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
- pmenzel@molgen.mpg.de, Yinggang Gu <guyinggang@loongson.cn>,
- Huacai Chen <chenhuacai@loongson.cn>
-References: <20250418093407.1335-1-zhaoqunqin@loongson.cn>
- <20250418093407.1335-5-zhaoqunqin@loongson.cn> <aAaVP8yG6rM436uw@kernel.org>
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Message-ID: <78d06edd-2f53-47ae-5c9b-5ad26ad1ce41@loongson.cn>
-Date: Wed, 30 Apr 2025 15:55:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1745999742; c=relaxed/simple;
+	bh=oL6F2S79noK8agQjvQFZDwlOYMCafaISAu1nr/Nods8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YiqRO7VL4E+B7quuEJmjoG0K8FffH2NlgriSdqdbIdzM+6WUfSaD8HRHIcqcxe5/7LwX/LTUjbvF8LSQIURZSAoFDAK4i/PhXRz/t0vIVBXXnpoZj3YO89BTbhNttV3slehFCv32Uhra8t6kM+lRCnVDsKG5CFCqT21yF9CeBHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a140BBS1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AmxW53oN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a140BBS1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AmxW53oN; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 560922124B;
+	Wed, 30 Apr 2025 07:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745999739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OFcER3isckkEE9kHcLwsvX/qb4nWFwzfM26bTlsjaAQ=;
+	b=a140BBS1KQd3tryldppCDK9qnsgmDg2wM3HGwhOxNFAgzuaZE/goMWCwDygzmJx1BtJjoS
+	Je0SST09gIEPQrXtqc1Ksb5xnvpxhP0mJt4VMmrIUGAunqbMNTD/Kq5L6FTi0GUrZtmKdw
+	eHxt+8F4kxF9Ct14j0TANsynNl82Hoo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745999739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OFcER3isckkEE9kHcLwsvX/qb4nWFwzfM26bTlsjaAQ=;
+	b=AmxW53oNnFROgTk+SPkLZ/8HyS/CW1U3t6UZGMFlfS9VUB7uuQA9v9cEcd5OxjZKjFyM6E
+	UaehUwbhuEMGaLDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745999739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OFcER3isckkEE9kHcLwsvX/qb4nWFwzfM26bTlsjaAQ=;
+	b=a140BBS1KQd3tryldppCDK9qnsgmDg2wM3HGwhOxNFAgzuaZE/goMWCwDygzmJx1BtJjoS
+	Je0SST09gIEPQrXtqc1Ksb5xnvpxhP0mJt4VMmrIUGAunqbMNTD/Kq5L6FTi0GUrZtmKdw
+	eHxt+8F4kxF9Ct14j0TANsynNl82Hoo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745999739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OFcER3isckkEE9kHcLwsvX/qb4nWFwzfM26bTlsjaAQ=;
+	b=AmxW53oNnFROgTk+SPkLZ/8HyS/CW1U3t6UZGMFlfS9VUB7uuQA9v9cEcd5OxjZKjFyM6E
+	UaehUwbhuEMGaLDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 424AB139E7;
+	Wed, 30 Apr 2025 07:55:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5d8sEHvXEWg9BgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 30 Apr 2025 07:55:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0BD09A0AF0; Wed, 30 Apr 2025 09:55:35 +0200 (CEST)
+Date: Wed, 30 Apr 2025 09:55:34 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	wanghaichi0403@gmail.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com
+Subject: Re: [PATCH 3/4] ext4: factor out ext4_get_maxbytes()
+Message-ID: <piudbprxqkuph4sqlmdqw5mpfvhrygejzotz33nni34sxefqbs@j6bc3vhtkf2c>
+References: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
+ <20250430011301.1106457-3-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aAaVP8yG6rM436uw@kernel.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMBxGcTU1xFoWd+fAA--.41512S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3AFy7CrWxAF4Utw4DZryxJFc_yoW7uw4rpF
-	WrCa1UCF4UJr1jk39IqrWDCF9Iv3s3Wry2kay7t34Uuryqy34rWryDGFy7Wa1xAr1kGr1I
-	vFZ3CFWfuF15u3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430011301.1106457-3-yi.zhang@huaweicloud.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Wed 30-04-25 09:13:00, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> There are several locations that get the correct maxbytes value based on
+> the inode's block type. It would be beneficial to extract a common
+> helper function to make the code more clear.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-ÔÚ 2025/4/22 ÉÏÎç2:58, Jarkko Sakkinen Ð´µÀ:
-> On Fri, Apr 18, 2025 at 05:34:06PM +0800, Qunqin Zhao wrote:
->> Loongson Security Engine supports random number generation, hash,
->> symmetric encryption and asymmetric encryption. Based on these
->> encryption functions, TPM2 have been implemented in the Loongson
->> Security Engine firmware. This driver is responsible for copying data
->> into the memory visible to the firmware and receiving data from the
->> firmware.
->>
->> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
->> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
->> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
->> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
->> ---
->> v8: In the send callback, it will wait until the TPM2 command is
->>      completed. So do not need to wait in the recv callback.
->>      Removed Jarkko's tag cause there are some changes in v8
->>
->> v7: Moved Kconfig entry between TCG_IBMVTPM and TCG_XEN.
->>      Added Jarkko's tag(a little change, should be fine).
->>
->> v6: Replace all "ls6000se" with "loongson"
->>      Prefix all with tpm_loongson instead of tpm_lsse.
->>      Removed Jarkko's tag cause there are some changes in v6
->>
->> v5: None
->> v4: Prefix all with tpm_lsse instead of tpm.
->>      Removed MODULE_AUTHOR fields.
->>
->> v3: Added reminder about Loongson security engine to git log.
->>
->>   drivers/char/tpm/Kconfig        |  9 ++++
->>   drivers/char/tpm/Makefile       |  1 +
->>   drivers/char/tpm/tpm_loongson.c | 78 +++++++++++++++++++++++++++++++++
->>   3 files changed, 88 insertions(+)
->>   create mode 100644 drivers/char/tpm/tpm_loongson.c
->>
->> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
->> index fe4f3a609..34302a875 100644
->> --- a/drivers/char/tpm/Kconfig
->> +++ b/drivers/char/tpm/Kconfig
->> @@ -189,6 +189,15 @@ config TCG_IBMVTPM
->>   	  will be accessible from within Linux.  To compile this driver
->>   	  as a module, choose M here; the module will be called tpm_ibmvtpm.
->>   
->> +config TCG_LOONGSON
->> +	tristate "Loongson TPM Interface"
->> +	depends on CRYPTO_DEV_LOONGSON_SE
->> +	help
->> +	  If you want to make Loongson TPM support available, say Yes and
->> +	  it will be accessible from within Linux. To compile this
->> +	  driver as a module, choose M here; the module will be called
->> +	  tpm_loongson.
->> +
->>   config TCG_XEN
->>   	tristate "XEN TPM Interface"
->>   	depends on TCG_TPM && XEN
->> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
->> index 2b004df8c..cb534b235 100644
->> --- a/drivers/char/tpm/Makefile
->> +++ b/drivers/char/tpm/Makefile
->> @@ -45,3 +45,4 @@ obj-$(CONFIG_TCG_CRB) += tpm_crb.o
->>   obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
->>   obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
->>   obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
->> +obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
->> diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
->> new file mode 100644
->> index 000000000..c4d69d28d
->> --- /dev/null
->> +++ b/drivers/char/tpm/tpm_loongson.c
->> @@ -0,0 +1,78 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
->> +
->> +#include <linux/device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/wait.h>
->> +
->> +#include "../../drivers/crypto/loongson/loongson-se.h"
->> +#include "tpm.h"
->> +
->> +struct tpm_loongson_cmd {
->> +	u32 cmd_id;
->> +	u32 data_off;
->> +	u32 data_len;
->> +	u32 pad[5];
->> +};
->> +
->> +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
->> +{
->> +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
->> +	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
->> +
->> +	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
->> +
->> +	return cmd_ret->data_len;
->> +}
->> +
->> +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
->> +{
->> +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
->> +	struct tpm_loongson_cmd *cmd = tpm_engine->command;
->> +
->> +	cmd->data_len = count;
->> +	memcpy(tpm_engine->data_buffer, buf, count);
->> +
->> +	return loongson_se_send_engine_cmd(tpm_engine);
->> +}
->> +
->> +static const struct tpm_class_ops tpm_loongson_ops = {
->> +	.flags = TPM_OPS_AUTO_STARTUP,
->> +	.recv = tpm_loongson_recv,
->> +	.send = tpm_loongson_send,
->> +};
->> +
->> +static int tpm_loongson_probe(struct platform_device *pdev)
->> +{
->> +	struct loongson_se_engine *tpm_engine;
->> +	struct device *dev = &pdev->dev;
->> +	struct tpm_loongson_cmd *cmd;
->> +	struct tpm_chip *chip;
->> +
->> +	tpm_engine = loongson_se_init_engine(dev->parent, SE_ENGINE_TPM);
->> +	if (!tpm_engine)
->> +		return -ENODEV;
->> +	cmd = tpm_engine->command;
->> +	cmd->cmd_id = SE_CMD_TPM;
->> +	cmd->data_off = tpm_engine->buffer_off;
->> +
->> +	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
->> +	if (IS_ERR(chip))
->> +		return PTR_ERR(chip);
->> +	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
->> +	dev_set_drvdata(&chip->dev, tpm_engine);
->> +
->> +	return tpm_chip_register(chip);
->> +}
->> +
->> +static struct platform_driver tpm_loongson_driver = {
->> +	.probe   = tpm_loongson_probe,
->> +	.driver  = {
->> +		.name  = "loongson-tpm",
->> +	},
->> +};
->> +module_platform_driver(tpm_loongson_driver);
->
-> It's otherwise fine but this should be just "tpm_loongson" :-)
->
-> +1 revision add
->
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> as long as this is renamed.
+Nice. Feel free to add:
 
-Will rename.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks for your reply,
+								Honza
 
-BR, Qunqin.
-
->> +
->> +MODULE_ALIAS("platform:loongson-tpm");
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("Loongson TPM driver");
->> -- 
->> 2.45.2
->>
->>
-> BR, Jarkko
-
+> ---
+>  fs/ext4/ext4.h    | 7 +++++++
+>  fs/ext4/extents.c | 7 +------
+>  fs/ext4/file.c    | 7 +------
+>  fs/ext4/inode.c   | 8 +-------
+>  4 files changed, 10 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 5a20e9cd7184..8664bb5367c5 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3378,6 +3378,13 @@ static inline unsigned int ext4_flex_bg_size(struct ext4_sb_info *sbi)
+>  	return 1 << sbi->s_log_groups_per_flex;
+>  }
+>  
+> +static inline loff_t ext4_get_maxbytes(struct inode *inode)
+> +{
+> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> +		return inode->i_sb->s_maxbytes;
+> +	return EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
+> +}
+> +
+>  #define ext4_std_error(sb, errno)				\
+>  do {								\
+>  	if ((errno))						\
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index c616a16a9f36..b294d2f35a26 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4931,12 +4931,7 @@ static const struct iomap_ops ext4_iomap_xattr_ops = {
+>  
+>  static int ext4_fiemap_check_ranges(struct inode *inode, u64 start, u64 *len)
+>  {
+> -	u64 maxbytes;
+> -
+> -	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> -		maxbytes = inode->i_sb->s_maxbytes;
+> -	else
+> -		maxbytes = EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
+> +	u64 maxbytes = ext4_get_maxbytes(inode);
+>  
+>  	if (*len == 0)
+>  		return -EINVAL;
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index beb078ee4811..b845a25f7932 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -929,12 +929,7 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
+>  loff_t ext4_llseek(struct file *file, loff_t offset, int whence)
+>  {
+>  	struct inode *inode = file->f_mapping->host;
+> -	loff_t maxbytes;
+> -
+> -	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)))
+> -		maxbytes = EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
+> -	else
+> -		maxbytes = inode->i_sb->s_maxbytes;
+> +	loff_t maxbytes = ext4_get_maxbytes(inode);
+>  
+>  	switch (whence) {
+>  	default:
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index f9725e6347c7..9f32af1241ff 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4006,7 +4006,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  	struct inode *inode = file_inode(file);
+>  	struct super_block *sb = inode->i_sb;
+>  	ext4_lblk_t start_lblk, end_lblk;
+> -	loff_t max_end;
+> +	loff_t max_end = ext4_get_maxbytes(inode) - sb->s_blocksize;
+>  	loff_t end = offset + length;
+>  	handle_t *handle;
+>  	unsigned int credits;
+> @@ -4015,12 +4015,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>  	WARN_ON_ONCE(!inode_is_locked(inode));
+>  
+> -	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> -		max_end = sb->s_maxbytes;
+> -	else
+> -		max_end = EXT4_SB(sb)->s_bitmap_maxbytes;
+> -	max_end -= sb->s_blocksize;
+> -
+>  	/* No need to punch hole beyond i_size */
+>  	if (offset >= inode->i_size || offset >= max_end)
+>  		return 0;
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
