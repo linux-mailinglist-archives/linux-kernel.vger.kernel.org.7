@@ -1,144 +1,201 @@
-Return-Path: <linux-kernel+bounces-627788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C633AA5523
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:57:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB19AA553A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 355917BB7C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:56:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCAA7BC1FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BBD2797B3;
-	Wed, 30 Apr 2025 19:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0UCulZlC"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E62283FFD;
+	Wed, 30 Apr 2025 20:01:04 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EF5275869
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 19:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF81427A47C;
+	Wed, 30 Apr 2025 20:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746043024; cv=none; b=Kh/CIlwOwjUZYzKwOV+SCHMXRQkDyes8Ih1riBEhjAYc7rUmP+f+4eFBju3jbQeBFrISn38TcBkpUaZdWQx2Hyp4six8gL3b2LGZg6BSVS4YEyER8pbZXZpod5j512ghbMYGl9F1lX5oQcnZhAZmUCNtUWo9eWk43exDYr0TYmY=
+	t=1746043264; cv=none; b=cjZIu14T1zifHU4AB5OX5j3KN9q6V5p62KsDKZIS1kWSoJl8Lo5XKf5kj1QZiEOYMX5/rtqc7OW0xV1KpejRs6ittqlgfawmsI44xc+Gx+t/rRcSrb2+SVkTHRbbiH+62UNK01ANYgwGYw2BqHc3S7w0lrvoMbjrbIHVGV6LD2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746043024; c=relaxed/simple;
-	bh=3qDTN+MBFQnDotoSGCXSC0TIqshMNt8VgM+VnIIfAOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rIXFpTm2bMY2CJ1DJRKtY6t1mxmSQcat/ZFF9KWo61x1ZNqe5eU7ghP9AazNicMK/KIanmfv4SJ9zP1LI1vGBxMkXHMjM/9uzsV3rfdRDxuVX62m1YoYPqIWix3pKvb8hH/3kRj6f22bS4wXMuaeahtHxbApxTNXn3GCX12YO0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0UCulZlC; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-301cda78d48so434211a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746043022; x=1746647822; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c+qKL+MUCJJ9XsZqOZSeMflU/a6s+djka0YUBDd9w14=;
-        b=0UCulZlCbxaaCS3q43QZ3WRx/9PzbnP9nvapKHzj4tFYNZexmgPVwAi47XnyVAAtRF
-         Mbe2Wn8vuwL4dQrzZLT5vGJBktrt7bD5a9GO9qskzgZNLKNVTLv0kJB0neRMq7A/VKcE
-         jJUtZ5x+QwVQIEAKOBNo2Fcsc07nGy5lrQ1msL0UN5HRNvb7NzpUjJeH1D8Hhj630Cy4
-         DoTMhccWcdy2IFqaTSeP5w+q6NW/6DWhxPSHjK1ph5wNpS0L0qQLiXAVrOD6MhK2MaEs
-         3PyFO3f2FwQD2o96VoJZDsWF5oGeMBedKfiXWeEeksdW87hfaVGWQh+8Lt1Ml7UykgCu
-         Of9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746043022; x=1746647822;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c+qKL+MUCJJ9XsZqOZSeMflU/a6s+djka0YUBDd9w14=;
-        b=rI5MsTWGcVvUqkjNupO94P6ma5aylOY0MMBzvB3TXogkZaFPByoYodPaDIz1N0oy97
-         FfxRqQ8Qc+izen9IdAho3ZjvdrKEyxINyfrXFL85o0feR330nh/4407oB4aC2/fOxB0q
-         LnYhCFMPFAcyJkycZolSTSc/sZ6yEfq9Uu4eN6JQ5OoBPSC0nXe0zUVKVTZaXPysb61q
-         JEC/rKdj/sQG4aRdgBjlAwrW9iq4SABmdiy2GtGO3t1U4LEEed93s7fPBFGk5DtTP3/S
-         MNU7zikBgHLmtZCz5An4F6c6ahmJsbV7MOCtVlkfdjhx3mLFEk3Mi2xYf0lRE/hox8fJ
-         DPdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbdPxXOPbR+1igLFdfcW6ltMMmmj29ONK5cWAes128z2PRbNla8OmGGwZMt4L+v84cgR0DIbdpzWJCVgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtyQTgv8/uyUbRz8vR2Skc7QcnsvCyVoLb508jx0+WhcP+L6Gs
-	8tQQez/DZe+5pWoPAfogfXNCEWcFa5RYLRbuxD9R9lJ5Uc4AEd1HEL/fQ0QnUg==
-X-Gm-Gg: ASbGnct1UFAjZn7HiY+0AEM5LQ40zxWDF4PDUgHp0Chtjk6FGukHDuEBp/4ReWzHTua
-	pQiTV8xLd/ZezW0giLIAwPS2S0Mf2Fg0u9rwN1KlEXOJc36p6eSSQXR8V4m7DNHK/GiZ315u769
-	8C2vPezEEyuYCl0g7HWc5jOq4oRNo9svOiYX0YG3LMTLItsxyZyshCc0O2MIX/LveeG6MsX5AUg
-	9NyT9YFoPepiruQvXHfn0AmBfsBAB7/C8dEyZ+ki+reJ+RM81ADdJ2EeiKbeBhP4LjGz6pvwXYw
-	hgjnkJUpYdhVGX/5jB5Ll25I2FZb2+eXm7naIQkyFKTRVsgFUAdoeTjOsQz6sujVssFuDhmpQx3
-	URU3O9g==
-X-Google-Smtp-Source: AGHT+IFYLwXsSVzpZ58dXpoeXLiC5qkI9bTIycsk32TydeZra3btf6V9VE3JspqpRKaeMTjXf206sg==
-X-Received: by 2002:a17:90b:3812:b0:2fe:b016:a6ac with SMTP id 98e67ed59e1d1-30a41e6c2fdmr10756a91.15.1746043022099;
-        Wed, 30 Apr 2025 12:57:02 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a3471ee7esm2100393a91.4.2025.04.30.12.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 12:57:01 -0700 (PDT)
-Date: Wed, 30 Apr 2025 12:56:57 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: joro@8bytes.org, will@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fix driver_managed_dma check
-Message-ID: <aBKAibjRdrYVEWAM@google.com>
-References: <20250425133929.646493-4-robin.murphy@arm.com>
+	s=arc-20240116; t=1746043264; c=relaxed/simple;
+	bh=DyH4eNefxxAMKqyPsMgA4QB+Gfc/tm94KE2quAIUcu4=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Rz4+XKHq90Uos9bbNgcV6S36f22A8EQxwGNGM3Da3gj7ilmPs+t9OdZWsnxzjwO4Xyd2qsxbJxKGDlKT2+rWHUU+CzwgMljRjjD9kOdRLeIIO9uFuHBHkhNtGhlCxQyzlODtc47sNIhR3oiaK1uFpOoYWeyPXMFlyxiHpHqFqHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F5FC4CEE7;
+	Wed, 30 Apr 2025 20:01:03 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uADcB-00000001dN2-2d9l;
+	Wed, 30 Apr 2025 16:01:07 -0400
+Message-ID: <20250430195746.827125963@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 30 Apr 2025 15:57:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ x86@kernel.org,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>,
+ linux-toolchains@vger.kernel.org,
+ Jordan Rome <jordalgo@meta.com>,
+ Sam James <sam@gentoo.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Florian Weimer <fweimer@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>,
+ Weinan Liu <wnliu@google.com>,
+ Blake Jones <blakejones@google.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Alexander Aring <aahringo@redhat.com>
+Subject: [PATCH v7 00/18] perf: Deferred unwinding of user space stack traces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425133929.646493-4-robin.murphy@arm.com>
 
-On 04/25/2025, Robin Murphy wrote:
-> Since it's not currently safe to take device_lock() in the IOMMU probe
-> path, that can race against really_probe() setting dev->driver before
-> attempting to bind. The race itself isn't so bad, since we're only
-> concerned with dereferencing dev->driver itself anyway, but sadly my
-> attempt to implement the check with minimal churn leads to a kind of
-> TOCTOU issue, where dev->driver becomes valid after to_pci_driver(NULL)
-> is already computed, and thus the check fails to work as intended.
-> 
-> Will and I both hit this with the platform bus, but the pattern here is
-> the same, so fix it for correctness too.
+[
+  The biggest change since v6 is that it only works for task events. That
+  is, if the event is per CPU it will still do the old unwinding.
 
-Thanks!
+  perf record -g ... # does the deferred unwinding
 
-Reviewed-by: Will McVicker <willmcvicker@google.com>
+  perf record -a -g ... # still does the old immediatel unwinding
 
-> 
-> Reported-by: Will McVicker <willmcvicker@google.com>
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  drivers/pci/pci-driver.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index c8bd71a739f7..66e3bea7dc1a 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -1634,7 +1634,7 @@ static int pci_bus_num_vf(struct device *dev)
->   */
->  static int pci_dma_configure(struct device *dev)
->  {
-> -	struct pci_driver *driver = to_pci_driver(dev->driver);
-> +	const struct device_driver *drv = READ_ONCE(dev->driver);
->  	struct device *bridge;
->  	int ret = 0;
->  
-> @@ -1651,8 +1651,8 @@ static int pci_dma_configure(struct device *dev)
->  
->  	pci_put_host_bridge_device(bridge);
->  
-> -	/* @driver may not be valid when we're called from the IOMMU layer */
-> -	if (!ret && dev->driver && !driver->driver_managed_dma) {
-> +	/* @drv may not be valid when we're called from the IOMMU layer */
-> +	if (!ret && drv && !to_pci_driver(drv)->driver_managed_dma) {
->  		ret = iommu_device_use_default_domain(dev);
->  		if (ret)
->  			arch_teardown_dma_ops(dev);
-> -- 
-> 2.39.2.101.g768bb238c484.dirty
-> 
+  I have patches that solve the per CPU deferred unwinding that I'm
+  currently cleaning up and will post shortly.
+]
+
+I'm currently working on getting sframe support from the kernel.
+Josh Poimboeuf did a lot of the hard work already, but he told me he doesn't
+have time to continue it so I'm picking it up where he left off.
+
+His last series of v4 is here:
+
+  https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
+
+It covers a lot of topics as he found issues with other aspects of
+the kernel that needed to be fixed for sframes to work properly.
+
+This series focuses only on implementing the deferred user space
+stack tracing that can be used by perf. It does not implement sframe
+support nor does it add an interface that can be used by ftrace
+or LTTng (that will come later).
+
+I based this off of the latest tip/master:
+
+  397310f19ee88e9af17ab24cb69dcbb49292c8cb
+
+Changes since v6: https://lore.kernel.org/linux-trace-kernel/20250425145422.132820147@goodmis.org/
+
+- Use (current->flags & PF_KTHREAD) instead of !(current->mm) for testing
+  if a task is a kernel thread or not. (Josh Poimboeuf)
+
+- Use (current->flags & PF_EXITING) instead of checking !current->mm
+
+- Only defer unwind if event is attached to a specific task (not global per CPU)
+
+- Added a missing rcuwait_init(&event->pending_unwind_wait);
+
+
+Josh Poimboeuf (12):
+      unwind_user: Add user space unwinding API
+      unwind_user: Add frame pointer support
+      unwind_user/x86: Enable frame pointer unwinding on x86
+      perf/x86: Rename and move get_segment_base() and make it global
+      unwind_user: Add compat mode frame pointer support
+      unwind_user/x86: Enable compat mode frame pointer unwinding on x86
+      unwind_user/deferred: Add unwind cache
+      perf: Remove get_perf_callchain() init_nr argument
+      perf: Have get_perf_callchain() return NULL if crosstask and user are set
+      perf: Simplify get_perf_callchain() user logic
+      perf: Skip user unwind if the task is a kernel thread.
+      perf: Support deferred user callchains
+
+Namhyung Kim (4):
+      perf tools: Minimal CALLCHAIN_DEFERRED support
+      perf record: Enable defer_callchain for user callchains
+      perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+      perf tools: Merge deferred user callchains
+
+Steven Rostedt (2):
+      unwind_user/deferred: Add unwind_deferred_trace()
+      perf: Use current->flags & PF_KTHREAD instead of current->mm == NULL
+
+----
+ MAINTAINERS                               |   8 ++
+ arch/Kconfig                              |  14 +++
+ arch/x86/Kconfig                          |   2 +
+ arch/x86/events/core.c                    |  44 +-------
+ arch/x86/include/asm/ptrace.h             |   2 +
+ arch/x86/include/asm/unwind_user.h        |  61 +++++++++++
+ arch/x86/include/asm/unwind_user_types.h  |  17 +++
+ arch/x86/kernel/ptrace.c                  |  38 +++++++
+ include/asm-generic/Kbuild                |   2 +
+ include/asm-generic/unwind_user.h         |  24 +++++
+ include/asm-generic/unwind_user_types.h   |   9 ++
+ include/linux/entry-common.h              |   2 +
+ include/linux/perf_event.h                |   9 +-
+ include/linux/sched.h                     |   5 +
+ include/linux/unwind_deferred.h           |  31 ++++++
+ include/linux/unwind_deferred_types.h     |  14 +++
+ include/linux/unwind_user.h               |  15 +++
+ include/linux/unwind_user_types.h         |  35 ++++++
+ include/uapi/linux/perf_event.h           |  19 +++-
+ kernel/Makefile                           |   1 +
+ kernel/bpf/stackmap.c                     |   8 +-
+ kernel/events/callchain.c                 |  47 ++++----
+ kernel/events/core.c                      | 173 +++++++++++++++++++++++++++++-
+ kernel/fork.c                             |   4 +
+ kernel/unwind/Makefile                    |   1 +
+ kernel/unwind/deferred.c                  |  61 +++++++++++
+ kernel/unwind/user.c                      | 130 ++++++++++++++++++++++
+ tools/include/uapi/linux/perf_event.h     |  19 +++-
+ tools/lib/perf/include/perf/event.h       |   7 ++
+ tools/perf/Documentation/perf-script.txt  |   5 +
+ tools/perf/builtin-script.c               |  92 ++++++++++++++++
+ tools/perf/util/callchain.c               |  24 +++++
+ tools/perf/util/callchain.h               |   3 +
+ tools/perf/util/event.c                   |   1 +
+ tools/perf/util/evlist.c                  |   1 +
+ tools/perf/util/evlist.h                  |   1 +
+ tools/perf/util/evsel.c                   |  39 +++++++
+ tools/perf/util/evsel.h                   |   1 +
+ tools/perf/util/machine.c                 |   1 +
+ tools/perf/util/perf_event_attr_fprintf.c |   1 +
+ tools/perf/util/sample.h                  |   3 +-
+ tools/perf/util/session.c                 |  78 ++++++++++++++
+ tools/perf/util/tool.c                    |   2 +
+ tools/perf/util/tool.h                    |   4 +-
+ 44 files changed, 985 insertions(+), 73 deletions(-)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
+ create mode 100644 arch/x86/include/asm/unwind_user_types.h
+ create mode 100644 include/asm-generic/unwind_user.h
+ create mode 100644 include/asm-generic/unwind_user_types.h
+ create mode 100644 include/linux/unwind_deferred.h
+ create mode 100644 include/linux/unwind_deferred_types.h
+ create mode 100644 include/linux/unwind_user.h
+ create mode 100644 include/linux/unwind_user_types.h
+ create mode 100644 kernel/unwind/Makefile
+ create mode 100644 kernel/unwind/deferred.c
+ create mode 100644 kernel/unwind/user.c
 
