@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-627646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF977AA535F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:12:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD346AA5388
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA9E4C8953
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:12:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EE3E7BA7D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CB1277013;
-	Wed, 30 Apr 2025 18:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C4928DF09;
+	Wed, 30 Apr 2025 18:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDRoUlFl"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="doA73Zbz"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB06270578;
-	Wed, 30 Apr 2025 18:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F26289E03
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746036669; cv=none; b=HsHzvYbNsPT/m267O4rqO9oBlSmEIU4C5kkGIWyhtjzXuQss7CqbzKrssQW6YePIznvO+XVlNHHWUzuGCmjAvc6VoZjjTtFtXq0sXX7qij3g3Y81eHaLkXbRAsb7nfTHinjvEdYnAgU+S6FXGwW0vXZ938ocayBBCeCoGMLl3iw=
+	t=1746036692; cv=none; b=ahg2UmCGwE5xvgQxvEs4NCgn/+yP5Iy8TVtqRJVCuDM9xnbTfJ2aTCuZKL/UGsZ8ihuZXGNqAik1ca5M7R/n6I6lpn+0FdlVwYMpIViSwOZg4nRTHQASqMKYLAmXVhKuJ+HGbr6SI06roOUksoqzR8/k6edNqRfC9VUuAXiF6O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746036669; c=relaxed/simple;
-	bh=uKkWq78XfYV8C1wGjeLxUClR6JZktKdqmRzCLRPiniM=;
+	s=arc-20240116; t=1746036692; c=relaxed/simple;
+	bh=y+zXYdm8lR81Xt8s2hy8d74VfZoLwscWMB6SycFNemM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=beY816YOwo2dS9A2YUT4EqWVHfNZqyL0CrbuUNVVHxwz60WQXPOWNgfLtQRcelnxPtaPg7FZ+lYI+3SvOf3So4I+7TDHIYhKvJTPBTxV/nJFdlRsGH3DsxJQphLkWH7JJvvpdKdlKKaDOt6FbfCd3xV5xQikHDqekv7BbHeR1is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDRoUlFl; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-73bf1cef6ceso280641b3a.0;
-        Wed, 30 Apr 2025 11:11:08 -0700 (PDT)
+	 MIME-Version; b=up/P3ItIBMku/mB7xxkQ5PlcI8d3jrf5UZ7CB6cvFFm2jnpVOqabIaFasDmJs1gxMp73gbFasIC0b0iqqtakbvffYLjKVqO60dc4pnRdRifL7jWFrZjJOOBm5vbin6VZjbig11C+kOwMHupQI+Y1Nd2srntyZrS9koLhpx6OQFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=doA73Zbz; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476977848c4so2571331cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746036667; x=1746641467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rWrdBEdzmL3R/kfX7rqlGT9fsre+XXLU7YQDNncr/vk=;
-        b=LDRoUlFlQPkVRrLEixPf8YnIJbnSTGunj5E9QMx5Ns3tbwn/gUmSBxynpVp5yEVwvE
-         zhobKS63DUh31l0LwTzWiWueAi0eF+UkJtFJ1Un2YkTy3PROmtMBdJVX5Dxprnwt9Oj5
-         A1X9swcuukrcpk+RlgYKXr9I8GxK/+Xj1oGQc7amNj7S6ijhWRgaqwaVL2uWkcAgfJd/
-         ha2MJG7m2tRjN+EykqXHLF0pNoWg3iRMWXGYYrkneK9St8F5ZgeEuPEK94U7GhI8vZmt
-         H45xUZVXIfHkOOmCczYj1RsHswL8rTr0cR9J+Zx+dhKrj5Wmm+65P8CDZrfGebYo8EI/
-         6cGg==
+        d=gourry.net; s=google; t=1746036690; x=1746641490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZA/uzDtyuFWn0NODL0whOKAEDNrO7IK9AQ6WwWNv0fM=;
+        b=doA73ZbzVUZrFPubkg+KlKO3AfNyAz5rQdhhQi5a6rHopWQGXMvZkoBW4TByp2uzaK
+         1ighbuIXTaJdYI2BPtYP1Zqe+CpPzocB6YpJsaWADV2s/wXjQYp4/l1qmO45I2HhDLNZ
+         jK5Tu/O+roAeJMzc7XvTo7PFk6mS7sjd648KSouXXZUpmsQLEcVazdqpgPMR04U4wbQX
+         hWo3lH8kUMaPm+OYS9x8aatuRxIUNTv+57lsfIVneaG7dOE7hERz8yMmKqNbLllwSulk
+         ywlLTeAWo6XIQoakdU145GBhwlnUFcDe0J/UgWrfDLHlZ8d7+4tNKd07+FVn7n98xa4X
+         Zu3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746036667; x=1746641467;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rWrdBEdzmL3R/kfX7rqlGT9fsre+XXLU7YQDNncr/vk=;
-        b=I4QZkPYO8fPWBpoKVyAWArmBLWdeU9XSBmrMJPMCShOWL4ROMF4LmjBVzseazN0yFH
-         CIrQ+zKV5AbAIxTI9sM/+qxjFfuB6UDwpSmvejyRxHq//IoEUOYQI0UHb8X8BvXoQmsX
-         Ab9wL0ZyoWbmpmUdo5Yr2JNrg2qTHw5p0XYl8WUPadXicRfFHlDbzHp/L+ooQeAnrLQL
-         ci+Qecg4nWsb4/xOWB54PMGYZ4+rApCznXzxbWR2Q9E2cjKL5p/Jrgro88FMx0Kgl6WT
-         P9ac2MRenVvnb4/gPgCC71DaakD4MAD0z68JmsOMpXqCkFjkW8WheRZ+mb3O3KqZgrRI
-         T3vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5oa7+3bWuxgz/5YjXdbPKLRn2taRzzeWBKay3rqIINKgLNqMjm73zlEKXR9ZztR9oU0hu3+EFxFJA3viH@vger.kernel.org, AJvYcCVtiU53SwwwnHPF5HAaVeikFAZf4c97r+ym6NvkHcYsFJRVUxsVNKsChig2QrSDql/ZFRf127DnQWt4TyTq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+GLF6pEcB6wFUocYo2GZxJYvkGdaPEGgsORQM9fj6wuWL0BJH
-	ncxkD4XITEqxpq1NHSDxdEzp+SsvYCSRXZAlcExUwvcqbsXTY8UK
-X-Gm-Gg: ASbGnctSa0AaXdtbF6cyDNG/hCeCtvmGSllxPQj7x5NNwUbKxE+yMyGiXJeEyhCpBCe
-	siwd77l9G1kGYhjVYZ1WEUwIxvPAjmRXYisBxTxR84BGmffTfPIeUviOL7NI2zRaN+tzSn2jwcG
-	vh4Dwnt7cIGxL0PWfUbUGfdCg7aKb7PrKV5oNOpDSMceYoQeNJRAufH1XdMeRLg8n8gcTU8zv2d
-	CaPJ3wQkP87ijDYcYMtVMYpQsKFY1pB8kS5XUSHFIorU1wzTlvpgh9ZlkryZlDV1OOuWMDpJ6Pq
-	mO1w+0q080ZNPO4TiiYE0oi9ap4yRudDR7HvdGd4qby9T4jzztm9x6GAdnx4Kg==
-X-Google-Smtp-Source: AGHT+IF9cU95gPYlg/+BueaWtgjVYu+duwRSmPeVQaR4peuDgpv89pIl+iXc0sQ4jiHvcfNXy2gTMg==
-X-Received: by 2002:a05:6a00:4651:b0:736:9f20:a175 with SMTP id d2e1a72fcca58-7403a75be24mr5326968b3a.2.1746036667491;
-        Wed, 30 Apr 2025 11:11:07 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([106.37.122.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.11.02
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 30 Apr 2025 11:11:06 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
+        d=1e100.net; s=20230601; t=1746036690; x=1746641490;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZA/uzDtyuFWn0NODL0whOKAEDNrO7IK9AQ6WwWNv0fM=;
+        b=TPYu5KMmQS/ghWwdLfrZ9enCrHNGEU/4+IZl/OyJuvGnwS+6bbGj15HSpmmNQDYYA6
+         7dG5fml6EvVad7HxL00xMiHszQZCxTMogf5qUW6pJuAcGvtzkQGPEUKJdbw95olwQ0UQ
+         0W0KdeVTGAbagmviMav+X3MWyfIPYNM85xxK02R4lrPpId2T3V61dFZ7gYW227gIWxj+
+         HViqoFp9WXEFwAbM/mTPon/pApe6UTE5UdnODgrPBRWtwNSVXCx+r1nCn2NnlFL4e3rk
+         haRyabXWn9y1IsZ6yB9NGXKtfEbTvUjaAJ+CsDxuLT7BncR1j2J2YedozIer2NurFP40
+         wPog==
+X-Forwarded-Encrypted: i=1; AJvYcCUKxkzRRDXW09Dm2ijGkWlaramgBjzAVakkGpBQMGD4/XChfP/OtPyKwGmJbssvyThVNDtPws+tFvZFGEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8JrovEaeZPsq643IIeHe9SokEaYoS2B0vtyVrX+6bo5tBqntt
+	NrGwLTyM2v8Xe1VYOF8W6PsVdd66dlTKbW23mrOPN9qAE8ErYmE/q5epZovZT1U=
+X-Gm-Gg: ASbGncuSKvYqY6Kk6XQzduQmocGfVhlW2icIbtcSWK6fO+vx2OMzSwiF6/z1KBk0J4K
+	DUcmAQFHQfhwmjbIK7HdrNhS+ljfF5Tdce6ggYtqDhiRhGtBUHGP+ty2v2pp0ktCyHmCvVp46bd
+	Hr2CrI8H633ni8STONN98COzqIg/lA/Kq28/1kxSjeGEQjnRtWs4mQq2y5AAfstkspvqlEJcIYN
+	NT16GVa9iYEULhcXEyF06VxDzNOGZ0YdpvtCTic4RwligAIB4Cfqc3NrmMjiPaSnUC8+Nman2Nh
+	yTYGsmtaik0rZDEeIsqWP2b9F9sW0ajGbi3FqMBmYHhRjlG/sels1D4VJxz8I8D2Pi3FLPczVM6
+	VbHIk2eGdQXCq9yXTk/OwN0TiJBhY
+X-Google-Smtp-Source: AGHT+IEv91mZMPKNU0PUGx07QOnNDsFCio0WccLHM/KQVlDxKGCYzZ3aQ4Acw83pDA3zj/uh5YlXmQ==
+X-Received: by 2002:a05:622a:5c1b:b0:476:71d2:61e0 with SMTP id d75a77b69052e-489c4356885mr70289341cf.23.1746036689813;
+        Wed, 30 Apr 2025 11:11:29 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-48a64fe04efsm5897421cf.19.2025.04.30.11.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 11:11:29 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: linux-cxl@vger.kernel.org
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 1/6] fuse: drop usage of folio_index
-Date: Thu,  1 May 2025 02:10:47 +0800
-Message-ID: <20250430181052.55698-2-ryncsn@gmail.com>
+	kernel-team@meta.com,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	corbet@lwn.net
+Subject: [RFC PATCH v2 17/18] cxl: docs/use-cases
+Date: Wed, 30 Apr 2025 14:10:47 -0400
+Message-ID: <20250430181048.1197475-18-gourry@gourry.net>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250430181052.55698-1-ryncsn@gmail.com>
-References: <20250430181052.55698-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+In-Reply-To: <20250430181048.1197475-1-gourry@gourry.net>
+References: <20250430181048.1197475-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,47 +99,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kairui Song <kasong@tencent.com>
+Add carve-outs for use-case documentation.  Complete open as to
+what (if anything) we should explain here, and/or what the structure
+should be.
 
-folio_index is only needed for mixed usage of page cache and swap
-cache, for pure page cache usage, the caller can just use
-folio->index instead.
-
-It can't be a swap cache folio here.  Swap mapping may only call into fs
-through `swap_rw` but fuse does not use that method for SWAP.
-
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Joanne Koong <joannelkoong@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-fsdevel@vger.kernel.org
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- fs/fuse/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/driver-api/cxl/index.rst        | 10 ++++++++++
+ .../cxl/use-case/dynamic-capacity.rst         | 20 +++++++++++++++++++
+ .../cxl/use-case/memory-expansion.rst         | 15 ++++++++++++++
+ .../driver-api/cxl/use-case/shared-memory.rst | 15 ++++++++++++++
+ .../cxl/use-case/virtual-machines.rst         | 19 ++++++++++++++++++
+ 5 files changed, 79 insertions(+)
+ create mode 100644 Documentation/driver-api/cxl/use-case/dynamic-capacity.rst
+ create mode 100644 Documentation/driver-api/cxl/use-case/memory-expansion.rst
+ create mode 100644 Documentation/driver-api/cxl/use-case/shared-memory.rst
+ create mode 100644 Documentation/driver-api/cxl/use-case/virtual-machines.rst
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 754378dd9f71..6f19a4daa559 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -487,7 +487,7 @@ static inline bool fuse_folio_is_writeback(struct inode *inode,
- 					   struct folio *folio)
- {
- 	pgoff_t last = folio_next_index(folio) - 1;
--	return fuse_range_is_writeback(inode, folio_index(folio), last);
-+	return fuse_range_is_writeback(inode, folio->index, last);
- }
+diff --git a/Documentation/driver-api/cxl/index.rst b/Documentation/driver-api/cxl/index.rst
+index e58d057a16e3..956434e23e41 100644
+--- a/Documentation/driver-api/cxl/index.rst
++++ b/Documentation/driver-api/cxl/index.rst
+@@ -49,5 +49,15 @@ that have impacts on each other.  The docs here break up configurations steps.
+    allocation/page-allocator
+    allocation/reclaim
+    allocation/hugepages.rst
++   allocation/tiering.rst
++
++.. toctree::
++   :maxdepth: 1
++   :caption: Use Cases
++
++   use-case/memory-expansion.rst
++   use-case/dynamic-capacity.rst
++   use-case/virtual-machines.rst
++   use-case/shared-memory.rst
  
- static void fuse_wait_on_folio_writeback(struct inode *inode,
-@@ -2349,7 +2349,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
- 		return true;
- 
- 	/* Discontinuity */
--	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
-+	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio->index)
- 		return true;
- 
- 	/* Need to grow the pages array?  If so, did the expansion fail? */
+ .. only::  subproject and html
+diff --git a/Documentation/driver-api/cxl/use-case/dynamic-capacity.rst b/Documentation/driver-api/cxl/use-case/dynamic-capacity.rst
+new file mode 100644
+index 000000000000..002f30e6eca9
+--- /dev/null
++++ b/Documentation/driver-api/cxl/use-case/dynamic-capacity.rst
+@@ -0,0 +1,20 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++================
++Dynamic Capacity
++================
++todo
++
++For Virtual Machines
++====================
++todo
++
++For Workload Orchestration
++==========================
++todo
++
++For Shared Memory
++=================
++todo
++
++
+diff --git a/Documentation/driver-api/cxl/use-case/memory-expansion.rst b/Documentation/driver-api/cxl/use-case/memory-expansion.rst
+new file mode 100644
+index 000000000000..2ebe1d92b556
+--- /dev/null
++++ b/Documentation/driver-api/cxl/use-case/memory-expansion.rst
+@@ -0,0 +1,15 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++================
++Memory Expansion
++================
++
++todo
++
++As Page Cache
++=============
++todo
++
++As DAX Device
++=============
++todo
+diff --git a/Documentation/driver-api/cxl/use-case/shared-memory.rst b/Documentation/driver-api/cxl/use-case/shared-memory.rst
+new file mode 100644
+index 000000000000..3b13b30ddd70
+--- /dev/null
++++ b/Documentation/driver-api/cxl/use-case/shared-memory.rst
+@@ -0,0 +1,15 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=============
++Shared Memory
++=============
++todo
++
++Coherence
++=========
++todo
++
++Fabric Attached Memory FileSystem (FAMFS)
++=========================================
++
++todo
+diff --git a/Documentation/driver-api/cxl/use-case/virtual-machines.rst b/Documentation/driver-api/cxl/use-case/virtual-machines.rst
+new file mode 100644
+index 000000000000..8fdeccdd5c1c
+--- /dev/null
++++ b/Documentation/driver-api/cxl/use-case/virtual-machines.rst
+@@ -0,0 +1,19 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++================
++Virtual Machines
++================
++
++todo
++
++NUMA Passthrough
++================
++todo
++
++Flexible Shapes
++===============
++todo
++
++Datacenter Efficiency
++=====================
++todo
 -- 
 2.49.0
 
