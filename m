@@ -1,215 +1,89 @@
-Return-Path: <linux-kernel+bounces-626773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FEDAA4742
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E86AA475B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74B21C059F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62D04A555A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312211C7017;
-	Wed, 30 Apr 2025 09:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KDDKM6cW"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472CC235062;
+	Wed, 30 Apr 2025 09:37:40 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A01823770D;
-	Wed, 30 Apr 2025 09:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F7D21C197;
+	Wed, 30 Apr 2025 09:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746005403; cv=none; b=m2oIR9nM9esmBhaLxp6rFaSBDexADxiLpe5L1Fb9kJmPVY2yrBKAUNOS1TZV8Jn17dZsO/3F94I7NdHUIRYhmjwsR5E1vRR2XQe1vhwqKAbo8GFRLCow65plXUssvA8djUUp5clbTX0qN10onjWN/hadcE7ypHRg5lLLlLgFSQQ=
+	t=1746005859; cv=none; b=mPJ3/aeM3j+/CgsTb3j5+COuf0unNxOm8xE/xsBB9TY1CcJwSP9+4wMhNJb9pQVt3f0FPQUj6Blh5wU613JkgUoKVNaC+2W5WxP5qTCbVBesQd09NF1PdHxLQlFbRHC2tuX9QBVBQ/YDOfl0qRvB4NIRrcsaydl+PzkIGYN4vU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746005403; c=relaxed/simple;
-	bh=OuQHQAOMHQtxRXlMxvBk71v1iUH3QsjtJkQtpI1hgvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZb1WhSr4Two1TD7WKijWDRoUuMpxlA1XQWcUGjfWdoomZUnvWEm7XLmwThGRoE7sX3ocsjzWM/fS5c/GQBecThlYI1AD+575ViZBhLyJucTD8jRgFklkM23UswQ8g4Ohv/OJiaFuC0ktOZhNoFWJzZwOvg4cIrIGEnEk3h3Bnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KDDKM6cW; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 960FF43181;
-	Wed, 30 Apr 2025 09:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746005390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2OzPyycrHdBOFNYlaedmLd2bDrUmkg8qhEXCLfUTANg=;
-	b=KDDKM6cWxY7JZnVAYB2Fe3yny9Ai6C/bj2+8pZ79gBRIscyJX9q9/yxRPRMz7jDbDiCK19
-	LBw4sl41yaYp4vJvsFJLkqBBLb4Wvgr4pWnnuVi3NP1NI1muVlKtaI7KGn5DvsJ9wHfxCG
-	JOe6Io0gNCwYu/IgfJrsBcVWExhWe2WEiYnd9XVp/9nC1fVunvLSleF51EWyO5GhF6Miom
-	FkzHk/vmdWl8AsmX9ofhuCEM5VQswUKDevi6PScwlD4A2RoCCYkQ6xrbpkobZ39eyxfLbH
-	rKLfZff+JNJkiILxnoR0IF6QCQsvwFbUr9SKw1dIjdPIJI/6hrPhPWoXC2y1TQ==
-Date: Wed, 30 Apr 2025 11:29:44 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, Hui
- Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 30/34] drm/bridge: imx8qxp-pixel-combiner: convert to
- devm_drm_bridge_alloc() API
-Message-ID: <20250430112944.1b39caab@booty>
-In-Reply-To: <553d62ed-976a-4e17-9678-cdc3d40ce4a7@nxp.com>
-References: <20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com>
-	<20250424-drm-bridge-convert-to-alloc-api-v2-30-8f91a404d86b@bootlin.com>
-	<553d62ed-976a-4e17-9678-cdc3d40ce4a7@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1746005859; c=relaxed/simple;
+	bh=dx3gwFLN+r2LapQatGyKjXKO7bo4RtW3nbFWJ9ZSfS0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SihLqcDSQq90YGtn6b80jXDg/KIDSLnkF1n90XElb/bj7BUEDEA2KtSPbwH+GT5BaUCru/RuwhsCb30YPPjAwHk4VBImmVIgYYE8FKUoMJD1ln3seEWpdtxZMciW7HWUljspadmZbvMv4gBCZsCLLyZmnGXMP/0IbPuT3nKGaQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZnX6n6VrdzySq1;
+	Wed, 30 Apr 2025 17:33:21 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2FF6118046F;
+	Wed, 30 Apr 2025 17:37:34 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Apr 2025 17:37:33 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
+Subject: [PATCH net 0/4] There are some bugfix for the HNS3 ethernet driver
+Date: Wed, 30 Apr 2025 17:30:48 +0800
+Message-ID: <20250430093052.2400464-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeifeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeelpdhrtghpthhtohepvhhitghtohhrrdhlihhusehngihprdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-Hello Liu,
+There is a pathset that contains three patches, but two of them
+need to be removed:
+ https://lore.kernel.org/all/20250402121001.663431-1-shaojijie@huawei.com/
+The last patch and other patches form this patchset:
+ net: hns3: store rx VLAN tag offload state for VF
 
-On Tue, 29 Apr 2025 10:10:55 +0800
-Liu Ying <victor.liu@nxp.com> wrote:
+Hao Lan (1):
+  net: hns3: fixed debugfs tm_qset size
 
-> Hi,
-> 
-> On 04/25/2025, Luca Ceresoli wrote:
-> > This is the new API for allocating DRM bridges.
-> > 
-> > This driver embeds an array of channels in the main struct, and each
-> > channel embeds a drm_bridge. This prevents dynamic, refcount-based
-> > deallocation of the bridges.
-> > 
-> > To make the new, dynamic bridge allocation possible:
-> > 
-> >  * change the array of channels into an array of channel pointers
-> >  * allocate each channel using devm_drm_bridge_alloc()
-> >  * adapt the code wherever using the channels
-> > 
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Jian Shen (2):
+  net: hns3: store rx VLAN tag offload state for VF
+  net: hns3: defer calling ptp_clock_register()
 
-[...]
+Yonglong Liu (1):
+  net: hns3: fix an interrupt residual problem
 
-> > @@ -345,8 +351,8 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
-> >  free_child:
-> >  	of_node_put(child);
-> >  
-> > -	if (i == 1 && pc->ch[0].next_bridge)
-> > -		drm_bridge_remove(&pc->ch[0].bridge);
-> > +	if (i == 1 && pc->ch[0]->next_bridge)  
-> 
-> Since this patch makes pc->ch[0] and pc->ch[1] be allocated separately,
-> pc->ch[0] could be NULL if channel0 is not available, hence a NULL pointer
-> dereference here...
-
-See below for this.
-
-> > +		drm_bridge_remove(&pc->ch[0]->bridge);
-> >  
-> >  	pm_runtime_disable(dev);
-> >  	return ret;
-> > @@ -359,7 +365,7 @@ static void imx8qxp_pc_bridge_remove(struct platform_device *pdev)
-> >  	int i;
-> >  
-> >  	for (i = 0; i < 2; i++) {
-> > -		ch = &pc->ch[i];
-> > +		ch = pc->ch[i];
-> >  
-> >  		if (!ch->is_available)  
-> 
-> ...and here too.
-
-This is indeed a bug, I should have checked the pointer for being
-non-NULL.
-
-Looking at that more closely, I think the is_available flag can be
-entirely removed now. The allocation itself (ch != NULL) now is
-equivalent. Do you think my reasoning is correct?
-
-Ouch! After writing the previous paragraph I realized you proposed this
-a few lines below! OK, removing is_available. :)
-
-[...]
-
-> On top of this patch series, this issue doesn't happen if I apply the below
-> change:
-
-[...]
-
-> @@ -351,7 +349,7 @@ static int imx8qxp_pc_bridge_probe(struct platform_device *pdev)
->  free_child:
->         of_node_put(child);
->  
-> -       if (i == 1 && pc->ch[0]->next_bridge)
-> +       if (i == 1 && pc->ch[0])
->                 drm_bridge_remove(&pc->ch[0]->bridge);
-
-Unrelated to this patch, but as I looked at it more in depth now, I'm
-not sure this whole logic is robust, even in the original code.
-
-The 'i == 1' check here seems to mean "if some error happened when
-handling channel@1, that means channel@0 was successfully initialized,
-so let's clean up channel 0".
-
-However my understanding of the bindings is that device tree is allowed
-to have the channel@1 node before the channel@0 node (or even channel@1
-without channel@0, but that's less problematic here).
-
-In such case (channel@1 before channel@0), this would happen:
-
- 1. alloc and init ch[1], all OK
- 2. alloc and init ch[0], an error happens
-    (e.g. of_graph_get_remote_node() fails)
-
-So we'd reach the free_child: label, and we should call
-drm_bridge_remove() for ch[1]->bridge, but there's no code to do that.
-
-To be robust in such a case, I think both channels need to be checked
-independently, as the status of one does not imply the status of the
-other. E.g.:
-
-  for (i = 0; i < 2; i++)
-      if (pc->ch[i] && pc->ch[i]->next_bridge)
-          drm_bridge_remove(&pc->ch[i]->bridge);
-
-(which is similar to what .remove() does after the changes discussed in
-this thread, and which I have queued for v3)
-
-What's your opinion? Do you think I missed anything?
-
-Thanks for taking the time to dig into this!
-
-Best regards,
-Luca
+ .../ethernet/hisilicon/hns3/hns3_debugfs.c    |  2 +-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 82 +++++++++----------
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         | 13 +--
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 25 ++++--
+ .../hisilicon/hns3/hns3vf/hclgevf_main.h      |  1 +
+ 5 files changed, 67 insertions(+), 56 deletions(-)
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.33.0
+
 
