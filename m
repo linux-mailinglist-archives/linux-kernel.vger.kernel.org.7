@@ -1,241 +1,481 @@
-Return-Path: <linux-kernel+bounces-627545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38545AA5262
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F04AA526F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04C667B632E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:06:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FA0E7ABB28
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9F32609ED;
-	Wed, 30 Apr 2025 17:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7552B262FE7;
+	Wed, 30 Apr 2025 17:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BotM+WlC"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rNOKorph"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2044.outbound.protection.outlook.com [40.107.96.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070421D3E9;
-	Wed, 30 Apr 2025 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746032879; cv=none; b=cTOuPefWVAnpkK8RWHlVhaISBd4mzMZ9XN60vJOQhGwSOo2fIZWLD2g8bDv7PWxc+4bwJmgs7nDBsbCkBAmjMmEy0/j66u1U0FjYxAMuRfzn9PRsiE4t3B56DDWlisz9aYh/hP+zV3/ghFrvH9DHQb8gNNZfzzZQfJ5Esso2cj4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746032879; c=relaxed/simple;
-	bh=aSXXgWGd7chNCgymfV8MFhuX0N/as2DSWP+hVD8qsns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AWbXDyGAzVX9MtuSAXSaZMTAYPlKxa5dHTSgIrpx0cnfhpCJcAZCtbQZiGaHPupxtJJ8q0yZXKXVOnYu6V3bUEtR4nBzz0Gko+ovXOXyQTXGOfB+aE0de5LjRWwYizb57vyG0cGrH2k9wQXtgdZBHujNyn9dXEA/uMBH/Mac82A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BotM+WlC; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso5898951f8f.2;
-        Wed, 30 Apr 2025 10:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746032876; x=1746637676; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oMXusxI0QZW/lWCkYNQNMWgJXnZSo5ysaTOr6uqV3aE=;
-        b=BotM+WlCdgJTW5eL1f2hcj4Vas7V3xlThkttvNA0BIlVyr7y4+ZZnQgX7TzzgjEM23
-         cZwqe+s7nrilxQdV0udGmb31WSYQAeuSMQrtE7Fwtpaccwu3CerTMX5vuxkxntA3Rldb
-         E8/YywW4xBTng7ZU84qLU74R+g3yYbrlfwE0PTQL3WnLtmgHpObRtRaOGY8L9JS+AVuy
-         vVnsl5XhJ4ZZkDvMzrqIVekVqSMDysS8KsTuvadA8WBg+7jaCndI1b3fgFMGF5uXPuE6
-         dMUdvq1N9iz8VnBlxWe+29r0NmOHHyN2BEhfY4DkFQpZMagTPpboght99d7bSNmIjcKw
-         y0ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746032876; x=1746637676;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMXusxI0QZW/lWCkYNQNMWgJXnZSo5ysaTOr6uqV3aE=;
-        b=lvSJUr4l8soctOgeF7IRS+Hx1Me8F6DwjV5fqqe9boaipVe3sLGdZmYXldlELuyDQd
-         RZGNPdapfxUhCZNZ36vyl3P3zV9iW0dBs8pqMsgPFdIx4aAHNDQmTVSRMdAL97aO5LCt
-         AVWUvvMNod2SVRPAZHcQRKw66cHT9HU8kovOVWNX8pmHpJOyMAfAB3Riyh6rBUHEBqeE
-         GegKz81UeFukL+6XFhL8FCg2zxI7FCtOJ35MPBmfxS+B9ErWkyzN9NIX79KDyzAYKdYv
-         mcFHqoYXTthCK/qjdRSCxT/H34km3hkolry/2ucJCU3p1Nl1mZayGsV4ss9PxzUZ6h+k
-         NbRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdsV2HnC6DdxzYMLMscLGUqY0V01Z7/LNYcjSCjMFWW7YxZ0qFKZH+ZX9HFqi4O8gc13CRz0wmj0NKYjE=@vger.kernel.org, AJvYcCXgCJvuX7eRS2yEPT0+rxRBGL0M+S7FH814xJzvzEy0FYwJdQCBmK7P3bP9xg33oxxQsMtMVWyFFCnmdLqV4VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd7sq5iwi77WTuLs9a37nB7J5nYmY0s39vreqtCZr/CkwDOcPJ
-	aE1xYYn7B3/81ndwboNZrMF/hZ2E4rfaPfWfYaZRXNVnIi8XxjXc
-X-Gm-Gg: ASbGncv0/lAUboD4B6/oQ3dvFRpX6SYiCH+55EadSx0YPz/XeU9t3xexyIGCyjXuQow
-	LQHuzg3I1lmwPjyAvAMiOTo8HY+h70RCrQu26bLiEV8TrkanpAAA+1Qx8IS0tBJ136rJskxdeB3
-	/kbfw6TrvO13aTOoYUSKtFzeLvwqB+jLFcnrcPujMtRV8SfX2hDCcUb5qW2xWVF2cgeETa8krxY
-	/Joi5Hn95a7tlHv9aSFVGlIyCe0tJ1doP/F9t5cNjI9HaNZK6S6ABSuXxwWiIIJ0pTmGsBeFs+8
-	IIjpMA6g4ErEosV5gCoCiiFM36mPV3NTCpLgnaAOE5PZhxjUolm+7w==
-X-Google-Smtp-Source: AGHT+IH9ON5OdEYGvzDXPnphlXNlbl4IdRIrP3RNJ6K9oDio5eu/bDJWTx8CrzimR+bWbt1MryIbWw==
-X-Received: by 2002:a05:6000:2284:b0:399:71d4:a9 with SMTP id ffacd0b85a97d-3a08f7d456dmr3771333f8f.52.1746032875786;
-        Wed, 30 Apr 2025 10:07:55 -0700 (PDT)
-Received: from ?IPV6:2001:871:22a:99c5::1ad1? ([2001:871:22a:99c5::1ad1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca4f88sm17103108f8f.29.2025.04.30.10.07.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 10:07:55 -0700 (PDT)
-Message-ID: <9683fcd6-4fdc-41f7-bfc6-78a44d7360e8@gmail.com>
-Date: Wed, 30 Apr 2025 19:07:53 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87545165F13;
+	Wed, 30 Apr 2025 17:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746033313; cv=fail; b=UHURFrIWtLlhKDto1xzPsl1k/SmewatakMtt/UXTVG0B/4rH2E/nIOo4UjrHPgiK4OSIkQDoho12tWjgThzmn+u00ThwUmCjbj5qF8MfPRIVpRjWoa7Rj+QCHopt0MHUExllmZfihs1QssLl6fvjHovUGeipOCa8rNqbcA64wYc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746033313; c=relaxed/simple;
+	bh=imQ3OcbN9PhK3P3gWoogWMDg4tqPo/gb2RiVtXr+zt8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=elqjmLnq4LUaBQyk00kk0ffMWhxW2LbZNkY1vUw8E2floVTK+cIah6B2Ga8OzCFH8brkjOAudH82uRmQMTBn/LyC5ZZ5+d2NqlhPYzbStlFXBkKnkC6MB1l7FYsOL0Luo2gp85BZ5RX25Wjo7JvmZETtVf9LNNiUe4xqWRKZK/o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rNOKorph; arc=fail smtp.client-ip=40.107.96.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eoGz4Z0avnruDmFtB//yr0AV4iOEziLibgdVULkxIffxjWXbbqc4A0nOEk2e4grAh+/hF8/lPpjMXrWQYbr8zEco65nMGRfGx1Zxn/sNHpmYurkRc0YJRl4QcTAYcaxOitm5NT60v7QZsT6kU0fcMVEmqPp5Pkdp1hYKAIh3UWZQaMyZ2q8JGt9x035TL4AIL+mult/mx8IyXm7dbDTzX8R8er77SfqMStLxHwg07wTx8B0jE9WstrTRkHCx7qb9hfXfOdExvxI3qhnyE4kkof03Agf2IGQxNo69wPpN1QFvM7x5osGYVYCrPdHQivEX+7Dj2Qa23xiNbU8OmLTadA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q8I4+GVfuItn0RRhMr4JStJSB9xdADmHdfyb6IkPmq0=;
+ b=RX8ofN+Z5RcMY9A8UkP+SEGxoIlpXgzmTnmkLkus7yJZzhHhdg3wEhAr+OryzND+MRGsOewurUYWpYQWC5R00q798UYarGGZoi9XD9s0D+5xoYPUFIivhHlgWEeXnawePTxbv91M5xZfytL27Lyi3I4TUmynLhg+DY770Dt90NEd5/VzQ4TTiL3Gw8t3W17RKpcPyB92fz8+AYsl5zGbEgViN2vkiYLY/d3jrSr/gVPsOpefVOPloKJgbLpmA1zLL2a19AzaOYuN37HVDmqqVPmcjjUvL/vTMu1p2tpfhB5LupnLIUkHgpzhXRlTlt6V6OpaHw5DJikGoyWYx3AJRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmx.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q8I4+GVfuItn0RRhMr4JStJSB9xdADmHdfyb6IkPmq0=;
+ b=rNOKorphFms7a2ExWq9D0hHWufOZ5+q6J2z7wKQPTT82MEdZGyI/xP13M4BEfKsXjxwyejlkjq3fMUZAgELMd+B9B4z//xOGyrqvUAsDmE+p97oiYixm5JHU1Dn4zBPns0v0ZffOdqTkaur6VnieHV8X0JzuulvjlBfg+TOMrXA=
+Received: from BN9PR03CA0052.namprd03.prod.outlook.com (2603:10b6:408:fb::27)
+ by PH7PR12MB6720.namprd12.prod.outlook.com (2603:10b6:510:1b3::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Wed, 30 Apr
+ 2025 17:15:04 +0000
+Received: from BN1PEPF00004688.namprd05.prod.outlook.com
+ (2603:10b6:408:fb:cafe::d7) by BN9PR03CA0052.outlook.office365.com
+ (2603:10b6:408:fb::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Wed,
+ 30 Apr 2025 17:15:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004688.mail.protection.outlook.com (10.167.243.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8699.20 via Frontend Transport; Wed, 30 Apr 2025 17:15:04 +0000
+Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 30 Apr 2025 12:15:02 -0500
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <W_Armin@gmx.de>, <ilpo.jarvinen@linux.intel.com>, <hdegoede@redhat.com>,
+	<mario.limonciello@amd.com>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<benjamin.chan@amd.com>, <bin.du@amd.com>, <gjorgji.rosikopulos@amd.com>,
+	<king.li@amd.com>, <dantony@amd.com>, Pratap Nirujogi
+	<pratap.nirujogi@amd.com>
+Subject: [PATCH v8] platform/x86: Add AMD ISP platform config for OV05C10
+Date: Wed, 30 Apr 2025 13:11:16 -0400
+Message-ID: <20250430171429.1043759-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] rust: use `UnsafePinned` in the implementation of
- `Opaque`
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Ralf Jung <post@ralfj.de>
-References: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com>
- <20250430-rust_unsafe_pinned-v2-3-fc8617a74024@gmail.com>
- <aBJTVWsrqzuasx7W@Mac.home>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <aBJTVWsrqzuasx7W@Mac.home>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004688:EE_|PH7PR12MB6720:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22cbaf00-cea8-4b98-30a9-08dd880a8c90
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|30052699003|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WAy2n223972BRMjPXTKtc1zy+glcY6SqY8QBXRBnzlRLZwnIH6nhIhlfUVTq?=
+ =?us-ascii?Q?aSL/7B+Uqi+D7m0TfnXJ8FfB4fWrah7hLqIUTCmlLXO1swwSu95FJTYEjsTX?=
+ =?us-ascii?Q?nvm3Msesadj4QOg/xFMUwk9JN8WBLp3eaIZrl56Ni9R0JtD+0snXZOw+dNXY?=
+ =?us-ascii?Q?2tbcZBg4OHXsPOaLKfDWf8QC8QJpiCcN1q+Dxqvu+egpa3WV9drvi/BgeaOo?=
+ =?us-ascii?Q?0CQOHY6MBK7rNvthMMRarrUg9oIKsPtKznZ8iTnup39IBYKIT1MXgOkwx2YN?=
+ =?us-ascii?Q?P80tbkGQ0mKIxlV/hqpztE8iOWJ0np1IwnYwEz4thcRAaxPSiaJrcC8nO4u/?=
+ =?us-ascii?Q?0gYAkfL9c2iUncKVtm282HLRC43tybXLkQH1JaduTDfs2XlKhtrK92ti2Tdg?=
+ =?us-ascii?Q?q7125dD8bVD37PGlApbV/lZrgmoBrykSHykkpdRGRoGkMfNGeYNO9Gj0IkrN?=
+ =?us-ascii?Q?F948KEVdLNH4ExMZX2Uffr8otlONRHreBuS4nWB6fe8D/QUItoF61w5/Sjlr?=
+ =?us-ascii?Q?Dm94dgabzKn6jRg8uT9gkiKRnRDfO2HNGU6RPowRtdhcZP8xtd+WtVEEvMB+?=
+ =?us-ascii?Q?rFtjBPF9Sp5dWt0n+0hSpd6YbG1i7/RRkjAkn4EtNl2r/b99n66W9uSBjzcQ?=
+ =?us-ascii?Q?fvGrltldJfyp++lC+gZ6z8phLzA6t4f8nsA80tKdqSybrIpc1WWkzgnwxwUJ?=
+ =?us-ascii?Q?ls2clClD+9nFZBLq5CnLkziaUvRkLlG/TJcEj8J/lR9L7rNYrcSeS+mQ1nI/?=
+ =?us-ascii?Q?e9VmfF810k7FLl9OoO3Jnwa4CDgFRT/dUvPqujFwnfUp4+lbRtgjPAKIB9XQ?=
+ =?us-ascii?Q?j0slbvU3o3WWAeHaVc6lIxi/1j8bMu4Xtq8EIWweJMrxjivp880rC6rMYkwj?=
+ =?us-ascii?Q?4X1XMfsD00NvIC6lGezolUpAZGfUB8JeaUjIc0iE+kSEMwaCKQqMFfk0Lmy2?=
+ =?us-ascii?Q?LDoWkIuyk15ThMK3XbZtTBH9g5t/smuC1dtRlnldy7Vhjc/A+hAFMLLS9Q6F?=
+ =?us-ascii?Q?AwAL3JkDBKhyg76Va7ySlBQaH8kvWtxM4j2UEEfwt4U6P5tPt4OcBkuumGSN?=
+ =?us-ascii?Q?GlSNpUOhhGjdztfpoWiu3vadYJDNRkfQueyjVn2/3e5QJy9bhRPNM5RjLtOr?=
+ =?us-ascii?Q?IrE/TrppkmrgkdBpLY7Um97UX9FRA6drk1ejS4rhqZYr9jfJ5lDzaV4KyCD6?=
+ =?us-ascii?Q?WZGcfr/b+YP0skcxyUN0nIhEYC4/9Lb0ghJy6NZwaQ6k8acAwmhNKYJr3wC9?=
+ =?us-ascii?Q?Gpjt2Qk69HwAkrw0ZKwc4MgFA9rh0F9k7g+vViC/PE8oGtLniwFPLyhd2BHj?=
+ =?us-ascii?Q?qsY1lTsl/FXgVT+vax6QXymXrN6qqiXsaMINw1X2PH9n77BfWFW2TFku6uRp?=
+ =?us-ascii?Q?2Qhg8E00D4DeVPQyL0bnTzUD2ryXANnSpOpZ/oSW0EXjRv8PlYHycLFfsniz?=
+ =?us-ascii?Q?fodI2zD00XhHKhxnt3RIyS0t3RWjULmQeLKHxOiklgJca+SexVFSaf8l9sYn?=
+ =?us-ascii?Q?vtcwsuKrcZWT4av+3GyFIznR5s7Pqd43TBPb?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(30052699003)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 17:15:04.5362
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22cbaf00-cea8-4b98-30a9-08dd880a8c90
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004688.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6720
 
-On 30.04.25 6:44 PM, Boqun Feng wrote:
-> [Cc Ralf]
-> 
-> On Wed, Apr 30, 2025 at 10:36:13AM +0200, Christian Schrefl wrote:
->> This change makes the semantics of the `Opaque` implementation
->> clearer and prepares for the switch to the upstream rust UnsafePinned`
->> type in the future.
->>
->> `Opaque` still uses `UnsafeCell` even though the kernel implementation
->> of `UnsafePinned` already includes it, since the current upstream
->> version does not.
->>
->> Reviewed-by: Gerald Wisböck <gerald.wisboeck@feather.ink>
->> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
->> ---
->>  rust/kernel/types.rs | 29 ++++++++++++-----------------
->>  1 file changed, 12 insertions(+), 17 deletions(-)
->>
->> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
->> index f06e8720e012102e5c41e79fd97b0607e927d71c..44d96423a8a6c358bb7ebf12c24fad98e5c2cb61 100644
->> --- a/rust/kernel/types.rs
->> +++ b/rust/kernel/types.rs
->> @@ -4,12 +4,12 @@
->>  
->>  use core::{
->>      cell::UnsafeCell,
->> -    marker::{PhantomData, PhantomPinned},
->> +    marker::PhantomData,
->>      mem::{ManuallyDrop, MaybeUninit},
->>      ops::{Deref, DerefMut},
->>      ptr::NonNull,
->>  };
->> -use pin_init::{PinInit, Wrapper, Zeroable};
->> +use pin_init::{cast_pin_init, PinInit, Wrapper, Zeroable};
->>  
->>  /// Used to transfer ownership to and from foreign (non-Rust) languages.
->>  ///
->> @@ -308,8 +308,7 @@ fn drop(&mut self) {
->>  /// ```
->>  #[repr(transparent)]
->>  pub struct Opaque<T> {
->> -    value: UnsafeCell<MaybeUninit<T>>,
->> -    _pin: PhantomPinned,
->> +    value: UnsafePinned<UnsafeCell<MaybeUninit<T>>>,
-> 
-> What's the Rust upstream opinion on `&UnsafePinned` vs `&UnsafeCell`?
-> Does `&UnsafePinned` provide the same noalias behavior as `&UnsafeCell`?
+ISP device specific configuration is not available in ACPI. Add
+swnode graph to configure the missing device properties for the
+OV05C10 camera device supported on amdisp platform.
 
-From the upsteam rust docs [0]:
-> Further note that this does not lift the requirement that shared
-references must be read-only! Use `UnsafeCell` for that.
+Add support to create i2c-client dynamically when amdisp i2c
+adapter is available.
 
-I at some point there was discussion about possibly needing to use
-`UnsafeCell` internally (because of `pin::deref`). But since the
-current upstream documentation explicitly mentions still needing
-`UnsafeCell` I assume that it will stay this was. If the upstream
-implementation changes I can add a patch that removes the
-unnecessary `UnsafeCell` and changes the documentation.
+Co-developed-by: Benjamin Chan <benjamin.chan@amd.com>
+Signed-off-by: Benjamin Chan <benjamin.chan@amd.com>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+---
+Changes v7 -> v8:
 
-I asked about this on the `UnsafePinned` rust tracking issue [1].
+* Create I2C client instance incase AMD ISP I2C device is registered
+prior to bus notifier registration.
+* Remove unused and duplicate variables in 'struct amdisp_platform'.
+* Remove global variable 'struct amdisp_platform amdisp_ov05c10_platform_config'.
+* Remove dependency on CONFIG_AMD_ISP4.
+* Call software_node_unregister_node_group() incase of amd_isp_probe() failures
+after prepare_amdisp_platform().
 
-Link: https://doc.rust-lang.org/nightly/std/pin/struct.UnsafePinned.html [0]
-Link: https://github.com/rust-lang/rust/issues/125735#issuecomment-2842668816 [1]
+ drivers/platform/x86/amd/Kconfig    |  11 ++
+ drivers/platform/x86/amd/Makefile   |   1 +
+ drivers/platform/x86/amd/amd_isp4.c | 275 ++++++++++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 drivers/platform/x86/amd/amd_isp4.c
 
-Cheers
-Christian
-
-> I'm wondering whether we should just do:
-> 
->     pub struct Opaque<T> {
->         value: UnsafePinned<MaybeUninit<T>>,
->         _not_sync: PhantomData<UnsafeCell<()>>,
->     }
-> 
-> , instead.
-> 
-> Regards,
-> Boqun
-> 
->>  }
->>  
->>  // SAFETY: `Opaque<T>` allows the inner value to be any bit pattern, including all zeros.
->> @@ -319,16 +318,14 @@ impl<T> Opaque<T> {
->>      /// Creates a new opaque value.
->>      pub const fn new(value: T) -> Self {
->>          Self {
->> -            value: UnsafeCell::new(MaybeUninit::new(value)),
->> -            _pin: PhantomPinned,
->> +            value: UnsafePinned::new(UnsafeCell::new(MaybeUninit::new(value))),
->>          }
->>      }
->>  
->>      /// Creates an uninitialised value.
->>      pub const fn uninit() -> Self {
->>          Self {
->> -            value: UnsafeCell::new(MaybeUninit::uninit()),
->> -            _pin: PhantomPinned,
->> +            value: UnsafePinned::new(UnsafeCell::new(MaybeUninit::uninit())),
->>          }
->>      }
->>  
->> @@ -371,7 +368,7 @@ pub fn try_ffi_init<E>(
->>  
->>      /// Returns a raw pointer to the opaque data.
->>      pub const fn get(&self) -> *mut T {
->> -        UnsafeCell::get(&self.value).cast::<T>()
->> +        UnsafeCell::raw_get(self.value.get()).cast::<T>()
->>      }
->>  
->>      /// Gets the value behind `this`.
->> @@ -384,14 +381,12 @@ pub const fn raw_get(this: *const Self) -> *mut T {
->>  }
->>  impl<T> Wrapper<T> for Opaque<T> {
->>      /// Create an opaque pin-initializer from the given pin-initializer.
->> -    fn pin_init<E>(slot: impl PinInit<T, E>) -> impl PinInit<Self, E> {
->> -        Self::try_ffi_init(|ptr: *mut T| {
->> -            // SAFETY:
->> -            //   - `ptr` is a valid pointer to uninitialized memory,
->> -            //   - `slot` is not accessed on error; the call is infallible,
->> -            //   - `slot` is pinned in memory.
->> -            unsafe { PinInit::<T, E>::__pinned_init(slot, ptr) }
->> -        })
->> +    fn pin_init<E>(value_init: impl PinInit<T, E>) -> impl PinInit<Self, E> {
->> +        let value_init =
->> +            UnsafePinned::pin_init(UnsafeCell::pin_init(MaybeUninit::pin_init(value_init)));
->> +        // SAFETY: `Opaque<T>` is a `repr(transparent)` wrapper around
->> +        // `UnsafePinned<UnsafeCell<MabeUninit<T>>>` so the memory representation is compatible.
->> +        unsafe { cast_pin_init(value_init) }
->>      }
->>  }
->>  
->>
->> -- 
->> 2.49.0
->>
->>
+diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+index c3e086ea64fc..152a68a470e8 100644
+--- a/drivers/platform/x86/amd/Kconfig
++++ b/drivers/platform/x86/amd/Kconfig
+@@ -32,3 +32,14 @@ config AMD_WBRF
+ 
+ 	  This mechanism will only be activated on platforms that advertise a
+ 	  need for it.
++
++config AMD_ISP_PLATFORM
++	tristate "AMD ISP4 platform driver"
++	depends on I2C && X86_64 && ACPI
++	help
++	  Platform driver for AMD platforms containing image signal processor
++	  gen 4. Provides camera sensor module board information to allow
++	  sensor and V4L drivers to work properly.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called amd_isp4.
+diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+index c6c40bdcbded..b0e284b5d497 100644
+--- a/drivers/platform/x86/amd/Makefile
++++ b/drivers/platform/x86/amd/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
+ obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+ obj-$(CONFIG_AMD_PMF)		+= pmf/
+ obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
++obj-$(CONFIG_AMD_ISP_PLATFORM)	+= amd_isp4.o
+diff --git a/drivers/platform/x86/amd/amd_isp4.c b/drivers/platform/x86/amd/amd_isp4.c
+new file mode 100644
+index 000000000000..6164915d8426
+--- /dev/null
++++ b/drivers/platform/x86/amd/amd_isp4.c
+@@ -0,0 +1,275 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AMD ISP platform driver for sensor i2-client instantiation
++ *
++ * Copyright 2025 Advanced Micro Devices, Inc.
++ */
++
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/units.h>
++
++#define AMDISP_OV05C10_I2C_ADDR		0x10
++#define AMDISP_OV05C10_PLAT_NAME	"amdisp_ov05c10_platform"
++#define AMDISP_OV05C10_HID		"OMNI5C10"
++#define AMDISP_OV05C10_REMOTE_EP_NAME	"ov05c10_isp_4_1_1"
++#define AMD_ISP_PLAT_DRV_NAME		"amd-isp4"
++
++/*
++ * AMD ISP platform definition to configure the device properties
++ * missing in the ACPI table.
++ */
++struct amdisp_platform {
++	struct i2c_board_info board_info;
++	struct notifier_block i2c_nb;
++	struct i2c_client *i2c_dev;
++};
++
++/* Top-level OV05C10 camera node property table */
++static const struct property_entry ov05c10_camera_props[] = {
++	PROPERTY_ENTRY_U32("clock-frequency", 24 * HZ_PER_MHZ),
++	{ }
++};
++
++/* Root AMD ISP OV05C10 camera node definition */
++static const struct software_node camera_node = {
++	.name = AMDISP_OV05C10_HID,
++	.properties = ov05c10_camera_props,
++};
++
++/*
++ * AMD ISP OV05C10 Ports node definition. No properties defined for
++ * ports node for OV05C10.
++ */
++static const struct software_node ports = {
++	.name = "ports",
++	.parent = &camera_node,
++};
++
++/*
++ * AMD ISP OV05C10 Port node definition. No properties defined for
++ * port node for OV05C10.
++ */
++static const struct software_node port_node = {
++	.name = "port@",
++	.parent = &ports,
++};
++
++/*
++ * Remote endpoint AMD ISP node definition. No properties defined for
++ * remote endpoint node for OV05C10.
++ */
++static const struct software_node remote_ep_isp_node = {
++	.name = AMDISP_OV05C10_REMOTE_EP_NAME,
++};
++
++/*
++ * Remote endpoint reference for isp node included in the
++ * OV05C10 endpoint.
++ */
++static const struct software_node_ref_args ov05c10_refs[] = {
++	SOFTWARE_NODE_REFERENCE(&remote_ep_isp_node),
++};
++
++/* OV05C supports one single link frequency */
++static const u64 ov05c10_link_freqs[] = {
++	925 * HZ_PER_MHZ,
++};
++
++/* OV05C supports only 2-lane configuration */
++static const u32 ov05c10_data_lanes[] = {
++	1,
++	2,
++};
++
++/* OV05C10 endpoint node properties table */
++static const struct property_entry ov05c10_endpoint_props[] = {
++	PROPERTY_ENTRY_U32("bus-type", 4),
++	PROPERTY_ENTRY_U32_ARRAY_LEN("data-lanes", ov05c10_data_lanes,
++				     ARRAY_SIZE(ov05c10_data_lanes)),
++	PROPERTY_ENTRY_U64_ARRAY_LEN("link-frequencies", ov05c10_link_freqs,
++				     ARRAY_SIZE(ov05c10_link_freqs)),
++	PROPERTY_ENTRY_REF_ARRAY("remote-endpoint", ov05c10_refs),
++	{ }
++};
++
++/* AMD ISP endpoint node definition */
++static const struct software_node endpoint_node = {
++	.name = "endpoint",
++	.parent = &port_node,
++	.properties = ov05c10_endpoint_props,
++};
++
++/*
++ * AMD ISP swnode graph uses 5 nodes and also its relationship is
++ * fixed to align with the structure that v4l2 expects for successful
++ * endpoint fwnode parsing.
++ *
++ * It is only the node property_entries that will vary for each platform
++ * supporting different sensor modules.
++ */
++#define NUM_SW_NODES 5
++
++static const struct software_node *ov05c10_nodes[NUM_SW_NODES + 1] = {
++	&camera_node,
++	&ports,
++	&port_node,
++	&endpoint_node,
++	&remote_ep_isp_node,
++	NULL
++};
++
++static const struct acpi_device_id amdisp_sensor_ids[] = {
++	{ AMDISP_OV05C10_HID },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, amdisp_sensor_ids);
++
++static inline bool is_isp_i2c_adapter(struct i2c_adapter *adap)
++{
++	return !strcmp(adap->owner->name, "i2c_designware_amdisp");
++}
++
++static void instantiate_isp_i2c_client(struct amdisp_platform *ov05c10, struct i2c_adapter *adap)
++{
++	struct i2c_board_info *info = &ov05c10->board_info;
++	struct i2c_client *i2c_dev;
++
++	if (ov05c10->i2c_dev)
++		return;
++
++	if (!info->addr) {
++		dev_err(&adap->dev, "invalid i2c_addr 0x%x detected\n", info->addr);
++		return;
++	}
++
++	i2c_dev = i2c_new_client_device(adap, info);
++	if (IS_ERR(i2c_dev)) {
++		dev_err(&adap->dev, "error %pe registering isp i2c_client\n", i2c_dev);
++		return;
++	}
++	ov05c10->i2c_dev = i2c_dev;
++}
++
++static int isp_i2c_bus_notify(struct notifier_block *nb,
++			      unsigned long action, void *data)
++{
++	struct amdisp_platform *ov05c10 = container_of(nb, struct amdisp_platform, i2c_nb);
++	struct device *dev = data;
++	struct i2c_client *client;
++	struct i2c_adapter *adap;
++
++	switch (action) {
++	case BUS_NOTIFY_ADD_DEVICE:
++		adap = i2c_verify_adapter(dev);
++		if (!adap)
++			break;
++		if (is_isp_i2c_adapter(adap))
++			instantiate_isp_i2c_client(ov05c10, adap);
++		break;
++	case BUS_NOTIFY_REMOVED_DEVICE:
++		client = i2c_verify_client(dev);
++		if (!client)
++			break;
++		if (ov05c10->i2c_dev == client) {
++			dev_dbg(&client->adapter->dev, "amdisp i2c_client removed\n");
++			ov05c10->i2c_dev = NULL;
++		}
++		break;
++	default:
++		break;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static struct amdisp_platform *prepare_amdisp_platform(struct device *dev)
++{
++	struct amdisp_platform *isp_ov05c10;
++	int ret;
++
++	isp_ov05c10 = devm_kzalloc(dev, sizeof(*isp_ov05c10), GFP_KERNEL);
++	if (!isp_ov05c10)
++		return ERR_PTR(-ENOMEM);
++
++	isp_ov05c10->board_info.dev_name = "ov05c10";
++	strscpy(isp_ov05c10->board_info.type, "ov05c10", I2C_NAME_SIZE);
++	isp_ov05c10->board_info.addr = AMDISP_OV05C10_I2C_ADDR;
++
++	ret = software_node_register_node_group(ov05c10_nodes);
++	if (ret)
++		return ERR_PTR(ret);
++
++	isp_ov05c10->board_info.swnode = ov05c10_nodes[0];
++
++	return isp_ov05c10;
++}
++
++static int try_to_instantiate_i2c_client(struct device *dev, void *data)
++{
++	struct amdisp_platform *ov05c10 = (struct amdisp_platform *)data;
++	struct i2c_adapter *adap = i2c_verify_adapter(dev);
++
++	if (!ov05c10 || !adap)
++		return 0;
++	if (!adap->owner)
++		return 0;
++
++	if (is_isp_i2c_adapter(adap))
++		instantiate_isp_i2c_client(ov05c10, adap);
++
++	return 0;
++}
++
++static int amd_isp_probe(struct platform_device *pdev)
++{
++	struct amdisp_platform *ov05c10;
++	int ret;
++
++	ov05c10 = prepare_amdisp_platform(&pdev->dev);
++	if (IS_ERR(ov05c10))
++		return dev_err_probe(&pdev->dev, PTR_ERR(ov05c10),
++				     "failed to prepare AMD ISP platform fwnode\n");
++
++	ov05c10->i2c_nb.notifier_call = isp_i2c_bus_notify;
++	ret = bus_register_notifier(&i2c_bus_type, &ov05c10->i2c_nb);
++	if (ret)
++		goto error_unregister_sw_node;
++
++	/* check if adapter is already registered and create i2c client instance */
++	i2c_for_each_dev((void *)ov05c10, try_to_instantiate_i2c_client);
++
++	platform_set_drvdata(pdev, ov05c10);
++	return 0;
++
++error_unregister_sw_node:
++	software_node_unregister_node_group(ov05c10_nodes);
++	return ret;
++}
++
++static void amd_isp_remove(struct platform_device *pdev)
++{
++	struct amdisp_platform *ov05c10 = platform_get_drvdata(pdev);
++
++	bus_unregister_notifier(&i2c_bus_type, &ov05c10->i2c_nb);
++	i2c_unregister_device(ov05c10->i2c_dev);
++	software_node_unregister_node_group(ov05c10_nodes);
++}
++
++static struct platform_driver amd_isp_platform_driver = {
++	.driver	= {
++		.name			= AMD_ISP_PLAT_DRV_NAME,
++		.acpi_match_table	= amdisp_sensor_ids,
++	},
++	.probe	= amd_isp_probe,
++	.remove	= amd_isp_remove,
++};
++
++module_platform_driver(amd_isp_platform_driver);
++
++MODULE_AUTHOR("Benjamin Chan <benjamin.chan@amd.com>");
++MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
++MODULE_DESCRIPTION("AMD ISP4 Platform Driver");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
 
 
