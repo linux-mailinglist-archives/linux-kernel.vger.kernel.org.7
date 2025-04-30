@@ -1,95 +1,45 @@
-Return-Path: <linux-kernel+bounces-626827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3156AA47D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BD4AA4813
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352184C55C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE399C3B52
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B87322156D;
-	Wed, 30 Apr 2025 10:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313D8242909;
+	Wed, 30 Apr 2025 10:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mZ5Fv/Wi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AXUgg6dA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mZ5Fv/Wi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AXUgg6dA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BMWbgcZd"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44753221738
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DF623182C;
+	Wed, 30 Apr 2025 10:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746007553; cv=none; b=bEgBFX0wQ/QFaHZ4lgbqvGUPPzXCkzbWKjLppjyMKWh1HOIoS7Si9S5wKoBMRmP2E2JDISEIkZUkSJ8boqVic2sj9vii5fGtX24bHsDxy5tlDUq+7E2+ow9ARyb6xSiPaJL0HXJSghJ4IwbhTqfomAvAa0cVCC6sKzPqeCo+0e8=
+	t=1746008051; cv=none; b=OagNBgWyL8uifX/RpaCkOQksYe8oI/rB9BAySfv1UBMTlT495hAvXkcjQ3ldk+7dRJI3wVv40o2nc/QMDnYzTOmUVTzgpEcGoaBKGC9JI3wjNQJfv6LpQ5DjN/W9ZrQA5igu5Dfzpr6OHzLkKx2FMvHJjet4NVv2KEe4spDc9y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746007553; c=relaxed/simple;
-	bh=PU8u7VACN/AJjKJIar6NdPXdcE6ruW+NxSAqS/1EBv8=;
+	s=arc-20240116; t=1746008051; c=relaxed/simple;
+	bh=PaCgg2vAc9k5TRrwRuFjVVCU1Q2fk54WJFzPegNvgLg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dha0bxull/9xLueoNiVvM8AyguwyuWtWWSKigV/SFL/SLdefgzGU9JCTmEaXrVK5sfhYqQdqliF052OjyKMRaqnbWzeHwzohotxfpchLk+DuNmZ9GpBZAVkZzDogzds9W51jJoHUHWVw3O1IjOBo7zAtxpM8vcL/YUSfIV1Imuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mZ5Fv/Wi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AXUgg6dA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mZ5Fv/Wi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AXUgg6dA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4A35421297;
-	Wed, 30 Apr 2025 10:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746007549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
-	b=mZ5Fv/WizkLn5NQrcxZu/FLmX8MdFpKMB2/SZ/wtUbFUGK/2tfr+ejbshEi0VS25qAVrhw
-	Jr/aJcKXiDqdhCtW7FazUfoq6X2F2L6CO+6ZxSOoWlMzQwW9hKl98zAfdbe+XafoLd4gGI
-	8FMRNOssevnX6TOFPmOa44mL8ZXzvqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746007549;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
-	b=AXUgg6dA2eZI/VUxqCn6CCv2P4mL/A5vhBIQhfCeFvmiADbiR/+r5X8swdJIyEa66qO2pI
-	WilQZ+8X0ltfl7CA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="mZ5Fv/Wi";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=AXUgg6dA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746007549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
-	b=mZ5Fv/WizkLn5NQrcxZu/FLmX8MdFpKMB2/SZ/wtUbFUGK/2tfr+ejbshEi0VS25qAVrhw
-	Jr/aJcKXiDqdhCtW7FazUfoq6X2F2L6CO+6ZxSOoWlMzQwW9hKl98zAfdbe+XafoLd4gGI
-	8FMRNOssevnX6TOFPmOa44mL8ZXzvqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746007549;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
-	b=AXUgg6dA2eZI/VUxqCn6CCv2P4mL/A5vhBIQhfCeFvmiADbiR/+r5X8swdJIyEa66qO2pI
-	WilQZ+8X0ltfl7CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D3C8139E7;
-	Wed, 30 Apr 2025 10:05:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IBLQBv31EWhxMAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 30 Apr 2025 10:05:49 +0000
-Message-ID: <ae4b9ac8-d67d-471f-89b9-7eeaf58dd1b8@suse.cz>
-Date: Wed, 30 Apr 2025 12:05:48 +0200
+	 In-Reply-To:Content-Type; b=OYDXC/xiKej/AeEeRfY2dcYCZiT9xubwQU44aGZYpKEzHHRVSALuihhrFy9fD3ikdBIr+525dokm5c8dxWDOg74prFUDZCdg28sOM1Y6A9dmXxV1w+uekqsg3F3rKIWG+3jHROVVY8+KEGpaII9aKdCaes+poC9CoFYKTLyMnWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BMWbgcZd; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1746008045; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=tnaZo9CZLXwjFdzNHeDmajP6DfeNAKKtcPjJNOWWJaw=;
+	b=BMWbgcZdTgHE+8VfLA94rvVzj4ObS3hAf0cEDOssfmjNtz8w8l5dB7qGoK9zsTryaINKIuLZTD+i09zEF7QOj2o0XQ40ZBxxQlAwjET3J5FgUHdtl6mx45ApzHqou1TG6ebkfmBIj2QMz6cYKL0JLR9rawqrfoxzYGXMSUTHqNE=
+Received: from 30.74.146.9(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WYoKPbi_1746007720 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 30 Apr 2025 18:08:41 +0800
+Message-ID: <5feb1d57-e069-4469-9751-af4fb067e858@linux.alibaba.com>
+Date: Wed, 30 Apr 2025 18:08:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,144 +47,234 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memcg: multi-memcg percpu charge cache
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Soheil Hassas Yeganeh
- <soheil@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>, Hugh Dickins <hughd@google.com>
-References: <20250416180229.2902751-1-shakeel.butt@linux.dev>
- <as5cdsm4lraxupg3t6onep2ixql72za25hvd4x334dsoyo4apr@zyzl4vkuevuv>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <as5cdsm4lraxupg3t6onep2ixql72za25hvd4x334dsoyo4apr@zyzl4vkuevuv>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v5 06/12] khugepaged: introduce khugepaged_scan_bitmap for
+ mTHP support
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
+ baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
+ peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
+ usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
+ cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com
+References: <20250428181218.85925-1-npache@redhat.com>
+ <20250428181218.85925-7-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250428181218.85925-7-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4A35421297
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 4/25/25 22:18, Shakeel Butt wrote:
-> Hi Andrew,
+
+
+On 2025/4/29 02:12, Nico Pache wrote:
+> khugepaged scans anons PMD ranges for potential collapse to a hugepage.
+> To add mTHP support we use this scan to instead record chunks of utilized
+> sections of the PMD.
 > 
-> Another fix for this patch. Basically simplification of refill_stock and
-> avoiding multiple cached entries of a memcg.
+> khugepaged_scan_bitmap uses a stack struct to recursively scan a bitmap
+> that represents chunks of utilized regions. We can then determine what
+> mTHP size fits best and in the following patch, we set this bitmap while
+> scanning the anon PMD.
 > 
-> From 6f6f7736799ad8ca5fee48eca7b7038f6c9bb5b9 Mon Sep 17 00:00:00 2001
-> From: Shakeel Butt <shakeel.butt@linux.dev>
-> Date: Fri, 25 Apr 2025 13:10:43 -0700
-> Subject: [PATCH] memcg: multi-memcg percpu charge cache - fix 2
+> max_ptes_none is used as a scale to determine how "full" an order must
+> be before being considered for collapse.
 > 
-> Simplify refill_stock by avoiding goto and doing the operations inline
-> and make sure the given memcg is not cached multiple times.
+> When attempting to collapse an order that has its order set to "always"
+> lets always collapse to that order in a greedy manner without
+> considering the number of bits set.
 > 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-
-It seems to me you could simplify further based on how cached/nr_pages
-arrays are filled from 0 to higher index and thus if you see a NULL it means
-all higher indices are also NULL. At least I don't think there's ever a
-drain_stock() that would "punch a NULL" in the middle? When it's done in
-refill_stock() for the random index, it's immediately reused.
-
-Of course if that invariant was made official and relied upon, it would need
-to be documented and care taken not to break it.
-
-But then I think:
-- refill_stock() could be further simplified
-- loops in consume_stop() and is_drain_needed() could stop on first NULL
-cached[i] encountered.
-
-WDYT?
-
+> Signed-off-by: Nico Pache <npache@redhat.com>
 > ---
->  mm/memcontrol.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
+>   include/linux/khugepaged.h |  4 ++
+>   mm/khugepaged.c            | 94 ++++++++++++++++++++++++++++++++++----
+>   2 files changed, 89 insertions(+), 9 deletions(-)
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 997e2da5d2ca..9dfdbb2fcccc 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1907,7 +1907,8 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
->  	struct mem_cgroup *cached;
->  	uint8_t stock_pages;
->  	unsigned long flags;
-> -	bool evict = true;
-> +	bool success = false;
-> +	int empty_slot = -1;
->  	int i;
->  
->  	/*
-> @@ -1931,26 +1932,28 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
->  
->  	stock = this_cpu_ptr(&memcg_stock);
->  	for (i = 0; i < NR_MEMCG_STOCK; ++i) {
-> -again:
->  		cached = READ_ONCE(stock->cached[i]);
-> -		if (!cached) {
-> -			css_get(&memcg->css);
-> -			WRITE_ONCE(stock->cached[i], memcg);
-> -		}
-> -		if (!cached || memcg == READ_ONCE(stock->cached[i])) {
-> +		if (!cached && empty_slot == -1)
-> +			empty_slot = i;
-> +		if (memcg == READ_ONCE(stock->cached[i])) {
->  			stock_pages = READ_ONCE(stock->nr_pages[i]) + nr_pages;
->  			WRITE_ONCE(stock->nr_pages[i], stock_pages);
->  			if (stock_pages > MEMCG_CHARGE_BATCH)
->  				drain_stock(stock, i);
-> -			evict = false;
-> +			success = true;
->  			break;
->  		}
->  	}
->  
-> -	if (evict) {
-> -		i = get_random_u32_below(NR_MEMCG_STOCK);
-> -		drain_stock(stock, i);
-> -		goto again;
-> +	if (!success) {
-> +		i = empty_slot;
-> +		if (i == -1) {
-> +			i = get_random_u32_below(NR_MEMCG_STOCK);
-> +			drain_stock(stock, i);
-> +		}
-> +		css_get(&memcg->css);
-> +		WRITE_ONCE(stock->cached[i], memcg);
-> +		WRITE_ONCE(stock->nr_pages[i], stock_pages);
->  	}
->  
->  	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
+> diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
+> index 1f46046080f5..18fe6eb5051d 100644
+> --- a/include/linux/khugepaged.h
+> +++ b/include/linux/khugepaged.h
+> @@ -1,6 +1,10 @@
+>   /* SPDX-License-Identifier: GPL-2.0 */
+>   #ifndef _LINUX_KHUGEPAGED_H
+>   #define _LINUX_KHUGEPAGED_H
+> +#define KHUGEPAGED_MIN_MTHP_ORDER	2
 
+Still better to add some comments to explain explicitly why choose 2 as 
+the MIN_MTHP_ORDER.
+
+> +#define KHUGEPAGED_MIN_MTHP_NR	(1<<KHUGEPAGED_MIN_MTHP_ORDER)
+> +#define MAX_MTHP_BITMAP_SIZE  (1 << (ilog2(MAX_PTRS_PER_PTE) - KHUGEPAGED_MIN_MTHP_ORDER))
+> +#define MTHP_BITMAP_SIZE  (1 << (HPAGE_PMD_ORDER - KHUGEPAGED_MIN_MTHP_ORDER))
+>   
+>   extern unsigned int khugepaged_max_ptes_none __read_mostly;
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index e21998a06253..6e67db86409a 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -94,6 +94,11 @@ static DEFINE_READ_MOSTLY_HASHTABLE(mm_slots_hash, MM_SLOTS_HASH_BITS);
+>   
+>   static struct kmem_cache *mm_slot_cache __ro_after_init;
+>   
+> +struct scan_bit_state {
+> +	u8 order;
+> +	u16 offset;
+> +};
+> +
+>   struct collapse_control {
+>   	bool is_khugepaged;
+>   
+> @@ -102,6 +107,18 @@ struct collapse_control {
+>   
+>   	/* nodemask for allocation fallback */
+>   	nodemask_t alloc_nmask;
+> +
+> +	/*
+> +	 * bitmap used to collapse mTHP sizes.
+> +	 * 1bit = order KHUGEPAGED_MIN_MTHP_ORDER mTHP
+> +	 */
+> +	DECLARE_BITMAP(mthp_bitmap, MAX_MTHP_BITMAP_SIZE);
+> +	DECLARE_BITMAP(mthp_bitmap_temp, MAX_MTHP_BITMAP_SIZE);
+> +	struct scan_bit_state mthp_bitmap_stack[MAX_MTHP_BITMAP_SIZE];
+> +};
+> +
+> +struct collapse_control khugepaged_collapse_control = {
+> +	.is_khugepaged = true,
+>   };
+>   
+>   /**
+> @@ -851,10 +868,6 @@ static void khugepaged_alloc_sleep(void)
+>   	remove_wait_queue(&khugepaged_wait, &wait);
+>   }
+>   
+> -struct collapse_control khugepaged_collapse_control = {
+> -	.is_khugepaged = true,
+> -};
+> -
+>   static bool khugepaged_scan_abort(int nid, struct collapse_control *cc)
+>   {
+>   	int i;
+> @@ -1118,7 +1131,8 @@ static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
+>   
+>   static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>   			      int referenced, int unmapped,
+> -			      struct collapse_control *cc)
+> +			      struct collapse_control *cc, bool *mmap_locked,
+> +				  u8 order, u16 offset)
+>   {
+>   	LIST_HEAD(compound_pagelist);
+>   	pmd_t *pmd, _pmd;
+> @@ -1137,8 +1151,12 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>   	 * The allocation can take potentially a long time if it involves
+>   	 * sync compaction, and we do not need to hold the mmap_lock during
+>   	 * that. We will recheck the vma after taking it again in write mode.
+> +	 * If collapsing mTHPs we may have already released the read_lock.
+>   	 */
+> -	mmap_read_unlock(mm);
+> +	if (*mmap_locked) {
+> +		mmap_read_unlock(mm);
+> +		*mmap_locked = false;
+> +	}
+>   
+>   	result = alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
+>   	if (result != SCAN_SUCCEED)
+> @@ -1273,12 +1291,72 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>   out_up_write:
+>   	mmap_write_unlock(mm);
+>   out_nolock:
+> +	*mmap_locked = false;
+>   	if (folio)
+>   		folio_put(folio);
+>   	trace_mm_collapse_huge_page(mm, result == SCAN_SUCCEED, result);
+>   	return result;
+>   }
+>   
+> +// Recursive function to consume the bitmap
+
+Nit: please use '/* Xxxx */' for comments in this patch.
+
+> +static int khugepaged_scan_bitmap(struct mm_struct *mm, unsigned long address,
+> +			int referenced, int unmapped, struct collapse_control *cc,
+> +			bool *mmap_locked, unsigned long enabled_orders)
+> +{
+> +	u8 order, next_order;
+> +	u16 offset, mid_offset;
+> +	int num_chunks;
+> +	int bits_set, threshold_bits;
+> +	int top = -1;
+> +	int collapsed = 0;
+> +	int ret;
+> +	struct scan_bit_state state;
+> +	bool is_pmd_only = (enabled_orders == (1 << HPAGE_PMD_ORDER));
+> +
+> +	cc->mthp_bitmap_stack[++top] = (struct scan_bit_state)
+> +		{ HPAGE_PMD_ORDER - KHUGEPAGED_MIN_MTHP_ORDER, 0 };
+> +
+> +	while (top >= 0) {
+> +		state = cc->mthp_bitmap_stack[top--];
+> +		order = state.order + KHUGEPAGED_MIN_MTHP_ORDER;
+> +		offset = state.offset;
+> +		num_chunks = 1 << (state.order);
+> +		// Skip mTHP orders that are not enabled
+> +		if (!test_bit(order, &enabled_orders))
+> +			goto next;
+> +
+> +		// copy the relavant section to a new bitmap
+> +		bitmap_shift_right(cc->mthp_bitmap_temp, cc->mthp_bitmap, offset,
+> +				  MTHP_BITMAP_SIZE);
+> +
+> +		bits_set = bitmap_weight(cc->mthp_bitmap_temp, num_chunks);
+> +		threshold_bits = (HPAGE_PMD_NR - khugepaged_max_ptes_none - 1)
+> +				>> (HPAGE_PMD_ORDER - state.order);
+> +
+> +		//Check if the region is "almost full" based on the threshold
+> +		if (bits_set > threshold_bits || is_pmd_only
+> +			|| test_bit(order, &huge_anon_orders_always)) {
+
+When testing this patch, I disabled the PMD-sized THP and enabled 
+64K-sized mTHP, but it still attempts to collapse into a PMD-sized THP 
+(since bits_set > threshold_bits is ture). This doesn't seem reasonable?
+
+> +			ret = collapse_huge_page(mm, address, referenced, unmapped, cc,
+> +					mmap_locked, order, offset * KHUGEPAGED_MIN_MTHP_NR);
+> +			if (ret == SCAN_SUCCEED) {
+> +				collapsed += (1 << order);
+> +				continue;
+> +			}
+> +		}
+> +
+> +next:
+> +		if (state.order > 0) {
+> +			next_order = state.order - 1;
+> +			mid_offset = offset + (num_chunks / 2);
+> +			cc->mthp_bitmap_stack[++top] = (struct scan_bit_state)
+> +				{ next_order, mid_offset };
+> +			cc->mthp_bitmap_stack[++top] = (struct scan_bit_state)
+> +				{ next_order, offset };
+> +			}
+> +	}
+> +	return collapsed;
+> +}
+> +
+>   static int khugepaged_scan_pmd(struct mm_struct *mm,
+>   				   struct vm_area_struct *vma,
+>   				   unsigned long address, bool *mmap_locked,
+> @@ -1445,9 +1523,7 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
+>   	pte_unmap_unlock(pte, ptl);
+>   	if (result == SCAN_SUCCEED) {
+>   		result = collapse_huge_page(mm, address, referenced,
+> -					    unmapped, cc);
+> -		/* collapse_huge_page will return with the mmap_lock released */
+> -		*mmap_locked = false;
+> +					    unmapped, cc, mmap_locked, HPAGE_PMD_ORDER, 0);
+>   	}
+>   out:
+>   	trace_mm_khugepaged_scan_pmd(mm, &folio->page, writable, referenced,
 
