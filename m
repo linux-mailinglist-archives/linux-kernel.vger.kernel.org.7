@@ -1,161 +1,105 @@
-Return-Path: <linux-kernel+bounces-627563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060FBAA52B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F807AA52BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2EDE7B79B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C13874C7CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01171264FA7;
-	Wed, 30 Apr 2025 17:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E05F26562F;
+	Wed, 30 Apr 2025 17:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wEgiSrDm"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4SRzNFE"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A4725F980
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013971DE2B4;
+	Wed, 30 Apr 2025 17:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746034651; cv=none; b=Mv0bE+XbOQOJRa5q3YsDW1nwrg6mbUnEbCY8JcaaKS78EJ4nQZ9WFb2R7vaDVuF4djrs87ixdr78OdfCRyRUJd9O6oaHz6998dtCnXP5ZhnEJy99dwPHMxJSXDGM1pj5RogRdipZs5m7MI76NFBevYjnIzCS3EIKLduteKYm7CI=
+	t=1746034852; cv=none; b=CcACg1xqv1rIXGhwyKeMkkRSarSLZ0Il8gdlchtsbdMOdwwxgXRI2Pqs4e7xAqWWpIOM7iOEsFrS+ZbAMCL1uTq6NGMJZyAjE/thamVikzmDfpue4eegmm9xrXmwUyVi0nzRx0uoI8W9epbtFQWBqK5WfZ6LNqvZexLlRaCFxPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746034651; c=relaxed/simple;
-	bh=OaA5OCQkvQnVP7nf8AXqDZtBH7PFGtrlg3Uojswc5M0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kdKxQNojhV2/K7w32AOesWjOYUs4dCrsAm8OK0w7z9f+yVDFeGWh+1Ov87S6iLDVuZUforFy4fk9RROQNbWJ+gn9L3TBbKoJPnVX8cW9MSrps2Re/uJlZKh+Y0wSw2MDktxcj+PhEqGDAzAt8crpRFFfO/keb3wwi0TNbAIEhJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wEgiSrDm; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3105ef2a08dso486161fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:37:28 -0700 (PDT)
+	s=arc-20240116; t=1746034852; c=relaxed/simple;
+	bh=U4P2tnNseozPuuy/skT7kmujiUB/sLQ43YhfGdq+IVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ssRpvXDxqJJViEKnayJeAYLXCcghEnEziR8FLY/aPHsQJJXoZqzMNizLFkfrraK8wIJXneLoHbSzMqPwyLBqq6kQK8q7MwbI/oz7VP2u4LCLOwm2sjgUdNjhk8evpYfLQ6PoFKL4B5nt1pY908KR0/KrPsIMLFZPnLxYU33nFx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4SRzNFE; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3913d129c1aso121755f8f.0;
+        Wed, 30 Apr 2025 10:40:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746034647; x=1746639447; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B80QHmr+sB5OMT7DkCFdd8/2a+nIvyDwd83EjF1b7wg=;
-        b=wEgiSrDm4PpSIjcw4EnkIIIArFYyjm6Q9haUgNQ/RKw3qhK51kDS61qWy497RzVCua
-         80fVOm38TTTHGnJF8FCvpw3Pjc7Br3IQz30Rr0iivVfXN3ShsRdQxUM0A1e9jzp872yM
-         WciFlw222dUjrrGLh/nLG3GXF5jNzh7DTD30hKTGeMABlJ6SZEwY0rB0CouP5MNEJ0vo
-         a7kSoZ26W54U/U6Jt701vdd7yNzl0a0bapMZxb/chsDgKtWGi5B2NleAwwlv423wjY0N
-         LhCppanyRKWo9jNiK7AWFJA2svGZ6obonekccVTObeR8Jf5Gg37Lbaek1uhu83CHepJd
-         uTuA==
+        d=gmail.com; s=20230601; t=1746034849; x=1746639649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Md9dvw0OrzD5ybuFEtQ1C4p9sLs5X9fR5lPCIeJYTOA=;
+        b=Y4SRzNFEKeQxJb31ALqeNR4Xrl9UBb8ZGKMQ8Y4FS8AmrzYpAWgi+EwCYI6+7sfUmW
+         X0Xk+N3cfSiBaqvF3JPw20ILB2ge0EB64eIDqnLrnt3FUn/1XC+CIKfG3EWzXvXBq2Mp
+         XxRdNG6AhjXSvmkuKavdf7srPmizu6jSxN/+Bnvjhyx52uokhJRCg/+J4a9auTWyDYFV
+         JxDAAbdHOPu3h5DENukqUz8r2e3zDgj807Ff9LV0wJ+FJ3QpjG6GXV3hRtRtpLZyjhps
+         zB9WVUHNonJtNmIw5DkeIOnKIgkpY/8+uMXUnsODlFgn92fjZeeRo5CB0unCDurivmyw
+         JZMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746034647; x=1746639447;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B80QHmr+sB5OMT7DkCFdd8/2a+nIvyDwd83EjF1b7wg=;
-        b=DyRdPfoKGV603ljG3mxKPGkkyQhQL+HNXWzZL6nhCaBiQ33/aa8LNiS+S60oMmQpbA
-         Tksdxro9XxFtW6+C7sDjzpe7wHUw2Dw/NZRF9rOSYYGuroWHysqORMVfZKKfSd6ON5yw
-         M/szU/SWBeoAgV0XebP38C3TwnrQWR8bEF844U+niHHrPNIDYRMnMZrq5GFrX+y0vt9/
-         dHEZoCenK8LRwJ4ayRi8+od6yIo1dlTEj9Mg7sSppIaLDid6kuokavFzh/3Sw11FPveq
-         3pVqFo5zkKrA7OYR3aQ1hfndMGhW3Iuu79dopfGIOU2V7PaDB+5PsFgSKdM7pH3cVneI
-         PRpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc77pDlqRqIRwCZoyu2jcwDP/uxACaa4z3j33NArWRDwyxIUcEzcXrjg79XUW+1C1YiHPYXZzlW/U4wLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXynxt5a7HG9FumoLiMeH0D3OymGAJEyGh48qUmtCPmSAadfY3
-	6N2eC6PpmwNk9qlloSNPXV39Q/v+gc65Og78oji6jgRYFt3f60Chk/mWAAUSpn/5bwxEkaDA9ya
-	SKDpKxmbfNCbOEF1pS8rJZUsLuwbEJBMt+M2ABw==
-X-Gm-Gg: ASbGnculNrJkiTuDrgxvrq35m3gNJroCiOd1QPFUMSwnI8uN02ko4IW9Fj7OxXILeVs
-	5AjetL3edrmwj7e7nba4g6wb3zS6UoeBVtDtpUThRwkxw3H/IIeQ2Xt177Zl9VvTqWF+i7igOq8
-	7ARHVyvUqR4LKiJlXdiEKtYWWu/6TI9pdFiEjyTx4hK72fiqwXUUzrgw==
-X-Google-Smtp-Source: AGHT+IHEUyDS2y73x5UTLVTCAeSkmZ9cGIaS0WUiShuP4klNjjtKcVRhzpqZk/qxLOTTSObt/mVmSixEfyP9TzJHf3w=
-X-Received: by 2002:a05:651c:2112:b0:30b:a185:47d8 with SMTP id
- 38308e7fff4ca-31e69d17438mr13186651fa.4.1746034647109; Wed, 30 Apr 2025
- 10:37:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746034849; x=1746639649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Md9dvw0OrzD5ybuFEtQ1C4p9sLs5X9fR5lPCIeJYTOA=;
+        b=ApwxD9ARAS8Cw9eiPRGyb63Q6zgeV5ChxO5xfUHJ065HYMA8xv29pmBMXJFjv9uzgG
+         wh4o0UvAojGmprB4aSiIRAc+GyQN/BRG0BKM37QTN4lfod5IpUrQZS8lbAPQkZ7qRKz2
+         6qIiIp9nrMhh75IzBM9TbFy3ntDExqrNnUtJkh9k9bpMZOhMv/FVWSD1HLHlQaEKQoYu
+         gAaB2uF5rXlK5l741NEMlI7UtCxZFARzw9H7tcBEyg4IZ5Gz57C0T1gao+CQ8XqIiy8Q
+         amH8ArsOOKBMH+qMivjflH0o19NiOoesjYT5bKOKl5i42TS8WbVTS4wlIXLVlX2wsz2k
+         aXHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpd/Xo+VtJQzs+OK1QhmExpnCBHpPjvjohk29owA2g2ch/Cg0aZY8VHGWK/BoF1ymdZivgX0/2Iuipmg==@vger.kernel.org, AJvYcCXXyJRKx7Q09gG844oyrRoYNA/NcbrUzMPo6xZYT10zFcMicvrDnySh8zv1Yp9Pbu1uykpoNTJe3SbfGC45@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdwMMF4su8tNhhyxDSyahYmv8aPaZjssfHogXFbq3c9RgHwNSz
+	/tWrS3z2xZfzAiBkM4J7B3UBuY8bNTpWqzeHkK/PSARHjzLSh+VS
+X-Gm-Gg: ASbGncvCwklgUvaR5wNFCF2hR7CNbBXukDR4PFO6BI4ceBlG7U8AIuaHMigyhVtC1yW
+	a9e9Jg4N5ghNssU0n2zWqpMw2biQFcojrV6sTV1TBIJSDV77A+7MCM1RXGq0f/dHjvO0noq5LxB
+	nS6gM7UWtYWhxxpK2VgPe6yYCZ3RNaU8wgdI4Nrv9SDDx6ItruWV3OyfIFbhwd5RHWWJpwPV/pU
+	ofoaB9n0cbFClvMaF3c8Efbgw6r7ojOxzdB7CLGvNuDFG218igvME7zGTDvf/xopZ3xT0OxnS8c
+	wnlCn0p69ndmVp7n8kaMzhcuotq2bt/HxSUWBfRCV3Rgt4MyJYcx
+X-Google-Smtp-Source: AGHT+IE7gEG4YDZEOWv5TkTkU5a8rxHnVddvhSHuKMmtC2j/xML135LeYoLkfkfueJoMJWIoy5rUng==
+X-Received: by 2002:a5d:5a46:0:b0:39c:1efb:eec9 with SMTP id ffacd0b85a97d-3a092cf7d0cmr308793f8f.13.1746034849124;
+        Wed, 30 Apr 2025 10:40:49 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:7d1e:a9b9:e7a2:cc4c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca5473sm17765934f8f.31.2025.04.30.10.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 10:40:48 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: ping.cheng@wacom.com,
+	jason.gerecke@wacom.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qasim Ijaz <qasdev00@gmail.com>
+Subject: [PATCH 0/3] HID: wacom: fix resource cleanup issues
+Date: Wed, 30 Apr 2025 18:39:08 +0100
+Message-Id: <20250430173911.84705-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
- <20250408-gpiochip-set-rv-powerpc-v1-2-73dc1ebc6ef1@linaro.org> <4a6e8ac1-b4e8-49e1-bc8a-d1854985bb31@csgroup.eu>
-In-Reply-To: <4a6e8ac1-b4e8-49e1-bc8a-d1854985bb31@csgroup.eu>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 30 Apr 2025 19:37:14 +0200
-X-Gm-Features: ATxdqUEh34Gz1POqWO9v2IKaGBTgS6zz7pi2s7vMr2oV8EN8tMuslc97xocJ6hQ
-Message-ID: <CAMRc=MesdgXAivzDnm1RW-jcxs_5goZiyKvK0-JLwqDv=9F6LQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] powerpc: 83xx/gpio: use new line value setter callbacks
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Anatolij Gustschin <agust@denx.de>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 30, 2025 at 7:33=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
->
->
-> Le 08/04/2025 =C3=A0 09:21, Bartosz Golaszewski a =C3=A9crit :
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > struct gpio_chip now has callbacks for setting line values that return
-> > an integer, allowing to indicate failures. Convert the driver to using
-> > them.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >   arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 6 ++++--
-> >   1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c b/arch/powe=
-rpc/platforms/83xx/mcu_mpc8349emitx.c
-> > index 4d8fa9ed1a67..d4ba6dbb86b2 100644
-> > --- a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> > +++ b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> > @@ -92,7 +92,7 @@ static void mcu_power_off(void)
-> >       mutex_unlock(&mcu->lock);
-> >   }
-> >
-> > -static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int =
-val)
-> > +static int mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int v=
-al)
-> >   {
-> >       struct mcu *mcu =3D gpiochip_get_data(gc);
-> >       u8 bit =3D 1 << (4 + gpio);
-> > @@ -105,6 +105,8 @@ static void mcu_gpio_set(struct gpio_chip *gc, unsi=
-gned int gpio, int val)
-> >
-> >       i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL, mcu->reg_ctr=
-l);
-> >       mutex_unlock(&mcu->lock);
-> > +
-> > +     return 0;
->
-> i2c_smbus_write_byte_data() can fail, why not return the value returned
-> by i2c_smbus_write_byte_data() ?
->
+Fix a few resource cleanup issues.
 
-The calls to i2c_smbus_write_byte_data() in this driver are
-universally not checked. I cannot test it and wasn't sure if that's on
-purpose so I decided to stay safe. Someone who has access to this
-platform could potentially fix it across the file.
+Qasim Ijaz (3):
+  fix memory leak on kobject creation failure
+  fix memory leak on sysfs attribute creation failure
+  fix kobject reference count leak
 
-Bartosz
+ drivers/hid/wacom_sys.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> >   }
-> >
-> >   static int mcu_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, =
-int val)
-> > @@ -123,7 +125,7 @@ static int mcu_gpiochip_add(struct mcu *mcu)
-> >       gc->can_sleep =3D 1;
-> >       gc->ngpio =3D MCU_NUM_GPIO;
-> >       gc->base =3D -1;
-> > -     gc->set =3D mcu_gpio_set;
-> > +     gc->set_rv =3D mcu_gpio_set;
-> >       gc->direction_output =3D mcu_gpio_dir_out;
-> >       gc->parent =3D dev;
-> >
-> >
->
+-- 
+2.39.5
+
 
