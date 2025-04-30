@@ -1,92 +1,96 @@
-Return-Path: <linux-kernel+bounces-627642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F748AA5356
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3957FAA5382
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E356C4C1A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:11:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98D71BC864C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83AB26563C;
-	Wed, 30 Apr 2025 18:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D8C266F01;
+	Wed, 30 Apr 2025 18:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVnKCqxz"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="hrnPfHha"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A241625E459
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606592882CD
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746036665; cv=none; b=NRuqmjE0jo7P/wmZALACLXbbkynhRIn5uriImVobz3bqCfgN91MX9GvMo3PQBR/RKfqssiRz3US+i3tGEexUFHuScighYxppMMnH3ATuvvweLMM/Oj2Ctwvgv0n1/cCaB8I01xDHcFgPDWqaZPbU9FoP2sbJu6GZ8M11qsJMXNU=
+	t=1746036691; cv=none; b=CuzQrhO/dumx1WT2mv6OBsR5M2vRppDJLKO8tUaSIieRPjVPSalOggLb2vUdr2GKvnswvsUH0+LBb9XajeF5MNQRxf9bw1bVgGhJyEpe0OBuLnx9LF8EP/MtpJxz2D237/LduzGiH8A6W8jFeSFiR4fGAyZpFHG0vsG4OvfX+Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746036665; c=relaxed/simple;
-	bh=tOQlNTP1RqbOsNTRy4G8zcVvFccJipJHU0Bp1l+fieo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cgwPvgXw1VITOveiVkPxsl3Ko1UX0z1J7XhAzrzsJbaeyO3x9Higl9q0ut03n0EC7VpUHy2UJS5wvl2sX75bGT0PCT94HNRr7OAbn7grkJkUmzhw//pzZ1lCaCOgpLA/emKxy+vN+LRsWa9PryKrvxG7v7rITgtf6e1lz6+/P1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVnKCqxz; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736c277331eso1328943b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:03 -0700 (PDT)
+	s=arc-20240116; t=1746036691; c=relaxed/simple;
+	bh=iirzwEeYoxznZHJe7vcY27yiljb3AwlzwC5WRq52rLc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D85e0f9TolVXLsuygR92HPh9MOCn1BVZ1mweJefTQhey19JGNHlGsrE+Igjcehf6V7Qomo9ndf5caw6M9Se8+UNbQ+mdJ39BI4J2FNEwTXbB7miGOMwwPS0aoD/kuRl4EF0a/gHuyKG4tl7A5tVOXkUYKjdn2DMb+K9YtF/BMTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=hrnPfHha; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4775ce8a4b0so3085271cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746036663; x=1746641463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BFR7AoJacqW7HaZwiZ98V1thSCcTnJzoeJlhOpgrdoc=;
-        b=PVnKCqxzIfG/dWwUZYih25S3PHWQKtw8BZsSRMBv26nxhx0/injVKD7dZu3S/1m0IJ
-         K6pjXaEKW8Tzo7gOgQzrm4xDy2QupfpH27Wjtv11ouMqTKwm5QTxr6pO/6knrDu4oEG1
-         RxuL7cowLUIWBR5F1Wi6XT5d+4VsM9m/jzXJ32jp/12vFxW/rOLBF7uet6uuP92Hmuap
-         TB+KKEB5xjwK0lBJm2FauR+wrxz8iZ80MqKDomlTq3BGVjFHsYFSN54vZZsc8uF7KiMr
-         PqXLz0DJlKzGm0y0IGxmo4SKBoHxIygLp2onbWbozHoMXJCLWApPS9ds42HeHox5t/vt
-         JMOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746036663; x=1746641463;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=gourry.net; s=google; t=1746036688; x=1746641488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BFR7AoJacqW7HaZwiZ98V1thSCcTnJzoeJlhOpgrdoc=;
-        b=i8xn/6VsoFAqlIzbUuYYNqvgCOkDrGi9IXOTNZEXo6kNC7xJWVAXQFYOSlBIbyAMn5
-         m+rFvNHFKh34kNDQxHhU5V8nifbl8Kz2Chm6qfNIha6VIeQRP+vTo4Gzyrdb2dYHWJBv
-         0ZQ9/zBH4+J/G6mwQQ3cgxrm6UrcL94McOxcy/CvqGa/93+1K+XjUiifns1q/StOMUaP
-         DxWFRFGwh6XmmHCn39IM4oIghjxsVKWVKOBqulTjQMFUqumJ2+KTn0RkjwNzUhn30gTx
-         cN4db2r44PXPkmG8KxmhKqUTUV+V+34DiUFvSNs24PzMB1ifvMWlUWfUKsIeDTJKQQIu
-         owcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAZBtYNx4Z211dNLuXr53YFvxk03e3S2wqcT5z1MMD1MW4fhTBrAZMImmwOaAmXm2vQ0YFIMXlXlM7vgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypIeikWYKqzDF9Jy7t8ziXyfMXW9uvYEFdIorWOquOn9/paZ7K
-	F4Lj73HZ32p6ppbIojNCKGBoYsnn+6MtEZqJuiceHQ5VrzEER3ba
-X-Gm-Gg: ASbGncs0GuiPZoiPH/Ez3lzvXVjefGpKeKLq4GpeMpCgl9lDP2o74OL2K0S9Ry0mmg0
-	sZKmewASiWf5Mb7QpbfIg/6BEUfoPI8lpXYhbVxMEfxJqMI/Yr5AQYwrsD1F92K6O9ShPF9KiKf
-	9m05+Cdd1Vtj0YD/kRiXiMaQUAU+8U5FLAd5UPnLrfbjYIS/Elp36LhikwIiI3uBNZ5/HweA9D6
-	iHY0b44OjSv4x85FXMsx31sYihGu2Yyv7tAhvwCl6zFlgTPLZwmPyoWs0djwSfkJubGbCo+pQk7
-	mQWXVPIfbiMlKTWggzOcqxkoSn54IWyJb3dWNU7oNHAo3D1jjCE4luEJ3n4K4g==
-X-Google-Smtp-Source: AGHT+IGNWoQRjjYwV+5Fgmq5l0irQkbd37wxK1tufot32watwCeXNfCMZBa34D0poHbU92Yq+iX/3g==
-X-Received: by 2002:a05:6a21:6da5:b0:1f3:3864:bbe0 with SMTP id adf61e73a8af0-20b9734f2d1mr559643637.8.1746036662637;
-        Wed, 30 Apr 2025 11:11:02 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([106.37.122.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.10.58
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 30 Apr 2025 11:11:02 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hugh Dickins <hughd@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
+        bh=A39YiB1Z+l6GCsVmrhqArPxiVLmwBB2VQEqP9tXT4Ig=;
+        b=hrnPfHhaQAzbrxbEaJMbYQ9nSMkwK3qabvTrVWPR51RX9eV6xdN4LMIrJNXRu3aLd+
+         R/lU/gXZceDxMVeebN9N0tpY6DyD92BBpzVIuAP61GPU+efI/QzI8VkZpZCv/AP3Lh5b
+         OM3n4RituY+VnxqBZDUgD3jEamKW54F8pMzMd6PIhVonpvEhqb7AZJisAsnaLVJowC0Q
+         l3OmCs0rkOV1GZo13/lJCLsdNbJ9RRJlLNlsc0PhUq98X9gx/AdFV2xYiolpTdW/l3bf
+         V2itiyeNxsAwbWhgNPTSJ15yN7myDiwjkpgYLzCXsyOpQ1oq9cUuzogUaAi4y9HUfOUb
+         9DqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746036688; x=1746641488;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A39YiB1Z+l6GCsVmrhqArPxiVLmwBB2VQEqP9tXT4Ig=;
+        b=uVvL1y/1V3JIn79G88+7BtHTSOiVny8Pt7o+luXuGd7IS5cvYlL6POrEmEQ26fMnrZ
+         l9nxTXkvugNBAbSN0sWdi4dtELwovilbV7ZRuyURtVzcXRE7fYvOrap2KJVzgH8gJv3v
+         4J5dyRy2vnfbfsDhkhL+itQ+R/U4H2tWadTFfaGBS1vfz0JupfVDHzSIOBl0KAfEp17m
+         zsKTumedUscqSWVcQSGbY894fT0Z+VLdZ3Tck50IIiQWSI6fkN5taYfYIjxXtuP5SHF0
+         YvRdlTc0lodpU6pT2mIsH3xTF3L04x2zKar0wZiokVOAjPa9qSVGg24rd1K+S3QwDmTc
+         8EkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtpsbuk7pWSCc5l3Fdp/OwrdFLwOGBEj59WF+4rdftAlNaC2VLzNLAWumoTS40m6s5B58U5xiZf4jF8hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLVH/V1GUAh31fMp7zF5wjD5IZoWYxW0JHmcMdfnoHNQ/y7hKi
+	5FHafJObvHiDrcfQnTrKa0sEf9pd0B6p0mzVi6J93EpTj9M8u9NGlnb5fRRbvPQ=
+X-Gm-Gg: ASbGncs+Mq37OJbmN0YaW290q1xjpfsi/RmHXvbYcZ2jm8RqjeJNLlDmatQPqbXXCFT
+	cSV7jnq3yml7JXR9D+41dnXChfxXO/rwKv/2gjqgSz8skjM3192n9RIALDJ+Dc01NV8Cs4NqMdO
+	qLW2hQQUTgW72BsKYJA2hcwIEDUFsoinMWb+WNQ+ZjsvrneLTUIra0ZcGhWfR0mbkwsAxNSkEPd
+	8TTSiKIa0qoM5Y118LtZZief6Jia6POK3n3WHIv8fQaVILhGX+AEWBezFATB/1UQKQBil2I4wak
+	i/lfCxwu5NwnfWBYNO6Adr9aC4ht2tPzDVV0IwIEx4eml1jQTwZijh2qATIoMI+cWv28xTnI+HA
+	5h/X5TK+Lh4lPCNKohZiFE7Sofg12
+X-Google-Smtp-Source: AGHT+IEjj5fRlO+G4AeYsj9CnMTHgu74PV6/AnY9a7Hyw1zOc1l/ean48c9t9b0uKuyRkKfZm4P+pg==
+X-Received: by 2002:a05:622a:4a17:b0:477:644a:72ec with SMTP id d75a77b69052e-48ae7a20044mr4433871cf.13.1746036688396;
+        Wed, 30 Apr 2025 11:11:28 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-48a64fe04efsm5897421cf.19.2025.04.30.11.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 11:11:28 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: linux-cxl@vger.kernel.org
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v3 0/6] mm, swap: clean up swap cache mapping helper
-Date: Thu,  1 May 2025 02:10:46 +0800
-Message-ID: <20250430181052.55698-1-ryncsn@gmail.com>
+	kernel-team@meta.com,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	corbet@lwn.net
+Subject: [RFC PATCH v2 16/18] cxl: docs/allocation/tiering
+Date: Wed, 30 Apr 2025 14:10:46 -0400
+Message-ID: <20250430181048.1197475-17-gourry@gourry.net>
 X-Mailer: git-send-email 2.49.0
-Reply-To: Kairui Song <kasong@tencent.com>
+In-Reply-To: <20250430181048.1197475-1-gourry@gourry.net>
+References: <20250430181048.1197475-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,52 +99,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kairui Song <kasong@tencent.com>
+Carve out a space for folks to explain existing tiering mechanisms
+and how CXL capacity interacts with it.
 
-This series removes usage of folio_index usage in fs/, and remove swap
-cache checking in folio_contains.
-
-Currently, the swap cache is already no longer directly exposed to fs,
-and swap cache will be more different from page cache. Clean up the
-helpers first to simplify the code and eliminate the helpers used for
-resolving circular header dependency issue between filemap and swap
-headers, and prepare for further changes.
-
+Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
+ .../driver-api/cxl/allocation/tiering.rst     | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 Documentation/driver-api/cxl/allocation/tiering.rst
 
-V1: https://lore.kernel.org/linux-mm/20250427185908.90450-1-ryncsn@gmail.com/
-Changes:
-- Collect Reviewed-by.
-- Fix a build bot error.
-- Slightly update commit messages to cover a few review concerns.
-
-V2: https://lore.kernel.org/linux-mm/20250429114949.41124-1-ryncsn@gmail.com/
-Changes:
-- Collect Acked-by.
-- VM_BUG_ON to VM_WARN_ON and minor code style update.
-
-Kairui Song (6):
-  fuse: drop usage of folio_index
-  btrfs: drop usage of folio_index
-  f2fs: drop usage of folio_index
-  filemap: do not use folio_contains for swap cache folios
-  mm: move folio_index to mm/swap.h and remove no longer needed helper
-  mm, swap: remove no longer used swap mapping helper
-
- fs/btrfs/extent_io.c    |  2 +-
- fs/f2fs/data.c          |  4 ++--
- fs/f2fs/inline.c        |  4 ++--
- fs/f2fs/super.c         |  2 +-
- fs/fuse/file.c          |  4 ++--
- include/linux/pagemap.h | 29 ++++-------------------------
- mm/gup.c                |  1 +
- mm/memfd.c              |  1 +
- mm/migrate.c            |  1 +
- mm/page-writeback.c     |  1 +
- mm/swap.h               | 18 ++++++++++++++++++
- mm/swapfile.c           | 15 ---------------
- 12 files changed, 34 insertions(+), 48 deletions(-)
-
+diff --git a/Documentation/driver-api/cxl/allocation/tiering.rst b/Documentation/driver-api/cxl/allocation/tiering.rst
+new file mode 100644
+index 000000000000..623bb23088be
+--- /dev/null
++++ b/Documentation/driver-api/cxl/allocation/tiering.rst
+@@ -0,0 +1,31 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++==============
++Memory Tiering
++==============
++
++todo
++
++Memory Tiers
++============
++
++todo
++
++
++Transparent Page Placement
++==========================
++
++todo
++
++Data Access MONitor
++===================
++
++to be updated
++
++References
++----------
++
++- `Self-tuned Memory Tiering RFC prototype and its evaluation <https://lore.kernel.org/all/20250320053937.57734-1-sj@kernel.org/>`_
++- `SK Hynix HMSDK Capacity Expansion <https://github.com/skhynix/hmsdk/wiki/Capacity-Expansion>`_
++- `kernel documentation <https://origin.kernel.org/doc/html/latest/mm/damon/>`_
++- `project website <https://damonitor.github.io/>`_
 -- 
 2.49.0
 
