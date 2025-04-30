@@ -1,184 +1,155 @@
-Return-Path: <linux-kernel+bounces-627237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4096AA4DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:41:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6656AAA4DC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E42E7A45CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9921C02835
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5025A2CB;
-	Wed, 30 Apr 2025 13:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03B625D211;
+	Wed, 30 Apr 2025 13:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHRuArQ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YacOySgS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048EC25A630
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4125A2DC
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746020498; cv=none; b=b63l5VRs6DAlfjP5QQIi84xhGRAMlhrMrnU0XIdN0sx/2jeycFCgCDWY9e6WLIEIxUPYRgdK8m9LIkYCxhjYH2rbTnPzluuL2DR27Cdug1otFQDl7BpR+UfLAvgdp5HXqLsZD9rBLFQyLcF86WW9R8IgY3WtkYupwQMShNcipQs=
+	t=1746020699; cv=none; b=m7mffc0oP37EF0a4kqOmxfdxD6cj5B+7G8HGTXlsBL21pUgarsC3f/vEdsYdgoGsZsG29SvDfRG8dNHg9q3kIDiyWEV30GiEPr4kRaAkxv2Z/qwxu7piEYoVOKNIE4keyQF7pGHkT7ac/iLXAL/uSDUxh07oTBBfcFHqIGnHk+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746020498; c=relaxed/simple;
-	bh=QGB2XMZ3b98RyBr6jLE2vhZLG4Sa8QcjzCO41p/5Y4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pd6fYPqgojBdoADx/dbVRP5meP/eOPXrjnyOwRzSMFzvztatsB6hGDteDkCZuUTUK7rsAkkKdjztAL0strAdzGcuO0NEpTbAzZtMcoghgc1jKRMH/QJfxZ1dk4VWydBPHjc7sKcaqSV4W7IqqtacwiYvK0Ur/VZb5Sw092abogM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHRuArQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E162C4CEEC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746020497;
-	bh=QGB2XMZ3b98RyBr6jLE2vhZLG4Sa8QcjzCO41p/5Y4I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AHRuArQ5T5BE3rRZJhwhD/cPLidIj1TxMbH7D5/vjJBepTdkGvJYoB7/lCVwd1kIr
-	 owUAQgMp7M9px6qpkgyIwbLwbi/vviOnrDF/oKyxYsX2W/fHMKOtNDEsWG1qL19kmS
-	 fxYjjv4ESfjxPr01BsbYR+4ZF9g3iQs70vsZpxWKymTbyNWNNeXGMxj4tjoSZjawKb
-	 zM4bQcTXKQBrYWNmtuBJcW5mQJssyUPgce+iZxOtSxmPNghDNyBSBszHYNuG3l9XU5
-	 TaRM0vWnhmWkyRno52COd/9LaydXBKqdr5Ut+qPfG7y74RowB2RHkM/Caxc5MCErhg
-	 PjTj1euHE5JBg==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-acbb48bad09so31616066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 06:41:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDYRhZeQV08MXbLc6utJbhEFemNc2XU0sXbdHKP7oo5Wc4lbgrFCUBtK72A/h9W3X9mnGWNn3E8DFcsBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGf3ACFt/vX5q23xWD3LjCk4UcP1zztN1na+ZIXA2lESCRXmVk
-	mB7+C4oCIy0MNFplJPtWYhcoVktvmvWwMmr0lIbsU78YUz3c/B2xZ+Pr3rCov2lT4RmX+5Z++Ei
-	gKYzwOyc5TfBcwqsQtD3o/hCjh1w=
-X-Google-Smtp-Source: AGHT+IHXUpfOm//QDSYq47hzNiCnbmw36W2KgA2g2eqr94IRM8uWxxPujN7KVzb5HO3fwsM3UXw+m62Dddzlz4IebzE=
-X-Received: by 2002:a17:907:3dac:b0:ac1:f5a4:6da5 with SMTP id
- a640c23a62f3a-acee24b45a6mr243504666b.37.1746020496119; Wed, 30 Apr 2025
- 06:41:36 -0700 (PDT)
+	s=arc-20240116; t=1746020699; c=relaxed/simple;
+	bh=2BkkXXLxgzxzf7kz1s7+UeVJbifgujGYLWM4XRpkZ2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adIu2bLFI8/xFT6x2sv9Dbmbqqm8VBr01mheD3ymrm2XIxdIfS935Nv4h7j60UPvOFD/l5IYDVu3kQrAPGus7M7ZMEF/RELD/gBjKiAiO6NmT20CNlCjLVSP3kzVp5Bfw9PZ6wjMb6eghcZ3ni5Bl/4PHtNiZ4FbWYdvaZqP0zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YacOySgS; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746020697; x=1777556697;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2BkkXXLxgzxzf7kz1s7+UeVJbifgujGYLWM4XRpkZ2Q=;
+  b=YacOySgSf1DPxJ7kxyv5/D/sTu/yUuV7HfvjLBQRmvf/+vPZ79PFIXJ5
+   RRYNCPiqJLBuQbIf8CemoxU1i1fNH5Bkcr+xNpHuYc0Q2Fw34JQOgS+7S
+   7BstARNgvhDFWB4ipZI6v0f/g1TAclTJ+wvFhTd7O4MGQo7ZMwSAixy+9
+   DWdssr8HnOCXkmre61+j4cP51svjcDMnjZc3twWWe523YBHUCGsdnZJQm
+   LZaMU77ZiwQUTp0hcEvaaB3EGCo5lEl8848jvk6GcelZH9Z/crq5nN7hG
+   9ipXu2kALo6s/9q8zm3znxbqNxfEhkXeHsmVtoAwWp7rEmBwdoTF4XsiZ
+   w==;
+X-CSE-ConnectionGUID: Ba2hUmIORXqnIry3gyBsuw==
+X-CSE-MsgGUID: IWxbdFUTT6aJOIbIUQzqoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="47563252"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="47563252"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 06:44:56 -0700
+X-CSE-ConnectionGUID: aUbIapIhRh2FojMYdjJSkw==
+X-CSE-MsgGUID: aYBXuvakQm+vbq/sgnuG6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="165212060"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO [10.124.223.145]) ([10.124.223.145])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 06:44:55 -0700
+Message-ID: <e8d3fe25-0f97-4edd-abad-dc6b96430965@intel.com>
+Date: Wed, 30 Apr 2025 06:44:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430131516.24287-1-yangtiezhu@loongson.cn>
-In-Reply-To: <20250430131516.24287-1-yangtiezhu@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 30 Apr 2025 21:41:24 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4VpYVEhwnhh4s083FuNsfEhGwrYxtceFDKD_imnBBrjw@mail.gmail.com>
-X-Gm-Features: ATxdqUGbaEYKmGnm9DyQj8rMCXaC6pz5JAVISdlfNXN9k8Z8IHGlk_nwdRPQh3M
-Message-ID: <CAAhV-H4VpYVEhwnhh4s083FuNsfEhGwrYxtceFDKD_imnBBrjw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Enable some configs in loongson3_defconfig
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2 PATCH] x86/tdx: add VIRT_CPUID2 virtualization if REDUCE_VE
+ was not successful
+To: Zhiquan Li <zhiquan1.li@intel.com>, Jun Miao <jun.miao@intel.com>,
+ kirill.shutemov@linux.intel.com, dave.hansen@linux.intel.com
+Cc: x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ "Du, Fan" <fan.du@intel.com>
+References: <20250429143114.1724280-1-jun.miao@intel.com>
+ <20250429143114.1724280-2-jun.miao@intel.com>
+ <b138cb84-3a34-40b3-a23d-6ff3708dae6b@intel.com>
+ <a0676c7b-9e6d-4af4-87d5-f822ab247730@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <a0676c7b-9e6d-4af4-87d5-f822ab247730@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Tiezhu,
+On 4/29/25 19:15, Zhiquan Li wrote:
+> On 2025/4/29 22:50, Dave Hansen wrote:
+>> On 4/29/25 07:31, Jun Miao wrote:
+>>> REDUCE_VE can only be enabled if x2APIC_ID has been properly configured
+>>> with unique values for each VCPU.  Check if VMM has provided an activated
+>>> topology configuration first as it is the prerequisite of REDUCE_VE and
+>>> ENUM_TOPOLOGY, so move it to reduce_unnecessary_ve().  The function
+>>> enable_cpu_topology_enumeration() was very little and can be
+>>> integrated into reduce_unnecessary_ve().
+>> Isn't this just working around VMM bugs? Shouldn't we just panic as
+>> quickly as possible so the VMM config gets fixed rather than adding kludges?
+> 
+> Now failed to virtualize these two cases will cause TD VM regression vs
+> legacy VM.  Do you mean the panic will just for the #VE caused by CPUID
+> leaf 0x2? Or both (+ VMM not configure topology) will panic?
 
-When I enable these options:
-CONFIG_FTRACE=3Dy
-CONFIG_FUNCTION_TRACER=3Dy
-CONFIG_FUNCTION_GRAPH_TRACER=3Dy
-CONFIG_DYNAMIC_FTRACE=3Dy
-CONFIG_DYNAMIC_FTRACE_WITH_REGS=3Dy
-CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=3Dy
-CONFIG_DYNAMIC_FTRACE_WITH_ARGS=3Dy
-CONFIG_KPROBES=3Dy
-CONFIG_UPROBES=3Dy
-CONFIG_KPROBE_EVENTS=3Dy
-CONFIG_UPROBE_EVENTS=3Dy
+I'm not really parsing this response. I don't understand what you are
+asking.
 
-Then your above commands will hang (or get a SIGTRAP), which options I
-am missing?
+> Currently the most customer's complaints come from the CPUID leaf 0x2
+> not virtualization, and most of access come from user space.  Is it
+> appropriate for such behavior directly cause a guest kernel panic?
 
-I haven't tried your patches, maybe it works, but I want to know the
-exactly needed options.
-
-Huacai
-
-
-On Wed, Apr 30, 2025 at 9:15=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> This is a small patchset based on 6.15-rc4, each patch is a
-> single logical change to better describe the problem and make
-> it easier to review.
->
-> If the changes make sense, all of them can be squashed into one
-> single patch, I think that would be fine as well, let us see if
-> other people have concern about it.
->
-> By the way, I received many compile-time error reports about tools,
-> most are related with configs, this is the motivation of this series.
->
-> Additionally, I also received one run-time bug report about uprobe,
-> but it works fine on my test environment. If somebody can reproduce
-> it, please let me know, maybe I am missing something.
->
-> 1. How to reproduce
->
-> (1) Compile and install Tongsuo
->
-> git clone https://github.com/Tongsuo-Project/Tongsuo.git
-> cd Tongsuo && ./config --prefix=3D/opt/tongsuo -Wl,-rpath,/opt/tongsuo/li=
-b
-> make && sudo make install
->
-> https://www.tongsuo.net/docs/compilation/source-compilation
->
-> (2) Compile and update kernel
->
-> Apply this series based on 6.15-rc4, then use the loongson3_defconfig,
-> CONFIG_UPROBE_EVENTS is already set.
->
-> (3) Probe "openssl speed sm2"
->
-> cd tools/perf && make
-> sudo ./perf probe -x /usr/lib64/libcrypto.so BN_mod_mul_montgomery
-> sudo ./perf stat -e probe_libcrypto:BN_mod_mul_montgomery /opt/tongsuo/bi=
-n/openssl speed sm2
->
-> 2. My test results
->
-> fedora@linux:~/uprobe.git/tools/perf$ sudo ./perf probe -x /usr/lib64/lib=
-crypto.so BN_mod_mul_montgomery
-> Added new event:
->   probe_libcrypto:BN_mod_mul_montgomery (on BN_mod_mul_montgomery in /usr=
-/lib64/libcrypto.so.3.2.2)
->
-> You can now use it in all perf tools, such as:
->
->         perf record -e probe_libcrypto:BN_mod_mul_montgomery -aR sleep 1
->
-> fedora@linux:~/uprobe.git/tools/perf$ sudo ./perf stat -e probe_libcrypto=
-:BN_mod_mul_montgomery /opt/tongsuo/bin/openssl speed sm2
-> Doing 256 bits sign CurveSM2's for 10s: 7463 256 bits CurveSM2 signs in 1=
-0.00s
-> Doing 256 bits verify CurveSM2's for 10s: 9681 256 bits CurveSM2 verify i=
-n 9.98s
-> ...
->                               sign    verify    sign/s verify/s
->  256 bits SM2 (CurveSM2)   0.0013s   0.0010s    746.3    970.0
->
->  Performance counter stats for '/opt/tongsuo/bin/openssl speed sm2':
->
->                  0      probe_libcrypto:BN_mod_mul_montgomery
->
->       20.007539877 seconds time elapsed
->
->       19.990010000 seconds user
->        0.000000000 seconds sys
->
-> Thanks,
-> Tiezhu
->
-> Tiezhu Yang (5):
->   LoongArch: Clean up loongson3_defconfig
->   LoongArch: Enable tracing infrastructure in defconfig
->   LoongArch: Enable tracing syscalls in defconfig
->   LoongArch: Enable debug information in defconfig
->   LoongArch: Enable kprobe and ftrace in defconfig
->
->  arch/loongarch/configs/loongson3_defconfig | 74 +++++-----------------
->  1 file changed, 16 insertions(+), 58 deletions(-)
->
-> --
-> 2.42.0
->
+If a VMM doesn't properly configure topology properly and allows
+REDUCE_VE, then panic. They obviously got something wrong because that
+configuration doesn't make any sense.
 
