@@ -1,113 +1,146 @@
-Return-Path: <linux-kernel+bounces-626240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B20AA4088
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:24:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC4AAA402D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C20E1BA829F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEE43176E37
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8686613B7AE;
-	Wed, 30 Apr 2025 01:23:56 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525A514F98;
+	Wed, 30 Apr 2025 01:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+h6PquG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646C711CBA;
-	Wed, 30 Apr 2025 01:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1C62DC782;
+	Wed, 30 Apr 2025 01:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745976236; cv=none; b=BNrYHeWV6+G5RNNUBvfmVusyn6X6r3M+2ozWFBAkEc8lw8BBfXOf3CUoy59kZ61aznQ3/tQaYWEdd4INwd4mMkpxv/DBUKMOOVLMGQ3mtFMFSfFPcn5aSuunM/VaZN/Dh/1G1hQ4xcKkQIYZfl3qIdXNk9O4PChgJ3BWIPXuyhM=
+	t=1745975636; cv=none; b=pu7SFnEQYd14XJFAdUSxarLtT56RSFwcIQl9LpZqBqNhR66mfkUDqCVjKqEsecs4JsZIS82YkSDjHoWd1lr6X4jWH1awMwfRI4/CPZPZ1rXuJ9g3Ur10xou9NwS/myZ0TgA5B4GEWI6X8R2IxwtJ2+s0mysJhWL2IzV7rVGfaqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745976236; c=relaxed/simple;
-	bh=maPbk9yPR3i9jJyCAZoyycHZkhZJBBcvgxsV7zpLKM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gKcTz8pvKdEnnflZpk+HAs007C+S4rFTdZpFm3DipSMj8HO7u8MenURNnWfKuA5jw60xCFVO6wNqGXMWdkbgd5ZpjswTnbtDPmzv8p8YtjpOygPIklAuY6Zr9bZvdy7TKDLFityiJGoPw9mFICUAA5Vk6vUrIQEGwSJteZFSVOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZnKFc3vmbz4f3k5s;
-	Wed, 30 Apr 2025 09:23:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7AA591A0AC2;
-	Wed, 30 Apr 2025 09:23:51 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgBHrGCbexFov3rkKw--.18493S7;
-	Wed, 30 Apr 2025 09:23:51 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	wanghaichi0403@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 4/4] ext4: ensure i_size is smaller than maxbytes
-Date: Wed, 30 Apr 2025 09:13:01 +0800
-Message-ID: <20250430011301.1106457-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
-References: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1745975636; c=relaxed/simple;
+	bh=uDFgTBxxrjAiTdB762RD/JEcEdFUMtvx0lbzh//GqVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUK7eycrcExHgScamhkMH9kVRy21+wK13VRuUJd2Ha8KxkE2Jy0M6ZUcH5xZiRjlaEjS6A8XixoOYxssdXRIAF+Zey/3jO1ExCNJTYmnrgBbxfmbIJhypOGGcpSKVAVv0Nb7Y9Pt9u+YvU6Rablyy8oE6Sb6m3lLKYykqM/A4kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+h6PquG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF2EC4CEE3;
+	Wed, 30 Apr 2025 01:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745975636;
+	bh=uDFgTBxxrjAiTdB762RD/JEcEdFUMtvx0lbzh//GqVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N+h6PquG3eFY5ZhOGfQfRS7KEJsRPgZTthi8Ju3c5HYUUF+GdNba+rAln1Zk/+JdE
+	 OrPIDNyr8SHocWhFIC302cl1u5aYmQdAiZarEU18fDUn/bOpqNZwgp9FoSpJs1K3rA
+	 Ec23UUCPAjgjlxMlXi3sM+6xoy0oALdKNtm/SugxuwYEHWCCUeacPEi2qBI8/xt4gE
+	 TVsESWUy23yCX+KM0BABNYBh3mYvxr9D0tb1yXyWIBRLg+xOQEEGEztVkIgxiwH6vZ
+	 EJ6a1EaiFrhSB97GeWzJvLq268KYDd6S/TxT0UpWX12MgABkTMVN4s5aDd+nD6yGbq
+	 VXhYTA6kz9YOQ==
+Date: Tue, 29 Apr 2025 22:13:53 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Joe Mario <jmario@redhat.com>,
+	Stephane Eranian <eranian@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Santosh Shukla <santosh.shukla@amd.com>,
+	Ananth Narayan <ananth.narayan@amd.com>,
+	Sandipan Das <sandipan.das@amd.com>
+Subject: Re: [PATCH v4 4/4] perf test amd ibs: Add sample period unit test
+Message-ID: <aBF5UWrxvYgbnxde@x1>
+References: <20250429035938.1301-1-ravi.bangoria@amd.com>
+ <20250429035938.1301-5-ravi.bangoria@amd.com>
+ <aBE8raTOCVZLfw7J@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHrGCbexFov3rkKw--.18493S7
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrWrCr17CFykCr4fKry3Arb_yoWfXrcEya
-	4Ivr48Gr45X3Z7KrZ5Ar13tr1qkw18Gr15uFyIkr15ury8Za9xCr1kZryIkF1UW3yjgrZ8
-	Zr18XFy7tr1IgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbkkFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUHWlkUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+In-Reply-To: <aBE8raTOCVZLfw7J@x1>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Apr 29, 2025 at 05:55:13PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Apr 29, 2025 at 03:59:38AM +0000, Ravi Bangoria wrote:
+> > IBS Fetch and IBS Op PMUs has various constraints on supported sample
+> > periods. Add perf unit tests to test those.
+> > 
+> > Running it in parallel with other tests causes intermittent failures.
+> > Mark it exclusive to force it to run sequentially. Sample output on a
+> > Zen5 machine:
+> 
+> I've applied the series and will test it now, but found some problems
+> when building in some non-glibc systems, namely the use of PAGE_SIZE,
+> that is used in libc headers, even in glibc, its just that in glibc we
+> happen not to include that header where PAGE_SIZE gets redefined:
+> 
+> ⬢ [acme@toolbx perf-tools-next]$ grep PAGE_SIZE /usr/include/sys/*.h
+> /usr/include/sys/user.h:#define PAGE_SIZE		(1UL << PAGE_SHIFT)
+> /usr/include/sys/user.h:#define PAGE_MASK		(~(PAGE_SIZE-1))
+> /usr/include/sys/user.h:#define NBPG			PAGE_SIZE
+> ⬢ [acme@toolbx perf-tools-next]$
+> 
+> So I folded the following patch, see if it is acceptable and please ack.
+> 
+> Thanks for respining it!
 
-The inode i_size cannot be larger than maxbytes, check it while loading
-inode from the disk.
+Another issue when building with clang on musl:
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+arch/x86/tests/amd-ibs-period.c:81:3: error: no matching function for call to 'memcpy'
+                memcpy(func, insn1, sizeof(insn1));
+                ^~~~~~
+/usr/include/string.h:27:7: note: candidate function not viable: no known conversion from 'int (*)(void)' to 'void *' for 1st argument
+void *memcpy (void *__restrict, const void *__restrict, size_t);
+      ^
+/usr/include/fortify/string.h:40:27: note: candidate function not viable: no known conversion from 'int (*)(void)' to 'void *const' for 1st argument
+_FORTIFY_FN(memcpy) void *memcpy(void * _FORTIFY_POS0 __od,
+                          ^
+arch/x86/tests/amd-ibs-period.c:87:3: error: no matching function for call to 'memcpy'
+                memcpy(func, insn2, sizeof(insn2));
+                ^~~~~~
+/usr/include/string.h:27:7: note: candidate function not viable: no known conversion from 'int (*)(void)' to 'void *' for 1st argument
+void *memcpy (void *__restrict, const void *__restrict, size_t);
+      ^
+/usr/include/fortify/string.h:40:27: note: candidate function not viable: no known conversion from 'int (*)(void)' to 'void *const' for 1st argument
+_FORTIFY_FN(memcpy) void *memcpy(void * _FORTIFY_POS0 __od,
+                          ^
+2 errors generated.
+  CC      /tmp/build/perf/ui/browsers/header.o
+  CC      /tmp/build/perf/arch/x86/util/mem-events.o
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 9f32af1241ff..2bd2a4f4d9d7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4916,7 +4916,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		ei->i_file_acl |=
- 			((__u64)le16_to_cpu(raw_inode->i_file_acl_high)) << 32;
- 	inode->i_size = ext4_isize(sb, raw_inode);
--	if ((size = i_size_read(inode)) < 0) {
-+	size = i_size_read(inode);
-+	if (size < 0 || size > ext4_get_maxbytes(inode)) {
- 		ext4_error_inode(inode, function, line, 0,
- 				 "iget: bad i_size value: %lld", size);
- 		ret = -EFSCORRUPTED;
--- 
-2.46.1
+Adding the patch below cures it, still need to test on a Zen 5 system.
 
+These issues were just in the regression test.
+
+- Arnaldo
+
+diff --git a/tools/perf/arch/x86/tests/amd-ibs-period.c b/tools/perf/arch/x86/tests/amd-ibs-period.c
+index 946b0a377554fb81..a198434da9b5c4a1 100644
+--- a/tools/perf/arch/x86/tests/amd-ibs-period.c
++++ b/tools/perf/arch/x86/tests/amd-ibs-period.c
+@@ -78,13 +78,13 @@ static int dummy_workload_1(unsigned long count)
+ 	else if (count > 10000000)
+ 		count = 10000000;
+ 	while (count--) {
+-		memcpy(func, insn1, sizeof(insn1));
++		memcpy((void *)func, insn1, sizeof(insn1));
+ 		if (func() != 1) {
+ 			pr_debug("ERROR insn1\n");
+ 			ret = -1;
+ 			goto out;
+ 		}
+-		memcpy(func, insn2, sizeof(insn2));
++		memcpy((void *)func, insn2, sizeof(insn2));
+ 		if (func() != 2) {
+ 			pr_debug("ERROR insn2\n");
+ 			ret = -1;
 
