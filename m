@@ -1,123 +1,189 @@
-Return-Path: <linux-kernel+bounces-627785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D885AA551E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:55:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3568AA5520
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AC087BAE8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F7B1BC7F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF6A27A461;
-	Wed, 30 Apr 2025 19:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA4B27A10E;
+	Wed, 30 Apr 2025 19:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NECfirtn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ezpy2rH4"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1FF27A131;
-	Wed, 30 Apr 2025 19:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746042897; cv=none; b=ERrEvSKDiOWtTqDncPLllILZ9UlbhXqiygDhugC1Fi9pFU1QEhJ240qaYHVJgPuRl4JUzom29KtqoiLWbCbAOfqebbxTmUmAmZqLaYbyrXDmrTRH1TIYO43pWe9wB8VY7nCk7rxP8FtGXNSt7aOGwuIU2IBCsTPVZU5yLsCMt7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746042897; c=relaxed/simple;
-	bh=dSPEmE/EXlHRBsIlmlj6nwc9hD/nTdrLc2q6YZiHfkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YPYUOFl38fDPgZ6C3IwdosU3J/wEMASYzf8y0ukUrYcn+mCnj5QKikY9v2IzQqIvgEugW5SvVvVQAJwhryCY8VOTBaaC0vwPDmUoxtP5sGAM8soBX/++VTCqaGORsaD3zJfsOTBrnk52UUTvwlObQvTZdkKxjrRBCW/xKA/W/20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NECfirtn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UHTVLk013348;
-	Wed, 30 Apr 2025 19:54:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A4pvLorfFGud5T+ZsYa/fT8VDlMtMC0szet+PN9pNdI=; b=NECfirtnFYnasGD2
-	y+tRTmkOrf8cM7ULfUWufSZbIQVvV5ruZD+GLExh4z2H27lS9VigpntXk/c1Xisu
-	A032GWWal4RypD1PDY4L4D6L/I26oDkFuupCOR0qHNY4vDhy3xlrJv9Oi9pWz45p
-	SqEqUNngcv0qd707wfJriEpbOFTeVXC0himVNODmqfuBFY8oZOYBaOEgURDiTeCM
-	uCuoTc+yn5d1bc/ctTQVstHSrYN7l5kuuGVxn8hUnFvCqDZmsU8+3+70/9dkTwo0
-	H4PV+hXPjTISuE+fy3jhYb1cnKnLY2+YNKEimWmlUEkJRL+gEDasPwej7Owswrvn
-	op0dyQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6uauejy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 19:54:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53UJshkG017424
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 19:54:43 GMT
-Received: from [10.71.110.123] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Apr
- 2025 12:54:42 -0700
-Message-ID: <264cf3ac-af5f-42d3-bfb4-8ca7dd69d976@quicinc.com>
-Date: Wed, 30 Apr 2025 12:54:41 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958AB2797BA;
+	Wed, 30 Apr 2025 19:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746042950; cv=fail; b=CvoPc6W0QYr905ssbh6b+/VBjnakFxImIIeNmeDRde3Q/M273ZNh2tNfSMtcaDW5rrAoUzATaGi4OjW5IRQOd2LBVQSHuau+Z8VPaRCeqHB5m0YPfg9+zMjZO9iWEWm/mdjb6fu69Aq8JBg95UKts8ZhCdGEwjZtShQeYWNLOVM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746042950; c=relaxed/simple;
+	bh=MPw8SdR8S6AutihhOgWvUlWu/ls0ZQpOa+wvciy1yRY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nosZo37RAlYZR0E+7hlmSk2rQ7s83fgfSTBNh9lb0FEMduywoV5/LLrKkMPlyC3PREJ75TfBJET8gFQk7CBJNODbMhYs+xQos1ZTlDbaaiLT3BWHHKWC2N2XQRSpsv7oXvZj8Sh6WStzLswESJ393TMwTGbM6EGuuVqBnwh9zSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ezpy2rH4; arc=fail smtp.client-ip=40.107.92.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fv7DeOeuP3bxVUUr7k+8MX/hgQReOEeNCNtWx3UMzMPGFdwe1P5XRCsuOGDV/2oi+UdbkN1z2iTTxNOri3iJLoJsoaEP3zWnPaZ0xEL6VZ9DU8nvfoMeZhVU39iXsJbTq+XqKiNTij5DiLrhraoSw0zfOB5elBfAPLEsluPEZ9wiqfW4Y+Wk0xzzQ4jx/uS2zEyYTtcfytAJ19uNCpzLZ78q6HtfJC2rDF++aVtQljEuS9EuKbHMXIE7e6CgOdx46pAK1ZSDwdIpiACYlWdJMZDeWZo4LN5yVPcbkWy0JAU8otVGXwI0gfWDI8+R14vjVLJmV+5XJFV0wFLO7mEdNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zwV1G6bFEuOoq2wzJSRUwdpZSwYrR5Hg3k2a1LOfCY0=;
+ b=HzIrwL3GYBNEaXS9cyKeQ/S8hijK5VahAn9ezaSWHJwvR8B+U4S1Kg0/EAQySr0iKSVWs6aHb/WQ9ZF2PjebQCNfD+J7Aj6Y4LvX26JVARpadnT5PMbLaRjkwkbf6ZZYKmgbE2z5KUk2xc+eofBdwWJdsncFNd+rKJ82VUcJIzZ+fw8RAPbMbu7CXW0ZHwqK8ptcgacL+qdKlGj2hZ6AC8EzKgv5Qfq8zQOahX03z9yckFqKzD8TtNoMRVA4Jz7oDm42IY+yzrUJzcGcc8vUH/ze1+3X4DkaDl3U+MW2iaIHoPnz0zOw6d3dOgERlGW/lqr24JBmjj+ErceMzHHcXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zwV1G6bFEuOoq2wzJSRUwdpZSwYrR5Hg3k2a1LOfCY0=;
+ b=Ezpy2rH48zme3gPt7PDN4tMqELCi3X0qDP0ByAPmJAvHX7SekYCMYjWrlwDaWA737VWZeZ5yyeQMVVILZ3n7QP42MjfBzGSjJ1Fh70tFUBOKk78qcUcZWIRTtG3BzC5BUek7Dfh9bNfeV6dfp7mjwYDqTQ2nprjZTfrRbB1BQyo=
+Received: from BN0PR04CA0182.namprd04.prod.outlook.com (2603:10b6:408:e9::7)
+ by DM6PR12MB4369.namprd12.prod.outlook.com (2603:10b6:5:2a1::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 30 Apr
+ 2025 19:55:42 +0000
+Received: from BN2PEPF0000449F.namprd02.prod.outlook.com
+ (2603:10b6:408:e9:cafe::dd) by BN0PR04CA0182.outlook.office365.com
+ (2603:10b6:408:e9::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.37 via Frontend Transport; Wed,
+ 30 Apr 2025 19:55:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF0000449F.mail.protection.outlook.com (10.167.243.150) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8699.20 via Frontend Transport; Wed, 30 Apr 2025 19:55:42 +0000
+Received: from vijendar-linux.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Apr
+ 2025 14:55:38 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <Sunil-kumar.Dommati@amd.com>,
+	<Basavaraj.Hiregoudar@amd.com>, <venkataprasad.potturu@amd.com>,
+	<Mario.Limonciello@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, "open list:SOUND - SOC LAYER / DYNAMIC AUDIO
+ POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: amd: ps: fix for irq handler return status
+Date: Thu, 1 May 2025 01:24:43 +0530
+Message-ID: <20250430195517.3065308-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] drm/msm: move helper calls to msm_kms.c
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark
-	<robdclark@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
-        Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250413-msm-gpu-split-v1-0-1132f4b616c7@oss.qualcomm.com>
- <20250413-msm-gpu-split-v1-2-1132f4b616c7@oss.qualcomm.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20250413-msm-gpu-split-v1-2-1132f4b616c7@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -Rmao_ZFbYDH_rLYbAiIN8f_HHHpYcvF
-X-Authority-Analysis: v=2.4 cv=KtlN2XWN c=1 sm=1 tr=0 ts=68128004 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=sM5MQWsAIeL3UqYyphAA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: -Rmao_ZFbYDH_rLYbAiIN8f_HHHpYcvF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDE0NCBTYWx0ZWRfX5Cb5oeC3QQXl KSd7nc89KZPDJvM4TogwiCqtNWykEW5/eV2+upBc8XvinbeolwHLyE+L4luMegKO6RuDUubdida 93IxRa7Uq3WsNrRlv5qJITEaH79ELEAfn03n8YL90J+rk8E9nzZbCqvVGMOshFpHmH2Kfh+6Rhp
- DV7HEznvcIDX2LTv75Ez1nXzuOAfmEy43m7i0Kyu9/4UOo4vWGLqvFaZp7WVcPDG/5+GvEjz3+3 YNkJnFg/KJ2JMSg/KdP/aKg8P/rsryGkYyAZnPlKgx+5MRTIiFFbMF0+L9/rMs3TQYqGFc7dfLj isbIAIeAt/vfdWR0KzJwOANnB6myAPHYEs93NiXhegcwCfGw2nVShh3GXd4K3fAACW4FEDG1R/2
- sjKdACAMpVVNWn/inUkwxun88kqXNdj+Hee9eEFGYlCLaB6pZcrIIdfylfMjmpE7LFx+XJ8c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=754 spamscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300144
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449F:EE_|DM6PR12MB4369:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a396ab0-3c2c-429b-99c5-08dd8820fd31
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GdCX7jnqrVeciRZugycF85TFziPtqsczJaSa3LZEdraCEN11/ou/n6nEbOmw?=
+ =?us-ascii?Q?0w4XsIXYOIE2N6ch9CDsbafXXMZ2VhjwKyBQPjL8mcebTbqux8zfkwT52H5I?=
+ =?us-ascii?Q?yetE5ejKQjj+2ziLtwRziMtT5s8WizhcMmjvPTEyGT1Pex8UWrVtRuGjvEZk?=
+ =?us-ascii?Q?znFGFj4CscGqjCj6j42YPvwiphIHKrXEstZ/YfLGGsVdeqtV696iGgrixn2r?=
+ =?us-ascii?Q?mUcQhdc8mMFDB8MsOoUIro65E0Jm9Fgar8eyqh80G2ceZhomA2ndCGQGZGQ7?=
+ =?us-ascii?Q?I030HPqB7i5vP2P62sKk2fXarjE1RkrdRXkwDgZLGDtJWpkGKWVsl5ahoWhW?=
+ =?us-ascii?Q?9UYwhgo4Er/MgvkVKVTlWvK5upRWMl/VrPZlK1n+P2kaqJO/4aQcqXVMFtt/?=
+ =?us-ascii?Q?lqiTNWRzag3P+fnxms8D9Q24svEOie2HfwofsNtAQ75B8BPM8er2iG3AK8Gc?=
+ =?us-ascii?Q?iXiSVcIlltBMgIGDuQIQI3kgStJAIfc4Azny+p2irzrzDlrFk4CTxW2gEi4r?=
+ =?us-ascii?Q?qYNgDP6l8nOpE9mgOzt3yosebAO65Do8BANPV7cvWyqNy3y1GkATygEUpBkk?=
+ =?us-ascii?Q?ryRIOJKD6ASFCHmwirIyCtNK9QVjl75b3kea0n9IhCwnKPMOm6dbH135AJ4d?=
+ =?us-ascii?Q?e4CWnmgDgwUf9puK0QZILQuPZT3lkTV2ZK2Vbz0FiKue6diu934Zkpvk1fiG?=
+ =?us-ascii?Q?fdsyE6r4oXh1wxEu5CluFZvX3wSOrzERPQF5e7deCMWf+UZEYmcqiuTZhX4D?=
+ =?us-ascii?Q?DCmoa/xbjtdwXfkW+gP+cmpSOlfWqUrbBTqEvWitzbBahYkhjYuA7xCLZ4kE?=
+ =?us-ascii?Q?ZFoBBY6t+gCWVOeUXnL6GnMZ1dc+5Au0/CPVGffu8jXfHg20S8XEJ8y7S8ZP?=
+ =?us-ascii?Q?BBGJfY5twPcCONfl616JVcMJNoVOwcg/zj6OX4W7xbwr0PHgM5cWf0lJRK7X?=
+ =?us-ascii?Q?qgu/FdEPldiutMDEXygtmsyIVunqU0osPCWCzBOcqJVHOgVhtpjIVXmp7Pg/?=
+ =?us-ascii?Q?UpfPBAWOkEyS+jDf0q1j56+nCSrv7SehnZjmwOk68Rre49w4qS86egswIFMv?=
+ =?us-ascii?Q?F9m14Vj4b2+oMWwiFxxtXv5alK2Bhxus5gk+VUxVg0mgPNmU3MrnBBxjUA3p?=
+ =?us-ascii?Q?/Xhvk1+im5ZCAOsMIlwWBPFg1TvDk7DxOoEyxuxhp/ihmLe4WSlWeMjptfpK?=
+ =?us-ascii?Q?LlyTft6BcMjVBn1AP1VsEZWzreHGmmIHI6nOxjwg4MIPl3OgxXE5nkG/jxW7?=
+ =?us-ascii?Q?gXE8O8Ih/Kw6/gFHZWpsR4ewtABW+XDq9aOyQRfvBvWZq3aacT57VOoiqkoV?=
+ =?us-ascii?Q?uWOTjUESN8olXVFxZHX3QcfY+d6UHgFrGQjBUAfJGofsP4qXHeH0bOVp31vn?=
+ =?us-ascii?Q?GCcafBObRR4QuHrh2y3vGttBWVac3h1Vm4jjxG4b3Zz4RgGBV6BxWOpnVTS4?=
+ =?us-ascii?Q?n0KhtbFSjZOpcMPNyMysR87yxgzgfmK/xYVgWrdYXznnNl+lKdY/402Ms2F8?=
+ =?us-ascii?Q?w6ndHs7uyqpWfRtHPPM+HsL/ydKjlcLLHwtH?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 19:55:42.4268
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a396ab0-3c2c-429b-99c5-08dd8820fd31
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449F.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4369
 
+If any Soundwire manager interrupt is reported, and wake interrupt
+is not reported, in this scenario irq_flag will be set to zero,
+which results in interrupt handler return status as IRQ_NONE.
 
+Add new irq flag 'wake_irq_flag' check for SoundWire wake interrupt
+handling to fix incorrect irq handling return status.
 
-On 4/13/2025 9:32 AM, Dmitry Baryshkov wrote:
-> Extract two more KMS-related codepieces to msm_kms.c, removing last
-> pieces of KMS code from msm_drv.c.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->   drivers/gpu/drm/msm/msm_drv.c |  9 +++------
->   drivers/gpu/drm/msm/msm_kms.c | 20 ++++++++++++++++++++
->   drivers/gpu/drm/msm/msm_kms.h |  2 ++
->   3 files changed, 25 insertions(+), 6 deletions(-)
-> 
+Fixes: 3898b189079c8 ("ASoC: amd: ps: add soundwire wake interrupt handling")
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+---
+ sound/soc/amd/ps/pci-ps.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+diff --git a/sound/soc/amd/ps/pci-ps.c b/sound/soc/amd/ps/pci-ps.c
+index 8e57f31ef7f7..7936b3173632 100644
+--- a/sound/soc/amd/ps/pci-ps.c
++++ b/sound/soc/amd/ps/pci-ps.c
+@@ -193,6 +193,7 @@ static irqreturn_t acp63_irq_handler(int irq, void *dev_id)
+ 	struct amd_sdw_manager *amd_manager;
+ 	u32 ext_intr_stat, ext_intr_stat1;
+ 	u16 irq_flag = 0;
++	u16 wake_irq_flag = 0;
+ 	u16 sdw_dma_irq_flag = 0;
+ 
+ 	adata = dev_id;
+@@ -231,7 +232,7 @@ static irqreturn_t acp63_irq_handler(int irq, void *dev_id)
+ 	}
+ 
+ 	if (adata->acp_rev >= ACP70_PCI_REV)
+-		irq_flag = check_and_handle_acp70_sdw_wake_irq(adata);
++		wake_irq_flag = check_and_handle_acp70_sdw_wake_irq(adata);
+ 
+ 	if (ext_intr_stat & BIT(PDM_DMA_STAT)) {
+ 		ps_pdm_data = dev_get_drvdata(&adata->pdm_dev->dev);
+@@ -245,7 +246,7 @@ static irqreturn_t acp63_irq_handler(int irq, void *dev_id)
+ 	if (sdw_dma_irq_flag)
+ 		return IRQ_WAKE_THREAD;
+ 
+-	if (irq_flag)
++	if (irq_flag | wake_irq_flag)
+ 		return IRQ_HANDLED;
+ 	else
+ 		return IRQ_NONE;
+-- 
+2.45.2
+
 
