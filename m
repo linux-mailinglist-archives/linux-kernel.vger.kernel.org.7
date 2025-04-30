@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-627724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF77AA543D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:54:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D00AA5442
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324EF4C20BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2119F16D8D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC60B26560A;
-	Wed, 30 Apr 2025 18:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB312265CC8;
+	Wed, 30 Apr 2025 18:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="D2wJB7hP"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfMpuZ2K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27D52DC791
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8B31DFDA5;
+	Wed, 30 Apr 2025 18:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746039277; cv=none; b=JDqkYpB0V7A1D29SxKrQ+0zeBhl8h2bu5e4P7sJX9Wudbw6DbO2/7f9NjC4o4kJbQ8WcdcRHz1iRhJFYpRckQ7kjZIGkOXDSMMsJmojg4g5IP52OmMEU7yOiMjSgMD78eTu9iiYxVv3t9mNub3oxslf+zLM2LiiCovDVSI1hecI=
+	t=1746039374; cv=none; b=B6qjAzvGdTGIcijGmL/SzfMLJblRqRC7+XfvduC81h1tysH6fNfOzZCcC04/WZnW+SAAl1RJK5aLVFHmwzGW7LXUa4/K7xahEhImXuHmzEwZpm3IZWx2PkVpH6EObpROAZipUdIxtpVOfx244nqZb47lAP3r8neXX9rSS+lmYRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746039277; c=relaxed/simple;
-	bh=865Cx2t3kUvgFLSb2R6Pw9pfJWtPTvNHqrmNxnLnDT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mdjoxy1cvqG33zN3nGlu9bFfJ39+XkXsesAYkfe9KxI1wrWdO6Wn7DnRF+/qmLI0EWTxOAO6WWxuyhBv8pJG34zPwtknelrUrdMGwUkeMZa7JNvGGwysKjeOOZ5FrSrlPtgC1BEMqqoZ8baSCX7Px9qtKHK4mp8a98OuVQ07IAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=D2wJB7hP; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-861d7a09c88so5250539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746039274; x=1746644074; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=865Cx2t3kUvgFLSb2R6Pw9pfJWtPTvNHqrmNxnLnDT8=;
-        b=D2wJB7hPvnhW2nOAd8QTcG6IrKcLABrBZDSW/oi0LT0l6ucTbFNd+BzGVhkFpydtvj
-         0iIV4I6ZpybIa/I+ShxTpLgSXsDZX5s6rcmSHLh/lIy72vW4FGucOWEXCPYjKxdx+BVS
-         IRzQylVWxMGXvJditySYJv5yb3LYHmcpobReQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746039274; x=1746644074;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=865Cx2t3kUvgFLSb2R6Pw9pfJWtPTvNHqrmNxnLnDT8=;
-        b=YFKF2A0VbHNQAQPpMJGnTVRe0erawxo3k+U2zX+4ITXJgN7OOBKewCixLrUW8nFauN
-         2WL7eSX4xU8KwJCEZSwiSBfBRcHih2P36MGlePg1VVFSoFpwkkJG7t6391E1L1hgB9Sk
-         95yy4fVSCzBX17mj+4XNWSzaSRoLuOfxAN0ItdYSQNKpopRFB+X09dUxB0sGUPMFUB78
-         CC520h4F/rufNSfDjv+h8u5T1RbWFAgrNZ6zoLyknGIOBxhwj5Cl7z1sDlNnIIyJsepy
-         be6Pko2e/NHBMxRMs2/j925tA1H3vJqXam51i760UUIwG2v/phJteUoebHNNAnonCiqN
-         bupQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJIxWriiDKc6uQWg21FJdJ3S9B9AK3+Goao9ssmfAc3WjbVE+S7mmHLCEozbXJYsijCHx6M94c0JCX0Qw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy28Ag/czhxhRmwzfN+ax/8M3giTi/YPoXRi0xUCTLq3/MQA7/X
-	fvyD49yRL2ifGONDGB0Rs/wGmvtGqd1S5P+FooBpydBHYQxz8mTtJrvai7p6M2o=
-X-Gm-Gg: ASbGncvaz2+IVSupEmY3w6xGZxJ/4dM8NkwXU7zdq5SH2LM6o6QeRHyMv3gkqe0h0qE
-	1wkCoZSB2DdW0Dcyxo8TTQZKUu6FHcIv+iLoXBZ/9mgaN8Xwwbf764gx4esHjT8pSHwzwiAIjU7
-	031K+i8jzoOYbILR0WHN+OFCSj4rhsMzaQDAebh1KI6PMYdaF0r7LwAfL5B7Nh44+h2h+uCEETY
-	/RHSz8RXetfW38ejKepN/BSPlGGGJv+YyW6b/qX+FaU62f/2zluE9rhHP1HmkopRuVbU+gjbBrE
-	1Z+Ma7J88xyx+5n1CHsQrIZvo7lmRbuWCiqO4Po2GSB3+pJhRcBmtG1GOCXBUQ==
-X-Google-Smtp-Source: AGHT+IE9D9dHDIH8+xKtHJUGmzEQO0mhEEj08arKdlDwswO8uWorHYe0lGPtYSS7JWukag+pUyvaug==
-X-Received: by 2002:a05:6602:36ca:b0:861:1ba3:3e50 with SMTP id ca18e2360f4ac-864a2051d04mr59173839f.0.1746039273897;
-        Wed, 30 Apr 2025 11:54:33 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8648c19572bsm81370839f.37.2025.04.30.11.54.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 11:54:33 -0700 (PDT)
-Message-ID: <a0ae3ab9-14e2-4ec4-ac7e-a9ad59955df4@linuxfoundation.org>
-Date: Wed, 30 Apr 2025 12:54:32 -0600
+	s=arc-20240116; t=1746039374; c=relaxed/simple;
+	bh=KeBZqBOT3TzcA4gh+7KvDD9sCKhrBLcUomzdBKW+FUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FitE6VT25KBaw5D5OFia4RRcnr74/JjEssR3XmJBJriojCc8oXXGRbjkgsSYzK95ukiTE8wYxBcWjC1Hk5ggTdigD1nT+9bP6EvLvHo8+r59iN1AA5DJaDl4+H3Cp9M6vWPmmADs36bMp4LFOHCzW83fyB91H/M1SekfpxvG21Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfMpuZ2K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B69C4CEE7;
+	Wed, 30 Apr 2025 18:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746039372;
+	bh=KeBZqBOT3TzcA4gh+7KvDD9sCKhrBLcUomzdBKW+FUw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LfMpuZ2KiT2J+K25zQgy7Knsn5liQBwAFXi/0YV16OeKryjOcvgVZ73DP2vEHtfUd
+	 c549Ony4evs3/aVwbStezDnnjKON9HnDi5A3nhUzacHGjvw/uvGACxhxCKR+7YUCSR
+	 j4cDZ7tsUxwdvsFgvfCFveXHa8G3cI/k7/q50gp6QyvB4Evrv9MAm1fildh2qUWx+t
+	 uYX79u1gUvCjpeiGp1awM4eWDy2XHhkrP/WD3UKA+DnxiUmCjSgkciLraOWyGch4i4
+	 gJ1Zdhs7uzHZOhl/4Qaf5HYsJFQjBUq1QqEL+w2K/c6Jo46uDaGvOSjXW0lRsfjMeD
+	 8HYufAGD9w3nQ==
+Date: Wed, 30 Apr 2025 11:56:09 -0700
+From: Kees Cook <kees@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Petr Mladek <pmladek@suse.com>, Rae Moar <rmoar@google.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Diego Vieira <diego.daniel.professional@gmail.com>,
+	Luis Chamberlain <mcgrof@kernel.org>, llvm@lists.linux.dev,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Mark Brown <broonie@kernel.org>, WangYuli <wangyuli@uniontech.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 2/3] lib/tests: Add randstruct KUnit test
+Message-ID: <202504301154.1A83E92@keescook>
+References: <20250427013604.work.926-kees@kernel.org>
+ <20250427013836.877214-2-kees@kernel.org>
+ <CABVgOSn1Lrkp96tucPniwPkVbpsBvTRZey=mCVDw7xS+Jro_AA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: fix spelling mistakes in HID documentation
-To: Ankit Chauhan <ankitchauhan2065@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org
-References: <20250430062412.54133-1-ankitchauhan2065@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250430062412.54133-1-ankitchauhan2065@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABVgOSn1Lrkp96tucPniwPkVbpsBvTRZey=mCVDw7xS+Jro_AA@mail.gmail.com>
 
-On 4/30/25 00:24, Ankit Chauhan wrote:
-> This commit fixes spelling mistakes in the HID documentation:
+On Tue, Apr 29, 2025 at 03:44:01PM +0800, David Gow wrote:
+> On Sun, 27 Apr 2025 at 09:38, Kees Cook <kees@kernel.org> wrote:
+> >
+> > Perform basic validation about layout randomization and initialization
+> > tracking when using CONFIG_RANDSTRUCT=y. Tested using:
+> >
+> > $ ./tools/testing/kunit/kunit.py run \
+> >         --kconfig_add CONFIG_RANDSTRUCT_FULL=y \
+> >         randstruct
+> > [17:22:30] ================= randstruct (2 subtests) ==================
+> > [17:22:30] [PASSED] randstruct_layout
+> > [17:22:30] [PASSED] randstruct_initializers
+> > [17:22:30] =================== [PASSED] randstruct ====================
+> > [17:22:30] ============================================================
+> > [17:22:30] Testing complete. Ran 2 tests: passed: 2
+> > [17:22:30] Elapsed time: 5.091s total, 0.001s configuring, 4.974s building, 0.086s running
+> >
+> > Adding "--make_option LLVM=1" can be used to test Clang, which also
+> > passes.
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> 
+> This works here for me. I'm a little wary of the prospect of the
+> "unlucky or broken" message making the test fail if we're just
+> unlucky, but it seems unlikely enough that we can deal with it later
+> if it ever becomes a problem.
+> 
+> Acked-by: David Gow <davidgow@google.com>
 
-The change log has to read in imperative mood:
+Thanks!
 
-"Fix spelling mistakes in the HID documentation" is the right
-phrasing.
+Yeah, I wonder if it might be an interesting adjustment to the shuffling
+to make sure it isn't a no-op? Like, it would shuffle with the original
+hash, and if it's a no-op, it could permute the hash again, and then try
+again? Hmmm...
 
-Make sure to send the patch to maintainers. You have to send
-the patch to everybody get_maintainer.pl tell you to.
-
-thanks,
--- Shuah
+-- 
+Kees Cook
 
