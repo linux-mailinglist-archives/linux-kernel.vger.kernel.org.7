@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-627584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C85AA52FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:53:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FB3AA52FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF619E3D62
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D781C0756B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05A2266EEA;
-	Wed, 30 Apr 2025 17:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D772E27A112;
+	Wed, 30 Apr 2025 17:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KpWZ1ADK"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XHsQ3Acp"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D97278E53
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A49278E7B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746035470; cv=none; b=eyYS1Jk5HbPL3wJJEYgvGB4OdmoBWa6omCS1jDv9dU9YxdfUMXVckuq91hkGIVtG/V0L3Ben777KBRxqX/TKheB/L6vM0W8WxvA1m1lPERoXoYkI4KkuhzIIiNDL9KIPGYlLyyucRqP/GmoGyqpppgwYmoZo5AUCrT7tQj0Lm6s=
+	t=1746035473; cv=none; b=n+YbHABtXVDYnW4ebfqLYsBo2uwWEvq+odkqGHgP/Pc48fXW97fE3PMCeTJczz/sV9/wKKf97WnAvtuRcTuwaCqmSKjLBtLcwWjre23mhMjEf8XTW5h2YqDMTo5TX0fAXUrjZK4b5K7PnuLHyVyqYFm5fknxPTRzcBR9hpc9Afs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746035470; c=relaxed/simple;
-	bh=7tLf8ZlpDGA58/SmNmZNJE4X51OXHkvdbXoRMSCnQ20=;
+	s=arc-20240116; t=1746035473; c=relaxed/simple;
+	bh=3zq+IDnOKZT0hU1YInek2TZNl0fl0bkC+6BhqcfPYRE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ATis4UnBm2Q3LtJWKhLUgG8heZGnY+onD6f6YcwMbbOPG1Hwqpvep23rLCwlJ1FdGWmYctaMj3C/QPH5AknKnaSvgykk4YstbIYXaSn5LN09iNViXn2BlcrI5rX7vPt1cpaov7j0JXjQnfJVxwOOrsKNFyzkab+QrpzTLC7OKxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KpWZ1ADK; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=mA8mF/LriSShA3faxcyt2nFQk1CzqYFcY9fHnJfQ0mV6oy5OECzZyuX2eCPie+nCzZjbSF+lVTAsES/bk7Ljy3D6Oa3B7o4/bNUY2KheBHuc3EaFgbwpd4dlanLWjzsMnxn4rswiKp3/c5yn9oz3GFRM5WhLccNYvoVIzF7+yJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XHsQ3Acp; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3087a703066so151705a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:51:08 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22650077995so1396825ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746035468; x=1746640268; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1746035470; x=1746640270; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3P3h5pAB5HUVcxM6Pr4S0kZF2+GkLiV5d80YFIKGnY=;
-        b=KpWZ1ADKSCxgNkbaK8HkZcn7YsWQnt4SqwmJfignWWSWcX/TPRIYGUmEuDabpkcws4
-         F3EyGk2u/iV9dyDnE3SceiBUU74zs2jt4WnGKFvb7JQ5ZwbshOfTnbXz8dkMHctnB8t9
-         iWNWNnhsXa3X/QiDhz4C4u3spdEXxNH3IraRC3XU42P782LPLp2q0QP7jVPirUqNy1vf
-         sYmYp+oMU8cfeWXxdX4LeYAojNjXyf5qVbnSOYAiyES+H8+dVfZoxiEJsIF1EaHskDsG
-         767QirhmjWOmbV87k6iQ8EAVzWDCFJsRiBilXTj8qvsZ6vf80Ul8runlK+Z7qM9drZ+S
-         xccg==
+        bh=MH5R01x49/QwgHTF4kBLHXHZXH1w/fu12hpgiU8X9b4=;
+        b=XHsQ3AcpiTb0s3MxaR2bKD2LVx9W2lViT3eRN/1tN58uPi8f0UGmFGgGj+vBwmiCwe
+         L0O7JeNIc5IHSK6Bmhf1BpD9pJn42zuDQ2MXm3cDhUjY6bTK/x6Fxk1ISkwsa1kyl9/A
+         QYdwSsdUqdj2T+AIvufGFqt/uoYqkmn3EhdMrFFcvdN+oNHiZ77NId+qROncbSajXhUs
+         73gpPjkHHSrn7Jf4IsrPIjhcekkKU5643Cj9rOh/lCqs6J+9sOkNZtBbZPywQk4eRwDg
+         jUi+Dn09fIK8qxzvHKQhMa0xhHhCcoR1+WQmLwtrIWc2CW1BXCdiFykZ3odq4ThiBhmc
+         OMqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746035468; x=1746640268;
+        d=1e100.net; s=20230601; t=1746035470; x=1746640270;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3P3h5pAB5HUVcxM6Pr4S0kZF2+GkLiV5d80YFIKGnY=;
-        b=ROUg4EKtz0jdf+Hxl+4VmN0Fxg/bDNLSuipC3j6fjAtsbcljJ4C/fCNLwBhImhXD9+
-         E6ACZjuExEXX6YLjOSh+ntQbqlqjrSjtZGRT0thnzyx3n33CNoF16nuqS9nq7u45Bg+W
-         mESM6uhwTHqvgs8MqWy/gG12hcwB9edru/66aa1fUnOf4P2uJUIcoYZXJqogctzxBgtc
-         D0HSeghpKRnt9/LF48qYIHO+qN//ZDTCQwuf+I6Hql7weUTAUegQbeRKRgxCiljvl9wp
-         1DggJ4Af5AwRJWj+7417/oNqLbwzOgcdv48rbYHe/6b2bqkXpF6Sjh/+lIBBRknDBDp3
-         pGKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+weZO87DYuVslVZc9zScT4eBcm/Qy4dveUxYhzjZVaY1JWUbYALCdSNtWOOXv+0H1pHD4hYEc2hR5YQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjMiqRfjeq0pUJrxgk69YEbksxR2XsHKz36HTwgBs48CHmn4Pg
-	yNK1GrTeJQJ2VQuK+p3JSM/2tmdOrhqHq4xL4I5tgUL0rVckT4fkXRclk9+Bcjnd8JMI+ktJxV4
-	tNGOCvg==
-X-Google-Smtp-Source: AGHT+IEo4BpVSTP736KrWVvKElXNGdJEvRja+RffiZep9xfmBDE9bpWvo/gjF9Sok1i5GqMVUn1zEL5vbAu7
-X-Received: from pjbee6.prod.google.com ([2002:a17:90a:fc46:b0:2ff:852c:ceb8])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c888:b0:301:1d9f:4ba2
- with SMTP id 98e67ed59e1d1-30a34450bdcmr5395853a91.28.1746035468058; Wed, 30
- Apr 2025 10:51:08 -0700 (PDT)
-Date: Wed, 30 Apr 2025 10:49:53 -0700
+        bh=MH5R01x49/QwgHTF4kBLHXHZXH1w/fu12hpgiU8X9b4=;
+        b=dlXVV9hNnm7VXN4wEvrhJN3TmmVPz8s1PDadsAz7yyVmW4Ns5lwd5S/dpMeP9HOJib
+         xo3QritpEAMDHKRI0WCo+ok0B6xAHVVQxMP4zoVWelVTb2JQja5WpFJx+Pdd7OhBA0oO
+         97+Ot+3JPLHD/VuPJBRBWZus9fJ5kaEDqa3+YNF3/Eogf0ive5huExOnnbMll32etIpy
+         hreND0vnmh/brGnZJDWicK/bSatFNycdRMf/2HW73dmxMk0ScSsol0y2S5/XZJdPcIiT
+         p5zueaxcGj0cEX3/5A1xkpqQ/wkCUTSbCv1damGgj2Oz90wBMHowH79isC2Mt1epTlzo
+         SKRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCaP6tikITDJ3JBGcVl4bAt1WI8rjTrgaZsjhUZsKFEgUFiF/jFiQySA30x19nH6sahEQIcEnQmDD2qLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJjY9LBqzPpOgSF8wLLcro9ujoFrE7MeK+NCVDl2e6KzlqimOs
+	6DEI+bAv8FI5VqRz9Gw9xM+HRY8I+9IelflRhocAqya0guAEqO/84yw2THBv7AnAJiXGTLIk0rU
+	ATTD0rg==
+X-Google-Smtp-Source: AGHT+IEn60x0bx43W5CWnBKmy0OZf6RSYbimZ3i3xC3fCl6DnVc73ipLr6BDAlwtbtQmzWBsuGzN/W9i5K4j
+X-Received: from plsl18.prod.google.com ([2002:a17:903:2452:b0:225:e051:fe46])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2290:b0:223:517a:d2a3
+ with SMTP id d9443c01a7336-22df34ec0b0mr65059825ad.17.1746035469944; Wed, 30
+ Apr 2025 10:51:09 -0700 (PDT)
+Date: Wed, 30 Apr 2025 10:49:54 -0700
 In-Reply-To: <20250430175036.184610-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250430175036.184610-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-Message-ID: <20250430175036.184610-6-irogers@google.com>
-Subject: [PATCH v2 05/47] arm64: cputype: Silence -Wshorten-64-to-32 warnings
+Message-ID: <20250430175036.184610-7-irogers@google.com>
+Subject: [PATCH v2 06/47] x86/insn: Silence -Wshorten-64-to-32 warnings
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -130,22 +130,22 @@ truncation explicit.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/arch/arm64/include/asm/cputype.h | 2 +-
+ tools/arch/x86/lib/insn.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/arch/arm64/include/asm/cputype.h b/tools/arch/arm64/include/asm/cputype.h
-index 488f8e751349..d7289b9d2758 100644
---- a/tools/arch/arm64/include/asm/cputype.h
-+++ b/tools/arch/arm64/include/asm/cputype.h
-@@ -227,7 +227,7 @@
+diff --git a/tools/arch/x86/lib/insn.c b/tools/arch/x86/lib/insn.c
+index e91d4c4e1c16..5fa8697498fe 100644
+--- a/tools/arch/x86/lib/insn.c
++++ b/tools/arch/x86/lib/insn.c
+@@ -92,7 +92,7 @@ static int __insn_get_emulate_prefix(struct insn *insn,
+ 			goto err_out;
+ 	}
  
- #include <asm/sysreg.h>
+-	insn->emulate_prefix_size = len;
++	insn->emulate_prefix_size = (int)len;
+ 	insn->next_byte += len;
  
--#define read_cpuid(reg)			read_sysreg_s(SYS_ ## reg)
-+#define read_cpuid(reg)			((u32)read_sysreg_s(SYS_ ## reg))
- 
- /*
-  * Represent a range of MIDR values for a given CPU model and a
+ 	return 1;
 -- 
 2.49.0.906.g1f30a19c02-goog
 
