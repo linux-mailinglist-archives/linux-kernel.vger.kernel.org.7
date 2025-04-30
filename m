@@ -1,316 +1,308 @@
-Return-Path: <linux-kernel+bounces-626498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574BEAA43D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 796D2AA43C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CA54C6863
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08AD4C5096
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C372116F6;
-	Wed, 30 Apr 2025 07:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144C61F5828;
+	Wed, 30 Apr 2025 07:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mQeQOqvm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qpBXWR6r"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C88B1F03FB;
-	Wed, 30 Apr 2025 07:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3D1E1DF9
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745997748; cv=none; b=IIEPohCSPwK1S7nTFzFnuW4PD7EKWlQy5dsKLet1wlrhW6QpOaJbEaPZ/CHFwmzUHmmZdMkdAbyk86X0o7/VBvXXe2f6n21b1j0tCD8d5oNYWQOcHhIRLty2+eeczAHSk8y/GEwjY+iTvTkt7dM5sCyzS28wOUHHVx83Qf/t9Ds=
+	t=1745997740; cv=none; b=T0wtsCj6f0y8ky+g6UP1qwDZzlSjBdbUA/5K7wd0FJpalmC3Srlh+YJYOc+VfR1e2Y/jD26+P2hJwXLo34dY/gmzWfQL7ii7S0XE+U2yyYGsOL5VvwNRtMWxDQcpg3p+qx+5KQt7KAJrnjUWPUBqRJTXOYtqU+KuOitnofRWTI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745997748; c=relaxed/simple;
-	bh=ED5M+XMr6sd1ffXjvdC3S9QDusOPxQT1RfvD+UzN0oQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TXqcmmuF31d/tViE/ZYxiKVXi6SaHX+fw4X9/I5mIYdbWim8G3GNQzb7s1Hw+imi7RmWI1ronvUwwdboIV40r7hLyx79H0CE3poMPfVWDMgCKIxyMc7+pzjZVVxu3jB1O5tSG+41YlE2LJlamrul8flPIKzz0IUIjDeKLOCulJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mQeQOqvm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TLaVQ3012269;
-	Wed, 30 Apr 2025 07:22:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cmHbdxz2WTDbW7aj8JbortVTW8La21RceHQfeYKZQZI=; b=mQeQOqvmezMI7H46
-	hODWxKF/GTjlwE+sIf0R1AGKGCndCzLAIe8qRv7cHM2g7WZzdAfy2q/DM5KsnIk2
-	4ekulLiXOL52XpviNIoD8NuRLtEd7/MumEDoyPzYk0DcKQeLQHM1xX6PdrBqbhvA
-	LE29hKGATnIdQGl6k1q/Z9VwjCgoO6UWIkIiBghwX1lMpD69yZzG2pELhiq0PjkP
-	TKV9RvmZWGhVH6IBtWbEGS97onvUhcEod0fJeRqyIs6TapJfkYjGxslQOKpbkE4u
-	KB1CI/oVqbayjIDX9ZXsMjyn7WinaJrOefcK7bf87kdcTKc1yIYzIZrXcQrzAaeC
-	SZbLtA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u3s6bw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 07:22:19 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53U7MIil000538
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 07:22:18 GMT
-Received: from [10.50.41.127] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Apr
- 2025 00:22:09 -0700
-Message-ID: <50f12fea-fbc9-8880-5e34-3d3a49d9ca65@quicinc.com>
-Date: Wed, 30 Apr 2025 12:52:03 +0530
+	s=arc-20240116; t=1745997740; c=relaxed/simple;
+	bh=mzM4vtbuISg4Wb+EOHKPhCgdn+dAEtJGu6Dqv5z7Bo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bJEpQxsWaDUvHSh9ARAxU8zoLwdSSGpqB+z016imUQmdPFP2fgRRaEmyQbq7AM48hYX8NpGojX7RUEUHQwXqa/ve2pO98lqIUTWw0eb9PMf/FFFvEzN9xMMuwjZ6D8MnFCYV+o7kpMwn2YJhgbg/uYhnUy6ayB2LG0yJxczJRSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qpBXWR6r; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f1a917d9-b225-4453-899b-4c8aa531d3a1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745997736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GnwDRkFSU3cnku32BLVBhrZjOy1GqIkDBCu3BBxR2u8=;
+	b=qpBXWR6rpXVjzMOmhaNdn0QDVX38Jlyd5/IFVdjFZMlbV0amPuPZExqqvWUeon6Vax62VV
+	H3L9WXFE/CYJ894jiwT84kY47YDADwTVo7d2ceSsLmf8+t93UBT8BMstlmzPztP4NnW0wt
+	06zqNFSLPryhkWkPnlkyp5MQUYQIpFE=
+Date: Wed, 30 Apr 2025 00:22:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 01/23] media: iris: Skip destroying internal buffer if
- not dequeued
+Subject: Re: [PATCH v2 3/3] KVM: riscv: selftests: Add vector extension tests
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429-kvm_selftest_improve-v2-0-51713f91e04a@rivosinc.com>
+ <20250429-kvm_selftest_improve-v2-3-51713f91e04a@rivosinc.com>
+ <20250430-4790c7c3ea3623243f2d22ac@orel>
 Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stefan Schmidt
-	<stefan.schmidt@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250428-qcom-iris-hevc-vp9-v2-0-3a6013ecb8a5@quicinc.com>
- <20250428-qcom-iris-hevc-vp9-v2-1-3a6013ecb8a5@quicinc.com>
- <dc9b20aecc8740896b2b3e7352b8e0d73d43fed2.camel@collabora.com>
- <32379a29-ab58-95b3-77f9-d1ada61e5359@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <32379a29-ab58-95b3-77f9-d1ada61e5359@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Bv6dwZX5 c=1 sm=1 tr=0 ts=6811cfab cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=5XAp0Sb-NG9feswOWF0A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: oCPAJPRVQu2ogoIyRBQ57nCYQG8G_XyV
-X-Proofpoint-ORIG-GUID: oCPAJPRVQu2ogoIyRBQ57nCYQG8G_XyV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA1MCBTYWx0ZWRfX04guIh6fDqeV dzeTuUbYm2X0O1hCVbXdxTQemnE+sJCYneLW+FsrI3Rv2rtId/SX6tyQSI7WDfUkpryQrEg39ML pr34A7uRlJJELjicGiyg/QWBPaFzHrJO+sRH0EDc7v5u9BDiNkBkAFyFrF2Cz83KsMIFx5Zoe/T
- 9NB05cxqow2Abm7lH0+VdkUjiNP0FXsjVFMZ644nQXd+km0fuIw8Zg0GoKlL3IZnZrInCTIXiSy 6+h0qTjqHIo6gdWLgF9U57bt554tPXnuIpaJzUbVQ1f60vfx1kULXwsaLfTE8n0e11H8HqUWwub 9RDIkBksSdaWCW1RE4hzqxHOoTzpSvoEWZrdqEOGVQTBcTuKT/xXHdfxJphIkQMVMnTTK0+RyID
- 7LUc3RByEV4YwI2q6DxdFPU5/BZ9Ghz3Le16PtmYwCoJ2qxSDvUF4k7ZR3OKNvqlt5Euo/tx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300050
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <20250430-4790c7c3ea3623243f2d22ac@orel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-
-On 4/30/2025 11:08 AM, Dikshita Agarwal wrote:
-> 
-> 
-> On 4/29/2025 6:17 PM, Nicolas Dufresne wrote:
->> Not mine to review, but wanted to highlight some best practices,
+On 4/30/25 12:17 AM, Andrew Jones wrote:
+> On Tue, Apr 29, 2025 at 05:18:47PM -0700, Atish Patra wrote:
+>> Add vector related tests with the ISA extension standard template.
+>> However, the vector registers are bit tricky as the register length is
+>> variable based on vlenb value of the system. That's why the macros are
+>> defined with a default and overidden with actual value at runtime.
 >>
->> comment below...
+>> Reviewed-by: Anup Patel <anup@brainfault.org>
+>> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+>> ---
+>>   tools/testing/selftests/kvm/riscv/get-reg-list.c | 133 +++++++++++++++++++++++
+>>   1 file changed, 133 insertions(+)
 >>
->> Le lundi 28 avril 2025 à 14:58 +0530, Dikshita Agarwal a écrit :
->>> Firmware might hold the DPB buffers for reference in case of sequence
->>> change, so skip destroying buffers for which QUEUED flag is not removed.
->>> Also, make sure that all buffers are released during streamoff.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 73702f45db81 ("media: iris: allocate, initialize and queue internal buffers")
->>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>> ---
->>>  drivers/media/platform/qcom/iris/iris_buffer.c | 37 +++++++++++++++++++++++++-
->>>  drivers/media/platform/qcom/iris/iris_buffer.h |  3 ++-
->>>  drivers/media/platform/qcom/iris/iris_vdec.c   |  4 +--
->>>  drivers/media/platform/qcom/iris/iris_vidc.c   |  6 +++--
->>>  4 files changed, 44 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
->>> index e5c5a564fcb8..606d76b10be2 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
->>> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
->>> @@ -376,7 +376,7 @@ int iris_destroy_internal_buffer(struct iris_inst *inst, struct iris_buffer *buf
->>>  	return 0;
->>>  }
->>>  
->>> -int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane)
->>> +int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane, bool force)
+>> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
+>> index 569f2d67c9b8..814dd981ce0b 100644
+>> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
+>> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
+>> @@ -17,6 +17,15 @@ enum {
+>>   	VCPU_FEATURE_SBI_EXT,
+>>   };
+>>   
+>> +enum {
+>> +	KVM_RISC_V_REG_OFFSET_VSTART = 0,
+>> +	KVM_RISC_V_REG_OFFSET_VL,
+>> +	KVM_RISC_V_REG_OFFSET_VTYPE,
+>> +	KVM_RISC_V_REG_OFFSET_VCSR,
+>> +	KVM_RISC_V_REG_OFFSET_VLENB,
+>> +	KVM_RISC_V_REG_OFFSET_MAX,
+>> +};
+>> +
+>>   static bool isa_ext_cant_disable[KVM_RISCV_ISA_EXT_MAX];
+>>   
+>>   bool filter_reg(__u64 reg)
+>> @@ -143,6 +152,39 @@ bool check_reject_set(int err)
+>>   	return err == EINVAL;
+>>   }
+>>   
+>> +static int override_vector_reg_size(struct kvm_vcpu *vcpu, struct vcpu_reg_sublist *s,
+>> +				    uint64_t feature)
+>> +{
+>> +	unsigned long vlenb_reg = 0;
+>> +	int rc;
+>> +	u64 reg, size;
+>> +
+>> +	/* Enable V extension so that we can get the vlenb register */
+>> +	rc = __vcpu_set_reg(vcpu, feature, 1);
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	__vcpu_get_reg(vcpu, s->regs[KVM_RISC_V_REG_OFFSET_VLENB], &vlenb_reg);
+> We can remove the underscores from this call since it shouldn't fail, as
+> we know we've successfully enabled the V extension at this point.
+good point. I will remove it.
+>> +
+>> +	if (!vlenb_reg) {
+>> +		TEST_FAIL("Can't compute vector register size from zero vlenb\n");
+>> +		return -EPERM;
+>> +	}
+>> +
+>> +	size = __builtin_ctzl(vlenb_reg);
+>> +	size <<= KVM_REG_SIZE_SHIFT;
+>> +
+>> +	for (int i = 0; i < 32; i++) {
+>> +		reg = KVM_REG_RISCV | KVM_REG_RISCV_VECTOR | size | KVM_REG_RISCV_VECTOR_REG(i);
+>> +		s->regs[KVM_RISC_V_REG_OFFSET_MAX + i] = reg;
+>> +	}
+>> +
+>> +	/* We should assert if disabling failed here while enabling succeeded before */
+>> +	vcpu_set_reg(vcpu, feature, 0);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcpu_reg_list *c)
+>>   {
+>>   	unsigned long isa_ext_state[KVM_RISCV_ISA_EXT_MAX] = { 0 };
+>> @@ -172,6 +214,13 @@ void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcpu_reg_list *c)
+>>   		if (!s->feature)
+>>   			continue;
+>>   
+>> +		if (s->feature == KVM_RISCV_ISA_EXT_V) {
+>> +			feature = RISCV_ISA_EXT_REG(s->feature);
+>> +			rc = override_vector_reg_size(vcpu, s, feature);
+>> +			if (rc)
+>> +				goto skip;
+>> +		}
+>> +
+>>   		switch (s->feature_type) {
+>>   		case VCPU_FEATURE_ISA_EXT:
+>>   			feature = RISCV_ISA_EXT_REG(s->feature);
+>> @@ -186,6 +235,7 @@ void finalize_vcpu(struct kvm_vcpu *vcpu, struct vcpu_reg_list *c)
+>>   		/* Try to enable the desired extension */
+>>   		__vcpu_set_reg(vcpu, feature, 1);
+>>   
+>> +skip:
+>>   		/* Double check whether the desired extension was enabled */
+>>   		__TEST_REQUIRE(__vcpu_has_ext(vcpu, feature),
+>>   			       "%s not available, skipping tests", s->name);
+>> @@ -410,6 +460,35 @@ static const char *fp_d_id_to_str(const char *prefix, __u64 id)
+>>   	return strdup_printf("%lld /* UNKNOWN */", reg_off);
+>>   }
+>>   
+>> +static const char *vector_id_to_str(const char *prefix, __u64 id)
+>> +{
+>> +	/* reg_off is the offset into struct __riscv_v_ext_state */
+>> +	__u64 reg_off = id & ~(REG_MASK | KVM_REG_RISCV_VECTOR);
+>> +	int reg_index = 0;
+>> +
+>> +	assert((id & KVM_REG_RISCV_TYPE_MASK) == KVM_REG_RISCV_VECTOR);
+>> +
+>> +	if (reg_off >= KVM_REG_RISCV_VECTOR_REG(0))
+>> +		reg_index = reg_off -  KVM_REG_RISCV_VECTOR_REG(0);
+>> +	switch (reg_off) {
+>> +	case KVM_REG_RISCV_VECTOR_REG(0) ...
+>> +	     KVM_REG_RISCV_VECTOR_REG(31):
+>> +		return strdup_printf("KVM_REG_RISCV_VECTOR_REG(%d)", reg_index);
+>> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vstart):
+>> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vstart)";
+>> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vl):
+>> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vl)";
+>> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vtype):
+>> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vtype)";
+>> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vcsr):
+>> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vcsr)";
+>> +	case KVM_REG_RISCV_VECTOR_CSR_REG(vlenb):
+>> +		return "KVM_REG_RISCV_VECTOR_CSR_REG(vlenb)";
+>> +	}
+>> +
+>> +	return strdup_printf("%lld /* UNKNOWN */", reg_off);
+>> +}
+>> +
+>>   #define KVM_ISA_EXT_ARR(ext)		\
+>>   [KVM_RISCV_ISA_EXT_##ext] = "KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_" #ext
+>>   
+>> @@ -639,6 +718,9 @@ void print_reg(const char *prefix, __u64 id)
+>>   	case KVM_REG_SIZE_U128:
+>>   		reg_size = "KVM_REG_SIZE_U128";
+>>   		break;
+>> +	case KVM_REG_SIZE_U256:
+>> +		reg_size = "KVM_REG_SIZE_U256";
+>> +		break;
+>>   	default:
+>>   		printf("\tKVM_REG_RISCV | (%lld << KVM_REG_SIZE_SHIFT) | 0x%llx /* UNKNOWN */,\n",
+>>   		       (id & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT, id & ~REG_MASK);
+>> @@ -670,6 +752,10 @@ void print_reg(const char *prefix, __u64 id)
+>>   		printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_FP_D | %s,\n",
+>>   				reg_size, fp_d_id_to_str(prefix, id));
+>>   		break;
+>> +	case KVM_REG_RISCV_VECTOR:
+>> +		printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_VECTOR | %s,\n",
+>> +		       reg_size, vector_id_to_str(prefix, id));
+>> +		break;
+>>   	case KVM_REG_RISCV_ISA_EXT:
+>>   		printf("\tKVM_REG_RISCV | %s | KVM_REG_RISCV_ISA_EXT | %s,\n",
+>>   				reg_size, isa_ext_id_to_str(prefix, id));
+>> @@ -874,6 +960,48 @@ static __u64 fp_d_regs[] = {
+>>   	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_D,
+>>   };
+>>   
+>> +/* Define a default vector registers with length. This will be overwritten at runtime */
+>> +static __u64 vector_regs[] = {
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_CSR_REG(vstart),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_CSR_REG(vl),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_CSR_REG(vtype),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_CSR_REG(vcsr),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_CSR_REG(vlenb),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(0),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(1),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(2),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(3),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(4),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(5),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(6),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(7),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(8),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(9),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(10),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(11),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(12),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(13),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(14),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(15),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(16),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(17),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(18),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(19),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(20),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(21),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(22),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(23),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(24),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(25),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(26),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(27),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(28),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(29),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(30),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_U128 | KVM_REG_RISCV_VECTOR | KVM_REG_RISCV_VECTOR_REG(31),
+>> +	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_V,
+>> +};
+>> +
+>>   #define SUBLIST_BASE \
+>>   	{"base", .regs = base_regs, .regs_n = ARRAY_SIZE(base_regs), \
+>>   	 .skips_set = base_skips_set, .skips_set_n = ARRAY_SIZE(base_skips_set),}
+>> @@ -898,6 +1026,9 @@ static __u64 fp_d_regs[] = {
+>>   	{"fp_d", .feature = KVM_RISCV_ISA_EXT_D, .regs = fp_d_regs, \
+>>   		.regs_n = ARRAY_SIZE(fp_d_regs),}
+>>   
+>> +#define SUBLIST_V \
+>> +	{"v", .feature = KVM_RISCV_ISA_EXT_V, .regs = vector_regs, .regs_n = ARRAY_SIZE(vector_regs),}
+>> +
+>>   #define KVM_ISA_EXT_SIMPLE_CONFIG(ext, extu)			\
+>>   static __u64 regs_##ext[] = {					\
+>>   	KVM_REG_RISCV | KVM_REG_SIZE_ULONG |			\
+>> @@ -966,6 +1097,7 @@ KVM_SBI_EXT_SIMPLE_CONFIG(susp, SUSP);
+>>   KVM_ISA_EXT_SUBLIST_CONFIG(aia, AIA);
+>>   KVM_ISA_EXT_SUBLIST_CONFIG(fp_f, FP_F);
+>>   KVM_ISA_EXT_SUBLIST_CONFIG(fp_d, FP_D);
+>> +KVM_ISA_EXT_SUBLIST_CONFIG(v, V);
+>>   KVM_ISA_EXT_SIMPLE_CONFIG(h, H);
+>>   KVM_ISA_EXT_SIMPLE_CONFIG(smnpm, SMNPM);
+>>   KVM_ISA_EXT_SUBLIST_CONFIG(smstateen, SMSTATEEN);
+>> @@ -1040,6 +1172,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
+>>   	&config_fp_f,
+>>   	&config_fp_d,
+>>   	&config_h,
+>> +	&config_v,
+>>   	&config_smnpm,
+>>   	&config_smstateen,
+>>   	&config_sscofpmf,
 >>
->> Its always tempting to just glue a boolean at the end of a parameter
->> list. But this has huge downside in code readability, see below...
+>> -- 
+>> 2.43.0
 >>
->>>  {
->>>  	const struct iris_platform_data *platform_data = inst->core->iris_platform_data;
->>>  	struct iris_buffer *buf, *next;
->>> @@ -396,6 +396,14 @@ int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane)
->>>  	for (i = 0; i < len; i++) {
->>>  		buffers = &inst->buffers[internal_buf_type[i]];
->>>  		list_for_each_entry_safe(buf, next, &buffers->list, list) {
->>> +			/*
->>> +			 * during stream on, skip destroying internal(DPB) buffer
->>> +			 * if firmware did not return it.
->>> +			 * during close, destroy all buffers irrespectively.
->>> +			 */
->>> +			if (!force && buf->attr & BUF_ATTR_QUEUED)
->>> +				continue;
->>> +
->>>  			ret = iris_destroy_internal_buffer(inst, buf);
->>>  			if (ret)
->>>  				return ret;
->>> @@ -446,6 +454,33 @@ static int iris_release_input_internal_buffers(struct iris_inst *inst)
->>>  	return 0;
->>>  }
->>>  
->>> +void iris_get_num_queued_internal_buffers(struct iris_inst *inst, u32 plane)
->>> +{
->>> +	const struct iris_platform_data *platform_data = inst->core->iris_platform_data;
->>> +	struct iris_buffer *buf, *next;
->>> +	struct iris_buffers *buffers;
->>> +	const u32 *internal_buf_type;
->>> +	u32 internal_buffer_count, i;
->>> +	u32 count = 0;
->>> +
->>> +	if (V4L2_TYPE_IS_OUTPUT(plane)) {
->>> +		internal_buf_type = platform_data->dec_ip_int_buf_tbl;
->>> +		internal_buffer_count = platform_data->dec_ip_int_buf_tbl_size;
->>> +	} else {
->>> +		internal_buf_type = platform_data->dec_op_int_buf_tbl;
->>> +		internal_buffer_count = platform_data->dec_op_int_buf_tbl_size;
->>> +	}
->>> +
->>> +	for (i = 0; i < internal_buffer_count; i++) {
->>> +		buffers = &inst->buffers[internal_buf_type[i]];
->>> +		list_for_each_entry_safe(buf, next, &buffers->list, list)
->>> +			count++;
->>> +		if (count)
->>> +			dev_err(inst->core->dev, "%d buffer of type %d not released",
->>> +				count, internal_buf_type[i]);
->>> +	}
->>> +}
->>> +
->>>  int iris_alloc_and_queue_persist_bufs(struct iris_inst *inst)
->>>  {
->>>  	struct iris_buffers *buffers = &inst->buffers[BUF_PERSIST];
->>> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/media/platform/qcom/iris/iris_buffer.h
->>> index c36b6347b077..03a32b91cf21 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_buffer.h
->>> +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
->>> @@ -106,7 +106,8 @@ void iris_get_internal_buffers(struct iris_inst *inst, u32 plane);
->>>  int iris_create_internal_buffers(struct iris_inst *inst, u32 plane);
->>>  int iris_queue_internal_buffers(struct iris_inst *inst, u32 plane);
->>>  int iris_destroy_internal_buffer(struct iris_inst *inst, struct iris_buffer *buffer);
->>> -int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane);
->>> +int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane, bool force);
->>> +void iris_get_num_queued_internal_buffers(struct iris_inst *inst, u32 plane);
->>>  int iris_alloc_and_queue_persist_bufs(struct iris_inst *inst);
->>>  int iris_alloc_and_queue_input_int_bufs(struct iris_inst *inst);
->>>  int iris_queue_buffer(struct iris_inst *inst, struct iris_buffer *buf);
->>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
->>> index 4143acedfc57..2c1a7162d2da 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
->>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
->>> @@ -408,7 +408,7 @@ int iris_vdec_streamon_input(struct iris_inst *inst)
->>>  
->>>  	iris_get_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
->>>  
->>> -	ret = iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
->>> +	ret = iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE, false);
->>>  	if (ret)
->>>  		return ret;
->>>  
->>> @@ -496,7 +496,7 @@ int iris_vdec_streamon_output(struct iris_inst *inst)
->>>  
->>>  	iris_get_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
->>>  
->>> -	ret = iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
->>> +	ret = iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE, false);
->>
->> If I was reviewing some changes (or even debugging) this specific C
->> file, I would not be able to understanding what this "false" means. I
->> would have to spend extra time, opening the declaration, going back and
->> forth, and breaking the flow.
->>
->> An alternative approach is to keep the boolean parameter in a static
->> function (c local), and then add two function wrappers that have
->> explicit names.
->>
-> Sure, I can implement the alternative approach, if recommended.
-> 
-> If I understand correctly, you are suggesting to have one static helper and
-> two wrappers around this. like:
-> 
-> static int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane,
-> bool force)
-> {
-> 	...
-> 	list_for_each_entry_safe(buf, next, &buffers->list, list) {
->        		if (!force && buf->attr & BUF_ATTR_QUEUED)
-> 			continue;
-> 		...
-> 	}
-> 	...
-> }
-> 
-> //called during stream on
-> int iris_destroy_dequeued_internal_buffers(struct iris_inst *inst, u32 plane)
-Name this iris_force_destroy...That way, it is easy for caller to understand
-without the need to interpret the boolean.
-
-Regards,
-Vikash
-> {
-> 	return iris_destroy_internal_buffers(inst, plane, false)
-> }
-> 
-> //called during close
-> int iris_destroy_all_internal_buffers(struct iris_inst *inst, u32 plane)
-> {
-> 	return iris_destroy_internal_buffers(inst, plane, true)
-> }
-> 
-> Thanks,
-> Dikshita
->> regards,
->> Nicolas
->>
->>>  	if (ret)
->>>  		return ret;
->>>  
->>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
->>> index ca0f4e310f77..56531a7f0dfe 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
->>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
->>> @@ -233,8 +233,10 @@ int iris_close(struct file *filp)
->>>  	iris_session_close(inst);
->>>  	iris_inst_change_state(inst, IRIS_INST_DEINIT);
->>>  	iris_v4l2_fh_deinit(inst);
->>> -	iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
->>> -	iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
->>> +	iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE, true);
->>> +	iris_destroy_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE, true);
->>> +	iris_get_num_queued_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
->>> +	iris_get_num_queued_internal_buffers(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
->>>  	iris_remove_session(inst);
->>>  	mutex_unlock(&inst->lock);
->>>  	mutex_destroy(&inst->ctx_q_lock);
->>
+> Otherwise,
+>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
