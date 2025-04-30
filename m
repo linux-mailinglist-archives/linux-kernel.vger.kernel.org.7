@@ -1,87 +1,101 @@
-Return-Path: <linux-kernel+bounces-626622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6A3AA4559
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F68AA4567
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA95161664
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23609A3A20
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B69F21CC59;
-	Wed, 30 Apr 2025 08:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EE6219A8C;
+	Wed, 30 Apr 2025 08:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BpV55Hca"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VIjl0B80";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34ylF4mT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0KLLECP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0xeY6gNN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA231EF388
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284CE1EF388
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001668; cv=none; b=avEKRLo5Ss2TvQnYwnam/1NmIeSsFQCnldKD2TNvIuU8074rQNXuiFF9BIFgH8gzRfCp8LuJ5xPgcKgTOQxx+v7fq0A+F/l/nPH3NA9sT+sQPMcVMcCQ7yCW+osIl121JOUeBVbnEU3R2nHD7R1LpYS+7YVIQbjGZDZGu36j/04=
+	t=1746001676; cv=none; b=NlD1MNm5MkXqLoE68bquDizVCqVtacYyw+SPJAN8lE3yun/V5Mq/rL8DWuJX5T16ehnciVX2pBe/TjNqMYuckvnggy3MomCT+oxgqVh0V24VOUaOYMWZCIICpXICWNRwvlx+RbcwEE3/te9JJPcm2ng0DPAJJS1dpfrtUiPhy9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001668; c=relaxed/simple;
-	bh=pC6366U9Vxi4MCVI0rp1quj2Je4SIGb4/739P9X10sI=;
+	s=arc-20240116; t=1746001676; c=relaxed/simple;
+	bh=KP0WbRYyXweFla+W9yKoUm82l153JkxLlFZrvyQgDFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gVvIlZkn7NT6RSbTNJZ4j3Um0KI0JVGct/BtxR1KMZIzw6GBeWXtTcUZM2pmO+sBgX8ccXIt/SDRpaTsm75ZS4/QVUzxh5uJ5m1aS4Tc25qjMSxJWntxD9zeiK+54ED89Os8IVzydc5q97w25mAzNnHJu11UqE8vpgV0hTXKaWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BpV55Hca; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso411611f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746001665; x=1746606465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSY65Em9CZe+eeM7wzETHW6baTLUML3bJ9yO/W+LGW4=;
-        b=BpV55Hcao8LJx3USC8dXWGy0jZY0dTNUf1NOyG77FbAJZwFSVYrF6m4t7Sc3nxMOP2
-         gduwBHbW/2CIdoEnPpxOviBUC08AycRD3smxY79htAvGhCls9vg5bYNM02dQ4c+kCyqL
-         YbF9seQjC8WDwilrb0kiB5bPlpfVTxt37UkUH32drVyxhVJTS0hVDg44MVD0Z3NAekAh
-         3ThUhBstwF8QJ5fvZxy8fZ0WJzVtsM8p1kX3v5deaoIfjeNYYpGu0ml9QInH8h/aO6NP
-         AAudKhR7m5zy4UYrlQ03GQOnxHC4+wz7v5Jc1bIME6bm5hqQJOYkcFxLuJxAgt8Ykg9S
-         +fCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746001665; x=1746606465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LSY65Em9CZe+eeM7wzETHW6baTLUML3bJ9yO/W+LGW4=;
-        b=erxwP4hGzULbboU2Bcg4Y/of4AFCSbSS2q13U2MOxeSUV1DnY4pqBiTeAsoPW9lpdv
-         l7T7ySnNPnFkpsBoUhsd1rmt56ShufHInr1GNgJ8Wf3NwbYZI5nQVW2eeWhDslfXpgYg
-         rzFAXim80G4QggQxDWEwEmtcoOmhaAisziyIX8D0BIfkyoZ6wz5LIekXuIpLwu3CewVV
-         PrHfj4WDHAMyrgr9U3oHLKRJ9r8WPwMn0oN2oYM9X8CXMqLjd5IZl92q6/ASEpnA8ODc
-         ZGf8uKhlErc9QRqBlm4XxAVy8PVL6YG4SEE0vmwAHkICrpx6dIQejtqyPDIv7g00J5hc
-         dV/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+2touWmDkAajiz++1be17qlqrtLBXbGsXQoSJOibY7r4lYqNa0xGPTgpnLMNrEjYQkITN66Fcz+YxaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/O5mxlu8liGojZHLlkrPrjBTO2wfLpo0WaxZaFKggBBbz2uMe
-	sWL+wLviOZgJzfyVPg97+TnxJxuH6Y3Xa9JoS2WoG4eccw63tEobaJOxGoKyGwk=
-X-Gm-Gg: ASbGncuxy/KgRFdm6eJX/cBdIJA8woOOsujUcCDj6fMkRdbr9K5MNmtobczx9FOod9J
-	A25oI5LoEaAeWGoIBADoMTDt9U/YICPy0pRMwz20hcp6IqRRHcAPVt4AHVC2mx9ZnCrwC/B00N+
-	eCziaACOuxYspTTN6McfR2et1eD93lHGPZGejlALLcFjw4DP2msROwxSrh5QooNiL+Lz8Kd7tiW
-	QS+GbNubysSaVkQw6rUpwF0ubuOsgEbu/z1G/baPXWzPsKSNpwtz+ZmgfWSHG/y1iX3Td5IuENM
-	URp+RUFoFDgZIW9Z5D3dqQtmV7bSNs/Zv5AoKmYouvmN0w==
-X-Google-Smtp-Source: AGHT+IHBFA+cH5958bx6/B07wZ/+XLQktMK13x4OjzkahXEnks5zyuH0RW3+E62V7jkfN4hmL/NqQQ==
-X-Received: by 2002:a05:6000:18ad:b0:39f:cfc:d520 with SMTP id ffacd0b85a97d-3a08fb52cf0mr1465639f8f.15.1746001665462;
-        Wed, 30 Apr 2025 01:27:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073c8d67esm16491272f8f.17.2025.04.30.01.27.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:27:45 -0700 (PDT)
-Date: Wed, 30 Apr 2025 11:27:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] media: i2c: ds90ub960: Fix uninitialized variable in
- ub960_rxport_bc_ser_config()
-Message-ID: <e9e8df2c7ee2fdcad0d97562e40572073de02d9e.1746001540.git.dan.carpenter@linaro.org>
-References: <cover.1746001540.git.dan.carpenter@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q8KFLPICqit3Oxv30F8UoOKLxynbOpK6UXgrQjR+5UcfWI3oUDSsHJ1Ss+XxazQbrSAYn7Hv5BMwQ2aShSnvCph6J2wG3/DuGkMQ7z31dUWJ3oS75NyeByyc2pg7+VhAJhrvUZms+7UdeBCF97D2RCbOt3gMv1djLLwazgnXc0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VIjl0B80; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34ylF4mT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0KLLECP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0xeY6gNN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 53CF51F7BF;
+	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746001667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=VIjl0B80Uh3OUx3+Pshx9kY6dUdBWDIAmXxE40ltIMkkAw6HJy5NF8n2wR/Vw/N6U//Mz/
+	q43tMlVKwvxlPjDZIZ36pWNmVElVfkBF4fjZjXjb+R/BwO3W7x7vCttQLcGPSfe9+U5wkc
+	VwECC9C1r4ivjILpHWOsw+9pE8Eo2RM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746001667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=34ylF4mTZj3STtfYtJGb1S3C6Ei9P7OlRGBTUYXWqsGldxCwQKSpPz7iANglSxXlRrs4UZ
+	c6LQlp1HcrReJHAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r0KLLECP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0xeY6gNN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746001666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=r0KLLECPsP8+xL6H7OibzAZq/4xdyKExIWg8qM+i0x7PUIvIfnbE2dV7hSQSAO3cIBumqi
+	iHq36qGokctFQcDoZgBGcdJsLcvBgorABMY+VR57Zx07RQ/nE28cZng+QrN6ez4u6DgzTN
+	vxn1r/IhXvabSNT2XWH1rCieh1qKkJg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746001666;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=0xeY6gNNADEAcP/1u5v0rxgig/6h7Zy3mSE8sNHy7Dg42tJTDMR6SpT4vFQFK1wPPVq3nS
+	3P54IpBgpCUANGCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47A4D139E7;
+	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4yVvEQLfEWgaEAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 30 Apr 2025 08:27:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 05DDEA0AF0; Wed, 30 Apr 2025 10:27:45 +0200 (CEST)
+Date: Wed, 30 Apr 2025 10:27:45 +0200
+From: Jan Kara <jack@suse.cz>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Damato <jdamato@fastly.com>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs/eventpoll: fix endless busy loop after timeout has
+ expired
+Message-ID: <diilyq37i35qlll7hu3si6dqrjntiif5gzajazkgtqvfsi4kgg@yr3v562urmjp>
+References: <20250429185827.3564438-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,30 +104,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1746001540.git.dan.carpenter@linaro.org>
+In-Reply-To: <20250429185827.3564438-1-max.kellermann@ionos.com>
+X-Rspamd-Queue-Id: 53CF51F7BF
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-The "ret" variable is not initialized on success.  Set it to zero.
+On Tue 29-04-25 20:58:27, Max Kellermann wrote:
+> After commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in
+> the future"), the following program would immediately enter a busy
+> loop in the kernel:
+> 
+> ```
+> int main() {
+>   int e = epoll_create1(0);
+>   struct epoll_event event = {.events = EPOLLIN};
+>   epoll_ctl(e, EPOLL_CTL_ADD, 0, &event);
+>   const struct timespec timeout = {.tv_nsec = 1};
+>   epoll_pwait2(e, &event, 1, &timeout, 0);
+> }
+> ```
+> 
+> This happens because the given (non-zero) timeout of 1 nanosecond
+> usually expires before ep_poll() is entered and then
+> ep_schedule_timeout() returns false, but `timed_out` is never set
+> because the code line that sets it is skipped.  This quickly turns
+> into a soft lockup, RCU stalls and deadlocks, inflicting severe
+> headaches to the whole system.
+> 
+> When the timeout has expired, we don't need to schedule a hrtimer, but
+> we should set the `timed_out` variable.  Therefore, I suggest moving
+> the ep_schedule_timeout() check into the `timed_out` expression
+> instead of skipping it.
+> 
+> Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
+> Cc: Joe Damato <jdamato@fastly.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-Fixes: e2a3b695bc5f ("media: i2c: ds90ub960: Configure serializer using back-channel")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/media/i2c/ds90ub960.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I agree this makes the logic somewhat more obvious than Joe's fix so feel
+free to add:
 
-diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-index cf104461b9a7..ed2cf9d247d1 100644
---- a/drivers/media/i2c/ds90ub960.c
-+++ b/drivers/media/i2c/ds90ub960.c
-@@ -2133,7 +2133,7 @@ static int ub960_rxport_bc_ser_config(struct ub960_rxport *rxport)
- 	struct ub960_data *priv = rxport->priv;
- 	struct device *dev = &priv->client->dev;
- 	u8 nport = rxport->nport;
--	int ret;
-+	int ret = 0;
- 
- 	/* Skip port if serializer's address is not known */
- 	if (rxport->ser.addr < 0) {
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+Thanks!
+
+								Honza
+
+> ---
+>  fs/eventpoll.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 4bc264b854c4..d4dbffdedd08 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2111,9 +2111,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  
+>  		write_unlock_irq(&ep->lock);
+>  
+> -		if (!eavail && ep_schedule_timeout(to))
+> -			timed_out = !schedule_hrtimeout_range(to, slack,
+> -							      HRTIMER_MODE_ABS);
+> +		if (!eavail)
+> +			timed_out = !ep_schedule_timeout(to) ||
+> +				!schedule_hrtimeout_range(to, slack,
+> +							  HRTIMER_MODE_ABS);
+>  		__set_current_state(TASK_RUNNING);
+>  
+>  		/*
+> -- 
+> 2.47.2
+> 
 -- 
-2.47.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
