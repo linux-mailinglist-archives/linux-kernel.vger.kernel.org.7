@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-626646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4781DAA4598
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:37:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75AEAA459B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B021467F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6DC546843E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD9C219A76;
-	Wed, 30 Apr 2025 08:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8A320E6F3;
+	Wed, 30 Apr 2025 08:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIMTaBXi"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYF1Roky"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828EE2E401;
-	Wed, 30 Apr 2025 08:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D20216E23;
+	Wed, 30 Apr 2025 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746002203; cv=none; b=fpEhCc3xuefIR2UAe039bFlZ7VUKIbDHwpbMy4iHqKkgxsugiFSG4pU4+c6Nvf5lX2wTbGKfbRwMFDnrD9PmE1tDA74NaDLHDVkphbgXnj/d6H0lIeBwLR9whLNjem9uxNLOAX5BbRWyPkZNWDGjXmi2a2yb0mc1aQ7JOJU5dVY=
+	t=1746002204; cv=none; b=foUkN5B4Bf0B7SQqvrjy8ZzxLTdEqFM2RBn1TMof2nabKQkP85+MNfYgjxJQ68vx76gzN2hFxwASajtTU4n8fw6iMwxMXT0qoqPsRLpdqVMsserY3I4CbAl0ydigyxq/ZcHouaBRIN4bfrw8PdaqkXdcinATikRm4kZNVrLvkKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746002203; c=relaxed/simple;
-	bh=cVe8kuvlCNbyLI9zMHSiLyFxdXifsYArcpk8G7n9O2w=;
+	s=arc-20240116; t=1746002204; c=relaxed/simple;
+	bh=xahLNgygqJTiJVigFRn+IzsVCeHFMXE9X3Pdq7CmgYs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DJ20m/pRSCuxG8rSiUqIpU6kAQeu4+XitH5AuSasWfQVbGJNpAe0dqYqGKdJDk44cLOEaQIm6zf9awMiTYWD/v63UO77D8EsOmFZu+k2pBwc81Kmaz/+et2FeQZtBXiUnlL6z1hdepRAuZJAksM4P5JsW/UaDqzsXJI7rf/b0Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eIMTaBXi; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:To:Cc; b=DgVsEDWdPsPg7JduHd/B8O5UZD66PNC39Au0c8bx4+0hoUP4INfC9tKtZg/k2v2zzoorT0Zj2WwZO+sDkloDjBb1MFGChWbx1iaK8sms/m6ZHaNHizkjTeA4jsvLOTtogPhsxFFQpx/MrYBBCNHa47cssM/St0F3Wg0i20T+jlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYF1Roky; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f6c3f7b0b0so13102426a12.0;
-        Wed, 30 Apr 2025 01:36:41 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso1971785a12.3;
+        Wed, 30 Apr 2025 01:36:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746002200; x=1746607000; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746002201; x=1746607001; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sgNeM8GMoi8jL54+pCv76QajxazqTJJs9v1rfzlVu8k=;
-        b=eIMTaBXiON6tJguvRY/GwwcK9gjXqLzSOfSkGEqOn05M/N8rcrRtODK7mYTzPt+3Ct
-         Q565sDV23HaPWYGyPd+4qvIQcYh2OIxNr2VGiYFoNGUouWNx+OqMJbnAkxXfRQk3+mxW
-         ohyUVDyyadsCdou3mpQxN4f1Hgz+APYK2Vu0fgqCAIfS9vu6todWeVyYxgZIXfO/l9zm
-         PhvIz4v2brrNNxMuWm6vXCmYofY2FYwjobqXdtOQdaj6L5nd5L4L5SYOHRnUdeXOcKNu
-         WRO5T3GXSEdOqD5G7ZPBbUU1zHf6jtgnwyJ97WuYEULTFXUld5dbcCJVRdrFjeiq0Cjd
-         flAg==
+        bh=9uCVKDq6jp9oxx83/rvCXFQf3N8D+OHF8dGA1W5v+/w=;
+        b=SYF1RokyzAhUNOH4SUyHtAL7naSqCNvt3UhaKtuT7XwVALz+FcdwQhP8bxPLpMRk8C
+         MzOInrV9s7FdxvwJsHpnFv8gQ0G43Y+0ePjMc1wc4bekS7hnYTu8vVYw6cvUS41OrFCj
+         nBdLXU6EkUsWMbIfwVqF5k3c2wDOzCM8fBw7gne0ol5fWc8BwfpDzUTkwrFQCykwNXwC
+         +KEMMSQe/K6bctm0KZuLg0DOsHd3N9EzDuMx+mZnRp5QVzIRsAi+Kbcvn1lmkfAG7iFp
+         7EkR5qlbcJzxwUYVDJK+SRCJ+8DT+KaxcjnzFBDVhe913/JgGl93ZU9jA0Jo6JVDMKHY
+         sCfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746002200; x=1746607000;
+        d=1e100.net; s=20230601; t=1746002201; x=1746607001;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sgNeM8GMoi8jL54+pCv76QajxazqTJJs9v1rfzlVu8k=;
-        b=qm1o1cWkzy0FW/8Cj19UiU8AtOYuyn3Wq8/vvuvkVjv1axqY+Sq2VNTu5QnfABvP3Z
-         VvIpVunNMkXFDowgUKtr+jCBjqIaIGC816eRl14lbtrkURXcAMyQONWhM9v6dzpwft7L
-         jbIQcpeGG90AotOiA8Ad/sxG8ahJxlt8YomlKGNwiUjHEDDKNQ592x2rVYf0lChOZxFs
-         IAtP3JjQUIl1U/JeiwSd3WHKhsE2bWs0F0X5nmbE7dmiwcMNpLo10qUlWkmCRq3SqcZh
-         Yn0oghgf31ck5CBTXXw3+tZ4yDOYaDxOWU9D9sfcSLsr9VdXE6TcIeKS3jGC6frFjI3H
-         HMxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWw/xgklJYkl4VGVkRS3Z9YVwA579wteBTcfjLLXT5bUpPVvjlTAXJBp2PWWSsYVeoPQTGcnotLSSWMMxopFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH2CMn1yhUL1Kp0OrIGMSC0nKRdpl2Mxmhxvns8ytsKSW8IGEE
-	AIXsnaunXTdZl4mcb3lHNGu/AalngmIf6F1FjRiuc/fTDk1dS6+Y1rmR+QQiAVc=
-X-Gm-Gg: ASbGncuK6tcI5J/2bft/zEF0zstMtE+Vp63a+v+fv9iydyS8xMF9JeB6OXSvY5vAxja
-	k1cO0wsAEJUldQzI/NJSUXv9hqIJUWp1D+gIhZw1p9dz35fQ8vpxNGujLpS6lH+kOtALucNlkkp
-	Qs8Msf3ch7Hl2kcWB3wyfH2XZsV+94oPPDzyeII8nK5NpJdOYDt4Mj1qQ26Rcw8i2eSODXhVQby
-	SUvyFLpo3OdgWcGdEmdlkIb4CegPQmZgoCwmFkXCMssIdEhNuFLUdDFtbS/NVq4ICQg0cz5ZpOM
-	xJYVbob9rLPw7+IsjJAwD0rz9DRQHSFBi5sB4zLSIZFjLW7xFkrp
-X-Google-Smtp-Source: AGHT+IEE8cW3+kZaE37viMlIBGstOxXYMmzeK7yDZP9y1qVranwCRAo0KQPq5kMvXsX1cwz/asHLnA==
-X-Received: by 2002:a05:6402:34d5:b0:5eb:534e:1c6c with SMTP id 4fb4d7f45d1cf-5f89b34b02cmr1908500a12.20.1746002199300;
-        Wed, 30 Apr 2025 01:36:39 -0700 (PDT)
+        bh=9uCVKDq6jp9oxx83/rvCXFQf3N8D+OHF8dGA1W5v+/w=;
+        b=QPAUu/Geip76CgK311ktuMAKOUmNWB3PiNlULuHbvHdvVw8Y8tLMxvtR1dP89+77BT
+         99pK+SbYbI2S2S4rLubdsG58KFDz0HncGeH8Me923UVn9YCpI/V/m0S3QA0HhwO0NyTU
+         SSdbePwtSPkXpg3XCmeoNDfEK/NZbCgC+HhR4x7HEz+DujHd3tDPD9kthQyBpeUCLAbJ
+         1GBM6RzgJfGrxLrt6FVWiJ2LD4iJGthLOjLNDCYY3wjhHkUDGJJ5eRmfPJ1xxR0/qaxv
+         sqrYp6XrceG+pWsB5XHiUmmoQ0zzGt+NWH5MUzXQ+xi+Q7CE3gXSLYwOmUlhEMap4o9X
+         lFuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Xe8hklhu7YuwKOVqzYSW4IbOtxAHVi7gFYlDtd9P553+I1873+aUpF5j7tndY09dSsDms47WfJ3brcyF/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7v2hsQB959p2FwidaQW+QpKz7GuWLVyuwm4FUJ/ifvsvBhLpW
+	KlhKpPs8Ea/f6RwBEfL0luJ7s96MD8384SYZqbMIL6z/CSSWiWnZydmDxKm2Q6U=
+X-Gm-Gg: ASbGncv543J3xKq5yRsz5hE1jPUAmKmZPZtvce9i3FNEWUOAK5dnHXt93XqQnyb54Bg
+	LmULy6UPLNfPhTfaxCndsdfWldDWhhJS6udgRkPnn5lqg4DQIJBjhdQAHftfDq/B/RIHJMj34vt
+	GBIGTMAPzihcxwXRyjRUX0jz2HKPljZbFkdtLeQbGyN6uq1yr0/sf4TD0GULI/a8AD07PIto3bC
+	YyIE9b9KggWEkFkKjlOzZLMfl4uoJMP6cVpUoU6Fu/IgnHU5MrQRLJ2nR/uFVTbFl8mYq4kdjrD
+	0/ncHnsEJTy62tar2pjGuNl9zIoCNo2sXCfdjOtPaMagMxsU03LDBwsJ4ZBikOU=
+X-Google-Smtp-Source: AGHT+IHgdUyDb7Npa79GgVeGUIa/uULKZUeqZatBXuTZuum3H0JpJVQL0VyV11HYP9jjk1dqKdMIWw==
+X-Received: by 2002:a05:6402:e86:b0:5ec:cc90:b126 with SMTP id 4fb4d7f45d1cf-5f89b557d7cmr1445950a12.19.1746002200393;
+        Wed, 30 Apr 2025 01:36:40 -0700 (PDT)
 Received: from [10.27.99.142] ([193.170.124.198])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f6424sm8653721a12.42.2025.04.30.01.36.38
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f6424sm8653721a12.42.2025.04.30.01.36.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:36:38 -0700 (PDT)
+        Wed, 30 Apr 2025 01:36:40 -0700 (PDT)
 From: Christian Schrefl <chrisi.schrefl@gmail.com>
-Date: Wed, 30 Apr 2025 10:36:12 +0200
-Subject: [PATCH v2 2/3] rust: implement `Wrapper<T>` for `Opaque<T>`
+Date: Wed, 30 Apr 2025 10:36:13 +0200
+Subject: [PATCH v2 3/3] rust: use `UnsafePinned` in the implementation of
+ `Opaque`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250430-rust_unsafe_pinned-v2-2-fc8617a74024@gmail.com>
+Message-Id: <20250430-rust_unsafe_pinned-v2-3-fc8617a74024@gmail.com>
 References: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com>
 In-Reply-To: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com>
 To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>, 
@@ -96,94 +97,106 @@ To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  Christian Schrefl <chrisi.schrefl@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746002196; l=3238;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746002196; l=3515;
  i=chrisi.schrefl@gmail.com; s=20250119; h=from:subject:message-id;
- bh=cVe8kuvlCNbyLI9zMHSiLyFxdXifsYArcpk8G7n9O2w=;
- b=xXZxc2yj/vgoE9aPMSRDfqsD1tEiutaCy1tMeJEfx+ubuzgpfqNZh6DvEl/jfabTleejUcdKW
- JhEBNiasT9BCCUuuTTchmV8qvyGBKbrjwOB3gLXDEPLtSEutF20nS4C
+ bh=xahLNgygqJTiJVigFRn+IzsVCeHFMXE9X3Pdq7CmgYs=;
+ b=z/maNiGs7sluI5WE1/LfJTpFFqrItwR11ffc9FYjYlnWtq7VLtet30b3QsHpDF2dVZ7W6feOI
+ 3AJ8IIbOy7JD4KILoLpybmZSgsdBzXT4ApukNgph1GYq8we20VS4zWV
 X-Developer-Key: i=chrisi.schrefl@gmail.com; a=ed25519;
  pk=EIyitYCrzxWlybrqoGqiL2jyvO7Vp9X40n0dQ6HE4oU=
 
-Moves the implementation for `pin-init` from an associated function
-to the trait function of the `Wrapper` trait and extends the
-implementation to support pin-initializers with error types.
+This change makes the semantics of the `Opaque` implementation
+clearer and prepares for the switch to the upstream rust UnsafePinned`
+type in the future.
 
-This allows to declare functions that are generic over `Wrapper`
-types.
-
-Adds a use for the `Wrapper` trait in `revocable.rs`, to use the new
-`pin-init` function. This is currently the only usage in the kernel.
+`Opaque` still uses `UnsafeCell` even though the kernel implementation
+of `UnsafePinned` already includes it, since the current upstream
+version does not.
 
 Reviewed-by: Gerald Wisböck <gerald.wisboeck@feather.ink>
 Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 ---
- rust/kernel/revocable.rs |  2 ++
- rust/kernel/types.rs     | 25 +++++++++++++------------
- 2 files changed, 15 insertions(+), 12 deletions(-)
+ rust/kernel/types.rs | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
-index 1e5a9d25c21b279b01f90b02997492aa4880d84f..4db68ea2207ebafcc09d082fdc1e281f31846a38 100644
---- a/rust/kernel/revocable.rs
-+++ b/rust/kernel/revocable.rs
-@@ -5,6 +5,8 @@
- //! The [`Revocable`] type wraps other types and allows access to them to be revoked. The existence
- //! of a [`RevocableGuard`] ensures that objects remain valid.
- 
-+use pin_init::Wrapper;
-+
- use crate::{bindings, prelude::*, sync::rcu, types::Opaque};
- use core::{
-     marker::PhantomData,
 diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 705f420fdfbc4a576de1c4546578f2f04cdf615e..f06e8720e012102e5c41e79fd97b0607e927d71c 100644
+index f06e8720e012102e5c41e79fd97b0607e927d71c..44d96423a8a6c358bb7ebf12c24fad98e5c2cb61 100644
 --- a/rust/kernel/types.rs
 +++ b/rust/kernel/types.rs
-@@ -9,7 +9,7 @@
+@@ -4,12 +4,12 @@
+ 
+ use core::{
+     cell::UnsafeCell,
+-    marker::{PhantomData, PhantomPinned},
++    marker::PhantomData,
+     mem::{ManuallyDrop, MaybeUninit},
      ops::{Deref, DerefMut},
      ptr::NonNull,
  };
--use pin_init::{PinInit, Zeroable};
-+use pin_init::{PinInit, Wrapper, Zeroable};
+-use pin_init::{PinInit, Wrapper, Zeroable};
++use pin_init::{cast_pin_init, PinInit, Wrapper, Zeroable};
  
  /// Used to transfer ownership to and from foreign (non-Rust) languages.
  ///
-@@ -332,17 +332,6 @@ pub const fn uninit() -> Self {
+@@ -308,8 +308,7 @@ fn drop(&mut self) {
+ /// ```
+ #[repr(transparent)]
+ pub struct Opaque<T> {
+-    value: UnsafeCell<MaybeUninit<T>>,
+-    _pin: PhantomPinned,
++    value: UnsafePinned<UnsafeCell<MaybeUninit<T>>>,
+ }
+ 
+ // SAFETY: `Opaque<T>` allows the inner value to be any bit pattern, including all zeros.
+@@ -319,16 +318,14 @@ impl<T> Opaque<T> {
+     /// Creates a new opaque value.
+     pub const fn new(value: T) -> Self {
+         Self {
+-            value: UnsafeCell::new(MaybeUninit::new(value)),
+-            _pin: PhantomPinned,
++            value: UnsafePinned::new(UnsafeCell::new(MaybeUninit::new(value))),
          }
      }
  
--    /// Create an opaque pin-initializer from the given pin-initializer.
--    pub fn pin_init(slot: impl PinInit<T>) -> impl PinInit<Self> {
--        Self::ffi_init(|ptr: *mut T| {
+     /// Creates an uninitialised value.
+     pub const fn uninit() -> Self {
+         Self {
+-            value: UnsafeCell::new(MaybeUninit::uninit()),
+-            _pin: PhantomPinned,
++            value: UnsafePinned::new(UnsafeCell::new(MaybeUninit::uninit())),
+         }
+     }
+ 
+@@ -371,7 +368,7 @@ pub fn try_ffi_init<E>(
+ 
+     /// Returns a raw pointer to the opaque data.
+     pub const fn get(&self) -> *mut T {
+-        UnsafeCell::get(&self.value).cast::<T>()
++        UnsafeCell::raw_get(self.value.get()).cast::<T>()
+     }
+ 
+     /// Gets the value behind `this`.
+@@ -384,14 +381,12 @@ pub const fn raw_get(this: *const Self) -> *mut T {
+ }
+ impl<T> Wrapper<T> for Opaque<T> {
+     /// Create an opaque pin-initializer from the given pin-initializer.
+-    fn pin_init<E>(slot: impl PinInit<T, E>) -> impl PinInit<Self, E> {
+-        Self::try_ffi_init(|ptr: *mut T| {
 -            // SAFETY:
 -            //   - `ptr` is a valid pointer to uninitialized memory,
 -            //   - `slot` is not accessed on error; the call is infallible,
 -            //   - `slot` is pinned in memory.
--            let _ = unsafe { PinInit::<T>::__pinned_init(slot, ptr) };
+-            unsafe { PinInit::<T, E>::__pinned_init(slot, ptr) }
 -        })
--    }
--
-     /// Creates a pin-initializer from the given initializer closure.
-     ///
-     /// The returned initializer calls the given closure with the pointer to the inner `T` of this
-@@ -393,6 +382,18 @@ pub const fn raw_get(this: *const Self) -> *mut T {
-         UnsafeCell::raw_get(this.cast::<UnsafeCell<MaybeUninit<T>>>()).cast::<T>()
++    fn pin_init<E>(value_init: impl PinInit<T, E>) -> impl PinInit<Self, E> {
++        let value_init =
++            UnsafePinned::pin_init(UnsafeCell::pin_init(MaybeUninit::pin_init(value_init)));
++        // SAFETY: `Opaque<T>` is a `repr(transparent)` wrapper around
++        // `UnsafePinned<UnsafeCell<MabeUninit<T>>>` so the memory representation is compatible.
++        unsafe { cast_pin_init(value_init) }
      }
  }
-+impl<T> Wrapper<T> for Opaque<T> {
-+    /// Create an opaque pin-initializer from the given pin-initializer.
-+    fn pin_init<E>(slot: impl PinInit<T, E>) -> impl PinInit<Self, E> {
-+        Self::try_ffi_init(|ptr: *mut T| {
-+            // SAFETY:
-+            //   - `ptr` is a valid pointer to uninitialized memory,
-+            //   - `slot` is not accessed on error; the call is infallible,
-+            //   - `slot` is pinned in memory.
-+            unsafe { PinInit::<T, E>::__pinned_init(slot, ptr) }
-+        })
-+    }
-+}
  
- /// Types that are _always_ reference counted.
- ///
 
 -- 
 2.49.0
