@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-628043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07708AA5871
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E907AA5875
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8DB3AD018
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:02:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B381BA6E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06617226CFE;
-	Wed, 30 Apr 2025 23:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BCE226CFE;
+	Wed, 30 Apr 2025 23:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSyEHhFd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6vCwD5K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01187221271
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5864A219A93;
+	Wed, 30 Apr 2025 23:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746054173; cv=none; b=Wvqfvfu/XHPQZslVT3v8EHernCVDueHXPwo/d7a3Rw0cJZO5gF+lxjzBNPtH+wIKxf5hySBqOGjr4GqdN61HOgNYuWyPFx29R+7c/zfqEK1dOp5GQeoWa0pefAwAmO5HX4E0Akkjb8xENOd/yK6qee6xFKUR/y31WW4HcALht04=
+	t=1746054415; cv=none; b=BdHEllgcLaXMfhOd9WhHnEpMPvqLNVyqbNatjVZo5QNajv3jwT2E1/bzUDE4omABaiug+kTu9h2NKcFGL5fbdXbj8fh7R+8NJcEKc3zmqxSg1f2omqW/fV9efqKYii6g9OnXrXZk2M1euWAZ01SrpI4LLSPRvunWEV1nfPl7w/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746054173; c=relaxed/simple;
-	bh=QcyPLVBYkw8YT/YG26ONvu5F6rsCMN1k+vumcWe39Zc=;
+	s=arc-20240116; t=1746054415; c=relaxed/simple;
+	bh=DVe4AB4EflgrauQLf6RgNDVBTkAUO5bOQliQvYixnW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRULwAExoBNJo5lSlpCOanUN2R+Aumpzxb+JXff2cR3OwioQa6D8NozAFkplid0Z3Pzs/QamauA+NeHYej8teToXNl+Ou+IdZt3F2CCkIUdZ1C9Ef/ftIF7QHAYn2MaSeA8/FAX9Q9Lj+noRxc1N4VXVb25SE3NWstQhHPijt8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSyEHhFd; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746054172; x=1777590172;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QcyPLVBYkw8YT/YG26ONvu5F6rsCMN1k+vumcWe39Zc=;
-  b=BSyEHhFdMnUhsc550XNuTz8x2jEHFvq8trZJo5QrKHTtanTuLWPWj0Y5
-   t9QbgCCsqe4tt8eP6/ptqouf8qJ/U0/6Jh2QVI18vBwrzNkBHQf0PR8hb
-   pvR8eZuk4q1z+FZSXTdIGjtuCScf/Pfvr00MTQgpy9MUS6Nxfz4+kBySi
-   OleaW4vSQcl4XVTqhjtvcaLBbF71aJNP7aI4LbcFnemV+aehzi6Xvh33O
-   892qYHNCOk0Qe9+uOoQnffBMTcbAjgXXmy7AWj/NsjqwwdwVRgJm1EWMH
-   QgyBUgvdk6Vgf5URznv2+LK9vxbv9D1xqkOEj9H/jSj+Y9NQBvgH7dzqN
-   w==;
-X-CSE-ConnectionGUID: KKyISpiMQYWwag6GlEtAHg==
-X-CSE-MsgGUID: gBUGuRjsRemtXqSx4vZt5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="47449914"
-X-IronPort-AV: E=Sophos;i="6.15,252,1739865600"; 
-   d="scan'208";a="47449914"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 16:02:51 -0700
-X-CSE-ConnectionGUID: uwnAy4y5T1y09PQXV6LABQ==
-X-CSE-MsgGUID: 0rKYNfIdTZ6qBwurhY76rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,252,1739865600"; 
-   d="scan'208";a="139067559"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 16:02:51 -0700
-Date: Wed, 30 Apr 2025 16:02:49 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v4 06/31] x86/rectrl: Fake OOBMSM interface
-Message-ID: <aBKsGa4tdcuPHf1x@agluck-desk3>
-References: <20250429003359.375508-1-tony.luck@intel.com>
- <20250429003359.375508-7-tony.luck@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pzw0a2hYwVbdUlLHtCs0v84qFm5BuAVdC9nHTuS1QCmqAMIJ9+274bQxF/GB38L/nyS/P9rarVbYHnwB1uW4THYR3rwx1QjnE3Rj/N+Ie8Q4c9/9RbcIzxR6+1Q/b6PvkZ5Ru29jQSCMlzVAw9FkVz5h9O7Zl8mkqVkWrQIvR2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6vCwD5K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6411C4CEE7;
+	Wed, 30 Apr 2025 23:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746054415;
+	bh=DVe4AB4EflgrauQLf6RgNDVBTkAUO5bOQliQvYixnW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i6vCwD5Ku8V7NhwVQCWwREJPG9bpxTlnAjBWAPC7OHfxwEj5pw6WIXihyOM0y07Np
+	 oGmUoxS7a2mBs6MUYDOWJANfPTAeQlHn9gqi2vcfINyLnEW81ZfPWC6QWthwuCtwxe
+	 uoLvX5SGnjAG+PStaYDsa20ZdplK/V0lQK4PCJqUSbfhXhxpHZL6q0gCQafGRJ8FUK
+	 hqDUKKJknEElV5O81sILkYadirfxvvyLluuq2YvGg858QohSN+Ed8uOWekovraA+6T
+	 zR9PoOP6dKH91v49Su5iWlZzX6BSNRYJKxcj8ve7M8lRI8lYzvXNJ8d0sATFVxd9vn
+	 HbtwgGZde6m2A==
+Date: Thu, 1 May 2025 08:06:51 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-sound@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: stm32: sai: skip useless iterations on kernel
+ rate loop
+Message-ID: <aBKtC6ltm4hyQ3yW@finisterre.sirena.org.uk>
+References: <20250430165210.321273-1-olivier.moysan@foss.st.com>
+ <20250430165210.321273-2-olivier.moysan@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bPEVIUKDWml5O3Hc"
+Content-Disposition: inline
+In-Reply-To: <20250430165210.321273-2-olivier.moysan@foss.st.com>
+X-Cookie: Well begun is half done.
+
+
+--bPEVIUKDWml5O3Hc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250429003359.375508-7-tony.luck@intel.com>
 
-On Mon, Apr 28, 2025 at 05:33:32PM -0700, Tony Luck wrote:
-> Real version is coming soon ... this is here so the remaining parts
-> will build (and run ... assuming a 2 socket system that supports RDT
-> monitoring ... only missing part is that the event counters just
-> report fixed values).
+On Wed, Apr 30, 2025 at 06:52:08PM +0200, Olivier Moysan wrote:
 
-Real OOBMSM discovery patches have now been posted:
+> Fixes: b1d2e4067dc6 ("ASoC: stm32: sai: add stm32mp25 support")
 
-https://lore.kernel.org/all/20250430212106.369208-1-david.e.box@linux.intel.com/
+This commit isn't in mainline, I think you meant 2cfe1ff22555.
 
--Tony
+--bPEVIUKDWml5O3Hc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgSrQoACgkQJNaLcl1U
+h9Ce4Qf+Kx6UyqHkHSI1stvCklQt/+Z4iVfBjGo3/P0vWUe9GgKN+LB/DPfzc/Ww
+FwQqXWsx0/xp/XQcgCpQFBEzci6nEGWjdJ240fLzpSphVX/TX/sFNiiuqXCWAffR
+jqABT5SrIZx+Oy0KfdzcfNbpaNdd4yRbjDWYi3TMH0DgmxLprzu+iy/65u+sZRtb
+mQQ++AZCcMQ+E/a70aYRbffxxRZtrdMpfzQIyl+EU9I3cjCCxMwt+Bt14NZd0VWO
+3j2T8f9vxbKM1etsdlP5X9THWTYcSjFZdi1lRGCtM4idZxRaKhYfHlAn+zx4ESdk
+OeJLoGUFNDp0qhHDbI93je5/cCKcHw==
+=jH7g
+-----END PGP SIGNATURE-----
+
+--bPEVIUKDWml5O3Hc--
 
