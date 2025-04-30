@@ -1,162 +1,176 @@
-Return-Path: <linux-kernel+bounces-626420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B26AA42FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:16:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70590AA4306
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AEF21BC3BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 06:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 474583B2159
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 06:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6595D1E412A;
-	Wed, 30 Apr 2025 06:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDF11E104E;
+	Wed, 30 Apr 2025 06:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IXTCtJVO"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e9g9fz2r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD9AC148
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 06:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DBE1E47CA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 06:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745993732; cv=none; b=kmUxl7gjh3Qn7XgasQcqPrkCjB/Zr9VXecxGkdUN6gSUaAgWi3NDw5r+/8TxLWokaoxJXvMoGLzWSRcLVNVaajp6WBti5gQ9+Bng1E22RC4gDeO4/kF+FIyYI1gHxcovSe0mtZkw/ptPmArwe3EF/IWpYhGSSboLhmvTr+80kyQ=
+	t=1745993903; cv=none; b=ijZKfyfVNI6sPLbd/uCIROwlwrZ6jnjjz8+5PK0h/v1xHg90imzR18IfMg8BHO11FL+cTnt1LlI0c6v6z2Y6PaRVNm746JmYHY9adwcGRAGwDzZ8ucflhtxidl2HzM3b2vfht24DG+K3ZYQgPnZzIQFrYFWI3VIyZwA9cO02hFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745993732; c=relaxed/simple;
-	bh=h/Dm1V3IY7c+A7v/oWkqv8G4jkeeLzXn+J22wkUSrrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kamepWTGH1Rhes+KU2JIb44VW79gBOz0WkwjEALhEU6iUoy9F3cT81cwn+t4BCZhk8ebTtavsqbhDTwp4F+XW/j+hCLGPEv7OocWQ2l2zaxz2ndxShSqLo3Vh46At3AneTPNx9hR3xBj+lCUh3E8h4HGddVBMiGL3KRhFQmsGxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IXTCtJVO; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-44069f5f3aaso9920255e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 23:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745993729; x=1746598529; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CQ8+byTHBbZULcISnPo+4EWHJovs157yAJJR0xdIOvU=;
-        b=IXTCtJVOXnM+O3wOfmLln/1AjdjPV8CTWAzKlbPAkXUxNnQp84EbL+U7HCcK4xbbyo
-         smLa0YTfYUa8lbHADY00KXklW2zRK/ZhiI+y576kU++Ee79Om8pEDmx9apFcKFRKe0rm
-         xdmM+lVtohQfXTH04KLWQ90nMPjXVM8K946I61zZCBunYzY3jyQ4/lqCEJrPyZMl4DN0
-         kC7MCg5npb+WNl3vEgA7LW8eCbjWpEk+Am8y2mwPPMR1vMO3pH9hwaEwQdOOQucgKJwB
-         Y+MsA6nj8AtTf5ZqyAzWxdFx8UAtCCqNZFUWZCgIIJqlOHIc8JZZOSTCdwnaLT3x4GFc
-         qVuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745993729; x=1746598529;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQ8+byTHBbZULcISnPo+4EWHJovs157yAJJR0xdIOvU=;
-        b=cmVIHio3XOVNS4GNVbx4fo4dBuhTBnzXsahnJ6UPDjrhEYWE1aDwZWcCB2mbrc68YD
-         UUhusM20pod/FbmSpFcSkDigMJ7mCFII4qYyCKy4X/3v08ZamZVDwvzLLEJJPQtXuhjR
-         +wdvVqDMdFiL+NqmB5RRtoAP8s9FB/lEcMJHfOeSj5Ynx/6wYP8Ja47QjQtmCbBe5qgg
-         11gcjJTQv8aIaYQiTin8owmJ7tMr4abx4eE9Mj2P3k2xqm2Ops1crWXw7Howt+oJ/bFC
-         jIUGgR4aiY4FCLxzMJV4D2RwsL0Xoclv5DdQ7j545p64K7esbU73uQ1emQJWyp1/xJzs
-         4DxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNB1SPWDIOt9nCwHMsN5CKicvOOroRXC4TDGOeezKGQViXCXcRQ85Bgq6Qm96gTQPNnNl5FZtUJ887HWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwleTuUULo1ZY2J+jqI12rsICMOfPLB48ocLl4pOzQG+TXKWOvz
-	0cfsheyhGvGHyzzqmF8TxnS3iTuxdBNI3VW6zDJPXdONOIlvDORoQvxHIYpBSVA=
-X-Gm-Gg: ASbGncsyNhpCm880gQuRBIZPHnie0J4s8GlPSz3TP5VEFaJLsaGLfQIrylRjEfpR9Ob
-	YwezgZ3zJPQXYqFzOKuO/FYe2kr5bPxwNGpTrt2znDZNcX8FiZ93hjjouisQJwrYJpC9AlSShfj
-	jCABnLBiYRMJJ/SZ3Q5qNQNbcWzEfAIkt3PAsDJaHDDG5Xuvx9oVX6Xbp4wBI4Oelf8GVOqFoAj
-	zO1KUq1jCOjSjAhyweDLy2f7yA9J5Vb3s3t/4rulpTd5a9xjso86u9DYs0DfD+bWI/n62CBUpiW
-	AsCirICR8yeMGJCv4VpMMu4NQu2s17kef3/YowalVodIPZ64BpOVNIjGAYw=
-X-Google-Smtp-Source: AGHT+IFQZNbrXkVIS3uNOK0FA6fZlLhkJ0C67COIWvsSffD85H8GkDXmfIwEvlABZICaa2nLWYoJLQ==
-X-Received: by 2002:a05:6000:18a4:b0:390:dba1:9589 with SMTP id ffacd0b85a97d-3a08ff80793mr289211f8f.8.1745993729322;
-        Tue, 29 Apr 2025 23:15:29 -0700 (PDT)
-Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46976sm16103498f8f.63.2025.04.29.23.15.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 23:15:28 -0700 (PDT)
-Message-ID: <c611add2-bb79-4cdb-a612-0f47d427c905@linaro.org>
-Date: Wed, 30 Apr 2025 08:15:27 +0200
+	s=arc-20240116; t=1745993903; c=relaxed/simple;
+	bh=PYkZX74d10lvPGrseB5FE9s3+bTtnF0aDOcSfLFSv0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=owvjqyMBs09I4QPqMt1wQDwG6RSsBeptu3nr+B9Pul+BvuKIPFcI2WJN+3j58JpPg0JWgmlPevtWT2IQk+fii3t1IH6/B0ThtiTK/3Lyng/6I4iSaLAlhKiW5Ast8+y/0JVCVzVGXWckP3voZyaV0+FxNtq6hnJfR3ItwRyiwX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e9g9fz2r; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745993901; x=1777529901;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PYkZX74d10lvPGrseB5FE9s3+bTtnF0aDOcSfLFSv0w=;
+  b=e9g9fz2rvJJQVwFQma6mHkmrz1PnzcuTnS6nDoFp1y/88OjIU5+9f7hR
+   tmAllqCy6i9SHpyWP/68kE1fZwKfkxpGURLaOckwPL/RiqgieiyxiO5Xj
+   Bvu9hdgP85uJytHPdguyWGBZ/3bkDEf/Ms2MYv38AmaNZstgk6vilisVu
+   2jL6FOUWUrK0ML8IjhEq558T0cU8Qw6ztL1nBFSQo6/nwp5j1scIEh6qa
+   okdS04iugaEUS10C7aW2BQfao00It+GYazsXrMbrpyLW2jdGliW5sT90J
+   TTgPEVLvcgKqqKMSdSqIi3IMSzf1fK8yTo1owqFqD3C+paUEWS2PgjOZK
+   A==;
+X-CSE-ConnectionGUID: tTWo+yBnQtyzhsXRqp18KA==
+X-CSE-MsgGUID: 45hUh6FORByMjRQZZPLlZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="47521357"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="47521357"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 23:18:20 -0700
+X-CSE-ConnectionGUID: JZDNPxd7Si6aYG0rC+r71w==
+X-CSE-MsgGUID: v1JASB2zTtuddJoWKG34Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="133929263"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 29 Apr 2025 23:18:12 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uA0lm-0003Dv-0B;
+	Wed, 30 Apr 2025 06:18:10 +0000
+Date: Wed, 30 Apr 2025 14:17:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	ryan.roberts@arm.com, david@redhat.com, willy@infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
+	anshuman.khandual@arm.com, peterx@redhat.com, joey.gouly@arm.com,
+	ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
+	quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
+	yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
+	namit@vmware.com, hughd@google.com, yang@os.amperecomputing.com,
+	ziy@nvidia.com, Dev Jain <dev.jain@arm.com>
+Subject: Re: [PATCH v2 6/7] mm: Batch around can_change_pte_writable()
+Message-ID: <202504301306.AU2G1yvg-lkp@intel.com>
+References: <20250429052336.18912-7-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
- version
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
- <000934a5-4934-4d21-8859-897fe48474dc@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <000934a5-4934-4d21-8859-897fe48474dc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429052336.18912-7-dev.jain@arm.com>
 
-On 29/04/2025 21:40, Bryan O'Donoghue wrote:
-> On 29/04/2025 19:08, Krzysztof Kozlowski wrote:
->> -	dev_dbg(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
->> -		vfe->id, gen, rev, step);
-> 
-> Please just change to dev_dbg_once() instead of entirely removing.
+Hi Dev,
 
-Why?
+kernel test robot noticed the following build warnings:
 
-This is entirely useless message, isn't it? Version is deducible from
-the compatible.
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on arm64/for-next/core linus/master v6.15-rc4 next-20250429]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> Same comment with the other patches.
-> 
-> ---
-> bod
+url:    https://github.com/intel-lab-lkp/linux/commits/Dev-Jain/mm-Refactor-code-in-mprotect/20250429-133151
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250429052336.18912-7-dev.jain%40arm.com
+patch subject: [PATCH v2 6/7] mm: Batch around can_change_pte_writable()
+config: arm64-randconfig-002-20250430 (https://download.01.org/0day-ci/archive/20250430/202504301306.AU2G1yvg-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250430/202504301306.AU2G1yvg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504301306.AU2G1yvg-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/mprotect.c:46:15: warning: unused variable 'page' [-Wunused-variable]
+      46 |         struct page *page;
+         |                      ^~~~
+   mm/mprotect.c:226:51: error: use of undeclared identifier 'folio'
+     226 |                             can_change_ptes_writable(vma, addr, ptent, folio, 1))
+         |                                                                        ^
+   1 warning and 1 error generated.
 
 
-Best regards,
-Krzysztof
+vim +/page +46 mm/mprotect.c
+
+36f881883c5794 Kirill A. Shutemov 2015-06-24  42  
+695112a1385b39 Dev Jain           2025-04-29  43  bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned long addr,
+695112a1385b39 Dev Jain           2025-04-29  44  			      pte_t pte, struct folio *folio, unsigned int nr)
+64fe24a3e05e5f David Hildenbrand  2022-06-14  45  {
+64fe24a3e05e5f David Hildenbrand  2022-06-14 @46  	struct page *page;
+64fe24a3e05e5f David Hildenbrand  2022-06-14  47  
+7ea7e333842ed5 David Hildenbrand  2022-11-08  48  	if (WARN_ON_ONCE(!(vma->vm_flags & VM_WRITE)))
+7ea7e333842ed5 David Hildenbrand  2022-11-08  49  		return false;
+64fe24a3e05e5f David Hildenbrand  2022-06-14  50  
+7ea7e333842ed5 David Hildenbrand  2022-11-08  51  	/* Don't touch entries that are not even readable. */
+d84887739d5c98 Nadav Amit         2022-11-08  52  	if (pte_protnone(pte))
+64fe24a3e05e5f David Hildenbrand  2022-06-14  53  		return false;
+64fe24a3e05e5f David Hildenbrand  2022-06-14  54  
+64fe24a3e05e5f David Hildenbrand  2022-06-14  55  	/* Do we need write faults for softdirty tracking? */
+f38ee285191813 Barry Song         2024-06-08  56  	if (pte_needs_soft_dirty_wp(vma, pte))
+64fe24a3e05e5f David Hildenbrand  2022-06-14  57  		return false;
+64fe24a3e05e5f David Hildenbrand  2022-06-14  58  
+64fe24a3e05e5f David Hildenbrand  2022-06-14  59  	/* Do we need write faults for uffd-wp tracking? */
+64fe24a3e05e5f David Hildenbrand  2022-06-14  60  	if (userfaultfd_pte_wp(vma, pte))
+64fe24a3e05e5f David Hildenbrand  2022-06-14  61  		return false;
+64fe24a3e05e5f David Hildenbrand  2022-06-14  62  
+64fe24a3e05e5f David Hildenbrand  2022-06-14  63  	if (!(vma->vm_flags & VM_SHARED)) {
+64fe24a3e05e5f David Hildenbrand  2022-06-14  64  		/*
+7ea7e333842ed5 David Hildenbrand  2022-11-08  65  		 * Writable MAP_PRIVATE mapping: We can only special-case on
+7ea7e333842ed5 David Hildenbrand  2022-11-08  66  		 * exclusive anonymous pages, because we know that our
+7ea7e333842ed5 David Hildenbrand  2022-11-08  67  		 * write-fault handler similarly would map them writable without
+7ea7e333842ed5 David Hildenbrand  2022-11-08  68  		 * any additional checks while holding the PT lock.
+64fe24a3e05e5f David Hildenbrand  2022-06-14  69  		 */
+695112a1385b39 Dev Jain           2025-04-29  70  		if (!folio)
+695112a1385b39 Dev Jain           2025-04-29  71  			folio = vm_normal_folio(vma, addr, pte);
+695112a1385b39 Dev Jain           2025-04-29  72  		return folio_test_anon(folio) && !folio_maybe_mapped_shared(folio);
+64fe24a3e05e5f David Hildenbrand  2022-06-14  73  	}
+64fe24a3e05e5f David Hildenbrand  2022-06-14  74  
+fce831c92092ad David Hildenbrand  2024-05-22  75  	VM_WARN_ON_ONCE(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte));
+fce831c92092ad David Hildenbrand  2024-05-22  76  
+7ea7e333842ed5 David Hildenbrand  2022-11-08  77  	/*
+7ea7e333842ed5 David Hildenbrand  2022-11-08  78  	 * Writable MAP_SHARED mapping: "clean" might indicate that the FS still
+7ea7e333842ed5 David Hildenbrand  2022-11-08  79  	 * needs a real write-fault for writenotify
+7ea7e333842ed5 David Hildenbrand  2022-11-08  80  	 * (see vma_wants_writenotify()). If "dirty", the assumption is that the
+7ea7e333842ed5 David Hildenbrand  2022-11-08  81  	 * FS was already notified and we can simply mark the PTE writable
+7ea7e333842ed5 David Hildenbrand  2022-11-08  82  	 * just like the write-fault handler would do.
+7ea7e333842ed5 David Hildenbrand  2022-11-08  83  	 */
+d84887739d5c98 Nadav Amit         2022-11-08  84  	return pte_dirty(pte);
+64fe24a3e05e5f David Hildenbrand  2022-06-14  85  }
+64fe24a3e05e5f David Hildenbrand  2022-06-14  86  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
