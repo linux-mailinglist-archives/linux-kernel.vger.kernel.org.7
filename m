@@ -1,103 +1,161 @@
-Return-Path: <linux-kernel+bounces-627411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7900CAA504B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:32:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D49AA5021
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6FF1C0657C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:32:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CE63ABDCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4A81D6DBC;
-	Wed, 30 Apr 2025 15:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8815525A658;
+	Wed, 30 Apr 2025 15:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=att.net header.i=@att.net header.b="Rg+wWLjZ"
-Received: from sonic306-24.consmr.mail.ne1.yahoo.com (sonic306-24.consmr.mail.ne1.yahoo.com [66.163.189.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PIq+/w3v"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B513B247299
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 15:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706EC25A2A1;
+	Wed, 30 Apr 2025 15:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746027152; cv=none; b=nAt+CJmk+r3cHFjxVeVdnOFUJbdvc5AnCZ9kAEfzA094N4dtrZGYAkZweafz03O29ffgBTdfaEJWla+hjCJ9zOAk7ztwwnlT1cB+aJLU0Pcsp5vmN/7h5OiqPfUz+ttm1zPg4Eq5dIY+9P5pWAoOl1usHRh0ovfYAON6puN0l58=
+	t=1746026567; cv=none; b=LvPoO+HIXCd756IXwbRabqoCTaDLGdeBCAlqlRe6vL0zSORQibEskcGJ5IQQYQrnIDThC50DB3GgPzvTGB/pgN6Ty1E+ZHJ4oaGt2XPQKwc16tpYuY6ZkECOHRDzwvljhbkfrHosY5gv+MciKqZ6dRRSoJ0sUzc3/nxspQrjos8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746027152; c=relaxed/simple;
-	bh=rI8tGOhXhDDVDq6fjyuKaqcWEtn1hWI58nlMpB4x0ks=;
-	h=Date:From:Subject:To:Message-Id:MIME-Version:Content-Type:
-	 References; b=QGiM+MkX+56nXoyr1BXLP61M/cLapban9uIB4sEv1wKS5KotTxXxpX0nMai13hBo2V4iRNbpsIllmz+0uklcS3xXlxhOCjSre9x0BHSkwO5+B6B2aQTO6WRFjMR6IYLO4NYC5/CBingsdEP4+7OBpwV4awBIn1mJZyG3fe0jfYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=att.net; spf=pass smtp.mailfrom=att.net; dkim=pass (1024-bit key) header.d=att.net header.i=@att.net header.b=Rg+wWLjZ; arc=none smtp.client-ip=66.163.189.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=att.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=att.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=att.net; s=s1024; t=1746027149; bh=KSVIM7aBkfKOKvpwNb75/OPsByk4QjayQ3E/GDlaPHY=; h=Date:From:Subject:To:References:From:Subject:Reply-To; b=Rg+wWLjZdbmNzqindkX5Nztd/bm34fZqeaPqvyeD/3ioeJDRAp9rZUYpBCDbIHT3yLMUr2dL9sVyJ9Xjx4FeF9mGwdpoKBFgcKSiiHTnyJSnKlmQ6Hagw76YjfHVfL0hfHf6LaePQS8cuz04S4Yp2hwV9QFXVg/HM/EPyW5YCqE=
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746027149; bh=1p8OXK4wMfUNuopUoNHubrb7QGKjOt0a5IJaoksflcb=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=nMYMyE/PTpCtvPmCfazyYaBW/42SdKoRNvZx9nVgmdcECwpV9IZO0oKIDr2oQR9B0F9ofZ58sLGfVNm+WB6EmDhoFJxLOdbBUeKOo8PKNRArzrTKOWKZ9d0mEsk7+YAcyx+bfYOXfCi1IQ9qAyK9G0zKGeAy7WUJhkSIogjbx5HhDGcauGWP2n23/r6CFTJuFGrUWCmk+is7YC+4Ng39PrZ0MrJ7UkH6//I79IFzm80L9NhdOmCty09R0DkOjVeV5RFuxDkbL0U78eBg6uwg5KY2DMhuHV6oaBEg0rNTxqxtgswyNGb7p5Ar+pr5NwsDh5UXCfH6xkURFnBuvaofoA==
-X-YMail-OSG: VR7SZYoVM1mHDhCJM0A1iiowf0H7c.JUSwk13.0JCrHO2XG1J3Kqlkd0yXMXTAr
- h1EEjKk0bup666z24V054Mfn.7cftIb5P2rmlrXCmhCQJ5Qbgg4fC9.UUxSmZ_Z_qYvICy9I6ZQk
- 0WPc5KlkNHv.cNeI7Bth3wwk1_uO7casE7TXbGSefquKEsjCJc7tQ6NJxUH71N_g8MlIqGzlIw9d
- FoZl3A3RzqGynuQjdhQqWVroMf9QaJrm6FXpe4qQJFcbWfiikiE4jNYXjQiT0ne8EhyCiOwBVqkb
- D.uLQTl.UBJLMYVTbMmZPPKNL6ZKIMp4q1t2JtgCckV9Y8Q_9OQMWBvbJSi4vAvNxSyYq.gVwMYm
- 3AnXvuCf7wUV5FPAWvo41c2XCzwpepDYne_5s0O1b7dZf7zQdt6jLv8CmbhJepoFxfbvx8wjFYMX
- M5mgFpJ0w4ZBzMU1VGHvT9fOSgvPPv67DPgJgjJSxpX50ZJP6LEcKR13oKnt6_OFx1Qw1PpWVLwo
- z8kndL.N2yFJXs4WxIchsl5Ky1PpaWd7fXm7jaejt5ejYKothMPZuKE3PJ5Y8gyILRlmWqM4lj.p
- rll.DjuNu0h3yPGkg6sEbZn8mR57iVS.Sodk4.VSOmN081_iNApeQq1d7Na.WkgKGpVk33OA2nNY
- GNwgOXWlj_.T2EIcH5NNGvAprmwajU7YCU6BGaSDMIFwkPWB50jmpuAs0jcaG5y2nw.C.MKlOC29
- OGGEdD30sJn7aOXNjas5YFupwf6oMg._KPxX.341NC_guvxWgMZkWeOaDxlJiD9B20YR68ruQ0Hz
- h1lrLbMkqHUP6PFWfKKybd7Zo0sL9kgPS8uy7NgVDst921LaR3mQzELsIscLoAZgQsvhJwCCjr7o
- wSJuZDTESMqZSJKNacUdDzHSadWRFxqB53O1_kr8yF02QUosIxk9f9qP9MGj3_ZpJWa_beNG4lWT
- IwCF7lGopRVHG7gn2VPb80JGCZtbhyqNIqQn4gU1pp3O4S6b3lSftVdJ.cdYAaevUhep_Fw0xDpp
- TZQ74dEypfnG1OJm9kDKVBSrNlecxvx7Wo0yzLsCHIQbdlEJu4vRyCXEcAZAMiYVc4.RQ1l3HnqB
- RHElLBzL3C9jTS70QRRmGgUNkiNrLAQe4ChTPE1O6H1K0pewzXhXWahA97iLgXnn4EqP7D7s_Ft1
- dx5fGg76ijNlzLqPR.N1nM1I4EosSObY0kSzXS6C3R9uDb0jdkTzbh8mzGSRTGDjgE8BtE_tC9BD
- ifdv2zmtEPq17sjichzvovNucMVkD7fvrlcjGiJ.D2IHTPQKRIgZdvqsCIDEiAT21C3ppPjdMRqX
- HNJ5lcaHmMFGEAjmEuphWtb8ADTyPsJ5nxmuZNUeL8enXWFlb2hdS8CATnMxoQHMdXHTcbhkuijY
- m73rb8Mp0vPhmbbBvBryh7wXWzLjdrtVyH6umQ4QLV11aBk0djsp3LiPELrZ2KtcFbrZ4yRT1j3M
- ybCldisQJHX2e19d7A7JwtrhFeuvxRdvNHIWRCIf_y1FQJuY1ABQ63._Tn9QijNdaUUCLR3Xx4W9
- RYgBYH9WoNF0t11SuWSmNT7pZjF6sewH1hasPg6qE0Zw2dR9KLWRVJaNzZ3.alHaJ6FGVduK8inZ
- GrffobL.QeX_NQ.uos8Uioh1v7kvlFrK04xUjRn7D1NNxzrwCHHwX_8ruacX4UyimVhDm_jyaTMh
- .e8Uq3nkjsyhUbY4.PBZwnMuAIVVQfW9e44N9zTu5QbZLt_.6_b1Tv.B2jRUV463n.gcjFwh_v7f
- 9QBQodz0gA10ruhR55hijM7UHtevBcArAWBVzTZ5orgmNCEIVdrN3_2GWSqpWJeRwLtzzC4skf5j
- Y7MTDcKn4_ohJq9a5vYSm_SN5d4qLDslrmWAeQHrkXOD2pkIV5g0X4hrReWg5UwI4uyadsJTGXeq
- HCNjH.0Gpty5jm_RF2waFkhawp6DASAO3EZRNuum0O4i5YZ2NCA6zzbvufAAImIKDMnhUMzERCKp
- aj2Dyrk8JadCiPeqPfKO2Ri0yCwLUaUEF0kstQoM2lHZxutrfC8MT7qJxQyukv74ClKYv2GqG8vH
- 5KCEnti4Vkj0mrnCcp7rnJBll2vuO4x8y25E_OsQNfNanpMKK5zqMLV38pgKEE87JqHoSDNygQ.a
- nRXGlf6U0aE_GuGbxZMEBsWelKrkX8fr.5CIyiHJVhanHZLO.r_0PZ9ZTEAvmdpOyEd_BsMRuNWC
- i8SxHsqbdd7lWgnPH7PcYVg--
-X-Sonic-MF: <pheonix.sja@att.net>
-X-Sonic-ID: a12ded4b-6047-43a8-b61c-cd1b631334d7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 30 Apr 2025 15:32:29 +0000
-Received: by hermes--production-ne1-9495dc4d7-7dn6v (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c428d61b40ad9c93d7b0c2522f209c0b;
-          Wed, 30 Apr 2025 15:22:20 +0000 (UTC)
-Date: Wed, 30 Apr 2025 11:22:13 -0400
-From: Steven J Abner <pheonix.sja@att.net>
-Subject: amdgpu: black screen 70% of time on boot
-To: linux-kernel@vger.kernel.org
-Message-Id: <1PEJVS.CLHTCJY89UP42@att.net>
-X-Mailer: geary/40.0
+	s=arc-20240116; t=1746026567; c=relaxed/simple;
+	bh=vK9x+fKPiphgnYio19S12ceCgeUhQ6mE/xg797ES+Bw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cC1FxMgKDzLW1VnJIX46XfteLgMLPi/MxlncV9bWUXi99ehf0GI6Q1hR9cKMcTkQt86N8iPIiCzi1zQzA4l/mqYG1UZ7Slh/W6vwo/5+hAOY+mGPJZVMzm3U6sNgo6rYOYXyu4BF9RdbidGNAMi6pJ4CuWB+2miZ4JrPy1DkUqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PIq+/w3v; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UA4D8s006429;
+	Wed, 30 Apr 2025 15:22:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=qel6dC
+	z7U0QSLGwxwhtVvAr2kR+Adu0rEYWSsIjsTbY=; b=PIq+/w3vZHiC7BGoySnV6C
+	DhbHM0/dBCx11uXLIuoiv30NxQSkggFk4G/9mo9Iv3jTVFos6007a8Bik67GuZa6
+	pda98LoS+ZRpukf9nR/URjcMZ1ovs2K5tMdjaoYQbl4Bpxur4KU0mnL0HnE//ssI
+	eYhKz7fpJqAYWEQ4zcw78jG7vmPaNk84i9PV8FiaVS1mQIsJlhwxxx9Mf5+7bn/E
+	X6yspfsCVZnDILFbGULYelC+1dGcLSOXxn/1Qn/MNMq3dQEFy29Ol3ObXBHz1wzi
+	wDDUpKSQ8FxBmrP/Cd9Zq7UftO0n5EkYeR61vUqMFqmkvKjwfJJkNEkvlB7m0IOA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46bhsjsh9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 15:22:34 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53UFM9gS025898;
+	Wed, 30 Apr 2025 15:22:33 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46bhsjsh9p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 15:22:33 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53UE72aJ024679;
+	Wed, 30 Apr 2025 15:22:32 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 469c1m86ba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 15:22:32 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53UFMVMw19268028
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 15:22:31 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1562558061;
+	Wed, 30 Apr 2025 15:22:31 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F19EE58054;
+	Wed, 30 Apr 2025 15:22:29 +0000 (GMT)
+Received: from [9.61.140.105] (unknown [9.61.140.105])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Apr 2025 15:22:29 +0000 (GMT)
+Message-ID: <135ceca8-e98a-407f-a301-8b4720c8e8f0@linux.ibm.com>
+Date: Wed, 30 Apr 2025 11:22:29 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-References: <1PEJVS.CLHTCJY89UP42.ref@att.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] integrity/platform_certs: Allow loading of keys in
+ static key management mode
+To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org
+References: <20250430090350.30023-1-ssrish@linux.ibm.com>
+ <20250430090350.30023-4-ssrish@linux.ibm.com>
+Content-Language: en-US
+From: Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <20250430090350.30023-4-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=dcuA3WXe c=1 sm=1 tr=0 ts=6812403a cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=KmA9UCYRVGLAr49MUM8A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: bxiKuflN9motG-j3lwDGZK_NwY8jAYZ0
+X-Proofpoint-ORIG-GUID: 1VHetqsTmLpayLE2wP_W6Ed7bBU9fglq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDEwNyBTYWx0ZWRfX35Mo87z6GspG lfncH6zxnv3JpMWNydyqlW3vKBQ0Vx4cY/mq/qcTajHJyzD4BdFvzdPNBqzK79v23YcpoV2U4Rl mGf7jLUCqEEEeWK9DzgzSpkPNYoXwjOIH8gNzzUJ9WZV4N/8yhH93lbrXVkt6YZsYJz4TRGrQSc
+ xjph8xt61b/B8+tDGgQToDw2CWGt5KREpaT1kcA3mLwvREgTjrhEt+O3WXF+GjJwpSnmDw2RHJk MCJaOMN/tIRTG8v+olfCbRkY0L1lCZ7/K8QpZVLwyWcdqvx1IqpOE/gMZvJs1o00G0gtwcK7LGD UBd0DvCcUcZlBOLyKhWgofQg4cPNMNfXtceezskgApRbSsvC+709C7V8OjGi00QJBAYuSnKpjlW
+ 85hA25azAv+WoYb7o99bvd0Ok91r07otbKmD0pBZll7SXvijrBzW1Tjy/lbOobOXdi7DU/xB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300107
 
- Having issue with firmware. 2400g, no OS or LFS build. Linux version 
-6.13.4, no initrd.
- Will boot 100% to linux console if I don't use firmware loading, and 
-average about 30% of the time with firmware. Clarify: 100% I can use 
-linux console, just with firmware I can only see it displayed 30% of 
-the boot ups, includes boot output and login prompt.
- Not sure of steps needed to remedy. Dmseg(s) from a non-LFS match in 
-the drm, amdgpu outputs:
-[drm] initializing kernel modesetting (RAVEN 0x1002:0x15DD 
-0x1002:0x15DD 0xC6).
-amdgpu: ATOM BIOS: 113-RAVEN-113
-amdgpu 0000:0e:00.0: [drm] fb0: amdgpudrmfb frame buffer device
- and dmesg(s) between blanked and displayed of LFS are identical.
-Guidance please :)
-Steve
 
+On 4/30/25 5:03 AM, Srish Srinivasan wrote:
+> On PLPKS enabled PowerVM LPAR, there is no provision to load signed
+> third-party kernel modules when the key management mode is static. This
+> is because keys from secure boot secvars are only loaded when the key
+> management mode is dynamic.
+>
+> Allow loading of the trustedcadb and moduledb keys even in the static
+> key management mode, where the secvar format string takes the form
+> "ibm,plpks-sb-v0".
 
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+
+Thanks & Regards,
+    - Nayna
+
+>
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>   security/integrity/platform_certs/load_powerpc.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+> index c85febca3343..714c961a00f5 100644
+> --- a/security/integrity/platform_certs/load_powerpc.c
+> +++ b/security/integrity/platform_certs/load_powerpc.c
+> @@ -75,12 +75,13 @@ static int __init load_powerpc_certs(void)
+>   		return -ENODEV;
+>   
+>   	// Check for known secure boot implementations from OPAL or PLPKS
+> -	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf)) {
+> +	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf) &&
+> +	    strcmp("ibm,plpks-sb-v0", buf)) {
+>   		pr_err("Unsupported secvar implementation \"%s\", not loading certs\n", buf);
+>   		return -ENODEV;
+>   	}
+>   
+> -	if (strcmp("ibm,plpks-sb-v1", buf) == 0)
+> +	if (strcmp("ibm,plpks-sb-v1", buf) == 0 || strcmp("ibm,plpks-sb-v0", buf) == 0)
+>   		/* PLPKS authenticated variables ESL data is prefixed with 8 bytes of timestamp */
+>   		offset = 8;
+>   
 
