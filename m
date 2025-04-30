@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-626152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304D0AA3F15
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 921CDAA3F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869BA17A6D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:31:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF3D174F37
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5040F248F53;
-	Wed, 30 Apr 2025 00:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9BC296FAF;
+	Wed, 30 Apr 2025 00:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2qmY2zJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="iSQJT8CE"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734DE248F50;
-	Wed, 30 Apr 2025 00:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D092701A6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 00:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745972221; cv=none; b=r4Q9zh5mXH9o1gPJ0g92WshephWj/OMQHTfcJ+OSjtAnzYPLts+q7A+hUghwD6GwCdkM0jarYLGFXRLdOcFB/9DKgr27I+2L1TqTazpnc55QaMUAhkyy7y/cxiUQXcoRp1DMWKJtOhZI8rFpaym4xLy7xjgQCadmTK7lUz9Ok+I=
+	t=1745972334; cv=none; b=fPTTatD75eG12zxg8V0XV9tAk+ikw2Uf3bBp6zdYSIudew3FhZc2de1n9mKR1S8FAdJF6kFoxGL5nUq0c0lNEED+1Fh9fya+lm0b6dhGHvee32Juw67aUieuQHJFL4V735eifzD7S97C3rWcmDNvOC26GLhWSL7DQJfSx6weZGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745972221; c=relaxed/simple;
-	bh=aK9F9nwIdg1FphfT+Yfjld5zvSum/rAfg7pCxAMkINY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IO7r1IM6+9IRKsvlR9kVKX65JVV7UDkxjVsMwx/Dm1ZGckFMTO+Hvglw/01wbWkRGWP5IbS7/PU33a5tFR92SywjYcatUnRwHa7WNhNY/Dtf+3xpYjCFzMUvy+EHjAW2mLpHSJ1mzDW0P2FcJgC5VYcekY4y1mQx+DBLKlxCWXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2qmY2zJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643AEC4CEF1;
-	Wed, 30 Apr 2025 00:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745972220;
-	bh=aK9F9nwIdg1FphfT+Yfjld5zvSum/rAfg7pCxAMkINY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f2qmY2zJxR+ibK/Gxzvt5dyIAIgHEFb0wJlpCM1untRcEPWw80nYDj9aUM9LmQCTO
-	 lZMeo4qtAnYSRYO2HTwMS1dzOLylqleohStMuC5Oyqe5LZdl1JUkNhNHN0jO0Oyz9a
-	 6sQdEs5JxrYXJvueCGqanCFfEGPzCrRPVZGSOYjL/euAFpfKnkp31PCG8JRDf9Neuc
-	 DI8GsQL1+afXp9PUy9ic1RtHK/PbmlWXsZ3CUMCbVbN9SeWZDZACSxiucdE5CGHTcN
-	 OP8Tc+9y5Pd5/+g4+P5Ts4nNF4XLGI8BFtKNj4/adKwW2mNEWt7mEzDuG8CVf8waKs
-	 QMWDPQrJCcIIA==
-Date: Wed, 30 Apr 2025 01:16:56 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] regcache: Use sort()'s default swap() implementation
-Message-ID: <aBFr-OJlWHg5a0Lj@finisterre.sirena.org.uk>
-References: <20250428061318.88859-2-thorsten.blum@linux.dev>
- <edab112f-9449-4862-8f8a-0beae136e0c6@web.de>
+	s=arc-20240116; t=1745972334; c=relaxed/simple;
+	bh=KXd/3V6PehhhU+w4DD08sX0JcXGyOTe6/oYAxTzMw+k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e7b0sUOviZRyvE1j+jknw/ZuFtZfn0cWS/SHlhwSao3g3Z/wxcjFOK6nvVE5EtagT4zsdpaFRUpAIbf4pZ6QtPpuAOW/TUuMPt/9q2DIl/wNyAl1g8kKZivEzBRwd0vHR6a7ZMtntYZ3DLbgHhrx29kJrkVBK+wS4aHg3TUmZoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=iSQJT8CE; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22438c356c8so73211195ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745972332; x=1746577132; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9CDC77dPHm0sLL9zARbZU/pLEdmRrLjaN9hFpvRuxw=;
+        b=iSQJT8CEgHwqsU+qituaKviji7nMZZH+ctnwFZQGPvBROOGwknlkseOf55UGltC8D8
+         F5ShiJ7xd0KZkA4F/9tRjQbqYr02GtyIpGlGBxyODjUTzk7XwJWyQv59Cj10erkz4Lct
+         dsM+hnOIv0dFwW5UJezZdRTnV4reFsNk+nz2Hp9mtYPQrkhLUu63J1aKUbdeajR1Ap1F
+         bVRQ79IfAZGhaAkvaB0Fl42236fdnV7gXKpabUTCwZGyivDLuGQBKqDRsYMsbZ2QciJA
+         FO/SJHseulh7vOVk6duPK4mh54ITubQo4ALT4kvO6tBFZVMu6O0QQJD+cuVnBOiBJJf4
+         2ATw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745972332; x=1746577132;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h9CDC77dPHm0sLL9zARbZU/pLEdmRrLjaN9hFpvRuxw=;
+        b=GFxHZFLk7YtwubaydleAiJV+aFF6R3aSX+J8FUJP3xUm0MVNAFJVUKjfqB3UOPLUtg
+         CIjLE4EptucugnTd/Ers/8ZPGYgVgjxV7S7K1+C/p8+jXebJJ5Wc29mmFbG5mmG89exo
+         i2gUdS1dNHGeFEWt+kV/Gl9kOj9HcjRyBAkebsXxODETDm7QNwg1UDf7wOXw+3oFMBme
+         PGAvAoujDeOQ1SdmZ3eOfW2Ok6cleB/N2kYkPqH0/uxbqhGkyFjov6moWSltOk0uKKw/
+         VNsRgWcFie37aq/s8JITtY9jHVMBW7mv37LaOqIanOlewot0JRT7wrO908PXva+Bqhlv
+         TMUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEMlImJgwwJXGinHv/jwcFsPn5uet2bQiC2SJGDuN1qur3OvxozBsZVCk+wLefwV+p77aKJwoJFu3ox8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGzEmjTIUEaAd/7SV7mG8WVwA6TByEWpSXhv3LwJo8/h6LDraV
+	SRlW6QeplhqRPlrDOQd5Xsx49cCF60/EwDGJGx3XV3fTlwYbvA2Jy1FFMUXBuOsyXt4ozS6ktMV
+	E
+X-Gm-Gg: ASbGncubQ+ovZQtWc/xLyqEw+8Z/Mwp9Br7IxtUZYyUqlyUKF2N/4833WTC9l/UI2ap
+	uRKeiUk9MrkjnsTgoq1U4rrI6lqujK9z+6B3y4XTRG0aIkkH1ZP40LxiwWtRBQxIH4b2VLsC8Km
+	1afnSbLQVioTIouecDx8btWpfe+4kgYWVh4JT1erpv5Y7p5w71zFEPBIvCZ21xhk34OQMVvJWHZ
+	yPlM6Oh9giFXWVFV7oSjr5OcEKpU61lS1ueI90h8urpN91jl5ZTkUDruajPrQmzgbG8bdb4p6r9
+	AUDGPLiTcBN0oEcnKcGZasfhvcjO8f0kd/xYnlOyJbAbUQ0hPjJVYw==
+X-Google-Smtp-Source: AGHT+IGcjNS30ZUbgOqbJ+3hZtDKq2g7yhYNKy+e5TbCHxGgjZoKOda+bZdglX1wUFE80tZeA/2XMA==
+X-Received: by 2002:a17:903:1aaf:b0:224:1e7a:43fe with SMTP id d9443c01a7336-22df3585814mr19158975ad.46.1745972332359;
+        Tue, 29 Apr 2025 17:18:52 -0700 (PDT)
+Received: from atishp.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1f68988ca4sm1907790a12.74.2025.04.29.17.18.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 17:18:52 -0700 (PDT)
+From: Atish Patra <atishp@rivosinc.com>
+Subject: [PATCH v2 0/3] RISC-V KVM selftests improvements
+Date: Tue, 29 Apr 2025 17:18:44 -0700
+Message-Id: <20250429-kvm_selftest_improve-v2-0-51713f91e04a@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NFTx9axBbIHKVfre"
-Content-Disposition: inline
-In-Reply-To: <edab112f-9449-4862-8f8a-0beae136e0c6@web.de>
-X-Cookie: Well begun is half done.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGRsEWgC/4WNXQ6CMBCEr0L22ZpSfiI+eQ9DCLRb2Sgt6TaNh
+ nB3Kxfw8ZvMfLMBYyBkuBYbBEzE5F0GdSpAz6N7oCCTGZRUjaxULZ5pGRhfNiLHgZY1+ISim9B
+ MnZVjayrI0zWgpfehvfeZZ+Low+d4SeUv/SNMpZCiuVRtrpWdqe0tUPJMTp+1X6Df9/0LFkf1c
+ rsAAAA=
+X-Change-ID: 20250324-kvm_selftest_improve-9bedb9f0a6d3
+To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Andrew Jones <ajones@ventanamicro.com>
+Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+ linux-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Atish Patra <atishp@rivosinc.com>
+X-Mailer: b4 0.15-dev-42535
 
+This series improves the following tests.
+1. Get-reg-list : Adds vector support
+2. SBI PMU test : Distinguish between different types of illegal exception
 
---NFTx9axBbIHKVfre
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first patch is just helper patch that adds stval support during
+exception handling.
 
-On Mon, Apr 28, 2025 at 11:00:46AM +0200, Markus Elfring wrote:
+Signed-off-by: Atish Patra <atishp@rivosinc.com>
+---
+Changes in v2:
+- Rebased on top of Linux 6.15-rc4
+- Changed from ex_regs to pt_regs based on Drew's suggestion. 
+- Dropped Anup's review on PATCH1 as it is significantly changed from last review.
+- Moved the instruction decoding macros to a common header file.
+- Improved the vector reg list test as per the feedback.
+- Link to v1: https://lore.kernel.org/r/20250324-kvm_selftest_improve-v1-0-583620219d4f@rivosinc.com
 
-> Would the following source code formatting become applicable?
->=20
-> +	sort(defaults, ndefaults, sizeof(*defaults), regcache_defaults_cmp, NUL=
-L);
+---
+Atish Patra (3):
+      KVM: riscv: selftests: Align the trap information wiht pt_regs
+      KVM: riscv: selftests: Decode stval to identify exact exception type
+      KVM: riscv: selftests: Add vector extension tests
 
-Feel free to ignore Markus, he has a long history of sending
-unhelpful review comments and continues to ignore repeated requests
-to stop.
+ .../selftests/kvm/include/riscv/processor.h        |  23 ++-
+ tools/testing/selftests/kvm/lib/riscv/handlers.S   | 164 ++++++++++++---------
+ tools/testing/selftests/kvm/lib/riscv/processor.c  |   2 +-
+ tools/testing/selftests/kvm/riscv/arch_timer.c     |   2 +-
+ tools/testing/selftests/kvm/riscv/ebreak_test.c    |   2 +-
+ tools/testing/selftests/kvm/riscv/get-reg-list.c   | 133 +++++++++++++++++
+ tools/testing/selftests/kvm/riscv/sbi_pmu_test.c   |  24 ++-
+ 7 files changed, 270 insertions(+), 80 deletions(-)
+---
+base-commit: f15d97df5afae16f40ecef942031235d1c6ba14f
+change-id: 20250324-kvm_selftest_improve-9bedb9f0a6d3
+--
+Regards,
+Atish patra
 
---NFTx9axBbIHKVfre
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgRa/UACgkQJNaLcl1U
-h9CyyQf9GfxP0Cy0bZ97n/ofMRRGMjpH6U3zALBxa2zXqCorH55hSQsEfUQRCfXJ
-UzR/jIdXczE7jdyZEQm+psDrDJegAOkYD2AWrLKF5U417evMcXcusr3chjfX2o4u
-0so9BBw4bpk3PAZMWlv5LadCc7gH/wJDfzPxOO59CO+pWTr3pwIpiotPYx5jDM0u
-KQ/VKWDOGyGXYGEvU+rA71pXDHV1Y+SSF9NehOS9zasrCiYxeXEjVTXABs61sYba
-6vjBWO9eIFXPurZ1fqkK7AbdtTq1UM6TleP293zosRUm+jw+DU9pAjb7OvTktbs9
-qyP6k5NsV9SweDj/sj6uIg2TCvUpyg==
-=siGj
------END PGP SIGNATURE-----
-
---NFTx9axBbIHKVfre--
 
