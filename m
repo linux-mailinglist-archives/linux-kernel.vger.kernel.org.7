@@ -1,67 +1,91 @@
-Return-Path: <linux-kernel+bounces-626560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5354AA448F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:57:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2585BAA4493
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0B84C7E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AD6A7B8C89
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C70210198;
-	Wed, 30 Apr 2025 07:57:19 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E6420E005;
+	Wed, 30 Apr 2025 07:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iAiZQnal";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LeyfkhiB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F63188A0E;
-	Wed, 30 Apr 2025 07:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E9120E338
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745999838; cv=none; b=pGwxjDbNo6rIx8yCpKHLsmaH1HhpEApEboWKqJ8GVyDxTNwjWc03TcTb/Oss7y9wvEoIASjDm0LwxmgW60hJXtu33LACf8q59ed4lTS9HoPg0NWPRWSimbDx3R788LcArdD+eS5DOHJWIjlpHsXc/pYQ8XWxPCNE8ZEW21FoIAs=
+	t=1745999889; cv=none; b=ajEBmhNqYrFvPnq0dwDQMZblLz93Nb9YfCjKZLzqG2VoTAPMiQqdGYwbBsdqJm4eXLAokPzGJ9GAkmxy4IOqxOkdnP/45C+azmuNMXr8PRqFM1jF/etN4F/Z1wrfu83cEMioOxvJD1qYDZyMBn8mz/lu9NqcQUdTMAPDNZVYt94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745999838; c=relaxed/simple;
-	bh=71DGGON2HSVDxxVvFtqOfUMtLQSWnvqMF0YLMh8MmaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+LCjw2zsYh/TLSdhOcXKyvwJLaoTYRPHZLMXi4bHiUtUd0OMWeKMvT9Mx4VqLn9IStouV8c9aD39GF/CHLBmIIXQXScRg+Srf7DLftPlwk5XUTJEnShwRt2nz/VeJgyxBdq4J8wlxLrLXuATpIn1pFcqNm2dYsgI7aucg+hovg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1uA2Jb-0007zd-S0; Wed, 30 Apr 2025 09:57:11 +0200
-Date: Wed, 30 Apr 2025 09:57:11 +0200
-From: Florian Westphal <fw@strlen.de>
-To: avimalin@gmail.com
-Cc: vimal.agrawal@sophos.com, linux-kernel@vger.kernel.org,
-	pablo@netfilter.org, netfilter-devel@vger.kernel.org, fw@strlen.de,
-	anirudh.gupta@sophos.com
-Subject: Re: [PATCH v3] nf_conntrack: sysctl: expose gc worker scan interval
- via sysctl
-Message-ID: <20250430075711.GA30698@breakpoint.cc>
-References: <20250430071140.GA29525@breakpoint.cc>
- <20250430072810.63169-1-vimal.agrawal@sophos.com>
+	s=arc-20240116; t=1745999889; c=relaxed/simple;
+	bh=LvoKHcJOLssTqoHB1MvZTHF2UQarzvS7x7xLlRZUZlg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H0UX+Fb4grMkQnB5d3IaeCyFcxkM/kRyqIFLme29VE8keO5fJonyCT20nJRPJ+GHjPT6GhrOddyUNFzKuRsBX/rE4K7fJMy3GocZ15v5jijerpUUaQH5asnWVRWQ6ipfas+oDusNtDdHr/JUX7RIBAA5yB5sBNdczLkQzhR7m3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iAiZQnal; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LeyfkhiB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1745999885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LvoKHcJOLssTqoHB1MvZTHF2UQarzvS7x7xLlRZUZlg=;
+	b=iAiZQnalZDS4OKKa51OfRKVHG+kZU0pihjP0q1UduxKG/R1q6ktJ633TfmuhnlF6XT2s08
+	tu1qMf3smcF1wLE5oI257Dnco6/Jh4COAkAHka6PLn0hmykwIIaWXu9Dgxl04IctyJ21H0
+	izkreqv89FKTzmT9VVMCP84oxEQkT6Gr+XtwsmbzMXnSX2zGjaXs4nNBKxMUYl5F00BOsd
+	ydeN+rhdSN5kArIbQVQipwlH/nPa6jAmTtkJZaotQPXeSpqgHW/KnggMBSnRohvx2HAy1s
+	+vIww8uo7LKOL9FfVtVuMwHuZjRjLDzcDvbpL6uG8RpfyhjpTEdB/miGSgWNDQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1745999885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LvoKHcJOLssTqoHB1MvZTHF2UQarzvS7x7xLlRZUZlg=;
+	b=LeyfkhiBXKlrmcOBKvUq+2cn6h/vPrQASik/GGSLduuDUlR3oanOSipjO/Xt6fdSbhTWR3
+	hVtonyWjhV85D2AA==
+To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, carlos.bilbao@kernel.org,
+ tglx@linutronix.de, seanjc@google.com, jan.glauber@gmail.com
+Cc: bilbao@vt.edu, pmladek@suse.com, akpm@linux-foundation.org,
+ jani.nikula@intel.com, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, takakura@valinux.co.jp
+Subject: Re: [PATCH v2 2/2] x86/panic: Add x86_panic_handler as default
+ post-panic behavior
+In-Reply-To: <781ef1d7-f9c6-4a15-b94d-c735e83e7d01@gmail.com>
+References: <20250428215952.1332985-1-carlos.bilbao@kernel.org>
+ <20250428215952.1332985-3-carlos.bilbao@kernel.org>
+ <84ldri7vv0.fsf@jogness.linutronix.de>
+ <781ef1d7-f9c6-4a15-b94d-c735e83e7d01@gmail.com>
+Date: Wed, 30 Apr 2025 10:04:05 +0206
+Message-ID: <84bjseozci.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430072810.63169-1-vimal.agrawal@sophos.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 
-avimalin@gmail.com <avimalin@gmail.com> wrote:
-> From: Vimal Agrawal <vimal.agrawal@sophos.com>
-> 
-> Default initial gc scan interval of 60 secs is too long for system
-> with low number of conntracks causing delay in conntrack deletion.
-> It is affecting userspace which are replying on timely arrival of
-> conntrack destroy event. So it is better that this is controlled
-> through sysctl
+On 2025-04-29, Carlos Bilbao <carlos.bilbao.osdev@gmail.com> wrote:
+>> I see no reason why you don't just use safe_halt() as your panic
+>> handler.
+>
+> Yes, in my original implementation I simply used halt, but I was
+> trying to be cautious in case any remaining messages hadn't flushed. I
+> wonder, can we be certain that, as you said, all output (e.g., a
+> backtrace) has already been displayed on screen at this point? I'm not
+> sure.
 
-Acked-by: Florian Westphal <fw@strlen.de>
+Well, without this series, the kernel goes into an infinite loop. So if
+the messages are not all out, they won't magically appear during the
+infinite loop either.
 
+John
 
