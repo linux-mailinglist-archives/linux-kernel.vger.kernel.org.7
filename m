@@ -1,150 +1,295 @@
-Return-Path: <linux-kernel+bounces-626711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFA4AA465C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:06:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2B2AA4668
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF614A0F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4049C6F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97140221F02;
-	Wed, 30 Apr 2025 09:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2592021B9CD;
+	Wed, 30 Apr 2025 09:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JXA0JVx9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D9E221DB4;
-	Wed, 30 Apr 2025 09:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pGIjnToJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF34E1EEA46;
+	Wed, 30 Apr 2025 09:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746003868; cv=none; b=jd+18HRQh9HG50+ud68PKCh5eQ5ND/UUJI9uuIO7XG60KfQbWYRty2kmEwh6I9gDOID3Z999nxxuWsX/BiI2A1Lj+hAhulbBLRt3/UJhTvqAEJFgkAp0z7ygtOiZ+oG8EN8Ik7wf+/RHBa83o31oLZIkjMvOtV/0kpIwDeI7neE=
+	t=1746003850; cv=none; b=JYmAlsT3DX4knS3tn7EZ0UnlhQud0wNwD3sT/w/YL/h8XHS6rhvXTZNglP5sz6Z11JcvfL49TMjRNqv7NtjipR5kjWFWpvyEev7ewnPkW5zut89L+UczhbKfVsYBwTo13U/o7DIc2vgEgvlb0Jo/JeOwYwZXYj5yJp47a4+Sw4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746003868; c=relaxed/simple;
-	bh=sg4nP1vsmKRyIOjaBfvOLljwCcb3ODZxzVhxgr0uGp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MW0TV0JN1Ou0TwqNuUYEEArlA24F34EdeS2jpfsdeeCchDyL3HoNrF1yRE0e7mXpcwMdObqrihTo5UWoQ5ujEOVi/creKybeB417F14xa4yzLguFxbGXHkry9TpqzKt1N1ck+nRTL2OpUedp9F4BI+LzDgg9jxI0Ikf1sXMhj78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JXA0JVx9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TNkg4F028053;
-	Wed, 30 Apr 2025 09:04:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=kZmvUAuKXTdsxm2nV
-	PwxC8EqEMZqr7IelCZT3bJXADk=; b=JXA0JVx93qGUJGvtmm/AnnbZX4LED35xe
-	paeYvkAN3mYlCKrJWBqDcs74Ycttl4IV2aYrnALji5Y0m37+mepzbpb3wE5vbCla
-	NgERwXeFmms25HXhabg2LqcVogVbMDVEQiG1quPW2bivtE8fTsDHt3xeeZ3pcrdZ
-	Ouq6TXzTlXUvY7KB18UJr7pWY+un1Ccoa8l6T4ixDseyEqbFNY0KdS0pijhD3Zhe
-	TstKGGqUgk2u/cCesNTX5WClVjUY+Frh5pcMEhjTPZq1hunncyfZ77vtxEXkLVor
-	12hF2lmGQMFip7x7Wyn+WETU+9oZkny28r6SpeS3yvAnQJtzef4Qg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b8r0sqmy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 09:04:14 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53U941h6020790;
-	Wed, 30 Apr 2025 09:04:14 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b8r0sqmw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 09:04:14 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53U7Ugv1031628;
-	Wed, 30 Apr 2025 09:04:13 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4699tu79x9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 09:04:13 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53U9497N58917316
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Apr 2025 09:04:09 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9964820079;
-	Wed, 30 Apr 2025 09:04:09 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CE65B20065;
-	Wed, 30 Apr 2025 09:04:06 +0000 (GMT)
-Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com.com (unknown [9.39.31.221])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 30 Apr 2025 09:04:06 +0000 (GMT)
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
-        zohar@linux.ibm.com, nayna@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] integrity/platform_certs: Allow loading of keys in static key management mode
-Date: Wed, 30 Apr 2025 14:33:50 +0530
-Message-ID: <20250430090350.30023-4-ssrish@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250430090350.30023-1-ssrish@linux.ibm.com>
-References: <20250430090350.30023-1-ssrish@linux.ibm.com>
+	s=arc-20240116; t=1746003850; c=relaxed/simple;
+	bh=PKzN8iXlBJBK9SwHSpvuXQqkp9QMK953kT+GMiKVbZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ef/3cB9hxDSTUyID3c59dQ+wqEo+etB2dlYFhujQLeF83Yo/qLaG0HCpDZOcuKfQjcUiRuUTeC8/rynUPsCgVpIm6LkWRwLYRMYlhtZ8aDKa9uSxFKGvLPgv2wOyyYNlCniJdoeEdlRlVue1iAsyP43pBf7buG8u+4DzyBhidUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pGIjnToJ; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=qZH1Iv4RTrKHulqeYwn77KGwSyTWOgV1PzxST8oMpJQ=;
+	b=pGIjnToJVXX4iLXvxQr9dbQ6zaraRnoH17VJrUbUrFl/uUAq/8Bkj7OXm3yX31
+	6mpNAji97mLnOXeSX+1gySOtG7b2ILgln71SHPXO7USkfMydZGFybdx+H2xrEe0/
+	9RcnH2kXkytzK0PPyC/zg4/KEEyJGAZf7tMiI8rCD1Zss=
+Received: from [10.42.12.6] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCXA5h35xFon77_Dg--.24817S2;
+	Wed, 30 Apr 2025 17:03:51 +0800 (CST)
+Message-ID: <040637ad-54ac-4695-8e49-b4a3c643b056@163.com>
+Date: Wed, 30 Apr 2025 17:03:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA2MCBTYWx0ZWRfXxkwx/pBELxXi PUkHSRULFE+jO/gPAFl3QyEU+/snpcLYfpHt8hJ9aIlfM2HZk8MGREWd42y5l/df8XxBRX80kXD 4lCF4PAoAUskv9sGZ6yus8rFTfTmQpXqoiPMm2aApe79zfhBGFmlToCGWtKGbleZRMVKyPHUz6m
- 7x3d+NqWPhrtmOnZU5fcgGhzqsnc/ppYDBdcLZnJA/tCDeyMKcBJLE89sO2AS8KmuUFlqeyZmjq eN+LzuV+fVSI/NmnYQO0dg9dA0F5ADVTuwsXd8ucBt/IROhmDbPPtWXc6NwivQ2pq3exihsjF7Z xCn8THK1T6nijoo2SFooJqQ5alsFJjTIS9Rrh6LKUpMgRvCqPjT0tI4bFCcfz0ivKxbHskkzdau
- li/xFQg2NeCFik9BNKBmxXD5RTMo3HtiqqKFSmwaNMJE3cJ81UFrDCJHZiyOMMavFi++OO/h
-X-Authority-Analysis: v=2.4 cv=OqdPyz/t c=1 sm=1 tr=0 ts=6811e78e cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=AtMIOgTZpS777Q0Lz8kA:9
-X-Proofpoint-GUID: YUFNTwMgtxTxrtbS7pwWlX3I7nRR7VGC
-X-Proofpoint-ORIG-GUID: DnfyhYWRTC1PWnK5XbqbXaZbp3tDUmfB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_02,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300060
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] Implement concurrent buffered write with folio
+ lock
+To: Dave Chinner <david@fromorbit.com>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chi Zhiling <chizhiling@kylinos.cn>
+References: <20250425103841.3164087-1-chizhiling@163.com>
+ <aBGFfpyGtYQnK411@dread.disaster.area>
+Content-Language: en-US
+From: Chi Zhiling <chizhiling@163.com>
+In-Reply-To: <aBGFfpyGtYQnK411@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCXA5h35xFon77_Dg--.24817S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3AFyfWrW8Cry5uryUtF4fZrb_yoW3Cr1DpF
+	Z5K39rtFs7Kr97Jrn293W8Xr1Fv39aq343CrW5Xw4xCa9xXr12gF1vq3yYkFWDArs2y3yq
+	vF40934xGFWqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U2Ap5UUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiKRw7nWgMNEZQQQACsW
 
-On PLPKS enabled PowerVM LPAR, there is no provision to load signed
-third-party kernel modules when the key management mode is static. This
-is because keys from secure boot secvars are only loaded when the key
-management mode is dynamic.
+On 2025/4/30 10:05, Dave Chinner wrote:
+> On Fri, Apr 25, 2025 at 06:38:39PM +0800, Chi Zhiling wrote:
+>> From: Chi Zhiling <chizhiling@kylinos.cn>
+>>
+>> This is a patch attempting to implement concurrent buffered writes.
+>> The main idea is to use the folio lock to ensure the atomicity of the
+>> write when writing to a single folio, instead of using the i_rwsem.
+>>
+>> I tried the "folio batch" solution, which is a great idea, but during
+>> testing, I encountered an OOM issue because the locked folios couldn't
+>> be reclaimed.
+>>
+>> So for now, I can only allow concurrent writes within a single block.
+>> The good news is that since we already support BS > PS, we can use a
+>> larger block size to enable higher granularity concurrency.
+> 
+> I'm not going to say no to this, but I think it's a short term and
+> niche solution to the general problem of enabling shared buffered
+> writes. i.e. I expect that it will not exist for long, whilst
 
-Allow loading of the trustedcadb and moduledb keys even in the static
-key management mode, where the secvar format string takes the form
-"ibm,plpks-sb-v0".
+Hi, Dave,
 
-Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
----
- security/integrity/platform_certs/load_powerpc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes, it's a short-term solution, but it's enough for some scenarios.
+I would also like to see better idea.
 
-diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-index c85febca3343..714c961a00f5 100644
---- a/security/integrity/platform_certs/load_powerpc.c
-+++ b/security/integrity/platform_certs/load_powerpc.c
-@@ -75,12 +75,13 @@ static int __init load_powerpc_certs(void)
- 		return -ENODEV;
- 
- 	// Check for known secure boot implementations from OPAL or PLPKS
--	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf)) {
-+	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf) &&
-+	    strcmp("ibm,plpks-sb-v0", buf)) {
- 		pr_err("Unsupported secvar implementation \"%s\", not loading certs\n", buf);
- 		return -ENODEV;
- 	}
- 
--	if (strcmp("ibm,plpks-sb-v1", buf) == 0)
-+	if (strcmp("ibm,plpks-sb-v1", buf) == 0 || strcmp("ibm,plpks-sb-v0", buf) == 0)
- 		/* PLPKS authenticated variables ESL data is prefixed with 8 bytes of timestamp */
- 		offset = 8;
- 
--- 
-2.47.1
+> experience tells me that adding special cases to the IO path locking
+> has a fairly high risk of unexpected regressions and/or data
+> corruption....
+
+I can't say there is definitely no data corruption, but I haven't seen
+any new errors in xfstests.
+
+We might need to add some assertions in the code to check for the risk
+of data corruption, not specifically for this patch, but for the current
+XFS system in general. This would help developers avoid introducing new
+bugs, similar to the lockdep tool.
+
+> 
+>> These ideas come from previous discussions:
+>> https://lore.kernel.org/all/953b0499-5832-49dc-8580-436cf625db8c@163.com/
+> 
+> In my spare time I've been looking at using the two state lock from
+> bcachefs for this because it looks to provide a general solution to
+> the issue of concurrent buffered writes.
+
+In fact, I have tried the two state lock, and it does work quite well.
+However, I noticed some performance degradation in single-threaded
+scenarios in UnixBench (I'm not sure if it's caused by the memory
+barrier).
+
+Since single-threaded bufferedio is still the primary read-write mode,
+I don't want to introduce too much impact in single-threaded scenarios.
+
+That's why I introduced the i_direct_mode flag, which protected by
+i_rwsem. This approach only adds a boolean operation in fast path.
+
+> 
+> The two valid IO exclusion states are:
+> 
+> +enum {
+> +       XFS_IOTYPE_BUFFERED = 0,
+> +       XFS_IOTYPE_DIRECT = 1,
+> +};
+> 
+> Importantly, this gives us three states, not two:
+> 
+> 1. Buffered IO in progress,
+> 2. Direct IO in progress, and
+> 3. No IO in progress. (i.e. not held at all)
+> 
+> When we do operations like truncate or hole punch, we need the state
+> to be #3 - no IO in progress.
+> 
+> Hence we can use this like we currently use i_dio_count for
+> truncate with the correct lock ordering. That is, we order the
+> IOLOCK before the IOTYPE lock:
+> 
+> Buffered IO:
+> 
+> 	IOLOCK_SHARED, IOLOCK_EXCL if IREMAPPING
+> 	  <IREMAPPING excluded>
+> 	  IOTYPE_BUFFERED
+> 	    <block waiting for in progress DIO>
+> 	    <do buffered IO>
+> 	  unlock IOTYPE_BUFFERED
+> 	unlock IOLOCK
+> 
+> IREMAPPING IO:
+> 
+> 	IOLOCK_EXCL
+> 	  set IREMAPPING
+> 	  demote to IOLOCK_SHARED
+> 	  IOTYPE_BUFFERED
+> 	    <block waiting for in progress DIO>
+> 	    <do reflink operation>
+> 	  unlock IOTYPE_BUFFERED
+> 	  clear IREMAPPING
+> 	unlock IOLOCK
+> 
+> Direct IO:
+> 
+> 	IOLOCK_SHARED
+> 	  IOTYPE_DIRECT
+> 	    <block waiting for in progress buffered, IREMAPPING>
+> 	    <do direct IO>
+> 	<submission>
+> 	  unlock IOLOCK_SHARED
+> 	<completion>
+> 	  unlock IOTYPE_DIRECT
+> 
+> Notes on DIO write file extension w.r.t. xfs_file_write_zero_eof():
+> - xfs_file_write_zero_eof() does buffered IO.
+> - needs to switch from XFS_IOTYPE_DIRECT to XFS_IOTYPE_BUFFERED
+> - this locks out all other DIO, as the current switch to
+>    IOLOCK_EXCL will do.
+> - DIO write path no longer needs IOLOCK_EXCL to serialise post-EOF
+>    block zeroing against other concurrent DIO writes.
+> - future optimisation target so that it doesn't serialise against
+>    other DIO (reads or writes) within EOF.
+> 
+> This path looks like:
+> 
+> Direct IO extension:
+> 
+> 	IOLOCK_EXCL
+> 	  IOTYPE_BUFFERED
+> 	    <block waiting for in progress DIO>
+> 	    xfs_file_write_zero_eof();
+> 	  demote to IOLOCK_SHARED
+> 	  IOTYPE_DIRECT
+> 	    <block waiting for buffered, IREMAPPING>
+> 	    <do direct IO>
+> 	<submission>
+> 	  unlock IOLOCK_SHARED
+> 	<completion>
+> 	  unlock IOTYPE_DIRECT
+> 
+> Notes on xfs_file_dio_write_unaligned()
+> - this drains all DIO in flight so it has exclusive access to the
+>    given block being written to. This prevents races doing IO (read
+>    or write, buffered or direct) to that specific block.
+> - essentially does an exclusive, synchronous DIO write after
+>    draining all DIO in flight. Very slow, reliant on inode_dio_wait()
+>    existing.
+> - make the slow path after failing the unaligned overwrite a
+>    buffered write.
+> - switching modes to buffered drains all the DIO in flight,
+>    buffered write data all the necessary sub-block zeroing in memory,
+>    next overlapping DIO of fdatasync() will flush it to disk.
+> 
+> This slow path looks like:
+> 
+> 	IOLOCK_EXCL
+> 	  IOTYPE_BUFFERED
+> 	    <excludes all concurrent DIO>
+> 	    set IOCB_DONTCACHE
+> 	    iomap_file_buffered_write()
+> 
+> Truncate and other IO exclusion code such as fallocate() need to do
+> this:
+> 
+> 	IOLOCK_EXCL
+> 	  <wait for IO state to become unlocked>
+> 
+> The IOLOCK_EXCL creates a submission barrier, and the "wait for IO
+> state to become unlocked" ensures that all buffered and direct IO
+> have been drained and there is no IO in flight at all.
+> 
+> Th upside of this is that we get rid of the dependency on
+> inode->i_dio_count and we ensure that we don't potentially need a
+> similar counter for buffered writes in future. e.g. buffered
+> AIO+RWF_DONTCACHE+RWF_DSYNC could be optimised to use FUA and/or IO
+> completion side DSYNC operations like AIO+DIO+RWF_DSYNC currently
+> does and that would currently need in-flight IO tracking for truncate
+> synchronisation. The two-state lock solution avoids that completely.
+
+Okay, sounds great.
+
+> 
+> Some work needs to be done to enable sane IO completion unlocking
+> (i.e. from dio->end_io). My curent notes on this say:
+> 
+> - ->end_io only gets called once when all bios submitted for the dio
+>    are complete. hence only one completion, so unlock is balanced
+> - caller has no idea on error if IO was submitted and completed;
+>    if dio->end_io unlocks on IO error, the waiting submitter has no
+>    clue whether it has to unlock or not.
+> - need a clean submitter unlock model. Alternatives?
+>    - dio->end_io only unlock on on IO error when
+>      dio->wait_for_completion is not set (i.e. completing an AIO,
+>      submitter was given -EIOCBQUEUED). iomap_dio_rw() caller can
+>      then do:
+> 
+>          if (ret < 0 && ret != -EIOCBQUEUED) {
+>                  /* unlock inode */
+>          }
+>    - if end_io is checking ->wait_for_completion, only ever unlock
+>      if it isn't set? i.e. if there is a waiter, we leave it to them
+>      to unlock? Simpler rule for ->end_io, cleaner for the submitter
+>      to handle:
+> 
+>          if (ret != -EIOCBQUEUED) {
+>                  /* unlock inode */
+>          }
+> - need to move DIO write page cache invalidation and inode_dio_end()
+>    into ->end_io for implementations
+> - if no ->end_io provided, do what the current code does.
+> 
+> There are also a few changes need to avoid inode->i_dio_count in
+> iomap:
+> - need a flag to tell iomap_dio_rw() not to account the DIO
+> - inode_dio_end() may need to be moved to ->dio_end, or we could
+>    use the "do not account" flag to avoid it.
+> - However, page cache invalidation and dsync work needs to be done
+>    before in-flight dio release, so this we likely need to move this
+>    stuff to ->end_io before we drop the IOTYPE lock...
+> - probably can be handled with appropriate helpers...
+> 
+> I've implemented some of this already; I'm currently in the process
+> of making truncate exclusion work correctly. Once that works, I'll
+> post the code....
+
+Thank you for sharing your thoughts, I will be waiting for that.
+
+> 
+> -~dave
 
 
