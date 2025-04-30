@@ -1,236 +1,173 @@
-Return-Path: <linux-kernel+bounces-627935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DBAAA5692
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D182AA569B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D344C64A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA9A93B62DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A8F2BEC29;
-	Wed, 30 Apr 2025 21:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528882BEC29;
+	Wed, 30 Apr 2025 21:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vg2K3Cum"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/Z6NqIh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19B1B87E8;
-	Wed, 30 Apr 2025 21:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECE2188A0E;
+	Wed, 30 Apr 2025 21:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746047990; cv=none; b=T53IuMp//nwbhjrC+Pff1c9KO0pUDn9hTgBz0qRMCKvhsjGsEJB/HfTn1v1HjCS6FDbjgZtl1zsfuH3PhWDtl6HSYXsmtEHMrksTUidKipN0PtrzSY33i3EkeshGCphTlc6QqwFfOxMB9P9qbMBKMgvWNv4JligojpbujLRsFLs=
+	t=1746048078; cv=none; b=tdOlW5SXHgxcL/azjys77SmoLMwpBUk5GUoLpRPcO93jHMevxrelQiSb+9fCO/0LbppsNyPmgErBpS/B9Z3H7hd/wYzrqk/C456fMK6tvan5fwJhkXMNWtM1DhsT7xNozXnVNlW7wKTcsx2k/4plwOaAoed3JiV0rBrSwr+F1YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746047990; c=relaxed/simple;
-	bh=Zh1g5NmzYNwkXg+SKcvvFymhyFnP4VBrEzUpUXaEi6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RiJk9QfIEsDNgxO53IPCzVU4LK0W9U7kJzZTHckVyl3K+AiXoXHmFpYDMvjFMF+/YAElYVFoyurKDohdkXf+YsXXY1r6Ov2ABnQXiqxnNQ0YMqtY8SyKhWq/O4376l2CLwkXeUS4QcJzCvgVj75zOQu8k+2kvI/klPTkGgyXFhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vg2K3Cum; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E31C4CEE7;
-	Wed, 30 Apr 2025 21:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746047989;
-	bh=Zh1g5NmzYNwkXg+SKcvvFymhyFnP4VBrEzUpUXaEi6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vg2K3CumnLN9nnRerQEZDRg2R3e+Qn0BI/W+6N5+RN0xGwI3vOg71asshKdjOVQnw
-	 9DKNf8mlYlc1wad7HyRiWZGp9jXay3Y+4vvqfEGq29a+q6wJ5pClXegBBH/W9eyCyj
-	 hSb4sWoaJxiI28n1+mjHYwm6OqVbxrPkEmw4bSdMKIShD0di1JqVYenhhJyRA4y+9H
-	 /r33efJK/tN++qsow0d1O8AV5zd4u89ol0On98PXgUTbHvj9d8Zi+bNKLoYe4w/td/
-	 qtwtblUKIfDD7+mjqxGFjAvmcyY4kHA0qRG99+Nh028F4OWIofuhJA1DLptGk/G9hy
-	 NKh845kHJB1bw==
-Date: Wed, 30 Apr 2025 14:19:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2][next] acpi: nfit: intel: Avoid multiple
- -Wflex-array-member-not-at-end warnings
-Message-ID: <202504301400.3B1EACEB@keescook>
-References: <Z-QpUcxFCRByYcTA@kspp>
- <67e55ac4dfa2e_13cb29410@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <df338a70-fdfc-427e-9915-8b9e50de93ad@embeddedor.com>
- <c4828c41-e46c-43c9-a73a-38ce8ab2c1c4@embeddedor.com>
+	s=arc-20240116; t=1746048078; c=relaxed/simple;
+	bh=fuSiUxAxLqJh6jgx7pov6srdo4jhQp82tTuqF//n1pc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tyYig+DJ154WiTVLiSOQPua8myMD6WJr3rzqwKpzhfWQ7NhOP5Pp+F/77d01p2ZMx7CyiyH8/Gdui9Gt/LtOCB4kcX2KSdnTpfSTEfgWK6kPLkyOuntKSfQV+KoUoLvtxB5IuMWr3pQTQXuQf7IYg4MFnxOkxh7s9dxFEk92D5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/Z6NqIh; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746048077; x=1777584077;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fuSiUxAxLqJh6jgx7pov6srdo4jhQp82tTuqF//n1pc=;
+  b=K/Z6NqIh1qVZjQZI/RFv4YPabnWaajVspxhaXQ+XrX7ATU1PujhAnuV+
+   NXD04al102fFew8XotkwGSUfplLaNEXRbUARyRNNerJS+Kt+EQ3YgUWOY
+   ws1IFBv6uehrJ4AZVeK0rWkaq1lfcCUT3+WXqbRzVMtrEpJ99Sk1LhxoY
+   7iAGAiYcoiz28US0SPzViXWrvp8XkUvZm1dTLdz+sb8+AQlqfg0Hja5ns
+   VjJcinqw3Io9QN1ePA6PrFCiUKSGTUXbhlWl/Datzj0pJ3UtZlqO97iy3
+   bgCwggkoXIodSFRC/Vahg2cIu13yY5HfHgHJsyWDSfPs/g8YNk5ucufUY
+   g==;
+X-CSE-ConnectionGUID: AVxt3+Z2RtK3Gj1AL+bgaQ==
+X-CSE-MsgGUID: 9Ufu9qQnQ6il9DqBWo+htg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="65257530"
+X-IronPort-AV: E=Sophos;i="6.15,252,1739865600"; 
+   d="scan'208";a="65257530"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 14:21:15 -0700
+X-CSE-ConnectionGUID: WaJJVR+cQ1eVfjdY1ghtdA==
+X-CSE-MsgGUID: ivsd4NugQRWms092jLczow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,252,1739865600"; 
+   d="scan'208";a="133972265"
+Received: from agladkov-desk.ger.corp.intel.com (HELO debox1-desk4.lan) ([10.125.110.57])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 14:21:15 -0700
+From: "David E. Box" <david.e.box@linux.intel.com>
+To: linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	david.e.box@linux.intel.com,
+	srinivas.pandruvada@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	tony.luck@intel.com,
+	xi.pardee@linux.intel.com
+Cc: hdegoede@redhat.com
+Subject: [PATCH 00/15] Intel VSEC/PMT: Introduce Discovery Driver
+Date: Wed, 30 Apr 2025 14:20:49 -0700
+Message-ID: <20250430212106.369208-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c4828c41-e46c-43c9-a73a-38ce8ab2c1c4@embeddedor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 30, 2025 at 02:07:24PM -0600, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 30/04/25 13:41, Gustavo A. R. Silva wrote:
-> > 
-> > 
-> > On 27/03/25 08:03, Dan Williams wrote:
-> > > Gustavo A. R. Silva wrote:
-> > > > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> > > > getting ready to enable it, globally.
-> > > > 
-> > > > Use the `DEFINE_RAW_FLEX()` helper for on-stack definitions of
-> > > > a flexible structure where the size of the flexible-array member
-> > > > is known at compile-time, and refactor the rest of the code,
-> > > > accordingly.
-> > > > 
-> > > > So, with these changes, fix a dozen of the following warnings:
-> > > > 
-> > > > drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> > > > 
-> > > > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> > > > ---
-> > > > Changes in v2:
-> > > >   - Use DEFINE_RAW_FLEX() instead of __struct_group().
-> > > > 
-> > > > v1:
-> > > >   - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
-> > > > 
-> > > >   drivers/acpi/nfit/intel.c | 388 ++++++++++++++++++--------------------
-> > > >   1 file changed, 179 insertions(+), 209 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
-> > > > index 3902759abcba..114d5b3bb39b 100644
-> > > > --- a/drivers/acpi/nfit/intel.c
-> > > > +++ b/drivers/acpi/nfit/intel.c
-> > > > @@ -55,21 +55,17 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
-> > > >   {
-> > > >       struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
-> > > >       unsigned long security_flags = 0;
-> > > > -    struct {
-> > > > -        struct nd_cmd_pkg pkg;
-> > > > -        struct nd_intel_get_security_state cmd;
-> > > > -    } nd_cmd = {
-> > > > -        .pkg = {
-> > > > -            .nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
-> > > > -            .nd_family = NVDIMM_FAMILY_INTEL,
-> > > > -            .nd_size_out =
-> > > > -                sizeof(struct nd_intel_get_security_state),
-> > > > -            .nd_fw_size =
-> > > > -                sizeof(struct nd_intel_get_security_state),
-> > > > -        },
-> > > > -    };
-> > > > +    DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-> > > > +            sizeof(struct nd_intel_get_security_state));
-> > > > +    struct nd_intel_get_security_state *cmd =
-> > > > +            (struct nd_intel_get_security_state *)nd_cmd->nd_payload;
-> > > >       int rc;
-> > > > +    nd_cmd->nd_command = NVDIMM_INTEL_GET_SECURITY_STATE;
-> > > > +    nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
-> > > > +    nd_cmd->nd_size_out = sizeof(struct nd_intel_get_security_state);
-> > > > +    nd_cmd->nd_fw_size = sizeof(struct nd_intel_get_security_state);
-> > > 
-> > > Can this keep the C99 init-style with something like (untested):
-> > > 
-> > > _DEFINE_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-> > >               sizeof(struct nd_intel_get_security_state), {
-> > >         .pkg = {
-> > >                 .nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
-> > >                 .nd_family = NVDIMM_FAMILY_INTEL,
-> > >                 .nd_size_out =
-> > >                         sizeof(struct nd_intel_get_security_state),
-> > >                 .nd_fw_size =
-> > >                         sizeof(struct nd_intel_get_security_state),
-> > >         },
-> > >     });
-> > > 
-> > > 
-> > > ?
-> > 
-> > The code below works - however, notice that in this case we should
-> > go through 'obj', which is an object defined in _DEFINE_FLEX().
-> > 
-> >          _DEFINE_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-> >                          sizeof(struct nd_intel_get_security_state), = {
-> >                  .obj = {
-> >                          .nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
-> >                          .nd_family = NVDIMM_FAMILY_INTEL,
-> >                          .nd_size_out =
-> >                                  sizeof(struct nd_intel_get_security_state),
-> >                          .nd_fw_size =
-> >                                  sizeof(struct nd_intel_get_security_state),
-> >                  },
-> >          });
-> > 
-> 
-> Now, I can modify the helper like this:
-> 
-> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-> index 69533e703be5..170d3cfe7ecc 100644
-> --- a/include/linux/overflow.h
-> +++ b/include/linux/overflow.h
-> @@ -404,7 +404,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
->         union {                                                                 \
->                 u8 bytes[struct_size_t(type, member, count)];                   \
->                 type obj;                                                       \
-> -       } name##_u initializer;                                                 \
-> +       } name##_u = { .obj initializer };                                      \
->         type *name = (type *)&name##_u
+This patch series introduces a new discovery driver for Intel Platform
+Monitoring Technology (PMT) and a set of supporting changes to improve
+telemetry integration across Intel VSEC features.
 
-Ah yeah, nice. That could work!
+The primary goal of this series is to add the PMT Discovery driver, which
+enumerates and exposes telemetry attributes by parsing hardware-provided
+discovery tables from OOBMSM devices. In particular, the discovery driver
+gathers detailed capability information (such as telemetry region
+attributes) that will later enable direct access to telemetry regions via a
+new API (intel_pmt_get_regions_by_feature()). This API is crucial for
+retrieving data like per-RMID counters.
+
+The remainder of the series consists of several preparatory and testing
+patches:
+
+1. Private Data and CPU Mapping:  The VSEC driver now includes
+per-device private data to store the OOBMSM-to-CPU mapping. The TPMI driver
+copies its platform info into this common area (via
+intel_vsec_set_mapping()), allowing other VSEC features to access CPU
+mapping information without redundant queries.
+
+2. Device Links Enhancements:  With telemetry now depending on both the
+TPMI driver (for CPU mapping) and the new discovery driver (for telemetry
+region attributes), device links have been added and optimized. These
+changes ensure that supplier drivers are probed and registered before
+consumer drivers, enforcing the proper dependency order for reliable
+telemetry feature access.
+
+4. Discovery Driver and API:  The core of the series is the addition of
+the PMT Discovery driver. This driver not only implements discovery of
+telemetry attributes and capability data (exposed via sysfs) but also
+introduces an API to retrieve telemetry regions by feature, which is
+essential for features like per-RMID telemetry counters.
+
+5. Testing:  A simple KUNIT test is provided for the enhanced discovery
+API to ensure its reliability and correctness.
+
+Together, these patches provide a foundation for future telemetry
+enhancements in the Intel VSEC framework. They enable a unified interface
+for accessing hardware telemetry capabilities and ensure that inter-driver
+dependencies are properly managed through device links.
+
+David E. Box (15):
+  MAINTAINERS: Add link to documentation of Intel PMT ABI
+  platform/x86/intel/vsec: Add private data for per-device data
+  platform/x86/intel/vsec: Create wrapper to walk PCI config space
+  platform/x86/intel/vsec: Add device links to enforce dependencies
+  platform/x86/intel/vsec: Skip absent features during initialization
+  platform/x86/intel/vsec: Skip driverless features
+  platform/x86/intel/vsec: Add new Discovery feature
+  platform/x86/intel/pmt: Add PMT Discovery driver
+  docs: Add ABI documentation for intel_pmt feature directories
+  platform/x86/intel/tpmi: Relocate platform info to intel_vsec.h
+  platform/x86/intel/vsec: Set OOBMSM to CPU mapping
+  platform/x86/intel/tpmi: Get OOBMSM CPU mapping from TPMI
+  platform/x86/intel/pmt/discovery: Get telemetry attributes
+  platform/x86/intel/pmt/telemetry: Add API to retrieve telemetry
+    regions by feature
+  platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API
+
+ .../testing/sysfs-class-intel_pmt-features    | 128 ++++
+ MAINTAINERS                                   |   2 +
+ drivers/platform/x86/intel/plr_tpmi.c         |   3 +-
+ drivers/platform/x86/intel/pmt/Kconfig        |  27 +
+ drivers/platform/x86/intel/pmt/Makefile       |   4 +
+ drivers/platform/x86/intel/pmt/class.c        |  35 +-
+ drivers/platform/x86/intel/pmt/class.h        |   9 +
+ .../platform/x86/intel/pmt/discovery-kunit.c  | 116 ++++
+ drivers/platform/x86/intel/pmt/discovery.c    | 633 ++++++++++++++++++
+ drivers/platform/x86/intel/pmt/features.c     | 205 ++++++
+ drivers/platform/x86/intel/pmt/telemetry.c    |  94 ++-
+ .../intel/speed_select_if/isst_tpmi_core.c    |   9 +-
+ .../uncore-frequency/uncore-frequency-tpmi.c  |   5 +-
+ drivers/platform/x86/intel/vsec.c             | 358 +++++++++-
+ drivers/platform/x86/intel/vsec_tpmi.c        |   8 +-
+ drivers/powercap/intel_rapl_tpmi.c            |   9 +-
+ include/linux/intel_pmt_features.h            | 157 +++++
+ include/linux/intel_tpmi.h                    |  26 +-
+ include/linux/intel_vsec.h                    |  97 ++-
+ 19 files changed, 1865 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-intel_pmt-features
+ create mode 100644 drivers/platform/x86/intel/pmt/discovery-kunit.c
+ create mode 100644 drivers/platform/x86/intel/pmt/discovery.c
+ create mode 100644 drivers/platform/x86/intel/pmt/features.c
+ create mode 100644 include/linux/intel_pmt_features.h
 
 
-I wish we could make it more idiomatic, but even if we pushed the
-initializer to the end, we have to repeat the type...
+base-commit: 67e2635fe0cca5f0383c0780db986d8237e83f0a
+--=20
+2.43.0
 
-#define _DEFINE_FLEX(type, name, member, count, initializer...)                 \
-        _Static_assert(__builtin_constant_p(count),                             \
-                       "onstack flex array members require compile-time const count"); \
-        union {                                                                 \
-                u8 bytes[struct_size_t(type, member, count)];                   \
-                type obj;                                                       \
-        } name##_u = { };                                                       \
-        type *name = (type *)&name##_u;						\
-	*name
-
-
-	_DEFINE_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
-		     sizeof(struct nd_intel_get_security_state))
-	= (struct nd_cmd_pkg){
-		.nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
-		.nd_family = NVDIMM_FAMILY_INTEL,
-		.nd_size_out =
-			sizeof(struct nd_intel_get_security_state),
-		.nd_fw_size =
-			sizeof(struct nd_intel_get_security_state),
-	};
-
-So, I think what you have is more readable (or perhaps less surprising),
-even if a little "weird". :)
-
-> 
->  /**
-> 
-> and then we can use the helper as follows:
-> 
->         _DEFINE_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
->                         sizeof(struct nd_intel_get_security_state), = {
->                         .nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
->                         .nd_family = NVDIMM_FAMILY_INTEL,
->                         .nd_size_out =
->                                 sizeof(struct nd_intel_get_security_state),
->                         .nd_fw_size =
->                                 sizeof(struct nd_intel_get_security_state),
->         });
-> 
-> OK, I'll go and update the helper.
-
-Sounds good!
-
--Kees
-
--- 
-Kees Cook
 
