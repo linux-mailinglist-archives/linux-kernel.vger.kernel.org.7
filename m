@@ -1,132 +1,227 @@
-Return-Path: <linux-kernel+bounces-626652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B95AA45A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0044EAA45AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C8D4E162E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F78C4E38E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7181215764;
-	Wed, 30 Apr 2025 08:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D892192E5;
+	Wed, 30 Apr 2025 08:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUYuKZ2N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tDWWlEr0"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2059.outbound.protection.outlook.com [40.107.237.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D6D21422B;
-	Wed, 30 Apr 2025 08:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746002392; cv=none; b=F+27M836lUm3vH1PLJx9MF0atIcDTVxklFg+ZKbBKw2LkqWgCORgZdUxB9MIMWX00jvzNfd05HZfV+MK9ySDWsqqXQ4VcMt4O+a+6sIEa7LMyEiRolgRRsAxWbp5OnXDtoYprEhSMO895JbddCmIEY6Fw1rSTDP84J0FKpi+Y/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746002392; c=relaxed/simple;
-	bh=yrL3PJoyAn5Ib4dQf9wlJBbzKW+Rlhk9V6kydL7uKHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMa+jGzCoe92euhrIbgJQgkFlmRZFAL6Ym0xrZ6zskIH1FBxKJedbdDzl+SFB9AEjrE/28vXI7xsveOWsMmwfj21TZO1LKlRSLiOWQKJXw7pD8p5LpX6HXZn6KSN+shuFtKc3KyUDbzRW80dpFSBee4CbwntzEe4z82d+6Xtgc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUYuKZ2N; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746002390; x=1777538390;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yrL3PJoyAn5Ib4dQf9wlJBbzKW+Rlhk9V6kydL7uKHo=;
-  b=bUYuKZ2NDoTlrAF385j8Hh+H1vgTrZAR3tWQZ9NDy+utI4tuIyrvZKUg
-   grKmmu1Btgn88b2arQUOmgU5V++MPdrBJXJCDGO36SV7FRfNaXlrJkm2E
-   s6qoVsVHQ+NOX/f8QP41sab5mAHgN1709vZLwu9c5ShzmdX8NB0d+CYFN
-   dH8P73e3/xUt3ibl08PmMgGyLmld5Ao1wmkkl+o2azYGZhnQH3i1eezLY
-   GuK3qpH14EyUCAYkwpi6QDSFRkAgcyr4loGgvLYyd4tP4ZNNeglFT4OEl
-   nMl4ZZHpaNaJSH6sXjy+fA57O7lkBqdI3aR6PQToZxsRNq7h3MgLRhbpX
-   Q==;
-X-CSE-ConnectionGUID: v3oajBTKQXaByqQ+VdXPaQ==
-X-CSE-MsgGUID: 8pAfoVwWR5mObUtTv+pIsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="58310369"
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="58310369"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 01:39:49 -0700
-X-CSE-ConnectionGUID: 1s+sMrZ8TpyW8eoofEEuIQ==
-X-CSE-MsgGUID: TbsIuOfkQeyU+Eonh3c9Ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="139177408"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 01:39:46 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 40AA711F7E7;
-	Wed, 30 Apr 2025 11:39:43 +0300 (EEST)
-Date: Wed, 30 Apr 2025 08:39:43 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 9/9] media: i2c: ov9282: add strobe_source v4l2 control
-Message-ID: <aBHhz85RVEBrAu56@kekkonen.localdomain>
-References: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
- <20250429-ov9282-flash-strobe-v3-9-2105ce179952@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0E6219A8C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746002438; cv=fail; b=VfUwx1yWDVRLUdeCjNInu/QMN/JCqf3JjouKEgQrojxHYBHkriI2P43AK6VOEzyFRYrhmNcsaisRwlXL2F5PQ1qRelp7wqB/VV63fTpNK9s3KZm3dwmeI52s7tWdy4rvK3w2oHemF1tN7WZURtW4QForHXCcZkvGf7wb8xj6Eqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746002438; c=relaxed/simple;
+	bh=gdvArZKNBIbiQwexYYmijKhJgtgZenQRGtIRVpWk3Ag=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tDmba0m//QAjAA/PmTSeFnICMy1NSjywavXPgNqXVd/bZIEVw42Is0CeQ3KZLVTfBjiXXWLhPkgcSuUK5nspMqFfvmOSgWAWhYUWoYtP+bzcS551XOK66NAV9sLIDzlT7J4eVUKIh5xKH+gYRS4gt1OOQCatUPP3UDT6Ako9lGE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tDWWlEr0; arc=fail smtp.client-ip=40.107.237.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dqr79AUArUsna1Ppdgd3Gv9gSNybr5gm/FQPmTtgk3J0LnFxWnUERPBCdWzjUp0H1ybePtPd4UlzOdZyT3amuLe9AON0JYJBaIF0sZuoSkgXu4jdjKeqhqOkfO+MQ/fO+s+CgrGDBQidu28c+lFhrGd8GqH3OQA3nh4rYZI8YD5ZH/Ir8pjpU/a7H+ptooAdAe1tu/WetbhHzvnbVuZGnwZ7237SI1YQ7M1lqM2Ww3AA38ykMvAK1QXQUSMFxVlBJV1gQ8kQZ4P7963Bc9hJOA6yTDMRsI/RiIcbyqE0Mliqc7XETj1rtKnzPEt9uPAV02tJi0szn54IGG5bUf3SAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OXRtfivEv/wtkzP9L6V3H6P9i7Uo+sXcED3AlYKLwbw=;
+ b=p2HL9o7Z2eey62RT1QRXEkAPzcJaUmMBQL6HjtzRlsXlPHJS/bWt5DI8owdmitb7TmjGHMTYQVPwCYGTu41UPZmfGuCXnPZmjKTEZfVzPopRujd+Isi9yzn4+7Bp7Tb8wykAY6J67/Doo1mm3R64vcVRlMH64Lpz8pPOIwLtFoXIm9Hd/vUGgGlFaJoSHvcBiAmX0U9a4/GuwDK7UMf2clld3G2daXJOlleKow0vnm1JTLOKbongcGGnUGL6UvvSJuHC1IgCLXc0Ko+44rqivGeBo8JCnuX8+Toz0N+Pgq/aPWdeAjuXvM8fKPA0Ra0U5yqINogiSJQ77LJrhCbHVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OXRtfivEv/wtkzP9L6V3H6P9i7Uo+sXcED3AlYKLwbw=;
+ b=tDWWlEr0XBUtGjsXtdZE/DG7hFGuAhroGyfG8IEjPUzxhRqOA9xRTCTFYGFKcLuO/mEERjzA1ln+j4SL1ehBTtCXRgIeap6V7FuDlNGBoEqtF5obqMhQZe2Uj228bL4DLVD1m4S7V3vk+Kt/CifXBc8nnkrBOHBYHcXU/ik7H6u86fCBeY79K/kaIu3BGaJab6bzHNxRFC/tsYGuCymJkatCXB8FDBjRCAfr5/hDNrWTWpSOQSc/jy1tgmKtrnDS8YBkG83zKie7W8V+R97TZZ8o3pAYqnsUhzXm21pZy8mjDH+4N8UetwHMcslBAfLoF722yj+ECn0kuf5re6pL/A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by DS0PR12MB7928.namprd12.prod.outlook.com (2603:10b6:8:14c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Wed, 30 Apr
+ 2025 08:40:32 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
+ 08:40:32 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.16] sched_ext: Avoid NULL scx_root deref in __scx_exit()
+Date: Wed, 30 Apr 2025 10:40:21 +0200
+Message-ID: <20250430084021.348347-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI2P293CA0001.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::14) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429-ov9282-flash-strobe-v3-9-2105ce179952@linux.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|DS0PR12MB7928:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69c6c7e8-1fd8-442f-abac-08dd87c2ab0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BNsLj1/UpBpccmRYRWF24zv1KyC7bsU/1WCY5pzLamkXx3oU5tD4AGQxavuS?=
+ =?us-ascii?Q?9q/iRlwoDdUoP/2LM6RCFdaux5U6RBFduUdYFUOveJQ5KHZG0tLC0s9Z1L8Z?=
+ =?us-ascii?Q?AVpR1Js11WPyrN/NFcZ2iUWZWFLnV6822+WdfrjK8E7KSxXGS4Oe1xDZ0cAS?=
+ =?us-ascii?Q?PGvOl2pSKmPZOjfsxqch11UdCQErB38MCiSUDND7e7ATwKhBPxmBa68MfGSc?=
+ =?us-ascii?Q?F8GrjTY6s/vE2mNsv4dS8j/54GIXLI3xHDED7UcePpYeCeiuqm5SwRKRbS2y?=
+ =?us-ascii?Q?m4g1kW0mq5COWC9avJp1jkyM2Hwc2THArQ0t2GbGPm5YSwY/wuIxUwL682qI?=
+ =?us-ascii?Q?r0lmdV4WvIQ99hh03xn+9tTQOYNkMTVmhM7euyIrdfkgbFogg1xBfGGNmuGO?=
+ =?us-ascii?Q?uh8Z6Q0WFYgx/OyV01c1uvYWP4j0yp4UrBjg/BbnbOsWTWarh4/DrU2eNS8Y?=
+ =?us-ascii?Q?ucjayJVE/XuBfLOSRQ2lcKQoT4uGx+MIUEZUih38RHU34VTVZraUsFIbmphh?=
+ =?us-ascii?Q?yDXSgbSgQHASgsG5WHOrkQKtxcPVYNJuTT0Rrkr3me+YmCrTERaw8KuryxWt?=
+ =?us-ascii?Q?dmx1Ho6LEk0w3YWgipkv44CgyCOV/DCd8OiQsQrFUZGVT0dBJ9R/Tys0msLp?=
+ =?us-ascii?Q?Rtt8PYHZrhj0e4s+CvWWOtcGwcrtpaSydYWvhMRZVYsAsVVdNTW+nCc7KiH4?=
+ =?us-ascii?Q?Gp3EogUruXJaqF/tGhk/2tyrpwQA29nEG5BvvvZ9vN78blzd7DXwQOv/Aujy?=
+ =?us-ascii?Q?6q2UDgsjSMdNF8TbfzlMe0fH0UztQLIvyRKyBefTeA/VMejAEYRvxFXbqo2r?=
+ =?us-ascii?Q?j1gBa/Z7pIhJhreZjym3uthLghYISIEqlXLb7gLynvbJu9cvYuRLcKXvk1zM?=
+ =?us-ascii?Q?R/yQl6BlJTSlu0HsU80S/xSSMoP4baxS8OqJArbKhN820eXhJA1etLVZihPM?=
+ =?us-ascii?Q?6BR/H0lyJuYHLpXn7g8kxgG1CjKYz/ZTwJ6KiWk19VLwn51mmDxOgxTogO76?=
+ =?us-ascii?Q?eySoRpUUJlB+TwL5QEqW+/6TysQEqwYK2WnRef7o8A3sD81+6hiFTy/GBOg0?=
+ =?us-ascii?Q?6HMFe9WayriOMKy69a3vPALhO05LsJpdcuAr9f7K+YkapWhwJZ7lOK4PVTWI?=
+ =?us-ascii?Q?vU4PGDLJ3V0NTXkmp0jLOXUECjm+CYG2ill1uTUPbQFBCUmyQHFAlWkKjMKG?=
+ =?us-ascii?Q?NLOe1dJu4HXUtwL9fq5RJs9Hdt8cZUrU2OK7MpR9CtMBmByDPjCCSvhhUb5R?=
+ =?us-ascii?Q?PnRJ5BbcKhx31Xz60CUvvusjBPn5wKOSpbg857uTJfJIClk8MAiLZj5k+V9T?=
+ =?us-ascii?Q?AUASKK2BXSODBX8tVNhWDznXpYg+PjSApV2tBJlSEh5kz6lMFHuHmBsnTm/a?=
+ =?us-ascii?Q?nZRyyE0VBk71opacHUgPdFbEZvO/fJZUoAwLDGhBV9eynPQX3ZN43CN8vLQM?=
+ =?us-ascii?Q?v+8OMy+AYSw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ajJKPHbFkwbPTNtUeqIJsbClRJ5moZEC78rTZhn/t3gbVTq1ijq3JvCZeOH/?=
+ =?us-ascii?Q?eg1OzjSjPepKAJ7I1tKxRMWnaXRFQBaklpbjzvScP0eywv7IRQ+UeARBpaTo?=
+ =?us-ascii?Q?WNiO5GAdC6mKscr8Qg96+ea5/38clEgpbmlEEpUsPX2qk6zSwLpJbUm7NRgr?=
+ =?us-ascii?Q?FGuZ/A4GbaGb3ZvRKLB9H3+gvwtK0sFhk3nIlsRA9UAGRGEtVLmNIlXjC/RM?=
+ =?us-ascii?Q?VUCg0Av6NKaWX/9iclYn3s6xGvP+sX3kGtjhf/JvAojggG9hWGgoeaxR00YU?=
+ =?us-ascii?Q?nYe8DrjDyGPYPOliyZb+Yhx3ticsStp00hrMJqL+bFyuBXzGA17qXg9OyMCl?=
+ =?us-ascii?Q?2GvcTOWUEzDxmi5D0RafIQJ4eG3zTUmQwxUrFAAUv1/RcUrI3JWloha4Ac72?=
+ =?us-ascii?Q?m5KcfyCGKpI5wpNeEAmw1Um3ZWL9jrAgZs2rRujerXcV1xrDo4w7jKR0V1ba?=
+ =?us-ascii?Q?pD22NJfOTV1YmQGC3XzRkgbScODLRoO5ylz/CUbYKRxznV381+FY3R3DN5Ah?=
+ =?us-ascii?Q?0EoxRhNW28Kslrmo1MwJ+F+Vs6aSGrNm/tH6liS6DhaH+CkcbFp/5tZIumbV?=
+ =?us-ascii?Q?mlKGDTi/ydnXHgiwNsHXHUlYBT0hBeHRHhVf4Yez+YFJaKZhDFSUTGye1REv?=
+ =?us-ascii?Q?/vcOHO2bVXoAoQKGhy8gxEDAFvjbFj7K7jNDjAch2atV5E9PNabNkoWoM8jm?=
+ =?us-ascii?Q?JQw3IURxpAFiHJj0VtYJ14rjPKYnlnvz297RVd63nXzRETaiv6H4lAXNOu2G?=
+ =?us-ascii?Q?ru2OYSjkL8wUQNHqQ1W8StUPI7UdxyRCR/75X8b+gvSayWGTIq2BJLVXS42z?=
+ =?us-ascii?Q?2BAQL1h/0pUQafIrt5fMjkrrvjj8IQZWrJhxmUMldlx7cRxWmXdM+YL4Jcbd?=
+ =?us-ascii?Q?FiE9WyIexOdFMFqOshBH+TmYYIV/MTIJo+k2BpSCVx0SCi9+cpXPlM7yAXO7?=
+ =?us-ascii?Q?L8T8ifPbJvToihyZRmAXnGY0yMmWFzCyyBYxjnTu5M3hSDnvWaWh66hsvpHd?=
+ =?us-ascii?Q?l2P/HslVrXhTMCq3m+N7uKFMVgE9pkyFhvmrCI1bXojXAdc0IXkRLBpbHYVg?=
+ =?us-ascii?Q?kcl+DKNMjk2iPEDlINvaG7LTPJ6EfXY7r69nVW5ZmfMRMCEY2eS2vf6K9BNm?=
+ =?us-ascii?Q?+jpKJLR6uaJ3rsCqynQuKBbaNYeHdmA/lZIXxx4I5y4icMGZbaUOPqKyXvD7?=
+ =?us-ascii?Q?e4/l08AHwNnzuymx0+br5QfZjzvoT5ipbJgoDVE/6kgg4X8HKZbxf0lzPDVx?=
+ =?us-ascii?Q?IJyaxrle1sYn3IrNDClNYqJiNITEIHcQWMvQP5fzJaGBGDFPnFG/7WwECMCD?=
+ =?us-ascii?Q?Agz+rXfqRXzM1rnu3KEvQk5LZS5/yuRlKnA4D++mdiTAkwwRGNOT1/nAN74h?=
+ =?us-ascii?Q?Ht2mLuevI9zTU9en4gfzp/MEzfOA4kB3hamBdgE/5KtGzTaFIpmXNuPR1Mgl?=
+ =?us-ascii?Q?e4SRRGs1p8LRpIqczhg18Xa2mVD6RIGBBbUHo9nTlub+bWzgzRlKvKH37j+m?=
+ =?us-ascii?Q?NXwkcPucw582M8qeEy+m/FNOe7STRK3EbtRoZgF4E0e173JftAZvUDe0SXIf?=
+ =?us-ascii?Q?vhbpXYJuGvrcJjIs7PvOiIyn0hPL0+Ue+PWrTOK6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69c6c7e8-1fd8-442f-abac-08dd87c2ab0d
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 08:40:32.1187
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AviE5hNrGNzbzzDoMBL4BWRcstKjIqFSj9CERtNRIy+P0ADqjW/USOYnOxlxLQH38zLCXpshy69vCtX/0Xol0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7928
 
-Hi Richard,
+A sched_ext scheduler may trigger __scx_exit() from a BPF timer
+callback, where scx_root may not be safely dereferenced.
 
-On Tue, Apr 29, 2025 at 02:59:14PM +0200, Richard Leitner wrote:
-> Add read-only V4L2_CID_FLASH_STROBE_SOURCE control. Its value is fixed
-> to V4L2_FLASH_STROBE_SOURCE_EXTERNAL as the camera sensor triggers the
-> strobe based on its register settings.
-> 
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> ---
->  drivers/media/i2c/ov9282.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index 5ddbfc51586111fbd2e17b739fb3d28bfb0aee1e..34ea903a18dadeeebd497a4a8858abf12b598717 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -1367,6 +1367,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
->  	struct v4l2_ctrl_handler *ctrl_hdlr = &ov9282->ctrl_handler;
->  	const struct ov9282_mode *mode = ov9282->cur_mode;
->  	struct v4l2_fwnode_device_properties props;
-> +	struct v4l2_ctrl *ctrl;
->  	u32 hblank_min;
->  	u32 lpfr;
->  	int ret;
-> @@ -1446,6 +1447,13 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
->  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
->  			  0, 13900, 1, 8);
->  
-> +	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
-> +				      V4L2_CID_FLASH_STROBE_SOURCE,
-> +				      V4L2_FLASH_STROBE_SOURCE_EXTERNAL,
-> +				      ~(1 << V4L2_FLASH_STROBE_SOURCE_EXTERNAL),
-> +				      V4L2_FLASH_STROBE_SOURCE_EXTERNAL);
-> +	ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+This can lead to a NULL pointer dereference as shown below (triggered by
+scx_tickless):
 
-Note that v4l2_ctrl_new_std_menu() may return NULL.
+ BUG: kernel NULL pointer dereference, address: 0000000000000330
+...
+ CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.14.0-virtme #1 PREEMPT(full)
+ RIP: 0010:__scx_exit+0x2b/0x190
+...
+ Call Trace:
+  <IRQ>
+  scx_bpf_get_idle_smtmask+0x59/0x80
+  bpf_prog_8320d4217989178c_dispatch_all_cpus+0x35/0x1b6
+...
+  bpf_prog_97f847d871513f95_sched_timerfn+0x4c/0x264
+  bpf_timer_cb+0x7a/0x140
+  __hrtimer_run_queues+0x1f9/0x3a0
+  hrtimer_run_softirq+0x8c/0xd0
+  handle_softirqs+0xd3/0x3d0
+  __irq_exit_rcu+0x9a/0xc0
+  irq_exit_rcu+0xe/0x20
 
-> +
->  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
->  	if (!ret) {
->  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> 
+Fix this by checking for a valid scx_root and adding proper RCU
+protection.
 
+Fixes: 48e1267773866 ("sched_ext: Introduce scx_sched")
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
+---
+ kernel/sched/ext.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 66d21c7cdff7d..1ee5a0088b1a1 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5212,12 +5212,19 @@ static void scx_error_irq_workfn(struct irq_work *irq_work)
+ static __printf(3, 4) void __scx_exit(enum scx_exit_kind kind, s64 exit_code,
+ 				      const char *fmt, ...)
+ {
+-	struct scx_exit_info *ei = scx_root->exit_info;
++	struct scx_sched *sch;
++	struct scx_exit_info *ei;
+ 	int none = SCX_EXIT_NONE;
+ 	va_list args;
+ 
+-	if (!atomic_try_cmpxchg(&scx_root->exit_kind, &none, kind))
+-		return;
++	rcu_read_lock();
++	sch = rcu_dereference(scx_root);
++	if (!sch)
++		goto out_unlock;
++	ei = sch->exit_info;
++
++	if (!atomic_try_cmpxchg(&sch->exit_kind, &none, kind))
++		goto out_unlock;
+ 
+ 	ei->exit_code = exit_code;
+ #ifdef CONFIG_STACKTRACE
+@@ -5235,7 +5242,9 @@ static __printf(3, 4) void __scx_exit(enum scx_exit_kind kind, s64 exit_code,
+ 	ei->kind = kind;
+ 	ei->reason = scx_exit_reason(ei->kind);
+ 
+-	irq_work_queue(&scx_root->error_irq_work);
++	irq_work_queue(&sch->error_irq_work);
++out_unlock:
++	rcu_read_unlock();
+ }
+ 
+ static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
 -- 
-Sakari Ailus
+2.49.0
+
 
