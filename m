@@ -1,174 +1,122 @@
-Return-Path: <linux-kernel+bounces-627774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788E5AA5505
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4798BAA54C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5599C0EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:48:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10ACD4E836D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C301F26A1BE;
-	Wed, 30 Apr 2025 19:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E085B1F0E4F;
+	Wed, 30 Apr 2025 19:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hboeck.de header.i=@hboeck.de header.b="FuoljF3/"
-Received: from zucker2.schokokeks.org (zucker2.schokokeks.org [178.63.68.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DB01E9B3A;
-	Wed, 30 Apr 2025 19:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.68.90
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NKUO1YoM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BB31311AC;
+	Wed, 30 Apr 2025 19:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746042512; cv=none; b=LMP6NzmmoNqnNbihitvcpfJedSVpsEyjqEM8XFbHB3Ji/C4d8v6AQs8k2QTRhl3Q1plVByy2EF2A9VfgQsbirKmQfIePWs0z+ZkXrdIpIFVTIdY1uY5oHZAZ7ciy9czt+ErbIRskBMI4cP9H/brXg1cIsH8WGlmqDoJoFKWivtU=
+	t=1746041964; cv=none; b=uJ0ohZ0LjrVAn5t35eoz666esCgLu2RYH8uwTOCC0qLW2dQHUAkh1nga2x7fjn2irDiPGytTrjF5Wvb6tZ7XtsIiMbmaNoa2OWu6BPF1MpzT54q0K6NGbCz8/8JY1G5t+nY0WrHK1+GdknED7ykCoDKVr49VzQiwqji3gXEnHUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746042512; c=relaxed/simple;
-	bh=vIXBsceJywR8lxkQXHTvqCxXPpEsE5ob+i7eM7Lw1wE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZKc6VDzCwQIu7cYyQJnsr84tFtcKsVxGnTCYD4ye6/pltMVgz6F0vNpoDJqEadtiGNDih5yE59as3MqNDnR+5Tp45rdqJtX4VAmnXzctkaDTi00snjK8d9HUgPo+sKUhDvpH2FlKedkf/OruFsF2OcDi5TCyFAiSeCZCOIRQrOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hboeck.de; spf=pass smtp.mailfrom=hboeck.de; dkim=pass (2048-bit key) header.d=hboeck.de header.i=@hboeck.de header.b=FuoljF3/; arc=none smtp.client-ip=178.63.68.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hboeck.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hboeck.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hboeck.de; s=key1;
-	t=1746041898; bh=eTaDm98D/en97YYrn4m0socY7fqhyB9xFUhKJAjwdrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	b=FuoljF3/nr41SJmTdH9DXOPKNJuSIdOJyK9ph8FX2zWZA8f65y1fEZuqcPiXK2aUL
-	 wqdU0H+ZTStw8O6MyghFuCgzy1SUQlSiTJ3hrW9n7TH9brrmsQzZj+bbPG6tVD/e7B
-	 ooR1fN91LH/ocj6dpTgY5pGO8D/2yD9M8pbZrt9tlrcXcQIc2JRTC2W3pN1IId7+F9
-	 nT1uuT4243ELAdXHBVzsDMVGfu3yoUfkwvpiau7U2a34Hi8WVOUMUgGdnX7uvuIDvi
-	 CN/KczyOnp9cKkX/+bLUDdNS3ztnT6DTD/rs+37toRWqlxqaIXV+KwkhHMaIDagdt6
-	 dmuZJWgw/mEGw==
-Original-Subject: linux/rmi4 driver: "BUG: kernel NULL pointer dereference" when
- accessing update_fw_status or bootloader_id
-Author: Hanno =?UTF-8?B?QsO2Y2s=?= <hanno@hboeck.de>
-Original-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, david@ixit.cz
-Date: Wed, 30 Apr 2025 21:38:16 +0200
-From: Hanno =?UTF-8?B?QsO2Y2s=?= <hanno@hboeck.de>
-To: dmitry.torokhov@gmail.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-  david@ixit.cz
-Subject: linux/rmi4 driver: "BUG: kernel NULL pointer dereference" when
- accessing update_fw_status or bootloader_id
-Message-ID: <20250430213816.7527e190@hboeck.de>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746041964; c=relaxed/simple;
+	bh=dlNXOcS3mPmuaWRyF1GDszM8rv/KZApIPqIK9uyAltM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDSYGJKPFrCAPlag30ZZPZMrSxJ/k8YiYJHLzolC0giyj2ryImQ3UIqNlr3OV9x+pYZVKhkHdEPgm50phWRk24T/EnIfRCLXNbx9EhnrFAHP1X2KNxnFuoySPF+AluhWVeYNnEA2N1KJcJNoZhIjPACAH5OqW0WO8/bjNU6H5f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NKUO1YoM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F400540E016E;
+	Wed, 30 Apr 2025 19:39:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZcdKoyjG8eAE; Wed, 30 Apr 2025 19:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1746041956; bh=YFLxSoXeKy8FgOW8J6YT6rsVJGkCNHNn3z8jsXjYpWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKUO1YoMDix/mtf6wFucYAZjRhybjmJRI/AMPrtmspSYz3dBtMci9CYA1sLbRhIgE
+	 HINSeA8Az0SSXFv22VSHpnnH0V/jzDzNEDnpyYnbMXSyKykWS9aG6PkuYsXUmstgea
+	 xIKi4Vb/Y6xJkSSNqAKtBSB182hycY7sH1+LowVXVUYXu987zZSBYeapmTKfxOVrES
+	 myQmzHZyRImisvLWmAX21bYk8mpHGcHiFNGeZ2er0zgRbG5Z6+aAveJz4FK8/4U7fN
+	 IOUPIepyYwiN2fwQJj1G8r5J0W3TD0trk7sbkjhkZFzkVlbxMcdhPw2U3gMNLGAuEJ
+	 VbzYciXP5+EF7JUJrQxZKFX+LxFjemX8jRdHXC9R0ymZ7Pit9BCWk6gy27itct2QGZ
+	 /pbPbQ60gV60366V0XFS2YTunMSFX1kzn8ljCFXuNYbLO4ENMospo3WrowrdaQCQZf
+	 ZmUI8Wi8MIpJ9hTvmFjA8B2OG9tGrgXjlCrBpxtq0RADDX74hTF4+t+dHqIMlXKnX+
+	 WRmkVDIyY5ewhGX+BuBNbNO7eXA+UZIdgcyvId1zfewQkEmtB/YeBcmw2qOPyjGE1q
+	 6kDzg39DMK5JUbNlNfPP9nWIPsZeKGqqJfwUADHk0xbjbChhfmF4lSRUhqMowX81z+
+	 uGGPBLj3eCut2vQIDd1MLBuk=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AD77D40E015E;
+	Wed, 30 Apr 2025 19:38:57 +0000 (UTC)
+Date: Wed, 30 Apr 2025 21:38:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
+	"open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v5 5/5] x86/CPU/AMD: Print the reason for the last reset
+Message-ID: <20250430193851.GHaBJ8S3MrRAp7fcHl@fat_crate.local>
+References: <20250422234830.2840784-1-superm1@kernel.org>
+ <20250422234830.2840784-6-superm1@kernel.org>
+ <20250430190333.GIaBJ0BWuMdZ1KNVQ7@fat_crate.local>
+ <e80be47b-5f8d-409c-8c3d-cd1af46944d0@kernel.org>
+ <20250430191025.GFaBJ1oQjxCuig1vS6@fat_crate.local>
+ <35bae46e-3b57-438a-a561-c93868120dcb@kernel.org>
+ <20250430192538.GGaBJ5MuS4CEKa4kIX@fat_crate.local>
+ <4bf62335-2e67-43c5-b2dc-4b0bed0521ed@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4bf62335-2e67-43c5-b2dc-4b0bed0521ed@kernel.org>
 
-Hi,
+On Wed, Apr 30, 2025 at 02:32:44PM -0500, Mario Limonciello wrote:
+> This would work, but would still need to track if "no" known bits were set
+> to emit an "unknown" message.
+> 
+> So the loops end up being for() and check a bit or while (true) and
+> find_next_bit() and otherwise identical.
+> 
+> At that point does it really buy much more than the while (true) approach
+> and find_next_bit()?
 
-I noticed that trying to read some sysfs entries created by the rmi4
-driver cause a kernel oops (BUG: kernel NULL pointer dereference).
+I have the requirements now, thanks. Lemme hack it up tomorrow, on a clear
+head.
 
-This can be triggered simply by running cat on these files, also as a
-user. Tested on a current vanilla kernel (6.14.4).
-It happens when trying to read from one of these files (exact path
-likely will differ depending on system):
-/sys/devices/pci0000:00/0000:00:1f.4/i2c-6/6-002c/rmi4-00/update_fw_status
-/sys/devices/pci0000:00/0000:00:1f.4/i2c-6/6-002c/rmi4-00/bootloader_id
-
-This is on a Lenovo X1 Carbon 2018 edition, lsusb lists the touchpad as:
-Bus 001 Device 010: ID 06cb:009a Synaptics, Inc. Metallica MIS Touch
-Fingerprint Reader
-
-The dmesg output for an access to bootloader_id:
-[   68.184846] BUG: kernel NULL pointer dereference, address: 0000000000000=
-008
-[   68.184866] #PF: supervisor read access in kernel mode
-[   68.184875] #PF: error_code(0x0000) - not-present page
-[   68.184882] PGD 0 P4D 0=20
-[   68.184892] Oops: Oops: 0000 [#1] SMP
-[   68.184902] CPU: 6 UID: 1000 PID: 4704 Comm: cat Tainted: G     U       =
-      6.14.4 #2
-[   68.184915] Tainted: [U]=3DUSER
-[   68.184919] Hardware name: LENOVO 20KHCTO1WW/20KHCTO1WW, BIOS N23ET90W (=
-1.65 ) 11/07/2024
-[   68.184926] RIP: 0010:rmi_driver_bootloader_id_show+0x1d/0x60
-[   68.184964] Code: 98 c3 66 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 =
-d7 48 8b 40 78 48 8b 50 20 31 c0 48 85 d2 74 3f 55 48 8b 82 90 00 00 00 <80=
-> 78 08 05 0f b6 70 09 0f b6 50 0a 48 89 e5 74 12 89 f1 48 c7 c6
-[   68.184973] RSP: 0018:ffffac4e419ebc28 EFLAGS: 00010286
-[   68.184982] RAX: 0000000000000000 RBX: ffffffffb6d78700 RCX: 00000000000=
-00000
-[   68.184989] RDX: ffffa31782c28000 RSI: ffffffffb6d78700 RDI: ffffa317841=
-50000
-[   68.184995] RBP: ffffac4e419ebc48 R08: ffffa31782c22400 R09: ffffa317841=
-50000
-[   68.185000] R10: 0000000000001000 R11: ffffffffb56f8b0b R12: ffffffffb67=
-2c590
-[   68.185006] R13: ffffac4e419ebd30 R14: 0000000000000001 R15: ffffa317852=
-11348
-[   68.185013] FS:  00007f75e3a5a740(0000) GS:ffffa31ac2780000(0000) knlGS:=
-0000000000000000
-[   68.185021] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   68.185028] CR2: 0000000000000008 CR3: 00000001a0448006 CR4: 00000000003=
-726f0
-[   68.185034] Call Trace:
-[   68.185039]  <TASK>
-[   68.185044]  ? dev_attr_show+0x15/0x40
-[   68.185054]  sysfs_kf_seq_show+0x9c/0xe0
-[   68.185065]  kernfs_seq_show+0x1c/0x20
-[   68.185073]  seq_read_iter+0xf8/0x410
-[   68.185082]  kernfs_fop_read_iter+0x12b/0x180
-[   68.185091]  vfs_read+0x236/0x300
-[   68.185102]  ksys_read+0x56/0xc0
-[   68.185112]  __x64_sys_read+0x14/0x20
-[   68.185122]  x64_sys_call+0x9f2/0xa00
-[   68.185129]  do_syscall_64+0x63/0xf0
-[   68.185141]  ? __count_memcg_events+0x49/0xe0
-[   68.185152]  ? handle_mm_fault+0x1b1/0x2d0
-[   68.185162]  ? irqentry_exit+0x19/0x30
-[   68.185169]  ? exc_page_fault+0x190/0x5b0
-[   68.185181]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[   68.185189] RIP: 0033:0x7f75e3aeaad7
-[   68.185196] Code: 20 49 89 d0 48 89 fa 4c 89 df e8 24 b4 00 00 8b 93 08 =
-03 00 00 59 5e 48 83 f8 fc 74 16 5b c3 0f 1f 40 00 48 8b 44 24 10 0f 05 <5b=
-> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 e2 e8 23 ff ff ff
-[   68.185204] RSP: 002b:00007ffe9e258720 EFLAGS: 00000202 ORIG_RAX: 000000=
-0000000000
-[   68.185213] RAX: ffffffffffffffda RBX: 00007f75e3a5a740 RCX: 00007f75e3a=
-eaad7
-[   68.185220] RDX: 0000000000040000 RSI: 00007f75e36d0000 RDI: 00000000000=
-00003
-[   68.185226] RBP: 0000000000040000 R08: 0000000000000000 R09: 00000000000=
-00000
-[   68.185231] R10: 0000000000000000 R11: 0000000000000202 R12: 00007f75e36=
-d0000
-[   68.185237] R13: 0000000000000003 R14: 00007f75e3cb1000 R15: 00000000000=
-00000
-[   68.185244]  </TASK>
-[   68.185248] Modules linked in: iwlmvm iwlwifi
-[   68.185261] CR2: 0000000000000008
-[   68.185267] ---[ end trace 0000000000000000 ]---
-[   68.199705] pstore: backend (efi_pstore) writing error (-28)
-[   68.199709] RIP: 0010:rmi_driver_bootloader_id_show+0x1d/0x60
-[   68.199715] Code: 98 c3 66 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 =
-d7 48 8b 40 78 48 8b 50 20 31 c0 48 85 d2 74 3f 55 48 8b 82 90 00 00 00 <80=
-> 78 08 05 0f b6 70 09 0f b6 50 0a 48 89 e5 74 12 89 f1 48 c7 c6
-[   68.199718] RSP: 0018:ffffac4e419ebc28 EFLAGS: 00010286
-[   68.199721] RAX: 0000000000000000 RBX: ffffffffb6d78700 RCX: 00000000000=
-00000
-[   68.199723] RDX: ffffa31782c28000 RSI: ffffffffb6d78700 RDI: ffffa317841=
-50000
-[   68.199724] RBP: ffffac4e419ebc48 R08: ffffa31782c22400 R09: ffffa317841=
-50000
-[   68.199726] R10: 0000000000001000 R11: ffffffffb56f8b0b R12: ffffffffb67=
-2c590
-[   68.199727] R13: ffffac4e419ebd30 R14: 0000000000000001 R15: ffffa317852=
-11348
-[   68.199729] FS:  00007f75e3a5a740(0000) GS:ffffa31ac2780000(0000) knlGS:=
-0000000000000000
-[   68.199731] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   68.199733] CR2: 0000000000000008 CR3: 00000001a0448006 CR4: 00000000003=
-726f0
-[   68.199735] note: cat[4704] exited with irqs disabled
+Thx.
 
 
---=20
-Hanno B=C3=B6ck
-https://hboeck.de/
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
