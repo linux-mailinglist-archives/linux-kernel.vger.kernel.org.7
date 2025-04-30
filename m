@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-626816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DEAAA47AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:54:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB70AA474C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C87A3AF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E044C171FB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A41B235049;
-	Wed, 30 Apr 2025 09:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A4321D3F6;
+	Wed, 30 Apr 2025 09:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f0CXsBPi"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Do2VF3FT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C722223184F;
-	Wed, 30 Apr 2025 09:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1E22206B1
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746006845; cv=none; b=kkFmZ91BAK9cp/WBZdKIOuV9rWFo36irjpnBtnLS0F5OTcOdSvnMowSjQGGKeM79fP83KPTH+jfp/uIgRc2w3M2uE3JEL8ssHLgn7z+l1F4/LTMHhOjQpFGjc+D4PzsAApvnrfLLXcb1b8nBobr9k9lW4ghvFuwGk62efpSw0G0=
+	t=1746005701; cv=none; b=Dx1iu82MX7FRCu/jecWLFGrqT+vMTnrTmhRYSRAahTiR1ftOS0gIfzq28MpjCWeRLaRa+1ntWxfZvfOmpPQUZLiVGKOFzi6Y7juHdd3oH054DRwI1TzQJmi3olsFnRfp9kf/Cmd8Z80hI3t2kzipNYqAnHZQnRTOnSLiKvMf/NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746006845; c=relaxed/simple;
-	bh=r06vbbdYSeyDhKUVj0TSgJTSH4wivO5RW6Zk56/fEZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6HO6bZuwBFMoqSwBIxnyMQW3OAb3ig79v+NbDG7oCqFRmEJwtGud4B5wcGy6sZHmcn0a8XVVvUrrWn004FLb8aj8uAOb5hq47rmfvuoRFykEgn2J8b4K2s9orATMEl4GRLcYCwNCRAfO9vlEYrOMDded8/C5YSwxB8JoOvbxOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f0CXsBPi; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id A039B5850FF;
-	Wed, 30 Apr 2025 09:33:53 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4642B4331A;
-	Wed, 30 Apr 2025 09:33:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746005625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KQ8rQQEEj/pGpG4T8FIv47iidj+XTjL64Au76KsPOSU=;
-	b=f0CXsBPiFX0HawPxuZE3wtGbYmyChyVKoPw2z9vegzKah9s0+NLUYqCaq+xi5Gmtk2NNGg
-	BvZwvqWageoMCQpSEXLqf54axgiVZ4TeucppIJadSb1ZbfFmlIxAGOquuB6N/R3n+eW3zh
-	vTG4wD6Iev39dfna3+P35FZtbQ6pSUyhz58CdgZToR0FTNrC0DfGi3SFQVEVxQzFi/YpHG
-	ZcYcSTLTEPzwk5ouKXNScKIhZu7OzP5kgFUg9rFatsDKh1JUatY2rWC3AJyj2BjQQoiwmr
-	eOVGXTQ/1srPsbwyuXV3UbD17wQtq7nKx6cjxxssTXZlgZaxB/y2jBUSKPnijA==
-Message-ID: <752fb7bc-8666-4912-aac1-9778f8779067@bootlin.com>
-Date: Wed, 30 Apr 2025 11:33:43 +0200
+	s=arc-20240116; t=1746005701; c=relaxed/simple;
+	bh=QTk+dEkk5tfuDKRZq0hjzj6icF2qed3BoFp2wQnQ3fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WpimEIXd2TpiaXkhC1Y+xNdyBvWZStH8FCf3UFajuIttFwyQJvze9R2cG1THEZ8PGkzyXVn7kRzmQd6eY24YTHqk/MLHgdGt96kyfN5q+Xp2E31G2qdWlLNE22L/lR+WxnNYYs5HcIvew5gVOLiLpWd0nSqlGXliYTSeTPeQDqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Do2VF3FT; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746005700; x=1777541700;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QTk+dEkk5tfuDKRZq0hjzj6icF2qed3BoFp2wQnQ3fo=;
+  b=Do2VF3FTwQvpWSgM0Xl8IDCRQoCS7Hkq05OXQ4HdGq/P7syOiNMvLnLR
+   2ntvomoKojGgVs97rqaG4f3qXhl1MgZDE1CKfuQ+zFyO3ynh3QCpNAmZi
+   JHRKim02V3BV2xJgtv4UypWkbk1xYTC6/sRJVjDwwl+6dij0FL1IH2fWf
+   ikjCZsUD+63NOL88xmUmmud/PjGP/nUriZPU0WjomvNJqLK5Y51aej1+G
+   jqc76oP72R0clelhsoGysbZFjOeWDdDplYtUHFXdOb6Sg/2Qze7lpU8md
+   hAbf3uYyuxUVaKT5MYS1GRSGMjxXifTzuG9K2Vt/e5054eDE+x/kDpKIZ
+   w==;
+X-CSE-ConnectionGUID: /eeqDaxvRDm7YpvJ2jtLog==
+X-CSE-MsgGUID: HKO7izciTMyoOqDS2Oh49w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="47671405"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="47671405"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 02:35:00 -0700
+X-CSE-ConnectionGUID: 2fOGnqzFRBeYd4S27rM5dg==
+X-CSE-MsgGUID: 0GBGlxhMRau2fVeJ0xKExw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="157290500"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 30 Apr 2025 02:33:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id B0266213; Wed, 30 Apr 2025 12:33:55 +0300 (EEST)
+Date: Wed, 30 Apr 2025 12:33:55 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Zhiquan Li <zhiquan1.li@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, Jun Miao <jun.miao@intel.com>, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	"Du, Fan" <fan.du@intel.com>
+Subject: Re: [V2 PATCH] x86/tdx: add VIRT_CPUID2 virtualization if REDUCE_VE
+ was not successful
+Message-ID: <sdczrx3z55vbf4jxbedjpccpdmz7h7ukhhiwrwblpozwyrqssv@ljszzrxvgoxr>
+References: <20250429143114.1724280-1-jun.miao@intel.com>
+ <20250429143114.1724280-2-jun.miao@intel.com>
+ <b138cb84-3a34-40b3-a23d-6ff3708dae6b@intel.com>
+ <a0676c7b-9e6d-4af4-87d5-f822ab247730@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] pinctrl: remove extern specifier for functions
- in machine.h
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, linux-hardening@vger.kernel.org
-References: <20250429-aaeon-up-board-pinctrl-support-v4-0-b3fffc11417d@bootlin.com>
- <20250429-aaeon-up-board-pinctrl-support-v4-2-b3fffc11417d@bootlin.com>
- <CAHp75VcRYE6meHB9+MhcH242eXbA0jzYXhL-+WidvvLXiLX=MQ@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <CAHp75VcRYE6meHB9+MhcH242eXbA0jzYXhL-+WidvvLXiLX=MQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeifeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehudehuddvgfdvfeetgffgleeuveejgfejtdehkeetheevheevgedujefgvddtteenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrngdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghro
- hdrohhrghdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0676c7b-9e6d-4af4-87d5-f822ab247730@intel.com>
 
-On 4/29/25 21:49, Andy Shevchenko wrote:
-> On Tue, Apr 29, 2025 at 5:08 PM Thomas Richard
-> <thomas.richard@bootlin.com> wrote:
->>
->> Extern is the default specifier for a function, no need to define it.
+On Wed, Apr 30, 2025 at 10:15:05AM +0800, Zhiquan Li wrote:
 > 
-> Suggested-by ?
-Oh yes, sorry about that. And also for patch 11/12.
+> On 2025/4/29 22:50, Dave Hansen wrote:
+> > On 4/29/25 07:31, Jun Miao wrote:
+> >> REDUCE_VE can only be enabled if x2APIC_ID has been properly configured
+> >> with unique values for each VCPU.  Check if VMM has provided an activated
+> >> topology configuration first as it is the prerequisite of REDUCE_VE and
+> >> ENUM_TOPOLOGY, so move it to reduce_unnecessary_ve().  The function
+> >> enable_cpu_topology_enumeration() was very little and can be
+> >> integrated into reduce_unnecessary_ve().
+> > 
+> > Isn't this just working around VMM bugs? Shouldn't we just panic as
+> > quickly as possible so the VMM config gets fixed rather than adding kludges?
+> 
+> 
+> Now failed to virtualize these two cases will cause TD VM regression vs
+> legacy VM.  Do you mean the panic will just for the #VE caused by CPUID
+> leaf 0x2? Or both (+ VMM not configure topology) will panic?
+> 
+> Currently the most customer's complaints come from the CPUID leaf 0x2
+> not virtualization, and most of access come from user space.  Is it
+> appropriate for such behavior directly cause a guest kernel panic?
 
-Regards,
+The appropriate behavior would be to fix VMM to configure APIC IDs
+correctly and use TDX module that supports REDUCE_VE.
 
-Thomas
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
