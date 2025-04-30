@@ -1,114 +1,93 @@
-Return-Path: <linux-kernel+bounces-626842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D811AA4812
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:15:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AEBAA482B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC0D1C05F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5253E16F658
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020D023505B;
-	Wed, 30 Apr 2025 10:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94ECC235062;
+	Wed, 30 Apr 2025 10:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OvV51h+L"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cdbrnRFQ"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1224C1B5EB5;
-	Wed, 30 Apr 2025 10:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8209D21A458
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746007968; cv=none; b=pzQ+mVJFMdYpPe77gzNtVoX7OVtAOP1reEuNdfBAJWF4NrjUQOrHj0Ijb1cP8IuZrCqCi3ftv81jHEIhVFyt+2PV0dtqtbb6rqsRRloww2mAyUzsmEMsWl6scl2VBKJi6gLq27oDH+oNSr2AaXckV6M/pazIl7+rhk4LSExe1F8=
+	t=1746008374; cv=none; b=Sy+nEjqhCb4WsnIQc7Bbqz49d0fF5idq9dDXx0erpL0bBr7zPspcCASc7M0/seQd8ey6LhtraldV6JnKzxPDdOxWUh1rLjynY3FMIJMb7Z11UE3VyHPhdrmxqj8sqW2wQzcXLBKTxpDBIETCMLTZCf+2jwljalHt8Nqg8zxISx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746007968; c=relaxed/simple;
-	bh=bSbjHd5fpmwuxfDGYWijAmxsLNypiafgTKyiPu9nVsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LHGNnHL4okktSGKu7E1LinNozd4+yyjgeU26ZbwJZne9UTjnVUXtl4GqtGBM/sxJkYYg5+hSkhsY4BET3RmeZi2rGetNRvD+ZBkURxF9LxL+bbt26C3Nn++pc28VFlYVIzjDoMAQ2qAOIspQT4hQTCFMFJuMomf5UtnDuIEYgM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OvV51h+L; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1746007957; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=jWF4Fc/9faHdX2BfnWYsn6epFHIXAYKUNdSnF1XgcMQ=;
-	b=OvV51h+LHWRbSC4cTIToEvPpbDzomXgEftvwug39L+n5/OJxF30Pl3yhZ3HRE5QkJhj9X6MemjHVYaA93zUts3YaFP1OmadiNcL+BzlWu5Gm4Nv3988JHQsGVKfhOQnGnMgEpHfQqXLhi7xkBY2c28NM4YvNCqnjt9Firz+EUuw=
-Received: from 30.74.146.9(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WYoKRf3_1746007953 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 30 Apr 2025 18:12:34 +0800
-Message-ID: <ba59d6aa-ade3-4440-a0ed-ef276b45f9d2@linux.alibaba.com>
-Date: Wed, 30 Apr 2025 18:12:33 +0800
+	s=arc-20240116; t=1746008374; c=relaxed/simple;
+	bh=anS6IR/rORgqvGhmAJhuM1m54YWHaH4FKndWzKt2pnI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=r8PFlcMCpFFfeOswFLb8jgS/ZC3bbTAhzyPGtVF/9Ben8NeTrR3f8BjaTOGSlpBKVhWv2WaKEpXbvMZkztbcObYWJBtIlyDT9RDUVhE2Xxglwig9rE8pB500vrhIsSYa/1+6UvfXkHeuWfpReb0e6yR4nYzh9rQ9BTiWrG6cGSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cdbrnRFQ; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1746008366; bh=MhJYYMhQTwnWneZl80azA+7oLTlnJBM1TLl9zR660cY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cdbrnRFQ+Y6lNjqJi9dy2ZFWWq/RuxSna7hj4wUbk2S5MoLaqHs8Y2uSl1EdZFgXk
+	 QG/aoEtYtn+nqa4IM5BHfoN5eiJBp+j9D2e5nPpB2CgJ6bft5gPnxJycWqcxbXD/c4
+	 uyehxmOah8PxoxH+fqUtLNNS/dmqzJtunZMc+iyE=
+Received: from pek-lxu-l1.wrs.com ([114.244.56.254])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 34F31C8A; Wed, 30 Apr 2025 18:13:15 +0800
+X-QQ-mid: xmsmtpt1746007995tvgiruu1n
+Message-ID: <tencent_001BC04BE01B3C2563BAA0BB1633DF9E7908@qq.com>
+X-QQ-XMAILINFO: OLZvRd9spCyfVCvrXajqvTUupYn4TtGYwn05xgtLkpV8hUCUPjEQjtBPDsiO5P
+	 LaPG6/TC62MATeqrzLw/q8cpHVfJXtSrrOOKabeF6WdnTjAr1llxVrHfB4OqXxgqXRw1JI9vrDK3
+	 7Fxxz8KZrUbIUz4WN8Xw2MChsD/mtKyk/YqN/kkl/IHosYI75YR07SMaiW3mLAwmG/LLWRSpviMb
+	 k9FtZ8d+u+uUS1fgMhcZq+9ADbLwuTkUna+Bpz6XAI8jfc0MxEe7jCty+EYhQm6Q5CIYaMHzj9nv
+	 FF7IByrzF2HxcH8YnyC8hvjVR2sdS1BqSCQUwgTIfEn7ZvMCBE/GqUWuFpidaDaEOte0VdOEpig8
+	 Va40jqyRLdLRUZonX9/34+s4f4l/tS3EgCB0zCYiSjniDBGBaORDmjAESYVt4Q7YVUHSLRN/rJcF
+	 c29GivLNbs35hk1jT0/K8X56wvZ79CD1CFGXgSA35H+G4vG/C9x+i2OtAkaPlFhygjb90SJsFNlp
+	 DLnRY1P1nFMF3FRLcY+buJKuEIxI5FJYgR0/njBOVS2EkXndNlqhQIat7ViNl0x1LVX3dBSnkP3M
+	 avTQbxcxUPpdMdveATVIGUDdE5nIgWrgPslYVFR5jqMVtPMpuQSSQWHoU5+fZs3YMDmFws/SRVmw
+	 M/bFuwpQmn5ozXQaJCBhhpz5tdOJWtI6RFAbqQ89wNju58CSOy26m1FCugZuo/d7WJW+GkxA7Yjg
+	 +Xpiiz4uQfjEkXdp8Mldi9kv4q5cRvOTwKpz4svheDt50jmT4eGuvJ+eV7Jrytn6Z8k4NUENq5uD
+	 QOCO3J+4vgRwxj8YOjSi4glFlUS8iuuu5mmYYC9ScVbhLiPzE60hfW5z7HrQzVuqak8S6PPyhY5R
+	 qjQBuzICKbziQxmKq6+owXUrsCz/t8AWyJvdDHhhiTxSM8OC2wWy6BqzNMBdBhkIHGQVKqaFVH
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4bcdddd48bb6f0be0da1@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_request_ibss_scan
+Date: Wed, 30 Apr 2025 18:13:16 +0800
+X-OQ-MSGID: <20250430101315.1527298-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
+References: <680fd171.050a0220.2b69d1.045e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/12] khugepaged: avoid unnecessary mTHP collapse
- attempts
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
- baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
- peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
- usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
- cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com
-References: <20250428181218.85925-1-npache@redhat.com>
- <20250428181218.85925-10-npache@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250428181218.85925-10-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+#syz test
 
+diff --git a/net/mac80211/ibss.c b/net/mac80211/ibss.c
+index 4246d168374f..1048a05fec5e 100644
+--- a/net/mac80211/ibss.c
++++ b/net/mac80211/ibss.c
+@@ -1732,6 +1732,9 @@ int ieee80211_ibss_join(struct ieee80211_sub_if_data *sdata,
+ 		return -EOPNOTSUPP;
+ 	}
+ 
++	if (local->int_scan_req && !local->int_scan_req->n_channels)
++		return -EINVAL;
++
+ 	ret = cfg80211_chandef_dfs_required(local->hw.wiphy,
+ 					    &params->chandef,
+ 					    sdata->wdev.iftype);
 
-On 2025/4/29 02:12, Nico Pache wrote:
-> There are cases where, if an attempted collapse fails, all subsequent
-> orders are guaranteed to also fail. Avoid these collapse attempts by
-> bailing out early.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->   mm/khugepaged.c | 17 +++++++++++++++++
->   1 file changed, 17 insertions(+)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 86d1153ce9e8..5e6732cccb86 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1365,6 +1365,23 @@ static int khugepaged_scan_bitmap(struct mm_struct *mm, unsigned long address,
->   				collapsed += (1 << order);
->   				continue;
->   			}
-> +			/*
-> +			 * Some ret values indicate all lower order will also
-> +			 * fail, dont trying to collapse smaller orders
-> +			 */
-> +			if (ret == SCAN_EXCEED_NONE_PTE ||
-> +				ret == SCAN_EXCEED_SWAP_PTE ||
-> +				ret == SCAN_EXCEED_SHARED_PTE ||
-> +				ret == SCAN_PTE_NON_PRESENT ||
-> +				ret == SCAN_PTE_UFFD_WP ||
-> +				ret == SCAN_ALLOC_HUGE_PAGE_FAIL ||
-> +				ret == SCAN_CGROUP_CHARGE_FAIL ||
-> +				ret == SCAN_COPY_MC ||
-> +				ret == SCAN_PAGE_LOCK ||
-> +				ret == SCAN_PAGE_COUNT)
-> +				goto next;
-> +			else
-> +				break;
-
-Better to merge this patch into patch 6, which can be helped to 
-understand your logic.
 
