@@ -1,132 +1,212 @@
-Return-Path: <linux-kernel+bounces-626671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04C8AA45DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4529BAA45E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D58E16D9F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE3A9C4245
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FB721ADB7;
-	Wed, 30 Apr 2025 08:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z8fxuge+"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E17621ADA2;
+	Wed, 30 Apr 2025 08:47:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65E2DC765
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E81219314;
+	Wed, 30 Apr 2025 08:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746002822; cv=none; b=AFO8Gq4XbtJJorpr6FrYDrJCG+eMOgy6Px+U9qURkFfgpngzn/SQlNaS4uwlIOW6vHEHTZIept1yjDziGNCBZWckiQUZKSgxxoPOVnSvf+j26i6ntzl3LMJlNhg/65SaxEzE5HZZbW+QtVo32fpduWSLjk4Dunrc8E++p3byFGQ=
+	t=1746002853; cv=none; b=cwSGN86ymxWIHlAUQrOmTzpCUNIbA0VbLXsRTcoyVgsRaw5yIk4SFWhLTdw2SQACU3C2uk6BhkaYrRnamXvy/Nv++a6X2evDHg2j3ci6ebpNWOOOMlrZOMMw0aygD4PqQy0z7J1JJSFkYsjJzZFIidYMl9L2KIdSbyzZ+aWTsBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746002822; c=relaxed/simple;
-	bh=Y9EbBv9uhTQU/4WYy7VxL5xhYLllbFHdTeX3Z/LCSbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6yCyRodOO/DeD3/Fx8wXDrsUiokeNFq/AuB9CRn8JvxvHnDe9bqbedAEqcG55uM3NhHOAg6VTB8w8QgbBNJ7w3TyovPZ+Lff4BVzgebE61mZhF7cb/zZuSqzvV2vCtTdZzWI74wD589YFip7gmCERkPK4mkY2Ld2TTkyg8OXhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z8fxuge+; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso6295303a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746002820; x=1746607620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ps/GlO1XvNY/W7BO10G7AD+oWxCe2mK1nHWx1SJsW+4=;
-        b=z8fxuge+hR2OVuksWIz7AdhAMDMc9PyK93b7VA4uTYAQ2D5gL6SaoaoK8NnCutElXT
-         cd+Gu4ofvdGXSUOXXXhyCsNIvMZ+8oa4NCRtwBxG1hDMWBov1VaDO32gRGeVfdvGAJS6
-         rNJLy76dkqS/Ms+Kug+U+06OxPmuDlQcEWJMHSiG8P4ZmnDGQ5KKZdSVbwIDbS5xsvoB
-         M0h9ho5EgMS2vmpp7OgQ1GgJKcyp2NMCDUIxPjCFdEfiVhCOkWH3NhlbmfUHIW8YHiCf
-         imRFfXRWkRdobA9lM7ac5Rq1aigs7yFLYqHzwSmWjiNa9tGT0Q6sCHjFxAcpyuEQ9Uxf
-         qjXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746002820; x=1746607620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ps/GlO1XvNY/W7BO10G7AD+oWxCe2mK1nHWx1SJsW+4=;
-        b=mm9ns5st6jGhuRlihqVwWD3tGrZWf3b2/Jq7T4K1IzQcsQmH2oL+T96fRManzWcri2
-         SzlKSnLarqOk3FPzoUSd8dUSAdlAJ+/nWVhlkXFfuwERP6geWs5Mlsz7/WwDVxf8u1UL
-         8x9ZG41X5WNF92mt4PhsI0r8MFXgEInsYoN9QlBMOM81b8mo6GRFZ5Oj9v6TYvGwo+tD
-         T2vkgnZkmKqUlpnrkrhObc7ZlGJOH/MJWToxdt5BeZ9HxI0Ykgg9EzsAXwwjXZ55wcAU
-         GLFBUfi3zUUPhqyCEqjm8FXwcOLAcdUSA7NK4JCQuF8xKdN/A8vtHOlRr7n/UTL4YMZE
-         lSHg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+J5t6Px5sBWoctxkFZEPJ55MW689wHad1qW/ulZ+XzqWvmBLwNiStLPGVSJQuvM4NVKEC634ul5XNGLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUovt60EJRtGH9vN3Nh3jcm1V6FHNQJPwc5T/tc6mR7mkvc5Io
-	syq10asMo4jRNSP0/VGBFc9bRp70EJCN2bO8JTSeJHyO4OXnBYpQkEjjq44TShs=
-X-Gm-Gg: ASbGncutGrTbOjr2XPuE/OeJ6NxfkEAHsTcncq+HlzISKrf9FeV6DGXuBIIzerLVjnT
-	X8HFhqrN4fyyaG1I+OmyKZri5LMYmId/TDw/AS0ABfnFOfUe7ckJ9hjCOKgxZ1M4X2Nu5WoFr8Y
-	bmChgJ8cTHQPqX5HnnLjSqwXt86keM1iPpzVul/oXgAZ50D5F9qwIj1mfOv6B5ROhPkNz3iLG6M
-	TXjrq4WwFKWWf+/HGhZM1mu1JRXvF5mclxkBjmZ5IJOx+Gz+FTCksiNhX7lXT5mrUf/OdeOH2So
-	wweMULLJEfN6IZ3fBDsDMEDm91Is70yUyEYfHfQQdQ==
-X-Google-Smtp-Source: AGHT+IE71Ft93uGd7KPOG74PkFqMkkrdRnPcFWUsK9xk65jelbG+5UbR6p6ZpkO97gGUVEbhaAbNzg==
-X-Received: by 2002:a17:90b:2747:b0:308:5273:4dee with SMTP id 98e67ed59e1d1-30a3330d535mr3768179a91.15.1746002819741;
-        Wed, 30 Apr 2025 01:46:59 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a349fff9bsm1023758a91.18.2025.04.30.01.46.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:46:59 -0700 (PDT)
-Date: Wed, 30 Apr 2025 14:16:56 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] OPP: core: Fix loop in dev_pm_opp_sync_regulators()
-Message-ID: <20250430084656.otga5l6nv3u5frug@vireshk-i7>
-References: <aBHaOOE8xHTsMap2@stanley.mountain>
+	s=arc-20240116; t=1746002853; c=relaxed/simple;
+	bh=2V3oi+zTqj6+6yjxoEi2u/vt/w1/hvUqDh25JFcZBjg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vq5+1E8ziDppc22EjA/EVyjGrXjPZDrJrZC92XQ2YAjXJBEZKS0Kobcub16jYIBFfLdAjTFApP7d4lZ3QSXY8JO2uKNmll78nsJzvZogkSC67Jtuf8H0FZamSFwgw/hzJhVyLXD/kkFM10+6IXnHJg2FIOEs6PjbFxgi3u9xJDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZnW0B6JHsz6K9YP;
+	Wed, 30 Apr 2025 16:42:34 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 152FC1402EE;
+	Wed, 30 Apr 2025 16:47:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Apr
+ 2025 10:47:27 +0200
+Date: Wed, 30 Apr 2025 09:47:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <admiyo@os.amperecomputing.com>
+CC: Jeremy Kerr <jk@codeconstruct.com.au>, Matt Johnston
+	<matt@codeconstruct.com.au>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sudeep Holla
+	<sudeep.holla@arm.com>, Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v21 1/1] mctp pcc: Implement MCTP over PCC
+ Transport
+Message-ID: <20250430094725.000031ac@huawei.com>
+In-Reply-To: <20250429222759.138627-2-admiyo@os.amperecomputing.com>
+References: <20250429222759.138627-1-admiyo@os.amperecomputing.com>
+	<20250429222759.138627-2-admiyo@os.amperecomputing.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBHaOOE8xHTsMap2@stanley.mountain>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 30-04-25, 11:07, Dan Carpenter wrote:
-> We accidentally deleted the if statement in this loop during a cleanup.
-> Add it back.
+On Tue, 29 Apr 2025 18:27:58 -0400
+admiyo@os.amperecomputing.com wrote:
+
+> From: Adam Young <admiyo@os.amperecomputing.com>
 > 
-> Fixes: 5330d0dab736 ("OPP: Define and use scope-based cleanup helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/opp/core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> Implementation of network driver for
+> Management Control Transport Protocol(MCTP)
+> over Platform Communication Channel(PCC)
+Hi Adam,
+
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index fc9874946453..f56ddae35ef2 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2889,7 +2889,7 @@ int dev_pm_opp_sync_regulators(struct device *dev)
->  {
->  	struct opp_table *opp_table __free(put_opp_table);
->  	struct regulator *reg;
-> -	int i;
-> +	int i, ret;
->  
->  	/* Device may not have OPP table */
->  	opp_table = _find_opp_table(dev);
-> @@ -2906,7 +2906,9 @@ int dev_pm_opp_sync_regulators(struct device *dev)
->  
->  	for (i = 0; i < opp_table->regulator_count; i++) {
->  		reg = opp_table->regulators[i];
-> -		return regulator_sync_voltage(reg);
-> +		ret = regulator_sync_voltage(reg);
-> +		if (ret)
-> +			return ret;
->  	}
->  
->  	return 0;
+> DMTF DSP:0292
+> https://www.dmtf.org/sites/default/files/standards/documents/\
+> DSP0292_1.0.0WIP50.pdf
 
-Ahh, thanks for the fix Dan. I have folded this in the original patch
-itself.
+Don't line break a link.
 
--- 
-viresh
+Is the WIP status something we should be concerned about?
+
+
+> 
+> MCTP devices are specified via ACPI by entries
+> in DSDT/SDST and reference channels specified
+> in the PCCT.  Messages are sent on a type 3 and
+> received on a type 4 channel.  Communication with
+> other devices use the PCC based doorbell mechanism;
+> a shared memory segment with a corresponding
+> interrupt and a memory register used to trigger
+> remote interrupts.
+> 
+
+Very short wrap.  Convention for patch descriptions tends to be around
+75 chars.
+
+> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+
+A couple more trivial things on a final look through from me.
+Obviously the netdev and mctp bits aren't my specialty as I only dip
+into them occasionally, but with that in mind and some concerns
+about possibility for this getting abused as a work around for things
+should have more specific kernel level support...
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+
+> diff --git a/drivers/net/mctp/mctp-pcc.c b/drivers/net/mctp/mctp-pcc.c
+> new file mode 100644
+> index 000000000000..aa5c5701d581
+> --- /dev/null
+> +++ b/drivers/net/mctp/mctp-pcc.c
+> @@ -0,0 +1,305 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * mctp-pcc.c - Driver for MCTP over PCC.
+> + * Copyright (c) 2024, Ampere Computing LLC
+> + */
+> +
+> +/* Implementation of MCTP over PCC DMTF Specification DSP0256
+> + * https://www.dmtf.org/sites/default/files/standards/documents/DSP0256_2.0.0WIP50.pdf
+
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0256_2.0.0.pdf
+
+Looks to be final version of that doc, but it's not what your title says...
+
+
+
+
+> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
+> +{
+> +	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
+> +	struct mctp_pcc_hdr *mctp_pcc_header;
+> +	void __iomem *buffer;
+> +	unsigned long flags;
+> +	int len = skb->len;
+> +	int rc;
+> +
+> +	rc = skb_cow_head(skb, sizeof(*mctp_pcc_header));
+> +	if (rc)
+> +		goto err_drop;
+> +
+> +	mctp_pcc_header = skb_push(skb, sizeof(mctp_pcc_header));
+> +	mctp_pcc_header->signature = cpu_to_le32(PCC_SIGNATURE | mpnd->outbox.index);
+> +	mctp_pcc_header->flags = cpu_to_le32(PCC_CMD_COMPLETION_NOTIFY);
+> +	memcpy(mctp_pcc_header->mctp_signature, MCTP_SIGNATURE,
+> +	       MCTP_SIGNATURE_LENGTH);
+> +	mctp_pcc_header->length = cpu_to_le32(len + MCTP_SIGNATURE_LENGTH);
+> +
+> +	spin_lock_irqsave(&mpnd->lock, flags);
+> +	buffer = mpnd->outbox.chan->shmem;
+> +	memcpy_toio(buffer, skb->data, skb->len);
+> +	rc = mpnd->outbox.chan->mchan->mbox->ops->send_data
+> +		(mpnd->outbox.chan->mchan, NULL);
+
+Not the most readable of line wraps. I'd just go long on this one for readability.
+It's still < 100 chars. Or use a local pointer to outbox chan.
+That will shorten this and at least one other place.
+
+
+	rc = mpnd->outbox.chan->mchan->mbox->ops->send_data(mpnd->outbox.chan->mchan, NULL);
+
+
+> +	spin_unlock_irqrestore(&mpnd->lock, flags);
+> +	if ACPI_FAILURE(rc)
+> +		goto err_drop;
+> +	dev_dstats_tx_add(ndev, len);
+> +	dev_consume_skb_any(skb);
+> +	return NETDEV_TX_OK;
+> +err_drop:
+> +	dev_dstats_tx_dropped(ndev);
+> +	kfree_skb(skb);
+> +	return NETDEV_TX_OK;
+> +}
+
+> +
+> +static acpi_status lookup_pcct_indices(struct acpi_resource *ares,
+> +				       void *context)
+> +{
+> +	struct mctp_pcc_lookup_context *luc = context;
+> +	struct acpi_resource_address32 *addr;
+> +
+> +	if (ares->type != PCC_DWORD_TYPE)
+> +		return AE_OK;
+> +
+> +	addr = ACPI_CAST_PTR(struct acpi_resource_address32, &ares->data);
+> +	switch (luc->index) {
+> +	case 0:
+> +		luc->outbox_index = addr[0].address.minimum;
+Really trivial but as this is a walk of the resources, I'd expect it
+to be conceptually providing one resource per walk iteration.
+As such, is 
+		luc->outbox_index = addr->address.minimum;
+
+more representative of what is going on here than an array look up?
+
+> +		break;
+> +	case 1:
+> +		luc->inbox_index = addr[0].address.minimum;
+> +		break;
+> +	}
+> +	luc->index++;
+> +	return AE_OK;
+> +}
+
+
 
