@@ -1,181 +1,186 @@
-Return-Path: <linux-kernel+bounces-626973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB562AA49AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04867AA49B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED73165AB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA2673BD465
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4B201017;
-	Wed, 30 Apr 2025 11:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE34201017;
+	Wed, 30 Apr 2025 11:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E+04w3u9"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QM+bkjbo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0B38615A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5328615A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746011924; cv=none; b=OSQw9CSu43+BJBi/+D6U0tt+v8RqfWyNUmxSjI865I7J0LnyNmkaktOD3Zf2zTN3eGx0lpPXSx0NO05WkwGGKqNQJPxZS0bk5XgmbiyX/OvwPIhOHVVEedy12LG//bqkGO2P07N2gCPY9+dZpn/t17gljNwKdiTIEhhBpBJWnKw=
+	t=1746012011; cv=none; b=ZEfEuQ8ywFxVIZYPe637k8f2LEDjeFf6tCjctk6epB62fYHjFVSlljnRrIDrYeoA8xlp0t4VBfP3o0oAlbPXKTpqkcqAvJLmDCXD7H5NyWnXGJdaBWeRca3ubzy6BSQP/xwEw8dPnurxe/1IsFvS03Xbuyx5TNkbYXphi4+UsKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746011924; c=relaxed/simple;
-	bh=qHVzRzYAX/G0uh2vhOZ3aWaU/ZOWTDKyqUKeO1jnO5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ihvXeJCStbnSApN7/qzcGq7dPJFLTxZtzIWPVkPfvU7VIWwh+/GRGTCV7emVDFO/pokWT8u6IZHvu5ScTtUFnwlh64kRbSSShcwMRKO3DEUCVqD54PvRepbWXzo/gqiX+Wb68Q3/OI9BWOX01e0zPm6oAY4TLx1fR3W6tZL+OcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E+04w3u9; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf861f936so12401485e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 04:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746011921; x=1746616721; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeqJL94ThFHVPWwTL6Id1PoIB6EHm0lFkz8p7+A1PcI=;
-        b=E+04w3u94AfDVehvRgQnaVZhXEjysF4OtMh0i0VFNLZlHvil0oM9tAbuBbIXWQ5yDh
-         rHLtCjce6Cr7XDOjUWCQhhv5agbBD9BfQWOC6yn32XKvDWD3qUMgS/uIAvnpNMWLkuCO
-         mTz8vKngnhpJqQxBYOFEJSgGVoJLUehqsKzgniZ1g0WqOEeICvS6EGuI0s8CDqR6abJJ
-         mEwh3S6KdmmbW6OKmO/Ol8gikVPZ6WcYlHZwvItri401dA8XmYAzy/ZbfRLyieEPmrLQ
-         44Cm9s1Ei23pEeOBKmMqQBM5+jdwMQWlGyw8/rOo04uF4XoieR4SRrCZDUIY+xn0ddJo
-         q46Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746011921; x=1746616721;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XeqJL94ThFHVPWwTL6Id1PoIB6EHm0lFkz8p7+A1PcI=;
-        b=HdzBpwXUGVGoZ1sJ6KFowJOrjXW/znAWhtd3UGbRQYXKpUzlD/ZAuykMwZtc2YwSaV
-         ulXIz//Q0naeHnR84eSA21hCVWuXuoGVF3DoYsrouIb0yCDI/oYOC1OLaJIIZa4yMOjr
-         9A1SFojrTbmDbyMSfzVU6Mt+rLTLEHNhEyFsYDR8Fxf2h6UiuwmbML2U8LZQWIUhcggC
-         rD6ipsJkFK42mUtgDBz/UXOzyvawct2Li4ovXvtyEFzXUMgPKbbUnJKkeiNLUFqXJGSY
-         BMU2gu5t6utzO97X2FcUkwYaFl2Iymrl1DmqbHzErPKhyFJAPjG9t0GRVIp8xRmuBnYy
-         G4rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3fjwInh++k7PsSRXQuZ8hqoziFD/rmD4IpfcMMkYa+I45kHfPswGJ6WjWtdEYZuLGVD77BNH+8ibEze4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGZ/IgRNKup8s+5HsmXEdU4Gsk1gUE21glDDW6MuE8NeuO3AnB
-	hcj8Q0xuhvKlTOrdb9AvXe65jDsqSBigvxf1S8HyF/hr+yjWAAygNZK+ayyE6Wi5P/4u+U1AArO
-	P
-X-Gm-Gg: ASbGncsZrz95jeOldfOg7YBqdrsOgxKrO/qEKw9yg5AikkFXyx+DST1lMmDk3y6LqSo
-	DbJziP8fg6/uAGjXqjo2VcdWWdKLtiMNGOCvFA9rdBEMD+ygkWXZiQvrhuwKJ26IEGAzAV27Ygc
-	emm0cKsN7anIFSdRY0uu5S0CWUITgJsDY+2eZQG6jBnb1Yob/95dpHIwBRs8EerhWjMtsQBruc7
-	lkRiKzpzAvTV/FrsbwLmIavCS5Wao+wuGbH7m6q+EKNo/ViM1yoTADsCf40M+DQKlL5YeU/MBqS
-	AWfAdCmVJ3T2cHq8pSl9BZt6NrAu5O0UjHDBXsatY8uJc15t4D7/xaQoGoR+5d1i+4fUNA==
-X-Google-Smtp-Source: AGHT+IGMVVqPePXkKCXFynpGT4g2L/ibpr2Dk9WAM/NQR5SfHVcdCwSDcn2Ib1PLbSP35M6anFFqzA==
-X-Received: by 2002:a05:600c:4691:b0:43d:fa5d:2675 with SMTP id 5b1f17b1804b1-441b2dfbaa0mr5646845e9.9.1746011921207;
-        Wed, 30 Apr 2025 04:18:41 -0700 (PDT)
-Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ba4b1fsm21178325e9.15.2025.04.30.04.18.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 04:18:40 -0700 (PDT)
-Message-ID: <07354130-999d-4f8d-9deb-49b72d8e4577@linaro.org>
-Date: Wed, 30 Apr 2025 13:18:38 +0200
+	s=arc-20240116; t=1746012011; c=relaxed/simple;
+	bh=EF01kkqV58wp6RAxtOeYWzYzYSD4HksIbDbTbhiLyCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvctTqHIt54aPcxZQ3qaxNnNqOYNuwhYAXmHmYfC4koDBoaGOlb2X5JVeDsWODpyRmy5R31jwSBN0TMo0FnllKQAzaVZTsNuuvoEXVxVKismJ/wh/6RPj1Hi//mvksGpifvjSssSDkFKhrI6SZiF7EHayfolfdSW991qThjchfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QM+bkjbo; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746012010; x=1777548010;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=EF01kkqV58wp6RAxtOeYWzYzYSD4HksIbDbTbhiLyCg=;
+  b=QM+bkjboXU+AJ0yIUbN+qAXLx7gtncMLcn4ydmVcgSqGSe6a0yG22xJY
+   Le3bPEiK2cg17j28xhyseTsYoLQJ2k46Fl1VoIET/+LahMs/Ixcd0qqqE
+   fjpwCHrQJY4gXEcJdZ/LS5O2x+27tjyFtoUUDKsNiHLRkJNHiWUTWe4kD
+   z4IijLDVNsuYhts8qncwiCvdq8J6w4Tw5/GwgzozcmROq31HwzzhpkOPU
+   YtCHokpaD2/+7cz2+vC0IE/oA7Y4HRbdXz4YjR8cfjHeuDkd4AIIJ3New
+   Fs62ldBdJGDU2WGfz1kj4PQOCCRi97Sl5fWNBc8U4F9HcZtivpldLc+P/
+   g==;
+X-CSE-ConnectionGUID: TJVI+h+JROSLEVBZM9pT9Q==
+X-CSE-MsgGUID: BQDLj0wRR4Ch1+cxoAdbUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="58324927"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="58324927"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 04:20:09 -0700
+X-CSE-ConnectionGUID: B4W/LccOQpyqnhDeH4uUWA==
+X-CSE-MsgGUID: +WRh437uRJyCd4LKnyOlpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="139275736"
+Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
+  by orviesa005.jf.intel.com with SMTP; 30 Apr 2025 04:20:04 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 30 Apr 2025 14:20:02 +0300
+Date: Wed, 30 Apr 2025 14:20:02 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+	david@redhat.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+	ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev, intel-gfx@lists.freedesktop.org,
+	Eero Tamminen <eero.t.tamminen@intel.com>
+Subject: Re: [REGRESSION] Re: [PATCH v3 3/6] mm: shmem: add large folio
+ support for tmpfs
+Message-ID: <aBIHYqzar5J8uxGO@intel.com>
+References: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
+ <035bf55fbdebeff65f5cb2cdb9907b7d632c3228.1732779148.git.baolin.wang@linux.alibaba.com>
+ <aBEP-6iFhIC87zmb@intel.com>
+ <ac8cbd8d-44e9-4a88-b88b-e29e9f30a2fd@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8750-mtp: Add sound (speakers,
- headset codec, dmics)
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250424-sm8750-audio-part-2-v1-0-50133a0ec35f@linaro.org>
- <20250424-sm8750-audio-part-2-v1-2-50133a0ec35f@linaro.org>
- <dd271e8c-e430-4e6d-88ca-95eabe61ce94@oss.qualcomm.com>
- <e61e17ca-fed7-4712-96fc-a9a2339de1fb@linaro.org>
- <9b6c5f67-0bbc-490f-9982-4e28218aa6eb@oss.qualcomm.com>
- <0e007f7f-d9ff-4b2d-914d-ad62b9983bba@linaro.org>
- <3a29e34c-d286-4673-adac-1fd8627c3eff@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <3a29e34c-d286-4673-adac-1fd8627c3eff@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac8cbd8d-44e9-4a88-b88b-e29e9f30a2fd@linux.alibaba.com>
+X-Patchwork-Hint: comment
 
-On 30/04/2025 12:48, Konrad Dybcio wrote:
->>>>>> +		/*
->>>>>> +		 * WCD9395 RX Port 1 (HPH_L/R)      <=> SWR1 Port 1 (HPH_L/R)
->>>>>> +		 * WCD9395 RX Port 2 (CLSH)         <=> SWR1 Port 2 (CLSH)
->>>>>> +		 * WCD9395 RX Port 3 (COMP_L/R)     <=> SWR1 Port 3 (COMP_L/R)
->>>>>> +		 * WCD9395 RX Port 4 (LO)           <=> SWR1 Port 4 (LO)
->>>>>> +		 * WCD9395 RX Port 5 (DSD_L/R)      <=> SWR1 Port 5 (DSD_L/R)
->>>>>> +		 * WCD9395 RX Port 6 (HIFI_PCM_L/R) <=> SWR1 Port 9 (HIFI_PCM_L/R)
->>>>>> +		 */
->>>>>> +		qcom,rx-port-mapping = <1 2 3 4 5 9>;
->>>>>
->>>>> Does this deserve some dt-bindings constants?
->>>>
->>>> No, because these are hardware details/constants. Drivers do not use them.
->>>
->>> I'd argue it makes sense here - it makes more sense to pass meaningfully
->>> named constants to the driver, rather than blobs with a comment
->>
->> Sense of what? You want to make it a binding then answer what does it
->> bind, what part of ABI for driver is here a binding (answer none:
->> because driver does not use it)?
+On Wed, Apr 30, 2025 at 02:32:39PM +0800, Baolin Wang wrote:
+> Hi,
 > 
-> Sense of the magic numbers that otherwise require a comment.
+> On 2025/4/30 01:44, Ville Syrjälä wrote:
+> > On Thu, Nov 28, 2024 at 03:40:41PM +0800, Baolin Wang wrote:
+> >> Add large folio support for tmpfs write and fallocate paths matching the
+> >> same high order preference mechanism used in the iomap buffered IO path
+> >> as used in __filemap_get_folio().
+> >>
+> >> Add shmem_mapping_size_orders() to get a hint for the orders of the folio
+> >> based on the file size which takes care of the mapping requirements.
+> >>
+> >> Traditionally, tmpfs only supported PMD-sized large folios. However nowadays
+> >> with other file systems supporting any sized large folios, and extending
+> >> anonymous to support mTHP, we should not restrict tmpfs to allocating only
+> >> PMD-sized large folios, making it more special. Instead, we should allow
+> >> tmpfs can allocate any sized large folios.
+> >>
+> >> Considering that tmpfs already has the 'huge=' option to control the PMD-sized
+> >> large folios allocation, we can extend the 'huge=' option to allow any sized
+> >> large folios. The semantics of the 'huge=' mount option are:
+> >>
+> >> huge=never: no any sized large folios
+> >> huge=always: any sized large folios
+> >> huge=within_size: like 'always' but respect the i_size
+> >> huge=advise: like 'always' if requested with madvise()
+> >>
+> >> Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
+> >> allocate the PMD-sized huge folios if huge=always/within_size/advise is set.
+> >>
+> >> Moreover, the 'deny' and 'force' testing options controlled by
+> >> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
+> >> semantics. The 'deny' can disable any sized large folios for tmpfs, while
+> >> the 'force' can enable PMD sized large folios for tmpfs.
+> >>
+> >> Co-developed-by: Daniel Gomez <da.gomez@samsung.com>
+> >> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > 
+> > Hi,
+> > 
+> > This causes a huge regression in Intel iGPU texturing performance.
 > 
-> dt-bindings don't exclusively contain enums-turned-defines that are
+> Unfortunately, I don't have such platform to test it.
+> 
+> > 
+> > I haven't had time to look at this in detail, but presumably the
+> > problem is that we're no longer getting huge pages from our
+> > private tmpfs mount (done in i915_gemfs_init()).
+> 
+> IIUC, the i915 driver still limits the maximum write size to PAGE_SIZE 
+> in the shmem_pwrite(),
 
-No, they don't.
+pwrite is just one random way to write to objects, and probably
+not something that's even used by current Mesa.
 
+> which prevents tmpfs from allocating large 
+> folios. As mentioned in the comments below, tmpfs like other file 
+> systems that support large folios, will allow getting a highest order 
+> hint based on the size of the write and fallocate paths, and then will 
+> attempt each allowable huge order.
+> 
+> Therefore, I think the shmem_pwrite() function should be changed to 
+> remove the limitation that the write size cannot exceed PAGE_SIZE.
+> 
+> Something like the following code (untested):
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c 
+> b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> index ae3343c81a64..97eefb73c5d2 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> @@ -420,6 +420,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+>          struct address_space *mapping = obj->base.filp->f_mapping;
+>          const struct address_space_operations *aops = mapping->a_ops;
+>          char __user *user_data = u64_to_user_ptr(arg->data_ptr);
+> +       size_t chunk = mapping_max_folio_size(mapping);
+>          u64 remain;
+>          loff_t pos;
+>          unsigned int pg;
+> @@ -463,10 +464,10 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+>                  void *data, *vaddr;
+>                  int err;
+>                  char __maybe_unused c;
+> +               size_t offset;
+> 
+> -               len = PAGE_SIZE - pg;
+> -               if (len > remain)
+> -                       len = remain;
+> +               offset = pos & (chunk - 1);
+> +               len = min(chunk - offset, remain);
+> 
+>                  /* Prefault the user page to reduce potential recursion */
+>                  err = __get_user(c, user_data);
 
-Best regards,
-Krzysztof
+-- 
+Ville Syrjälä
+Intel
 
