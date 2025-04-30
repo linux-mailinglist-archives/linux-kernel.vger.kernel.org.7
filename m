@@ -1,58 +1,51 @@
-Return-Path: <linux-kernel+bounces-627053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62F6AA4AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:08:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA72AA4AAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DAC4A0D62
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA2C981B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527B025D8F8;
-	Wed, 30 Apr 2025 12:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D58F25E821;
+	Wed, 30 Apr 2025 12:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zK1VEXPq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NhVfFUY8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC86A25D553;
-	Wed, 30 Apr 2025 12:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86DF25E475;
+	Wed, 30 Apr 2025 12:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746014785; cv=none; b=oJAHP9cjkpvoSmRyAF23dCF/7vKx5J2Jm4jKJKK0X8KRt2h6S6Gx2q5i6uf5GNZ50BppGdrZvG/cAqjXOT4hLXJHJ/+u9ZIPnzdOwnfIXe/RN5zScBp01xBDD01J4iAQNdUu5Bhr8jTy8a+aMNbtDPtC2bqBL3NhcztFusjQXAE=
+	t=1746014798; cv=none; b=bpBR6+nuHBQMVuVneCCywEPe+Zic0UdALLyOzzMZAvAJ+ADjLPuEQs93qM3n82W80tb3X0gbaO5zWwidbRQQHxzOqdWBOPB2Scbj/CpVrD9Oh7UzkYmweqISt5NsabBQMoyjOE1gB2VLJJUED+ra+lwmoLthtM+nJKzBRFu03NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746014785; c=relaxed/simple;
-	bh=bnMLu4pVkf1lQX+0PxE5pWPqFqFRrbaYe7y7NbZ6EXA=;
+	s=arc-20240116; t=1746014798; c=relaxed/simple;
+	bh=l6yyV7708WESzqH5cph/QyrGZANX05TrIxVflajbigQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdtiYCATavKcX1ItzrXTHz27ZlucNgPDPNf5a+8vgChKiMnS4OMc7gF3UhD2ie7PsG+CHdcflO4V7ks4j1FXd7iMc4C5UL7zeGli4fiMO27yDcSgOAc5nFZnR7ufIWEBU3tS2bg7bwzN+xmdD3B8IPGq+BJ96/ksbEWYPNC1ark=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zK1VEXPq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7A2BC4CEE9;
-	Wed, 30 Apr 2025 12:06:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjmAD9tZhx7oPxjNEeKT88Bsa6uqA6kuJYpkUyNwslrvX5tX1SH85+142KkCctNR40fIXMoEtuybn5Rj/Ht4sP6ZVRLrzt5lO4M+EmT5HIwc2/S280GsQynki6cLJFNdQGF+/RqHXR4BDO+5ndpmBr8pUJ3LjYRrT0eWaPWpfpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NhVfFUY8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9E3C4CEE9;
+	Wed, 30 Apr 2025 12:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1746014785;
-	bh=bnMLu4pVkf1lQX+0PxE5pWPqFqFRrbaYe7y7NbZ6EXA=;
+	s=korg; t=1746014798;
+	bh=l6yyV7708WESzqH5cph/QyrGZANX05TrIxVflajbigQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zK1VEXPqZRguWtH+GBHXDxMV9OGM6dJJ/6jooyIt3bhVVavyH/WU3Cu8jYCfV5LEP
-	 f3zs7/AIFwgDuoega31YEqMdEUVV5pAEx8Hz+U3OErVHbrB6I4rejM4yhK4nw+x6RF
-	 pZXmbC8gpuVkDOnCSgMFYur/f0VXxQCdvJVfXZFg=
-Date: Wed, 30 Apr 2025 10:03:31 +0200
+	b=NhVfFUY849X7mBJQbDGAzkxoLxHd33/qndUVW/vDuOQk7DPyqw/v24lntg3njLhJh
+	 3KdYSrdJkbqLX/FOnzEZxIvrXQbqCoxezC4RFBXVjdoUx4zdV6Of+m2BCoJDvsQqTF
+	 YpJkYpj+XYJ3FtLpwAYurcyVrU7Ly1fQmJoeearw=
+Date: Wed, 30 Apr 2025 12:57:33 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 0/8] rust: DebugFS Bindings
-Message-ID: <2025043024-disk-rockfish-1c1b@gregkh>
-References: <20250429-debugfs-rust-v1-0-6b6e7cb7929f@google.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: CVE-2025-22029: exec: fix the racy usage of fs_struct->in_exec
+Message-ID: <2025043019-cash-amicably-b5e1@gregkh>
+References: <2025041655-CVE-2025-22029-349f@gregkh>
+ <aBH93qMAhgMEGDAY@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,27 +54,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250429-debugfs-rust-v1-0-6b6e7cb7929f@google.com>
+In-Reply-To: <aBH93qMAhgMEGDAY@tiehlicka>
 
-On Tue, Apr 29, 2025 at 11:15:54PM +0000, Matthew Maurer wrote:
-> This series provides safe DebugFS bindings for Rust, with a sample
-> driver using them.
+On Wed, Apr 30, 2025 at 12:39:26PM +0200, Michal Hocko wrote:
+> Based on a follow up update from Oleg[1] I would like to dispute this
+> CVE.
 > 
-> The primary intended way to use these bindings is to attach a data
-> object to a DebugFS directory handle, and use the contents of that
-> attached object to serve what's inside the directory.
+> TL;DR version
+> : with or without this patch the "if (fs->in_exec)" check in copy_fs()
+> : can obviously hit the 1 -> 0 transition.
+> : 
+> : This is harmless, but should be probably fixed just to avoid another report
+> : from KCSAN.
 
-That's cool, but really, not the common use for debugfs.  Why not make
-the "simple" way work first (i.e. just create/remove directories and
-files attached to variables and generic read/write functions) and then,
-if really needed, we can add the structure layout mess like you are
-wanting to do here.
-
-And yes, I know why you want to tie debugfs layout to a structure
-layout, it makes one type of debugfs use really easy to write in rust,
-but that's not the common user for what we have today.  Let's address
-the common use first please, save the "builder" pattern stuff for after
-we nail all of that down.
+What is the link to [1]?
 
 thanks,
 
