@@ -1,249 +1,186 @@
-Return-Path: <linux-kernel+bounces-626719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F2FAA4675
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:10:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CACAA467B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7FEA1896F17
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA723AAF81
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CD9158218;
-	Wed, 30 Apr 2025 09:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D78F21B9F6;
+	Wed, 30 Apr 2025 09:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AtV02DCj"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2041.outbound.protection.outlook.com [40.107.223.41])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eyCZ9Z7e"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD67220685
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746004184; cv=fail; b=M73TaPZO8NHYQ+DME6cDwsH9yJFDwGdma8A8u3Ak4+PLwbgTozvZCqF8XAc0lQ8qG+YujgdkW+l3h7SJci+R0IXShMLbgiz9N2gxtTJBG1XGAPSFCyYelm+qIj9tFzj6wLLlJA6vOasiIN0El1fanibAP7S2+LOc3KNf90uI7/k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746004184; c=relaxed/simple;
-	bh=XOPDFubKT8RIoi/Nrc98tdjNL3Sn9z54nrwhKgZorT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cE3USgWxSsr6++2J5R2txhoaKg4Y19CyrATOq5CHGWFsFcEHkK7b/vNHwNYxFjWpuwafRSzyhpMLwxBCA8Uieal/nLeO/X1tVFiFJtaCacj5xK9I922V1AVjFha00Rb2lJGiCsdpu9X0fFnYFax9ThNNglj/AOo1r2DOmu5VKag=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AtV02DCj; arc=fail smtp.client-ip=40.107.223.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J6pKD39iKBaELkNcwC3sn4AagGXLaI8fJ+hmLia8atryChL4Ru+oL34Jo9nQKW2MeoVct/oCMYCJAyVESfOTSvKPPO48ztVFKsrdsXGt97Tf4XwtmDsAxKfurbTLp4u1jeM29bmVlO4TXz2qJdnb0C5VP/QvsId0IRiIjcyF9ZlZqpMSEmaeR2GrnLlWcXN6pJpiiHfpq8XoyVuP3+tE9zZaOR3Bh+E8n5ZhQaS4iiTsSg9QuY6bQ+sYruA07BqxPQ2lI2Uzv3F2EVqnbYaPCtOrjpPpVHEudLrws2+fapvmcTcZkAw0VZ03BaLkPR9hExsnDuQTvklaPBmnRi1tjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gp1djq+UbuJODCZIGZtWDx6KcJBui8jik1iHMv+uWWA=;
- b=on8O2m1dexflhJ+rK4Ag471G0VF5Fzc1ZCCU+eSLvHbDr4EJO3mTus7ZMObpuc8XGLmv/UcgH9y6q1cuvS1UaGEt4U9nR+kQE2iOFGrC8YcbKdn+WgSWAPix5Td+FmyPZ5/NMIdawZh8oLP52ixdKalTZZBD3Ost0fDeLWfgoyucNL3NEORhAw1Nt5Bx94bhKy1XLyC8QfySQov3JsImuuAHp+T+rgoa3mWFC2Pizp97Blyr6AAeFtNZ0djs0UT8XiMMms+uGwShtAN0k8fjoSJtMkt1FAejaPA0cPw+Q2bujb+ar7mzSnGgMSWuSOi8ww7WtXRJEMzJe/71y+czXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gp1djq+UbuJODCZIGZtWDx6KcJBui8jik1iHMv+uWWA=;
- b=AtV02DCjIfNoKn5pqkREIiBl2SpcgmijKDDSIki7ks3t6r0cd5SHH7scvyJN7+O2ZKhuwKbBWPi+rRRFAuEwavEOE9wsCEDYdxA6CP+bUmqHXPv2R+UCfJOAQOqW9H2OltPGqhPXRcYL2SpynxNIVncqkfpz4LJZ6gVo77OzThYzpzcdBHtsBYs6ipYMgIRtNY9lzVDRW2kWDsDzLQgV9O/YWxTRgN5e8x7QREBuOA+sBHUXpS6qNRk6aIq1geEaajk9hw/lv0BEs3FliZHVPzK53fHCCN85O08CTuP0BNZPK/7BUy3WP6NPzPz+9nTGWNcZyohVh8b2Fza2CpraIw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by BL1PR12MB5802.namprd12.prod.outlook.com (2603:10b6:208:392::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.35; Wed, 30 Apr
- 2025 09:09:38 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
- 09:09:38 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.16] sched_ext: Add RCU protection to scx_root in DSQ iterator
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF0C1E51FF
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746004180; cv=none; b=eZQlXALd7OIbEGA1MJw5+uiOHjkq4o90IHCVntKSz+VgN1Y0mfnxKlyWk27Ai+Aw92pg4nKryOLzIc+qGNuDX5QGMFt0BsFt6K+fJBxpCOvM1m2RAhkt9T2VT0KTlq5EumG956YUORN2WOQE2zWvPEY+20XOn8WFH15ZaDNhRIM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746004180; c=relaxed/simple;
+	bh=e4VAosr0IColf0a/CAOwD0TIFn3zHD6ZO9SpkXnE7kY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgHiQVQgQvtVA7tx35/Dvi8qVtbMeeUWVeIuONloPMtfdihBh8Xc4nKA/qugFmp6fHp0g9Co2z/uwWXMyfaql/vFILjwa7JpO/8BgCDUc9MIfnliph4nLbxbZom0i/4rZQbWQ3SBhKg3tvCegooqfvcs4/3KM+1CIB5NMv1d43Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eyCZ9Z7e; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Date: Wed, 30 Apr 2025 11:09:30 +0200
-Message-ID: <20250430090930.355732-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR2P278CA0020.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:46::6) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1746004175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QCRBRZZ/FbaHEC4RagoiZb8qIZ+TxSNDeJF2W7TvLAU=;
+	b=eyCZ9Z7e8YR2Rw072GaF3/+eIOxnaOFEvCAWB0Oin1QOD91c3RZq8vaMArKTKiFB0oWClh
+	2o/WsYstSvqxQzoZWbwgqN+sjthWAeFBFge56eABRNoxpPxiFGgW41ejk1uyQ9AJZE4xtX
+	qmPGcn6ezL+h8O51QC5MjQ++J0YKDWU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v3 8/9] media: i2c: ov9282: add strobe_duration v4l2
+ control
+Message-ID: <t7lnqmhufsyf5ygfkfyllvxpm4h2qdxotgi2lcfoxlhxjpejjd@mf2poxik2zje>
+References: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
+ <20250429-ov9282-flash-strobe-v3-8-2105ce179952@linux.dev>
+ <aBHe-55_U3bYTXyG@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|BL1PR12MB5802:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83992189-c3e4-4bd6-b28c-08dd87c6bc36
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RMORmnS1Qju5QvWgUX0zLDkj3pdLs7Iounwg3Q1NZmtpieVLUikjnytifkPa?=
- =?us-ascii?Q?/GWDDvrTBg57T6QHTaMy07lWKPIk2ewn4bbcaDCO7W3svgcup62G9A3QHcDQ?=
- =?us-ascii?Q?jx6/ETsyG/KV3brqm2V/rMH/JJVh6AYksKlkbiHyftB08jt/6xyHl3aB0fbj?=
- =?us-ascii?Q?hTvN6s1hfHofYt794CdDMZ9i3MUDpisg8AN4TuSo0BR3tn319YMlWLRjKY4a?=
- =?us-ascii?Q?0jfBlYRw30befAliTcDVOOECZKFSEu02PuBq0Lsagayht0scT8c1UwtiaUUX?=
- =?us-ascii?Q?0crVo8BzswywwLOKheaz/veawvX8jpOCZlNcxP/bWC2XPEJ8ERd2TCWSGDEp?=
- =?us-ascii?Q?fCcIuvllCF6uq8T1VqFQEjwKxy5FEqyFrW84WUy5kH+Zvn3Iza3cNV/NqOAc?=
- =?us-ascii?Q?DhWrxA9jWL0YKoQALax120auvq88akv3vMb/fTGKiYwSdQ6XYNn1biinrApK?=
- =?us-ascii?Q?dD4mc0X5bF+dQ10/7kiLeZtVM5BjmsPsNwYeUVP8+hgO0O/GS7rOXoAkE+qh?=
- =?us-ascii?Q?XK3K21bQAjec9NoEOm5X2Xq5woE6Q7KqsmbF7KP84eL90rnS0XcCBLwF7Hfj?=
- =?us-ascii?Q?WQId+NrnoxELSZ2LpivEgm+tzk1Ur8XZjUBSwue6CHVxeaU9zhaF7ieGeKDm?=
- =?us-ascii?Q?XSv5Cv8MEEfvyOUp+18MycshEgTaoNmTHcE/2fnWqucluWKP1lqTnJBgwPnM?=
- =?us-ascii?Q?urikqcn9rtBQTw+2GFvy6ck3AyQf9B28ivHnjgVU3vz/ih9P8axFk3TLZtmc?=
- =?us-ascii?Q?995g0xQHO/yjc5UZQljHkUsqLYQ6d7APvY2WNkzO4qEYxR0bRCOw0k2kYO9f?=
- =?us-ascii?Q?JpcMRxS/CnaaZVGxh1m0OUsf7CCdfIVYhn+JO+k3IMDmcrrffp37vIDteYxT?=
- =?us-ascii?Q?XoQcdcZ+8VyfcRU0yISSTJvutez0bY86YuKZ6FxLgISZq/hCuJqw/pmT5Lb/?=
- =?us-ascii?Q?BdGfNT3onK0oFMhgRY6iwF1G1OlGmJ/jWaRYHkbvumPXmT6Txnw7iz6oe8Sv?=
- =?us-ascii?Q?mPmTmc62SX55/5tUNYpjRi8M5iwbcjmV1hAoZejafYEPIx297e84hhBNXcK4?=
- =?us-ascii?Q?lnlth2hwemfxYNBJ/vWCIXCYyK3UV84OV/8G63gqXvd5rxFywYij3ei4zZPl?=
- =?us-ascii?Q?WoTy1x2raxA2g0l4GAdBM9KIHt9tXJCWlgW2Xk+NZF5qCU6gFTfApXbtYB2x?=
- =?us-ascii?Q?j0Ur9+tJjiADyxBUfCXBX3YaBTlhl6FaUDAT/hB+i1nScnJOcch4Tnm5RBzG?=
- =?us-ascii?Q?w1MSiSyEQ8kvyxQoo5hl5Cr6Ob+Dni/89k99SxsZTJRheIbhgLQ+BjRy4yrn?=
- =?us-ascii?Q?7Dpiu3XItga/0FkJAiqS7WNyEM2ybxjQYhYXvyfACr3ge6NpRhCAejqSULNJ?=
- =?us-ascii?Q?nIKQPFmQB7wl8hzC1XCFbKvCj4OfSHCg6q38TowYA8lTxEflfBorT0wn8hcD?=
- =?us-ascii?Q?qgfp2RwwCJs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Q4iRJHp//taxdCZ6N6qMmRZ1LmNFMoaWZ7AqDGvOwUNpEY5P2D1MWYutqHZk?=
- =?us-ascii?Q?uLIZmvVRorNQLxGRz2+kJWEJtBfETcP/TkbvvjjbDt6WIUZBQ1q/8ewnf/cR?=
- =?us-ascii?Q?rv4hpgLjK67eEw5Mz7kdz6fN7Y4rD4to31GbC0mE7j11qWCmAlWOyHiVspL6?=
- =?us-ascii?Q?cElsx1aI1btwnDTuJblAg8qWv6e+NSCw3fDZ/GAeAYpZZh/6MjbvYpV1363s?=
- =?us-ascii?Q?vhhLVglVz9QoA1Qb5zEkPjv8ucd4CIHz2jVjLeJvhUAf4SWBjDjzQDc8n+Qa?=
- =?us-ascii?Q?WeyAG3NeL9A/Km+wS7o+DmBmpwXSMs6Mtd2PCERLHt+cwJA83lcKi0azQssU?=
- =?us-ascii?Q?5NeDpbChD+gmxIqtRQjwz6tvBwRR+U49u/2Mqsh+4np8bcjPucsE+80ynG5O?=
- =?us-ascii?Q?j0Hjj9uXq2kLRU5M9sa6wnXtCYjnQ+nDJfxecmD0aCEW6eeIhRhstKZqIYAH?=
- =?us-ascii?Q?E1fmuqJNwtFQCIwD6rhn2tjL4HMBmfWa5zZFugHZJ3cKyDh1BNkepjp14CzN?=
- =?us-ascii?Q?ySWBQMnMiIaGU/ZipmLuXfQpfcp4mw1iVt67ur99Y3tELTf/A6NkRX4WVsMS?=
- =?us-ascii?Q?RS6ZyymoYyEShDia0BlUkNHQtByXrUq8GWaMRcXCW32a/YKsEM79nrk64FLb?=
- =?us-ascii?Q?pKxn+V1pdcS7o59nHFLkDkY60qyLULfyejFVS3TAUftxcyIv+AmTztBpgopx?=
- =?us-ascii?Q?pHPiK+vzOo86zaUI+wSkSDbyGXY8GDtL/h5xH5lheHpAQyMk88mUKN4bD6iG?=
- =?us-ascii?Q?9JtfehIlQF5NiSuBkktDVegmQsNsajSDPVLlrDT2/7xHQAsakQRHGLsafX57?=
- =?us-ascii?Q?CwJWOoQBi0mVXiJWBSkEZn2ZdSWpRDwIN/7zr07B48T37bqgGDW/X0va89uU?=
- =?us-ascii?Q?h6LWJHQItpNX3gaGMTR2R/tj+Ab0CD84J/XyfIRpZnpLRQ07GRO2x/sHoARe?=
- =?us-ascii?Q?DiIXzJ2y/mqzz5IdVy3CcHiCxHljdft0pM0eaeRIrkce9NrREwO46BhkvhF5?=
- =?us-ascii?Q?ivM7EtV7cZcflP9mHNluzw5Z6btzbtILyIdPGNoce+ZmqkKv1SLzGVF73u7E?=
- =?us-ascii?Q?BJnkLfaTMvf3Vh+IqRE91NFE+BOpxoksYZPkV/WHi2HwAgzkOjumHuGZizV2?=
- =?us-ascii?Q?FGZ575astZSJ4vnAFeg3kjqg0dn5Tb7blE3QQAR4E0GsWhdu4XhRtkBNizpI?=
- =?us-ascii?Q?QO3PvPi/ZvtOOy8y8HCE1uZsztgpkHwrd0B/6jjptpp/oSw9TteltmS0rzOI?=
- =?us-ascii?Q?11nlUlfEZuFLAheG2lafpLwh3JdhEX3lu1yVtGLdldB0TxDbqV6jBQLDyi7s?=
- =?us-ascii?Q?yKHuTEpMoF2EjQ2AFcux+IchXrPEy04e7wHVkXs0y9NYZofVM2c+M1PGvnAF?=
- =?us-ascii?Q?Y6AVWp7WNsYusVRwzyN2X2W8sGStDNt8fk4TTR73cRfzk9Lj0o7CTSZ8MK1h?=
- =?us-ascii?Q?cXMBWvDw3Z8JcO0YRUKS/POnYyrvMBKRlw5X8H8vs84UJXxhGkg42NN1CT0T?=
- =?us-ascii?Q?SiqQwgA7Re68c7XXO0gDsG9HXz2x8a6TBBiY3v2oJBdepavK859r1QalyhZT?=
- =?us-ascii?Q?c5rXotdWFWL/fo6g77tamxUiQPPJD4HrfOhOgSoN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83992189-c3e4-4bd6-b28c-08dd87c6bc36
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 09:09:38.8683
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s4y4LO7Np42XwnURsu+KRGiwT3h5WM+yWgKhUc/za1WTVyD3svYPGmCkeq7VGxYV3J7fR3jOgayMJftyHqTuXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5802
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aBHe-55_U3bYTXyG@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-Using a DSQ iterators from a timer callback can trigger the following
-lockdep splat:
+Hi Sakari,
 
- =============================
- WARNING: suspicious RCU usage
- 6.14.0-virtme #1 Not tainted
- -----------------------------
- kernel/sched/ext.c:6907 suspicious rcu_dereference_check() usage!
+thanks for the review!
 
- other info that might help us debug this:
+On Wed, Apr 30, 2025 at 08:27:39AM +0000, Sakari Ailus wrote:
+> Hi Richard,
+> 
+> On Tue, Apr 29, 2025 at 02:59:13PM +0200, Richard Leitner wrote:
+> > Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
+> > feature of the sensor. This is implemented by transforming the given µs
+> > value by an interpolated formula to a "span step width" value and
+> > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
+> > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
+> > 
+> > The maximum control value is set to the period of the current default
+> > framerate.
+> > 
+> > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
+> > and tested using an ov9281 VisionComponents module.
+> > 
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> >  drivers/media/i2c/ov9282.c | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> > index 35edbe1e0efb61a0e03da0ed817c4c4ec0ae9c35..5ddbfc51586111fbd2e17b739fb3d28bfb0aee1e 100644
+> > --- a/drivers/media/i2c/ov9282.c
+> > +++ b/drivers/media/i2c/ov9282.c
+> > @@ -97,6 +97,10 @@
+> >  #define OV9282_REG_MIPI_CTRL00	0x4800
+> >  #define OV9282_GATED_CLOCK	BIT(5)
+> >  
+> > +/* Flash/Strobe control registers */
+> > +#define OV9282_REG_FLASH_DURATION	0x3925
+> > +#define OV9282_FLASH_DURATION_DEFAULT	0x0000001A
+> > +
+> >  /* Input clock rate */
+> >  #define OV9282_INCLK_RATE	24000000
+> >  
+> > @@ -687,6 +691,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
+> >  				current_val);
+> >  }
+> >  
+> > +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, int value)
+> > +{
+> > +	/* Calculate "strobe_frame_span" increments from a given value (µs).
+> 
+> /*
+>  * Multi-line
+>  * comment.
+>  */
 
- rcu_scheduler_active = 2, debug_locks = 1
- no locks held by swapper/0/0.
+sure. will adapt that in v4.
 
- stack backtrace:
- CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.14.0-virtme #1 PREEMPT(full)
- Sched_ext: tickless (enabled+all)
- Call Trace:
-  <IRQ>
-  dump_stack_lvl+0x6f/0xb0
-  lockdep_rcu_suspicious.cold+0x4e/0xa3
-  bpf_iter_scx_dsq_new+0xb1/0xd0
-  bpf_prog_63f4fd1bccc101e7_dispatch_cpu+0x3e/0x156
-  bpf_prog_8320d4217989178c_dispatch_all_cpus+0x153/0x1b6
-  bpf_prog_97f847d871513f95_sched_timerfn+0x4c/0x264
-  ? hrtimer_run_softirq+0x4f/0xd0
-  bpf_timer_cb+0x7a/0x140
-  __hrtimer_run_queues+0x1f9/0x3a0
-  hrtimer_run_softirq+0x8c/0xd0
-  handle_softirqs+0xd3/0x3d0
-  __irq_exit_rcu+0x9a/0xc0
-  irq_exit_rcu+0xe/0x20
-  sysvec_apic_timer_interrupt+0x73/0x80
+> 
+> > +	 * This is quite tricky as "The step width of shift and span is
+> > +	 * programmable under system clock domain.", but it's not documented
+> > +	 * how to program this step width (at least in the datasheet available
+> > +	 * to the author at time of writing).
+> > +	 * The formula below is interpolated from different modes/framerates
+> > +	 * and should work quite well for most settings.
+> > +	 */
+> > +	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
+> > +
+> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
+> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
+> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
+> > +	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
+> 
+> The granularity of the hardware supported values is lower than that of the
+> control. Could you add try_ctrl op to provide the actual value back to the
+> user space?
 
-Add rcu_read_lock/unlock() around scx_root access to prevent this.
+Tbh, I've never implemented a try_ctrl before, but sure. I will dig into it and
+add it for the ov9282 FLASH_DURATION in v4.
 
-Fixes: cdf5a6faa8cf0 ("sched_ext: Move dsq_hash into scx_sched")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> > +}
+> > +
+> >  /**
+> >   * ov9282_set_ctrl() - Set subdevice control
+> >   * @ctrl: pointer to v4l2_ctrl structure
+> > @@ -756,6 +778,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  	case V4L2_CID_FLASH_LED_MODE:
+> >  		ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
+> >  		break;
+> > +	case V4L2_CID_FLASH_DURATION:
+> > +		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
+> > +		break;
+> >  	default:
+> >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+> >  		ret = -EINVAL;
+> > @@ -1418,6 +1443,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> >  			       (1 << V4L2_FLASH_LED_MODE_TORCH),
+> >  			       V4L2_FLASH_LED_MODE_NONE);
+> >  
+> > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> 
+> Should the number of controls in the handler be updated?
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 1ee5a0088b1a1..d2856529711d7 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -6907,28 +6907,39 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
- {
- 	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
- 	struct scx_sched *sch;
-+	int ret = 0;
- 
- 	BUILD_BUG_ON(sizeof(struct bpf_iter_scx_dsq_kern) >
- 		     sizeof(struct bpf_iter_scx_dsq));
- 	BUILD_BUG_ON(__alignof__(struct bpf_iter_scx_dsq_kern) !=
- 		     __alignof__(struct bpf_iter_scx_dsq));
- 
-+	rcu_read_lock();
- 	sch = rcu_dereference(scx_root);
--	if (!sch)
--		return -ENODEV;
-+	if (!sch) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
- 
--	if (flags & ~__SCX_DSQ_ITER_USER_FLAGS)
--		return -EINVAL;
-+	if (flags & ~__SCX_DSQ_ITER_USER_FLAGS) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
- 
- 	kit->dsq = find_user_dsq(sch, dsq_id);
--	if (!kit->dsq)
--		return -ENOENT;
-+	if (!kit->dsq) {
-+		ret = -ENOENT;
-+		goto out_unlock;
-+	}
- 
- 	INIT_LIST_HEAD(&kit->cursor.node);
- 	kit->cursor.flags = SCX_DSQ_LNODE_ITER_CURSOR | flags;
- 	kit->cursor.priv = READ_ONCE(kit->dsq->seq);
- 
--	return 0;
-+out_unlock:
-+	rcu_read_unlock();
-+
-+	return ret;
- }
- 
- /**
--- 
-2.49.0
+What do you mean by "number of controls in the handler" exactly? Which
+handler?
 
+> > +			  0, 13900, 1, 8);
+> > +
+> >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+> >  	if (!ret) {
+> >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+> > 
+> 
+> -- 
+> Regards,
+> 
+> Sakari Ailus
+
+regards;rl
 
