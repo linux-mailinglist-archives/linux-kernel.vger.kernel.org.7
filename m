@@ -1,46 +1,45 @@
-Return-Path: <linux-kernel+bounces-626533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40C0AA444B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:47:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F184AAA4471
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2091BC5FBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247905A009D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60F420F080;
-	Wed, 30 Apr 2025 07:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF7520C463;
+	Wed, 30 Apr 2025 07:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="B/RhTTtZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AF20D4F2;
-	Wed, 30 Apr 2025 07:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EI1cFIQj"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9938B1E1E10;
+	Wed, 30 Apr 2025 07:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745999200; cv=none; b=NunVhe5J5LMGuLFqNnH4WbJYglZWvz1xKpH+pNUUF9Z68UTlc8YqVI0fQXUHwaYw1elgveNQDfskM2BJw/dmMKW24/f4HDpRBq0KHtX4+Km4e0utiQHhRWzS/8l4yxIOjN1n85Lk+sn40N6E5uLhxbzpSvbkyW3VIHpTq24XSGE=
+	t=1745999558; cv=none; b=HAq+p13VbyVE0zz3ie0LtUY/1PZsy6iPdLNhyeArrjyXATlG8cycxlAOJ/lBdTzCtqjBSU44w8JNhnPBx33HmOKKxgRp8AzOCnpXiKSpHXRHi313X718DAafYR2Ut4OeTpb30vLI01Fih06rJlommF8Puu1B1lGZqGxjtOxsnV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745999200; c=relaxed/simple;
-	bh=V0vN86J8Amhp5uSVCUtJ9QA2CyeKLoo79zpLTPffBxo=;
+	s=arc-20240116; t=1745999558; c=relaxed/simple;
+	bh=ViuCqa1O0ArkQ3KKEAI0bCV9+N50gtg0uhrcmWdxvZ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DP7FYn2U0FjULY+zh3sHN9SBngtywRtouvR3sfg+ffcDhq6xaPMFDaQ26t3m3lDma67Xf4UUPBRygvGOqohFHxn9lQVqqujjyd+ZCvKxTaYg+WBq8M1MCLBnAmmljZuMNMq8Qb0IoRf0XTt6E1perr44y9WdB6eqFdbJnI+zyDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=B/RhTTtZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.32.103] (unknown [20.236.11.102])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0D098204E7D7;
-	Wed, 30 Apr 2025 00:46:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0D098204E7D7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745999198;
-	bh=1sYnBvs5uUw9MJcn+lnMcfIkdXkdcRWW5QdwFTK2gRM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B/RhTTtZ5noovMdUGXb882ZzLD1lEmnbW9IVGtM+1s0ymbsV21gcZgyAUUZ6mVF4p
-	 Dv28uWItPcBo+UT7v68pj6lFdM4dddy6oL4ATrV197EmjsZZTAWTvTf5PR4YWZtlrk
-	 H7ziBduaINqWzpLzK+rihe8apExia+tQWv5vlxgw=
-Message-ID: <d5bea5ef-770e-4b99-82c3-95f26e29e018@linux.microsoft.com>
-Date: Wed, 30 Apr 2025 00:46:36 -0700
+	 In-Reply-To:Content-Type; b=fmfr1TDO9sVbSePwI862Ry5KERevvR9bZyehysAJMQLqVjMQFf2hKVqT6NwauVuNRkm5JOdIwBPG1GP1JIemZ3xSjVt1pRKV5j1+tG2Amf3Ud7AENsHdTg0QgqCbwdgqggwo7qrr9Wn3RscegyBW+tjQc24huYF042OF4K2OEWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EI1cFIQj; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1745999552; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=iI6C5Rr8n73x6s2CrV03MiOdT5s35UobKP9ILv8Xhu8=;
+	b=EI1cFIQjOcxVt3EMOHhHL9lCzFRUDvRaRwdM1uCaLmN+0zuUELj7fWxTuDp7Oct0Zoyc+GBxGCWLQiodb10fhjZQ1woFljP+CidPlmKeGFP29XhZsgYcSMEHCwWXBtBgOxmvQlzYGrzkHW+qSKE+OH8f/rkEVULdmM06sGPtiJo=
+Received: from 30.74.146.9(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WYnlqwD_1745999226 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 30 Apr 2025 15:47:07 +0800
+Message-ID: <02c73c31-d52c-4ace-bc2c-eb6cd0eab253@linux.alibaba.com>
+Date: Wed, 30 Apr 2025 15:47:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,29 +47,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/167] 6.1.136-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250429161051.743239894@linuxfoundation.org>
-Content-Language: en-US
-From: Hardik Garg <hargar@linux.microsoft.com>
-In-Reply-To: <20250429161051.743239894@linuxfoundation.org>
+Subject: Re: [PATCH v5 01/12] khugepaged: rename hpage_collapse_* to
+ khugepaged_*
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, david@redhat.com,
+ baohua@kernel.org, ryan.roberts@arm.com, willy@infradead.org,
+ peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
+ usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ dev.jain@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
+ cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com
+References: <20250428181218.85925-1-npache@redhat.com>
+ <20250428181218.85925-2-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250428181218.85925-2-npache@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The kernel, bpf tool and perf tool builds fine for v6.1.136-rc1 on x86 
-and arm64 Azure VM.
 
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+On 2025/4/29 02:12, Nico Pache wrote:
+> functions in khugepaged.c use a mix of hpage_collapse and khugepaged
+> as the function prefix.
+> 
+> rename all of them to khugepaged to keep things consistent and slightly
+> shorten the function names.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
 
-
-Thanks,
-
-Hardik
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
