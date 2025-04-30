@@ -1,166 +1,193 @@
-Return-Path: <linux-kernel+bounces-626853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88701AA4839
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:25:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5260AA483F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D351C045C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4778B4C6E79
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3969D2472BD;
-	Wed, 30 Apr 2025 10:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5155248F4A;
+	Wed, 30 Apr 2025 10:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChGWKdLZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKNx2/KN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911A7246798;
-	Wed, 30 Apr 2025 10:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325BA237194;
+	Wed, 30 Apr 2025 10:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746008687; cv=none; b=Z1HUCJ02CXhcDxHzJsyMeYb0HHNZZkR1nnacXz9vFck2Pz6VGO+MkPBp7SXl3TVMPVvUrm3Q0gXxdRIk5Znr7R5WwSzVMZgRHrmMy2i8CRbt+MJ/8jrymLNFWYSYu90r2EPtI8oVFxGHxFs9vHLxJsXwLTV/1oNumAZnl4cOnwo=
+	t=1746008766; cv=none; b=osU0+Ee9v7xXQgaGmosVzqaBa40uTWjlomML7SRH8PSCq1DB9G5ltxvUWfmLIE2f7fvKwY7mkHEoWXABSy1DwRyL+89gUOYGkd2rrAEwORsJ6HR4Fw0GrZ6GSLXPWZkPKVho4NjSKWpxJqOj0Y+izUvlal//2mEevbbvcaexevA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746008687; c=relaxed/simple;
-	bh=eKfkflY+nlOOGx+pGhNBk8yKSaGeuwtY9rXz667lGQM=;
+	s=arc-20240116; t=1746008766; c=relaxed/simple;
+	bh=U83C1fx4RiCnbON4J3BLjckTisNNBrWzMaUOSyTeN0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3MmKTxq2rKZ8HMZfw4IWrzxFss8ZfVrUOYiszyzVB+FSUUpJiydF/DkxjBSY3To9dnzD883SvUrfofidE0VWRyIg2w88ourqVU5akAsBzo2hKVFF2lr5d1mk26QwL82iaLByaX6xJevM314ygeoe3ypfwFzw4N6DBShSgoWOa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChGWKdLZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E059C4CEE9;
-	Wed, 30 Apr 2025 10:24:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+PGNnVa8YHCFdgX/4omxH6XHsebJj+szWIZSUzegVhRG0Ir2KpvFwlG8FEaLBAcDp/Oem0isgY2iBlRuhbfPPEJvASthFtJwjmuyilCdWA1CKsQ1ex/adGIjWT7I9lDkCp5qJaq6TooJ0JXOocNoNMa1cApduEHbOisCR9kBts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKNx2/KN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A074C4CEEA;
+	Wed, 30 Apr 2025 10:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746008687;
-	bh=eKfkflY+nlOOGx+pGhNBk8yKSaGeuwtY9rXz667lGQM=;
+	s=k20201202; t=1746008765;
+	bh=U83C1fx4RiCnbON4J3BLjckTisNNBrWzMaUOSyTeN0g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ChGWKdLZiwptIeQqo75HXMnKHrLSjUzG8gnKD0Z/AGwMy78QJLAlaCyl9xEsZdB7S
-	 Quk0LZWc38anQYBG5auFKXvoBAPGFb65qK6f5yYvCERVi6lYKf3ptVMPtdaI0vhhQ7
-	 AOnE6dSuvFUCw3Cr5rZtZ8e6tEvW/fCvruKRhaMedCAF28eyMxuwXRIiB+1eK25ywI
-	 NoIwiXsPpBUS23NoX7WUqzJpkAVPzO0+tKg4DLlTV64eLbMPW3Af/xWutS+xyX0vmI
-	 d6jlH6WTV04jIcMyMVmpfsiC2BzNOu0ymCgcccM2z7ooC06RdUIiXzy7tUCF7fu2ea
-	 3i6hLKToK/3Ug==
-Date: Wed, 30 Apr 2025 11:24:41 +0100
-From: Will Deacon <will@kernel.org>
-To: Huang Yiwei <quic_hyiwei@quicinc.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
-	tony.luck@intel.com, bp@alien8.de, xueshuai@linux.alibaba.com,
-	quic_aiquny@quicinc.com, quic_satyap@quicinc.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@quicinc.com,
-	kernel@oss.qualcomm.com
-Subject: Re: [PATCH] firmware: SDEI: Allow sdei initialization without
- ACPI_APEI_GHES
-Message-ID: <20250430102440.GA27570@willie-the-truck>
-References: <20250428095623.3220369-1-quic_hyiwei@quicinc.com>
+	b=DKNx2/KNqd+nIiX4NgFYdjgXQ3RpDGD4sxrkCgK2xt3GfgNMkmBZZN+VNcOa4SSG9
+	 SfgTPNdYVW9SX4QG71IdLI4kqaEHXn9OCgIEKA2PfIwLzx3FufqMnyqJ4ETIGqFupY
+	 03zFpqIr/+nDjrLyHYhKWIpzgfJgnzGykS5glGuoE0WwercwS5QWCWWqfLIyxpAse+
+	 kNgclIfc0SEVVCtKaW7DCZiK41oQEknEEV7/oOMqzLWc1K842QffIu5A2LzKw0F8Iz
+	 Lp7nGHhBw0fVRIU0cJ0Q4I4BpQIzHgdkRKOYywgrUDctamkiURw8mD4L4c1ZlvRuWD
+	 ZyWJZzq1bH/Fg==
+Date: Wed, 30 Apr 2025 12:26:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+Cc: peter.ujfalusi@gmail.com, vkoul@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com, ssantosh@kernel.org, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, praneeth@ti.com, vigneshr@ti.com, u-kumar1@ti.com, 
+	a-chavda@ti.com
+Subject: Re: [PATCH 1/8] dt-bindings: dma: ti: Add document for K3 BCDMA V2
+Message-ID: <20250430-energetic-hippo-from-tartarus-bf4b65@kuoka>
+References: <20250428072032.946008-1-s-adivi@ti.com>
+ <20250428072032.946008-2-s-adivi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250428095623.3220369-1-quic_hyiwei@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250428072032.946008-2-s-adivi@ti.com>
 
-On Mon, Apr 28, 2025 at 05:56:23PM +0800, Huang Yiwei wrote:
-> SDEI usually initialize with the ACPI table, but on platforms where
-> ACPI is not used, the SDEI feature can still be used to handle
-> specific firmware calls or other customized purposes. Therefore, it
-> is not necessary for ARM_SDE_INTERFACE to depend on ACPI_APEI_GHES.
+On Mon, Apr 28, 2025 at 12:50:25PM GMT, Sai Sree Kartheek Adivi wrote:
+> New binding document for
+> Texas Instruments K3 Block Copy DMA (BCDMA) V2.
 > 
-> In commit dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES
-> in acpi_init()"), to make APEI ready earlier, sdei_init was moved
-> into acpi_ghes_init instead of being a standalone initcall, adding
-> ACPI_APEI_GHES dependency to ARM_SDE_INTERFACE. This restricts the
-> flexibility and usability of SDEI.
+> BCDMA V2 is introduced as part of AM62L.
 > 
-> This patch corrects the dependency in Kconfig and allows the
-> initialization of SDEI without ACPI_APEI_GHES enabled.
-> 
-> Fixes: dc4e8c07e9e2 ("ACPI: APEI: explicit init of HEST and GHES in apci_init()")
-> Cc: Shuai Xue <xueshuai@linux.alibaba.com>
-> Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
+> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
 > ---
-> Link: https://lore.kernel.org/all/20230906130900.12218-1-schspa@gmail.com/
+>  .../bindings/dma/ti/k3-bcdma-v2.yaml          | 97 +++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/ti/k3-bcdma-v2.yaml
 > 
-> Current patch has been verified in the following scenarios:
->   - ACPI_APEI_GHES enabled and ARM_SDE_INTERFACE enabled
->   - ACPI_APEI_GHES disabled and ARM_SDE_INTERFACE enabled
->   - ACPI_APEI_GHES disabled and ARM_SDE_INTERFACE disabled
->   - SDEI works well with DT node and compatiable firmware when
->     ACPI_APEI_GHES disabled
-> 
-> The scenario where CONFIG_ACPI enabled but not used has not been
-> considered in this patch due to the absence of such platform.
-> 
->  drivers/acpi/apei/Kconfig   | 1 +
->  drivers/firmware/Kconfig    | 1 -
->  drivers/firmware/arm_sdei.c | 9 +++++++--
->  include/linux/arm_sdei.h    | 4 ++--
->  4 files changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
-> index 3cfe7e7475f2..070c07d68dfb 100644
-> --- a/drivers/acpi/apei/Kconfig
-> +++ b/drivers/acpi/apei/Kconfig
-> @@ -23,6 +23,7 @@ config ACPI_APEI_GHES
->  	select ACPI_HED
->  	select IRQ_WORK
->  	select GENERIC_ALLOCATOR
-> +	select ARM_SDE_INTERFACE if ARM64
->  	help
->  	  Generic Hardware Error Source provides a way to report
->  	  platform hardware errors (such as that from chipset). It
-> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-> index aadc395ee168..7df19d82aa68 100644
-> --- a/drivers/firmware/Kconfig
-> +++ b/drivers/firmware/Kconfig
-> @@ -31,7 +31,6 @@ config ARM_SCPI_PROTOCOL
->  config ARM_SDE_INTERFACE
->  	bool "ARM Software Delegated Exception Interface (SDEI)"
->  	depends on ARM64
-> -	depends on ACPI_APEI_GHES
->  	help
->  	  The Software Delegated Exception Interface (SDEI) is an ARM
->  	  standard for registering callbacks from the platform firmware
-> diff --git a/drivers/firmware/arm_sdei.c b/drivers/firmware/arm_sdei.c
-> index 3e8051fe8296..ddb10389b340 100644
-> --- a/drivers/firmware/arm_sdei.c
-> +++ b/drivers/firmware/arm_sdei.c
-> @@ -1062,14 +1062,14 @@ static bool __init sdei_present_acpi(void)
->  	return true;
->  }
->  
-> -void __init sdei_init(void)
-> +int __init sdei_init(void)
->  {
->  	struct platform_device *pdev;
->  	int ret;
->  
->  	ret = platform_driver_register(&sdei_driver);
->  	if (ret || !sdei_present_acpi())
-> -		return;
-> +		return ret;
->  
->  	pdev = platform_device_register_simple(sdei_driver.driver.name,
->  					       0, NULL, 0);
-> @@ -1079,7 +1079,12 @@ void __init sdei_init(void)
->  		pr_info("Failed to register ACPI:SDEI platform device %d\n",
->  			ret);
->  	}
+> diff --git a/Documentation/devicetree/bindings/dma/ti/k3-bcdma-v2.yaml b/Documentation/devicetree/bindings/dma/ti/k3-bcdma-v2.yaml
+> new file mode 100644
+> index 0000000000000..af4aa3839fd66
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/ti/k3-bcdma-v2.yaml
+> @@ -0,0 +1,97 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2024-2025 Texas Instruments Incorporated
+> +# Author: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/ti/k3-bcdma-v2.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	return ret;
->  }
-> +#ifndef CONFIG_ACPI_APEI_GHES
-> +subsys_initcall_sync(sdei_init);
-> +#endif
+> +title: Texas Instruments K3 DMSS BCDMA V2
+> +
+> +maintainers:
+> +  - Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> +
+> +description: |
+> +  The BCDMA V2 is intended to perform similar functions as the TR
+> +  mode channels of K3 UDMA-P.
+> +  BCDMA V2 includes block copy channels and Split channels.
+> +
+> +  Block copy channels mainly used for memory to memory transfers, but with
+> +  optional triggers a block copy channel can service peripherals by accessing
+> +  directly to memory mapped registers or area.
+> +
+> +  Split channels can be used to service PSI-L based peripherals.
+> +  The peripherals can be PSI-L native or legacy, non PSI-L native peripherals
+> +  with PDMAs. PDMA is tasked to act as a bridge between the PSI-L fabric and the
+> +  legacy peripheral.
+> +
+> +allOf:
+> +  - $ref: /schemas/dma/dma-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,dmss-bcdma-v2
 
-Using an initcall purely for the non-ACPI case feels like a hack to me.
-Could we instead just call sdei_init() from the arch code (and remove
-the call from acpi_ghes_init()) so that the platform device is
-registered at the same time, regardless of the firmware?
+SoC compatibles instead.
 
-Will
+> +
+> +  reg:
+> +    items:
+> +      - description: BCDMA Control /Status Registers region
+
+s/Registers region//
+
+> +      - description: Block Copy Channel Realtime Registers region
+> +      - description: Channel Realtime Registers region
+> +      - description: Ring Realtime Registers region
+> +
+> +  reg-names:
+> +    items:
+> +      - const: gcfg
+> +      - const: bchanrt
+> +      - const: chanrt
+> +      - const: ringrt
+> +
+> +  "#dma-cells":
+> +    const: 4
+> +    description: |
+> +      cell 1: Trigger type for the channel
+> +        0 - disable / no trigger
+> +        1 - internal channel event
+> +        2 - external signal
+> +        3 - timer manager event
+> +
+> +      cell 2: parameter for the trigger:
+> +        if cell 1 is 0 (disable / no trigger):
+> +          Unused, ignored
+> +        if cell 1 is 1 (internal channel event):
+> +          channel number whose TR event should trigger the current channel.
+> +        if cell 1 is 2 or 3 (external signal or timer manager event):
+> +          index of global interfaces that come into the DMA.
+> +
+> +          Please refer to the device documentation for global interface indexes.
+> +
+> +      cell 3: Channel number for the peripheral
+> +
+> +        Please refer to the device documentation for the channel map.
+> +
+> +      cell 4: ASEL value for the channel
+> +
+> +required:
+> +  - compatible
+> +  - "#dma-cells"
+> +  - reg
+> +  - reg-names
+
+Keep same order as in properties: block.
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |+
+
+Drop +
+
+> +    cbass_main {
+
+Follow DTS coding style... or just make it like all other SoC bindings.
+
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +      main_bcdma: dma-controller@485c4000 {
+
+Messed indentation.
+
+
+Best regards,
+Krzysztof
+
 
