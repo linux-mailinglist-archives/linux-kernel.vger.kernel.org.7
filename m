@@ -1,88 +1,156 @@
-Return-Path: <linux-kernel+bounces-626515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07404AA4417
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:34:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB06AA441C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCBA4C29B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:34:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8365B7A95B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC12202C5D;
-	Wed, 30 Apr 2025 07:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9903202C52;
+	Wed, 30 Apr 2025 07:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRdAqIW7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dl8THRxl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827352DC78E;
-	Wed, 30 Apr 2025 07:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D691DF98B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745998486; cv=none; b=uMKZOnl8brLoqvun4pQzS+joTemTN4LdT0vU3aef1TrH3LH6pBkmcVrczsV8rg55Ov0wTAk+01SZ9hksiUktIKoo790UewxZTNqWJLVPyS+EGGJ0G1b5gAJUIT+wDuenEdYwN7EAIUlYCpgkYE3K3OLL6l1jAZL94peX89RqeVE=
+	t=1745998596; cv=none; b=ty1W5mLZgQP/nqu8X9Z5ZaaqCngOtHyEdsl2f3jEEAAeSkWAigeEYGG0DHKNvCE3FiUKNYDJ36t9DRoZW0KEZx6oTTSZX6omR1VJGKSWjK/znB1zmjo5Veh20oOkXxyQQ9nd+uMAGMHN4vuFwLu8ILbC+kkzfTZ80ho5kk1IdZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745998486; c=relaxed/simple;
-	bh=xuu2ccVFX5K1wKFwUc/YuoUfgvrmjbfO+/eyQt6lOqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glruE95o/DHH2ovE7+rApJ5/lxL45Vc+HncHObafGCPx9qsg+TEQlWU+624UDt3es/NW4L/dMi24FtYCmp93Bk748z2FU/FIDo9LfNHAmNpEdBLaP6oPqMSm/dzsN2ZZ25Y+7KynuyhWEckBogbNW++k7GnSKiNFJwk5N3SjS8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRdAqIW7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F70C4CEEA;
-	Wed, 30 Apr 2025 07:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745998486;
-	bh=xuu2ccVFX5K1wKFwUc/YuoUfgvrmjbfO+/eyQt6lOqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jRdAqIW750dK5t1iPLMKDpw5qw761V/SZDWMd7ChslMnaS0dLReHO0aOehYnY+VTi
-	 9KzAfc+9turL4JtyhW0w6K7Ua4Tcp7w8PZij7+I2QXlIhymYKs41CDTVUhUXTOSmzV
-	 EHOdybHQgYOMSyQl7o3Tlhv8BcNB3SiTGgmKCWtHZ8pOIZ//9hk3V/qb3dKVfmgvWV
-	 GM+Gh50u/0NLr62CfpPToKxteHvS2ZNtMLAiWT7sLt8RYJOaWV1xmfWiFQQwwxzrQn
-	 Kl09wxToFHdy4MiEiA0j/IKl3Em8orfcbqi4d5d8Zea455MU4AMcTMtcKKvSAhgxvk
-	 BrzFwK22e4YRQ==
-Date: Wed, 30 Apr 2025 09:34:43 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
-	spujar@nvidia.com, mkumard@nvidia.com
-Subject: Re: [PATCH v2 02/11] dt-bindings: ASoC: Document Tegra264 APE support
-Message-ID: <20250430-ancient-radiant-sheep-0e4738@kuoka>
-References: <20250429055941.901511-1-sheetal@nvidia.com>
- <20250429055941.901511-3-sheetal@nvidia.com>
+	s=arc-20240116; t=1745998596; c=relaxed/simple;
+	bh=Jp6r1uAPNiaUcZ7vu3hEK4j5sCCvhx8jZQNF3pIvzPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uAKaiIl4YGZsbpPW68pgndhJDHjJs6dP9C1M1HKcuCltywCYwZqTsM5miYhl3EYHSnhb9+gaPUSvCjoMFljv5JXpKQQrpp+mGejzJTvaa4SMWPuYi+7lfFahA6BxuSrKOWeQ9vziigEz5a7E1V8hUZwpTcTALI8TrIJ5AJBXrIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dl8THRxl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745998593;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ATlge+/XHY/x4P++Awsgt+89C15GuzoKXYKTk6Biva0=;
+	b=dl8THRxlJVGBepEa8XLtkWlS500rkZarPF0UxKp4+9sKGxdJAzhf/lKHtgEpmGQsGeli68
+	V/tjpzdJoaL9vKIzdz893zNANKG6093DhyNtCVLMN+rO1+6e1lesRfQXk5hTqACobJaRrN
+	Oa4c3doyZdwxQigD/dlRqDTAHq3IQxA=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-390-tqFJZ_1TMRWb3SpHYnavHg-1; Wed, 30 Apr 2025 03:36:29 -0400
+X-MC-Unique: tqFJZ_1TMRWb3SpHYnavHg-1
+X-Mimecast-MFC-AGG-ID: tqFJZ_1TMRWb3SpHYnavHg_1745998588
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-736c7df9b6cso9264881b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 00:36:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745998588; x=1746603388;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ATlge+/XHY/x4P++Awsgt+89C15GuzoKXYKTk6Biva0=;
+        b=mEup7xmyzdkhTYATL7gUeyLe8s0bMhJS7jVoHU16k50olB3imNJAZYLUUmaj3MM+1L
+         DcT/Ot9dZdnrdCPDMzifwOZV3hnauBd2Q/DKDSXl+4rUOMTYyDyOEfEQK1c4Z51OpryQ
+         cZn12w90lyhSHWkydpvSzEroTGf4NhTKjg3pbeJVxypuYHaErJAzB0K+RooAlIldkEGq
+         3zWc2H06zAoSi6jR5Q0/GKGTVQAuU80YB6Vt1vQo7rh/i70Y7DN7uIzwJCjChdajCe0+
+         Bp+XeBcBC/6otp4FkxhXFZ0JHRyqNVnD7m+Kv6HiS4N8FMGhLtB4SFTD38k9SqV9MRPl
+         e6BQ==
+X-Gm-Message-State: AOJu0YyEkXzL1yYODovBLm8PKZh8xWFpsW1O7fgZZLwVzj/BlvPyC3KF
+	qdwQLryoKYTPNA0BGNezwwOZGscpMAbBOgPw1QXLTwwZDh6d/JXqtm2ShRGBid6EgyCv/TR0vCI
+	kkaMlz6oKOdUQEszGYh5LY3n8JnCywD2fzGct9fgzXNwdpAcuxst9TOBlQ8Odig==
+X-Gm-Gg: ASbGncu7bvCZi2dVkDYsuWxYu/nXjDcR69IEBBeSIX5l+h6/9e2f87mdqXwLvCOIMn/
+	DYLrAAFcpHaz5TBRcCyPihwOl7yX2yQRmzGcQZAY7NsopeSTM+NWQmRap16fcct12BVnkWqQXJK
+	MMqHczbozr8UJ5xmmWH5MqKkFRx5oq9KaRxSuzEt+Mcvj2M1d8VWq5vf8kpgan9WPgNsWewrhY5
+	SqC4OIGkLgolBddVf+h/wi5BweT+wLEtOHrEgSd5MRtaLSWiOXNVjGmzM+cp5krplHh1csmDSdn
+	umVutWLPe+/TBXxHRxJBI1t9
+X-Received: by 2002:a05:6a00:2e29:b0:736:a973:748 with SMTP id d2e1a72fcca58-7403a82e80dmr2157062b3a.22.1745998588029;
+        Wed, 30 Apr 2025 00:36:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgr8bHNca5fFeYuBhBxyWC8wjluqnA4KJ6k1oh1C7Ebs3Yk51OKs3lCNRatb6ZP8ZSIeUrQA==
+X-Received: by 2002:a05:6a00:2e29:b0:736:a973:748 with SMTP id d2e1a72fcca58-7403a82e80dmr2157036b3a.22.1745998587672;
+        Wed, 30 Apr 2025 00:36:27 -0700 (PDT)
+Received: from localhost.localdomain ([2804:1b3:a800:e30d:722a:db4d:3dea:f1ae])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039a90ebasm961811b3a.162.2025.04.30.00.36.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 00:36:27 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Leonardo Bras <leobras@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/1] local_lock: Minor improvements of local_trylock*() documentation
+Date: Wed, 30 Apr 2025 04:36:10 -0300
+Message-ID: <20250430073610.163846-1-leobras@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250429055941.901511-3-sheetal@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 05:59:32AM GMT, Sheetal . wrote:
-> From: Sheetal <sheetal@nvidia.com>
-> 
-> Add Tegra264 compatible strings to APE subsystem device bindings:
-> - audio-graph-card: Due to different PLL clock rate.
-> - admaif: Due to 32 channels supported and register offset changes.
-> - i2s: Due to 32 channels supported and register offset changes.
-> - amx/adx: Due to 32 channels supported and register offset changes.
-> - asrc: Due to different ARAM address.
-> - ahub: Due to AHUB IPs number of instances updates.
-> - for future proofing the T264 compatibility is added for other device
->   nodes.
-> 
-> These bindings enable the enhanced audio features of Tegra264
-> while maintaining compatibility with existing platforms.
-> 
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
+Fix local_trylock_init() documentation, as it was mentioning the non-try
+helper instead, and use the opportunity to make clear the try_lock*() needs
+to receive a try-enabled variable as parameter.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Leonardo Bras <leobras@redhat.com>
+---
+ include/linux/local_lock.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
+index 16a2ee4f8310b..e052e33432cb2 100644
+--- a/include/linux/local_lock.h
++++ b/include/linux/local_lock.h
+@@ -45,38 +45,38 @@
+ /**
+  * local_unlock_irqrestore - Release a per CPU local lock and restore
+  *			      interrupt flags
+  * @lock:	The lock variable
+  * @flags:      Interrupt flags to restore
+  */
+ #define local_unlock_irqrestore(lock, flags)			\
+ 	__local_unlock_irqrestore(lock, flags)
+ 
+ /**
+- * local_lock_init - Runtime initialize a lock instance
++ * local_trylock_init - Runtime initialize a try-enabled lock instance
+  */
+ #define local_trylock_init(lock)	__local_trylock_init(lock)
+ 
+ /**
+  * local_trylock - Try to acquire a per CPU local lock
+- * @lock:	The lock variable
++ * @lock:	The try-enabled lock variable
+  *
+  * The function can be used in any context such as NMI or HARDIRQ. Due to
+  * locking constrains it will _always_ fail to acquire the lock in NMI or
+  * HARDIRQ context on PREEMPT_RT.
+  */
+ #define local_trylock(lock)		__local_trylock(lock)
+ 
+ /**
+  * local_trylock_irqsave - Try to acquire a per CPU local lock, save and disable
+  *			   interrupts if acquired
+- * @lock:	The lock variable
++ * @lock:	The try-enabled lock variable
+  * @flags:	Storage for interrupt flags
+  *
+  * The function can be used in any context such as NMI or HARDIRQ. Due to
+  * locking constrains it will _always_ fail to acquire the lock in NMI or
+  * HARDIRQ context on PREEMPT_RT.
+  */
+ #define local_trylock_irqsave(lock, flags)			\
+ 	__local_trylock_irqsave(lock, flags)
+ 
+ DEFINE_GUARD(local_lock, local_lock_t __percpu*,
+-- 
+2.49.0
 
 
