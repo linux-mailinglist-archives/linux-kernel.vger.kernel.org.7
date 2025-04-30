@@ -1,120 +1,93 @@
-Return-Path: <linux-kernel+bounces-626629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DCDAA456C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:31:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82836AA4579
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A79E7B589F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3AF98205E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398C021C176;
-	Wed, 30 Apr 2025 08:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61BF21CFE0;
+	Wed, 30 Apr 2025 08:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uci.edu header.i=@uci.edu header.b="OiO2CgW8"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1pPrsFN6"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F0421ABC5
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3DE216E23;
+	Wed, 30 Apr 2025 08:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001730; cv=none; b=MirE6eyEO8WNXjWRqAuBwbrHJsiMMeqJ8ZOrM3Q+GzJl+9SGJLHNeGrT1Uk2HTY0v/E2NHMJV/TtEwT9k4tj7Xgr1mmTa6EaU5c6v5wnMl68+cCTNsgf2lD2MUZ4Q3mCFoDeFRQffI4AetCNfmkaEFI7YZ5akYSpVoIJbEvit3Y=
+	t=1746001766; cv=none; b=aOHc0rD83R8kHuWMut+8d90MY/j83buNcDY5Yp8fPpOp8PW2AyOyi7jowoF1y3NyQ4/D3aAEfAKhgLJdK2Km9CICVPe8iyLIoJVSP4vUtsI8Dd6f1zndiZTP2tBLP8bf1UsxLhy1UbBZ9KBbr/ami0oryYU5cGNq+tZNUHn/1LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001730; c=relaxed/simple;
-	bh=pH0oqBFzXr7dxaa6fyvrd+LLrjaVdoyq6r4ZmuQseF0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AaRkEsA4zwHoSkgk4zss0WnzYfBq1k4lbezGwMxPCcoIWBfZjBU38CPRGRjDN6uVrgQhFVBcCTp9XSzTZxu6cnipPECZRnWVo+AqFWPXxU61D+Kf/l+mEZRNzMbaYTkAGzezViQjxmfD7iZ8SnGJhXFGDxu1Qmn1Ro0UIBFi+zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uci.edu; spf=pass smtp.mailfrom=uci.edu; dkim=pass (2048-bit key) header.d=uci.edu header.i=@uci.edu header.b=OiO2CgW8; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uci.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uci.edu
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30ddad694c1so76896791fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:28:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=uci.edu; s=google; t=1746001726; x=1746606526; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6lPqXLo5Wb4FjmQISWv1/W8649m7XVXX1Bcf7rCMT1I=;
-        b=OiO2CgW8iu5CCKeSmS3PlKZ+n3xjB4FpmGZ/szRw0QJi8A+YcL0FYUJrTLEgosdX4F
-         d2jIHVcqMDFx8tXKCMTNLxGOgHXxJzDe1Lu5A+HD3aOZY2YteujoRH75Q6yRlSADpr7D
-         FVLvx40vp6KiwdNYybuP9Ljyfgcf+knyPL9/g0CFVT89u3k15c5uis1NnJR4mUXlSJko
-         zeE595klz/aoX3G/7dxfmk/okb1P8e+2elx9oIXR/mq9UO4aBbBncJUmdhGS9w45ZlXo
-         EuU2szghJEATSCEJv63JZTzcijBR1Lt3hkO0CBfuP4aaNjdxIZd+FPqtMVe6/dGanA2S
-         2EWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746001726; x=1746606526;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6lPqXLo5Wb4FjmQISWv1/W8649m7XVXX1Bcf7rCMT1I=;
-        b=kxEzEJyXgbj6LOmb1vYrK9mUcCw97fx5HkWrRueSpkAkGk8ngflcPnknNMs4BDApSE
-         gjOYkm25XPcrm0UIR4B2m0W8XM2bA8DZVxTOEiBhODn+B2SyQzvIxu/JLMifET5xqvX+
-         mOd+LYYRVv4xgO+c+S8StXaORqqyWqyAT5R4cbm/tOYM+ztghecbVQOls1DnMTvtmMbK
-         KHYwM2Zc+7EdXjMeJVKqm7peLuyvrl0Y4OsD3yUS7rMF0JA/7mz3MOgw3cUclXhoyYW7
-         E8uwrcAXMzGbgUZu36QsWGjD2hG7TZ2InNdIyxvKVY+xt2GCi0uknmAH3sAuE+F/9Us0
-         8Jag==
-X-Gm-Message-State: AOJu0YzTuTRLmCtRGYQo3cfZZepS/NzLRG8oA5wRvR8L9uCsZx4Mqd1i
-	0khzjifhUaJT4hjdgBgcOIfGgHVpiG8dPHdfLRACU3zGUl6+voZDITeCu+mJ250/7b0dtcYJ9mU
-	W1QkDE6IbveuLqaVHyT8hlKH7qn8JYAdHHksoJyi9aPbV2l6xK3f/Qg==
-X-Gm-Gg: ASbGncvHmymYN2fUQwjFmB9OJGt26ggw3bVUBllBVtqjFZwbXQmENiETBp2fPj0kFWY
-	QfOORpfkzZooMByHq6aFSIbMBhGjesTMik/8nbd6xN+xjMceWxdK8LnM0fL+SsLcrSjWBLnbv2Y
-	UPA3PwUcRu1OcefnHKgAqcS4gcvLWGWNA3kqVq
-X-Google-Smtp-Source: AGHT+IHm9LGcwO5UfIgmOPoA/NZWU0YUuagpPN/FMkVDaPR9suXAlBToMbxCmPA+26NwR16zuoPZt7Fpu/vyInDHLes=
-X-Received: by 2002:a05:651c:1542:b0:30b:ee78:79d2 with SMTP id
- 38308e7fff4ca-31e6bb7963amr7026571fa.36.1746001726243; Wed, 30 Apr 2025
- 01:28:46 -0700 (PDT)
+	s=arc-20240116; t=1746001766; c=relaxed/simple;
+	bh=Y399pOk2PwFyXdUDdU2fl2otfNhae3MlGbg3fitUhBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WKDu16NHX0gv4AYztvHxGU5hh3vJcqWmLOWDJmudEzJfOzRAO3BY3wCaFBKkvSh5g+LoU1lfI24/sZUcqqyrXBAD9JIpa3Y0EkquD5QX7SjdHFoi4+Bk0uhJNI8eBj5RP6YsRYVnfp9YJOSNC8hkgiYE/o2myiymFDScTo8g8wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1pPrsFN6; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=hQyzVgSeS1zqqoyGREtN+mz33pRSUXUrrYNi91vis3M=; b=1pPrsFN6Bx75iVbdytX4QUGAef
+	SBhDdRSKKdJoVVMtn7Njgqt5S8xRJZUA1g5nlHezxIktzKi7mCO+n9QZWuhKqx34OjHdThxaztS5v
+	lncGWqIQgAXDRcl1ucg6mlD9+VqyByfEJH6Lnd3m0NM703WKcrVVk4AcqPaflzZ3JuT2LCIh5DRhz
+	vhtWcP45xbKyfRxkzNgVdHVEMSoIrDvbu+gs2Z6U9J6mBke+khQLi5bLPlqkOopVWlhx8OZATxKSe
+	DksVca83S65gqyudQpD7Ca1oD7nW/a6NE1pgu28NskLsRjtGjyACSSwuacjNFti1lRB4z8ViO6E7l
+	xmyQ6+Ow==;
+Received: from i53875ba4.versanet.de ([83.135.91.164] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uA2oV-00032E-P0; Wed, 30 Apr 2025 10:29:07 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: neil.armstrong@linaro.org
+Cc: quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	heiko@sntech.de,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Allow port dt-property on two leadtek dsi displays
+Date: Wed, 30 Apr 2025 10:28:48 +0200
+Message-ID: <20250430082850.244199-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ezra Khuzadi <ekhuzadi@uci.edu>
-Date: Wed, 30 Apr 2025 01:28:35 -0700
-X-Gm-Features: ATxdqUHlLjGvyjp1aDqcwzw1xdWYY187ti4MPUlvYdIVpJ5MANTZwWt-gw4LJKI
-Message-ID: <CAPXr0uxh0c_2b2-zJF=N8T6DfccfyvOQRX0X0VO24dS7YsxzzQ@mail.gmail.com>
-Subject: sound/pci/hda: add quirk for HP Spectre x360 15-eb0xxx
-To: linux-kernel@vger.kernel.org
-Cc: alsa-devel@lists.sourceforge.net, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-sound/pci/hda: add quirk for HP Spectre x360 15-eb0xxx
+Working on an upcoming board dts, I noticed a dtc check warning
+about the port node and at the same time the kernel-test-robot
+noticed the same warning with a overlay I added recently.
 
-Add subsystem ID 0x86e5 for HP Spectre x360 15-eb0xxx so that
-ALC285_FIXUP_HP_SPECTRE_X360_EB1 (GPIO amp-enable, mic-mute LED and
-pinconfigs) is applied.
+So allow the port node in the binding of two leadtek displays
+to fix that.
 
-Tested on HP Spectre x360 15-eb0043dx (Vendor 0x10ec0285, Subsys 0x103c86e5)
-with legacy HDA driver and hda-verb toggles:
 
-  $ cat /proc/asound/card0/codec#0 \
-      | sed -n -e '1,5p;/Vendor Id:/p;/Subsystem Id:/p'
-  Codec: Realtek ALC285
-  Vendor Id: 0x10ec0285
-  Subsystem Id: 0x103c86e5
+Heiko Stuebner (2):
+  dt-bindings: display: ltk050h3146w: add port property
+  dt-bindings: display: ltk500hd1829: add port property
 
-  $ dmesg | grep -i realtek
-  [    5.828728] snd_hda_codec_realtek ehdaudio0D0: ALC285: picked fixup
-        for PCI SSID 103c:86e5
+ .../devicetree/bindings/display/panel/leadtek,ltk050h3146w.yaml  | 1 +
+ .../devicetree/bindings/display/panel/leadtek,ltk500hd1829.yaml  | 1 +
+ 2 files changed, 2 insertions(+)
 
-Signed-off-by: Ezra Khuzadi <ekhuzadi@uci.edu>
+-- 
+2.47.2
 
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 877137cb09ac..82ad105e7fa9 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10563,6 +10563,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
-   SND_PCI_QUIRK(0x103c, 0x86c7, "HP Envy AiO 32", ALC274_FIXUP_HP_ENVY_GPIO),
-+  SND_PCI_QUIRK(0x103c, 0x86e5, "HP Spectre x360 15-eb0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_EB1),
-   SND_PCI_QUIRK(0x103c, 0x86e7, "HP Spectre x360 15-eb0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_EB1),
-   SND_PCI_QUIRK(0x103c, 0x86e8, "HP Spectre x360 15-eb0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_EB1),
-   SND_PCI_QUIRK(0x103c, 0x86f9, "HP Spectre x360 13-aw0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_MUTE_LED),
 
