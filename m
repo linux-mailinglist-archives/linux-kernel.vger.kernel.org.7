@@ -1,435 +1,173 @@
-Return-Path: <linux-kernel+bounces-626357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BB3AA4224
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:13:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605E6AA422D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F6BF7B16C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DDC16659D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577C61DC9B1;
-	Wed, 30 Apr 2025 05:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8D51E2845;
+	Wed, 30 Apr 2025 05:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XNJ55wSt"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Z0nbmGqB"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7207913FEE
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745989967; cv=fail; b=BSPhlm8aJC02bc/VtILwMtWXV4q+872Iio7WcasLDAnFU8akG9bZUMZKJuUg0zLT3N59Jd4nTHeZKKbtN3ON9nKLQxByNQfirO78Hi/S72Xp2Gglpag0aPLHZb912nW60AyOcvJvp82RSpc6I6XA0dYKRNbe6lB5uFVd5/dKJ8Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745989967; c=relaxed/simple;
-	bh=/tLegfx3CPlcTxZMvDuyscQ+KBgOuaWu7JLF8+8I0go=;
-	h=Message-ID:Date:To:From:Subject:Content-Type:MIME-Version; b=fn/Mb76dRTd4rX8nNm709f5RLhxiDBtOGj+wacDtMfwgfS88NyfZdpaRIQp2D3YW5na3VGZcggCice594HA0h0QU6jT1OkjyOV6NpAhDbzrAxiA/Uv4h6IRB0PBhvQfDNMMpCHdKg64h48/JWmxymKADHIdRv9iv9YhvnnHsbo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XNJ55wSt; arc=fail smtp.client-ip=40.107.237.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QbiO1nep6dyYX7X90WPZ2G1iTqMnmPBuMRzYRwFzD0tUahtBPUDNpMRS6csIC4BjiNImSHcVfliKZaDepyxEk+6DOr/UcpxuDfs1eWIXJm6zuW3+tMjHu+lRCjOOcuqFJNaNKpE3bKaMpcwWlntJLpiEN2rbyk1EBFJN/3OkR+lNffNX604L4WLOt9BN25dSJSoySX8EpDXDYxBBzez9TR8P7Sp6lmwYb3ZVOtN8JzNPqtwvAi5EF5UbQprE8bzxuHlcLPcnp3nybJ+njejwof0H4Pfn8T5OGVQSIPC1kVV4OnJ1zu0XOLX/b5ugjUApkJYu6waI+OBojb0HNzQpRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=erAzbGpPf25YNWLNEvO6KOHgKLP2VQohVGb/fe/uS/8=;
- b=k/1ocz5Vzx3fyUvkblvRTevJj1vp8RYoz4ZPZJJam7X8/305b6d61KUV2dm7miLIeKP4itPwAVKMmTBrlx9ae/6DsLOz98jYPRpYG+Bb3z5B25SjpAA4qbCUSUJAB+cDzumpfLPMOoQUq2JAChvQWUhSzLm+kviODrxgvspLWfB24fQqu41Lh0wOwesOCEGm7HiTbZrOwQqUOpvVm0Kf26eAJ7OPtKIVEPVJv2UfJoTpgHrcI/bfHO4zXbmr0+0ulT2e0cnFRP0TWq4wyoPkFYftneCMaYBho0K7il9gjR4HK7HlDWbHq/HitRhLaTm2UaQny6WMlL+m8G4u1V4heQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=erAzbGpPf25YNWLNEvO6KOHgKLP2VQohVGb/fe/uS/8=;
- b=XNJ55wStc5tbkLUaS149XLRc91k7dpIFLeU9RnCUMZP1FMIMCzATFepV62PG8q2LIxyLsJQeDK0k7GX8uuFeTZPnKsPZ1CD44WpfTMsgFI1YeVuabFCG4McFo/XoJ9yfHFkYXBD2eoQXaSgIpXOnwis0JaNfMWmx8QMqPR9PpAY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
- by SA1PR12MB6799.namprd12.prod.outlook.com (2603:10b6:806:25b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 30 Apr
- 2025 05:12:39 +0000
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870%7]) with mapi id 15.20.8699.012; Wed, 30 Apr 2025
- 05:12:39 +0000
-Message-ID: <82a096ae-0be2-4f7e-842f-95cfe8df3ba5@amd.com>
-Date: Wed, 30 Apr 2025 10:42:34 +0530
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kernel@vger.kernel.org,
- syzbot <syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
-From: Shivank Garg <shivankg@amd.com>
-Subject: Syz Test if issue still reproduce
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2P287CA0007.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:21b::7) To CH2PR12MB4262.namprd12.prod.outlook.com
- (2603:10b6:610:af::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0848EA921;
+	Wed, 30 Apr 2025 05:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745990310; cv=none; b=MTv0wR0CDkqDc2UTzAGgojOQvyDX4MASycQ0EjoToNjd6SzttJcKLMujMIkKRl6k+p0OcHZ3VPV7qWU2rS2fTQAi/OANWfUfOHKBFNZpvLxgMNQiI6lFLoN7GJtRz+cWk7qLDJDewEHFdsCAIdObVnABNbF0MwtXcaAorOkW9jk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745990310; c=relaxed/simple;
+	bh=lPl54U/qqBrHjOX1YYhAPaRKXabra0RM17t6IxKVe2A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=osNxxO39TN401Mq0dHQ2UX2OElwV4AE5yN5gVEpP9QhsgVdkWq/vprWEfxt0Fya+5fYz+L65EmqS7m2yqjPDIzMxE8V0x2FrfIYRbHBAVJNyFxwnN4m52HyOf9EUgsxwjj00cOh5vh2oFHSSLieudoy5iDT32JxtAV4I/ClNLq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Z0nbmGqB; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1B7891026CE8F;
+	Wed, 30 Apr 2025 07:18:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1745990304; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=TErDts74dOF/38EZE2pPpZ6LyWNto2lM7fBOGJnyoqw=;
+	b=Z0nbmGqBGuQlaK0UMu2UDILnle5P3mLp60rmNGS8qhDWHsnD4O04A5jd9zCa7/Y2FRyrZu
+	FKqEzf4b+i2PvcjOncAgHPSHNV05TQJBRllYjDduBiQbsBC11+uX+OEKHyKG5WFuUBD+ch
+	wNO2JvFLqNfi8NJov1ua437F69uIX/C75euS7DlOWOZz2DAG+ifmFgs6GtFeg4VgDu+pha
+	vNROB6Sv8Odfxij8Rthj3T0mT/ZG8ZMghL6P6dCmJD+L5k93exVEOE7NDiBi7UdhzDWDGC
+	d0SUK/U7m4R7Tnr5RNAArxdJ9AjfKYoqQ5LUvLgtur40xXCCQQ+zGnpwq8P/xQ==
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Simon Horman <horms@kernel.org>,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [net-next v9 0/7] net: mtip: Add support for MTIP imx287 L2 switch driver
+Date: Wed, 30 Apr 2025 07:17:49 +0200
+Message-Id: <20250430051756.574067-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|SA1PR12MB6799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04e13ddf-fb53-4e0d-8cea-08dd87a5a054
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c0lwR3ZiM201MXhvN3JnaGhFRC96VTVteGh1cmUwTE1KK1J0UHBCNEs5Y2Rk?=
- =?utf-8?B?aSs1U1gyVy9UNktIdGZ6RUhXcmFxa2lOWjhmZDFyTndaT05kY1lRakpOR0xI?=
- =?utf-8?B?aTZkYlBCR0txMWI5Sm5aL0VsWXFGL1dKczFVQXowQytVYjNxTmFWcSs2VDJ5?=
- =?utf-8?B?ZEdrU1hIVkNzRVNqT1hIZFRFbTRYajB6cEJvUVc5Zlo2aVpJZFYxS3hEQWFL?=
- =?utf-8?B?ZzRjZ2J2ZU9GcWRzTHBMOUU2UEJiMHVTSFhQMkFKQiswNmJZS1kvNkdpZFhE?=
- =?utf-8?B?Z1RFUmQrZWhnTllmVHEwb2FqUE0zUzladHhBNCtHVUQ2b1NNMGx2M3k4d1BD?=
- =?utf-8?B?OG4zN3VESWZreWdRWnJnVVNsOWRwUXFTUmYyUWc2RkFGbnpRdFNJU1lqOFRz?=
- =?utf-8?B?RGY3QXdheHlhY0R6dmlDQllwV3ZRa2FJL2FoRmhKdDFpR0t2bTJPTnpNdUlT?=
- =?utf-8?B?Znd2M1N6RmN3MXNsSXVQT0pMRzdXM3IyZVNZVXFDTm8xMFU0bjQyQVRad0tl?=
- =?utf-8?B?OGxxMXJGUW1xVXJMQXZmSmwrQVNFejdTMklkNEhhbXE3dUI3ZG9HbEwxRDRY?=
- =?utf-8?B?TTZSQmx6WXBSQ0pENmRGN1g1UkpKb3ZJWEdHRDdmeUVoL0FSMWxJYVcvTjF5?=
- =?utf-8?B?Zm5YTjREcjBsdGhUenEzaXFpL1RHaHVNa2FDcG1ESyt1TFVkTzJuRHVrdW4z?=
- =?utf-8?B?QW5tNmc4bVNVaEoxak1DNDlvZjBtNFlOSlFZUWpJY0hrcXpsQ1FCdytHVXh3?=
- =?utf-8?B?bTN1RCtLd0l5ZzZNRzR3VCtKQlE3YzlhREZJWTJHUm1yYk5tZTZ6SC9VZzlF?=
- =?utf-8?B?dHdrdVVPaFhHTUh1bTJvQ21TNG41S1prNVlPM2ExcHMvN2VFY1VjbGRILzhY?=
- =?utf-8?B?T283UzV6STRhREl2TFQrUTNkUmwvb3BxRzBITXJhN1hRU2E3RGhKdUlmbEd5?=
- =?utf-8?B?WDFrN2kyaUh6L0UvellBYktoUmN5Mjd5dndZUW1sWkhYR0lqU014bUFDNmh6?=
- =?utf-8?B?RDlsUFhTclp0SGJoVVp5V1lMN0NyQUJtODV5YU8wYTlZVjI0Sys3UFZkRkF3?=
- =?utf-8?B?dVM3NUFQTUY2WUc0UWtCd3QrR2ZzcHpTTk8ra0NxbFJZOGxlOHhnZVNvcEZF?=
- =?utf-8?B?Ry9CWkk5dnV3ZWFNalNZeUFLQUtRNHRqL2FhaXhiUktJeG95MkZNK2pjMXhT?=
- =?utf-8?B?OVRoSUoxUFI4OVc4Skwzb1ZZU3BjMUE5WmQ3R3VsL0NWdVF2TUlQdVBiVlIx?=
- =?utf-8?B?S3AvRDJTTERoZnFIVXBsaTgvbGlScjlSZjlzS1hkSUh4eTVERVNIdzVUNWRB?=
- =?utf-8?B?ZFVodTJBeUpVVGsxdE5vZXkzUEdKRWNIc1A2V09QQnNDM0FkOEZOamNLUjJD?=
- =?utf-8?B?Y2pzYVdVVStOZURjYlJ3V29rY2FpaGM5cWNnY0U5MjJ2NUp3aUJ4UTRyU2t4?=
- =?utf-8?B?Q21aYU5MTTdXdzZrRUJtanFyellSSkZ4eW9QZllIZlNwUkx0UDVRbnBiTXFr?=
- =?utf-8?B?L1haZ0JHSVl0L1FGZ01RRzRaQlNPZnFoMmFTbG5NNE1XUHZaQ20rd2Fjdy92?=
- =?utf-8?B?S3F1K1RJUHpFR3U5U29ad2tXQlJZMlJqSkZmeCttZzNoWEhZOUw0UzVHMS9t?=
- =?utf-8?B?Y3EyVG4xT211bkpnRXNvWGF2UEVybGdxOERLd3ZXcERxS2Q0YkVRRjJLeXRp?=
- =?utf-8?B?NnFMM1RUSUNLVC9uazYzUkdCVmFQalhLUkQya2l0OTRybTdNZWlvTEIxMWZO?=
- =?utf-8?B?S25hLzAwRVhIVDcyYm5iaC9RNmtZRlBndGxxT1hPa3dTbHdYVXBJMHllNFZE?=
- =?utf-8?Q?RCnMdBM++V5r3fuT4IqsZ4w4cLfZrkRmKrJU4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z1NvOGhrSElzSjZuMEt5OEdlenVJc2hUQUpVdy9RUTFXeE1EVkx6S3FxWUNC?=
- =?utf-8?B?QjF3SWtDUGYxRWtoa2dTcFRCMEdac3ZlSTBGS3VhMFBIdUovMVFHWFdDdUpU?=
- =?utf-8?B?anF3SFRzNitYRmE3bkpFOFAxNmFyRnNDSS9ESTg4ZjY3ZFdhcitnS1NHM3V2?=
- =?utf-8?B?ZFl1Uml5a1lweWVodkhTbFZNbk51RHROc0YzSzIyMjA3d3hrN2hkSHpsUG0x?=
- =?utf-8?B?bnYvdW1jcXFBNGRyRDBReGZaTjJMVkZpc1VGR3dORktaYVZBMGNYYjEzOEhN?=
- =?utf-8?B?R29Kc2cyQ0htMnpHOFRmSFh1NXpKZHlSa2ZITnpld0dVYjg1NlRkMGdFcVMz?=
- =?utf-8?B?cTNtcWI0cW5yRHFOaytNL3lWTytwSEowS0lkWHBsRlQ4YitBNTY1bjBYelhH?=
- =?utf-8?B?WWVmZG1zY2V3dzJyTXpRcklFMzFKV0RJWnBuUWNrYUIyMjM1NDlnV1JSSTFQ?=
- =?utf-8?B?NkZyS3JsMllObVJvRWh0YkJtcU1OeTNVMmNMaUhZRDAxQk9PV0p3aW9CamMw?=
- =?utf-8?B?VXlDdXVTZTNNRW9vNWJlYjZhTndnY1R2QlNRaVFYTEVsRDI4cDRoYXdaT1py?=
- =?utf-8?B?dm85NDBpdmFPMEQ0NWZtSW14YjFERmhINVBOSUt3UWRtdit5UUZreU9DTXBq?=
- =?utf-8?B?YTlUZllFNEpCNktpdkc4TFUwZmZyY1ZMVnRMUE83Z3h1eUtRNmducmJxbW05?=
- =?utf-8?B?dzl1eWRyNWZNOUQ3K242RDUySmlkYlJEMzRBUEE5ZG43dUdiZXMrb1FzS3pY?=
- =?utf-8?B?Vjd4SzhpZ285TFhESUUxZDUwcGszck5HWkNJKzhUVTZSNDFseXM4ZDdnYUMr?=
- =?utf-8?B?Rzl6Q0NieEFkR3ZEakNIM1BlVjdFeXQxT0VnUGFibi9GTVN1RFlHNUJYajY3?=
- =?utf-8?B?c0RYRDBaMXJiSUMybGo1VFpTTHBzeTNjUUlLT1RNQWlHWFRRTzlkSkdlVjRR?=
- =?utf-8?B?YjhneXVmQnRxd0VSR25ubTNEQk9nZi9iVFNGdFVUdmtldUI4STBLVDd4czll?=
- =?utf-8?B?NVNQbHlOSFZMM0ZZaFovaTdvVWhoaU5EYVRoTmwwQU5ERzA4dHFGY0J4OUpv?=
- =?utf-8?B?N0Y4bW1YZnRVZC9tTkFIZVNEZUxyY2Z0aXcvK1lXb2thWERUWUhTSjJIMWtZ?=
- =?utf-8?B?ZmYyOVR0bm9VTy90K3c2TllQL1pQTU41Z2hBcVVIRlU5NEI3MWRPeHBrenU3?=
- =?utf-8?B?czFldzIxSHNVWXNPWVIwRTJVVDdxaHUwdDJCc2hBTENQWEtRbVFUU2c0OUd4?=
- =?utf-8?B?dk1ibEcwbjVScWZQSEZIeWpqWU1jM21CN2ZYRzJwN2VNbDVsSHUvT0YrcTc4?=
- =?utf-8?B?UURZNVFJQkpBSjVPd25BM2thdEphRmlLMS9idG02dDRqeExOTE91RFg4Tzl4?=
- =?utf-8?B?a2xzRnY0THhTOVNnWnNGYnJ6cURaNW5GWFlNb0pFbGJySUdSbnBwVDFONGw4?=
- =?utf-8?B?eXA3VTdvNEhWL0k1WElveFRFb3JKTFBURllCYlZudUpkNldMR29uUlRqTnFt?=
- =?utf-8?B?TG5HM1N3NEl6YUFYaE9GNDZhbExSaGtvYnFvS1FjS0RYSFNDeXpUMURBNE9D?=
- =?utf-8?B?aitkWDBOR2QxVmpZWWtzaEFEVVZreDNEb3Y5eXdCTUhMWVZEZnhhRWUrTzdh?=
- =?utf-8?B?OTNka05GU2pnTFc2MG1teXlUVEUrc3FId1cyMU5wNlpkU3ZENmRPZ2pMRzVn?=
- =?utf-8?B?VVFBV3RzSUFkdTVoa1EzTk5uL3MzeDMzb1RqaWhlQVQ4ckYrSUdIWmV5MlJt?=
- =?utf-8?B?RFEwd3Bia1lpNit0R2pURlc4WlU3WmY2eTV0clArbTJtd2wzcGlPV2ZaS0NR?=
- =?utf-8?B?NW5PL0djWFg0YnZuVVl4bFpRN1FKWHd0TGdUcU13eG9CTkZmYzhRMUE4Q3Bl?=
- =?utf-8?B?WnNod3oxcW14Y3VRTFBMMko4bjlSK01yeVc1aXpOYVZ5QlQ5MWQxWmFhU3Bo?=
- =?utf-8?B?ZU8zMkVTeno1ZkhPSGRieXBRdkJVeDFUNy9kb2R5bEN1ZHBwMEd1NTJHNkk5?=
- =?utf-8?B?bFZ3K1pOR1JkQVI4S3FRNkw1K1dDNW1aK3JRR2ExSHFwZmpFZWd5YTFGTlpZ?=
- =?utf-8?B?MFpxLzZkSWx6WjJ6cXM3aTlkaUJKaFd0T2ZIeW5RMmpTZG9MTGUvOVMvNWdz?=
- =?utf-8?Q?SSGIpTd/DnF3t6eyX28+95H5R?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04e13ddf-fb53-4e0d-8cea-08dd87a5a054
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 05:12:38.9261
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I+dDi8m92xP5nih9RUCJx1BOQHBM4mkNoSeCBSC45CElsJcX8BD9MgvOuZw0Fbksb/meRn8PkrZaaAqyNA9gUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6799
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+This patch series adds support for More Than IP's L2 switch driver embedded
+in some NXP's SoCs. This one has been tested on imx287, but is also available
+in the vf610.
 
-Testing if this issue https://syzkaller.appspot.com/bug?extid=8bb6fd945af4e0ad9299
-still reproduces
+In the past there has been performed some attempts to upstream this driver:
 
+1. The 4.19-cip based one [1]
+2. DSA based one for 5.12 [2] - i.e. the switch itself was treat as a DSA switch
+   with NO tag appended.
+3. The extension for FEC driver for 5.12 [3] - the trick here was to fully reuse
+   FEC when the in-HW switching is disabled. When bridge offloading is enabled,
+   the driver uses already configured MAC and PHY to also configure PHY.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 33035b665
+All three approaches were not accepted as eligible for upstreaming.
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index df575a873ec6..f863ba521533 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -15,6 +15,7 @@
- #include <linux/mempool.h>
- #include <linux/seq_file.h>
- #include <linux/writeback.h>
-+#include <linux/migrate.h>
- #include "jfs_incore.h"
- #include "jfs_superblock.h"
- #include "jfs_filsys.h"
-@@ -151,6 +152,54 @@ static inline void dec_io(struct folio *folio, blk_status_t status,
- 		handler(folio, anchor->status);
- }
- 
-+static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
-+				    struct folio *src, enum migrate_mode mode)
-+{
-+	struct meta_anchor *src_anchor = src->private;
-+	struct metapage *mps[MPS_PER_PAGE] = {0};
-+	struct metapage *mp;
-+	int i, rc;
-+
-+	for (i = 0; i < MPS_PER_PAGE; i++) {
-+		mp = src_anchor->mp[i];
-+		if (mp && metapage_locked(mp))
-+			return -EAGAIN;
-+	}
-+
-+	rc = filemap_migrate_folio(mapping, dst, src, mode);
-+	if (rc != MIGRATEPAGE_SUCCESS)
-+		return rc;
-+
-+	for (i = 0; i < MPS_PER_PAGE; i++) {
-+		mp = src_anchor->mp[i];
-+		if (!mp)
-+			continue;
-+		if (unlikely(insert_metapage(dst, mp))) {
-+			/* If error, roll-back previosly inserted pages */
-+			for (int j = 0 ; j < i; j++) {
-+				if (mps[j])
-+					remove_metapage(dst, mps[j]);
-+			}
-+			return -EAGAIN;
-+		}
-+		mps[i] = mp;
-+	}
-+
-+	/* Update the metapage and remove it from src */
-+	for (i = 0; i < MPS_PER_PAGE; i++) {
-+		mp = mps[i];
-+		if (mp) {
-+			int page_offset = mp->data - folio_address(src);
-+
-+			mp->data = folio_address(dst) + page_offset;
-+			mp->folio = dst;
-+			remove_metapage(src, mp);
-+		}
-+	}
-+
-+	return MIGRATEPAGE_SUCCESS;
-+}
-+
- #else
- static inline struct metapage *folio_to_mp(struct folio *folio, int offset)
- {
-@@ -175,6 +224,32 @@ static inline void remove_metapage(struct folio *folio, struct metapage *mp)
- #define inc_io(folio) do {} while(0)
- #define dec_io(folio, status, handler) handler(folio, status)
- 
-+static int __metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
-+				    struct folio *src, enum migrate_mode mode)
-+{
-+	struct metapage *mp;
-+	int page_offset;
-+	int rc;
-+
-+	mp = folio_to_mp(src, 0);
-+	if (mp && metapage_locked(mp))
-+		return -EAGAIN;
-+
-+	rc = filemap_migrate_folio(mapping, dst, src, mode);
-+	if (rc != MIGRATEPAGE_SUCCESS)
-+		return rc;
-+
-+	if (unlikely(insert_metapage(dst, mp)))
-+		return -EAGAIN;
-+
-+	page_offset = mp->data - folio_address(src);
-+	mp->data = folio_address(dst) + page_offset;
-+	mp->folio = dst;
-+	remove_metapage(src, mp);
-+
-+	return MIGRATEPAGE_SUCCESS;
-+}
-+
- #endif
- 
- static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
-@@ -554,6 +629,24 @@ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
- 	return ret;
- }
- 
-+/**
-+ * metapage_migrate_folio - Migration function for JFS metapages
-+ */
-+static int metapage_migrate_folio(struct address_space *mapping, struct folio *dst,
-+				  struct folio *src, enum migrate_mode mode)
-+{
-+	int expected_count;
-+
-+	if (!src->private)
-+		return filemap_migrate_folio(mapping, dst, src, mode);
-+
-+	/* Check whether page does not have extra refs before we do more work */
-+	expected_count = folio_expected_ref_count(src) + 1;
-+	if (folio_ref_count(src) != expected_count)
-+		return -EAGAIN;
-+	return __metapage_migrate_folio(mapping, dst, src, mode);
-+}
-+
- static void metapage_invalidate_folio(struct folio *folio, size_t offset,
- 				    size_t length)
- {
-@@ -570,6 +663,7 @@ const struct address_space_operations jfs_metapage_aops = {
- 	.release_folio	= metapage_release_folio,
- 	.invalidate_folio = metapage_invalidate_folio,
- 	.dirty_folio	= filemap_dirty_folio,
-+	.migrate_folio	= metapage_migrate_folio,
- };
- 
- struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 68d3dd14b323..1db540bb9381 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2115,6 +2115,61 @@ static inline bool folio_maybe_mapped_shared(struct folio *folio)
- 	return folio_test_large_maybe_mapped_shared(folio);
- }
- 
-+/**
-+ * folio_expected_ref_count - calculate the expected folio refcount
-+ * @folio: the folio
-+ *
-+ * Calculate the expected folio refcount, taking references from the pagecache,
-+ * swapcache, PG_private and page table mappings into account. Useful in
-+ * combination with folio_ref_count() to detect unexpected references (e.g.,
-+ * GUP or other temporary references).
-+ *
-+ * Does currently not consider references from the LRU cache. If the folio
-+ * was isolated from the LRU (which is the case during migration or split),
-+ * the LRU cache does not apply.
-+ *
-+ * Calling this function on an unmapped folio -- !folio_mapped() -- that is
-+ * locked will return a stable result.
-+ *
-+ * Calling this function on a mapped folio will not result in a stable result,
-+ * because nothing stops additional page table mappings from coming (e.g.,
-+ * fork()) or going (e.g., munmap()).
-+ *
-+ * Calling this function without the folio lock will also not result in a
-+ * stable result: for example, the folio might get dropped from the swapcache
-+ * concurrently.
-+ *
-+ * However, even when called without the folio lock or on a mapped folio,
-+ * this function can be used to detect unexpected references early (for example,
-+ * if it makes sense to even lock the folio and unmap it).
-+ *
-+ * The caller must add any reference (e.g., from folio_try_get()) it might be
-+ * holding itself to the result.
-+ *
-+ * Returns the expected folio refcount.
-+ */
-+static inline int folio_expected_ref_count(const struct folio *folio)
-+{
-+	const int order = folio_order(folio);
-+	int ref_count = 0;
-+
-+	if (WARN_ON_ONCE(folio_test_slab(folio)))
-+		return 0;
-+
-+	if (folio_test_anon(folio)) {
-+		/* One reference per page from the swapcache. */
-+		ref_count += folio_test_swapcache(folio) << order;
-+	} else if (!((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS)) {
-+		/* One reference per page from the pagecache. */
-+		ref_count += !!folio->mapping << order;
-+		/* One reference from PG_private. */
-+		ref_count += folio_test_private(folio);
-+	}
-+
-+	/* One reference per page table mapping. */
-+	return ref_count + folio_mapcount(folio);
-+}
-+
- #ifndef HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
- static inline int arch_make_folio_accessible(struct folio *folio)
- {
-diff --git a/mm/migrate.c b/mm/migrate.c
-index c80591514e66..67f2bf1eb51e 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -445,20 +445,6 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
- }
- #endif
- 
--static int folio_expected_refs(struct address_space *mapping,
--		struct folio *folio)
--{
--	int refs = 1;
--	if (!mapping)
--		return refs;
--
--	refs += folio_nr_pages(folio);
--	if (folio_test_private(folio))
--		refs++;
--
--	return refs;
--}
--
- /*
-  * Replace the folio in the mapping.
-  *
-@@ -601,7 +587,7 @@ static int __folio_migrate_mapping(struct address_space *mapping,
- int folio_migrate_mapping(struct address_space *mapping,
- 		struct folio *newfolio, struct folio *folio, int extra_count)
- {
--	int expected_count = folio_expected_refs(mapping, folio) + extra_count;
-+	int expected_count = folio_expected_ref_count(folio) + extra_count + 1;
- 
- 	if (folio_ref_count(folio) != expected_count)
- 		return -EAGAIN;
-@@ -618,7 +604,7 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 				   struct folio *dst, struct folio *src)
- {
- 	XA_STATE(xas, &mapping->i_pages, folio_index(src));
--	int rc, expected_count = folio_expected_refs(mapping, src);
-+	int rc, expected_count = folio_expected_ref_count(src) + 1;
- 
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
-@@ -749,7 +735,7 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
- 			   struct folio *src, void *src_private,
- 			   enum migrate_mode mode)
- {
--	int rc, expected_count = folio_expected_refs(mapping, src);
-+	int rc, expected_count = folio_expected_ref_count(src) + 1;
- 
- 	/* Check whether src does not have extra refs before we do more work */
- 	if (folio_ref_count(src) != expected_count)
-@@ -837,7 +823,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
- 		return migrate_folio(mapping, dst, src, mode);
- 
- 	/* Check whether page does not have extra refs before we do more work */
--	expected_count = folio_expected_refs(mapping, src);
-+	expected_count = folio_expected_ref_count(src) + 1;
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
- 
+The driver from this series has floowing features:
+
+1. It is fully separated from fec_main - i.e. can be used interchangeable
+   with it. To be more specific - one can build them as modules and
+   if required switch between them when e.g. bridge offloading is required.
+
+   To be more specific:
+        - Use FEC_MAIN: When one needs support for two ETH ports with separate
+          uDMAs used for both and bridging can be realized in SW.
+
+        - Use MTIPL2SW: When it is enough to support two ports with only uDMA0
+          attached to switch and bridging shall be offloaded to HW. 
+
+2. This driver uses MTIP's L2 switch internal VLAN feature to provide port
+   separation at boot time. Port separation is disabled when bridging is
+   required.
+
+3. Example usage:
+        Configuration:
+        ip link set lan0 up; sleep 1;
+        ip link set lan1 up; sleep 1;
+        ip link add name br0 type bridge;
+        ip link set br0 up; sleep 1;
+        ip link set lan0 master br0;
+        ip link set lan1 master br0;
+        bridge link;
+        ip addr add 192.168.2.17/24 dev br0;
+        ping -c 5 192.168.2.222
+
+        Removal:
+        ip link set br0 down;
+        ip link delete br0 type bridge;
+        ip link set dev lan1 down
+        ip link set dev lan0 down
+
+4. Limitations:
+        - Driver enables and disables switch operation with learning and ageing.
+        - Missing is the advanced configuration (e.g. adding entries to FBD). This is
+          on purpose, as up till now we didn't had consensus about how the driver
+          shall be added to Linux.
+
+Links:
+[1] - https://github.com/lmajewski/linux-imx28-l2switch/commits/master
+[2] - https://github.com/lmajewski/linux-imx28-l2switch/tree/imx28-v5.12-L2-upstream-RFC_v1
+[3] - https://source.denx.de/linux/linux-imx28-l2switch/-/tree/imx28-v5.12-L2-upstream-switchdev-RFC_v1?ref_type=heads
+
+Lukasz Majewski (7):
+  dt-bindings: net: Add MTIP L2 switch description
+  ARM: dts: nxp: mxs: Adjust the imx28.dtsi L2 switch description
+  ARM: dts: nxp: mxs: Adjust XEA board's DTS to support L2 switch
+  net: mtip: The L2 switch driver for imx287
+  ARM: mxs_defconfig: Enable CONFIG_NFS_FSCACHE
+  ARM: mxs_defconfig: Update mxs_defconfig to 6.15-rc1
+  ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2
+    switch
+
+ .../bindings/net/nxp,imx28-mtip-switch.yaml   |  149 ++
+ MAINTAINERS                                   |    7 +
+ arch/arm/boot/dts/nxp/mxs/imx28-xea.dts       |   56 +
+ arch/arm/boot/dts/nxp/mxs/imx28.dtsi          |    9 +-
+ arch/arm/configs/mxs_defconfig                |   13 +-
+ drivers/net/ethernet/freescale/Kconfig        |    1 +
+ drivers/net/ethernet/freescale/Makefile       |    1 +
+ drivers/net/ethernet/freescale/mtipsw/Kconfig |   13 +
+ .../net/ethernet/freescale/mtipsw/Makefile    |    4 +
+ .../net/ethernet/freescale/mtipsw/mtipl2sw.c  | 1978 +++++++++++++++++
+ .../net/ethernet/freescale/mtipsw/mtipl2sw.h  |  771 +++++++
+ .../ethernet/freescale/mtipsw/mtipl2sw_br.c   |  120 +
+ .../ethernet/freescale/mtipsw/mtipl2sw_mgnt.c |  436 ++++
+ 13 files changed, 3547 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/Kconfig
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/Makefile
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.c
+
+-- 
+2.39.5
 
 
