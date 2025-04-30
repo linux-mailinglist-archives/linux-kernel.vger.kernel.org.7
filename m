@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-627577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9BCAA52F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:51:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8204CAA52B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6EC9E1541
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:51:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D007AC9FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F66626C3A9;
-	Wed, 30 Apr 2025 17:50:54 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2BC266566;
-	Wed, 30 Apr 2025 17:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F820265CCF;
+	Wed, 30 Apr 2025 17:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YBirQRGs"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8192B7FBA2;
+	Wed, 30 Apr 2025 17:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746035453; cv=none; b=S4m+YJLps26lca/tmLnocPptoHU1rN5QZ6QMg/An/lthwQVo+9Sz3H1ZoYkIQfr1umazSefKfPxC1gSw38OAKOA1pBr0ntrM9ieLg7QaXvxJ2Hqsyb4fEuUarfE30ZOD/4nn0mEDdIJiIzwORvtsKXn0Pki7hnxobiOCmZaMFBw=
+	t=1746034574; cv=none; b=jOlxR9oZu3dm5v0fVyBcKPCMMIcbJBX7aIf2qVYPFB99uUv+jjMpPUKiBYB4Rm33sq+0X0AXv7khlSn/xzQ5h1xIXqlXm61zqM3cV9+Ok3O1GiQlqbqWsEs2m7jNr4JLPLJu7+bkAM9WFcjMB9MXMvVxwuEyPyaYNpT4VbySGNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746035453; c=relaxed/simple;
-	bh=lhbpp0bXVbOc8CtFLW0Ny8MieOlby3Adwq4uiz5JmIA=;
+	s=arc-20240116; t=1746034574; c=relaxed/simple;
+	bh=ak9YUCFArsM5aUPhK2jd2yrJ29Vauu0uJrHsSTZ9vhQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pq0qNA/sie7nIENAXu/rVt+LiXOjLB5RJLqcrKUW8HuIde2100P0HiqDtjEq99d5M4vynNNyJPBaPw/53dLRnqNio493fRh1sucJz6tcjvXh2/O1tmxrYlvhlxPdRSGsPSc9XvZQt4uLsupswe6DqkqkSiFA9FHCPTHxO3Pfsks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Znkmp3X2Nz9sfF;
-	Wed, 30 Apr 2025 19:33:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id RKxf0jgrwP6Q; Wed, 30 Apr 2025 19:33:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Znkmp2jH5z9sd1;
-	Wed, 30 Apr 2025 19:33:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 576778B765;
-	Wed, 30 Apr 2025 19:33:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id AMxxhowWQVYU; Wed, 30 Apr 2025 19:33:30 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 554BC8B763;
-	Wed, 30 Apr 2025 19:33:29 +0200 (CEST)
-Message-ID: <4a6e8ac1-b4e8-49e1-bc8a-d1854985bb31@csgroup.eu>
-Date: Wed, 30 Apr 2025 19:33:28 +0200
+	 In-Reply-To:Content-Type; b=pa1PHyFZHxlogZ6XMMnuHvQdHgAPB0bPbFDGvvT+31Hqn+IxN5EVrgbQwaas65CSPcDZE5mBtkMlbulT/xjKNVtvQ0nzPTOkzGlw6IRajMZA+xhq8pfNt1cWso7LcbNTDV3kPYFjDslBpzrInBDsYTVzOsMBE04NcrtgGmjp3Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YBirQRGs; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53UHYglH994677
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 30 Apr 2025 10:34:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53UHYglH994677
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1746034492;
+	bh=MVcFuH6LQX3Y3pUhS9pDt2jTv3OOuhGgVjMgZBwFQbU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YBirQRGsh/eKhYCU46jEVunfYnCZZLGJwrkUur+AVnLfZOgM2knIRNzrZbf9yWCo9
+	 juTOLbfakM++FVNYbWI7VMM61OBGpjeTocu/tJJcKM4G8I/1t6+b+PzT4AnPvVbz0h
+	 BbdU7/90+cjC0oKiyPmbG4DiLeYyIE6yfLjoMHDwWuBzrqeLRRM4YyYJ5f9/sXGXHU
+	 egrQpYb03Y9EciKRAdv2n6yXgLPSMuEFconn56YWuD3tYuPf6WIqsEFB7eR6/ZBS7g
+	 hYXTVsGSsffm09JBcLUTgarngUDGWX8wE0EpOGSInhMhUwDxstW72Csx0RoTmWX5Jv
+	 fG5/w1SY9Cpug==
+Message-ID: <480f6bf5-20ea-47a0-a1be-3f3cf15227b6@zytor.com>
+Date: Wed, 30 Apr 2025 10:34:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,73 +55,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] powerpc: 83xx/gpio: use new line value setter
- callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Anatolij Gustschin <agust@denx.de>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
- <20250408-gpiochip-set-rv-powerpc-v1-2-73dc1ebc6ef1@linaro.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250408-gpiochip-set-rv-powerpc-v1-2-73dc1ebc6ef1@linaro.org>
+Subject: Re: [PATCH v4 01/15] x86/msr: Add missing includes of <asm/msr.h>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux.dev, linux-pm@vger.kernel.org,
+        linux-edac@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
+        peterz@infradead.org, namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+        haiyangz@microsoft.com, decui@microsoft.com,
+        dapeng1.mi@linux.intel.com
+References: <20250427092027.1598740-1-xin@zytor.com>
+ <20250427092027.1598740-2-xin@zytor.com>
+ <a1917b37-e41e-d303-749b-4007cda01605@linux.intel.com>
+ <c16677bd-ee63-4032-8825-7d2789dd7555@zytor.com>
+ <d1bf0657-1cc5-b6ec-5601-f31efefacd9a@linux.intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <d1bf0657-1cc5-b6ec-5601-f31efefacd9a@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-Le 08/04/2025 à 09:21, Bartosz Golaszewski a écrit :
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 4/30/2025 2:17 AM, Ilpo Järvinen wrote:
+> While this is not my subsystem so don't have the final say here, you had
+> to explain quite much to prove that (and reviewer would have to go through
+> the same places to check). Wouldn't it be much simpler for all if all
+> those .c files would just include <asm/msr.h> directly? No need to explain
+> anything then.
 > 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> index 4d8fa9ed1a67..d4ba6dbb86b2 100644
-> --- a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> +++ b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-> @@ -92,7 +92,7 @@ static void mcu_power_off(void)
->   	mutex_unlock(&mcu->lock);
->   }
->   
-> -static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-> +static int mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   {
->   	struct mcu *mcu = gpiochip_get_data(gc);
->   	u8 bit = 1 << (4 + gpio);
-> @@ -105,6 +105,8 @@ static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   
->   	i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL, mcu->reg_ctrl);
->   	mutex_unlock(&mcu->lock);
-> +
-> +	return 0;
+> Also, similar to what you're doing for some tsc related things in this
+> series, somebody could in the future decide that hey, these static inline
+> functions (that use .*msr.*) belong to some other file, allowing msr.h to
+> be removed from arch/x86/events/perf_event.h. Again, we'd need to add
+> asm/msr.h into more .c files. This is the problem with relying on indirect
+> includes, they create hard to track dependencies for #includes done in .h
+> files. If we actively encourage to depend on indirect #include
+> dependencies like that, it makes it very hard to_remove_ any #include
+> from a header file (as you have yourself discovered).
 
-i2c_smbus_write_byte_data() can fail, why not return the value returned 
-by i2c_smbus_write_byte_data() ?
-
->   }
->   
->   static int mcu_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
-> @@ -123,7 +125,7 @@ static int mcu_gpiochip_add(struct mcu *mcu)
->   	gc->can_sleep = 1;
->   	gc->ngpio = MCU_NUM_GPIO;
->   	gc->base = -1;
-> -	gc->set = mcu_gpio_set;
-> +	gc->set_rv = mcu_gpio_set;
->   	gc->direction_output = mcu_gpio_dir_out;
->   	gc->parent = dev;
->   
-> 
-
+You're right, it makes a lot of sense from maintenance point of view.
 
