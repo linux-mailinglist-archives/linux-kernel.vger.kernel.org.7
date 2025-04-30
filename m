@@ -1,62 +1,65 @@
-Return-Path: <linux-kernel+bounces-627761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75A3AA54CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7291DAA54DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C247B9800E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7089C25BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A86E1EB5FC;
-	Wed, 30 Apr 2025 19:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A535A266B41;
+	Wed, 30 Apr 2025 19:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Glo7zhLm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Mj/tOxD9"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9119F11B;
-	Wed, 30 Apr 2025 19:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390181EB19E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 19:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746042091; cv=none; b=pQVLBdE2Gz5Y5XY4m63aHkRmQ81MxUe/mx0VDxMh31mKDW3/C5pED18ZMlR4ADoju6BOoFOFAzU/zNNDE0jXeOiz9qVYJbw5HGAFFnwwXe4guwxf/XrIDtcoChw81umMwrVLBHgkEh6tp3W6kHeCGVcn897QAvzuPB4mxP0Tx4U=
+	t=1746042124; cv=none; b=gplSK2vgdQ8p2xPxf8zxMM1+JKhsj+GLL2VeC+6+xsL4Smum0tRrCBpqbRlLfXg3DojmK5x/jumknWB2Cj3OJCB6YgECJpeHiJ7/7qOJb5+017N5oNFQVRhmo7pZYRdjg/ZxdvlA2MZMYy2eppswGJFfb9rSRvCL47aRAnJbL/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746042091; c=relaxed/simple;
-	bh=L00nMiYXt6U1pqfjE4ugf/WVdHCISUv2EAMn4Uzqa2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CCi5DA4R4UHCJEoEou/v/K/qsjmOMZkAWU7I7w8pp51eRaspbYhfQ5q0MAh3UZhzU1vvBiVW33jLhZgl7OeHwzvN2fSKLVTgtDad+cWD7Ls2wiZnYaXW/3V7DqjSREVQEi5MI0o+vc+V8FoCKjuUxMpg6on2NwJmisWUym6tvdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Glo7zhLm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UGgxBS029556;
-	Wed, 30 Apr 2025 19:41:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JPJj2ypVxLM6FirxIox1Ym4HrMcpwqg5uqyspzcdVqA=; b=Glo7zhLmOH1FFffG
-	+GPcusVVc4fHmf5fOD6JZ1418X0nASD0XaFSgjY0lOmpNm6YKtjJlfQypGeSA1MF
-	WHKIveIsxAnjic4Xu7X+3m+hKhmBfFgQ1cG9WrFtQ0YBEe4XqRqo7EeNJEXvZ9UL
-	WWdfr6VRYTZpS8TfsK7goFd2SSq9zxByaJoS7/dIzMTzfLBtiVNGA5EeztEiQpen
-	ftLV/3b8xEYkWmBcL0RoBjR/P53S3pCJPlo0WCzdp/t2/YGHmYjLQTMjj+K2DEhA
-	lNX/Ez+T36Zl4OD8RQJQhH3ga8PtUg91FbLTTziXAbblwqrylxZT37cwW2CvJPL/
-	dhZxIQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u7ug0e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 19:41:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53UJfG1i030862
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 19:41:16 GMT
-Received: from [10.71.110.123] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Apr
- 2025 12:41:15 -0700
-Message-ID: <0e07f35d-0eeb-4380-84e2-97a45841bf15@quicinc.com>
-Date: Wed, 30 Apr 2025 12:41:14 -0700
+	s=arc-20240116; t=1746042124; c=relaxed/simple;
+	bh=aNlI5doREuFnpNBygwYJ3vVeRE4exj3jm3zEaNbahzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QQYBbG2UuUTyo+3atEosLwcxAy7FXyqnAx5kXDhUgrwbV1ceglYSGCADqA4ITyVKn1rVG4HzfrXhxigKrcQdTh3wlK1xUt5jMknVKWn29aecA4cvsU2soGEwl9E78XjjUqVSJZT1eF4Ggpf5K7NA1YQ3+wFNWJyWEEgMnrGHJCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Mj/tOxD9; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
+	by cmsmtp with ESMTPS
+	id A3qouCxmczZPaADJbuv0RR; Wed, 30 Apr 2025 19:41:55 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id ADJauPyBAF7AgADJau2Ky8; Wed, 30 Apr 2025 19:41:54 +0000
+X-Authority-Analysis: v=2.4 cv=AtHo3v9P c=1 sm=1 tr=0 ts=68127d02
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=efVMuJ2jJG67FGuSm7J3ww==:17
+ a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=pWlpG66K428ilhL_DWUA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bjBrQjQU2afaw/LgDKWhKIXfjuWHuTWx5Msxh3WnN5Y=; b=Mj/tOxD9PutqF7L7pmpkZUOujQ
+	zUq/sOjq3INBElVfO+dyqRIfdtf2RIGY61ahoAUVv8w1oNhos33PUewqsonq7E0ZPAGBqwKXYn2us
+	0IOsf9uqAhD2HT1cySyw7qUzw8qgvMAhB942pmYdS0qvXG8utkUxxS3zgFttrThCStSu+eRBGgMrx
+	ZYosA+tTCQYsfjprs7rs8CqstKr581CVKlzgp6XDUq16w7IRZSL81ezZ0U4TIYLR5efgCBLKNnLFR
+	EgcsyglBIC7px8NLYB4Mn8z9wID9TL6B0Osuyg/8Rxo3LaWLiz5+/j64OagP8OYi+udUQZXNNvW3J
+	dJLLsdoA==;
+Received: from [177.238.17.151] (port=23848 helo=[192.168.0.101])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uADJY-00000002pqq-0b9b;
+	Wed, 30 Apr 2025 14:41:52 -0500
+Message-ID: <df338a70-fdfc-427e-9915-8b9e50de93ad@embeddedor.com>
+Date: Wed, 30 Apr 2025 13:41:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,204 +67,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] drm/msm: move wq handling to KMS code
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark
-	<robdclark@gmail.com>
-CC: Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250413-msm-gpu-split-v1-0-1132f4b616c7@oss.qualcomm.com>
- <20250413-msm-gpu-split-v1-1-1132f4b616c7@oss.qualcomm.com>
- <CAF6AEGtG2K79zAd9tyNAG7JSVhS2sPdC-VjqubpmhD9AvoVoAA@mail.gmail.com>
- <9f64ea5e-1b59-4522-b55a-d9b11e412ee5@oss.qualcomm.com>
+Subject: Re: [PATCH v2][next] acpi: nfit: intel: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+To: Dan Williams <dan.j.williams@intel.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>
+Cc: nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z-QpUcxFCRByYcTA@kspp>
+ <67e55ac4dfa2e_13cb29410@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <9f64ea5e-1b59-4522-b55a-d9b11e412ee5@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ldc86ifi c=1 sm=1 tr=0 ts=68127cdc cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=ZvaOMdlihffMFPaspHcA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: OYPJ16N5teY2OzZPBYTTALRqidUUVMO8
-X-Proofpoint-ORIG-GUID: OYPJ16N5teY2OzZPBYTTALRqidUUVMO8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDE0NCBTYWx0ZWRfXxKy1z67eH/WT CK8Zndnp8kdp6x1GIlg7c6gy0EJbrfw5sCdALay+F7rEyXdGodUZvWwakPuLMiCZN9UZ1P+/ILr pBoApuK8J+0Ck9YEE+rlUE9yWZdqcNjXLNOhtZ6Afz4eMO0iG85zfSIPSwJ/qQgzUbUZmCejxM7
- TlgEWHPiWvgBP0b8uX3U4JYHoFvGobpIXJh6R+ErMM70yChfnGFQGoEBRzyY72Kajr73adZJOpl +7oTSLBV+8mJc+6Ulp91ywumnIWKVMNprz3qeJXkTqf9pgL+vhARKTcaAlb7swxdNB0PRAvRpKt HJdUZTFJe3brbj0jYHCgr+HLvjyBnmQ+vKClGe2JUHrKzOcdcLy02Q4SG5Hfcx0tSS50I+1VS+B
- uqe6ZxSs1pr3QD1EJro+KDT3mqLFwmcxQYEdNjd9YgORksJsiKo+zDBtEs1rcYyPyUo+4oBb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_06,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 spamscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300144
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <67e55ac4dfa2e_13cb29410@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.17.151
+X-Source-L: No
+X-Exim-ID: 1uADJY-00000002pqq-0b9b
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.101]) [177.238.17.151]:23848
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFU0G0yw6RD4mix9mdN6SDX1KD2h4Hx8iFg4Bg4y/cSdWAPEh8hlx/JNy/Yp8HiuvwB8SltJr2pcmFWFj11KlhZ7Jfgg4ZP5oAMixD4mmrcoIuLgxa2A
+ hcLaa4n9czw9mpGsdUAGb2iEW7TrSfUKGz62rUHwkJtup5xHwdMdr9HThtSMd9YIFDbkvT6jVU0NAHi4ZSSKnnF0RPvyjdW4J2Rerc/xCjkRq0kxm1bJDLvV
 
 
 
-On 4/15/2025 1:59 AM, Dmitry Baryshkov wrote:
-> On 14/04/2025 18:58, Rob Clark wrote:
->> On Sun, Apr 13, 2025 at 9:33 AM Dmitry Baryshkov
->> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>>
->>> The global workqueue is only used for vblanks inside KMS code. Move
->>> allocation / flushing / deallcation of it to msm_kms.c
+On 27/03/25 08:03, Dan Williams wrote:
+> Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
 >>
->> Maybe we should also just move the wq into struct msm_kms?
-> 
-> ... together with several other KMS-only fields. I will take a look.
-> 
-
-Yeah the usages seem to be only within kms, so we can move this to msm_kms.
-
+>> Use the `DEFINE_RAW_FLEX()` helper for on-stack definitions of
+>> a flexible structure where the size of the flexible-array member
+>> is known at compile-time, and refactor the rest of the code,
+>> accordingly.
 >>
->> BR,
->> -R
+>> So, with these changes, fix a dozen of the following warnings:
 >>
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>> ---
->>>   drivers/gpu/drm/msm/msm_drv.c | 21 ++-------------------
->>>   drivers/gpu/drm/msm/msm_kms.c | 16 +++++++++++++++-
->>>   2 files changed, 17 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/ 
->>> msm_drv.c
->>> index 
->>> c3588dc9e53764a27efda1901b094724cec8928a..02beb40eb9146941aa43862d07a6d82ae21c965e 100644
->>> --- a/drivers/gpu/drm/msm/msm_drv.c
->>> +++ b/drivers/gpu/drm/msm/msm_drv.c
->>> @@ -82,13 +82,6 @@ static int msm_drm_uninit(struct device *dev)
->>>                          drm_atomic_helper_shutdown(ddev);
->>>          }
->>>
->>> -       /* We must cancel and cleanup any pending vblank enable/disable
->>> -        * work before msm_irq_uninstall() to avoid work re-enabling an
->>> -        * irq after uninstall has disabled it.
->>> -        */
->>> -
->>> -       flush_workqueue(priv->wq);
->>> -
->>>          msm_gem_shrinker_cleanup(ddev);
->>>
->>>          msm_perf_debugfs_cleanup(priv);
->>> @@ -104,8 +97,6 @@ static int msm_drm_uninit(struct device *dev)
->>>          ddev->dev_private = NULL;
->>>          drm_dev_put(ddev);
->>>
->>> -       destroy_workqueue(priv->wq);
->>> -
->>>          return 0;
->>>   }
->>>
->>> @@ -227,12 +218,6 @@ static int msm_drm_init(struct device *dev, 
->>> const struct drm_driver *drv)
->>>          ddev->dev_private = priv;
->>>          priv->dev = ddev;
->>>
->>> -       priv->wq = alloc_ordered_workqueue("msm", 0);
->>> -       if (!priv->wq) {
->>> -               ret = -ENOMEM;
->>> -               goto err_put_dev;
->>> -       }
->>> -
->>>          INIT_LIST_HEAD(&priv->objects);
->>>          mutex_init(&priv->obj_lock);
->>>
->>> @@ -253,12 +238,12 @@ static int msm_drm_init(struct device *dev, 
->>> const struct drm_driver *drv)
->>>          if (priv->kms_init) {
->>>                  ret = drmm_mode_config_init(ddev);
->>>                  if (ret)
->>> -                       goto err_destroy_wq;
->>> +                       goto err_put_dev;
->>>          }
->>>
->>>          ret = msm_init_vram(ddev);
->>>          if (ret)
->>> -               goto err_destroy_wq;
->>> +               goto err_put_dev;
->>>
->>>          dma_set_max_seg_size(dev, UINT_MAX);
->>>
->>> @@ -304,8 +289,6 @@ static int msm_drm_init(struct device *dev, const 
->>> struct drm_driver *drv)
->>>
->>>   err_deinit_vram:
->>>          msm_deinit_vram(ddev);
->>> -err_destroy_wq:
->>> -       destroy_workqueue(priv->wq);
->>>   err_put_dev:
->>>          drm_dev_put(ddev);
->>>
->>> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/ 
->>> msm_kms.c
->>> index 
->>> 35d5397e73b4c5cb90b1770e8570277e782be7ec..821f0b9f968fc3d448e612bfae04639ceb770353 100644
->>> --- a/drivers/gpu/drm/msm/msm_kms.c
->>> +++ b/drivers/gpu/drm/msm/msm_kms.c
->>> @@ -227,6 +227,13 @@ void msm_drm_kms_uninit(struct device *dev)
->>>
->>>          BUG_ON(!kms);
->>>
->>> +       /* We must cancel and cleanup any pending vblank enable/disable
->>> +        * work before msm_irq_uninstall() to avoid work re-enabling an
->>> +        * irq after uninstall has disabled it.
->>> +        */
->>> +
->>> +       flush_workqueue(priv->wq);
->>> +
->>>          /* clean up event worker threads */
->>>          for (i = 0; i < priv->num_crtcs; i++) {
->>>                  if (priv->event_thread[i].worker)
->>> @@ -243,6 +250,8 @@ void msm_drm_kms_uninit(struct device *dev)
->>>
->>>          if (kms && kms->funcs)
->>>                  kms->funcs->destroy(kms);
->>> +
->>> +       destroy_workqueue(priv->wq);
->>>   }
->>>
->>>   int msm_drm_kms_init(struct device *dev, const struct drm_driver *drv)
->>> @@ -258,10 +267,14 @@ int msm_drm_kms_init(struct device *dev, const 
->>> struct drm_driver *drv)
->>>          if (ret)
->>>                  return ret;
->>>
->>> +       priv->wq = alloc_ordered_workqueue("msm", 0);
->>> +       if (!priv->wq)
->>> +               return -ENOMEM;
->>> +
->>>          ret = priv->kms_init(ddev);
->>>          if (ret) {
->>>                  DRM_DEV_ERROR(dev, "failed to load kms\n");
->>> -               return ret;
->>> +               goto err_msm_uninit;
->>>          }
->>>
->>>          /* Enable normalization of plane zpos */
->>> @@ -319,6 +332,7 @@ int msm_drm_kms_init(struct device *dev, const 
->>> struct drm_driver *drv)
->>>          return 0;
->>>
->>>   err_msm_uninit:
->>> +       destroy_workqueue(priv->wq);
->>>          return ret;
->>>   }
->>>
->>>
->>> -- 
->>> 2.39.5
->>>
+>> drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> ---
+>> Changes in v2:
+>>   - Use DEFINE_RAW_FLEX() instead of __struct_group().
+>>
+>> v1:
+>>   - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
+>>
+>>   drivers/acpi/nfit/intel.c | 388 ++++++++++++++++++--------------------
+>>   1 file changed, 179 insertions(+), 209 deletions(-)
+>>
+>> diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
+>> index 3902759abcba..114d5b3bb39b 100644
+>> --- a/drivers/acpi/nfit/intel.c
+>> +++ b/drivers/acpi/nfit/intel.c
+>> @@ -55,21 +55,17 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
+>>   {
+>>   	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>>   	unsigned long security_flags = 0;
+>> -	struct {
+>> -		struct nd_cmd_pkg pkg;
+>> -		struct nd_intel_get_security_state cmd;
+>> -	} nd_cmd = {
+>> -		.pkg = {
+>> -			.nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
+>> -			.nd_family = NVDIMM_FAMILY_INTEL,
+>> -			.nd_size_out =
+>> -				sizeof(struct nd_intel_get_security_state),
+>> -			.nd_fw_size =
+>> -				sizeof(struct nd_intel_get_security_state),
+>> -		},
+>> -	};
+>> +	DEFINE_RAW_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
+>> +			sizeof(struct nd_intel_get_security_state));
+>> +	struct nd_intel_get_security_state *cmd =
+>> +			(struct nd_intel_get_security_state *)nd_cmd->nd_payload;
+>>   	int rc;
+>>   
+>> +	nd_cmd->nd_command = NVDIMM_INTEL_GET_SECURITY_STATE;
+>> +	nd_cmd->nd_family = NVDIMM_FAMILY_INTEL;
+>> +	nd_cmd->nd_size_out = sizeof(struct nd_intel_get_security_state);
+>> +	nd_cmd->nd_fw_size = sizeof(struct nd_intel_get_security_state);
 > 
+> Can this keep the C99 init-style with something like (untested):
 > 
+> _DEFINE_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
+>               sizeof(struct nd_intel_get_security_state), {
+> 		.pkg = {
+> 		        .nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
+> 		        .nd_family = NVDIMM_FAMILY_INTEL,
+> 		        .nd_size_out =
+> 		                sizeof(struct nd_intel_get_security_state),
+> 		        .nd_fw_size =
+> 		                sizeof(struct nd_intel_get_security_state),
+> 		},
+> 	});
+> 	
+> 
+> ?
+
+The code below works - however, notice that in this case we should
+go through 'obj', which is an object defined in _DEFINE_FLEX().
+
+         _DEFINE_FLEX(struct nd_cmd_pkg, nd_cmd, nd_payload,
+                         sizeof(struct nd_intel_get_security_state), = {
+                 .obj = {
+                         .nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
+                         .nd_family = NVDIMM_FAMILY_INTEL,
+                         .nd_size_out =
+                                 sizeof(struct nd_intel_get_security_state),
+                         .nd_fw_size =
+                                 sizeof(struct nd_intel_get_security_state),
+                 },
+         });
+
+Thanks
+-Gustavo
 
 
