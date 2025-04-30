@@ -1,199 +1,207 @@
-Return-Path: <linux-kernel+bounces-628055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6755AA589C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:20:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAACAA58A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29DB84C17B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58174C1DD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD174228CB0;
-	Wed, 30 Apr 2025 23:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F412228CB0;
+	Wed, 30 Apr 2025 23:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uxo/r8H5"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDra5OEZ"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B68921129C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19336225A29
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746055212; cv=none; b=RP9OHUYDGo8TWAa0DmCopTO0Y41p+PBn1xcR0atLa4bE0u+OBXDKyJLvEQ3hg1GKjREedhIxPDsYlMAlgGnmBUkiddYl2uhU85tcW0MMOZsNOArRfc95nvZshxD1QEBOroCBx982AfcEFSE6JX49e1P+CePIH0m/SF6RHtAw00c=
+	t=1746055421; cv=none; b=uAhspbXE/3+YlNbw2RqHQ9QaXXX/AmehDoEwuFJWFmPc2OpcTiENmefXMZsqKPTGb+yAaDa2iY+xIGDh7Yp9G41Tl5C2/H5TCQ9+g1vJ/OhhcCVeLIkS5zh7tBTYwrpbkw1BCISb2qH99wzKrK0y+R0gPMiXVi/w3gdQFv8i5JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746055212; c=relaxed/simple;
-	bh=hNxBmD9EBKRVZnV8TedbtwQMd5tVIldnAb762KJdHcY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FEAGKHS33U3L0/CZyikuIKTublAy+1tMgiWjIyMLmp5b00fAwVYNSUz4dybj6R+kM8dGyLTQw1EzKbPoehPFR/Xkypti9vRSrf4t7gsyWqcWiiAkiXCB7tvpQGZyMY1t7GX5JynwtbiJMqgSWlayWP3VcgkWMRrTfabcAloyIXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--danielmentz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uxo/r8H5; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--danielmentz.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3087a703066so360357a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 16:20:10 -0700 (PDT)
+	s=arc-20240116; t=1746055421; c=relaxed/simple;
+	bh=fW8tqN4Jv0Q+XFS4iJls5dMAoxcext+fi+pfBSiD7ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AmuH03Oy94w9yvgHay/rD1sHi53tfk6yfEE7YfK3l+cLO9ZHJbwoQN4M7SilHL+azXaIOpUZFhj0oSHiLlwB2N3MYndB8jsbTgYlzM62aV/bo3layzpdjmqnG38sdi0UTHeb/ZteZ4xgtZdtV0DCuhQobT8ADUv+lBwg0l7mRE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDra5OEZ; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4c4e1f16833so125352137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 16:23:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746055210; x=1746660010; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AfjgXcYxCrLXML8qIwR5TnpgzR0FuN4DocvnvlLCV0M=;
-        b=Uxo/r8H5MGFgYBObJzizlbNkZxl22fKST9qpGFKNXe54A06qpILTTNIMr4Zn/txqAZ
-         xfNGG64hQJPQswtz09aIbMjCivMT6gFSmXEW2jceCAB+CgpO7LWm11zqt69B3uFqMFtr
-         a+qZSXhQbJhMBXsvMAkmVswHVb0+sb4wNfOVwctOyPpG103JQ8k+nStykKu72SrAfaMk
-         d/SJar7dPMeXUcr6rxna1wM7EpCQ51pOlhNyC2oUu2eBD/nrF1PCSVhbqXbI08tKQFk6
-         w5RhIJ5BUKYMK+JIkAqOYQI526BeEjMW4TGMGaBbgdwBzNBwepNTsjOepjOQztCFJ8ui
-         wLMw==
+        d=gmail.com; s=20230601; t=1746055419; x=1746660219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0OmrzXzEkAyXUbOIVvM9SLB44UQDkpWd3Om5I77M2ZA=;
+        b=QDra5OEZANZQLM1N6V+KWocSyeLX3R32WUe4Nwx4cA6Y+Iara1b3ufEdpuQUUbCqXs
+         H16hOUjQwSlQUaVI/MLxwIW4vRoKU44W3wc5nKW4Y5BVMgxH7EHaSB4YsRnPfT3RtLed
+         nZesqDiaZiQ81PhS2pZLgxsD5TATXjR9q8ahFdRtQ0SP7O4tyq6HS9gbIJhlzsUMtBRu
+         rw5mev+UQMH8prPUXGz9l/nkuVy7lHnkdac0MNFtEmLV3Om9ARVqESZLA30/k7WAWyiU
+         2rtz7WKsXM5fovIgdHGEAKRX4SPbxw68fCfTcxS61s9gCj85XDpLeQWCnJqRBsS6Frdr
+         MQuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746055210; x=1746660010;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AfjgXcYxCrLXML8qIwR5TnpgzR0FuN4DocvnvlLCV0M=;
-        b=TEBm4edl/jXE+GdvPKm3Os3ZYqIGhCM4Whjkup1mk4spIbKOb0/OY7sgaS8ZFOYAZx
-         E8tn8R5HwaD8MkYkoiozt2lxMg1Hrcx3TemwvFgCy1sRfVJ3cmAxoyVQ2U+vVKMBs1wb
-         tsPK3isWzMDvN0jne00PgtsGWij+RQKsR5jbU2yBFypZBVmU17wU5yhU+xjbHWMKyYQt
-         uqLwDzaQBzaGbcBvLsmkn3EVDQz9kvraqLVvxHZYRANSlpCQkgmRumL3sSkJWVyJ0aI7
-         bNzBPQsCTJfiMaa1OXThMIB4Xiav299+YH0NLshNhccYpbn+uYZaPprp42WC1q70HERg
-         tuiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnCFkWdIco3zOtHRUeKUJUJ5biNxb6IES2XemDOpAga62Rs1KUf/Mlos7N5nf0V4zI8xyHxQHlv9MKL68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3VeVv+cf8jJqkzcgvvfuWVxjRdoOleI0umRVDLDAirI1JoNHm
-	BhzKs4JUnguSLSGuMeagtgEM4ttSZGH4OyRUGTKcpUZybTeNFxxWJSzw/oPFzXtnzMdH++fjchh
-	cSBWsmtf1sHxOYmEAXOKkbg==
-X-Google-Smtp-Source: AGHT+IFtGBHyQZStuEphw4tf6iEVV6/w6Q6UhS8lVXPJoGU4RpJttYr05TBGMeYbb8Z8cNX1/IWBNJSQJ/hLMnZECw==
-X-Received: from pjbqi13.prod.google.com ([2002:a17:90b:274d:b0:2fc:2b96:2d4b])
- (user=danielmentz job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1846:b0:2ff:58a4:9db3 with SMTP id 98e67ed59e1d1-30a3446ca02mr7229589a91.35.1746055209801;
- Wed, 30 Apr 2025 16:20:09 -0700 (PDT)
-Date: Wed, 30 Apr 2025 23:19:24 +0000
+        d=1e100.net; s=20230601; t=1746055419; x=1746660219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0OmrzXzEkAyXUbOIVvM9SLB44UQDkpWd3Om5I77M2ZA=;
+        b=WsLXQB2yCt9TWeiDj2NTtIqzlcYvSMuypNcVX4uf3Tc0Dv0a/5wOyuy2IVDAhnY/31
+         KqKfmCD2G8LYGBJRcsNhRVh8D4kLOg8Zhr/qCTAxsN1O2GtI6Q5+bIZiYIg4BXiHVMs6
+         wAjJt8Hv/IQojcYMTTnwn0qAsgQtP68GTtWvndCsjD3ztkSiPssNtJ/QnRXN6on/lRwA
+         s98IX639URsI2DMfAuTGAlTut/9Eilf2ta0lAop+l+w6sYtq7W569OfrVHTww+iho5vL
+         H64Rdbitxn/TR/uOpUPWx2XoA68NYKWxDJaFbAGvQm8YgsBHWcXAf2ygfRShWbgeG2Bz
+         A7zg==
+X-Forwarded-Encrypted: i=1; AJvYcCXg4bMohK3r9rYPGfoy/0mfB4/ufXGVA32wN/TBwN+ExjqZitARpHgtUtwU3Mpxn3wVcu9St4+q0nwQmws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEv5bruwxx32VK9jcNMmjFxblB9c03K9baOteYvlmoTvuRWEKB
+	WnO4xSVtkYm+qEVNAh8OdnwbAaH1of4ycavsF7zIZCD2vzbMKVFPzjHCEbEnTn9jIZERDGeZD6D
+	ruQqvKl3g5NnZCrXimH4HidjXw2M=
+X-Gm-Gg: ASbGncuUT3c/zMFWy42JtZlmLvHV/R79V4KM9/juh1ysWInNacPsrDpujp0T/Tdz/W1
+	evpRd4Hx5fNL1L9q2QAc5aZYMugM6UKrM/39wLI6xy/toFb0mC43eSuRPuChpDLnKRvGuxE5rD+
+	eBS8ZCE1GeghFIE4n3X1JT0Q==
+X-Google-Smtp-Source: AGHT+IE7JauPCct1OezqTmytM8EWwdhVjXt1NEP5XW3RIBdyV1yN9KvK9Pz0JOeeAaZyy8Px65LDJR71czPsZaXoglk=
+X-Received: by 2002:a05:6102:5124:b0:4c5:5aba:94bb with SMTP id
+ ada2fe7eead31-4dae8f23dd0mr233021137.3.1746055418782; Wed, 30 Apr 2025
+ 16:23:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
-Message-ID: <20250430231924.1481493-1-danielmentz@google.com>
-Subject: [PATCH] iommu/io-pgtable-arm: Support contiguous bit in translation tables
-From: Daniel Mentz <danielmentz@google.com>
-To: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: Will Deacon <will@kernel.org>, Mostafa Saleh <smostafa@google.com>, 
-	Pranjal Shrivastava <praan@google.com>, Daniel Mentz <danielmentz@google.com>
+MIME-Version: 1.0
+References: <tencent_C263C0783702591C464F887E3D3C496E6B08@qq.com>
+ <CAGsJ_4wWK6B8GSc=cxPGnPU0Jt_o0YB55yk4+VNOm_hY_iditA@mail.gmail.com>
+ <d8228c02-b5c0-47cd-927f-9054d412c7ea@redhat.com> <CAGsJ_4zn158TQV7Nc+vK-kmu6S4kOiFSZyUO7aK9dhwhrEq2cw@mail.gmail.com>
+ <f34bf704-6eb1-4591-ad0e-93641a2f1ad4@redhat.com>
+In-Reply-To: <f34bf704-6eb1-4591-ad0e-93641a2f1ad4@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 1 May 2025 11:23:27 +1200
+X-Gm-Features: ATxdqUFcmXOHxnyLrPU_ykfxI146Uen-N5xkEBAR_CmnpLVzybV8jY0hpCY5RT4
+Message-ID: <CAGsJ_4y5QB7UTD3Mvwqib-c6DYkKCP_9V1s9eVoXLZGx+A5ObA@mail.gmail.com>
+Subject: Re: [PATCH] mm: remove useless code
+To: David Hildenbrand <david@redhat.com>
+Cc: Feng Lee <379943137@qq.com>, akpm@linux-foundation.org, ryan.roberts@arm.com, 
+	libang.li@antgroup.com, peterx@redhat.com, maobibo@loongson.cn, 
+	lance.yang@linux.dev, anshuman.khandual@arm.com, trivial@kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The contiguous bit in translation table entries can be used as a hint to
-SMMU that a group of adjacent translation table entries have consistent
-attributes and point to a contiguous and properly aligned output address
-range. This enables SMMU to predict the properties of the remaining
-translation table entries in the same group without accessing them. It
-also allows an SMMU implementation to make more efficient use of its TLB
-by using a single TLB entry to cover all translation table entries in
-the same group.
+On Tue, Apr 29, 2025 at 1:59=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 28.04.25 13:03, Barry Song wrote:
+> > On Mon, Apr 28, 2025 at 7:17=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >> On 27.04.25 10:22, Barry Song wrote:
+> >>> On Sun, Apr 27, 2025 at 2:16=E2=80=AFPM Feng Lee <379943137@qq.com> w=
+rote:
+> >>>>
+> >>>> Remove unused conditional macros.
+> >>>>
+> >>>> Signed-off-by: Feng Lee <379943137@qq.com>
+> >>>> ---
+> >>>>    include/linux/pgtable.h | 2 --
+> >>>>    1 file changed, 2 deletions(-)
+> >>>>
+> >>>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> >>>> index b50447ef1c92..47c5a54b7551 100644
+> >>>> --- a/include/linux/pgtable.h
+> >>>> +++ b/include/linux/pgtable.h
+> >>>> @@ -1164,9 +1164,7 @@ static inline void arch_swap_restore(swp_entry=
+_t entry, struct folio *folio)
+> >>>>    }
+> >>>>    #endif
+> >>>>
+> >>>> -#ifndef __HAVE_ARCH_PGD_OFFSET_GATE
+> >>>>    #define pgd_offset_gate(mm, addr)      pgd_offset(mm, addr)
+> >>>> -#endif
+> >>>
+> >>> Do you know who else had pgd_offset_gate() before except ia64?
+> >>>
+> >>> /* Look up a pgd entry in the gate area.  On IA-64, the gate-area
+> >>>      resides in the kernel-mapped segment, hence we use pgd_offset_k(=
+)
+> >>>      here.  */
+> >>> #define pgd_offset_gate(mm, addr) pgd_offset_k(addr)
+> >>>
+> >>> btw, do we still
+> >>> need pgd_offset_gate() given that nobody needs it now?
+> >>>
+> >>>      1   1168  include/linux/pgtable.h <<GLOBAL>>
+> >>>                #define pgd_offset_gate(mm, addr) pgd_offset(mm, addr)
+> >>>
+> >>>      2   1112  mm/gup.c <<get_gate_page>>
+> >>>                pgd =3D pgd_offset_gate(mm, address);
+> >>>
+> >>
+> >> Right, we should just remove pgd_offset_gate() completely in this patc=
+h
+> >> and simply make the single caller use pgd_offset().
+> >
+> > Yes, exactly. The original patch doesn=E2=80=99t seem to be appropriate=
+.
+> >
+> >>
+> >> I think we can even do:
+> >>
+> >> diff --git a/mm/gup.c b/mm/gup.c
+> >> index 84461d384ae2b..05dd87ccce155 100644
+> >> --- a/mm/gup.c
+> >> +++ b/mm/gup.c
+> >> @@ -1106,10 +1106,7 @@ static int get_gate_page(struct mm_struct *mm,
+> >> unsigned long address,
+> >>           /* user gate pages are read-only */
+> >>           if (gup_flags & FOLL_WRITE)
+> >>                   return -EFAULT;
+> >> -       if (address > TASK_SIZE)
+> >> -               pgd =3D pgd_offset_k(address);
+> >> -       else
+> >> -               pgd =3D pgd_offset_gate(mm, address);
+> >> +       pgd =3D pgd_offset(address);
+> >>           if (pgd_none(*pgd))
+> >>                   return -EFAULT;
+> >>           p4d =3D p4d_offset(pgd, address);
+> >>
+> >> Unless I am missing something important :)
+> >
+> > Technically, it appears to be correct. However, it seems that
+> > pgd_offset_k is primarily used to improve readability by
+> > distinguishing between kernel space and user space?
+>
+> Yeah, but this is GUP ... ("user") ... looks like that check/handling
+> was in there ever since git happened.
+>
+> get_gate_vma() only exists on x86-64 and uml.
+>
+> I wonder if that could ever actually reside > TASK_SIZE such that we
+> would even need that.
 
-In the case of 4KB granule size, there are 16 translation table entries
-in one group.
+I assume that reside > TASK_SIZE can only be true on IA64?
 
-This change sets the contiguous bit for such groups of entries that are
-completely covered by a single call to map_pages. As it stands, the code
-wouldn't set the contiguous bit if a group of adjacent descriptors is
-completed by separate calls to map_pages.
+ /* Look up a pgd entry in the gate area.  On IA-64, the gate-area
+      resides in the kernel-mapped segment, hence we use pgd_offset_k()
+      here.  */
+#define pgd_offset_gate(mm, addr) pgd_offset_k(addr)
 
-Signed-off-by: Daniel Mentz <danielmentz@google.com>
----
- drivers/iommu/io-pgtable-arm.c | 53 +++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 4 deletions(-)
+Since IA64 is dead, is the code also dead? It seems we can safely move
+forward with the approach you're proposing.
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 7632c80edea6..07b40e928bb3 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -76,6 +76,7 @@
- 
- #define ARM_LPAE_PTE_NSTABLE		(((arm_lpae_iopte)1) << 63)
- #define ARM_LPAE_PTE_XN			(((arm_lpae_iopte)3) << 53)
-+#define ARM_LPAE_PTE_CONT		(((arm_lpae_iopte)1) << 52)
- #define ARM_LPAE_PTE_DBM		(((arm_lpae_iopte)1) << 51)
- #define ARM_LPAE_PTE_AF			(((arm_lpae_iopte)1) << 10)
- #define ARM_LPAE_PTE_SH_NS		(((arm_lpae_iopte)0) << 8)
-@@ -326,6 +327,27 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
- 				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
- }
- 
-+static int arm_lpae_cont_ptes(int lvl, struct arm_lpae_io_pgtable *data)
-+{
-+	switch (ARM_LPAE_GRANULE(data)) {
-+	case SZ_4K:
-+		if (lvl >= 1)
-+			return 16;
-+		break;
-+	case SZ_16K:
-+		if (lvl == 2)
-+			return 32;
-+		else if (lvl == 3)
-+			return 128;
-+		break;
-+	case SZ_64K:
-+		if (lvl >= 2)
-+			return 32;
-+		break;
-+	}
-+	return 1;
-+}
-+
- static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
- {
- 	for (int i = 0; i < num_entries; i++)
-@@ -340,8 +362,30 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 			       unsigned long iova, size_t size, size_t pgcount,
- 			       int lvl, arm_lpae_iopte *ptep);
- 
-+static bool arm_lpae_use_contpte(struct arm_lpae_io_pgtable *data,
-+				 unsigned long iova, phys_addr_t paddr,
-+				 int lvl, int num_entries, int i)
-+{
-+	size_t sz = ARM_LPAE_BLOCK_SIZE(lvl, data);
-+	int cont_ptes = arm_lpae_cont_ptes(lvl, data);
-+	int contmask = cont_ptes - 1;
-+	int contpte_addr_mask = sz * cont_ptes - 1;
-+	int map_idx_start, tbl_idx;
-+
-+	if ((paddr & contpte_addr_mask) != (iova & contpte_addr_mask))
-+		return false;
-+
-+	map_idx_start = ARM_LPAE_LVL_IDX(iova, lvl, data);
-+	tbl_idx = map_idx_start + i;
-+	if (((tbl_idx & contmask) <= i) &&
-+	    (tbl_idx < ((map_idx_start + num_entries) & ~contmask)))
-+		return true;
-+
-+	return false;
-+}
-+
- static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
--				phys_addr_t paddr, arm_lpae_iopte prot,
-+				unsigned long iova, phys_addr_t paddr, arm_lpae_iopte prot,
- 				int lvl, int num_entries, arm_lpae_iopte *ptep)
- {
- 	arm_lpae_iopte pte = prot;
-@@ -355,8 +399,9 @@ static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
- 		pte |= ARM_LPAE_PTE_TYPE_BLOCK;
- 
- 	for (i = 0; i < num_entries; i++)
--		ptep[i] = pte | paddr_to_iopte(paddr + i * sz, data);
--
-+		ptep[i] = pte | paddr_to_iopte(paddr + i * sz, data) |
-+			  (arm_lpae_use_contpte(data, iova, paddr, lvl, num_entries, i) ?
-+			  ARM_LPAE_PTE_CONT : 0);
- 	if (!cfg->coherent_walk)
- 		__arm_lpae_sync_pte(ptep, num_entries, cfg);
- }
-@@ -389,7 +434,7 @@ static int arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
- 			}
- 		}
- 
--	__arm_lpae_init_pte(data, paddr, prot, lvl, num_entries, ptep);
-+	__arm_lpae_init_pte(data, iova, paddr, prot, lvl, num_entries, ptep);
- 	return 0;
- }
- 
--- 
-2.49.0.967.g6a0df3ecc3-goog
+>
+> But this whole gate stuff is confusing ... IIRC it's a single VMA shared
+> by all processes, and not actually linked in the maple tree etc.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
+Thanks
+Barry
 
