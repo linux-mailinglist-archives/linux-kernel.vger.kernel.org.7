@@ -1,168 +1,156 @@
-Return-Path: <linux-kernel+bounces-628062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964C3AA58B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:30:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22204AA58B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C9616FCAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:30:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D00767B58D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8D7229B37;
-	Wed, 30 Apr 2025 23:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A4F2288FB;
+	Wed, 30 Apr 2025 23:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBSRN+Cd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gd6XIC1e"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D18224B08;
-	Wed, 30 Apr 2025 23:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1747B214232
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746055797; cv=none; b=PlLVZ2jaPZ6YuEX2FZe7Bz4zjy5Sl4EhUygzDq6rNw7RMTZlDl7lvloX1ZE/M0hhUyY/0+Tsk+FzF6ucr1IA7oym8Kbe5cNDy092EDOrQtn9kDYEgdTE06tVemasYtl8Dy2/uolKoiy9IfrJIEittOtxrxvpxUAKXUIvl9O7qoY=
+	t=1746055879; cv=none; b=O0AHiSvO2XUfMTTiIWbtgDzsQ8cmkl5KRmr8VIGSDu47AdIxVs8zRfhe11rsr4wKMwH+Z+dDQ4BJCY2B3bwUpB9JVd/M6YeH2urzx3pehyzkcKJxJXlZAtRX/STNR4NYej6uUbOdT2i6awJwt9nIOuTwFDsFDk9/ibY9xukWmS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746055797; c=relaxed/simple;
-	bh=YfszCblJFyfY03DL8XXrgkd5xX++4FamuTO+wfAZTdU=;
+	s=arc-20240116; t=1746055879; c=relaxed/simple;
+	bh=yD3qheyPyJxLQOVC87vkI+yAdZWmU4D1zU4Z3sUtGsg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mJ64cQSF/XfTU3qRxjNm310VnGkx4egMy6ZWjHD9YD7N7JR8hBZj9uh37spNfdn6/XVpibcjtuimMsVUo92SOFsSkoJKUvhd5svo+0vX/64eJRgoeUZ/sodKBjEX9iENinBYDAbxiIkX+hh3pMpd+ZDE3P2RD47vgMHk7xF0ufU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBSRN+Cd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C991C4CEE7;
-	Wed, 30 Apr 2025 23:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746055796;
-	bh=YfszCblJFyfY03DL8XXrgkd5xX++4FamuTO+wfAZTdU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CBSRN+CdA8OVjt7ep85XM1fA0jHkm9myj0UJO2EsDz2aMo5y7137sioKwV2jOLXTx
-	 /IMuiO5y32c0jDW4fAJDai2Gp//p6y/DtvyrLKpViDyhNDVbSxo9cpA3nZP/cjk09N
-	 5NIDQYq/4GsbZ7kiBPKj7ugOiCzMr+oQjEuwhSSlZIkNs4Yks9XCrlD7PpWUj8UDVp
-	 o1/08fj4aDkyRj9uExjwOLnT2YRKM9VRbFXLmf7chlLO3ek/bUmK7DEoKPRM8OJJJf
-	 WkREvLWaYIpKahcKbYN6DGm8ZXG3s3myvIcVk8YL+/+/rxh+9VEHUk6p4mz/VegeRa
-	 bZswfG7sOR+Jg==
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso382804276.2;
-        Wed, 30 Apr 2025 16:29:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2gY4SgaCAJDt8g2+S42eNk27BrN8KDyC07E0tNfWvgBanpXjcQOSQ8TwZrRlgHO2MKam9wJSNk771WwM=@vger.kernel.org, AJvYcCVMJZ2GuoubnDJntPLC+w57WuliHftgyeeAnZVUhoipq6V5CPQvb2WqVfJAm3ZE7ZrcYh4pd8CS31ETnY0r1Ot+APHKFgI6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYpTOCZmoOTyIOz9YmisBPfK1kjk1J3aEaYv1iLzSm/ZBs8l0q
-	t8/WqCeZpbi+vFUNiPV+8duQ+OxiD6fIaIYSXtV2tqn0sK6z9dBzoqgUsBuGGPRO4Itf0zTsFon
-	Ih7Ta9PJ42VtiZ85NW9Vax+dFclc=
-X-Google-Smtp-Source: AGHT+IFEJ2qTrUej3AfwsK8YWr+xOQqZR4yKyK5COAxs42YmE7rXz5xDr8LVkJjJwzXz9HBJ1hhvGKLB9aczj7bsZkk=
-X-Received: by 2002:a05:6902:2b11:b0:e73:1ff1:ca38 with SMTP id
- 3f1490d57ef6-e75318276ecmr316609276.20.1746055795779; Wed, 30 Apr 2025
- 16:29:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=FIPH08UJS/GwYlHjijaHIoCuAsSqx1sgdSN+JosLhuIisAgcqdx2v8ICu7jKeIO2BckAhC/C81sTk0D1fnDru6IUCUXm2cIknN+HGYFeWj8AD3fHM5j1iFCLyzJeGuH/pXq5QLhCbqo8j73HGk3wopRQKng5fEj+xFMabAs0rgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gd6XIC1e; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736aaeed234so448820b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 16:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1746055876; x=1746660676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7kkJOaWRkAsIP/ls9ASqGbXAxOgOs1WU+P/bZPko4NY=;
+        b=Gd6XIC1ehog3xZBMoRH22G/Fd0fFNtVrX7xdut0cdkoEkDA6yNz2omuxrjbBDTqhtw
+         albZrgP+A5nZImakrO6ZuMLVZAnzOIyoE7KX8eG+7UubBXQSb9lTlF+i4QxERaqSSnuZ
+         oxDWYgXzRDvh3eenr/eEpdmL0xHPJ/W3ZYoo4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746055876; x=1746660676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7kkJOaWRkAsIP/ls9ASqGbXAxOgOs1WU+P/bZPko4NY=;
+        b=tBepoTC6ba0pjzaVQnnETpPfN2XfpeSsIuzGpyjxbaCmy1qz6E2B+uNyDm22ZRj9pf
+         OyoiFpjQuvJzZ+e1NSGwsduRVVocg4AsvCiJ/yGuQRuxpd4ivCBDDctmLAykWKKidNlt
+         aT9ryVI0/p4b2UD9w1sdWQ3gi9BN3bkAG3MRK6r5fWcj103UJRaFWYx8jTVKsq967uE6
+         JgAToVudOoztPDbmi+PberCX/t6bw8LB5dIDFU7Ud/FdF4tmqhji98lMcKkmKj2enaAd
+         G6+zdvXYjflKyAJZhtMrrtbIYOZFa+qWK0HOcgc9Sep/gVy2g40PEgZblNyE2wFcS2GT
+         8Lug==
+X-Gm-Message-State: AOJu0YxqrUUvL3OozspNSpwxgo7LTrtY186Lf762ZoCVqql8INC6GBY3
+	IIQ6CNps8THweDhpZ/+sABYevyqaUcUR89wXA3RTDyX5PZIIwFjpcZx/zM1hKHcx23/x+ydmARQ
+	=
+X-Gm-Gg: ASbGncsHxWSZiULR4jxBl0WvIwSwxrpahy1hJ0SpbSF181fMIKne2n7QY05GZH/jFHo
+	YYVLdsPY7t+8t3+vPMnSyFxvEy7b9QeJEV5fiGesSaP48D9GJx/mBgh0TkEB+jguA0+/5JwlVgs
+	aQqmqy/9j5Lx9AI6f0110Is4AgonzK3B0wU4FGyVV4VQD2CruV16bJHOND1gSdNSOhKr4GkU6Yt
+	M8z72ZTuQcKzUc4I5Nwiigx+z5mF1vf8RwR69qTQ8jXQZ+lxJzexsx1rqrtI6ifrDE4cKKqjBc+
+	bGUqCplyRukYWb5Onip+ronVRbx/VmmgkwJ/R7D6T4T8M4uxbv22lNpR0kv93zF1ncZt8wAOS40
+	I/FxT12tn
+X-Google-Smtp-Source: AGHT+IGn/1f5fVo9UAqigFTuvhU2ZWjHNOeNzjX3e9wrqMBloTE9loZYKlPBMdJ7be7YIqOCEx6JuQ==
+X-Received: by 2002:a05:6a20:c6cb:b0:1ee:8435:6b69 with SMTP id adf61e73a8af0-20bd6656eebmr521239637.1.1746055876380;
+        Wed, 30 Apr 2025 16:31:16 -0700 (PDT)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com. [209.85.214.181])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039a5ffecsm2368080b3a.143.2025.04.30.16.31.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Apr 2025 16:31:15 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22438c356c8so3884835ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 16:31:15 -0700 (PDT)
+X-Received: by 2002:a17:90b:562d:b0:301:98fc:9b2f with SMTP id
+ 98e67ed59e1d1-30a41cfc2e0mr915708a91.1.1746055874808; Wed, 30 Apr 2025
+ 16:31:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com> <1745961770-7188-2-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1745961770-7188-2-git-send-email-jasjivsingh@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Wed, 30 Apr 2025 16:29:44 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkG03zaOgC57-y4mNBXc+Nt0eZtKvyuhbs53SEUGwYUb5g@mail.gmail.com>
-X-Gm-Features: ATxdqUGvxqon-yThcz6VNe8SeUVTzobNsltqinBw3cTCikAeKb3yBcLsIcP487M
-Message-ID: <CAKtyLkG03zaOgC57-y4mNBXc+Nt0eZtKvyuhbs53SEUGwYUb5g@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/1] ipe: add script enforcement with BPRM check
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Cc: wufan@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	mic@digikod.net, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
+ <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
+ <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
+ <CAD=FV=Wc9TnDg6vDb8r5A8dT9TvOzU2kNSKi_6TzTtb0ka=8jA@mail.gmail.com> <nchsanp7nc7nqy3kqlu7c5iwvfj6vmrkqbxyjxmoc5eq3dthjk@fusw4pm52auq>
+In-Reply-To: <nchsanp7nc7nqy3kqlu7c5iwvfj6vmrkqbxyjxmoc5eq3dthjk@fusw4pm52auq>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 30 Apr 2025 16:31:02 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U4PdTgRsxJ3HVRRQEZAPHinKxhUE9FpKDOnv=nDQo3KQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFKrr33v60MdJ7VLJEtzDzKpshe0mGaGV2WsW8O5fvBduy-dvNn_PfNeFQ
+Message-ID: <CAD=FV=U4PdTgRsxJ3HVRRQEZAPHinKxhUE9FpKDOnv=nDQo3KQ@mail.gmail.com>
+Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
+To: Nick Bowler <nbowler@draconx.ca>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	regressions@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 2:23=E2=80=AFPM Jasjiv Singh
-<jasjivsingh@linux.microsoft.com> wrote:
->
-> From: jasjivsingh_microsoft <jasjivsingh@linux.microsoft.com>
->
-> Like direct file execution (e.g. ./script.sh), indirect file execution
-> (e.g. sh script.sh) needs to be enforce by IPE based on the rules.
-> Added a new security_bprm_creds_for_exec() hook to verify the indirect
-> file's integrity.
->
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-> ---
->  security/ipe/hooks.c | 23 +++++++++++++++++++++++
->  security/ipe/hooks.h |  2 ++
->  security/ipe/ipe.c   |  1 +
->  3 files changed, 26 insertions(+)
->
-> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-> index d0323b81cd8f..12713a0495cf 100644
-> --- a/security/ipe/hooks.c
-> +++ b/security/ipe/hooks.c
-> @@ -35,6 +35,29 @@ int ipe_bprm_check_security(struct linux_binprm *bprm)
->         return ipe_evaluate_event(&ctx);
->  }
->
-> +/**
-> + * ipe_bprm_creds_for_exec() - ipe security hook function for bprm creds=
- check.
-> + * @bprm: Supplies a pointer to a linux_binprm structure to source the f=
-ile
-> + *       being evaluated.
-> + *
-> + * This LSM hook is called when a script is checked for execution throug=
-h the
-> + * execveat syscall with the AT_EXECVE_CHECK flag.
+Hi,
 
-I remember the script is only one case, user space can add this flag
-for other cases.
+On Wed, Apr 30, 2025 at 10:52=E2=80=AFAM Nick Bowler <nbowler@draconx.ca> w=
+rote:
+>
+> > > To clarify, there is no boot failure.  There is just no video output
+> > > after rebooting.  I can then boot Linux again by any method that work=
+s
+> > > without being able to see the screen, and then everything is fine onc=
+e
+> > > I do that.
+> >
+> > Super weird. So every other boot works?
+>
+> On a new/broken kernel, every time I run "reboot" the video turns off
+> when Linux does whatever it does to make the system restart.
+>
+> The video comes on again if I manage to boot it up again.
+>
+> The problem is that I have to do that without using the screen.  So I
+> can boot Linux via the serial port, or via the BMC web interface, or
+> by just typing on the keyboard without seeing what is happening.
 
-> + *
-> + * Return:
-> + * * %0                - Success
-> + * * %-EACCES  - Did not pass IPE policy
-> + */
-> +int ipe_bprm_creds_for_exec(struct linux_binprm *bprm)
-> +{
-> +       struct ipe_eval_ctx ctx =3D IPE_EVAL_CTX_INIT;
-> +
-> +       if (!bprm->is_check)
-> +               return 0;
-> +
-> +       ipe_build_eval_ctx(&ctx, bprm->file, IPE_OP_EXEC, IPE_HOOK_BPRM_C=
-HECK);
+Ohhhhhh! I was assuming that your problem looked like this:
 
-A new enum needs to be added to audit this new hook in the audit
-event. Please create something like IPE_HOOK_BPRM_CREDS_FOR_EXEC.
+1. Boot up Linux, video works.
 
--Fan
+2. Type "reboot" and the system boots back to Linux w/ no video.
 
-> +       return ipe_evaluate_event(&ctx);
-> +}
-> +
->  /**
->   * ipe_mmap_file() - ipe security hook function for mmap check.
->   * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
-> diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-> index 38d4a387d039..1c16a25d806e 100644
-> --- a/security/ipe/hooks.h
-> +++ b/security/ipe/hooks.h
-> @@ -24,6 +24,8 @@ enum ipe_hook_type {
->
->  int ipe_bprm_check_security(struct linux_binprm *bprm);
->
-> +int ipe_bprm_creds_for_exec(struct linux_binprm *bprm);
-> +
->  int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long p=
-rot,
->                   unsigned long flags);
->
-> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-> index 4317134cb0da..845e3fd7a345 100644
-> --- a/security/ipe/ipe.c
-> +++ b/security/ipe/ipe.c
-> @@ -47,6 +47,7 @@ struct ipe_inode *ipe_inode(const struct inode *inode)
->
->  static struct security_hook_list ipe_hooks[] __ro_after_init =3D {
->         LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
-> +       LSM_HOOK_INIT(bprm_creds_for_exec, ipe_bprm_creds_for_exec),
->         LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
->         LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
->         LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
-> --
-> 2.34.1
->
+3. Log into Linux via UART or ssh and type "reboot". System boots back
+to Linux and video works.
+
+...and then if you repeat steps #2 and #3 it keeps alternating with
+Linux having video and not having video.
+
+It sounds like instead what you're saying is that you're typing
+"reboot" and then booting into some other operating system / BIOS and
+the video doesn't work in that other (non-Linux) environment. Is that
+right?
+
+If I (finally) got it right, then I'm not really sure what to suggest.
+It would sure seem like a bug in the other OS/BIOS. We could possibly
+land the revert you have. I'd imagine it's papering over the bug, but
+it's no real skin off my teeth. As a test, I'd imagine that if you
+turned the screen off via commandline (I never really do this, but a
+search turns up [1]) and then reboot with the screen off then I'd
+imagine you run into the same trouble with or without the patch. Is
+that true?
+
+FWIW: The original incentive for adding all the shutdown calls (aside
+from the fact that it's documented that they should be there) was to
+make sure embedded panels shutdown properly. It looks as if no
+embedded panels will really be used with this driver anyway.
+
+[1] https://www.baeldung.com/linux/cli-monitor-turn-on-off
 
