@@ -1,296 +1,126 @@
-Return-Path: <linux-kernel+bounces-626994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B78AA49FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:31:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09D3AA4987
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37541C0391A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:30:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ED4F7A7424
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F05B2609D4;
-	Wed, 30 Apr 2025 11:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B019248F5D;
+	Wed, 30 Apr 2025 11:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W1jXDB8d"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMGE7Vpj"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE69248F77;
-	Wed, 30 Apr 2025 11:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CAD210FB;
+	Wed, 30 Apr 2025 11:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746012411; cv=none; b=iEwnlI/GcDKQ7pY/c5O28epAidwMQXrRgiWamcR1hLwL20BAn9OBeMDxZv0uwmY8A2WIdusLMCOWD47DpIGS/eTsb3XSkvnR2uZz6esuD41LHik4mi7hJbDG7iexA1j/Px7QQIocf94Z6zlhH+uXWUdXc0adC/+zn5d4UAAuc4s=
+	t=1746011361; cv=none; b=JSNNS4J9eanSo614kGF5igd5YNhSFL78Pf6oVeRaUkcXW5AcnnYLfgTT4hKh6B/9qfaNd6AhxvGQdwkt1eLrnTBgWH06J3+YSn5eXlsJWrWLZFT7CpoSRGS+UAWY+7Z1NYuetOiG+VGTVTXdWJcrvUIVk5SvBES+vOVLWaeaOJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746012411; c=relaxed/simple;
-	bh=9+/BuRDGAA6TLDb0yk7rHBW8mHDlaavPQl2vlVEAVkI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=khYqu/PxefYnawpXdg4WTkA971cWWv9IcRLPXQ0/o6QzTPy/LfgO6RnDOkNVwWUnIOtWO3TuQkj1UzTfJ66Te5TbB9xTOjfjC6ugl+xIxDu2QahRzBKdFNgoyU1ydVxwjFnX530H6+Q/QPIKebrO7ribaNEw2ggnfwvvZ3f/bas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W1jXDB8d; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=k9Ri4ZyqEibe0HpDT575gbrV5ZF8Kp/wefhRDjxVdRo=; b=W1jXDB8dLl80ZTVasLrOzMMEzh
-	nvwN1guUG/MrY2bLLuthDILrx8Ibgv6CJWPLpz5RouJhh1LnVsA7FH3OzBrgjDqTRwUj2A5NR+dfH
-	A9gBoUxEFgokwWwbM3xdPmqE+z+MmF6/Kv/YCpNb7bFDbmbrRHrabmPPZZcEPOVPN5CxVhoCymmzG
-	YeTmrD+7eYkUFrcEnXXOgSnHyTuoP2Mu/c7Cgl1K+uB0aBhA67topbnJgXxusnUvWIhICoNrA09QW
-	wTNQxOmcrHWCvC1vEZgE7Yp5KlsVeBmCsfEcWSXh8+mTopS1HAcHUojp5AESrS5oivzW6qA6SnOTZ
-	em/Kue3A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uA5aH-0000000Dm7z-0HsX;
-	Wed, 30 Apr 2025 11:26:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 024933085D7; Wed, 30 Apr 2025 13:26:36 +0200 (CEST)
-Message-ID: <20250430112350.443414861@infradead.org>
-User-Agent: quilt/0.66
-Date: Wed, 30 Apr 2025 13:07:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org
-Cc: kys@microsoft.com,
- haiyangz@microsoft.com,
- wei.liu@kernel.org,
- decui@microsoft.com,
- tglx@linutronix.de,
- mingo@redhat.com,
- bp@alien8.de,
- dave.hansen@linux.intel.com,
- hpa@zytor.com,
- seanjc@google.com,
- pbonzini@redhat.com,
- ardb@kernel.org,
- kees@kernel.org,
- Arnd Bergmann <arnd@arndb.de>,
- gregkh@linuxfoundation.org,
- jpoimboe@kernel.org,
- peterz@infradead.org,
- linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org,
- linux-efi@vger.kernel.org,
- samitolvanen@google.com,
- ojeda@kernel.org
-Subject: [PATCH v2 13/13] objtool: Validate kCFI calls
-References: <20250430110734.392235199@infradead.org>
+	s=arc-20240116; t=1746011361; c=relaxed/simple;
+	bh=YSaFNmzNjtEF5p0dsK8tdZykWTu+wWo88X4YUeJAgw0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q5AoBaDK4Vqw1MQliwfm9cSjeivN6123xg9tS4oQUibHRnqS4emDlWb5lW5nv1lr7FKIFg0ss1WuAF4OZA7P/E/LzjwehQ+81xqQZc/7TLgeQ7q3UmE6htr0fZsBtUGYBYEWjOc/q4h9ky6TrBIaF6B+39j+uQo01VicPJ0nrlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMGE7Vpj; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c0dfba946so5329331f8f.3;
+        Wed, 30 Apr 2025 04:09:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746011358; x=1746616158; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SEitgjtahAtNU2wvVTIjLweOLMfaME/emj9moqRDOvQ=;
+        b=dMGE7VpjvmJEWtLYdo09VP2sKvcNewMn7CevCNMUOIiAXTZF1Vv3K6hNTvJg8SSX5U
+         COsjOBb6ggMpycd99eP4RqLQTWDw1QyhPmLyexZODzhXguAvDk9fjwfsEaIBd/Eam57T
+         tfc4UWzXgV4AHiR4Nm8bAO3Uz9CHLsNa/79WEx76uNWzr9k8gD7/YzY3VdJJbC1tGQrf
+         a80mHar8RSa7TowfLuqi0dO5S21p/9Bb1f0pwEdQdifMP5/GkgjOPp55CGT0MbqUio/r
+         vX4I7+vZR2UFv6edk/Za00ryEWM7q8wnJ1G5EoVrcJu0CRtj94TUkEweZwE7nTsr99Eb
+         PYCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746011358; x=1746616158;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEitgjtahAtNU2wvVTIjLweOLMfaME/emj9moqRDOvQ=;
+        b=WZIfTq6vBF2VhRIHpDrrmcHA2v24+jsF6Y2TzwX42PSTm/cjI/LMecpvUXK+CeP7ix
+         r4zQJYpE4lQK34Xrp8Ys/Bai4/nge1mMrGe0EUGJZWcmmisqD56KBo2CVh80AOvpKfc3
+         pT5ZsjMefENQ1LTbEiJ/7GkFoLVgu/lGkzPu1sazrgvHXiMI+5o/8fU6dUDqyptgwCFu
+         Vnv5BX94c98tow/rx1bvfX9V+13SY7qZ977QnCOdT7WHIk1tjqqmggQaokpOFgZn4N2H
+         J0QaW+uExr6f4H2sqGaFXgVODGzjk12s6NqmMwpcmVqvQG1FXSosROo4Ngjgo7J+duq0
+         2rPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCpRmCNMbjM95sPlCSunmNZ1sED1DUeVo+g49d6ZSism6I8ctAaTmV2PxDN6ynhCOI7SczvKFdWI7kaIiw@vger.kernel.org, AJvYcCXtj8r3crfoC5m0bWgtssKac9T7Bjf5Bb9en0p/HadPn6VO2m7Uwmo0bGQOQ1LdixIPtPm8N+A/+fPdxA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1i130Z1t1MghPhpaN6wriR//hXKyQx9lvmQ7AelSNU985MPv0
+	NfnkHHliMKiq6d8jLi/Np/5xYwpv/ZCgWdGpeLIxqVr1C0A+V5rF
+X-Gm-Gg: ASbGncuL6Jz5uFMM8YNSQ2B7xok6WTnglTy46ub8paD65Lc/UWZI280V2vuS4bZrWJa
+	ws88in57pTMIGH1srBwzsmWlIwrVHeTrjFZ171nagE2bPt/vJRPKEO2vK2UYBIRnLHSJS870trV
+	+SGswHKFm7I/JKj5EuWNI/PotsWedXouRJD/H9GN6M/Bbk8RrBqIwDFbyc/kJdERTNna3Rc9K6B
+	RjtwgNDJhZ+HWoXmf1jqrwFQUMEa0ADk+lNG25W6KxL/L00+lpgK4WKtxlZGH89VGez3xvczaZm
+	sa4VGBo1N/7hkbNdgISbW8idIbmQ63Quy9pXXXGA/q4OBpaDRa+p3aMRcqSaPetZ6XxJsg==
+X-Google-Smtp-Source: AGHT+IGxu9Uh4q2RnnhbGf0tPulsnpozzeUe4ztSuFazWW+jQqWLTtORjDXUbuDaxoelee08v6dY9w==
+X-Received: by 2002:a05:6000:40c9:b0:39c:1257:c96c with SMTP id ffacd0b85a97d-3a08ff555b3mr1768979f8f.56.1746011358215;
+        Wed, 30 Apr 2025 04:09:18 -0700 (PDT)
+Received: from fedora (p54ad9e64.dip0.t-ipconnect.de. [84.173.158.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5c9cdsm16597307f8f.87.2025.04.30.04.09.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 04:09:17 -0700 (PDT)
+From: Johannes Thumshirn <morbidrsa@gmail.com>
+X-Google-Original-From: Johannes Thumshirn <johannes@fedora>
+Date: Wed, 30 Apr 2025 13:09:15 +0200
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: Daniel Vacek <neelx@suse.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: remove extent buffer's redundant `len` member
+ field
+Message-ID: <aBIE28WHbC2jPkpz@fedora>
+References: <20250429151800.649010-1-neelx@suse.com>
+ <CAL3q7H7WPE+26v1uCKa5C=BwcGpUN3OjnaPUkexPGD=mpJbkSA@mail.gmail.com>
+ <CAPjX3FevwHRzyHzgLjcZ8reHtJ3isw3eREYrMvNCPLMDR=NJ4g@mail.gmail.com>
+ <CAL3q7H56LC5ro+oshGaVVCV9Gvxfnz4dLaq6bwVW=t0P=tLUCg@mail.gmail.com>
+ <CAPjX3Fe3BZ8OB2ZVMn58pY5E9k9j=uNAmuqM4R1tO=sPvx7-pA@mail.gmail.com>
+ <CAL3q7H5Bzvew9kGXBRLJNtZm+0_eMOyrgUvC1ZK544DunAPEsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL3q7H5Bzvew9kGXBRLJNtZm+0_eMOyrgUvC1ZK544DunAPEsA@mail.gmail.com>
 
-Validate that all indirect calls adhere to kCFI rules. Notably doing
-nocfi indirect call to a cfi function is broken.
+On Wed, Apr 30, 2025 at 11:26:08AM +0100, Filipe Manana wrote:
+> On Wed, Apr 30, 2025 at 9:50 AM Daniel Vacek <neelx@suse.com> wrote:
+> >
+> > Nah, thanks again. I was not aware of that. Will keep it in mind.
+> >
+> > Still, it doesn't make sense to me to be honest. I mean specifically
+> > with this example. The header file is also private to btrfs, no public
+> > API. Personally I wouldn't differentiate if it's a source or a header
+> > file. The code can be freely moved around. And with the prefix the
+> > code would end up more bloated and less readable, IMO. But let's not
+> > start any flamewars here.
+> 
+> I'd disagree about less readability. Reading code that calls a
+> function with the btrfs prefix makes it clear it's a btrfs specific
+> function.
+> Looking at ext4 and xfs, functions declared or defined in their
+> headers have a "ext4_", "ext_" or "xfs_" prefix.
 
-Apparently some Rust 'core' code violates this and explodes when ran
-with FineIBT.
+To add my $.02 here, it is also a matter of namespacing. There's nothing more
+anoying than having two functions with the same name in different subsystems.
+IIRC we did have this with the in_range() function, that is available globally
+and there has been a btrfs specific as well.
 
-All the ANNOTATE_NOCFI_SYM sites are prime targets for attackers.
-
- - runtime EFI is especially henous because it also needs to disable
-   IBT. Basically calling unknown code without CFI protection at
-   runtime is a massice security issue.
-
- - Kexec image handover; if you can exploit this, you get to keep it :-)
-
- - KVM, for the interrupt injection calling IDT gates directly.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/kernel/machine_kexec_64.c  |    4 +++
- arch/x86/kvm/vmx/vmenter.S          |    5 ++++
- arch/x86/platform/efi/efi_stub_64.S |    4 +++
- drivers/misc/lkdtm/perms.c          |    5 ++++
- include/linux/objtool.h             |   10 ++++++++
- include/linux/objtool_types.h       |    1 
- tools/include/linux/objtool_types.h |    1 
- tools/objtool/check.c               |   41 ++++++++++++++++++++++++++++++++++++
- tools/objtool/include/objtool/elf.h |    1 
- 9 files changed, 72 insertions(+)
-
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -421,6 +421,10 @@ void __nocfi machine_kexec(struct kimage
- 
- 	__ftrace_enabled_restore(save_ftrace_enabled);
- }
-+/*
-+ * Handover to the next kernel, no CFI concern.
-+ */
-+ANNOTATE_NOCFI_SYM(machine_kexec);
- 
- /* arch-dependent functionality related to kexec file-based syscall */
- 
---- a/arch/x86/kvm/vmx/vmenter.S
-+++ b/arch/x86/kvm/vmx/vmenter.S
-@@ -363,5 +363,10 @@ SYM_FUNC_END(vmread_error_trampoline)
- .section .text, "ax"
- 
- SYM_FUNC_START(vmx_do_interrupt_irqoff)
-+	/*
-+	 * Calling an IDT gate directly; annotate away the CFI concern for now.
-+	 * Should be fixed if possible.
-+	 */
-+	ANNOTATE_NOCFI_SYM
- 	VMX_DO_EVENT_IRQOFF CALL_NOSPEC _ASM_ARG1
- SYM_FUNC_END(vmx_do_interrupt_irqoff)
---- a/arch/x86/platform/efi/efi_stub_64.S
-+++ b/arch/x86/platform/efi/efi_stub_64.S
-@@ -11,6 +11,10 @@
- #include <asm/nospec-branch.h>
- 
- SYM_FUNC_START(__efi_call)
-+	/*
-+	 * The EFI code doesn't have any CFI, annotate away the CFI violation.
-+	 */
-+	ANNOTATE_NOCFI_SYM
- 	pushq %rbp
- 	movq %rsp, %rbp
- 	and $~0xf, %rsp
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -9,6 +9,7 @@
- #include <linux/vmalloc.h>
- #include <linux/mman.h>
- #include <linux/uaccess.h>
-+#include <linux/objtool.h>
- #include <asm/cacheflush.h>
- #include <asm/sections.h>
- 
-@@ -86,6 +87,10 @@ static noinline __nocfi void execute_loc
- 	func();
- 	pr_err("FAIL: func returned\n");
- }
-+/*
-+ * Explicitly doing the wrong thing for testing.
-+ */
-+ANNOTATE_NOCFI_SYM(execute_location);
- 
- static void execute_user_location(void *dst)
- {
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -184,6 +184,15 @@
-  * WARN using UD2.
-  */
- #define ANNOTATE_REACHABLE(label)	__ASM_ANNOTATE(label, ANNOTYPE_REACHABLE)
-+/*
-+ * This should not be used; it annotates away CFI violations. There are a few
-+ * valid use cases like kexec handover to the next kernel image, and there is
-+ * no security concern there.
-+ *
-+ * There are also a few real issues annotated away, like EFI because we can't
-+ * control the EFI code.
-+ */
-+#define ANNOTATE_NOCFI_SYM(sym)		asm(__ASM_ANNOTATE(sym, ANNOTYPE_NOCFI))
- 
- #else
- #define ANNOTATE_NOENDBR		ANNOTATE type=ANNOTYPE_NOENDBR
-@@ -194,6 +203,7 @@
- #define ANNOTATE_INTRA_FUNCTION_CALL	ANNOTATE type=ANNOTYPE_INTRA_FUNCTION_CALL
- #define ANNOTATE_UNRET_BEGIN		ANNOTATE type=ANNOTYPE_UNRET_BEGIN
- #define ANNOTATE_REACHABLE		ANNOTATE type=ANNOTYPE_REACHABLE
-+#define ANNOTATE_NOCFI_SYM		ANNOTATE type=ANNOTYPE_NOCFI
- #endif
- 
- #if defined(CONFIG_NOINSTR_VALIDATION) && \
---- a/include/linux/objtool_types.h
-+++ b/include/linux/objtool_types.h
-@@ -65,5 +65,6 @@ struct unwind_hint {
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALL	7
- #define ANNOTYPE_REACHABLE		8
-+#define ANNOTYPE_NOCFI			9
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/include/linux/objtool_types.h
-+++ b/tools/include/linux/objtool_types.h
-@@ -65,5 +65,6 @@ struct unwind_hint {
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALL	7
- #define ANNOTYPE_REACHABLE		8
-+#define ANNOTYPE_NOCFI			9
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2388,6 +2388,8 @@ static int __annotate_ifc(struct objtool
- 
- static int __annotate_late(struct objtool_file *file, int type, struct instruction *insn)
- {
-+	struct symbol *sym;
-+
- 	switch (type) {
- 	case ANNOTYPE_NOENDBR:
- 		/* early */
-@@ -2429,6 +2431,15 @@ static int __annotate_late(struct objtoo
- 		insn->dead_end = false;
- 		break;
- 
-+	case ANNOTYPE_NOCFI:
-+		sym = insn->sym;
-+		if (!sym) {
-+			ERROR_INSN(insn, "dodgy NOCFI annotation");
-+			break;
-+		}
-+		insn->sym->nocfi = 1;
-+		break;
-+
- 	default:
- 		ERROR_INSN(insn, "Unknown annotation type: %d", type);
- 		return -1;
-@@ -3998,6 +4009,36 @@ static int validate_retpoline(struct obj
- 		warnings++;
- 	}
- 
-+	if (!opts.cfi)
-+		return warnings;
-+
-+	/*
-+	 * kCFI call sites look like:
-+	 *
-+	 *     movl $(-0x12345678), %r10d
-+	 *     addl -4(%r11), %r10d
-+	 *     jz 1f
-+	 *     ud2
-+	 *  1: cs call __x86_indirect_thunk_r11
-+	 *
-+	 * Verify all indirect calls are kCFI adorned by checking for the
-+	 * UD2. Notably, doing __nocfi calls to regular (cfi) functions is
-+	 * broken.
-+	 */
-+	list_for_each_entry(insn, &file->retpoline_call_list, call_node) {
-+		struct symbol *sym = insn->sym;
-+
-+		if (sym && sym->type == STT_FUNC && !sym->nocfi) {
-+			struct instruction *prev =
-+				prev_insn_same_sym(file, insn);
-+
-+			if (!prev || prev->type != INSN_BUG) {
-+				WARN_INSN(insn, "no-cfi indirect call!");
-+				warnings++;
-+			}
-+		}
-+	}
-+
- 	return warnings;
- }
- 
---- a/tools/objtool/include/objtool/elf.h
-+++ b/tools/objtool/include/objtool/elf.h
-@@ -70,6 +70,7 @@ struct symbol {
- 	u8 local_label       : 1;
- 	u8 frame_pointer     : 1;
- 	u8 ignore	     : 1;
-+	u8 nocfi             : 1;
- 	struct list_head pv_target;
- 	struct reloc *relocs;
- };
-
-
+Byte,
+	Johannes
 
