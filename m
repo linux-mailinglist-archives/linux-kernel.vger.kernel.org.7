@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-627139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD256AA4C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:57:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756B6AA4C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCCA1C20E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8C14C455F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D35825C71C;
-	Wed, 30 Apr 2025 12:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7315D25D1FC;
+	Wed, 30 Apr 2025 12:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pl0vRy2h"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pMX7HqAH"
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B014520E338;
-	Wed, 30 Apr 2025 12:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9976525A65B;
+	Wed, 30 Apr 2025 12:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746017530; cv=none; b=nN5fiLrWYFg1lmzjtuwSt0Bk1bNxLrHlLGvg1uaHRqySBm2csRicT4POYsOg9H8BM7UQGDMC3sPav9C+Cips13+KeOJ9TFpkYU8fV4O+vgZL7FC5YeElJuNIfMPVvRl3c+lyfTg0orIWAVkLyHDK/CuyMKXWhxSPb3iXmHdiOaw=
+	t=1746017531; cv=none; b=HryDafu5dBPVkZE9/2dYDqvs0wR23LNXHAnYhF73KAFAi4duN6jLZIY+xZwHXBD7lytjhIy1J8PIJ6hi0HL8jspxl08mAKe+scsIcMZkPxUD/17fOUMoiwhpGjAJ0GBS72Pzn2XjTX3P44lGoN7j5CJfaNFlC2rmQUAiRtGFMTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746017530; c=relaxed/simple;
-	bh=HEvTwRzxmeE2NAfpgz9SSxXMD/XmjgIztjzYO9Oa8xY=;
+	s=arc-20240116; t=1746017531; c=relaxed/simple;
+	bh=04Lgsevk075WoZNcBOi6TghRMwt8xkLiKvl4P7+VTdQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T7NmmKNZrh79FXCvF69C9sKe+31UFD96tflUVkqU15gr3ZE14hSf2lUNIPgPQ4XJ6b/ETSkOqC9s5UMY4mFP3MRbCbqrOhp9AJB/CvkbkX278Balo3COMjNheLpr0nfSs6pfzu/Gvj/zZ6uYvcb911/9LPmDk3hu+AyYNKdMKrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pl0vRy2h; arc=none smtp.client-ip=217.70.183.194
+	 MIME-Version; b=JSPC9o2KeVYdjT57urSBjX2rF1CESWl1WYZy2Njt0zqg6VCpor6pAd1Oum3P57AuGr0B6gOjJfzCb3zOhHivCnq36GHinxgzfeaDG3J0Rh3w38RcFoOeCVVqzNbrgJdWaBgxFS99/8h63x6+dNi47qvK2dq7Z7W6YuX9aoBr08I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pMX7HqAH; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 21148438A7;
-	Wed, 30 Apr 2025 12:52:06 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 18F8E438AF;
+	Wed, 30 Apr 2025 12:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1746017527;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PksiWeDnJhw5poQ866xXWaCAoSzsYk7jz7dyOJiWxTo=;
-	b=Pl0vRy2hzfhpjCruTH94XFBt4AN8DIMQbsvBnNsyiEbSSXOklYtNCpt3kQ2/78i2VIeBDm
-	aOjaeq+0eu4DNyE2MFi+aKT6flJCBvvRkDTWcJY/fAVZhDMOQZEQqgDrRtFFY9e0PQi5gc
-	+xtn66L8FQc2lCRgumLQmUfGbTEguF2SDDoS7InnU62qXigs80Q4+3EHC5m5V4LqgaH6bC
-	LnkTy4B0YQ2ID0xODKaUF86WzcvTk/ityrdIMfcnccPCAj4YfZlLN77sTA1d3u8CgEnRfe
-	3UQBSpbkMy+8kmDZyUGvC//mLGgipdRqoGZqGq9w/uMptcDhvBe6m0+rixn94w==
+	bh=MeC3Blleg5ID5FjARVSQZ7w0x3ZCmA8mRG7YjX82K+A=;
+	b=pMX7HqAHsWNh3AUjTppEwZBlIfYDPUbcEzKyp40WRB5bJu6IVHACeqrzwIaV6xij6m4UUq
+	7GcxYuWK2SbRO0M/SKyJx+Upfsv1OAMXsqIXX9t/tn4My/tXBfoPijO82jd7EB8jNYhW0h
+	10aFPTyNvM8a+3ZWBY/2xPNAl0xFSy2HP3QnzPpQCU01ZgcEZ4quJaf6XC55NWYFBqBuN1
+	w8Y67nuDbXoZeOcTf07JRSL33cquJ2NZU/RUaZz8kZ5dTw76AtXsN1erD/ZARLMZGgOPjR
+	eCARbQOmiT3529bz7Y/aZdp1zJvdQgtr5tF3GS/BxAM6SWk9SC6GzWgqTRw6Sw==
 From: Herve Codina <herve.codina@bootlin.com>
 To: David Gibson <david@gibson.dropbear.id.au>,
 	Andrew Davis <afd@ti.com>,
@@ -61,9 +61,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 1/7] dt-bindings: Add support for export-symbols node
-Date: Wed, 30 Apr 2025 14:51:45 +0200
-Message-ID: <20250430125154.195498-2-herve.codina@bootlin.com>
+Subject: [PATCH v2 2/7] of: resolver: Introduce get_phandle_from_symbols_node()
+Date: Wed, 30 Apr 2025 14:51:46 +0200
+Message-ID: <20250430125154.195498-3-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250430125154.195498-1-herve.codina@bootlin.com>
 References: <20250430125154.195498-1-herve.codina@bootlin.com>
@@ -76,119 +76,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeijeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfefhhfefveduvedutdetfedvvedufeetieetfeejtefgteeigefgkeejgfegtddunecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdrlhhotggrlhguohhmrghinhdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepuggrvhhiugesghhisghsohhnrdgurhhophgsvggrrhdrihgurdgruhdprhgtphhtthhopegrfhgusehtihdrtghomhdprhgtphhtthhopegrhihushhhsegsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepr
- hhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhm
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeijeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheffiefgjeeuleeuueffleeufefglefhjefhheeigedukeetieeltddthfffkeffnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopegurghvihgusehgihgsshhonhdrughrohhpsggvrghrrdhiugdrrghupdhrtghpthhtoheprghfugesthhirdgtohhmpdhrtghpthhtoheprgihuhhshhessggvrghglhgvsghorghrugdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepk
+ hhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomh
 X-GND-Sasl: herve.codina@bootlin.com
 
-An export-symbols node allows to export symbols for symbols resolution
-performed when applying a device tree overlay.
-
-When a device tree overlay is applied on a node having an export-symbols
-node, symbols listed in the export-symbols node are used to resolve
-undefined symbols referenced from the overlay.
-
-This allows:
-  - Referencing symbols from an device tree overlay without the need to
-    know the full base board. Only the connector definition is needed.
-
-  - Using the exact same overlay on several connectors available on a given
-    board.
-
-For instance, the following description is supported with the
-export-symbols node:
- - Base device tree board A:
-    ...
-    foo_connector: connector1 {
-        export-symbols {
-           connector = <&foo_connector>;
-        };
-    };
-
-    bar_connector: connector2 {
-        export-symbols {
-           connector = <&bar_connector>;
-        };
-    };
-    ...
-
- - Base device tree board B:
-    ...
-    front_connector: addon-connector {
-        export-symbols {
-           connector = <&front_connector>;
-        };
-    };
-    ...
-
- - Overlay describing an addon board the can be connected on connectors:
-    ...
-    node {
-        ...
-        connector = <&connector>;
-        ...
-    };
-    ...
-
-Thanks to the export-symbols node, the overlay can be applied on
-connector1 or connector2 available on board A but also on
-addon-connector available on board B.
+In order to simplify the introduction of the export symbols node
+handling, group necessary operations done to get a phandle from the
+__symbols__ node in this dedicated get_phandle_from_symbols_node()
+function.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Tested-by: Ayush Singh <ayush@beagleboard.org>
 ---
- .../devicetree/bindings/export-symbols.yaml   | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/export-symbols.yaml
+ drivers/of/resolver.c | 39 ++++++++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/export-symbols.yaml b/Documentation/devicetree/bindings/export-symbols.yaml
-new file mode 100644
-index 000000000000..0e404eff8937
---- /dev/null
-+++ b/Documentation/devicetree/bindings/export-symbols.yaml
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/export-symbols.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
+index 86424e145919..2c7a3b479b15 100644
+--- a/drivers/of/resolver.c
++++ b/drivers/of/resolver.c
+@@ -212,6 +212,28 @@ static int adjust_local_phandle_references(const struct device_node *local_fixup
+ 	return 0;
+ }
+ 
++static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
++					 const char *symbol_name,
++					 phandle *phandle)
++{
++	struct device_node *refnode;
++	const char *refpath;
++	int err;
 +
-+title: Export symbols
++	err = of_property_read_string(tree_symbols, symbol_name, &refpath);
++	if (err)
++		return err;
 +
-+maintainers:
-+  - Herve Codina <herve.codina@bootlin.com>
++	refnode = of_find_node_by_path(refpath);
++	if (!refnode)
++		return -ENOENT;
 +
-+description: |
-+  An export-symbols node allows to export symbols for symbols resolution
-+  performed when applying a device tree overlay.
++	*phandle = refnode->phandle;
++	of_node_put(refnode);
 +
-+  When a device tree overlay is applied on a node having an export-symbols
-+  node, symbols listed in the export-symbols node are used to resolve undefined
-+  symbols referenced from the overlay.
++	return 0;
++}
 +
-+properties:
-+  $nodename:
-+    const: export-symbols
-+
-+patternProperties:
-+  "^[a-zA-Z_]?[a-zA-Z0-9_]*$":
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      A symbol exported in the form <symbol_name>=<phandle>.
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    /*
-+     * Allows 'connector' symbol used in a device-tree overlay to be resolved to
-+     * connector0 when the device-tree overlay is applied on connector0 node.
-+     */
-+    connector0: connector0 {
-+      export-symbols {
-+        connector = <&connector0>;
-+      };
-+    };
-+...
+ /**
+  * of_resolve_phandles - Relocate and resolve overlay against live tree
+  *
+@@ -247,11 +269,9 @@ static int adjust_local_phandle_references(const struct device_node *local_fixup
+  */
+ int of_resolve_phandles(struct device_node *overlay)
+ {
+-	struct device_node *child, *refnode;
+-	struct device_node *overlay_fixups;
++	struct device_node *child, *overlay_fixups;
+ 	struct device_node __free(device_node) *local_fixups = NULL;
+ 	struct property *prop;
+-	const char *refpath;
+ 	phandle phandle, phandle_delta;
+ 	int err;
+ 
+@@ -298,21 +318,14 @@ int of_resolve_phandles(struct device_node *overlay)
+ 		if (!of_prop_cmp(prop->name, "name"))
+ 			continue;
+ 
+-		err = of_property_read_string(tree_symbols,
+-				prop->name, &refpath);
++		err = get_phandle_from_symbols_node(tree_symbols, prop->name,
++						    &phandle);
+ 		if (err) {
+-			pr_err("node label '%s' not found in live devicetree symbols table\n",
++			pr_err("node label '%s' not found or invalid in live devicetree symbols table\n",
+ 			       prop->name);
+ 			return err;
+ 		}
+ 
+-		refnode = of_find_node_by_path(refpath);
+-		if (!refnode)
+-			return -ENOENT;
+-
+-		phandle = refnode->phandle;
+-		of_node_put(refnode);
+-
+ 		err = update_usages_of_a_phandle_reference(overlay, prop, phandle);
+ 		if (err)
+ 			break;
 -- 
 2.49.0
 
