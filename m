@@ -1,267 +1,218 @@
-Return-Path: <linux-kernel+bounces-626877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C4BAA4880
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:35:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802EEAA4873
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C57C1C06982
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:33:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A704E5F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DA225A2AF;
-	Wed, 30 Apr 2025 10:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE78248F59;
+	Wed, 30 Apr 2025 10:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qQiXNKyZ";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="XVk/8ubn"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIA4Qqn0"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05E8248F55;
-	Wed, 30 Apr 2025 10:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746009127; cv=fail; b=NmfRVoW3A0F7uef/8G1T+9uckJa78H/P/RxkMenkNf32noY1NK6hw3TwdgDpPcZ+T3wJsf9MM1gauz7jp4sG5FnEXbU9k1rOZZClPJn36gjRcJXi/flrocY90i8iHpeLpVI3tdjrZ/Zpp17okna+/mvp1fF9eTuf7yd5TaWd92w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746009127; c=relaxed/simple;
-	bh=OwLbA61jNc/lZ85jXmwm4n1rps4eE+LVv3/5eKSF2eE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hiuUC9YnaBy9x5b5Pf0BMEHx/i2vn2Wyz8XIaSx+AlMGcZOjM2jkIprpdhRASypIJcwi/GiwSdgf/ecI8oGhfaDpGO2PKk3FEqRUBGbraJOH2BIFC7eVVKp8o5NHmLyeQT2LeFbcNMwg6vTtbQJFPhys3sQEWNPBuyaeHjIR2sI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qQiXNKyZ; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=XVk/8ubn; arc=fail smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53U4rFFW019656;
-	Wed, 30 Apr 2025 05:31:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=ZQCxpfaMsOS+/xtf8TcyFfUPII2vUWhjVehbOFn3qPM=; b=
-	qQiXNKyZDTvKc7rZFGUzKHz7gN6KdxwaoLfISjnyXTLA+pYdm6XBF+YhcflaCSbL
-	dx5FGSAY2K2ZNEtvLBeRuRtZxvP70bvzYO0Ul37Cs2wy2oYdg0940FBdUtaifWhe
-	0uALmZ8fQrv8thMjV/TWpG+HwhzCxJRR1htdRzNoIhr+Ohs3u9N5ILhOgai2b4pB
-	Pnzil58m/GyOHbZP3xCPC0z4hw+l5yAbrRl3wusfwQaF5kiFmGvcdNZIQ50NqTq8
-	fEx93NAZOn7of19r/+vGMOW18k2IU+/KbrhK+x9VblwR3c5QchRrj7chWJzsIg3C
-	aFkwD1xAS/R3TJ6WxWg5pA==
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2045.outbound.protection.outlook.com [104.47.55.45])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 46b6te8s9s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 05:31:47 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aB9189kFjPApabcjToHSlu/k5v8iVQ60C9/X1t4HRy7Sk0p8/0iXY+5eVtO+AVpRV7z+KN06vEIQKGWqgDz9LzCCWYteATFjeCf3XPIl14lc5jyzh9+yXiYe5jo9yWVpD+e7o0aWqn5oYEm3GO0lxk8B39bIbXDONISRavBvE9t16VCywprKZCzktf4nfDZ3XflEK7qvQ5z2dsr4Ld2GqeEt+/IbRVW3WRHlZO5YXBFdxytsZfyx8bQr/rELO5oFgJ/8M6Dj2ze/hS02f8AcOZqGP1Ec8jLpi7lWwcMZZOdPkOtO42qakXjyuYnDnLQqPtoGf0K/+aSnXPD0A2IuXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZQCxpfaMsOS+/xtf8TcyFfUPII2vUWhjVehbOFn3qPM=;
- b=spawZH7ynrehAmYk7zlGesdXmQCDWZclvq6Gxtz5zDrt08HGZUpbx3cG1ApKsBE5XI8ITpsnGF9IOjpzG3WiVDg+VsCMUuLh/zg3t/4cx75x61sL+TMnXB3qf4TouNt+JkgRWf2LiEWhtlBIJ429riYB00DRDPpMNSvPcrU6zn3iw5Hqcf+k+2VwSS7Ac3irP3+As0AhpYFNP31+NajN0pfH6lV71HB77k59WdYI65cWVb1SFEebSgl72IPVxfCpjQunNjXEkRWkZlF+Le91E/TNhMCh4/QumGgsxeVrdDXCwoKYxHXH853KkVcUQsKy+jEAcy4FmhfESPcAzvtH2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=amd.com smtp.mailfrom=opensource.cirrus.com;
- dmarc=fail (p=reject sp=reject pct=100) action=oreject
- header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
- (0)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FF92367A6;
+	Wed, 30 Apr 2025 10:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746009120; cv=none; b=OUGu3d1DUQTRYk0vWeMtGNA7idkhAVrD21C1ouhmgZQ3533NvSW/EFvF6KGi4OSSPZJiSuym+fyZMdto0P6AYA4/CnVUckdfPWv+mx+97EObAkSwe3gtxS5/p5tIdVzdPya7ek1Lke9RocSah6DotUH+aud13vDrCGIcfgmsYF0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746009120; c=relaxed/simple;
+	bh=qxwCK+TKSFOdpqEKu97fiXM9g32n+PW28mqYHuBGsDs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Vh4omwHU6HnGN4/QOBqUTY74lny0709kF35N4SNfLbGa7xxE7Ur/0BAb2y4JzVo8AgfFgEswBV+5mPWfO4/RkQ5nKmFj2vKRs7xlU+yYXGdXZRvL+9/Sn2D9oXGVXAQcm/3DTJoUn0IN+GWfcjkzjb9Z6CQdtOV5SzH9y5YdJiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIA4Qqn0; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-736a7e126c7so6513946b3a.3;
+        Wed, 30 Apr 2025 03:31:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZQCxpfaMsOS+/xtf8TcyFfUPII2vUWhjVehbOFn3qPM=;
- b=XVk/8ubnNnnM7nQkzmdcv7gX5cjR8AwysKQWqunfsp1fdH5Gmvac9yW9a04DqZcd3zPM51OCGREePhilQZr3+IfE2VlgxC1A0jSQybiCXuoYwjL/+3BmEp20MRBvOUAByhoObpMyos/E99gfCv1NEL6Uono0LTQb4ewsv+OKQxw=
-Received: from SA9PR13CA0081.namprd13.prod.outlook.com (2603:10b6:806:23::26)
- by CO6PR19MB5386.namprd19.prod.outlook.com (2603:10b6:303:149::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Wed, 30 Apr
- 2025 10:31:44 +0000
-Received: from SA2PEPF000015C6.namprd03.prod.outlook.com
- (2603:10b6:806:23:cafe::63) by SA9PR13CA0081.outlook.office365.com
- (2603:10b6:806:23::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8678.13 via Frontend Transport; Wed,
- 30 Apr 2025 10:31:44 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- SA2PEPF000015C6.mail.protection.outlook.com (10.167.241.196) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.20
- via Frontend Transport; Wed, 30 Apr 2025 10:31:42 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 0F67740654D;
-	Wed, 30 Apr 2025 10:31:41 +0000 (UTC)
-Received: from lonswws02.ad.cirrus.com (lonswws02.ad.cirrus.com [198.90.188.42])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id C7B3E820244;
-	Wed, 30 Apr 2025 10:31:40 +0000 (UTC)
-From: Stefan Binding <sbinding@opensource.cirrus.com>
-To: Mark Brown <broonie@kernel.org>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        =?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        Stefan Binding <sbinding@opensource.cirrus.com>
-Subject: [PATCH v1 2/2] ASoC: intel/sdw_utils: Add volume limit to cs35l56 speakers
-Date: Wed, 30 Apr 2025 11:31:20 +0100
-Message-ID: <20250430103134.24579-3-sbinding@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250430103134.24579-1-sbinding@opensource.cirrus.com>
-References: <20250430103134.24579-1-sbinding@opensource.cirrus.com>
+        d=gmail.com; s=20230601; t=1746009117; x=1746613917; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SQrplKuznos3CKU7xsOCXM8cn9nAbF8UQ/A3fpprKKY=;
+        b=GIA4Qqn0cTDIlVYWf2ck+vdbOU9GTEFN/wOkd5c3FpwfhzScUJFR1zqWzFHTMVdoZf
+         tYLqfytw+n3s97bPkRALlZtVGvqpFM4jHysWr4rcdwhQL0OJxDYJ7Tte0+U6n/OGMjTQ
+         dgvoZO6JGXsNuA+pLiFLUc5d4VimWZaE7YQevBWGWCSnds1qWJ21NvtqBuoN6VtKrLBE
+         MM0M/sK17ahEoEt3gC67Av2NwoSWmcVaiS8AzhDeU2RqiqXGAN0H8ZkQqOKUL0K0ej23
+         9068J1g79rqJt69pZi9Pm/caabXEPcLNTTEDvCddo1WhqLDF0asBZAkMqqUVv916KcP2
+         nHUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746009117; x=1746613917;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SQrplKuznos3CKU7xsOCXM8cn9nAbF8UQ/A3fpprKKY=;
+        b=PEkvGRGeJo5yNr4UdaXzrlKXOKMmyk97eMn5qkbkpg9XrrsdP35pNLLilFZEtnmeXe
+         ggr3mlWcDFImTaTioMRkzQ2xTSnIP2G6NDxl5+1PsUlq5aQeZzeHflP0dVhmgas0DO5X
+         2oJ0Fw8SgrnhMp3tUDfxCnMv7fUnqNz8KJm4QUwSt9fg7BVHDElmcm+6RhCzNab0+7+p
+         tyapPtSmLsls90YI68NDFtAqPYPIZyWiSrfKlSZ8nioluu3lj1g8OytnktZKXDl2oI7h
+         5RAmnACUbgWAWwTmK3qwQBoR2vliw8YIEV1LfqBrFqlDPR48MZf/YsBPHGgoqP3iUDnY
+         7TMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKpmst3FFFXLuct1MxKchciTjwdDCw0KfH86xWmBiuG/sPlrr+pPsJFbL19522LKeTuqSQuXqBVDNP@vger.kernel.org, AJvYcCWBJMY56vhTiNNg5aOP3mduGjllj+p4VGnNencgjRKyaTdHqLA/rrQG0sOosvcODRpjQN9DSfF4Vdb2@vger.kernel.org, AJvYcCWIUj1sc+IRUMDQ5ajzjxNO56QVVyJ/vmcmomuk+eMytEaiDjOHcEZG724mdQi9IFJMgmNmGxTqrGO23Ynu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvb6akyrZfXXNVDNSGLz2CyB+L4K7ufQLaIHz9f6LVqJbqxiDh
+	EXc9DAOaYz4kE5/CzilMMx0NuqBPb72IpuRx+miBfmsK/wLpsfl9
+X-Gm-Gg: ASbGnct5aBOcdsepHV3KN/05jzU6/vjRTLUtLEpmYPf2ZjMwkkkDU6l09loDNX+h23u
+	zh8v/FyMVy3TtYEzjU5ANci0iqTaXe8+fkPifc6BfMNfgxwPlZtUmcT0ACqnxWIW8MmR7me/T9d
+	+aUTbpCRRfZQQpKs+4Cai1oiDvEtWf5VypUz05LdlhxRMTilFPaV0YQwkvBlycGZN/a8XJ0MB4w
+	fjiAYVxJM6nIZLu+wGr4TfTSiKv6cnjwsHfEywVX9aLey+Twsz/tP+3/Nncn9cDW+1yQokyMxhJ
+	z4ONEGvxSqti6pK4uQ05BTa3IzRiB6dZKsWvGoM/UTf4WtQyX0aB4McKpo34l2E=
+X-Google-Smtp-Source: AGHT+IHZe0TXYslujCTYOtGtFjRpT6Y7Y076cq9NiJJvVsBDGspddr6Y2NW78t4g4qygnKEUxRNGQw==
+X-Received: by 2002:a05:6a21:318b:b0:1f5:7280:1cf2 with SMTP id adf61e73a8af0-20aa2be02c6mr3127615637.12.1746009117455;
+        Wed, 30 Apr 2025 03:31:57 -0700 (PDT)
+Received: from NB-GIGA003.letovo.school ([5.194.95.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f7fb7e54sm10432071a12.30.2025.04.30.03.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 03:31:57 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 30 Apr 2025 14:31:36 +0400
+Subject: [PATCH v2] dt-bindings: i2c: i2c-wmt: Convert to YAML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C6:EE_|CO6PR19MB5386:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 455a6b14-c6b6-43f1-f943-08dd87d23328
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|61400799027|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0pGQdvJ6ILEdqyGTVr6LuFYuH34W6yS9DdoDLImOaEv+m2Qdc8KTrcu5HENs?=
- =?us-ascii?Q?7YlF3XE3mcFTgRxUmrbkYK94RoInvfRnU6zvs+VTocZnFPKaqcoYM4hPCAjS?=
- =?us-ascii?Q?3lePRcmu4xbu65a7g0JHRTrNebhN1+Pf/jox99UB58EoxEx+EU0DbHnafbs7?=
- =?us-ascii?Q?uOddTkvx7O9oWGAfY1KvQjr49oVYepVMs3k4HgkG4oHEAJ1SW5S0J77yNuOU?=
- =?us-ascii?Q?rlfEpDwTn35a4dhg99dNFecXgAfdaiUemsJzGJyN5AqEIKRouJ31Cuo3mzA2?=
- =?us-ascii?Q?IfXZcQYDhF0Aa+cR8qNIWqLPpGoonRRJ5JSB45hx7Fl5elCxDLMbIp0Oufq0?=
- =?us-ascii?Q?uOYH1UT1afCz2+txcx7tfD+e3t0IZ0hXosGCL065vajOjdIduHFPqSTUahZW?=
- =?us-ascii?Q?PtxXYqKM63bBDXIpVA6sXZSeOSrutEJc4trwTgZe/+rTbVxxhFUkR0RfKjwB?=
- =?us-ascii?Q?swz+jWAn9wZ7vx2al501wLZXHrQP0kYkPgrBMh2a3mBYzTrrK5lGlbb6xoB9?=
- =?us-ascii?Q?eHVgWScDo9dSeM04Lu/RAhCHazo3e3zykJERzf5uatBNyfPhIjRIQ9bktJv9?=
- =?us-ascii?Q?ri/RXqTlkSx2j9iaa64LodC6xqEDAtRYREU1ZviJV+nG6tutYOH98/mt5h9g?=
- =?us-ascii?Q?Hlgnh0H0ltUxwIjvYsayCSIDH/QpkzBKkr1YoFbWwCmpjJF5rBQ/aO/osePk?=
- =?us-ascii?Q?hb1iBiK++Cvj39nn1nC6OUvM09bnM/c7xuyWHQl9/A9pDEJeEnq+wZb2CkW2?=
- =?us-ascii?Q?7aN/bEvDlBM3PMRAG6gGP3kLb6Q8JeoxfTiuqXeOomuJpAvQoCHZ+x9qpSDv?=
- =?us-ascii?Q?tHIFAZwxOyywUvzk8jYRMKywV03MsqTGifZnIdm8ukX59wLMsesU87NUhUY5?=
- =?us-ascii?Q?7tiig+syABcmoQI745ruw6JDMVVGktg9I8VDbNOJBqekocx+Bvj7Q0Qj45YM?=
- =?us-ascii?Q?QaHSjBb0VEBqB5Vwmsp06F4N5EVrPXhZTV8Qd+ZlNxiC02i1PBtjNSEukdqj?=
- =?us-ascii?Q?CJL2lW11W1SFpWq+K0HQHfzfEx3d76gMKc6wnTGqJU1LPUFyYPHYOvUutt7x?=
- =?us-ascii?Q?Hif9Wncd8flB+5Qmq/mb5T180Qd6OWpVxKGUZY8UBeBZodg2BsvCDpRUVQMc?=
- =?us-ascii?Q?xcQqSmSRha9BwJHp9A0yeASwhWdgVYcN7RbC5lF3Tz8kwlaFqeKSDYsXWvDS?=
- =?us-ascii?Q?63TpokCTrB3sKtwzwsA4VhNxOAFetoMdyZsqdjjJ91yonm71+RC+0+q8rwp9?=
- =?us-ascii?Q?ztgXs3GfVKPVUVsOlsr8aLTP+tskXyjnS9kGVWWLUpFDFdbm4Meg+7zv0sW+?=
- =?us-ascii?Q?yJguN1sJtsRpvwnDAVkyrUSIrX9qW3JKmMx8MUPc3OMmqSAFWC+ma64jsPsV?=
- =?us-ascii?Q?vcodlIOz+c4+NcKDTQ2EjNzism/XwGcG950XwErXunZ8QXC7/o6/sOMP/Yng?=
- =?us-ascii?Q?HKP8jBnuoC+h4Iny5i/rwyuH03lQ6NHWPpn+iYYyRebYd7SzDiZPhxHbMd1l?=
- =?us-ascii?Q?Z2hLqNdfXoE8ihLpWnuuyjcaTlVU4f1kluDk?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(61400799027)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 10:31:42.4970
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 455a6b14-c6b6-43f1-f943-08dd87d23328
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C6.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR19MB5386
-X-Proofpoint-ORIG-GUID: dB5wS0KlhrNK6lfIy0In6F48UHTRCqA8
-X-Proofpoint-GUID: dB5wS0KlhrNK6lfIy0In6F48UHTRCqA8
-X-Authority-Analysis: v=2.4 cv=I9ZlRMgg c=1 sm=1 tr=0 ts=6811fc13 cx=c_pps a=R19XVbJ/69TrMGWtO/A4Aw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=XR8D0OoHHMoA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8
- a=dNzS_mdQi9kc3JURET8A:9 a=BGLuxUZjE2igh1l4FkT-:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA3NCBTYWx0ZWRfX+CBFvPqa0rdf vkmR04iDK09jODx/Sgakx/lgB7OwSoZ0stiFOB+uemeLoYfD2CoI611THuCWsGw6wQ8BKp1uPyp LRrW7IgZKsjFDo6fBh2qBOOW1NxtGUCcPtHH9jUGc81pcFvTRfEH2k9RuT1WJbGoU4FnZ40qAFz
- oYz5lA+gtc+yMGlbKDZNKI44gy7L7zlVk6M4YFlg6MQvQBeWYiZmpxEE9RBnDzz+HFTCJVcobU1 oUz3dXrd9G7SjMpoCTtTKNpnO2tSDFpiGOHwvoGnMmKx9lbMDogOQTXVqOQmnTrVCdrfGCphljM U2OIeBSQ1M06Kqf6+b4Uo5ha2RGTa8F9eCFWviWcvA/agLnsuzk1o0+4tREgFro5UDNwfE4Kf4i
- 50CixytP2i8eDI+2hxjMCiHLSojs7RzlDrRfTuvJMI9AQbdFGUBup2Fmwo8zZ9IvuLKSSIet
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250430-vt8500-i2c-binding-v2-1-0cf22d0c2d42@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAf8EWgC/x3MQQqAIBBA0avErBsYNNG6SrTImmw2FhoRSHdPW
+ r7F/wUyJ+EMQ1Mg8S1Zjlih2gaWfY6BUdZqUKQMdZrwvpwhQlELeomrxIDG6956Y0k7CzU8E2/
+ y/NNxet8PM1//82QAAAA=
+X-Change-ID: 20250430-vt8500-i2c-binding-5b397b570387
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alexey Charkov <alchark@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746009111; l=3387;
+ i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
+ bh=qxwCK+TKSFOdpqEKu97fiXM9g32n+PW28mqYHuBGsDs=;
+ b=pMd9cRXEoGac6qEgsXthAvZ3Q+fu2//TgoRrNM2QN0jMYGlCBojb9PBLN0Fq/sqk95OLemU0U
+ 433B6Ghn4mEDtMrlVS0MABfIWYxWTQgeejr5T3U5ZvZsvcEDrC9NFQD
+X-Developer-Key: i=alchark@gmail.com; a=ed25519;
+ pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
 
-The volume control for cs35l56 speakers has a maximum gain of +12 dB.
-However, for many use cases, this can cause distorted audio, depending
-various factors, such as other signal-processing elements in the chain,
-for example if the audio passes through a gain control before reaching
-the amp or the signal path has been tuned for a particular maximum
-gain in the amp.
+Rewrite the textual description for the WonderMedia I2C controller
+as YAML schema, and switch the filename to follow the compatible
+string.
 
-In the case of systems which use the soc_sdw_* driver, audio will
-likely be distorted in all cases above 0 dB, therefore add a volume
-limit of 400, which is 0 dB maximum volume inside this driver.
+The controller only supports two bus speeds (100kHz and 400kHz)
+so restrict clock-frequency values accordingly.
 
-The volume limit should be applied to both soundwire and soundwire
-bridge configurations.
-
-Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Alexey Charkov <alchark@gmail.com>
 ---
- include/sound/soc_sdw_utils.h                |  1 +
- sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c |  4 ++++
- sound/soc/sdw_utils/soc_sdw_cs_amp.c         | 24 ++++++++++++++++++++
- 3 files changed, 29 insertions(+)
+Changes in v2:
+- Added Krzysztof's review tag (thanks Krzysztof)
+- Dropped the update to MAINTAINERS for now to reduce merge conflicts
+  across different trees
+- Split out the i2c binding separately from the big series affecting
+  multiple subsystems unnecessarily (thanks Rob)
+- Link to v1: https://lore.kernel.org/all/20250416-wmt-updates-v1-1-f9af689cdfc2@gmail.com/
+---
+ Documentation/devicetree/bindings/i2c/i2c-wmt.txt  | 24 -----------
+ .../devicetree/bindings/i2c/wm,wm8505-i2c.yaml     | 47 ++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 24 deletions(-)
 
-diff --git a/include/sound/soc_sdw_utils.h b/include/sound/soc_sdw_utils.h
-index 36a4a1e1d8ca..d8bd5d37131a 100644
---- a/include/sound/soc_sdw_utils.h
-+++ b/include/sound/soc_sdw_utils.h
-@@ -226,6 +226,7 @@ int asoc_sdw_cs_amp_init(struct snd_soc_card *card,
- 			 bool playback);
- int asoc_sdw_cs_spk_feedback_rtd_init(struct snd_soc_pcm_runtime *rtd,
- 				      struct snd_soc_dai *dai);
-+int asoc_sdw_cs35l56_volume_limit(struct snd_soc_card *card, const char *name_prefix);
- 
- /* MAXIM codec support */
- int asoc_sdw_maxim_init(struct snd_soc_card *card,
-diff --git a/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c b/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c
-index 246e5c2e0af5..c7e55f443351 100644
---- a/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c
-+++ b/sound/soc/sdw_utils/soc_sdw_bridge_cs35l56.c
-@@ -60,6 +60,10 @@ static int asoc_sdw_bridge_cs35l56_asp_init(struct snd_soc_pcm_runtime *rtd)
- 
- 	/* 4 x 16-bit sample slots and FSYNC=48000, BCLK=3.072 MHz */
- 	for_each_rtd_codec_dais(rtd, i, codec_dai) {
-+		ret = asoc_sdw_cs35l56_volume_limit(card, codec_dai->component->name_prefix);
-+		if (ret)
-+			return ret;
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-wmt.txt b/Documentation/devicetree/bindings/i2c/i2c-wmt.txt
+deleted file mode 100644
+index 94a425eaa6c78bc9e3136ae7055b51635baf16ca..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-wmt.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-* Wondermedia I2C Controller
+-
+-Required properties :
+-
+- - compatible : should be "wm,wm8505-i2c"
+- - reg : Offset and length of the register set for the device
+- - interrupts : <IRQ> where IRQ is the interrupt number
+- - clocks : phandle to the I2C clock source
+-
+-Optional properties :
+-
+- - clock-frequency : desired I2C bus clock frequency in Hz.
+-	Valid values are 100000 and 400000.
+-	Default to 100000 if not specified, or invalid value.
+-
+-Example :
+-
+-	i2c_0: i2c@d8280000 {
+-		compatible = "wm,wm8505-i2c";
+-		reg = <0xd8280000 0x1000>;
+-		interrupts = <19>;
+-		clocks = <&clki2c0>;
+-		clock-frequency = <400000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/i2c/wm,wm8505-i2c.yaml b/Documentation/devicetree/bindings/i2c/wm,wm8505-i2c.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..e498ce47b885203fcfe233b946f987abdac6784a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/wm,wm8505-i2c.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/wm,wm8505-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 		ret = snd_soc_dai_set_tdm_slot(codec_dai, tx_mask, rx_mask, 4, 16);
- 		if (ret < 0)
- 			return ret;
-diff --git a/sound/soc/sdw_utils/soc_sdw_cs_amp.c b/sound/soc/sdw_utils/soc_sdw_cs_amp.c
-index 4b6181cf2971..35b550bcd4de 100644
---- a/sound/soc/sdw_utils/soc_sdw_cs_amp.c
-+++ b/sound/soc/sdw_utils/soc_sdw_cs_amp.c
-@@ -16,6 +16,25 @@
- 
- #define CODEC_NAME_SIZE	8
- #define CS_AMP_CHANNELS_PER_AMP	4
-+#define CS35L56_SPK_VOLUME_0DB 400 /* 0dB Max */
++title: I2C Controller on WonderMedia WM8505 and related SoCs
 +
-+int asoc_sdw_cs35l56_volume_limit(struct snd_soc_card *card, const char *name_prefix)
-+{
-+	char *volume_ctl_name;
-+	int ret;
++maintainers:
++  - Alexey Charkov <alchark@gmail.com>
 +
-+	volume_ctl_name = kasprintf(GFP_KERNEL, "%s Speaker Volume", name_prefix);
-+	if (!volume_ctl_name)
-+		return -ENOMEM;
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
 +
-+	ret = snd_soc_limit_volume(card, volume_ctl_name, CS35L56_SPK_VOLUME_0DB);
-+	if (ret)
-+		dev_err(card->dev, "%s limit set failed: %d\n", volume_ctl_name, ret);
++properties:
++  compatible:
++    const: wm,wm8505-i2c
 +
-+	kfree(volume_ctl_name);
-+	return ret;
-+}
-+EXPORT_SYMBOL_NS(asoc_sdw_cs35l56_volume_limit, "SND_SOC_SDW_UTILS");
- 
- int asoc_sdw_cs_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai)
- {
-@@ -40,6 +59,11 @@ int asoc_sdw_cs_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai
- 
- 		snprintf(widget_name, sizeof(widget_name), "%s SPK",
- 			 codec_dai->component->name_prefix);
++  reg:
++    maxItems: 1
 +
-+		ret = asoc_sdw_cs35l56_volume_limit(card, codec_dai->component->name_prefix);
-+		if (ret)
-+			return ret;
++  interrupts:
++    maxItems: 1
 +
- 		ret = snd_soc_dapm_add_routes(&card->dapm, &route, 1);
- 		if (ret)
- 			return ret;
++  clocks:
++    maxItems: 1
++
++  clock-frequency:
++    enum: [100000, 400000]
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i2c_0: i2c@d8280000 {
++        compatible = "wm,wm8505-i2c";
++        reg = <0xd8280000 0x1000>;
++        interrupts = <19>;
++        clocks = <&clki2c0>;
++        clock-frequency = <400000>;
++    };
+
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250430-vt8500-i2c-binding-5b397b570387
+
+Best regards,
 -- 
-2.43.0
+Alexey Charkov <alchark@gmail.com>
 
 
