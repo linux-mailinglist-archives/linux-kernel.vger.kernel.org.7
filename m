@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-627286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DD8AA4E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:25:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B433AAA4E9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F51C20A8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465C317BC4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FEA25E45B;
-	Wed, 30 Apr 2025 14:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A844825B1E3;
+	Wed, 30 Apr 2025 14:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="G1ewDVEd"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdmiGM1w"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6C521ABC6;
-	Wed, 30 Apr 2025 14:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDA482899;
+	Wed, 30 Apr 2025 14:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746023103; cv=none; b=IPgMKpISL5Yfm7hI54xHYv4wJAjTWKd2hmvVXIsr5Vk7qREpBuxrO5+qWM22EM4SuxCQlRPeRrcEAzUkMBaIvN7o9NQ2taco3Tk8gnIfbuQRBHLmL/YuVVcRbQijw3KiE+iwZB+pzPKSaZQvEpzi6uQnsa7cmliGZte4zWn8fvY=
+	t=1746023461; cv=none; b=sgLTHUVs3+7FJGDcrVAfzs1ZkWdMYRs6J6beap+EoqkvUo8AJrSM82EiYYb3wwsVyGhZw1H4/BVNgSnIgl3Mw6eKGhd/dMMjQAKJ0Bdd8ltVUtPgXG9buk2NLq/e+rrjClL+h3Jzv3ZRd7urN3lKZWJe+iZjlm7IW1iQ4JWcJ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746023103; c=relaxed/simple;
-	bh=rjMvhhoHC1X7+lw3l2dB4rGD+6HMJz3GsS5ASyow71I=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=I0i1LuueXFVgdy2vc2anFJ0gnz7XJyx1o3WUBDhp6wTG8bnS3+8iBDw3BWuu+qYXYJoBtzKqMjP6nQJVN16bnDDtJ7sIjarrY3znJ52uh5hYL+auVSHUghHlasK2nrIXp8qDO4dQdCXOcDUPpDQokUEWwkXd56uAWfr4n265iS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=G1ewDVEd; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53UEOI5X931491
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 30 Apr 2025 07:24:18 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53UEOI5X931491
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1746023059;
-	bh=pQL8GxGCP0lOqhjZgQIjgeXZK6YREx5vQoMNpPTLrHU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=G1ewDVEdQC6La4J5R7kMKwnkqVpNGebEjVhRdP8CbyAj4JzpaV+0lhKWzQgviR5Jz
-	 DnHGbQYWM0DUzo52eq8rHyuiP6ugp8H+u4HqECJ8ihkukboZW7TMa7IIrDAplGBmdO
-	 PnYBtM1FotSDGP0Bwmd3LQeqCgtZ+/DRE8sWb1QLo6aQbwVT8vaa4jQ32stDbGr9Pv
-	 oxP6dsv+CWX+tLfnoiF9XpDI0hZpikUo9GVld07MAjzYS/EGIUqWvWp07qhZNwt/Wg
-	 jHQIj1zz1GDMcwQqmZxnpwFKTpI2+0AEGA4hhTodBLWJXHWfh1l0J23ON/EjuigJld
-	 JJ/nQMjAp4l8g==
-Date: Wed, 30 Apr 2025 07:24:15 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
-CC: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-        decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, seanjc@google.com,
-        pbonzini@redhat.com, ardb@kernel.org, kees@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-        jpoimboe@kernel.org, peterz@infradead.org,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-        samitolvanen@google.com, ojeda@kernel.org, xin@zytor.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_00/13=5D_objtool=3A_Detect_and_wa?=
- =?US-ASCII?Q?rn_about_indirect_calls_in_=5F=5Fnocfi_functions?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250430110734.392235199@infradead.org>
-References: <20250430110734.392235199@infradead.org>
-Message-ID: <8B86A3AE-A296-438C-A7A7-F844C66D0198@zytor.com>
+	s=arc-20240116; t=1746023461; c=relaxed/simple;
+	bh=5efKiyPEk+sdLj4zVkA91mL6EwpLaUOFiB1U2WZ/vuk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ys9aB5m1mbclQdAVynWllWfpcZcRCfyTl+RNrgO9KU5oFuaQSPFf/5XAK7/+a8ykmDWEWMRM8WkVnfFHT5qk4CPc9f6dmbtQTt8UVTUUHg4kBWSoCl40qOyQAmwD/fBCrllySjMjSMSvEKORGbDMF0f7GPuNj+ZzV6zg4ryUTFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdmiGM1w; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso5745356f8f.2;
+        Wed, 30 Apr 2025 07:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746023458; x=1746628258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0w8UscCO5MybUIE9ef0MnKYg2PNsk1FHLto9LqecTu4=;
+        b=OdmiGM1wn5D1sH2wSyymt89dzyVY9hZbqe5aFEIjeLLKIUOgg/6Op+uQhLSGBPZNZM
+         fn8IFpCqIG45QYZ+KHZmd/BmfkWt+tmuP3LdBwnRHwy2E2QnZJv3DMiBsR3AY01fqNaY
+         e1KuDgNUKxsIYDO6XORSaOB17PPbmhaTietgtCLNBYe1w9mSOUuPOKFSzCuhZeOB8dmu
+         qedmsWFA5oFjZst1O29Nv2JnP6dA4fAFTW1wYV1OH9/tCfn1uzivAhnaSvkkmkeRWaZO
+         nv1PVzaoz9DS6xQLqogAZmtAkhHACDGcWu9c0v6LHeZX34uSIqQr/hDk83UOkykA6YWQ
+         sbJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746023458; x=1746628258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0w8UscCO5MybUIE9ef0MnKYg2PNsk1FHLto9LqecTu4=;
+        b=d6wfFYpxhKY7weGBAgJdqldlqKXh26mCAF9qjixvu+Qk/Aie0m6JyEFUpJo4q3GuyX
+         rQKi0kiUVuVBfaCYrAyHFJUmk4B8RGx0nhIXBRDMn8wVO9DMYdmUHpbF2eIXGgFzXG8e
+         1d2nmQow9X7P0gv6C8vhL+t7hoFsOW8SC74Tgm1va2b7xOz3izv0AdhXGoeGqx6Vm2mf
+         O3G5TPAppKvNK3pXHDn6LDwaN/Oxe4wFuGgbtQORnLV8ERElBlP9kGJ+AhOSxLh9vTfY
+         BX6dafs3l+2yOnLaYYVG6bywq0mjcDcuHTd3c94HOf5xzdXbcf2RrIAzU5kXdrskvTzL
+         9BOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXApFBQC9ZZjeHJhVPbwLhVmb7jScJCiNAp8KtR3FSm1f7rMqL5Pc4ZxbYZSrnrtk/A0wh1lIUY1KUzS4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoQqTKZhjCj2FOxdDymp5Llgm7QqwTLlVxDb0zcL63b7Akahc4
+	e4mrYsINbzy/2W85GzlXpfwLIT+wTUEflh9LXt7jsAB/pqMNbTOTvnT5xzW1QHg=
+X-Gm-Gg: ASbGncuKvyZ/j7mm8PY7BfwU2v7v5pS1U+6z2PnHV9DZINZkbk6znSyrHB28BC87Rce
+	4BuMN/2BetnP1RQt8VI9ZSWRrF45VLrUoCLY2pMCGzOov+IG1dbijhLj5bm7s1E1KXGMHzoiq5o
+	RglaGhqLITHV2jvI4HDveUSB8Aebr/PQOnRbVjeR7VtK2mvGVcQt/97wu0l9cbNPADx4Kmp5DWy
+	28LBYPkPx99u1cZld33I4OLsBZrT/ma07qL6AuTxznSnpc6szgUZbxF58Sky2LbR7efm0Lvm05S
+	lm1O0tOuJnmgnlvWGtBSIYItc0wSuK24sW6AG4PT
+X-Google-Smtp-Source: AGHT+IEWhirat0n5nsX8ATDTnk9qmPez0mg3j9XAEmMycu763yzHSI70X3OF2jBJI0Rz5rlmIiFXaA==
+X-Received: by 2002:a05:6000:4014:b0:3a0:7a5d:96f8 with SMTP id ffacd0b85a97d-3a08f7a2755mr2747694f8f.31.1746023457400;
+        Wed, 30 Apr 2025 07:30:57 -0700 (PDT)
+Received: from sashok63.. ([46.19.86.240])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5c9cdsm17064227f8f.87.2025.04.30.07.30.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 07:30:57 -0700 (PDT)
+From: Alexander Shatalin <sashatalin03@gmail.com>
+To: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Shatalin <sashatalin03@gmail.com>
+Subject: [PATCH] docs: fix typo in firmware-related section
+Date: Wed, 30 Apr 2025 14:27:26 +0000
+Message-Id: <20250430142726.3276-1-sashatalin03@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On April 30, 2025 4:07:34 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg> w=
-rote:
->Hi!
->
->On kCFI (CONFIG_CFI_CLANG=3Dy) builds all indirect calls should have the =
-CFI
->check on (with very few exceptions)=2E Not having the CFI checks undermin=
-es the
->protection provided by CFI and will make these sites candidates for peopl=
-e
->wanting to steal your cookies=2E
->
->Specifically the ABI changes are so that doing indirect calls without the=
- CFI
->magic, to a CFI adorned function is not compatible (although it happens t=
-o work
->for some setups, it very much does not for FineIBT)=2E
->
->Rust people tripped over this the other day, since their 'core' happened =
-to
->have some no_sanitize(kcfi) bits in, which promptly exploded when ran wit=
-h
->FineIBT on=2E
->
->Since this is very much not a supported model -- on purpose, have objtool
->detect and warn about such constructs=2E
->
->This effort [1] found all existing [2] non-cfi indirect calls in the kern=
-el=2E
->
->Notably the KVM fastop emulation stuff -- which I've completely rewritten=
- for
->this version -- the generated code doesn't look horrific, but is slightly=
- more
->verbose=2E I'm running on the assumption that instruction emulation is no=
-t super
->performance critical these days of zero VM-exit VMs etc=2E
->
->KVM has another; the VMX interrupt injection stuff calls the IDT handler
->directly=2E  Is there an alternative? Can we keep a table of Linux functi=
-ons
->slighly higher up the call stack (asm_\cfunc ?) and add CFI to those?
->
->HyperV hypercall page stuff, which I've previously suggested use direct c=
-alls,
->and which I've now converted (after getting properly annoyed with that co=
-de)=2E
->
->Also available at:
->
->  git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/peterz/queue=2Egit x8=
-6/core
->
->Changes since v1:
->
-> - complete rewrite of the fastop stuff
-> - HyperV tweaks (Michael)
-> - objtool changes (Josh)
->
->
->[1] https://lkml=2Ekernel=2Eorg/r/20250410154556=2EGB9003@noisy=2Eprogram=
-ming=2Ekicks-ass=2Enet
->[2] https://lkml=2Ekernel=2Eorg/r/20250410194334=2EGA3248459@google=2Ecom
->
+Fix a minor grammar issue by changing 'firmwares' to 'firmware' in the
+Documentation/index.rst file.
 
-We do have a table of handlers higher up in the stack in the form of the d=
-ispatch tables for FRED=2E They don't in general even need the assembly ent=
-ry stubs, either=2E
+Signed-off-by: Alexander Shatalin <sashatalin03@gmail.com>
+---
+ Documentation/index.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index f9f525f4c0dd..c0cf79a87c3a 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -84,7 +84,7 @@ which are kept separately from the kernel's own documentation.
+ Firmware-related documentation
+ ==============================
+ The following holds information on the kernel's expectations regarding the
+-platform firmwares.
++platform firmware.
+ 
+ .. toctree::
+    :maxdepth: 1
+-- 
+2.34.1
+
 
