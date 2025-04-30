@@ -1,138 +1,201 @@
-Return-Path: <linux-kernel+bounces-626915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3358AA4925
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21847AA492C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0A53189D68B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE6D3B18EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9713025A62E;
-	Wed, 30 Apr 2025 10:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ABF258CFC;
+	Wed, 30 Apr 2025 10:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DG4fGBLl"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxEx+Oe8"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A75925A33A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE5A2B9A9;
+	Wed, 30 Apr 2025 10:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746009760; cv=none; b=gTIgi3boPOYBUR8rKPigj+EdiJIPv+JPx5R100UBj0mDg/ZfH1yPJym3H0W0WzxhLcmPxFlwnQm9HRayHWCAcre9n4lyeGBohN2wl0csaw4YA6y9usyXO886kJb+X14UHdmoFwDYZhIIUkXwCB//7Fh6TRiVr7ibKriylbpWsCA=
+	t=1746009817; cv=none; b=EtbwnbXdyxXueVV+qAKRecgx7v+c2Wa5v/Q5ryvMWug2nUzDCA6xAM6BBYZr4af2/T0VyxJltD8v92vHxYqjRGBeo3b1esyVRbFU9hHKU8D4424OdxIWRuVGofcdSKzsXr/wWCHbcb1sIHFfJtWDSvDXqHnwF5ZqaMvgYe064Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746009760; c=relaxed/simple;
-	bh=JlLvldGIfDbHrnB5LrDceGt+7VtfTDEk9EgBP//rGyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nc4dtUaRiNEbclKscAgPkZU4zgQOdoJ/iHiedH8WGg8wd7OIdY+MnMdCN/T3/sUxK1wQvdJmUoeVORAuhm6Nu/1G4Qs8WQJ0m/XjIBP7v11ckJSlXoYTFCHzk78lOTyLYxl8eByRv4Wu9uKNQKNjWjacJnx3We7IsgGNZa9Lj1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DG4fGBLl; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736a7e126c7so6521548b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 03:42:38 -0700 (PDT)
+	s=arc-20240116; t=1746009817; c=relaxed/simple;
+	bh=NAKlta3XWitRCQ9CR0OeceOIu9uDJz/mQLmJc953vZc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hJfVA96XM/3iLoliU9kVAvgWv1L8CAg2CGKAi8Vp7nHmkGJo42yYPhw1yih++f6mfM2eL8z6vPJjAEIlMDRrn0H3Ov4ku7PbzvJ/jEp1bp0AtxgFJECKG+UbawFmR0e+KgaeGTYfSqW8CvjOwD18375j6PfF4V53466Bb/h6Kn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxEx+Oe8; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-224341bbc1dso77049735ad.3;
+        Wed, 30 Apr 2025 03:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746009758; x=1746614558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4gl3XU8JoJn5dwDW6OC+cxv1hib4kwdH98QGnhy+dmg=;
-        b=DG4fGBLl7XAHMyiYPRpIQw1pTKIAMhdsH2z9e8JvuFys7Ef9CzDIf/E3Z7+WiC9rdJ
-         ojseM2Zk8Gnz4fzcNUIGAbI87zJk2y/hjenhPCowerDToR4J8zqlcOo3G1V0UmwEIeZi
-         wW2YR20mShYU4sEEye6A2DZRVlZs3bfPDfnQlEMCCggyvwjtNE37LUjRG+9OT16CQxKv
-         nqlw3ckUUVo2bUALT5S80/jlG7TE92rmHQ1P366XHWdYvW3Hve5UI1XXVBCJiB0rkU8m
-         eaWhEbVJtApin6MviF4HG8BvJSP+21nUfx6KofwMUPPvn1fbXa9W6NpWbMuOJMScvl9X
-         y4DA==
+        d=gmail.com; s=20230601; t=1746009815; x=1746614615; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzZQqAJR+WqTIKqQI8DYjkIpauNuciSLhlQufPfaICY=;
+        b=DxEx+Oe8wmQoZUSyzAqUQGUAWQUKcHAMYIHZFU+Dg0kxYdHSbpBrvgUCx5vGPmU495
+         Abhq3lmdjK+L7VkkMpJRiBiJH+gmMbv18c3yBodRI93ouNM4PmooSHNt1HH7lK4GG8dw
+         9ReUlPS1SOzeb3ZCZsIZIlhR1ZFnHDz/DSdl7N/i4P/ryRFdsZcDlbqRgmdaHg2jYdNX
+         zgcyJbcPOnyfrk+Ua3FyhvMsHrXfDX671vdBjqBioycwnXHq1OjvaVMxVXpa4VjHSE9T
+         8V2CgIYTESqY9+Wd4CEAVCkIuU1tI4zFzuHcGbMwUPF9vw5O3VffVGnDlyyN0qYbZPKm
+         D2FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746009758; x=1746614558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4gl3XU8JoJn5dwDW6OC+cxv1hib4kwdH98QGnhy+dmg=;
-        b=WlhIXiaREWygCKq2X5N63X6b/Ssz3QY4dRGrD5xTmIssa5tUB65GbsegUJCyi0wloj
-         iwZtNF8Rs28+E4zrmmffG2bTj9DG/I83PsnpBC9xkdP+HQWsQ10RUPOvfQtiaetPQqY8
-         5djqTdM27DQ51pTJiBBkHpXJDCJpfWyDFKLZhIw+rAps4FZKA1Yp4usNJs4M2FVtg6mq
-         nwG7aNMrpyBai3UdaMPX1bj9tQ7in86VRrm+g+eQCSX3GqYvgCbIxhsJ7FpVwGaWa4T1
-         1yprdVft1/hA3PJWFZPFFeqLWNkqXjfAqAZI+MuKzqTduhTmrSbihl0NuZ5YpbBYqelj
-         OYrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUlYV3Qs2JddVPwnQE4tufeLY1VSrjuxS97K4B7t+WTgdtP/9liXQCm1qLZDwk5v1VGvayxSPS2TpZf0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK67zH2RUxux8LNXflqs4y4375Jw5cwkLU71E7HQsSv1YA4MUS
-	aaP08sxMDYe+ZIDWxVBDU+0XEa5CrVrWBRffejv0ns0E+w9md6IDikH58mVIB08=
-X-Gm-Gg: ASbGncticQezOo5O92SE27gXwOS4BCQhyTBrWkRYCvA3/Ec7sxSxjJQ4l5GksfMQT+v
-	RWgOk1vpuE37TQf9qNQfMjx1bNcSwIV0tH2DGy3HNrIeTFU/I+56OBoWu+0c7iPP9b+zR++Ca65
-	jA7+U/nr25hLbtL//15xEAhOwowbfur3OXORzv3vMyAdOTMeO1Q9XzZlbVYCztXMZiKzzfSR3fB
-	sZcoPgVSWlL1VR5rWQpuUgpFW3yjZDZbMsJulSq8dMPCyRHxHx6NYrIikvhWA7nqdKPupM44sZO
-	xaLAg5W0fjv10BoTU7YNUAEwJBfghD29zdfXQpY68w==
-X-Google-Smtp-Source: AGHT+IE5aoAUnm09kBy2axv3TvAAHpf075PJ6ak0Gwu1Lu258byCuGSU3Nwqt2mSHiDYVnppASvXrQ==
-X-Received: by 2002:a05:6a21:8cc6:b0:1f5:591b:4f7a with SMTP id adf61e73a8af0-20aa457e4a4mr3055673637.38.1746009757697;
-        Wed, 30 Apr 2025 03:42:37 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039a9451csm1291575b3a.167.2025.04.30.03.42.36
+        d=1e100.net; s=20230601; t=1746009815; x=1746614615;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uzZQqAJR+WqTIKqQI8DYjkIpauNuciSLhlQufPfaICY=;
+        b=dtXeNxfrFjNZErBLwS+KCMDOTnIlPxvYDd6pHzwvc1XnPK6+JGq5nd3pf151o/wWj3
+         3h9v7L/i0eHqLVll9TyG1Wxe9edlJ5DrfTxbMCVYLl0WAjfGdt8UoEvyxmoIMA+scmUk
+         CQRZaJr9vN/G8T/+qKAxYvI0NUIy5689JaDoYiuSvIfwIH3VmdNMLhJxfyr1ap9zsS1n
+         JSBdnokDMS+6rlX/t+HMBBHmx2D0n8KZUPor287QyBWq3fdAKDCY9yvzjgNCYbJo35DZ
+         0Kn4tbGnFFmJzyOXMFMW1UwR7NstV6kTguPaCn83JywxGARlAXHUb6kkzsZEuW/kVNti
+         Puig==
+X-Forwarded-Encrypted: i=1; AJvYcCVAX56PNcgWtdzIx9JmMdrzJvzqzBwXIg/Lnbfu/HA8s79utAG6/s2dRYBB195DO5ES1aev//y5gtIi@vger.kernel.org, AJvYcCX1D0DHNAtAhQOvDcT/43E0ZZGHWrDkoDYFt/iAN8idjUe8ws0NqT/SNlaaVgkX1YC4HzFq9oHlE1FKa4Ue@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAqGS4hc7XntEoCw6EVe4G67linvTxlA9fX7PSHmiqaIqbcvn
+	0BaBi9Vkrv1J3dOY35MDMTX5AwQnWGJy82UZ0M8ScfNl+9/lBdDq
+X-Gm-Gg: ASbGncsC45CcSSULnkwNwWAEVESrsc8G9PRGLsN/snNuwuHthCMQ8J6fAS2gKFRw/Su
+	Dj3dj871KLEGNMm+gu/WccHHauTUeADfcZ5TVpXGMpmZGcjVh4txbXlje7kLBa7XH4AcqW8CIDY
+	jWld9hYWpDQ/x0v8ifQrG45H5VEO+alXdHgvRiP9eeLlTXm5FVP9DIncUVKIk9jZbXb8NClvCfz
+	S36bxkUQAsVSmG2vsD3bku3oRXMhSibwRqZBA0tcRiycPkVIkLiQ8NzggC54i0aaKMRu2bwCY2B
+	8wNAU9+ZiLf5ZgkK8ycLB4DQfQZOF6oKfwaN7efuBAUc1aetwy4c
+X-Google-Smtp-Source: AGHT+IHrvYxDI1wKN1rkMDQ7eeuHkLXsOmiBRAnjf4RJ0ayJhK3kCarMO3qNBqmI7N4UpeLNLKZkEA==
+X-Received: by 2002:a17:903:198d:b0:227:e980:919d with SMTP id d9443c01a7336-22df35bf45amr39338245ad.47.1746009814978;
+        Wed, 30 Apr 2025 03:43:34 -0700 (PDT)
+Received: from NB-GIGA003.letovo.school ([5.194.95.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e7a8dsm118992715ad.136.2025.04.30.03.43.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 03:42:36 -0700 (PDT)
-Date: Wed, 30 Apr 2025 16:12:34 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust-xarray tree
-Message-ID: <20250430104234.dmwnn5ih232kfk4z@vireshk-i7>
-References: <20250430202315.62bb1c1b@canb.auug.org.au>
+        Wed, 30 Apr 2025 03:43:34 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 30 Apr 2025 14:42:45 +0400
+Subject: [PATCH v2] dt-bindings: net: via-rhine: Convert to YAML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430202315.62bb1c1b@canb.auug.org.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250430-rhine-binding-v2-1-4290156c0f57@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKT+EWgC/x3MQQqAIBBA0avIrBNME6yrRAvLSWczhUIE4t2Tl
+ m/xf4WCmbDAIipkfKjQxR16EHAkzxElhW7QSls1GSVzIka5EwfiKBGNd86p2dgRenNnPOn9f+v
+ W2gejrjv0XwAAAA==
+X-Change-ID: 20250430-rhine-binding-ee3a88809351
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Alexey Charkov <alchark@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746009806; l=3022;
+ i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
+ bh=NAKlta3XWitRCQ9CR0OeceOIu9uDJz/mQLmJc953vZc=;
+ b=VQRHu3ZlD50RosJpgOF+6PVZZ5Cv2oP5/FHjW6pS9bL99am6fO+PKopyogJ245JBslAgUHZu1
+ 8oE61AMGgvOAujPa/xQbcZB8SPRwiahTx1WvHo98EBRm7BWCEIzdXPT
+X-Developer-Key: i=alchark@gmail.com; a=ed25519;
+ pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
 
-On 30-04-25, 20:23, Stephen Rothwell wrote:
-> Caused by commit
-> 
->   a68f46e83747 ("rust: types: add `ForeignOwnable::PointedTo`")
-> 
-> interacting with commit
-> 
->   254df142ab42 ("rust: cpufreq: Add initial abstractions for cpufreq framework")
-> 
-> from the cpufreq-arm tree.
-> 
-> I don't know how to fix this up, so I have dropped the rust-xarray tree
-> for today.
+Rewrite the textual description for the VIA Rhine platform Ethernet
+controller as YAML schema, and switch the filename to follow the
+compatible string. These are used in several VIA/WonderMedia SoCs
 
-Probably this:
+Signed-off-by: Alexey Charkov <alchark@gmail.com>
+---
+Changes in v2:
+- Dropped the update to MAINTAINERS for now to reduce merge conflicts
+  across different trees
+- Split out the Rhine binding separately from the big series affecting
+  multiple subsystems unnecessarily (thanks Rob)
+- Link to v1: https://lore.kernel.org/all/20250416-wmt-updates-v1-4-f9af689cdfc2@gmail.com/
+---
+ .../devicetree/bindings/net/via,vt8500-rhine.yaml  | 41 ++++++++++++++++++++++
+ .../devicetree/bindings/net/via-rhine.txt          | 17 ---------
+ 2 files changed, 41 insertions(+), 17 deletions(-)
 
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 49246e50f67e..82d20b999e6c 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -630,7 +630,7 @@ pub fn data<T: ForeignOwnable>(&mut self) -> Option<<T>::Borrowed<'_>> {
-             None
-         } else {
-             // SAFETY: The data is earlier set from [`set_data`].
--            Some(unsafe { T::borrow(self.as_ref().driver_data) })
-+            Some(unsafe { T::borrow(self.as_ref().driver_data.cast()) })
-         }
-     }
+diff --git a/Documentation/devicetree/bindings/net/via,vt8500-rhine.yaml b/Documentation/devicetree/bindings/net/via,vt8500-rhine.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..e663d5a2f014788481dfa0c612c261eb6adb6423
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/via,vt8500-rhine.yaml
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/via,vt8500-rhine.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: VIA Rhine 10/100 Network Controller
++
++description:
++  VIA's Ethernet controller integrated into VIA VT8500,
++  WonderMedia WM8950 and related SoCs
++
++maintainers:
++  - Alexey Charkov <alchark@gmail.com>
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    const: via,vt8500-rhine
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - reg
++  - interrupts
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    ethernet@d8004000 {
++        compatible = "via,vt8500-rhine";
++        reg = <0xd8004000 0x100>;
++        interrupts = <10>;
++    };
+diff --git a/Documentation/devicetree/bindings/net/via-rhine.txt b/Documentation/devicetree/bindings/net/via-rhine.txt
+deleted file mode 100644
+index 334eca2bf937cc4a383be87f952ed7b5acbbeb59..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/net/via-rhine.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-* VIA Rhine 10/100 Network Controller
+-
+-Required properties:
+-- compatible : Should be "via,vt8500-rhine" for integrated
+-	Rhine controllers found in VIA VT8500, WonderMedia WM8950
+-	and similar. These are listed as 1106:3106 rev. 0x84 on the
+-	virtual PCI bus under vendor-provided kernels
+-- reg : Address and length of the io space
+-- interrupts : Should contain the controller interrupt line
+-
+-Examples:
+-
+-ethernet@d8004000 {
+-	compatible = "via,vt8500-rhine";
+-	reg = <0xd8004000 0x100>;
+-	interrupts = <10>;
+-};
 
-@@ -657,7 +657,7 @@ fn clear_data<T: ForeignOwnable>(&mut self) -> Option<T> {
-             let data = Some(
-                 // SAFETY: The data is earlier set by us from [`set_data`]. It is safe to take
-                 // back the ownership of the data from the foreign interface.
--                unsafe { <T as ForeignOwnable>::from_foreign(self.as_ref().driver_data) },
-+                unsafe { <T as ForeignOwnable>::from_foreign(self.as_ref().driver_data.cast()) },
-             );
-             self.as_mut_ref().driver_data = ptr::null_mut();
-             data
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250430-rhine-binding-ee3a88809351
 
-
-Andreas, is your xarray-next branch immmutable ? I can rebase over the
-change then.
-
+Best regards,
 -- 
-viresh
+Alexey Charkov <alchark@gmail.com>
+
 
