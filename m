@@ -1,142 +1,93 @@
-Return-Path: <linux-kernel+bounces-626497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAAAAA43CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:22:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE64AA43DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5821BA430B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:23:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 735F87B03F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B31B20E002;
-	Wed, 30 Apr 2025 07:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4AC209F38;
+	Wed, 30 Apr 2025 07:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tOTGspgT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dmjJQMbn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoekLzk9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652F620C038;
-	Wed, 30 Apr 2025 07:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033981F30A2;
+	Wed, 30 Apr 2025 07:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745997746; cv=none; b=YHR/rnE1kbMAi0hPxDZIPe80zCCPVQZfZ2v1ErXnkVJMhYYi69wBOFmkfKb5mlcv7CbwWM6P+NNacNHSpheN/ItZWwsBREDp39Zz6tmzMH8JTZ49gq488R1ilfao/MNcWNEXc1SalaDabTMJLwfTu6ZNR3jjXeTMvI22wfke3LQ=
+	t=1745997945; cv=none; b=fqaBXsOQp66Uim9xrjkeJF2DnKaU36m929ZpoW2xMiF/jKVBp8rOzvPvOAUBN+zTrY+LKW4n1bfXdC+afV5YnY4cDCUH/Vev1WEU+kpq3PNqP+FEHv8kP1LrQzyo3JrvmBbYadNoXoztouvIEUFDbRh78KZCKPhuhigJYchuVYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745997746; c=relaxed/simple;
-	bh=9vOlsdyYz0oqRQggJmKJhJNLNTqunkbx318xFnwqjD0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SDSlvJkQxny1Lr+B4DqMCnBJKOidcyDU67KSv90mR8Xxjd/i1S7R0w0zbJ3xCxaXwe/VI9JOtfABYfRPkYjTn+mIE3prTVWkB2pIn31aLSpuPF2UugzvHEJeAjahx48UAb+tSH75P14CmAgLCQr8rmBATaUoX/6clmwyZOOt6qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tOTGspgT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dmjJQMbn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 30 Apr 2025 07:22:21 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745997742;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jwqGfP6ipNqRR5ErbnK5eMpCjKlYWUpIyL7Fvi4ZvfI=;
-	b=tOTGspgT6E9yHXeiNq+kbrViN2PYlzkKF1nGpisEJkC7KFad9zhU7LhLylhKeICjj8K7O3
-	S7tRumUqr04QdPkytOzo6BYdh2PlKnp2bch+rVCoNaosvCgFOIeBbfkPClXectTlwXUq+y
-	hH7aPR7JA6Sp9kBAmAMScqYghBxkk09uUhNtuwBVb8S8kk3deee/86KSjh9WfLlMr+JxPl
-	AFVz3/kj8cSykOKWMJ65hGiP92fIdWBQFxBZORKg/yfKG9vlwks/YOoM6ylzGYPG6s4/rX
-	aDvIZ4Ecq2x4CTgAR4t1ZLHOTgfiOJrEmFWjsSnoaVfMUkiXO3hsLRly/FaLWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745997742;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jwqGfP6ipNqRR5ErbnK5eMpCjKlYWUpIyL7Fvi4ZvfI=;
-	b=dmjJQMbnO7fzCjBoAub/Kvetk272ZZooMWhbOYrqjMO1tcAvbQdXGQ0H7N0s9vZmpuOCQj
-	1CacojYDNK9pQ+AQ==
-From: "tip-bot2 for Su Hui" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] time/jiffies: Change register_refined_jiffies() to
- void __init
-Cc: Su Hui <suhui@nfschina.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250430032734.2079290-2-suhui@nfschina.com>
-References: <20250430032734.2079290-2-suhui@nfschina.com>
+	s=arc-20240116; t=1745997945; c=relaxed/simple;
+	bh=ubaqlVCfzznK8NA0TMC5zjpm+9ElhduUD1AiUfUvlmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GPiRayjjb1NnC9CSgNXjpiknDHAYvx0RR2KHLubXvkhYwNfAPcnPl+jzXXIN2CTL5pUArDDuFrMwlOT0Gnw6oFGjC9p3G92IMlZqi5G4A8mqp5A79zN317AhE5Vr1rGKs8ztjveQ8XtGIuYUJl8kOTNHxVunLWK/XArbVLjXxl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoekLzk9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689D7C4CEE9;
+	Wed, 30 Apr 2025 07:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745997944;
+	bh=ubaqlVCfzznK8NA0TMC5zjpm+9ElhduUD1AiUfUvlmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eoekLzk9b3pSI3wfRQXkoK+YkC7T9GzOioy/a7VPZclg2DMn4NSy0mZTrYEsFfG6u
+	 j+TVy3071KEcevi9hn+vEoWtxdh3n+nFYIUx/l4H7liz4OFiX586shc1HURUAgcMKs
+	 D/YWV3L7aCN0O9KMc3/piJV1fPH/DQdkNSf1lHYYa76nKTa0rP4vmZJnOX1M4nTukm
+	 aVs5mYEJee2c9fYvgA+7huqkvVELuB0pCfpqL/MjHyKHYWI25tkoeYCg43zRNjqkNn
+	 gfO1a20CeMUXQzTOtUF1av8ph3zczrbwBnjVBrbYHmgOxa9jaR0m6K2tq9W9vUkv0J
+	 riec7HKUrT6pA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uA1pC-0000000088Y-1Y7K;
+	Wed, 30 Apr 2025 09:25:47 +0200
+Date: Wed, 30 Apr 2025 09:25:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
+ version
+Message-ID: <aBHQejn_ksLyyUm1@hovoldconsulting.com>
+References: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174599774175.22196.10917731514907157768.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
 
-The following commit has been merged into the timers/core branch of tip:
+On Tue, Apr 29, 2025 at 08:08:29PM +0200, Krzysztof Kozlowski wrote:
+> Camss drivers spam kernel dmesg with 64 useless messages during boot:
+> 
+>   qcom-camss acb7000.isp: VFE:1 HW Version = 3.0.2
+>   qcom-camss acb7000.isp: VFE:2 HW Version = 2.4.0
+> 
+> All of these messages are the same, so it makes no sense to print same
+> information 32 times.
 
-Commit-ID:     007c07168ac0c64387be500f6604b09ace3f3bdc
-Gitweb:        https://git.kernel.org/tip/007c07168ac0c64387be500f6604b09ace3f3bdc
-Author:        Su Hui <suhui@nfschina.com>
-AuthorDate:    Wed, 30 Apr 2025 11:27:32 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 30 Apr 2025 09:06:23 +02:00
+It's even worse then that (several hundred messages during use) and I
+sent fixes for these regressions a few weeks ago:
 
-time/jiffies: Change register_refined_jiffies() to void __init
+	https://lore.kernel.org/lkml/20250407104828.3833-1-johan+linaro@kernel.org/
+	https://lore.kernel.org/lkml/20250407085125.21325-1-johan+linaro@kernel.org/
 
-register_refined_jiffies() is only used in setup code and always returns 0.
-Mark it as __init to save some bytes and change it to void.
+Unfortunately, it seems Bryan missed that this was a regression that
+should be fixed in 6.15 and only included them in a pull request for 6.16:
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250430032734.2079290-2-suhui@nfschina.com
----
- include/linux/jiffies.h | 2 +-
- kernel/time/jiffies.c   | 5 +----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+	https://lore.kernel.org/all/20250410233039.77093-1-bod@kernel.org/
 
-diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-index 0ea8c98..91b2078 100644
---- a/include/linux/jiffies.h
-+++ b/include/linux/jiffies.h
-@@ -59,7 +59,7 @@
- /* LATCH is used in the interval timer and ftape setup. */
- #define LATCH ((CLOCK_TICK_RATE + HZ/2) / HZ)	/* For divider */
- 
--extern int register_refined_jiffies(long clock_tick_rate);
-+extern void register_refined_jiffies(long clock_tick_rate);
- 
- /* TICK_USEC is the time between ticks in usec assuming SHIFTED_HZ */
- #define TICK_USEC ((USEC_PER_SEC + HZ/2) / HZ)
-diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
-index bc4db9e..34eeaca 100644
---- a/kernel/time/jiffies.c
-+++ b/kernel/time/jiffies.c
-@@ -75,13 +75,11 @@ struct clocksource * __init __weak clocksource_default_clock(void)
- 
- static struct clocksource refined_jiffies;
- 
--int register_refined_jiffies(long cycles_per_second)
-+void __init register_refined_jiffies(long cycles_per_second)
- {
- 	u64 nsec_per_tick, shift_hz;
- 	long cycles_per_tick;
- 
--
--
- 	refined_jiffies = clocksource_jiffies;
- 	refined_jiffies.name = "refined-jiffies";
- 	refined_jiffies.rating++;
-@@ -100,5 +98,4 @@ int register_refined_jiffies(long cycles_per_second)
- 	refined_jiffies.mult = ((u32)nsec_per_tick) << JIFFIES_SHIFT;
- 
- 	__clocksource_register(&refined_jiffies);
--	return 0;
- }
+Bryan, has your PR been merged? Can you try to get my fixes into 6.15
+since this is a regression in 6.15-rc1?
+
+Johan
 
