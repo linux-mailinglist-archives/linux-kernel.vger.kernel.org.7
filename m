@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-626627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3462CAA4572
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:31:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DCDAA456C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290AB1C03EEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:30:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A79E7B589F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A57B2192F4;
-	Wed, 30 Apr 2025 08:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398C021C176;
+	Wed, 30 Apr 2025 08:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ugWvjkNX"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=uci.edu header.i=@uci.edu header.b="OiO2CgW8"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FFC20D505
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F0421ABC5
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001713; cv=none; b=V0JsVhBh1W1SBxrxsHyHaLh4L6VEv38iUD0luu+Ve4EkvZcr/0//ubIuT8hN0Ot2GpnPzmUU5i430v6rD4/nqvozZeRfrdji9nfynmehtJh88mazo/L+PdRx1NmgmQ+UeL3VBzGy4XWmgP91wDZyrXToULqJeLeUkL9f6kSg+3o=
+	t=1746001730; cv=none; b=MirE6eyEO8WNXjWRqAuBwbrHJsiMMeqJ8ZOrM3Q+GzJl+9SGJLHNeGrT1Uk2HTY0v/E2NHMJV/TtEwT9k4tj7Xgr1mmTa6EaU5c6v5wnMl68+cCTNsgf2lD2MUZ4Q3mCFoDeFRQffI4AetCNfmkaEFI7YZ5akYSpVoIJbEvit3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001713; c=relaxed/simple;
-	bh=Tgj0b8wEyAscpECMyq6oZdPbM5PjpTjZ9DzPNxVUtdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=idQADvCLurazqvXNeb0oGLxxFgvBJFYCfjSyjbY3lMCC8qMCHamD+j076jvk+H4Lz5aPrqK0x0Z3i0Sot8ZNoPgqxnB83koN98qMchS8WrcbB9gXyR6fBiJAxmbjqbDjE4bks6k5fjS42t2VfOVvE2imtO4vxGhMYF4+kIO1o1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ugWvjkNX; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso7730706f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:28:31 -0700 (PDT)
+	s=arc-20240116; t=1746001730; c=relaxed/simple;
+	bh=pH0oqBFzXr7dxaa6fyvrd+LLrjaVdoyq6r4ZmuQseF0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AaRkEsA4zwHoSkgk4zss0WnzYfBq1k4lbezGwMxPCcoIWBfZjBU38CPRGRjDN6uVrgQhFVBcCTp9XSzTZxu6cnipPECZRnWVo+AqFWPXxU61D+Kf/l+mEZRNzMbaYTkAGzezViQjxmfD7iZ8SnGJhXFGDxu1Qmn1Ro0UIBFi+zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uci.edu; spf=pass smtp.mailfrom=uci.edu; dkim=pass (2048-bit key) header.d=uci.edu header.i=@uci.edu header.b=OiO2CgW8; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uci.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uci.edu
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30ddad694c1so76896791fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746001710; x=1746606510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iQU+bng+xkR7HviR9k3Fod5rLUwRR2Wp2EYNWSD72hA=;
-        b=ugWvjkNXL5AIJubLY2lUDW3CnP1LC969ErMeH6em7rkDxWsBBmjXnH4pF7L04oKasQ
-         bgaW/E0iGMgYJLh8nNoltlHKhl6onZnNi7L/2ke0UtKbsnhZD2KmEBuErlVcVX9+EGCr
-         8unU9UISL5k2UxI6jpMUGugHkJ60O328HtDL9inrIJzUAPKxXEzKkePNnsSTa1ShIFVw
-         I73BxUmeesIcKQagc6tKBiGyF/NBYyHcCv2papLTNBzZZjiB1NEhzAmYJfW3OmVQDQfw
-         qzHDcZj25eOxq1poHfs0RofbDAxzbatYx/SIK1FZG4hNLrbPEWsaDo9iabvCB2wH7rTf
-         htgw==
+        d=uci.edu; s=google; t=1746001726; x=1746606526; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6lPqXLo5Wb4FjmQISWv1/W8649m7XVXX1Bcf7rCMT1I=;
+        b=OiO2CgW8iu5CCKeSmS3PlKZ+n3xjB4FpmGZ/szRw0QJi8A+YcL0FYUJrTLEgosdX4F
+         d2jIHVcqMDFx8tXKCMTNLxGOgHXxJzDe1Lu5A+HD3aOZY2YteujoRH75Q6yRlSADpr7D
+         FVLvx40vp6KiwdNYybuP9Ljyfgcf+knyPL9/g0CFVT89u3k15c5uis1NnJR4mUXlSJko
+         zeE595klz/aoX3G/7dxfmk/okb1P8e+2elx9oIXR/mq9UO4aBbBncJUmdhGS9w45ZlXo
+         EuU2szghJEATSCEJv63JZTzcijBR1Lt3hkO0CBfuP4aaNjdxIZd+FPqtMVe6/dGanA2S
+         2EWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746001710; x=1746606510;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iQU+bng+xkR7HviR9k3Fod5rLUwRR2Wp2EYNWSD72hA=;
-        b=eu42vv+bRCVB+mh4b819SMrw/id7R5bPPyaPm4o+gPIjfwEI7zyPS4EyUpMBLQM63V
-         XybzU45LaSbwXi6YJRpcbOV+fGhPdZtUgHUhnjlX8Dz5xLich00tfdX5cMsrvvmqAg8v
-         CNC6A8rMJec2l27obN9HGSa24AsAsrcTv8K3TjirQBNCSAfIRKLgAO87uNoOlRunsZAu
-         DuglzYHcu7AzpsAruEv3/w2bXPbQ4GB+b3eA96A1LKjvPzCnP1emy7tzIQ2WKHU/LnwU
-         SUQ7PfrpcuDAoxSIF+I1ULA7GwA5sn+xrgrnHHEji0eE/3dpBuAXRTUTDIPUy8dCBa6J
-         TqDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5i8tpZeK6GnuRyVlY1jfbwdzjpvPCCP9v3bfMcf79WRW7NVSRtFSYGO27mmH63tE51H7loyE5ayHkQUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrJhh7dpaSHG6F7XswXJa15W/WkUbN/r5ibf8GgI73q028XB9N
-	zkhoQtbIONMGlMfWCkaCKfxeOJlumualAkSRQCYuuZVu//Hsr8gkP9ShUmJlsTM=
-X-Gm-Gg: ASbGncu8F2dK97J+D7AN324rcSzbiUKSPH8m2u0OfsApVI6UIjO1BGb7yBqCDXMrZ/+
-	K0ZZuIXurTHeYvAe5x0r1yCqBl/Cb2SNhhMl9ppAOJIo9mNjRokwRluW89U1tyStnZdZPjxJxmR
-	2jNhlwr7wJUtk9SjWsriBQd37VLgMwePPQrtSzl12DXreuDZyHSkC9J9hgqnozx/lhU2d0gaMIx
-	Al9i/nqI73ASUE/Eoo4ss+0ogcLNsmFP/bD+bH0gL+k5lltMhH/t0ZUMzjM5j1ImrN1/4nQeqZO
-	gfu0eMrwsNMfhkBvJL9UzNDBnmBVFtp4n+5vYcEIurPOfcbYcmzH
-X-Google-Smtp-Source: AGHT+IHgMvuDAt895ICDc0XLDGqBuslTtH+D05AWu6mlFg6UPu208Udg0K1dATfjFDOpPEGc7f862A==
-X-Received: by 2002:a05:600c:3516:b0:43c:fdbe:43be with SMTP id 5b1f17b1804b1-441b1f61398mr18443775e9.27.1746001709493;
-        Wed, 30 Apr 2025 01:28:29 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6298:7254:d3df:f23e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2aecedcsm16496835e9.15.2025.04.30.01.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:28:28 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/12] gpio: convert more GPIO chips to using new value setters - part 2 for v6.16
-Date: Wed, 30 Apr 2025 10:28:27 +0200
-Message-ID: <174600170555.13323.4628945373721333783.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-References: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
+        d=1e100.net; s=20230601; t=1746001726; x=1746606526;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6lPqXLo5Wb4FjmQISWv1/W8649m7XVXX1Bcf7rCMT1I=;
+        b=kxEzEJyXgbj6LOmb1vYrK9mUcCw97fx5HkWrRueSpkAkGk8ngflcPnknNMs4BDApSE
+         gjOYkm25XPcrm0UIR4B2m0W8XM2bA8DZVxTOEiBhODn+B2SyQzvIxu/JLMifET5xqvX+
+         mOd+LYYRVv4xgO+c+S8StXaORqqyWqyAT5R4cbm/tOYM+ztghecbVQOls1DnMTvtmMbK
+         KHYwM2Zc+7EdXjMeJVKqm7peLuyvrl0Y4OsD3yUS7rMF0JA/7mz3MOgw3cUclXhoyYW7
+         E8uwrcAXMzGbgUZu36QsWGjD2hG7TZ2InNdIyxvKVY+xt2GCi0uknmAH3sAuE+F/9Us0
+         8Jag==
+X-Gm-Message-State: AOJu0YzTuTRLmCtRGYQo3cfZZepS/NzLRG8oA5wRvR8L9uCsZx4Mqd1i
+	0khzjifhUaJT4hjdgBgcOIfGgHVpiG8dPHdfLRACU3zGUl6+voZDITeCu+mJ250/7b0dtcYJ9mU
+	W1QkDE6IbveuLqaVHyT8hlKH7qn8JYAdHHksoJyi9aPbV2l6xK3f/Qg==
+X-Gm-Gg: ASbGncvHmymYN2fUQwjFmB9OJGt26ggw3bVUBllBVtqjFZwbXQmENiETBp2fPj0kFWY
+	QfOORpfkzZooMByHq6aFSIbMBhGjesTMik/8nbd6xN+xjMceWxdK8LnM0fL+SsLcrSjWBLnbv2Y
+	UPA3PwUcRu1OcefnHKgAqcS4gcvLWGWNA3kqVq
+X-Google-Smtp-Source: AGHT+IHm9LGcwO5UfIgmOPoA/NZWU0YUuagpPN/FMkVDaPR9suXAlBToMbxCmPA+26NwR16zuoPZt7Fpu/vyInDHLes=
+X-Received: by 2002:a05:651c:1542:b0:30b:ee78:79d2 with SMTP id
+ 38308e7fff4ca-31e6bb7963amr7026571fa.36.1746001726243; Wed, 30 Apr 2025
+ 01:28:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Ezra Khuzadi <ekhuzadi@uci.edu>
+Date: Wed, 30 Apr 2025 01:28:35 -0700
+X-Gm-Features: ATxdqUHlLjGvyjp1aDqcwzw1xdWYY187ti4MPUlvYdIVpJ5MANTZwWt-gw4LJKI
+Message-ID: <CAPXr0uxh0c_2b2-zJF=N8T6DfccfyvOQRX0X0VO24dS7YsxzzQ@mail.gmail.com>
+Subject: sound/pci/hda: add quirk for HP Spectre x360 15-eb0xxx
+To: linux-kernel@vger.kernel.org
+Cc: alsa-devel@lists.sourceforge.net, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+sound/pci/hda: add quirk for HP Spectre x360 15-eb0xxx
 
+Add subsystem ID 0x86e5 for HP Spectre x360 15-eb0xxx so that
+ALC285_FIXUP_HP_SPECTRE_X360_EB1 (GPIO amp-enable, mic-mute LED and
+pinconfigs) is applied.
 
-On Wed, 23 Apr 2025 09:15:02 +0200, Bartosz Golaszewski wrote:
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. We're in the process of
-> converting all GPIO drivers to using the new API. This series converts
-> another round of GPIO controllers.
-> 
-> 
+Tested on HP Spectre x360 15-eb0043dx (Vendor 0x10ec0285, Subsys 0x103c86e5)
+with legacy HDA driver and hda-verb toggles:
 
-Applied, thanks!
+  $ cat /proc/asound/card0/codec#0 \
+      | sed -n -e '1,5p;/Vendor Id:/p;/Subsystem Id:/p'
+  Codec: Realtek ALC285
+  Vendor Id: 0x10ec0285
+  Subsystem Id: 0x103c86e5
 
-[01/12] gpio: imx-scu: don't check the GPIO range
-        https://git.kernel.org/brgl/linux/c/57bbc60be45b750073acc7d94aaccc4e652319a1
-[02/12] gpio: imx-scu: use lock guards
-        https://git.kernel.org/brgl/linux/c/dd6d13abb4c363f49ddca2697a781945cf80ad89
-[03/12] gpio: imx-scu: destroy the mutex in detach path
-        https://git.kernel.org/brgl/linux/c/68ef71400d0e7a9049c36cd0954ecc67521b0bc8
-[04/12] gpio: imx-scu: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/40150dda92cd8718a367a32ac345dce05f788a16
-[05/12] gpio: it87: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/ef877a159072ca31ed183b086c41fb9951521886
-[06/12] gpio: janz-ttl: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/3444049044ce24c2a2bc98c6e30d189451147b63
-[07/12] gpio: kempld: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/0c5fa4ee5a2256cd2d37bd0d0dda5d4fbbb30281
-[08/12] gpio: ljca: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/722332f58aa82b92c857b053426dd46e09988e38
-[09/12] gpio: logicvc: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/ba2ce44332142a86bb0e9246d40b97d6cc191c5d
-[10/12] gpio: loongson-64bit: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/145c4d7052fd15d20e5165305b3296a026a40747
-[11/12] gpio: loongson: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/7d34d9fbab771779a2b365934fdafff32bddd029
-[12/12] gpio: lp3943: use new line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/127da457c4e01bd6e4b8a126aaf1be1a6c03fc0b
+  $ dmesg | grep -i realtek
+  [    5.828728] snd_hda_codec_realtek ehdaudio0D0: ALC285: picked fixup
+        for PCI SSID 103c:86e5
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Ezra Khuzadi <ekhuzadi@uci.edu>
+
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 877137cb09ac..82ad105e7fa9 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10563,6 +10563,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+   SND_PCI_QUIRK(0x103c, 0x86c7, "HP Envy AiO 32", ALC274_FIXUP_HP_ENVY_GPIO),
++  SND_PCI_QUIRK(0x103c, 0x86e5, "HP Spectre x360 15-eb0xxx",
+ALC285_FIXUP_HP_SPECTRE_X360_EB1),
+   SND_PCI_QUIRK(0x103c, 0x86e7, "HP Spectre x360 15-eb0xxx",
+ALC285_FIXUP_HP_SPECTRE_X360_EB1),
+   SND_PCI_QUIRK(0x103c, 0x86e8, "HP Spectre x360 15-eb0xxx",
+ALC285_FIXUP_HP_SPECTRE_X360_EB1),
+   SND_PCI_QUIRK(0x103c, 0x86f9, "HP Spectre x360 13-aw0xxx",
+ALC285_FIXUP_HP_SPECTRE_X360_MUTE_LED),
 
