@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-626717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CACAA467B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:10:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 245E1AA4682
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA723AAF81
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701DD5A0E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D78F21B9F6;
-	Wed, 30 Apr 2025 09:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AEC2206B2;
+	Wed, 30 Apr 2025 09:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eyCZ9Z7e"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eJlPibJp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF0C1E51FF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACFB78F44
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746004180; cv=none; b=eZQlXALd7OIbEGA1MJw5+uiOHjkq4o90IHCVntKSz+VgN1Y0mfnxKlyWk27Ai+Aw92pg4nKryOLzIc+qGNuDX5QGMFt0BsFt6K+fJBxpCOvM1m2RAhkt9T2VT0KTlq5EumG956YUORN2WOQE2zWvPEY+20XOn8WFH15ZaDNhRIM=
+	t=1746004217; cv=none; b=sdwZP+q8O2kH1OlBXQQn8WBosiqjK9omUcA7ahIQohI28nNSDT2pZZj42nmDFUCzK+QQ9Q9rvBRKfBrUjvz6BXYdTHqfCMr1ICjurY8xo35MWsH+UmHti0Q0HH2gG3bJ9duMoUniCeycnmfBYXGcHyZKnw5MgIH5rbHND4f1W6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746004180; c=relaxed/simple;
-	bh=e4VAosr0IColf0a/CAOwD0TIFn3zHD6ZO9SpkXnE7kY=;
+	s=arc-20240116; t=1746004217; c=relaxed/simple;
+	bh=igMUEO2jdAMJa66FnKgZHk74FDW367SkId7b0Aj61PU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BgHiQVQgQvtVA7tx35/Dvi8qVtbMeeUWVeIuONloPMtfdihBh8Xc4nKA/qugFmp6fHp0g9Co2z/uwWXMyfaql/vFILjwa7JpO/8BgCDUc9MIfnliph4nLbxbZom0i/4rZQbWQ3SBhKg3tvCegooqfvcs4/3KM+1CIB5NMv1d43Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eyCZ9Z7e; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 30 Apr 2025 11:09:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746004175;
+	 Content-Type:Content-Disposition:In-Reply-To; b=C6Pclmv2Qb0sXgfLZMXdp4BsL6CbxToEfN/U8bX5iR35Sq/LMWFL+6VoPJOuWoOPYGwHdF765gXukim3tD0suq3sekFmvP+SyP2B3NpyKoIfkJMj5ZPiILGznqdLQ1Be3I+HiRaSSAq3HQSbIoxFWxbE1d7dTg+dR1kIP+iQssc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eJlPibJp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746004214;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QCRBRZZ/FbaHEC4RagoiZb8qIZ+TxSNDeJF2W7TvLAU=;
-	b=eyCZ9Z7e8YR2Rw072GaF3/+eIOxnaOFEvCAWB0Oin1QOD91c3RZq8vaMArKTKiFB0oWClh
-	2o/WsYstSvqxQzoZWbwgqN+sjthWAeFBFge56eABRNoxpPxiFGgW41ejk1uyQ9AJZE4xtX
-	qmPGcn6ezL+h8O51QC5MjQ++J0YKDWU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 8/9] media: i2c: ov9282: add strobe_duration v4l2
- control
-Message-ID: <t7lnqmhufsyf5ygfkfyllvxpm4h2qdxotgi2lcfoxlhxjpejjd@mf2poxik2zje>
-References: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
- <20250429-ov9282-flash-strobe-v3-8-2105ce179952@linux.dev>
- <aBHe-55_U3bYTXyG@kekkonen.localdomain>
+	bh=RBM8h9GXkd4oRheqBQptKlBrFr1ALhS3777dATJTzNQ=;
+	b=eJlPibJp+2E6PzUzZWKN185mIsg8aDJT2IQOJ9+ROLdL3ou+nk8/HVgfyxM1rWML1yYqDy
+	Foo9j1Uer2j6ZFiBBQ9U1sguIHaw6DfM+fjJV9iHepa7R6QV7rzObiBYSlB5l1wgin4E4s
+	YbRRsMKF434UP+UJTCX8GZDIo6AOk4s=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-ErEzdI7iPiuMmRdMqVTypg-1; Wed, 30 Apr 2025 05:10:12 -0400
+X-MC-Unique: ErEzdI7iPiuMmRdMqVTypg-1
+X-Mimecast-MFC-AGG-ID: ErEzdI7iPiuMmRdMqVTypg_1746004212
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-acb8f9f58ebso523612766b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:10:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746004209; x=1746609009;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RBM8h9GXkd4oRheqBQptKlBrFr1ALhS3777dATJTzNQ=;
+        b=dCP0uzuRkivWaA1LEGBzgf5KXT/GA2+TXOCvmNrADb+biDK3Glg3Zi72GAPRuxaCIg
+         +YNwBN0fEOBk3hN8cjdWMBM3WJqIGr6fmILZHYmRjDGs0lDStq4SSHDsuxAbq47fJdH4
+         ID9zE+jJdnfvo6MOZve+7XnXNdaSmHZ7hDzIy153hnqnKs10PjNyLUMbjadtsFSd06hd
+         D6kS7Q2Pfj56/p9OHtqps/EaFJmlvX/ivPTT03nwziG09RQjGvzoFuY1G/3ZSZhXlyah
+         7Y8rPNHROmisL4DJcn+uZG3Ef8yKSA++AIpzKC5L5Csla9ZVJMm6qKDfNaDLSTqC2jno
+         p9hA==
+X-Gm-Message-State: AOJu0Yx3wYJ7rc8ltoCKymNgirf284+QggL/+YDkC3akBJbc1NHdSuqv
+	gBE0sJBUs+ZXB+AGuRY7T6nYXqrcUPM6oA3kcLHumMnHunEXfVbkcGE6lfBkPXwinhU49O7XlHi
+	wG8vo9tk3wzlK7hLETqjxjXAwzF5uznnpQCMfefXJA1+P2rKJzKGvUO9tUyxZ/w==
+X-Gm-Gg: ASbGnctQTcpJI2wbcWziiav6k4/X443Xtva7QcIkEvjogc8Yh7g1JmvpCAkjahr53PW
+	Gann5ybM+4UC4t0Z7AIFVzX5F+dEywNIj050ZEDql6Efdsw/St6rtbaH0KPfKkDUQUuP1qKLfuZ
+	48eo163AD3chjeTCocFK8Jo/y218+rKHJxJJOi4aIAgCIyXAhrR5EDWJ+z6GhC/T5m9V/UfyXfp
+	7ScqjDx5IL45mQiAQ94nnmCJeSufCMmr4iGI3PrtaRrtutZMl7DbmGbKvwEfprRSAfHWUnopuro
+	JN//+IMSyzDWVCQzLA==
+X-Received: by 2002:a17:907:7b82:b0:aca:aeb4:9bd6 with SMTP id a640c23a62f3a-acedc574a4cmr220066066b.10.1746004209560;
+        Wed, 30 Apr 2025 02:10:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBMPamEhDPbDLqOXiGcIZesC1dmK+7e+0MqQ1tv9XUC/crH+ZQmawf9DLNdOJwg2QfTaPusw==
+X-Received: by 2002:a17:907:7b82:b0:aca:aeb4:9bd6 with SMTP id a640c23a62f3a-acedc574a4cmr220063766b.10.1746004208996;
+        Wed, 30 Apr 2025 02:10:08 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.220.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acebe7a4ee8sm313299266b.74.2025.04.30.02.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 02:10:08 -0700 (PDT)
+Date: Wed, 30 Apr 2025 11:10:01 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	"Michael S . Tsirkin" <mst@redhat.com>, jasowang@redhat.com, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.6 13/21] vhost_task: fix vhost_task_create()
+ documentation
+Message-ID: <n2c3bjkh4jbzm2psd4wfrxzf5wdzv2qihcnds5apfgfyrojhyd@l6p47teppn62>
+References: <20250429235233.537828-1-sashal@kernel.org>
+ <20250429235233.537828-13-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aBHe-55_U3bYTXyG@kekkonen.localdomain>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250429235233.537828-13-sashal@kernel.org>
 
-Hi Sakari,
+On Tue, Apr 29, 2025 at 07:52:25PM -0400, Sasha Levin wrote:
+>From: Stefano Garzarella <sgarzare@redhat.com>
+>
+>[ Upstream commit fec0abf52609c20279243699d08b660c142ce0aa ]
+>
+>Commit cb380909ae3b ("vhost: return task creation error instead of NULL")
+>changed the return value of vhost_task_create(), but did not update the
+>documentation.
+>
+>Reflect the change in the documentation: on an error, vhost_task_create()
+>returns an ERR_PTR() and no longer NULL.
+>
+>Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>Message-Id: <20250327124435.142831-1-sgarzare@redhat.com>
+>Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>Signed-off-by: Sasha Levin <sashal@kernel.org>
+>---
+> kernel/vhost_task.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks for the review!
+It looks like 6.6 doesn't contain commit cb380909ae3b ("vhost: return 
+task creation error instead of NULL") so I think we should not backport 
+this.
 
-On Wed, Apr 30, 2025 at 08:27:39AM +0000, Sakari Ailus wrote:
-> Hi Richard,
-> 
-> On Tue, Apr 29, 2025 at 02:59:13PM +0200, Richard Leitner wrote:
-> > Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
-> > feature of the sensor. This is implemented by transforming the given µs
-> > value by an interpolated formula to a "span step width" value and
-> > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-> > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
-> > 
-> > The maximum control value is set to the period of the current default
-> > framerate.
-> > 
-> > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-> > and tested using an ov9281 VisionComponents module.
-> > 
-> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > ---
-> >  drivers/media/i2c/ov9282.c | 28 ++++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > index 35edbe1e0efb61a0e03da0ed817c4c4ec0ae9c35..5ddbfc51586111fbd2e17b739fb3d28bfb0aee1e 100644
-> > --- a/drivers/media/i2c/ov9282.c
-> > +++ b/drivers/media/i2c/ov9282.c
-> > @@ -97,6 +97,10 @@
-> >  #define OV9282_REG_MIPI_CTRL00	0x4800
-> >  #define OV9282_GATED_CLOCK	BIT(5)
-> >  
-> > +/* Flash/Strobe control registers */
-> > +#define OV9282_REG_FLASH_DURATION	0x3925
-> > +#define OV9282_FLASH_DURATION_DEFAULT	0x0000001A
-> > +
-> >  /* Input clock rate */
-> >  #define OV9282_INCLK_RATE	24000000
-> >  
-> > @@ -687,6 +691,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
-> >  				current_val);
-> >  }
-> >  
-> > +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, int value)
-> > +{
-> > +	/* Calculate "strobe_frame_span" increments from a given value (µs).
-> 
-> /*
->  * Multi-line
->  * comment.
+BTW, this is just a fix for a comment, so not a big issue if we backport 
+or not.
+
+Thanks,
+Stefano
+
+>
+>diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
+>index 8800f5acc0071..0e4455742190c 100644
+>--- a/kernel/vhost_task.c
+>+++ b/kernel/vhost_task.c
+>@@ -111,7 +111,7 @@ EXPORT_SYMBOL_GPL(vhost_task_stop);
+>  * @arg: data to be passed to fn and handled_kill
+>  * @name: the thread's name
+>  *
+>- * This returns a specialized task for use by the vhost layer or NULL on
+>+ * This returns a specialized task for use by the vhost layer or ERR_PTR() on
+>  * failure. The returned task is inactive, and the caller must fire it up
+>  * through vhost_task_start().
 >  */
+>-- 
+>2.39.5
+>
 
-sure. will adapt that in v4.
-
-> 
-> > +	 * This is quite tricky as "The step width of shift and span is
-> > +	 * programmable under system clock domain.", but it's not documented
-> > +	 * how to program this step width (at least in the datasheet available
-> > +	 * to the author at time of writing).
-> > +	 * The formula below is interpolated from different modes/framerates
-> > +	 * and should work quite well for most settings.
-> > +	 */
-> > +	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> > +
-> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> > +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-> > +	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
-> 
-> The granularity of the hardware supported values is lower than that of the
-> control. Could you add try_ctrl op to provide the actual value back to the
-> user space?
-
-Tbh, I've never implemented a try_ctrl before, but sure. I will dig into it and
-add it for the ov9282 FLASH_DURATION in v4.
-
-> 
-> > +}
-> > +
-> >  /**
-> >   * ov9282_set_ctrl() - Set subdevice control
-> >   * @ctrl: pointer to v4l2_ctrl structure
-> > @@ -756,6 +778,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> >  	case V4L2_CID_FLASH_LED_MODE:
-> >  		ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
-> >  		break;
-> > +	case V4L2_CID_FLASH_DURATION:
-> > +		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
-> > +		break;
-> >  	default:
-> >  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> >  		ret = -EINVAL;
-> > @@ -1418,6 +1443,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> >  			       (1 << V4L2_FLASH_LED_MODE_TORCH),
-> >  			       V4L2_FLASH_LED_MODE_NONE);
-> >  
-> > +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> 
-> Should the number of controls in the handler be updated?
-
-What do you mean by "number of controls in the handler" exactly? Which
-handler?
-
-> > +			  0, 13900, 1, 8);
-> > +
-> >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> >  	if (!ret) {
-> >  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > 
-> 
-> -- 
-> Regards,
-> 
-> Sakari Ailus
-
-regards;rl
 
