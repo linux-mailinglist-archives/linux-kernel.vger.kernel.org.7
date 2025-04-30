@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-627662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3957FAA5382
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:16:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF977AA535F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98D71BC864C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA9E4C8953
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D8C266F01;
-	Wed, 30 Apr 2025 18:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CB1277013;
+	Wed, 30 Apr 2025 18:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="hrnPfHha"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDRoUlFl"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606592882CD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB06270578;
+	Wed, 30 Apr 2025 18:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746036691; cv=none; b=CuzQrhO/dumx1WT2mv6OBsR5M2vRppDJLKO8tUaSIieRPjVPSalOggLb2vUdr2GKvnswvsUH0+LBb9XajeF5MNQRxf9bw1bVgGhJyEpe0OBuLnx9LF8EP/MtpJxz2D237/LduzGiH8A6W8jFeSFiR4fGAyZpFHG0vsG4OvfX+Jo=
+	t=1746036669; cv=none; b=HsHzvYbNsPT/m267O4rqO9oBlSmEIU4C5kkGIWyhtjzXuQss7CqbzKrssQW6YePIznvO+XVlNHHWUzuGCmjAvc6VoZjjTtFtXq0sXX7qij3g3Y81eHaLkXbRAsb7nfTHinjvEdYnAgU+S6FXGwW0vXZ938ocayBBCeCoGMLl3iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746036691; c=relaxed/simple;
-	bh=iirzwEeYoxznZHJe7vcY27yiljb3AwlzwC5WRq52rLc=;
+	s=arc-20240116; t=1746036669; c=relaxed/simple;
+	bh=uKkWq78XfYV8C1wGjeLxUClR6JZktKdqmRzCLRPiniM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D85e0f9TolVXLsuygR92HPh9MOCn1BVZ1mweJefTQhey19JGNHlGsrE+Igjcehf6V7Qomo9ndf5caw6M9Se8+UNbQ+mdJ39BI4J2FNEwTXbB7miGOMwwPS0aoD/kuRl4EF0a/gHuyKG4tl7A5tVOXkUYKjdn2DMb+K9YtF/BMTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=hrnPfHha; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4775ce8a4b0so3085271cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:29 -0700 (PDT)
+	 MIME-Version; b=beY816YOwo2dS9A2YUT4EqWVHfNZqyL0CrbuUNVVHxwz60WQXPOWNgfLtQRcelnxPtaPg7FZ+lYI+3SvOf3So4I+7TDHIYhKvJTPBTxV/nJFdlRsGH3DsxJQphLkWH7JJvvpdKdlKKaDOt6FbfCd3xV5xQikHDqekv7BbHeR1is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDRoUlFl; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-73bf1cef6ceso280641b3a.0;
+        Wed, 30 Apr 2025 11:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1746036688; x=1746641488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A39YiB1Z+l6GCsVmrhqArPxiVLmwBB2VQEqP9tXT4Ig=;
-        b=hrnPfHhaQAzbrxbEaJMbYQ9nSMkwK3qabvTrVWPR51RX9eV6xdN4LMIrJNXRu3aLd+
-         R/lU/gXZceDxMVeebN9N0tpY6DyD92BBpzVIuAP61GPU+efI/QzI8VkZpZCv/AP3Lh5b
-         OM3n4RituY+VnxqBZDUgD3jEamKW54F8pMzMd6PIhVonpvEhqb7AZJisAsnaLVJowC0Q
-         l3OmCs0rkOV1GZo13/lJCLsdNbJ9RRJlLNlsc0PhUq98X9gx/AdFV2xYiolpTdW/l3bf
-         V2itiyeNxsAwbWhgNPTSJ15yN7myDiwjkpgYLzCXsyOpQ1oq9cUuzogUaAi4y9HUfOUb
-         9DqQ==
+        d=gmail.com; s=20230601; t=1746036667; x=1746641467; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rWrdBEdzmL3R/kfX7rqlGT9fsre+XXLU7YQDNncr/vk=;
+        b=LDRoUlFlQPkVRrLEixPf8YnIJbnSTGunj5E9QMx5Ns3tbwn/gUmSBxynpVp5yEVwvE
+         zhobKS63DUh31l0LwTzWiWueAi0eF+UkJtFJ1Un2YkTy3PROmtMBdJVX5Dxprnwt9Oj5
+         A1X9swcuukrcpk+RlgYKXr9I8GxK/+Xj1oGQc7amNj7S6ijhWRgaqwaVL2uWkcAgfJd/
+         ha2MJG7m2tRjN+EykqXHLF0pNoWg3iRMWXGYYrkneK9St8F5ZgeEuPEK94U7GhI8vZmt
+         H45xUZVXIfHkOOmCczYj1RsHswL8rTr0cR9J+Zx+dhKrj5Wmm+65P8CDZrfGebYo8EI/
+         6cGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746036688; x=1746641488;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A39YiB1Z+l6GCsVmrhqArPxiVLmwBB2VQEqP9tXT4Ig=;
-        b=uVvL1y/1V3JIn79G88+7BtHTSOiVny8Pt7o+luXuGd7IS5cvYlL6POrEmEQ26fMnrZ
-         l9nxTXkvugNBAbSN0sWdi4dtELwovilbV7ZRuyURtVzcXRE7fYvOrap2KJVzgH8gJv3v
-         4J5dyRy2vnfbfsDhkhL+itQ+R/U4H2tWadTFfaGBS1vfz0JupfVDHzSIOBl0KAfEp17m
-         zsKTumedUscqSWVcQSGbY894fT0Z+VLdZ3Tck50IIiQWSI6fkN5taYfYIjxXtuP5SHF0
-         YvRdlTc0lodpU6pT2mIsH3xTF3L04x2zKar0wZiokVOAjPa9qSVGg24rd1K+S3QwDmTc
-         8EkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtpsbuk7pWSCc5l3Fdp/OwrdFLwOGBEj59WF+4rdftAlNaC2VLzNLAWumoTS40m6s5B58U5xiZf4jF8hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLVH/V1GUAh31fMp7zF5wjD5IZoWYxW0JHmcMdfnoHNQ/y7hKi
-	5FHafJObvHiDrcfQnTrKa0sEf9pd0B6p0mzVi6J93EpTj9M8u9NGlnb5fRRbvPQ=
-X-Gm-Gg: ASbGncs+Mq37OJbmN0YaW290q1xjpfsi/RmHXvbYcZ2jm8RqjeJNLlDmatQPqbXXCFT
-	cSV7jnq3yml7JXR9D+41dnXChfxXO/rwKv/2gjqgSz8skjM3192n9RIALDJ+Dc01NV8Cs4NqMdO
-	qLW2hQQUTgW72BsKYJA2hcwIEDUFsoinMWb+WNQ+ZjsvrneLTUIra0ZcGhWfR0mbkwsAxNSkEPd
-	8TTSiKIa0qoM5Y118LtZZief6Jia6POK3n3WHIv8fQaVILhGX+AEWBezFATB/1UQKQBil2I4wak
-	i/lfCxwu5NwnfWBYNO6Adr9aC4ht2tPzDVV0IwIEx4eml1jQTwZijh2qATIoMI+cWv28xTnI+HA
-	5h/X5TK+Lh4lPCNKohZiFE7Sofg12
-X-Google-Smtp-Source: AGHT+IEjj5fRlO+G4AeYsj9CnMTHgu74PV6/AnY9a7Hyw1zOc1l/ean48c9t9b0uKuyRkKfZm4P+pg==
-X-Received: by 2002:a05:622a:4a17:b0:477:644a:72ec with SMTP id d75a77b69052e-48ae7a20044mr4433871cf.13.1746036688396;
-        Wed, 30 Apr 2025 11:11:28 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-48a64fe04efsm5897421cf.19.2025.04.30.11.11.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 11:11:28 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-cxl@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1746036667; x=1746641467;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rWrdBEdzmL3R/kfX7rqlGT9fsre+XXLU7YQDNncr/vk=;
+        b=I4QZkPYO8fPWBpoKVyAWArmBLWdeU9XSBmrMJPMCShOWL4ROMF4LmjBVzseazN0yFH
+         CIrQ+zKV5AbAIxTI9sM/+qxjFfuB6UDwpSmvejyRxHq//IoEUOYQI0UHb8X8BvXoQmsX
+         Ab9wL0ZyoWbmpmUdo5Yr2JNrg2qTHw5p0XYl8WUPadXicRfFHlDbzHp/L+ooQeAnrLQL
+         ci+Qecg4nWsb4/xOWB54PMGYZ4+rApCznXzxbWR2Q9E2cjKL5p/Jrgro88FMx0Kgl6WT
+         P9ac2MRenVvnb4/gPgCC71DaakD4MAD0z68JmsOMpXqCkFjkW8WheRZ+mb3O3KqZgrRI
+         T3vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5oa7+3bWuxgz/5YjXdbPKLRn2taRzzeWBKay3rqIINKgLNqMjm73zlEKXR9ZztR9oU0hu3+EFxFJA3viH@vger.kernel.org, AJvYcCVtiU53SwwwnHPF5HAaVeikFAZf4c97r+ym6NvkHcYsFJRVUxsVNKsChig2QrSDql/ZFRf127DnQWt4TyTq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+GLF6pEcB6wFUocYo2GZxJYvkGdaPEGgsORQM9fj6wuWL0BJH
+	ncxkD4XITEqxpq1NHSDxdEzp+SsvYCSRXZAlcExUwvcqbsXTY8UK
+X-Gm-Gg: ASbGnctSa0AaXdtbF6cyDNG/hCeCtvmGSllxPQj7x5NNwUbKxE+yMyGiXJeEyhCpBCe
+	siwd77l9G1kGYhjVYZ1WEUwIxvPAjmRXYisBxTxR84BGmffTfPIeUviOL7NI2zRaN+tzSn2jwcG
+	vh4Dwnt7cIGxL0PWfUbUGfdCg7aKb7PrKV5oNOpDSMceYoQeNJRAufH1XdMeRLg8n8gcTU8zv2d
+	CaPJ3wQkP87ijDYcYMtVMYpQsKFY1pB8kS5XUSHFIorU1wzTlvpgh9ZlkryZlDV1OOuWMDpJ6Pq
+	mO1w+0q080ZNPO4TiiYE0oi9ap4yRudDR7HvdGd4qby9T4jzztm9x6GAdnx4Kg==
+X-Google-Smtp-Source: AGHT+IF9cU95gPYlg/+BueaWtgjVYu+duwRSmPeVQaR4peuDgpv89pIl+iXc0sQ4jiHvcfNXy2gTMg==
+X-Received: by 2002:a05:6a00:4651:b0:736:9f20:a175 with SMTP id d2e1a72fcca58-7403a75be24mr5326968b3a.2.1746036667491;
+        Wed, 30 Apr 2025 11:11:07 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([106.37.122.198])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.11.02
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 30 Apr 2025 11:11:06 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>,
+	Chris Li <chrisl@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
 	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	corbet@lwn.net
-Subject: [RFC PATCH v2 16/18] cxl: docs/allocation/tiering
-Date: Wed, 30 Apr 2025 14:10:46 -0400
-Message-ID: <20250430181048.1197475-17-gourry@gourry.net>
+	Kairui Song <kasong@tencent.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 1/6] fuse: drop usage of folio_index
+Date: Thu,  1 May 2025 02:10:47 +0800
+Message-ID: <20250430181052.55698-2-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250430181048.1197475-1-gourry@gourry.net>
-References: <20250430181048.1197475-1-gourry@gourry.net>
+In-Reply-To: <20250430181052.55698-1-ryncsn@gmail.com>
+References: <20250430181052.55698-1-ryncsn@gmail.com>
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,52 +103,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Carve out a space for folks to explain existing tiering mechanisms
-and how CXL capacity interacts with it.
+From: Kairui Song <kasong@tencent.com>
 
-Signed-off-by: Gregory Price <gourry@gourry.net>
+folio_index is only needed for mixed usage of page cache and swap
+cache, for pure page cache usage, the caller can just use
+folio->index instead.
+
+It can't be a swap cache folio here.  Swap mapping may only call into fs
+through `swap_rw` but fuse does not use that method for SWAP.
+
+Signed-off-by: Kairui Song <kasong@tencent.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- .../driver-api/cxl/allocation/tiering.rst     | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/driver-api/cxl/allocation/tiering.rst
+ fs/fuse/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/driver-api/cxl/allocation/tiering.rst b/Documentation/driver-api/cxl/allocation/tiering.rst
-new file mode 100644
-index 000000000000..623bb23088be
---- /dev/null
-+++ b/Documentation/driver-api/cxl/allocation/tiering.rst
-@@ -0,0 +1,31 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==============
-+Memory Tiering
-+==============
-+
-+todo
-+
-+Memory Tiers
-+============
-+
-+todo
-+
-+
-+Transparent Page Placement
-+==========================
-+
-+todo
-+
-+Data Access MONitor
-+===================
-+
-+to be updated
-+
-+References
-+----------
-+
-+- `Self-tuned Memory Tiering RFC prototype and its evaluation <https://lore.kernel.org/all/20250320053937.57734-1-sj@kernel.org/>`_
-+- `SK Hynix HMSDK Capacity Expansion <https://github.com/skhynix/hmsdk/wiki/Capacity-Expansion>`_
-+- `kernel documentation <https://origin.kernel.org/doc/html/latest/mm/damon/>`_
-+- `project website <https://damonitor.github.io/>`_
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 754378dd9f71..6f19a4daa559 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -487,7 +487,7 @@ static inline bool fuse_folio_is_writeback(struct inode *inode,
+ 					   struct folio *folio)
+ {
+ 	pgoff_t last = folio_next_index(folio) - 1;
+-	return fuse_range_is_writeback(inode, folio_index(folio), last);
++	return fuse_range_is_writeback(inode, folio->index, last);
+ }
+ 
+ static void fuse_wait_on_folio_writeback(struct inode *inode,
+@@ -2349,7 +2349,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+ 		return true;
+ 
+ 	/* Discontinuity */
+-	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
++	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio->index)
+ 		return true;
+ 
+ 	/* Need to grow the pages array?  If so, did the expansion fail? */
 -- 
 2.49.0
 
