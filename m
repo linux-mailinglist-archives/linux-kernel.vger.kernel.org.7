@@ -1,379 +1,168 @@
-Return-Path: <linux-kernel+bounces-627619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434B6AA531E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF51BAA5320
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA7B4E5DFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E4F3B7828
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED1E29840D;
-	Wed, 30 Apr 2025 17:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DE52973CC;
+	Wed, 30 Apr 2025 17:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RimY1o+5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="u9RW3Jro"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120612983F4;
-	Wed, 30 Apr 2025 17:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53C3296FB8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746035537; cv=none; b=Do3tuV7Iop+NlQ9VwPBE3dNOSRtLLx9GYigIyaP0LMOxa/Xc/u3FPpbNFfLZvtkt8ydfY6ulv+alPJ/cwd18yDl1O0fIM38bK7SDqSzngv9e22xUyb4iR3mhDv4wZJi8Al8DDuTvhPRWR1mjO0qt5jevfke4oYTkCyZ92DVQ0Lw=
+	t=1746035530; cv=none; b=mx3Z7UotQg2Ajs6lG5e+ZIucX/JG09H4vZqQwz9biRZMB9ii/13aZf4jfLebR/NAMY1WxMHAzmG08Hj2obXEqhp2cpHhbZ/xQmu/dc7/XwyIzvOuKXnmOC7UM0T7xIaQR+TA1N74LIh6d/ylDLkcOGlhHYXFEROLPR3/hb/D0cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746035537; c=relaxed/simple;
-	bh=3IQls6LanaHFfB+tJv6QGqpwwG+ALsyhTOMes6xZWPY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WkSdwrzXTIcxIPBHnQa7It6Bhry7ttafFy+n4GAl06d1dxDIXaKIGUS/F8ToeYDXJ23RzgPIbQdcryFQ6EQSvL16qdQxa3FAlughxSgx2ONf9EwquyJpruFjXzy6lf7Qr3bo7uIIL9Od+dFY8+drgURxCi+uXGwKYEJjWvvPwUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RimY1o+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 52222C32782;
-	Wed, 30 Apr 2025 17:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746035535;
-	bh=3IQls6LanaHFfB+tJv6QGqpwwG+ALsyhTOMes6xZWPY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=RimY1o+54Xo2+N5HDxBoVmlO+1gJ0j7Z1+pzm8HLffj0PUt6h6DJ3dmXotUNotr0T
-	 fohs8VWG7YBtGpB2y8E3g0wdLbryzATB3ug56eEpBvlfoDLTWMkxa+CG8tdm3NFdUo
-	 wcP+71iqOcd3J6sXF4FjWycbsdTZAXSxMY1AqtU0mXFMlgmiyW4flJqD75xXy8shdO
-	 /o3hLASffLMi3ZGT1O67YwhLukyb6Wva+TCxGJh035XWUs3cnwoc2YHTwo8dJzcqvy
-	 3SbirMplKJ7yQhHzIuCuPBJ3thTMAZ5MoO83AwsM4gH6TW2jQkojyFQ7u5Dj/4+C3l
-	 Bsj2bT3bz0Bxg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D014FC3ABA9;
-	Wed, 30 Apr 2025 17:52:14 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Wed, 30 Apr 2025 12:52:01 -0500
-Subject: [PATCH] memory: tegra210-emc: Support Device Tree EMC Tables
+	s=arc-20240116; t=1746035530; c=relaxed/simple;
+	bh=6Qk5aOcjeughcGyqvegbHGnygQ3Y1BSJM0ZNYFBy5Q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtq1asxU0PuYY7QCyVyfxna1Z/fyolyEyB2yONeVJHNMcrjWh2JnacD36y7ywLtve9tERm7Eg0XKw9yf7ALPrcSbY0xutD/AZ+VW/1JE0OqGHQyNm2mr6L+d8U8FL6Wk4idczKO3EieuLN2Ptwi1bOtKKD1WuLxGidFU6hlqXzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=u9RW3Jro; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-864687c830aso8277539f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1746035528; x=1746640328; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tV3++ttVfH4W7FY1HViLXTb1LjmY9pSLMgtourB5A0Y=;
+        b=u9RW3Jro+7F5ywKrRjCooS8bX98k8mnoDWYhjJOUrG+yzsbA4jLFidBTJK7Qv3cXVe
+         14aqiy+x/1Vo4s0Gtwk2oFKdaEMapBudMGLcsQZkmGrPknt9+DzUGUjd6/TmvEe8MuF+
+         XVwPtP/ipPQtdrJTb0hsB2xo52g0UJ4oq4FBf1kFOtSTFkQzGANEhrQRNtHet7XqNMrR
+         rMr1FpmC7W/Ymd00O2wzyTorpKxyn4UfRKhmUYKcF6v2uU0eIScUaavXxGR6OpkcOGDG
+         K38CRI4gNJmgXYK6PPHSaELAvUcT+2+cKFL1Ar/zTtHHMVaVI+zyA5fnG7cP0TI2cTtb
+         9G/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746035528; x=1746640328;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tV3++ttVfH4W7FY1HViLXTb1LjmY9pSLMgtourB5A0Y=;
+        b=gYcM42YmiPYQIyt8JCvotUhD2s+xaKXXkRXh0CL5ATC7RkYdJbfnWpxddZAa2k1fN8
+         wDv+j5tL7s6IRyuKDbJUXA9pQJU9a/JfsAza3hCyd8aZdIX6Xuq9BQ4BzDfKe+YS3a34
+         fq432N+QL4P47FM/p8WmXG6sKzZp4WysY1HpDjzhyTzy2sEjo4vPH8/B7UQJkY3j4HXX
+         grIV0bF0Py8etbKkcwEZ0aBahxxhkxOKCRtuIINst+lJC6NHeJhSnt6ckFtvJA3PCNcC
+         mfU69/w97lSKB+llIgIrNTKjjOAERI4GO4dpt7t6nZQeXyeS69yjXV3J66xHAjaU8GGF
+         RtWw==
+X-Gm-Message-State: AOJu0Yy0fX5DAXsggw2AvOEdkXKuEl9mRSyPrjUaKn9qiGk+CmVpUDlL
+	TtbhViN3OFqYJLJdT1cBBukFlmoMXM+AEQewLBmW0SEXEFWHOf1t/d4r8ZcyRo3qXlFbtizOjt3
+	z
+X-Gm-Gg: ASbGncs7GgQrRan0ayFdfgqevLGlV6mzDxTxX4TqCGnp+5knW2z44YQ1C86x7rHSe6S
+	xLEDXRwWkod62A2/Ip4JDLm1I5X2RbK9adVqMK8Iwa7QKaxmsZClDlBorLAQqhMREui3S86CGOp
+	p3eOka8z0Q3jJEcD3HdCrGTGGHKzhPnFDMNDLS9h4rEpj2KXlBTi3VS3BKQz8EoOghWP+t7mAVF
+	tHN+b7npGL6Ab/TPuBuDdwEPKFfXBp6W5zgscBCSvibjdXLkyAUQ5VbV0NzRrW66qvuqDGqHl+s
+	8mvN4OauF01ZlQB5WvOsBbrIiRLDpGcJ38l0Jdn0l5xi236GHXQ+Qy7fFUursDwuFdFFwg==
+X-Google-Smtp-Source: AGHT+IGA8d3eSMeZa990sNEOMPBfFmfFJDgS1Kkfj8JknYIKmKzHhe3V9dFO1McaI8Jc02UYFjzRfQ==
+X-Received: by 2002:a05:6602:389a:b0:85a:e279:1ed6 with SMTP id ca18e2360f4ac-86495ef01d6mr557928339f.11.1746035527605;
+        Wed, 30 Apr 2025 10:52:07 -0700 (PDT)
+Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8648bf2f2adsm83135239f.12.2025.04.30.10.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 10:52:07 -0700 (PDT)
+Date: Wed, 30 Apr 2025 13:52:05 -0400
+From: Nick Bowler <nbowler@draconx.ca>
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	regressions@lists.linux.dev
+Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
+Message-ID: <nchsanp7nc7nqy3kqlu7c5iwvfj6vmrkqbxyjxmoc5eq3dthjk@fusw4pm52auq>
+References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
+ <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
+ <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
+ <CAD=FV=Wc9TnDg6vDb8r5A8dT9TvOzU2kNSKi_6TzTtb0ka=8jA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAEBjEmgC/x3MSwqAIBRG4a3EHXfBpAe2lWgg+ld3kIVGBNLek
- 4bf4JxMCVGQaKwyRdyS5AgFTV2R22xYweKLSSvdqVYbvrBGqxvF2B37i83gHXqjrG9BpTojFnn
- +4zS/7wfGrSDaYQAAAA==
-X-Change-ID: 20250429-tegra210-emc-dt-97dce690ad4e
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746035534; l=11318;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=oK0pr0GREoOZzHrbUEhRzpd0qBn9cGUQIAd6Mb/CAcg=;
- b=EqKw3T3C+p76GZFOR7E9cQJZ/nd9kzvp+ywCCbBSpfQSz2/MvBpngA1Tqc7KdyLx2f49GpZao
- e3LTTGH3V8zDWvwetocL7Jly8ji2bPqNlf+53J4tFjvOue+0r4FtXzu
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=Wc9TnDg6vDb8r5A8dT9TvOzU2kNSKi_6TzTtb0ka=8jA@mail.gmail.com>
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Hi,
 
-These are generated by the Tegra210 Android bootloader. This is similar
-to the Tegra124 handling, so the support is based on that and modified
-to match Tegra210 by referencing the downstream Nvidia 4.9 kernel.
+On Wed, Apr 30, 2025 at 10:05:44AM -0700, Doug Anderson wrote:
+> On Wed, Apr 30, 2025 at 6:28 AM Nick Bowler <nbowler@draconx.ca> wrote:
+> > On Mon, Apr 28, 2025 at 01:40:25PM -0700, Doug Anderson wrote:
+> > > On Sun, Apr 20, 2025 at 9:26 PM Nick Bowler <nbowler@draconx.ca> wrote:
+> > > > I recently noticed that on current kernels I lose video output from
+> > > > my Blackbird's AST2500 BMC after a reboot
+> > [...]
+> > > >   ce3d99c8349584bc0fbe1e21918a3ea1155343aa is the first bad commit
+> > > >   commit ce3d99c8349584bc0fbe1e21918a3ea1155343aa
+> > > >   Author: Douglas Anderson <dianders@chromium.org>
+> > > >   Date:   Fri Sep 1 16:39:53 2023 -0700
+> > > >
+> > > >       drm: Call drm_atomic_helper_shutdown() at shutdown time for misc drivers
+[...]
+> Do you happen to have anything that's just a normal HDMI sink, like a
+> TV or a standard monitor that takes HDMI?
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/memory/tegra/tegra210-emc-core.c | 246 +++++++++++++++++++++++++++++--
- 1 file changed, 236 insertions(+), 10 deletions(-)
+I can probably find something else to try later.
 
-diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-index e63f6269057106ded054dea94d92d96cb9c13c06..0b8c7cd09679dc64b3fb04acf2bb5963dd7544fc 100644
---- a/drivers/memory/tegra/tegra210-emc-core.c
-+++ b/drivers/memory/tegra/tegra210-emc-core.c
-@@ -1783,6 +1783,226 @@ static void tegra210_emc_detect(struct tegra210_emc *emc)
- 		emc->num_channels = 1;
- }
- 
-+static struct device_node *
-+tegra_emc_find_node_by_ram_code(struct device_node *node, u32 ram_code)
-+{
-+	struct device_node *np;
-+	int err;
-+
-+	for_each_child_of_node(node, np) {
-+		u32 value;
-+
-+		err = of_property_read_u32(np, "nvidia,ram-code", &value);
-+		if (err || (value != ram_code))
-+			continue;
-+
-+		return np;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int load_one_timing_from_dt(struct tegra210_emc *emc,
-+				   struct tegra210_emc_timing *timing,
-+				   struct device_node *node)
-+{
-+	int err;
-+
-+#define EMC_READ_PROP(prop, dtprop) { \
-+	err = of_property_read_u32(node, dtprop, &timing->prop); \
-+	if (err) { \
-+		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
-+			node, err); \
-+		return err; \
-+	} \
-+}
-+
-+#define EMC_READ_PROP_STRING(prop, dtprop) { \
-+	err = of_property_read_string(node, dtprop, (const char **)&timing->prop); \
-+	if (err) { \
-+		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
-+			node, err); \
-+		return err; \
-+	} \
-+}
-+
-+#define EMC_READ_PROP_ARRAY(prop, dtprop, length) { \
-+	err = of_property_read_u32_array(node, dtprop, timing->prop, length); \
-+	if (err) { \
-+		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
-+			node, err); \
-+		return err; \
-+	} \
-+}
-+
-+	EMC_READ_PROP_STRING(clock_src, "nvidia,source")
-+	EMC_READ_PROP_STRING(dvfs_ver, "nvidia,dvfs-version")
-+
-+	EMC_READ_PROP(revision, "nvidia,revision")
-+	EMC_READ_PROP(rate, "clock-frequency")
-+	EMC_READ_PROP(min_volt, "nvidia,emc-min-mv")
-+	EMC_READ_PROP(gpu_min_volt, "nvidia,gk20a-min-mv")
-+	EMC_READ_PROP(clk_src_emc, "nvidia,src-sel-reg")
-+	EMC_READ_PROP(num_burst, "nvidia,burst-regs-num")
-+	EMC_READ_PROP(emc_cfg_2, "nvidia,emc-cfg-2")
-+	EMC_READ_PROP(emc_sel_dpd_ctrl, "nvidia,emc-sel-dpd-ctrl")
-+	EMC_READ_PROP(emc_auto_cal_config, "nvidia,emc-auto-cal-config")
-+	EMC_READ_PROP(emc_auto_cal_config2, "nvidia,emc-auto-cal-config2")
-+	EMC_READ_PROP(emc_auto_cal_config3, "nvidia,emc-auto-cal-config3")
-+	EMC_READ_PROP(latency, "nvidia,emc-clock-latency-change")
-+	EMC_READ_PROP_ARRAY(burst_regs, "nvidia,emc-registers", timing->num_burst)
-+	EMC_READ_PROP(needs_training, "nvidia,needs-training")
-+	EMC_READ_PROP(trained, "nvidia,trained")
-+
-+	if (timing->revision >= 0x6) {
-+		EMC_READ_PROP(periodic_training, "nvidia,periodic_training")
-+		EMC_READ_PROP(trained_dram_clktree[C0D0U0], "nvidia,trained_dram_clktree_c0d0u0")
-+		EMC_READ_PROP(trained_dram_clktree[C0D0U1], "nvidia,trained_dram_clktree_c0d0u1")
-+		EMC_READ_PROP(trained_dram_clktree[C0D1U0], "nvidia,trained_dram_clktree_c0d1u0")
-+		EMC_READ_PROP(trained_dram_clktree[C0D1U1], "nvidia,trained_dram_clktree_c0d1u1")
-+		EMC_READ_PROP(trained_dram_clktree[C1D0U0], "nvidia,trained_dram_clktree_c1d0u0")
-+		EMC_READ_PROP(trained_dram_clktree[C1D0U1], "nvidia,trained_dram_clktree_c1d0u1")
-+		EMC_READ_PROP(trained_dram_clktree[C1D1U0], "nvidia,trained_dram_clktree_c1d1u0")
-+		EMC_READ_PROP(trained_dram_clktree[C1D1U1], "nvidia,trained_dram_clktree_c1d1u1")
-+		EMC_READ_PROP(current_dram_clktree[C0D0U0], "nvidia,current_dram_clktree_c0d0u0")
-+		EMC_READ_PROP(current_dram_clktree[C0D0U1], "nvidia,current_dram_clktree_c0d0u1")
-+		EMC_READ_PROP(current_dram_clktree[C0D1U0], "nvidia,current_dram_clktree_c0d1u0")
-+		EMC_READ_PROP(current_dram_clktree[C0D1U1], "nvidia,current_dram_clktree_c0d1u1")
-+		EMC_READ_PROP(current_dram_clktree[C1D0U0], "nvidia,current_dram_clktree_c1d0u0")
-+		EMC_READ_PROP(current_dram_clktree[C1D0U1], "nvidia,current_dram_clktree_c1d0u1")
-+		EMC_READ_PROP(current_dram_clktree[C1D1U0], "nvidia,current_dram_clktree_c1d1u0")
-+		EMC_READ_PROP(current_dram_clktree[C1D1U1], "nvidia,current_dram_clktree_c1d1u1")
-+		EMC_READ_PROP(run_clocks, "nvidia,run_clocks")
-+		EMC_READ_PROP(tree_margin, "nvidia,tree_margin")
-+	}
-+
-+	EMC_READ_PROP(num_burst_per_ch, "nvidia,burst-regs-per-ch-num")
-+	EMC_READ_PROP(num_trim, "nvidia,trim-regs-num")
-+	EMC_READ_PROP(num_trim_per_ch, "nvidia,trim-regs-per-ch-num")
-+	EMC_READ_PROP(num_mc_regs, "nvidia,burst-mc-regs-num")
-+	EMC_READ_PROP(num_up_down, "nvidia,la-scale-regs-num")
-+	EMC_READ_PROP(vref_num, "nvidia,vref-regs-num")
-+	EMC_READ_PROP(dram_timing_num, "nvidia,dram-timing-regs-num")
-+	EMC_READ_PROP(min_mrs_wait, "nvidia,min-mrs-wait")
-+	EMC_READ_PROP(emc_mrw, "nvidia,emc-mrw")
-+	EMC_READ_PROP(emc_mrw2, "nvidia,emc-mrw2")
-+	EMC_READ_PROP(emc_mrw3, "nvidia,emc-mrw3")
-+	EMC_READ_PROP(emc_mrw4, "nvidia,emc-mrw4")
-+	EMC_READ_PROP(emc_mrw9, "nvidia,emc-mrw9")
-+	EMC_READ_PROP(emc_mrs, "nvidia,emc-mrs")
-+	EMC_READ_PROP(emc_emrs, "nvidia,emc-emrs")
-+	EMC_READ_PROP(emc_emrs2, "nvidia,emc-emrs2")
-+	EMC_READ_PROP(emc_auto_cal_config4, "nvidia,emc-auto-cal-config4")
-+	EMC_READ_PROP(emc_auto_cal_config5, "nvidia,emc-auto-cal-config5")
-+	EMC_READ_PROP(emc_auto_cal_config6, "nvidia,emc-auto-cal-config6")
-+	EMC_READ_PROP(emc_auto_cal_config7, "nvidia,emc-auto-cal-config7")
-+	EMC_READ_PROP(emc_auto_cal_config8, "nvidia,emc-auto-cal-config8")
-+	EMC_READ_PROP(emc_fdpd_ctrl_cmd_no_ramp, "nvidia,emc-fdpd-ctrl-cmd-no-ramp")
-+	EMC_READ_PROP(dll_clk_src, "nvidia,dll-clk-src")
-+	EMC_READ_PROP(clk_out_enb_x_0_clk_enb_emc_dll, "nvidia,clk-out-enb-x-0-clk-enb-emc-dll")
-+
-+	if (timing->revision >= 0x7)
-+		EMC_READ_PROP_ARRAY(ptfv_list, "nvidia,ptfv", ARRAY_SIZE(timing->ptfv_list))
-+
-+	EMC_READ_PROP_ARRAY(burst_reg_per_ch, "nvidia,emc-burst-regs-per-ch",
-+			timing->num_burst_per_ch)
-+	EMC_READ_PROP_ARRAY(shadow_regs_ca_train, "nvidia,emc-shadow-regs-ca-train",
-+			timing->num_burst)
-+	EMC_READ_PROP_ARRAY(shadow_regs_quse_train, "nvidia,emc-shadow-regs-quse-train",
-+			timing->num_burst)
-+	EMC_READ_PROP_ARRAY(shadow_regs_rdwr_train, "nvidia,emc-shadow-regs-rdwr-train",
-+			timing->num_burst)
-+	EMC_READ_PROP_ARRAY(trim_regs, "nvidia,emc-trim-regs", timing->num_trim)
-+	EMC_READ_PROP_ARRAY(trim_perch_regs, "nvidia,emc-trim-regs-per-ch", timing->num_trim_per_ch)
-+	EMC_READ_PROP_ARRAY(vref_perch_regs, "nvidia,emc-vref-regs", timing->vref_num)
-+	EMC_READ_PROP_ARRAY(dram_timings, "nvidia,emc-dram-timing-regs", timing->dram_timing_num)
-+	EMC_READ_PROP_ARRAY(burst_mc_regs, "nvidia,emc-burst-mc-regs", timing->num_mc_regs)
-+	EMC_READ_PROP_ARRAY(la_scale_regs, "nvidia,emc-la-scale-regs", timing->num_up_down)
-+
-+#undef EMC_READ_PROP
-+#undef EMC_READ_STRING
-+#undef EMC_READ_PROP_ARRAY
-+
-+	return 0;
-+}
-+
-+#define NOMINAL_COMPATIBLE "nvidia,tegra21-emc-table"
-+#define DERATED_COMPATIBLE "nvidia,tegra21-emc-table-derated"
-+static int tegra210_emc_load_timings_from_dt(struct tegra210_emc *emc,
-+					     struct device_node *node)
-+{
-+	struct tegra210_emc_timing *timing;
-+	unsigned int num_nominal = 0, num_derated = 0;
-+	int err;
-+
-+	emc->num_timings = 0;
-+	for_each_child_of_node_scoped(node, child) {
-+		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
-+			emc->num_timings++;
-+		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
-+			num_derated++;
-+	}
-+
-+	if (!emc->num_timings || (num_derated && (emc->num_timings != num_derated)))
-+		return -EINVAL;
-+
-+	emc->nominal = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
-+				    GFP_KERNEL);
-+	if (!emc->nominal)
-+		return -ENOMEM;
-+
-+	if (num_derated) {
-+		num_derated = 0;
-+		emc->derated = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
-+					    GFP_KERNEL);
-+		if (!emc->derated)
-+			return -ENOMEM;
-+	}
-+
-+	for_each_child_of_node_scoped(node, child) {
-+		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
-+			timing = &emc->nominal[num_nominal++];
-+		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
-+			timing = &emc->derated[num_derated++];
-+		else
-+			continue;
-+
-+		err = load_one_timing_from_dt(emc, timing, child);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra210_emc_parse_dt(struct tegra210_emc *emc)
-+{
-+	struct device_node *node, *np = emc->dev->of_node;
-+	int ram_code, ret = 0;
-+
-+	if (!np) {
-+		dev_err(emc->dev, "Unable to find emc node\n");
-+		return -ENODEV;
-+	}
-+
-+	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
-+		ram_code = tegra_read_ram_code();
-+		node = tegra_emc_find_node_by_ram_code(np, ram_code);
-+
-+		if (!node) {
-+			dev_warn(emc->dev, "can't find emc table for ram-code\n");
-+			return -ENODEV;
-+		}
-+
-+		ret = tegra210_emc_load_timings_from_dt(emc, node);
-+		of_node_put(node);
-+	} else {
-+		ret = tegra210_emc_load_timings_from_dt(emc, np);
-+	}
-+
-+	return ret;
-+}
-+
- static int tegra210_emc_validate_timings(struct tegra210_emc *emc,
- 					 struct tegra210_emc_timing *timings,
- 					 unsigned int num_timings)
-@@ -1815,6 +2035,7 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 	struct device_node *np;
- 	unsigned int i;
- 	int err;
-+	bool have_dt_tables = false;
- 
- 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
- 	if (!emc)
-@@ -1847,16 +2068,20 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 	np = pdev->dev.of_node;
- 
- 	/* attach to the nominal and (optional) derated tables */
--	err = of_reserved_mem_device_init_by_name(emc->dev, np, "nominal");
--	if (err < 0) {
--		dev_err(emc->dev, "failed to get nominal EMC table: %d\n", err);
--		return err;
--	}
-+	if (of_reserved_mem_device_init_by_name(emc->dev, np, "nominal") >= 0) {
-+		err = of_reserved_mem_device_init_by_name(emc->dev, np, "derated");
-+		if (err < 0 && err != -ENODEV) {
-+			dev_err(emc->dev, "failed to get derated EMC table: %d\n", err);
-+			goto release;
-+		}
-+	} else {
-+		err = tegra210_emc_parse_dt(emc);
-+		if (err < 0) {
-+			dev_err(emc->dev, "failed to get EMC tables: %d\n", err);
-+			return err;
-+		}
- 
--	err = of_reserved_mem_device_init_by_name(emc->dev, np, "derated");
--	if (err < 0 && err != -ENODEV) {
--		dev_err(emc->dev, "failed to get derated EMC table: %d\n", err);
--		goto release;
-+		have_dt_tables = true;
- 	}
- 
- 	/* validate the tables */
-@@ -1980,7 +2205,8 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 	debugfs_remove_recursive(emc->debugfs.root);
- 	tegra210_clk_emc_detach(emc->clk);
- release:
--	of_reserved_mem_device_release(emc->dev);
-+	if (!have_dt_tables)
-+		of_reserved_mem_device_release(emc->dev);
- 
- 	return err;
- }
+> > To clarify, there is no boot failure.  There is just no video output
+> > after rebooting.  I can then boot Linux again by any method that works
+> > without being able to see the screen, and then everything is fine once
+> > I do that.
+> 
+> Super weird. So every other boot works?
 
----
-base-commit: 8bac8898fe398ffa3e09075ecea2be511725fb0b
-change-id: 20250429-tegra210-emc-dt-97dce690ad4e
+On a new/broken kernel, every time I run "reboot" the video turns off
+when Linux does whatever it does to make the system restart.
 
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
+The video comes on again if I manage to boot it up again.
 
+The problem is that I have to do that without using the screen.  So I
+can boot Linux via the serial port, or via the BMC web interface, or
+by just typing on the keyboard without seeing what is happening.
 
+> I guess I'd be interested in other types of tests to see what's going
+> on. Aside from trying some other, more standard HDMI sinks, I'd love
+> to see the results of:
+> 
+> 1. HDMI is supposed to be hotpluggable. If you've got a boot where the
+> display isn't working, what if you unplug the HDMI and plug it back
+> in. Does it fix it?
+
+Unplugging/replugging the cable when the video is off after rebooting
+does not cause it to start working again.
+
+> 2. Does the hotplug experience change if you boot with the revert?
+> AKA: boot up with the revert (so everything is working normally),
+> unplug HDMI, wait a few seconds, plug HDMI back in? Is this different
+> than #1?
+
+I have certainly never noticed any problem related to hot plugging while
+the video output is working but this is not something I ever normally
+do.  I can try it later.
+
+> 3. What about if you fully power off and then power on? Does the
+> display work reliably in this case, or are things different between
+> ToT and with the revert?
+
+There is never any problem with the video output if I fully power off/on
+the system.  The problem only occurs on a reboot.
+
+> 4. What about if you fully power off, unplug the HDMI, wait a few
+> seconds, plug the HDMI, and power on? Does that work? Are things
+> different between ToT and with the revert?
+
+Again there is never any problem if I fully power off/on the system.
+
+Thanks,
+  Nick
 
