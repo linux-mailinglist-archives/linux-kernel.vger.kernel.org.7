@@ -1,112 +1,171 @@
-Return-Path: <linux-kernel+bounces-627490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7618DAA516B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E253AA515C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC51F1C06C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:18:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D51A4E2B01
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F58C2641E2;
-	Wed, 30 Apr 2025 16:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Z9TRme2w"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82B325F980;
+	Wed, 30 Apr 2025 16:17:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D2225A2AF;
-	Wed, 30 Apr 2025 16:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746029876; cv=pass; b=A289xX1m4Q6S2xdt5u6mEj5oIUnJQ77+CkqNhvXZLc92hLw7fEe6i9Tr6joWklHjDULKF18pngQzW7RyVJSBfb5qlQy4kElBZkMeuw4pHx4H1x2ZRJ4MYHdFKzYonogkZ9dMFR+rBUifMC32WUxQerDEa3CzmHirDDRF9RzjgQQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746029876; c=relaxed/simple;
-	bh=3AgojCgwnHiJ/4UeMtAu1VEULwqiJr6pr7+DLktb6oM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sY/BlzWs3IkcSsH2vTBpFs6yY76gmZLdFJhqdnlDlwEQj8hpUg4Oscx7sebRJxjK6QHZqYA10rDDrXag2weeEGD6PwTI/V5X5YCgH1+V73Z4dZ/iys9l69ITWIJVvsGQ29JPJvgYD6Vfhao7yLsHtfxJqK2n4sYztffHzRd/Xko=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Z9TRme2w; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1746029822; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=f+93AWjXW5VDIYoO0E8YkXtcP4BNlDbolM9nmkTGiVwL68mOHaRgl7DboLKuv8bcPK2Jcd0AhTUZdwV4/AlzQU0nIsNqhKQkkyzVd1mY+jqabGVhjRmAVPJjxdjoUMi6+b5Xl42lVoayoktTy6+RSqtvNevw5YTaBaynbP9Quh0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1746029822; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PqaMC8w6qtB1n0xipg6hxZmuKd9Q6kyn2/VlH0Aqgtg=; 
-	b=f4aEIU8IMcZFVD8SF9NY5xKGsw4lA1Q7usyi756Q5oMolxZS3oLCIEXM9e30A1AK3WlJu5Hm0fGEK+XXy9BIDVG4OuismmG50gxuQXC079FRnYC0IAfrrCaMYlEi6XxSVeFT8u5U95wHFGYy9oWu2xN7PvrGgpkd0R7z11oqU3c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1746029822;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=PqaMC8w6qtB1n0xipg6hxZmuKd9Q6kyn2/VlH0Aqgtg=;
-	b=Z9TRme2wLZNYuuNwMyq+DF6xQHWyn8Ly6bn2n+YAwblU1fFtJasEEs8LqT2GeuOb
-	ST6jMaIKHJj2rzuzlNfMDRZE0xSG1xGpPEXvaXoGeBj27ksCPZ7k2GXLQ7f32UWjQ4Q
-	kZKtbcPHXyURRbSLwCAsr24jyM3Vx5FPpiopDfXs=
-Received: by mx.zohomail.com with SMTPS id 1746029821190216.44843874019614;
-	Wed, 30 Apr 2025 09:17:01 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Wed, 30 Apr 2025 18:16:36 +0200
-Subject: [PATCH 3/3] arm64: dts: rockchip: add RK3576 RNG node
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F47D1ADC93;
+	Wed, 30 Apr 2025 16:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746029834; cv=none; b=FuHb2GqHHfKJmMZOvZae3Xu3ISgvEXvKfwVqW/GejmVdabtjG0B0mk/xnyuC38rqfv3twVz0ADsEkATbbnQkCQCTyhp68PXpPlqZI8DDK/40R2u/y4gWm+9r6rTbBdTIwStRcEVcXmU4Vb6R578EsQK//XOsnTFDaIoHOeeZdpQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746029834; c=relaxed/simple;
+	bh=u8pyoCgN3tvzdZvpvYgv063h+QLbtvDhM5b29UpKbk0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dixbpRgA+M54PKiAnV2m4Iwx2a36SiKgOIMUVjGw1CmtSoKsNbOKYh2pTTZJzoQuzhUy1pwHg+nVnr/mbX3KBc9oug7QI5hrobOmQrCPydUzRCoIIYt6XXj/VIug7eOeTEKVQVFGwflwMJJhz8/5DmoLrpW71V8JMwRTrKQfPp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Znj2F6c1Xz6L4t7;
+	Thu,  1 May 2025 00:15:01 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A47F814022E;
+	Thu,  1 May 2025 00:17:07 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Apr
+ 2025 18:17:07 +0200
+Date: Wed, 30 Apr 2025 17:17:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <Victor.Duicu@microchip.com>
+CC: <jic23@kernel.org>, <Marius.Cristea@microchip.com>, <andy@kernel.org>,
+	<dlechner@baylibre.com>, <linux-iio@vger.kernel.org>, <nuno.sa@analog.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] iio: temperature: add support for MCP998X
+Message-ID: <20250430171705.00006e29@huawei.com>
+In-Reply-To: <303fbf2f6c64241966009be59f68c1d2f8cdc786.camel@microchip.com>
+References: <20250415132623.14913-1-victor.duicu@microchip.com>
+	<20250415132623.14913-3-victor.duicu@microchip.com>
+	<20250418190757.2b007737@jic23-huawei>
+	<303fbf2f6c64241966009be59f68c1d2f8cdc786.camel@microchip.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-rk3576-hwrng-v1-3-480c15b5843e@collabora.com>
-References: <20250430-rk3576-hwrng-v1-0-480c15b5843e@collabora.com>
-In-Reply-To: <20250430-rk3576-hwrng-v1-0-480c15b5843e@collabora.com>
-To: Daniel Golle <daniel@makrotopia.org>, 
- Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Jonas Karlman <jonas@kwiboo.se>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
- kernel@collabora.com, linux-crypto@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-The RK3576 has a hardware random number generator IP built into the SoC.
+On Mon, 28 Apr 2025 12:57:05 +0000
+<Victor.Duicu@microchip.com> wrote:
 
-Add it to the SoC's .dtsi, now that there's a binding and driver for it.
+> On Fri, 2025-04-18 at 19:07 +0100, Jonathan Cameron wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > know the content is safe
+> >=20
+> > On Tue, 15 Apr 2025 16:26:23 +0300
+> > <victor.duicu@microchip.com> wrote:
+> >  =20
+> > > From: Victor Duicu <victor.duicu@microchip.com>
+> > >=20
+> > > This is the driver for Microchip MCP998X/33 and MCP998XD/33D
+> > > Multichannel Automotive Monitor Family.
+> > >=20
+> > > Signed-off-by: Victor Duicu <victor.duicu@microchip.com> =20
+> >  =20
+>=20
+> Hi Jonathan,
+>=20
+> > Hi Victor,
+> >=20
+> > Various comments inline,
+> >=20
+> > Thanks,
+> >=20
+> > Jonathan
+> >  =20
+> > > ---
+> > > =A0.../testing/sysfs-bus-iio-temperature-mcp9982 |=A0 17 +
+> > > =A0MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 7 +
+> > > =A0drivers/iio/temperature/Kconfig=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 |=A0 10 +
+> > > =A0drivers/iio/temperature/Makefile=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 |=A0=A0 1 +
+> > > =A0drivers/iio/temperature/mcp9982.c=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 | 794
+> > > ++++++++++++++++++
+> > > =A05 files changed, 829 insertions(+)
+> > > =A0create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-
+> > > temperature-mcp9982
+> > > =A0create mode 100644 drivers/iio/temperature/mcp9982.c
+> > >=20
+> > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-temperature-
+> > > mcp9982 b/Documentation/ABI/testing/sysfs-bus-iio-temperature-
+> > > mcp9982
+> > > new file mode 100644
+> > > index 000000000000..de3360fb05be
+> > > --- /dev/null
+> > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-temperature-mcp9982
+> > > @@ -0,0 +1,17 @@
+> > > +What:=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0
+> > > /sys/bus/iio/devices/iio:deviceX/running_average_window =20
+> >=20
+> > As later in review, I think we can control this via the low pass
+> > filter 3dB point
+> > and use standard ABI.
+> >=20
+> >  =20
+> > >  =20
+> ...
+>=20
+> > Hmm.=A0 A running average is a low pass filter.=A0 Can we control this
+> > instead via
+> > standard ABI and the 3dB point?=A0 Take a look at the filter ABI in
+> > Documentation/ABI/testing/sysfs-bus-iio
+> >=20
+> > Custom ABI is rarely used in real cases because the tools tend not to
+> > know about it
+> > so we avoid it if we possibly can.
+> >  =20
+> > > +
+> > >  =20
+>=20
+>=20
+> The moving average filter is used to smooth the temperature spikes.
+> The user should be able to set the size of the window to
+> a few values: 1(disable the filter), 4 and 8.
+> The user does not have access to the frequency properties.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Assuming the device is self clocking, then we know the frequency and
+hence can consider an averaging filter as a type of low pass filter (which =
+is
+what it effectively is) and control via the 3dB point.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index a6bfef82d50bc9b0203a04324d61e0f232b61a65..ce8bcab215c0e6b7786ab3baae6977072497ed2f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -1527,6 +1527,14 @@ sfc0: spi@2a340000 {
- 			status = "disabled";
- 		};
- 
-+		rng: rng@2a410000 {
-+			compatible = "rockchip,rk3576-rng";
-+			reg = <0x0 0x2a410000 0x0 0x200>;
-+			clocks = <&cru HCLK_TRNG_NS>;
-+			interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&cru SRST_H_TRNG_NS>;
-+		};
-+
- 		otp: otp@2a580000 {
- 			compatible = "rockchip,rk3576-otp";
- 			reg = <0x0 0x2a580000 0x0 0x400>;
+Whether it is documented that way is just a question of how they
+decided to describe it in the datasheet.
 
--- 
-2.49.0
+A moving average is also known as a box car filter.=20
+https://www.wavewalkerdsp.com/2022/08/03/bandwidth-of-a-moving-average-filt=
+er/
+
+Approximately (pi / N)*sampling frequency (I think anyway, I only took a qu=
+ick
+look).
+
+Doing that allows you to map it to standard ABI.
+
+>=20
+> Best Regards,
+> Victor
+> >  =20
+>=20
 
 
