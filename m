@@ -1,89 +1,161 @@
-Return-Path: <linux-kernel+bounces-626388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF5BAA4294
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A8FAA4296
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC71983340
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D983B9104
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82461E260D;
-	Wed, 30 Apr 2025 05:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzACvTNu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199741E1C09;
-	Wed, 30 Apr 2025 05:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DAD1E25F8;
+	Wed, 30 Apr 2025 05:44:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9667316EB42
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745991803; cv=none; b=TbguiqMITTODzRb9mcZ6efRg9jt1buPr+jeaV3W9Nfw74a4eumUJLgIsJtmfg/fT0eqNfXkJyeg6tIoGf1BXb+7gzOtl0eFrnL8amYW6OHMlzZ0Z6NWOI1H0yqPXfUlH6/MwT+BWR7NuOGeu/iXnFn6oXDwe41g6I96zE03DmI8=
+	t=1745991873; cv=none; b=b9B3H2nQTqXFBzLGLOz19aZIb9G0onWSBbH7HoI09giCIbgRjoO2vT93ASFj1hGj7BEeZqcjUwl59+ii7hh5jPHXhGL4iPsxXs8JEnVWHtWJwfC4cgXz6T4vPAxA/DWeZeqvAONC+zPCJGhJ4cD6xj1RO2qqD8RqSmJLcVQJIhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745991803; c=relaxed/simple;
-	bh=bpXDU+gweh9z6xj+SXIhRaMgkoTWhzq35HoewDDC3nU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hKtTW1PoxczUxbeVktx2qMOrWw86JbWh/8Jd+BTG6JMPyKhwLA5R9JjX7d+tI3XfnnZLA7mSy/4NyW4yAeFfnGwLR+nHdnTMKI46zA0OOFc+oB6PaKxIF3p5ImplSk2I58mCyGHZiuOxwiQCf/nTebNBV24elU/L2RrUtCqKkdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzACvTNu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B929C4AF09;
-	Wed, 30 Apr 2025 05:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745991802;
-	bh=bpXDU+gweh9z6xj+SXIhRaMgkoTWhzq35HoewDDC3nU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UzACvTNuqq8mWejCtaqGllCoiNXTCuDvIw4xR1A+VPQFF165/FWcM2WOm9UVieL1G
-	 MIbMW3o+dFKgDS/zR5Aza10TK7bMAOyhn+1qmwJQf7QqRkV40P8N+mOzcS0bZm6Ta2
-	 TyCmUxl2uIkd/G10gH0Se+lYdLO020D6Jn54mQBTlkdXQq6xyaLDYa081chA2yrQyw
-	 MbU9CxpmKcFa1st4/b65gg8rX+lR9th1L4ye9b8qgsRN35q5Zb76IzKjD6xSWrGdkq
-	 Dykg2vr7GsIklb/OX1P0LkATHKsEpRT702UgwDiuyXT3e/HMPdsXX4/oiCpazhSVhe
-	 GNMlA4T6V++hg==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2c76a1b574cso1950465fac.2;
-        Tue, 29 Apr 2025 22:43:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrgv0uSJPgrXN9+4TeKdxCo93qibz7OjCL/dbmdD9XaNA7KIXQsmdVGKjoGED+nqdlNYLxep36Fj9F@vger.kernel.org, AJvYcCXNGfUiE9VFMU2rHgPvx3nEEt8nm+BGaklVNTn5NAcIIEMgnkkxFg1L835bkOoELoaZX4yaezahkpkwju0Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvudOjcSPCtV14302BfOz/gE1MBkN53ATrz8XybQJskw2Qzd85
-	Vkvn9gR0+HRK6AVYwq58Om/bNUynDE3UnLSONBsrJmYR9zHTSI5MiZXmY16GLTJPTPDaeCm0/3s
-	eS3C7GUVxpHOLeGZreOToiFgt3R4=
-X-Google-Smtp-Source: AGHT+IFNrHoCJUNzteY1+zligzTVVkoapNf8nHRZAynxF8K7vgoMoPwGRLvHKihvSRnHE9Bau78NKYUhWwkvAu0ysrk=
-X-Received: by 2002:a05:6870:200d:b0:29f:97af:a1a0 with SMTP id
- 586e51a60fabf-2da6d1922c2mr607992fac.24.1745991801725; Tue, 29 Apr 2025
- 22:43:21 -0700 (PDT)
+	s=arc-20240116; t=1745991873; c=relaxed/simple;
+	bh=X2wAr44kyEa1wXomBZkP0S30pU+20A2JzbIbMT1DTAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T5CKq0HHwrrqleQsPjjoIYk8vDRbx2747ld4lJhr4jYcheOrOGpX5AeiWGfvwGrIa8jyRr2w53voYs+Ueyv0pLDVdQfvLlcctRUo0SklinrHYqR6xePi0SqWOwAP7RLMg0LUGD2TKhqa7QfORmLJCJmQywLfXt0jX7I3lqMVPi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4F4D106F;
+	Tue, 29 Apr 2025 22:44:23 -0700 (PDT)
+Received: from [10.163.79.251] (unknown [10.163.79.251])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4FC553F5A1;
+	Tue, 29 Apr 2025 22:44:22 -0700 (PDT)
+Message-ID: <c7629a41-4069-4206-ae70-ec145a70fc67@arm.com>
+Date: Wed, 30 Apr 2025 11:14:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430031623.744547-1-wangzhaolong1@huawei.com>
-In-Reply-To: <20250430031623.744547-1-wangzhaolong1@huawei.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 30 Apr 2025 14:43:10 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9q4Ax-6rwOzEooWpGJkonw1mjO_TKgMmB8Em+XR7zp_g@mail.gmail.com>
-X-Gm-Features: ATxdqUE2d37O_efGdmPJffYnXVuQ9QxeCRpgbnwWHVbfQ1oVvhTmapE8oCccFSA
-Message-ID: <CAKYAXd9q4Ax-6rwOzEooWpGJkonw1mjO_TKgMmB8Em+XR7zp_g@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: fix memory leak in parse_lease_state()
-To: Wang Zhaolong <wangzhaolong1@huawei.com>
-Cc: smfrench@gmail.com, norbert@doyensec.com, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
-	chengzhihao1@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] mm: Batch around can_change_pte_writable()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, willy@infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, Liam.Howlett@oracle.com, vbabka@suse.cz, jannh@google.com,
+ anshuman.khandual@arm.com, peterx@redhat.com, joey.gouly@arm.com,
+ ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
+ quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
+ yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
+ hughd@google.com, yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250429052336.18912-1-dev.jain@arm.com>
+ <20250429052336.18912-7-dev.jain@arm.com>
+ <25dcf969-e479-4d4a-a95c-0e83706af99e@redhat.com>
+ <9a770aec-a020-4199-a53e-eddda657999d@redhat.com>
+ <7cf8235e-21f7-4643-82c4-82ad57d99b98@lucifer.local>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <7cf8235e-21f7-4643-82c4-82ad57d99b98@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 30, 2025 at 12:16=E2=80=AFPM Wang Zhaolong <wangzhaolong1@huawe=
-i.com> wrote:
->
-> The previous patch that added bounds check for create lease context
-> introduced a memory leak. When the bounds check fails, the function
-> returns NULL without freeing the previously allocated lease_ctx_info
-> structure.
->
-> This patch fixes the issue by adding kfree(lreq) before returning NULL
-> in both boundary check cases.
->
-> Fixes: bab703ed8472 ("ksmbd: add bounds check for create lease context")
-> Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
-Applied it to #ksmbd-for-next-next.
-Thanks!
+
+
+On 29/04/25 7:27 pm, Lorenzo Stoakes wrote:
+> On Tue, Apr 29, 2025 at 11:27:43AM +0200, David Hildenbrand wrote:
+>> On 29.04.25 11:19, David Hildenbrand wrote:
+>>>
+>>>>     #include "internal.h"
+>>>> -bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>>>> -			     pte_t pte)
+>>>> +bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned long addr,
+>>>> +			      pte_t pte, struct folio *folio, unsigned int nr)
+>>>>     {
+>>>>     	struct page *page;
+>>>> @@ -67,8 +67,9 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>>>>     		 * write-fault handler similarly would map them writable without
+>>>>     		 * any additional checks while holding the PT lock.
+>>>>     		 */
+>>>> -		page = vm_normal_page(vma, addr, pte);
+>>>> -		return page && PageAnon(page) && PageAnonExclusive(page);
+>>>> +		if (!folio)
+>>>> +			folio = vm_normal_folio(vma, addr, pte);
+>>>> +		return folio_test_anon(folio) && !folio_maybe_mapped_shared(folio);
+>>>
+>>> Oh no, now I spot it. That is horribly wrong.
+>>>
+>>> Please understand first what you are doing.
+>>
+>> Also, would expect that the cow.c selftest would catch that:
+>>
+>> "vmsplice() + unmap in child with mprotect() optimization"
+>>
+>> After fork() we have a R/O PTE in the parent. Our child then uses vmsplice()
+>> and unmaps the R/O PTE, meaning it is only left mapped by the parent.
+>>
+>> ret = mprotect(mem, size, PROT_READ);
+>> ret |= mprotect(mem, size, PROT_READ|PROT_WRITE);
+>>
+>> should turn the PTE writable, although it shouldn't.
+> 
+> This makes me concerned about the stability of this series as a whole...
+> 
+>>
+>> If that test case does not detect the issue you're introducing, we should
+>> look into adding a test case that detects it.
+> 
+> There are 25 tests that fail for the cow self-test with this series
+> applied:
+> 
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with base page
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (16 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (16 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (16 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (32 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (32 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (32 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (64 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (64 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (64 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (128 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (128 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (128 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (256 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (256 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (256 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (512 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (512 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (512 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (1024 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (1024 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (1024 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with PTE-mapped THP (2048 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with single PTE of THP (2048 kB)
+> # [RUN] vmsplice() + unmap in child with mprotect() optimization ... with partially shared THP (2048 kB)
+> 
+> 
+> Dev, please take a little more time to test your series :) the current
+> patch set doesn't compile and needs fixes applied to do so, and we're at
+> v2, and you've clearly not run self-tests as these also fail.
+> 
+> Please ensure you do a smoke test and check compilation before sending out,
+> as well as running self tests also.
+
+Apologies, I over-confidently skipped over selftests, and didn't build 
+for x86 :( Shall take care.
+
+> 
+> Thanks, Lorenzo
+> 
+>>
+>> --
+>> Cheers,
+>>
+>> David / dhildenb
+>>
+
 
