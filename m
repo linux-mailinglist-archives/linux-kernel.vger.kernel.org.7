@@ -1,73 +1,109 @@
-Return-Path: <linux-kernel+bounces-626278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96713AA40E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 04:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD55AA40D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 04:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEEF1C02F90
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79631B68481
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F2E136672;
-	Wed, 30 Apr 2025 02:23:24 +0000 (UTC)
-Received: from mail.hlmt-cn.com (mail.hlmt-cn.com [218.104.38.157])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8F12DC770
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.104.38.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA0313B2A4;
+	Wed, 30 Apr 2025 02:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/itnw0F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67401225D6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745979803; cv=none; b=deXvbnMGFYnbM2yYshj1TJ7N0GiSlvrLLWUgGTR9+8Lte7Ar/zCjIXDMVReX0IenmxpeTjHTHsl8V72v/ASsEBfouaD40sOt5elRmsGSHYgswxSWge47QviKK98IbIG8uakURZV7qtnkRgb+p4cAYBFIqzgOZsXm0Fc0D4WrYRU=
+	t=1745979142; cv=none; b=qzO6xmZSvZ3ASfAO88Wq9SR33Y1/wNIErsZHomCse2L5+g/lE0i4YXBJzFplxFb78ZNdbaN0awnuYPQUrjQrwOa/ET1NuuQzUluUAVHtHTRdm+2zFFV+ktQpwo40FR84b4cyCeu7FJsSmprUt3ohRGi4wXJivjmHlKNPDn8R/qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745979803; c=relaxed/simple;
-	bh=lrRCzWnVaYDNkdBTEBHEaBZJOMcouaWGK8Ocx5vB1tM=;
-	h=Message-ID:From:To:Subject:Date:MIME-Version:Content-Type; b=W8yVRCvIz2t67doUPXqK7+sqtAo3lm8+wT+jiSoJ9ollGBR8M1ZRwnaOgk9Gp+SntK7LYwC+by/S6veRm2tRfMTuWHK5emFh1z6G5+Nsk3s7DIdriRlRudkpDf8/rtIna6YUCjDE6sc//Zf+orCr1fPJiAJZOjUhoaQx9D7VK2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=qsban.cn; spf=fail smtp.mailfrom=qsban.cn; arc=none smtp.client-ip=218.104.38.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=qsban.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=qsban.cn
-Received: from localhost (localhost [127.0.0.1])
-	by mail.hlmt-cn.com (Postfix) with ESMTP id 5324D7342F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:15:16 +0800 (CST)
-X-Virus-Scanned: amavisd-new at hlmt-cn.com
-Received: from mail.hlmt-cn.com ([127.0.0.1])
-	by localhost (mail.hlmt-cn.com [127.0.0.1]) (amavisd-new, port 10024)
-	with LMTP id lwCDkO68WeF7 for <linux-kernel@vger.kernel.org>;
-	Wed, 30 Apr 2025 10:15:14 +0800 (CST)
-Received: from 194.0.234.227 (unknown [194.0.234.227])
-	(Authenticated sender: public)
-	by mail.hlmt-cn.com (Postfix) with ESMTPA id D46E374476
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:09:50 +0800 (CST)
-Message-ID: <2CD682FCE1351BA874713885515058DF@194.0.234.227>
-Reply-To: "Malcolm Amos" <malcolmamos@malcolmamoss.com>
-From: "Malcolm Amos" <test@qsban.cn>
-To: <linux-kernel@vger.kernel.org>
-Subject: Exploring Potential Investment
-Date: Tue, 29 Apr 2025 19:09:50 -0700
-Organization: Malcolm Amos.
+	s=arc-20240116; t=1745979142; c=relaxed/simple;
+	bh=i0xhYBoE9NEM38VpBCc8GYhwV6BIRufPgSa7+Tzxa1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JPLMggS60Sy/GK7OrF7W+GPu9t3gLONfqeRTAtLIkF6L5VjIowUjooT15GgWGcy3P+Ov91V1/KxLuqMw5VGAnX6IyG+nwUTRuiNq8bEEx3eIwaY4UExokjbYz8zLxZ+ZOywb507CL+BX9TtU89co6ZCVnjBIiNZ3geeY60HgQQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/itnw0F; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745979142; x=1777515142;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=i0xhYBoE9NEM38VpBCc8GYhwV6BIRufPgSa7+Tzxa1A=;
+  b=i/itnw0FOIhj+lMxBL8C8lmdiWBjeVIyOu1cUT2mZGmRTpZscmwDlKHf
+   lENyvJITdKIbC2STzwaLpYGTIppNv5ICJ/6Il+ZqJXRmSkSaw2A+kL7dX
+   6p7vfvCm3xzKI14FSUISSho19/r9WHnx6tPsxXgUvDNsoGipEzF6C5Nsq
+   VCalkTW9vs2uTBx0I8dNbWU7LNvaKymF9RnuTzZOcabdmKVgWoX8w3sL/
+   xSmI4alj3FcX5D29zaKWFLBtiZwcZTmG+Y4TJF5pv3GotONnnf/pu6rKo
+   6HkezAU8pdtp0Mkf7YoEW/64VxcGtz4irbeSrMr+HM5wpU1sHKOtsacnj
+   w==;
+X-CSE-ConnectionGUID: ABkHORIxSlyd8ZN+0SwwFg==
+X-CSE-MsgGUID: cCCOVjxaTfaULOr/tbK9+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="51288427"
+X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
+   d="scan'208";a="51288427"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 19:11:05 -0700
+X-CSE-ConnectionGUID: bWGc7LQATJmfaFUzbUISnQ==
+X-CSE-MsgGUID: h4UI0eYiTRejRWwPiexuCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
+   d="scan'208";a="134303413"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa008.fm.intel.com with ESMTP; 29 Apr 2025 19:11:02 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 0/2] iommu/vt-d: Use ida for domain ID management
+Date: Wed, 30 Apr 2025 10:11:33 +0800
+Message-ID: <20250430021135.2370244-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	format=flowed;
-	charset="windows-1251";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Windows Live Mail 16.4.3528.331
-X-MimeOLE: Produced By Microsoft MimeOLE V16.4.3528.331
+Content-Transfer-Encoding: 8bit
 
-Greetings.
+This converts the Intel iommu driver's domain ID management from a
+fixed-size bitmap to the dynamic ida allocator. This improves memory
+efficiency by only allocating resources for the domain IDs actually in
+use, rather than the maximum possible number.
 
-I hope this message finds you well.
+The also includes necessary cleanups after the ida conversion, including
+locking adjustment for the ida.
 
-I am actively exploring new opportunities for silent and private placement investments, including joint ventures, structured loans, and equity partnerships. My focus is on projects with strong potential for return on investment, and I am particularly interested in ventures that are innovative, scalable, and strategically sound.
+---
+Change log:
+v2:
+ - Drop the last patch which simplified the code with __free(). There
+   needs a helper like xa_store_or_{reset,kfree}(). Thus I plan to put
+   it a separated series with broader reviewers.
 
-With a solid capital base readily available, I am keen to identify promising collaborations and would welcome the opportunity to learn more about your project. Please feel free to reach out at your convenience to discuss how we might work together.
+v1: https://lore.kernel.org/linux-iommu/20250423031020.2189546-1-baolu.lu@linux.intel.com/
 
-Warm regards,
-Malcolm Amos.
+Lu Baolu (2):
+  iommu/vt-d: Use ida to manage domain id
+  iommu/vt-d: Replace spin_lock with mutex to protect domain ida
+
+ drivers/iommu/intel/dmar.c  |  4 ++
+ drivers/iommu/intel/iommu.c | 90 ++++++++-----------------------------
+ drivers/iommu/intel/iommu.h | 21 +++++++--
+ 3 files changed, 40 insertions(+), 75 deletions(-)
+
+-- 
+2.43.0
+
 
