@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-627514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1853AA51C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FE6AA51C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805511C053FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB4231C05823
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23232609D4;
-	Wed, 30 Apr 2025 16:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62F62609CA;
+	Wed, 30 Apr 2025 16:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuXCFgaE"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CKkIitfA"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A682609C8
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 16:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834442641EE
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 16:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746031064; cv=none; b=pjsqV7Zy30snvB/O4FxPasINGvJWc3qAmRxPPsZ2hpTsg8IRpeFsWymcSlUxneUacsfiDvunZzTrKPWe1sjwgvKnWkBs49ijkaF3yx2c1dVlv9TYqhaK+GYQK5pQdqW6OTpj6pW2p/MG51XxNIZFyE7UkM6sCwh9F6l5Mcoy0EI=
+	t=1746031125; cv=none; b=Tmeb7mP0Zrv3vMXXTOAEjelI8oUyEIl8yVQi2rVXAsqUAKZj6vVXhwmrItudsmz7qG9kwLIXbfY1RcNR9TabPqnTBJtzTnko7mxH3uxHEjAHWIEieNIYnae6X1NlIygozEXMZ5U276dKG13GgCveFlIZEbmPFGnh92CwTcRmoJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746031064; c=relaxed/simple;
-	bh=DLQtM5PA9tnX4LJeaZa3hFR6w41lGFUSQFPETZ1b/x0=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=p4NHTAyhZFPpY0JRN2zqD2AkR5WtTRqnmyL7kQfB8sdDWQEYtr1XWXPAoJWL2p7sOIhHt6vFU5t0dsDbS/zSCdHXbX7VOEyE7Zq4rmoOCnQ8znZbV8ilBhLVvr/o5wUwM4L4z6eOdZCxSRByxhZIB8tOQwV/tMH6fjnakgMFFDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuXCFgaE; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb3so125137a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:37:42 -0700 (PDT)
+	s=arc-20240116; t=1746031125; c=relaxed/simple;
+	bh=a+aS3VH0fFr3wLv+ziZGwPORQcPz6cZRwZ8j2YP4ds0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+KgoAz79Q+wqDYRSflNvo7qjeCf1+Az/0W4kGjC9Z1f8mW/VKDGtfhWeqAZYbW2AW35fW810E99WkB/US7xnGytO8QDCYvTjfSR6KF0dCKAHAVGSJk/fajF38okBNXoUgqx1NZNvPppO+bFAD6v+7vv9OB7fbW7TXuV/ispBi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CKkIitfA; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so70635915e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746031062; x=1746635862; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qxjWOzCodYh6h91i+Fd4DO9wFsqHoGVnoY26/g1sEjk=;
-        b=GuXCFgaEL5dxc4t1j91lRsivYKnbJWaF0Vkr2JWD+qRrm3N61E1WVoDNnHH85l/JUc
-         JF7wD9H0ISHZ9fpJSagELHnrrpOQJJ9ik8H/dnJvH4Qps4VVD9Z5E3Ojg0mMsb5E0IAW
-         cJjMLi7SXE6i6/rLRoSYucyzq4y6EoS68TlR/g2XpNb7vUS2uOEOb528ACg3fJ2aF85K
-         s6alY8JvvqQ0r0qRZtQ8Pz8AEJPxSTyCZuHvELCRk+F+nw/fTqwlGXW1r6FjLKTp6Ue0
-         0jCNeOECEB/gPYOQla81udqFIK9ad3eu1QwYQ/yjmUCz/W3OLBoznKgcrCDCX/akretX
-         WQ5g==
+        d=linaro.org; s=google; t=1746031122; x=1746635922; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ImSfHGGDXmae3/biQUrc2P/URlkNlj76LbgQ/xlJH98=;
+        b=CKkIitfADxBdSqGUCWMkOThE1jTrvFSJZuyRABPLGn2aS7dnws+eH3W6XLQ1qG5gjO
+         Gr5IYJK5FNFHumMYGdFv0aXyPy5xPczbI/uVN3/YOn1Ea34z0SrhbMqGNnClh/vskurO
+         diEbki/F5X/gj6o9T9Kzp6S3+zQsUvSg6gmqWr3P6n7YFddQACB8b2UWqSR031MphRGp
+         eXVhTEXnGkI4166ayB6JWPH9dtDDBP2b3TyHNJS0Qoyl8T2/8Hfu3zdxRbbYd9XefVwn
+         ZMl/pZ9f2W70BukkG0sop+BWefRIs44Ej03vfrk5JjswxqVlIGBJDghrvaM3SiBgNkdk
+         kjuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746031062; x=1746635862;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qxjWOzCodYh6h91i+Fd4DO9wFsqHoGVnoY26/g1sEjk=;
-        b=p5rMKTqa1AhlyCbPheukR+DtolnRoM8mJMN8r12ihMik50Q3LAdJ7qVR8LjEqZ6fay
-         5ZOdvpJ+lUkbwuzH0UIJ42LUfM8befVzXLPGxDY1XP/jvEYpTknQ+6O3mbZBPQEld4WR
-         pkIHigNyBs/093fSZoVsrZU1I2OQkkk4OZmI64Brdolg6Cxne78TvuNao7HOQ0zBE7Cd
-         OIJgXDpVUePegWKwRfWjcf5EUwN4SAZx5ZR1H3eaBunGJdqrIou+4AvDCOEe9o/JY7Gu
-         3nmF4ksrXueruPmmlRvwsuJFvPYUJRLzbdOmqvljG0OmkRwEGrzR5ydrLVJSFgoejGmr
-         GZjw==
-X-Gm-Message-State: AOJu0YwpxRu79+HJ679vb2MZvQoPczMqAD6/BmtxQkXg/QhWfKFgz4Mi
-	p9co/mltgvzgAr4pHnkWiTVPSJEyxO7CJPhua3wPeFSgrrpr00H9
-X-Gm-Gg: ASbGnctZbtXgNRypabkeP1/jNycRQIbFmVOmysqbTSnA91rmHQXqIsbh7zF9xTD4O9+
-	mpgdaVX38yqnyoXxtKVeEOqrXI+T0QdtV8G2n/r1cPSUEte29p8TZbt0pCrrXesv7Dn/yS85krl
-	VSecQeHehlkhCs9lwbppkT/MrAw0BKDr0AvJmUCa4vwv9N1qnzqqP6YBirhoLfaZi7EU/K13gpn
-	vyy8YRiEWBi+OzC/YQtbN/+2YF2AWnQcM6GPaM4a5sJl7sDT00vzHcUMLfd/PAGZ6qJwCKy/5Sp
-	EbGFC5Lg9XxD31CnnGz8bzynRTaramcQ4Ajd5GTrofD/dE5TAuSuGpKyUrjgjurySqHjMXaGM3e
-	hJIWiItzpGO4o8gX4
-X-Google-Smtp-Source: AGHT+IFZGcI74EhGKxPzzAuz4dRadRUA7d+g93mMYCaI9MFy924XUYPiyQ9WM8HNYOOlIamO7v3orQ==
-X-Received: by 2002:a17:90a:ba98:b0:2ff:4f04:4261 with SMTP id 98e67ed59e1d1-30a344894fbmr3071328a91.34.1746031062097;
-        Wed, 30 Apr 2025 09:37:42 -0700 (PDT)
-Received: from localhost (i223-218-150-204.s42.a014.ap.plala.or.jp. [223.218.150.204])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a349e3c2csm2025308a91.2.2025.04.30.09.37.40
+        d=1e100.net; s=20230601; t=1746031122; x=1746635922;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ImSfHGGDXmae3/biQUrc2P/URlkNlj76LbgQ/xlJH98=;
+        b=kGzOII6Ha67T5O9OwK7eAxcr+PY0oERF+6qK1gp2pT9yhc4x1NFrrZoGiKFtebXvbH
+         9eDZEq22Cun2WeDvFiY8gjGMGXEgJcEh8+Xfvk8hopNKVlx6Vh9S4mZrEizAZo8eod+7
+         8FYXJIRlUSgwoxgg7+3DXVLyDm9vfzGKGqXAGzrizNYBpLcor2qBhjp3xRBnww50+C4v
+         PmJRo4BWmxx1cO4/E9OusAF5VTxlASuSw3HQ2NFYobLpzJAbZmEUdULSsw8DBhcawyls
+         QyZce6Hw4zc9KSoS7VkwoxgmVAUjuCmSczI2+E/gm0iKu7xk54ckRXmHyaOvLlf7I6RK
+         OSDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGX0afL/MPXW4aE4kYkvfoWRJSdPekg4kjQyGXVaAAf692KiO+s0d7MeBWBk7TXLFvp18Bbp5a80YiEcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYRPkxckJyhRIRVHLTq/AxINH6kb1vnHWlOverClMWsra/8nvO
+	jGBmhzXTtR2y/oGVTXtF2h9TIxOtYa8crqBH7Y3X3bYyawhuZyoFXQXDJ0DikTI=
+X-Gm-Gg: ASbGncvvt8ZXdruXQuWNzvreLjHJD3UMr74cObPf+M7ZjR3fsT+OKMtbpt73xYmbBVB
+	eETGRf1hfaA9m1v10l7gnqt4B6urrSl37lWJp1BnDbUu/8XkVjfHMM7ut2CVNndX0g+cczC9+t4
+	a39sWe3ODp4Qi61xpTYf9hzG9YXS6ZQ3BGCQV7TYpm5dfGXftgzgjLJ2X1h/W8G35NgDbsTnGIH
+	XjkgeK0Dw6nfqkMuwnDw58tLHZF5zIstj6ARfuaHDUwkO0p6jsx0t9s6Edzapm3hxgAeJFNFPgZ
+	f9lQ70GRZzMZJM9ttFSr8yssfMf3IJglI2nKAGI5Q+MbDrnUV6em/1TwLqR0iahLvxGYLUnYnm+
+	wmp8=
+X-Google-Smtp-Source: AGHT+IEKy3F4uYVmzfjaV7eUGAdjznhecYK7JE8sAsW9F6Cog3MaZ4CfTM6KaWY5hOefQKaGuojVAA==
+X-Received: by 2002:a05:600c:1e12:b0:43d:b85:1831 with SMTP id 5b1f17b1804b1-441b25dd779mr37480605e9.0.1746031121822;
+        Wed, 30 Apr 2025 09:38:41 -0700 (PDT)
+Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2af2a5fsm31756385e9.20.2025.04.30.09.38.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 09:37:41 -0700 (PDT)
-Date: Thu, 01 May 2025 01:37:37 +0900 (JST)
-Message-Id: <20250501.013737.1960337608602672035.konishi.ryusuke@gmail.com>
-To: syzbot+00f7f5b884b117ee6773@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [nilfs?] possible deadlock in __nilfs_error (3)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-In-Reply-To: <68118a52.050a0220.39e3a1.0cab.GAE@google.com>
-References: <68118a52.050a0220.39e3a1.0cab.GAE@google.com>
-X-Mailer: Mew version 6.8 on Emacs 29.3
+        Wed, 30 Apr 2025 09:38:41 -0700 (PDT)
+Date: Wed, 30 Apr 2025 18:38:39 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
+	rui.zhang@intel.com, lukasz.luba@arm.com,
+	david.collins@oss.qualcomm.com, srinivas.kandagatla@linaro.org,
+	stefan.schmidt@linaro.org, quic_tsoni@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org
+Subject: Re: [PATCH v3 4/5 RESEND] thermal: qcom-spmi-temp-alarm: add support
+ for GEN2 rev 2 PMIC peripherals
+Message-ID: <aBJSDwZg6Sr7t4bZ@mai.linaro.org>
+References: <20250320202408.3940777-1-anjelique.melendez@oss.qualcomm.com>
+ <20250320202408.3940777-5-anjelique.melendez@oss.qualcomm.com>
+ <aAI1JnQ2yCjtJL9u@mai.linaro.org>
+ <6031624c-9c65-4df8-88db-96800d58c910@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6031624c-9c65-4df8-88db-96800d58c910@oss.qualcomm.com>
 
-Try removing unnecessary ns_sem lock in init_nilfs() to eliminate lock
-dependencies that were causing false positive deadlock warnings in
-__nilfs_error() etc.
+On Wed, Apr 23, 2025 at 04:31:18PM -0700, Anjelique Melendez wrote:
+> 
+> 
+> On 4/18/2025 4:19 AM, Daniel Lezcano wrote:
+> > On Thu, Mar 20, 2025 at 01:24:07PM -0700, Anjelique Melendez wrote:
+> > > Add support for TEMP_ALARM GEN2 PMIC peripherals with digital major
+> > > revision 2.  This revision utilizes individual temp DAC registers
+> > > to set the threshold temperature for over-temperature stages 1,
+> > > 2, and 3 instead of a single register to specify a set of
+> > > thresholds.
+> > 
+> > Can you elaborate what are the different stages in the QCom semantic ?
+> Stage 1: warning
+> Stage 2: system shutdown
+> Stage 3: emergency shutdown
+> 
+> This is the same as was outlined in original driver documentation:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/thermal?h=v5.4.281&id=f1599f9e4cd6f1dd0cad202853fb830854f4e944.
+> Will add this info to commit.
 
-#syz test
+Thanks for the pointer and the clarification
 
-diff --git a/fs/nilfs2/the_nilfs.c b/fs/nilfs2/the_nilfs.c
-index cb01ea81724d..d0bcf744c553 100644
---- a/fs/nilfs2/the_nilfs.c
-+++ b/fs/nilfs2/the_nilfs.c
-@@ -705,8 +705,6 @@ int init_nilfs(struct the_nilfs *nilfs, struct super_block *sb)
- 	int blocksize;
- 	int err;
- 
--	down_write(&nilfs->ns_sem);
--
- 	blocksize = sb_min_blocksize(sb, NILFS_MIN_BLOCK_SIZE);
- 	if (!blocksize) {
- 		nilfs_err(sb, "unable to set blocksize");
-@@ -779,7 +777,6 @@ int init_nilfs(struct the_nilfs *nilfs, struct super_block *sb)
- 	set_nilfs_init(nilfs);
- 	err = 0;
-  out:
--	up_write(&nilfs->ns_sem);
- 	return err;
- 
-  failed_sbh:
+> > > Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
+> > > Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> > > ---
+> > >   drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 136 ++++++++++++++++++++
+> > >   1 file changed, 136 insertions(+)
+> > > 
+
 -- 
-2.43.0
 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
