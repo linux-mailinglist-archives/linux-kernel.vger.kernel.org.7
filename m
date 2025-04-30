@@ -1,183 +1,159 @@
-Return-Path: <linux-kernel+bounces-627350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0617EAA4F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C87A2AA4F85
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A554B5013F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CECB2500643
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0505625E444;
-	Wed, 30 Apr 2025 15:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F7678F39;
+	Wed, 30 Apr 2025 15:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mCwyBwln"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kEMH4N7y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E68A55
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018BF20CCE4
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 15:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746025336; cv=none; b=AVQpYl8ZS1UevRWb2Msu+xAz9AZ1B+XkH5EVpZU0ixyWMJYC+hS215NwvjsFlaHWm87Qfg4UqS9syNI5zgvCrWeOims0vcqiLw8KjgT63c3Aw0B8uxPfFVtgG1UP7jTj5XwWWHVGxOl9NRP5EEoldFYY82HgV3cojoK9tvYOOWw=
+	t=1746025374; cv=none; b=mPZWCjQjRMRcYtDakr4EM3Ex8OfnhmppdTKNBmPgThlWaFHiQKGZyjGoadlIiMcG8/DpwiPWpMjAAMbuS4lmjz9wIp/+14JC0MrDVE05KU1GRfuQXML17H9jSSVGGwtagu+8e7B+zBGPc3LWKZI1ES4TfR3GBFoe9AAUSUjcFKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746025336; c=relaxed/simple;
-	bh=yTzOvPVZicdtXxYAN3i0WpG3riaGBG0fc2rbiaYZ7Gg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NfdgQHiWQALzI/NCqLvguzHSdjKmX6uEi76Olw9j7sd0S7VL4P3+rZk3/raPAX+TPRqrGSTof8f2+otsqkxt3KFM5oLuvPOf0rLRwqOKFBVPXKRi+2T9tFs0cJ2JSHCMcHBT6TD/MvEEKHnmvy0Pz5UeujxmL6OF+VtW3x6s5ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mCwyBwln; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d8c4222fc9so344685ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746025333; x=1746630133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TxLP2jvQJU6ArGA2+B3kENikuO4EAauVA/47UH8n29s=;
-        b=mCwyBwln/HBYY8iU0m6W+w5qb3vbbiXi5xOa7wbHpvlBJ6G2Tf9V7a38G6WnXQDpWJ
-         pWiIOOcmkjNtNArn94Q/JuEW83q3Bcn6xzQaqAV1gHJzBA3TETQvxjF/bW9FEvuodOKS
-         K9HSSB9CPHhfuLnflJeHCy6V+ifD6yYJAjQfS4l9amXmOCYpjQz6ckmpSAuj4ylVHwQv
-         mLUOqrjNFFa9iDkg70wmNYyPRgCFAm8lvhkHRmp6UzSr0ChRGBPHfJMeL6xmpKHzzcrB
-         2vAOk1C6NuACUPBKN+Ofoqv/5f9cKIAmrA5RZBPvYD4jcJ9KvSI96v5kUNvfTjWtl+cr
-         b9ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746025333; x=1746630133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TxLP2jvQJU6ArGA2+B3kENikuO4EAauVA/47UH8n29s=;
-        b=hORS++rMdRWqZxRwEXpxrDh9eFTYbNcI17DbdPoiwIPzlMNxA5vUltQ62l1jQ7Hy5Z
-         oHt1Bx3eV/2AtHvaGZYM7cq3H4r1rFpSota67duBuZQh7f70sUHByvJHfyS+Pk0XVJDI
-         xsf8SQUOn4UPLTtr6C3wW6Pxo6hmeAItY3Y4qrdegEwL0255NcAv5YYXfNG4gq5/ztK0
-         DvBJEBD48hqDvrBVyPBlH/t53za0xHfEKhAlMYx5Fyipi8MF6GEQBMkCuRsfmAgMxo20
-         BYgb80LKfyjAgxdz+CwyYNv1fF7HymzpznIsARdv5kZJF4dYSMHNU5wP8oYrftIeBVgk
-         dcpQ==
-X-Gm-Message-State: AOJu0YxkzW9AwhYeEVPC+sw4Sn1WMTJTYiwz/ywCzSVBtIg5XhrsQZ6M
-	JvQC3I7igU0HULw8gvVWo2Hv0IUvUbmRCV6ZGpp3ZJIExK2eDLS9e6eNUpMSvkmWBupNCbLY5Vy
-	S8c2RmGvx53J/enAJ2zQCqQIfHx9uCWgw7i9c
-X-Gm-Gg: ASbGncv/eIFEofxJhXWwlEO3XQlkL9f/HTvrPmgnYzhthUqPZ57yvE/PuJo7i8V2aa+
-	10FNEClO/Mz3tb7PjCCX2xT0loyVgkjtgFoqv0SDodpsWsMgtitU3JIHxD5hoCyCZuANkWwvU8z
-	hNVd2O+X8r2qfOyf5z/6wGJaSMZImNv+YgT01VFGjJryZ1KjbY5EE=
-X-Google-Smtp-Source: AGHT+IFkE/B5i/O5ffd0Y9+cfOmEolUnMeNWp7gfguWLFWzrthiz5YGUN8hzcMmp9FogiKa7pA1epCiBXvFTujwV/cM=
-X-Received: by 2002:a05:6e02:2164:b0:3d5:e202:6f05 with SMTP id
- e9e14a558f8ab-3d967612248mr4125325ab.18.1746025332744; Wed, 30 Apr 2025
- 08:02:12 -0700 (PDT)
+	s=arc-20240116; t=1746025374; c=relaxed/simple;
+	bh=40dBjCWUrUks9J/uOhNM38pIvRH8MQTbhcOE6uu9Ypc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oFKZK8Pi9LeIrvc9ttMvAnximtbHN5X49ef8/4VbOzu0TchdLa8qOatcG3aguTeJS0wVGGAlktUwU9/PklXuj7qISdYAoJDvZPGqdk6fb24pP46woDRJvyQ/hIqRe6EBofxiGKalVz+JCmQuJCUN0K0pPxfuZfrX/hby1uwAMtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kEMH4N7y; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746025372; x=1777561372;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=40dBjCWUrUks9J/uOhNM38pIvRH8MQTbhcOE6uu9Ypc=;
+  b=kEMH4N7yg5M2z4hHJ5P4ifWvu22gR9z3SU7ledtbuBMz0p0pNqzg21Ss
+   KvTkXvgXHkw28njxlBSqqp05bHdVbL7VmhPGt+CP9Qa9pAT4eCxOh7PjV
+   CWwzEPWN/n+/ZPvFHZ/ShBNPeeZXFWMSc4XHxXchtS6Yx2O0W9Upu1h1F
+   lKWmYD4vBRGWMrh9Awq9hLzPnZevUM6e2cA/vOxBD8ncOsFyMGyrINyJ+
+   bjWf7kBVe8UP8D9EPwZeg1yeiFue6hFrH+qJvIJS5fvAaDEc0L2e3EMzl
+   bHGyFcPKHRifpI02Kn2pflwVLZrI+bBbvvcxVHaj4bPCcMvvN717eWleW
+   Q==;
+X-CSE-ConnectionGUID: x9jK8aDVTc2HEE4Jgp2XmQ==
+X-CSE-MsgGUID: svptJn5eSzWs7Z7qqjek/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="46804537"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="46804537"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 08:02:10 -0700
+X-CSE-ConnectionGUID: XQEaiVrUS4u/1iDHzMo2IQ==
+X-CSE-MsgGUID: Uj0jWxUVSl6Vk9/94rgppA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="134649851"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.223.193]) ([10.124.223.193])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 08:02:08 -0700
+Message-ID: <a2e9c0e6-0746-42aa-b936-2d72921a7e0d@intel.com>
+Date: Wed, 30 Apr 2025 08:02:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430140611.599078-1-tmricht@linux.ibm.com>
-In-Reply-To: <20250430140611.599078-1-tmricht@linux.ibm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 30 Apr 2025 08:02:00 -0700
-X-Gm-Features: ATxdqUEjvqkuTaPqQIOIutbCYOx106q2eTjEroJsyqDujQ6PC-OfenpiCGQkBb8
-Message-ID: <CAP-5=fXKp6sX2jndJjS7a9ycHW8F2iFxHLEQhJp4PiOAuanyGQ@mail.gmail.com>
-Subject: Re: [PATCH V4] perf test: Allow tolerance for leader sampling test
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org, 
-	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com, 
-	hca@linux.ibm.com, ctshao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2 PATCH] x86/tdx: add VIRT_CPUID2 virtualization if REDUCE_VE
+ was not successful
+To: Zhiquan Li <zhiquan1.li@intel.com>, Jun Miao <jun.miao@intel.com>,
+ kirill.shutemov@linux.intel.com, dave.hansen@linux.intel.com
+Cc: x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ "Du, Fan" <fan.du@intel.com>
+References: <20250429143114.1724280-1-jun.miao@intel.com>
+ <20250429143114.1724280-2-jun.miao@intel.com>
+ <b138cb84-3a34-40b3-a23d-6ff3708dae6b@intel.com>
+ <a0676c7b-9e6d-4af4-87d5-f822ab247730@intel.com>
+ <e8d3fe25-0f97-4edd-abad-dc6b96430965@intel.com>
+ <0e298f80-5361-4376-a099-d3457c8cd349@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <0e298f80-5361-4376-a099-d3457c8cd349@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 30, 2025 at 7:06=E2=80=AFAM Thomas Richter <tmricht@linux.ibm.c=
-om> wrote:
->
-> V4: Update to be applied onto linux-next
-> V3: Added check for missing samples as suggested by Chun-Tse.
-> V2: Changed bc invocation to return 0 on success and 1 on error.
->
-> There is a known issue that the leader sampling is inconsistent, since
-> throttle only affect leader, not the slave. The detail is in [1]. To
-> maintain test coverage, this patch sets a tolerance rate of 80% to
-> accommodate the throttled samples and prevent test failures due to
-> throttling.
->
-> [1] lore.kernel.org/20250328182752.769662-1-ctshao@google.com
->
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
-> Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+On 4/30/25 08:09, Zhiquan Li wrote:
+> On 2025/4/30 21:44, Dave Hansen wrote:
+>>> Currently the most customer's complaints come from the CPUID leaf 0x2
+>>> not virtualization, and most of access come from user space.  Is it
+>>> appropriate for such behavior directly cause a guest kernel panic?
+>> If a VMM doesn't properly configure topology properly and allows
+>> REDUCE_VE, then panic. They obviously got something wrong because that
+>> configuration doesn't make any sense.
+> OK, I agree with you.  Is it better to simplify the logic like this:
+> 
+>     static void reduce_unnecessary_ve(void)
+>     {
+>         u64 configured;
+> 
+>         /* Has the VMM provided a valid topology configuration? */
+>         tdg_vm_rd(TDCS_TOPOLOGY_ENUM_CONFIGURED, &configured);
+> 
+>         if (!configured)
+>             panic("VMM did not configure X2APIC_IDs properly\n");
+> 
+>         tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_REDUCE_VE, TD_CTLS_REDUCE_VE);
+>     }
+> 
+> Since merely fall back to enable ENUM_TOPOLOGY isn't enough, the guest
+> still suffering the CPUID leaf 0x2 not virtualization regression, like
+> the glibc bug.  Full REDUCE_VE is really expected.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
-> ---
->  tools/perf/tests/shell/record.sh | 33 ++++++++++++++++++++++++++------
->  1 file changed, 27 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/re=
-cord.sh
-> index 05d91a663fda..587f62e34414 100755
-> --- a/tools/perf/tests/shell/record.sh
-> +++ b/tools/perf/tests/shell/record.sh
-> @@ -240,22 +240,43 @@ test_leader_sampling() {
->      err=3D1
->      return
->    fi
-> +  perf script -i "${perfdata}" | grep brstack > $script_output
-> +  # Check if the two instruction counts are equal in each record.
-> +  # However, the throttling code doesn't consider event grouping. During=
- throttling, only the
-> +  # leader is stopped, causing the slave's counts significantly higher. =
-To temporarily solve this,
-> +  # let's set the tolerance rate to 80%.
-> +  # TODO: Revert the code for tolerance once the throttling mechanism is=
- fixed.
->    index=3D0
-> -  perf script -i "${perfdata}" > "${script_output}"
-> +  valid_counts=3D0
-> +  invalid_counts=3D0
-> +  tolerance_rate=3D0.8
->    while IFS=3D read -r line
->    do
-> -    # Check if the two instruction counts are equal in each record
->      cycles=3D$(echo $line | awk '{for(i=3D1;i<=3DNF;i++) if($i=3D=3D"cyc=
-les:") print $(i-1)}')
->      if [ $(($index%2)) -ne 0 ] && [ ${cycles}x !=3D ${prev_cycles}x ]
->      then
-> -      echo "Leader sampling [Failed inconsistent cycles count]"
-> -      err=3D1
-> -      return
-> +      invalid_counts=3D$(($invalid_counts+1))
-> +    else
-> +      valid_counts=3D$(($valid_counts+1))
->      fi
->      index=3D$(($index+1))
->      prev_cycles=3D$cycles
->    done < "${script_output}"
-> -  echo "Basic leader sampling test [Success]"
-> +  total_counts=3D$(bc <<< "$invalid_counts+$valid_counts")
-> +  if (( $(bc <<< "$total_counts <=3D 0") ))
-> +  then
-> +    echo "Leader sampling [No sample generated]"
-> +    err=3D1
-> +    return
-> +  fi
-> +  isok=3D$(bc <<< "scale=3D2; if (($invalid_counts/$total_counts) < (1-$=
-tolerance_rate)) { 0 } else { 1 };")
-> +  if [ $isok -eq 1 ]
-> +  then
-> +     echo "Leader sampling [Failed inconsistent cycles count]"
-> +     err=3D1
-> +  else
-> +    echo "Basic leader sampling test [Success]"
-> +  fi
->  }
->
->  test_topdown_leader_sampling() {
-> --
-> 2.45.2
->
+Either that or fix the TDX module in some way to untangle the mess.
 
