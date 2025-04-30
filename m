@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-627806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0BCAA5548
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07262AA5546
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2801F7B6F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 228FD9E820E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D052980D4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30762980D9;
 	Wed, 30 Apr 2025 20:01:08 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BE92949FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91EE295500;
 	Wed, 30 Apr 2025 20:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746043265; cv=none; b=n5HeAgwAw+wfrWJMeUxAxdn0TAskH0y2q9MSEZrGmzoEdrV2gn3UpYl5u7N8VKafZVaYE7ADx628+AEGIvV8nADF8833McQejiUsGU9soKKx3MqP1Q4n6TVBMRJOw3Z1AfkNafprqlE2OP1DCslhBqNBDgDerWVsGDYG3wMNTic=
+	t=1746043265; cv=none; b=RCdlJoWDHAfK0okSD+8du54a5nEGotSd6+arxgTgGuyAa6CZImAiVD0ujzzSfvnCit/Q8oyraNQ1H0wPU9D8/5quz8NDdxmEWtHy3pSZ2JesmlqW/quStFdLf6Yc1MxhnVXfQvdQB/l7+D3aQ96yt5wGrx5MvICIYaUudslLrMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746043265; c=relaxed/simple;
-	bh=mggx5smXanCvg7n8gnR/FploZ9NPITBU1NWvDKMpMos=;
+	bh=wuNRjbmyz6MHvkwS+XtlrPebpFzfrgYzdjwYBw3T+s0=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=NJ8MAf9cp7y7yEPGF7hHAAr9N3oyH50rtf2f5kjV2OQbWsV2ujA557+XyGun1ZfbMbz4KyEeykEXMw1Gpc/zI6xOA+gHGNEF4E1OaADlb6+d2INi76GZCqktm9N37hkjT0mrT8uUm2MUi7KFBkWPyIbZRLvs5zR0PhOlkrnmKrY=
+	 Content-Type; b=PmoJzZQDKTnESk4Yj3WWuibRCF1gV80QnoyPdANnFT06rzuawn5fP4F3+ZLUilMYEJmyckh5eFlu2hqS1k9FjGiWSuS5nUfqq5h5YA2HbbgS5RqiQn6Qnm51jLmQYJLXbG/KjI/WrZxoyzwav6wHbR5yUzX0ozvjPCJc2pla9bI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 570FFC4CEE7;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C17EC4CEEE;
 	Wed, 30 Apr 2025 20:01:05 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uADcD-00000001dT5-2lNA;
+	id 1uADcD-00000001dTb-3SKR;
 	Wed, 30 Apr 2025 16:01:09 -0400
-Message-ID: <20250430200109.512005059@goodmis.org>
+Message-ID: <20250430200109.678557621@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 30 Apr 2025 15:57:58 -0400
+Date: Wed, 30 Apr 2025 15:57:59 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -67,7 +67,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Beau Belgrave <beaub@linux.microsoft.com>,
  "Jose E. Marchesi" <jemarch@gnu.org>,
  Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v7 12/18] perf: Simplify get_perf_callchain() user logic
+Subject: [PATCH v7 13/18] perf: Skip user unwind if the task is a kernel thread.
 References: <20250430195746.827125963@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -79,50 +79,28 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 
-Simplify the get_perf_callchain() user logic a bit.  task_pt_regs()
-should never be NULL.
+If the task is not a user thread, there's no user stack to unwind.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/events/callchain.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ kernel/events/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index cda145dc11bd..2798c0c9f782 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -247,21 +247,19 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
- 	if (user) {
- 		if (!user_mode(regs)) {
- 			if (current->flags & PF_KTHREAD)
--				regs = NULL;
--			else
--				regs = task_pt_regs(current);
-+				goto exit_put;
-+			regs = task_pt_regs(current);
- 		}
- 
--		if (regs) {
--			if (add_mark)
--				perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
-+		if (add_mark)
-+			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
- 
--			start_entry_idx = entry->nr;
--			perf_callchain_user(&ctx, regs);
--			fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
--		}
-+		start_entry_idx = entry->nr;
-+		perf_callchain_user(&ctx, regs);
-+		fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
- 	}
- 
-+exit_put:
- 	put_callchain_entry(rctx);
- 
- 	return entry;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 430dd158b1ee..ec9edf602974 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8101,7 +8101,8 @@ struct perf_callchain_entry *
+ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+ {
+ 	bool kernel = !event->attr.exclude_callchain_kernel;
+-	bool user   = !event->attr.exclude_callchain_user;
++	bool user   = !event->attr.exclude_callchain_user &&
++		!(current->flags & PF_KTHREAD);
+ 	/* Disallow cross-task user callchains. */
+ 	bool crosstask = event->ctx->task && event->ctx->task != current;
+ 	const u32 max_stack = event->attr.sample_max_stack;
 -- 
 2.47.2
 
