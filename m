@@ -1,158 +1,93 @@
-Return-Path: <linux-kernel+bounces-627041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39DEAA4A8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:02:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CE8AA4A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622DC3A7FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:00:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A921BA3BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481F22586C1;
-	Wed, 30 Apr 2025 12:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48434248F5B;
+	Wed, 30 Apr 2025 12:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTVXSE08"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LmNiAgBN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F226D2DC779
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C137E107
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746014455; cv=none; b=JgSUGFAjMAIHtNQsTWhGOUk5+sx07a1Jx4W3kafqVXJ8czK2m0aAm8dGzQdcOX+l7ptfrC5ojPXJ5oB6HCug6tt+StoMZqgJoFpQLRqMpQRQsawkhuF4MHMpLuPSMJbBLj7nu2W4WM/8DC8J/Ezc7LLAXVIExgpE8HT6dzVNhQU=
+	t=1746014752; cv=none; b=RYjQ23mw3qbDvxaUQD1OArEdw1MrvcITojrmkkMgdSzq7b4v7uR+dyOVNOHjmxQ8vSK8gS/lsy1TH7Wr9Yf4eXfRksJzDC5Vms+GTeuK5YIRxVTTvYb2m9tbNx2TyxNULIjFnQWPUnwjCGximWvj/kiTRQcve3SJ7UQkpb70hMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746014455; c=relaxed/simple;
-	bh=8QsjaxLDIv0ISrAdDMHRML8ijQlfkOmaKKvq6LJ0kMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oH/LlCr7B0+zpkNbzKisie/sbuEDaGxhEBsuOXLU5as12wkSRUCmsoS9UNMZex+y8KJscuI1K38J1orFtYVwK+7QHynJ0lPPWBbCLkBoHScNUBWFnZDJMmXmsDtheAGtneJk5AkWsiPa284XRyYD8KnAdPyGFSYHsWXMGZcQGts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTVXSE08; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf257158fso40475275e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746014452; x=1746619252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/DCQtpbmnNH8yPwrJGcf1JWJJVtWdng53I7ehlQb2+A=;
-        b=LTVXSE089NquEekVeaRlvJYbo/PRx7eBV7c9vvvkWhCOi5xpQW81huye+NnE0E/E8x
-         KgSGPFPZ0+DmcWvhV6EZh26BqlCWe/DAzImnrcvqSnpO8vre/f1gcK2Iu0rlibPOVxQj
-         unPBJUHKhnNNQpFIuPqHXmKvFnvt3W25Ef/jVrT5dYCRlT6XCEBnHkPnqaOoq1OiqY72
-         5hR3xW7/d6u+JBMIFUNsn/fQp8l2gkxsRAbm8rk4nu/w8G+g9aa2/yV8N4Tv0uNmk2vP
-         98Ctm+YfQ/fNCoi/5WecdfneJcReUMtaMLLumJJ1w7NFJ3M2rYdNrhgQMWtcvCQuHWu5
-         lYJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746014452; x=1746619252;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/DCQtpbmnNH8yPwrJGcf1JWJJVtWdng53I7ehlQb2+A=;
-        b=pWmBOa1JKi582YUlCverTGjMZL3Gtptv0LHLPJUFl6o6cwRBrG64i6WrF1PTgQn5hW
-         qagA4ic5d/LzPExfBEQdv/nqi70LNwPIo5cdm2qF3V/tUVMjhgVU96NDkkGi8Fdl8dBt
-         4R5IZZYe5PFsFU3A/jOOzXWK07L87QP+Lwns+MlIImwt4XYIVQj0ph+XiPnm/HgOiTI2
-         OPrrUSk4mxAbm4zZcukUiJF4VQbB/bDdK4MC70xW/nDMDFrFPSS/IeQ5qYByX16Ragqe
-         CpqRAr38TJE7cRLqGLzeBCgtOZfqVVUrXekhCuGN3BwnF85s9Jezx0MQOQr4xNEfcJ7A
-         DEWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGecFZtAtmCch4isXJtqluGsKhXCA1X8z3Lg3yqMYtqi+kTpfynI8eh4uhgbVXiqaLWivk3lepGK7RO9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIkaaJ0hqxuNwHD5nsAzrVD1c2N2TS6W3cmKwsSK3/Cw5e5u/y
-	nQO5M8f20F5D4y+BbyVcGGNKpvciNaEEWVyTBTz7+mrB+jJuqyrO
-X-Gm-Gg: ASbGncuhOelhwMBWqyyKDsXXenUcZm+qhZBCX5bhaxxiL18JBBsO4FjfjTVvd6siYBO
-	dcZpgcvQ96bIlj9Ye2RZBf+mB+SibAC8TErt0Dm5ONRSTgmHgHp4OjmSklW85d7c4IgOivt4fuS
-	ikV//XUfX5RV6817tCGzfFWgBGGVFkFHTUspH2wbfT5mX5TgVaBUH9VYfCPFn/dgCQDCgYNdS6K
-	ICijfaaUkE329dJhCGlyFzAKfEX9LjorC7UotcMPvTkUef9V7PuBF/et+sAM6/WIq4REhdJnham
-	t0Yip6Nom+8X33Li5bkBheo+UrBHBd2aumdZQJT9l2nIVh0nEdv5hwhAdmglMS0aUbeoO4rcdd+
-	+zxI=
-X-Google-Smtp-Source: AGHT+IHdKokDsDAPpxiS26E99ubqRD+quvtP2rRWwTXxF12j2WHpvdyRyJppc7rg/JIjOLn49FAS8A==
-X-Received: by 2002:a05:600c:1c29:b0:440:6a79:6df0 with SMTP id 5b1f17b1804b1-441b268b915mr14159175e9.22.1746014451847;
-        Wed, 30 Apr 2025 05:00:51 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2b97288sm23331245e9.6.2025.04.30.05.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 05:00:51 -0700 (PDT)
-Date: Wed, 30 Apr 2025 13:00:50 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Ard Biesheuvel <ardb+git@google.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org, phasta@kernel.org, Linus
- Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH] x86/boot: Work around broken busybox truncate tool
-Message-ID: <20250430130050.27be402e@pumpkin>
-In-Reply-To: <CAMj1kXH7Vi8ruqohvRrPM+Dk2vPtyaMUkNRzi0Ak77aq6Q_peg@mail.gmail.com>
-References: <20250424101917.1552527-2-ardb+git@google.com>
-	<aApm-lvBjREPOW47@gmail.com>
-	<CAMj1kXH7Vi8ruqohvRrPM+Dk2vPtyaMUkNRzi0Ak77aq6Q_peg@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1746014752; c=relaxed/simple;
+	bh=iuF4qsmIoy02nl8tvmkWalwES4KqQZm4f38Hi7k2PM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPomrC7UGt0nOtRAjNLmAlMUMAXhtHyJv8x+SOOmfZPBbNDJIOHsAg7dJsMigfu5DD6YNOH0+ov7JqPnfjrmW02twuU4AeKINpFLnREMHqyKEGHU2hoPJGWUPzic2uiWajOnNukQWpNow34YP44qJPipL/7U/N4w8rWX6J1qA4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LmNiAgBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21C56C4CEE9;
+	Wed, 30 Apr 2025 12:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1746014752;
+	bh=iuF4qsmIoy02nl8tvmkWalwES4KqQZm4f38Hi7k2PM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LmNiAgBNTpUltVkPFao59ewr2pvpyx53kSALCg5XZz5fNQR7CtHpiNhgYkoCa91Pg
+	 torreztM7t3wN+glfcLz7IyRN7xLXh8PjAwWDQCAxbPvb0m0022Hvx/T1GllLsILwF
+	 VIpbX4zDnC4ZUcy7XmpQ2hGLaDmf+pFYYsw8yMWU=
+Date: Wed, 30 Apr 2025 09:25:47 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: linux@treblig.org
+Cc: tglx@linutronix.de, fei1.li@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [REPOST PATCH] virt: acrn: Remove unused list
+ 'acrn_irqfd_clients'
+Message-ID: <2025043030-theology-driveway-20b8@gregkh>
+References: <20250430003623.313541-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430003623.313541-1-linux@treblig.org>
 
-On Thu, 24 Apr 2025 18:39:13 +0200
-Ard Biesheuvel <ardb@kernel.org> wrote:
-
-> On Thu, 24 Apr 2025 at 18:29, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Ard Biesheuvel <ardb+git@google.com> wrote:
-> >  
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > The GNU coreutils version of truncate, which is the original, accepts a
-> > > % prefix for the -s size argument which means the file in question
-> > > should be padded to a multiple of the given size. This is currently used
-> > > to pad the setup block of bzImage to a multiple of 4k before appending
-> > > the decompressor.
-> > >
-> > > busybux reimplements truncate but does not support this idiom, and
-> > > therefore fails the build since commit
-> > >
-> > >   9c54baab4401 ("x86/boot: Drop CRC-32 checksum and the build tool that generates it")
-> > >
-> > > Work around this by avoiding truncate altogether, and relying on dd to
-> > > perform the padding.
-> > >
-> > > Reported-by: <phasta@kernel.org>
-> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > ---
-> > > I personally think using a busybox environment for building the kernel
-> > > is a terrible idea, and does not satisfy the build tool requirements
-> > > listed in the documentation. But apparently, it used to work and now it
-> > > doesn't, and the workaround is rather straight-forward.
-> > >
-> > > IOW, I don't care whether this gets applied or not, so I will leave it
-> > > to others to make the argument.  
-> >  
-> > >  quiet_cmd_image = BUILD   $@
-> > > -      cmd_image = cp $< $@; truncate -s %4K $@; cat $(obj)/vmlinux.bin >>$@
-> > > +      cmd_image = (dd if=$< bs=4k conv=sync status=none; cat $(filter-out $<,$(real-prereqs))) >$@  
-> >
-> > So the workaround isn't too terrible, and since someone did trigger the
-> > bug, debugged it and reported it to us, it costs us very little to
-> > apply the workaround and (re-)enable someone's Linux build environment.
-> >  
+On Wed, Apr 30, 2025 at 01:36:23AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Indeed.
+> It doesn't look like this was ever used.
 > 
-> > Also there's almost no existing usage of 'truncate' within the kernel
-> > build system. Found one only:
-> >
-> >    drivers/firmware/efi/libstub/Makefile.zboot:                  truncate -s $$(hexdump -s16 -n4 -e '"%u"' $<) $@
-> >  
+> Build tested only.
 > 
-> Yeah, and it was me who added that one too :-)
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Acked-by: Fei Li <fei1.li@intel.com>
+> ---
+> This is a repost of the patch originally posted last in May
+> last year as id 20240504174725.93495-1-linux@treblig.org and
+> Ack'd by Fei Li on 20th May, in Zkq183IzBA6cV9FE@louislifei-OptiPlex-7090
+> No one picked it up.
+> (Fixed one typo in the subject line)
+> 
+>  drivers/virt/acrn/irqfd.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/virt/acrn/irqfd.c b/drivers/virt/acrn/irqfd.c
+> index b7da24ca1475..64d32c8fbf79 100644
+> --- a/drivers/virt/acrn/irqfd.c
+> +++ b/drivers/virt/acrn/irqfd.c
+> @@ -16,8 +16,6 @@
+>  
+>  #include "acrn_drv.h"
+>  
+> -static LIST_HEAD(acrn_irqfd_clients);
+> -
 
-That could be changed to use dd as well - since it defaults to truncating the
-destination at the write offset.
+Odd, why doesn't the compiler complain about this?
 
-	David
+I'll queue it up in a bit, thanks!
 
-
+greg k-h
 
