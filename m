@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-626585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081C7AA44CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5963AA44D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F07767B908B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A4E1BA3432
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7C821420A;
-	Wed, 30 Apr 2025 08:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4D57FBA2;
+	Wed, 30 Apr 2025 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N2ADUQi6"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QkipsDXr"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A54213245
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0852AF0E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746000361; cv=none; b=tqp1NXTqp6+nX7LkwBTG4xGwqeDij3ydEE/PqzfBVmgHV+hZr2/BVeNYxqX4xWgb4h/sGizo4O171de8GBhGhtvuaKGi0pyofAaL5Fi7HbNQ5hOVc9glGaJyqgrlFPcW4kpODbnqvefyAHljA2qP/OK5FUeYTaEEnkBYu/VRY/E=
+	t=1746000401; cv=none; b=AeCv1wSoCjy3GB9b+wNk4VrCDFO4gav+AozRCW0bslbXW6ojeNqT5G68VZ+PLl/+MZc9l+YgP2DlrN+k53emshBXwP9xrFRHmzpZIM5WHS2V9lJU256oh16rdGsu/LcODk1s41fYhIXbMYhWfypp640Fwgj7KgGYvMeBSL7fg3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746000361; c=relaxed/simple;
-	bh=DUHxlAwhz09uoCCY/km3TFaTU24WnD8mv0hKD36WSmQ=;
+	s=arc-20240116; t=1746000401; c=relaxed/simple;
+	bh=99+kCDIITBMCpmDZvnmLUTjaZZ6LPqCubOvj04JEBtI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GC5vveeC8DhCfRaT7GygtMbaG9SqsAg3DMfbQXNrnX8JqmIT0KNdunTBCUbcvpCwqwSLOayke9iOoWfUG1hNSCTm6LxeJ8SvZIg034I7qWC+eKquQJegUOwxdOSS5YDl4thf9u8CslHZoqQlFjM7tDcptPwJ1BqROszGLkJ4c7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N2ADUQi6; arc=none smtp.client-ip=209.85.221.43
+	 Content-Disposition; b=WnIFsMC9E/zxW2tsBlgWntd+QkHCYOBRw1nN3j2Sl6D2OuU5RrNEaQBvpZzGN7HYtVbpPyiQyW5Hh7JZBds4U4yiEYMx0xKenKRuljkSp6K5Cla7KSX1ToSPzsB1dSEqB6P3Ky0FmpFx15lRTcyDgMh9TLgbfB7mgXpRsA6lB/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QkipsDXr; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39c1efc4577so3787593f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:05:59 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so71720255e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:06:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746000358; x=1746605158; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746000398; x=1746605198; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZYENxwyZq0Q3qL0QvqAbL/WUtfShupQ9hB5wEZFyU3M=;
-        b=N2ADUQi6goI3gno0vTdsktd+qmM83Zti92tW4v1rhLE7Pxvp01Pvx2VUWslsqu0b2t
-         kyTrehhvraCsY+oUj/27BfrjWcrtI2wbWatHzY23CWccVzLQNOZkiNmYgRp2wpjwNdfx
-         L/+F8yiohNn+i0xQDNSyUiMEziMg6YvFDvOrPefG0cUNQVt4V5+0acXNfDd7HvEnvdms
-         YeBJxdmn8b3xZOhphOmx8u1CpoGapuZfBc8iYGriDq7E0UtxnPqUdQai1mUnPa/s8V1S
-         24WpBqqcm5qQrcGnyn53+osO6Idn2VMezEwp0j8hq8XJy+2P0P7fNltEgYFigyT4Xc/Y
-         61Ng==
+        bh=JaBtCb/6XVAvBecubHAVnnEpXRtXlY0yxjWDApUS/CE=;
+        b=QkipsDXrVNvE6qclzrfPGxtpF7ikYP30XwL1H89kwa4VsZnDEKgc/x+2+35NS7uiUg
+         G6k+s8yg41e6PA6gcmdztdAUPo7S//ULJybdRx1b/GZpFyFOE3RaQhiSZ18+7p1vNB6H
+         O/SNCRHsP2fxfvnM3XF+FQjJRRlEpk0Le9I2ETcf5u4qAcdksRpM1yLSAkqe8B30s4cM
+         WKOH8/+7xJsExW8uHaqQlMwc2qV/KXFp0nSnrloRCb8araKgfb8d7ueHsk454HN7t06r
+         u7EKoPvILkDNxxcYM3QHsw+klEdejpKZradDhmy0E0AHGMaHqP831SfDnmiKATZeK9Me
+         UE+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746000358; x=1746605158;
+        d=1e100.net; s=20230601; t=1746000398; x=1746605198;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZYENxwyZq0Q3qL0QvqAbL/WUtfShupQ9hB5wEZFyU3M=;
-        b=LKyxewosPOVlohQZO8SyEBm+pPJQFZ0vWCGcQqW/XHMk1vV/PtfvAh+SnQ2FgCCsPH
-         iPvQsLxJv6/GS2mR0xhRRQbbOUe3tOyIOSUOPECjnDu62YlybJ1W4I+U/fTF2pvT5x8/
-         XjF4lUQQEOvouja+wqGVY++/BP9lAodMOK6WRNcKjOQSLwMa8KFWTnDcdB/dv4PSN98L
-         Q9q54nOyaM3k3X/yZ6xm5mq/JdBNIfih+czAu+ud5LL+/kCr3HMi62acE/Lhqd7ycKaQ
-         tnIRtTQu/NElOHVWM3zwcWj5ZELEorLxYPh9fbOGItr7sppW5th6uVBSwRFPi2kXQJ4x
-         gi9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdCtHHVFsMtepGlMkjxB3guWJUqa0FUCM6rHxlLexjl5jVpPld5FWP/qvT5Fq7Evgf+PyPdJR1/bvQXok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwElhjmQSmwtkqZ4FaEOtFfMF8kETYAPCUJDv9Lq0/87wbQNDY2
-	cqwGuZkeqheQOeCSHgyrz/vcr/clEl7dwYGPIeM+wN5ySDk5t+PphTPOZZ4S7wE=
-X-Gm-Gg: ASbGnct/5oGibi5MxIj7+qM0pJsQLBKOqDYDjfzFMQogot8PbbJQ8jYblkuSYsoXqT7
-	wM4B8g+heCeoUuV9Zz82jazaDQBzVgdBae1j/PJFzGuPw1UqOssS94qNTRCglLcjRf/btR9z99Z
-	VQ65K6fXMaA/jSIZ+0Tf9cs1AddhDNTP5+Cx+2CXGfLtNK9i+4d7KdJ/FJSjXVRZ+wvhYa53L2A
-	e2qgk1V2fCTFzmDZeT0d3aCqFz4paZJKMKNcjeG/jwTyJxM7oVn+hzIF8xVW19cDrwoqtMVw0tw
-	ElMfhq+K1FIJ0ij2jHaUqobIzfF788eANcUXKc03t4R3Z4+kfDNxFgYq
-X-Google-Smtp-Source: AGHT+IE/vJgkReHfU0yex981z0mRRJKC7iIQUf/5YtQH4VoE02PsQEx8EvbLqs3gYSEqbq0UVxslLw==
-X-Received: by 2002:a05:6000:430b:b0:3a0:8429:a2e2 with SMTP id ffacd0b85a97d-3a08f7a2776mr1682112f8f.32.1746000358002;
-        Wed, 30 Apr 2025 01:05:58 -0700 (PDT)
+        bh=JaBtCb/6XVAvBecubHAVnnEpXRtXlY0yxjWDApUS/CE=;
+        b=RwakzIRjx3UmyIdfwqLoB7Y7SR5atLP82w7vjZ6rfxy/ytceBjRNZAjLASGe2LwECZ
+         VQlqcEzyb2hQHJzt9rH5guvv9Esg89FNOHb5XDjsTyjKhi8lCvoeDLWxvYdsXd2nACwP
+         elSo4aUZ6QLCAOtH8PjYlGBp+9AZYVLMP5rvYquq58th76Bj5EsvAvk8T18HgsD+KRaT
+         nYT4dPn/BbFbOmJ9TlZ+WbstH5GqpI+Q8xGYLKVUJVlFk4GnwkmqV8pj4zHZR3/bKCDV
+         KMVo94vft+Zpo0+sN94ObkmaTt1LvkKncm7pmnaLkTA3M2ST+E+Ij2AZZ8eqrTNuuFiB
+         6a1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWmJfiahnI/lBvrC3Khqf5qslvGblZGarpVDuAi0/dQrRRJ4Fle0M/EKe+/RZNpWxR2dflW+MPdv7EKxkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbRpszWEyJkySf1lQkLZPTXUXb05Vf78jjOZeratDqUwjDxEMr
+	iR8RdM9ZErUjByTFfu2uq09lYqcZ+DfKTwiXOVSRZKmU3bKh/Rl/HxvbU4TZ5oM=
+X-Gm-Gg: ASbGncvZML+kqkr2bbHLAvNxhn67t2gKmizrVf99vMHZL+IMAyHJIjDizB7VFTlRa5d
+	sBRriYJGuRlO6v04ff73+xTc49LfrzPUZH9T94hSMbI15KPe8M3jUkpiXRBXsy1uLgx5dtp8S+S
+	RH/U0GYPfi9D/I54ySHx4odY+URKo3Hg9vmpX4CLWfo3v2wVSscbTAjT/HjboztOxoPgOD7ePUb
+	VfrT/cEcL3a92utjZs0pdpE1LGRCZwv6B5iqSlZKbV4kxmW8lLNIR0yr5HQu9bxwc5Bg+o20s/1
+	EtMt4ys8TUI96fXhsab87Z4uWfphlUrQD+H7/7uGip4N+w==
+X-Google-Smtp-Source: AGHT+IHP+atkeWPXnPct3xYEf+jUQ0S7DQqC5h4qJD0wJmpfwo3S07LKuBCrJm3Z9SrRTQ8TUMm+ag==
+X-Received: by 2002:a05:600c:502b:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-441b1f30736mr19057575e9.4.1746000398163;
+        Wed, 30 Apr 2025 01:06:38 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a07a5ed2e0sm13777037f8f.39.2025.04.30.01.05.57
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2bbbedfsm15173965e9.26.2025.04.30.01.06.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:05:57 -0700 (PDT)
-Date: Wed, 30 Apr 2025 11:05:54 +0300
+        Wed, 30 Apr 2025 01:06:37 -0700 (PDT)
+Date: Wed, 30 Apr 2025 11:06:32 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Satya Tangirala <satyat@google.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Eric Biggers <ebiggers@google.com>, dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] dm: add missing unlock on in dm_keyslot_evict()
-Message-ID: <aBHZ4puON8GNK0vw@stanley.mountain>
+To: Lyude Paul <lyude@redhat.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/nouveau/fifo: small cleanup in nvkm_chan_cctx_get()
+Message-ID: <aBHaCM66pXaP84ei@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,36 +88,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-We need to call dm_put_live_table() even if dm_get_live_table() returns
-NULL.
+"&chan->cgrp->mutex" and "&cgrp->mutex" are the same thing.  Use
+"&cgrp->mutex" consistently.  It looks nicer and it silences a
+Smatch static checker warning.
 
-Fixes: 9355a9eb21a5 ("dm: support key eviction from keyslot managers of underlying devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/md/dm-table.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 933e01f3fab4..1a7e2623069b 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1177,7 +1177,7 @@ static int dm_keyslot_evict(struct blk_crypto_profile *profile,
- 
- 	t = dm_get_live_table(md, &srcu_idx);
- 	if (!t)
--		return 0;
-+		goto put_live_table;
- 
- 	for (unsigned int i = 0; i < t->num_targets; i++) {
- 		struct dm_target *ti = dm_table_get_target(t, i);
-@@ -1188,6 +1188,7 @@ static int dm_keyslot_evict(struct blk_crypto_profile *profile,
- 					  (void *)key);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
+index 7d4716dcd512..f5cd7f7c48b4 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
+@@ -104,7 +104,7 @@ nvkm_chan_cctx_get(struct nvkm_chan *chan, struct nvkm_engn *engn, struct nvkm_c
+ 	if (cctx) {
+ 		refcount_inc(&cctx->refs);
+ 		*pcctx = cctx;
+-		mutex_unlock(&chan->cgrp->mutex);
++		mutex_unlock(&cgrp->mutex);
+ 		return 0;
  	}
  
-+put_live_table:
- 	dm_put_live_table(md, srcu_idx);
- 	return 0;
- }
 -- 
 2.47.2
 
