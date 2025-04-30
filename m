@@ -1,188 +1,379 @@
-Return-Path: <linux-kernel+bounces-627627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A9BAA5325
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:02:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434B6AA531E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916E81698BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA7B4E5DFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A0B268FF9;
-	Wed, 30 Apr 2025 17:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED1E29840D;
+	Wed, 30 Apr 2025 17:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xXBDZnhc"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RimY1o+5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF3C279325
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120612983F4;
+	Wed, 30 Apr 2025 17:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746035553; cv=none; b=jHcYFw58Cwn9XDS4uG6i/1H0gEfdzqmurMCt9CH0MaQJsm4JoOo+3UoSxDl1Rtt7YrRj2Nch4XqWEATE/66UBmPrADOm8rM/QWvX0L1KKvy7utYygIFia3BaJI8XEtUwi86VN0Ryx7MZtip1jtvwGAW4DZnBGjyeDXATD3GLsCw=
+	t=1746035537; cv=none; b=Do3tuV7Iop+NlQ9VwPBE3dNOSRtLLx9GYigIyaP0LMOxa/Xc/u3FPpbNFfLZvtkt8ydfY6ulv+alPJ/cwd18yDl1O0fIM38bK7SDqSzngv9e22xUyb4iR3mhDv4wZJi8Al8DDuTvhPRWR1mjO0qt5jevfke4oYTkCyZ92DVQ0Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746035553; c=relaxed/simple;
-	bh=kyIAaqYv5feUAAH9a7cG4X9qbJk9e6Q/D00eURyg8ms=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k3r0qY5FkvZp02cEWp3HmiubMGILHOT+7tb3vS8VWnbct1bMigCGdX7MfvYM+pnKu/zA11rAoUWNk6kKMZkczs2ucfxp93jHgV40DTnEg+0WVl36lUzzoBaddHORkRI9bB7Xm2kkLZFc+Xiecma1tEHPcT11mCoxw6aAfZxSpEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xXBDZnhc; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b1d9f278aecso51472a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746035551; x=1746640351; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xcg6wjMvXME6KKvdjmH0neAjL3wA1v7P5CrDBAB/BDc=;
-        b=xXBDZnhce4huloB8X/qdRUg+eWHumjVOohdujdH5z7FMRUtNqFX3iw4XgSDCJG8QmE
-         /o3iScg+Mzag8VtG6wZG7g6gOBgC+QQH/4H8wPihIPfqnLuE6gl1qc73ZLKIHqyaQst2
-         YVGpahC9EIBHrTxxGO5gBikjbubwPIXdpcosWdW0RcEzEdCqBrKa1ClZb6lBg46tW/9n
-         0cAZTKfTO8VUcT3rXP+aqHSiVj0cPR7I6S21+ntiCKN2vD9d2KmOtQAl3ZXnqORQeBTL
-         /tg8sBqOVPNkZWZWNdNN9SqUKed/Aacor+rD3Kt/bD30B4Un40QFESSdPdzla8P5aH5F
-         nr4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746035551; x=1746640351;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xcg6wjMvXME6KKvdjmH0neAjL3wA1v7P5CrDBAB/BDc=;
-        b=jZWfPqUPSZRMQcnanu2UnlCjRZ+ZGvu4gqp+VwlWOPwo36DJ5TIFOGXO96jPvG47GV
-         10zjdnWDsv+aOosXnbRVJXCs3tSUqgkM/MU2wA59NQmd+nMgWAxZKRJ29AJJrpTGqtCC
-         X0k2NYaUmgJOpP5l00DYgnzu8iYxQmIqHSGEdjaJQ4uSPzo84nAcTKCu5bbdxpVvPmKB
-         pegRpaIdcMsqTDsY3dDe/hGbDcIuFk8GJ/+rNXKFaeaEexEMAGKN4oyVx2cPbtiw3DW0
-         8gcuetwF2AjWtuP/6egobVkKAvPekhQp6++lGbQM/QQ9Za3YJ3+OYWowpvP+aMLSjXe1
-         RkgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Daz1iZOaPENEodpNeblWIzJtL1xIqQMZRRPWK/i4PuCDXa5fVWOUx83zO0T+chPlGMyLB0XfRmuQW4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFdhKGpZsxXL53hs5EOzPh9rF2AyrGHoX/0v9qi9e1WX2du50V
-	te4HJD9fnC+zYsbfAJcDNRCXN0ckK9KbJjIQH7yRWOR+esm8/JItRFprU3pTnm7q3PDkXPQpTJR
-	DP7dzVQ==
-X-Google-Smtp-Source: AGHT+IEKyz0de2SDHs2Wi3XD69kNX3qSVqi0GA9WwmSWKDFlmr/T24Ck2MF0lTbNZtV+tulQOwG0zYD0Vjfx
-X-Received: from pgkb21.prod.google.com ([2002:a63:eb55:0:b0:b1f:857e:2198])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:118a:b0:1f5:93cd:59b5
- with SMTP id adf61e73a8af0-20aa41839ccmr5344128637.28.1746035551081; Wed, 30
- Apr 2025 10:52:31 -0700 (PDT)
-Date: Wed, 30 Apr 2025 10:50:34 -0700
-In-Reply-To: <20250430175036.184610-1-irogers@google.com>
+	s=arc-20240116; t=1746035537; c=relaxed/simple;
+	bh=3IQls6LanaHFfB+tJv6QGqpwwG+ALsyhTOMes6xZWPY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WkSdwrzXTIcxIPBHnQa7It6Bhry7ttafFy+n4GAl06d1dxDIXaKIGUS/F8ToeYDXJ23RzgPIbQdcryFQ6EQSvL16qdQxa3FAlughxSgx2ONf9EwquyJpruFjXzy6lf7Qr3bo7uIIL9Od+dFY8+drgURxCi+uXGwKYEJjWvvPwUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RimY1o+5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52222C32782;
+	Wed, 30 Apr 2025 17:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746035535;
+	bh=3IQls6LanaHFfB+tJv6QGqpwwG+ALsyhTOMes6xZWPY=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=RimY1o+54Xo2+N5HDxBoVmlO+1gJ0j7Z1+pzm8HLffj0PUt6h6DJ3dmXotUNotr0T
+	 fohs8VWG7YBtGpB2y8E3g0wdLbryzATB3ug56eEpBvlfoDLTWMkxa+CG8tdm3NFdUo
+	 wcP+71iqOcd3J6sXF4FjWycbsdTZAXSxMY1AqtU0mXFMlgmiyW4flJqD75xXy8shdO
+	 /o3hLASffLMi3ZGT1O67YwhLukyb6Wva+TCxGJh035XWUs3cnwoc2YHTwo8dJzcqvy
+	 3SbirMplKJ7yQhHzIuCuPBJ3thTMAZ5MoO83AwsM4gH6TW2jQkojyFQ7u5Dj/4+C3l
+	 Bsj2bT3bz0Bxg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D014FC3ABA9;
+	Wed, 30 Apr 2025 17:52:14 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Wed, 30 Apr 2025 12:52:01 -0500
+Subject: [PATCH] memory: tegra210-emc: Support Device Tree EMC Tables
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250430175036.184610-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-Message-ID: <20250430175036.184610-47-irogers@google.com>
-Subject: [PATCH v2 46/47] perf hashmap: Silence -Wshorten-64-to-32 warnings
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Thomas Gleixner <tglx@linutronix.de>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>, 
-	Ben Gainey <ben.gainey@arm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Aditya Gupta <adityag@linux.ibm.com>, 
-	Eder Zulian <ezulian@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>, 
-	Dirk Gouders <dirk@gouders.net>, Brian Geffon <bgeffon@google.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Howard Chu <howardchu95@gmail.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Jann Horn <jannh@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Yang Jihong <yangjihong@bytedance.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Andi Kleen <ak@linux.intel.com>, Graham Woodward <graham.woodward@arm.com>, 
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Hao Ge <gehao@kylinos.cn>, Tengda Wu <wutengda@huaweicloud.com>, 
-	Gabriele Monaco <gmonaco@redhat.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Casey Chen <cachen@purestorage.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Li Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Andrew Kreimer <algonell@gmail.com>, 
-	"=?UTF-8?q?Krzysztof=20=C5=81opatowski?=" <krzysztof.m.lopatowski@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, Zixian Cai <fzczx123@gmail.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Yujie Liu <yujie.liu@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250430-tegra210-emc-dt-v1-1-99896fa69341@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEBjEmgC/x3MSwqAIBRG4a3EHXfBpAe2lWgg+ld3kIVGBNLek
+ 4bf4JxMCVGQaKwyRdyS5AgFTV2R22xYweKLSSvdqVYbvrBGqxvF2B37i83gHXqjrG9BpTojFnn
+ +4zS/7wfGrSDaYQAAAA==
+X-Change-ID: 20250429-tegra210-emc-dt-97dce690ad4e
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746035534; l=11318;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=oK0pr0GREoOZzHrbUEhRzpd0qBn9cGUQIAd6Mb/CAcg=;
+ b=EqKw3T3C+p76GZFOR7E9cQJZ/nd9kzvp+ywCCbBSpfQSz2/MvBpngA1Tqc7KdyLx2f49GpZao
+ e3LTTGH3V8zDWvwetocL7Jly8ji2bPqNlf+53J4tFjvOue+0r4FtXzu
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-The clang warning -Wshorten-64-to-32 can be useful to catch
-inadvertent truncation. In some instances this truncation can lead to
-changing the sign of a result, for example, truncation to return an
-int to fit a sort routine. Silence the warning by making the implicit
-truncation explicit.
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+These are generated by the Tegra210 Android bootloader. This is similar
+to the Tegra124 handling, so the support is based on that and modified
+to match Tegra210 by referencing the downstream Nvidia 4.9 kernel.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- tools/perf/util/hashmap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/memory/tegra/tegra210-emc-core.c | 246 +++++++++++++++++++++++++++++--
+ 1 file changed, 236 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/util/hashmap.c b/tools/perf/util/hashmap.c
-index 140ee4055676..f2719f522b84 100644
---- a/tools/perf/util/hashmap.c
-+++ b/tools/perf/util/hashmap.c
-@@ -115,7 +115,7 @@ static int hashmap_grow(struct hashmap *map)
- 		return -ENOMEM;
+diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
+index e63f6269057106ded054dea94d92d96cb9c13c06..0b8c7cd09679dc64b3fb04acf2bb5963dd7544fc 100644
+--- a/drivers/memory/tegra/tegra210-emc-core.c
++++ b/drivers/memory/tegra/tegra210-emc-core.c
+@@ -1783,6 +1783,226 @@ static void tegra210_emc_detect(struct tegra210_emc *emc)
+ 		emc->num_channels = 1;
+ }
  
- 	hashmap__for_each_entry_safe(map, cur, tmp, bkt) {
--		h = hash_bits(map->hash_fn(cur->key, map->ctx), new_cap_bits);
-+		h = hash_bits(map->hash_fn(cur->key, map->ctx), (int)new_cap_bits);
- 		hashmap_add_entry(&new_buckets[h], cur);
++static struct device_node *
++tegra_emc_find_node_by_ram_code(struct device_node *node, u32 ram_code)
++{
++	struct device_node *np;
++	int err;
++
++	for_each_child_of_node(node, np) {
++		u32 value;
++
++		err = of_property_read_u32(np, "nvidia,ram-code", &value);
++		if (err || (value != ram_code))
++			continue;
++
++		return np;
++	}
++
++	return NULL;
++}
++
++static int load_one_timing_from_dt(struct tegra210_emc *emc,
++				   struct tegra210_emc_timing *timing,
++				   struct device_node *node)
++{
++	int err;
++
++#define EMC_READ_PROP(prop, dtprop) { \
++	err = of_property_read_u32(node, dtprop, &timing->prop); \
++	if (err) { \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
++		return err; \
++	} \
++}
++
++#define EMC_READ_PROP_STRING(prop, dtprop) { \
++	err = of_property_read_string(node, dtprop, (const char **)&timing->prop); \
++	if (err) { \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
++		return err; \
++	} \
++}
++
++#define EMC_READ_PROP_ARRAY(prop, dtprop, length) { \
++	err = of_property_read_u32_array(node, dtprop, timing->prop, length); \
++	if (err) { \
++		dev_err(emc->dev, "timing %pOFn: failed to read " #prop ": %d\n", \
++			node, err); \
++		return err; \
++	} \
++}
++
++	EMC_READ_PROP_STRING(clock_src, "nvidia,source")
++	EMC_READ_PROP_STRING(dvfs_ver, "nvidia,dvfs-version")
++
++	EMC_READ_PROP(revision, "nvidia,revision")
++	EMC_READ_PROP(rate, "clock-frequency")
++	EMC_READ_PROP(min_volt, "nvidia,emc-min-mv")
++	EMC_READ_PROP(gpu_min_volt, "nvidia,gk20a-min-mv")
++	EMC_READ_PROP(clk_src_emc, "nvidia,src-sel-reg")
++	EMC_READ_PROP(num_burst, "nvidia,burst-regs-num")
++	EMC_READ_PROP(emc_cfg_2, "nvidia,emc-cfg-2")
++	EMC_READ_PROP(emc_sel_dpd_ctrl, "nvidia,emc-sel-dpd-ctrl")
++	EMC_READ_PROP(emc_auto_cal_config, "nvidia,emc-auto-cal-config")
++	EMC_READ_PROP(emc_auto_cal_config2, "nvidia,emc-auto-cal-config2")
++	EMC_READ_PROP(emc_auto_cal_config3, "nvidia,emc-auto-cal-config3")
++	EMC_READ_PROP(latency, "nvidia,emc-clock-latency-change")
++	EMC_READ_PROP_ARRAY(burst_regs, "nvidia,emc-registers", timing->num_burst)
++	EMC_READ_PROP(needs_training, "nvidia,needs-training")
++	EMC_READ_PROP(trained, "nvidia,trained")
++
++	if (timing->revision >= 0x6) {
++		EMC_READ_PROP(periodic_training, "nvidia,periodic_training")
++		EMC_READ_PROP(trained_dram_clktree[C0D0U0], "nvidia,trained_dram_clktree_c0d0u0")
++		EMC_READ_PROP(trained_dram_clktree[C0D0U1], "nvidia,trained_dram_clktree_c0d0u1")
++		EMC_READ_PROP(trained_dram_clktree[C0D1U0], "nvidia,trained_dram_clktree_c0d1u0")
++		EMC_READ_PROP(trained_dram_clktree[C0D1U1], "nvidia,trained_dram_clktree_c0d1u1")
++		EMC_READ_PROP(trained_dram_clktree[C1D0U0], "nvidia,trained_dram_clktree_c1d0u0")
++		EMC_READ_PROP(trained_dram_clktree[C1D0U1], "nvidia,trained_dram_clktree_c1d0u1")
++		EMC_READ_PROP(trained_dram_clktree[C1D1U0], "nvidia,trained_dram_clktree_c1d1u0")
++		EMC_READ_PROP(trained_dram_clktree[C1D1U1], "nvidia,trained_dram_clktree_c1d1u1")
++		EMC_READ_PROP(current_dram_clktree[C0D0U0], "nvidia,current_dram_clktree_c0d0u0")
++		EMC_READ_PROP(current_dram_clktree[C0D0U1], "nvidia,current_dram_clktree_c0d0u1")
++		EMC_READ_PROP(current_dram_clktree[C0D1U0], "nvidia,current_dram_clktree_c0d1u0")
++		EMC_READ_PROP(current_dram_clktree[C0D1U1], "nvidia,current_dram_clktree_c0d1u1")
++		EMC_READ_PROP(current_dram_clktree[C1D0U0], "nvidia,current_dram_clktree_c1d0u0")
++		EMC_READ_PROP(current_dram_clktree[C1D0U1], "nvidia,current_dram_clktree_c1d0u1")
++		EMC_READ_PROP(current_dram_clktree[C1D1U0], "nvidia,current_dram_clktree_c1d1u0")
++		EMC_READ_PROP(current_dram_clktree[C1D1U1], "nvidia,current_dram_clktree_c1d1u1")
++		EMC_READ_PROP(run_clocks, "nvidia,run_clocks")
++		EMC_READ_PROP(tree_margin, "nvidia,tree_margin")
++	}
++
++	EMC_READ_PROP(num_burst_per_ch, "nvidia,burst-regs-per-ch-num")
++	EMC_READ_PROP(num_trim, "nvidia,trim-regs-num")
++	EMC_READ_PROP(num_trim_per_ch, "nvidia,trim-regs-per-ch-num")
++	EMC_READ_PROP(num_mc_regs, "nvidia,burst-mc-regs-num")
++	EMC_READ_PROP(num_up_down, "nvidia,la-scale-regs-num")
++	EMC_READ_PROP(vref_num, "nvidia,vref-regs-num")
++	EMC_READ_PROP(dram_timing_num, "nvidia,dram-timing-regs-num")
++	EMC_READ_PROP(min_mrs_wait, "nvidia,min-mrs-wait")
++	EMC_READ_PROP(emc_mrw, "nvidia,emc-mrw")
++	EMC_READ_PROP(emc_mrw2, "nvidia,emc-mrw2")
++	EMC_READ_PROP(emc_mrw3, "nvidia,emc-mrw3")
++	EMC_READ_PROP(emc_mrw4, "nvidia,emc-mrw4")
++	EMC_READ_PROP(emc_mrw9, "nvidia,emc-mrw9")
++	EMC_READ_PROP(emc_mrs, "nvidia,emc-mrs")
++	EMC_READ_PROP(emc_emrs, "nvidia,emc-emrs")
++	EMC_READ_PROP(emc_emrs2, "nvidia,emc-emrs2")
++	EMC_READ_PROP(emc_auto_cal_config4, "nvidia,emc-auto-cal-config4")
++	EMC_READ_PROP(emc_auto_cal_config5, "nvidia,emc-auto-cal-config5")
++	EMC_READ_PROP(emc_auto_cal_config6, "nvidia,emc-auto-cal-config6")
++	EMC_READ_PROP(emc_auto_cal_config7, "nvidia,emc-auto-cal-config7")
++	EMC_READ_PROP(emc_auto_cal_config8, "nvidia,emc-auto-cal-config8")
++	EMC_READ_PROP(emc_fdpd_ctrl_cmd_no_ramp, "nvidia,emc-fdpd-ctrl-cmd-no-ramp")
++	EMC_READ_PROP(dll_clk_src, "nvidia,dll-clk-src")
++	EMC_READ_PROP(clk_out_enb_x_0_clk_enb_emc_dll, "nvidia,clk-out-enb-x-0-clk-enb-emc-dll")
++
++	if (timing->revision >= 0x7)
++		EMC_READ_PROP_ARRAY(ptfv_list, "nvidia,ptfv", ARRAY_SIZE(timing->ptfv_list))
++
++	EMC_READ_PROP_ARRAY(burst_reg_per_ch, "nvidia,emc-burst-regs-per-ch",
++			timing->num_burst_per_ch)
++	EMC_READ_PROP_ARRAY(shadow_regs_ca_train, "nvidia,emc-shadow-regs-ca-train",
++			timing->num_burst)
++	EMC_READ_PROP_ARRAY(shadow_regs_quse_train, "nvidia,emc-shadow-regs-quse-train",
++			timing->num_burst)
++	EMC_READ_PROP_ARRAY(shadow_regs_rdwr_train, "nvidia,emc-shadow-regs-rdwr-train",
++			timing->num_burst)
++	EMC_READ_PROP_ARRAY(trim_regs, "nvidia,emc-trim-regs", timing->num_trim)
++	EMC_READ_PROP_ARRAY(trim_perch_regs, "nvidia,emc-trim-regs-per-ch", timing->num_trim_per_ch)
++	EMC_READ_PROP_ARRAY(vref_perch_regs, "nvidia,emc-vref-regs", timing->vref_num)
++	EMC_READ_PROP_ARRAY(dram_timings, "nvidia,emc-dram-timing-regs", timing->dram_timing_num)
++	EMC_READ_PROP_ARRAY(burst_mc_regs, "nvidia,emc-burst-mc-regs", timing->num_mc_regs)
++	EMC_READ_PROP_ARRAY(la_scale_regs, "nvidia,emc-la-scale-regs", timing->num_up_down)
++
++#undef EMC_READ_PROP
++#undef EMC_READ_STRING
++#undef EMC_READ_PROP_ARRAY
++
++	return 0;
++}
++
++#define NOMINAL_COMPATIBLE "nvidia,tegra21-emc-table"
++#define DERATED_COMPATIBLE "nvidia,tegra21-emc-table-derated"
++static int tegra210_emc_load_timings_from_dt(struct tegra210_emc *emc,
++					     struct device_node *node)
++{
++	struct tegra210_emc_timing *timing;
++	unsigned int num_nominal = 0, num_derated = 0;
++	int err;
++
++	emc->num_timings = 0;
++	for_each_child_of_node_scoped(node, child) {
++		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
++			emc->num_timings++;
++		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
++			num_derated++;
++	}
++
++	if (!emc->num_timings || (num_derated && (emc->num_timings != num_derated)))
++		return -EINVAL;
++
++	emc->nominal = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
++				    GFP_KERNEL);
++	if (!emc->nominal)
++		return -ENOMEM;
++
++	if (num_derated) {
++		num_derated = 0;
++		emc->derated = devm_kcalloc(emc->dev, emc->num_timings, sizeof(*timing),
++					    GFP_KERNEL);
++		if (!emc->derated)
++			return -ENOMEM;
++	}
++
++	for_each_child_of_node_scoped(node, child) {
++		if (of_device_is_compatible(child, NOMINAL_COMPATIBLE))
++			timing = &emc->nominal[num_nominal++];
++		else if (of_device_is_compatible(child, DERATED_COMPATIBLE))
++			timing = &emc->derated[num_derated++];
++		else
++			continue;
++
++		err = load_one_timing_from_dt(emc, timing, child);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++static int tegra210_emc_parse_dt(struct tegra210_emc *emc)
++{
++	struct device_node *node, *np = emc->dev->of_node;
++	int ram_code, ret = 0;
++
++	if (!np) {
++		dev_err(emc->dev, "Unable to find emc node\n");
++		return -ENODEV;
++	}
++
++	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
++		ram_code = tegra_read_ram_code();
++		node = tegra_emc_find_node_by_ram_code(np, ram_code);
++
++		if (!node) {
++			dev_warn(emc->dev, "can't find emc table for ram-code\n");
++			return -ENODEV;
++		}
++
++		ret = tegra210_emc_load_timings_from_dt(emc, node);
++		of_node_put(node);
++	} else {
++		ret = tegra210_emc_load_timings_from_dt(emc, np);
++	}
++
++	return ret;
++}
++
+ static int tegra210_emc_validate_timings(struct tegra210_emc *emc,
+ 					 struct tegra210_emc_timing *timings,
+ 					 unsigned int num_timings)
+@@ -1815,6 +2035,7 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+ 	struct device_node *np;
+ 	unsigned int i;
+ 	int err;
++	bool have_dt_tables = false;
+ 
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc)
+@@ -1847,16 +2068,20 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+ 	np = pdev->dev.of_node;
+ 
+ 	/* attach to the nominal and (optional) derated tables */
+-	err = of_reserved_mem_device_init_by_name(emc->dev, np, "nominal");
+-	if (err < 0) {
+-		dev_err(emc->dev, "failed to get nominal EMC table: %d\n", err);
+-		return err;
+-	}
++	if (of_reserved_mem_device_init_by_name(emc->dev, np, "nominal") >= 0) {
++		err = of_reserved_mem_device_init_by_name(emc->dev, np, "derated");
++		if (err < 0 && err != -ENODEV) {
++			dev_err(emc->dev, "failed to get derated EMC table: %d\n", err);
++			goto release;
++		}
++	} else {
++		err = tegra210_emc_parse_dt(emc);
++		if (err < 0) {
++			dev_err(emc->dev, "failed to get EMC tables: %d\n", err);
++			return err;
++		}
+ 
+-	err = of_reserved_mem_device_init_by_name(emc->dev, np, "derated");
+-	if (err < 0 && err != -ENODEV) {
+-		dev_err(emc->dev, "failed to get derated EMC table: %d\n", err);
+-		goto release;
++		have_dt_tables = true;
  	}
  
-@@ -164,7 +164,7 @@ int hashmap_insert(struct hashmap *map, long key, long value,
- 	if (old_value)
- 		*old_value = 0;
+ 	/* validate the tables */
+@@ -1980,7 +2205,8 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+ 	debugfs_remove_recursive(emc->debugfs.root);
+ 	tegra210_clk_emc_detach(emc->clk);
+ release:
+-	of_reserved_mem_device_release(emc->dev);
++	if (!have_dt_tables)
++		of_reserved_mem_device_release(emc->dev);
  
--	h = hash_bits(map->hash_fn(key, map->ctx), map->cap_bits);
-+	h = hash_bits(map->hash_fn(key, map->ctx), (int)map->cap_bits);
- 	if (strategy != HASHMAP_APPEND &&
- 	    hashmap_find_entry(map, key, h, NULL, &entry)) {
- 		if (old_key)
-@@ -188,7 +188,7 @@ int hashmap_insert(struct hashmap *map, long key, long value,
- 		err = hashmap_grow(map);
- 		if (err)
- 			return err;
--		h = hash_bits(map->hash_fn(key, map->ctx), map->cap_bits);
-+		h = hash_bits(map->hash_fn(key, map->ctx), (int)map->cap_bits);
- 	}
- 
- 	entry = malloc(sizeof(struct hashmap_entry));
-@@ -208,7 +208,7 @@ bool hashmap_find(const struct hashmap *map, long key, long *value)
- 	struct hashmap_entry *entry;
- 	size_t h;
- 
--	h = hash_bits(map->hash_fn(key, map->ctx), map->cap_bits);
-+	h = hash_bits(map->hash_fn(key, map->ctx), (int)map->cap_bits);
- 	if (!hashmap_find_entry(map, key, h, NULL, &entry))
- 		return false;
- 
-@@ -223,7 +223,7 @@ bool hashmap_delete(struct hashmap *map, long key,
- 	struct hashmap_entry **pprev, *entry;
- 	size_t h;
- 
--	h = hash_bits(map->hash_fn(key, map->ctx), map->cap_bits);
-+	h = hash_bits(map->hash_fn(key, map->ctx), (int)map->cap_bits);
- 	if (!hashmap_find_entry(map, key, h, &pprev, &entry))
- 		return false;
- 
+ 	return err;
+ }
+
+---
+base-commit: 8bac8898fe398ffa3e09075ecea2be511725fb0b
+change-id: 20250429-tegra210-emc-dt-97dce690ad4e
+
+Best regards,
 -- 
-2.49.0.906.g1f30a19c02-goog
+Aaron Kling <webgeek1234@gmail.com>
+
 
 
