@@ -1,155 +1,183 @@
-Return-Path: <linux-kernel+bounces-627226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F28AA4D7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A1EAA4D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC15698621F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66945986F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9772325C6E8;
-	Wed, 30 Apr 2025 13:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510EC25B68E;
+	Wed, 30 Apr 2025 13:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YzXg5ruK"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="03fP3bXo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1FRLYm99";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNR7rmLp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5uD+7E60"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8878C25B1D2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C1C7462
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746019783; cv=none; b=SWznRUfVZv3eFs98mYjUJyK6ZbaiTQABruWb8DZDAD1dwf2JPGoS86c9JKf77QqBvHSQ+AlkkPLRoxX7fmU7mv5O+NTSdc53RxxXfZt/+ZG35fEQY1+hkTTkzZ9hCf8WGnI4qXzBDwMzU0PL1MGT4z5elKMV02QrU9FGD5RJdoI=
+	t=1746019835; cv=none; b=HzRWx7GP5ZdCKmsFEJESkxYUclBTJvfDhlyvyi9Yk9eRUcCmBHzfNvU1GEzG3is7PVUGg9oaLCNtxlFrHURp4w0UfqPirWE9vWGKVzgNrE6CQ3CMgcmKFpTvN3BNTNZzb4BdALGk5WCKafz4Ac9eCBzByYH1z8Um18ckYvrBm3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746019783; c=relaxed/simple;
-	bh=xcF9psvTteWxnjeVCP5MxLsrf0PsD3ozsExL4qq3GbY=;
+	s=arc-20240116; t=1746019835; c=relaxed/simple;
+	bh=FUK72UCcAbgqKhkyAwVsKfsjNUq08EAAjoWV0V95JWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=In7MWDd0S4yTii5IU8eNP/S/VwIxQ323eXsHTGz3EKIrTm5Jsf6JFY5a5HYcMMRuc+FYE2xBIvoMkK4ToDkDH9SirH6+gGzrqDE2RmBgecn6D3m6JdgmuCNZQoiKfj3oKnLVZqpmF8ZumLUPEpenk5WieeGz4trSG4KwjdxL5II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YzXg5ruK; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UC36v3006768;
-	Wed, 30 Apr 2025 13:29:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:to; s=pp1; bh=H/eGatCGfMyAMZkac1vP/
-	80gmKFHQJq5wLmjfkF9Va8=; b=YzXg5ruK2YTxjOx17CmwTYTPKjHHdBULmlyuX
-	jTvijvhkWmVRg63goVfjfQz7qd0RXCKC7JPz1m5rcU5KszKe3FEbJ8unurYMyFJ/
-	nf9F3XrrTeOSjMvdCHBg9xTaTwQS8RJB4TbKcvppNP739S0nSsNAqYrKqS4m0ofQ
-	9jkznf/QKz1rx/5NmWM66i7xpDvepj16Z25eULXKNX5KpCw1a02KQRXA6rxOiBvH
-	yupqxEh6yd7+85JK6WlJXaHwhtINmueGCXYO3iqQ+tigme5/e9+px7E9mYYzULa/
-	xvRnz+Gjo3bgq9qFkvIsCAXUgEd3Y2x8tHAuBXNRNxlcHlJuw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b6vb39bp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 13:29:26 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53UDPNbY013840;
-	Wed, 30 Apr 2025 13:29:25 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b6vb39bj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 13:29:25 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53U9qPlM008542;
-	Wed, 30 Apr 2025 13:29:24 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 469ch37pq1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 13:29:24 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53UDTLBY35783262
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Apr 2025 13:29:21 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3298F20043;
-	Wed, 30 Apr 2025 13:29:21 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8A49120040;
-	Wed, 30 Apr 2025 13:29:18 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.126.150.29])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed, 30 Apr 2025 13:29:18 +0000 (GMT)
-Date: Wed, 30 Apr 2025 18:59:17 +0530
-From: Srikar Dronamraju <srikar@linux.ibm.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, mpe@ellerman.id.au, peterz@infradead.org,
-        fbarrat@linux.ibm.com, ajd@linux.ibm.com, mahesh@linux.ibm.com,
-        oohall@gmail.com, hbathini@linux.ibm.com, dhowells@redhat.com,
-        haren@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] powerpc: use lock guards for mutex Set 1
-Message-ID: <aBIlrYRE8TvWAKI_@linux.ibm.com>
-Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
-References: <20250314114502.2083434-1-sshegde@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eq2UPN7ig+O+bl6faU8qX1UYWuR1zcqheTXrFUl3VggsCS6d84SmQH4Lg6FcCUQpNsVgt7AoWxbsyXpTu4CrMCFu5QfbIwikOuV4m6wpAX21elzD8wN4V3raJ6Y0hz6JS9FA/OcABv9IrrslRMc7QaSAuWx+LMKfq8bnKSW84no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=03fP3bXo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1FRLYm99; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNR7rmLp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5uD+7E60; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C3F1721168;
+	Wed, 30 Apr 2025 13:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746019832;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXrm8L0PtcuZKV245THat/pGgNrx58PVEfekeZA2cds=;
+	b=03fP3bXocKg5GYzogIaSuz5p/blXeVI4vCFR4AYqctruosBz0CZ8QUk7IPtXHnWPKBkIB4
+	/eccHHUFNEYFLxiAbdNoZv9lajLqQ52DWqFJNk7Ke9nKQQchL4jwpKS+R6vuDEBPI/OZsJ
+	JmNdjSB+9UShgwPrgqScTs6ZcO1vFLs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746019832;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXrm8L0PtcuZKV245THat/pGgNrx58PVEfekeZA2cds=;
+	b=1FRLYm99/j17CAEeR6VSsBVLosD38qdwKPNqylNmoS6jPrWJJdyjl/wMdHkoMvejRdCUqe
+	Ok6komxvkyoxPlBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rNR7rmLp;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5uD+7E60
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746019831;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXrm8L0PtcuZKV245THat/pGgNrx58PVEfekeZA2cds=;
+	b=rNR7rmLp716tkFxAtFt43WmMJYu6Xut6ksC9zZWKxfZcnSJnGHgat7ynwPCBPZ7mxKBKja
+	3e355u89HQIAXiQ3WycbV33gBdHUsqHn+3AkvjOWbkXwQfkjEuRTDzZbEJfQekLA4uyO/m
+	MhFbTotpazMqYXAJxBCrfovHqRWAkYg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746019831;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXrm8L0PtcuZKV245THat/pGgNrx58PVEfekeZA2cds=;
+	b=5uD+7E60DpXNAA/6/tyNv6Bc7oLxzGy7atAGTct8piTOjpTQwuAsGqlQzLF2Kq05WermJH
+	UeHzJ2EENutAXgDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A0CE113A25;
+	Wed, 30 Apr 2025 13:30:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OfkHJ/clEmjPdAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 30 Apr 2025 13:30:31 +0000
+Date: Wed, 30 Apr 2025 15:30:26 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Daniel Vacek <neelx@suse.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: remove extent buffer's redundant `len` member
+ field
+Message-ID: <20250430133026.GH9140@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250429151800.649010-1-neelx@suse.com>
+ <20250430080317.GF9140@twin.jikos.cz>
+ <CAPjX3FfBoU9-wYP-JC63K6y8Pzocu0z8cKvXEbjD_NjdxWO+Og@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314114502.2083434-1-sshegde@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=BISzrEQG c=1 sm=1 tr=0 ts=681225b6 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=8nJEP1OIZ-IA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=VnNF1IyMAAAA:8 a=_evYCRor3lOg1Tm-bjQA:9
- a=wPNLvfGTeEIA:10 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-GUID: eKw5tx0qpIcUseuhLt25YcSIfJCVsS9P
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA5NCBTYWx0ZWRfXy4wMmo54urfh MoXjz2xRDY3WkKqE+Ij/OlsHcgOejLne2EqamSxwj7IxD14lP8+nK56m89CY7ta+TBSxkI3iZtc p6ePJqRhHbFXo8vlUvo/T3++YBlyg2B4yBuJ775eLDgrYCDQhYE2FcNW1kWuN5Gx0AsyZGtbq2D
- zx/at2ncBiYgifTG9luNL5MsfrBAHg5pKS2yKVJS20Gc5v27bmSSQ4s2s4ikD7ygMWeND6ClW8l 4JtAb+fcfd5YRW3FHZQ+B3Gu5mazvurE4YBurHYYSwi1UM6+P14j7gmGO+CUN7Z1Ish4FgVU2Sa RSfxy9lxUVVxs1iHl95XMPDr1251/xbhkFyPSDrvEu52iXsh/NiAc9EjFWWUGstO2bxogQXImKO
- BdrZOC6x3kt+qnGN8WbQbEtYDSIYLDCXjkE5zIQF1Of/7OIDjuCJQzG20b/RowFBFbvp97eD
-X-Proofpoint-ORIG-GUID: C-m7iRsO30HuYYvfFdznr2fBemJCidWD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 spamscore=0 lowpriorityscore=0 mlxlogscore=999
- mlxscore=0 phishscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300094
+In-Reply-To: <CAPjX3FfBoU9-wYP-JC63K6y8Pzocu0z8cKvXEbjD_NjdxWO+Og@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: C3F1721168
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:replyto,suse.cz:dkim,suse.cz:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-* Shrikanth Hegde <sshegde@linux.ibm.com> [2025-03-14 17:14:56]:
+On Wed, Apr 30, 2025 at 10:21:18AM +0200, Daniel Vacek wrote:
+> > The benefit of duplicating the length in each eb is that it's in the
+> > same cacheline as the other members that are used for offset
+> > calculations or bit manipulations.
+> >
+> > Going to the fs_info->nodesize may or may not hit a cache, also because
+> > it needs to do 2 pointer dereferences, so from that perspective I think
+> > it's making it worse.
+> 
+> I was considering that. Since fs_info is shared for all ebs and other
+> stuff like transactions, etc. I think the cache is hot most of the
+> time and there will be hardly any performance difference observable.
+> Though without benchmarks this is just a speculation (on both sides).
 
-> This is an effort to make the code simpler by making use of lock
-> guards which were introduced in [1], which works by using __cleanup 
-> attributes. More details in v1 cover letter
-> 
-> This series aims mainly at simplifying code around mutex with goto
-> statements. If it makes sense, there are more code simplification which 
-> can done for preempt, rcu, spinlock as well. Even for mutex, there is
-> more which could be done. Even there are usecases for kfree which could
-> use the new __free infra. 
-> 
-> Please review. Code is compile/boot tested except for powernv. 
-> Have kept the patches separate for easier bisect. Let me if they should
-> be combined into one. Commit message is same for all. 
-> 
-> [1]: https://lkml.kernel.org/r/20230612093537.614161713%40infradead.org
-> v1: https://lore.kernel.org/all/20250314054544.1998928-1-sshegde@linux.ibm.com/#t
-> 
-> v1->v2:
-> - Fix changelog of powernv (Andrew Donnellan)
-> - use scoped_guard in couple of places to avoid holding mutex
->   un-necessarily (Peter Zijlstra)
-> 
-> Shrikanth Hegde (6):
->   powerpc: eeh: use lock guard for mutex
->   powerpc: rtas: use lock guard for mutex
->   powerpc: fadump: use lock guard for mutex
->   powerpc: book3s: vas: use lock guard for mutex
->   powerpc: powernv: ocxl: use lock guard for mutex
->   powerpc: sysdev: use lock guard for mutex
-> 
+The comparison is between "always access 1 cacheline" and "hope that the
+other cacheline is hot", yeah we don't have benchmarks for that but the
+first access pattern is not conditional.
 
-For all the patches in this series
+> > I don't think we need to do the optimization right now, but maybe in the
+> > future if there's a need to add something to eb. Still we can use the
+> > remaining 16 bytes up to 256 without making things worse.
+> 
+> This really depends on configuration. On my laptop (Debian -rt kernel)
+> the eb struct is actually 272 bytes as the rt_mutex is significantly
+> heavier than raw spin lock. And -rt is a first class citizen nowadays,
+> often used in Kubernetes deployments like 5G RAN telco, dpdk and such.
+> I think it would be nice to slim the struct below 256 bytes even there
+> if that's your aim.
 
-Reviewed-by: Srikar Dronamraju <srikar@linux.ibm.com>
+I configured and built RT kernel to see if it's possible to go to 256
+bytes on RT and it seems yes with a big sacrifice of removing several
+struct members that cache values like folio_size or folio_shift and
+generating worse code.
 
--- 
-Thanks and Regards
-Srikar Dronamraju
+As 272 is a multiple of 16 it's a reasonable size and we don't need to
+optimize further. The number of ebs in one slab is 30, with the non-rt
+build it's 34, which sounds OK.
 
