@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-626618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1811AA4557
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:29:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21E3AA4556
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E25189C106
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7AB99A42AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA1421ADA9;
-	Wed, 30 Apr 2025 08:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9232021B9E3;
+	Wed, 30 Apr 2025 08:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mLXTCk1R"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Alh41VcA"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E78218EA2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544821EF388
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001658; cv=none; b=DhgHpxPd9dRUrD7YK8o9bxFwJuiMAG5yeNjVfEaKIqoqJs0wBud8TFrlwkq7Sc+0CsJfGPpES/+394MpsLdiGfYG/AVWM8KQ6lPdwUQpx96s2+khzuoVCWZEf60VwaILFeefOH7KEQ/e5R6XmMQ8XT2pxZQL1emfWocrOGVKmqo=
+	t=1746001664; cv=none; b=DVy4MxN0H9ZyIoOEbfwGkg6qxTdsQOU7/EfGzjnUFWAI3vvI3L/9NMj6Q4vgDfy33b6DN5Yvz1i7tw200q8jkcK8jQmrprJ0fCBoj1wKHmZF9+HGK+O19trPoayJf9WUHnOxZiawn7GNayqFhR+VZQpFnOQNVV7nHQUkCHV/lyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001658; c=relaxed/simple;
-	bh=DxHxKhJsfM5IQo4p/BKw2Qv5mxONn1+sIjGNnBfbnCc=;
+	s=arc-20240116; t=1746001664; c=relaxed/simple;
+	bh=qVsS2hUBtqENy+Oubx9DpGdc3RA0lMtgQ25CAEpQvtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYMX1U8eRUAnbt9qxbxPt0AhS06PtQjh8fnUzFjP9X6zAQbwvPQXCjs7Q4npe8XZEkX71GvpTMVbMvNfprYG+rZakwZS+k5MfAXDly/39rTeCqW+hQ1ZJGoRt6VU868VpnHyXXKcBEfmd1vpPI4Po6Dlp64LEQWq1mvRAJOmx10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mLXTCk1R; arc=none smtp.client-ip=209.85.128.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHpav/M1/PaZPwfK5P+wnmcNzmOCSvr8tGkvoZZ/STiet58mN1KqRDxJmno2FRJw6bHpPHjvzwHdfC6HPNfz2WJoNpJNxCWHQPlO6bRc8IHPp4neQFNA2FX1txx1vnKMsL7msC8CztLk2QemS4deQ/XNnY1ZJpvwxd/dqFb/fd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Alh41VcA; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so26592085e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:27:35 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so65059355e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746001654; x=1746606454; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746001660; x=1746606460; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ca2Hq/Lqblr8quUvSQPFNLA2CAIvKIyN9VULJch+1To=;
-        b=mLXTCk1R8CZkBSaln/P3982QK+0Aoy+HdQnfMCFydvQ8Ap05PtmX3Q20gXmdtfGhf6
-         uygm75QhLs6uFXlk9beQpNjpyYeiiho3rT1IXC3cH31O5NBpLRPZHj/nSHCtzym7prDn
-         QvyXQtLbTqb0GwJP/1SYkYFPrPng9zHaW1WdZZWNCDa550QUaVq3UiLdY6ubWWsCnqlj
-         xhoQK+GxhEMjqfMdaqzj+iAWS11G0GR25Wrqo3s5qveb9I936IbxKXwIy55grWTZsOuP
-         Nap5pDTJyOO4FA2C4g950FCmiCsiJft3F7VeMWEFQP/aI58E6cJR0uRxqT6GoQnTCnQz
-         81Jw==
+        bh=1mGsDZPklQSrBkLSeSMFUQEvM6CvjwvWAOT3FCKj6DE=;
+        b=Alh41VcAHba6JSo3mD2BqMWSh+WzP0a8CfA/RbQ8zniwxJJUDVF4lTqHuTwM1Q/+Su
+         iGTQu8YQfVE6M9CvoGy7VZ85OneF6wNgNccuw3Kzh+f8AH8Xs/ucSLwYmPbDJ6yfDzIY
+         5Ee12Bf11b8SbMKmHpOVz8u0v66qjNl3donX0gDQiyeyeHJFLC84PfdkJ6vKdlUEYW/R
+         EHFIJXQlQy2kkD5JgGdajP3w0BQTqTnj0zUHWe2Sh4/wp6ut4cDRmIx1arYJBTW6fHAe
+         6fmeoUF0FVfLnPD0hbhScziPB5SYET3bk+xj+PrgATvTbEBCgSm/uWAK08jgysu4e3l5
+         DSwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746001654; x=1746606454;
+        d=1e100.net; s=20230601; t=1746001660; x=1746606460;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ca2Hq/Lqblr8quUvSQPFNLA2CAIvKIyN9VULJch+1To=;
-        b=oAaqYU31+YHEYVdgxpn+nh3k9slgFCn4WSpdAiDXkRuBGErBhRelC35mkzMkroiH0k
-         k4dStQIkTYNtL8q2SldluCVNk+9heTj2ER2FOTQjHZj+aQhzgzJjMAZH4eaaAmk+8qwW
-         NXD2YFZclNetuXx20Mc3R+bUEGXpxm03O6js95jYyuL+tzkkQnRlJ70pInAr3x3UMAA0
-         WDDLjotUSoCoS75FFqiZNsRO3A96RBjnEyRRmnL5NrJdqJszrLOIp3q6RulxEw9w+F3T
-         r6kAZaskbJimVmbL5ttmyrokE7fWyD9/MuUa9OvSFKXwALWPuYaOA1OCHFcOdX8NOQQh
-         0PPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBeHlztNzw+NLgvKEG37AEZtrRFQYxP6M1zmKcYLWisJjz9EwuD2Q8zzjxQYk9OVg1u84Lip7g2Inp0Sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwE2JQ4yN2gbUa7j+NGRcdVsfR9epNNDDhy+k5EEh+mrJ9/kC3
-	Kv6KWun/ujNyRWJN0S17VNie6Ep2muxcXN5fF7FTS3WXA9GxJWjgQ4saYy0opD0=
-X-Gm-Gg: ASbGncuRuChaYSONfIf/cIUXEPx9nSUGay9gEeTYSkdlmmduiZcPTZz7QSqHPNvIwf8
-	tzG3jKboB5LEEyha9jL7alKKXrMD6w145aDeUPVBO7ZuNG4PTSoqZGvjkW/o9mxMn4DOq8nbyg4
-	qIJvsE7WnidA5XQmvx6fZxFeSvKacjiQlVopK1Kz31qIc+aFaOVJYV8l4qEkoYevb9S0cyf5vYR
-	MtnmGFeJ6CLYJuotHFVriZaGdBk6T4/aYEAW+HRyW28ats9EBFMU67DwdGc7Vsi+Lh96+Fq8SlW
-	1zQT/SjkCXO6ydPmyyL8YYNpVaqp+pWLRnQb+uGN6/uKHA==
-X-Google-Smtp-Source: AGHT+IGwdDRTjPXieuwqML9OeOIGuwumXqnwuBaxSQXQnI/omezt1QxDAaH8vN3P12fRW7cmzI1H6w==
-X-Received: by 2002:a05:600c:1d8d:b0:440:54ef:dfdc with SMTP id 5b1f17b1804b1-441b2639c36mr13608775e9.8.1746001653963;
-        Wed, 30 Apr 2025 01:27:33 -0700 (PDT)
+        bh=1mGsDZPklQSrBkLSeSMFUQEvM6CvjwvWAOT3FCKj6DE=;
+        b=ozy3CE2MMDbPNU/4Nxo1SRmurEu/HaPgdlJjOKjHA9cH15GpiXGklk7oiCHFR4pmnY
+         tHqig7TUGYUXt3VNrjmtsNmvCbovJp4AGAdjcno2RAkRu6PxPKHEjJhIO/akli1Z6Vrw
+         58mov4A++ejKjzwQdRRzibxpQSl9XZBKZSdibdRsh2Y5BuhRr7+fdN6scz0yo0BYE+2/
+         W+1ZfZ8KideQD1DO5ixjXNgTWH9qHfFa094WlMT93TijHqCnw9nWW4eHgyJ0Af4d7iuQ
+         Klgq9ROnGAWqrkL1pme4AHIiF4TnTDy0JmSi6wmHkLUqWIwM5VvSF7egniL03whi7fWj
+         Sa+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDXNYtXWqRldUG6InMuu3osqO4gR9C5Xwd9WxfYrg3tcqFZP+hxqLL/+Vs3Ao9cBndA4aBTfbGCCntJyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAssH6rFR//LOuvlihAVIrXndrMHsJPa+HblxDA0mDs8CGbeSc
+	cMfUMBuBNZB2mu5VoOfCI8mBxM/CmjEBp2y2D+ydqH6JV73NQTkJGoIWMIhY7NI=
+X-Gm-Gg: ASbGncvhB3hNX3earUf68ZeezCR2OjEggfGklVqyQCLs6U2RVGehWM1LuO8nnO7B3rk
+	Nf8qgbBDrFF3MMbomDHRrrMRpDOYj7zSUwwds0JKs5inGde2yd7jLeNRpyhpRYPLwCXNoQhEqRr
+	ZMp3rBivW6CV5a4PDl32OzmN9v6/t6hgjUj8Z6Xxa5/a7BZZp059YnhqlaeaLQhWYj0fPkbrLrQ
+	x+AnIWCll99jucr4RI3CpuRzE7efpxajtC76rXpAJWeyyQiqjjBDQ9YQlZtke4QGObF0bOz40e8
+	+1LKB4zFPR/CWVxUHjsy1uC8CLfMuiuR+xOWJJPtZf2hlw==
+X-Google-Smtp-Source: AGHT+IFirixO8zK1n2Aomk9+LOvvs0gmdVuJyEBLIkX5VxmbuCqSlheIcRnqq6WdgItyXk/d3bhvEQ==
+X-Received: by 2002:a05:600c:3acb:b0:43c:fc00:f94f with SMTP id 5b1f17b1804b1-441b268dfcamr12676025e9.23.1746001660599;
+        Wed, 30 Apr 2025 01:27:40 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2aecc89sm16215325e9.9.2025.04.30.01.27.33
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441ae3f5949sm33946145e9.1.2025.04.30.01.27.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:27:33 -0700 (PDT)
-Date: Wed, 30 Apr 2025 11:27:30 +0300
+        Wed, 30 Apr 2025 01:27:40 -0700 (PDT)
+Date: Wed, 30 Apr 2025 11:27:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Shravan Chippa <Shravan.Chippa@microchip.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] media: i2c: imx334: uninitialized variable in
- imx334_update_exp_gain()
-Message-ID: <ee811e7c6eabc390241e0227f7a26d1eaa7818a1.1746001540.git.dan.carpenter@linaro.org>
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] media: i2c: ds90ub960: Fix uninitialized variable in
+ ub960_serializer_temp_ramp()
+Message-ID: <e01f2784c6f8e4bc14458f9f4246ac0a8888468c.1746001540.git.dan.carpenter@linaro.org>
 References: <cover.1746001540.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,29 +92,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1746001540.git.dan.carpenter@linaro.org>
 
-The "ret" variable is not initialized on the success path.  Set it to
-zero.
+The "ret" variable is not initialized on the success path.
 
-Fixes: 7b19b0fc8ac8 ("media: i2c: imx334: Convert to CCI register access helpers")
+Fixes: a05744749600 ("media: i2c: ds90ub9xx: Set serializer temperature ramp")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/media/i2c/imx334.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/i2c/ds90ub960.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-index fc875072f859..846b9928d4e8 100644
---- a/drivers/media/i2c/imx334.c
-+++ b/drivers/media/i2c/imx334.c
-@@ -536,7 +536,8 @@ static int imx334_update_controls(struct imx334 *imx334,
- static int imx334_update_exp_gain(struct imx334 *imx334, u32 exposure, u32 gain)
- {
- 	u32 lpfr, shutter;
--	int ret, ret_hold;
-+	int ret_hold;
+diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+index 8075bffbac2b..cf104461b9a7 100644
+--- a/drivers/media/i2c/ds90ub960.c
++++ b/drivers/media/i2c/ds90ub960.c
+@@ -2058,7 +2058,7 @@ static int ub960_serializer_temp_ramp(struct ub960_rxport *rxport)
+ 	u8 temp_dynamic_cfg;
+ 	u8 nport = rxport->nport;
+ 	u8 ser_temp_code;
+-	int ret;
 +	int ret = 0;
  
- 	lpfr = imx334->vblank + imx334->cur_mode->height;
- 	shutter = lpfr - exposure;
+ 	/* Configure temp ramp only on UB953 */
+ 	if (!fwnode_device_is_compatible(rxport->ser.fwnode, "ti,ds90ub953-q1"))
 -- 
 2.47.2
 
