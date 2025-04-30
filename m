@@ -1,122 +1,287 @@
-Return-Path: <linux-kernel+bounces-627564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8F0AA52BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B6BAA52CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029C41C0645D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:40:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D0D03A8AA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CCD265631;
-	Wed, 30 Apr 2025 17:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11935265629;
+	Wed, 30 Apr 2025 17:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gP87IG3t"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Xwr19mjE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCDA264F9D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4901BEF6D;
+	Wed, 30 Apr 2025 17:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746034816; cv=none; b=L0B4XT6LPi5+oxlT2wAcZYrmnt0s7u85tc6aafKcB4e3XxrtmW2T8c9zR4mmZijKoW4Tj9G6LisnFyBhYFnYN5HO1sahCIg2VGujATdol3QLkVNEy9nt9YC+KR3Q/wtC9qmnylH4H5wNK0ygvxrndaz291VjU19S2/rNVF2BU40=
+	t=1746034976; cv=none; b=gPnHqxU/HfLMjScR7blS2tBd6gwGM3hr74gNDZpUK8e7wVFe61bnPk3gcYqPscIWGbEV6f3gGmMAsoasAuLPOjfUC6cw10K7USb3/tiirRiQPmI3rDojT2CTLJvCKIWue/NCLgNqPFUv7DjjtqLNlhbht2jFgRBNtyJYw/DzwPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746034816; c=relaxed/simple;
-	bh=NDzeKYPe2I8Yfoh+f4eSw99RP2htupFat6fSOf0y+Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBRewIopfC86vrNKtST6wz2q11IDF2pN8ageebJGnZ/jpfVhO4hKSC7V6jqlAiz1G+h88SUPq8FqQb61IpixwUTOqo2Oe/yzSdnhAWwa5McojVl5PgFuNGfA0tvIZJm9u+YJVWCW2VqlYzjmDqpX16AaMam00JpnBJwbBHImO6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gP87IG3t; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3913d129c1aso121249f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746034813; x=1746639613; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTI+NTQY1S5fmWs9NCsPjnEhqIDgFiuLJ0sQ9mVO6og=;
-        b=gP87IG3tzLQfE/9/oZlAJ2LJ+9D2gddvbiu323SYtZkJ2xTboQwRMxJx69Hf6r32nf
-         CN9dvCM/fdtkQxNEhsdjT0A1kZzqE5voHnThBobnlkEmgS02cb8dqL7968BDoWdiqjOJ
-         WBygYEcslwcPT6UXaKLYezu2C4Pocv2/Fex1q/lMimExLagdypHe1dgFkTmiEC7gWWP7
-         wJOtF7dtoEvkUUsJhtr3mU8foK1zbp2TCzx8sTqaZ2kImpbjZzUdVNaF66sHOpL6dl7z
-         9LIi9EQHYJCL1bTDS8pO9gZgKivbzzAhNk5HbrP47+jz8peMEY/yDsjFFNXvPcppVjKO
-         HmRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746034813; x=1746639613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fTI+NTQY1S5fmWs9NCsPjnEhqIDgFiuLJ0sQ9mVO6og=;
-        b=iK6uDuVfdTCx4NA6kHxXQF+cGnT3htSkOWQ00UDBmnn2jgYLvkYnCjvFkB/LlvfLuA
-         FRAs/wSVcFMjtc3SEMaL5E5l1GiuJr/xNsHv0ET8JDBlmCl7rsL3lVmrphYYGyDEyqhX
-         hRNZq3MK4YCcTKgc7fTsxVDMBRx0V0LfRfx/2e70Mh9vus9D+K/NSIOQUlACgwB31Lf8
-         nrtH/WK6rTsKcSRTLSgdAy44wW0IfrSQ+rLmZAR1eebSuR/x9cTezLi6xlS/SFNmA3Fd
-         yTIs9M7avMiaYXrdOMrIvholO4fQnLO/y6hnG1Jk1vjz7JUidQ4ISugPEnwoOjYDrevD
-         bQbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOUqahQdDzjNY5Kh36cRwqp4ekfQz2nbuhBGE4AXvzYn7bdauGPnu/Ji3gPrNOyLjCiPdUHNKp0GF2AtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3az4KUzP6IyLYlKc3YYAgxUUtxc5oLjxEvQ+FJbjZGlejstU9
-	2F2sAj/ekJp8LKHa9lybAAEzCb/U9E/bOkzPdbhmfABZb2cNWZqd9iwfpIFNZas=
-X-Gm-Gg: ASbGncvNmUVe/N0cqE5JP2BBDEtgB4xWRfJC3L6829Fr+tQFm5Y0tOH3MgQ1be88XCf
-	e7Vhu02iD2tu2Vmgq9DuoWngTmbmW/U/DndU/dIFZAfiVFEe0ID8Af3J00KC3cT+1z29gdyyD9U
-	VVZeD7v2liUAIk+wUBcZgbpIzp68ZCCPXpmXSfC4L4tOSlZQq1ssFMKqB8dv11fK7TbF/wcsun/
-	zw9BvvkEXJm80kmgBnJkUuJ5zycs+AM3izaFjN8yIR+dvb0AU2+dhwWRheXXLaSf1ieDJ6E+BQV
-	3gm9dBqQ7riMs1ptO0C/qTwJk9ib57iUp3xC5UjpI+4FaQ==
-X-Google-Smtp-Source: AGHT+IF1nO2qpvxe8YcGotQpsDAI9G2//rj00Y8Vv2gR//T8UoGu6ib91X10edaNaTJyuRE9TTivJg==
-X-Received: by 2002:adf:ee0a:0:b0:3a0:831a:8fef with SMTP id ffacd0b85a97d-3a092d00c42mr301702f8f.22.1746034812866;
-        Wed, 30 Apr 2025 10:40:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073cbf04dsm17858905f8f.52.2025.04.30.10.40.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 10:40:12 -0700 (PDT)
-Date: Wed, 30 Apr 2025 20:40:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Satya Tangirala <satyat@google.com>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dm: add missing unlock on in dm_keyslot_evict()
-Message-ID: <aBJgeV7pZ7Q47OCb@stanley.mountain>
-References: <aBHZ4puON8GNK0vw@stanley.mountain>
- <20250430165037.GA1958@sol.localdomain>
+	s=arc-20240116; t=1746034976; c=relaxed/simple;
+	bh=GlNw0fg0FixJZ2qzDbRYwdij3JYjvfnckEvYMAE3tv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PiqFDMAM5utm6oPGVoxwp+g5h9gWhFqy8nHEtN4qpesOAYkvNhJdcQUx8fQfbGjnUcbK5Uvp3tirKyfes3waGC1rG9UdPs09SqwxIoQaj1mBkUkJmumCkx5VN9p1TKY5gmpoFPFVjBXEJnlAUEGuf7X4iPecl/vCXxmzBxn62RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Xwr19mjE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EF8A3564;
+	Wed, 30 Apr 2025 19:42:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1746034964;
+	bh=GlNw0fg0FixJZ2qzDbRYwdij3JYjvfnckEvYMAE3tv8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xwr19mjE4sNI9+fxfg0tZvhbRFwjqZ0mbKgQ/r2kGna1yDeNmeUWzGKUUu/IGaQ19
+	 P6wGhzQmBycilryfs3aHyxoNv5eGPKmYapuuOqPQvTEt+TzdYBOznbYRAhvbVwX2J+
+	 afSslEfSn1zOQ2S+Pua9t8rVdvjAfeo+mUMsJW2w=
+Message-ID: <88993439-bfdc-418c-95c6-d6d8bdb5b87f@ideasonboard.com>
+Date: Wed, 30 Apr 2025 20:42:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430165037.GA1958@sol.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] drm/tidss: Update infrastructure to support K3 DSS
+ cut-down versions
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: praneeth@ti.com, vigneshr@ti.com, aradhya.bhatia@linux.dev,
+ s-jain1@ti.com, r-donadkar@ti.com, j-choudhary@ti.com, h-shenoy@ti.com,
+ jyri.sarha@iki.fi, airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ simona@ffwll.ch, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+References: <20250429143656.3252877-1-devarsht@ti.com>
+ <20250429143656.3252877-3-devarsht@ti.com>
+ <f729c0d6-45a0-4610-b22b-92c03f534bf7@ideasonboard.com>
+ <1f8c43cd-8c26-4e42-b144-b91f5ffc2e2e@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <1f8c43cd-8c26-4e42-b144-b91f5ffc2e2e@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 30, 2025 at 09:50:37AM -0700, Eric Biggers wrote:
-> On Wed, Apr 30, 2025 at 11:05:54AM +0300, Dan Carpenter wrote:
-> > We need to call dm_put_live_table() even if dm_get_live_table() returns
-> > NULL.
-> > 
-> > Fixes: 9355a9eb21a5 ("dm: support key eviction from keyslot managers of underlying devices")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/md/dm-table.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
+On 30/04/2025 19:37, Devarsh Thakkar wrote:
+> Hi Tomi
 > 
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> Thanks for the review.
 > 
-> But that's an awfully error-prone API.
+> <snip>
+>>>    @@ -2025,7 +2101,7 @@ int dispc_plane_check(struct dispc_device
+>>> *dispc, u32 hw_plane,
+>>>                  const struct drm_plane_state *state,
+>>>                  u32 hw_videoport)
+>>>    {
+>>> -    bool lite = dispc->feat->vid_lite[hw_plane];
+>>> +    bool lite = dispc->feat->vid_info[hw_plane].is_lite;
+>>
+>> I don't think this is correct. You can't access the vid_info[] with the
+>> hw-id.
+> 
+> I don't think hw_id is getting passed to hw_plane here. The
+> dispc_plane_check is called from tidss_plane_atomic_check which passes
+> hw_plane as tplane->hw_plane_id and this index starts from actually
+> instantiated planes i.e. from 0 and are contiguous as these are
 
-Yep.
+Well, if tplane->hw_plane_id is not the HW plane id (i.e. it's misnamed 
+now), and tidss_plane.c calls dispc_plane_enable() with 
+tplane->hw_plane_id as the hw_plane parameter, which is used as a HW 
+plane ID... Then... One of these is wrong, no?
+
+> populated from vid_order array (hw_plane_id =
+> feat->vid_order[tidss->num_planes];) and not the hw_id index.
+> 
+> So for e.g. for AM62L even though hw_id is 1 for VIDL hw_plane is
+> getting passed as 0 and that's how it is able to access the first and
+> only member of vid_info struct and read the properties correctly and
+> function properly as seen in test logs [1].
+
+If for AM62L the tplane->hw_plane_id is 0, the the dispc_plane_enable() 
+call would enable the wrong plane, wouldn't it?
+
+But even if it all works, I think this highlights how confusing it is...
 
 > 
-> dm_blk_report_zones() gets this wrong too.
+>>
+>>>        u32 fourcc = state->fb->format->format;
+>>>        bool need_scaling = state->src_w >> 16 != state->crtc_w ||
+>>>            state->src_h >> 16 != state->crtc_h;
+>>> @@ -2096,7 +2172,7 @@ void dispc_plane_setup(struct dispc_device
+>>> *dispc, u32 hw_plane,
+>>>                   const struct drm_plane_state *state,
+>>>                   u32 hw_videoport)
+>>>    {
+>>> -    bool lite = dispc->feat->vid_lite[hw_plane];
+>>> +    bool lite = dispc->feat->vid_info[hw_plane].is_lite;
+>>
+>> Here too.
+> 
+> Here also hw_plane is getting passed as 0 and not the hw_id which is 1
+> for AM62L.
+> 
+>>
+>>>        u32 fourcc = state->fb->format->format;
+>>>        u16 cpp = state->fb->format->cpp[0];
+>>>        u32 fb_width = state->fb->pitches[0] / cpp;
+>>> @@ -2210,7 +2286,7 @@ static void dispc_k2g_plane_init(struct
+>>> dispc_device *dispc)
+>>>        /* MFLAG_START = MFLAGNORMALSTARTMODE */
+>>>        REG_FLD_MOD(dispc, DISPC_GLOBAL_MFLAG_ATTRIBUTE, 0, 6, 6);
+>>>    -    for (hw_plane = 0; hw_plane < dispc->feat->num_planes;
+>>> hw_plane++) {
+>>> +    for (hw_plane = 0; hw_plane < dispc->feat->num_vids; hw_plane++) {
+>>>            u32 size = dispc_vid_get_fifo_size(dispc, hw_plane);
+>>>            u32 thr_low, thr_high;
+>>>            u32 mflag_low, mflag_high;
+>>> @@ -2226,7 +2302,7 @@ static void dispc_k2g_plane_init(struct
+>>> dispc_device *dispc)
+>>>              dev_dbg(dispc->dev,
+>>>                "%s: bufsize %u, buf_threshold %u/%u, mflag threshold
+>>> %u/%u preload %u\n",
+>>> -            dispc->feat->vid_name[hw_plane],
+>>> +            dispc->feat->vid_info[hw_plane].name,
+>>
+>> Here hw_plane is not actually the hw-id (anymore), but elsewhere in this
+>> function it is used as a hw-id, which is no longer correct.
+> 
+> For accessing vid_info hw_plane needs to be used which is the index of
+> actually instantiated planes and I see it as correctly being passed for
+> AM62L too. hw_id is only for dispc_k3_vid* functions where we need to
+> skip the not-instantiated vid regions by adding the offset per the hw_id
+> index.
 
-Ugh...  dm_blk_report_zones() is too weird for my static checker tool.
-The checker is looking very specifically for error paths with missing
-unlocks.
+Hmm, sorry, I don't follow. If we use the same variable, hw_plane, to 
+access the vid_info[], and as a parameter to functions that take 
+hw_plane, e.g., dispc_vid_set_buf_threshold(), isn't one of those uses 
+wrong?
 
-regards,
-dan carpenter
+Oh, wait... I think I see it now. For some functions using the hw_id as 
+the hw_plane parameter is fine, as they access the VID's registers by 
+just using, e.g. dispc_vid_write(), which gets the address correctly 
+from dispc->base_vid[hw_plane], as that one is indexed from 0 to num_vids.
+
+But some functions use registers that have bits based on the hw_id (like 
+dispc_k3_vid_write_irqstatus), and then we use the hw_id for the 
+hw_plane parameter. If that function were to also write a vid register, 
+using the passed hw_plane, it wouldn't work, but I guess we don't do that.
+
+It feels broken... We can't have 'hw_plane' that's sometimes the HW id 
+(i.e. 1 for AM62L), and sometimes the driver's index (i.e. 0 for AM62L).
+
+>>
+>>>                size,
+>>>                thr_high, thr_low,
+>>>                mflag_high, mflag_low,
+>>> @@ -2265,7 +2341,7 @@ static void dispc_k3_plane_init(struct
+>>> dispc_device *dispc)
+>>>        /* MFLAG_START = MFLAGNORMALSTARTMODE */
+>>>        REG_FLD_MOD(dispc, DISPC_GLOBAL_MFLAG_ATTRIBUTE, 0, 6, 6);
+>>>    -    for (hw_plane = 0; hw_plane < dispc->feat->num_planes;
+>>> hw_plane++) {
+>>> +    for (hw_plane = 0; hw_plane < dispc->feat->num_vids; hw_plane++) {
+>>>            u32 size = dispc_vid_get_fifo_size(dispc, hw_plane);
+>>>            u32 thr_low, thr_high;
+>>>            u32 mflag_low, mflag_high;
+>>> @@ -2281,7 +2357,7 @@ static void dispc_k3_plane_init(struct
+>>> dispc_device *dispc)
+>>>              dev_dbg(dispc->dev,
+>>>                "%s: bufsize %u, buf_threshold %u/%u, mflag threshold
+>>> %u/%u preload %u\n",
+>>> -            dispc->feat->vid_name[hw_plane],
+>>> +            dispc->feat->vid_info[hw_plane].name,
+>>
+>> And here.
+>>
+>> All these issues make me wonder whether we have the right model. It's
+>> just too easy to get the usage wrong.
+>>
+>> I'm not sure which way to go here.
+>>
+>> Fix the current issues? It's a bit cumbersome to go from hw-id to the
+>> index (needs a search), just to get some hw properties.
+>>
+>> Or go back to the earlier one, with a vid array containing unused slots?
+>> That makes the for loops a bit harder.
+>>
+>> I need to think about it...
+>>
+> 
+> Hmm, I don't think so, it seems to look fine to me and work fine too. I
+> have tested thoroughly for AM62L (which has uninstantiated vid region)
+> along with AM62x and AM62A with all planes displayed simultaneously. If
+> you want I can put on some test logs, create some dummy holes for VID
+> regions in AM62 and AM62A to put this on to some further negative tests.
+ >
+> Also if naming convention is confusing (hw_id vs hw_plane) then maybe we
+> can use something else like vid_idx ??
+
+It is confusing. But I think it's also broken, in the sense that e.g. 
+dispc_k3_vid_write_irqstatus() has hw_plane parameter. But it's actually 
+hw_id.
+
+I'm not sure if naming them differently helps here. It's super 
+confusing. What indices do we have?
+
+- The lowest level HW IDs, e.g. for DISPC_VID_IRQSTATUS()
+- The index for the dispc->vid_info[]
+- The index to tidss->planes[]
+- drm_plane->index
+
+Originally I kept the drm_plane and the HW index separate, so that the 
+dispc.c doesn't really deal with the drm_plane at all. But I wonder if 
+we need to change that, as drm_plane pointer can't really be 
+"understood" wrong, whereas an two indices are easy to mix.
+
+  Tomi
 
 
