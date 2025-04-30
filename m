@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-627289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700A7AA4E94
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5A7AA4E9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78BAA1C0449C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4703ACD18
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8E22609CB;
-	Wed, 30 Apr 2025 14:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="by+6MnU+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB3825D1F4;
+	Wed, 30 Apr 2025 14:31:36 +0000 (UTC)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274C621A94F;
-	Wed, 30 Apr 2025 14:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21A11A238A;
+	Wed, 30 Apr 2025 14:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746023372; cv=none; b=nOtBRfGdiQLdzXiF2E5yOL36hDZHzLvMpqewaskyoiFG3ghKw5uigtY6Oj4RRwByci8NrVYwi3u+En9RI5/6pZ1MQdDtBp8jUcn8BEEE772aGtcXm2TUG78X++wOiSiQ4tJuyup8li70quxp2u2503PfLrOpu9HYPSQcI2CtwU4=
+	t=1746023495; cv=none; b=sPaDNLxfVN66ukauV3OiP4p2tPO+3AawvUK13Iwa8MnDvETSvJAzRZOhZv9v1RaSbv4+0k7hl//CHTKf/NVncFSe86z87ixbdqBo6sFs3vByfzdZi1hHwxLGzrfAUg3LJSz7NwQHXSgAv7mRIbRdPKouL7FqFhAI3wrLnPg2/wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746023372; c=relaxed/simple;
-	bh=McTwb9pq+/vbqEqNIWzbMZewBCRlkfKpTurFpG+gIdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZhHVseyx65lMfwJPR7Li+CPS25cVMOCJBbqAyg6IG0BiRXXqEe3Hur+PUnfHha8wUewqq+yDPCbMkMBGyRK3bdj7omDU+Vbk78QAu8cImI0EYOEDRgaqR6Dwt5xGAkeVNjnd6EslskeAhW2D6AV+ubUWnNyy/lbywxOdf6XASE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=by+6MnU+; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746023371; x=1777559371;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=McTwb9pq+/vbqEqNIWzbMZewBCRlkfKpTurFpG+gIdk=;
-  b=by+6MnU+WPnxFLGOnzVLlEcXpykgJNkWBvNhVNwk9sv+2AnFoTt8HWw0
-   KFNr+qBTrDdvQqZM/mebzHoRvH4bI/DCk9t4ZcwaXEocLZV/yUaIRtDwJ
-   ffen21EEZkF8irK9OVG+KJXcqtcVYZ6HQHZMBZpzY3tG4jyGbkvwXtC7e
-   1ie+ohLyn4Vyi5TZCAI3yomgBrMsWuCn10hkd/7g3LGlk3D4VRm7f7y+U
-   UF52WbS0TmvCVIircj9EYItaMykHPPdjirxx2aoDWJFcM5mVJCCVuQ0pu
-   GV14e/Crm5j3qJPEMfYg+DZ5Spg9ma5zDM00lDkYHOjcylc9TjNuiMauw
-   w==;
-X-CSE-ConnectionGUID: tvq0ZNlMTL2mUC5NKTxGsA==
-X-CSE-MsgGUID: 2h/ueM4yQAyxeYN1snqcnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="47698507"
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="47698507"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 07:29:31 -0700
-X-CSE-ConnectionGUID: /vGbO1UYRdKeO1UzaAIs1g==
-X-CSE-MsgGUID: q4UKBdEtQ/SYH4H1q429Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="138968832"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 30 Apr 2025 07:29:26 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uA8R9-0003WT-16;
-	Wed, 30 Apr 2025 14:29:23 +0000
-Date: Wed, 30 Apr 2025 22:29:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-	Youssef Samir <quic_yabdulra@quicinc.com>,
-	Matthew Leung <quic_mattleun@quicinc.com>,
-	Yan Zhen <yanzhen@vivo.com>, Kunwu Chan <chentao@kylinos.cn>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Troy Hanson <quic_thanson@quicinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
-	Carl Vanderlip <quic_carlv@quicinc.com>,
-	Sumit Garg <sumit.garg@kernel.org>, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-	ath12k@lists.infradead.org
-Subject: Re: [PATCH v3] bus: mhi: host: don't free bhie tables during
- suspend/hibernation
-Message-ID: <202504302208.7JSH4wb6-lkp@intel.com>
-References: <20250429122351.108684-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1746023495; c=relaxed/simple;
+	bh=qIxqLkrLmqPsSQR6NTihzgmUq9naVQcd/zkTATyty5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HYZC4UaGyIcZlwGsRI6IQ5VJnJJyvmAcA+6Hv51uOQYSmVlMyHoAucB85tP9GqFwr2n797qwSboXqexRkFCnF+M2E5GyHqV8NdPv+f3LNeNgVyTXTMq0R3GAHte7s4jtfjY/8cASf2MGB5WLLDflYvdq4V3pRzvE1VaDhKeSgNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c54f67db99so131824885a.1;
+        Wed, 30 Apr 2025 07:31:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746023491; x=1746628291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UAEfON3QY41MEIN8lhv3eCjTSDUHFTJ0lIZRgiRgkZQ=;
+        b=f0qtpecdUZlgOvI/nqdUO+ZUNssAFQLhepjN8JN06941YDl+vyTwziyqkIpWwPthkJ
+         UuEYvlcABTkln3C5SeM825IhrgDNz/l3WEzJnk1ftWJvGfu6BUZWLRlSRDgya1Kc6S4a
+         +dgC2BwXk0KS/07VXN0XFpqmNZjj4BdE/uAMGxgfm9Jdc964lG7pKAQsPdRZDEWdnLgW
+         GhVFuzfPgWHPbacJ//Uw2ZPYwodgLUoQaImcVvCV98FvoPD+iC0b2GmZeY4Lhn5qll7E
+         HOWpIcL/9w15FpHNvSDJ+PXIx7rKHJ20x3lH15rTYQIWNDVOUchUIBvnPtJEmh6NBYed
+         MJjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1aWR4oqNFPLQQu5JSO+9cr48R+piwZiI8aBiVu+6IJxaSA+IBf4w252a4JxpiOuyX2UF/ay5/kNk6@vger.kernel.org, AJvYcCWzdAJhPS/oq7SY0FsklDhZnzUx3az1kuTL95nTuma/cpZPuSheePGir2cdhMIfCbmX8yO2OdkUGs71XLEk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQkgtksuj8BhwgOVrZrbLoyikrknT2KJeSi2G/R0EEcp6pzsrp
+	5UkkMI6/gzPRmf0i32h85k0Ij/ucKDTVnmcEQk+sml2hSrLpNytEFge4PlyJ
+X-Gm-Gg: ASbGnctAOISrLFUiSqOEjJlBmwoUiSKpbQ1mu+F98caAXt+gww0dpDDpC0qP88CGloa
+	ovtPe7HzOEGvycnoA21vvNHBUsLBXRmzW2cM2mxYnw64nOaWY/4+vEFepoxHOiU0qaJjtzeRDdE
+	VtrruhYge4lPfUvvOJ4Zf4m817MEVERBT8lAMU2Ayj3jM7H+2vt2xscItvskyE1bnGzg9wTK9YM
+	LYvwn8hRERboiqHPkHXal4/OxG9vayXL09lPa8SrUbJwULeMDHe/W7UFvz+wUCjVcp/flKjAkgR
+	a5C5aJZx36B18LpxBar+g4Q8kjTQTn2y4eNbXVjglf+nyfG8WLa46CP97GPNNXuMeAJ1tYvJJ2N
+	AlpsAV6g=
+X-Google-Smtp-Source: AGHT+IHXnXsgDbuVB1IheDenFexQWApWvejADQQuydjcAU3Wv7fModFTvBwmdyZzbgd/Eb6skqaYig==
+X-Received: by 2002:a05:620a:280d:b0:7ca:c6e0:669d with SMTP id af79cd13be357-7cac7b40895mr448034385a.22.1746023491011;
+        Wed, 30 Apr 2025 07:31:31 -0700 (PDT)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com. [209.85.222.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958cbd048sm856298785a.43.2025.04.30.07.31.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Apr 2025 07:31:30 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c54f67db99so131816185a.1;
+        Wed, 30 Apr 2025 07:31:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBp32HdOt7BIN+JBjUPRiFho2GUja4yflsSHd0X46d/cmGnLsTp+tJzgbNOetROpfz3OV2xzmsaXmu@vger.kernel.org, AJvYcCVnD6e7GiHP7fbg+iVTVNzImQwNdKZ4te8RARNlwSbiIhgRkfLkO5DE5e9Hll4LgZg3noWGYiXy+D5A3bi3@vger.kernel.org
+X-Received: by 2002:a05:620a:1990:b0:7c9:222a:d858 with SMTP id
+ af79cd13be357-7cac7ab085amr489037085a.10.1746023490075; Wed, 30 Apr 2025
+ 07:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429122351.108684-1-usama.anjum@collabora.com>
+References: <b1990c97-8751-4964-a3e8-9598f4cfac2a@beagleboard.org> <20250430160944.7740d5e9@bootlin.com>
+In-Reply-To: <20250430160944.7740d5e9@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 Apr 2025 16:31:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXoNk3cFm10dJNMK19Ym2RWZ_hyRpDXRZ_gjPAPZpAuVQ@mail.gmail.com>
+X-Gm-Features: ATxdqUG1wAs_cKaEH0_mVx4aThxHb8GBnTIWTn-vglOuBRMgC8tbjtqH0Mvo6Do
+Message-ID: <CAMuHMdXoNk3cFm10dJNMK19Ym2RWZ_hyRpDXRZ_gjPAPZpAuVQ@mail.gmail.com>
+Subject: Re: [Discussion] Global vs Local devicetree overlays for addon board
+ + connector setups
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Ayush Singh <ayush@beagleboard.org>, xypron.glpk@gmx.de, 
+	Jason Kridner <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>, 
+	Dhruva Gole <d-gole@ti.com>, Robert Nelson <robertcnelson@beagleboard.org>, Andrew Davis <afd@ti.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Gibson <david@gibson.dropbear.id.au>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Pantelis Antoniou <pantelis.antoniou@gmail.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Muhammad,
+Hi Herv=C3=A9,
 
-kernel test robot noticed the following build warnings:
+On Wed, 30 Apr 2025 at 16:09, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+> On Wed, 30 Apr 2025 17:37:33 +0530
+> Ayush Singh <ayush@beagleboard.org> wrote:
+>
+> ...
+>
+> > 1. __symbols__ based approach [3]
+> >
+> >
+> > This was originally proposed by Andre Davis [3]. It defines an overlay
+> > with just special names in `__symbols__`, which is used along with an
+> > overlay for the addon-board, which makes use of the node names defined
+> > in the connector `__symbols__` overlay. Please take a look at the
+> > original patch series since it provides a working example of how it can
+> > be used [3].
+> >
+>
+> The __symbols__ based approach needs 2 overlays to handle the case where
+> 2 connectors (A and B) are present an you want to connect a board describ=
+ed
+> by a single overlay.
+>
+> The first overlay applied "adapts" the __symbols__ node for the connector
+> where the board is connected (for instance connector A) in order to have
+> the symbols used by the overlay describing the board resolved to the
+> correct symbols.
+>
+> I think this open race conditions when the overlay is applied by the kern=
+el
+> itself. Indeed, we need to perform 2 steps in an atomic way:
+>   1) Adapt symbols
+>   2) Applied board overlay
 
-[auto build test WARNING on ath/ath-next]
-[also build test WARNING on next-20250430]
-[cannot apply to mani-mhi/mhi-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus staging/staging-testing staging/staging-next staging/staging-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.15-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I think that can be solved by not applying them in two steps, but by
+in-memory merging of the symbol and board overlays first, and applying
+the result.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/bus-mhi-host-don-t-free-bhie-tables-during-suspend-hibernation/20250429-202649
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
-patch link:    https://lore.kernel.org/r/20250429122351.108684-1-usama.anjum%40collabora.com
-patch subject: [PATCH v3] bus: mhi: host: don't free bhie tables during suspend/hibernation
-config: arm-randconfig-001-20250430 (https://download.01.org/0day-ci/archive/20250430/202504302208.7JSH4wb6-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250430/202504302208.7JSH4wb6-lkp@intel.com/reproduce)
+Gr{oetje,eeting}s,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504302208.7JSH4wb6-lkp@intel.com/
+                        Geert
 
-All warnings (new ones prefixed by >>):
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
->> drivers/bus/mhi/host/pm.c:1246:6: warning: no previous prototype for 'mhi_power_down_unprepare_keep_dev' [-Wmissing-prototypes]
-    1246 | void mhi_power_down_unprepare_keep_dev(struct mhi_controller *mhi_cntrl)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/mhi_power_down_unprepare_keep_dev +1246 drivers/bus/mhi/host/pm.c
-
-  1245	
-> 1246	void mhi_power_down_unprepare_keep_dev(struct mhi_controller *mhi_cntrl)
-  1247	{
-  1248		mhi_cntrl->bhi = NULL;
-  1249		mhi_cntrl->bhie = NULL;
-  1250	
-  1251		mhi_deinit_dev_ctxt(mhi_cntrl);
-  1252	}
-  1253	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
