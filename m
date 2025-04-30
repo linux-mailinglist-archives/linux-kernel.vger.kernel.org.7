@@ -1,48 +1,45 @@
-Return-Path: <linux-kernel+bounces-626308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45B4AA4163
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:28:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC877AA415F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B910986A3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70BDA1BC3258
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4DC1DB92A;
-	Wed, 30 Apr 2025 03:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34D41C8630;
+	Wed, 30 Apr 2025 03:27:46 +0000 (UTC)
 Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id D7B9317BCE;
+	by smtp.subspace.kernel.org (Postfix) with SMTP id D7BD213957E;
 	Wed, 30 Apr 2025 03:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745983667; cv=none; b=iB6MuIx91jrPpiAfTWJLCN5qGETGOVsmHiBP+E4tn8FnVgmUVsPotWeONvsDviOzbXr0Vc+mRGTorKK0w298eR5jL4tYnkzxpksz0X/sZ23R3e4oPfZ4la3sQ8NgJsDiQ873SH0SgGmkqWeYNhYpygiby55cEY926F5VnJ6TkoI=
+	t=1745983666; cv=none; b=o+MeOHTSIIcuGoNG4jeSXdKUCr5r+LyF/y5slO/RdyK6km8k8n8KbS+V387bsp/SDkq35sFB0Fanxe9KKdNIH5MNn83k7J/ILkmTZfw+Eh7C0zkOTBhtLeLbMhkys9/p4dCd9leXV7afMvb3kBU09FjX8rHKjso5smMsH+niBFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745983667; c=relaxed/simple;
-	bh=TA/oaPhLaGpyOFSU6/CEZ4CaYsUYo367iaGcEsvtJSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=TXHfnDD22p0emBlPGw0C+FouG2+rCWWhjk6Q/IN4jy0pQ3tuDSQhtTihq2A/r5cMXf9QHzaTORNU/D6SlPgaJnDmsO2YKdOHPSPzEy6Cio5HP0n5No5ISe5L5Nydy2tRWn9261F4Ph/B4ximQRrxUzCd6JAOo0UyFRT4CJPd6aw=
+	s=arc-20240116; t=1745983666; c=relaxed/simple;
+	bh=DBWerTwqEx3+VzSJhVgjUMjx2RYqZbTNcI7cSBo+KPY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=PuVT3Mf5hcgq3FbFWTpDbLOoQ+EhvvSWjeEBnReXj3cn2V1GyPK14PbYf0QN2GclH7yj7CLJwzTz4XikfkXjY6WRTWBngk0eDBLLGMRKDNuAimabl+q3ZF2/c2zox6Rm9YEqJwUqhxgCX479liitzS1qARc+20zkzGnwRbhPnU8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
 Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C76576019013B;
-	Wed, 30 Apr 2025 11:27:38 +0800 (CST)
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 824576018E584;
+	Wed, 30 Apr 2025 11:27:39 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
-To: jstultz@google.com
-Cc: Su Hui <suhui@nfschina.com>,
+To: jstultz@google.com,
 	tglx@linutronix.de,
-	eahariha@linux.microsoft.com,
-	geert@linux-m68k.org,
-	anna-maria@linutronix.de,
-	ojeda@kernel.org,
+	sboyd@kernel.org
+Cc: Su Hui <suhui@nfschina.com>,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v3 1/3] time/jiffies: change register_refined_jiffies() to void __init
-Date: Wed, 30 Apr 2025 11:27:32 +0800
-Message-Id: <20250430032734.2079290-2-suhui@nfschina.com>
+Subject: [PATCH v3 2/3] alarmtimer: remove dead return value in clock2alarm()
+Date: Wed, 30 Apr 2025 11:27:33 +0800
+Message-Id: <20250430032734.2079290-3-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20250430032734.2079290-1-suhui@nfschina.com>
 Precedence: bulk
@@ -53,56 +50,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-register_refined_jiffies() is only used in setup code and always return 0.
-Mark it to __init to save some bytes and change it to void.
+'clockid' only can be ALARM_REALTIME and ALARM_BOOTTIME. It's impossible
+to return -1 and callers never check the value of -1.
+
+Only alarm_clock_get_timespec(), alarm_clock_get_ktime(),
+alarm_timer_create() and alarm_timer_nsleep() call clock2alarm(). These
+callers using clockid_to_kclock() to get 'struct k_clock', this ensures
+clock2alarm() never returns -1.
+
+Remove the impossible -1 return value, and add a warn to be aware of any
+misuse of this function.
 
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
-v2/v3:
- - No change. 
+v3:
+ - Add WARN_ON_ONCE to notice any misuse of this function.
 
- include/linux/jiffies.h | 2 +-
- kernel/time/jiffies.c   | 5 +----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+v2:
+ - No Change.
 
-diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-index 0ea8c9887429..91b20788273d 100644
---- a/include/linux/jiffies.h
-+++ b/include/linux/jiffies.h
-@@ -59,7 +59,7 @@
- /* LATCH is used in the interval timer and ftape setup. */
- #define LATCH ((CLOCK_TICK_RATE + HZ/2) / HZ)	/* For divider */
- 
--extern int register_refined_jiffies(long clock_tick_rate);
-+extern void register_refined_jiffies(long clock_tick_rate);
- 
- /* TICK_USEC is the time between ticks in usec assuming SHIFTED_HZ */
- #define TICK_USEC ((USEC_PER_SEC + HZ/2) / HZ)
-diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
-index bc4db9e5ab70..34eeacac2253 100644
---- a/kernel/time/jiffies.c
-+++ b/kernel/time/jiffies.c
-@@ -75,13 +75,11 @@ struct clocksource * __init __weak clocksource_default_clock(void)
- 
- static struct clocksource refined_jiffies;
- 
--int register_refined_jiffies(long cycles_per_second)
-+void __init register_refined_jiffies(long cycles_per_second)
+ kernel/time/alarmtimer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index 0ddccdff119a..621d39666e29 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -515,9 +515,9 @@ static enum alarmtimer_type clock2alarm(clockid_t clockid)
  {
- 	u64 nsec_per_tick, shift_hz;
- 	long cycles_per_tick;
- 
--
--
- 	refined_jiffies = clocksource_jiffies;
- 	refined_jiffies.name = "refined-jiffies";
- 	refined_jiffies.rating++;
-@@ -100,5 +98,4 @@ int register_refined_jiffies(long cycles_per_second)
- 	refined_jiffies.mult = ((u32)nsec_per_tick) << JIFFIES_SHIFT;
- 
- 	__clocksource_register(&refined_jiffies);
--	return 0;
+ 	if (clockid == CLOCK_REALTIME_ALARM)
+ 		return ALARM_REALTIME;
+-	if (clockid == CLOCK_BOOTTIME_ALARM)
+-		return ALARM_BOOTTIME;
+-	return -1;
++
++	WARN_ON_ONCE(clockid != CLOCK_BOOTTIME_ALARM);
++	return ALARM_BOOTTIME;
  }
+ 
+ /**
 -- 
 2.30.2
 
