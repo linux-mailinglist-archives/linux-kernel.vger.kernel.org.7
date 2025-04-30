@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-627389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E04CAA500A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57822AA500E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08B45189D3E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A3D1885DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CE325E46B;
-	Wed, 30 Apr 2025 15:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675C6257AE7;
+	Wed, 30 Apr 2025 15:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqetwA91"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Xvz7OAl1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C831411DE;
-	Wed, 30 Apr 2025 15:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FDA204F9C;
+	Wed, 30 Apr 2025 15:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746026462; cv=none; b=rZOs4Ng5Z0B9P2quMdWnQnQmJdMmzyLzrphpNmkZws8UecyNjTNr8eo2i+UeFlGNOCQYtuF1xMoKq/wsp3D3CIsDvtzHtkA3lcIrtGUmGBIGsnRBuSrKUkzVDVnC5Jd82iwM7Whdx0qi6dcHfNXzr/jS528CAUPfmavzAD03BzA=
+	t=1746026472; cv=none; b=kWn+zkQgoutzV4Ti9U2NRB7X5qP+32x8qrGoGidzLtwkL/9vpuJJk/a/NfBpHwZFPyRQuP9ptNDupCBth+UmpNAm/6A5PsTA57+2wKoAlpSFxFjIuDmIhrzEA0PyKRduO8BTj0zhOThtviaBFttB/IM5NwkaBLyHR1d9yOnDN80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746026462; c=relaxed/simple;
-	bh=uhFxYPnXiTUoSpJeM3bSvzBlKPYFN1uP7NgCPaX74Ag=;
+	s=arc-20240116; t=1746026472; c=relaxed/simple;
+	bh=2t0avsYGFh5dbngitM91y3UXh//iU+YmHd1EzhAodJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJ2eMqaljt4EAMOKgMPF9Yrb2BP8vBwx7mmjNV1lyWXlhptQMrxYD4KDb5sgA3nRdkRgfcW3TxRLQu0NXM1JDQsCvDX4Q6M4qnfejA1B9OESmrvnQdxJkxPD9oUyiLOd9/Je7v+UUHmUKOQk0yubBnukIpcHXPbPypd8oeD7ylA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqetwA91; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 170E9C4CEE7;
-	Wed, 30 Apr 2025 15:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746026461;
-	bh=uhFxYPnXiTUoSpJeM3bSvzBlKPYFN1uP7NgCPaX74Ag=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mNj7FAZVPZ/85DYVOZccADwBL2ee9zltj/4Fr7vSlBtCGWbbEMhLbZkXXhfvWer1uophnNGgjlJpfBT/l0HrnHJMFbwmoFNRjTczs28AHcz6unbYdJl9+233uVUoYv2aSVBjuU4HR+flWHWzOtEt1cEvf4GHg5w+oxyjtgVynrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Xvz7OAl1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739D1C4CEE7;
+	Wed, 30 Apr 2025 15:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1746026472;
+	bh=2t0avsYGFh5dbngitM91y3UXh//iU+YmHd1EzhAodJU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dqetwA91TNfX2vPVxtEzl224LWpSUdN5YGmo45+YXp5+ahlF6ma9NDKN4M2JwI1ep
-	 +WtGN8SFYtZkaU/HcyTeL5OxjvKD7Dq0CMAoH/SQJ5ORawpeI6728Vrq3y44zYvNmK
-	 64MmMGTtIVvn1EF7JCzRi9syZ2E3l+jLSyt9fKmpuY+PLKfWPD8cqGPr2VYak2R6cz
-	 WufeyYihKwOXIUOf9ZN7388uK2bnPnnrwQSUfXzTRZ5V8V1FDVWCyNrCD6DWUMExYz
-	 fo3P1UhSMJfblEtVAqncaIWRfr+MxJuLvAPD92yKaBf7LqXcsuUdQTuXdowmpP7WNz
-	 c8US+IIEOITog==
-Date: Wed, 30 Apr 2025 18:20:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, x86@kernel.org,
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] x86/sgx: Use SHA-256 library API instead of crypto_shash
- API
-Message-ID: <aBI_2NJHRk61n9TY@kernel.org>
-References: <20250428183838.799333-1-ebiggers@kernel.org>
- <ae48d190-03fd-4f4d-ab6f-969301e8b96e@intel.com>
+	b=Xvz7OAl1AD3mMKNOz5ZJUvauSAKo6qYe65ZC9WN86ulr2CZCF+P0qBetm/9t9hAse
+	 2dQXoL5mxH/KXXm/ZFBpjrGDJO15CgoavebDLVcCOZC5T1KCVCtkGd8HIrsY1FGfJ7
+	 1o82B6fOxyTHtjT5v+Cv6Ptg0FoMddDXQs0EIcp4=
+Date: Wed, 30 Apr 2025 17:21:09 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 0/8] rust: DebugFS Bindings
+Message-ID: <2025043005-monkhood-caring-7829@gregkh>
+References: <20250429-debugfs-rust-v1-0-6b6e7cb7929f@google.com>
+ <2025043024-disk-rockfish-1c1b@gregkh>
+ <CAGSQo0040a9efWj8bCr4KiMUXezJJ2HVQVR5aJ90rgrYSjKq1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,33 +63,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae48d190-03fd-4f4d-ab6f-969301e8b96e@intel.com>
+In-Reply-To: <CAGSQo0040a9efWj8bCr4KiMUXezJJ2HVQVR5aJ90rgrYSjKq1w@mail.gmail.com>
 
-On Mon, Apr 28, 2025 at 12:19:50PM -0700, Dave Hansen wrote:
-> On 4/28/25 11:38, Eric Biggers wrote:
-> > -static int sgx_get_key_hash(const void *modulus, void *hash)
-> > -{
-> > -	struct crypto_shash *tfm;
-> > -	int ret;
-> > -
-> > -	tfm = crypto_alloc_shash("sha256", 0, CRYPTO_ALG_ASYNC);
-> > -	if (IS_ERR(tfm))
-> > -		return PTR_ERR(tfm);
-> > -
-> > -	ret = __sgx_get_key_hash(tfm, modulus, hash);
-> > -
-> > -	crypto_free_shash(tfm);
-> > -	return ret;
-> > -}
+On Wed, Apr 30, 2025 at 08:01:38AM -0700, Matthew Maurer wrote:
+> > And yes, I know why you want to tie debugfs layout to a structure
+> > layout, it makes one type of debugfs use really easy to write in rust,
+> > but that's not the common user for what we have today.  Let's address
+> > the common use first please, save the "builder" pattern stuff for after
+> > we nail all of that down.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> Let's just say, theoretically, that there was some future hardware that
-> also supported SHA384.  There doesn't seem to be a SHA-384 library API.
+> I'll remove that API in the next version of the patch series to get
+> the basics down first, but to give some motivation to what I was
+> trying to support which *is* done in C today, see qcom-socinfo [1] -
+> it uses a backing `socinfo_params` struct which is expected to outlive
+> its whole directory structure.
+
+What exactly do you mean by "outlive"?  Right now debugfs has no way to
+"own" a structure and it just "has to work" so that the file will always
+be there and hope that the backing variable is also still there.  I
+guess you are trying to encode that "hope" into something real?  :)
+
+> [1]: https://github.com/torvalds/linux/blob/b6ea1680d0ac0e45157a819c41b46565f4616186/drivers/soc/qcom/socinfo.c#L133-L156
 > 
-> Would you leave the crypto_shash() in place if that were to be
-> happening? Theoretically of course.
 
-I don't see any reason why SHA-384 could not be added in order to
-support a CPU feature.
+Yes, SOC drivers are a mess of debugfs files, but manually creating them
+is "fine" to start with, let's not go wild to start with.  If we see
+common patterns outside of the single soc driver use case, then we can
+propose exporting structures as a directory structure in debugfs, but I
+really think that is a very minor use of the api at the moment.
 
-BR, Jarkko
+thanks,
+
+greg k-h
 
