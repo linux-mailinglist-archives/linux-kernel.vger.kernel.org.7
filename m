@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-627251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E955AA4DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:52:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864F8AA4DF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3287D3BF0CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40F8F9A763F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C542325DB08;
-	Wed, 30 Apr 2025 13:51:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933A21E98E7;
-	Wed, 30 Apr 2025 13:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580FE25E445;
+	Wed, 30 Apr 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDrZ5ylV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1FC25DAEB;
+	Wed, 30 Apr 2025 13:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746021103; cv=none; b=CGCkpj9AnBBah7TPXavuwPLSx8usw+R9q5Sadf/yBLXjXPnkE6Oehw+HEOPC96uAK40NGfWHqwXJNgg6o0BOy+fI28+dh1xfdJ8IyVa4NWbplWLhZuDRh2WBAuV4nKvspYRQLtqNJqYCxRGH8HeLb5fafLnsQZR6vVZJBl+yO84=
+	t=1746021122; cv=none; b=RIk9q12YwaL+GcQIJyYYB1gHqDAmYfZvpK4vhrSavcqY0xgyra9AghM1GWIvgZlChm38OtxgTR5uUjsYjacBC++tHE5vg6dEFINV8aToWUS6WHvBU1hgEb0wa1QF6U8WHfLWQZQP3B2GKUE6spBqkGOnywcMw9I2GtR2YVsaIgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746021103; c=relaxed/simple;
-	bh=UIhg9oR0wVTRD36C+pR8L+b3uTqxZoo4MurjjgXJxBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8S+7/YIunD/f6ZeX61fp1XeQMBAlBGL3TUpmf1aInrQcKHb71P7cEl9KBJ7iP+t3PNpJUtIahaERG9Z8ZX8goIiwfyxrjgBJM5vGLxAiTfryRA7ztI266K02BeNzCj0nd1aStjzceLPYKGjyvd5777k9y+8EXaldAjaTZYYYlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2326106F;
-	Wed, 30 Apr 2025 06:51:33 -0700 (PDT)
-Received: from [10.1.33.69] (Suzukis-MBP.cambridge.arm.com [10.1.33.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 934443F673;
-	Wed, 30 Apr 2025 06:51:39 -0700 (PDT)
-Message-ID: <1efe761e-964b-4b24-b1e3-dc33bf1749b7@arm.com>
-Date: Wed, 30 Apr 2025 14:51:38 +0100
+	s=arc-20240116; t=1746021122; c=relaxed/simple;
+	bh=xf1uFp/EVSDzohAXpVq0ni+m7CYH2QXJJpG3H9J9ivg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EXFeyGwg03/Hv+T/YC7BsJlEl2Si9B2FzlJZKg+EPAPUVHLIXdfuOaJR8EDOIkuF/h5ZUqh7+4w4h1J1vZhXnF06OrX5MjqGvX5ftdb6NE7ON0Cy+nP4YasuuDhu9jRh1dlBVEYJNozasDU4pnLH9NuoYxGN/yRUX4N10M4GPSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDrZ5ylV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 260B7C4CEEB;
+	Wed, 30 Apr 2025 13:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746021122;
+	bh=xf1uFp/EVSDzohAXpVq0ni+m7CYH2QXJJpG3H9J9ivg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FDrZ5ylVhgyEL2WIZLvXJRJH+61d9KI0jJI03lZum2EuNfKXzS610Xq0f4/u/gMe2
+	 tXMBZVomy6mEmBEVXIqOqEOzWIMTe/2H6/a+LyMNU5AhW7nFAZmy9ySN1zPH8Dcuy+
+	 OQD0dHPHIBDEwvoBkK5XtFLiqoGGHg9jhw5NsKPK9sa9SVLy7MBHY7lTuR17JwVpZn
+	 4XTUoYBCv7QIZ3NfWdaQ9+J6G9MTXPz17fZoZzuRKXUEZyQuD7e63xuaiE026fk38w
+	 dYU7Idi8aZMUIfUxLu8CoMAwOKCMiIWtrPupaMCobbh7HHOxNNtNw7ZYcuxSusjUil
+	 y7qhhXi7Oci4g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1uA7r3-000000001Lh-2fnM;
+	Wed, 30 Apr 2025 15:52:05 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Marc Zyngier <maz@kernel.org>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] firmware: arm_scmi: quirk: force perf level get fastchannel
+Date: Wed, 30 Apr 2025 15:51:46 +0200
+Message-ID: <20250430135146.5154-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: Disable MMIO logging for coresight stm driver
-Content-Language: en-GB
-To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250430110347.2091013-1-quic_jinlmao@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250430110347.2091013-1-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The Qualcomm SCP firmware in X1E machines like the Lenovo ThinkPad T14s
+does not set the FastChannel supported attribute bit for PERF_LEVEL_GET
+but crashes when falling back to regular messaging.
 
-On 30/04/2025 12:03, Mao Jinlong wrote:
-> When read/write registers with readl_relaxed and writel_relaxed,
-> log_read_mmio and log_write_mmio will be called. If mmio trace
-> is enabled to STM, STM driver will write the register to send the
-> trace and writel_relaxed will be called again. The circular call
-> like callstack below will happen. Disable mmio logging for stm
-> driver to avoid this issue.
-> 
+Use the new SCMI quirk framework to force FastChannel initialisation for
+this implementation.
 
-Thanks for the fix, looks good to me. However, I think the commit 
-description is a bit cryptic. Could we say :
+Note that we can add an upper bound on the version matching when we
+learn which version has a fix (or limit matching using a SoC compatible
+string in the unlikely event that always enabling FC causes trouble
+somewhere).
 
-With MMIO logging enabled, the MMIO access are traced and could be
-sent to an STM device. Thus, an STM driver MMIO access could create
-circular call chain with MMIO logging. Disable it for STM driver.
+Link: https://lore.kernel.org/lkml/Z4Dt8E7C6upVtEGV@hovoldconsulting.com/
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
 
-Suzuki
+This one depends on the new SCMI quirk framework:
 
-> [] stm_source_write[stm_core]+0xc4
-> [] stm_ftrace_write[stm_ftrace]+0x40
-> [] trace_event_buffer_commit+0x238
-> [] trace_event_raw_event_rwmmio_rw_template+0x8c
-> [] log_post_write_mmio+0xb4
-> [] writel_relaxed[coresight_stm]+0x80
-> [] stm_generic_packet[coresight_stm]+0x1a8
-> [] stm_data_write[stm_core]+0x78
-> [] ost_write[stm_p_ost]+0xc8
-> [] stm_source_write[stm_core]+0x7c
-> [] stm_ftrace_write[stm_ftrace]+0x40
-> [] trace_event_buffer_commit+0x238
-> [] trace_event_raw_event_rwmmio_read+0x84
-> [] log_read_mmio+0xac
-> [] readl_relaxed[coresight_tmc]+0x50
-> 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> ---
->   drivers/hwtracing/coresight/Makefile | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-> index 4ba478211b31..f3158266f75e 100644
-> --- a/drivers/hwtracing/coresight/Makefile
-> +++ b/drivers/hwtracing/coresight/Makefile
-> @@ -22,6 +22,8 @@ condflags := \
->   	$(call cc-option, -Wstringop-truncation)
->   subdir-ccflags-y += $(condflags)
->   
-> +CFLAGS_coresight-stm.o := -D__DISABLE_TRACE_MMIO__
-> +
->   obj-$(CONFIG_CORESIGHT) += coresight.o
->   coresight-y := coresight-core.o  coresight-etm-perf.o coresight-platform.o \
->   		coresight-sysfs.o coresight-syscfg.o coresight-config.o \
+	https://lore.kernel.org/lkml/20250429141108.406045-1-cristian.marussi@arm.com/	
+
+Johan
+
+
+ drivers/firmware/arm_scmi/driver.c | 8 ++++++++
+ drivers/firmware/arm_scmi/quirks.c | 2 ++
+ drivers/firmware/arm_scmi/quirks.h | 1 +
+ 3 files changed, 11 insertions(+)
+
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 6a18670ea261..eb6bec39c02d 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -1900,6 +1900,13 @@ struct scmi_msg_resp_desc_fc {
+ 	__le32 db_preserve_hmask;
+ };
+ 
++#define QUIRK_PERF_FC_FORCE						\
++	({								\
++		if (pi->proto->id == SCMI_PROTOCOL_PERF &&		\
++		    message_id == 0x8 /* PERF_LEVEL_GET */)		\
++			attributes |= BIT(0);				\
++	})
++
+ static void
+ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+ 			     u8 describe_id, u32 message_id, u32 valid_size,
+@@ -1920,6 +1927,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+ 
+ 	/* Check if the MSG_ID supports fastchannel */
+ 	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
++	SCMI_QUIRK(perf_level_get_fc_force, QUIRK_PERF_FC_FORCE);
+ 	if (ret || !MSG_SUPPORTS_FASTCHANNEL(attributes)) {
+ 		dev_dbg(ph->dev,
+ 			"Skip FC init for 0x%02X/%d  domain:%d - ret:%d\n",
+diff --git a/drivers/firmware/arm_scmi/quirks.c b/drivers/firmware/arm_scmi/quirks.c
+index 120ac933ed2e..48bf45b8bcf9 100644
+--- a/drivers/firmware/arm_scmi/quirks.c
++++ b/drivers/firmware/arm_scmi/quirks.c
+@@ -168,6 +168,7 @@ struct scmi_quirk {
+ 
+ /* Global Quirks Definitions */
+ DEFINE_SCMI_QUIRK(clock_rates_triplet_out_of_spec, NULL, NULL, NULL);
++DEFINE_SCMI_QUIRK(perf_level_get_fc_force, "Qualcomm", NULL, "0x20000-");
+ 
+ /*
+  * Quirks Pointers Array
+@@ -177,6 +178,7 @@ DEFINE_SCMI_QUIRK(clock_rates_triplet_out_of_spec, NULL, NULL, NULL);
+  */
+ static struct scmi_quirk *scmi_quirks_table[] = {
+ 	__DECLARE_SCMI_QUIRK_ENTRY(clock_rates_triplet_out_of_spec),
++	__DECLARE_SCMI_QUIRK_ENTRY(perf_level_get_fc_force),
+ 	NULL
+ };
+ 
+diff --git a/drivers/firmware/arm_scmi/quirks.h b/drivers/firmware/arm_scmi/quirks.h
+index 7fdc496c94c7..a71fde85a527 100644
+--- a/drivers/firmware/arm_scmi/quirks.h
++++ b/drivers/firmware/arm_scmi/quirks.h
+@@ -47,5 +47,6 @@ static inline void scmi_quirks_enable(struct device *dev, const char *vend,
+ 
+ /* Quirk delarations */
+ DECLARE_SCMI_QUIRK(clock_rates_triplet_out_of_spec);
++DECLARE_SCMI_QUIRK(perf_level_get_fc_force);
+ 
+ #endif /* _SCMI_QUIRKS_H */
+-- 
+2.49.0
 
 
