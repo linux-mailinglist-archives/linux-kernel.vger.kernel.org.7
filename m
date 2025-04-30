@@ -1,109 +1,144 @@
-Return-Path: <linux-kernel+bounces-626658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70102AA45BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:42:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55424AA45C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA44986E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909151C039AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A64E2185B1;
-	Wed, 30 Apr 2025 08:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615D321B8F7;
+	Wed, 30 Apr 2025 08:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RlvlwNHz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZdP3hXK4"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9C9213E61;
-	Wed, 30 Apr 2025 08:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACE81DF98B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746002498; cv=none; b=rqAyxP5vhCsC+LACLVS2F8DFTnzbNjgM1qDgyXi7u/X+xGy3wZvnAmpe3twXBmosOW06wxtlFNBb92Q9qixNX1KQ89CJ3nSvOPS5V0GoX2hL5hBB1MjnUmODuDLPLQX/LYDYm82gvrbNS0rWhc83u5DnNITALJ93RRqCrqhUit4=
+	t=1746002543; cv=none; b=c/1yldervfAj4zQVpurAB2Y9diqT4Sf0POpbeHiSFrZ3jpRhXTiSNB0c6dTEfSSCdugSEvXoj8AU58hdc0h5hRmA/GxVCCMZlpvDuBrIlDsXDhi0I0sfB4QV83sTtdg3txSFQsp3ihLV5KCRAOIWEMSNNxU0BSpfiTPq/mh33dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746002498; c=relaxed/simple;
-	bh=0qEn7MJfVbxaANYajFwdnrNgy4w0+YWWm/KA1BB7luI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozHSDYe3271HPdrsR0uinNSdpcijL5eMEGuttAsAPtK8GhbcaaV/kLC7e0dOfkH5St0vZ6PK5xCsARQH40F9mdXZQzz/XGYcMytReYVlaV775rAwh9Tw/FEzggcT62VgiUq5Qgasb4NNBFkOAUWIICmlmTdRoLfyw0EptboZwlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RlvlwNHz; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746002497; x=1777538497;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0qEn7MJfVbxaANYajFwdnrNgy4w0+YWWm/KA1BB7luI=;
-  b=RlvlwNHzDyZEwv4btDC4XfwbKrJhLr3oaV+hjdc2gmjDbeMo9eygVcWj
-   QjnbEpTiZp8zU1cVKn9T0yGzWO00WAHrozPaoZrIyXMGtlZRkaSotsrjL
-   Vt8Oao19FNkG4I5Jn3ChQnMEFMYsCMePMjalj5oGhE6q+1gsEroPoEcfG
-   mKi8ol029R4YMsKva06q9mtHWU6w6uvYUiN4hESkOD+0YJRPaFiW9DA77
-   EP6dI6VzJfIfejSNi587lIgPRIKbCiThC50Yh3SicEzII+c0/plW3jcQ6
-   2eUSovciKMLQBMeqUWoHT/mb6nZvxdPEUQGODLdkgTFXI9/hyVMsrKJSS
-   Q==;
-X-CSE-ConnectionGUID: clCHO2QgSoyY0A5xTv8jdA==
-X-CSE-MsgGUID: h8B5wR+yShWM4qEzNc8J7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="47534985"
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="47534985"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 01:41:36 -0700
-X-CSE-ConnectionGUID: Ocus3NRtQ16MyjW9Ik4wDg==
-X-CSE-MsgGUID: mJisz17zQVC6+ZNPg2uAvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="139039491"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 01:41:35 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id CB95411F7E7;
-	Wed, 30 Apr 2025 11:41:31 +0300 (EEST)
-Date: Wed, 30 Apr 2025 08:41:31 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 3/9] media: v4l2-flash: add support for flash/strobe
- duration
-Message-ID: <aBHiO6aIeLP6NSgr@kekkonen.localdomain>
-References: <20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev>
- <20250429-ov9282-flash-strobe-v3-3-2105ce179952@linux.dev>
- <aBHeIBbFRkZ4P82E@kekkonen.localdomain>
- <zpmfhi6fzg3zhwifpi2kmstn4soex4fvg5jhha2me73r76bhgo@j2bfwdza23xs>
+	s=arc-20240116; t=1746002543; c=relaxed/simple;
+	bh=GKW8F/esjma3xIisnNdfmxgVLhg33OtW33/8gKmHAKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ll8dz3sKfAtMx6aOqmJo8TDfsJ1NHYkL36wJ2Pf7Kgyvq0CzOphSLL38grp7uGHKNww7G0Ix+kcOW+zm+7J7BmL3Ze14NrhjqzkYBXAX/z7jxDUwTDfdUa3aScwmusl3EuKwM/wt4p+UARdry42/QtaDNAvL1v3ACF/S4NEKFuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZdP3hXK4; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so10964094a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1746002539; x=1746607339; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=92CUaGQAbfLwUOAfwUK+51NCmaqkCK/WvaTduxkGT4w=;
+        b=ZdP3hXK4ynRDOFi2tBgcCpqZ11Uhc2Lr+dg3S070NzPMjv9vrjF8vSR3p/4TT7gn5z
+         w74qgnwm0Ux/CEVCuYuALSGsIFve3AuElAG8I0wkNJQqHD/+2X1hC1T6rcSX5cFTqz4I
+         AaysfU8cLxLT7xvaaL4mRXYhgaBK7fuFyAMek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746002539; x=1746607339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=92CUaGQAbfLwUOAfwUK+51NCmaqkCK/WvaTduxkGT4w=;
+        b=mOl+pddKzsErBPLobS2k9z62u88XvZ6scVlFkDsWUYhgio/mKX0qyGdhAl4AnVdeCa
+         Ty+3gi6fK4zx0d+8QxbLn2iZG0Pq8SZ/sd+lrJhD+SAhgacWC8CJEs3A0TjXx2OhUZvM
+         aWqOjXOaI0IpKHish/s2QmtG/5Y7SoaJGlQ8OY4Tp7d39xbMZnpkYiLY6YJ8ZTZwvc0S
+         qAV895Iagxl5Tmfm7w4E86bfiBhyXytB8OLGlB4YPn6fAZVyYQ9Iur2XldNr7UXBfRB1
+         i+Ep9CLmB4bAIhv0Y1oYfKg30i89FEh9Ugnv028U38Hs54ALwZ1VfVUzxQjEIp7lSTRO
+         c5fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHCe/nz0/sPd1H4dFE9VSWsP0S6eLKhj3eRIaRnNTGQzDKiZYt6pIhR/1pFHVqiAEbox43LiSo3ayMCq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTKxYnKN/MjPpIbc96FfjW8jboN+SvTBLuhZcpe5Oq+GSSS35p
+	t4hz1BdWDpjKYQ4zWCDqwP1LXnx7YMJYnWusIg37IhWYHhdNvP7zGlvY+n9uIw==
+X-Gm-Gg: ASbGnctbPqaj5W07Pw4vbbrVUbkrSjKGZz1U4pOYvdMEPeikODvUnmS8VWRpvoeKO7C
+	7XE1fxEVJdPd7G6C3GVJ7K91RuHIuGxM0R98N6/DcSNQnouFl3YscuQsDhXig7UbbDbwC1u7Oks
+	AxtUY7w/9cxuEuM9JyGP9px6YBgaxQYfLputR2FuWRM189E1SxMpl0hCrbkNYVE16K7Zs0Y7hPO
+	agUFD9n7jZ0uPtptEKjBfSUJkbDJVOCyzf4g1mzoha8NOPJ7mN36ab5reXGF4nEU6Og7oqo5aCJ
+	05lfVo4Ml3eqGXnzeJDmXBuonkAWnUfemkImLvW1dqTYfetHK0EbGYULNi1e90SLNEtfZ4Sbd6r
+	tbMZV08trYM1jhPxlM+to4sQAFw==
+X-Google-Smtp-Source: AGHT+IHxx+jvJKhxJN5DAz1Pj/9fep2nbrC9HiPTHd7+BrSnkhxBr/I4PsJYRNJc5L9MSoHlnuyC3A==
+X-Received: by 2002:a05:6402:50d1:b0:5e6:616f:42e4 with SMTP id 4fb4d7f45d1cf-5f89bf1d74cmr1957760a12.27.1746002539157;
+        Wed, 30 Apr 2025 01:42:19 -0700 (PDT)
+Received: from jaz-virt.c.googlers.com.com (23.31.204.35.bc.googleusercontent.com. [35.204.31.23])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f5342sm8351783a12.35.2025.04.30.01.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 01:42:18 -0700 (PDT)
+From: Grzegorz Jaszczyk <jaszczyk@chromium.org>
+To: tglx@linutronix.de,
+	robh@kernel.org
+Cc: mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	saravanak@google.com,
+	dmaluka@chromium.org,
+	bgrzesik@google.com,
+	jaszczyk@google.com,
+	ilpo.jarvinen@linux.intel.com,
+	usamaarif642@gmail.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	tnowicki@google.com,
+	mazurekm@google.com,
+	vineethrp@google.com,
+	rppt@kernel.org,
+	agordeev@linux.ibm.com,
+	dyoung@redhat.com,
+	myrrhperiwinkle@qtmlabs.xyz,
+	guoweikang.kernel@gmail.com,
+	kirill.shutemov@linux.intel.com,
+	akpm@linux-foundation.org,
+	joel.granados@kernel.org,
+	sourabhjain@linux.ibm.com
+Subject: [PATCH v3 0/2] x86: add support for reserved memory defined by DT
+Date: Wed, 30 Apr 2025 08:41:36 +0000
+Message-ID: <20250430084138.2287031-1-jaszczyk@chromium.org>
+X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zpmfhi6fzg3zhwifpi2kmstn4soex4fvg5jhha2me73r76bhgo@j2bfwdza23xs>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 30, 2025 at 10:37:48AM +0200, Richard Leitner wrote:
-> > > +	/* Init FLASH_DURATION ctrl data */
-> > > +	if (has_flash_op(fled_cdev, timeout_set)) {
-> > > +		ctrl_init_data[FLASH_DURATION].cid = V4L2_CID_FLASH_DURATION;
-> > > +		ctrl_cfg = &ctrl_init_data[FLASH_DURATION].config;
-> > > +		__lfs_to_v4l2_ctrl_config(&fled_cdev->duration, ctrl_cfg);
-> > > +		ctrl_cfg->id = V4L2_CID_FLASH_DURATION;
-> > 
-> > Has this been compile tested? :-)
-> 
-> Oooh... Damn. That's embarrasing. SORRY! There should have been at least
-> another '}' in this patch.... Seems I somehow messed up my last rebase.
-> 
-> Will fix that in v4. Sorry again :-/
+From: Grzegorz Jaszczyk <jaszczyk@google.com>
 
-No worries, it happens to everyone sometimes.
+Currently x86 allows to boot with ACPI and DT at the same time and basic DT
+support is already in place but processing DT reserved memory was missing.
+
+The DT reserved-memory nodes can be present in DT as described in
+Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml.
+Similar to other architecture, which supports DT, there is a need to
+scan and register reserved memory regions on x86 for such nodes. It is required
+by drivers (e.g. open-dice driver) to process DT reserved-memory regions.
+
+v2 -> v3:
+- Patch #1 which extends of/reserved_mem and adds the possibility to register an
+arch specific hook was dropped. Instead "x86/e820: reserve corresponding to DT
+reserved-memory nomap region" was introduced.
+- "x86/of: add support for reserved memory defined by DT" stop relying on arch
+specific hook. Also calling x86_flattree_get_config was moved and is now called
+earlier during memblock setup.
+For more info please refer to commit log description and v2 discussion:
+https://lore.kernel.org/all/20250418124718.1009563-1-jaszczyk@chromium.org/
+
+Grzegorz Jaszczyk (2):
+  x86/of: add support for reserved memory defined by DT
+  x86/e820: reserve corresponding to DT reserved-memory nomap region
+
+ arch/x86/include/asm/e820/api.h |  1 +
+ arch/x86/kernel/devicetree.c    |  1 +
+ arch/x86/kernel/e820.c          | 19 +++++++++++++++++++
+ arch/x86/kernel/setup.c         |  6 ++++--
+ 4 files changed, 25 insertions(+), 2 deletions(-)
 
 -- 
-Sakari Ailus
+2.49.0.901.g37484f566f-goog
+
 
