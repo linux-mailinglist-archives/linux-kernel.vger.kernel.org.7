@@ -1,164 +1,205 @@
-Return-Path: <linux-kernel+bounces-626678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE5BAA45F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:50:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89266AA45C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E689C2353
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA11F9A60F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B605A20F088;
-	Wed, 30 Apr 2025 08:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B3C21A94F;
+	Wed, 30 Apr 2025 08:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uci.edu header.i=@uci.edu header.b="mgfhyMeG"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmiWafS3"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CF82DC78E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7A02192E3;
+	Wed, 30 Apr 2025 08:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746003009; cv=none; b=I5q7OaTmcJKXX/OMHXY+9waedQ35qed0LCGssWO+IACjD5Yyxyy/vuqAX8tb/hkog+ys62oG2nr+31JO2yOqPNn1fxEsDxNzU9KF3j3Tp35xVtZAlLw1PWW1vaEKqUm9qYMJDO95ZNKrENtH3PQ0jq55GUaqGFUj9h7k9EInhqU=
+	t=1746002635; cv=none; b=VP8QAp/EzBYqCTM67kOZtiZUZtPR0Z/nd+/evpN89f9+jg0d/mEuDg4LY8LMi10muYw8L3U8p03AWvxWE2uCeVphkPjBTu6PSm4/HiZADwYeEuq8mVm3TSjvruXq8k3v1B+wDkrNcrtLx4CMQxpf8vPPl6g2hNszr+6j85jMKa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746003009; c=relaxed/simple;
-	bh=KNpuHzwTaaTYpf7LfrnyBa2FI4gDtfLAyiquhlf2Pro=;
+	s=arc-20240116; t=1746002635; c=relaxed/simple;
+	bh=uCbpG3QrjrqIEpeYmGwYvqptFCLTfdx524GgbmyrHrc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQguTnK7rjG76s+5Vx2jhcgMbWztPBVuEpFNXUjVcOUUrWSo6HYG+6jOmNdOovEH399JBp9+6Q5hKalTO2WjGwnpHloJcia9dYiWjG82T+qPG5eMcGZ06Jf717zGNa9XL7O/FcrFjZ3OdV8WtBl20YcMEBUeEIfOPFuM9S99npM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uci.edu; spf=pass smtp.mailfrom=uci.edu; dkim=pass (2048-bit key) header.d=uci.edu header.i=@uci.edu header.b=mgfhyMeG; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uci.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uci.edu
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-acacb8743a7so124753666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:50:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=eWbBOURzvNn1J8wBnE7fapfUlykssKlr8nulk03waErAUMbxzG4GmuYYgj+n8Ou+P0+Z0CBsp9wdlMZntjQlE0ls2GGTX3hTV//P21Qbe83hbvyvN9tJUSi/KYl4whQVjZHRG28+64HAu50rWIkFoJBRuGmJ6mxTv4twcBcpd6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmiWafS3; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e63a159525bso5874348276.2;
+        Wed, 30 Apr 2025 01:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=uci.edu; s=google; t=1746003003; x=1746607803; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746002631; x=1746607431; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z1qs81RVT7WGaI5EEDOkNWrLzSI42G5tmDul/p84+M0=;
-        b=mgfhyMeG7AC9qUCK+iducS3K5ToALUjsIljt/6NKaP+fFtcBuT56BQIyUZv4bOjlBd
-         EnwDy05tcCX3QIRZ/zPMp3LKOqF0P+VGgwkPn4rHvZSOVJUXN9xzFQDVTR2B+wHLeQDN
-         PKOW43qr9lqPxSxl8f3Hvw+yT4vXLKFgU5JlJ4LlzVjExDLKXN0eGqlzWG4ZP5iZSzTf
-         LfqqPCbGrg+stWxpuxuuHmDLL/CaKo+QGx6oxy3+oY8xV1VvGP9ebB3Pebp4lIAjgBfx
-         CPWAtk1/8OTN199fHgVjUBIDf0JVur5X9ZkhkKoGpuGmp0DQF3zIa0O+VfKWeZwsZQO0
-         7/wg==
+        bh=uCbpG3QrjrqIEpeYmGwYvqptFCLTfdx524GgbmyrHrc=;
+        b=GmiWafS3V7c8bjXlbk4OxAgBNgMdMDRL4V0Vw+CPlm5DNTXxIcss9IxS8NzF0tjYnj
+         9iqxKJh3IZfR9VFEZVfrw+jC6bIVJby0N506XXM/QiWSUTCKAM9OKM3bfLQM/VKdVH48
+         NyTyUH3MNiczNSx6BoEU2aNnJgyhNmoADQIG2ITsmP+uOl/yPCznPExhvJnh1zOvKkQF
+         gP6dfMQJBop2vdSldCvpKxIdQ99KCYSdgRqipz2Wiwru7PUIIXgfNE0y0NXhiJbSpbWM
+         jFARAN0JdouirBgMlFe6nB090TgqQyYAqcuEjW6QKe1lnPP4hfhfXBj7qjM+Mxk/kwi4
+         1eXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746003003; x=1746607803;
+        d=1e100.net; s=20230601; t=1746002631; x=1746607431;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z1qs81RVT7WGaI5EEDOkNWrLzSI42G5tmDul/p84+M0=;
-        b=f2RKTzzP+NOw8w/XIVT7KW/3TzGiJIZcdNTamH4iGfmZPr86VMrq2A9RlV1he/AqFd
-         5IcbjnZJbifEec7dPZK3Z9T9UabJWfUfEICTYjlCDUNdL/cExUmNOvYgZM49nulTo9qt
-         z8SMrbomRxuzcxnLJWmVlWuwplUkhRxvGZuSphkOksoJpr6dOD2jxRkCE4LzLV9zNBDN
-         vASl51rmvqztfu/sQ25pKdIU2teVQnmqp1u0cPGWTo9/k/6V3ovxqoKJfb9wskyg7wqU
-         DD7gSql/+4sP+zszRNwJiu100vlUW3SeZriVz+fjDDFAkfU7fER2WQRm/hdfmpfOD8Ft
-         Bedw==
-X-Forwarded-Encrypted: i=1; AJvYcCUh6I7vZEW4l0rCd89ajfhXzn+6Zp1Dp06iqrAsDI/kWX6Mv4WkHu2iJIlbscgspeDdWvHexXPnILiuBpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOICjsRvemWwswiftMEmzA2GqclJJ7vsjEWcj736PExPirzHua
-	WSYbOct86Rj70A/Pp3PAa1kWLLiyNHLHKHG5sVL8dQi5B28kcsJ0UNrIHBHkVvWuJ1Rf2SUAvTA
-	H+ouloYiF86iQ/dUbqT03L7jfMVQQen3INZCqdgPDq0aq1hB4wjucHprt
-X-Gm-Gg: ASbGncu5FdaPK+XES33PgsrsTMzRY85PqfPYulkXDBB47mCIJ2hqP4gU/4UVqNG4IAT
-	nqE5wO9/YrIoFyQnLnr+bq5MTD+4tMudkQ8US3s/E8+A1TPfBYTiShVYMtYOyu6S+IrBN78KXRQ
-	C38wgay+rOaG8KJ2x8BDAZ4NXePwWGGIo1igpr
-X-Google-Smtp-Source: AGHT+IEj2xNmii2aVrB0HPnZcj1cS2DilF+s1D1CmUyT4TXXlXak86RbcnaZ+lF+p2b/bE6q5sm0vkwf9XHDx/ezzxg=
-X-Received: by 2002:a2e:a808:0:b0:30b:a100:7fec with SMTP id
- 38308e7fff4ca-31e7d4d6977mr5091471fa.12.1746002599538; Wed, 30 Apr 2025
- 01:43:19 -0700 (PDT)
+        bh=uCbpG3QrjrqIEpeYmGwYvqptFCLTfdx524GgbmyrHrc=;
+        b=i6WgjYscued8SlUcFxRfM0BpmqPOJCo1fNCVNUEOu/7jrhFZM96eDA+rR3G01/7xwI
+         sK7yaj+WkWpVmL6SaV9qkLSZrW8P9L7CnEyLDaGYM7cFHw04JUL2f93Te5gLdvkqmc/J
+         ySjuz6qK9nBIsdhRT6R6w1YJsR/OdHyieoIbi3U9G05HMk9yaKromfYax/FXi+Mv9JEE
+         3DF2jBqqQJpIuuwS21HDgKo83rJ21wWDjZMAlXmTJL0vTHH02UfjWXuHfM8LzoxPCqM9
+         0R3oK2TTF+eITyrHyNYEOmY3tmiPuxkogB7ECnUp/xXS3upQ0jX9TZLu3sjxO94rfWTK
+         Zfug==
+X-Forwarded-Encrypted: i=1; AJvYcCV5EjUD5/8tJMBqYyCiHWVuyr6oibeOIhpsOanUrQrgpDRt01BdrPOwUZmkXFnJIsPccx+IJ/qu@vger.kernel.org, AJvYcCVXCmj4KE3bseheJIAZH7j0iD2QsIDUAgSF8N+8RE1/kW4+IJSQ+Be4rZPncdhyqz6Qo7bjSFJiRO3GyOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9kLQGf+e2FwoyZBORxOD7eThievN0pZW58ftwY/vRprY45z1b
+	NVkRfx46lKVNjPtFEz8QFPLM/wL86y3NNtLN/Wc9frO9rkL00yDLD78aiOb11YXDp6Gd+ohNZCt
+	CjGHfVsimp+nMVXfXvtkFYUhCIBY=
+X-Gm-Gg: ASbGncvEUssB0Frz6ztSerWXM+164AMVPCkc7RhE6J5ttM/rnL83JlWUkySXu+Zk6uE
+	+8EIjfCGkFsKm5qFhS/8uMXhwlPLaXkZpG/H98n8sOmGRrhFLW3eTvpOBdeA+gmvdRjYTauD42b
+	8kODWEd33gQuI8NCHoUyw=
+X-Google-Smtp-Source: AGHT+IEhkfAwWL8fVju4Lkb0QFOaKJJL8P4xY667SzVOwX2PIzzJstixARlzcso7JHOoO0ZjEw+VVPDctr4hEApCZ3s=
+X-Received: by 2002:a05:6902:a86:b0:e73:91a:9311 with SMTP id
+ 3f1490d57ef6-e73ea21119cmr2996051276.6.1746002631281; Wed, 30 Apr 2025
+ 01:43:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPXr0uxh0c_2b2-zJF=N8T6DfccfyvOQRX0X0VO24dS7YsxzzQ@mail.gmail.com>
- <aBHgOsqA4qfe7LbN@c757f733ca9e>
-In-Reply-To: <aBHgOsqA4qfe7LbN@c757f733ca9e>
-From: Ezra Khuzadi <ekhuzadi@uci.edu>
-Date: Wed, 30 Apr 2025 01:43:08 -0700
-X-Gm-Features: ATxdqUFr52ls8iRfGl3SJa_g3FJ8AF-6Py3XE-3yWU18Haruwxmc1FYYj3yD3U4
-Message-ID: <CAPXr0uxJg0kMu_N7Gxb14kVdhkFGXO_KbK5RxfAcY9dEA8vrEA@mail.gmail.com>
-Subject: Re: sound/pci/hda: add quirk for HP Spectre x360 15-eb0xxx
-To: kernel test robot <lkp@intel.com>, sound-dev@vger.kernel.org
-Cc: stable@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	alsa-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20250429201710.330937-1-jonas.gorski@gmail.com> <52f4039a-0b7e-4486-ad99-0a65fac3ae70@broadcom.com>
+In-Reply-To: <52f4039a-0b7e-4486-ad99-0a65fac3ae70@broadcom.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Wed, 30 Apr 2025 10:43:40 +0200
+X-Gm-Features: ATxdqUFI7CkDXiAPdAxAFb4q56LGJGrb1AR7EqNZNEXKnpODFXQ2kT5IcrZ2LP8
+Message-ID: <CAOiHx=n_f9CXZf_x1Rd36Fm5ELFd03a9vbLe+wUqWajfaSY5jg@mail.gmail.com>
+Subject: Re: [PATCH net 00/11] net: dsa: b53: accumulated fixes
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, Kurt Kanzenbach <kurt@linutronix.de>, 
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-sound/pci/hda/patch_realtek.c: add quirk for HP Spectre x360 15-eb0xxx
+On Wed, Apr 30, 2025 at 10:07=E2=80=AFAM Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
+>
+>
+>
+> On 4/29/2025 10:16 PM, Jonas Gorski wrote:
+> > This patchset aims at fixing most issues observed while running the
+> > vlan_unaware_bridge, vlan_aware_bridge and local_termination selftests.
+> >
+> > Most tests succeed with these patches on BCM53115, connected to a
+> > BCM6368.
+> >
+> > It took me a while to figure out that a lot of tests will fail if all
+> > ports have the same MAC address, as the switches drop any frames with
+> > DA =3D=3D SA. Luckily BCM63XX boards often have enough MACs allocated f=
+or
+> > all ports, so I just needed to assign them.
+> >
+> > The still failing tests are:
+> >
+> > FDB learning, both vlan aware aware and unaware:
+> >
+> > This is expected, as b53 currently does not implement changing the
+> > ageing time, and both the bridge code and DSA ignore that, so the
+> > learned entries don't age out as expected.
+> >
+> > ping and ping6 in vlan unaware:
+> >
+> > These fail because of the now fixed learning, the switch trying to
+> > forward packet ingressing on one of the standalone ports to the learned
+> > port of the mac address when the packets ingressed on the bridged port.
+>
+> Sorry not quite getting that part, can you expand a bit more?
 
-Add subsystem ID 0x86e5 for HP Spectre x360 15-eb0xxx so that
-ALC285_FIXUP_HP_SPECTRE_X360_EB1 (GPIO amp-enable, mic-mute LED and
-pinconfigs) is applied.
+The ping test uses four network ports, where two pairs are linked via
+a network cable. So the setup is
 
-Tested on HP Spectre x360 15-eb0043dx (Vendor 0x10ec0285, Subsys 0x103c86e5=
-)
-with legacy HDA driver and hda-verb toggles:
+sw1p1 <- cable -> sw1p2 <- bridge -> sw1p3 <- cable ->sw1p4
 
-  $ cat /proc/asound/card0/codec#0 \
-      | sed -n -e '1,5p;/Vendor Id:/p;/Subsystem Id:/p'
-  Codec: Realtek ALC285
-  Vendor Id: 0x10ec0285
-  Subsystem Id: 0x103c86e5
+And it tries to ping from sw1p1 to sw1p4.
 
-  $ dmesg | grep -i realtek
-  [    5.828728] snd_hda_codec_realtek ehdaudio0D0: ALC285: picked fixup
-        for PCI SSID 103c:86e5
+In the vlan_aware test, the bridge uses VLAN 1 pvid untagged, so it
+learns in VLAN 1, while the standalone ports use VLAN 0. Different
+FIDs, so no issue.
 
-Signed-off-by: Ezra Khuzadi <ekhuzadi@uci.edu>
-Cc: stable@vger.kernel.org
+In the vlan_unaware test, untagged traffic uses VLAN 0 everywhere, so
+the following happens:
 
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+- switch learns swp1p's MAC at sw1p2
+- switch learns sw1p4's MAC at sw1p3
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 877137cb09ac..82ad105e7fa9 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10563,6 +10563,7 @@ static const struct hda_quirk alc269_fixup_tbl[] =
-=3D {
-   SND_PCI_QUIRK(0x103c, 0x86c7, "HP Envy AiO 32", ALC274_FIXUP_HP_ENVY_GPI=
-O),
-+  SND_PCI_QUIRK(0x103c, 0x86e5, "HP Spectre x360 15-eb0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_EB1),
-   SND_PCI_QUIRK(0x103c, 0x86e7, "HP Spectre x360 15-eb0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_EB1),
-   SND_PCI_QUIRK(0x103c, 0x86e8, "HP Spectre x360 15-eb0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_EB1),
-   SND_PCI_QUIRK(0x103c, 0x86f9, "HP Spectre x360 13-aw0xxx",
-ALC285_FIXUP_HP_SPECTRE_X360_MUTE_LED),
+when sw1p1 sends a unicast to sw1p4' mac it egresses on swp1p3 and
+then ingresses on sw1p4 again. The switch see's sw1p2's MAC as DA and
+then ARL lookup says "sw1p3", but the port VLAN mask disallows sending
+from sw1p4 to sw1p3, so it gets dropped.
 
-On Wed, Apr 30, 2025 at 1:33=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
+Without learning, all packets are flooded, so connectivity works, as
+the standalone ports are always part of the flood masks.
+
+> > The port VLAN masks only prevent forwarding to other ports, but the ARL
+> > lookup will still happen, and the packet gets dropped because the port
+> > isn't allowed to forward there.
 >
-> Hi,
+> OK.
 >
-> Thanks for your patch.
+> >
+> > I have a fix/workaround for that, but as it is a bit more controversial
+> > and makes use of an unrelated feature, I decided to hold off from that
+> > and post it later.
 >
-> FYI: kernel test robot notices the stable kernel rule is not satisfied.
+> Can you expand on the fix/workaround you have?
+
+It's setting EAP mode to simplified on standalone ports, where it
+redirects all frames to the CPU port where there is no matching ARL
+entry for that SA and port. That should work on everything semi recent
+(including BCM63XX), and should work regardless of VLAN. It might
+cause more traffic than expected to be sent to the switch, as I'm not
+sure if multicast filtering would still work (not that I'm sure that
+it currently works lol).
+
+At first I moved standalone ports to VID 4095 for untagged traffic,
+but that only fixed the issue for untagged traffic, and you would have
+had the same issue again when using VLAN uppers. And VLAN uppers have
+the same issue on vlan aware bridges, so the above would be a more
+complete workaround.
+
+> > This wasn't noticed so far, because learning was never working in VLAN
+> > unaware mode, so the traffic was always broadcast (which sidesteps the
+> > issue).
+> >
+> > Finally some of the multicast tests from local_termination fail, where
+> > the reception worked except it shouldn't. This doesn't seem to me as a
+> > super serious issue, so I didn't attempt to debug/fix these yet.
+> >
+> > I'm not super confident I didn't break sf2 along the way, but I did
+> > compile test and tried to find ways it cause issues (I failed to find
+> > any). I hope Florian will tell me.
 >
-> The check is based on https://urldefense.com/v3/__https://www.kernel.org/=
-doc/html/latest/process/stable-kernel-rules.html*option-1__;Iw!!CzAuKJ42Guq=
-uVTTmVmPViYEvSg!PiCmDJsbkP48HY6ady0rbC21rGusuY-IjJ61JqQnp99GdHsbc5uEQDwV-Q9=
-TeKK7R4THFV7fXQ$
->
-> Rule: add the tag "Cc: stable@vger.kernel.org" in the sign-off area to ha=
-ve the patch automatically included in the stable tree.
-> Subject: sound/pci/hda: add quirk for HP Spectre x360 15-eb0xxx
-> Link: https://urldefense.com/v3/__https://lore.kernel.org/stable/CAPXr0ux=
-h0c_2b2-zJF*3DN8T6DfccfyvOQRX0X0VO24dS7YsxzzQ*40mail.gmail.com__;JSU!!CzAuK=
-J42GuquVTTmVmPViYEvSg!PiCmDJsbkP48HY6ady0rbC21rGusuY-IjJ61JqQnp99GdHsbc5uEQ=
-DwV-Q9TeKK7R4SyRLIbeQ$
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://urldefense.com/v3/__https://github.com/intel/lkp-tests/wiki__;!!C=
-zAuKJ42GuquVTTmVmPViYEvSg!PiCmDJsbkP48HY6ady0rbC21rGusuY-IjJ61JqQnp99GdHsbc=
-5uEQDwV-Q9TeKK7R4QdTQyPmg$
->
->
->
+> I am currently out of the office but intend to test your patch series at
+> some point in the next few days. Let's gather some review feedback in
+> the meantime, thanks for submitting those fixes!
+
+If you are awake at this hour I guess your are back "home" ;-)
+
+Sure thing, take your time! All I wanted to implement is MST support,
+but then I noticed some things not working as expected, and then I
+became aware of the selftests, and then I suddenly had accumulated a
+lot of fixes trying to make everything say "Okay" (and sometimes
+wondering why other stuff broke when I fixed things, like the learning
+in unaware mode).
+
+Best regards,
+Jonas
 
