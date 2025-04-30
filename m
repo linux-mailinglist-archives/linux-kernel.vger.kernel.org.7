@@ -1,313 +1,199 @@
-Return-Path: <linux-kernel+bounces-626528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9B2AA443C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:44:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74408AA4440
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA761BA7F45
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DBD1BA8062
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EBB20CCE4;
-	Wed, 30 Apr 2025 07:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE5020E01A;
+	Wed, 30 Apr 2025 07:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HnHt92+P"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="Arn3ByAM"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2085.outbound.protection.outlook.com [40.107.21.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273D81EA7F1;
-	Wed, 30 Apr 2025 07:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745999062; cv=none; b=NLJMKWT2ISupcFwVCOFQ/iP0sprNOkgsBDCkeTj8e04B0H99NsMv+tSifVNsUPcResq9cmXPaPt3svghWZgIFm4uRGmDs8bRHZlLMIR1KNG+pQLPX+sYAbkqSfMKaeAsPeIG+Gadl3j2WQlHL2Z1Uq2sr04QJBvkBIkuqijmUNc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745999062; c=relaxed/simple;
-	bh=Ldw9+JIs2VadCmgGdhJYNkZUOfEJZqed92VMp+S4NLs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UrYKfduQ3/kUkU+sE5XzrJYE2q/D4R8nkJiB4ABLCLVdZJJeorNEqEbYhyUUkF8yNmyhaLK7qinlrRAlbR8CR+A0/fiNZApPuOcawh7sJE6fFKl42AFOiPrxYnx89PISeWiUE42K6zwQhb8Y0O6ij7ikssdZyLLbKZSrvGg0FJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HnHt92+P; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso6987010b3a.2;
-        Wed, 30 Apr 2025 00:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745999057; x=1746603857; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zrESOHG0sLCCbiiaT25hID1gO0oTlv+4VenA0x68Mew=;
-        b=HnHt92+PfnJhQ7xwdfAIMQ8E2HWnuU1GybxCZ0iFXtmo/4rGWH5acvFegfB4bNmyWo
-         RPSqUVQ6pA/idLLTOk0iJoTlXjknT2jNc0s7CWWrisCTJDIhFnFZq55w3ym798GPsRq7
-         oAz4M42Jkh+2ctaDkn9aIZRwEeZLoRXCfXbUxN5+TENdWkcPcWRACToETXB4O3Pc++59
-         UwOfjisliMB5aTst3rFbN+6+U2wMAW+7fIvdi/H9kJR2kyyzTfAaTeEUzxPZznWkDP7p
-         cxuxvwPi05lrQATboFRrusMGNHO50EMfQFAuCzuXCtpo2ewlaLeDDrvfyGzPxaPDbcWy
-         4z+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745999057; x=1746603857;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zrESOHG0sLCCbiiaT25hID1gO0oTlv+4VenA0x68Mew=;
-        b=wqkU7jjEtM5UiC9xbmX7qhGYr/fojGr9x4RDY4iyliUVMOWxymaxM6O2UtEHGbhpoW
-         VzdaAVp9G8lSFCvoiXxN1uMvNwIbqtcswvZrYTLa1Drrn5mfxC8f7h4Z0xmubluzQ/yO
-         RpfjLhjqCiFHROPASSTWu1u/mAUk1zr8R/ReUYDuf8DaHh+QM1cNe564gvT30UWPNMNi
-         yKgk+daUbB5965VJwrgSbZqLPfHtxp1JWbwU946NMLhM6HQj3aCrhose/hqiLeHr6L3n
-         yVPg5PgBdHoOoP8io6oLRmHJVDSb0eI49v2TUPTZfKdQQP9rgI/ZUd12BZX+Lxpfx53i
-         Sgkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW99WBlhctL0Yvi35HJ6fOCFUoHCqKM+qKJwUqSc3O2OeoMnPk+XlOG5smAblkTBiWlixXycZxr32R0Ayo=@vger.kernel.org, AJvYcCX5df4kl5/0B1j827+tULeppv/tuLBis+zzk5ToH0xqZxmBzgZUVUm+31XmJH2jgnyV0NP3dRw2FlC4@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpo4QXdyDg0WlfHZV+AI6Jpb7hRam4jky5AvYebQtD9/gvLf4B
-	9Lg8GgRBDTm/zH0IlKiU+6hSDF2XXimiRObIpAqZK8mkZ1IDqv61
-X-Gm-Gg: ASbGncskFCgkfpa+nu3v0ZUsUrhBhqmdIGuENjnQ17IYbYeI3tQ3m3RK6gva6wbr54Q
-	ZJbGX+acEaJLni43AvRPw1Rm5IUKIcpyqBsAJRHRK4teLUF7iV8ng/KQatdvwJu6LnniCSTkRbJ
-	4Kj6M2E4Y47bTfpJXfZsP6g9juTSw/oUTK3ssMSSSKUwfq7uKl+Qytz/9J7nZyy/8fvrqgvVHDW
-	+zL7ZT5vOS9hNGgtLr7phXR9iHQ7eo5cJZj5IsS1u6oeJD8o99wnoQRHMNSCXNt5BKVzZpWQ/Zn
-	WbVxZ5+v1s0AJjmMTUbKyLQ0Rt1WTbGut13C/GNUkcvhes4I/1AigW6g92Z7attr4Q==
-X-Google-Smtp-Source: AGHT+IF06NW1ClQUAO/SIEO6133O5k9N280oeUAGSpUbGow1VaGJ774XRxZ1c6pEdx19wXl+cXkOKw==
-X-Received: by 2002:a05:6a21:139b:b0:1f5:82ae:69d1 with SMTP id adf61e73a8af0-20a8832fa04mr2672867637.20.1745999057268;
-        Wed, 30 Apr 2025 00:44:17 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039a94780sm976673b3a.168.2025.04.30.00.44.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 00:44:16 -0700 (PDT)
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-Date: Wed, 30 Apr 2025 17:43:51 +1000
-Subject: [PATCH] PCI: dwc: Add support for slot reset on link down event
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935E6204F9C;
+	Wed, 30 Apr 2025 07:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745999084; cv=fail; b=DnCzyMz/MQY5W2Lfr41eGvMu3djEecURD7EtVCg+L90XJilOcttdlC2USpukbtz53o3WrHsAb1RSsJZJWISQCwwrnxdAPvgvTlRepZmSY8Nzt/uINTvKwWNy/5h7FKSVR3Si1lRHMpUht3st+pqoyI3eQI4jfnN6vGHN9uJdPYc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745999084; c=relaxed/simple;
+	bh=h5KY6ffPJoe3aYlLVNpgDHzPdf0KNV3bCbhVydU5sfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CLPwTRuZQPYqRrYvEMx5yoFpHij8k05HQ+PYgsjZ6Y2JUZlU1iPwp3hZbxmMlp3R3ky2wqANq+P9qDsXd+Rf4qyqVZZezM7BnVilvQvqLEsGD94It/lhQQfpIBCiY6tPxUY6sYRT9HklRoDHvwd0QtPI3LZ+srhXKJz5+iNnlvA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=Arn3ByAM; arc=fail smtp.client-ip=40.107.21.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pRbVafceyWE+9pPObHXRPq58iz0u6SNjC9DbhBeknn9tJaBRgXObCJqLiM8DvMK/aHX6rTLaQBqmB1zCUMtg3wz3HjHzIVbFZTAjHQzgkV9apPGpf2DlFtqRkhRR5Xucrhp+OLslcTx5fa36RksAOdqu9uULoHLQ5R332kMw3qD+v7tgSKvdqU18lNV0uXTWpvyiiN2i/3V+y4OTW0AsqjjLgNVpiWjPxRDqYDt8XmxXLRaN8nEpjhI8HSbNlP/ZNYBvdmWLpzJy1Ekzo9vN3PhirUcQlNV+zw3KzBGF1PTmOpCZq8EaFdP7ifcnOAS50RpyDFvxUonOgfhOgGsryg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LqFt9Jd12jxYN6lY4LDJXBPir8JfirRblcVSyC2QY5Y=;
+ b=BwLA7p1AeTI+v2oMHv4r+Aubp9GZ1JbDadmgHQc82/1s2fctbLq9dIR32f/3jQ30es9yh8ne29UqI9W4c/dxZIj1bMuKQ1e0lwD/2oCiOdOjjuNHpRn09RdBgq0I0zsHr+s38Y55SE2NlaXa/i8s0yAHAE1JaTsKe3XuVc+AxzS0Q7Wmx3H6IH146UntHhP5eZmMrr28oRL78y42ikPuj3HZc/WsF5OYOEitYyteBPZ4mikq1D0yZpVBcpLUAPLBZZbo82tbQtLiMcKMERrGs2wYRTREkNjnUtDgXByICw1DWhF07I18hqcjLLDB1QJIgkV6u8w2XCNtgpzxoBZkOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=buenzli.dev smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqFt9Jd12jxYN6lY4LDJXBPir8JfirRblcVSyC2QY5Y=;
+ b=Arn3ByAMMyY+9whZH9FPBeHvKPyRCV5W+fXuixEh6sfOC+ctDKQUl0Zoa7qaWZpp8nFKcpIi5VpG6Oa/7RrUX33nmRXQ6O3abFjZbP74veH0JloDHDbj7T2qivtwvXVqVHZYP6VndyPxchL7P9v/4gws5ijH/5dYcqLC9TWIrsqR86qbEehb5oR74NUXdJqjVtYbjScgowUBfSUaCkvryF79DApGJDetxc5dSSuThtJoqNQBDfOMmREUV024na9Mqtx1Sa0SQMe+38fq3lRn5G1rs8W+w3ij7xPOBhHED2B/ILSGrexkYEYUlsi3um6OeyCOThzMOEBIp64Feb0S9g==
+Received: from AS4P195CA0044.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:65a::7)
+ by GV1PR10MB9092.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Wed, 30 Apr
+ 2025 07:44:37 +0000
+Received: from AMS0EPF000001A6.eurprd05.prod.outlook.com
+ (2603:10a6:20b:65a:cafe::c6) by AS4P195CA0044.outlook.office365.com
+ (2603:10a6:20b:65a::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.41 via Frontend Transport; Wed,
+ 30 Apr 2025 07:44:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ AMS0EPF000001A6.mail.protection.outlook.com (10.167.16.233) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8699.20 via Frontend Transport; Wed, 30 Apr 2025 07:44:37 +0000
+Received: from FE-EXCAS2001.de.bosch.com (10.139.217.200) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 30 Apr
+ 2025 09:44:33 +0200
+Received: from [10.34.219.93] (10.139.217.196) by FE-EXCAS2001.de.bosch.com
+ (10.139.217.200) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.43; Wed, 30 Apr
+ 2025 09:44:33 +0200
+Message-ID: <6b1393ac-bb45-4911-ad79-59f0bd7d882c@de.bosch.com>
+Date: Wed, 30 Apr 2025 09:44:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v3 2/7] rust: property: Enable printing fwnode name and
+ path
+To: Remo Senekowitsch <remo@buenzli.dev>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	"Alex Gaynor" <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+	<bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<rust-for-linux@vger.kernel.org>
+References: <20250425150130.13917-1-remo@buenzli.dev>
+ <20250425150130.13917-3-remo@buenzli.dev>
+Content-Language: en-GB
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20250425150130.13917-3-remo@buenzli.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-b4-pci_dwc_reset_support-v1-1-f654abfa7925@wdc.com>
-X-B4-Tracking: v=1; b=H4sIALbUEWgC/02OQQ6DIBBFr2JmXZIRVNCrNMaADC1JWy2gbWK8e
- 4luunyTP/+/DSIFTxG6YoNAq49+emUoLwWMd/26EfM2M3DkNVYCmanYPPrBfsYhUKQ0xGWep5C
- YlRyt0c5I0pDf50DOf4/qa39yoPeSF9J5BKMjsXF6Pn3qClRSCFTK1E1jasWVcOhKnuuEq61pd
- KtbSwLh36wrTi88pIgdRiw+psSkQOO0LHVOdKuAft9/ChD0vO0AAAA=
-X-Change-ID: 20250430-b4-pci_dwc_reset_support-d720dbafb7ea
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Niklas Cassel <cassel@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
- Alistair Francis <alistair@alistair23.me>, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Wilfred Mallawa <wilfred.mallawa@wdc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745999051; l=7327;
- i=wilfred.mallawa@wdc.com; s=20250430; h=from:subject:message-id;
- bh=NUb75iKsIETzPGTbAEgEuTM/+CXDTu6qPlclj4TgXHQ=;
- b=lNZp+VJHmjh4wYkVkCS7+XbaMTYDvOO1JXAzciWZJrGbWA2jT1JmIEe2qeFc5hOAqdkdfc+MR
- jdUAhikEGktDHEnC2cs0nkW4VAttUzdLO6eSHTNLHSss8fAQzrrvwqC
-X-Developer-Key: i=wilfred.mallawa@wdc.com; a=ed25519;
- pk=DpjNSsEpzUYRunwCxBmAJ/fv9YKUmAPOIoBDL0qeAQU=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001A6:EE_|GV1PR10MB9092:EE_
+X-MS-Office365-Filtering-Correlation-Id: b07861f6-b870-45e8-555c-08dd87badbac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d0toOWNXNWlWYkUxTi9YZUJxQmRUbld6ejlsUVYwWkc2dk5IYzhxUEtqdi9o?=
+ =?utf-8?B?R1QrRm1NWEVkcjBVRTEvWEZYMW1hMVRJUFNxZldSNTBzeWlBd2tGeG1ocTU3?=
+ =?utf-8?B?RzNyazk0TENmMFpvaWRDTDZMZ1B2OTg3andJeHh2eDUyTFBVMElvTlJJOG05?=
+ =?utf-8?B?SkJweVcxRXJZMkt0VG9lejd6TEJWWWllZnRvbUdkaWJIcStGbEVCdlVyVmNU?=
+ =?utf-8?B?R1dBZlIvTmtGOEYyM29kTnJPNlExTUd6Ry9IV2ZDYTZtbFdPQVA0SVErQXdv?=
+ =?utf-8?B?VDUyZ0h0Mk01TnJCUGFOT0tabFl6YUxEdHhWMmc3K0tzOVRiTG9KT0l2TTBl?=
+ =?utf-8?B?YzdJQS95Sy9wTFNMSTlXaVlWczI1MU5leDYxWjl0WlV3cmpFOEQ1K3IzWXdN?=
+ =?utf-8?B?cWlDa0Z1RUJGL3hiNUR2TUUzcHFoc1VuTnB1NTZlc1F4ZU1aOTB4N1VIcXRG?=
+ =?utf-8?B?QVl0QXExcW55NGh0WlJHTHZxTFVNMkdhN1ZWdk82eS9XY05UdGd2M1poVVZn?=
+ =?utf-8?B?eUFaMndmR2hDTkp0K2MyaURjOEZpMTYxYzZ6V1JuU1gzY2pmN2RlblpZakdL?=
+ =?utf-8?B?azVVQUVRSXhsdzRWTEVaSjVTVXcwODVoYXNkTHFsY3k1d1FUZkRvNXFETEMy?=
+ =?utf-8?B?QlpwN3JsNFVVektmMzU1OFZQMXQzTFNxdiswSHB6REx2Y1U0S3phdEU5MHdG?=
+ =?utf-8?B?V0F4bDJWb0x3bWhiQ2xRT0N5cUZoRHFrMEFkL3k4VU9mUlJXcnVrNnhtN2Yz?=
+ =?utf-8?B?aGhHU0R5b0JQQ01KQTNUYitwVnF4bW9lUWZxR01CRHdBZ2R1ZGFHb3NMRmxT?=
+ =?utf-8?B?ZWlkTitndy9FNGJ2VVUwWHhrelVIYitvdGJLeFp2eU5PcTRkOTZlaXdvRmlO?=
+ =?utf-8?B?bXNkZnpJcjQxd3pRNVVpVmtXMmZ4d1haWWhuVjIrVFRQVFk1ZHEraDlCRGNa?=
+ =?utf-8?B?RzJ0ck5QZDE2V0EwWmo4K3ZYdzRuZ09kR0ZtaWxaZnVXSklGdWRFTEpoRGZD?=
+ =?utf-8?B?SW9uUmppM21uQWlmZ0NORUdxVnJKUjBGSUxQcG0wWjk4dFdXL1duSTJ3VVly?=
+ =?utf-8?B?OEpEUWhqdWtnK2wxVzNIUkNVM2FsVVMyYUlGcit3RjZjSURSdjdySmtiNWVV?=
+ =?utf-8?B?bnBxMjV5V1dHZzhRS1JjU3h0MGRLVnBJUDNvWnhVV0oySFFlVE1vcytPbThQ?=
+ =?utf-8?B?dnlrM2kwcDhwMDdUOCtPUE11N3hLMk9sS25EazU0c1JHanZJNFZ0anBVeC9X?=
+ =?utf-8?B?dFBtYmQ5c2NZN1MxWmlwUUk2QytGS2ZqQ3hSTlBRMkJ6MkVSV1Q3bzZWbUNW?=
+ =?utf-8?B?WUgxRmlqcys4bisxWWdWSnVqLzVnT1hPNjFYQmcxRDV0Sjc0ejlvdHoveHVH?=
+ =?utf-8?B?SlhzZFc0QVFWeS9YNGZmMHhRNzRkdnBqRENTWkdETnhtdDAyd08vUmNsN0V6?=
+ =?utf-8?B?L2hvZ2ZFcTR4VmpVQkV4cGRhSC9KUlZJMFJibUFLMWozWHBOZ0hTQ2o5Ujcy?=
+ =?utf-8?B?VEM1dUdrME5Fb0IyaWpPSklITnJxbVJtK1J0MGRjYVJ1SnBNUUMyYTNnaWlY?=
+ =?utf-8?B?OVdpclYwNWVULzVnb2Jnb3hJNW11TSt5RDJRY0gybkl3Z2ZQR1MrNU5iNzVO?=
+ =?utf-8?B?VVBXQlU1cjFxYU11akxMcTFxb0pnL0lRbGRIUlNqNnREZFByVlN2RU81cVRL?=
+ =?utf-8?B?MG12Umg3ZGhoT1NWOEpwVmtUd0o5NFNsMkVNUkF2L2xIWlk4aXZZTEhZWmY1?=
+ =?utf-8?B?VnVvc0IyNUIyTE9oMzkyTVA3L085blZ3c3AvZWZJYlVpdFdSb0hnQ0w5SHU5?=
+ =?utf-8?B?T1B6d2lWdlowUkVlY2hJTm43YTJtdEFIVEo3dWhKcGhPWEVFNzB3bzFFV0hW?=
+ =?utf-8?B?Y3FBVXBEWU1PQ1NnQUkvekc3dGhHNG1aSTMwdnZQRkdLKzl0ZlQvNFVYNnhX?=
+ =?utf-8?B?ZEVmS3lWeGlqZlBGMGk1b29QWXZ2c3NCK1B0SmtyYnkycHpmeEFHSDduRUdG?=
+ =?utf-8?B?bHJxbW83UmozOWJhQlg1aXJPalExdjF0NmI2eUlJSjdHb1RyeHAzTTRxcFpZ?=
+ =?utf-8?B?V09uN05vb3JQM0R5V0t0UnFLbHNYOTBuTUZVdz09?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 07:44:37.4909
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b07861f6-b870-45e8-555c-08dd87badbac
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001A6.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB9092
 
-From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+On 25/04/2025 17:01, Remo Senekowitsch wrote:
+> Add two new public methods `display_name` and `display_path` to
+> `FwNode`. They can be used by driver authors for logging purposes. In
+> addition, they will be used by core property abstractions for automatic
+> logging, for example when a driver attempts to read a required but
+> missing property.
+> 
+> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
+> ---
+>  rust/kernel/device/property.rs | 78 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+> 
+> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+> index d89715f7d..28850aa3b 100644
+> --- a/rust/kernel/device/property.rs
+> +++ b/rust/kernel/device/property.rs
+> @@ -49,6 +49,84 @@ pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
+....
+> +    /// Returns an object that implements [`Display`](core::fmt::Display) for
+> +    /// printing the full path of a node.
+> +    pub fn display_path(&self) -> impl core::fmt::Display + '_ {
+> +        struct FwNodeDisplayPath<'a>(&'a FwNode);
+> +
+> +        impl core::fmt::Display for FwNodeDisplayPath<'_> {
+> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+> +                // The logic here is the same as the one in lib/vsprintf.c
+> +                // (fwnode_full_name_string).
+> +
+> +                let num_parents = unsafe { bindings::fwnode_count_parents(self.0.as_raw()) };
 
-The PCIe link may go down in cases like firmware crashes or unstable
-connections. When this occurs, the PCIe slot must be reset to restore
-functionality. However, the current driver lacks link down handling,
-forcing users to reboot the system to recover.
+Missing a safety comment.
 
-This patch implements the `reset_slot` callback for link down handling
-for DWC PCIe host controller. In which, the RC is reset, reconfigured
-and link training initiated to recover from the link down event.
+Dirk
 
-This patch by extension fixes issues with sysfs initiated bus resets.
-In that, currently, when a sysfs initiated bus reset is issued, the
-endpoint device is non-functional after (may link up with downgraded link
-status). With this patch adding support for link down recovery, a sysfs
-initiated bus reset works as intended. Testing conducted on a ROCK5B board
-with an M.2 NVMe drive.
-
-Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
----
-Hey all,
-
-This patch builds ontop of [1] to extend the reset slot support for the
-DWC PCIe host controller. Which implements link down recovery support
-for the DesignWare PCIe host controller by adding a `reset_slot` callback.
-This allows the system to recover from PCIe link failures without requiring a reboot.
-
-This patch by extension improves the behavior of sysfs-initiated bus resets.
-Previously, a `reset` issued via sysfs could leave the endpoint in a
-non-functional state or with downgraded link parameters. With the added
-link down recovery logic, sysfs resets now result in a properly reinitialized
-and fully functional endpoint device. This issue was discovered on a
-Rock5B board, and thus testing was also conducted on the same platform
-with a known good M.2 NVMe drive.
-
-Thanks!
-
-[1] https://lore.kernel.org/all/20250417-pcie-reset-slot-v3-0-59a10811c962@linaro.org/
----
- drivers/pci/controller/dwc/Kconfig            |  1 +
- drivers/pci/controller/dwc/pcie-dw-rockchip.c | 89 ++++++++++++++++++++++++++-
- 2 files changed, 88 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index d9f0386396edf66ad0e514a0f545ed24d89fcb6c..878c52de0842e32ca50dfcc4b66231a73ef436c4 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -347,6 +347,7 @@ config PCIE_ROCKCHIP_DW_HOST
- 	depends on OF
- 	select PCIE_DW_HOST
- 	select PCIE_ROCKCHIP_DW
-+	select PCI_HOST_COMMON
- 	help
- 	  Enables support for the DesignWare PCIe controller in the
- 	  Rockchip SoC (except RK3399) to work in host mode.
-diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-index 3c6ab71c996ec1246954f52a9454c8ae67956a54..4c2c683d170f19266e1dfe0efde76d6feb23bf7a 100644
---- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-+++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-@@ -23,6 +23,8 @@
- #include <linux/reset.h>
- 
- #include "pcie-designware.h"
-+#include "../../pci.h"
-+#include "../pci-host-common.h"
- 
- /*
-  * The upper 16 bits of PCIE_CLIENT_CONFIG are a write
-@@ -83,6 +85,9 @@ struct rockchip_pcie_of_data {
- 	const struct pci_epc_features *epc_features;
- };
- 
-+static int rockchip_pcie_rc_reset_slot(struct pci_host_bridge *bridge,
-+				       struct pci_dev *pdev);
-+
- static int rockchip_pcie_readl_apb(struct rockchip_pcie *rockchip, u32 reg)
- {
- 	return readl_relaxed(rockchip->apb_base + reg);
-@@ -256,6 +261,7 @@ static int rockchip_pcie_host_init(struct dw_pcie_rp *pp)
- 					 rockchip);
- 
- 	rockchip_pcie_enable_l0s(pci);
-+	pp->bridge->reset_slot = rockchip_pcie_rc_reset_slot;
- 
- 	return 0;
- }
-@@ -455,6 +461,11 @@ static irqreturn_t rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
- 	dev_dbg(dev, "PCIE_CLIENT_INTR_STATUS_MISC: %#x\n", reg);
- 	dev_dbg(dev, "LTSSM_STATUS: %#x\n", rockchip_pcie_get_ltssm(rockchip));
- 
-+	if (reg & PCIE_LINK_REQ_RST_NOT_INT) {
-+		dev_dbg(dev, "hot reset or link-down reset\n");
-+		pci_host_handle_link_down(pp->bridge);
-+	}
-+
- 	if (reg & PCIE_RDLH_LINK_UP_CHGED) {
- 		if (rockchip_pcie_link_up(pci)) {
- 			dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
-@@ -536,8 +547,8 @@ static int rockchip_pcie_configure_rc(struct platform_device *pdev,
- 		return ret;
- 	}
- 
--	/* unmask DLL up/down indicator */
--	val = HIWORD_UPDATE(PCIE_RDLH_LINK_UP_CHGED, 0);
-+	/* unmask DLL up/down indicator and hot reset/link-down reset irq */
-+	val = HIWORD_UPDATE(PCIE_RDLH_LINK_UP_CHGED | PCIE_LINK_REQ_RST_NOT_INT, 0);
- 	rockchip_pcie_writel_apb(rockchip, val, PCIE_CLIENT_INTR_MASK_MISC);
- 
- 	return ret;
-@@ -688,6 +699,80 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int rockchip_pcie_rc_reset_slot(struct pci_host_bridge *bridge,
-+				  struct pci_dev *pdev)
-+{
-+	struct pci_bus *bus = bridge->bus;
-+	struct dw_pcie_rp *pp = bus->sysdata;
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct rockchip_pcie *rockchip = to_rockchip_pcie(pci);
-+	struct device *dev = rockchip->pci.dev;
-+	u32 val;
-+	int ret;
-+
-+	dw_pcie_stop_link(pci);
-+	rockchip_pcie_phy_deinit(rockchip);
-+
-+	ret = reset_control_assert(rockchip->rst);
-+	if (ret)
-+		return ret;
-+
-+	ret = rockchip_pcie_phy_init(rockchip);
-+	if (ret)
-+		goto disable_regulator;
-+
-+	ret = reset_control_deassert(rockchip->rst);
-+	if (ret)
-+		goto deinit_phy;
-+
-+	ret = rockchip_pcie_clk_init(rockchip);
-+	if (ret)
-+		goto deinit_phy;
-+
-+	ret = pp->ops->init(pp);
-+	if (ret) {
-+		dev_err(dev, "Host init failed: %d\n", ret);
-+		goto deinit_clk;
-+	}
-+
-+	/* LTSSM enable control mode */
-+	val = HIWORD_UPDATE_BIT(PCIE_LTSSM_ENABLE_ENHANCE);
-+	rockchip_pcie_writel_apb(rockchip, val, PCIE_CLIENT_HOT_RESET_CTRL);
-+
-+	rockchip_pcie_writel_apb(rockchip, PCIE_CLIENT_RC_MODE, PCIE_CLIENT_GENERAL_CON);
-+
-+	ret = dw_pcie_setup_rc(pp);
-+	if (ret) {
-+		dev_err(dev, "Failed to setup RC: %d\n", ret);
-+		goto deinit_clk;
-+	}
-+
-+	/* unmask DLL up/down indicator and hot reset/link-down reset irq */
-+	val = HIWORD_UPDATE(PCIE_RDLH_LINK_UP_CHGED | PCIE_LINK_REQ_RST_NOT_INT, 0);
-+	rockchip_pcie_writel_apb(rockchip, val, PCIE_CLIENT_INTR_MASK_MISC);
-+
-+	ret = dw_pcie_start_link(pci);
-+	if (ret)
-+		return ret;
-+
-+	ret = dw_pcie_wait_for_link(pci);
-+	if (ret)
-+		return ret;
-+
-+	dev_dbg(dev, "Slot reset completed\n");
-+	return ret;
-+
-+deinit_clk:
-+	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
-+deinit_phy:
-+	rockchip_pcie_phy_deinit(rockchip);
-+disable_regulator:
-+	if (rockchip->vpcie3v3)
-+		regulator_disable(rockchip->vpcie3v3);
-+
-+	return ret;
-+}
-+
- static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
- 	.mode = DW_PCIE_RC_TYPE,
- };
-
----
-base-commit: 08733088b566b58283f0f12fb73f5db6a9a9de30
-change-id: 20250430-b4-pci_dwc_reset_support-d720dbafb7ea
-prerequisite-change-id: 20250404-pcie-reset-slot-730bfa71a202:v3
-prerequisite-patch-id: 2dad85eb26838d89569b12c19d70f392fa592667
-prerequisite-patch-id: 6238a682bd8e9476e5911b7a59263c3fc618d63e
-prerequisite-patch-id: a01300083e94a67ea7c8bfcde320081d90b384d4
-prerequisite-patch-id: ff711f65cf9926374646b76cd38bdd823d576764
-prerequisite-patch-id: a5ee9d4b728b80d32844c5108a5b453eaa4f653f
-
-Best regards,
--- 
-Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
 
