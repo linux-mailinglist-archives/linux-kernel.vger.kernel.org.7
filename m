@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-626795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79C6AA4773
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:42:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200EBAA4777
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C58177A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 707E31BA8626
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8D4235049;
-	Wed, 30 Apr 2025 09:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A644123644D;
+	Wed, 30 Apr 2025 09:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GD4bpCiv"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="pCpo3arA"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7A02DC771;
-	Wed, 30 Apr 2025 09:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E0921C19D;
+	Wed, 30 Apr 2025 09:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746006123; cv=none; b=Vrh6imdgcR5UGJpaRGtoozQ2oIf2JBCqhPLe3X80bzc1aGlUeCAoL0sSceHnUq81zSrovQNbWbxGDwym1F8PcDZ+U09qt866EqP0NlMr+EVC60bWGCpI+oyvWm/HnDH0YWQ4KfR5y4c36iRz1RYsc4MRHkYjTDYzx069Gha/9Fk=
+	t=1746006124; cv=none; b=FwjBN4DLMnT8p+R15w0c3eHWjq2W+FeAeNnvOrqYfamRpD6jxcaKydc22ubWXC8+g0SXNb84MjOoI5jQrZhib6+SAQPTCKBXQLiMyu83CYaF1xXOMbLA2m/3Aab1zZKXpqLYBxJRdTD2iGe+70oP7jfoOs2GdS+tS88rNDJMxJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746006123; c=relaxed/simple;
-	bh=fzSvUu61XhKjmnGZmVyO0QUaZR+/121r+Z8tAdHf29Y=;
+	s=arc-20240116; t=1746006124; c=relaxed/simple;
+	bh=iu/VMNMQmoQnwo/lSa87IsrAqt4Hvm3sc+mB7QVA7WY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CsAo1KnYWE4m4nU4+K9lqPIUpBRQEL4OV96cz2lIBEI68Zk3gPt6dEKU7sbO8EjUYOn6lfkr/mRFav5CZU/yhWmSsfQISu6T/dN2++Y1TUdDE36GosvEOecFJ9Gu7BkFsXxU9ZS6OzpWYClciU2jxwVGwZu9NGB1bbin1nAH8LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GD4bpCiv; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version; b=AqmWpZP6q6/GVKXQCPB9BWOU00mZKfu7iqpbznIkI/wtTvhbOKmv2iSr5TzNsJRrNHnCKmYN+v7npOmQ+Jcyx/MMgJeaUc/enPAUXpTvDVIgK+aBrSEJe/ibVzfgrlnOjgZYZl+2J+lHh3MZagGWTuQjiuAf2H2+bpFjgjbyDi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=pCpo3arA; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id A2F231FC2D;
-	Wed, 30 Apr 2025 11:41:58 +0200 (CEST)
+	by mail11.truemail.it (Postfix) with ESMTPA id 5A2781FC12;
+	Wed, 30 Apr 2025 11:41:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
 	s=default; t=1746006119;
-	bh=ntln+YOGpHmhFRt+vk8RW2Ng5oNX6WD2cK51HZdX7ck=; h=From:To:Subject;
-	b=GD4bpCivljCnPyud/dxbHRcmv3iRa5N2NOk5X+AZ0/LAgNHPPDTQO0+u/u5ZQAUUj
-	 X8ySqMlB7gJWLQ26lFyOWLzSuV/wQFPnOPnYY6E2lXCZiUzW6sThDOHuW8gNIPQ834
-	 9Xn5zoRMjnN3EsVcKQO+TjzaYwU+kWQQOao3SFMc11O8DEXjV6EVjKKxn0A66wL9tT
-	 ar8JqaN5iaLjuMEoj3sluzqPfwRVa/MHOBL/pc88ekepxGahCOSjmb0KEpAfca2JXI
-	 bEO6C2c1SbD+jlOpXmXwzNiA6TE0SxvmrVjloPgcg8ReNSKDvgBNWw2Jombmta9EKu
-	 dPyMWUR2EZMsA==
+	bh=BDF8Z3RJZY5FcXZfk/EqiMQX/cKRyGAP1fzBEqQurz8=; h=From:To:Subject;
+	b=pCpo3arAcXqLGP+7qpvoxOq5GWTB0NR5nTdNKIHbkx4GXYmPO64QZQU/Kj4pdWMWO
+	 x2OZ6VreGd6g+f1OyID5sNPedzR+NfFqRJY9P6PwxHjBlreHMBgbh+NZNNB12z2Jh+
+	 YA+lZNZucnqFBeJvwjBhsoEISeCcev6p2mRREPINXaFR35d3N6PugzbXyBe3mH092Y
+	 0I/g+JIRaxv/EGXEG8RRLYtTu+juk1Z3OG8qQbtZjOY6PiRT/7V4OeUVh+z43vx2bZ
+	 4HGVx0HyTC7/CFHx1x6A6HAgr4XlPGgwA/e6QOPmOh/b7nrRcmn1BnjSxa9+eX1dor
+	 E8igKrGaBTMkA==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -52,15 +52,16 @@ To: Rob Herring <robh@kernel.org>,
 	Fabio Estevam <festevam@gmail.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
 	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v2 1/5] arm64: dts: freescale: imx8mp-toradex-smarc: add fan PWM configuration
-Date: Wed, 30 Apr 2025 11:41:47 +0200
-Message-Id: <20250430094151.98079-2-francesco@dolcini.it>
+	Peng Fan <peng.fan@nxp.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v2 2/5] arm64: dts: freescale: imx8mp-toradex-smarc: add embedded controller
+Date: Wed, 30 Apr 2025 11:41:48 +0200
+Message-Id: <20250430094151.98079-3-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250430094151.98079-1-francesco@dolcini.it>
 References: <20250430094151.98079-1-francesco@dolcini.it>
@@ -72,47 +73,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-Configure correctly the FAN pwm output (inverted).
+Add the embedded controller node to the device tree, this is required
+for reset and power-off functionalities.
 
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
 v2: add r-b peng
 ---
- .../boot/dts/freescale/imx8mp-toradex-smarc-dev.dts      | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts b/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
-index 581f221323b7..55b8c5c14fb4 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
-@@ -3,6 +3,8 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/pwm/pwm.h>
-+
- #include "imx8mp-toradex-smarc.dtsi"
- 
- / {
-@@ -205,9 +207,14 @@ &i2c6 {
- 	status = "okay";
- 
- 	/* Fan controller */
--	fan@18 {
-+	fan_controller: fan@18 {
- 		compatible = "ti,amc6821";
- 		reg = <0x18>;
-+		#pwm-cells = <2>;
-+
-+		fan {
-+			pwms = <&fan_controller 40000 PWM_POLARITY_INVERTED>;
-+		};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc.dtsi
+index 0a8b9eee5ed9..c4ca01ce60d0 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc.dtsi
+@@ -534,6 +534,11 @@ reg_sd_3v3_1v8: LDO5 {
+ 		};
  	};
  
- 	/* Current measurement into module VDD */
++	embedded-controller@28 {
++		compatible = "toradex,smarc-imx8mp-ec", "toradex,smarc-ec";
++		reg = <0x28>;
++	};
++
+ 	rtc_i2c: rtc@32 {
+ 		compatible = "epson,rx8130";
+ 		reg = <0x32>;
 -- 
 2.39.5
 
