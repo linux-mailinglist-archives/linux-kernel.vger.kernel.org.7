@@ -1,255 +1,170 @@
-Return-Path: <linux-kernel+bounces-628010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31421AA5814
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD89AAA5825
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFB39A52FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3B71C21EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E52226527;
-	Wed, 30 Apr 2025 22:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B99C227599;
+	Wed, 30 Apr 2025 22:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="aO2LlmMV"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="Bp8AP/HN"
+Received: from 1.mo550.mail-out.ovh.net (1.mo550.mail-out.ovh.net [178.32.127.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729C61BF37
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3DD22839A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.32.127.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746053095; cv=none; b=CFNiMp3Pjm1GcPbD89bXxr++mfZRs0SZ2yu/4l3YQk+GL5Jmb4CisM/6FgclmVNFBTN6pEN/dAiTRGkbgybTrhvBRRCiAcfr6pIA7jpsr9WilLGQwpVMeRCmdEmea6kxDJmzkHqy8foPwVA6r7WsiM/gFKCIP6TG8e248nXHqaQ=
+	t=1746053448; cv=none; b=mL94OtGBGBgqJ/TIvD/ZC5a9lCUeL3tOQmrYipXCKeRWsbcatjHoAnlksRRevV/nD8241WkidntifB8OtgDROXWq0O65DU6qtRxVU3VRWdElPAJjF5qdSxjA5yANHVsr1JaQ9MmihfJdePFCyHlahxvOqu9nGsrKuTTqY5d+p2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746053095; c=relaxed/simple;
-	bh=1+JIBphWHfDcWl02h0RjxDS4m+42dqs1JZljITnINdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFdY6G+jhlrDVkkLdsNkX+gvFe4/y8RJBcATWFh0D/AATJBDZDzLogj3lwETYoVKYduUIDkyjn6B5WjqV+QR6L4mF5Fye/+ZvaVrdv+grbmE/BaUh3To2rIiezVAzRWJRdkYep7rq7VivUsp9hDrc9LB0ONO9LilanzRYC/WOR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=aO2LlmMV; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso51300a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 15:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1746053092; x=1746657892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ceeMIRWgv4SCR5iGq8PYK6f2/FuZygILbwwdKDZzsv0=;
-        b=aO2LlmMVh6h3Vb2ReQb0QOb7uAbO6mhl3cdWPqVs25ragANhjFssJlq/Mqgy1HeShp
-         lBIPZD3+LzY43A6TTyoGjAcG8ZPH9dbzrMN/PbdT+YoHIqouCn/K05jV6qcJC9V29R/V
-         D8iQhYDLgcViXmR2jzf5fOz1/ozUGKFYziC2ZtH4PLGlRirhzJdsuHD4DWIUPpiVBk2s
-         k4euG46Zfikr7ibygJy+QZg7R4oVbdNY8Ym85NVuglc3nbi5IVENWx9if9TSM5gwot5b
-         7s2oyWDn81q8BKifivOeQjD/dlYXpJhWVqOET1ZiwC2IoxPLKyCfveHXaGXLiiXoIAP6
-         RpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746053092; x=1746657892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ceeMIRWgv4SCR5iGq8PYK6f2/FuZygILbwwdKDZzsv0=;
-        b=P3E0Wz43m0G2pYW1yxuL/746VxsJ+jzB1sU2q1sWnATomRJBCc0N88VMYU+DD1GA4y
-         rg91TmmWzsX486dSe22OebhiNwPyftkr+GJmo/XAM+PWtfxeBMu0objMbdLcIiGbqNQM
-         IoSziM31Xk7CUbAmIOF+7vSRNAkwiE4z5tmro1OP525v85N0gsVLLu4B1JhbVzKTQsXq
-         UsQux1dbLltxWdR2THBBJtWshIkXPoNQxrVOJsVZWAXS3cMoQ1GM0k2TmpV2lWGPTfUL
-         /K71xBqZIU9gQh17+/05G9ok28JyMrmTZs8JY8Alu1YMsTtBV5qDtw0TO/rlNPrVKhsu
-         B0jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbdGE5b0QsjtZChH5/s69v3LV3aEPSYx7wNYz8aOxexhOT/nY3tik/UfFHDJZ+uU/Ib1WjZO6GeMykaYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzebxHtOtV/4J0c9wyZ6/ThxWj29z+Zyw63rIx17XOwtz3VqVNs
-	n9tWp84Mw3Ar1PeDS07C6EZQRl6jjtAKQJW7NJV5OfuiivOJWnijQ+MdJSBcgwbca5dkuZOxolo
-	ksTrJWkEtagnlIds5zWMWx7jVGfBwT/xmqhfZAw==
-X-Gm-Gg: ASbGncuI1DnHR+xlHFY0PjYyRTp2EO9AJFXuA9mzZ/pHw1HxPbM1ILENuKsI0s7WKfa
-	WhXCBBEf4yoGFtvG0C2LxS4JUoPx0mU3UbRzuhfcKt77+u5TiDhcF0KKxuiFvJZkGhLDwX1D4F4
-	iAslw2Ds89p7I1aOtcZROE
-X-Google-Smtp-Source: AGHT+IE0Zg5f6VjXaW0QKlFCFCGm617lQSPwzy4fZyxl9+kVfeVCVFmkB1vj9aliLt42Hgd8VxhRNooSsSHBoe+H+Sg=
-X-Received: by 2002:a17:90b:3e8b:b0:2fe:7f51:d2ec with SMTP id
- 98e67ed59e1d1-30a348d7896mr2483484a91.0.1746053091617; Wed, 30 Apr 2025
- 15:44:51 -0700 (PDT)
+	s=arc-20240116; t=1746053448; c=relaxed/simple;
+	bh=h5TDfjVJP+JA3nYD+SpLtv/fGeAqasik99QHwRGZMpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Aw/ClJ1dTT0+UhBK5BANVGZMwxq6duMtOmN/jCTWEV1L37nop0KL/7gpXc67s+ZR//EuO0lAk00/szE6wtm8V8cycVQaOLLGCYYtVQke3HIJn7wAqRV1ylMF7FrePEw9g04C36kZzSSLNTm6ep5vrP7dBTMkts8pfSnT8cTu6iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=Bp8AP/HN; arc=none smtp.client-ip=178.32.127.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3mdeb.com
+Received: from director7.ghost.mail-out.ovh.net (unknown [10.108.17.160])
+	by mo550.mail-out.ovh.net (Postfix) with ESMTP id 4ZnshJ5Lddz1Xnm
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:45:04 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-nrbjb (unknown [10.108.42.124])
+	by director7.ghost.mail-out.ovh.net (Postfix) with ESMTPS id C605D1FE5D;
+	Wed, 30 Apr 2025 22:45:02 +0000 (UTC)
+Received: from 3mdeb.com ([37.59.142.96])
+	by ghost-submission-5b5ff79f4f-nrbjb with ESMTPSA
+	id LdGgHu6nEmjucAAAg4lW5Q
+	(envelope-from <sergii.dmytruk@3mdeb.com>); Wed, 30 Apr 2025 22:45:02 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-96R0016457a580-feb4-44b8-907e-f9518034a7ab,
+                    7FFE21389DDF989CCD6FB7268846A7FDE11993D7) smtp.auth=sergii.dmytruk@3mdeb.com
+X-OVh-ClientIp:176.111.181.178
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+To: linux-kernel@vger.kernel.org
+Cc: trenchboot-devel@googlegroups.com,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	x86@kernel.org
+Subject: [RFC PATCH v2 0/9] x86: Trenchboot Secure Launch DRTM for AMD SKINIT (Linux)
+Date: Thu,  1 May 2025 01:44:42 +0300
+Message-ID: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250427045803.772972-1-csander@purestorage.com>
- <20250427045803.772972-6-csander@purestorage.com> <aA4rqcpC01SzUn_g@fedora>
- <CADUfDZpEGVLzEZJtPiScWgf6PVroQvKKhGed1cb8AJiyUr_RYg@mail.gmail.com>
- <CADUfDZqqeeBTbgvCfHa8sr7Y7BetGbPzHYA1hMoN83kz+Bi54A@mail.gmail.com>
- <aBBQDjLDkGWE63vT@fedora> <CADUfDZroQ4zHanPjytcEUhn4tQc3BYMPZD2uLOik7jAXvOCjGg@mail.gmail.com>
-In-Reply-To: <CADUfDZroQ4zHanPjytcEUhn4tQc3BYMPZD2uLOik7jAXvOCjGg@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 30 Apr 2025 15:44:40 -0700
-X-Gm-Features: ATxdqUGgthu2otFRLelqvowO_XHdUR9JnnnpNESPicNrS9lWbym4m_M-Fg4SsdE
-Message-ID: <CADUfDZqtoiK0vX-sfN5OiEQo4j=j3wtYdRJy5LGMqASPp+2BKQ@mail.gmail.com>
-Subject: Re: [PATCH 5/8] ublk: factor out ublk_start_io() helper
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Uday Shankar <ushankar@purestorage.com>, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 12101172201501406284
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefuvghrghhiihcuffhmhihtrhhukhcuoehsvghrghhiihdrughmhihtrhhukhesfehmuggvsgdrtghomheqnecuggftrfgrthhtvghrnhepkedvkeefveejhfevfffgkedukeegueffiedvhedtiefggeetjeeugeeujeeivddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpudejiedrudduuddrudekuddrudejkedpfeejrdehledrudegvddrleeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvghrghhiihdrughmhihtrhhukhesfehmuggvsgdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtdgmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=V5q8ZXow5mUTSUWflxYvaL7jcmMyQOWtgjykd9BwtWw=;
+ c=relaxed/relaxed; d=3mdeb.com; h=From; s=ovhmo3617313-selector1;
+ t=1746053104; v=1;
+ b=Bp8AP/HNVrxCf80EH0E+/V/qvK9ucypG0uiczrgkh0H2hwQtgjL36adMpga8w2svdlKVpDPU
+ 8I/ABEaBw10L7CC6MGw1LkFdx6ctjzD6rnLziF4xATrp57qDbfgNnQz/AvUTLj6pCE5vaUMzBGn
+ hNc565EIeEPx8lei8yMbDbCx9fomEaCYyPJRS5+IUJTcQsuCnfqkTgmNeFRHhY6rgrAtivcJso/
+ 3DXk5D4Dwc0cWzTJJsFa4QVgK6CO0epzm72mCCdiRg/D66/nBMo6ZzSZWtYcqgnRAmen5nJjOkj
+ 9J4mER3L7d7Se3pLXhFiNjQ+6TWkFP1HhnNPh/7iQNlKA==
 
-On Tue, Apr 29, 2025 at 7:55=E2=80=AFAM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> On Mon, Apr 28, 2025 at 9:05=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wr=
-ote:
-> >
-> > On Mon, Apr 28, 2025 at 08:12:52AM -0700, Caleb Sander Mateos wrote:
-> > > On Mon, Apr 28, 2025 at 7:28=E2=80=AFAM Caleb Sander Mateos
-> > > <csander@purestorage.com> wrote:
-> > > >
-> > > > On Sun, Apr 27, 2025 at 6:05=E2=80=AFAM Ming Lei <ming.lei@redhat.c=
-om> wrote:
-> > > > >
-> > > > > On Sat, Apr 26, 2025 at 10:58:00PM -0600, Caleb Sander Mateos wro=
-te:
-> > > > > > In preparation for calling it from outside ublk_dispatch_req(),=
- factor
-> > > > > > out the code responsible for setting up an incoming ublk I/O re=
-quest.
-> > > > > >
-> > > > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > > > > ---
-> > > > > >  drivers/block/ublk_drv.c | 53 ++++++++++++++++++++++----------=
---------
-> > > > > >  1 file changed, 29 insertions(+), 24 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.=
-c
-> > > > > > index 01fc92051754..90a38a82f8cc 100644
-> > > > > > --- a/drivers/block/ublk_drv.c
-> > > > > > +++ b/drivers/block/ublk_drv.c
-> > > > > > @@ -1151,17 +1151,44 @@ static inline void __ublk_abort_rq(stru=
-ct ublk_queue *ubq,
-> > > > > >               blk_mq_requeue_request(rq, false);
-> > > > > >       else
-> > > > > >               blk_mq_end_request(rq, BLK_STS_IOERR);
-> > > > > >  }
-> > > > > >
-> > > > > > +static void ublk_start_io(struct ublk_queue *ubq, struct reque=
-st *req,
-> > > > > > +                       struct ublk_io *io)
-> > > > > > +{
-> > > > > > +     unsigned mapped_bytes =3D ublk_map_io(ubq, req, io);
-> > > > > > +
-> > > > > > +     /* partially mapped, update io descriptor */
-> > > > > > +     if (unlikely(mapped_bytes !=3D blk_rq_bytes(req))) {
-> > > > > > +             /*
-> > > > > > +              * Nothing mapped, retry until we succeed.
-> > > > > > +              *
-> > > > > > +              * We may never succeed in mapping any bytes here=
- because
-> > > > > > +              * of OOM. TODO: reserve one buffer with single p=
-age pinned
-> > > > > > +              * for providing forward progress guarantee.
-> > > > > > +              */
-> > > > > > +             if (unlikely(!mapped_bytes)) {
-> > > > > > +                     blk_mq_requeue_request(req, false);
-> > > > > > +                     blk_mq_delay_kick_requeue_list(req->q,
-> > > > > > +                                     UBLK_REQUEUE_DELAY_MS);
-> > > > > > +                     return;
-> > > > > > +             }
-> > > > > > +
-> > > > > > +             ublk_get_iod(ubq, req->tag)->nr_sectors =3D
-> > > > > > +                     mapped_bytes >> 9;
-> > > > > > +     }
-> > > > > > +
-> > > > > > +     ublk_init_req_ref(ubq, req);
-> > > > > > +}
-> > > > > > +
-> > > > > >  static void ublk_dispatch_req(struct ublk_queue *ubq,
-> > > > > >                             struct request *req,
-> > > > > >                             unsigned int issue_flags)
-> > > > > >  {
-> > > > > >       int tag =3D req->tag;
-> > > > > >       struct ublk_io *io =3D &ubq->ios[tag];
-> > > > > > -     unsigned int mapped_bytes;
-> > > > > >
-> > > > > >       pr_devel("%s: complete: qid %d tag %d io_flags %x addr %l=
-lx\n",
-> > > > > >                       __func__, ubq->q_id, req->tag, io->flags,
-> > > > > >                       ublk_get_iod(ubq, req->tag)->addr);
-> > > > > >
-> > > > > > @@ -1204,33 +1231,11 @@ static void ublk_dispatch_req(struct ub=
-lk_queue *ubq,
-> > > > > >               pr_devel("%s: update iod->addr: qid %d tag %d io_=
-flags %x addr %llx\n",
-> > > > > >                               __func__, ubq->q_id, req->tag, io=
-->flags,
-> > > > > >                               ublk_get_iod(ubq, req->tag)->addr=
-);
-> > > > > >       }
-> > > > > >
-> > > > > > -     mapped_bytes =3D ublk_map_io(ubq, req, io);
-> > > > > > -
-> > > > > > -     /* partially mapped, update io descriptor */
-> > > > > > -     if (unlikely(mapped_bytes !=3D blk_rq_bytes(req))) {
-> > > > > > -             /*
-> > > > > > -              * Nothing mapped, retry until we succeed.
-> > > > > > -              *
-> > > > > > -              * We may never succeed in mapping any bytes here=
- because
-> > > > > > -              * of OOM. TODO: reserve one buffer with single p=
-age pinned
-> > > > > > -              * for providing forward progress guarantee.
-> > > > > > -              */
-> > > > > > -             if (unlikely(!mapped_bytes)) {
-> > > > > > -                     blk_mq_requeue_request(req, false);
-> > > > > > -                     blk_mq_delay_kick_requeue_list(req->q,
-> > > > > > -                                     UBLK_REQUEUE_DELAY_MS);
-> > > > > > -                     return;
-> > > > > > -             }
-> > > > >
-> > > > > Here it needs to break ublk_dispatch_req() for not completing the
-> > > > > uring_cmd, however ublk_start_io() can't support it.
-> > > >
-> > > > Good catch. How about I change ublk_start_io() to return a bool
-> > > > indicating whether the I/O was successfully started?
-> >
-> > That is doable.
-> >
-> > >
-> > > Thinking a bit more about this, is the existing behavior of returning
-> > > early from ublk_dispatch_req() correct for UBLK_IO_NEED_GET_DATA? It
-> >
-> > The requeue isn't related with UBLK_IO_NEED_GET_DATA actually, when
-> > UBLK_IO_FLAG_NEED_GET_DATA is cleared.
-> >
-> > It is usually caused by running out of pages, so we have to requeue unt=
-il
-> > ublk_map_io() can make progress.
-> >
-> > > makes sense for the initial ublk_dispatch_req() because the req will
-> > > be requeued without consuming the ublk fetch request, allowing it to
-> > > be reused for a subsequent I/O. But for UBLK_IO_NEED_GET_DATA, doesn'=
-t
-> > > it mean the io_uring_cmd will never complete? I would think it would
-> > > be better to return an error code in this case.
-> >
-> > The same request will be requeued and re-dispatched to ublk driver afte=
-r
-> > a short delay, so the uring_cmd won't be never complete.
->
-> I am referring to the UBLK_IO_NEED_GET_DATA uring_cmd, not the FETCH
-> one. Doesn't the early return in ublk_dispatch_req() mean
-> ublk_complete_io_cmd() won't be called? How else can the
-> UBLK_IO_NEED_GET_DATA complete?
->
-> >
-> > Anyway, it isn't another story, which shouldn't be added into this
-> > cleanup patch.
->
-> I agree it belongs in a separate patch.
+NOTE: this patch set follows up on Intel TXT DRTM patches that are
+currently under review in their 14th version [0]; therefore, it is not
+standalone!
 
-I am not going to fix it in this patch set. I am not sure what the
-result value for UBLK_IO_NEED_GET_DATA should be if
-ublk_copy_user_pages() returns 0. I also noticed that the return value
-of import_ubuf() is ignored, which means that a bad userspace address
-will result in an uninitialized struct iov_iter. I think ublk_map_io()
-and ublk_unmap_io() may need to have more failure modes.
+The publication of the patches at this point pursues several goals:
+ - Make anyone tracking upstream aware of the maturity of the support
+   for AMD SKINIT.
+ - Collect early feedback on the SKINIT implementation.
+ - Finally, demonstrate the extensibility of Secure Launch for
+   incorporating additional platforms.
 
-Best,
-Caleb
+As the RFC suggest, this series is temporal and will be updated based on
+changes made to the initial Secure Launch series. Review comments are
+greatly welcomed and will be worked/addressed, but we would caution that
+changes to the Secure Launch series will take precedence over review
+comments. Once the Secure Launch series is merged, this series will
+transition from RFC to a formally submitted series.
+
+-----
+
+The patches extend Secure Launch for legacy and UEFI boot with support
+for AMD CPUs and their DRTM in two flavours: SKINIT on its own and SKINIT
+with DRTM service running in PSP/ASP.
+
+The code is adjusted to detect CPU type and handle AMD differently.
+DRTM-specific differences relative to Intel TXT include:
+ - absence of DRTM-specific registers to pass data from bootloader to DLME,
+   resulting in passing some information via boot parameters
+ - use of a different SLRT entry
+ - not sending #INIT to APs
+ - special handling for TPM event logs to make them "compatible" with TXT logs
+
+-----
+
+[0]: https://lore.kernel.org/lkml/20250421162712.77452-1-ross.philipson@oracle.com/
+
+Changes in v2:
+ - rebase onto v14 of the main patch set
+ - cleaner handling of reset in sl_main.c leading to a smaller diff
+ - renamed slr_entry_amd_info::boot_params_{base,addr} for consistency with
+   slr_entry_intel_info
+ - slightly safer slaunch_reset() macro in slmodule.c
+
+-----
+
+Jagannathan Raman (1):
+  psp: Perform kernel portion of DRTM procedures
+
+Michał Żygowski (1):
+  x86: Implement AMD support for Secure Launch
+
+Ross Philipson (6):
+  x86: AMD changes for Secure Launch Resource Table header file
+  x86: Secure Launch main header file AMD support
+  x86: Split up Secure Launch setup and finalize functions
+  x86: Prepare CPUs for post SKINIT launch
+  x86/slmodule: Support AMD SKINIT
+  x86: AMD changes for EFI stub DRTM launch support
+
+Sergii Dmytruk (1):
+  Documentation/x86: update Secure Launch for AMD SKINIT
+
+ .../secure_launch_details.rst                 |  83 +++++-
+ .../secure_launch_overview.rst                |  61 ++--
+ arch/x86/Kconfig                              |   9 +-
+ arch/x86/boot/compressed/sl_main.c            | 271 ++++++++++++++----
+ arch/x86/boot/compressed/sl_stub.S            |  41 ++-
+ arch/x86/include/asm/svm.h                    |   2 +
+ arch/x86/include/uapi/asm/setup_data.h        |   3 +-
+ arch/x86/kernel/Makefile                      |   1 +
+ arch/x86/kernel/setup.c                       |   2 +-
+ arch/x86/kernel/sl-psp.c                      | 239 +++++++++++++++
+ arch/x86/kernel/slaunch.c                     | 193 +++++++++++--
+ arch/x86/kernel/slmodule.c                    | 161 +++++++++--
+ arch/x86/kernel/smpboot.c                     |  15 +-
+ arch/x86/kernel/traps.c                       |   4 +
+ drivers/firmware/efi/libstub/x86-stub.c       |  12 +-
+ drivers/iommu/amd/init.c                      |  12 +
+ include/linux/slaunch.h                       |  83 +++++-
+ include/linux/slr_table.h                     |  15 +
+ 18 files changed, 1044 insertions(+), 163 deletions(-)
+ create mode 100644 arch/x86/kernel/sl-psp.c
+
+
+base-commit: 616c6ae2fa0b736552873af08ad0e5532e04ad80
+-- 
+2.49.0
+
 
