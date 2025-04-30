@@ -1,167 +1,134 @@
-Return-Path: <linux-kernel+bounces-627338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1B8AA4F41
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:59:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694EDAA4F5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE001BC5293
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C0F1C06C7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD89C16DC28;
-	Wed, 30 Apr 2025 14:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vp1dXU1F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9571C07C3
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 14:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66621AF0C8;
+	Wed, 30 Apr 2025 14:59:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8167E1A5B84;
+	Wed, 30 Apr 2025 14:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746025116; cv=none; b=p3c9F2j8qE3EVbLY6Su/fFuZKr1sT6aV9Xyxwm6XIJlt60xutC/jNSeVzmfnCT8lQuvMU8cZcxOB2/bioWO0SRNdyP1mvtzEm0bnVaB7CgFqYgzWm7Fym4i+2/HJx7V3k6NM6zZfjwC2f/dKW09tOMoPMeYpDcDM9s9wf7R7IU0=
+	t=1746025179; cv=none; b=nntuW32uX2GAiTKkW+5soOeUcYJ8GChQotIK436HMdOnzXpryeKUy6hmUbLjiE9Nh6L3c2W67NFqBEi3kQGrBDcla3XCTAVTspRPdeeJg7H1U9p2Prh2++OiBUGcLvtkLvlrVrIFxvUFkMN5cyfTjX23jX3XbWQCr+onhuz92Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746025116; c=relaxed/simple;
-	bh=wB6kpIf21q1Qn6YXVNzBxYXe34/WGz8PYw9bqAw7+C0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ml7Omj1y3tXKBc1piFTO90WvumurvhId1s84WqMhnJgc9K4Nz3IrYa1aWAfQ2zQfMg5gF4IvGCvNLBbu0Gi7Km4NtBIWLmG/PFCSpBF5U/I8EapF/3Wzm3bWKsHm2DW9+T+WsmYH2Bj5MJGjdgdgdMGKnB5zvwVh4iSQKMVbp+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vp1dXU1F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53U9PIVd010516
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 14:58:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0395qd5yJqamGnAr3MiSAsjGjuJlP7P6P9uGyNSoi0w=; b=Vp1dXU1F0aba3NFg
-	3uWHJq72RAyi+rek1JEtvAR8Wj0w9BSEP6vvtZ+MQHWWtvKMZfeJ2eNCU5tzVR/t
-	we61iI2nIkqPMZUaQNVjREG3Es/Qdp+x0KVcBi4n/Q6ZHc3esjwQIfQA3wXdNI+s
-	aEmz+MkaET7DFpLEuL88AuQxIqcRX17qwTNMoyLrsx9a7qPnD2jgkSv2yiE6AmWB
-	W5fq4NzyG/Rh2suQto9lVtMxPYg4pn4mDDZ4tNiiEyfEZDMQZHLZOjL0aqrOJvIF
-	fAJG0pQocQybrAxl8Dl+g6qYkKHluIVhUJC4mOLcJ7SEcGEApey+qCshzXHPn38U
-	bCeaJQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6uathah-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 14:58:33 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2242f3fd213so62876625ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:58:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746025112; x=1746629912;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0395qd5yJqamGnAr3MiSAsjGjuJlP7P6P9uGyNSoi0w=;
-        b=RORVbXKUtppWP3PjyAN6BtaP11Z5AWgsfgquAriwiHoXObr+58goJZSEq7HyzBDFcr
-         DyfFO/1Qofm+G8mcmIsB8IHReuGGFZgxaIdUTMSI6AVr67Ou0tiKsiNa/8e7gl6xlIix
-         jo6IqV2k18uC2LwdJMAL2C7KS3GZKTjI3taYAzrvBpQ0XLKAlUbEtuccfMYgsuY9p8pV
-         L0aPrfOf0w4ouHz+q2VJ4TwYYywu57+YLLWxGYsBMqwK3xUmQffdXHZT2lR956Y5eHeU
-         Juze7te6fPJPdZGNHJWvTDQU5LXeEJsH06VNM/sdKqC8Kizl2tX85BGUwjhLYlZTpkSW
-         9hnw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1nPbtwjwQP+BE01Cv+aFFzDK+72AoBjE9rPUTjziOtTmVIScSgqNM3BJ+FablBMnn5vJmDoNf7zXWWDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx75KD2v3HZKyV/cMuGLuDYsVA+i3SQuT9dIT5W9f5PtclsOarQ
-	PIwaR+3nrr77JTFbTpTDzw2P2vQRFBaD3QNkWO7wranmgeH+py19dFeY7fH1oti1q8lB4B462r2
-	k8cXNfA4h4h0L0q7bw/dop50ptVC/f/smYNm0OOIWAPvaajNySbUVYFyxL0gyctw=
-X-Gm-Gg: ASbGncuL6nQZSWU6cGemTsVGFevjNQ52/EO7f55mwVz7wQSasqh+a7XMooCUeOw5QJc
-	qtPGf9smozpTcHSzTE9iwUxHq8kRuO4k93fmByvgEs6m9wwc8wJQ5vROf5lMMSKkRrLPYq7ImbB
-	UlS/6gnwiYOESSeQiw1kNkafl2njMi5CL6mboC+/uGH5pxRMqs92ArqXz5xSBYD9059YOnZtK73
-	w6Bj4KxmmXOgedQuHYGDgadJ8zM3RuAN1FMAdWrVcG+g3NWV47AicvHDyfQrwwuXIMC6TkP/Wmt
-	TuHxpIUGqmwhfebUnTlqH1uD/sZ8EauFozsSrJBrfUqRzTJwxqsZ
-X-Received: by 2002:a17:903:238e:b0:216:794f:6d7d with SMTP id d9443c01a7336-22df5838d24mr48531915ad.48.1746025112001;
-        Wed, 30 Apr 2025 07:58:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqTq6PHUfdr6lYeZjfMfQgeitmCQj1xj6u1g5wc8lHhOeu4N6jAXqIdsqmrbeggeTxMbY6nQ==
-X-Received: by 2002:a17:903:238e:b0:216:794f:6d7d with SMTP id d9443c01a7336-22df5838d24mr48531545ad.48.1746025111693;
-        Wed, 30 Apr 2025 07:58:31 -0700 (PDT)
-Received: from [192.168.1.4] ([122.164.87.156])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db5102ddcsm122866445ad.190.2025.04.30.07.58.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 07:58:31 -0700 (PDT)
-Message-ID: <a9c8cfe2-2889-4f75-ac5f-10dcd564808e@oss.qualcomm.com>
-Date: Wed, 30 Apr 2025 20:28:24 +0530
+	s=arc-20240116; t=1746025179; c=relaxed/simple;
+	bh=RhAzlCJbPtUUpaoj2kdnNovqzYuOnqKFmxO+EPw/OLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nhELvvDwrbHDsgkOsjaNkA942A3KG0jf8oT1/b/kbfuW6HDMbfQTiWWj7a/SVmna22ZU1fKA8IlO5U1y0SYOb97U1Zk8xmHJ4z28lO4EV0lmpycQPFM0gqW6oSgCzEExq1bCZxNIZREIThmfm5t44z15ZFxdnJ3cGPS9ms0Ewl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66C201007;
+	Wed, 30 Apr 2025 07:59:24 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B37EC3F5A1;
+	Wed, 30 Apr 2025 07:59:29 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	David Hildenbrand <david@redhat.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Zi Yan <ziy@nvidia.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v4 0/5] Readahead tweaks for larger folios
+Date: Wed, 30 Apr 2025 15:59:13 +0100
+Message-ID: <20250430145920.3748738-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] watchdog: qcom: add support to read the restart
- reason from IMEM
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck
- <linux@roeck-us.net>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20250416-wdt_reset_reason-v2-0-c65bba312914@oss.qualcomm.com>
- <20250416-wdt_reset_reason-v2-5-c65bba312914@oss.qualcomm.com>
- <4e9621c2-f347-4cba-9422-b14f96ee4c0b@oss.qualcomm.com>
- <0a774c34-e82d-4ff0-aa3f-4f348f4c2296@oss.qualcomm.com>
- <f6f17489-19ec-4956-ace4-47ec93081359@oss.qualcomm.com>
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-In-Reply-To: <f6f17489-19ec-4956-ace4-47ec93081359@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: ZleSpf4CnBLl5ACFR6dh61Y7AnMHQkLY
-X-Authority-Analysis: v=2.4 cv=KtlN2XWN c=1 sm=1 tr=0 ts=68123a99 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=wj/iefQKNY9P1RSDfSoyGA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=ZnTUR88OqGoCr7JtRBMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: ZleSpf4CnBLl5ACFR6dh61Y7AnMHQkLY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDEwNiBTYWx0ZWRfX1epl6eBYd8Q/ Tq/Y2hAOJGdMfEMdtmVLVgC942uz/N1H0hNFCZ8p5QghIOA1Ck14zkiHX0iw7sNK28bNbGYNmKX sC1/Abt2ta5vP2hA5alR/d1IHh3nya44sfldnrEFNDpDReNanvnMF0gcv4kpENL4KPclnu5FidY
- gVGi9+uVmOR+AAV8Ycy5aAiy3+XueSk/KXK6AXIq5NLDBTJBqXUbykwdghjLFp9E/tOTRNUr3aI WKzQiTZq88mqEfwS/z9rNgFxuuqBllpQkiR2VhyIW1drVKqBWKFkD9Z2PqFAaWtUbZ61vJufd6V wVZ7hqk9XhLvVJusNCk6v9H4DrJbW43WtlYW8MY3E0FWICbHEGrM3z1oWHwaAvP9E+iItLN4875
- LEwaoU0DKlfPLZHs43CseC9cA+vElGS6tlElMMuN3NJf+l33yVSnGM5UHh1anZ+BjXYnnJL3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300106
 
+Hi All,
 
-On 4/30/2025 7:58 PM, Konrad Dybcio wrote:
-> On 4/17/25 8:19 AM, Kathiravan Thirumoorthy wrote:
->> On 4/16/2025 8:21 PM, Konrad Dybcio wrote:
->>>>        .max_tick_count = 0xFFFFFU,
->>>>    };
->>>>    +static int  qcom_wdt_get_restart_reason(struct qcom_wdt *wdt,
->>> double space> +                    const struct qcom_wdt_match_data *data)
->>>
->>> Please align this
->>
->> Ack.
->>
->>
->>>> +{
->>>> +    struct regmap *imem;
->>>> +    unsigned int val;
->>>> +    int ret;
->>>> +
->>>> +    imem = syscon_regmap_lookup_by_compatible(data->compatible);
->>> I still think nvmem could be better here, as it allows to plug in
->>> more magic values
->>
->> Sure, I will be on vacation next week. I shall check on how to use nvmem here once I'm back.
-> We talked offline and I learned that IMEM is not in fact non-volatile, so
-> while good looking, the nvram APIs are probably not really fit for it.
->
-> Let's continue with the syscon approach.
+This RFC series adds some tweaks to readahead so that it does a better job of
+ramping up folio sizes as readahead extends further into the file. And it
+additionally special-cases executable mappings to allow the arch to request a
+preferred folio size for text.
 
+Previous versions of the series focussed on the latter part only (large folios
+for text). See [3]. But after discussion with Matthew Wilcox last week, we
+decided that we should really be fixing some of the unintended behaviours in how
+a folio size is selected in general before special-casing for text. As a result
+patches 1-4 make folio size selection behave more sanely, then patch 5
+introduces large folios for text. Patch 5 depends on patch 1, but does not
+depend on patches 2-4.
 
-Thanks Konrad for the discussion.
+---
 
+I'm leaving this marked as RFC for now as I intend to do more testing, and
+haven't yet updated the benchmark results in patch 5 (although I expect them to
+be similar).
 
->
-> Konrad
+Applies on top of Monday's mm-unstable (b18dec6a6ad3) and passes all mm
+kselftests.
+
+Changes since v3 [3]
+====================
+
+ - Added patchs 1-4 to do better job of ramping up folio order
+ - In patch 5:
+   - Confine readahead blocks to vma boundaries (per Kalesh)
+   - Rename arch_exec_folio_order() to exec_folio_order() (per Matthew)
+   - exec_folio_order() now returns unsigned int and defaults to order-0
+     (per Matthew)
+   - readahead size is honoured (including when disabled)
+
+Changes since v2 [2]
+====================
+
+ - Rename arch_wants_exec_folio_order() to arch_exec_folio_order() (per Andrew)
+ - Fixed some typos (per Andrew)
+
+Changes since v1 [1]
+====================
+
+ - Remove "void" from arch_wants_exec_folio_order() macro args list
+
+[1] https://lore.kernel.org/linux-mm/20240111154106.3692206-1-ryan.roberts@arm.com/
+[2] https://lore.kernel.org/all/20240215154059.2863126-1-ryan.roberts@arm.com/
+[3] https://lore.kernel.org/linux-mm/20250327160700.1147155-1-ryan.roberts@arm.com/
+
+Thanks,
+Ryan
+
+Ryan Roberts (5):
+  mm/readahead: Honour new_order in page_cache_ra_order()
+  mm/readahead: Terminate async readahead on natural boundary
+  mm/readahead: Make space in struct file_ra_state
+  mm/readahead: Store folio order in struct file_ra_state
+  mm/filemap: Allow arch to request folio size for exec memory
+
+ arch/arm64/include/asm/pgtable.h |  8 +++++
+ include/linux/fs.h               |  4 ++-
+ include/linux/pgtable.h          | 11 +++++++
+ mm/filemap.c                     | 55 ++++++++++++++++++++++++--------
+ mm/internal.h                    |  3 +-
+ mm/readahead.c                   | 27 +++++++++-------
+ 6 files changed, 81 insertions(+), 27 deletions(-)
+
+--
+2.43.0
+
 
