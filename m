@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-627206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E76AA4D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:16:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35F5AA4D32
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8891D7AAEB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BC0170376
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229F725DB15;
-	Wed, 30 Apr 2025 13:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8529F25C828;
+	Wed, 30 Apr 2025 13:15:35 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E60D1E5B8A
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36CF2AF14
 	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018936; cv=none; b=XlTTRfmu/tm86IbwVQaelAxZ6jfd9nV/w14u0AHoS3adbx9jj1Z4vrLVqTi2/5UV5YEm69Sp5FE3pXzT4wTCyl+LBIRXHaT6HH5q0qhsT5X6a4hdTmiM2BfQXBqxShU4IWTGtYj6qre7VHcEbDs4ynkQr/xaRgK49k36qKv6tu8=
+	t=1746018935; cv=none; b=ibXQLGqTYlege+NPPbxv2GduPEEzvKDydjbOZS5dg9FDoe1+uXz+hIF/jHtfvYqrlDvZUHXtlLHQBWt8UTuSL/rCv2SKPyQ2wIu4+96pLgGM/YZwfmihQ2u4A9h4AUswhHYMOe0FL7dVTBB+9DEECS/NfZ6B6Do+k/5wtDCYgYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018936; c=relaxed/simple;
-	bh=tfAd7pxoIaaF4Wc0E9TXD8BNBW9T4Pxdgh3Abv0XiWw=;
+	s=arc-20240116; t=1746018935; c=relaxed/simple;
+	bh=uOjghlcsMo3DEQkUwDPO1+tvx20efvE49bhgbT+elEw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ClAJVtlWmDUcFk4kHYT1296UW3Zi6jlt+XodMWb3H0rrGd3rse7pd2+/ouhWuflQTbD2VQwA0Qeoc72iIxq+lGuZOrpcqLKSbfhrWPMDTUnp1PagMPJZqQNF3Et2FfVirQ6nao9z98lVrFY6okHcidz93dOE0tj91ekFhNSa8D0=
+	 MIME-Version; b=pLvyNjy5JEH+Z6Uq9YaARBLdI26F9zdtQXVwrF7GfCQqymNhHzy1l3JnBUPPL9Hm/P7wAqVTxs+5KOQNFdtY0PuW2LrkvS5IP7Xqqr9wwTC3RcMNlgqJZ5ZUeEaB66XJxoxCTOJsN2gR3cW/Nh+OplEOvuJ/jf3YmMI6l+6ApiI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxbWtrIhJoIznLAA--.8933S3;
-	Wed, 30 Apr 2025 21:15:23 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8BxrOJsIhJoJjnLAA--.35231S3;
+	Wed, 30 Apr 2025 21:15:24 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCx_cZmIhJoqoKgAA--.14402S4;
+	by front1 (Coremail) with SMTP id qMiowMCx_cZmIhJoqoKgAA--.14402S5;
 	Wed, 30 Apr 2025 21:15:23 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>
 Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] LoongArch: Enable tracing infrastructure in defconfig
-Date: Wed, 30 Apr 2025 21:15:13 +0800
-Message-ID: <20250430131516.24287-3-yangtiezhu@loongson.cn>
+Subject: [PATCH 3/5] LoongArch: Enable tracing syscalls in defconfig
+Date: Wed, 30 Apr 2025 21:15:14 +0800
+Message-ID: <20250430131516.24287-4-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20250430131516.24287-1-yangtiezhu@loongson.cn>
 References: <20250430131516.24287-1-yangtiezhu@loongson.cn>
@@ -49,14 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCx_cZmIhJoqoKgAA--.14402S4
+X-CM-TRANSID:qMiowMCx_cZmIhJoqoKgAA--.14402S5
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ur1DGF1DJr1rGrWDWr1fZrc_yoW8WFWDpr
-	4fCws8trZ5Jr1Sk39rAr97WrZ5tr97Cr13W3W7CrW7C393Zw4jvF40gry3uF4DXa9xtw4F
-	va95Krya9FWUC3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kr18try7Zr47Gr1xAr43urX_yoW8Gw1Up3
+	W5Aw1DGr48GrnYkrW7CrZ7Wws2yFZ7GFy7Ww1UZry5A39xXw10vr4rKFyY9FW7u395t3yF
+	vF95KF129FyUZacCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
 	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
 	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
 	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
@@ -65,46 +65,42 @@ X-Coremail-Antispam: 1Uk129KBj93XoW7ur1DGF1DJr1rGrWDWr1fZrc_yoW8WFWDpr
 	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
 	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7
 	IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8l38UUUUUU==
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jOdb8UUUUU=
 
-When executing the command "perf list", I met "Error: failed to open
-tracing events directory" twice, the first reason is that there is no
-"/sys/kernel/tracing/events" directory due to it does not enable the
-kernel tracing infrastructure with CONFIG_FTRACE, the second reason
-is that there is no root privileges.
+There exist the following errors when building bpf selftest:
 
-Although the error string was added to tell the users what happened
-and what should to do in commit b48543c451c3 ("perf list: Give clues
-if failed to open tracing events directory"), it is better to enable
-CONFIG_FTRACE in defconfig to avoid the error message at runtime:
+  $ cd tools/testing/selftests/bpf/
+  $ make
+  ...
+  CLNG-BPF [test_progs] profiler1.bpf.o
+  In file included from progs/profiler1.c:5:
+  progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  ...
+  progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  ...
+  progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  ...
+  3 errors generated.
 
-  $ ./perf list
-  Error: failed to open tracing events directory
-  /sys/kernel/tracing/events: No such file or directory
-
-Additionally, CONFIG_UPROBE_EVENTS is default y only if CONFIG_FTRACE
-is set, otherwise there exists the following error:
-
-  $ ./perf probe -x /usr/lib64/libcrypto.so BN_mod_mul_montgomery
-  /sys/kernel/tracing//uprobe_events does not exist.
-  Please rebuild kernel with CONFIG_UPROBE_EVENTS=y.
-    Error: Failed to add events.
+This is because there is no basic tracer to catch the syscall entry
+and exit events, it is better to enable the kernel tracing syscalls
+with CONFIG_FTRACE_SYSCALLS in defconfig to avoid the building errors.
 
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- arch/loongarch/configs/loongson3_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/loongarch/configs/loongson3_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
-index a3c9d189a627..eaaf3419555c 100644
+index eaaf3419555c..4289e3abf8c7 100644
 --- a/arch/loongarch/configs/loongson3_defconfig
 +++ b/arch/loongarch/configs/loongson3_defconfig
-@@ -1006,5 +1006,4 @@ CONFIG_STRIP_ASM_SYMS=y
+@@ -1006,4 +1006,5 @@ CONFIG_STRIP_ASM_SYMS=y
  CONFIG_MAGIC_SYSRQ=y
  CONFIG_DEBUG_FS=y
  CONFIG_SCHEDSTATS=y
--# CONFIG_FTRACE is not set
++CONFIG_FTRACE_SYSCALLS=y
  CONFIG_UNWINDER_ORC=y
 -- 
 2.42.0
