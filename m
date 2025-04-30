@@ -1,335 +1,137 @@
-Return-Path: <linux-kernel+bounces-626706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D33DAA4654
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51841AA466B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB5F1BC7C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E62B9C7469
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D77222259A;
-	Wed, 30 Apr 2025 09:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F16621D58F;
+	Wed, 30 Apr 2025 09:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RUgdbKRN"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HOrwCMxH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A2D220685
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6114421D3F9;
+	Wed, 30 Apr 2025 09:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746003801; cv=none; b=YNGSBj2mdGr3AlGo1YEDOLEfxW+2JtNngUiP7/1somLjzLIEfeOK1k0aUg/Q8DrHtqGczFkXzo9h4C9ekO0L1F7Co3RqcMPu5WWuuKd4FDZxwzboQsZ0jskBrirh03dJ/hKww6l6R9d/fEp5BJ1cqiHAXQjZkuJXGx8mSREGFAQ=
+	t=1746003856; cv=none; b=LSRsc9KZYZk0udqM4j81brVbiK/n50Q491RZPrd4w0GkntsczZ2Z3sRjr1IfVW7PJlhCBQdeI4X64cEcSjuirugtxRkArvVJba+gc9znvYeWlUoG7sl7ptjiVwJhvVculBsmuVLAl8v0cj3E2EoMGBaAKmYgA7uRtXTwEOHWLAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746003801; c=relaxed/simple;
-	bh=o1Qsb3HDQ0y1fMYD5Z0n6QAiTpx3nP8QGVFUewn/r80=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lOAZYFkRuyO3IywIC3Jj0xVEC35c2rnf8DRT20Ubwu95gChkbIxZvYPflB0oaGvDA5wmf6d1ach3CUE6Cj4CN4PZUeUnzA6HUPFYphCZFZwZw5RTWqD83wlFxRhAb6nNbLbHVXMEgKuarT9albcRXsWWsMjVELM0mY8sWbwnD8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RUgdbKRN; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso1526822166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746003796; x=1746608596; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7zdeylOylYk/fCkkbzL6TPhsYQZ5wrS4PeyDnGbCM1E=;
-        b=RUgdbKRNqBWrN6+AIZYfWxJ8P4HnZmG8AA44PicMbv8BNVyhxFWHWv4mns+mYK3Vt3
-         xxAL/TVwb4DxiPElle9ywDk5eQj/Ajmf2u75KnqBF6iocKoxk3YTNt4UO8wI7Qjh+SRL
-         bv3904SsYOTtkXBUUbHHHNY2FZR0WeYbG/aiZwCIy9Sh0SDqJ1h8aJFuY/FYb4ak+BBU
-         4QsLwwupWiW7/7iXVwl6Wevx1GsfwHSItjMq+02KJuSVVUUeUKDX+kg6qmMs4206wBWX
-         S6CMBdDV3f0b8IjCZtxKNebaIa698jsw4yYaXcIjD1fUDJeGxgsVaOsd9HOdY6EOotWP
-         SotA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746003796; x=1746608596;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7zdeylOylYk/fCkkbzL6TPhsYQZ5wrS4PeyDnGbCM1E=;
-        b=bYul3fRZn8UjCWbvxJlNha74WuBnLypsHG5LA61rVm4/MC4xqXKwBG1wMCRMLKcDBu
-         LTn9Xun1i2ssEZfnbhatFGS3ndoC0VIyKKc8SyYUhRfHAuQK1kpF9NQDbcZe7DguVWJe
-         wRQ3gNiNd0w40sR9/MIsIcm5VslYBwcJcE37cq0L2YpNjBM4wd9uOpKxIOwo5k09/yYS
-         mdyS/B2mP67l3H5adFo3jszYkKI/048lP9hAEEgyGNRxxr64aupzzbvHc3LA6UG2e5eB
-         apLO/FG6dRj14TdnmHxy6Ggvg74xN18ZrrpZKybEjTDJrJx23YtOaC3nvSkbG5+Q/Mn7
-         6w6g==
-X-Forwarded-Encrypted: i=1; AJvYcCX/tUiUVdD+qEYLRl7m+w2Awb6LLJF/y7sfKT3VqciSW3m6trZenYTb7XOFzcjTpt/vXvGsuRuF8Io/YrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjUGAdWfVNHEt8RvsKhR0oZZ4ii/6U+SD4sy9mpwHUlzAd4W3e
-	Rde17YCzpDQv5rPEjQtlma7/P9fRTuMMdqkHFOW92Xe3TTtMkZDf4CA4ruAZtGg=
-X-Gm-Gg: ASbGnctvNb3v/4QNacfP04RyH1+HTeSSN9cO2O0XbO9OYIbvWcZd19AQoCRfzqyB+Eo
-	Oo8OPA+ihKI2E/EYsfbEf8pT+fj2aQch3mor8sHSMNABIHFmY7kLLYiJR/XPSesaHPJWyGPaYNx
-	ssitvHqFAOuWHzYCvDPWHNnF3ejkG+/aMwyUmxnvS264fLpoHoXu4LyUEJs7Nhx7a7VTmjxG6BG
-	LsjqFXM4oD7tiRimR+0g4+uM80LXNCj/5bR+s1Q4zrSqmyPRLCuQwGqBOBs7HUowuTSqPGVo6v2
-	YJzr9b5OT4jTcJEIV0SpZ3101SiyFhCqXuDn/QFGEGSrKdjcNM7IRdRpVeaoSQbTjjzFPjRwFqz
-	Poky+cTOgkerQDq6IsmEtRUqd
-X-Google-Smtp-Source: AGHT+IGRuZJzgfE7wlsVQE+YnNAFAyvNW5Es5waeCyPJcJDIWE808tuoEyrNnMHOCdChveQaY2Wd9A==
-X-Received: by 2002:a17:907:7f17:b0:ace:d957:d6d8 with SMTP id a640c23a62f3a-acedc66a629mr224380466b.34.1746003795647;
-        Wed, 30 Apr 2025 02:03:15 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41bbb6sm889676766b.28.2025.04.30.02.03.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 02:03:15 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 30 Apr 2025 10:03:13 +0100
-Subject: [PATCH v9 6/6] nvmem: max77759: add Maxim MAX77759 NVMEM driver
+	s=arc-20240116; t=1746003856; c=relaxed/simple;
+	bh=EkoOHQPQ3eaqRG+VimOFjk0KxHikHPluhIjOJ55s28Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VG6HKbuMIwijY1AmnjRyWQaM+tTMHX7DKyk2WP57tA+HGUgtOnOnQoYEWAAmiRbJ1KaQkir1ZiLYghRaNGostrUDYV9KX0mAhWiqFKxYgiZpeVyJdlf01Z79uZJ+xIGv+E+pO0+eXK36QfSaFdeOHKzanG8i2RymuUeU4zX1hr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HOrwCMxH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TNkGna027564;
+	Wed, 30 Apr 2025 09:03:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=vKuBZ5aZc0d1DJ2ixmVGYewRSDRmMTUcAvN2prhmT
+	kc=; b=HOrwCMxHMgMabaP+Kinn51j52stEhUWOZXo3pp6SQXC2RlTIZ+g2mj83C
+	QHlGx/GK5XkMAjlWRv/WHHhiQ/ydicPPU9tR0x2A6fCnCAJw+GA7yMnz5tUs2PL1
+	uuF+Wxk26vZyjmnhNAHvPdsiyPzyVxpG3BKvzFbScPJ/syDBPo9VuTji/Lt4+u6n
+	bhd/I8i9+5fvQouCHqj11tcF7ELXDd6OZyFS/VI++j45kI4bW7MASVm1wtgTFsfR
+	LI0c9GFRFW2kSoCmCB5JMYN5ctH6kECzVzbqLbmqhK0pKr2JHhdfpCFR/KOSOiQD
+	BdVko79xZAXSdQs+mhvZ1pDZE/ngQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b8r0sqks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 09:03:58 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53U8mTQN021165;
+	Wed, 30 Apr 2025 09:03:57 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b8r0sqkk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 09:03:57 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53U7DEPl031627;
+	Wed, 30 Apr 2025 09:03:57 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4699tu79wn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 09:03:56 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53U93r7C17629530
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 09:03:53 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65DEF20043;
+	Wed, 30 Apr 2025 09:03:53 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EDC1F20075;
+	Wed, 30 Apr 2025 09:03:50 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com.com (unknown [9.39.31.221])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Apr 2025 09:03:50 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
+        zohar@linux.ibm.com, nayna@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Enhancements to the secvar interface in static key management mode
+Date: Wed, 30 Apr 2025 14:33:47 +0530
+Message-ID: <20250430090350.30023-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250430-max77759-mfd-v9-6-639763e23598@linaro.org>
-References: <20250430-max77759-mfd-v9-0-639763e23598@linaro.org>
-In-Reply-To: <20250430-max77759-mfd-v9-0-639763e23598@linaro.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA2MCBTYWx0ZWRfX5CwEZ7CcAuaH 3JCjHEbeTGRgoqDQLepQqbrjtefpMY/V6FN6IVI7vwBene6TRku7Aups4kt74CdKU08uywcXSPT Bjlxn5SrcRsgMGcPYvxOTuaLbTrK40YKRBhZjYI0bZTq8h/exvWYJd6uIiI5wqQt26Tb2k2xahq
+ 8CqFE8J9HcBx00wvtKJMjS1SvvyUmLmOsF2bSjdmIeWnXYYtnKHR9y8SM6G3TXf3P/lhu6hlQgE hd3K6hVnmYmAIYl80+O85tweEkB+Q7LY3w5H4AgtMg4Nz/Ytry3pvN6FkfnQtbGeCRkT8sks3hr 0ViXFKs2MNKxX6V+3/6Qbt69cTmsZoZzA/5xxl0J4FOBRoASsUJk4D60Zlwfhw4Nl+bSiASaERK
+ Be7QFUSxGsQ+SR++i7SOU5tnwoyN/uerOmiwVm23XK6o7gQQJtMFYnJVgHOYjv2Aj1X92XcD
+X-Authority-Analysis: v=2.4 cv=OqdPyz/t c=1 sm=1 tr=0 ts=6811e77e cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=XR8D0OoHHMoA:10 a=-1jmnclONZOZV9iy3uUA:9
+X-Proofpoint-GUID: WsIpi0vml3b7-lnxn2t7OFbitzGNn3PZ
+X-Proofpoint-ORIG-GUID: 6QxYdSmDHmGiKknebpMSRVYlQek6CcKv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_02,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1011 spamscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300060
 
-The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-Port Controller (TCPC), NVMEM, and a GPIO expander.
+The PLPKS enabled Power LPAR sysfs exposes all of the secure boot secure
+variables irrespective of the key management mode. There is support for
+both static and dynamic key management and the key management mode can
+be updated using the management console. The user can modify the secure
+boot secvars db, dbx, grubdb, grubdbx, and sbat only in the dynamic key
+mode. But the sysfs interface exposes these secvars even in static key
+mode. This could lead to errors when reading them or writing to them in
+the static key mode.
 
-This driver exposes the non volatile memory using the platform device
-registered by the core MFD driver.
+Update the secvar format property based on the key management mode and
+expose only the secure variables relevant to the key management mode.
+Enable loading of signed third-party kernel modules in the static key
+mode when the platform keystore is enabled.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-v9:
-* drop superfluous max77759_nvmem_is_valid() (Srini)
+Srish Srinivasan (3):
+  powerpc/pseries: Correct secvar format representation for static key
+    management
+  powerpc/secvar: Expose secvars relevant to the key management mode
+  integrity/platform_certs: Allow loading of keys in static key
+    management mode
 
-v8:
-* replace MODULE_ALIAS() with .id_table (Krzysztof)
-* drop previous tags
-
-v5:
-* follow API updates of max77759 core driver
-
-v2:
-* align sentinel in max77759_nvmem_of_id[] with other max77759 drivers
- (Christophe)
----
- MAINTAINERS                    |   1 +
- drivers/nvmem/Kconfig          |  12 ++++
- drivers/nvmem/Makefile         |   2 +
- drivers/nvmem/max77759-nvmem.c | 145 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 160 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0db5e1fe64930e85265913e6a7dd2669c645cf42..b821502afc48f95d48fb8c6ac6941d1dd8e63582 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14670,6 +14670,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
- F:	drivers/gpio/gpio-max77759.c
- F:	drivers/mfd/max77759.c
-+F:	drivers/nvmem/max77759-nvmem.c
- F:	include/linux/mfd/max77759.h
- 
- MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 8671b7c974b933e147154bb40b5d41b5730518d2..3de07ef524906ad24a89e58abdfe93529a83c80f 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -154,6 +154,18 @@ config NVMEM_LPC18XX_OTP
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called nvmem_lpc18xx_otp.
- 
-+config NVMEM_MAX77759
-+	tristate "Maxim Integrated MAX77759 NVMEM Support"
-+	depends on MFD_MAX77759
-+	default MFD_MAX77759
-+	help
-+	  Say Y here to include support for the user-accessible storage found
-+	  in Maxim Integrated MAX77759 PMICs. This IC provides space for 30
-+	  bytes of storage.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called nvmem-max77759.
-+
- config NVMEM_MESON_EFUSE
- 	tristate "Amlogic Meson GX eFuse Support"
- 	depends on (ARCH_MESON || COMPILE_TEST) && MESON_SM
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 5b77bbb6488bf89bfb305750a1cbf4a6731a0a58..a9d03cfbbd27e68d40f8c330e72e20378b12a481 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -34,6 +34,8 @@ obj-$(CONFIG_NVMEM_LPC18XX_EEPROM)	+= nvmem_lpc18xx_eeprom.o
- nvmem_lpc18xx_eeprom-y			:= lpc18xx_eeprom.o
- obj-$(CONFIG_NVMEM_LPC18XX_OTP)		+= nvmem_lpc18xx_otp.o
- nvmem_lpc18xx_otp-y			:= lpc18xx_otp.o
-+obj-$(CONFIG_NVMEM_MAX77759)		+= nvmem-max77759.o
-+nvmem-max77759-y			:= max77759-nvmem.o
- obj-$(CONFIG_NVMEM_MESON_EFUSE)		+= nvmem_meson_efuse.o
- nvmem_meson_efuse-y			:= meson-efuse.o
- obj-$(CONFIG_NVMEM_MESON_MX_EFUSE)	+= nvmem_meson_mx_efuse.o
-diff --git a/drivers/nvmem/max77759-nvmem.c b/drivers/nvmem/max77759-nvmem.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..c9961ad0e232e152e924b5b06d7d93172760ac3a
---- /dev/null
-+++ b/drivers/nvmem/max77759-nvmem.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Copyright 2020 Google Inc
-+// Copyright 2025 Linaro Ltd.
-+//
-+// NVMEM driver for Maxim MAX77759
-+
-+#include <linux/dev_printk.h>
-+#include <linux/device.h>
-+#include <linux/device/driver.h>
-+#include <linux/err.h>
-+#include <linux/mfd/max77759.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/overflow.h>
-+#include <linux/platform_device.h>
-+#include <linux/string.h>
-+
-+#define MAX77759_NVMEM_OPCODE_HEADER_LEN 3
-+/*
-+ * NVMEM commands have a three byte header (which becomes part of the command),
-+ * so we need to subtract that.
-+ */
-+#define MAX77759_NVMEM_SIZE (MAX77759_MAXQ_OPCODE_MAXLENGTH \
-+			     - MAX77759_NVMEM_OPCODE_HEADER_LEN)
-+
-+struct max77759_nvmem {
-+	struct device *dev;
-+	struct max77759 *max77759;
-+};
-+
-+static int max77759_nvmem_reg_read(void *priv, unsigned int offset,
-+				   void *val, size_t bytes)
-+{
-+	struct max77759_nvmem *nvmem = priv;
-+	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
-+		    MAX77759_NVMEM_OPCODE_HEADER_LEN);
-+	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	int ret;
-+
-+	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_READ;
-+	cmd->cmd[1] = offset;
-+	cmd->cmd[2] = bytes;
-+	rsp->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
-+
-+	ret = max77759_maxq_command(nvmem->max77759, cmd, rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(cmd->cmd, rsp->rsp, MAX77759_NVMEM_OPCODE_HEADER_LEN)) {
-+		dev_warn(nvmem->dev, "protocol error (read)\n");
-+		return -EIO;
-+	}
-+
-+	memcpy(val, &rsp->rsp[MAX77759_NVMEM_OPCODE_HEADER_LEN], bytes);
-+
-+	return 0;
-+}
-+
-+static int max77759_nvmem_reg_write(void *priv, unsigned int offset,
-+				    void *val, size_t bytes)
-+{
-+	struct max77759_nvmem *nvmem = priv;
-+	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length,
-+		    MAX77759_MAXQ_OPCODE_MAXLENGTH);
-+	int ret;
-+
-+	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_USER_SPACE_WRITE;
-+	cmd->cmd[1] = offset;
-+	cmd->cmd[2] = bytes;
-+	memcpy(&cmd->cmd[MAX77759_NVMEM_OPCODE_HEADER_LEN], val, bytes);
-+	cmd->length = bytes + MAX77759_NVMEM_OPCODE_HEADER_LEN;
-+	rsp->length = cmd->length;
-+
-+	ret = max77759_maxq_command(nvmem->max77759, cmd, rsp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(cmd->cmd, rsp->rsp, cmd->length)) {
-+		dev_warn(nvmem->dev, "protocol error (write)\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77759_nvmem_probe(struct platform_device *pdev)
-+{
-+	struct nvmem_config config = {
-+		.dev = &pdev->dev,
-+		.name = dev_name(&pdev->dev),
-+		.id = NVMEM_DEVID_NONE,
-+		.type = NVMEM_TYPE_EEPROM,
-+		.ignore_wp = true,
-+		.size = MAX77759_NVMEM_SIZE,
-+		.word_size = sizeof(u8),
-+		.stride = sizeof(u8),
-+		.reg_read = max77759_nvmem_reg_read,
-+		.reg_write = max77759_nvmem_reg_write,
-+	};
-+	struct max77759_nvmem *nvmem;
-+
-+	nvmem = devm_kzalloc(&pdev->dev, sizeof(*nvmem), GFP_KERNEL);
-+	if (!nvmem)
-+		return -ENOMEM;
-+
-+	nvmem->dev = &pdev->dev;
-+	nvmem->max77759 = dev_get_drvdata(pdev->dev.parent);
-+
-+	config.priv = nvmem;
-+
-+	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
-+}
-+
-+static const struct of_device_id max77759_nvmem_of_id[] = {
-+	{ .compatible = "maxim,max77759-nvmem", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max77759_nvmem_of_id);
-+
-+static const struct platform_device_id max77759_nvmem_platform_id[] = {
-+	{ "max77759-nvmem", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, max77759_nvmem_platform_id);
-+
-+static struct platform_driver max77759_nvmem_driver = {
-+	.driver = {
-+		.name = "max77759-nvmem",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.of_match_table = max77759_nvmem_of_id,
-+	},
-+	.probe = max77759_nvmem_probe,
-+	.id_table = max77759_nvmem_platform_id,
-+};
-+
-+module_platform_driver(max77759_nvmem_driver);
-+
-+MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
-+MODULE_DESCRIPTION("NVMEM driver for Maxim MAX77759");
-+MODULE_LICENSE("GPL");
+ Documentation/ABI/testing/sysfs-secvar        |  9 +-
+ arch/powerpc/platforms/pseries/plpks-secvar.c | 98 ++++++++++++-------
+ .../integrity/platform_certs/load_powerpc.c   |  5 +-
+ 3 files changed, 73 insertions(+), 39 deletions(-)
 
 -- 
-2.49.0.901.g37484f566f-goog
+2.47.1
 
 
