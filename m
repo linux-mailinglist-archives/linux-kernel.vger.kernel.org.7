@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-627652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160BEAA5374
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:14:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FC5AA537B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46DE87ABB6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6529E42DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0A727E7F4;
-	Wed, 30 Apr 2025 18:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6C4283FCE;
+	Wed, 30 Apr 2025 18:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLUNb8lP"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkDTCbkQ"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AD927E7CB
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7A62749CA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746036680; cv=none; b=m01An2X1uAl1R04VGYdnMZ5bvyGMXjStLJT/FWGynMap4EICF/EqOEeGbxJFQYRIEFrJkvaMN93UoCT16cWdghKhi/a+iZ+dvtHk6fkN1o8s5ZSODADCduuSvfbVzLRiV2KHxb8+a9GO5MaytMr7QlKDY6LaqV6p22gX2h1Gicg=
+	t=1746036683; cv=none; b=pWS8/HaZmSR7hw9VxRs27wxONUrqZkFRSaPm7DULONttTGEn5iCDUFvrCj+Ra8GjrsEER6No+6QEdsh/MIhqYmjxsTBEO2mqz9/rPt1LcnaP4mmIi+X3jsk+/0rXRgDBEktKOVpeqw3YfE/kI1wVh+vKdcMbR3N2ejY/EeMQ3lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746036680; c=relaxed/simple;
-	bh=2+zHp3o6v4QSVzp94ClonbDqg/k5+dUzGUoCLjRAKLo=;
+	s=arc-20240116; t=1746036683; c=relaxed/simple;
+	bh=We8Dff6Q27N+5ZEddI/zKbc2E8guH42H5LUvj7Sdpas=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZX2xZlPXJ+gn2Tz822gL+VoyHkhSI3BbNsUFneOYYB7bepoDreLNeCv01koqYKfpiCH2bl/w8++nEj63uCw+UqeoTJncVI8vGSsbEI/s0IJe6RrLO66dZ+ViwyTsiN0o21XZwNQAEptIc/HCicnKvnp112/eeYrnWt0Ithb5wgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bLUNb8lP; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=MThNKVcKjvtLpVT3gdUnHGW+GHbVfO6YpSQgRxEzC1FSzmQP4M8gY4PAHuimtI+AbnVf6UTKoyKKTxNp1dd12VOYvbHqTH4S0vR1ZbPdCUzUu+b9ZUXRFx8DiR0qskZnmTqy5otjAfCTkq/8N1nMpi58Ew52ARWkC9cTw3HOfPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkDTCbkQ; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7399838db7fso283274b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:17 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so127183a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746036677; x=1746641477; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746036681; x=1746641481; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=NRi4DVQ4l2yFg1fX4IS9tDs6tW+LC63jcXq9t1eYUbg=;
-        b=bLUNb8lPgIAbQivTjoIOxkLs/now8WOA0BvdAysge4hMXIsMoaIkcV3aMmSIM0NOEE
-         P5YjqTWb7mlpPizxY+y2GQxTXgrjgXpD7UZ5sOIzhTHzH5EY0ShLUSYXGQEYL5keWoRp
-         A6mcYIEz6tom0FPYHdAIPzY6XeSvCQ7DaOexCTgEbsbH+qIsz6dOenyqPMdFr1L193LV
-         pouOUlxeTcs3FYueGM45FTSdvDJFQFt6gkcFWNzouuv2RgP3zEtWpeaCbcGhC+R1hkyw
-         sNWoEyNwZvwYtn8W5gabUP4OQLmjq4k+F53G1U+cxq2DiB32uALJWPko+IYWK7K/MNfB
-         PEaQ==
+        bh=9qHFF/xTlBQeExdAl4eX04pdKCEarK6ESk+cMoKBj4E=;
+        b=JkDTCbkQJgRwHu+zzA91fpv26bj7Z1q5hoo4d6q0k2z6cGSdH77MSQi4/k3ZH6dmpc
+         +rtzEpPZwhTC93iDnwFuifFHi8zGyNS5BDDNflcyfqzVrEXbmipJYwfG/GXM0YDtq4Pc
+         gy98cnIrIBB5CGISeLsYqKp1AKkeIgLMtw2SMjW/foSZ9IbwAAokFt7EwFIrWC/wi0VU
+         7a2UMSN7jXkw6jNgdgrG9VWAJF9V7m14rrMi6D/4wVowUWy53ByFBmFOyiuWh+CTTEQ0
+         cHdFRyGju4ZZS/VSDRugs2+bczYyR+zQJZDdraQqgODxviUsUbMGv7T4Jjmv7N8Yr0po
+         IkgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746036677; x=1746641477;
+        d=1e100.net; s=20230601; t=1746036681; x=1746641481;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NRi4DVQ4l2yFg1fX4IS9tDs6tW+LC63jcXq9t1eYUbg=;
-        b=IR1fnLT813fBMRGgkDEB0FiIl3Euc4xyhA3plbaFG1P3BcZWG2BiuyB97LWDfcp4lL
-         c8ebMiyRZPBPX5XMUkgLNsgiF6UuM2naVlwPMfxe8A/XdoygOlFLUZqs9vIB6ZxrAqLW
-         +KoNzjvHjZjYHSLqFI0vQbQH7GwfrU9NB1ICHN3ZUoqRK67CX7D2bpISy8se+VCXdEes
-         pi7xAMNs8OGyB7CgXFxJ11cx7fKK1KUfngWZ4ckqGXJRgOiD+DDL5XeVfum2SzhvCV/p
-         2eBDXFCThWYgac1Iah5X+qpPLX0PUeLk08zRD/MtKC6nF17n0hOmXA6kXBlVyQdh1y2n
-         ymJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGRHLS2DK78+T7qhwzU13DwTVor3w5MEjWkAC9yEJmP3xksISieH2W/F6do0Jkh6IUeZF4+pv60jxMXY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfYUC6PSWxIFR23WxJpt8tFZ9mPfCkIY+8aBfYRDY0mCBJMVKp
-	d0kZWbrRhdosFyA9KKqkd6VYNC9jxmkJBj76TXQ7X9ve4m/MOgG2
-X-Gm-Gg: ASbGncshu5sPAPJMA+DT1iWCFSbKEJkdm0siV3uelGoUXxHIqFny+XIhGHV4BL71Adj
-	tOwek5sMUsmrFSDgiVibA4Kl67Ai2kjZONaieqf9+ppxJ6GkF9sAEQjdHceSYP45TlOBdgGiSyt
-	AXwGr1BBvC/Ci8jTngBctbSs4b65Nbc61626WoTiLizhA17DY9Z4WfxtFIM+SNSnc8AHbAcuY/K
-	MUJ3QB6piazNGY7RkCJrs4QHwShtobygbFJCr48cqmc+ch96r3hCP4QSnfk9z24WQymclhsfYWq
-	L0ln1vkGEDh0gngvBfndIE5pW428wB8yrAAuaUcMZINRAS/VHp0xR/Ty7Yv9nA==
-X-Google-Smtp-Source: AGHT+IFui7W32qe/7oFPxgXqGuD21PFMOpd9VG8chpu1c5yNXFW+POaOkysCOWvmg5iIKChIBFoOWg==
-X-Received: by 2002:a05:6a00:391b:b0:736:3ea8:4813 with SMTP id d2e1a72fcca58-7404613f584mr699444b3a.2.1746036677129;
-        Wed, 30 Apr 2025 11:11:17 -0700 (PDT)
+        bh=9qHFF/xTlBQeExdAl4eX04pdKCEarK6ESk+cMoKBj4E=;
+        b=eUwgjnydB14HRc6Yko0VqVmIFPfVkMd6mKfyxCffDFjDkxeEYQJgJK+J8x4a0u+qiD
+         33RitCyTsaaD4Fkay5Q2k4HrvG5rzT44i4Fe/Lmt6mhqYxoM9MTE7XwKWFDODJeuD3TU
+         Ef5VB2dDkH1Mb7zjLhNA11MbDWyt098+28S8LJx9zEDZvT35NgtdrhJPnDy4IUEmhALe
+         yxZZGGzDnRm1/BHegVCKnZeDjfYbu6Nfa7EdmUsF6fvGiYxSm0kvZ/i0UjFrMow2VaFI
+         CUejvfBt5kNBi56yT+hVhhMtE65cgl24it5ZIoHeKL9uMidaEt2vOpcd1hwqb2gr7iVH
+         XJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/q+gX5ILZ1H9I6vRB5GF3nwC3JNowtdpAjsymjCcD73avM0paHs74cKVTfgYn2RrekeiQGXLVauHG4tA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTvTcgdqOnvdVUWECqj3mIrF5RBXzpcKf2Je8jRgqJOina8XSH
+	sX8jEM3hdeMDUTMpIcUxgxr8X5nO/ovKOzFF65NEZnbNgDpuJ7Hn
+X-Gm-Gg: ASbGncvhTj+61BbiupdqJDVcCeY671fgvUKLcHjH4qHS0v9wF6SgdAZwF0YjuD7iyx1
+	kbS2IsSbg2th5LKnuDxDEbgkdcDx6YRfVyT76aymJf8x7Y1mPMX/NX2+jm3mi3En0EDndOsynrT
+	Vn9cY1OCVq19/yR1DbM0A0ok+7GTvFeo5zReEWfulUaJ6d3EBfKN0qh7cQv7aMDuK/uxSuf7ERz
+	ub93sqOHmo4k0cAIMNjBqHDnTWt9+zjErZzaWFM6ckZwgFStbkkUD1UIN1rdU3Q+kzCcv7bqXiv
+	V2zWeoeKRht9BAXjD997hRozr6ZZf4ncp8VdZNQrtvuqxxycILLW6IprMmUo4aJsiuOCO3Va
+X-Google-Smtp-Source: AGHT+IHF5M1/PXpGFD3JmmxbamN2ef4frqiiXFLFq0XpOZjSrO3NxaTlgM0tiao5ZAJP8qQkb0DMiw==
+X-Received: by 2002:a05:6a20:9f8a:b0:1f5:8da5:ffe9 with SMTP id adf61e73a8af0-20a87741099mr6125077637.12.1746036681106;
+        Wed, 30 Apr 2025 11:11:21 -0700 (PDT)
 Received: from KASONG-MC4.tencent.com ([106.37.122.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.11.12
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.11.17
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 30 Apr 2025 11:11:16 -0700 (PDT)
+        Wed, 30 Apr 2025 11:11:20 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -83,13 +83,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Nhat Pham <nphamcs@gmail.com>,
 	Johannes Weiner <hannes@cmpxchg.org>,
 	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v3 3/6] f2fs: drop usage of folio_index
-Date: Thu,  1 May 2025 02:10:49 +0800
-Message-ID: <20250430181052.55698-4-ryncsn@gmail.com>
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v3 4/6] filemap: do not use folio_contains for swap cache folios
+Date: Thu,  1 May 2025 02:10:50 +0800
+Message-ID: <20250430181052.55698-5-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250430181052.55698-1-ryncsn@gmail.com>
 References: <20250430181052.55698-1-ryncsn@gmail.com>
@@ -104,81 +101,62 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-folio_index is only needed for mixed usage of page cache and swap
-cache, for pure page cache usage, the caller can just use
-folio->index instead.
+Currently, none of the folio_contains callers should encounter swap
+cache folios.
 
-It can't be a swap cache folio here.  Swap mapping may only call into fs
-through `swap_rw` but f2fs does not use that method for swap.
+For fs/ callers, swap cache folios are never part of their workflow.
+
+For filemap and truncate, folio_contains is only used for sanity
+checks to verify the folio index matches the expected
+lookup / invalidation target.
+
+The swap cache does not utilize filemap or truncate helpers in ways
+that would trigger these checks, as it mostly implements its own
+cache management.
+
+Shmem won't trigger these sanity checks either unless thing went
+wrong, as it would directly trigger a BUG because swap cache index are
+unrelated and almost never matches shmem index. Shmem have to handle
+mixed values of folios, shadows, and swap entries, so it has its own
+way of handling the mapping.
+
+While some filemap helpers works for swap cache space, the swap cache
+is different from the page cache in many ways. So this particular helper
+will unlikely to work in a helpful way for swap cache folios.
+
+So make it explicit here that folio_contains should not be used for
+swap cache folios. This helps to avoid misuse, make swap cache less
+exposed and remove the folio_index usage here.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org> (maintainer:F2FS FILE SYSTEM)
-Cc: Chao Yu <chao@kernel.org> (maintainer:F2FS FILE SYSTEM)
-Cc: linux-f2fs-devel@lists.sourceforge.net (open list:F2FS FILE SYSTEM)
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
- fs/f2fs/data.c   | 4 ++--
- fs/f2fs/inline.c | 4 ++--
- fs/f2fs/super.c  | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ include/linux/pagemap.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 54f89f0ee69b..5745b97ca1f0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2077,7 +2077,7 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
- 	sector_t last_block;
- 	sector_t last_block_in_file;
- 	sector_t block_nr;
--	pgoff_t index = folio_index(folio);
-+	pgoff_t index = folio->index;
- 	int ret = 0;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index af25fb640463..0c9aff5ec77f 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -935,14 +935,14 @@ static inline struct page *folio_file_page(struct folio *folio, pgoff_t index)
+  * @folio: The folio.
+  * @index: The page index within the file.
+  *
+- * Context: The caller should have the page locked in order to prevent
+- * (eg) shmem from moving the page between the page cache and swap cache
+- * and changing its index in the middle of the operation.
++ * Context: The caller should have the folio locked and ensure
++ * e.g., shmem did not move this folio to the swap cache.
+  * Return: true or false.
+  */
+ static inline bool folio_contains(struct folio *folio, pgoff_t index)
+ {
+-	return index - folio_index(folio) < folio_nr_pages(folio);
++	VM_WARN_ON_FOLIO(folio_test_swapcache(folio), folio);
++	return index - folio->index < folio_nr_pages(folio);
+ }
  
- 	block_in_file = (sector_t)index;
-@@ -2392,7 +2392,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 		}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
--		index = folio_index(folio);
-+		index = folio->index;
- 
- 		if (!f2fs_compressed_file(inode))
- 			goto read_single_page;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index ad92e9008781..aaaec3206538 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -86,7 +86,7 @@ void f2fs_do_read_inline_data(struct folio *folio, struct page *ipage)
- 	if (folio_test_uptodate(folio))
- 		return;
- 
--	f2fs_bug_on(F2FS_I_SB(inode), folio_index(folio));
-+	f2fs_bug_on(F2FS_I_SB(inode), folio->index);
- 
- 	folio_zero_segment(folio, MAX_INLINE_DATA(inode), folio_size(folio));
- 
-@@ -130,7 +130,7 @@ int f2fs_read_inline_data(struct inode *inode, struct folio *folio)
- 		return -EAGAIN;
- 	}
- 
--	if (folio_index(folio))
-+	if (folio->index)
- 		folio_zero_segment(folio, 0, folio_size(folio));
- 	else
- 		f2fs_do_read_inline_data(folio, ipage);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f087b2b71c89..eac1dcb44637 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3432,7 +3432,7 @@ static int __f2fs_commit_super(struct f2fs_sb_info *sbi, struct folio *folio,
- 	bio = bio_alloc(sbi->sb->s_bdev, 1, opf, GFP_NOFS);
- 
- 	/* it doesn't need to set crypto context for superblock update */
--	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(folio_index(folio));
-+	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(folio->index);
- 
- 	if (!bio_add_folio(bio, folio, folio_size(folio), 0))
- 		f2fs_bug_on(sbi, 1);
+ unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
 -- 
 2.49.0
 
