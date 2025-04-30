@@ -1,123 +1,165 @@
-Return-Path: <linux-kernel+bounces-626894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69ADEAA48E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:43:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88B6AA48C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07DE73B8EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5334E5B0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4924C2586C3;
-	Wed, 30 Apr 2025 10:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92ED258CE1;
+	Wed, 30 Apr 2025 10:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EIKKsLfw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CX+nrV5M"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F4F25333E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB8A246774;
+	Wed, 30 Apr 2025 10:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746009277; cv=none; b=XHilkY84SSOeDDY+QS0kzgWWdI6iicKJyjsZsstd+gOylo2U32pYIoD5WZ9f4jmC/pk9ewquKpEGbzLlYdJrxNKPUgw8ByNsgPkxEIgOfcScsgnm1pnHN46bzPh3zJ/NIwrFs+2G+4grEkiDNxM91qO04AwR+P9Zhu9o1sQpJzg=
+	t=1746009359; cv=none; b=lb5XnGPP6MkBKErhnCr6GSDhYpz05uPe0XpFikHgqWAwzm7w6YH9vDOu1X3dwZGvkwrzvJcz1modhPzLHHzlUfnDAyGFMxvGPsMe5m08qOhOLRrCw1yadJaMJsCH2T4sSDT6W8gBU5Ww30ZGeAitITzy5CVxQR1m7+qIACRa1FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746009277; c=relaxed/simple;
-	bh=57iokHmYjdcAZayIvqdZd5fOEHDPDI/m5Ok9KeY3rFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q9pbw/kzS+nl3WVSdqa9dUinfGrQKlgIs91UOzdsu/lqDIDjVpJ/z3R7zDnJFHEWbQxmZFJ8r7gb1PGOwBLyBTunlcb8QLs984IrzF9gaBYiOg+9xg1v2gV3b0AmcQOpSswWqk+FLe51DUE21gv//JVNRadN2LjGgeBedZOvHeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EIKKsLfw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746009274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=57iokHmYjdcAZayIvqdZd5fOEHDPDI/m5Ok9KeY3rFc=;
-	b=EIKKsLfw4CP9dpmdh58UdoWiQDzXyBT5248aLwL8aqD7NRfkw2EX3E1dfCxf00t0pYqwTW
-	5C8O0ZOYEuiX2hbDf2np8QlHMVa2vGvVdaqoaoOkNwjEbzxBmqal6WVngDShIQQzhISxnd
-	tfbcumi1rM1/F7P8W9mZGr4bYQSGUto=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-333-GOh01nwWMGK-_ntCMYswBQ-1; Wed, 30 Apr 2025 06:34:31 -0400
-X-MC-Unique: GOh01nwWMGK-_ntCMYswBQ-1
-X-Mimecast-MFC-AGG-ID: GOh01nwWMGK-_ntCMYswBQ_1746009271
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e6df20900f5so9810091276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 03:34:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746009271; x=1746614071;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=57iokHmYjdcAZayIvqdZd5fOEHDPDI/m5Ok9KeY3rFc=;
-        b=sfFQF8NuhZDQa6/AAIuCSawm1stLZv5UXZ/WD7wOvjSFVHR5UHPI7KiEg9mw6WTxqt
-         WyMbhamH7pdWb4CJYTgPUUekk4OvTC2cHR2RZBRpBdjtQX/dHfnB+5AKAvGKMnvnlHwL
-         Cp3XLTdM439yGewNa67xngiNHqHzOyNhxU384cpsvCYRiN/AT1r6NwM0t0QloaVn7L1B
-         MYl7wjvDoVmJ3sN/nS7HjMwfB8mRcJb/q9TFnaCoeW18lW9kpOwFyokSOEuOhsP9YsBi
-         5MmR7oM1cv9zNU4EXbH6rdSo9q6m/tHaLFA79VrPpMqy0uuywlTW1QosfrjHusXZSJmV
-         67IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9hEpQcdIj93PAksCi1X0ESZElaNPGuCaJVSJITOEgj+kTW+0YtVL6An8jzXoUerzIqhxDhQ/ONolST+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl0cSymrphYss/Bp2ZhY5o0BgYwD+ttVPUpbsLiUlXnuSU3qvS
-	0T3tlTP1OoEFgDJQctHufSlKajyuclf7hc8MbVv83Nea6uQJTrOjnA/JPloqGdIJvlzGseht+Fi
-	YXL3+XgS3GLSjZEzkDZhGVuI95rLg75M7apncDh3h1If1dmgENMJEA5AxeVF+Ob7ddGDr5Ii0yV
-	tqlEcvoSJlJsolbZyIfa/7KQOLsPoQqan8MO69
-X-Gm-Gg: ASbGncuWPJ0EAfMxJ3G0PtRmasmTAM/+O3ds6NxCEsl12WigMZIYuiHrvVSZ2uZ6sQ/
-	OxOQQCGeGZXNUF7vJarigUAF4UPjYVqMhKTqcUMlBDs9klXGEqBNGQ/ta9ukDr9O0Uf6k7qM=
-X-Received: by 2002:a05:6902:2e04:b0:e72:8aca:d06b with SMTP id 3f1490d57ef6-e73eb1e65bbmr3488708276.25.1746009271078;
-        Wed, 30 Apr 2025 03:34:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2PrL/8Qtn9RsZP8gd5PYBcNrIX0CThPxJuTbKkfEk6rVR0kYHi6XEOL3ZZcMQ3Xfw0mqQVeC6RSWHmdB1B5w=
-X-Received: by 2002:a05:6902:2e04:b0:e72:8aca:d06b with SMTP id
- 3f1490d57ef6-e73eb1e65bbmr3488683276.25.1746009270736; Wed, 30 Apr 2025
- 03:34:30 -0700 (PDT)
+	s=arc-20240116; t=1746009359; c=relaxed/simple;
+	bh=87orribIQT06VVPrFXntCTcYFJnaJnhl79Ls2IghEaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SptRm752EGsX+Zih1Lw6rJEFUcu1X9ueBhF6s+orbbBt27sHNue80CPEXs7dJ2mlhj4enVdsaYY1HwkUirRjaGE2vfrRgg3pJNTNypBd5Kd7/dlWBHxeSJo1Wm/LezouC6xaZZzaf0/At049YwWZFoRUtKtgf0cweY13T/pMkPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CX+nrV5M; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53U9KYqp003295;
+	Wed, 30 Apr 2025 10:35:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GQTYxiPbPzzg4AJCoL67j/BVhUArLog9x3AUPofvRC4=; b=CX+nrV5M0l3TKncp
+	g88NsNQM36V9IpJ6YnIRIR1tV48CL1vtkdUDAjW+3y5S+i5daHK+QOqWRrtcyHib
+	Z6TTyW8GO0Q6mz2IT3706N12My94w3C3spPa4PTz+dVIQ4q8aEHBZ3vo4pXWtC4U
+	WzBxVg/6Y8tn3QNQGhe8uNf5fiY8mb9YequMF5CAepK5c6lPB7qXbR9UYqBZh/Gs
+	H4FbRjCUszhMDxxjTc1Es5j8uKunonXwF+hIFc9NuHGempHoIEoYkQH7n5BR0LMG
+	hadGkTJjpY1XEn4vujZTFTX10fg/y7n91YVYYeba8JUiEBDzorlw6Gs1O7CgORE3
+	KNB3pg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u89sfy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 10:35:51 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53UAZmnm029217
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 10:35:48 GMT
+Received: from [10.50.41.127] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Apr
+ 2025 03:35:40 -0700
+Message-ID: <26621fa7-d5b6-3f9c-8bac-7b1657ebfa1d@quicinc.com>
+Date: Wed, 30 Apr 2025 16:05:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430-vsock-linger-v3-0-ddbe73b53457@rbox.co>
- <20250430-vsock-linger-v3-2-ddbe73b53457@rbox.co> <dlk4swnprv52exa3xs5omo76ir7e3x5u7bwlkkuecmrrn2cznm@smxggyqjhgke>
- <1b24198d-2e74-43b5-96be-bdf72274f712@rbox.co>
-In-Reply-To: <1b24198d-2e74-43b5-96be-bdf72274f712@rbox.co>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Wed, 30 Apr 2025 12:34:19 +0200
-X-Gm-Features: ATxdqUG9mjYJydPSVQyHlnDymiSRul3tknhI-VICJUQQ6q1CyA6LPz-wMS1FOD0
-Message-ID: <CAGxU2F5_vZ8S7uoU4QF=J0jh11y976+AxFKf94dp01Fctq-ZwQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 2/4] vsock/virtio: Reduce indentation in virtio_transport_wait_close()
-To: Michal Luczaj <mhal@rbox.co>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 23/23] media: iris: Add codec specific check for VP9
+ decoder drain handling
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Nicolas Dufresne
+	<nicolas.dufresne@collabora.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20250428-qcom-iris-hevc-vp9-v2-0-3a6013ecb8a5@quicinc.com>
+ <20250428-qcom-iris-hevc-vp9-v2-23-3a6013ecb8a5@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250428-qcom-iris-hevc-vp9-v2-23-3a6013ecb8a5@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=B7i50PtM c=1 sm=1 tr=0 ts=6811fd07 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=lzZTJudIQaIjGSla84IA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: iVYqPMhnb_hh8IonOX7LOB34z_Da9hCq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA3NSBTYWx0ZWRfX28CpWwqUUmrA VtknYxpkeoIwvH/aGdRQDrrS2T9N+WB3p6UcEK/UrTmuC67CXj4d5rTKRhw+mUYyMvcmzvSp9tT Ee1iM8uZkkfOZOrZ8nQ18xChjoYQWyvPFnWggg4JizGQjilmW9RG8n80K1j0+Bnr6t1DSAnV50H
+ +6ViQ/hlI44E6VHcbokPW8VAWqh3uA4FF4uQuA5UrRe45rGuMZHh7C9YG0An3MzkPJ4KW/C8Ny8 Qc2MACJEeH6lIdBqT6XrY/iKCao9ALHQ+wM99vHAtishy44mNuOZ5+i4nRYnHL1VrCCMUHGyDiI /glMHGyN8AcLNfnovkALDXwKwbgs8A+4gBpDW3f0FrHScvAIDTitkeUunWtDWdXYwKC2x/4amiL
+ JjC3r7Fxu4RQ+KP7TuiJQ5JRMe72ojHlcpria2ziCUZq7H7MbauJE1nblVddhDkTEJneUxFJ
+X-Proofpoint-ORIG-GUID: iVYqPMhnb_hh8IonOX7LOB34z_Da9hCq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 spamscore=0 clxscore=1015
+ mlxscore=0 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300075
 
-On Wed, 30 Apr 2025 at 12:30, Michal Luczaj <mhal@rbox.co> wrote:
->
-> On 4/30/25 11:28, Stefano Garzarella wrote:
-> > On Wed, Apr 30, 2025 at 11:10:28AM +0200, Michal Luczaj wrote:
-> >> Flatten the function. Remove the nested block by inverting the condition:
-> >> return early on !timeout.
-> >
-> > IIUC we are removing this function in the next commit, so we can skip
-> > this patch IMO. I suggested this change, if we didn't move the code in
-> > the core.
-> Right, I remember your suggestion. Sorry, I'm still a bit uncertain as to
-> what should and shouldn't be done in a single commit.
 
-Sorry for the confusion :-)
-
-The rule I usually follow is this (but may not be the perfect one):
-- try to make the fewest changes in a commit, to simplify both
-backports, but also for debug/revert/bisection/etc.
-- when I move code around and edit it a bit, then it's okay to edit
-style, comments, etc.
-
-Thanks,
-Stefano
-
+On 4/28/2025 2:59 PM, Dikshita Agarwal wrote:
+> Add a codec specific for the VP9 decoder to ensure that a non-null
+> buffer is sent to the firmware during drain. The firmware enforces a
+> check for VP9 decoder that the number of buffers queued and dequeued on
+> the output plane should match. When a null buffer is sent, the firmware
+> does not return a response for it, leading to a count mismatch and an
+> assertion failure from the firmware.
+> 
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c  | 2 ++
+>  drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c | 4 ++++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> index 837643741dc3..bc63189fc43c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> @@ -401,6 +401,8 @@ static int iris_hfi_gen1_session_drain(struct iris_inst *inst, u32 plane)
+>  	ip_pkt.shdr.hdr.pkt_type = HFI_CMD_SESSION_EMPTY_BUFFER;
+>  	ip_pkt.shdr.session_id = inst->session_id;
+>  	ip_pkt.flags = HFI_BUFFERFLAG_EOS;
+> +	if (inst->codec == V4L2_PIX_FMT_VP9)
+> +		ip_pkt.packet_buffer = 0xdeadb000;
+>  
+>  	return iris_hfi_queue_cmd_write(inst->core, &ip_pkt, ip_pkt.shdr.hdr.size);
+>  }
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+> index 01338baf3788..d39226efb3d9 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+> @@ -349,6 +349,10 @@ static void iris_hfi_gen1_session_etb_done(struct iris_inst *inst, void *packet)
+>  	struct iris_buffer *buf = NULL;
+>  	bool found = false;
+>  
+> +	/* EOS buffer sent via drain won't be in v4l2 buffer list */
+> +	if (pkt->packet_buffer == 0xdeadb000)
+> +		return;
+> +
+>  	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, m2m_buffer, n) {
+>  		buf = to_iris_buffer(&m2m_buffer->vb);
+>  		if (buf->index == pkt->input_tag) {
+> 
+Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
