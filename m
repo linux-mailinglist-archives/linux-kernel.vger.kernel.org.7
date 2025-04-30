@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-626689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE07AA4619
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA25AA4633
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48C84657D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47601C01ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC5521C171;
-	Wed, 30 Apr 2025 08:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE6A21B9E5;
+	Wed, 30 Apr 2025 09:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrw6hQcR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nev+3pUb"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA2E21B182;
-	Wed, 30 Apr 2025 08:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D77213E71;
+	Wed, 30 Apr 2025 09:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746003496; cv=none; b=f5yNNIBAXuSyyWFFqDoUZk/QRoLlFQ0JuyfLPGxwYsSKHxUGNlN7aeyFCTlZxKyLIFHMIlKAafqcKuZYrOjdtRagdLXGy1+gGCvUpyavowzV/h8PrwmYUAFNdP9GgHotVcY9Pd+niaQXwgkdCYLzWPds0Q8O+UL7xWXBhLM0CCI=
+	t=1746003648; cv=none; b=E30oiocP4NVWXS0sYxXKdPbn51eF0cOZfdIJ6EOU4UyguG5o2M8iUFBj1bSsWSflsUwthuOohnq7+tZFyCuX168zbcWBLfvRdXWsiIXgRHJ7srkt8hI3J1zobIOJpqtdqBnaV0OEPiDsZ/tAht4YqYjm1Xsg9lsAOrzfTHLrNDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746003496; c=relaxed/simple;
-	bh=Ll3KSEqa1UYp5DsI2uGdvjwuMS4ugb23LjatdJSgsJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndnyM4TOGyACTzx5eVVzOoxI0sLRG2ZhGazMrlUEOuatu55VipBd2v1ueBcYkQWWqMqe+Hg6Oj33pEnm4mIL+f0xtd8BjzSbDRes3wff5y3NSpbtAtX4HeOZ9jJ8WIr46XgzTbOVKCd0M4V7QNiQWhKqWC8AptL0uMIlA6cs9hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrw6hQcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D954C4CEED;
-	Wed, 30 Apr 2025 08:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746003495;
-	bh=Ll3KSEqa1UYp5DsI2uGdvjwuMS4ugb23LjatdJSgsJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nrw6hQcRBj+PQvfvFioygyq8v/eSiOAUv39rnKVE/w9X1EF61Mx0CwWzN1+19GarC
-	 RuFUYGve7a/eQj/crVN/u3Szpf0rO5XpENbRXnvDrCuYpgiwwr2NjfBW5e4UReg4X7
-	 V2yrCniCmQuOvqHaNYvYVPVJVWpGs5QpM57g6xht52RDOzhptXbwlaD7vlNpZX74M+
-	 zBfQrGx4lH2fGSw4HjTS1H1gl3ZrtRWnGQmJnpMaRSdyzCNmemrAvNg73yIHb79QSJ
-	 0YKk2yh2GRCJgL9HzAjCLI6Wve00w1+6qeUvjKk3lSMGwAiJknm0GtBT/AuMW77kDI
-	 DWk5fXYaHwKhw==
-Date: Wed, 30 Apr 2025 09:58:09 +0100
-From: Lee Jones <lee@kernel.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-	peterhuewe@gmx.de, jarkko@kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-crypto@vger.kernel.org,
-	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	pmenzel@molgen.mpg.de
-Subject: Re: [PATCH v8 0/5] Add Loongson Security Engine chip driver
-Message-ID: <20250430085809.GD1567507@google.com>
-References: <20250418093506.1349-1-zhaoqunqin@loongson.cn>
- <CAAhV-H608_ddH0g0gyFCZSTVxYHOBqLXrtGYxZ1eoXX6eCcEuA@mail.gmail.com>
- <75bb29fa-6d77-6f95-eec4-ee183190da17@loongson.cn>
- <aBHc2tT2-Duj3_-A@gondor.apana.org.au>
- <6b7385ce-d8ad-1be9-4503-55460f40fe72@loongson.cn>
- <CAAhV-H6ku=imPGqaFrey6hCMwXSL4Qsoif9Rv=Gko2R1CBtGmw@mail.gmail.com>
+	s=arc-20240116; t=1746003648; c=relaxed/simple;
+	bh=JmwdzasM5q2FtDZ5x6Y68JaQXr5A512sSMcq8EMY73s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nnVG6aYi+yzIlPehfYAvIMf7dT+EiM58i//knkEgRLIGk3Vl/kiBnJFKV8VV5rQ0++KxM8qeuCYXGrA6LrTjPO8UvpYjGDKvYw3vFyPeOwF706VWEBYVnytpW3ltb0FHQPJhO8CsxlnKKSOI3x/vUMDrEXzI10GYHZVDiKdyNPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nev+3pUb; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e63a159525bso5886969276.2;
+        Wed, 30 Apr 2025 02:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746003646; x=1746608446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JmwdzasM5q2FtDZ5x6Y68JaQXr5A512sSMcq8EMY73s=;
+        b=Nev+3pUbtcTXI1jtTogK/beXBeFZDA+U/YB2QQKnYEruCvsol2rmQMGUl++As/J5iC
+         2XH+WJFBOYDwL/qHUbC00ar9aFUKeTAw5lc2r4bB8UZKRH4PHUXc7RXXkR3lTqqXLmBH
+         jZc+KMnrsAkL5NLVbUWc1AOpl/hxPCX5spzXU927EHkY0P8b7H5Gq2iJ7JXPokyS9qx4
+         x1wWvRmGuoHhp1nZaoEW23ncmMdefRFH7s+ABfNDtfxGFOqpNonRDGO4ZrrNAZApyjyT
+         DS7pE/FIKaY5QwLOR3qvUJCWEav5seEjSvlX1jhvFRxsTGHydD2AoSkE8xQ7KHK8yJjm
+         lCFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746003646; x=1746608446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JmwdzasM5q2FtDZ5x6Y68JaQXr5A512sSMcq8EMY73s=;
+        b=JkW/CeBRtlhLGVW4XC0BLamov9OGw4QjFKYIkCrIqVwe8/aPV6LR56kLXC+xIQezbJ
+         C/hhxaKhro9+lnl7SIapOs8BM8JNQ16FuIzOf72zsLzep8Ak5Kukz0dFD3XSzzNJEWrf
+         75iJ5sqrfILQWlxMF9Pd1/eS/CmfOGcFKN1LYpKd+Hokua22utYUfCRFoIRRvWPHS0Md
+         NARX2C6ljnmDVQ+2c6wEqSHQGsBbUfHBtekEWCQj0DRfFhEs1TBD+cSDMb5l0lhTcPpq
+         ZvJYe5AY0WPbouzWZij8Km7/hleRpX2BfrthdYzJ7O1HUVgIfyfVGc9tyyF3koTpoRGU
+         WqmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Bm05+6uhv5xAL5qch2MciyGmGUhhd1uZqt7RFWP9Lmtje+1T6LDCCUc7DrrSkLqFuvUPc9uF@vger.kernel.org, AJvYcCVcbZ7Oc1pIZC437E4nzNArhLPo2JURWdelHVv0RQEDNpRIK8lcr+xW7TTRtojJbOb1isSBJoKvRKiq/Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrPP3R/Fm9HC3AC+Ag4i49+AaAPxOElKMlONb6cCvjXMH25Iis
+	GFK9nLLJIj+VAoh7Y9KUoHFLH2IMS+XMgRBZDI+HwfkffqQexh2YGH/z0W111y4NDh9dkIfvsOa
+	CGflwySp5uPUDTGSD/HjfqvNwzc0=
+X-Gm-Gg: ASbGncu+St7SJeNQlHlr/b7OQvaza2vPEGChw5Sy4vJrFPExhdfOdV+sZ7PiRBQl8dS
+	5ljMJs33FBPw4J6H4WghkG3Sg1reut8LPObtmEjieIbm943r0RzdSZDQLD7nhvNG8dLP+KB+7C5
+	PoifYR2aVTrOXph15dDNM=
+X-Google-Smtp-Source: AGHT+IErBMYJjeuu55AXVDFfHHV5A1rdh7TsTrSkbVy2P+rXzwjI8uo30OCEeL0f3aMQrCfDBI7E0B916Kj2HlvsJho=
+X-Received: by 2002:a05:6902:10c7:b0:e72:74a9:18d with SMTP id
+ 3f1490d57ef6-e73ec5ac393mr2976720276.42.1746003646041; Wed, 30 Apr 2025
+ 02:00:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H6ku=imPGqaFrey6hCMwXSL4Qsoif9Rv=Gko2R1CBtGmw@mail.gmail.com>
+References: <20250429201710.330937-1-jonas.gorski@gmail.com>
+ <20250429201710.330937-5-jonas.gorski@gmail.com> <33e87dc1-17a4-4938-a099-f277f31898fc@broadcom.com>
+In-Reply-To: <33e87dc1-17a4-4938-a099-f277f31898fc@broadcom.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Wed, 30 Apr 2025 11:00:35 +0200
+X-Gm-Features: ATxdqUFfsqqfwJK_ni8rYdsQK-v-ZBlBJqUCsBQxXJBYd2ExM5QhRZ5FIz80KqA
+Message-ID: <CAOiHx=m-59GX2wyoLi9MQqMNzoWLaMsXXJjQJ8D_C-4OrOz7hA@mail.gmail.com>
+Subject: Re: [PATCH net 04/11] net: dsa: b53: fix flushing old pvid VLAN on
+ pvid change
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, Kurt Kanzenbach <kurt@linutronix.de>, 
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Apr 2025, Huacai Chen wrote:
+On Wed, Apr 30, 2025 at 10:03=E2=80=AFAM Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
+>
+>
+>
+> On 4/29/2025 10:17 PM, Jonas Gorski wrote:
+> > Presumably the intention here was to flush the VLAN of the old pvid, no=
+t
+> > the added VLAN again, which we already flushed before.
+> >
+> > Fixes: a2482d2ce349 ("net: dsa: b53: Plug in VLAN support")
+> > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>
+> Does not this logically belong to patch #3?
 
-> On Wed, Apr 30, 2025 at 4:47 PM Qunqin Zhao <zhaoqunqin@loongson.cn> wrote:
-> >
-> >
-> > 在 2025/4/30 下午4:18, Herbert Xu 写道:
-> > > On Wed, Apr 30, 2025 at 04:14:40PM +0800, Qunqin Zhao wrote:
-> > >> Sorry to bother you, may i ask is it fine to move  the Security Engine base
-> > >> driver[Patch v8 1/5] to drivers/crypto ?
-> > >>
-> > >> The base driver uses MFD  interface  to register child device(tpm, rng) , as
-> > >> done in
-> > >>
-> > >> "drivers/iio/common/ssp_sensors/ssp_dev.c" and
-> > >> "drivers/firmware/xilinx/zynqmp.c".
-> > >>
-> > >> Thank you, and I look forward to hearing from you.
-> > > I don't mind at this point in time.  But if this driver were to
-> > > develop features way outside of the Crypto API in future then I
-> > > may change my mind.
-> >
-> > Hi, Herbert, thanks for your reply.
-> >
-> > In future it just add child platform devices  name(sm2, sm3, sm4) to
-> > "struct  mfd_cell engines".
-> >
-> >
-> > Hi, Huaci
-> >
-> > Let's go via Herbert's crypto tree for the base driver patch under
-> > drivers/crypto/loongson/,
-> >
-> > What do you think of it?
-> In my opinion drivers/mfd is better, because another user is in
-> drivers/char rather than drivers/crypto.
-> 
-> But if moving to drivers/crypto is what Lee Jones wants, then everything is OK.
+Yes and no, IMHO these are two different issues, though closely related.
 
-You can move the driver, but then you must not reference or use the MFD API.
+The flush was always there, and for a long time I wondered why we
+flush vlan->vid again. Until I noticed that PVID clears aren't handled
+(as a test broke because of that), and then I understood what the
+intention of the second flush was.
 
--- 
-Lee Jones [李琼斯]
+But I should probably reorder them and first fix flushing of the old
+pvid, and then add the handling of unsetting pvid.
+
+Also at one point we might want to limit the flushing of the VID to
+just that on that port, but that is a future optimization. I fought
+very hard the temptation to include optimizations/refactorings that
+don't actually fix things, and will send them at a later time.
+
+Best regards,
+Jonas
 
