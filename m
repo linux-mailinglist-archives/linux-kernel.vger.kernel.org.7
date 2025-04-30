@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-627659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6FBAA537C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:15:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03F4AA5385
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F179C368E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 369777B9612
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67762882A1;
-	Wed, 30 Apr 2025 18:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60265289E36;
+	Wed, 30 Apr 2025 18:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLnpInnA"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjHvu0/A"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B23326656F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C142882BD
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746036687; cv=none; b=h2zNMnhw3/XyA3nse4S4Dfc8LvaElBIdYH1uyFQGtQpS9Y+zcT1c5l9nIu0jNhNuMk3Da1nvxYutdO8arUpHt8blpCtBClTcJfy1Rgq8I35IozfyQY4BI/cfsHvHjUrW8y75GkJkvPSjoNjiSpPm/O39VlRuEsw3zpIizbHtNBE=
+	t=1746036691; cv=none; b=RUCH+ZG1HVG38XW6Hnj9FIqiCYjniOCT8QoX5yXKnTOAhtGTkJbR9JD+HotzS7aKCIvwy8N0gMKH5QI3T9aIGwsqQC5kTLvNbzcKUKdWj6iBzsc7BztdHVqQ/tU+zYu4yBvdTP7Ibcm/2IlXn/W61iJ++NJQMFU4lZPJ5RdoyiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746036687; c=relaxed/simple;
-	bh=CQu6NY+XXCjQ0pDoxIrTBz6qrVh4Glx1z3jLOwt79bY=;
+	s=arc-20240116; t=1746036691; c=relaxed/simple;
+	bh=j4nly31GVjWEhbgTSOnyZr5LFHdDhJ/vcbZlEmbkTs8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q0C2gnNC6PpQWjH71bKEMJpBLD9Ft4gOeeHLxBSg5Oz+bPgQYmzGi6sWvAdU1dlG/FXgHzNfa8S/gJcO5z9hYBt35jddtXPnZbp67Ce4IUpJn9vfB/2+nyR5wzT6plei4R0+gM7F0iyQBi01dPoNAoDqUZ5ayhqotP+wMc+ldB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLnpInnA; arc=none smtp.client-ip=209.85.215.172
+	 MIME-Version; b=Ut44zsUctlYkEgIziDBEmD71A+WdSPFAPFdZnOYcKPH2jcVc79isZ2xX2sYBVOtPFdqR/yei7+NDcxfes1ps9wc0v/leFSlcLKD1wdaOw+CJ1KVVg3YJwUIas+HXdC47FgIDeu+mQ5Ik98GwMGrdj9EDBN36BXtF7/9mFinAiIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WjHvu0/A; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b0b2d1f2845so107889a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:25 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736c3e7b390so241512b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746036685; x=1746641485; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746036689; x=1746641489; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ABVuvP5TNG4tVYGMuC//l3k1Ki5yFOjDY70WGpcFOzo=;
-        b=VLnpInnAmXiY75sDp4x75brDKpRp/VGCeuXCb3IeAjhh/V67LOb8l18bihH1iKpEco
-         flNbfgGzco2Ekgw+2mpkIv8PLoDEeXwxYCVg37JyBUPhpfH1U+jlBfNkOwmGbnyLelzb
-         u/K1W/66z76c9ZbuE+DNdGiTRcLbKi9kzNM9tHPAuFVgNiJQdJ8KTNJ8WukGyVt7TYMF
-         oy5NXkjcIFzvle2WO5CmN7glrhzBlrBNudelnDjEIRpv/Z1abyoNTzapY9ukt7OcFR5w
-         QL684UTmmo4bBFWOTiqoF+No9Cttf5vfg0bNHNXRa4O2L9zwckt8V22D7eQ07IHZgV0V
-         ZSSQ==
+        bh=YPYU8xo1mzMVuKzjJlWPb2a6nMmELwwkYyTRspWFm2c=;
+        b=WjHvu0/AFF1rH0k3CnD3JPsA4kwk6gkQY0IvAyuOe66KEKXJjwQO1AWsO1eRbUbfGJ
+         2T6hBs355pux7+6pHurfDhhbRMo0rmFUtU3p2iBMmN/vWU/5VlN/fNkFcDNfjfdxOxti
+         GXRW3nNXTShIVDxPR9tJ9CgBa/B30/NsIWOimjEvnzJJ+kAPkeNw0mV4AxUWb4gnCcT/
+         G1NOKgP0B82BnE/ZZiQNCpxaJlpij2ZSVf45vqu9Z6zW3G8JpO311yVA+jV9XiRa069O
+         F2N73IYjWEt1Wfrkfgi/LxPO9vICScqZaOyIZdSFlTHkEgduilg5bR01Zsxw70+UOWxp
+         anCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746036685; x=1746641485;
+        d=1e100.net; s=20230601; t=1746036689; x=1746641489;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ABVuvP5TNG4tVYGMuC//l3k1Ki5yFOjDY70WGpcFOzo=;
-        b=M3hRi3F9Yh8064hEGD5myNuFjJq0H+o3fPPIdAr9zaczSVTH7f1GA74UAjJz/GKNPR
-         cUEWjyO411B9yqNwEbq5vuhQFs8JG7aVY408SuSzONcKKmHMddtakfBzCADV/mq+dWn5
-         7T6KBVLsY+cSxzsolfXDsXK8hBQq3rhcMg5BO98PCOwSFPUs6/E3zpq37sAvEa10eAgT
-         UbISXV78peOvVQdT8ZgSHL++pxRw2VvBEypu2SwKNzEHNzvHrjjp2OCQDV91BbcEHm3R
-         sqd15AHuqxGFMgwTK5C4TgBltgxA9rKNQOOGq0TACgtHq10WeSi7J1zNujM7krG/ebN3
-         E4Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWexNsuIOiW+BDTc5QqliUa+2vcAbtR6/5i0e5nVcmWIaj8iKiAx79tbh5VgOVHbkkR7qT4xrbHm6sJ9/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZnf0LBeMyrSfbyYc6TOSqGaZQe79Z3xmWMfTKNJ38pzc/T9SS
-	zXifhZPjCuGPABSosv0lVi64cjPqusCkjaJrtkombxYr/ka1pTM8
-X-Gm-Gg: ASbGncvArXKga33eHe/dULns1k1wOz0jM+q3I0WNXC37fwlijaLziteiQTPt9a+wi3q
-	0qXefaHFb1M8aP1LqLakenye26x00LPLJ7j+hMPFgtB0XDSaHj+UGsWn25O9GSmFCLTvoA/JP85
-	mVnlRvMNeTUE+FcLLqZ2zES6o+7s3cdjYgitc5veV5M2UyXcMBeG/jyJ0kpGh4WOfOlRhyWXl1P
-	OmgzS0YlmcETD22H/sDoAQCH/EP9JSqPZA3qCBCVr/AFxIUWu4CGYQCfVf3yPo4qNXgoi3U+4lz
-	yAlpbGkXNDpvHYmXRbNozBPP6p8ZPsow2NMeAHUwR18SDJox6modvUwWto9Ayw==
-X-Google-Smtp-Source: AGHT+IGvk0oJWttNM6c0zFmz2EsnDvT1Lr3GHsue6PfHLv/bA327BK4ptz41QX/l91eCNpM4QRO2Ag==
-X-Received: by 2002:a05:6a21:1583:b0:1f5:6d00:ba05 with SMTP id adf61e73a8af0-20a89a012bcmr5766473637.38.1746036685092;
-        Wed, 30 Apr 2025 11:11:25 -0700 (PDT)
+        bh=YPYU8xo1mzMVuKzjJlWPb2a6nMmELwwkYyTRspWFm2c=;
+        b=voW4TtPdOuomkarLHmD1vTIpJZBxArWynSKxtOFKjL02h18Xx2I5SFObVrqCrb3HC6
+         HpRxwtfL3TwT3Nh1qQ4i74b6KBgNIK2jbMLP5qom3bVE3xjALoU869cZw2RAC4Bgzjhq
+         ZjnoE+QZ1OuDD9TvtmyOF9R/m+ABEoLcLa19QlaPS8gifYhVq8Y/n7Ggt66Xes+D6aaE
+         w1zLOu2r2ORpKBicK2S5RRbeG1AxZ/zsQIy9B8/STTV8ERvhO4RyklWiQ7WUyIsfftXy
+         U33aLeS1NFDNFix/L4J8TvsMaE2GTZMHjUavY6WSzcfW7gFjqUibQxROydfcT30xTKKX
+         C7Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKlAqFQUXxlPkIYANh6m+gEfAr/B1IIeYbHLfABOx+JrtXGlaNnZzmW3622Fko7FmJ2uyvRm1aLNgB2fI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhqG4mhqoogc5J+tgF+xw9pIiS3T7fb8g4algIYInCOL0Ej07y
+	0KZfsD9pHsqUI1oiD7YYDKjXzUmAMJtDhitE8PfCUrc/0TIQ/2mi
+X-Gm-Gg: ASbGncvKiddWnK0wHHHiT09OhL9Rc5LSkz/jt4SACTekrsin0zIvtiAcIG+WCdbpPXh
+	JE6fRXSXKcOinKZrI1oyg6SbClvK7WyiqvFcsUJpMuVfHwqjyv32RWg2lDld8aJjYHCnzEv4cI3
+	yrJBe/eQSHZBzqoRWZ0+XHvWLt83vVrzw6yQRFYykWxebaCfwfymfS/crU41ZSrEKmXzdeCcY5a
+	KmYJjejMFGnwdbek5u2nx8MLiafYKTOIZWcJhlhG/yi0JseZF+L8LW053k+WBOnOvgEcHck55Gx
+	y3XOqsQG7FKvay9/LQZtcTkz6QB+rf3aeqJdgdf41DoPxMGI7reYF+8e9wmLwA==
+X-Google-Smtp-Source: AGHT+IEizwJh83fKA4GblxYQufq8IOSE9ngbKGJYIoIhX0XYft1sNuqLkCRCPDpZGvKkBh5oDGgu7w==
+X-Received: by 2002:a05:6a00:18a6:b0:736:d297:164 with SMTP id d2e1a72fcca58-7403897a50dmr5522387b3a.1.1746036689082;
+        Wed, 30 Apr 2025 11:11:29 -0700 (PDT)
 Received: from KASONG-MC4.tencent.com ([106.37.122.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.11.21
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039947976sm1983822b3a.84.2025.04.30.11.11.25
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 30 Apr 2025 11:11:24 -0700 (PDT)
+        Wed, 30 Apr 2025 11:11:28 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -84,9 +84,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Johannes Weiner <hannes@cmpxchg.org>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v3 5/6] mm: move folio_index to mm/swap.h and remove no longer needed helper
-Date: Thu,  1 May 2025 02:10:51 +0800
-Message-ID: <20250430181052.55698-6-ryncsn@gmail.com>
+Subject: [PATCH v3 6/6] mm, swap: remove no longer used swap mapping helper
+Date: Thu,  1 May 2025 02:10:52 +0800
+Message-ID: <20250430181052.55698-7-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250430181052.55698-1-ryncsn@gmail.com>
 References: <20250430181052.55698-1-ryncsn@gmail.com>
@@ -101,143 +101,46 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-There are no remaining users of folio_index() outside the mm subsystem.
-Move it to mm/swap.h to co-locate it with swap_cache_index(), eliminating
-a forward declaration, and a function call overhead.
-
-Also remove the helper that was used to fix circular header dependency
-issue.
+This helper existed to fix the circular header dependency issue
+but it is no longer used since commit 0d40cfe63a2f ("fs: remove
+folio_file_mapping()"), remove it.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/pagemap.h | 20 --------------------
- mm/gup.c                |  1 +
- mm/memfd.c              |  1 +
- mm/migrate.c            |  1 +
- mm/page-writeback.c     |  1 +
- mm/swap.h               | 18 ++++++++++++++++++
- mm/swapfile.c           |  6 ------
- 7 files changed, 22 insertions(+), 26 deletions(-)
+ include/linux/pagemap.h | 1 -
+ mm/swapfile.c           | 9 ---------
+ 2 files changed, 10 deletions(-)
 
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 0c9aff5ec77f..627cb0338e5d 100644
+index 627cb0338e5d..8c6894d0ac27 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -884,26 +884,6 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
- 			mapping_gfp_mask(mapping));
+@@ -533,7 +533,6 @@ static inline void filemap_nr_thps_dec(struct address_space *mapping)
  }
  
--extern pgoff_t __folio_swap_cache_index(struct folio *folio);
--
--/**
-- * folio_index - File index of a folio.
-- * @folio: The folio.
-- *
-- * For a folio which is either in the page cache or the swap cache,
-- * return its index within the address_space it belongs to.  If you know
-- * the page is definitely in the page cache, you can look at the folio's
-- * index directly.
-- *
-- * Return: The index (offset in units of pages) of a folio in its file.
-- */
--static inline pgoff_t folio_index(struct folio *folio)
--{
--	if (unlikely(folio_test_swapcache(folio)))
--		return __folio_swap_cache_index(folio);
--	return folio->index;
--}
--
+ struct address_space *folio_mapping(struct folio *);
+-struct address_space *swapcache_mapping(struct folio *);
+ 
  /**
-  * folio_next_index - Get the index of the next folio.
-  * @folio: The current folio.
-diff --git a/mm/gup.c b/mm/gup.c
-index f32168339390..91bbf57579f0 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -26,6 +26,7 @@
- #include <asm/tlbflush.h>
- 
- #include "internal.h"
-+#include "swap.h"
- 
- struct follow_page_context {
- 	struct dev_pagemap *pgmap;
-diff --git a/mm/memfd.c b/mm/memfd.c
-index c64df1343059..ab367e61553d 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -20,6 +20,7 @@
- #include <linux/memfd.h>
- #include <linux/pid_namespace.h>
- #include <uapi/linux/memfd.h>
-+#include "swap.h"
- 
- /*
-  * We need a tag: a new tag would expand every xa_node by 8 bytes,
-diff --git a/mm/migrate.c b/mm/migrate.c
-index f3ee6d8d5e2e..662e5dc44b33 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -50,6 +50,7 @@
- #include <trace/events/migrate.h>
- 
- #include "internal.h"
-+#include "swap.h"
- 
- bool isolate_movable_page(struct page *page, isolate_mode_t mode)
- {
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 20e1d76f1eba..9ff44b64d3d6 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -41,6 +41,7 @@
- #include <trace/events/writeback.h>
- 
- #include "internal.h"
-+#include "swap.h"
- 
- /*
-  * Sleep at most 200ms at a time in balance_dirty_pages().
-diff --git a/mm/swap.h b/mm/swap.h
-index 6f4a3f927edb..521bf510ec75 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -201,4 +201,22 @@ static inline int swap_zeromap_batch(swp_entry_t entry, int max_nr,
- 
- #endif /* CONFIG_SWAP */
- 
-+/**
-+ * folio_index - File index of a folio.
-+ * @folio: The folio.
-+ *
-+ * For a folio which is either in the page cache or the swap cache,
-+ * return its index within the address_space it belongs to.  If you know
-+ * the folio is definitely in the page cache, you can look at the folio's
-+ * index directly.
-+ *
-+ * Return: The index (offset in units of pages) of a folio in its file.
-+ */
-+static inline pgoff_t folio_index(struct folio *folio)
-+{
-+	if (unlikely(folio_test_swapcache(folio)))
-+		return swap_cache_index(folio->swap);
-+	return folio->index;
-+}
-+
- #endif /* _MM_SWAP_H */
+  * folio_flush_mapping - Find the file mapping this folio belongs to.
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index b86637cfb17a..9fe58284079d 100644
+index 9fe58284079d..026090bf3efe 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -3671,12 +3671,6 @@ struct address_space *swapcache_mapping(struct folio *folio)
+@@ -3662,15 +3662,6 @@ struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+ 	return swap_type_to_swap_info(swp_type(entry));
  }
- EXPORT_SYMBOL_GPL(swapcache_mapping);
  
--pgoff_t __folio_swap_cache_index(struct folio *folio)
+-/*
+- * out-of-line methods to avoid include hell.
+- */
+-struct address_space *swapcache_mapping(struct folio *folio)
 -{
--	return swap_cache_index(folio->swap);
+-	return swp_swap_info(folio->swap)->swap_file->f_mapping;
 -}
--EXPORT_SYMBOL_GPL(__folio_swap_cache_index);
+-EXPORT_SYMBOL_GPL(swapcache_mapping);
 -
  /*
   * add_swap_count_continuation - called when a swap count is duplicated
