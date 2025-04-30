@@ -1,238 +1,97 @@
-Return-Path: <linux-kernel+bounces-626358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D38AA422A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:18:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A128AA4230
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC161BC6DA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334331BC6DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 05:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3B01DFD8B;
-	Wed, 30 Apr 2025 05:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208AC1E503D;
+	Wed, 30 Apr 2025 05:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcxCoyOZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8OTW4Ye"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F43A921;
-	Wed, 30 Apr 2025 05:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D95C1E32D6;
+	Wed, 30 Apr 2025 05:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745990304; cv=none; b=H+3uHe5ARlV4Lqf2PZOyS4I06bbQpJZxAdX4PAhuY7XqItbD9qzaEfwS/PQWi3+5Cf6TtUY0Ze7BfrbxKz8D9EoA9gNYVxr21tAaaHwvHyHRaiy2jb5mQEYdRI09FNwVXbZ7Exm87gx9j9hZYKmGjEGfudGHzWZHM44LAiNnci4=
+	t=1745990311; cv=none; b=izwDDBNX90DINOs+53qK9o1WueI84JtWlkNj5tu+hDhUmlDz8JViNcizIM4rujYAhoODNHY3MQFqkxQelli4Z5JovCDOw38uYSE/91mN+bofIc5T9STXIBfYGPzN5V1OwinDo4DnBDzmbNoTvI7ruP6D5/ysaxO3P+t5ZUnwQz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745990304; c=relaxed/simple;
-	bh=gArsuC6TY1f02PCoxGsHqNCpkz9m/aoI+JRflmC5Afo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHMosoO3RW4p97gDw/zJ2Q8asuvCW4CrPy01u5xCnj2eW6YzMBQwmcXuyg7FEmmhX6zTFpjRunqN9ZhJ6Rw4Xkg9KdJa8eaDkWda7UIc0PLxCRAgmvq7VNnxFV3StNVENi9aAuBowqOm+w5H40ZTaGrcMNZM9AbvNHwHSB0TNOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcxCoyOZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DA4C4CEE9;
-	Wed, 30 Apr 2025 05:18:23 +0000 (UTC)
+	s=arc-20240116; t=1745990311; c=relaxed/simple;
+	bh=vJNafRqavmjLD9aDj+IFuyQdV0eiO+Scf8aHDP3rM74=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hcf1SYmO+/rBK8Wv6oztkrTk7ZzX8sskxNAGqHzLsEoe0oidK1d58rEkjiGIwzKimepUdJmt3ytI1TGGgtAk7qLCnfk/oTcSRb9o4grZgOudHv0uhyrkBBwEGbHAZM5AZGnb5hGuR1ag2CamFW+JePHXZr7lKfLRCaGREAJGelw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8OTW4Ye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0091C4CEE9;
+	Wed, 30 Apr 2025 05:18:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745990303;
-	bh=gArsuC6TY1f02PCoxGsHqNCpkz9m/aoI+JRflmC5Afo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gcxCoyOZy84JGHyzBchpGoalQsA7G6SL9C15Exjb3Yo2eGQU8lUdDyGZVMjbdMstZ
-	 gMu3W4jJTsc5uiXoBPTafp4O5dWi1Be/53uUGtbn29FnzCTJD+DktnWNPGamPKo+o0
-	 r6wAEvEM3NdCNt8TCI9HrXi8vT+qcH+yALlz+t7sq+YssnpQDkNqoc7zAwFz7k6dwS
-	 bIT7nZD+XxOnm+Nh2LNVE7cRoAoOhUi98ABhbzqBcYaXmM11c4Aq9pF0tgpdIZCEHE
-	 vWOFTR5+IX9FUOYSRc253YOa94QQm5+aUUQ/vznu7bkH+hWY5mVrlZi+cVvTlN00ZN
-	 qgMC19Rb86m5g==
-Date: Tue, 29 Apr 2025 22:18:22 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, jack@suse.cz,
-	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: [PATCH v9.1 05/15] xfs: ignore HW which cannot atomic write a single
- block
-Message-ID: <20250430051822.GY25675@frogsfrogsfrogs>
-References: <20250425164504.3263637-1-john.g.garry@oracle.com>
- <20250425164504.3263637-6-john.g.garry@oracle.com>
+	s=k20201202; t=1745990310;
+	bh=vJNafRqavmjLD9aDj+IFuyQdV0eiO+Scf8aHDP3rM74=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N8OTW4YeWxaseH8T9vSS8ev8gTx72VRN7NqVbT+7JCutPUf+99l4WTa4mlQavvjD6
+	 atRLJ3ipMQjodipS4RqZI9MjDLS0nYvuWGpUR6qYzH9XkxSf538QCyeHkZ83162EQ3
+	 bqNB7hENbcM980H8/BLc9+t0/lQDGG52+5Rr+k3CM9m4rMS+sOxE8Cc6Le3AuP8Iee
+	 EwKSiwI8O54VsgwwYVDpHDO+trDq4doTeNnN506/oUj3Cep/YLk+r5dSmZ7adCB/zI
+	 L+Sy8GDNPXclynuA8jdFpVLmNwMTgoPvbTRn/46jhz3VNhZB0a8lndYENYZ5mTOJ8b
+	 0qM7or8q/CuYA==
+Date: Wed, 30 Apr 2025 07:18:25 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com,
+ corbet@lwn.net, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] kunit: add tips to clean source tree to build help
+ message
+Message-ID: <20250430071825.1e196cb1@foz.lan>
+In-Reply-To: <dc8f4035a8d493be9ddc0e868a3ffd67626cca00.1745965121.git.skhan@linuxfoundation.org>
+References: <cover.1745965121.git.skhan@linuxfoundation.org>
+	<dc8f4035a8d493be9ddc0e868a3ffd67626cca00.1745965121.git.skhan@linuxfoundation.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425164504.3263637-6-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Darrick J. Wong <djwong@kernel.org>
+Em Tue, 29 Apr 2025 16:27:12 -0600
+Shuah Khan <skhan@linuxfoundation.org> escreveu:
 
-Currently only HW which can write at least 1x block is supported.
+> Add tips to clean source tree to build help message. When user run
+> kunit.py after building another kernel for ARCH=foo, it is necessary
+> to run 'make ARCH=foo mrproper' to remove all build artifacts generated
+> during the build. In such cases, kunit build could fail.
+> 
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> ---
+>  tools/testing/kunit/kunit.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
+> index 7f9ae55fd6d5..db86a396ed33 100755
+> --- a/tools/testing/kunit/kunit.py
+> +++ b/tools/testing/kunit/kunit.py
+> @@ -583,7 +583,7 @@ def main(argv: Sequence[str]) -> None:
+>  						'the options in .kunitconfig')
+>  	add_common_opts(config_parser)
+>  
+> -	build_parser = subparser.add_parser('build', help='Builds a kernel with KUnit tests')
+> +	build_parser = subparser.add_parser('build', help='Builds a kernel with KUnit tests. Successful build depends on a clean source tree. Run mrproper to clean generated artifcats for prior ARCH=foo kernel build. Run 'make ARCH=foo mrproper')
+>  	add_common_opts(build_parser)
+>  	add_build_opts(build_parser)
+>  
+Would be better instead to detect if the last build was not done
+by kunit.py and call "make mrproper" inside kunit.py?
 
-For supporting atomic writes > 1x block, a CoW-based method will also be
-used and this will not be resticted to using HW which can write >= 1x
-block.
-
-However for deciding if HW-based atomic writes can be used, we need to
-start adding checks for write length < HW min, which complicates the
-code.  Indeed, a statx field similar to unit_max_opt should also be
-added for this minimum, which is undesirable.
-
-HW which can only write > 1x blocks would be uncommon and quite weird,
-so let's just not support it.
-
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
----
-v9.1: move the atomic hw geometry calls to xfs_setup_devices
----
- fs/xfs/xfs_buf.h   |    3 ++-
- fs/xfs/xfs_inode.h |   14 ++------------
- fs/xfs/xfs_buf.c   |   41 ++++++++++++++++++++++++++++++++++-------
- fs/xfs/xfs_super.c |    6 +++++-
- 4 files changed, 43 insertions(+), 21 deletions(-)
-
-diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-index d0b065a9a9f0d2..6f691779887f77 100644
---- a/fs/xfs/xfs_buf.h
-+++ b/fs/xfs/xfs_buf.h
-@@ -112,7 +112,7 @@ struct xfs_buftarg {
- 	struct percpu_counter	bt_readahead_count;
- 	struct ratelimit_state	bt_ioerror_rl;
- 
--	/* Atomic write unit values */
-+	/* Atomic write unit values, bytes */
- 	unsigned int		bt_bdev_awu_min;
- 	unsigned int		bt_bdev_awu_max;
- 
-@@ -375,6 +375,7 @@ extern void xfs_free_buftarg(struct xfs_buftarg *);
- extern void xfs_buftarg_wait(struct xfs_buftarg *);
- extern void xfs_buftarg_drain(struct xfs_buftarg *);
- extern int xfs_setsize_buftarg(struct xfs_buftarg *, unsigned int);
-+void xfs_buftarg_config_atomic_writes(struct xfs_buftarg *btp);
- 
- #define xfs_getsize_buftarg(buftarg)	block_size((buftarg)->bt_bdev)
- #define xfs_readonly_buftarg(buftarg)	bdev_read_only((buftarg)->bt_bdev)
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index bdbbff0d8d9920..d7e2b902ef5c97 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -356,19 +356,9 @@ static inline bool xfs_inode_has_bigrtalloc(const struct xfs_inode *ip)
- 	(XFS_IS_REALTIME_INODE(ip) ? \
- 		(ip)->i_mount->m_rtdev_targp : (ip)->i_mount->m_ddev_targp)
- 
--static inline bool
--xfs_inode_can_hw_atomic_write(
--	struct xfs_inode	*ip)
-+static inline bool xfs_inode_can_hw_atomic_write(const struct xfs_inode *ip)
- {
--	struct xfs_mount	*mp = ip->i_mount;
--	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
--
--	if (mp->m_sb.sb_blocksize < target->bt_bdev_awu_min)
--		return false;
--	if (mp->m_sb.sb_blocksize > target->bt_bdev_awu_max)
--		return false;
--
--	return true;
-+	return xfs_inode_buftarg(ip)->bt_bdev_awu_max > 0;
- }
- 
- /*
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 5ae77ffdc947b1..c1bd5654c3afa8 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1779,6 +1779,40 @@ xfs_init_buftarg(
- 	return -ENOMEM;
- }
- 
-+/*
-+ * Configure this buffer target for hardware-assisted atomic writes if the
-+ * underlying block device supports is congruent with the filesystem geometry.
-+ */
-+void
-+xfs_buftarg_config_atomic_writes(
-+	struct xfs_buftarg	*btp)
-+{
-+	struct xfs_mount	*mp = btp->bt_mount;
-+	unsigned int		min_bytes, max_bytes;
-+
-+	ASSERT(btp->bt_bdev != NULL);
-+
-+	if (!bdev_can_atomic_write(btp->bt_bdev))
-+		return;
-+
-+	min_bytes = bdev_atomic_write_unit_min_bytes(btp->bt_bdev);
-+	max_bytes = bdev_atomic_write_unit_max_bytes(btp->bt_bdev);
-+
-+	/*
-+	 * Ignore atomic write geometry that is nonsense or doesn't even cover
-+	 * a single fsblock.
-+	 */
-+	if (min_bytes > max_bytes ||
-+	    min_bytes > mp->m_sb.sb_blocksize ||
-+	    max_bytes < mp->m_sb.sb_blocksize) {
-+		min_bytes = 0;
-+		max_bytes = 0;
-+	}
-+
-+	btp->bt_bdev_awu_min = min_bytes;
-+	btp->bt_bdev_awu_max = max_bytes;
-+}
-+
- struct xfs_buftarg *
- xfs_alloc_buftarg(
- 	struct xfs_mount	*mp,
-@@ -1799,13 +1833,6 @@ xfs_alloc_buftarg(
- 	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
- 					    mp, ops);
- 
--	if (bdev_can_atomic_write(btp->bt_bdev)) {
--		btp->bt_bdev_awu_min = bdev_atomic_write_unit_min_bytes(
--						btp->bt_bdev);
--		btp->bt_bdev_awu_max = bdev_atomic_write_unit_max_bytes(
--						btp->bt_bdev);
--	}
--
- 	/*
- 	 * When allocating the buftargs we have not yet read the super block and
- 	 * thus don't know the file system sector size yet.
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index b2dd0c0bf50979..af4c541251d859 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -520,7 +520,8 @@ xfs_open_devices(
- }
- 
- /*
-- * Setup xfs_mount buffer target pointers based on superblock
-+ * Setup xfs_mount buffer target pointers based on superblock, and configure
-+ * the atomic write capabilities now that we've validated the blocksize.
-  */
- STATIC int
- xfs_setup_devices(
-@@ -531,6 +532,7 @@ xfs_setup_devices(
- 	error = xfs_setsize_buftarg(mp->m_ddev_targp, mp->m_sb.sb_sectsize);
- 	if (error)
- 		return error;
-+	xfs_buftarg_config_atomic_writes(mp->m_ddev_targp);
- 
- 	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp) {
- 		unsigned int	log_sector_size = BBSIZE;
-@@ -541,6 +543,7 @@ xfs_setup_devices(
- 					    log_sector_size);
- 		if (error)
- 			return error;
-+		xfs_buftarg_config_atomic_writes(mp->m_logdev_targp);
- 	}
- 
- 	if (mp->m_sb.sb_rtstart) {
-@@ -555,6 +558,7 @@ xfs_setup_devices(
- 					    mp->m_sb.sb_sectsize);
- 		if (error)
- 			return error;
-+		xfs_buftarg_config_atomic_writes(mp->m_rtdev_targp);
- 	}
- 
- 	return 0;
+Thanks,
+Mauro
 
