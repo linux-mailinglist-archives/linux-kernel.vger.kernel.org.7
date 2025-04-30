@@ -1,158 +1,216 @@
-Return-Path: <linux-kernel+bounces-627522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070E8AA51E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:45:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F89AA51C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416ED461D5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14E397B8CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C18261372;
-	Wed, 30 Apr 2025 16:45:42 +0000 (UTC)
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A46262802;
+	Wed, 30 Apr 2025 16:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YO8E7UOW"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BAE1ADC69;
-	Wed, 30 Apr 2025 16:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086522DC768;
+	Wed, 30 Apr 2025 16:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746031541; cv=none; b=dt9C1wVhaws1gGvczbRI+u9ougS4aoYxA8/+MhPXmWYR157urX0mid2Eq4XsFRwmwpR2JC/Ar/XlHDm0eQCoas7FCnh2xvvKeJec4kvgcOX/J62DZBuHrtC7hmSL0RN+/netoZQB99jTKFJ3M5Gtsvv8e1QjGe8b21dNYbx+SEc=
+	t=1746031082; cv=none; b=LAfXzQKINOFO8dqaPn9fgpzhsxmwbXpVB0F/ZjPF1uxjSvBIVOHwWoqr8S4Rl+OcRiwS50xRc8MyGNlYNHy45Os5EWS6Ueww+jSWK+nt1bg/Iup/0k8o1zgebkMK0iYL3+NJvE1begfKtQFhZo7p16tCF6NdlAeSnA142o0ZUaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746031541; c=relaxed/simple;
-	bh=7lWr4OMbkRSnBUxwM3XWJdY3O2AMAYEwZJRX+iFrkGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XCKTl/p4a8OqmEOifJ8X6Hy5Bun3q6ntHAM803jr8RAX31SPqwhynnifHmQOFLeEeRIkHHA4rVt3UO9VrkND2FmREdp8UG/B5uban8ZWhP2JAw8MdWCNyK2kokrhOpPi/sJEyWhCtaHV7c47BwFsc/QzZnCLxX+g7Um8wRDf/jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
-Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
-	by unicorn.mansr.com (Postfix) with ESMTPS id 86AD315366;
-	Wed, 30 Apr 2025 17:37:26 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-	id 761F921A3DA; Wed, 30 Apr 2025 17:37:26 +0100 (BST)
-From: Mans Rullgard <mans@mansr.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH] tty: serial: 8250_omap: fix tx with dma
-Date: Wed, 30 Apr 2025 17:37:09 +0100
-Message-ID: <20250430163709.15850-1-mans@mansr.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746031082; c=relaxed/simple;
+	bh=VvRMlfT4VgobUB0P0bqwvBN95Fvzh/5fnLVG24jCK+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qPtwP4BLnOxBu/j8EN6O0sN0MxSIJtfAkD76DD59eWEdURWdCQzvU8a3q4sLK1U/5CmmONam5BBg87GcDgXhBmcST4gzZ15Wr2QeGS51LOjtICGmqMkFdUJ63671Icz5fFIfEFnasqavdHk8xq8rMyyKNLnorruGhvUWgr9rPZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YO8E7UOW; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53UGbPFO3433713
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 11:37:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1746031045;
+	bh=b3dp5KW7OreVaxGvi8WjnNnrvEUPu4U0ZEyTIjYYRug=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=YO8E7UOWV/1k49uebg0Dz8gWLfFkhIrgGdvBeQFYhxNuxkMQIjoJOcJnnLBi8Ce1M
+	 AsEdzDYxO27bgI4VExootBdBHvPP4aKwS1OL4V5n9adS7Fzceg3/aTU0BBtu1AcRp7
+	 NAbuziNBWconD3zY9N3zWJcX75jTKharo3hLOAuY=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53UGbPE9009237
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 30 Apr 2025 11:37:25 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
+ Apr 2025 11:37:24 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 30 Apr 2025 11:37:24 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53UGbInj068775;
+	Wed, 30 Apr 2025 11:37:19 -0500
+Message-ID: <1f8c43cd-8c26-4e42-b144-b91f5ffc2e2e@ti.com>
+Date: Wed, 30 Apr 2025 22:07:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH v5 2/3] drm/tidss: Update infrastructure to support K3 DSS
+ cut-down versions
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
+        <s-jain1@ti.com>, <r-donadkar@ti.com>, <j-choudhary@ti.com>,
+        <h-shenoy@ti.com>, <jyri.sarha@iki.fi>, <airlied@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <dri-devel@lists.freedesktop.org>,
+        <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+References: <20250429143656.3252877-1-devarsht@ti.com>
+ <20250429143656.3252877-3-devarsht@ti.com>
+ <f729c0d6-45a0-4610-b22b-92c03f534bf7@ideasonboard.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <f729c0d6-45a0-4610-b22b-92c03f534bf7@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-introduced two errors in the TX DMA handling for 8250_omap.
+Hi Tomi
 
-Firstly, kfifo_dma_out_prepare_mapped() needs a scatterlist with two
-entries whereas only one is provided.  The same error was fixed for
-8250_dma in 59449c9dbdaa ("tty: serial: 8250_dma: use sgl with 2 nents
-to take care of buffer wrap").
+Thanks for the review.
 
-Secondly, when the OMAP_DMA_TX_KICK flag is set, one byte is pulled from
-the kfifo and emitted directly in order to start the DMA.  This is done
-without updating DMA tx_size which leads to uart_xmit_advance() called
-in the DMA complete callback advancing the kfifo by one too much.
+<snip>
+>>   @@ -2025,7 +2101,7 @@ int dispc_plane_check(struct dispc_device
+>> *dispc, u32 hw_plane,
+>>                 const struct drm_plane_state *state,
+>>                 u32 hw_videoport)
+>>   {
+>> -    bool lite = dispc->feat->vid_lite[hw_plane];
+>> +    bool lite = dispc->feat->vid_info[hw_plane].is_lite;
+> 
+> I don't think this is correct. You can't access the vid_info[] with the
+> hw-id.
 
-In practice, transmitting N bytes has been seen to result in the last
-N-1 bytes being sent repeatedly.
+I don't think hw_id is getting passed to hw_plane here. The
+dispc_plane_check is called from tidss_plane_atomic_check which passes
+hw_plane as tplane->hw_plane_id and this index starts from actually
+instantiated planes i.e. from 0 and are contiguous as these are
+populated from vid_order array (hw_plane_id =
+feat->vid_order[tidss->num_planes];) and not the hw_id index.
 
-This change fixes both problems.
+So for e.g. for AM62L even though hw_id is 1 for VIDL hw_plane is
+getting passed as 0 and that's how it is able to access the first and
+only member of vid_info struct and read the properties correctly and
+function properly as seen in test logs [1].
 
-Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-Signed-off-by: Mans Rullgard <mans@mansr.com>
----
- drivers/tty/serial/8250/8250_omap.c | 35 +++++++++++++++--------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+> 
+>>       u32 fourcc = state->fb->format->format;
+>>       bool need_scaling = state->src_w >> 16 != state->crtc_w ||
+>>           state->src_h >> 16 != state->crtc_h;
+>> @@ -2096,7 +2172,7 @@ void dispc_plane_setup(struct dispc_device
+>> *dispc, u32 hw_plane,
+>>                  const struct drm_plane_state *state,
+>>                  u32 hw_videoport)
+>>   {
+>> -    bool lite = dispc->feat->vid_lite[hw_plane];
+>> +    bool lite = dispc->feat->vid_info[hw_plane].is_lite;
+> 
+> Here too.
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index f1aee915bc02..84a2f013015e 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1152,9 +1152,11 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 	struct omap8250_priv		*priv = p->port.private_data;
- 	struct tty_port			*tport = &p->port.state->port;
- 	struct dma_async_tx_descriptor	*desc;
--	struct scatterlist sg;
-+	struct scatterlist *sg;
-+	struct scatterlist sgl[2];
- 	int skip_byte = -1;
- 	int ret;
-+	int i;
- 
- 	if (dma->tx_running)
- 		return 0;
-@@ -1173,16 +1175,6 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 		return 0;
- 	}
- 
--	sg_init_table(&sg, 1);
--	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
--					   UART_XMIT_SIZE, dma->tx_addr);
--	if (ret != 1) {
--		serial8250_clear_THRI(p);
--		return 0;
--	}
--
--	dma->tx_size = sg_dma_len(&sg);
--
- 	if (priv->habit & OMAP_DMA_TX_KICK) {
- 		unsigned char c;
- 		u8 tx_lvl;
-@@ -1207,7 +1199,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 			ret = -EBUSY;
- 			goto err;
- 		}
--		if (dma->tx_size < 4) {
-+		if (kfifo_len(&tport->xmit_fifo) < 4) {
- 			ret = -EINVAL;
- 			goto err;
- 		}
-@@ -1216,12 +1208,19 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- 			goto err;
- 		}
- 		skip_byte = c;
--		/* now we need to recompute due to kfifo_get */
--		kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
--				UART_XMIT_SIZE, dma->tx_addr);
- 	}
- 
--	desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1, DMA_MEM_TO_DEV,
-+	sg_init_table(sgl, ARRAY_SIZE(sgl));
-+
-+	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, sgl, ARRAY_SIZE(sgl),
-+					   UART_XMIT_SIZE, dma->tx_addr);
-+
-+	dma->tx_size = 0;
-+
-+	for_each_sg(sgl, sg, ret, i)
-+		dma->tx_size += sg_dma_len(sg);
-+
-+	desc = dmaengine_prep_slave_sg(dma->txchan, sgl, ret, DMA_MEM_TO_DEV,
- 			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 	if (!desc) {
- 		ret = -EBUSY;
-@@ -1248,8 +1247,10 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
- err:
- 	dma->tx_err = 1;
- out_skip:
--	if (skip_byte >= 0)
-+	if (skip_byte >= 0) {
- 		serial_out(p, UART_TX, skip_byte);
-+		p->port.icount.tx++;
-+	}
- 	return ret;
- }
- 
--- 
-2.49.0
+Here also hw_plane is getting passed as 0 and not the hw_id which is 1
+for AM62L.
 
+> 
+>>       u32 fourcc = state->fb->format->format;
+>>       u16 cpp = state->fb->format->cpp[0];
+>>       u32 fb_width = state->fb->pitches[0] / cpp;
+>> @@ -2210,7 +2286,7 @@ static void dispc_k2g_plane_init(struct
+>> dispc_device *dispc)
+>>       /* MFLAG_START = MFLAGNORMALSTARTMODE */
+>>       REG_FLD_MOD(dispc, DISPC_GLOBAL_MFLAG_ATTRIBUTE, 0, 6, 6);
+>>   -    for (hw_plane = 0; hw_plane < dispc->feat->num_planes;
+>> hw_plane++) {
+>> +    for (hw_plane = 0; hw_plane < dispc->feat->num_vids; hw_plane++) {
+>>           u32 size = dispc_vid_get_fifo_size(dispc, hw_plane);
+>>           u32 thr_low, thr_high;
+>>           u32 mflag_low, mflag_high;
+>> @@ -2226,7 +2302,7 @@ static void dispc_k2g_plane_init(struct
+>> dispc_device *dispc)
+>>             dev_dbg(dispc->dev,
+>>               "%s: bufsize %u, buf_threshold %u/%u, mflag threshold
+>> %u/%u preload %u\n",
+>> -            dispc->feat->vid_name[hw_plane],
+>> +            dispc->feat->vid_info[hw_plane].name,
+> 
+> Here hw_plane is not actually the hw-id (anymore), but elsewhere in this
+> function it is used as a hw-id, which is no longer correct.
+
+For accessing vid_info hw_plane needs to be used which is the index of
+actually instantiated planes and I see it as correctly being passed for
+AM62L too. hw_id is only for dispc_k3_vid* functions where we need to
+skip the not-instantiated vid regions by adding the offset per the hw_id
+index.
+
+> 
+>>               size,
+>>               thr_high, thr_low,
+>>               mflag_high, mflag_low,
+>> @@ -2265,7 +2341,7 @@ static void dispc_k3_plane_init(struct
+>> dispc_device *dispc)
+>>       /* MFLAG_START = MFLAGNORMALSTARTMODE */
+>>       REG_FLD_MOD(dispc, DISPC_GLOBAL_MFLAG_ATTRIBUTE, 0, 6, 6);
+>>   -    for (hw_plane = 0; hw_plane < dispc->feat->num_planes;
+>> hw_plane++) {
+>> +    for (hw_plane = 0; hw_plane < dispc->feat->num_vids; hw_plane++) {
+>>           u32 size = dispc_vid_get_fifo_size(dispc, hw_plane);
+>>           u32 thr_low, thr_high;
+>>           u32 mflag_low, mflag_high;
+>> @@ -2281,7 +2357,7 @@ static void dispc_k3_plane_init(struct
+>> dispc_device *dispc)
+>>             dev_dbg(dispc->dev,
+>>               "%s: bufsize %u, buf_threshold %u/%u, mflag threshold
+>> %u/%u preload %u\n",
+>> -            dispc->feat->vid_name[hw_plane],
+>> +            dispc->feat->vid_info[hw_plane].name,
+> 
+> And here.
+> 
+> All these issues make me wonder whether we have the right model. It's
+> just too easy to get the usage wrong.
+> 
+> I'm not sure which way to go here.
+> 
+> Fix the current issues? It's a bit cumbersome to go from hw-id to the
+> index (needs a search), just to get some hw properties.
+> 
+> Or go back to the earlier one, with a vid array containing unused slots?
+> That makes the for loops a bit harder.
+> 
+> I need to think about it...
+> 
+
+Hmm, I don't think so, it seems to look fine to me and work fine too. I
+have tested thoroughly for AM62L (which has uninstantiated vid region)
+along with AM62x and AM62A with all planes displayed simultaneously. If
+you want I can put on some test logs, create some dummy holes for VID
+regions in AM62 and AM62A to put this on to some further negative tests.
+
+Also if naming convention is confusing (hw_id vs hw_plane) then maybe we
+can use something else like vid_idx ??
+
+[1]: https://gist.github.com/devarsht/82505ca69f0bd5d9788bfc240d2e83d4
+
+Regards
+Devarsh
 
