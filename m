@@ -1,374 +1,338 @@
-Return-Path: <linux-kernel+bounces-627814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A71AA5549
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E182AA5527
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 21:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474901C24412
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87DBD188DD21
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DDA29841B;
-	Wed, 30 Apr 2025 20:01:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99192798F0;
+	Wed, 30 Apr 2025 19:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Pxh16EUp";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="csQVu4Tl"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A906A296FA1;
-	Wed, 30 Apr 2025 20:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746043266; cv=none; b=lbdQLN//IiNbP8HPQjcKkACNJ5pOXIF6mVQGqcyzszGd++is6d45DRhcaUQC8aebGRjuvKNdKPHRXS1Rr1jcLxj5AFOdJ4oeCjClHiqwFZ7KGGHj8L7nD99RpAq7v+bRypG87XlgY5g+F+AZWFub5aAvzSBr9gT+xoRZHW4pT3w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746043266; c=relaxed/simple;
-	bh=/zRizgZFZlI5K0XKGv1I5paDFnaMYmUlybJB51qAZDg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=hikyQvpo0GKP8KE73g1GlckSI12JvbWe4Wq6pTXxE0QTXYqPFb0hE3lK8oX7NKHSVplUAzm2g3qDuUJX7cBfms/v0WNeo6R3qcsB9epYt4hGDTQarrLWB/IAzUVOVr8DkwgUCsqJ39GD4lgO03FeRts1ETXCLKtCK0p87AG4B1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DBF9C4CEFB;
-	Wed, 30 Apr 2025 20:01:06 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uADcE-00000001dWE-2qNu;
-	Wed, 30 Apr 2025 16:01:10 -0400
-Message-ID: <20250430200110.528523011@goodmis.org>
-User-Agent: quilt/0.68
-Date: Wed, 30 Apr 2025 15:58:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org,
- Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org,
- Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Florian Weimer <fweimer@redhat.com>,
- Andy Lutomirski <luto@kernel.org>,
- Weinan Liu <wnliu@google.com>,
- Blake Jones <blakejones@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH v7 18/18] perf tools: Merge deferred user callchains
-References: <20250430195746.827125963@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08111218E81;
+	Wed, 30 Apr 2025 19:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746043168; cv=fail; b=Cgh2/MpWGR7alpXBeA/flcFurp8cBNkniHo5Gs4RZIzPgfIwH91QctQhn4yBU72H9nxn6FRthoOiZaiOzCtpezMzMKfXWJYpIH1MrR9sd17TJXQZ1o55teccPRGf2Xc4FuGtTtGbmCAgAs3LjF4wqaXAZM0Bq7mULe8jQootZYQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746043168; c=relaxed/simple;
+	bh=HPBQhkD+FxqFJW00DVIsALC6NB3/R3IFhVH+aZTtC10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XEw2k9C1AvWORuWZF1pvvGqvtwqoUtZrrvsm5Ur/7tsJ1bALEnoupMsprU7fyqsSZuofN6SzKoR4/8Wt180X9Yq+0pbBL7v5ZoN62/LeMQBNQM7nHS0dtsXTH6ZNKfg8Xf00yYJyntjDOxjX4tjG9icNtRPUfOnmUv2LJvhlbnY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Pxh16EUp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=csQVu4Tl; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UHu1cm008936;
+	Wed, 30 Apr 2025 19:59:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=v2KOL1ga8kPt1iYJ1V
+	tBRM2pmmSYvph5lWyxpl3ETmk=; b=Pxh16EUpBigKnxTBvMlLAaUDM9gsbc26Gp
+	kLVH/eO316QdcsvlrsXgUrSb7zXNUyTIJL+4L+7KtQ+Vez1Dcpj3D1R/JoVfK4yI
+	TDAU3ighh4b9Kllak7/kKsJBVjOj9E4AxmDdjLbVmqCr1YC9FVYUm6UltAwVrU2g
+	Wqpw1jL2b9xRIwYD8MYrIxXN3bqv69UcNMoNwa8RZLnawAI750b/F1Tl1B/I68+T
+	GXFd2yCn38ntLHZ4QFIPCFgVTLyMy4YMjsJbxv5sYhNCIzefiFugDYrn4YXfisy4
+	krd8IGJexQIahqGjdaBd35E9my1SPToistY09s7gDo74sOE/vG6w==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46b6uta189-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 19:59:11 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53UJoQ7L013974;
+	Wed, 30 Apr 2025 19:59:10 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 468nxbsyq6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 19:59:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JrZxONy7rwst72FooTUx88ba4PQKoSzeueHbVW3V4eO1d3qGsfw1TyXFUPYoPmoPZs6E7qjK8gV7eZ6+l9kV4ylZ5vGzGpa1l4K5IHdz/YmvOyKAqN/kCXeyq3tscdMwiEKAeSO0Rjbu1RHVcOjOK/fEBhEt4NnUncKpuZ5zLcdeZcLFgtxmELQPRQgbt2mhfnDa8u684xJzs2DJhdbB5eJEun2aeeivPNNbhd8RxiYjW2CwnuJktoYjUplorKof4ip+uP7WZ3qDgMbWpnQNISRa99EBojS0jUTtB/AeZiEwQ+lnkfl8cUfAnlscz2xJkQhRsNtAHOdu6cNA+ufBiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v2KOL1ga8kPt1iYJ1VtBRM2pmmSYvph5lWyxpl3ETmk=;
+ b=lCv6wDSd4iPicKIbBSZ5NlQQiywXsxR0/VgQq1uSOG75pPecqa5iQMHIQ53P/gGQMG0/CbktNJjMaR8WSNkpTKFkGy5uz9kIQ/eR0v5jA4hFabIAcu2YYGZTdYpo1ABNm6Y9/wstMdAxT5RR0rSCT8mKHpZIqDDvaN+1x7ckgWdhT70SBoeeXLHglVVMzUWBh6+NlCagviklYOx/A+o8XRZmgG/xTfFXVjllmM79SqJrvyHlpfG5dIxxcT2GGeX69JERC5Wj/NmvJ8EGCnhC50v9Ku/hhQOxi8Qv9DCP5YcsvzWSlKaR/adPhISHRWlHBC4pjSyv1YLEu7Hhz5K+pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v2KOL1ga8kPt1iYJ1VtBRM2pmmSYvph5lWyxpl3ETmk=;
+ b=csQVu4TlhnzRpxvT3pxueZ386VCbRwfvBUnoxz3QSUG3s9P7GqJdbZ3YBk3FDWfT2TnAQgr7+/sScqCexth8TXZRjSqEZ5hl9+ZIMQyPk3B/SYjhgPN9JaFfjgbHhog6NzqYA4VCxYCZhB4jbbTfyQqb7whZaLdwk7uQjcymAS4=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH4PR10MB8051.namprd10.prod.outlook.com (2603:10b6:610:242::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.34; Wed, 30 Apr
+ 2025 19:59:05 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
+ 19:59:05 +0000
+Date: Wed, 30 Apr 2025 20:58:59 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH 0/3] eliminate mmap() retry merge, add .mmap_proto
+ hook
+Message-ID: <c6335d9a-797a-4ccd-8828-b22f72354b8a@lucifer.local>
+References: <cover.1746040540.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1746040540.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: LO3P123CA0011.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:ba::16) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH4PR10MB8051:EE_
+X-MS-Office365-Filtering-Correlation-Id: a91e56a3-cdb6-4e75-3cc4-08dd8821763f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?toyszO5/87M8eb0xp8WmB+hEQrhimWD6qq+CX5PlouPq2ZGbpuFDDDOr7t3v?=
+ =?us-ascii?Q?gTPtWLy3V57Kd8l2Lbc8Xg/DMOld2wD7dZVlgVcQVffXkRKInuIeYgyIzKH3?=
+ =?us-ascii?Q?QkjQiafb1i9DW71wtT6+HjU2qqCmrW5kY10eAyOmT9x2SMxBOx3GBKtvx/T2?=
+ =?us-ascii?Q?sRLpfDzaM18ppFRlsA2YgM1vYAytMguH2PdNQ9GlfZ/4a8N7UZ5t0RVUOjWk?=
+ =?us-ascii?Q?5gupyupm5+HktKd3kaULBFwJb97gf6iwsHefPPP8VEtxP8tixq/aK9ga5gEP?=
+ =?us-ascii?Q?tHh3Py43baBatuug35LyUkLiVZHVa07/aeG2bFjlfp7/YWl1YelKNO4SDOPF?=
+ =?us-ascii?Q?i7gZlBzrog3AcpRNgH+Sauk58zGXtc9kQMwzVciunvwJq5/UkDk2tq0AmzLU?=
+ =?us-ascii?Q?OBNEzx/78F1KmHdHWmyeQ06MvyQwWAF0nWckUP17B+r3fAlwXqxMeaMrilBq?=
+ =?us-ascii?Q?AsXQJaB/E3STVY73UxJzpP5/plkTglRMmXbS93NQzqVdHXjjYse1ZtD6VvEI?=
+ =?us-ascii?Q?udi0IMEOnldjt1uyK9H6kulfRDJUBbgtD7eJ1/M3Wo+Y2btu9LQ3dE/lY5R6?=
+ =?us-ascii?Q?kfChZmwN0k2VPfybgRTmanKv8KTi7Jf3A+LsD6GL5t9ZYVITbUEfGjlg7RCj?=
+ =?us-ascii?Q?MhxuwEPJZqV9UYWp4qk4kFsBO+VWErNVE8atudX+SK9d4lnWGzVJZoikt7xM?=
+ =?us-ascii?Q?bnQNi6i7GwfqAfTJtFuaP2ZBnC/vcF3ODLpsccCttYxuytnK2Q4+eqiaECQX?=
+ =?us-ascii?Q?VnPAoKZVatg1ENToyT49WFv00Wpdq4IsODFqLoJCj9BujAzJ9QOrAGDLfihd?=
+ =?us-ascii?Q?5WOQ+GfYfW+DgAyl+ttwVQpBfvi2vWk2Y9FI3JiFtEQIrQEOE1SbkU+EHyYe?=
+ =?us-ascii?Q?4RxEqpVvwTLhlS4osbzUI+OSJ/aGW45rvc0PKK6Hp+20IRNVn69wgreGI5AY?=
+ =?us-ascii?Q?MoLL8hE0roTcExx2hAgOXaAP8WaxZd0gAJz+VtZwqKNwFUqrU5JbM7hpWaRd?=
+ =?us-ascii?Q?NtPqcrS6lSDfOs+SjbYicKhaCojBB+9UINR83zPLK0Cs/nbUub5iEqpzmgcX?=
+ =?us-ascii?Q?eg+fPPgZ3g/xw66cALFyflLsCnFB7Q/9pf8YvBa+Ktd+rFtQ47l2m3KrYc6E?=
+ =?us-ascii?Q?JkfJv32pB4JZvlm7f4haxizTvmhFsLrFIeqDoMhYDj+8yYtIEOBuieS8Uwf1?=
+ =?us-ascii?Q?2jrU5IE2iAl+5830RV26QV0L4VDCERFzxtTpX6iysz1SgOu0PCHWusgjsPn5?=
+ =?us-ascii?Q?5HKcJkPzXw5fi8hfTh7yrYM1WEC7NboxSwxxLylH97f4R858QhRHEHyHgBzz?=
+ =?us-ascii?Q?OiZFS/nB2ZLcDWTjtvZ4a8Z6G97w09Wfw8hp0Z3RYFr5q5+Bx88BL/bmtwaL?=
+ =?us-ascii?Q?Nfh5GFmXpMGGnffskwHx+QmLhhtm9wNDq85cOQNYpIWbiUFVTekV+7R6oryd?=
+ =?us-ascii?Q?g05cdk0HCOc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?cyC9PooCqtB7RmMA/DXglrAmaQQdT3oHpsl06FNDRvWhF947zBSEnop8b2mL?=
+ =?us-ascii?Q?8uzQ40W7et4X3QaAPwVKuiIQ2u1IW0x7qNCB+C2ekB/h7uLT+92I+PrnTZRl?=
+ =?us-ascii?Q?pnWLjH+rMOTxsXeIE0A5WenHVW7+4ijlFsj4EydlMTb0eYchj3SH/qBp98a9?=
+ =?us-ascii?Q?UnoxjTD+K1Gx1TBmlOYfQf85wmujq+BUChmUj7QlF9cM8P4nIa7sbeCNlUHS?=
+ =?us-ascii?Q?mJQXhBJl2JEbtVdhSK+d3XolLgpGA9fYM+skv+JT9ac2QVNFwQn/td9AiY6Z?=
+ =?us-ascii?Q?Ik3U+fUeQLFJQG0ImbORKV3bOD89d9G9DUf9kMrhl0HrqM4RI3PbREEz/pxy?=
+ =?us-ascii?Q?Kl6xunS69oSKZDLIV3pVywal+ZHyfw9/sbf+hzq1sTrVbM7QTB8XM3VXs/bd?=
+ =?us-ascii?Q?AFVhJQ+lEK8UYANz3ArmBaM4+xxdbLL+d0819ayX+FVMGH5gA9+xN8/tUrOZ?=
+ =?us-ascii?Q?uvI8DKDCYDz42uL2Bg6JQpu2WtCvSEi+o1EzDmKYJL64WdR+y698dXsOuTbg?=
+ =?us-ascii?Q?gXn2B2K+SaIOSdWoL6iVaTZqQvVN/YMy9rhdaPQK8hZQESR+K5Ir/P9xFWK6?=
+ =?us-ascii?Q?ePiD1eZ2Ids+g8K3gGp5UZ2Aa/IS2laodgeOMx1u5orFg0QUExrnn0AyP+B1?=
+ =?us-ascii?Q?suF4+siyMuSh6cUNUaPvAlcQNdrvvvTc98t8RB+roK0Bvqn9lPkP9Tc3McNT?=
+ =?us-ascii?Q?F78iqgLYr9FjlRnZTdc5I95BYlfgQ0oQQpCeZBqc9L/cdfl7qKvrOaqmiqf0?=
+ =?us-ascii?Q?+8zzUgc13hwlrz7pBW1zJJUyVqzffpaz027ifeC08KYffelbAn01jHTmG/Jl?=
+ =?us-ascii?Q?8Qw62R5UwaEfDYNQbNu45Kr8TM09aefDZHNxN+fHumrBtt9FaJmqQbjjkFoH?=
+ =?us-ascii?Q?X80Hsp8xBGa8+yFLvV2vjeUnuG2/tnl6EAznch1n3Yu8qgT4AjecUfNhbUOO?=
+ =?us-ascii?Q?ECd3GjcudqMca24FnHEf7iIdkH57adpa4Yq0pL6dJS1kZ1f/rgoTvJ6z6h9a?=
+ =?us-ascii?Q?7d72Gql9ZaVRJ/+A7PtH2N+6zaTgTE57n+b32ws6r82eE4HcAkTmCE9Xymej?=
+ =?us-ascii?Q?ZOmhyqXkdy1BSLpzExRduKIDVNL+k/k8gqR7UAZ1CqRBjX+RnptAFjf4JMjq?=
+ =?us-ascii?Q?ypFznDtZfgmJLs/Z8m7YwkEgxyhGq5+o6D3vKkWjF/jSxW6MwxagXZgJTAxL?=
+ =?us-ascii?Q?XwiktgH6qgEW5lcwAS8UrBK764Q4mSZu3ebP6MW9BodmSAE3wY5RIbVJDnDx?=
+ =?us-ascii?Q?9tM1D7ami0j+L61zQQxxqF9hwaRyeoMbrU/9LDw7qAcY7JGmZlmRk+/cjdG4?=
+ =?us-ascii?Q?MHFHvWAyTOSq9kH/mG3wuNIsVi65+9p5iy81v8vOMEt1HK/fkPlcMFeTgKOI?=
+ =?us-ascii?Q?nrj1sGQtR5h3I9IP7tQXqkqZN/BN8Ol6aXWvMH2XZjZX1keeMc43phDmqgcg?=
+ =?us-ascii?Q?wuwMO98Y3Yg1fID0g8EdjbUHxF1NBDhoE+wJIbD38kW7CqPo8qxpiVM1pWXG?=
+ =?us-ascii?Q?+0H+nMXA5rsfJeNq5CqmayH1mMzHHa3bOA8lxaYuhcLDDq84oTWfiYnACODc?=
+ =?us-ascii?Q?atIH3EC7G6uyhiNlhcAupnqttpeuNkB0BhOcyvFt7WB4TfiG7Uli/6oWic+o?=
+ =?us-ascii?Q?ZQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	WowwK7FWhbdHiLC48EV6vyMEVygL14MClgHRkzEj4d8foSuCR0bcL7qB8WsQ4uuqjnVyft8+OkdyfLDqwac9wcBsb4KCyebUChrghI9PmqrmCPGT06BYob43zb72/IEQfYQkFF/nr4kjT3Wd1bHpiD07KZjMlJYS/co1MifED5gCWSzANu9rQRI62nf+9eF5iaLUAx/I8PeT/NOuweLi+EMRUkDtpvp2yFvKtkxUG6Oiv21XCtEIgTZLE3/oxgeAalKvUbygAeYDrpNLoJpGz1mhAwJyqUjFuxU48G4nvfElfeZGbM+s1Hgf3GfdvQwawldklkgSd0FYwa9sohuB/nReRi92C9M84r2D2Cfjd4Ae/SCTTRxVRfOFEv7KqB+oHLRfr4W3ZaQQQK1e0YT9Q7sn/+k/wDEBq9b9x2dmaYsnk3CkaFF5o+9/aIXPGBDfKF2MEgoMUYsIJzjmtG2hokDBsMzM35rBvpszqoXZI8hhxXW2HegzzykluqtjJghAEfsB5SkaICHy0x2iH/GUwdIRN4oiOe1+1OCRRMOtssDnKQcZiP27QThCzhi1Bw8S2S32EruMfa/mT7mPfRcBtmUq0WVaxtEdMKIqxCdWRMk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a91e56a3-cdb6-4e75-3cc4-08dd8821763f
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 19:59:05.6359
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JHzNjfTW7T1pZ0xxKGkUkZJ4gedIacTM1z+tOIcb3toWBKfksJVlGo9BjUiUe3Qv32ID1GCiygtX0o+hW0Dz7KBpkpzJRwxQh8hgjyOxGsg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR10MB8051
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2504070000
+ definitions=main-2504300146
+X-Proofpoint-GUID: ttkcw6s97Z6-l1E_OKUbBwAR1SWWvWC5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDE0NiBTYWx0ZWRfX73+ghWUwXEkY 4m+bufY+TPb1ou+vQC3KTFBRsXALChB0i2AmarwNhHTYc6AzlUVRRKK4ncVeeuky57jZWEAzHX5 WZSm8HWTiZtT4ixtONfoMRLz+KUIochybtNdspyC2WI187tHPY4UpOwK1lh2yp7VQ4whsmGi3p+
+ 1G8KDakCwEVX/a8T1V5BIULVeGHw2msbHtSuq84OkLR6rEhUKaFBMjKTDnMbIjl22TTJ7beoQlO V103DHTM6EixckNC9oSBlBGAKoNf2V+ihQgFWfHWPJklA3exD0BLPgAOU6rigui0hA37RnagSND fzPuEGYoLG4gkzPVgjHirfpXKzt0WSrQ/3q03rt2ePWQV9RUNzw/AFpoMhnXws97VQ+tGDFTE1c
+ ryuaJ3Q79CGaugHTc5Bz9kNWdg1M1l+aZeExjc0OQ1mJBSWY62ndTHZeus9DVLllHpuqLTQT
+X-Authority-Analysis: v=2.4 cv=ZuHtK87G c=1 sm=1 tr=0 ts=6812810f b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=GoEa3M9JfhUA:10 a=hUIfCTMR2JyyZYqEob8A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: ttkcw6s97Z6-l1E_OKUbBwAR1SWWvWC5
 
-From: Namhyung Kim <namhyung@kernel.org>
+Apologies, made a mistake that I wrongly assumed tooling would catch... let me
+try sending this again...
 
-Save samples with deferred callchains in a separate list and deliver
-them after merging the user callchains.  If users don't want to merge
-they can set tool->merge_deferred_callchains to false to prevent the
-behavior.
-
-With previous result, now perf script will show the merged callchains.
-
-  $ perf script
-  perf     801 [000]    18.031793:          1 cycles:P:
-          ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
-          ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
-          ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
-          ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
-          ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
-          ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
-          ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
-          ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
-          ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
-          ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
-          ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
-          ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
-          ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
-              7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
-  ...
-
-The old output can be get using --no-merge-callchain option.
-Also perf report can get the user callchain entry at the end.
-
-  $ perf report --no-children --percent-limit=0 --stdio -q -S __intel_pmu_enable_all.isra.0
-  # symbol: __intel_pmu_enable_all.isra.0
-       0.00%  perf     [kernel.kallsyms]
-              |
-              ---__intel_pmu_enable_all.isra.0
-                 perf_ctx_enable
-                 event_function
-                 remote_function
-                 generic_exec_single
-                 smp_call_function_single
-                 event_function_call
-                 perf_event_for_each_child
-                 _perf_ioctl
-                 perf_ioctl
-                 __x64_sys_ioctl
-                 do_syscall_64
-                 entry_SYSCALL_64
-                 __GI___ioctl
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/perf/Documentation/perf-script.txt |  5 ++
- tools/perf/builtin-script.c              |  5 +-
- tools/perf/util/callchain.c              | 24 +++++++++
- tools/perf/util/callchain.h              |  3 ++
- tools/perf/util/evlist.c                 |  1 +
- tools/perf/util/evlist.h                 |  1 +
- tools/perf/util/session.c                | 63 +++++++++++++++++++++++-
- tools/perf/util/tool.c                   |  1 +
- tools/perf/util/tool.h                   |  1 +
- 9 files changed, 102 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 28bec7e78bc8..03d112960632 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -527,6 +527,11 @@ include::itrace.txt[]
- 	The known limitations include exception handing such as
- 	setjmp/longjmp will have calls/returns not match.
- 
-+--merge-callchains::
-+	Enable merging deferred user callchains if available.  This is the
-+	default behavior.  If you want to see separate CALLCHAIN_DEFERRED
-+	records for some reason, use --no-merge-callchains explicitly.
-+
- :GMEXAMPLECMD: script
- :GMEXAMPLESUBCMD:
- include::guest-files.txt[]
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 176b8f299afc..dd17c11af0c8 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3775,6 +3775,7 @@ int cmd_script(int argc, const char **argv)
- 	bool header_only = false;
- 	bool script_started = false;
- 	bool unsorted_dump = false;
-+	bool merge_deferred_callchains = true;
- 	char *rec_script_path = NULL;
- 	char *rep_script_path = NULL;
- 	struct perf_session *session;
-@@ -3928,6 +3929,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Guest code can be found in hypervisor process"),
- 	OPT_BOOLEAN('\0', "stitch-lbr", &script.stitch_lbr,
- 		    "Enable LBR callgraph stitching approach"),
-+	OPT_BOOLEAN('\0', "merge-callchains", &merge_deferred_callchains,
-+		    "Enable merge deferred user callchains"),
- 	OPTS_EVSWITCH(&script.evswitch),
- 	OPT_END()
- 	};
-@@ -4183,7 +4186,7 @@ int cmd_script(int argc, const char **argv)
- 	script.tool.throttle		 = process_throttle_event;
- 	script.tool.unthrottle		 = process_throttle_event;
- 	script.tool.ordering_requires_timestamps = true;
--	script.tool.merge_deferred_callchains = false;
-+	script.tool.merge_deferred_callchains = merge_deferred_callchains;
- 	session = perf_session__new(&data, &script.tool);
- 	if (IS_ERR(session))
- 		return PTR_ERR(session);
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index d7b7eef740b9..6d423d92861b 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -1828,3 +1828,27 @@ int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 	}
- 	return 0;
- }
-+
-+int sample__merge_deferred_callchain(struct perf_sample *sample_orig,
-+				     struct perf_sample *sample_callchain)
-+{
-+	u64 nr_orig = sample_orig->callchain->nr - 1;
-+	u64 nr_deferred = sample_callchain->callchain->nr;
-+	struct ip_callchain *callchain;
-+
-+	callchain = calloc(1 + nr_orig + nr_deferred, sizeof(u64));
-+	if (callchain == NULL) {
-+		sample_orig->deferred_callchain = false;
-+		return -ENOMEM;
-+	}
-+
-+	callchain->nr = nr_orig + nr_deferred;
-+	/* copy except for the last PERF_CONTEXT_USER_DEFERRED */
-+	memcpy(callchain->ips, sample_orig->callchain->ips, nr_orig * sizeof(u64));
-+	/* copy deferred use callchains */
-+	memcpy(&callchain->ips[nr_orig], sample_callchain->callchain->ips,
-+	       nr_deferred * sizeof(u64));
-+
-+	sample_orig->callchain = callchain;
-+	return 0;
-+}
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 86ed9e4d04f9..89785125ed25 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -317,4 +317,7 @@ int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
- 				    struct perf_sample *sample, int max_stack,
- 				    bool symbols, callchain_iter_fn cb, void *data);
- 
-+int sample__merge_deferred_callchain(struct perf_sample *sample_orig,
-+				     struct perf_sample *sample_callchain);
-+
- #endif	/* __PERF_CALLCHAIN_H */
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index c1a04141aed0..d23a3f8e8649 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -82,6 +82,7 @@ void evlist__init(struct evlist *evlist, struct perf_cpu_map *cpus,
- 	evlist->ctl_fd.ack = -1;
- 	evlist->ctl_fd.pos = -1;
- 	evlist->nr_br_cntr = -1;
-+	INIT_LIST_HEAD(&evlist->deferred_samples);
- }
- 
- struct evlist *evlist__new(void)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index edcbf1c10e92..a8cb5a29d55e 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -84,6 +84,7 @@ struct evlist {
- 		int	pos;	/* index at evlist core object to check signals */
- 	} ctl_fd;
- 	struct event_enable_timer *eet;
-+	struct list_head deferred_samples;
- };
- 
- struct evsel_str_handler {
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 30fb1d281be8..51f17bf42dd9 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1277,6 +1277,56 @@ static int evlist__deliver_sample(struct evlist *evlist, const struct perf_tool
- 					    per_thread);
- }
- 
-+struct deferred_event {
-+	struct list_head list;
-+	union perf_event *event;
-+};
-+
-+static int evlist__deliver_deferred_samples(struct evlist *evlist,
-+					    const struct perf_tool *tool,
-+					    union  perf_event *event,
-+					    struct perf_sample *sample,
-+					    struct machine *machine)
-+{
-+	struct deferred_event *de, *tmp;
-+	struct evsel *evsel;
-+	int ret = 0;
-+
-+	if (!tool->merge_deferred_callchains) {
-+		evsel = evlist__id2evsel(evlist, sample->id);
-+		return tool->callchain_deferred(tool, event, sample,
-+						evsel, machine);
-+	}
-+
-+	list_for_each_entry_safe(de, tmp, &evlist->deferred_samples, list) {
-+		struct perf_sample orig_sample;
-+
-+		ret = evlist__parse_sample(evlist, de->event, &orig_sample);
-+		if (ret < 0) {
-+			pr_err("failed to parse original sample\n");
-+			break;
-+		}
-+
-+		if (sample->tid != orig_sample.tid)
-+			continue;
-+
-+		evsel = evlist__id2evsel(evlist, orig_sample.id);
-+		sample__merge_deferred_callchain(&orig_sample, sample);
-+		ret = evlist__deliver_sample(evlist, tool, de->event,
-+					     &orig_sample, evsel, machine);
-+
-+		if (orig_sample.deferred_callchain)
-+			free(orig_sample.callchain);
-+
-+		list_del(&de->list);
-+		free(de);
-+
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+
- static int machines__deliver_event(struct machines *machines,
- 				   struct evlist *evlist,
- 				   union perf_event *event,
-@@ -1305,6 +1355,16 @@ static int machines__deliver_event(struct machines *machines,
- 			return 0;
- 		}
- 		dump_sample(evsel, event, sample, perf_env__arch(machine->env));
-+		if (sample->deferred_callchain && tool->merge_deferred_callchains) {
-+			struct deferred_event *de = malloc(sizeof(*de));
-+
-+			if (de == NULL)
-+				return -ENOMEM;
-+
-+			de->event = event;
-+			list_add_tail(&de->list, &evlist->deferred_samples);
-+			return 0;
-+		}
- 		return evlist__deliver_sample(evlist, tool, event, sample, evsel, machine);
- 	case PERF_RECORD_MMAP:
- 		return tool->mmap(tool, event, sample, machine);
-@@ -1364,7 +1424,8 @@ static int machines__deliver_event(struct machines *machines,
- 		return tool->aux_output_hw_id(tool, event, sample, machine);
- 	case PERF_RECORD_CALLCHAIN_DEFERRED:
- 		dump_deferred_callchain(evsel, event, sample);
--		return tool->callchain_deferred(tool, event, sample, evsel, machine);
-+		return evlist__deliver_deferred_samples(evlist, tool, event,
-+							sample, machine);
- 	default:
- 		++evlist->stats.nr_unknown_events;
- 		return -1;
-diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-index e78f16de912e..385043e06627 100644
---- a/tools/perf/util/tool.c
-+++ b/tools/perf/util/tool.c
-@@ -238,6 +238,7 @@ void perf_tool__init(struct perf_tool *tool, bool ordered_events)
- 	tool->cgroup_events = false;
- 	tool->no_warn = false;
- 	tool->show_feat_hdr = SHOW_FEAT_NO_HEADER;
-+	tool->merge_deferred_callchains = true;
- 
- 	tool->sample = process_event_sample_stub;
- 	tool->mmap = process_event_stub;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 9987bbde6d5e..d06580478ab1 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -87,6 +87,7 @@ struct perf_tool {
- 	bool		cgroup_events;
- 	bool		no_warn;
- 	bool		dont_split_sample_group;
-+	bool		merge_deferred_callchains;
- 	enum show_feature_header show_feat_hdr;
- };
- 
--- 
-2.47.2
-
-
+On Wed, Apr 30, 2025 at 08:54:10PM +0100, Lorenzo Stoakes wrote:
+> During the mmap() of a file-backed mapping, we invoke the underlying
+> driver's f_op->mmap() callback in order to perform driver/file system
+> initialisation of the underlying VMA.
+> 
+> This has been a source of issues in the past, including a significant
+> security concern relating to unwinding of error state discovered by Jann
+> Horn, as fixed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+> error path behaviour") which performed the recent, significant, rework of
+> mmap() as a whole.
+> 
+> However, we have had a fly in the ointment remain - drivers have a great
+> deal of freedom in the .mmap() hook to manipulate VMA state (as well as
+> page table state).
+> 
+> This can be problematic, as we can no longer reason sensibly about VMA
+> state once the call is complete (the ability to do - anything - here does
+> rather interfere with that).
+> 
+> In addition, callers may choose to do odd or unusual things which might
+> interfere with subsequent steps in the mmap() process, and it may do so and
+> then raise an error, requiring very careful unwinding of state about which
+> we can make no assumptions.
+> 
+> Rather than providing such an open-ended interface, this series provides an
+> alternative, far more restrictive one - we expose a whitelist of fields
+> which can be adjusted by the driver, along with immutable state upon which
+> the driver can make such decisions:
+> 
+> struct vma_proto {
+> 	/* Immutable state. */
+> 	struct mm_struct *mm;
+> 	unsigned long start;
+> 	unsigned long end;
+> 
+> 	/* Mutable fields. Populated with initial state. */
+> 	pgoff_t pgoff;
+> 	struct file *file;
+> 	vm_flags_t flags;
+> 	pgprot_t page_prot;
+> 
+> 	/* Write-only fields. */
+> 	const struct vm_operations_struct *vm_ops;
+> 	void *private_data;
+> };
+> 
+> The mmap logic then updates the state used to either merge with a VMA or
+> establish a new VMA based upon this logic.
+> 
+> This is achieved via new f_op hook .vma_proto(), which is, importantly,
+> invoked very early on in the mmap() process.
+> 
+> If an error arises, we can very simply abort the operation with very little
+> unwinding of state required.
+> 
+> The existing logic contains another, related, peccadillo - since the
+> .mmap() callback might do anything, it may also cause a previously
+> unmergeable VMA to become mergeable with adjacent VMAs.
+> 
+> Right now the logic will retry a merge like this only if the driver changes
+> VMA flags, and changes them in such a way that a merge might succeed (that
+> is, the flags are not 'special', that is do not contain any of the flags
+> specified in VM_SPECIAL).
+> 
+> This has been the source of a great deal of pain for a while - it is hard
+> to reason about an .mmap() callback that might do - anything - but it's
+> also hard to reason about setting up a VMA and writing to the maple tree,
+> only to do it again utilising a great deal of shared state.
+> 
+> Since .mmap_proto() sets fields before the first merge is even attempted,
+> the use of this callback obviates the need for this retry merge logic.
+> 
+> A driver can specify either .mmap_proto(), .mmap() or both. This provides
+> maximum flexibility.
+> 
+> In researching this change, I examined every .mmap() callback, and
+> discovered only a very few that set VMA state in such a way that a. the VMA
+> flags changed and b. this would be mergeable.
+> 
+> In the majority of cases, it turns out that drivers are mapping kernel
+> memory and thus ultimately set VM_PFNMAP, VM_MIXEDMAP, or other unmergeable
+> VM_SPECIAL flags.
+> 
+> Of those that remain I identified a number of cases which are only
+> applicable in DAX, setting the VM_HUGEPAGE flag:
+> 
+> * dax_mmap()
+> * erofs_file_mmap()
+> * ext4_file_mmap()
+> * xfs_file_mmap()
+> 
+> For this remerge to not occur and to impact users, each of these cases
+> would require a user to mmap() files using DAX, in parts, immediately
+> adjacent to one another.
+> 
+> This is a very unlikely usecase and so it does not appear to be worthwhile
+> to adjust this functionality accordingly.
+> 
+> We can, however, very quickly do so if needed by simply adding an
+> .mmap_proto() hook to these as required.
+> 
+> There are two further non-DAX cases I idenitfied:
+> 
+> * orangefs_file_mmap() - Clears VM_RAND_READ if set, replacing with
+>   VM_SEQ_READ.
+> * usb_stream_hwdep_mmap() - Sets VM_DONTDUMP.
+> 
+> Both of these cases again seem very unlikely to be mmap()'d immediately
+> adjacent to one another in a fashion that would result in a merge.
+> 
+> Finally, we are left with a viable case:
+> 
+> * secretmem_mmap() - Set VM_LOCKED, VM_DONTDUMP.
+> 
+> This is viable enough that the mm selftests trigger the logic as a matter
+> of course. Therefore, this series replace the .secretmem_mmap() hook with
+> .secret_mmap_proto().
+> 
+> Lorenzo Stoakes (3):
+>   mm: introduce new .mmap_proto() f_op callback
+>   mm: secretmem: convert to .mmap_proto() hook
+>   mm/vma: remove mmap() retry merge
+> 
+>  include/linux/fs.h               |  7 +++
+>  include/linux/mm_types.h         | 24 ++++++++
+>  mm/memory.c                      |  3 +-
+>  mm/mmap.c                        |  2 +-
+>  mm/secretmem.c                   | 14 ++---
+>  mm/vma.c                         | 99 +++++++++++++++++++++++++++-----
+>  tools/testing/vma/vma_internal.h | 38 ++++++++++++
+>  7 files changed, 164 insertions(+), 23 deletions(-)
+> 
+> -- 
+> 2.49.0
+> 
 
