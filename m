@@ -1,216 +1,128 @@
-Return-Path: <linux-kernel+bounces-626735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D66AA46AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:16:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8E8AA4717
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5A84E0610
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:16:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B947A6D4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39891E260A;
-	Wed, 30 Apr 2025 09:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4CF237A3B;
+	Wed, 30 Apr 2025 09:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cTQn8R5Q"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gc3e37m3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32536158218
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F7231839;
+	Wed, 30 Apr 2025 09:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746004556; cv=none; b=Zv4ug6J5xSiaKFZiaIdX8IxjDulW6A7GphUmV6EErobWyE1ujZ7YG6/fRaIAbMlmaBjwyc5SDDjs1/KCrCZz4FtHP5u3jzHE4qmDy5nJ3bloV14c2Y0+WSSlTKX5QA4wrWdql9ewSlaV50Y2gjXoDlG5scC0VUy5tvDzvC+dBJA=
+	t=1746005265; cv=none; b=Bp26T58SZE7C4D6K/1UxoZ/YFWCjBQfMmGQ9Gc264XuiPOaq+4ngN43H1AoFE+bYTT1Y1o8TSvaGkZTW23dImeEEpWET0QDtbhNzI3BfUzZ+mAORJbR1eIy0adC2e8JDifKBjElHMX4TUEWlZ55iS8jaj/oP97V+dCAXVyAyQW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746004556; c=relaxed/simple;
-	bh=WtneIc0QDfp7DDBdSDxXokPJOzOSITmmPNHBQnSD4cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbmmHdtKxVhIay9flSfzssYiuY1owA7veuNPs3r3nm/NVf7Ggl++15/U9qH+ylNWX5PvZTdWCERBeJSOxcUugFgbUZptxqAVpG09gysGFxpluPpjMINJz0nZoPaZMgUnlpAsSkgAmJHn7/VxJn1vNHZ/oonIXGRbiEt024FNokg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cTQn8R5Q; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so5329192f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746004552; x=1746609352; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iGp+BEJIsu8tiMnSTnVm5SKGOdus+/7Cz1jcp7uu/9c=;
-        b=cTQn8R5Q7G3HjGw/qU212gP76XQx3D3AQWqevQV9Irzo8jD2roHaxf/misjNRu6KLp
-         s+TdkBoZ3fuePN5p7H4SOFOYTO5xKe5OSSkEJTm2TyVCzILIzK8eb0bM65ApmlnJk9xA
-         kck2KrSehPyZAQGtO9TaC3/d/TXALbjhkRS8fcmLVduFJ6YvJ0xuel9831nmiByoaxY4
-         nPCJfo1eY2xd00p7DFWhXxnVm4ahM692ao991SA6Oov/kAZHh1Ium8xlj2n05X4AXEr5
-         cAa6jGoPhi7Sb8JInj9CWwo9sGm/uMByq08SNPikDdDJ75FeGZmN7yKGH5sfKG+kXL/F
-         UOzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746004552; x=1746609352;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGp+BEJIsu8tiMnSTnVm5SKGOdus+/7Cz1jcp7uu/9c=;
-        b=uqCMIVe3XI4n2196GDwwh6EgnM6pMxTMbwj/uzeJONJgpCbFJbQ8Z3D42gO/ETlATl
-         WuD6bdjgSZF6KfqkBNskazlq8xgizoKwVFMIEaEjxFRKEurl8wG3YFBgvQVnrAbbqphU
-         rvmGyLHjkTr8y7O9nQ/IEPiScde/Qa8pEMtRpMJVMz9iljX/L3cLeK2RfYb0Dj08a6zP
-         txIboVv0rWpYqqt2594i9pdASZKieuam6zCt37/iltjtoeeJG+F5XBHg+rJRWB6gJHWp
-         LRSoP/Hm3LgD/wM4sTbggOHEoUYZbihzlYCWBeHaI8W+k/lil7fsrDPebjbWjwCpSAB2
-         XwOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhw9U28ehZ5HER/tjdVydg/1ewd54Zej94rpKEOuV5rZvbzICKIEfPmfrzanYZ0ucDTazTxxwUkv1QwAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzodsR2cveGkd76auzmErbAaHbmazYMYnhOSvqAtmKXP9DAQytk
-	UPEHhOeHx/77LTjq9CIrF12xAi3beglGYz94ULPsUHmGHb6UPoHbhAmsR1yOHKw=
-X-Gm-Gg: ASbGnctppRyOPNJVzGMIGX79XoSX2hS1+6m1jEFJqcWDYikx//b3MEPt4jMocFtA3sI
-	0UNnguB92lB1VZN7PCh2la/Atlv81rJgMp4S0zcje5RIXgOwfVqjUdeX3Itr5eGWDNeoolUG8Wj
-	SRDNRrDxiQGq2GzNrnf6vAWfjaeH4Yv5XeEWpza1wYwu+nEb8MKyfwh+/ZCtYFkUiWP1aCd0d7O
-	yKozZ2+k9USCKyxmm16xQt19/sEJ9Wz+xT0Ldsbi8J3tiJB2aSy2IdVwXkjMDq/uG21hQ+UwSkK
-	qAaUg3y12Nx2vm6K3UphfM5C8v7oWCAtXlagF0DezjrepbnB76JQFcsLn6ONHzdJF/izqxZcFIh
-	3Kv4=
-X-Google-Smtp-Source: AGHT+IFkPR//rOgO0Nj6VP0et5o5R5weTdk43Q9O48THz0Bb0Mc82kvtuhKb+SHshn3v5YQdadMBLQ==
-X-Received: by 2002:a05:6000:2284:b0:3a0:8c68:19b7 with SMTP id ffacd0b85a97d-3a08f7985d0mr2116855f8f.3.1746004552519;
-        Wed, 30 Apr 2025 02:15:52 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073cc4025sm16666218f8f.56.2025.04.30.02.15.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 02:15:52 -0700 (PDT)
-Date: Wed, 30 Apr 2025 11:15:50 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengfei Li <pengfei.li_1@nxp.com>,
-	Marco Felsch <m.felsch@pengutronix.de>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ye.li@nxp.com, joy.zou@nxp.com, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RESEND v6 2/2] thermal: imx91: Add support for i.MX91
- thermal monitoring unit
-Message-ID: <aBHqRu7qmDlXyFeR@mai.linaro.org>
-References: <20250407-imx91tmu-v6-0-e48c2aa3ae44@nxp.com>
- <20250407-imx91tmu-v6-2-e48c2aa3ae44@nxp.com>
- <aAIkAF_AHta8_vuS@mai.linaro.org>
- <aAJtwxBtBX4ofy/o@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1746005265; c=relaxed/simple;
+	bh=kTKppK2H79eLeACzamVwFdZ/qi0nWKnNmS/TmUsNZ3s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NUn1KROV5/1qyehTpkqHjlFVGyDPrl1q24HGp0iaF8Kp2yc7Z0XopXMmTiUkmT9e5VyYFeLi83lHEZLH3aw9LDWo1USaH/sz3UrbZa+j2LJzD+ZZ8GrMjVLaAiDvAqcuC5WjACIhYt5n31m7GZDQQthH+ggnwnOBOc8WXkAuvV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gc3e37m3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BFDE1C4CEED;
+	Wed, 30 Apr 2025 09:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746005264;
+	bh=kTKppK2H79eLeACzamVwFdZ/qi0nWKnNmS/TmUsNZ3s=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Gc3e37m3WJUOEdF5hgMEaICfdhHmpJQrr7/bfaAfrkVU0pYrz1AeB9XlU9+Gibjsm
+	 F63Ww1lReNKXe5zODERVekEdMMU7CKnsCTxl1D51EdvGzzvxIgNYs8PMvVIP82LLVj
+	 df6kDLSlb15quqoYDhHF/c4Igf66jA30Z9D87/FWlv68gOK1UD9VeF0Sd1ydQEHniq
+	 qfAVJ6P36MSFTwF0nOCWTZg7UW46P4Vp2RjJmOVd88oNfFlOMBlRDuz5bjFo08+0Mp
+	 TCREjkDxSbsymdxYP4bpUe86rURlu2LEhrkmdQn+BFgOFyZSHtu9QQf+sPxjJrEfDj
+	 4y298YEwYN81Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B56C3ABAD;
+	Wed, 30 Apr 2025 09:27:44 +0000 (UTC)
+From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
+Date: Wed, 30 Apr 2025 11:15:51 +0200
+Subject: [PATCH v6 02/13] media: dt-bindings: video-interfaces: add defines
+ for sampling modes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aAJtwxBtBX4ofy/o@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240220-rk3568-vicap-v6-2-d2f5fbee1551@collabora.com>
+References: <20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com>
+In-Reply-To: <20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com>
+To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Gerald Loacker <gerald.loacker@wolfvision.net>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Kever Yang <kever.yang@rock-chips.com>, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Collabora Kernel Team <kernel@collabora.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Alexander Shiyan <eagle.alexander923@gmail.com>, 
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Michael Riesch <michael.riesch@wolfvision.net>, 
+ Michael Riesch <michael.riesch@collabora.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746004564; l=1010;
+ i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
+ bh=Uz74OJ3MrVHSpMmLIY3bphZ6CO+aAi3TjYd87Bbmoq0=;
+ b=3pezi/eZthEJyZ3VA7cSIbm+xnaBjXhjmQJV5Ym/Xtp5znFGFi9MK4ISbR+kN20nMFWeOfLvW
+ 2w334p2hO0UCtFjNGpw8qa//2wB22i6hvrTR0dWWTqgYmTshGpbmenG
+X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
+ pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
+X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
+ with auth_id=371
+X-Original-From: Michael Riesch <michael.riesch@collabora.com>
+Reply-To: michael.riesch@collabora.com
 
-On Fri, Apr 18, 2025 at 11:20:35AM -0400, Frank Li wrote:
+From: Michael Riesch <michael.riesch@wolfvision.net>
 
-[ ... ]
+Add defines for the pixel clock sampling modes (rising edge, falling edge,
+dual edge) for parallel video interfaces.
+This avoids hardcoded constants in device tree sources.
 
-> > > +static int imx91_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
-> > > +{
-> > > +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
-> > > +	s16 data;
-> > > +	int ret;
-> > > +
-> > > +	ret = pm_runtime_resume_and_get(tmu->dev);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> >
-> > Why using pm_runtime* all over the place ?
-> >
-> > It would make sense to have in the probe/remove functions (or in the set_mode -
-> > enabled / disabled), suspend / resume but the other place it does not make
-> > sense IMO. If the sensor is enabled by the set_mode function and then
-> > pm_runtime_get() is called, then the ref is taken during all the time the
-> > sensor is in use, so others pm_runtime_get / pm_runtime_put will be helpless,
-> > no ?
-> >
-> >
-> > > +	/* DATA0 is 16bit signed number */
-> > > +	data = readw_relaxed(tmu->base + IMX91_TMU_DATA0);
-> > > +	*temp = imx91_tmu_to_mcelsius(data);
-> > > +	if (*temp < IMX91_TMU_TEMP_LOW_LIMIT || *temp > IMX91_TMU_TEMP_HIGH_LIMIT)
-> > > +		ret = -EAGAIN;
-> >
-> > When the measured temperature can be out of limits ?
-> 
-> It is safety check. It may be caused by incorrect calibration data or some
-> glitch at ref voltage.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+---
+ include/dt-bindings/media/video-interfaces.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-In which circumstances do that can happen ? At boot time or any time at runtime ?
-
-> > > +	if (*temp <= tmu->high && tmu->enable) {
-> >
-> > I suggest to provide a change in the thermal core to return -EAGAIN if the
-> > thermal zone is not enabled when calling thermal_zone_get_temp() and get rid of the tmu->enable
-> >
-> > > +		writel_relaxed(IMX91_TMU_STAT0_THR1_IF, tmu->base + IMX91_TMU_STAT0 + REG_CLR);
-> > > +		writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_SET);
-> > > +	}
-> >
-> > For my understanding what are for these REG_CLR and REG_SET in this function?
-> 
-> REG_CLR\REG_SET is offset 8\4 for each register, which used clear\set only
-> some bits without touch other value
-> 
-> 	SET register work as
-> 
-> 	val = readl(reg);
-> 	val |= mask;
->         writel (val, reg);
-> 
-> the benenfit of use CLR/SET register make code simple and it is atomic change
-> one bit.
-
-Actually, I meant what are they for and why are they in the get_temp() function ?
-
-> > > +	pm_runtime_put(tmu->dev);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static int imx91_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-> > > +{
-> > > +	struct imx91_tmu *tmu = thermal_zone_device_priv(tz);
-> > > +	int val;
-> > > +	int ret;
-> > > +
-> > > +	ret = pm_runtime_resume_and_get(tmu->dev);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	if (high >= IMX91_TMU_TEMP_HIGH_LIMIT)
-> > > +		return -EINVAL;
-> > > +
-> > > +	writel_relaxed(IMX91_TMU_CTRL0_THR1_IE, tmu->base + IMX91_TMU_CTRL0 + REG_CLR);
-> > > +
-> > > +	/* Comparator1 for temperature threshold */
-> > > +	writel_relaxed(IMX91_TMU_THR_CTRL01_THR1_MASK, tmu->base + IMX91_TMU_THR_CTRL01 + REG_CLR);
-> > > +	val = FIELD_PREP(IMX91_TMU_THR_CTRL01_THR1_MASK, imx91_tmu_from_mcelsius(high));
-> > > +	writel_relaxed(val, tmu->base + IMX91_TMU_THR_CTRL01 + REG_SET);
-> > > +
-> > > +	writel_relaxed(IMX91_TMU_STAT0_THR1_IF, tmu->base + IMX91_TMU_STAT0 + REG_CLR);
-> > > +
-> > > +	tmu->high = high;
-> >
-> > Why is 'high' needed?
-> 
-> Need re-enable irq when tempture below high.
-
-You should not need that. There may be something wrong with the
-temperature threshold interrupt routine.
-
-[ ... ]
+diff --git a/include/dt-bindings/media/video-interfaces.h b/include/dt-bindings/media/video-interfaces.h
+index 88b9d05d8075..0b19c9b2e627 100644
+--- a/include/dt-bindings/media/video-interfaces.h
++++ b/include/dt-bindings/media/video-interfaces.h
+@@ -20,4 +20,8 @@
+ #define MEDIA_BUS_CSI2_CPHY_LINE_ORDER_CAB	4
+ #define MEDIA_BUS_CSI2_CPHY_LINE_ORDER_CBA	5
+ 
++#define MEDIA_PCLK_SAMPLE_FALLING_EDGE		0
++#define MEDIA_PCLK_SAMPLE_RISING_EDGE		1
++#define MEDIA_PCLK_SAMPLE_DUAL_EDGE		2
++
+ #endif /* __DT_BINDINGS_MEDIA_VIDEO_INTERFACES_H__ */
 
 -- 
+2.39.5
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
