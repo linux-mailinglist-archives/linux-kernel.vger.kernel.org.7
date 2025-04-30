@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-627217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173AFAA4D5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:22:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9C1AA4D63
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9A61BA33E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:21:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD42188AE3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E5525C80B;
-	Wed, 30 Apr 2025 13:21:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACFC25C6EB;
-	Wed, 30 Apr 2025 13:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F31254852;
+	Wed, 30 Apr 2025 13:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vjd0LIB0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B8B248F69;
+	Wed, 30 Apr 2025 13:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746019275; cv=none; b=gmgMu0o/BqOF+NaD2EVXBYp5mzW9yYYpIAXCTz6Pai4bs3SpN1ALtq4tFbPW3W13Pjft3rzdB6P6zRYNkh26/0QPr49wNuZTd8FqijFCIvIFK9wH3f5933dT/GBqf6qra1284YTx55f/shAiQJ02MNbSj5rUKtzlrogEqsaBUTQ=
+	t=1746019447; cv=none; b=JZyJ0zqZrag/ANXyYzO249JqKoc+tNARG1ZxkTpsANSXGgY3x2XensE6Kix2bBD97SyCSZKUYeQoztQNlN3NkyW2KAI+RNdUVufgHiUasnFnMqNSZ6DCfoyY5MEv+un2BolXpq9F1X9+LscRV0m8OonzngMAG45vNjUCBBQ0aqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746019275; c=relaxed/simple;
-	bh=Q4Vqg7zHV38KqXTLLAnzysMnm1orUAGP8J8yeW2trTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HfGE8rZtfojKXFtflQnKNJWPIJL5JcCaX9BT2KdQrgB2mIfgouvyzXYodpJXPEJ+mZVm+oXAjkUSuXk+qt892nA3cgLWrVq/DfM0HUQJrrks8sw/kgCcsWpOdDbYyLGsmD8a9yoVJ1CTldLJwoNHWpEmDiYwtmhTqmVfPXpTGgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BE3F106F;
-	Wed, 30 Apr 2025 06:21:05 -0700 (PDT)
-Received: from [10.57.84.121] (unknown [10.57.84.121])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 124183F5A1;
-	Wed, 30 Apr 2025 06:21:10 -0700 (PDT)
-Message-ID: <c8855e0a-8b91-490a-8d9a-5992f8fcc300@arm.com>
-Date: Wed, 30 Apr 2025 14:21:09 +0100
+	s=arc-20240116; t=1746019447; c=relaxed/simple;
+	bh=4Nc6GDztxDnf1w4KqVdi+LzpveRRgp4sfrwZ+0SHHS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMuwAHbmFshrPzQtXdhAaD/1NgnpZypphzzL2YU2AxQB9jjxBUsI+KiYfZvL2/xCKGuXVVk8yDVDT/31yelZSILYUhk66UoaHOkcZqz5UTjyfnSytV2aMzUMFyS2gX72MJX4hisMrbzYpWGqtha/adtzRF1dhQBVOVLtFVpGzrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vjd0LIB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40D40C4CEE9;
+	Wed, 30 Apr 2025 13:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746019446;
+	bh=4Nc6GDztxDnf1w4KqVdi+LzpveRRgp4sfrwZ+0SHHS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vjd0LIB0sgnkdhpcz4kpRBtnO+wtfuCiN5i4BEnIynkhHoW8goJk9P83j2stkksMJ
+	 g3zYhaQhOeihgkEd6GcpZOV0jW/TB9ubFWPBi4caCRtCQpzXA2ONW9/it5zJkamFH3
+	 phDIOZOi6HIXsOWDQa6wYWAAhd9z3A7+iUVgbNF7NDNyKOi/CQFWcjhg7TWDeuZeK3
+	 rqfxQpJIZYfRYLcGYKbYDhlSPjfgvG6+LyZVfNIWKSvpMhFUbzPdP9N8UYqq51IKaM
+	 ZT+rLuVYi2BZHHU2K19J5ywKPO9w7pZxLKtvTGTqplHPDevcjuqhSmtlp9fmxM4TPJ
+	 Ux5DDc86qPSJg==
+Date: Wed, 30 Apr 2025 15:24:03 +0200
+From: Daniel Gomez <da.gomez@kernel.org>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org, 
+	hughd@google.com, willy@infradead.org, david@redhat.com, 
+	wangkefeng.wang@huawei.com, 21cnbao@gmail.com, ryan.roberts@arm.com, ioworker0@gmail.com, 
+	da.gomez@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
+	Eero Tamminen <eero.t.tamminen@intel.com>
+Subject: Re: [REGRESSION] Re: [PATCH v3 3/6] mm: shmem: add large folio
+ support for tmpfs
+Message-ID: <cxwpgygobg6wleoeezbowjhmid4mdhptzheqask44ew37h2q24@kryzkecuobbp>
+References: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
+ <035bf55fbdebeff65f5cb2cdb9907b7d632c3228.1732779148.git.baolin.wang@linux.alibaba.com>
+ <aBEP-6iFhIC87zmb@intel.com>
+ <ac8cbd8d-44e9-4a88-b88b-e29e9f30a2fd@linux.alibaba.com>
+ <aBIHYqzar5J8uxGO@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm: Fix folio_pte_batch() overcount with zero PTEs
-Content-Language: en-GB
-To: =?UTF-8?Q?Petr_Van=C4=9Bk?= <arkamar@atlas.cz>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- stable@vger.kernel.org
-References: <20250429142237.22138-1-arkamar@atlas.cz>
- <20250429142237.22138-2-arkamar@atlas.cz>
- <d53fd549-887f-4220-b0d1-ebc336eecb9f@redhat.com>
- <e9617001-da1d-4c4f-99f4-0e51d51d385e@arm.com>
- <bb24f0d3-cbbf-4323-a9e6-09a627c8559b@redhat.com>
- <cac9bf3c-5af1-41be-86a5-bf76384b5e3b@arm.com>
- <20254301348-aBIfyEmRyUx3zBBL-arkamar@atlas.cz>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20254301348-aBIfyEmRyUx3zBBL-arkamar@atlas.cz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aBIHYqzar5J8uxGO@intel.com>
 
-On 30/04/2025 14:04, Petr Vaněk wrote:
-> On Tue, Apr 29, 2025 at 04:02:10PM +0100, Ryan Roberts wrote:
->> On 29/04/2025 15:46, David Hildenbrand wrote:
->>> On 29.04.25 16:41, Ryan Roberts wrote:
->>>> On 29/04/2025 15:29, David Hildenbrand wrote:
->>>>> On 29.04.25 16:22, Petr Vaněk wrote:
->>>>>> folio_pte_batch() could overcount the number of contiguous PTEs when
->>>>>> pte_advance_pfn() returns a zero-valued PTE and the following PTE in
->>>>>> memory also happens to be zero. The loop doesn't break in such a case
->>>>>> because pte_same() returns true, and the batch size is advanced by one
->>>>>> more than it should be.
->>>>>>
->>>>>> To fix this, bail out early if a non-present PTE is encountered,
->>>>>> preventing the invalid comparison.
->>>>>>
->>>>>> This issue started to appear after commit 10ebac4f95e7 ("mm/memory:
->>>>>> optimize unmap/zap with PTE-mapped THP") and was discovered via git
->>>>>> bisect.
->>>>>>
->>>>>> Fixes: 10ebac4f95e7 ("mm/memory: optimize unmap/zap with PTE-mapped THP")
->>>>>> Cc: stable@vger.kernel.org
->>>>>> Signed-off-by: Petr Vaněk <arkamar@atlas.cz>
->>>>>> ---
->>>>>>    mm/internal.h | 2 ++
->>>>>>    1 file changed, 2 insertions(+)
->>>>>>
->>>>>> diff --git a/mm/internal.h b/mm/internal.h
->>>>>> index e9695baa5922..c181fe2bac9d 100644
->>>>>> --- a/mm/internal.h
->>>>>> +++ b/mm/internal.h
->>>>>> @@ -279,6 +279,8 @@ static inline int folio_pte_batch(struct folio *folio,
->>>>>> unsigned long addr,
->>>>>>                dirty = !!pte_dirty(pte);
->>>>>>            pte = __pte_batch_clear_ignored(pte, flags);
->>>>>>    +        if (!pte_present(pte))
->>>>>> +            break;
->>>>>>            if (!pte_same(pte, expected_pte))
->>>>>>                break;
->>>>>
->>>>> How could pte_same() suddenly match on a present and non-present PTE.
->>>>>
->>>>> Something with XEN is really problematic here.
->>>>>
->>>>
->>>> We are inside a lazy MMU region (arch_enter_lazy_mmu_mode()) at this point,
->>>> which I believe XEN uses. If a PTE was written then read back while in lazy mode
->>>> you could get a stale value.
->>>>
->>>> See
->>>> https://lore.kernel.org/all/912c7a32-b39c-494f-a29c-4865cd92aeba@agordeev.local/
->>>> for an example bug.
->>>
->>> So if we cannot trust ptep_get() output, then, ... how could we trust anything
->>> here and ever possibly batch?
->>
->> The point is that for a write followed by a read to the same PTE, the read may
->> not return what was written. It could return the value of the PTE at the point
->> of entry into the lazy mmu mode.
->>
->> I guess one quick way to test is to hack out lazy mmu support. Something like
->> this? (totally untested):
+On Wed, Apr 30, 2025 at 02:20:02PM +0100, Ville Syrj�l� wrote:
+> On Wed, Apr 30, 2025 at 02:32:39PM +0800, Baolin Wang wrote:
+> > On 2025/4/30 01:44, Ville Syrj�l� wrote:
+> > > On Thu, Nov 28, 2024 at 03:40:41PM +0800, Baolin Wang wrote:
+> > > Hi,
+> > > 
+> > > This causes a huge regression in Intel iGPU texturing performance.
+> > 
+> > Unfortunately, I don't have such platform to test it.
+> > 
+> > > 
+> > > I haven't had time to look at this in detail, but presumably the
+> > > problem is that we're no longer getting huge pages from our
+> > > private tmpfs mount (done in i915_gemfs_init()).
+> > 
+> > IIUC, the i915 driver still limits the maximum write size to PAGE_SIZE 
+> > in the shmem_pwrite(),
 > 
-> I (blindly) applied the suggested change but I am still seeing the same
-> issue.
-
-Thanks for trying; it was just something that came to mind as a possibility
-knowing it was XEN and inside lazy mmu region. I think your other discussion has
-concluded that the x86 implementation of pte_advance_pfn() is not correct when
-XEN is in use? (I was just scanning, perhaps I came to wrong conclusion)..
-
-Thanks,
-Ryan
-
+> pwrite is just one random way to write to objects, and probably
+> not something that's even used by current Mesa.
 > 
-> Petr
-> 
->> ----8<----
->> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
->> index c4c23190925c..1f0a1a713072 100644
->> --- a/arch/x86/include/asm/paravirt.h
->> +++ b/arch/x86/include/asm/paravirt.h
->> @@ -541,22 +541,6 @@ static inline void arch_end_context_switch(struct
->> task_struct *next)
->>         PVOP_VCALL1(cpu.end_context_switch, next);
->>  }
->>
->> -#define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
->> -static inline void arch_enter_lazy_mmu_mode(void)
->> -{
->> -       PVOP_VCALL0(mmu.lazy_mode.enter);
->> -}
->> -
->> -static inline void arch_leave_lazy_mmu_mode(void)
->> -{
->> -       PVOP_VCALL0(mmu.lazy_mode.leave);
->> -}
->> -
->> -static inline void arch_flush_lazy_mmu_mode(void)
->> -{
->> -       PVOP_VCALL0(mmu.lazy_mode.flush);
->> -}
->> -
->>  static inline void __set_fixmap(unsigned /* enum fixed_addresses */ idx,
->>                                 phys_addr_t phys, pgprot_t flags)
->>  {
->> ----8<----
->>
+> > which prevents tmpfs from allocating large 
+> > folios. As mentioned in the comments below, tmpfs like other file 
+> > systems that support large folios, will allow getting a highest order 
+> > hint based on the size of the write and fallocate paths, and then will 
+> > attempt each allowable huge order.
+> > 
+> > Therefore, I think the shmem_pwrite() function should be changed to 
+> > remove the limitation that the write size cannot exceed PAGE_SIZE.
 
+To enable mTHP on tmpfs, the necessary knobs must first be enabled in sysfs
+as they are not enabled by default IIRC (only THP, PMD level). Ville, I
+see i915_gemfs the huge=within_size mount option is passed. Can you confirm
+if /sys/kernel/mm/transparent_hugepage/hugepages-*/enabled are also marked as
+'always' when the regression is found?
+
+Even if these are enabled, the possible difference may be that before, i915 was
+using PMD pages (THP) always and now mTHP will be used, unless the file size is
+as big as the PMD page. I think the always mount option would also try to infer
+the size to actually give a proper order folio according to that size. Baolin,
+is that correct?
+
+And Ville, can you confirm if what i915 needs is to enable PMD-size allocations
+always?
 
