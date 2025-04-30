@@ -1,375 +1,182 @@
-Return-Path: <linux-kernel+bounces-626578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7F4AA44BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E803FAA44C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776F49C21D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BAF9C3C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCCF215764;
-	Wed, 30 Apr 2025 08:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84E91E9B22;
+	Wed, 30 Apr 2025 08:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/YKKXJB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SbzC+k1y"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E902213E79;
-	Wed, 30 Apr 2025 08:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C30E21129C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746000221; cv=none; b=AZRZs9EJWTRlZucYYpW9c8yAgC8I0ni9NCp0eYVufjsj/9iJUir2rD7G4yhOYqg4LNO830oA6i8vSbPNYicV82F+2qBqLDxGBpnVRi/BCgrLjkQYWhnO0PzUOIz6gJ2lDLNldEB4KT7wNF49aQihROnzZmD2TSHTH6XiIW/zrz0=
+	t=1746000240; cv=none; b=Y3XmZNrBL6bUoudedHdmwOKoyleBY44NAgtnZMvy2sbRxTKdV+pZR+1JLh3DVmTN9YSnD0vMCXu8xAedKAQQwdsaxrWlxDcftlST1pGuWHfPQB7FCIPlQo/Ti/QEAJq1X31M89GhDDWJoki7Q6APl7zCMpGk+537YPUGgtB0dTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746000221; c=relaxed/simple;
-	bh=6drvUTZA3XtBOUMIg3nWg1p34cXvyVA8kv/Z5HSimH0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LqhbWbFoGYuDKDyWmfq49Ee0fC0qN6Gjl191QY8me8vFMyMGknCLHQrA+WqHXAc9bVpJYV+TLCJa2x4OAcUxCRWsknGnLNBdy18nneCQWOFGofpR/8dKlsNn4DwW+XG4bmX4dG+OrwXi0nHfCHl7oEoc/atZbF7bGCU0/sevGX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/YKKXJB; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746000219; x=1777536219;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=6drvUTZA3XtBOUMIg3nWg1p34cXvyVA8kv/Z5HSimH0=;
-  b=I/YKKXJB9NjV9SDjwxBfe/t11yhvUTUfATA9buvjBa1gYKn/wslSO6mX
-   jld3QNgQqwsFtMUHldBSWC+PKW2QMbYsbmmZezZaRhj6/oVZVse6Nacr3
-   BqxWcX/I33YclDBopsiJYKzb4jkxbPjZjdOpO33jkQbYK5xdQQmFEDw9W
-   UTyhS9e3SY3KsBUFpD5vU1VvSEDZnL2T3tIE+mGBXFSm2pcjv1dN0Vony
-   kavGhJC/ZIcZjRfqmt3mMajC1v/W1g8fd+7lNvltRoLUauQjfvxq4T0eb
-   amEfOYVtmfPrvHDxEm5a/lB2QMGwFGWMuA1ynI0AGqyH25GMwjP7mW2Ba
-   w==;
-X-CSE-ConnectionGUID: uxoPJhkFTEiLfFm/Rnv4cg==
-X-CSE-MsgGUID: NUG+vlogTX2vvw6sUFAntw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="46765194"
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="46765194"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 01:03:38 -0700
-X-CSE-ConnectionGUID: NdU+fwu2SgiA6jQQ8luuWg==
-X-CSE-MsgGUID: 4pl1v2KVRbmYb3k3a9C1Ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="139233702"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.97])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 01:03:33 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 30 Apr 2025 11:03:30 +0300 (EEST)
-To: Hans Zhang <18255117159@163.com>
-cc: lpieralisi@kernel.org, bhelgaas@google.com, 
-    manivannan.sadhasivam@linaro.org, kw@linux.com, cassel@kernel.org, 
-    robh@kernel.org, jingoohan1@gmail.com, thomas.richard@bootlin.com, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 3/6] PCI: Refactor capability search into common
- macros
-In-Reply-To: <20250429125036.88060-4-18255117159@163.com>
-Message-ID: <df929c0d-f318-023e-cf7d-97a2b344f6fc@linux.intel.com>
-References: <20250429125036.88060-1-18255117159@163.com> <20250429125036.88060-4-18255117159@163.com>
+	s=arc-20240116; t=1746000240; c=relaxed/simple;
+	bh=jZK0QLebtMfOcEUm0h/6bxVrX1rTU7CIc+iZJypo1N8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=JwuzgxxQ8DTIqZ9I/KR9sw4k4jiar+ciRg1n0BCMOT3gLyuDSicHd2n08ZHF8KDjAjSpNAp0uKg2YcJbLO9Tbid/rNay/oLJjl72MkPU1Kw51LfBcY3dbv1iFhxd0Ex3pkYnmgvuM0+k6zhj/zLm2mPdrpRIuuRc7OdpTZlNYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SbzC+k1y; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250430080349epoutp0146940e16c395a5bdd24e09e56c299df4~7CfVLehBJ1065410654epoutp01c
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:03:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250430080349epoutp0146940e16c395a5bdd24e09e56c299df4~7CfVLehBJ1065410654epoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746000229;
+	bh=r0lzQPeD0TToeRVN66QVOhI3MZ56kDdIBrvCu7NCmjw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=SbzC+k1yEJFb3FK3TVjh7wn2XicZsCZfGw1ZNk7kucXn4PPDG1tXuXG/OxWgmqsYe
+	 TE8TsWWS5PtMgQN+686m4uAk8agDj10Fi/4U7Ut5A5EZ8SHRKN5jQLyX4J1ZAVgSom
+	 ublS/E1Y1P9vFa04/dxP5Es8HKYhqKeKdZ9qxEbQ=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250430080348epcas5p29f981d5f79ac379b9a4e6f0e2eb20ea3~7CfUTQvmo1973919739epcas5p26;
+	Wed, 30 Apr 2025 08:03:48 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZnV7Q6z4Yz3hhT4; Wed, 30 Apr
+	2025 08:03:46 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250430080346epcas5p1ab9a54e2a451f0c273606be005a4c6a8~7CfSCb2ba3050630506epcas5p1v;
+	Wed, 30 Apr 2025 08:03:46 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250430080346epsmtrp2074fbc2854c58cfe9b1c566da8a38641~7CfSBjNNW2131021310epsmtrp23;
+	Wed, 30 Apr 2025 08:03:46 +0000 (GMT)
+X-AuditID: b6c32a29-55afd7000000223e-d4-6811d9622a01
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6A.08.08766.269D1186; Wed, 30 Apr 2025 17:03:46 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250430080344epsmtip1b5735d0f9aba6e2aeb8b6cb5da022a0e~7CfQAw4_x2209522095epsmtip1w;
+	Wed, 30 Apr 2025 08:03:43 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Pritam Manohar Sutar'" <pritam.sutar@samsung.com>, <krzk@kernel.org>,
+	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <sunyeal.hong@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	"'stable'" <stable@kernel.org>
+In-Reply-To: <20250428115049.2064955-1-pritam.sutar@samsung.com>
+Subject: RE: [PATCH] clk: samsung: correct clock summary for hsi1 block
+Date: Wed, 30 Apr 2025 13:33:42 +0530
+Message-ID: <0b1b01dbb9a6$65bdd150$313973f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJRzV9wh12IZchi0K7svot8vU81fQE18kpXssYBMwA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnG7STcEMg9/veC2uf3nOanFvxzJ2
+	i2s3FrJbnD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wjy7t4LN4svPB8wWh9+0s1r8
+	u7aRxeLT+QtsFk3L1jM58Hu8v9HK7rFpVSebx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRv
+	l8CV0fLgJmvBBdGKudM72BsYfwl2MXJySAiYSFxqXMfUxcjFISSwm1Hi97UbzBAJaYnrGyew
+	Q9jCEiv/PWeHKHrOKLH0wX1GkASbgK7EjsVtbCAJEYErjBLTfn8Fq2IWaGOSWN7fDdUykVHi
+	8Ov5LCAtnAIOEnOezgfbISzgLnFl60U2EJtFQFXi+7TvYPt4BSwlPq3uYIGwBSVOznwCZjML
+	aEv0PmxlhLDlJba/nQN1q4LEz6fLWEFsEQEriU1zVjND1IhLvDx6hH0Co/AsJKNmIRk1C8mo
+	WUhaFjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECI5QLc0djNtXfdA7xMjEwXiI
+	UYKDWUmEd0ONYIYQb0piZVVqUX58UWlOavEhRmkOFiVxXvEXvSlCAumJJanZqakFqUUwWSYO
+	TqkGpun7XDb48dduknCdL5646P2NxUnu5o/O5+iuznJ1VDzwsf3nZ3X9BttSgScmN3mu/mz5
+	9uMeo6Te9rTWRL+Vas9tAlN+Tl80/WhXBee74Msls6YETJ/6ZeH6RP61E1doxIb+UxQ+bl7c
+	Y1Vy86SDcmnel6wfHh+KKy/6fXncc35qiKzJaiEbjQvhTrHh2+dqV9YHbnxY6xjxrmuz6R25
+	OX3HXyt4mR1u63qZPyvLoL5wYYlBt4jgNa5jvWr7Q79+6Tl6dPKWcEH94hW712aHCs1iMQie
+	emTB3Kkb/NUaOE9OLxVYlXY4tXSyQVfVSweTKsc7x79adwp8NrVavYdlTwKXtFzIV1Mje812
+	1ahKJZbijERDLeai4kQAVdW7wj8DAAA=
+X-CMS-MailID: 20250430080346epcas5p1ab9a54e2a451f0c273606be005a4c6a8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f
+References: <CGME20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f@epcas5p4.samsung.com>
+	<20250428115049.2064955-1-pritam.sutar@samsung.com>
 
-On Tue, 29 Apr 2025, Hans Zhang wrote:
+Hi Pritam
 
-> The PCI Capability search functionality is duplicated across the PCI core
-> and several controller drivers. The core's current implementation requires
-> fully initialized PCI device and bus structures, which prevents controller
-> drivers from using it during early initialization phases before these
-> structures are available.
+> -----Original Message-----
+> From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Sent: Monday, April 28, 2025 5:21 PM
+> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
+> sunyeal.hong@samsung.com
+> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+> arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> rosa.pila@samsung.com; dev.tailor@samsung.com;
+> faraz.ata@samsung.com; Pritam Manohar Sutar
+> <pritam.sutar@samsung.com>; stable <stable@kernel.org>
+> Subject: [PATCH] clk: samsung: correct clock summary for hsi1 block
 > 
-> Move the Capability search logic into a header-based macro that accepts a
-> config space accessor function as an argument. This enables controller
-> drivers to perform Capability discovery using their early access
-> mechanisms prior to full device initialization while sharing the
-> Capability search code.
+> When debugfs is mounted to check clk_summary, 'mout_hsi1_usbdrd_user'
+> shows 400Mhz instead of 40Mhz. Snippet of the clock summary is given as
+> below
 > 
-> Convert the existing PCI core Capability search implementation to use this
-> new macro.
+> dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+>   mout_hsi1_usbdrd_user     0 0 0 400000000 0 0 50000 Y ...
+>     dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
 > 
-> The macros now implement, parameterized by the config access method. The
-
-This sentence is incomplete (and sounds pretty much duplicated 
-information anyway).
-
-> PCI core functions are converted to utilize these macros with the standard
-> pci_bus_read_config accessors.
-
-This info is duplicated.
-
-> Controller drivers can later use the same
-> macros with their early access mechanisms while maintaining the existing
-> protection against infinite loops through preserved TTL checks.
+> Hence corrected the clk-tree for the cmu_hsi1 & the corrected clock
+> summary is as mentioned below.
 > 
-> The ttl parameter was originally an additional safeguard to prevent
-> infinite loops in corrupted config space.  However, the
-> PCI_FIND_NEXT_CAP_TTL macro already enforces a TTL limit internally.
-> Removing redundant ttl handling simplifies the interface while maintaining
-> the safety guarantee. This aligns with the macro's design intent of
-> encapsulating TTL management.
+May be just " correct the clk_tree by adding correct clock patent for
+mout_hsi1_usbdrd_user "
+
+see: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+
+> dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+>   mout_clkcmu_hsi1_usbdrd   0 0 0 400000000 0 0 50000 Y ...
+>     dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
+>       mout_hsi1_usbdrd_user 0 0 0 40000000  0 0 50000 Y ...
 > 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
+> Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto
+> v920 SoC")
+> Cc: stable <stable@kernel.org>
+> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
 > ---
-> Changes since v9:
-> - None
+>  drivers/clk/samsung/clk-exynosautov920.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Changes since v8:
-> - The patch commit message were modified.
-> ---
->  drivers/pci/pci.c | 70 +++++---------------------------------
->  drivers/pci/pci.h | 86 +++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 95 insertions(+), 61 deletions(-)
+> diff --git a/drivers/clk/samsung/clk-exynosautov920.c
+> b/drivers/clk/samsung/clk-exynosautov920.c
+> index dc8d4240f6de..b0561faecfeb 100644
+> --- a/drivers/clk/samsung/clk-exynosautov920.c
+> +++ b/drivers/clk/samsung/clk-exynosautov920.c
+> @@ -1393,7 +1393,7 @@ static const unsigned long hsi1_clk_regs[]
+> __initconst = {
+>  /* List of parent clocks for Muxes in CMU_HSI1 */
+>  PNAME(mout_hsi1_mmc_card_user_p) = {"oscclk",
+> "dout_clkcmu_hsi1_mmc_card"};
+>  PNAME(mout_hsi1_noc_user_p) = { "oscclk", "dout_clkcmu_hsi1_noc" };
+> -PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk",
+> "mout_clkcmu_hsi1_usbdrd" };
+> +PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk",
+> "dout_clkcmu_hsi1_usbdrd"
+> +};
+>  PNAME(mout_hsi1_usbdrd_p) = { "dout_tcxo_div2",
+> "mout_hsi1_usbdrd_user" };
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 1c29e8f20cb5..8a1f47e8f5cc 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -9,7 +9,6 @@
->   */
->  
->  #include <linux/acpi.h>
-> -#include <linux/align.h>
->  #include <linux/kernel.h>
->  #include <linux/delay.h>
->  #include <linux/dmi.h>
-> @@ -31,7 +30,6 @@
->  #include <asm/dma.h>
->  #include <linux/aer.h>
->  #include <linux/bitfield.h>
-> -#include <uapi/linux/pci_regs.h>
->  #include "pci.h"
->  
->  DEFINE_MUTEX(pci_slot_mutex);
-> @@ -426,35 +424,16 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
->  }
->  
->  static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
-> -				  u8 pos, int cap, int *ttl)
-> +				  u8 pos, int cap)
->  {
-> -	u8 id;
-> -	u16 ent;
-> -
-> -	pci_bus_read_config_byte(bus, devfn, pos, &pos);
-> -
-> -	while ((*ttl)--) {
-> -		if (pos < PCI_STD_HEADER_SIZEOF)
-> -			break;
-> -		pos = ALIGN_DOWN(pos, 4);
-> -		pci_bus_read_config_word(bus, devfn, pos, &ent);
-> -
-> -		id = FIELD_GET(PCI_CAP_ID_MASK, ent);
-> -		if (id == 0xff)
-> -			break;
-> -		if (id == cap)
-> -			return pos;
-> -		pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, ent);
-> -	}
-> -	return 0;
-> +	return PCI_FIND_NEXT_CAP_TTL(pci_bus_read_config, pos, cap, bus,
-> +				     devfn);
->  }
->  
->  static u8 __pci_find_next_cap(struct pci_bus *bus, unsigned int devfn,
->  			      u8 pos, int cap)
->  {
-> -	int ttl = PCI_FIND_CAP_TTL;
-> -
-> -	return __pci_find_next_cap_ttl(bus, devfn, pos, cap, &ttl);
-> +	return __pci_find_next_cap_ttl(bus, devfn, pos, cap);
->  }
->  
->  u8 pci_find_next_capability(struct pci_dev *dev, u8 pos, int cap)
-> @@ -555,42 +534,11 @@ EXPORT_SYMBOL(pci_bus_find_capability);
->   */
->  u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 start, int cap)
->  {
-> -	u32 header;
-> -	int ttl;
-> -	u16 pos = PCI_CFG_SPACE_SIZE;
-> -
-> -	/* minimum 8 bytes per capability */
-> -	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-> -
->  	if (dev->cfg_size <= PCI_CFG_SPACE_SIZE)
->  		return 0;
->  
-> -	if (start)
-> -		pos = start;
-> -
-> -	if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
-> -		return 0;
-> -
-> -	/*
-> -	 * If we have no capabilities, this is indicated by cap ID,
-> -	 * cap version and next pointer all being 0.
-> -	 */
-> -	if (header == 0)
-> -		return 0;
-> -
-> -	while (ttl-- > 0) {
-> -		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-> -			return pos;
-> -
-> -		pos = PCI_EXT_CAP_NEXT(header);
-> -		if (pos < PCI_CFG_SPACE_SIZE)
-> -			break;
-> -
-> -		if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
-> -			break;
-> -	}
-> -
-> -	return 0;
-> +	return PCI_FIND_NEXT_EXT_CAPABILITY(pci_bus_read_config, start, cap,
-> +					    dev->bus, dev->devfn);
->  }
->  EXPORT_SYMBOL_GPL(pci_find_next_ext_capability);
->  
-> @@ -650,7 +598,7 @@ EXPORT_SYMBOL_GPL(pci_get_dsn);
->  
->  static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int ht_cap)
->  {
-> -	int rc, ttl = PCI_FIND_CAP_TTL;
-> +	int rc;
->  	u8 cap, mask;
->  
->  	if (ht_cap == HT_CAPTYPE_SLAVE || ht_cap == HT_CAPTYPE_HOST)
-> @@ -659,7 +607,7 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int ht_cap)
->  		mask = HT_5BIT_CAP_MASK;
->  
->  	pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn, pos,
-> -				      PCI_CAP_ID_HT, &ttl);
-> +				      PCI_CAP_ID_HT);
->  	while (pos) {
->  		rc = pci_read_config_byte(dev, pos + 3, &cap);
->  		if (rc != PCIBIOS_SUCCESSFUL)
-> @@ -670,7 +618,7 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int ht_cap)
->  
->  		pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn,
->  					      pos + PCI_CAP_LIST_NEXT,
-> -					      PCI_CAP_ID_HT, &ttl);
-> +					      PCI_CAP_ID_HT);
->  	}
->  
->  	return 0;
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 5e1477d6e254..79cd6402ba8d 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -2,7 +2,9 @@
->  #ifndef DRIVERS_PCI_H
->  #define DRIVERS_PCI_H
->  
-> +#include <linux/align.h>
->  #include <linux/pci.h>
-> +#include <uapi/linux/pci_regs.h>
->  
->  struct pcie_tlp_log;
->  
-> @@ -91,6 +93,90 @@ bool pcie_cap_has_rtctl(const struct pci_dev *dev);
->  int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
->  			u32 *val);
->  
-> +/* Standard Capability finder */
-> +/**
-> + * PCI_FIND_NEXT_CAP_TTL - Find a PCI standard capability
-> + * @read_cfg: Function pointer for reading PCI config space
-> + * @start: Starting position to begin search
-> + * @cap: Capability ID to find
-> + * @args: Arguments to pass to read_cfg function
-> + *
-> + * Iterates through the capability list in PCI config space to find
-> + * the specified capability. Implements TTL (time-to-live) protection
-> + * against infinite loops.
-> + *
-> + * Returns: Position of the capability if found, 0 otherwise.
-> + */
-> +#define PCI_FIND_NEXT_CAP_TTL(read_cfg, start, cap, args...)		\
-> +({									\
-> +	int __ttl = PCI_FIND_CAP_TTL;					\
-> +	u8 __id, __found_pos = 0;					\
-> +	u8 __pos = (start);						\
-> +	u16 __ent;							\
-> +									\
-> +	read_cfg(args, __pos, 1, (u32 *)&__pos);			\
-> +									\
-> +	while (__ttl--) {						\
-> +		if (__pos < PCI_STD_HEADER_SIZEOF)			\
-> +			break;						\
-> +									\
-> +		__pos = ALIGN_DOWN(__pos, 4);				\
-> +		read_cfg(args, __pos, 2, (u32 *)&__ent);		\
+>  static const struct samsung_mux_clock hsi1_mux_clks[] __initconst = {
+> --
+> 2.34.1
 
-You seem to have dropped the return value checks?
-
-> +									\
-> +		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
-> +		if (__id == 0xff)					\
-> +			break;						\
-> +									\
-> +		if (__id == (cap)) {					\
-> +			__found_pos = __pos;				\
-> +			break;						\
-> +		}							\
-> +									\
-> +		__pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, __ent);	\
-> +	}								\
-> +	__found_pos;							\
-> +})
-> +
-> +/* Extended Capability finder */
-> +/**
-> + * PCI_FIND_NEXT_EXT_CAPABILITY - Find a PCI extended capability
-> + * @read_cfg: Function pointer for reading PCI config space
-> + * @start: Starting position to begin search (0 for initial search)
-> + * @cap: Extended capability ID to find
-> + * @args: Arguments to pass to read_cfg function
-> + *
-> + * Searches the extended capability space in PCI config registers
-> + * for the specified capability. Implements TTL protection against
-> + * infinite loops using a calculated maximum search count.
-> + *
-> + * Returns: Position of the capability if found, 0 otherwise.
-> + */
-> +#define PCI_FIND_NEXT_EXT_CAPABILITY(read_cfg, start, cap, args...)		\
-> +({										\
-> +	u16 __pos = (start) ?: PCI_CFG_SPACE_SIZE;				\
-> +	u16 __found_pos = 0;							\
-> +	int __ttl, __ret;							\
-> +	u32 __header;								\
-> +										\
-> +	__ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;		\
-> +	while (__ttl-- > 0 && __pos >= PCI_CFG_SPACE_SIZE) {			\
-> +		__ret = read_cfg(args, __pos, 4, &__header);			\
-> +		if (__ret != PCIBIOS_SUCCESSFUL)				\
-> +			break;							\
-> +										\
-> +		if (__header == 0)						\
-> +			break;							\
-> +										\
-> +		if (PCI_EXT_CAP_ID(__header) == (cap) && __pos != start) {	\
-> +			__found_pos = __pos;					\
-> +			break;							\
-> +		}								\
-> +										\
-> +		__pos = PCI_EXT_CAP_NEXT(__header);				\
-> +	}									\
-> +	__found_pos;								\
-> +})
-> +
->  /* Functions internal to the PCI core code */
->  
->  #ifdef CONFIG_DMI
-> 
-
--- 
- i.
 
 
