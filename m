@@ -1,203 +1,142 @@
-Return-Path: <linux-kernel+bounces-626954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BC0AA496B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EC3AA4971
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2F397B9340
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:05:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CA24C4FB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419C325E81F;
-	Wed, 30 Apr 2025 11:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6C4258CEF;
+	Wed, 30 Apr 2025 11:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f9AI9JOt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s0D0wsxY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HcXHScSu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E9625A63D;
-	Wed, 30 Apr 2025 11:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4389221B9E0;
+	Wed, 30 Apr 2025 11:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746010976; cv=none; b=p780xqGmcxvotw+a+CtAaH36kRqm6lqeMQtuWI97dxBH8XRKQqGI8R63sIz8zkcl0IpdIKma3ev3/OW85yZBeBH6J1gVpOzuM4QJPkn2WKHizvA/8zblaKXAKOHP1L+KPQ2s/FQzL2Kj2wH1GqtmMBo8G3Q088qPjKGcVPjhePc=
+	t=1746011053; cv=none; b=Le5e4WLLmZkpb4RuJ3IW2cfxuYbdOzpx1RYDbZ2SK4F/Hnmz99yjsu8BscT28oZc0INIPevqbscpNT5Kgj7mq+gTSz5HHhV5q26lwmqptC3akAPTu5hqMz5GQ6/E/qnUKF7zL2FrLnWqVpnHa7FNQ803OOxMPhyA5xYVaQOH/bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746010976; c=relaxed/simple;
-	bh=hQA6qqGvwzZFtAZxFqekDTt+sSU6wgmodPxkSK4vBIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r2cCQfJz+e1zILK3ltcdteHoNGjIR6z3nVMPb7zDcQQkpH8rYKNAoKyq8kdmRRzRJLg9Cfkwetg0edP2DM4DIeMQjqkCd43+CYevLKGyL6j1AcPO4f4LdqAARB2wkR27+ixbWKSzLicQTp71u5zoIBEhVYrYVRkAjU34Fp2EMLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f9AI9JOt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s0D0wsxY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746010970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=US9+bEe6lsHn+NLLmdFqzC4dUUP/fmwKCds5E1h2XJ0=;
-	b=f9AI9JOtMsRGJGoDF0caEPwGRRqDJ4fTw9EDX39DCFdKFM/NKlOvzpy+6oSiUXNiffxgcX
-	+5CR+g4hPq07UsfIRxttC07DlZSZ6gfbwVIH5qWwRCAlolhinbOlpA78eda/QEz4KHZN18
-	5ZOrdcVt7cu5qzNImYYkCrdQ53RGZCTk0ylgbjCr8l+yStK+FTOKkK7O1Wmxp6aNG8hyqJ
-	b01S1w+nckvzvedE348UjKSztThsujAjn5SL9F97oUkbTKU8vRVOoxR+uak3w5EvfhQwtg
-	kckuYy7KKFFZwjnVaES53gEc5pxERkgH0B/xSyfwQmBZkXlkAg5cxXlEu4nCHw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746010970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=US9+bEe6lsHn+NLLmdFqzC4dUUP/fmwKCds5E1h2XJ0=;
-	b=s0D0wsxYOFQjUK7YTwcefKffdR3/S/EAkmAx1sLWc5Hw2ASFSElZlCPaOVA2vHYCfezuio
-	7VjeqTt8xzQcsvDA==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: john.ogness@linutronix.de,
-	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v6 22/22] rv: Allow to configure the number of per-task monitor
-Date: Wed, 30 Apr 2025 13:02:37 +0200
-Message-Id: <044759be658d4ec5fdb18246ac9ef07eccce9845.1745999587.git.namcao@linutronix.de>
-In-Reply-To: <cover.1745999587.git.namcao@linutronix.de>
-References: <cover.1745999587.git.namcao@linutronix.de>
+	s=arc-20240116; t=1746011053; c=relaxed/simple;
+	bh=mvALsY+IwGGogHBtWJUORKxwQ9SvDdLDCNU5DjW5K+U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hmqtaWsD+OS0LyvJNtWVzlGeRyaTjFl1lZ4oAeHJ3OzHq+FtRFugC0CN36U327jaCog+sSwmu7js6iOnxKQ69NlNJz9GCsVuKVusyDoeKxAnU6EoI7iS0tj9xhadjhTuDgJIq7Z1aOpVQ95Nkhpo9hA2MoP851BH7eLlbzN1Khc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HcXHScSu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53U9Vg8o020908;
+	Wed, 30 Apr 2025 11:04:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hKEMsFz+5InyWRGlQjljTV
+	a4FuIOoyVGX3MTSQHG8CQ=; b=HcXHScSu9OWopRFmC+98IqgqTuGr36HWMRe5dW
+	TrXYplnoEwyaGk8CXRS6l1ZPl+hrRDIIqJ4LuRFebGnyG9CXSWHoxoOYLHRJith3
+	2NcAhjEoX+gHMeBEZgibde9RD11zeYVyUe1xk4cQqSO+m2eXnii6OAIKAkFutmN/
+	ppmO/Ny8hCOkjzogelR6fteq/Dx0nJGognBJRt82jCUiUo7Es2AF6WMT255VTkF2
+	PJgmMnUByg9k+6aK+aQYbzoBCeNFB1zqVoKCmS5cErAbsBUwAKYcKzy7jnGfSro7
+	+q8pjo68aJc7LQd3kG7SWGdXhD3SUxHLmzIpqdRnAOTFz/gQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u1svrn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 11:04:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53UB406N000323
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 11:04:00 GMT
+Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 30 Apr 2025 04:03:59 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH] coresight: Disable MMIO logging for coresight stm driver
+Date: Wed, 30 Apr 2025 04:03:47 -0700
+Message-ID: <20250430110347.2091013-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=G5AcE8k5 c=1 sm=1 tr=0 ts=681203a1 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=3H110R4YSZwA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=veiSyZ7YIUJwdJkxcWIA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA3OCBTYWx0ZWRfXzcHPg5bF2V3V 5ci/HKzPJBTroBOjJXIZ3GGTQt04f/uBScdMxOyZ4J1W0f2HpsKg6WIWR9DX+d7oCy9fR2WE+0q CCaGHLgL0HCRkQd5cq27tEMbX2EiWJXLlFGNrcLRhKOAam+9ZAJj6+uqF6P5pXFP6kJCwqPsWPR
+ re35RFMnBHV1KrShHnhGrJWVKZbuIq5LIpDRT2TQrg9ONxBLMEkfpl2vfkyi1hkJrjmLMFgWZCJ 6BYmOktCganK0UogKr9l86WMKK9KGyiIUEW/iMovdZzomAZmhm+9LAyUIQ2gBJEJw0Gw8LATJFC 9c8Mur686zP9gTAQfDVr00hoXt0+BYz79hZaeACWKjGr02oLjLIbMrShel70aCWalrMj6V6XQGe
+ 1df3gh1rjtxXWrCXb9WfVlp2JrRRelFHmhhhp7AbqNnWufObUsP3GApTzJ/CUlTLtUB8FCpT
+X-Proofpoint-GUID: F0SnEkpOGs_Q7K3q_ivJ26wbALxZLoGJ
+X-Proofpoint-ORIG-GUID: F0SnEkpOGs_Q7K3q_ivJ26wbALxZLoGJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 impostorscore=0 phishscore=0 mlxlogscore=952
+ lowpriorityscore=0 adultscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ clxscore=1015 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300078
 
-Now that there are 2 monitors for real-time applications, users may want to
-enable both of them simultaneously. Make the number of per-task monitor
-configurable. Default it to 2 for now.
+When read/write registers with readl_relaxed and writel_relaxed,
+log_read_mmio and log_write_mmio will be called. If mmio trace
+is enabled to STM, STM driver will write the register to send the
+trace and writel_relaxed will be called again. The circular call
+like callstack below will happen. Disable mmio logging for stm
+driver to avoid this issue.
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
+[] stm_source_write[stm_core]+0xc4
+[] stm_ftrace_write[stm_ftrace]+0x40
+[] trace_event_buffer_commit+0x238
+[] trace_event_raw_event_rwmmio_rw_template+0x8c
+[] log_post_write_mmio+0xb4
+[] writel_relaxed[coresight_stm]+0x80
+[] stm_generic_packet[coresight_stm]+0x1a8
+[] stm_data_write[stm_core]+0x78
+[] ost_write[stm_p_ost]+0xc8
+[] stm_source_write[stm_core]+0x7c
+[] stm_ftrace_write[stm_ftrace]+0x40
+[] trace_event_buffer_commit+0x238
+[] trace_event_raw_event_rwmmio_read+0x84
+[] log_read_mmio+0xac
+[] readl_relaxed[coresight_tmc]+0x50
+
+Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
 ---
- include/linux/rv.h                     | 9 +--------
- include/linux/sched.h                  | 8 +++-----
- kernel/trace/rv/Kconfig                | 9 +++++++++
- kernel/trace/rv/monitors/rtapp/Kconfig | 1 +
- kernel/trace/rv/rv.c                   | 8 ++++----
- 5 files changed, 18 insertions(+), 17 deletions(-)
+ drivers/hwtracing/coresight/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 2897aad16883..099b23c14e54 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -74,14 +74,7 @@ struct ltl_monitor {};
-=20
- #endif /* CONFIG_RV_LTL_MONITOR */
-=20
--/*
-- * Per-task RV monitors count. Nowadays fixed in RV_PER_TASK_MONITORS.
-- * If we find justification for more monitors, we can think about
-- * adding more or developing a dynamic method. So far, none of
-- * these are justified.
-- */
--#define RV_PER_TASK_MONITORS		1
--#define RV_PER_TASK_MONITOR_INIT	(RV_PER_TASK_MONITORS)
-+#define RV_PER_TASK_MONITOR_INIT	(CONFIG_RV_PER_TASK_MONITORS)
-=20
- union rv_task_monitor {
- 	struct da_monitor	da_mon;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 45be0fa7a5cc..560782493292 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1623,12 +1623,10 @@ struct task_struct {
-=20
- #ifdef CONFIG_RV
- 	/*
--	 * Per-task RV monitor. Nowadays fixed in RV_PER_TASK_MONITORS.
--	 * If we find justification for more monitors, we can think
--	 * about adding more or developing a dynamic method. So far,
--	 * none of these are justified.
-+	 * Per-task RV monitor, fixed in CONFIG_RV_PER_TASK_MONITORS.
-+	 * If memory becomes a concern, we can think about a dynamic method.
- 	 */
--	union rv_task_monitor		rv[RV_PER_TASK_MONITORS];
-+	union rv_task_monitor		rv[CONFIG_RV_PER_TASK_MONITORS];
- #endif
-=20
- #ifdef CONFIG_USER_EVENTS
-diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
-index 942d57575e67..c11bf7e61ebf 100644
---- a/kernel/trace/rv/Kconfig
-+++ b/kernel/trace/rv/Kconfig
-@@ -32,6 +32,15 @@ menuconfig RV
- 	  For further information, see:
- 	    Documentation/trace/rv/runtime-verification.rst
-=20
-+config RV_PER_TASK_MONITORS
-+	int "Maximum number of per-task monitor"
-+	depends on RV
-+	range 1 8
-+	default 2
-+	help
-+	  This option configures the maximum number of per-task RV monitors that =
-can run
-+	  simultaneously.
+diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+index 4ba478211b31..f3158266f75e 100644
+--- a/drivers/hwtracing/coresight/Makefile
++++ b/drivers/hwtracing/coresight/Makefile
+@@ -22,6 +22,8 @@ condflags := \
+ 	$(call cc-option, -Wstringop-truncation)
+ subdir-ccflags-y += $(condflags)
+ 
++CFLAGS_coresight-stm.o := -D__DISABLE_TRACE_MMIO__
 +
- source "kernel/trace/rv/monitors/wip/Kconfig"
- source "kernel/trace/rv/monitors/wwnr/Kconfig"
- source "kernel/trace/rv/monitors/sched/Kconfig"
-diff --git a/kernel/trace/rv/monitors/rtapp/Kconfig b/kernel/trace/rv/monit=
-ors/rtapp/Kconfig
-index 94689d66a79c..6a521c95a03f 100644
---- a/kernel/trace/rv/monitors/rtapp/Kconfig
-+++ b/kernel/trace/rv/monitors/rtapp/Kconfig
-@@ -1,5 +1,6 @@
- config RV_MON_RTAPP
- 	depends on RV
-+	depends on RV_PER_TASK_MONITORS >=3D 2
- 	bool "rtapp monitor"
- 	help
- 	  Collection of monitors to check for common problems with real-time appl=
-ication that cause
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index d493fddf411f..ebd4b4b228bf 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -165,7 +165,7 @@ struct dentry *get_monitors_root(void)
- LIST_HEAD(rv_monitors_list);
-=20
- static int task_monitor_count;
--static bool task_monitor_slots[RV_PER_TASK_MONITORS];
-+static bool task_monitor_slots[CONFIG_RV_PER_TASK_MONITORS];
-=20
- int rv_get_task_monitor_slot(void)
- {
-@@ -173,12 +173,12 @@ int rv_get_task_monitor_slot(void)
-=20
- 	lockdep_assert_held(&rv_interface_lock);
-=20
--	if (task_monitor_count =3D=3D RV_PER_TASK_MONITORS)
-+	if (task_monitor_count =3D=3D CONFIG_RV_PER_TASK_MONITORS)
- 		return -EBUSY;
-=20
- 	task_monitor_count++;
-=20
--	for (i =3D 0; i < RV_PER_TASK_MONITORS; i++) {
-+	for (i =3D 0; i < CONFIG_RV_PER_TASK_MONITORS; i++) {
- 		if (task_monitor_slots[i] =3D=3D false) {
- 			task_monitor_slots[i] =3D true;
- 			return i;
-@@ -194,7 +194,7 @@ void rv_put_task_monitor_slot(int slot)
- {
- 	lockdep_assert_held(&rv_interface_lock);
-=20
--	if (slot < 0 || slot >=3D RV_PER_TASK_MONITORS) {
-+	if (slot < 0 || slot >=3D CONFIG_RV_PER_TASK_MONITORS) {
- 		WARN_ONCE(1, "RV releasing an invalid slot!: %d\n", slot);
- 		return;
- 	}
---=20
-2.39.5
+ obj-$(CONFIG_CORESIGHT) += coresight.o
+ coresight-y := coresight-core.o  coresight-etm-perf.o coresight-platform.o \
+ 		coresight-sysfs.o coresight-syscfg.o coresight-config.o \
+-- 
+2.25.1
 
 
