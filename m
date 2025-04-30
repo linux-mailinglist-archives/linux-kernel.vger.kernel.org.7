@@ -1,121 +1,186 @@
-Return-Path: <linux-kernel+bounces-627151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14D8AA4C29
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFAFAA4C60
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9648C16C946
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5F71C213BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C3E25D544;
-	Wed, 30 Apr 2025 12:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A8C25B1ED;
+	Wed, 30 Apr 2025 12:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxzW83SP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7KJ242K"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5625D541;
-	Wed, 30 Apr 2025 12:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A40221F0E;
+	Wed, 30 Apr 2025 12:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746017818; cv=none; b=uhSIXx9aDtwl4ey61yfhxd9HD4qCSTPjXSckgOM03ziiA+g3+6sI/mDDtY+pKV0IFyUX4azjlwnk2FBy9JguonfPkjErDq464kA9Odrk9DjtO25xfenPrie5wzi/lLuIJjDC28S+EbeGYdldZmDMink1GCG2pYwMcJOutMzTYr0=
+	t=1746017865; cv=none; b=JFa46jyGQi0pE3gf659P0DC8Uhnn69w+ghrUaVUultoBcPZoLgNlOO8mU0JIBZXg8X/7ms+MAK0wcwzEUxaybmv//ryBMbtZKYVhG5dCwAcy2rOD4ng+QtvcpYaiyVZXdFQ3EzOXG4/qx2gvqOyogURkmJZS0TQAxX+iSS1DFnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746017818; c=relaxed/simple;
-	bh=uLcVteZSPDqe2u74CAvMKYQO5qHTff2Fkb3KFWwvD4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBz1Jp8mGt0E11bzFEVPrAKgVOFxKk052nAAWNmF7ncMi8EJhijQkMFiAp+jCWdknENZLtpob4XrMznAS6eiotgyfuK9lv/SMZmtYdjlxqNAy9fIjV9a5BqyY/Qd+9B71mIVb6pCIeUGW99zeWvqZinXcD3M4V4hyynt33Tu1Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxzW83SP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DDA1C4CEE9;
-	Wed, 30 Apr 2025 12:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746017817;
-	bh=uLcVteZSPDqe2u74CAvMKYQO5qHTff2Fkb3KFWwvD4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PxzW83SPf9ZZ4HFymch8b/+BMURaYyGgCYmOxJVXagSIhyQoSBlovI8WWsTUDRrir
-	 E1UVkInW31z9/Davm3uR30FvsKSVTNsA4CnXtdPuFlPkfWYExc2HjBG+QexyPJtRXZ
-	 jqJ9QZFz4emaAubh4vCZF4/5fAR5CDpY9ZorbPgtK10rP8MXJuDW41JKaVOR5xBs9+
-	 LGU2tOGEmUE67eBZ6WgGrCzim01goK/ZPPadEunbAnhJyGLoBNsooezwExFafNJwCg
-	 72klqPkgk3nqcNihBLuSk04VqJPxIPpJ+LmzQmy1rPtCSElK+fcbgYXRF87Qvs6G1H
-	 qJJ3haj51R9fw==
-Date: Wed, 30 Apr 2025 09:56:54 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, namhyung@kernel.org,
-	ctshao@google.com, irogers@google.com, agordeev@linux.ibm.com,
-	gor@linux.ibm.com, sumanthk@linux.ibm.com, hca@linux.ibm.com
-Subject: Re: [PING PATCH v3] perf test: Allow tolerance for leader sampling
- test
-Message-ID: <aBIeFio2nkbzFj0b@x1>
-References: <20250422110643.2900090-1-tmricht@linux.ibm.com>
+	s=arc-20240116; t=1746017865; c=relaxed/simple;
+	bh=9qPP5PNftrah6ri/cztEnnoO4hLSYjKaxWmldomFwDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tptEvtqXTqUzS9aVkQeFS5Fy6yYRjS2S5p0yb0qb3IWqXGSmIiK5r2vr2I53H1aQUagzuWxtDH6Ty9XjKQuoJ2qusSBGbIbMwgNjGE6MYDnbB3gh2nFhWxTnoU1WtxCWSJthJJcto2WGFw2PsKbpXZYx1a2d79t0ecZ7jOlYFcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C7KJ242K; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3032a9c7cfeso761257a91.1;
+        Wed, 30 Apr 2025 05:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746017863; x=1746622663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rm05lpTkOVOHXu8eGRdE6kXYVUr0GQNtiOAVsh1nNCg=;
+        b=C7KJ242KYQ15vgG/zWSJEVRrvGJ2RycOlfKvKoAGtJPrI3yk63Jp5kZyvQ2P/xrWGU
+         LE8s3uf7ky2EsOv1EBXGXaAYQr9CMGlPzXu4E5gXdyWl9NqjHoTZpTIWwQYar7D6RCYL
+         bHl0ALpneo6gbCKqhRuiRYDfdJYZ4ZBOGEUgIDTaDXhytqpnKPeyWJM+8a78RbnvnQZk
+         LVuUllheXy/fjE3kCvnxVuscDAwfX4j5UVmZoVriMSCYxkn5CSFANHx3c4JthMZwy652
+         aAWVku4pcrD/5terbTL+j9tNjEH1zoQy9GDotXoP7lT0RsTWveu1uTS3vXzAp2xzUTD8
+         u3lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746017863; x=1746622663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rm05lpTkOVOHXu8eGRdE6kXYVUr0GQNtiOAVsh1nNCg=;
+        b=ITKnpUPGH4eDAVPCS3OkhRXoNm7elshwLlZhWPH4oV3JO0b99h5JLo9lhV6wrMXPUw
+         YTqpVbosBJ7+oafaEQ3W97Ok5ZiLqLz3n68v+QyWSFjhrAnGBWJfNtZ3Qt/OLmIGzBuz
+         qy/EGtVtB4RxLA2YeaOUhV5Mp4Gbl2namswZtnzKjLIyUHSBspFlD1RuZAkFky1UIc1x
+         BBKY8YfwS7wwyrkKgSKWB7F0s+IVRFb2ZpCjZY8Zt/GxZm40kCvEcooFco6FcxPKNeCE
+         rmVkDT8BpYyBW4CCr5JnxMFh7LY1VwyROa6Ak8J3KaVfitzMx6HvYYcp8OC8LIdFABLC
+         L+hA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq+7D3CQfUepLB0BheJ94Ty72PqnXHq37XhdcrLrNCpoma7XtnG90Q8b7YhmnPByfy8nRwRCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWaoAUqc9mCCFg9SG0okzdBf3S1cRws4FCXyGFZXJA/rRr8DsR
+	5F76P4H4RXAkrPf43jvY3/XNesLcrW0tZHP9sXweyHDflVy40oYHm3O3+o7NjcdrJLZiMo4+iys
+	cSmDn+DOmO9MEPFBXDboYJ3cPMkA=
+X-Gm-Gg: ASbGncv+OgfrDlbQrFo0n+BLY3uI4fkClYqKfj/9vyCGFisA0LMfRb6wAW5ZrYIhCxJ
+	iCueQk1rFgS0WGHHR0wvShArhEiJ6izSsQneDMbzqFoqM06lcswrTxAhCdmwVflccc21cG+TR+w
+	iKqOVIatCKPy/ToOiC8DrRJnHkTMCPAOC2
+X-Google-Smtp-Source: AGHT+IHsahqat7sRDVZbpn87HSfKCGqp+eBYCISXvsmpIZH8IyO4vathjjFMmGbSmuz1hqRFo78WfmBbT1d//7/DQAM=
+X-Received: by 2002:a17:90b:1c07:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-30a3b959b2cmr271359a91.0.1746017863425; Wed, 30 Apr 2025
+ 05:57:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250422110643.2900090-1-tmricht@linux.ibm.com>
+References: <20250429235316.538129-1-sashal@kernel.org> <20250429235316.538129-7-sashal@kernel.org>
+In-Reply-To: <20250429235316.538129-7-sashal@kernel.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 30 Apr 2025 08:57:30 -0400
+X-Gm-Features: ATxdqUGOAb33lS8ofFWUIrrEQktvjwc5jTIu1Jk9cnpJOqAND3CyqoIWsvrv9zE
+Message-ID: <CADnq5_NacNmcKKQUdrbTtEGAn8UCvvJHki+JMUPMRA2AB6T8VA@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.1 07/10] drm/amdgpu: Allow P2P access through XGMI
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Felix Kuehling <felix.kuehling@amd.com>, Hao Zhou <hao.zhou@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, airlied@gmail.com, simona@ffwll.ch, 
+	Yunxiang.Li@amd.com, matthew.auld@intel.com, tvrtko.ursulin@igalia.com, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 01:06:43PM +0200, Thomas Richter wrote:
-> V3: Added check for missing samples as suggested by Chun-Tse.
-> V2: Changed bc invocation to return 0 on success and 1 on error.
- 
-> There is a known issue that the leader sampling is inconsistent, since
-> throttle only affect leader, not the slave. The detail is in [1]. To
-> maintain test coverage, this patch sets a tolerance rate of 80% to
-> accommodate the throttled samples and prevent test failures due to
-> throttling.
- 
-> [1] lore.kernel.org/20250328182752.769662-1-ctshao@google.com
- 
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
-> Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+On Tue, Apr 29, 2025 at 8:03=E2=80=AFPM Sasha Levin <sashal@kernel.org> wro=
+te:
+>
+> From: Felix Kuehling <felix.kuehling@amd.com>
+>
+> [ Upstream commit a92741e72f91b904c1d8c3d409ed8dbe9c1f2b26 ]
+>
+> If peer memory is accessible through XGMI, allow leaving it in VRAM
+> rather than forcing its migration to GTT on DMABuf attachment.
+>
+> Signed-off-by: Felix Kuehling <felix.kuehling@amd.com>
+> Tested-by: Hao (Claire) Zhou <hao.zhou@amd.com>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+> (cherry picked from commit 372c8d72c3680fdea3fbb2d6b089f76b4a6d596a)
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-This doesn't apply to perf-tools-next:
+This patch is only applicable to 6.15 and newer.  Please drop for stable.
 
-⬢ [acme@toolbx perf-tools-next]$        git am ./v3_20250422_tmricht_perf_test_allow_tolerance_for_leader_sampling_test.mbx
-Applying: perf test: Allow tolerance for leader sampling test
-error: patch failed: tools/perf/tests/shell/record.sh:238
-error: tools/perf/tests/shell/record.sh: patch does not apply
-Patch failed at 0001 perf test: Allow tolerance for leader sampling test
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am --abort".
-hint: Disable this message with "git config set advice.mergeConflict false"
-⬢ [acme@toolbx perf-tools-next]$
+Alex
 
-Are you proposing this for perf-tools, i.e. for this release cycles?
-
-Namhyung, what do you think?
-
-I think it is not applying in perf-tools-next due to this patch that
-isn't in perf-tools:
-
-⬢ [acme@toolbx perf-tools-next]$ git log --oneline -5 perf-tools-next/perf-tools-next tools/perf/tests/shell/record.sh
-be8aefad33760dd8 perf tests record: Cleanup improvements <<<<<<<<<<<<<<<<<<<<<<<<<<<<
-90d97674d4ad0166 perf test: Use cycles event in perf record test for leader_sampling
-859199431d768091 perf test: Fix perf record test for precise_max
-180fd0c1eac7cd8c perf tests: Make leader sampling test work without branch event
-2532be3d219d8819 perf test: Tag parallel failing shell tests with "(exclusive)"
-⬢ [acme@toolbx perf-tools-next]$
-
-⬢ [acme@toolbx perf-tools-next]$ git log --oneline -5 perf-tools/perf-tools tools/perf/tests/shell/record.sh
-90d97674d4ad0166 perf test: Use cycles event in perf record test for leader_sampling
-859199431d768091 perf test: Fix perf record test for precise_max
-180fd0c1eac7cd8c perf tests: Make leader sampling test work without branch event
-2532be3d219d8819 perf test: Tag parallel failing shell tests with "(exclusive)"
-36fae9f93e5f00eb perf test: Add precise_max subtest to the perf record shell test
-⬢ [acme@toolbx perf-tools-next]$
-
-- Arnaldo
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 30 ++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/dr=
+m/amd/amdgpu/amdgpu_dma_buf.c
+> index ab06cb4d7b358..4dcc7de961d08 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+> @@ -42,6 +42,29 @@
+>  #include <linux/pci-p2pdma.h>
+>  #include <linux/pm_runtime.h>
+>
+> +static const struct dma_buf_attach_ops amdgpu_dma_buf_attach_ops;
+> +
+> +/**
+> + * dma_buf_attach_adev - Helper to get adev of an attachment
+> + *
+> + * @attach: attachment
+> + *
+> + * Returns:
+> + * A struct amdgpu_device * if the attaching device is an amdgpu device =
+or
+> + * partition, NULL otherwise.
+> + */
+> +static struct amdgpu_device *dma_buf_attach_adev(struct dma_buf_attachme=
+nt *attach)
+> +{
+> +       if (attach->importer_ops =3D=3D &amdgpu_dma_buf_attach_ops) {
+> +               struct drm_gem_object *obj =3D attach->importer_priv;
+> +               struct amdgpu_bo *bo =3D gem_to_amdgpu_bo(obj);
+> +
+> +               return amdgpu_ttm_adev(bo->tbo.bdev);
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+>  /**
+>   * amdgpu_dma_buf_attach - &dma_buf_ops.attach implementation
+>   *
+> @@ -53,12 +76,14 @@
+>  static int amdgpu_dma_buf_attach(struct dma_buf *dmabuf,
+>                                  struct dma_buf_attachment *attach)
+>  {
+> +       struct amdgpu_device *attach_adev =3D dma_buf_attach_adev(attach)=
+;
+>         struct drm_gem_object *obj =3D dmabuf->priv;
+>         struct amdgpu_bo *bo =3D gem_to_amdgpu_bo(obj);
+>         struct amdgpu_device *adev =3D amdgpu_ttm_adev(bo->tbo.bdev);
+>         int r;
+>
+> -       if (pci_p2pdma_distance(adev->pdev, attach->dev, false) < 0)
+> +       if (!amdgpu_dmabuf_is_xgmi_accessible(attach_adev, bo) &&
+> +           pci_p2pdma_distance(adev->pdev, attach->dev, false) < 0)
+>                 attach->peer2peer =3D false;
+>
+>         r =3D pm_runtime_get_sync(adev_to_drm(adev)->dev);
+> @@ -479,6 +504,9 @@ bool amdgpu_dmabuf_is_xgmi_accessible(struct amdgpu_d=
+evice *adev,
+>         struct drm_gem_object *obj =3D &bo->tbo.base;
+>         struct drm_gem_object *gobj;
+>
+> +       if (!adev)
+> +               return false;
+> +
+>         if (obj->import_attach) {
+>                 struct dma_buf *dma_buf =3D obj->import_attach->dmabuf;
+>
+> --
+> 2.39.5
+>
 
