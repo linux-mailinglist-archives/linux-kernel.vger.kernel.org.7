@@ -1,95 +1,93 @@
-Return-Path: <linux-kernel+bounces-626791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F713AA4768
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:40:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D8BAA4741
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24441BA2E3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F376F1618EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417D0235BE1;
-	Wed, 30 Apr 2025 09:38:33 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41C235060;
+	Wed, 30 Apr 2025 09:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNUM8oOq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5AE235055;
-	Wed, 30 Apr 2025 09:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3FA231856;
+	Wed, 30 Apr 2025 09:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746005912; cv=none; b=Ue9uYRDYVcCu/1TLz03VrcWBJuWcWILXodJAIRM5WqFrIr73C6nwnWrDWXmEj8y36Jx0ubGcOIXpA/qwUMZX5djQNdXabVTKYxrgKuTEHo591i3ZVL57J8nvba52MtSI+KqERO5PBiwLiaCNTigmYzhmFjV57aiZrFurdYIAPrI=
+	t=1746005578; cv=none; b=nUzd+NiN02lXHll0z13BWoPTY5Xc34pZWbUPzQgwTYDiuHf/lQfC1PFPNBqORWOsdZWOZdrQVSgARX3ZCgbyCsZqCO+cL4/u9TLITqadRXynkXZvQBwlMFV9yYh6hH+VDzPVzKjaSDUUYpvDIAAjWkGcPI8qHGUQDv5VxbgX8ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746005912; c=relaxed/simple;
-	bh=j9Rn5hX6mv7spf3KVf2Y3X9LbA0hK8RNFXlA259jL6k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mjyke7HTF8b3Djja4t2Q8e1AkFVeEbPYdzvtQspSQHaLt7JyGrDFPZQESKLBdYWoKNXXbncUmoHqZsrrIX1wMmwdYRWjsGRaCnNgEd01xl0VLpF2oyQ8NTfzqGZ+FSuiwoA8MzXnmdIB/u8dGGk3N5N/Sgne2RyvYACUIyE6oX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZnXCP0tDlz13L8J;
-	Wed, 30 Apr 2025 17:37:21 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2C04F1401F4;
-	Wed, 30 Apr 2025 17:38:29 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Apr 2025 17:38:28 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH net 2/2] net: hibmcge: fix wrong ndo.open() after reset fail issue.
-Date: Wed, 30 Apr 2025 17:31:27 +0800
-Message-ID: <20250430093127.2400813-3-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250430093127.2400813-1-shaojijie@huawei.com>
-References: <20250430093127.2400813-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1746005578; c=relaxed/simple;
+	bh=rAJtEV8XNhHDLkmxcy3W+Ng4pKD/f66UzwwLY2Pf8nw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=CkrLw/NWXaJ3hLhTFCmEZlk6SQh3MtK3QSgUuIkkteJGikkNUzw3LyolX6P4J9+B3AIVvIwb2XuEkguZxJ9YToEYyVOxtQVtpfR148u2m3IJDRGfzP1rZqCr2KSDlUM88UrkDaesxeVYmFFOgo+t0sFK3j1K5DPv0TrHA/IG4Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNUM8oOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E30EC4CEE9;
+	Wed, 30 Apr 2025 09:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746005578;
+	bh=rAJtEV8XNhHDLkmxcy3W+Ng4pKD/f66UzwwLY2Pf8nw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=aNUM8oOqgMjwJCjvIjG4hLIcwTp3UNLPfvDg3UhQleXEiP0WbitlRJbGTXgYRH6Sb
+	 cW1vK5Z6wscBDlPh7k0gV/1kJv+xF6e+QBmFpizgcQvCL32wH2w8ZZThR/4U6L2JAH
+	 wSv8Fk4LQZSOCeZPes0It9ZE1DBhke5ltMiwLpCcuxpWM92q7cne5pc575FZvjBX6i
+	 NIWDt1tdjyIkiteailksmuVcY45G1hjsK6UyRBxfSX7V5nEpaHoENamna/z4Cuf6LM
+	 Cv1NEyIAEmJtzgurPbudHQ9TC3Dh5QW+BH79Zabnob02kBvuKOEbatXlm9mnAGkCys
+	 cg5WFlCmrHrKg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 30 Apr 2025 11:32:53 +0200
+Message-Id: <D9JVBJ7NUE2G.3AFGELETSX50N@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] rust: implement `Wrapper<T>` for `Opaque<T>`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Christian Schrefl" <chrisi.schrefl@gmail.com>, "Sky" <sky@sky9.dev>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, =?utf-8?q?Gerald_Wisb=C3=B6ck?=
+ <gerald.wisboeck@feather.ink>
+X-Mailer: aerc 0.20.1
+References: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com>
+ <20250430-rust_unsafe_pinned-v2-2-fc8617a74024@gmail.com>
+In-Reply-To: <20250430-rust_unsafe_pinned-v2-2-fc8617a74024@gmail.com>
 
-If the driver reset fails, it may not work properly.
-Therefore, the ndo.open() operation should be rejected.
+On Wed Apr 30, 2025 at 10:36 AM CEST, Christian Schrefl wrote:
+> Moves the implementation for `pin-init` from an associated function
+> to the trait function of the `Wrapper` trait and extends the
+> implementation to support pin-initializers with error types.
+>
+> This allows to declare functions that are generic over `Wrapper`
+> types.
+>
+> Adds a use for the `Wrapper` trait in `revocable.rs`, to use the new
+> `pin-init` function. This is currently the only usage in the kernel.
+>
+> Reviewed-by: Gerald Wisb=C3=B6ck <gerald.wisboeck@feather.ink>
+> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 
-In this patch, if a reset failure is detected in ndo.open(),
-return directly.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-Fixes: 3f5a61f6d504 ("net: hibmcge: Add reset supported in this module")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+Cheers,
+Benno
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-index 2e64dc1ab355..6c98f906bf0d 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
-@@ -35,6 +35,9 @@ static int hbg_net_open(struct net_device *netdev)
- 	struct hbg_priv *priv = netdev_priv(netdev);
- 	int ret;
- 
-+	if (test_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state))
-+		return -EBUSY;
-+
- 	ret = hbg_txrx_init(priv);
- 	if (ret)
- 		return ret;
--- 
-2.33.0
-
+> ---
+>  rust/kernel/revocable.rs |  2 ++
+>  rust/kernel/types.rs     | 25 +++++++++++++------------
+>  2 files changed, 15 insertions(+), 12 deletions(-)
 
