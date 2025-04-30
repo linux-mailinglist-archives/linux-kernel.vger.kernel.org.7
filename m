@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-627723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C935AA543C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:54:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81F5AA543F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93A3816B5C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3622A1BA4D00
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90534265627;
-	Wed, 30 Apr 2025 18:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D570D26A098;
+	Wed, 30 Apr 2025 18:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/VUJi0j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0deOkIC"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4471DFDA5;
-	Wed, 30 Apr 2025 18:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDB7263C7F;
+	Wed, 30 Apr 2025 18:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746039241; cv=none; b=J7ndQoiXAocoY8gMJghaRCuhk3SrO33qtPLc/p64zRPVb7z6gnH2911e+4kva/TIH8U8ulWCTwPTG0cxs/dOu0hNUE7vW9x6+Lgh9wR9t+QtrP+TV8BsgJb0DPSz9FOl/83vXulQEdv6Gn6CgnNvehg/xJrSP4Be2hoexuFJRCA=
+	t=1746039279; cv=none; b=bfjI3R6IvgoW5X6eaOQs6uJujuErBCPr22VHf4GzuuVLkogAkhdaW9O9ad87xSbGiKPioIj9kI2QoqD/kFvmNpXQ4Uf7CtKlspm0w+uzcEaF7LebtxeEFJhBfhzO7+xwxO6toztKNkDAsijsAvS5mNdUfTS6QWFV4/7Q+0ohTAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746039241; c=relaxed/simple;
-	bh=INqp31oPH6YlSTaHcFPVax+oSPwJTWRqHYvfXqiVndg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BZBL1Yd+mbC2qwTxl91WV9i6923oUV8kOTwNHHxmpIFW16B3ED0bn5/KSXzTWW+27x3LgaU+HMtQyzTpmdxkxQF6HvOdrrmOzoJFTdZmshEQP8OemEcEYY6T9v9bKuma7zDgxe1HHhV7xk8WIo6iazDZdn7g/+MV+g409mpDI0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/VUJi0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C621C4CEE7;
-	Wed, 30 Apr 2025 18:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746039240;
-	bh=INqp31oPH6YlSTaHcFPVax+oSPwJTWRqHYvfXqiVndg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z/VUJi0jjbbNa+TFHpHtWlZVwRW81Aw+AZNcQwqfjM0xYAwbk76vc+hWuOlN5N3IY
-	 0EEY5IYiA3UMh6Ge/tB4eTU1TmLUVXalcSlSn5lExVVf+xM7Z2FRotV7+yYommlmxx
-	 8wG2bxSAqdYbwjDoIb0l0pA5DGQl9Hd54n3/2aHrOXLno/PAv8jUr7FdKSCz8PZkfV
-	 21UjKaq0th7CFyvnAh3vLAlsbtz6hPbFyne0L0xCjxHW9oZos/yHDgU5H7bGOrqXX/
-	 UrQ3ZpS+hP4ecCwdaCIrv7dwJ69uyBZqFr6zyf1BMYv/qFqb82xuFZlI/tSKnQPRA1
-	 vy+ONWiHeJwLA==
-Date: Wed, 30 Apr 2025 11:53:57 -0700
-From: Kees Cook <kees@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Willy Tarreau <w@1wt.eu>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Shuah Khan <shuah@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 00/32] kselftest harness and nolibc compatibility
-Message-ID: <202504301153.E2D0C4ED@keescook>
-References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
- <20250422103612-64ea71dd-d51d-487e-b387-508c372af07c@linutronix.de>
- <20250422085145.GB14589@1wt.eu>
- <7bb64160-103c-4882-a69b-9bc054e62db8@linuxfoundation.org>
+	s=arc-20240116; t=1746039279; c=relaxed/simple;
+	bh=RuEs/0OB2TeUNVBJ7KbaOKTja7dATGjXX+pvvcciRpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IEC8Roobtm38SdAPOdHp7S9u+xOfLEyV4PUoMGHYN6Km8KZrAJD3qBwwvW5tDvZUtwFH4YIqiCffUAzeVbEJPyBFggAolHU8Hcgpas9tOPFRC0xgWwP5tRbiAPHQp7r+hiq0kQgLfxlcV25miFcxpi7184x9ZGnfToS0DHA9wLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0deOkIC; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30c0517142bso1021251fa.1;
+        Wed, 30 Apr 2025 11:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746039276; x=1746644076; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=INnUYS4aztl17KAR4asCnO8mLObv269L2LB64ZQOrdY=;
+        b=C0deOkICKmJQCckbiwLn5NkdfI9azQCB+XgeGB8ZNUwsWJakEsDTFG16vx+Dm4C9OM
+         8ldU+w8EvbMr4TrDkaNno3BOuPcIGE4EDb2ZQ52aqFgV5c2lXCMJRD36Wpj5iDCszq1a
+         RqER1OAhRSx5NVjT53bRXtOsbDYcmYMh6QywHSzOvYcleiRDNZ5lHD0bnDzDjwph2SOw
+         wwk3/VTiGuD5Xk1GdnNfCFUotSj22NtVlRAmRNP/d2JTVLzK/VG+ivSmVQrGJYs+Is3n
+         iT8IU63W4jY5Ku3718zkJvK0bLbQQ7fAvJzxrqnNZgJYXbd28o4Xtkrq0W9v+3NaFn9+
+         PTdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746039276; x=1746644076;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=INnUYS4aztl17KAR4asCnO8mLObv269L2LB64ZQOrdY=;
+        b=nNygLIrvmhM11MdUOpnMpV3A7/03VOJKZlc3b3pXZhVlud+Nt9JfKH1zGEdM4T2vYC
+         YKdcR4KnylcShBacH6SSWcScDEcYQc65s/mgZU4TPFJGr9JkGthDnev/fsv7GdDx2cbd
+         kAQQmajFNd3AXoGRCeEmi8OUcGdGhk+LxgYe/mYeblQyzTmfQlR6GrBffNMRyfz2fWLd
+         bTnhjCYVLqq9n8XMhIRQTEhK4kJN+r5MRooPvRg4zfevkXuUchNb26AEdEDuj8FnAGjo
+         kZzieSXDIrpYKMxLsLpMbiZnWZbj+1dPnt9Nf8U5ohOArYraqk9MwvHyTyfssGmaH1Me
+         6lqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVidq2abLhpt3eMuKm9wbE14k7merO5515RwIBkDJhIAP6g1RSFi07GCSEWR0qI9hGasdanWR5OQ+njMY8=@vger.kernel.org, AJvYcCXEbZ2KcP6mUoyxW6iCYOTWFw11CDJwDDnKVduIvSqHL0GjDlkMMX9jOJtKTDekYsWG8vdpLBu4++C4Mg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+Ad7jXFC84zrCEqSCmH6gq2IsREWSG3aDwBUvwyH7HBxq+61L
+	Wdru/VGiCYiCXCM7+wHhkF1EvctIhWbzhotHNT7xHaZYJVK2ywOjH3sCzQOwO6LJqg18Nc+Eg0q
+	s97fElX/ZlN2oN8k6v32pigB/LiiqfD3rc4Y=
+X-Gm-Gg: ASbGncsjDGTUIZiojZyVnwKFMq1UGt1LJncl34gmaQ4JezPaYY2VX0/RLOEatDkzG+W
+	9+bwiv078j3eLkW6Vv3Pnn8g7KeGzNYOJ2kBYch9e4d3xdGKfrC4rZj7HPa54xlcIwlCvw25BHT
+	cEb9iIr4ZMQEO9EudRIF1S0qYb4vpS+tCCTMhaMA==
+X-Google-Smtp-Source: AGHT+IHmONtEN/xdxnZx+o08PKjnVD4YC1y5YRSR+8KR6UhsXjDD6/Gb/DNtIiijTTw7D4Fogh7Q/wD1bO93+LeWacA=
+X-Received: by 2002:a2e:a912:0:b0:30b:f274:d1e2 with SMTP id
+ 38308e7fff4ca-31e69e31eacmr18647711fa.1.1746039275466; Wed, 30 Apr 2025
+ 11:54:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7bb64160-103c-4882-a69b-9bc054e62db8@linuxfoundation.org>
+References: <20250430085544.12800bdd@canb.auug.org.au> <CAJ-ks9mQfDwmz=chKjjcjv2KxPk1su4NWfZXey7nNgQWYXzaWA@mail.gmail.com>
+ <4654171.LvFx2qVVIh@rjwysocki.net>
+In-Reply-To: <4654171.LvFx2qVVIh@rjwysocki.net>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 30 Apr 2025 11:53:58 -0700
+X-Gm-Features: ATxdqUEMlf94wCHJAVWSq2q2Y2wziFWbxXtwh7RY2305fcLElottv8bncPvTPHU
+Message-ID: <CAJ-ks9np=yeVPrwNS2BwWJsohqntTgy-2eou68rfWcftR8gjjg@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pm tree
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gldrk <me@rarity.fan>, Kees Cook <kees@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 24, 2025 at 02:06:34PM -0600, Shuah Khan wrote:
-> On 4/22/25 02:51, Willy Tarreau wrote:
-> > Hi Thomas,
-> > 
-> > On Tue, Apr 22, 2025 at 10:48:28AM +0200, Thomas Weißschuh wrote:
-> > > Hi,
-> > > 
-> > > On Fri, Apr 11, 2025 at 11:00:24AM +0200, Thomas Weißschuh wrote:
-> > > > Nolibc is useful for selftests as the test programs can be very small,
-> > > > and compiled with just a kernel crosscompiler, without userspace support.
-> > > > Currently nolibc is only usable with kselftest.h, not the more
-> > > > convenient to use kselftest_harness.h
-> > > > This series provides this compatibility by adding new features to nolibc
-> > > > and removing the usage of problematic features from the harness.
-> > > > 
-> > > > The first half of the series are changes to the harness, the second one
-> > > > are for nolibc. Both parts are very independent and should go through
-> > > > different trees.
-> > > 
-> > > I need a few nolibc bits of this series (snprintf() and prep patches) to base
-> > > further patches on. For that I'd like to pick up all the nolibc patches from
-> > > this series through the nolibc tree. They got Acks from Willy.
-> > > 
-> > > Any objections?
-> > 
-> > No objection on my side!
-> > 
-> 
-> Thanks.
-> 
-> Kees, do you have any comments on this series? If you are okay
-> with it, I would like to apply this for next.
+On Wed, Apr 30, 2025 at 11:32=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.n=
+et> wrote:
+>
+> On Wednesday, April 30, 2025 1:30:43 AM CEST Tamir Duberstein wrote:
+> > On Tue, Apr 29, 2025 at 3:55=E2=80=AFPM Stephen Rothwell <sfr@canb.auug=
+.org.au> wrote:
+> > >
+> > > Hi all,
+> > >
+> > > Commits
+> > >
+> > >   9eef70365d71 ("ACPICA: Introduce ACPI_NONSTRING")
+> > >   ac9334785c75 ("ACPICA: utilities: Fix overflow check in vsnprintf()=
+")
+> > >   5de20bc939b0 ("ACPICA: Apply pack(1) to union aml_resource")
+> > >
+> > > are missing a Signed-off-by from their authors.
+> >
+> > Hi Stephen, how can I remedy this for 5de20bc939b0 ("ACPICA: Apply
+> > pack(1) to union aml_resource")?
+>
+> The original ACPICA commit does not carry an S-o-b from you, so this one
+> does not either.
+>
+> If you reply with a Signed-off-by to this message:
+>
+> https://lore.kernel.org/linux-acpi/4664267.LvFx2qVVIh@rjwysocki.net/
+>
+> I will pick up your tag.
+>
+> Thanks!
 
-Fine by me! :)
-
--- 
-Kees Cook
+Done in https://lore.kernel.org/linux-acpi/20250430185019.19528-2-tamird@gm=
+ail.com/.
 
