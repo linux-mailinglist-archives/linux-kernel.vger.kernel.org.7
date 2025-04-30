@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-627280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27ED7AA4E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A9FAA4E66
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADECF1885BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76E9188A3A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6995025E441;
-	Wed, 30 Apr 2025 14:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F6B25E44F;
+	Wed, 30 Apr 2025 14:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Mcdb7T1c"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1Q7eU9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DE225B1EF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 14:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D619D2AE8B;
+	Wed, 30 Apr 2025 14:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746022893; cv=none; b=bpQpa4W6jKB/a/K5U3gh2BV3rJJ+dJHSLKPaj/6tdNtp/wEAXlNIgkWPtgstJ4ppVCs4s8RuTjD0XGuUq8DMtrZBXRFxE3GI9zyjbtJPJqOvm0j0aYEIFT0qOzYEXzZx6HnJwAq5QShuLaQHmjWyasHZFtw74wKMkW85mOiSPds=
+	t=1746022984; cv=none; b=R9k120v+g/EaeNb8S6Hy93eZFhqpskx02ehezG2+wGNUDlI2HyUeHUUtOgjmVEMwxClo8iQ2n27ypJ8J+4/aR8ZZoBOIxM7/Dlv2rWLXEUQtpPxdfKXr1QXDyWJ+wAW79o3JPHxQ/ccdgGLo2VSEou25nMbkBny2naRMNh6sifQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746022893; c=relaxed/simple;
-	bh=sQ3uGnHXH5pOVC81pZdY1hVXCJqW8kE2I+Llf8pVa9Y=;
+	s=arc-20240116; t=1746022984; c=relaxed/simple;
+	bh=EHmJoyT1t1HTWr93T5cTrjOvhbK6j7Z+nBdrivtN+KM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h5fjpCwtm/CH+y9IHPnN/DVgt0UTcpnXikWb7jkgliAuNgmuzk0TU2dKAb40kEvWAeJUxW01J1OHmyORElQNQ02toZvwnxmhjDjx8kPHdFLDpYiUMMRZtvS6mL0Ohos7YFENLN1d2fVNPsmyptJy7aRfV8X0YN7X0xGvJH4Cf5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Mcdb7T1c; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-603f54a6cb5so4592803eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746022890; x=1746627690; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1J21N20NQgiRAPGKjWxJGQE1CtsIaoc0bg+24VnTew=;
-        b=Mcdb7T1cWn1syaEhX00J6XyY1jUP/9i2FcK2VsRDyh/LmWHlBEh66jQuRTcCIWbL9D
-         eR0ZUgrweVHwnXPDrXOCGpnQfrufRqhx4N8fdOWHKFoz80qQkj22m7+YNVlYKG2nlf5p
-         WyRAszw6eBhW7iHaNLbwbunl2fRBs+hB+lEV0ytBZB95ZUEV3ukAyHgGL5rKWwAuVqrj
-         2zC+YHC9HSJwKqvjkKUN/izO+F9x8q0SUe3f8Mflhfrk/igMlVilOG7mo9vOy/fEHnGA
-         t9FXYKDM2x8UNdCpD0iHglhn1v05Q1ea3C9KxSEUHBfXsFcyuRW2vZdbsopGqzHeIqCP
-         fSxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746022890; x=1746627690;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1J21N20NQgiRAPGKjWxJGQE1CtsIaoc0bg+24VnTew=;
-        b=oHz6vy8A15iU/RPQ6UGt96e5R8SvNHACUIXBbHBOr+9sqqOPTn77Pv4k0stFHOuVMC
-         w/28YTW2OHiSZY41Ro3kb9g+vmlwjrA5msbq9jvYPs/sd6hr6LsDVdjI7mAZTQrLMpf0
-         BW+xfpzh82m3zmSBdd/CQzt5k0r2gnYYdgLU9mQJpGZZzSjF0dg1BIwUw7VMZIadifA9
-         fOtwY7npJyy5jaR+UJHjdL3lf6m6nmVKiptgDOGvCqlC+fN8ihQNrp+6x/orUO2wM9Av
-         3YKjZpWv+WPTDQPSySoU9hM97LcDfdHjXpIGM25tXTLmmLWhWWIVVPntCrn6uLasPPne
-         tgTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZdBswiCyx/skmS8pAKwfFkS26pR/oairzMffGkpg5bSUBlgaK4/HgU2o3hREH9olvAuWZ4jiGK3YCIf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmOI8lpFpJVPupQg3joyXzFeQAIfv7JAMNgSWdCk7AD8BPIFvZ
-	JpsHW6h/+oF//J+geTda594DhgXopqORTIYUHEDCNRAQtTAx9KOfXLGBQQ7aQQU=
-X-Gm-Gg: ASbGnctAKCyF9t4FVrJYgcMAbr4jylSA9p64ZtGnEnEnL3jAKAWojXavuivTzDKVx5R
-	O+7liRK9FX5+gcLjGHqH4QFgnQAljMPy9+jwVyFa2yNcgwoZL6hRTHyfs9FDqxrNDqS+uGPz2UG
-	/AgPnTeKhTthEA4iEpXjDdV/c7vytsEAjQXGDCYqcIEnvPU01oLMyZwS2ItmXUkDx4PcUIHDgwW
-	CZHiYf+FzciJ3782tlmy00leZVbXXZmbT/p+LLU8bE6/X8Jq4qHYOJakwYTOhsHsEnuq9Qfi1SH
-	h9jvsVnH9Ka9PfDciIiMJNeA1zSAyX6USE9ChbYtewas8O65cJ97g59o7+8QKOywRafc9NAL65Y
-	0uOGw6laTEkaz4XGvvaIT94yqgQ==
-X-Google-Smtp-Source: AGHT+IHWCsLcDIxL6ytR5QTqeptmdFdVVO+xqRDcmlgk7+/1KWk02aStJmqcNR/mTszyOY6C7kGxXw==
-X-Received: by 2002:a05:6820:8c9:b0:606:85ad:881 with SMTP id 006d021491bc7-607d40e2902mr1899866eaf.0.1746022890085;
-        Wed, 30 Apr 2025 07:21:30 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:359a:f1e:f988:206a? ([2600:8803:e7e4:1d00:359a:f1e:f988:206a])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-607d8dbd96fsm232384eaf.35.2025.04.30.07.21.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 07:21:29 -0700 (PDT)
-Message-ID: <070b269c-c536-49c5-a11d-7e23653613f9@baylibre.com>
-Date: Wed, 30 Apr 2025 09:21:28 -0500
+	 In-Reply-To:Content-Type; b=d4BOsLeFQabFOuuDUMEDTRijEed8hf4jgJtW5kTJbgvOPD+hXzJyaNp4tqK1TcSMGiRp9YKoxCFAXsQD7QnotWVgqALmoWk8DXtx6YlkYV3zqTM88UFViy0Bt7/bKyhRDe0PDnPjV3xNVSl7IYrxBVEYJM3T9V8YQ480Sb+WcDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1Q7eU9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBEAC4CEE7;
+	Wed, 30 Apr 2025 14:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746022983;
+	bh=EHmJoyT1t1HTWr93T5cTrjOvhbK6j7Z+nBdrivtN+KM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i1Q7eU9v9c9LhftrfG98JhwjvdtIX79CBeve9Lm9W0p/zaxBB/CR370V7cwfPUGci
+	 25KfK/1vS7TQX5ECZxwu+KE077rM4bgeBY+Q/Vtv8oUdIKqvqUPWg+zIQoDpln+Tlb
+	 /TmX2lawn/mb7tU5xdarnbQtwswtW2SXMG7yWVd7b11VeE5I/sEmxz3OBrWqOvf1hF
+	 pPAbH8QqUv3ecrfsUEyv/l2zqHdiapP/8qWa2Scgq1L/bPXKK460WXhOCZTtnrkGG9
+	 K0OYKkZNdYznUBJ/H2RS9SuWz723aSULxpMKAJ2v7Tqkm9OG9KQUJiCsJwpLHNFFI/
+	 dK5uXZw+L4CHQ==
+Message-ID: <06268dcb-4a49-468e-8ebd-d9366a2cf0c2@kernel.org>
+Date: Wed, 30 Apr 2025 17:22:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,62 +49,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] Documentation: ABI: IIO: add calibphase_delay
- documentation
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Angelo Dureghello <adureghello@baylibre.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
+Subject: Re: [PATCH net-next 2/4] dt-bindings: net: ti: k3-am654-cpsw-nuss:
+ update phy-mode in example
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com>
- <20250429-wip-bl-ad7606-calibration-v1-1-eb4d4821b172@baylibre.com>
- <4645ae3e0c3bb1ada9d4cadce77b64fe5e651596.camel@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
+ Conor Dooley <conor+dt@kernel.org>, Andy Whitcroft <apw@canonical.com>,
+ "mike .." <wingman205@gmx.com>
+Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>,
+ Jonathan Corbet <corbet@lwn.net>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>, Tero Kristo <kristo@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+References: <cover.1744710099.git.matthias.schiffer@ew.tq-group.com>
+ <4216050f7b33ce4e5ce54f32023ec6ce093bd83c.1744710099.git.matthias.schiffer@ew.tq-group.com>
 Content-Language: en-US
-In-Reply-To: <4645ae3e0c3bb1ada9d4cadce77b64fe5e651596.camel@gmail.com>
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <4216050f7b33ce4e5ce54f32023ec6ce093bd83c.1744710099.git.matthias.schiffer@ew.tq-group.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 4/30/25 12:40 AM, Nuno Sá wrote:
-> On Tue, 2025-04-29 at 15:06 +0200, Angelo Dureghello wrote:
->> From: Angelo Dureghello <adureghello@baylibre.com>
->>
->> Add new IIO calibphase_delay documentation.
->>
->> The delay suffix is added to specify that the phase, generally in
->> radiants, is for this case (needed from ad7606) in nanoseconds.
->>
->> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->> ---
->>  Documentation/ABI/testing/sysfs-bus-iio | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-iio
->> b/Documentation/ABI/testing/sysfs-bus-iio
->> index
->> 33c09c4ac60a4feec82308461643134f5ba84b66..f233190d48a34882b7fed2d961141cc6bec3ddb2
->> 100644
->> --- a/Documentation/ABI/testing/sysfs-bus-iio
->> +++ b/Documentation/ABI/testing/sysfs-bus-iio
->> @@ -559,6 +559,26 @@ Description:
->>  		- a small discrete set of values like "0 2 4 6 8"
->>  		- a range specified as "[min step max]"
->>  
->> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_calibphase_delay
+Hi Matthias,
+
+On 15/04/2025 13:18, Matthias Schiffer wrote:
+> k3-am65-cpsw-nuss controllers have a fixed internal TX delay, so RXID
+> mode is not actually possible and will result in a warning from the
+> driver going forward.
 > 
-> Not sure if I'm too convinced on the _delay suffix
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+>  .../devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml          | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-Phase is measured in radians, not seconds, so it seems wrong to use it here.
+> diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+> index b11894fbaec47..c8128b8ca74fb 100644
+> --- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+> +++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+> @@ -282,7 +282,7 @@ examples:
+>                      ti,syscon-efuse = <&mcu_conf 0x200>;
+>                      phys = <&phy_gmii_sel 1>;
+>  
+> -                    phy-mode = "rgmii-rxid";
+> +                    phy-mode = "rgmii-id";
+>                      phy-handle = <&phy0>;
+>                  };
+>              };
 
-https://en.wikipedia.org/wiki/Phase_(waves)
+FYI the following TI boards using this driver are using "rgmii-rxid".
+Will you be sending fixes to the device trees files?
 
-And the delay here is with respect to individual samples in a simultaneous
-conversion without regard for a sampling frequency, so I don't see how we could
-convert the time to radians in any meaningful way.
+arch/arm64/boot/dts/ti
+k3-am625-beagleplay.dts:	phy-mode = "rgmii-rxid";
+k3-am625-sk.dts:	phy-mode = "rgmii-rxid";
+k3-am625-sk.dts.orig:	phy-mode = "rgmii-rxid";
+k3-am62a7-sk.dts:	phy-mode = "rgmii-rxid";
+k3-am62a-phycore-som.dtsi:	phy-mode = "rgmii-rxid";
+k3-am62p5-sk.dts:	phy-mode = "rgmii-rxid";
+k3-am62p5-sk.dts:	phy-mode = "rgmii-rxid";
+k3-am62-phycore-som.dtsi:	phy-mode = "rgmii-rxid";
+k3-am62-verdin-dev.dtsi:	phy-mode = "rgmii-rxid";
+k3-am62-verdin.dtsi:	phy-mode = "rgmii-rxid";
+k3-am62-verdin-ivy.dtsi:	phy-mode = "rgmii-rxid";
+k3-am62x-phyboard-lyra.dtsi:	phy-mode = "rgmii-rxid";
+k3-am62x-sk-common.dtsi:	phy-mode = "rgmii-rxid";
+k3-am642-evm.dts:	phy-mode = "rgmii-rxid";
+k3-am642-evm.dts:	phy-mode = "rgmii-rxid";
+k3-am642-sk.dts:	phy-mode = "rgmii-rxid";
+k3-am642-sk.dts:	phy-mode = "rgmii-rxid";
+k3-am642-tqma64xxl-mbax4xxl.dts:	phy-mode = "rgmii-rxid";
+k3-am642-tqma64xxl-mbax4xxl.dts:	/* phy-mode is fixed up to rgmii-rxid by prueth driver to account for
+k3-am64-phycore-som.dtsi:	phy-mode = "rgmii-rxid";
+k3-am654-base-board.dts:	phy-mode = "rgmii-rxid";
+k3-am67a-beagley-ai.dts:	phy-mode = "rgmii-rxid";
+k3-am68-sk-base-board.dts:	phy-mode = "rgmii-rxid";
+k3-am69-sk.dts:	phy-mode = "rgmii-rxid";
+k3-j7200-common-proc-board.dts:	phy-mode = "rgmii-rxid";
+k3-j721e-beagleboneai64.dts:	phy-mode = "rgmii-rxid";
+k3-j721e-common-proc-board.dts:	phy-mode = "rgmii-rxid";
+k3-j721e-evm-gesi-exp-board.dtso:	phy-mode = "rgmii-rxid";
+k3-j721e-evm-gesi-exp-board.dtso:	phy-mode = "rgmii-rxid";
+k3-j721e-evm-gesi-exp-board.dtso:	phy-mode = "rgmii-rxid";
+k3-j721e-evm-gesi-exp-board.dtso:	phy-mode = "rgmii-rxid";
+k3-j721e-sk.dts:	phy-mode = "rgmii-rxid";
+k3-j721s2-common-proc-board.dts:	phy-mode = "rgmii-rxid";
+k3-j721s2-evm-gesi-exp-board.dtso:	phy-mode = "rgmii-rxid";
+k3-j722s-evm.dts:	phy-mode = "rgmii-rxid";
+k3-j784s4-j742s2-evm-common.dtsi:	phy-mode = "rgmii-rxid";
+k3-j784s4-j742s2-evm-common.dtsi:	phy-mode = "rgmii-rxid";
+
+-- 
+cheers,
+-roger
 
 
