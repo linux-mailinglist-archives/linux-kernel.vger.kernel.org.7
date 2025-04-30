@@ -1,270 +1,210 @@
-Return-Path: <linux-kernel+bounces-627067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1F2AA4AC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:13:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89641AA4ACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B398568C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814CF1BA47CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE43F259C9B;
-	Wed, 30 Apr 2025 12:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D52825A2B2;
+	Wed, 30 Apr 2025 12:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GL18b2IC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+3JpQdK"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EFF259489
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721C259CBB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746015085; cv=none; b=S7DhDl9rZvIxnux9+niY6mSX2R+lxG/Qy2rXmpAObqV3usFcSY1X/+xEZZi5dZwmx/l4agprJod5XNjZhW5SkrDES/S6uY8OAFw50alELnOeBjEDERUwhAXwKJXXYE5fJ8IjgVsAhC/r9aQbpVMiaebdI9q8P8H3hKvIgqxEBmA=
+	t=1746015163; cv=none; b=OK6WZ2n8qS0PcMf7f8FzSCgpnxFuG3CF1nfeJ4k5FtVBWRhxmzqSCThjH0W8IwQabiv6UzibHFz+EV5iUL6gi4x+g1O5qkSX5p9Qx5MBiSI36ZiXt/oiEBVnwlnbzag9PxenQNuXk+fjbnimo/yXsw56G4YHxFKjWxXlWlYsK4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746015085; c=relaxed/simple;
-	bh=WBVwmUGhNQeqSG1wEq0pfwpkL0pYYhpZqSLVK9JWP60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ebxV7p9eMNntRycdwyD0s/Lp1gOsYO/cGnlshOqw6ucOtGu5NNGtQ74cMdEOeYGr70ENpVCZ/+BbjBXBj4x2W4jfVqjEzglvURtv5pDsTiIpH7UvOuVRteGYN8f92pNVUUkQqGes8ZYEQtFGuoxrRmBcGybnyA493owaPXPH8XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GL18b2IC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746015081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7tFgFXzqc2ivrCQjcqTMjWCPkQCLYsEDRrk0U+aYhgw=;
-	b=GL18b2IC2gkkQb65yB8bclS/XWPzzpx6rrq4QXIRPCjsUPl03/qSGrz6SgIkNjhRc9pMp2
-	YHuAmBzzUgLZs/EyATlXwNy4LcfEpT3j4BsZn6EJWN6LgemUGZLItx6uNkfVcVzjvNelUo
-	npGRxmrJFiW+2ief4NdvMSa+yNZnJLE=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-egU7yoaFOdyXdnDK0T1nGg-1; Wed, 30 Apr 2025 08:11:19 -0400
-X-MC-Unique: egU7yoaFOdyXdnDK0T1nGg-1
-X-Mimecast-MFC-AGG-ID: egU7yoaFOdyXdnDK0T1nGg_1746015079
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2242f3fd213so61373635ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:11:19 -0700 (PDT)
+	s=arc-20240116; t=1746015163; c=relaxed/simple;
+	bh=QiFE57zyx6kmjXiSN4/oHw9/UfRS+tfM4wy66RCOdrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OjX8JI31jUzVpZfBhJ/f3YlxEdG1ZazZ2Hgr1LTlLZFoqBcOMwQI2K4h32pjzGlpcy5d2J+Ky9bWAj+ElFPrUYUqMR6N8bV/n5i+0Sno3R9NxnQV1uow7jyKMUJbTReajSopVcnJ7doFaMB1bVMLrt7oiCxFm8Jypg86Gube6HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C+3JpQdK; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac25d2b2354so1094853266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746015160; x=1746619960; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bw5vuERICCQaAaztVYNub3Fq870dmKKXz2A+Vw1GzLE=;
+        b=C+3JpQdKyNMU8tqXWq7fJIrOosbPBqu2wn6HfO8ikS3fZ4SaxiWaXlKwYQjWcVqxvW
+         2gB0cQzz8QS7sUBJC7tC0vhQ+SBt2BA9zBXPC9bOUNHY7Gx8iRAPi+M0FI7lFybaZ5e9
+         H7x98Feuv1BAu7CLMGl0QSzgwPdzxbYMngUUsetIBBq/xyTq66mTTiJXr+gmd+FTnIzk
+         HUF/lCcE7209kXTYQMlim30My/3LYXtTHGnVVI0LnUK7LAZkLbx5F3120OGN/jHpRHmm
+         IZsCipzGyDzwT2BE/wRU81CLO+1uMYkb292sRlDpYpvjFULMDwPUvp4FyPQmRYGFWDS8
+         nNFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746015078; x=1746619878;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7tFgFXzqc2ivrCQjcqTMjWCPkQCLYsEDRrk0U+aYhgw=;
-        b=tYjliyszjKiEz5tu3/4oKzSmAG+JiGLAorWmicVyIXzWLLARSaSpv9kVTzWMVqX/iK
-         TgMU/BmU1t36jfD62DzVcv9xbF2ihXbH5sSEMm5yTFc1lQVJlZbiD+UA6+m/osdNxa5l
-         0TORD54CRMZjFjgfmYoC9sJpj8tNbW4Yu9ZxvfhQUA3zlIikI+KFHGBHfx+kt+HNFsUl
-         RfY2K7nfcswgL+ulN3kvQiJiE9uKsUowV9px4FWnl+V1Ogodq4dcYw7vimFMovNj27iZ
-         /16goIdTKtT5+X5L4jA6JMYVyE6oNXRLohJLly2o43ojni26qEJoTy7USfQsW8/VayNF
-         XP+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVspiKy/wKvpnuHmSziVeZyIKGxOGj5uBsxDfrG7P7LwN1Jvp1sZEl6lWnGCqKykScHNb6fg70VdDEQsds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzecGIw5oxPTDCKkzCVR7Ttvq6M+ZmmmoawE98rLVAdo0z2WFvL
-	LfS6g6tsSWyA0AiqlKT+iD/qXp3O+DlssEBhT1QINBaf/JjQ1LHEIh7M6bUMmNF/gBVr5i8vAKK
-	SXPEDSev6g3gVNOQdiXvKecsaRbl58fTOKOWZrKsbQEwJUfyedMVq55Y0el6Sjg==
-X-Gm-Gg: ASbGncvFXLbxJ4/5HXu2AcJbjslOoeQHpM2ffI0MgRJ51J0RWwVCCIxiuHim6tMdgF4
-	XrIiaGBAGy98qFqsUqftV8R/7X2QPTl/nUvDsDLf5OQRTfpVXUOapWbFwMIWk6Wqg7xL1zavLHz
-	JZGM5fw3Tej8Pyd8t05dAg0s6tfIH74RkzytGElFinCUhodsYFPXot2mQ1S3Qj9/J640YQxLw8D
-	9w/dv/Mq3htQd+0Nn9ZD2eRQ10Vu2Y1QXhjd3k6iBxfF+/7U9acZtn0E/U7YghSa5O6HwKWA+IR
-	ngiO3ZaE9I9r
-X-Received: by 2002:a17:902:ebcc:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22df578bcebmr38849585ad.14.1746015078602;
-        Wed, 30 Apr 2025 05:11:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHL6LT3h1gUo31SZA1COwvt+3Fy8+QNcJQ2pDlfoosU3yDt8W0PlDXI1jufTia5Y9HcVnFrHw==
-X-Received: by 2002:a17:902:ebcc:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22df578bcebmr38849145ad.14.1746015078260;
-        Wed, 30 Apr 2025 05:11:18 -0700 (PDT)
-Received: from [192.168.68.51] ([180.233.125.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50e89acsm120641205ad.113.2025.04.30.05.11.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 05:11:17 -0700 (PDT)
-Message-ID: <b5770d9b-4f17-4be8-95a7-1549322debb2@redhat.com>
-Date: Wed, 30 Apr 2025 22:11:09 +1000
+        d=1e100.net; s=20230601; t=1746015160; x=1746619960;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bw5vuERICCQaAaztVYNub3Fq870dmKKXz2A+Vw1GzLE=;
+        b=Ki7FagO9kOVWTH1QJlnSZPJdfUGfuZlQnNFuUbbcbsxjW/Rb9i3Z9GRxcyXwKydd8G
+         ILdyzKAhg3BQdeqgQocblA32+QzLjEanEt6ANA7ZkoFyGG2/mBoRwajTwYB8qhwZJfaT
+         fRl8/5iIr+P51SFeYl5X3Qx4XTuLDhi3Vh1s08o5L6vonToOB03lnz5ueKGxk2B/Ph1n
+         pjDT4oW8a9hXEZ5evA8BkTk1zo7LGest2RHZksfR47ZVSe5TnWYdOPmo46f+ttxtPH2H
+         6IlB/NSIMt5ZfMhXUTV0YsKiml3JhztK34ViRuArE/AeZ7An84172EHS3w34LJHaYNZ3
+         CUDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEr6C+0pAmMs5gFH6Ni5s55nhBYgm+2SNSoKug/U0qb46CUjVTYcg74Qw+s1Qp9pVRuRigS5LP4r15Co4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhSagWkEl8L0kGMGY6N68Fd0QNW2N3bAX2wFKui+BXrhyx/Vjo
+	dlfINYRn/XWFQw8JpawMG93PA2gTNBrI7x/k8CwJXjji8MAX5MxApw+dWOL0ABKKknPt3jojzHq
+	Z08A7+yGJcmQ7iTfPpaPEBM2kwfGzs1GsXmDPnQ==
+X-Gm-Gg: ASbGncuKSfBrv7ZScIUiXAeFskAK54eRcrxnxAXCozqpp+Szv+QZiPrJ5GV1f//2AGN
+	bMuEAsj66WC5uA2Plfa3uiMFZp+jrdXQKpClEPe9i7KZiGip6IbKYNEccwcJvzCd+Iiib7/qk2d
+	eHje6AqFho2hmDBUhPUHnk7gVCGz59avaUxwjE4s242KmTTlRn7kKpMg==
+X-Google-Smtp-Source: AGHT+IEBVMXhh9O68BsmwiGuVRDwFqgaRwRx3WWJWKtbEdBnrWBtuHEntXm1t41yUiPtsDukCLWcJeDZW/ap4XicZtU=
+X-Received: by 2002:a17:907:7d86:b0:ac7:3817:d8da with SMTP id
+ a640c23a62f3a-acedc762e3bmr301811066b.52.1746015159919; Wed, 30 Apr 2025
+ 05:12:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 17/43] arm64: RME: Handle RMI_EXIT_RIPAS_CHANGE
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250416134208.383984-1-steven.price@arm.com>
- <20250416134208.383984-18-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250416134208.383984-18-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250428-tee-sizecheck-v1-1-5c3c25a2fa79@google.com> <CAHUa44E_JZdYnGrReP0zWCP1wdu2BdJ9DSZZ3a2OiobRj61ThQ@mail.gmail.com>
+In-Reply-To: <CAHUa44E_JZdYnGrReP0zWCP1wdu2BdJ9DSZZ3a2OiobRj61ThQ@mail.gmail.com>
+From: Rouven Czerwinski <rouven.czerwinski@linaro.org>
+Date: Wed, 30 Apr 2025 14:12:28 +0200
+X-Gm-Features: ATxdqUGnAbXl5wqnE5WEVJ_UQiM-RMiem7NwvrC5SiRxCziM9qBoRHZIDqAo6Pc
+Message-ID: <CAK8z29XWCujUdLXcHz075+xcix8HV2Mp3EtxxX9GB7vGjwi3HA@mail.gmail.com>
+Subject: Re: [PATCH] tee: Prevent size calculation wraparound on 32-bit kernels
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Jann Horn <jannh@google.com>, Sumit Garg <sumit.garg@kernel.org>, 
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/16/25 11:41 PM, Steven Price wrote:
-> The guest can request that a region of it's protected address space is
-> switched between RIPAS_RAM and RIPAS_EMPTY (and back) using
-> RSI_IPA_STATE_SET. This causes a guest exit with the
-> RMI_EXIT_RIPAS_CHANGE code. We treat this as a request to convert a
-> protected region to unprotected (or back), exiting to the VMM to make
-> the necessary changes to the guest_memfd and memslot mappings. On the
-> next entry the RIPAS changes are committed by making RMI_RTT_SET_RIPAS
-> calls.
-> 
-> The VMM may wish to reject the RIPAS change requested by the guest. For
-> now it can only do with by no longer scheduling the VCPU as we don't
-> currently have a usecase for returning that rejection to the guest, but
-> by postponing the RMI_RTT_SET_RIPAS changes to entry we leave the door
-> open for adding a new ioctl in the future for this purpose.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v7:
->   * Rework the loop in realm_set_ipa_state() to make it clear when the
->     'next' output value of rmi_rtt_set_ripas() is used.
-> New patch for v7: The code was previously split awkwardly between two
-> other patches.
-> ---
->   arch/arm64/kvm/rme.c | 88 ++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 88 insertions(+)
-> 
+Hi,
 
-One nitpick below, either way:
+On Wed, 30 Apr 2025 at 13:53, Jens Wiklander <jens.wiklander@linaro.org> wr=
+ote:
+>
+> On Mon, Apr 28, 2025 at 3:06=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+e:
+> >
+> > The current code around TEE_IOCTL_PARAM_SIZE() is a bit wrong on
+> > 32-bit kernels: Multiplying a user-provided 32-bit value with the
+> > size of a structure can wrap around on such platforms.
+> >
+> > Fix it by using saturating arithmetic for the size calculation.
+> >
+> > This has no security consequences because, in all users of
+> > TEE_IOCTL_PARAM_SIZE(), the subsequent kcalloc() implicitly checks
+> > for wrapping.
+> >
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> > Note that I don't have a test device with a TEE; I only compile-tested
+> > the change on an x86-64 build.
+> > ---
+> >  drivers/tee/tee_core.c | 11 ++++++-----
+> >  1 file changed, 6 insertions(+), 5 deletions(-)
+>
+> Looks good, I'm picking up this.
+>
+> Thanks,
+> Jens
+>
+> >
+> > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> > index d113679b1e2d..acc7998758ad 100644
+> > --- a/drivers/tee/tee_core.c
+> > +++ b/drivers/tee/tee_core.c
+> > @@ -10,6 +10,7 @@
+> >  #include <linux/fs.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/module.h>
+> > +#include <linux/overflow.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/tee_core.h>
+> >  #include <linux/uaccess.h>
+> > @@ -19,7 +20,7 @@
+> >
+> >  #define TEE_NUM_DEVICES        32
+> >
+> > -#define TEE_IOCTL_PARAM_SIZE(x) (sizeof(struct tee_param) * (x))
+> > +#define TEE_IOCTL_PARAM_SIZE(x) (size_mul(sizeof(struct tee_param), (x=
+)))
+> >
+> >  #define TEE_UUID_NS_NAME_SIZE  128
+> >
+> > @@ -487,7 +488,7 @@ static int tee_ioctl_open_session(struct tee_contex=
+t *ctx,
+> >         if (copy_from_user(&arg, uarg, sizeof(arg)))
+> >                 return -EFAULT;
+> >
+> > -       if (sizeof(arg) + TEE_IOCTL_PARAM_SIZE(arg.num_params) !=3D buf=
+.buf_len)
+> > +       if (size_add(sizeof(arg), TEE_IOCTL_PARAM_SIZE(arg.num_params))=
+ !=3D buf.buf_len)
+> >                 return -EINVAL;
+> >
+> >         if (arg.num_params) {
+> > @@ -565,7 +566,7 @@ static int tee_ioctl_invoke(struct tee_context *ctx=
+,
+> >         if (copy_from_user(&arg, uarg, sizeof(arg)))
+> >                 return -EFAULT;
+> >
+> > -       if (sizeof(arg) + TEE_IOCTL_PARAM_SIZE(arg.num_params) !=3D buf=
+.buf_len)
+> > +       if (size_add(sizeof(arg), TEE_IOCTL_PARAM_SIZE(arg.num_params))=
+ !=3D buf.buf_len)
+> >                 return -EINVAL;
+> >
+> >         if (arg.num_params) {
+> > @@ -699,7 +700,7 @@ static int tee_ioctl_supp_recv(struct tee_context *=
+ctx,
+> >         if (get_user(num_params, &uarg->num_params))
+> >                 return -EFAULT;
+> >
+> > -       if (sizeof(*uarg) + TEE_IOCTL_PARAM_SIZE(num_params) !=3D buf.b=
+uf_len)
+> > +       if (size_add(sizeof(*uarg), TEE_IOCTL_PARAM_SIZE(num_params)) !=
+=3D buf.buf_len)
+> >                 return -EINVAL;
+> >
+> >         params =3D kcalloc(num_params, sizeof(struct tee_param), GFP_KE=
+RNEL);
+> > @@ -798,7 +799,7 @@ static int tee_ioctl_supp_send(struct tee_context *=
+ctx,
+> >             get_user(num_params, &uarg->num_params))
+> >                 return -EFAULT;
+> >
+> > -       if (sizeof(*uarg) + TEE_IOCTL_PARAM_SIZE(num_params) > buf.buf_=
+len)
+> > +       if (size_add(sizeof(*uarg), TEE_IOCTL_PARAM_SIZE(num_params)) >=
+ buf.buf_len)
+> >                 return -EINVAL;
+> >
+> >         params =3D kcalloc(num_params, sizeof(struct tee_param), GFP_KE=
+RNEL);
+> >
+> > ---
+> > base-commit: b4432656b36e5cc1d50a1f2dc15357543add530e
+> > change-id: 20250428-tee-sizecheck-299d5eff8fc7
+> >
+> > --
+> > Jann Horn <jannh@google.com>
+> >
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+I ran this through the arm32 qemu virt machine to test my new development s=
+etup,
+so:
 
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> index bee9dfe12e03..fe0d5b8703d2 100644
-> --- a/arch/arm64/kvm/rme.c
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -624,6 +624,65 @@ void kvm_realm_unmap_range(struct kvm *kvm, unsigned long start,
->   		realm_unmap_private_range(kvm, start, end);
->   }
->   
-> +static int realm_set_ipa_state(struct kvm_vcpu *vcpu,
-> +			       unsigned long start,
-> +			       unsigned long end,
-> +			       unsigned long ripas,
-> +			       unsigned long *top_ipa)
-> +{
-> +	struct kvm *kvm = vcpu->kvm;
-> +	struct realm *realm = &kvm->arch.realm;
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +	phys_addr_t rd_phys = virt_to_phys(realm->rd);
-> +	phys_addr_t rec_phys = virt_to_phys(rec->rec_page);
-> +	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
-> +	unsigned long ipa = start;
-> +	int ret = 0;
-> +
-> +	while (ipa < end) {
-> +		unsigned long next;
-> +
-> +		ret = rmi_rtt_set_ripas(rd_phys, rec_phys, ipa, end, &next);
-> +
-> +		if (RMI_RETURN_STATUS(ret) == RMI_SUCCESS) {
-> +			ipa = next;
-> +		} else if (RMI_RETURN_STATUS(ret) == RMI_ERROR_RTT) {
+Tested-by: Rouven Czerwinski <rouven.czerwinski@linaro.org>
 
---->
-
-> +			int walk_level = RMI_RETURN_INDEX(ret);
-> +			int level = find_map_level(realm, ipa, end);
-> +
-> +			/*
-> +			 * If the RMM walk ended early then more tables are
-> +			 * needed to reach the required depth to set the RIPAS.
-> +			 */
-> +			if (walk_level < level) {
-> +				ret = realm_create_rtt_levels(realm, ipa,
-> +							      walk_level,
-> +							      level,
-> +							      memcache);
-> +				/* Retry with RTTs created */
-> +				if (!ret)
-> +					continue;
-> +			} else {
-> +				ret = -EINVAL;
-> +			}
-> +
-
-<--- This block of code have been existing in multiple functions. I guess
-it would be worthy to introduce a helper for it if you agree. Alternatively,
-it's definitely something to do in the future, after this series is merged :)
-
-> +			break;
-> +		} else {
-> +			WARN(1, "Unexpected error in %s: %#x\n", __func__,
-> +			     ret);
-> +			ret = -ENXIO;
-> +			break;
-> +		}
-> +	}
-> +
-> +	*top_ipa = ipa;
-> +
-> +	if (ripas == RMI_EMPTY && ipa != start)
-> +		realm_unmap_private_range(kvm, start, ipa);
-> +
-> +	return ret;
-> +}
-> +
->   static int realm_init_ipa_state(struct realm *realm,
->   				unsigned long ipa,
->   				unsigned long end)
-> @@ -863,6 +922,32 @@ void kvm_destroy_realm(struct kvm *kvm)
->   	kvm_free_stage2_pgd(&kvm->arch.mmu);
->   }
->   
-> +static void kvm_complete_ripas_change(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm *kvm = vcpu->kvm;
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +	unsigned long base = rec->run->exit.ripas_base;
-> +	unsigned long top = rec->run->exit.ripas_top;
-> +	unsigned long ripas = rec->run->exit.ripas_value;
-> +	unsigned long top_ipa;
-> +	int ret;
-> +
-> +	do {
-> +		kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_page_cache,
-> +					   kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
-> +		write_lock(&kvm->mmu_lock);
-> +		ret = realm_set_ipa_state(vcpu, base, top, ripas, &top_ipa);
-> +		write_unlock(&kvm->mmu_lock);
-> +
-> +		if (WARN_RATELIMIT(ret && ret != -ENOMEM,
-> +				   "Unable to satisfy RIPAS_CHANGE for %#lx - %#lx, ripas: %#lx\n",
-> +				   base, top, ripas))
-> +			break;
-> +
-> +		base = top_ipa;
-> +	} while (top_ipa < top);
-> +}
-> +
->   int kvm_rec_enter(struct kvm_vcpu *vcpu)
->   {
->   	struct realm_rec *rec = &vcpu->arch.rec;
-> @@ -873,6 +958,9 @@ int kvm_rec_enter(struct kvm_vcpu *vcpu)
->   		for (int i = 0; i < REC_RUN_GPRS; i++)
->   			rec->run->enter.gprs[i] = vcpu_get_reg(vcpu, i);
->   		break;
-> +	case RMI_EXIT_RIPAS_CHANGE:
-> +		kvm_complete_ripas_change(vcpu);
-> +		break;
->   	}
->   
->   	if (kvm_realm_state(vcpu->kvm) != REALM_STATE_ACTIVE)
-
-Thanks,
-Gavin
-
+Best regards,
+Rouven
 
