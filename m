@@ -1,55 +1,100 @@
-Return-Path: <linux-kernel+bounces-626783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC67AA4755
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:37:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0ABAA476D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D693B86BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:36:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D94817B460D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8745B221FCF;
-	Wed, 30 Apr 2025 09:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603BA235052;
+	Wed, 30 Apr 2025 09:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0YO5Umu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uO3SaQvM"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15E51E4110;
-	Wed, 30 Apr 2025 09:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FAE231856
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746005808; cv=none; b=ATiAgztOtSZ8fugBGAut6M9DnlJ27D4z6HOgmYqWJptYDvQ0j3VVHEnxtA6HolvZRxJ2QxCjT6JupUHK04DPSp5R79H5qDLzfnv8FcMc2VY/xabM28ikmA/+GpEeBYAyGuJ6eNBJ/C16peDvhEo9oI8ndtjRMGtRtPdZEdqcHQI=
+	t=1746005959; cv=none; b=BQeBkNq/Dqjciwg1Xv4dmPnnvMImNbRDMsfyeiLXQ2t7DT5vhaCO0fSVwhknL9H15H8Hkiaw2ZJESu3sdveHzOg0raBStbKW0CpnK+tPe6YI0MyUm6m35oKQMAOSJG1R9t5glWR8ug3NJGvhmMgpsC7YWmFfnK6coLTM4SgPa7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746005808; c=relaxed/simple;
-	bh=ncOt9Y9sd3++aRr8Xund9S3QMXKgNMJZ5vGF6v/PCB0=;
+	s=arc-20240116; t=1746005959; c=relaxed/simple;
+	bh=AUDJd4dz5XyC/N6fEGt5cYH/J0DmYOyJCqcdAnsYAcw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6vPcOfOgHf34hAad8ywHAlmVuPSBYwlkNNY47b3NvuHh5KoFfjF7b7ivtsUjkaOYOjcbGFjfJZuNop6uM6t4BfE3Zqz9V+I+6rXb1ZiHhA3Grg1jXhHrm1iUB5fOHzX5l7hNuq7V+dd+2SxuH78dxG6lPmvNtDnRuRGXTD1Svg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0YO5Umu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56B2C4CEE9;
-	Wed, 30 Apr 2025 09:36:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746005807;
-	bh=ncOt9Y9sd3++aRr8Xund9S3QMXKgNMJZ5vGF6v/PCB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e0YO5UmuI74/p7C492cGUJYUwOmq0oBotji2akZzR01cPH1LoO763zTX7vSU+/t+D
-	 Q6CMujPhfbPgzMy1CsPqlPwvpPaA2JK0vo4b3nW2I82WyQASXQfdZdhQZFrRigynbi
-	 feUGEFmel6rCoHA1MYAZZFBXrR16rSW4CkP2RRq726EZIg5UEenvTkVfVO2EBm247w
-	 OYjPSn7bHMV4aCY+2wG1fe4jyOwDT2jw4yK/SIiOrslQ42mt0z98hEPCukt0aLHKsl
-	 v+7Q8ongYI51cp1pjTGTcXED11277nolQmj6oIClfsPp81kjUbIUg/63O3yInt/6BL
-	 Hp057+R3Sa7UQ==
-Date: Wed, 30 Apr 2025 11:36:42 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	"Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] xfs: allow ro mounts if rtdev or logdev are read-only
-Message-ID: <veeiqwim6lrjh7wqtnhcguh5ukxcl74lkzloqxthbh5e6rjie7@euq7b7ksqdqr>
-References: <8exDmubwngY9v0_33lv5_EEDd8axqY8n_ZWu7-yEeEh_3YL_C0gcZAYXy-9vkbG2Kvwg0JtfuILWx0YfP1wTZw==@protonmail.internalid>
- <20250430083438.9426-1-hans.holmberg@wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwCdC/PVs/r3ghTfnMEZ6uA+3u2zDB9yrsMzVKx2N9W+4wI5KQubfB98Y0Dluw0EIJ9cTqBWViMmyvB4Tsx9P85t7nTIQ/VBoeRnxXhDPtga0JYiO0bN8gkKs8gSjNFZtvcomt3cB7/xrVNKM05QbWMvbQiRlRU85MP+RuojrBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uO3SaQvM; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so883122966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746005956; x=1746610756; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6OGMbcMEkhBmGqs5Z3YtgBQ6Hwa1jUmstb0M0+KK0Nc=;
+        b=uO3SaQvMg2uYB5lOtoFBdyDcAipupleaSdHMd14tWmPxYRsMP0RVbfRhnuW7lMa+Jq
+         oAmLd2va15V7SUtqz90aKf3EWd/xWqEd0xWoeQsBCy9saIyy44cxEBOe4uhg9rAKzvwV
+         qNIXo7Swfnf9PS6tWrptvpRJjL6RizDJw3AR1RlpDPwgB897bn4f8peMWw1963xnxUAr
+         HhyrJG+qR/xoMsJ2Hq050qymPzMiuq6ETz1smE+Iwgixdb2vIMSIrlEQza6SnriZQBtz
+         IN7dl7qdMbAYFq7MSxSuydv5PgSwjN/w7djsXMs8axi4tOaUajgvJaiZTHgiNP2tAt8R
+         nMGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746005956; x=1746610756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6OGMbcMEkhBmGqs5Z3YtgBQ6Hwa1jUmstb0M0+KK0Nc=;
+        b=eYyBgQmuRf4w5gsmvIZ/fgDMjAJG4B0uKlzP+RgcHuJcPe/JpE0d68nIpSMcujSilu
+         B35rT4bG7EfadcAgYOBxa9TYOQgfBc/I5BqMtnS1sBM7WDbYETYrtm+zpHtvjBqx+jZd
+         vs6xEWiZpwp78gAQT0c1K5saRwSQp+AKCbOEmMg/UINsbYzN9BtgFYjIT+3xueO13pgu
+         2mfiugyTxzDznncTEmSUxqElS3F42o0l7DiNHn1B3fW6f5QcBZoQoeqhphJPHci62yN4
+         Oy5A9K11pIKNXKHUIExaRJB0+Ljelvax6sV1Akm3GYhp5iSK9tCxgWHp5gFK6RNaZvji
+         JqBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXR75rYjrzFpqHI1U2Zi5E+6nwXBUPIfl7v0S+kSOtafxXwurw+HDWeOt7FA/ny0GgRajDbSp+oFvzfCIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO0mWajhzbTgK43Oz68h3AU38p+wTtZP2jlCGGhxlHRz1bMDAb
+	/IXVypvg0J0kKaS12kBXjkNHDIEYXKCqZceuYM8e5yM/7JjD2KjXh96ubtgKZL0=
+X-Gm-Gg: ASbGncvqKXwAeaip14BSRn6SZ6EUe3zBzBfRiS5hClFK64qR6MpT7EYE0HZVMYZ6e1s
+	BxLFVjBChmd5O6szcI0sYKZdaYb4OCEscf9xK7v01p2BJRWfK8v07nyJ9PhB1v6JyvJRQ6MwIE3
+	5AAEK3XyUBR/+RXVX9E4ErPts+4+uHmTRMuF6leh/ZZipe0BSklI/JsaC6LI4Swzfb+rMt8427V
+	vYoidnxDa8LZA2GcrpTUWT58aGxJU+gOxDSj8DMlYjOToBtBTl4NvI8Oek0qNqxKHL/IccIBnOj
+	hstjQ+tt9CYY5lbRZIqXbzUE7qU7zdL5iQAWdA==
+X-Google-Smtp-Source: AGHT+IFdTIvskANcQfZgyrnhvSLOX/uhDZK8XOpbGmgtU0SafrRwMbwRPtiX/Z0dHI+9ZICQQQNkbA==
+X-Received: by 2002:a17:907:d17:b0:aca:a347:c050 with SMTP id a640c23a62f3a-acedc029a40mr272914266b.0.1746005955819;
+        Wed, 30 Apr 2025 02:39:15 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e4f841fsm902286966b.72.2025.04.30.02.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 02:39:15 -0700 (PDT)
+Date: Wed, 30 Apr 2025 12:39:13 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Xilin Wu <wuxilin123@gmail.com>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Konrad Dybcio <quic_kdybcio@quicinc.com>
+Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
+ compatible override
+Message-ID: <aBHvwUAISo2JhYSz@linaro.org>
+References: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
+ <wsdhqocld54ygjrnn6etydorcg6j6uko4ner2dawoomflvu3bp@tq5jbqcahip4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,71 +103,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430083438.9426-1-hans.holmberg@wdc.com>
+In-Reply-To: <wsdhqocld54ygjrnn6etydorcg6j6uko4ner2dawoomflvu3bp@tq5jbqcahip4>
 
-On Wed, Apr 30, 2025 at 08:35:34AM +0000, Hans Holmberg wrote:
-> Allow read-only mounts on rtdevs and logdevs that are marked as
-> read-only and make sure those mounts can't be remounted read-write.
+On 25-04-30 01:26:13, Sebastian Reichel wrote:
+> Hi,
 > 
-> Use the sb_open_mode helper to make sure that we don't try to open
-> devices with write access enabled for read-only mounts.
+> On Tue, Apr 29, 2025 at 10:42:28AM +0300, Abel Vesa wrote:
+> > It all started with the support for CRD back when we had different
+> > compatibles for eDP and DP. Meanwhile, that has been sorted out and it
+> > is now figured out at runtime while using only the DP compatible.
+> > 
+> > It's almost funny how this got copied over from CRD and spread to all
+> > X Elite platforms.
+> > 
+> > TBH, the best reason to drop it ASAP is to make sure this doesn't spread
+> > beyond X Elite to newer platforms.
+> > 
+> > Functionally nothing changes.
 > 
-> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+> Looking at the diff I wonder if this part should also be simplified:
+> 
+> /delete-property/ #sound-dai-cells;
+> 
+> This is done by all upstream X1E boards, so maybe just drop the
+> #sound-dai-cells directly in x1e80100.dtsi?
 
-This looks good, thanks Hans!
+Yeah, I'm not sure about that.
 
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+Though the DP3 PHY is currently used as eDP, I think it could be used
+as DP. So I think it makes more sense to keep the DP3 controller as is
+in the SoC dtsi and delete the #sound-dai-cells property in each board
+specific dts. Don't know if it will ever be the case with this SoC, but
+maybe someone will use DP3 with the PHY configured as DP rather than
+eDP.
 
-> ---
+Not sure if I'm 100% right about this though.
+
+Dmitry, Bjorn, do you think that is accurate enough?
+
 > 
-> Changes since v1:
->  - Switched to using the sb_open_mode helper that does exactly
->    what we want.
+> Greetings,
 > 
->  fs/xfs/xfs_super.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index b2dd0c0bf509..5e456a6073ca 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -380,10 +380,11 @@ xfs_blkdev_get(
->  	struct file		**bdev_filep)
->  {
->  	int			error = 0;
-> +	blk_mode_t		mode;
-> 
-> -	*bdev_filep = bdev_file_open_by_path(name,
-> -		BLK_OPEN_READ | BLK_OPEN_WRITE | BLK_OPEN_RESTRICT_WRITES,
-> -		mp->m_super, &fs_holder_ops);
-> +	mode = sb_open_mode(mp->m_super->s_flags);
-> +	*bdev_filep = bdev_file_open_by_path(name, mode,
-> +			mp->m_super, &fs_holder_ops);
->  	if (IS_ERR(*bdev_filep)) {
->  		error = PTR_ERR(*bdev_filep);
->  		*bdev_filep = NULL;
-> @@ -1969,6 +1970,20 @@ xfs_remount_rw(
->  	struct xfs_sb		*sbp = &mp->m_sb;
->  	int error;
-> 
-> +	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp &&
-> +	    bdev_read_only(mp->m_logdev_targp->bt_bdev)) {
-> +		xfs_warn(mp,
-> +			"ro->rw transition prohibited by read-only logdev");
-> +		return -EACCES;
-> +	}
-> +
-> +	if (mp->m_rtdev_targp &&
-> +	    bdev_read_only(mp->m_rtdev_targp->bt_bdev)) {
-> +		xfs_warn(mp,
-> +			"ro->rw transition prohibited by read-only rtdev");
-> +		return -EACCES;
-> +	}
-> +
->  	if (xfs_has_norecovery(mp)) {
->  		xfs_warn(mp,
->  			"ro->rw transition prohibited on norecovery mount");
-> --
-> 2.34.1
-> 
+> -- Sebastian
+
+
 
