@@ -1,106 +1,153 @@
-Return-Path: <linux-kernel+bounces-627110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93C8AA4B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A42AA4B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E78427ACC6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F3577ACEF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D435E25A327;
-	Wed, 30 Apr 2025 12:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2726D25A327;
+	Wed, 30 Apr 2025 12:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0Fl6hMdu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IXKjlD1+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b++a9hni"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B672475CF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF5E23BF9E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746016976; cv=none; b=Pt4jwRjdls3e2eNWcXQMV7kSmtxPyn7eC/QCIdDdZLbHHK0pFaT4kH2EQnZsyBYsEoe01PcZvEY9OuwTGVGA88pQn7zNDcXhtY+eJG3NgoA96IS6L2yf0bVinWedZSoJ788bY6m4VjAl9GhTN9Fh6HkqXHjxmOl6YtXkpA9xav8=
+	t=1746017032; cv=none; b=pWmYwgDCxa1EQgjyyyWaU+u/fs0znmfuXuW87OF8E9vMcSV8O+dTtJSKKg6Oxf9TFytkaKoS8wBrskFunckGUjytWG4LVGoKUPHbiyXxbrBJtTY84tqLOThnd28zYmGx0GSS+1KQZJQBsOJN8fhtCtXqzvvcKvnnUht9GF4roGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746016976; c=relaxed/simple;
-	bh=sI2/AgqR3merR18766WgeswQaRcYH6kXkaSdGTPKJTA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Yo98dE/LrFVXXkS3y+YA/+CKmST2BM2LXldV/7LEqWOn/2xEDBiFYytdnVsKAXjmWsx5onPW3bmoT0TKb2sBFHKgmbma+Vo5iUMFSpm6aB+GICCBixMA4GxpIKxrkQdSCcnbR7PFI+S1UO8nmmRkJ+/7U6JUz9VjihLWsgsUWW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0Fl6hMdu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IXKjlD1+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746016972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bVwpBB4QYUEp6OQd1Ue9I9QKdCicaN98QgVc3B/CCuI=;
-	b=0Fl6hMdufGuj4WYD8IajXpFPNiwuPpIrSbYiBUcf86a9q88lwo+8AaqUJh2jEF+kmu2m9n
-	FBk1+19yrRTPVm1bAeOIxqetXAmXGW6YWE1tAxNMqhMUPGGqs2q4LYiO1OI3yAzPFu4giu
-	zH9INNsLB32dXnZ3RTaudKoQ8Xc7LHGaFqUdF1N4lzrLB+3pMLOljKaCsmxemmz1+e2HGP
-	TKF3AZwZb2ThfRToiA0YD3b4GgdFW1QvXa34QlgL7i6F5MAd0UmXepslaU/3HU+/A0A/68
-	LIFuIH2Q5NSNfuoxjZeoaqtLYlhR/SRgC81lsVQuYm490el6PTzZrP+tN2oBXg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746016972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bVwpBB4QYUEp6OQd1Ue9I9QKdCicaN98QgVc3B/CCuI=;
-	b=IXKjlD1+hanyJ13BuciYMB+tyw9ts0crWqGxflDsvBHV8B3L98ri609YRsHYv3LvPi49oL
-	RoUCGD1xEsdpIeDA==
-To: Jiri Slaby <jirislaby@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V2 35/45] genirq/manage: Rework irq_set_irq_wake()
-In-Reply-To: <e9a0abc5-7ee0-4ee1-9e19-37d43a5d41de@kernel.org>
-References: <20250429065337.117370076@linutronix.de>
- <20250429065422.128859754@linutronix.de>
- <e9a0abc5-7ee0-4ee1-9e19-37d43a5d41de@kernel.org>
-Date: Wed, 30 Apr 2025 14:42:52 +0200
-Message-ID: <87plgtq0qb.ffs@tglx>
+	s=arc-20240116; t=1746017032; c=relaxed/simple;
+	bh=Vqhnsdgyw/STBZl9rFBTzagmkZ+ds/jt/eYzlfmnpew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJt2AunFimImI3AfS8UhFVQQAdmHao7hWT8XvPr5Kw5x0t1L8nVMoAlq8cWSbGCA/Tbs28rLxzckklkh96xeJti0B/g/PRK/NZTrhHQBreJB997TESGHs6gjOX0Utxov73rgPWvBAhEnwCPho6Yzdo4v3EVq4ZxmKT4c7fAN96Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b++a9hni; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=X5oil7mFmz7rWqPq0OxlqBT4sZV4Ykxse3cu/o3/GrI=; b=b++a9hniLXynnx/Wn/YkeMjj8n
+	IOzTcU5Tw7PuPzatrQeZHF1j5PeLgsf9zB0N/AzRj4exzTLokOlysT/aMNKxEbbJPbzneNvTI/Htm
+	xIs3Ec+BzZ7hyzCUNBHFKzeinj+Ynrz5nkTeGf65sO2/iOuLBWjaSfjw2JMceh14jmFf9yWCRW8tA
+	gnSHxjlNdvJwbKcW3gvzK4pksBiVxkYDAOqiQkZr2274Foioh+tDyE+E3CkgJIIahTrVRNH3bDWa3
+	clZXmSVCg8YaEFPehrGw9+wrI96kYKfgMpm1ksD4jezddqTz/6R+COAeWo7fheOKWzAkcbDdKYyp8
+	IYq1+5EQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uA6mq-0000000Dmap-3aRn;
+	Wed, 30 Apr 2025 12:43:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0D5C1300642; Wed, 30 Apr 2025 14:43:40 +0200 (CEST)
+Date: Wed, 30 Apr 2025 14:43:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>, kernel-team@android.com,
+	peter-yc.chang@mediatek.com
+Subject: Re: [PATCH v3] sched/core: Tweak wait_task_inactive() to force
+ dequeue sched_delayed tasks
+Message-ID: <20250430124339.GM4439@noisy.programming.kicks-ass.net>
+References: <20250429150736.3778580-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429150736.3778580-1-jstultz@google.com>
 
-On Wed, Apr 30 2025 at 08:37, Jiri Slaby wrote:
-> On 29. 04. 25, 8:55, Thomas Gleixner wrote:
->> Use the new guards to get and lock the interrupt descriptor and tidy up the
->> code.
->> -	unsigned long flags;
->> -	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, IRQ_GET_DESC_CHECK_GLOBAL);
->> -	int ret = 0;
->> +	int ret = -EINVAL;
->
-> Hmm...
->
->> -	if (!desc)
->> -		return -EINVAL;
->> +	scoped_irqdesc_get_and_lock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
->> +		struct irq_desc *desc = scoped_irqdesc;
->>   
->> +		/*
->> +		 * wakeup-capable irqs can be shared between drivers that
->> +		 * don't need to have the same sleep mode behaviors.
->> +		 */
->> +		if (on) {
->> +			if (desc->wake_depth++ == 0) {
->> +				ret = set_irq_wake_real(irq, on);
->> +				if (ret)
->> +					desc->wake_depth = 0;
->> +				else
->> +					irqd_set(&desc->irq_data, IRQD_WAKEUP_STATE);
->> +			}
->
-> So in this (imaginary) else branch (i.e. desc->wake_depth++ != 0), you 
-> return EINVAL now?
->
-> Previously, it was 0 (correctly), if I am looking correctly.
+On Tue, Apr 29, 2025 at 08:07:26AM -0700, John Stultz wrote:
+> It was reported that in 6.12, smpboot_create_threads() was
+> taking much longer then in 6.6.
+> 
+> I narrowed down the call path to:
+>  smpboot_create_threads()
+>  -> kthread_create_on_cpu()
+>     -> kthread_bind()
+>        -> __kthread_bind_mask()
+>           ->wait_task_inactive()
+> 
+> Where in wait_task_inactive() we were regularly hitting the
+> queued case, which sets a 1 tick timeout, which when called
+> multiple times in a row, accumulates quickly into a long
+> delay.
+> 
+> I noticed disabling the DELAY_DEQUEUE sched feature recovered
+> the performance, and it seems the newly create tasks are usually
+> sched_delayed and left on the runqueue.
+> 
+> So in wait_task_inactive() when we see the task
+> p->se.sched_delayed, manually dequeue the sched_delayed task
+> with DEQUEUE_DELAYED, so we don't have to constantly wait a
+> tick.
 
-Duh, yes.
+---
+
+(that is, I'll trim the Changelog a this point, seeing how the rest is
+'discussion')
+
+> This seems to work, but I've only lightly tested it, so I'd love
+> close review and feedback in case I've missed something in
+> wait_task_inactive(), or if there is a simpler alternative
+> approach.
+
+There might be. I suspect:
+
+	queued = task_on_rq_queued() && !p->se.sched_delayed;
+
+might just work, but that is indeed pushing things quite far. That gets
+us into the position of changing ->cpus_allowed while still enqueued,
+and while it all might just work out, it is fairly tricky and not worth
+the mental pain.
+
+> NOTE: Peter did highlight[1] his general distaste for the
+> kthread_bind() through wait_task_inactive() functions, which
+> suggests a deeper rework might be better, but I'm not familiar
+> enough with all its users to have a sense of how that might be
+> done, and this fix seems to address the problem and be more
+> easily backported to 6.12-stable, so I wanted to submit it
+> again, as a potentially more short-term solution.
+
+Right, so my distaste is with wait_task_inactive() for basically random
+waiting for the condition to become true. The neater solution would be a
+completion of sorts, but then we need the dequeue path to do a wakeup
+and urgh.
+
+So yeah, this is what we have.
+
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index c81cf642dba05..b986cd2fb19b7 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2283,6 +2283,12 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
+>  		 * just go back and repeat.
+>  		 */
+>  		rq = task_rq_lock(p, &rf);
+> +		/*
+> +		 * If task is sched_delayed, force dequeue it, to avoid always
+> +		 * hitting the tick timeout in the queued case
+> +		 */
+> +		if (p->se.sched_delayed)
+> +			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+>  		trace_sched_wait_task(p);
+>  		running = task_on_cpu(rq, p);
+>  		queued = task_on_rq_queued(p);
+
+Lets just do this. I'll to stick it in queue/sched/core.
 
