@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-627068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7426AA4AC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:13:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02A4AA4AD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17A324A4447
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11581891DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458A9253B5F;
-	Wed, 30 Apr 2025 12:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoX/KL/S"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB79259C9B;
+	Wed, 30 Apr 2025 12:14:11 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B17C248F5B
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6936A24728A;
+	Wed, 30 Apr 2025 12:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746015157; cv=none; b=VWRjX0YPid+aZKu0Irad0dK9a9DTLG7HqlKV12goO74PFa8Z0o7jRlfZ6tfuZVArKcmcVo3H8S41/RjaZeZcmeoAdejBNresd/Gpb7Pdrf8AeV3Uh1qwoVUWH1H6br7BG8ajOHqaJlplLuorSYU83ddLoUoq6JnCVt0t6UcbVSc=
+	t=1746015251; cv=none; b=mAOshULqI3aQTwdgqomxfhzuycHEuM2P88cKxdtTAiGB07KiuuxL1wmallnoMSWsbZSHEeUX7Z0T9+5AC5fvoAuKmYDJFd3ue//Y1u44DIOsgMPV5MAA/+cbRxOHRZaZrPztgMWdIDm51E6I/ok3FhfK9Xpe/cbcph2IjI6HVuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746015157; c=relaxed/simple;
-	bh=gvAopjoNyA7dbzXulW4xl/bX7+60c+NQIsGH5vBcpAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JVV6Zk+0Mj5nc55DAcvTtgEVuvpkOwm72H4bsl7076gPJlgbdinXFh9JomdjY5Tx3Ew0BLkKlXQf6n9FKIwRC8MKZRbNU1g925CkwYkAU4GSsOHvQhUCaNZAYFl81sogLY9kFYV5sNUFizj3NbJ2VMGDssUBnKtKcVJAVMmmSlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoX/KL/S; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39ee682e0ddso4931181f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:12:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746015154; x=1746619954; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=exV/Dw+Vt005ATLp0ivkfrkkCFtH2VHvaATRN0wi0iE=;
-        b=JoX/KL/SKxbwaYtrIb6e8M4d38edn7SB1VToPaMgHnu3bfLoPPLR5uz4DgXAj3vbDA
-         mifEb68lpFPpK6lr2U4f4KcbE+TyfjTp7+XXM4MtAqtmF36R7dmU7HWYEHk/RBGfzJBe
-         c3r18duR5+t/pvFAGiiLTDg8J08N5gGcOddqR5wb+Qk3VECxWVlUViJxIXcgHd5Y+d8A
-         De88Ijk6m33qvKXLtCZ1bRA5vjxy1OzZqE9L9ioA+cLu5lhZrsWbR36kzTf38ZtcOyQ0
-         bdH+xiRTSYFrYPGSxe6Vswo3fYy3SXDMbc9pAlIaEP7580Bn8ZWE/S9makTUDueQVLvC
-         DJIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746015154; x=1746619954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=exV/Dw+Vt005ATLp0ivkfrkkCFtH2VHvaATRN0wi0iE=;
-        b=hLWHsWZyWKhD/ufQ2UT+bvdrR/1w9qv1vLIjTaVpJnSE+O9rJdacCS0shHjVgKOIdD
-         MQqG8qiDTKz6DDsFaAbswr2BeBcblqG7TTZG2/8MYsiP1ztkEJ9SBPW0FhVEWLqFykh/
-         QGit//gjdCnC3asHnQ3mpo+Mtaeoea58UmiAwvHArn9iNOMqTeSUjayxA4lQKKTZEvzo
-         Pd8iO7o+bFI0RSyv1jsA9MxghoeVvsKOm+gxpeG7hJywWMCDjzLrFpoeLUcmmVL5LjX8
-         QwlHtAwpQ0VkCM9BLrgm7rODTntKdukF50GAwFX2KTp4HgW9abJVpunf4CHTJg4RKIXh
-         bmYg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6qlozVsS/k0Y8KrLU/6QgObZ8gNxwzW411lPGAYlSNfRfYXY8TBAzOtDZdFXburv6/B47ulBVGAoRTdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy06tonxiQXEDtgAPqBSD21V46/7PuM6ijvkU8IGnC0RsbKBGBA
-	KZbCgRt9R9gzu3FDPtr9FHIS+TAJzdT4ua4HE0bP3gGwH0ruljBh
-X-Gm-Gg: ASbGncvyWcdG+Qk7J1m89rGxpqfXlAe4pBc37zf9w0/UgXCcbhJUufbRZ7QFarZci7e
-	EcGZCxGvHPrxSOYENXE0ZUV1Zy9Wx0MSAEZFCR9ca6SZl5ZvfvBHdJXEMM1/oRqUnN+mWvf/Lnl
-	7osiHwwOkMX5SR33YfU/to1j8U0kSxRWaafr/mI6PlbtVAeXw3zizcBsPUiYntKtMRckGRrYQJd
-	eBdhORzr6hoxIOuXRslef5kj90R5wAhEuoTgqITDodlI2HgD+Nn2N+RQ3rl+Bj5Tt0WtMEIG1UX
-	cT3eq8RtvrIjtl0cRyVtgE0Xqu1cAIoCX0Cle8TUaeE3LeDEvRK+bs4qzP+OApwF/cPkoLD9wtZ
-	WJ0A=
-X-Google-Smtp-Source: AGHT+IHdNy2cnEFHIFGItGh5hGfN1ZHCaeYaOLyj5VuHMZN0pXEx9Cb435wW4njErTV4EecqJL6luQ==
-X-Received: by 2002:a05:6000:2585:b0:39e:e217:28c0 with SMTP id ffacd0b85a97d-3a08ff34c51mr2240192f8f.10.1746015154143;
-        Wed, 30 Apr 2025 05:12:34 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073cc1842sm17094081f8f.54.2025.04.30.05.12.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 05:12:33 -0700 (PDT)
-Date: Wed, 30 Apr 2025 13:12:32 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, llvm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: Adding __popcountsi2 and __popcountdi2
-Message-ID: <20250430131232.3caea352@pumpkin>
-In-Reply-To: <20250425003342.GA795313@ax162>
-References: <20250425003342.GA795313@ax162>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1746015251; c=relaxed/simple;
+	bh=LiBOXVSo3YvRCvgf0MEGE0OBC6pt4z+3BeVByew1hq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CEsmS6S/Yzcsf1iSzrTw+QgJwtHl3H0mSOC/8CHE/VpJmnbp2fYgGr/iPZ2auvsHO54p16wDcJLFPbfvKYO0tFavxqxzNRPcN4Mq7ZLwdm9cpwdio7TtJqjyOMy37h/O/OiCoOpzhwySbMkG/oDY1y7wiNw2itPW8OwQPVUSq1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC502C4CEE9;
+	Wed, 30 Apr 2025 12:14:08 +0000 (UTC)
+Message-ID: <6fc17824-8442-4b97-8a8a-8a593dfd98cc@xs4all.nl>
+Date: Wed, 30 Apr 2025 14:14:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: i2c: lt6911uxe: Fix Kconfig dependencies:
+To: Arnd Bergmann <arnd@arndb.de>, Dongcheng Yan <dongcheng.yan@intel.com>,
+ Arnd Bergmann <arnd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250314154738.3983798-1-arnd@kernel.org>
+ <ecb959fe-69e3-4265-9e4b-326bff421153@intel.com>
+ <3bb730a9-5d8a-41c6-8a27-e099561b5890@app.fastmail.com>
+ <0eb40ff7-7123-477f-a477-6d537195346b@xs4all.nl>
+ <9586ec8a-ea48-4586-89f1-3ff118809223@app.fastmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <9586ec8a-ea48-4586-89f1-3ff118809223@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 24 Apr 2025 17:33:42 -0700
-Nathan Chancellor <nathan@kernel.org> wrote:
-
-> Hi Linus,
+On 30/04/2025 13:21, Arnd Bergmann wrote:
+> On Tue, Mar 18, 2025, at 14:51, Hans Verkuil wrote:
+>> On 3/17/25 11:32, Arnd Bergmann wrote:
+>>> On Mon, Mar 17, 2025, at 11:17, Yan, Dongcheng wrote:
+>>>
+>>>> So I remove this select flag and passed lkp build test in patch v7.
+>>>> But now it encounters build error again, I'm curious why...
+>>>
+>>> I don't currently get any more build errors with my patch
+>>> added in, and I think this should be sufficient. Can you forward
+>>> me the errors and config you get with my patch?
+>>
+>> FYI: I plan to take Arnd's patch tomorrow to be in time for the merge window.
+>>
+>> If more issues are found, then they can be on top later.
 > 
-> Since I ran into problems at pull request time previously, I figured I
-> would save myself some trouble and gauge your opinion up front. How
-> palatable would the diff at the end of the thread be for the kernel?
-> Clang would like to start emitting calls to __popcountsi2 and
-> __popcountdi2 [1] for certain architectures (ARM and RISC-V), which
-> would normally be a part of the compiler runtime but obviously the
-> kernel does not link against it so it breaks the build. I figured added
-> these may not be as bad as the wcslen() case because most architectures
-> generally have an optimized popcount implementation and I am not sure
-> compiler builtins are banned entirely from the kernel but I can
-> understand if it is still contentious. It sounds like GCC has previously
-> wanted to something similar [2] and it was somewhat brought up on the
-> mailing lists [3] but never persued further it seems. Since this is a
-> compiler runtime function, '-fno-builtin' would not work to avoid this.
+> Not sure what happened: I see that my patch was in next-20250424
+> and earlier but is now missing again, so the link failure returned.
+> 
+> It was in git://linuxtv.org/media-ci/media-pending.git at the
+> time along with two more patches that are now also missing:
+> 
+> d51adf038ebe media: cec: tda9950: add back i2c dependency
+> 118b34092e37 media: i2c: lt6911uxe: add two selects to Kconfig
+> 0dce5b44bd38 media: platform: synopsys: VIDEO_SYNOPSYS_HDMIRX should depend on ARCH_ROCKCHIP
+> 
+>       Arnd
 
-Is this the compiler converting a call to __builtin_popcount() into
-a function call - which the kernel can arrange to never do.
+I believe Mauro is working on preparing a PR for 6.15 with these patches.
+They are here:
 
-Or the compiler detecting a code pattern that looks like an open-coded
-'popcount' function and deciding to convert it to a call to the builtin?
-(which is a translation the kernel pretty much never wants for any
-such code pattern - including memcpy()).
+https://git.linuxtv.org/media-ci/media-pending.git/log/?h=fixes
 
-In either case the link failure is exactly what you want.
+Regards,
 
-	David
-
+	Hans
 
