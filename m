@@ -1,130 +1,124 @@
-Return-Path: <linux-kernel+bounces-627312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770EAAA4EDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:40:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BEFAA4EF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75910188F7D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C7A1892691
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C2525EF84;
-	Wed, 30 Apr 2025 14:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E97192B90;
+	Wed, 30 Apr 2025 14:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lK+M498k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eNezmNMv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057472B9A9;
-	Wed, 30 Apr 2025 14:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41B3149DE8;
+	Wed, 30 Apr 2025 14:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746023998; cv=none; b=jnvt87qJme7ZDkKtMCoInRRB3/d099xh+EVxQbLSoj6LHxakMSXNH03v4XYyMfxAH1oyGwKbZseawJQ40urBrR4A5I6X2H+UxnaSMF0/c3KWLVTPz156xcAzylR4A3xIIvk9O2pbdcKm4F5030XO3EJgompXMiLbWB5r9eUhAcI=
+	t=1746024403; cv=none; b=jEF/NapnWpni0eW8lxLxZ42raL1cKnij5YZTuJLtG59/Wd8rOfdptDItYaeoQiBoTOG+brDzuIQ1sGzeon6/wsU7OpSbkjImROVcIRPgYOGv6CtguTCa5o3a3AXQ6LDPy8ChT8BgbWY0betgCIdngfFJkKcioi6Lm7QgoB04lfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746023998; c=relaxed/simple;
-	bh=odob20u9gDP5puX+nz314ZVRMvgs918mZ3ed9/j6RPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mn+BCMIDOoCZSmCWz97nEuFCsUBko/Z4TBBtspBuSK7znle1z4l3ETjWLPTFrN8IV4zkAyUKxJ/emQuf0DXGXnPcnuws84auLIEYMxVB2iv1Mp1uZ1YZDSe4PgB7Ez1THx1rzkqMixegm99Zb5lv9dF+SO+zwWIW1+X8SGmfGE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lK+M498k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F64C4CEE7;
-	Wed, 30 Apr 2025 14:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746023997;
-	bh=odob20u9gDP5puX+nz314ZVRMvgs918mZ3ed9/j6RPo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lK+M498ksZ2dH6z0RhfSK8AzeE6JHg+SLeElHqJs2cVSeVMVtNHn+iPNmtuz5PA1j
-	 cFYGv39PHZNBY91GsDy2+JqSA4RAJ9cqDDFnazFk3IEtQ+0NnQ6V1lmgQduMGjwoNi
-	 xF9SVDavuUdgvlGjAP71OAsY0vXQLnUY/iFkKiwRfca/uSdt14aj5g08iHOjs1yMM3
-	 NQN7oZV0+egF5S6HmwuJuDK4YBR73T06k16wi2LIFxlmELvcZIwGvaXaN8diqRqvWR
-	 vwsCz/NCURJySTZ6JF4sTWKtqIF0bkn0iOeu7TfDBQ09NBCvivE6Sf6VBDKYh+07M0
-	 jGuswI+IzbVbw==
-Date: Wed, 30 Apr 2025 17:39:51 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	"Kalra, Ashish" <ashish.kalra@amd.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, linux-mm@kvack.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: SNP guest crash in memblock with unaccepted memory
-Message-ID: <aBI2N-aUSXgLOgF0@kernel.org>
-References: <f12f5bd0-135b-91fd-9703-7df98500f9c5@amd.com>
- <b037ffeb-bfeb-41a6-b200-d8c57076370f@redhat.com>
- <43o2gni2stscuwjfr2cyawn4ikcfhsroact6t7civ3ud3e6sgi@jizmzw7lpzvt>
+	s=arc-20240116; t=1746024403; c=relaxed/simple;
+	bh=gJY5KpuGymBc06cwncC7Fx2bYurfhjxAo/SRBqouwtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N221FsiWryTbyqZ1Zhfj2ygRCGzM+gBrC/5XgDvmqu97xy4EO8r209rSWyx+iPO1KeQo3huBIu06vZXJx1TaxHPPHWhVetkG8ycMWN+oj7osPFdA5DWmYw+rXtx6Zxz/F6c7OtxmMSH1EXsm4ctH57ASkU5DQpyqS3/v+5HraMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eNezmNMv; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746024402; x=1777560402;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gJY5KpuGymBc06cwncC7Fx2bYurfhjxAo/SRBqouwtU=;
+  b=eNezmNMvLaauO5A6/wj8H1MBDLj/IZt1HiZxgctz3HLlPJBkvJeIIQZZ
+   m+OecX1QpqrSJBO/P6e74sCr9mt55qczKjgkaX4INRWRoKi4o+rcTvpTx
+   bCprQrn4Zu3M1d6QWk3fVjHJy7GUrFPCMs50ewarMoiSHvKhBGkgY94Lm
+   6K5PRRqVueFkxgPw1UytlJVDynkB3mbQmKjduQXVFHqa95r1WV8PmSGgT
+   TvZNLowqrjHtrT0/hkxtykE0y6ZT9qjKjwIGUHd85o3rJShLh6KScuqiy
+   Rz0RTOfZI/Jr+9hd4982hbWfIYRLWt3VjRIImJ8iZFP+hl9vHA3WpTW6l
+   g==;
+X-CSE-ConnectionGUID: D6ZfClphQq+48xxLSQQUCA==
+X-CSE-MsgGUID: S/Avg8K3Rxms+zM3VTeZRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="46933551"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="46933551"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 07:46:41 -0700
+X-CSE-ConnectionGUID: 2wrjLOIBRrGWeaAPg2HhCQ==
+X-CSE-MsgGUID: VwNQe1UnSdeD4loCSfEDKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="171374969"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 30 Apr 2025 07:46:39 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 8BD6C9F; Wed, 30 Apr 2025 17:46:37 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [rft, PATCH v2 1/1] PM: Don't use "proxy" headers
+Date: Wed, 30 Apr 2025 17:42:13 +0300
+Message-ID: <20250430144635.3714821-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43o2gni2stscuwjfr2cyawn4ikcfhsroact6t7civ3ud3e6sgi@jizmzw7lpzvt>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 30, 2025 at 12:14:08PM +0300, Kirill A. Shutemov wrote:
-> On Mon, Apr 28, 2025 at 04:04:50PM +0200, David Hildenbrand wrote:
-> > On 27.04.25 17:01, Tom Lendacky wrote:
-> > > Hi Kirill,
-> > > 
-> > > Every now and then I experience an SNP guest boot failure for accessing
-> > > memory that hasn't been accepted. I managed to get a back trace:
-> > > 
-> > >    RIP: 0010:memcpy_orig+0x68/0x130
-> > >    Code: ...
-> > >    RSP: 0000:ffffffff9cc03ce8 EFLAGS: 00010006
-> > >    RAX: ff11001ff83e5000 RBX: 0000000000000000 RCX: fffffffffffff000
-> > >    RDX: 0000000000000bc0 RSI: ffffffff9dba8860 RDI: ff11001ff83e5c00
-> > >    RBP: 0000000000002000 R08: 0000000000000000 R09: 0000000000002000
-> > >    R10: 000000207fffe000 R11: 0000040000000000 R12: ffffffff9d06ef78
-> > >    R13: ff11001ff83e5000 R14: ffffffff9dba7c60 R15: 0000000000000c00
-> > >    memblock_double_array+0xff/0x310
-> > >    memblock_add_range+0x1fb/0x2f0
-> > >    memblock_reserve+0x4f/0xa0
-> > >    memblock_alloc_range_nid+0xac/0x130
-> > >    memblock_alloc_internal+0x53/0xc0
-> > >    memblock_alloc_try_nid+0x3d/0xa0
-> > >    swiotlb_init_remap+0x149/0x2f0
-> > >    mem_init+0xb/0xb0
-> > >    mm_core_init+0x8f/0x350
-> > >    start_kernel+0x17e/0x5d0
-> > >    x86_64_start_reservations+0x14/0x30
-> > >    x86_64_start_kernel+0x92/0xa0
-> > >    secondary_startup_64_no_verify+0x194/0x19b
-> > > 
-> > > I don't know a lot about memblock, but it appears that it needs to
-> > > allocate more memory for it's regions array and returns a range of memory
-> > > that hasn't been accepted. When the memcpy() runs, the SNP guest gets a
-> > > #VC 0x404 because of this.
-> > > 
-> > > Do you think it is as simple as calling accept_memory() on the memory
-> > > range returned from memblock_find_in_range() in memblock_double_array()?
-> > 
-> > (not Kirill, but replying :) )
-> > 
-> > Yeah, we seem to be effectively allocating memory from memblock ("from
-> > ourselves") without considering that memory must be accepted first.
-> > 
-> > accept_memory() on the new memory (in case of !slab) should be the right
-> > thing to do.
-> 
-> Right, it should do the trick.
-> 
-> BTW, Mike, is there any other codepath where memblock allocates memory for
-> itself? We need to cover them too.
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
-memblock_double_arrayi() is the only place where memblock allocates memory
-for itself.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+v2: fixed obvious missing hrtimer_types.h include (LKP)
+
+It may fail some builds, let's wait for CIs to report any issues before
+applying this. But I also encourage to test it locally as much as possible.
+
+ include/linux/pm.h | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index f0bd8fbae4f2..938b1b446a5d 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -8,14 +8,15 @@
+ #ifndef _LINUX_PM_H
+ #define _LINUX_PM_H
  
-> -- 
->   Kiryl Shutsemau / Kirill A. Shutemov
-
+-#include <linux/export.h>
+-#include <linux/list.h>
+-#include <linux/workqueue.h>
+-#include <linux/spinlock.h>
+-#include <linux/wait.h>
+-#include <linux/timer.h>
+-#include <linux/hrtimer.h>
+ #include <linux/completion.h>
++#include <linux/export.h>
++#include <linux/hrtimer_types.h>
++#include <linux/mutex.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++#include <linux/util_macros.h>
++#include <linux/wait.h>
++#include <linux/workqueue_types.h>
+ 
+ /*
+  * Callbacks for platform drivers to implement.
 -- 
-Sincerely yours,
-Mike.
+2.47.2
+
 
