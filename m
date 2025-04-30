@@ -1,232 +1,292 @@
-Return-Path: <linux-kernel+bounces-626256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC0BAA40B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:43:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB95CAA40CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 04:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1775D1C0023E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9ED73A935A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87F81F941;
-	Wed, 30 Apr 2025 01:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5B9136672;
+	Wed, 30 Apr 2025 02:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VasraSZP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="h1sh6FTI"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A27028DB3
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745977419; cv=fail; b=DsYtesY5ntK/USnKy+U+aJQrbgDPiXkgX4KHu6DtWm6Ds7PPzSCT1FtmKltwNMwa/YSo/eGHdkeLWx7c1T5MzgG0e6If5vOj1Zv3lFf4FJ8QkleNflsUS+1EUczRzY45+ZhcYT45Pa/V90hyrAX0vXZ/Fpo73GMKrfa402yAh50=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745977419; c=relaxed/simple;
-	bh=QBKl5kf0AgqFqDseIGdmheytErEdc0M5Fk4by80TGD4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HyFc4X6ydHlwuJa2tV9SEJRcI1Mc6keSfj55EUH3W/xH3NjrFnCR8geyB9s7cHg2XMyKYsdc8nYBgfkEnhMcHw4hVWbKsva8VYbFQfWV7sGvU/pj2pzh9VFqnShAK6DVZLDLI3MQJKuFWuzeO1H4jzxKiWL977FrSUJ7ZrHp8FQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VasraSZP; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1745977415; x=1777513415;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=QBKl5kf0AgqFqDseIGdmheytErEdc0M5Fk4by80TGD4=;
-  b=VasraSZPL9cyl936E1P+9aSIQxcoCZaAWAXDshbwQ3ZSOKbWYUatYvTZ
-   YSH+dSLnSO+KnxtlHZLTFTREit1ZIQBCsYl1PD/wlo2L8z0q/e0vun1Re
-   TXqu8wpycjdceAbeGSzPVAF11WLlLOeULqbPQPKyHJBuSWfl7kttfJrsf
-   /tWUTHMCZGueA+Zc0voGjmsyT9G7StIHR2q1o+2KvIVyc6Z8InmedpYAC
-   73Ly/BxTtaKMDKx823huRrbMQtR15uZv9woqDEtcEzYzjVyflZuyeSHGf
-   21OVK3L4IgBW9Lo0bsipa2QuKMlW8q3Ug34v3s4qFSjdIE+Aabg9v50Tw
-   g==;
-X-CSE-ConnectionGUID: RXv0bZ1XRCG7yKw1Pxtq0A==
-X-CSE-MsgGUID: jIz5nGXQTxCj5ufZAya/VA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11418"; a="47502475"
-X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
-   d="scan'208";a="47502475"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 18:43:31 -0700
-X-CSE-ConnectionGUID: +dSBpoyXQHm2PlpNt34/Tg==
-X-CSE-MsgGUID: 5S9evQfHSyCpyc4nXONyQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,250,1739865600"; 
-   d="scan'208";a="134929323"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2025 18:39:51 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 29 Apr 2025 18:39:46 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Tue, 29 Apr 2025 18:39:46 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 29 Apr 2025 18:39:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A76NAV0izhbLTljeTZmIIZCVgkSKiVM0/mpgLqJDtbZgfynogUrcxxR0walR5BmTp7OnRneco/ibJXBhAESt07R5pAvxftv5IbK5xkAGtRMT9hTPo6TcwreMczAgUxg8O6TNWZwmFOItIpkQnbt1Xml4Z9me4ZkTL+Brzxd1Daj/m3vOBFDe/DwcvUAPOum2/91lp0PFewLl/XGcZF6usjW6eWiZQYFQekXk+tZogAKsBRWdb9dQVIB14GXdbaHAfmNbcGxJrQcGBEA7K5ApWtrtM+GcQuBbK6Hn4dZyFx3u2g7YKVdJx8IT8Le2wCA49AlHiLg1WO1MzSnUrCAc7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5nVuB1foeaEZGSvlWUx9iJY3P6bOBWiArDZmZPOJUro=;
- b=e/D1Cl2TScwEJ6OFuh2UIUeKUtzg1mRNhYl+ZgmuLg+5LP7Gx8azMA2YHuFpvOUSW27ps2wZ+OvCeAn32tkuUHJAv6KgKoVsAIRMbtKh4lQqSiv9Uat0HBxLavsOMSI639AfewPl/W/jQLDnxf5MOPWHmLqCHnsW7JWh91dE0RPaIvGcKA9DhzLmM2fEPEpGhq42GhQ4s1SSfJyUMhCptL1RVLcYCggj5ygec0UFYKvQLxHbXvGEy5jrtFRXwIMJmMdkCrF2yA/cYWwMy3yogoB5b16125Eyw8UZdx6ZqRXhHaScvFncfCczeMryWAiF2JWNbCNSQTbDdfY2eyZBBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV8PR11MB8488.namprd11.prod.outlook.com (2603:10b6:408:1e7::18)
- by SJ5PPF7DCFBC32A.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::839) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 30 Apr
- 2025 01:39:41 +0000
-Received: from LV8PR11MB8488.namprd11.prod.outlook.com
- ([fe80::554d:de93:ab26:ae1f]) by LV8PR11MB8488.namprd11.prod.outlook.com
- ([fe80::554d:de93:ab26:ae1f%7]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
- 01:39:41 +0000
-Message-ID: <a0676c7b-9e6d-4af4-87d5-f822ab247730@intel.com>
-Date: Wed, 30 Apr 2025 10:15:05 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V2 PATCH] x86/tdx: add VIRT_CPUID2 virtualization if REDUCE_VE
- was not successful
-To: Dave Hansen <dave.hansen@intel.com>, Jun Miao <jun.miao@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <linux-coco@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, "Du, Fan" <fan.du@intel.com>
-References: <20250429143114.1724280-1-jun.miao@intel.com>
- <20250429143114.1724280-2-jun.miao@intel.com>
- <b138cb84-3a34-40b3-a23d-6ff3708dae6b@intel.com>
-From: Zhiquan Li <zhiquan1.li@intel.com>
-Content-Language: en-US
-In-Reply-To: <b138cb84-3a34-40b3-a23d-6ff3708dae6b@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0021.apcprd02.prod.outlook.com
- (2603:1096:3:17::33) To CH3PR11MB8465.namprd11.prod.outlook.com
- (2603:10b6:610:1bc::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DB92DC775
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745978756; cv=none; b=bBltYfb9JFw3q5kZ6OrlbLw6Md3/PuQ6o8ROFpIsDIVA2EAbJseIIXVByL4d7uOVR8lSYUqLWgov6Ly8vuhmngyHKJ1A25qwpaD31zqyxUY6mKMa+i4Oj577a/l4IxPyDBPE6xjqaqQwdC4CnH69mcc4vrkCUpXU+3TM9fIGI/k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745978756; c=relaxed/simple;
+	bh=DMct/huGiCfiD65OsYKIezz7VbjrtRClGTQgEFomFow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SPFLIhoQB0B6a/X10vJpip5GBJ0Ugsyl/IpbqkulOP7joJuh6ZcNf+1+zr9BxQa62YJE6UESlWDyUlPksWBIUSNoMc+us007LDD5iIk734chuOCP1Gjiwd+SDw7woqLdXfSDl6mbtijHhL5xAOx2mncsU6xBEo9ajIu680dkTZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=h1sh6FTI; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso9576778b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 19:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1745978753; x=1746583553; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ivhh2j5ykafhwFZuVZhYJEHHQx1F6zYILuWeaYLILCg=;
+        b=h1sh6FTIN4CKnv0yfKMQB5rlEhFppKVjrPcqHgxu26Cj2eHfnzEebQ6BL5MaQGqLO9
+         OZrLkC0LYY4PC91mill7QZhI6RPR5k7D5HnBBB0fX4JhLdyftWvk7NcawIahLsjzp/gf
+         9eX6+Zdc0jdL+bts30iLttI5P1PN1BlsxayBkpwmuhFV5M9QZy+QrhMyobvwmNniM1LY
+         Uz3g689Ol9ZHdybdGAdLdAsC4Fz9ELW9ZyX/a26nJO6y7srAOyZnnMIqbAfKMEpaj+vi
+         6ld7w3x5KrtNxET65s+dYnU3WvDZoehk1lNqhpcSo86vpuNfT9ZHN1ND7TD8gn5y4Xc4
+         TcXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745978753; x=1746583553;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ivhh2j5ykafhwFZuVZhYJEHHQx1F6zYILuWeaYLILCg=;
+        b=ZAZSwmmCAIv+LcPsCNOgMwciRowhhQgZahZmT7g18JkEaSlcs0BnjHvFIQ+U9AkCaM
+         rSlBBIXxWGeuokzHKNxkKTcGy2dGsl2/XCAs/hw5rAzd1oBVnaEPQO6iDpIzB/gyDghn
+         kJCYcCsbCPd9POI+IBHC9MKtxxFqg0v3tbo2+Y0m/DOHE1oFgG6IdLL5JWXDa6cJe8Hz
+         iqE5VGPdaoGA6TmOmTNroT84D7ZW9x0q8Y5p6dj8lE3sPgvTM1JmvMx96ekqI/kpjXYJ
+         1nwHmqkmXXFTO9WGFS35M+coIPUHhDtkxOKKWqZJkRP47qv3HC0zmXgGSLt5WSbuYF14
+         blew==
+X-Forwarded-Encrypted: i=1; AJvYcCWnmJWeBQi3SEVX83cq8OF++py3mFV+IhIqvi4fGQhGYlNmeXOELdYAQM9akqqjGPavvWKnkwlXVpBLQdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoR/xp/KWAd0h/C25denk6RIalBYpG35QlOR0IVJUQ7pCjyvVq
+	O3SYUOUYtr9luuzg/oUT1ziUdoKVH6vkMb43k9sMv6EQHWrQa3OiliJJG+UQCvY=
+X-Gm-Gg: ASbGncsfb6e5dq7RYHedidOxx75gNuJ0YkiXDBNzYBwPlvVM8bOx3asps9qCoa6znbl
+	8Len0ntJVcL1OphP5c0hYke33Dye44N6iIYnaEYwr9vwrAzuzVX2KNhvYYf56XGGyA9WGKwFahl
+	ilwSnmwjK1l5c9KaJpy9kgyRyN+BR4z9rHIgyJ/p8jy0PPYG3HO8qD/mP7qd3A8Ng3j4PZyRx2l
+	K9pT84CzQwIHxREWH20On2Jfj5lupNYUOdNeDsxC/5ud3BYLSj/la1V8F2YZrIyl1mEfp5gAI9V
+	W8djGnIQBk88npnkMvsISKhVeH+W1gAZZNJBYcyYfvspafEDly2Dv5s813QZ9x5+X4HTjC2edJB
+	n4NCBsBbUKVURRA==
+X-Google-Smtp-Source: AGHT+IGoe/6XelXwleh/f8r4zr27zHcIB0CqVXjZbRwv8XJwPHM5clgwxTPlpMXrxuLPSpKCZryPXw==
+X-Received: by 2002:a05:6a00:2181:b0:736:4cde:5c0e with SMTP id d2e1a72fcca58-7403a77e9e2mr1262709b3a.10.1745978753458;
+        Tue, 29 Apr 2025 19:05:53 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-740398f9ee5sm445532b3a.3.2025.04.29.19.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 19:05:52 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1u9wpa-0000000F32T-2pBL;
+	Wed, 30 Apr 2025 12:05:50 +1000
+Date: Wed, 30 Apr 2025 12:05:50 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Chi Zhiling <chizhiling@163.com>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: Re: [RFC PATCH 0/2] Implement concurrent buffered write with folio
+ lock
+Message-ID: <aBGFfpyGtYQnK411@dread.disaster.area>
+References: <20250425103841.3164087-1-chizhiling@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR11MB8488:EE_|SJ5PPF7DCFBC32A:EE_
-X-MS-Office365-Filtering-Correlation-Id: d180d691-e5f4-4af3-00f7-08dd8787dffe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RjZ3WDZZVlkrZE16d0tUMUlpMW9LOENGVHQ3NkhCN1ZPSitXdkhiYTM2WVFj?=
- =?utf-8?B?K2MwQW4xWHQ4MVg1WkNTeEF1V1FtYU0wR2JuQVRtRkdhMHFldDZFeHl1d2Zp?=
- =?utf-8?B?empWU1kxblIwak9VMVpob3JnWm1TU1EwU1RsczZWdEw4bUZydDVDR0cvQ2Nx?=
- =?utf-8?B?N3RSdEtORDhBNUlRVGtaOFEyNlgvemtmY1dwNDJHc2dSdGp1RG1CNTEwYXJQ?=
- =?utf-8?B?clZPM0x5TzV3Z2JPd29uT2pWRVlKMnRHMlRPZVNVUkhlZGwyNFVvQjRvRElk?=
- =?utf-8?B?cjhEdWNsL0lhQ3lxUHFKYmNYZWJaRDd4R01TL0VBTVFOUllDOXA3RG05aTVD?=
- =?utf-8?B?WTE0TFFRZ1hqZHBvS1VlS1dSdjFOMklBRzIwTGhPYUJFOWFwK0NOQUxKVTEz?=
- =?utf-8?B?UmxvbXhTWUJrZjFvbmlCM3ZCcTIrSElrRTE0RGg5K05SVnZxcWxJOXB2ZEky?=
- =?utf-8?B?aVNFNG1FZU8wazRUbmtPMG5xR2lEcG5LSlBsUDZlbTJLS0FxbzA0VjZDV01W?=
- =?utf-8?B?UDJzZjY1c3NKT2YwM3FzU1lSdUg3ZXdzTWkwNC9ha2ZsL3l0V1FmN0VVbEZF?=
- =?utf-8?B?QlkrMXIvaERvRFhzL2NWSkJUVUVublRsQ2hPYkJrbkZoSzVBTEZaRHo2Sjc0?=
- =?utf-8?B?SDRGdGRxdUdmOGRCRk41Z3hhZ3ozK0xGRkNTWXM5TDN2SXRnZ3crbmdXNURu?=
- =?utf-8?B?TlkvZVRGVVpGMFdTYVA1ZTVXbE9XMzFpMzEwL0ZQNmd4aU12ajlaZ21yK3Fx?=
- =?utf-8?B?SFYzVytkU3NwRHV6NUJBY1hBUitDMUg1ZXhHNG9DY09zVmV4RWkwaUNJME1I?=
- =?utf-8?B?UmJ5M1BENzYvZlFIYTZJZzg0TXY2YlZtNlVSUmVLdkRITlFpT1Bkc1kvZTNz?=
- =?utf-8?B?M2M5K1Z4ZHZrZlYzcHEraUxYMzc1NlpaY3RiWDhIeTdUcmlnd2t4SXVzMFI4?=
- =?utf-8?B?MHNoRzRuNUl2V21wcEUrZ1dqeWNxcEloRzhyeHlzWmZ2V1lHYkNhS0hXQTY2?=
- =?utf-8?B?cm0zNDJ0b2hjRzF1T0RIYTRlc1NGenQrR3E3VUtNQzhVVFp4enJTckRRTG04?=
- =?utf-8?B?ZGNQWWRKMTFVMmNKTzVHM1NCUWFxUDV3bmFVeWc4a3NCTnFyTnNGYk8rYlUz?=
- =?utf-8?B?VUtnMTJwRVNvN0V4ZnpGcXV2ekJ6M2ZQODd3bzVSSmozSGpJWkVpNm5yd01M?=
- =?utf-8?B?SVNES2l2c0hzdm9qOG1lUE5mYllzVi8wVWJFa3NOZ0k2eE00RmEwaHNiSVZU?=
- =?utf-8?B?SUtpT1g3YzN1NW1OSTNyakUwelFXYzB3ZWdlOFFQYXY4cFcvVzQ4TzZNOWRl?=
- =?utf-8?B?eXZlUExlVUUwMHppMHd0cUN2ZFppdlJJcExLVkx4emFCaC8rellCY3h0cEhm?=
- =?utf-8?B?UWF1TTNWamFUQ0Q2WlV0bkNNcTNGNktyTnBuV0MwS3hTOW0wL2ZrSjZudHRN?=
- =?utf-8?B?SUpSQW9Ic3kzYmYvM1RHVDYrR0R4NmtJbitybEpGUkpQWG5wRXBhRW1nVXV5?=
- =?utf-8?B?ci9yNHdNS2kxSVFsNTRCeGpra1p3NVlKOVZ2YmdlRXJjT3hlQnJUR0NjaExW?=
- =?utf-8?B?OXRxd0hhY2pNUzZTTk5NK2ZmRmlBc2xYaGJrVk0yOStyMk9zMlA1RXNNWW5I?=
- =?utf-8?B?REI4SjZUQ3laY3kxekF2OVNoMFkrNExxcEhRbE5xWUsxVW1LQzdqOWc3NnJZ?=
- =?utf-8?B?eEtyWlYrREJBVFpWckMxWGVDRjF4SXhWcWc3L0ZGZ3F4WW9RQkVGUWpnd3lY?=
- =?utf-8?B?UDg5RWd6eEdZSitKTHBHWGlRZzZJL2RxZ0U2TnZTZ1ZhNk1xWC91ck15LzBN?=
- =?utf-8?B?bTd4d1FZMGFrN2xQa1BzNmR4UTBicGp6ZzJRTXNUZ3Z5N1AwV2NXZm9MMEs4?=
- =?utf-8?B?Y3NvT28vcmwxQVlKM1dPOFZiTHRqNW9rb0QxbXlIcVhYM1E9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR11MB8488.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c0g3ZFExWHUraVNIMHRWOCtSUm10dGlOL25EanE0bnloQ29rRVE5WGtoNGx5?=
- =?utf-8?B?aXU0NTBMYnBoT29rV21kSE1GTFovbFdzQ2Q1NWZjcmZEL0MwL1VMejExOUow?=
- =?utf-8?B?ei8wV0I3MC9HeTJBNjVTRjkzLzUxZWQveHM2Ly9udUdsTk01UWNBVUZDMVRo?=
- =?utf-8?B?UTJ2WU94dEZ3ckx6bkUxaCtLSUQ5N1dtck4rSzdTaUhDai8yNUZXWU9VUFJ2?=
- =?utf-8?B?ZlRQL29OcjRBNlY3cmttYnFhZW5LclVlUVcxNU8wSHhKS2s0cG5ucys4YmZG?=
- =?utf-8?B?TnJiYWhZSDJ4WHlZWmFOOEM2VzMydDdYRXhiSXloZitPbE5XdHk0eWVmaFcx?=
- =?utf-8?B?eVBvSWx2TU14NTRXU1AzaUpZOTdDYTNFaWlQSVdSZURuZE1xejNYSGVhNUVU?=
- =?utf-8?B?QVpGNThqRUh6cXcrQ2h5MUovQUlhdVJjVUpIRFBZWTVyTERud3k5R1c4YUdK?=
- =?utf-8?B?aTlNSzA3blA0RlpZb3FXTEpPakZnOUZjYWZ3YmNqaEM4alFVZXNxZ3pxNnFy?=
- =?utf-8?B?bk1aSC9TeGxGWnBWMkhyQlNXNVB2SzBXK1JvK3BkT25kaFFZN2dyVGlrVVBW?=
- =?utf-8?B?M2NMSkh0WXhEckZSY0E0dDU1QVpreW9pN1J0U2JDU2VmaE11dXJXRmV4OExv?=
- =?utf-8?B?WkxuWUM4c1dYdzNHa3BoTXpEVDh3VzhvQU14L3hMOTN6WjlwVVpWTzRROFFw?=
- =?utf-8?B?a1lSVWE0RFRlcTBlRk5ZanMxZDZ0di9nZVRCVWNPcVNJWEgrdy8ySzhVWjZ6?=
- =?utf-8?B?Skp2M0d6eDZqTGVnT3Nha1IrWEVyUE1vM04zMEtReTFNV3JmSkV4ZCsyNExB?=
- =?utf-8?B?ZEdRclQ0UGtDalJLclYzZC95QnNmSW5xeVZSQnNYQTJVa0JDR2pyaUNEOWlv?=
- =?utf-8?B?bmM0Tk1uS3RkMWpWOHFYL0h6OXJ0NlRFTUpNQi9NRjdIY3lPTDNxWmh5MCtm?=
- =?utf-8?B?WmJpMmM0K1JyVGhpVCt3MlBVMDQvRkNWRmRrQXc0djJJZUNndWtGYzlMeGNl?=
- =?utf-8?B?UzM2RVJXdzVpdFZidFZnS2R3azB5Y2RubHppazhvZXUrQkFUejV0VmdpYjgv?=
- =?utf-8?B?RzEzK0lVZnR5eTRZUWlTb2lHMFBFWjdDRUM2bnFITFltVVY5NmJ4aDNCRXNE?=
- =?utf-8?B?T21nUWxJUjdvZFBqQmxrVEFMSVNxamVEVXQwckNiQkx5cjdGakxpbjFyc01v?=
- =?utf-8?B?cDdoRUFhNXo3UjJyYWJ6cWJHYy9xUTJkV016eld0cGJmUDF1Y2l4TTRBWnVW?=
- =?utf-8?B?WlY2d09YbFpKY0IrU2xVbXZyY0pBU3NSYTlWMFlubXlXa28xNmgraVdoMmtr?=
- =?utf-8?B?dko4Z1U3UmxPMEpPT0VUa3BkR1V4bGEzeDdsR1JtRkN6MGFVK2NqUHc1OVI0?=
- =?utf-8?B?OWJmU2hkV3FveVZUcUt5d2hscFo3eHg4MUdvNm81eFExdGx3Q2c0Q29kc3hh?=
- =?utf-8?B?ZHp6dEhNUDIyOXdCNTRlb2V3eE0zNzRGdkwvb1oxa1N3ZzRQRm5QdWdZcCtN?=
- =?utf-8?B?T1lxOVF6Y0pHNjlmYlNjQ0cxT0hrc2g2ZmRxVVpLNjlTc2V4SEhvZFppaFhQ?=
- =?utf-8?B?cEtrS0RZS0tQRWFObWlVR0hRc3BwQ3UwZEtnaiszOEsxa09BUHNYZGYzMlJZ?=
- =?utf-8?B?aGc2aDhRRkg5eXhtR010MmF6NWN6SzVBME1SdmRMakR2b3J4QjNxQ3M4WCtZ?=
- =?utf-8?B?ZFZaVk1aR2t2UGtzYWliUmhxS0JrVGFXR1I3MGtHejVIc2NWN3IvQWUwL1M2?=
- =?utf-8?B?ZXRjRmZrS3VmTUdyUU5ETkxlRi9JU1l1aFM1eXNVL0RheXB4bjFJWmo5N1JR?=
- =?utf-8?B?UFRUTjJoYktNbEdWb1BZZzdsV1dxVENyQm1GaFJvNzM2WUl1TG94KzJtYmYy?=
- =?utf-8?B?NmppSDhhdVkreUkzV1hvYWlPalljV3A3c2ZXdjk4ZUZ1ZnpCcWhvcTBERS9W?=
- =?utf-8?B?OGM1ZHhkUm1TbFVCZUlWUFVlUXEyalRiblhVUitiK2FZZUV6SDdiL0Ntc1Zi?=
- =?utf-8?B?UDlHbTJHNEtVcjJEZTlaakV0UUdOS1hHNFJONFJ1S01PWlVsdjVMajEzYklG?=
- =?utf-8?B?WVF3TkJHSkdLekF5SWRjQnUwWTZDWWhMcVF0T0R1MmdJalZtaWpFVEZzdlJ1?=
- =?utf-8?Q?BaI2GVH8Zd/B5Y7F044ZMd6UW?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d180d691-e5f4-4af3-00f7-08dd8787dffe
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8465.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 01:39:41.4522
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3TKUPQguv+knT65bzvVshImLD/Eu+5VFnUGIv0U1fmMaCLmeI6hFYThVYRvaA34k6sTHv53tFXrwCTHNFjyy2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF7DCFBC32A
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250425103841.3164087-1-chizhiling@163.com>
 
-
-On 2025/4/29 22:50, Dave Hansen wrote:
-> On 4/29/25 07:31, Jun Miao wrote:
->> REDUCE_VE can only be enabled if x2APIC_ID has been properly configured
->> with unique values for each VCPU.  Check if VMM has provided an activated
->> topology configuration first as it is the prerequisite of REDUCE_VE and
->> ENUM_TOPOLOGY, so move it to reduce_unnecessary_ve().  The function
->> enable_cpu_topology_enumeration() was very little and can be
->> integrated into reduce_unnecessary_ve().
+On Fri, Apr 25, 2025 at 06:38:39PM +0800, Chi Zhiling wrote:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
 > 
-> Isn't this just working around VMM bugs? Shouldn't we just panic as
-> quickly as possible so the VMM config gets fixed rather than adding kludges?
+> This is a patch attempting to implement concurrent buffered writes.
+> The main idea is to use the folio lock to ensure the atomicity of the
+> write when writing to a single folio, instead of using the i_rwsem.
+> 
+> I tried the "folio batch" solution, which is a great idea, but during
+> testing, I encountered an OOM issue because the locked folios couldn't
+> be reclaimed.
+> 
+> So for now, I can only allow concurrent writes within a single block.
+> The good news is that since we already support BS > PS, we can use a
+> larger block size to enable higher granularity concurrency.
 
+I'm not going to say no to this, but I think it's a short term and
+niche solution to the general problem of enabling shared buffered
+writes. i.e. I expect that it will not exist for long, whilst
+experience tells me that adding special cases to the IO path locking
+has a fairly high risk of unexpected regressions and/or data
+corruption....
 
-Now failed to virtualize these two cases will cause TD VM regression vs
-legacy VM.  Do you mean the panic will just for the #VE caused by CPUID
-leaf 0x2? Or both (+ VMM not configure topology) will panic?
+> These ideas come from previous discussions:
+> https://lore.kernel.org/all/953b0499-5832-49dc-8580-436cf625db8c@163.com/
 
-Currently the most customer's complaints come from the CPUID leaf 0x2
-not virtualization, and most of access come from user space.  Is it
-appropriate for such behavior directly cause a guest kernel panic?
+In my spare time I've been looking at using the two state lock from
+bcachefs for this because it looks to provide a general solution to
+the issue of concurrent buffered writes.
 
-Thanks,
-Zhiquan
+The two valid IO exclusion states are:
+
++enum {
++       XFS_IOTYPE_BUFFERED = 0,
++       XFS_IOTYPE_DIRECT = 1,
++};
+
+Importantly, this gives us three states, not two:
+
+1. Buffered IO in progress,
+2. Direct IO in progress, and
+3. No IO in progress. (i.e. not held at all)
+
+When we do operations like truncate or hole punch, we need the state
+to be #3 - no IO in progress.
+
+Hence we can use this like we currently use i_dio_count for
+truncate with the correct lock ordering. That is, we order the
+IOLOCK before the IOTYPE lock:
+
+Buffered IO:
+
+	IOLOCK_SHARED, IOLOCK_EXCL if IREMAPPING
+	  <IREMAPPING excluded>
+	  IOTYPE_BUFFERED
+	    <block waiting for in progress DIO>
+	    <do buffered IO>
+	  unlock IOTYPE_BUFFERED
+	unlock IOLOCK
+
+IREMAPPING IO:
+
+	IOLOCK_EXCL
+	  set IREMAPPING
+	  demote to IOLOCK_SHARED
+	  IOTYPE_BUFFERED
+	    <block waiting for in progress DIO>
+	    <do reflink operation>
+	  unlock IOTYPE_BUFFERED
+	  clear IREMAPPING
+	unlock IOLOCK
+
+Direct IO:
+
+	IOLOCK_SHARED
+	  IOTYPE_DIRECT
+	    <block waiting for in progress buffered, IREMAPPING>
+	    <do direct IO>
+	<submission>
+	  unlock IOLOCK_SHARED
+	<completion>
+	  unlock IOTYPE_DIRECT
+
+Notes on DIO write file extension w.r.t. xfs_file_write_zero_eof():
+- xfs_file_write_zero_eof() does buffered IO.
+- needs to switch from XFS_IOTYPE_DIRECT to XFS_IOTYPE_BUFFERED
+- this locks out all other DIO, as the current switch to
+  IOLOCK_EXCL will do.
+- DIO write path no longer needs IOLOCK_EXCL to serialise post-EOF
+  block zeroing against other concurrent DIO writes.
+- future optimisation target so that it doesn't serialise against
+  other DIO (reads or writes) within EOF.
+
+This path looks like:
+
+Direct IO extension:
+
+	IOLOCK_EXCL
+	  IOTYPE_BUFFERED
+	    <block waiting for in progress DIO>
+	    xfs_file_write_zero_eof();
+	  demote to IOLOCK_SHARED
+	  IOTYPE_DIRECT
+	    <block waiting for buffered, IREMAPPING>
+	    <do direct IO>
+	<submission>
+	  unlock IOLOCK_SHARED
+	<completion>
+	  unlock IOTYPE_DIRECT
+
+Notes on xfs_file_dio_write_unaligned()
+- this drains all DIO in flight so it has exclusive access to the
+  given block being written to. This prevents races doing IO (read
+  or write, buffered or direct) to that specific block.
+- essentially does an exclusive, synchronous DIO write after
+  draining all DIO in flight. Very slow, reliant on inode_dio_wait()
+  existing.
+- make the slow path after failing the unaligned overwrite a
+  buffered write.
+- switching modes to buffered drains all the DIO in flight,
+  buffered write data all the necessary sub-block zeroing in memory,
+  next overlapping DIO of fdatasync() will flush it to disk.
+
+This slow path looks like:
+
+	IOLOCK_EXCL
+	  IOTYPE_BUFFERED
+	    <excludes all concurrent DIO>
+	    set IOCB_DONTCACHE
+	    iomap_file_buffered_write()
+
+Truncate and other IO exclusion code such as fallocate() need to do
+this:
+
+	IOLOCK_EXCL
+	  <wait for IO state to become unlocked>
+
+The IOLOCK_EXCL creates a submission barrier, and the "wait for IO
+state to become unlocked" ensures that all buffered and direct IO
+have been drained and there is no IO in flight at all.
+
+Th upside of this is that we get rid of the dependency on
+inode->i_dio_count and we ensure that we don't potentially need a
+similar counter for buffered writes in future. e.g. buffered
+AIO+RWF_DONTCACHE+RWF_DSYNC could be optimised to use FUA and/or IO
+completion side DSYNC operations like AIO+DIO+RWF_DSYNC currently
+does and that would currently need in-flight IO tracking for truncate
+synchronisation. The two-state lock solution avoids that completely.
+
+Some work needs to be done to enable sane IO completion unlocking
+(i.e. from dio->end_io). My curent notes on this say:
+
+- ->end_io only gets called once when all bios submitted for the dio
+  are complete. hence only one completion, so unlock is balanced
+- caller has no idea on error if IO was submitted and completed;
+  if dio->end_io unlocks on IO error, the waiting submitter has no
+  clue whether it has to unlock or not.
+- need a clean submitter unlock model. Alternatives?
+  - dio->end_io only unlock on on IO error when
+    dio->wait_for_completion is not set (i.e. completing an AIO,
+    submitter was given -EIOCBQUEUED). iomap_dio_rw() caller can
+    then do:
+
+        if (ret < 0 && ret != -EIOCBQUEUED) {
+                /* unlock inode */
+        }
+  - if end_io is checking ->wait_for_completion, only ever unlock
+    if it isn't set? i.e. if there is a waiter, we leave it to them
+    to unlock? Simpler rule for ->end_io, cleaner for the submitter
+    to handle:
+
+        if (ret != -EIOCBQUEUED) {
+                /* unlock inode */
+        }
+- need to move DIO write page cache invalidation and inode_dio_end()
+  into ->end_io for implementations
+- if no ->end_io provided, do what the current code does.
+
+There are also a few changes need to avoid inode->i_dio_count in
+iomap:
+- need a flag to tell iomap_dio_rw() not to account the DIO
+- inode_dio_end() may need to be moved to ->dio_end, or we could
+  use the "do not account" flag to avoid it.
+- However, page cache invalidation and dsync work needs to be done
+  before in-flight dio release, so this we likely need to move this
+  stuff to ->end_io before we drop the IOTYPE lock...
+- probably can be handled with appropriate helpers...
+
+I've implemented some of this already; I'm currently in the process
+of making truncate exclusion work correctly. Once that works, I'll
+post the code....
+
+-~dave
+-- 
+Dave Chinner
+david@fromorbit.com
 
