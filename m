@@ -1,123 +1,166 @@
-Return-Path: <linux-kernel+bounces-626232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03D5AA4019
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2585AA4089
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D80B4A1548
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7726B1BA82BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87EA12B63;
-	Wed, 30 Apr 2025 01:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HAh0tLEU"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81E51519A0;
+	Wed, 30 Apr 2025 01:23:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8967B4685;
-	Wed, 30 Apr 2025 01:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBA82DC788;
+	Wed, 30 Apr 2025 01:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745975438; cv=none; b=dgMOrEr7WccqEOWCJqg8Hu7dycRRLXzDCCs+CT9mTEeFKijXlcrjaTlgPFJga9ewnqyVP39ECEdMQBN8fVhMT+l7zQciqY7dgY2wIA3aFUSWauDwAaXxpJ7Qw15fp0FGCZL0Ghc04jv/QvzKo81LFfa9fzCYNaBd2CZrjT8+Yt8=
+	t=1745976236; cv=none; b=ljol+SAHaLRgvWTM07zCImJvVcYjPdDxYVfrUhg/PWI4lHikENiJsSB0C9mxsgLhrqbFtkOUGsksX3Vxk6ULtie6myeUevt3D2BEmQaPoWCfKtxkMdSMkiGE0D9PxjATDHwHdnNIiMyTFduoB+D8MqHIfl06WM3DNxNGQJNhKO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745975438; c=relaxed/simple;
-	bh=GcA0wqe4bwS+nqsbaE7zGxsfAfwH+z1wdZ2jUKGpfNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TcGIzf/2BvJKPq2M6NK0MZZv0eoQbboW+H0LjhnBXazojg2uor1ldqhdK/RS0mXtcCFcokFP9ej0H18IyoLlcOIUSkNItDt7Woyo9z+ES4SlXvY0qIwLsUXwO82GcvNSeVwgjeyIYM06Cj9qy+jyc7l183xpk4b5aUAX3A+X6H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=HAh0tLEU; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39c14016868so6928267f8f.1;
-        Tue, 29 Apr 2025 18:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1745975435; x=1746580235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fy0EpqkwjDtmTcF94zxnemA5fOntKhPCB9hsiCBnym0=;
-        b=HAh0tLEU1yvdiJ0qbNlBS4z9cIw6EhrV5G7xwFRHmQ+hvmeT/tRv3qxsAKZcgv3EnM
-         sui/HPvs/vFRPPgjMbcSfeVyl/x4ncVdJofaXqACyvzHcJhaVfeRyP1tMAyuy2SPCOhb
-         llZxnjsmqycSItNZkdx2HkyFT7UMr7FZxZ8UykgOqlwdMtKSbNmjp+cJ+drqR+WnPckE
-         aoUnxERztASuLaJK5/U4+Mt6nFM3/HeRUbxMaaJo+kQz7So61y/B90JKOjksm9z2fVER
-         DrkpQRwzcVMzbDUZImIZsbUcJHJaXe/MkXQfyJc4mawxI533BjW41YKjMmuQtwB0NbYz
-         3+pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745975435; x=1746580235;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fy0EpqkwjDtmTcF94zxnemA5fOntKhPCB9hsiCBnym0=;
-        b=tt+hA12C7OvJjgaILW6YkoDN13pslFD9QZwmqRCZ4xM9K02mrEWJ0SeAmJAZsVD4Mj
-         4lUZKd6sAmxzmPD6wQoje6a8gGEU87wzL3oA4fWkX4SbGdsSxj8qb1KQC9e2hatkqndZ
-         c9bsNSPDwdsQcBbOLxQsfMFwPaXu5wpVwuTptljbJexGBI5ugtDkbpmzHsOzTyyWKYYC
-         LriKa2SR1uP7qOPQUYiony1RPQHVcJWholvPFV+zpyfoJs5umSOme0FM63GiCpBKXUZg
-         Gm3vD9qEDniGXGNzy3xpnrPi4XJMPaGlZDlV7AgmRAsO53I4Msnof+GjKJCgtmhoiDN7
-         N2qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv3CBGrYuhrQawgAu5OvL8nVa0ZM6D8Lc/ZqVB7AR+scVxsMjX7PfJreqTrqDpfQ7+Qm8t7AmLIhMeZqU=@vger.kernel.org, AJvYcCWTwWuOYHxyVDpJ++IlSqbHChbd4vCaqTtL5tOWPBauvyU2F2t0c4GP2d/wugWTnHXzOw2NPyQL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSEId+i/SEqx0/Kts0MDvxuJGblP67tTZ3OPeKbHquA6Z1cVhY
-	/jWPHf5TYkgTuIvhVG3ieCn5kiVO6DD0aKJ+SHhWQd9f0hTi+VA=
-X-Gm-Gg: ASbGncuXr8ulZXlkJuVrgHAC4bNXR2VdQdT/64/5yh1DVmXltvMKjijkUKjp9Y+2O/w
-	/0YoGQickiW5KAMoRnuAWCPEVeI8lD+or4hw2mEAq3x+20vVLSZOhpbm28g/lHibSSaUY5P4rXg
-	9EDuZzFFA6VQEztXUNk2RFL51C1SHIpe6fMSz+tFpJWKLEMrd/n8l5OJJWS2mICZQ1HF7aRU9lU
-	DHmZVZlIefGte6Qraa6VmdhfJvUgvYPcA2hRfFFWuQfq9RY1sLRGY88efB5lgKUm5isWF+v5c8f
-	Q1GNIETnDhsi8GMHMtOhPW3Gz+VYE3dU3GFVTpxY2WA07T7E5xKuAmHwqLXfWO8baeEuOfRrV67
-	6xgoB3WdG6UXhBVoXSTU=
-X-Google-Smtp-Source: AGHT+IEfCZyklWz25dz8UgxLE8bMSFKXl1EvDpiL4cI6Uh838bs3W6K4R8SlOQyze6UjmyVl60Hv3A==
-X-Received: by 2002:a5d:64a5:0:b0:39e:e438:8e3c with SMTP id ffacd0b85a97d-3a08f7babaamr1003573f8f.53.1745975434662;
-        Tue, 29 Apr 2025 18:10:34 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac6c7.dip0.t-ipconnect.de. [91.42.198.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5c6a0sm15385345f8f.86.2025.04.29.18.10.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Apr 2025 18:10:33 -0700 (PDT)
-Message-ID: <92ed23e2-651a-4730-b5b6-d9e85761c1f8@googlemail.com>
-Date: Wed, 30 Apr 2025 03:10:32 +0200
+	s=arc-20240116; t=1745976236; c=relaxed/simple;
+	bh=vrTXKcD7lg0ZrlY3co1o6Vs22J3lMqn6dH0Axk2nQmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QY7TL3faJTwYP6LzodRMLgUoS4tS5e8/MqHxSXJzNd5T+r+W6n90cbv9ehEhNdZw97pkNUt+q5aWKvPI7FyIG3qTxx77XikIKYuUAH3vCBirPskLeg4GLVOE5lmP5kRgJ06pGTcrf6VF13GnEIdWnPuQriGuS/NvgW+wYdJIuLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZnKFb11j2z4f3jt8;
+	Wed, 30 Apr 2025 09:23:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 160B11A09ED;
+	Wed, 30 Apr 2025 09:23:50 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgBHrGCbexFov3rkKw--.18493S4;
+	Wed, 30 Apr 2025 09:23:47 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	wanghaichi0403@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 1/4] ext4: fix out of bounds punch offset
+Date: Wed, 30 Apr 2025 09:12:58 +0800
+Message-ID: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/204] 6.6.89-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250429161059.396852607@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250429161059.396852607@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHrGCbexFov3rkKw--.18493S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4fXryxAF4xXr4DWw1DAwb_yoW5uF45pr
+	y7GrWUGr48Wr1UCF48Jr17Jr4Uta17CFW7XF1xWrWUAF1fZ3WjgF1UKr47uF1UJr48Xr1S
+	qF1DXw10qw1YyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Am 29.04.2025 um 18:41 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.89 release.
-> There are 204 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Punching a hole with a start offset that exceeds max_end is not
+permitted and will result in a negative length in the
+truncate_inode_partial_folio() function while truncating the page cache,
+potentially leading to undesirable consequences.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+A simple reproducer:
 
+  truncate -s 9895604649994 /mnt/foo
+  xfs_io -c "pwrite 8796093022208 4096" /mnt/foo
+  xfs_io -c "fpunch 8796093022213 25769803777" /mnt/foo
 
-Beste Grüße,
-Peter Schneider
+  kernel BUG at include/linux/highmem.h:275!
+  Oops: invalid opcode: 0000 [#1] SMP PTI
+  CPU: 3 UID: 0 PID: 710 Comm: xfs_io Not tainted 6.15.0-rc3
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
+  RIP: 0010:zero_user_segments.constprop.0+0xd7/0x110
+  RSP: 0018:ffffc90001cf3b38 EFLAGS: 00010287
+  RAX: 0000000000000005 RBX: ffffea0001485e40 RCX: 0000000000001000
+  RDX: 000000000040b000 RSI: 0000000000000005 RDI: 000000000040b000
+  RBP: 000000000040affb R08: ffff888000000000 R09: ffffea0000000000
+  R10: 0000000000000003 R11: 00000000fffc7fc5 R12: 0000000000000005
+  R13: 000000000040affb R14: ffffea0001485e40 R15: ffff888031cd3000
+  FS:  00007f4f63d0b780(0000) GS:ffff8880d337d000(0000)
+  knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 000000001ae0b038 CR3: 00000000536aa000 CR4: 00000000000006f0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  Call Trace:
+   <TASK>
+   truncate_inode_partial_folio+0x3dd/0x620
+   truncate_inode_pages_range+0x226/0x720
+   ? bdev_getblk+0x52/0x3e0
+   ? ext4_get_group_desc+0x78/0x150
+   ? crc32c_arch+0xfd/0x180
+   ? __ext4_get_inode_loc+0x18c/0x840
+   ? ext4_inode_csum+0x117/0x160
+   ? jbd2_journal_dirty_metadata+0x61/0x390
+   ? __ext4_handle_dirty_metadata+0xa0/0x2b0
+   ? kmem_cache_free+0x90/0x5a0
+   ? jbd2_journal_stop+0x1d5/0x550
+   ? __ext4_journal_stop+0x49/0x100
+   truncate_pagecache_range+0x50/0x80
+   ext4_truncate_page_cache_block_range+0x57/0x3a0
+   ext4_punch_hole+0x1fe/0x670
+   ext4_fallocate+0x792/0x17d0
+   ? __count_memcg_events+0x175/0x2a0
+   vfs_fallocate+0x121/0x560
+   ksys_fallocate+0x51/0xc0
+   __x64_sys_fallocate+0x24/0x40
+   x64_sys_call+0x18d2/0x4170
+   do_syscall_64+0xa7/0x220
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
+Fix this by filtering out cases where the punching start offset exceeds
+max_end.
+
+Fixes: 982bf37da09d ("ext4: refactor ext4_punch_hole()")
+Reported-by: Liebes Wang <wanghaichi0403@gmail.com>
+Closes: https://lore.kernel.org/linux-ext4/ac3a58f6-e686-488b-a9ee-fc041024e43d@huawei.com/
+Tested-by: Liebes Wang <wanghaichi0403@gmail.com>
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ fs/ext4/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 94c7d2d828a6..4ec4a80b6879 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4016,7 +4016,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+ 	WARN_ON_ONCE(!inode_is_locked(inode));
+ 
+ 	/* No need to punch hole beyond i_size */
+-	if (offset >= inode->i_size)
++	if (offset >= inode->i_size || offset >= max_end)
+ 		return 0;
+ 
+ 	/*
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+2.46.1
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
