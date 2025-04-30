@@ -1,209 +1,129 @@
-Return-Path: <linux-kernel+bounces-626623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F68AA4567
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09DDAA456A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23609A3A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7534615FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EE6219A8C;
-	Wed, 30 Apr 2025 08:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD4B20D505;
+	Wed, 30 Apr 2025 08:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VIjl0B80";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34ylF4mT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0KLLECP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0xeY6gNN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLQQRYIK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284CE1EF388
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7CD21B9C3;
+	Wed, 30 Apr 2025 08:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001676; cv=none; b=NlD1MNm5MkXqLoE68bquDizVCqVtacYyw+SPJAN8lE3yun/V5Mq/rL8DWuJX5T16ehnciVX2pBe/TjNqMYuckvnggy3MomCT+oxgqVh0V24VOUaOYMWZCIICpXICWNRwvlx+RbcwEE3/te9JJPcm2ng0DPAJJS1dpfrtUiPhy9o=
+	t=1746001719; cv=none; b=u2w8dYtcman2krXcIVTEcL6FxhoBXuwFIvGdo/g4HeQXWQ5Nu0ZbTrBs/eY/BSeSPZvpDwUsbnwUxwLlleRFVothCYr70HO6rgwaN4Tcykhay2kYysQkmtUQniwAheK7kDEx6h3fU3c09clezAII+/O+HMvBGEgqqd0cfvmrYgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001676; c=relaxed/simple;
-	bh=KP0WbRYyXweFla+W9yKoUm82l153JkxLlFZrvyQgDFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8KFLPICqit3Oxv30F8UoOKLxynbOpK6UXgrQjR+5UcfWI3oUDSsHJ1Ss+XxazQbrSAYn7Hv5BMwQ2aShSnvCph6J2wG3/DuGkMQ7z31dUWJ3oS75NyeByyc2pg7+VhAJhrvUZms+7UdeBCF97D2RCbOt3gMv1djLLwazgnXc0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VIjl0B80; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34ylF4mT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0KLLECP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0xeY6gNN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 53CF51F7BF;
-	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746001667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=VIjl0B80Uh3OUx3+Pshx9kY6dUdBWDIAmXxE40ltIMkkAw6HJy5NF8n2wR/Vw/N6U//Mz/
-	q43tMlVKwvxlPjDZIZ36pWNmVElVfkBF4fjZjXjb+R/BwO3W7x7vCttQLcGPSfe9+U5wkc
-	VwECC9C1r4ivjILpHWOsw+9pE8Eo2RM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746001667;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=34ylF4mTZj3STtfYtJGb1S3C6Ei9P7OlRGBTUYXWqsGldxCwQKSpPz7iANglSxXlRrs4UZ
-	c6LQlp1HcrReJHAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r0KLLECP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0xeY6gNN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746001666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=r0KLLECPsP8+xL6H7OibzAZq/4xdyKExIWg8qM+i0x7PUIvIfnbE2dV7hSQSAO3cIBumqi
-	iHq36qGokctFQcDoZgBGcdJsLcvBgorABMY+VR57Zx07RQ/nE28cZng+QrN6ez4u6DgzTN
-	vxn1r/IhXvabSNT2XWH1rCieh1qKkJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746001666;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=0xeY6gNNADEAcP/1u5v0rxgig/6h7Zy3mSE8sNHy7Dg42tJTDMR6SpT4vFQFK1wPPVq3nS
-	3P54IpBgpCUANGCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47A4D139E7;
-	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4yVvEQLfEWgaEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 30 Apr 2025 08:27:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 05DDEA0AF0; Wed, 30 Apr 2025 10:27:45 +0200 (CEST)
-Date: Wed, 30 Apr 2025 10:27:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Damato <jdamato@fastly.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] fs/eventpoll: fix endless busy loop after timeout has
- expired
-Message-ID: <diilyq37i35qlll7hu3si6dqrjntiif5gzajazkgtqvfsi4kgg@yr3v562urmjp>
-References: <20250429185827.3564438-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1746001719; c=relaxed/simple;
+	bh=dRAs2qXXUA/N97RfHpdlApe9kO3tgf2G0Ws27HW/leU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hh9BgXNAyqdpXiWZMpx4lCG/+u5JAJ3xfgLsyFm3KfTgoUXV/f3FmW5UawftkLrk+D2CW24UrZQhneC7y9zqTOxHy7lwOYwr3G2Q0iI7ie7MZwFK8OEECHm5cl7jOHcTp+mFWPfeJebfy3IX8WvQ10tw7NYcL8/uki+bvnPoe6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLQQRYIK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675A2C4CEE9;
+	Wed, 30 Apr 2025 08:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746001718;
+	bh=dRAs2qXXUA/N97RfHpdlApe9kO3tgf2G0Ws27HW/leU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=HLQQRYIKoXpbCGU1oiZAlBYVf2sYWlszXWirWOR7hDLvOKLcxakR6Hs3RjN3ZDT9o
+	 ke/671XCkqpYc76O2on3kpuvoCh9hLTZwUfkWVDNPyp2Cna9grfXVOy82u1s6bDEuP
+	 mLQM87Sif9u9GSoHY1De98kud+SWcTFGTcwpx2u5D2DN6lt6S34n9fHH0lMXSlwYeG
+	 EtCJE+mzLWFKYv5ASk8ITaolzKlv+PBLyNzMkgw4wnnqBXJeCkg8on1KO0My3HCeO3
+	 8kQlMbqSzFqXKZof7wjX/0MP1fTgE1aARvdRqwLGvbX2O+PtPL9ku0h9V7luEzQOZZ
+	 LN8bUTGAV3O9Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "kernel test robot" <lkp@intel.com>,  "FUJITA Tomonori"
+ <fujita.tomonori@gmail.com>,  <oe-kbuild-all@lists.linux.dev>,
+  <linux-kernel@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: error[E0432]: unresolved import `core::sync::atomic::AtomicU64`
+In-Reply-To: <CANiq72n6tTox7jMX89p4vLihghrJeDcBL+MWR8rp4_Y0LyxcKg@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Wed, 30 Apr 2025 07:06:28 +0200")
+References: <202504301208.YQCguEmE-lkp@intel.com>
+	<D4J3Zi4_pJAvvHPii2-9GqOa4jd7dzNzOJ3Wf_Mo95TggON0WGCiDwXrT2vd_aj5G0tt-tqIDp4vi5tjbLE7AA==@protonmail.internalid>
+	<CANiq72n6tTox7jMX89p4vLihghrJeDcBL+MWR8rp4_Y0LyxcKg@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 30 Apr 2025 10:28:25 +0200
+Message-ID: <87ecxa2guu.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429185827.3564438-1-max.kellermann@ionos.com>
-X-Rspamd-Queue-Id: 53CF51F7BF
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 29-04-25 20:58:27, Max Kellermann wrote:
-> After commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in
-> the future"), the following program would immediately enter a busy
-> loop in the kernel:
-> 
-> ```
-> int main() {
->   int e = epoll_create1(0);
->   struct epoll_event event = {.events = EPOLLIN};
->   epoll_ctl(e, EPOLL_CTL_ADD, 0, &event);
->   const struct timespec timeout = {.tv_nsec = 1};
->   epoll_pwait2(e, &event, 1, &timeout, 0);
-> }
-> ```
-> 
-> This happens because the given (non-zero) timeout of 1 nanosecond
-> usually expires before ep_poll() is entered and then
-> ep_schedule_timeout() returns false, but `timed_out` is never set
-> because the code line that sets it is skipped.  This quickly turns
-> into a soft lockup, RCU stalls and deadlocks, inflicting severe
-> headaches to the whole system.
-> 
-> When the timeout has expired, we don't need to schedule a hrtimer, but
-> we should set the `timed_out` variable.  Therefore, I suggest moving
-> the ep_schedule_timeout() check into the `timed_out` expression
-> instead of skipping it.
-> 
-> Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
-> Cc: Joe Damato <jdamato@fastly.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-I agree this makes the logic somewhat more obvious than Joe's fix so feel
-free to add:
+> On Wed, Apr 30, 2025 at 6:55=E2=80=AFAM kernel test robot <lkp@intel.com>=
+ wrote:
+>>
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
+it master
+>> head:   8bac8898fe398ffa3e09075ecea2be511725fb0b
+>> commit: 584e61452f75bfeac2cdd83730b4059526ec60c7 rust: helpers: Remove v=
+olatile qualifier from io helpers
+>> date:   2 weeks ago
+>> config: um-randconfig-r063-20250430 (https://download.01.org/0day-ci/arc=
+hive/20250430/202504301208.YQCguEmE-lkp@intel.com/config)
+>> compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cb=
+f1a2591520c2491aa35339f227775f4d3adf6)
+>> rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+>> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arch=
+ive/20250430/202504301208.YQCguEmE-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new ver=
+sion of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202504301208.YQCguEmE-lk=
+p@intel.com/
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>> >> error[E0432]: unresolved import `core::sync::atomic::AtomicU64`
+>>    --> rust/kernel/block/mq/operations.rs:15:33
+>>    |
+>>    15 | use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::a=
+tomic::Ordering};
+>>    |                                 ^^^^^^^^^^^^^^---------
+>>    |                                 |             |
+>>    |                                 |             help: a similar name =
+exists in the module: `AtomicU32`
+>>    |                                 no `AtomicU64` in `sync::atomic`
+>> --
+>> >> error[E0432]: unresolved import `core::sync::atomic::AtomicU64`
+>>    --> rust/kernel/block/mq/request.rs:16:20
+>>    |
+>>    16 |     sync::atomic::{AtomicU64, Ordering},
+>>    |                    ^^^^^^^^^
+>>    |                    |
+>>    |                    no `AtomicU64` in `sync::atomic`
+>>    |                    help: a similar name exists in the module: `Atom=
+icU32`
+>
+> Cc'ing Andreas.
+>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Gary sent a patch to fix this a while back [1].
 
-Thanks!
 
-								Honza
+Best regards,
+Andreas Hindborg
 
-> ---
->  fs/eventpoll.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 4bc264b854c4..d4dbffdedd08 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2111,9 +2111,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  
->  		write_unlock_irq(&ep->lock);
->  
-> -		if (!eavail && ep_schedule_timeout(to))
-> -			timed_out = !schedule_hrtimeout_range(to, slack,
-> -							      HRTIMER_MODE_ABS);
-> +		if (!eavail)
-> +			timed_out = !ep_schedule_timeout(to) ||
-> +				!schedule_hrtimeout_range(to, slack,
-> +							  HRTIMER_MODE_ABS);
->  		__set_current_state(TASK_RUNNING);
->  
->  		/*
-> -- 
-> 2.47.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] https://lore.kernel.org/all/20250219201602.1898383-4-gary@garyguo.net
+
+
 
