@@ -1,82 +1,252 @@
-Return-Path: <linux-kernel+bounces-627318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C303AA4EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:47:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059DAAA4EFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA9BE3A934E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AAD717B963
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A2614AD2D;
-	Wed, 30 Apr 2025 14:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C02186284;
+	Wed, 30 Apr 2025 14:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OF0GYw09"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="H/ZpkXCJ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA50224FA;
-	Wed, 30 Apr 2025 14:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5633A225D6;
+	Wed, 30 Apr 2025 14:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746024460; cv=none; b=qo4MBzzdSTyMsUVltzydvqmAGpFv9+bF5gA2cEuTIXj0C5Y3VH8XtmYAqfUOPLiFGsOPKTGIHQuZr+WAYbqXmw0PWbjM82rdrKYOTNsv+olut1XiFMWgrfwb55DN0WlY6o3H3VUy8K8yyvrGcDsK5Eh4jesgY8ULpFxeRmsFFvc=
+	t=1746024500; cv=none; b=X6jp8+4rLabWVbHBNkDuD3chBLUT7S6/w1VrvEAspDOlJ3HQI5fehNTSUw/aBgGuPl3USZVQejnD+Ll89dnx36QWDXUsxP97bVJ9PCgc1AJfEPEaYJ2f9oJExS91k8dbbAf3nnEHGqrzhlAMEeNY29gAIED1BqVA1edon7X72Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746024460; c=relaxed/simple;
-	bh=8Kby3BF9Goa+u8k9qxOdZq2WO9DIL0NJjF87tLz5zeo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hw04bmd/m4CBSUQZgdrsqRV+Zbq6pQOGoeCuJW/CMb1q90kq1ZgUwrUz0zjjEVbmz7Ry+SrSIvlGazZVyg8fX+kXzHTks9qCkxaK7W8AIk1goq7uqLnFGhQGLQ+X7YCHebIsctPSj3MMGL5sAki6dx7be8/unJICpJHp8tuAva0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OF0GYw09; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1746024450;
-	bh=8Kby3BF9Goa+u8k9qxOdZq2WO9DIL0NJjF87tLz5zeo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OF0GYw09mwXW+/AF6xC9bMUzN2ywdOOiQkfxRpk7R8/ttoZhe3IGNKpbP0I4dPMGt
-	 ndet0ENHqF4TXoS+vskRGolwyrnEE+FwiwJx1MG2HCdM0wEDZ74Fr8EYp5ejNvviYk
-	 Xj+sG6RljlA51qNyywAS8EUJPbhESbF3mpiXL9136kVvjTY3hwgIqyTIVrq18Zscpm
-	 xtscdC88iGoNgOSGWgZhOETvcXNajHCCkawE6LQeo/+yj8ATAKNdz7yb6GxlLGT/ZT
-	 SMbcr0h651ImCTq9VS1kxyyA0MT3NsdUzgao/YHqRYHPHsMy5Lf0pkdH+Koh/N7Rg9
-	 8TSyXPhob+cfQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9F7E617E0630;
-	Wed, 30 Apr 2025 16:47:29 +0200 (CEST)
-Message-ID: <5a99252b-d251-4385-bf53-105262b821a4@collabora.com>
-Date: Wed, 30 Apr 2025 16:47:28 +0200
+	s=arc-20240116; t=1746024500; c=relaxed/simple;
+	bh=NXBWEd1ph+eZTmeXYgMCpSBzmBMLHdzVrIkTU9qkShM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eaAGZV7+LXc/HPTGTLHi7AbIowpI7JNgCO7OfJbOmLLbqVmek1wtLhmtKCiTimmJgFS6CrfkdzuguccqTZtggNWEFvmP6AsgVSuWbh5kJwPASSZotiWLB5XMLBwCA66WVwqLLjkdkSb9kcRX48VkZKJOOwrtQugDS94cJGhhIKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=H/ZpkXCJ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1746024495;
+	bh=NXBWEd1ph+eZTmeXYgMCpSBzmBMLHdzVrIkTU9qkShM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H/ZpkXCJtwStLZxzW1gr6Bj3nsnrDiCUr/Hvhf2R4zgIrgWARC/BANdBL1wByur2M
+	 Q2k4BghjK2NHzcDq3xDSRgVj04/s8s97l8Hd85nn5DXKFHFnxJO5FKBlx0GDIfpzRS
+	 txJXIKLi1cahLaE6xwhAGusI7oqgslzTM4MCEbGs=
+Date: Wed, 30 Apr 2025 16:48:15 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Sung-Chi Li <lschyi@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/3] hwmon: (cros_ec) add PWM control over fans
+Message-ID: <0483bdf2-c1a2-4a8e-b0ee-b00cafdda557@t-8ch.de>
+References: <20250429-cros_ec_fan-v1-0-a8d9e3efbb1a@chromium.org>
+ <20250429-cros_ec_fan-v1-2-a8d9e3efbb1a@chromium.org>
+ <0933ec48-9a4b-49d0-8670-50b6ff6433f5@t-8ch.de>
+ <aBHKepQx_drHfnp8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtc: mt6359: Add mt6357 support
-To: Alexandre Mergnat <amergnat@baylibre.com>,
- Eddie Huang <eddie.huang@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250428-rtc-mt6357-v1-1-31f673b0a723@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250428-rtc-mt6357-v1-1-31f673b0a723@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aBHKepQx_drHfnp8@google.com>
 
-Il 28/04/25 16:29, Alexandre Mergnat ha scritto:
-> The MT6357 PMIC contains the same RTC as MT6358 which allows to add
-> support for it trivially by just complementing the list of compatibles.
+On 2025-04-30 15:00:10+0800, Sung-Chi Li wrote:
+> On Tue, Apr 29, 2025 at 11:20:09PM +0200, Thomas Weißschuh wrote:
+> > On 2025-04-29 16:14:22+0800, Sung-Chi Li via B4 Relay wrote:
+> > > From: Sung-Chi Li <lschyi@chromium.org>
+> > > 
+> > > Newer EC firmware supports controlling fans through host commands, so
+> > > adding corresponding implementations for controlling these fans in the
+> > > driver for other kernel services and userspace to control them.
+> > > 
+> > > The driver will first probe the supported host command versions (get and
+> > > set of fan PWM values, get and set of fan control mode) to see if the
+> > > connected EC fulfills the requirements of controlling the fan, then
+> > > exposes corresponding sysfs nodes for userspace to control the fan with
+> > > corresponding read and write implementations.
+> > > As EC will automatically change the fan mode to auto when the device is
+> > > suspended, the power management hooks are added as well to keep the fan
+> > > control mode and fan PWM value consistent during suspend and resume. As
+> > > we need to access the hwmon device in the power management hook, update
+> > > the driver by storing the hwmon device in the driver data as well.
+> > > 
+> > > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> > > ---
+> > >  Documentation/hwmon/cros_ec_hwmon.rst |   5 +-
+> > >  drivers/hwmon/cros_ec_hwmon.c         | 237 +++++++++++++++++++++++++++++++++-
+> > >  2 files changed, 237 insertions(+), 5 deletions(-)
+
+<snip>
+
+> > > +static int cros_ec_hwmon_read_pwm_value(struct cros_ec_device *cros_ec,
+> > > +					u8 index, u8 *pwm_value)
+> > > +{
+> > > +	int ret = cros_ec_hwmon_read_pwm_raw_value(cros_ec, index, pwm_value);
+> > 
+> > The _raw_ function is unnecessary.
+> > 
 > 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> This is to share with the `cros_ec_hwmon_cooling_get_cur_state`, and there is a
+> unit conversion needed, so extract the same process into a _raw_ function.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+What's the advantage of scaling the value for the cooling device?
+The hwmon core thermal zone implementation also uses the hwmon values
+directly.
 
+> > > +
+> > > +	if (ret == 0)
+> > > +		*pwm_value = *pwm_value * 255 / 100;
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int cros_ec_hwmon_read_pwm_enable(struct cros_ec_device *cros_ec,
+> > > +					 u8 index, u8 *control_method)
+> > > +{
+> > > +	struct ec_params_auto_fan_ctrl_v2 req = {
+> > > +		.fan_idx = index,
+> > > +		.cmd = EC_AUTO_FAN_CONTROL_CMD_GET,
+> > > +	};
+> > > +	struct ec_response_auto_fan_control resp;
+> > > +	int ret = cros_ec_cmd(cros_ec, 2, EC_CMD_THERMAL_AUTO_FAN_CTRL, &req,
+> > > +			      sizeof(req), &resp, sizeof(resp));
+> > 
+> > Keep &foo and sizeof(foo) together on the same line please.
+> > 
+> 
+> This is automatically formatted by clang-format. I will keep it like this in the
+> v2 patch. If it is important for readablity, please share with me, and I will
+> update that in the v2 patch.
+
+It's not that important. But unfortunate that clang-format will make the
+formatting worse.
+
+<snip>
+
+> > > +static int cros_ec_hwmon_set_pwm_raw_value(struct cros_ec_hwmon_priv *priv,
+> > > +					   u8 index, u8 val)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	if (!(priv->manual_fans & BIT(index)))
+> > > +		return -ECANCELED;
+> > 
+> > Weird error code.
+> > 
+> 
+> Hmm, do you have some error code suggestion? I think the idea here is we will
+> reject to write the PWM value if fan is not in manual mode, and I am not sure
+> what error suits for this (is -EPERM the one to use here?).
+
+EOPNOTSUPP maybe.
+
+> 
+> > > +
+> > > +	ret = cros_ec_hwmon_write_pwm_value(priv->cros_ec, index, val);
+> > > +	if (ret == 0)
+> > > +		priv->manual_fan_pwm_values[index] = val;
+> > > +	return ret;
+> > > +}
+
+<snip>
+
+> > > +static int cros_ec_hwmon_write_pwm_enable(struct cros_ec_device *cros_ec,
+> > > +					  u8 index, u8 val)
+> > > +{
+> > > +	struct ec_params_auto_fan_ctrl_v2 req = {
+> > > +		.fan_idx = index,
+> > > +		.cmd = EC_AUTO_FAN_CONTROL_CMD_SET,
+> > 
+> > Swap the two lines above.
+> > 
+> 
+> Will update in v2 patch.
+> 
+> > > +	};
+> > > +	int ret;
+> > > +
+> > > +	/* No CROS EC supports no fan speed control */
+> > > +	if (val == 0)
+> > > +		return -EOPNOTSUPP;
+> > > +
+> > > +	req.set_auto = (val != 1) ? true : false;
+> > > +	ret = cros_ec_cmd(cros_ec, 2, EC_CMD_THERMAL_AUTO_FAN_CTRL, &req,
+> > > +			  sizeof(req), NULL, 0);
+> > 
+> > Use a full 100 columns.
+> > 
+> 
+> Hmm, I found the style guide actually strongly prefer 80:
+> https://www.kernel.org/doc/html/v6.14/process/coding-style.html#breaking-long-lines-and-strings
+
+I don't think it is a strong recommendation anymore.
+The hwmon core also doesn't seem to be religious about it.
+
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +	return 0;
+> > > +}
+> > > +
+
+<snip>
+
+> > > +static int cros_ec_hwmon_resume(struct platform_device *pdev)
+> > > +{
+> > > +	const struct cros_ec_hwmon_platform_priv *platform_priv =
+> > > +		dev_get_drvdata(&pdev->dev);
+> > > +	const struct cros_ec_hwmon_priv *priv =
+> > > +		dev_get_drvdata(platform_priv->hwmon_dev);
+> > > +	size_t i;
+> > > +	int ret;
+> > > +
+> > > +	if (!priv->fan_control_supported)
+> > > +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * EC sets fan control to auto after suspended, restore settings to
+> > > +	 * before suspended.
+> > > +	 */
+> > > +	for (i = 0; i < EC_FAN_SPEED_ENTRIES; i++) {
+> > > +		if (!(priv->manual_fans & BIT(i)))
+> > > +			continue;
+> > 
+> > Given that we can read the actual state from the EC I'd prefer to read
+> > it back and store it during suspend() instead of storing it during write().
+> > 
+> 
+> Do you mean reading fan mode and fan PWM value during suspend, or we will keep
+> updating `manual_fans` while write(), and do not cache the PWM value while
+> write()? That involves whether we need to send a get fan mode for every write
+> PWM value.
+
+This one:
+"reading fan mode and fan PWM value during suspend"
+
+> > > +
+> > > +		/*
+> > > +		 * Setting fan PWM value to EC will change the mode to manual
+> > > +		 * for that fan in EC as well, so we do not need to issue a
+> > > +		 * separate fan mode to manual call.
+> > > +		 */
+> > > +		ret = cros_ec_hwmon_write_pwm_value(
+> > > +			priv->cros_ec, i, priv->manual_fan_pwm_values[i]);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > >  }
+
+<snip>
 
