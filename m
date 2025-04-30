@@ -1,161 +1,127 @@
-Return-Path: <linux-kernel+bounces-626770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50BDAA472F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:30:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 878F7AA46C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3666B1BC28EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3232E18824CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228DB246777;
-	Wed, 30 Apr 2025 09:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC9E1F3BB0;
+	Wed, 30 Apr 2025 09:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0NAYywa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wht/Sy0N"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B657B235076;
-	Wed, 30 Apr 2025 09:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A65F21C186
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 09:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746005265; cv=none; b=d5hqkT2Vd+Ma748VMMHx5DEgnEIyOXcx+urOKDD7xzl463JKUv6yzvWZ/wp/ieYi2hl/BCduIecstH2dudyuCSdRRSmGMAgAdGglSsvqRuC+M2lFxpVdCDPJ7QU/IQwQzg96xxGXKRHRtBvDMnvvn4OxMdsgOzLaQ1nghqdy7gE=
+	t=1746004566; cv=none; b=ZHYNc79Wh2sNC90Z7nQocPktnYF379CYLmcHWq92ih3wdlSBYRv83xoWofsVV+h01duyHECFt84Qvt9+EqkvqZ4T7/ivVOUqwqIhKFqv9t/4e4yN5Uzd15yGLUhpasy18NN3ZiZ+XVJ1l4b/ImymuC2aQWSXp1IAHeUgBqb2VtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746005265; c=relaxed/simple;
-	bh=PIseqjeo0I9CQ8TfQjzy3djUSEl3eIkK1NNEhH2P13A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Iy1lTBl1v/xLxn0ee3rUSyVPspb9zSBVt7i3bJzg0Krx+b+v6envXNKzpeXQeuIxsvdgeNwc1ielZ7RoRN7evW6dUWX00NZoHhTsFt4eEEPMLL+TgQLnua7JSMzrnkuO3A7SMnbgYlvKM8bEf+nbgiQutLy+cVncMHdlM1rmxXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0NAYywa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 60E60C4CEE9;
-	Wed, 30 Apr 2025 09:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746005265;
-	bh=PIseqjeo0I9CQ8TfQjzy3djUSEl3eIkK1NNEhH2P13A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=R0NAYywaFmLz5cozJNEZMtAutmfuz8YGHSfGX1qmmG6IjBrjMqkqzWO2n83ial5+/
-	 tfwF2Z+qMR81ggG+O2/6aWNnzFcHFGObBkMu31gQUT/Q4OD1KB2xc4aDckck+fIkaB
-	 4VUrIG8tBOu3WbIcyYzlmC593bZeuw1Ec6mGbvGPSuFcvQdau3u5mXovjiPU5zRZTf
-	 dFHtwUJg0oUd8jaWhbkki+DJmxXpfbNyVRYwpPwRc/MnBdwKHfuaxRmOVmfE5zB/Ap
-	 jndHW8f9fCjUqiDuqpOKxj4KXkkJji5JUX3zoRofgPr2ZR2YxFeafK9vaFbQ9UBD8X
-	 /1YIhED+o7zEA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58476C369D9;
-	Wed, 30 Apr 2025 09:27:45 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Wed, 30 Apr 2025 11:16:01 +0200
-Subject: [PATCH v6 12/13] arm64: dts: rockchip: add mipi csi receiver node
- to rk356x
+	s=arc-20240116; t=1746004566; c=relaxed/simple;
+	bh=LtVhfWiqY+K0Ft9EIwL0Molm/ueKWbCMO2rcHu/Ejug=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Fi4ycbh6HLRfYXH3/IQOg+J/st0JDvmRyNetGDxeeASExE0tL93dKLluhioK/zesR/AbIrH3riJyDx6t0EU2WQsvc7jFld/Jlc6l57gJ9a//gYwyemj2nYaiV4qBfHF80cXtCiduj22fODiZQX1mucJDNWLrhBMKOQrUkj3g1pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wht/Sy0N; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so36417465e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 02:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746004563; x=1746609363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LtVhfWiqY+K0Ft9EIwL0Molm/ueKWbCMO2rcHu/Ejug=;
+        b=wht/Sy0NO7eC7k8OuCLEzj/cVUKtk1rs142d3AjLnBGJ/srJD4Rxk+cclaB01y25TT
+         c+vgakjArTWvPAO/Ot9rs3DZqbgZ/gpefrtd+feh4yhPuWIW4ZTEeAgt+TM8sZ/1bOEU
+         t8k5gr76KkiKEkL+KzARWdoj240q3eWtIDgO9cdxW7PfC0BqBCNWwl+GYjxudjPZZPOL
+         FrctyBTOZd/dAOsyhh37Ed/VVGcIwZaD77bUWJIaTx2cqKVcjHPsTtmJQM/k5RWHGjoz
+         G3kwGGf3GsTtTZi1Bx2FHRLfbNI4XoyuegRm93IxjDn/FcJEEwIylFcCUD87EiPOurxm
+         VR1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746004563; x=1746609363;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LtVhfWiqY+K0Ft9EIwL0Molm/ueKWbCMO2rcHu/Ejug=;
+        b=lxpJJ2aheN+VSG/q4BfYhb2KlhsPPikDcVN+YGGAGwZGi7xEyvE69Pp0QfKeAV2e1X
+         cHoayWrUls3ZxZLoxJdfHEdGIqZ7KFeENuFFK1lCdxdaE3UM9Z4PvulRvPux0gqvOqht
+         Rnqck32DOYEwedot3LE6w6cE30i9cxi58ouZTfr6PDqop6jKJ39ldvOwuWwCTwtDG1YU
+         lgQC9aM6xV+UW65TFN9d+u0GkGJ2nCwl9h6iTGLa6e5Zij4BQMxRgmvDeerfG7JBAA9Y
+         k8IqKCyIdjQafzDknbhEq4gcSpu05TK8MwSfsSNavMRDOjT4AzrjiLN3h0ZTwcLtwS5I
+         JrBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhgIp6016/EsfRwN/ahcr8wFXQSve3UlpTXtGX1toGcve7N+tKbYIDm/nY5x2S+JtHI5VeoLu5Og3/YE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTnNe6jDxj/jC9b6mj0gJOFJHXq1OC6LSA7shR0TBdk3XX/WBo
+	8fMYplajtZPZzKb3N3m5cUuBk7ocIg5etY+rX7Q2f1sMn/owxS8B0Cv6gQpNFiWD003jguagitE
+	k048nxTF6/lQPGw==
+X-Google-Smtp-Source: AGHT+IFxhcERQYWAcvbhYHN/OW5FD7v/TzNCgH8DCvMD/GLCXurr03llxmGp+GSubB+keZhqjqEoocx36qx5Vs4=
+X-Received: from wmbeu8.prod.google.com ([2002:a05:600c:81c8:b0:440:59df:376a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:34c1:b0:43d:db5:7b1a with SMTP id 5b1f17b1804b1-441b263a237mr15978995e9.12.1746004563615;
+ Wed, 30 Apr 2025 02:16:03 -0700 (PDT)
+Date: Wed, 30 Apr 2025 09:16:01 +0000
+In-Reply-To: <20250430-rust_unsafe_pinned-v2-1-fc8617a74024@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250430-rust_unsafe_pinned-v2-0-fc8617a74024@gmail.com> <20250430-rust_unsafe_pinned-v2-1-fc8617a74024@gmail.com>
+Message-ID: <aBHqUdtkP9uHMdKO@google.com>
+Subject: Re: [PATCH v2 1/3] rust: add UnsafePinned type
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Schrefl <chrisi.schrefl@gmail.com>
+Cc: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, 
+	"Gerald =?utf-8?Q?Wisb=C3=B6ck?=" <gerald.wisboeck@feather.ink>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240220-rk3568-vicap-v6-12-d2f5fbee1551@collabora.com>
-References: <20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com>
-In-Reply-To: <20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Gerald Loacker <gerald.loacker@wolfvision.net>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Collabora Kernel Team <kernel@collabora.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Alexander Shiyan <eagle.alexander923@gmail.com>, 
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Michael Riesch <michael.riesch@wolfvision.net>, 
- Michael Riesch <michael.riesch@collabora.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746004564; l=1513;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=n7SsQ0Jm8O3DWkSGx7UsFwouL+EV1n9f6o7pvgBiZes=;
- b=lzw29BwM3tPkfOdfKBg86jtDgvUqZAFVH/p8kgRrW4iML8dcwBQh6mVMnW27scM/bIG9zX2J2
- s9auiD0AejAD5isRCKPOV6ATrHZZvxyjxfjIP1mGH33LkSZiAvadxkV
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+Content-Transfer-Encoding: quoted-printable
 
-From: Michael Riesch <michael.riesch@wolfvision.net>
+On Wed, Apr 30, 2025 at 10:36:11AM +0200, Christian Schrefl wrote:
+> `UnsafePinned<T>` is useful for cases where a value might be shared with
+> C code but not directly used by it. In particular this is added for
+> storing additional data in the `MiscDeviceRegistration` which will be
+> shared between `fops->open` and the containing struct.
+>=20
+> Similar to `Opaque` but guarantees that the value is always initialized
+> and that the inner value is dropped when `UnsafePinned` is dropped.
+>=20
+> This was originally proposed for the IRQ abstractions [0] and is also
+> useful for other where the inner data may be aliased, but is always
+> valid and automatic `Drop` is desired.
+>=20
+> Since then the `UnsafePinned` type was added to upstream Rust [1] by Sky
+> as a unstable feature, therefore this patch implements the subset of the
+> upstream API for the `UnsafePinned` type required for additional data in
+> `MiscDeviceRegistration` and in the implementation of the `Opaque` type.
+>=20
+> Some differences to the upstream type definition are required in the
+> kernel implementation, because upstream type uses some compiler changes
+> to opt out of certain optimizations, this is documented in the
+> documentation and a comment on the `UnsafePinned` type.
+>=20
+> The documentation on is based on the upstream rust documentation with
+> minor modifications for the kernel implementation.
+>=20
+> Link: https://lore.kernel.org/rust-for-linux/CAH5fLgiOASgjoYKFz6kWwzLaH07=
+DqP2ph+3YyCDh2+gYqGpABA@mail.gmail.com [0]
+> Link: https://github.com/rust-lang/rust/pull/137043 [1]
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Gerald Wisb=C3=B6ck <gerald.wisboeck@feather.ink>
+> Co-developed-by: Sky <sky@sky9.dev>
+> Signed-off-by: Sky <sky@sky9.dev>
+> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 
-Add the device tree node for the RK356x MIPI CSI-2 Receiver.
-
-Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 31 +++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-index e0e4dc85a3a9..a1eab57003f6 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-@@ -564,6 +564,33 @@ gpu: gpu@fde60000 {
- 		status = "disabled";
- 	};
- 
-+	csi: csi@fdfb0000 {
-+		compatible = "rockchip,rk3568-mipi-csi";
-+		reg = <0x0 0xfdfb0000 0x0 0x10000>;
-+		clocks = <&cru PCLK_CSI2HOST1>;
-+		phys = <&csi_dphy>;
-+		power-domains = <&power RK3568_PD_VI>;
-+		resets = <&cru SRST_P_CSI2HOST1>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			csi_in: port@0 {
-+				reg = <0>;
-+			};
-+
-+			csi_out: port@1 {
-+				reg = <1>;
-+
-+				csi_output: endpoint {
-+					remote-endpoint = <&vicap_mipi_input>;
-+				};
-+			};
-+		};
-+	};
-+
- 	vicap: video-capture@fdfe0000 {
- 		compatible = "rockchip,rk3568-vicap";
- 		reg = <0x0 0xfdfe0000 0x0 0x200>;
-@@ -592,6 +619,10 @@ vicap_dvp: port@0 {
- 
- 			vicap_mipi: port@1 {
- 				reg = <1>;
-+
-+				vicap_mipi_input: endpoint {
-+					remote-endpoint = <&csi_output>;
-+				};
- 			};
- 		};
- 	};
-
--- 
-2.39.5
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
