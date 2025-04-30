@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-627117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3189AA4B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D062AA4B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9672C9C2AB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007FE1C03D08
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D42B2580DB;
-	Wed, 30 Apr 2025 12:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D931B258CE6;
+	Wed, 30 Apr 2025 12:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBmsEN8/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z/+thX7a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E3919F135
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A090625B1F0;
+	Wed, 30 Apr 2025 12:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746017268; cv=none; b=PDSwWXaYqumCfANZTjlHeAcarFm9ylWCIlOVxQIMuTNbYCog+vOciIIjqLy0A4yjE1wJ3eUR1jZoPyAGr4tVsp1QFhTJBM3/uDfafhGjh/hgMQPbSLYjRIJGcT4FlKAON0PbgfZuc0+7Tec/yHGfJyoatdIX8RuSoO/mOGr6CiM=
+	t=1746017287; cv=none; b=ChF+u5mQK64F4P68s8xjTGdAIgdywshecfgbiBthtIzllRYdo7YbMQcOZeIM7Uu2hvfasx+qzRFDcAa7Uk1yVA2bAdC1SG5AVajI0lwYMazMlMOGvbBLzP5S/5zoUvNfm+rHBqy2UegTL6v9Zw11pwW7aUA8DS9io1oMtDtG94U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746017268; c=relaxed/simple;
-	bh=tCKwb4cPFpmdPUcNn0T3KSrbEQ/sL4BgvyRp10kVntY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q4BcWZOK9lkSfdMlpkwVSrTmLaylorT6qn9rPyRtgHINPCvxi3z2FtIRv9Skz1kNvy7tUqfN5y6J4Klnjqpv4Fp73Cu52xejom9destWgNoOL3jSukP8dJjDmmdErpbo+l/3h7le2B8jXfj7AYKhdRTrwKrvFiV6BEH/RCJQZ1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBmsEN8/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746017265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zphvSnykN9OE07j6fXA0nKqE7w+RWIGW1d9po/7trWE=;
-	b=VBmsEN8/cchqW5QIprdptL4es3VaflZai1PQqallAID65kYrOEU4LqKuyMwTTkUQ0ronVH
-	AgwBtsw//+dmkQBrzSaIaYsFC2ZimuN3tGUOB7GHrSEJcStftMAGc6pUYhw2h4VWSJ8/Ia
-	XWoGnfSqyDHcIN+VPN8MfpspN18sbv8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-A1oXJcGoMNSHkVr8fWDcFw-1; Wed, 30 Apr 2025 08:47:44 -0400
-X-MC-Unique: A1oXJcGoMNSHkVr8fWDcFw-1
-X-Mimecast-MFC-AGG-ID: A1oXJcGoMNSHkVr8fWDcFw_1746017263
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3912d5f6689so3804312f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:47:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746017263; x=1746622063;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zphvSnykN9OE07j6fXA0nKqE7w+RWIGW1d9po/7trWE=;
-        b=Eu2zUegANCkrjJXAX8UL8VzboxuPU36ptymZVfzcElwK0qV7gO3bXpNxMrc0y3knMc
-         5OLVEvaq/YZpudhUYrP7TZ0Fd9tjFPBy83UZbaIeHaJC/nkUKQdfQ59Cm2hvA5lhnKlh
-         T6gmUBc20zdTZZVXvVw5b2pIufSRuofHVTGcjbCJ66n/w/WD0uvrhVSjCmPovMIN8JJR
-         vwfniyhmgazX2taRnCG3Yo3iHYiYXuHOHsO/I8ruvT64YNmWUPvoY+5k2rTlrHgJQOrT
-         eNh+TbTacgJWW3qkz5hkhpbG//f4n0674k17fFd3QnIRhB6xVihQoGIVSROmAiL9W22s
-         2nug==
-X-Forwarded-Encrypted: i=1; AJvYcCWbD5h3AGCz0t2cxDtls5k5JpUamKolpR2u39ULDTHLVmghMNkvggwrFIaJvY3XS1VGJEBGVKemyhAe2HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJqQKPxc/V59yyCBxcStv+hLaNNtfmcTiElNgk+VRQtkZJNqhJ
-	QrrvLPrG7Cq5fagRuJ0SZyoL1nLMYktP5oDHf7B6ZwuZrrrSAKPbcb5VEkbnqs7cY2Z2c5xA5HU
-	jsR9kBe+ANYadz5NXGytqU05EuIVtq33U1ht11550dS5dtMazcdMyMKdgXB6BLw==
-X-Gm-Gg: ASbGncvUfXfNfRxC0O+1dp+57aP9yVO06ptSeBTxlA6ohhzb7fRwYZnFIT/pJ7CV3fA
-	Rp/9hWWw9ZYvh6vj6XO2oPfrLuj57/zXRMfhYwHIfB36DAi0EMdlbr7baHKzDAo+rbqudHmOBZZ
-	HQ69gAJocQJzVDhGuRh0MeNN2wfbDBC1btz/WfdJh6lI3kFVdQngM0eoMhxa2EZpuB4gJ3POaBn
-	BlIrAylk4sSggK049UZkRkL5j2Wk9Tt5qkNozQBhUtB/CxNX41YodZi4K48n2xwNKL7cKr463CO
-	WLComq+7G/d7ZIiZPOWz+7fUNokTb4zF+7CwgaDZiOmF8rlYsYMcSNB7t7eklrUtT5uCdA==
-X-Received: by 2002:a05:600c:4f06:b0:43d:47b7:b32d with SMTP id 5b1f17b1804b1-441b1f5bffamr23643505e9.25.1746017262827;
-        Wed, 30 Apr 2025 05:47:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFM+ceGhOv4JKCvz5Fh82bRAJjwTkYhN8POhSnvp7s6BTnIqcTj6XXd3hkyknjVQdUMFaljyA==
-X-Received: by 2002:a05:600c:4f06:b0:43d:47b7:b32d with SMTP id 5b1f17b1804b1-441b1f5bffamr23643345e9.25.1746017262451;
-        Wed, 30 Apr 2025 05:47:42 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2b20b36sm24245465e9.25.2025.04.30.05.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 05:47:40 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Marcus Folkesson
- <marcus.folkesson@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/st7571-i2c: Fix IS_ERR() vs NULL checks in
- probe()
-In-Reply-To: <aBHZYgPPPYY-J8Vd@stanley.mountain>
-References: <aBHZYgPPPYY-J8Vd@stanley.mountain>
-Date: Wed, 30 Apr 2025 14:47:38 +0200
-Message-ID: <87msbxzuhh.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1746017287; c=relaxed/simple;
+	bh=FNSfl7sJXyyMr58cTcycGqVKOnJzdf3JLX0L3/BzZRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fudAn+799N//hkV84CuwQn1CspzGUY6Gr0i03hHbn3pKIvBebq0SxKXRZGgeoeKgB6eS0Q6er7KV4ybxIfY3xUI/rT/cTYyH3UFiys6V99/ZvWDXng/kEul+OZOAjTgpXYBWWZ6KoCDJfz0f+gAmwp55OZH9VT93JmfhSrGr65k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z/+thX7a; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746017286; x=1777553286;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FNSfl7sJXyyMr58cTcycGqVKOnJzdf3JLX0L3/BzZRA=;
+  b=Z/+thX7a22NncWeOH5T+1628bm0rhV4isAUpES2AhcX3JUBJqgrZcnxl
+   N+MUk3eIf9/DLFsNLNi0UJ6a8gXKu8psG7tcv+49IgzOobnxpGicHexQK
+   yUQN2wKW1l4pUlaTFGQcprZ8A4KP6/hM6iIzXj5FDl17pytHgWYV0oiXD
+   GtaTOHkGbkTqwwzBpjiotagZOr7m7H/YR0tLy91t4ZQsE3V46j57FXblZ
+   d7Mc96+jwCr4bQzbnn8T6/FkGM6YLSwH6S+NoV4vZlrW+5VgDHjKCIfGz
+   eQmyDDlQLG3eIQLP9B//kh7LegF5u2jUYJC/t9zY9rk7WBD8BTnkmsp7T
+   w==;
+X-CSE-ConnectionGUID: bcCu4itLRQmyUe3LNmJ63Q==
+X-CSE-MsgGUID: wGYBAX3pR7mwG5NqwBi89Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="58307638"
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="58307638"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 05:48:04 -0700
+X-CSE-ConnectionGUID: sgyrkr1tSMy/f8/B9aXFnw==
+X-CSE-MsgGUID: 0xbFseEsT/SY1Zk732Sa5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
+   d="scan'208";a="134060316"
+Received: from smile.fi.intel.com ([10.237.72.55])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 05:47:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uA6qx-00000001d0J-0oph;
+	Wed, 30 Apr 2025 15:47:55 +0300
+Date: Wed, 30 Apr 2025 15:47:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: pmladek@suse.com, admin@kodeit.net, airlied@redhat.com,
+	akpm@linux-foundation.org, alyssa@rosenzweig.io, apw@canonical.com,
+	asahi@lists.linux.dev, corbet@lwn.net,
+	dri-devel@lists.freedesktop.org, dwaipayanray1@gmail.com,
+	geert@linux-m68k.org, joe@perches.com, kees@kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@rasmusvillemoes.dk, lukas.bulwahn@gmail.com, marcan@marcan.st,
+	mripard@kernel.org, rostedt@goodmis.org, senozhatsky@chromium.org,
+	simona@ffwll.ch, sven@svenpeter.dev, tamird@gmail.com,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v2] checkpatch: remove %p4cn and add check for %p4chR
+Message-ID: <aBIb-nOSUqaLgIsV@smile.fi.intel.com>
+References: <20250428123132.578771-1-pmladek@suse.com>
+ <PN3PR01MB95970CA0E1E1972B39405B43B8802@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN3PR01MB95970CA0E1E1972B39405B43B8802@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
+On Tue, Apr 29, 2025 at 05:50:30PM +0000, Aditya Garg wrote:
+> %p4cn was recently removed and replaced by %p4chR in vsprintf. So,
+> remove the check for %p4cn from checkpatch.pl.
 
-Hello Dan,
+...
 
-> The devm_kzalloc() function returns NULL on failure, not error pointers.
-> Also printing an error message for kmalloc() failures is against kernel
-> style so just return -ENOMEM without printing a message.  (Kmalloc
-> already prints a message).
->
-> Fixes: 4b35f0f41ee2 ("drm/st7571-i2c: add support for Sitronix ST7571 LCD controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+> Fixes: 37eed892cc5f ("vsprintf: Use %p4chR instead of %p4cn for reading data in reversed host ordering")
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+> 
+
+There shouldn't be blank lines in the tag block.
+
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 
 -- 
-Best regards,
+With Best Regards,
+Andy Shevchenko
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
 
 
