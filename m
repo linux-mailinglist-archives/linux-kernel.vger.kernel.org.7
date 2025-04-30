@@ -1,111 +1,158 @@
-Return-Path: <linux-kernel+bounces-627513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB658AA51BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:37:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070E8AA51E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6F4B7B3E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416ED461D5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7225C261589;
-	Wed, 30 Apr 2025 16:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="XWDxr3A8"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C18261372;
+	Wed, 30 Apr 2025 16:45:42 +0000 (UTC)
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26D32DC768;
-	Wed, 30 Apr 2025 16:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BAE1ADC69;
+	Wed, 30 Apr 2025 16:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746031024; cv=none; b=WskO5wwanB+Inm5bdsez0RBAIY6nbU2dlUg+b9XIdyeMmGcTggXsXyJNqw09VVVeUXcJiaZmCe+P0LQS38ElH6eMFzsS03RZC8X1kGkPusr++MDtPdGGVhZEpi8DAWQvVSyU2MwnFcqQ784ItERFSyCT4Gg3z2Cq9eMrLsYo+9U=
+	t=1746031541; cv=none; b=dt9C1wVhaws1gGvczbRI+u9ougS4aoYxA8/+MhPXmWYR157urX0mid2Eq4XsFRwmwpR2JC/Ar/XlHDm0eQCoas7FCnh2xvvKeJec4kvgcOX/J62DZBuHrtC7hmSL0RN+/netoZQB99jTKFJ3M5Gtsvv8e1QjGe8b21dNYbx+SEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746031024; c=relaxed/simple;
-	bh=9geV/FjB9jog23wCw1W/StqQ0myuqQkS4rykbVNxuNY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YcM+otHB7ppoCerZxfrdV+t+vQPsA5Z9ZdLxBjQvgRbgPokMFNstukIU3X43uyyCSW4t3BI7J99yMs1Cy2bgkFzf2mW0HwqHVTSISKoC0gPpUCXOrYRhu1lCNY43mrqOotTltoGC+Hrtu0aJeO64/Tjaa5JhpW7xjSjwy3lukqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=XWDxr3A8; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=u7nNGcfk3YS6f+K/g0woe4Rifi6nim8UCZ/niqDjLko=; b=XWDxr3A8XsgDAvBFCigLA/7cz3
-	w9RO3KlsJ4ye37LnsnEv68WCDp/3huEwve9yG43vzEUmOLexUixvFbgWt1HsCytHU9EQDE6t36VDA
-	UOo5F35Qq/JI1VSPlVJeJ3hruYY0XxDHX7KQ/ckv72u2WeJi9o8Dlqq1PbsscqOnXXM522skTIS16
-	NmMiRZwHWGRcX3MV72zN+juudrcMJAvUicdVcY4oShlJwoWoqGDpayx8N7fjeJ+RL+AaFQTdGE8jU
-	JRzkaaIITHZezOctm4HR1UOoHjO7Kn0schnWAvkTAd66SOhj09cS700j0Lm6V4OxRIvnNTz7I8oI4
-	00Cv9Arw==;
-Received: from 179-125-79-234-dinamico.pombonet.net.br ([179.125.79.234] helo=[192.168.67.187])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uAAPT-000zis-3o; Wed, 30 Apr 2025 18:36:43 +0200
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Date: Wed, 30 Apr 2025 13:36:28 -0300
-Subject: [PATCH] char: misc: make miscdevice unit test built-in only
+	s=arc-20240116; t=1746031541; c=relaxed/simple;
+	bh=7lWr4OMbkRSnBUxwM3XWJdY3O2AMAYEwZJRX+iFrkGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XCKTl/p4a8OqmEOifJ8X6Hy5Bun3q6ntHAM803jr8RAX31SPqwhynnifHmQOFLeEeRIkHHA4rVt3UO9VrkND2FmREdp8UG/B5uban8ZWhP2JAw8MdWCNyK2kokrhOpPi/sJEyWhCtaHV7c47BwFsc/QzZnCLxX+g7Um8wRDf/jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id 86AD315366;
+	Wed, 30 Apr 2025 17:37:26 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id 761F921A3DA; Wed, 30 Apr 2025 17:37:26 +0100 (BST)
+From: Mans Rullgard <mans@mansr.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH] tty: serial: 8250_omap: fix tx with dma
+Date: Wed, 30 Apr 2025 17:37:09 +0100
+Message-ID: <20250430163709.15850-1-mans@mansr.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-misc-test-fixup-v1-1-6f39ed6c733d@igalia.com>
-X-B4-Tracking: v=1; b=H4sIAItREmgC/x2MywqAIBAAfyX23IKaHupXooPYWnvogVsRiP+ed
- ByGmQxCiUlgaDIkelj42CvotoGw+n0h5LkyGGWcsp3CjSXgRXJh5Pc+sVfB+RhIz9pCrc5EVfz
- HcSrlA9LHNjVhAAAA
-X-Change-ID: 20250430-misc-test-fixup-90c5afce1d14
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
- Stephen Rothwell <sfr@canb.auug.org.au>, 
- Andrew Morton <akpm@linux-foundation.org>, kernel-dev@igalia.com, 
- kernel test robot <lkp@intel.com>, 
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Since it uses __init symbols, it cannot be a module. Builds with
-CONFIG_TEST_MISC_MINOR=m will fail with:
+Commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+introduced two errors in the TX DMA handling for 8250_omap.
 
-ERROR: modpost: "init_mknod" [drivers/misc/misc_minor_kunit.ko] undefined!
-ERROR: modpost: "init_unlink" [drivers/misc/misc_minor_kunit.ko] undefined!
+Firstly, kfifo_dma_out_prepare_mapped() needs a scatterlist with two
+entries whereas only one is provided.  The same error was fixed for
+8250_dma in 59449c9dbdaa ("tty: serial: 8250_dma: use sgl with 2 nents
+to take care of buffer wrap").
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250429155404.2b6fe5b1@canb.auug.org.au/
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202504160338.BjUL3Owb-lkp@intel.com/
-Fixes: 45f0de4f8dc3 ("char: misc: add test cases")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Secondly, when the OMAP_DMA_TX_KICK flag is set, one byte is pulled from
+the kfifo and emitted directly in order to start the DMA.  This is done
+without updating DMA tx_size which leads to uart_xmit_advance() called
+in the DMA complete callback advancing the kfifo by one too much.
+
+In practice, transmitting N bytes has been seen to result in the last
+N-1 bytes being sent repeatedly.
+
+This change fixes both problems.
+
+Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+Signed-off-by: Mans Rullgard <mans@mansr.com>
 ---
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_omap.c | 35 +++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index f9051ab610d54358b21d61c141b737bb345b4cee..0117b852bd131b8a585dc02d8225e2e8c0740077 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2512,7 +2512,7 @@ config TEST_IDA
- 	tristate "Perform selftest on IDA functions"
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index f1aee915bc02..84a2f013015e 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1152,9 +1152,11 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 	struct omap8250_priv		*priv = p->port.private_data;
+ 	struct tty_port			*tport = &p->port.state->port;
+ 	struct dma_async_tx_descriptor	*desc;
+-	struct scatterlist sg;
++	struct scatterlist *sg;
++	struct scatterlist sgl[2];
+ 	int skip_byte = -1;
+ 	int ret;
++	int i;
  
- config TEST_MISC_MINOR
--	tristate "miscdevice KUnit test" if !KUNIT_ALL_TESTS
-+	bool "miscdevice KUnit test" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	default KUNIT_ALL_TESTS
- 	help
-
----
-base-commit: 4f822ad5ee944ffafc21937a32dd055f1df5c28d
-change-id: 20250430-misc-test-fixup-90c5afce1d14
-
-Best regards,
+ 	if (dma->tx_running)
+ 		return 0;
+@@ -1173,16 +1175,6 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 		return 0;
+ 	}
+ 
+-	sg_init_table(&sg, 1);
+-	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+-					   UART_XMIT_SIZE, dma->tx_addr);
+-	if (ret != 1) {
+-		serial8250_clear_THRI(p);
+-		return 0;
+-	}
+-
+-	dma->tx_size = sg_dma_len(&sg);
+-
+ 	if (priv->habit & OMAP_DMA_TX_KICK) {
+ 		unsigned char c;
+ 		u8 tx_lvl;
+@@ -1207,7 +1199,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 			ret = -EBUSY;
+ 			goto err;
+ 		}
+-		if (dma->tx_size < 4) {
++		if (kfifo_len(&tport->xmit_fifo) < 4) {
+ 			ret = -EINVAL;
+ 			goto err;
+ 		}
+@@ -1216,12 +1208,19 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 			goto err;
+ 		}
+ 		skip_byte = c;
+-		/* now we need to recompute due to kfifo_get */
+-		kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
+-				UART_XMIT_SIZE, dma->tx_addr);
+ 	}
+ 
+-	desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1, DMA_MEM_TO_DEV,
++	sg_init_table(sgl, ARRAY_SIZE(sgl));
++
++	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, sgl, ARRAY_SIZE(sgl),
++					   UART_XMIT_SIZE, dma->tx_addr);
++
++	dma->tx_size = 0;
++
++	for_each_sg(sgl, sg, ret, i)
++		dma->tx_size += sg_dma_len(sg);
++
++	desc = dmaengine_prep_slave_sg(dma->txchan, sgl, ret, DMA_MEM_TO_DEV,
+ 			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!desc) {
+ 		ret = -EBUSY;
+@@ -1248,8 +1247,10 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ err:
+ 	dma->tx_err = 1;
+ out_skip:
+-	if (skip_byte >= 0)
++	if (skip_byte >= 0) {
+ 		serial_out(p, UART_TX, skip_byte);
++		p->port.icount.tx++;
++	}
+ 	return ret;
+ }
+ 
 -- 
-Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+2.49.0
 
 
