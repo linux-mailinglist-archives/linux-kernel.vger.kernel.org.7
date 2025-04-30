@@ -1,192 +1,117 @@
-Return-Path: <linux-kernel+bounces-627546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8FD3AA526D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:15:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4991AA5271
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 19:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97CB19A1A1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004654665CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE1B264A92;
-	Wed, 30 Apr 2025 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1263B2638B4;
+	Wed, 30 Apr 2025 17:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5B7i+NFK"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2076.outbound.protection.outlook.com [40.107.101.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CKZV7+v+"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA492609D1;
-	Wed, 30 Apr 2025 17:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746033303; cv=fail; b=Ue4w4/z8ywdkCGgNNVFCvQVUuOUKPDVTlSMcGs4HU82Henxd4LlX+CD/1xyCRnEsYLIl13XAELCyLo8H5h2k2yyWP3vGYcWz7OB1Y7C+TvfNyUC9k/0nnsfU4MSVRxrPyn0Ufs972fze85ZAxE7h9K1pEm7Ae5wxNNo0TS8Utd4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746033303; c=relaxed/simple;
-	bh=CB264QTP0aXxIIRF/00d5JIm9ix7C7Tq6t9VuCPMLcg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r4H6HctRijxmNhz89Gs87sk5yfgjek+ydys2WU9O9hn1PfA9elrkfXBi8yUIzRDypVkys1lUWYOAPAqHiM2it4h4RV/XHy0OOFoGFk2tlBEbP3AnqhKMSAgwiesAr+r/PAXvmgCcX18Tu/XSlppRgkJ88LQnQii9DM9Mo0xsHtg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5B7i+NFK; arc=fail smtp.client-ip=40.107.101.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RORiuh6hIMs7Zo05XrgRtXFCaTWug4JoIZSNO6N1TC6dE3zkbv7akrfisZKvfi9q3RwQca42up06ipWHi7yZGVO0vAK7Wzo8nbkpM31ClL5P03s5OTbn3H4ywekZEnXLEkJqkNW7qoP9tIuKW8q5Qw3xsaBJphvnOoLAK4EKOebm4m2Ns8NZmBAiEE2D1QXi0VbomIs35s7YknRIj0X/osqTMkAt5mdcgVAuXFd5mcuXQbuX2Lx40WXlj23FRxUQiwVQyUIsWxLoGZi/Odk7kXi7eqbYrWfX7YG/HUfIrAdHPkKVIorkstSDP5W/IQbu6iw2cKYbUcpL7VhhAZES+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=05VS0uXcuMNGxVdUPrdCwaumCtMQE+MJBy4wJ3tTbRg=;
- b=KiMnAN1rojcI1neniP4+vK1MMphpsVeFhsZSoE2KucjxFchXDsdkk6gPjI/485t+00bbCGzTZvPxyYGqERe2WhC7jfLZ/ki1IkQ3QdTa8Q8LNRtwF18zsPB2qEZhFu+Yy4R1sbSFqmH6k2H+wEcBpc/xkU6vTApUmTn7JZLEXqdnf00SwStDwhowLx/nzv/BdKKq+PabwoGqhPG+CB5LNmlZ93TJVfnvPUaP1qDE+B3RK4t4qJGCOupcQWiOHsFNFoMEJWI4iG2RDTujRmt6p+u8TmraEESSWabkH1uILhouZ47Qk3tpwKnLnky9RteFCMSlXZ3sC/nx8iEL0lt3DQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=05VS0uXcuMNGxVdUPrdCwaumCtMQE+MJBy4wJ3tTbRg=;
- b=5B7i+NFK/Su4K+ilfrtvNw9FhGQtpdAKI7T4HKOc4Z4e5EmKRIZU/OeJ/56lSEvBH+W2HScItsE09ovhLtESJjTvpmARLujfrdTtBxxXxLLWAF+oRv3A+nPPBH4kuqX0VqIrUuAoHVa2tOBmOW77/QBO1ZbqeJ5QRPtaId/FRzs=
-Received: from BN9PR03CA0256.namprd03.prod.outlook.com (2603:10b6:408:ff::21)
- by CH3PR12MB9218.namprd12.prod.outlook.com (2603:10b6:610:19f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.34; Wed, 30 Apr
- 2025 17:14:55 +0000
-Received: from BN1PEPF00004687.namprd05.prod.outlook.com
- (2603:10b6:408:ff:cafe::f6) by BN9PR03CA0256.outlook.office365.com
- (2603:10b6:408:ff::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.41 via Frontend Transport; Wed,
- 30 Apr 2025 17:14:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00004687.mail.protection.outlook.com (10.167.243.132) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8699.20 via Frontend Transport; Wed, 30 Apr 2025 17:14:55 +0000
-Received: from tapi.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Apr
- 2025 12:14:51 -0500
-From: Swapnil Sapkal <swapnil.sapkal@amd.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <shuah@kernel.org>
-CC: <gautham.shenoy@amd.com>, <narasimhan.v@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: [PATCH] selftests/cpufreq: Fix cpufreq basic read and update testcases
-Date: Wed, 30 Apr 2025 17:14:33 +0000
-Message-ID: <20250430171433.10866-1-swapnil.sapkal@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EB625F980
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 17:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746033343; cv=none; b=SwbnDHvQU+Z8oShAko5Atw0p29baSi+QbBTH+8ISMJrcDVVDAPLMssoRlSiv+UZnVWdzxt7Qoanp3FZhRGlicbkViZBapOH8unQt3VQCEE9cDiUNCWPLwRxBiRb9ihjUJaqhkW7vVUc1qJe5eRHxz4yY4UZp7EtIFELZbcJjF7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746033343; c=relaxed/simple;
+	bh=a1OE5bfqiQpD3wUqlPPLecFwn0/TgL4JwzH7YA5a96I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=m3y67IKARn9ZHzjazHSp1Wiub0rYeG4HeZsLHyHOrAh7YXho/knZKaF9Pef4xmoKswCQ9QLE8j5DPsvDnWgffSXQuEaldDv5DQP4Bd1xJFd7IaeHorn0O/u46v6bGiWMng1dtiFrv7n65q6QSoPbb7psxxAb7LeU3UyLt3rWIy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CKZV7+v+; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-736d64c5e16so92115b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746033340; x=1746638140; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2l6EpSn49twaG/1RM3U2XqpvkRe6FWEsiPTfIGBFJKk=;
+        b=CKZV7+v+XqB+eJFxYGGWtpU9caUc4ZRN1HuxhZXHfbOTcz6zoe+1HDakACaCwvr0v/
+         c16wy5ntS+PcxuklMLxmQ3n9xdqquA2/3cVj1Sqz9WdK55ASlLEbCCrmgevyvBIciQhw
+         mpqJH89ypTJ1ELKqP6xNBaVoqWoCQkV2tv2f+USmNr2d3vBg4e+lURuOkZgS7v5L51Zj
+         H743/he3U8UPxjE6StyRhpD8w/2dlYUSrASyKECtXEIZH4mX9ILRaqAaKraq6XZ8ynFG
+         JTFpZSwB901Wpkpgk1YspfHD3pJ0IKfGYBCi/nM5Ypnb4ItpvX7m8CAQVFWlS4/WhtJc
+         oBvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746033340; x=1746638140;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2l6EpSn49twaG/1RM3U2XqpvkRe6FWEsiPTfIGBFJKk=;
+        b=TL6mUFVmGIu4LQry4AGUQZ000vtz0KZlNBMbQuTLHg2YNPM8udu8IZjsBKYum2CiDC
+         QemEywmCZAfdnCmUbkt9emzms9chHW8rkQqiUWadgC++Uv59Xcua/6CkzPAPu23lrBwd
+         YNwIiVQzDQSr1mgD0d1LB8vph/hiFCIO/XK8/k5j+yxObap2KKaFgAlIVKIAFJ0/gEN/
+         1Qmhlc1pcmArtSkqkVOIJhcTgGiMe9k1l6mNPN5JSLfMwcr0oU/fG+h6ObXpdCoSswBH
+         /KqVmTdQ+we3+aUlpLJlW9dEqV/buNK02jZBio5L8ZPFlCbIJHuxpSSApDsqVMv7rna+
+         9X6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUgxO0DcHfKN97pCmAm/kBSsckIqnvNIz9/dVQRKuuqt1dpy9gYQ86c0f1ahsyid+gsTgjbxAUz0DpZvcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyCh7QinxJbsO9YZl1fW6ZgJ9auYf0eZNmzv/q9xgJkmlDa3cN
+	qWuiVm2hhVodJ8eqZsoqK80/VEheiVVOjCI8rFcObyvba6ZUHKFzSQ0drU7sXukSPlAu8OHoaM5
+	ST5/MsQ==
+X-Google-Smtp-Source: AGHT+IHwG7pdNLiBaAM24HThjkOi7tLfoBL4L6u/i7asjEelEVXiAdsmMsTUPy8p7bw7xwkQu9IheoDEPmPe
+X-Received: from pgbfq21.prod.google.com ([2002:a05:6a02:2995:b0:af2:3b16:9767])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d8c:b0:1f1:432:f4a3
+ with SMTP id adf61e73a8af0-20aa2fcc884mr4171936637.23.1746033340179; Wed, 30
+ Apr 2025 10:15:40 -0700 (PDT)
+Date: Wed, 30 Apr 2025 10:15:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004687:EE_|CH3PR12MB9218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3fcbdc78-8030-425f-fe52-08dd880a86f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?m3Td5Tvf0Ru0vLuCH4Sv03PtPRShDNjFVvWqe5euFuuBT+pxzul4sUJuunBl?=
- =?us-ascii?Q?Xlk4XUOti8m6+dls0wKyhU8B2rgkNuZyWVIYmHhCZm3dVoRTGZhn22rT2gCB?=
- =?us-ascii?Q?Fxu0+WcPwtnGocNQsuxGoQvFmc1xfpo/nluPTRlDGGzWXsS2RNica8NYF1H6?=
- =?us-ascii?Q?w37PZA1qz+gUCh+XglSfHcEJpJQzJ/WhOACWLcOxXAi821fPKjHdlwLxFGGY?=
- =?us-ascii?Q?W4JmIQYrW8u1L8ar2l47nb3kQKHecag17I/xRFbI/rNsuRrhlOpijky4GlpZ?=
- =?us-ascii?Q?wfRGNQ1dY7jMONuXF4uRr+MNtPZSaQRagtaTSZrVYzgfiwM1bkrXqPMCQsYY?=
- =?us-ascii?Q?sfMTsLkJoCZgArw9GYdUzI7qT4Rt86LL52bieARdwq9z9jvcVKCEAffKD1wA?=
- =?us-ascii?Q?v+zpLXr+b5U6qseROh5KADw+VDb9hzh8B3Wbx0p4NY/yYtrwoiUEqy0aQ4kD?=
- =?us-ascii?Q?Os3if4e+atCy4/HGtkWwO+vzZpFLb8QMuIVPJqp6jwfoaL0yhkqBsC1vjfgj?=
- =?us-ascii?Q?7FroqlaTEfX6cqhHDCvQdrWHaUxEnSaNA7U/Wod58ieB7kIi1dBkUitXjvZz?=
- =?us-ascii?Q?d1jqlxGqvU081G09uGj9AYcJ7zLU5TLWqnX2DzDFig1+WL7H+xhmN5DPFY7V?=
- =?us-ascii?Q?fI5N3sWkBaLuORthHZudAkz8AzxCMXbSZ6jXCTEEzobQPH6Zx07c0u2qzY0f?=
- =?us-ascii?Q?bKhznybGOmaTgF4iyYRN24ahFcXv8QA/DLHQOrUZ/ItPNmTaPU/mEJqDFOmT?=
- =?us-ascii?Q?9hLPVlNCSGrm9wbK9u5dEgWCTqa0WnhEncCdNPdS7kyb3xhUZg3rqNJGrhwp?=
- =?us-ascii?Q?5fUuRr26MvcR9swZhuMdx9aDT3mBRg0YxhJCBkLFTF4ddTdvHK6QngWGC5PH?=
- =?us-ascii?Q?jQLzkOJqCqEdnRccftO9rcXS5RCyUPke7JEde40zZwo0B6knqwUL7kwry1vj?=
- =?us-ascii?Q?rk1rKA+LB3KsGlmLXGLYXV4UWcntBRztfAiwSsBuytB3A18wvIC4driBYKQM?=
- =?us-ascii?Q?qnGDsoI6k+Yz27rx6E/SyQmgxXBx7cjmLua8LGlMpVH8hbxro5kNh7y6Rfji?=
- =?us-ascii?Q?UYfuwEQ/uFwYTHKCJcaJl4Z29RdlpdxA06pNCi3m6weVTECPzYMlcjLc8lbu?=
- =?us-ascii?Q?lE71yHTAf9KQCWzZ3KxTOC18MSnb4ZjYT8ql/kckfY7u9jL+6FptYqcMAC50?=
- =?us-ascii?Q?BPpPA97JctJWes4i3TMvtXWDzNZnr5jTpVInqM6uC+bUpFRy6gVaH1vh51RL?=
- =?us-ascii?Q?mo/PGL4YLR2q/2kMkaewODMTJSxZdliNOj/mEYr3e2pIc/SL/ObTGfm11h9a?=
- =?us-ascii?Q?6b19W9lvSkrf/Bxrq8wPgcyaAumiLIvdVam5wm53I4aJtw9Z8VmRFJTzmYtA?=
- =?us-ascii?Q?y0S2qXLJXdFEznx9o16pEF5x21S8aBvSUjXQHuVDSiOaHjsNYbUplnQrVR0u?=
- =?us-ascii?Q?uglDp3PeETkqwCmK7l/YRL86oX5mN3KS+iIZoenaer7adiT7fXsx3AIFlr63?=
- =?us-ascii?Q?FfOx9yL76MbZs0z1vyU9iYvQPKEthKUjUHLu?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 17:14:55.1506
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fcbdc78-8030-425f-fe52-08dd880a86f7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004687.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9218
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
+Message-ID: <20250430171534.132774-1-irogers@google.com>
+Subject: [PATCH v2 0/5] Silence some clang -Wshorten-64-to-32 warnings
+From: Ian Rogers <irogers@google.com>
+To: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Jakub Kicinski <kuba@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, Leo Yan <leo.yan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-In cpufreq basic selftests, one of the testcases is to read all cpufreq
-sysfs files and print the values. This testcase assumes all the cpufreq
-sysfs files have read permissions. However certain cpufreq sysfs files
-(eg. stats/reset) are write only files and this testcase errors out
-when it is not able to read the file.
-Similarily, there is one more testcase which reads the cpufreq sysfs
-file data and write it back to same file. This testcase also errors out
-for sysfs files without read permission.
-Fix these testcases by adding proper read permission checks.
+Clang's shorten-64-to-32 can be useful to spot certain kinds of bugs
+that can be more prevalent in C code due to implicit 64 to 32-bit
+casting. Add some explicit casts to header files so as to avoid the
+warning when these headers are used.
 
-Reported-by: Narasimhan V <narasimhan.v@amd.com>
-Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
----
- tools/testing/selftests/cpufreq/cpufreq.sh | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+This patch started out as a single patch in a series for the perf tool
+where a bug could have been identified were -Wshorten-64-to-32
+enabled:
+https://lore.kernel.org/lkml/20250401182347.3422199-3-irogers@google.com/
 
-diff --git a/tools/testing/selftests/cpufreq/cpufreq.sh b/tools/testing/selftests/cpufreq/cpufreq.sh
-index e350c521b467..3484fa34e8d8 100755
---- a/tools/testing/selftests/cpufreq/cpufreq.sh
-+++ b/tools/testing/selftests/cpufreq/cpufreq.sh
-@@ -52,7 +52,14 @@ read_cpufreq_files_in_dir()
- 	for file in $files; do
- 		if [ -f $1/$file ]; then
- 			printf "$file:"
--			cat $1/$file
-+			#file is readable ?
-+			local rfile=$(ls -l $1/$file | awk '$1 ~ /^.*r.*/ { print $NF; }')
-+
-+			if [ ! -z $rfile ]; then
-+				cat $1/$file
-+			else
-+				printf "$file is not readable\n"
-+			fi
- 		else
- 			printf "\n"
- 			read_cpufreq_files_in_dir "$1/$file"
-@@ -83,10 +90,10 @@ update_cpufreq_files_in_dir()
- 
- 	for file in $files; do
- 		if [ -f $1/$file ]; then
--			# file is writable ?
--			local wfile=$(ls -l $1/$file | awk '$1 ~ /^.*w.*/ { print $NF; }')
-+			# file is readable and writable ?
-+			local rwfile=$(ls -l $1/$file | awk '$1 ~ /^.*rw.*/ { print $NF; }')
- 
--			if [ ! -z $wfile ]; then
-+			if [ ! -z $rwfile ]; then
- 				# scaling_setspeed is a special file and we
- 				# should skip updating it
- 				if [ $file != "scaling_setspeed" ]; then
+v2: Rebase and try to address Arnd Bergmann's comments wrt the commit
+    message. Arnd also mentioned doing larger refactors, changing
+    return types and adding helper functions. I've held off doing this
+    given concerns over breaking printf flags.
+
+Ian Rogers (5):
+  bitfield: Silence a clang -Wshorten-64-to-32 warning
+  bitmap: Silence a clang -Wshorten-64-to-32 warning
+  bitops: Silence a clang -Wshorten-64-to-32 warning
+  math64: Silence a clang -Wshorten-64-to-32 warning
+  hash.h: Silence a clang -Wshorten-64-to-32 warning
+
+ include/asm-generic/bitops/fls64.h | 2 +-
+ include/linux/bitfield.h           | 2 +-
+ include/linux/bitmap.h             | 2 +-
+ include/linux/hash.h               | 2 +-
+ include/linux/math64.h             | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
 -- 
-2.43.0
+2.49.0.906.g1f30a19c02-goog
 
 
