@@ -1,189 +1,226 @@
-Return-Path: <linux-kernel+bounces-626210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4640AA3FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F40AA4000
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 170BA16F85C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A7D1BA5EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC169647;
-	Wed, 30 Apr 2025 01:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587F82CA6;
+	Wed, 30 Apr 2025 01:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hn3izpPU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWGtGc5C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437D217BA9
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA410A1E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745975103; cv=none; b=rgbSI1JxKpjxqM7pjV0s+o6AG/Jqw1p9XBsmssU8mXCw3O93S+cQWNvPLdIA5rTfF1cdoJvgDfBLk9SEQFT/AV4JpB0TVBYX8ciotj/Y5I1+cigL4B4HLiSacB4zPWzqFQaqbgR8a74EYc3cgLtvg1AMLiV1k6wag8vG7C80Elk=
+	t=1745975126; cv=none; b=kJseyjDEspazgN0DztcibvnzhCzfoY+iUDLOebBzN+EDNB2IDOCFavhKWwZTnd0YqV6ab4cOk+stHIsoS9ZqA2FePbTA9L7lCOKfvpYmET/fHHu4ATPiGefldHhd07ZHKbztexJMJobjMcwCarY8ZBVKbeZUshEUGoNvmSUIids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745975103; c=relaxed/simple;
-	bh=zfMN+OuWOiL6b7Mc0kTwoXJkTCxc25MaAuv8otuWUvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dylqb0sUiUvSxmaaNATZED2f+81eb8k5aJ9imXmF1Z7TlYimSkqPc7QJa85SpKazHbuJPxIHfV6ay803pEfleIsoUtagBjmWed66ir5JMuZZsZsH4Afe1ZXgJ0gqImzJp8HD+OhSlLYq+9jPt/DuyCvum8jNv7vrPhCNIdnU5xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hn3izpPU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2445C4CEE3;
-	Wed, 30 Apr 2025 01:05:02 +0000 (UTC)
+	s=arc-20240116; t=1745975126; c=relaxed/simple;
+	bh=U7zgE6IzCLrPpMWVpq2+GUdcrSUMCh/2FsvZ9huMwiU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Yb07tBkMDhg9G5//9t2e4+7XXY5fcd5ikRTxantmx0BuqYiFZvP9UAadiahgjhlvdxEtCHqIQKU1FM/wBasYCjhQh0jqG4wlEg8Nx0G4ZS9vEgCeS049hj1ulu+SeLRwoMfr/aBmkMpKfhSnwR4IU+2gnruFgvNljxjXMJkPpmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWGtGc5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D92FC4CEE3;
+	Wed, 30 Apr 2025 01:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745975102;
-	bh=zfMN+OuWOiL6b7Mc0kTwoXJkTCxc25MaAuv8otuWUvo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Hn3izpPU4vOovFUK/F2h5pSByQq/JfdnUb8Zz0UQ3uQpyVJw4iAOn7Cyip/d9yML4
-	 i4dCC2Mffrt+zo1vpw5fCDmMXKw6uDE3ORIAsMEnzs8iu01XeGoZcwjEs0qLwHyzk7
-	 e6Exhy/98dLsYC54wtQB9kmr978nQqA1hknSzAwrYWDSG1XBcIYx0sIacztxOhCW/z
-	 rq0mnEH9Js97Jy3hdSUMbId2ibJcToRezlaci6RRdS483noBOXPzYoCkTvv0/KFccG
-	 pCIY7hepDHAM6vx6BmPPQQii0WwoyHRHlmRXBRucXP80t4PiSB14S2r6yr02ZzaklF
-	 ovv6mHA7+4Z4Q==
+	s=k20201202; t=1745975126;
+	bh=U7zgE6IzCLrPpMWVpq2+GUdcrSUMCh/2FsvZ9huMwiU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EWGtGc5CTuD7OCD0BH1BIMJ4uUH/UutxSxCR9uVXzltMFD3JzqWumduUhzgREaX16
+	 kT2MciZhfHf4bJULImPkHAAl40aPPqtgvmnNJzR7tZgYbwBQVv/WlvWmsNI8e7Ea/2
+	 CrpGDDj7R8nUiu6C06PxqVC6yZip1nFIghuxrH7t+pLhGRKpg1koEOGkQUTT8GYx8W
+	 6kJ3yr94xvGEYvLVNUP+hJ5mp0T6lzt6VDi8qTVGjiMn2HJJipwKvWEO19x0S8tT/o
+	 Q4L+U7RbvqP8unmRRjeKRWAo7ZIyKeWCxMTyOu3lyLtWn2YVFWgJI8unOSUxooHfn/
+	 xIw7PIkIY08ng==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A8C9CCE077B; Tue, 29 Apr 2025 18:05:00 -0700 (PDT)
-Date: Tue, 29 Apr 2025 18:05:00 -0700
+	id 35971CE077B; Tue, 29 Apr 2025 18:05:25 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+Cc: kernel-team@meta.com,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	John Ogness <john.ogness@linutronix.de>,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Jon Pan-Doh <pandoh@google.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>
-Subject: [PATCH v4 0/20] ratelimit: Reduce ratelimit's false-positive misses
-Message-ID: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop>
- <4edcefb0-cdbd-4422-8a08-ffc091de158e@paulmck-laptop>
- <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v4 01/20] lib: Add trivial kunit test for ratelimit
+Date: Tue, 29 Apr 2025 18:05:05 -0700
+Message-Id: <20250430010524.3614408-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
+References: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72ee57b8-9e2a-4cad-aaa0-1e3353d146d8@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
 
-Hello!
+Add a simple single-threaded smoke test for lib/ratelimit.c
 
-This v4 series replaces open-coded uses of the ratelimit_state structure
-with formal APIs, counts all rate-limit misses, replaces jiffies=0 special
-case with a flag, provides a ___ratelimit() trylock-failure fastpath to
-(almost) eliminate false-positive misses, simplifies the code, and adds
-a simple test.
+To run on x86:
 
-The key point of this series is the reduction of false-positive misses.
-More could be done to avoid open-coded access to the ->interval and
-->burst fields, and to tighten up checking of user input for these fields,
-but those are jobs for later patches.
+	make ARCH=x86_64 mrproper
+	./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add CONFIG_RATELIMIT_KUNIT_TEST=y --kconfig_add CONFIG_SMP=y lib_ratelimit
 
-The individual patches are as follows:
+This will fail on old ___ratelimit(), and subsequent patches provide
+the fixes that are required.
 
-1.	Add trivial kunit test for ratelimit.
+[ paulmck:  Apply timeout and kunit feedback from Petr Mladek. ]
 
-2.	Create functions to handle ratelimit_state internals.
+Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
+Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Jon Pan-Doh <pandoh@google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Karolina Stolarek <karolina.stolarek@oracle.com>
+---
+ lib/Kconfig.debug          | 11 ++++++
+ lib/tests/Makefile         |  1 +
+ lib/tests/test_ratelimit.c | 79 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 91 insertions(+)
+ create mode 100644 lib/tests/test_ratelimit.c
 
-3.	Avoid open-coded use of ratelimit_state structure's ->missed
-	field.
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 9fe4d8dfe5782..c239099218c2b 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -3232,6 +3232,17 @@ config TEST_OBJPOOL
+ 
+ 	  If unsure, say N.
+ 
++config RATELIMIT_KUNIT_TEST
++	tristate "KUnit Test for correctness and stress of ratelimit" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds the "test_ratelimit" module that should be used
++	  for correctness verification and concurrent testings of rate
++	  limiting.
++
++	  If unsure, say N.
++
+ config INT_POW_KUNIT_TEST
+ 	tristate "Integer exponentiation (int_pow) test" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+diff --git a/lib/tests/Makefile b/lib/tests/Makefile
+index 5a4794c1826e7..1c7c2d20fe501 100644
+--- a/lib/tests/Makefile
++++ b/lib/tests/Makefile
+@@ -45,5 +45,6 @@ obj-$(CONFIG_STRING_KUNIT_TEST) += string_kunit.o
+ obj-$(CONFIG_STRING_HELPERS_KUNIT_TEST) += string_helpers_kunit.o
+ obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
+ obj-$(CONFIG_UTIL_MACROS_KUNIT) += util_macros_kunit.o
++obj-$(CONFIG_RATELIMIT_KUNIT_TEST) += test_ratelimit.o
+ 
+ obj-$(CONFIG_TEST_RUNTIME_MODULE)		+= module/
+diff --git a/lib/tests/test_ratelimit.c b/lib/tests/test_ratelimit.c
+new file mode 100644
+index 0000000000000..0374107f5ea89
+--- /dev/null
++++ b/lib/tests/test_ratelimit.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <kunit/test.h>
++
++#include <linux/ratelimit.h>
++#include <linux/module.h>
++
++/* a simple boot-time regression test */
++
++#define TESTRL_INTERVAL (5 * HZ)
++static DEFINE_RATELIMIT_STATE(testrl, TESTRL_INTERVAL, 3);
++
++#define test_ratelimited(test, expected) \
++	KUNIT_ASSERT_EQ(test, ___ratelimit(&testrl, "test_ratelimit_smoke"), (expected))
++
++static void test_ratelimit_smoke(struct kunit *test)
++{
++	// Check settings.
++	KUNIT_ASSERT_GE(test, TESTRL_INTERVAL, 100);
++
++	// Test normal operation.
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, false);
++
++	schedule_timeout_idle(TESTRL_INTERVAL - 40);
++	test_ratelimited(test, false);
++
++	schedule_timeout_idle(50);
++	test_ratelimited(test, true);
++
++	schedule_timeout_idle(2 * TESTRL_INTERVAL);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++
++	schedule_timeout_idle(TESTRL_INTERVAL - 40);
++	test_ratelimited(test, true);
++	schedule_timeout_idle(50);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, false);
++
++	// Test disabling.
++	testrl.burst = 0;
++	test_ratelimited(test, false);
++	testrl.burst = 2;
++	testrl.interval = 0;
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++
++	// Testing re-enabling.
++	testrl.interval = TESTRL_INTERVAL;
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, false);
++	test_ratelimited(test, false);
++}
++
++static struct kunit_case sort_test_cases[] = {
++	KUNIT_CASE_SLOW(test_ratelimit_smoke),
++	{}
++};
++
++static struct kunit_suite ratelimit_test_suite = {
++	.name = "lib_ratelimit",
++	.test_cases = sort_test_cases,
++};
++
++kunit_test_suites(&ratelimit_test_suite);
++
++MODULE_DESCRIPTION("___ratelimit() KUnit test suite");
++MODULE_LICENSE("GPL");
+-- 
+2.40.1
 
-4.	Avoid open-coded use of ratelimit_state structure's ->missed
-	field.
-
-5.	Avoid open-coded use of ratelimit_state structure's internals.
-
-6.	Convert the ->missed field to atomic_t.
-
-7.	Count misses due to lock contention.
-
-8.	Avoid jiffies=0 special case.
-
-9.	Reduce ___ratelimit() false-positive rate limiting, courtesy of
-	Petr Mladek.
-
-10.	Allow zero ->burst to disable ratelimiting.
-
-11.	Force re-initialization when rate-limiting re-enabled.
-
-12.	Don't flush misses counter if RATELIMIT_MSG_ON_RELEASE.
-
-13.	Avoid atomic decrement if already rate-limited.
-
-14.	Avoid atomic decrement under lock if already rate-limited.
-
-15.	Warn if ->interval or ->burst are negative, courtesy of Petr
-	Mladek.
-
-16.	Simplify common-case exit path.
-
-17.	Use nolock_ret label to save a couple of lines of code.
-
-18.	Use nolock_ret label to collapse lock-failure code.
-
-19.	Use nolock_ret restructuring to collapse common case code.
-
-20.	Drop redundant accesses to burst.
-
-Changes since v3:
-
-o	Correctly handle zero-initialized ratelimit_state structures,
-	being careful to avoid acquiring the uninitialized ->lock.
-
-o	Remove redundant checks of the "burst" local variable.
-
-o	Add Reviewed-by tags.
-
-Changes since v2:
-
-o	Apply feedback from Bert Karwatzki, Srikanth Aithal, and Mark
-	Brown, fixing a hang that happened on some systems.
-
-o	Applied Reviewed-by tags and added links.
-
-o	Added a prototype patch from Petr Mladek that splats if either
-	interval or burst are negative.
-
-o	Added several commits that simplify the code.
-
-Changes since v1 (RFC):
-
-o	Switch from lockless fastpath to carrying out needed updates
-	upon trylock failure, per Petr Mladek feedback.  This greatly
-	simplifies the code and is a much smaller change from the
-	current code.  There is a small performance penalty compared to
-	the lockless fastpath, but not enough to matter.
-
-o	Never unconditionally acquire the lock, again per Petr Mladek
-	feedback.
-
-o	Better define effects of non-positive burst values (always
-	ratelimit) and non-positive interval values (never ratelimit
-	when the burst value is positive).
-
-o	The changes from Petr's original are supplied as five incremental
-	patches, but could easily be folded into Petr's original if
-	desired.  (Left to my lazy self, they stay as-is.)
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/drivers/char/random.c              |    9 +
- b/drivers/gpu/drm/amd/pm/amdgpu_pm.c |   11 --
- b/drivers/gpu/drm/i915/i915_perf.c   |    8 -
- b/include/linux/ratelimit.h          |   40 +++++++-
- b/include/linux/ratelimit_types.h    |    2 
- b/lib/Kconfig.debug                  |   11 ++
- b/lib/ratelimit.c                    |    8 -
- b/lib/tests/Makefile                 |    1 
- b/lib/tests/test_ratelimit.c         |   79 ++++++++++++++++
- include/linux/ratelimit.h            |   13 +-
- include/linux/ratelimit_types.h      |    3 
- lib/ratelimit.c                      |  165 ++++++++++++++++++++---------------
- 12 files changed, 246 insertions(+), 104 deletions(-)
 
