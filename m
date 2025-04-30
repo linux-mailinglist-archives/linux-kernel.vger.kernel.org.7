@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-626214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBF5AA4004
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827B2AA400B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4136D987035
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19D61A86E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9523A8C1;
-	Wed, 30 Apr 2025 01:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E8819F40A;
+	Wed, 30 Apr 2025 01:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYO3AJC6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRuqRK2R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ECE134CB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A922612
 	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745975127; cv=none; b=iMXspUzqlTrL8XuF1SCGbDff2C/mliCHijTm0arSXhAOBRd1IgchB0HzWDAP0nyLgq5eDJfF4It69kky+Qo6DM3m337bvqhXeXBVkq1okeFz+R6Zmk2KhUqizSXgO8fhWE4ome4hFZr//LbZ4/vrwc6hx4rMMiEtXWZ2qINd7QA=
+	t=1745975127; cv=none; b=BUwBKq7UtApbDVdJjQqj0kB7yQi+/NhUpeC9u6Elo7pXKydJxOjZb2mWWosR30DogutkiiBMWfCryEDZFLTbhH+FuvwPVTF+/2DC5qppyhNrRkFeApRuLyn8ct+/LJcHVQAel9LvWsT2MEuBfD0Lj6C6ZTjgZXeL5R2niHx5cl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745975127; c=relaxed/simple;
-	bh=drIhZlz6qjJXl6CfFVToJFT9tX9Y5dyNfzQrE+P3u7o=;
+	bh=/+i4NOmtNmiJBCyQ4d45E7T91BkwFjUY+T60jMduKPo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TvymNZ79VCtwKK3JOIAauBJZmCfO2gzJH4SM+H/nDbuC+IqRY2ItGalxGhdNBgI/kM4cW/sVUV9/3j3VjdD+03hvu41D8kR0CX/J/YwVNb8WxxK4sGiAOJ+/hsRzLbTBqlhyU95/GvMKx5mtUAbtVZDUpEVBlzrDhG9C33MX9hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYO3AJC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF39C4CEE3;
+	 MIME-Version; b=IXTb3Y0eYZqbdKS/Xh28IOl4OvyQkqFInAhSLCM7DTY23kwcMka71LTR9koGuKj/qzcZ2eLXY6bJXhRhZl5Xel+Ub1RrgYG0qCOW8akOf5Hd24F/R7dzUWndn1xwAJQZhogq9ZBnrCvIR3QxJmBYlsGc0AyUwNsefaUPByTSpro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRuqRK2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA500C4CEF4;
 	Wed, 30 Apr 2025 01:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745975126;
-	bh=drIhZlz6qjJXl6CfFVToJFT9tX9Y5dyNfzQrE+P3u7o=;
+	s=k20201202; t=1745975127;
+	bh=/+i4NOmtNmiJBCyQ4d45E7T91BkwFjUY+T60jMduKPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZYO3AJC6RXPJeaS+caIxQrzhTeKEi94FbgC1Uc0iLBoCA9Zlwz2uW+qGjfMy23MoH
-	 d/FukNP/1PD10TRwKVeS3SJ0FrP0lDcjL/M3fNSZ80DhXg7Amzv3aW8oEi52P7Musl
-	 8vJ1mBpFZ3ZP2gBr/1SE8Gxbc/XEmn0ac4fpCFd3k4YDkYoLUTIrBefLx4xmPGRXHf
-	 wwaZ5gVACPV+52BuXVgLfFBeQzJS41F+c5lhjTn/98IUwFJ6uPUbKRdm7baj3vNpcA
-	 4UDh7yJAbIG2288Fz9h2fSgCbDbCAHDzwUYVKHrCQsrHJEcRjrRDyaTHN7shzllQcW
-	 qSbbWYc511zPQ==
+	b=BRuqRK2RVomGeEtSOnh1tFi1dDiseR0kIrpbeMfHXrOW66HJ+s1o7R6OELVGpx61f
+	 xvos93VuzHGEWkB99HHZAKQ699eisrlfrynzFYZvH0womii0ikyf9qDXq3niyeui6b
+	 DU/95FHywTsIKI24cm3vs12fdRc3BDm/2KazWniYFYnz1R+YkxIIVDYMZDNNpCdFKH
+	 tCiAslazyXdpKnVWChAKJUqJ5NBEL07KNQ3uAn4FaQClQpTmfd7Cz53+2NyO9++eNy
+	 auMIgCvarf7gtui4DeFqsmwbNAKGhUwO+vX73RDftlm3FoNZg/3irfKOtzfnrN1OXr
+	 jRM6OmF6XFexQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7B7DDCE0E61; Tue, 29 Apr 2025 18:05:25 -0700 (PDT)
+	id 87287CE0F4E; Tue, 29 Apr 2025 18:05:25 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -56,9 +56,9 @@ Cc: kernel-team@meta.com,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v4 07/20] ratelimit: Count misses due to lock contention
-Date: Tue, 29 Apr 2025 18:05:11 -0700
-Message-Id: <20250430010524.3614408-7-paulmck@kernel.org>
+Subject: [PATCH v4 08/20] ratelimit: Avoid jiffies=0 special case
+Date: Tue, 29 Apr 2025 18:05:12 -0700
+Message-Id: <20250430010524.3614408-8-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
 References: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
@@ -70,11 +70,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The ___ratelimit() function simply returns zero ("do ratelimiting")
-if the trylock fails, but does not adjust the ->missed field.  This
-means that the resulting dropped printk()s are dropped silently, which
-could seriously confuse people trying to do console-log-based debugging.
-Therefore, increment the ->missed field upon trylock failure.
+The ___ratelimit() function special-cases the jiffies-counter value of zero
+as "uninitialized".  This works well on 64-bit systems, where the jiffies
+counter is not going to return to zero for more than half a billion years
+on systems with HZ=1000, but similar 32-bit systems take less than 50 days
+to wrap the jiffies counter.  And although the consequences of wrapping the
+jiffies counter seem to be limited to minor confusion on the duration of
+the rate-limiting interval that happens to end at time zero, it is almost
+no work to avoid this confusion.
+
+Therefore, introduce a RATELIMIT_INITIALIZED bit to the ratelimit_state
+structure's ->flags field so that a ->begin value of zero is no longer
+special.
 
 Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
 Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
@@ -87,25 +94,52 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- lib/ratelimit.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/ratelimit.h       | 2 +-
+ include/linux/ratelimit_types.h | 1 +
+ lib/ratelimit.c                 | 4 +++-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/ratelimit.h b/include/linux/ratelimit.h
+index c78b92b3e5cd8..adfec24061d16 100644
+--- a/include/linux/ratelimit.h
++++ b/include/linux/ratelimit.h
+@@ -43,7 +43,7 @@ static inline void ratelimit_state_reset_interval(struct ratelimit_state *rs, in
+ 
+ 	raw_spin_lock_irqsave(&rs->lock, flags);
+ 	rs->interval = interval_init;
+-	rs->begin = 0;
++	rs->flags &= ~RATELIMIT_INITIALIZED;
+ 	rs->printed = 0;
+ 	ratelimit_state_reset_miss(rs);
+ 	raw_spin_unlock_irqrestore(&rs->lock, flags);
+diff --git a/include/linux/ratelimit_types.h b/include/linux/ratelimit_types.h
+index d21fe82b67f67..ef6711b6b229f 100644
+--- a/include/linux/ratelimit_types.h
++++ b/include/linux/ratelimit_types.h
+@@ -11,6 +11,7 @@
+ 
+ /* issue num suppressed message on exit */
+ #define RATELIMIT_MSG_ON_RELEASE	BIT(0)
++#define RATELIMIT_INITIALIZED		BIT(1)
+ 
+ struct ratelimit_state {
+ 	raw_spinlock_t	lock;		/* protect the state */
 diff --git a/lib/ratelimit.c b/lib/ratelimit.c
-index 18703f92d73e7..19ad3cdbd1711 100644
+index 19ad3cdbd1711..bd6e3b429e333 100644
 --- a/lib/ratelimit.c
 +++ b/lib/ratelimit.c
-@@ -44,8 +44,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
- 	 * in addition to the one that will be printed by
- 	 * the entity that is holding the lock already:
- 	 */
--	if (!raw_spin_trylock_irqsave(&rs->lock, flags))
-+	if (!raw_spin_trylock_irqsave(&rs->lock, flags)) {
-+		ratelimit_state_inc_miss(rs);
+@@ -49,8 +49,10 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
  		return 0;
+ 	}
+ 
+-	if (!rs->begin)
++	if (!(rs->flags & RATELIMIT_INITIALIZED)) {
+ 		rs->begin = jiffies;
++		rs->flags |= RATELIMIT_INITIALIZED;
 +	}
  
- 	if (!rs->begin)
- 		rs->begin = jiffies;
+ 	if (time_is_before_jiffies(rs->begin + interval)) {
+ 		int m = ratelimit_state_reset_miss(rs);
 -- 
 2.40.1
 
