@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-628081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119B2AA58E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 02:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B31AA5872
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174D81C2045F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331C71BA5F2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D1517B50A;
-	Thu,  1 May 2025 00:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62318225A3C;
+	Wed, 30 Apr 2025 23:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="eYRStlys"
-Received: from 6.mo581.mail-out.ovh.net (6.mo581.mail-out.ovh.net [188.165.39.218])
+	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="J1TK5DX5"
+Received: from 17.mo582.mail-out.ovh.net (17.mo582.mail-out.ovh.net [46.105.36.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1461D2DC771
-	for <linux-kernel@vger.kernel.org>; Thu,  1 May 2025 00:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.39.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8371DC9B0
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.36.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746057700; cv=none; b=SeQoo0l+FNORPF/kzTacN3MDzM04PEcR8BrGlx3uCBB1L1Db0R+YtI1BeFIx6XuibRMoNvZLGfwua2M5k58U2V9vZ+6gJ8MZ7X2gmACeeO+2xN3ey/QVg+BdtW9MPqW1QCFzItHBxQt+WFRvjXJod9yPQeDbegc1xoZEs5mbEoU=
+	t=1746054236; cv=none; b=CJkuW0rlfFSImpbqdZMuN4E6OXPttwhLUUhAc9VCOlOUIgidhp3TqToO4vlQbWLRMHs9P+6h8qJmzCLYuwiPFKQ0Pa3hZCyn1X41U8NzRoqX6YFLgtLrmRpwCMwA9VjConwaLuRB9kLzVuq/OppcFjM/uXcskozMJQfX3WVsPO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746057700; c=relaxed/simple;
-	bh=R6IceUwMr0LDFa2629e3oGBZ3BcVaeTj7CZ0L8ipPHM=;
+	s=arc-20240116; t=1746054236; c=relaxed/simple;
+	bh=A3qyNpgIhJdTErPTMjoTewRqqr5w/st8rXbErG+JDbw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yk/rqDX9dUGfChHkvLIk6N6eg5NRVvhSXs5/Q4ARj/55wYsdxKhb6Umd36+m65K+fibrPZixsaxdTllT8W0+CAzBX/tfr7oVZi2/rGkYan9t0OgJHeGq8Ffy1LHRy+uLYGSrHHPJZFbIlO8TJlPCEFEo2H5nPbehCCi8zzM5zzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=eYRStlys; arc=none smtp.client-ip=188.165.39.218
+	 MIME-Version:Content-Type; b=foNuvfqW7oc9JjQM2tDH0TKhwuBTl3UQAYec/isC5uNC21QfzyyolK1Dt6Gcjb7eFS2i3p08ojiE0RGyACkOyDChUuQG6pXiubrz1XnVxpH11+mhCUpRFxWo4ESGeApp2gbXukbwVvMEb5b/K3vcGka72Y1Q1qBGdF8VOYvB7dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=J1TK5DX5; arc=none smtp.client-ip=46.105.36.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3mdeb.com
-Received: from director5.ghost.mail-out.ovh.net (unknown [10.109.148.49])
-	by mo581.mail-out.ovh.net (Postfix) with ESMTP id 4ZnshM00Xvz1KrG
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:45:06 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-lsxl9 (unknown [10.110.188.136])
-	by director5.ghost.mail-out.ovh.net (Postfix) with ESMTPS id A6E571FD1E;
-	Wed, 30 Apr 2025 22:45:06 +0000 (UTC)
-Received: from 3mdeb.com ([37.59.142.106])
-	by ghost-submission-5b5ff79f4f-lsxl9 with ESMTPSA
-	id zNP6HvKnEmhEPgsA7JqBbA
-	(envelope-from <sergii.dmytruk@3mdeb.com>); Wed, 30 Apr 2025 22:45:06 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-106R006e662464a-a362-49e1-98a7-ed03813e7455,
+Received: from director1.ghost.mail-out.ovh.net (unknown [10.109.148.106])
+	by mo582.mail-out.ovh.net (Postfix) with ESMTP id 4ZnshR51P8z1PG0
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:45:11 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-bt6hd (unknown [10.110.188.136])
+	by director1.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 5CFD11FD61;
+	Wed, 30 Apr 2025 22:45:11 +0000 (UTC)
+Received: from 3mdeb.com ([37.59.142.108])
+	by ghost-submission-5b5ff79f4f-bt6hd with ESMTPSA
+	id ejsPCvenEmgevisAyP1w0w
+	(envelope-from <sergii.dmytruk@3mdeb.com>); Wed, 30 Apr 2025 22:45:11 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-108S002c0a7c6fa-a18a-4bd0-a5dd-c1144deb985f,
                     7FFE21389DDF989CCD6FB7268846A7FDE11993D7) smtp.auth=sergii.dmytruk@3mdeb.com
 X-OVh-ClientIp:176.111.181.178
 From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
 To: linux-kernel@vger.kernel.org
 Cc: trenchboot-devel@googlegroups.com
-Subject: [RFC PATCH v2 1/9] Documentation/x86: update Secure Launch for AMD SKINIT
-Date: Thu,  1 May 2025 01:44:43 +0300
-Message-ID: <c942fc219566a9a39de48918fb6608849abf4383.1746037489.git.sergii.dmytruk@3mdeb.com>
+Subject: [RFC PATCH v2 3/9] x86: Secure Launch main header file AMD support
+Date: Thu,  1 May 2025 01:44:45 +0300
+Message-ID: <f856478803635d0b1efbd95e66c43b9c3808e4fc.1746037489.git.sergii.dmytruk@3mdeb.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
 References: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
@@ -58,275 +58,185 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 12101735152036918428
+X-Ovh-Tracer-Id: 12103142526215632028
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuvghrghhiihcuffhmhihtrhhukhcuoehsvghrghhiihdrughmhihtrhhukhesfehmuggvsgdrtghomheqnecuggftrfgrthhtvghrnhephfelgfdtleejhefhffeileetgfffjeekueejudegieekieekvefhgeevtdelffehnecuffhomhgrihhnpehtrhgvnhgthhgsohhothdrohhrghdprghmugdrtghomhdpghhithhhuhgsrdgtohhmpdhfohhsuggvmhdrohhrghenucfkphepuddvjedrtddrtddruddpudejiedrudduuddrudekuddrudejkedpfeejrdehledrudegvddruddtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkedumgdpmhhouggvpehsmhhtphhouhht
-DKIM-Signature: a=rsa-sha256; bh=JuWliCcAsReBMdU+nYOowwU7TndfwJwkdSza/u3yJXQ=;
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepufgvrhhgihhiucffmhihthhruhhkuceoshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmqeenucggtffrrghtthgvrhhnpeegkeffieeitdevkefhudegffevieeggfelgedvgeehffdtteehfeeuleeiudekvdenucfkphepuddvjedrtddrtddruddpudejiedrudduuddrudekuddrudejkedpfeejrdehledrudegvddruddtkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkedvmgdpmhhouggvpehsmhhtphhouhht
+DKIM-Signature: a=rsa-sha256; bh=Z/g7dNV0WLxS81SLsZO/TkyYRGI2634tQDHJNCpmxUQ=;
  c=relaxed/relaxed; d=3mdeb.com; h=From; s=ovhmo3617313-selector1;
- t=1746053107; v=1;
- b=eYRStlysuOo+/q+RdvWt3UH2J7ocC0t7u2I3DySr15q70NgkKutCMMHLsXqnYGEToY44JjnV
- UM8qvO/gRkUqZXVbqIQlPW5Z9crGNac1bWjLx60GJdZp/SlDTzHEqNHifHViUPQvYBzYXhzLBOx
- 1CEj4VNZqz8YRSSyGP08RIyKidjnJp0WtH8HzRt9J5IUAMnkE6nZUk1KHxHfgDgsh4FNhrWWSrU
- A5AviAs3ONB14f9v0ijpXOJg34uDRH/GR9P5unXn7DEDbbfyxumhUIsXXNCueKbK6rN2uhjdf0X
- ODTiXyqQOIJDZOXuGGEJFkI01gfR2cErG4pZA36eY52mQ==
+ t=1746053111; v=1;
+ b=J1TK5DX5XE/LXIqW2zKDsmvlbknl5B+qS0GVjKmmesCUcdSe1h61t3x7b5zEQlUvDKDmxywu
+ TTgDFjaNBiJmJP8gVlDw5b8PZabbhAhMBo3Tguj/cgYabkD2vOnUA/Oo31ifVNqC0h3si+ae8jw
+ 1vaA5t32nAc1ydg0MLLbqLOzINKYchqmrk1S8GWzWhBNnj6HZHxohKPQxL7jfOY3QnAQB9WPdrz
+ yezwbvu7feW027dFDzKZfJNwFfVJXLNKVbZvyvpJ1aCgC8By3dpN51zA4PX/xElTEOc26WBCMTj
+ fPQ0UYU9ofsjtG4NI8SSfSW0Jl2sMANiOkvZ6NBX1Z5MA==
 
-* Switch ACM to DCE where not talking exclusively about Intel TXT
-* Switch MLE to DLME where not talking exclusively about Intel TXT
-* Add information about Secure Loader
-* Update information about Secure Launch to account for AMD SKINIT
+From: Ross Philipson <ross.philipson@oracle.com>
 
+Add additional Secure Launch definitions and declarations for AMD/SKINIT
+support.
+
+Use a single implementation of slaunch_is_txt_launch(),
+slaunch_get_flags() returns to 0 if Secure Launch support isn't enabled.
+
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
 ---
- .../secure_launch_details.rst                 | 83 ++++++++++++++++---
- .../secure_launch_overview.rst                | 61 +++++++++-----
- 2 files changed, 113 insertions(+), 31 deletions(-)
+ include/linux/slaunch.h | 81 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 70 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/security/launch-integrity/secure_launch_details.rst b/Documentation/security/launch-integrity/secure_launch_details.rst
-index c58fa3a6a607..0936c29fd113 100644
---- a/Documentation/security/launch-integrity/secure_launch_details.rst
-+++ b/Documentation/security/launch-integrity/secure_launch_details.rst
-@@ -18,13 +18,13 @@ The settings to enable Secure Launch using Kconfig are under::
- A kernel with this option enabled can still be booted using other supported
- methods.
+diff --git a/include/linux/slaunch.h b/include/linux/slaunch.h
+index ae67314c2aad..ec7e0d736a03 100644
+--- a/include/linux/slaunch.h
++++ b/include/linux/slaunch.h
+@@ -14,11 +14,14 @@
+  */
+ #define SL_FLAG_ACTIVE		0x00000001
+ #define SL_FLAG_ARCH_TXT	0x00000002
++#define SL_FLAG_ARCH_SKINIT	0x00000004
++#define SL_FLAG_SKINIT_PSP	0x00000008
  
--To reduce the Trusted Computing Base (TCB) of the MLE [1]_, the build
-+To reduce the Trusted Computing Base (TCB) of the DLME [1]_, the build
- configuration should be pared down as narrowly as one's use case allows.
- Fewer drivers (less active hardware) and features reduce the attack surface.
--As an example in the extreme, the MLE could only have local disk access with no
-+As an example in the extreme, the DLME could only have local disk access with no
- other hardware supports except optional network access for remote attestation.
+ /*
+  * Secure Launch CPU Type
+  */
+ #define SL_CPU_INTEL	1
++#define SL_CPU_AMD	2
  
--It is also desirable, if possible, to embed the initrd used with the MLE kernel
-+It is also desirable, if possible, to embed the initrd used with the DLME kernel
- image to reduce complexity.
+ #define __SL32_CS	0x0008
+ #define __SL32_DS	0x0010
+@@ -146,6 +149,8 @@
+ #define SL_ERROR_INVALID_SLRT		0xc0008022
+ #define SL_ERROR_SLRT_MISSING_ENTRY	0xc0008023
+ #define SL_ERROR_SLRT_MAP		0xc0008024
++#define SL_ERROR_MISSING_EVENT_LOG	0xc0008025
++#define SL_ERROR_MAP_SETUP_DATA		0xc0008026
  
- The following are important configuration necessities to always consider:
-@@ -39,7 +39,8 @@ other instabilities at boot. Even in cases where Secure Launch and KASLR work
- together, it is still recommended that KASLR be disabled to avoid introducing
- security concerns with unprotected kernel memory.
+ /*
+  * Secure Launch Defined Limits
+@@ -325,9 +330,25 @@ struct smx_rlp_mle_join {
+ 	u32 rlp_entry_point; /* phys addr */
+ } __packed;
  
--If possible, a kernel being used as an MLE should be built with KASLR disabled::
-+If possible, a kernel being used as an DLME should be built with KASLR
-+disabled::
- 
-   "Processor type and features" -->
-       "Build a relocatable kernel" -->
-@@ -64,7 +65,7 @@ IOMMU Configuration
- 
- When doing a Secure Launch, the IOMMU should always be enabled and the drivers
- loaded. However, IOMMU passthrough mode should never be used. This leaves the
--MLE completely exposed to DMA after the PMRs [2]_ are disabled. The current
-+DLME completely exposed to DMA after the PMRs [2]_ are disabled. The current
- default mode is to use IOMMU in lazy translated mode, but strict translated
- mode, is the preferred IOMMU mode and this should be selected in the build
- configuration::
-@@ -109,9 +110,9 @@ Intel TXT Interface
- 
- The primary interfaces between the various components in TXT are the TXT MMIO
- registers and the TXT heap. The MMIO register banks are described in Appendix B
--of the TXT MLE [1]_ Development Guide.
-+of the TXT MLE Development Guide.
- 
--The TXT heap is described in Appendix C of the TXT MLE [1]_ Development
-+The TXT heap is described in Appendix C of the TXT MLE Development
- Guide. Most of the TXT heap is predefined in the specification. The heap is
- initialized by firmware and the pre-launch environment and is subsequently used
- by the SINIT ACM. One section, called the OS to MLE Data Table, is reserved for
-@@ -571,10 +572,68 @@ An error occurred in the Secure Launch module while mapping the Secure Launch
- Resource table. The underlying issue is memremap() failure, most likely due to
- a resource shortage.
- 
-+AMD SKINIT Interface
-+====================
++/* The TCG original Spec ID structure defined for TPM 1.2 */
++#define TCG_SPECID_SIG00 "Spec ID Event00"
 +
-+This DRTM comes in two flavours: with DRTM service running in PSP/ASP and
-+without one. The DRTM service effectively extends basic functionality of the
-+SKINIT instruction providing stronger security guarantees at the cost of more
-+complicated programming interface.
++struct tpm_tcg_specid_event_head {
++	char signature[16];
++	u32  platform_class;
++	u8   spec_ver_minor;
++	u8   spec_ver_major;
++	u8   errata;
++	u8   uintn_size;	/* reserved (must be 0) for 1.21 */
++	u8   vendor_info_size;
++	/* vendor_info[]; */
++} __packed;
 +
-+As of the end of 2024 the DRTM service is available on Milan/Genoa platforms
-+running suitable firmware releases. When firmware doesn't provide the service,
-+simpler DRTM process is used.
-+
-+Basic SKINIT DRTM workflow is straightforward in its design. It defines only
-+the bare minimum necessary to perform the DRTM and to pass some data from pre-
-+to post-launch code. DRTM service extends the workflow by adding more metadata
-+and performing some of the operations itself instead of leaving their
-+implementation to a user-provided code (Secure Loader or SL).
-+
-+Secure Loader image is a binary to which SKINIT instruction passes control. The
-+binary must start with a short header defined in the second volume of AMD64
-+Architecture Programmer's Manual to have only two required fields. DRTM
-+integration guide [4]_ adds an extended header which is mostly opaque and can be
-+treated as reserved area in the kernel. Together these fields can be presented
-+as the following structure::
-+
-+        struct sl_header {
-+                u16 entry_point;
-+                u16 image_size;
-+                grub_uint8_t reserved[62];
-+                /*
-+                 * Any other fields, if present, are implementation-specific.
-+                 */
-+        } __packed;
-+
-+Secure Loader is loaded into Secure Loader Block (SLB) which is a 64 KiB area of
-+RAM below 4 GiB that starts on a 64 KiB boundary. The smaller a particular SL
-+image is, the more space is available for passing additional data which is to
-+be placed after the image so it doesn't get measured by SKINIT.
-+
-+Passing of the information from bootloader to the kernel is carried out by the
-+SLRT which is placed after the end of Secure Loader. A platform-specific entry
-+of the SLRT is additionally linked as `setup_data` structure allowing the
-+kernel to discover location of the SLRT by traversing boot parameters looking
-+for the entry.
-+
-+Description of the header:
-+
-+=====================  ========================================================================
-+Field                  Use
-+=====================  ========================================================================
-+entry_point            Offset from the start of the image
-+image_size             How much of the SLB area is actually occupied by the image
-+reserved               Data for DRTM service
-+=====================  ========================================================================
-+
- .. [1]
--    MLE: Measured Launch Environment is the binary runtime that is measured and
--    then run by the TXT SINIT ACM. The TXT MLE Development Guide describes the
--    requirements for the MLE in detail.
-+    DLME: Dynamic Launch Measured Environment (which Intel calls MLE for
-+    Measured Launch Environment) is the binary runtime that is measured and
-+    then run by the DCE. The TXT MLE Development Guide describes the
-+    requirements for the MLE in detail. Because AMD SKINIT doesn't impose any
-+    specific requirements of that sort, TXT's format of MLE is used on AMD
-+    devices as well for simplicity.
+ /*
+- * TPM event log structures defined in both the TXT specification and
+- * the TCG documentation.
++ * TPM event log structures defined by the TXT specification derived
++ * from the TCG documentation. For TXT this is setup as the conainter
++ * header. On AMD this header is embedded in to vendor information
++ * after the TCG spec ID header.
+  */
+ #define TPM_EVTLOG_SIGNATURE "TXT Event Container"
  
- .. [2]
-     PMR: Intel VTd has a feature in the IOMMU called Protected Memory Registers.
-@@ -585,3 +644,7 @@ a resource shortage.
+@@ -344,6 +365,25 @@ struct tpm_event_log_header {
+ 	/* PCREvents[] */
+ } __packed;
  
- .. [3]
-     Secure Launch Specification: https://trenchboot.org/specifications/Secure_Launch/
++/* TPM Event Log Size Macros */
++#define TCG_PCClientSpecIDEventStruct_SIZE			\
++		(sizeof(struct tpm_tcg_specid_event_head))
++#define TCG_EfiSpecIdEvent_SIZE(n) \
++		((n) * sizeof(struct tcg_efi_specid_event_algs)	\
++		 + sizeof(struct tcg_efi_specid_event_head)	\
++		 + sizeof(u8) /* vendorInfoSize */)
++#define TPM2_HASH_COUNT(base) (*((u32 *)(base)			\
++		+ (offsetof(struct tcg_efi_specid_event_head, num_algs) >> 2)))
 +
-+.. [4]
-+   Dynamic Root of Trust Measurement (DRTM) Service Integration Guide:
-+   https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/user-guides/58453.pdf
-diff --git a/Documentation/security/launch-integrity/secure_launch_overview.rst b/Documentation/security/launch-integrity/secure_launch_overview.rst
-index 492f2b12e297..e9b8082314e1 100644
---- a/Documentation/security/launch-integrity/secure_launch_overview.rst
-+++ b/Documentation/security/launch-integrity/secure_launch_overview.rst
-@@ -47,9 +47,8 @@ documentation on these technologies can be readily found online; see
- the `Resources`_ section below for references.
- 
- .. note::
--    Currently, only Intel TXT is supported in this first release of the Secure
--    Launch feature. AMD/Hygon SKINIT and Arm support will be added in a
--    subsequent release.
-+    Currently, only Intel TXT and AMD/Hygon SKINIT are supported by the Secure
-+    Launch feature. Arm support will be added later.
- 
- To enable the kernel to be launched by GETSEC, the Secure Launch stub
- must be built into the setup section of the compressed kernel to handle the
-@@ -112,22 +111,26 @@ Pre-launch: *Phase where the environment is prepared and configured to initiate
- the secure launch by the boot chain.*
- 
-  - The SLRT is initialized, and dl_stub is placed in memory.
-- - Load the kernel, initrd and ACM [2]_ into memory.
-- - Set up the TXT heap and page tables describing the MLE [1]_ per the
-+ - Load the kernel, initrd and DCE [1]_ into memory.
-+ - For TXT, set up the TXT heap and page tables describing the DLME [2]_ per the
-    specification.
-  - If non-UEFI platform, dl_stub is called.
-  - If UEFI platform, SLRT registered with UEFI and efi-stub called.
-  - Upon completion, efi-stub will call EBS followed by dl_stub.
-  - The dl_stub will prepare the CPU and the TPM for the launch.
-- - The secure launch is then initiated with the GETSET[SENTER] instruction.
-+ - The secure launch is then initiated with either GETSEC[SENTER] (Intel) or
-+   SKINIT (AMD) instruction.
- 
--Post-launch: *Phase where control is passed from the ACM to the MLE and the secure
--kernel begins execution.*
-+Post-launch: *Phase where control is passed from the DCE to the DLME and the
-+secure kernel begins execution.*
- 
-  - Entry from the dynamic launch jumps to the SL stub.
-- - SL stub fixes up the world on the BSP.
-+ - For TXT, SL stub fixes up the world on the BSP.
-  - For TXT, SL stub wakes the APs, fixes up their worlds.
-  - For TXT, APs are left in an optimized (MONITOR/MWAIT) wait state.
-+ - For SKINIT, APs are woken up mostly as usual except that the INIT IPIs aren't
-+   sent before Startup IPIs to avoid compromising security. INIT IPIs were sent
-+   to APs in pre-launch before issuing SKINIT, thus halting them.
-  - SL stub jumps to startup_32.
-  - SL main does validation of buffers and memory locations. It sets
-    the boot parameter loadflag value SLAUNCH_FLAG to inform the main
-@@ -137,16 +140,19 @@ kernel begins execution.*
-  - Kernel boot proceeds normally from this point.
-  - During early setup, slaunch_setup() runs to finish validation
-    and setup tasks.
-- - The SMP bring up code is modified to wake the waiting APs via the monitor
--   address.
-+ - For AMD with DRTM service, Trusted Memory Region gets releases after
-+   successful configuration of IOMMU.
-+ - For TXT, the SMP bring up code is modified to wake the waiting APs via the
-+   monitor address.
-  - APs jump to rmpiggy and start up normally from that point.
-  - SL platform module is registered as a late initcall module. It reads
-    the TPM event log and extends the measurements taken into the TPM PCRs.
-  - SL platform module initializes the securityfs interface to allow
--   access to the TPM event log and TXT public registers.
-+   access to the TXT public registers on Intel and TPM event log everywhere.
-  - Kernel boot finishes booting normally.
-- - SEXIT support to leave SMX mode is present on the kexec path and
--   the various reboot paths (poweroff, reset, halt).
-+ - On Intel SEXIT support to leave SMX mode is present on the kexec path and
-+   the various reboot paths (poweroff, reset, halt). A similar finalization
-+   (locking of DRTM localities) happens on AMD with DRTM service.
- 
- PCR Usage
- =========
-@@ -224,17 +230,30 @@ GRUB Secure Launch support:
- 
- https://github.com/TrenchBoot/grub/tree/grub-sl-fc-38-dlstub
- 
-+secure-kernel-loader (Secure Loader for AMD SKINIT, a kind of DCE):
++/* AMD Specific Structures and Definitions */
++struct sl_header {
++	u16 skl_entry_point;
++	u16 length;
++	u8 reserved[62];
++	u16 skl_info_offset;
++	u16 bootloader_data_offset;
++} __packed;
 +
-+https://github.com/TrenchBoot/secure-kernel-loader/
-+
- FOSDEM 2021: Secure Upgrades with DRTM
+ /*
+  * Functions to extract data from the Intel TXT Heap Memory. The layout
+  * of the heap is as follows:
+@@ -512,16 +552,14 @@ void slaunch_fixup_jump_vector(void);
+ u32 slaunch_get_flags(void);
+ struct sl_ap_wake_info *slaunch_get_ap_wake_info(void);
+ struct acpi_table_header *slaunch_get_dmar_table(struct acpi_table_header *dmar);
++void slaunch_cpu_setup_skinit(void);
++void __noreturn slaunch_skinit_reset(const char *msg, u64 error);
+ void __noreturn slaunch_txt_reset(void __iomem *txt,
+ 					 const char *msg, u64 error);
+ void slaunch_finalize(int do_sexit);
+-
+-static inline bool slaunch_is_txt_launch(void)
+-{
+-	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_TXT;
+-
+-	return (slaunch_get_flags() & mask) == mask;
+-}
++bool slaunch_psp_tmr_release(void);
++void slaunch_psp_setup(void);
++void slaunch_psp_finalize(void);
  
- https://archive.fosdem.org/2021/schedule/event/firmware_suwd/
+ #else
  
- .. [1]
--    MLE: Measured Launch Environment is the binary runtime that is measured and
--    then run by the TXT SINIT ACM. The TXT MLE Development Guide describes the
--    requirements for the MLE in detail.
-+    DCE: Dynamic Configuration Environment. Either ACM (Intel's Authenticated
-+    Code Module) for TXT or SKL (secure-kernel-loader) for AMD SKINIT.
-+
-+    ACM is a 32-bit binary blob that is run securely by the GETSEC[SENTER]
-+    during a measured launch. It is described in the Intel documentation on TXT
-+    and versions for various chipsets are signed and distributed by Intel.
-+
-+    SKL is an implementation of SL (Secure Loader) which is started securely by
-+    SKINIT instruction in a flat 32-bit protected mode without paging. See AMD's
-+    System Programming manual for more details on the format and operation.
+@@ -529,6 +567,10 @@ static inline void slaunch_setup_txt(void)
+ {
+ }
  
- .. [2]
--    ACM: Intel's Authenticated Code Module. This is the 32b bit binary blob that
--    is run securely by the GETSEC[SENTER] during a measured launch. It is described
--    in the Intel documentation on TXT and versions for various chipsets are
--    signed and distributed by Intel.
-+    DLME: Dynamic Launch Measured Environment (which Intel calls MLE for
-+    Measured Launch Environment) is the binary runtime that is measured and
-+    then run by the DCE. The TXT MLE Development Guide describes the
-+    requirements for the MLE in detail. Because AMD SKINIT doesn't impose any
-+    specific requirements of that sort, TXT's format of MLE is used on AMD
-+    devices as well for simplicity.
++static inline void slaunch_cpu_setup_skinit(void)
++{
++}
++
+ static inline void slaunch_fixup_jump_vector(void)
+ {
+ }
+@@ -545,14 +587,31 @@ static inline struct acpi_table_header *slaunch_get_dmar_table(struct acpi_table
+ 
+ static inline void slaunch_finalize(int do_sexit)
+ {
++	(void)do_sexit;
+ }
+ 
++#endif /* !IS_ENABLED(CONFIG_SECURE_LAUNCH) */
++
+ static inline bool slaunch_is_txt_launch(void)
+ {
+-	return false;
++	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_TXT;
++
++	return (slaunch_get_flags() & mask) == mask;
+ }
+ 
+-#endif /* !IS_ENABLED(CONFIG_SECURE_LAUNCH) */
++static inline bool slaunch_is_skinit_launch(void)
++{
++	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_SKINIT;
++
++	return (slaunch_get_flags() & mask) == mask;
++}
++
++static inline bool slaunch_is_skinit_psp(void)
++{
++	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_SKINIT | SL_FLAG_SKINIT_PSP;
++
++	return (slaunch_get_flags() & mask) == mask;
++}
+ 
+ #endif /* !__ASSEMBLY */
+ 
 -- 
 2.49.0
 
