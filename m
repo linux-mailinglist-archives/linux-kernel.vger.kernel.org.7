@@ -1,294 +1,435 @@
-Return-Path: <linux-kernel+bounces-627187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE56AA4CF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:12:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E209AA4D03
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E8F503642
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C92A91C21720
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D573E25B1EF;
-	Wed, 30 Apr 2025 13:02:42 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0A225E817;
+	Wed, 30 Apr 2025 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b="m2Pui0vF"
+Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A242343CF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 13:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6363248F6D;
+	Wed, 30 Apr 2025 13:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018162; cv=none; b=sPOL9ZJqfFdd2Ygal/vuodfvbfYQeMoytS5X1EIf+9lOyD+lnObRlhSZrJpaMfPOgtz7GJgjv9U2/9GL6U+DQW/1xHm5iNXqaueVZIgUmpK17EU8QhHd2kdrohu65ZN6+mN2xTV7cJG/UVBRXOr1mar5ZpC7Dv6b8xQmcgAUlTk=
+	t=1746018225; cv=none; b=JjeYNvcwbJd1/fKCeBslYihRdkgVo4Q0GAnSUCCDxdY8l4WweNNDrMADExZnGhkv/Ys9Oe0Hg6nPpC1vaAMhfcVjq0L/5XvgyY8WBOpRdh+GgIIjb4N1T/O+U8NJarAcu+OQljpKfA9pztsFugxQG4Xmix1z7JftoeaSZynalxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018162; c=relaxed/simple;
-	bh=x2ti7/R5nDhd7tDM2yYsl6Li6KD9V2vS1surI/MyTMw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sLJytg9nsDGmvyCmOlth5dqS3LDLKPqW4z7XDvCqKsKKniIbC5JIoAvgfCHHV9qvD5NgRbvPlBkUKf+vhwoeTSOzERAFY2OT303BPPNuTqLM1j2nQxzAtxggpi9hVaUcqXmFWrxl/wlrge+BMvZCiP9+hMmDhzZwX0tDnsR2Tqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d817cf6e72so9355265ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 06:02:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746018159; x=1746622959;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmOoeQf9gPzkDmiMisSnG7s0f6SHLuIsdiddQpOp3vM=;
-        b=po47XVfNMg7wpumSwAnuljFCa/oy5yj4Ik157h/E2SJ5+K7cMDzmm74xn51AzdETu8
-         FdWFqVPU7F5TyHtUDj7JmdQy/4AgBDW8qoG76lBbTFM9SVOWGE1fw8FB/fYXhk4m8q6r
-         soh+MBA6HKwRTJWwrYXiew5eCZwxxmVxb9PunHTW6OXzAksybKppCD6BLnmr84SotjGL
-         0UXvJW/0Fztc7vFzxayuOyrd/YoxiEuItREtUCOS8W93DbHV+lR4fmLEiidGkKbOEv+9
-         jkXyqbeciNrALRaArezp+Zrtec2y0arNLpAbLWyyKWS50vuvwKmREsGyiZRDKxR5sO8E
-         eofQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWapmzlQIj20RIxPrhRt/NDF1FNLb1FGX5l994lEfAajCrMYYvLViWkXnIi7LrV329aSIQcY5MkxT9i46U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk0xX0fBZ6ylopuHa0IARWGV/se5g89bUf53nNCf7tq5ExKulM
-	R4WtHwnOzPKgRcFi9faLV9SQXN2QXPwnM+Q/p2ZOFJHeni6j8v5pr0OUh+VjzG4vuo73poUN5rS
-	tJ/NaG4JJtUsGsSApIw7sq8A4BgIg5MkYSXjAXV4zvYqmtO/kX8+sxIo=
-X-Google-Smtp-Source: AGHT+IGWcJ9YH5i+42cHHNOMi/JmDtuM5N80ImmfT0BnlCFeXpfXN7ODPcasb/JJ6wxdcH4O0ruiTAy82WsY5JUmj3MDYNGL4fEu
+	s=arc-20240116; t=1746018225; c=relaxed/simple;
+	bh=ynNrsxZMUbC1OvLE/L8H30dMbT/qMgO/upg8N7H7jvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uftdehZp8Sg8aftcbhRbpwc3TeN8lQZBATvghp3F5S6Vk5IenRRq4aRpXgvzbmExC1eyVi89HG8qI0fTLdJKhmatVL1M4RKGM7OslN6Z331CxCkt15p0ZIZr+IewoBBlbST8SWm3e4b2V1FsK5GmzvWGyAs2RLHfh1nJUYVzoDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl; spf=pass smtp.mailfrom=jjverkuil.nl; dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b=m2Pui0vF; arc=none smtp.client-ip=185.233.34.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jjverkuil.nl
+Received: from smtp.freedom.nl (unknown [10.10.4.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by dane.soverin.net (Postfix) with ESMTPS id 4ZncnD1P1mzgYw;
+	Wed, 30 Apr 2025 13:03:28 +0000 (UTC)
+Received: from smtp.freedom.nl (smtp.freedom.nl [10.10.4.108]) by freedom.nl (Postfix) with ESMTPSA id 4ZncnC0hjzz2xMR;
+	Wed, 30 Apr 2025 13:03:27 +0000 (UTC)
+Authentication-Results: smtp.freedom.nl;
+	dkim=pass (2048-bit key; unprotected) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.a=rsa-sha256 header.s=soverin1 header.b=m2Pui0vF;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jjverkuil.nl;
+	s=soverin1; t=1746018207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VFM0RB041q0dAMDNjmnwWuw/FnQHo7Zdmh0S5PpFvTA=;
+	b=m2Pui0vFNsC+nVHdkI9qFYFAo5zI981mE2G3UlAHdAk5DPLL8wyfHT85olTBzY2eglRi6H
+	hZtPnwCy/1OelnJTIVfLpju8pZqUESSOeju+xJRXnRBcRfoSDuH05R1HTp2APhHdfdmcgx
+	BzlClPPxelzcvOfpdb/FPb+pZtjco5kCxxOAkVdnye7/eNIFskj7dnNb11n5YjG7LEO7zV
+	L6TVmYSZqiVZlRpncv+6ykmIkSYhh2H1bMrEsDNDDT9vzqE8vZDyMLpj5zXbY7O9jFMO2E
+	pAFG9DD2QIjczpqrfZ9V8QxyBXVD7XWntFtuDj1DwJNcoAuqUpgHd/pwC6/fYw==
+X-CM-Envelope: MS4xfDOtHrS1D5h4G7ZWaFsFv70+NOSrakYSQEqPbphgS8ssuETTAV0cUYPahF4NsA3NNAtaIcA2bN2QDvCqpmHJOqtET/A/vZG1IEPUXAB+ourV9UncuJu0 IO9zZpwhaIOTlTo+4u0U21m1f2Y3m4F+kXqVC+UXeAjCASuUwZz3e5h2vbRM2KN+BCTAznE/JwsSC4OS9lcU0vYtBe37+Tdv+WSeqiB4/Z5zHk5vuV/ZksFK S+tUkdspJOSLLR35KPFxncQdzwXr+/TGJwF4IQz7dSWY3Mlg51hoUXkj7TG2vj5Ddk2IdWV2R+FFDvz+HRYET3Z79oLqrQV2CKldIyCxLghn7+2Q0OrqZnAt Br13avDkgveCskYdYpzDqA/WyRBvGqMFbLd2+OC9Oxw1e6n2zsk=
+X-CM-Analysis: v=2.4 cv=d/oPyQjE c=1 sm=1 tr=0 ts=68121f9f a=smkfPCmiGCBx+NgG8pXs4w==:117 a=smkfPCmiGCBx+NgG8pXs4w==:17 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=xOd6jRPJAAAA:8 a=n-v-m4S5FT9mcBT6AccA:9 a=QEXdDO2ut3YA:10
+Message-ID: <ee6e4732-0d71-4e96-8832-f4251540fd53@jjverkuil.nl>
+Date: Wed, 30 Apr 2025 15:03:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:de6:b0:3d2:af0b:6e2a with SMTP id
- e9e14a558f8ab-3d96792b52cmr21081175ab.5.1746018153312; Wed, 30 Apr 2025
- 06:02:33 -0700 (PDT)
-Date: Wed, 30 Apr 2025 06:02:33 -0700
-In-Reply-To: <66ec3506.050a0220.29194.002c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68121f69.050a0220.14dd7d.0000.GAE@google.com>
-Subject: Re: [syzbot] [mm] INFO: rcu detected stall in shmem_fault (6)
-From: syzbot <syzbot+4145b11cdf925264bff4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hughd@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, pasha.tatashin@soleen.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v7] media: uvcvideo: Set V4L2_CTRL_FLAG_DISABLED during
+ queryctrl errors
+To: Ricardo Ribalda <ribalda@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250403-uvc-eaccess-v7-1-033d0c3d6368@chromium.org>
+ <58c84d4f-b750-4817-b2ee-4d749e99c94b@xs4all.nl>
+ <CANiDSCtVs34-OGZaBsa2bixP8pMLKwwujKmQYLy_9cHYvT30dQ@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hans@jjverkuil.nl>
+Autocrypt: addr=hans@jjverkuil.nl; keydata=
+ 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
+In-Reply-To: <CANiDSCtVs34-OGZaBsa2bixP8pMLKwwujKmQYLy_9cHYvT30dQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spampanel-Class: ham
 
-syzbot has found a reproducer for the following issue on:
+Hi Ricardo,
 
-HEAD commit:    8bac8898fe39 Merge tag 'mmc-v6.15-rc1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=156131b3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a9a25b7a36123454
-dashboard link: https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1390502f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e4fecc580000
+Apologies, this got snowed under.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-8bac8898.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2a76d594c0f5/vmlinux-8bac8898.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dae09c25780d/bzImage-8bac8898.xz
+On 07/04/2025 16:39, Ricardo Ribalda wrote:
+> Hi Hans
+> 
+> On Mon, 7 Apr 2025 at 16:02, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> Hi Ricardo,
+>>
+>> Some more comments:
+>>
+>> On 03/04/2025 14:59, Ricardo Ribalda wrote:
+>>> To implement VIDIOC_QUERYCTRL, we need to know the minimum, maximum,
+>>> step and flags of the control. For some of the controls, this involves
+>>> querying the actual hardware.
+>>>
+>>> Some non-compliant cameras produce errors when we query them. These
+>>> error can be triggered every time, sometimes, or when other controls do
+>>> not have the "right value". Right now, we populate that error to userspace.
+>>> When an error happens, the v4l2 framework does not copy the v4l2_queryctrl
+>>> struct to userspace. Also, userspace apps are not ready to handle any
+>>> other error than -EINVAL.
+>>>
+>>> One of the main usecases of VIDIOC_QUERYCTRL is enumerating the controls
+>>> of a device. This is done using the V4L2_CTRL_FLAG_NEXT_CTRL flag. In
+>>> that usecase, a non-compliant control will make it almost impossible to
+>>> enumerate all controls of the device.
+>>>
+>>> A control with an invalid max/min/step/flags is better than non being
+>>> able to enumerate the rest of the controls.
+>>>
+>>> This patch:
+>>> - Retries for an extra attempt to read the control, to avoid spurious
+>>>   errors. More attempts do not seem to produce better results in the
+>>>   tested hardware.
+>>> - Makes VIDIOC_QUERYCTRL return 0 in all the error cases different than
+>>>   -EINVAL.
+>>> - Introduces a warning in dmesg so we can have a trace of what has happened
+>>>   and sets the V4L2_CTRL_FLAG_DISABLED.
+>>> - Makes sure we keep returning V4L2_CTRL_FLAG_DISABLED for all the next
+>>>   attempts to query that control (other operations have the same
+>>>   functionality as now).
+>>>
+>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>>> ---
+>>> Hi 2*Hans and Laurent!
+>>>
+>>> I came around a device that was listing just a couple of controls when
+>>> it should be listing much more.
+>>>
+>>> Some debugging later I found that the device was returning -EIO when
+>>> all the focal controls were read.
+>>>
+>>> Lots of good arguments in favor/against this patch in the v1. Please
+>>> check!
+>>>
+>>> Without this patch:
+>>> $ v4l2-ctl --list-ctrls
+>>> User Controls
+>>>
+>>>                      brightness 0x00980900 (int)    : min=0 max=255 step=1 default=128 value=128
+>>>                        contrast 0x00980901 (int)    : min=0 max=100 step=1 default=32 value=32
+>>>                      saturation 0x00980902 (int)    : min=0 max=100 step=1 default=64 value=64
+>>>                             hue 0x00980903 (int)    : min=-180 max=180 step=1 default=0 value=0
+>>>         white_balance_automatic 0x0098090c (bool)   : default=1 value=1
+>>>                           gamma 0x00980910 (int)    : min=90 max=150 step=1 default=120 value=120
+>>>            power_line_frequency 0x00980918 (menu)   : min=0 max=2 default=2 value=2 (60 Hz)
+>>>       white_balance_temperature 0x0098091a (int)    : min=2800 max=6500 step=1 default=4600 value=4600 flags=inactive
+>>>
+>>> With this patch:
+>>> $ v4l2-ctl --list-ctrls
+>>>
+>>> User Controls
+>>>
+>>>                      brightness 0x00980900 (int)    : min=0 max=255 step=1 default=128 value=128
+>>>                        contrast 0x00980901 (int)    : min=0 max=100 step=1 default=32 value=32
+>>>                      saturation 0x00980902 (int)    : min=0 max=100 step=1 default=64 value=64
+>>>                             hue 0x00980903 (int)    : min=-180 max=180 step=1 default=0 value=0
+>>>         white_balance_automatic 0x0098090c (bool)   : default=1 value=1
+>>>                           gamma 0x00980910 (int)    : min=90 max=150 step=1 default=120 value=120
+>>>            power_line_frequency 0x00980918 (menu)   : min=0 max=2 default=2 value=2 (60 Hz)
+>>>       white_balance_temperature 0x0098091a (int)    : min=2800 max=6500 step=1 default=4600 value=4600 flags=inactive
+>>>                       sharpness 0x0098091b (int)    : min=0 max=7 step=1 default=3 value=3
+>>>          backlight_compensation 0x0098091c (int)    : min=0 max=2 step=1 default=1 value=1
+>>> [   32.777643] usb 3-6: UVC non compliance: permanently disabling control 98091b (Sharpness), due to error -5
+>>>
+>>> Camera Controls
+>>>
+>>>                   auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+>>>          exposure_time_absolute 0x009a0902 (int)    : min=2 max=1250 step=1 default=156 value=156 flags=inactive
+>>>      exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+>>>                         privacy 0x009a0910 (bool)   : default=0 value=0 flags=read-only
+>>>    region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
+>>>   region_of_interest_auto_ctrls 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+>>
+>> When you post a v8, remember to update the v4l2-ctl --list-ctrls output.
+> 
+> will do. Please note that the output is after --- so it will not be in
+> git log. Let me know if I shall promote it.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4145b11cdf925264bff4@syzkaller.appspotmail.com
+It's fine after the ---.
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-0): P6103/1:b..l P6106/1:b..l P6104/1:b..l
-rcu: 	(detected by 0, t=10502 jiffies, g=24761, q=25 ncpus=1)
-task:syz-executor384 state:R  running task     stack:26008 pid:6104  tgid:6104  ppid:5332   task_flags:0x400040 flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- preempt_schedule_common+0x83/0xd0 kernel/sched/core.c:6947
- preempt_schedule+0xae/0xc0 kernel/sched/core.c:6971
- preempt_schedule_thunk+0x16/0x30 arch/x86/entry/thunk.S:12
- __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
- _raw_spin_unlock+0x3f/0x50 kernel/locking/spinlock.c:186
- spin_unlock include/linux/spinlock.h:391 [inline]
- finish_fault+0xd97/0x1020 mm/memory.c:5388
- do_read_fault mm/memory.c:5522 [inline]
- do_fault mm/memory.c:5652 [inline]
- do_pte_missing mm/memory.c:4160 [inline]
- handle_pte_fault mm/memory.c:5997 [inline]
- __handle_mm_fault+0x3666/0x5380 mm/memory.c:6140
- handle_mm_fault+0x3f6/0x8c0 mm/memory.c:6309
- faultin_page mm/gup.c:1193 [inline]
- __get_user_pages+0x16f0/0x2a40 mm/gup.c:1491
- populate_vma_page_range+0x26b/0x340 mm/gup.c:1929
- __mm_populate+0x24c/0x380 mm/gup.c:2032
- mm_populate include/linux/mm.h:3487 [inline]
- vm_mmap_pgoff+0x3f0/0x4c0 mm/util.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc94d0ef959
-RSP: 002b:00007ffed9bc6198 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 000000000005d4df RCX: 00007fc94d0ef959
-RDX: b635773f06ebbeee RSI: 0000000000b36000 RDI: 0000200000000000
-RBP: 0000000000000000 R08: ffffffffffffffff R09: 0000000000000000
-R10: 0000000000008031 R11: 0000000000000246 R12: 00007ffed9bc61dc
-R13: 00007ffed9bc6210 R14: 00007ffed9bc61f0 R15: 000000000000003c
- </TASK>
-task:dhcpcd-run-hook state:R  running task     stack:23928 pid:6106  tgid:6106  ppid:5016   task_flags:0x400000 flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- preempt_schedule_notrace+0xd1/0x110 kernel/sched/core.c:7040
- preempt_schedule_notrace_thunk+0x16/0x30 arch/x86/entry/thunk.S:13
- rcu_is_watching+0x7f/0xb0 kernel/rcu/tree.c:737
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x4b/0x3e0 kernel/locking/lockdep.c:5877
- rcu_lock_release include/linux/rcupdate.h:341 [inline]
- rcu_read_unlock include/linux/rcupdate.h:871 [inline]
- class_rcu_destructor include/linux/rcupdate.h:1155 [inline]
- unwind_next_frame+0x19a9/0x2390 arch/x86/kernel/unwind_orc.c:680
- arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbc/0xd0 mm/kasan/generic.c:548
- __call_rcu_common kernel/rcu/tree.c:3082 [inline]
- call_rcu+0x142/0x990 kernel/rcu/tree.c:3202
- ma_free_rcu lib/maple_tree.c:211 [inline]
- mas_free lib/maple_tree.c:1313 [inline]
- mas_topiary_replace lib/maple_tree.c:2584 [inline]
- mas_wmb_replace+0x209d/0x25f0 lib/maple_tree.c:2641
- mas_split lib/maple_tree.c:3368 [inline]
- mas_commit_b_node+0xa6e/0xf40 lib/maple_tree.c:3388
- mas_wr_bnode lib/maple_tree.c:4049 [inline]
- mas_wr_store_entry+0x510/0x2550 lib/maple_tree.c:4090
- mas_store_prealloc+0xb02/0xf60 lib/maple_tree.c:5475
- vma_iter_store_new mm/vma.h:455 [inline]
- vma_link+0x254/0x450 mm/vma.c:1754
- insert_vm_struct+0x2d0/0x3d0 mm/mmap.c:1357
- __install_special_mapping mm/mmap.c:1507 [inline]
- _install_special_mapping+0x1b0/0x350 mm/mmap.c:1543
- map_vdso+0x1ff/0x480 arch/x86/entry/vdso/vma.c:174
- load_elf_binary+0x1c85/0x27b0 fs/binfmt_elf.c:1277
- search_binary_handler fs/exec.c:1778 [inline]
- exec_binprm fs/exec.c:1810 [inline]
- bprm_execve+0x999/0x1440 fs/exec.c:1862
- do_execveat_common+0x510/0x6a0 fs/exec.c:1968
- do_execve fs/exec.c:2042 [inline]
- __do_sys_execve fs/exec.c:2118 [inline]
- __se_sys_execve fs/exec.c:2113 [inline]
- __x64_sys_execve+0x94/0xb0 fs/exec.c:2113
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff7677a0ef7
-RSP: 002b:00007ff76764ae78 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00007ffc285c39b0 RCX: 00007ff7677a0ef7
-RDX: 0000557645b67700 RSI: 00007ffc285c3ea0 RDI: 000055761bc40df6
-RBP: 00007ff76764aff0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffc285c3cc8
-R13: 00007ff76764af28 R14: 0000000000000000 R15: 0000000000000041
- </TASK>
-task:syz-executor384 state:R  running task     stack:26008 pid:6103  tgid:6103  ppid:5336   task_flags:0x400040 flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7090
- irqentry_exit+0x6f/0x90 kernel/entry/common.c:354
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__sanitizer_cov_trace_cmp8+0x0/0x90 kernel/kcov.c:293
-Code: 7c 11 10 48 89 74 11 18 48 89 44 11 20 c3 cc cc cc cc cc 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 08 40 75 92 65 8b 15 e8 7e
-RSP: 0018:ffffc9000d9d70a0 EFLAGS: 00000293
-RAX: ffffffff822c9a9b RBX: 0000000000000000 RCX: ffff88801f920000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff822c998a R12: ffff888030e42f70
-R13: 0000000000000000 R14: 00000000000473cc R15: ffffea00011cf2f0
- __page_table_check_zero+0x1d6/0x510 mm/page_table_check.c:139
- page_table_check_alloc include/linux/page_table_check.h:33 [inline]
- post_alloc_hook+0x1eb/0x230 mm/page_alloc.c:1719
- prep_new_page mm/page_alloc.c:1726 [inline]
- get_page_from_freelist+0x21ce/0x22b0 mm/page_alloc.c:3688
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4970
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2301
- folio_alloc_mpol_noprof+0x39/0x70 mm/mempolicy.c:2320
- shmem_alloc_folio mm/shmem.c:1854 [inline]
- shmem_alloc_and_add_folio+0x447/0xf60 mm/shmem.c:1893
- shmem_get_folio_gfp+0x597/0x15f0 mm/shmem.c:2533
- shmem_fault+0x179/0x390 mm/shmem.c:2734
- __do_fault+0x135/0x390 mm/memory.c:5098
- do_read_fault mm/memory.c:5518 [inline]
- do_fault mm/memory.c:5652 [inline]
- do_pte_missing mm/memory.c:4160 [inline]
- handle_pte_fault mm/memory.c:5997 [inline]
- __handle_mm_fault+0x363e/0x5380 mm/memory.c:6140
- handle_mm_fault+0x3f6/0x8c0 mm/memory.c:6309
- faultin_page mm/gup.c:1193 [inline]
- __get_user_pages+0x16f0/0x2a40 mm/gup.c:1491
- populate_vma_page_range+0x26b/0x340 mm/gup.c:1929
- __mm_populate+0x24c/0x380 mm/gup.c:2032
- mm_populate include/linux/mm.h:3487 [inline]
- vm_mmap_pgoff+0x3f0/0x4c0 mm/util.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc94d0ef959
-RSP: 002b:00007ffed9bc6198 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 000000000005d4c4 RCX: 00007fc94d0ef959
-RDX: b635773f06ebbeee RSI: 0000000000b36000 RDI: 0000200000000000
-RBP: 0000000000000000 R08: ffffffffffffffff R09: 0000000000000000
-R10: 0000000000008031 R11: 0000000000000246 R12: 00007ffed9bc61dc
-R13: 00007ffed9bc6210 R14: 00007ffed9bc61f0 R15: 000000000000003c
- </TASK>
-rcu: rcu_preempt kthread timer wakeup didn't happen for 10501 jiffies! g24761 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-rcu: 	Possible timer handling issue on cpu=0 timer-softirq=26096
-rcu: rcu_preempt kthread starved for 10502 jiffies! g24761 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:I stack:27640 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x16e2/0x4cd0 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6860
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2046
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2248
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 0 UID: 0 PID: 1311 Comm: aoe_tx0 Not tainted 6.15.0-rc4-syzkaller-00040-g8bac8898fe39 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa8/0x110 kernel/locking/spinlock.c:194
-Code: 74 05 e8 8b e1 6e f6 48 c7 44 24 20 00 00 00 00 9c 8f 44 24 20 f6 44 24 21 02 75 4f f7 c3 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 73 63 38 f6 65 8b 05 5c e5 1c 07 85 c0 74 40 48 c7 04 24 0e 36
-RSP: 0018:ffffc900029cf740 EFLAGS: 00000206
-RAX: b3874e252c70ba00 RBX: 0000000000000a06 RCX: b3874e252c70ba00
-RDX: 0000000000000002 RSI: ffffffff8d749f9b RDI: 0000000000000001
-RBP: ffffc900029cf7d0 R08: ffffffff8f7ed377 R09: 1ffffffff1efda6e
-R10: dffffc0000000000 R11: fffffbfff1efda6f R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffffffff99b4c6c0 R15: 1ffff92000539ee8
-FS:  0000000000000000(0000) GS:ffff88808d6cc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f22234160d0 CR3: 0000000035bd2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
- uart_port_unlock_irqrestore include/linux/serial_core.h:786 [inline]
- uart_write+0x4cd/0xa40 drivers/tty/serial/serial_core.c:628
- handle_tx+0x23c/0x610 drivers/net/caif/caif_serial.c:222
- __netdev_start_xmit include/linux/netdevice.h:5203 [inline]
- netdev_start_xmit include/linux/netdevice.h:5212 [inline]
- xmit_one net/core/dev.c:3776 [inline]
- dev_hard_start_xmit+0x2ff/0x880 net/core/dev.c:3792
- __dev_queue_xmit+0x1adf/0x3a70 net/core/dev.c:4629
- dev_queue_xmit include/linux/netdevice.h:3350 [inline]
- tx+0x6b/0x190 drivers/block/aoe/aoenet.c:62
- kthread+0x1cd/0x3e0 drivers/block/aoe/aoecmd.c:1237
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+> 
+>>
+>>>
+>>> Emulating error with:
+>>> +       if (cs == UVC_PU_SHARPNESS_CONTROL && query == UVC_GET_MAX) {
+>>> +               printk(KERN_ERR "%s:%d %s\n", __FILE__, __LINE__, __func__);
+>>> +               return -EIO;
+>>> +       }
+>>> In uvc_query_ctrl()
+>>> ---
+>>> Changes in v7:
+>>> - Only retry on -EIO (Thanks Hans).
+>>> - Add comment for retry (Thanks Hans).
+>>> - Rebase patch
+>>> - Check master_map->disabled before reading the master control.
+>>> - Link to v6: https://lore.kernel.org/r/20250310-uvc-eaccess-v6-1-bf4562f7cabd@chromium.org
+>>>
+>>> Changes in v6:
+>>> - Keep returning V4L2_CTRL_FLAG_DISABLED in future control queries.
+>>> - Link to v5: https://lore.kernel.org/r/20250224-uvc-eaccess-v5-1-690d73bcef28@chromium.org
+>>>
+>>> Changes in v5:
+>>> - Explain the retry in the commit message (Thanks Laurent).
+>>> - Link to v4: https://lore.kernel.org/r/20250111-uvc-eaccess-v4-1-c7759bfd1bd4@chromium.org
+>>>
+>>> Changes in v4:
+>>> - Display control name (Thanks Hans)
+>>> - Link to v3: https://lore.kernel.org/r/20250107-uvc-eaccess-v3-1-99f3335d5133@chromium.org
+>>>
+>>> Changes in v3:
+>>> - Add a retry mechanism during error.
+>>> - Set V4L2_CTRL_FLAG_DISABLED flag.
+>>> - Link to v2: https://lore.kernel.org/r/20241219-uvc-eaccess-v2-1-bf6520c8b86d@chromium.org
+>>>
+>>> Changes in v2:
+>>> - Never return error, even if we are not enumerating the controls
+>>> - Improve commit message.
+>>> - Link to v1: https://lore.kernel.org/r/20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org
+>>> ---
+>>>  drivers/media/usb/uvc/uvc_ctrl.c | 53 ++++++++++++++++++++++++++++++++++------
+>>>  drivers/media/usb/uvc/uvcvideo.h |  2 ++
+>>>  2 files changed, 47 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+>>> index cbf19aa1d82374a08cf79b6a6787fa348b83523a..b41fed364d54aefd7da72c47197cf9d9e3c1b176 100644
+>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+>>> @@ -1483,14 +1483,28 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+>>>       return ~0;
+>>>  }
+>>>
+>>> +/*
+>>> + * Maximum retry count to avoid spurious errors with controls. Increase this
+>>
+>> Increase -> Increasing
+>>
+>>> + * value does no seem to produce better results in the tested hardware.
+>>> + */
+>>> +#define MAX_QUERY_RETRIES 2
+>>> +
+>>>  static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+>>>                                     struct uvc_control *ctrl,
+>>>                                     struct uvc_control_mapping *mapping,
+>>>                                     struct v4l2_query_ext_ctrl *v4l2_ctrl)
+>>>  {
+>>>       if (!ctrl->cached) {
+>>> -             int ret = uvc_ctrl_populate_cache(chain, ctrl);
+>>> -             if (ret < 0)
+>>> +             unsigned int retries;
+>>> +             int ret;
+>>> +
+>>> +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
+>>> +                     ret = uvc_ctrl_populate_cache(chain, ctrl);
+>>> +                     if (ret != -EIO)
+>>> +                             break;
+>>> +             }
+>>> +
+>>> +             if (ret)
+>>>                       return ret;
+>>>       }
+>>>
+>>> @@ -1567,6 +1581,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>>>  {
+>>>       struct uvc_control_mapping *master_map = NULL;
+>>>       struct uvc_control *master_ctrl = NULL;
+>>> +     int ret;
+>>>
+>>>       memset(v4l2_ctrl, 0, sizeof(*v4l2_ctrl));
+>>>       v4l2_ctrl->id = mapping->id;
+>>> @@ -1587,18 +1602,29 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>>>               __uvc_find_control(ctrl->entity, mapping->master_id,
+>>>                                  &master_map, &master_ctrl, 0, 0);
+>>>       if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
+>>> +             unsigned int retries;
+>>>               s32 val;
+>>>               int ret;
+>>>
+>>>               if (WARN_ON(uvc_ctrl_mapping_is_compound(master_map)))
+>>>                       return -EIO;
+>>>
+>>> -             ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
+>>> -             if (ret < 0)
+>>> -                     return ret;
+>>> +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
+>>> +                     ret = __uvc_ctrl_get(chain, master_ctrl, master_map,
+>>> +                                          &val);
+>>
+>> I'd write this:
+>>
+>>                         if (ret < 0 && ret != -EIO)
+>>                                 return ret;
+>>
+>> Without that you'll see the non compliance warning below, but that's not
+>> what you want for non-EIO errors.
+> 
+> I am not sure about this one. If there is an error reading a master
+> control you probably want to continue. Semantically it is similar to
+> not finding the control or having invalid flags.  And in those two
+> cases we move on.
+> Also, I think there is some value for the warning. It is counter
+> intuitive that query_ctrl for control X fails due to an error in
+> control Y.
 
+In the original code you just return the error as well, without a
+warning.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I think for non-EIO errors you should just return. It can always be
+changed later, for now I think we should stick close to the original
+code.
+
+It's really a matter of taste rather than right or wrong code.
+
+Regards,
+
+	Hans
+
+> 
+> Let me know what do you think.
+> 
+>>
+>>> +                     if (ret != -EIO)
+>>> +                             break;
+>>> +             }
+>>>
+>>> -             if (val != mapping->master_manual)
+>>> -                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+>>> +             if (ret < 0) {
+>>> +                     dev_warn_ratelimited(&chain->dev->udev->dev,
+>>> +                                          "UVC non compliance: Error %d querying master control %x (%s)\n",
+>>> +                                          ret, master_map->id,
+>>> +                                          uvc_map_get_name(master_map));
+>>> +             } else {
+>>> +                     if (val != mapping->master_manual)
+>>> +                             v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+>>> +             }
+>>>       }
+>>>
+>>>       v4l2_ctrl->elem_size = uvc_mapping_v4l2_size(mapping);
+>>> @@ -1613,7 +1639,18 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>>>               return 0;
+>>>       }
+>>>
+>>> -     return __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
+>>> +     ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
+>>> +     if (ret && !mapping->disabled) {
+>>> +             dev_warn(&chain->dev->udev->dev,
+>>> +                      "UVC non compliance: permanently disabling control %x (%s), due to error %d\n",
+>>> +                      mapping->id, uvc_map_get_name(mapping), ret);
+>>> +             mapping->disabled = true;
+>>> +     }
+>>> +
+>>> +     if (mapping->disabled)
+>>> +             v4l2_ctrl->flags |= V4L2_CTRL_FLAG_DISABLED;
+>>> +
+>>> +     return 0;
+>>>  }
+>>>
+>>>  int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>>> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+>>> index b4ee701835fc016474d2cd2a0b67b2aa915c1c60..8e3753896d42baddcc2192057e8c5786ddd79fa8 100644
+>>> --- a/drivers/media/usb/uvc/uvcvideo.h
+>>> +++ b/drivers/media/usb/uvc/uvcvideo.h
+>>> @@ -134,6 +134,8 @@ struct uvc_control_mapping {
+>>>       s32 master_manual;
+>>>       u32 slave_ids[2];
+>>>
+>>> +     bool disabled;
+>>> +
+>>>       const struct uvc_control_mapping *(*filter_mapping)
+>>>                               (struct uvc_video_chain *chain,
+>>>                               struct uvc_control *ctrl);
+>>>
+>>> ---
+>>> base-commit: 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
+>>> change-id: 20250403-uvc-eaccess-8f3666151830
+>>>
+>>> Best regards,
+>>
+>> Regards,
+>>
+>>         Hans
+> 
+> 
+> 
+
 
