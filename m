@@ -1,97 +1,287 @@
-Return-Path: <linux-kernel+bounces-628047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0093AA587F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:09:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DEFEAA5883
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A68D1C0746A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:10:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FFC98823E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5FF1F4199;
-	Wed, 30 Apr 2025 23:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87FB22839A;
+	Wed, 30 Apr 2025 23:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBocPFY1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="SoYyB5fG"
+Received: from mx10.gouders.net (mx10.gouders.net [202.61.206.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D861BD9F0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B941BD9F0;
+	Wed, 30 Apr 2025 23:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.206.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746054584; cv=none; b=suyv1GbxJahEyJ9fghrPnBYRL/hahr+95aYQNxz8fWCGRYjhsqSbAArofzlydgjLWim9bszrlxFyAV0yNxiIYMC8n9ShyIzqBRTv5N6JAcVGZHk7cP9NtjP4Z4udHYe1fC24spNZB+WWvBdnP3iekf8Q/+AnB6hb+FeAPoGtEcE=
+	t=1746054849; cv=none; b=odurxy5z+NOLKDZQ1OBwygXrIgGqf7mgfH9M9+Wj7V56HFQ3+tdy/1db9facAVf3/LjVSrXhuAcCx++q2+zj19Nk/P9xJxwX0ko6xRqkWJgjlq682bcXu3gPw8ijMBLaPTD6DRD+V2pvRBvT1TMk1+qANH1bdWFE+hgux+s946s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746054584; c=relaxed/simple;
-	bh=eRM49ENGm/AH7ifjnE7OSeEzVG18E9Yp542KftbtE40=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rkrloXVqDU/b1d5gKA9dQTvxKr0HaeUtdVnRBAVJNtv+NYLALFY2pY6buLNa71xnRS68bT0P0mQMiJpOg3uK4VQn3ehR68FgcNMUOLKgC+RiIB5pSfW6CkxaeSzX4ZzRfTq/lv2jt9noEcX8KvZWw6/SLRlpzWItA9IGl9vpooI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBocPFY1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A4A6C4CEE7;
-	Wed, 30 Apr 2025 23:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746054582;
-	bh=eRM49ENGm/AH7ifjnE7OSeEzVG18E9Yp542KftbtE40=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=lBocPFY11L1YL+G9gb7BjUr7OJNByaiu2CfXJ1IViX4+9p6YRvNe5g6sKntOeBVqj
-	 YYP/s/Llj5ZZaK7v8047uYA+9ccOb6ODIAdw+ZZTvcGijZNBkn7MyR0+w+RQrXx/wr
-	 aOlIUUkIEBX72G1FeMsyoVCR0pMqbMVX7TtXhHaIdODReGtGjF/IulZjmVyPmYt9T4
-	 AstwrgF3Bj+HSklI/kp73a5dldX6+2uXj6vGRWvm136i8j2P52uvEUyC8vmK2CVdhk
-	 A03D94eYyLwhGxapxyTp8OosRmi+/9cCLMY61vuXPnv/spUKjm060RxMTY9O0W188Q
-	 OZ9Kq709jA4zQ==
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250428061318.88859-2-thorsten.blum@linux.dev>
-References: <20250428061318.88859-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] regcache: Use sort()'s default swap() implementation
-Message-Id: <174605458012.3999461.2521484594284495976.b4-ty@kernel.org>
-Date: Thu, 01 May 2025 08:09:40 +0900
+	s=arc-20240116; t=1746054849; c=relaxed/simple;
+	bh=9VGV070cNaPJBF2sqEl8whPKwO0bmDWdIjTQ5V7Qn04=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E2grC0druVFciyzGbk9K+o241IXvERPH5svAStIbM5qbLq0X8qDY65TUJC8dgenD4ndNFKW15ZNN6ep5g83HKCGhdoOknXj8+Ls5Ny8OnapR++EiWTL0uJkSNgGGvUXgIV16s30U4yESgIwnVBnIjBHEPMXXdFy6EuoLQeNtJ74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net; spf=pass smtp.mailfrom=gouders.net; dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b=SoYyB5fG; arc=none smtp.client-ip=202.61.206.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gouders.net
+Received: from localhost (dynamic-176-001-007-189.176.1.pool.telefonica.de [176.1.7.189])
+	(authenticated bits=0)
+	by mx10.gouders.net (8.17.1.9/8.17.1.9) with ESMTPSA id 53UNBLBs026343
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Thu, 1 May 2025 01:11:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+	t=1746054688; bh=9VGV070cNaPJBF2sqEl8whPKwO0bmDWdIjTQ5V7Qn04=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=SoYyB5fG4jLYA30dv7qYXYltZoDIkrJVI1nVQinO1y06pRMEsQTI5VMhLoiTyhQBX
+	 uiRXEGGiMhtE3XxLjClWPqfne9NhPfBJSUtRef9MFs7ckKt6EnGVT8JltLkM+JP8U1
+	 P0WLEriTSLbP3rRW28mBVmAVswXqLO3BiBerwZLo=
+From: Dirk Gouders <dirk@gouders.net>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim
+ <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa
+ <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang
+ <kan.liang@linux.intel.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus
+ Villemoes <linux@rasmusvillemoes.dk>,
+        Thomas Gleixner
+ <tglx@linutronix.de>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr
+ Bueso <dave@stgolabs.net>,
+        =?utf-8?Q?Andr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>,
+        John
+ Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+        James
+ Clark <james.clark@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>, Leo
+ Yan <leo.yan@linux.dev>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Nathan Chancellor
+ <nathan@kernel.org>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt
+ <justinstitt@google.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Al Viro
+ <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>,
+        Ben Gainey
+ <ben.gainey@arm.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Kajol
+ Jain <kjain@linux.ibm.com>,
+        Aditya Gupta <adityag@linux.ibm.com>,
+        Eder
+ Zulian <ezulian@redhat.com>,
+        Dapeng Mi <dapeng1.mi@linux.intel.com>,
+        Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Ravi Bangoria
+ <ravi.bangoria@amd.com>,
+        Howard Chu <howardchu95@gmail.com>,
+        Charlie
+ Jenkins <charlie@rivosinc.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jann Horn
+ <jannh@google.com>, Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Yang Jihong <yangjihong@bytedance.com>,
+        Dmitry
+ Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
+        Graham
+ Woodward <graham.woodward@arm.com>,
+        Ilkka Koskinen
+ <ilkka@os.amperecomputing.com>,
+        Anshuman Khandual
+ <anshuman.khandual@arm.com>,
+        Zhongqiu Han <quic_zhonhan@quicinc.com>, Hao Ge <gehao@kylinos.cn>,
+        Tengda Wu <wutengda@huaweicloud.com>,
+        Gabriele Monaco <gmonaco@redhat.com>,
+        Chun-Tse Shao <ctshao@google.com>, Casey Chen <cachen@purestorage.com>,
+        "Dr. David Alan Gilbert"
+ <linux@treblig.org>,
+        Li Huafei <lihuafei1@huawei.com>,
+        "Steinar H.
+ Gunderson" <sesse@google.com>,
+        Levi Yun <yeoreum.yun@arm.com>, Weilin
+ Wang <weilin.wang@intel.com>,
+        Thomas Falcon <thomas.falcon@intel.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Andrew Kreimer
+ <algonell@gmail.com>,
+        Krzysztof =?utf-8?Q?=C5=81opatowski?=
+ <krzysztof.m.lopatowski@gmail.com>,
+        Christophe Leroy
+ <christophe.leroy@csgroup.eu>,
+        Jean-Philippe Romain
+ <jean-philippe.romain@foss.st.com>,
+        Junhao He <hejunhao3@huawei.com>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Xu Yang
+ <xu.yang_2@nxp.com>,
+        Steve Clevenger
+ <scclevenger@os.amperecomputing.com>,
+        Zixian Cai <fzczx123@gmail.com>,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        Yujie Liu
+ <yujie.liu@intel.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH v2 04/47] perf bench: Silence -Wshorten-64-to-32 warnings
+In-Reply-To: <CAP-5=fXJpD_f6dUqroVpqe-OX5kyOPc1zpbyOZoQtqvQWBGr=Q@mail.gmail.com>
+	(Ian Rogers's message of "Wed, 30 Apr 2025 15:22:41 -0700")
+References: <20250430175036.184610-1-irogers@google.com>
+	<20250430175036.184610-5-irogers@google.com>
+	<gho6wdh00l.fsf@gouders.net>
+	<CAP-5=fUdpa40MDNu0aDBO7o8H3YMe-cYsg-YfqUUZUY4M4XLeA@mail.gmail.com>
+	<ghecx9guoj.fsf@gouders.net>
+	<CAP-5=fXJpD_f6dUqroVpqe-OX5kyOPc1zpbyOZoQtqvQWBGr=Q@mail.gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Thu, 01 May 2025 01:11:16 +0200
+Message-ID: <gha57xgs8b.fsf@gouders.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Apr 2025 08:13:18 +0200, Thorsten Blum wrote:
-> Use sort()'s default swap() implementation and remove the custom
-> regcache_defaults_swap() function.
-> 
-> 
+Ian Rogers <irogers@google.com> writes:
 
-Applied to
+> On Wed, Apr 30, 2025 at 3:19=E2=80=AFPM Dirk Gouders <dirk@gouders.net> w=
+rote:
+>>
+>> Ian Rogers <irogers@google.com> writes:
+>>
+>> > On Wed, Apr 30, 2025 at 1:23=E2=80=AFPM Dirk Gouders <dirk@gouders.net=
+> wrote:
+>> >>
+>> >> Hi Ian,
+>> >>
+>> >> considering so many eyes looking at this, I am probably wrong.
+>> >>
+>> >> So, this is only a "gauge reply" to see if it's worth I really read
+>> >> through all the commits ;-)
+>> >>
+>> >> Ian Rogers <irogers@google.com> writes:
+>> >>
+>> >> [SNIP]
+>> >>
+>> >> > diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched=
+-pipe.c
+>> >> > index 70139036d68f..b847213fd616 100644
+>> >> > --- a/tools/perf/bench/sched-pipe.c
+>> >> > +++ b/tools/perf/bench/sched-pipe.c
+>> >> > @@ -102,7 +102,8 @@ static const char * const bench_sched_pipe_usag=
+e[] =3D {
+>> >> >  static int enter_cgroup(int nr)
+>> >> >  {
+>> >> >       char buf[32];
+>> >> > -     int fd, len, ret;
+>> >> > +     int fd;
+>> >> > +     ssize_t ret, len;
+>> >> >       int saved_errno;
+>> >> >       struct cgroup *cgrp;
+>> >> >       pid_t pid;
+>> >> > @@ -118,7 +119,7 @@ static int enter_cgroup(int nr)
+>> >> >       cgrp =3D cgrps[nr];
+>> >> >
+>> >> >       if (threaded)
+>> >> > -             pid =3D syscall(__NR_gettid);
+>> >> > +             pid =3D (pid_t)syscall(__NR_gettid);
+>> >> >       else
+>> >> >               pid =3D getpid();
+>> >> >
+>> >> > @@ -172,23 +173,25 @@ static void exit_cgroup(int nr)
+>> >> >
+>> >> >  static inline int read_pipe(struct thread_data *td)
+>> >> >  {
+>> >> > -     int ret, m;
+>> >> > +     ssize_t ret;
+>> >> > +     int m;
+>> >> >  retry:
+>> >> >       if (nonblocking) {
+>> >> >               ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1, -1=
+);
+>> >>
+>> >> The epoll_wait(), I know of, returns an int and not ssize_t.
+>> >>
+>> >> That shouldn't show up, because it doesn't cause real problems...
+>> >
+>> > So the function is read_pipe so it should probably return a ssize_t. I
+>> > stopped short of that but made ret a ssize_t to silence the truncation
+>> > warning on the read call. Assigning smaller to bigger is of course not
+>> > an issue for epoll_wait.
+>>
+>> Oh yes, I missed that ret is also used for the result of read().
+>>
+>> Some lines down there is also a combination of
+>>
+>> ret =3D enter_cgroup() (which is int)
+>>
+>> and
+>>
+>> ret =3D write()
+>>
+>>
+>> Just confusing but yes, because ret is also used for read() and write()
+>> in those cases it should be ssize_t.
+>>
+>> I'm sorry for the noise.
+>
+> No worries, I'm appreciative of the eyes. I suspect we'll only pick up
+> the first patches in this series to fix what is a bug on ARM. I think
+> I'm responsible for too much noise here ;-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+A final thought (in case this patch will also be picked):
 
-Thanks!
+Why not, in case of read_pipe() and worker_thread() just cast
+read() and write() to int?  Both get counts of sizeof(int) and
+it would clearly show: we know the result fits into an int.
 
-[1/1] regcache: Use sort()'s default swap() implementation
-      commit: d30e845b0ae63400738709ca624a4a7bb69c4ba2
+In case of read_pipe() that would mean to just change one line in
+contrast to:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+@@ -172,23 +173,25 @@ static void exit_cgroup(int nr)
+=20
+ static inline int read_pipe(struct thread_data *td)
+ {
+-	int ret, m;
++	ssize_t ret;
++	int m;
+ retry:
+ 	if (nonblocking) {
+ 		ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1, -1);
+ 		if (ret < 0)
+-			return ret;
++			return (int)ret;
+ 	}
+ 	ret =3D read(td->pipe_read, &m, sizeof(int));
+ 	if (nonblocking && ret < 0 && errno =3D=3D EWOULDBLOCK)
+ 		goto retry;
+-	return ret;
++	return (int)ret;
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Best regards,
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Dirk
 
