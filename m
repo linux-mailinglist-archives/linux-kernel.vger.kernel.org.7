@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-626345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D20AA41E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 06:31:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFE4AA4203
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 06:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC833BAE42
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 04:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3ED985422
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 04:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C91E1754B;
-	Wed, 30 Apr 2025 04:31:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB9B134D4;
-	Wed, 30 Apr 2025 04:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224961D89E3;
+	Wed, 30 Apr 2025 04:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xYVbdazZ"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DD66AD3
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 04:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745987494; cv=none; b=R8CIu+YVtetI/0MUc/Fn07tuRzgkZxjbQXnwE9rnTyHnxXCMoL+u5bDkZC/WW7cX08Zb5O0M7r8s5lBpOHc5X+0sHdYFxgQWFqupt81KM/G6BvgX9pPlYJKWWGrzIQbs067D4RIeXYpkgqT6VpVQbjPwST6GBYIETBhhEF54fvQ=
+	t=1745987867; cv=none; b=pb1ZIcSAivblG82KOUSJpNzfuFlED5ai+X99rigsSksXc4Tz33pvmQk0MXAA4fQJqiL9KBteszuB8LGVa3dxkXlMv51qJx6CQVvFHBbbL6I0FIffJ5aHM/F3k9cSYLPQQILtUBy0+KAjYeBfo+FVtAyAuWrw+tjQnb1/rNWO82w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745987494; c=relaxed/simple;
-	bh=Xch5i+pOwOmWkgSc289YJ0Z+tNONrmPcI3BET6rGG2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fm6ZsQnYh2qPAbRJof0DR+zktt4KBJYwT0FhtbrVmZNEWD1ZPu/7USrf+NFcPkDQGqnvm74ywXjzeVj43eiVXUjTMN/21LkrtPNka23pB2ZbynseKwa7jV2lzNMQ54d9pElG5PidSPBHGQsSDjML2yfzS1TFPjgP4HkcNK3eq1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4338A106F;
-	Tue, 29 Apr 2025 21:31:24 -0700 (PDT)
-Received: from [10.163.50.23] (unknown [10.163.50.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5A333F5A1;
-	Tue, 29 Apr 2025 21:31:27 -0700 (PDT)
-Message-ID: <896970ff-bcf6-4c7d-9c51-6c95246e00d1@arm.com>
-Date: Wed, 30 Apr 2025 10:01:22 +0530
+	s=arc-20240116; t=1745987867; c=relaxed/simple;
+	bh=f3ULwdz3E+FT0nhtRA9uWt9Tazclrc2kktUie/YwiJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwppXMsdfZquuOinDn1ozEexhXwXwel2b8a+lFw1aI8/2Dmwhe9qASIJ+da6R6JOTX+dYn1Scy6ddXbCK5xiOzkzS5iQSOfHX1EMnL5d/K2fDGtyFSxB0vlxxvLu77DiLfJY1b97NQAOuuZM1Tp5yYiQfKAdDOahn+ptRnNkj+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xYVbdazZ; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 29 Apr 2025 21:37:26 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745987853;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nk++kZUym1lInKgvd6euou9nW/mbCsjkNUrb182STy8=;
+	b=xYVbdazZKtwWLsUH/QfCw2fysf6554U6sfclBklEutued09XIvwNg/PqHt5eJ8mrUGtPGe
+	9tJOEtXp5wi1kQPR1ezcvanMiJuB/eO14DYEhHHEhHv6TMrxUa2TaKbZUIp5j2WxY3TbEF
+	ZF/uOK14ntiqWdwtJWLleirD1q6pp+c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org
+Subject: Re: [PATCH 1/4] memcg: simplify consume_stock
+Message-ID: <ik3yjjt6evxexkaculyiibgrgxtvimwx7rzalpbecb75gpmmck@pcsmy6kxzynb>
+References: <20250429230428.1935619-1-shakeel.butt@linux.dev>
+ <20250429230428.1935619-2-shakeel.butt@linux.dev>
+ <dvyyqubghf67b3qsuoreegqk4qnuuqfkk7plpfhhrck5yeeuic@xbn4c6c7yc42>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] documentation: Add nodebugmon for arm64 platforms
-To: Will Deacon <will@kernel.org>
-Cc: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250416062706.2735563-1-anshuman.khandual@arm.com>
- <20250429162754.GA26677@willie-the-truck>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250429162754.GA26677@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dvyyqubghf67b3qsuoreegqk4qnuuqfkk7plpfhhrck5yeeuic@xbn4c6c7yc42>
+X-Migadu-Flow: FLOW_OUT
 
-On 4/29/25 21:57, Will Deacon wrote:
-> On Wed, Apr 16, 2025 at 11:57:06AM +0530, Anshuman Khandual wrote:
->> Add an entry for nodebugmon which has been used on arm64 platforms.
->>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: linux-doc@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> This patch applies on v6.15-rc2
->>
->>  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index d9fd26b95b34..f4a313d6c0ab 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -4085,6 +4085,13 @@
->>  			/sys/module/printk/parameters/console_suspend) to
->>  			turn on/off it dynamically.
->>  
->> +	nodebugmon
->> +			[HW,ARM64] Disable debug monitor
->> +			Disables the debug monitor exception handling on the platform
->> +			regardless whether breakpoints and watchpoints are programmed
->> +			or not. This prevents debug exceptions from being enabled via
->> +			MDSCR_EL1 register.
+On Tue, Apr 29, 2025 at 04:51:03PM -0700, Alexei Starovoitov wrote:
+> On Tue, Apr 29, 2025 at 04:04:25PM -0700, Shakeel Butt wrote:
+> > The consume_stock() does not need to check gfp_mask for spinning and can
+> > simply trylock the local lock to decide to proceed or fail. No need to
+> > spin at all for local lock.
+> > 
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > ---
+> >  mm/memcontrol.c | 20 +++++++-------------
+> >  1 file changed, 7 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 650fe4314c39..40d0838d88bc 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -1804,16 +1804,14 @@ static bool obj_stock_flush_required(struct memcg_stock_pcp *stock,
+> >   * consume_stock: Try to consume stocked charge on this cpu.
+> >   * @memcg: memcg to consume from.
+> >   * @nr_pages: how many pages to charge.
+> > - * @gfp_mask: allocation mask.
+> >   *
+> > - * The charges will only happen if @memcg matches the current cpu's memcg
+> > - * stock, and at least @nr_pages are available in that stock.  Failure to
+> > - * service an allocation will refill the stock.
+> > + * Consume the cached charge if enough nr_pages are present otherwise return
+> > + * failure. Also return failure for charge request larger than
+> > + * MEMCG_CHARGE_BATCH or if the local lock is already taken.
+> >   *
+> >   * returns true if successful, false otherwise.
+> >   */
+> > -static bool consume_stock(struct mem_cgroup *memcg, unsigned int nr_pages,
+> > -			  gfp_t gfp_mask)
+> > +static bool consume_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+> >  {
+> >  	struct memcg_stock_pcp *stock;
+> >  	uint8_t stock_pages;
+> > @@ -1821,12 +1819,8 @@ static bool consume_stock(struct mem_cgroup *memcg, unsigned int nr_pages,
+> >  	bool ret = false;
+> >  	int i;
+> >  
+> > -	if (nr_pages > MEMCG_CHARGE_BATCH)
+> > -		return ret;
+> > -
+> > -	if (gfpflags_allow_spinning(gfp_mask))
+> > -		local_lock_irqsave(&memcg_stock.stock_lock, flags);
+> > -	else if (!local_trylock_irqsave(&memcg_stock.stock_lock, flags))
+> > +	if (nr_pages > MEMCG_CHARGE_BATCH ||
+> > +	    !local_trylock_irqsave(&memcg_stock.stock_lock, flags))
 > 
-> Hmm. I appreciate the effort to document this, but I'm not sure that the
-> text above is really going to help anybody.
-> 
-> Firstly, this option goes hand-in-hand with a debugfs control
-> ("debug_enabled") and so the two would ideally be documented together.
+> I don't think it's a good idea.
+> spin_trylock() will fail often enough in PREEMPT_RT.
+> Even during normal boot I see preemption between tasks and they
+> contend on the same cpu for the same local_lock==spin_lock.
+> Making them take slow path is a significant behavior change
+> that needs to be carefully considered.
 
-Completely agree on this, but could find an appropriate Documentation/
-file listing arm64 platform relate debugfs interfaces. Just wondering
-if we need to have such a file created in Documentation/arch/arm64 ?
+I didn't really think too much about PREEMPT_RT kernels as I assume
+performance is not top priority but I think I get your point. Let me
+explain and correct me if I am wrong. On PREEMPT_RT kernel, the local
+lock is a spin lock which is actually a mutex but with priority
+inheritance. A task having the local lock can still get context switched
+(but will remain on same CPU run queue) and the newer task can try to
+acquire the memcg stock local lock. If we just do trylock, it will
+always go to the slow path but if we do local_lock() then it will sleeps
+and possibly gives its priority to the task owning the lock and possibly
+make that task to get the CPU. Later the task slept on memcg stock lock
+will wake up and go through fast path.
 
-> 
-> Secondly, I think the documentation should talk about the user-visible
-> effects that the control has... and that's where I get stuck! This has
-> been there since day 1 but I'm not really sure what it's useful for. I
 
-Hmm, alright. I tried to reason about what is being done in the kernel
-but as you mentioned above, user visible effects were not very clearly
-apparent. But having a kernel command line option without documenting
-on what it really does seemed problematic as well.
-
-> _do_ remember needing it to use the DS-5 debugger back in the day, but
-> looking at what the option does (it mostly prevents the kernel from
-> touching MDSCR_EL1.{MDE,KDE} which effectively disables hardware
-> breakpoints and watchpoints for kernel/user and single-step for kernel)
-
-Right, it is an system wide override regardless whether there are any
-current users for these break/watch points.
-
-> I don't see why that's relevant for halting debug. The architecture says
-> that EDSCR.HDE can be used by the external debugger to enter debug state
-> and I don't see anything to suggest that MDSCR_EL1 settings interfere
-> with this.
-
-ARM ARM DDI 0487 L.A states that EDSCR.HDE can be used to enable/disable
-debug halting with OSLSR_EL1.OSLK = 1. Hence MDSCR_EL1.{MDE,KDE} controls
-are not required to disable debug state in kernel.
+Ok, I will drop the first patch. Please let me know your comments on the
+remaining series.
 
 > 
-> Maybe the problem was that the external debugger left a load of live
-> breakpoint registers around after detaching, so this was a way to
-> suppress those? I don't remember :/
+> Also please cc bpf@vger in the future for these kind of changes.
 
-But that would be a bug in the HW, not an expected behaviour - is not it ?
-
-> 
-> I wonder if we can remove this?
-
-Yes, we could probably remove both 'nodebugmon' kernel command line option
-and 'debug_enabled' debug fs control if EDSCR.HDE is the controller of the
-debug state for external debuggers.
+Sounds good.
 
