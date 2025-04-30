@@ -1,162 +1,174 @@
-Return-Path: <linux-kernel+bounces-627668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9049EAA538F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6BEAA5392
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35AA5028CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41D1E502A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6477C265CD6;
-	Wed, 30 Apr 2025 18:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161F5266584;
+	Wed, 30 Apr 2025 18:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mg4PP0d0"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBN/ePs+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0E015C140
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6616315C140;
+	Wed, 30 Apr 2025 18:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746036927; cv=none; b=Yj8I2O+FiAaBBPbr+xXdhYbsx4ccpRVXgP8hQbSxIAlpyrttEBke8uLBc+7NaEzwB4Z21lLF6lte281KopxD8pKcmT33L3FOphFpYl+EH09jhxUlYWQcnecDPWFClGoYHAsMGU68ZLVIw0H+Qr046yCDg4YEnBA8mDT+sFHyTl8=
+	t=1746036990; cv=none; b=SLlATLcZ2eer8RT4W5S32oVE/dvNwQqY6hQ/pCtgFuD+EDYmSl5fYQIze1p7dKRCMRaBEOejYReDJsoBSkG+HR7b3C8MyDfXcqP/aXAFsP7JHJ6SN+pJ+p7f9pyQMi9D7pSXsWw+9szUIe4tKs1vltIXNLaAlsj0LOax/f009aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746036927; c=relaxed/simple;
-	bh=2egahgrtnpwU0lnvD4WMa/SMsHhsr6yE+MDT32L21ZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dzqhf5hvko9G8lcMtia1OmdCulReLOCWsPq1zu4ItG/SMFRfffnXcMQI0U9xQuFU/S1qhNRC28rh3GvuCn154FUGIbEwWyWbBvqwEY3Ma+qoysQhtnodWOyxUMLnmfx1/yq6QIWh+owstyQklRliDJKhrxSpbOd20kDApCHHMNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mg4PP0d0; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-548409cd2a8so201993e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746036924; x=1746641724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8gbcY59sHcKVQbAR+nbma8JoUOaJ4sk1ICn9Mjml/5s=;
-        b=Mg4PP0d0DsqWljMArPogKXtnsGwfn9ruh1JgsomvLOuzGR1bAN0cBsKEZONku60mcO
-         GaqHEW4rhLnKif7mgQh9+Vh/sZHOzsWfhUovsv+EdPOqCn2L+tnMAv31PAhQQliIhIro
-         u4vYtRdKY1HT4Gygfk97S4F9q0ClyC2NvpIkc1l/IX/acnotHSzXaWC92AqILvcWyMF7
-         OCO9T9Epvmq788/9+zCUbNGC+DwX8PbDxv9JWEnML7hwETnoovxcCivjw1h/le/64zbn
-         AWC5e4FsR9JAd0KxYtikBP3xtM6vMMqOEBZi2UEpmS1cBBs0RRIQV5qliJvrTikWUV/b
-         ntSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746036924; x=1746641724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8gbcY59sHcKVQbAR+nbma8JoUOaJ4sk1ICn9Mjml/5s=;
-        b=RtsJnU4k1HBmZslCqE0WWY3Eow/e5CCNc/t3cqF7Kc2NkKp+OWguiyghXBaBddLNBI
-         x+JAfM8IMNOECTf4n03VB5mpIdtdt4g17dOpeD/gRti4IDNMD7PWcvEyWuk9wSzS/uQY
-         DsOJ/angdxae8C9QvqIjLgirKB6KMS4Z2dg/Hd6Pr8Gy/cB2Y4c375De31iG1l2OtZZA
-         44hbNcxaS3/2BvMEwYZj0cqSdE5OFeaZ+1DhpncAuKI9WXi/BKcW2WRoMYrsI+kQj67s
-         dMgJs5F96zkOlDAFKnSOQog8UGLQtxYG49KTo96pwPbdYmN5vy4E6u825PBUEEZElkns
-         q3+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX2MR59J+ef+jD4dQRRwozAgbErGhKHQOcBX1HO2eshSaHG8ncTNmPWWV1cOnzT8CHSvO2sFfkFmbZszlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaC+9ABduMjgkSuPurZpDRV+EriSq4YfEuhqYwzixzC/LjpKEN
-	reAVmSnfZcg0UDVirCyhcg04XmCAmXiqqEshifVzAzlY6OdTymVZ61JeBgxO3Lkl9oYo4UzA82r
-	E17dt9g7qETssUuylJhINdnqEzB90pTlNQ7nsqA==
-X-Gm-Gg: ASbGncsN9bsOSjTjcrFExaEBXACa1d7Ed4Zz4yLdhDtbfg7cSK1eJxRi66LmU/REm4Z
-	o/jjjCCWynFBYTRozLlvpdngqcICmRa/i8RjkOE/hD6EAg/5EUD9IrU14YHrSx+eCQnzXEKYdLJ
-	UmVvLH4fXNN/Tdja4RRDDmaQ==
-X-Google-Smtp-Source: AGHT+IGb2GLRIyr9grOdOWSKjK5OHsJGK3nf19lpAtYvji3v2YcFT+CGj5Ryjcw42Sy//Z7RhQ4tjh9as/OtLIacrOw=
-X-Received: by 2002:a05:651c:50f:b0:30c:aae:6d61 with SMTP id
- 38308e7fff4ca-31f950cc529mr302311fa.30.1746036923645; Wed, 30 Apr 2025
- 11:15:23 -0700 (PDT)
+	s=arc-20240116; t=1746036990; c=relaxed/simple;
+	bh=u+gLd6Cauqg83Q7vPE135p/3fXtheyIdEV1XMt+xhxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7Y1BlKSEdB2AfQHZdyhdORvB4ztlW7fRV61mZBue3Z/r2nhVwaMInG+yl4ppmIPeNEqmalHQVCNxuVcUpyiIAMtDNYq59upOfbiScb9U4WxA93ilR2KDyCyqSSbvYFXXYvyebXtpx4hjCbrp5OWzFPpxjVgn7BM6njXKI2X1co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBN/ePs+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBA3C4CEE7;
+	Wed, 30 Apr 2025 18:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746036989;
+	bh=u+gLd6Cauqg83Q7vPE135p/3fXtheyIdEV1XMt+xhxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FBN/ePs+8ER1bxqKoTN23OCJ/q3dk2qoAgx0OTRaleborkhSxY1sSuVm2cmc9VNEw
+	 mXY1MtXfvQFxFkXuL1L2sQwnqTBXYRIrl28i1Uv7Wbv3um5MKxKKNmXt5P58dBlAHh
+	 /wjQsFpIGVVBUoghUOu2f1OqS1HQwGjQkOT64acXoUP4bAKB2zw/1IdskFvnw4kzVD
+	 lkO8aNbPKupRQYD5wo94L5fjBGIBmTNm9LDAV0nygZendKx6DV4QnVrelLXUbVEPWr
+	 xxJoqx+PWyI2Yk2IseALagcqoAgboZ7+xUFTppeZ/uOuEjtA7TFHQ0T0gzjSpveGjC
+	 rh1J67l04Imjg==
+Date: Wed, 30 Apr 2025 20:16:22 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 11/16] gpu: nova-core: add falcon register definitions
+ and base code
+Message-ID: <aBJo9qNDn8xDEwlk@pollux>
+References: <20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com>
+ <20250420-nova-frts-v1-11-ecd1cca23963@nvidia.com>
+ <aAerWF9j5d01pQv0@cassiopeiae>
+ <D9K09AU4KTQJ.3TVVZPMDB0H7I@nvidia.com>
+ <9977ad2e-ce2d-48b5-a222-f74a821abfeb@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430181052.55698-1-ryncsn@gmail.com> <20250430181052.55698-5-ryncsn@gmail.com>
-In-Reply-To: <20250430181052.55698-5-ryncsn@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 1 May 2025 02:15:06 +0800
-X-Gm-Features: ATxdqUFkfhYcI-xu2JK_XpeN5Mtxg3WBPHGYn_pVC1uNsqLT6ryrqzsJgPa2fY4
-Message-ID: <CAMgjq7B_frEwFhUcosPL13hySk7otjThh-aOKOPALfpvUPJWLA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] filemap: do not use folio_contains for swap cache folios
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9977ad2e-ce2d-48b5-a222-f74a821abfeb@nvidia.com>
 
-On Thu, May 1, 2025 at 2:11=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrote=
-:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Currently, none of the folio_contains callers should encounter swap
-> cache folios.
->
-> For fs/ callers, swap cache folios are never part of their workflow.
->
-> For filemap and truncate, folio_contains is only used for sanity
-> checks to verify the folio index matches the expected
-> lookup / invalidation target.
->
-> The swap cache does not utilize filemap or truncate helpers in ways
-> that would trigger these checks, as it mostly implements its own
-> cache management.
->
-> Shmem won't trigger these sanity checks either unless thing went
-> wrong, as it would directly trigger a BUG because swap cache index are
-> unrelated and almost never matches shmem index. Shmem have to handle
-> mixed values of folios, shadows, and swap entries, so it has its own
-> way of handling the mapping.
->
-> While some filemap helpers works for swap cache space, the swap cache
-> is different from the page cache in many ways. So this particular helper
-> will unlikely to work in a helpful way for swap cache folios.
->
-> So make it explicit here that folio_contains should not be used for
-> swap cache folios. This helps to avoid misuse, make swap cache less
-> exposed and remove the folio_index usage here.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->  include/linux/pagemap.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index af25fb640463..0c9aff5ec77f 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -935,14 +935,14 @@ static inline struct page *folio_file_page(struct f=
-olio *folio, pgoff_t index)
->   * @folio: The folio.
->   * @index: The page index within the file.
->   *
-> - * Context: The caller should have the page locked in order to prevent
-> - * (eg) shmem from moving the page between the page cache and swap cache
-> - * and changing its index in the middle of the operation.
-> + * Context: The caller should have the folio locked and ensure
-> + * e.g., shmem did not move this folio to the swap cache.
->   * Return: true or false.
->   */
->  static inline bool folio_contains(struct folio *folio, pgoff_t index)
->  {
-> -       return index - folio_index(folio) < folio_nr_pages(folio);
-> +       VM_WARN_ON_FOLIO(folio_test_swapcache(folio), folio);
+On Wed, Apr 30, 2025 at 10:38:11AM -0400, Joel Fernandes wrote:
+> On 4/30/2025 9:25 AM, Alexandre Courbot wrote:
+> > On Tue Apr 22, 2025 at 11:44 PM JST, Danilo Krummrich wrote:
+> 
+> >>> +/// Returns a boxed falcon HAL adequate for the passed `chipset`.
+> >>> +///
+> >>> +/// We use this function and a heap-allocated trait object instead of statically defined trait
+> >>> +/// objects because of the two-dimensional (Chipset, Engine) lookup required to return the
+> >>> +/// requested HAL.
+> >>
+> >> Do we really need the dynamic dispatch? AFAICS, there's only E::BASE that is
+> >> relevant to FalconHal impls?
+> >>
+> >> Can't we do something like I do in the following example [1]?
+> >>
+> >> [1] https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=bf7035a07e79a4047fb6834eac03a9f2
+> > 
+> > So are you have noticed there are two dimensions from which the falcons
+> > can be instantiated:
+> > 
+> > - The engine, which determines its register BASE,
+> > - The HAL, which is determined by the chipset.
+> > 
+> > For the engine, I want to keep things static for the main reason that if
+> > BASE was dynamic, we would have to do all our IO using
+> > try_read()/try_write() and check for an out-of-bounds error at each
+> > register access. The cost of monomorphization is limited as there are
+> > only a handful of engines.
+> > 
+> > But the HAL introduces a second dimension to this, and if we support N
+> > engines then the amount of monomorphized code would then increase by N
+> > for each new HAL we add. Chipsets are released at a good cadence, so
+> > this is the dimension that risks growing the most.
 
-Ah, my bad, it will be better to be VM_WARN_ON_ONCE_FOLIO here as
-suggested by David, other than this this series should be good.
+I agree, avoiding the dynamic dispatch is probably not worth in this case
+considering the long term. However, I wanted to point out an alternative with
+[2].
 
-> +       return index - folio->index < folio_nr_pages(folio);
->  }
+> > It is also the one that makes use of methods to abstract things (vs.
+> > fixed parameters), so it is a natural candidate for using virtual
+> > methods. I am not a fan of having ever-growing boilerplate match
+> > statements for each method that needs to be abstracted, especially since
+> > this is that virtual methods do without requiring extra code, and for a
+> > runtime penalty that is completely negligible in our context and IMHO
+> > completely balanced by the smaller binary size that results from their
+> > use.
 >
->  unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *star=
-t,
-> --
-> 2.49.0
->
+> Adding to what Alex said, note that the runtime cost is still there even without
+> using dyn. Because at runtime, the match conditionals need to route function
+> calls to the right place.
+
+Honestly, I don't know how dynamic dispatch scales compared to static dispatch
+with conditionals.
+
+OOC, I briefly looked for a benchmark and found [3], which doesn't look
+unreasonable at a first glance.
+
+I modified it real quick to have more than 2 actions. [4]
+
+2 Actions
+---------
+Dynamic Dispatch: time:   [2.0679 ns 2.0825 ns 2.0945 ns]
+ Static Dispatch: time:   [850.29 ps 851.05 ps 852.36 ps]
+
+20 Actions
+----------
+Dynamic Dispatch: time:   [21.368 ns 21.827 ns 22.284 ns]
+ Static Dispatch: time:   [1.3623 ns 1.3703 ns 1.3793 ns]
+
+100 Actions
+-----------
+Dynamic Dispatch: time:   [103.72 ns 104.33 ns 105.13 ns]
+ Static Dispatch: time:   [4.5905 ns 4.6311 ns 4.6775 ns]
+
+Absolutely take it with a grain of salt, I neither spend a lot of brain power
+nor time on this, which usually is not a great combination with benchmarking
+things. :)
+
+However, I think it's probably not too important here. Hence, feel free to go
+with dynamic dispatch for this.
+
+> I am just not seeing the benefits of not using dyn for
+> this use case and only drawbacks. IMHO, we should try to not be doing the
+> compiler's job.
+> 
+> Maybe the only benefit is you don't need an Arc or Kbox wrapper?
+
+That's not a huge concern for me, it's only one single allocation per Engine,
+correct?
+
+[2] https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=99ce0f12542488f78e35356c99a1e23f
+[3] https://github.com/tailcallhq/rust-benchmarks
+[4] https://pastebin.com/k0PqtQnq
 
