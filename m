@@ -1,273 +1,200 @@
-Return-Path: <linux-kernel+bounces-626544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52188AA445E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78925AA4467
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2656B3BAE56
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F3C3B3581
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ED420DD63;
-	Wed, 30 Apr 2025 07:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF8120E318;
+	Wed, 30 Apr 2025 07:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e96Q4IKs"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oJptAU3E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3NlxzIYS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oJptAU3E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3NlxzIYS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B407620E33D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63ED1EDA0E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 07:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745999422; cv=none; b=FS5JQX4VfcBZrQW7g5xBS4/U2z9Gp0z8mUMUZ5FZpvA/y2tRRnSgsJk2TADsnoE4ofVVJjec7BvSWXz94zldCDi33Ra2iDah1R3aRFrr8N2FeToHrfu+sj6LD1zLCtFKBRu6JX0AZvNtR96YM4kn2qPYu1zfNFgngjAdjZmRdk0=
+	t=1745999462; cv=none; b=efEanDnkF5nWA9fhdXxk+BYHJ0BZNlGEF16Jz6p3CvtjOlqS7xLpPLihMTFAcBKIFeGr7kGMs/k6H+1yJzyxUhRtbbS29MAmBZCTR9VQwq8YYdQIQj33kSWtonEwJsYBLPDLh8QJoohyjZlXA6J5E4VwFQ0Tp2IGT8Y7hd7DBxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745999422; c=relaxed/simple;
-	bh=dpGOxMLIeOmwxW/FB5SchRaiP+uCvl2prhEvt6qK08s=;
+	s=arc-20240116; t=1745999462; c=relaxed/simple;
+	bh=EDMU+h0ZKd/bFT94pgKAxH87WKcgtieuxJYeL+dbFuA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVv0OqbwIF1j1AvTAagwnJ1t5xFXISAaT5HJ/50yamw1U+9UAVMaudJFGi7qoghMgFLxmVqgGB8FB4qnnmSmUEiC3Zx37rDYIuPu3Gz0YS2JQfY1zwZZvu8jUpCSMX9dKmkKvcZn4nQ707v2cJ9DONnyQkOhOXq3SHP/2MnB5P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e96Q4IKs; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af5139ad9a2so4685457a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 00:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745999417; x=1746604217; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9yxKFbS7FJYlVTaW80XPyRVVbRWztaV2reVeiBVpKKQ=;
-        b=e96Q4IKseXOyeDyxnanbHcGoohPRV2q+Ozf/UigxZsd5rM5r6PSiLlwjCQNjEVZqS7
-         AO8Hs2BlmxJb2U5zx9XT8Wtm/PyyCu4BlZHuqzVYLuZvPRBUPTQ5Ju7ijComO+Y9zc/u
-         QIMX1Sega50EC8yzP8BNwfNIO/1o5j9RBuOHjMmfl/gXoJEZZFZmCE7sK0prn0xJzR0Z
-         R9wdNmOa0Nv4WbaOcy/Ic1mALFJT+9Q96gmA/xoz4nMr+AREOjU43CDJPIh3mhdWzJGI
-         IEKGmJToh45+YpdFwoiTKaH1JNhgr9HPBKfOt09hIS2H/Qrjz10fFS2meQdOcJBIR8+N
-         6tAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745999417; x=1746604217;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9yxKFbS7FJYlVTaW80XPyRVVbRWztaV2reVeiBVpKKQ=;
-        b=itFEMXtapDcDLl7d5++9DByMHEW9P2xlswFzZjWsQaPD2M19vFhYaWl0SqtQ+39Kdm
-         qnSgumOsffxaLJC2rdfBmBaccu1Ss9/S0p+MwI3y/nEuKrfaOAIA8KWBcIhQfjghNzs0
-         n4qoeXb089RgEgyFWZX3KaiMzmoanwkmmBpfQtKO+bWjAI3uitG5D4hGcl60e3phRnrs
-         oF/N3enPx0hK68/8ai+x9QZeLKAxlnOSxThtW7ymjNDoe3DICCzgcJB3u6QCyXllg709
-         UOZ5jsaA58/R5dIDsWKK0ixjc6FARAUgVDsPclt8wmkEgHP5xzZpIxw3kVKA4st3+s1T
-         rAyg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7GuFg4ofYf2IZeZHzxseGEqEZeaLdIsmimcnVEacd2YBo+VJ6flKNxPZVUL71bOzSwp7tfakpm5ZRR/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+ZdD9zWq1DCSmY+KcthqN/6fKIvdsbiIBJ4swVGqcNtjVx8A/
-	dLbMZr3hPJ21JfYe7lhrtjjbp2tYNklSziR/LRSZRMIXOxww4zpcmki36/HGUQ==
-X-Gm-Gg: ASbGncvvqqsFTCCANjKOAQtpN/1AkvVcb3gavI1wUyozc9SCE7JwBby2Tg3RpkxFVlj
-	s8otZigeu9+1nEbLpYWSv0PJtOi6X0O6uGwuRssS6Hjx22DHDrJ4XM5bVKwodf7HHqX++xv2A0h
-	DjVP6DKJ0c2Z/tpM1nsIPowGf2MiDARRzHBWit1EFkZGlY/jyXTdAKgoGWqxCyCH1WywCpN7+lc
-	DRJJMWnm2LbYHO06Hmcu0KbZ3iMZwXDNJ950Kz3ID0c0IqSi+jKM0B2KJRHDDdYzgJDmh14R5T6
-	xBY/7RptNOYIkyPyf+zR4gb/BuO+2Wd3ZKz2+G8ANDvQO0zC37lB
-X-Google-Smtp-Source: AGHT+IFvx4UAfDgrq2sMjoLi6VEnM3rJ09t7/z8JxBTCQ55y5uUYEKoDCPk40jK6HkYjUv4z1LuM8A==
-X-Received: by 2002:a17:90b:56c3:b0:2ff:502e:62d4 with SMTP id 98e67ed59e1d1-30a3336472dmr2604246a91.32.1745999416760;
-        Wed, 30 Apr 2025 00:50:16 -0700 (PDT)
-Received: from thinkpad ([120.56.197.193])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a349e4586sm909365a91.8.2025.04.30.00.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 00:50:16 -0700 (PDT)
-Date: Wed, 30 Apr 2025 13:20:06 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, 
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, p.zabel@pengutronix.de, 
-	thippeswamy.havalige@amd.com, shradha.t@samsung.com, quic_schintav@quicinc.com, 
-	cassel@kernel.org, johan+linaro@kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 4/9] PCI: stm32: Add PCIe Endpoint support for
- STM32MP25
-Message-ID: <tdgyva6qyn6qwzvft4f7r3tgp5qswuv4q5swoaeomnnbxtmz5j@zo3gvevx2skp>
-References: <20250423090119.4003700-1-christian.bruel@foss.st.com>
- <20250423090119.4003700-5-christian.bruel@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSdOzH5N8vpm+6nWFcV+Bx8ZxnKOvCBlVIm1FKrDQPtfpdOhVm23Xm+Mg2YDvckhxjVhjHAyJ9++fEHOO/TEwvfbzLI0nZj/4OYk93nAETQwrDzyJM0OFpcZzhn8G1hbrMJQjgKr/yUJL70eUvG4AWfCUNwG9cWNisXpxhlHago=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oJptAU3E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3NlxzIYS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oJptAU3E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3NlxzIYS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B04DE1F7CD;
+	Wed, 30 Apr 2025 07:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745999458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgA3FvVgjo1HyZM+9jABfYH5Ii0eOTJBo6Tbqq4m9yY=;
+	b=oJptAU3EmNB4qDC/4KC+4PAaz66WwfRdRR+yP2dLDgq0FwC7921UzMe5XmHY7pc9wsHYAw
+	aJlDdFNULA2A7znBNvpnqJTtwGM019cLayP7kQVEhW/2QviYYAN1ZixJ+lGGkqsrS5nxgc
+	MMwIyKBXr0fBMhBoVgk1tA074Z/X3gs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745999458;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgA3FvVgjo1HyZM+9jABfYH5Ii0eOTJBo6Tbqq4m9yY=;
+	b=3NlxzIYSoJgr7S/kiliPJ/m81Wy7BSlXqA4NsVot7hmnCEavGbY3/RWHRfJ5rM0B/6maQj
+	Pk2v4EF7Fta0MrDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oJptAU3E;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3NlxzIYS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745999458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgA3FvVgjo1HyZM+9jABfYH5Ii0eOTJBo6Tbqq4m9yY=;
+	b=oJptAU3EmNB4qDC/4KC+4PAaz66WwfRdRR+yP2dLDgq0FwC7921UzMe5XmHY7pc9wsHYAw
+	aJlDdFNULA2A7znBNvpnqJTtwGM019cLayP7kQVEhW/2QviYYAN1ZixJ+lGGkqsrS5nxgc
+	MMwIyKBXr0fBMhBoVgk1tA074Z/X3gs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745999458;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgA3FvVgjo1HyZM+9jABfYH5Ii0eOTJBo6Tbqq4m9yY=;
+	b=3NlxzIYSoJgr7S/kiliPJ/m81Wy7BSlXqA4NsVot7hmnCEavGbY3/RWHRfJ5rM0B/6maQj
+	Pk2v4EF7Fta0MrDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C0B3139E7;
+	Wed, 30 Apr 2025 07:50:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ewlWAGLWEWiLBAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 30 Apr 2025 07:50:58 +0000
+Date: Wed, 30 Apr 2025 09:50:52 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: nifan.cxl@gmail.com
+Cc: muchun.song@linux.dev, willy@infradead.org, mcgrof@kernel.org,
+	a.manzanares@samsung.com, dave@stgolabs.net,
+	akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Fan Ni <fan.ni@samsung.com>,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Subject: Re: [PATCH v3 1/4] mm/hugetlb: Pass folio instead of page to
+ unmap_ref_private()
+Message-ID: <aBHWXClZEclK6HPV@localhost.localdomain>
+References: <20250428171608.21111-3-nifan.cxl@gmail.com>
+ <20250428171608.21111-4-nifan.cxl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250423090119.4003700-5-christian.bruel@foss.st.com>
+In-Reply-To: <20250428171608.21111-4-nifan.cxl@gmail.com>
+X-Rspamd-Queue-Id: B04DE1F7CD
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.de:dkim,suse.de:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Wed, Apr 23, 2025 at 11:01:14AM +0200, Christian Bruel wrote:
-> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
-> controller based on the DesignWare PCIe core in endpoint mode.
+On Mon, Apr 28, 2025 at 10:11:44AM -0700, nifan.cxl@gmail.com wrote:
+> From: Fan Ni <fan.ni@samsung.com>
 > 
-> Uses the common reference clock provided by the host.
+> The function unmap_ref_private() has only user, which passes in
+> &folio->page. Let it take folio directly.
 > 
-> The PCIe core_clk receives the pipe0_clk from the ComboPHY as input,
-> and the ComboPHY PLL must be locked for pipe0_clk to be ready.
-> Consequently, PCIe core registers cannot be accessed until the ComboPHY is
-> fully initialised and refclk is enabled and ready.
-> 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> Signed-off-by: Fan Ni <fan.ni@samsung.com>
+> Reviewed-by: Muchun Song <muchun.song@linux.dev>
+> Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
 > ---
->  drivers/pci/controller/dwc/Kconfig         |  12 +
->  drivers/pci/controller/dwc/Makefile        |   1 +
->  drivers/pci/controller/dwc/pcie-stm32-ep.c | 414 +++++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-stm32.h    |   1 +
->  4 files changed, 428 insertions(+)
->  create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+>  mm/hugetlb.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 2aec5d2f9a46..aceff7d1ef33 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -422,6 +422,18 @@ config PCIE_STM32_HOST
->  	  This driver can also be built as a module. If so, the module
->  	  will be called pcie-stm32.
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index e287d8050b40..b1268e7ca1f6 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -6039,7 +6039,7 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
+>   * same region.
+>   */
+>  static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
+> -			      struct page *page, unsigned long address)
+> +			      struct folio *folio, unsigned long address)
+>  {
+>  	struct hstate *h = hstate_vma(vma);
+>  	struct vm_area_struct *iter_vma;
+> @@ -6083,7 +6083,8 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
+>  		 */
+>  		if (!is_vma_resv_set(iter_vma, HPAGE_RESV_OWNER))
+>  			unmap_hugepage_range(iter_vma, address,
+> -					     address + huge_page_size(h), page, 0);
+> +					     address + huge_page_size(h),
+> +					     &folio->page, 0);
+>  	}
+>  	i_mmap_unlock_write(mapping);
+>  }
+> @@ -6206,8 +6207,7 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+>  			hugetlb_vma_unlock_read(vma);
+>  			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
 >  
-> +config PCIE_STM32_EP
-> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
-> +	depends on ARCH_STM32 || COMPILE_TEST
-> +	depends on PCI_ENDPOINT
-> +	select PCIE_DW_EP
-> +	help
-> +	  Enables endpoint support for DesignWare core based PCIe controller
-> +	  found in STM32MP25 SoC.
-
-Can you please use similar description for the RC driver also?
-
-"Enables Root Complex (RC) support for the DesignWare core based PCIe host
-controller found in STM32MP25 SoC."
-
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called pcie-stm32-ep.
-> +
->  config PCI_DRA7XX
->  	tristate
+> -			unmap_ref_private(mm, vma, &old_folio->page,
+> -					vmf->address);
+> +			unmap_ref_private(mm, vma, old_folio, vmf->address);
 >  
-
-[...]
-
-> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
-> +			     struct platform_device *pdev)
-> +{
-> +	struct dw_pcie_ep *ep = &stm32_pcie->pci.ep;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-
-This needs to be called before devm_pm_runtime_enable().
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-> +				 STM32MP25_PCIECR_TYPE_MASK,
-> +				 STM32MP25_PCIECR_EP);
-> +	if (ret) {
-> +		goto err_pm_put_sync;
-> +		return ret;
-> +	}
-> +
-> +	reset_control_assert(stm32_pcie->rst);
-> +	reset_control_deassert(stm32_pcie->rst);
-> +
-> +	ep->ops = &stm32_pcie_ep_ops;
-> +
-> +	ret = dw_pcie_ep_init(ep);
-> +	if (ret) {
-> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
-> +		goto err_pm_put_sync;
-> +	}
-> +
-> +	ret = stm32_pcie_enable_resources(stm32_pcie);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable resources: %d\n", ret);
-> +		goto err_ep_deinit;
-> +	}
-> +
-> +	ret = dw_pcie_ep_init_registers(ep);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
-> +		goto err_disable_resources;
-> +	}
-> +
-> +	pci_epc_init_notify(ep->epc);
-> +
-
-Hmm, looks like you need to duplicate dw_pcie_ep_init_registers() and
-pci_epc_init_notify() in stm32_pcie_perst_deassert() for hw specific reasons.
-So can you drop these from there?
-
-> +	return 0;
-> +
-> +err_disable_resources:
-> +	stm32_pcie_disable_resources(stm32_pcie);
-> +
-> +err_ep_deinit:
-> +	dw_pcie_ep_deinit(ep);
-> +
-> +err_pm_put_sync:
-> +	pm_runtime_put_sync(dev);
-> +	return ret;
-> +}
-> +
-> +static int stm32_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct stm32_pcie *stm32_pcie;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
-> +	if (!stm32_pcie)
-> +		return -ENOMEM;
-> +
-> +	stm32_pcie->pci.dev = dev;
-> +	stm32_pcie->pci.ops = &dw_pcie_ops;
-> +
-> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
-> +	if (IS_ERR(stm32_pcie->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
-> +				     "No syscfg specified\n");
-> +
-> +	stm32_pcie->phy = devm_phy_get(dev, NULL);
-> +	if (IS_ERR(stm32_pcie->phy))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
-> +				     "failed to get pcie-phy\n");
-> +
-> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(stm32_pcie->clk))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
-> +				     "Failed to get PCIe clock source\n");
-> +
-> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(stm32_pcie->rst))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
-> +				     "Failed to get PCIe reset\n");
-> +
-> +	stm32_pcie->perst_gpio = devm_gpiod_get(dev, "reset", GPIOD_IN);
-> +	if (IS_ERR(stm32_pcie->perst_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
-> +				     "Failed to get reset GPIO\n");
-> +
-> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, stm32_pcie);
-> +
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to enable pm runtime %d\n", ret);
-
-Use dev_err_probe() please for consistency.
-
-- Mani
+>  			mutex_lock(&hugetlb_fault_mutex_table[hash]);
+>  			hugetlb_vma_lock_read(vma);
+> -- 
+> 2.47.2
+> 
+> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Oscar Salvador
+SUSE Labs
 
