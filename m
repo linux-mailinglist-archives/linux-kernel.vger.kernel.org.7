@@ -1,131 +1,100 @@
-Return-Path: <linux-kernel+bounces-627071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C399AA4AD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCFAAA4ADB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4A918894DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D49561BA726E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348A3259CA9;
-	Wed, 30 Apr 2025 12:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F18225A32F;
+	Wed, 30 Apr 2025 12:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JY2Uls+j"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="f/h49cYb"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEB8B674
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D76125A2B0;
+	Wed, 30 Apr 2025 12:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746015319; cv=none; b=Dpu36zjjWcEd2RuT73PAvkoMAGe65YE06kQZlJY+7SAqDqoZSkqaVDy7Hnk5O59ss94dixJ6LWb84X+zeMa/KiLTPTq8e/D/LzUWrnfhSGJ/41AjMIug6tuj6P9qrxYcrIiHIRg4HgB1a16evEGi052VgAjq2TLID0byx0aiZuU=
+	t=1746015438; cv=none; b=nAD13Rk7e3VcWT6fIbkFjhkFKc9SJ7R+TxXM/jtwuL90A8KuWSvN1ktMCQ+B6h7HaBFrUvd3FckhS5qKn1CetbOZkVEyOb9UcAz7KvPhubMoeIE5cTpzxMc3HJqAoSdafpyBl9/I4GAKc8j0IIHIxMojVCxMVhHXPbEEJqxaubw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746015319; c=relaxed/simple;
-	bh=+PMrTV4cMqqu/lA+cBky0GvUBIqaXbLjxr4LQJmpKag=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FTkPhdo2W9pyM9xoghKgS4qiwHo/BWSXKOP/Wn4DplP2ZF++u+UNaaBYen76En0m6Sen4Ip7FK9qhirt58e1Wf3E5uv9QeH+nQ0ycNM6k5N1AnvUPDg+Om9LLYg6VZuj74kMCvjlxiZ73pO03nlfYoKf7BL7QwHRQvCIOjaEOsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JY2Uls+j; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d0830c3f7so55023765e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 05:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746015316; x=1746620116; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nTKCIm+7pqVBVyacOmAhIisX4MK9GGaxDxO7NBbyAN4=;
-        b=JY2Uls+jmAxMbrMhH47Nzk3Bh3KqBPPOHK5E8xB9azg7e/jiZJC+YkfR+J1w4z72ua
-         1ANIIsHmNy/4kLXzKR7AoHb5WUgl/cH5RkLVB/Z9vzjqFwo26okrwZEyA8MuejFy0h5F
-         NkmLLMil1tnagQwOFvHgIZZP5P3J06JjskfBMWPVnEM1geC6y2BID7FmhOYGCbifs6U4
-         IPIGKwX/wti9FEQIwr4XdgPTcyXtk4j3UFH31ofpixcZLfdfVRSlKCIlkv2tGTxiVazZ
-         FbHFH68F26hOkD3+7nvOgz0inZwKaf+CFRGtpmlUG4URkr6fuDE+l1hmZ0MWCYzfGpeo
-         pXcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746015316; x=1746620116;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nTKCIm+7pqVBVyacOmAhIisX4MK9GGaxDxO7NBbyAN4=;
-        b=ppCpYwWvxcBzTY/ZxQ5J9ynkQ4mEs4NUJD+ytlVoiYuTD2Jf425ewHXjyJwZbTVzfc
-         xxacjUFSI9ROCNJEalzzBM8Qlt3jwK91ESQEKk912YaZvXcQySvB2g+1s+bflAvGk8Nl
-         YRf2dPUBlIjtoL4zk281tAgWyzMQbASCg3tOUy0JpeZQbd0IqBtkZlf9Gb5HpI5lIbJc
-         sYve4/wrf8yhWGxyXBzOpnTs75C36oWxigeeYaL03xfRPWfDKgp7cFa2DLXVYwF573UH
-         tMwPpmxa3lYPzOUpVdIaGHAz50UjMTkB2diVTiIZYF4MOdgFxz7uzFBIckjWgJarfvs5
-         SSdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtmggSLyeWq8kIejLe5LL7bp+A2ncgFJ4EVWHsRRnWWasumCBKC9Nq8ZsyUn2GlxtxZpxGLsp5CjgDP+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUo6rr6ekTrMmg2D/rfB9lFV+QnEuW36W1DMxUlcAsX5cerzP4
-	j/L0udTwdqH2EDuUSRZu78RSsh3AwPWjjri3wuvpAcpj9hnFkJD5k7YQblngoWgaOLHSnzesd37
-	o0j0fCWmlMlBgag==
-X-Google-Smtp-Source: AGHT+IHMDr/rZjgFYSiN16p1TscIq688FqOB0h/PUjPN14cIJ5RHkwIyd6kYOwKeOQZmyhKW+W0dB9Qx4oUzhP8=
-X-Received: from wmrs8.prod.google.com ([2002:a05:600c:3848:b0:43c:fd72:aae1])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b08:b0:43c:f64c:447f with SMTP id 5b1f17b1804b1-441b43a62ccmr10399725e9.29.1746015316406;
- Wed, 30 Apr 2025 05:15:16 -0700 (PDT)
-Date: Wed, 30 Apr 2025 12:15:14 +0000
-In-Reply-To: <2025043045-overbuilt-swab-5b65@gregkh>
+	s=arc-20240116; t=1746015438; c=relaxed/simple;
+	bh=0/lwsBFQEL74aMsIjzB/hLaLxe+NzQ0+al5uNBu78dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tftd80eS/n+8Vsw2npwbjrgKegs/i0vSmufRd+xkDUQU4g0twdD+7kWIOPKipBPZYPufkBuNhfsOnXxTCeMttoc0cZ+aIvDB4qbwLDpuacW7MtY3P3kWH2Ql1U058RD+qzZjizAyFYtfa06tDVB4OdcMfES6sqvZ60RGNnggoP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=f/h49cYb; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/CruT1hpOjH0txkNMdrxLRuELIojffklxleNRgp0XsY=; b=f/h49cYb+HraKzSuBwxpbNYNZO
+	LQqSSy6Qqgu+G2htxmIyqhmxIPXWmCW3J5M6kpLKMWNoX1zj+PXkgIAYi0yTyWrJyQQZsfNd+b4FM
+	hLbFZqK3GZfbqojFGBME+CWLvhF9sRZklG1rvv9wxHwi4YVwmbzhZMC8rBycZKi8uCSqwidBOSXYD
+	yRZceAW5f5v+S9Tqh0hN8iF/3Yp7oAnKDQ/TsjWrVsqK/DBLmk0VKGgZQ/hnYBPn1YC3G07Rh8lBW
+	xpTWTu3JKXkwiSRk5mkUpR8z+j6zy4JzqqFiaBY5ujjGuYqPJDCbvAYZOX6Kqo5y1B3vZSqS1wLRO
+	0IR8SURw==;
+Received: from 179-125-79-234-dinamico.pombonet.net.br ([179.125.79.234] helo=quatroqueijos)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uA6MF-000sDI-BL; Wed, 30 Apr 2025 14:17:02 +0200
+Date: Wed, 30 Apr 2025 09:16:56 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the char-misc tree
+Message-ID: <aBIUuIVJvdcUm9yz@quatroqueijos>
+References: <20250429155404.2b6fe5b1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250429-vec-methods-v4-0-dad4436ff82d@google.com>
- <20250429-vec-methods-v4-7-dad4436ff82d@google.com> <2025042925-kindly-squash-fa6f@gregkh>
- <aBIIZ64_Wsk1unB2@google.com> <2025043045-overbuilt-swab-5b65@gregkh>
-Message-ID: <aBIUUs4AWTII2bcO@google.com>
-Subject: Re: [PATCH v4 7/7] rust: alloc: add Vec::insert_within_capacity
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429155404.2b6fe5b1@canb.auug.org.au>
 
-On Wed, Apr 30, 2025 at 01:39:03PM +0200, Greg KH wrote:
-> On Wed, Apr 30, 2025 at 11:24:23AM +0000, Alice Ryhl wrote:
-> > On Tue, Apr 29, 2025 at 05:30:06PM +0200, Greg KH wrote:
-> > > On Tue, Apr 29, 2025 at 02:44:27PM +0000, Alice Ryhl wrote:
-> > > > This adds a variant of Vec::insert that does not allocate memory. This
-> > > > makes it safe to use this function while holding a spinlock. Rust Binder
-> > > > uses it for the range allocator fast path.
-> > > > 
-> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > > > ---
-> > > >  rust/kernel/alloc/kvec.rs | 39 +++++++++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 39 insertions(+)
-> > > > 
-> > > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > > > index 0682108951675cbee05faa130e5a9ce72fc343ba..998afdcde47bec94b2c9d990ba3afbb3488ea99e 100644
-> > > > --- a/rust/kernel/alloc/kvec.rs
-> > > > +++ b/rust/kernel/alloc/kvec.rs
-> > > > @@ -355,6 +355,45 @@ pub unsafe fn push_within_capacity_unchecked(&mut self, v: T) {
-> > > >          unsafe { self.inc_len(1) };
-> > > >      }
-> > > >  
-> > > > +    /// Inserts an element at the given index in the [`Vec`] instance.
-> > > > +    ///
-> > > > +    /// Fails if the vector does not have capacity for the new element. Panics if the index is out
-> > > > +    /// of bounds.
-> > > 
-> > > Why panic and why not just return an error instead?
-> > 
-> > It's for consistency with stdlib. Illegal use is panic, expected error
-> > conditions are errors.
+On Tue, Apr 29, 2025 at 03:54:04PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> But this is the kernel, not userspace :)
+> After merging the char-misc tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> As you can return an error, why not?  Rebooting a box should be a "last
-> resort" type of thing when you can not recover from an error.  You can
-> easily not overflow and return an error here, so why do you want to just
-> give up and cause all data to be lost?
+> ERROR: modpost: "init_mknod" [drivers/misc/misc_minor_kunit.ko] undefined!
+> ERROR: modpost: "init_unlink" [drivers/misc/misc_minor_kunit.ko] undefined!
 > 
-> And I don't see any other panics happening in this file, so would this
-> be the first one?
+> Caused by commit
+> 
+>   45f0de4f8dc3 ("char: misc: add test cases")
+> 
+> I have used the char-misc tree from next-20250428 for today.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-I don't feel strongly about this method, but it's not the first panic.
-The vector type has an indexing operator vec[i] that panics if you index
-out-of-bounds.
+Hi, Greg.
 
-Alice
+I have a fix for this one. How stable is char-misc-next? Should I include a
+Fixes: line referring to this commit ID? Or is there a chance
+char-misc-next would be rebased or the commit dropped, making the ID
+invalid?
+
+Or would you rather that I submit a v5?
+
+Thanks.
+Cascardo.
 
