@@ -1,167 +1,229 @@
-Return-Path: <linux-kernel+bounces-626731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0A4AA46BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E348AAA46AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015443B388C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EAB9C0931
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF8422370D;
-	Wed, 30 Apr 2025 09:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3C3221F38;
+	Wed, 30 Apr 2025 09:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AB7yHzHZ"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="KOXHmpAf"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010014.outbound.protection.outlook.com [52.101.229.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFEC222563;
-	Wed, 30 Apr 2025 09:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746004400; cv=none; b=gI1YKG0OrWg59wWn1OEURo4jueaBSTrLdPw9lOTTZl9yEE0MFKohuLUaUTahRGngc76o1Hk4+RuvGKnGlqVjv7VWMP3/7QT32rXDZTIgZ7s/znWeVsdQ1TlPwsWFiy4JukO8G0Lag/5KPfZbkj7TI3SrMnmTmM5svexlTDnUgiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746004400; c=relaxed/simple;
-	bh=d2DDZC70gbpscPgbWYbwQPfzHaJwMRuO8UuuTeGXlnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIhv4hR7OcNBRJuQz4A+VJMW3ST7lKZ/P5Q/Wpt5Th8ePBkZyXWhZ/elRvpU0glPDoSUm11Wo9qkUchz3gUcvkeE6fMmHLjUyLgIYG+eLCL4Nx0XOGtTaTfOEOQgFf+IH5ocqrrUMPRzNsUIcAiOwk0CWmsTiCECJuCDLmkJBGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AB7yHzHZ; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53U9CK8G823665
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 30 Apr 2025 02:12:20 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53U9CK8G823665
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1746004344;
-	bh=/7rTi9HvZ6onJSTdYqzzgTETKP8TAGe+/d/qRha+9aU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AB7yHzHZAPzuuD3gLAO5sc0iXVQ+0GQF0XcAMrHLP5xDswXkqmewyho4mFI+++jqF
-	 MUjpki2/cVxD8OLc2l7OexLkzHfkljDGVxdNMg55yJJaHHq61lYWVxCqkbcDlKPQUA
-	 zSYweN1JtJ7V8wjKay/kfLYDENnpupYxIHInm8F/XdaI7EVCrqyb+ID3uZvWWl1lZ6
-	 JjsGcIx5lBkgRJaxum2F+bKJHQvcOpilyvKrFHCwoCu7yRPQ3Cx+lli3hqR1yJzAxL
-	 76HNJqHr0UMhGU5BXc72W6NjFJ4FPu6zOuAmJG9uLPuSgV47tgyG8sly9PeO8s0Rh4
-	 x5a/U6REmH0ZA==
-Message-ID: <d5b7edab-1872-45ff-8f2e-bcb34f6bdc23@zytor.com>
-Date: Wed, 30 Apr 2025 02:12:19 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C96E171D2;
+	Wed, 30 Apr 2025 09:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746004370; cv=fail; b=dynw2eiKEdsZjoZL4lBhjOhqyVkf16VMthtOjcMOLlPCxrwn3evdFFfOuac8lAxOvoAhFVK8LVYZAGVpJXWn1pi9ugsulGK3xi6YvW9D+wNMLaGVRSGQVQJyCyat4m+Hcu+A7iari4Gp3GIpqrNikfLj08tifap6YvNp3CpwM18=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746004370; c=relaxed/simple;
+	bh=LacbHysY//JoNUcFSjBYxf3gmex6iaq9+AFUnKANAPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=L5qW3gGdsWSMIS4gJn0B1hGJ4Xf46HMZZm8QO0lIAUU6ATFTP7TtunCaR1CU9p7MntN83e1OQ7CbVcdapi3GfLLtHWR893339lwLZslMI6ylEKRloSk1NtZzM0i6DTBLoPUO8hG3J22dmIr5+q7CHKooAd5BNo3XyUjFDYcArjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=KOXHmpAf; arc=fail smtp.client-ip=52.101.229.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ldqlwLDgPzHwOk6QsQBoLxXvOyCnkIo4AKvx1Kg9mRZcdUE+96LcF+yMJERmtyD9Kvg2Vou8syI5kvkrEYr+7GQTRlhAsAP7GT5zNP4XWDCQNG0PWu3MKunpsuakF7g+tp10mpdpCBsMhscKRSlVp9OOyzMpZi1qZyuSjTk7W+Qu9OuPokge2HN5tAEwqP4XSvB6wGIusuNGw0KejyRVpmcWk0aj0krkIHDoKdvLH6xh0S9r/wTEBolfnuCqf257M3RnAxGtx/jy/ipZJ+FGqKuYHSscbu813jOHhmH4SeZif1NnDdDU+DHcOOTnKEF23b3oXxI/fpkHmP6TkvoT6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FpCX3a15QcUMZTy7zgIKOEk/EMAtKoiFnl+fw5TF9KY=;
+ b=KTVPtzoPG3oRdNcVQVzbggRHVqZpAlTh16HT+ea/oZqQbn0XmBilpbt6Eiazizg/kF9mDS5D7KWhAgd0HZ9+FSo9hbsODFfUIQJVPKRw7HOft4mMU4iPzen2RJeB24uT8D4wpSOPnAzYZk/6LpG4DOJskOr4n6Lm0aTV4Sm/wMZy1+asKwSN8qyMzIKvXMwpwwf6xjM0pB8wt3jlP6lNcuPiD0BuEWinVnxZ0EW6EviusLEocgHSuypqwe0yxBdpSfXc/tfAlPOjwuhpIkQ1JkF8cm+1Xd4ZgEEDZcybzxp3Lmp/tkeXWTkgY51Mrd+MQKUvEMAQHJM8UdkWNvHNZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FpCX3a15QcUMZTy7zgIKOEk/EMAtKoiFnl+fw5TF9KY=;
+ b=KOXHmpAf7kr2ppi7QW/EYOfj0yuluq29Bb2I4gqFaqlJPsFcJDM7Amlv08ddVeFttk/TtjH9Mh7aLapxZhGjtK7n5Nqf9f1AdTsMz6iZkDupjfUKcw/NK5vbuFNo6OyseDQ4eLY3WcthCUzO0l33XXyQM50pRVcH3YqomPtaVA0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
+ by TYCPR01MB8770.jpnprd01.prod.outlook.com (2603:1096:400:18d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.34; Wed, 30 Apr
+ 2025 09:12:41 +0000
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3%3]) with mapi id 15.20.8699.012; Wed, 30 Apr 2025
+ 09:12:41 +0000
+Date: Wed, 30 Apr 2025 11:12:31 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 2/2] media: renesas: rzg2l-cru: Fix typo in
+ rzg3e_fifo_empty name
+Message-ID: <aBHpf0B7ljhfbd8j@tom-desktop>
+References: <20250429091609.9947-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250429091609.9947-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429091609.9947-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-ClientProxiedBy: FR3P281CA0153.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a2::11) To OS9PR01MB13950.jpnprd01.prod.outlook.com
+ (2603:1096:604:35e::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/15] x86/msr: Add missing includes of <asm/msr.h>
-To: Michael Kelley <mhklinux@outlook.com>,
-        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-        "jolsa@kernel.org" <jolsa@kernel.org>,
-        "irogers@google.com" <irogers@google.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-        "wei.liu@kernel.org" <wei.liu@kernel.org>,
-        "ajay.kaher@broadcom.com" <ajay.kaher@broadcom.com>,
-        "bcm-kernel-feedback-list@broadcom.com"
- <bcm-kernel-feedback-list@broadcom.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "seanjc@google.com" <seanjc@google.com>,
-        "luto@kernel.org"
- <luto@kernel.org>,
-        "boris.ostrovsky@oracle.com"
- <boris.ostrovsky@oracle.com>,
-        "kys@microsoft.com" <kys@microsoft.com>,
-        "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-        "decui@microsoft.com" <decui@microsoft.com>,
-        "dapeng1.mi@linux.intel.com" <dapeng1.mi@linux.intel.com>
-References: <20250427092027.1598740-1-xin@zytor.com>
- <20250427092027.1598740-2-xin@zytor.com>
- <a1917b37-e41e-d303-749b-4007cda01605@linux.intel.com>
- <SN6PR02MB4157EA2E3B827141588DA310D4832@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <SN6PR02MB4157EA2E3B827141588DA310D4832@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYCPR01MB8770:EE_
+X-MS-Office365-Filtering-Correlation-Id: c196bd65-7bc7-4600-b12b-08dd87c72923
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G0LW3mE30XMpamnQNbx8M6dUHONpzlfrWmPv5TwkMwtcegrjJxb1CX+Or/5T?=
+ =?us-ascii?Q?z5Jqo0RSZ5hgdR1DQ62NTs/gh+w3poUJK6vD0O5JbrfdBSaDsU2EpAe1M/3E?=
+ =?us-ascii?Q?N2kATd8D3TGbxDB53qlVVuhz2Op3HJWVL0rl/ayKSyErUZXFf1mfg+JHXSpu?=
+ =?us-ascii?Q?NF/EsW5vCHAp4vn+RLeD63aCL5OlTWkwcY5gUb/MFI3Pi9k59NGLeQUpYrh4?=
+ =?us-ascii?Q?QTm+HfXZGnfkUvd8+Ri86cEeqATZ3obZ2ZTjtCVtVuI0e+t4Yu2CGg1ii1hc?=
+ =?us-ascii?Q?a8gnSfHxE7clGyxTm3QrnzoAhYY0JkYTGQldhFMvt0soVpTR0BMx9mPqE1X1?=
+ =?us-ascii?Q?mGERBzjbmYf3mO8YJ1RpIEIauNCDWNGRqihNr7cGbvcXfQqIe1aLdQkbMMdP?=
+ =?us-ascii?Q?LhQSdTs0fxc2pxC9lVHVY1g27axPb5TeTLuDW78vf2HnrJrJ1/R83mPx4ZNa?=
+ =?us-ascii?Q?tqlN2psehLOYKJzMGiUPl0mogca0G/y8pq6JofFlNPDpezMjKlU3IMx0m8c2?=
+ =?us-ascii?Q?VSFLxDIu5bMrL4cW4wJIHMmJ5bssdWOXs4TwR32UwyBOn5IYvnkBSw1BBE3L?=
+ =?us-ascii?Q?Z8C29wlr2UJ6CZs9p5qFYr2JzZkB3kJ3EL2xv8aZ7uP91jkJAwdulQkl9WRS?=
+ =?us-ascii?Q?ShGcZC/x8lyjrcSGLNIqkGoG5+LSMv9YqWrqj1ntwO89Dd0n0X38jINWBPr4?=
+ =?us-ascii?Q?q81UdOKP1P3kf3efhN+EacAYrN7dEmKBtmmi+nmLCz8y36k+qJG/8v5WIkdT?=
+ =?us-ascii?Q?Cjgh56sNeumAQtX0bzWnvtPN7LOUmQFEggouQNGhgFn138caEiwggzs9AmJ2?=
+ =?us-ascii?Q?VyXE5MxjPhwgl16O35n6rySvqKHjfq6mBsNmPbl8LCrvu/k4nKANXxAERt1r?=
+ =?us-ascii?Q?5PLr4PUuRaV2D6CSJjBhQTGBYz7x6MnjIaxe0wPwpUnM/LBJcBPOpaPgidtr?=
+ =?us-ascii?Q?hr9VBlxrGNXyS7LHRNx1fm/dEv1q//CFFouad1JENEjf4wTfcVMYQfq7p/Hr?=
+ =?us-ascii?Q?HBrALvlLEYkBcVW4CtbY66CVZWgPtz9Jsh+IYxLXw++bPhUQ4Ua6PEFPwKLm?=
+ =?us-ascii?Q?OWOhXlhO0fyCrO+sUAqxCoi6NBTBZJG5g45jjzOsg39A3EjJLYAJoAqJrhyj?=
+ =?us-ascii?Q?bV5yX/cfH28hLGHaXYdOQoEHAgttCZCNd7aCcUfuuFhgnDTwBluLB0VMPri9?=
+ =?us-ascii?Q?NfXmSibHNIcKGQlbDJFI7txINW6YC2YipMGmz1fzofQofadd8F3Gjw3Dme7z?=
+ =?us-ascii?Q?IAFlX+SZnvdDO2xcBtJUbPGFLrF8Vmc+EVMB1KI9VeylGdZTcyArTxyk4RDm?=
+ =?us-ascii?Q?GJPvfg/CI9UxQri/dIaGgnalNnLS8TMpM3ezwjHBJ7uYPvyUob8qUR1UqkjC?=
+ =?us-ascii?Q?8Vi9j+UYGmXWpiXF7urlPzyCByu1UHAcQVZMScEtljP3snk24Xlz0u9MeaaA?=
+ =?us-ascii?Q?FFWiZ0eGOmwO+R034hpk45wZY4RAUkFuK+XxYusrzoZ1YFrA4lXF1mWhD+t4?=
+ =?us-ascii?Q?Com05db3K3XPHDo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qaVpQ8h1u7UHEZQ9sh0xX1XHd/7gs/J9Cceu8PZhOSgei56h3K3MgDQpTCdy?=
+ =?us-ascii?Q?F/dbr8FlNwJLAj9Hv2bGbJP9U9VyGGgEbtGkQVS032Ha9ixSWPmgmichmz5f?=
+ =?us-ascii?Q?d9KJDDeMSJt68iMibc9OVtAOyC/LgtG4sTGJ+aq8fCUod4SUpYNv+2Q5jDrb?=
+ =?us-ascii?Q?2JvVAfskV41eAK6dNMc7ymEwEtyP9gfSRXcKZqnEDGLNUxcTVohzR0w7P2LH?=
+ =?us-ascii?Q?0XXcpd/EbmeEgM3X+KMcaR0I0jXhZOdzqyiQIeuLJWVLD7UoIS94Sgk8182m?=
+ =?us-ascii?Q?bBP6eOrpYuHioVzM/oUXoLIej1JLCxvlUcdtFFQyN28Qo3TjUBpXKuxTmLZm?=
+ =?us-ascii?Q?rBQtL/pRF55C+kBtQgTcBj4VjCBXRK2HLbCS89TCJywTnsV2O2r+VVHwrZah?=
+ =?us-ascii?Q?91OdZKRTb2OCoUGKMBSFXnZGfEIFmYtiIE86l5/o91JPKeHafMiVmW0Pf7kW?=
+ =?us-ascii?Q?vqx2AUgKXGeCILcqVa9eNYl4RxX62sq7Vx8YBnC2U5zLATdwH5hXbT/FJyGy?=
+ =?us-ascii?Q?CeH3/31AFzsZrlL71/JupOoWWsWxQUaHsqRqK8ILDvx3mY8THUm1Ck76SbRT?=
+ =?us-ascii?Q?u9sb6LeHPM8+fuCLKkc9dM2Qd9K5/UvwZj16KCm8MRJ1ehgX3DkBn2OfICJg?=
+ =?us-ascii?Q?rDfMwhJHang6SHgPbgky4eoukTCXbDo05Z3mCOO6QNig30r8w8bbRu2p64wQ?=
+ =?us-ascii?Q?W1ugB54OYmp7OvBEU9p/QGtzfIRGflQlEadM2d2BtRj3MZUez0e/s9I15zJ9?=
+ =?us-ascii?Q?avpoCRvUHc27Y75uKmSkZowqkaiHfDD6yU7z5E+SmVjWepQcBbDz5nSboGNq?=
+ =?us-ascii?Q?w6eK0Q+sjqN5sc4AWXhWTTSzuK3x9WyKTHfylqCEXqhTS2r8yZQPWWI4ODjQ?=
+ =?us-ascii?Q?XpIeF6Sf0X5brPWgdCmYAdpxt9w6qrxSOPF/NHHN7l0gyslWLPo4xecETFCV?=
+ =?us-ascii?Q?Jiqs5GhT91XKH/992pVUAJdHxDX8wCqoi6jdtoHAn0O2YY2kYaASe3Amemcr?=
+ =?us-ascii?Q?VJwcKDDJSrWLcnML/U0hojAT1/hmON0sar0LsX3Ll0rzuxymo9buknvIcCWk?=
+ =?us-ascii?Q?d547Vuxp4oJe4/tDhSwd7D0es0yc/t6uvZxQPnSqTQgkEfX5NJBZ9c0j403R?=
+ =?us-ascii?Q?f2qO275SB5lTZIIxNe83ktiAHHN79L3jXX+dVqPPfAq1pgKActxaeNaierEX?=
+ =?us-ascii?Q?fwb9sEI/znJdj/faP/VR2HC4+JfinDtfP8gq7v750N547Xl9VzweVIatKJRJ?=
+ =?us-ascii?Q?2kTQtSVqAQah7jjsvfGiHgbIXCeyt+Or5aT4QjTHDyWo5GGooBSQUQxyAw22?=
+ =?us-ascii?Q?p+5g3clBa2nFOjezj4tqm1OFQf1QOL8xi9thbAIMDkMCzssFtMydwMAXnefv?=
+ =?us-ascii?Q?pHUN/yQTUde+zLKrgyJEvztOb6ZMC7X7VKIrtKOmXG8Z6U6GydHIxOxxhcp4?=
+ =?us-ascii?Q?aRdFU0PNVI5gt11UyfFrtkWp03IeJH8RXdBtcAEx0+hQhbJM2lxDUXKY4HYS?=
+ =?us-ascii?Q?tbNTUUKkFCpJXu+DXLicfPTbWMV3quYpdyi9jz2hEdFii38o9oQTkG2eOi4F?=
+ =?us-ascii?Q?w/5rdC5lUiiiNi/JxRXpLPrj+F9JgTUjEzuKTPn4Pf4VO23d5z+NUN0PFhpe?=
+ =?us-ascii?Q?Z5WtfZRReMjzB/zfmUHFOT0=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c196bd65-7bc7-4600-b12b-08dd87c72923
+X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 09:12:41.5989
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f41eQt0oHnkOTIccDbd6ObS/5gXyZQ9F3qESWVJ3lymGPmm5hnDazvZ1kw2CfFsRdipbVeTT7ekV/SFHAYsA7VlYluYPVsL/8U1KSj4cx1C8/8hH+S8pYxt4/m1a5ybe
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8770
 
-On 4/29/2025 9:20 PM, Michael Kelley wrote:
->> Also under hyperv/ not all files are covered but I'm a bit hesitant to
->> suggest a change there since I'm not sure if they (hypervisors) do
->> something special w.r.t. msr.
-> I've worked on the Hyper-V code in Linux for 8 years or so, first as
-> a Microsoft employee, and more recently as a retiree. 🙂 I'm not
-> aware of anything special w.r.t. MSR access for Hyper-V guests.
-> All the normal Linux code for accessing MSRs just works. Hyper-V
-> *does* provide a set of synthetic MSRs that are unique to
-> Hyper-V, but they are also accessed using normal Linux code. Of
-> course, at runtime the access to these synthetic MSRs always
-> traps to the hypervisor.
+On Tue, Apr 29, 2025 at 10:16:09AM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> I'm planning to apply Xin Li's patch set and make sure nothing
-> breaks for Hyper-V guests, and particularly when running as an
-> SEV-SNP or TDX guest. Hopefully I can do that by early next week
-> at the latest.
+> Correct the misnamed FIFO-empty helper for the RZ/G3E CRU. Rename
+> `rz3e_fifo_empty` to `rzg3e_fifo_empty` to match the intended
+> naming convention.
+> 
+> Reported-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Closes: https://lore.kernel.org/all/TY3PR01MB11346E57A3DF8D8A90A405E4686812@TY3PR01MB11346.jpnprd01.prod.outlook.com/
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Michael, I appreciate it!
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+
+Thanks & Regards,
+Tommaso
+
+> ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c  | 2 +-
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h   | 2 +-
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> index 5fa73ab2db53..db27819d8200 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> @@ -366,7 +366,7 @@ static const struct rzg2l_cru_info rzg3e_cru_info = {
+>  	.irq_handler = rzg3e_cru_irq,
+>  	.enable_interrupts = rzg3e_cru_enable_interrupts,
+>  	.disable_interrupts = rzg3e_cru_disable_interrupts,
+> -	.fifo_empty = rz3e_fifo_empty,
+> +	.fifo_empty = rzg3e_fifo_empty,
+>  	.csi_setup = rzg3e_cru_csi2_setup,
+>  };
+>  
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> index c30f3b281284..56feda6e6207 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> @@ -199,7 +199,7 @@ void rzg3e_cru_enable_interrupts(struct rzg2l_cru_dev *cru);
+>  void rzg3e_cru_disable_interrupts(struct rzg2l_cru_dev *cru);
+>  
+>  bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru);
+> -bool rz3e_fifo_empty(struct rzg2l_cru_dev *cru);
+> +bool rzg3e_fifo_empty(struct rzg2l_cru_dev *cru);
+>  void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+>  			  const struct rzg2l_cru_ip_format *ip_fmt,
+>  			  u8 csi_vc);
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 3d0810b3c35e..ab35caf97c51 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -323,7 +323,7 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  	return 0;
+>  }
+>  
+> -bool rz3e_fifo_empty(struct rzg2l_cru_dev *cru)
+> +bool rzg3e_fifo_empty(struct rzg2l_cru_dev *cru)
+>  {
+>  	u32 amnfifopntr = rzg2l_cru_read(cru, AMnFIFOPNTR);
+>  
+> -- 
+> 2.49.0
+> 
+> 
 
