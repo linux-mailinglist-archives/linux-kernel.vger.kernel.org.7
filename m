@@ -1,174 +1,152 @@
-Return-Path: <linux-kernel+bounces-626605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2728AA4511
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:20:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91503AA4520
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD53218999AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B684A08BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 08:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D737C219A8C;
-	Wed, 30 Apr 2025 08:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BC5214223;
+	Wed, 30 Apr 2025 08:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0tJbcci"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V/XXfSFh"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5142F21507C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71867FBA2
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 08:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001160; cv=none; b=OG2lSr6ZfHxIgACdw4PTvMjunn3D5YjXMB0AB3K4gFXK2+ZBMqSqwmhD+DHM/+i7HXKpmRtkfIb8r06HDziuXYiQOQJ9YAHQ5zRU6yRxS5hVfwjzYGYJ+wFt/Hv6vUMFxJ3iYOcv0/yQEi48KGtgZ8t5PQAtSiyULwj5HeLtjEk=
+	t=1746001292; cv=none; b=mJT2iu2qPoFzf/j0vrfhpCE8Etcb+sedbASa3W+R5/gOQWXQ+pvd/cbDzMKNU0fPSYkYIw1riqCVZMCW7ncRKBGRzSh0WQjMgm+jVdcB3CXL/DRqizQVWx6ghrDqW0mAQvCzfCH95rj+Ot67GLX1BOqr6Gfo95dcYjcNzH6pBBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001160; c=relaxed/simple;
-	bh=fiI6v2sLSru2ldS3Chl17lyrvKpWDwMOwhCNyMMMPuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/Me3r4KA77p/4KmIYIOBtZ4FO/DBlA5DO3Z/EfhcKiXzqquHNX2zVF3OVF+qfEmLhDJeNUvSBksHTlmw4Ic5HgT6oKxYcFg7nEGxOWX7szy3zmxhpVIOx17oM0AIX2SXP/lBaYrdFEgkqzGnFZtJAYs0bQTqyEfVHQm6HFJKIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q0tJbcci; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-391295490c8so454160f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:19:16 -0700 (PDT)
+	s=arc-20240116; t=1746001292; c=relaxed/simple;
+	bh=fmtdM2CPWNoSGtqCaZKgL0xYYYt6+JNVVhkMJ+bSf78=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aFywA9coTGv2PnepS8Kh/SrkRCX58TJruz3DSd6ne7VPQxQRq7TuHFtjhxSjFglU1ojBqHgeZRA+WDRMttguPAllV51cYC3f/oQ6GzlwyOFl+uLEwycDQP4t0UOHOFGPJfrAkyMBuqYXq0ofZC9cxNYYkczdKnki5Fn9yWEOFxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V/XXfSFh; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so1213243866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:21:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746001155; x=1746605955; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpunSQQmJd11F5PhM8s5L9YEZ9KXf1KKg9c45qMNfwE=;
-        b=Q0tJbcciExaBiMS/6q0G3FiRPQ15rAe2qXB06p9C96g0P0CDeE9Wez00ua9vf8UtCd
-         Sc0VQc2Q6scCBU1cn2Is/zFXG4ABoFqB9+cIdKMHEebmETABYjyMP3q/tXKhpFKYi77b
-         hOaTCxmVb1CcqCaC6XgaxNN0FwvD9qwY3ia45ZvEROzabUoNasorkqA/bG4PElzT7em9
-         55NtKkrVKmk88wSXHqC20VhW5DccjsJ001OCHFVTAyfvdqAWAHxuc02SketSuxpbsEXs
-         TANqfNj2UoisV6nyJP3u4KU7XNJVL2w/zjwZDk4zeA4U2ptYxTi2wKfgASez/UsINWPt
-         d8Hw==
+        d=suse.com; s=google; t=1746001289; x=1746606089; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JoXuPa8XPN028EXJ/KAd1SC1yPdabYe6dR0fihdGMkE=;
+        b=V/XXfSFhLIpLdSxdY6csTfC4yXDiikF1jZfXysYRjWt4mXL7S2oHjwK4RIm7pkhFtA
+         suMJXtxUL/fw/xmUFINJvJ5AAuvnX1gb/tEcCDnGMqrwphmLVV6OWqF595iPFj20K+d0
+         sFyEZevFR1YUl8lLUxtp1R0bg3VggjQvlbNNyo4MYF5cfFbKJk8oU2w40ct67obWZvM5
+         1nkvlJXnZ1EHEffgHIhLyOPA04GtXVT+CEXrMolz6LOWJDPqo0SbHgPLrSY9rhfBBMJG
+         EJvtvp86Qi3747Z1Rvp2qlJlJTBRlJEgMb0sFPhML2agXxpNOvQu+lFG40oQuGsob67s
+         2bsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746001155; x=1746605955;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1746001289; x=1746606089;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UpunSQQmJd11F5PhM8s5L9YEZ9KXf1KKg9c45qMNfwE=;
-        b=ZQsB8KTamqOY8gL+4ZCiOynSiCc6VpUIusnaaiZb1PoCBozYZjf6Y92Uj3/Y+WRI18
-         mm9z9O4ghIxUAVwelNvvQ9DsudGkhDAkib60ahUqALHsz93YSv8TuOCkwxI5cdkc19Nw
-         5lYZmOTWf9me84okPhkTvYlkSrsY+VSv1wu4JvhZ70RRXMmcIrhS+RB3Em5GOG0IFmAk
-         Y63TPao+34txZmV9B6y8PjI/RkbfAJnHc/l4G1lb65qL2yJAd9GJ4jl7EHJflNnUpXnO
-         ANU0wDAPDGXjewL8IH/b9Fupnxdgh7tANcRRpvph7TTqBklRL5MvcDNM+WBXkenQV6/s
-         dTpg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6NeDGSWaH/aaf5O0gljceaDIooLLBdPczG2+lKGlQZyFvrOsKvFP5AEyeIzB45g0H/2vq1WB11p37iIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhzcJ95BOsa1Ux5Fj0S1hNtW6IQggsMeENnrR0ru4XfaANIOw7
-	7/18CbplVpSekQDGTNloxaNaFbq0QJX8kYCASNXyP1NGzSK9nH95x4t8B5tzYBU=
-X-Gm-Gg: ASbGnctTthKVNPKMuawtR/sMdOHvkjCsk1/ezyFCukJNd6k/mr9ScHPGqBJCDIY+bKB
-	SW/bRoAamqsi2NvbtX7GEVPatP9/EFfG0Cd64W/6NpcoKHA/kwBlUZR/6MlxnkhYtQA7yT9117z
-	ObA6C5hkqFxTXnoGhATorIzF3QSDks3z8ZRVPPxHpul5cQTj67eVOK0YNQWWnxeoe9vJPrl6mHR
-	4PhfoI7H/PQHrFu9ijc23CQUqCaYU1vwHqS/WjXS5HdLTtZMPiPjO1V0KvokkM2iUc0TEpydyNV
-	5q8RpdKUJJd+T4iuoNIxhGdPjQgZu6U9tuaButP0H63TokSQ6o4VjzNqr2w=
-X-Google-Smtp-Source: AGHT+IE1qlH7u+YAdeHuBXmBf21Ma0kko6EXnXCydVXTTFQPPR5RsKgo/tR0GJokT9V5Sn48/V0JFA==
-X-Received: by 2002:a05:6000:40dd:b0:3a0:8b90:1acd with SMTP id ffacd0b85a97d-3a08ff347b3mr497614f8f.0.1746001155603;
-        Wed, 30 Apr 2025 01:19:15 -0700 (PDT)
-Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca5219sm15998586f8f.27.2025.04.30.01.19.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 01:19:15 -0700 (PDT)
-Message-ID: <3e34ce09-1207-4dba-bff8-38c01cad9b78@linaro.org>
-Date: Wed, 30 Apr 2025 10:19:13 +0200
+        bh=JoXuPa8XPN028EXJ/KAd1SC1yPdabYe6dR0fihdGMkE=;
+        b=NzIMfDvvssEFtXTKC8HsG5WjTN64LDIcT45ZlDVNj8/skAdo8nJ2skhCkyBcIAlGLQ
+         gSnUTavXh9LTxgkIURijsrq5o812dkuT1qwkssId0mPcsQWrexTKdOwtBzCkfXjhy4O/
+         Fq1x+4lK2jN6lNIF4ZypXJbCIiyd1k8axq0H3s/IDqWqU0R7a6q745PgORhqH+cBOMYj
+         g6uoDxnaqyZ2INXpe9k8tRRXLQSxsxJpPtHHG3a3TBqqYMqpwB4/sLIPygrf+lH/X72h
+         pMPlogIjmvupupSTLtfcMVUtHPkZCuKBD38LQAoD1CfKbkvGZh0zvy341qCibrCQUyOc
+         yLZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWn2EUzAabpmsgyNPGkeq3fyHab3zkQn8Ar95XQb2hSJwhg51cCCvyC4sci4oLAY4x2DDjKtZjXol1zfd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyka6yC9StEUFiqsfKPGWped1OsLPnaxi6En/ZHdXFxi9WljtYD
+	cowgDwq4hvYu/fGhL9L6O9VV9uR0fUFBSbZy6PkQcOwnDXgYJdKw4dA/fRNY48BpuSzYjkYOJpA
+	46K9wqsi0HbSXZUQFRgWcw0FF5QEzpNf2Xa/oiQ==
+X-Gm-Gg: ASbGncsOGP1n9JbvLN+tB93FR4QjljGU0NdvMJtDhZwG2Ic5K2r4Vut6P4AK6nTG6M4
+	dBse5FbpWeuWDthKdwjCqEz2iM9LuWzEiVPoks42kY25A+THXic/ug7hWc552Xi3uXqrj7bvNr5
+	RmEVx6O4toL4tTDyUxBn9U
+X-Google-Smtp-Source: AGHT+IGpBq/RTpgieVy5arQVsUovgH5v7YiM5KjoFBf6iUybxR6sXuZygH9JWCqrYn/9Ku77IlGD6EuW1I6FklnG+2w=
+X-Received: by 2002:a17:907:970a:b0:acb:b71c:1eaa with SMTP id
+ a640c23a62f3a-acee21ac4fcmr149852666b.23.1746001289091; Wed, 30 Apr 2025
+ 01:21:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
- version
-To: Johan Hovold <johan@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
- <aBHQejn_ksLyyUm1@hovoldconsulting.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <aBHQejn_ksLyyUm1@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250429151800.649010-1-neelx@suse.com> <20250430080317.GF9140@twin.jikos.cz>
+In-Reply-To: <20250430080317.GF9140@twin.jikos.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 30 Apr 2025 10:21:18 +0200
+X-Gm-Features: ATxdqUGg62QfCeOdFgR7irU9rqwhXy1s-YIMvWe6W4HXsSIgP846bek9CpOoeAY
+Message-ID: <CAPjX3FfBoU9-wYP-JC63K6y8Pzocu0z8cKvXEbjD_NjdxWO+Og@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: remove extent buffer's redundant `len` member field
+To: dsterba@suse.cz
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 30/04/2025 09:25, Johan Hovold wrote:
-> On Tue, Apr 29, 2025 at 08:08:29PM +0200, Krzysztof Kozlowski wrote:
->> Camss drivers spam kernel dmesg with 64 useless messages during boot:
->>
->>   qcom-camss acb7000.isp: VFE:1 HW Version = 3.0.2
->>   qcom-camss acb7000.isp: VFE:2 HW Version = 2.4.0
->>
->> All of these messages are the same, so it makes no sense to print same
->> information 32 times.
-> 
-> It's even worse then that (several hundred messages during use) and I
-> sent fixes for these regressions a few weeks ago:
-> 
-> 	https://lore.kernel.org/lkml/20250407104828.3833-1-johan+linaro@kernel.org/
-> 	https://lore.kernel.org/lkml/20250407085125.21325-1-johan+linaro@kernel.org/
+On Wed, 30 Apr 2025 at 10:03, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Tue, Apr 29, 2025 at 05:17:57PM +0200, Daniel Vacek wrote:
+> > Even super block nowadays uses nodesize for eb->len. This is since commits
+> >
+> > 551561c34663 ("btrfs: don't pass nodesize to __alloc_extent_buffer()")
+> > da17066c4047 ("btrfs: pull node/sector/stripe sizes out of root and into fs_info")
+> > ce3e69847e3e ("btrfs: sink parameter len to alloc_extent_buffer")
+> > a83fffb75d09 ("btrfs: sink blocksize parameter to btrfs_find_create_tree_block")
+> >
+> > With these the eb->len is not really useful anymore. Let's use the nodesize
+> > directly where applicable.
+>
+> I've had this patch in my local branch for some years from the times we
+> were optimizing extent buffer size. The size on release config is 240
+> bytes. The goal was to get it under 256 and keep it aligned.
+>
+> Removing eb->len does not change the structure size and leaves a hole
+>
+>  struct extent_buffer {
+>         u64                        start;                /*     0     8 */
+> -       u32                        len;                  /*     8     4 */
+> -       u32                        folio_size;           /*    12     4 */
+> +       u32                        folio_size;           /*     8     4 */
+> +
+> +       /* XXX 4 bytes hole, try to pack */
+> +
+>         long unsigned int          bflags;               /*    16     8 */
+>         struct btrfs_fs_info *     fs_info;              /*    24     8 */
+>         void *                     addr;                 /*    32     8 */
+> @@ -5554,8 +5556,8 @@ struct extent_buffer {
+>         struct rw_semaphore        lock;                 /*    72    40 */
+>         struct folio *             folios[16];           /*   112   128 */
+>
+> -       /* size: 240, cachelines: 4, members: 14 */
+> -       /* sum members: 238, holes: 1, sum holes: 2 */
+> +       /* size: 240, cachelines: 4, members: 13 */
+> +       /* sum members: 234, holes: 2, sum holes: 6 */
+>         /* forced alignments: 1, forced holes: 1, sum forced holes: 2 */
+>         /* last cacheline: 48 bytes */
+>  } __attribute__((__aligned__(8)));
+>
+> The benefit of duplicating the length in each eb is that it's in the
+> same cacheline as the other members that are used for offset
+> calculations or bit manipulations.
+>
+> Going to the fs_info->nodesize may or may not hit a cache, also because
+> it needs to do 2 pointer dereferences, so from that perspective I think
+> it's making it worse.
 
-Oh damn...
+I was considering that. Since fs_info is shared for all ebs and other
+stuff like transactions, etc. I think the cache is hot most of the
+time and there will be hardly any performance difference observable.
+Though without benchmarks this is just a speculation (on both sides).
 
-I developed this on top of next, so already with your fixes included,
-but - following standard kernel coding practice that drivers should be
-silent on success - I think even debug messages are not needed here.
+> I don't think we need to do the optimization right now, but maybe in the
+> future if there's a need to add something to eb. Still we can use the
+> remaining 16 bytes up to 256 without making things worse.
 
-There is really no point in printing (even as debug) version of hw block
-EVERY TIME I boot the hardware. It does not change, does it?
-
-If anyone wants to know it and cannot deduce from compatible, then add
-debugfs interface.
-
-
-Best regards,
-Krzysztof
+This really depends on configuration. On my laptop (Debian -rt kernel)
+the eb struct is actually 272 bytes as the rt_mutex is significantly
+heavier than raw spin lock. And -rt is a first class citizen nowadays,
+often used in Kubernetes deployments like 5G RAN telco, dpdk and such.
+I think it would be nice to slim the struct below 256 bytes even there
+if that's your aim.
 
