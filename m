@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-627301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08A8AA4EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D76AA4EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A95216AED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED3E171BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CF225E46B;
-	Wed, 30 Apr 2025 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE4A2609F1;
+	Wed, 30 Apr 2025 14:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WauwNMWt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VZjR+6oJ"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC6525C708;
-	Wed, 30 Apr 2025 14:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B1325E821;
+	Wed, 30 Apr 2025 14:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746023773; cv=none; b=MHkoj+JKWoBnYdchs+k7rh8EB0cxqkPPhvlCDjtgzz8AxQd/QFGsLEOVlBE1TPHHGAW2+MzeX9rslK9UfTLVD3KKkZ9NOWt6gtSz6igHnIdz3sriiHZ/Uk+dAGqO2Zpk8fkhVhCs40VsUrYUjsgcM72Do86EEi+pTTd++WmBOHk=
+	t=1746023786; cv=none; b=oQ9F09GjlUKmWJgVj7qVM3RfqwwN8HZYBPQiUV945HrKw/EgQRI+IH8jpix+alcyC83QBYr3s68Fu/OGhH3ZNbD8XhGhvIM1j1khre4Z63HnbiEYSo0kY2WuZmox1uXZ3UROxnpVQx8GEBKAln+gETqR2JLsVUJXg5gIJmG6OV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746023773; c=relaxed/simple;
-	bh=cKXS0wbgFsKYhv80O7ouzrBxO3wfwf4oihtTeXawYtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifTt2qqT8Zhxxn1fm07tc/x6nkZCOB0UCpuO3/frXFIZ7oTRNeQjXi/qBOkaxW8SnPDr1FLNKfB3i5FTFK1k2wh/9dC7To/EFvUgXVflQKSkMlNCSXUP/wW5jnHI3NsXXcSkv+zTGjQWB90V05zBXExPutdTNZA4dEkAkTj8pRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WauwNMWt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE11C4CEE7;
-	Wed, 30 Apr 2025 14:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746023772;
-	bh=cKXS0wbgFsKYhv80O7ouzrBxO3wfwf4oihtTeXawYtw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WauwNMWtUTHe5HHI+QLThurQGREbcqLfHQ18UpVLclxxxtRUkcfqba7LkFfVysHzF
-	 gquw22zFkR4sVoxAjTyUvBDLHEjw/hk2vAnDzHuTQ3yGeuINGQXCkEbDkJcl9uCoNB
-	 SIFrgAKrVUQasWkw7hHuyeJP57p1SUs7vnJBG9BZfQ1ygHpKJMI1AV2lf77VEH7qNL
-	 93U+RVM9TpRi0UZil/z6y7vppSaydNgyMwUWOH1heAH9QW2b5qofbWydsKh/IXeC48
-	 I+4K9y08oLBLT1oUP+qDnBH3GFRTfdjnHTXJOJac4o7Nr+3rOTcqH93G85uveDmGJ7
-	 7et0ESu527O2Q==
-Date: Wed, 30 Apr 2025 09:36:11 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chaoyi Chen <kernel@airkyi.com>
-Cc: Quentin Schulz <quentin.schulz@cherry.de>,
-	FUKAUMI Naoki <naoki@radxa.com>, linux-rockchip@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	devicetree@vger.kernel.org, Kever Yang <kever.yang@rock-chips.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Jonas Karlman <jonas@kwiboo.se>, Andrew Lunn <andrew@lunn.ch>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Jimmy Hon <honyuenkwun@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add rk3399 industry
- evaluation board
-Message-ID: <174602375195.3396795.11425847299435773154.robh@kernel.org>
-References: <20250430074848.539-1-kernel@airkyi.com>
- <20250430074848.539-2-kernel@airkyi.com>
+	s=arc-20240116; t=1746023786; c=relaxed/simple;
+	bh=tjIyv1JFvMFq7wZTL6MfarqYFF/XyielH+6I6/vs7Ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rv8mTPgQOLyGqh1rMVY+zUBPcuYrbqKjKQ6WnGwxGiBqa5Mk4WutVTiToVHXfqJ3aalsVRDay0lHqtk5BoNLMLTcMyqzqzR/jRwrmAeuCuAkpYBeJyhZtIyfqXjaX1ncAu4OSSB0kovrH3D0Dh+TFvDG58fs3/tcooAOWMkUDEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VZjR+6oJ; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0177E43205;
+	Wed, 30 Apr 2025 14:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746023776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dYMWcJMyVuYfo7Mr2qm5ixxTrlcF5uQVV5ROWedLjYc=;
+	b=VZjR+6oJC05R5G5bJ9k2Y7stntPOIBd5w6xyWSACkuXPXv237hd7SR7SiCVFthTGVvkpzr
+	zyYk33SQthruY/2XkjydTSBSkAaYJmZm32VCjP8o5Oh9mwhSMkll5QnTUHInSKlevXBcLY
+	/gw6OX3OKRG4VcfkCs0zvvJ/wcMv8aTJ9eoRoVrQDtRT4oZhtnw45YYENtmqh6L/rT8qzQ
+	LQkyIN/TV04RXlFWQ5rOeQRAlhSTWbU+sG2tQf7KidE3Gp5ukKQ8HQERqTlRinsEEyH1Cj
+	WlRxdK+ZFDsfMBoI5u5FwPyHuzK0Vl8K1xl9C4ZJjWtHdLNtQU/IZkUDBvKOJA==
+Date: Wed, 30 Apr 2025 16:36:13 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 8/9] i2c: atr: add static flag
+Message-ID: <20250430163613.187a0504@booty>
+In-Reply-To: <20250428102516.933571-9-demonsingur@gmail.com>
+References: <20250428102516.933571-1-demonsingur@gmail.com>
+	<20250428102516.933571-9-demonsingur@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430074848.539-2-kernel@airkyi.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeileeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepfihsrgdorhgvnhgvs
+ hgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+On Mon, 28 Apr 2025 13:25:13 +0300
+Cosmin Tanislav <demonsingur@gmail.com> wrote:
 
-On Wed, 30 Apr 2025 15:48:47 +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> Some I2C ATRs do not support dynamic remapping, only static mapping
+> of direct children.
 > 
-> Add devicetree binding for the rk3399 industry evaluation board.
+> Add a new flag that prevents old mappings to be replaced or new mappings
+> to be created in the alias finding code paths.
 > 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 > ---
+>  drivers/i2c/i2c-atr.c   | 6 +++++-
+>  include/linux/i2c-atr.h | 3 +++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> (no changes since v1)
-> 
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
+> index e2350fcf3d68..721dd680f2ac 100644
+> --- a/drivers/i2c/i2c-atr.c
+> +++ b/drivers/i2c/i2c-atr.c
+> @@ -341,12 +341,16 @@ i2c_atr_create_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
+>  static struct i2c_atr_alias_pair *
+>  i2c_atr_get_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
+>  {
+> +	struct i2c_atr *atr = chan->atr;
+>  	struct i2c_atr_alias_pair *c2a;
+>  
+>  	c2a = i2c_atr_find_mapping_by_addr(chan, addr);
+>  	if (c2a)
+>  		return c2a;
+>  
+> +	if (atr->flags & I2C_ATR_F_STATIC)
+> +		return NULL;
+> +
+>  	c2a = i2c_atr_create_mapping_by_addr(chan, addr);
+>  	if (c2a)
+>  		return c2a;
+> @@ -545,7 +549,7 @@ static int i2c_atr_attach_addr(struct i2c_adapter *adapter,
+>  	mutex_lock(&chan->alias_pairs_lock);
+>  
+>  	c2a = i2c_atr_create_mapping_by_addr(chan, addr);
+> -	if (!c2a)
+> +	if (!c2a && !(atr->flags & I2C_ATR_F_STATIC))
+>  		c2a = i2c_atr_replace_mapping_by_addr(chan, addr);
+>  
+>  	if (!c2a) {
+> diff --git a/include/linux/i2c-atr.h b/include/linux/i2c-atr.h
+> index 5082f4dd0e23..7c6a9627191d 100644
+> --- a/include/linux/i2c-atr.h
+> +++ b/include/linux/i2c-atr.h
+> @@ -20,8 +20,11 @@ struct i2c_atr;
+>  
+>  /**
+>   * enum i2c_atr_flags - Flags for an I2C ATR driver
+> + *
+> + * @I2C_ATR_F_STATIC: ATR does not support dynamic mapping, use static mapping
 
+Maybe add something along the lines of: "mappings can only be
+added/removed by the higher level driver via
+i2c_atr_attach_addr/i2c_atr_detach_addr"
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+Other than that, looks good.
 
-If a tag was not added on purpose, please state why and what changed.
+Luca
 
-Missing tags:
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
