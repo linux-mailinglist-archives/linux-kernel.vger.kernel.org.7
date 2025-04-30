@@ -1,72 +1,67 @@
-Return-Path: <linux-kernel+bounces-626948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5432BAA4967
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:05:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04317AA4969
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6604C170B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0C517AE2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9640725D55A;
-	Wed, 30 Apr 2025 11:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051C725E445;
+	Wed, 30 Apr 2025 11:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xvcIbi3g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AqKQgEIB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AsMVi1so";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U+Ms1IFd"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B0225B1E1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B176425B1E8;
 	Wed, 30 Apr 2025 11:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746010974; cv=none; b=lIagR0wrjFq+AttjMUGJ/l8qwn6R6E6IwOeAIToxkYMxnlIVdJjdMLhOXrwpv3SG+TmKYXGHrWOiWjtFaVmZuyAZ0fVas6Sn7gt+sLS8PYfe7M/ihAIbHpeKxdLLKearllca+c0+3ItWGaWpjx1Eb43d6Z0KFcoETlodw2d+NDU=
+	t=1746010975; cv=none; b=nbDWy7liC9vhHNIf7OUBkWv76sPIZ+KJyH2GrDFRoU+E0NG4RJYYRWWe/RqFia8hyaNi/9hjTh33l6IQNbflATZJ/HNKqAd+GWjmlGBDDSSk9WwVVJ5F/1zbdjzE2+vR0u67VjsOdIa2DhVpyi3hGtx7Psf9BmdmR0jspL33dYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746010974; c=relaxed/simple;
-	bh=eX5oXC+HBcw1mu0TCAHq5i0a+I/QmsXUI8/vYm8odp4=;
+	s=arc-20240116; t=1746010975; c=relaxed/simple;
+	bh=63SSOKFSEqcjbQoJl5F1xfsKFc3zZT0b4E7TON8iDu8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ek6db/DwL469C6LEmN0KGN2ILRHlncJmKXzi7NJJrk0ohyprw7SrAAxLjJMXuhK4kHm/EW/In4MFMKhm7oCnVdFYdhc/RfJA2m6gBHCmzO0miKBIIgXbP8PfjfY9HZ+yGILiymkGmyHWtrWPeAIO/bOAheppF4zNK7vvrCt7jmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xvcIbi3g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AqKQgEIB; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=AnEzRndNXS4C61xu1MR28LOPmVOSZLVo1IlDWcH63ZzqTvQTYIBhSYodDXDH0wJolsvicnGdLz+6UthIoIHvG1rmaTy4PekQrBA+T2kl+DoRG9klQTs428be3QjYsWrXns53KsT+I7f2z/bMNbxNmUx2/fzndrjfN0SlEGPYDH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AsMVi1so; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U+Ms1IFd; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1746010969;
+	s=2020; t=1746010970;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GRN84yAGCbJ9jXd7YMFr0fN4dU5tvyZpKeky5D5bT9k=;
-	b=xvcIbi3gql4WCxASfzBmjJ8h3n6dXU2sFtFvOcO+M+k/I+JPJW1gvFK/rn1Cmk8n9kl2Wt
-	2ZWMh8xopACKJ3YAElMcwQ1IcZMW9x22gcggMTnUgAHjLduHWKt0PwlLrZMxDUV0CYDZJH
-	LdTC8ug9LyZW/jdSJmpeq++4QvAA1wyKT65ldWgkChmjgtZLUfpFWOIuy7hqh7mZQmafuF
-	BpmaDIT5eQVAmQjHJ4tkEv7fEa3AhCjC4bfWa4eScOxVZzAf0Tbr7W+KY+xa7PvAQsUyn+
-	WekYF9PYQ5zwnNqcMwyGRKgprLQsJpve9/7mRCa1VP5Fm4izUdnQkTuiQsXm9g==
+	bh=mFYb5V4IyVEoCUHFCMY8+1BrRHYKk9SC4cQ0JOZIl/4=;
+	b=AsMVi1soA+4NGY79XE+S+83f+m4oSSWfGBMOvFAB5FhLEBw5BknXjRRUdqKGVjT8G37V0Y
+	elh8RguGJ/UpfetFOv/6Yvrn4QHAc6ZoGRp6+Y8qp0XGL6xn8vrp5sS7fo3JRqAzuLsMdv
+	40wO0isqf+QfI065+sdn54YgYBLYo9zPCdssCNS1G1prYaCIlTdkzMcctH/ntL/RiuIYeg
+	bXnwyyjazsdcBYuAQF5U8hv4jSYfn1BO2Bcn1UHBIZHW1IbNxNKbbDQt8FCpcAs0onqVjY
+	i0CBOEkChZwCwdRsvxi/olQtVv+tQ2MvlQ/J9FUeAN+mSgoDm63W7uqfcqBlxw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1746010969;
+	s=2020e; t=1746010970;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GRN84yAGCbJ9jXd7YMFr0fN4dU5tvyZpKeky5D5bT9k=;
-	b=AqKQgEIB0ls3X4oMDyq8NxPF1DQCSvNBuWKpf3zKqBQJ5a8XurESv2UT1Jf+9H1aRKqeM1
-	dh8Ai3j5s389BuCg==
+	bh=mFYb5V4IyVEoCUHFCMY8+1BrRHYKk9SC4cQ0JOZIl/4=;
+	b=U+Ms1IFdAUSfL/u0qyKOXV9TO7VFUR8gd35S8SwxLoWTfaeUW0u/016RTQWOldby8KpZSL
+	ISJ7S/h35SxhLlAA==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Gabriele Monaco <gmonaco@redhat.com>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: john.ogness@linutronix.de,
-	Nam Cao <namcao@linutronix.de>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v6 18/22] riscv: mm: Add page fault trace points
-Date: Wed, 30 Apr 2025 13:02:33 +0200
-Message-Id: <dbcd52978bc997a59181b3d22601bf7c3c8210ed.1745999587.git.namcao@linutronix.de>
+	Nam Cao <namcao@linutronix.de>
+Subject: [PATCH v6 19/22] rv: Add rtapp_pagefault monitor
+Date: Wed, 30 Apr 2025 13:02:34 +0200
+Message-Id: <8ca50e24474d6d8918edb60a9b5bda56054d674d.1745999587.git.namcao@linutronix.de>
 In-Reply-To: <cover.1745999587.git.namcao@linutronix.de>
 References: <cover.1745999587.git.namcao@linutronix.de>
 Precedence: bulk
@@ -77,46 +72,282 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Add page fault trace points, which are useful to implement RV monitor that
-watches page faults.
+Userspace real-time applications may have design flaws that they raise
+page faults in real-time threads, and thus have unexpected latencies.
 
+Add an linear temporal logic monitor to detect this scenario.
+
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
-Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org
----
- arch/riscv/mm/fault.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ kernel/trace/rv/Kconfig                       |  1 +
+ kernel/trace/rv/Makefile                      |  1 +
+ kernel/trace/rv/monitors/pagefault/Kconfig    | 11 +++
+ .../trace/rv/monitors/pagefault/pagefault.c   | 87 +++++++++++++++++++
+ .../trace/rv/monitors/pagefault/pagefault.h   | 57 ++++++++++++
+ .../rv/monitors/pagefault/pagefault_trace.h   | 14 +++
+ kernel/trace/rv/rv_trace.h                    |  1 +
+ tools/verification/models/rtapp/pagefault.ltl |  1 +
+ 8 files changed, 173 insertions(+)
+ create mode 100644 kernel/trace/rv/monitors/pagefault/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.c
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.h
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault_trace.h
+ create mode 100644 tools/verification/models/rtapp/pagefault.ltl
 
-diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-index 0194324a0c50..04ed6f8acae4 100644
---- a/arch/riscv/mm/fault.c
-+++ b/arch/riscv/mm/fault.c
-@@ -20,6 +20,9 @@
- #include <asm/ptrace.h>
- #include <asm/tlbflush.h>
+diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
+index 5c407d291661..6f86d8501e87 100644
+--- a/kernel/trace/rv/Kconfig
++++ b/kernel/trace/rv/Kconfig
+@@ -42,6 +42,7 @@ source "kernel/trace/rv/monitors/scpd/Kconfig"
+ source "kernel/trace/rv/monitors/snep/Kconfig"
+ source "kernel/trace/rv/monitors/sncid/Kconfig"
+ source "kernel/trace/rv/monitors/rtapp/Kconfig"
++source "kernel/trace/rv/monitors/pagefault/Kconfig"
+ # Add new monitors here
 =20
-+#define CREATE_TRACE_POINTS
+ config RV_REACTORS
+diff --git a/kernel/trace/rv/Makefile b/kernel/trace/rv/Makefile
+index 9b28c2419995..353ecf939d0e 100644
+--- a/kernel/trace/rv/Makefile
++++ b/kernel/trace/rv/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_RV_MON_SCPD) +=3D monitors/scpd/scpd.o
+ obj-$(CONFIG_RV_MON_SNEP) +=3D monitors/snep/snep.o
+ obj-$(CONFIG_RV_MON_SNCID) +=3D monitors/sncid/sncid.o
+ obj-$(CONFIG_RV_MON_RTAPP) +=3D monitors/rtapp/rtapp.o
++obj-$(CONFIG_RV_MON_PAGEFAULT) +=3D monitors/pagefault/pagefault.o
+ # Add new monitors here
+ obj-$(CONFIG_RV_REACTORS) +=3D rv_reactors.o
+ obj-$(CONFIG_RV_REACT_PRINTK) +=3D reactor_printk.o
+diff --git a/kernel/trace/rv/monitors/pagefault/Kconfig b/kernel/trace/rv/m=
+onitors/pagefault/Kconfig
+new file mode 100644
+index 000000000000..b31dee208459
+--- /dev/null
++++ b/kernel/trace/rv/monitors/pagefault/Kconfig
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++config RV_MON_PAGEFAULT
++	depends on RV
++	select RV_LTL_MONITOR
++	depends on RV_MON_RTAPP
++	default y
++	select LTL_MON_EVENTS_ID
++	bool "pagefault monitor"
++	help
++	  Monitor that real-time tasks do not raise page faults
+diff --git a/kernel/trace/rv/monitors/pagefault/pagefault.c b/kernel/trace/=
+rv/monitors/pagefault/pagefault.c
+new file mode 100644
+index 000000000000..80f6d7ecf5cf
+--- /dev/null
++++ b/kernel/trace/rv/monitors/pagefault/pagefault.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/ftrace.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/rv.h>
++#include <linux/sched/deadline.h>
++#include <linux/sched/rt.h>
++#include <linux/tracepoint.h>
++#include <rv/instrumentation.h>
++
++#define MODULE_NAME "pagefault"
++
++#include <rv_trace.h>
 +#include <trace/events/exceptions.h>
++#include <monitors/rtapp/rtapp.h>
 +
- #include "../kernel/head.h"
-=20
- static void show_pte(unsigned long addr)
-@@ -291,6 +294,11 @@ void handle_page_fault(struct pt_regs *regs)
- 	if (kprobe_page_fault(regs, cause))
- 		return;
-=20
-+	if (user_mode(regs))
-+		trace_page_fault_user(addr, regs, cause);
-+	else
-+		trace_page_fault_kernel(addr, regs, cause);
++#include "pagefault.h"
++#include <rv/ltl_monitor.h>
 +
- 	/*
- 	 * Fault-in kernel-space virtual memory on-demand.
- 	 * The 'reference' page table is init_mm.pgd.
++static void ltl_atoms_fetch(struct task_struct *task, struct ltl_monitor *=
+mon)
++{
++	/*
++	 * This includes "actual" real-time tasks and also PI-boosted tasks. A ta=
+sk being PI-boosted
++	 * means it is blocking an "actual" real-task, therefore it should also o=
+bey the monitor's
++	 * rule, otherwise the "actual" real-task may be delayed.
++	 */
++	ltl_atom_set(mon, LTL_RT, rt_or_dl_task(task));
++}
++
++static void ltl_atoms_init(struct task_struct *task, struct ltl_monitor *m=
+on, bool task_creation)
++{
++	if (task_creation)
++		ltl_atom_set(mon, LTL_PAGEFAULT, false);
++}
++
++static void handle_page_fault(void *data, unsigned long address, struct pt=
+_regs *regs,
++			      unsigned long error_code)
++{
++	ltl_atom_pulse(current, LTL_PAGEFAULT, true);
++}
++
++static int enable_pagefault(void)
++{
++	int retval;
++
++	retval =3D ltl_monitor_init();
++	if (retval)
++		return retval;
++
++	rv_attach_trace_probe("rtapp_pagefault", page_fault_kernel, handle_page_f=
+ault);
++	rv_attach_trace_probe("rtapp_pagefault", page_fault_user, handle_page_fau=
+lt);
++
++	return 0;
++}
++
++static void disable_pagefault(void)
++{
++	rv_detach_trace_probe("rtapp_pagefault", page_fault_kernel, handle_page_f=
+ault);
++	rv_detach_trace_probe("rtapp_pagefault", page_fault_user, handle_page_fau=
+lt);
++
++	ltl_monitor_destroy();
++}
++
++static struct rv_monitor rv_pagefault =3D {
++	.name =3D "pagefault",
++	.description =3D "Monitor that RT tasks do not raise page faults",
++	.enable =3D enable_pagefault,
++	.disable =3D disable_pagefault,
++};
++
++static int __init register_pagefault(void)
++{
++	return rv_register_monitor(&rv_pagefault, &rv_rtapp);
++}
++
++static void __exit unregister_pagefault(void)
++{
++	rv_unregister_monitor(&rv_pagefault);
++}
++
++module_init(register_pagefault);
++module_exit(unregister_pagefault);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Nam Cao <namcao@linutronix.de>");
++MODULE_DESCRIPTION("pagefault: Monitor that RT tasks do not raise page fau=
+lts");
+diff --git a/kernel/trace/rv/monitors/pagefault/pagefault.h b/kernel/trace/=
+rv/monitors/pagefault/pagefault.h
+new file mode 100644
+index 000000000000..94c0fe4fdaa5
+--- /dev/null
++++ b/kernel/trace/rv/monitors/pagefault/pagefault.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/rv.h>
++
++#define MONITOR_NAME pagefault
++
++enum ltl_atom {
++	LTL_PAGEFAULT,
++	LTL_RT,
++	LTL_NUM_ATOM
++};
++static_assert(LTL_NUM_ATOM <=3D RV_MAX_LTL_ATOM);
++
++static const char *ltl_atom_str(enum ltl_atom atom)
++{
++	static const char *const names[] =3D {
++		"pa",
++		"rt",
++	};
++
++	return names[atom];
++}
++
++enum ltl_buchi_state {
++	S0,
++	RV_NUM_BA_STATES
++};
++static_assert(RV_NUM_BA_STATES <=3D RV_MAX_BA_STATES);
++
++static void ltl_start(struct task_struct *task, struct ltl_monitor *mon)
++{
++	bool pagefault =3D test_bit(LTL_PAGEFAULT, mon->atoms);
++	bool val3 =3D !pagefault;
++	bool rt =3D test_bit(LTL_RT, mon->atoms);
++	bool val1 =3D !rt;
++	bool val4 =3D val1 || val3;
++
++	if (val4)
++		__set_bit(S0, mon->states);
++}
++
++static void
++ltl_possible_next_states(struct ltl_monitor *mon, unsigned int state, unsi=
+gned long *next)
++{
++	bool pagefault =3D test_bit(LTL_PAGEFAULT, mon->atoms);
++	bool val3 =3D !pagefault;
++	bool rt =3D test_bit(LTL_RT, mon->atoms);
++	bool val1 =3D !rt;
++	bool val4 =3D val1 || val3;
++
++	switch (state) {
++	case S0:
++		if (val4)
++			__set_bit(S0, next);
++		break;
++	}
++}
+diff --git a/kernel/trace/rv/monitors/pagefault/pagefault_trace.h b/kernel/=
+trace/rv/monitors/pagefault/pagefault_trace.h
+new file mode 100644
+index 000000000000..fe1f82597b1a
+--- /dev/null
++++ b/kernel/trace/rv/monitors/pagefault/pagefault_trace.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Snippet to be included in rv_trace.h
++ */
++
++#ifdef CONFIG_RV_MON_PAGEFAULT
++DEFINE_EVENT(event_ltl_monitor_id, event_pagefault,
++	     TP_PROTO(struct task_struct *task, char *states, char *atoms, char *=
+next),
++	     TP_ARGS(task, states, atoms, next));
++DEFINE_EVENT(error_ltl_monitor_id, error_pagefault,
++	     TP_PROTO(struct task_struct *task),
++	     TP_ARGS(task));
++#endif /* CONFIG_RV_MON_PAGEFAULT */
+diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
+index f9fb848bae91..02c906c9745b 100644
+--- a/kernel/trace/rv/rv_trace.h
++++ b/kernel/trace/rv/rv_trace.h
+@@ -172,6 +172,7 @@ TRACE_EVENT(error_ltl_monitor_id,
+=20
+ 	TP_printk("%s[%d]: violation detected", __get_str(comm), __entry->pid)
+ );
++#include <monitors/pagefault/pagefault_trace.h>
+ // Add new monitors based on CONFIG_LTL_MON_EVENTS_ID here
+ #endif /* CONFIG_LTL_MON_EVENTS_ID */
+ #endif /* _TRACE_RV_H */
+diff --git a/tools/verification/models/rtapp/pagefault.ltl b/tools/verifica=
+tion/models/rtapp/pagefault.ltl
+new file mode 100644
+index 000000000000..d7ce62102733
+--- /dev/null
++++ b/tools/verification/models/rtapp/pagefault.ltl
+@@ -0,0 +1 @@
++RULE =3D always (RT imply not PAGEFAULT)
 --=20
 2.39.5
 
