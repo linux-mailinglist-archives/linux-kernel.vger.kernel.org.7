@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-627260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0D0AA4E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:03:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D9BAA5047
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84A54E462C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561CF9E3873
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8472925FA0A;
-	Wed, 30 Apr 2025 14:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UlsIjj1y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144E0227BA5;
-	Wed, 30 Apr 2025 14:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D84F1C84A5;
+	Wed, 30 Apr 2025 15:32:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D0617BEBF
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 15:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746021802; cv=none; b=nqZfNcMxbqJOiwbiam226+n5Kp/WMEVz8xD1SpJED20IOfp7zHrVtelPYASwrWyB9aWXbnS+WU4fPjy5Tj7bQuLSn8ITqr4fLGcYtHA9PF82NBBA57KqyZ3jeukh1h5gF1rfYzY6Y+4cee16vHBTeZASn+LFDOSIKuqi9h5wFi0=
+	t=1746027129; cv=none; b=SwDxr74Ef9SdE0ZZmRwgNmj/YfKNX3Qbh1NMLlc/jRz4LhGaHnlh9SVQEMLdIR0clEDsolncTDAI0WBNuaCzd0TA8I1BE/XM8fNWyjAzhmLVoY8t2+olpm1AQMOSfOpXuPHvdyRHd0YvsEePE0SWGDCg0jmKcF2FugjPczB0IOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746021802; c=relaxed/simple;
-	bh=oV9B2r0VrTgigR4sUinXlFwe6m8WkIqU+og3Gf2XdH4=;
+	s=arc-20240116; t=1746027129; c=relaxed/simple;
+	bh=eoGkTQhqugRlO85EAz2Zx0SlQN4BRx8grqr+qLksFlI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MyQ0ZpXobSSniOd+6MpUuejYZr6rqO7gU0QDglJqSYSr4CKHtmA2qxuUZXHh4i9A1hHiABH3a/lnHxIkbzAOQO2hPFkBjVsXm+poEzxD3d5ECEgjQnFF6+PibKrP7jhXTLATX48xfAS/3eENf1VAmu3mVE5nKHALSzwyOBwvqiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UlsIjj1y; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746021801; x=1777557801;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oV9B2r0VrTgigR4sUinXlFwe6m8WkIqU+og3Gf2XdH4=;
-  b=UlsIjj1yUxskdbVmmI6Cy1ORn8KjJULOEPPiArr8mIkzo/i9emEBl4ND
-   9SBwW6PBLtr72lGg54dklC9AVEWE2DOguwFQpmovh4ukLM+rwjzwV+Pa+
-   ZMjtTcg32yeAx+prxQabSwcjMNDCbvhpE4ZUxhtK5jLlgOHYlVcacQKiT
-   33GMwLqHK7Tv+uCQJ/ZHOM2pghAX6svrQOvs1xIBl/D6gMkGXGRV+5o2O
-   ZyDySua2TGo66urmGheKH73kqI8Y4lh/iXbwq0wwIK5Kwf+aL6CfssmjK
-   OUv6UyM51TFpxXGi1B8Z55sf8GQHkFRJpbvQJAd4EQjCcH71rGHzEgeac
-   w==;
-X-CSE-ConnectionGUID: 2aiv6yXRS6yo5hMEBioxmA==
-X-CSE-MsgGUID: jJjYZVOrRga5TkLDIQJEWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="65096254"
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="65096254"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 07:03:20 -0700
-X-CSE-ConnectionGUID: Z2iOPct0SmG484vb6sAtnQ==
-X-CSE-MsgGUID: bhME4bkBS+u+IQ6JP/GOyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,251,1739865600"; 
-   d="scan'208";a="134656948"
-Received: from bkammerd-mobl.amr.corp.intel.com (HELO [10.124.223.145]) ([10.124.223.145])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 07:03:15 -0700
-Message-ID: <b22117bf-6b2c-4a98-8a40-48163c1e25d9@intel.com>
-Date: Wed, 30 Apr 2025 07:03:12 -0700
+	 In-Reply-To:Content-Type; b=UygUDprI0UKqtvwSt+NR46h+GuKlJYjDj8njGKFlAWyEnYdRRfrKtpyvmRFF9DVaviLn3y+4T8vAkuXEq5Qtdd+QU9X294RpwSZ/IeR7kEM8rK7UDZYX2Vn5igle5LdVDhCv9+E6Ae2tN2vT1n+FhgqAVZywjtQs8HLnTMvCRZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8594C1063;
+	Wed, 30 Apr 2025 08:31:59 -0700 (PDT)
+Received: from [192.168.1.148] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 78C023F5A1;
+	Wed, 30 Apr 2025 08:32:05 -0700 (PDT)
+Message-ID: <adc1454d-f990-4f45-9dc2-6740b04ccba5@arm.com>
+Date: Wed, 30 Apr 2025 14:45:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,95 +41,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] optimize cost of inter-process communication
-To: Jiadong Sun <sunjiadong.lff@bytedance.com>, luto@kernel.org,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, akpm@linux-foundation.org
-Cc: x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, viro@zeniv.linux.org.uk,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- duanxiongchun@bytedance.com, yinhongbo@bytedance.com,
- dengliang.1214@bytedance.com, xieyongji@bytedance.com,
- chaiwen.cc@bytedance.com, songmuchun@bytedance.com, yuanzhu@bytedance.com
-References: <CAP2HCOmAkRVTci0ObtyW=3v6GFOrt9zCn2NwLUbZ+Di49xkBiw@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAP2HCOmAkRVTci0ObtyW=3v6GFOrt9zCn2NwLUbZ+Di49xkBiw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v5 1/2] coresight: catu: Introduce refcount and spinlock
+ for enabling/disabling
+Content-Language: en-GB
+To: Yabin Cui <yabinc@google.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>,
+ Jie Gan <quic_jiegan@quicinc.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250429231301.1952246-1-yabinc@google.com>
+ <20250429231301.1952246-2-yabinc@google.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250429231301.1952246-2-yabinc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 4/30/25 02:16, Jiadong Sun wrote:
-> To attain the first objective, processes that use RPAL share the same
-> virtual address space. So one process can access another's data directly
-> via a data pointer. This means data can be transferred from one process
-> to another with just one copy operation.
+On 30/04/2025 00:12, Yabin Cui wrote:
+> When tracing ETM data on multiple CPUs concurrently via the
+> perf interface, the CATU device is shared across different CPU
+> paths. This can lead to race conditions when multiple CPUs attempt
+> to enable or disable the CATU device simultaneously.
+> 
+> To address these race conditions, this patch introduces the
+> following changes:
+> 
+> 1. The enable and disable operations for the CATU device are not
+>     reentrant. Therefore, a spinlock is added to ensure that only
+>     one CPU can enable or disable a given CATU device at any point
+>     in time.
+> 
+> 2. A reference counter is used to manage the enable/disable state
+>     of the CATU device. The device is enabled when the first CPU
+>     requires it and is only disabled when the last CPU finishes
+>     using it. This ensures the device remains active as long as at
+>     least one CPU needs it.
+> 
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-It's a neat idea and it is impressive that you got it running at all.
+Looks good to me, I will add :
 
-But it's a *HUGE* change in the process model and it's obviously not
-generally applicable. You literally don't have small processes any more.
-You only have big ones that are *VERY* expensive to tear down.
+Fixes: fcacb5c154ba ("coresight: Introduce support for Coresight Address 
+Translation Unit")
 
-> RPAL is currently implemented on the Linux v5.15 kernel
+Suzuki
 
-Hmmm: "This branch is 196946 commits ahead of, 17734 commits behind
-5.4.143-velinux."
+> ---
+>   drivers/hwtracing/coresight/coresight-catu.c | 25 +++++++++++++-------
+>   drivers/hwtracing/coresight/coresight-catu.h |  1 +
+>   2 files changed, 18 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+> index 96cb48b140af..d4e2e175e077 100644
+> --- a/drivers/hwtracing/coresight/coresight-catu.c
+> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+> @@ -458,12 +458,17 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
+>   static int catu_enable(struct coresight_device *csdev, enum cs_mode mode,
+>   		       void *data)
+>   {
+> -	int rc;
+> +	int rc = 0;
+>   	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+>   
+> -	CS_UNLOCK(catu_drvdata->base);
+> -	rc = catu_enable_hw(catu_drvdata, mode, data);
+> -	CS_LOCK(catu_drvdata->base);
+> +	guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
+> +	if (csdev->refcnt == 0) {
+> +		CS_UNLOCK(catu_drvdata->base);
+> +		rc = catu_enable_hw(catu_drvdata, mode, data);
+> +		CS_LOCK(catu_drvdata->base);
+> +	}
+> +	if (!rc)
+> +		csdev->refcnt++;
+>   	return rc;
+>   }
+>   
+> @@ -486,12 +491,15 @@ static int catu_disable_hw(struct catu_drvdata *drvdata)
+>   
+>   static int catu_disable(struct coresight_device *csdev, void *__unused)
+>   {
+> -	int rc;
+> +	int rc = 0;
+>   	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+>   
+> -	CS_UNLOCK(catu_drvdata->base);
+> -	rc = catu_disable_hw(catu_drvdata);
+> -	CS_LOCK(catu_drvdata->base);
+> +	guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
+> +	if (--csdev->refcnt == 0) {
+> +		CS_UNLOCK(catu_drvdata->base);
+> +		rc = catu_disable_hw(catu_drvdata);
+> +		CS_LOCK(catu_drvdata->base);
+> +	}
+>   	return rc;
+>   }
+>   
+> @@ -550,6 +558,7 @@ static int __catu_probe(struct device *dev, struct resource *res)
+>   	dev->platform_data = pdata;
+>   
+>   	drvdata->base = base;
+> +	raw_spin_lock_init(&drvdata->spinlock);
+>   	catu_desc.access = CSDEV_ACCESS_IOMEM(base);
+>   	catu_desc.pdata = pdata;
+>   	catu_desc.dev = dev;
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
+> index 141feac1c14b..755776cd19c5 100644
+> --- a/drivers/hwtracing/coresight/coresight-catu.h
+> +++ b/drivers/hwtracing/coresight/coresight-catu.h
+> @@ -65,6 +65,7 @@ struct catu_drvdata {
+>   	void __iomem *base;
+>   	struct coresight_device *csdev;
+>   	int irq;
+> +	raw_spinlock_t spinlock;
+>   };
+>   
+>   #define CATU_REG32(name, offset)					\
 
-So this isn't even on top of a stable kernel? It's 10,000 lines on top
-of a ~200k commit fork? Yeah, I can see how it would take some
-substantial effort to rebase it to mainline. It's also a _bit_ of a
-stretch to call this a v5.15 kernel.
-
-Basically, I don't doubt that this is good for _you_ and your
-applications. But would anybody else ever use it? I seriously doubt it.
-It's too big of a change in model and it has too many compromises in its
-design. It's fundamentally not aligned with how the kernel evolves both
-in ts design and its development process.
-
-Unless something big changes (like a lot of users suddenly dying for
-this functionality), this isn't even something I'd remotely consider
-spending any time on looking at again. Sorry.
 
