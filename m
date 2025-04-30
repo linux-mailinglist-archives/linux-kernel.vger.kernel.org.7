@@ -1,177 +1,240 @@
-Return-Path: <linux-kernel+bounces-626854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9BEAA483C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3156AA47D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916321C04C95
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352184C55C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 10:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C53242D94;
-	Wed, 30 Apr 2025 10:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B87322156D;
+	Wed, 30 Apr 2025 10:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KhsoNhpX"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mZ5Fv/Wi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AXUgg6dA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mZ5Fv/Wi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AXUgg6dA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5837923A563
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44753221738
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746008736; cv=none; b=VsHGpKlo9NEmZV87lS4ikFbdvz46/9jym+t1ESbXseeXKKzi9pC7VESn/U5gpyKVof4YneCokuvf000bvdd4l0Wo3xj7VsBQcFRFIZ5nCMi01jIcCvjk+lORc7OhdhnnZsCKUgLu1fbLD7GnqGw+lecdMYVk0wz6CRWFjJvH7CY=
+	t=1746007553; cv=none; b=bEgBFX0wQ/QFaHZ4lgbqvGUPPzXCkzbWKjLppjyMKWh1HOIoS7Si9S5wKoBMRmP2E2JDISEIkZUkSJ8boqVic2sj9vii5fGtX24bHsDxy5tlDUq+7E2+ow9ARyb6xSiPaJL0HXJSghJ4IwbhTqfomAvAa0cVCC6sKzPqeCo+0e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746008736; c=relaxed/simple;
-	bh=UyRogJQCKF4dzNdKeUnXZgi87K+PLm5TUetHnPxcySQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Jpxncn4WlBTfWSqUpw6C+nnbjlW3CPUoGaI62RcgiayxMVuIzOKXm9ci3VwMqk7r2pruGqVe9x6o5mEEB7I2TIq71wcpDUYAYWIlO6goqEgBd6w2uy5jqZ4DZJXfekQ8UiknhwtZUXhrSDK9bIswXDnBp1/3iWtHVb4wLxOY7NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KhsoNhpX; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250430102531epoutp014323fa1b10c5a9c1a6aaa0d5efe174bd~7EbDjug4i0927809278epoutp01g
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 10:25:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250430102531epoutp014323fa1b10c5a9c1a6aaa0d5efe174bd~7EbDjug4i0927809278epoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746008732;
-	bh=UyRogJQCKF4dzNdKeUnXZgi87K+PLm5TUetHnPxcySQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=KhsoNhpX8FdZd1Zp+syN1TSiScguoqd/YK6aVQZH/yuwxDfhDGvP5NeKYK4IrxnU7
-	 uAr0Gj4vYJxRKlkzqUNn194gvVo4OYj1Ibtu2Ju/xECmR7SSbFFn5nfM3mJvpdy3Rq
-	 6q6uiMHfV5SFkFPUM3UPK0cMhkd1L9tkM3cOWdzw=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250430102531epcas5p159f5edae7b9d6649b91ba016fd8580cf~7EbDDY--c1745817458epcas5p1B;
-	Wed, 30 Apr 2025 10:25:31 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZnYGy28rYz6B9m9; Wed, 30 Apr
-	2025 10:25:30 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250430092538epcas5p1b6aee888ecfa27c04e01ca16a0a93d19~7DmwiV8Qt0647906479epcas5p1S;
-	Wed, 30 Apr 2025 09:25:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250430092538epsmtrp1e08dff0c1eac600a72115669d75dc488~7Dmwhcsq62304923049epsmtrp1Z;
-	Wed, 30 Apr 2025 09:25:38 +0000 (GMT)
-X-AuditID: b6c32a2a-d57fe70000002265-56-6811ec9127c4
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C5.75.08805.19CE1186; Wed, 30 Apr 2025 18:25:37 +0900 (KST)
-Received: from INBRO002053 (unknown [107.122.2.234]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250430092535epsmtip23755164dfc0ad1aef32e04bca5476327~7DmueEaSD2671426714epsmtip25;
-	Wed, 30 Apr 2025 09:25:35 +0000 (GMT)
-From: "Yashwant Varur" <yashwant.v@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <cs0617.lee@samsung.com>, <g.naidu@samsung.com>,
-	<niyas.ahmed@samsung.com>
-In-Reply-To: <b00514f2-55ca-49f0-aefb-ec1e784545d6@kernel.org>
-Subject: RE: [PATCH] arm64: dts: exynos: Added the ethernet pin
- configuration
-Date: Wed, 30 Apr 2025 14:55:34 +0530
-Message-ID: <0f6e01dbb9b1$d52519d0$7f6f4d70$@samsung.com>
+	s=arc-20240116; t=1746007553; c=relaxed/simple;
+	bh=PU8u7VACN/AJjKJIar6NdPXdcE6ruW+NxSAqS/1EBv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dha0bxull/9xLueoNiVvM8AyguwyuWtWWSKigV/SFL/SLdefgzGU9JCTmEaXrVK5sfhYqQdqliF052OjyKMRaqnbWzeHwzohotxfpchLk+DuNmZ9GpBZAVkZzDogzds9W51jJoHUHWVw3O1IjOBo7zAtxpM8vcL/YUSfIV1Imuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mZ5Fv/Wi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AXUgg6dA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mZ5Fv/Wi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AXUgg6dA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4A35421297;
+	Wed, 30 Apr 2025 10:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746007549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
+	b=mZ5Fv/WizkLn5NQrcxZu/FLmX8MdFpKMB2/SZ/wtUbFUGK/2tfr+ejbshEi0VS25qAVrhw
+	Jr/aJcKXiDqdhCtW7FazUfoq6X2F2L6CO+6ZxSOoWlMzQwW9hKl98zAfdbe+XafoLd4gGI
+	8FMRNOssevnX6TOFPmOa44mL8ZXzvqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746007549;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
+	b=AXUgg6dA2eZI/VUxqCn6CCv2P4mL/A5vhBIQhfCeFvmiADbiR/+r5X8swdJIyEa66qO2pI
+	WilQZ+8X0ltfl7CA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="mZ5Fv/Wi";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=AXUgg6dA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746007549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
+	b=mZ5Fv/WizkLn5NQrcxZu/FLmX8MdFpKMB2/SZ/wtUbFUGK/2tfr+ejbshEi0VS25qAVrhw
+	Jr/aJcKXiDqdhCtW7FazUfoq6X2F2L6CO+6ZxSOoWlMzQwW9hKl98zAfdbe+XafoLd4gGI
+	8FMRNOssevnX6TOFPmOa44mL8ZXzvqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746007549;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aXUil+ET8/TFI2RImwQgr+2V8ec+IC8TtX59DMlILv8=;
+	b=AXUgg6dA2eZI/VUxqCn6CCv2P4mL/A5vhBIQhfCeFvmiADbiR/+r5X8swdJIyEa66qO2pI
+	WilQZ+8X0ltfl7CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D3C8139E7;
+	Wed, 30 Apr 2025 10:05:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IBLQBv31EWhxMAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 30 Apr 2025 10:05:49 +0000
+Message-ID: <ae4b9ac8-d67d-471f-89b9-7eeaf58dd1b8@suse.cz>
+Date: Wed, 30 Apr 2025 12:05:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI+tP5AvR0g22A5T67WLyfPVk3CYgKkYErqAxsAxq0DRO6qzAIlGw2ospyhojA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSvO7EN4IZBt1vrCwezNvGZrFm7zkm
-	i1XveC3mHznHarFl5mVmi5ez7rFZnD+/gd1i0+NrrBaXd81hs5hxfh+TxZMpj1gt/u/Zwe7A
-	47FpVSebx+Yl9R59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CV8bWpm7lgHX/F1EuzGRsYd/J0
-	MXJySAiYSFz9v4eli5GLQ0hgN6PEnkdL2LsYOYASUhINb8IhaoQlVv57zg5R85xRYvOuY6wg
-	CTYBfYnnm68xgSREBBYzSXxpOsgG0swsECTxZXcgRMNcJon9xzewgTRwCthJfOp+CNYsLOAr
-	sbvjDDuIzSKgKjH71HFmEJtXwFJi9+p+KFtQ4uTMJywgNrOAtsTTm0/h7GULXzNDXKcg8fPp
-	MrCZIgJ+Epf+zmeFqBGXeHn0CPsERuFZSEbNQjJqFpJRs5C0LGBkWcUomVpQnJueW2xYYJSX
-	Wq5XnJhbXJqXrpecn7uJERxzWlo7GPes+qB3iJGJg/EQowQHs5II76RbghlCvCmJlVWpRfnx
-	RaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1MHHvsVtVs3H+JFVlKfE9cezl
-	UiffhOy5+PfKqTmeuuyWB/N4yrhT3tzL4i3PPdm6L8v/q+7+a2wfTW2q9kpvYzz+qDjCSiJr
-	elDSXW3mjdyW278/vbVsa627kQXDgifWcr8fxu9YOmP+Y9O3ko/uRzj4HJ8gt0lQPsT80AWT
-	vo9bHHae3uS0pjC3/I+Z5ypOeRNtrX7O4wZP+aX0P9+/x1JRVvCMr1VV9FC09nXdbclfu9NO
-	OEenB2qtidm3XfBJ4LlusxNMjsIrXPo1shWyNcJucUs1Td2ztf7azZczbpz75fPfd9fdv60C
-	hYvY/kdm/5eUFOGVfpIuKCn07UmgQeCz0wudVnw84aQ27x+LvBJLcUaioRZzUXEiAE0w33oo
-	AwAA
-X-CMS-MailID: 20250430092538epcas5p1b6aee888ecfa27c04e01ca16a0a93d19
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a
-References: <CGME20250423060042epcas5p2c04be779e21089f33b8a9a7785bb151a@epcas5p2.samsung.com>
-	<20250423060034.973-1-yashwant.v@samsung.com>
-	<73a5d0a6-ceb0-4c47-9992-260828f074d0@kernel.org>
-	<0ed501dbb8e9$45aa96e0$d0ffc4a0$@samsung.com>
-	<b00514f2-55ca-49f0-aefb-ec1e784545d6@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memcg: multi-memcg percpu charge cache
+Content-Language: en-US
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Soheil Hassas Yeganeh
+ <soheil@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>, Hugh Dickins <hughd@google.com>
+References: <20250416180229.2902751-1-shakeel.butt@linux.dev>
+ <as5cdsm4lraxupg3t6onep2ixql72za25hvd4x334dsoyo4apr@zyzl4vkuevuv>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <as5cdsm4lraxupg3t6onep2ixql72za25hvd4x334dsoyo4apr@zyzl4vkuevuv>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4A35421297
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Krzysztof
+On 4/25/25 22:18, Shakeel Butt wrote:
+> Hi Andrew,
+> 
+> Another fix for this patch. Basically simplification of refill_stock and
+> avoiding multiple cached entries of a memcg.
+> 
+> From 6f6f7736799ad8ca5fee48eca7b7038f6c9bb5b9 Mon Sep 17 00:00:00 2001
+> From: Shakeel Butt <shakeel.butt@linux.dev>
+> Date: Fri, 25 Apr 2025 13:10:43 -0700
+> Subject: [PATCH] memcg: multi-memcg percpu charge cache - fix 2
+> 
+> Simplify refill_stock by avoiding goto and doing the operations inline
+> and make sure the given memcg is not cached multiple times.
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Tuesday, April 29, 2025 6:37 PM
-> To: Yashwant Varur <yashwant.v=40samsung.com>; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org
-> Cc: cs0617.lee=40samsung.com; g.naidu=40samsung.com;
-> niyas.ahmed=40samsung.com
-> Subject: Re: =5BPATCH=5D arm64: dts: exynos: Added the ethernet pin confi=
-guration
->=20
-> On 29/04/2025 11:29, Yashwant Varur wrote:
-> >
-> > Please follow DTS coding style carefully. This applies to all commits y=
-ou try to
-> send from your downstream/vendor code.
->=20
->=20
-> hm?
->=20
-Got the issue, coding style says
-Node and property names can use only the following characters:
-Lowercase characters: =5Ba-z=5D
-Digits: =5B0-9=5D
-Dash: -
-I was using underscore for node name.
-> >>
-> > Sure, thanks
-> >
-> > What is more important, I don't really understand why you are doing
-> > this
-> > - there is no user of these entries - and commit msg does not help here=
-.
-> >>
-> > Understood, in v2 will add the Ethernet node as well.
->=20
-> I don't understand what is your reply here and what is quote. Use standar=
-d email
-> style, not some mySingle or Outlook output. I suggest reading typical gui=
-delines
-> how to use email based workflows (kernel also has one).
->=20
+It seems to me you could simplify further based on how cached/nr_pages
+arrays are filled from 0 to higher index and thus if you see a NULL it means
+all higher indices are also NULL. At least I don't think there's ever a
+drain_stock() that would "punch a NULL" in the middle? When it's done in
+refill_stock() for the random index, it's immediately reused.
 
-Looks like mailer was not configured properly, hope this time it is fine.
-I am working on upstreaming Ethernet driver for exynosauto (which has a var=
-iant of STMMAC controller)
-What I wanted to reply previously was, will add pin control, along with Eth=
-ernet node(which will consume the pincontrol) and
-I realize that first dt-binding should go for this IP.
-My plan is to send Ethernet driver along with Ethernet dtsi node as well.
+Of course if that invariant was made official and relied upon, it would need
+to be documented and care taken not to break it.
 
->=20
-> Best regards,
-> Krzysztof
+But then I think:
+- refill_stock() could be further simplified
+- loops in consume_stop() and is_drain_needed() could stop on first NULL
+cached[i] encountered.
+
+WDYT?
+
+> ---
+>  mm/memcontrol.c | 27 +++++++++++++++------------
+>  1 file changed, 15 insertions(+), 12 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 997e2da5d2ca..9dfdbb2fcccc 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1907,7 +1907,8 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+>  	struct mem_cgroup *cached;
+>  	uint8_t stock_pages;
+>  	unsigned long flags;
+> -	bool evict = true;
+> +	bool success = false;
+> +	int empty_slot = -1;
+>  	int i;
+>  
+>  	/*
+> @@ -1931,26 +1932,28 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+>  
+>  	stock = this_cpu_ptr(&memcg_stock);
+>  	for (i = 0; i < NR_MEMCG_STOCK; ++i) {
+> -again:
+>  		cached = READ_ONCE(stock->cached[i]);
+> -		if (!cached) {
+> -			css_get(&memcg->css);
+> -			WRITE_ONCE(stock->cached[i], memcg);
+> -		}
+> -		if (!cached || memcg == READ_ONCE(stock->cached[i])) {
+> +		if (!cached && empty_slot == -1)
+> +			empty_slot = i;
+> +		if (memcg == READ_ONCE(stock->cached[i])) {
+>  			stock_pages = READ_ONCE(stock->nr_pages[i]) + nr_pages;
+>  			WRITE_ONCE(stock->nr_pages[i], stock_pages);
+>  			if (stock_pages > MEMCG_CHARGE_BATCH)
+>  				drain_stock(stock, i);
+> -			evict = false;
+> +			success = true;
+>  			break;
+>  		}
+>  	}
+>  
+> -	if (evict) {
+> -		i = get_random_u32_below(NR_MEMCG_STOCK);
+> -		drain_stock(stock, i);
+> -		goto again;
+> +	if (!success) {
+> +		i = empty_slot;
+> +		if (i == -1) {
+> +			i = get_random_u32_below(NR_MEMCG_STOCK);
+> +			drain_stock(stock, i);
+> +		}
+> +		css_get(&memcg->css);
+> +		WRITE_ONCE(stock->cached[i], memcg);
+> +		WRITE_ONCE(stock->nr_pages[i], stock_pages);
+>  	}
+>  
+>  	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
 
 
