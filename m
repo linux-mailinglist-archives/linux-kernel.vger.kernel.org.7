@@ -1,138 +1,391 @@
-Return-Path: <linux-kernel+bounces-626190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EF9AA3FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:43:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AEEAA3FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D3237A516A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 817104C7618
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5393C1714AC;
-	Wed, 30 Apr 2025 00:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011C93FC7;
+	Wed, 30 Apr 2025 00:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="apNF28FV"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jOxYpXB3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5686EBA27
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 00:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8CD2DC76A;
+	Wed, 30 Apr 2025 00:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745973717; cv=none; b=m0Nq4pmi4yrdJ60eEsfgtip/a38I6wqq0pIWRgsUUidN9dsRHFFcmTMqc4eCuy/35euuE/1RmXo/IGqqTlfN2OnRKT/EhFGB32mlluxK8STmdPkdEFBfAokI3JSxgMR/GsBpbcPf7it/U3fEUxRuJDggl0uXTksLN+obENHKwwE=
+	t=1745973770; cv=none; b=nZx7UUIZ+nwQXmdhPIXgW9JrQEe3JZMWxeg3iop7AORGhSUSOBNwtlJFzSjEUWXFc918AUnC6s7IorPf3M4L6L5FOrsHFpZzJf8AgBYq8XKTfBMNgjIUlpE3sQsGyTghvJQzWwfD5GDv2gCBW0MhUaJaRyZ6cSfVV1XNZ2ZJybw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745973717; c=relaxed/simple;
-	bh=pLvxUdxndsr2wYkJQYg49ecez/cviTwRj3eN4nJwgxo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ts9Ts26dCuC641vPkebi5KUWYN4cswrZL/EzQ5PSRF2GijrNDQb3L4MneT0PjeoAHgMPKu3chRNW5ioEyD4a+71HzTIBDKSG7urJheNNQya5Gfue37cljS/PalbGq1RRy/j58Mgya7DVLXlmg/hnOeiauKQ4IQdePjXMkfU4xPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=apNF28FV; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7369c5ed395so7516046b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745973715; x=1746578515; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VWjkucJuMaosxMcy1Z3rSUNsLtdDY3ZZywavpz7InSY=;
-        b=apNF28FVbWdzH+0p7oT9pqhgVfytqVk4HeXo+6Pnia3EmomAcSMSbJQxSrx5jaqdv+
-         +9rgBfJ7WR8ZIb1AQIrdBZpSvJdoOtkLqFDnVB5bV6hzfAwZgIKVv8/2pSJiSiZ7O8ro
-         aOOxHiF6fqhWoRE/7cGosma/CCpMzJuGDnNx7kYgLDxHMdteOMvJZP/U6mhPM6e9g58P
-         75/BKgxt+1kcfuxqKq+z9uOzONGN5f/ZMidHbVOGMhTnVnGPHEjJSLlRN9DiKcsZx84M
-         WVra43nR9I9c4ShK8cQRuSXo708Z0UXlJWRWmYloVSAdwTMPf/tSHOLldBKRQrWtDlit
-         lltQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745973715; x=1746578515;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VWjkucJuMaosxMcy1Z3rSUNsLtdDY3ZZywavpz7InSY=;
-        b=PFbA8rPwxRG3cVoSnqq+sl47kqFSaUhK4Nfr0A6XI+4ErhS2CTBpZurKOMMRkWVWqt
-         Li/BdWUbR7FWn5LmV+PDgDivQ0kbn5TeAdJD5ONsVdl9x+kL0Chi1DaFNoDQJMUPVd+T
-         IV1uUykG6LpSRE9131pQFJSNYFZ2dF+NEd+hhAp16P7lrFxxNIXb7XTmQqVIRbOmC0Zs
-         PeAvM4BffGcBtBGwgLWb9400fbJH5nJEnUDoRxo4ICyOP0Q3oIJOyFERTcIZ97fL457T
-         5GHtaEjxt3F30EwLqcLWB07IEO8dvwJEc5P2i464Zxp1Jk/4YErDuUMlG33SOJBLf6pA
-         meFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv1a+S6g96nHJL+LSYpf8r6vEX9hyWo37UzCgLLynlLs8RCDLDIqYnq/s+Mjru4517bGtB8NVhH1lvg40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnLKR7qYRxaDwTAvIE7fNkeJkF5TAnGr5xfVo5aEVxLgl6kXRb
-	vEn63xEO4JqhINhednmjJBx2zjbGVuHPb3xD76BnMOUPgT3+2ljZBdlUp/OvmCNRMkDWj/KKuqL
-	tczOLsg==
-X-Google-Smtp-Source: AGHT+IGBKZmj0xcnx3IB64TcbS0pb/r17lmOgH8lxAqqhmr49CDFUH1EBNpi6iyWZc1C2ZsKErjB7VbqxAQl
-X-Received: from pfbfn23.prod.google.com ([2002:a05:6a00:2fd7:b0:740:555:f7af])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3924:b0:736:34a2:8a18
- with SMTP id d2e1a72fcca58-7403a836556mr988402b3a.24.1745973715575; Tue, 29
- Apr 2025 17:41:55 -0700 (PDT)
-Date: Tue, 29 Apr 2025 17:41:28 -0700
-In-Reply-To: <20250430004128.474388-1-irogers@google.com>
+	s=arc-20240116; t=1745973770; c=relaxed/simple;
+	bh=Vi7IbtCbQ7YDE16/0oEM7pJVS2KaA98hGhQ1q5n3uD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CSOzVFTjtQe3Hdh54bcuj6jpAluEbKRnHoJ/bhz5Oj5dU7+tamGGPelw3m36f7Hg7cRa8B5EUQpu7dI+OpTn4rZMZ49lwNRkNSxWuNwQ7KCqdfPOwEMlyj4JrYCuLNxVzM9OZJEu1ysa+4FQQ6xyfeRS08budOgcN7Q7Ref4qX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jOxYpXB3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TLaaOi032198;
+	Wed, 30 Apr 2025 00:42:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FUwhFGiC+eN9tmNWeLuNSBUdTaRec4Y4VeuZ45/kY1g=; b=jOxYpXB3yvyzCsIG
+	ch6LVTTBLAgzgiqOaWvmTchijYMQ2aj2gEjjRMGKS7/CBK6X9gAqHfdSmR0u37xH
+	kwhKGG26iXYAl/KcWhp9QZjtsYfvGGDlntCKNFEQJs/iWxGHU3Fni9D8/ko53hJW
+	EEPYMmjQ/VRq9juB1yMhhDTbnrtvS2QKfzkjtIaDeag+MRF02ZEgDMbZGgj3+Muv
+	TDqEi2aVCXtjEuWsuZDi+xhf0w96UYg14EAxpR1Rn0rjXhiF/6W+iORknZHyfCev
+	Yw8O09fNpzRb0Pd1U5Q6MKS7x+x7i/KzguRoedqGOxVBdQT+UQ5cxO85GZrIevgt
+	KFQH6Q==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u70avp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 00:42:33 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53U0gXMM004096
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 00:42:33 GMT
+Received: from [10.134.71.99] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
+ 2025 17:42:32 -0700
+Message-ID: <b1b034a0-3f28-49af-9c87-1684409dcdeb@quicinc.com>
+Date: Tue, 29 Apr 2025 17:42:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250430004128.474388-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.901.g37484f566f-goog
-Message-ID: <20250430004128.474388-7-irogers@google.com>
-Subject: [PATCH v2 6/6] perf test demangle-ocaml: Switch to using dso__demangle_sym
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Stephen Brennan <stephen.s.brennan@oracle.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	Daniel Xu <dxu@dxuuu.xyz>, Ariel Ben-Yehuda <ariel.byd@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from CTL
+ blocks on DPU >= 5.0
+To: Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Neil
+ Armstrong" <neil.armstrong@linaro.org>
+References: <20250307-dpu-active-ctl-v3-0-5d20655f10ca@linaro.org>
+ <20250307-dpu-active-ctl-v3-7-5d20655f10ca@linaro.org>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20250307-dpu-active-ctl-v3-7-5d20655f10ca@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDAwMyBTYWx0ZWRfX9kl3fuo/hnUE CWvezkC/v4gtjVU43DVUn0DXkuiHXp/8u3ZCfBKFbSzhwi7QudGcWu8zXFMIz6x/dY8YUDb8mEA 0d9rFWBVQcSVZq6lHR/aOOBHoW2onnsC3BkJiojW/l541Lu/DPHAG6cCn4Txb58S+7YgvrX+uqU
+ gvSYa2m2YsfRlJvTcG8kXQJwJWfN/AdYhVNDWpM+4S4KD+e0pbq04nUjXJp08HmP01ygGNuEdnS QlF8L4VksZhPi0Q5wDdkX5lo2qbTfwbcaqIeyRnwl6Q/MUv67UJzGPVuvNGqsfe8QWz9hTaP4KA WYUNR2G3UFKkNL2ohBCJ/A3RDnmWGoK9THFJowjrx4lsHe4O8bAG83xFEZ/JNNk3JPOGScFKDeA
+ ON4AI1eMWAY7qtGr8pBZZiHtqk8SpLnntYBNfCYsCAF10aLY7iqsK6kOPU1O0ltvgSOm4ryO
+X-Proofpoint-GUID: PdsdLsPOK1d8R5xwYQqiq0f5b32yCUzx
+X-Authority-Analysis: v=2.4 cv=W404VQWk c=1 sm=1 tr=0 ts=681171f9 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=tVI0ZWmoAAAA:8 a=COk6AnOGAAAA:8
+ a=2JfERfvxAdRcI9qkB6IA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=-BPWgnxRz2uhmvdm1NTO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: PdsdLsPOK1d8R5xwYQqiq0f5b32yCUzx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_08,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 phishscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300003
 
-The use of the demangle-ocaml APIs means we don't detect if a different
-demangler is used before the OCaml one for the case that matters to
-perf.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/demangle-ocaml-test.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/tests/demangle-ocaml-test.c b/tools/perf/tests/demangle-ocaml-test.c
-index 90a4285e2ad5..612c788b7e0d 100644
---- a/tools/perf/tests/demangle-ocaml-test.c
-+++ b/tools/perf/tests/demangle-ocaml-test.c
-@@ -2,10 +2,9 @@
- #include <string.h>
- #include <stdlib.h>
- #include <stdio.h>
--#include "tests.h"
--#include "session.h"
- #include "debug.h"
--#include "demangle-ocaml.h"
-+#include "symbol.h"
-+#include "tests.h"
- 
- static int test__demangle_ocaml(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
- {
-@@ -27,7 +26,7 @@ static int test__demangle_ocaml(struct test_suite *test __maybe_unused, int subt
- 	};
- 
- 	for (i = 0; i < ARRAY_SIZE(test_cases); i++) {
--		buf = ocaml_demangle_sym(test_cases[i].mangled);
-+		buf = dso__demangle_sym(/*dso=*/NULL, /*kmodule=*/0, test_cases[i].mangled);
- 		if ((buf == NULL && test_cases[i].demangled != NULL)
- 				|| (buf != NULL && test_cases[i].demangled == NULL)
- 				|| (buf != NULL && strcmp(buf, test_cases[i].demangled))) {
--- 
-2.49.0.901.g37484f566f-goog
+On 3/6/2025 10:24 PM, Dmitry Baryshkov wrote:
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> Since DPU 5.0 CTL blocks do not require DPU_CTL_SPLIT_DISPLAY, as single
+> CTL is used for both interfaces. As both RM and encoder now handle
+> active CTLs, drop that feature bit.
+> 
+> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  | 4 ++--
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   | 4 ++--
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h   | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h  | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   | 5 ++---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 5 ++---
+>   11 files changed, 22 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+> index 85fde7243dd4d011ed1e3a5719fd6c98cf7d6e77..e7639f3d187cbe606a66af1b2fd6306cdb044972 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
+> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sm8650_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sm8650_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x1000,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x1000,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> index 23188290001ffb45563a9953a9f710bacb4dac89..9b7884d7695c700b39860db207171802beaa93d8 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> @@ -37,17 +37,16 @@ static const struct dpu_mdp_cfg sm8150_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sm8150_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> index de8ccf589f1fe026ca0697d48f9533befda4659d..745b4e701c2d13b25a78d29b767b26b8a06dd006 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+> @@ -41,12 +41,12 @@ static const struct dpu_ctl_cfg sc8180x_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
+> index b2ebf76e386718b95292e119d53e67f5d9f0743a..9b63e4a44449aeba998fc0cceb21c88acbaf8499 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
+> @@ -38,12 +38,12 @@ static const struct dpu_ctl_cfg sm7150_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
+> index 47e01c3c242f9a2ecb201b04be5effd7ff0d04b1..a86fdb33ebddc7f2a9914ef04899397e3271b79e 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sm8250_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sm8250_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x1000, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x1200, .len = 0x1e0,
+> -		.features = BIT(DPU_CTL_ACTIVE_CFG) | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = BIT(DPU_CTL_ACTIVE_CFG),
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
+> index 795e9ebf8c11dcc7d7cae7444fc3e386ced5792d..977af601b4decefbee4b5f1f2b24f3d7fe6ed18a 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sm8350_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sm8350_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x1e8,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x1e8,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
+> index fcee1c3665f88a9defca4fec38dd76d56c97297e..426a8d76c707f3fe1d95faf2183cb16e565940b3 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sc8280xp_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sc8280xp_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
+> index 048dfb9dbb601bdbbf6a1326a7af8680f2777b5d..767b8e7866c6a32bf5fa7eb85f9039eede32742c 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
+> @@ -36,17 +36,16 @@ static const struct dpu_mdp_cfg sm8450_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sm8450_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> index 4d96ce71746f2595427649d0fdb73dae0c18be60..c248b3b55c410d8e374b8b659eeddbb657bbe854 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> @@ -35,17 +35,16 @@ static const struct dpu_mdp_cfg sa8775p_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sa8775p_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x204,
+> -		.features = BIT(DPU_CTL_SPLIT_DISPLAY) | CTL_SC7280_MASK,
+> +		.features = CTL_SC7280_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
+> index a5b90e5e31202900c0bb5bc4a705a6b269005474..65cdf95a02c7634dcc364d5b3b7990e3d6210829 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
+> @@ -27,17 +27,16 @@ static const struct dpu_mdp_cfg sm8550_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg sm8550_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
+> index 8977fa48926b40d486110424f70344c4d29abe80..beadfa0c0daef9ef352847d6fd1cf5b8763a17b8 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
+> @@ -26,17 +26,16 @@ static const struct dpu_mdp_cfg x1e80100_mdp = {
+>   	},
+>   };
+>   
+> -/* FIXME: get rid of DPU_CTL_SPLIT_DISPLAY in favour of proper ACTIVE_CTL support */
+>   static const struct dpu_ctl_cfg x1e80100_ctl[] = {
+>   	{
+>   		.name = "ctl_0", .id = CTL_0,
+>   		.base = 0x15000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 9),
+>   	}, {
+>   		.name = "ctl_1", .id = CTL_1,
+>   		.base = 0x16000, .len = 0x290,
+> -		.features = CTL_SM8550_MASK | BIT(DPU_CTL_SPLIT_DISPLAY),
+> +		.features = CTL_SM8550_MASK,
+>   		.intr_start = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 10),
+>   	}, {
+>   		.name = "ctl_2", .id = CTL_2,
+> 
 
 
