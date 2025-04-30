@@ -1,103 +1,139 @@
-Return-Path: <linux-kernel+bounces-627717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5DBAA5417
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 201FCAA5421
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 20:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0BD1C02A87
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFBC1C03232
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 18:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C99C2620CB;
-	Wed, 30 Apr 2025 18:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5CB25B1CE;
+	Wed, 30 Apr 2025 18:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0G3VxxN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="M0HnFOP+"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F131E5B9C;
-	Wed, 30 Apr 2025 18:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678E125DD10
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 18:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746038995; cv=none; b=pFyXAL0l65uV21O11uccVn9ydOUKmHUULsH0dq1ZQo4BtehlCX9m51J08Hh4Sd5cjNtoZIQtG0z+X8bNxNP0UyS45tqmCSLk6NDZRkGrAf97vDq31TG/8XMCoG/qLjv17z/IYTpgbM8zX9Q1pnNU6xRPfL93TJogxgp94DrAVqY=
+	t=1746039077; cv=none; b=a9U3oMcpU0C0m/Es0BAV46Mr7FJjf6KgrF1CGbcOuSdn4RrVdImsO8OKCZ2Ya/5nRiW39GrJv/IROmTnc+sFXlRMI38hgdms1/qsIBllgNQ50CxiGrcI9YTOSllt0lEdGcllnqrtQcDrzqRbc7h6Gw/GalYREK5fxQef17B69Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746038995; c=relaxed/simple;
-	bh=k2jZImIplLtrep9ZLm69IqQCo72lpoWaYbejGDF7KOQ=;
+	s=arc-20240116; t=1746039077; c=relaxed/simple;
+	bh=8/3Vu1D+LVVPxV2vHCD21bHGPb43u8RgJ3L+nYHuh2g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O3iSEenwlE17br5P2i1QbPVGbKzg1xG/CwqF3YMR0aoj+SZ6wh1d/HEuJJRSUp/k4ao7Rt9wFW8eWSkCKKRF5mv2dlfqcG2X5r5DSCE378dyOI7c8RInd3xPcNbVhE2janIszFk/Mtm8RwS8vWfiWUIpMCAEG/sbJChSsAtWB9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0G3VxxN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775E9C4AF09;
-	Wed, 30 Apr 2025 18:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746038995;
-	bh=k2jZImIplLtrep9ZLm69IqQCo72lpoWaYbejGDF7KOQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=N0G3VxxN/C4DBG/ztgKALICySfyN/lPMhnXRfgg481aZAd+FtYC01eQTQrmsZGbo4
-	 AZcfYCFxQ674tvMIbdEMy1tFuCsVHGkK+aysCZqt74NO3yn8Sycfi8lyKHQkNvXAmj
-	 kz5soKXbZMiT0WDhLelvlbu8jD0Wey5dpdyvX9QaHiBROLD1yYy/RUbQUpq6rivN+N
-	 O4BqkBPSpMU8foNKBqrE4cfVZmWtmdEw/hafde2hRMi1Ig7GY9hEtxAdkBEWbAqP+c
-	 MykKDCgJll7UaI/kRU+/Bp/Oe+umY7gN6yiyb7tTsLFsaacbDWHTR9ZkhccBTTZqGA
-	 Seb9yRrbRHB4w==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2da3c572a0bso145015fac.3;
-        Wed, 30 Apr 2025 11:49:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUcWVwZ0FxdR61pSCoP0uJMZT5hzdRtS2Q5W8KBi+E5TMxYG6pelJ3Lq2wgamIDTiYtA/b20za9AuY0ODbS@vger.kernel.org, AJvYcCUpVG66rHfwmGnG7vVriBdTU6nu7kmnlr4wp9o4qpP9rYQKFQuAqsSxRUDtUIDAzJ8KT9VlAxdVYRDZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoBlspwM45gXKD7Pk3FXHoIF3y5aut0KgaEfAXyGMUbVZ0wUut
-	J+XJ6G2gy1GRBYUI7y86kixX+VB7m5nIyzAE/VVOEZPAzqudlvPOD8fGR2a1pH9Nol1tvI1ZPox
-	TFaTi0IEVe+OyUFSObrX/LndbhEE=
-X-Google-Smtp-Source: AGHT+IHCVfuzVWNY9nHwwlciHk6mqob+lxlgBdZjMWwwxzLNFTxBXSXIniXZZgevdbzCe9a+V+ySH2ltwONC2ikP5Os=
-X-Received: by 2002:a05:6870:9624:b0:2cc:4516:afc6 with SMTP id
- 586e51a60fabf-2da8c82fc61mr263957fac.36.1746038994790; Wed, 30 Apr 2025
- 11:49:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=PGXX37XKfAZWzBcPooiFwC1OH9CJiyagDNXlQNOKqJ64UGgwJpHq6qURhoeuZWLaCymVrY2gve3ue6VL+4S71cSDitYOBZLSe8dgPfZVf11PYnOsyJpSWRA9OksRIW0l1XibiWEpX7M/H9J/EAXAtkcBj01xruoPCsKsqxW5thY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=M0HnFOP+; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e733b858574so149372276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 11:51:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1746039074; x=1746643874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rE4E6ahlqj9qOjKExuQG4V41IoSftlZFpt7HNxvcZx0=;
+        b=M0HnFOP+A0airj9rqmzm8ESxWdVh2Ud3eKHFS1roLu0wyB1KEQF0gfbGtEuqhyj8WG
+         Kd+IgI8aKr5T4fdDGbiqLuWKznMo8vX2iyBPdey03dHm5Wx04m7ogBQwiBM+7OvHy/S9
+         Qc5MMx+7H8mLhvLqou6evNikBPCc4zsCtEQg5rt3zxrMB8abUKoslEqXcVHnuvp7SyMR
+         +W9me81MdbFws3b1iKw2pJlxDrOtLBUiaAfJTAO4rEHC8lx/mp/mg6WTCxpE7TS5fHtx
+         vbS3OmOSfyabBx2ps1ekwkJRp0Difgs10AJcin+NSPjKkWlFV4kVIujNDvSTzGAv7shC
+         rcug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746039074; x=1746643874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rE4E6ahlqj9qOjKExuQG4V41IoSftlZFpt7HNxvcZx0=;
+        b=MbiGbY/hBP7cTHhZWNZ0A3JVg1fSEajOh1yXNFS3x9kYhe2+YJn+R+Bv2l5nJ/SJ71
+         eLy4mSEv87amuIwy/nzbUd2stUU2CfVs8bGytVSj0DNk1d0sTaGQYzriOtvhgPv8RZ/h
+         YybAMVokrqNivBwls0NGee2qJ17bCWvEV0QbyveGs8su/rk/F5V5ZzvBsPN4Q+KAED2J
+         lRVgf6myqoC2E8BsBwXrfPC4mX45Qvjvw9y6UdGV3dnD01tew6kXWzoZLO343U8Btfaj
+         WrtMqSfMNrlQFFCtEIVDk5ASD7mXER3qgVtfGAKbFW924SsMmK9BLEXV8sQOnl7objH6
+         BcVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMSbE1GeEoKSJYnAgQkGy6RWh57Q/qa6L/Tc6/dkg1OPmSJZlF4ZQnFxQAM5CzyjrX1oa33m1/OiG4ZX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQg1UugGlLesSbfSbEBzoWtkKdwvZI1uw4WLQ1PtHArqp6LygL
+	RUKHsD4rrmuRCG+3BdMqzJUeAVfTpJaEE+4l6Lb3iU8fOm8xJe9xHftQgjNNiMBRN4IvK9CzfwX
+	ot2x39x8vuv+fv8ld7u7PKDTIh0ABZkvK3u99
+X-Gm-Gg: ASbGncvHk1p0YKuzY5nV6KVsSDpGAUI3f/oHN/Q6AcBenWB9uxC3CWppTbiz0MwAda9
+	hqPcJfotlYDF3U0vJcmB3U5XE/mnq9a6S9qmuHi60crXgJ3+VVHyI/wKdxQufc+zLhx1WMzlXZ3
+	X4l1bK65Bda3vbVDN8evO/ew==
+X-Google-Smtp-Source: AGHT+IFGVRlgUQ78u+BwGAXsh8y6G1LjqMSHEQkoG4q+UkDPQkOssWg8INldt0gpGq6aM8/J91W8xIUVPyuoHL+fi4Q=
+X-Received: by 2002:a05:6902:220b:b0:e72:89ac:b7c6 with SMTP id
+ 3f1490d57ef6-e74f8e7fb23mr347826276.47.1746039074175; Wed, 30 Apr 2025
+ 11:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12671029.O9o76ZdvQC@rjwysocki.net> <1841930.VLH7GnMWUR@rjwysocki.net>
- <202504301134.2EF987A@keescook>
-In-Reply-To: <202504301134.2EF987A@keescook>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 30 Apr 2025 20:49:43 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hsJr+5vzrH1Yp4_r5hrxLsVaO0dTdR6EG1Ft8tMcWSYA@mail.gmail.com>
-X-Gm-Features: ATxdqUGMePn8O1hoCaC0DhO2eijxkVk5QWGVR9M4_P4K2Lak7-glCj_GgyFUnD8
-Message-ID: <CAJZ5v0hsJr+5vzrH1Yp4_r5hrxLsVaO0dTdR6EG1Ft8tMcWSYA@mail.gmail.com>
-Subject: Re: [PATCH v1 12/19] ACPICA: Introduce ACPI_NONSTRING
-To: Kees Cook <kees@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>, 
-	Saket Dumbre <saket.dumbre@intel.com>
+References: <20250319222744.17576-5-casey@schaufler-ca.com>
+ <0211e4c6561bf2eabbad2bf75a760e03@paul-moore.com> <c53cf38a-f159-48b8-922a-550bd21b5951@schaufler-ca.com>
+In-Reply-To: <c53cf38a-f159-48b8-922a-550bd21b5951@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 30 Apr 2025 14:51:03 -0400
+X-Gm-Features: ATxdqUFt-c_vhDhdD3LFcCyct7_rWPW5hvTca5RmMG4EeWbCJDu41dKAKTCrllk
+Message-ID: <CAHC9VhTbrk_XovghLTtqPUv3br9aJbn2YcnFyn3uugTUKAHNFw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] Audit: multiple subject lsm values for netlabel
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: eparis@redhat.com, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 30, 2025 at 8:35=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+On Wed, Apr 30, 2025 at 12:25=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 4/24/2025 3:18 PM, Paul Moore wrote:
+> > On Mar 19, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Refactor audit_log_task_context(), creating a new audit_log_subj_ctx()=
+.
+> >> This is used in netlabel auditing to provide multiple subject security
+> >> contexts as necessary.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  include/linux/audit.h        |  7 +++++++
+> >>  kernel/audit.c               | 28 +++++++++++++++++++++-------
+> >>  net/netlabel/netlabel_user.c |  9 +--------
+> >>  3 files changed, 29 insertions(+), 15 deletions(-)
+> > Other than moving to the subject count supplied by the LSM
+> > initialization patchset previously mentioned, this looks fine to me.
 >
-> On Fri, Apr 25, 2025 at 09:27:58PM +0200, Rafael J. Wysocki wrote:
-> > From: Kees Cook <kees@kernel.org>
-> >
-> > ACPICA commit 878823ca20f1987cba0c9d4c1056be0d117ea4fe
-> >
-> > In order to distinguish character arrays from C Strings (i.e. strings w=
-ith
-> > a terminating NUL character), add support for the "nonstring" attribute
-> > provided by GCC. (A better name might be "ACPI_NONCSTRING", but that's
-> > the attribute name, so stick to the existing naming convention.)
-> >
-> > GCC 15's -Wunterminated-string-initialization will warn about truncatio=
-n
-> > of the NUL byte for string initializers unless the destination is marke=
-d
-> > with "nonstring". Prepare for applying this attribute to the project.
-> >
-> > Link: https://github.com/acpica/acpica/commit/878823ca
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Whoops, I missed adding my S-o-b to the original upstream ACPICA commit.
-> Please consider this:
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> I'm perfectly willing to switch once the LSM initialization patch set
+> moves past RFC.
 
-Added, thanks!
+It's obviously your choice as to if/when you switch, but I'm trying to
+let you know that acceptance into the LSM tree is going to be
+dependent on that switch happening.
+
+The initialization patchset is still very much alive, and the next
+revision will not be an RFC.  I'm simply waiting on some additional
+LSM specific reviews before posting the next revision so as to not
+burn out people from looking at multiple iterations.  I've been told
+privately by at least one LSM maintainer that reviewing the changes in
+their code is on their todo list, but they have been slammed with
+other work at their job and haven't had the time to look at that
+patchset yet.  I realize you don't have those issues anymore, but I
+suspect you are still sympathetic to those problems.
+
+If you're really anxious to continue work on this RIGHT NOW, you can
+simply base your patchset on top of the initialization patchset.  Just
+make sure you mention in the cover letter what you are using as a base
+for the patchset.
+
+If that still doesn't offer any satisfaction, you can always
+incorporate the feedback that I made in v2 that was ignored in your v3
+posting :-P
+
+--=20
+paul-moore.com
 
