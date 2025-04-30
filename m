@@ -1,232 +1,136 @@
-Return-Path: <linux-kernel+bounces-626263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4E3AA40C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 04:03:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580C7AA40B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE4144E1AEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE108980C8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1551B13B2A4;
-	Wed, 30 Apr 2025 02:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DDE29408;
+	Wed, 30 Apr 2025 01:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGk/AOSr"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Iukovl82"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DBC2DC77E;
-	Wed, 30 Apr 2025 02:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7552F2EAF7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745978582; cv=none; b=sFs//f7AtFWRiVA6RTOppdu3BSL5kk93YXUkQfnp0oZstTV1e5OrmmkMVy1Y644S7lPyffpqh7NYIt/cLjBKPIDKiUGjBu5Fs+hHjq0oCFxp72C+tGBKLJtWlGJ3808o9ZvqIJkUDX7lexo0hgfNzj0LYRzUSu5NsmrtTyb7k1E=
+	t=1745977871; cv=none; b=aAZdJVSsz5ybv0NZpxzRlERIH8Z/uh3T2gFR//ZqzPmG7/3p+mnNkZSNzfIpvnlM/GE5jB/6yovx+o/ibKh2JyYZSqc3PEJInmSzv3YsAKpFKl0TxMSUR6bKLY9Qp1ePOXstUIwBVLdHJjmSquqLqRVHbkFrHsVrvlp4AXbkrL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745978582; c=relaxed/simple;
-	bh=e25vsFQvM7K9a+NWv9Hv7JhvUfauCVFzCE5OgLo8MPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tCVi/7oYzJS2B1JcWMhQhKLz53AI6ecQy0w0aXwcHJsOWJNbm8vlRtd/FrFe98/0IEZ2rxA+Gcg/pr1Gm24xvXnj0Wi7KXp270TDPL0MWlBq2mNZ0HZjJChfnZc0hirDgtXaxPY04HvxnYCg2YgudOsR5wfBEHGfvRa8n9tY4cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGk/AOSr; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-736aaeed234so5607646b3a.0;
-        Tue, 29 Apr 2025 19:03:00 -0700 (PDT)
+	s=arc-20240116; t=1745977871; c=relaxed/simple;
+	bh=rfrOgKpBCk7qPpaO75GltUUxet8hLfjCpRs6KwLqCqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMOW7qMQNtEKBzBBfahEOsVrdmvCPK+jMY4w67oJg/X88WtiHIt/r/HlDpEoDGBn4y6LV1eDwYpO0gfk4fmNxPN6emHsDhawkzVn8kB4B/RMukeGivpMPCTPJKWSsz+tC+oXIpVZyBzO5fk+Q/f/PyQxBh1z80bz2g2pQn0Fyg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Iukovl82; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-736aaeed234so5601874b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 18:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745978580; x=1746583380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PU2BMFTnVtPjOHXZX3MwYrwKdLPtw4QrVftiOXMGqpw=;
-        b=FGk/AOSrTnV9qyh1ke1eNcAqxlCzMG+exCZjea13GF80FjCYWqdTT26VXc0PhorEUV
-         u1hatA8IJJpZdXhvJC5g2JvCQRFPwMZEG8bixXNRNNw7xnq0XKXcJ5ckQ9nf8TJpvGXS
-         MeXBLzRh0KfXajHM5G6xt+QnELIYXgJDMSzJQt2F4UPiGBw6KDTJ/gSSTWoloQuzM0mg
-         M+JVssavY+4Ry6VDetJkYUW5/P8a3gVv0SHP+tkEBEIR3QMLmx6ArF05Wo5otUJ07X/5
-         +hAzGWEC6gTdubd22alnfxtXFxFLFxMpnfAfVdfa9M0lYtmxsuOnRX1NPr/ff0P59qtq
-         FJ6A==
+        d=chromium.org; s=google; t=1745977869; x=1746582669; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=x7xSxmgjA4Hl8qCX2/f7trj++E1dgn0NeNi1d5opTig=;
+        b=Iukovl82ZHl1ppBm+387EtfClLxZe6Yj2QLC62o8i8UrQlA/oUKm+jFp+9H/+xpd4I
+         +ButersfAMeX5/Je7k09mN0iTHG1CSgAUSRF0fi15RmzFyhHSlrk8itB41hQmKH1V4wX
+         8Y4QjgcThlx9tM4G1FNAPYI2DwTy3nEEulsPI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745978580; x=1746583380;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PU2BMFTnVtPjOHXZX3MwYrwKdLPtw4QrVftiOXMGqpw=;
-        b=GXeqBftWTXOAxEcyvTD+zTgRhXdmzF9GVc1rbbemIXDiDiHBp8U4SsPu9TnEsYB2IU
-         ZlW8HFIQUk9L1SjRauigT/0GhSJrZtqvcqwNpX6R/P5sM17/oOKGQWVx+AtV0U7zZ8yP
-         PXyiMAImUsh7yYApicNr8ui6HQa4pfdKzYxohRH4C4Jt1+ip0IeXTimMPe15yOw5AI55
-         vIslJlNszaq1EphkHVI57dz0vqrTybVOZLtEMN5iRTgZwKF8MeMIufgMCVcy7g9epGRl
-         fxkpLEzQpU4j2Vp6rS0x0EL5cuyYIDwH6Lh+JEcW0MrW0zzFNNTNynIO+grmnWxv0amg
-         gxxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjkMMo6oPoVbrDzzKJPu97p2EO0UFCwlTFNi5JQkR/B+3bEtv0rm20zQ2NzdgqGDk80/0O3/JKlSmy2fY9@vger.kernel.org, AJvYcCXrzs8I0aymw36DOfL7Z2rlTcuQcplqZ85GpUzQj5LMyiKFEFbfAXxFO6JSts3L+K2MHyHxGlp8J2Nc@vger.kernel.org, AJvYcCXz5MtiZ4thstY2dSa+2q1kxFAizxU0FOmyM1Jvwxn2auxihga/3cHVcxoBMbR2aBhLsTa1abz/HgvD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOXw21ulULlNWa3rh0xY4l1Do77C7fH7B9DdrPcGj71Psdcl7e
-	NpUNTojP1wc93AnVxqylNsuqcAmZhLplkAMOXOBqWXC6juvksV4tKpo+4adp
-X-Gm-Gg: ASbGncsD2Tjew197u5eBXi48RfJ49aZtl3XR3og2tRvaaFb9S1woU3YULrXnqcfxsWA
-	qjhrHKOZJVJIR1w2DI/TzAoH+XDNdXBdp1lXEIXur8D/obC1xICHrk74ewaFkPDgxRlvFn06awZ
-	XZrtze9tbUREJwW2AC4fbJd6BGgws1oeI0tpqF8WIZMOEHKvkx1DdiBxOrSvNGLAcy/fYHOE5Yt
-	k+ierOKRNWuAKyTeHT90Ja0vNFnRe5pAz2GCD2kuLEhKVyQQCMXj8lxaG7OXzn1NwJZBxLZPpJP
-	rbrtIzIXYg4c9W+RB9A0l2HbkhilTgFWbzd+mtyf3lZ6avgYuI7NlqeIslAxfW8=
-X-Google-Smtp-Source: AGHT+IHOaZdyKtUuNnxCkWkAIUmlGJeGdXdT+lkJ9XoblFjEg6+XQGjW6oJ2RUEHE2nQP+fbQuVjXA==
-X-Received: by 2002:a05:6a20:c90c:b0:1f5:60fb:8d9 with SMTP id adf61e73a8af0-20a88f11293mr1875081637.33.1745978579802;
-        Tue, 29 Apr 2025 19:02:59 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:4ff:1626:32b1:712a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15faee61e1sm9689735a12.78.2025.04.29.19.02.56
+        d=1e100.net; s=20230601; t=1745977869; x=1746582669;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7xSxmgjA4Hl8qCX2/f7trj++E1dgn0NeNi1d5opTig=;
+        b=AOf4IkEmO72gj1+6emqUjt6RvUeGyC8k98J7B4SkmhzGaY5CrVQ3zR0uHt1bFEPVOa
+         WIeq/DAngdOLWhLmePdecT25LuK4VBNgFXJ2UGJCbj0/0R1izkaM7tfFW+UUuzLisYMb
+         BppghpBcgni/537Fdq9Esif/5aJSplA0IGlAU3oSJcsyRf/g1TUQ7bivQjPATzY953dy
+         HETuz/ZCFW9qbFwR34XMdkicgklb8oVQgfNTWiKazw4NDrGqFTZFu484dhdOiPYnIqU8
+         ROXtSYZzae392ewwCHPGfWPewb9YIP9u9q++eMI9/BrmcQASZ2Hs4xP7VMgxt/rTRIaR
+         b3ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWHQFRu2ovEPpCcsCK2AFZhnGk/YA4rgajuDqSvwWFpXQRj8ZxMOwyq6TWvuI6lNB7X6eNOflFTFKh6Bv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5UCTCvQxdAdvGJu1Q8DD6zB4XGI9W8wHk+F7DMAORmowGf9HX
+	ipo1S9UxdjxcMYhzL/cLtDazTPq0oJN5cfQjdUjsZd4+cpOv69CyTOFMKU9YPQ==
+X-Gm-Gg: ASbGncuz5PNw8XITE55MuqbihZG2zDDazpm4RHjpDSUNaACtzBnpEZ2PeK/cu167hLt
+	9ZUr///y/i2zoLtoSmD5/ZY+5uKHC24wQ42wiG9gNjILkVUEQaMkEIOe3yJkSgRM1cmxu50r4p5
+	ppvR4ZM4i4d8Xcywy75hu7H0EDJQytdjGp7bgcWmx1gBG+WU5BSgBUcubw/JAgS6+OcvOy4g+X7
+	eLs2AvDRIimH/nFBHmH2/jxxfThMgVNPuN6C9lGLylvJkz3cE5BlvFCImyp/QRDPQoVPjm96k1n
+	kiMmD2k3s8cnjv3LOFqh3BBYaorSwePL/g==
+X-Google-Smtp-Source: AGHT+IFRB1rzS2EHxndlOMO/eNYOCxxmki6CfyHz/pgYJY8goCmO9VQbnakhTKfmm95vXeql2kPVtA==
+X-Received: by 2002:a05:6a00:3e03:b0:73d:fa54:afb9 with SMTP id d2e1a72fcca58-7403899f538mr1991527b3a.7.1745977868695;
+        Tue, 29 Apr 2025 18:51:08 -0700 (PDT)
+Received: from google.com ([2401:fa00:1:10:d326:d929:40d:c7f6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74039a31018sm416334b3a.113.2025.04.29.18.51.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 19:02:59 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: jic23@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings:iio:adc:st,spear600-adc: txt to yaml format conversion.
-Date: Tue, 29 Apr 2025 22:50:01 -0300
-Message-ID: <20250430020248.26639-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        Tue, 29 Apr 2025 18:51:08 -0700 (PDT)
+Date: Wed, 30 Apr 2025 09:51:03 +0800
+From: Sung-Chi Li <lschyi@chromium.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/3] hwmon: (cros_ec) register fans into thermal
+ framework cooling devices
+Message-ID: <aBGCB6_4XR4Z-vFI@google.com>
+References: <20250429-cros_ec_fan-v1-0-a8d9e3efbb1a@chromium.org>
+ <20250429-cros_ec_fan-v1-3-a8d9e3efbb1a@chromium.org>
+ <ec2f7e54-0582-475d-af91-42d9be65cd3e@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec2f7e54-0582-475d-af91-42d9be65cd3e@t-8ch.de>
 
-Straight forward conversion from spear-adc.txt into yaml format.
+On Tue, Apr 29, 2025 at 10:45:56PM +0200, Thomas Weißschuh wrote:
+> On 2025-04-29 16:14:23+0800, Sung-Chi Li via B4 Relay wrote:
+> > From: Sung-Chi Li <lschyi@chromium.org>
+> > 
+> > Register fans connected under EC as thermal cooling devices as well, so
+> > these fans can then work with the thermal framework.
+> > 
+> > During the driver probing phase, we will also try to register each fan
+> > as a thermal cooling device based on previous probe result (whether the
+> > there are fans connected on that channel, and whether EC supports fan
+> > control). The basic get max state, get current state, and set current
+> > state methods are then implemented as well.
+> 
+> There is also HWMON_C_REGISTER_TZ, however it depends on OF.
+> But this patch looks very generic, so maybe it makes sense to implement
+> it in the hwmon core.
+> 
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-Some constraints were extracted from the driver (spear_adc.c) and the public datasheet
-referenced at the yaml.
+Hi, the HWMON_C_REGISTER_TZ is for registering a thermal sensor, and here I
+registered it as thermal cooling devices, so they are different. I followed
+other hwmon drivers:
 
-Changelog:
-v2: add constraints over properties and remove a ref at MAINTAINERS file.
-v1: https://lore.kernel.org/linux-devicetree/20250423022956.31218-1-rodrigo.gobbi.7@gmail.com/
----
- .../bindings/iio/adc/st,spear600-adc.yaml     | 69 +++++++++++++++++++
- .../bindings/staging/iio/adc/spear-adc.txt    | 24 -------
- MAINTAINERS                                   |  2 +-
- 3 files changed, 70 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml
- delete mode 100644 Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt
+  - gpio-fan.c
+  - aspeed-pwm-tacho.c
+  - max6650.c
+  - qnap-mcu-hwmon.c
+  - ...
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml
-new file mode 100644
-index 000000000000..afce10eab1c1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/st,spear600-adc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ST SPEAr ADC device driver
-+
-+maintainers:
-+  - Jonathan Cameron <jic23@kernel.org>
-+
-+description: |
-+  Integrated ADC inside the ST SPEAr SoC, SPEAr600, supporting
-+  10-bit resolution. Datasheet can be found here:
-+  https://www.st.com/resource/en/datasheet/spear600.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - st,spear600-adc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  sampling-frequency:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 2500000
-+    maximum: 20000000
-+    description:
-+      Default sampling frequency of the ADC
-+
-+  vref-external:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1000
-+    maximum: 2800
-+    description:
-+      External voltage reference in milli-volts. If omitted
-+      the internal voltage reference will be used.
-+
-+  average-samples:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+    maximum: 128
-+    default: 0
-+    description:
-+      Number of samples to generate an average value. If
-+      omitted, single data conversion will be used.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - sampling-frequency
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    adc: adc@d8200000 {
-+        compatible = "st,spear600-adc";
-+        reg = <0xd8200000 0x1000>;
-+        interrupt-parent = <&vic1>;
-+        interrupts = <6>;
-+        sampling-frequency = <5000000>;
-+        vref-external = <2500>;	/* 2.5V VRef */
-+    };
-diff --git a/Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt b/Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt
-deleted file mode 100644
-index 88bc94fe1f6d..000000000000
---- a/Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--* ST SPEAr ADC device driver
--
--Required properties:
--- compatible: Should be "st,spear600-adc"
--- reg: Address and length of the register set for the device
--- interrupts: Should contain the ADC interrupt
--- sampling-frequency: Default sampling frequency
--
--Optional properties:
--- vref-external: External voltage reference in milli-volts. If omitted
--  the internal voltage reference will be used.
--- average-samples: Number of samples to generate an average value. If
--  omitted, single data conversion will be used.
--
--Examples:
--
--	adc: adc@d8200000 {
--		compatible = "st,spear600-adc";
--		reg = <0xd8200000 0x1000>;
--		interrupt-parent = <&vic1>;
--		interrupts = <6>;
--		sampling-frequency = <5000000>;
--		vref-external = <2500>;	/* 2.5V VRef */
--	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 906881b6c5cb..e923becb0633 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23213,7 +23213,7 @@ STAGING - INDUSTRIAL IO
- M:	Jonathan Cameron <jic23@kernel.org>
- L:	linux-iio@vger.kernel.org
- S:	Odd Fixes
--F:	Documentation/devicetree/bindings/staging/iio/
-+F:	Documentation/devicetree/bindings/iio/
- F:	drivers/staging/iio/
- 
- STAGING - NVIDIA COMPLIANT EMBEDDED CONTROLLER INTERFACE (nvec)
--- 
-2.47.0
+. These hwmon drivers also manually registered other cooling devices, and that
+makes sense to me, so I think it is good to just register cooling devices rather
+than make big changes to hwmon core.
 
+> > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> > ---
+> >  Documentation/hwmon/cros_ec_hwmon.rst |  2 +
+> >  drivers/hwmon/cros_ec_hwmon.c         | 72 +++++++++++++++++++++++++++++++++++
+> >  2 files changed, 74 insertions(+)
+> 
+> <snip>
 
