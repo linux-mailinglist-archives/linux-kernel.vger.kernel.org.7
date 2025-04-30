@@ -1,163 +1,187 @@
-Return-Path: <linux-kernel+bounces-627409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D9BAA5047
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 17:32:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542E7AA4E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 16:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561CF9E3873
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 15:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B344E5DBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D84F1C84A5;
-	Wed, 30 Apr 2025 15:32:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D0617BEBF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 15:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9D725DCEE;
+	Wed, 30 Apr 2025 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="k1dzkGKN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9151B5EB5;
+	Wed, 30 Apr 2025 14:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746027129; cv=none; b=SwDxr74Ef9SdE0ZZmRwgNmj/YfKNX3Qbh1NMLlc/jRz4LhGaHnlh9SVQEMLdIR0clEDsolncTDAI0WBNuaCzd0TA8I1BE/XM8fNWyjAzhmLVoY8t2+olpm1AQMOSfOpXuPHvdyRHd0YvsEePE0SWGDCg0jmKcF2FugjPczB0IOs=
+	t=1746021990; cv=none; b=g45baCGV4+hqRtxSAxen44lOyPSqldMzn0tCjwjgb9Y9kiLsVEV8NmbK6y6KmHGCanym+0rSecTVYYjUbvDlbXPFS/r9XDEFI3djXQYlQQ/piTVPpLGbtJXkyTIog/K1MMM5V4Sv4KpE8weoBPbQqQ0GyYitcfZynpEvM4TON0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746027129; c=relaxed/simple;
-	bh=eoGkTQhqugRlO85EAz2Zx0SlQN4BRx8grqr+qLksFlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UygUDprI0UKqtvwSt+NR46h+GuKlJYjDj8njGKFlAWyEnYdRRfrKtpyvmRFF9DVaviLn3y+4T8vAkuXEq5Qtdd+QU9X294RpwSZ/IeR7kEM8rK7UDZYX2Vn5igle5LdVDhCv9+E6Ae2tN2vT1n+FhgqAVZywjtQs8HLnTMvCRZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8594C1063;
-	Wed, 30 Apr 2025 08:31:59 -0700 (PDT)
-Received: from [192.168.1.148] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 78C023F5A1;
-	Wed, 30 Apr 2025 08:32:05 -0700 (PDT)
-Message-ID: <adc1454d-f990-4f45-9dc2-6740b04ccba5@arm.com>
-Date: Wed, 30 Apr 2025 14:45:02 +0100
+	s=arc-20240116; t=1746021990; c=relaxed/simple;
+	bh=Is5RVfMU5+fLCq4dwszPfEvzEgmFjYMe1veGCVF7e2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uTb37PetzqQbNGdTBfwohphqcEm7n9YLE+jJXWpz0v9i0OghjB7b4jvnUE/M0XvbbIrlfxo7CLRZmmUpRCDk2TmTCh1Pxmx8TBN4M87xBX0HejwBgd2zoX1eIE4nE2KS+SH6HCtuLjMKKotOkoIb49kVEZmP4UesS+0wXDFvhio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=k1dzkGKN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53UBKUfA016448;
+	Wed, 30 Apr 2025 14:06:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=z7PrF91iL711BYQhJ1aumTe2wZ1AFn9CFKfWuPJz+
+	MI=; b=k1dzkGKNjOnN5P6/T4J3KSqAf5icJbtrGpq+zRTxC6zaXYVvosklFz1FX
+	NdKRe2lCGevQHaOnKKFvyYzp8EeIyRQrtyuniZeYX4Et0UiyiZT9ojmzlQQ9n7ol
+	auMdM8zJZLn57Dwu/nLSF2JtofeGSFfyl2rzCs6g958MCabJAmNcB7F5RMe6qJ40
+	Rcskz6JY7EtBS5DIWniKKCQxtk1315MquUlxTfBqJMlwHGbNksCaCgh6Pi++ADYz
+	2qvp/z9/M8JrqLLtMrNFjwJeVrd1/t/9z6H6thnVlktzLkLpDPsAC2EOcc/WSKIj
+	FDES1/TBXD1heecrnDKquJEw9Pigw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b6upkg3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 14:06:26 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53UDw1Mb009759;
+	Wed, 30 Apr 2025 14:06:26 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46b6upkg3g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 14:06:26 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53UBVkcM016584;
+	Wed, 30 Apr 2025 14:06:24 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 469a70g8g0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 14:06:24 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53UE6L6Q52494628
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Apr 2025 14:06:21 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 09C622004E;
+	Wed, 30 Apr 2025 14:06:21 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9AB2420040;
+	Wed, 30 Apr 2025 14:06:20 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Apr 2025 14:06:20 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, irogers@google.com, ctshao@google.com,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH V4] perf test: Allow tolerance for leader sampling test
+Date: Wed, 30 Apr 2025 16:06:11 +0200
+Message-ID: <20250430140611.599078-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] coresight: catu: Introduce refcount and spinlock
- for enabling/disabling
-Content-Language: en-GB
-To: Yabin Cui <yabinc@google.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>,
- Jie Gan <quic_jiegan@quicinc.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250429231301.1952246-1-yabinc@google.com>
- <20250429231301.1952246-2-yabinc@google.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250429231301.1952246-2-yabinc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=IqQecK/g c=1 sm=1 tr=0 ts=68122e62 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8 a=C54mTPxxYbvSgDT82gwA:9
+X-Proofpoint-ORIG-GUID: JRqHqBzu54QBWPIdjiWFm7t7xVGLDcXR
+X-Proofpoint-GUID: rhhV1dOfsxmW37JvZn1PCaTLWXxLk-BL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDEwMCBTYWx0ZWRfX/3aL1dWwgMEM jBmawLCX7vzvqLbhrrrLra76t3D3wT9xjoef8LwwY/2ISIhiMO/gJ0NBqQ/bSDLAVYr5qDJhphz w99dNbuqrxYvlvnqFAdA5NxC8R/LDxKgH6h0OX+8c7/GpGO0YdjsntmtHkV/J8L2t5OTuzEElXb
+ bivU88h5/XXrxJmsfiACGarqeUV/3B8SKkuT5j5uPeLaHMMVjXJWs8f+GLPoftx6/gef3XNfL4v IdSj3Cx0NGkBSOvtg172XBFTGHRDsIGLTc2sutRnUD3YC7VJ9T3WZ8t3VXEFO/zrRDU8mf4FQZU YJSd4Cav+CRu4XcqW+5Uuu6qupeb7XUn8+zNB/dlWtSCYmFihB85q63lgf8YvEo4HsGdrzQm3+4
+ vd/I64GWlXwjjN8TciHP5lrHGl89GP+0VJzEwKjEpD3kp9Iw+svITkrO/S1vxHhaXBXABtzu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ phishscore=0 spamscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 mlxscore=0 mlxlogscore=876 suspectscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300100
 
-On 30/04/2025 00:12, Yabin Cui wrote:
-> When tracing ETM data on multiple CPUs concurrently via the
-> perf interface, the CATU device is shared across different CPU
-> paths. This can lead to race conditions when multiple CPUs attempt
-> to enable or disable the CATU device simultaneously.
-> 
-> To address these race conditions, this patch introduces the
-> following changes:
-> 
-> 1. The enable and disable operations for the CATU device are not
->     reentrant. Therefore, a spinlock is added to ensure that only
->     one CPU can enable or disable a given CATU device at any point
->     in time.
-> 
-> 2. A reference counter is used to manage the enable/disable state
->     of the CATU device. The device is enabled when the first CPU
->     requires it and is only disabled when the last CPU finishes
->     using it. This ensures the device remains active as long as at
->     least one CPU needs it.
-> 
-> Signed-off-by: Yabin Cui <yabinc@google.com>
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> Reviewed-by: Leo Yan <leo.yan@arm.com>
+V4: Update to be applied onto linux-next
+V3: Added check for missing samples as suggested by Chun-Tse.
+V2: Changed bc invocation to return 0 on success and 1 on error.
 
-Looks good to me, I will add :
+There is a known issue that the leader sampling is inconsistent, since
+throttle only affect leader, not the slave. The detail is in [1]. To
+maintain test coverage, this patch sets a tolerance rate of 80% to
+accommodate the throttled samples and prevent test failures due to
+throttling.
 
-Fixes: fcacb5c154ba ("coresight: Introduce support for Coresight Address 
-Translation Unit")
+[1] lore.kernel.org/20250328182752.769662-1-ctshao@google.com
 
-Suzuki
+Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+Suggested-by: Ian Rogers <irogers@google.com>
+Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/tests/shell/record.sh | 33 ++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-> ---
->   drivers/hwtracing/coresight/coresight-catu.c | 25 +++++++++++++-------
->   drivers/hwtracing/coresight/coresight-catu.h |  1 +
->   2 files changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-> index 96cb48b140af..d4e2e175e077 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.c
-> +++ b/drivers/hwtracing/coresight/coresight-catu.c
-> @@ -458,12 +458,17 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
->   static int catu_enable(struct coresight_device *csdev, enum cs_mode mode,
->   		       void *data)
->   {
-> -	int rc;
-> +	int rc = 0;
->   	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
->   
-> -	CS_UNLOCK(catu_drvdata->base);
-> -	rc = catu_enable_hw(catu_drvdata, mode, data);
-> -	CS_LOCK(catu_drvdata->base);
-> +	guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
-> +	if (csdev->refcnt == 0) {
-> +		CS_UNLOCK(catu_drvdata->base);
-> +		rc = catu_enable_hw(catu_drvdata, mode, data);
-> +		CS_LOCK(catu_drvdata->base);
-> +	}
-> +	if (!rc)
-> +		csdev->refcnt++;
->   	return rc;
->   }
->   
-> @@ -486,12 +491,15 @@ static int catu_disable_hw(struct catu_drvdata *drvdata)
->   
->   static int catu_disable(struct coresight_device *csdev, void *__unused)
->   {
-> -	int rc;
-> +	int rc = 0;
->   	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
->   
-> -	CS_UNLOCK(catu_drvdata->base);
-> -	rc = catu_disable_hw(catu_drvdata);
-> -	CS_LOCK(catu_drvdata->base);
-> +	guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
-> +	if (--csdev->refcnt == 0) {
-> +		CS_UNLOCK(catu_drvdata->base);
-> +		rc = catu_disable_hw(catu_drvdata);
-> +		CS_LOCK(catu_drvdata->base);
-> +	}
->   	return rc;
->   }
->   
-> @@ -550,6 +558,7 @@ static int __catu_probe(struct device *dev, struct resource *res)
->   	dev->platform_data = pdata;
->   
->   	drvdata->base = base;
-> +	raw_spin_lock_init(&drvdata->spinlock);
->   	catu_desc.access = CSDEV_ACCESS_IOMEM(base);
->   	catu_desc.pdata = pdata;
->   	catu_desc.dev = dev;
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
-> index 141feac1c14b..755776cd19c5 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.h
-> +++ b/drivers/hwtracing/coresight/coresight-catu.h
-> @@ -65,6 +65,7 @@ struct catu_drvdata {
->   	void __iomem *base;
->   	struct coresight_device *csdev;
->   	int irq;
-> +	raw_spinlock_t spinlock;
->   };
->   
->   #define CATU_REG32(name, offset)					\
+diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
+index 05d91a663fda..587f62e34414 100755
+--- a/tools/perf/tests/shell/record.sh
++++ b/tools/perf/tests/shell/record.sh
+@@ -240,22 +240,43 @@ test_leader_sampling() {
+     err=1
+     return
+   fi
++  perf script -i "${perfdata}" | grep brstack > $script_output
++  # Check if the two instruction counts are equal in each record.
++  # However, the throttling code doesn't consider event grouping. During throttling, only the
++  # leader is stopped, causing the slave's counts significantly higher. To temporarily solve this,
++  # let's set the tolerance rate to 80%.
++  # TODO: Revert the code for tolerance once the throttling mechanism is fixed.
+   index=0
+-  perf script -i "${perfdata}" > "${script_output}"
++  valid_counts=0
++  invalid_counts=0
++  tolerance_rate=0.8
+   while IFS= read -r line
+   do
+-    # Check if the two instruction counts are equal in each record
+     cycles=$(echo $line | awk '{for(i=1;i<=NF;i++) if($i=="cycles:") print $(i-1)}')
+     if [ $(($index%2)) -ne 0 ] && [ ${cycles}x != ${prev_cycles}x ]
+     then
+-      echo "Leader sampling [Failed inconsistent cycles count]"
+-      err=1
+-      return
++      invalid_counts=$(($invalid_counts+1))
++    else
++      valid_counts=$(($valid_counts+1))
+     fi
+     index=$(($index+1))
+     prev_cycles=$cycles
+   done < "${script_output}"
+-  echo "Basic leader sampling test [Success]"
++  total_counts=$(bc <<< "$invalid_counts+$valid_counts")
++  if (( $(bc <<< "$total_counts <= 0") ))
++  then
++    echo "Leader sampling [No sample generated]"
++    err=1
++    return
++  fi
++  isok=$(bc <<< "scale=2; if (($invalid_counts/$total_counts) < (1-$tolerance_rate)) { 0 } else { 1 };")
++  if [ $isok -eq 1 ]
++  then
++     echo "Leader sampling [Failed inconsistent cycles count]"
++     err=1
++  else
++    echo "Basic leader sampling test [Success]"
++  fi
+ }
+ 
+ test_topdown_leader_sampling() {
+-- 
+2.45.2
 
 
