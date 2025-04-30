@@ -1,283 +1,151 @@
-Return-Path: <linux-kernel+bounces-627131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D27AA4BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B4BAA4BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005F7188EEF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA629500DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FF5267AFD;
-	Wed, 30 Apr 2025 12:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5759B25DD0D;
+	Wed, 30 Apr 2025 12:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ebwegr2r"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hKJdZjlH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B031B2641E4;
-	Wed, 30 Apr 2025 12:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F5125DCEE;
+	Wed, 30 Apr 2025 12:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746017368; cv=none; b=a3UoH2FQhjzxpiFO3xV8PdOwvJSXiixTjXUzaQqtVQIqt2+VY7Y9gD0Cok38JAO7Xb2hoALEhWhIfRI2zgpMp0JDo48S/x0fUN5agKruGaxZUBe/rBnnzu4hUCLDVBKcBRHdJlXAkYWE//4XQgLGWmxEUezv2aDMLt19IlyxHmA=
+	t=1746017366; cv=none; b=Qq8p15J4wrfh0xpS+TETRBXxNaq5fu24o3O1dqonalVCr7AUslOpoVNUo1i3YJkqDYZjePqO4UOU3qJVJ6soRd8IjAR+QYkPFRw91BesTz8EJxxvHDOffaq5NtxYb7NRb6j/3pJHGOmluWXvoMOxRWBOR5cRZbIkQVMIE2WB7VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746017368; c=relaxed/simple;
-	bh=lhY3UhDu5nx+O1Fi44z/mcLChAzZrf0RUHIYCmu8iL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pY2CTjjJWPPfNL9u6jRmWWzR25LlIbWCW6d521lUzAG0UJmC+pvae4/Wmewbl2pZ/QEqi/uwdV7dKNHFk7RvDxTrBZT4/YjisuNafqHrfS6WbLZtf5nKxbb8l0ljvMEjKw/N5jbOTZhjlAAuV+PeayZgF7tHdv0I6aMHAuRoCZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ebwegr2r; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 92F1A43A27;
-	Wed, 30 Apr 2025 12:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746017364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H/OUpl+c2QHHtmrmXPqlciNY816qMvdz6fKciUiS4VQ=;
-	b=Ebwegr2rIAxBxL8bhqE5Pba9Oj2gUFEWboHFOgeUMV00aAtSmU/5yM0rsb/XgKfRv+lOkf
-	s8EbNI4+/jEoC18NFn21QM+5hAUjZJ24pIcIEOjncTCmWeu7mt1oTSS6mHg6q+e8ittex3
-	5zFAThF+WhaZDSUVoxm01BxdvI8HVo/NlLbwTne2/1gFF6Y9z6vDOoh3evuh40bzwz85QE
-	qJFi8KNbJXoaykxJcf4C2MpffEZT++8NY3+CqGVt7ct6tToIx47/f1z1I5+v21CyfhfW0O
-	d8H+TKzCFJWqKqAoV9rOIYk/GQOAI5p3Qe9UXT3+eDRiu/6O5ak4Eny7Pm0NyQ==
-From: Herve Codina <herve.codina@bootlin.com>
-To: David Gibson <david@gibson.dropbear.id.au>,
-	Andrew Davis <afd@ti.com>,
-	Ayush Singh <ayush@beagleboard.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: devicetree@vger.kernel.org,
-	devicetree-compiler@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 7/7] of: unittest: Add tests for export symbols
-Date: Wed, 30 Apr 2025 14:49:06 +0200
-Message-ID: <20250430124910.195368-8-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250430124910.195368-1-herve.codina@bootlin.com>
-References: <20250430124910.195368-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1746017366; c=relaxed/simple;
+	bh=cDMJclNXODyK6FoHQdX9WffMNMsWwbdFdY0KjMSz0Oc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p70dr+KMKNTLzevXxf67+7mLlJCnEs/8QDEuojcxSKGhzpzUl6cEeJkZv6azUb5OwNYFQeosBSQLl2Cq9k6k9Yz1z8SwmL4qEpENfPV40iJsj5t/t0LkZA8YrPE0aAib0p3Yx1NajcmJvoIshwmB/IKby4iGLXFTXsWR/FjvoIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hKJdZjlH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53U9Xail005570;
+	Wed, 30 Apr 2025 12:49:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	occHxSA562krSi0Y+4bOpHp0aXC9KZXPxmhbQmxC0QU=; b=hKJdZjlHOarJ2S14
+	D9T5lIAjOE8H7NtSXayeyfASevP+zwpDwLSq3+9qgziS0cDLK8yO7GC+R4gKyWFd
+	1MP7zRBL3IqaE7DLuaqEmP74t05QbdvJkq2C7jlDycxiWD3bukBW+nZQ/jx66ci1
+	5bBJGFBylJat+AOjr+/jGJhLuctbJNX4iBltQBTg6hq/50w7gDbS1XIQPQKneG1V
+	sqwHL+gW0F/jaFsR0GgHulFcKJeE8cNfIte+9qCeFqzvX4JmAx7sU/djksLCULiM
+	m5RLPeV++fJmP7io01An55QFUgExvVHe2N+W63Os7lo/G+HEeeCoO84Vpw03iZeD
+	TEsOCg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u8a6ry-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 12:49:21 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53UCnKcw028143
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 12:49:20 GMT
+Received: from [10.50.41.127] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Apr
+ 2025 05:49:13 -0700
+Message-ID: <fc01b28d-713f-e6cc-565a-c24b2aabac2e@quicinc.com>
+Date: Wed, 30 Apr 2025 18:19:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieeijeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheffiefgjeeuleeuueffleeufefglefhjefhheeigedukeetieeltddthfffkeffnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopegurghvihgusehgihgsshhonhdrughrohhpsggvrghrrdhiugdrrghupdhrtghpthhtoheprghfugesthhirdgtohhmpdhrtghpthhtoheprgihuhhshhessggvrghglhgvsghorghrugdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepk
- hhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomh
-X-GND-Sasl: herve.codina@bootlin.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 4/5] arm64: dts: qcom: qcs8300: add video node
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250430-qcs8300_iris-v6-0-a2fa43688722@quicinc.com>
+ <20250430-qcs8300_iris-v6-4-a2fa43688722@quicinc.com>
+ <5086f0d3-d097-4668-b195-5ee00e84aad5@oss.qualcomm.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <5086f0d3-d097-4668-b195-5ee00e84aad5@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=B7i50PtM c=1 sm=1 tr=0 ts=68121c51 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=uUng-3H5kDwaNyo2zCsA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: sE0a39aUFNiYKzMSG1L2_cO8IvGiU5Ul
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA5MSBTYWx0ZWRfX3phejJGNUUIk mY/ufdpaFODHineYJDki6UHbn2ffNa4vuGAOMpAMCvMvMx9rf7x0j5tiK/IhwWyz4SpXKMYtk6U T+Ykn6w2D2wj4zM1FgKyE3UUGbATHXEAinU0gIu6wvC0cH8PZjZf/xJl8P17ooAEuo1cqdUPBr2
+ hLaRmu8OUio6dc7Pk9ypoQc3RrFF7gEX52K6dBbGqM15/M47oWDMG9IOB+U261MPCBsI4K2aKeK bnwGtjFiEZFKGijO3Z57nkYpPLK6H1iZWER+0fZP0G0+A+40f0s+e1KK6vYwzCHEgCNxz0MrUNg ZGD+wfUGGEHvOW7KjpSWJGthokgUfxHD1HZjGj8W63Z2J2VGOoJSUo5GTGjK4GFfgXhpgbwsfZ/
+ T4tqwhpAhXJpiF1/ODd/Z/eNyEeVgG+zlhyraPV+9CD4P0h/CJI9wnFgVng2UipfKcXMHWAA
+X-Proofpoint-ORIG-GUID: sE0a39aUFNiYKzMSG1L2_cO8IvGiU5Ul
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 spamscore=0 clxscore=1015
+ mlxscore=0 impostorscore=0 mlxlogscore=688 lowpriorityscore=0
+ malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300091
 
-The export symbols feature allows to use some additional symbols
-provided in an export symbols node to resolve overlay symbols.
 
-Add tests to exercise the export symbols feature.
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Tested-by: Ayush Singh <ayush@beagleboard.org>
----
- drivers/of/unittest-data/Makefile             |  5 ++
- .../unittest-data/overlay_export_symbols.dtso | 15 +++++
- .../of/unittest-data/testcases_common.dtsi    |  1 +
- .../unittest-data/tests-export-symbols.dtsi   | 30 +++++++++
- drivers/of/unittest.c                         | 65 +++++++++++++++++++
- 5 files changed, 116 insertions(+)
- create mode 100644 drivers/of/unittest-data/overlay_export_symbols.dtso
- create mode 100644 drivers/of/unittest-data/tests-export-symbols.dtsi
+On 4/30/2025 6:09 PM, Konrad Dybcio wrote:
+> On 4/30/25 2:17 PM, Vikash Garodia wrote:
+>> Add the IRIS video-codec node on QCS8300 platform to support video
+>> functionality.
+>>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>> ---
+> 
+> [...]
+> 
+>> +			iris_opp_table: opp-table {
+>> +				compatible = "operating-points-v2";
+>> +
+>> +				opp-366000000 {
+>> +					opp-hz = /bits/ 64 <366000000>;
+>> +					required-opps = <&rpmhpd_opp_svs_l1>,
+>> +							<&rpmhpd_opp_svs_l1>;
+>> +				};
+>> +
+>> +				opp-444000000 {
+>> +					opp-hz = /bits/ 64 <444000000>;
+>> +					required-opps = <&rpmhpd_opp_nom>,
+>> +							<&rpmhpd_opp_nom>;
+>> +				};
+>> +
+>> +				opp-533333334 {
+> 
+> 533.00 for this one, 533+1/3 for CVP, it seems
+You are right, its 533.00 as clock corner for video.
 
-diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
-index 01a966e39f23..b51be046749a 100644
---- a/drivers/of/unittest-data/Makefile
-+++ b/drivers/of/unittest-data/Makefile
-@@ -34,6 +34,7 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtbo.o \
- 			    overlay_gpio_04a.dtbo.o \
- 			    overlay_gpio_04b.dtbo.o \
- 			    overlay_pci_node.dtbo.o \
-+			    overlay_export_symbols.dtbo.o \
- 			    overlay_bad_unresolved.dtbo.o
- 
- # enable creation of __symbols__ node
-@@ -66,6 +67,10 @@ DTC_FLAGS_testcases += -Wno-interrupts_property \
- #			  overlay_bad_add_dup_prop.dtbo \
- #			  overlay_bad_phandle.dtbo \
- #			  overlay_bad_symbol.dtbo \
-+#
-+# Also overlay_export_symbols_ovl.dtbo is designed to be applied to a specific
-+# node and cannot be applied statically with fdtoverlay
-+
- 
- apply_static_overlay_1 := overlay_0.dtbo \
- 			  overlay_1.dtbo \
-diff --git a/drivers/of/unittest-data/overlay_export_symbols.dtso b/drivers/of/unittest-data/overlay_export_symbols.dtso
-new file mode 100644
-index 000000000000..89c9df4ef89b
---- /dev/null
-+++ b/drivers/of/unittest-data/overlay_export_symbols.dtso
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+/ {
-+	fragment@0 {
-+		target-path="";
-+		__overlay__ {
-+			ovl_node {
-+				ref-base = <&test_export_base>;
-+				ref-node = <&test_export_node>;
-+			};
-+		};
-+	};
-+};
-diff --git a/drivers/of/unittest-data/testcases_common.dtsi b/drivers/of/unittest-data/testcases_common.dtsi
-index 1c2cdf353ae3..21ffe0fb03ef 100644
---- a/drivers/of/unittest-data/testcases_common.dtsi
-+++ b/drivers/of/unittest-data/testcases_common.dtsi
-@@ -18,4 +18,5 @@ node-remove {
- #include "tests-address.dtsi"
- #include "tests-platform.dtsi"
- #include "tests-overlay.dtsi"
-+#include "tests-export-symbols.dtsi"
- #include "tests-lifecycle.dtsi"
-diff --git a/drivers/of/unittest-data/tests-export-symbols.dtsi b/drivers/of/unittest-data/tests-export-symbols.dtsi
-new file mode 100644
-index 000000000000..1650289b34cd
---- /dev/null
-+++ b/drivers/of/unittest-data/tests-export-symbols.dtsi
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/ {
-+	testcase-data {
-+		test-export-symbols {
-+			test_export_symbols_b0: base0 {
-+				test_export_symbols_n0: node {
-+					dummy;
-+				};
-+
-+				export-symbols {
-+					test_export_base = <&test_export_symbols_b0>;
-+					test_export_node = <&test_export_symbols_n0>;
-+				};
-+			};
-+
-+			test_export_symbols_b1: base1 {
-+
-+				test_export_symbols_n1: node {
-+					dummy;
-+				};
-+
-+				export-symbols {
-+					test_export_base = <&test_export_symbols_b1>;
-+					test_export_node = <&test_export_symbols_n1>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 11091b0176e0..bf286902c65b 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -4164,6 +4164,69 @@ static __init void of_unittest_overlay_high_level(void)
- 	mutex_unlock(&of_mutex);
- }
- 
-+OVERLAY_INFO_EXTERN(overlay_export_symbols);
-+
-+static __init void of_unittest_export_symbols(const char *prefix,
-+					      const char *base_full_path)
-+{
-+	const struct overlay_info ovl = OVERLAY_INFO(overlay_export_symbols, 0, 0);
-+	struct device_node *ovl_node;
-+	struct device_node *base;
-+	struct device_node *node;
-+	struct device_node *ref;
-+	int ovcs_id;
-+	u32 size;
-+	int ret;
-+
-+	base = of_find_node_by_path(base_full_path);
-+	if (unittest(base, "%s: Get base (%s) failed\n", prefix, base_full_path))
-+		return;
-+
-+	node = of_get_child_by_name(base, "node");
-+	if (unittest(base, "%s: Get node from %pOF failed\n", prefix, base))
-+		goto end_put_base;
-+
-+	size = ovl.dtbo_end - ovl.dtbo_begin;
-+	ret = of_overlay_fdt_apply(ovl.dtbo_begin, size, &ovcs_id, base, "export-symbols");
-+	if (unittest(!ret, "%s: Apply '%s' failed (%d)\n", prefix, ovl.name, ret))
-+		goto end_put_node;
-+
-+	ovl_node = of_get_child_by_name(base, "ovl_node");
-+	if (unittest(ovl_node, "%s: Get ovl_node from %pOF failed\n", prefix, base))
-+		goto end_remove_overlay;
-+
-+	ref = of_parse_phandle(ovl_node, "ref-base", 0);
-+	if (unittest(ref, "%s: Parse 'ref-base' from %pOF failed\n", prefix, ovl_node))
-+		goto end_put_ovl_node;
-+	unittest(ref == base,
-+		 "%s: Node from 'ref-base' phandle mismatches (got %pOF, expected %pOF)\n",
-+		 prefix, ref, base);
-+	of_node_put(ref);
-+
-+	ref = of_parse_phandle(ovl_node, "ref-node", 0);
-+	if (unittest(ref, "%s: Parse 'ref-node' from %pOF failed\n", prefix, ovl_node))
-+		goto end_put_ovl_node;
-+	unittest(ref == node,
-+		 "%s: Node from 'ref-node' phandle mismatches (got %pOF, expected %pOF)\n",
-+		 prefix, ref, node);
-+	of_node_put(ref);
-+
-+end_put_ovl_node:
-+	of_node_put(ovl_node);
-+end_remove_overlay:
-+	of_overlay_remove(&ovcs_id);
-+end_put_node:
-+	of_node_put(node);
-+end_put_base:
-+	of_node_put(base);
-+}
-+
-+static __init void of_unittest_overlay_export_symbols(void)
-+{
-+	of_unittest_export_symbols("base0", "/testcase-data/test-export-symbols/base0");
-+	of_unittest_export_symbols("base1", "/testcase-data/test-export-symbols/base1");
-+}
-+
- static int of_unittest_pci_dev_num;
- static int of_unittest_pci_child_num;
- 
-@@ -4349,6 +4412,7 @@ static void __init of_unittest_pci_node(void)
- #else
- 
- static inline __init void of_unittest_overlay_high_level(void) {}
-+static inline __init void of_unittest_overlay_export_symbols(void) {}
- static inline __init void of_unittest_pci_node(void) { }
- 
- #endif
-@@ -4404,6 +4468,7 @@ static int __init of_unittest(void)
- 	of_unittest_overlay();
- 	of_unittest_lifecycle();
- 	of_unittest_pci_node();
-+	of_unittest_overlay_export_symbols();
- 
- 	/* Double check linkage after removing testcase data */
- 	of_unittest_check_tree_linkage();
--- 
-2.49.0
-
+Regards,
+Vikash
 
