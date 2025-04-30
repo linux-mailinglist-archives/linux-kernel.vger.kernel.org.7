@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-628044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-628017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B31AA5872
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 01:04:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D83EAA5823
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 May 2025 00:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331C71BA5F2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 23:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB613B01F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 22:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62318225A3C;
-	Wed, 30 Apr 2025 23:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CDE22687C;
+	Wed, 30 Apr 2025 22:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="J1TK5DX5"
-Received: from 17.mo582.mail-out.ovh.net (17.mo582.mail-out.ovh.net [46.105.36.150])
+	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="NGixRtCX"
+Received: from 9.mo550.mail-out.ovh.net (9.mo550.mail-out.ovh.net [178.32.108.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8371DC9B0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 23:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.36.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235291BF37
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.32.108.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746054236; cv=none; b=CJkuW0rlfFSImpbqdZMuN4E6OXPttwhLUUhAc9VCOlOUIgidhp3TqToO4vlQbWLRMHs9P+6h8qJmzCLYuwiPFKQ0Pa3hZCyn1X41U8NzRoqX6YFLgtLrmRpwCMwA9VjConwaLuRB9kLzVuq/OppcFjM/uXcskozMJQfX3WVsPO8=
+	t=1746053433; cv=none; b=Gmiu+G5wkYKIT9o1/2Ud2TkoveUgPJjIdoUfpT0QsgW/in043Ojzo9er+zXaTl2v9YXk3UxS/ArPMv3JbIzvkHxXLuwcJDOhU2re0kT9a7+g9wKLQHg+uNiiipVjm6qvuMeFGIIAoZiWtBv4lXtNzfNOt9ktcriPa52toiGWVVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746054236; c=relaxed/simple;
-	bh=A3qyNpgIhJdTErPTMjoTewRqqr5w/st8rXbErG+JDbw=;
+	s=arc-20240116; t=1746053433; c=relaxed/simple;
+	bh=kPomQ7PXgpw7knpV3SVfubuKhsQUI05+skk6zT7Eq1I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=foNuvfqW7oc9JjQM2tDH0TKhwuBTl3UQAYec/isC5uNC21QfzyyolK1Dt6Gcjb7eFS2i3p08ojiE0RGyACkOyDChUuQG6pXiubrz1XnVxpH11+mhCUpRFxWo4ESGeApp2gbXukbwVvMEb5b/K3vcGka72Y1Q1qBGdF8VOYvB7dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=J1TK5DX5; arc=none smtp.client-ip=46.105.36.150
+	 MIME-Version; b=KqHHuSqzPpwfFGcoCtCko4DOGL9KBs8PmSuvvV/M7nkmnZkJZdI4y5yJHs2j1P/xg68VcVsnBoQxXv0dqPz2Onzh8PzFCBPlZseZdGkG5u1PP6BqOFfqAMoXKqSq7IrIYlezxuIN4Pp3aK6NyRjc5svfse6wKxSF3VHtHXrsxhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=NGixRtCX; arc=none smtp.client-ip=178.32.108.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3mdeb.com
-Received: from director1.ghost.mail-out.ovh.net (unknown [10.109.148.106])
-	by mo582.mail-out.ovh.net (Postfix) with ESMTP id 4ZnshR51P8z1PG0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:45:11 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-bt6hd (unknown [10.110.188.136])
-	by director1.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 5CFD11FD61;
-	Wed, 30 Apr 2025 22:45:11 +0000 (UTC)
-Received: from 3mdeb.com ([37.59.142.108])
-	by ghost-submission-5b5ff79f4f-bt6hd with ESMTPSA
-	id ejsPCvenEmgevisAyP1w0w
-	(envelope-from <sergii.dmytruk@3mdeb.com>); Wed, 30 Apr 2025 22:45:11 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-108S002c0a7c6fa-a18a-4bd0-a5dd-c1144deb985f,
+Received: from director4.ghost.mail-out.ovh.net (unknown [10.109.176.170])
+	by mo550.mail-out.ovh.net (Postfix) with ESMTP id 4ZnshT6jk9z1Xnx
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 22:45:13 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-twnx5 (unknown [10.110.164.49])
+	by director4.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 9A8971FD29;
+	Wed, 30 Apr 2025 22:45:13 +0000 (UTC)
+Received: from 3mdeb.com ([37.59.142.114])
+	by ghost-submission-5b5ff79f4f-twnx5 with ESMTPSA
+	id SuivGfmnEmgRWAgA1PhhsQ
+	(envelope-from <sergii.dmytruk@3mdeb.com>); Wed, 30 Apr 2025 22:45:13 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-114S00894c63abd-27f7-477a-bf0c-fa55fba5a45f,
                     7FFE21389DDF989CCD6FB7268846A7FDE11993D7) smtp.auth=sergii.dmytruk@3mdeb.com
 X-OVh-ClientIp:176.111.181.178
 From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
 To: linux-kernel@vger.kernel.org
 Cc: trenchboot-devel@googlegroups.com
-Subject: [RFC PATCH v2 3/9] x86: Secure Launch main header file AMD support
-Date: Thu,  1 May 2025 01:44:45 +0300
-Message-ID: <f856478803635d0b1efbd95e66c43b9c3808e4fc.1746037489.git.sergii.dmytruk@3mdeb.com>
+Subject: [RFC PATCH v2 4/9] x86: Split up Secure Launch setup and finalize functions
+Date: Thu,  1 May 2025 01:44:46 +0300
+Message-ID: <bd2d21fb90cbb4905afcb5d934c48e4ff23a3ed8.1746037489.git.sergii.dmytruk@3mdeb.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
 References: <cover.1746037489.git.sergii.dmytruk@3mdeb.com>
@@ -58,184 +58,191 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 12103142526215632028
+X-Ovh-Tracer-Id: 12103705474822026396
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepufgvrhhgihhiucffmhihthhruhhkuceoshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmqeenucggtffrrghtthgvrhhnpeegkeffieeitdevkefhudegffevieeggfelgedvgeehffdtteehfeeuleeiudekvdenucfkphepuddvjedrtddrtddruddpudejiedrudduuddrudekuddrudejkedpfeejrdehledrudegvddruddtkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkedvmgdpmhhouggvpehsmhhtphhouhht
-DKIM-Signature: a=rsa-sha256; bh=Z/g7dNV0WLxS81SLsZO/TkyYRGI2634tQDHJNCpmxUQ=;
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejleegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuvghrghhiihcuffhmhihtrhhukhcuoehsvghrghhiihdrughmhihtrhhukhesfehmuggvsgdrtghomheqnecuggftrfgrthhtvghrnhephfehfeehudeileeikeffgfffgfefuddtveelvedvhfffgfelvdfgtddutdehfeeinecukfhppeduvdejrddtrddtrddupddujeeirdduuddurddukedurddujeekpdefjedrheelrddugedvrdduudegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvghrghhiihdrughmhihtrhhukhesfehmuggvsgdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtdgmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=5VFk4FOVNsAWcUO093+INFp3zTO4CmYlsU9Pb5Y3iAY=;
  c=relaxed/relaxed; d=3mdeb.com; h=From; s=ovhmo3617313-selector1;
- t=1746053111; v=1;
- b=J1TK5DX5XE/LXIqW2zKDsmvlbknl5B+qS0GVjKmmesCUcdSe1h61t3x7b5zEQlUvDKDmxywu
- TTgDFjaNBiJmJP8gVlDw5b8PZabbhAhMBo3Tguj/cgYabkD2vOnUA/Oo31ifVNqC0h3si+ae8jw
- 1vaA5t32nAc1ydg0MLLbqLOzINKYchqmrk1S8GWzWhBNnj6HZHxohKPQxL7jfOY3QnAQB9WPdrz
- yezwbvu7feW027dFDzKZfJNwFfVJXLNKVbZvyvpJ1aCgC8By3dpN51zA4PX/xElTEOc26WBCMTj
- fPQ0UYU9ofsjtG4NI8SSfSW0Jl2sMANiOkvZ6NBX1Z5MA==
+ t=1746053114; v=1;
+ b=NGixRtCXiVNRihEJULF8W1ZW/fYzDX8yDyGmrA6teCk3Ay5vijC/ujJIEvuiIt77Jvbovyg5
+ 1emvo6H6OUx/EGrumVzKuPIPcKZTXbZF64GGzgswl72MQQ0mDrGCR9ij7vYC91kMCaXiR5r2MOw
+ n/XdkN2Jt67S4UvPhfwyJ3XxJpw3NTLNy2dqsO1RWmTUeWZ///FTqQ8l+xuqU/udfT1oD4aThYV
+ mpsdLtXMW4HPWLiNOriK53mnZvcJt/mEP5aeicp950Rx2d0Z8JOKvouY7B0SfKkyMwx1BWKmNQy
+ zp7kImWAnNhPFybpQ4UIa7rl5+yRadOv952gxYnC6pVUQ==
 
 From: Ross Philipson <ross.philipson@oracle.com>
 
-Add additional Secure Launch definitions and declarations for AMD/SKINIT
-support.
-
-Use a single implementation of slaunch_is_txt_launch(),
-slaunch_get_flags() returns to 0 if Secure Launch support isn't enabled.
+Split up the setup and findalize functions internally to determine
+the type of launch and call the appropriate function (TXT or SKINIT
+version).
 
 Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-Signed-off-by: Michał Żygowski <michal.zygowski@3mdeb.com>
 Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
 ---
- include/linux/slaunch.h | 81 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 70 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/svm.h |  2 ++
+ arch/x86/kernel/setup.c    |  2 +-
+ arch/x86/kernel/slaunch.c  | 69 +++++++++++++++++++++++++++++++-------
+ include/linux/slaunch.h    |  4 +--
+ 4 files changed, 62 insertions(+), 15 deletions(-)
 
+diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
+index 9b7fa99ae951..da9536c5a137 100644
+--- a/arch/x86/include/asm/svm.h
++++ b/arch/x86/include/asm/svm.h
+@@ -584,6 +584,8 @@ static inline void __unused_size_checks(void)
+ 
+ #define SVM_CPUID_FUNC 0x8000000a
+ 
++#define SVM_VM_CR_INIT_REDIRECTION 1
++
+ #define SVM_SELECTOR_S_SHIFT 4
+ #define SVM_SELECTOR_DPL_SHIFT 5
+ #define SVM_SELECTOR_P_SHIFT 7
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index afb1b238202f..3bcf5a5fbac7 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -999,7 +999,7 @@ void __init setup_arch(char **cmdline_p)
+ 	early_gart_iommu_check();
+ #endif
+ 
+-	slaunch_setup_txt();
++	slaunch_setup();
+ 
+ 	/*
+ 	 * partially used pages are not usable - thus
+diff --git a/arch/x86/kernel/slaunch.c b/arch/x86/kernel/slaunch.c
+index b6ba4c526aa3..d81433a9b699 100644
+--- a/arch/x86/kernel/slaunch.c
++++ b/arch/x86/kernel/slaunch.c
+@@ -18,6 +18,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/e820/api.h>
+ #include <asm/setup.h>
++#include <asm/svm.h>
+ #include <asm/realmode.h>
+ #include <linux/slr_table.h>
+ #include <linux/slaunch.h>
+@@ -437,21 +438,11 @@ void __init slaunch_fixup_jump_vector(void)
+  * Intel TXT specific late stub setup and validation called from within
+  * x86 specific setup_arch().
+  */
+-void __init slaunch_setup_txt(void)
++static void __init slaunch_setup_txt(void)
+ {
+ 	u64 one = TXT_REGVALUE_ONE, val;
+ 	void __iomem *txt;
+ 
+-	if (!boot_cpu_has(X86_FEATURE_SMX))
+-		return;
+-
+-	/*
+-	 * If booted through secure launch entry point, the loadflags
+-	 * option will be set.
+-	 */
+-	if (!(boot_params.hdr.loadflags & SLAUNCH_FLAG))
+-		return;
+-
+ 	/*
+ 	 * See if SENTER was done by reading the status register in the
+ 	 * public space. If the public register space cannot be read, TXT may
+@@ -523,6 +514,42 @@ void __init slaunch_setup_txt(void)
+ 	pr_info("Intel TXT setup complete\n");
+ }
+ 
++/*
++ * AMD SKINIT specific late stub setup and validation called from within
++ * x86 specific setup_arch().
++ */
++static void __init slaunch_setup_skinit(void)
++{
++	u64 val;
++
++	/*
++	 * If the platform is performing a Secure Launch via SKINIT
++	 * INIT_REDIRECTION flag will be active.
++	 */
++	rdmsrl(MSR_VM_CR, val);
++	if (!(val & (1 << SVM_VM_CR_INIT_REDIRECTION)))
++		return;
++
++	/* Set flags on BSP so subsequent code knows it was a SKINIT launch */
++	sl_flags |= (SL_FLAG_ACTIVE|SL_FLAG_ARCH_SKINIT);
++	pr_info("AMD SKINIT setup complete\n");
++}
++
++void __init slaunch_setup(void)
++{
++	/*
++	 * If booted through secure launch entry point, the loadflags
++	 * option will be set.
++	 */
++	if (!(boot_params.hdr.loadflags & SLAUNCH_FLAG))
++		return;
++
++	if (boot_cpu_has(X86_FEATURE_SMX))
++		slaunch_setup_txt();
++	else if (boot_cpu_has(X86_FEATURE_SKINIT))
++		slaunch_setup_skinit();
++}
++
+ static inline void smx_getsec_sexit(void)
+ {
+ 	asm volatile ("getsec\n"
+@@ -533,7 +560,7 @@ static inline void smx_getsec_sexit(void)
+  * Used during kexec and on reboot paths to finalize the TXT state
+  * and do an SEXIT exiting the DRTM and disabling SMX mode.
+  */
+-void slaunch_finalize(int do_sexit)
++static void slaunch_finalize_txt(int do_sexit)
+ {
+ 	u64 one = TXT_REGVALUE_ONE, val;
+ 	void __iomem *config;
+@@ -594,3 +621,21 @@ void slaunch_finalize(int do_sexit)
+ 
+ 	pr_info("TXT SEXIT complete.\n");
+ }
++
++/*
++ * Used during kexec and on reboot paths to finalize the SKINIT.
++ */
++static void slaunch_finalize_skinit(void)
++{
++	/* AMD CPUs with PSP-supported DRTM */
++	if (!slaunch_is_skinit_psp())
++		return;
++}
++
++void slaunch_finalize(int do_sexit)
++{
++	if (boot_cpu_has(X86_FEATURE_SMX))
++		slaunch_finalize_txt(do_sexit);
++	else if (boot_cpu_has(X86_FEATURE_SKINIT))
++		slaunch_finalize_skinit();
++}
 diff --git a/include/linux/slaunch.h b/include/linux/slaunch.h
-index ae67314c2aad..ec7e0d736a03 100644
+index ec7e0d736a03..22e253960fdd 100644
 --- a/include/linux/slaunch.h
 +++ b/include/linux/slaunch.h
-@@ -14,11 +14,14 @@
+@@ -547,7 +547,7 @@ static inline int tpm2_log_event(struct txt_heap_event_log_pointer2_1_element *e
+ /*
+  * External functions available in mainline kernel.
   */
- #define SL_FLAG_ACTIVE		0x00000001
- #define SL_FLAG_ARCH_TXT	0x00000002
-+#define SL_FLAG_ARCH_SKINIT	0x00000004
-+#define SL_FLAG_SKINIT_PSP	0x00000008
- 
- /*
-  * Secure Launch CPU Type
-  */
- #define SL_CPU_INTEL	1
-+#define SL_CPU_AMD	2
- 
- #define __SL32_CS	0x0008
- #define __SL32_DS	0x0010
-@@ -146,6 +149,8 @@
- #define SL_ERROR_INVALID_SLRT		0xc0008022
- #define SL_ERROR_SLRT_MISSING_ENTRY	0xc0008023
- #define SL_ERROR_SLRT_MAP		0xc0008024
-+#define SL_ERROR_MISSING_EVENT_LOG	0xc0008025
-+#define SL_ERROR_MAP_SETUP_DATA		0xc0008026
- 
- /*
-  * Secure Launch Defined Limits
-@@ -325,9 +330,25 @@ struct smx_rlp_mle_join {
- 	u32 rlp_entry_point; /* phys addr */
- } __packed;
- 
-+/* The TCG original Spec ID structure defined for TPM 1.2 */
-+#define TCG_SPECID_SIG00 "Spec ID Event00"
-+
-+struct tpm_tcg_specid_event_head {
-+	char signature[16];
-+	u32  platform_class;
-+	u8   spec_ver_minor;
-+	u8   spec_ver_major;
-+	u8   errata;
-+	u8   uintn_size;	/* reserved (must be 0) for 1.21 */
-+	u8   vendor_info_size;
-+	/* vendor_info[]; */
-+} __packed;
-+
- /*
-- * TPM event log structures defined in both the TXT specification and
-- * the TCG documentation.
-+ * TPM event log structures defined by the TXT specification derived
-+ * from the TCG documentation. For TXT this is setup as the conainter
-+ * header. On AMD this header is embedded in to vendor information
-+ * after the TCG spec ID header.
-  */
- #define TPM_EVTLOG_SIGNATURE "TXT Event Container"
- 
-@@ -344,6 +365,25 @@ struct tpm_event_log_header {
- 	/* PCREvents[] */
- } __packed;
- 
-+/* TPM Event Log Size Macros */
-+#define TCG_PCClientSpecIDEventStruct_SIZE			\
-+		(sizeof(struct tpm_tcg_specid_event_head))
-+#define TCG_EfiSpecIdEvent_SIZE(n) \
-+		((n) * sizeof(struct tcg_efi_specid_event_algs)	\
-+		 + sizeof(struct tcg_efi_specid_event_head)	\
-+		 + sizeof(u8) /* vendorInfoSize */)
-+#define TPM2_HASH_COUNT(base) (*((u32 *)(base)			\
-+		+ (offsetof(struct tcg_efi_specid_event_head, num_algs) >> 2)))
-+
-+/* AMD Specific Structures and Definitions */
-+struct sl_header {
-+	u16 skl_entry_point;
-+	u16 length;
-+	u8 reserved[62];
-+	u16 skl_info_offset;
-+	u16 bootloader_data_offset;
-+} __packed;
-+
- /*
-  * Functions to extract data from the Intel TXT Heap Memory. The layout
-  * of the heap is as follows:
-@@ -512,16 +552,14 @@ void slaunch_fixup_jump_vector(void);
+-void slaunch_setup_txt(void);
++void slaunch_setup(void);
+ void slaunch_fixup_jump_vector(void);
  u32 slaunch_get_flags(void);
  struct sl_ap_wake_info *slaunch_get_ap_wake_info(void);
- struct acpi_table_header *slaunch_get_dmar_table(struct acpi_table_header *dmar);
-+void slaunch_cpu_setup_skinit(void);
-+void __noreturn slaunch_skinit_reset(const char *msg, u64 error);
- void __noreturn slaunch_txt_reset(void __iomem *txt,
- 					 const char *msg, u64 error);
- void slaunch_finalize(int do_sexit);
--
--static inline bool slaunch_is_txt_launch(void)
--{
--	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_TXT;
--
--	return (slaunch_get_flags() & mask) == mask;
--}
-+bool slaunch_psp_tmr_release(void);
-+void slaunch_psp_setup(void);
-+void slaunch_psp_finalize(void);
+@@ -563,7 +563,7 @@ void slaunch_psp_finalize(void);
  
  #else
  
-@@ -529,6 +567,10 @@ static inline void slaunch_setup_txt(void)
+-static inline void slaunch_setup_txt(void)
++static inline void slaunch_setup(void)
  {
  }
- 
-+static inline void slaunch_cpu_setup_skinit(void)
-+{
-+}
-+
- static inline void slaunch_fixup_jump_vector(void)
- {
- }
-@@ -545,14 +587,31 @@ static inline struct acpi_table_header *slaunch_get_dmar_table(struct acpi_table
- 
- static inline void slaunch_finalize(int do_sexit)
- {
-+	(void)do_sexit;
- }
- 
-+#endif /* !IS_ENABLED(CONFIG_SECURE_LAUNCH) */
-+
- static inline bool slaunch_is_txt_launch(void)
- {
--	return false;
-+	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_TXT;
-+
-+	return (slaunch_get_flags() & mask) == mask;
- }
- 
--#endif /* !IS_ENABLED(CONFIG_SECURE_LAUNCH) */
-+static inline bool slaunch_is_skinit_launch(void)
-+{
-+	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_SKINIT;
-+
-+	return (slaunch_get_flags() & mask) == mask;
-+}
-+
-+static inline bool slaunch_is_skinit_psp(void)
-+{
-+	u32 mask = SL_FLAG_ACTIVE | SL_FLAG_ARCH_SKINIT | SL_FLAG_SKINIT_PSP;
-+
-+	return (slaunch_get_flags() & mask) == mask;
-+}
- 
- #endif /* !__ASSEMBLY */
  
 -- 
 2.49.0
