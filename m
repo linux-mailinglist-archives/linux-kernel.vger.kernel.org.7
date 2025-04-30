@@ -1,465 +1,185 @@
-Return-Path: <linux-kernel+bounces-627072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-627074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C37AA4AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96C3AA4ADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 14:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287B79A2AD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCAF16801A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 12:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F26A259491;
-	Wed, 30 Apr 2025 12:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10EE25A2D9;
+	Wed, 30 Apr 2025 12:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NhTVswmM"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fi6ovw3e"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273C1222587
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0142550B3;
+	Wed, 30 Apr 2025 12:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746015432; cv=none; b=u36UrFN+11GhkfdcNxvUyvoDXnfwZd9kAL6rUI4p866LxNLc0nVSfJQAhWhZ2RleCPYAU7oqFD0oqx0juDya2Ncd8774YMogzPp94O2LUDQTEJ4OLAcIib4N/kxidbg+au5LZ/+Gi3IbnBo42+R+AIqxzeDskSSB2H3VUeWmPGA=
+	t=1746015452; cv=none; b=qyK+QP70ZV8wC8kgojoP/LRUYSQbZ59hsHt5v2XiSH3ovMmPigmGBb6DM5mL0gBZ9p/OAslMnHNpOzPuYwI22NMHDxRl/48YqCE0ZSbv9scm0wW+1iKCPtY/5JRFRaa0gWjjL5qtQhUDfQtpfwDBhJCkncV4V+K1jYK5Tq1WGKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746015432; c=relaxed/simple;
-	bh=L4v1/UbpH60//0UYwR3fWtKMRUSBz3VW0idipyvx3x8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=EtQVvoXvUzTg0mhOEc2+5d+MrW5S4ZEzR5TD+IAPCecdsCSr5LRGDb7cgD4ilNu0xRILHFw4X6U4YqgcEzGDci0geh1uhEDtzUdl1mbfxW/N1LEWa6GQJJEz4h8V2F0U0tMz40v2CA5h9HhTlFQRMCokhqav6eeiJ36dJzy0aoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NhTVswmM; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250430121708euoutp02f110889439e18194feb3849d637f8bcd~7F8gANqpp2575025750euoutp02J
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 12:17:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250430121708euoutp02f110889439e18194feb3849d637f8bcd~7F8gANqpp2575025750euoutp02J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1746015428;
-	bh=4JLcjR3NKmbTIpY7Ig7hH0ZRadrUWtEC46toJgZbLXs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=NhTVswmMQv02s1uY+gGXLPKSJpvlx1hz3V8mjmWImF3d+PxOm3/bp2fjhFs5mpSYd
-	 igAKZrj/QEIw0Sgyj+Tj9++Gy/PjBL+1YlJ15GERqFWMcTvgU0crnNkP2WJXFoojxv
-	 exZn7DnTc+MtOuFlB87UbBNHAi736Y1vvgpXdi1I=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250430121707eucas1p2a9e61dc5accfb9784d6d1aa81028408c~7F8ff0M5F2650226502eucas1p2q;
-	Wed, 30 Apr 2025 12:17:07 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250430121706eusmtip122471c36d7228758127881c4f8464ec5~7F8ecFgJI2844428444eusmtip1q;
-	Wed, 30 Apr 2025 12:17:06 +0000 (GMT)
-Message-ID: <5413f5c7-8049-4490-bdd6-8c03f6e2057f@samsung.com>
-Date: Wed, 30 Apr 2025 14:17:06 +0200
+	s=arc-20240116; t=1746015452; c=relaxed/simple;
+	bh=E1kEwPsLvdquGJddOJvX2EN9XwDc3z7/1YWDxE570N4=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=cx6FlgdOBbwvJ4/jNR39HhEod1n+NWncMbFR2N2PpEJ1IpG3mUR5dp3CWABwX5OF7tHUltYPRA4ak2YjvnyvpMTXBeBREzrbPy67tbctCMStbmDq7NmmHak4TNLfD5F7tMhCopQz4rIihAVedj/s6+VD0Lai75FtjgFmuPLrBz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fi6ovw3e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53U9p2fV011715;
+	Wed, 30 Apr 2025 12:17:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=T2VVxXq80qNYSnlcmC+ZnU
+	KDWd6u2DL1cLhNjntN/vk=; b=Fi6ovw3ezqy32fLqa6GSFgRZLFczbmkWlUM7HX
+	GS456I2EI6HpGHLB/8bj6CVhcndDDI61KfLHuPD2FvrzCzwdrEGXoN8i4oxCW6Zp
+	+tkiFDDTV+lYcd/uZq19e58tvLCq5QFl/qeA4a8XFD2PlFnHk2vZPgz9b2JgKnBK
+	6HAe/YpRo/GjunWPn+1vbVOxhI4gsx3TYoX0lByCLl1Ae4TljgfSR2uKabIKum25
+	0hDHiCmVFDj2NLeDMo4yFGnR4vFeYvEGIm3UPK+oEkJ3Xv0Gmc/cKg49V+2YDY1+
+	IabvdClx33CCqlzQe0bQH0WIQOL3xG/yR/Lr47REdbqAJoGw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6uaa3ex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 12:17:26 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53UCHPDQ024632
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Apr 2025 12:17:25 GMT
+Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 30 Apr 2025 05:17:21 -0700
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [PATCH v6 0/5] media: qcom: iris: add support for QCS8300
+Date: Wed, 30 Apr 2025 17:47:06 +0530
+Message-ID: <20250430-qcs8300_iris-v6-0-a2fa43688722@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] pmdomain: thead: Add GPU-specific clock and
- reset handling for TH1520
-To: Ulf Hansson <ulf.hansson@linaro.org>, Bartosz Golaszewski
-	<brgl@bgdev.pl>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich
-	<dakr@kernel.org>, Pavel Machek <pavel@kernel.org>, Drew Fustini
-	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
-	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
-	Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Frank
-	Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	m.szyprowski@samsung.com, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <CAPDyKFqX5cjQe3-MX3W9wMoQW3gzwSvb0QMf-_sTJuq_TeGsCg@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250430121707eucas1p2a9e61dc5accfb9784d6d1aa81028408c
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250414185316eucas1p2c2dbd33788d9141773546f7a479ac288
-X-EPHeader: CA
-X-CMS-RootMailID: 20250414185316eucas1p2c2dbd33788d9141773546f7a479ac288
-References: <CGME20250414185316eucas1p2c2dbd33788d9141773546f7a479ac288@eucas1p2.samsung.com>
-	<20250414-apr_14_for_sending-v2-0-70c5af2af96c@samsung.com>
-	<20250414-apr_14_for_sending-v2-3-70c5af2af96c@samsung.com>
-	<CAPDyKFqX5cjQe3-MX3W9wMoQW3gzwSvb0QMf-_sTJuq_TeGsCg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMIUEmgC/32Py27CMBBFfyXKuq7G9viVVf+jqirbGRcvIBCnE
+ RXKv9eERSkglnc058ydU1tozFTarjm1I8255GFXg35p2rjxuy9iua+5FSAUILfsEIuVAJ95zIU
+ Z74g0oOTo24rsR0r5uOrePy55pMN3tU6X4Z+0a1alEIpNwz5HVrb2qICt3pkD84K7YL0NaEw3m
+ 7M++EIsDtttnrqGIwqZovRYN1NAqfveW4UKpHQURUjc8SB1ey6yyWUaxp/1zZmvTR5/NHMGTBv
+ jRJAuVPNbrR/zLr7Wu6tqFs9wUXFOwKVVwQG5e1xe4ULe4LLivSEHGjShsvc4XuN4g+O5PGlNP
+ SYdzIPy6hmuKp44t0mBinX8H1+W5RftgLOBLwIAAA==
+X-Change-ID: 20250418-qcs8300_iris-7a9ee604314a
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746015441; l=2755;
+ i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
+ bh=E1kEwPsLvdquGJddOJvX2EN9XwDc3z7/1YWDxE570N4=;
+ b=7+1sH/1M4uRskjCxi3yUutLgEPlVe7PI9rTQgtXJnh4edPPJL4N6PYcbZRB6fd8ggjLQLg2pB
+ IqWoXNhCXT2CJ3VN/1CziqnsPYYCbUIBHbwa7TyzJ0KClOxSZp43BD3
+X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=BNizrEQG c=1 sm=1 tr=0 ts=681214d6 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=h97imd1RtcNJs7uGSNUA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDA4NyBTYWx0ZWRfX+N/YT/K4H5Lz a3Rxo2XI2R8pBk+I0EMGVY0H9SrnGqhLkMwcrDU4SwFL5efRxoVs42Anx52F8cbwfq91LWCC7Xy R04TQhgOeFVrS7J7Bje2aaKSUMIzS2YLmGHoGnEZ63GJ4aeYfREDuBTyRC0WsCB/b6czbOjbP19
+ NEworwbdD15t98lAmvkQYnacTeNMPEkUN6Ih37inV0GaJKk6Ln/nrmc1kuzUIgg79pNQOL3epBY kXao1WEW6YQpN08H5uGSkYWj07jD8YJ3nqgWAUZSmWdvyZNyhbIND95Q27oI7EedSf7H0wxb2lF OivqCbTMfssSAF6VfYzz6CgeignJuYdRCIXFI/74lTyqIMWaL+FBdedYZrmsSe4vGL04lvWP1NX
+ oqJEPk9g6VZ5tgQycZjiF52m9vw0DgV9IjEL2PxDkiNWyg1WRTPIlaKWsQrdb3eVILPacWpm
+X-Proofpoint-GUID: PL-JjaOex6PhQYJ6AiMNUzbJ0xWvgtP1
+X-Proofpoint-ORIG-GUID: PL-JjaOex6PhQYJ6AiMNUzbJ0xWvgtP1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-30_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 adultscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504300087
 
+add support for video hardware acceleration on QCS8300 platform.
 
+This series depends on
+https://lore.kernel.org/all/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
 
-On 4/25/25 10:50, Ulf Hansson wrote:
-> + Bartosz
-> 
-> On Mon, 14 Apr 2025 at 20:53, Michal Wilczynski
-> <m.wilczynski@samsung.com> wrote:
->>
->> Extend the TH1520 power domain driver to manage GPU related clocks and
->> resets via generic PM domain start/stop callbacks.
->>
->> The TH1520 GPU requires a special sequence to correctly initialize:
->> - Enable the GPU clocks
->> - Deassert the GPU clkgen reset
->> - Delay for a few cycles to satisfy hardware requirements
->> - Deassert the GPU core reset
->>
->> This sequence is SoC-specific and must be abstracted away from the
->> Imagination GPU driver, which expects only a standard single reset
->> interface. Following discussions with kernel maintainers [1], this
->> logic is placed inside a PM domain, rather than polluting the clock or
->> reset frameworks, or the GPU driver itself.
-> 
-> Speaking about special sequences for power-on/off devices like this
-> one, that's a known common problem. We actually have a generic
-> subsystem for this now, drivers/power/sequencing/*.
-> 
-> Perhaps it's worth having a look at that, it should allow us to
-> abstract things, so the GPU driver can stay more portable.
-> 
-> Kind regards
-> Uffe
+Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+---
+Changes in v6:
+- Address a comment related the commit title.
+- Link to v5: https://lore.kernel.org/r/20250424-qcs8300_iris-v5-0-f118f505c300@quicinc.com
 
+Changes in v5:
+- Fix order in dt bindings.
+- Drop an unrelated sentence from commit description.
+- Link to v4: https://lore.kernel.org/r/20250424-qcs8300_iris-v4-0-6e66ed4f6b71@quicinc.com
 
-Hi Ulf, Bartosz,
+Changes in v4:
+- Introduce a patch to fix existing order of compat strings.
+- Fix the order of header inclusions.
+- Link to v3: https://lore.kernel.org/r/20250423-qcs8300_iris-v3-0-d7e90606e458@quicinc.com
 
-Thank you very much for your suggestion, Ulf. I took a look at the
-drivers/power/sequencing/ API and agree that it seems like a suitable
-framework to model the specific power-on/off sequence required for the
-TH1520 GPU, allowing for better abstraction than embedding the logic
-directly in genpd callbacks.
+Changes in v3:
+- Fix commit description to better describe about QCS8300.
+- Fix the order of the patch.
+- Collect the review tags.
+- Link to v2: https://lore.kernel.org/r/20250418-qcs8300_iris-v2-0-1e01385b90e9@quicinc.com
 
-My plan is to refactor the series based on this approach. Here's how I
-envision the implementation:
+Changes in v2:
+- Added dependent info in binding patch as well.
+- Fix a sparse error.
+- Link to v1: https://lore.kernel.org/r/20250418-qcs8300_iris-v1-0-67792b39ba21@quicinc.com
 
-1) Provider (th1520-pm-domains.c): This driver will register as both a
-generic power domain provider and a power sequencer provider for the GPU
-domain.
+---
+Vikash Garodia (5):
+      dt-bindings: media: qcom,sm8550-iris: document QCS8300 IRIS accelerator
+      media: iris: fix the order of compat strings
+      media: iris: add qcs8300 platform data
+      arm64: dts: qcom: qcs8300: add video node
+      arm64: dts: qcom: qcs8300-ride: enable video
 
-2) pwrseq target Definition: A pwrseq target will be defined within the
-provider to encapsulate the required sequence (enable clocks, deassert
-clkgen reset, delay, deassert GPU core reset). The target will be
-named using the GPU's first compatible string with a "-power" suffix.
-
-Example GPU DT node, adhering to convention introduced here [1].
-gpu: gpu@ffef400000 {
-	compatible = "thead,th1520-gpu", "img,img-bxm-4-64",
-	             "img,img-bxm", "img-rogue";
-};
-
-[1] - https://lore.kernel.org/all/20250410-sets-bxs-4-64-patch-v1-v6-1-eda620c5865f@imgtec.com/#t
-
-3) Consumer (drm/imagination): In its probe function, the driver will
-read the first compatible string of the device node. It will then
-attempt devm_pwrseq_get(dev, compatible_string_with_suffix) (e.g.
-devm_pwrseq_get(dev, "thead,th1520-gpu-power")). The result
-pvr_dev->pwrseq_desc will be stored (it will be NULL if no suitable
-provider/target is found, or a valid descriptor if successful). The
-driver will still acquire its necessary clock/reset handles via
-devm_*_get in probe for potential use outside of RPM (like devfreq).
-
-4) Consumer Runtime PM Callbacks
-(pvr_power_device_resume/suspend): These functions will check if
-pvr_dev->pwrseq_desc is valid. If valid: Call pwrseq_power_on() in
-resume and pwrseq_power_off() in suspend. The driver will not perform
-its own clock/reset enabling/disabling for resources managed by the
-sequence. If NULL: Execute the existing fallback logic (manually
-enabling/disabling clocks/resets using the handles acquired in probe).
-Unconditional logic (like FW booting/shutdown) will remain within the
-RPM callbacks, executed after successful power on or before power off,
-respectively.
-
-5) Resource Handling (via genpd callbacks): To allow the provider
-(th1520-pm-domains.c) to access resources defined in the consumer's DT
-node (specifically the clocks and gpu_reset needed in the sequence), I
-plan to keep the attach_dev / detach_dev genpd callbacks as implemented
-in the previous patch version. attach_dev will acquire the consumer's
-resources (using the consumer_dev pointer) and store the handles in the
-provider's context. The pwrseq unit callbacks will then access these
-stored handles via the shared context. detach_dev will release these
-resources. This seems necessary as the pwrseq API itself doesn't
-currently provide a direct hook for the provider to get the consumer's
-device pointer or manage its resources across the pwrseq_get/put
-lifecycle.
-
-This approach uses the pwrseq framework for the sequence logic as
-suggested, keeps the generic consumer driver free of SoC-specific
-sequence details (by using the compatible string lookup for this), and
-retains the genpd attach/detach mechanism to handle cross-node resource
-dependencies.
-
-Please let me know if this plan sounds reasonable.
-
-Thanks !
-
-> 
->>
->> To support this, the TH1520 PM domain implements `attach_dev` and
->> `detach_dev` callbacks, allowing it to dynamically acquire clock and
->> reset resources from the GPU device tree node at runtime. This allows to
->> maintain the separation between generic drivers and SoC-specific
->> integration logic.
->>
->> As a result, the PM domain not only handles power sequencing but also
->> effectively acts as the SoC specific "glue driver" for the GPU device,
->> encapsulating all TH1520-specific clock and reset management.
->>
->> This approach improves maintainability and aligns with the broader
->> direction of treating PM domains as lightweight SoC-specific power
->> management drivers [2].
->>
->> [1] - https://lore.kernel.org/all/CAPDyKFqsJaTrF0tBSY-TjpqdVt5=6aPQHYfnDebtphfRZSU=-Q@mail.gmail.com/
->> [2] - https://osseu2024.sched.com/event/1ej38/the-case-for-an-soc-power-management-driver-stephen-boyd-google
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  drivers/pmdomain/thead/th1520-pm-domains.c | 199 +++++++++++++++++++++++++++++
->>  1 file changed, 199 insertions(+)
->>
->> diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
->> index f702e20306f469aeb0ed15e54bd4f8309f28018c..75412efb195eb534c2e8ff10ced65ed4c4d2452c 100644
->> --- a/drivers/pmdomain/thead/th1520-pm-domains.c
->> +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
->> @@ -5,10 +5,13 @@
->>   * Author: Michal Wilczynski <m.wilczynski@samsung.com>
->>   */
->>
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->>  #include <linux/firmware/thead/thead,th1520-aon.h>
->>  #include <linux/slab.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_domain.h>
->> +#include <linux/reset.h>
->>
->>  #include <dt-bindings/power/thead,th1520-power.h>
->>
->> @@ -16,6 +19,15 @@ struct th1520_power_domain {
->>         struct th1520_aon_chan *aon_chan;
->>         struct generic_pm_domain genpd;
->>         u32 rsrc;
->> +
->> +       /* PM-owned reset */
->> +       struct reset_control *clkgen_reset;
->> +
->> +       /* Device-specific resources */
->> +       struct device *attached_dev;
->> +       struct clk_bulk_data *clks;
->> +       int num_clks;
->> +       struct reset_control *gpu_reset;
->>  };
->>
->>  struct th1520_power_info {
->> @@ -61,6 +73,177 @@ static int th1520_pd_power_off(struct generic_pm_domain *domain)
->>         return th1520_aon_power_update(pd->aon_chan, pd->rsrc, false);
->>  }
->>
->> +static int th1520_gpu_init_consumer_clocks(struct device *dev,
->> +                                          struct th1520_power_domain *pd)
->> +{
->> +       static const char *const clk_names[] = { "core", "sys" };
->> +       int i, ret;
->> +
->> +       pd->num_clks = ARRAY_SIZE(clk_names);
->> +       pd->clks = devm_kcalloc(dev, pd->num_clks, sizeof(*pd->clks), GFP_KERNEL);
->> +       if (!pd->clks)
->> +               return -ENOMEM;
->> +
->> +       for (i = 0; i < pd->num_clks; i++)
->> +               pd->clks[i].id = clk_names[i];
->> +
->> +       ret = devm_clk_bulk_get(dev, pd->num_clks, pd->clks);
->> +       if (ret)
->> +               return dev_err_probe(dev, ret, "Failed to get GPU clocks\n");
->> +
->> +       return 0;
->> +}
->> +
->> +static int th1520_gpu_init_consumer_reset(struct device *dev,
->> +                                         struct th1520_power_domain *pd)
->> +{
->> +       int ret;
->> +
->> +       pd->gpu_reset = reset_control_get_exclusive(dev, NULL);
->> +       if (IS_ERR(pd->gpu_reset)) {
->> +               ret = PTR_ERR(pd->gpu_reset);
->> +               pd->gpu_reset = NULL;
->> +               return dev_err_probe(dev, ret, "Failed to get GPU reset\n");
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int th1520_gpu_init_pm_reset(struct device *dev,
->> +                                   struct th1520_power_domain *pd)
->> +{
->> +       pd->clkgen_reset = devm_reset_control_get_exclusive(dev, "gpu-clkgen");
->> +       if (IS_ERR(pd->clkgen_reset))
->> +               return dev_err_probe(dev, PTR_ERR(pd->clkgen_reset),
->> +                                    "Failed to get GPU clkgen reset\n");
->> +
->> +       return 0;
->> +}
->> +
->> +static int th1520_gpu_domain_attach_dev(struct generic_pm_domain *genpd,
->> +                                       struct device *dev)
->> +{
->> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
->> +       int ret;
->> +
->> +       /* Enforce 1:1 mapping - only one device can be attached. */
->> +       if (pd->attached_dev)
->> +               return -EBUSY;
->> +
->> +       /* Initialize clocks using the consumer device */
->> +       ret = th1520_gpu_init_consumer_clocks(dev, pd);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Initialize consumer reset using the consumer device */
->> +       ret = th1520_gpu_init_consumer_reset(dev, pd);
->> +       if (ret) {
->> +               if (pd->clks) {
->> +                       clk_bulk_put(pd->num_clks, pd->clks);
->> +                       kfree(pd->clks);
->> +                       pd->clks = NULL;
->> +                       pd->num_clks = 0;
->> +               }
->> +               return ret;
->> +       }
->> +
->> +       /* Mark device as platform PM driver managed */
->> +       device_platform_resources_set_pm_managed(dev, true);
->> +       pd->attached_dev = dev;
->> +
->> +       return 0;
->> +}
->> +
->> +static void th1520_gpu_domain_detach_dev(struct generic_pm_domain *genpd,
->> +                                        struct device *dev)
->> +{
->> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
->> +
->> +       /* Ensure this is the device we have attached */
->> +       if (pd->attached_dev != dev) {
->> +               dev_warn(dev,
->> +                        "tried to detach from GPU domain but not attached\n");
->> +               return;
->> +       }
->> +
->> +       /* Remove PM managed flag when detaching */
->> +       device_platform_resources_set_pm_managed(dev, false);
->> +
->> +       /* Clean up the consumer-owned resources */
->> +       if (pd->gpu_reset) {
->> +               reset_control_put(pd->gpu_reset);
->> +               pd->gpu_reset = NULL;
->> +       }
->> +
->> +       if (pd->clks) {
->> +               clk_bulk_put(pd->num_clks, pd->clks);
->> +               kfree(pd->clks);
->> +               pd->clks = NULL;
->> +               pd->num_clks = 0;
->> +       }
->> +
->> +       pd->attached_dev = NULL;
->> +}
->> +
->> +static int th1520_gpu_domain_start(struct device *dev)
->> +{
->> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
->> +       int ret;
->> +
->> +       /* Check if we have all required resources */
->> +       if (pd->attached_dev != dev || !pd->clks || !pd->gpu_reset ||
->> +           !pd->clkgen_reset)
->> +               return -ENODEV;
->> +
->> +       ret = clk_bulk_prepare_enable(pd->num_clks, pd->clks);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = reset_control_deassert(pd->clkgen_reset);
->> +       if (ret)
->> +               goto err_disable_clks;
->> +
->> +       /*
->> +        * According to the hardware manual, a delay of at least 32 clock
->> +        * cycles is required between de-asserting the clkgen reset and
->> +        * de-asserting the GPU reset. Assuming a worst-case scenario with
->> +        * a very high GPU clock frequency, a delay of 1 microsecond is
->> +        * sufficient to ensure this requirement is met across all
->> +        * feasible GPU clock speeds.
->> +        */
->> +       udelay(1);
->> +
->> +       ret = reset_control_deassert(pd->gpu_reset);
->> +       if (ret)
->> +               goto err_assert_clkgen;
->> +
->> +       return 0;
->> +
->> +err_assert_clkgen:
->> +       reset_control_assert(pd->clkgen_reset);
->> +err_disable_clks:
->> +       clk_bulk_disable_unprepare(pd->num_clks, pd->clks);
->> +       return ret;
->> +}
->> +
->> +static int th1520_gpu_domain_stop(struct device *dev)
->> +{
->> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->> +       struct th1520_power_domain *pd = to_th1520_power_domain(genpd);
->> +
->> +       /* Check if we have all required resources and if this is the attached device */
->> +       if (pd->attached_dev != dev || !pd->clks || !pd->gpu_reset ||
->> +           !pd->clkgen_reset)
->> +               return -ENODEV;
->> +
->> +       reset_control_assert(pd->gpu_reset);
->> +       reset_control_assert(pd->clkgen_reset);
->> +       clk_bulk_disable_unprepare(pd->num_clks, pd->clks);
->> +
->> +       return 0;
->> +}
->> +
->>  static struct generic_pm_domain *th1520_pd_xlate(const struct of_phandle_args *spec,
->>                                                  void *data)
->>  {
->> @@ -99,6 +282,22 @@ th1520_add_pm_domain(struct device *dev, const struct th1520_power_info *pi)
->>         pd->genpd.power_off = th1520_pd_power_off;
->>         pd->genpd.name = pi->name;
->>
->> +       /* there are special callbacks for the GPU */
->> +       if (pi == &th1520_pd_ranges[TH1520_GPU_PD]) {
->> +               /* Initialize the PM-owned reset */
->> +               ret = th1520_gpu_init_pm_reset(dev, pd);
->> +               if (ret)
->> +                       return ERR_PTR(ret);
->> +
->> +               /* No device attached yet */
->> +               pd->attached_dev = NULL;
->> +
->> +               pd->genpd.dev_ops.start = th1520_gpu_domain_start;
->> +               pd->genpd.dev_ops.stop = th1520_gpu_domain_stop;
->> +               pd->genpd.attach_dev = th1520_gpu_domain_attach_dev;
->> +               pd->genpd.detach_dev = th1520_gpu_domain_detach_dev;
->> +       }
->> +
->>         ret = pm_genpd_init(&pd->genpd, NULL, true);
->>         if (ret)
->>                 return ERR_PTR(ret);
->>
->> --
->> 2.34.1
->>
-> 
+ .../bindings/media/qcom,sm8550-iris.yaml           |   1 +
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts          |   4 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi              |  71 ++++++++++++
+ .../platform/qcom/iris/iris_platform_common.h      |   1 +
+ .../media/platform/qcom/iris/iris_platform_gen2.c  |  57 ++++++++++
+ .../platform/qcom/iris/iris_platform_qcs8300.h     | 124 +++++++++++++++++++++
+ drivers/media/platform/qcom/iris/iris_probe.c      |  16 ++-
+ 7 files changed, 268 insertions(+), 6 deletions(-)
+---
+base-commit: 14423fc3a4a21fb436dda85450339ec2bf191b36
+change-id: 20250418-qcs8300_iris-7a9ee604314a
+prerequisite-change-id: 20250225-topic-sm8x50-iris-v10-a219b8a8b477:v7
+prerequisite-patch-id: afffe7096c8e110a8da08c987983bc4441d39578
+prerequisite-patch-id: b93c37dc7e09d1631b75387dc1ca90e3066dce17
+prerequisite-patch-id: b7b50aa1657be59fd51c3e53d73382a1ee75a08e
+prerequisite-patch-id: 30960743105a36f20b3ec4a9ff19e7bca04d6add
+prerequisite-patch-id: 2bba98151ca103aa62a513a0fbd0df7ae64d9868
+prerequisite-patch-id: 0e43a6d758b5fa5ab921c6aa3c19859e312b47d0
+prerequisite-patch-id: 35f8dae1416977e88c2db7c767800c01822e266e
 
 Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Vikash Garodia <quic_vgarodia@quicinc.com>
+
 
