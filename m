@@ -1,85 +1,127 @@
-Return-Path: <linux-kernel+bounces-626520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEB4AA4420
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:37:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD56AA4426
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 09:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEF64C3A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1CB1C01C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 07:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B06C1E9B14;
-	Wed, 30 Apr 2025 07:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A7520C00B;
+	Wed, 30 Apr 2025 07:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2WFTBv0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="qiDXNL33"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9281D61BB;
-	Wed, 30 Apr 2025 07:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E1E1E9B14;
+	Wed, 30 Apr 2025 07:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745998638; cv=none; b=H5fnXDU1t/OgpXfxI7MlFRA2qb8oRES/aiyI1LxQEFmCBg0RFdybm+EeAja9LaO4z/6odNDu6qPyMSE0ejpTBQej0xxrbb4Ae5xFWCgHa+k6qre1Ghu+x7j2DLyt2DDSd+hSDlBK49iOR1z8Z1/B7Eq3n3Tyl0f4fCUazqnH3wY=
+	t=1745998678; cv=none; b=BYe3c0Yps126avCD5tDQ9Hc7sJEqtu5OzMawnovz6jFF1RKtRgc7ypgj7kvucZWfvKUKAKggLITHXUXPT/3TGbl7xr0Ai78xVBfpfq0HTB3fneUUSrdWrmWqQWen4YGviVcOAcYmlwm3HmYqVW6wucS43Gfg6xiEZzZ7K8BuE2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745998638; c=relaxed/simple;
-	bh=D5BW2gpx6wpLJIoZXvp/LiKyekPZG4Ijf80HhWU5hJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E0kaB/t0FUPWwUFEnuKi5nGsDPohiMx50frJbzhDlbhSTwtZZR2PlJG4FQ59jrzMQ7Av9iyXBBBr1xNDjoXTMRhh4dcl42XTlBHKcz+8sFf9YQArNJ/HGoqrXDa3VauowGTfTTJxtbJ69dA127xiyojZCGjavoP95mmVrd0jxbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2WFTBv0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A431DC4CEE9;
-	Wed, 30 Apr 2025 07:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745998637;
-	bh=D5BW2gpx6wpLJIoZXvp/LiKyekPZG4Ijf80HhWU5hJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2WFTBv0+Ky7WjqYg7CNblp112S2OS1Yq6PrL1dVVCzbuN/RwGDkC+wT5zyIn9pya
-	 fbErUuaw/+dbDO58zSAQUiqfKMjJtenaCWDNRYGFNGhGP2teIR8+C/XW8RMuqLjyql
-	 KOgHHmNCppPZ7F+pjqnout4ojdCeVMbNOplhTR8PAeg/0KzjICSP6WS4NXeODw4lho
-	 Nk1zvVeWFVlKMZFz2VHQ9r3yNnN8zO/KZ64JIkpf0AtNXqX8pzN+iGb1y+ydIEfbrS
-	 /V4rlsZWj4Yzo78ee1E5eYwvZ6VdNugma7AUfhEIfV48YdZMNP8yJugs7+Z91xsNc6
-	 6UF8eV72x5EPQ==
-Date: Wed, 30 Apr 2025 09:37:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: display: panel: Add BOE TD4320
-Message-ID: <20250430-economic-papaya-labradoodle-a947dd@kuoka>
-References: <20250429-lavender-panel-v2-0-fb467ff81bac@mainlining.org>
- <20250429-lavender-panel-v2-1-fb467ff81bac@mainlining.org>
+	s=arc-20240116; t=1745998678; c=relaxed/simple;
+	bh=C4sWc4j5j5AeC0Pzx7XtMY7aROUJ/SFJgSlMDYKwMIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=honRWhtoyb/+Czw4KqZDo6rWpj7l3/R8kYCWF2MY8uNxb4R54FpZUcOclS3Ubc626k8qqbR5NoJI9s+lo4daEAPsRlwLESPFTapBtrD7upQAk6yzBWNoBkxBusaKFHnCPfiSQAXQlpH8Zt434RI50RAvyobT9U00Wu1M4BCmbIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=qiDXNL33; arc=none smtp.client-ip=212.227.17.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1745998668; x=1746603468;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=C4sWc4j5j5AeC0Pzx7XtMY7aROUJ/SFJgSlMDYKwMIQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qiDXNL33SbF84E7ZWDUtnM//0zHHLqF9OrMwrX1CjiKVFmzFzT2DnWJ/oAPgY/sa
+	 cuw8JbQqYiJlb3y87GjdHtHIVcrarTVULYPOG7QIa8qGDvrnXmpqpxfIWc4JDaT1x
+	 Ca3S6Ir+ausKe9Z2Bor2X6PuWvvgOm3lWkvYc1cfqpImQl3X/PNNI/xJOXiU5Gg5z
+	 F4CaGgKy746So4rtifuRNgT9yEd/GoESPqe6Z9DLebFoYkEugTTWpU/iumfpSbN61
+	 zhiou4RVsjX5GO8y3g3uXWkXeX2qECZBsndMB6vs78lnxe4AY9l/tBSTjOHC+aOtk
+	 2VJVG+4ad8cXvxFabw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([62.226.32.213]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MIxmm-1uUJkX3cFe-00OMvm; Wed, 30 Apr 2025 09:37:48 +0200
+Message-ID: <4d8142a3-6f65-454d-a187-9207d1eb4b82@oldschoolsolutions.biz>
+Date: Wed, 30 Apr 2025 09:37:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100-*: Drop useless DP3
+ compatible override
+To: Sebastian Reichel <sre@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org>
+ <wsdhqocld54ygjrnn6etydorcg6j6uko4ner2dawoomflvu3bp@tq5jbqcahip4>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <wsdhqocld54ygjrnn6etydorcg6j6uko4ner2dawoomflvu3bp@tq5jbqcahip4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250429-lavender-panel-v2-1-fb467ff81bac@mainlining.org>
+X-Provags-ID: V03:K1:JpVSqj09iZRd8sl6/HjNSrEVXKRnrfcWP9XCJ4yO5yO+3xVOc8c
+ j21KQQu+FbHh0FHvBgsKPBUbyWXuCNFNJbX7AhIfIxDCbcvNTBMetWI1dlWAbrZykUo3g7A
+ lFCT8BBWv1r9VYPBbJ4pIBElpx+IUTXiencs3O7mHHTyYgjGiUCPU7n6i5wsBGmQfuSk0uI
+ tfLNhAWqyey5qbCY5v7Fg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HaGr14C37kE=;wJFa2OrmyhIBESnHP8BKCQCn+f/
+ dkEilGKaKUIZUMdhTMkgfYSrdd9I4l9kK7LuTp3u4uQbmuyKty2Trm3B3VbgFRRtcj/elmRDS
+ KJ/mUhxwjcUuMvnqxCNZ5uxhYg/VpHJ1jzL1zkpnn+XArwKkjUdpP5fIoZLqF8P0TLZa4j/rC
+ /tHKD0IqkgBDM+ghME6p8JRbB/WWmet/KBNraCsf8ngqgT6PTTXKTWJhcGSHa5LssMONphtIP
+ aQg9fLUfJC9n3p1rlWIlIyHeyWL+0Jmol0TEbk/ZKW1R1doLQeoEaVjb7xx+O13gkaU5AytOY
+ Nh0Gns+qZ8FZF6rpGEWrt8v/bcXCK1zqHu73AE0p+OP+MP0gaRtY/puzFW+OzqSx5DQaJuHNV
+ HNZQSkU5/HiTyKD8CjMmb8m5sFj/z6JebNoZO0lceJ/yXpLEeHdUiFp9JXh2cvYhg9+Dgr+Ns
+ z+x+Eyuu+mXq0F2PVAfH0YrOz2LouzAwHpWzkgnBsgN6jwcttVWnwpB+CAVd1R0hkBXJM++xB
+ VeAN5rNCsgQftJBDDBNTSl/8pB4A7jaK7dUFjllzYTze2KgR0DJAOUqPlwUkrj+RiRP1ja4WE
+ pZEku+pttacbEUPjGN5hLm1Jg2IoT9lmuFI7S1bqGrVTvCDlZ3CM9Bu2m/fuKVDJo+NMl6UyB
+ xYgFX+Ad2PZpueQdeQ+mALpa5PB1+pAatQdsW7uJR6Q3ht9y3TlQYxvyeFB7ATik/CIUZric2
+ 7Ki5kDsq4e060GAx1cIGQEgUpSEKyU1TL1p7Xpt18+/1I6bxOCaIE/lDDzplBjhhYzS1sVdBO
+ eWE+eiQQIJ3mAtd3DjNOBfYfJKoBb+oY49vRK+xUFXlPlJ0iM3ccoAEFPGxdie03v3g3m/iFl
+ 9VZg4yXhxdwvwLz2BhXPRbuG0Pslc/UwpiW+5r8Z0sRyTYdL1OyqGOMpRvmwJx7Z2rR0Trkhs
+ pj8tr7cz43HX3lCjHOPfkLlsBEBuRDHzgNC58ukJdwsCxC0eqYEnMgkACCF8ZkpWxCzFsooGA
+ S9REldhysCgXMeg7sX9Glvui6HpTaiyvsXjaniXQ+gQCSqXjv3y3C8XsvUC+pHuGk/4oQgrEc
+ YJ9XcSqt8WPTJfVWNdvTyT1WPW1XjSmQWEM91J2RR1ITd2yi1rGWxxFYDbfQLgzfaNQ4zfxVL
+ OHjddI1TbtwJs/inqsvjO3rP8Lb1s7EQ896noNgt7ihfb527uUz6y4JI1w00V9NqrGLiNXR/b
+ 4Q0hBcCtEzhcmi+GGukUH3Vfu5OPykJ4Skn+kcixRWl4KCCs8LKxF95o4CHqU3H50vpqNTJNi
+ j6huzRE5LZgN8CFut3GBpSBnDcMq73o8zC89cDuTEgu1j2hjRm5tKFoxs1BS93tBTWO3zUXHI
+ eXNG580ZB5n6Zr5IafE+TLdrIKwEdX9q+MPf8UNijgGop+5NcWU2zKSexT
 
-On Tue, Apr 29, 2025 at 11:33:14PM GMT, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrot=
-e:
-> Document BOE TD4320 6.3" 2340x1080 panel
-> found in Xiaomi Redmi Note 7 smartphone.
->=20
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-=2Eorg>
-> ---
->  .../bindings/display/panel/boe,td4320.yaml         | 65 ++++++++++++++++=
-++++++
->  1 file changed, 65 insertions(+)
+On 4/30/25 01:26, Sebastian Reichel wrote:
+> Hi,
+>
+> On Tue, Apr 29, 2025 at 10:42:28AM +0300, Abel Vesa wrote:
+>> ...
+> Looking at the diff I wonder if this part should also be simplified:
+>
+> /delete-property/ #sound-dai-cells;
+>
+> This is done by all upstream X1E boards, so maybe just drop the
+> #sound-dai-cells directly in x1e80100.dtsi?
+>
+This is for phy configurations where a display panel is connected that=20
+has no sound channels. Not guaranteed that it's always on mdss_dp3.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+with best regards
 
-Best regards,
-Krzysztof
+Jens Gathe
 
 
