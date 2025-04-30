@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-626215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878F4AA4003
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E6EAA4006
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 03:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1823C1BA6147
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682AA3B3CFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 01:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C75FDA7;
-	Wed, 30 Apr 2025 01:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9474019EEC2;
+	Wed, 30 Apr 2025 01:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGcUCjFq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0Cd+GHK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CCA13FEE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7F61B7F4
 	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 01:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745975127; cv=none; b=ZESAWI7wrBTEG/ZuyuIaA97lBu6IsSPqmFargr3xpdgAUhgMX3UgzAiOuwGEtxvVLF5OqdQB8+91WNGTDvBi3DZiw7+1vPn9hoD0JeoYvflkYYqSgqKsksLefWE3aw7Ldnvt94D81sMpGZ9kwy21LjeFs3HlGJ3wKVwxoovgv0Y=
+	t=1745975127; cv=none; b=o97QE09P5i1ICLS94M57jNiUACFzRLIEOoRhTBpz04Soq+LXVcymKEWDRZKSMurFN66RuAlA+0MJuBbyB8KqBSWqq4NxpUmKWDpExX8FsjhLRQX6vEn/0HwrU/2G4HwHkpfmGI2SkbW30E94u4kawusDe3yR/RlAc4wcchWAO1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745975127; c=relaxed/simple;
-	bh=gdsff1ewKdQFrckg4o6Eop2RJTaYEsK2lc1udsPqdD4=;
+	bh=qrbtE4GJAc5CkkZvuRY2A4Vna57jDG+6dB5+Nw5K9to=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bA2cIOzGgvIDakR1Fk2/JhjEzSV0ZGGIRzW7NUTFL6YALKMHmmo5gTeX/uw1P9ZvNySmdp8sPyiX7lIzWceraS/jMDAplIdaeybiB+GHaKTNi8SxfXolF8Nc8Zhw3KIIP6lBzmf64hKdcqSdSIxXPV5oktuVejZUlEVE16+UUkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGcUCjFq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39D9C4CEEF;
+	 MIME-Version; b=aNUb0DYkNeo4WTcTX3I90+jsz94y6OAS+tLZR8PFVnkhyR2yRcRHWoLmHXOGHW4o4xkXM18H2nRnKMsLG3zADubXTRT5lEllSHFQUqcgxIz5C5lZhgWbTd6j55VIEujFdgwQOuYlNITs0EZ+sWzf+FXA1eJLfwPYgjCDWfBZ+60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0Cd+GHK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F12C4CEEB;
 	Wed, 30 Apr 2025 01:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1745975126;
-	bh=gdsff1ewKdQFrckg4o6Eop2RJTaYEsK2lc1udsPqdD4=;
+	bh=qrbtE4GJAc5CkkZvuRY2A4Vna57jDG+6dB5+Nw5K9to=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dGcUCjFqgqdvL2K23b0Mh9BNt68ZzzgNMwWFEus1JXO57ZaRExAwbZeie4GbN2n+y
-	 O+IzQTQmJKn3l408CY0gO/8BOSl2aRaWRKHO4hwuJA9fIJMnVzPy7vzBiwX0skNMvY
-	 inVEP/sThwRH2aoEQsETSZFwMbX0xv7CVeQn8GtmrAri3LamoOvHjf5ASMuOPojpUc
-	 vreQPJFcE4l5hVboiFegAenRppmil13gOLQoOYEjbCfnaDxIpnkflfyKKXsHq+BZVl
-	 43RGV02rGojLLcJrdOu4bciXgYlrPw3pIajA95MWq6ogSxUI82UClJZpzBTOKRdlUZ
-	 qsIWU8u92FyeA==
+	b=J0Cd+GHK5HI12oOTGq3MCptyKvKob6SIvI4/kwg+GZUml+H6o/pF5KAEiCoDYcO3A
+	 tq9qIffs9TIR3cYVIBX+CprXLUa3Pyga7XpjSL45Ooin2zTKEg/+OMjXiqDd9h4foq
+	 YIFn9m/S/tMCW6FBo6fNHPC/ZsQnz+eWD/XmTBJRbkR5dz6WknS+M4F/Cbhd8BbAaH
+	 M9GLoPKP/vFrqh+tR22Zc9A+W3S65AVdecybTT8UgLiZPdg4ufKXfxv7cUeXvRjFdr
+	 GZ5WwRfCsnTvZl0N88HznyyVPfLjZH4egBLQZJ1RUaKASy/33nBPSdGXoISraajtXI
+	 PTzEbTIFJx2cA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4C1DBCE08F4; Tue, 29 Apr 2025 18:05:25 -0700 (PDT)
+	id 581D5CE0DEC; Tue, 29 Apr 2025 18:05:25 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: kernel-team@meta.com,
@@ -56,10 +56,17 @@ Cc: kernel-team@meta.com,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Karolina Stolarek <karolina.stolarek@oracle.com>,
 	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Theodore Ts'o" <tytso@mit.edu>
-Subject: [PATCH v4 03/20] random: Avoid open-coded use of ratelimit_state structure's ->missed field
-Date: Tue, 29 Apr 2025 18:05:07 -0700
-Message-Id: <20250430010524.3614408-3-paulmck@kernel.org>
+	Jani Nikula <jani.nikula@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v4 04/20] drm/i915: Avoid open-coded use of ratelimit_state structure's ->missed field
+Date: Tue, 29 Apr 2025 18:05:08 -0700
+Message-Id: <20250430010524.3614408-4-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
 References: <b0883f20-c337-40bb-b564-c535a162bf54@paulmck-laptop>
@@ -71,56 +78,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The _credit_init_bits() function directly accesses the ratelimit_state
-structure's ->missed field, which works, but which also makes it
-more difficult to change this field.  Therefore, make use of the
-ratelimit_state_get_miss() and ratelimit_state_inc_miss() functions
-instead of directly accessing the ->missed field.
+The i915_oa_stream_destroy() function directly accesses the
+ratelimit_state structure's ->missed field, which works, but which also
+makes it more difficult to change this field.  Therefore, make use of
+the ratelimit_state_get_miss() function instead of directly accessing
+the ->missed field.
 
 Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
 Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-"Jason A. Donenfeld" <Jason@zx2c4.com>
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: <intel-gfx@lists.freedesktop.org>
+Cc: <dri-devel@lists.freedesktop.org>
 ---
- drivers/char/random.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/i915_perf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 38f2fab29c569..416dac0ab565d 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -726,6 +726,7 @@ static void __cold _credit_init_bits(size_t bits)
- 	static DECLARE_WORK(set_ready, crng_set_ready);
- 	unsigned int new, orig, add;
- 	unsigned long flags;
+diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
+index de0b413600a15..1658f1246c6fa 100644
+--- a/drivers/gpu/drm/i915/i915_perf.c
++++ b/drivers/gpu/drm/i915/i915_perf.c
+@@ -1666,6 +1666,7 @@ static void i915_oa_stream_destroy(struct i915_perf_stream *stream)
+ 	struct i915_perf *perf = stream->perf;
+ 	struct intel_gt *gt = stream->engine->gt;
+ 	struct i915_perf_group *g = stream->engine->oa_group;
 +	int m;
  
- 	if (!bits)
+ 	if (WARN_ON(stream != g->exclusive_stream))
  		return;
-@@ -748,9 +749,9 @@ static void __cold _credit_init_bits(size_t bits)
- 		wake_up_interruptible(&crng_init_wait);
- 		kill_fasync(&fasync, SIGIO, POLL_IN);
- 		pr_notice("crng init done\n");
--		if (urandom_warning.missed)
--			pr_notice("%d urandom warning(s) missed due to ratelimiting\n",
--				  urandom_warning.missed);
-+		m = ratelimit_state_get_miss(&urandom_warning);
-+		if (m)
-+			pr_notice("%d urandom warning(s) missed due to ratelimiting\n", m);
- 	} else if (orig < POOL_EARLY_BITS && new >= POOL_EARLY_BITS) {
- 		spin_lock_irqsave(&base_crng.lock, flags);
- 		/* Check if crng_init is CRNG_EMPTY, to avoid race with crng_reseed(). */
-@@ -1466,7 +1467,7 @@ static ssize_t urandom_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
+@@ -1690,10 +1691,9 @@ static void i915_oa_stream_destroy(struct i915_perf_stream *stream)
+ 	free_oa_configs(stream);
+ 	free_noa_wait(stream);
  
- 	if (!crng_ready()) {
- 		if (!ratelimit_disable && maxwarn <= 0)
--			++urandom_warning.missed;
-+			ratelimit_state_inc_miss(&urandom_warning);
- 		else if (ratelimit_disable || __ratelimit(&urandom_warning)) {
- 			--maxwarn;
- 			pr_notice("%s: uninitialized urandom read (%zu bytes read)\n",
+-	if (perf->spurious_report_rs.missed) {
+-		gt_notice(gt, "%d spurious OA report notices suppressed due to ratelimiting\n",
+-			  perf->spurious_report_rs.missed);
+-	}
++	m = ratelimit_state_get_miss(&perf->spurious_report_rs);
++	if (m)
++		gt_notice(gt, "%d spurious OA report notices suppressed due to ratelimiting\n", m);
+ }
+ 
+ static void gen7_init_oa_buffer(struct i915_perf_stream *stream)
 -- 
 2.40.1
 
