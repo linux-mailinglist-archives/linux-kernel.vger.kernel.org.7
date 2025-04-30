@@ -1,396 +1,186 @@
-Return-Path: <linux-kernel+bounces-626955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A38AA496F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6386BAA4975
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 13:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3528A4C2F8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090941BC6EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 11:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816B723A99E;
-	Wed, 30 Apr 2025 11:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E471625A2CC;
+	Wed, 30 Apr 2025 11:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3S/jYXBO"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhtuDTpH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87514235056;
-	Wed, 30 Apr 2025 11:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746011040; cv=fail; b=pXAXkaTUL9hQ0ClQQ0tmVbZh0slePKHLLcSO1mIy6oNhPDLsrGI8FOa21COCJh2c1ut7lnXSGCTiK5ba4rkzGgOrAa99JrjLzMphdoALcUjxCqa28iEMd7zGtNyIAJKeJPgkIWzCqs6MXV2KhyBkvoIx+hkf07gGVNmBprpxTig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746011040; c=relaxed/simple;
-	bh=t+Q6cSiZhM1tcx5VbWwAbCpzTPQNjQQk845hHqgzBHI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HJAOysLDOM7REWLi5/4FvUzN6tXk+9vRKTRUh7MEULNqnhjB/EG8u3z4gzQ717Rqzgg8tNyhjOBgKSGWEAn9ha8mlN/P1znCk2LVL1oD0lfZMEdAcKxjqLca21Su6/sKLuSAGMsI5TNiXWUpon3oJF7hCaK6M8t2X4omt4nRa5k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3S/jYXBO; arc=fail smtp.client-ip=40.107.243.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NWOh2hDyoX7K6toGGaJtmu+Su+ZTwhIJTWLjk1yGzsWr+0me9oiIcw/UEDKJ7prSOyEOz1ou4TWuuRxeISgmHuT4WpxLF5x8HKX6BVy/l4hGVYsnJGoybiubLVmBz28HCTtRgWBOrgAlYoJlQVIs2hrHvnz/PNK41GGP1Vp//A2obSibT0EuXnU8W8csh5CWAdhYc3epa/v8p6efDvSEO3HAXrGJp1ffN9ae3lDPPOV+oqhk4ICCEeHeC5hctdBE7SlALcf3mscyCMUeIyBaDsAclbttUvXwSj2Oy3thiunAKmnBWph/hmpMYAXBpz8uGxAE1vu4heMU465wdxBQCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rPAD/0D+v+fRE1jfnpKPCulGLrHIfKEXGOGBkHJ/+oQ=;
- b=IEm/+RzSHka2iatRNgquyTBW5jHvb3h46cKLeXlcEFsqH1JP6UhilWnkNkS7yGFXePGWXlp81qpQjwjcTXurom3/okV/X4qdjOmZRjrdw9DnindyaKnOEJumA5d2dFP/XmIfarP5FPAVUbK3gvWdx/jllNh14PxMidYpIpDKPj4vmnv499bWkqd4hQ4cr8bkH5PFu0G2JKhhHx89oNTssqsM64+YYWD0KrSchO31e0csCtpOW5LVB0D5AU/62LJAHxPNBGsJPT6J8g3U0CYC3jZwQma522dIy7KnFKY3OE8NW9DzVe//FyuhFOkToadE07drI0buvonCyetEw0nnMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rPAD/0D+v+fRE1jfnpKPCulGLrHIfKEXGOGBkHJ/+oQ=;
- b=3S/jYXBOx6pD8Gw8h9NJAL7F1WE21MDypmy494i0nVpCfYpn1n0fwvNCx/DJ2Ri3U3d7xWBF0FFu7J0S2pCGJb4aevSOIWG8agcb3LsJZYbeBBTtBsu1E4yrqPczEWkhFM9jPlxcBUFyCGA0XmEJbjd54igMFEoRd/gM62uyR80=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SJ2PR12MB7823.namprd12.prod.outlook.com (2603:10b6:a03:4c9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Wed, 30 Apr
- 2025 11:03:55 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
- 11:03:55 +0000
-Message-ID: <daaf1445-f0b8-490a-b87b-dab219f13571@amd.com>
-Date: Wed, 30 Apr 2025 13:03:50 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/prime: Support importing DMA-BUF without sg_table
-To: oushixiong1025@163.com, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>,
- Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250430085658.540746-1-oushixiong1025@163.com>
- <20250430085658.540746-2-oushixiong1025@163.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250430085658.540746-2-oushixiong1025@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0226.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e9::14) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3558F221F35;
+	Wed, 30 Apr 2025 11:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746011133; cv=none; b=pnhWvkx+SCXxOyjW0K38KOHeZB/AHCm8F4CfUgNIcBn4bEJsy64hAhTQyCGLQDMRODo5MRcdLcs6JDfg1nO79gJWgrqHwb8cE43XZAl6n+U/S1NQio1i+JlNSkP0dTvI1t3FyWwXTKLaS+IKAGsT1uMRweZUjQLJiItshrOQiR8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746011133; c=relaxed/simple;
+	bh=nQrASJ6hdVZOdSLWPhEr1DleCbN40IIG8C9hTJrUoPc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jK79LJCsuSHPApNMTLAZIO51MSXpzNDS3R6EL0pJHN1LdRuCSkT+xbYvSEJXZwL42YV/x9zsjYe84hdROrzqoPVCp/n3Ekn0Jjw/lIe67ab52gKnYF9VgX1NdP2cmfugv/etJEFvmkcW4aAJuYINlMOePCMlHinMCiTNRwshW8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhtuDTpH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81121C4CEE9;
+	Wed, 30 Apr 2025 11:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746011132;
+	bh=nQrASJ6hdVZOdSLWPhEr1DleCbN40IIG8C9hTJrUoPc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=GhtuDTpH/HkACn8tSfiUklpASOuhO/C98x0A3Ood3J7HKFwfXJMGAEjQSveuZ7n0r
+	 YYma3pvwztypVtQtY4GNUXwf3fRmMNncyUeqWSdA7lLmT7vHS3ampVRlxL42GPXg5N
+	 kUwsiSOJLN2yH2exsZulJfFqZTKhj9Jm0Cd4Optp1SbdYLN0dguPTnK8OB/0DlgKSl
+	 cSTMx2LpEwYXRru/m4G32yxusTFjn7UDuHXZa8L87+K5D1PXZ/Fshq9bsA1b+45ywK
+	 xyrpFTwCeos6AVkNnDAzZN9PvjjlPzzhkgLu/eEIuu+R10v5JqhRWWRrezNn/X4I5Z
+	 QInEMwzZvtb/Q==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC 0/3] coredump: support AF_UNIX sockets
+Date: Wed, 30 Apr 2025 13:05:00 +0200
+Message-Id: <20250430-work-coredump-socket-v1-0-2faf027dbb47@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ2PR12MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7184a68-fdfa-4fbd-a0c6-08dd87d6b311
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elpPRlBEY2hPVUNFU2ZqMkljNnY3M3RGbHprZ05uTzBnTUFkVnpZbnpJbHpo?=
- =?utf-8?B?b0drTklnUXF6dkN2SHF0clhGTCtxRDFyWlZWMTc2M01VRnZBNklhMXZrWURR?=
- =?utf-8?B?N2RMbUtzQ2p1M0dNTEZ1VlVPaWdISjY0ckpiTFBFdUtmUGI4WGtla2x3Z1NG?=
- =?utf-8?B?cThyQTB1RExmSkh2MzBXUU1Pa21lTElsS2Z2YUhYVm0vVC9IbGtiOCs2N0N6?=
- =?utf-8?B?YWt3VThrT0xHUVl1RlZUdkZGcm5EbEhsS0F3TlRlRnVFMzZkdGxFU05sRHo5?=
- =?utf-8?B?MWZvQU9CK1lUand3U1Q1UmNBelcrc2s2MDNmemdSOFo5R2w4eS9KZk5EVFpW?=
- =?utf-8?B?NVMvN1VwV1c1MXllYnRiTHhsUWdLRVlINjFRbkRFUm5KYUx1TE9WeWFUQ0Vm?=
- =?utf-8?B?dXBvTThmZ2Rxdjlpc1VRZHRqTHhkRGx3SUwzUkFPaERTYjMrRmV0eWg1U1ZG?=
- =?utf-8?B?dU1kdGUwTUdxNm55RkJzNXlrSWlsNzRJaXkzUndTWjAzOUhxcnF5UTNKRXg1?=
- =?utf-8?B?ajZ4dCtId1RydVNJeFpqeGNmZTNzU2VUVmxSVDhhYy9vYnZIUEd4SGN3bmtY?=
- =?utf-8?B?UThsazFWakZXOExpaFcxcUt6WjJXNkdVTDRmNTdtUFA1Mjhqd2g2WjZjcmZR?=
- =?utf-8?B?TlUwL0EzcXZkVFh1OCtueVVCWEJ1SEEyQmU3T2RqU3JaUGVxcUVjRytWc3pD?=
- =?utf-8?B?NFFua2dsU3NtMGNsaXVRUDVjQzlrSVFRR3YwRTJCSDk5d3dqTzlJelYzWU01?=
- =?utf-8?B?WkZhNElLUmlOSXkycjg0d2dCa0pWdmlBRHFWUldWVDhPWGc1MDVuTEt5VU96?=
- =?utf-8?B?d2gzZVpzek5HSm84OFpRVlh2c2Q3dVVKbytsdU9EM2M5MHNTRHQ4cTZHQXl4?=
- =?utf-8?B?d2FHMVRsdXNNYVVvdS9OdmwzRUlPRHZvV0xKMXY1UnYrOTVtYzZQM25BM24v?=
- =?utf-8?B?dXNiYkFHUGt3QkoxbVVFaHF6aEJ6eFQ5QnJVRmR0cHNCZ05uc0RLSWh2dXpy?=
- =?utf-8?B?U2dOaUwrLzR0Q2ZVc1F2dFNvNlpzdHdPU01wVHg2alBOTWY3ekJPN3VwZjBs?=
- =?utf-8?B?Q1owWTBuMllWcktGcC9Jem5PUFVtNlNuRGJjTGdldUpsY3lhY003bkdoeFdN?=
- =?utf-8?B?N1hYakxHSXZXUWNqWk1KcGVCakJLcHdpMnpMaUFJdzBlK24xYUc4elg3ZXJs?=
- =?utf-8?B?WXpaVlBQWkczVVV5cVh4NmZyck5ZYkxybTRKVndKRXRWck9Eby9ZTE54My83?=
- =?utf-8?B?MExORkphVVVONUdPNExuc1c5T0NLWXI5aFJJeGMxTDNSeGZMTHpvQWlNaWYz?=
- =?utf-8?B?c0U3QU1VaUN1ZjNNT3E3K2VwQmlHZXkwcEYvandZUUt0K3hGUEtVaXFNQkFw?=
- =?utf-8?B?ZGVVVkxSaTU2VWFNTU9RNllzYVFKUmZHRERXQTQ2ZkVDOGFpRnhGOHVEM255?=
- =?utf-8?B?b3RRbms4YVpIUW02bkNHdjZZV25jMGtHd01SUzY4S2x1ajNSd2w5TE9FT2pH?=
- =?utf-8?B?Vkx1QWhzOTRUc0Y2dWpPbG0yV2o1MFJXVGFPL0UwTm5SbXEzSU5VYkgrcmhv?=
- =?utf-8?B?VFNlK0FNS0tqanBjREU5SHhlL2lab0J0d2srcnZoYnZhT2VjWTlJeCtURVBx?=
- =?utf-8?B?M1BPUGtJNkZ4Q0VGWUloZkJLbzZSMnVOdWFraktRdXBFNmt0enlvZnlXNmZj?=
- =?utf-8?B?a0dHdlFBczRPRCs4NWhYQW1OZlZjaHBRWHczUFFzL2hNTVpBVG9Fc25aeW41?=
- =?utf-8?B?TVJnM0pqSHhEKzFmTkRSbWhuWWdpVllnS1hlejNBbjUzQzRPaFVwZDVOTzRK?=
- =?utf-8?B?M1NBUEhzakpOYlVWYmZWS0FiYUtGSUV4Sy9TQVFndkpwbGJNSnJKV2FrVVVa?=
- =?utf-8?B?MElsODlhVEJ1eWxtZ3VUdVdoWnJIWEx1TUxSSHpvdE9Sb1RCa1ZaamNPNHZX?=
- =?utf-8?Q?ds2QF+WPaDE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RW8rM21HNGlJSUVWTnFmWXFrdVowQlF5R0Zyb3h0UjFNMEJBV3RMM0xlMGpx?=
- =?utf-8?B?MTNGZmQwNjQvVlBINXY2VGJKallxeExsUVMvNE1vckZCamorZ09Xb1VrZVNN?=
- =?utf-8?B?YS9naTZJV25JTnNSOGt4TzhiOXhPVERaUHZTZVlXM2lMY1dqKzRnUG9FdzlV?=
- =?utf-8?B?bWtTaC9jeUhZY0JrcGxhWk9XcW55Y1Z1SWh4WFVkVnV3V1pyN1V6aFlhR1FY?=
- =?utf-8?B?TzlxRExPTXFRMXBLYmpKcTNPMlhDVEN3VmJQL3FFT3QwTEJoenRvYzJXS2JV?=
- =?utf-8?B?eFNlTEJJUWxHSGljejQwZUFjUGpuSU9xM3NLMEI3S1dZbnBvQW4ySGkzSTRY?=
- =?utf-8?B?S0sxRnlVUGZqLzdGZmtCc0VhNllDNXgxZnFFaWpld2llME05eG5GK05qeUNs?=
- =?utf-8?B?MFF2RFhQTmJld01uc2thZ2J6ejRtRmpBdUx4RlFPcXF0d2xEakxMSCtFOFlQ?=
- =?utf-8?B?Wk5JUFdKOFZHRzI1ckRnamt1bmxOTEpJV3ZqNnlBSnF4RTJQVnBVRGhFeHFX?=
- =?utf-8?B?a3NmRFZEc25WdGxWVDNhcXh1Vzg2QnpoMkNNZTRNNGNocllNMDcySjJmRllR?=
- =?utf-8?B?WDBMOXVBbEhubjJqYTFtd1ExM1p4T3E1SUtPUTZpMUFnRjRKY1htRXdhUWR6?=
- =?utf-8?B?bVhGL3l4Y0MyY1Vvbm13TlAyeVNNZUkxdTR5QVp1VElWU0wrQkw4c0lZU1A5?=
- =?utf-8?B?dDB0dmlYYjFWem1QUXduQkZSa3k0OFNTcjdjdW02WkhNbkEwVmhvTHRqRG5x?=
- =?utf-8?B?K1JhRDBlOTU5bjluZ3dVekNTNTFsSzJFUnRQRGlIUnBCY1JvN01RNFBxZkkz?=
- =?utf-8?B?dUM5L3NVRXArVWZPbW5zb1BlN2p6Z3lYNTZlUHFVQWVMTDJGeDlBSERQbURK?=
- =?utf-8?B?NTVlNWJ6ZWRjY2tBNERtaDd3ZUMvTzdrNWxNQXlpNmY2TFdqamx5a2xRK3dT?=
- =?utf-8?B?Z2F5bzVoM1VOUmFrcHc4bGJVTTdVYUNhMGZCbXYwRSszYXNCSFJESDcwMmdO?=
- =?utf-8?B?a0pCQzErOWY3SzJQSzhncks5ZlVORzZ1VEkxWm40S3JPV05WWisybmNJayt3?=
- =?utf-8?B?ZzE5N1Q5aTQyWklpV1RSWkhHTERsZlNxQ3FZaW50L1d4UnhKQTdBMVQxVGph?=
- =?utf-8?B?L0FBd0tnVkFiS2RHNTdLOC9wV1NBellXQjFzb3lYYWxPb2hFOXpsck1ydXlG?=
- =?utf-8?B?NnI5SzltS0dXYUhJaDMwRVdyTTJCWisvUEI2NS9nYVg1WVFFMnd0eEQ2ZHMv?=
- =?utf-8?B?OUtwZE5OcDF2R0s4cjBLbnA4V0dxL1R0NCtpNjl2dy82QThDWTJVdTF2aUUx?=
- =?utf-8?B?ZFM0RlFrMlUyWnl2QjU4Yk9veGdLQWhHekF1RjVTRnlkL05zSnJ0a0hVb2JO?=
- =?utf-8?B?QUNTdCsyaHZqNWovYVNaZUZpd0M1bndpN2ExbWJJZitVaEVIODZIakJXREgr?=
- =?utf-8?B?a0crMC9ESHRaNit5NkFqOEkyTmZQT21LWThVVkJjNjNudWNCZ0N3elRaWlNL?=
- =?utf-8?B?aUFQcXJvK0p4eTJaVUxYRlQ4cTloVHBXaURYY2NobUpqbEk3eG5OTG5vMUZk?=
- =?utf-8?B?M0RhQU9JYzVEY0ZCWGp1eXJIaENkeHhTL240VTBlaXFtL3d4SzJaV1dlc0lt?=
- =?utf-8?B?L240UVFERmRlTG8zVUdYMVpkSEJKcmp5SSt1dmtTbkpGM0czcEZyL0VXZlRH?=
- =?utf-8?B?WmhuOExrQlBnV3NSekhVRlZoR0N4YWhLT0Y4UlEvbis3NFdXWmN3VFEzZlpj?=
- =?utf-8?B?eGxUR0dNMVFPa3VpVlZjaDdEdUJQYjhoTzM4TFpFaVJkRjR1dXFmL3J0Mjhk?=
- =?utf-8?B?WnU3N29UTzBPdCsyNmtRZHNwTmFHd1VNZlBERTVRTTRFb0dRNHp1OHZGdWN0?=
- =?utf-8?B?Ym1Ld1h0SjEzRUVYbytZalhLMmdTckVXLzVMVnBiaFpIdGJjZVJ1NjZLRXFC?=
- =?utf-8?B?YVNOeG9WcXpoTC8vcCtxcEFYbkw2OXYrMWtlQ2FPaktjdW52YXY1dUxXMnVq?=
- =?utf-8?B?aWh2SVhpUkFMOXU4bDAwcFEzOTZkWklCdDdpaVBaRFJZeGwrZVphRGFyYlJD?=
- =?utf-8?B?bFdsbWhEb3cyWGNMeW1FdGtCTXhDU1pJVWpNWTlZc0dNUUg4UkxwRlRmYThN?=
- =?utf-8?Q?SqZGX/II7za480O/5ZeRc2tg1?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7184a68-fdfa-4fbd-a0c6-08dd87d6b311
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 11:03:55.4671
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CsuCqogojHRWeVROgMgE4ARnIqV70Om7w4rflKcUJWOFMPyVAXoFva9I7rcEJrs6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7823
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN0DEmgC/zXMQQrCMBCF4auUWTslCdpYt4IHcCsu0unEhmJSM
+ lqF0rsbBZf/g/ctIJwDCxyqBTLPQUKKJfSmAhpcvDGGvjQYZXZqa1p8pTwipcz98z6hJBr5gXt
+ LpLy21rQE5Tpl9uH9Yy9wPh3hWsbOCWOXXaThK85esKl1U/8xWNcP6GXQnY8AAAA=
+X-Change-ID: 20250429-work-coredump-socket-87cc0f17729c
+To: linux-fsdevel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ David Rheinsberg <david@readahead.eu>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+ Oleg Nesterov <oleg@redhat.com>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4051; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=nQrASJ6hdVZOdSLWPhEr1DleCbN40IIG8C9hTJrUoPc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQIMX/3vbNgemrJCh1x413lhw1stm97ynD8et7heV68f
+ P/Opzk96ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIWgWG/z5ng0QbU6QUfmtH
+ te2VmrXM8Gh8pWuSmPFzN+PSnX0/LzH8s6t4FuMxu0623TvS13p1XJfGV07GvLidruXxB5xu7mp
+ iBgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 4/30/25 10:56, oushixiong1025@163.com wrote:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
-> 
-> [WHY]
-> On some boards, the dma_mask of Aspeed devices is 0xffff_ffff, this
-> quite possibly causes the SWIOTLB to be triggered when importing dmabuf.
-> However IO_TLB_SEGSIZE limits the maximum amount of available memory
-> for DMA Streaming Mapping, as dmesg following:
-> 
-> [   24.885303][ T1947] ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
-> 
-> [HOW] Provide an interface so that attachment is not mapped when
-> importing dma-buf.
+Coredumping currently supports two modes:
 
-This is unecessary. The extra abstraction in DRM is only useful when you want to implement the obj->funcs->get_sg_table() callback.
+(1) Dumping directly into a file somewhere on the filesystem.
+(2) Dumping into a pipe connected to a usermode helper process
+    spawned as a child of the system_unbound_wq or kthreadd.
 
-When a driver doesn't want to expose an sg_table for a buffer or want some other special handling it can simply do so by implementing the DMA-buf interface directly.
+For simplicity I'm mostly ignoring (1). There's probably still some
+users of (1) out there but processing coredumps in this way can be
+considered adventurous especially in the face of set*id binaries.
 
-See drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c for an example on how to do this.
+The most common option should be (2) by now. It works by allowing
+userspace to put a string into /proc/sys/kernel/core_pattern like:
 
-Regards,
-Christian.
+        |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
 
-> 
-> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
-> ---
->  drivers/gpu/drm/ast/ast_drv.c          |  2 +-
->  drivers/gpu/drm/drm_gem_shmem_helper.c | 17 +++++++
->  drivers/gpu/drm/drm_prime.c            | 67 ++++++++++++++++++++++++--
->  drivers/gpu/drm/udl/udl_drv.c          |  2 +-
->  include/drm/drm_drv.h                  |  3 ++
->  include/drm/drm_gem_shmem_helper.h     |  6 +++
->  6 files changed, 91 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-> index 6fbf62a99c48..2dac6acf79e7 100644
-> --- a/drivers/gpu/drm/ast/ast_drv.c
-> +++ b/drivers/gpu/drm/ast/ast_drv.c
-> @@ -64,7 +64,7 @@ static const struct drm_driver ast_driver = {
->  	.minor = DRIVER_MINOR,
->  	.patchlevel = DRIVER_PATCHLEVEL,
->  
-> -	DRM_GEM_SHMEM_DRIVER_OPS,
-> +	DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS,
->  	DRM_FBDEV_SHMEM_DRIVER_OPS,
->  };
->  
-> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> index d99dee67353a..655d841df933 100644
-> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> @@ -799,6 +799,23 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
->  }
->  EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
->  
-> +struct drm_gem_object *
-> +drm_gem_shmem_prime_import_attachment(struct drm_device *dev,
-> +				      struct dma_buf_attachment *attach)
-> +{
-> +	size_t size = PAGE_ALIGN(attach->dmabuf->size);
-> +	struct drm_gem_shmem_object *shmem;
-> +
-> +	shmem = __drm_gem_shmem_create(dev, size, true, NULL);
-> +	if (IS_ERR(shmem))
-> +		return ERR_CAST(shmem);
-> +
-> +	drm_dbg_prime(dev, "size = %zu\n", size);
-> +
-> +	return &shmem->base;
-> +}
-> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_attachment);
-> +
->  MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
->  MODULE_IMPORT_NS("DMA_BUF");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-> index 8e70abca33b9..522cf974e202 100644
-> --- a/drivers/gpu/drm/drm_prime.c
-> +++ b/drivers/gpu/drm/drm_prime.c
-> @@ -911,6 +911,62 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
->  }
->  EXPORT_SYMBOL(drm_gem_prime_export);
->  
-> +/**
-> + * drm_gem_prime_import_dev_skip_map - core implementation of the import callback
-> + * @dev: drm_device to import into
-> + * @dma_buf: dma-buf object to import
-> + * @attach_dev: struct device to dma_buf attach
-> + *
-> + * This function exports a dma-buf without get it's scatter/gather table.
-> + *
-> + * Drivers who need to get an scatter/gather table for objects need to call
-> + * drm_gem_prime_import_dev() instead.
-> + */
-> +struct drm_gem_object *drm_gem_prime_import_dev_skip_map(struct drm_device *dev,
-> +							 struct dma_buf *dma_buf,
-> +							 struct device *attach_dev)
-> +{
-> +	struct dma_buf_attachment *attach;
-> +	struct drm_gem_object *obj;
-> +	int ret;
-> +
-> +	if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
-> +		obj = dma_buf->priv;
-> +		if (obj->dev == dev) {
-> +			/*
-> +			 * Importing dmabuf exported from our own gem increases
-> +			 * refcount on gem itself instead of f_count of dmabuf.
-> +			 */
-> +			drm_gem_object_get(obj);
-> +			return obj;
-> +		}
-> +	}
-> +
-> +	attach = dma_buf_attach(dma_buf, attach_dev, true);
-> +	if (IS_ERR(attach))
-> +		return ERR_CAST(attach);
-> +
-> +	get_dma_buf(dma_buf);
-> +
-> +	obj = dev->driver->gem_prime_import_attachment(dev, attach);
-> +	if (IS_ERR(obj)) {
-> +		ret = PTR_ERR(obj);
-> +		goto fail_detach;
-> +	}
-> +
-> +	obj->import_attach = attach;
-> +	obj->resv = dma_buf->resv;
-> +
-> +	return obj;
-> +
-> +fail_detach:
-> +	dma_buf_detach(dma_buf, attach);
-> +	dma_buf_put(dma_buf);
-> +
-> +	return ERR_PTR(ret);
-> +}
-> +EXPORT_SYMBOL(drm_gem_prime_import_dev_skip_map);
-> +
->  /**
->   * drm_gem_prime_import_dev - core implementation of the import callback
->   * @dev: drm_device to import into
-> @@ -946,9 +1002,6 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
->  		}
->  	}
->  
-> -	if (!dev->driver->gem_prime_import_sg_table)
-> -		return ERR_PTR(-EINVAL);
-> -
->  	attach = dma_buf_attach(dma_buf, attach_dev, false);
->  	if (IS_ERR(attach))
->  		return ERR_CAST(attach);
-> @@ -998,7 +1051,13 @@ EXPORT_SYMBOL(drm_gem_prime_import_dev);
->  struct drm_gem_object *drm_gem_prime_import(struct drm_device *dev,
->  					    struct dma_buf *dma_buf)
->  {
-> -	return drm_gem_prime_import_dev(dev, dma_buf, dev->dev);
-> +	if (dev->driver->gem_prime_import_sg_table)
-> +		return drm_gem_prime_import_dev(dev, dma_buf, dev->dev);
-> +	else if (dev->driver->gem_prime_import_attachment)
-> +		return drm_gem_prime_import_dev_skip_map(dev, dma_buf, dev->dev);
-> +	else
-> +		return ERR_PTR(-EINVAL);
-> +
->  }
->  EXPORT_SYMBOL(drm_gem_prime_import);
->  
-> diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-> index 05b3a152cc33..c00d8b8834f2 100644
-> --- a/drivers/gpu/drm/udl/udl_drv.c
-> +++ b/drivers/gpu/drm/udl/udl_drv.c
-> @@ -72,7 +72,7 @@ static const struct drm_driver driver = {
->  
->  	/* GEM hooks */
->  	.fops = &udl_driver_fops,
-> -	DRM_GEM_SHMEM_DRIVER_OPS,
-> +	DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS,
->  	.gem_prime_import = udl_driver_gem_prime_import,
->  	DRM_FBDEV_SHMEM_DRIVER_OPS,
->  
-> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-> index a43d707b5f36..aef8d9051fcd 100644
-> --- a/include/drm/drm_drv.h
-> +++ b/include/drm/drm_drv.h
-> @@ -326,6 +326,9 @@ struct drm_driver {
->  				struct dma_buf_attachment *attach,
->  				struct sg_table *sgt);
->  
-> +	struct drm_gem_object *(*gem_prime_import_attachment)(
-> +				struct drm_device *dev,
-> +				struct dma_buf_attachment *attach);
->  	/**
->  	 * @dumb_create:
->  	 *
-> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
-> index cef5a6b5a4d6..39a93c222aaa 100644
-> --- a/include/drm/drm_gem_shmem_helper.h
-> +++ b/include/drm/drm_gem_shmem_helper.h
-> @@ -274,6 +274,9 @@ struct drm_gem_object *
->  drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
->  				    struct dma_buf_attachment *attach,
->  				    struct sg_table *sgt);
-> +struct drm_gem_object *
-> +drm_gem_shmem_prime_import_attachment(struct drm_device *dev,
-> +				      struct dma_buf_attachment *attach);
->  int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
->  			      struct drm_mode_create_dumb *args);
->  
-> @@ -287,4 +290,7 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
->  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
->  	.dumb_create		   = drm_gem_shmem_dumb_create
->  
-> +#define DRM_GEM_SHMEM_SIMPLE_DRIVER_OPS \
-> +	.gem_prime_import_attachment = drm_gem_shmem_prime_import_attachment, \
-> +	.dumb_create                 = drm_gem_shmem_dumb_create
->  #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
+The "|" at the beginning indicates to the kernel that a pipe must be
+used. The path following the pipe indicator is a path to a binary that
+will be spawned as a usermode helper process. Any additional parameters
+pass information about the task that is generating the coredump to the
+binary that processes the coredump.
+
+In this case systemd-coredump is spawned as a usermode helper. There's
+various conceptual consequences of this (non-exhaustive list):
+
+- systemd-coredump is spawned with file descriptor number 0 (stdin)
+  to the read-end of the pipe. All other file descriptors are closed.
+  That specifically includes 1 (stdout) and 2 (stderr). This has already
+  caused bugs because userspace assumed that this cannot happen (Whether
+  or not this is a sane assumption is irrelevant.).
+
+- systemd-coredump will be spawned as a child of system_unbound_wq. So
+  it is not a child of any userspace process and specifically not a
+  child of PID 1 so it cannot be waited upon and is in general a weird
+  hybrid upcall.
+
+- systemd-coredump is spawned highly privileged as it is spawned with
+  full kernel credentials requiring all kinds of weird privilege
+  dropping excercises in userspaces.
+
+This adds another mode:
+
+(3) Dumping into a AF_UNIX socket.
+
+Userspace can set /proc/sys/kernel/core_pattern to:
+
+        :/run/coredump.socket
+
+The ":" at the beginning indicates to the kernel that an AF_UNIX socket
+is used to process coredumps. The task generating the coredump simply
+connects to the socket and writes the coredump into the socket.
+
+Userspace can get a stable handle on the task generating the coredump by
+using the SO_PEERPIDFD socket option. SO_PEERPIDFD uses the thread-group
+leader pid stashed during connect(). Even if the task generating the
+coredump is a subthread in the thread-group the pidfd of the
+thread-group leader is a reliable stable handle. Userspace that's
+interested in the credentials of the specific thread that crashed can
+use SCM_PIDFD to retrieve them.
+
+The pidfd can be used to safely open and parse /proc/<pid> of the task
+and it can also be used to retrieve additional meta information via the
+PIDFD_GET_INFO ioctl().
+
+This will allow userspace to not have to rely on usermode helpers for
+processing coredumps and thus to stop having to handle super privileged
+coredumping helpers.
+
+This is easy to test:
+
+(a) coredump processing (we're using socat):
+
+    > cat coredump_socket.sh
+    #!/bin/bash
+    
+    set -x
+    
+    sudo bash -c "echo ':/tmp/stream.sock' > /proc/sys/kernel/core_pattern"
+    socat --statistics unix-listen:/tmp/stream.sock,fork FILE:core_file,create,append,truncate
+
+(b) trigger a coredump:
+
+    user1@localhost:~/data/scripts$ cat crash.c
+    #include <stdio.h>
+    #include <unistd.h>
+    
+    int main(int argc, char *argv[])
+    {
+            fprintf(stderr, "%u\n", (1 / 0));
+            _exit(0);
+    }
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (3):
+      coredump: massage format_corname()
+      coredump: massage do_coredump()
+      coredump: support AF_UNIX sockets
+
+ fs/coredump.c | 241 ++++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 168 insertions(+), 73 deletions(-)
+---
+base-commit: 80e14080a00bc429a4ee440d17746a49867df663
+change-id: 20250429-work-coredump-socket-87cc0f17729c
 
 
