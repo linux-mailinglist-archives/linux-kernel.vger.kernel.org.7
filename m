@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-626127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-626128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E97AA3EB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 223FCAA3EC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 02:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E418A4A3A73
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC149213EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Apr 2025 00:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7399D1DAC95;
-	Wed, 30 Apr 2025 00:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A943E1D90C8;
+	Wed, 30 Apr 2025 00:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="EL6eMbKk"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HRKo3CI/"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088F31C84BC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 00:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5201CDFCE
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Apr 2025 00:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745971975; cv=none; b=fmasPjmxnTKBOvQ2EjQqo7rhm4Jp/UyS9VMnzM3SCr83cjs5SnefANB6T6K4GQOrGnfz/ttZsLCUQPV3d2yFuMUtDMht/Uy7YISGH7nnPxpP9GLYOLZoSwIvB52tM1qMkxrRpufvuJS+Pkz52isI3Md+hSELA4xw7pRBiEvpG8U=
+	t=1745971975; cv=none; b=XyIS6us9bIOATWNVeTOgPsiC5xYTQULVmN9qk1c/35D8SXn1T4EKOmVzVlMN9VvawJ4SeCK7gq075qk0yNC+LfZLq7pIlv8SPA9gtQ1LAqUhAJhRj4Ygc/E46LjUvBhuxIlfK/+VcajqCdWymO8gdvKAB+lr6WhARSlySo+Yk98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745971975; c=relaxed/simple;
-	bh=kdclmYpDFWGGn3eZYre2+mmmf45MD+ex0OVX9HJCjLs=;
+	bh=TjuLcwK+M6LLMZ5Wff/rzBDXZJiMEDSOuoY3CLkuI+E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PQldqcSve1F2E7twjChyzAFza61nlbL57fUfAp2y3TrMT7geXX8LJL4AjDCTUGkiDP65X9k5r5DrWww75bkcmIjm82DfLSlcVL40+Nztm2pylzgggOmov0EwZIVyslXHZkwOMEAj+2Z76Uu/KmGs3f/1vxAXn6S/aKqZU+Jh5cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=EL6eMbKk; arc=none smtp.client-ip=209.85.160.173
+	 MIME-Version; b=rv/reaxm9/eR+IjO8l4pzVQDoxjnKlYBIJ8WHgYqhn5oiFtqb8THjI9Cd5QIeR8VNqdizcyWGsH3vsMUE3Kmj/O1E6Fmt+2d8pISsx1oIfQxgRJ80LrTKQlfFPITr+1dLvMzfTjciwUgfG/AGZsmzu8ylvHDFv6/Pz7CwJXH73o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HRKo3CI/; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47ae894e9b7so143949691cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:12:51 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47677b77725so85865771cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Apr 2025 17:12:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1745971971; x=1746576771; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1745971973; x=1746576773; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RPdD/fpXbxGAsaOBYn9Y1QDHEAxNFnUh1p4EK+EoUGU=;
-        b=EL6eMbKkw34XtyJps3gKvuglKnujXUo+0pEoRR8H0bGqruJ6r/iQIQBF4t1mDxA45j
-         737g12DEHPhknP35N6qRP9x2k+MeaHKiZRQhfrgUITT4LNuBL6suYrJdKLTyQCSbcppa
-         vAdfDsGs9T89PKvnZk6awa3+YBVrfAD04W8lvllMtnDst58OJGwHTGcTxzr7kwZwYDEl
-         D+2WnZFlj7o4+9e+mLBWO4SJGXuWq9gY2DrzKDbUH7iHRlzsmZ/CWj9u2okkJjBC7Nke
-         O4u70LIOh4cDjhMcqlEM08VObK5dtTpcO5tEwa207nmmdwKNYtDn8PaHx7OdIE7c2Src
-         nypg==
+        bh=48IBIQBS5H0eCikVfx3jlLOYBAjND5JFsqhmRr8kgFs=;
+        b=HRKo3CI/VTUikbT0AAmZ8xINJDyGeKvzQbecVnhyh0c6mGsC7MVd0JKmGKVhcfTlzW
+         zHOzBn1EV/g/oP+CNUl0NgwR1FrZGPYeFOdT07OqObUZINn/IaLrCVZQ9eDoguhst2Lb
+         8rTT/OaXY/Uw0XyF0G/4TcwFC8HGQcZnezOj5F+9rhWuMmYOuZU2vUDFGfawdWad7SFg
+         sGCtOBeZLhZgHHqF1Pe1LqiJvwj9vgRtTUexbe4UOC0Ew1rokg9USGwLZPI7JJf4DvV7
+         jnEz3O548XsEMWKcZnUvIqUJHGIYM7SbIRcWAj8NJLbvickevwL3/3/dtDhBVwM11/Z+
+         JetQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745971971; x=1746576771;
+        d=1e100.net; s=20230601; t=1745971973; x=1746576773;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RPdD/fpXbxGAsaOBYn9Y1QDHEAxNFnUh1p4EK+EoUGU=;
-        b=S5pexQgyuUyZAPxK0vymtObViiqUV6tXGe2gETYDjWRKIxMER1VCWxHFXuKBoLbOJ4
-         fBCDwoQUo/tZu+kdAaedNK1We4taidA/w6Zk84AB7GGwt1uJ8uj+WK82dMcT3YfAxcjM
-         Xu8iaEr1U4f+LZgmL80OzAoIZFkqtosFQqa6sH/y+jtZwcbQlnQbO8JRYzVo1IN7VFT7
-         JWPmgPi1k+Ybqt+fdsFL9BQZXOw9mJwkyV0eGLVVIjDLiDtNTTU7kGKNXUCISCI00eKa
-         4KaxLNJxnV8XLMw2uUXGFyShWUxJqwo5oRinqvVDFJClC4gMFhOR9/Kq5OtaAgWvlmAB
-         BgXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTqeaFZ6Ov8szRKg4/4lmhj0KwQgC4v94mEpT4LPLefdFWTi4LzCom1Z39Tlby56xNasWIl0dg6aZ888I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8RqOoRHqoOHZttXFNZTI+NFcRza8QDux3mYomTIJv7kjX31iM
-	xu8E5fLMD6J+yH1q/QPiGpTnytqnPhBVr4awSUARKq19GwXPuWVxB9boQLV1Tlc=
-X-Gm-Gg: ASbGnctI8+jzhcFLVpME1NQosWptTIPykfSRdcDCq7s1tYWuT483AW5uOwUMkzXXaKW
-	IxQqS6+aVazNwAjrlc0DsQN049c7CdsC/z2mVhSkbSLIAB7+zF8wt7+KiYNPcOO85RlRhBzpUsr
-	aOy00X6folLr8M27RRb9jWs7svhHn6sPRsXVoMxlT45za/d5UozpXNjTj2tFXELxRhct3MW7Y1i
-	+Rs/P7SDZiGLpc5dAyJ/xMD0rlbcgPVmdFB69rIAII2DJ1m6W7uKTRAXN7lzWjmFcTKaKiYvY1u
-	BRV/eIic8VknTW0spbE0/tRSadsaNXhXMe6MMjGWYwuIFAzl3L5m4q2CsL4cgb+XVz40WFQysnD
-	spvUEHnv1uv6N8DSQBv3RmtcTeiqI
-X-Google-Smtp-Source: AGHT+IGVPT55HBTmyvi+Hih/wuL6I+RAeHfsa1acj3FLMJPwEb+oEnFnvVEOjWXn5Lq5n5Altz/ZnQ==
-X-Received: by 2002:a05:622a:544e:b0:47a:e81b:ccb9 with SMTP id d75a77b69052e-489e44b5c5dmr10097551cf.2.1745971970614;
-        Tue, 29 Apr 2025 17:12:50 -0700 (PDT)
+        bh=48IBIQBS5H0eCikVfx3jlLOYBAjND5JFsqhmRr8kgFs=;
+        b=R+/X+pYLU5nLnnG4CgR8Bfhw/t8GjtcrNaFoFTZUOxdON3FtNzWuVhEJZUA2EVjOo0
+         zuCUYqaEdir79F8NhwXDsz4J0LLVUtVAsE/jlqUP067QaYrngfjiDGVjSPNJPd67nt4G
+         x+8hEhdsATCbN5fW+pO9wWHny7aAYM6kqpM/XQVjIH9DS56xNdlh1B1SS7FMvcqBDFNf
+         0SCofqQ2Djvr9ybLqw4M9iAF+1jBum8vDYHLXlTkultmoagQ7hG+HoOWQYaeGns9fQE2
+         uO2jjm8Sovq40Tr67wich/3epc/iGKWljCNNZrQuWDXuEx9kj9s/M3NfVK4eBFDaUsv+
+         zPog==
+X-Forwarded-Encrypted: i=1; AJvYcCXPFcnGpY36yKXmZK2nh+Zv7fVRJe+0mXrNHntac+pSG3z+6syN0X2suS19hOIsEyl/bkmeEYIw4aURFSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAHcgwRtvsrL0whBqj4Y8EHq1qz2x5QZkAvqzVOPVH9qqE92xA
+	ZF2CJdT8y/i9yWJ1t+FQ3cOm7jJFPRndbJQwE50XbjTYvnIOsQCDd0Yk/d1Idrs=
+X-Gm-Gg: ASbGnctbqBjT+N6pG3upHSLCsHmPv+dJgoxi/atWH5NXuhriUrbg4RJ6TLa4PVM4h3/
+	FgXWKt3NUKLjIurzkfE8fIXzYzyKGm++5HDu64AD8ZKFng3/4sXFsJ/wPu3RATkIlwvGpK+ypFx
+	0RH8r1ay3cCFgb0Ndaxt1hi+F8C+3WXIcNd3TqdZ0mUic3IkwH9ocBZHBKBZ+Aeqw3LrfaAKkd0
+	/MU0mPXLiNxmzGKoJ9Kv32a/FezHmwQR02kC5J1uWWvgq4C7pjlwp1sKFyYC1KVg85VeH1pNirC
+	zuTA5DgtPsqQGBqaopBWH4MrnenknxcRl/0zNf2iG8PmN/qr5RKcZ2qQBCWhMP+jtJMfOao9OY5
+	NALsr4rq5dSJMPY5bWy0Rz2A7E/1edYx6diaZK6c=
+X-Google-Smtp-Source: AGHT+IFzgkOauRvlDmL11rMMrtVN8v6NuHdseJxsSrQzs6ks2JKTqOLcs6++Jr/SBAfN9hT/VjYF6w==
+X-Received: by 2002:a05:622a:244e:b0:476:b7e2:385c with SMTP id d75a77b69052e-489c38aa1fbmr17532591cf.2.1745971972868;
+        Tue, 29 Apr 2025 17:12:52 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9f7a820esm87634411cf.41.2025.04.29.17.12.49
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9f7a820esm87634411cf.41.2025.04.29.17.12.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 17:12:50 -0700 (PDT)
+        Tue, 29 Apr 2025 17:12:52 -0700 (PDT)
 From: Gregory Price <gourry@gourry.net>
 To: linux-cxl@vger.kernel.org
 Cc: linux-doc@vger.kernel.org,
@@ -85,9 +85,9 @@ Cc: linux-doc@vger.kernel.org,
 	ira.weiny@intel.com,
 	dan.j.williams@intel.com,
 	corbet@lwn.net
-Subject: [RFC PATCH 09/17] cxl: docs/linux/cxl-driver - add example configurations
-Date: Tue, 29 Apr 2025 20:12:16 -0400
-Message-ID: <20250430001224.1028656-10-gourry@gourry.net>
+Subject: [RFC PATCH 10/17] cxl: docs/linux/dax-driver documentation
+Date: Tue, 29 Apr 2025 20:12:17 -0400
+Message-ID: <20250430001224.1028656-11-gourry@gourry.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250430001224.1028656-1-gourry@gourry.net>
 References: <20250430001224.1028656-1-gourry@gourry.net>
@@ -99,1319 +99,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add 4 example configurations:
-- single device
-- cross-host-bridge interleave
-- intra-host-bridge-interleave
-- multi-level interleave
+Add documentation on how the CXL driver interacts with the DAX driver.
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- .../driver-api/cxl/linux/cxl-driver.rst       |  10 +
- .../example-configurations/hb-interleave.rst  | 314 ++++++++++++++
- .../intra-hb-interleave.rst                   | 291 +++++++++++++
- .../multi-interleave.rst                      | 401 ++++++++++++++++++
- .../example-configurations/single-device.rst  | 246 +++++++++++
- 5 files changed, 1262 insertions(+)
- create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/hb-interleave.rst
- create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/intra-hb-interleave.rst
- create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/multi-interleave.rst
- create mode 100644 Documentation/driver-api/cxl/linux/example-configurations/single-device.rst
+ Documentation/driver-api/cxl/index.rst        |  1 +
+ .../driver-api/cxl/linux/dax-driver.rst       | 42 +++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+ create mode 100644 Documentation/driver-api/cxl/linux/dax-driver.rst
 
-diff --git a/Documentation/driver-api/cxl/linux/cxl-driver.rst b/Documentation/driver-api/cxl/linux/cxl-driver.rst
-index f403804648b1..8d586b85d346 100644
---- a/Documentation/driver-api/cxl/linux/cxl-driver.rst
-+++ b/Documentation/driver-api/cxl/linux/cxl-driver.rst
-@@ -519,3 +519,13 @@ from HPA to DPA.  This is why they must be aware of the entire interleave set.
+diff --git a/Documentation/driver-api/cxl/index.rst b/Documentation/driver-api/cxl/index.rst
+index b915ce982048..bfaf0e2ebfc0 100644
+--- a/Documentation/driver-api/cxl/index.rst
++++ b/Documentation/driver-api/cxl/index.rst
+@@ -38,6 +38,7 @@ that have impacts on each other.  The docs here break up configurations steps.
+    linux/overview
+    linux/early-boot
+    linux/cxl-driver
++   linux/dax-driver
+    linux/access-coordinates
  
- Linux does not support unbalanced interleave configurations.  As a result, all
- endpoints in an interleave set must have the same ways and granularity.
-+
-+Example Configurations
-+**********************
-+.. toctree::
-+   :maxdepth: 1
-+
-+   example-configurations/single-device.rst
-+   example-configurations/hb-interleave.rst
-+   example-configurations/intra-hb-interleave.rst
-+   example-configurations/multi-interleave.rst
-diff --git a/Documentation/driver-api/cxl/linux/example-configurations/hb-interleave.rst b/Documentation/driver-api/cxl/linux/example-configurations/hb-interleave.rst
+ 
+diff --git a/Documentation/driver-api/cxl/linux/dax-driver.rst b/Documentation/driver-api/cxl/linux/dax-driver.rst
 new file mode 100644
-index 000000000000..f071490763a2
+index 000000000000..56addd5fa71e
 --- /dev/null
-+++ b/Documentation/driver-api/cxl/linux/example-configurations/hb-interleave.rst
-@@ -0,0 +1,314 @@
++++ b/Documentation/driver-api/cxl/linux/dax-driver.rst
+@@ -0,0 +1,42 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+============================
-+Inter-Host-Bridge Interleave
-+============================
-+This cxl-cli configuration dump shows the following host configuration:
-+
-+* A single socket system with one CXL root
-+* CXL Root has Four (4) CXL Host Bridges
-+* Two CXL Host Bridges have a single CXL Memory Expander Attached
-+* The CXL root is configured to interleave across the two host bridges.
-+
-+This output is generated by :code:`cxl list -v` and describes the relationships
-+between objects exposed in :code:`/sys/bus/cxl/devices/`.
-+
-+::
-+
-+  [
-+    {
-+        "bus":"root0",
-+        "provider":"ACPI.CXL",
-+        "nr_dports":4,
-+        "dports":[
-+            {
-+                "dport":"pci0000:00",
-+                "alias":"ACPI0016:01",
-+                "id":0
-+            },
-+            {
-+                "dport":"pci0000:a8",
-+                "alias":"ACPI0016:02",
-+                "id":4
-+            },
-+            {
-+                "dport":"pci0000:2a",
-+                "alias":"ACPI0016:03",
-+                "id":1
-+            },
-+            {
-+                "dport":"pci0000:d2",
-+                "alias":"ACPI0016:00",
-+                "id":5
-+            }
-+        ],
-+
-+This chunk shows the CXL "bus" (root0) has 4 downstream ports attached to CXL
-+Host Bridges.  The `Root` can be considered the singular upstream port attached
-+to the platform's memory controller - which routes memory requests to it.
-+
-+The `ports:root0` section lays out how each of these downstream ports are
-+configured.  If a port is not configured (id's 0 and 1), they are omitted.
-+
-+::
-+
-+        "ports:root0":[
-+            {
-+                "port":"port1",
-+                "host":"pci0000:d2",
-+                "depth":1,
-+                "nr_dports":3,
-+                "dports":[
-+                    {
-+                        "dport":"0000:d2:01.1",
-+                        "alias":"device:02",
-+                        "id":0
-+                    },
-+                    {
-+                        "dport":"0000:d2:01.3",
-+                        "alias":"device:05",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:d2:07.1",
-+                        "alias":"device:0d",
-+                        "id":113
-+                    }
-+                ],
-+
-+This chunk shows the available downstream ports associated with the CXL Host
-+Bridge :code:`port1`.  In this case, :code:`port1` has 3 available downstream
-+ports: :code:`dport1`, :code:`dport2`, and :code:`dport113`..
-+
-+::
-+
-+                "endpoints:port1":[
-+                    {
-+                        "endpoint":"endpoint5",
-+                        "host":"mem0",
-+                        "parent_dport":"0000:d2:01.1",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem0",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:d3:00.0"
-+                        },
-+                        "decoders:endpoint5":[
-+                            {
-+                                "decoder":"decoder5.0",
-+                                "resource":825975898112,
-+                                "size":274877906944,
-+                                "interleave_ways":2,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    }
-+                ],
-+
-+This chunk shows the endpoints attached to the host bridge :code:`port1`.
-+
-+:code:`endpoint5` contains a single configured decoder :code:`decoder5.0`
-+which has the same interleave configuration as :code:`region0` (shown later).
-+
-+Next we have the decodesr belonging to the host bridge:
-+
-+::
-+
-+                "decoders:port1":[
-+                    {
-+                        "decoder":"decoder1.0",
-+                        "resource":825975898112,
-+                        "size":274877906944,
-+                        "interleave_ways":1,
-+                        "region":"region0",
-+                        "nr_targets":1,
-+                        "targets":[
-+                            {
-+                                "target":"0000:d2:01.1",
-+                                "alias":"device:02",
-+                                "position":0,
-+                                "id":0
-+                            }
-+                        ]
-+                    }
-+                ]
-+            },
-+
-+Host Bridge :code:`port1` has a single decoder (:code:`decoder1.0`), whose only
-+target is :code:`dport1` - which is attached to :code:`endpoint5`.
-+
-+The following chunk shows a similar configuration for Host Bridge :code:`port3`,
-+the second host bridge with a memory device attached.
-+
-+::
-+
-+            {
-+                "port":"port3",
-+                "host":"pci0000:a8",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:a8:01.1",
-+                        "alias":"device:c3",
-+                        "id":0
-+                    }
-+                ],
-+                "endpoints:port3":[
-+                    {
-+                        "endpoint":"endpoint6",
-+                        "host":"mem1",
-+                        "parent_dport":"0000:a8:01.1",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem1",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:a9:00.0"
-+                        },
-+                        "decoders:endpoint6":[
-+                            {
-+                                "decoder":"decoder6.0",
-+                                "resource":825975898112,
-+                                "size":274877906944,
-+                                "interleave_ways":2,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    }
-+                ],
-+                "decoders:port3":[
-+                    {
-+                        "decoder":"decoder3.0",
-+                        "resource":825975898112,
-+                        "size":274877906944,
-+                        "interleave_ways":1,
-+                        "region":"region0",
-+                        "nr_targets":1,
-+                        "targets":[
-+                            {
-+                                "target":"0000:a8:01.1",
-+                                "alias":"device:c3",
-+                                "position":0,
-+                                "id":0
-+                            }
-+                        ]
-+                    }
-+                ]
-+            },
-+
-+
-+The next chunk shows the two CXL host bridges without attached endpoints.
-+
-+::
-+
-+            {
-+                "port":"port2",
-+                "host":"pci0000:00",
-+                "depth":1,
-+                "nr_dports":2,
-+                "dports":[
-+                    {
-+                        "dport":"0000:00:01.3",
-+                        "alias":"device:55",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:00:07.1",
-+                        "alias":"device:5d",
-+                        "id":113
-+                    }
-+                ]
-+            },
-+            {
-+                "port":"port4",
-+                "host":"pci0000:2a",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:2a:01.1",
-+                        "alias":"device:d0",
-+                        "id":0
-+                    }
-+                ]
-+            }
-+        ],
-+
-+Next we have the `Root Decoders` belonging to :code:`root0`.  This root decoder
-+applies the interleave across the downstream ports :code:`port1` and
-+:code:`port3` - with a granularity of 256 bytes.
-+
-+This information is generated by the CXL driver reading the ACPI CEDT CMFWS.
-+
-+::
-+
-+        "decoders:root0":[
-+            {
-+                "decoder":"decoder0.0",
-+                "resource":825975898112,
-+                "size":274877906944,
-+                "interleave_ways":2,
-+                "interleave_granularity":256,
-+                "max_available_extent":0,
-+                "volatile_capable":true,
-+                "nr_targets":2,
-+                "targets":[
-+                    {
-+                        "target":"pci0000:a8",
-+                        "alias":"ACPI0016:02",
-+                        "position":1,
-+                        "id":4
-+                    },
-+                    {
-+                        "target":"pci0000:d2",
-+                        "alias":"ACPI0016:00",
-+                        "position":0,
-+                        "id":5
-+                    }
-+                ],
-+
-+Finally we have the `Memory Region` associated with the `Root Decoder`
-+:code:`decoder0.0`.  This region describes the overall interleave configuration
-+of the interleave set.
-+
-+::
-+
-+                "regions:decoder0.0":[
-+                    {
-+                        "region":"region0",
-+                        "resource":825975898112,
-+                        "size":274877906944,
-+                        "type":"ram",
-+                        "interleave_ways":2,
-+                        "interleave_granularity":256,
-+                        "decode_state":"commit",
-+                        "mappings":[
-+                            {
-+                                "position":1,
-+                                "memdev":"mem1",
-+                                "decoder":"decoder6.0"
-+                            },
-+                            {
-+                                "position":0,
-+                                "memdev":"mem0",
-+                                "decoder":"decoder5.0"
-+                            }
-+                        ]
-+                    }
-+                ]
-+            }
-+        ]
-+    }
-+  ]
-diff --git a/Documentation/driver-api/cxl/linux/example-configurations/intra-hb-interleave.rst b/Documentation/driver-api/cxl/linux/example-configurations/intra-hb-interleave.rst
-new file mode 100644
-index 000000000000..077dfaf8458d
---- /dev/null
-+++ b/Documentation/driver-api/cxl/linux/example-configurations/intra-hb-interleave.rst
-@@ -0,0 +1,291 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============================
-+Intra-Host-Bridge Interleave
-+============================
-+This cxl-cli configuration dump shows the following host configuration:
-+
-+* A single socket system with one CXL root
-+* CXL Root has Four (4) CXL Host Bridges
-+* One (1) CXL Host Bridges has two CXL Memory Expanders Attached
-+* The Host bridge decoder is programmed to interleave across the expanders.
-+
-+This output is generated by :code:`cxl list -v` and describes the relationships
-+between objects exposed in :code:`/sys/bus/cxl/devices/`.
-+
-+::
-+
-+  [
-+    {
-+        "bus":"root0",
-+        "provider":"ACPI.CXL",
-+        "nr_dports":4,
-+        "dports":[
-+            {
-+                "dport":"pci0000:00",
-+                "alias":"ACPI0016:01",
-+                "id":0
-+            },
-+            {
-+                "dport":"pci0000:a8",
-+                "alias":"ACPI0016:02",
-+                "id":4
-+            },
-+            {
-+                "dport":"pci0000:2a",
-+                "alias":"ACPI0016:03",
-+                "id":1
-+            },
-+            {
-+                "dport":"pci0000:d2",
-+                "alias":"ACPI0016:00",
-+                "id":5
-+            }
-+        ],
-+
-+This chunk shows the CXL "bus" (root0) has 4 downstream ports attached to CXL
-+Host Bridges.  The `Root` can be considered the singular upstream port attached
-+to the platform's memory controller - which routes memory requests to it.
-+
-+The `ports:root0` section lays out how each of these downstream ports are
-+configured.  If a port is not configured (id's 0 and 1), they are omitted.
-+
-+::
-+
-+        "ports:root0":[
-+            {
-+                "port":"port1",
-+                "host":"pci0000:d2",
-+                "depth":1,
-+                "nr_dports":3,
-+                "dports":[
-+                    {
-+                        "dport":"0000:d2:01.1",
-+                        "alias":"device:02",
-+                        "id":0
-+                    },
-+                    {
-+                        "dport":"0000:d2:01.3",
-+                        "alias":"device:05",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:d2:07.1",
-+                        "alias":"device:0d",
-+                        "id":113
-+                    }
-+                ],
-+
-+This chunk shows the available downstream ports associated with the CXL Host
-+Bridge :code:`port1`.  In this case, :code:`port1` has 3 available downstream
-+ports: :code:`dport1`, :code:`dport2`, and :code:`dport113`..
-+
-+::
-+
-+                "endpoints:port1":[
-+                    {
-+                        "endpoint":"endpoint5",
-+                        "host":"mem0",
-+                        "parent_dport":"0000:d2:01.1",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem0",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:d3:00.0"
-+                        },
-+                        "decoders:endpoint5":[
-+                            {
-+                                "decoder":"decoder5.0",
-+                                "resource":825975898112,
-+                                "size":274877906944,
-+                                "interleave_ways":2,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    },
-+                    {
-+                        "endpoint":"endpoint6",
-+                        "host":"mem1",
-+                        "parent_dport":"0000:d2:01.3,
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem1",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:a9:00.0"
-+                        },
-+                        "decoders:endpoint6":[
-+                            {
-+                                "decoder":"decoder6.0",
-+                                "resource":825975898112,
-+                                "size":274877906944,
-+                                "interleave_ways":2,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    }
-+                ],
-+
-+This chunk shows the endpoints attached to the host bridge :code:`port1`.
-+
-+:code:`endpoint5` contains a single configured decoder :code:`decoder5.0`
-+which has the same interleave configuration memory region they belong to
-+(show later).
-+
-+Next we have the decoders belonging to the host bridge:
-+
-+::
-+
-+                "decoders:port1":[
-+                    {
-+                        "decoder":"decoder1.0",
-+                        "resource":825975898112,
-+                        "size":274877906944,
-+                        "interleave_ways":2,
-+                        "interleave_granularity":256,
-+                        "region":"region0",
-+                        "nr_targets":2,
-+                        "targets":[
-+                            {
-+                                "target":"0000:d2:01.1",
-+                                "alias":"device:02",
-+                                "position":0,
-+                                "id":0
-+                            },
-+                            {
-+                                "target":"0000:d2:01.3",
-+                                "alias":"device:05",
-+                                "position":1,
-+                                "id":0
-+                            }
-+                        ]
-+                    }
-+                ]
-+            },
-+
-+Host Bridge :code:`port1` has a single decoder (:code:`decoder1.0`) with two
-+targets: :code:`dport1` and :code:`dport3` - which are attached to
-+:code:`endpoint5` and :code:`endpoint6` respectively.
-+
-+The host bridge decoder interleaves these devices at a 256 byte granularity.
-+
-+The next chunk shows the three CXL host bridges without attached endpoints.
-+
-+::
-+
-+            {
-+                "port":"port2",
-+                "host":"pci0000:00",
-+                "depth":1,
-+                "nr_dports":2,
-+                "dports":[
-+                    {
-+                        "dport":"0000:00:01.3",
-+                        "alias":"device:55",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:00:07.1",
-+                        "alias":"device:5d",
-+                        "id":113
-+                    }
-+                ]
-+            },
-+            {
-+                "port":"port3",
-+                "host":"pci0000:a8",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:a8:01.1",
-+                        "alias":"device:c3",
-+                        "id":0
-+                    }
-+                ],
-+            },
-+            {
-+                "port":"port4",
-+                "host":"pci0000:2a",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:2a:01.1",
-+                        "alias":"device:d0",
-+                        "id":0
-+                    }
-+                ]
-+            }
-+        ],
-+
-+Next we have the `Root Decoders` belonging to :code:`root0`.  This root decoder
-+applies the interleave across the downstream ports :code:`port1` and
-+:code:`port3` - with a granularity of 256 bytes.
-+
-+This information is generated by the CXL driver reading the ACPI CEDT CMFWS.
-+
-+::
-+
-+        "decoders:root0":[
-+            {
-+                "decoder":"decoder0.0",
-+                "resource":825975898112,
-+                "size":274877906944,
-+                "interleave_ways":1,
-+                "max_available_extent":0,
-+                "volatile_capable":true,
-+                "nr_targets":2,
-+                "targets":[
-+                    {
-+                        "target":"pci0000:a8",
-+                        "alias":"ACPI0016:02",
-+                        "position":1,
-+                        "id":4
-+                    },
-+                ],
-+
-+Finally we have the `Memory Region` associated with the `Root Decoder`
-+:code:`decoder0.0`.  This region describes the overall interleave configuration
-+of the interleave set.
-+
-+::
-+
-+                "regions:decoder0.0":[
-+                    {
-+                        "region":"region0",
-+                        "resource":825975898112,
-+                        "size":274877906944,
-+                        "type":"ram",
-+                        "interleave_ways":2,
-+                        "interleave_granularity":256,
-+                        "decode_state":"commit",
-+                        "mappings":[
-+                            {
-+                                "position":1,
-+                                "memdev":"mem1",
-+                                "decoder":"decoder6.0"
-+                            },
-+                            {
-+                                "position":0,
-+                                "memdev":"mem0",
-+                                "decoder":"decoder5.0"
-+                            }
-+                        ]
-+                    }
-+                ]
-+            }
-+        ]
-+    }
-+  ]
-diff --git a/Documentation/driver-api/cxl/linux/example-configurations/multi-interleave.rst b/Documentation/driver-api/cxl/linux/example-configurations/multi-interleave.rst
-new file mode 100644
-index 000000000000..008f9053c630
---- /dev/null
-+++ b/Documentation/driver-api/cxl/linux/example-configurations/multi-interleave.rst
-@@ -0,0 +1,401 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+======================
-+Multi-Level Interleave
-+======================
-+This cxl-cli configuration dump shows the following host configuration:
-+
-+* A single socket system with one CXL root
-+* CXL Root has Four (4) CXL Host Bridges
-+* Two CXL Host Bridges have a two CXL Memory Expanders Attached each.
-+* The CXL root is configured to interleave across the two host bridges.
-+* Each host bridge with expanders interleaves across two endpoints.
-+
-+This output is generated by :code:`cxl list -v` and describes the relationships
-+between objects exposed in :code:`/sys/bus/cxl/devices/`.
-+
-+::
-+
-+  [
-+    {
-+        "bus":"root0",
-+        "provider":"ACPI.CXL",
-+        "nr_dports":4,
-+        "dports":[
-+            {
-+                "dport":"pci0000:00",
-+                "alias":"ACPI0016:01",
-+                "id":0
-+            },
-+            {
-+                "dport":"pci0000:a8",
-+                "alias":"ACPI0016:02",
-+                "id":4
-+            },
-+            {
-+                "dport":"pci0000:2a",
-+                "alias":"ACPI0016:03",
-+                "id":1
-+            },
-+            {
-+                "dport":"pci0000:d2",
-+                "alias":"ACPI0016:00",
-+                "id":5
-+            }
-+        ],
-+
-+This chunk shows the CXL "bus" (root0) has 4 downstream ports attached to CXL
-+Host Bridges.  The `Root` can be considered the singular upstream port attached
-+to the platform's memory controller - which routes memory requests to it.
-+
-+The `ports:root0` section lays out how each of these downstream ports are
-+configured.  If a port is not configured (id's 0 and 1), they are omitted.
-+
-+::
-+
-+        "ports:root0":[
-+            {
-+                "port":"port1",
-+                "host":"pci0000:d2",
-+                "depth":1,
-+                "nr_dports":3,
-+                "dports":[
-+                    {
-+                        "dport":"0000:d2:01.1",
-+                        "alias":"device:02",
-+                        "id":0
-+                    },
-+                    {
-+                        "dport":"0000:d2:01.3",
-+                        "alias":"device:05",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:d2:07.1",
-+                        "alias":"device:0d",
-+                        "id":113
-+                    }
-+                ],
-+
-+This chunk shows the available downstream ports associated with the CXL Host
-+Bridge :code:`port1`.  In this case, :code:`port1` has 3 available downstream
-+ports: :code:`dport0`, :code:`dport2`, and :code:`dport113`.
-+
-+::
-+
-+                "endpoints:port1":[
-+                    {
-+                        "endpoint":"endpoint5",
-+                        "host":"mem0",
-+                        "parent_dport":"0000:d2:01.1",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem0",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:d3:00.0"
-+                        },
-+                        "decoders:endpoint5":[
-+                            {
-+                                "decoder":"decoder5.0",
-+                                "resource":825975898112,
-+                                "size":549755813888,
-+                                "interleave_ways":4,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    },
-+                    {
-+                        "endpoint":"endpoint6",
-+                        "host":"mem1",
-+                        "parent_dport":"0000:d2:01.3",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem1",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:d3:00.0"
-+                        },
-+                        "decoders:endpoint6":[
-+                            {
-+                                "decoder":"decoder6.0",
-+                                "resource":825975898112,
-+                                "size":549755813888,
-+                                "interleave_ways":4,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    }
-+                ],
-+
-+This chunk shows the endpoints attached to the host bridge :code:`port1`.
-+
-+:code:`endpoint5` contains a single configured decoder :code:`decoder5.0`
-+which has the same interleave configuration as :code:`region0` (shown later).
-+
-+:code:`endpoint6` contains a single configured decoder :code:`decoder5.0`
-+which has the same interleave configuration as :code:`region0` (shown later).
-+
-+Next we have the decoders belonging to the host bridge:
-+
-+::
-+
-+                "decoders:port1":[
-+                    {
-+                        "decoder":"decoder1.0",
-+                        "resource":825975898112,
-+                        "size":549755813888,
-+                        "interleave_ways":2,
-+                        "interleave_granularity":512,
-+                        "region":"region0",
-+                        "nr_targets":2,
-+                        "targets":[
-+                            {
-+                                "target":"0000:d2:01.1",
-+                                "alias":"device:02",
-+                                "position":0,
-+                                "id":0
-+                            },
-+                            {
-+                                "target":"0000:d2:01.3",
-+                                "alias":"device:05",
-+                                "position":2,
-+                                "id":0
-+                            }
-+                        ]
-+                    }
-+                ]
-+            },
-+
-+Host Bridge :code:`port1` has a single decoder (:code:`decoder1.0`), whose
-+targets are :code:`dport0` and :code:`dport2` - which are attached to
-+:code:`endpoint5` and :code:`endpoint6` respectively.
-+
-+The following chunk shows a similar configuration for Host Bridge :code:`port3`,
-+the second host bridge with a memory device attached.
-+
-+::
-+
-+            {
-+                "port":"port3",
-+                "host":"pci0000:a8",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:a8:01.1",
-+                        "alias":"device:c3",
-+                        "id":0
-+                    },
-+                    {
-+                        "dport":"0000:a8:01.3",
-+                        "alias":"device:c5",
-+                        "id":0
-+                    }
-+                ],
-+                "endpoints:port3":[
-+                    {
-+                        "endpoint":"endpoint7",
-+                        "host":"mem2",
-+                        "parent_dport":"0000:a8:01.1",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem2",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:a9:00.0"
-+                        },
-+                        "decoders:endpoint7":[
-+                            {
-+                                "decoder":"decoder7.0",
-+                                "resource":825975898112,
-+                                "size":549755813888,
-+                                "interleave_ways":4,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    },
-+                    {
-+                        "endpoint":"endpoint8",
-+                        "host":"mem3",
-+                        "parent_dport":"0000:a8:01.3",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem3",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:a9:00.0"
-+                        },
-+                        "decoders:endpoint8":[
-+                            {
-+                                "decoder":"decoder8.0",
-+                                "resource":825975898112,
-+                                "size":549755813888,
-+                                "interleave_ways":4,
-+                                "interleave_granularity":256,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    }
-+                ],
-+                "decoders:port3":[
-+                    {
-+                        "decoder":"decoder3.0",
-+                        "resource":825975898112,
-+                        "size":549755813888,
-+                        "interleave_ways":2,
-+                        "interleave_granularity":512,
-+                        "region":"region0",
-+                        "nr_targets":1,
-+                        "targets":[
-+                            {
-+                                "target":"0000:a8:01.1",
-+                                "alias":"device:c3",
-+                                "position":1,
-+                                "id":0
-+                            },
-+                            {
-+                                "target":"0000:a8:01.3",
-+                                "alias":"device:c5",
-+                                "position":3,
-+                                "id":0
-+                            }
-+                        ]
-+                    }
-+                ]
-+            },
-+
-+
-+The next chunk shows the two CXL host bridges without attached endpoints.
-+
-+::
-+
-+            {
-+                "port":"port2",
-+                "host":"pci0000:00",
-+                "depth":1,
-+                "nr_dports":2,
-+                "dports":[
-+                    {
-+                        "dport":"0000:00:01.3",
-+                        "alias":"device:55",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:00:07.1",
-+                        "alias":"device:5d",
-+                        "id":113
-+                    }
-+                ]
-+            },
-+            {
-+                "port":"port4",
-+                "host":"pci0000:2a",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:2a:01.1",
-+                        "alias":"device:d0",
-+                        "id":0
-+                    }
-+                ]
-+            }
-+        ],
-+
-+Next we have the `Root Decoders` belonging to :code:`root0`.  This root decoder
-+applies the interleave across the downstream ports :code:`port1` and
-+:code:`port3` - with a granularity of 256 bytes.
-+
-+This information is generated by the CXL driver reading the ACPI CEDT CMFWS.
-+
-+::
-+
-+        "decoders:root0":[
-+            {
-+                "decoder":"decoder0.0",
-+                "resource":825975898112,
-+                "size":549755813888,
-+                "interleave_ways":2,
-+                "interleave_granularity":256,
-+                "max_available_extent":0,
-+                "volatile_capable":true,
-+                "nr_targets":2,
-+                "targets":[
-+                    {
-+                        "target":"pci0000:a8",
-+                        "alias":"ACPI0016:02",
-+                        "position":1,
-+                        "id":4
-+                    },
-+                    {
-+                        "target":"pci0000:d2",
-+                        "alias":"ACPI0016:00",
-+                        "position":0,
-+                        "id":5
-+                    }
-+                ],
-+
-+Finally we have the `Memory Region` associated with the `Root Decoder`
-+:code:`decoder0.0`.  This region describes the overall interleave configuration
-+of the interleave set.  So we see there are a total of :code:`4` interleave
-+targets across 4 endpoint decoders.
-+
-+::
-+
-+                "regions:decoder0.0":[
-+                    {
-+                        "region":"region0",
-+                        "resource":825975898112,
-+                        "size":549755813888,
-+                        "type":"ram",
-+                        "interleave_ways":4,
-+                        "interleave_granularity":256,
-+                        "decode_state":"commit",
-+                        "mappings":[
-+                            {
-+                                "position":3,
-+                                "memdev":"mem3",
-+                                "decoder":"decoder8.0"
-+                            },
-+                            {
-+                                "position":2,
-+                                "memdev":"mem1",
-+                                "decoder":"decoder6.0"
-+                            }
-+                            {
-+                                "position":1,
-+                                "memdev":"mem2",
-+                                "decoder":"decoder7.0"
-+                            },
-+                            {
-+                                "position":0,
-+                                "memdev":"mem0",
-+                                "decoder":"decoder5.0"
-+                            }
-+                        ]
-+                    }
-+                ]
-+            }
-+        ]
-+    }
-+  ]
-diff --git a/Documentation/driver-api/cxl/linux/example-configurations/single-device.rst b/Documentation/driver-api/cxl/linux/example-configurations/single-device.rst
-new file mode 100644
-index 000000000000..5fd38eb0aaf4
---- /dev/null
-+++ b/Documentation/driver-api/cxl/linux/example-configurations/single-device.rst
-@@ -0,0 +1,246 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=============
-+Single Device
-+=============
-+This cxl-cli configuration dump shows the following host configuration:
-+
-+* A single socket system with one CXL root
-+* CXL Root has Four (4) CXL Host Bridges
-+* One CXL Host Bridges has a single CXL Memory Expander Attached
-+* No interleave is present.
-+
-+This output is generated by :code:`cxl list -v` and describes the relationships
-+between objects exposed in :code:`/sys/bus/cxl/devices/`.
-+
-+::
-+
-+  [
-+    {
-+        "bus":"root0",
-+        "provider":"ACPI.CXL",
-+        "nr_dports":4,
-+        "dports":[
-+            {
-+                "dport":"pci0000:00",
-+                "alias":"ACPI0016:01",
-+                "id":0
-+            },
-+            {
-+                "dport":"pci0000:a8",
-+                "alias":"ACPI0016:02",
-+                "id":4
-+            },
-+            {
-+                "dport":"pci0000:2a",
-+                "alias":"ACPI0016:03",
-+                "id":1
-+            },
-+            {
-+                "dport":"pci0000:d2",
-+                "alias":"ACPI0016:00",
-+                "id":5
-+            }
-+        ],
-+
-+This chunk shows the CXL "bus" (root0) has 4 downstream ports attached to CXL
-+Host Bridges.  The `Root` can be considered the singular upstream port attached
-+to the platform's memory controller - which routes memory requests to it.
-+
-+The `ports:root0` section lays out how each of these downstream ports are
-+configured.  If a port is not configured (id's 0, 1, and 4), they are omitted.
-+
-+::
-+
-+        "ports:root0":[
-+            {
-+                "port":"port1",
-+                "host":"pci0000:d2",
-+                "depth":1,
-+                "nr_dports":3,
-+                "dports":[
-+                    {
-+                        "dport":"0000:d2:01.1",
-+                        "alias":"device:02",
-+                        "id":0
-+                    },
-+                    {
-+                        "dport":"0000:d2:01.3",
-+                        "alias":"device:05",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:d2:07.1",
-+                        "alias":"device:0d",
-+                        "id":113
-+                    }
-+                ],
-+
-+This chunk shows the available downstream ports associated with the CXL Host
-+Bridge :code:`port1`.  In this case, :code:`port1` has 3 available downstream
-+ports: :code:`dport1`, :code:`dport2`, and :code:`dport113`..
-+
-+::
-+
-+                "endpoints:port1":[
-+                    {
-+                        "endpoint":"endpoint5",
-+                        "host":"mem0",
-+                        "parent_dport":"0000:d2:01.1",
-+                        "depth":2,
-+                        "memdev":{
-+                            "memdev":"mem0",
-+                            "ram_size":137438953472,
-+                            "serial":0,
-+                            "numa_node":0,
-+                            "host":"0000:d3:00.0"
-+                        },
-+                        "decoders:endpoint5":[
-+                            {
-+                                "decoder":"decoder5.0",
-+                                "resource":825975898112,
-+                                "size":137438953472,
-+                                "interleave_ways":1,
-+                                "region":"region0",
-+                                "dpa_resource":0,
-+                                "dpa_size":137438953472,
-+                                "mode":"ram"
-+                            }
-+                        ]
-+                    }
-+                ],
-+
-+This chunk shows the endpoints attached to the host bridge :code:`port1`.
-+
-+:code:`endpoint5` contains a single configured decoder :code:`decoder5.0`
-+which has the same interleave configuration as :code:`region0` (shown later).
-+
-+Next we have the decoders belonging to the host bridge:
-+
-+::
-+
-+                "decoders:port1":[
-+                    {
-+                        "decoder":"decoder1.0",
-+                        "resource":825975898112,
-+                        "size":137438953472,
-+                        "interleave_ways":1,
-+                        "region":"region0",
-+                        "nr_targets":1,
-+                        "targets":[
-+                            {
-+                                "target":"0000:d2:01.1",
-+                                "alias":"device:02",
-+                                "position":0,
-+                                "id":0
-+                            }
-+                        ]
-+                    }
-+                ]
-+            },
-+
-+Host Bridge :code:`port1` has a single decoder (:code:`decoder1.0`), whose only
-+target is :code:`dport1` - which is attached to :code:`endpoint5`.
-+
-+The next chunk shows the three CXL host bridges without attached endpoints.
-+
-+::
-+
-+            {
-+                "port":"port2",
-+                "host":"pci0000:00",
-+                "depth":1,
-+                "nr_dports":2,
-+                "dports":[
-+                    {
-+                        "dport":"0000:00:01.3",
-+                        "alias":"device:55",
-+                        "id":2
-+                    },
-+                    {
-+                        "dport":"0000:00:07.1",
-+                        "alias":"device:5d",
-+                        "id":113
-+                    }
-+                ]
-+            },
-+            {
-+                "port":"port3",
-+                "host":"pci0000:a8",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:a8:01.1",
-+                        "alias":"device:c3",
-+                        "id":0
-+                    }
-+                ]
-+            },
-+            {
-+                "port":"port4",
-+                "host":"pci0000:2a",
-+                "depth":1,
-+                "nr_dports":1,
-+                "dports":[
-+                    {
-+                        "dport":"0000:2a:01.1",
-+                        "alias":"device:d0",
-+                        "id":0
-+                    }
-+                ]
-+            }
-+        ],
-+
-+Next we have the `Root Decoders` belonging to :code:`root0`.  This root decoder
-+is a pass-through decoder because :code:`interleave_ways` is set to :code:`1`.
-+
-+This information is generated by the CXL driver reading the ACPI CEDT CMFWS.
-+
-+::
-+
-+        "decoders:root0":[
-+            {
-+                "decoder":"decoder0.0",
-+                "resource":825975898112,
-+                "size":137438953472,
-+                "interleave_ways":1,
-+                "max_available_extent":0,
-+                "volatile_capable":true,
-+                "nr_targets":1,
-+                "targets":[
-+                    {
-+                        "target":"pci0000:d2",
-+                        "alias":"ACPI0016:00",
-+                        "position":0,
-+                        "id":5
-+                    }
-+                ],
-+
-+Finally we have the `Memory Region` associated with the `Root Decoder`
-+:code:`decoder0.0`.  This region describes the discrete region associated
-+with the lone device.
-+
-+::
-+
-+                "regions:decoder0.0":[
-+                    {
-+                        "region":"region0",
-+                        "resource":825975898112,
-+                        "size":137438953472,
-+                        "type":"ram",
-+                        "interleave_ways":1,
-+                        "decode_state":"commit",
-+                        "mappings":[
-+                            {
-+                                "position":0,
-+                                "memdev":"mem0",
-+                                "decoder":"decoder5.0"
-+                            }
-+                        ]
-+                    }
-+                ]
-+            }
-+        ]
-+    }
-+  ]
++DAX Driver Operation
++====================
++The `Direct Access Device` driver was originally designed to provide a
++memory-like access mechanism to memory-like block-devices.  It was
++extended to support CXL Memory Devices, which provide user-configured
++memory devices.
++
++The CXL subsystem depends on the DAX subsystem to generate either:
++
++- A file-like interface to userland via :code:`/dev/daxN.Y`, or
++- Engaging the memory-hotplug interface to add CXL memory to page allocator.
++
++The DAX subsystem exposes this ability through the `cxl_dax_region` driver.
++A `dax_region` provides the translation between a CXL `memory_region` and
++a `DAX Device`.
++
++DAX Device
++----------
++A `DAX Device` is a file-like interface exposed in :code:`/dev/daxN.Y`. A
++memory region exposed via dax device can be accessed via userland software
++via the :code:`mmap()` system-call.  The result is direct mappings to the
++CXL capacity in the task's page tables.
++
++Users wishing to manually handle allocation of CXL memory should use this
++interface.
++
++kmem conversion
++---------------
++The :code:`dax_kmem` driver converts a `DAX Device` into a series of `hotplug
++memory blocks` managed by :code:`kernel/memory-hotplug.c`.  This capacity
++will be exposed to the kernel page allocator in the user-selected memory
++zone.
++
++The :code:`memmap_on_memory` setting (both global and DAX device local) dictate
++where the kernell will allocate the :code:`struct folio` descriptors for this
++memory will come from.  If :code:`memmap_on_memory` is set, memory hotplug
++will set aside a portion of the memory block capacity to allocate folios.  If
++unset, the memory is allocated via a normal :code:`GFP_KERNEL` allocation -
++and as a result will most likely land on the local NUM node of the cpu executing
++the hotplug operation.
 -- 
 2.49.0
 
